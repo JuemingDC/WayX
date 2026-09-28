@@ -68,6 +68,12 @@ jobs:
         with:
           python-version: "3.13"
 
+      - name: Syntax check conversion automation
+        if: steps.pending.outputs.blocked != 'true'
+        run: |
+          node --check .github/scripts/sync-convert.mjs
+          python -m py_compile .github/scripts/conversion_gate.py .github/scripts/validate_conversion_policy.py
+
       - name: Install sync dependency
         if: steps.pending.outputs.blocked != 'true'
         run: python -m pip install --disable-pip-version-check requests
