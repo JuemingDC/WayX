@@ -6,7 +6,7 @@
 
 ## 目录规则
 
-1. `adblock/`
+1. `Adblock/`
    - 去广告、推广移除、界面净化、HTTPDNS 屏蔽。
    - 对应的 Quantumult X snippet 与 Surge sgmodule 保留在这里。
 
@@ -154,6 +154,6 @@ Safe Tier 的新增和删除必须通过 **重新解析源文件并完整生成�
 
 自动化只向现代目录写入：
 
-`adblock/<App>/QuantumultX/` 与 `adblock/<App>/Surge/`。
+`Adblock/Quantumult X/` 与 `Adblock/Surge/`。
 
-历史 `Adblock/` 目录仅作兼容遗留，不再作为自动化写入目标；在确认没有外部 raw 链接依赖前不得批量删除。
+旧小写 `adblock/` 已废弃并删除；自动化不得重新创建。
