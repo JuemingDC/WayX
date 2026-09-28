@@ -23,6 +23,8 @@
 
 ## 转换规则
 
+> Loon 3.5.x 新语法（`request/response if ${url} ~= ... then ...`、`response.json.*`、`script(...) with`、`[Argument]` 等）必须同时遵循 [`LOON_NEW_SYNTAX_CONVERSION.md`](./LOON_NEW_SYNTAX_CONVERSION.md)。该文件优先定义新语法的目标平台等价行为与不可转换处理。
+
 1. **机制对应优先**
    - jq → jq
    - JavaScript → JavaScript
