@@ -70,6 +70,8 @@ jobs:
 
       - name: Sync simple Loon sources and convert deterministically
         if: steps.pending.outputs.blocked != 'true'
+        id: loon_sync
+        continue-on-error: true
         run: node .github/scripts/sync-convert.mjs
 
       - name: Sync RuCu6 sources and scripts
@@ -87,6 +89,8 @@ jobs:
 
       - name: Validate deterministic generated outputs
         if: steps.pending.outputs.blocked != 'true'
+        id: validate
+        continue-on-error: true
         run: python .github/scripts/validate_conversion_policy.py
 
       - name: Classify conversion changes
@@ -97,7 +101,7 @@ jobs:
       - name: Build Work review body
         if: >
           steps.pending.outputs.blocked != 'true' &&
-          (steps.monitor.outputs.has_review == 'true' || steps.gate.outputs.requires_work == 'true')
+          (steps.monitor.outputs.has_review == 'true' || steps.gate.outputs.requires_work == 'true' || steps.loon_sync.outcome != 'success' || steps.validate.outcome != 'success')
         id: review
         shell: bash
         run: |
@@ -105,9 +109,14 @@ jobs:
           BODY="monitor/.runtime/work_review_body.md"
           mkdir -p monitor/.runtime
           {
-            echo "# WayX 自动上游审查"
+            echo "# WayX automated upstream review"
             echo
-            echo "本 PR 由 GitHub Actions 生成。确定无损的简单转换已经由 Actions 完成；以下内容需要 ChatGPT Work 做语义审查。"
+            echo "GitHub Actions already applied deterministic safe-tier conversions. ChatGPT Work must review the remaining semantic-risk changes."
+            echo
+            echo "## Actions status"
+            echo
+            echo "- Loon converter: ${{ steps.loon_sync.outcome }}"
+            echo "- Validator: ${{ steps.validate.outcome }}"
             echo
             if [ -f "${{ steps.gate.outputs.summary }}" ]; then
               cat "${{ steps.gate.outputs.summary }}"
@@ -117,17 +126,18 @@ jobs:
               cat "${{ steps.monitor.outputs.review_summary }}"
               echo
             fi
-            echo "## Work 指令"
+            echo "## Work instruction"
             echo
-            echo "严格读取并执行仓库 monitor/WORK_TASK_PROMPT.md。"
+            echo "Read and execute monitor/WORK_TASK_PROMPT.md strictly. Converter/validator failure is Review Tier and must never be committed directly to main."
           } > "$BODY"
           echo "body=$BODY" >> "$GITHUB_OUTPUT"
-
       - name: Commit safe-tier changes directly
         if: >
           steps.pending.outputs.blocked != 'true' &&
           steps.monitor.outputs.has_review != 'true' &&
-          steps.gate.outputs.requires_work != 'true'
+          steps.gate.outputs.requires_work != 'true' &&
+          steps.loon_sync.outcome == 'success' &&
+          steps.validate.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
@@ -150,13 +160,13 @@ jobs:
       - name: Open Work review PR
         if: >
           steps.pending.outputs.blocked != 'true' &&
-          (steps.monitor.outputs.has_review == 'true' || steps.gate.outputs.requires_work == 'true')
+          (steps.monitor.outputs.has_review == 'true' || steps.gate.outputs.requires_work == 'true' || steps.loon_sync.outcome != 'success' || steps.validate.outcome != 'success')
         env:
           GH_TOKEN: ${{ github.token }}
           REVIEW_BODY: ${{ steps.review.outputs.body }}
         shell: bash
         run: |
-          set -eu[�\Y�Z[��]�ۙ�Y�\�\���[YH��[��K]\��X[KX�����]�ۙ�Y�\�\��[XZ[�NN����]X�XX�[ۜ�؛�P\�\�˛�ܙ\K��]X����H�����S��H��ܚ��\��X[KI��UP�ԕS��QKI��UP�ԕS��USPT_H���]��]�X����S�����]YPH�\��\��K��ۈY�����ܚ\[ۚ]܋��]K���ۂ�Y��Y\��X[HN�[���]YPH\��X[B��B��Y��]Y��KX�X�YK\]ZY]�[��X����]�Y]��\��\]Y\�Y�]��\��\�[��[\��[��Y���^]B��B���]��[Z][H��ܙN��\\�H\��X[H�ܚ��]�Y]Ȃ��]\�K\�]]\��X[HܚY�[����S������X�[ܙX]H�ܚ�\�]�Y]��KY\�ܚ\[ۈ��\]Z\�\��]��ܚ��[X[�X��]�Y]Ȉ�KX��܈�����KY�ܘ�H��]�۝[���H�YB��X�[ܙX]H�ܚ�X��\]H�KY\�ܚ\[ۈ��ܚ��]�Y]���\]Y��Y�H�Y\��H[��X[�\��KX��܈��PM��KY�ܘ�H��]�۝[���H�YB��X�[ܙX]H�ܚ�\�Z�X��KY\�ܚ\[ۈ�\��X[H�[��H�Z�X�Y����H�]�]Y\��[�Ȉ�KX��܈����H�KY�ܘ�H��]�۝[���H�YB����ܙX]H�KX�\�HXZ[��KZXY���S����K]]H�\��X[H�[X[�X��]�Y]Έ	
+          set -eu[È\Y˜Z[ˆÚ]ÛÛ™šYÈ\Ù\‹›˜[YH˜Ú[˜ÙK]\Ý™X[KX›Ý‚ˆÚ]ÛÛ™šYÈ\Ù\‹™[XZ[NNŽŠÙÚ]X‹XXÝ[ÛœÖØ›ÝP\Ù\œË››Ü™\K™Ú]X‹˜ÛÛH‚‚ˆ”SÒHÛÜšËÝ\Ý™X[KIÑÒUP—Ô•S—ÒQKIÑÒUP—Ô•S—ÐUSPT_H‚ˆÚ]ÝÚ]ÚXÈ‰”SÒ‚ˆÚ]YPH™\ÛÝ\˜ÙKÓÛÛˆY›ØÚÈØÜš\[Ûš]Ü‹ÜÝ]KšœÛÛ‚ˆYˆÈY\Ý™X[HNÈ[‚ˆÚ]YPH\Ý™X[BˆšB‚ˆYˆÚ]Y™ˆKXØXÚYK\]ZY]È[‚ˆXÚÈ”™]šY]ÈØ\È™\]Y\ÝY]›È\œÚ\Ý[š[\ÈÚ[™ÙYˆ‚ˆ^]BˆšB‚ˆÚ]ÛÛ[Z][H˜ÚÜ™Nˆ™\\™H\Ý™X[HÛÜšÈ™]šY]È‚ˆÚ]\ÚK\Ù]]\Ý™X[HÜšYÚ[ˆ‰”SÒ‚‚ˆÚX™[Ü™X]HÛÜšË\™]šY]ÈˆKY\ØÜš\[Ûˆ”™\]Z\™\ÈÚ]ÔÛÜšÈÙ[X[XÈ™]šY]ÈˆˆKXÛÛÜˆŽŒˆˆKY›Ü˜ÙH‹Ù]‹Û[‰ŒHYBˆÚX™[Ü™X]HÛÜšËXÛÛ\]HˆKY\ØÜš\[Ûˆ•ÛÜšÈ™]šY]ÈÛÛ\]YÈØY™HÈY\™ÙH[™ÛX[ˆ\ˆˆKXÛÛÜˆŒ‘PMˆˆKY›Ü˜ÙH‹Ù]‹Û[‰ŒHYBˆÚX™[Ü™X]HÛÜšË\™Z™XÝˆKY\ØÜš\[Ûˆ•\Ý™X[HÚ[™ÙH™Z™XÝYÈÛÜÙHÚ]Ý]Y\™Ú[™ÈˆˆKXÛÛÜˆŒŒHˆKY›Ü˜ÙH‹Ù]‹Û[‰ŒHYB‚ˆÚˆÜ™X]HˆKX˜\ÙHXZ[ˆˆKZXY‰”SÒˆˆK]]H•\Ý™X[HÙ[X[XÈ™]šY]Îˆ	
 ]H]H
-�VKI[KIY
-H��KX��KY�[H��U�QU�Г�H��K[X�[�ܚ�\�]�Y]�
+ÉVKI[KIY
+HˆˆKX›ÙKYš[H‰‘U’QU×Ð“ÑHˆˆK[X™[ÛÜšË\™]šY]Â
