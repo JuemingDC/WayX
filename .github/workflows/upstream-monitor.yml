@@ -1,7 +1,7 @@
 # Chance Upstream Monitor
 # Author: chance
 # Updated: 2026-09-28
-# Category: Automation / Upstream Monitor / Work Handoff
+# Category: Automation / Sync / Conversion / Work Handoff
 
 name: Upstream Monitor
 
@@ -23,7 +23,7 @@ concurrency:
 jobs:
   monitor:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
 
     steps:
       - name: Check for pending Work review
@@ -39,7 +39,6 @@ jobs:
             --label work-review \
             --json number \
             --jq '.[0].number // empty')"
-
           if [ -n "$OPEN_PR" ]; then
             echo "blocked=true" >> "$GITHUB_OUTPUT"
             echo "Existing Work review PR #$OPEN_PR is still open; skip this cycle."
@@ -51,7 +50,13 @@ jobs:
         if: steps.pending.outputs.blocked != 'true'
         uses: actions/checkout@v6
         with:
-          fetch-depth: 2
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        if: steps.pending.outputs.blocked != 'true'
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
 
       - name: Set up Python
         if: steps.pending.outputs.blocked != 'true'
@@ -59,74 +64,99 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Check upstreams
+      - name: Install sync dependency
+        if: steps.pending.outputs.blocked != 'true'
+        run: python -m pip install --disable-pip-version-check requests
+
+      - name: Sync simple Loon sources and convert deterministically
+        if: steps.pending.outputs.blocked != 'true'
+        run: node .github/scripts/sync-convert.mjs
+
+      - name: Sync RuCu6 sources and scripts
+        if: steps.pending.outputs.blocked != 'true'
+        env:
+          HTTP_PROXY_URL: ${{ secrets.HTTP_PROXY_URL }}
+        run: python .github/scripts/sync_rucu6.py
+
+      - name: Check official upstream specifications
         if: steps.pending.outputs.blocked != 'true'
         id: monitor
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python monitor/monitor_upstreams.py
 
-      - name: Commit non-semantic changes directly
-        if: steps.pending.outputs.blocked != 'true' && steps.monitor.outputs.has_review != 'true'
+      - name: Validate deterministic generated outputs
+        if: steps.pending.outputs.blocked != 'true'
+        run: python .github/scripts/validate_conversion_policy.py
+
+      - name: Classify conversion changes
+        if: steps.pending.outputs.blocked != 'true'
+        id: gate
+        run: python .github/scripts/conversion_gate.py
+
+      - name: Build Work review body
+        if: >
+          steps.pending.outputs.blocked != 'true' &&
+          (steps.monitor.outputs.has_review == 'true' || steps.gate.outputs.requires_work == 'true')
+        id: review
+        shell: bash
+        run: |
+          set -euo pipefail
+          BODY="monitor/.runtime/work_review_body.md"
+          mkdir -p monitor/.runtime
+          {
+            echo "# WayX è‡ªåŠ¨ä¸Šæ¸¸å®¡æŸ¥"
+            echo
+            echo "æœ¬ PR ç”± GitHub Actions ç”Ÿæˆã€‚ç¡®å®šæ— æŸçš„ç®€å•è½¬æ¢å·²ç»ç”± Actions å®Œæˆï¼›ä»¥ä¸‹å†…å®¹éœ€è¦ ChatGPT Work åšè¯­ä¹‰å®¡æŸ¥ã€‚"
+            echo
+            if [ -f "${{ steps.gate.outputs.summary }}" ]; then
+              cat "${{ steps.gate.outputs.summary }}"
+              echo
+            fi
+            if [ -f "${{ steps.monitor.outputs.review_summary }}" ]; then
+              cat "${{ steps.monitor.outputs.review_summary }}"
+              echo
+            fi
+            echo "## Work æŒ‡ä»¤"
+            echo
+            echo "ä¸¥æ ¼è¯»å–å¹¶æ‰§è¡Œä»“åº“ monitor/WORK_TASK_PROMPT.mdã€‚"
+          } > "$BODY"
+          echo "body=$BODY" >> "$GITHUB_OUTPUT"
+
+      - name: Commit safe-tier changes directly
+        if: >
+          steps.pending.outputs.blocked != 'true' &&
+          steps.monitor.outputs.has_review != 'true' &&
+          steps.gate.outputs.requires_work != 'true'
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "chance-upstream-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add -A monitor
+          git add -A Resource/Loon adblock script monitor/state.json
           if [ -d upstream ]; then
             git add -A upstream
           fi
-
           if git diff --cached --quiet; then
-            echo "No tracked changes to commit."
+            echo "No safe-tier changes to commit."
             exit 0
           fi
 
-          git commit -m "chore: sync upstream sources"
-          git push
+          git commit -m "chore: sync upstream and apply safe conversions"
+          git pull --rebase origin main
+          git push origin HEAD:main
 
       - name: Open Work review PR
-        if: steps.pending.outputs.blocked != 'true' && steps.monitor.outputs.has_review == 'true'
+        if: >
+          steps.pending.outputs.blocked != 'true' &&
+          (steps.monitor.outputs.has_review == 'true' || steps.gate.outputs.requires_work == 'true')
         env:
           GH_TOKEN: ${{ github.token }}
-          REVIEW_BODY: ${{ steps.monitor.outputs.review_summary }}
+          REVIEW_BODY: ${{ steps.review.outputs.body }}
         shell: bash
         run: |
-          set -euo pipefail
-          git config user.name "chance-upstream-bot"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          BRANCH="work/upstream-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-          git switch -c "$BRANCH"
-
-          git add -A monitor
-          if [ -d upstream ]; then
-            git add -A upstream
-          fi
-
-          if git diff --cached --quiet; then
-            echo "Monitor requested review but there are no tracked changes."
-            exit 1
-          fi
-
-          git commit -m "chore: prepare upstream Work review"
-          git push --set-upstream origin "$BRANCH"
-
-          gh label create work-review \
-            --description "Requires ChatGPT Work semantic review" \
-            --color "B8860B" \
-            --force >/dev/null 2>&1 || true
-
-          gh label create work-complete \
-            --description "Work review completed; safe to merge and clean up" \
-            --color "2EA44F" \
-            --force >/dev/null 2>&1 || true
-
-          gh pr create \
-            --base main \
-            --head "$BRANCH" \
-            --title "Upstream semantic review: $(date -u +%Y-%m-%d)" \
-            --body-file "$REVIEW_BODY" \
-            --label work-review
+          set -eu[È\Y˜Z[ˆÚ]ÛÛ™šYÈ\Ù\‹›˜[YH˜Ú[˜ÙK]\Ý™X[KX›Ý‚ˆÚ]ÛÛ™šYÈ\Ù\‹™[XZ[NNŽŠÙÚ]X‹XXÝ[ÛœÖØ›ÝP\Ù\œË››Ü™\K™Ú]X‹˜ÛÛH‚‚ˆ”SÒHÛÜšËÝ\Ý™X[KIÑÒUP—Ô•S—ÒQKIÑÒUP—Ô•S—ÐUSPT_H‚ˆÚ]ÝÚ]ÚXÈ‰”SÒ‚ˆÚ]YPH™\ÛÝ\˜ÙKÓÛÛˆY›ØÚÈØÜš\[Ûš]Ü‹ÜÝ]KšœÛÛ‚ˆYˆÈY\Ý™X[HNÈ[‚ˆÚ]YPH\Ý™X[BˆšB‚ˆYˆÚ]Y™ˆKXØXÚYK\]ZY]È[‚ˆXÚÈ”™]šY]ÈØ\È™\]Y\ÝY]›È\œÚ\Ý[š[\ÈÚ[™ÙYˆ‚ˆ^]BˆšB‚ˆÚ]ÛÛ[Z][H˜ÚÜ™Nˆ™\\™H\Ý™X[HÛÜšÈ™]šY]È‚ˆÚ]\ÚK\Ù]]\Ý™X[HÜšYÚ[ˆ‰”SÒ‚‚ˆÚX™[Ü™X]HÛÜšË\™]šY]ÈˆKY\ØÜš\[Ûˆ”™\]Z\™\ÈÚ]ÔÛÜšÈÙ[X[XÈ™]šY]ÈˆˆKXÛÛÜˆŽŒˆˆKY›Ü˜ÙH‹Ù]‹Û[‰ŒHYBˆÚX™[Ü™X]HÛÜšËXÛÛ\]HˆKY\ØÜš\[Ûˆ•ÛÜšÈ™]šY]ÈÛÛ\]YÈØY™HÈY\™ÙH[™ÛX[ˆ\ˆˆKXÛÛÜˆŒ‘PMˆˆKY›Ü˜ÙH‹Ù]‹Û[‰ŒHYBˆÚX™[Ü™X]HÛÜšË\™Z™XÝˆKY\ØÜš\[Ûˆ•\Ý™X[HÚ[™ÙH™Z™XÝYÈÛÜÙHÚ]Ý]Y\™Ú[™ÈˆˆKXÛÛÜˆŒŒHˆKY›Ü˜ÙH‹Ù]‹Û[‰ŒHYB‚ˆÚˆÜ™X]HˆKX˜\ÙHXZ[ˆˆKZXY‰”SÒˆˆK]]H•\Ý™X[HÙ[X[XÈ™]šY]Îˆ	
+]H]H
+ÉVKI[KIY
+HˆˆKX›ÙKYš[H‰‘U’QU×Ð“ÑHˆˆK[X™[ÛÜšË\™]šY]Â
