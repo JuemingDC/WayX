@@ -141,9 +141,31 @@ def simple_rule(line: str) -> tuple[bool, str]:
     return True, "basic deterministic rule"
 
 
+def simple_rewrite_v2(line: str) -> tuple[bool, str] | None:
+    m = re.fullmatch(
+        r"request\s+if\s+\$\{url\}\s*~=\s*/((?:\\.|[^/])*)/([ims]*)\s+then\s+(.+)",
+        line,
+    )
+    if not m:
+        if " then " in line or re.match(r"^(request|response)\s+if\s+", line):
+            return False, "Loon Rewrite v2 line is outside the deterministic simple subset"
+        return None
+    if m.group(2):
+        return False, "Rewrite v2 regex flags require semantic review"
+    action = m.group(3).strip()
+    am = re.fullmatch(r"(reject|reject_dict|reject_array|reject_img)\(\s*(\d{3})\s*\)", action)
+    if not am:
+        return False, "Rewrite v2 action is outside deterministic reject/reject_dict/reject_array/reject_img subset"
+    status = int(am.group(2))
+    if not 100 <= status <= 599:
+        return False, "Rewrite v2 reject status is outside Loon 100...599"
+    return True, "deterministic Rewrite v2 request URL reject mapping"
+
+
 def simple_old_rewrite(line: str) -> tuple[bool, str]:
-    if " if ${url} " in line or " then " in line:
-        return False, "Loon new Rewrite syntax requires Work unless a dedicated deterministic converter handles it"
+    v2 = simple_rewrite_v2(line)
+    if v2 is not None:
+        return v2
     m = re.match(r"^(\S+)\s+(.+)$", line)
     if not m:
         return False, "rewrite has no pattern/action split"
