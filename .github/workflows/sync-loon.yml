@@ -1,1 +1,52 @@
-The requested file reference is not currently visible. Use files.search or files.list to rediscover the file, then retry with a returned ref_id or file_id.
+name: Sync Loon and Convert
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 19 * * *"
+  push:
+    paths:
+      - ".github/sources/loon.json"
+      - ".github/scripts/**"
+      - ".github/workflows/sync-loon.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-loon-convert
+  cancel-in-progress: false
+
+jobs:
+  sync-convert:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      TZ: Asia/Shanghai
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+
+      - name: Sync selected Loon plugins and convert
+        run: node .github/scripts/sync-convert.mjs
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Resource/Loon Adblock script
+          if git diff --cached --quiet; then
+            echo "No changes."
+            exit 0
+          fi
+          git commit -m "chore: sync selected Loon plugins $(date '+%Y-%m-%d %H:%M:%S')"
+          git pull --rebase origin main
+          git push origin HEAD:main
