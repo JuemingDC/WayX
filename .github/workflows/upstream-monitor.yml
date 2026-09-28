@@ -1,19 +1,19 @@
 # Chance Upstream Monitor
 # Author: chance
-# Created: 2026-09-28
-# Category: Automation / Upstream Monitor
+# Updated: 2026-09-28
+# Category: Automation / Upstream Monitor / Work Handoff
 
 name: Upstream Monitor
 
 on:
   workflow_dispatch:
   schedule:
-    # 每天北京时间 01:00。GitHub Actions 当前支持 IANA timezone。
     - cron: "0 1 * * *"
       timezone: "Asia/Shanghai"
 
 permissions:
   contents: write
+  pull-requests: write
   issues: write
 
 concurrency:
@@ -26,26 +26,48 @@ jobs:
     timeout-minutes: 15
 
     steps:
+      - name: Check for pending Work review
+        id: pending
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          OPEN_PR="$(gh pr list \
+            --repo "$GITHUB_REPOSITORY" \
+            --state open \
+            --label work-review \
+            --json number \
+            --jq '.[0].number // empty')"
+
+          if [ -n "$OPEN_PR" ]; then
+            echo "blocked=true" >> "$GITHUB_OUTPUT"
+            echo "Existing Work review PR #$OPEN_PR is still open; skip this cycle."
+          else
+            echo "blocked=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Checkout
+        if: steps.pending.outputs.blocked != 'true'
         uses: actions/checkout@v6
         with:
           fetch-depth: 2
 
       - name: Set up Python
+        if: steps.pending.outputs.blocked != 'true'
         uses: actions/setup-python@v6
         with:
           python-version: "3.13"
 
       - name: Check upstreams
+        if: steps.pending.outputs.blocked != 'true'
         id: monitor
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          # 可选 Repository Variable；不设置时脚本默认 gpt-5.6-sol。
-          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
         run: python monitor/monitor_upstreams.py
 
-      - name: Commit synchronized changes
+      - name: Commit non-semantic changes directly
+        if: steps.pending.outputs.blocked != 'true' && steps.monitor.outputs.has_review != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -65,20 +87,46 @@ jobs:
           git commit -m "chore: sync upstream sources"
           git push
 
-      - name: Create review issue
-        if: steps.monitor.outputs.has_review == 'true'
+      - name: Open Work review PR
+        if: steps.pending.outputs.blocked != 'true' && steps.monitor.outputs.has_review == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-          SUMMARY_FILE: ${{ steps.monitor.outputs.review_summary }}
+          REVIEW_BODY: ${{ steps.monitor.outputs.review_summary }}
         shell: bash
         run: |
           set -euo pipefail
-          gh label create upstream-review \
-            --description "Upstream change needs semantic review" \
+          git config user.name "chance-upstream-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          BRANCH="work/upstream-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          git switch -c "$BRANCH"
+
+          git add -A monitor
+          if [ -d upstream ]; then
+            git add -A upstream
+          fi
+
+          if git diff --cached --quiet; then
+            echo "Monitor requested review but there are no tracked changes."
+            exit 1
+          fi
+
+          git commit -m "chore: prepare upstream Work review"
+          git push --set-upstream origin "$BRANCH"
+
+          gh label create work-review \
+            --description "Requires ChatGPT Work semantic review" \
             --color "B8860B" \
             --force >/dev/null 2>&1 || true
 
-          gh issue create \
-            --title "Upstream semantic review $(date -u +%Y-%m-%d)" \
-            --body-file "$SUMMARY_FILE" \
-            --label upstream-review
+          gh label create work-complete \
+            --description "Work review completed; safe to merge and clean up" \
+            --color "2EA44F" \
+            --force >/dev/null 2>&1 || true
+
+          gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "Upstream semantic review: $(date -u +%Y-%m-%d)" \
+            --body-file "$REVIEW_BODY" \
+            --label work-review
