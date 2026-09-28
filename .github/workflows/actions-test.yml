@@ -1,0 +1,10 @@
+name: WayX Actions Test
+on:
+  push:
+    paths:
+      - ".github/workflows/actions-test.yml"
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ok
