@@ -8,13 +8,14 @@ Implemented and committed:
 - QX Loon Rule mapping, including `URL-REGEX + REJECT* -> reject-200`.
 - QX logical `AND / OR / NOT` preservation as comments.
 - QX IP rule removal of Loon-only trailing options such as `no-resolve`.
+- Surge Module external policies such as `PROXY` are not assumed; they are commented for explicit policy binding.
 - JQ whitespace-only minifier; no algorithm/path/type rewrite.
 - QX script action registry with verified RuCu6 `12306.js -> script-analyze-echo-response` and `header.js -> script-response-header`.
 - Loon `[Argument]` parser and BoxJs descriptor generator.
 - GitHub Actions calls `node converter/tests/checkpoint.mjs` before upstream conversion.
 - Existing sync converter now uses the canonical Rule, Script and JQ cores.
 
-Verified locally before repository write: checkpoint tests 12/12 passed.
+Verified locally before repository write: checkpoint tests 13/13 passed.
 MyBlockAds golden-case JQ review: 11 rules / 9 unique expressions; syntax and representative output equivalence were checked before this checkpoint.
 
 ## Next session
