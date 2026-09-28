@@ -5,8 +5,7 @@ import crypto from 'node:crypto';
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
 const RESOURCE_DIR = path.join(ROOT, 'Resource/Loon');
-const QX_DIR = path.join(ROOT, 'Adblock/Quantumult X');
-const SURGE_DIR = path.join(ROOT, 'Adblock/Surge');
+const TARGET_ROOT = path.join(ROOT, 'adblock');
 const SCRIPT_DIR = path.join(ROOT, 'script');
 const RAW_BASE = 'https://raw.githubusercontent.com/JuemingDC/WayX/main';
 const UA = 'StashCore/2.7.1 Stash/2.7.1 Clash/1.11.0';
@@ -137,7 +136,7 @@ function qxRule(line) {
     if (!['direct', 'reject', 'proxy'].includes(policy)) return { kind: 'comment', line: `# Loon rule policy not losslessly expressible in Quantumult X: ${line}` };
     return { kind: 'filter', line: `${map[type]}, ${value}, ${policy}` };
   }
-  if (type === 'URL-REGEX' && /^REJECT/.test((p[2] || '').toUpperCase())) return { kind: 'rewrite', line: `# Moved from Loon URL-REGEX Rule\n${value.replace(/^"|"$/g, '')} url reject` };
+  if (type === 'URL-REGEX' && /^REJECT/.test((p[2] || '').toUpperCase())) return { kind: 'rewrite', line: `# Moved from Loon URL-REGEX Rule\n${value.replace(/^"|"$/g, '')} url reject-200` };
   return { kind: 'comment', line: `# Loon rule not losslessly expressible in Quantumult X filter: ${line}` };
 }
 
@@ -345,7 +344,9 @@ function convert(entry, source, scriptMap, stamp = nowCN()) {
     const mapped = scriptMap.get(sc.scriptPath);
     const qxUrl = mapped?.qx || sc.scriptPath;
     const surgeUrl = mapped?.surge || sc.scriptPath;
-    const qType = sc.type === 'http-response' ? 'script-response-body' : 'script-request-body';
+    const qType = sc.type === 'http-response'
+      ? (sc.requiresBody ? 'script-response-body' : 'script-response-header')
+      : (sc.requiresBody ? 'script-request-body' : 'script-request-header');
     qx.rewrite.push(...comments);
     if (sc.tag) qx.rewrite.push(`# ${sc.tag}`);
     if (sc.argument || sc.enable || sc.binary) qx.rewrite.push(`# Loon script options preserved in source: ${[sc.argument && `argument=${sc.argument}`, sc.enable && `enable=${sc.enable}`, sc.binary && 'binary-body-mode=true'].filter(Boolean).join(', ')}`);
@@ -524,6 +525,13 @@ function scriptUrls(source) {
 function validateQX(text, entry) {
   const activeSections = text.split('\n').filter(l => /^\[(filter_local|rewrite_local|mitm)\]$/i.test(l.trim()));
   if (activeSections.length) throw new Error(`${entry.id}: Quantumult X section headings must be commented`);
+  for (const raw of text.split('\n')) {
+    const line = raw.trim();
+    if (!line || line.startsWith('#')) continue;
+    if (/^(?:ip-cidr|ip6-cidr|geoip|ip-asn),/i.test(line) && /,\s*no-resolve(?:,|$)/i.test(line)) {
+      throw new Error(`${entry.id}: Quantumult X IP-class rules must remove no-resolve`);
+    }
+  }
   for (const bad of ['response-body-json-del', 'response-body-json-replace', 'response-body-json-jq', 'mock-response-body']) {
     const active = text.split('\n').find(l => l.trim() && !l.trim().startsWith('#') && l.includes(bad));
     if (active) throw new Error(`${entry.id}: unconverted QX token ${bad}`);
@@ -542,7 +550,7 @@ function validateSurge(text, entry) {
 
 async function main() {
   const manifest = JSON.parse(await fs.readFile(MANIFEST, 'utf8'));
-  await Promise.all([RESOURCE_DIR, QX_DIR, SURGE_DIR, SCRIPT_DIR].map(d => fs.mkdir(d, { recursive: true })));
+  await Promise.all([RESOURCE_DIR, TARGET_ROOT, SCRIPT_DIR].map(d => fs.mkdir(d, { recursive: true })));
   const failures = [];
   for (const entry of manifest) {
     try {
@@ -562,8 +570,13 @@ async function main() {
         scriptMap.set(url, await syncScript(entry, url, sourceDefaults));
       }
 
-      const qxPath = path.join(QX_DIR, entry.qx);
-      const sgPath = path.join(SURGE_DIR, entry.surge);
+      const appRoot = path.join(TARGET_ROOT, entry.id);
+      const qxPath = path.join(appRoot, 'QuantumultX', entry.qx);
+      const sgPath = path.join(appRoot, 'Surge', entry.surge);
+      await Promise.all([
+        path.dirname(qxPath),
+        path.dirname(sgPath),
+      ].map(d => fs.mkdir(d, { recursive: true })));
       const qxExists = await exists(qxPath);
       const sgExists = await exists(sgPath);
       const oldQx = qxExists ? normalizeNewlines(await fs.readFile(qxPath, 'utf8')) : null;
