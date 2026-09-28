@@ -449,9 +449,13 @@ function adaptTiebaQX(entry, source, defaults) {
   if (entry.id !== 'Tieba') return source;
   const raw = String(defaults.get('per_filter_video_thread') ?? 'false').trim().toLowerCase();
   const value = raw === 'true' ? 'true' : 'false';
-  const re = /(per_filter_video_thread:\s*)(true|false)(\s*,)/;
-  if (!re.test(source)) throw new Error(`${entry.id}: cannot locate per_filter_video_thread default in tieba-proto.js`);
-  return source.replace(re, `$1${value}$3`);
+  const re = /^(\s*)per_filter_video_thread:\s*(true|false),\s*(\/\/[^\n]*)$/m;
+  const m = source.match(re);
+  if (!m) throw new Error(`${entry.id}: cannot locate per_filter_video_thread default in tieba-proto.js`);
+  const indent = m[1];
+  const originalComment = m[3];
+  const replacement = `${indent}// Converted by chance: Quantumult X snippet cannot receive Loon [Argument]; apply the Loon default ${value}.\n${indent}per_filter_video_thread: ${value},\n${indent}// Original comment: ${originalComment.replace(/^\/\/\s*/, '')}`;
+  return source.replace(re, replacement);
 }
 
 async function adaptPinDuoDuoCommon(entry, source) {
