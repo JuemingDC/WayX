@@ -6,7 +6,7 @@
 
 ## 1. 基本原则
 
-1. **语义优先于形式**：必须保持请求/响应阶段、状态码、响应体类型、正则范围、MITM 范围、脚本方向和二进制模式。
+1. **语义优先于形式**：必须保持请求/响应阶段、动作语义、响应体类型、正则范围、MITM 范围、脚本方向和二进制模式。状态码不是自动选择目标动作的首要指标；不得仅为复刻数字状态码而把可由目标平台原生动作表达的行为强行改成脚本。
 2. **禁止扩大匹配范围**：不能为了简化转换把 `AND` 条件拆成更宽泛的单条域名规则，不能把精确 URL 正则扩大为域名级拦截。
 3. **禁止伪等价**：目标平台没有无损等价语法时，必须：
    - 使用目标平台官方支持的脚本机制实现等价行为；或
@@ -164,7 +164,11 @@ REJECT          -> reject
 PROXY           -> proxy
 ```
 
-`AND / OR / NOT / DEST-PORT / URL-REGEX / REJECT-NO-DROP` 等若当前 sample 没有等价示例，不直接生成可执行行。
+`AND / OR / NOT / DEST-PORT / REJECT-NO-DROP` 等若当前 sample 没有等价示例，不直接生成可执行行。
+
+Quantumult X 的 IP 类规则（至少 `ip-cidr`、`ip6-cidr`，以及转换器处理的 `geoip`、`ip-asn`）转换时去掉 `no-resolve`；最终只输出官方 sample 已确认的字段。Surge 不执行此删除规则，源规则中的 `no-resolve` 按 Surge 官方能力和原语义保留。
+
+WayX 对 Loon `[Rule]` 中 `URL-REGEX, "REGEX", REJECT` 的固定 QX 映射为 `REGEX url reject-200`。这是 **URL-REGEX Rule** 的项目约定，不能据此把普通 Rewrite 中的 `reject(200)`、`reject_dict(200)` 等机械转换为 `reject-200`。
 
 特别禁止：
 
@@ -224,19 +228,38 @@ Surge：
 REGEX data-type=tiny-gif status-code=200
 ```
 
-### 5.3 reject(status)
+### 5.3 reject(status) 与状态码
 
-若状态码不是目标平台内建 reject 动作的确定等价状态码，不得直接降级。
+状态码不是转换动作的首要判定指标，先保持 **拒绝动作、响应体语义和处理阶段**。
 
 Loon：
 
 ```text
 request if ${url} ~= /REGEX/i then reject(404)
+request if ${url} ~= /REGEX/i then reject(200)
 ```
 
-Surge 使用 Map Local 返回明确 404。
+Quantumult X：
 
-Quantumult X 使用生成的 `script-echo-response` 返回明确状态码；不能简单改成 `url reject` 并声称等价。
+- 普通 Rewrite 的 `reject(status)` 默认转换为 `REGEX url reject`；
+- 不得仅因为 `status=200` 就自动转换为 `reject-200`；
+- 不得仅为了精确复刻数字状态码而生成 `script-echo-response`；
+- 只有来源动作本身明确表达“200 + 空 Body 的 URL 拒绝”，或命中 WayX 的 `URL-REGEX Rule -> reject-200` 固定映射时，才使用 `reject-200`。
+
+Surge：
+
+- 普通拒绝优先使用官方 URL Rewrite 的 `reject` 语义；
+- 只有自定义 Body、Content-Type、二进制响应或其他确实需要本地响应能力的场景，才使用 Map Local。
+
+特别注意：
+
+```text
+reject_dict(200)  -> QX reject-dict
+reject_array(200) -> QX reject-array
+reject_img(200)   -> QX reject-img
+```
+
+上面的 `200` 不能覆盖 Body/Action 语义，不能改成 `reject-200`。
 
 ### 5.4 redirect
 
@@ -572,3 +595,42 @@ RuCu6 2026 年 Loon 插件已经大量使用新语法，包括：
 - RuCu6 Bilibili protobuf 脚本存在明确的 QX 不支持分支；QX 版本不得直接引用该脚本并假定可运行。
 
 以上兼容结论必须随上游脚本更新重新扫描，不得永久硬编码。
+
+
+## 13. GitHub Actions / Work 自动化分层
+
+WayX 自动化采用 **fail-closed**：能证明是确定映射的简单变化由 GitHub Actions 直接处理；存在语义风险的变化交给 ChatGPT Work。
+
+### 13.1 Safe Tier：Actions 可直接完成
+
+在转换器与 validator 全部通过时，可自动新增、删除或同步：
+
+- 基础 `DOMAIN / DOMAIN-SUFFIX / DOMAIN-KEYWORD / DOMAIN-WILDCARD`；
+- `IP-CIDR / IP-CIDR6 / GEOIP / IP-ASN`（QX 去 `no-resolve`，Surge 保留）；
+- `USER-AGENT`；
+- `DIRECT / REJECT / PROXY` 的基础映射；
+- Loon `URL-REGEX,...,REJECT` → QX `url reject-200` 的 WayX 固定映射；
+- 目标平台原生 `reject / reject-dict / reject-array / reject-img / reject-200`；
+- 302 / 307；
+- 已有转换器已证明可无损表达的简单 JSON JQ delete / replace / jq；
+- 纯 hostname MITM 列表且不扩大 wildcard；
+- 注释与转换元数据。
+
+新增/删除必须通过 **重新解析源文件并完整生成目标文件** 完成，保持源顺序，不允许 Actions 猜测插入位置。
+
+### 13.2 Review Tier：必须交给 Work
+
+以下任一出现时，不得直接写 main：
+
+- JavaScript 内容变化；
+- `[Script]` / `[Argument]` 变化；
+- Loon 新语法中 converter 未明确覆盖的 Action；
+- `AND / OR / NOT`、复杂条件、pipeline；
+- 自定义 Body、binary/base64、Header + Body 联动；
+- 需要新增 helper script；
+- 目标平台无官方确认等价语法；
+- 生成结果出现 `UNSUPPORTED` / `MANUAL PORT REQUIRED` 等提示；
+- Surge / Egern 官方规范变化可能影响已有输出；
+- QX 官方 sample / parser 变化可能影响已有输出。
+
+Work 完成并验证通过后添加 `work-complete`；确认该上游变化不应采用时添加 `work-reject`；仍有不确定项时不得添加完成标签。
