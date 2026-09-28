@@ -1,6 +1,27 @@
 # Conversion Policy
 
-## 核心规则
+## 目录规则
+
+1. `adblock/`
+   - 去广告、推广移除、界面净化、HTTPDNS 屏蔽。
+   - 对应的 Quantumult X snippet 与 Surge sgmodule 保留在这里。
+
+2. `module/`
+   - 只放非去广告类的 `.snippet` 与 `.sgmodule`。
+   - 不放 JavaScript、JSON 或独立 rule 文件。
+
+3. `script/`
+   - 所有 JavaScript 统一放这里。
+   - 包括模块配套脚本和单脚本。
+   - 模块通过 raw URL 引用对应 `script/` 路径。
+
+4. `rule/`
+   - 独立规则集。
+
+5. `boxjs/`
+   - BoxJs JSON 配置。
+
+## 转换规则
 
 1. **机制对应优先**
    - jq → jq
@@ -20,6 +41,7 @@
    - 优先直接复用原脚本。
    - 仅修改目标平台 API 差异、路径、持久化 API、通知 API、HTTP API 等必要部分。
    - 修改后逐项对比原脚本输入、输出与副作用。
+   - JavaScript 文件最终统一放入 `script/`，不放入 `module/`。
 
 4. **注释**
    - 原注释尽量完整保留。
