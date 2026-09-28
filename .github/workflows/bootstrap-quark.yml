@@ -1,0 +1,114 @@
+name: Bootstrap Quark conversion
+
+on:
+  push:
+    paths:
+      - ".github/workflows/bootstrap-quark.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Convert original Loon plugin faithfully
+        shell: python
+        run: |
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+          import json
+
+          source = "https://kelee.one/Tool/Loon/Lpx/QuarkBrowser_remove_ads.lpx"
+          req = Request(source, headers={"User-Agent": "Loon"})
+          text = urlopen(req, timeout=30).read().decode("utf-8")
+          lines = text.splitlines()
+
+          original_meta = []
+          for line in lines:
+              if line.strip() == "[Rewrite]":
+                  break
+              original_meta.append(line)
+
+          json_del = next(x for x in lines if " response-body-json-del " in x)
+          pattern, raw_paths = json_del.split(" response-body-json-del ", 1)
+          paths = raw_paths.split()
+
+          if len(paths) != 703:
+              raise RuntimeError(f"Unexpected JSON delete path count: {len(paths)} (expected 703)")
+
+          jq_paths = []
+          for path in paths:
+              root, key = path.split(".", 1)
+              jq_paths.append(f'.{root}[{json.dumps(key, ensure_ascii=False)}]')
+          jq = "del(" + ", ".join(jq_paths) + ")"
+
+          qx = "\n".join(original_meta) + """
+# Author: chance
+# Category: 去广告 / 应用净化
+# Converted: 2026-09-28
+# Target: Quantumult X
+# Source: https://kelee.one/Tool/Loon/Lpx/QuarkBrowser_remove_ads.lpx
+# Conversion principle: 保持原插件形式和语义；JSON 删除继续使用 jq；reject-dict 对应 Quantumult X reject-dict。
+
+# [rewrite_local]
+""" + pattern + " url jsonjq-response-body '" + jq + """'
+^https:\/\/stars\.shuqireader\.com\/kkios\/render\/load\/resource\/app$ url reject-dict
+^https:\/\/stars\.shuqireader\.com\/kkios\/render\/load\/resource\/appConfig$ url reject-dict
+
+# [mitm]
+hostname = open-cms-api.quark.cn, stars.shuqireader.com
+"""
+
+          surge = "\n".join(original_meta) + """
+#!author=chance
+#!category=去广告 / 应用净化
+#!date=2026-09-28
+# Source: https://kelee.one/Tool/Loon/Lpx/QuarkBrowser_remove_ads.lpx
+# Conversion principle: 保持原插件形式和语义；JSON 删除继续使用 Surge 原生 JQ Body Rewrite；reject-dict 以 Map Local 返回 HTTP 200 + {}。
+
+[Body Rewrite]
+http-response-jq """ + pattern + " '" + jq + """'
+
+[Map Local]
+^https:\/\/stars\.shuqireader\.com\/kkios\/render\/load\/resource\/app$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/stars\.shuqireader\.com\/kkios\/render\/load\/resource\/appConfig$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% open-cms-api.quark.cn, stars.shuqireader.com
+"""
+
+          qx_path = Path("adblock/Quark/QuantumultX/Quark_remove_ads.snippet")
+          sg_path = Path("adblock/Quark/Surge/Quark_remove_ads.sgmodule")
+          qx_path.parent.mkdir(parents=True, exist_ok=True)
+          sg_path.parent.mkdir(parents=True, exist_ok=True)
+          qx_path.write_text(qx, encoding="utf-8")
+          sg_path.write_text(surge, encoding="utf-8")
+
+          # Remove this one-shot workflow after successful generation.
+          Path(".github/workflows/bootstrap-quark.yml").unlink()
+
+      - name: Validate jq expression
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          line = next(
+              x for x in Path("adblock/Quark/QuantumultX/Quark_remove_ads.snippet").read_text(encoding="utf-8").splitlines()
+              if " url jsonjq-response-body " in x
+          )
+          expr = line.split(" url jsonjq-response-body '", 1)[1][:-1]
+          Path("/tmp/quark.jq").write_text(expr, encoding="utf-8")
+          PY
+          printf '%s\n' '{"result":{"cms_homepage_push_banner_config":1,"quark-countdown-2025":2,"keep":3}}' | jq -f /tmp/quark.jq | grep -q '"keep": 3'
+
+      - name: Commit generated conversions
+        shell: bash
+        run: |
+          git config user.name "chance"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat: add faithful Quark conversions"
+          git push
