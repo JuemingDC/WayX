@@ -62,8 +62,8 @@ def mapped_targets() -> dict[str, str]:
     out: dict[str, str] = {}
     for entry in manifest:
         app = entry["id"]
-        out[f"adblock/{app}/QuantumultX/{entry['qx']}"] = "qx"
-        out[f"adblock/{app}/Surge/{entry['surge']}"] = "surge"
+        out[f"Adblock/Quantumult X/{entry['qx']}"] = "qx"
+        out[f"Adblock/Surge/{entry['surge']}"] = "surge"
     return out
 
 
