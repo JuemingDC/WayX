@@ -416,7 +416,7 @@ host, yandexmetrica.com, reject
 ^https:\/\/p0\.pipi\.cn\/(?:adAdmin|mediaplus\/maoyantong_ads_fe)\/\w+\.(?:jpe?g|png)\?imageMogr2\/thumbnail\/(?:860x0|880x0|!165x165|!1049x1169) url reject-dict
 
 # 墨迹天气 //mme.api.moji.com, sns.api.moji.com
-^https:\/\/mme\.api\.moji\.com\/json\/entrance\/list$ url jsonjq-response-body 'del(.entrance_region_res_list[] | select(.region_name == "皇冠区域" or .region_name == "banner区")) | .entrance_region_res_list[].entrance_res_list |= if . then map(select(.entrance_name | . != "墨迹钱包" and . != "墨圈")) else . end'
+^https:\/\/mme\.api\.moji\.com\/json\/entrance\/list$ url jsonjq-response-body 'del(.entrance_region_res_list[]|select(.region_name=="皇冠区域" or .region_name=="banner区"))|.entrance_region_res_list[].entrance_res_list|=if . then map(select(.entrance_name|. !="墨迹钱包" and . !="墨圈")) else . end'
 ^https:\/\/sns\.api\.moji\.com\/(?:forum|user\/dynamic_v[89]\/json)\/ url reject-dict
 
 # 每日万年历
@@ -434,7 +434,7 @@ host, yandexmetrica.com, reject
 ^https:\/\/home\.mi\.com\/cgi-op\/api\/v1\/recommendation\/(?:banner|carousel\/banners|myTab|openingBanner) url reject-dict
 
 # Reddit //gql.reddit.com, gql-fed.reddit.com
-^https:\/\/gql(-fed)?\.reddit\.com url jsonjq-response-body 'walk( if type == "object" then (if .isNsfw == true then .isNsfw = false else . end) | (if .isNsfwMediaBlocked == true then .isNsfwMediaBlocked = false else . end) | (if .isNsfwContentShown == false then .isNsfwContentShown = true else . end) | (if (.commentsPageAds | type == "array") then (.commentsPageAds = []) else . end) | (if ( (.node | type == "object") and (.node.cells | type == "array") and (.node.cells | any(.__typename? == "AdMetadataCell" or .isAdPost? == true)) ) then empty else . end) | (if (.node | type == "object") and (.node.adPayload | type == "object") then empty else . end) | (if .__typename == "AdPost" then empty else . end) else . end)'
+^https:\/\/gql(-fed)?\.reddit\.com url jsonjq-response-body 'walk(if type=="object" then (if .isNsfw==true then .isNsfw=false else . end)|(if .isNsfwMediaBlocked==true then .isNsfwMediaBlocked=false else . end)|(if .isNsfwContentShown==false then .isNsfwContentShown=true else . end)|(if (.commentsPageAds|type=="array") then (.commentsPageAds=[]) else . end)|(if ((.node|type=="object") and (.node.cells|type=="array") and (.node.cells|any(.__typename?=="AdMetadataCell" or .isAdPost?==true))) then empty else . end)|(if (.node|type=="object") and (.node.adPayload|type=="object") then empty else . end)|(if .__typename=="AdPost" then empty else . end) else . end)'
 
 # 太平洋寿险 //a.cpiccdn.com
 ^https:\/\/a\.cpiccdn\.com\/config-center\/api\/configfile\/images\/\d{8}\/\d{13}_(?:(?:630|945|1035)_\d{2,4}|123_48|136_136|207_210|408_408|750_750|1125_\d{4})\.(gif|jpg|png)$ url reject-dict
@@ -444,7 +444,7 @@ host, yandexmetrica.com, reject
 
 # 下厨房 //api.xiachufang.com
 ^https:\/\/api\.xiachufang\.com\/v2\/ad\/ url reject-dict
-^https:\/\/api\.xiachufang\.com\/v2\/homepage\/paged_waterfall_recommendations\.json url jsonjq-response-body '.multiplex_cells |= map(select(.recommendation_cell.label != "广告"))'
+^https:\/\/api\.xiachufang\.com\/v2\/homepage\/paged_waterfall_recommendations\.json url jsonjq-response-body '.multiplex_cells|=map(select(.recommendation_cell.label !="广告"))'
 
 # 微信 //mp.weixin.qq.com
 ^https:\/\/mp\.weixin\.qq\.com\/mp\/(?:cps_product_info|getappmsgad|getbizbanner|jsmonitor|masonryfeed|relatedarticle|relatedsearchword) url reject-dict
@@ -455,14 +455,14 @@ host, yandexmetrica.com, reject
 # 小米商城 //api.m.mi.com, shop-api.retail.mi.com, xiaomishop.retail.mi.com
 ^https:\/\/api\.m\.mi\.com\/v1\/order\/expressView url jsonjq-response-body 'del(.data.bottom.ad_info)'
 ^https:\/\/api\.m\.mi\.com\/(?:v1\/(?:app\/popup_info|home\/page_feed|home\/recommendBlank|misearch\/search_input|product\/recommendv2)|v2\/search\/search_default) url reject-dict
-^https:\/\/shop-api\.retail\.mi\.com\/mtop\/act\/mishopSearch\/mainSearch url jsonjq-response-body '.data.recProductList = []'
-^https:\/\/shop-api\.retail\.mi\.com\/mtop\/mf\/home\/v1\/index url jsonjq-response-body 'del(.data.floors[0].data.left_icon_config, .data.floors[0].data.right_icon_config)'
+^https:\/\/shop-api\.retail\.mi\.com\/mtop\/act\/mishopSearch\/mainSearch url jsonjq-response-body '.data.recProductList=[]'
+^https:\/\/shop-api\.retail\.mi\.com\/mtop\/mf\/home\/v1\/index url jsonjq-response-body 'del(.data.floors[0].data.left_icon_config,.data.floors[0].data.right_icon_config)'
 ^https:\/\/shop-api\.retail\.mi\.com\/mtop\/mf\/usercenter\/personalHome url jsonjq-response-body 'del(.data.carouselAD)'
 ^https:\/\/shop-api\.retail\.mi\.com\/mtop\/mf\/(?:cart|home|personal)\/recommend url reject-dict
 ^https:\/\/shop-api\.retail\.mi\.com\/mtop\/(?:act\/mishopSearch\/searchInput|mf\/home\/v1\/feed) url reject-dict
 ^https:\/\/shop-api\.retail\.mi\.com\/mtop\/navi\/(?:rec\/merge\/|skywheel\/(?:homePage\/bottomFloatLayer|mishop\/splash|shop\/resourceAms|ucenter\/pendant|ucenter\/popup)) url reject-dict
 ^https:\/\/xiaomishop\.retail\.mi\.com\/mtop\/xiaomishop\/product\/compose url reject-dict
-^https:\/\/xiaomishop\.retail\.mi\.com\/mtop\/xiaomishop\/product\/info url jsonjq-response-body 'del(.data.carouselAdInfo, .data.product.floatWindow)'
+^https:\/\/xiaomishop\.retail\.mi\.com\/mtop\/xiaomishop\/product\/info url jsonjq-response-body 'del(.data.carouselAdInfo,.data.product.floatWindow)'
 
 # 星星充电 //gateway.sccncdn.com, gateway.starcharge.com
 ^https:\/\/gateway\.sccncdn\.com\/app\/v2\/apiV2\/advertisement\/marke\/list\/ url reject-dict
