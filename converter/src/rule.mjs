@@ -8,7 +8,7 @@ export function qxRule(line){const source=String(line).trim();if(/^(AND|OR|NOT)\
 export function surgeRule(line){
   const source=String(line).trim();
   const parts=splitTopLevelCsv(source);
-  const policy=(parts.at(-1)||'').toUpperCase();
+  const policy=(parts[2]||'').toUpperCase();
   const internal=new Set(['DIRECT','REJECT','REJECT-DROP','REJECT-NO-DROP','REJECT-TINYGIF']);
   if(internal.has(policy))return source;
   return `# [WayX] Surge Module policy binding required: ${source}`;
