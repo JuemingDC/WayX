@@ -244,8 +244,8 @@ def mapped_targets(manifest: list[dict]) -> dict[str, dict]:
     out: dict[str, dict] = {}
     for entry in manifest:
         app = entry["id"]
-        out[f"adblock/{app}/QuantumultX/{entry['qx']}"] = entry
-        out[f"adblock/{app}/Surge/{entry['surge']}"] = entry
+        out[f"Adblock/Quantumult X/{entry['qx']}"] = entry
+        out[f"Adblock/Surge/{entry['surge']}"] = entry
     return out
 
 
@@ -299,8 +299,8 @@ def main() -> int:
         if path.startswith(".github/reports/"):
             continue
         # Converted output under older legacy directory must never be updated automatically now.
-        if path.startswith("Adblock/"):
-            reasons.append(f"{path}: legacy Adblock/ path changed; automation must use adblock/<App>/<Platform>/")
+        if path.startswith("adblock/"):
+            reasons.append(f"{path}: legacy lowercase adblock/ path changed; canonical outputs must use Adblock/Quantumult X/ or Adblock/Surge/")
 
     RUNTIME.mkdir(parents=True, exist_ok=True)
     lines = [
