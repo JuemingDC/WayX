@@ -432,7 +432,10 @@ function validateQX(text, entry) {
 function validateSurge(text, entry) {
   const allowed = new Set(['Rule','URL Rewrite','Body Rewrite','Map Local','Script','MITM']);
   for (const m of text.matchAll(/^\[([^\]]+)\]$/gm)) if (!allowed.has(m[1])) throw new Error(`${entry.id}: unsupported Surge section [${m[1]}]`);
-  if (/^hostname\s*=\s*(?!%APPEND%)/mi.test(text)) throw new Error(`${entry.id}: Surge module MITM hostname must use %APPEND%`);
+  for (const line of text.split('\n')) {
+    const m = line.match(/^hostname\s*=\s*(.+)$/i);
+    if (m && !m[1].trim().startsWith('%APPEND%')) throw new Error(`${entry.id}: Surge module MITM hostname must use %APPEND%`);
+  }
 }
 
 async function main() {
