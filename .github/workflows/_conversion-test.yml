@@ -1,0 +1,146 @@
+name: WayX Deterministic Conversion Test
+
+on:
+  push:
+    paths:
+      - ".github/workflows/_conversion-test.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  conversion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Prepare local deterministic source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/wayx-fixture
+          cat > /tmp/wayx-fixture/Test.lpx <<'EOF'
+          #!name=WayXTest
+          #!desc=deterministic conversion test
+          # original comment
+          [Rule]
+          DOMAIN, base.example, REJECT
+          IP-CIDR, 10.0.0.0/8, REJECT, no-resolve
+          URL-REGEX, "^https://ads\.example/", REJECT
+
+          [Rewrite]
+          ^https://api\.example/base$ reject-dict
+
+          [MitM]
+          hostname=api.example
+          EOF
+          cat > .github/sources/loon.json <<'EOF'
+          [
+            {
+              "id": "Test",
+              "file": "Test.lpx",
+              "source": "http://127.0.0.1:8765/Test.lpx",
+              "qx": "Test.snippet",
+              "surge": "Test.sgmodule",
+              "category": "测试"
+            }
+          ]
+          EOF
+          python -m http.server 8765 --directory /tmp/wayx-fixture >/tmp/wayx-http.log 2>&1 &
+          echo $! > /tmp/wayx-http.pid
+          sleep 1
+
+      - name: Baseline conversion and policy checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          node .github/scripts/sync-convert.mjs
+          QX="adblock/Test/QuantumultX/Test.snippet"
+          SG="adblock/Test/Surge/Test.sgmodule"
+          grep -Fq "ip-cidr, 10.0.0.0/8, reject" "$QX"
+          if grep -Eqi '^ip-cidr,.*no-resolve' "$QX"; then
+            echo "QX incorrectly retained no-resolve" >&2
+            exit 1
+          fi
+          grep -Fq "IP-CIDR,10.0.0.0/8,REJECT,no-resolve" "$SG"
+          grep -Fq '^https://ads\.example/ url reject-200' "$QX"
+          grep -Fq '^https://api\.example/base$ url reject-dict' "$QX"
+          grep -Fq '# [filter_local]' "$QX"
+          grep -Fq '# [rewrite_local]' "$QX"
+          grep -Fq '# [mitm]' "$QX"
+          grep -Fq '# Converted by: chance' "$QX"
+          python .github/scripts/validate_conversion_policy.py
+          python .github/scripts/conversion_gate.py
+          grep -q "SAFE" monitor/.runtime/conversion_gate.md
+
+      - name: Add simple source rules and regenerate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p = Path("/tmp/wayx-fixture/Test.lpx")
+          s = p.read_text()
+          s = s.replace("DOMAIN, base.example, REJECT", "DOMAIN, base.example, REJECT\nDOMAIN, added.example, REJECT")
+          s = s.replace("^https://api\\.example/base$ reject-dict", "^https://api\\.example/base$ reject-dict\n^https://api\\.example/added$ reject-array")
+          p.write_text(s)
+          PY
+          node .github/scripts/sync-convert.mjs
+          QX="adblock/Test/QuantumultX/Test.snippet"
+          SG="adblock/Test/Surge/Test.sgmodule"
+          grep -Fq "host, added.example, reject" "$QX"
+          grep -Fq "DOMAIN,added.example,REJECT" "$SG"
+          grep -Fq '^https://api\.example/added$ url reject-array' "$QX"
+          python .github/scripts/validate_conversion_policy.py
+          python .github/scripts/conversion_gate.py
+          grep -q "SAFE" monitor/.runtime/conversion_gate.md
+
+      - name: Delete simple source rules and regenerate without stale output
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p = Path("/tmp/wayx-fixture/Test.lpx")
+          s = p.read_text()
+          s = s.replace("DOMAIN, added.example, REJECT\n", "")
+          s = s.replace("^https://api\\.example/added$ reject-array\n", "")
+          p.write_text(s)
+          PY
+          node .github/scripts/sync-convert.mjs
+          QX="adblock/Test/QuantumultX/Test.snippet"
+          SG="adblock/Test/Surge/Test.sgmodule"
+          if grep -Fq "added.example" "$QX" || grep -Fq "added.example" "$SG"; then
+            echo "deleted rule remained in generated output" >&2
+            exit 1
+          fi
+          if grep -Fq '/added' "$QX" || grep -Fq '/added' "$SG"; then
+            echo "deleted rewrite remained in generated output" >&2
+            exit 1
+          fi
+          python .github/scripts/validate_conversion_policy.py
+          python .github/scripts/conversion_gate.py
+          grep -q "SAFE" monitor/.runtime/conversion_gate.md
+
+      - name: Complex logic fails closed to Work
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '\nAND, ((DOMAIN, complex.example), (PROTOCOL, TCP)), REJECT\n' >> Resource/Loon/Test.lpx
+          python .github/scripts/conversion_gate.py
+          grep -q "Work required" monitor/.runtime/conversion_gate.md
+
+      - name: Stop local server
+        if: always()
+        run: kill "$(cat /tmp/wayx-http.pid)" 2>/dev/null || true
