@@ -12,7 +12,7 @@ import requests
 ROOT = Path(__file__).resolve().parents[2]
 RESOURCE_DIR = ROOT / "Resource" / "Loon" / "RuCu6"
 SCRIPT_DIR = ROOT / "script" / "RuCu6"
-REPORT_DIR = ROOT / ".github" / "reports"
+REPORT_DIR = ROOT / "monitor" / ".runtime" / "reports"
 UA = "Surge iOS/3374"
 CF_BASE = "https://rucu6.pages.dev"
 SOURCES = [
