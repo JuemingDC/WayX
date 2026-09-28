@@ -100,6 +100,7 @@ Surge 普通拒绝优先使用官方 URL Rewrite 的 `reject`；只有确实需�
 - DIRECT / REJECT / PROXY 的基础策略映射；
 - Loon URL-REGEX + REJECT → QX `url reject-200` 的固定映射；
 - 原生 `reject / reject-200 / reject-img / reject-dict / reject-array`；
+- Loon Rewrite v2 的严格 Safe 子集：`request if ${url} ~= /REGEX/ then reject(status) / reject_dict(status) / reject_array(status) / reject_img(status)`；仅允许无 regex flag、无附加条件、无 `as`、无 pipeline、无自定义 Body。该子集按动作/Body 语义映射，`reject(200)` 仍是普通 `reject`，不会机械转成 `reject-200`；
 - 302 / 307；
 - 转换器已明确覆盖且可无损表达的简单 JSON JQ delete / replace / jq；
 - 纯 hostname MITM 列表，禁止自动扩大 wildcard；
