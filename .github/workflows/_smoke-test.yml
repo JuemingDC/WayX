@@ -16,57 +16,67 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
+
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
+
       - name: Python syntax
         run: python -m py_compile .github/scripts/conversion_gate.py .github/scripts/validate_conversion_policy.py .github/scripts/sync_rucu6.py monitor/monitor_upstreams.py
+
       - name: Node syntax
         run: node --check .github/scripts/sync-convert.mjs
+
       - name: Clean-tree gate
         run: |
           python .github/scripts/conversion_gate.py
           grep -q "SAFE" monitor/.runtime/conversion_gate.md
-      - name: QX validator detects untracked new target and no-resolve
+
+      - name: QX validator accepts valid new target
         shell: bash
         run: |
           set -euo pipefail
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          root = Path(".")
-          entry = json.loads((root/".github/sources/loon.json").read_text())[0]
-          p = root/"adblock"/entry["id"]/"QuantumultX"/entry["qx"]
-          p.parent.mkdir(parents=True, exist_ok=True)
-          p.write_text("""# Converted: 2026-09-28 00:00:00 +08:00
-# Converted by: chance
-# Category: test
-# Source: test
-# Target: Quantumult X
+          TARGET="adblock/HTTPDNS/QuantumultX/HTTPDNS.snippet"
+          mkdir -p "$(dirname "$TARGET")"
+          cat > "$TARGET" <<'EOF'
+          # Converted: 2026-09-28 00:00:00 +08:00
+          # Converted by: chance
+          # Category: test
+          # Source: test
+          # Target: Quantumult X
 
-# [filter_local]
-ip-cidr, 10.0.0.0/8, reject
+          # [filter_local]
+          ip-cidr, 10.0.0.0/8, reject
 
-# [rewrite_local]
-^https://example\\.com/ url reject-dict
+          # [rewrite_local]
+          ^https://example\.com/ url reject-dict
 
-# [mitm]
-hostname = example.com
-""", encoding="utf-8")
-          PY
+          # [mitm]
+          hostname = example.com
+          EOF
           python .github/scripts/validate_conversion_policy.py
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          entry = json.loads(Path(".github/sources/loon.json").read_text())[0]
-          p = Path("adblock")/entry["id"]/"QuantumultX"/entry["qx"]
-          text = p.read_text()
-          p.write_text(text.replace("ip-cidr, 10.0.0.0/8, reject", "ip-cidr, 10.0.0.0/8, reject, no-resolve"))
-          PY
+
+      - name: QX validator rejects no-resolve
+        shell: bash
+        run: |
+          set -euo pipefail
+          TARGET="adblock/HTTPDNS/QuantumultX/HTTPDNS.snippet"
+          sed -i 's/ip-cidr, 10.0.0.0\/8, reject/ip-cidr, 10.0.0.0\/8, reject, no-resolve/' "$TARGET"
           if python .github/scripts/validate_conversion_policy.py; then
             echo "validator unexpectedly accepted QX no-resolve" >&2
             exit 1
           fi
+
+      - name: Gate sends complex source change to Work
+        shell: bash
+        run: |
+          set -euo pipefail
+          git restore --worktree adblock 2>/dev/null || true
+          rm -rf adblock/HTTPDNS
+          printf '\nAND, ((DOMAIN, example.com), (PROTOCOL, TCP)), REJECT\n' >> Resource/Loon/Block_HTTPDNS.lpx
+          python .github/scripts/conversion_gate.py
+          grep -q "Work required" monitor/.runtime/conversion_gate.md
