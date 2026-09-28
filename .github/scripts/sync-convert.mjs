@@ -1,11 +1,14 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { qxRule as canonicalQxRule, surgeRule as canonicalSurgeRule } from '../../converter/src/rule.mjs';
+import { selectQxScriptAction } from '../../converter/src/script.mjs';
+import { qxTargetPath, surgeTargetPath } from '../../converter/src/paths.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
 const RESOURCE_DIR = path.join(ROOT, 'Resource/Loon');
-const TARGET_ROOT = path.join(ROOT, 'adblock');
+const TARGET_ROOT = path.join(ROOT, 'Adblock');
 const SCRIPT_DIR = path.join(ROOT, 'script');
 const RAW_BASE = 'https://raw.githubusercontent.com/JuemingDC/WayX/main';
 const UA = 'StashCore/2.7.1 Stash/2.7.1 Clash/1.11.0';
@@ -364,11 +367,11 @@ function convert(entry, source, scriptMap, stamp = nowCN()) {
   for (const item of sectionItems(parsed.sections.get('Rule'))) {
     const comments = cleanComments(item.comments);
     if (!item.line) { qx.filter.push(...comments); sg.rule.push(...comments); continue; }
-    const qr = qxRule(item.line);
+    const qr = canonicalQxRule(item.line);
     if (qr.kind === 'filter') qx.filter.push(...comments, qr.line);
     else if (qr.kind === 'rewrite') qx.rewrite.push(...comments, qr.line);
     else qx.filter.push(...comments, qr.line);
-    sg.rule.push(...comments, surgeRule(item.line));
+    sg.rule.push(...comments, canonicalSurgeRule(item.line));
   }
 
   for (const item of sectionItems(parsed.sections.get('Rewrite'))) {
@@ -407,9 +410,12 @@ function convert(entry, source, scriptMap, stamp = nowCN()) {
     const mapped = scriptMap.get(sc.scriptPath);
     const qxUrl = mapped?.qx || sc.scriptPath;
     const surgeUrl = mapped?.surge || sc.scriptPath;
-    const qType = sc.type === 'http-response'
-      ? (sc.requiresBody ? 'script-response-body' : 'script-response-header')
-      : (sc.requiresBody ? 'script-request-body' : 'script-request-header');
+    const qType = selectQxScriptAction({
+      phase: sc.type,
+      requiresBody: sc.requiresBody,
+      scriptUrl: sc.scriptPath,
+      sourceText: mapped?.source || '',
+    }).action;
     qx.rewrite.push(...comments);
     if (sc.tag) qx.rewrite.push(`# ${sc.tag}`);
     if (sc.argument || sc.enable || sc.binary) qx.rewrite.push(`# Loon script options preserved in source: ${[sc.argument && `argument=${sc.argument}`, sc.enable && `enable=${sc.enable}`, sc.binary && 'binary-body-mode=true'].filter(Boolean).join(', ')}`);
@@ -578,7 +584,7 @@ async function syncScript(entry, url, defaults = new Map()) {
   }
 
   const toRaw = file => `${RAW_BASE}/${path.relative(ROOT, file).split(path.sep).map(encodeURIComponent).join('/')}`;
-  return { qx: toRaw(qxPath), surge: toRaw(surgePath) };
+  return { qx: toRaw(qxPath), surge: toRaw(surgePath), source: normalized };
 }
 
 function scriptUrls(source) {
@@ -633,9 +639,8 @@ async function main() {
         scriptMap.set(url, await syncScript(entry, url, sourceDefaults));
       }
 
-      const appRoot = path.join(TARGET_ROOT, entry.id);
-      const qxPath = path.join(appRoot, 'QuantumultX', entry.qx);
-      const sgPath = path.join(appRoot, 'Surge', entry.surge);
+      const qxPath = path.join(ROOT, qxTargetPath(entry));
+      const sgPath = path.join(ROOT, surgeTargetPath(entry));
       await Promise.all([
         path.dirname(qxPath),
         path.dirname(sgPath),
