@@ -457,10 +457,15 @@ name = type=http-response,pattern=REGEX,script-path=URL,requires-body=true,binar
 ### 6.2 Quantumult X
 
 ```text
-request + requires_body=true  -> url script-request-body
-request + requires_body=false -> url script-request-header
+request + requires_body=true  -> 默认候选为 url script-request-body，但必须先读取脚本正文判断是否属于 echo-response
+request + requires_body=false -> 默认候选为 url script-request-header
 response + requires_body=true -> url script-response-body
 response + requires_body=false-> url script-response-header
+
+已验证特例：
+- RuCu6 `12306.js` 在 request 阶段读取请求 Body 并构造响应，QX 必须使用 `script-analyze-echo-response`；官方 sample 明确说明该类型会等待 request body。
+- RuCu6 `header.js` 使用已验证的 `script-response-header` 映射。
+- 因此 Script action 不能仅由 phase + requires_body 机械决定，必须经过脚本兼容检查或命中经过验证的 port/override registry。
 ```
 
 **在生成 QX 行之前必须读取脚本内容做运行时兼容检查。**
@@ -486,13 +491,14 @@ captionLang=select, "zh-Hans", "zh-Hant", ...
 
 ### Quantumult X
 
-当前 snippet sample 没有 Loon 式参数表。转换器默认：
+Quantumult X snippet 不承载 Loon 式参数表。WayX 的固定策略：
 
-1. 解析每个参数的**第一个值为默认值**；
-2. 将 `${name}` 固化为默认值；
-3. 原 `[Argument]` 内容完整保留为注释；
-4. 若参数控制脚本开关，默认 false 的脚本默认不生成执行行，但保留注释；
-5. 若要保留可配置 UI，必须单独设计 BoxJs/脚本配置，不得伪造 snippet 参数语法。
+1. 解析 `[Argument]` 的类型、默认值、候选值、tag、desc；
+2. 生成/合并到 `boxjs/QuantumultX/Chanceの订阅.json` 的 BoxJs app/settings；
+3. BoxJs key 使用稳定命名空间 `wayx.<plugin>.<argument>`；
+4. snippet 仍只包含 filter / rewrite / mitm；
+5. 远程脚本若读取 Loon `$argument`，QX fork/adapter 必须通过 `$prefs` 读取对应 BoxJs key，再重建原参数语义；
+6. 在 BoxJs → `$prefs` bridge 尚未生成并验证前，该参数化脚本不得进入 Safe Tier。
 
 ### Surge
 
@@ -635,3 +641,17 @@ WayX 自动化采用 **fail-closed**：能证明是确定映射的简单变化�
 - QX 官方 sample / parser 变化可能影响已有输出。
 
 Work 完成并验证通过后添加 `work-complete`；确认该上游变化不应采用时添加 `work-reject`；仍有不确定项时不得添加完成标签。
+
+
+## 14. JQ 最简化约束
+
+- 允许删除无意义空白、压缩逗号/管道周围格式；
+- 不得改写 `walk/select/map/empty/any/if`、路径、操作顺序或 JSON 类型；
+- 对外输出前必须至少做语法编译；有 fixture 时比较压缩前后输出；
+- MyBlockAds 已作为 golden case 验证：11 条 JQ、9 个唯一表达式保持语义一致。
+
+## 15. Canonical Adblock 输出目录
+
+- Quantumult X: `Adblock/Quantumult X/<name>.snippet`
+- Surge: `Adblock/Surge/<name>.sgmodule`
+- 旧小写 `adblock/` 已删除，转换器、validator、GitHub Actions 不得重新创建。
