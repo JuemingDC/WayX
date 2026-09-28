@@ -611,6 +611,7 @@ WayX 自动化采用 **fail-closed**：能证明是确定映射的简单变化�
 - `DIRECT / REJECT / PROXY` 的基础映射；
 - Loon `URL-REGEX,...,REJECT` → QX `url reject-200` 的 WayX 固定映射；
 - 目标平台原生 `reject / reject-dict / reject-array / reject-img / reject-200`；
+- Loon Rewrite v2 的严格简单子集：`request if ${url} ~= /REGEX/ then reject(status)`、`reject_dict(status)`、`reject_array(status)`、`reject_img(status)`；仅限无 flags、无复合条件、无 `as`、无 pipeline、无自定义 Body。Actions 可以直接转换；`reject(200)` 仍按普通 `reject` 语义，不因 200 变为 `reject-200`；
 - 302 / 307；
 - 已有转换器已证明可无损表达的简单 JSON JQ delete / replace / jq；
 - 纯 hostname MITM 列表且不扩大 wildcard；
