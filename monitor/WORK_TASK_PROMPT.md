@@ -1,70 +1,51 @@
 # WayX — ChatGPT Work 上游语义审查任务
 
-版本：2.0  
+版本：2.1  
 作者：chance  
 更新时间：2026-09-28  
 类型：Automation / Upstream Semantic Review
 
 ## 触发条件
 
-仅处理仓库 `JuemingDC/WayX` 中：
-- 新打开的 Pull Request；
-- PR 带有 `work-review` 标签；
-- base 分支为 `main`；
-- head 分支以 `work/upstream-` 开头。
+仅处理 `JuemingDC/WayX` 中同时满足：`work-review` 标签、base=`main`、head 以 `work/upstream-` 开头的 PR。其他 PR 忽略。
 
-其他 PR 一律忽略。
+## 开始前必须读取
 
-## 目标
+1. `CONVERSION_POLICY.md`
+2. `LOON_NEW_SYNTAX_CONVERSION.md`
+3. 当前 PR 说明与 `Files changed`
+4. 涉及 QX 时核对 `crossutility/Quantumult-X` 当前官方 sample
+5. 涉及 Surge 时先读 `https://nssurge.com/llms.txt`，再按其指引核对当前 Manual
+6. 涉及 Egern 时核对 `https://egernapp.com/docs/` 当前官方文档
 
-GitHub Actions 已完成机械工作：检查 ETag / Last-Modified / commit SHA / SHA-256、同步真实变化并建立 PR。
+## 分工
 
-Work 只处理需要理解的部分：
-1. 阅读 PR 的 `Files changed`，确认具体上游变化。
-2. 判断变化是否影响 WayX 当前 Quantumult X / Surge 的转换结果、脚本、模块或规范。
-3. 需要修改时，在该 PR 的 head 分支中完成必要修改；不要直接写 main。
-4. 完成后核对修改前后语义、目标平台官方规范和项目现有约定。
-5. 所有检查通过后，为 PR 添加 `work-complete` 标签。
-6. 如果证据不足、官方能力不明确、转换存在风险或无法完成操作：不要添加 `work-complete`，在 PR 中说明阻塞原因。
+GitHub Actions 已完成 Safe Tier：上游检查、确定性 Rule/Rewrite/JQ/MITM 转换、简单新增删除、目标文件重生成和 validator。不要无意义重做已验证的 Safe Tier。
 
-## 强制规范
+Work 只处理 Review Tier：JavaScript 内容、[Script]/[Argument]、复杂逻辑规则、Loon 新语法未覆盖 action、自定义 Body、binary/base64、pipeline、helper script、converter/validator 失败、官方语法变更或任何无法证明无损的变化。
 
-### Surge / Egern
-回答、转换或修改前必须重新查阅官方资料：
-- Surge: `https://nssurge.com/`、`https://manual.nssurge.com/`
-- Egern: `https://egernapp.com/`
-只使用官方支持语法。
+## 核心转换规则
 
-### Quantumult X
-以官方 sample / `crossutility/Quantumult-X` 当前资料为最终依据，输出只能使用 QX 支持的样式。
-QX IP 类规则转换时去掉 `no-resolve`。该删除规则不得套用到 Surge。
+- 语义一致性优先于状态码表面一致。
+- `reject_dict(200)` → QX `reject-dict`，不得因 200 变成 `reject-200`。
+- `reject_array(status)` / `reject_img(status)` 同理保持 Body/Action 语义。
+- 普通 Loon Rewrite `reject(status)` 按一般 `reject` 语义处理；不得仅为精确状态码生成 helper script。
+- Loon `[Rule] URL-REGEX,...,REJECT` 按 WayX 固定映射 → QX `REGEX url reject-200`。
+- QX IP 类规则必须删除 `no-resolve`；Surge 不执行这一删除规则。
+- QX snippet 的 filter/rewrite/mitm section 标题必须注释。
+- 转换时保留原注释，添加转换时间、作者 `chance`、模块分类、Target、Source。
+- 不扩大 MITM、正则或域名匹配范围。
 
-### Loon Reject 转换
-状态码不是机械转换指标，优先保持前后语义一致：
-- `reject_dict(200)` 不得仅因为 `200` 转成 QX `reject-200`；
-- 字典、数组、图片响应分别保持相应语义；
-- 一般拒绝按一般拒绝语义处理；
-- 只有来源本身表达“200 + 空 Body 的 URL 拒绝”时，才使用 QX `reject-200`；
-- 不得为了强制复刻状态码而无必要地生成脚本。
+## 脚本处理
 
-### 模块 / snippet / 脚本
-发生转换时：
-- 保留原注释；
-- 添加转换时间；
-- 作者写 `chance`；
-- 添加模块分类；
-- QX snippet 中 filter / rewrite / mitm 的分段标题按项目约定注释；
-- 脚本转换必须检查原脚本真实行为；
-- 修改完成后与原脚本、目标平台官方示例再次比较。
+脚本变化必须阅读原脚本真实行为，检查输入、输出、副作用、持久化 API、通知 API、HTTP API、`$done`、Body/二进制处理和平台判定。必要修改只能写入当前 PR head 分支。修改后与原脚本和目标平台官方示例再次比较。
+
+## Actions 生成结果的复核
+
+如果 Actions 已经生成了目标文件但 gate 判定为 Review Tier，必须同时审查源变化和生成结果。生成结果有误时直接在 PR 分支修正，不能因为它来自 Actions 就默认正确。
 
 ## 完成判定
-只有在上游变化已确认、必要修改已写入 PR 分支、目标格式核验通过、无临时分析文件遗留时，才能添加 `work-complete` 标签。
-添加后 GitHub Actions 会自动 squash merge、删除临时 review 分支并关闭 PR。
-GitHub PR 历史记录不能真正删除，只能进入 merged/closed 状态。
 
-## 不允许
-- 不得盲目修改生产配置；
-- 不得自动放宽 MITM 范围；
-- 不得猜测未确认的 Egern / Surge API；
-- 不得把 `200` 当作 `reject-200` 的充分条件；
-- 不得在未完成核验时添加 `work-complete`。
+只有在必要修改完成、目标格式核验通过、validator 通过、无临时无效文件遗留时才添加 `work-complete`。GitHub Actions 会 squash merge 并删除临时分支。
+
+如果确认上游变化错误、不兼容或不应采用，说明原因并添加 `work-reject`；不得同时添加 `work-complete`。如果仍有不确定项，两个标签都不要添加，保留 PR 等待人工确认。
