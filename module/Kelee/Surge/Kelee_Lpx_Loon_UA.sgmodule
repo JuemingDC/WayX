@@ -1,0 +1,27 @@
+#!name=Kelee Lpx Loon UA
+#!desc=将 kelee.one 上以 .lpx 结尾的插件请求 User-Agent 统一替换为 Loon，用于兼容读取 Loon 插件源码。
+#!author=chance
+#!category=网络兼容 / User-Agent
+#!date=2026-09-26
+
+# ============================================================
+# Kelee Lpx Loon UA Compatibility
+#
+# Author: chance
+# Date: 2026-09-26
+# Category: 网络兼容 / User-Agent
+#
+# 作用范围：
+# - https://kelee.one/.../*.lpx
+#
+# 仅修改 .lpx 请求的 User-Agent，不影响 kelee.one 的其他资源。
+# Surge 官方建议在需要无条件替换请求头时使用 header-del + header-add。
+# HTTPS 请求头改写需要 MITM，并确保 Surge 的 MITM CA 已正确配置。
+# ============================================================
+
+[Header Rewrite]
+http-request ^https:\/\/kelee\.one\/.*\.lpx(?:\?.*)?$ header-del User-Agent
+http-request ^https:\/\/kelee\.one\/.*\.lpx(?:\?.*)?$ header-add User-Agent Loon
+
+[MITM]
+hostname = %APPEND% kelee.one
