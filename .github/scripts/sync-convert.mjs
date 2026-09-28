@@ -102,6 +102,59 @@ function splitPatternAction(line) {
   return [line.slice(0, idx).trim(), line.slice(idx).trim().replace(/^\-\s+/, '')];
 }
 
+
+function parseSimpleRewriteV2(line) {
+  // Safe subset only:
+  // request if ${url} ~= /REGEX/ then reject*(status)
+  // No flags, captures-as variables, compound conditions, pipelines, custom body,
+  // response phase, or parameter interpolation are accepted here.
+  const prefix = line.match(/^request\s+if\s+\$\{url\}\s*~=\s*/);
+  if (!prefix) return null;
+  let rest = line.slice(prefix[0].length);
+  if (!rest.startsWith('/')) return { unsupported: true, reason: 'URL condition is not a literal regex' };
+
+  let end = -1;
+  let escaped = false;
+  for (let i = 1; i < rest.length; i++) {
+    const ch = rest[i];
+    if (escaped) { escaped = false; continue; }
+    if (ch === '\\') { escaped = true; continue; }
+    if (ch === '/') { end = i; break; }
+  }
+  if (end < 0) return { unsupported: true, reason: 'unterminated URL regex' };
+
+  const pattern = rest.slice(1, end);
+  rest = rest.slice(end + 1);
+  const fm = rest.match(/^([ims]*)\s+then\s+(.+)$/);
+  if (!fm) return { unsupported: true, reason: 'condition is not the simple URL-regex form' };
+  if (fm[1]) return { unsupported: true, reason: 'regex flags require semantic review' };
+
+  const action = fm[2].trim();
+  const am = action.match(/^(reject|reject_dict|reject_array|reject_img)\(\s*(\d{3})\s*\)$/);
+  if (!am) return { unsupported: true, reason: 'action is outside the deterministic reject subset' };
+  const status = Number(am[2]);
+  if (status < 100 || status > 599) return { unsupported: true, reason: 'reject status is outside Loon 100...599' };
+
+  const map = {
+    reject: 'reject',
+    reject_dict: 'reject-dict',
+    reject_array: 'reject-array',
+    reject_img: 'reject-img',
+  };
+  return { pattern, action: map[am[1]], status, sourceAction: action };
+}
+
+function rewriteV2Action(line, target, ctx) {
+  const parsed = parseSimpleRewriteV2(line);
+  if (!parsed) return null;
+  if (parsed.unsupported) {
+    return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${parsed.reason}): ${line}` };
+  }
+  // Status is intentionally not used to choose QX reject-200. The action/body
+  // semantics decide the native target action. Surge uses native reject/Map Local.
+  return rewriteAction(parsed.pattern, parsed.action, target, ctx);
+}
+
 function sectionItems(lines = []) {
   const items = [];
   let pending = [];
@@ -321,9 +374,19 @@ function convert(entry, source, scriptMap, stamp = nowCN()) {
   for (const item of sectionItems(parsed.sections.get('Rewrite'))) {
     const comments = cleanComments(item.comments);
     if (!item.line) continue;
-    const [pattern, action] = splitPatternAction(item.line);
-    const qr = rewriteAction(pattern, action, 'qx', qctx);
-    const sr = rewriteAction(pattern, action, 'surge', sctx);
+
+    const qv2 = rewriteV2Action(item.line, 'qx', qctx);
+    const sv2 = rewriteV2Action(item.line, 'surge', sctx);
+    let qr, sr;
+    if (qv2 || sv2) {
+      qr = qv2;
+      sr = sv2;
+    } else {
+      const [pattern, action] = splitPatternAction(item.line);
+      qr = rewriteAction(pattern, action, 'qx', qctx);
+      sr = rewriteAction(pattern, action, 'surge', sctx);
+    }
+
     const qdest = qr.section === 'rewrite' ? qx.rewrite : qx.notes;
     const sdest = ({url: sg.url, map: sg.map, body: sg.body, script: sg.script})[sr.section] || sg.notes;
     qdest.push(...comments, qr.line);
