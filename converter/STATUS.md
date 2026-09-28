@@ -15,7 +15,7 @@ Implemented and committed:
 - GitHub Actions calls `node converter/tests/checkpoint.mjs` before upstream conversion.
 - Existing sync converter now uses the canonical Rule, Script and JQ cores.
 
-Verified locally before repository write: checkpoint tests 13/13 passed.
+Verified locally before repository write: checkpoint tests 14/14 passed.
 MyBlockAds golden-case JQ review: 11 rules / 9 unique expressions; syntax and representative output equivalence were checked before this checkpoint.
 
 ## Next session
