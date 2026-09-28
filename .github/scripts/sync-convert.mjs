@@ -3,6 +3,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { qxRule as canonicalQxRule, surgeRule as canonicalSurgeRule } from '../../converter/src/rule.mjs';
 import { selectQxScriptAction } from '../../converter/src/script.mjs';
+import { minifyJq } from '../../converter/src/jq.mjs';
 import { qxTargetPath, surgeTargetPath } from '../../converter/src/paths.mjs';
 
 const ROOT = process.cwd();
@@ -266,12 +267,12 @@ function rewriteAction(pattern, action, target, ctx) {
     return { section: 'map', line: `${pattern} data-type=text data=${JSON.stringify(body)} status-code=200 header=${JSON.stringify('Content-Type:application/json')}` };
   }
   if (lower.startsWith('response-body-json-del ')) {
-    const jq = jqDelete(a.slice('response-body-json-del '.length));
+    const jq = minifyJq(jqDelete(a.slice('response-body-json-del '.length)));
     return target === 'qx' ? { section: 'rewrite', line: `${pattern} url jsonjq-response-body ${quoteJq(jq)}` }
       : { section: 'body', line: `http-response-jq ${pattern} ${quoteJq(jq)}` };
   }
   if (lower.startsWith('response-body-json-replace ')) {
-    const jq = jqReplace(a.slice('response-body-json-replace '.length));
+    const jq = minifyJq(jqReplace(a.slice('response-body-json-replace '.length)));
     return target === 'qx' ? { section: 'rewrite', line: `${pattern} url jsonjq-response-body ${quoteJq(jq)}` }
       : { section: 'body', line: `http-response-jq ${pattern} ${quoteJq(jq)}` };
   }
@@ -360,7 +361,7 @@ function convert(entry, source, scriptMap, stamp = nowCN()) {
   // Preserve [Argument] semantics as comments. QX/Surge module arguments are not fabricated.
   if (parsed.sections.has('Argument')) {
     const raw = parsed.sections.get('Argument').filter(x => x.trim());
-    qx.notes.push('# Original Loon [Argument] (default values are used for conversion):', ...raw.map(x => x.trim().startsWith('#') ? x : `# ${x}`));
+    qx.notes.push('# Original Loon [Argument] (BoxJs/$prefs bridge required; Review Tier until verified):', ...raw.map(x => x.trim().startsWith('#') ? x : `# ${x}`));
     sg.notes.push('# Original Loon [Argument] (default values are used for conversion):', ...raw.map(x => x.trim().startsWith('#') ? x : `# ${x}`));
   }
 
@@ -418,6 +419,7 @@ function convert(entry, source, scriptMap, stamp = nowCN()) {
     }).action;
     qx.rewrite.push(...comments);
     if (sc.tag) qx.rewrite.push(`# ${sc.tag}`);
+    if (sc.argument) qx.rewrite.push(`# [WayX] REVIEW REQUIRED: verify BoxJs/$prefs bridge for argument=${sc.argument}`);
     if (sc.argument || sc.enable || sc.binary) qx.rewrite.push(`# Loon script options preserved in source: ${[sc.argument && `argument=${sc.argument}`, sc.enable && `enable=${sc.enable}`, sc.binary && 'binary-body-mode=true'].filter(Boolean).join(', ')}`);
     qx.rewrite.push(`${sc.pattern} url ${qType} ${qxUrl}`);
 
