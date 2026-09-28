@@ -1,7 +1,8 @@
-import assert from'node:assert/strict';import{qxRule,minifyJq,selectQxScriptAction,qxTargetPath,surgeTargetPath,parseLoonArguments,renderBoxJsApp}from'../src/index.mjs';
+import assert from'node:assert/strict';import{qxRule,surgeRule,minifyJq,selectQxScriptAction,qxTargetPath,surgeTargetPath,parseLoonArguments,renderBoxJsApp}from'../src/index.mjs';
 assert.equal(qxRule('URL-REGEX, "^https:\\/\\/ad\\.example\\.com", REJECT').line,'^https:\\/\\/ad\\.example\\.com url reject-200');
 assert.match(qxRule('AND, ((DOMAIN-SUFFIX, example.com), (PROTOCOL, TCP)), REJECT').line,/^# Loon logical rule/);
 assert.equal(qxRule('IP-CIDR, 1.1.1.1/32, REJECT, no-resolve').line,'ip-cidr, 1.1.1.1/32, reject');
+assert.match(surgeRule('DOMAIN, example.com, PROXY'),/^# \[WayX\] Surge Module policy binding required:/);
 const compact=minifyJq('walk( if type == "object" then .a = [] | del(.b, .c) else . end )');assert.equal(compact.includes('"object"'),true);assert.equal(compact.includes('del(.b,.c)'),true);
 assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:true,scriptUrl:'https://rucu6.pages.dev/Scripts/12306.js'}).action,'script-analyze-echo-response');
 assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:false,scriptUrl:'https://rucu6.pages.dev/Scripts/header.js'}).action,'script-response-header');
@@ -9,4 +10,4 @@ assert.equal(selectQxScriptAction({phase:'http-response',requiresBody:true,scrip
 assert.equal(qxTargetPath({qx:'A.snippet'}),'Adblock/Quantumult X/A.snippet');assert.equal(surgeTargetPath({surge:'A.sgmodule'}),'Adblock/Surge/A.sgmodule');
 const args=parseLoonArguments(['Capture=switch, false, true, tag="捕获", desc="测试"','Lang=select, "zh-Hans", "zh-Hant", tag="语言"']);assert.equal(args.length,2);assert.equal(args[0].defaultValue,'false');assert.equal(args[1].values[1],'zh-Hant');
 const app=renderBoxJsApp({id:'Demo',name:'Demo'},['Capture=switch, false, true, tag="捕获"']);assert.equal(app.settings[0].type,'boolean');assert.equal(app.settings[0].id,'wayx.demo.Capture');
-console.log('WayX converter checkpoint tests: 12/12 passed');
+console.log('WayX converter checkpoint tests: 13/13 passed');
