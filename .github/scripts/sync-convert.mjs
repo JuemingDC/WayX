@@ -253,9 +253,10 @@ function parseScriptLine(line) {
   const requiresBody = /(?:^|,)\s*requires-body=(?:true|1)/i.test(rest);
   const binary = /(?:^|,)\s*binary-body-mode=(?:true|1)/i.test(rest);
   const timeout = (rest.match(/(?:^|,)\s*timeout=([^,]+)/i) || [])[1]?.trim();
+  const maxSize = (rest.match(/(?:^|,)\s*max-size=([^,]+)/i) || [])[1]?.trim();
   const argument = (rest.match(/(?:^|,)\s*argument=([^,]+)/i) || [])[1]?.trim();
   const enable = (rest.match(/(?:^|,)\s*enable=([^,]+)/i) || [])[1]?.trim();
-  return { type, pattern, scriptPath, tag, requiresBody, binary, timeout, argument, enable, original: line };
+  return { type, pattern, scriptPath, tag, requiresBody, binary, timeout, maxSize, argument, enable, original: line };
 }
 
 function argumentDefaults(lines = []) {
@@ -275,7 +276,9 @@ function argumentDefaults(lines = []) {
 
 function resolveArgument(arg, defaults) {
   if (!arg) return null;
-  return arg.replace(/\{([^}]+)\}/g, (_, k) => defaults.get(k) ?? '');
+  return arg
+    .replace(/\[\{([^}]+)\}\]/g, (_, k) => defaults.get(k) ?? '')
+    .replace(/\{([^}]+)\}/g, (_, k) => defaults.get(k) ?? '');
 }
 
 function sanitizeName(s) {
@@ -340,17 +343,22 @@ function convert(entry, source, scriptMap) {
       continue;
     }
     scriptIndex++;
-    const localUrl = scriptMap.get(sc.scriptPath) || sc.scriptPath;
+    const mapped = scriptMap.get(sc.scriptPath);
+    const qxUrl = mapped?.qx || sc.scriptPath;
+    const surgeUrl = mapped?.surge || sc.scriptPath;
     const qType = sc.type === 'http-response' ? 'script-response-body' : 'script-request-body';
     qx.rewrite.push(...comments);
     if (sc.tag) qx.rewrite.push(`# ${sc.tag}`);
     if (sc.argument || sc.enable || sc.binary) qx.rewrite.push(`# Loon script options preserved in source: ${[sc.argument && `argument=${sc.argument}`, sc.enable && `enable=${sc.enable}`, sc.binary && 'binary-body-mode=true'].filter(Boolean).join(', ')}`);
-    qx.rewrite.push(`${sc.pattern} url ${qType} ${localUrl}`);
+    qx.rewrite.push(`${sc.pattern} url ${qType} ${qxUrl}`);
 
     const resolvedArg = resolveArgument(sc.argument, defaults);
     const name = sanitizeName(sc.tag || `${entry.id}_${String(scriptIndex).padStart(2, '0')}`);
-    const params = [`type=${sc.type}`, `pattern=${sc.pattern}`, `script-path=${localUrl}`];
-    if (sc.requiresBody) params.push('requires-body=true');
+    const params = [`type=${sc.type}`, `pattern=${sc.pattern}`, `script-path=${surgeUrl}`];
+    if (sc.requiresBody) {
+      params.push('requires-body=true');
+      params.push(`max-size=${sc.maxSize || '-1'}`);
+    }
     if (sc.binary) params.push('binary-body-mode=true');
     if (sc.timeout) params.push(`timeout=${sc.timeout}`);
     if (resolvedArg) params.push(`argument=${resolvedArg}`);
@@ -404,6 +412,18 @@ function convert(entry, source, scriptMap) {
   return { qx: qxOut.replace(/\n*$/, '\n'), surge: sgOut, generatedScripts: new Map([...qx.generatedScripts, ...sg.generatedScripts]) };
 }
 
+function adaptSurgeScript(entry, source, sourceUrl) {
+  if (entry.id !== 'DianPing') return null;
+  let out = source
+    .replace('$done({body: "", headers: "", status: "HTTP/1.1 404 Not Found"});', '$done({body: "", headers: {}, status: 404});')
+    .replace('$done({bodyBytes: hexStringToArrayBuffer(hexString),headers: header, status: "HTTP/1.1 200 OK"});', '$done({body: new Uint8Array(hexStringToArrayBuffer(hexString)), headers: header, status: 200});');
+  if (/bodyBytes\s*:/.test(out) || /status\s*:\s*["']HTTP\/1\.1/.test(out)) {
+    throw new Error(`${entry.id}: Surge script adapter could not remove Quantumult X-only response fields`);
+  }
+  const meta = `// Converted: ${nowCN()}\n// Converted by: chance\n// Category: ${entry.category}\n// Target: Surge\n// Source: ${sourceUrl}\n`;
+  return meta + out;
+}
+
 async function syncScript(entry, url) {
   const filename = decodeURIComponent(new URL(url).pathname.split('/').pop() || `${entry.id}.js`);
   const destDir = path.join(SCRIPT_DIR, entry.id);
@@ -411,8 +431,19 @@ async function syncScript(entry, url) {
   const { text } = await fetchWithFallback(url);
   await fs.mkdir(destDir, { recursive: true });
   const normalized = normalizeNewlines(text).replace(/\n*$/, '\n');
-  if (!await exists(dest) || normalizeNewlines(await fs.readFile(dest, 'utf8')) !== normalized) await fs.writeFile(dest, normalized);
-  return `${RAW_BASE}/script/${entry.id}/${encodeURIComponent(filename)}`;
+  const old = await exists(dest) ? normalizeNewlines(await fs.readFile(dest, 'utf8')) : null;
+  const changed = old !== normalized;
+  if (changed) await fs.writeFile(dest, normalized);
+  const qx = `${RAW_BASE}/script/${entry.id}/${encodeURIComponent(filename)}`;
+  let surge = qx;
+  if (entry.id === 'DianPing') {
+    const surgeDir = path.join(destDir, 'Surge');
+    const surgeDest = path.join(surgeDir, filename);
+    await fs.mkdir(surgeDir, { recursive: true });
+    if (changed || !await exists(surgeDest)) await fs.writeFile(surgeDest, adaptSurgeScript(entry, normalized, url));
+    surge = `${RAW_BASE}/script/${entry.id}/Surge/${encodeURIComponent(filename)}`;
+  }
+  return { qx, surge };
 }
 
 function scriptUrls(source) {
