@@ -20,7 +20,8 @@ jobs:
       github.event.action == 'labeled' &&
       github.event.label.name == 'work-complete' &&
       github.event.pull_request.base.ref == 'main' &&
-      startsWith(github.event.pull_request.head.ref, 'work/upstream-')
+      startsWith(github.event.pull_request.head.ref, 'work/upstream-') &&
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -31,9 +32,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          HAS_REVIEW="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json labels --jq '[.labels[].name] | index("work-review") != null')"
+          LABELS="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json labels --jq '[.labels[].name]')"
+          HAS_REVIEW="$(jq -r 'index("work-review") != null' <<<"$LABELS")"
+          HAS_REJECT="$(jq -r 'index("work-reject") != null' <<<"$LABELS")"
           if [ "$HAS_REVIEW" != "true" ]; then
             echo "Missing work-review label; refusing automatic merge."
+            exit 1
+          fi
+          if [ "$HAS_REJECT" = "true" ]; then
+            echo "Conflicting work-reject label found; refusing automatic merge."
             exit 1
           fi
 
@@ -62,9 +69,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          HAS_REVIEW="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json labels --jq '[.labels[].name] | index("work-review") != null')"
+          LABELS="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json labels --jq '[.labels[].name]')"
+          HAS_REVIEW="$(jq -r 'index("work-review") != null' <<<"$LABELS")"
+          HAS_COMPLETE="$(jq -r 'index("work-complete") != null' <<<"$LABELS")"
           if [ "$HAS_REVIEW" != "true" ]; then
             echo "Missing work-review label; refusing automatic close."
+            exit 1
+          fi
+          if [ "$HAS_COMPLETE" = "true" ]; then
+            echo "Conflicting work-complete label found; refusing automatic reject."
             exit 1
           fi
           gh pr close "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --delete-branch
