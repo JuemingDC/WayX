@@ -15,8 +15,9 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Convert original Loon plugin faithfully
-        shell: python {0}
+        shell: bash
         run: |
+          python - <<'PY'
           from pathlib import Path
           from urllib.request import Request, urlopen
           import json
@@ -89,6 +90,8 @@ hostname = %APPEND% open-cms-api.quark.cn, stars.shuqireader.com
 
           # Remove this one-shot workflow after successful generation.
           Path(".github/workflows/bootstrap-quark.yml").unlink()
+
+          PY
 
       - name: Validate jq expression
         shell: bash
