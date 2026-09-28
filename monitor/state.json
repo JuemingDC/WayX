@@ -1,4 +1,51 @@
 {
-  "version": 1,
-  "sources": {}
+  "sources": {
+    "egern-modules": {
+      "checked_at": "2026-09-28T22:20:59.169768+00:00",
+      "etag": null,
+      "kind": "http",
+      "last_modified": null,
+      "sha256": "e7076b116c286e98205229d1de6e8abef567ab159d593cf06cb4cb3fd0d629c4",
+      "url": "https://egernapp.com/docs/configuration/modules/"
+    },
+    "egern-scriptings": {
+      "checked_at": "2026-09-28T22:20:59.337411+00:00",
+      "etag": null,
+      "kind": "http",
+      "last_modified": null,
+      "sha256": "d55a726e565bbbee36f2742ad6cfb66197cc9b51994323402d9f8ba1d82d31ff",
+      "url": "https://egernapp.com/docs/configuration/scriptings/"
+    },
+    "loon-rewrite-v2": {
+      "checked_at": "2026-09-28T22:20:59.547413+00:00",
+      "etag": "\"6ab2cab9-20711\"",
+      "kind": "http",
+      "last_modified": "Tue, 22 Sep 2026 18:36:41 GMT",
+      "sha256": "d8c97ac157a379b9dcd5b33242ea790fb200f73f4ab40caeaad47f1ae0d0074e",
+      "url": "https://nsloon.app/docs/Rewrite/rewrite_v2/"
+    },
+    "quantumultx-official": {
+      "checked_at": "2026-09-28T22:20:59.841702+00:00",
+      "kind": "github_repo",
+      "ref": "master",
+      "remote_sha": "af6fb594233ec4a3ec6d4ccb3601e9c36b75ea2d",
+      "repo": "crossutility/Quantumult-X"
+    },
+    "quantumultx-parser": {
+      "checked_at": "2026-09-28T22:21:00.180953+00:00",
+      "kind": "github_repo",
+      "ref": "master",
+      "remote_sha": "38a6fe02eb7cc67efd26a8f3c618bd031f1885b4",
+      "repo": "KOP-XIAO/QuantumultX"
+    },
+    "surge-official-llms": {
+      "checked_at": "2026-09-28T22:20:58.975028+00:00",
+      "etag": "\"6aa7a554-c52\"",
+      "kind": "http",
+      "last_modified": "Mon, 14 Sep 2026 07:42:12 GMT",
+      "sha256": "50eb239a4861608ec6883874707698d3ab206b1a0202b6aca0997574f6f23f49",
+      "url": "https://nssurge.com/llms.txt"
+    }
+  },
+  "version": 1
 }
