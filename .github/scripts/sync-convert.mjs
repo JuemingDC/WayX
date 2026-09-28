@@ -285,9 +285,8 @@ function sanitizeName(s) {
   return (s || 'script').replace(/[=,\r\n]/g, '_').trim().slice(0, 64) || 'script';
 }
 
-function convert(entry, source, scriptMap) {
+function convert(entry, source, scriptMap, stamp = nowCN()) {
   const parsed = parseLoon(source);
-  const stamp = nowCN();
   const defaults = argumentDefaults(parsed.sections.get('Argument'));
   const meta = [
     `# Converted: ${stamp}`,
@@ -495,27 +494,31 @@ async function main() {
       const sgPath = path.join(SURGE_DIR, entry.surge);
       const qxExists = await exists(qxPath);
       const sgExists = await exists(sgPath);
-      let localRewriteNeeded = false;
-      if (qxExists && sgExists && scriptMap.size) {
-        const qxOld = await fs.readFile(qxPath, 'utf8');
-        const sgOld = await fs.readFile(sgPath, 'utf8');
-        for (const originalUrl of scriptMap.keys()) {
-          if (qxOld.includes(originalUrl) || sgOld.includes(originalUrl)) { localRewriteNeeded = true; break; }
-        }
+      const oldQx = qxExists ? normalizeNewlines(await fs.readFile(qxPath, 'utf8')) : null;
+      const oldSg = sgExists ? normalizeNewlines(await fs.readFile(sgPath, 'utf8')) : null;
+      const oldStamp = (oldQx?.match(/^# Converted:\s*(.+)$/m) || [])[1] || null;
+      let stamp = changed || !oldStamp ? nowCN() : oldStamp;
+      let out = convert(entry, source, scriptMap, stamp);
+
+      // Converter changes must also refresh outputs even when upstream LPX is unchanged.
+      // Preserve the old conversion timestamp only if the generated content is actually identical.
+      if (!changed && oldStamp && ((oldQx && oldQx !== out.qx) || (oldSg && oldSg !== out.surge))) {
+        stamp = nowCN();
+        out = convert(entry, source, scriptMap, stamp);
       }
-      if (changed || !qxExists || !sgExists || localRewriteNeeded) {
-        const out = convert(entry, source, scriptMap);
-        for (const [file, content] of out.generatedScripts) {
-          const dir = path.join(SCRIPT_DIR, entry.id);
-          await fs.mkdir(dir, { recursive: true });
-          await fs.writeFile(path.join(dir, file), content);
-        }
-        validateQX(out.qx, entry);
-        validateSurge(out.surge, entry);
-        await fs.writeFile(qxPath, out.qx);
-        await fs.writeFile(sgPath, out.surge);
-        console.log(`converted -> ${path.relative(ROOT, qxPath)}, ${path.relative(ROOT, sgPath)}`);
-      } else console.log('conversion skipped: source and outputs unchanged');
+
+      for (const [file, content] of out.generatedScripts) {
+        const dir = path.join(SCRIPT_DIR, entry.id);
+        await fs.mkdir(dir, { recursive: true });
+        const dest = path.join(dir, file);
+        if (!await exists(dest) || normalizeNewlines(await fs.readFile(dest, 'utf8')) !== content) await fs.writeFile(dest, content);
+      }
+      validateQX(out.qx, entry);
+      validateSurge(out.surge, entry);
+      let outputChanged = false;
+      if (oldQx !== out.qx) { await fs.writeFile(qxPath, out.qx); outputChanged = true; }
+      if (oldSg !== out.surge) { await fs.writeFile(sgPath, out.surge); outputChanged = true; }
+      console.log(outputChanged ? `converted -> ${path.relative(ROOT, qxPath)}, ${path.relative(ROOT, sgPath)}` : 'conversion verified: outputs unchanged');
     } catch (e) {
       failures.push(`${entry.id}: ${e.stack || e.message}`);
       console.error(`::error title=${entry.id}::${String(e.message).replaceAll('\n', '%0A')}`);
