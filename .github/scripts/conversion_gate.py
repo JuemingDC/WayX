@@ -47,7 +47,9 @@ def run(*args: str, check: bool = True) -> str:
 
 
 def changed_files() -> list[str]:
-    return [x for x in run("git", "diff", "--name-only", "HEAD").splitlines() if x.strip()]
+    tracked = run("git", "diff", "--name-only", "HEAD").splitlines()
+    untracked = run("git", "ls-files", "--others", "--exclude-standard").splitlines()
+    return sorted({x.strip() for x in [*tracked, *untracked] if x.strip()})
 
 
 def old_text(path: str) -> str:
@@ -216,12 +218,12 @@ def classify_resource(path: str, manifest_by_file: dict[str, dict]) -> list[str]
     return reasons
 
 
-def mapped_targets(manifest: list[dict]) -> set[str]:
-    out: set[str] = set()
+def mapped_targets(manifest: list[dict]) -> dict[str, dict]:
+    out: dict[str, dict] = {}
     for entry in manifest:
         app = entry["id"]
-        out.add(f"adblock/{app}/QuantumultX/{entry['qx']}")
-        out.add(f"adblock/{app}/Surge/{entry['surge']}")
+        out[f"adblock/{app}/QuantumultX/{entry['qx']}"] = entry
+        out[f"adblock/{app}/Surge/{entry['surge']}"] = entry
     return out
 
 
@@ -246,10 +248,26 @@ def main() -> int:
             continue
         if path in targets:
             text = new_text(path)
+            entry = targets[path]
             if re.search(r"(?im)^\s*#\s*(?:Unsupported Loon|Loon .*not losslessly expressible|\[WayX\]\s*MANUAL PORT REQUIRED)", text):
                 reasons.append(f"{path}: generated output contains an unsupported/manual-review marker")
-            else:
-                safe_notes.append(f"{path}: generated target passed semantic marker gate")
+                continue
+
+            # New target files deserve a full source-risk check rather than being
+            # treated as safe merely because no marker was generated.
+            if not old_text(path):
+                source_path = f"Resource/Loon/{entry['file']}"
+                _, sections = parse_sections(new_text(source_path))
+                script_lines = executable(sections.get("Script", []))
+                argument_lines = executable(sections.get("Argument", []))
+                if script_lines:
+                    reasons.append(f"{path}: newly generated target comes from a source with [Script]; runtime semantics require Work")
+                if argument_lines:
+                    reasons.append(f"{path}: newly generated target comes from a source with [Argument]; parameter semantics require Work")
+                if script_lines or argument_lines:
+                    continue
+
+            safe_notes.append(f"{path}: generated target passed semantic marker gate")
             continue
         if path.startswith("upstream/") or path == "monitor/state.json":
             # Official-doc monitoring decides Work handoff through monitor_upstreams.py.
