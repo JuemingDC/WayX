@@ -41,14 +41,20 @@ META = (
 )
 
 
-def changed_files() -> set[str]:
+def git_lines(*args: str) -> list[str]:
     proc = subprocess.run(
-        ["git", "diff", "--name-only", "HEAD"], cwd=ROOT, text=True,
+        ["git", *args], cwd=ROOT, text=True,
         stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
     )
     if proc.returncode:
         raise RuntimeError(proc.stderr.strip())
-    return {line for line in proc.stdout.splitlines() if line.strip()}
+    return [line.strip() for line in proc.stdout.splitlines() if line.strip()]
+
+
+def changed_files() -> set[str]:
+    return set(git_lines("diff", "--name-only", "HEAD")) | set(
+        git_lines("ls-files", "--others", "--exclude-standard")
+    )
 
 
 def mapped_targets() -> dict[str, str]:
