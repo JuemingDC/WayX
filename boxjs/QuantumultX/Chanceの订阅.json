@@ -1,0 +1,68 @@
+{
+  "id": "juemingdc.qx.sub",
+  "name": "Chanceの订阅",
+  "descs_html": [
+    "该订阅为 Chance 自用，来源自网络。"
+  ],
+  "author": "@JuemingDC",
+  "icon": "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Telegram.png",
+  "repo": "https://github.com/JuemingDC/WayX",
+  "apps": [
+    {
+      "id": "juemingdc.telegram.redirect.qx",
+      "name": "Telegram 第三方客户端重定向",
+      "descs_html": [
+        "用于 Quantumult X，将 t.me 链接重定向到指定第三方 Telegram 客户端。",
+        "修改客户端后，请点击 BoxJs 页面右下角保存。"
+      ],
+      "keys": [
+        "telegram_redirect_client"
+      ],
+      "settings": [
+        {
+          "id": "telegram_redirect_client",
+          "name": "客户端选择",
+          "type": "selects",
+          "val": "Telegram",
+          "items": [
+            {
+              "key": "Telegram",
+              "label": "Telegram"
+            },
+            {
+              "key": "Swiftgram",
+              "label": "Swiftgram"
+            },
+            {
+              "key": "Turrit",
+              "label": "Turrit"
+            },
+            {
+              "key": "iMe",
+              "label": "iMe"
+            },
+            {
+              "key": "Nicegram",
+              "label": "Nicegram"
+            },
+            {
+              "key": "Lingogram",
+              "label": "Lingogram"
+            },
+            {
+              "key": "Nagram",
+              "label": "Nagram"
+            }
+          ],
+          "desc": "选择 t.me 链接跳转使用的 Telegram 客户端。"
+        }
+      ],
+      "author": "@JuemingDC",
+      "repo": "https://github.com/JuemingDC/WayX",
+      "icons": [
+        "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Telegram.png",
+        "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Telegram.png"
+      ]
+    }
+  ]
+}
