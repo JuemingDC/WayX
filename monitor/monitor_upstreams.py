@@ -283,34 +283,30 @@ def build_review_summary(review_items: list[tuple], runtime: Path) -> Path:
     runtime.mkdir(parents=True, exist_ok=True)
     summary = runtime / "work_review.md"
     lines = [
-        "# WayX ä¸Šæ¸¸è¯­ä¹‰å®¡æŸ¥\n\n",
-        f"- æ£€æµ‹æ—¶é—´ï¼š`{now()}`\n",
-        "- å¤„ç†æ–¹å¼ï¼š`ChatGPT Work`\n",
-        "- OpenAI APIï¼š`ä¸è°ƒç”¨`\n\n",
-        "è¿™ä¸ª PR ç”± GitHub Actions è‡ªåŠ¨åˆ›å»ºã€‚è¯·ä»¥ PR çš„ `Files changed` ä½œä¸ºä¸»è¦å·®å¼‚æ¥æºã€‚\n\n",
-        "## éœ€è¦å®¡æŸ¥çš„æ¥æº\n\n",
+        "# WayX upstream semantic review\n\n",
+        f"- Checked at: `{now()}`\n",
+        "- Handoff: `ChatGPT Work`\n",
+        "- OpenAI API: `not used`\n\n",
+        "This PR was created by GitHub Actions. Use the PR Files changed view as the primary diff source.\n\n",
+        "## Sources requiring review\n\n",
     ]
-
     for src, message in review_items:
-        lines.extend(
-            [
-                f"### {src.get('name', src['id'])}\n\n",
-                f"- Source ID: `{src['id']}`\n",
-                f"- Platform: `{src.get('platform', 'unknown')}`\n",
-                f"- Category: `{src.get('category', 'unspecified')}`\n",
-                f"- Result: {message}\n",
-                f"- Upstream: `{src.get('url') or src.get('repo')}`\n\n",
-            ]
-        )
-
-    lines.extend(
-        [
-            "## Work å¤„ç†è¦æ±‚\n\n",
-            "è¯»å– `monitor/WORK_TASK_PROMPT.md` å¹¶ä¸¥æ ¼æ‰§è¡Œã€‚æ‰€æœ‰å¿…è¦å·¥ä½œå®Œæˆåï¼Œä¸ºè¯¥ PR æ·»åŠ  "
-            "`work-complete` æ ‡ç­¾ã€‚GitHub Actions ä¼šè‡ªåŠ¨ squash merge å¹¶åˆ é™¤ä¸´æ—¶åˆ†æ”¯ã€‚"
-            "å¦‚æœå­˜åœ¨ä¸ç¡®å®šé¡¹ï¼Œä¸å¾—æ·»åŠ  `work-complete`ã€‚\n",
-        ]
-    )
+        lines.extend([
+            f"### {src.get('name', src['id'])}\n\n",
+            f"- Source ID: `{src['id']}`\n",
+            f"- Platform: `{src.get('platform', 'unknown')}`\n",
+            f"- Category: `{src.get('category', 'unspecified')}`\n",
+            f"- Result: {message}\n",
+            f"- Upstream: `{src.get('url') or src.get('repo')}`\n\n",
+        ])
+    lines.extend([
+        "## Work requirement\n\n",
+        "Read `CONVERSION_POLICY.md`, `LOON_NEW_SYNTAX_CONVERSION.md`, and "
+        "`monitor/WORK_TASK_PROMPT.md` before changing any target file. "
+        "Add `work-complete` only after all required changes and validation pass. "
+        "If the upstream change should not be adopted, add `work-reject`. "
+        "If anything remains uncertain, add neither label.\n",
+    ])
     summary.write_text("".join(lines), "utf-8")
     return summary
 
@@ -333,15 +329,40 @@ def main() -> int:
     for src in cfg.get("sources", []):
         source_id = src["id"]
         source_state = states.setdefault(source_id, {})
-
         try:
             if src["kind"] == "http":
-                changed, state_changed, message = check_http(
-                    src, source_state, settings
-                )
+                changed, state_changed, message = check_http(src, source_state, settings)
             elif src["kind"] == "github_repo":
-                changed, state_changed, message = check_repo(
-                    src, source_state, settings
-                )
+                changed, state_changed, message = check_repo(src, source_state, settings)
             else:
-                raise ValueError( ‰Õ¹ÍÕÁÁ½ÉÑ•Í½ÕÉ”­¥¹è€ˆ€¬ÍÉl‰­¥¹‰t¤(€€€€€€€•á•ÁĞá•ÁÑ¥½¸…Ì•áŒè(€€€€€€€€€€€ÁÉ¥¹Ğ (€€€€€€€€€€€€€€€˜‰m•ÉÉ½ÉtíÍ½ÕÉ•}¥‘ôèíÑåÁ”¡•áŒ¤¹}}¹…µ•}}ôèí•áôˆ°(€€€€€€€€€€€€€€€™¥±”õÍåÌ¹ÍÑ‘•ÉÈ°(€€€€€€€€€€€€¤(€€€€€€€€€€€É•ÍÕ±ÑÌ¹…ÁÁ•¹ ¡ÍÉŒ°…±Í”°…±Í”°€‰II=Hè€ˆ€¬ÍÑÈ¡•áŒ¤¤¤(€€€€€€€€€€€½¹Ñ¥¹Õ”((€€€€€€€…¹å}ÍÑ…Ñ”ğôÍÑ…Ñ•}¡…¹•(€€€€€€€ÁÉ¥¹Ğ¡˜‰mÉ•ÍÕ±ÑtíÍ½ÕÉ•}¥‘ôèíµ•ÍÍ…•ôˆ¤(€€€€€€€É•ÍÕ±ÑÌ¹…ÁÁ•¹ ¡ÍÉŒ°¡…¹•°ÍÑ…Ñ•}¡…¹•°µ•ÍÍ…”¤¤((€€€¥˜…¹å}ÍÑ…Ñ”è(€€€€€€€Í…Ù•}©Í½¸¡ÍÑ…Ñ•}Á…Ñ °ÍÑ…Ñ”¤((€€€É•Ù¥•İ}¥Ñ•µÌ€ôl(€€€€€€€€¡ÍÉŒ°µ•ÍÍ…”¤(€€€€€€€™½ÈÍÉŒ°¡…¹•°|°µ•ÍÍ…”¥¸É•ÍÕ±ÑÌ(€€€€€€€¥˜¡…¹•…¹ÍÉŒ¹•Ğ ‰…¹…±åÍ¥Ìˆ°€‰¹½¹”ˆ¤€ôô€‰İ½É¬ˆ(€€€t((€€€ÍÕµµ…Éä€ôÉÕ¹Ñ¥µ”€¼€‰İ½É­}É•Ù¥•Ü¹µˆ(€€€¥˜É•Ù¥•İ}¥Ñ•µÌè(€€€€€€€ÍÕµµ…Éä€ô‰Õ¥±‘}É•Ù¥•İ}ÍÕµµ…Éä¡É•Ù¥•İ}¥Ñ•µÌ°ÉÕ¹Ñ¥µ”¤((€€€Í•Ñ}½ÕÑÁÕĞ (€€€€€€€€‰¡…Í}¡…¹”ˆ°(€€€€€€€€‰ÑÉÕ”ˆ¥˜…¹ä¡¥Ñ•µlÅt™½È¥Ñ•´¥¸É•ÍÕ±ÑÌ¤•±Í”€‰™…±Í”ˆ°(€€€€¤(€€€Í•Ñ}½ÕÑÁÕĞ ‰¡…Í}É•Ù¥•Üˆ°€‰ÑÉÕ”ˆ¥˜É•Ù¥•İ}¥Ñ•µÌ•±Í”€‰™…±Í”ˆ¤(€€€Í•Ñ}½ÕÑÁÕĞ ‰É•Ù¥•İ}ÍÕµµ…Éäˆ°ÍÕµµ…Éä¹É•±…Ñ¥Ù•}Ñ¼¡I==P¤¹…Í}Á½Í¥à ¤¤(€€€É•ÑÕÉ¸€À(()¥˜}}¹…µ•}|€ôô€‰}}µ…¥¹}|ˆè(€€€É…¥Í”MåÍÑ•µá¥Ğ¡µ…¥¸ ¤¤(
+                raise ValueError("unsupported source kind: " + src["kind"])
+        except Exception as exc:
+            print(f"[error] {source_id}: {type(exc).__name__}: {exc}", file=sys.stderr)
+            results.append((src, False, False, "ERROR: " + str(exc)))
+            continue
+
+        any_state |= state_changed
+        print(f"[result] {source_id}: {message}")
+        results.append((src, changed, state_changed, message))
+
+    if any_state:
+        save_json(state_path, state)
+
+    review_items = [
+        (src, message)
+        for src, changed, _, message in results
+        if changed and src.get("analysis", "none") == "work"
+    ]
+
+    summary = runtime / "work_review.md"
+    if review_items:
+        summary = build_review_summary(review_items, runtime)
+
+    set_output("has_change", "true" if any(item[1] for item in results) else "false")
+    set_output("has_review", "true" if review_items else "false")
+    set_output("review_summary", summary.relative_to(ROOT).as_posix())
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
