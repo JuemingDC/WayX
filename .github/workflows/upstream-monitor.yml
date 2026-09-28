@@ -58,6 +58,10 @@ jobs:
         with:
           node-version: "24"
 
+      - name: Validate WayX converter core
+        if: steps.pending.outputs.blocked != 'true'
+        run: node converter/tests/checkpoint.mjs
+
       - name: Set up Python
         if: steps.pending.outputs.blocked != 'true'
         uses: actions/setup-python@v6
