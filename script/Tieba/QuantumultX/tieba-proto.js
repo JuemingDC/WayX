@@ -1,4 +1,4 @@
-// Converted: 2026-09-28 13:21:34 +08:00
+// Converted: 2026-09-28 13:23:04 +08:00
 // Converted by: chance
 // Category: 去广告
 // Target: Quantumult X
@@ -149,7 +149,9 @@ if(resStatus !== 200) {
     } else if (url.includes("excellent/personalized")) {
         console.log('贴吧-personalized');
         const argOptions = {
-            per_filter_video_thread: true, // ✅ 默认值改为 false（布尔）
+            // Converted by chance: Quantumult X snippet cannot receive Loon [Argument]; apply the Loon default true.
+            per_filter_video_thread: true,
+            // Original comment: ✅ 默认值改为 false（布尔）
         };
         switch (typeof $argument) {
             case 'string':
