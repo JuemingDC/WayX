@@ -9,7 +9,7 @@
 #!homepage=https://hub.kelee.one
 #!icon=https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/PinDuoDuo.png
 #!date=2026-07-11 20:21:39
-# Converted: 2026-09-28 13:08:23 +08:00
+# Converted: 2026-09-28 13:14:56 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/PinDuoDuo_remove_ads.lpx
@@ -76,7 +76,7 @@ http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/aristotle\/order_list_v4\?
 ^https:\/\/api\.pinduoduo\.com\/api\/caterham\/v2\/query\/goods_detail_with_tags\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-移除扫码取件页面商品推荐及弹窗 = type=http-response,pattern=^https:\/\/m\.pinduoduo\.net\/mdkd\/package\?from_app_scan,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/script/PinDuoDuo/PinDuoDuo_remove_ads.js,requires-body=true
+移除扫码取件页面商品推荐及弹窗 = type=http-response,pattern=^https:\/\/m\.pinduoduo\.net\/mdkd\/package\?from_app_scan,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/script/PinDuoDuo/PinDuoDuo_remove_ads.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% api.pinduoduo.com, m.pinduoduo.net
