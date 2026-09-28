@@ -17,7 +17,7 @@ DOMAIN,ad.lovefree.cc,REJECT,pre-matching
 DOMAIN-SUFFIX,zhixuexingtu.cn,REJECT,pre-matching
 
 [Script]
-趣智校园净化 = type=http-response,pattern=^https:\/\/v3-api\.china-qzxy\.cn\/(?:user\/coin\/info\/withAppAdvChannel|project\/adv\/chain\/get|project\/advSpace\/app\/v2\/list|settlement\/advertise\/freeMeal\/activity\/index|project\/info\/triple)(?:\?|$),requires-body=true,max-size=262144,script-update-interval=60,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/adblock/QZXY/Surge/QZXYCleaner.js
+趣智校园净化 = type=http-response,pattern=^https:\/\/v3-api\.china-qzxy\.cn\/(?:user\/coin\/info\/withAppAdvChannel|project\/adv\/chain\/get|project\/advSpace\/app\/v2\/list|settlement\/advertise\/freeMeal\/activity\/index|project\/info\/triple)(?:\?|$),requires-body=true,max-size=262144,script-update-interval=60,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/script/QZXY/Surge/QZXYCleaner.js
 
 [MITM]
 hostname = %APPEND% v3-api.china-qzxy.cn
