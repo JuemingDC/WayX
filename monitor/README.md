@@ -1,56 +1,54 @@
-# Chance Upstream Monitor — Work 模式
+# Chance Upstream Monitor — Actions + Work 分层模式
 
-用于 WayX 的低资源上游监控。GitHub Actions 负责机械检查；只有真实语义变化才通过 Pull Request 交给 ChatGPT Work。
+WayX 使用两级自动化：GitHub Actions 处理可以机械证明正确的 Safe Tier；只有脚本、复杂语义或官方规范变化才进入 ChatGPT Work。
 
-> WayX 仍以 Quantumult X / Surge 为生产内容范围。Loon / Egern 主要作为上游语法与转换参考监控。
-
-## 工作流
+## 每日流程
 
 ```text
 每天 01:00 Asia/Shanghai
-→ GitHub Actions 检查 ETag / Last-Modified / commit SHA / SHA-256
-→ 无真实变化：结束（Work = 0 / API = 0）
-→ analysis=none：Actions 直接同步 main
-→ analysis=work：创建 work-review PR
-→ ChatGPT Work 审查 / 必要修改 / 自检
-→ Work 添加 work-complete
-→ GitHub Actions 自动 squash merge + 删除临时分支
+→ GitHub Actions 同步选定 Loon 源 / RuCu6 / 官方规范
+→ sync-convert 对 Safe Tier 做确定性 QX / Surge 转换
+→ validate_conversion_policy.py 校验目标格式
+→ conversion_gate.py 判断 Safe Tier / Review Tier
+→ 无变化：结束
+→ 仅 Safe Tier：直接提交 main
+→ Review Tier / converter失败 / validator失败：创建 work-review PR
+→ ChatGPT Work 按 monitor/WORK_TASK_PROMPT.md 审查与必要修改
+→ work-complete：自动 squash merge + 删除临时分支
+→ work-reject：自动关闭且不合并 + 删除临时分支
 ```
+
+## Safe Tier
+
+Actions 可直接新增、删除和同步基础 Rule、确定的 reject/redirect、转换器已覆盖的简单 JQ、纯 hostname MITM、注释与转换元数据。新增和删除都通过重新解析源文件并完整重生成目标文件完成，不猜测插入位置。
+
+QX IP 类规则自动去掉 `no-resolve`；Surge 保留其官方支持的 `no-resolve`。Loon `[Rule] URL-REGEX,...,REJECT` 按 WayX 约定转成 QX `url reject-200`；普通 Rewrite 的 reject 不按状态码机械映射。
+
+## Review Tier
+
+JavaScript 内容、[Script]/[Argument]、复杂 AND/OR/NOT、Loon 新 Rewrite 未覆盖 action、自定义 Body、binary/base64、pipeline、helper script、converter/validator 失败和官方规范变化都交给 Work。不能证明安全就不直接写 main。
+
+RuCu6 当前属于 Review Tier：Actions 负责同步原始 LPX/JS，Work 负责复杂新语法与脚本转换审查。
 
 ## OpenAI API
 
-**本版本不调用 OpenAI API。**
-
-代码中已移除 `OPENAI_API_KEY`、`/v1/responses` 和 API 模型配置，因此 WayX 自动化不会产生 OpenAI API 账单。
-
-以前创建的 GitHub Secret `OPENAI_API_KEY` 已不再被任何 Workflow 使用。建议在 GitHub 仓库 Settings → Secrets and variables → Actions 中手动删除。
-
-## ChatGPT Work 一次性设置
-
-GitHub Actions 能创建 PR，但不能替你的 ChatGPT 账户创建/授权 Work webhook 任务。需要在 ChatGPT **Work** 中做一次设置：
-- 连接 GitHub，并授权 `JuemingDC/WayX`；
-- 创建 GitHub PR 事件触发任务；
-- 触发事件：PR opened；
-- 仓库：`JuemingDC/WayX`；
-- 条件：PR 带 `work-review` 标签，base=`main`，head 以 `work/upstream-` 开头；
-- Prompt：使用本仓库 `monitor/WORK_TASK_PROMPT.md` 的完整内容。
-
-设置一次后，后续流程自动运行。
+本流程不调用 OpenAI API，不使用 `OPENAI_API_KEY`，不会产生 API 独立账单。以前创建的仓库 Secret 可以手动删除。
 
 ## 自动清理
 
-Work 完成后添加 `work-complete` 标签。Finalizer 验证 PR 属于本自动化，再自动 squash merge 并删除 review 分支。
-GitHub 不提供真正删除 PR 的能力，因此采用 **merge/close + 删除临时分支**。本版本不再把 diff/review 临时文件提交到 main。
-有一个 `work-review` PR 未完成时，下一次定时任务直接跳过，避免重复 PR 和重复 Work 消耗。
+`monitor/.runtime/` 和 `.github/reports/` 不提交。Work 完成后临时 review 分支自动删除。GitHub 本身不支持真正删除 PR 历史，所以最终只保留 merged/closed PR 记录，不保留临时 diff/review 文件。
 
-## 当前监控源
-- Surge 官方 `llms.txt`
-- Egern Modules 官方文档
-- Egern Scriptings 官方文档
-- Loon Rewrite 新语法官方文档
-- Quantumult X 官方仓库 `crossutility/Quantumult-X`
-- Quantumult X 资源解析器 `KOP-XIAO/QuantumultX`
+一个 `work-review` PR 未处理完成时，下一次定时任务会跳过，避免重复 PR 和重复 Work 消耗。
 
-`analysis`：
-- `none`：Actions 自己同步；
-- `work`：真实内容变化后创建 PR，交给 Work 语义审查。
+## 核心文件
+
+- `CONVERSION_POLICY.md`：总转换规范。
+- `LOON_NEW_SYNTAX_CONVERSION.md`：Loon 3.5.x 新语法专项规范。
+- `.github/scripts/sync-convert.mjs`：确定性 Safe Tier Loon → QX/Surge 转换。
+- `.github/scripts/sync_rucu6.py`：RuCu6 上游镜像同步。
+- `.github/scripts/validate_conversion_policy.py`：目标格式硬校验。
+- `.github/scripts/conversion_gate.py`：Safe / Work 风险分级。
+- `monitor/monitor_upstreams.py`：官方文档/仓库变化检查。
+- `monitor/WORK_TASK_PROMPT.md`：Work 审查与处理规范。
+- `.github/workflows/upstream-monitor.yml`：每天 01:00 唯一上游调度器。
+- `.github/workflows/work-review-finalizer.yml`：Work 完成/拒绝后的 merge、close 和 branch cleanup。
