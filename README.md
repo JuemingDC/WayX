@@ -9,21 +9,37 @@
 ```text
 WayX/
 ├── adblock/
-│   └── <App>/
+│   └── <App-or-Category>/
 │       ├── QuantumultX/
 │       └── Surge/
 ├── module/
 │   └── <App-or-Feature>/
 │       ├── QuantumultX/
 │       └── Surge/
-└── rule/
+├── script/
+│   └── <App-or-Feature>/
+│       ├── QuantumultX/
+│       └── Surge/
+├── rule/
+│   └── QuantumultX/
+└── boxjs/
     └── QuantumultX/
 ```
 
-- `adblock/`：去广告、界面净化、推广内容移除。
-- `module/`：Telegram 重定向、签到、HTTPDNS、兼容工具等功能性内容。
+- `adblock/`：去广告、界面净化、HTTPDNS 屏蔽等广告/干扰项处理。这里保留对应的 `.snippet` / `.sgmodule`。
+- `module/`：非去广告类的功能模块，只放 `.snippet` / `.sgmodule`。
+- `script/`：JavaScript 脚本统一放这里；无论是模块配套脚本还是单脚本，都不放进 `module/`。
 - `rule/`：独立规则集。
-- 每个软件/功能再按 `QuantumultX`、`Surge` 分类。
+- `boxjs/`：BoxJs 配置。
+
+## 当前分类原则
+
+- HTTPDNS → `adblock/HTTPDNS/`
+- 去广告模块 / snippet → `adblock/<App>/`
+- 功能性 module / snippet → `module/<App-or-Feature>/`
+- JavaScript → `script/<App-or-Feature>/`
+- 独立规则 → `rule/`
+- BoxJs JSON → `boxjs/`
 
 ## 转换原则
 
@@ -39,13 +55,7 @@ WayX/
 
 只有目标平台没有等价原生能力时，才允许换用脚本，并在文件注释中写明原因。
 
-转换时保留原注释，并追加：
-
-- 转换时间；
-- 作者：chance；
-- 模块分类；
-- 目标平台；
-- 原始来源。
+转换时保留原注释，并追加转换时间、作者 chance、模块分类、目标平台与原始来源。
 
 Quantumult X snippet 按项目约定将分段标题保留为注释形式，例如：
 
