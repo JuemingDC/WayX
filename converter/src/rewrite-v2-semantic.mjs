@@ -266,7 +266,16 @@ export function surgeRejectRewritePlan(ast) {
   if (!['reject','reject_img','reject_dict','reject_array'].includes(action.name)) return unsupported('reject action has no direct Surge mapping');
   const status = action.args[0];
   if (status?.type !== 'number' || !Number.isInteger(status.value) || status.value < 200 || status.value > 599) {
-    return unsupported('Surge Map Local status must be 200...599 for this mapping');
+    return unsupported('reject status must be 200...599 for this mapping');
+  }
+
+  // Ordinary Loon reject(404) is just a normal reject. Surge has a native
+  // URL Rewrite reject action, so do not synthesize a Map Local response.
+  if (action.name === 'reject' && action.args.length === 1 && status.value === 404) {
+    return {
+      ok:true, strategy:'direct', section:'url', pattern:condition.pattern,
+      line:condition.pattern + ' _ reject', notes:condition.notes,
+    };
   }
 
   if (action.name === 'reject_img') {
