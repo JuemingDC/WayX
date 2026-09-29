@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {
   analyzeSafeRewriteV2,
   dependencySpecFromAction,
+  jqDependencySpecFromAction,
   inlineResolvedDependency,
   inspectQxScriptCompatibility,
   listRewriteV2Dependencies,
@@ -20,6 +21,7 @@ import {
   renderQxMockFileScript,
   LOON_REWRITE_V2_ACTIONS,
   minifyJq,
+  minifyJqFile,
   mergeBoxJsSubscription,
   parseLoonArguments,
   parseRewriteV2,
@@ -274,6 +276,47 @@ assert.equal(deps[0].url, 'https://example.com/Plugins/filters/remove-ads.jq');
 const inlinedJq = inlineResolvedDependency(jqFileAst.actions[0], 'del(.ads)', {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
 assert.equal(inlinedJq.action.name, 'response.json.jq');
 assert.equal(inlinedJq.action.args[0].value, 'del(.ads)');
+
+const legacyJqPathAst = parseRewriteV2(
+  'response if ${url} ~= /reddit/i then response.json.jq("jq-path=https://rucu6.pages.dev/JQLang/reddit.jq")'
+);
+const legacyJqSpec = jqDependencySpecFromAction(legacyJqPathAst.actions[0], {
+  pluginSourceUrl:'https://example.com/demo.lpx',
+});
+assert.equal(legacyJqSpec.kind, 'jq');
+assert.equal(legacyJqSpec.legacyAlias, true);
+assert.equal(legacyJqSpec.url, 'https://rucu6.pages.dev/JQLang/reddit.jq');
+const legacyJqDeps = listRewriteV2Dependencies(legacyJqPathAst, {
+  pluginSourceUrl:'https://example.com/demo.lpx',
+});
+assert.equal(legacyJqDeps.length, 1);
+assert.equal(legacyJqDeps[0].legacyAlias, true);
+const legacyJqInline = inlineResolvedDependency(
+  legacyJqPathAst.actions[0],
+  'walk(if type == "object" then . else . end)',
+  {pluginSourceUrl:'https://example.com/demo.lpx'},
+);
+assert.equal(legacyJqInline.action.name, 'response.json.jq');
+assert.equal(
+  legacyJqInline.action.args[0].value,
+  'walk(if type == "object" then . else . end)',
+);
+assert.doesNotMatch(legacyJqInline.action.args[0].value, /^jq-path=/);
+
+const jqFileWithComments = `# file comment
+walk(
+  if .tag == "#keep" then
+    # executable comment
+    .value
+  else . end
+)`;
+const minifiedJqFile = minifyJqFile(jqFileWithComments);
+assert.equal(
+  minifiedJqFile,
+  'walk(if .tag == "#keep" then .value else . end)',
+);
+assert.match(minifiedJqFile, /"#keep"/);
+assert.doesNotMatch(minifiedJqFile, /file comment|executable comment/);
 
 const mockFileAst = parseRewriteV2('response if ${url} ~= /api/ then response.body.mock_file("json", "mock.json", 200)');
 const mockSpec = dependencySpecFromAction(mockFileAst.actions[0], {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
