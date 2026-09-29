@@ -16,8 +16,8 @@ Implemented on `work/semantic-rewrite-mock-20260929` / PR #5:
   - response -> `script-echo-response`;
   - request text body -> `script-request-body`;
   - plugin-relative files resolve against the plugin URL;
-  - response binary files use `$task.fetch(...).bodyBytes`, which is demonstrated in the official Quantumult X bytes-rewrite sample;
-  - Base64 response files are decoded inside the generated script;
+  - mock-file dependencies are fetched/materialized during conversion and embedded into the generated QX script, so the QX rewrite does not perform a second network fetch;
+  - response binary/Base64 files are embedded as Base64 and decoded to the official QX `bodyBytes` output form inside the generated script;
   - request binary/bodyBytes remains disabled until an official request-body example proves that exact output contract.
 - Explicit source-level QX rejection and unported Loon-only `$utils` are hard blockers. A WayX adaptation/fork URL cannot override them; the original Loon script declaration remains commented in QX output.
 - PR #5 Converter Check passed after these changes.
@@ -66,7 +66,7 @@ Official behavior rechecked during this phase:
 
 - Bilibili protobuf is treated as **unsupported in QX output**, not as a pending fork: the source explicitly rejects QX and depends on `$utils.ungzip`, so WayX preserves the Loon declaration as comments and emits no executable QX line.
 - Parsing or dependency resolution alone never promotes complex Rewrite v2 rules to Safe Tier.
-- Binary response `mock_file` is preserved as bytes through the official QX `bodyBytes` path; binary request `mock_file` remains disabled until its exact QX request-body output contract is officially evidenced.
+- Binary response `mock_file` is materialized during conversion, embedded losslessly as Base64, and restored through the official QX `bodyBytes` output path; binary request `mock_file` remains disabled until its exact QX request-body output contract is officially evidenced.
 
 ## Next work
 
