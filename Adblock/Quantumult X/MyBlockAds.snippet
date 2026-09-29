@@ -4,7 +4,7 @@
 #!icon=https://rucu6.pages.dev/Icons/app/myblockads.png
 #!date=2026-09-27 18:30
 #!loon_version=3.5.1(978)
-# Converted: 2026-09-29 12:07:28 +08:00
+# Converted: 2026-09-29 12:17:25 +08:00
 # Converted by: chance
 # Category: 去广告 / Loon Plugin Conversion
 # Source: https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Loon/RuCu6/myblockads.lpx
@@ -433,7 +433,7 @@ host, yandexmetrica.com, reject
 ^[hH][tT][tT][pP][sS]:\/\/[hH][oO][mM][eE]\.[mM][iI]\.[cC][oO][mM]\/[cC][gG][iI]-[oO][pP]\/[aA][pP][iI]\/[vV]1\/[rR][eE][cC][oO][mM][mM][eE][nN][dD][aA][tT][iI][oO][nN]\/(?:[bB][aA][nN][nN][eE][rR]|[cC][aA][rR][oO][uU][sS][eE][lL]\/[bB][aA][nN][nN][eE][rR][sS]|[mM][yY][tT][aA][bB]|[oO][pP][eE][nN][iI][nN][gG][bB][aA][nN][nN][eE][rR]) url reject-dict
 
 # Reddit //gql.reddit.com, gql-fed.reddit.com
-^[hH][tT][tT][pP][sS]:\/\/[gG][qQ][lL](-[fF][eE][dD])?\.[rR][eE][dD][dD][iI][tT]\.[cC][oO][mM] url jsonjq-response-body 'jq-path=https://rucu6.pages.dev/JQLang/reddit.jq'
+^[hH][tT][tT][pP][sS]:\/\/[gG][qQ][lL](-[fF][eE][dD])?\.[rR][eE][dD][dD][iI][tT]\.[cC][oO][mM] url jsonjq-response-body 'walk(if type=="object" then (if .isNsfw==true then .isNsfw=false else . end)|(if .isNsfwMediaBlocked==true then .isNsfwMediaBlocked=false else . end)|(if .isNsfwContentShown==false then .isNsfwContentShown=true else . end)|(if (.commentsPageAds|type=="array") then (.commentsPageAds=[]) else . end)|(if ((.node|type=="object") and (.node.cells|type=="array") and (.node.cells|any(.__typename?=="AdMetadataCell" or .isAdPost?==true))) then empty else . end)|(if (.node|type=="object") and (.node.adPayload|type=="object") then empty else . end)|(if .__typename=="AdPost" then empty else . end) else . end)'
 
 # 太平洋寿险 //a.cpiccdn.com
 ^[hH][tT][tT][pP][sS]:\/\/[aA]\.[cC][pP][iI][cC][cC][dD][nN]\.[cC][oO][mM]\/[cC][oO][nN][fF][iI][gG]-[cC][eE][nN][tT][eE][rR]\/[aA][pP][iI]\/[cC][oO][nN][fF][iI][gG][fF][iI][lL][eE]\/[iI][mM][aA][gG][eE][sS]\/\d{8}\/\d{13}_(?:(?:630|945|1035)_\d{2,4}|123_48|136_136|207_210|408_408|750_750|1125_\d{4})\.([gG][iI][fF]|[jJ][pP][gG]|[pP][nN][gG])$ url reject-dict

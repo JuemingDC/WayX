@@ -6,7 +6,7 @@
 # Original Loon metadata: #!icon=https://rucu6.pages.dev/Icons/app/myblockads.png
 # Original Loon metadata: #!date=2026-09-27 18:30
 # Original Loon metadata: #!loon_version=3.5.1(978)
-# Converted: 2026-09-29 12:07:28 +08:00
+# Converted: 2026-09-29 12:17:25 +08:00
 # Author: chance
 # Category: 去广告 / Loon Plugin Conversion
 # Target: Surge
@@ -378,7 +378,7 @@ http-response-jq ^[hH][tT][tT][pP][sS]:\/\/[wW][wW][wW]\.[wW][aA][sS][hH][pP][aA
 http-response-jq ^[hH][tT][tT][pP][sS]:\/\/[mM][mM][eE]\.[aA][pP][iI]\.[mM][oO][jJ][iI]\.[cC][oO][mM]\/[jJ][sS][oO][nN]\/[eE][nN][tT][rR][aA][nN][cC][eE]\/[lL][iI][sS][tT]$ 'del(.entrance_region_res_list[] | select(.region_name == "皇冠区域" or .region_name == "banner区")) | .entrance_region_res_list[].entrance_res_list |= if . then map(select(.entrance_name | . != "墨迹钱包" and . != "墨圈")) else . end'
 
 # Reddit //gql.reddit.com, gql-fed.reddit.com
-http-response-jq ^[hH][tT][tT][pP][sS]:\/\/[gG][qQ][lL](-[fF][eE][dD])?\.[rR][eE][dD][dD][iI][tT]\.[cC][oO][mM] 'jq-path=https://rucu6.pages.dev/JQLang/reddit.jq'
+http-response-jq ^[hH][tT][tT][pP][sS]:\/\/[gG][qQ][lL](-[fF][eE][dD])?\.[rR][eE][dD][dD][iI][tT]\.[cC][oO][mM] 'walk(if type=="object" then (if .isNsfw==true then .isNsfw=false else . end)|(if .isNsfwMediaBlocked==true then .isNsfwMediaBlocked=false else . end)|(if .isNsfwContentShown==false then .isNsfwContentShown=true else . end)|(if (.commentsPageAds|type=="array") then (.commentsPageAds=[]) else . end)|(if ((.node|type=="object") and (.node.cells|type=="array") and (.node.cells|any(.__typename?=="AdMetadataCell" or .isAdPost?==true))) then empty else . end)|(if (.node|type=="object") and (.node.adPayload|type=="object") then empty else . end)|(if .__typename=="AdPost" then empty else . end) else . end)'
 http-response-jq ^[hH][tT][tT][pP][sS]:\/\/[aA][pP][iI]\.[xX][iI][aA][cC][hH][uU][fF][aA][nN][gG]\.[cC][oO][mM]\/[vV]2\/[hH][oO][mM][eE][pP][aA][gG][eE]\/[pP][aA][gG][eE][dD]_[wW][aA][tT][eE][rR][fF][aA][lL][lL]_[rR][eE][cC][oO][mM][mM][eE][nN][dD][aA][tT][iI][oO][nN][sS]\.[jJ][sS][oO][nN] '.multiplex_cells |= map(select(.recommendation_cell.label != "广告"))'
 
 # 小米商城 //api.m.mi.com, shop-api.retail.mi.com, xiaomishop.retail.mi.com
