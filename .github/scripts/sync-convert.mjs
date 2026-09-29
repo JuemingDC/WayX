@@ -29,7 +29,6 @@ const TARGET_ROOT = path.join(ROOT, 'Adblock');
 const SCRIPT_DIR = path.join(ROOT, 'script');
 const RAW_BASE = 'https://raw.githubusercontent.com/JuemingDC/WayX/main';
 const UA = 'StashCore/2.7.1 Stash/2.7.1 Clash/1.11.0';
-const MIRRORS = ['git.repcz.link', 'git.unx.indevs.in'];
 
 const nowCN = () => new Intl.DateTimeFormat('sv-SE', {
   timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit',
@@ -67,27 +66,22 @@ async function fetchBytes(url, timeoutMs = 20000) {
   } finally { clearTimeout(timer); }
 }
 
-function candidates(url) {
-  if (!url.includes('https://kelee.one/')) return [url];
-  const suffix = url.slice('https://kelee.one'.length);
-  return [
-    ...MIRRORS.map(h => `https://${h}/kelee.one${suffix}`),
-    url,
-  ];
+function candidates(url, mirrors=[]) {
+  return [...new Set([...(mirrors || []), url].map(x=>String(x).trim()).filter(Boolean))];
 }
 
-async function fetchWithFallback(url) {
+async function fetchWithFallback(url, mirrors=[]) {
   const errors = [];
-  for (const candidate of candidates(url)) {
+  for (const candidate of candidates(url, mirrors)) {
     try { return { text: await fetchText(candidate), fetchedFrom: candidate }; }
     catch (e) { errors.push(`${candidate}: ${e.message}`); }
   }
   throw new Error(`all sources failed\n${errors.join('\n')}`);
 }
 
-async function fetchBytesWithFallback(url) {
+async function fetchBytesWithFallback(url, mirrors=[]) {
   const errors = [];
-  for (const candidate of candidates(url)) {
+  for (const candidate of candidates(url, mirrors)) {
     try { return { bytes: await fetchBytes(candidate), fetchedFrom: candidate }; }
     catch (e) { errors.push(`${candidate}: ${e.message}`); }
   }
@@ -632,7 +626,7 @@ async function main() {
   for (const entry of manifest) {
     try {
       console.log(`\n== ${entry.id} ==`);
-      const { text, fetchedFrom } = await fetchWithFallback(entry.source);
+      const { text, fetchedFrom } = await fetchWithFallback(entry.source, entry.mirrors);
       const source = cleanSource(text);
       if (!/^#!name=/m.test(source) || !/^\[[^\]]+\]/m.test(source)) throw new Error('downloaded content is not a valid Loon plugin');
       const sourcePath = path.join(RESOURCE_DIR, entry.file);
