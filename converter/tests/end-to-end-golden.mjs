@@ -39,8 +39,8 @@ const responseHeaderLines = headerGroupOutput.qx.split(/\\r?\\n/).filter(line =>
 assert.equal(responseHeaderLines.length, 1, 'same-condition response Header actions must share one QX response-header hook');
 const headerGroupScripts = [...headerGroupOutput.generatedScripts.values()];
 assert.equal(headerGroupScripts.length, 1, 'grouped Header actions should generate one helper');
-assert.match(headerGroupScripts[0], /__wayxAdd\\("content-disposition", "inline"\\);/);
-assert.match(headerGroupScripts[0], /__wayxSet\\("content-type", "text\\/plain; charset=utf-8"\\);/);
+assert.match(headerGroupScripts[0], /__wayxAdd\("content-disposition", "inline"\);/);
+assert.match(headerGroupScripts[0], /__wayxSet\("content-type", "text\/plain; charset=utf-8"\);/);
 assert.ok(
   headerGroupScripts[0].indexOf('__wayxAdd("content-disposition", "inline");') <
   headerGroupScripts[0].indexOf('__wayxSet("content-type", "text/plain; charset=utf-8");'),
