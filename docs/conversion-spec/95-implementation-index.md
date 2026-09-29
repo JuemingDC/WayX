@@ -13,7 +13,7 @@
 | 50 | JSON/JQ/mock/dependency | `jq.mjs`, `dependency.mjs`, `qx-mock.mjs`, `legacy-rewrite.mjs` | `checkpoint.mjs`, end-to-end Golden |
 | 60 | Script declaration / Argument / compatibility | `script.mjs`, `script-compat.mjs`, `script-v2.mjs`, `script-v2-target.mjs`, `argument.mjs` | `rucu6-script-v2-coverage.mjs`, `checkpoint.mjs` |
 | 70 | MITM / comments / metadata | `mitm.mjs`, `metadata.mjs`, `sync-convert.mjs` comment pipeline | `checkpoint.mjs`, QX/Surge validators |
-| 80 | Review / validator / Golden / reconciliation | `validateQX`, `validateSurgeModule`, repository audit | genericity, Golden, canonical consistency |
+| 80 | Review / validator / Golden / reconciliation | `validateQX`, `validateSurgeModule`, repository audit | genericity, Golden, `generated-helper-refs.mjs`, canonical consistency |
 | 90 | 拉源→依赖→转换→生成→审核/提交 | `.github/sources/loon.json`, `sync-convert.mjs`, `upstream-monitor.yml`, `converter-check.yml` | full CI |
     
 ## 固定端到端数据流
@@ -28,8 +28,9 @@
 → QX snippet + Surge sgmodule renderer
 → QX validator + Surge validator
 → source/target reconciliation + genericity/golden checks
-→ canonical regeneration consistency
-→ Safe Tier commit OR work-review PR
+→ canonical + generated-helper regeneration consistency
+→ same-repo PR: deterministic canonical/helper commit
+→ scheduled upstream flow: Safe Tier commit OR work-review PR
 ```
 
 任何第二份插件清单、按插件名分支、按当前工作分支名自动修 canonical 的逻辑都违反本索引和 Block 05/90。
