@@ -1,6 +1,6 @@
-// Loon [Argument] parser and optional descriptor generation
+// Loon [Argument] parser for dependency analysis only
 // Author: chance
-// Category: Converter / Argument / BoxJs
+// Category: Converter / Argument Parser
 import { splitTopLevelCsv } from './rule.mjs';
 
 function unquote(s) {
@@ -46,63 +46,4 @@ export function parseLoonArguments(lines = []) {
     });
   }
   return args;
-}
-
-export function boxJsKey(entryId, argId) {
-  return `wayx.${String(entryId).toLowerCase()}.${argId}`;
-}
-
-export function renderBoxJsApp(entry, argumentLines = []) {
-  const args = parseLoonArguments(argumentLines);
-  if (!args.length) return null;
-
-  const settings = args.map(arg => {
-    const base = {
-      id: boxJsKey(entry.id, arg.id),
-      name: arg.tag,
-      val: arg.valueType === 'boolean' ? /^(true|1)$/i.test(arg.defaultValue) : arg.defaultValue,
-      desc: arg.desc || `Loon [Argument] ${arg.id}`,
-    };
-    if (arg.kind === 'switch') return { ...base, type: 'boolean' };
-    if (arg.kind === 'select') {
-      return {
-        ...base,
-        type: 'selects',
-        items: arg.values.map(v => ({ key: v, label: v })),
-      };
-    }
-    return { ...base, type: 'text' };
-  });
-
-  return {
-    id: `juemingdc.${String(entry.id).toLowerCase()}.qx`,
-    name: entry.name || entry.id,
-    descs_html: ['由 WayX Converter 从 Loon [Argument] 生成；Quantumult X snippet 不直接承载配置项。'],
-    keys: settings.map(x => x.id),
-    settings,
-    author: '@JuemingDC',
-    repo: 'https://github.com/JuemingDC/WayX',
-    _wayx: {
-      managed: true,
-      source_arguments: args.map(x => ({
-        id: x.id,
-        key: boxJsKey(entry.id, x.id),
-        default: x.defaultValue,
-        value_type: x.valueType,
-      })),
-    },
-  };
-}
-
-export function mergeBoxJsSubscription(subscription, generatedApps = []) {
-  const out = JSON.parse(JSON.stringify(subscription || {}));
-  const incoming = generatedApps.filter(Boolean);
-  const incomingIds = new Set(incoming.map(app => app.id));
-  const existing = Array.isArray(out.apps) ? out.apps : [];
-
-  out.apps = [
-    ...existing.filter(app => !app?._wayx?.managed && !incomingIds.has(app?.id)),
-    ...incoming,
-  ];
-  return out;
 }
