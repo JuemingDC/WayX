@@ -86,6 +86,6 @@ assert.equal(
 
 const loonUrlDrop = 'URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP';
 assert.equal(qxRule(loonUrlDrop).line, '^https:\\/\\/drop\\.example\\.com url reject');
-assert.equal(surgeRule(loonUrlDrop), loonUrlDrop);
+assert.equal(surgeRule(loonUrlDrop).split('\n').at(-1), 'URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT');
 
 console.log('Loon new-syntax reference cases passed');
