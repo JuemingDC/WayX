@@ -3,7 +3,9 @@ import {
   analyzeSafeRewriteV2,
   LOON_REWRITE_V2_ACTIONS,
   minifyJq,
+  mergeBoxJsSubscription,
   parseLoonArguments,
+  renderQxPrefsObjectBridge,
   parseRewriteV2,
   qxPrimitiveForRewriteV2Action,
   qxRule,
@@ -43,6 +45,26 @@ assert.equal(args[1].values[1], 'zh-Hant');
 const app = renderBoxJsApp({id:'Demo',name:'Demo'}, ['Capture=switch, false, true, tag="捕获"']);
 assert.equal(app.settings[0].type, 'boolean');
 assert.equal(app.settings[0].id, 'wayx.demo.Capture');
+
+const managedApp = renderBoxJsApp({id:'Tieba',name:'百度贴吧去广告'}, [
+  'per_filter_video_thread=select, "true", "false", tag=拦截推荐页面视频帖',
+]);
+const mergedBoxJs = mergeBoxJsSubscription(
+  {id:'juemingdc.qx.sub',apps:[{id:'keep.me',name:'Keep'}]},
+  [managedApp],
+);
+assert.equal(mergedBoxJs.apps.length, 2);
+assert.equal(mergedBoxJs.apps[0].id, 'keep.me');
+assert.equal(mergedBoxJs.apps[1].settings[0].id, 'wayx.tieba.per_filter_video_thread');
+const prefBridge = renderQxPrefsObjectBridge(
+  'Tieba',
+  ['per_filter_video_thread=select, "true", "false", tag=拦截推荐页面视频帖'],
+  ['per_filter_video_thread'],
+  {per_filter_video_thread:'boolean'},
+);
+assert.match(prefBridge, /\$prefs\.valueForKey/);
+assert.match(prefBridge, /wayx\.tieba\.per_filter_video_thread/);
+assert.match(prefBridge, /const \$argument =/);
 
 const simpleV2 = parseRewriteV2('request if ${url} ~= /^https:\\/\\/ad\\.example\\.com/i as hit then reject_dict(200)');
 assert.equal(simpleV2.phase, 'request');
