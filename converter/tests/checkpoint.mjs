@@ -153,6 +153,19 @@ const genericReject = inspectQxScriptCompatibility({
 });
 assert.equal(genericReject.executable, false);
 
+const surgeOnlyScript = inspectQxScriptCompatibility({
+  scriptUrl:'https://example.com/surge-only.js',
+  sourceText:'$httpClient.get("https://example.com", () => $done({})); const x=$persistentStore.read("x");',
+});
+assert.equal(surgeOnlyScript.executable, false);
+assert.match(surgeOnlyScript.reason, /\$httpClient/);
+
+const dualRuntimeScript = inspectQxScriptCompatibility({
+  scriptUrl:'https://example.com/cross-platform.js',
+  sourceText:'const isQX = typeof $task !== "undefined"; if (isQX) $task.fetch({url:"https://example.com"}); else $httpClient.get("https://example.com",()=>{});',
+});
+assert.equal(dualRuntimeScript.executable, true);
+
 const jqFileAst = parseRewriteV2('response if ${url} ~= /api/ then response.json.jq_file("filters/remove-ads.jq")');
 const deps = listRewriteV2Dependencies(jqFileAst, {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
 assert.equal(deps.length, 1);
@@ -389,7 +402,7 @@ assert.deepEqual(surgeV2Bridge.moduleArgumentIds.sort(), ['enabled','lang']);
 assert.match(surgeV2Bridge.declarationArgument, /\{\{\{enabled\}\}\}/);
 assert.match(surgeV2Bridge.declarationArgument, /\{\{\{lang\}\}\}/);
 assert.match(surgeV2Bridge.source, /JSON\.parse\(\$argument/);
-assert.match(surgeV2Bridge.source, /function\(\$argument\)/);
+assert.match(surgeV2Bridge.source, /async function\(\$argument\)/);
 
 const surgeArgMeta = renderSurgeModuleArguments(scriptBridgeArgs, ['enabled','lang']);
 assert.equal(surgeArgMeta[0], '#!arguments=enabled:false,lang:zh-Hans');
