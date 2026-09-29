@@ -9,6 +9,8 @@ import {
   scriptOptionBoolean,
   qxScriptV2Plan,
   surgeScriptV2Plan,
+  renderQxScriptV2Bridge,
+  renderSurgeScriptV2Bridge,
 } from '../src/index.mjs';
 
 const ROOT = process.cwd();
@@ -40,10 +42,13 @@ const report = {
   scriptUrls: {},
   qxPlans: {},
   surgePlans: {},
+  bridgeValidation: {qx:0, surge:0, errors:[]},
 };
 
 for (const name of files) {
   const text = await fs.readFile(path.join(DIR, name), 'utf8');
+  const argumentLines = sectionLines(text, 'Argument').filter(line => line.trim());
+  const entryId = name.replace(/\.lpx$/i, '');
   for (const raw of sectionLines(text, 'Script')) {
     const line = raw.trim();
     if (!line || line.startsWith('#') || line.startsWith(';') || line.startsWith('//')) continue;
@@ -66,6 +71,38 @@ for (const name of files) {
       }
       const qxPlan = qxScriptV2Plan(ast, {scriptUrl:ast.script.path, sourceText:''});
       const surgePlan = surgeScriptV2Plan(ast, {scriptUrl:ast.script.path, name:'coverage'});
+
+      if (!qxPlan.ok || !surgePlan.ok) {
+        try {
+          const qxBridge = renderQxScriptV2Bridge(entryId, argumentLines, ast, '$done({});');
+          if (qxBridge.changed) {
+            const bridged = qxScriptV2Plan(ast, {
+              scriptUrl:'https://example.invalid/bridge.js',
+              sourceText:'$done({});',
+              bridgeReady:true,
+            });
+            assert.equal(bridged.ok, true);
+            report.bridgeValidation.qx++;
+          }
+        } catch (error) {
+          report.bridgeValidation.errors.push({file:name, target:'qx', line, error:String(error?.message || error).split('\n')[0]});
+        }
+        try {
+          const surgeBridge = renderSurgeScriptV2Bridge(argumentLines, ast, '$done({});');
+          if (surgeBridge.changed) {
+            const bridged = surgeScriptV2Plan(ast, {
+              scriptUrl:'https://example.invalid/bridge.js',
+              name:'coverage',
+              bridgeReady:true,
+              declarationArgument:surgeBridge.declarationArgument,
+            });
+            assert.equal(bridged.ok, true);
+            report.bridgeValidation.surge++;
+          }
+        } catch (error) {
+          report.bridgeValidation.errors.push({file:name, target:'surge', line, error:String(error?.message || error).split('\n')[0]});
+        }
+      }
       const qxKey = qxPlan.ok ? (qxPlan.disabled ? 'disabled' : qxPlan.strategy) : 'REVIEW: ' + qxPlan.reason;
       const surgeKey = surgePlan.ok ? (surgePlan.disabled ? 'disabled' : surgePlan.strategy) : 'REVIEW: ' + surgePlan.reason;
       report.qxPlans[qxKey] = (report.qxPlans[qxKey] || 0) + 1;
@@ -86,5 +123,6 @@ for (const name of files) {
 assert.ok(report.scriptLines > 0, 'Expected RuCu6 Script entries');
 assert.equal(report.parseErrors.length, 0, 'Current RuCu6 [Script] entries must parse as Script v2');
 assert.equal(report.scriptLines, report.scriptV2);
+assert.equal(report.bridgeValidation.errors.length, 0, 'All current Script v2 [Argument] references must build target bridges');
 console.log('RuCu6 Script v2 coverage:');
 console.log(JSON.stringify(report, null, 2));
