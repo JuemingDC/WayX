@@ -143,7 +143,7 @@ function assertOfflineDependencies(entry, source) {
   }
 }
 
-const manifest = [...JSON.parse(await fs.readFile(MANIFEST, 'utf8')), ...EXTRA_LOCAL_ENTRIES];
+const manifest = JSON.parse(await fs.readFile(MANIFEST, 'utf8'));
 const dependencyCache = await loadDependencyCache();
 const changed = [];
 const failures = [];
