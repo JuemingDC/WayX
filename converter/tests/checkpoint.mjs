@@ -209,6 +209,12 @@ const identityActionB = selectQxScriptAction({
 });
 assert.equal(identityActionA.action, identityActionB.action);
 assert.equal(identityActionA.action, 'script-analyze-echo-response');
+const crossPlatformEcho = selectQxScriptAction({
+  phase:'http-request',
+  requiresBody:true,
+  sourceText:'const b=$request.body; const q=typeof $task!=="undefined"; if(q)$done({body:b}); else $done({response:{body:b}});',
+});
+assert.equal(crossPlatformEcho.action, 'script-analyze-echo-response');
 
 assert.equal(qxTargetPath({qx:'A.snippet'}), 'Adblock/Quantumult X/A.snippet');
 assert.equal(surgeTargetPath({surge:'A.sgmodule'}), 'Adblock/Surge/A.sgmodule');
