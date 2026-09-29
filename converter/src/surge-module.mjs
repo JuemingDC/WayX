@@ -24,9 +24,6 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
     if (/\\\//.test(value)) {
       throw new Error(`${entry.id}: Surge URL pattern must use bare '/' instead of Loon/JS '\\/' escaping: ${line}`);
     }
-    if (/^\(\^/.test(value)) {
-      throw new Error(`${entry.id}: Surge URL pattern must use '^(...)' instead of '(^...)': ${line}`);
-    }
   };
 
   const allowedTopDirectives = [
