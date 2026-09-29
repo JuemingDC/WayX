@@ -94,9 +94,9 @@ export function compileRegexForTarget(regex, { subject = 'url' } = {}) {
   }
 
   if (flags.includes('m') || flags.includes('s')) {
-    if (subject !== 'url') return fail('m/s regex flags require target-specific body/header regex semantics');
-    // An HTTP URL cannot contain a literal CR/LF. For URL matching, multiline
-    // anchors and dotAll therefore do not change the match set.
+    if (!['url','header'].includes(subject)) return fail('m/s regex flags require target-specific body regex semantics');
+    // An HTTP URL or valid individual header value cannot contain a literal CR/LF.
+    // For those subjects, multiline anchors and dotAll do not change the match set.
     notes.push(flags.includes('m') ? 'm-elided-for-url' : null, flags.includes('s') ? 's-elided-for-url' : null);
   }
 
