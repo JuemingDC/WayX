@@ -1,7 +1,63 @@
-// WayX remote script declaration conversion
+// WayX generic remote-script declaration conversion
 // Author: chance
 // Category: Converter / Script
-const QX_SCRIPT_OVERRIDES=[{test:url=>/\/Scripts\/12306\.js(?:\?|$)/i.test(url),action:'script-analyze-echo-response',reason:'12306 reads request body and returns analyzed echo response; QX analyze-echo-response waits for request body'},{test:url=>/\/Scripts\/header\.js(?:\?|$)/i.test(url),action:'script-response-header',reason:'RuCu6 header.js uses the verified QX response-header mapping'}];
-export function selectQxScriptAction({phase,requiresBody=false,scriptUrl='',sourceText=''}){for(const override of QX_SCRIPT_OVERRIDES)if(override.test(scriptUrl))return{action:override.action,reason:override.reason,override:true};const p=String(phase).toLowerCase().replace(/^http-/,'');if(!['request','response'].includes(p))throw new Error(`Unsupported QX HTTP script phase: ${phase}`);if(p==='request')return{action:requiresBody?'script-request-body':'script-request-header',reason:sourceText?'generic request script after source inspection; no registered echo-response behavior':'generic request script; source inspection required before Safe Tier',override:false};return{action:requiresBody?'script-response-body':'script-response-header',reason:'native QX response script mapping',override:false}}
-export function hasExplicitQxRejection(sourceText){const s=String(sourceText||'');return/quantumult\s*x[^\n]{0,80}(?:not\s+support|unsupported|not\s+supported)/i.test(s)||/(?:not\s+support|unsupported|not\s+supported)[^\n]{0,80}quantumult\s*x/i.test(s)}
-export{QX_SCRIPT_OVERRIDES};
+//
+// Script action selection is based only on declaration semantics and inspected
+// source behavior. Script URL, plugin id, author and repository never select an
+// action.
+
+export function scriptBehaviorSignals(sourceText='') {
+  const source=String(sourceText || '');
+  return {
+    sourceAvailable:Boolean(source.trim()),
+    readsRequestBody:/\$request\.(?:body|bodyBytes)\b/.test(source),
+    readsResponseBody:/\$response\.(?:body|bodyBytes)\b/.test(source),
+    returnsHttpResponse:/\$done\s*\(\s*\{[\s\S]{0,800}\b(?:status|statusCode)\s*:/.test(source),
+  };
+}
+
+export function selectQxScriptAction({phase,requiresBody=false,sourceText=''}) {
+  const p=String(phase).toLowerCase().replace(/^http-/,'');
+  if(!['request','response'].includes(p)) throw new Error(`Unsupported QX HTTP script phase: ${phase}`);
+
+  const signals=scriptBehaviorSignals(sourceText);
+
+  if(p==='request') {
+    if(signals.returnsHttpResponse) {
+      const waitsForBody=Boolean(requiresBody || signals.readsRequestBody);
+      return {
+        action:waitsForBody ? 'script-analyze-echo-response' : 'script-echo-response',
+        reason:waitsForBody
+          ? 'request-phase source constructs an HTTP response and reads/requires request body'
+          : 'request-phase source constructs an HTTP response without request-body dependency',
+        override:false,
+        signals,
+      };
+    }
+    const needsBody=Boolean(requiresBody || signals.readsRequestBody);
+    return {
+      action:needsBody ? 'script-request-body' : 'script-request-header',
+      reason:needsBody
+        ? 'request-phase script reads/requires request body'
+        : 'request-phase script does not require request body',
+      override:false,
+      signals,
+    };
+  }
+
+  const needsBody=Boolean(requiresBody || signals.readsResponseBody);
+  return {
+    action:needsBody ? 'script-response-body' : 'script-response-header',
+    reason:needsBody
+      ? 'response-phase script reads/requires response body'
+      : 'response-phase script does not require response body',
+    override:false,
+    signals,
+  };
+}
+
+export function hasExplicitQxRejection(sourceText){
+  const s=String(sourceText||'');
+  return /quantumult\s*x[^\n]{0,120}(?:not\s+support|unsupported|not\s+supported)/i.test(s) ||
+    /(?:not\s+support|unsupported|not\s+supported)[^\n]{0,120}quantumult\s*x/i.test(s);
+}
