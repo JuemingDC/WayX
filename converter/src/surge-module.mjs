@@ -1,7 +1,7 @@
 // WayX Surge Module formatter / validator
 // Author: chance
 // Category: Converter / Surge Module
-import { splitTopLevelCsv, surgePolicyIndex, SURGE_MODULE_POLICIES, SURGE_RULE_TYPES } from './rule.mjs';
+import { splitTopLevelCsv, surgePolicyIndex, surgeRuleTypesInTree, SURGE_MODULE_POLICIES } from './rule.mjs';
 
 export function hasActiveSurgeLines(lines = []) {
   return lines.some(raw => {
@@ -93,9 +93,9 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
 
     if (current === 'Rule') {
       const parts = splitTopLevelCsv(line);
-      const type = String(parts[0] || '').toUpperCase();
-      if (!SURGE_RULE_TYPES.has(type)) {
-        throw new Error(`${entry.id}: unsupported Surge rule type in module: ${line}`);
+      const typeTree = surgeRuleTypesInTree(line);
+      if (!typeTree.ok) {
+        throw new Error(`${entry.id}: unsupported Surge rule type/combination in module (${typeTree.reason}): ${line}`);
       }
       const policyIndex = surgePolicyIndex(parts);
       const policy = String(parts[policyIndex] || '').toUpperCase();
