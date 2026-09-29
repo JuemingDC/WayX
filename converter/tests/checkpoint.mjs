@@ -222,9 +222,10 @@ assert.match(redirectScript.script, /__wayxLocation/);
 assert.match(redirectScript.script, /HTTP\/1\.1 302 Found/);
 
 const reject404V2 = parseRewriteV2('request if ${url} ~= /^https:\\/\\/ads\\.example\\.com/i then reject(404)');
-const reject404Script = renderQxRejectScript(reject404V2, {category:'Adblock'});
-assert.equal(reject404Script.qxAction, 'script-echo-response');
-assert.match(reject404Script.script, /HTTP\/1\.1 404 Not Found/);
+const reject404Qx = qxDirectRewritePlan(reject404V2);
+assert.equal(reject404Qx.ok, true);
+assert.match(reject404Qx.line, / url reject$/);
+assert.equal(qxPrimitiveForRewriteV2Action(reject404V2.actions[0]), 'reject');
 
 
 const surgeRedirectV2 = surgeRedirectRewritePlan(redirectV2);
@@ -233,7 +234,13 @@ assert.match(surgeRedirectV2.line, /\$1 302$/);
 
 const surgeReject404 = surgeRejectRewritePlan(reject404V2);
 assert.equal(surgeReject404.ok, true);
-assert.match(surgeReject404.line, /data-type=text data="" status-code=404$/);
+assert.equal(surgeReject404.section, 'url');
+assert.match(surgeReject404.line, / _ reject$/);
+
+const reject451V2 = parseRewriteV2('request if ${url} ~= /blocked/ then reject(451, "blocked")');
+const reject451Script = renderQxRejectScript(reject451V2, {category:'Adblock'});
+assert.equal(reject451Script.qxAction, 'script-echo-response');
+assert.match(reject451Script.script, /HTTP\/1\.1 451 Unavailable For Legal Reasons/);
 
 const qxHeaderV2 = parseRewriteV2('request if ${url} ~= /https:\\/\\/rule\\.example\\.com/i then request.header.set("user-agent", "Loon") | request.header.del("Cookie")');
 const qxHeaderScript = renderQxHeaderScript(qxHeaderV2, {category:'Rewrite'});
