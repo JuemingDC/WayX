@@ -6,7 +6,7 @@
 # Original Loon metadata: #!icon=https://rucu6.pages.dev/Icons/app/myblockads.png
 # Original Loon metadata: #!date=2026-09-27 18:30
 # Original Loon metadata: #!loon_version=3.5.1(978)
-# Converted: 2026-09-29 12:17:25 +08:00
+# Converted: 2026-09-29 12:33:01 +08:00
 # Author: chance
 # Category: 去广告 / Loon Plugin Conversion
 # Target: Surge
@@ -360,170 +360,170 @@ DOMAIN,yandexmetrica.com,REJECT
 
 [URL Rewrite]
 # 爱思助手 //list-app-m.i4.cn
-^[hH][tT][tT][pP][sS]:\/\/[lL][iI][sS][tT]-[aA][pP][pP]-[mM]\.[iI]4\.[cC][nN]\/(?:[aA][dD][cC][lL][iI][cC][kK][cC][bB]|[gG][eE][tT][hH][oO][tT][sS][eE][aA][rR][cC][hH][lL][iI][sS][tT]|[gG][eE][tT][oO][pP][fF][sS][tT][aA][dD][iI][nN][fF][oO])\.[xX][hH][tT][mM][lL] _ reject
+^https:\/\/list-app-m\.i4\.cn\/(?:adclickcb|getHotSearchList|getopfstadinfo)\.xhtml _ reject
 
 # 建设银行
-^[hH][tT][tT][pP]:\/\/[iI][mM][aA][gG][eE]1\.[cC][cC][bB]\.[cC][oO][mM]\/[nN][eE][wW][sS][iI][nN][fF][oO]\/[eE][bB][rR][aA][nN][cC][hH]\/[cC][hH][eE][cC][kK]\/(?:[nN][fF]\/[nN][eE][wW][fF][iI][nN]\/[aA][cC][tT][iI][vV][iI][tT][yY]|[pP][oO]\/[pP][oO][oO][rR][tT][hH][eE][mM][eE]\/[aA][cC][tT][iI][vV][iI][tT][yY])\/\w+\.[pP][nN][gG] _ reject
+^http:\/\/image1\.ccb\.com\/newsinfo\/eBranch\/check\/(?:nf\/newfin\/activity|po\/poortheme\/activity)\/\w+\.png _ reject
 
 # 云闪付 //wallet.95516.com
-^[hH][tT][tT][pP][sS]:\/\/[wW][aA][lL][lL][eE][tT]\.95516\.[cC][oO][mM](:10533)?\/[sS]\/[wW][lL]\/[iI][cC][oO][nN]\/[lL][aA][rR][gG][eE]\/1 _ reject
+^https:\/\/wallet\.95516\.com(:10533)?\/s\/wl\/icon\/large\/1 _ reject
 
 [Body Rewrite]
 
 # 昌原云充 五代十路 //www.washpayer.com
-http-response-jq ^[hH][tT][tT][pP]:\/\/[aA][dD]\.5[tT][aA][oO]5[aA][iI]\.[cC][oO][mM]\/[cC][oO][mM][mM][oO][nN]\/[gG][eE][tT][rR][eE][cC][eE][iI][pP][tT]\? 'delpaths([["payload","adInfo"]])'
-http-response-jq ^[hH][tT][tT][pP][sS]:\/\/[wW][wW][wW]\.[wW][aA][sS][hH][pP][aA][yY][eE][rR]\.[cC][oO][mM]\/[cC][oO][mM][mM][oO][nN]\/[gG][eE][tT][rR][eE][cC][eE][iI][pP][tT] 'delpaths([["payload","adInfo"]])'
+http-response-jq ^http:\/\/ad\.5tao5ai\.com\/common\/getReceipt\? 'delpaths([["payload","adInfo"]])'
+http-response-jq ^https:\/\/www\.washpayer\.com\/common\/getReceipt 'delpaths([["payload","adInfo"]])'
 
 # 墨迹天气 //mme.api.moji.com, sns.api.moji.com
-http-response-jq ^[hH][tT][tT][pP][sS]:\/\/[mM][mM][eE]\.[aA][pP][iI]\.[mM][oO][jJ][iI]\.[cC][oO][mM]\/[jJ][sS][oO][nN]\/[eE][nN][tT][rR][aA][nN][cC][eE]\/[lL][iI][sS][tT]$ 'del(.entrance_region_res_list[] | select(.region_name == "皇冠区域" or .region_name == "banner区")) | .entrance_region_res_list[].entrance_res_list |= if . then map(select(.entrance_name | . != "墨迹钱包" and . != "墨圈")) else . end'
+http-response-jq ^https:\/\/mme\.api\.moji\.com\/json\/entrance\/list$ 'del(.entrance_region_res_list[] | select(.region_name == "皇冠区域" or .region_name == "banner区")) | .entrance_region_res_list[].entrance_res_list |= if . then map(select(.entrance_name | . != "墨迹钱包" and . != "墨圈")) else . end'
 
 # Reddit //gql.reddit.com, gql-fed.reddit.com
-http-response-jq ^[hH][tT][tT][pP][sS]:\/\/[gG][qQ][lL](-[fF][eE][dD])?\.[rR][eE][dD][dD][iI][tT]\.[cC][oO][mM] 'walk(if type=="object" then (if .isNsfw==true then .isNsfw=false else . end)|(if .isNsfwMediaBlocked==true then .isNsfwMediaBlocked=false else . end)|(if .isNsfwContentShown==false then .isNsfwContentShown=true else . end)|(if (.commentsPageAds|type=="array") then (.commentsPageAds=[]) else . end)|(if ((.node|type=="object") and (.node.cells|type=="array") and (.node.cells|any(.__typename?=="AdMetadataCell" or .isAdPost?==true))) then empty else . end)|(if (.node|type=="object") and (.node.adPayload|type=="object") then empty else . end)|(if .__typename=="AdPost" then empty else . end) else . end)'
-http-response-jq ^[hH][tT][tT][pP][sS]:\/\/[aA][pP][iI]\.[xX][iI][aA][cC][hH][uU][fF][aA][nN][gG]\.[cC][oO][mM]\/[vV]2\/[hH][oO][mM][eE][pP][aA][gG][eE]\/[pP][aA][gG][eE][dD]_[wW][aA][tT][eE][rR][fF][aA][lL][lL]_[rR][eE][cC][oO][mM][mM][eE][nN][dD][aA][tT][iI][oO][nN][sS]\.[jJ][sS][oO][nN] '.multiplex_cells |= map(select(.recommendation_cell.label != "广告"))'
+http-response-jq ^https:\/\/gql(-fed)?\.reddit\.com 'walk(if type=="object" then (if .isNsfw==true then .isNsfw=false else . end)|(if .isNsfwMediaBlocked==true then .isNsfwMediaBlocked=false else . end)|(if .isNsfwContentShown==false then .isNsfwContentShown=true else . end)|(if (.commentsPageAds|type=="array") then (.commentsPageAds=[]) else . end)|(if ((.node|type=="object") and (.node.cells|type=="array") and (.node.cells|any(.__typename?=="AdMetadataCell" or .isAdPost?==true))) then empty else . end)|(if (.node|type=="object") and (.node.adPayload|type=="object") then empty else . end)|(if .__typename=="AdPost" then empty else . end) else . end)'
+http-response-jq ^https:\/\/api\.xiachufang\.com\/v2\/homepage\/paged_waterfall_recommendations\.json '.multiplex_cells |= map(select(.recommendation_cell.label != "广告"))'
 
 # 小米商城 //api.m.mi.com, shop-api.retail.mi.com, xiaomishop.retail.mi.com
-http-response-jq ^[hH][tT][tT][pP][sS]:\/\/[aA][pP][iI]\.[mM]\.[mM][iI]\.[cC][oO][mM]\/[vV]1\/[oO][rR][dD][eE][rR]\/[eE][xX][pP][rR][eE][sS][sS][vV][iI][eE][wW] 'delpaths([["data","bottom","ad_info"]])'
-http-response-jq ^[hH][tT][tT][pP][sS]:\/\/[sS][hH][oO][pP]-[aA][pP][iI]\.[rR][eE][tT][aA][iI][lL]\.[mM][iI]\.[cC][oO][mM]\/[mM][tT][oO][pP]\/[aA][cC][tT]\/[mM][iI][sS][hH][oO][pP][sS][eE][aA][rR][cC][hH]\/[mM][aA][iI][nN][sS][eE][aA][rR][cC][hH] 'setpath(["data","recProductList"]; [])'
-http-response-jq ^[hH][tT][tT][pP][sS]:\/\/[sS][hH][oO][pP]-[aA][pP][iI]\.[rR][eE][tT][aA][iI][lL]\.[mM][iI]\.[cC][oO][mM]\/[mM][tT][oO][pP]\/[mM][fF]\/[hH][oO][mM][eE]\/[vV]1\/[iI][nN][dD][eE][xX] 'delpaths([["data","floors",0,"data","left_icon_config"]]) | delpaths([["data","floors",0,"data","right_icon_config"]])'
-http-response-jq ^[hH][tT][tT][pP][sS]:\/\/[sS][hH][oO][pP]-[aA][pP][iI]\.[rR][eE][tT][aA][iI][lL]\.[mM][iI]\.[cC][oO][mM]\/[mM][tT][oO][pP]\/[mM][fF]\/[uU][sS][eE][rR][cC][eE][nN][tT][eE][rR]\/[pP][eE][rR][sS][oO][nN][aA][lL][hH][oO][mM][eE] 'delpaths([["data","carouselAD"]])'
-http-response-jq ^[hH][tT][tT][pP][sS]:\/\/[xX][iI][aA][oO][mM][iI][sS][hH][oO][pP]\.[rR][eE][tT][aA][iI][lL]\.[mM][iI]\.[cC][oO][mM]\/[mM][tT][oO][pP]\/[xX][iI][aA][oO][mM][iI][sS][hH][oO][pP]\/[pP][rR][oO][dD][uU][cC][tT]\/[iI][nN][fF][oO] 'delpaths([["data","carouselAdInfo"]]) | delpaths([["data","product","floatWindow"]])'
-http-response-jq ^[hH][tT][tT][pP][sS]:\/\/[cC][oO][nN][fF]-[mM]-[sS][sS][lL]\.[xX][uU][nN][lL][eE][iI]\.[cC][oO][mM]\/[eE][xX][tT][eE][rR][nN][aA][lL]\/[0-9-a-zA-Z]+\? 'delpaths([["values","me_config","common_service_list"]])'
+http-response-jq ^https:\/\/api\.m\.mi\.com\/v1\/order\/expressView 'delpaths([["data","bottom","ad_info"]])'
+http-response-jq ^https:\/\/shop-api\.retail\.mi\.com\/mtop\/act\/mishopSearch\/mainSearch 'setpath(["data","recProductList"]; [])'
+http-response-jq ^https:\/\/shop-api\.retail\.mi\.com\/mtop\/mf\/home\/v1\/index 'delpaths([["data","floors",0,"data","left_icon_config"]]) | delpaths([["data","floors",0,"data","right_icon_config"]])'
+http-response-jq ^https:\/\/shop-api\.retail\.mi\.com\/mtop\/mf\/usercenter\/personalHome 'delpaths([["data","carouselAD"]])'
+http-response-jq ^https:\/\/xiaomishop\.retail\.mi\.com\/mtop\/xiaomishop\/product\/info 'delpaths([["data","carouselAdInfo"]]) | delpaths([["data","product","floatWindow"]])'
+http-response-jq ^https:\/\/conf-m-ssl\.xunlei\.com\/external\/[0-9-a-z]+\? 'delpaths([["values","me_config","common_service_list"]])'
 
 [Map Local]
 
 # 阿里云盘 //*api.alipan.com, member.alipan.com
-^[hH][tT][tT][pP][sS]:\/\/[aA][pP][iI]\.[aA][lL][iI][pP][aA][nN]\.[cC][oO][mM]\/[aA][dD][rR][iI][vV][eE]\/[vV]1\/[fF][iI][lL][eE]\/[gG][eE][tT][tT][oO][pP][fF][oO][lL][dD][eE][rR][sS] data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[mM][eE][mM][bB][eE][rR]\.[aA][lL][iI][pP][aA][nN]\.[cC][oO][mM]\/[vV]2\/[aA][cC][tT][iI][vV][iI][tT][yY]\/[sS][iI][gG][nN]_[iI][nN]_[lL][uU][cC][kK][yY][bB][oO][tT][tT][lL][eE] data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.alipan\.com\/adrive\/v1\/file\/getTopFolders data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/member\.alipan\.com\/v2\/activity\/sign_in_luckyBottle data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 # 阿里巴巴 //acs.m.taobao.com, heic.alicdn.com, guide-acs.m.taobao.com, poplayer.template.alibaba.com
-^[hH][tT][tT][pP][sS]:\/\/[aA][cC][sS]\.[mM]\.[tT][aA][oO][bB][aA][oO]\.[cC][oO][mM]\/[gG][wW]\/[mM][tT][oO][pP]\.[fF][lL][iI][gG][gG][yY]\.[cC][rR][mM]\.[sS][cC][rR][eE][eE][nN]\.(?:[aA][lL][lL][rR][eE][sS][oO][uU][rR][cC][eE]|[pP][rR][eE][dD][iI][cC][tT]) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[aA][cC][sS]\.[mM]\.[tT][aA][oO][bB][aA][oO]\.[cC][oO][mM]\/[gG][wW]\/[mM][tT][oO][pP]\.[aA][lL][iI][bB][aA][bB][aA]\.[aA][dD][vV][eE][rR][tT][iI][sS][eE][mM][eE][nN][tT][sS][eE][rR][vV][iI][cC][eE]\.[gG][eE][tT][aA][dD][vV] data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[aA][cC][sS]\.[mM]\.[tT][aA][oO][bB][aA][oO]\.[cC][oO][mM]\/[gG][wW]\/[mM][tT][oO][pP]\.[aA][lL][iI][mM][aA][mM][aA]\.[eE][tT][aA][oO]\.[cC][oO][nN][fF][iI][gG]\.[qQ][uU][eE][rR][yY]\/.+?[eE][tT][aA][oO]_[aA][dD][vV][eE][rR][tT][iI][sS][eE] data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[aA][cC][sS]\.[mM]\.[tT][aA][oO][bB][aA][oO]\.[cC][oO][mM]\/[gG][wW]\/[mM][tT][oO][pP]\.[aA][lL][iI][mM][uU][sS][iI][cC]\.[cC][oO][mM][mM][oO][nN]\.[mM][oO][bB][iI][lL][eE][sS][eE][rR][vV][iI][cC][eE]\.[sS][tT][aA][rR][tT][iI][nN][iI][tT] data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[aA][cC][sS]\.[mM]\.[tT][aA][oO][bB][aA][oO]\.[cC][oO][mM]\/[gG][wW]\/[mM][tT][oO][pP]\.[eE][tT][aA][oO]\.[nN][oO][aA][hH]\.[qQ][uU][eE][rR][yY]\/.+[tT][aA][oO]_[sS][pP][lL][aA][sS][hH] data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[aA][cC][sS]\.[mM]\.[tT][aA][oO][bB][aA][oO]\.[cC][oO][mM]\/[gG][wW]\/[mM][tT][oO][pP]\.[fF][iI][lL][mM]\.[mM][tT][oO][pP][aA][dD][vV][eE][rR][tT][iI][sS][eE][aA][pP][iI]\.[qQ][uU][eE][rR][yY][aA][dD][vV][eE][rR][tT][iI][sS][eE] data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[aA][cC][sS]\.[mM]\.[tT][aA][oO][bB][aA][oO]\.[cC][oO][mM]\/[gG][wW]\/[mM][tT][oO][pP]\.[oO]2[oO]\.[aA][dD]\.[gG][aA][tT][eE][wW][aA][yY]\.[gG][eE][tT] data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[aA][cC][sS]\.[mM]\.[tT][aA][oO][bB][aA][oO]\.[cC][oO][mM]\/[gG][wW]\/[mM][tT][oO][pP]\.[tT][rR][iI][pP]\.[aA][cC][tT][iI][vV][iI][tT][yY]\.[qQ][uU][eE][rR][yY][tT][mM][sS][rR][eE][sS][oO][uU][rR][cC][eE][sS] data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[gG][uU][iI][dD][eE]-[aA][cC][sS]\.[mM]\.[tT][aA][oO][bB][aA][oO]\.[cC][oO][mM]\/[gG][wW]\/[mM][tT][oO][pP]\.[cC][aA][iI][nN][iI][aA][oO]\.[aA][dD][xX]\.[fF][lL][yY][aA][dD]\.[gG][eE][tT][aA][dD] data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[gG][uU][iI][dD][eE]-[aA][cC][sS]\.[mM]\.[tT][aA][oO][bB][aA][oO]\.[cC][oO][mM]\/[gG][wW]\/[mM][tT][oO][pP]\.[rR][eE][lL][aA][tT][iI][oO][nN][rR][eE][cC][oO][mM][mM][eE][nN][dD]\.[pP][aA][iI][lL][iI][tT][aA][oO][rR][eE][cC][oO][mM][mM][eE][nN][dD]\.[rR][eE][cC][oO][mM][mM][eE][nN][dD] data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[gG][uU][iI][dD][eE]-[aA][cC][sS]\.[mM]\.[tT][aA][oO][bB][aA][oO]\.[cC][oO][mM]\/[gG][wW]\/[mM][tT][oO][pP]\.[tT][aA][oO][bB][aA][oO]\.(?:[vV][oO][lL][vV][oO]\.[sS][eE][cC][oO][nN][dD][fF][lL][oO][oO][rR]\.[gG][eE][tT][cC][oO][nN][fF][iI][gG]|[sS][hH][oO][tT]\.[rR][eE][sS][oO][uU][rR][cC][eE][sS]\.[lL][oO][aA][dD]|[wW][iI][rR][eE][lL][eE][sS][sS]\.[hH][oO][mM][eE]\.([nN][eE][wW][fF][aA][cC][eE]|[sS][pP][lL][aA][sS][hH])\.[aA][wW][eE][sS][oO][mM][eE]\.[gG][eE][tT]) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/(?:[gG][wW]|[hH][eE][iI][cC])\.[aA][lL][iI][cC][dD][nN]\.[cC][oO][mM]\/[iI][mM][gG][eE][xX][tT][rR][aA]\/[iI]\d\/\d*\/?[\w!]+-\d-(?:[oO][cC][tT][oO][pP][uU][sS]|[tT][pP][sS])-(?:1080|1125)-\d{4}\.(?:[jJ][pP][gG]|[pP][nN][gG])_(?:1\d{3}|9\d{2})[xX](?:\d|1\d{3}|9\d{2})[qQ][59]0 data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.fliggy\.crm\.screen\.(?:allresource|predict) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.alibaba\.advertisementservice\.getadv data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.alimama\.etao\.config\.query\/.+?etao_advertise data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.alimusic\.common\.mobileservice\.startinit data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.etao\.noah\.query\/.+tao_splash data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.mtopadvertiseapi\.queryadvertise data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.o2o\.ad\.gateway\.get data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.trip\.activity\.querytmsresources data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.cainiao\.adx\.flyad\.getad data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.relationrecommend\.pailitaorecommend\.recommend data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.taobao\.(?:volvo\.secondfloor\.getconfig|shot\.resources\.load|wireless\.home\.(newface|splash)\.awesome\.get) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/(?:gw|heic)\.alicdn\.com\/imgextra\/i\d\/\d*\/?[\w!]+-\d-(?:octopus|tps)-(?:1080|1125)-\d{4}\.(?:jpg|png)_(?:1\d{3}|9\d{2})x(?:\d|1\d{3}|9\d{2})q[59]0 data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 # 百度云 //pan.baidu.com
-^[hH][tT][tT][pP][sS]:\/\/[pP][aA][nN]\.[bB][aA][iI][dD][uU]\.[cC][oO][mM]\/(?:[aA][cC][tT]\/|[aA][iI][pP][iI][cC]\/|[aA][iI][sS][eE][aA][rR][cC][hH]\/|[aA][pP][iI]\/[gG][eE][tT][sS][yY][sS][cC][fF][gG]\?|[bB][uU][yY]\/[aA][dD][xX]?\/|[rR][eE][sS][tT]\/) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[wW][wW][wW]\.[wW][aA][sS][hH][pP][aA][yY][eE][rR]\.[cC][oO][mM]\/(?:[aA][dD]\/[gG][eE][tT][bB][aA][nN][nN][eE][rR][aA][dD]|[aA][dD]\/[uU][sS][eE][rR]-[aA][dD][wW][oO][rR][dD]|[uU][sS][eE][rR]\/[gG][eE][tT][bB][aA][nN][nN][eE][rR][lL][iI][sS][tT]) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/pan\.baidu\.com\/(?:act\/|aipic\/|aisearch\/|api\/getsyscfg\?|buy\/adx?\/|rest\/) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/www\.washpayer\.com\/(?:ad\/getBannerAd|ad\/user-adword|user\/getBannerList) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 # 东风日产 //oneapph5.dongfeng-nissan.com.cn
-^[hH][tT][tT][pP][sS]:\/\/[oO][nN][eE][aA][pP][pP][hH]5\.[dD][oO][nN][gG][fF][eE][nN][gG]-[nN][iI][sS][sS][aA][nN]\.[cC][oO][mM]\.[cC][nN]\/[mM][bB]-[gG][wW]\/(?:[dD][nN][dD][cC]-[gG][aA][tT][eE][wW][aA][yY]\/[nN][iI][sS][sS][aA][nN]\/[pP][lL][aA][tT][fF][oO][rR][mM]\/[aA][pP][iI]\/[aA][dD][vV][eE][rR][tT][iI][sS][eE][mM][eE][nN][tT]\/[aA][pP][pP]\/[aA][dD]-[cC][oO][nN][tT][eE][nN][tT]|[lL][yY]-[mM][pP]-[iI][oO][vV]-[fF][oO][rR][wW][aA][rR][dD][iI][nN][gG]-[sS][eE][rR][vV][iI][cC][eE]\/[iI][oO][vV]\/[lL][oO][gG][iI][nN]\/[aA][dD][vV][eE][rR][tT][aA][pP][pP]\/[lL][iI][sS][tT][bB][yY][cC][aA][rR][sS][eE][rR][iI][eE][sS]) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/oneapph5\.dongfeng-nissan\.com\.cn\/mb-gw\/(?:dndc-gateway\/nissan\/platform\/api\/advertisement\/app\/ad-content|ly-mp-iov-forwarding-service\/iov\/login\/advertapp\/listByCarSeries) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 # 豆瓣 //api.douban.com, img3.doubanio.com, qnmob3.doubanio.com
-^[hH][tT][tT][pP][sS]:\/\/[aA][pP][iI]\.[dD][oO][uU][bB][aA][nN]\.[cC][oO][mM]\/[vV]2\/[aA][pP][pP]_[aA][dD][sS]\/[sS][pP][lL][aA][sS][hH]\w+ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/(?:[iI][mM][gG]|[qQ][nN][mM][oO][bB])3\.[dD][oO][uU][bB][aA][nN][iI][oO]\.[cC][oO][mM]\/[vV][iI][eE][wW]\/[dD][aA][lL][eE]-[oO][nN][lL][iI][nN][eE]\/[dD][aA][lL][eE]_[aA][dD]\/[pP][uU][bB][lL][iI][cC]\/\w+ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.douban\.com\/v2\/app_ads\/splash\w+ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/(?:img|qnmob)3\.doubanio\.com\/view\/dale-online\/dale_ad\/public\/\w+ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 # 工商银行 //image.mybank.icbc.com.cn
 
 # 和风天气 //hfapp-service.qweather.net
-^[hH][tT][tT][pP][sS]:\/\/[hH][fF][aA][pP][pP]-[sS][eE][rR][vV][iI][cC][eE]\.[qQ][wW][eE][aA][tT][hH][eE][rR]\.[nN][eE][tT]\/[vV]2\.0\/[aA][pP][pP]\/[aA][dD]\/[lL][iI][sS][tT]\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/hfapp-service\.qweather\.net\/v2\.0\/app\/ad\/list\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 # 盒马
-^[hH][tT][tT][pP][sS]:\/\/[aA][cC][sS]-[mM]\.[fF][rR][eE][sS][hH][iI][pP][pP][oO]\.[cC][oO][mM]\/[gG][wW]\/[mM][tT][oO][pP]\.[wW][dD][kK]\.[rR][eE][nN][dD][eE][rR]\.[qQ][uU][eE][rR][yY][sS][iI][nN][gG][lL][eE][pP][aA][gG][eE]\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/acs-m\.freshippo\.com\/gw\/mtop\.wdk\.render\.querysinglepage\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 # 交管12123 //gab.122.gov.cn
-^[hH][tT][tT][pP][sS]:\/\/[gG][aA][bB]\.122\.[gG][oO][vV]\.[cC][nN]\/[eE][aA][pP][pP]\/[mM]\/[sS][yY][sS][qQ][uU][eE][rR][yY]\/[aA][dD][vV][eE][rR] data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/gab\.122\.gov\.cn\/eapp\/m\/sysquery\/adver data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 # 酷安 //api.coolapk.com
-^[hH][tT][tT][pP][sS]:\/\/[aA][pP][iI]\.[cC][oO][oO][lL][aA][pP][kK]\.[cC][oO][mM]\/[vV]6\/[sS][eE][aA][rR][cC][hH]\?.*[tT][yY][pP][eE]=[hH][oO][tT][sS][eE][aA][rR][cC][hH] data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.coolapk\.com\/v6\/search\?.*type=hotSearch data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 # 猫眼 //p0.pipi.cn
-^[hH][tT][tT][pP][sS]:\/\/[pP]0\.[pP][iI][pP][iI]\.[cC][nN]\/(?:[aA][dD][aA][dD][mM][iI][nN]|[mM][eE][dD][iI][aA][pP][lL][uU][sS]\/[mM][aA][oO][yY][aA][nN][tT][oO][nN][gG]_[aA][dD][sS]_[fF][eE])\/\w+\.[jJ][pP][eE]?[gG]\?[iI][mM][aA][gG][eE][mM][oO][gG][rR]2\/[qQ][uU][aA][lL][iI][tT][yY]\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[pP]0\.[pP][iI][pP][iI]\.[cC][nN]\/(?:[aA][dD][aA][dD][mM][iI][nN]|[mM][eE][dD][iI][aA][pP][lL][uU][sS]\/[mM][aA][oO][yY][aA][nN][tT][oO][nN][gG]_[aA][dD][sS]_[fF][eE])\/\w+\.(?:[jJ][pP][eE]?[gG]|[pP][nN][gG])\?[iI][mM][aA][gG][eE][mM][oO][gG][rR]2\/[tT][hH][uU][mM][bB][nN][aA][iI][lL]\/(?:860[xX]0|880[xX]0|!165[xX]165|!1049[xX]1169) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[sS][nN][sS]\.[aA][pP][iI]\.[mM][oO][jJ][iI]\.[cC][oO][mM]\/(?:[fF][oO][rR][uU][mM]|[uU][sS][eE][rR]\/[dD][yY][nN][aA][mM][iI][cC]_[vV][89]\/[jJ][sS][oO][nN])\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/p0\.pipi\.cn\/(?:adAdmin|mediaplus\/maoyantong_ads_fe)\/\w+\.jpe?g\?imageMogr2\/quality\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/p0\.pipi\.cn\/(?:adAdmin|mediaplus\/maoyantong_ads_fe)\/\w+\.(?:jpe?g|png)\?imageMogr2\/thumbnail\/(?:860x0|880x0|!165x165|!1049x1169) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/sns\.api\.moji\.com\/(?:forum|user\/dynamic_v[89]\/json)\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 # 每日万年历
-^[hH][tT][tT][pP]:\/\/[aA][pP][pP]-[cC][dD][nN]\.2[qQ]10\.[cC][oO][mM]\/[aA][pP][pP]\/[iI][cC][aA][lL]\/[hH][oO][nN][oO][rR][eE][dD]\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^http:\/\/app-cdn\.2q10\.com\/app\/ical\/honored\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 # 美团 & 美团外卖 //flowplus.meituan.net, img.meituan.net, s3plus.meituan.net
-^[hH][tT][tT][pP]:\/\/[wW][mM][aA][pP][iI]\.[mM][eE][iI][tT][uU][aA][nN]\.[cC][oO][mM]\/[aA][pP][iI]\/[vV]7\/(?:[lL][oO][aA][dD][iI][nN][fF][oO]|[oO][pP][eE][nN][sS][cC][rR][eE][eE][nN]|[sS][tT][aA][rR][tT][pP][iI][cC][tT][uU][rR][eE]) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[fF][lL][oO][wW][pP][lL][uU][sS]\.[mM][eE][iI][tT][uU][aA][nN]\.[nN][eE][tT]\/[vV]1\/[mM][sS][sS]_\w+\/[lL][iI][nN][gG][lL][oO][nN][gG]\/\d+\.[jJ][pP][gG] data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[iI][mM][gG]\.[mM][eE][iI][tT][uU][aA][nN]\.[nN][eE][tT]\/[bB][iI][zZ][aA][dD]\/[bB][iI][zZ][aA][dD]_[bB][rR][aA][nN][dD][cC][pP][tT]_\d+\.[jJ][pP][gG] data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[sS]3[pP][lL][uU][sS]\.[mM][eE][iI][tT][uU][aA][nN]\.[nN][eE][tT]\/[oO][cC][eE][aA][nN]-[bB][lL][kK]-[iI][nN][dD][eE][xX]\/[iI][nN][dD][eE][xX]\/[bB][lL][kK]_[cC][oO][nN][fF]_\d+\.[jJ][sS][oO][nN] data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[sS]3[pP][lL][uU][sS]\.[mM][eE][iI][tT][uU][aA][nN]\.[nN][eE][tT]\/[vV]1\/[mM][sS][sS]_\w+\/(?:[bB][rR][aA][nN][dD][cC][pP][tT]-[vV][eE][dD][iI][oO]|[wW][aA][iI][mM][aA][iI]-[aA][lL][iI][tT][aA])\/\w+\.[zZ][iI][pP]$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[sS]3[pP][lL][uU][sS]\.[mM][eE][iI][tT][uU][aA][nN]\.[nN][eE][tT]\/[vV]1\/[mM][sS][sS]_\w+\/[nN][eE][bB][uU][lL][aA][fF][iI][lL][eE]\/\w+ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^http:\/\/wmapi\.meituan\.com\/api\/v7\/(?:loadInfo|openscreen|startpicture) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/flowplus\.meituan\.net\/v1\/mss_\w+\/linglong\/\d+\.jpg data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/img\.meituan\.net\/bizad\/bizad_brandCpt_\d+\.jpg data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/s3plus\.meituan\.net\/ocean-blk-index\/index\/blk_conf_\d+\.json data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/s3plus\.meituan\.net\/v1\/mss_\w+\/(?:brandcpt-vedio|waimai-alita)\/\w+\.zip$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/s3plus\.meituan\.net\/v1\/mss_\w+\/nebulafile\/\w+ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 # 米家 //home.mi.com
-^[hH][tT][tT][pP][sS]:\/\/[hH][oO][mM][eE]\.[mM][iI]\.[cC][oO][mM]\/[cC][gG][iI]-[oO][pP]\/[aA][pP][iI]\/[vV]1\/[rR][eE][cC][oO][mM][mM][eE][nN][dD][aA][tT][iI][oO][nN]\/(?:[bB][aA][nN][nN][eE][rR]|[cC][aA][rR][oO][uU][sS][eE][lL]\/[bB][aA][nN][nN][eE][rR][sS]|[mM][yY][tT][aA][bB]|[oO][pP][eE][nN][iI][nN][gG][bB][aA][nN][nN][eE][rR]) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/home\.mi\.com\/cgi-op\/api\/v1\/recommendation\/(?:banner|carousel\/banners|myTab|openingBanner) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 # 太平洋寿险 //a.cpiccdn.com
-^[hH][tT][tT][pP][sS]:\/\/[aA]\.[cC][pP][iI][cC][cC][dD][nN]\.[cC][oO][mM]\/[cC][oO][nN][fF][iI][gG]-[cC][eE][nN][tT][eE][rR]\/[aA][pP][iI]\/[cC][oO][nN][fF][iI][gG][fF][iI][lL][eE]\/[iI][mM][aA][gG][eE][sS]\/\d{8}\/\d{13}_(?:(?:630|945|1035)_\d{2,4}|123_48|136_136|207_210|408_408|750_750|1125_\d{4})\.([gG][iI][fF]|[jJ][pP][gG]|[pP][nN][gG])$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/a\.cpiccdn\.com\/config-center\/api\/configfile\/images\/\d{8}\/\d{13}_(?:(?:630|945|1035)_\d{2,4}|123_48|136_136|207_210|408_408|750_750|1125_\d{4})\.(gif|jpg|png)$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 # 网上国网 //osg-service.sgcc.com.cn
-^[hH][tT][tT][pP][sS]:\/\/[oO][sS][gG]-[sS][eE][rR][vV][iI][cC][eE]\.[sS][gG][cC][cC]\.[cC][oO][mM]\.[cC][nN]:18600\/[eE][mM][sS][sS]-[pP][fF][aA]-[aA][pP][pP][sS][eE][tT]-[fF][rR][oO][nN][tT]\/[bB][oO][oO][tT][pP][aA][gG][eE][oO][uU][tT][tT][eE][rR]\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/osg-service\.sgcc\.com\.cn:18600\/emss-pfa-appset-front\/bootpageoutter\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 # 下厨房 //api.xiachufang.com
-^[hH][tT][tT][pP][sS]:\/\/[aA][pP][iI]\.[xX][iI][aA][cC][hH][uU][fF][aA][nN][gG]\.[cC][oO][mM]\/[vV]2\/[aA][dD]\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.xiachufang\.com\/v2\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 # 微信 //mp.weixin.qq.com
-^[hH][tT][tT][pP][sS]:\/\/[mM][pP]\.[wW][eE][iI][xX][iI][nN]\.[qQ][qQ]\.[cC][oO][mM]\/[mM][pP]\/(?:[cC][pP][sS]_[pP][rR][oO][dD][uU][cC][tT]_[iI][nN][fF][oO]|[gG][eE][tT][aA][pP][pP][mM][sS][gG][aA][dD]|[gG][eE][tT][bB][iI][zZ][bB][aA][nN][nN][eE][rR]|[jJ][sS][mM][oO][nN][iI][tT][oO][rR]|[mM][aA][sS][oO][nN][rR][yY][fF][eE][eE][dD]|[rR][eE][lL][aA][tT][eE][dD][aA][rR][tT][iI][cC][lL][eE]|[rR][eE][lL][aA][tT][eE][dD][sS][eE][aA][rR][cC][hH][wW][oO][rR][dD]) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/mp\.weixin\.qq\.com\/mp\/(?:cps_product_info|getappmsgad|getbizbanner|jsmonitor|masonryfeed|relatedarticle|relatedsearchword) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 # 小米音箱 //marketing-aibox.v.mitvos.com
-^[hH][tT][tT][pP][sS]:\/\/[mM][aA][rR][kK][eE][tT][iI][nN][gG]-[aA][iI][bB][oO][xX]\.[vV]\.[mM][iI][tT][vV][oO][sS]\.[cC][oO][mM]\/(?:[aA][dD][vV][eE][rR][tT][iI][sS][eE]|[pP][aA][yY][gG][uU][iI][dD][eE]\/[hH][aA][lL][fF][sS][cC][rR][eE][eE][nN][mM][uU][lL][tT][iI])\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[aA][pP][iI]\.[mM]\.[mM][iI]\.[cC][oO][mM]\/(?:[vV]1\/(?:[aA][pP][pP]\/[pP][oO][pP][uU][pP]_[iI][nN][fF][oO]|[hH][oO][mM][eE]\/[pP][aA][gG][eE]_[fF][eE][eE][dD]|[hH][oO][mM][eE]\/[rR][eE][cC][oO][mM][mM][eE][nN][dD][bB][lL][aA][nN][kK]|[mM][iI][sS][eE][aA][rR][cC][hH]\/[sS][eE][aA][rR][cC][hH]_[iI][nN][pP][uU][tT]|[pP][rR][oO][dD][uU][cC][tT]\/[rR][eE][cC][oO][mM][mM][eE][nN][dD][vV]2)|[vV]2\/[sS][eE][aA][rR][cC][hH]\/[sS][eE][aA][rR][cC][hH]_[dD][eE][fF][aA][uU][lL][tT]) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[sS][hH][oO][pP]-[aA][pP][iI]\.[rR][eE][tT][aA][iI][lL]\.[mM][iI]\.[cC][oO][mM]\/[mM][tT][oO][pP]\/[mM][fF]\/(?:[cC][aA][rR][tT]|[hH][oO][mM][eE]|[pP][eE][rR][sS][oO][nN][aA][lL])\/[rR][eE][cC][oO][mM][mM][eE][nN][dD] data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[sS][hH][oO][pP]-[aA][pP][iI]\.[rR][eE][tT][aA][iI][lL]\.[mM][iI]\.[cC][oO][mM]\/[mM][tT][oO][pP]\/(?:[aA][cC][tT]\/[mM][iI][sS][hH][oO][pP][sS][eE][aA][rR][cC][hH]\/[sS][eE][aA][rR][cC][hH][iI][nN][pP][uU][tT]|[mM][fF]\/[hH][oO][mM][eE]\/[vV]1\/[fF][eE][eE][dD]) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[sS][hH][oO][pP]-[aA][pP][iI]\.[rR][eE][tT][aA][iI][lL]\.[mM][iI]\.[cC][oO][mM]\/[mM][tT][oO][pP]\/[nN][aA][vV][iI]\/(?:[rR][eE][cC]\/[mM][eE][rR][gG][eE]\/|[sS][kK][yY][wW][hH][eE][eE][lL]\/(?:[hH][oO][mM][eE][pP][aA][gG][eE]\/[bB][oO][tT][tT][oO][mM][fF][lL][oO][aA][tT][lL][aA][yY][eE][rR]|[mM][iI][sS][hH][oO][pP]\/[sS][pP][lL][aA][sS][hH]|[sS][hH][oO][pP]\/[rR][eE][sS][oO][uU][rR][cC][eE][aA][mM][sS]|[uU][cC][eE][nN][tT][eE][rR]\/[pP][eE][nN][dD][aA][nN][tT]|[uU][cC][eE][nN][tT][eE][rR]\/[pP][oO][pP][uU][pP])) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[xX][iI][aA][oO][mM][iI][sS][hH][oO][pP]\.[rR][eE][tT][aA][iI][lL]\.[mM][iI]\.[cC][oO][mM]\/[mM][tT][oO][pP]\/[xX][iI][aA][oO][mM][iI][sS][hH][oO][pP]\/[pP][rR][oO][dD][uU][cC][tT]\/[cC][oO][mM][pP][oO][sS][eE] data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/marketing-aibox\.v\.mitvos\.com\/(?:advertise|payGuide\/halfScreenMulti)\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.m\.mi\.com\/(?:v1\/(?:app\/popup_info|home\/page_feed|home\/recommendBlank|misearch\/search_input|product\/recommendv2)|v2\/search\/search_default) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/shop-api\.retail\.mi\.com\/mtop\/mf\/(?:cart|home|personal)\/recommend data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/shop-api\.retail\.mi\.com\/mtop\/(?:act\/mishopSearch\/searchInput|mf\/home\/v1\/feed) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/shop-api\.retail\.mi\.com\/mtop\/navi\/(?:rec\/merge\/|skywheel\/(?:homePage\/bottomFloatLayer|mishop\/splash|shop\/resourceAms|ucenter\/pendant|ucenter\/popup)) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/xiaomishop\.retail\.mi\.com\/mtop\/xiaomishop\/product\/compose data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 # 星星充电 //gateway.sccncdn.com, gateway.starcharge.com
-^[hH][tT][tT][pP][sS]:\/\/[gG][aA][tT][eE][wW][aA][yY]\.[sS][cC][cC][nN][cC][dD][nN]\.[cC][oO][mM]\/[aA][pP][pP]\/[vV]2\/[aA][pP][iI][vV]2\/[aA][dD][vV][eE][rR][tT][iI][sS][eE][mM][eE][nN][tT]\/[mM][aA][rR][kK][eE]\/[lL][iI][sS][tT]\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^[hH][tT][tT][pP][sS]:\/\/[gG][aA][tT][eE][wW][aA][yY]\.[sS][tT][aA][rR][cC][hH][aA][rR][gG][eE]\.[cC][oO][mM]\/[aA][pP][pP]\/(?:[aA][pP][iI]\/[aA][dD][vV][eE][rR][tT][iI][sS][eE][mM][eE][nN][tT]|[vV]2\/[aA][pP][iI][vV]2\/[aA][dD][vV][eE][rR][tT][iI][sS][eE][mM][eE][nN][tT]\/[mM][aA][rR][kK][eE])\/[lL][iI][sS][tT] data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/gateway\.sccncdn\.com\/app\/v2\/apiV2\/advertisement\/marke\/list\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/gateway\.starcharge\.com\/app\/(?:api\/advertisement|v2\/apiV2\/advertisement\/marke)\/list data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 # 迅雷 //api-shoulei-ssl.xunlei.com, conf-m-ssl.xunlei.com
-^[hH][tT][tT][pP][sS]:\/\/[aA][pP][iI]-[sS][hH][oO][uU][lL][eE][iI]-[sS][sS][lL]\.[xX][uU][nN][lL][eE][iI]\.[cC][oO][mM]\/[fF][lL][oO][wW][hH][uU][bB]\/[vV]1\/[sS][lL][oO][tT][sS]:[bB][aA][tT][cC][hH][gG][eE][tT] data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api-shoulei-ssl\.xunlei\.com\/flowhub\/v1\/slots:batchGet data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 # 邮储银行 //login-service.mobile-bank.psbc.com
-^[hH][tT][tT][pP][sS]:\/\/[lL][oO][gG][iI][nN]-[sS][eE][rR][vV][iI][cC][eE]\.[mM][oO][bB][iI][lL][eE]-[bB][aA][nN][kK]\.[pP][sS][bB][cC]\.[cC][oO][mM]\/[sS][nN]10\/[aA][pP][iI]\/[pP][uU][bB][lL][iI][cC]\/[vV]1\/(?:[gG][eE][tT][sS][tT][aA][rR][tT][uU][pP][aA][dD][vV][pP][iI][cC][tT][uU][rR][eE]|[qQ][rR][yY][pP][oO][pP][iI][nN][fF][oO])\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/login-service\.mobile-bank\.psbc\.com\/sn10\/api\/public\/v1\/(?:getStartUpAdvPicture|qryPopInfo)\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
 # 12306 //ad.12306.cn, mobile.12306.cn
-12306_splash = type=http-request,pattern=^[hH][tT][tT][pP][sS]:\/\/[aA][dD]\.12306\.[cC][nN]\/[aA][dD]\/[sS][eE][rR]\/[gG][eE][tT][aA][dD][lL][iI][sS][tT]$,script-path=https://rucu6.pages.dev/Scripts/12306.js,requires-body=true,max-size=-1
-12306_ads = type=http-request,pattern=^[hH][tT][tT][pP][sS]:\/\/[mM][oO][bB][iI][lL][eE]\.12306\.[cC][nN]\/[oO][tT][sS][mM][oO][bB][iI][lL][eE]\/[aA][pP][pP]\/[mM][gG][sS]\/[mM][gG][wW]\.[hH][tT][mM]$,script-path=https://rucu6.pages.dev/Scripts/header.js
+12306_splash = type=http-request,pattern=^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList$,script-path=https://rucu6.pages.dev/Scripts/12306.js,requires-body=true,max-size=-1
+12306_ads = type=http-request,pattern=^https:\/\/mobile\.12306\.cn\/otsmobile\/app\/mgs\/mgw\.htm$,script-path=https://rucu6.pages.dev/Scripts/header.js
 
 # 阿里云盘 //*api.alipan.com, member.alipan.com
-aliyun_mine = type=http-response,pattern=^[hH][tT][tT][pP][sS]:\/\/([bB][iI][zZ])?[aA][pP][iI]\.[aA][lL][iI][pP][aA][nN]\.[cC][oO][mM]\/[aA][pP][pP][sS]\/[vV]\d\/[uU][sS][eE][rR][sS]?\/[hH][oO][mM][eE]\/(?:[nN][eE][wW][sS]|[wW][iI][dD][gG][eE][tT][sS]),script-path=https://rucu6.pages.dev/Scripts/adrive.js,requires-body=true,max-size=-1
-aliyun_board = type=http-response,pattern=^[hH][tT][tT][pP][sS]:\/\/[mM][eE][mM][bB][eE][rR]\.[aA][lL][iI][pP][aA][nN]\.[cC][oO][mM]\/[vV]1\/[uU][sS][eE][rR][sS]\/[oO][nN][bB][oO][aA][rR][dD]_[lL][iI][sS][tT],script-path=https://rucu6.pages.dev/Scripts/adrive.js,requires-body=true,max-size=-1
+aliyun_mine = type=http-response,pattern=^https:\/\/(biz)?api\.alipan\.com\/apps\/v\d\/users?\/home\/(?:news|widgets),script-path=https://rucu6.pages.dev/Scripts/adrive.js,requires-body=true,max-size=-1
+aliyun_board = type=http-response,pattern=^https:\/\/member\.alipan\.com\/v1\/users\/onboard_list,script-path=https://rucu6.pages.dev/Scripts/adrive.js,requires-body=true,max-size=-1
 
 # 阿里巴巴 //acs.m.taobao.com, heic.alicdn.com, guide-acs.m.taobao.com, poplayer.template.alibaba.com
-taobao_1 = type=http-response,pattern=^[hH][tT][tT][pP][sS]:\/\/[gG][uU][iI][dD][eE]-[aA][cC][sS]\.[mM]\.[tT][aA][oO][bB][aA][oO]\.[cC][oO][mM]\/[gG][wW]\/[mM][tT][oO][pP]\.[tT][aA][oO][bB][aA][oO]\.(?:[cC][lL][oO][uU][dD][vV][iI][dD][eE][oO]\.[vV][iI][dD][eE][oO]\.[qQ][uU][eE][rR][yY]|[wW][iI][rR][eE][lL][eE][sS][sS]\.[hH][oO][mM][eE]\.[sS][pP][lL][aA][sS][hH]\.[aA][wW][eE][sS][oO][mM][eE]\.[gG][eE][tT]),script-path=https://rucu6.pages.dev/Scripts/myblockads.js,requires-body=true,max-size=-1
-taobao_2 = type=http-response,pattern=^[hH][tT][tT][pP][sS]:\/\/[pP][oO][pP][lL][aA][yY][eE][rR]\.[tT][eE][mM][pP][lL][aA][tT][eE]\.[aA][lL][iI][bB][aA][bB][aA]\.[cC][oO][mM]\/\w+\.[jJ][sS][oO][nN],script-path=https://rucu6.pages.dev/Scripts/myblockads.js,requires-body=true,max-size=-1
+taobao_1 = type=http-response,pattern=^https:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.taobao\.(?:cloudvideo\.video\.query|wireless\.home\.splash\.awesome\.get),script-path=https://rucu6.pages.dev/Scripts/myblockads.js,requires-body=true,max-size=-1
+taobao_2 = type=http-response,pattern=^https:\/\/poplayer\.template\.alibaba\.com\/\w+\.json,script-path=https://rucu6.pages.dev/Scripts/myblockads.js,requires-body=true,max-size=-1
 
 # 草榴社区 //2023.redircdn.com
-caoliu = type=http-response,pattern=^[hH][tT][tT][pP][sS]:\/\/2023\.[rR][eE][dD][iI][rR][cC][dD][nN]\.[cC][oO][mM]\/[wW][eE][bB]\/[mM][oO][bB]_[pP][oO][sS][tT]\.[jJ][sS]\?,script-path=https://rucu6.pages.dev/Scripts/myblockads.js,requires-body=true,max-size=-1
+caoliu = type=http-response,pattern=^https:\/\/2023\.redircdn\.com\/web\/mob_post\.js\?,script-path=https://rucu6.pages.dev/Scripts/myblockads.js,requires-body=true,max-size=-1
 
 # 昌原云充 五代十路 //www.washpayer.com
-changyuan = type=http-response,pattern=^[hH][tT][tT][pP][sS]:\/\/[wW][wW][wW]\.[wW][aA][sS][hH][pP][aA][yY][eE][rR]\.[cC][oO][mM]\/[uU][sS][eE][rR]\/[mM][eE][sS][sS][aA][gG][eE]\/[eE][qQ][uU][iI][pP][mM][eE][nN][tT][pP][aA][rR][aA]\?,script-path=https://rucu6.pages.dev/Scripts/changyuan.js,requires-body=true,max-size=-1
+changyuan = type=http-response,pattern=^https:\/\/www\.washpayer\.com\/user\/message\/equipmentPara\?,script-path=https://rucu6.pages.dev/Scripts/changyuan.js,requires-body=true,max-size=-1
 
 # 酷安 //api.coolapk.com
-coolapk = type=http-response,pattern=^[hH][tT][tT][pP][sS]:\/\/[aA][pP][iI]\.[cC][oO][oO][lL][aA][pP][kK]\.[cC][oO][mM]\/[vV]6\/(?:[fF][eE][eE][dD]\/[dD][eE][tT][aA][iI][lL]|[fF][eE][eE][dD]\/[rR][eE][pP][lL][yY][lL][iI][sS][tT]|[pP][aA][gG][eE]\/[dD][aA][tT][aA][lL][iI][sS][tT]|[mM][aA][iI][nN]\/[dD][aA][tT][aA][lL][iI][sS][tT]|[mM][aA][iI][nN]\/[iI][nN][dD][eE][xX][vV]8|[mM][aA][iI][nN]\/[iI][nN][iI][tT]),script-path=https://rucu6.pages.dev/Scripts/coolapk.js,requires-body=true,max-size=-1
+coolapk = type=http-response,pattern=^https:\/\/api\.coolapk\.com\/v6\/(?:feed\/detail|feed\/replyList|page\/dataList|main\/dataList|main\/indexV8|main\/init),script-path=https://rucu6.pages.dev/Scripts/coolapk.js,requires-body=true,max-size=-1
 
 # 酷狗音乐 //adserviceretry.kglink.cn, gateway.kugou.com
-kg_gateway = type=http-response,pattern=^[hH][tT][tT][pP][sS]:\/\/[gG][aA][tT][eE][wW][aA][yY]\.[kK][uU][gG][oO][uU]\.[cC][oO][mM]\/(?:[aA][dD][pP]\/[aA][dD]\/[vV]1\/[mM][iI][nN][eE]_[tT][oO][pP]_[bB][aA][nN][nN][eE][rR]|[aA][dD][sS]\.[gG][aA][tT][eE][wW][aA][yY]\/[vV]2\/[hH][oO][mM][eE]_[cC][aA][rR][dD]),script-path=https://rucu6.pages.dev/Scripts/kugou.js,requires-body=true,max-size=-1
-kg_linkcn = type=http-response,pattern=^[hH][tT][tT][pP][sS]?:\/\/[aA][dD][sS][eE][rR][vV][iI][cC][eE][rR][eE][tT][rR][yY]\.[kK][gG][lL][iI][nN][kK]\.[cC][nN]\/[vV]\d\/[mM][oO][bB][iI][lL][eE]\w+,script-path=https://rucu6.pages.dev/Scripts/kugou.js,requires-body=true,max-size=-1
+kg_gateway = type=http-response,pattern=^https:\/\/gateway\.kugou\.com\/(?:adp\/ad\/v1\/mine_top_banner|ads\.gateway\/v2\/home_card),script-path=https://rucu6.pages.dev/Scripts/kugou.js,requires-body=true,max-size=-1
+kg_linkcn = type=http-response,pattern=^https?:\/\/adserviceretry\.kglink\.cn\/v\d\/mobile\w+,script-path=https://rucu6.pages.dev/Scripts/kugou.js,requires-body=true,max-size=-1
 
 # 微信封禁页面 //weixin110.qq.com, security.wechat.com
-wechat = type=http-response,pattern=^[hH][tT][tT][pP][sS]\:\/\/(?:[wW][eE][iI][xX][iI][nN]110\.[qQ][qQ]|[sS][eE][cC][uU][rR][iI][tT][yY]\.[wW][eE][cC][hH][aA][tT])\.[cC][oO][mM]\/[cC][gG][iI]-[bB][iI][nN]\/[mM][mM][sS][pP][aA][mM][sS][uU][pP][pP][oO][rR][tT]-[bB][iI][nN]\/[nN][eE][wW][rR][eE][dD][iI][rR][eE][cC][tT][cC][oO][nN][fF][iI][rR][mM][cC][gG][iI]\?,script-path=https://rucu6.pages.dev/Scripts/wechat.js,requires-body=true,max-size=-1
+wechat = type=http-response,pattern=^https\:\/\/(?:weixin110\.qq|security\.wechat)\.com\/cgi-bin\/mmspamsupport-bin\/newredirectconfirmcgi\?,script-path=https://rucu6.pages.dev/Scripts/wechat.js,requires-body=true,max-size=-1
 
 # 小米商城 //api.m.mi.com, shop-api.retail.mi.com
-mi_mall = type=http-response,pattern=^[hH][tT][tT][pP][sS]:\/\/[aA][pP][iI]\.[mM]\.[mM][iI]\.[cC][oO][mM]\/[vV]1\/[aA][pP][pP]\/[sS][tT][aA][rR][tT],script-path=https://rucu6.pages.dev/Scripts/myblockads.js,requires-body=true,max-size=-1
+mi_mall = type=http-response,pattern=^https:\/\/api\.m\.mi\.com\/v1\/app\/start,script-path=https://rucu6.pages.dev/Scripts/myblockads.js,requires-body=true,max-size=-1
 
 # 迅雷 //api-gateway-pan.xunlei.com
-thunder = type=http-response,pattern=^[hH][tT][tT][pP][sS]:\/\/[aA][pP][iI]-[gG][aA][tT][eE][wW][aA][yY]-[pP][aA][nN]\.[xX][uU][nN][lL][eE][iI]\.[cC][oO][mM]\/[cC][oO][nN][tT][eE][nN][tT]\/[vV]1\/[aA][gG][gG][rR][eE][gG][aA][tT][eE]\/[iI][nN][fF][oO]\?,script-path=https://rucu6.pages.dev/Scripts/myblockads.js,requires-body=true,max-size=-1
+thunder = type=http-response,pattern=^https:\/\/api-gateway-pan\.xunlei\.com\/content\/v1\/aggregate\/info\?,script-path=https://rucu6.pages.dev/Scripts/myblockads.js,requires-body=true,max-size=-1
 
 # 中国农业银行 //mobilepaas.abchina.com.cn
-abchina = type=http-request,pattern=^[hH][tT][tT][pP][sS]:\/\/[mM][oO][bB][iI][lL][eE][pP][aA][aA][sS]\.[aA][bB][cC][hH][iI][nN][aA]\.[cC][oO][mM]\.[cC][nN]:441\/[mM][gG][wW]\.[hH][tT][mM]$,script-path=https://rucu6.pages.dev/Scripts/header.js
+abchina = type=http-request,pattern=^https:\/\/mobilepaas\.abchina\.com\.cn:441\/mgw\.htm$,script-path=https://rucu6.pages.dev/Scripts/header.js
 
 # 中国移动云盘 //ad.mcloud.139.com, jzts.cmpassport.com
-cloud139_1 = type=http-response,pattern=^[hH][tT][tT][pP][sS]:\/\/[aA][dD]\.[mM][cC][lL][oO][uU][dD]\.139\.[cC][oO][mM]\/[aA][dD][vV][eE][rR][tT][aA][pP][iI]\/[aA][dD][vV]-[fF][iI][lL][tT][eE][rR]\/,script-path=https://rucu6.pages.dev/Scripts/cloud139.js,requires-body=true,max-size=-1
-cloud139_2 = type=http-response,pattern=^[hH][tT][tT][pP][sS]:\/\/[jJ][zZ][tT][sS]\.[cC][mM][pP][aA][sS][sS][pP][oO][rR][tT]\.[cC][oO][mM]\/[pP][eE][rR][sS][oO][nN][aA][lL][iI][zZ][eE][dD]\/[gG][eE][tT][pP][uU][sS][hH][cC][oO][nN][tT][eE][nN][tT],script-path=https://rucu6.pages.dev/Scripts/cloud139.js,requires-body=true,max-size=-1
+cloud139_1 = type=http-response,pattern=^https:\/\/ad\.mcloud\.139\.com\/advertapi\/adv-filter\/,script-path=https://rucu6.pages.dev/Scripts/cloud139.js,requires-body=true,max-size=-1
+cloud139_2 = type=http-response,pattern=^https:\/\/jzts\.cmpassport\.com\/personalized\/getPushContent,script-path=https://rucu6.pages.dev/Scripts/cloud139.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% ad.12306.cn, mobile.12306.cn, list-app-m.i4.cn, *api.alipan.com, member.alipan.com, acs.m.taobao.com, gw.alicdn.com, heic.alicdn.com, guide-acs.m.taobao.com, poplayer.template.alibaba.com, pan.baidu.com, 2023.redircdn.com, www.washpayer.com, oneapph5.dongfeng-nissan.com.cn, api.douban.com, img3.doubanio.com, qnmob3.doubanio.com, image.mybank.icbc.com.cn, hfapp-service.qweather.net, acs-m.freshippo.com, gab.122.gov.cn, api.coolapk.com, adserviceretry.kglink.cn, gateway.kugou.com, p0.pipi.cn, mme.api.moji.com, sns.api.moji.com, flowplus.meituan.net, img.meituan.net, s3plus.meituan.net, home.mi.com, gql.reddit.com, gql-fed.reddit.com, a.cpiccdn.com, osg-service.sgcc.com.cn, api.xiachufang.com, mp.weixin.qq.com, weixin110.qq.com, security.wechat.com, marketing-aibox.v.mitvos.com, api.m.mi.com, shop-api.retail.mi.com, xiaomishop.retail.mi.com, gateway.sccncdn.com, gateway.starcharge.com, api-gateway-pan.xunlei.com, api-shoulei-ssl.xunlei.com, conf-m-ssl.xunlei.com, login-service.mobile-bank.psbc.com, wallet.95516.com, mobilepaas.abchina.com.cn, ad.mcloud.139.com, jzts.cmpassport.com
