@@ -193,8 +193,22 @@ assert.equal(compact.includes('"object"'), true);
 assert.equal(compact.includes('del(.b,.c)'), true);
 
 assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:true,scriptUrl:'https://example.com/request.js',sourceText:'$done({status:"HTTP/1.1 200 OK",body:$request.body});'}).action, 'script-analyze-echo-response');
-assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:false,scriptUrl:'https://example.com/header.js',sourceText:'$done({headers:$request.headers});'}).action, 'script-response-header');
+assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:false,scriptUrl:'https://example.com/header.js',sourceText:'$done({headers:$request.headers});'}).action, 'script-request-header');
 assert.equal(selectQxScriptAction({phase:'http-response',requiresBody:true,scriptUrl:'https://example.com/a.js'}).action, 'script-response-body');
+const identityActionA = selectQxScriptAction({
+  phase:'http-request',
+  requiresBody:true,
+  scriptUrl:'https://one.invalid/a.js',
+  sourceText:'$done({status:"HTTP/1.1 200 OK",body:$request.body});',
+});
+const identityActionB = selectQxScriptAction({
+  phase:'http-request',
+  requiresBody:true,
+  scriptUrl:'https://two.invalid/completely-different-name.js',
+  sourceText:'$done({status:"HTTP/1.1 200 OK",body:$request.body});',
+});
+assert.equal(identityActionA.action, identityActionB.action);
+assert.equal(identityActionA.action, 'script-analyze-echo-response');
 
 assert.equal(qxTargetPath({qx:'A.snippet'}), 'Adblock/Quantumult X/A.snippet');
 assert.equal(surgeTargetPath({surge:'A.sgmodule'}), 'Adblock/Surge/A.sgmodule');
