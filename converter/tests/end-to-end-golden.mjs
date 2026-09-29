@@ -125,6 +125,7 @@ function count(text, re) {
 }
 
 const report = [];
+const goldenMismatches = [];
 for (const testCase of cases) {
   assert.ok(testCase.entry, `${testCase.name}: missing manifest entry`);
   const source = await fs.readFile(path.join(ROOT, testCase.file), 'utf8');
@@ -168,9 +169,23 @@ for (const testCase of cases) {
   const expected = golden.cases[testCase.name];
   assert.ok(expected, testCase.name + ': missing golden fixture');
   for (const key of ['qxSha256','surgeSha256','qxBytes','surgeBytes','sourceScriptCount','generatedScriptCount','qxReview','surgeReview']) {
-    assert.equal(actual[key], expected[key], testCase.name + ': golden mismatch for ' + key);
+    if (actual[key] !== expected[key]) {
+      goldenMismatches.push({
+        case:testCase.name,
+        key,
+        expected:expected[key],
+        actual:actual[key],
+      });
+    }
   }
-  assert.deepEqual(actual.sections, expected.sections, testCase.name + ': Surge section order changed');
+  if (JSON.stringify(actual.sections) !== JSON.stringify(expected.sections)) {
+    goldenMismatches.push({
+      case:testCase.name,
+      key:'sections',
+      expected:expected.sections,
+      actual:actual.sections,
+    });
+  }
 
   const qxActive = activeLines(out.qx);
   const surgeActive = activeLines(out.surge);
@@ -224,5 +239,11 @@ for (const testCase of cases) {
   report.push(actual);
 }
 
-console.log('End-to-end conversion golden passed:');
+console.log('End-to-end conversion report:');
 console.log(JSON.stringify(report, null, 2));
+if (goldenMismatches.length) {
+  console.error('Golden mismatches:');
+  console.error(JSON.stringify(goldenMismatches, null, 2));
+}
+assert.deepEqual(goldenMismatches, [], 'end-to-end golden mismatches detected');
+console.log('End-to-end conversion golden passed');
