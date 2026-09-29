@@ -356,11 +356,13 @@ const requestBinaryMockAst = parseRewriteV2('request if ${url} ~= /upload/ then 
 const requestBinaryMockPlan = qxMockPlanFromAction(requestBinaryMockAst.actions[0], {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
 assert.throws(() => renderQxMockFileScript(requestBinaryMockPlan), /request mock binary\/bodyBytes output is not enabled/);
 
-// Behavior-first target regex compilation: do not rely on undocumented (?i).
-const foldedUrl = compileRegexForTarget(parseRewriteV2('request if ${url} ~= /^https:\\/\\/Api\\.Example\\.com\\/[a-z]+/i then reject_dict(200)').condition.right, {subject:'url'});
-assert.equal(foldedUrl.ok, true);
-assert.match(foldedUrl.pattern, /^\^\[hH\]\[tT\]\[tT\]\[pP\]\[sS\]/);
-assert.match(foldedUrl.pattern, /\[a-zA-Z\]\+/);
+// Target declarations follow official bare-regex syntax. Loon /i is not
+// expanded into per-character case classes and no undocumented inline modifier
+// is invented.
+const bareUrl = compileRegexForTarget(parseRewriteV2('request if ${url} ~= /^https:\\/\\/Api\\.Example\\.com\\/[a-z]+/i then reject_dict(200)').condition.right, {subject:'url'});
+assert.equal(bareUrl.ok, true);
+assert.equal(bareUrl.pattern, '^https:\\/\\/Api\\.Example\\.com\\/[a-z]+');
+assert.ok(bareUrl.notes.includes('i-source-flag-not-expressed-in-target-declaration'));
 assert.equal(compileRegexForTarget(parseRewriteV2('response if ${url} ~= /api/ then response.body.replace(/a.b/s, "x")').actions[0].args[0], {subject:'body'}).ok, false);
 
 const qxDeleteV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /^https:\\/\\/api\\.example\\.com\\/feed/i then response.json.delete(["data.ads", "data.apps[0].promo"])'));
@@ -384,7 +386,7 @@ assert.match(surgeJqV2.line, /^http-response-jq /);
 const redirectV2 = parseRewriteV2('request if ${url} ~= /(^https:\\/\\/live\\.bilibili\\.com\\/\\d+)(?:\\/?\\?.*)/i as urlMatch then redirect(302, "${urlMatch.1}")');
 const redirectScript = renderQxRedirectScript(redirectV2, {stamp:'2026-09-29 10:00:00 +08:00', category:'Adblock'});
 assert.equal(redirectScript.qxAction, 'script-echo-response');
-assert.match(redirectScript.pattern, /\[bB\]\[iI\]\[lL\]\[iI\]/);
+assert.equal(redirectScript.pattern, '(^https:\\/\\/live\\.bilibili\\.com\\/\\d+)(?:\\/?\\?.*)');
 assert.match(redirectScript.script, /__wayxLocation/);
 assert.match(redirectScript.script, /HTTP\/1\.1 302 Found/);
 
