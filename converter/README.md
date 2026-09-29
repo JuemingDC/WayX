@@ -56,6 +56,16 @@ Surge 模块输出另有独立规范化层，不复用 Loon 文件头或 Loon Ru
 - golden 只锁声明层和目标成品；源 Script JavaScript 不改写。Bilibili `request.js/response.js` 不得出现在活动 QX 行，YouTube/JingDong 不能通过包装脚本绕过参数限制；
 - golden fixture 位于 `converter/fixtures/end-to-end-golden.json`，完整测试位于 `converter/tests/end-to-end-golden.mjs`。
 
+Canonical 成品一致性现已进入 CI：
+
+- `converter/tools/regenerate-canonical.mjs` 直接复用正式 `convert()`，从仓库内已保存的 Loon 源文件离线生成 managed QX/Surge 成品；
+- managed 范围包括 `.github/sources/loon.json` 的 11 个条目，以及已有独立 golden 的 `Resource/Loon/RuCu6/myblockads.lpx`；
+- 源脚本只读取仓库中的精确镜像用于兼容性判断，不改写正文；存在 `script/<entry.id>/<filename>` 时声明指向 WayX raw URL，否则保留源 URL；
+- 生成后继续执行 QX validator 和 Surge sgmodule validator；
+- PR CI 会先重新生成，再对 `Adblock/Quantumult X/` 与 `Adblock/Surge/` 做 `git diff --exit-code`。若转换器/源文件/脚本兼容性变化却没有同步提交成品，CI 会失败；
+- QZXY 是人工维护的目标原生配置，不属于 Loon converter managed entry，因此不会被该工具覆盖；
+- 当前 managed canonical 已全部用 phase 7/8 的新 converter 重建，Surge 不再保留活动的 Loon 专属 metadata。
+
 第五阶段已接入 Loon HTTP Script v2，并在当前阶段修正为“声明层转换、脚本正文原样保留”：
 
 - 当前 RuCu6 9 个插件的 110 条活动 Script v2 全部进入正式 parser/AST，解析错误为 0；其中 response 101 条、request 9 条，108 条要求 body，14 条要求 binary body；
@@ -66,4 +76,4 @@ Surge 模块输出另有独立规范化层，不复用 Loon 文件头或 Loon Ru
 - 旧 Tieba/DianPing/PinDuoDuo 的正文适配产物已退出转换主链，managed BoxJs bridge 项同步清理；
 - 用户提供的 Loon 新语法案例已加入独立 CI 回归测试，覆盖 JSON delete/replace/JQ、body.mock、reject/reject_dict/reject_img、URL-REGEX REJECT-IMG/REJECT-DROP。
 
-下一阶段优先把已合并转换器重新应用到仓库 canonical 产物，并增加“checked-in 成品 == converter 当前输出”的离线一致性检查；随后再扩展 Script v2 复合 condition。原则固定为：原生声明优先，源脚本正文绝不改写，无法声明层等价表达时保留 Review。
+下一阶段继续扩展 Script v2 复合 condition，并把更多已审核 RuCu6 插件逐步加入 managed canonical；新增 entry 前必须先通过完整 golden。原则固定为：原生声明优先，源脚本正文绝不改写，无法声明层等价表达时保留 Review。
