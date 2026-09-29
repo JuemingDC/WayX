@@ -1,4 +1,4 @@
-// Converted: 2026-09-29 21:55:03 +08:00
+// Converted: 2026-09-29 22:18:57 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /(^https:\/\/youtu\.be\/[\w-]+)(?:\?si=\w+)/i as urlMatch then redirect(302, "${urlMatch.1}")

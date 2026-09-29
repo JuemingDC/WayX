@@ -1,6 +1,8 @@
 #!name=百度贴吧去广告
 #!desc=移除开屏广告、信息流广告和帖内广告，精简侧拉抽屉及我的页面。
 #!requirement=CORE_VERSION>=20
+#!arguments=per_filter_video_thread:true
+#!arguments-desc=per_filter_video_thread: 拦截推荐页面视频帖 — options=true|false — 此项决定是否拦截首页推荐标签下的视频帖
 
 # Open URL: https://apps.apple.com/app/id477927812
 # Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md], app2smile[https://github.com/app2smile]
@@ -10,7 +12,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Tieba.png
 # Updated: 2026-06-01 17:11:35
 
-# Converted: 2026-09-29 21:54:57 +08:00
+# Converted: 2026-09-29 22:18:51 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Tieba_remove_ads.lpx
@@ -51,8 +53,7 @@ http-response-jq ^https?:\/\/tiebac\.baidu\.com\/c\/f\/sidebar\/home$ 'del(.game
 ^http:\/\/c\.tieba\.baidu\.com\/c\/f\/forum\/hotforum$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-# [WayX] SCRIPT REVIEW REQUIRED: dynamic/typed source argument is not converted because script source must remain unchanged.
-# Source declaration: http-response ^https?:\/\/tieba(?:c)?\.baidu\.com\/c\/(f\/excellent\/personalized|f\/frs\/page|b\/ad\/adBid|f\/ad\/getFeedAd|f\/pb\/page|f\/frs\/generalTabList)\?cmd=\d+&format=protobuf script-path=https://kelee.one/Resource/JavaScript/Tieba/tieba-proto.js, requires-body=true, binary-body-mode=true, timeout=10, tag=ProtoBuf处理, argument=[{per_filter_video_thread}]
+ProtoBuf处理 = type=http-response,pattern=^https?:\/\/tieba(?:c)?\.baidu\.com\/c\/(f\/excellent\/personalized|f\/frs\/page|b\/ad\/adBid|f\/ad\/getFeedAd|f\/pb\/page|f\/frs\/generalTabList)\?cmd=\d+&format=protobuf,script-path=https://kelee.one/Resource/JavaScript/Tieba/tieba-proto.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=10,argument="{\"per_filter_video_thread\":\"{{{per_filter_video_thread}}}\"}"
 
 [MITM]
 hostname = %APPEND% tiebac.baidu.com, tieba.baidu.com
