@@ -55,9 +55,9 @@
     },
     "YouTube": {
       "qxSha256": "8f2524f95c9284e3dfdbecb27a6a2647e00d2c7ce032202b4517f773d9313cf2",
-      "surgeSha256": "93dfc18522a54570168903ad64b651fe8b7c6ca40270b750a210101e365834f5",
+      "surgeSha256": "c82b35ead9613754f8d2bf471f240d3f86f7f87d1275c60249dda96097a94864",
       "qxBytes": 2319,
-      "surgeBytes": 2503,
+      "surgeBytes": 2644,
       "sourceScriptCount": 2,
       "generatedScriptCount": 1,
       "qxReview": 2,
@@ -65,15 +65,16 @@
       "sections": [
         "Rule",
         "URL Rewrite",
+        "Map Local",
         "Script",
         "MITM"
       ]
     },
     "Bilibili": {
       "qxSha256": "a9efa808a8dc397c280a4286649febb0c3cc5a393f42e6355ec6721b8dbb0d69",
-      "surgeSha256": "29e39a4be880196274735bb2e25354818978abc4d73d4f01aefdc5695bd9d9f9",
+      "surgeSha256": "e97e8965f4a1dafa66be4123946398d862acc86d5016a666fcead408d0e0c5fb",
       "qxBytes": 14505,
-      "surgeBytes": 12572,
+      "surgeBytes": 12876,
       "sourceScriptCount": 3,
       "generatedScriptCount": 9,
       "qxReview": 0,
