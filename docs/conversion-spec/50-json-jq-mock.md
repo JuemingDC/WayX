@@ -49,19 +49,18 @@ response.json.jq_file(path)
 3. 目标输出真实 JQ；
 4. 不把路径字符串当作 JQ 输出。
 
-RuCu6 当前存在：
+部分现有源插件存在：
 ```text
 response.json.jq("jq-path=https://...")
 ```
 
-这**不是 Loon 官方 jq_file 语法**。
+这**不是 Loon 官方 jq_file 语法**，WayX 仅把固定 `jq-path=https://...` 作为 legacy dependency alias 处理：
 
-WayX 只允许将“已登记的已知 legacy alias”解析为依赖：
-- 必须在 dependency manifest 登记
-- 必须有缓存 JQ
-- 必须校验
-- 最终必须内联真实 JQ
-- 活动目标规则中禁止出现 `jq-path=`
+- URL 必须是声明中直接给出的 HTTP(S) 原始依赖地址；
+- 转换期直接读取该原始地址，不要求插件身份登记，不使用 dependency manifest、仓库缓存或 fallback；
+- 读取后按真实 JQ 内容校验/规范化并内联目标；
+- URL 无效、不可达或内容无法安全内联时 Review；
+- 活动目标规则中禁止残留 `jq-path=`。
 
 ## 50.4 response.body.mock / mock_file
 
@@ -87,9 +86,10 @@ WayX 只允许将“已登记的已知 legacy alias”解析为依赖：
 - binary request 若 bodyBytes 路径未由官方示例与测试确认 → Review。
 
 ### Surge
-- 能用 Body Rewrite 原生表达时优先原生；
-- 否则最小 helper；
-- 不得使用 Map Local 假装 request body rewrite。
+- 不得使用 Map Local 假装 request body rewrite；
+- 当前 generic planner 尚未实现 request.body.mock / mock_file 的 Surge request-body helper；
+- 因此无法由当前原生 Body Rewrite 精确表达时进入 Review，不伪造 helper 能力；
+- 后续若新增 generic helper，必须先补官方运行时依据、synthetic fixture 与 validator。
 
 ## 50.6 原始依赖读取原则
 
