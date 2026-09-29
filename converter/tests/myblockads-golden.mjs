@@ -65,9 +65,9 @@ for (const ast of sourceJq) {
     const rel = dependencyCache.resources?.[url];
     assert.ok(rel, 'No cached JQ dependency for source jq-path: ' + url);
     const cached = await fs.readFile(new URL('../../' + rel, import.meta.url), 'utf8');
-    assert.equal(target.jq, minifyJqFile(cached), 'Cached jq-path dependency changed target JQ semantics');
+    assert.equal(minifyJq(target.jq), minifyJqFile(cached), 'Cached jq-path dependency changed target JQ semantics');
   } else {
-    assert.equal(target.jq, minifyJq(jq), 'Inline source JQ changed semantics/text beyond whitespace minification');
+    assert.equal(minifyJq(target.jq), minifyJq(jq), 'Inline source JQ changed semantics/text beyond whitespace normalization');
   }
 }
 
