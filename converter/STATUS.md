@@ -1,39 +1,46 @@
 # WayX Converter Status
 
-## 2026-09-29 checkpoint
+## 2026-09-29 phase 2
 
-Implemented and committed:
+Completed in this branch:
 
-- Canonical output: `Adblock/Quantumult X/`, `Adblock/Surge/`.
-- QX Loon Rule mapping, including `URL-REGEX + REJECT* -> reject-200`.
-- QX logical `AND / OR / NOT` preservation as comments.
-- QX IP rule removal of Loon-only trailing options such as `no-resolve`.
-- Surge Module external policies such as `PROXY` are not assumed; they are commented for explicit policy binding.
-- JQ whitespace-only minifier; no algorithm/path/type rewrite.
-- QX script action registry with verified RuCu6 `12306.js -> script-analyze-echo-response` and `header.js -> script-response-header`.
-- Loon `[Argument]` parser, BoxJs descriptor generator and managed subscription merge.
-- Rewrite v2 tokenizer/parser/AST for `&& / || / () / as / pipeline`, typed literals, arrays and documented `i/m/s` regex flags.
-- Official Loon Rewrite v2 Action registry: 31 current actions, with arity and documented bulk-array validation.
-- Fail-closed Rewrite v2 Safe Tier analyzer is now used by the real sync converter; the legacy regex-only v2 parser was removed.
-- Conservative QX primitive capability map derived from the official Quantumult X sample; unproved mappings remain Review Tier.
-- Tieba QX script now uses a BoxJs `$prefs` bridge to rebuild the Loon `$argument` object; the original script body is preserved.
-- DianPing QX script now uses a BoxJs `$prefs` guard to reproduce Loon `enable={davsdmpk_enable}` behavior; disabled mode returns without modifying the response.
-- BoxJs subscription now contains functional managed controls for Tieba and DianPing.
-- Dedicated pull-request CI checks every converter `.mjs`, `sync-convert.mjs`, and the checkpoint test without contacting upstream sources.
-- Existing upstream workflow still calls `node converter/tests/checkpoint.mjs` before conversion.
+- Fixed the PR #3 Converter Check regression: the Surge policy assertion itself was over-escaped; it now uses an exact expected string.
+- Added `converter/src/script-compat.mjs`:
+  - QX script compatibility / fork registry.
+  - Known RuCu6 Bilibili protobuf scripts are blocked from QX executable output because upstream explicitly throws on Quantumult X and uses Loon `$utils.ungzip`.
+  - Known RuCu6 YouTube request/response scripts are registered as having an explicit QuanX adapter (`$task / $prefs / bodyBytes` translation).
+  - Unknown scripts are scanned for explicit QX rejection and direct Loon-only `$utils` use.
+- Integrated script compatibility into the real legacy sync converter:
+  - blocked scripts keep the original Loon declaration as comments;
+  - output includes `[WayX] MANUAL PORT REQUIRED`;
+  - no invalid QX script execution line is emitted;
+  - verified WayX QX forks remain executable.
+- Added `converter/tools/scan-script-compat.mjs` and wired it into upstream monitoring.
+- Added `converter/src/dependency.mjs`:
+  - discovers `request/response.json.jq_file`;
+  - discovers `request/response.body.mock_file`;
+  - resolves absolute HTTP(S) and plugin-relative dependencies when a plugin source URL is available;
+  - can inline JQ and text/Base64 mock dependencies without changing Action ordering;
+  - binary mock files remain Review Tier until a target-native binary/file mapping is proven.
+- Extended checkpoint coverage for the script registry and dependency resolver.
+- Converter CI now syntax-checks both `converter/src/*.mjs` and `converter/tools/*.mjs`.
 
-Verification completed in this session:
+Official behavior rechecked during this phase:
 
-- Rewrite v2 parser: 32 assertions passed locally.
-- Rewrite v2 action registry tests passed locally.
-- BoxJs merge / QX `$prefs` bridge component tests passed locally.
-- Combined converter checkpoint passed before the BoxJs extension; the new PR CI is the authoritative full-branch check after the latest commits.
-- Complex Rewrite v2 conditions, captures, flags and pipelines are parsed but are **not** automatically promoted to Safe Tier.
+- Loon Rewrite v2 current docs: `jq_file`, `mock_file`, Base64 and pipeline semantics.
+- Loon plugin/script docs: plugin object arguments preserve typed values.
+- Quantumult X official repository: `$task.fetch`, `$prefs`, `bodyBytes` are documented; no official `$utils.ungzip` example was found.
+- Surge documentation entrypoint and current Body Rewrite / Map Local manuals were checked before retaining the current Surge mappings.
+
+## Current boundary
+
+- Bilibili protobuf QX port is **not** fabricated. It remains a real manual-port item because replacing `$utils.ungzip` and its platform runtime requires a tested QX implementation.
+- Parsing or dependency resolution alone never promotes complex Rewrite v2 rules to Safe Tier.
+- Binary `mock_file` content is not coerced into UTF-8 text.
 
 ## Next work
 
-1. Wait for / inspect the new PR converter CI, then fix any branch-level syntax or checkpoint regression before merge.
-2. Implement remote-script inspection/fork registry for scripts that explicitly reject or diverge on Quantumult X.
-3. Add `jq_file / mock_file` dependency resolver.
-4. Promote MyBlockAds to an automated golden fixture and compare generated output against repository targets.
-5. After the checkpoint is merged, rerun upstream monitoring from the new `main` so deprecated lowercase `adblock/` output is no longer regenerated.
+1. Build the full RuCu6 Rewrite v2 source → target generator on top of the existing AST, action registry, script registry and dependency resolver.
+2. Add target-specific dependency materialization for QX/Surge with byte/text integrity checks.
+3. Promote MyBlockAds to a repository golden fixture and diff generated outputs against canonical targets.
+4. After phase 2 is green and merged, rerun the upstream monitor from the new main; discard the stale pre-converter `work/upstream-36491808454-1` results.
