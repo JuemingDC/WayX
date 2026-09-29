@@ -41,7 +41,8 @@ assert.equal(/EXTRA_LOCAL_ENTRIES|RuCu6\/youtube\.lpx|RuCu6\/myblockads\.lpx/.te
 assert.equal(/DEPENDENCY_MANIFEST|localJqFiles|assertOfflineDependencies/.test(canonicalRunner), false, 'Block 50/90: canonical runner must not fall back to repository dependency caches');
 assert.match(canonicalRunner,/materializeJqFiles\(entry, parsed\)/, 'Block 50: canonical runner must fetch JQ from original dependency URLs through the shared materializer');
 assert.match(canonicalRunner,/materializeQxMockFiles\(entry, parsed\)/, 'Block 50: canonical runner must fetch mock_file from original dependency URLs through the shared materializer');
-assert.match(canonicalRunner,/fetchOriginalText\(url\)/, 'Block 60: canonical script compatibility must read original Source Script URLs');
+assert.match(canonicalRunner,/resolveOriginalUrl\(reference, pluginSourceUrl\)/, 'Block 60: relative Source Script refs must resolve against the original plugin URL');
+assert.match(canonicalRunner,/fetchOriginalText\(originalUrl\)/, 'Block 60: canonical script compatibility must read the resolved original Source Script URL');
 
 const index=await fs.readFile(path.join(ROOT,'docs/conversion-spec/95-implementation-index.md'),'utf8');
 for(const [block] of contracts) assert.match(index,new RegExp('\\| '+block+' \\|'), `implementation index missing Block ${block}`);
