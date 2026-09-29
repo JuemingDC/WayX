@@ -19,6 +19,25 @@ function assertHttpUrl(value) {
   return text;
 }
 
+export function resolveOriginalUrl(reference, baseUrl=null) {
+  const ref=String(reference ?? '').trim();
+  if (!ref) throw new Error('empty original source reference');
+  try {
+    const absolute=new URL(ref);
+    if (!['http:','https:'].includes(absolute.protocol)) throw new Error('unsupported protocol');
+    return absolute.toString();
+  } catch (error) {
+    if (!baseUrl) throw new Error('relative source reference requires original plugin URL: ' + ref);
+    let resolved;
+    try { resolved=new URL(ref, assertHttpUrl(baseUrl)); }
+    catch { throw new Error('cannot resolve original source reference: ' + ref); }
+    if (!['http:','https:'].includes(resolved.protocol)) {
+      throw new Error('resolved source reference must use HTTP(S): ' + resolved.toString());
+    }
+    return resolved.toString();
+  }
+}
+
 async function fetchOriginal(url, {timeoutMs=20000, bytes=false}={}) {
   const sourceUrl=assertHttpUrl(url);
   const controller=new AbortController();
