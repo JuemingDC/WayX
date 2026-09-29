@@ -59,7 +59,7 @@ converter 先实现
 - Source Catalog：`.github/sources/loon.json`
 - Source fetch + dependency fetch + generic conversion：`.github/scripts/sync-convert.mjs`
 - Canonical deterministic regeneration：`converter/tools/regenerate-canonical.mjs`
-- CI gate：`.github/workflows/converter-check.yml`
+- CI gate：`.github/workflows/converter-check.yml`（同仓库 PR 可自动提交 deterministic canonical + WayX-generated helpers；外部 fork 只校验不写入）
 - Upstream scheduled flow：`.github/workflows/upstream-monitor.yml`
 - Review classification：`.github/scripts/conversion_gate.py` + `.github/scripts/validate_conversion_policy.py`
 
@@ -87,4 +87,4 @@ Source Catalog entry.source（原作者）
 - 把原 `script-path` 改写成 WayX/GitHub URL；
 - 原源失败时自动切换第三方副本。
 
-WayX 自动生成的 target helper script 不属于 Source Script 镜像，可继续作为 converter 产物写入 `script/<id>/`。
+WayX 自动生成的 target helper script 不属于 Source Script 镜像，可继续作为 converter 产物写入 `script/<id>/`。`regenerate-canonical.mjs` 必须与目标文件一起生成这些 helper；`generated-helper-refs.mjs` 必须确认所有 WayX raw helper URL 都有真实文件。
