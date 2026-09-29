@@ -91,4 +91,5 @@ CI 必须额外检查：
 - Genericity audit：`converter/tests/genericity-audit.mjs`
 - Identity invariance：`converter/tests/generic-identity.mjs`
 - Repository-wide audit：`converter/tools/audit-repository.mjs`
+- Generated helper reference existence：`converter/tests/generated-helper-refs.mjs`
 - End-to-end Golden：`converter/tests/end-to-end-golden.mjs` + `converter/fixtures/end-to-end-golden.json`
