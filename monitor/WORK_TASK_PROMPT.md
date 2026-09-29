@@ -11,18 +11,20 @@
 
 ## 开始前必须读取
 
-1. `CONVERSION_POLICY.md`
-2. `LOON_NEW_SYNTAX_CONVERSION.md`
+1. `CONVERSION_SPEC.md`
+2. 与本次变更相关的 `docs/conversion-spec/` 规范块
 3. 当前 PR 说明与 `Files changed`
 4. 涉及 QX 时核对 `crossutility/Quantumult-X` 当前官方 sample
 5. 涉及 Surge 时先读 `https://nssurge.com/llms.txt`，再按其指引核对当前 Manual
 6. 涉及 Egern 时核对 `https://egernapp.com/docs/` 当前官方文档
 
+`CONVERSION_POLICY.md` 与 `LOON_NEW_SYNTAX_CONVERSION.md` 仅为 deprecated index，不再作为独立行为规范。
+
 ## 分工
 
 GitHub Actions 已完成 Safe Tier：上游检查、确定性 Rule/Rewrite/JQ/MITM 转换、简单新增删除、目标文件重生成和 validator。不要无意义重做已验证的 Safe Tier。
 
-Work 只处理 Review Tier：JavaScript 内容、[Script]/[Argument]、复杂逻辑规则、Loon 新语法未覆盖 action、自定义 Body、binary/base64、pipeline、helper script、converter/validator 失败、官方语法变更或任何无法证明无损的变化。
+Work 只处理 Review Tier：JavaScript 内容、[Script]、依赖 Loon `[Argument]` 的声明、复杂逻辑规则、Loon 新语法未覆盖 action、自定义 Body、binary/base64、pipeline、helper script、converter/validator 失败、官方语法变更或任何无法证明无损的变化。Loon `[Argument]` 本身不转换为 QX/Surge 参数 UI 或 BoxJs。
 
 ## 通用转换器约束
 
