@@ -42,6 +42,7 @@ jobs:
           node --check converter/tests/genericity-audit.mjs
           node --check converter/tests/spec-block-contract.mjs
           node --check converter/tests/generated-helper-refs.mjs
+          node --check converter/tests/source-script-url-preservation.mjs
           node --check converter/tools/regenerate-canonical.mjs
           node --check converter/tools/audit-repository.mjs
       - name: Converter checkpoint
@@ -72,6 +73,9 @@ jobs:
 
       - name: Verify generated helper references
         run: node converter/tests/generated-helper-refs.mjs
+
+      - name: Verify original Source Script URLs
+        run: node converter/tests/source-script-url-preservation.mjs
 
       - name: Upload regenerated canonical outputs
         if: always()
