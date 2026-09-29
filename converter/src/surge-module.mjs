@@ -19,13 +19,6 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
   const allowedSection = name =>
     fixedSections.has(name) || /^WireGuard\s+.+$/.test(name) || /^Ruleset\s+.+$/.test(name);
 
-  const assertCanonicalUrlPattern = (pattern, line) => {
-    const value = String(pattern || '');
-    if (/\\\//.test(value)) {
-      throw new Error(`${entry.id}: Surge URL pattern must use bare '/' instead of Loon/JS '\\/' escaping: ${line}`);
-    }
-  };
-
   const allowedTopDirectives = [
     /^#!name=.+$/i,
     /^#!desc=.+$/i,
@@ -94,9 +87,6 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
 
     if (current === 'Rule') {
       const parts = splitTopLevelCsv(line);
-      if (String(parts[0] || '').toUpperCase() === 'URL-REGEX') {
-        assertCanonicalUrlPattern(parts[1], line);
-      }
       const typeTree = surgeRuleTypesInTree(line);
       if (!typeTree.ok) {
         throw new Error(`${entry.id}: unsupported Surge rule type/combination in module (${typeTree.reason}): ${line}`);
@@ -113,7 +103,6 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
     }
 
     if (current === 'URL Rewrite') {
-      assertCanonicalUrlPattern(line.split(/\s+/, 1)[0], line);
       if (!/\s(?:header|302|307|reject)$/.test(line)) {
         throw new Error(`${entry.id}: invalid Surge URL Rewrite line: ${line}`);
       }
@@ -124,8 +113,6 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
     }
 
     if (current === 'Header Rewrite') {
-      const headerParts = line.split(/\s+/);
-      assertCanonicalUrlPattern(headerParts[1], line);
       if (!/^http-(?:request|response)\s+\S+\s+header-(?:add|del|replace|replace-regex)\b/.test(line)) {
         throw new Error(`${entry.id}: invalid Surge Header Rewrite line: ${line}`);
       }
@@ -134,8 +121,6 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
 
     if (current === 'Body Rewrite') {
       hasBodyRewrite = true;
-      const bodyParts = line.split(/\s+/);
-      assertCanonicalUrlPattern(bodyParts[1], line);
       if (!/^http-(?:request|response)(?:-jq)?\s+/.test(line)) {
         throw new Error(`${entry.id}: invalid Surge Body Rewrite line: ${line}`);
       }
@@ -167,7 +152,6 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
         if (!patternMatch) {
           throw new Error(`${entry.id}: Surge HTTP script missing pattern: ${line}`);
         }
-        assertCanonicalUrlPattern(patternMatch[1].trim(), line);
       }
       if (type === 'cron' && !/(?:^|,)\s*cronexp=(?:"[^"]+"|'[^']+'|[^,]+)/.test(body)) {
         throw new Error(`${entry.id}: Surge cron script missing cronexp: ${line}`);
