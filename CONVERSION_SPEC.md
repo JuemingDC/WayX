@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.1  
+版本：1.2  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -13,6 +13,7 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 | Block | 内容 |
 |---|---|
 | [00-authority](docs/conversion-spec/00-authority.md) | 权威来源、优先级、通用原则 |
+| [05-generic-converter](docs/conversion-spec/05-generic-converter.md) | **通用转换器架构、分型、自动化契约、陌生插件验收** |
 | [10-target-format](docs/conversion-spec/10-target-format.md) | QX snippet / Surge sgmodule 固定格式 |
 | [20-rule-mapping](docs/conversion-spec/20-rule-mapping.md) | **Rule 类型与 Policy 对应表** |
 | [30-rewrite-mapping](docs/conversion-spec/30-rewrite-mapping.md) | Loon 旧 Rewrite / Rewrite v2 Action 映射 |
