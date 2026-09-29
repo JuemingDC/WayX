@@ -91,7 +91,13 @@ WayX 只允许将“已登记的已知 legacy alias”解析为依赖：
 - 否则最小 helper；
 - 不得使用 Map Local 假装 request body rewrite。
 
-## 50.6 自动转换实现
+## 50.6 原始依赖读取原则
+
+- `jq_file` / `jq-path` / `mock_file` 只从源插件声明或相对源 URL 解析出的原始地址读取。
+- dependency 内容只在本次转换进程内 materialize；不写入 `converter/dependencies/` 作为权威副本或 fallback。
+- 原始依赖无法读取或无法安全嵌入目标语法时，进入 Review；不得使用仓库缓存替代。
+
+## 50.7 自动转换实现
 
 - JQ normalize/minify：`converter/src/jq.mjs`
 - jq_file/mock_file dependency resolution：`converter/src/dependency.mjs`
