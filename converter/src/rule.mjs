@@ -184,10 +184,26 @@ export function qxRule(line) {
   return {kind:'filter', line:`${qxType}, ${value}, ${policy}`, reason:'native-filter'};
 }
 
-export function surgeModuleRule(line) {
+export function surgeModuleRule(line, { macOnly = false } = {}) {
   const source = String(line).trim();
   const parts = splitTopLevelCsv(source);
   const type = String(parts[0] || '').toUpperCase();
+
+  if (type === 'FINAL') {
+    return {
+      kind:'comment',
+      lines:[`# [WayX] REVIEW REQUIRED: FINAL from a source plugin is not activated automatically in a Surge Module: ${source}`],
+      reason:'final-in-module',
+    };
+  }
+
+  if (type === 'PROCESS-NAME' && !macOnly) {
+    return {
+      kind:'comment',
+      lines:[`# [WayX] REVIEW REQUIRED: PROCESS-NAME is Mac-only; source plugin is not constrained to macOS only: ${source}`],
+      reason:'process-name-platform',
+    };
+  }
 
   // Loon URL-REGEX supports HTTP-response-shaped reject policies that are not
   // Surge Rule policies. Lower those to Surge's native Map Local instead of
@@ -256,8 +272,8 @@ export function surgeModuleRule(line) {
   };
 }
 
-export function surgeRule(line) {
-  return surgeModuleRule(line).lines.join('\n');
+export function surgeRule(line, options = {}) {
+  return surgeModuleRule(line, options).lines.join('\n');
 }
 
 export { splitTopLevelCsv, surgePolicyIndex };
