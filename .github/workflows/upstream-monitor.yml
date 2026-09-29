@@ -65,6 +65,7 @@ jobs:
           node converter/tests/generic-identity.mjs
           node converter/tests/genericity-audit.mjs
           node converter/tests/spec-block-contract.mjs
+          python converter/tests/test_conversion_gate.py
           node converter/tests/myblockads-golden.mjs
 
       - name: Set up Python
@@ -77,7 +78,7 @@ jobs:
         if: steps.pending.outputs.blocked != 'true'
         run: |
           node --check .github/scripts/sync-convert.mjs
-          python -m py_compile .github/scripts/conversion_gate.py .github/scripts/validate_conversion_policy.py
+          python -m py_compile .github/scripts/conversion_gate.py .github/scripts/validate_conversion_policy.py converter/tests/test_conversion_gate.py
 
       - name: Install sync dependency
         if: steps.pending.outputs.blocked != 'true'
