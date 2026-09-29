@@ -27,6 +27,21 @@ async function pluginFiles() {
   return names.filter(name => name.endsWith('.lpx')).sort();
 }
 
+
+function sectionLines(text, wanted) {
+  const out = [];
+  let current = null;
+  for (const raw of sectionLines(text, 'Rewrite')) {
+    const match = raw.trim().match(/^\[([^\]]+)\]$/);
+    if (match) {
+      current = match[1];
+      continue;
+    }
+    if (current === wanted) out.push(raw);
+  }
+  return out;
+}
+
 function classifyQx(ast) {
   try {
     if (ast.actions.length === 1 && /^(?:request|response)\.body\.mock_file$/.test(ast.actions[0].name)) {
