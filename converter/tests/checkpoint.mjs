@@ -31,6 +31,8 @@ import {
   parseLoonArguments,
   surgeArgumentMetadata,
   surgePluginObjectArgument,
+  surgeBooleanOptionValue,
+  surgeTimeoutOptionValue,
   surgeEnableRequirement,
   parseLegacyLoonPluginObjectRefs,
   analyzePluginArgumentUsage,
@@ -52,6 +54,7 @@ import {
   surgeModuleRule,
   renderSurgeModuleHeader,
   renderQxSnippetHeader,
+  sourcePlatformConstraint,
   validateSurgeModule,
   surgeTargetPath,
   validateRewriteV2Ast,
@@ -105,7 +108,13 @@ assert.equal(surgeModuleRule('CELLULAR-RADIO,NR,DIRECT').line, 'CELLULAR-RADIO,N
 assert.equal(surgeModuleRule('HOSTNAME-TYPE,IPv6,REJECT').line, 'HOSTNAME-TYPE,IPv6,REJECT');
 assert.equal(surgeModuleRule('RULE-SET,https://example.com/list.list,REJECT,no-resolve').line, 'RULE-SET,https://example.com/list.list,REJECT,no-resolve');
 assert.equal(surgeModuleRule('SCRIPT,ssid-rule,DIRECT,requires-resolve').line, 'SCRIPT,ssid-rule,DIRECT,requires-resolve');
-assert.equal(surgeModuleRule('FINAL,DIRECT').line, 'FINAL,DIRECT');
+assert.equal(surgeModuleRule('FINAL,DIRECT').reason, 'final-in-module');
+assert.match(surgeModuleRule('FINAL,DIRECT').lines[0], /REVIEW REQUIRED/);
+assert.equal(surgeModuleRule('PROCESS-NAME,Example,DIRECT').reason, 'process-name-platform');
+assert.equal(
+  surgeModuleRule('PROCESS-NAME,Example,DIRECT', {macOnly:true}).line,
+  'PROCESS-NAME,Example,DIRECT',
+);
 assert.equal(
   surgeModuleRule('AND,((DOMAIN,api.pinduoduo.com),(PROTOCOL,QUIC)),REJECT').line,
   'AND,((DOMAIN,api.pinduoduo.com),(PROTOCOL,QUIC)),REJECT',
@@ -162,13 +171,21 @@ const qxHeader = renderQxSnippetHeader([
   source:'https://example.com/demo.lpx',
 }, '2026-09-29 12:00:00 +08:00');
 assert.equal(qxHeader[0], '# Name: Demo');
-assert.ok(qxHeader.includes('# Description: Works in Quantumult X DNS framework'));
+assert.ok(qxHeader.includes('# Description: Works in Loon DNS framework'));
 assert.ok(qxHeader.includes('# Author: Source Author'));
 assert.ok(qxHeader.includes('# Homepage: https://example.com'));
 assert.ok(qxHeader.includes('# Icon: https://example.com/icon.png'));
 assert.equal(qxHeader.some(line => line.startsWith('#!')), false);
 assert.equal(qxHeader.some(line => /loon_version/i.test(line)), false);
 assert.ok(qxHeader.includes('# Converted by: chance'));
+assert.equal(sourcePlatformConstraint(['#!system=macOS']).macOnly, true);
+assert.equal(sourcePlatformConstraint(['#!system=mac']).macOnly, true);
+assert.equal(sourcePlatformConstraint(['#!system=iOS,macOS']).macOnly, false);
+const macSurgeHeader = renderSurgeModuleHeader([
+  '#!name=MacOnly',
+  '#!system=macOS',
+], {id:'MacOnly',category:'测试',source:'https://example.com/mac.lpx'}, '2026-09-29 12:00:00 +08:00');
+assert.ok(macSurgeHeader.includes('#!system=mac'));
 
 const validSurgeModule = [
   ...surgeHeader,
@@ -322,6 +339,18 @@ assert.deepEqual(parseLegacyLoonPluginObjectRefs('{region,level,enabled}'), ['re
 const noDefaultArgs = surgeArgumentMetadata(['optional=input,tag=可选']);
 assert.equal(noDefaultArgs.lines[0], '#!arguments=optional');
 assert.equal(surgePluginObjectArgument(['optional'], noDefaultArgs.table).ok, false);
+assert.throws(() => parseLoonArguments(['bad=unknown,x']), /unsupported Loon \[Argument\] control/);
+assert.throws(() => parseLoonArguments(['dup=input,a','dup=input,b']), /duplicate Loon \[Argument\] id/);
+assert.throws(() => parseLoonArguments(['flag=switch,yes,no']), /values must be Boolean/);
+assert.throws(() => parseLoonArguments(['count=input,abc,type=number']), /non-numeric/);
+assert.equal(surgeBooleanOptionValue('enabled', surgeArgs.table), '{{{enabled}}}');
+assert.equal(surgeBooleanOptionValue('region', surgeArgs.table), null);
+assert.equal(surgeTimeoutOptionValue('level', surgeArgs.table), '{{{level}}}');
+assert.equal(surgeTimeoutOptionValue('enabled', surgeArgs.table), null);
+const numericStringArgs = surgeArgumentMetadata(['wait=select,"5","10"']);
+assert.equal(surgeTimeoutOptionValue('wait', numericStringArgs.table), '{{{wait}}}');
+const nonNumericStringArgs = surgeArgumentMetadata(['wait=select,"fast","slow"']);
+assert.equal(surgeTimeoutOptionValue('wait', nonNumericStringArgs.table), null);
 
 const surgeArgumentScript = surgeScriptV2Plan(
   parseScriptV2('request if ${url} ~= /api/ then script("https://example.com/a.js", {${region}, ${level}, ${enabled}}) with enable=${enabled}, timeout=${level}, debug=${enabled}, requires_body=true'),
@@ -359,6 +388,12 @@ assert.equal(argumentAnalysis.arguments.find(x => x.id === 'unused').used, false
 assert.ok(argumentAnalysis.arguments.find(x => x.id === 'region').uses.some(x => x.kind === 'argument-object'));
 assert.ok(argumentAnalysis.arguments.find(x => x.id === 'enabled').uses.some(x => x.kind === 'dynamic-option' && x.option === 'enable'));
 assert.ok(argumentAnalysis.arguments.find(x => x.id === 'price').uses.some(x => x.section === 'Rewrite' && x.kind === 'action'));
+const legacyOptionAnalysis = analyzePluginArgumentUsage({
+  argumentLines:['wait=input,5,type=number','trace=switch,false,true'],
+  scriptLines:['http-response ^https://api\\.example\\.com script-path=https://example.com/a.js, timeout={wait}, debug={trace}'],
+});
+assert.ok(legacyOptionAnalysis.arguments.find(x => x.id === 'wait').uses.some(x => x.option === 'timeout'));
+assert.ok(legacyOptionAnalysis.arguments.find(x => x.id === 'trace').uses.some(x => x.option === 'debug'));
 assert.deepEqual(
   rewriteV2PluginArgumentRefs(
     parseRewriteV2('response if ${enabled} == true && ${url} ~= /api/ then response.json.replace("data.price", ${price})'),
@@ -748,6 +783,14 @@ assert.throws(
   () => parseScriptV2('response if ${url} ~= /api/ then script("a.js") with unknown=true'),
   /unknown Script v2 option/,
 );
+assert.throws(
+  () => parseScriptV2('response if ${url} ~= /api/ then script("a.js", {})'),
+  /plugin object argument must not be empty/,
+);
+assert.throws(
+  () => parseScriptV2('response if ${url} ~= /api/ then script("a.js", {${enabled}, ${enabled}})'),
+  /duplicate parameters/,
+);
 
 const scriptV2ArgumentCondition = parseScriptV2(
   'request if ${enabled} == true && ${url} ~= /api/ then script("https://example.com/a.js") with requires_body=true'
@@ -771,6 +814,27 @@ const qxScriptV2Native = qxScriptV2Plan(
 );
 assert.equal(qxScriptV2Native.ok, true);
 assert.match(qxScriptV2Native.line, /url script-response-body https:\/\/example\.com\/a\.js$/);
+
+const qxBinaryRequestReview = qxScriptV2Plan(
+  parseScriptV2('request if ${url} ~= /upload/ then script("a.js") with requires_body=true, binary_body_mode=true'),
+  {scriptUrl:'a.js', sourceText:'const b=$request.bodyBytes; $done({bodyBytes:b});'},
+);
+assert.equal(qxBinaryRequestReview.ok, false);
+assert.match(qxBinaryRequestReview.reason, /binary request body mode/);
+
+const qxTimeoutReview = qxScriptV2Plan(
+  parseScriptV2('response if ${url} ~= /api/ then script("a.js") with timeout=10'),
+  {scriptUrl:'a.js', sourceText:'$done({});'},
+);
+assert.equal(qxTimeoutReview.ok, false);
+assert.match(qxTimeoutReview.reason, /timeout/);
+
+const qxDynamicDebugReview = qxScriptV2Plan(
+  parseScriptV2('response if ${url} ~= /api/ then script("a.js") with debug=${enabled}'),
+  {scriptUrl:'a.js', sourceText:'$done({});', argumentIds:new Set(['enabled'])},
+);
+assert.equal(qxDynamicDebugReview.ok, false);
+assert.match(qxDynamicDebugReview.reason, /debug/);
 
 const surgeScriptV2Native = surgeScriptV2Plan(
   parseScriptV2('request if ${url} ~= /submit/i then script("https://example.com/request.js") with requires_body=true, binary_body_mode=true'),
