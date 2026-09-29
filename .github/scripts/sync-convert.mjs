@@ -13,7 +13,7 @@ import { qxMockPlanFromAction } from '../../converter/src/dependency.mjs';
 import { renderQxMockFileScript } from '../../converter/src/qx-mock.mjs';
 import { qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan, surgeHeaderRewritePlan, surgeInlineMockPlan, simpleUrlRewriteCondition } from '../../converter/src/rewrite-v2-semantic.mjs';
 import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript } from '../../converter/src/qx-semantic-script.mjs';
-import { mergeBoxJsSubscription, renderBoxJsApp, renderQxPrefsObjectBridge } from '../../converter/src/argument.mjs';
+import { mergeBoxJsSubscription, renderBoxJsApp, renderQxPrefsObjectBridge, renderQxScriptV2Bridge, renderSurgeScriptV2Bridge, renderSurgeModuleArguments } from '../../converter/src/argument.mjs';
 import { isScriptV2, parseScriptV2 } from '../../converter/src/script-v2.mjs';
 import { qxScriptV2Plan, surgeScriptV2Plan } from '../../converter/src/script-v2-target.mjs';
 
@@ -490,8 +490,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   const header = parsed.header.filter(l => !/^#\s*引用链接:/.test(l));
   while (header.length && !header.at(-1).trim()) header.pop();
 
-  const qx = { filter: [], rewrite: [], mitm: [], notes: [], generatedScripts: new Map() };
-  const sg = { rule: [], url: [], header: [], map: [], body: [], script: [], mitm: [], notes: [], generatedScripts: new Map() };
+  const qx = { filter: [], rewrite: [], mitm: [], notes: [], generatedScripts: new Map(), preferenceIds: new Set() };
+  const sg = { rule: [], url: [], header: [], map: [], body: [], script: [], mitm: [], notes: [], generatedScripts: new Map(), moduleArgumentIds: new Set() };
   const qctx = { id: entry.id, generatedScripts: qx.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, mockFiles: qxMockFiles };
   const sctx = { id: entry.id, generatedScripts: sg.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category };
 
@@ -551,39 +551,96 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
       }
 
       const mapped = scriptMap.get(ast.script.path);
-      const qxUrl = mapped?.qx || ast.script.path;
-      const surgeUrl = mapped?.surge || ast.script.path;
+      const sourceText = mapped?.source || '';
+      let qxUrl = mapped?.qx || ast.script.path;
+      let surgeUrl = mapped?.surge || ast.script.path;
       const qxCompat = inspectQxScriptCompatibility({
         scriptUrl: ast.script.path,
-        sourceText: mapped?.source || '',
+        sourceText,
         forkUrl: mapped?.qxAdapted ? qxUrl : '',
       });
 
       qx.rewrite.push(...comments);
-      const qxPlan = qxScriptV2Plan(ast, { scriptUrl: qxUrl, sourceText: mapped?.source || '' });
       if (!qxCompat.executable) {
         qx.rewrite.push(...qxManualPortComment({ scriptUrl: ast.script.path, result: qxCompat }));
         qx.rewrite.push(`# Original Loon: ${item.line}`);
-      } else if (!qxPlan.ok) {
-        qx.rewrite.push(`# [WayX] SCRIPT V2 REVIEW REQUIRED: ${qxPlan.reason}`);
-        qx.rewrite.push(`# Original Loon: ${item.line}`);
-      } else if (qxPlan.disabled) {
-        qx.rewrite.push(`# [WayX] Script disabled by source option: ${item.line}`);
       } else {
-        if (qxPlan.tag) qx.rewrite.push(`# ${qxPlan.tag}`);
-        if (qxPlan.binaryBodyMode) qx.rewrite.push('# [WayX] Loon binary_body_mode=true; QX binary handling must be provided by the script runtime itself.');
-        qx.rewrite.push(qxPlan.line);
+        let qxBridge = null;
+        let qxBridgeError = null;
+        try {
+          qxBridge = renderQxScriptV2Bridge(entry.id, parsed.sections.get('Argument') || [], ast, sourceText, {
+            stamp: ctx?.stamp || stamp,
+            category: entry.category,
+            sourceUrl: ast.script.path,
+          });
+          if (qxBridge.changed) {
+            const key = crypto.createHash('sha1').update('script-v2-qx\0' + item.line).digest('hex').slice(0, 10);
+            const filename = `scriptv2_qx_${key}.js`;
+            qx.generatedScripts.set(filename, qxBridge.source);
+            qxUrl = `${RAW_BASE}/script/${entry.id}/${filename}`;
+            for (const id of qxBridge.preferenceIds) qx.preferenceIds.add(id);
+          }
+        } catch (error) {
+          qxBridgeError = String(error?.message || error).split('\n')[0];
+        }
+
+        const qxPlan = qxBridgeError
+          ? {ok:false, reason:qxBridgeError}
+          : qxScriptV2Plan(ast, {
+              scriptUrl: qxUrl,
+              sourceText,
+              bridgeReady:Boolean(qxBridge?.changed),
+            });
+
+        if (!qxPlan.ok) {
+          qx.rewrite.push(`# [WayX] SCRIPT V2 REVIEW REQUIRED: ${qxPlan.reason}`);
+          qx.rewrite.push(`# Original Loon: ${item.line}`);
+        } else if (qxPlan.disabled) {
+          qx.rewrite.push(`# [WayX] Script disabled by source option: ${item.line}`);
+        } else {
+          if (qxPlan.tag) qx.rewrite.push(`# ${qxPlan.tag}`);
+          if (qxPlan.binaryBodyMode) qx.rewrite.push('# [WayX] Loon binary_body_mode=true; QX binary handling is delegated to the compatible script runtime.');
+          if (qxBridge?.changed) qx.rewrite.push('# [WayX] BoxJs/$prefs Script v2 bridge active.');
+          qx.rewrite.push(qxPlan.line);
+        }
       }
 
       const name = sanitizeName((ast.options.find(x => x.name === 'tag')?.value?.value) || `${entry.id}_${String(scriptIndex).padStart(2, '0')}`);
-      const surgePlan = surgeScriptV2Plan(ast, { scriptUrl: surgeUrl, name });
       sg.script.push(...comments);
+      let surgeBridge = null;
+      let surgeBridgeError = null;
+      try {
+        surgeBridge = renderSurgeScriptV2Bridge(parsed.sections.get('Argument') || [], ast, sourceText, {
+          stamp,
+          category: entry.category,
+          sourceUrl: ast.script.path,
+        });
+        if (surgeBridge.changed) {
+          const key = crypto.createHash('sha1').update('script-v2-surge\0' + item.line).digest('hex').slice(0, 10);
+          const filename = `scriptv2_surge_${key}.js`;
+          sg.generatedScripts.set(filename, surgeBridge.source);
+          surgeUrl = `${RAW_BASE}/script/${entry.id}/${filename}`;
+          for (const id of surgeBridge.moduleArgumentIds) sg.moduleArgumentIds.add(id);
+        }
+      } catch (error) {
+        surgeBridgeError = String(error?.message || error).split('\n')[0];
+      }
+
+      const surgePlan = surgeBridgeError
+        ? {ok:false, reason:surgeBridgeError}
+        : surgeScriptV2Plan(ast, {
+            scriptUrl: surgeUrl,
+            name,
+            bridgeReady:Boolean(surgeBridge?.changed),
+            declarationArgument:surgeBridge?.declarationArgument || null,
+          });
       if (!surgePlan.ok) {
         sg.script.push(`# [WayX] SCRIPT V2 REVIEW REQUIRED: ${surgePlan.reason}`);
         sg.script.push(`# Original Loon: ${item.line}`);
       } else if (surgePlan.disabled) {
         sg.script.push(`# [WayX] Script disabled by source option: ${item.line}`);
       } else {
+        if (surgeBridge?.changed) sg.script.push('# [WayX] Surge module-argument Script v2 bridge active.');
         sg.script.push(surgePlan.line);
       }
       continue;
@@ -680,9 +737,15 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   if (sg.map.length) surgeSections.push('[Map Local]', ...compact(sg.map), '');
   if (sg.script.length) surgeSections.push('[Script]', ...compact(sg.script), '');
   if (sg.mitm.length) surgeSections.push('[MITM]', ...compact(sg.mitm), '');
-  const sgOut = [...header, ...meta, '# Target: Surge', '', ...surgeSections].join('\n').replace(/\n*$/, '\n');
+  const surgeArgumentMeta = renderSurgeModuleArguments(parsed.sections.get('Argument') || [], [...sg.moduleArgumentIds]);
+  const sgOut = [...header, ...surgeArgumentMeta, ...meta, '# Target: Surge', '', ...surgeSections].join('\n').replace(/\n*$/, '\n');
 
-  return { qx: qxOut.replace(/\n*$/, '\n'), surge: sgOut, generatedScripts: new Map([...qx.generatedScripts, ...sg.generatedScripts]) };
+  return {
+    qx: qxOut.replace(/\n*$/, '\n'),
+    surge: sgOut,
+    generatedScripts: new Map([...qx.generatedScripts, ...sg.generatedScripts]),
+    qxPreferenceIds: [...qx.preferenceIds],
+  };
 }
 
 function convertedScriptMeta(entry, target, sourceUrl, stamp) {
