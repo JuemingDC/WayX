@@ -966,6 +966,18 @@ async function main() {
         out = convert(entry, source, scriptMap, stamp, qxMockFiles);
       }
 
+      if (out.qxPreferenceIds?.length && argumentLines.length) {
+        const used = new Set(out.qxPreferenceIds);
+        const usedArgumentLines = argumentLines.filter(raw => {
+          const idx = raw.indexOf('=');
+          return idx > 0 && used.has(raw.slice(0, idx).trim());
+        });
+        if (usedArgumentLines.length) {
+          const displayName = (source.match(/^#!name\s*=\s*(.+)$/m) || [])[1]?.trim() || entry.id;
+          generatedBoxJsApps.push(renderBoxJsApp({ ...entry, name: displayName }, usedArgumentLines));
+        }
+      }
+
       for (const [file, content] of out.generatedScripts) {
         const dir = path.join(SCRIPT_DIR, entry.id);
         await fs.mkdir(dir, { recursive: true });
