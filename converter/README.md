@@ -47,6 +47,15 @@ Surge 模块输出另有独立规范化层，不复用 Loon 文件头或 Loon Ru
 - `[URL Rewrite]`、`[Header Rewrite]`、`[Body Rewrite]`、`[Map Local]`、`[Script]`、`[MITM]` 均按 Surge 官方 section 和参数形式输出；`[Script]` 使用现代 `name = type=...,pattern=...,script-path=...` 形式；
 - Module MITM hostname 始终使用 `hostname = %APPEND% ...`；
 - `converter/src/surge-module.mjs` 对生成结果做严格校验，防止 Loon 专属活动指令或非法 Surge Module Rule 重新进入输出。
+端到端完整成品 golden 已加入 CI：
+
+- 固定转换时间后，直接调用实际 converter 对完整 Loon 插件生成 QX `.snippet` 与 Surge `.sgmodule`，不再只测 parser/helper；
+- 当前锁定 6 条代表路径：HTTPDNS、PinDuoDuo、RuCu6 MyBlockAds、YouTube、Bilibili、JingDong；
+- 每个 case 锁定完整 QX/Surge SHA-256、字节数、Section 顺序、Review 数量与生成辅助脚本数量；
+- 同时做语义断言：Surge Module 头与 Core requirement、逻辑 Rule/PROTOCOL/no-resolve、Body Rewrite/Map Local/Script/MITM、QX 注释段格式、Bilibili protobuf QX 禁用、YouTube/JingDong typed argument/dynamic enable Review；
+- golden 只锁声明层和目标成品；源 Script JavaScript 不改写。Bilibili `request.js/response.js` 不得出现在活动 QX 行，YouTube/JingDong 不能通过包装脚本绕过参数限制；
+- golden fixture 位于 `converter/fixtures/end-to-end-golden.json`，完整测试位于 `converter/tests/end-to-end-golden.mjs`。
+
 第五阶段已接入 Loon HTTP Script v2，并在当前阶段修正为“声明层转换、脚本正文原样保留”：
 
 - 当前 RuCu6 9 个插件的 110 条活动 Script v2 全部进入正式 parser/AST，解析错误为 0；其中 response 101 条、request 9 条，108 条要求 body，14 条要求 binary body；
@@ -57,4 +66,4 @@ Surge 模块输出另有独立规范化层，不复用 Loon 文件头或 Loon Ru
 - 旧 Tieba/DianPing/PinDuoDuo 的正文适配产物已退出转换主链，managed BoxJs bridge 项同步清理；
 - 用户提供的 Loon 新语法案例已加入独立 CI 回归测试，覆盖 JSON delete/replace/JQ、body.mock、reject/reject_dict/reject_img、URL-REGEX REJECT-IMG/REJECT-DROP。
 
-下一阶段优先做端到端输出 golden 和 Script v2 复合 condition；原则固定为：原生声明优先，源脚本正文绝不改写，无法声明层等价表达时保留 Review。
+下一阶段优先把已合并转换器重新应用到仓库 canonical 产物，并增加“checked-in 成品 == converter 当前输出”的离线一致性检查；随后再扩展 Script v2 复合 condition。原则固定为：原生声明优先，源脚本正文绝不改写，无法声明层等价表达时保留 Review。
