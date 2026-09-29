@@ -23,6 +23,9 @@ import {
   mergeBoxJsSubscription,
   parseLoonArguments,
   renderQxPrefsObjectBridge,
+  renderQxScriptV2Bridge,
+  renderSurgeScriptV2Bridge,
+  renderSurgeModuleArguments,
   parseRewriteV2,
   qxPrimitiveForRewriteV2Action,
   qxRule,
@@ -30,6 +33,13 @@ import {
   renderBoxJsApp,
   rewriteV2ToSource,
   selectQxScriptAction,
+  parseScriptV2,
+  scriptV2ToSource,
+  scriptV2ArgumentRefs,
+  scriptV2DynamicOptionRefs,
+  scriptOptionBoolean,
+  qxScriptV2Plan,
+  surgeScriptV2Plan,
   surgeRule,
   surgeTargetPath,
   validateRewriteV2Ast,
@@ -142,6 +152,19 @@ const genericReject = inspectQxScriptCompatibility({
   sourceText:'throw new Error("Quantumult X is not supported");',
 });
 assert.equal(genericReject.executable, false);
+
+const surgeOnlyScript = inspectQxScriptCompatibility({
+  scriptUrl:'https://example.com/surge-only.js',
+  sourceText:'$httpClient.get("https://example.com", () => $done({})); const x=$persistentStore.read("x");',
+});
+assert.equal(surgeOnlyScript.executable, false);
+assert.match(surgeOnlyScript.reason, /\$httpClient/);
+
+const dualRuntimeScript = inspectQxScriptCompatibility({
+  scriptUrl:'https://example.com/cross-platform.js',
+  sourceText:'const isQX = typeof $task !== "undefined"; if (isQX) $task.fetch({url:"https://example.com"}); else $httpClient.get("https://example.com",()=>{});',
+});
+assert.equal(dualRuntimeScript.executable, true);
 
 const jqFileAst = parseRewriteV2('response if ${url} ~= /api/ then response.json.jq_file("filters/remove-ads.jq")');
 const deps = listRewriteV2Dependencies(jqFileAst, {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
@@ -306,5 +329,86 @@ assert.equal(surgeGrpcMock.section, 'map');
 assert.match(surgeGrpcMock.line, /data-type=base64/);
 assert.match(surgeGrpcMock.line, /status-code=200/);
 assert.match(surgeGrpcMock.line, /Content-Type:text\/plain\|grpc-status:0/);
+
+const scriptV2Basic = parseScriptV2('response if ${url} ~= /^https:\\/\\/api\\.example\\.com/i then script("https://example.com/a.js") with tag="API", requires_body=true, binary_body_mode=false');
+assert.equal(scriptV2Basic.phase, 'response');
+assert.equal(scriptV2Basic.script.path, 'https://example.com/a.js');
+assert.equal(scriptOptionBoolean(scriptV2Basic, 'requires_body'), true);
+assert.equal(scriptOptionBoolean(scriptV2Basic, 'binary_body_mode'), false);
+assert.match(scriptV2ToSource(scriptV2Basic), /then script\("https:\/\/example\.com\/a\.js"\)/);
+
+const scriptV2ObjectArg = parseScriptV2('request if ${url} ~= /grpc/i then script("request.js", {${enabled}, ${lang}}) with enable=${enabled}, timeout=20, requires_body=true, binary_body_mode=true');
+assert.deepEqual(scriptV2ArgumentRefs(scriptV2ObjectArg), ['enabled','lang']);
+assert.deepEqual(scriptV2DynamicOptionRefs(scriptV2ObjectArg), [{option:'enable',id:'enabled'}]);
+assert.equal(scriptOptionBoolean(scriptV2ObjectArg, 'binary_body_mode'), true);
+assert.throws(
+  () => parseScriptV2('response if ${url} ~= /api/ then script("a.js") with requires_body=${enabled}'),
+  /requires_body: invalid value type/,
+);
+assert.throws(
+  () => parseScriptV2('response if ${url} ~= /api/ then script("a.js") with unknown=true'),
+  /unknown Script v2 option/,
+);
+
+const qxScriptV2Native = qxScriptV2Plan(
+  parseScriptV2('response if ${url} ~= /^https:\\/\\/api\\.example\\.com/i then script("https://example.com/a.js") with tag="API", requires_body=true'),
+  {scriptUrl:'https://example.com/a.js', sourceText:'$done({body:$response.body});'},
+);
+assert.equal(qxScriptV2Native.ok, true);
+assert.match(qxScriptV2Native.line, /url script-response-body https:\/\/example\.com\/a\.js$/);
+
+const surgeScriptV2Native = surgeScriptV2Plan(
+  parseScriptV2('request if ${url} ~= /submit/i then script("https://example.com/request.js") with requires_body=true, binary_body_mode=true'),
+  {scriptUrl:'https://example.com/request.js', name:'request_script'},
+);
+assert.equal(surgeScriptV2Native.ok, true);
+assert.match(surgeScriptV2Native.line, /^request_script = type=http-request,/);
+assert.match(surgeScriptV2Native.line, /requires-body=true/);
+assert.match(surgeScriptV2Native.line, /binary-body-mode=true/);
+
+const qxScriptV2NeedsBridge = qxScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'request.js'});
+assert.equal(qxScriptV2NeedsBridge.ok, false);
+assert.match(qxScriptV2NeedsBridge.reason, /dynamic enable|argument/);
+
+const surgeScriptV2NeedsBridge = surgeScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'request.js', name:'x'});
+assert.equal(surgeScriptV2NeedsBridge.ok, false);
+assert.match(surgeScriptV2NeedsBridge.reason, /dynamic enable|argument/);
+
+const scriptBridgeArgs = [
+  'enabled=switch, false, true, tag="Enabled"',
+  'lang=select, "zh-Hans", "en", tag="Language"',
+];
+const qxV2Bridge = renderQxScriptV2Bridge(
+  'Demo',
+  scriptBridgeArgs,
+  scriptV2ObjectArg,
+  'const value = $argument.lang; $done({});',
+  {stamp:'2026-09-29 10:00:00 +08:00', category:'Adblock', sourceUrl:'https://example.com/request.js'},
+);
+assert.equal(qxV2Bridge.changed, true);
+assert.deepEqual(qxV2Bridge.preferenceIds.sort(), ['enabled','lang']);
+assert.match(qxV2Bridge.source, /\$prefs\.valueForKey/);
+assert.match(qxV2Bridge.source, /async function\(\$argument\)/);
+assert.match(qxV2Bridge.source, /"lang": String/);
+
+const surgeV2Bridge = renderSurgeScriptV2Bridge(
+  scriptBridgeArgs,
+  scriptV2ObjectArg,
+  'const value = $argument.lang; $done({});',
+  {category:'Adblock', sourceUrl:'https://example.com/request.js'},
+);
+assert.equal(surgeV2Bridge.changed, true);
+assert.deepEqual(surgeV2Bridge.moduleArgumentIds.sort(), ['enabled','lang']);
+assert.match(surgeV2Bridge.declarationArgument, /\{\{\{enabled\}\}\}/);
+assert.match(surgeV2Bridge.declarationArgument, /\{\{\{lang\}\}\}/);
+assert.match(surgeV2Bridge.source, /JSON\.parse\(\$argument/);
+assert.match(surgeV2Bridge.source, /async function\(\$argument\)/);
+
+const surgeArgMeta = renderSurgeModuleArguments(scriptBridgeArgs, ['enabled','lang']);
+assert.equal(surgeArgMeta[0], '#!arguments=enabled:false,lang:zh-Hans');
+assert.throws(
+  () => renderQxScriptV2Bridge('Demo', scriptBridgeArgs, scriptV2ObjectArg, 'const $argument = {}; $done({});'),
+  /source declares \$argument/,
+);
 
 console.log('WayX converter checkpoint tests passed');
