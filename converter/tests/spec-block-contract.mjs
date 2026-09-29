@@ -26,6 +26,14 @@ for(const [block,doc,impls] of contracts){
   }
 }
 
+const upstreamWorkflow=await fs.readFile(path.join(ROOT,'.github/workflows/upstream-monitor.yml'),'utf8');
+const converterWorkflow=await fs.readFile(path.join(ROOT,'.github/workflows/converter-check.yml'),'utf8');
+const canonicalRunner=await fs.readFile(path.join(ROOT,'converter/tools/regenerate-canonical.mjs'),'utf8');
+assert.equal(/sync_rucu6\.py|rucu6_sync/.test(upstreamWorkflow), false, 'Block 90: duplicate RuCu6 sync path must not return');
+assert.match(upstreamWorkflow,/node \.github\/scripts\/sync-convert\.mjs/, 'Block 90: scheduled workflow must call the unified converter');
+assert.equal(/work\/catalog-unification|github\.head_ref\s*==/.test(converterWorkflow), false, 'Block 90: CI must not contain branch-specific canonical behavior');
+assert.equal(/EXTRA_LOCAL_ENTRIES|RuCu6\/youtube\.lpx|RuCu6\/myblockads\.lpx/.test(canonicalRunner), false, 'Block 90: canonical runner must only traverse Source Catalog');
+
 const index=await fs.readFile(path.join(ROOT,'docs/conversion-spec/95-implementation-index.md'),'utf8');
 for(const [block] of contracts) assert.match(index,new RegExp('\\| '+block+' \\|'), `implementation index missing Block ${block}`);
 
