@@ -9,23 +9,23 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/LOL_Bible.png
 # Updated: 2026-06-01 17:11:35
 
-# Converted: 2026-09-29 14:32:07 +08:00
+# Converted: 2026-09-29 23:36:45 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/LOL_Bible_remove_ads.lpx
 # Target: Surge
 
 [Map Local]
-^https:\/\/mlol\.qt\.qq\.com\/go\/recommend\/platstrongshell\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https://mlol\.qt\.qq\.com/go/recommend/platstrongshell\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/mlol\.qt\.qq\.com\/go\/club\/match\/get_ai_search_words$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https://mlol\.qt\.qq\.com/go/club/match/get_ai_search_words$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/mlol\.qt\.qq\.com\/go\/mlol_news\/search\/varcache_hotV\d\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https://mlol\.qt\.qq\.com/go/mlol_news/search/varcache_hotV\d\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/mlol\.qt\.qq\.com\/go\/customize_search\/article_rank_tab\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/mlol\.qt\.qq\.com\/go\/customize_search\/article_rank\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https://mlol\.qt\.qq\.com/go/customize_search/article_rank_tab\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https://mlol\.qt\.qq\.com/go/customize_search/article_rank\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/mlol\.qt\.qq\.com\/go\/zone\/bottomtab_tip\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https://mlol\.qt\.qq\.com/go/zone/bottomtab_tip\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% mlol.qt.qq.com
