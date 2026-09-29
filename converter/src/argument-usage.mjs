@@ -30,9 +30,16 @@ function collectVariableNames(node, out = new Set()) {
   return out;
 }
 
+function isBuiltInRuntimeVariable(name) {
+  const value = String(name || '');
+  return value === 'url' || value.startsWith('request.') || value.startsWith('response.');
+}
+
 function declaredRefs(node, declaredIds) {
   const declared = declaredIds instanceof Set ? declaredIds : new Set(declaredIds || []);
-  return [...collectVariableNames(node)].filter(name => declared.has(name)).sort();
+  return [...collectVariableNames(node)]
+    .filter(name => declared.has(name) && !isBuiltInRuntimeVariable(name))
+    .sort();
 }
 
 function pluginObjectRefs(ast) {
