@@ -6,12 +6,12 @@ import { selectQxScriptAction } from '../../converter/src/script.mjs';
 import { inspectQxScriptCompatibility, qxManualPortComment } from '../../converter/src/script-compat.mjs';
 import { minifyJq } from '../../converter/src/jq.mjs';
 import { BOXJS_SUBSCRIPTION, qxTargetPath, surgeTargetPath } from '../../converter/src/paths.mjs';
-import { analyzeSafeRewriteV2, analyzeSimpleUrlRegexCondition } from '../../converter/src/rewrite-v2-safe.mjs';
+import { analyzeSafeRewriteV2 } from '../../converter/src/rewrite-v2-safe.mjs';
 import { isRewriteV2, parseRewriteV2 } from '../../converter/src/rewrite-v2.mjs';
 import { validateRewriteV2Ast } from '../../converter/src/rewrite-v2-actions.mjs';
 import { qxMockPlanFromAction } from '../../converter/src/dependency.mjs';
 import { renderQxMockFileScript } from '../../converter/src/qx-mock.mjs';
-import { qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan, simpleUrlRewriteCondition } from '../../converter/src/rewrite-v2-semantic.mjs';
+import { qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan, surgeHeaderRewritePlan, surgeInlineMockPlan, simpleUrlRewriteCondition } from '../../converter/src/rewrite-v2-semantic.mjs';
 import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript } from '../../converter/src/qx-semantic-script.mjs';
 import { mergeBoxJsSubscription, renderBoxJsApp, renderQxPrefsObjectBridge } from '../../converter/src/argument.mjs';
 
@@ -241,9 +241,9 @@ function rewriteV2Action(line, target, ctx) {
 
   if (target === 'surge') {
     try {
-      for (const mapper of [surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan]) {
+      for (const mapper of [surgeInlineMockPlan, surgeHeaderRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan]) {
         const mapped = mapper(ast);
-        if (mapped.ok) return { section: mapped.section, line: mapped.line };
+        if (mapped.ok) return { section: mapped.section, line: mapped.line, lines: mapped.lines };
       }
     } catch (error) {
       return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
@@ -489,7 +489,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   while (header.length && !header.at(-1).trim()) header.pop();
 
   const qx = { filter: [], rewrite: [], mitm: [], notes: [], generatedScripts: new Map() };
-  const sg = { rule: [], url: [], map: [], body: [], script: [], mitm: [], notes: [], generatedScripts: new Map() };
+  const sg = { rule: [], url: [], header: [], map: [], body: [], script: [], mitm: [], notes: [], generatedScripts: new Map() };
   const qctx = { id: entry.id, generatedScripts: qx.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, mockFiles: qxMockFiles };
   const sctx = { id: entry.id, generatedScripts: sg.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category };
 
@@ -527,9 +527,9 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     }
 
     const qdest = qr.section === 'rewrite' ? qx.rewrite : qx.notes;
-    const sdest = ({url: sg.url, map: sg.map, body: sg.body, script: sg.script})[sr.section] || sg.notes;
+    const sdest = ({url: sg.url, header: sg.header, map: sg.map, body: sg.body, script: sg.script})[sr.section] || sg.notes;
     qdest.push(...comments, qr.line);
-    sdest.push(...comments, sr.line);
+    sdest.push(...comments, ...(sr.lines || [sr.line]));
   }
 
   let scriptIndex = 0;
@@ -621,6 +621,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   const surgeSections = [];
   if (sg.notes.length) surgeSections.push(...sg.notes, '');
   if (sg.rule.length) surgeSections.push('[Rule]', ...compact(sg.rule), '');
+  if (sg.header.length) surgeSections.push('[Header Rewrite]', ...compact(sg.header), '');
   if (sg.url.length) surgeSections.push('[URL Rewrite]', ...compact(sg.url), '');
   if (sg.body.length) surgeSections.push('[Body Rewrite]', ...compact(sg.body), '');
   if (sg.map.length) surgeSections.push('[Map Local]', ...compact(sg.map), '');
@@ -781,7 +782,7 @@ function validateQX(text, entry) {
 }
 
 function validateSurge(text, entry) {
-  const allowed = new Set(['Rule','URL Rewrite','Body Rewrite','Map Local','Script','MITM']);
+  const allowed = new Set(['Rule','Header Rewrite','URL Rewrite','Body Rewrite','Map Local','Script','MITM']);
   for (const m of text.matchAll(/^\[([^\]]+)\]$/gm)) if (!allowed.has(m[1])) throw new Error(`${entry.id}: unsupported Surge section [${m[1]}]`);
   for (const line of text.split('\n')) {
     const m = line.match(/^hostname\s*=\s*(.+)$/i);
