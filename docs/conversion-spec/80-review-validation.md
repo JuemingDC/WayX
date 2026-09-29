@@ -92,4 +92,5 @@ CI 必须额外检查：
 - Identity invariance：`converter/tests/generic-identity.mjs`
 - Repository-wide audit：`converter/tools/audit-repository.mjs`
 - Generated helper reference existence：`converter/tests/generated-helper-refs.mjs`
+- Original Source Script URL preservation：`converter/tests/source-script-url-preservation.mjs`
 - End-to-end Golden：`converter/tests/end-to-end-golden.mjs` + `converter/fixtures/end-to-end-golden.json`
