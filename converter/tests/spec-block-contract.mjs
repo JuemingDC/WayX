@@ -5,7 +5,7 @@ import path from 'node:path';
 const ROOT=process.cwd();
 const contracts=[
   ['00','docs/conversion-spec/00-authority.md',['converter/tests/genericity-audit.mjs','converter/tools/audit-repository.mjs']],
-  ['05','docs/conversion-spec/05-generic-converter.md',['converter/src/source-catalog.mjs','converter/src/script-path.mjs','.github/scripts/sync-convert.mjs']],
+  ['05','docs/conversion-spec/05-generic-converter.md',['converter/src/source-catalog.mjs','converter/src/source-fetch.mjs','.github/scripts/sync-convert.mjs']],
   ['10','docs/conversion-spec/10-target-format.md',['converter/src/paths.mjs','converter/src/metadata.mjs','converter/src/surge-module.mjs']],
   ['20','docs/conversion-spec/20-rule-mapping.md',['converter/src/rule.mjs']],
   ['30','docs/conversion-spec/30-rewrite-mapping.md',['converter/src/legacy-rewrite.mjs','converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-semantic.mjs']],
@@ -29,6 +29,11 @@ for(const [block,doc,impls] of contracts){
 const upstreamWorkflow=await fs.readFile(path.join(ROOT,'.github/workflows/upstream-monitor.yml'),'utf8');
 const converterWorkflow=await fs.readFile(path.join(ROOT,'.github/workflows/converter-check.yml'),'utf8');
 const canonicalRunner=await fs.readFile(path.join(ROOT,'converter/tools/regenerate-canonical.mjs'),'utf8');
+const sourceCatalog=await fs.readFile(path.join(ROOT,'.github/sources/loon.json'),'utf8');
+const syncConverter=await fs.readFile(path.join(ROOT,'.github/scripts/sync-convert.mjs'),'utf8');
+assert.equal(/"mirrors"\s*:/.test(sourceCatalog), false, 'Block 90: Source Catalog must not contain mirrors');
+assert.equal(/entry\.mirrors|fetchWithFallback|planScriptMirrorPaths/.test(syncConverter), false, 'Block 90: converter must not use source/script mirror fallback');
+assert.match(syncConverter,/fetchOriginalText\(entry\.source\)/, 'Block 90: plugin fetch must use original descriptor source');
 assert.equal(/sync_rucu6\.py|rucu6_sync/.test(upstreamWorkflow), false, 'Block 90: duplicate RuCu6 sync path must not return');
 assert.match(upstreamWorkflow,/node \.github\/scripts\/sync-convert\.mjs/, 'Block 90: scheduled workflow must call the unified converter');
 assert.equal(/work\/catalog-unification|github\.head_ref\s*==/.test(converterWorkflow), false, 'Block 90: CI must not contain branch-specific canonical behavior');
