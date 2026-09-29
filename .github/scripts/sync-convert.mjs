@@ -4,8 +4,9 @@ import crypto from 'node:crypto';
 import { qxRule as canonicalQxRule, surgeRule as canonicalSurgeRule } from '../../converter/src/rule.mjs';
 import { selectQxScriptAction } from '../../converter/src/script.mjs';
 import { minifyJq } from '../../converter/src/jq.mjs';
-import { qxTargetPath, surgeTargetPath } from '../../converter/src/paths.mjs';
+import { BOXJS_SUBSCRIPTION, qxTargetPath, surgeTargetPath } from '../../converter/src/paths.mjs';
 import { analyzeSafeRewriteV2 } from '../../converter/src/rewrite-v2-safe.mjs';
+import { mergeBoxJsSubscription, renderBoxJsApp, renderQxPrefsObjectBridge } from '../../converter/src/argument.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -381,7 +382,8 @@ function convert(entry, source, scriptMap, stamp = nowCN()) {
     }).action;
     qx.rewrite.push(...comments);
     if (sc.tag) qx.rewrite.push(`# ${sc.tag}`);
-    if (sc.argument) qx.rewrite.push(`# [WayX] REVIEW REQUIRED: verify BoxJs/$prefs bridge for argument=${sc.argument}`);
+    if (sc.argument && mapped?.qxArgumentBridge) qx.rewrite.push(`# [WayX] BoxJs/$prefs bridge active for argument=${sc.argument}`);
+    else if (sc.argument) qx.rewrite.push(`# [WayX] REVIEW REQUIRED: verify BoxJs/$prefs bridge for argument=${sc.argument}`);
     if (sc.argument || sc.enable || sc.binary) qx.rewrite.push(`# Loon script options preserved in source: ${[sc.argument && `argument=${sc.argument}`, sc.enable && `enable=${sc.enable}`, sc.binary && 'binary-body-mode=true'].filter(Boolean).join(', ')}`);
     qx.rewrite.push(`${sc.pattern} url ${qType} ${qxUrl}`);
 
@@ -479,17 +481,18 @@ function adaptSurgeScript(entry, source) {
   return out;
 }
 
-function adaptTiebaQX(entry, source, defaults) {
+function adaptTiebaQX(entry, source, argumentLines = []) {
   if (entry.id !== 'Tieba') return source;
-  const raw = String(defaults.get('per_filter_video_thread') ?? 'false').trim().toLowerCase();
-  const value = raw === 'true' ? 'true' : 'false';
-  const re = /^(\s*)per_filter_video_thread:\s*(true|false),\s*(\/\/[^\n]*)$/m;
-  const m = source.match(re);
-  if (!m) throw new Error(`${entry.id}: cannot locate per_filter_video_thread default in tieba-proto.js`);
-  const indent = m[1];
-  const originalComment = m[3];
-  const replacement = `${indent}// Converted by chance: Quantumult X snippet cannot receive Loon [Argument]; apply the Loon default ${value}.\n${indent}per_filter_video_thread: ${value},\n${indent}// Original comment: ${originalComment.replace(/^\/\/\s*/, '')}`;
-  return source.replace(re, replacement);
+  if (!/\$argument\b/.test(source)) throw new Error(`${entry.id}: expected $argument usage was not found in tieba-proto.js`);
+  if (/\b(?:const|let|var)\s+\$argument\b/.test(source)) throw new Error(`${entry.id}: source declares $argument; automatic QX bridge would collide`);
+
+  const bridge = renderQxPrefsObjectBridge(
+    entry.id,
+    argumentLines,
+    ['per_filter_video_thread'],
+    { per_filter_video_thread: 'boolean' },
+  );
+  return bridge + source;
 }
 
 async function adaptPinDuoDuoCommon(entry, source) {
@@ -512,7 +515,7 @@ async function adaptPinDuoDuoCommon(entry, source) {
   return out;
 }
 
-async function syncScript(entry, url, defaults = new Map()) {
+async function syncScript(entry, url, defaults = new Map(), argumentLines = []) {
   const filename = decodeURIComponent(new URL(url).pathname.split('/').pop() || `${entry.id}.js`);
   const destDir = path.join(SCRIPT_DIR, entry.id);
   await fs.mkdir(destDir, { recursive: true });
@@ -529,7 +532,7 @@ async function syncScript(entry, url, defaults = new Map()) {
 
   if (entry.id === 'Tieba') {
     const qxDest = path.join(destDir, 'QuantumultX', filename);
-    await writeAdaptedScript(qxDest, entry, 'Quantumult X', url, adaptTiebaQX(entry, normalized, defaults));
+    await writeAdaptedScript(qxDest, entry, 'Quantumult X', url, adaptTiebaQX(entry, normalized, argumentLines));
     qxPath = qxDest;
   }
 
@@ -548,7 +551,7 @@ async function syncScript(entry, url, defaults = new Map()) {
   }
 
   const toRaw = file => `${RAW_BASE}/${path.relative(ROOT, file).split(path.sep).map(encodeURIComponent).join('/')}`;
-  return { qx: toRaw(qxPath), surge: toRaw(surgePath), source: normalized };
+  return { qx: toRaw(qxPath), surge: toRaw(surgePath), source: normalized, qxArgumentBridge: entry.id === 'Tieba' };
 }
 
 function scriptUrls(source) {
@@ -585,6 +588,7 @@ async function main() {
   const manifest = JSON.parse(await fs.readFile(MANIFEST, 'utf8'));
   await Promise.all([RESOURCE_DIR, TARGET_ROOT, SCRIPT_DIR].map(d => fs.mkdir(d, { recursive: true })));
   const failures = [];
+  const generatedBoxJsApps = [];
   for (const entry of manifest) {
     try {
       console.log(`\n== ${entry.id} ==`);
@@ -598,9 +602,17 @@ async function main() {
       console.log(`${changed ? 'updated' : 'unchanged'} source via ${fetchedFrom}; sha256=${sha256(source).slice(0, 12)}`);
 
       const scriptMap = new Map();
-      const sourceDefaults = argumentDefaults(parseLoon(source).sections.get('Argument'));
+      const parsedSource = parseLoon(source);
+      const argumentLines = parsedSource.sections.get('Argument') || [];
+      const sourceDefaults = argumentDefaults(argumentLines);
       for (const url of scriptUrls(source)) {
-        scriptMap.set(url, await syncScript(entry, url, sourceDefaults));
+        scriptMap.set(url, await syncScript(entry, url, sourceDefaults, argumentLines));
+      }
+
+      // Only publish BoxJs controls once the corresponding QX bridge is functional.
+      if (entry.id === 'Tieba' && argumentLines.length) {
+        const displayName = (source.match(/^#!name\s*=\s*(.+)$/m) || [])[1]?.trim() || entry.id;
+        generatedBoxJsApps.push(renderBoxJsApp({ ...entry, name: displayName }, argumentLines));
       }
 
       const qxPath = path.join(ROOT, qxTargetPath(entry));
@@ -641,6 +653,18 @@ async function main() {
       console.error(`::error title=${entry.id}::${String(e.message).replaceAll('\n', '%0A')}`);
     }
   }
+  if (!failures.length && generatedBoxJsApps.length) {
+    const boxJsPath = path.join(ROOT, BOXJS_SUBSCRIPTION);
+    const current = JSON.parse(await fs.readFile(boxJsPath, 'utf8'));
+    const merged = mergeBoxJsSubscription(current, generatedBoxJsApps);
+    const next = JSON.stringify(merged, null, 2) + '\n';
+    const previous = normalizeNewlines(await fs.readFile(boxJsPath, 'utf8'));
+    if (previous !== next) {
+      await fs.writeFile(boxJsPath, next);
+      console.log(`BoxJs updated -> ${path.relative(ROOT, boxJsPath)}`);
+    }
+  }
+
   if (failures.length) {
     console.error('\nFailures:\n' + failures.join('\n\n'));
     process.exitCode = 1;
