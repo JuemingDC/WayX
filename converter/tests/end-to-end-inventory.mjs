@@ -10,7 +10,8 @@ import {
 import { validateSurgeModule } from '../src/index.mjs';
 
 const ROOT = process.cwd();
-const STAMP = '2026-09-29 12:00:00 +08:00';
+const golden = JSON.parse(await fs.readFile(path.join(ROOT, 'converter/fixtures/end-to-end-golden.json'), 'utf8'));
+const STAMP = golden.stamp;
 
 const manifest = JSON.parse(await fs.readFile(path.join(ROOT, '.github/sources/loon.json'), 'utf8'));
 const byId = new Map(manifest.map(entry => [entry.id, entry]));
@@ -120,7 +121,7 @@ for (const testCase of cases) {
     assert.ok(![...out.generatedScripts.values()].some(body => body.includes('Source: ' + url) && body.includes('Script v2 ->')));
   }
 
-  report.push({
+  const actual = {
     name:testCase.name,
     source:testCase.file,
     qxSha256:sha256(out.qx),
@@ -129,14 +130,69 @@ for (const testCase of cases) {
     surgeBytes:Buffer.byteLength(out.surge),
     sourceScriptCount:scripts.size,
     generatedScriptCount:out.generatedScripts.size,
-    qxActiveLines:activeLines(out.qx).length,
-    surgeActiveLines:activeLines(out.surge).length,
     qxReview:count(out.qx, /REVIEW REQUIRED/g),
     surgeReview:count(out.surge, /REVIEW REQUIRED/g),
-    qxManualPort:count(out.qx, /MANUAL PORT REQUIRED/g),
     sections:[...out.surge.matchAll(/^\[([^\]]+)\]$/gm)].map(m => m[1]),
-  });
+  };
+
+  const expected = golden.cases[testCase.name];
+  assert.ok(expected, testCase.name + ': missing golden fixture');
+  for (const key of ['qxSha256','surgeSha256','qxBytes','surgeBytes','sourceScriptCount','generatedScriptCount','qxReview','surgeReview']) {
+    assert.equal(actual[key], expected[key], testCase.name + ': golden mismatch for ' + key);
+  }
+  assert.deepEqual(actual.sections, expected.sections, testCase.name + ': Surge section order changed');
+
+  const qxActive = activeLines(out.qx);
+  const surgeActive = activeLines(out.surge);
+
+  if (testCase.name === 'HTTPDNS') {
+    assert.match(out.surge, /^#!requirement=CORE_VERSION>=20$/m);
+    assert.match(out.surge, /AND,\(\(URL-REGEX,/);
+    assert.match(out.surge, /USER-AGENT,/);
+    assert.equal(/^#!(?:author|icon|date|loon_version)=/mi.test(out.surge), false);
+    assert.ok(qxActive.some(line => /url reject-200$/.test(line)), 'HTTPDNS: QX URL-REGEX reject mapping missing');
+  }
+
+  if (testCase.name === 'PinDuoDuo') {
+    assert.match(out.surge, /AND,\(\(DOMAIN,api\.pinduoduo\.com\),\(PROTOCOL,QUIC\)\),REJECT/);
+    assert.match(out.surge, /^\[Body Rewrite\]$/m);
+    assert.match(out.surge, /^\[Map Local\]$/m);
+    assert.match(out.surge, /^\[Script\]$/m);
+    assert.match(out.surge, /^hostname = %APPEND% api\.pinduoduo\.com, m\.pinduoduo\.net$/m);
+    assert.ok(surgeActive.some(line => line.includes('script-path=https://kelee.one/Resource/JavaScript/PinDuoDuo/PinDuoDuo_remove_ads.js')));
+  }
+
+  if (testCase.name === 'MyBlockAds') {
+    assert.equal(actual.qxReview, 0);
+    assert.equal(actual.surgeReview, 0);
+    assert.match(out.surge, /^\[Body Rewrite\]$/m);
+    assert.match(out.surge, /^\[Map Local\]$/m);
+  }
+
+  if (testCase.name === 'YouTube') {
+    assert.equal(actual.qxReview, 2);
+    assert.equal(actual.surgeReview, 2);
+    assert.ok(qxActive.some(line => /youtube\/request\.js$/.test(line)), 'YouTube: native QX request script declaration missing');
+    assert.match(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
+    assert.match(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
+  }
+
+  if (testCase.name === 'Bilibili') {
+    assert.match(out.qx, /QUANTUMULT X UNSUPPORTED - source script disabled/);
+    assert.equal(qxActive.some(line => /bilibili\/(?:request|response)\.js/.test(line)), false, 'Bilibili protobuf scripts must not be active in QX');
+    assert.ok(qxActive.some(line => /bilibili\/json\.js/.test(line)), 'Bilibili JSON script declarations should remain available');
+    assert.equal(actual.surgeReview, 3);
+  }
+
+  if (testCase.name === 'JingDong') {
+    assert.equal(actual.qxReview, 2);
+    assert.equal(actual.surgeReview, 2);
+    assert.ok(qxActive.some(line => /Scripts\/jingdong\.js$/.test(line)), 'JingDong native script declaration missing');
+    assert.match(out.qx, /dynamic enable cannot be carried|SCRIPT V2 REVIEW REQUIRED/);
+  }
+
+  report.push(actual);
 }
 
-console.log('End-to-end conversion inventory:');
+console.log('End-to-end conversion golden passed:');
 console.log(JSON.stringify(report, null, 2));
