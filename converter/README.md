@@ -24,4 +24,6 @@ WayX 自有的 Loon Plugin → Quantumult X / Surge 转换核心。参考 KOP-XI
 - `jq_file / mock_file` 已进入依赖 AST：JQ 和文本/Base64 mock 可以解析为可内联依赖，未证明安全的二进制 mock 保持 Review Tier；
 - 上游同步会生成 RuCu6 脚本兼容性报告，PR CI 同时检查 converter tools。
 
-下一阶段：把依赖 resolver 接入完整 RuCu6 Rewrite v2 生成器，并建立 MyBlockAds 自动 golden fixture。
+MyBlockAds JQ golden 已自动化：QX / Surge 当前 11 条 JQ 有序规则必须逐条一致，并锁定 10 个唯一表达式及有序指纹；该 fixture 不宣称已证明 Loon `/i` regex flag 与 QX regex 的等价性。
+
+下一阶段：把依赖 resolver 接入完整 RuCu6 Rewrite v2 生成器，并补目标平台的 regex flag 语义验证。
