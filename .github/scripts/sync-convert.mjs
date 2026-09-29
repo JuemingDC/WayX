@@ -21,7 +21,7 @@ import { hasActiveSurgeLines, renderSurgeModuleHeader, validateSurgeModule } fro
 import { renderQxSnippetHeader } from '../../converter/src/metadata.mjs';
 import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
 import { planMitmLine } from '../../converter/src/mitm.mjs';
-import { fetchOriginalText, fetchOriginalBytes } from '../../converter/src/source-fetch.mjs';
+import { fetchOriginalText, fetchOriginalBytes, resolveOriginalUrl } from '../../converter/src/source-fetch.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -524,11 +524,12 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
 
 }
 
-async function inspectSourceScript(url) {
-  const normalized = normalizeNewlines(await fetchOriginalText(url)).replace(/\n*$/, '\n');
+async function inspectSourceScript(reference, pluginSourceUrl) {
+  const originalUrl = resolveOriginalUrl(reference, pluginSourceUrl);
+  const normalized = normalizeNewlines(await fetchOriginalText(originalUrl)).replace(/\n*$/, '\n');
   return {
-    qx: url,
-    surge: url,
+    qx: originalUrl,
+    surge: originalUrl,
     source: normalized,
     qxAdapted: false,
   };
@@ -587,8 +588,8 @@ async function main() {
       const qxMockFiles = await materializeQxMockFiles(entry, parsedSource);
       const jqFiles = await materializeJqFiles(entry, parsedSource);
       const discoveredScriptUrls = scriptUrls(source);
-      for (const url of discoveredScriptUrls) {
-        scriptMap.set(url, await inspectSourceScript(url));
+      for (const reference of discoveredScriptUrls) {
+        scriptMap.set(reference, await inspectSourceScript(reference, entry.source));
       }
 
       const qxPath = path.join(ROOT, qxTargetPath(entry));
