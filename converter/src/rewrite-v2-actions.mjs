@@ -80,9 +80,10 @@ export function validateRewriteV2Ast(ast) {
   return ast.actions.map(validateRewriteV2Action);
 }
 
-// QX primitives are selected by behavior, not spelling. In particular Loon's
-// terminal reject(200) behavior maps to QX reject-200, not QX reject (404).
+// QX primitives are selected by behavior. The official Quantumult X sample
+// defines `reject` as an empty HTTP 404 response and `reject-200` as empty 200.
 export const QX_REWRITE_PRIMITIVES = Object.freeze({
+  reject_404: 'reject',
   reject_200: 'reject-200',
   reject_img_200: 'reject-img',
   reject_dict_200: 'reject-dict',
@@ -102,7 +103,13 @@ function statusIs200(action) {
 
 export function qxPrimitiveForRewriteV2Action(action) {
   validateRewriteV2Action(action);
-  if (action.name === 'reject') return statusIs200(action) && action.args.length === 1 ? QX_REWRITE_PRIMITIVES.reject_200 : null;
+  if (action.name === 'reject' && action.args.length === 1) {
+    const status = action.args?.[0];
+    if (status?.type !== 'number') return null;
+    if (status.value === 404) return QX_REWRITE_PRIMITIVES.reject_404;
+    if (status.value === 200) return QX_REWRITE_PRIMITIVES.reject_200;
+    return null;
+  }
   if (action.name === 'reject_img') return statusIs200(action) ? QX_REWRITE_PRIMITIVES.reject_img_200 : null;
   if (action.name === 'reject_dict') return statusIs200(action) ? QX_REWRITE_PRIMITIVES.reject_dict_200 : null;
   if (action.name === 'reject_array') return statusIs200(action) ? QX_REWRITE_PRIMITIVES.reject_array_200 : null;

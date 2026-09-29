@@ -91,10 +91,13 @@ function classifySurge(ast) {
       ['header-rewrite', surgeHeaderRewritePlan],
       ['direct', surgeDirectRewritePlan],
       ['url-rewrite', surgeRedirectRewritePlan],
-      ['map-local-reject', surgeRejectRewritePlan],
+      ['reject', surgeRejectRewritePlan],
     ]) {
       const result = mapper(ast);
-      if (result.ok) return {ok:true, strategy:name};
+      if (result.ok) {
+        if (name === 'reject') return {ok:true, strategy:result.section === 'url' ? 'url-reject' : 'map-local-reject'};
+        return {ok:true, strategy:name};
+      }
     }
     return {ok:false, reason:'no Surge semantic mapper'};
   } catch (error) {

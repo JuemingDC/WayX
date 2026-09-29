@@ -16,7 +16,7 @@ Implemented on `work/rewrite-v2-semantic-actions-20260929` / PR #6:
   - Header pipelines.
   - Inline mock and response mock + Header pipelines.
 - QX redirect uses a generated `script-echo-response` to reproduce Loon's matched-range replacement and named capture templates without assuming undocumented QX 302 capture syntax.
-- QX non-200/custom reject uses generated `script-echo-response`.
+- Ordinary Loon `reject(404)` uses native QX `url reject`; generated `script-echo-response` is reserved for reject behavior with no exact native QX primitive.
 - QX same-phase Header set/del/replace is combined into one generated script so left-to-right Loon ordering is preserved.
 - QX `header.add` remains fail-closed because the documented header object cannot guarantee duplicate-header semantics.
 - QX inline `body.mock` and response mock + Header pipelines are combined into one generated script.
@@ -24,7 +24,8 @@ Implemented on `work/rewrite-v2-semantic-actions-20260929` / PR #6:
   - `[URL Rewrite]` for redirect/url.replace.
   - `[Body Rewrite]` for body/JQ operations.
   - `[Header Rewrite]` for header operations; Loon `set` becomes `header-del` + `header-add`.
-  - `[Map Local]` for static reject/mock responses that skip upstream.
+  - native `[URL Rewrite] ... _ reject` for ordinary reject;
+  - `[Map Local]` only for structured/image/custom reject responses and static mock responses that actually require a synthesized response.
 - Added a real-resource coverage scan to PR CI.
 
 Current RuCu6 Rewrite v2 coverage from CI:
@@ -33,14 +34,14 @@ Current RuCu6 Rewrite v2 coverage from CI:
 - 175 Rewrite v2 entries.
 - Parse/action validation errors: 0.
 - Quantumult X: 174 / 175 automatically mapped.
-  - direct: 150
+  - direct: 156
   - generated inline mock: 7
   - generated redirect: 9
-  - generated reject: 6
   - generated header: 2
   - Review: 1
 - Surge: 175 / 175 automatically mapped.
-  - Map Local reject: 124
+  - URL Rewrite reject: 6
+  - Map Local reject: 118
   - direct Body/JQ: 32
   - Map Local mock: 7
   - URL Rewrite: 9
@@ -62,7 +63,8 @@ Implemented on `work/semantic-rewrite-mock-20260929` / PR #5:
 
 - Conversion policy is now explicitly behavior-first rather than token-by-token.
 - Loon URL-regex terminal reject semantics map to QX by observable response:
-  - `reject(200)` / plain reject-style URL blocking -> `reject-200`;
+  - `reject(404)` -> native QX `reject`;
+  - `reject(200)` -> `reject-200`;
   - `reject_dict(200)` -> `reject-dict`;
   - `reject_array(200)` -> `reject-array`;
   - `reject_img(200)` -> `reject-img`;
