@@ -17,6 +17,7 @@ import { minifyJqFile } from '../src/jq.mjs';
 const ROOT = process.cwd();
 const golden = JSON.parse(await fs.readFile(path.join(ROOT, 'converter/fixtures/end-to-end-golden.json'), 'utf8'));
 const STAMP = golden.stamp;
+const DUMP_GOLDEN = process.env.WAYX_DUMP_GOLDEN === '1';
 const dependencyCache = JSON.parse(await fs.readFile(path.join(ROOT, 'converter/dependencies/manifest.json'), 'utf8'));
 
 const manifest = JSON.parse(await fs.readFile(path.join(ROOT, '.github/sources/loon.json'), 'utf8'));
@@ -164,6 +165,12 @@ for (const testCase of cases) {
     surgeReview:count(out.surge, /REVIEW REQUIRED/g),
     sections:[...out.surge.matchAll(/^\[([^\]]+)\]$/gm)].map(m => m[1]),
   };
+
+  if (DUMP_GOLDEN) {
+    console.log('END_TO_END_ACTUAL ' + testCase.name + ' ' + JSON.stringify(actual));
+    report.push(actual);
+    continue;
+  }
 
   const expected = golden.cases[testCase.name];
   assert.ok(expected, testCase.name + ': missing golden fixture');
