@@ -140,3 +140,178 @@ export function renderQxPrefsObjectBridge(entryId, argumentLines = [], argumentI
     '',
   ].join('\n');
 }
+
+
+function argumentMap(lines = []) {
+  return new Map(parseLoonArguments(lines).map(arg => [arg.id, arg]));
+}
+
+function qxPrefExpression(entryId, arg) {
+  const key = boxJsKey(entryId, arg.id);
+  const read = '__wayxPref(' + JSON.stringify(key) + ', ' + JSON.stringify(arg.defaultValue) + ')';
+  if (arg.valueType === 'boolean') return 'String(' + read + ').toLowerCase() === "true"';
+  if (arg.valueType === 'number') return 'Number(' + read + ')';
+  return 'String(' + read + ')';
+}
+
+function assertBridgeableSource(source, target) {
+  if (/\b(?:const|let|var|function)\s+\$argument\b/.test(source)) {
+    throw new Error(target + ': source declares $argument; automatic bridge would collide');
+  }
+}
+
+export function renderQxScriptV2Bridge(entryId, argumentLines = [], ast, source, meta = {}) {
+  const byId = argumentMap(argumentLines);
+  const arg = ast?.script?.argument || null;
+  const enable = ast?.options?.find(option => option.name === 'enable')?.value || null;
+  const ids = new Set();
+
+  if (arg?.type === 'plugin-object') for (const item of arg.items) ids.add(item.name);
+  if (enable?.type === 'variable') ids.add(enable.name);
+  for (const id of ids) if (!byId.has(id)) throw new Error('Unknown Loon [Argument] reference: ' + id);
+
+  const needsArgument = Boolean(arg);
+  const needsEnable = enable?.type === 'variable';
+  if (!needsArgument && !needsEnable) return {changed:false, source, preferenceIds:[]};
+  assertBridgeableSource(source, 'Quantumult X');
+
+  const lines = [
+    meta.stamp ? '// Converted: ' + meta.stamp : null,
+    '// Converted by: chance',
+    meta.category ? '// Category: ' + meta.category : '// Category: Script',
+    meta.sourceUrl ? '// Source: ' + meta.sourceUrl : null,
+    '// WayX Loon Script v2 -> Quantumult X BoxJs/$prefs bridge',
+    'const __wayxPref = (key, fallback) => {',
+    '  const value = $prefs.valueForKey(key);',
+    '  return value === null || value === undefined ? fallback : value;',
+    '};',
+  ].filter(Boolean);
+
+  let enabledExpr = 'true';
+  if (enable?.type === 'boolean') enabledExpr = enable.value ? 'true' : 'false';
+  else if (enable?.type === 'variable') enabledExpr = qxPrefExpression(entryId, byId.get(enable.name));
+
+  let argumentExpr = 'undefined';
+  if (arg?.type === 'plugin-object') {
+    const rows = arg.items.map(item => JSON.stringify(item.name) + ': ' + qxPrefExpression(entryId, byId.get(item.name)));
+    argumentExpr = '{' + rows.join(', ') + '}';
+  } else if (arg?.type === 'string' || arg?.type === 'raw-string') {
+    argumentExpr = JSON.stringify(arg.value);
+  }
+
+  lines.push(
+    'const __wayxEnabled = ' + enabledExpr + ';',
+    'if (!__wayxEnabled) {',
+    '  $done({});',
+    '} else {',
+    '  const __wayxArgument = ' + argumentExpr + ';',
+    '  (function($argument) {',
+    source.replace(/\n*$/, '').split('\n').map(line => '    ' + line).join('\n'),
+    '  })(__wayxArgument);',
+    '}',
+    '',
+  );
+
+  return {changed:true, source:lines.join('\n'), preferenceIds:[...ids]};
+}
+
+function surgePlaceholderValue(arg) {
+  if (arg.valueType === 'boolean' || arg.valueType === 'number') return '{{{' + arg.id + '}}}';
+  return JSON.stringify('{{{' + arg.id + '}}}');
+}
+
+export function renderSurgeModuleArguments(argumentLines = [], ids = []) {
+  const byId = argumentMap(argumentLines);
+  const unique = [...new Set(ids)];
+  if (!unique.length) return [];
+  const rows = unique.map(id => {
+    const arg = byId.get(id);
+    if (!arg) throw new Error('Unknown Loon [Argument] reference: ' + id);
+    if (!/^[A-Za-z0-9_]+$/.test(id)) throw new Error('Surge module argument name is invalid: ' + id);
+    return id + ':' + String(arg.defaultValue ?? '');
+  });
+  return [
+    '#!arguments=' + rows.join(','),
+    '#!arguments-desc=Converted from Loon [Argument] by WayX / chance',
+  ];
+}
+
+export function renderSurgeScriptV2Bridge(argumentLines = [], ast, source, meta = {}) {
+  const byId = argumentMap(argumentLines);
+  const arg = ast?.script?.argument || null;
+  const enable = ast?.options?.find(option => option.name === 'enable')?.value || null;
+  const ids = new Set();
+  if (arg?.type === 'plugin-object') for (const item of arg.items) ids.add(item.name);
+  if (enable?.type === 'variable') ids.add(enable.name);
+  for (const id of ids) if (!byId.has(id)) throw new Error('Unknown Loon [Argument] reference: ' + id);
+
+  const needsArgument = Boolean(arg);
+  const needsEnable = enable?.type === 'variable';
+  if (!needsArgument && !needsEnable) {
+    return {changed:false, source, moduleArgumentIds:[], declarationArgument:null};
+  }
+  assertBridgeableSource(source, 'Surge');
+
+  let payloadExpression;
+  let declarationArgument;
+  if (ids.size === 1) {
+    const id = [...ids][0];
+    const def = byId.get(id);
+    declarationArgument = '"{{{' + id + '}}}"';
+    const valueExpr = def.valueType === 'boolean'
+      ? 'String($argument).toLowerCase() === "true"'
+      : def.valueType === 'number' ? 'Number($argument)' : '$argument';
+    const objectRows = [];
+    if (arg?.type === 'plugin-object') {
+      for (const item of arg.items) objectRows.push(JSON.stringify(item.name) + ': ' + (item.name === id ? valueExpr : 'undefined'));
+    }
+    const enabledExpr = enable?.type === 'variable' && enable.name === id ? valueExpr : 'true';
+    payloadExpression = '{enabled:' + enabledExpr + ', argument:' + (arg?.type === 'plugin-object' ? '{' + objectRows.join(', ') + '}' : arg ? JSON.stringify(arg.value) : 'undefined') + '}';
+  } else {
+    const fields = [...ids].map(id => {
+      const def = byId.get(id);
+      return JSON.stringify(id) + ':' + surgePlaceholderValue(def);
+    });
+    declarationArgument = JSON.stringify('{' + fields.join(',') + '}');
+    const argRows = arg?.type === 'plugin-object'
+      ? arg.items.map(item => JSON.stringify(item.name) + ': __wayxPayload[' + JSON.stringify(item.name) + ']').join(', ')
+      : '';
+    const enabledExpr = enable?.type === 'variable'
+      ? '__wayxPayload[' + JSON.stringify(enable.name) + '] !== false'
+      : 'true';
+    payloadExpression = '{enabled:' + enabledExpr + ', argument:' + (arg?.type === 'plugin-object' ? '{' + argRows + '}' : arg ? JSON.stringify(arg.value) : 'undefined') + '}';
+  }
+
+  const lines = [
+    meta.stamp ? '// Converted: ' + meta.stamp : null,
+    '// Converted by: chance',
+    meta.category ? '// Category: ' + meta.category : '// Category: Script',
+    meta.sourceUrl ? '// Source: ' + meta.sourceUrl : null,
+    '// WayX Loon Script v2 -> Surge module-argument bridge',
+  ].filter(Boolean);
+
+  if (ids.size > 1) {
+    lines.push(
+      'let __wayxPayload;',
+      'try { __wayxPayload = JSON.parse($argument || "{}"); } catch { __wayxPayload = {}; }',
+    );
+  }
+  lines.push(
+    'const __wayxBridge = ' + payloadExpression + ';',
+    'if (!__wayxBridge.enabled) {',
+    '  $done({});',
+    '} else {',
+    '  (function($argument) {',
+    source.replace(/\n*$/, '').split('\n').map(line => '    ' + line).join('\n'),
+    '  })(__wayxBridge.argument);',
+    '}',
+    '',
+  );
+
+  return {
+    changed:true,
+    source:lines.join('\n'),
+    moduleArgumentIds:[...ids],
+    declarationArgument,
+  };
+}
