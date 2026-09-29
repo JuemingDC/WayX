@@ -35,7 +35,12 @@ function fnv1a64(text) {
 
 const qxPairs = extractQx(qx);
 const surgePairs = extractSurge(surge);
-assert.deepEqual(qxPairs, surgePairs, 'QX and Surge JQ rule order/content diverged');
+const normalizeUrlPattern = value => String(value).replace(/\\\//g, '/');
+assert.deepEqual(
+  qxPairs.map(x => ({pattern:normalizeUrlPattern(x.pattern), jq:x.jq})),
+  surgePairs.map(x => ({pattern:normalizeUrlPattern(x.pattern), jq:x.jq})),
+  'QX and Surge JQ rule order/semantic content diverged',
+);
 assert.equal(qxPairs.length, fixture.jqRuleCount);
 assert.equal(new Set(qxPairs.map(x => x.jq)).size, fixture.uniqueJqCount);
 assert.equal(fnv1a64(JSON.stringify(qxPairs)), fixture.orderedPairsFnv1a64);
