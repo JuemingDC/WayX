@@ -1,4 +1,4 @@
-// Offline canonical target regeneration for checked-in Loon sources.
+// Canonical target regeneration for checked-in Loon sources using original source-script URLs.
 // Author: chance
 // Category: Converter / Canonical Output
 import fs from 'node:fs/promises';
@@ -11,13 +11,11 @@ import { validateRewriteV2Ast } from '../src/rewrite-v2-actions.mjs';
 import { jqDependencySpecFromAction } from '../src/dependency.mjs';
 import { minifyJqFile } from '../src/jq.mjs';
 import { loadLoonSourceCatalog } from '../src/source-catalog.mjs';
-import { planScriptMirrorPaths } from '../src/script-path.mjs';
+import { fetchOriginalText } from '../src/source-fetch.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
 const RESOURCE_DIR = path.join(ROOT, 'Resource/Loon');
-const SCRIPT_DIR = path.join(ROOT, 'script');
-const RAW_BASE = 'https://raw.githubusercontent.com/JuemingDC/WayX/main';
 const DEPENDENCY_MANIFEST = path.join(ROOT, 'converter/dependencies/manifest.json');
 
 const mode = process.argv.includes('--write') ? 'write' : 'check';
@@ -36,33 +34,16 @@ async function exists(file) {
   catch { return false; }
 }
 
-function rawRepoUrl(file) {
-  const rel = path.relative(ROOT, file).split(path.sep).map(encodeURIComponent).join('/');
-  return RAW_BASE + '/' + rel;
-}
-
-async function mirroredScriptMap(entry, source) {
+async function originalScriptMap(source) {
   const map = new Map();
-  const urls=scriptUrls(source);
-  const planned=planScriptMirrorPaths(urls);
-  for (const url of urls) {
-    const filename=planned.get(url);
-    const local = filename ? path.join(SCRIPT_DIR, entry.id, filename) : '';
-    if (local && await exists(local)) {
-      map.set(url, {
-        qx: rawRepoUrl(local),
-        surge: rawRepoUrl(local),
-        source: normalize(await fs.readFile(local, 'utf8')),
-        qxAdapted: false,
-      });
-    } else {
-      map.set(url, {
-        qx: url,
-        surge: url,
-        source: '',
-        qxAdapted: false,
-      });
-    }
+  for (const url of scriptUrls(source)) {
+    const sourceText = normalize(await fetchOriginalText(url)).replace(/\n*$/, '\n');
+    map.set(url, {
+      qx: url,
+      surge: url,
+      source: sourceText,
+      qxAdapted: false,
+    });
   }
   return map;
 }
@@ -138,7 +119,7 @@ for (const entry of manifest) {
     const oldQx = await readIfExists(qxPath);
     const oldSurge = await readIfExists(surgePath);
     const stamp = existingStamp(oldQx, oldSurge) || nowCN();
-    const scripts = await mirroredScriptMap(entry, source);
+    const scripts = await originalScriptMap(source);
     const jqFiles = await localJqFiles(entry, source, dependencyCache);
 
     let out = convert(entry, source, scripts, stamp, new Map(), jqFiles);
