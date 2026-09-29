@@ -60,7 +60,9 @@ jobs:
 
       - name: Validate WayX converter core
         if: steps.pending.outputs.blocked != 'true'
-        run: node converter/tests/checkpoint.mjs
+        run: |
+          node converter/tests/checkpoint.mjs
+          node converter/tests/myblockads-golden.mjs
 
       - name: Set up Python
         if: steps.pending.outputs.blocked != 'true'
