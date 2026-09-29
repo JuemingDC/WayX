@@ -15,10 +15,10 @@ import { inlineResolvedDependency, jqDependencySpecFromAction, qxMockPlanFromAct
 import { renderQxMockFileScript } from '../../converter/src/qx-mock.mjs';
 import { qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan, surgeHeaderRewritePlan, surgeInlineMockPlan, simpleUrlRewriteCondition } from '../../converter/src/rewrite-v2-semantic.mjs';
 import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript } from '../../converter/src/qx-semantic-script.mjs';
-import { isScriptV2, parseScriptV2 } from '../../converter/src/script-v2.mjs';
+import { isScriptV2, parseScriptV2, splitScriptV2Csv } from '../../converter/src/script-v2.mjs';
 import { qxScriptV2Plan, surgeScriptV2Plan } from '../../converter/src/script-v2-target.mjs';
 import { analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs } from '../../converter/src/argument-usage.mjs';
-import { surgeArgumentMetadata, surgePluginObjectArgument, surgeDynamicOptionValue, surgeEnableRequirement } from '../../converter/src/argument.mjs';
+import { surgeArgumentMetadata, surgePluginObjectArgument, surgeDynamicOptionValue, surgeEnableRequirement, parseLegacyLoonPluginObjectRefs } from '../../converter/src/argument.mjs';
 import { hasActiveSurgeLines, renderSurgeModuleHeader, validateSurgeModule } from '../../converter/src/surge-module.mjs';
 import { renderQxSnippetHeader } from '../../converter/src/metadata.mjs';
 import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
@@ -364,14 +364,20 @@ function parseScriptLine(line) {
   const m = line.match(/^(http-request|http-response)\s+(\S+)\s+(.+)$/i);
   if (!m) return null;
   const type = m[1].toLowerCase(), pattern = m[2], rest = m[3];
-  const scriptPath = (rest.match(/(?:^|,)\s*script-path=([^,]+)/i) || [])[1]?.trim();
-  const tag = (rest.match(/(?:^|,)\s*tag=([^,]+)/i) || [])[1]?.trim();
-  const requiresBody = /(?:^|,)\s*requires-body=(?:true|1)/i.test(rest);
-  const binary = /(?:^|,)\s*binary-body-mode=(?:true|1)/i.test(rest);
-  const timeout = (rest.match(/(?:^|,)\s*timeout=([^,]+)/i) || [])[1]?.trim();
-  const maxSize = (rest.match(/(?:^|,)\s*max-size=([^,]+)/i) || [])[1]?.trim();
-  const argument = (rest.match(/(?:^|,)\s*argument=([^,]+)/i) || [])[1]?.trim();
-  const enable = (rest.match(/(?:^|,)\s*enable=([^,]+)/i) || [])[1]?.trim();
+  const options = new Map();
+  for (const token of splitScriptV2Csv(rest)) {
+    const eq = token.indexOf('=');
+    if (eq < 1) continue;
+    options.set(token.slice(0, eq).trim().toLowerCase(), token.slice(eq + 1).trim());
+  }
+  const scriptPath = options.get('script-path');
+  const tag = options.get('tag');
+  const requiresBody = /^(?:true|1)$/i.test(options.get('requires-body') || '');
+  const binary = /^(?:true|1)$/i.test(options.get('binary-body-mode') || '');
+  const timeout = options.get('timeout');
+  const maxSize = options.get('max-size');
+  const argument = options.get('argument');
+  const enable = options.get('enable') ?? options.get('enabled');
   return { type, pattern, scriptPath, tag, requiresBody, binary, timeout, maxSize, argument, enable, original: line };
 }
 
@@ -589,9 +595,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
       }
 
       if (sc.argument) {
-        const refs = [...String(sc.argument).matchAll(/\{([A-Za-z_][\w-]*)\}/g)].map(match => match[1]);
-        const looksLikePluginObject = refs.length > 0 && /^\s*\[.*\]\s*$/.test(String(sc.argument));
-        if (looksLikePluginObject) {
+        const refs = parseLegacyLoonPluginObjectRefs(sc.argument);
+        if (refs) {
           const encoded = surgePluginObjectArgument(refs, surgeArgumentTable);
           if (!encoded.ok) {
             sg.script.push(`# [WayX] SCRIPT REVIEW REQUIRED: ${encoded.reason}`);
