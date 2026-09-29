@@ -264,6 +264,315 @@ export function surgeRejectRewritePlan(ast) {
   };
 }
 
+function fixedNoTemplate(node, what) {
+  const value = stringNode(node);
+  if (value === null) throw new Error(what + ' must be a fixed string');
+  if (value.includes(' + n;
+  });
+  if (converted.includes(' + '{')) throw new Error('URL replacement contains a non-URL variable');
+  return converted;
+}
+
+export function surgeRedirectRewritePlan(ast) {
+  validateRewriteV2Ast(ast);
+  if (ast.actions.length !== 1 || !['redirect','url.replace'].includes(ast.actions[0].name)) {
+    return unsupported('Surge URL Rewrite mapping requires one redirect/url.replace action');
+  }
+  const condition = simpleUrlRewriteCondition(ast);
+  if (!condition.ok) return condition;
+  const action = ast.actions[0];
+
+  if (action.name === 'redirect') {
+    const status = action.args[0];
+    const target = stringNode(action.args[1]);
+    if (status?.type !== 'number' || ![302,307].includes(status.value)) return unsupported('redirect status must be 302 or 307');
+    if (target === null) return unsupported('redirect target must be a fixed string');
+    try {
+      const replacement = loonTemplateToSurge(target, condition.capture);
+      return { ok:true, strategy:'direct', section:'url', pattern:condition.pattern, line:`${condition.pattern} ${replacement} ${status.value}`, notes:condition.notes };
+    } catch (error) {
+      return unsupported(String(error.message || error));
+    }
+  }
+
+  const target = stringNode(action.args[0]);
+  if (target === null) return unsupported('url.replace target must be a fixed string');
+  try {
+    const replacement = loonTemplateToSurge(target, condition.capture);
+    return { ok:true, strategy:'direct', section:'url', pattern:condition.pattern, line:`${condition.pattern} ${replacement} header`, notes:condition.notes };
+  } catch (error) {
+    return unsupported(String(error.message || error));
+  }
+}
+
+function mapLocalData(value) {
+  return JSON.stringify(String(value));
+}
+
+export function surgeRejectRewritePlan(ast) {
+  validateRewriteV2Ast(ast);
+  if (ast.actions.length !== 1) return unsupported('Surge reject mapping requires exactly one action');
+  const condition = simpleUrlRewriteCondition(ast);
+  if (!condition.ok) return condition;
+  const action = ast.actions[0];
+  if (!['reject','reject_img','reject_dict','reject_array'].includes(action.name)) return unsupported('reject action has no direct Surge mapping');
+  const status = action.args[0];
+  if (status?.type !== 'number' || !Number.isInteger(status.value) || status.value < 200 || status.value > 599) {
+    return unsupported('Surge Map Local status must be 200...599 for this mapping');
+  }
+
+  if (action.name === 'reject_img') {
+    return { ok:true, strategy:'direct', section:'map', pattern:condition.pattern, line:`${condition.pattern} data-type=tiny-gif status-code=${status.value}`, notes:condition.notes };
+  }
+
+  let body = '', header = '';
+  if (action.name === 'reject_dict') { body = '{}'; header = ' header="Content-Type:application/json"'; }
+  else if (action.name === 'reject_array') { body = '[]'; header = ' header="Content-Type:application/json"'; }
+  else if (action.args.length > 1) {
+    body = stringNode(action.args[1]);
+    if (body === null) return unsupported('custom reject body must be a fixed string');
+    header = ' header="Content-Type:text/plain; charset=utf-8"';
+  }
+  return {
+    ok:true, strategy:'direct', section:'map', pattern:condition.pattern,
+    line:`${condition.pattern} data-type=text data=${mapLocalData(body)} status-code=${status.value}${header}`,
+    notes:condition.notes,
+  };
+}
+
+export function fixedStringValue(node) {
+  return stringNode(node);
+}
+ + '{')) throw new Error(what + ' contains a runtime variable');
+  return value;
+}
+
+function expandBulkAction(action) {
+  if (!action.args.some(arg => arg.type === 'array')) return [action.args];
+  const arrays = action.args.map(arg => arg.items);
+  return arrays[0].map((_, index) => arrays.map(items => items[index]));
+}
+
+function surgeHeaderLine(phase, pattern, action, args) {
+  const direction = phase === 'request' ? 'http-request' : 'http-response';
+  const name = fixedNoTemplate(args[0], 'header name');
+  if (/\\s/.test(name)) throw new Error('header name contains whitespace');
+
+  if (action.name.endsWith('.add')) {
+    const value = fixedNoTemplate(args[1], 'header value');
+    if (/[\\r\\n]/.test(value)) throw new Error('header value contains a line break');
+    return [direction + ' ' + pattern + ' header-add ' + name + ' ' + value];
+  }
+  if (action.name.endsWith('.set')) {
+    const value = fixedNoTemplate(args[1], 'header value');
+    if (/[\\r\\n]/.test(value)) throw new Error('header value contains a line break');
+    return [
+      direction + ' ' + pattern + ' header-del ' + name,
+      direction + ' ' + pattern + ' header-add ' + name + ' ' + value,
+    ];
+  }
+  if (action.name.endsWith('.del')) {
+    return [direction + ' ' + pattern + ' header-del ' + name];
+  }
+
+  const regex = args[1];
+  const replacement = fixedNoTemplate(args[2], 'header replacement');
+  if (regex?.type !== 'regex') throw new Error('header.replace regex must be fixed');
+  const compiled = compileRegexForTarget(regex, {subject:'header'});
+  if (!compiled.ok) throw new Error(compiled.reason);
+  if (/\\s/.test(compiled.pattern) || /[\\r\\n]/.test(replacement)) {
+    throw new Error('Surge header-replace-regex with literal whitespace requires script fallback');
+  }
+  return [direction + ' ' + pattern + ' header-replace-regex ' + name + ' ' + compiled.pattern + ' ' + replacement];
+}
+
+export function surgeHeaderRewritePlan(ast) {
+  validateRewriteV2Ast(ast);
+  if (!ast.actions.length || ast.actions.some(action => !new RegExp('^' + ast.phase + '\\\\.header\\\\.(?:add|set|del|replace) + n;
+  });
+  if (converted.includes(' + '{')) throw new Error('URL replacement contains a non-URL variable');
+  return converted;
+}
+
+export function surgeRedirectRewritePlan(ast) {
+  validateRewriteV2Ast(ast);
+  if (ast.actions.length !== 1 || !['redirect','url.replace'].includes(ast.actions[0].name)) {
+    return unsupported('Surge URL Rewrite mapping requires one redirect/url.replace action');
+  }
+  const condition = simpleUrlRewriteCondition(ast);
+  if (!condition.ok) return condition;
+  const action = ast.actions[0];
+
+  if (action.name === 'redirect') {
+    const status = action.args[0];
+    const target = stringNode(action.args[1]);
+    if (status?.type !== 'number' || ![302,307].includes(status.value)) return unsupported('redirect status must be 302 or 307');
+    if (target === null) return unsupported('redirect target must be a fixed string');
+    try {
+      const replacement = loonTemplateToSurge(target, condition.capture);
+      return { ok:true, strategy:'direct', section:'url', pattern:condition.pattern, line:`${condition.pattern} ${replacement} ${status.value}`, notes:condition.notes };
+    } catch (error) {
+      return unsupported(String(error.message || error));
+    }
+  }
+
+  const target = stringNode(action.args[0]);
+  if (target === null) return unsupported('url.replace target must be a fixed string');
+  try {
+    const replacement = loonTemplateToSurge(target, condition.capture);
+    return { ok:true, strategy:'direct', section:'url', pattern:condition.pattern, line:`${condition.pattern} ${replacement} header`, notes:condition.notes };
+  } catch (error) {
+    return unsupported(String(error.message || error));
+  }
+}
+
+function mapLocalData(value) {
+  return JSON.stringify(String(value));
+}
+
+export function surgeRejectRewritePlan(ast) {
+  validateRewriteV2Ast(ast);
+  if (ast.actions.length !== 1) return unsupported('Surge reject mapping requires exactly one action');
+  const condition = simpleUrlRewriteCondition(ast);
+  if (!condition.ok) return condition;
+  const action = ast.actions[0];
+  if (!['reject','reject_img','reject_dict','reject_array'].includes(action.name)) return unsupported('reject action has no direct Surge mapping');
+  const status = action.args[0];
+  if (status?.type !== 'number' || !Number.isInteger(status.value) || status.value < 200 || status.value > 599) {
+    return unsupported('Surge Map Local status must be 200...599 for this mapping');
+  }
+
+  if (action.name === 'reject_img') {
+    return { ok:true, strategy:'direct', section:'map', pattern:condition.pattern, line:`${condition.pattern} data-type=tiny-gif status-code=${status.value}`, notes:condition.notes };
+  }
+
+  let body = '', header = '';
+  if (action.name === 'reject_dict') { body = '{}'; header = ' header="Content-Type:application/json"'; }
+  else if (action.name === 'reject_array') { body = '[]'; header = ' header="Content-Type:application/json"'; }
+  else if (action.args.length > 1) {
+    body = stringNode(action.args[1]);
+    if (body === null) return unsupported('custom reject body must be a fixed string');
+    header = ' header="Content-Type:text/plain; charset=utf-8"';
+  }
+  return {
+    ok:true, strategy:'direct', section:'map', pattern:condition.pattern,
+    line:`${condition.pattern} data-type=text data=${mapLocalData(body)} status-code=${status.value}${header}`,
+    notes:condition.notes,
+  };
+}
+
+export function fixedStringValue(node) {
+  return stringNode(node);
+}
+).test(action.name))) {
+    return unsupported('Surge Header Rewrite requires same-phase header actions only');
+  }
+  const condition = simpleUrlRewriteCondition(ast);
+  if (!condition.ok) return condition;
+  try {
+    const lines = [];
+    for (const action of ast.actions) {
+      for (const args of expandBulkAction(action)) lines.push(...surgeHeaderLine(ast.phase, condition.pattern, action, args));
+    }
+    return {ok:true, strategy:'direct', section:'header', pattern:condition.pattern, lines, notes:condition.notes};
+  } catch (error) {
+    return unsupported(String(error.message || error));
+  }
+}
+
+const MOCK_MIME = Object.freeze({
+  json:'application/json',
+  text:'text/plain',
+  css:'text/css',
+  html:'text/html',
+  javascript:'application/javascript',
+  plain:'text/plain',
+  png:'image/png',
+  gif:'image/gif',
+  jpeg:'image/jpeg',
+  tiff:'image/tiff',
+  svg:'image/svg+xml',
+  mp4:'video/mp4',
+  'form-data':'multipart/form-data',
+});
+const MOCK_TEXT_TYPES = new Set(['json','text','css','html','javascript','plain']);
+
+function boolArg(node, fallback = false) {
+  if (!node) return fallback;
+  if (node.type !== 'boolean') throw new Error('mock Base64 flag must be Boolean');
+  return node.value;
+}
+
+function intArg(node, fallback) {
+  if (!node) return fallback;
+  if (node.type !== 'number' || !Number.isInteger(node.value)) throw new Error('mock status must be an integer');
+  return node.value;
+}
+
+function applyStaticHeaderAction(headers, action) {
+  const remove = name => {
+    const wanted = name.toLowerCase();
+    for (let i = headers.length - 1; i >= 0; i--) if (headers[i][0].toLowerCase() === wanted) headers.splice(i, 1);
+  };
+  for (const args of expandBulkAction(action)) {
+    const name = fixedNoTemplate(args[0], 'header name');
+    if (action.name.endsWith('.add')) {
+      headers.push([name, fixedNoTemplate(args[1], 'header value')]);
+    } else if (action.name.endsWith('.set')) {
+      remove(name);
+      headers.push([name, fixedNoTemplate(args[1], 'header value')]);
+    } else if (action.name.endsWith('.del')) {
+      remove(name);
+    } else {
+      const regex = args[1];
+      const replacement = fixedNoTemplate(args[2], 'header replacement');
+      if (regex?.type !== 'regex') throw new Error('header.replace regex must be fixed');
+      const flags = String(regex.flags || '');
+      const re = new RegExp(regex.pattern, flags);
+      const wanted = name.toLowerCase();
+      for (const pair of headers) if (pair[0].toLowerCase() === wanted) pair[1] = String(pair[1]).replace(re, replacement);
+    }
+  }
+}
+
+export function surgeInlineMockPlan(ast) {
+  validateRewriteV2Ast(ast);
+  if (ast.phase !== 'response') return unsupported('Surge Map Local maps response.body.mock only');
+  const condition = simpleUrlRewriteCondition(ast);
+  if (!condition.ok) return condition;
+  const mocks = ast.actions.filter(action => action.name === 'response.body.mock');
+  if (mocks.length !== 1) return unsupported('Surge mock conversion requires exactly one response.body.mock');
+  if (ast.actions.some(action => action !== mocks[0] && !/^response\\.header\\.(?:add|set|del|replace)$/.test(action.name))) {
+    return unsupported('response mock may only combine response.header actions');
+  }
+
+  try {
+    const mock = mocks[0];
+    const type = fixedNoTemplate(mock.args[0], 'mock content type').toLowerCase();
+    const body = fixedNoTemplate(mock.args[1], 'mock body');
+    const status = intArg(mock.args[2], 200);
+    const base64 = boolArg(mock.args[3], false);
+    if (status < 200 || status > 599) return unsupported('Surge Map Local cannot preserve this Loon mock status');
+    if (!Object.hasOwn(MOCK_MIME, type)) return unsupported('unsupported Loon mock content type: ' + type);
+    if (!MOCK_TEXT_TYPES.has(type) && !base64) return unsupported('binary inline mock requires Base64=true for Surge Map Local');
+    const compactBase64 = base64 ? body.replace(/\\s+/g, '') : '';
+    if (base64 && (!/^[A-Za-z0-9+/]*={0,2}$/.test(compactBase64) || compactBase64.length % 4 === 1)) {
+      return unsupported('invalid inline Base64 mock body');
+    }
+
+    const headers = [['Content-Type', MOCK_MIME[type]]];
+    for (const action of ast.actions) if (action !== mock) applyStaticHeaderAction(headers, action);
+    const headerValue = headers.map(pair => pair[0] + ':' + pair[1]).join('|');
+    const data = base64 ? compactBase64 : body;
+    const dataType = base64 ? 'base64' : 'text';
+    const line = condition.pattern + ' data-type=' + dataType + ' data=' + JSON.stringify(data) +
+      ' status-code=' + status + (headerValue ? ' header=' + JSON.stringify(headerValue) : '');
+    return {ok:true, strategy:'direct', section:'map', pattern:condition.pattern, line, notes:condition.notes};
+  } catch (error) {
+    return unsupported(String(error.message || error));
+  }
+}
+
 export function fixedStringValue(node) {
   return stringNode(node);
 }
