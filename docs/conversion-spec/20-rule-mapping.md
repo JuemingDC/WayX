@@ -83,7 +83,7 @@ NOT,((Rule1)),Policy
 |---|---|---|
 | `DIRECT` | `direct` | `DIRECT` |
 | `REJECT` | `reject` | `REJECT` |
-| `PROXY` | `proxy` | 不假设用户存在 PROXY 组 → Review |
+| `PROXY` | `PROXY`（保留为外部 policy 绑定，不映射为内建 `proxy`） | 不假设用户存在 PROXY 组 → Review |
 | `REJECT-IMG` | URL 场景 → `reject-img` | `REJECT-TINYGIF` |
 | `REJECT-DROP` | 项目约定 → `reject` | `REJECT-DROP`（当前 App Module 运行时已验证） |
 | `REJECT-NO-DROP` | `reject`（QX 不存在 Surge 自动升级机制） | `REJECT-NO-DROP`（当前 App Module 运行时已验证） |
@@ -95,6 +95,8 @@ NOT,((Rule1)),Policy
 | 用户策略组 | 只有明确存在对应 QX policy 时可执行 | Module 不允许假设 → Review |
 
 公开 Surge Module Manual 当前仍列出较窄的 policy 范围；但当前 Surge App 的模块 Rule 编辑器/运行时已直接验证 `REJECT-DROP / REJECT-NO-DROP / CELLULAR / CELLULAR-ONLY / HYBRID / NO-HYBRID` 可作为 Module Rule 内建 policy 使用。WayX 对这组**运行时已验证的内建值**原样保留，绝不降级为其他 policy。
+
+Loon 插件 [Rule] 中的 `PROXY` 具有插件策略选择语义：Loon 官方定义其为“由用户选择策略组”的保留策略，而不是普通的固定内建 `proxy`。Quantumult X snippet 没有与 Loon 插件策略选择器同构的参数界面，因此转换到 QX 时必须保留字面 `PROXY` 作为外部 policy 名称；不得静默降为 QX 内建小写 `proxy`。该输出仍属于 Review/用户绑定：用户需要在 QX 中提供名为 `PROXY` 的对应策略，或在导入层显式绑定目标策略。
 
 用户自定义策略组（例如源中的 `PROXY`）仍不得假定存在，必须 Review/绑定提示。
 
