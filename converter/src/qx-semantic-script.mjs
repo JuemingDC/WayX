@@ -15,22 +15,22 @@ const STATUS_TEXT = Object.freeze({
 });
 
 function statusLine(code) {
-  return `HTTP/1.1 ${code} ${STATUS_TEXT[code] || 'WayX Response'}`;
+  return 'HTTP/1.1 ' + code + ' ' + (STATUS_TEXT[code] || 'WayX Response');
 }
 
 function metadata({ stamp = '', category = '', sourceLine = '' } = {}) {
   return [
-    stamp ? `// Converted: ${stamp}` : null,
+    stamp ? '// Converted: ' + stamp : null,
     '// Converted by: chance',
-    category ? `// Category: ${category}` : '// Category: Rewrite / Script',
-    sourceLine ? `// Source Loon: ${sourceLine}` : null,
+    category ? '// Category: ' + category : '// Category: Rewrite / Script',
+    sourceLine ? '// Source Loon: ' + sourceLine : null,
   ].filter(Boolean);
 }
 
 function oneAction(ast, name) {
   validateRewriteV2Ast(ast);
   if (ast.actions.length !== 1 || ast.actions[0].name !== name) {
-    throw new Error(`Expected one ${name} action`);
+    throw new Error('Expected one ' + name + ' action');
   }
   const condition = simpleUrlRewriteCondition(ast);
   if (!condition.ok) throw new Error(condition.reason);
@@ -42,7 +42,9 @@ function templateCaptureName(template) {
 }
 
 export function renderQxRedirectScript(ast, options = {}) {
-  const { condition, action } = oneAction(ast, 'redirect');
+  const pair = oneAction(ast, 'redirect');
+  const condition = pair.condition;
+  const action = pair.action;
   const status = action.args[0];
   const template = fixedStringValue(action.args[1]);
   if (status?.type !== 'number' || ![302,307].includes(status.value)) throw new Error('redirect status must be 302 or 307');
@@ -56,24 +58,22 @@ export function renderQxRedirectScript(ast, options = {}) {
 
   const lines = [
     ...metadata(options),
-    `const __wayxRe = new RegExp(${JSON.stringify(condition.regex.pattern)}, ${JSON.stringify(condition.regex.flags || '')});`,
+    'const __wayxRe = new RegExp(' + JSON.stringify(condition.regex.pattern) + ', ' + JSON.stringify(condition.regex.flags || '') + ');',
     'const __wayxUrl = $request.url;',
     'const __wayxMatch = __wayxRe.exec(__wayxUrl);',
     'if (!__wayxMatch) {',
     '  $done({});',
     '} else {',
-    `  const __wayxTemplate = ${JSON.stringify(template)};`,
+    '  const __wayxTemplate = ' + JSON.stringify(template) + ';',
   ];
   if (refs.length) {
-    lines.push(
-      `  const __wayxReplacement = __wayxTemplate.replace(/\\$\\{${condition.capture}\\.(\\d+)\\}/g, (_, n) => __wayxMatch[Number(n)] ?? "");`
-    );
+    lines.push('  const __wayxReplacement = __wayxTemplate.replace(/\\$\\{' + condition.capture + '\\.(\\d+)\\}/g, (_, n) => __wayxMatch[Number(n)] ?? "");');
   } else {
     lines.push('  const __wayxReplacement = __wayxTemplate;');
   }
   lines.push(
     '  const __wayxLocation = __wayxUrl.slice(0, __wayxMatch.index) + __wayxReplacement + __wayxUrl.slice(__wayxMatch.index + __wayxMatch[0].length);',
-    `  $done({status: ${JSON.stringify(statusLine(status.value))}, headers: {Location: __wayxLocation}, body: ""});`,
+    '  $done({status: ' + JSON.stringify(statusLine(status.value)) + ', headers: {Location: __wayxLocation}, body: ""});',
     '}',
     '',
   );
@@ -122,7 +122,7 @@ export function renderQxRejectScript(ast, options = {}) {
   return {
     qxAction: 'script-echo-response',
     pattern: condition.pattern,
-    script: [...metadata(options), `$done(${JSON.stringify(response)});`, ''].join('\n'),
+    script: [...metadata(options), '$done(' + JSON.stringify(response) + ');', ''].join('\n'),
     notes: condition.notes,
   };
 }
@@ -156,64 +156,7 @@ function headerOpsForMock(ast, mockAction) {
   const ops = [];
   for (const action of ast.actions) {
     if (action === mockAction) continue;
-    if (!new RegExp('^' + ast.phase + '\\.header\\.(?:set|del|replace)
-  validateRewriteV2Ast(ast);
-  const condition = simpleUrlRewriteCondition(ast);
-  if (!condition.ok) throw new Error(condition.reason);
-  if (!ast.actions.length || ast.actions.some(a => !new RegExp('^' + ast.phase + '\\.header\\.(?:set|del|replace)$').test(a.name))) {
-    throw new Error('QX header script supports only same-phase set/del/replace actions');
-  }
-
-  const statements = [];
-  for (const action of ast.actions) {
-    for (const args of expandAction(action)) {
-      if (action.name.endsWith('.set')) {
-        statements.push(`__wayxSet(${JSON.stringify(fixed(args[0], 'header name'))}, ${JSON.stringify(fixed(args[1], 'header value'))});`);
-      } else if (action.name.endsWith('.del')) {
-        statements.push(`__wayxDel(${JSON.stringify(fixed(args[0], 'header name'))});`);
-      } else {
-        const name = fixed(args[0], 'header name');
-        const regex = args[1];
-        const replacement = fixed(args[2], 'header replacement');
-        if (regex?.type !== 'regex') throw new Error('header.replace regex is not fixed');
-        statements.push(`__wayxReplace(${JSON.stringify(name)}, ${JSON.stringify(regex.pattern)}, ${JSON.stringify(regex.flags || '')}, ${JSON.stringify(replacement)});`);
-      }
-    }
-  }
-
-  const source = ast.phase === 'request' ? '$request.headers' : '$response.headers';
-  const lines = [
-    ...metadata(options),
-    `const __wayxHeaders = {...${source}};`,
-    'function __wayxKey(name) {',
-    '  const wanted = String(name).toLowerCase();',
-    '  return Object.keys(__wayxHeaders).find(key => key.toLowerCase() === wanted);',
-    '}',
-    'function __wayxSet(name, value) {',
-    '  const key = __wayxKey(name);',
-    '  __wayxHeaders[key || name] = value;',
-    '}',
-    'function __wayxDel(name) {',
-    '  const wanted = String(name).toLowerCase();',
-    '  for (const key of Object.keys(__wayxHeaders)) if (key.toLowerCase() === wanted) delete __wayxHeaders[key];',
-    '}',
-    'function __wayxReplace(name, source, flags, replacement) {',
-    '  const key = __wayxKey(name);',
-    '  if (key !== undefined) __wayxHeaders[key] = String(__wayxHeaders[key]).replace(new RegExp(source, flags), replacement);',
-    '}',
-    ...statements,
-    '$done({headers: __wayxHeaders});',
-    '',
-  ];
-
-  return {
-    qxAction: ast.phase === 'request' ? 'script-request-header' : 'script-response-header',
-    pattern: condition.pattern,
-    script: lines.join('\n'),
-    notes: condition.notes,
-  };
-}
-).test(action.name)) {
+    if (!new RegExp('^' + ast.phase + '\\.header\\.(?:set|del|replace)$').test(action.name)) {
       throw new Error('QX mock pipeline supports only same-phase header set/del/replace actions');
     }
     for (const args of expandAction(action)) {
@@ -241,7 +184,7 @@ export function renderQxInlineMockScript(ast, options = {}) {
   validateRewriteV2Ast(ast);
   const condition = simpleUrlRewriteCondition(ast);
   if (!condition.ok) throw new Error(condition.reason);
-  const mocks = ast.actions.filter(a => /^(?:request|response)\\.body\\.mock$/.test(a.name));
+  const mocks = ast.actions.filter(a => /^(?:request|response)\.body\.mock$/.test(a.name));
   if (mocks.length !== 1) throw new Error('QX inline mock conversion requires exactly one body.mock action');
   const mock = mocks[0];
   if (!mock.name.startsWith(ast.phase + '.')) throw new Error('mock action phase does not match Rewrite phase');
@@ -255,7 +198,8 @@ export function renderQxInlineMockScript(ast, options = {}) {
   const base64 = isResponse ? booleanArg(mock.args[3], false) : booleanArg(mock.args[2], false);
   const binary = qxMockTypeIsBinary(contentType);
   if (binary && !base64) throw new Error('binary inline mock must use Base64=true for a lossless QX conversion');
-  if (base64 && !/^[A-Za-z0-9+/]*={0,2}$/.test(body.replace(/\\s+/g, ''))) {
+  const compactBase64 = base64 ? body.replace(/\s+/g, '') : '';
+  if (base64 && (!/^[A-Za-z0-9+/]*={0,2}$/.test(compactBase64) || compactBase64.length % 4 === 1)) {
     throw new Error('inline mock Base64 body is invalid');
   }
 
@@ -264,7 +208,7 @@ export function renderQxInlineMockScript(ast, options = {}) {
   const scriptOptions = {
     ...options,
     headerOps,
-    ...(base64 || binary ? {bodyBase64:body.replace(/\\s+/g, '')} : {bodyText:body}),
+    ...(base64 || binary ? {bodyBase64:compactBase64} : {bodyText:body}),
   };
   return {
     qxAction: isResponse ? 'script-echo-response' : 'script-request-body',
@@ -286,15 +230,15 @@ export function renderQxHeaderScript(ast, options = {}) {
   for (const action of ast.actions) {
     for (const args of expandAction(action)) {
       if (action.name.endsWith('.set')) {
-        statements.push(`__wayxSet(${JSON.stringify(fixed(args[0], 'header name'))}, ${JSON.stringify(fixed(args[1], 'header value'))});`);
+        statements.push('__wayxSet(' + JSON.stringify(fixed(args[0], 'header name')) + ', ' + JSON.stringify(fixed(args[1], 'header value')) + ');');
       } else if (action.name.endsWith('.del')) {
-        statements.push(`__wayxDel(${JSON.stringify(fixed(args[0], 'header name'))});`);
+        statements.push('__wayxDel(' + JSON.stringify(fixed(args[0], 'header name')) + ');');
       } else {
         const name = fixed(args[0], 'header name');
         const regex = args[1];
         const replacement = fixed(args[2], 'header replacement');
         if (regex?.type !== 'regex') throw new Error('header.replace regex is not fixed');
-        statements.push(`__wayxReplace(${JSON.stringify(name)}, ${JSON.stringify(regex.pattern)}, ${JSON.stringify(regex.flags || '')}, ${JSON.stringify(replacement)});`);
+        statements.push('__wayxReplace(' + JSON.stringify(name) + ', ' + JSON.stringify(regex.pattern) + ', ' + JSON.stringify(regex.flags || '') + ', ' + JSON.stringify(replacement) + ');');
       }
     }
   }
@@ -302,7 +246,7 @@ export function renderQxHeaderScript(ast, options = {}) {
   const source = ast.phase === 'request' ? '$request.headers' : '$response.headers';
   const lines = [
     ...metadata(options),
-    `const __wayxHeaders = {...${source}};`,
+    'const __wayxHeaders = {...' + source + '};',
     'function __wayxKey(name) {',
     '  const wanted = String(name).toLowerCase();',
     '  return Object.keys(__wayxHeaders).find(key => key.toLowerCase() === wanted);',
