@@ -6,21 +6,11 @@
 # Icon: https://rucu6.pages.dev/Icons/app/bilibili.png
 # Updated: 2026-09-22 22:55
 
-# Converted: 2026-09-29 21:03:27 +08:00
+# Converted: 2026-09-29 21:54:59 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/bilibili.lpx
 # Target: Surge
-
-# Source [Argument] (declaration-only conversion; typed/dynamic arguments stay Review):
-# displayUpList=select, "auto", "show", "hide", tag=显示 动态「最常访问」, desc=- auto: 仅当列表中存在直播状态时显示\n- show: 始终显示\n- hide: 始终隐藏
-# optimizeRequest=switch, true, false, tag=过滤「视频内」插播广告, desc=自动跳过视频内广告\n- true: 开启\n- false: 关闭
-# purifyComment=switch, true, false, tag=过滤「评论区」置顶广告, desc=-true: 开启\n- false: 关闭
-# sponsorBlock=switch, true, false, tag=空降助手
-# [WayX] Argument usage: displayUpList [string] -> Script argument-object
-# [WayX] Argument usage: optimizeRequest [boolean] -> Script enable
-# [WayX] Argument usage: purifyComment [boolean] -> Script argument-object
-# [WayX] Argument usage: sponsorBlock [boolean] -> Script enable
 
 [Rule]
 # 空降助手
