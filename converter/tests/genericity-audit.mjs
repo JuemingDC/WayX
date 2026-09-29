@@ -9,6 +9,7 @@ const files=[
     .filter(name=>name.endsWith('.mjs'))
     .map(name=>path.join(SRC,name)),
   path.join(ROOT,'.github','scripts','sync-convert.mjs'),
+  path.join(ROOT,'.github','scripts','conversion_gate.py'),
   path.join(ROOT,'converter','tools','regenerate-canonical.mjs'),
 ];
 
@@ -24,6 +25,8 @@ const identityComparisonPatterns=[
   /\bswitch\s*\(\s*(?:entry|plugin)\.(?:id|name|author)\s*\)/,
   /\b(?:scriptUrl|sourceUrl)\s*\.(?:includes|startsWith|endsWith|match)\s*\(\s*['"][^'"]*(?:youtube|bilibili|jingdong|12306|myblockads|rucu6)/i,
   /\/Scripts\\\/(?:youtube|bilibili|jingdong|12306|myblockads)[^/]*\\?\.js/i,
+  /path\.startsWith\(\s*["']Resource\/Loon\/[^"']+\/["']\s*\)/,
+  /Resource\/Loon\/(?:RuCu6|YouTube|Bilibili|JingDong|MyBlockAds)\//i,
 ];
 
 const violations=[];
