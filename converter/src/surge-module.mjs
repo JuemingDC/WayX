@@ -128,7 +128,6 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
     }
 
     if (current === 'Map Local') {
-      assertCanonicalUrlPattern(line.split(/\s+/, 1)[0], line);
       if (!/\bdata-type=(?:file|text|tiny-gif|base64)\b/.test(line)) {
         throw new Error(`${entry.id}: invalid Surge Map Local line: ${line}`);
       }
