@@ -11,6 +11,7 @@ import { validateRewriteV2Ast } from '../src/rewrite-v2-actions.mjs';
 import { jqDependencySpecFromAction } from '../src/dependency.mjs';
 import { minifyJqFile } from '../src/jq.mjs';
 import { loadLoonSourceCatalog } from '../src/source-catalog.mjs';
+import { planScriptMirrorPaths } from '../src/script-path.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -42,14 +43,10 @@ function rawRepoUrl(file) {
 
 async function mirroredScriptMap(entry, source) {
   const map = new Map();
-  for (const url of scriptUrls(source)) {
-    let filename;
-    try {
-      filename = decodeURIComponent(new URL(url).pathname.split('/').pop() || '');
-    } catch {
-      filename = '';
-    }
-
+  const urls=scriptUrls(source);
+  const planned=planScriptMirrorPaths(urls);
+  for (const url of urls) {
+    const filename=planned.get(url);
     const local = filename ? path.join(SCRIPT_DIR, entry.id, filename) : '';
     if (local && await exists(local)) {
       map.set(url, {
