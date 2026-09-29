@@ -61,24 +61,28 @@ validateQX(outB.qx, entryB);
 validateSurgeModule(outA.surge, entryA);
 validateSurgeModule(outB.surge, entryB);
 
-function qxSemantics(text){
+function normalizeGeneratedIdentityPath(line, entryId){
+  return line.replaceAll('/script/' + entryId + '/', '/script/<identity>/');
+}
+function qxSemantics(text, entryId){
   return text.split('\n')
-    .map(x=>x.trim())
+    .map(x=>normalizeGeneratedIdentityPath(x.trim(), entryId))
     .filter(x=>x && !x.startsWith('#'));
 }
-function surgeSemantics(text){
+function surgeSemantics(text, entryId){
   return text.split('\n')
-    .map(x=>x.trim())
+    .map(x=>normalizeGeneratedIdentityPath(x.trim(), entryId))
     .filter(x=>x && !x.startsWith('#') && !/^\[[^\]]+\]$/.test(x));
 }
 
-assert.deepEqual(qxSemantics(outA.qx), qxSemantics(outB.qx));
-assert.deepEqual(surgeSemantics(outA.surge), surgeSemantics(outB.surge));
+assert.deepEqual(qxSemantics(outA.qx, entryA.id), qxSemantics(outB.qx, entryB.id));
+assert.deepEqual(surgeSemantics(outA.surge, entryA.id), surgeSemantics(outB.surge, entryB.id));
+assert.deepEqual([...outA.generatedScripts], [...outB.generatedScripts]);
 
-assert.ok(qxSemantics(outA.qx).includes('^https:\\/\\/ads\\.example\\.com url reject-dict'));
-assert.ok(surgeSemantics(outA.surge).includes('^https:\\/\\/ads\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"'));
-assert.ok(surgeSemantics(outA.surge).some(x=>x.startsWith('http-response ^https:\\/\\/api\\.example\\.com enabled:true enabled:false')));
-assert.ok(qxSemantics(outA.qx).some(x=>x.includes("jsonjq-response-body 'del(.data.ads)'")));
-assert.ok(qxSemantics(outA.qx).some(x=>x.includes('script-response-body https://scripts.example.com/generic.js')));
+assert.ok(qxSemantics(outA.qx, entryA.id).includes('^https:\\/\\/ads\\.example\\.com url reject-dict'));
+assert.ok(surgeSemantics(outA.surge, entryA.id).includes('^https:\\/\\/ads\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"'));
+assert.ok(surgeSemantics(outA.surge, entryA.id).some(x=>x.startsWith('http-response ^https:\\/\\/api\\.example\\.com enabled:true enabled:false')));
+assert.ok(qxSemantics(outA.qx, entryA.id).some(x=>x.includes("jsonjq-response-body 'del(.data.ads)'")));
+assert.ok(qxSemantics(outA.qx, entryA.id).some(x=>x.includes('script-response-body https://scripts.example.com/generic.js')));
 
 console.log('Generic identity-invariance conversion test passed');
