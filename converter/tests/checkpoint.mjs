@@ -23,6 +23,9 @@ import {
   mergeBoxJsSubscription,
   parseLoonArguments,
   renderQxPrefsObjectBridge,
+  renderQxScriptV2Bridge,
+  renderSurgeScriptV2Bridge,
+  renderSurgeModuleArguments,
   parseRewriteV2,
   qxPrimitiveForRewriteV2Action,
   qxRule,
@@ -357,5 +360,42 @@ assert.match(qxScriptV2NeedsBridge.reason, /dynamic enable|argument/);
 const surgeScriptV2NeedsBridge = surgeScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'request.js', name:'x'});
 assert.equal(surgeScriptV2NeedsBridge.ok, false);
 assert.match(surgeScriptV2NeedsBridge.reason, /dynamic enable|argument/);
+
+const scriptBridgeArgs = [
+  'enabled=switch, false, true, tag="Enabled"',
+  'lang=select, "zh-Hans", "en", tag="Language"',
+];
+const qxV2Bridge = renderQxScriptV2Bridge(
+  'Demo',
+  scriptBridgeArgs,
+  scriptV2ObjectArg,
+  'const value = $argument.lang; $done({});',
+  {stamp:'2026-09-29 10:00:00 +08:00', category:'Adblock', sourceUrl:'https://example.com/request.js'},
+);
+assert.equal(qxV2Bridge.changed, true);
+assert.deepEqual(qxV2Bridge.preferenceIds.sort(), ['enabled','lang']);
+assert.match(qxV2Bridge.source, /\$prefs\.valueForKey/);
+assert.match(qxV2Bridge.source, /async function\(\$argument\)/);
+assert.match(qxV2Bridge.source, /"lang": String/);
+
+const surgeV2Bridge = renderSurgeScriptV2Bridge(
+  scriptBridgeArgs,
+  scriptV2ObjectArg,
+  'const value = $argument.lang; $done({});',
+  {category:'Adblock', sourceUrl:'https://example.com/request.js'},
+);
+assert.equal(surgeV2Bridge.changed, true);
+assert.deepEqual(surgeV2Bridge.moduleArgumentIds.sort(), ['enabled','lang']);
+assert.match(surgeV2Bridge.declarationArgument, /\{\{\{enabled\}\}\}/);
+assert.match(surgeV2Bridge.declarationArgument, /\{\{\{lang\}\}\}/);
+assert.match(surgeV2Bridge.source, /JSON\.parse\(\$argument/);
+assert.match(surgeV2Bridge.source, /function\(\$argument\)/);
+
+const surgeArgMeta = renderSurgeModuleArguments(scriptBridgeArgs, ['enabled','lang']);
+assert.equal(surgeArgMeta[0], '#!arguments=enabled:false,lang:zh-Hans');
+assert.throws(
+  () => renderQxScriptV2Bridge('Demo', scriptBridgeArgs, scriptV2ObjectArg, 'const $argument = {}; $done({});'),
+  /source declares \$argument/,
+);
 
 console.log('WayX converter checkpoint tests passed');
