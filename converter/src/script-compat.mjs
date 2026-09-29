@@ -1,4 +1,4 @@
-// WayX remote-script compatibility and fork registry
+// WayX remote-script compatibility registry
 // Author: chance
 // Category: Converter / Script Compatibility
 
@@ -7,9 +7,9 @@ const PORTS = [
     id: 'rucu6-bilibili-protobuf',
     test: url => /\/Scripts\/bilibili\/(?:request|response)\.js(?:\?|$)/i.test(String(url || '')),
     qx: {
-      status: 'manual-port',
+      status: 'unsupported',
       executable: false,
-      reason: 'Upstream Bilibili protobuf runtime explicitly rejects Quantumult X and uses $utils.ungzip; no QX fork is registered.',
+      reason: 'Upstream Bilibili protobuf runtime explicitly rejects Quantumult X and uses Loon $utils.ungzip; keep the source declaration commented in QX output.',
     },
   },
   {
@@ -52,35 +52,38 @@ export function inspectQxScriptCompatibility({ scriptUrl = '', sourceText = '', 
   const signals = scriptRuntimeSignals(sourceText);
   const registered = registeredQxScriptPort(scriptUrl);
 
-  if (forkUrl && forkUrl !== scriptUrl) {
+  // Explicit incompatibility always wins. WayX must not turn an unsupported
+  // source runtime into an executable QX line by selecting a fork first.
+  if (signals.explicitQxRejection || registered?.executable === false) {
     return {
-      status: 'fork',
-      executable: true,
-      reason: 'WayX QX fork selected by converter.',
-      registryId: registered?.id || null,
-      signals,
-    };
-  }
-
-  if (registered) {
-    return { ...registered, signals };
-  }
-
-  if (signals.explicitQxRejection) {
-    return {
-      status: 'manual-port',
+      status: 'unsupported',
       executable: false,
-      reason: 'Script explicitly rejects Quantumult X and no verified QX fork is registered.',
-      registryId: null,
+      reason: registered?.reason || 'Script explicitly rejects Quantumult X; keep the source declaration commented in QX output.',
+      registryId: registered?.id || null,
       signals,
     };
   }
 
   if (signals.loonUtils) {
     return {
-      status: 'manual-port',
+      status: 'unsupported',
       executable: false,
-      reason: 'Script directly uses Loon $utils API; no verified Quantumult X equivalent/fork is registered.',
+      reason: 'Script directly uses Loon $utils API without a proven Quantumult X equivalent; keep the source declaration commented in QX output.',
+      registryId: registered?.id || null,
+      signals,
+    };
+  }
+
+  if (registered) return { ...registered, signals };
+
+  // A WayX adaptation is allowed only for a source script that is otherwise
+  // QX-compatible (for example an Argument/$prefs bridge), never to override
+  // an explicit source-level incompatibility.
+  if (forkUrl && forkUrl !== scriptUrl) {
+    return {
+      status: 'adapted',
+      executable: true,
+      reason: 'WayX QX adaptation selected for an otherwise compatible source script.',
       registryId: null,
       signals,
     };
@@ -92,16 +95,16 @@ export function inspectQxScriptCompatibility({ scriptUrl = '', sourceText = '', 
     executable: true,
     reason: qxEvidence
       ? 'No blocking signal found and the script contains Quantumult X runtime evidence.'
-      : 'No blocking signal found; generic script execution remains subject to normal Review Tier checks when content changes.',
+      : 'No blocking signal found; preserve the source script behavior and use the normal QX script action selected from request/response semantics.',
     registryId: null,
     signals,
   };
 }
 
 export function qxManualPortComment({ scriptUrl = '', result } = {}) {
-  const reason = result?.reason || 'Quantumult X compatibility could not be proven.';
+  const reason = result?.reason || 'Quantumult X compatibility is not available for this source script.';
   return [
-    '# [WayX] MANUAL PORT REQUIRED:',
+    '# [WayX] QUANTUMULT X UNSUPPORTED - source script disabled:',
     `# Script: ${scriptUrl}`,
     `# Reason: ${reason}`,
   ];
