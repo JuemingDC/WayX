@@ -384,6 +384,8 @@ function convert(entry, source, scriptMap, stamp = nowCN()) {
     if (sc.tag) qx.rewrite.push(`# ${sc.tag}`);
     if (sc.argument && mapped?.qxArgumentBridge) qx.rewrite.push(`# [WayX] BoxJs/$prefs bridge active for argument=${sc.argument}`);
     else if (sc.argument) qx.rewrite.push(`# [WayX] REVIEW REQUIRED: verify BoxJs/$prefs bridge for argument=${sc.argument}`);
+    if (sc.enable && mapped?.qxEnableBridge) qx.rewrite.push(`# [WayX] BoxJs/$prefs enable bridge active for enable=${sc.enable}`);
+    else if (sc.enable) qx.rewrite.push(`# [WayX] REVIEW REQUIRED: verify QX enable bridge for enable=${sc.enable}`);
     if (sc.argument || sc.enable || sc.binary) qx.rewrite.push(`# Loon script options preserved in source: ${[sc.argument && `argument=${sc.argument}`, sc.enable && `enable=${sc.enable}`, sc.binary && 'binary-body-mode=true'].filter(Boolean).join(', ')}`);
     qx.rewrite.push(`${sc.pattern} url ${qType} ${qxUrl}`);
 
@@ -481,6 +483,24 @@ function adaptSurgeScript(entry, source) {
   return out;
 }
 
+function adaptDianPingQX(entry, source, defaults) {
+  if (entry.id !== 'DianPing') return source;
+  const fallback = String(defaults.get('davsdmpk_enable') ?? 'true').trim().toLowerCase() === 'false' ? 'false' : 'true';
+  const key = 'wayx.dianping.davsdmpk_enable';
+  return [
+    '// WayX BoxJs -> Quantumult X $prefs enable bridge',
+    '// Converted by: chance',
+    `const __wayxEnabledValue = $prefs.valueForKey(${JSON.stringify(key)});`,
+    `const __wayxEnabled = String(__wayxEnabledValue === null || __wayxEnabledValue === undefined ? ${JSON.stringify(fallback)} : __wayxEnabledValue).toLowerCase() === "true";`,
+    'if (!__wayxEnabled) {',
+    '  $done({});',
+    '} else {',
+    source,
+    '}',
+    '',
+  ].join('\n');
+}
+
 function adaptTiebaQX(entry, source, argumentLines = []) {
   if (entry.id !== 'Tieba') return source;
   if (!/\$argument\b/.test(source)) throw new Error(`${entry.id}: expected $argument usage was not found in tieba-proto.js`);
@@ -537,8 +557,11 @@ async function syncScript(entry, url, defaults = new Map(), argumentLines = []) 
   }
 
   if (entry.id === 'DianPing') {
+    const qxDest = path.join(destDir, 'QuantumultX', filename);
     const surgeDest = path.join(destDir, 'Surge', filename);
+    await writeAdaptedScript(qxDest, entry, 'Quantumult X', url, adaptDianPingQX(entry, normalized, defaults));
     await writeAdaptedScript(surgeDest, entry, 'Surge', url, adaptSurgeScript(entry, normalized));
+    qxPath = qxDest;
     surgePath = surgeDest;
   }
 
@@ -551,7 +574,7 @@ async function syncScript(entry, url, defaults = new Map(), argumentLines = []) 
   }
 
   const toRaw = file => `${RAW_BASE}/${path.relative(ROOT, file).split(path.sep).map(encodeURIComponent).join('/')}`;
-  return { qx: toRaw(qxPath), surge: toRaw(surgePath), source: normalized, qxArgumentBridge: entry.id === 'Tieba' };
+  return { qx: toRaw(qxPath), surge: toRaw(surgePath), source: normalized, qxArgumentBridge: entry.id === 'Tieba', qxEnableBridge: entry.id === 'DianPing' };
 }
 
 function scriptUrls(source) {
@@ -610,7 +633,7 @@ async function main() {
       }
 
       // Only publish BoxJs controls once the corresponding QX bridge is functional.
-      if (entry.id === 'Tieba' && argumentLines.length) {
+      if (['Tieba', 'DianPing'].includes(entry.id) && argumentLines.length) {
         const displayName = (source.match(/^#!name\s*=\s*(.+)$/m) || [])[1]?.trim() || entry.id;
         generatedBoxJsApps.push(renderBoxJsApp({ ...entry, name: displayName }, argumentLines));
       }
