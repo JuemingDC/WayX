@@ -49,7 +49,7 @@ function addUse(usage, id, use) {
 }
 
 function boundaryValue(line, key) {
-  const re = new RegExp('(?:^|,)\\s*' + key.replace(/[.*+?^$${}()|[\\]\\]/g, '\\$&') + '\\s*=\\s*([\\s\\S]*?)(?=,\\s*[A-Za-z][A-Za-z0-9_-]*\\s*=|$)', 'i');
+  const re = new RegExp('(?:^|,)\\s*' + key + '\\s*=\\s*([\\s\\S]*?)(?=,\\s*[A-Za-z][A-Za-z0-9_-]*\\s*=|$)', 'i');
   return (String(line).match(re) || [])[1]?.trim() || '';
 }
 
