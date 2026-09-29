@@ -21,7 +21,7 @@ WayX 自有的 Loon Plugin → Quantumult X / Surge 转换核心。参考 KOP-XI
 
 - QX script compatibility registry：已知 RuCu6 Bilibili protobuf 脚本因上游显式拒绝 QX 而阻断执行行；YouTube 的内置 QuanX adapter 作为已审查兼容项登记；
 - 未登记脚本会扫描显式 QX 拒绝、Loon-only `$utils`、QX runtime 信号；明确不支持时输出 `QUANTUMULT X UNSUPPORTED` 并注释保留源声明，适配路径不能绕过该阻断；
-- 转换原则改为“先判断 Loon 行为效果，再选择目标平台等效表达”：例如 URL regex + reject/`reject(200)` 在 QX 中使用 `reject-200`，`reject_dict/array/img(200)` 分别使用对应 QX 200 响应 primitive；
+- 转换原则改为“先判断 Loon 行为效果，再选择目标平台等效表达”：例如 Loon `reject(404)` 直接使用 QX 原生 `reject`，`reject(200)` 使用 `reject-200`，`reject_dict/array/img(200)` 分别使用对应 QX 原生 primitive；
 - `jq_file / mock_file` 已进入依赖 AST：JQ 仍可解析并内联；QX `mock_file` 不再伪装成原生 token，而是在转换阶段读取依赖并写入生成脚本；response 使用 `script-echo-response`，request 文本 body 使用 `script-request-body`；QX 运行时不再为 mock 文件二次联网，二进制 response 用内嵌 Base64 还原为官方支持的 `bodyBytes`，二进制 request 暂不自动放行；
 - 上游同步会生成 RuCu6 脚本兼容性报告，PR CI 同时检查 converter tools。
 
@@ -32,7 +32,7 @@ MyBlockAds JQ golden 已自动化：QX / Surge 当前 11 条 JQ 有序规则必�
 - Loon URL regex 的 `/i` 不使用未在 QX 官方 sample 中证明的 `(?i)`；转换器把 ASCII 字母显式编译为大小写字符类，例如 `api` → `[aA][pP][iI]`。不能无损编译的 Unicode/特殊 escape 保持 Review；
 - redirect 的“只替换 URL 命中片段 + capture 模板”在 QX 侧使用生成的 `script-echo-response`，不假定 QX 302 replacement 支持未证明的捕获语义；
 - JSON delete/replace/JQ、可证明安全的 Body Replace 直接转为 QX/Surge 原生能力；
-- non-200/custom reject 在 QX 侧生成 `script-echo-response`，保留状态码和 body；
+- 普通 `reject(404)` 优先使用 QX 原生 `url reject`；只有目标端没有原生等价 primitive 的自定义状态/body 才进入生成响应脚本；Surge 普通 reject 使用 `[URL Rewrite] ... _ reject`，不使用 Map Local；
 - 同阶段 Header set/del/replace pipeline 在 QX 侧合并为一个脚本以保持顺序；Surge 使用官方 `[Header Rewrite]`，其中 Loon `set` 展开为 `header-del + header-add`；
 - inline response mock 及 mock + Header pipeline：QX 合成一个 echo-response 脚本；Surge 使用 `[Map Local]` 静态响应。
 
