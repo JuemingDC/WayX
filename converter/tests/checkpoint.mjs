@@ -182,25 +182,33 @@ const validSurgeModule = [
   'AND,((DOMAIN-SUFFIX,example.com),(PROTOCOL,TCP)),REJECT',
   '',
   '[URL Rewrite]',
-  '^https:\\/\\/ads\\.example\\.com _ reject',
+  '^https://ads\\.example\\.com _ reject',
   '',
   '[Header Rewrite]',
-  'http-response ^https:\\/\\/api\\.example\\.com header-del Server',
+  'http-response ^https://api\\.example\\.com header-del Server',
   '',
   '[Body Rewrite]',
-  'http-response-jq ^https:\\/\\/api\\.example\\.com \'del(.ads)\'',
+  'http-response-jq ^https://api\\.example\\.com \'del(.ads)\'',
   '',
   '[Map Local]',
-  '^https:\\/\\/mock\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"',
+  '^https://mock\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"',
   '',
   '[Script]',
-  'demo = type=http-response,pattern=^https:\\/\\/api\\.example\\.com,script-path=https://example.com/demo.js,requires-body=true',
+  'demo = type=http-response,pattern=^https://api\\.example\\.com,script-path=https://example.com/demo.js,requires-body=true',
   '',
   '[MITM]',
   'hostname = %APPEND% api.example.com',
   '',
 ].join('\n');
 assert.doesNotThrow(() => validateSurgeModule(validSurgeModule, {id:'Demo'}));
+assert.throws(
+  () => validateSurgeModule(validSurgeModule.replace('^https://ads\\.example\\.com _ reject', '^https:\\/\\/ads\\.example\\.com _ reject'), {id:'Demo'}),
+  /bare '\/'/,
+);
+assert.throws(
+  () => validateSurgeModule(validSurgeModule.replace('^https://ads\\.example\\.com _ reject', '(^https://ads\\.example\\.com) _ reject'), {id:'Demo'}),
+  /use '\^\(\.\.\.\)'/,
+);
 assert.throws(
   () => validateSurgeModule(validSurgeModule.replace('#!requirement=CORE_VERSION>=20\n', ''), {id:'Demo'}),
   /CORE_VERSION>=20/,
