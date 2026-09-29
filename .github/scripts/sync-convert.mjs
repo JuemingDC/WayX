@@ -5,12 +5,12 @@ import { fileURLToPath } from 'node:url';
 import { qxRule as canonicalQxRule, surgeModuleRule } from '../../converter/src/rule.mjs';
 import { selectQxScriptAction } from '../../converter/src/script.mjs';
 import { inspectQxScriptCompatibility, qxManualPortComment } from '../../converter/src/script-compat.mjs';
-import { minifyJq } from '../../converter/src/jq.mjs';
+import { minifyJq, minifyJqFile } from '../../converter/src/jq.mjs';
 import { qxTargetPath, surgeTargetPath } from '../../converter/src/paths.mjs';
 import { analyzeSafeRewriteV2 } from '../../converter/src/rewrite-v2-safe.mjs';
 import { isRewriteV2, parseRewriteV2 } from '../../converter/src/rewrite-v2.mjs';
 import { validateRewriteV2Ast } from '../../converter/src/rewrite-v2-actions.mjs';
-import { qxMockPlanFromAction } from '../../converter/src/dependency.mjs';
+import { inlineResolvedDependency, jqDependencySpecFromAction, qxMockPlanFromAction } from '../../converter/src/dependency.mjs';
 import { renderQxMockFileScript } from '../../converter/src/qx-mock.mjs';
 import { qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan, surgeHeaderRewritePlan, surgeInlineMockPlan, simpleUrlRewriteCondition } from '../../converter/src/rewrite-v2-semantic.mjs';
 import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript } from '../../converter/src/qx-semantic-script.mjs';
@@ -147,6 +147,22 @@ function rewriteV2Action(line, target, ctx) {
   try {
     ast = parseRewriteV2(line);
     validateRewriteV2Ast(ast);
+  } catch (error) {
+    return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
+  }
+
+  try {
+    if (ast.actions.length === 1) {
+      const jqSpec = jqDependencySpecFromAction(ast.actions[0], { pluginSourceUrl: ctx.sourceUrl });
+      if (jqSpec) {
+        const materialized = ctx.jqFiles?.get(line);
+        if (!materialized) throw new Error('JQ dependency was not materialized during conversion');
+        if (materialized.error) throw new Error(materialized.error);
+        const inlined = inlineResolvedDependency(ast.actions[0], materialized.content, { pluginSourceUrl: ctx.sourceUrl });
+        ast = { ...ast, actions: [inlined.action] };
+        validateRewriteV2Ast(ast);
+      }
+    }
   } catch (error) {
     return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
   }
@@ -317,6 +333,30 @@ async function materializeQxMockFiles(entry, parsed) {
   return out;
 }
 
+async function materializeJqFiles(entry, parsed) {
+  const out = new Map();
+  for (const item of sectionItems(parsed.sections.get('Rewrite'))) {
+    if (!item.line || !isRewriteV2(item.line)) continue;
+    try {
+      const ast = parseRewriteV2(item.line);
+      validateRewriteV2Ast(ast);
+      if (ast.actions.length !== 1) continue;
+      const spec = jqDependencySpecFromAction(ast.actions[0], { pluginSourceUrl: entry.source });
+      if (!spec) continue;
+      if (!spec.resolvable || !spec.url) throw new Error(spec.reason || 'JQ dependency is not resolvable');
+      const { text } = await fetchWithFallback(spec.url);
+      out.set(item.line, {
+        content: minifyJqFile(text),
+        sourceFile: spec.url,
+        legacyAlias: Boolean(spec.legacyAlias),
+      });
+    } catch (error) {
+      out.set(item.line, { error: String(error?.message || error).split('\n')[0] });
+    }
+  }
+  return out;
+}
+
 function jqPath(pathText) {
   // Current whitelist uses identifier-safe dotted paths. Keep exact hierarchy.
   return '.' + pathText.split('.').map(k => /^[A-Za-z_][A-Za-z0-9_]*$/.test(k) ? k : `[${JSON.stringify(k)}]`).join('.').replace(/\.\[/g, '[');
@@ -435,7 +475,7 @@ function sanitizeName(s) {
   return (s || 'script').replace(/[=,\r\n]/g, '_').trim().slice(0, 64) || 'script';
 }
 
-function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Map()) {
+function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Map(), jqFiles = new Map()) {
   const parsed = parseLoon(source);
   const meta = [
     `# Converted: ${stamp}`,
@@ -448,8 +488,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
 
   const qx = { filter: [], rewrite: [], mitm: [], notes: [], generatedScripts: new Map() };
   const sg = { rule: [], url: [], header: [], map: [], body: [], script: [], mitm: [], notes: [], generatedScripts: new Map() };
-  const qctx = { id: entry.id, generatedScripts: qx.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, mockFiles: qxMockFiles };
-  const sctx = { id: entry.id, generatedScripts: sg.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category };
+  const qctx = { id: entry.id, generatedScripts: qx.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, mockFiles: qxMockFiles, jqFiles };
+  const sctx = { id: entry.id, generatedScripts: sg.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, jqFiles };
 
   // Preserve [Argument] semantics as comments. QX/Surge module arguments are not fabricated.
   if (parsed.sections.has('Argument')) {
@@ -723,6 +763,7 @@ async function main() {
       const scriptMap = new Map();
       const parsedSource = parseLoon(source);
       const qxMockFiles = await materializeQxMockFiles(entry, parsedSource);
+      const jqFiles = await materializeJqFiles(entry, parsedSource);
       for (const url of scriptUrls(source)) {
         scriptMap.set(url, await syncScript(entry, url));
       }
@@ -739,13 +780,13 @@ async function main() {
       const oldSg = sgExists ? normalizeNewlines(await fs.readFile(sgPath, 'utf8')) : null;
       const oldStamp = (oldQx?.match(/^# Converted:\s*(.+)$/m) || [])[1] || null;
       let stamp = changed || !oldStamp ? nowCN() : oldStamp;
-      let out = convert(entry, source, scriptMap, stamp, qxMockFiles);
+      let out = convert(entry, source, scriptMap, stamp, qxMockFiles, jqFiles);
 
       // Converter changes must also refresh outputs even when upstream LPX is unchanged.
       // Preserve the old conversion timestamp only if the generated content is actually identical.
       if (!changed && oldStamp && ((oldQx && oldQx !== out.qx) || (oldSg && oldSg !== out.surge))) {
         stamp = nowCN();
-        out = convert(entry, source, scriptMap, stamp, qxMockFiles);
+        out = convert(entry, source, scriptMap, stamp, qxMockFiles, jqFiles);
       }
 
       for (const [file, content] of out.generatedScripts) {
