@@ -20,6 +20,7 @@ import { qxScriptV2Plan, surgeScriptV2Plan } from '../../converter/src/script-v2
 import { hasActiveSurgeLines, renderSurgeModuleHeader, validateSurgeModule } from '../../converter/src/surge-module.mjs';
 import { renderQxSnippetHeader } from '../../converter/src/metadata.mjs';
 import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
+import { planScriptMirrorPaths } from '../../converter/src/script-path.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -579,8 +580,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
 
 }
 
-async function syncScript(entry, url) {
-  const filename = decodeURIComponent(new URL(url).pathname.split('/').pop() || `${entry.id}.js`);
+async function syncScript(entry, url, filename) {
+  if (!filename) throw new Error(`${entry.id}: missing planned local filename for script ${url}`);
   const destDir = path.join(SCRIPT_DIR, entry.id);
   await fs.mkdir(destDir, { recursive: true });
   const { text } = await fetchWithFallback(url);
@@ -644,8 +645,10 @@ async function main() {
       const parsedSource = parseLoon(source);
       const qxMockFiles = await materializeQxMockFiles(entry, parsedSource);
       const jqFiles = await materializeJqFiles(entry, parsedSource);
-      for (const url of scriptUrls(source)) {
-        scriptMap.set(url, await syncScript(entry, url));
+      const discoveredScriptUrls = scriptUrls(source);
+      const scriptPaths = planScriptMirrorPaths(discoveredScriptUrls);
+      for (const url of discoveredScriptUrls) {
+        scriptMap.set(url, await syncScript(entry, url, scriptPaths.get(url)));
       }
 
       const qxPath = path.join(ROOT, qxTargetPath(entry));
