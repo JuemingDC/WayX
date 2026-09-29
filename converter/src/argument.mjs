@@ -119,6 +119,22 @@ export function surgeArgumentPlaceholder(id, table) {
   return table?.byId?.get(String(id))?.placeholder || null;
 }
 
+export function parseLegacyLoonPluginObjectRefs(source) {
+  const raw = String(source || '').trim();
+  if (!raw) return null;
+
+  const bracket = raw.match(/^\[([\s\S]*)\]$/);
+  if (bracket) {
+    const refs = [...bracket[1].matchAll(/\{([A-Za-z_][\w-]*)\}/g)].map(match => match[1]);
+    return refs.length ? refs : null;
+  }
+
+  const compact = raw.match(/^\{([A-Za-z_][\w-]*(?:\s*,\s*[A-Za-z_][\w-]*)*)\}$/);
+  if (compact) return compact[1].split(',').map(value => value.trim());
+
+  return null;
+}
+
 export function surgePluginObjectArgument(refs = [], table) {
   const fields = [];
   for (const id of refs) {
