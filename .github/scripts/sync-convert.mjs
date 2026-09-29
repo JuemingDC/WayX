@@ -12,7 +12,7 @@ import { validateRewriteV2Ast } from '../../converter/src/rewrite-v2-actions.mjs
 import { qxMockPlanFromAction } from '../../converter/src/dependency.mjs';
 import { renderQxMockFileScript } from '../../converter/src/qx-mock.mjs';
 import { qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan, simpleUrlRewriteCondition } from '../../converter/src/rewrite-v2-semantic.mjs';
-import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript } from '../../converter/src/qx-semantic-script.mjs';
+import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript } from '../../converter/src/qx-semantic-script.mjs';
 import { mergeBoxJsSubscription, renderBoxJsApp, renderQxPrefsObjectBridge } from '../../converter/src/argument.mjs';
 
 const ROOT = process.cwd();
@@ -168,6 +168,20 @@ function rewriteV2Action(line, target, ctx) {
         });
         ctx.generatedScripts.set(filename, script);
         return { section: 'rewrite', line: `${condition.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}` };
+      } catch (error) {
+        return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
+      }
+    }
+
+    // Inline body.mock, including Loon's mock + response-header pipeline,
+    // becomes one QX script so mock-before-upstream and action ordering are kept.
+    if (ast.actions.some(a => /^(?:request|response)\.body\.mock$/.test(a.name))) {
+      try {
+        const plan = renderQxInlineMockScript(ast, { stamp: ctx.stamp, category: ctx.category, sourceLine: line });
+        const key = crypto.createHash('sha1').update('mock-inline\0' + line).digest('hex').slice(0, 10);
+        const filename = `mock_${key}.js`;
+        ctx.generatedScripts.set(filename, plan.script);
+        return { section: 'rewrite', line: `${plan.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}` };
       } catch (error) {
         return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
       }
