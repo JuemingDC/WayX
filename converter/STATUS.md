@@ -76,20 +76,20 @@ Implemented on `work/surge-module-format-audit-v2-20260929` / PR #10:
   - `#!desc`
   - valid `#!system` when present
   - `#!requirement=CORE_VERSION>=20` when active Body Rewrite or inline Map Local is emitted.
-- Loon-only metadata such as `#!author`, `#!icon`, `#!date`, `#!loon_version` is preserved as ordinary comments.
+- Source metadata is converted to target-native presentation: author/icon/date/homepage/tag become ordinary comments as appropriate, while source-platform-only version fields are omitted from target artifacts.
 - WayX conversion metadata remains ordinary comments: conversion time, author `chance`, category, target and source.
 - No undocumented Surge `#!category` directive is invented.
 - Surge Module `[Rule]` is normalized independently from a normal Surge profile:
-  - only `DIRECT / REJECT / REJECT-TINYGIF` are emitted as active module policies;
   - Loon `REJECT-IMG` -> `REJECT-TINYGIF`;
-  - Loon/Surge profile `REJECT-DROP / REJECT-NO-DROP` are **not** collapsed to `REJECT`; because the official Module page still restricts module rules to `DIRECT / REJECT / REJECT-TINYGIF`, these policies stay commented for Review to preserve semantics;
+  - current Surge App runtime-verified built-in policies `REJECT-DROP / REJECT-NO-DROP / CELLULAR / CELLULAR-ONLY / HYBRID / NO-HYBRID` are preserved as active policies instead of being collapsed or commented;
+  - unknown/user policy groups remain binding notes rather than fabricated module policies;
   - external policy names such as `PROXY` remain commented for user binding;
   - the converter now recognizes the current official Surge Rule Type Index (DOMAIN family, IP family, USER-AGENT, URL-REGEX, process/source/port/network rules, AND/OR/NOT, SCRIPT, RULE-SET, FINAL) and preserves native Loon→Surge combinations such as nested logic, PROTOCOL=QUIC and `no-resolve`.
 - Section output is Surge-native: `[Rule]`, `[URL Rewrite]`, `[Header Rewrite]`, `[Body Rewrite]`, `[Map Local]`, `[Script]`, `[MITM]`.
 - URL reject uses `<pattern> _ reject`.
 - Header Rewrite uses official `http-request/http-response ... header-*` syntax.
 - Script declarations use modern `name = type=http-...,pattern=...,script-path=...` syntax.
-- Module MITM hostname uses `%APPEND%`.
+- Generated Module MITM hostname uses `%APPEND%` to avoid overriding the parent profile; validator also accepts valid Surge hostname override syntax.
 - Added reusable `converter/src/surge-module.mjs` formatter/validator and checkpoint coverage.
 - Source JavaScript remains unchanged; this phase changes only declaration/module formatting.
 
@@ -128,7 +128,7 @@ User-provided Loon new-syntax cases are now locked by CI:
 Current rule behavior:
 
 - QX `URL-REGEX REJECT-DROP` -> native `url reject` by project policy.
-- QX `URL-REGEX REJECT-DROP` remains `url reject`; Surge profile itself supports `REJECT-DROP / REJECT-NO-DROP`, but the current official Module page still limits module `[Rule]` policies to `DIRECT / REJECT / REJECT-TINYGIF`. WayX therefore keeps those source rules commented for Review rather than changing their behavior.
+- QX `URL-REGEX REJECT-DROP` remains `url reject`; Surge output preserves `REJECT-DROP / REJECT-NO-DROP` exactly when used as current runtime-supported built-in policies.
 - QX `REJECT-IMG` -> `reject-img`.
 - Surge Loon `REJECT-IMG` rule policy -> `REJECT-TINYGIF`.
 - Ordinary Loon `reject(404)` continues to use native QX `reject` and Surge URL Rewrite `_ reject`.
@@ -269,7 +269,7 @@ Implemented on `work/semantic-rewrite-mock-20260929` / PR #5:
   - mock-file dependencies are fetched/materialized during conversion and embedded into the generated QX script, so the QX rewrite does not perform a second network fetch;
   - response binary/Base64 files are embedded as Base64 and decoded to the official QX `bodyBytes` output form inside the generated script;
   - request binary/bodyBytes remains disabled until an official request-body example proves that exact output contract.
-- Explicit source-level QX rejection and unported Loon-only `$utils` are hard blockers. A WayX adaptation/fork URL cannot override them; the original Loon script declaration remains commented in QX output.
+- Explicit source-level QX rejection and unported source-runtime `$utils` are hard blockers. A WayX adaptation/fork URL cannot override them; the source script declaration remains commented in QX output.
 - PR #5 Converter Check passed after these changes.
 
 Current semantic boundary:
@@ -290,7 +290,7 @@ Completed in this branch:
   - Known RuCu6 YouTube request/response scripts are registered as having an explicit QuanX adapter (`$task / $prefs / bodyBytes` translation).
   - Unknown scripts are scanned for explicit QX rejection and direct Loon-only `$utils` use.
 - Integrated script compatibility into the real legacy sync converter:
-  - blocked scripts keep the original Loon declaration as comments;
+  - blocked scripts keep the source declaration as comments;
   - output includes `[WayX] MANUAL PORT REQUIRED`;
   - no invalid QX script execution line is emitted;
   - verified WayX QX forks remain executable.

@@ -1,21 +1,20 @@
-#!name=百度贴吧去广告
-#!desc=移除开屏广告、信息流广告和帖内广告，精简侧拉抽屉及我的页面。
-#!openUrl=https://apps.apple.com/app/id477927812
-#!author=可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md], app2smile[https://github.com/app2smile]
-#!tag=去广告
-#!system=
-#!system_version=15
-#!loon_version=3.4.0(962)
-#!homepage=https://hub.kelee.one
-#!icon=https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Tieba.png
-#!date=2026-06-01 17:11:35
-# Converted: 2026-09-29 12:06:21 +08:00
+# Name: 百度贴吧去广告
+# Description: 移除开屏广告、信息流广告和帖内广告，精简侧拉抽屉及我的页面。
+# Open URL: https://apps.apple.com/app/id477927812
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md], app2smile[https://github.com/app2smile]
+# Tags: 去广告
+# System Version: 15
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Tieba.png
+# Updated: 2026-06-01 17:11:35
+
+# Converted: 2026-09-29 14:32:07 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Tieba_remove_ads.lpx
 # Target: Quantumult X
 
-# Original Loon [Argument] (BoxJs/$prefs bridge required; Review Tier until verified):
+# Source [Argument] (BoxJs/$prefs bridge required; Review Tier until verified):
 # per_filter_video_thread=select, "true", "false", tag=拦截推荐页面视频帖, desc=此项决定是否拦截首页推荐标签下的视频帖
 
 # [filter_local]
@@ -50,8 +49,8 @@ ip-cidr, 180.76.76.200/32, reject
 
 ^https?:\/\/tiebac\.baidu\.com\/c\/f\/sidebar\/home$ url jsonjq-response-body 'del(.game_center,.tools,.task_list,.vip_banner)'
 # ProtoBuf处理
-# [WayX] SCRIPT REVIEW REQUIRED: QX declaration cannot carry this Loon argument/enable semantics without changing the script.
-# Original Loon: http-response ^https?:\/\/tieba(?:c)?\.baidu\.com\/c\/(f\/excellent\/personalized|f\/frs\/page|b\/ad\/adBid|f\/ad\/getFeedAd|f\/pb\/page|f\/frs\/generalTabList)\?cmd=\d+&format=protobuf script-path=https://kelee.one/Resource/JavaScript/Tieba/tieba-proto.js, requires-body=true, binary-body-mode=true, timeout=10, tag=ProtoBuf处理, argument=[{per_filter_video_thread}]
+# [WayX] SCRIPT REVIEW REQUIRED: QX declaration cannot carry this source argument/enable semantics without changing the script.
+# Source declaration: http-response ^https?:\/\/tieba(?:c)?\.baidu\.com\/c\/(f\/excellent\/personalized|f\/frs\/page|b\/ad\/adBid|f\/ad\/getFeedAd|f\/pb\/page|f\/frs\/generalTabList)\?cmd=\d+&format=protobuf script-path=https://kelee.one/Resource/JavaScript/Tieba/tieba-proto.js, requires-body=true, binary-body-mode=true, timeout=10, tag=ProtoBuf处理, argument=[{per_filter_video_thread}]
 
 # [mitm]
 hostname = tiebac.baidu.com, tieba.baidu.com

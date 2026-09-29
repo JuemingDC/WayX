@@ -2,19 +2,18 @@
 #!desc=移除开屏广告、弹窗推广、搜索热搜、搜索热榜、底栏推广图标。
 #!requirement=CORE_VERSION>=20
 
-# Original Loon metadata: #!openUrl=https://apps.apple.com/app/id475666808
-# Original Loon metadata: #!author=可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
-# Original Loon metadata: #!tag=去广告
-# Original Loon metadata: #!system_version=
-# Original Loon metadata: #!loon_version=3.4.0(962)
-# Original Loon metadata: #!homepage=https://hub.kelee.one
-# Original Loon metadata: #!icon=https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/LOL_Bible.png
-# Original Loon metadata: #!date=2026-06-01 17:11:35
-# Converted: 2026-09-29 12:06:21 +08:00
-# Author: chance
+# Open URL: https://apps.apple.com/app/id475666808
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/LOL_Bible.png
+# Updated: 2026-06-01 17:11:35
+
+# Converted: 2026-09-29 14:32:07 +08:00
+# Converted by: chance
 # Category: 去广告
-# Target: Surge
 # Source: https://kelee.one/Tool/Loon/Lpx/LOL_Bible_remove_ads.lpx
+# Target: Surge
 
 [Map Local]
 ^https:\/\/mlol\.qt\.qq\.com\/go\/recommend\/platstrongshell\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"

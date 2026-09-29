@@ -41,6 +41,7 @@ import {
   surgeRule,
   surgeModuleRule,
   renderSurgeModuleHeader,
+  renderQxSnippetHeader,
   validateSurgeModule,
   surgeTargetPath,
   validateRewriteV2Ast,
@@ -51,10 +52,11 @@ assert.equal(qxRule('URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP').line, '^https:\\/\\/drop\\.example\\.com url reject');
 assert.equal(surgeRule('URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-IMG'), 'URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-TINYGIF');
 const surgeDropModule = surgeModuleRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP');
-assert.equal(surgeDropModule.kind, 'comment');
-assert.equal(surgeDropModule.reason, 'module-policy-restricted');
-assert.match(surgeDropModule.lines[0], /profile supports policy REJECT-DROP/);
-assert.match(qxRule('AND, ((DOMAIN-SUFFIX, example.com), (PROTOCOL, TCP)), REJECT').line, /^# Loon logical rule/);
+assert.equal(surgeDropModule.kind, 'rule');
+assert.equal(surgeDropModule.line, 'URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP');
+assert.equal(surgeModuleRule('DOMAIN,drop.example.com,REJECT-NO-DROP').line, 'DOMAIN,drop.example.com,REJECT-NO-DROP');
+assert.equal(surgeModuleRule('DOMAIN,cell.example.com,CELLULAR').line, 'DOMAIN,cell.example.com,CELLULAR');
+assert.match(qxRule('AND, ((DOMAIN-SUFFIX, example.com), (PROTOCOL, TCP)), REJECT').line, /^# Unsupported logical rule for Quantumult X/);
 assert.equal(qxRule('IP-CIDR, 1.1.1.1/32, REJECT, no-resolve').line, 'ip-cidr, 1.1.1.1/32, reject');
 assert.equal(surgeRule('IP-CIDR, 1.1.1.1/32, REJECT, no-resolve'), 'IP-CIDR,1.1.1.1/32,REJECT,no-resolve');
 assert.equal(surgeRule('DOMAIN, example.com, PROXY'), '# [WayX] Surge Module policy binding required: DOMAIN, example.com, PROXY');
@@ -92,7 +94,7 @@ assert.equal(
 const surgeHeader = renderSurgeModuleHeader([
   '#!name=Demo',
   '#!desc=Demo module',
-  '#!author=Loon Author',
+  '#!author=Source Author',
   '#!icon=https://example.com/icon.png',
   '#!date=2026-09-29',
   '#!loon_version=3.5.1(978)',
@@ -105,12 +107,34 @@ const surgeHeader = renderSurgeModuleHeader([
 assert.equal(surgeHeader[0], '#!name=Demo');
 assert.equal(surgeHeader[1], '#!desc=Demo module');
 assert.equal(surgeHeader[2], '#!requirement=CORE_VERSION>=20');
-assert.ok(surgeHeader.includes('# Original Loon metadata: #!author=Loon Author'));
-assert.ok(surgeHeader.includes('# Original Loon metadata: #!icon=https://example.com/icon.png'));
-assert.ok(surgeHeader.includes('# Original Loon metadata: #!loon_version=3.5.1(978)'));
-assert.ok(surgeHeader.includes('# Author: chance'));
+assert.ok(surgeHeader.includes('# Author: Source Author'));
+assert.ok(surgeHeader.includes('# Icon: https://example.com/icon.png'));
+assert.equal(surgeHeader.some(line => /loon_version/i.test(line)), false);
+assert.ok(surgeHeader.includes('# Converted by: chance'));
 assert.ok(surgeHeader.includes('# Category: 去广告 / 测试'));
 assert.equal(surgeHeader.some(line => /^#!(?:author|icon|date|loon_version)=/i.test(line)), false);
+
+const qxHeader = renderQxSnippetHeader([
+  '#!name=Demo',
+  '#!desc=Works in Loon DNS framework',
+  '#!author=Source Author',
+  '#!homepage=https://example.com',
+  '#!icon=https://example.com/icon.png',
+  '#!loon_version=3.5.1(978)',
+  '# original comment',
+], {
+  id:'Demo',
+  category:'测试',
+  source:'https://example.com/demo.lpx',
+}, '2026-09-29 12:00:00 +08:00');
+assert.equal(qxHeader[0], '# Name: Demo');
+assert.ok(qxHeader.includes('# Description: Works in Quantumult X DNS framework'));
+assert.ok(qxHeader.includes('# Author: Source Author'));
+assert.ok(qxHeader.includes('# Homepage: https://example.com'));
+assert.ok(qxHeader.includes('# Icon: https://example.com/icon.png'));
+assert.equal(qxHeader.some(line => line.startsWith('#!')), false);
+assert.equal(qxHeader.some(line => /loon_version/i.test(line)), false);
+assert.ok(qxHeader.includes('# Converted by: chance'));
 
 const validSurgeModule = [
   ...surgeHeader,
@@ -147,21 +171,19 @@ assert.throws(
   () => validateSurgeModule(validSurgeModule.replace('#!requirement=CORE_VERSION>=20\n', ''), {id:'Demo'}),
   /CORE_VERSION>=20/,
 );
-assert.throws(
+assert.doesNotThrow(
   () => validateSurgeModule(validSurgeModule.replace('DOMAIN,ads.example.com,REJECT', 'DOMAIN,ads.example.com,REJECT-DROP'), {id:'Demo'}),
-  /DIRECT\/REJECT\/REJECT-TINYGIF/,
 );
 assert.throws(
   () => validateSurgeModule(validSurgeModule.replace('DOMAIN-WILDCARD,api-*.example.com,REJECT', 'LOON-ONLY,foo,REJECT'), {id:'Demo'}),
   /unsupported Surge rule type/,
 );
 assert.throws(
-  () => validateSurgeModule(validSurgeModule.replace('# Original Loon metadata: #!author=Loon Author', '#!author=Loon Author'), {id:'Demo'}),
+  () => validateSurgeModule(validSurgeModule.replace('# Author: Source Author', '#!author=Source Author'), {id:'Demo'}),
   /unsupported Surge module directive/,
 );
-assert.throws(
+assert.doesNotThrow(
   () => validateSurgeModule(validSurgeModule.replace('hostname = %APPEND% api.example.com', 'hostname = api.example.com'), {id:'Demo'}),
-  /%APPEND%/,
 );
 
 const compact = minifyJq('walk( if type == "object" then .a = [] | del(.b, .c) else . end )');

@@ -4,7 +4,7 @@ WayX 自有的 Loon Plugin → Quantumult X / Surge 转换核心。参考 KOP-XI
 
 当前检查点已经固化：
 
-- Loon `URL-REGEX` 按行为映射：`REJECT/REJECT-200` → QX `reject-200`，`REJECT-IMG` → `reject-img`，`REJECT-DROP` → QX `reject`；Surge 的 Rule **类型**按官方 Rule index 尽量原样保留，包括 DOMAIN/DOMAIN-WILDCARD/IP-CIDR/IP-ASN/USER-AGENT/URL-REGEX/PROTOCOL/DEST-PORT/SUBNET/HOSTNAME-TYPE/AND/OR/NOT 等；但 `.sgmodule` 的 **策略**仍受官方 Module 文档限制，只能使用 `DIRECT / REJECT / REJECT-TINYGIF`。因此 `REJECT-IMG` → `REJECT-TINYGIF`，而 `REJECT-DROP / REJECT-NO-DROP` 不再降级成 `REJECT`，而是保留原规则注释等待 Review；
+- Loon `URL-REGEX` 按行为映射：`REJECT/REJECT-200` → QX `reject-200`，`REJECT-IMG` → `reject-img`，`REJECT-DROP` → QX `reject`；Surge 的 Rule **类型**按官方 Rule index 保留，包括 DOMAIN/DOMAIN-WILDCARD/IP-CIDR/IP-ASN/USER-AGENT/URL-REGEX/PROTOCOL/DEST-PORT/SUBNET/HOSTNAME-TYPE/AND/OR/NOT 等。Surge policy 按当前应用运行时能力处理：`REJECT-IMG` → `REJECT-TINYGIF`，`REJECT-DROP / REJECT-NO-DROP` 及已验证的 CELLULAR/HYBRID 内建策略原样保留，未知/用户策略组保留绑定提示；
 - Quantumult X 不执行 `AND / OR / NOT`，保留原规则注释；
 - QX IP 类规则去除 `no-resolve`；
 - JQ 只做空白压缩，不重写 `walk/select/map/empty/any/if` 等算法；
@@ -40,12 +40,12 @@ MyBlockAds JQ golden 已自动化：QX / Surge 当前 11 条 JQ 有序规则必�
 
 Surge 模块输出另有独立规范化层，不复用 Loon 文件头或 Loon Rule 排版：
 
-- `.sgmodule` 顶部只生成官方模块元信息 `#!name / #!desc`，合法的 `#!system` 按需保留；Loon 的 `#!author / #!icon / #!date / #!loon_version` 改为普通注释原样保留；
+- 目标头部不照搬来源插件头：QX snippet 的 name/desc/author/icon/date/homepage/tag 等统一转换为普通 `#` 注释；Surge `.sgmodule` 只生成合法的 `#!name / #!desc`、必要的 `#!requirement` 与适用的 `#!system`，作者/图标/日期等转换为普通 `#` 注释，来源平台专属版本字段不进入成品；
 - WayX 的转换时间、作者 `chance`、模块分类、目标平台、来源以普通注释记录，不伪造未在官方手册确认的 `#!category`；
 - 使用 `[Body Rewrite]` 或 inline `[Map Local]` 时自动加入 `#!requirement=CORE_VERSION>=20`；
-- `[Rule]` 的规则类型按 Surge 当前官方 Rule Type Index 全量识别，并保留 Loon 与 Surge 共同支持的复杂组合（含 AND/OR/NOT 嵌套、URL-REGEX、USER-AGENT、PROTOCOL、no-resolve 等）；策略层单独按 Module 限制处理，外部策略组如 `PROXY` 只保留注释等待绑定；`REJECT-DROP / REJECT-NO-DROP` 因行为与 `REJECT` 不同，不再做有损归一化；
+- `[Rule]` 的规则类型按 Surge 当前官方 Rule Type Index 全量识别，并保留 Loon 与 Surge 共同支持的复杂组合（含 AND/OR/NOT 嵌套、URL-REGEX、USER-AGENT、PROTOCOL、no-resolve 等）；`REJECT-DROP / REJECT-NO-DROP` 及当前应用已验证的其他内建策略原样保留，外部策略组如 `PROXY` 只保留注释等待绑定；
 - `[URL Rewrite]`、`[Header Rewrite]`、`[Body Rewrite]`、`[Map Local]`、`[Script]`、`[MITM]` 均按 Surge 官方 section 和参数形式输出；`[Script]` 使用现代 `name = type=...,pattern=...,script-path=...` 形式；
-- Module MITM hostname 始终使用 `hostname = %APPEND% ...`；
+- 自动转换的 Module MITM hostname 使用 `hostname = %APPEND% ...` 避免覆盖主配置；验证器同时接受 Surge 官方 Module 支持的合法 hostname override。
 - `converter/src/surge-module.mjs` 对生成结果做严格校验，防止 Loon 专属活动指令或非法 Surge Module Rule 重新进入输出。
 端到端完整成品 golden 已加入 CI：
 
@@ -64,7 +64,7 @@ Canonical 成品一致性现已进入 CI：
 - 生成后继续执行 QX validator 和 Surge sgmodule validator；
 - PR CI 会先重新生成，再对 `Adblock/Quantumult X/` 与 `Adblock/Surge/` 做 `git diff --exit-code`。若转换器/源文件/脚本兼容性变化却没有同步提交成品，CI 会失败；
 - QZXY 是人工维护的目标原生配置，不属于 Loon converter managed entry，因此不会被该工具覆盖；
-- 当前 managed canonical 已全部用 phase 7/8 的新 converter 重建，Surge 不再保留活动的 Loon 专属 metadata。
+- 当前 managed canonical 已全部用最新 converter 重建：QX 不再携带来源插件的活动 `#!...`，Surge 不再携带来源平台专属活动 metadata，也不再使用 `Original Loon metadata` 这类成品标签。
 
 第五阶段已接入 Loon HTTP Script v2，并在当前阶段修正为“声明层转换、脚本正文原样保留”：
 

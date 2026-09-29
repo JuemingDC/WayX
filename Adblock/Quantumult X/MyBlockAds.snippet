@@ -1,12 +1,12 @@
-#!name=MyBlockAds
-#!desc=Walalala 自用去广告大合集。
-#!author=RuCu6[https://github.com/RuCu6]
-#!icon=https://rucu6.pages.dev/Icons/app/myblockads.png
-#!date=2026-09-27 18:30
-#!loon_version=3.5.1(978)
-# Converted: 2026-09-29 12:33:01 +08:00
+# Name: MyBlockAds
+# Description: Walalala 自用去广告大合集。
+# Author: RuCu6[https://github.com/RuCu6]
+# Icon: https://rucu6.pages.dev/Icons/app/myblockads.png
+# Updated: 2026-09-27 18:30
+
+# Converted: 2026-09-29 14:33:28 +08:00
 # Converted by: chance
-# Category: 去广告 / Loon Plugin Conversion
+# Category: 去广告
 # Source: https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Loon/RuCu6/myblockads.lpx
 # Target: Quantumult X
 
@@ -17,7 +17,7 @@ host, ad.12306.cn, direct
 
 # ======= A ======= #
 # 阿里巴巴
-# Loon logical rule (Quantumult X unsupported): AND, ((URL-REGEX, "^http:\/\/.+\/amdc\/mobileDispatch"), (USER-AGENT, "Alibaba*")), REJECT
+# Unsupported logical rule for Quantumult X: AND, ((URL-REGEX, "^http:\/\/.+\/amdc\/mobileDispatch"), (USER-AGENT, "Alibaba*")), REJECT
 host-suffix, ut.taobao.com, reject
 host, dns.alidns.com, reject
 host, ems.youku.com, reject
@@ -66,7 +66,7 @@ ip-cidr, 180.76.76.112/32, reject
 ip-cidr, 180.76.76.200/32, reject
 
 # 百度网盘
-# Loon logical rule (Quantumult X unsupported): AND, ((DOMAIN-SUFFIX, pan.baidu.com), (PROTOCOL, TCP)), REJECT
+# Unsupported logical rule for Quantumult X: AND, ((DOMAIN-SUFFIX, pan.baidu.com), (PROTOCOL, TCP)), REJECT
 
 # ======= C ======= #
 # 昌原云充
@@ -99,9 +99,9 @@ host-suffix, mall.icbc.com.cn, reject
 host, pageviewp.icbc.com.cn, reject
 
 # 广告联盟
-# Loon logical rule (Quantumult X unsupported): AND, ((DOMAIN-KEYWORD, -misc-), (DOMAIN-SUFFIX, zijieapi.com)), REJECT
-# Loon logical rule (Quantumult X unsupported): AND, ((DOMAIN-KEYWORD, adx-), (DOMAIN-SUFFIX, statisticslinks.com)), REJECT
-# Loon logical rule (Quantumult X unsupported): AND, ((DOMAIN-KEYWORD, mssdk), (DOMAIN-SUFFIX, zijieapi.com)), REJECT
+# Unsupported logical rule for Quantumult X: AND, ((DOMAIN-KEYWORD, -misc-), (DOMAIN-SUFFIX, zijieapi.com)), REJECT
+# Unsupported logical rule for Quantumult X: AND, ((DOMAIN-KEYWORD, adx-), (DOMAIN-SUFFIX, statisticslinks.com)), REJECT
+# Unsupported logical rule for Quantumult X: AND, ((DOMAIN-KEYWORD, mssdk), (DOMAIN-SUFFIX, zijieapi.com)), REJECT
 host-keyword, -ad-sign.byteimg.com, reject
 host-keyword, -ad., reject
 host-keyword, -ads-, reject
@@ -184,7 +184,7 @@ host, ws.tapjoyads.com, reject
 #DOMAIN-SUFFIX, ehaier.com, REJECT
 
 # 盒马
-# Loon logical rule (Quantumult X unsupported): AND, ((URL-REGEX, "^http:\/\/.+\/amdc\/mobileDispatch"), (USER-AGENT, "Hema4iPhone*")), REJECT
+# Unsupported logical rule for Quantumult X: AND, ((URL-REGEX, "^http:\/\/.+\/amdc\/mobileDispatch"), (USER-AGENT, "Hema4iPhone*")), REJECT
 
 # httpdns
 host, hdns.ksyun.com, reject
@@ -322,7 +322,7 @@ host, splashimgbssdl.yun.kugou.com, reject
 host, tmead.y.qq.com, reject
 
 # 天猫精灵
-# Loon logical rule (Quantumult X unsupported): AND, ((URL-REGEX, "^http:\/\/.+\/amdc\/mobileDispatch"), (USER-AGENT, "TmallGenie*")), REJECT
+# Unsupported logical rule for Quantumult X: AND, ((URL-REGEX, "^http:\/\/.+\/amdc\/mobileDispatch"), (USER-AGENT, "TmallGenie*")), REJECT
 
 # ======= W ======= #
 # 万能钥匙
@@ -346,7 +346,7 @@ host, dns.weixin.qq.com.cn, reject
 host-suffix, vsdrwee.com, reject
 host, carlinaframh.com, reject
 host, tong.8888888888.bid, reject
-# Loon logical rule (Quantumult X unsupported): AND, ((OR, ((DOMAIN-KEYWORD, kc.), (DOMAIN-KEYWORD, kcc.), (DOMAIN-KEYWORD, kg.))), (DEST-PORT, 8008)), REJECT
+# Unsupported logical rule for Quantumult X: AND, ((OR, ((DOMAIN-KEYWORD, kc.), (DOMAIN-KEYWORD, kcc.), (DOMAIN-KEYWORD, kg.))), (DEST-PORT, 8008)), REJECT
 
 # 云闪付 开屏广告
 host, ads.95516.com, reject

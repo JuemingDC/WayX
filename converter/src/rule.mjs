@@ -98,7 +98,13 @@ export const SURGE_RULE_TYPES = new Set([
   'SCRIPT', 'RULE-SET', 'FINAL',
 ]);
 
-export const SURGE_MODULE_POLICIES = new Set(['DIRECT', 'REJECT', 'REJECT-TINYGIF']);
+// Current Surge app runtime accepts these built-in policies in module Rule UI.
+// The public Module manual still documents only DIRECT/REJECT/REJECT-TINYGIF;
+// keep the broader runtime set explicit instead of silently collapsing behavior.
+export const SURGE_MODULE_POLICIES = new Set([
+  'DIRECT', 'REJECT', 'REJECT-TINYGIF', 'REJECT-DROP', 'REJECT-NO-DROP',
+  'CELLULAR', 'CELLULAR-ONLY', 'HYBRID', 'NO-HYBRID',
+]);
 
 export const SURGE_PROFILE_BUILTIN_POLICIES = new Set([
   'DIRECT', 'REJECT', 'REJECT-TINYGIF', 'REJECT-DROP', 'REJECT-NO-DROP',
@@ -142,7 +148,7 @@ export function surgeRuleTypesInTree(line, {subrule = false} = {}) {
 export function qxRule(line) {
   const source = String(line).trim();
   if (/^(AND|OR|NOT)\s*,/i.test(source)) {
-    return {kind:'comment', line:`# Loon logical rule (Quantumult X unsupported): ${source}`, reason:'logical-rule'};
+    return {kind:'comment', line:`# Unsupported logical rule for Quantumult X: ${source}`, reason:'logical-rule'};
   }
 
   const parts = splitTopLevelCsv(source);
@@ -157,16 +163,16 @@ export function qxRule(line) {
   }
 
   const qxType = QX_RULE_TYPES.get(type);
-  if (!qxType) return {kind:'comment', line:`# Loon rule (Quantumult X unsupported): ${source}`, reason:'unsupported-type'};
+  if (!qxType) return {kind:'comment', line:`# Unsupported rule for Quantumult X: ${source}`, reason:'unsupported-type'};
 
   let policy;
   if (policyRaw === 'DIRECT') policy = 'direct';
   else if (policyRaw === 'REJECT' || policyRaw === 'REJECT-DROP' || policyRaw === 'REJECT-NO-DROP') policy = 'reject';
   else if (policyRaw === 'PROXY') policy = 'proxy';
   else if (/^REJECT/.test(policyRaw)) {
-    return {kind:'comment', line:`# Loon reject policy has no proven equivalent Quantumult X filter behavior: ${source}`, reason:'unsupported-reject-policy'};
+    return {kind:'comment', line:`# Unsupported reject policy for Quantumult X filter behavior: ${source}`, reason:'unsupported-reject-policy'};
   } else {
-    return {kind:'comment', line:`# Loon rule policy (Quantumult X unsupported): ${source}`, reason:'unsupported-policy'};
+    return {kind:'comment', line:`# Unsupported Quantumult X rule policy: ${source}`, reason:'unsupported-policy'};
   }
 
   return {kind:'filter', line:`${qxType}, ${value}, ${policy}`, reason:'native-filter'};
@@ -190,30 +196,23 @@ export function surgeModuleRule(line) {
   if (parts.length <= policyIndex || !parts[policyIndex]) {
     return {
       kind:'comment',
-      lines:[`# [WayX] Invalid/unsupported Loon rule preserved: ${source}`],
+      lines:[`# [WayX] Invalid/unsupported source rule preserved: ${source}`],
       reason:'invalid-rule',
     };
   }
 
   let policy = String(parts[policyIndex]).toUpperCase();
 
-  // Loon's image reject rule is behaviorally equivalent to Surge's tiny GIF reject.
+  // Source image-reject behavior maps to Surge's tiny GIF reject policy.
   if (policy === 'REJECT-IMG') policy = 'REJECT-TINYGIF';
 
-  // Do not collapse REJECT-DROP / REJECT-NO-DROP to REJECT. They are valid
-  // Surge profile policies with different behavior, but the official Module
-  // manual still restricts module rules to DIRECT / REJECT / REJECT-TINYGIF.
-  // Semantic fidelity therefore requires fail-closed output for those policies.
+  // Preserve runtime-supported built-in policies exactly. Unknown/external
+  // policy-group names cannot be defined by a module and remain a binding note.
   if (!SURGE_MODULE_POLICIES.has(policy)) {
-    const isProfileBuiltin = SURGE_PROFILE_BUILTIN_POLICIES.has(policy);
     return {
       kind:'comment',
-      lines:[
-        isProfileBuiltin
-          ? `# [WayX] Surge profile supports policy ${policy}, but current official Module [Rule] does not; source rule preserved for Review: ${source}`
-          : `# [WayX] Surge Module policy binding required: ${source}`,
-      ],
-      reason:isProfileBuiltin ? 'module-policy-restricted' : 'external-policy',
+      lines:[`# [WayX] Surge Module policy binding required: ${source}`],
+      reason:'external-policy',
     };
   }
 

@@ -1,20 +1,18 @@
 #!name=HTTPDNS拦截器
-#!desc=此插件是所有去广告插件的依赖，拦截常见的HTTPDNS服务，以确保这些请求都能够在Loon的DNS框架下工作。
+#!desc=此插件是所有去广告插件的依赖，拦截常见的HTTPDNS服务，以确保这些请求都能够在Surge的DNS框架下工作。
 #!requirement=CORE_VERSION>=20
 
-# Original Loon metadata: #!openUrl=
-# Original Loon metadata: #!author=可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md], VirgilClyne[https://github.com/VirgilClyne]
-# Original Loon metadata: #!tag=去广告, 依赖
-# Original Loon metadata: #!system_version=
-# Original Loon metadata: #!loon_version=3.4.0(962)
-# Original Loon metadata: #!homepage=https://hub.kelee.one
-# Original Loon metadata: #!icon=https://raw.githubusercontent.com/luestr/IconResource/main/Other_icon/120px/HTTPDNS.png
-# Original Loon metadata: #!date=2026-09-28 14:29:55
-# Converted: 2026-09-29 12:06:21 +08:00
-# Author: chance
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md], VirgilClyne[https://github.com/VirgilClyne]
+# Tags: 去广告, 依赖
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/Other_icon/120px/HTTPDNS.png
+# Updated: 2026-09-28 14:29:55
+
+# Converted: 2026-09-29 14:32:07 +08:00
+# Converted by: chance
 # Category: 去广告
-# Target: Surge
 # Source: https://kelee.one/Tool/Loon/Lpx/Block_HTTPDNS.lpx
+# Target: Surge
 
 [Rule]
 DOMAIN-KEYWORD,httpdns,REJECT
