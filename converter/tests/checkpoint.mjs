@@ -22,6 +22,7 @@ import {
   LOON_REWRITE_V2_ACTIONS,
   minifyJq,
   minifyJqFile,
+  quoteJq,
   classifyLegacyRewrite,
   planLegacyRewrite,
   validateLoonSourceCatalog,
@@ -53,6 +54,14 @@ import {
 } from '../src/index.mjs';
 
 assert.equal(qxRule('URL-REGEX, "^https:\\/\\/ad\\.example\\.com", REJECT').line, '^https:\\/\\/ad\\.example\\.com url reject-200');
+assert.equal(
+  quoteJq('select(.title == "I\'m here")'),
+  '\'select(.title == "I\\u0027m here")\'',
+);
+assert.throws(
+  () => quoteJq(".foo'bar"),
+  /single quote outside a JSON string/,
+);
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/empty\\.example\\.com",REJECT-200').line, '^https:\\/\\/empty\\.example\\.com url reject-200');
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/image\\.example\\.com",REJECT-IMG').line, '^https:\\/\\/image\\.example\\.com url reject-img');
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/dict\\.example\\.com",REJECT-DICT').line, '^https:\\/\\/dict\\.example\\.com url reject-dict');
