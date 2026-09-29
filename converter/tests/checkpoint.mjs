@@ -6,6 +6,12 @@ import {
   inspectQxScriptCompatibility,
   listRewriteV2Dependencies,
   qxMockPlanFromAction,
+  compileRegexForTarget,
+  qxDirectRewritePlan,
+  surgeDirectRewritePlan,
+  renderQxRedirectScript,
+  renderQxRejectScript,
+  renderQxHeaderScript,
   renderQxMockFileScript,
   LOON_REWRITE_V2_ACTIONS,
   minifyJq,
@@ -177,5 +183,52 @@ assert.match(requestMockScript, /\$done\(\{headers, body: __wayxBody\}\)/);
 const requestBinaryMockAst = parseRewriteV2('request if ${url} ~= /upload/ then request.body.mock_file("png", "image.png")');
 const requestBinaryMockPlan = qxMockPlanFromAction(requestBinaryMockAst.actions[0], {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
 assert.throws(() => renderQxMockFileScript(requestBinaryMockPlan), /request mock_file binary\/bodyBytes output is not enabled/);
+
+// Behavior-first target regex compilation: do not rely on undocumented (?i).
+const foldedUrl = compileRegexForTarget(parseRewriteV2('request if ${url} ~= /^https:\\/\\/Api\\.Example\\.com\\/[a-z]+/i then reject_dict(200)').condition.right, {subject:'url'});
+assert.equal(foldedUrl.ok, true);
+assert.match(foldedUrl.pattern, /^\^\[hH\]\[tT\]\[tT\]\[pP\]\[sS\]/);
+assert.match(foldedUrl.pattern, /\[a-zA-Z\]\+/);
+assert.equal(compileRegexForTarget(parseRewriteV2('response if ${url} ~= /api/ then response.body.replace(/a.b/s, "x")').actions[0].args[0], {subject:'body'}).ok, false);
+
+const qxDeleteV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /^https:\\/\\/api\\.example\\.com\\/feed/i then response.json.delete(["data.ads", "data.apps[0].promo"])'));
+assert.equal(qxDeleteV2.ok, true);
+assert.match(qxDeleteV2.line, /url jsonjq-response-body/);
+assert.match(qxDeleteV2.line, /delpaths/);
+assert.match(qxDeleteV2.line, /\["data","apps",0,"promo"\]/);
+
+const qxReplaceV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /search/i then response.json.replace("data.items", `[]`)'));
+assert.equal(qxReplaceV2.ok, true);
+assert.match(qxReplaceV2.line, /setpath\(\["data","items"\]; \[\]\)/);
+
+const qxJqV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /profile/i then response.json.jq("del(.ads)")'));
+assert.equal(qxJqV2.ok, true);
+assert.match(qxJqV2.line, /jsonjq-response-body 'del\(\.ads\)'/);
+
+const surgeJqV2 = surgeDirectRewritePlan(parseRewriteV2('response if ${url} ~= /profile/i then response.json.jq("del(.ads)")'));
+assert.equal(surgeJqV2.ok, true);
+assert.match(surgeJqV2.line, /^http-response-jq /);
+
+const redirectV2 = parseRewriteV2('request if ${url} ~= /(^https:\\/\\/live\\.bilibili\\.com\\/\\d+)(?:\\/?\\?.*)/i as urlMatch then redirect(302, "${urlMatch.1}")');
+const redirectScript = renderQxRedirectScript(redirectV2, {stamp:'2026-09-29 10:00:00 +08:00', category:'Adblock'});
+assert.equal(redirectScript.qxAction, 'script-echo-response');
+assert.match(redirectScript.pattern, /\[bB\]\[iI\]\[lL\]\[iI\]/);
+assert.match(redirectScript.script, /__wayxLocation/);
+assert.match(redirectScript.script, /HTTP\/1\.1 302 Found/);
+
+const reject404V2 = parseRewriteV2('request if ${url} ~= /^https:\\/\\/ads\\.example\\.com/i then reject(404)');
+const reject404Script = renderQxRejectScript(reject404V2, {category:'Adblock'});
+assert.equal(reject404Script.qxAction, 'script-echo-response');
+assert.match(reject404Script.script, /HTTP\/1\.1 404 Not Found/);
+
+const qxHeaderV2 = parseRewriteV2('request if ${url} ~= /https:\\/\\/rule\\.example\\.com/i then request.header.set("user-agent", "Loon") | request.header.del("Cookie")');
+const qxHeaderScript = renderQxHeaderScript(qxHeaderV2, {category:'Rewrite'});
+assert.equal(qxHeaderScript.qxAction, 'script-request-header');
+assert.match(qxHeaderScript.script, /__wayxSet/);
+assert.match(qxHeaderScript.script, /__wayxDel/);
+assert.throws(
+  () => renderQxHeaderScript(parseRewriteV2('response if ${url} ~= /api/i then response.header.add("X-A", "1")')),
+  /set\/del\/replace/,
+);
 
 console.log('WayX converter checkpoint tests passed');
