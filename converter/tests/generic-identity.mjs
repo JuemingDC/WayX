@@ -15,7 +15,7 @@ IP-CIDR,192.0.2.0/24,DIRECT,no-resolve
 ^https:\\/\\/old\\.example\\.com 302 https://new.example.com
 ^https:\\/\\/api\\.example\\.com response-body-replace-regex enabled:true enabled:false
 ^https:\\/\\/api\\.example\\.com response-body-json-del data.ads
-request if ${url} ~= /^https:\\/\\/api\\.example\\.com\\/v2/ then request.header.set("X-WayX", "1")
+request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\/v2/ then request.header.set("X-WayX", "1")
 
 [Script]
 http-response ^https:\\/\\/api\\.example\\.com script-path=https://scripts.example.com/generic.js,tag=generic_response,requires-body=true
@@ -78,7 +78,7 @@ assert.deepEqual(surgeSemantics(outA.surge), surgeSemantics(outB.surge));
 assert.ok(qxSemantics(outA.qx).includes('^https:\\/\\/ads\\.example\\.com url reject-dict'));
 assert.ok(surgeSemantics(outA.surge).includes('^https:\\/\\/ads\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"'));
 assert.ok(surgeSemantics(outA.surge).some(x=>x.startsWith('http-response ^https:\\/\\/api\\.example\\.com enabled:true enabled:false')));
-assert.ok(qxSemantics(outA.qx).some(x=>x.includes("jsonjq-response-body 'delpaths")));
+assert.ok(qxSemantics(outA.qx).some(x=>x.includes("jsonjq-response-body 'del(.data.ads)'")));
 assert.ok(qxSemantics(outA.qx).some(x=>x.includes('script-response-body https://scripts.example.com/generic.js')));
 
 console.log('Generic identity-invariance conversion test passed');
