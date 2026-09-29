@@ -156,8 +156,8 @@ function headerOpsForMock(ast, mockAction) {
   const ops = [];
   for (const action of ast.actions) {
     if (action === mockAction) continue;
-    if (!new RegExp('^' + ast.phase + '\\.header\\.(?:add|set|del|replace).test(action.name)) {
-      throw new Error('QX mock pipeline supports only same-phase header set/del/replace actions');
+    if (!new RegExp('^' + ast.phase + '\\.header\\.(?:add|set|del|replace)$').test(action.name)) {
+      throw new Error('QX mock pipeline supports only same-phase header add/set/del/replace actions');
     }
     for (const args of expandAction(action)) {
       if (action.name.endsWith('.add')) {
@@ -224,7 +224,7 @@ export function renderQxHeaderScript(ast, options = {}) {
   validateRewriteV2Ast(ast);
   const condition = simpleUrlRewriteCondition(ast);
   if (!condition.ok) throw new Error(condition.reason);
-  if (!ast.actions.length || ast.actions.some(a => !new RegExp('^' + ast.phase + '\\.header\\.(?:set|del|replace)$').test(a.name))) {
+  if (!ast.actions.length || ast.actions.some(a => !new RegExp('^' + ast.phase + '\\.header\\.(?:add|set|del|replace)$').test(a.name))) {
     throw new Error('QX header script supports only same-phase add/set/del/replace actions');
   }
 
@@ -284,7 +284,7 @@ export function renderQxHeaderScript(ast, options = {}) {
   };
 }
 ).test(action.name)) {
-      throw new Error('QX mock pipeline supports only same-phase header set/del/replace actions');
+      throw new Error('QX mock pipeline supports only same-phase header add/set/del/replace actions');
     }
     for (const args of expandAction(action)) {
       if (action.name.endsWith('.set')) {
@@ -349,7 +349,7 @@ export function renderQxHeaderScript(ast, options = {}) {
   validateRewriteV2Ast(ast);
   const condition = simpleUrlRewriteCondition(ast);
   if (!condition.ok) throw new Error(condition.reason);
-  if (!ast.actions.length || ast.actions.some(a => !new RegExp('^' + ast.phase + '\\.header\\.(?:add|set|del|replace).test(a.name))) {
+  if (!ast.actions.length || ast.actions.some(a => !new RegExp('^' + ast.phase + '\\.header\\.(?:add|set|del|replace)$').test(a.name))) {
     throw new Error('QX header script supports only same-phase set/del/replace actions');
   }
 
