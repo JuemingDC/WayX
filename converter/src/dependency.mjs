@@ -26,6 +26,30 @@ function numberValue(node, fallback) {
   return node.type === 'number' && Number.isFinite(node.value) ? node.value : fallback;
 }
 
+function legacyJqPathSpec(action) {
+  if (!/^(?:request|response)\.json\.jq$/.test(action?.name || '')) return null;
+  const value = stringValue(action.args?.[0]);
+  const match = value?.match(/^jq-path=(https?:\/\/\S+)$/i);
+  if (!match) return null;
+  let url;
+  try {
+    url = new URL(match[1]).href;
+  } catch {
+    return null;
+  }
+  return {
+    action: action.name,
+    kind: 'jq',
+    ref: match[1],
+    scope: 'legacy-jq-path',
+    url,
+    resolvable: true,
+    inlineName: action.name,
+    pathIndex: 0,
+    legacyAlias: true,
+  };
+}
+
 export function dependencySpecFromAction(action, { pluginSourceUrl = '' } = {}) {
   const def = FILE_ACTIONS[action?.name];
   if (!def) return null;
@@ -66,8 +90,14 @@ export function dependencySpecFromAction(action, { pluginSourceUrl = '' } = {}) 
   return spec;
 }
 
+export function jqDependencySpecFromAction(action, { pluginSourceUrl = '' } = {}) {
+  const official = dependencySpecFromAction(action, { pluginSourceUrl });
+  if (official?.kind === 'jq') return { ...official, pathIndex: FILE_ACTIONS[action.name].pathIndex };
+  return legacyJqPathSpec(action);
+}
+
 export function inlineResolvedDependency(action, content, { pluginSourceUrl = '' } = {}) {
-  const spec = dependencySpecFromAction(action, { pluginSourceUrl });
+  const spec = jqDependencySpecFromAction(action, { pluginSourceUrl }) || dependencySpecFromAction(action, { pluginSourceUrl });
   if (!spec) return { action, changed: false, dependency: null };
   if (!spec.resolvable) throw new Error(`${action.name}: ${spec.reason}`);
   if (spec.kind === 'mock') {
@@ -79,7 +109,7 @@ export function inlineResolvedDependency(action, content, { pluginSourceUrl = ''
     name: spec.inlineName,
     args: action.args.map(arg => ({ ...arg })),
   };
-  const pathIndex = FILE_ACTIONS[action.name].pathIndex;
+  const pathIndex = spec.pathIndex ?? FILE_ACTIONS[action.name].pathIndex;
   next.args[pathIndex] = { type: 'string', value: String(content), raw: JSON.stringify(String(content)) };
   return { action: next, changed: true, dependency: spec };
 }
@@ -102,7 +132,7 @@ export function qxMockPlanFromAction(action, { pluginSourceUrl = '' } = {}) {
 
 export function listRewriteV2Dependencies(ast, options = {}) {
   if (!ast || ast.type !== 'rewrite') throw new TypeError('Expected Rewrite v2 AST');
-  return ast.actions.map(action => dependencySpecFromAction(action, options)).filter(Boolean);
+  return ast.actions.map(action => jqDependencySpecFromAction(action, options) || dependencySpecFromAction(action, options)).filter(Boolean);
 }
 
 export { FILE_ACTIONS, TEXT_MOCK_TYPES };
