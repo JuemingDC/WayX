@@ -73,6 +73,31 @@ assert.equal(
   'plugin Argument Rewrite must not be frozen into an executable QX rewrite',
 );
 
+const disabledRewriteFixture = {
+  id:'DisabledRewriteFixture',
+  source:'https://example.invalid/disabled-rewrite.lpx',
+  qx:'DisabledRewriteFixture.snippet',
+  surge:'DisabledRewriteFixture.sgmodule',
+  category:'测试',
+};
+const disabledRewriteSource = `#!name=DisabledRewriteFixture
+[Rewrite]
+#response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\/mock\\?/i then response.body.mock("text", "OK", 200)
+#response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\/json\\?/i then response.json.jq(".data.ads = []")
+`;
+const disabledRewriteOutput = convert(disabledRewriteFixture, disabledRewriteSource, new Map(), STAMP);
+assert.match(disabledRewriteOutput.surge, /^\[Body Rewrite\]$/m);
+assert.match(disabledRewriteOutput.surge, /#response if \$\{url\} ~= \/\^https:\\\/\\\/api\\\.example\\\.com\\\/json\\\?\/i then response\.json\.jq/);
+assert.match(disabledRewriteOutput.surge, /# http-response-jq \^https:\\\/\\\/api\\\.example\\\.com\\\/json\\\? '\.data\.ads = \[\]'/);
+assert.match(disabledRewriteOutput.surge, /^\[Map Local\]$/m);
+assert.match(disabledRewriteOutput.surge, /#response if \$\{url\} ~= \/\^https:\\\/\\\/api\\\.example\\\.com\\\/mock\\\?\/i then response\.body\.mock\("text", "OK", 200\)/);
+assert.match(disabledRewriteOutput.surge, /# \^https:\\\/\\\/api\\\.example\\\.com\\\/mock\\\? data-type=text data="OK" status-code=200 header="Content-Type:text\/plain"/);
+assert.equal(
+  disabledRewriteOutput.surge.split(/\\r?\\n/).some(line => !line.trim().startsWith('#') && /api\\\.example\\\.com\\\/(?:mock|json)/.test(line)),
+  false,
+  'disabled source Rewrite entries must remain disabled after Surge conversion',
+);
+
 const cases = [
   {
     name:'HTTPDNS',
