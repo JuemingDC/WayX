@@ -13,7 +13,7 @@ function fail(reason) {
 }
 
 export function canonicalizeSurgeUrlPattern(pattern) {
-  return String(pattern ?? '').replace(/\\\//g, '/').replace(/^\(\^/, '^(');
+  return String(pattern ?? '').replace(/\\\//g, '/');
 }
 
 export function compileRegexForTarget(regex, { subject = 'url', target = 'generic' } = {}) {
@@ -25,8 +25,8 @@ export function compileRegexForTarget(regex, { subject = 'url', target = 'generi
 
   if (target === 'surge' && subject === 'url') {
     // Surge URL patterns are bare regular expressions, not /.../ literals.
-    // Remove Loon/JavaScript-only slash escaping and canonicalize a leading
-    // capture from (^...) to ^(...) without changing capture numbering.
+    // Remove only Loon/JavaScript-literal slash escaping. Preserve capture
+    // group structure exactly because Surge replacement may reference $1/$2.
     pattern = canonicalizeSurgeUrlPattern(pattern);
   }
 
