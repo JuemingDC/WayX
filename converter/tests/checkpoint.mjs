@@ -11,6 +11,8 @@ import {
   surgeDirectRewritePlan,
   surgeRedirectRewritePlan,
   surgeRejectRewritePlan,
+  surgeHeaderRewritePlan,
+  surgeInlineMockPlan,
   renderQxRedirectScript,
   renderQxRejectScript,
   renderQxHeaderScript,
@@ -271,5 +273,31 @@ assert.throws(
   () => renderQxInlineMockScript(parseRewriteV2('response if ${url} ~= /api/i then response.body.mock("text", "x", 200) | response.header.add("Set-Cookie", "a=1")')),
   /header set\/del\/replace/,
 );
+
+const surgeHeaderSet = surgeHeaderRewritePlan(
+  parseRewriteV2('request if ${url} ~= /api/i then request.header.set("X-Test", "1") | request.header.del("Cookie")')
+);
+assert.equal(surgeHeaderSet.ok, true);
+assert.equal(surgeHeaderSet.section, 'header');
+assert.equal(surgeHeaderSet.lines.length, 3);
+assert.match(surgeHeaderSet.lines[0], /header-del X-Test$/);
+assert.match(surgeHeaderSet.lines[1], /header-add X-Test 1$/);
+assert.match(surgeHeaderSet.lines[2], /header-del Cookie$/);
+
+const surgeHeaderAdd = surgeHeaderRewritePlan(
+  parseRewriteV2('response if ${url} ~= /api/i then response.header.add("Set-Cookie", "a=1")')
+);
+assert.equal(surgeHeaderAdd.ok, true);
+assert.equal(surgeHeaderAdd.lines.length, 1);
+assert.match(surgeHeaderAdd.lines[0], /header-add Set-Cookie a=1$/);
+
+const surgeGrpcMock = surgeInlineMockPlan(
+  parseRewriteV2('response if ${url} ~= /grpc/i then response.body.mock("text", "AAAAAAA=", 200, true) | response.header.set("grpc-status", "0")')
+);
+assert.equal(surgeGrpcMock.ok, true);
+assert.equal(surgeGrpcMock.section, 'map');
+assert.match(surgeGrpcMock.line, /data-type=base64/);
+assert.match(surgeGrpcMock.line, /status-code=200/);
+assert.match(surgeGrpcMock.line, /Content-Type:text\/plain\|grpc-status:0/);
 
 console.log('WayX converter checkpoint tests passed');
