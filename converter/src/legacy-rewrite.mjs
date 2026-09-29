@@ -66,7 +66,7 @@ function parseJsonValue(token) {
 }
 
 function compileJsonMutation(phase, op, rest) {
-  if (op === 'jq') return { ok:true, jq:String(rest).trim() };
+  if (op === 'jq') return { ok:true, jq:unquote(String(rest).trim()) };
   const tokens = shellTokens(rest);
   if (op === 'add') return { ok:false, reason:'legacy json-add semantics are not compiled until add-vs-replace behavior is proven equivalent' };
   if (op === 'del') {
