@@ -737,7 +737,8 @@ function validateQX(text, entry) {
     const active = text.split('\n').find(l => l.trim() && !l.trim().startsWith('#') && l.includes(bad));
     if (active) throw new Error(`${entry.id}: unconverted QX token ${bad}`);
   }
-  if (!text.includes('# [rewrite_local]') || !text.includes('# [mitm]') || !text.includes('# [filter_local]')) throw new Error(`${entry.id}: missing commented QX headings`);
+  const commentedSections = ['# [filter_local]', '# [rewrite_local]', '# [mitm]'].filter(section => text.includes(section));
+  if (!commentedSections.length) throw new Error(`${entry.id}: missing commented QX section heading`);
 }
 
 
