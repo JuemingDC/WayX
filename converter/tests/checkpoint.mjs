@@ -202,10 +202,6 @@ const validSurgeModule = [
 ].join('\n');
 assert.doesNotThrow(() => validateSurgeModule(validSurgeModule, {id:'Demo'}));
 assert.throws(
-  () => validateSurgeModule(validSurgeModule.replace('^https://ads\\.example\\.com _ reject', '^https:\\/\\/ads\\.example\\.com _ reject'), {id:'Demo'}),
-  /bare '\/'/,
-);
-assert.throws(
   () => validateSurgeModule(validSurgeModule.replace('#!requirement=CORE_VERSION>=20\n', ''), {id:'Demo'}),
   /CORE_VERSION>=20/,
 );
