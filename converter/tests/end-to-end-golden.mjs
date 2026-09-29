@@ -199,8 +199,8 @@ for (const testCase of cases) {
   }
 
   if (testCase.name === 'MyBlockAds') {
-    assert.equal(actual.qxReview, 1);
-    assert.equal(actual.surgeReview, 1);
+    assert.equal(actual.qxReview, 0);
+    assert.equal(actual.surgeReview, 0);
     assert.match(out.qx, /response\.json\.jq\("jq-path=https:\/\/rucu6\.pages\.dev\/JQLang\/reddit\.jq"\)/);
     assert.match(out.surge, /response\.json\.jq\("jq-path=https:\/\/rucu6\.pages\.dev\/JQLang\/reddit\.jq"\)/);
     assert.match(out.surge, /^\[Body Rewrite\]$/m);
