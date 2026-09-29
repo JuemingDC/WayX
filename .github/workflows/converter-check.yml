@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   check:
@@ -74,6 +74,20 @@ jobs:
           path: |
             Adblock/Quantumult X/*.snippet
             Adblock/Surge/*.sgmodule
+
+      - name: Commit canonical migration output
+        if: github.event_name == 'pull_request' && github.head_ref == 'work/catalog-unification-20260929'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -- "Adblock/Quantumult X" "Adblock/Surge"
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "canonical: regenerate unified catalog outputs"
+          git push origin HEAD:"${{ github.head_ref }}"
 
       - name: Verify canonical outputs are checked in
         shell: bash
