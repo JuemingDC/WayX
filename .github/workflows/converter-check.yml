@@ -16,13 +16,16 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
@@ -89,6 +92,30 @@ jobs:
             Adblock/Quantumult X/*.snippet
             Adblock/Surge/*.sgmodule
             script/**
+
+      - name: Commit deterministic generated outputs to same-repo PR
+        if: >-
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -A -- "Adblock/Quantumult X" "Adblock/Surge" script
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+
+          remote_sha="$(git ls-remote origin "refs/heads/${{ github.head_ref }}" | awk '{print $1}')"
+          expected_sha="${{ github.event.pull_request.head.sha }}"
+          if [[ -z "$remote_sha" || "$remote_sha" != "$expected_sha" ]]; then
+            echo "::notice::PR head advanced while this run was executing; skip generated-output commit and let the newer run regenerate."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "canonical: regenerate converter outputs"
+          git push origin HEAD:"${{ github.head_ref }}"
 
       - name: Verify canonical outputs are checked in
         shell: bash
