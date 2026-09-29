@@ -197,9 +197,9 @@ Next work:
 Implemented on `work/rewrite-v2-semantic-actions-20260929` / PR #6:
 
 - Added a target-regex compiler for Loon flags.
-  - `/i` is compiled to explicit ASCII case-folded character classes instead of emitting undocumented QX inline modifiers.
+  - `/i` is **not** expanded into per-character ASCII case-fold classes and no undocumented QX inline modifier is emitted. Target declarations keep the source regex body in the documented bare-regex form.
   - `m/s` are elided only for URL/header subjects where CR/LF cannot occur; body regex remains fail-closed.
-  - Unicode or ambiguous case-folding remains Review Tier.
+  - Source regex flags that have no documented target declaration field are retained only as diagnostics; the converter does not invent target syntax.
 - Added behavior-first Rewrite v2 mapping:
   - QX/Surge JSON delete/replace/JQ.
   - Proven scalar body replacement.
@@ -274,7 +274,7 @@ Implemented on `work/semantic-rewrite-mock-20260929` / PR #5:
 
 Current semantic boundary:
 
-- Regex flags such as Loon `/i` still require an official QX-supported equivalent before automatic promotion.
+- Loon `/i` has no documented QX rewrite flag field in Crossutility's current sample. WayX therefore preserves the source regex body as bare QX regex and does not synthesize `[aA]` expansions or `(?i)`.
 - Compound conditions, captures and multi-action pipelines remain Review Tier until their complete behavior can be reproduced, rather than flattening them into independent target lines.
 - `mock_file` response/header pipelines still need a single generated script when header actions must execute in Loon order.
 - Surge behavior was not weakened by this QX phase; Surge-specific expansion continues from official Surge syntax.
