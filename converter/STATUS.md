@@ -14,11 +14,13 @@ Implemented on `work/canonical-regeneration-20260929` / PR #12:
   - resolves exact existing script mirrors under `script/<entry.id>/<filename>` when available;
   - reads script bodies only for compatibility checks;
   - never rewrites/wraps/forks source JavaScript;
-  - refuses future `mock_file/jq_file` dependencies unless their files have first been materialized for offline generation.
+  - supports official `*.json.jq_file(...)` through conversion-time materialization; offline canonical generation requires the dependency to be registered in `converter/dependencies/manifest.json` and backed by a checked-in file;
+  - recognizes RuCu6's current `response.json.jq("jq-path=https://...")` only as a project-specific legacy compatibility alias. This is not treated or documented as official Loon Rewrite v2 syntax; it is resolved to the cached JQ before QX/Surge output;
+  - still refuses uncached `body.mock_file` dependencies in offline canonical mode until their bytes are explicitly materialized.
 - Rebuilt managed QX/Surge outputs with the current converter.
 - Surge generated modules now use the audited module header layer (`#!name`, `#!desc`, optional requirement/system) and preserve Loon-only metadata as ordinary comments.
 - QX managed snippets retain commented `# [filter_local] / # [rewrite_local] / # [mitm]` headings.
-- `MyBlockAds.sgmodule` was regenerated as well; its former active Loon `#!author/#!icon/#!date/#!loon_version` lines are now comments.
+- `MyBlockAds.sgmodule` was regenerated as well; its former active Loon `#!author/#!icon/#!date/#!loon_version` lines are now comments. The Reddit JQ dependency is cached at `converter/dependencies/rucu6/reddit.jq`, comment-stripped/minified outside strings, and inlined into both QX and Surge outputs; unresolved `jq-path=` is forbidden by golden tests.
 - `QZXY` remains explicitly unmanaged by the Loon converter because it is a hand-maintained native target configuration.
 - Permanent `Converter Check` behavior:
   - regenerates managed canonical outputs in the PR workspace;
