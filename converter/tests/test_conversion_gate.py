@@ -67,9 +67,26 @@ try:
         manifest,
     )
     assert reasons and any("policy PROXY" in item for item in reasons), reasons
+
+    # Loon [Argument] is not converted into target parameter UI. An Argument-only
+    # source change is safe by itself; dependent executable declarations are
+    # caught by converter-generated Review markers.
+    gate.old_text = lambda _path: "[Argument]\nmode=select,old,new\n[Rule]\nDOMAIN,example.com,DIRECT\n"
+    gate.new_text = lambda _path: "[Argument]\nmode=select,new,old\n[Rule]\nDOMAIN,example.com,DIRECT\n"
+    reasons = gate.classify_resource(
+        "Resource/Loon/UnknownVendor/unfamiliar.lpx",
+        manifest,
+    )
+    assert reasons == [], reasons
 finally:
     gate.old_text = old_text
     gate.new_text = new_text
+
+assert gate.has_manual_review_marker("# [WayX] SCRIPT V2 REVIEW REQUIRED: source plugin parameter dependency")
+assert gate.has_manual_review_marker("# [WayX] REWRITE V2 REVIEW REQUIRED: source plugin parameter dependency")
+assert gate.has_manual_review_marker("# [WayX] ARGUMENT REVIEW REQUIRED: undeclared source plugin argument reference")
+assert gate.has_manual_review_marker("# [WayX] QUANTUMULT X UNSUPPORTED - source script disabled:")
+assert not gate.has_manual_review_marker("# Source [Argument] legacy comment only")
 
 assert "script-analyze-echo-response" in validator.QX_REWRITE_ACTIONS
 
