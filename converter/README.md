@@ -17,4 +17,11 @@ WayX 自有的 Loon Plugin → Quantumult X / Surge 转换核心。参考 KOP-XI
 - 去广告输出目录固定为 `Adblock/Quantumult X/` 和 `Adblock/Surge/`；
 - PR 级 `Converter Check` 负责语法检查和 checkpoint 回归，不执行上游写入。
 
-下一阶段：脚本兼容性/fork registry、`jq_file / mock_file` 依赖解析和 MyBlockAds 自动 golden fixture。
+第二阶段新增：
+
+- QX script compatibility / port registry：已知 RuCu6 Bilibili protobuf 脚本因上游显式拒绝 QX 而阻断执行行；YouTube 的内置 QuanX adapter 作为已审查兼容项登记；
+- 未登记脚本会扫描显式 QX 拒绝、Loon-only `$utils`、QX runtime 信号；存在明确阻断项时输出 `MANUAL PORT REQUIRED`，不生成会报错的 QX 行；
+- `jq_file / mock_file` 已进入依赖 AST：JQ 和文本/Base64 mock 可以解析为可内联依赖，未证明安全的二进制 mock 保持 Review Tier；
+- 上游同步会生成 RuCu6 脚本兼容性报告，PR CI 同时检查 converter tools。
+
+下一阶段：把依赖 resolver 接入完整 RuCu6 Rewrite v2 生成器，并建立 MyBlockAds 自动 golden fixture。
