@@ -43,6 +43,31 @@ const QX_URL_REJECT_ACTIONS = new Map([
   ['REJECT-ARRAY','reject-array'],
 ]);
 
+// Current official Surge Rule type index.
+// Keep this separate from Module policy restrictions: rule TYPE support is broad,
+// while .sgmodule policy names are explicitly restricted by the Module manual.
+export const SURGE_RULE_TYPES = new Set([
+  'DOMAIN', 'DOMAIN-SUFFIX', 'DOMAIN-KEYWORD', 'DOMAIN-WILDCARD', 'DOMAIN-SET',
+  'IP-CIDR', 'IP-CIDR6', 'GEOIP', 'IP-ASN',
+  'USER-AGENT', 'URL-REGEX',
+  'PROCESS-NAME',
+  'DEST-PORT', 'SRC-PORT', 'IN-PORT', 'SRC-IP', 'DEVICE-NAME', 'MAC-ADDRESS',
+  'PROTOCOL', 'HOSTNAME-TYPE', 'SUBNET', 'CELLULAR-RADIO', 'CELLULAR-CARRIER',
+  'AND', 'OR', 'NOT',
+  'SCRIPT', 'RULE-SET', 'FINAL',
+]);
+
+export const SURGE_MODULE_POLICIES = new Set(['DIRECT', 'REJECT', 'REJECT-TINYGIF']);
+
+export const SURGE_PROFILE_BUILTIN_POLICIES = new Set([
+  'DIRECT', 'REJECT', 'REJECT-TINYGIF', 'REJECT-DROP', 'REJECT-NO-DROP',
+  'CELLULAR', 'CELLULAR-ONLY', 'HYBRID', 'NO-HYBRID',
+]);
+
+function surgePolicyIndex(parts) {
+  return String(parts[0] || '').toUpperCase() === 'FINAL' ? 1 : 2;
+}
+
 export function qxRule(line) {
   const source = String(line).trim();
   if (/^(AND|OR|NOT)\s*,/i.test(source)) {
@@ -79,7 +104,18 @@ export function qxRule(line) {
 export function surgeModuleRule(line) {
   const source = String(line).trim();
   const parts = splitTopLevelCsv(source);
-  if (parts.length < 3) {
+  const type = String(parts[0] || '').toUpperCase();
+
+  if (!SURGE_RULE_TYPES.has(type)) {
+    return {
+      kind:'comment',
+      lines:[`# [WayX] Surge rule type unsupported by current official manual: ${source}`],
+      reason:'unsupported-rule-type',
+    };
+  }
+
+  const policyIndex = surgePolicyIndex(parts);
+  if (parts.length <= policyIndex || !parts[policyIndex]) {
     return {
       kind:'comment',
       lines:[`# [WayX] Invalid/unsupported Loon rule preserved: ${source}`],
@@ -87,35 +123,34 @@ export function surgeModuleRule(line) {
     };
   }
 
-  const policyIndex = 2;
-  const originalPolicy = parts[policyIndex];
-  let policy = String(originalPolicy || '').toUpperCase();
+  let policy = String(parts[policyIndex]).toUpperCase();
 
-  // Surge Module [Rule] is stricter than a normal Surge profile: only
-  // DIRECT / REJECT / REJECT-TINYGIF are allowed by the module manual.
-  if (policy === 'REJECT-IMG') {
-    policy = 'REJECT-TINYGIF';
-  } else if (policy === 'REJECT-DROP' || policy === 'REJECT-NO-DROP') {
-    policy = 'REJECT';
-  } else if (!['DIRECT','REJECT','REJECT-TINYGIF'].includes(policy)) {
+  // Loon's image reject rule is behaviorally equivalent to Surge's tiny GIF reject.
+  if (policy === 'REJECT-IMG') policy = 'REJECT-TINYGIF';
+
+  // Do not collapse REJECT-DROP / REJECT-NO-DROP to REJECT. They are valid
+  // Surge profile policies with different behavior, but the official Module
+  // manual still restricts module rules to DIRECT / REJECT / REJECT-TINYGIF.
+  // Semantic fidelity therefore requires fail-closed output for those policies.
+  if (!SURGE_MODULE_POLICIES.has(policy)) {
+    const isProfileBuiltin = SURGE_PROFILE_BUILTIN_POLICIES.has(policy);
     return {
       kind:'comment',
-      lines:[`# [WayX] Surge Module policy binding required: ${source}`],
-      reason:'external-policy',
+      lines:[
+        isProfileBuiltin
+          ? `# [WayX] Surge profile supports policy ${policy}, but current official Module [Rule] does not; source rule preserved for Review: ${source}`
+          : `# [WayX] Surge Module policy binding required: ${source}`,
+      ],
+      reason:isProfileBuiltin ? 'module-policy-restricted' : 'external-policy',
     };
   }
 
   parts[policyIndex] = policy;
   const lineOut = parts.join(',');
-  const notes = [];
-  if (/^REJECT-(?:DROP|NO-DROP)$/i.test(originalPolicy)) {
-    notes.push(`# [WayX] Surge Module [Rule] does not permit ${originalPolicy}; normalized to REJECT.`);
-  }
-
   return {
     kind:'rule',
     line:lineOut,
-    lines:[...notes, lineOut],
+    lines:[lineOut],
     reason:'module-native-rule',
   };
 }
@@ -124,4 +159,4 @@ export function surgeRule(line) {
   return surgeModuleRule(line).lines.join('\n');
 }
 
-export { splitTopLevelCsv };
+export { splitTopLevelCsv, surgePolicyIndex };
