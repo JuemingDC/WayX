@@ -210,7 +210,7 @@ function rewriteV2Action(line, target, ctx) {
       }
     }
 
-    // Preserve custom/non-200 reject response semantics with script-echo-response.
+    // Use a generated response only when QX has no exact native reject primitive.
     if (ast.actions.length === 1 && /^(?:reject|reject_dict|reject_array)$/.test(ast.actions[0].name)) {
       try {
         const plan = renderQxRejectScript(ast, { stamp: ctx.stamp, category: ctx.category, sourceLine: line });
