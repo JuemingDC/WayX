@@ -11,6 +11,8 @@ WayX 自有的 Loon Plugin → Quantumult X / Surge 转换核心。参考 KOP-XI
 - RuCu6 `12306.js` → `script-analyze-echo-response`；`header.js` → `script-response-header`；
 - 普通远程 JS 保留原 URL；脚本正文兼容性由独立扫描/port registry 判断；
 - `[Argument]` 解析为 BoxJs descriptor，snippet 本身不写配置项；
+- Rewrite v2 已拆成 tokenizer/parser/AST 与官方 Action registry：支持 `&& / || / () / as / i|m|s flags / array / pipeline`，复杂语义默认仍保持 Review Tier；
+- 当前官方 Loon Rewrite v2 的 31 个 Action 已登记；只有 Quantumult X 官方 sample 能直接证明的 primitive 才进入 QX 能力表；
 - 去广告输出目录固定为 `Adblock/Quantumult X/` 和 `Adblock/Surge/`。
 
-下一阶段：完整 Rewrite v2 条件 AST、pipeline、mock/header/body fallback、BoxJs `$prefs` bridge 与脚本 fork registry。
+下一阶段：Rewrite v2 语义验证/目标映射、BoxJs `$prefs` bridge、脚本 fork registry、`jq_file / mock_file` 依赖解析与 golden fixtures。
