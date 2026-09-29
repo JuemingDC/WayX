@@ -24,6 +24,7 @@ import {
   minifyJqFile,
   classifyLegacyRewrite,
   planLegacyRewrite,
+  validateLoonSourceCatalog,
   mergeBoxJsSubscription,
   parseLoonArguments,
   parseRewriteV2,
@@ -215,6 +216,25 @@ const crossPlatformEcho = selectQxScriptAction({
   sourceText:'const b=$request.body; const q=typeof $task!=="undefined"; if(q)$done({body:b}); else $done({response:{body:b}});',
 });
 assert.equal(crossPlatformEcho.action, 'script-analyze-echo-response');
+
+const catalogFixture = validateLoonSourceCatalog([
+  {
+    id:'UnknownPlugin',
+    file:'Vendor/unknown.lpx',
+    source:'https://example.invalid/plugins/unknown.lpx',
+    qx:'Unknown.snippet',
+    surge:'Unknown.sgmodule',
+    category:'测试',
+  },
+]);
+assert.equal(catalogFixture[0].id, 'UnknownPlugin');
+assert.throws(
+  () => validateLoonSourceCatalog([
+    {id:'A',file:'a.lpx',source:'https://a.invalid/a.lpx',qx:'same.snippet',surge:'a.sgmodule',category:'x'},
+    {id:'B',file:'b.lpx',source:'https://b.invalid/b.lpx',qx:'same.snippet',surge:'b.sgmodule',category:'x'},
+  ]),
+  /duplicate catalog qx/,
+);
 
 assert.equal(qxTargetPath({qx:'A.snippet'}), 'Adblock/Quantumult X/A.snippet');
 assert.equal(surgeTargetPath({surge:'A.sgmodule'}), 'Adblock/Surge/A.sgmodule');
