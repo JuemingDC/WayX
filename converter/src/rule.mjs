@@ -29,6 +29,47 @@ function unquote(value) {
   return s;
 }
 
+function splitLogicalSubrules(value) {
+  const source = String(value ?? '').trim();
+  if (!source.startsWith('(') || !source.endsWith(')')) return null;
+  const inner = source.slice(1, -1).trim();
+  const out = [];
+  let i = 0;
+
+  while (i < inner.length) {
+    while (i < inner.length && /[\s,]/.test(inner[i])) i++;
+    if (i >= inner.length) break;
+    if (inner[i] !== '(') return null;
+
+    const start = ++i;
+    let depth = 1, quote = null, esc = false;
+    for (; i < inner.length; i++) {
+      const ch = inner[i];
+      if (quote) {
+        if (esc) { esc = false; continue; }
+        if (ch === '\\') { esc = true; continue; }
+        if (ch === quote) quote = null;
+        continue;
+      }
+      if (ch === '"' || ch === "'") { quote = ch; continue; }
+      if (ch === '(') { depth++; continue; }
+      if (ch === ')') {
+        depth--;
+        if (depth === 0) {
+          out.push(inner.slice(start, i).trim());
+          i++;
+          break;
+        }
+      }
+    }
+    if (depth !== 0) return null;
+    while (i < inner.length && /\s/.test(inner[i])) i++;
+    if (i < inner.length && inner[i] === ',') i++;
+  }
+
+  return out;
+}
+
 const QX_RULE_TYPES = new Map([
   ['DOMAIN','host'], ['DOMAIN-SUFFIX','host-suffix'], ['DOMAIN-KEYWORD','host-keyword'],
   ['DOMAIN-WILDCARD','host-wildcard'], ['IP-CIDR','ip-cidr'], ['IP-CIDR6','ip6-cidr'],
@@ -66,6 +107,36 @@ export const SURGE_PROFILE_BUILTIN_POLICIES = new Set([
 
 function surgePolicyIndex(parts) {
   return String(parts[0] || '').toUpperCase() === 'FINAL' ? 1 : 2;
+}
+
+export function surgeRuleTypesInTree(line, {subrule = false} = {}) {
+  const parts = splitTopLevelCsv(String(line ?? '').trim());
+  const type = String(parts[0] || '').toUpperCase();
+  if (!type) return {ok:false, types:[], reason:'missing-rule-type'};
+
+  const types = [type];
+  if (!SURGE_RULE_TYPES.has(type)) {
+    return {ok:false, types, reason:`unsupported-rule-type:${type}`};
+  }
+
+  if (subrule && type === 'FINAL') {
+    return {ok:false, types, reason:'FINAL-cannot-be-a-logical-subrule'};
+  }
+
+  if (['AND','OR','NOT'].includes(type)) {
+    const subrules = splitLogicalSubrules(parts[1]);
+    if (!subrules?.length) return {ok:false, types, reason:`invalid-${type}-subrules`};
+    if (type === 'NOT' && subrules.length !== 1) return {ok:false, types, reason:'NOT-requires-one-subrule'};
+    if ((type === 'AND' || type === 'OR') && subrules.length < 1) return {ok:false, types, reason:`${type}-requires-subrules`};
+
+    for (const child of subrules) {
+      const result = surgeRuleTypesInTree(child, {subrule:true});
+      types.push(...result.types);
+      if (!result.ok) return {ok:false, types, reason:result.reason};
+    }
+  }
+
+  return {ok:true, types, reason:null};
 }
 
 export function qxRule(line) {
@@ -106,10 +177,11 @@ export function surgeModuleRule(line) {
   const parts = splitTopLevelCsv(source);
   const type = String(parts[0] || '').toUpperCase();
 
-  if (!SURGE_RULE_TYPES.has(type)) {
+  const typeTree = surgeRuleTypesInTree(source);
+  if (!typeTree.ok) {
     return {
       kind:'comment',
-      lines:[`# [WayX] Surge rule type unsupported by current official manual: ${source}`],
+      lines:[`# [WayX] Surge rule type/combination unsupported by current official manual (${typeTree.reason}): ${source}`],
       reason:'unsupported-rule-type',
     };
   }
