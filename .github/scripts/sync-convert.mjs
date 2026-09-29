@@ -439,10 +439,22 @@ function sanitizeName(s) {
 function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Map(), jqFiles = new Map()) {
   const parsed = parseLoon(source);
   const sourceHeader = parsed.header;
+  const platform = sourcePlatformConstraint(sourceHeader);
   const qxHeader = renderQxSnippetHeader(sourceHeader, entry, stamp);
 
   const qx = { filter: [], rewrite: [], mitm: [], notes: [], generatedScripts: new Map() };
   const sg = { rule: [], url: [], header: [], map: [], body: [], script: [], mitm: [], notes: [], generatedScripts: new Map() };
+
+  const handledSections = new Set(['Argument','Rule','Rewrite','Script','MITM']);
+  for (const [section, lines] of parsed.sections) {
+    if (handledSections.has(section)) continue;
+    const active = sectionItems(lines).filter(item => item.line);
+    if (!active.length) continue;
+    const review = `# [WayX] REVIEW REQUIRED: source section [${section}] has no implemented target planner; declarations are preserved below.`;
+    qx.notes.push(review, ...active.map(item => `# Source declaration: ${item.line}`));
+    sg.notes.push(review, ...active.map(item => `# Source declaration: ${item.line}`));
+  }
+
   const argumentAnalysis = analyzePluginArgumentUsage({
     argumentLines: parsed.sections.get('Argument') || [],
     rewriteLines: parsed.sections.get('Rewrite') || [],
@@ -474,7 +486,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     if (qr.kind === 'filter') qx.filter.push(...comments, qr.line);
     else if (qr.kind === 'rewrite') qx.rewrite.push(...comments, qr.line);
     else qx.filter.push(...comments, qr.line);
-    const sr = surgeModuleRule(item.line);
+    const sr = surgeModuleRule(item.line, { macOnly: platform.macOnly });
     const sRuleDest = sr.section === 'map' ? sg.map : sg.rule;
     sRuleDest.push(...comments, ...sr.lines);
   }
@@ -670,7 +682,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     }
   }
 
-  const mitmLines = parsed.sections.get('MitM') || parsed.sections.get('MITM') || [];
+  const mitmLines = parsed.sections.get('MITM') || [];
   for (const item of sectionItems(mitmLines)) {
     const comments = cleanComments(item.comments);
     if (!item.line) continue;
