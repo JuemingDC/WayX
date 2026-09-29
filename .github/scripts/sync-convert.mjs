@@ -21,6 +21,7 @@ import { hasActiveSurgeLines, renderSurgeModuleHeader, validateSurgeModule } fro
 import { renderQxSnippetHeader } from '../../converter/src/metadata.mjs';
 import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
 import { planScriptMirrorPaths } from '../../converter/src/script-path.mjs';
+import { planMitmLine } from '../../converter/src/mitm.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -529,14 +530,10 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   for (const item of sectionItems(mitmLines)) {
     const comments = cleanComments(item.comments);
     if (!item.line) continue;
-    if (/^hostname\s*=/i.test(item.line)) {
-      const hosts = item.line.split('=').slice(1).join('=').trim();
-      qx.mitm.push(...comments, `hostname = ${hosts}`);
-      sg.mitm.push(...comments, `hostname = %APPEND% ${hosts}`);
-    } else {
-      qx.mitm.push(...comments, `# Unsupported source MITM option preserved: ${item.line}`);
-      sg.mitm.push(...comments, `# Unsupported source MITM option preserved: ${item.line}`);
-    }
+    const qPlan = planMitmLine(item.line, 'qx');
+    const sPlan = planMitmLine(item.line, 'surge');
+    qx.mitm.push(...comments, qPlan.line);
+    sg.mitm.push(...comments, sPlan.line);
   }
 
   const compact = arr => {
