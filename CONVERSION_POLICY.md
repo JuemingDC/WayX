@@ -44,10 +44,11 @@
    - 不扩大 MITM hostname、Rule 域名或正则匹配范围。
 
 3. **脚本处理**
-   - 优先直接复用原脚本。
-   - 仅修改目标平台 API 差异、路径、持久化 API、通知 API、HTTP API 等必要部分。
-   - 修改后逐项对比原脚本输入、输出与副作用。
-   - JavaScript 文件最终统一放入 `script/`，不放入 `module/`。
+   - 自动转换只处理 **Script 声明**，不改写、包装、fork 原始 JavaScript 正文。
+   - 原脚本已经支持目标平台时直接复用；若脚本明确拒绝目标平台、使用目标平台不存在的 API，或兼容性无法证明，则在目标配置中注释掉该 Script 声明并说明原因。
+   - 不得为了消除 `$argument`、动态 `enable`、运行时 API 差异而偷偷生成“兼容 fork”去改变原脚本行为。
+   - 由 Rewrite / Mock / Header 等**非源 Script 动作**为了保持目标平台等价行为而生成的短 helper script，可以放入 `script/`；这类 helper 不得冒充或替换原作者 Script 正文。
+   - JavaScript 文件统一放入 `script/`，不放入 `module/`。
 
 4. **注释**
    - 原注释尽量完整保留。
@@ -75,15 +76,21 @@ Surge 普通拒绝优先使用官方 URL Rewrite 的 `reject`；只有确实需�
 
 ## Quantumult X 固定约束
 
+- 以 Crossutility 官方 `Quantumult-X` 仓库的 sample / rewrite 示例以及项目上传的官方 sample 为可执行语法依据。
 - snippet 分段必须注释：`# [filter_local]`、`# [rewrite_local]`、`# [mitm]`。
+- URL Rewrite 使用官方示例的 bare-regex 风格；不得把 Loon `/i` 展开成 `[hH][tT]...`，也不得发明官方 sample 未确认的 `(?i)`。
+- 若源 regex flag 对实际匹配语义不可忽略而目标声明又无官方表达方式，则进入 Review；不得把近似结果标成“无损”。
 - QX IP 类规则（至少 `ip-cidr`、`ip6-cidr`，以及转换器处理的 `geoip`、`ip-asn`）必须去掉 `no-resolve`。
-- 最终只输出用户官方 sample 已确认的字段与动作。
+- 最终只输出官方 sample 已确认的字段与动作。
 - 不允许把 Loon / Surge / Egern 私有关键字作为 QX 可执行行输出。
 
 ## Surge 固定约束
 
 - 转换或验证前先查 `https://nssurge.com/llms.txt` 并按其指引核对当前 Surge Manual。
 - Surge IP 类规则不套用 QX 的 `no-resolve` 删除规则；源中合法的 `no-resolve` 按语义保留。
+- Surge Module metadata 只使用官方文档确认的 `#!name`、`#!desc`、`#!system=mac`、`#!arguments`、`#!arguments-desc`、`#!requirement`；作者、分类、日期等保存为普通 `#` 注释。
+- Module `[Rule]` 的 policy 仅允许官方规定的 `DIRECT / REJECT / REJECT-TINYGIF`；普通 Profile 支持的 `REJECT-DROP / REJECT-NO-DROP` 不得原样塞入 Module，也不得有损改成 `REJECT`。
+- 使用 Body Rewrite 或 inline Map Local 的 Module 必须声明相应 Core requirement。
 - 自动生成 Module 的 `[MITM]` hostname 使用 `%APPEND%`，不得覆盖主配置。
 - 只使用官方支持 section 与 action；不确定时进入 Work。
 
