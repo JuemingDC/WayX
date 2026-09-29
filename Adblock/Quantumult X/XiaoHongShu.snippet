@@ -1,0 +1,87 @@
+# Name: 小红书
+# Description: 集美们都在这里当女菩萨。
+# Author: RuCu6[https://github.com/RuCu6], fmz200[https://github.com/fmz200]
+# Icon: https://rucu6.pages.dev/Icons/app/xiaohongshu.png
+# Updated: 2026-09-14 11:00
+
+# Converted: 2026-09-29 17:23:21 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://rucu6.pages.dev/Plugins/xiaohongshu.lpx
+# Target: Quantumult X
+
+# [filter_local]
+# Unsupported logical rule for Quantumult X: AND, ((DOMAIN-SUFFIX, xiaohongshu.com), (PROTOCOL, UDP)), REJECT
+host, ads-img-qc.xhscdn.com, reject
+host, ads-video-al.xhscdn.com, reject
+host, ads-video-qc.xhscdn.com, reject
+host, t-ads.xiaohongshu.com, reject
+
+# [rewrite_local]
+# 小红书水印
+^https:\/\/ci\.xiaohongshu\.com\/system_config\/watermark url reject-img
+
+# 惊喜弹窗
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/surprisebox\/(?:get_style|open|submit_action) url reject-dict
+^https:\/\/www\.xiaohongshu\.com\/api\/marketing\/box\/trigger\? url reject-dict
+
+# 信息流
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/(?:v2\/guide\/user_banner|v3\/note\/guide) url reject-dict
+^https:\/\/www\.xiaohongshu\.com\/api\/sns\/(?:v1\/ads\/resource|v2\/hey\/\w+\/hey_gallery) url reject-dict
+
+# 搜索页
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/search\/banner_list$ url jsonjq-response-body 'setpath(["data"]; {})'
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/search\/hot_list$ url jsonjq-response-body 'setpath(["data","items"]; [])'
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v4\/search\/hint url jsonjq-response-body 'setpath(["data","hint_words"]; [])'
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v4\/search\/trending\? url jsonjq-response-body 'setpath(["data","queries"]; []) | setpath(["data","hint_word"]; {})'
+# [WayX] QUANTUMULT X UNSUPPORTED - source script disabled:
+# Script: https://rucu6.pages.dev/Scripts/xiaohongshu.js
+# Reason: Script uses non-Quantumult-X runtime API(s) without QX adapter evidence: $persistentStore.
+# Source declaration: response if ${url} ~= /^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/note\/(?:imagefeed|live_photo\/save)/i then script("https://rucu6.pages.dev/Scripts/xiaohongshu.js") with tag="移除图片和实况照片水印", requires_body=true
+# [WayX] QUANTUMULT X UNSUPPORTED - source script disabled:
+# Script: https://rucu6.pages.dev/Scripts/xiaohongshu.js
+# Reason: Script uses non-Quantumult-X runtime API(s) without QX adapter evidence: $persistentStore.
+# Source declaration: response if ${url} ~= /^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/system\/service\/ui\/config\?/i then script("https://rucu6.pages.dev/Scripts/xiaohongshu.js") with tag="移除整体配置 ui", requires_body=true
+# [WayX] QUANTUMULT X UNSUPPORTED - source script disabled:
+# Script: https://rucu6.pages.dev/Scripts/xiaohongshu.js
+# Reason: Script uses non-Quantumult-X runtime API(s) without QX adapter evidence: $persistentStore.
+# Source declaration: response if ${url} ~= /^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/system_service\/config\?/i then script("https://rucu6.pages.dev/Scripts/xiaohongshu.js") with tag="移除开屏广告 config", requires_body=true
+# [WayX] QUANTUMULT X UNSUPPORTED - source script disabled:
+# Script: https://rucu6.pages.dev/Scripts/xiaohongshu.js
+# Reason: Script uses non-Quantumult-X runtime API(s) without QX adapter evidence: $persistentStore.
+# Source declaration: response if ${url} ~= /^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v2\/system_service\/splash_config/i then script("https://rucu6.pages.dev/Scripts/xiaohongshu.js") with tag="移除开屏广告 splash_config", requires_body=true
+# [WayX] QUANTUMULT X UNSUPPORTED - source script disabled:
+# Script: https://rucu6.pages.dev/Scripts/xiaohongshu.js
+# Reason: Script uses non-Quantumult-X runtime API(s) without QX adapter evidence: $persistentStore.
+# Source declaration: response if ${url} ~= /^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v2\/(?:note\/widgets|user\/followings\/followfeed)/i then script("https://rucu6.pages.dev/Scripts/xiaohongshu.js") with tag="移除详情页小部件、关注页感兴趣的人", requires_body=true
+# [WayX] QUANTUMULT X UNSUPPORTED - source script disabled:
+# Script: https://rucu6.pages.dev/Scripts/xiaohongshu.js
+# Reason: Script uses non-Quantumult-X runtime API(s) without QX adapter evidence: $persistentStore.
+# Source declaration: response if ${url} ~= /^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v4\/followfeed\?/i then script("https://rucu6.pages.dev/Scripts/xiaohongshu.js") with tag="移除信息流广告", requires_body=true
+# [WayX] QUANTUMULT X UNSUPPORTED - source script disabled:
+# Script: https://rucu6.pages.dev/Scripts/xiaohongshu.js
+# Reason: Script uses non-Quantumult-X runtime API(s) without QX adapter evidence: $persistentStore.
+# Source declaration: response if ${url} ~= /^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v5\/recommend\/user\/follow_recommend\?/i then script("https://rucu6.pages.dev/Scripts/xiaohongshu.js") with tag="移除详情页感兴趣的人", requires_body=true
+# [WayX] QUANTUMULT X UNSUPPORTED - source script disabled:
+# Script: https://rucu6.pages.dev/Scripts/xiaohongshu.js
+# Reason: Script uses non-Quantumult-X runtime API(s) without QX adapter evidence: $persistentStore.
+# Source declaration: response if ${url} ~= /^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/(?:v1\/interaction\/comment\/video\/download|v5\/note\/comment\/list)/i then script("https://rucu6.pages.dev/Scripts/xiaohongshu.js") with tag="移除评论区实况照片水印", requires_body=true
+# [WayX] QUANTUMULT X UNSUPPORTED - source script disabled:
+# Script: https://rucu6.pages.dev/Scripts/xiaohongshu.js
+# Reason: Script uses non-Quantumult-X runtime API(s) without QX adapter evidence: $persistentStore.
+# Source declaration: response if ${url} ~= /^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/(?:v2\/note\/feed|v3\/note\/videofeed)/i then script("https://rucu6.pages.dev/Scripts/xiaohongshu.js") with tag="移除图片和视频水印", requires_body=true
+# [WayX] QUANTUMULT X UNSUPPORTED - source script disabled:
+# Script: https://rucu6.pages.dev/Scripts/xiaohongshu.js
+# Reason: Script uses non-Quantumult-X runtime API(s) without QX adapter evidence: $persistentStore.
+# Source declaration: response if ${url} ~= /^https:\/\/(?:edith|rec)\.xiaohongshu\.com\/api\/sns\/v6\/homefeed\?/i then script("https://rucu6.pages.dev/Scripts/xiaohongshu.js") with tag="移除信息流广告", requires_body=true
+# [WayX] QUANTUMULT X UNSUPPORTED - source script disabled:
+# Script: https://rucu6.pages.dev/Scripts/xiaohongshu.js
+# Reason: Script uses non-Quantumult-X runtime API(s) without QX adapter evidence: $persistentStore.
+# Source declaration: response if ${url} ~= /^https:\/\/(?:edith|so)\.xiaohongshu\.com\/api\/sns\/v10\/search\/notes\?/i then script("https://rucu6.pages.dev/Scripts/xiaohongshu.js") with tag="移除搜索页广告", requires_body=true
+# [WayX] QUANTUMULT X UNSUPPORTED - source script disabled:
+# Script: https://rucu6.pages.dev/Scripts/xiaohongshu.js
+# Reason: Script uses non-Quantumult-X runtime API(s) without QX adapter evidence: $persistentStore.
+# Source declaration: response if ${url} ~= /^https:\/\/(?:edith|rec|www)\.xiaohongshu\.com\/api\/sns\/(?:v4\/note\/videofeed|v10\/note\/video\/save)/i then script("https://rucu6.pages.dev/Scripts/xiaohongshu.js") with tag="移除视频水印", requires_body=true
+
+# [mitm]
+hostname = ci.xiaohongshu.com, edith.xiaohongshu.com, rec.xiaohongshu.com, so.xiaohongshu.com, www.xiaohongshu.com

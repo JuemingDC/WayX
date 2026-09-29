@@ -1,0 +1,33 @@
+# Name: 京东
+# Description: 商品详情页面触发比价。
+# Author: 小白脸, githubdulong[https://github.com/githubdulong/Script], RuCu6[https://github.com/RuCu6], Maasea[https://github.com/Maasea/sgmodule]
+# Icon: https://rucu6.pages.dev/Icons/app/jingdong.png
+# Updated: 2026-08-30 10:10
+
+# Converted: 2026-09-29 17:23:21 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://rucu6.pages.dev/Plugins/jingdong.lpx
+# Target: Quantumult X
+
+# Source [Argument] (declaration-only conversion; typed/dynamic arguments stay Review):
+# Capture=switch, false, true, tag=账号捕获, desc=慢慢买 Cookies 捕获开关
+# Cookies=input, "", tag=账号信息, desc=这里需要输入慢慢买 Cookies 的值
+
+# [filter_local]
+# Unsupported logical rule for Quantumult X: AND, ((DOMAIN, api.m.jd.com), (PROTOCOL, TCP)), REJECT-NO-DROP
+
+# [rewrite_local]
+^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(?:cartCouponRecommendGoods|intelligentRecommendSku|obtainGrowingInfo|recommendShop|searchBoxWord|stationPullService|uniformRecommend) url reject-dict
+^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=basicConfig url jsonjq-response-body 'setpath(["data","JDMessage","socketmonitor","isSocketEstablishedAhead"]; 0) | setpath(["data","JDMessage","socketmonitor","isSocketReport"]; 0) | setpath(["data","JDHttpToolKit","httpdns","httpdns"]; 0)'
+^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=cart url jsonjq-response-body 'delpaths([["cartLocationMap","loc_emptyCartFloor2"]]) | delpaths([["emptyCartRecommendFloor"]])'
+# [WayX] SCRIPT V2 REVIEW REQUIRED: dynamic enable cannot be carried by Quantumult X rewrite declaration without changing the script
+# Source declaration: request if ${url} ~= /^https:\/\/apapia-sqk-weblogic\.manmanbuy\.com\/baoliao\/center\/menu$/i then script("https://rucu6.pages.dev/Scripts/manmanbuy_ck.js") with enable=${Capture}, tag="manmanbuy_cookies", requires_body=true, binary_body_mode=false
+# jingdong_noad
+# [WayX] i-source-flag-not-expressed-in-target-declaration
+^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(?:deliverLayer|getTabHomeInfo|myOrderInfo|orderTrackBusiness|personinfoBusiness|start|welcomeHome) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/script/JingDong/jingdong.js
+# [WayX] SCRIPT V2 REVIEW REQUIRED: Loon Script v2 $argument cannot be carried by the official Quantumult X rewrite declaration without changing the script
+# Source declaration: response if ${url} ~= /^https:\/\/in\.m\.jd\.com\/product\/graphext\/\d+\.html\?/i then script("https://rucu6.pages.dev/Scripts/jd_price.js", {${Cookies}}) with tag="jd_price", requires_body=true
+
+# [mitm]
+hostname = apapia-sqk-weblogic.manmanbuy.com, api.m.jd.com, in.m.jd.com
