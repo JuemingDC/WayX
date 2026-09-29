@@ -94,7 +94,7 @@ function regressionScriptSource(url) {
     return 'const isQX=typeof $task!=="undefined"; const pref=$prefs.valueForKey("x"); $done({body:$response&&$response.body});';
   }
   if (/\/12306\.js(?:\?|$)/i.test(url)) {
-    return 'const body=$request.body; $done({status:"HTTP/1.1 200 OK",body});';
+    return 'const body=$request.body; const isQX=typeof $task!=="undefined"; if(isQX)$done({body});else $done({response:{body}});';
   }
   if (/\/header\.js(?:\?|$)/i.test(url)) {
     return 'const h=$request.headers; if(h) $done({status:"HTTP/1.1 404 Not Found"}); else $done({});';
