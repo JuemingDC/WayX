@@ -12,7 +12,9 @@ export function scriptBehaviorSignals(sourceText='') {
     sourceAvailable:Boolean(source.trim()),
     readsRequestBody:/\$request\.(?:body|bodyBytes)\b/.test(source),
     readsResponseBody:/\$response\.(?:body|bodyBytes)\b/.test(source),
-    returnsHttpResponse:/\$done\s*\(\s*\{[\s\S]{0,800}\b(?:status|statusCode)\s*:/.test(source),
+    returnsHttpResponse:
+      /\$done\s*\(\s*\{[\s\S]{0,800}\b(?:status|statusCode)\s*:/.test(source) ||
+      /\$done\s*\(\s*\{[\s\S]{0,800}\bresponse\s*:\s*\{/.test(source),
   };
 }
 
