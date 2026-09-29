@@ -83,10 +83,29 @@ function sha256(text) {
   return crypto.createHash('sha256').update(text).digest('hex');
 }
 
+function regressionScriptSource(url) {
+  // Real-plugin regression fixtures may encode known source behavior, but the
+  // production converter never sees these identities. Genericity is enforced
+  // separately by generic-identity.mjs and genericity-audit.mjs.
+  if (/\/bilibili\/(?:request|response)\.js(?:\?|$)/i.test(url)) {
+    return 'throw new Error("Quantumult X is not supported"); const body=$utils.ungzip($response.bodyBytes);';
+  }
+  if (/\/youtube\/(?:request|response)\.js(?:\?|$)/i.test(url)) {
+    return 'const isQX=typeof $task!=="undefined"; const pref=$prefs.valueForKey("x"); $done({body:$response&&$response.body});';
+  }
+  if (/\/12306\.js(?:\?|$)/i.test(url)) {
+    return 'const body=$request.body; const isQX=typeof $task!=="undefined"; if(isQX)$done({body});else $done({response:{body}});';
+  }
+  if (/\/header\.js(?:\?|$)/i.test(url)) {
+    return 'const h=$request.headers; if(h) $done({status:"HTTP/1.1 404 Not Found"}); else $done({});';
+  }
+  return 'const isQX=typeof $task!=="undefined"; $done({});';
+}
+
 function passthroughScriptMap(source) {
   return new Map(scriptUrls(source).map(url => [
     url,
-    {qx:url, surge:url, source:'', qxAdapted:false},
+    {qx:url, surge:url, source:regressionScriptSource(url), qxAdapted:false},
   ]));
 }
 
@@ -125,6 +144,7 @@ function count(text, re) {
 }
 
 const report = [];
+const goldenMismatches = [];
 for (const testCase of cases) {
   assert.ok(testCase.entry, `${testCase.name}: missing manifest entry`);
   const source = await fs.readFile(path.join(ROOT, testCase.file), 'utf8');
@@ -168,9 +188,23 @@ for (const testCase of cases) {
   const expected = golden.cases[testCase.name];
   assert.ok(expected, testCase.name + ': missing golden fixture');
   for (const key of ['qxSha256','surgeSha256','qxBytes','surgeBytes','sourceScriptCount','generatedScriptCount','qxReview','surgeReview']) {
-    assert.equal(actual[key], expected[key], testCase.name + ': golden mismatch for ' + key);
+    if (actual[key] !== expected[key]) {
+      goldenMismatches.push({
+        case:testCase.name,
+        key,
+        expected:expected[key],
+        actual:actual[key],
+      });
+    }
   }
-  assert.deepEqual(actual.sections, expected.sections, testCase.name + ': Surge section order changed');
+  if (JSON.stringify(actual.sections) !== JSON.stringify(expected.sections)) {
+    goldenMismatches.push({
+      case:testCase.name,
+      key:'sections',
+      expected:expected.sections,
+      actual:actual.sections,
+    });
+  }
 
   const qxActive = activeLines(out.qx);
   const surgeActive = activeLines(out.surge);
@@ -224,5 +258,11 @@ for (const testCase of cases) {
   report.push(actual);
 }
 
-console.log('End-to-end conversion golden passed:');
+console.log('End-to-end conversion report:');
 console.log(JSON.stringify(report, null, 2));
+if (goldenMismatches.length) {
+  console.error('Golden mismatches:');
+  console.error(JSON.stringify(goldenMismatches, null, 2));
+}
+assert.deepEqual(goldenMismatches, [], 'end-to-end golden mismatches detected');
+console.log('End-to-end conversion golden passed');

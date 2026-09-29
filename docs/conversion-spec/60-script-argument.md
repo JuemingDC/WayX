@@ -91,3 +91,26 @@ Review：
 - Loon typed object argument
 - Boolean/Number object 重建
 - dynamic `enable` 需要 wrapper 才能实现
+
+
+## 60.6 Script 兼容性判定必须与插件身份无关
+
+兼容性只允许依据 Source Script 内容与脚本声明本身判定。
+
+允许使用的证据：
+- 显式 Quantumult X 支持或拒绝；
+- `$task` / `$prefs` / `$notify`；
+- `$httpClient` / `$persistentStore`；
+- `$utils` / `$loon`；
+- body / bodyBytes；
+- request/response phase；
+- binary 模式；
+- `$done` 返回形态。
+
+禁止建立：
+- 按插件名的 adapter registry；
+- 按作者的 whitelist；
+- 按 script URL 路径的特判；
+- 按来源仓库的 compatibility override。
+
+如果脚本正文不可获得，且仅凭声明无法证明兼容，必须 Review。

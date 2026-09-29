@@ -1,8 +1,8 @@
 # WayX — ChatGPT Work 上游语义审查任务
 
-版本：2.1  
+版本：2.2  
 作者：chance  
-更新时间：2026-09-28  
+更新时间：2026-09-29  
 类型：Automation / Upstream Semantic Review
 
 ## 触发条件
@@ -23,6 +23,14 @@
 GitHub Actions 已完成 Safe Tier：上游检查、确定性 Rule/Rewrite/JQ/MITM 转换、简单新增删除、目标文件重生成和 validator。不要无意义重做已验证的 Safe Tier。
 
 Work 只处理 Review Tier：JavaScript 内容、[Script]/[Argument]、复杂逻辑规则、Loon 新语法未覆盖 action、自定义 Body、binary/base64、pipeline、helper script、converter/validator 失败、官方语法变更或任何无法证明无损的变化。
+
+## 通用转换器约束
+
+- 新增/更新某个插件时，首先按 `CONVERSION_SPEC.md` 和 Block 05 判断它属于哪种 Rule / Rewrite / Script / MITM 语义类型。
+- 不得以修复单个插件为由，在 production converter 中加入插件 id/name/author/source URL/script URL 路径特判。
+- 如果陌生插件暴露的是新语法类型：先补官方依据和规范，再补 generic parser/planner 和 synthetic fixture，最后才用该真实插件做 regression。
+- Source Catalog 中允许出现具体插件名和 URL，因为 Catalog 只描述输入/输出身份；这些字段不得改变转换算法。
+- Review 修复完成后必须运行 genericity-audit 与 generic-identity，确保修复没有破坏陌生插件泛化能力。
 
 ## 核心转换规则
 

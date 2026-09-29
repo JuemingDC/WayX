@@ -62,6 +62,8 @@ jobs:
         if: steps.pending.outputs.blocked != 'true'
         run: |
           node converter/tests/checkpoint.mjs
+          node converter/tests/generic-identity.mjs
+          node converter/tests/genericity-audit.mjs
           node converter/tests/myblockads-golden.mjs
 
       - name: Set up Python

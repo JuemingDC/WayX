@@ -71,3 +71,15 @@ Golden 只锁**已经人工审过的结果**，不能定义规范。
 
 若 Golden 与本规范冲突：
 **修改 Golden / output，不修改规范去迁就旧 Golden。**
+
+
+## 80.6 Genericity Validator
+
+CI 必须额外检查：
+- production converter 不得使用已知插件 id/name/author/source URL 决定语义映射；
+- Source Descriptor 只影响下载、metadata、目标路径；
+- synthetic unknown-plugin fixture 必须通过；
+- identity-invariance 测试必须通过；
+- 新增一个仅改变插件身份字段的 fixture，不得改变有效 Rule/Rewrite/Script/MITM 输出。
+
+真实插件 Golden 只能做 regression，不能替代 genericity 测试。

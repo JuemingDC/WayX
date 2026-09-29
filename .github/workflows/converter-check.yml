@@ -36,6 +36,8 @@ jobs:
           node --check converter/tests/loon-new-syntax-cases.mjs
           node --check converter/tests/surge-rule-coverage.mjs
           node --check converter/tests/end-to-end-golden.mjs
+          node --check converter/tests/generic-identity.mjs
+          node --check converter/tests/genericity-audit.mjs
           node --check converter/tools/regenerate-canonical.mjs
           node --check converter/tools/audit-repository.mjs
       - name: Converter checkpoint
@@ -47,6 +49,8 @@ jobs:
           node converter/tests/loon-new-syntax-cases.mjs
           node converter/tests/surge-rule-coverage.mjs
           node converter/tests/end-to-end-golden.mjs
+          node converter/tests/generic-identity.mjs
+          node converter/tests/genericity-audit.mjs
           node converter/tools/audit-repository.mjs
 
       - name: Repository script syntax
