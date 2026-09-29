@@ -3,6 +3,7 @@
 // Category: Converter / Rewrite v2 / Semantic Mapping
 import { compileRegexForTarget } from './target-regex.mjs';
 import { qxPrimitiveForRewriteV2Action, validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
+import { quoteJq } from './jq.mjs';
 
 function unsupported(reason, extra = {}) {
   return { ok: false, reason, ...extra };
@@ -71,8 +72,7 @@ function anyToJq(node) {
 }
 
 function qxQuote(value) {
-  if (String(value).includes("'")) throw new Error('JQ contains a single quote and requires script fallback');
-  return "'" + value + "'";
+  return quoteJq(value);
 }
 
 export function jsonActionToJq(action) {
@@ -156,8 +156,7 @@ export function qxDirectRewritePlan(ast) {
 }
 
 function surgeQuoteJq(jq) {
-  if (String(jq).includes("'")) throw new Error('JQ contains a single quote and requires script fallback');
-  return "'" + jq + "'";
+  return quoteJq(jq);
 }
 
 export function surgeDirectRewritePlan(ast) {

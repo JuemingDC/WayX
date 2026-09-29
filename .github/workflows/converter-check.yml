@@ -7,6 +7,8 @@ on:
       - ".github/scripts/sync-convert.mjs"
       - ".github/workflows/converter-check.yml"
       - ".github/sources/loon.json"
+      - "CONVERSION_SPEC.md"
+      - "docs/conversion-spec/**"
       - "Resource/Loon/**"
       - "script/**"
       - "Adblock/Quantumult X/**"
@@ -14,16 +16,16 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: "22"
+          node-version: "24"
       - name: Syntax check converter
         run: |
           for file in converter/src/*.mjs converter/tools/*.mjs; do
@@ -38,12 +40,14 @@ jobs:
           node --check converter/tests/end-to-end-golden.mjs
           node --check converter/tests/generic-identity.mjs
           node --check converter/tests/genericity-audit.mjs
+          node --check converter/tests/spec-block-contract.mjs
+          node --check converter/tests/generated-helper-refs.mjs
+          node --check converter/tests/source-script-url-preservation.mjs
           node --check converter/tools/regenerate-canonical.mjs
           node --check converter/tools/audit-repository.mjs
       - name: Converter checkpoint
         run: |
           node converter/tests/checkpoint.mjs
-          node converter/tests/myblockads-golden.mjs
           node converter/tests/rucu6-rewrite-v2-coverage.mjs
           node converter/tests/rucu6-script-v2-coverage.mjs
           node converter/tests/loon-new-syntax-cases.mjs
@@ -51,6 +55,7 @@ jobs:
           node converter/tests/end-to-end-golden.mjs
           node converter/tests/generic-identity.mjs
           node converter/tests/genericity-audit.mjs
+          node converter/tests/spec-block-contract.mjs
           node converter/tools/audit-repository.mjs
 
       - name: Repository script syntax
@@ -65,6 +70,15 @@ jobs:
       - name: Regenerate canonical outputs
         run: node converter/tools/regenerate-canonical.mjs --write
 
+      - name: Verify generated helper references
+        run: node converter/tests/generated-helper-refs.mjs
+
+      - name: Verify regenerated MyBlockAds golden
+        run: node converter/tests/myblockads-golden.mjs
+
+      - name: Verify original Source Script URLs
+        run: node converter/tests/source-script-url-preservation.mjs
+
       - name: Upload regenerated canonical outputs
         if: always()
         uses: actions/upload-artifact@v4
@@ -75,11 +89,28 @@ jobs:
             Adblock/Quantumult X/*.snippet
             Adblock/Surge/*.sgmodule
 
+
+      - name: Commit regenerated canonical outputs to same-repo PR
+        if: >-
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -A -- "Adblock/Quantumult X" "Adblock/Surge" script
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "canonical: regenerate converter outputs"
+          git push origin HEAD:"${{ github.head_ref }}"
+
       - name: Verify canonical outputs are checked in
         shell: bash
         run: |
           set -euo pipefail
-          status="$(git status --porcelain --untracked-files=all -- "Adblock/Quantumult X" "Adblock/Surge")"
+          status="$(git status --porcelain --untracked-files=all -- "Adblock/Quantumult X" "Adblock/Surge" script)"
           if [[ -n "$status" ]]; then
             printf '%s\n' "$status"
             exit 1

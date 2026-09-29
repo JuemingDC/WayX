@@ -1,6 +1,6 @@
 # Chance Upstream Monitor
 # Author: chance
-# Updated: 2026-09-28
+# Updated: 2026-09-29
 # Category: Automation / Sync / Conversion / Work Handoff
 
 name: Upstream Monitor
@@ -64,6 +64,7 @@ jobs:
           node converter/tests/checkpoint.mjs
           node converter/tests/generic-identity.mjs
           node converter/tests/genericity-audit.mjs
+          node converter/tests/spec-block-contract.mjs
           node converter/tests/myblockads-golden.mjs
 
       - name: Set up Python
@@ -86,7 +87,7 @@ jobs:
         if: steps.pending.outputs.blocked != 'true'
         run: mkdir -p monitor/.runtime
 
-      - name: Sync simple Loon sources and convert deterministically
+      - name: Sync all catalog Loon sources and convert deterministically
         if: steps.pending.outputs.blocked != 'true'
         id: loon_sync
         continue-on-error: true
@@ -95,18 +96,8 @@ jobs:
           set -o pipefail
           node .github/scripts/sync-convert.mjs 2>&1 | tee monitor/.runtime/loon-sync.log
 
-      - name: Sync RuCu6 sources and scripts
-        if: steps.pending.outputs.blocked != 'true'
-        id: rucu6_sync
-        continue-on-error: true
-        env:
-          HTTP_PROXY_URL: ${{ secrets.HTTP_PROXY_URL }}
-        shell: bash
-        run: |
-          set -o pipefail
-          python .github/scripts/sync_rucu6.py 2>&1 | tee monitor/.runtime/rucu6-sync.log
 
-      - name: Scan mirrored script compatibility
+      - name: Scan original Source Script compatibility
         if: steps.pending.outputs.blocked != 'true'
         run: node converter/tools/scan-script-compat.mjs
 
@@ -137,7 +128,6 @@ jobs:
           (steps.monitor.outputs.has_review == 'true' ||
            steps.gate.outputs.requires_work == 'true' ||
            steps.loon_sync.outcome != 'success' ||
-           steps.rucu6_sync.outcome != 'success' ||
            steps.validate.outcome != 'success')
         id: review
         shell: bash
@@ -152,7 +142,6 @@ jobs:
             echo "## Actions status"
             echo
             echo "- Loon converter: ${{ steps.loon_sync.outcome }}"
-            echo "- RuCu6 sync: ${{ steps.rucu6_sync.outcome }}"
             echo "- Validator: ${{ steps.validate.outcome }}"
             echo
             if [ -f "${{ steps.gate.outputs.summary }}" ]; then
@@ -163,7 +152,7 @@ jobs:
               cat "${{ steps.monitor.outputs.review_summary }}"
               echo
             fi
-            for LOG in monitor/.runtime/loon-sync.log monitor/.runtime/rucu6-sync.log monitor/.runtime/validator.log; do
+            for LOG in monitor/.runtime/loon-sync.log monitor/.runtime/validator.log; do
               if [ -s "$LOG" ]; then
                 echo "## $(basename "$LOG")"
                 echo
@@ -185,7 +174,6 @@ jobs:
           steps.monitor.outputs.has_review != 'true' &&
           steps.gate.outputs.requires_work != 'true' &&
           steps.loon_sync.outcome == 'success' &&
-          steps.rucu6_sync.outcome == 'success' &&
           steps.validate.outcome == 'success'
         shell: bash
         run: |
@@ -208,7 +196,6 @@ jobs:
           (steps.monitor.outputs.has_review == 'true' ||
            steps.gate.outputs.requires_work == 'true' ||
            steps.loon_sync.outcome != 'success' ||
-           steps.rucu6_sync.outcome != 'success' ||
            steps.validate.outcome != 'success')
         env:
           GH_TOKEN: ${{ github.token }}

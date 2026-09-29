@@ -90,3 +90,12 @@ WayX 只允许将“已登记的已知 legacy alias”解析为依赖：
 - 能用 Body Rewrite 原生表达时优先原生；
 - 否则最小 helper；
 - 不得使用 Map Local 假装 request body rewrite。
+
+## 50.6 自动转换实现
+
+- JQ normalize/minify：`converter/src/jq.mjs`
+- jq_file/mock_file dependency resolution：`converter/src/dependency.mjs`
+- QX mock_file helper：`converter/src/qx-mock.mjs`
+- QX inline mock/header helpers：`converter/src/qx-semantic-script.mjs`
+- Legacy JSON/JQ/mock：`converter/src/legacy-rewrite.mjs`
+- Rewrite v2 JSON/JQ/mock planner：`converter/src/rewrite-v2-semantic.mjs`

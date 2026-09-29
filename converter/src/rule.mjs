@@ -183,6 +183,28 @@ export function surgeModuleRule(line) {
   const parts = splitTopLevelCsv(source);
   const type = String(parts[0] || '').toUpperCase();
 
+  // Loon URL-REGEX supports HTTP-response-shaped reject policies that are not
+  // Surge Rule policies. Lower those to Surge's native Map Local instead of
+  // weakening them to a generic reject or dropping the response body semantics.
+  if (type === 'URL-REGEX') {
+    const pattern = unquote(parts[1] || '');
+    const sourcePolicy = String(parts[2] || '').toUpperCase();
+    const mapLocal = {
+      'REJECT-200': `${pattern} data-type=text data="" status-code=200`,
+      'REJECT-DICT': `${pattern} data-type=text data="{}" status-code=200 header="Content-Type:application/json"`,
+      'REJECT-ARRAY': `${pattern} data-type=text data="[]" status-code=200 header="Content-Type:application/json"`,
+    }[sourcePolicy];
+    if (mapLocal) {
+      return {
+        kind:'map',
+        section:'map',
+        line:mapLocal,
+        lines:[mapLocal],
+        reason:'url-regex-local-response',
+      };
+    }
+  }
+
   const typeTree = surgeRuleTypesInTree(source);
   if (!typeTree.ok) {
     return {
@@ -220,6 +242,7 @@ export function surgeModuleRule(line) {
   const lineOut = parts.join(',');
   return {
     kind:'rule',
+    section:'rule',
     line:lineOut,
     lines:[lineOut],
     reason:'module-native-rule',

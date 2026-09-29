@@ -51,3 +51,10 @@ hostname = %APPEND% api.example.com, *.example.com
 ```
 
 禁止在目标成品头部加入 `Original Loon metadata`、`Loon resource`、`Loon Plugin Conversion` 等来源平台说明。Surge 中未被 Module metadata 确认的字段不得作为活动 `#!...`；QX snippet 的这些信息全部使用普通 `#` 注释。来源平台专属版本字段不输出。
+
+## 70.4 自动转换实现
+
+- MITM target planner：`converter/src/mitm.mjs`
+- Metadata/header rendering：`converter/src/metadata.mjs`
+- Source comment grouping/preservation：`.github/scripts/sync-convert.mjs` 的 section item/comment pipeline。
+- Validation：`converter/src/surge-module.mjs` + `.github/scripts/sync-convert.mjs::validateQX`。

@@ -1,23 +1,18 @@
-// Offline canonical target regeneration for checked-in Loon sources.
+// Canonical target regeneration for checked-in Loon sources using original source-script URLs.
 // Author: chance
 // Category: Converter / Canonical Output
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { cleanSource, convert, parseLoon, scriptUrls, validateQX } from '../../.github/scripts/sync-convert.mjs';
+import { cleanSource, convert, materializeJqFiles, materializeQxMockFiles, parseLoon, scriptUrls, validateQX } from '../../.github/scripts/sync-convert.mjs';
 import { qxTargetPath, surgeTargetPath } from '../src/paths.mjs';
 import { validateSurgeModule } from '../src/surge-module.mjs';
-import { isRewriteV2, parseRewriteV2 } from '../src/rewrite-v2.mjs';
-import { validateRewriteV2Ast } from '../src/rewrite-v2-actions.mjs';
-import { jqDependencySpecFromAction } from '../src/dependency.mjs';
-import { minifyJqFile } from '../src/jq.mjs';
 import { loadLoonSourceCatalog } from '../src/source-catalog.mjs';
+import { fetchOriginalText, resolveOriginalUrl } from '../src/source-fetch.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
 const RESOURCE_DIR = path.join(ROOT, 'Resource/Loon');
-const SCRIPT_DIR = path.join(ROOT, 'script');
-const RAW_BASE = 'https://raw.githubusercontent.com/JuemingDC/WayX/main';
-const DEPENDENCY_MANIFEST = path.join(ROOT, 'converter/dependencies/manifest.json');
+const GENERATED_SCRIPT_DIR = path.join(ROOT, 'script');
 
 const mode = process.argv.includes('--write') ? 'write' : 'check';
 
@@ -35,37 +30,17 @@ async function exists(file) {
   catch { return false; }
 }
 
-function rawRepoUrl(file) {
-  const rel = path.relative(ROOT, file).split(path.sep).map(encodeURIComponent).join('/');
-  return RAW_BASE + '/' + rel;
-}
-
-async function mirroredScriptMap(entry, source) {
+async function originalScriptMap(source, pluginSourceUrl) {
   const map = new Map();
-  for (const url of scriptUrls(source)) {
-    let filename;
-    try {
-      filename = decodeURIComponent(new URL(url).pathname.split('/').pop() || '');
-    } catch {
-      filename = '';
-    }
-
-    const local = filename ? path.join(SCRIPT_DIR, entry.id, filename) : '';
-    if (local && await exists(local)) {
-      map.set(url, {
-        qx: rawRepoUrl(local),
-        surge: rawRepoUrl(local),
-        source: normalize(await fs.readFile(local, 'utf8')),
-        qxAdapted: false,
-      });
-    } else {
-      map.set(url, {
-        qx: url,
-        surge: url,
-        source: '',
-        qxAdapted: false,
-      });
-    }
+  for (const reference of scriptUrls(source)) {
+    const originalUrl = resolveOriginalUrl(reference, pluginSourceUrl);
+    const sourceText = normalize(await fetchOriginalText(originalUrl)).replace(/\n*$/, '\n');
+    map.set(reference, {
+      qx: originalUrl,
+      surge: originalUrl,
+      source: sourceText,
+      qxAdapted: false,
+    });
   }
   return map;
 }
@@ -82,51 +57,7 @@ async function readIfExists(file) {
   return await exists(file) ? normalize(await fs.readFile(file, 'utf8')) : null;
 }
 
-async function loadDependencyCache() {
-  if (!await exists(DEPENDENCY_MANIFEST)) return { resources: {} };
-  return JSON.parse(await fs.readFile(DEPENDENCY_MANIFEST, 'utf8'));
-}
-
-async function localJqFiles(entry, source, dependencyCache) {
-  const out = new Map();
-  const parsed = parseLoon(source);
-  for (const raw of parsed.sections.get('Rewrite') || []) {
-    const line = raw.trim();
-    if (!line || line.startsWith('#') || line.startsWith(';') || line.startsWith('//') || !isRewriteV2(line)) continue;
-    const ast = parseRewriteV2(line);
-    validateRewriteV2Ast(ast);
-    if (ast.actions.length !== 1) continue;
-    const spec = jqDependencySpecFromAction(ast.actions[0], { pluginSourceUrl: entry.source });
-    if (!spec) continue;
-    const rel = dependencyCache.resources?.[spec.url];
-    if (!rel) {
-      throw new Error(entry.id + ': missing cached JQ dependency for ' + spec.url);
-    }
-    const local = path.join(ROOT, rel);
-    if (!await exists(local)) {
-      throw new Error(entry.id + ': cached JQ dependency file missing: ' + rel);
-    }
-    out.set(line, {
-      content: minifyJqFile(await fs.readFile(local, 'utf8')),
-      sourceFile: spec.url,
-      localFile: rel,
-      legacyAlias: Boolean(spec.legacyAlias),
-    });
-  }
-  return out;
-}
-
-function assertOfflineDependencies(entry, source) {
-  if (/\.body\.mock_file\s*\(/.test(source)) {
-    throw new Error(
-      entry.id + ': offline canonical regeneration found mock_file dependency; ' +
-      'materialize that dependency before enabling canonical write/check.'
-    );
-  }
-}
-
 const manifest = await loadLoonSourceCatalog(MANIFEST);
-const dependencyCache = await loadDependencyCache();
 const changed = [];
 const failures = [];
 
@@ -134,21 +65,28 @@ for (const entry of manifest) {
   try {
     const sourcePath = path.join(RESOURCE_DIR, entry.file);
     const source = cleanSource(await fs.readFile(sourcePath, 'utf8'));
-    assertOfflineDependencies(entry, source);
-
     const qxPath = path.join(ROOT, qxTargetPath(entry));
     const surgePath = path.join(ROOT, surgeTargetPath(entry));
     const oldQx = await readIfExists(qxPath);
     const oldSurge = await readIfExists(surgePath);
     const stamp = existingStamp(oldQx, oldSurge) || nowCN();
-    const scripts = await mirroredScriptMap(entry, source);
-    const jqFiles = await localJqFiles(entry, source, dependencyCache);
+    const scripts = await originalScriptMap(source, entry.source);
+    const parsed = parseLoon(source);
+    const qxMockFiles = await materializeQxMockFiles(entry, parsed);
+    const jqFiles = await materializeJqFiles(entry, parsed);
 
-    let out = convert(entry, source, scripts, stamp, new Map(), jqFiles);
+    let out = convert(entry, source, scripts, stamp, qxMockFiles, jqFiles);
     validateQX(out.qx, entry);
     validateSurgeModule(out.surge, entry);
 
-    const differs = oldQx !== out.qx || oldSurge !== out.surge;
+    const helperDir = path.join(GENERATED_SCRIPT_DIR, entry.id);
+    const helperDiffs = [];
+    for (const [name, content] of out.generatedScripts) {
+      const oldHelper = await readIfExists(path.join(helperDir, name));
+      if (oldHelper !== content) helperDiffs.push(name);
+    }
+
+    const differs = oldQx !== out.qx || oldSurge !== out.surge || helperDiffs.length > 0;
     if (!differs) {
       console.log(entry.id + ': canonical outputs current');
       continue;
@@ -156,14 +94,13 @@ for (const entry of manifest) {
 
     changed.push(entry.id);
     if (mode === 'check') {
-      console.error('::error title=' + entry.id + '::canonical outputs are stale');
+      console.error('::error title=' + entry.id + '::canonical outputs/helpers are stale');
       continue;
     }
 
-    // A real regeneration is a conversion event. Refresh the timestamp only
-    // when content actually changes, then write both targets atomically enough
-    // for a normal Git working tree update.
-    out = convert(entry, source, scripts, nowCN(), new Map(), jqFiles);
+    // Refresh one shared conversion timestamp for targets and WayX-generated
+    // helper scripts. Source Script URLs remain untouched and are never mirrored.
+    out = convert(entry, source, scripts, nowCN(), qxMockFiles, jqFiles);
     validateQX(out.qx, entry);
     validateSurgeModule(out.surge, entry);
 
@@ -171,7 +108,20 @@ for (const entry of manifest) {
     await fs.mkdir(path.dirname(surgePath), {recursive:true});
     await fs.writeFile(qxPath, out.qx);
     await fs.writeFile(surgePath, out.surge);
-    console.log(entry.id + ': regenerated ' + path.relative(ROOT, qxPath) + ' + ' + path.relative(ROOT, surgePath));
+
+    if (out.generatedScripts.size) {
+      await fs.mkdir(helperDir, {recursive:true});
+      for (const [name, content] of out.generatedScripts) {
+        await fs.writeFile(path.join(helperDir, name), content);
+      }
+    }
+
+    console.log(
+      entry.id + ': regenerated ' +
+      path.relative(ROOT, qxPath) + ' + ' +
+      path.relative(ROOT, surgePath) +
+      (out.generatedScripts.size ? ' + helpers=' + out.generatedScripts.size : '')
+    );
   } catch (error) {
     failures.push(entry.id + ': ' + (error?.stack || error));
     console.error('::error title=' + entry.id + '::' + String(error?.message || error).replaceAll('\n', '%0A'));

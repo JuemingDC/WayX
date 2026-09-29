@@ -222,15 +222,25 @@ source action
 GitHub Action 的职责：
 
 1. 从 Source Catalog 获取待处理资源；
-2. 下载/更新源插件；
-3. 下载 converter 需要审查的 Source Script / dependency；
+2. **只从 descriptor 中的原作者 `source` URL 下载/更新源插件；Catalog 不允许 mirror/fallback 字段；**
+3. 对插件声明的 Source Script / JQ / mock dependency，**只访问声明或相对解析得到的原始 URL**；Source Script 仅临时读取用于兼容性判断，不复制到 WayX，不改写目标引用；
 4. 对每个资源调用**同一个 generic converter**；
 5. 运行 QX / Surge validator；
 6. 运行 source/target 对账；
 7. Safe Tier 自动提交；
 8. Review Tier 开 PR 等待语义审查。
 
-Source Catalog 可以包含具体插件名和 URL，因为它只是数据清单；converter source code 不得根据 Catalog 中的身份字段改变转换算法。
+Source Catalog 可以包含具体插件名和原作者 URL，因为它只是数据清单；converter source code 不得根据 Catalog 中的身份字段改变转换算法。
+
+### 5.10.1 原作者源唯一原则
+
+- 插件：只请求 `entry.source`。
+- Source Script：只请求插件声明中的 `script-path` / `script("...")` URL。
+- 相对 dependency：只按插件原始 URL 解析后直接请求。
+- 禁止第三方 GitHub 副本、第三方镜像、备用域名和 fallback 链；若原作者官方 `source` 本身就是 GitHub/GitHub Raw，则该 URL 属于原作者源，可直接使用。
+- 原源不可达：本轮失败并进入 Review，不切换副本。
+- QX/Surge 中的 Source Script URL 必须继续指向源插件声明的 URL。
+- WayX 允许生成自己的 **helper script** 来补足目标平台缺失的 Rewrite/Mock 语义；这种 helper 是 converter 输出，不属于 Source Script 镜像。
 
 ## 5.11 陌生插件验收测试
 
@@ -272,3 +282,12 @@ CI 必须审计生产 converter，禁止出现已登记插件身份驱动的语�
 → real-plugin regression
 → canonical output
 ```
+
+## 5.13 自动转换实现
+
+- Source Catalog schema/validation：`converter/src/source-catalog.mjs`
+- Original-source fetch layer：`converter/src/source-fetch.mjs`
+- Generic orchestration：`.github/scripts/sync-convert.mjs`
+- Offline canonical regeneration：`converter/tools/regenerate-canonical.mjs`
+- Identity invariance：`converter/tests/generic-identity.mjs`
+- Plugin-identity source audit：`converter/tests/genericity-audit.mjs`

@@ -1,54 +1,54 @@
-// Scan mirrored RuCu6 scripts for Quantumult X compatibility signals.
+// Scan original Source Script URLs referenced by catalog-managed Loon plugins.
 // Author: chance
 // Category: Converter / Script Compatibility / Report
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { inspectQxScriptCompatibility } from '../src/script-compat.mjs';
+import { loadLoonSourceCatalog } from '../src/source-catalog.mjs';
+import { fetchOriginalText } from '../src/source-fetch.mjs';
+import { scriptUrls } from '../../.github/scripts/sync-convert.mjs';
 
-const ROOT = process.cwd();
-const SCRIPT_ROOT = path.join(ROOT, 'script', 'RuCu6');
-const REPORT = path.join(ROOT, 'monitor', '.runtime', 'reports', 'script-compat.json');
+const ROOT=process.cwd();
+const CATALOG=path.join(ROOT,'.github','sources','loon.json');
+const RESOURCE_ROOT=path.join(ROOT,'Resource','Loon');
+const REPORT=path.join(ROOT,'monitor','.runtime','reports','script-compat.json');
 
-async function walk(dir) {
-  const out = [];
-  let entries = [];
-  try { entries = await fs.readdir(dir, { withFileTypes: true }); }
-  catch (error) {
-    if (error?.code === 'ENOENT') return out;
-    throw error;
+const catalog=await loadLoonSourceCatalog(CATALOG);
+const items=[];
+
+for (const entry of catalog) {
+  const source=await fs.readFile(path.join(RESOURCE_ROOT,entry.file),'utf8');
+  for (const scriptUrl of scriptUrls(source)) {
+    try {
+      const sourceText=await fetchOriginalText(scriptUrl);
+      const result=inspectQxScriptCompatibility({scriptUrl,sourceText});
+      items.push({
+        pluginId:entry.id,
+        scriptUrl,
+        status:result.status,
+        executable:result.executable,
+        reason:result.reason,
+        signals:result.signals,
+      });
+    } catch (error) {
+      items.push({
+        pluginId:entry.id,
+        scriptUrl,
+        status:'review',
+        executable:false,
+        reason:'Original Source Script fetch failed: '+String(error?.message || error),
+        signals:{sourceAvailable:false},
+      });
+    }
   }
-  for (const entry of entries) {
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) out.push(...await walk(full));
-    else if (entry.isFile() && entry.name.endsWith('.js')) out.push(full);
-  }
-  return out;
 }
 
-const files = await walk(SCRIPT_ROOT);
-const items = [];
-for (const file of files.sort()) {
-  const sourceText = await fs.readFile(file, 'utf8');
-  const rel = path.relative(SCRIPT_ROOT, file).split(path.sep).join('/');
-  const scriptUrl = 'https://rucu6.pages.dev/Scripts/' + rel;
-  const result = inspectQxScriptCompatibility({ scriptUrl, sourceText });
-  items.push({
-    file: path.relative(ROOT, file).split(path.sep).join('/'),
-    scriptUrl,
-    status: result.status,
-    executable: result.executable,
-    registryId: result.registryId,
-    reason: result.reason,
-    signals: result.signals,
-  });
-}
+const summary={};
+for(const item of items) summary[item.status]=(summary[item.status]||0)+1;
+await fs.mkdir(path.dirname(REPORT),{recursive:true});
+await fs.writeFile(REPORT,JSON.stringify({version:2,sourcePolicy:'original-only',summary,items},null,2)+'\n');
 
-const summary = {};
-for (const item of items) summary[item.status] = (summary[item.status] || 0) + 1;
-await fs.mkdir(path.dirname(REPORT), { recursive: true });
-await fs.writeFile(REPORT, JSON.stringify({ version: 1, summary, items }, null, 2) + '\n');
-
-console.log('WayX script compatibility scan:', JSON.stringify(summary));
-for (const item of items.filter(x => !x.executable)) {
-  console.log(`REVIEW ${item.file}: ${item.reason}`);
+console.log('WayX original-script compatibility scan:',JSON.stringify(summary));
+for(const item of items.filter(x=>!x.executable)) {
+  console.log(`REVIEW ${item.pluginId} ${item.scriptUrl}: ${item.reason}`);
 }

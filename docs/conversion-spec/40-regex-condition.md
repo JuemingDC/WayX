@@ -84,3 +84,11 @@ ${url} ~= /REGEX/ && ${request.method} == "POST"
 - quantifier
 
 不得为了“简洁”重写 regex。
+
+## 40.7 自动转换实现
+
+- Rewrite v2 condition parser/AST：`converter/src/rewrite-v2.mjs`
+- AST action/condition validation：`converter/src/rewrite-v2-actions.mjs`
+- Target regex compilation：`converter/src/target-regex.mjs`
+- Static/simple-condition target planner：`converter/src/rewrite-v2-semantic.mjs`
+- Regression：`converter/tests/checkpoint.mjs`、`converter/tests/rucu6-rewrite-v2-coverage.mjs`

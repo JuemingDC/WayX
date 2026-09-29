@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.2  
+版本：1.3  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -23,6 +23,7 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 | [70-mitm-comments](docs/conversion-spec/70-mitm-comments.md) | MITM、注释、metadata |
 | [80-review-validation](docs/conversion-spec/80-review-validation.md) | Review Tier、validator、Golden |
 | [90-project-workflow](docs/conversion-spec/90-project-workflow.md) | 项目执行顺序和规范变更流程 |
+| [95-implementation-index](docs/conversion-spec/95-implementation-index.md) | **规范块 → production script → tests → 自动化入口总索引** |
 
 ## 固定顺序
 

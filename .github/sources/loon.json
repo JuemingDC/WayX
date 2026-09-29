@@ -1,13 +1,162 @@
 [
-  {"id":"HTTPDNS","file":"Block_HTTPDNS.lpx","source":"https://kelee.one/Tool/Loon/Lpx/Block_HTTPDNS.lpx","qx":"HTTPDNS.snippet","surge":"HTTPDNS.sgmodule","category":"去广告"},
-  {"id":"BlockAdvertisers","file":"BlockAdvertisers.lpx","source":"https://kelee.one/Tool/Loon/Lpx/BlockAdvertisers.lpx","qx":"BlockAdvertisers.snippet","surge":"BlockAdvertisers.sgmodule","category":"去广告"},
-  {"id":"Amap","file":"Amap_remove_ads.lpx","source":"https://kelee.one/Tool/Loon/Lpx/Amap_remove_ads.lpx","qx":"Amap_remove_ads.snippet","surge":"Amap_remove_ads.sgmodule","category":"去广告"},
-  {"id":"BaiduNetDisk","file":"BaiduNetDisk_remove_ads.lpx","source":"https://kelee.one/Tool/Loon/Lpx/BaiduNetDisk_remove_ads.lpx","qx":"BaiduNetDisk_remove_ads.snippet","surge":"BaiduNetDisk_remove_ads.sgmodule","category":"去广告"},
-  {"id":"Tieba","file":"Tieba_remove_ads.lpx","source":"https://kelee.one/Tool/Loon/Lpx/Tieba_remove_ads.lpx","qx":"Tieba_remove_ads.snippet","surge":"Tieba_remove_ads.sgmodule","category":"去广告"},
-  {"id":"Quark","file":"QuarkBrowser_remove_ads.lpx","source":"https://kelee.one/Tool/Loon/Lpx/QuarkBrowser_remove_ads.lpx","qx":"QuarkBrowser_remove_ads.snippet","surge":"QuarkBrowser_remove_ads.sgmodule","category":"去广告"},
-  {"id":"Taobao","file":"Taobao_remove_ads.lpx","source":"https://kelee.one/Tool/Loon/Lpx/Taobao_remove_ads.lpx","qx":"Taobao_remove_ads.snippet","surge":"Taobao_remove_ads.sgmodule","category":"去广告"},
-  {"id":"PinDuoDuo","file":"PinDuoDuo_remove_ads.lpx","source":"https://kelee.one/Tool/Loon/Lpx/PinDuoDuo_remove_ads.lpx","qx":"PinDuoDuo_remove_ads.snippet","surge":"PinDuoDuo_remove_ads.sgmodule","category":"去广告"},
-  {"id":"LOL_Bible","file":"LOL_Bible_remove_ads.lpx","source":"https://kelee.one/Tool/Loon/Lpx/LOL_Bible_remove_ads.lpx","qx":"LOL_Bible_remove_ads.snippet","surge":"LOL_Bible_remove_ads.sgmodule","category":"去广告"},
-  {"id":"DianPing","file":"DianPing.lpx","source":"https://raw.githubusercontent.com/fmz200/wool_scripts/main/Loon/plugin/split/partD/DianPing.lpx","qx":"DianPing.snippet","surge":"DianPing.sgmodule","category":"去广告"},
-  {"id":"Meituan","file":"Meituan.lpx","source":"https://raw.githubusercontent.com/fmz200/wool_scripts/main/Loon/plugin/split/partM/Meituan.lpx","qx":"Meituan.snippet","surge":"Meituan.sgmodule","category":"去广告"}
+  {
+    "id": "HTTPDNS",
+    "file": "Block_HTTPDNS.lpx",
+    "source": "https://kelee.one/Tool/Loon/Lpx/Block_HTTPDNS.lpx",
+    "qx": "HTTPDNS.snippet",
+    "surge": "HTTPDNS.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "BlockAdvertisers",
+    "file": "BlockAdvertisers.lpx",
+    "source": "https://kelee.one/Tool/Loon/Lpx/BlockAdvertisers.lpx",
+    "qx": "BlockAdvertisers.snippet",
+    "surge": "BlockAdvertisers.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "Amap",
+    "file": "Amap_remove_ads.lpx",
+    "source": "https://kelee.one/Tool/Loon/Lpx/Amap_remove_ads.lpx",
+    "qx": "Amap_remove_ads.snippet",
+    "surge": "Amap_remove_ads.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "BaiduNetDisk",
+    "file": "BaiduNetDisk_remove_ads.lpx",
+    "source": "https://kelee.one/Tool/Loon/Lpx/BaiduNetDisk_remove_ads.lpx",
+    "qx": "BaiduNetDisk_remove_ads.snippet",
+    "surge": "BaiduNetDisk_remove_ads.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "Tieba",
+    "file": "Tieba_remove_ads.lpx",
+    "source": "https://kelee.one/Tool/Loon/Lpx/Tieba_remove_ads.lpx",
+    "qx": "Tieba_remove_ads.snippet",
+    "surge": "Tieba_remove_ads.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "Quark",
+    "file": "QuarkBrowser_remove_ads.lpx",
+    "source": "https://kelee.one/Tool/Loon/Lpx/QuarkBrowser_remove_ads.lpx",
+    "qx": "QuarkBrowser_remove_ads.snippet",
+    "surge": "QuarkBrowser_remove_ads.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "Taobao",
+    "file": "Taobao_remove_ads.lpx",
+    "source": "https://kelee.one/Tool/Loon/Lpx/Taobao_remove_ads.lpx",
+    "qx": "Taobao_remove_ads.snippet",
+    "surge": "Taobao_remove_ads.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "PinDuoDuo",
+    "file": "PinDuoDuo_remove_ads.lpx",
+    "source": "https://kelee.one/Tool/Loon/Lpx/PinDuoDuo_remove_ads.lpx",
+    "qx": "PinDuoDuo_remove_ads.snippet",
+    "surge": "PinDuoDuo_remove_ads.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "LOL_Bible",
+    "file": "LOL_Bible_remove_ads.lpx",
+    "source": "https://kelee.one/Tool/Loon/Lpx/LOL_Bible_remove_ads.lpx",
+    "qx": "LOL_Bible_remove_ads.snippet",
+    "surge": "LOL_Bible_remove_ads.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "DianPing",
+    "file": "DianPing.lpx",
+    "source": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Loon/plugin/split/partD/DianPing.lpx",
+    "qx": "DianPing.snippet",
+    "surge": "DianPing.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "Meituan",
+    "file": "Meituan.lpx",
+    "source": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Loon/plugin/split/partM/Meituan.lpx",
+    "qx": "Meituan.snippet",
+    "surge": "Meituan.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "RuCu6Amap",
+    "file": "RuCu6/amap.lpx",
+    "source": "https://rucu6.pages.dev/Plugins/amap.lpx",
+    "qx": "RuCu6_Amap.snippet",
+    "surge": "RuCu6_Amap.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "Bilibili",
+    "file": "RuCu6/bilibili.lpx",
+    "source": "https://rucu6.pages.dev/Plugins/bilibili.lpx",
+    "qx": "Bilibili.snippet",
+    "surge": "Bilibili.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "JingDong",
+    "file": "RuCu6/jingdong.lpx",
+    "source": "https://rucu6.pages.dev/Plugins/jingdong.lpx",
+    "qx": "JingDong.snippet",
+    "surge": "JingDong.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "MyBlockAds",
+    "file": "RuCu6/myblockads.lpx",
+    "source": "https://rucu6.pages.dev/Plugins/myblockads.lpx",
+    "qx": "MyBlockAds.snippet",
+    "surge": "MyBlockAds.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "Webpage",
+    "file": "RuCu6/webpage.lpx",
+    "source": "https://rucu6.pages.dev/Plugins/webpage.lpx",
+    "qx": "Webpage.snippet",
+    "surge": "Webpage.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "Weibo",
+    "file": "RuCu6/weibo.lpx",
+    "source": "https://rucu6.pages.dev/Plugins/weibo.lpx",
+    "qx": "Weibo.snippet",
+    "surge": "Weibo.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "XiaoHongShu",
+    "file": "RuCu6/xiaohongshu.lpx",
+    "source": "https://rucu6.pages.dev/Plugins/xiaohongshu.lpx",
+    "qx": "XiaoHongShu.snippet",
+    "surge": "XiaoHongShu.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "YouTube",
+    "file": "RuCu6/youtube.lpx",
+    "source": "https://rucu6.pages.dev/Plugins/youtube.lpx",
+    "qx": "YouTube.snippet",
+    "surge": "YouTube.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "Zhihu",
+    "file": "RuCu6/zhihu.lpx",
+    "source": "https://rucu6.pages.dev/Plugins/zhihu.lpx",
+    "qx": "Zhihu.snippet",
+    "surge": "Zhihu.sgmodule",
+    "category": "去广告"
+  }
 ]

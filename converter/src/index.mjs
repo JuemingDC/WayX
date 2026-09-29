@@ -18,3 +18,5 @@ export * from './surge-module.mjs';
 export * from './metadata.mjs';
 export * from './legacy-rewrite.mjs';
 export * from './source-catalog.mjs';
+export * from './mitm.mjs';
+export * from './source-fetch.mjs';

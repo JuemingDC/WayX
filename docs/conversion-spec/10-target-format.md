@@ -74,3 +74,10 @@ Surge Module：
 - `[MITM]`
 
 不得把 Loon `[Rewrite]`、`request if ... then ...` 原样作为 Surge 可执行内容。
+
+## 10.6 自动转换实现
+
+- QX/Surge output path：`converter/src/paths.mjs`
+- QX/Surge metadata/header：`converter/src/metadata.mjs`
+- Surge module section/header validator：`converter/src/surge-module.mjs`
+- Final render/orchestration：`.github/scripts/sync-convert.mjs`

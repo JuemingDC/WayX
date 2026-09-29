@@ -53,3 +53,38 @@ converter 先实现
 - 新目标平台官方能力；
 
 才允许改 converter。此时必须先修改对应规范块，再用 synthetic fixture 实现该语法类别，最后再用真实插件做回归验证。
+
+## 自动化实现文件
+
+- Source Catalog：`.github/sources/loon.json`
+- Source fetch + dependency fetch + generic conversion：`.github/scripts/sync-convert.mjs`
+- Canonical deterministic regeneration：`converter/tools/regenerate-canonical.mjs`
+- CI gate：`.github/workflows/converter-check.yml`（同仓库 PR 可自动提交 deterministic canonical + WayX-generated helpers；外部 fork 只校验不写入）
+- Upstream scheduled flow：`.github/workflows/upstream-monitor.yml`
+- Review classification：`.github/scripts/conversion_gate.py` + `.github/scripts/validate_conversion_policy.py`
+
+自动化脚本不得再维护第二份插件列表；所有 Loon source 必须从 Source Catalog 遍历。
+
+## 原作者源唯一链路
+
+自动化从源头开始固定为：
+
+```text
+Source Catalog entry.source（原作者）
+→ 直接下载 Loon plugin
+→ 解析 plugin 中原始 script/dependency URL
+→ 直接读取原 Source Script / dependency
+→ 只在内存中做兼容性/语义分析
+→ 通用 converter
+→ QX / Surge
+→ validator / reconciliation
+→ Safe commit 或 Review PR
+```
+
+禁止：
+- plugin mirror/fallback；
+- Source Script 镜像落盘；
+- 把原 `script-path` 改写成 WayX/GitHub URL；
+- 原源失败时自动切换第三方副本。
+
+WayX 自动生成的 target helper script 不属于 Source Script 镜像，可继续作为 converter 产物写入 `script/<id>/`。`regenerate-canonical.mjs` 必须与目标文件一起生成这些 helper；`generated-helper-refs.mjs` 必须确认所有 WayX raw helper URL 都有真实文件。

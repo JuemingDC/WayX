@@ -83,3 +83,14 @@ CI 必须额外检查：
 - 新增一个仅改变插件身份字段的 fixture，不得改变有效 Rule/Rewrite/Script/MITM 输出。
 
 真实插件 Golden 只能做 regression，不能替代 genericity 测试。
+
+## 80.7 自动转换实现
+
+- QX validator：`.github/scripts/sync-convert.mjs::validateQX`
+- Surge validator：`converter/src/surge-module.mjs::validateSurgeModule`
+- Genericity audit：`converter/tests/genericity-audit.mjs`
+- Identity invariance：`converter/tests/generic-identity.mjs`
+- Repository-wide audit：`converter/tools/audit-repository.mjs`
+- Generated helper reference existence：`converter/tests/generated-helper-refs.mjs`
+- Original Source Script URL preservation：`converter/tests/source-script-url-preservation.mjs`
+- End-to-end Golden：`converter/tests/end-to-end-golden.mjs` + `converter/fixtures/end-to-end-golden.json`

@@ -18,6 +18,17 @@ function safeRelativePath(value, field) {
   return path;
 }
 
+function absoluteHttpUrl(value, field) {
+  const text=cleanString(value);
+  let url;
+  try { url=new URL(text); }
+  catch { throw new Error(`catalog ${field} must be an absolute URL: ${text}`); }
+  if (!['http:','https:'].includes(url.protocol)) {
+    throw new Error(`catalog ${field} must use HTTP(S): ${text}`);
+  }
+  return text;
+}
+
 export function validateLoonSourceEntry(input) {
   if (!input || typeof input !== 'object' || Array.isArray(input)) {
     throw new TypeError('catalog entry must be an object');
@@ -26,13 +37,17 @@ export function validateLoonSourceEntry(input) {
     if (!cleanString(input[field])) throw new Error(`catalog entry missing ${field}`);
   }
 
+  if (Object.prototype.hasOwnProperty.call(input, 'mirrors')) {
+    throw new Error('catalog mirrors are forbidden; use the original author source URL only');
+  }
+
   const entry = {
     id: cleanString(input.id),
     file: safeRelativePath(input.file, 'file'),
-    source: cleanString(input.source),
+    source: absoluteHttpUrl(input.source, 'source'),
     qx: safeRelativePath(input.qx, 'qx'),
     surge: safeRelativePath(input.surge, 'surge'),
-    category: cleanString(input.category),
+    category: cleanString(input.category)
   };
 
   if (!/^[A-Za-z0-9._-]+$/.test(entry.id)) {
@@ -41,13 +56,6 @@ export function validateLoonSourceEntry(input) {
   if (!/\.lpx$/i.test(entry.file)) throw new Error(`catalog file must end in .lpx: ${entry.file}`);
   if (!/\.snippet$/i.test(entry.qx)) throw new Error(`catalog qx target must end in .snippet: ${entry.qx}`);
   if (!/\.sgmodule$/i.test(entry.surge)) throw new Error(`catalog surge target must end in .sgmodule: ${entry.surge}`);
-
-  let url;
-  try { url = new URL(entry.source); }
-  catch { throw new Error(`catalog source must be an absolute URL: ${entry.source}`); }
-  if (!['http:','https:'].includes(url.protocol)) {
-    throw new Error(`catalog source must use HTTP(S): ${entry.source}`);
-  }
 
   return Object.freeze(entry);
 }

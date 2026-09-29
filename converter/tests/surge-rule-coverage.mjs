@@ -67,15 +67,22 @@ for (const entry of manifest) {
 assert.ok(stats.files > 0, 'no Loon source files were scanned');
 assert.ok(stats.rules > 0, 'no Loon [Rule] entries were scanned');
 
-// Current checked-in Loon resources only use rule types and module policies that
-// Surge can represent natively. If this changes upstream, CI should expose it
-// instead of silently approximating the new rule.
+// Surge profiles may bind rules to named proxy policies/groups, but Surge
+// Modules can only insert rules using internal policies because Modules cannot
+// modify [Proxy] / [Proxy Group]. Those source rules are therefore an expected
+// Review condition, not a syntax-conversion failure. Any other review reason
+// still fails coverage so no unsupported rule is silently approximated.
+const unexpectedReview = stats.reviewLines.filter(x => x.reason !== 'external-policy');
 assert.equal(
-  stats.review,
+  unexpectedReview.length,
   0,
-  'current Loon rules must remain natively expressible in Surge modules:\n' +
-    stats.reviewLines.map(x => `${x.file}: [${x.reason}] ${x.line}`).join('\n'),
+  'unexpected Surge module rule reviews:\n' +
+    unexpectedReview.map(x => `${x.file}: [${x.reason}] ${x.line}`).join('\n'),
 );
+for (const item of stats.reviewLines.filter(x => x.reason === 'external-policy')) {
+  const mapped=surgeModuleRule(item.line);
+  assert.match(mapped.lines.join('\n'), /policy binding required/i);
+}
 
 const types = [...stats.types.entries()].sort((a, b) => a[0].localeCompare(b[0]));
 console.log(

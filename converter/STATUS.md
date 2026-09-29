@@ -337,3 +337,11 @@ Official behavior rechecked during this phase:
 3. Map request/response phase, body/binary-body requirements, timeout and enable semantics to verified QX/Surge script forms.
 4. Keep explicit QX-incompatible source scripts commented and disabled; do not fork them.
 5. Add a Script v2 real-resource coverage report analogous to the Rewrite v2 report.
+
+## Phase 11 — Source Catalog unification and spec-to-code contract
+
+- Loon `[Rule] URL-REGEX + REJECT-X` and legacy `[Rewrite] reject-X` are explicitly separated in Block 20/30 and synthetic tests.
+- Every conversion spec block is mapped to production implementation/test files; Block 70 now has a dedicated MITM planner.
+- RuCu6 managed LPX sources are declarative Source Catalog entries; duplicate `sync_rucu6.py` automation is removed.
+- Script dependency filenames use a generic collision-safe planner; unique basenames stay stable and real collisions receive deterministic hashes.
+- `converter-check` is verification-only. Scheduled `upstream-monitor` owns source fetch, deterministic conversion, validation, Safe Tier commit, and Review Tier PR handoff.

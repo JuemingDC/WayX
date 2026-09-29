@@ -2,7 +2,7 @@
 // Author: chance
 // Category: Converter / Legacy Rewrite
 import crypto from 'node:crypto';
-import { minifyJq } from './jq.mjs';
+import { minifyJq, quoteJq } from './jq.mjs';
 
 const REJECT_ACTIONS = new Set(['reject','reject-200','reject-img','reject-dict','reject-array']);
 
@@ -63,11 +63,6 @@ function jqAccess(pathText) {
     else out += '[' + JSON.stringify(part) + ']';
   }
   return out;
-}
-
-function quoteJq(jq) {
-  if (jq.includes("'")) throw new Error('jq expression contains a single quote and cannot be safely embedded');
-  return `'${jq}'`;
 }
 
 function parseJsonValue(token) {

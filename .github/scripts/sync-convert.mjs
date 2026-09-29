@@ -20,6 +20,8 @@ import { qxScriptV2Plan, surgeScriptV2Plan } from '../../converter/src/script-v2
 import { hasActiveSurgeLines, renderSurgeModuleHeader, validateSurgeModule } from '../../converter/src/surge-module.mjs';
 import { renderQxSnippetHeader } from '../../converter/src/metadata.mjs';
 import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
+import { planMitmLine } from '../../converter/src/mitm.mjs';
+import { fetchOriginalText, fetchOriginalBytes, resolveOriginalUrl } from '../../converter/src/source-fetch.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -27,8 +29,6 @@ const RESOURCE_DIR = path.join(ROOT, 'Resource/Loon');
 const TARGET_ROOT = path.join(ROOT, 'Adblock');
 const SCRIPT_DIR = path.join(ROOT, 'script');
 const RAW_BASE = 'https://raw.githubusercontent.com/JuemingDC/WayX/main';
-const UA = 'StashCore/2.7.1 Stash/2.7.1 Clash/1.11.0';
-const MIRRORS = ['git.repcz.link', 'git.unx.indevs.in'];
 
 const nowCN = () => new Intl.DateTimeFormat('sv-SE', {
   timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit',
@@ -42,60 +42,8 @@ async function exists(file) {
   try { await fs.access(file); return true; } catch { return false; }
 }
 
-async function fetchText(url, timeoutMs = 20000) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, { headers: { 'User-Agent': UA, 'Accept': '*/*' }, redirect: 'follow', signal: controller.signal });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const text = normalizeNewlines(await res.text());
-    if (!text.trim()) throw new Error('empty response');
-    return text;
-  } finally { clearTimeout(timer); }
-}
-
-async function fetchBytes(url, timeoutMs = 20000) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, { headers: { 'User-Agent': UA, 'Accept': '*/*' }, redirect: 'follow', signal: controller.signal });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const bytes = Buffer.from(await res.arrayBuffer());
-    if (!bytes.length) throw new Error('empty response');
-    return bytes;
-  } finally { clearTimeout(timer); }
-}
-
-function candidates(url) {
-  if (!url.includes('https://kelee.one/')) return [url];
-  const suffix = url.slice('https://kelee.one'.length);
-  return [
-    ...MIRRORS.map(h => `https://${h}/kelee.one${suffix}`),
-    url,
-  ];
-}
-
-async function fetchWithFallback(url) {
-  const errors = [];
-  for (const candidate of candidates(url)) {
-    try { return { text: await fetchText(candidate), fetchedFrom: candidate }; }
-    catch (e) { errors.push(`${candidate}: ${e.message}`); }
-  }
-  throw new Error(`all sources failed\n${errors.join('\n')}`);
-}
-
-async function fetchBytesWithFallback(url) {
-  const errors = [];
-  for (const candidate of candidates(url)) {
-    try { return { bytes: await fetchBytes(candidate), fetchedFrom: candidate }; }
-    catch (e) { errors.push(`${candidate}: ${e.message}`); }
-  }
-  throw new Error(`all sources failed\n${errors.join('\n')}`);
-}
-
 function cleanSource(text) {
-  // Qmxn mirror may insert this one line. The direct mirrors used by Actions do not.
-  return normalizeNewlines(text).split('\n').filter(l => !/^#\s*引用链接:\s*/.test(l)).join('\n').replace(/\n*$/, '\n');
+  return normalizeNewlines(text).replace(/\n*$/, '\n');
 }
 
 function parseLoon(text) {
@@ -297,15 +245,15 @@ async function materializeQxMockFiles(entry, parsed) {
       }
 
       if (plan.base64) {
-        const { text } = await fetchWithFallback(plan.url);
+        const text = await fetchOriginalText(plan.url);
         const compact = text.replace(/\s+/g, '');
         if (!/^[A-Za-z0-9+/]*={0,2}$/.test(compact) || compact.length % 4 === 1) throw new Error('invalid Base64 mock_file content');
         out.set(item.line, { bodyBase64: Buffer.from(compact, 'base64').toString('base64'), sourceFile: plan.url });
       } else if (plan.binary) {
-        const { bytes } = await fetchBytesWithFallback(plan.url);
+        const bytes = await fetchOriginalBytes(plan.url);
         out.set(item.line, { bodyBase64: bytes.toString('base64'), sourceFile: plan.url });
       } else {
-        const { text } = await fetchWithFallback(plan.url);
+        const text = await fetchOriginalText(plan.url);
         out.set(item.line, { bodyText: text, sourceFile: plan.url });
       }
     } catch (error) {
@@ -326,7 +274,7 @@ async function materializeJqFiles(entry, parsed) {
       const spec = jqDependencySpecFromAction(ast.actions[0], { pluginSourceUrl: entry.source });
       if (!spec) continue;
       if (!spec.resolvable || !spec.url) throw new Error(spec.reason || 'JQ dependency is not resolvable');
-      const { text } = await fetchWithFallback(spec.url);
+      const text = await fetchOriginalText(spec.url);
       out.set(item.line, {
         content: minifyJqFile(text),
         sourceFile: spec.url,
@@ -360,7 +308,7 @@ function sanitizeName(s) {
 
 function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Map(), jqFiles = new Map()) {
   const parsed = parseLoon(source);
-  const sourceHeader = parsed.header.filter(l => !/^#\s*引用链接:/.test(l));
+  const sourceHeader = parsed.header;
   const qxHeader = renderQxSnippetHeader(sourceHeader, entry, stamp);
 
   const qx = { filter: [], rewrite: [], mitm: [], notes: [], generatedScripts: new Map() };
@@ -383,7 +331,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     else if (qr.kind === 'rewrite') qx.rewrite.push(...comments, qr.line);
     else qx.filter.push(...comments, qr.line);
     const sr = surgeModuleRule(item.line);
-    sg.rule.push(...comments, ...sr.lines);
+    const sRuleDest = sr.section === 'map' ? sg.map : sg.rule;
+    sRuleDest.push(...comments, ...sr.lines);
   }
 
   for (const item of sectionItems(parsed.sections.get('Rewrite'))) {
@@ -533,14 +482,10 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   for (const item of sectionItems(mitmLines)) {
     const comments = cleanComments(item.comments);
     if (!item.line) continue;
-    if (/^hostname\s*=/i.test(item.line)) {
-      const hosts = item.line.split('=').slice(1).join('=').trim();
-      qx.mitm.push(...comments, `hostname = ${hosts}`);
-      sg.mitm.push(...comments, `hostname = %APPEND% ${hosts}`);
-    } else {
-      qx.mitm.push(...comments, `# Unsupported source MITM option preserved: ${item.line}`);
-      sg.mitm.push(...comments, `# Unsupported source MITM option preserved: ${item.line}`);
-    }
+    const qPlan = planMitmLine(item.line, 'qx');
+    const sPlan = planMitmLine(item.line, 'surge');
+    qx.mitm.push(...comments, qPlan.line);
+    sg.mitm.push(...comments, sPlan.line);
   }
 
   const compact = arr => {
@@ -579,18 +524,15 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
 
 }
 
-async function syncScript(entry, url) {
-  const filename = decodeURIComponent(new URL(url).pathname.split('/').pop() || `${entry.id}.js`);
-  const destDir = path.join(SCRIPT_DIR, entry.id);
-  await fs.mkdir(destDir, { recursive: true });
-  const { text } = await fetchWithFallback(url);
-  const normalized = normalizeNewlines(text).replace(/\n*$/, '\n');
-  const dest = path.join(destDir, filename);
-  if (!await exists(dest) || normalizeNewlines(await fs.readFile(dest, 'utf8')) !== normalized) {
-    await fs.writeFile(dest, normalized);
-  }
-  const raw = `${RAW_BASE}/${path.relative(ROOT, dest).split(path.sep).map(encodeURIComponent).join('/')}`;
-  return { qx: raw, surge: raw, source: normalized, qxAdapted: false };
+async function inspectSourceScript(reference, pluginSourceUrl) {
+  const originalUrl = resolveOriginalUrl(reference, pluginSourceUrl);
+  const normalized = normalizeNewlines(await fetchOriginalText(originalUrl)).replace(/\n*$/, '\n');
+  return {
+    qx: originalUrl,
+    surge: originalUrl,
+    source: normalized,
+    qxAdapted: false,
+  };
 }
 function scriptUrls(source) {
   const urls = new Set([...source.matchAll(/script-path=([^,\s]+)/gi)].map(m => m[1].trim()));
@@ -631,7 +573,8 @@ async function main() {
   for (const entry of manifest) {
     try {
       console.log(`\n== ${entry.id} ==`);
-      const { text, fetchedFrom } = await fetchWithFallback(entry.source);
+      const text = await fetchOriginalText(entry.source);
+      const fetchedFrom = entry.source;
       const source = cleanSource(text);
       if (!/^#!name=/m.test(source) || !/^\[[^\]]+\]/m.test(source)) throw new Error('downloaded content is not a valid Loon plugin');
       const sourcePath = path.join(RESOURCE_DIR, entry.file);
@@ -644,8 +587,9 @@ async function main() {
       const parsedSource = parseLoon(source);
       const qxMockFiles = await materializeQxMockFiles(entry, parsedSource);
       const jqFiles = await materializeJqFiles(entry, parsedSource);
-      for (const url of scriptUrls(source)) {
-        scriptMap.set(url, await syncScript(entry, url));
+      const discoveredScriptUrls = scriptUrls(source);
+      for (const reference of discoveredScriptUrls) {
+        scriptMap.set(reference, await inspectSourceScript(reference, entry.source));
       }
 
       const qxPath = path.join(ROOT, qxTargetPath(entry));
@@ -698,6 +642,8 @@ if (__wayxIsMain) await main();
 export {
   cleanSource,
   convert,
+  materializeJqFiles,
+  materializeQxMockFiles,
   parseLoon,
   scriptUrls,
   validateQX,

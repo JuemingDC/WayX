@@ -22,9 +22,12 @@ import {
   LOON_REWRITE_V2_ACTIONS,
   minifyJq,
   minifyJqFile,
+  quoteJq,
   classifyLegacyRewrite,
   planLegacyRewrite,
   validateLoonSourceCatalog,
+  planMitmLine,
+  resolveOriginalUrl,
   mergeBoxJsSubscription,
   parseLoonArguments,
   parseRewriteV2,
@@ -51,6 +54,28 @@ import {
 } from '../src/index.mjs';
 
 assert.equal(qxRule('URL-REGEX, "^https:\\/\\/ad\\.example\\.com", REJECT').line, '^https:\\/\\/ad\\.example\\.com url reject-200');
+assert.equal(
+  quoteJq('select(.title == "I\'m here")'),
+  '\'select(.title == "I\\u0027m here")\'',
+);
+assert.throws(
+  () => quoteJq(".foo'bar"),
+  /single quote outside a JSON string/,
+);
+assert.equal(qxRule('URL-REGEX,"^https:\\/\\/empty\\.example\\.com",REJECT-200').line, '^https:\\/\\/empty\\.example\\.com url reject-200');
+assert.equal(qxRule('URL-REGEX,"^https:\\/\\/image\\.example\\.com",REJECT-IMG').line, '^https:\\/\\/image\\.example\\.com url reject-img');
+assert.equal(qxRule('URL-REGEX,"^https:\\/\\/dict\\.example\\.com",REJECT-DICT').line, '^https:\\/\\/dict\\.example\\.com url reject-dict');
+assert.equal(qxRule('URL-REGEX,"^https:\\/\\/array\\.example\\.com",REJECT-ARRAY').line, '^https:\\/\\/array\\.example\\.com url reject-array');
+assert.equal(qxRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP').line, '^https:\\/\\/drop\\.example\\.com url reject');
+const surgeUrlReject200 = surgeModuleRule('URL-REGEX,"^https:\\/\\/empty\\.example\\.com",REJECT-200');
+assert.equal(surgeUrlReject200.section, 'map');
+assert.equal(surgeUrlReject200.line, '^https:\\/\\/empty\\.example\\.com data-type=text data="" status-code=200');
+const surgeUrlRejectDict = surgeModuleRule('URL-REGEX,"^https:\\/\\/dict\\.example\\.com",REJECT-DICT');
+assert.equal(surgeUrlRejectDict.section, 'map');
+assert.equal(surgeUrlRejectDict.line, '^https:\\/\\/dict\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"');
+const surgeUrlRejectArray = surgeModuleRule('URL-REGEX,"^https:\\/\\/array\\.example\\.com",REJECT-ARRAY');
+assert.equal(surgeUrlRejectArray.section, 'map');
+assert.equal(surgeUrlRejectArray.line, '^https:\\/\\/array\\.example\\.com data-type=text data="[]" status-code=200 header="Content-Type:application/json"');
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-IMG').line, '^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\? url reject-img');
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP').line, '^https:\\/\\/drop\\.example\\.com url reject');
 assert.equal(surgeRule('URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-IMG'), 'URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-TINYGIF');
@@ -193,6 +218,7 @@ const compact = minifyJq('walk( if type == "object" then .a = [] | del(.b, .c) e
 assert.equal(compact.includes('"object"'), true);
 assert.equal(compact.includes('del(.b,.c)'), true);
 
+
 assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:true,scriptUrl:'https://example.com/request.js',sourceText:'$done({status:"HTTP/1.1 200 OK",body:$request.body});'}).action, 'script-analyze-echo-response');
 assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:false,scriptUrl:'https://example.com/header.js',sourceText:'$done({headers:$request.headers});'}).action, 'script-request-header');
 assert.equal(selectQxScriptAction({phase:'http-response',requiresBody:true,scriptUrl:'https://example.com/a.js'}).action, 'script-response-body');
@@ -228,6 +254,29 @@ const catalogFixture = validateLoonSourceCatalog([
   },
 ]);
 assert.equal(catalogFixture[0].id, 'UnknownPlugin');
+assert.equal(
+  resolveOriginalUrl('../Scripts/response.js', 'https://author.example.invalid/Plugins/demo.lpx'),
+  'https://author.example.invalid/Scripts/response.js',
+);
+assert.equal(
+  resolveOriginalUrl('https://author.example.invalid/Scripts/request.js', 'https://ignored.example.invalid/demo.lpx'),
+  'https://author.example.invalid/Scripts/request.js',
+);
+assert.throws(() => resolveOriginalUrl('../Scripts/request.js'), /requires original plugin URL/);
+assert.throws(
+  () => validateLoonSourceCatalog([
+    {
+      id:'NoMirror',
+      file:'no-mirror.lpx',
+      source:'https://author.example.invalid/no-mirror.lpx',
+      qx:'NoMirror.snippet',
+      surge:'NoMirror.sgmodule',
+      category:'测试',
+      mirrors:['https://mirror.example.invalid/no-mirror.lpx'],
+    },
+  ]),
+  /mirrors are forbidden/,
+);
 assert.throws(
   () => validateLoonSourceCatalog([
     {id:'A',file:'a.lpx',source:'https://a.invalid/a.lpx',qx:'same.snippet',surge:'a.sgmodule',category:'x'},
@@ -308,6 +357,34 @@ assert.equal(
   planLegacyRewrite('^https:\\/\\/ads\\.example\\.com', 'reject-dict', 'surge', legacyCtx).section,
   'map',
 );
+assert.equal(
+  planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject', 'qx', legacyCtx).line,
+  '^https:\\/\\/legacy\\.example\\.com url reject',
+);
+assert.equal(
+  planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject', 'surge', legacyCtx).line,
+  '^https:\\/\\/legacy\\.example\\.com _ reject',
+);
+assert.equal(
+  planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject-200', 'qx', legacyCtx).line,
+  '^https:\\/\\/legacy\\.example\\.com url reject-200',
+);
+assert.equal(
+  planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject-img', 'qx', legacyCtx).line,
+  '^https:\\/\\/legacy\\.example\\.com url reject-img',
+);
+assert.equal(
+  planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject-dict', 'qx', legacyCtx).line,
+  '^https:\\/\\/legacy\\.example\\.com url reject-dict',
+);
+assert.equal(
+  planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject-array', 'qx', legacyCtx).line,
+  '^https:\\/\\/legacy\\.example\\.com url reject-array',
+);
+
+assert.equal(planMitmLine('hostname = api.example.com, *.example.com', 'qx').line, 'hostname = api.example.com, *.example.com');
+assert.equal(planMitmLine('hostname = api.example.com, *.example.com', 'surge').line, 'hostname = %APPEND% api.example.com, *.example.com');
+assert.match(planMitmLine('ca-passphrase = secret', 'qx').line, /Unsupported source MITM option preserved/);
 assert.equal(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-body-json-del data.ads', 'qx', legacyCtx).line,
   '^https:\\/\\/api\\.example\\.com url jsonjq-response-body \'del(.data.ads)\'',
