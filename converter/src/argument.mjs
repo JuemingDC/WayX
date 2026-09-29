@@ -1,4 +1,4 @@
-// Loon [Argument] parser and optional descriptor generation
+// Loon [Argument] parser for dependency analysis only
 // Author: chance
 // Category: Converter / Argument Parser
 import { splitTopLevelCsv } from './rule.mjs';
