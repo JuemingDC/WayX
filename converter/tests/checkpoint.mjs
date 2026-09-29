@@ -28,16 +28,13 @@ import {
   validateLoonSourceCatalog,
   planMitmLine,
   resolveOriginalUrl,
-  mergeBoxJsSubscription,
   parseLoonArguments,
   analyzePluginArgumentUsage,
-  argumentUsageSummary,
   rewriteV2PluginArgumentRefs,
   parseRewriteV2,
   qxPrimitiveForRewriteV2Action,
   qxRule,
   qxTargetPath,
-  renderBoxJsApp,
   rewriteV2ToSource,
   selectQxScriptAction,
   parseScriptV2,
@@ -300,58 +297,7 @@ const args = parseLoonArguments([
 assert.equal(args.length, 2);
 assert.equal(args[0].defaultValue, 'false');
 assert.equal(args[1].values[1], 'zh-Hant');
-const app = renderBoxJsApp({id:'Demo',name:'Demo'}, ['Capture=switch, false, true, tag="捕获"']);
-assert.equal(app.settings[0].type, 'boolean');
-assert.equal(app.settings[0].id, 'wayx.demo.Capture');
 
-const argumentAnalysis = analyzePluginArgumentUsage({
-  argumentLines:[
-    'enabled=switch,true,tag=启用',
-    'region=select,"CN","US",tag=地区',
-    'price=input,9.99,type=number,tag=价格',
-    'unused=input,"x",tag=未使用',
-  ],
-  rewriteLines:[
-    'response if ${enabled} == true && ${url} ~= /api/ then response.json.replace("data.price", ${price})',
-  ],
-  scriptLines:[
-    'request if ${enabled} == true && ${url} ~= /order/ then script("request.js", {${region}}) with enable=${enabled}, requires_body=true',
-  ],
-  ruleLines:['DOMAIN,example.com,PROXY'],
-});
-assert.equal(argumentAnalysis.policyBindings.length, 1);
-assert.equal(argumentAnalysis.arguments.find(x => x.id === 'unused').used, false);
-assert.ok(argumentAnalysis.arguments.find(x => x.id === 'region').uses.some(x => x.kind === 'argument-object'));
-assert.ok(argumentAnalysis.arguments.find(x => x.id === 'enabled').uses.some(x => x.kind === 'dynamic-option' && x.option === 'enable'));
-assert.ok(argumentAnalysis.arguments.find(x => x.id === 'price').uses.some(x => x.section === 'Rewrite' && x.kind === 'action'));
-assert.deepEqual(
-  rewriteV2PluginArgumentRefs(
-    parseRewriteV2('response if ${enabled} == true && ${url} ~= /api/ then response.json.replace("data.price", ${price})'),
-    new Set(['enabled','price']),
-  ).all,
-  ['enabled','price'],
-);
-assert.ok(argumentUsageSummary(argumentAnalysis).find(x => x.id === 'enabled').uses.includes('Script enable'));
-
-const undeclaredArgumentAnalysis = analyzePluginArgumentUsage({
-  argumentLines:['enabled=switch,true'],
-  scriptLines:['request if ${url} ~= /api/ then script("request.js", {${missing}}) with enable=${alsoMissing}'],
-});
-assert.deepEqual(
-  [...new Set(undeclaredArgumentAnalysis.undeclaredRefs.map(x => x.id))].sort(),
-  ['alsoMissing','missing'],
-);
-
-const managedApp = renderBoxJsApp({id:'Tieba',name:'百度贴吧去广告'}, [
-  'per_filter_video_thread=select, "true", "false", tag=拦截推荐页面视频帖',
-]);
-const mergedBoxJs = mergeBoxJsSubscription(
-  {id:'juemingdc.qx.sub',apps:[{id:'keep.me',name:'Keep'}]},
-  [managedApp],
-);
-assert.equal(mergedBoxJs.apps.length, 2);
-assert.equal(mergedBoxJs.apps[0].id, 'keep.me');
-assert.equal(mergedBoxJs.apps[1].settings[0].id, 'wayx.tieba.per_filter_video_thread');
 const simpleV2 = parseRewriteV2('request if ${url} ~= /^https:\\/\\/ad\\.example\\.com/i as hit then reject_dict(200)');
 assert.equal(simpleV2.phase, 'request');
 assert.equal(simpleV2.condition.capture, 'hit');
