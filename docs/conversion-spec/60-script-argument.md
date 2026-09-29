@@ -68,9 +68,10 @@ Surge Module 官方支持参数表：
 转换规则：
 
 - Loon 参数 id 保持为 Surge 参数名；若含 Surge 不允许的字符，规范化为字母/数字/下划线，发生重名冲突则 fail closed。
-- `input/select/switch` 的首个默认值转换到 `#!arguments`。
+- `input/select/switch` 的首个默认值转换到 `#!arguments`；没有默认值的 `input/select` 只声明参数名，不伪造默认值。
 - Loon `tag/desc` 和 select 可选值汇总到 `#!arguments-desc`，不伪造 Surge 不存在的 select/switch 控件类型。
 - Surge 参数默认值若包含 `#!arguments` 无法安全分隔的逗号或换行，进入 Review，不发明转义语法。
+- 无默认值参数若用于 Loon PluginObject，Loon 的缺值语义为 `null`；Surge 文本替换无法无损复刻时进入 Review，不把它静默变成空字符串。
 - QX 不生成这些 metadata。
 
 Surge 官方参数表本质是文本替换，因此 Script 侧按 Surge 原生格式重新表达：
