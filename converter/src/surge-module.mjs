@@ -1,7 +1,7 @@
 // WayX Surge Module formatter / validator
 // Author: chance
 // Category: Converter / Surge Module
-import { splitTopLevelCsv } from './rule.mjs';
+import { splitTopLevelCsv, surgePolicyIndex, SURGE_MODULE_POLICIES, SURGE_RULE_TYPES } from './rule.mjs';
 
 export function hasActiveSurgeLines(lines = []) {
   return lines.some(raw => {
@@ -93,12 +93,17 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
 
     if (current === 'Rule') {
       const parts = splitTopLevelCsv(line);
-      const policy = (parts[2] || '').toUpperCase();
-      if (!['DIRECT','REJECT','REJECT-TINYGIF'].includes(policy)) {
+      const type = String(parts[0] || '').toUpperCase();
+      if (!SURGE_RULE_TYPES.has(type)) {
+        throw new Error(`${entry.id}: unsupported Surge rule type in module: ${line}`);
+      }
+      const policyIndex = surgePolicyIndex(parts);
+      const policy = String(parts[policyIndex] || '').toUpperCase();
+      if (!SURGE_MODULE_POLICIES.has(policy)) {
         throw new Error(`${entry.id}: Surge module [Rule] policy must be DIRECT/REJECT/REJECT-TINYGIF: ${line}`);
       }
       if (line !== parts.join(',')) {
-        throw new Error(`${entry.id}: Surge module [Rule] must use canonical comma formatting: ${line}`);
+        throw new Error(`${entry.id}: Surge module [Rule] must use canonical top-level comma formatting: ${line}`);
       }
       continue;
     }
