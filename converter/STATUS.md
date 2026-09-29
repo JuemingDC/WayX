@@ -24,6 +24,7 @@ Completed in this branch:
   - binary mock files remain Review Tier until a target-native binary/file mapping is proven.
 - Extended checkpoint coverage for the script registry and dependency resolver.
 - Converter CI now syntax-checks both `converter/src/*.mjs` and `converter/tools/*.mjs`.
+- MyBlockAds JQ golden fixture is now automated: QX and Surge must keep the same 11 ordered JQ rules, 10 unique expressions, and the reviewed ordered-pair fingerprint.
 
 Official behavior rechecked during this phase:
 
@@ -42,5 +43,5 @@ Official behavior rechecked during this phase:
 
 1. Build the full RuCu6 Rewrite v2 source → target generator on top of the existing AST, action registry, script registry and dependency resolver.
 2. Add target-specific dependency materialization for QX/Surge with byte/text integrity checks.
-3. Promote MyBlockAds to a repository golden fixture and diff generated outputs against canonical targets.
+3. Add target-specific regex-flag handling only after QX support is proven from official material; current `/i` source rules remain outside the golden equivalence claim.
 4. After phase 2 is green and merged, rerun the upstream monitor from the new main; discard the stale pre-converter `work/upstream-36491808454-1` results.
