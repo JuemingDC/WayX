@@ -3,15 +3,20 @@
 // Category: Converter / Canonical Output
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { cleanSource, convert, scriptUrls, validateQX } from '../../.github/scripts/sync-convert.mjs';
+import { cleanSource, convert, parseLoon, scriptUrls, validateQX } from '../../.github/scripts/sync-convert.mjs';
 import { qxTargetPath, surgeTargetPath } from '../src/paths.mjs';
 import { validateSurgeModule } from '../src/surge-module.mjs';
+import { isRewriteV2, parseRewriteV2 } from '../src/rewrite-v2.mjs';
+import { validateRewriteV2Ast } from '../src/rewrite-v2-actions.mjs';
+import { jqDependencySpecFromAction } from '../src/dependency.mjs';
+import { minifyJqFile } from '../src/jq.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
 const RESOURCE_DIR = path.join(ROOT, 'Resource/Loon');
 const SCRIPT_DIR = path.join(ROOT, 'script');
 const RAW_BASE = 'https://raw.githubusercontent.com/JuemingDC/WayX/main';
+const DEPENDENCY_MANIFEST = path.join(ROOT, 'converter/dependencies/manifest.json');
 
 const mode = process.argv.includes('--write') ? 'write' : 'check';
 
@@ -87,16 +92,51 @@ async function readIfExists(file) {
   return await exists(file) ? normalize(await fs.readFile(file, 'utf8')) : null;
 }
 
+async function loadDependencyCache() {
+  if (!await exists(DEPENDENCY_MANIFEST)) return { resources: {} };
+  return JSON.parse(await fs.readFile(DEPENDENCY_MANIFEST, 'utf8'));
+}
+
+async function localJqFiles(entry, source, dependencyCache) {
+  const out = new Map();
+  const parsed = parseLoon(source);
+  for (const raw of parsed.sections.get('Rewrite') || []) {
+    const line = raw.trim();
+    if (!line || line.startsWith('#') || line.startsWith(';') || line.startsWith('//') || !isRewriteV2(line)) continue;
+    const ast = parseRewriteV2(line);
+    validateRewriteV2Ast(ast);
+    if (ast.actions.length !== 1) continue;
+    const spec = jqDependencySpecFromAction(ast.actions[0], { pluginSourceUrl: entry.source });
+    if (!spec) continue;
+    const rel = dependencyCache.resources?.[spec.url];
+    if (!rel) {
+      throw new Error(entry.id + ': missing cached JQ dependency for ' + spec.url);
+    }
+    const local = path.join(ROOT, rel);
+    if (!await exists(local)) {
+      throw new Error(entry.id + ': cached JQ dependency file missing: ' + rel);
+    }
+    out.set(line, {
+      content: minifyJqFile(await fs.readFile(local, 'utf8')),
+      sourceFile: spec.url,
+      localFile: rel,
+      legacyAlias: Boolean(spec.legacyAlias),
+    });
+  }
+  return out;
+}
+
 function assertOfflineDependencies(entry, source) {
-  if (/\.(?:mock_file|jq_file)\s*\(/.test(source)) {
+  if (/\.body\.mock_file\s*\(/.test(source)) {
     throw new Error(
-      entry.id + ': offline canonical regeneration found mock_file/jq_file dependency; ' +
+      entry.id + ': offline canonical regeneration found mock_file dependency; ' +
       'materialize that dependency before enabling canonical write/check.'
     );
   }
 }
 
 const manifest = [...JSON.parse(await fs.readFile(MANIFEST, 'utf8')), ...EXTRA_LOCAL_ENTRIES];
+const dependencyCache = await loadDependencyCache();
 const changed = [];
 const failures = [];
 
@@ -112,8 +152,9 @@ for (const entry of manifest) {
     const oldSurge = await readIfExists(surgePath);
     const stamp = existingStamp(oldQx, oldSurge) || nowCN();
     const scripts = await mirroredScriptMap(entry, source);
+    const jqFiles = await localJqFiles(entry, source, dependencyCache);
 
-    let out = convert(entry, source, scripts, stamp, new Map());
+    let out = convert(entry, source, scripts, stamp, new Map(), jqFiles);
     validateQX(out.qx, entry);
     validateSurgeModule(out.surge, entry);
 
@@ -132,7 +173,7 @@ for (const entry of manifest) {
     // A real regeneration is a conversion event. Refresh the timestamp only
     // when content actually changes, then write both targets atomically enough
     // for a normal Git working tree update.
-    out = convert(entry, source, scripts, nowCN(), new Map());
+    out = convert(entry, source, scripts, nowCN(), new Map(), jqFiles);
     validateQX(out.qx, entry);
     validateSurgeModule(out.surge, entry);
 
