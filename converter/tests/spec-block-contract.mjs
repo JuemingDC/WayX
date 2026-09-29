@@ -13,7 +13,7 @@ const contracts=[
   ['50','docs/conversion-spec/50-json-jq-mock.md',['converter/src/jq.mjs','converter/src/dependency.mjs','converter/src/qx-mock.mjs']],
   ['60','docs/conversion-spec/60-script-argument.md',['converter/src/script.mjs','converter/src/script-compat.mjs','converter/src/script-v2.mjs','converter/src/script-v2-target.mjs','converter/src/argument.mjs']],
   ['70','docs/conversion-spec/70-mitm-comments.md',['converter/src/mitm.mjs','converter/src/metadata.mjs']],
-  ['80','docs/conversion-spec/80-review-validation.md',['converter/src/surge-module.mjs','converter/tests/genericity-audit.mjs','converter/tests/end-to-end-golden.mjs']],
+  ['80','docs/conversion-spec/80-review-validation.md',['converter/src/surge-module.mjs','converter/tests/genericity-audit.mjs','converter/tests/generated-helper-refs.mjs','converter/tests/end-to-end-golden.mjs']],
   ['90','docs/conversion-spec/90-project-workflow.md',['.github/scripts/sync-convert.mjs','converter/tools/regenerate-canonical.mjs','.github/workflows/converter-check.yml','.github/workflows/upstream-monitor.yml']],
 ];
 
