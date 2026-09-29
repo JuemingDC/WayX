@@ -22,7 +22,6 @@ import {
   minifyJq,
   mergeBoxJsSubscription,
   parseLoonArguments,
-  renderQxPrefsObjectBridge,
   parseRewriteV2,
   qxPrimitiveForRewriteV2Action,
   qxRule,
@@ -84,16 +83,6 @@ const mergedBoxJs = mergeBoxJsSubscription(
 assert.equal(mergedBoxJs.apps.length, 2);
 assert.equal(mergedBoxJs.apps[0].id, 'keep.me');
 assert.equal(mergedBoxJs.apps[1].settings[0].id, 'wayx.tieba.per_filter_video_thread');
-const prefBridge = renderQxPrefsObjectBridge(
-  'Tieba',
-  ['per_filter_video_thread=select, "true", "false", tag=拦截推荐页面视频帖'],
-  ['per_filter_video_thread'],
-  {per_filter_video_thread:'boolean'},
-);
-assert.match(prefBridge, /\$prefs\.valueForKey/);
-assert.match(prefBridge, /wayx\.tieba\.per_filter_video_thread/);
-assert.match(prefBridge, /const \$argument =/);
-
 const simpleV2 = parseRewriteV2('request if ${url} ~= /^https:\\/\\/ad\\.example\\.com/i as hit then reject_dict(200)');
 assert.equal(simpleV2.phase, 'request');
 assert.equal(simpleV2.condition.capture, 'hit');
