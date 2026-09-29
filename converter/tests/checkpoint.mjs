@@ -22,6 +22,8 @@ import {
   LOON_REWRITE_V2_ACTIONS,
   minifyJq,
   minifyJqFile,
+  classifyLegacyRewrite,
+  planLegacyRewrite,
   mergeBoxJsSubscription,
   parseLoonArguments,
   parseRewriteV2,
@@ -190,8 +192,8 @@ const compact = minifyJq('walk( if type == "object" then .a = [] | del(.b, .c) e
 assert.equal(compact.includes('"object"'), true);
 assert.equal(compact.includes('del(.b,.c)'), true);
 
-assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:true,scriptUrl:'https://rucu6.pages.dev/Scripts/12306.js'}).action, 'script-analyze-echo-response');
-assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:false,scriptUrl:'https://rucu6.pages.dev/Scripts/header.js'}).action, 'script-response-header');
+assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:true,scriptUrl:'https://example.com/request.js',sourceText:'$done({status:"HTTP/1.1 200 OK",body:$request.body});'}).action, 'script-analyze-echo-response');
+assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:false,scriptUrl:'https://example.com/header.js',sourceText:'$done({headers:$request.headers});'}).action, 'script-response-header');
 assert.equal(selectQxScriptAction({phase:'http-response',requiresBody:true,scriptUrl:'https://example.com/a.js'}).action, 'script-response-body');
 
 assert.equal(qxTargetPath({qx:'A.snippet'}), 'Adblock/Quantumult X/A.snippet');
@@ -251,26 +253,61 @@ assert.equal(analyzeSafeRewriteV2('response if ${url} ~= /ads/ then reject_dict(
 assert.equal(analyzeSafeRewriteV2('response if ${url} ~= /ads/ then reject_dict(451)').safe, false);
 assert.equal(analyzeSafeRewriteV2('request if ${url} ~= /ads/ then reject_dict(200) | request.header.del("X")').safe, false);
 
-const bilibiliCompat = inspectQxScriptCompatibility({
-  scriptUrl:'https://rucu6.pages.dev/Scripts/bilibili/request.js',
-  sourceText:'if (typeof $task < "u") throw new Error("QuantumultX is not supported"); function unzip(x){ return $utils.ungzip(x); }',
-});
-assert.equal(bilibiliCompat.executable, false);
-assert.equal(bilibiliCompat.status, 'unsupported');
-const bilibiliForkAttempt = inspectQxScriptCompatibility({
-  scriptUrl:'https://rucu6.pages.dev/Scripts/bilibili/request.js',
-  sourceText:'throw new Error("QuantumultX is not supported"); const x=$utils.ungzip(data);',
-  forkUrl:'https://raw.githubusercontent.com/JuemingDC/WayX/main/script/RuCu6/bilibili/request.js',
-});
-assert.equal(bilibiliForkAttempt.executable, false);
-assert.equal(bilibiliForkAttempt.status, 'unsupported');
+assert.equal(classifyLegacyRewrite('reject').kind, 'reject');
+assert.equal(classifyLegacyRewrite('302 https://example.com/new').kind, 'redirect');
+assert.equal(classifyLegacyRewrite('response-header-del Server').kind, 'header');
+assert.equal(classifyLegacyRewrite('response-body-json-del data.ads').kind, 'json');
+assert.equal(classifyLegacyRewrite('mock-response-body data-type=json data="{}" status-code=200').kind, 'mock');
 
-const youtubeCompat = inspectQxScriptCompatibility({
-  scriptUrl:'https://rucu6.pages.dev/Scripts/youtube/response.js',
+const legacyCtx = {id:'UnknownFixture', rawBase:'https://raw.githubusercontent.com/example/repo/main', generatedScripts:new Map()};
+assert.equal(
+  planLegacyRewrite('^https:\\/\\/ads\\.example\\.com', 'reject', 'qx', legacyCtx).line,
+  '^https:\\/\\/ads\\.example\\.com url reject',
+);
+assert.equal(
+  planLegacyRewrite('^https:\\/\\/ads\\.example\\.com', 'reject-dict', 'surge', legacyCtx).section,
+  'map',
+);
+assert.equal(
+  planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-body-json-del data.ads', 'qx', legacyCtx).line,
+  '^https:\\/\\/api\\.example\\.com url jsonjq-response-body \'delpaths([["data","ads"]])\'',
+);
+assert.equal(
+  planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-del Server', 'surge', legacyCtx).line,
+  'http-response ^https:\\/\\/api\\.example\\.com header-del Server',
+);
+assert.match(
+  planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-del Server', 'qx', legacyCtx).line,
+  /REVIEW REQUIRED/,
+);
+
+const explicitQxReject = inspectQxScriptCompatibility({
+  scriptUrl:'https://alpha.invalid/runtime.js',
+  sourceText:'throw new Error("QuantumultX is not supported"); const x=$utils.ungzip(data);',
+});
+assert.equal(explicitQxReject.executable, false);
+assert.equal(explicitQxReject.status, 'unsupported');
+
+const sameRejectedSourceDifferentIdentity = inspectQxScriptCompatibility({
+  scriptUrl:'https://totally-different.invalid/renamed.js',
+  sourceText:'throw new Error("QuantumultX is not supported"); const x=$utils.ungzip(data);',
+});
+assert.equal(sameRejectedSourceDifferentIdentity.executable, explicitQxReject.executable);
+assert.equal(sameRejectedSourceDifferentIdentity.status, explicitQxReject.status);
+
+const qxRuntimeEvidence = inspectQxScriptCompatibility({
+  scriptUrl:'https://unknown.invalid/response.js',
   sourceText:'const platform = typeof $task < "u" ? "QuanX" : "Surge"; const x=$prefs.valueForKey("a");',
 });
-assert.equal(youtubeCompat.executable, true);
-assert.equal(youtubeCompat.status, 'native-adapter');
+assert.equal(qxRuntimeEvidence.executable, true);
+assert.equal(qxRuntimeEvidence.status, 'runtime-evidence');
+
+const missingSourceReview = inspectQxScriptCompatibility({
+  scriptUrl:'https://unknown.invalid/no-source.js',
+  sourceText:'',
+});
+assert.equal(missingSourceReview.executable, false);
+assert.equal(missingSourceReview.status, 'review');
 
 const genericReject = inspectQxScriptCompatibility({
   scriptUrl:'https://example.com/a.js',
