@@ -46,6 +46,7 @@ jobs:
           node --check converter/tests/spec-block-contract.mjs
           node --check converter/tests/generated-helper-refs.mjs
           node --check converter/tests/source-script-url-preservation.mjs
+          python -m py_compile converter/tests/test_conversion_gate.py
           node --check converter/tools/regenerate-canonical.mjs
           node --check converter/tools/audit-repository.mjs
       - name: Converter checkpoint
@@ -59,6 +60,7 @@ jobs:
           node converter/tests/generic-identity.mjs
           node converter/tests/genericity-audit.mjs
           node converter/tests/spec-block-contract.mjs
+          python converter/tests/test_conversion_gate.py
           node converter/tools/audit-repository.mjs
 
       - name: Repository script syntax
