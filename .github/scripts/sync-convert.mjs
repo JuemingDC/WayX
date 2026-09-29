@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { qxRule as canonicalQxRule, surgeRule as canonicalSurgeRule } from '../../converter/src/rule.mjs';
+import { qxRule as canonicalQxRule, surgeModuleRule } from '../../converter/src/rule.mjs';
 import { selectQxScriptAction } from '../../converter/src/script.mjs';
 import { inspectQxScriptCompatibility, qxManualPortComment } from '../../converter/src/script-compat.mjs';
 import { minifyJq } from '../../converter/src/jq.mjs';
@@ -15,6 +15,7 @@ import { qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, 
 import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript } from '../../converter/src/qx-semantic-script.mjs';
 import { isScriptV2, parseScriptV2 } from '../../converter/src/script-v2.mjs';
 import { qxScriptV2Plan, surgeScriptV2Plan } from '../../converter/src/script-v2-target.mjs';
+import { hasActiveSurgeLines, renderSurgeModuleHeader, validateSurgeModule } from '../../converter/src/surge-module.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -463,8 +464,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     `# Category: ${entry.category}`,
     `# Source: ${entry.source}`,
   ];
-  const header = parsed.header.filter(l => !/^#\s*引用链接:/.test(l));
-  while (header.length && !header.at(-1).trim()) header.pop();
+  const qxHeader = parsed.header.filter(l => !/^#\s*引用链接:/.test(l));
+  while (qxHeader.length && !qxHeader.at(-1).trim()) qxHeader.pop();
 
   const qx = { filter: [], rewrite: [], mitm: [], notes: [], generatedScripts: new Map() };
   const sg = { rule: [], url: [], header: [], map: [], body: [], script: [], mitm: [], notes: [], generatedScripts: new Map() };
@@ -475,7 +476,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   if (parsed.sections.has('Argument')) {
     const raw = parsed.sections.get('Argument').filter(x => x.trim());
     qx.notes.push('# Original Loon [Argument] (BoxJs/$prefs bridge required; Review Tier until verified):', ...raw.map(x => x.trim().startsWith('#') ? x : `# ${x}`));
-    sg.notes.push('# Original Loon [Argument] (default values are used for conversion):', ...raw.map(x => x.trim().startsWith('#') ? x : `# ${x}`));
+    sg.notes.push('# Original Loon [Argument] (declaration-only conversion; typed/dynamic arguments stay Review):', ...raw.map(x => x.trim().startsWith('#') ? x : `# ${x}`));
   }
 
   for (const item of sectionItems(parsed.sections.get('Rule'))) {
@@ -485,7 +486,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     if (qr.kind === 'filter') qx.filter.push(...comments, qr.line);
     else if (qr.kind === 'rewrite') qx.rewrite.push(...comments, qr.line);
     else qx.filter.push(...comments, qr.line);
-    sg.rule.push(...comments, canonicalSurgeRule(item.line));
+    const sr = surgeModuleRule(item.line);
+    sg.rule.push(...comments, ...sr.lines);
   }
 
   for (const item of sectionItems(parsed.sections.get('Rewrite'))) {
@@ -656,7 +658,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   };
 
   const qxOut = [
-    ...header, ...meta, '# Target: Quantumult X', '',
+    ...qxHeader, ...meta, '# Target: Quantumult X', '',
     ...(qx.notes.length ? [...qx.notes, ''] : []),
     '# [filter_local]', ...compact(qx.filter), '',
     '# [rewrite_local]', ...compact(qx.rewrite), '',
@@ -666,15 +668,19 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   const surgeSections = [];
   if (sg.notes.length) surgeSections.push(...sg.notes, '');
   if (sg.rule.length) surgeSections.push('[Rule]', ...compact(sg.rule), '');
-  if (sg.header.length) surgeSections.push('[Header Rewrite]', ...compact(sg.header), '');
   if (sg.url.length) surgeSections.push('[URL Rewrite]', ...compact(sg.url), '');
+  if (sg.header.length) surgeSections.push('[Header Rewrite]', ...compact(sg.header), '');
   if (sg.body.length) surgeSections.push('[Body Rewrite]', ...compact(sg.body), '');
   if (sg.map.length) surgeSections.push('[Map Local]', ...compact(sg.map), '');
   if (sg.script.length) surgeSections.push('[Script]', ...compact(sg.script), '');
   if (sg.mitm.length) surgeSections.push('[MITM]', ...compact(sg.mitm), '');
-  const sgOut = [...header, ...meta, '# Target: Surge', '', ...surgeSections].join('\n').replace(/\n*$/, '\n');
+
+  const needsCore20 = hasActiveSurgeLines(sg.body) || hasActiveSurgeLines(sg.map);
+  const surgeHeader = renderSurgeModuleHeader(parsed.header, entry, stamp, { needsCore20 });
+  const sgOut = [...surgeHeader, '', ...surgeSections].join('\n').replace(/\n*$/, '\n');
 
   return { qx: qxOut.replace(/\n*$/, '\n'), surge: sgOut, generatedScripts: new Map([...qx.generatedScripts, ...sg.generatedScripts]) };
+
 }
 
 async function syncScript(entry, url) {
@@ -718,14 +724,6 @@ function validateQX(text, entry) {
   if (!text.includes('# [rewrite_local]') || !text.includes('# [mitm]') || !text.includes('# [filter_local]')) throw new Error(`${entry.id}: missing commented QX headings`);
 }
 
-function validateSurge(text, entry) {
-  const allowed = new Set(['Rule','Header Rewrite','URL Rewrite','Body Rewrite','Map Local','Script','MITM']);
-  for (const m of text.matchAll(/^\[([^\]]+)\]$/gm)) if (!allowed.has(m[1])) throw new Error(`${entry.id}: unsupported Surge section [${m[1]}]`);
-  for (const line of text.split('\n')) {
-    const m = line.match(/^hostname\s*=\s*(.+)$/i);
-    if (m && !m[1].trim().startsWith('%APPEND%')) throw new Error(`${entry.id}: Surge module MITM hostname must use %APPEND%`);
-  }
-}
 
 async function main() {
   const manifest = JSON.parse(await fs.readFile(MANIFEST, 'utf8'));
@@ -779,7 +777,7 @@ async function main() {
         if (!await exists(dest) || normalizeNewlines(await fs.readFile(dest, 'utf8')) !== content) await fs.writeFile(dest, content);
       }
       validateQX(out.qx, entry);
-      validateSurge(out.surge, entry);
+      validateSurgeModule(out.surge, entry);
       let outputChanged = false;
       if (oldQx !== out.qx) { await fs.writeFile(qxPath, out.qx); outputChanged = true; }
       if (oldSg !== out.surge) { await fs.writeFile(sgPath, out.surge); outputChanged = true; }
