@@ -28,9 +28,6 @@ function fixedOption(ast, name) {
 
 export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText = '', argumentIds = null} = {}) {
   if (!ast || ast.type !== 'script') return unsupported('expected Script v2 AST');
-  const condition = scriptUrlCondition(ast);
-  if (!condition.ok) return condition;
-
   if (argumentIds !== null) {
     const usage = scriptV2PluginArgumentUsage(ast, argumentIds);
     const undeclared = [
@@ -44,6 +41,9 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
       return unsupported('plugin [Argument] condition cannot be represented by the Quantumult X rewrite declaration: ' + usage.conditionRefs.join(', '));
     }
   }
+
+  const condition = scriptUrlCondition(ast);
+  if (!condition.ok) return condition;
 
   const enable = scriptOption(ast, 'enable');
   if (enable?.type === 'boolean' && enable.value === false) {
@@ -85,9 +85,6 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
 
 export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 'script', argumentIds = null} = {}) {
   if (!ast || ast.type !== 'script') return unsupported('expected Script v2 AST');
-  const condition = scriptUrlCondition(ast);
-  if (!condition.ok) return condition;
-
   if (argumentIds !== null) {
     const usage = scriptV2PluginArgumentUsage(ast, argumentIds);
     const undeclared = [
@@ -101,6 +98,9 @@ export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 's
       return unsupported('plugin [Argument] condition has no verified Surge Script declaration equivalent: ' + usage.conditionRefs.join(', '));
     }
   }
+
+  const condition = scriptUrlCondition(ast);
+  if (!condition.ok) return condition;
 
   const enable = scriptOption(ast, 'enable');
   if (enable?.type === 'boolean' && enable.value === false) {
