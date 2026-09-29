@@ -14,6 +14,8 @@ import { renderQxMockFileScript } from '../../converter/src/qx-mock.mjs';
 import { qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan, surgeHeaderRewritePlan, surgeInlineMockPlan, simpleUrlRewriteCondition } from '../../converter/src/rewrite-v2-semantic.mjs';
 import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript } from '../../converter/src/qx-semantic-script.mjs';
 import { mergeBoxJsSubscription, renderBoxJsApp, renderQxPrefsObjectBridge } from '../../converter/src/argument.mjs';
+import { isScriptV2, parseScriptV2 } from '../../converter/src/script-v2.mjs';
+import { qxScriptV2Plan, surgeScriptV2Plan } from '../../converter/src/script-v2-target.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -536,6 +538,57 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   for (const item of sectionItems(parsed.sections.get('Script'))) {
     const comments = cleanComments(item.comments);
     if (!item.line) continue;
+
+    if (isScriptV2(item.line)) {
+      scriptIndex++;
+      let ast;
+      try {
+        ast = parseScriptV2(item.line);
+      } catch (error) {
+        qx.notes.push(...comments, `# Unsupported Loon Script v2 preserved (${String(error?.message || error).split('\n')[0]}): ${item.line}`);
+        sg.notes.push(...comments, `# Unsupported Loon Script v2 preserved (${String(error?.message || error).split('\n')[0]}): ${item.line}`);
+        continue;
+      }
+
+      const mapped = scriptMap.get(ast.script.path);
+      const qxUrl = mapped?.qx || ast.script.path;
+      const surgeUrl = mapped?.surge || ast.script.path;
+      const qxCompat = inspectQxScriptCompatibility({
+        scriptUrl: ast.script.path,
+        sourceText: mapped?.source || '',
+        forkUrl: mapped?.qxAdapted ? qxUrl : '',
+      });
+
+      qx.rewrite.push(...comments);
+      const qxPlan = qxScriptV2Plan(ast, { scriptUrl: qxUrl, sourceText: mapped?.source || '' });
+      if (!qxCompat.executable) {
+        qx.rewrite.push(...qxManualPortComment({ scriptUrl: ast.script.path, result: qxCompat }));
+        qx.rewrite.push(`# Original Loon: ${item.line}`);
+      } else if (!qxPlan.ok) {
+        qx.rewrite.push(`# [WayX] SCRIPT V2 REVIEW REQUIRED: ${qxPlan.reason}`);
+        qx.rewrite.push(`# Original Loon: ${item.line}`);
+      } else if (qxPlan.disabled) {
+        qx.rewrite.push(`# [WayX] Script disabled by source option: ${item.line}`);
+      } else {
+        if (qxPlan.tag) qx.rewrite.push(`# ${qxPlan.tag}`);
+        if (qxPlan.binaryBodyMode) qx.rewrite.push('# [WayX] Loon binary_body_mode=true; QX binary handling must be provided by the script runtime itself.');
+        qx.rewrite.push(qxPlan.line);
+      }
+
+      const name = sanitizeName((ast.options.find(x => x.name === 'tag')?.value?.value) || `${entry.id}_${String(scriptIndex).padStart(2, '0')}`);
+      const surgePlan = surgeScriptV2Plan(ast, { scriptUrl: surgeUrl, name });
+      sg.script.push(...comments);
+      if (!surgePlan.ok) {
+        sg.script.push(`# [WayX] SCRIPT V2 REVIEW REQUIRED: ${surgePlan.reason}`);
+        sg.script.push(`# Original Loon: ${item.line}`);
+      } else if (surgePlan.disabled) {
+        sg.script.push(`# [WayX] Script disabled by source option: ${item.line}`);
+      } else {
+        sg.script.push(surgePlan.line);
+      }
+      continue;
+    }
+
     const sc = parseScriptLine(item.line);
     if (!sc || !sc.scriptPath) {
       qx.notes.push(...comments, `# Unsupported Loon Script preserved: ${item.line}`);
@@ -761,7 +814,14 @@ async function syncScript(entry, url, defaults = new Map(), argumentLines = []) 
 }
 
 function scriptUrls(source) {
-  return [...new Set([...source.matchAll(/script-path=([^,\s]+)/gi)].map(m => m[1].trim()))];
+  const urls = new Set([...source.matchAll(/script-path=([^,\s]+)/gi)].map(m => m[1].trim()));
+  const parsed = parseLoon(source);
+  for (const item of sectionItems(parsed.sections.get('Script'))) {
+    if (!item.line || !isScriptV2(item.line)) continue;
+    try { urls.add(parseScriptV2(item.line).script.path); }
+    catch {}
+  }
+  return [...urls];
 }
 
 function validateQX(text, entry) {
