@@ -10,9 +10,11 @@ WayX 自有的 Loon Plugin → Quantumult X / Surge 转换核心。参考 KOP-XI
 - JQ 只做空白压缩，不重写 `walk/select/map/empty/any/if` 等算法；
 - RuCu6 `12306.js` → `script-analyze-echo-response`；`header.js` → `script-response-header`；
 - 普通远程 JS 保留原 URL；脚本正文兼容性由独立扫描/port registry 判断；
-- `[Argument]` 解析为 BoxJs descriptor，snippet 本身不写配置项；
-- Rewrite v2 已拆成 tokenizer/parser/AST 与官方 Action registry：支持 `&& / || / () / as / i|m|s flags / array / pipeline`，复杂语义默认仍保持 Review Tier；
-- 当前官方 Loon Rewrite v2 的 31 个 Action 已登记；只有 Quantumult X 官方 sample 能直接证明的 primitive 才进入 QX 能力表；
-- 去广告输出目录固定为 `Adblock/Quantumult X/` 和 `Adblock/Surge/`。
+- Rewrite v2 已拆成 tokenizer/parser/AST、官方 Action registry 与 fail-closed Safe Tier analyzer；
+- 当前官方 Loon Rewrite v2 的 31 个 Action 已登记；只有目标平台官方资料能直接证明的 primitive 才进入自动映射；
+- `[Argument]` 可生成并合并 BoxJs descriptor；当前 Tieba 的 `$argument` Object 与 DianPing 的 `enable` 开关已经通过 QX `$prefs` bridge 实际接通；
+- QX snippet 的 `filter / rewrite / mitm` 段名始终保持注释；
+- 去广告输出目录固定为 `Adblock/Quantumult X/` 和 `Adblock/Surge/`；
+- PR 级 `Converter Check` 负责语法检查和 checkpoint 回归，不执行上游写入。
 
-下一阶段：Rewrite v2 语义验证/目标映射、BoxJs `$prefs` bridge、脚本 fork registry、`jq_file / mock_file` 依赖解析与 golden fixtures。
+下一阶段：脚本兼容性/fork registry、`jq_file / mock_file` 依赖解析和 MyBlockAds 自动 golden fixture。
