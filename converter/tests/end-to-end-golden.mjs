@@ -47,6 +47,30 @@ assert.ok(
   'grouped QX Header helper must preserve source action order',
 );
 
+const argumentRewriteFixture = {
+  id:'ArgumentRewriteFixture',
+  source:'https://example.invalid/argument-rewrite.lpx',
+  qx:'ArgumentRewriteFixture.snippet',
+  surge:'ArgumentRewriteFixture.sgmodule',
+  category:'测试',
+};
+const argumentRewriteSource = `#!name=ArgumentRewriteFixture
+[Argument]
+enabled=switch,true,tag=Enabled
+price=input,9.99,type=number,tag=Price
+
+[Rewrite]
+response if \${enabled} == true && \${url} ~= /api/ then response.json.replace("data.price", \${price})
+`;
+const argumentRewriteOutput = convert(argumentRewriteFixture, argumentRewriteSource, new Map(), STAMP);
+assert.match(argumentRewriteOutput.qx, /REWRITE V2 REVIEW REQUIRED: plugin \[Argument\] reference\(s\) enabled, price/);
+assert.match(argumentRewriteOutput.surge, /REWRITE V2 REVIEW REQUIRED: plugin \[Argument\] reference\(s\) enabled, price/);
+assert.equal(
+  argumentRewriteOutput.qx.split(/\\r?\\n/).some(line => !line.trim().startsWith('#') && /jsonjq-response-body/.test(line)),
+  false,
+  'plugin Argument Rewrite must not be frozen into an executable QX rewrite',
+);
+
 const cases = [
   {
     name:'HTTPDNS',
@@ -238,6 +262,7 @@ for (const testCase of cases) {
   }
 
   if (testCase.name === 'YouTube') {
+    assert.match(out.qx, /Argument usage: captionLang \[string\] -> Script argument-object/);
     assert.equal(actual.qxReview, 2);
     assert.equal(actual.surgeReview, 2);
     assert.ok(qxActive.some(line => /youtube\/request\.js$/.test(line)), 'YouTube: native QX request script declaration missing');
@@ -247,6 +272,8 @@ for (const testCase of cases) {
 
   if (testCase.name === 'Bilibili') {
     assert.match(out.qx, /^host, bsbsb\.top, PROXY$/m, 'Bilibili: Loon plugin PROXY binding must remain literal in QX');
+    assert.match(out.qx, /Argument usage: optimizeRequest \[boolean\] -> Script enable/);
+    assert.match(out.qx, /Argument usage: displayUpList \[string\] -> Script argument-object/);
     assert.match(out.qx, /QUANTUMULT X UNSUPPORTED - source script disabled/);
     assert.equal(qxActive.some(line => /bilibili\/(?:request|response)\.js/.test(line)), false, 'Bilibili protobuf scripts must not be active in QX');
     assert.ok(qxActive.some(line => /bilibili\/json\.js/.test(line)), 'Bilibili JSON script declarations should remain available');
