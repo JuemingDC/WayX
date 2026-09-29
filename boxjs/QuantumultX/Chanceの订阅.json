@@ -105,6 +105,38 @@
           }
         ]
       }
+    },
+    {
+      "id": "juemingdc.dianping.qx",
+      "name": "大众点评",
+      "descs_html": [
+        "由 WayX Converter 从 Loon [Argument] 生成；Quantumult X 通过 $prefs bridge 控制脚本开关。"
+      ],
+      "keys": [
+        "wayx.dianping.davsdmpk_enable"
+      ],
+      "settings": [
+        {
+          "id": "wayx.dianping.davsdmpk_enable",
+          "name": "大众点评-脚本开关",
+          "val": true,
+          "desc": "Loon [Argument] davsdmpk_enable",
+          "type": "boolean"
+        }
+      ],
+      "author": "@JuemingDC",
+      "repo": "https://github.com/JuemingDC/WayX",
+      "_wayx": {
+        "managed": true,
+        "source_arguments": [
+          {
+            "id": "davsdmpk_enable",
+            "key": "wayx.dianping.davsdmpk_enable",
+            "default": "true",
+            "value_type": "boolean"
+          }
+        ]
+      }
     }
   ]
 }
