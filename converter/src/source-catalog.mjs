@@ -18,6 +18,17 @@ function safeRelativePath(value, field) {
   return path;
 }
 
+function absoluteHttpUrl(value, field) {
+  const text=cleanString(value);
+  let url;
+  try { url=new URL(text); }
+  catch { throw new Error(`catalog ${field} must be an absolute URL: ${text}`); }
+  if (!['http:','https:'].includes(url.protocol)) {
+    throw new Error(`catalog ${field} must use HTTP(S): ${text}`);
+  }
+  return text;
+}
+
 export function validateLoonSourceEntry(input) {
   if (!input || typeof input !== 'object' || Array.isArray(input)) {
     throw new TypeError('catalog entry must be an object');
@@ -33,6 +44,9 @@ export function validateLoonSourceEntry(input) {
     qx: safeRelativePath(input.qx, 'qx'),
     surge: safeRelativePath(input.surge, 'surge'),
     category: cleanString(input.category),
+    mirrors: Object.freeze((input.mirrors || []).map((value, index) =>
+      absoluteHttpUrl(value, `mirrors[${index}]`)
+    )),
   };
 
   if (!/^[A-Za-z0-9._-]+$/.test(entry.id)) {
@@ -42,12 +56,7 @@ export function validateLoonSourceEntry(input) {
   if (!/\.snippet$/i.test(entry.qx)) throw new Error(`catalog qx target must end in .snippet: ${entry.qx}`);
   if (!/\.sgmodule$/i.test(entry.surge)) throw new Error(`catalog surge target must end in .sgmodule: ${entry.surge}`);
 
-  let url;
-  try { url = new URL(entry.source); }
-  catch { throw new Error(`catalog source must be an absolute URL: ${entry.source}`); }
-  if (!['http:','https:'].includes(url.protocol)) {
-    throw new Error(`catalog source must use HTTP(S): ${entry.source}`);
-  }
+  absoluteHttpUrl(entry.source, 'source');
 
   return Object.freeze(entry);
 }
