@@ -22,7 +22,7 @@ WayX 自有的 Loon Plugin → Quantumult X / Surge 转换核心。参考 KOP-XI
 - QX script compatibility registry：已知 RuCu6 Bilibili protobuf 脚本因上游显式拒绝 QX 而阻断执行行；YouTube 的内置 QuanX adapter 作为已审查兼容项登记；
 - 未登记脚本会扫描显式 QX 拒绝、Loon-only `$utils`、QX runtime 信号；明确不支持时输出 `QUANTUMULT X UNSUPPORTED` 并注释保留源声明，适配路径不能绕过该阻断；
 - 转换原则改为“先判断 Loon 行为效果，再选择目标平台等效表达”：例如 Loon `reject(404)` 直接使用 QX 原生 `reject`，`reject(200)` 使用 `reject-200`，`reject_dict/array/img(200)` 分别使用对应 QX 原生 primitive；
-- `jq_file / mock_file` 已进入依赖 AST：JQ 仍可解析并内联；QX `mock_file` 不再伪装成原生 token，而是在转换阶段读取依赖并写入生成脚本；response 使用 `script-echo-response`，request 文本 body 使用 `script-request-body`；QX 运行时不再为 mock 文件二次联网，二进制 response 用内嵌 Base64 还原为官方支持的 `bodyBytes`，二进制 request 暂不自动放行；
+- `jq_file / mock_file` 已进入依赖 AST：官方 `request/response.json.jq_file(...)` 会在转换期读取并内联真实 JQ；QX `mock_file` 不再伪装成原生 token，而是在转换阶段读取依赖并写入生成脚本；response 使用 `script-echo-response`，request 文本 body 使用 `script-request-body`；QX 运行时不再为 mock 文件二次联网，二进制 response 用内嵌 Base64 还原为官方支持的 `bodyBytes`，二进制 request 暂不自动放行；
 - 上游同步会生成 RuCu6 脚本兼容性报告，PR CI 同时检查 converter tools。
 
 MyBlockAds JQ golden 已自动化：QX / Surge 当前 11 条 JQ 有序规则必须逐条一致，并锁定 10 个唯一表达式及有序指纹。
@@ -59,8 +59,8 @@ Surge 模块输出另有独立规范化层，不复用 Loon 文件头或 Loon Ru
 Canonical 成品一致性现已进入 CI：
 
 - `converter/tools/regenerate-canonical.mjs` 直接复用正式 `convert()`，从仓库内已保存的 Loon 源文件离线生成 managed QX/Surge 成品；
-- managed 范围包括 `.github/sources/loon.json` 的 11 个条目，以及已有独立 golden 的 `Resource/Loon/RuCu6/myblockads.lpx`；
-- 源脚本只读取仓库中的精确镜像用于兼容性判断，不改写正文；存在 `script/<entry.id>/<filename>` 时声明指向 WayX raw URL，否则保留源 URL；
+- managed 范围包括 `.github/sources/loon.json` 的 11 个条目，以及已有独立 golden 的 `Resource/Loon/RuCu6/myblockads.lpx`；MyBlockAds 当前使用的 `response.json.jq("jq-path=https://...")` **不是官方 Loon Rewrite v2 的 `json.jq_file` 语法**，WayX 只把这个已知写法作为 RuCu6 legacy compatibility alias 解析，并在生成目标配置前物化为真实 JQ；
+- 源脚本只读取仓库中的精确镜像用于兼容性判断，不改写正文；存在 `script/<entry.id>/<filename>` 时声明指向 WayX raw URL，否则保留源 URL；远程 JQ 依赖可通过 `converter/dependencies/manifest.json` 映射到已审核的仓库缓存，offline canonical 生成不得把 `jq-path=...` 字面量输出成 JQ；
 - 生成后继续执行 QX validator 和 Surge sgmodule validator；
 - PR CI 会先重新生成，再对 `Adblock/Quantumult X/` 与 `Adblock/Surge/` 做 `git diff --exit-code`。若转换器/源文件/脚本兼容性变化却没有同步提交成品，CI 会失败；
 - QZXY 是人工维护的目标原生配置，不属于 Loon converter managed entry，因此不会被该工具覆盖；
