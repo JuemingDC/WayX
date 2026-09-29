@@ -5,7 +5,7 @@
 | Block | 语义职责 | Production / Automation | Contract / Regression |
 |---|---|---|---|
 | 00 | 官方依据、优先级、行为优先 | 无独立语义转换；由 CI gate 执行 | `genericity-audit.mjs`, `audit-repository.mjs`, `spec-block-contract.mjs` |
-| 05 | Catalog、通用流水线、陌生插件 | `source-catalog.mjs`, `script-path.mjs`, `sync-convert.mjs`, `regenerate-canonical.mjs` | `generic-identity.mjs`, `genericity-audit.mjs` |
+| 05 | Catalog、通用流水线、陌生插件 | `source-catalog.mjs`, `source-fetch.mjs`, `sync-convert.mjs`, `regenerate-canonical.mjs` | `generic-identity.mjs`, `genericity-audit.mjs` |
 | 10 | QX/Surge 目标文件结构 | `paths.mjs`, `metadata.mjs`, `surge-module.mjs` | `checkpoint.mjs`, target validators |
 | 20 | Rule / Policy / URL-REGEX reject-X | `rule.mjs` | `checkpoint.mjs`, `surge-rule-coverage.mjs` |
 | 30 | Legacy Rewrite + Rewrite v2 mapping | `legacy-rewrite.mjs`, `rewrite-v2*.mjs`, `qx-semantic-script.mjs` | `checkpoint.mjs`, `loon-new-syntax-cases.mjs`, `rucu6-rewrite-v2-coverage.mjs` |
@@ -21,9 +21,9 @@
 ```text
 .github/sources/loon.json
 → validate Source Catalog
-→ fetch source (source + mirrors only for transport)
+→ fetch plugin directly from descriptor `source` only
 → normalize + parse Loon sections
-→ fetch/cache Source JS + jq/mock dependencies
+→ fetch Source JS + jq/mock dependencies directly from their original resolved URLs; Source JS is analysis-only and is not mirrored
 → Rule / Rewrite / Script / MITM generic planners
 → QX snippet + Surge sgmodule renderer
 → QX validator + Surge validator
