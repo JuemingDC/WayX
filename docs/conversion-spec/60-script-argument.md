@@ -1,0 +1,91 @@
+# Block 60 — Script / Argument
+
+## 60.1 Source Script 唯一原则
+
+**只转换 Script 声明，不转换 Source JavaScript 正文。**
+
+禁止：
+- prepend
+- wrapper
+- fork
+- 自动 API 替换
+- 删除 QX 不支持检查
+- 为 `$argument` / `enable` 修改脚本
+
+## 60.2 Quantumult X Script Action
+
+Crossutility 官方 sample 已确认的 Script action 包括：
+```text
+script-request-header
+script-request-body
+script-response-header
+script-response-body
+script-echo-response
+script-analyze-echo-response
+```
+
+选择依据是脚本实际行为，不是文件名。
+
+| Source 行为 | QX declaration |
+|---|---|
+| request，不需要 body | `script-request-header` |
+| request，读取/修改 body | `script-request-body` |
+| request 阶段直接生成 response | `script-echo-response` |
+| request 阶段生成 response 且需要 request body | `script-analyze-echo-response` |
+| response，只处理 header | `script-response-header` |
+| response，读取/修改 body | `script-response-body` |
+
+兼容检查至少包括：
+- 是否明确拒绝 QX；
+- 是否已有 QX adapter；
+- 是否依赖 Loon-only API；
+- binary 是否正确使用目标平台数据接口。
+
+明确不支持 QX：
+```text
+# [WayX] QUANTUMULT X UNSUPPORTED
+# Original Loon: ...
+# Reason: ...
+```
+
+不 fork。
+
+## 60.3 Surge Script
+
+使用现代 Surge：
+```ini
+[Script]
+name = type=http-request,pattern=...,script-path=...
+name = type=http-response,pattern=...,script-path=...
+```
+
+合法映射：
+- `requires_body` → `requires-body`
+- `binary_body_mode` → `binary-body-mode`
+- 固定 timeout → `timeout=`
+
+## 60.4 [Argument] → QX
+
+QX snippet 没有 Loon `[Argument]` 同构语法。
+
+因此 converter：
+- 不修改 Source Script 注入 `$prefs`
+- 不生成 wrapper 重建 typed object
+- 不用 BoxJs 偷偷改变 Source Script 接口
+
+若原脚本自身已支持 QX `$prefs` / QX adapter，可按原脚本接口使用；否则参数化 Script 声明进入 Review。
+
+BoxJs 可以作为独立 QX 原生功能存在，但不能成为自动改造 Source Script 的手段。
+
+## 60.5 [Argument] → Surge
+
+Surge `#!arguments` 只在**不改变 Source Script 接口**时使用。
+
+允许：
+- Source Script 原本接收 string `$argument`
+- Surge `argument=` 能传入完全相同字符串
+
+Review：
+- Loon typed object argument
+- Boolean/Number object 重建
+- dynamic `enable` 需要 wrapper 才能实现
