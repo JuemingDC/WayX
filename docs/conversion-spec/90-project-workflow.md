@@ -64,3 +64,27 @@ converter 先实现
 - Review classification：`.github/scripts/conversion_gate.py` + `.github/scripts/validate_conversion_policy.py`
 
 自动化脚本不得再维护第二份插件列表；所有 Loon source 必须从 Source Catalog 遍历。
+
+## 原作者源唯一链路
+
+自动化从源头开始固定为：
+
+```text
+Source Catalog entry.source（原作者）
+→ 直接下载 Loon plugin
+→ 解析 plugin 中原始 script/dependency URL
+→ 直接读取原 Source Script / dependency
+→ 只在内存中做兼容性/语义分析
+→ 通用 converter
+→ QX / Surge
+→ validator / reconciliation
+→ Safe commit 或 Review PR
+```
+
+禁止：
+- plugin mirror/fallback；
+- Source Script 镜像落盘；
+- 把原 `script-path` 改写成 WayX/GitHub URL；
+- 原源失败时自动切换第三方副本。
+
+WayX 自动生成的 target helper script 不属于 Source Script 镜像，可继续作为 converter 产物写入 `script/<id>/`。
