@@ -641,6 +641,8 @@ if (__wayxIsMain) await main();
 export {
   cleanSource,
   convert,
+  materializeJqFiles,
+  materializeQxMockFiles,
   parseLoon,
   scriptUrls,
   validateQX,
