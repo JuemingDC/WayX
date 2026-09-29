@@ -14,6 +14,7 @@ import {
   renderQxRedirectScript,
   renderQxRejectScript,
   renderQxHeaderScript,
+  renderQxInlineMockScript,
   renderQxMockFileScript,
   LOON_REWRITE_V2_ACTIONS,
   minifyJq,
@@ -240,6 +241,35 @@ assert.match(qxHeaderScript.script, /__wayxDel/);
 assert.throws(
   () => renderQxHeaderScript(parseRewriteV2('response if ${url} ~= /api/i then response.header.add("X-A", "1")')),
   /set\/del\/replace/,
+);
+
+const inlineTextMock = renderQxInlineMockScript(
+  parseRewriteV2('response if ${url} ~= /api/i then response.body.mock("text", "{\\\"ok\\\":true}", 200)'),
+  {category:'Adblock'},
+);
+assert.equal(inlineTextMock.qxAction, 'script-echo-response');
+assert.doesNotMatch(inlineTextMock.script, /\$task\.fetch/);
+assert.match(inlineTextMock.script, /output\.body = __wayxBody/);
+
+const grpcMock = renderQxInlineMockScript(
+  parseRewriteV2('response if ${url} ~= /grpc/i then response.body.mock("text", "AAAAAAA=", 200, true) | response.header.set("grpc-status", "0")'),
+  {category:'Adblock'},
+);
+assert.equal(grpcMock.qxAction, 'script-echo-response');
+assert.match(grpcMock.script, /output\.bodyBytes = __wayxBase64ToArrayBuffer/);
+assert.match(grpcMock.script, /grpc-status/);
+assert.match(grpcMock.script, /__wayxHeaderSet/);
+
+const requestInlineMock = renderQxInlineMockScript(
+  parseRewriteV2('request if ${url} ~= /submit/i then request.body.mock("json", "{\\\"x\\\":1}")'),
+  {category:'Rewrite'},
+);
+assert.equal(requestInlineMock.qxAction, 'script-request-body');
+assert.match(requestInlineMock.script, /\$done\(\{headers, body: __wayxBody\}\)/);
+
+assert.throws(
+  () => renderQxInlineMockScript(parseRewriteV2('response if ${url} ~= /api/i then response.body.mock("text", "x", 200) | response.header.add("Set-Cookie", "a=1")')),
+  /header set\/del\/replace/,
 );
 
 console.log('WayX converter checkpoint tests passed');
