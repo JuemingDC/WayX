@@ -1,11 +1,15 @@
-// Converted: 2026-09-29 18:33:47 +08:00
+// Converted: 2026-09-29 20:01:49 +08:00
 // Converted by: chance
 // Category: 去广告
-// Source Loon: response if ${url} ~= /https:\/\/(rule\.)?kelee\.one\//i then response.header.set("content-type", "text/plain; charset=utf-8")
+// Source Loon: response if ${url} ~= /https:\/\/(rule\.)?kelee\.one\//i then response.header.add("content-disposition", "inline") | response if ${url} ~= /https:\/\/(rule\.)?kelee\.one\//i then response.header.set("content-type", "text/plain; charset=utf-8")
 const __wayxHeaders = {...$response.headers};
 function __wayxKey(name) {
   const wanted = String(name).toLowerCase();
   return Object.keys(__wayxHeaders).find(key => key.toLowerCase() === wanted);
+}
+function __wayxAdd(name, value) {
+  const key = __wayxKey(name);
+  __wayxHeaders[key || name] = value;
 }
 function __wayxSet(name, value) {
   const key = __wayxKey(name);
@@ -19,5 +23,6 @@ function __wayxReplace(name, source, flags, replacement) {
   const key = __wayxKey(name);
   if (key !== undefined) __wayxHeaders[key] = String(__wayxHeaders[key]).replace(new RegExp(source, flags), replacement);
 }
+__wayxAdd("content-disposition", "inline");
 __wayxSet("content-type", "text/plain; charset=utf-8");
 $done({headers: __wayxHeaders});

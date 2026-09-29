@@ -17,6 +17,36 @@ const STAMP = golden.stamp;
 const manifest = JSON.parse(await fs.readFile(path.join(ROOT, '.github/sources/loon.json'), 'utf8'));
 const byId = new Map(manifest.map(entry => [entry.id, entry]));
 
+const headerGroupFixture = {
+  id:'HeaderGroupFixture',
+  source:'https://example.invalid/header-group.lpx',
+  qx:'HeaderGroupFixture.snippet',
+  surge:'HeaderGroupFixture.sgmodule',
+  category:'测试',
+};
+const headerGroupSource = `#!name=HeaderGroupFixture
+#!desc=Header grouping regression
+
+[Rewrite]
+response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then response.header.add("content-disposition", "inline")
+response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then response.header.set("content-type", "text/plain; charset=utf-8")
+
+[MITM]
+hostname=api.example.com
+`;
+const headerGroupOutput = convert(headerGroupFixture, headerGroupSource, new Map(), STAMP);
+const responseHeaderLines = headerGroupOutput.qx.split(/\\r?\\n/).filter(line => / url script-response-header /.test(line));
+assert.equal(responseHeaderLines.length, 1, 'same-condition response Header actions must share one QX response-header hook');
+const headerGroupScripts = [...headerGroupOutput.generatedScripts.values()];
+assert.equal(headerGroupScripts.length, 1, 'grouped Header actions should generate one helper');
+assert.match(headerGroupScripts[0], /__wayxAdd\("content-disposition", "inline"\);/);
+assert.match(headerGroupScripts[0], /__wayxSet\("content-type", "text\/plain; charset=utf-8"\);/);
+assert.ok(
+  headerGroupScripts[0].indexOf('__wayxAdd("content-disposition", "inline");') <
+  headerGroupScripts[0].indexOf('__wayxSet("content-type", "text/plain; charset=utf-8");'),
+  'grouped QX Header helper must preserve source action order',
+);
+
 const cases = [
   {
     name:'HTTPDNS',

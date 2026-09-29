@@ -4,13 +4,11 @@
 # Icon: https://rucu6.pages.dev/Icons/app/webpage.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-09-29 18:33:47 +08:00
+# Converted: 2026-09-29 20:01:49 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/webpage.lpx
 # Target: Quantumult X
-
-# Unsupported Loon Rewrite v2 preserved (regex flags require target-regex review): response if ${url} ~= /https:\/\/(rule\.)?kelee\.one\//i then response.header.add("content-disposition", "inline")
 
 # [filter_local]
 host-suffix, mypikpak.com, proxy
@@ -33,7 +31,7 @@ host, yhg007.com, proxy
 
 # 可莉仓库解除 UA 限制 //kelee.one
 https:\/\/(rule\.)?kelee\.one\/ url script-request-header https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/header_eb9fc300bc.js
-https:\/\/(rule\.)?kelee\.one\/ url script-response-header https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/header_b079cf408d.js
+https:\/\/(rule\.)?kelee\.one\/ url script-response-header https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/header_19980350e5.js
 
 # E-Hentai (https://e-hentai.org) //e-hentai.org, exhentai.org
 ^https:\/\/exhentai\.org url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/redirect_1cb6a93724.js

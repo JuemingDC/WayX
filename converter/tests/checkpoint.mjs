@@ -592,10 +592,13 @@ const qxHeaderScript = renderQxHeaderScript(qxHeaderV2, {category:'Rewrite'});
 assert.equal(qxHeaderScript.qxAction, 'script-request-header');
 assert.match(qxHeaderScript.script, /__wayxSet/);
 assert.match(qxHeaderScript.script, /__wayxDel/);
-assert.throws(
-  () => renderQxHeaderScript(parseRewriteV2('response if ${url} ~= /api/i then response.header.add("X-A", "1")')),
-  /set\/del\/replace/,
+const qxHeaderAdd = renderQxHeaderScript(
+  parseRewriteV2('response if ${url} ~= /api/i then response.header.add("X-A", "1")'),
+  {category:'Rewrite'},
 );
+assert.equal(qxHeaderAdd.qxAction, 'script-response-header');
+assert.match(qxHeaderAdd.script, /__wayxAdd\("X-A", "1"\)/);
+assert.match(qxHeaderAdd.script, /\$done\(\{headers: __wayxHeaders\}\)/);
 
 const inlineTextMock = renderQxInlineMockScript(
   parseRewriteV2('response if ${url} ~= /api/i then response.body.mock("text", "{\\\"ok\\\":true}", 200)'),
@@ -621,10 +624,12 @@ const requestInlineMock = renderQxInlineMockScript(
 assert.equal(requestInlineMock.qxAction, 'script-request-body');
 assert.match(requestInlineMock.script, /\$done\(\{headers, body: __wayxBody\}\)/);
 
-assert.throws(
-  () => renderQxInlineMockScript(parseRewriteV2('response if ${url} ~= /api/i then response.body.mock("text", "x", 200) | response.header.add("Set-Cookie", "a=1")')),
-  /header set\/del\/replace/,
+const qxMockHeaderAdd = renderQxInlineMockScript(
+  parseRewriteV2('response if ${url} ~= /api/i then response.body.mock("text", "x", 200) | response.header.add("X-Test", "a=1")'),
+  {category:'Rewrite'},
 );
+assert.equal(qxMockHeaderAdd.qxAction, 'script-echo-response');
+assert.match(qxMockHeaderAdd.script, /__wayxHeaderAdd\(headers, "X-Test", "a=1"\)/);
 
 const surgeHeaderSet = surgeHeaderRewritePlan(
   parseRewriteV2('request if ${url} ~= /api/i then request.header.set("X-Test", "1") | request.header.del("Cookie")')

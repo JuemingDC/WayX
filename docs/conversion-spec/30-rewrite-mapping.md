@@ -93,6 +93,24 @@ QX -> REGEX url reject
 
 完整 `URL-REGEX + REJECT-X` 表以 Block 20.2 为唯一 Rule 映射表；本节只强调它与旧 Rewrite reject 不同。
 
+## 30.4.1 Rewrite v2 Header → Quantumult X Header Script
+
+Loon 将 Header 操作细分为 `add / set / del / replace`；Quantumult X 的官方 Rewrite 接口按阶段提供 Header Script：
+
+```text
+request.header.add/set/del/replace
+→ script-request-header
+
+response.header.add/set/del/replace
+→ script-response-header
+```
+
+转换按 **Header 行为与请求/响应阶段** 映射，不要求目标端存在与 Loon 子动作同名的 Rewrite token。生成脚本读取 `$request.headers` 或 `$response.headers`，完成对应 Header 对象操作后以 `$done({headers: ...})` 返回；同一 Loon pipeline 必须在同一个 helper 中按原顺序执行。
+
+对 Quantumult X 不发明数组 Header、重复 raw Header 行或其他未在官方示例中证明的返回格式；`add` 在 QX Header 对象模型中写入匹配 Header 键。
+
+若 Loon 中存在**连续、同 phase、同 condition** 的多条 Header Rewrite，QX 输出必须将它们合并到一个 Header helper，并按源顺序执行全部动作，避免同一事务依赖多条同时命中的 QX rewrite。中间存在注释/空行或条件不同则不擅自跨边界合并。
+
 ## 30.5 Rewrite v2 Pipeline
 
 Loon：

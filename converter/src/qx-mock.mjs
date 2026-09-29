@@ -73,12 +73,19 @@ function base64Decoder() {
   ];
 }
 
-function headerHelpers() {
+function headerHelpers(headerOps = []) {
+  const needsAdd = headerOps.some(op => op.type === 'add');
   return [
     'function __wayxHeaderKey(headers, name) {',
     '  const wanted = String(name).toLowerCase();',
     '  return Object.keys(headers).find(key => key.toLowerCase() === wanted);',
     '}',
+    ...(needsAdd ? [
+      'function __wayxHeaderAdd(headers, name, value) {',
+      '  const key = __wayxHeaderKey(headers, name);',
+      '  headers[key || name] = value;',
+      '}',
+    ] : []),
     'function __wayxHeaderSet(headers, name, value) {',
     '  const key = __wayxHeaderKey(headers, name);',
     '  headers[key || name] = value;',
@@ -96,9 +103,10 @@ function headerHelpers() {
 
 function renderHeaderOps(lines, headerOps = []) {
   if (!headerOps.length) return;
-  lines.push(...headerHelpers());
+  lines.push(...headerHelpers(headerOps));
   for (const op of headerOps) {
-    if (op.type === 'set') lines.push(`__wayxHeaderSet(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(op.value)});`);
+    if (op.type === 'add') lines.push(`__wayxHeaderAdd(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(op.value)});`);
+    else if (op.type === 'set') lines.push(`__wayxHeaderSet(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(op.value)});`);
     else if (op.type === 'del') lines.push(`__wayxHeaderDel(headers, ${JSON.stringify(op.name)});`);
     else if (op.type === 'replace') lines.push(`__wayxHeaderReplace(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(op.pattern)}, ${JSON.stringify(op.flags || '')}, ${JSON.stringify(op.replacement)});`);
     else throw new Error('unsupported QX mock header operation: ' + op.type);
@@ -111,10 +119,6 @@ export function renderQxMockScript(plan, options = {}) {
   if (plan.phase === 'request' && (plan.binary || plan.base64)) {
     throw new Error('Quantumult X request mock binary/bodyBytes output is not enabled without an official request-body example');
   }
-  if ((options.headerOps || []).some(op => op.type === 'add')) {
-    throw new Error('Quantumult X documented header object cannot preserve duplicate header-add semantics');
-  }
-
   const hasText = typeof options.bodyText === 'string';
   const hasBytes = typeof options.bodyBase64 === 'string' && options.bodyBase64.length > 0;
   if (plan.binary || plan.base64) {

@@ -70,6 +70,7 @@ function classifyQx(ast) {
       return {ok:true, strategy:'generated-reject'};
     }
     const allowedHeaders = new Set([
+      ast.phase + '.header.add',
       ast.phase + '.header.set',
       ast.phase + '.header.del',
       ast.phase + '.header.replace',
