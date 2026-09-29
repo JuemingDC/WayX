@@ -83,10 +83,26 @@ function sha256(text) {
   return crypto.createHash('sha256').update(text).digest('hex');
 }
 
+function regressionScriptSource(url) {
+  // Real-plugin regression fixtures may encode known source behavior, but the
+  // production converter never sees these identities. Genericity is enforced
+  // separately by generic-identity.mjs and genericity-audit.mjs.
+  if (/\/bilibili\/(?:request|response)\.js(?:\?|$)/i.test(url)) {
+    return 'throw new Error("Quantumult X is not supported"); const body=$utils.ungzip($response.bodyBytes);';
+  }
+  if (/\/youtube\/(?:request|response)\.js(?:\?|$)/i.test(url)) {
+    return 'const isQX=typeof $task!=="undefined"; const pref=$prefs.valueForKey("x"); $done({body:$response&&$response.body});';
+  }
+  if (/\/12306\.js(?:\?|$)/i.test(url)) {
+    return 'const body=$request.body; $done({status:"HTTP/1.1 200 OK",body});';
+  }
+  return 'const isQX=typeof $task!=="undefined"; $done({});';
+}
+
 function passthroughScriptMap(source) {
   return new Map(scriptUrls(source).map(url => [
     url,
-    {qx:url, surge:url, source:'', qxAdapted:false},
+    {qx:url, surge:url, source:regressionScriptSource(url), qxAdapted:false},
   ]));
 }
 
