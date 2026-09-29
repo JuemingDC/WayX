@@ -27,14 +27,14 @@
 | `IN-PORT` | 官方 sample 未确认 → Review | `IN-PORT` | Surge 直接 |
 | `DEVICE-NAME` | 官方 sample 未确认 → Review | `DEVICE-NAME` | Surge 直接 |
 | `MAC-ADDRESS` | 官方 sample 未确认 → Review | `MAC-ADDRESS` | Surge 直接 |
-| `PROCESS-NAME` | 官方 sample 未确认 → Review | `PROCESS-NAME` | Surge 直接，遵守平台限制 |
+| `PROCESS-NAME` | 官方 sample 未确认 → Review | `PROCESS-NAME` | 仅源插件明确为 macOS-only 时直接；否则 Review |
 | `AND` | 官方 sample 未确认 → Review | `AND` | Surge 直接 |
 | `OR` | 官方 sample 未确认 → Review | `OR` | Surge 直接 |
 | `NOT` | 官方 sample 未确认 → Review | `NOT` | Surge 直接 |
 | `SCRIPT` Rule | QX filter sample 未确认 → Review | `SCRIPT` | Surge 直接 |
 | `RULE-SET` | 不自动推断 | `RULE-SET` | QX Review |
 | `DOMAIN-SET` | 不自动推断 | `DOMAIN-SET` | QX Review |
-| `FINAL` | `final` 仅完整规则配置场景 | `FINAL` | plugin/module 默认 Review |
+| `FINAL` | `final` 仅完整规则配置场景 | 不自动输出活动 `FINAL` | plugin/module 默认 Review |
 
 ## 20.2 `URL-REGEX` + `REJECT-X` 特殊映射
 
@@ -101,6 +101,12 @@ Loon 插件 [Rule] 中的 `PROXY` 具有插件策略选择语义：Loon 官方�
 用户自定义策略组（例如源中的 `PROXY`）仍不得假定存在，必须 Review/绑定提示。
 
 **Rule Type 的支持范围和 policy 的可用范围必须分开判断。**
+
+### 20.5.1 平台限制与 FINAL
+
+- `PROCESS-NAME` 属于 Surge 的平台受限 Rule。只有源插件 metadata 明确约束为 macOS-only 时，WayX 才允许在 Surge Module 中输出活动 `PROCESS-NAME`；否则保留源声明并 Review。
+- Loon Plugin 中的 `FINAL` 不自动变成 Surge Module 活动 `FINAL`。Module 被插入用户主配置后的规则顺序与全局兜底语义不能仅由单个插件声明证明，因此默认 Review。
+- 上述限制不改变本块已记录、且已经通过实际 Surge App 验证的 Module 内建 policy 支持范围。
 
 ## 20.6 自动转换实现
 
