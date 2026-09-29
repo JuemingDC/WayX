@@ -27,14 +27,15 @@ export function renderSurgeModuleHeader(headerLines, entry, stamp, {needsCore20 
   ];
 
   const system = directive('system');
-  if (system && /^(?:ios|mac)$/i.test(system)) out.push('#!system=' + system.toLowerCase());
+  if (system && /^mac$/i.test(system)) out.push('#!system=mac');
   if (needsCore20) out.push('#!requirement=CORE_VERSION>=20');
 
   out.push('');
   for (const raw of clean) {
     const line = raw.trim();
     if (!line) continue;
-    if (/^#!name=/i.test(line) || /^#!desc=/i.test(line) || /^#!system=/i.test(line)) continue;
+    if (/^#!name=/i.test(line) || /^#!desc=/i.test(line)) continue;
+    if (/^#!system=/i.test(line) && system && /^mac$/i.test(system)) continue;
     if (line.startsWith('#!')) out.push('# Original Loon metadata: ' + line);
     else out.push(raw);
   }
