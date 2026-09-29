@@ -30,9 +30,20 @@ function parseHeader(headerLines = []) {
   return { directives, comments };
 }
 
-function targetText(value, target) {
-  if (!value) return value;
-  return String(value).replace(/\bLoon\b/g, target);
+function targetText(value) {
+  return value == null ? value : String(value);
+}
+
+export function sourcePlatformConstraint(headerLines = []) {
+  const { directives } = parseHeader(headerLines);
+  const raw = String(directives.get('system') || '').trim();
+  if (!raw) return { macOnly:false, raw:'' };
+  const systems = raw.split(',').map(v => v.trim().toLowerCase()).filter(Boolean);
+  const normalized = systems.map(v => v === 'macos' ? 'mac' : v);
+  return {
+    raw,
+    macOnly: normalized.length > 0 && normalized.every(v => v === 'mac'),
+  };
 }
 
 function metadataComments(directives, target) {
@@ -65,7 +76,7 @@ export function renderQxSnippetHeader(headerLines, entry, stamp) {
   const { directives, comments } = parseHeader(headerLines);
   const out = [];
   const name = directives.get('name') || entry.id;
-  const desc = targetText(directives.get('desc') || '', 'Quantumult X');
+  const desc = targetText(directives.get('desc') || '');
 
   out.push(`# Name: ${name}`);
   if (desc) out.push(`# Description: ${desc}`);
@@ -89,14 +100,14 @@ export function renderQxSnippetHeader(headerLines, entry, stamp) {
 export function renderSurgeModuleHeader(headerLines, entry, stamp, { needsCore20 = false, argumentMetadata = [], needsLineRequirement = false } = {}) {
   const { directives, comments } = parseHeader(headerLines);
   const name = directives.get('name') || entry.id;
-  const desc = targetText(directives.get('desc') || entry.id, 'Surge');
+  const desc = targetText(directives.get('desc') || entry.id);
   const out = [
     '#!name=' + name,
     '#!desc=' + desc,
   ];
 
-  const system = directives.get('system');
-  if (system && /^mac$/i.test(system)) out.push('#!system=mac');
+  const platform = sourcePlatformConstraint(headerLines);
+  if (platform.macOnly) out.push('#!system=mac');
   if (needsLineRequirement) out.push('#!requirement=CORE_VERSION>=22');
   else if (needsCore20) out.push('#!requirement=CORE_VERSION>=20');
   out.push(...argumentMetadata);
