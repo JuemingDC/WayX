@@ -1,6 +1,6 @@
-// Loon [Argument] parser for dependency analysis only
+// Loon [Argument] parser and Surge module parameter conversion
 // Author: chance
-// Category: Converter / Argument Parser
+// Category: Converter / Argument / Surge Module
 import { splitTopLevelCsv } from './rule.mjs';
 
 function unquote(s) {
@@ -55,11 +55,12 @@ function surgeArgumentName(id) {
   return safe;
 }
 
-function escapeMetadataValue(value) {
-  return String(value ?? '')
-    .replace(/\\/g, '\\\\')
-    .replace(/\r?\n/g, '\\n')
-    .replace(/,/g, '\\,');
+function metadataDefaultValue(value, id) {
+  const text = String(value ?? '');
+  if (/[\r\n,]/.test(text)) {
+    throw new Error(`Surge #!arguments default for ${id} contains an unsupported comma/newline delimiter`);
+  }
+  return text;
 }
 
 export function buildSurgeArgumentTable(argumentLines = []) {
@@ -95,7 +96,7 @@ export function surgeArgumentMetadata(argumentLines = []) {
     const defaultValue = entry.defaultValue;
     return defaultValue === undefined || defaultValue === null
       ? entry.surgeName
-      : `${entry.surgeName}:${escapeMetadataValue(defaultValue)}`;
+      : `${entry.surgeName}:${metadataDefaultValue(defaultValue, entry.id)}`;
   });
 
   const desc = table.entries.map(entry => {
@@ -143,8 +144,8 @@ export function surgeDynamicOptionValue(id, table) {
 }
 
 export function surgeEnableRequirement(id, table) {
-  const placeholder = surgeDynamicOptionValue(id, table);
-  if (!placeholder) return null;
-  return `#!REQUIREMENT "'${placeholder}'=='true'"`;
+  const entry = table?.byId?.get(String(id));
+  if (!entry || entry.valueType !== 'boolean') return null;
+  return `#!REQUIREMENT "'${entry.placeholder}'=='true'"`;
 }
 
