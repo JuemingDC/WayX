@@ -26,7 +26,7 @@ QX IP 类规则自动去掉 `no-resolve`；Surge 保留其官方支持的 `no-re
 
 ## Review Tier
 
-JavaScript 内容、[Script]、依赖 Loon `[Argument]` 的执行声明、复杂 AND/OR/NOT、Loon 新 Rewrite 未覆盖 action、自定义 Body、binary/base64、pipeline、helper script、converter/validator 失败和官方规范变化都交给 Work。Loon `[Argument]` 不转换为 QX/Surge 参数 UI 或 BoxJs；不能证明安全就不直接写 main。
+JavaScript 内容、[Script]、依赖 Loon `[Argument]` 且目标无法确定表达的执行声明、复杂 AND/OR/NOT、Loon 新 Rewrite 未覆盖 action、自定义 Body、binary/base64、pipeline、helper script、converter/validator 失败和官方规范变化都交给 Work。Loon `[Argument]` 不转换为 QX 参数 UI/BoxJs；Surge 使用官方 `#!arguments` 参数表和 `{{{name}}}` 占位符。不能证明安全就不直接写 main。
 
 RuCu6 当前属于 Review Tier：Actions 负责同步原始 LPX/JS，Work 负责复杂新语法与脚本转换审查。
 
