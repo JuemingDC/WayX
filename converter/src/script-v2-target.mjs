@@ -10,6 +10,7 @@ import {
   scriptV2DynamicOptionRefs,
 } from './script-v2.mjs';
 import { scriptV2PluginArgumentUsage } from './argument-usage.mjs';
+import { surgePluginObjectArgument, surgeDynamicOptionValue, surgeEnableRequirement } from './argument.mjs';
 
 function unsupported(reason) {
   return { ok:false, reason };
@@ -83,7 +84,7 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
   };
 }
 
-export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 'script', argumentIds = null} = {}) {
+export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 'script', argumentIds = null, argumentTable = null} = {}) {
   if (!ast || ast.type !== 'script') return unsupported('expected Script v2 AST');
   if (argumentIds !== null) {
     const usage = scriptV2PluginArgumentUsage(ast, argumentIds);
@@ -106,8 +107,12 @@ export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 's
   if (enable?.type === 'boolean' && enable.value === false) {
     return {ok:true, disabled:true, reason:'Loon Script v2 enable=false'};
   }
+  let requirementPrefix = null;
   if (enable?.type === 'variable') {
-    return unsupported('dynamic enable has no verified Surge Script declaration equivalent');
+    requirementPrefix = surgeEnableRequirement(enable.name, argumentTable);
+    if (!requirementPrefix) {
+      return unsupported('dynamic enable references an undeclared or unsupported Surge module argument: ' + enable.name);
+    }
   }
 
   const params = [
@@ -124,27 +129,40 @@ export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 's
 
   const timeout = scriptOption(ast, 'timeout');
   if (timeout?.type === 'number') params.push('timeout=' + timeout.value);
-  else if (timeout?.type === 'variable') return unsupported('dynamic timeout has no verified Surge Script declaration equivalent');
+  else if (timeout?.type === 'variable') {
+    const placeholder = surgeDynamicOptionValue(timeout.name, argumentTable);
+    if (!placeholder) return unsupported('dynamic timeout references undeclared Surge module argument: ' + timeout.name);
+    params.push('timeout=' + placeholder);
+  }
 
   const argument = ast.script.argument;
   if (argument?.type === 'string' || argument?.type === 'raw-string') {
     params.push('argument=' + JSON.stringify(argument.value));
+  } else if (argument?.type === 'plugin-object') {
+    const encoded = surgePluginObjectArgument(argument.items.map(item => item.name), argumentTable);
+    if (!encoded.ok) return unsupported(encoded.reason);
+    params.push('argument=' + encoded.value);
   } else if (argument) {
-    return unsupported('Loon typed/object $argument cannot be preserved as Surge string $argument without changing the script');
+    return unsupported('unsupported Loon Script v2 argument form');
   }
 
   const debug = scriptOption(ast, 'debug');
   if (debug?.type === 'boolean' && debug.value) params.push('debug=true');
-  else if (debug?.type === 'variable') return unsupported('dynamic debug has no verified Surge Script declaration equivalent');
+  else if (debug?.type === 'variable') {
+    const placeholder = surgeDynamicOptionValue(debug.name, argumentTable);
+    if (!placeholder) return unsupported('dynamic debug references undeclared Surge module argument: ' + debug.name);
+    params.push('debug=' + placeholder);
+  }
 
   return {
     ok:true,
     strategy:'native-declaration',
     section:'script',
     pattern:condition.pattern,
-    line:name + ' = ' + params.join(','),
+    line:(requirementPrefix ? requirementPrefix + ' ' : '') + name + ' = ' + params.join(','),
     tag:fixedOption(ast, 'tag'),
     notes:condition.notes,
+    usesLineRequirement:Boolean(requirementPrefix),
   };
 }
 
