@@ -3,6 +3,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { qxRule as canonicalQxRule, surgeRule as canonicalSurgeRule } from '../../converter/src/rule.mjs';
 import { selectQxScriptAction } from '../../converter/src/script.mjs';
+import { inspectQxScriptCompatibility, qxManualPortComment } from '../../converter/src/script-compat.mjs';
 import { minifyJq } from '../../converter/src/jq.mjs';
 import { BOXJS_SUBSCRIPTION, qxTargetPath, surgeTargetPath } from '../../converter/src/paths.mjs';
 import { analyzeSafeRewriteV2 } from '../../converter/src/rewrite-v2-safe.mjs';
@@ -374,20 +375,30 @@ function convert(entry, source, scriptMap, stamp = nowCN()) {
     const mapped = scriptMap.get(sc.scriptPath);
     const qxUrl = mapped?.qx || sc.scriptPath;
     const surgeUrl = mapped?.surge || sc.scriptPath;
-    const qType = selectQxScriptAction({
-      phase: sc.type,
-      requiresBody: sc.requiresBody,
+    const qxCompat = inspectQxScriptCompatibility({
       scriptUrl: sc.scriptPath,
       sourceText: mapped?.source || '',
-    }).action;
+      forkUrl: mapped?.qxAdapted ? qxUrl : '',
+    });
     qx.rewrite.push(...comments);
     if (sc.tag) qx.rewrite.push(`# ${sc.tag}`);
-    if (sc.argument && mapped?.qxArgumentBridge) qx.rewrite.push(`# [WayX] BoxJs/$prefs bridge active for argument=${sc.argument}`);
-    else if (sc.argument) qx.rewrite.push(`# [WayX] REVIEW REQUIRED: verify BoxJs/$prefs bridge for argument=${sc.argument}`);
-    if (sc.enable && mapped?.qxEnableBridge) qx.rewrite.push(`# [WayX] BoxJs/$prefs enable bridge active for enable=${sc.enable}`);
-    else if (sc.enable) qx.rewrite.push(`# [WayX] REVIEW REQUIRED: verify QX enable bridge for enable=${sc.enable}`);
-    if (sc.argument || sc.enable || sc.binary) qx.rewrite.push(`# Loon script options preserved in source: ${[sc.argument && `argument=${sc.argument}`, sc.enable && `enable=${sc.enable}`, sc.binary && 'binary-body-mode=true'].filter(Boolean).join(', ')}`);
-    qx.rewrite.push(`${sc.pattern} url ${qType} ${qxUrl}`);
+    if (!qxCompat.executable) {
+      qx.rewrite.push(...qxManualPortComment({ scriptUrl: sc.scriptPath, result: qxCompat }));
+      qx.rewrite.push(`# Original Loon: ${item.line}`);
+    } else {
+      const qType = selectQxScriptAction({
+        phase: sc.type,
+        requiresBody: sc.requiresBody,
+        scriptUrl: sc.scriptPath,
+        sourceText: mapped?.source || '',
+      }).action;
+      if (sc.argument && mapped?.qxArgumentBridge) qx.rewrite.push(`# [WayX] BoxJs/$prefs bridge active for argument=${sc.argument}`);
+      else if (sc.argument) qx.rewrite.push(`# [WayX] REVIEW REQUIRED: verify BoxJs/$prefs bridge for argument=${sc.argument}`);
+      if (sc.enable && mapped?.qxEnableBridge) qx.rewrite.push(`# [WayX] BoxJs/$prefs enable bridge active for enable=${sc.enable}`);
+      else if (sc.enable) qx.rewrite.push(`# [WayX] REVIEW REQUIRED: verify QX enable bridge for enable=${sc.enable}`);
+      if (sc.argument || sc.enable || sc.binary) qx.rewrite.push(`# Loon script options preserved in source: ${[sc.argument && `argument=${sc.argument}`, sc.enable && `enable=${sc.enable}`, sc.binary && 'binary-body-mode=true'].filter(Boolean).join(', ')}`);
+      qx.rewrite.push(`${sc.pattern} url ${qType} ${qxUrl}`);
+    }
 
     const resolvedArg = resolveArgument(sc.argument, defaults);
     const name = sanitizeName(sc.tag || `${entry.id}_${String(scriptIndex).padStart(2, '0')}`);
@@ -574,7 +585,7 @@ async function syncScript(entry, url, defaults = new Map(), argumentLines = []) 
   }
 
   const toRaw = file => `${RAW_BASE}/${path.relative(ROOT, file).split(path.sep).map(encodeURIComponent).join('/')}`;
-  return { qx: toRaw(qxPath), surge: toRaw(surgePath), source: normalized, qxArgumentBridge: entry.id === 'Tieba', qxEnableBridge: entry.id === 'DianPing' };
+  return { qx: toRaw(qxPath), surge: toRaw(surgePath), source: normalized, qxAdapted: qxPath !== sourceDest, qxArgumentBridge: entry.id === 'Tieba', qxEnableBridge: entry.id === 'DianPing' };
 }
 
 function scriptUrls(source) {

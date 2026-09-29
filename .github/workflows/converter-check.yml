@@ -21,10 +21,12 @@ jobs:
           node-version: "22"
       - name: Syntax check converter
         run: |
-          for file in converter/src/*.mjs; do
+          for file in converter/src/*.mjs converter/tools/*.mjs; do
             node --check "$file"
           done
           node --check .github/scripts/sync-convert.mjs
           node --check converter/tests/checkpoint.mjs
       - name: Converter checkpoint
-        run: node converter/tests/checkpoint.mjs
+        run: |
+          node converter/tests/checkpoint.mjs
+          node converter/tests/myblockads-golden.mjs

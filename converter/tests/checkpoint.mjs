@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import {
   analyzeSafeRewriteV2,
+  dependencySpecFromAction,
+  inlineResolvedDependency,
+  inspectQxScriptCompatibility,
+  listRewriteV2Dependencies,
   LOON_REWRITE_V2_ACTIONS,
   minifyJq,
   mergeBoxJsSubscription,
@@ -22,7 +26,7 @@ assert.equal(qxRule('URL-REGEX, "^https:\\/\\/ad\\.example\\.com", REJECT').line
 assert.match(qxRule('AND, ((DOMAIN-SUFFIX, example.com), (PROTOCOL, TCP)), REJECT').line, /^# Loon logical rule/);
 assert.equal(qxRule('IP-CIDR, 1.1.1.1/32, REJECT, no-resolve').line, 'ip-cidr, 1.1.1.1/32, reject');
 assert.equal(surgeRule('IP-CIDR, 1.1.1.1/32, REJECT, no-resolve'), 'IP-CIDR, 1.1.1.1/32, REJECT, no-resolve');
-assert.match(surgeRule('DOMAIN, example.com, PROXY'), /^# \\[WayX\\] Surge Module policy binding required:/);
+assert.equal(surgeRule('DOMAIN, example.com, PROXY'), '# [WayX] Surge Module policy binding required: DOMAIN, example.com, PROXY');
 
 const compact = minifyJq('walk( if type == "object" then .a = [] | del(.b, .c) else . end )');
 assert.equal(compact.includes('"object"'), true);
@@ -97,5 +101,44 @@ assert.equal(analyzeSafeRewriteV2('request if ${url} ~= /ads/i then reject(200)'
 assert.equal(analyzeSafeRewriteV2('request if ${url} ~= /ads/ then reject(451, "blocked")').safe, false);
 assert.equal(analyzeSafeRewriteV2('response if ${url} ~= /ads/ then reject_dict(200)').safe, false);
 assert.equal(analyzeSafeRewriteV2('request if ${url} ~= /ads/ then reject_dict(200) | request.header.del("X")').safe, false);
+
+const bilibiliCompat = inspectQxScriptCompatibility({
+  scriptUrl:'https://rucu6.pages.dev/Scripts/bilibili/request.js',
+  sourceText:'if (typeof $task < "u") throw new Error("QuantumultX is not supported"); function unzip(x){ return $utils.ungzip(x); }',
+});
+assert.equal(bilibiliCompat.executable, false);
+assert.equal(bilibiliCompat.status, 'manual-port');
+
+const youtubeCompat = inspectQxScriptCompatibility({
+  scriptUrl:'https://rucu6.pages.dev/Scripts/youtube/response.js',
+  sourceText:'const platform = typeof $task < "u" ? "QuanX" : "Surge"; const x=$prefs.valueForKey("a");',
+});
+assert.equal(youtubeCompat.executable, true);
+assert.equal(youtubeCompat.status, 'native-adapter');
+
+const genericReject = inspectQxScriptCompatibility({
+  scriptUrl:'https://example.com/a.js',
+  sourceText:'throw new Error("Quantumult X is not supported");',
+});
+assert.equal(genericReject.executable, false);
+
+const jqFileAst = parseRewriteV2('response if ${url} ~= /api/ then response.json.jq_file("filters/remove-ads.jq")');
+const deps = listRewriteV2Dependencies(jqFileAst, {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
+assert.equal(deps.length, 1);
+assert.equal(deps[0].url, 'https://example.com/Plugins/filters/remove-ads.jq');
+const inlinedJq = inlineResolvedDependency(jqFileAst.actions[0], 'del(.ads)', {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
+assert.equal(inlinedJq.action.name, 'response.json.jq');
+assert.equal(inlinedJq.action.args[0].value, 'del(.ads)');
+
+const mockFileAst = parseRewriteV2('response if ${url} ~= /api/ then response.body.mock_file("json", "mock.json", 200)');
+const mockSpec = dependencySpecFromAction(mockFileAst.actions[0], {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
+assert.equal(mockSpec.inlineSafeText, true);
+assert.equal(inlineResolvedDependency(mockFileAst.actions[0], '{"ok":true}', {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'}).action.name, 'response.body.mock');
+
+const binaryMockAst = parseRewriteV2('response if ${url} ~= /image/ then response.body.mock_file("png", "image.png", 200)');
+assert.throws(
+  () => inlineResolvedDependency(binaryMockAst.actions[0], 'not-binary-safe', {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'}),
+  /binary mock file must stay Review Tier/,
+);
 
 console.log('WayX converter checkpoint tests passed');

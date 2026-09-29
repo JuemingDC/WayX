@@ -60,7 +60,9 @@ jobs:
 
       - name: Validate WayX converter core
         if: steps.pending.outputs.blocked != 'true'
-        run: node converter/tests/checkpoint.mjs
+        run: |
+          node converter/tests/checkpoint.mjs
+          node converter/tests/myblockads-golden.mjs
 
       - name: Set up Python
         if: steps.pending.outputs.blocked != 'true'
@@ -101,6 +103,10 @@ jobs:
         run: |
           set -o pipefail
           python .github/scripts/sync_rucu6.py 2>&1 | tee monitor/.runtime/rucu6-sync.log
+
+      - name: Scan mirrored script compatibility
+        if: steps.pending.outputs.blocked != 'true'
+        run: node converter/tools/scan-script-compat.mjs
 
       - name: Check official upstream specifications
         if: steps.pending.outputs.blocked != 'true'
