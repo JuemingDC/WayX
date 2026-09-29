@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { surgeModuleRule } from '../src/index.mjs';
+import { surgeModuleRule, surgeRuleTypesInTree } from '../src/index.mjs';
 
 const ROOT = process.cwd();
 const manifest = JSON.parse(await fs.readFile(path.join(ROOT, '.github/sources/loon.json'), 'utf8'));
@@ -45,8 +45,11 @@ for (const entry of manifest) {
   stats.files++;
   for (const line of activeRuleLines(text)) {
     stats.rules++;
-    const type = line.split(',', 1)[0].trim().toUpperCase();
-    stats.types.set(type, (stats.types.get(type) || 0) + 1);
+    const typeTree = surgeRuleTypesInTree(line);
+    assert.equal(typeTree.ok, true, `unsupported Surge rule type tree: ${line} (${typeTree.reason})`);
+    for (const type of typeTree.types) {
+      stats.types.set(type, (stats.types.get(type) || 0) + 1);
+    }
 
     const mapped = surgeModuleRule(line);
     if (mapped.kind === 'rule') {
