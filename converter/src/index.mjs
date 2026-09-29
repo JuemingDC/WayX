@@ -12,3 +12,4 @@ export * from './qx-mock.mjs';
 export * from './target-regex.mjs';
 export * from './rewrite-v2-semantic.mjs';
 export * from './qx-semantic-script.mjs';
+export * from './script-v2.mjs';
