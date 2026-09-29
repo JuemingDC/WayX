@@ -26,6 +26,7 @@ import {
   planLegacyRewrite,
   validateLoonSourceCatalog,
   planMitmLine,
+  resolveOriginalUrl,
   mergeBoxJsSubscription,
   parseLoonArguments,
   parseRewriteV2,
@@ -244,6 +245,15 @@ const catalogFixture = validateLoonSourceCatalog([
   },
 ]);
 assert.equal(catalogFixture[0].id, 'UnknownPlugin');
+assert.equal(
+  resolveOriginalUrl('../Scripts/response.js', 'https://author.example.invalid/Plugins/demo.lpx'),
+  'https://author.example.invalid/Scripts/response.js',
+);
+assert.equal(
+  resolveOriginalUrl('https://author.example.invalid/Scripts/request.js', 'https://ignored.example.invalid/demo.lpx'),
+  'https://author.example.invalid/Scripts/request.js',
+);
+assert.throws(() => resolveOriginalUrl('../Scripts/request.js'), /requires original plugin URL/);
 assert.throws(
   () => validateLoonSourceCatalog([
     {
