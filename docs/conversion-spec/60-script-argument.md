@@ -114,3 +114,13 @@ Review：
 - 按来源仓库的 compatibility override。
 
 如果脚本正文不可获得，且仅凭声明无法证明兼容，必须 Review。
+
+## 60.7 自动转换实现
+
+- Legacy script behavior selection：`converter/src/script.mjs`
+- Source JS compatibility：`converter/src/script-compat.mjs`
+- Script v2 parser：`converter/src/script-v2.mjs`
+- Script v2 target planner：`converter/src/script-v2-target.mjs`
+- Loon Argument parser：`converter/src/argument.mjs`
+- Source-script mirror path planning：`converter/src/script-path.mjs`
+- Regression：`converter/tests/rucu6-script-v2-coverage.mjs`、`converter/tests/checkpoint.mjs`
