@@ -7,6 +7,8 @@ import {
   scriptV2ArgumentRefs,
   scriptV2DynamicOptionRefs,
   scriptOptionBoolean,
+  qxScriptV2Plan,
+  surgeScriptV2Plan,
 } from '../src/index.mjs';
 
 const ROOT = process.cwd();
@@ -36,6 +38,8 @@ const report = {
   argumentString: 0,
   dynamicOptions: {},
   scriptUrls: {},
+  qxPlans: {},
+  surgePlans: {},
 };
 
 for (const name of files) {
@@ -60,6 +64,13 @@ for (const name of files) {
         const key = ref.option + ':' + ref.id;
         report.dynamicOptions[key] = (report.dynamicOptions[key] || 0) + 1;
       }
+      const qxPlan = qxScriptV2Plan(ast, {scriptUrl:ast.script.path, sourceText:''});
+      const surgePlan = surgeScriptV2Plan(ast, {scriptUrl:ast.script.path, name:'coverage'});
+      const qxKey = qxPlan.ok ? (qxPlan.disabled ? 'disabled' : qxPlan.strategy) : 'REVIEW: ' + qxPlan.reason;
+      const surgeKey = surgePlan.ok ? (surgePlan.disabled ? 'disabled' : surgePlan.strategy) : 'REVIEW: ' + surgePlan.reason;
+      report.qxPlans[qxKey] = (report.qxPlans[qxKey] || 0) + 1;
+      report.surgePlans[surgeKey] = (report.surgePlans[surgeKey] || 0) + 1;
+
       const refs = scriptV2ArgumentRefs(ast);
       const key = ast.script.path;
       if (!report.scriptUrls[key]) report.scriptUrls[key] = {count:0, argumentRefs:[], binary:false};
