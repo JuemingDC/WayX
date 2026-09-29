@@ -23,9 +23,6 @@ import {
   mergeBoxJsSubscription,
   parseLoonArguments,
   renderQxPrefsObjectBridge,
-  renderQxScriptV2Bridge,
-  renderSurgeScriptV2Bridge,
-  renderSurgeModuleArguments,
   parseRewriteV2,
   qxPrimitiveForRewriteV2Action,
   qxRule,
@@ -46,6 +43,10 @@ import {
 } from '../src/index.mjs';
 
 assert.equal(qxRule('URL-REGEX, "^https:\\/\\/ad\\.example\\.com", REJECT').line, '^https:\\/\\/ad\\.example\\.com url reject-200');
+assert.equal(qxRule('URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-IMG').line, '^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\? url reject-img');
+assert.equal(qxRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP').line, '^https:\\/\\/drop\\.example\\.com url reject');
+assert.equal(surgeRule('URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-IMG'), 'URL-REGEX,^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?,REJECT-TINYGIF');
+assert.equal(surgeRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP'), 'URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP');
 assert.match(qxRule('AND, ((DOMAIN-SUFFIX, example.com), (PROTOCOL, TCP)), REJECT').line, /^# Loon logical rule/);
 assert.equal(qxRule('IP-CIDR, 1.1.1.1/32, REJECT, no-resolve').line, 'ip-cidr, 1.1.1.1/32, reject');
 assert.equal(surgeRule('IP-CIDR, 1.1.1.1/32, REJECT, no-resolve'), 'IP-CIDR, 1.1.1.1/32, REJECT, no-resolve');
@@ -366,49 +367,26 @@ assert.match(surgeScriptV2Native.line, /^request_script = type=http-request,/);
 assert.match(surgeScriptV2Native.line, /requires-body=true/);
 assert.match(surgeScriptV2Native.line, /binary-body-mode=true/);
 
-const qxScriptV2NeedsBridge = qxScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'request.js'});
-assert.equal(qxScriptV2NeedsBridge.ok, false);
-assert.match(qxScriptV2NeedsBridge.reason, /dynamic enable|argument/);
+const qxScriptV2NeedsReview = qxScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'request.js'});
+assert.equal(qxScriptV2NeedsReview.ok, false);
+assert.match(qxScriptV2NeedsReview.reason, /dynamic enable|argument/);
 
-const surgeScriptV2NeedsBridge = surgeScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'request.js', name:'x'});
-assert.equal(surgeScriptV2NeedsBridge.ok, false);
-assert.match(surgeScriptV2NeedsBridge.reason, /dynamic enable|argument/);
+const surgeScriptV2NeedsReview = surgeScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'request.js', name:'x'});
+assert.equal(surgeScriptV2NeedsReview.ok, false);
+assert.match(surgeScriptV2NeedsReview.reason, /dynamic enable|argument/);
 
-const scriptBridgeArgs = [
-  'enabled=switch, false, true, tag="Enabled"',
-  'lang=select, "zh-Hans", "en", tag="Language"',
-];
-const qxV2Bridge = renderQxScriptV2Bridge(
-  'Demo',
-  scriptBridgeArgs,
-  scriptV2ObjectArg,
-  'const value = $argument.lang; $done({});',
-  {stamp:'2026-09-29 10:00:00 +08:00', category:'Adblock', sourceUrl:'https://example.com/request.js'},
+const fixedSurgeArgument = surgeScriptV2Plan(
+  parseScriptV2('response if ${url} ~= /api/ then script("a.js", "plain-string") with requires_body=true'),
+  {scriptUrl:'a.js', name:'fixed_arg'},
 );
-assert.equal(qxV2Bridge.changed, true);
-assert.deepEqual(qxV2Bridge.preferenceIds.sort(), ['enabled','lang']);
-assert.match(qxV2Bridge.source, /\$prefs\.valueForKey/);
-assert.match(qxV2Bridge.source, /async function\(\$argument\)/);
-assert.match(qxV2Bridge.source, /"lang": String/);
+assert.equal(fixedSurgeArgument.ok, true);
+assert.match(fixedSurgeArgument.line, /argument="plain-string"/);
 
-const surgeV2Bridge = renderSurgeScriptV2Bridge(
-  scriptBridgeArgs,
-  scriptV2ObjectArg,
-  'const value = $argument.lang; $done({});',
-  {category:'Adblock', sourceUrl:'https://example.com/request.js'},
+const fixedQxArgument = qxScriptV2Plan(
+  parseScriptV2('response if ${url} ~= /api/ then script("a.js", "plain-string") with requires_body=true'),
+  {scriptUrl:'a.js'},
 );
-assert.equal(surgeV2Bridge.changed, true);
-assert.deepEqual(surgeV2Bridge.moduleArgumentIds.sort(), ['enabled','lang']);
-assert.match(surgeV2Bridge.declarationArgument, /\{\{\{enabled\}\}\}/);
-assert.match(surgeV2Bridge.declarationArgument, /\{\{\{lang\}\}\}/);
-assert.match(surgeV2Bridge.source, /JSON\.parse\(\$argument/);
-assert.match(surgeV2Bridge.source, /async function\(\$argument\)/);
-
-const surgeArgMeta = renderSurgeModuleArguments(scriptBridgeArgs, ['enabled','lang']);
-assert.equal(surgeArgMeta[0], '#!arguments=enabled:false,lang:zh-Hans');
-assert.throws(
-  () => renderQxScriptV2Bridge('Demo', scriptBridgeArgs, scriptV2ObjectArg, 'const $argument = {}; $done({});'),
-  /source declares \$argument/,
-);
+assert.equal(fixedQxArgument.ok, false);
+assert.match(fixedQxArgument.reason, /cannot be carried by the official Quantumult X rewrite declaration/);
 
 console.log('WayX converter checkpoint tests passed');
