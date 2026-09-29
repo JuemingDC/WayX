@@ -5,7 +5,6 @@ import { isRewriteV2, parseRewriteV2 } from './rewrite-v2.mjs';
 import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
 
 const SAFE_REJECT_ACTIONS = new Map([
-  ['reject', 'reject-200'],
   ['reject_dict', 'reject-dict'],
   ['reject_array', 'reject-array'],
   ['reject_img', 'reject-img'],
@@ -26,16 +25,25 @@ export function analyzeSimpleUrlRegexCondition(condition) {
 }
 
 function safeRejectAction(action) {
+  if (action?.name === 'reject') {
+    if (action.args.length !== 1) return { ok: false, reason: 'reject with custom body requires semantic review' };
+    const status = action.args[0];
+    if (status?.type !== 'number' || !Number.isInteger(status.value) || status.value < 100 || status.value > 599) {
+      return { ok: false, reason: 'reject status must be an integer in Loon 100...599' };
+    }
+    if (status.value === 404) return { ok: true, action: 'reject', sourceAction: 'reject', status: 404 };
+    if (status.value === 200) return { ok: true, action: 'reject-200', sourceAction: 'reject', status: 200 };
+    return { ok: false, reason: 'reject status has no direct QX primitive' };
+  }
+
   const mapped = SAFE_REJECT_ACTIONS.get(action?.name);
   if (!mapped) return { ok: false, reason: 'action is outside the deterministic reject subset' };
-  if (action.name === 'reject' && action.args.length !== 1) return { ok: false, reason: 'reject with custom body requires semantic review' };
   const status = action.args[0];
   if (status?.type !== 'number' || !Number.isInteger(status.value) || status.value < 100 || status.value > 599) {
     return { ok: false, reason: 'reject status must be an integer in Loon 100...599' };
   }
-  // QX reject-200/reject-dict/reject-array/reject-img are documented 200-response
-  // primitives. Other Loon status codes require a generated response script.
-  if (status.value !== 200) return { ok: false, reason: 'non-200 reject status requires a generated QX response script' };
+  // QX reject-dict/reject-array/reject-img are documented 200-response primitives.
+  if (status.value !== 200) return { ok: false, reason: 'structured/image reject status has no direct QX primitive' };
   return { ok: true, action: mapped, sourceAction: action.name, status: status.value };
 }
 
