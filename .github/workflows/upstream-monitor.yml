@@ -102,6 +102,10 @@ jobs:
           set -o pipefail
           python .github/scripts/sync_rucu6.py 2>&1 | tee monitor/.runtime/rucu6-sync.log
 
+      - name: Scan mirrored script compatibility
+        if: steps.pending.outputs.blocked != 'true'
+        run: node converter/tools/scan-script-compat.mjs
+
       - name: Check official upstream specifications
         if: steps.pending.outputs.blocked != 'true'
         id: monitor
