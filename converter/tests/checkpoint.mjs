@@ -25,6 +25,7 @@ import {
   classifyLegacyRewrite,
   planLegacyRewrite,
   validateLoonSourceCatalog,
+  planScriptMirrorPaths,
   mergeBoxJsSubscription,
   parseLoonArguments,
   parseRewriteV2,
@@ -192,6 +193,24 @@ assert.doesNotThrow(
 const compact = minifyJq('walk( if type == "object" then .a = [] | del(.b, .c) else . end )');
 assert.equal(compact.includes('"object"'), true);
 assert.equal(compact.includes('del(.b,.c)'), true);
+
+const mirrorUrls=[
+  'https://one.example.invalid/a/response.js',
+  'https://two.example.invalid/b/response.js',
+  'https://one.example.invalid/a/request.js',
+];
+const mirrorPlan=planScriptMirrorPaths(mirrorUrls);
+assert.equal(mirrorPlan.get(mirrorUrls[2]), 'request.js');
+assert.notEqual(mirrorPlan.get(mirrorUrls[0]), mirrorPlan.get(mirrorUrls[1]));
+assert.match(mirrorPlan.get(mirrorUrls[0]), /^response-[0-9a-f]{10}\.js$/);
+assert.deepEqual(
+  [...planScriptMirrorPaths([...mirrorUrls].reverse()).entries()].sort(),
+  [...mirrorPlan.entries()].sort(),
+);
+assert.equal(
+  new Set([...mirrorPlan.values()].map(x=>x.toLowerCase())).size,
+  mirrorPlan.size,
+);
 
 assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:true,scriptUrl:'https://example.com/request.js',sourceText:'$done({status:"HTTP/1.1 200 OK",body:$request.body});'}).action, 'script-analyze-echo-response');
 assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:false,scriptUrl:'https://example.com/header.js',sourceText:'$done({headers:$request.headers});'}).action, 'script-request-header');
