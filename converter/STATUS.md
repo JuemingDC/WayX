@@ -1,5 +1,36 @@
 # WayX Converter Status
 
+## 2026-09-29 phase 8 — end-to-end full-output golden
+
+Implemented on `work/end-to-end-golden-20260929` / PR #11:
+
+- `.github/scripts/sync-convert.mjs` can now be imported by tests without executing network sync; normal CLI execution still runs `main()`.
+- Added deterministic complete-output conversion with fixed timestamp against checked-in Loon sources.
+- Golden coverage includes six representative full plugins:
+  - HTTPDNS — legacy Rule + logical Rule + URL Rewrite + Map Local + MITM;
+  - PinDuoDuo — nested URL-REGEX/USER-AGENT Rule, PROTOCOL=QUIC, JQ Body Rewrite, Map Local, source Script declaration, MITM;
+  - RuCu6 MyBlockAds — large Rule/Rewrite v2/JQ/Script surface;
+  - RuCu6 YouTube — binary Script v2 plus typed argument Review;
+  - RuCu6 Bilibili — protobuf QX hard-disable plus JSON script declarations and generated rewrite helpers;
+  - RuCu6 JingDong — dynamic enable/Cookies Review plus native script declaration.
+- `converter/fixtures/end-to-end-golden.json` locks complete QX and Surge SHA-256 fingerprints, byte sizes, source/generated script counts, Review counts and Surge section order.
+- `converter/tests/end-to-end-golden.mjs` additionally validates target semantics:
+  - QX section headings remain commented;
+  - Surge output passes the strict sgmodule validator;
+  - Surge Loon-only metadata is not active;
+  - Core 20 requirement appears when Body Rewrite / inline Map Local is active;
+  - PinDuoDuo PROTOCOL=QUIC logical rule survives;
+  - Bilibili protobuf `request.js/response.js` never appears in an active QX line;
+  - YouTube/JingDong typed argument and dynamic enable remain Review instead of modifying source scripts.
+- Source Script JavaScript remains unchanged. End-to-end golden validates declarations and generated target helper scripts only.
+- Existing MyBlockAds JQ golden, Rewrite v2 coverage, Script v2 coverage, uploaded Loon syntax cases and Surge Rule coverage remain enabled in the same CI job.
+
+Next work:
+
+1. Regenerate the checked-in canonical `Adblock/Quantumult X/` and `Adblock/Surge/` outputs with the merged converter so old pre-audit headers are replaced.
+2. Add an offline consistency test that compares checked-in canonical outputs against current converter output after normalizing only the conversion timestamp/source-script mirror URL where appropriate.
+3. Then extend Script v2 compound conditions only where target semantics remain fully equivalent.
+
 ## 2026-09-29 phase 7 — Surge sgmodule format audit
 
 Implemented on `work/surge-module-format-audit-v2-20260929` / PR #10:
