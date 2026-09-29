@@ -44,9 +44,11 @@ script-analyze-echo-response
 明确不支持 QX：
 ```text
 # [WayX] QUANTUMULT X UNSUPPORTED
-# Original Loon: ...
+# Source declaration: ...
 # Reason: ...
 ```
+
+目标成品中的 Review/Unsupported 注释使用 `Source declaration`，不添加 `Original Loon`、`Loon resource` 等来源平台标签。
 
 不 fork。
 
