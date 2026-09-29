@@ -9,6 +9,8 @@ import {
   compileRegexForTarget,
   qxDirectRewritePlan,
   surgeDirectRewritePlan,
+  surgeRedirectRewritePlan,
+  surgeRejectRewritePlan,
   renderQxRedirectScript,
   renderQxRejectScript,
   renderQxHeaderScript,
@@ -220,6 +222,15 @@ const reject404V2 = parseRewriteV2('request if ${url} ~= /^https:\\/\\/ads\\.exa
 const reject404Script = renderQxRejectScript(reject404V2, {category:'Adblock'});
 assert.equal(reject404Script.qxAction, 'script-echo-response');
 assert.match(reject404Script.script, /HTTP\/1\.1 404 Not Found/);
+
+
+const surgeRedirectV2 = surgeRedirectRewritePlan(redirectV2);
+assert.equal(surgeRedirectV2.ok, true);
+assert.match(surgeRedirectV2.line, /\$1 302$/);
+
+const surgeReject404 = surgeRejectRewritePlan(reject404V2);
+assert.equal(surgeReject404.ok, true);
+assert.match(surgeReject404.line, /data-type=text data="" status-code=404$/);
 
 const qxHeaderV2 = parseRewriteV2('request if ${url} ~= /https:\\/\\/rule\\.example\\.com/i then request.header.set("user-agent", "Loon") | request.header.del("Cookie")');
 const qxHeaderScript = renderQxHeaderScript(qxHeaderV2, {category:'Rewrite'});
