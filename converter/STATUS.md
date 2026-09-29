@@ -17,9 +17,9 @@ Implemented on `work/surge-module-format-audit-v2-20260929` / PR #10:
 - Surge Module `[Rule]` is normalized independently from a normal Surge profile:
   - only `DIRECT / REJECT / REJECT-TINYGIF` are emitted as active module policies;
   - Loon `REJECT-IMG` -> `REJECT-TINYGIF`;
-  - Loon `REJECT-DROP / REJECT-NO-DROP` -> `REJECT` with an explanatory comment;
+  - Loon/Surge profile `REJECT-DROP / REJECT-NO-DROP` are **not** collapsed to `REJECT`; because the official Module page still restricts module rules to `DIRECT / REJECT / REJECT-TINYGIF`, these policies stay commented for Review to preserve semantics;
   - external policy names such as `PROXY` remain commented for user binding;
-  - logical AND/OR/NOT expressions, URL-REGEX and `no-resolve` are preserved when their Surge rule syntax is valid.
+  - the converter now recognizes the current official Surge Rule Type Index (DOMAIN family, IP family, USER-AGENT, URL-REGEX, process/source/port/network rules, AND/OR/NOT, SCRIPT, RULE-SET, FINAL) and preserves native Loon→Surge combinations such as nested logic, PROTOCOL=QUIC and `no-resolve`.
 - Section output is Surge-native: `[Rule]`, `[URL Rewrite]`, `[Header Rewrite]`, `[Body Rewrite]`, `[Map Local]`, `[Script]`, `[MITM]`.
 - URL reject uses `<pattern> _ reject`.
 - Header Rewrite uses official `http-request/http-response ... header-*` syntax.
@@ -63,7 +63,7 @@ User-provided Loon new-syntax cases are now locked by CI:
 Current rule behavior:
 
 - QX `URL-REGEX REJECT-DROP` -> native `url reject` by project policy.
-- QX `URL-REGEX REJECT-DROP` remains `url reject`; for Surge `.sgmodule`, `REJECT-DROP / REJECT-NO-DROP` are normalized to `REJECT` because the official Module `[Rule]` policy set is stricter than a normal Surge profile.
+- QX `URL-REGEX REJECT-DROP` remains `url reject`; Surge profile itself supports `REJECT-DROP / REJECT-NO-DROP`, but the current official Module page still limits module `[Rule]` policies to `DIRECT / REJECT / REJECT-TINYGIF`. WayX therefore keeps those source rules commented for Review rather than changing their behavior.
 - QX `REJECT-IMG` -> `reject-img`.
 - Surge Loon `REJECT-IMG` rule policy -> `REJECT-TINYGIF`.
 - Ordinary Loon `reject(404)` continues to use native QX `reject` and Surge URL Rewrite `_ reject`.
