@@ -53,6 +53,18 @@ function jqPath(pathText) {
   return parts;
 }
 
+function jqAccess(pathText) {
+  const parts=jqPath(pathText);
+  if (!parts) return null;
+  let out='';
+  for (const part of parts) {
+    if (typeof part === 'number') out += `[${part}]`;
+    else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(part)) out += '.' + part;
+    else out += '[' + JSON.stringify(part) + ']';
+  }
+  return out;
+}
+
 function quoteJq(jq) {
   if (jq.includes("'")) throw new Error('jq expression contains a single quote and cannot be safely embedded');
   return `'${jq}'`;
@@ -71,9 +83,9 @@ function compileJsonMutation(phase, op, rest) {
   if (op === 'add') return { ok:false, reason:'legacy json-add semantics are not compiled until add-vs-replace behavior is proven equivalent' };
   if (op === 'del') {
     if (!tokens.length) return { ok:false, reason:'missing JSON path' };
-    const paths = tokens.map(unquote).map(jqPath);
+    const paths = tokens.map(unquote).map(jqAccess);
     if (paths.some(x => !x)) return { ok:false, reason:'unsupported JSON path syntax' };
-    return { ok:true, jq:`delpaths(${JSON.stringify(paths)})` };
+    return { ok:true, jq:`del(${paths.join(', ')})` };
   }
   if (op === 'replace') {
     if (!tokens.length || tokens.length % 2) return { ok:false, reason:'json-replace requires path/value pairs' };
