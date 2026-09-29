@@ -5,7 +5,8 @@ import { fileURLToPath } from 'node:url';
 import { qxRule as canonicalQxRule, surgeModuleRule } from '../../converter/src/rule.mjs';
 import { selectQxScriptAction } from '../../converter/src/script.mjs';
 import { inspectQxScriptCompatibility, qxManualPortComment } from '../../converter/src/script-compat.mjs';
-import { minifyJq, minifyJqFile } from '../../converter/src/jq.mjs';
+import { minifyJqFile } from '../../converter/src/jq.mjs';
+import { planLegacyRewrite } from '../../converter/src/legacy-rewrite.mjs';
 import { qxTargetPath, surgeTargetPath } from '../../converter/src/paths.mjs';
 import { analyzeSafeRewriteV2 } from '../../converter/src/rewrite-v2-safe.mjs';
 import { isRewriteV2, parseRewriteV2 } from '../../converter/src/rewrite-v2.mjs';
@@ -111,27 +112,6 @@ function parseLoon(text) {
     else sections.get(current).push(raw);
   }
   return { header, sections };
-}
-
-function shellTokens(input) {
-  const out = [];
-  let cur = '', quote = null, esc = false;
-  for (let i = 0; i < input.length; i++) {
-    const ch = input[i];
-    if (esc) { cur += ch; esc = false; continue; }
-    if (ch === '\\' && quote) { cur += ch; esc = true; continue; }
-    if (quote) {
-      cur += ch;
-      if (ch === quote) quote = null;
-      continue;
-    }
-    if (ch === '"' || ch === "'") { quote = ch; cur += ch; continue; }
-    if (/\s/.test(ch)) {
-      if (cur) { out.push(cur); cur = ''; }
-    } else cur += ch;
-  }
-  if (cur) out.push(cur);
-  return out;
 }
 
 function splitPatternAction(line) {
@@ -358,105 +338,6 @@ async function materializeJqFiles(entry, parsed) {
   return out;
 }
 
-function jqPath(pathText) {
-  // Current whitelist uses identifier-safe dotted paths. Keep exact hierarchy.
-  return '.' + pathText.split('.').map(k => /^[A-Za-z_][A-Za-z0-9_]*$/.test(k) ? k : `[${JSON.stringify(k)}]`).join('.').replace(/\.\[/g, '[');
-}
-
-function quoteJq(jq) {
-  if (jq.includes("'")) throw new Error('jq expression contains a single quote and cannot be safely embedded without manual review');
-  return `'${jq}'`;
-}
-
-function jqDelete(rest) {
-  const fields = shellTokens(rest).map(x => x.replace(/^['"]|['"]$/g, ''));
-  return `del(${fields.map(jqPath).join(', ')})`;
-}
-
-function parseJsonValue(tok) {
-  const t = tok.trim();
-  try { return JSON.stringify(JSON.parse(t)); } catch {}
-  if (/^(true|false|null|-?\d+(?:\.\d+)?)$/.test(t)) return t;
-  if ((t.startsWith('"') && t.endsWith('"')) || (t.startsWith("'") && t.endsWith("'"))) {
-    const body = t.slice(1, -1);
-    return JSON.stringify(body);
-  }
-  return JSON.stringify(t);
-}
-
-function jqReplace(rest) {
-  const t = shellTokens(rest);
-  const ops = [];
-  for (let i = 0; i + 1 < t.length; i += 2) {
-    const keys = t[i].replace(/^['"]|['"]$/g, '').split('.');
-    ops.push(`setpath(${JSON.stringify(keys)}; ${parseJsonValue(t[i + 1])})`);
-  }
-  return ops.join(' | ');
-}
-
-function parseMock(rest) {
-  const type = (rest.match(/\bdata-type=([^\s]+)/) || [])[1] || 'text';
-  const status = Number((rest.match(/\bstatus-code=(\d+)/) || [])[1] || 200);
-  let data = '';
-  const dm = rest.match(/\bdata="((?:\\.|[^"])*)"/);
-  if (dm) data = dm[1].replace(/\\"/g, '"').replace(/\\n/g, '\n').replace(/\\\\/g, '\\');
-  else {
-    const du = rest.match(/\bdata=([^\s]+)/);
-    if (du) data = du[1];
-  }
-  return { type, status, data };
-}
-
-function mockScriptContent(mock) {
-  const contentType = mock.type === 'json' ? 'application/json' : 'text/plain; charset=utf-8';
-  return `// Generated from Loon mock-response-body by chance\n$done({status: \"HTTP/1.1 ${mock.status} OK\", headers: {\"Content-Type\": ${JSON.stringify(contentType)}}, body: ${JSON.stringify(mock.data)}});\n`;
-}
-
-function rewriteAction(pattern, action, target, ctx) {
-  const a = action.trim();
-  const lower = a.toLowerCase();
-  if (['reject', 'reject-dict', 'reject-array', 'reject-img', 'reject-200'].includes(lower)) {
-    if (target === 'qx') return { section: 'rewrite', line: `${pattern} url ${lower === 'reject' ? 'reject-200' : lower}` };
-    if (lower === 'reject') return { section: 'url', line: `${pattern} _ reject` };
-    if (lower === 'reject-img') return { section: 'map', line: `${pattern} data-type=tiny-gif status-code=200` };
-    const body = lower === 'reject-dict' ? '{}' : lower === 'reject-array' ? '[]' : '';
-    if (lower === 'reject-200') return { section: 'map', line: `${pattern} data-type=text data="" status-code=200` };
-    return { section: 'map', line: `${pattern} data-type=text data=${JSON.stringify(body)} status-code=200 header=${JSON.stringify('Content-Type:application/json')}` };
-  }
-  if (lower.startsWith('response-body-json-del ')) {
-    const jq = minifyJq(jqDelete(a.slice('response-body-json-del '.length)));
-    return target === 'qx' ? { section: 'rewrite', line: `${pattern} url jsonjq-response-body ${quoteJq(jq)}` }
-      : { section: 'body', line: `http-response-jq ${pattern} ${quoteJq(jq)}` };
-  }
-  if (lower.startsWith('response-body-json-replace ')) {
-    const jq = minifyJq(jqReplace(a.slice('response-body-json-replace '.length)));
-    return target === 'qx' ? { section: 'rewrite', line: `${pattern} url jsonjq-response-body ${quoteJq(jq)}` }
-      : { section: 'body', line: `http-response-jq ${pattern} ${quoteJq(jq)}` };
-  }
-  if (lower.startsWith('response-body-json-jq ')) {
-    const jq = a.slice('response-body-json-jq '.length).trim();
-    return target === 'qx' ? { section: 'rewrite', line: `${pattern} url jsonjq-response-body ${jq}` }
-      : { section: 'body', line: `http-response-jq ${pattern} ${jq}` };
-  }
-  if (lower.startsWith('mock-response-body ')) {
-    const mock = parseMock(a.slice('mock-response-body '.length));
-    if (target === 'surge') {
-      const ct = mock.type === 'json' ? 'Content-Type:application/json' : 'Content-Type:text/plain';
-      return { section: 'map', line: `${pattern} data-type=text data=${JSON.stringify(mock.data)} status-code=${mock.status} header=${JSON.stringify(ct)}` };
-    }
-    const key = crypto.createHash('sha1').update(pattern + a).digest('hex').slice(0, 10);
-    const filename = `mock_${key}.js`;
-    ctx.generatedScripts.set(filename, mockScriptContent(mock));
-    return { section: 'rewrite', line: `${pattern} url script-echo-response ${RAW_BASE}/script/${ctx.id}/${filename}` };
-  }
-  if (/^(302|307)\s+/.test(a)) {
-    const m = a.match(/^(302|307)\s+(.+)$/);
-    if (target === 'qx') return { section: 'rewrite', line: `${pattern} url ${m[1]} ${m[2]}` };
-    return { section: 'url', line: `${pattern} ${m[2]} ${m[1]}` };
-  }
-  return { section: 'comment', line: `# Unsupported source rewrite preserved: ${pattern} ${action}` };
-}
-
 function parseScriptLine(line) {
   const m = line.match(/^(http-request|http-response)\s+(\S+)\s+(.+)$/i);
   if (!m) return null;
@@ -516,8 +397,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
       sr = sv2;
     } else {
       const [pattern, action] = splitPatternAction(item.line);
-      qr = rewriteAction(pattern, action, 'qx', qctx);
-      sr = rewriteAction(pattern, action, 'surge', sctx);
+      qr = planLegacyRewrite(pattern, action, 'qx', { ...qctx, rawBase: RAW_BASE });
+      sr = planLegacyRewrite(pattern, action, 'surge', { ...sctx, rawBase: RAW_BASE });
     }
 
     const qdest = qr.section === 'rewrite' ? qx.rewrite : qx.notes;
