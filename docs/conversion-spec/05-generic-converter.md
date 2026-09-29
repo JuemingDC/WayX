@@ -53,7 +53,7 @@ Descriptor 不得携带“此插件应该怎样转换”的语义开关。
 - `[Rule]`；
 - `[Rewrite]`；
 - `[Script]`；
-- `[Argument]`（仅用于依赖分析，不渲染为 QX/Surge 参数配置）；
+- `[Argument]`（QX 仅用于依赖分析；Surge 渲染为官方 Module `#!arguments` 参数表）；
 - `[MITM]`；
 - 引用的 JQ / mock file；
 - 引用的 Source JavaScript（只读，用于兼容性判断）。
