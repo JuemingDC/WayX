@@ -799,23 +799,93 @@ function scriptUrls(source) {
 }
 
 function validateQX(text, entry) {
-  const activeMetadata = text.split('\n').filter(l => /^#!/.test(l.trim()));
-  if (activeMetadata.length) throw new Error(`${entry.id}: Quantumult X snippet metadata must be plain comments, not active #! directives`);
-  const activeSections = text.split('\n').filter(l => /^\[(filter_local|rewrite_local|mitm)\]$/i.test(l.trim()));
+  const filterTypes = new Set([
+    'user-agent','host','host-keyword','host-wildcard','host-suffix',
+    'ip6-cidr','ip-cidr','geoip','ip-asn','final',
+  ]);
+  const ipTypes = new Set(['ip-cidr','ip6-cidr','geoip','ip-asn']);
+  const rewriteActions = new Set([
+    'reject','reject-img','reject-200','reject-dict','reject-array',
+    '302','307','jsonjq-response-body','jsonjq-request-body',
+    'request-header','request-body','response-body','echo-response',
+    'script-response-body','script-echo-response','script-analyze-echo-response',
+    'script-response-header','script-request-header','script-request-body',
+    'url-and-header',
+  ]);
+
+  const lines = String(text).split('\n');
+  const activeMetadata = lines.filter(line => /^#!/.test(line.trim()));
+  if (activeMetadata.length) {
+    throw new Error(`${entry.id}: Quantumult X snippet metadata must be plain comments, not active #! directives`);
+  }
+  const activeSections = lines.filter(line => /^\[(filter_local|rewrite_local|mitm)\]$/i.test(line.trim()));
   if (activeSections.length) throw new Error(`${entry.id}: Quantumult X section headings must be commented`);
-  for (const raw of text.split('\n')) {
+
+  let section = null;
+  const seenSections = new Set();
+  for (const raw of lines) {
     const line = raw.trim();
-    if (!line || line.startsWith('#')) continue;
-    if (/^(?:ip-cidr|ip6-cidr|geoip|ip-asn),/i.test(line) && /,\s*no-resolve(?:,|$)/i.test(line)) {
-      throw new Error(`${entry.id}: Quantumult X IP-class rules must remove no-resolve`);
+    if (line.toLowerCase() === '# [filter_local]') { section = 'filter'; seenSections.add(section); continue; }
+    if (line.toLowerCase() === '# [rewrite_local]') { section = 'rewrite'; seenSections.add(section); continue; }
+    if (line.toLowerCase() === '# [mitm]') { section = 'mitm'; seenSections.add(section); continue; }
+    if (!line || line.startsWith('#') || line.startsWith(';') || line.startsWith('//')) continue;
+
+    if (/^(?:request|response)\s+if\b/i.test(line) || /\sthen\s/i.test(line)) {
+      throw new Error(`${entry.id}: Loon Rewrite v2 syntax leaked into executable QX line: ${line}`);
     }
+    if (/\b(?:response-body-json-(?:del|replace|jq)|request-body-json-(?:del|replace|jq)|mock-(?:request|response)-body)\b/i.test(line)) {
+      throw new Error(`${entry.id}: Loon legacy Rewrite token leaked into executable QX line: ${line}`);
+    }
+    if (/\bjq-path=/i.test(line)) {
+      throw new Error(`${entry.id}: unresolved jq-path dependency leaked into executable QX line: ${line}`);
+    }
+    if (/\(\?i\)/.test(line)) {
+      throw new Error(`${entry.id}: undocumented inline (?i) regex modifier in executable QX line: ${line}`);
+    }
+    if (/\[hH\]\[tT\]\[tT\]\[pP\](?:\[sS\])?/.test(line)) {
+      throw new Error(`${entry.id}: generated case-folded HTTP scheme is forbidden in QX output: ${line}`);
+    }
+
+    if (section === 'filter') {
+      const parts = line.split(',').map(value => value.trim());
+      const type = String(parts[0] || '').toLowerCase();
+      if (!filterTypes.has(type)) {
+        throw new Error(`${entry.id}: QX filter type outside official sample allowlist: ${line}`);
+      }
+      if (ipTypes.has(type) && parts.slice(3).some(value => value.toLowerCase() === 'no-resolve')) {
+        throw new Error(`${entry.id}: Quantumult X IP-class rules must remove no-resolve: ${line}`);
+      }
+      continue;
+    }
+
+    if (section === 'rewrite') {
+      let action = null;
+      if (/\surl-and-header\s/.test(line)) {
+        action = 'url-and-header';
+      } else {
+        const split = line.split(' url ');
+        if (split.length < 2) throw new Error(`${entry.id}: invalid QX rewrite line: ${line}`);
+        action = split.slice(1).join(' url ').trim().split(/\s+/)[0];
+      }
+      if (!rewriteActions.has(action)) {
+        throw new Error(`${entry.id}: QX rewrite action outside official sample allowlist: ${line}`);
+      }
+      continue;
+    }
+
+    if (section === 'mitm') {
+      if (!/^hostname\s*=/i.test(line)) {
+        throw new Error(`${entry.id}: invalid QX MITM line: ${line}`);
+      }
+      continue;
+    }
+
+    throw new Error(`${entry.id}: executable QX content outside a recognized commented section: ${line}`);
   }
-  for (const bad of ['response-body-json-del', 'response-body-json-replace', 'response-body-json-jq', 'mock-response-body']) {
-    const active = text.split('\n').find(l => l.trim() && !l.trim().startsWith('#') && l.includes(bad));
-    if (active) throw new Error(`${entry.id}: unconverted QX token ${bad}`);
+
+  for (const required of ['filter','rewrite','mitm']) {
+    if (!seenSections.has(required)) throw new Error(`${entry.id}: missing commented QX section heading: ${required}`);
   }
-  const commentedSections = ['# [filter_local]', '# [rewrite_local]', '# [mitm]'].filter(section => text.includes(section));
-  if (!commentedSections.length) throw new Error(`${entry.id}: missing commented QX section heading`);
 }
 
 
