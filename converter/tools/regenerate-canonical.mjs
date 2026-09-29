@@ -15,6 +15,18 @@ const RAW_BASE = 'https://raw.githubusercontent.com/JuemingDC/WayX/main';
 
 const mode = process.argv.includes('--write') ? 'write' : 'check';
 
+const EXTRA_LOCAL_ENTRIES = [
+  {
+    id: 'MyBlockAds',
+    file: 'RuCu6/myblockads.lpx',
+    source: 'https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Loon/RuCu6/myblockads.lpx',
+    qx: 'MyBlockAds.snippet',
+    surge: 'MyBlockAds.sgmodule',
+    category: '去广告 / Loon Plugin Conversion',
+  },
+];
+
+
 const normalize = text => String(text ?? '').replace(/\r\n?/g, '\n').replace(/^\uFEFF/, '');
 const nowCN = () => new Intl.DateTimeFormat('sv-SE', {
   timeZone: 'Asia/Shanghai',
@@ -84,7 +96,7 @@ function assertOfflineDependencies(entry, source) {
   }
 }
 
-const manifest = JSON.parse(await fs.readFile(MANIFEST, 'utf8'));
+const manifest = [...JSON.parse(await fs.readFile(MANIFEST, 'utf8')), ...EXTRA_LOCAL_ENTRIES];
 const changed = [];
 const failures = [];
 
