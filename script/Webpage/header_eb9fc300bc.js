@@ -1,4 +1,4 @@
-// Converted: 2026-09-29 21:03:30 +08:00
+// Converted: 2026-09-29 22:48:59 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /https:\/\/(rule\.)?kelee\.one\//i then request.header.set("user-agent", "Loon/786 CFNetwork/1568.200.51 Darwin/24.1.0")

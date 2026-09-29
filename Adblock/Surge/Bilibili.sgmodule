@@ -8,7 +8,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/bilibili.png
 # Updated: 2026-09-22 22:55
 
-# Converted: 2026-09-29 22:18:53 +08:00
+# Converted: 2026-09-29 22:48:56 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/bilibili.lpx
@@ -55,8 +55,8 @@ http-response-jq ^https:\/\/api\.bilibili\.com\/pgc\/view\/v2\/app\/season\? 'de
 # 直播间
 http-response-jq ^https:\/\/api\.live\.bilibili\.com\/xlive\/(?:app-interface\/v2\/index\/feed|app-room\/v1\/index\/getInfoBy(?:Room|User))\? '.data |= (del(.play_together_info, .play_together_info_v2, .activity_banner_info) | if .function_card then .function_card[] = null end | if .new_tab_info.outer_list then .new_tab_info.outer_list |= map(select(.biz_id != 33)) end | if .card_list then .card_list |= map(select(.card_type | IN("banner_v2", "activity_card_v1") | not)) end | reduce ([["show_reserve_status"], false], [["reserve_info", "show_reserve_status"], false], [["shopping_info", "is_show"], 0]) as [$path, $value] (.; if getpath($path) then setpath($path; $value) end))'
 http-response-jq ^https:\/\/api\.live\.bilibili\.com\/xlive\/(?:app-interface\/v2\/index\/feed|app-room\/v1\/index\/getInfoBy(?:Room|User))\? '.data |= (del(.play_together_info, .play_together_info_v2, .activity_banner_info) | if .function_card then .function_card[] = null end | if .new_tab_info.outer_list then .new_tab_info.outer_list |= map(select(.biz_id != 33)) end | if .card_list then .card_list |= map(select(.card_type | IN("banner_v2", "activity_card_v1") | not)) end | reduce ([["show_reserve_status"], false], [["reserve_info", "show_reserve_status"], false], [["shopping_info", "is_show"], 0]) as [$path, $value] (.; if getpath($path) then setpath($path; $value) end))'
-#response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/splash\/list\?/i then response.body.mock("text", "OK", 200)
 #response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/splash\/(show|event\/list2)\?/i then response.json.jq(".data |= with_entries(if .key | IN(\"show\", \"event_list\") then .value = [] else . end)")
+# http-response-jq ^https:\/\/app\.bilibili\.com\/x\/v2\/splash\/(show|event\/list2)\? '.data |= with_entries(if .key | IN("show", "event_list") then .value = [] else . end)'
 
 # 屏蔽STUN
 http-response-jq ^https:\/\/api\.bilibili\.com\/x\/pd-proxy\/tracker\? '.data[][]?="stun.chat.bilibili.com:3478"'
@@ -74,6 +74,8 @@ http-response-jq ^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v1\.(?:Comic\/Ap
 
 # 开屏广告
 ^https:\/\/app\.bilibili\.com\/x\/resource\/peak\/download data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+#response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/splash\/list\?/i then response.body.mock("text", "OK", 200)
+# ^https:\/\/app\.bilibili\.com\/x\/v2\/splash\/list\? data-type=text data="OK" status-code=200 header="Content-Type:text/plain"
 
 # 满意度调研
 ^https:\/\/api\.bilibili\.com\/x\/v2\/dm\/qoe\/show\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"

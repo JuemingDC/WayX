@@ -6,7 +6,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/webpage.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-09-29 21:03:30 +08:00
+# Converted: 2026-09-29 22:48:59 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/webpage.lpx
@@ -20,8 +20,6 @@
 
 [URL Rewrite]
 # 解决 GitHub 速率限制返回429问题
-#request if ${url} ~= /^https:\/\/(?:avatars|gist|raw)\.githubusercontent\.com\//i then request.header.set("Accept-Language", "en-us")
-#request if ${url} ~= /^https:\/\/github\.com\//i then request.header.set("Accept-Language", "en-us")
 
 # 桌面端请使用 https://google.com/ncr
 # 谷歌服务重定向 //*.google.cn
@@ -39,6 +37,12 @@
 ^https:\/\/www\.pornhub\.com\/ https://cn.pornhub.com/ 302
 
 [Header Rewrite]
+#request if ${url} ~= /^https:\/\/(?:avatars|gist|raw)\.githubusercontent\.com\//i then request.header.set("Accept-Language", "en-us")
+# http-request ^https:\/\/(?:avatars|gist|raw)\.githubusercontent\.com\/ header-del Accept-Language
+# http-request ^https:\/\/(?:avatars|gist|raw)\.githubusercontent\.com\/ header-add Accept-Language en-us
+#request if ${url} ~= /^https:\/\/github\.com\//i then request.header.set("Accept-Language", "en-us")
+# http-request ^https:\/\/github\.com\/ header-del Accept-Language
+# http-request ^https:\/\/github\.com\/ header-add Accept-Language en-us
 
 # 可莉仓库解除 UA 限制 //kelee.one
 http-request https:\/\/(rule\.)?kelee\.one\/ header-del user-agent
