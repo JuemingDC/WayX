@@ -1,8 +1,3 @@
-// Converted: 2026-09-28 13:21:35 +08:00
-// Converted by: chance
-// Category: 去广告
-// Target: Quantumult X / Surge
-// Source: https://kelee.one/Resource/JavaScript/PinDuoDuo/PinDuoDuo_remove_ads.js
 /*
 https://t.me/ibilibili
 2026-07-11 20:05:34
@@ -10,7 +5,7 @@ https://t.me/ibilibili
 let body = $response.body || "";
 
 const oldChunk = "https://pfile.pddpic.com/mdkd/mdkd/_next/static/chunks/9410-b8806e870a26db7d.js";
-const newChunk = "https://raw.githubusercontent.com/JuemingDC/WayX/main/script/PinDuoDuo/9410-b8806e870a26db7d.js";
+const newChunk = "https://kelee.one/Resource/JavaScript/PinDuoDuo/9410-b8806e870a26db7d.js";
 
 function replaceAllText(text, from, to) {
   let pos = text.indexOf(from);
