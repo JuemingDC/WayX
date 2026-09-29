@@ -29,6 +29,30 @@ const EXTRA_LOCAL_ENTRIES = [
     surge: 'MyBlockAds.sgmodule',
     category: '去广告',
   },
+  {
+    id: 'YouTube',
+    file: 'RuCu6/youtube.lpx',
+    source: 'https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Loon/RuCu6/youtube.lpx',
+    qx: 'YouTube.snippet',
+    surge: 'YouTube.sgmodule',
+    category: '去广告',
+  },
+  {
+    id: 'Bilibili',
+    file: 'RuCu6/bilibili.lpx',
+    source: 'https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Loon/RuCu6/bilibili.lpx',
+    qx: 'Bilibili.snippet',
+    surge: 'Bilibili.sgmodule',
+    category: '去广告',
+  },
+  {
+    id: 'JingDong',
+    file: 'RuCu6/jingdong.lpx',
+    source: 'https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Loon/RuCu6/jingdong.lpx',
+    qx: 'JingDong.snippet',
+    surge: 'JingDong.sgmodule',
+    category: '去广告',
+  },
 ];
 
 
