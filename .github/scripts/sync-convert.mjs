@@ -566,6 +566,80 @@ function validateQX(text, entry) {
 }
 
 
+async function prepareEntryConversion(entry) {
+  const source = cleanSource(await fetchOriginalText(entry.source));
+  if (!/^#!name=/m.test(source) || !/^\[[^\]]+\]/m.test(source)) {
+    throw new Error(entry.id + ': downloaded content is not a valid Loon plugin');
+  }
+
+  const parsedSource = parseLoon(source);
+  const qxMockFiles = await materializeQxMockFiles(entry, parsedSource);
+  const jqFiles = await materializeJqFiles(entry, parsedSource);
+  const scriptMap = new Map();
+  for (const reference of scriptUrls(source)) {
+    scriptMap.set(reference, await inspectSourceScript(reference, entry.source));
+  }
+
+  return { source, parsedSource, qxMockFiles, jqFiles, scriptMap };
+}
+
+function renderEntryConversion(entry, prepared, stamp = nowCN()) {
+  const out = convert(
+    entry,
+    prepared.source,
+    prepared.scriptMap,
+    stamp,
+    prepared.qxMockFiles,
+    prepared.jqFiles,
+  );
+  validateQX(out.qx, entry);
+  validateSurgeModule(out.surge, entry);
+  return out;
+}
+
+async function writeConversionArtifacts(entry, out, { root = ROOT } = {}) {
+  const qxPath = path.join(root, qxTargetPath(entry));
+  const surgePath = path.join(root, surgeTargetPath(entry));
+  const changed = { qx:false, surge:false, helpers:[] };
+
+  await Promise.all([
+    path.dirname(qxPath),
+    path.dirname(surgePath),
+  ].map(dir => fs.mkdir(dir, { recursive:true })));
+
+  const qxOld = await exists(qxPath) ? normalizeNewlines(await fs.readFile(qxPath, 'utf8')) : null;
+  if (qxOld !== out.qx) {
+    await fs.writeFile(qxPath, out.qx);
+    changed.qx = true;
+  }
+
+  const surgeOld = await exists(surgePath) ? normalizeNewlines(await fs.readFile(surgePath, 'utf8')) : null;
+  if (surgeOld !== out.surge) {
+    await fs.writeFile(surgePath, out.surge);
+    changed.surge = true;
+  }
+
+  if (out.generatedScripts.size) {
+    const helperDir = path.join(root, 'script', entry.id);
+    await fs.mkdir(helperDir, { recursive:true });
+    for (const [name, content] of out.generatedScripts) {
+      const dest = path.join(helperDir, name);
+      const old = await exists(dest) ? normalizeNewlines(await fs.readFile(dest, 'utf8')) : null;
+      if (old !== content) {
+        await fs.writeFile(dest, content);
+        changed.helpers.push(path.relative(root, dest).split(path.sep).join('/'));
+      }
+    }
+  }
+
+  return {
+    ...changed,
+    qxPath,
+    surgePath,
+  };
+}
+
+
 async function main() {
   const manifest = await loadLoonSourceCatalog(MANIFEST);
   await Promise.all([RESOURCE_DIR, TARGET_ROOT, SCRIPT_DIR].map(d => fs.mkdir(d, { recursive: true })));
@@ -573,24 +647,14 @@ async function main() {
   for (const entry of manifest) {
     try {
       console.log(`\n== ${entry.id} ==`);
-      const text = await fetchOriginalText(entry.source);
-      const fetchedFrom = entry.source;
-      const source = cleanSource(text);
-      if (!/^#!name=/m.test(source) || !/^\[[^\]]+\]/m.test(source)) throw new Error('downloaded content is not a valid Loon plugin');
+      const prepared = await prepareEntryConversion(entry);
+      const source = prepared.source;
       const sourcePath = path.join(RESOURCE_DIR, entry.file);
+      await fs.mkdir(path.dirname(sourcePath), { recursive:true });
       const old = await exists(sourcePath) ? normalizeNewlines(await fs.readFile(sourcePath, 'utf8')) : null;
       const changed = old !== source;
       if (changed) await fs.writeFile(sourcePath, source);
-      console.log(`${changed ? 'updated' : 'unchanged'} source via ${fetchedFrom}; sha256=${sha256(source).slice(0, 12)}`);
-
-      const scriptMap = new Map();
-      const parsedSource = parseLoon(source);
-      const qxMockFiles = await materializeQxMockFiles(entry, parsedSource);
-      const jqFiles = await materializeJqFiles(entry, parsedSource);
-      const discoveredScriptUrls = scriptUrls(source);
-      for (const reference of discoveredScriptUrls) {
-        scriptMap.set(reference, await inspectSourceScript(reference, entry.source));
-      }
+      console.log(`${changed ? 'updated' : 'unchanged'} source via ${entry.source}; sha256=${sha256(source).slice(0, 12)}`);
 
       const qxPath = path.join(ROOT, qxTargetPath(entry));
       const sgPath = path.join(ROOT, surgeTargetPath(entry));
@@ -604,26 +668,17 @@ async function main() {
       const oldSg = sgExists ? normalizeNewlines(await fs.readFile(sgPath, 'utf8')) : null;
       const oldStamp = (oldQx?.match(/^# Converted:\s*(.+)$/m) || [])[1] || null;
       let stamp = changed || !oldStamp ? nowCN() : oldStamp;
-      let out = convert(entry, source, scriptMap, stamp, qxMockFiles, jqFiles);
+      let out = renderEntryConversion(entry, prepared, stamp);
 
       // Converter changes must also refresh outputs even when upstream LPX is unchanged.
       // Preserve the old conversion timestamp only if the generated content is actually identical.
       if (!changed && oldStamp && ((oldQx && oldQx !== out.qx) || (oldSg && oldSg !== out.surge))) {
         stamp = nowCN();
-        out = convert(entry, source, scriptMap, stamp, qxMockFiles, jqFiles);
+        out = renderEntryConversion(entry, prepared, stamp);
       }
 
-      for (const [file, content] of out.generatedScripts) {
-        const dir = path.join(SCRIPT_DIR, entry.id);
-        await fs.mkdir(dir, { recursive: true });
-        const dest = path.join(dir, file);
-        if (!await exists(dest) || normalizeNewlines(await fs.readFile(dest, 'utf8')) !== content) await fs.writeFile(dest, content);
-      }
-      validateQX(out.qx, entry);
-      validateSurgeModule(out.surge, entry);
-      let outputChanged = false;
-      if (oldQx !== out.qx) { await fs.writeFile(qxPath, out.qx); outputChanged = true; }
-      if (oldSg !== out.surge) { await fs.writeFile(sgPath, out.surge); outputChanged = true; }
+      const written = await writeConversionArtifacts(entry, out);
+      const outputChanged = written.qx || written.surge || written.helpers.length > 0;
       console.log(outputChanged ? `converted -> ${path.relative(ROOT, qxPath)}, ${path.relative(ROOT, sgPath)}` : 'conversion verified: outputs unchanged');
     } catch (e) {
       failures.push(`${entry.id}: ${e.stack || e.message}`);
@@ -645,6 +700,9 @@ export {
   materializeJqFiles,
   materializeQxMockFiles,
   parseLoon,
+  prepareEntryConversion,
+  renderEntryConversion,
   scriptUrls,
   validateQX,
+  writeConversionArtifacts,
 };
