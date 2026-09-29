@@ -1,0 +1,108 @@
+{
+  "version": 1,
+  "stamp": "2026-09-29 12:00:00 +08:00",
+  "cases": {
+    "HTTPDNS": {
+      "qxSha256": "45a77a0fe760aac554b29a857c456b044ee21950d798d901c6c31c2e468637c5",
+      "surgeSha256": "5f068cca90b84304cc62db158272f4e082b6220d3c568b0d971141c43e9143ce",
+      "qxBytes": 7931,
+      "surgeBytes": 8963,
+      "sourceScriptCount": 0,
+      "generatedScriptCount": 0,
+      "qxReview": 0,
+      "surgeReview": 0,
+      "sections": [
+        "Rule",
+        "URL Rewrite",
+        "Map Local",
+        "MITM"
+      ]
+    },
+    "PinDuoDuo": {
+      "qxSha256": "36d63cadea5c964999833d86e507649cc934a881d05b64fb4aa4c6ad6883ed4d",
+      "surgeSha256": "ed7c4ab939d60b3aa65ec3af478ee52bcc396c04fdd44f38260b0429913f2a06",
+      "qxBytes": 5198,
+      "surgeBytes": 6543,
+      "sourceScriptCount": 1,
+      "generatedScriptCount": 0,
+      "qxReview": 0,
+      "surgeReview": 0,
+      "sections": [
+        "Rule",
+        "Body Rewrite",
+        "Map Local",
+        "Script",
+        "MITM"
+      ]
+    },
+    "MyBlockAds": {
+      "qxSha256": "4316c5b481530b4fc05a3aacdea2a78d5790de26a04392f2219627b6ae2daedd",
+      "surgeSha256": "409f6703a4b3486ca7a46ab50b2c5802ec9ef6ec34c225bd63bc326dc1e85c96",
+      "qxBytes": 36603,
+      "surgeBytes": 39488,
+      "sourceScriptCount": 9,
+      "generatedScriptCount": 0,
+      "qxReview": 0,
+      "surgeReview": 0,
+      "sections": [
+        "Rule",
+        "URL Rewrite",
+        "Body Rewrite",
+        "Map Local",
+        "Script",
+        "MITM"
+      ]
+    },
+    "YouTube": {
+      "qxSha256": "75e90d42d965f897f130abdc2fb33befa48a461810d1c1d824dd9618a2ee0d1c",
+      "surgeSha256": "5fec2d972138b4b0c4284faf756bff2150475480e221e74b0dc4107a62159042",
+      "qxBytes": 3125,
+      "surgeBytes": 3038,
+      "sourceScriptCount": 2,
+      "generatedScriptCount": 1,
+      "qxReview": 2,
+      "surgeReview": 2,
+      "sections": [
+        "Rule",
+        "URL Rewrite",
+        "Script",
+        "MITM"
+      ]
+    },
+    "Bilibili": {
+      "qxSha256": "e853d6f797782cf5b21ac3fb9eefa202f4acea139eddbabd72b76ad5a13eb711",
+      "surgeSha256": "25faca8778aed9a64dd0ca80ac9d1f4eb8abe998362adfb81508da5e6fc73c9e",
+      "qxBytes": 19547,
+      "surgeBytes": 19419,
+      "sourceScriptCount": 3,
+      "generatedScriptCount": 9,
+      "qxReview": 0,
+      "surgeReview": 3,
+      "sections": [
+        "Rule",
+        "URL Rewrite",
+        "Body Rewrite",
+        "Map Local",
+        "Script",
+        "MITM"
+      ]
+    },
+    "JingDong": {
+      "qxSha256": "8bfcaa81b084cad7a125a6f618f92252a363b1b0771fa5f0bf97ac19dde1bf84",
+      "surgeSha256": "cdb2b5dabae7ca0bb728866e604307531ca9b7f2792989025ef479c203c79f24",
+      "qxBytes": 3876,
+      "surgeBytes": 4119,
+      "sourceScriptCount": 3,
+      "generatedScriptCount": 0,
+      "qxReview": 2,
+      "surgeReview": 2,
+      "sections": [
+        "Rule",
+        "Body Rewrite",
+        "Map Local",
+        "Script",
+        "MITM"
+      ]
+    }
+  }
+}

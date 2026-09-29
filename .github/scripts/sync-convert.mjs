@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { fileURLToPath } from 'node:url';
 import { qxRule as canonicalQxRule, surgeModuleRule } from '../../converter/src/rule.mjs';
 import { selectQxScriptAction } from '../../converter/src/script.mjs';
 import { inspectQxScriptCompatibility, qxManualPortComment } from '../../converter/src/script-compat.mjs';
@@ -770,4 +771,13 @@ async function main() {
   }
 }
 
-await main();
+const __wayxIsMain = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url));
+if (__wayxIsMain) await main();
+
+export {
+  cleanSource,
+  convert,
+  parseLoon,
+  scriptUrls,
+  validateQX,
+};
