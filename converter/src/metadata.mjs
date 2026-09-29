@@ -86,7 +86,7 @@ export function renderQxSnippetHeader(headerLines, entry, stamp) {
   return out;
 }
 
-export function renderSurgeModuleHeader(headerLines, entry, stamp, { needsCore20 = false } = {}) {
+export function renderSurgeModuleHeader(headerLines, entry, stamp, { needsCore20 = false, argumentMetadata = [], needsLineRequirement = false } = {}) {
   const { directives, comments } = parseHeader(headerLines);
   const name = directives.get('name') || entry.id;
   const desc = targetText(directives.get('desc') || entry.id, 'Surge');
@@ -97,7 +97,8 @@ export function renderSurgeModuleHeader(headerLines, entry, stamp, { needsCore20
 
   const system = directives.get('system');
   if (system && /^mac$/i.test(system)) out.push('#!system=mac');
-  if (needsCore20) out.push('#!requirement=CORE_VERSION>=20');
+  if (needsCore20 || needsLineRequirement) out.push('#!requirement=CORE_VERSION>=20');
+  out.push(...argumentMetadata);
 
   const meta = metadataComments(directives, 'Surge');
   const original = preservedComments(comments);
