@@ -17,7 +17,8 @@ Updated: 2026-09-29
 - Loon Plugin `PROXY` policy binding is preserved as literal `PROXY`; it is not lowered to built-in `proxy`.
 - Loon `[Argument]` is **not converted** to QX parameter configuration or BoxJs.
 - QX outputs do not copy source `[Argument]` declarations or Argument usage lists.
-- If a Rewrite/Script declaration depends on Loon plugin arguments and cannot be represented with the same semantics, it is kept non-executable with a Review/Unsupported reason.
+- Surge modules convert Loon `[Argument]` to `#!arguments / #!arguments-desc` and `{{{name}}}` placeholders; PluginObject is emitted as JSON string `argument=` and dynamic Script options use target-native placeholders/line requirements.
+- If a QX declaration depends on Loon plugin arguments and cannot be represented with the same semantics, it remains non-executable with a Review/Unsupported reason.
 - Independent BoxJs content under `boxjs/` remains supported and is outside the Loon converter pipeline.
 
 ## Surge
@@ -44,7 +45,7 @@ Updated: 2026-09-29
 
 The following are no longer part of the converter design:
 
-- Loon `[Argument]` → QX BoxJs generation;
+- Loon `[Argument]` → QX BoxJs generation (removed; Surge `#!arguments` conversion remains supported);
 - Loon `[Argument]` → QX `$prefs` bridge;
 - rebuilding typed Loon `$argument` with wrapper scripts;
 - freezing dynamic Loon plugin parameters to their defaults;
