@@ -62,6 +62,15 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
     return unsupported('binary request body mode has no verified Quantumult X request-body declaration/runtime path in the official sample');
   }
 
+  const timeout = scriptOption(ast, 'timeout');
+  if (timeout) {
+    return unsupported('Loon Script timeout cannot be represented by the official Quantumult X rewrite declaration');
+  }
+  const debug = scriptOption(ast, 'debug');
+  if (debug?.type === 'variable') {
+    return unsupported('dynamic Loon debug parameter cannot be represented by the official Quantumult X rewrite declaration');
+  }
+
   const action = selectQxScriptAction({
     phase:ast.phase,
     requiresBody:scriptOptionBoolean(ast, 'requires_body', false),
@@ -70,9 +79,6 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
   });
 
   const notes = [...(condition.notes || [])];
-  const timeout = scriptOption(ast, 'timeout');
-  if (timeout) notes.push('Loon timeout is not represented in the Quantumult X rewrite declaration');
-  const debug = scriptOption(ast, 'debug');
   if (debug?.type === 'boolean' && debug.value) notes.push('Loon debug=true has no Quantumult X rewrite declaration field');
 
   return {
