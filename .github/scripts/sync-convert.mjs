@@ -19,6 +19,7 @@ import { isScriptV2, parseScriptV2 } from '../../converter/src/script-v2.mjs';
 import { qxScriptV2Plan, surgeScriptV2Plan } from '../../converter/src/script-v2-target.mjs';
 import { hasActiveSurgeLines, renderSurgeModuleHeader, validateSurgeModule } from '../../converter/src/surge-module.mjs';
 import { renderQxSnippetHeader } from '../../converter/src/metadata.mjs';
+import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -624,7 +625,7 @@ function validateQX(text, entry) {
 
 
 async function main() {
-  const manifest = JSON.parse(await fs.readFile(MANIFEST, 'utf8'));
+  const manifest = await loadLoonSourceCatalog(MANIFEST);
   await Promise.all([RESOURCE_DIR, TARGET_ROOT, SCRIPT_DIR].map(d => fs.mkdir(d, { recursive: true })));
   const failures = [];
   for (const entry of manifest) {
