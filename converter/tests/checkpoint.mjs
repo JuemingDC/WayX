@@ -287,7 +287,7 @@ assert.equal(
   '^https:\\/\\/api\\.example\\.com url jsonjq-response-body \'delpaths([["data","ads"]])\'',
 );
 assert.equal(
-  planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-del Server', 'surge', legacyCtx).line,
+  planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-del Server', 'surge', legacyCtx).lines[0],
   'http-response ^https:\\/\\/api\\.example\\.com header-del Server',
 );
 assert.match(
