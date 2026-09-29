@@ -25,7 +25,7 @@ function fixedOption(ast, name) {
   return null;
 }
 
-export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText = ''} = {}) {
+export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText = '', bridgeReady = false} = {}) {
   if (!ast || ast.type !== 'script') return unsupported('expected Script v2 AST');
   const condition = scriptUrlCondition(ast);
   if (!condition.ok) return condition;
@@ -34,10 +34,10 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
   if (enable?.type === 'boolean' && enable.value === false) {
     return {ok:true, disabled:true, reason:'Loon Script v2 enable=false'};
   }
-  if (enable?.type === 'variable') return unsupported('dynamic enable requires a QX preference bridge');
+  if (enable?.type === 'variable' && !bridgeReady) return unsupported('dynamic enable requires a QX preference bridge');
 
   const arg = ast.script.argument;
-  if (arg) return unsupported('Script v2 argument requires a QX $argument bridge');
+  if (arg && !bridgeReady) return unsupported('Script v2 argument requires a QX $argument bridge');
 
   const action = selectQxScriptAction({
     phase:ast.phase,
@@ -59,7 +59,7 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
   };
 }
 
-export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 'script'} = {}) {
+export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 'script', bridgeReady = false, declarationArgument = null} = {}) {
   if (!ast || ast.type !== 'script') return unsupported('expected Script v2 AST');
   const condition = scriptUrlCondition(ast);
   if (!condition.ok) return condition;
@@ -68,8 +68,8 @@ export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 's
   if (enable?.type === 'boolean' && enable.value === false) {
     return {ok:true, disabled:true, reason:'Loon Script v2 enable=false'};
   }
-  if (enable?.type === 'variable') return unsupported('dynamic enable requires a Surge module-argument bridge');
-  if (scriptV2ArgumentRefs(ast).length || ast.script.argument) {
+  if (enable?.type === 'variable' && !bridgeReady) return unsupported('dynamic enable requires a Surge module-argument bridge');
+  if ((scriptV2ArgumentRefs(ast).length || ast.script.argument) && !bridgeReady) {
     return unsupported('Script v2 argument requires a Surge $argument bridge');
   }
 
@@ -88,6 +88,8 @@ export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 's
   const timeout = scriptOption(ast, 'timeout');
   if (timeout?.type === 'number') params.push('timeout=' + timeout.value);
   else if (timeout?.type === 'variable') return unsupported('dynamic timeout requires a Surge module-argument bridge');
+
+  if (declarationArgument) params.push('argument=' + declarationArgument);
 
   const debug = scriptOption(ast, 'debug');
   if (debug?.type === 'boolean' && debug.value) params.push('debug=true');
