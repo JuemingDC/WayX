@@ -40,13 +40,10 @@ export function validateLoonSourceEntry(input) {
   const entry = {
     id: cleanString(input.id),
     file: safeRelativePath(input.file, 'file'),
-    source: cleanString(input.source),
+    source: absoluteHttpUrl(input.source, 'source'),
     qx: safeRelativePath(input.qx, 'qx'),
     surge: safeRelativePath(input.surge, 'surge'),
-    category: cleanString(input.category),
-    mirrors: Object.freeze((input.mirrors || []).map((value, index) =>
-      absoluteHttpUrl(value, `mirrors[${index}]`)
-    )),
+    category: cleanString(input.category)
   };
 
   if (!/^[A-Za-z0-9._-]+$/.test(entry.id)) {
@@ -55,8 +52,6 @@ export function validateLoonSourceEntry(input) {
   if (!/\.lpx$/i.test(entry.file)) throw new Error(`catalog file must end in .lpx: ${entry.file}`);
   if (!/\.snippet$/i.test(entry.qx)) throw new Error(`catalog qx target must end in .snippet: ${entry.qx}`);
   if (!/\.sgmodule$/i.test(entry.surge)) throw new Error(`catalog surge target must end in .sgmodule: ${entry.surge}`);
-
-  absoluteHttpUrl(entry.source, 'source');
 
   return Object.freeze(entry);
 }
