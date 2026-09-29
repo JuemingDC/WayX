@@ -301,7 +301,7 @@ export function renderSurgeScriptV2Bridge(argumentLines = [], ast, source, meta 
     'if (!__wayxBridge.enabled) {',
     '  $done({});',
     '} else {',
-    '  (function($argument) {',
+    '  (async function($argument) {',
     source.replace(/\n*$/, '').split('\n').map(line => '    ' + line).join('\n'),
     '  })(__wayxBridge.argument);',
     '}',
