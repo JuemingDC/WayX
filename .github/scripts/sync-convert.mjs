@@ -6,7 +6,11 @@ import { selectQxScriptAction } from '../../converter/src/script.mjs';
 import { inspectQxScriptCompatibility, qxManualPortComment } from '../../converter/src/script-compat.mjs';
 import { minifyJq } from '../../converter/src/jq.mjs';
 import { BOXJS_SUBSCRIPTION, qxTargetPath, surgeTargetPath } from '../../converter/src/paths.mjs';
-import { analyzeSafeRewriteV2 } from '../../converter/src/rewrite-v2-safe.mjs';
+import { analyzeSafeRewriteV2, analyzeSimpleUrlRegexCondition } from '../../converter/src/rewrite-v2-safe.mjs';
+import { isRewriteV2, parseRewriteV2 } from '../../converter/src/rewrite-v2.mjs';
+import { validateRewriteV2Ast } from '../../converter/src/rewrite-v2-actions.mjs';
+import { qxMockPlanFromAction } from '../../converter/src/dependency.mjs';
+import { renderQxMockFileScript } from '../../converter/src/qx-mock.mjs';
 import { mergeBoxJsSubscription, renderBoxJsApp, renderQxPrefsObjectBridge } from '../../converter/src/argument.mjs';
 
 const ROOT = process.cwd();
@@ -111,15 +115,45 @@ function splitPatternAction(line) {
 
 
 function rewriteV2Action(line, target, ctx) {
+  if (!isRewriteV2(line)) return null;
+
+  // mock_file is a behavior-level conversion in QX: Loon reads a resource and
+  // synthesizes/replaces a body; QX reproduces that effect with a generated
+  // rewrite script instead of pretending mock_file is a native QX token.
+  if (target === 'qx') {
+    try {
+      const ast = parseRewriteV2(line);
+      validateRewriteV2Ast(ast);
+      if (ast.actions.length === 1 && /^(?:request|response)\.body\.mock_file$/.test(ast.actions[0].name)) {
+        const condition = analyzeSimpleUrlRegexCondition(ast.condition);
+        if (!condition.ok) {
+          return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${condition.reason}): ${line}` };
+        }
+        const plan = qxMockPlanFromAction(ast.actions[0], { pluginSourceUrl: ctx.sourceUrl });
+        const key = crypto.createHash('sha1').update(line).digest('hex').slice(0, 10);
+        const filename = `mock_file_${key}.js`;
+        const script = renderQxMockFileScript(plan, {
+          stamp: ctx.stamp,
+          category: ctx.category,
+          sourceLine: line,
+        });
+        ctx.generatedScripts.set(filename, script);
+        return {
+          section: 'rewrite',
+          line: `${condition.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}`,
+        };
+      }
+    } catch (error) {
+      return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
+    }
+  }
+
   const parsed = analyzeSafeRewriteV2(line);
-  if (!parsed.matched) return null;
   if (!parsed.safe) {
     return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${parsed.reason}): ${line}` };
   }
-  // The Safe Tier analyzer validates phase, condition shape, regex flags,
-  // action arity, reject body semantics and status range before this point.
-  // Numeric status does not mechanically select QX reject-200; WayX keeps
-  // action/body semantics as the primary mapping rule.
+  // Direct primitives are chosen by resulting behavior. Example:
+  // Loon reject(200) -> QX reject-200, not QX reject (404).
   return rewriteAction(parsed.pattern, parsed.action, target, ctx);
 }
 
@@ -223,7 +257,7 @@ function rewriteAction(pattern, action, target, ctx) {
   const a = action.trim();
   const lower = a.toLowerCase();
   if (['reject', 'reject-dict', 'reject-array', 'reject-img', 'reject-200'].includes(lower)) {
-    if (target === 'qx') return { section: 'rewrite', line: `${pattern} url ${lower}` };
+    if (target === 'qx') return { section: 'rewrite', line: `${pattern} url ${lower === 'reject' ? 'reject-200' : lower}` };
     if (lower === 'reject') return { section: 'url', line: `${pattern} _ reject` };
     if (lower === 'reject-img') return { section: 'map', line: `${pattern} data-type=tiny-gif status-code=200` };
     const body = lower === 'reject-dict' ? '{}' : lower === 'reject-array' ? '[]' : '';
@@ -319,8 +353,8 @@ function convert(entry, source, scriptMap, stamp = nowCN()) {
 
   const qx = { filter: [], rewrite: [], mitm: [], notes: [], generatedScripts: new Map() };
   const sg = { rule: [], url: [], map: [], body: [], script: [], mitm: [], notes: [], generatedScripts: new Map() };
-  const qctx = { id: entry.id, generatedScripts: qx.generatedScripts };
-  const sctx = { id: entry.id, generatedScripts: sg.generatedScripts };
+  const qctx = { id: entry.id, generatedScripts: qx.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category };
+  const sctx = { id: entry.id, generatedScripts: sg.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category };
 
   // Preserve [Argument] semantics as comments. QX/Surge module arguments are not fabricated.
   if (parsed.sections.has('Argument')) {
