@@ -148,10 +148,12 @@ export function analyzePluginArgumentUsage({
       if (declaredIds.has(id)) addUse(usage, id, {section:'Script', kind:'argument-object', line});
       else undeclaredRefs.push({section:'Script', kind:'argument-object', id, line});
     }
-    const enable = boundaryValue(line, 'enable');
-    for (const id of legacyRefs(enable)) {
-      if (declaredIds.has(id)) addUse(usage, id, {section:'Script', kind:'dynamic-option', option:'enable', line});
-      else undeclaredRefs.push({section:'Script', kind:'dynamic-option', option:'enable', id, line});
+    for (const option of ['enable','timeout','debug']) {
+      const value = boundaryValue(line, option);
+      for (const id of legacyRefs(value)) {
+        if (declaredIds.has(id)) addUse(usage, id, {section:'Script', kind:'dynamic-option', option, line});
+        else undeclaredRefs.push({section:'Script', kind:'dynamic-option', option, id, line});
+      }
     }
   }
 
