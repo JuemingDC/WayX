@@ -2,20 +2,21 @@
 #!desc=某些APP要清除缓存或者重新安装拦截广告才会生效！
 #!requirement=CORE_VERSION>=20
 
-# Original Loon metadata: #!author=奶思
-# Original Loon metadata: #!homepage=https://github.com/fmz200/wool_scripts
-# Original Loon metadata: #!icon=https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/gif/naisi-01.gif
-# Original Loon metadata: #!raw-url=https://github.com/fmz200/wool_scripts/raw/main/Loon/plugin/split/partD/DianPing.lpx
-# Original Loon metadata: #!tg-channel=https://t.me/inaisi
-# Original Loon metadata: #!date=
-#############################################
-# Converted: 2026-09-29 12:06:21 +08:00
-# Author: chance
-# Category: 去广告
-# Target: Surge
-# Source: https://raw.githubusercontent.com/fmz200/wool_scripts/main/Loon/plugin/split/partD/DianPing.lpx
+# Author: 奶思
+# Homepage: https://github.com/fmz200/wool_scripts
+# Icon: https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/gif/naisi-01.gif
+# Upstream: https://github.com/fmz200/wool_scripts/raw/main/Loon/plugin/split/partD/DianPing.lpx
+# Channel: https://t.me/inaisi
 
-# Original Loon [Argument] (declaration-only conversion; typed/dynamic arguments stay Review):
+#############################################
+
+# Converted: 2026-09-29 14:32:07 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://raw.githubusercontent.com/fmz200/wool_scripts/main/Loon/plugin/split/partD/DianPing.lpx
+# Target: Surge
+
+# Source [Argument] (declaration-only conversion; typed/dynamic arguments stay Review):
 # davsdmpk_enable = switch,true,false,tag=大众点评-脚本开关
 
 [URL Rewrite]
@@ -43,10 +44,10 @@
 
 [Script]
 # 开屏广告
-# [WayX] SCRIPT REVIEW REQUIRED: dynamic Loon enable has no verified Surge declaration equivalent.
-# Original Loon: http-response ^https?:\/\/img\.meituan\.net\/(?>dpmobile|goodsawardpic)\/ script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js, requires-body=true, timeout=60, tag=大众点评, enable={davsdmpk_enable}
-# [WayX] SCRIPT REVIEW REQUIRED: dynamic Loon enable has no verified Surge declaration equivalent.
-# Original Loon: http-response ^https?:\/\/ddplus\.meituan\.net\/v\d\/mss_\w+\/picassovc script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js, requires-body=true, timeout=60, tag=大众点评, enable={davsdmpk_enable}
+# [WayX] SCRIPT REVIEW REQUIRED: dynamic source enable has no verified Surge declaration equivalent.
+# Source declaration: http-response ^https?:\/\/img\.meituan\.net\/(?>dpmobile|goodsawardpic)\/ script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js, requires-body=true, timeout=60, tag=大众点评, enable={davsdmpk_enable}
+# [WayX] SCRIPT REVIEW REQUIRED: dynamic source enable has no verified Surge declaration equivalent.
+# Source declaration: http-response ^https?:\/\/ddplus\.meituan\.net\/v\d\/mss_\w+\/picassovc script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js, requires-body=true, timeout=60, tag=大众点评, enable={davsdmpk_enable}
 
 [MITM]
 hostname = %APPEND% 103.37.155.60, *.dianping.com, img.meituan.net, p.meituan.com, rms.meituan.com, www.dpfile.com, awp-assets.meituan.net, s3plus.meituan.net, p*.meituan.net, ddplus.meituan.net

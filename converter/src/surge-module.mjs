@@ -2,52 +2,13 @@
 // Author: chance
 // Category: Converter / Surge Module
 import { splitTopLevelCsv, surgePolicyIndex, surgeRuleTypesInTree, SURGE_MODULE_POLICIES } from './rule.mjs';
+export { renderSurgeModuleHeader } from './metadata.mjs';
 
 export function hasActiveSurgeLines(lines = []) {
   return lines.some(raw => {
     const line = String(raw).trim();
     return line && !line.startsWith('#') && !line.startsWith(';') && !line.startsWith('//');
   });
-}
-
-export function renderSurgeModuleHeader(headerLines, entry, stamp, {needsCore20 = false} = {}) {
-  const clean = (headerLines || []).map(line => String(line).trimEnd());
-  const directive = key => {
-    const re = new RegExp('^#!' + key + '=(.*)$', 'i');
-    for (const line of clean) {
-      const match = line.match(re);
-      if (match) return match[1].trim();
-    }
-    return null;
-  };
-
-  const out = [
-    '#!name=' + (directive('name') || entry.id),
-    '#!desc=' + (directive('desc') || ('Converted from Loon plugin: ' + entry.id)),
-  ];
-
-  const system = directive('system');
-  if (system && /^mac$/i.test(system)) out.push('#!system=mac');
-  if (needsCore20) out.push('#!requirement=CORE_VERSION>=20');
-
-  out.push('');
-  for (const raw of clean) {
-    const line = raw.trim();
-    if (!line) continue;
-    if (/^#!name=/i.test(line) || /^#!desc=/i.test(line)) continue;
-    if (/^#!system=/i.test(line) && system && /^mac$/i.test(system)) continue;
-    if (line.startsWith('#!')) out.push('# Original Loon metadata: ' + line);
-    else out.push(raw);
-  }
-
-  out.push(
-    '# Converted: ' + stamp,
-    '# Author: chance',
-    '# Category: ' + entry.category,
-    '# Target: Surge',
-    '# Source: ' + entry.source,
-  );
-  return out;
 }
 
 export function validateSurgeModule(text, entry = {id:'module'}) {
@@ -107,7 +68,7 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
       const policyIndex = surgePolicyIndex(parts);
       const policy = String(parts[policyIndex] || '').toUpperCase();
       if (!SURGE_MODULE_POLICIES.has(policy)) {
-        throw new Error(`${entry.id}: Surge module [Rule] policy must be DIRECT/REJECT/REJECT-TINYGIF: ${line}`);
+        throw new Error(`${entry.id}: Surge module [Rule] policy is not in the accepted built-in runtime set: ${line}`);
       }
       if (line !== parts.join(',')) {
         throw new Error(`${entry.id}: Surge module [Rule] must use canonical top-level comma formatting: ${line}`);

@@ -66,16 +66,17 @@ NOT,((Rule1)),Policy
 | `REJECT` | `reject` | `REJECT` |
 | `PROXY` | `proxy` | 不假设用户存在 PROXY 组 → Review |
 | `REJECT-IMG` | URL 场景 → `reject-img` | `REJECT-TINYGIF` |
-| `REJECT-DROP` | 项目约定 → `reject` | Profile 支持，但 Module policy 不允许 → Review |
-| `REJECT-NO-DROP` | 默认 Review，不自动退化 | Module 不允许 → Review |
+| `REJECT-DROP` | 项目约定 → `reject` | `REJECT-DROP`（当前 App Module 运行时已验证） |
+| `REJECT-NO-DROP` | `reject`（QX 不存在 Surge 自动升级机制） | `REJECT-NO-DROP`（当前 App Module 运行时已验证） |
+| `CELLULAR` | Review | `CELLULAR`（当前 App Module 运行时已验证） |
+| `CELLULAR-ONLY` | Review | `CELLULAR-ONLY`（当前 App Module 运行时已验证） |
+| `HYBRID` | Review | `HYBRID`（当前 App Module 运行时已验证） |
+| `NO-HYBRID` | Review | `NO-HYBRID`（当前 App Module 运行时已验证） |
 | `REJECT-TINYGIF` | URL 场景 → `reject-img` | `REJECT-TINYGIF` |
 | 用户策略组 | 只有明确存在对应 QX policy 时可执行 | Module 不允许假设 → Review |
 
-当前 Surge 官方 Module 文档规定 Module Rule 只能使用：
-```text
-DIRECT
-REJECT
-REJECT-TINYGIF
-```
+公开 Surge Module Manual 当前仍列出较窄的 policy 范围；但当前 Surge App 的模块 Rule 编辑器/运行时已直接验证 `REJECT-DROP / REJECT-NO-DROP / CELLULAR / CELLULAR-ONLY / HYBRID / NO-HYBRID` 可作为 Module Rule 内建 policy 使用。WayX 对这组**运行时已验证的内建值**原样保留，绝不降级为其他 policy。
 
-**Rule Type 的支持范围和 Module policy 的允许范围必须分开判断。**
+用户自定义策略组（例如源中的 `PROXY`）仍不得假定存在，必须 Review/绑定提示。
+
+**Rule Type 的支持范围和 policy 的可用范围必须分开判断。**

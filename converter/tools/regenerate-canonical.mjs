@@ -27,7 +27,7 @@ const EXTRA_LOCAL_ENTRIES = [
     source: 'https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Loon/RuCu6/myblockads.lpx',
     qx: 'MyBlockAds.snippet',
     surge: 'MyBlockAds.sgmodule',
-    category: '去广告 / Loon Plugin Conversion',
+    category: '去广告',
   },
 ];
 

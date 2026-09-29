@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.0  
+版本：1.1  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 

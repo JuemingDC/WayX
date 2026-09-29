@@ -21,7 +21,7 @@
 格式：
 ```text
 # [WayX] REVIEW REQUIRED:
-# Original Loon: ...
+# Source declaration: ...
 # Reason: ...
 ```
 
@@ -43,6 +43,7 @@ Target 已转换语义项
 必须检查：
 - 只使用 Crossutility 官方 sample 已确认 filter/action；
 - section 标题全部注释化；
+- snippet 头部不存在活动 `#!...` 来源 metadata；
 - 无 `[hH][tT][tT][pP]` 自动 case-fold；
 - 无未经官方确认的 `(?i)`；
 - QX IP filter 不含 `no-resolve`；
@@ -57,12 +58,12 @@ Target 已转换语义项
 - section 合法
 - Rule type 属于当前官方 Rule Type
 - Logical Rule 递归合法
-- Module policy 仅使用官方允许值
+- Module policy 仅使用当前官方资料或当前 Surge App 运行时已直接验证的内建值；未知/用户 policy group 不作为活动 Rule
 - 外部 policy 不作为活动 Module Rule
 - URL/Header/Body/Map Local/Script 参数合法
-- MITM hostname 使用 `%APPEND%`
-- 不存在活动 Loon metadata
-- 不存在活动 Loon Rewrite v2 行
+- 自动转换生成的 MITM hostname 使用 `%APPEND%`；validator 同时接受官方合法的 hostname override
+- 不存在来源插件专属活动 metadata
+- 不存在来源平台 Rewrite v2 行
 
 ## 80.5 Golden
 

@@ -37,6 +37,7 @@ jobs:
           node --check converter/tests/surge-rule-coverage.mjs
           node --check converter/tests/end-to-end-golden.mjs
           node --check converter/tools/regenerate-canonical.mjs
+          node --check converter/tools/audit-repository.mjs
       - name: Converter checkpoint
         run: |
           node converter/tests/checkpoint.mjs
@@ -46,6 +47,16 @@ jobs:
           node converter/tests/loon-new-syntax-cases.mjs
           node converter/tests/surge-rule-coverage.mjs
           node converter/tests/end-to-end-golden.mjs
+          node converter/tools/audit-repository.mjs
+
+      - name: Repository script syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' file; do
+            node --check "$file"
+          done < <(find script converter .github/scripts -type f \( -name '*.js' -o -name '*.mjs' \) -print0)
+          python -m py_compile .github/scripts/*.py monitor/*.py
 
       - name: Regenerate canonical outputs
         run: node converter/tools/regenerate-canonical.mjs --write

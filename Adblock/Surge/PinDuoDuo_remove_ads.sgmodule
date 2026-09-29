@@ -2,19 +2,18 @@
 #!desc=移除开屏广告、底栏多多视频、会场入口、聊天页面精选推荐及推广，精简首页和个人中心。
 #!requirement=CORE_VERSION>=20
 
-# Original Loon metadata: #!openUrl=https://apps.apple.com/app/id1044283059
-# Original Loon metadata: #!author=ZenmoFeiShi[https://github.com/ZenmoFeiShi], 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
-# Original Loon metadata: #!tag=去广告
-# Original Loon metadata: #!system_version=
-# Original Loon metadata: #!loon_version=3.5.0(969)
-# Original Loon metadata: #!homepage=https://hub.kelee.one
-# Original Loon metadata: #!icon=https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/PinDuoDuo.png
-# Original Loon metadata: #!date=2026-07-11 20:21:39
-# Converted: 2026-09-29 12:06:21 +08:00
-# Author: chance
+# Open URL: https://apps.apple.com/app/id1044283059
+# Author: ZenmoFeiShi[https://github.com/ZenmoFeiShi], 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/PinDuoDuo.png
+# Updated: 2026-07-11 20:21:39
+
+# Converted: 2026-09-29 14:32:07 +08:00
+# Converted by: chance
 # Category: 去广告
-# Target: Surge
 # Source: https://kelee.one/Tool/Loon/Lpx/PinDuoDuo_remove_ads.lpx
+# Target: Surge
 
 [Rule]
 AND,((URL-REGEX, "^http:\/\/((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/d(\d)?"), (USER-AGENT, "*com.xunmeng.pinduoduo*")),REJECT

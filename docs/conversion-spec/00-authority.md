@@ -36,6 +36,8 @@
 - Logical Rule: https://manual.nssurge.com/rules/logical.html
 - Reject Policy: https://manual.nssurge.com/policies/reject.html
 
+若当前 Surge App 的模块编辑器/运行时与公开 Manual 的旧文字存在可重复验证的差异，只能对**已在当前官方 App 中直接验证的具体能力**采用运行时行为，并在测试/规范中明确记录；不得由此推断其他未验证语法。
+
 ## 0.3 行为优先
 
 必须保持：
