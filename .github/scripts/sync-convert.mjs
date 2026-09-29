@@ -227,6 +227,69 @@ function cleanComments(comments) {
   return comments.map(x => x || '').map(x => x.trim() ? x : '').filter((x, i, a) => !(x === '' && a[i - 1] === ''));
 }
 
+function qxHeaderRewriteInfo(line) {
+  if (!line || !isRewriteV2(line)) return null;
+  try {
+    const ast = parseRewriteV2(line);
+    validateRewriteV2Ast(ast);
+    if (!ast.actions.length || ast.actions.some(action =>
+      !new RegExp('^' + ast.phase + '\\.header\\.(?:add|set|del|replace)$').test(action.name)
+    )) return null;
+    const condition = simpleUrlRewriteCondition(ast);
+    if (!condition.ok) return null;
+    return {
+      ast,
+      signature: ast.phase + '\0' + JSON.stringify(ast.condition),
+    };
+  } catch {
+    return null;
+  }
+}
+
+function planAdjacentQxHeaderGroups(items, ctx) {
+  const plans = new Map();
+  const consumed = new Set();
+
+  for (let index = 0; index < items.length; index++) {
+    if (consumed.has(index) || !items[index]?.line) continue;
+    const first = qxHeaderRewriteInfo(items[index].line);
+    if (!first) continue;
+
+    const actions = [...first.ast.actions];
+    const sourceLines = [items[index].line];
+    let end = index;
+
+    for (let nextIndex = index + 1; nextIndex < items.length; nextIndex++) {
+      const nextItem = items[nextIndex];
+      if (!nextItem?.line || nextItem.comments.length) break;
+      const next = qxHeaderRewriteInfo(nextItem.line);
+      if (!next || next.signature !== first.signature) break;
+      actions.push(...next.ast.actions);
+      sourceLines.push(nextItem.line);
+      end = nextIndex;
+    }
+
+    if (end === index) continue;
+
+    const mergedAst = {...first.ast, actions};
+    const plan = renderQxHeaderScript(mergedAst, {
+      stamp: ctx.stamp,
+      category: ctx.category,
+      sourceLine: sourceLines.join(' | '),
+    });
+    const key = crypto.createHash('sha1').update('header\0' + sourceLines[0]).digest('hex').slice(0, 10);
+    const filename = `header_${key}.js`;
+    ctx.generatedScripts.set(filename, plan.script);
+    plans.set(index, {
+      section:'rewrite',
+      line:`${plan.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}`,
+    });
+    for (let consumedIndex = index + 1; consumedIndex <= end; consumedIndex++) consumed.add(consumedIndex);
+  }
+
+  return {plans, consumed};
+}
+
 async function materializeQxMockFiles(entry, parsed) {
   const out = new Map();
   for (const item of sectionItems(parsed.sections.get('Rewrite'))) {
@@ -335,25 +398,30 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     sRuleDest.push(...comments, ...sr.lines);
   }
 
-  for (const item of sectionItems(parsed.sections.get('Rewrite'))) {
+  const rewriteItems = sectionItems(parsed.sections.get('Rewrite'));
+  const qxHeaderGroups = planAdjacentQxHeaderGroups(rewriteItems, qctx);
+
+  for (let rewriteIndex = 0; rewriteIndex < rewriteItems.length; rewriteIndex++) {
+    const item = rewriteItems[rewriteIndex];
     const comments = cleanComments(item.comments);
     if (!item.line) continue;
 
-    const qv2 = rewriteV2Action(item.line, 'qx', qctx);
-    const sv2 = rewriteV2Action(item.line, 'surge', sctx);
-    let qr, sr;
-    if (qv2 || sv2) {
-      qr = qv2;
-      sr = sv2;
-    } else {
-      const [pattern, action] = splitPatternAction(item.line);
-      qr = planLegacyRewrite(pattern, action, 'qx', { ...qctx, rawBase: RAW_BASE });
-      sr = planLegacyRewrite(pattern, action, 'surge', { ...sctx, rawBase: RAW_BASE });
+    const qxConsumed = qxHeaderGroups.consumed.has(rewriteIndex);
+    let qr = qxHeaderGroups.plans.get(rewriteIndex) || null;
+    let sr = rewriteV2Action(item.line, 'surge', sctx);
+
+    if (!qxConsumed && !qr) qr = rewriteV2Action(item.line, 'qx', qctx);
+
+    const [pattern, action] = splitPatternAction(item.line);
+    if (!qxConsumed && !qr) qr = planLegacyRewrite(pattern, action, 'qx', { ...qctx, rawBase: RAW_BASE });
+    if (!sr) sr = planLegacyRewrite(pattern, action, 'surge', { ...sctx, rawBase: RAW_BASE });
+
+    if (!qxConsumed) {
+      const qdest = qr.section === 'rewrite' ? qx.rewrite : qx.notes;
+      qdest.push(...comments, qr.line);
     }
 
-    const qdest = qr.section === 'rewrite' ? qx.rewrite : qx.notes;
     const sdest = ({url: sg.url, header: sg.header, map: sg.map, body: sg.body, script: sg.script})[sr.section] || sg.notes;
-    qdest.push(...comments, qr.line);
     sdest.push(...comments, ...(sr.lines || [sr.line]));
   }
 
