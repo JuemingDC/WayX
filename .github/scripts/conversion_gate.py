@@ -34,6 +34,18 @@ SIMPLE_REWRITE_ACTIONS = {
     "reject", "reject-200", "reject-img", "reject-dict", "reject-array",
 }
 COMMENT_PREFIXES = ("#", ";", "//")
+MANUAL_REVIEW_RE = re.compile(
+    r"(?im)^\s*#\s*(?:"
+    r"Unsupported Loon|"
+    r"Loon .*not losslessly expressible|"
+    r"\[WayX\]\s*(?:"
+    r"MANUAL PORT REQUIRED|"
+    r"(?:SCRIPT(?: V2)?|REWRITE V2|ARGUMENT)\s+REVIEW REQUIRED|"
+    r"QUANTUMULT X (?:REVIEW REQUIRED|UNSUPPORTED)"
+    r")"
+    r")"
+)
+
 
 
 def run(*args: str, check: bool = True) -> str:
@@ -98,6 +110,10 @@ def executable(lines: list[str]) -> list[str]:
             continue
         out.append(value)
     return out
+
+
+def has_manual_review_marker(text: str) -> bool:
+    return bool(MANUAL_REVIEW_RE.search(text))
 
 
 def changed_lines(old: list[str], new: list[str]) -> list[str]:
@@ -216,8 +232,14 @@ def classify_resource(path: str, manifest_by_file: dict[str, dict]) -> list[str]
             continue
         key = section.lower()
         delta = changed_lines(before, after)
-        if key in {"script", "argument"}:
+        if key == "script":
             reasons.append(f"[{section}] changed")
+            continue
+        if key == "argument":
+            # Loon [Argument] is analysis-only for target conversion. Changes to
+            # the declaration block are safe by themselves; any executable
+            # Rewrite/Script dependency that becomes non-equivalent is surfaced
+            # by the converter as a target Review marker below.
             continue
         if key == "rule":
             for line in delta:
@@ -274,7 +296,7 @@ def main() -> int:
         if path in targets:
             text = new_text(path)
             entry = targets[path]
-            if re.search(r"(?im)^\s*#\s*(?:Unsupported Loon|Loon .*not losslessly expressible|\[WayX\]\s*MANUAL PORT REQUIRED)", text):
+            if has_manual_review_marker(text):
                 reasons.append(f"{path}: generated output contains an unsupported/manual-review marker")
                 continue
 
@@ -284,12 +306,8 @@ def main() -> int:
                 source_path = f"Resource/Loon/{entry['file']}"
                 _, sections = parse_sections(new_text(source_path))
                 script_lines = executable(sections.get("Script", []))
-                argument_lines = executable(sections.get("Argument", []))
                 if script_lines:
                     reasons.append(f"{path}: newly generated target comes from a source with [Script]; runtime semantics require Work")
-                if argument_lines:
-                    reasons.append(f"{path}: newly generated target comes from a source with [Argument]; parameter semantics require Work")
-                if script_lines or argument_lines:
                     continue
 
             safe_notes.append(f"{path}: generated target passed semantic marker gate")

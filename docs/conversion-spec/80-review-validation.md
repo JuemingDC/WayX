@@ -27,6 +27,8 @@
 
 原规则不能静默删除。
 
+Loon `[Argument]` **声明区块本身不构成 Review 条件**。QX 忽略参数 UI，只做依赖分析；Surge 按 Block 60 确定性转换为 `#!arguments` 与 `{{{name}}}` 占位符。只有具体 Rewrite/Script 的参数依赖无法按目标官方格式表达时，才进入 Review；generated target 中的 `SCRIPT/REWRITE/ARGUMENT REVIEW REQUIRED` 标记必须被 Gate 捕获。
+
 ## 80.2 Source 对账
 
 必须满足：

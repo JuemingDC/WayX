@@ -1,6 +1,6 @@
-// Loon [Argument] parser and optional descriptor generation
+// Loon [Argument] parser and Surge module parameter conversion
 // Author: chance
-// Category: Converter / Argument / BoxJs
+// Category: Converter / Argument / Surge Module
 import { splitTopLevelCsv } from './rule.mjs';
 
 function unquote(s) {
@@ -33,11 +33,13 @@ export function parseLoonArguments(lines = []) {
       ? 'boolean'
       : String(options.type || '').toLowerCase() === 'number' ? 'number' : 'string';
 
+    const hasDefault = values.length > 0 || kind === 'switch';
     args.push({
       id,
       kind,
       values,
-      defaultValue: values[0] ?? (kind === 'switch' ? 'false' : ''),
+      hasDefault,
+      defaultValue: values[0] ?? (kind === 'switch' ? 'false' : undefined),
       valueType,
       tag: options.tag || id,
       desc: options.desc || '',
@@ -48,61 +50,122 @@ export function parseLoonArguments(lines = []) {
   return args;
 }
 
-export function boxJsKey(entryId, argId) {
-  return `wayx.${String(entryId).toLowerCase()}.${argId}`;
+function surgeArgumentName(id) {
+  const raw = String(id || '');
+  const safe = raw.replace(/[^A-Za-z0-9_]/g, '_');
+  if (!safe || !/^[A-Za-z_]/.test(safe)) return '_' + safe;
+  return safe;
 }
 
-export function renderBoxJsApp(entry, argumentLines = []) {
-  const args = parseLoonArguments(argumentLines);
-  if (!args.length) return null;
+function metadataDefaultValue(value, id) {
+  const text = String(value ?? '');
+  if (/[\r\n,]/.test(text)) {
+    throw new Error(`Surge #!arguments default for ${id} contains an unsupported comma/newline delimiter`);
+  }
+  return text;
+}
 
-  const settings = args.map(arg => {
-    const base = {
-      id: boxJsKey(entry.id, arg.id),
-      name: arg.tag,
-      val: arg.valueType === 'boolean' ? /^(true|1)$/i.test(arg.defaultValue) : arg.defaultValue,
-      desc: arg.desc || `Loon [Argument] ${arg.id}`,
-    };
-    if (arg.kind === 'switch') return { ...base, type: 'boolean' };
-    if (arg.kind === 'select') {
-      return {
-        ...base,
-        type: 'selects',
-        items: arg.values.map(v => ({ key: v, label: v })),
-      };
+export function buildSurgeArgumentTable(argumentLines = []) {
+  const declarations = parseLoonArguments(argumentLines);
+  const usedNames = new Map();
+  const entries = [];
+
+  for (const declaration of declarations) {
+    const surgeName = surgeArgumentName(declaration.id);
+    const previous = usedNames.get(surgeName);
+    if (previous && previous !== declaration.id) {
+      throw new Error(`Surge argument name collision after normalization: ${previous}, ${declaration.id} -> ${surgeName}`);
     }
-    return { ...base, type: 'text' };
-  });
+    usedNames.set(surgeName, declaration.id);
+    entries.push({
+      ...declaration,
+      surgeName,
+      placeholder:`{{{${surgeName}}}}`,
+    });
+  }
 
   return {
-    id: `juemingdc.${String(entry.id).toLowerCase()}.qx`,
-    name: entry.name || entry.id,
-    descs_html: ['由 WayX Converter 从 Loon [Argument] 生成；Quantumult X snippet 不直接承载配置项。'],
-    keys: settings.map(x => x.id),
-    settings,
-    author: '@JuemingDC',
-    repo: 'https://github.com/JuemingDC/WayX',
-    _wayx: {
-      managed: true,
-      source_arguments: args.map(x => ({
-        id: x.id,
-        key: boxJsKey(entry.id, x.id),
-        default: x.defaultValue,
-        value_type: x.valueType,
-      })),
-    },
+    entries,
+    byId:new Map(entries.map(entry => [entry.id, entry])),
   };
 }
 
-export function mergeBoxJsSubscription(subscription, generatedApps = []) {
-  const out = JSON.parse(JSON.stringify(subscription || {}));
-  const incoming = generatedApps.filter(Boolean);
-  const incomingIds = new Set(incoming.map(app => app.id));
-  const existing = Array.isArray(out.apps) ? out.apps : [];
+export function surgeArgumentMetadata(argumentLines = []) {
+  const table = buildSurgeArgumentTable(argumentLines);
+  if (!table.entries.length) return { table, lines:[] };
 
-  out.apps = [
-    ...existing.filter(app => !app?._wayx?.managed && !incomingIds.has(app?.id)),
-    ...incoming,
-  ];
-  return out;
+  const args = table.entries.map(entry => {
+    if (!entry.hasDefault) return entry.surgeName;
+    return `${entry.surgeName}:${metadataDefaultValue(entry.defaultValue, entry.id)}`;
+  });
+
+  const desc = table.entries.map(entry => {
+    const pieces = [entry.tag || entry.id];
+    if (entry.kind === 'select' && entry.values.length) {
+      pieces.push('options=' + entry.values.join('|'));
+    } else if (entry.kind === 'switch') {
+      pieces.push('true/false');
+    }
+    if (entry.desc) pieces.push(entry.desc);
+    return `${entry.surgeName}: ${pieces.join(' — ')}`;
+  }).join('\\n');
+
+  const lines = ['#!arguments=' + args.join(',')];
+  if (desc) lines.push('#!arguments-desc=' + desc);
+  return { table, lines };
 }
+
+export function surgeArgumentPlaceholder(id, table) {
+  return table?.byId?.get(String(id))?.placeholder || null;
+}
+
+export function parseLegacyLoonPluginObjectRefs(source) {
+  const raw = String(source || '').trim();
+  if (!raw) return null;
+
+  const bracket = raw.match(/^\[([\s\S]*)\]$/);
+  if (bracket) {
+    const refs = [...bracket[1].matchAll(/\{([A-Za-z_][\w-]*)\}/g)].map(match => match[1]);
+    return refs.length ? refs : null;
+  }
+
+  const compact = raw.match(/^\{([A-Za-z_][\w-]*(?:\s*,\s*[A-Za-z_][\w-]*)*)\}$/);
+  if (compact) return compact[1].split(',').map(value => value.trim());
+
+  return null;
+}
+
+export function surgePluginObjectArgument(refs = [], table) {
+  const fields = [];
+  for (const id of refs) {
+    const entry = table?.byId?.get(String(id));
+    if (!entry) return {ok:false, reason:`undeclared Loon [Argument]: ${id}`};
+    if (!entry.hasDefault) {
+      return {ok:false, reason:`Loon [Argument] ${id} has no default; PluginObject missing-value null cannot be represented losslessly by Surge module substitution`};
+    }
+    const key = JSON.stringify(entry.id);
+    const placeholder = entry.placeholder;
+    if (entry.valueType === 'string') {
+      fields.push(`${key}:${JSON.stringify(placeholder)}`);
+    } else if (entry.valueType === 'number' || entry.valueType === 'boolean') {
+      fields.push(`${key}:${placeholder}`);
+    } else {
+      return {ok:false, reason:`unsupported Loon [Argument] value type for ${id}: ${entry.valueType}`};
+    }
+  }
+  const jsonTemplate = '{' + fields.join(',') + '}';
+  return {ok:true, value:JSON.stringify(jsonTemplate)};
+}
+
+export function surgeDynamicOptionValue(id, table) {
+  const entry = table?.byId?.get(String(id));
+  if (!entry || !entry.hasDefault) return null;
+  return entry.placeholder;
+}
+
+export function surgeEnableRequirement(id, table) {
+  const entry = table?.byId?.get(String(id));
+  if (!entry || entry.valueType !== 'boolean') return null;
+  return `#!REQUIREMENT "'${entry.placeholder}'=='true'"`;
+}
+

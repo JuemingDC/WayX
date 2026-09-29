@@ -28,16 +28,17 @@ import {
   validateLoonSourceCatalog,
   planMitmLine,
   resolveOriginalUrl,
-  mergeBoxJsSubscription,
   parseLoonArguments,
+  surgeArgumentMetadata,
+  surgePluginObjectArgument,
+  surgeEnableRequirement,
+  parseLegacyLoonPluginObjectRefs,
   analyzePluginArgumentUsage,
-  argumentUsageSummary,
   rewriteV2PluginArgumentRefs,
   parseRewriteV2,
   qxPrimitiveForRewriteV2Action,
   qxRule,
   qxTargetPath,
-  renderBoxJsApp,
   rewriteV2ToSource,
   selectQxScriptAction,
   parseScriptV2,
@@ -300,9 +301,43 @@ const args = parseLoonArguments([
 assert.equal(args.length, 2);
 assert.equal(args[0].defaultValue, 'false');
 assert.equal(args[1].values[1], 'zh-Hant');
-const app = renderBoxJsApp({id:'Demo',name:'Demo'}, ['Capture=switch, false, true, tag="捕获"']);
-assert.equal(app.settings[0].type, 'boolean');
-assert.equal(app.settings[0].id, 'wayx.demo.Capture');
+
+const surgeArgs = surgeArgumentMetadata([
+  'region=select,"CN","US",tag=地区,desc=选择区域',
+  'level=select,2,3,type=number,tag=等级',
+  'enabled=switch,true,false,tag=启用',
+]);
+assert.equal(surgeArgs.lines[0], '#!arguments=region:CN,level:2,enabled:true');
+assert.match(surgeArgs.lines[1], /^#!arguments-desc=/);
+assert.equal(surgeEnableRequirement('enabled', surgeArgs.table), '#!REQUIREMENT "\'{{{enabled}}}\'==\'true\'"');
+const surgeObject = surgePluginObjectArgument(['region','level','enabled'], surgeArgs.table);
+assert.equal(surgeObject.ok, true);
+assert.equal(
+  surgeObject.value,
+  '"{\\\"region\\\":\\\"{{{region}}}\\\",\\\"level\\\":{{{level}}},\\\"enabled\\\":{{{enabled}}}}"',
+);
+assert.deepEqual(parseLegacyLoonPluginObjectRefs('[{region},{level},{enabled}]'), ['region','level','enabled']);
+assert.deepEqual(parseLegacyLoonPluginObjectRefs('{region,level,enabled}'), ['region','level','enabled']);
+
+const noDefaultArgs = surgeArgumentMetadata(['optional=input,tag=可选']);
+assert.equal(noDefaultArgs.lines[0], '#!arguments=optional');
+assert.equal(surgePluginObjectArgument(['optional'], noDefaultArgs.table).ok, false);
+
+const surgeArgumentScript = surgeScriptV2Plan(
+  parseScriptV2('request if ${url} ~= /api/ then script("https://example.com/a.js", {${region}, ${level}, ${enabled}}) with enable=${enabled}, timeout=${level}, debug=${enabled}, requires_body=true'),
+  {
+    scriptUrl:'https://example.com/a.js',
+    name:'argument_script',
+    argumentIds:new Set(['region','level','enabled']),
+    argumentTable:surgeArgs.table,
+  },
+);
+assert.equal(surgeArgumentScript.ok, true);
+assert.equal(surgeArgumentScript.usesLineRequirement, true);
+assert.match(surgeArgumentScript.line, /^#!REQUIREMENT "\'\{\{\{enabled\}\}\}\'==\'true\'" argument_script = /);
+assert.match(surgeArgumentScript.line, /timeout=\{\{\{level\}\}\}/);
+assert.match(surgeArgumentScript.line, /debug=\{\{\{enabled\}\}\}/);
+assert.match(surgeArgumentScript.line, /argument="\{\\\"region\\\":\\\"\{\{\{region\}\}\}\\\"/);
 
 const argumentAnalysis = analyzePluginArgumentUsage({
   argumentLines:[
@@ -331,8 +366,6 @@ assert.deepEqual(
   ).all,
   ['enabled','price'],
 );
-assert.ok(argumentUsageSummary(argumentAnalysis).find(x => x.id === 'enabled').uses.includes('Script enable'));
-
 const undeclaredArgumentAnalysis = analyzePluginArgumentUsage({
   argumentLines:['enabled=switch,true'],
   scriptLines:['request if ${url} ~= /api/ then script("request.js", {${missing}}) with enable=${alsoMissing}'],
@@ -342,16 +375,6 @@ assert.deepEqual(
   ['alsoMissing','missing'],
 );
 
-const managedApp = renderBoxJsApp({id:'Tieba',name:'百度贴吧去广告'}, [
-  'per_filter_video_thread=select, "true", "false", tag=拦截推荐页面视频帖',
-]);
-const mergedBoxJs = mergeBoxJsSubscription(
-  {id:'juemingdc.qx.sub',apps:[{id:'keep.me',name:'Keep'}]},
-  [managedApp],
-);
-assert.equal(mergedBoxJs.apps.length, 2);
-assert.equal(mergedBoxJs.apps[0].id, 'keep.me');
-assert.equal(mergedBoxJs.apps[1].settings[0].id, 'wayx.tieba.per_filter_video_thread');
 const simpleV2 = parseRewriteV2('request if ${url} ~= /^https:\\/\\/ad\\.example\\.com/i as hit then reject_dict(200)');
 assert.equal(simpleV2.phase, 'request');
 assert.equal(simpleV2.condition.capture, 'hit');

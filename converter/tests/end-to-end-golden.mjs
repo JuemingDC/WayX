@@ -65,6 +65,8 @@ response if \${enabled} == true && \${url} ~= /api/ then response.json.replace("
 const argumentRewriteOutput = convert(argumentRewriteFixture, argumentRewriteSource, new Map(), STAMP);
 assert.match(argumentRewriteOutput.qx, /REWRITE V2 REVIEW REQUIRED: plugin \[Argument\] reference\(s\) enabled, price/);
 assert.match(argumentRewriteOutput.surge, /REWRITE V2 REVIEW REQUIRED: plugin \[Argument\] reference\(s\) enabled, price/);
+assert.doesNotMatch(argumentRewriteOutput.qx, /Source \[Argument\]|Argument usage:|enabled=switch|price=input/);
+assert.doesNotMatch(argumentRewriteOutput.surge, /Source \[Argument\]|Argument usage:|enabled=switch|price=input/);
 assert.equal(
   argumentRewriteOutput.qx.split(/\\r?\\n/).some(line => !line.trim().startsWith('#') && /jsonjq-response-body/.test(line)),
   false,
@@ -262,27 +264,33 @@ for (const testCase of cases) {
   }
 
   if (testCase.name === 'YouTube') {
-    assert.match(out.qx, /Argument usage: captionLang \[string\] -> Script argument-object/);
+    assert.doesNotMatch(out.qx, /Source \[Argument\]|Argument usage:/, 'YouTube QX must not emit Loon plugin parameter UI/declarations');
     assert.equal(actual.qxReview, 2);
-    assert.equal(actual.surgeReview, 2);
+    assert.equal(actual.surgeReview, 0);
+    assert.match(out.surge, /^#!arguments=.*captionLang:zh-Hans/m);
+    assert.match(out.surge, /argument="\{\\\"captionLang\\\":\\\"\{\{\{captionLang\}\}\}\\\"\}"/);
     assert.ok(qxActive.some(line => /youtube\/request\.js$/.test(line)), 'YouTube: native QX request script declaration missing');
     assert.match(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
-    assert.match(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
+    assert.doesNotMatch(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
   }
 
   if (testCase.name === 'Bilibili') {
     assert.match(out.qx, /^host, bsbsb\.top, PROXY$/m, 'Bilibili: Loon plugin PROXY binding must remain literal in QX');
-    assert.match(out.qx, /Argument usage: optimizeRequest \[boolean\] -> Script enable/);
-    assert.match(out.qx, /Argument usage: displayUpList \[string\] -> Script argument-object/);
+    assert.doesNotMatch(out.qx, /Source \[Argument\]|Argument usage:/, 'Bilibili QX must not emit Loon plugin parameter UI/declarations');
     assert.match(out.qx, /QUANTUMULT X UNSUPPORTED - source script disabled/);
     assert.equal(qxActive.some(line => /bilibili\/(?:request|response)\.js/.test(line)), false, 'Bilibili protobuf scripts must not be active in QX');
     assert.ok(qxActive.some(line => /bilibili\/json\.js/.test(line)), 'Bilibili JSON script declarations should remain available');
-    assert.equal(actual.surgeReview, 3);
+    assert.equal(actual.surgeReview, 0);
+    assert.match(out.surge, /^#!arguments=.*displayUpList:auto.*sponsorBlock:true/m);
+    assert.match(out.surge, /#!REQUIREMENT "'\{\{\{sponsorBlock\}\}\}'=='true'"/);
+    assert.doesNotMatch(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
   }
 
   if (testCase.name === 'JingDong') {
     assert.equal(actual.qxReview, 2);
-    assert.equal(actual.surgeReview, 2);
+    assert.equal(actual.surgeReview, 0);
+    assert.match(out.surge, /^#!arguments=Capture:false,Cookies:/m);
+    assert.match(out.surge, /#!REQUIREMENT "'\{\{\{Capture\}\}\}'=='true'"/);
     assert.ok(qxActive.some(line => /Scripts\/jingdong\.js$/.test(line)), 'JingDong native script declaration missing');
     assert.match(out.qx, /dynamic enable cannot be carried|SCRIPT V2 REVIEW REQUIRED/);
   }
