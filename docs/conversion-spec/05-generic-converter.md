@@ -290,4 +290,5 @@ CI 必须审计生产 converter，禁止出现已登记插件身份驱动的语�
 - Generic orchestration：`.github/scripts/sync-convert.mjs`
 - Offline canonical regeneration：`converter/tools/regenerate-canonical.mjs`
 - Identity invariance：`converter/tests/generic-identity.mjs`
+- Unknown-plugin production pipeline smoke：`converter/tests/unknown-plugin-pipeline.mjs`
 - Plugin-identity source audit：`converter/tests/genericity-audit.mjs`
