@@ -79,6 +79,30 @@ QX snippet 没有 Loon `[Argument]` 同构语法。
 
 BoxJs 可以作为独立 QX 原生功能存在，但不能成为自动改造 Source Script 的手段。
 
+### 60.4.1 Plugin Argument 使用分型
+
+Loon 官方定义的 `[Argument]` 是插件级 typed data，`input/select` 默认 String、可声明 Number，`switch` 为 Boolean；Script 的 PluginObject 会把这些类型保留到 `$argument`，动态 `enable` 也直接受插件参数控制。
+
+converter 必须先做静态使用分析，再决定是否可自动转换。至少分为：
+
+| 使用位置 | 目标处理 |
+|---|---|
+| 仅声明、未被任何执行项引用 | 保留声明注释；不制造运行时配置 |
+| Rewrite condition / action 引用 | QX / Surge 均 Review，除非未来存在经官方验证的同构参数机制 |
+| Script condition 引用 | QX / Surge 均 Review；不得只保留 URL 条件而丢掉参数条件 |
+| Script PluginObject `{\${id}}` | QX / Surge 均 Review；不得把 typed Object 改成 String |
+| Script dynamic `enable/timeout/debug` | QX / Surge 均 Review；不得冻结成默认值伪装为等价 |
+| 固定 String / Raw String `$argument` | QX Review；Surge 仅在 `argument=` 能传入完全相同 String 时直接 |
+| Rule `PROXY` | 这是插件 policy binding，不属于普通 `[Argument]` id；QX 保留字面 `PROXY`，Surge 继续要求 policy 绑定 |
+
+禁止：
+- 用 Loon 默认值静态替换参数后声称完成了参数转换；
+- 把 Boolean/Number/Object 序列化成 String 后继续自动执行；
+- 因 QX 支持 `$prefs` 或 `$environment.sourcePath` 就自动修改 Source Script；
+- 为实现参数 UI 自动生成 wrapper、fork 或插件特判。
+
+只有 Source Script **自身已经实现并实际读取**目标平台的参数接口，且转换器能从源码证明输入类型和行为等价时，才允许另行建立原生映射；仍不得修改 Source Script。
+
 ## 60.5 [Argument] → Surge
 
 Surge `#!arguments` 只在**不改变 Source Script 接口**时使用。
@@ -130,5 +154,6 @@ Review：
 - Script v2 parser：`converter/src/script-v2.mjs`
 - Script v2 target planner：`converter/src/script-v2-target.mjs`
 - Loon Argument parser：`converter/src/argument.mjs`
+- Plugin Argument usage analysis：`converter/src/argument-usage.mjs`
 - Original Source Script fetch / relative resolution：`converter/src/source-fetch.mjs`
 - Regression：`converter/tests/rucu6-script-v2-coverage.mjs`、`converter/tests/checkpoint.mjs`
