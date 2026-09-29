@@ -1,11 +1,17 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { qxRule as canonicalQxRule, surgeRule as canonicalSurgeRule } from '../../converter/src/rule.mjs';
+import { selectQxScriptAction } from '../../converter/src/script.mjs';
+import { minifyJq } from '../../converter/src/jq.mjs';
+import { BOXJS_SUBSCRIPTION, qxTargetPath, surgeTargetPath } from '../../converter/src/paths.mjs';
+import { analyzeSafeRewriteV2 } from '../../converter/src/rewrite-v2-safe.mjs';
+import { mergeBoxJsSubscription, renderBoxJsApp, renderQxPrefsObjectBridge } from '../../converter/src/argument.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
 const RESOURCE_DIR = path.join(ROOT, 'Resource/Loon');
-const TARGET_ROOT = path.join(ROOT, 'adblock');
+const TARGET_ROOT = path.join(ROOT, 'Adblock');
 const SCRIPT_DIR = path.join(ROOT, 'script');
 const RAW_BASE = 'https://raw.githubusercontent.com/JuemingDC/WayX/main';
 const UA = 'StashCore/2.7.1 Stash/2.7.1 Clash/1.11.0';
@@ -103,55 +109,16 @@ function splitPatternAction(line) {
 }
 
 
-function parseSimpleRewriteV2(line) {
-  // Safe subset only:
-  // request if ${url} ~= /REGEX/ then reject*(status)
-  // No flags, captures-as variables, compound conditions, pipelines, custom body,
-  // response phase, or parameter interpolation are accepted here.
-  const prefix = line.match(/^request\s+if\s+\$\{url\}\s*~=\s*/);
-  if (!prefix) return null;
-  let rest = line.slice(prefix[0].length);
-  if (!rest.startsWith('/')) return { unsupported: true, reason: 'URL condition is not a literal regex' };
-
-  let end = -1;
-  let escaped = false;
-  for (let i = 1; i < rest.length; i++) {
-    const ch = rest[i];
-    if (escaped) { escaped = false; continue; }
-    if (ch === '\\') { escaped = true; continue; }
-    if (ch === '/') { end = i; break; }
-  }
-  if (end < 0) return { unsupported: true, reason: 'unterminated URL regex' };
-
-  const pattern = rest.slice(1, end);
-  rest = rest.slice(end + 1);
-  const fm = rest.match(/^([ims]*)\s+then\s+(.+)$/);
-  if (!fm) return { unsupported: true, reason: 'condition is not the simple URL-regex form' };
-  if (fm[1]) return { unsupported: true, reason: 'regex flags require semantic review' };
-
-  const action = fm[2].trim();
-  const am = action.match(/^(reject|reject_dict|reject_array|reject_img)\(\s*(\d{3})\s*\)$/);
-  if (!am) return { unsupported: true, reason: 'action is outside the deterministic reject subset' };
-  const status = Number(am[2]);
-  if (status < 100 || status > 599) return { unsupported: true, reason: 'reject status is outside Loon 100...599' };
-
-  const map = {
-    reject: 'reject',
-    reject_dict: 'reject-dict',
-    reject_array: 'reject-array',
-    reject_img: 'reject-img',
-  };
-  return { pattern, action: map[am[1]], status, sourceAction: action };
-}
-
 function rewriteV2Action(line, target, ctx) {
-  const parsed = parseSimpleRewriteV2(line);
-  if (!parsed) return null;
-  if (parsed.unsupported) {
+  const parsed = analyzeSafeRewriteV2(line);
+  if (!parsed.matched) return null;
+  if (!parsed.safe) {
     return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${parsed.reason}): ${line}` };
   }
-  // Status is intentionally not used to choose QX reject-200. The action/body
-  // semantics decide the native target action. Surge uses native reject/Map Local.
+  // The Safe Tier analyzer validates phase, condition shape, regex flags,
+  // action arity, reject body semantics and status range before this point.
+  // Numeric status does not mechanically select QX reject-200; WayX keeps
+  // action/body semantics as the primary mapping rule.
   return rewriteAction(parsed.pattern, parsed.action, target, ctx);
 }
 
@@ -263,12 +230,12 @@ function rewriteAction(pattern, action, target, ctx) {
     return { section: 'map', line: `${pattern} data-type=text data=${JSON.stringify(body)} status-code=200 header=${JSON.stringify('Content-Type:application/json')}` };
   }
   if (lower.startsWith('response-body-json-del ')) {
-    const jq = jqDelete(a.slice('response-body-json-del '.length));
+    const jq = minifyJq(jqDelete(a.slice('response-body-json-del '.length)));
     return target === 'qx' ? { section: 'rewrite', line: `${pattern} url jsonjq-response-body ${quoteJq(jq)}` }
       : { section: 'body', line: `http-response-jq ${pattern} ${quoteJq(jq)}` };
   }
   if (lower.startsWith('response-body-json-replace ')) {
-    const jq = jqReplace(a.slice('response-body-json-replace '.length));
+    const jq = minifyJq(jqReplace(a.slice('response-body-json-replace '.length)));
     return target === 'qx' ? { section: 'rewrite', line: `${pattern} url jsonjq-response-body ${quoteJq(jq)}` }
       : { section: 'body', line: `http-response-jq ${pattern} ${quoteJq(jq)}` };
   }
@@ -357,18 +324,18 @@ function convert(entry, source, scriptMap, stamp = nowCN()) {
   // Preserve [Argument] semantics as comments. QX/Surge module arguments are not fabricated.
   if (parsed.sections.has('Argument')) {
     const raw = parsed.sections.get('Argument').filter(x => x.trim());
-    qx.notes.push('# Original Loon [Argument] (default values are used for conversion):', ...raw.map(x => x.trim().startsWith('#') ? x : `# ${x}`));
+    qx.notes.push('# Original Loon [Argument] (BoxJs/$prefs bridge required; Review Tier until verified):', ...raw.map(x => x.trim().startsWith('#') ? x : `# ${x}`));
     sg.notes.push('# Original Loon [Argument] (default values are used for conversion):', ...raw.map(x => x.trim().startsWith('#') ? x : `# ${x}`));
   }
 
   for (const item of sectionItems(parsed.sections.get('Rule'))) {
     const comments = cleanComments(item.comments);
     if (!item.line) { qx.filter.push(...comments); sg.rule.push(...comments); continue; }
-    const qr = qxRule(item.line);
+    const qr = canonicalQxRule(item.line);
     if (qr.kind === 'filter') qx.filter.push(...comments, qr.line);
     else if (qr.kind === 'rewrite') qx.rewrite.push(...comments, qr.line);
     else qx.filter.push(...comments, qr.line);
-    sg.rule.push(...comments, surgeRule(item.line));
+    sg.rule.push(...comments, canonicalSurgeRule(item.line));
   }
 
   for (const item of sectionItems(parsed.sections.get('Rewrite'))) {
@@ -407,11 +374,18 @@ function convert(entry, source, scriptMap, stamp = nowCN()) {
     const mapped = scriptMap.get(sc.scriptPath);
     const qxUrl = mapped?.qx || sc.scriptPath;
     const surgeUrl = mapped?.surge || sc.scriptPath;
-    const qType = sc.type === 'http-response'
-      ? (sc.requiresBody ? 'script-response-body' : 'script-response-header')
-      : (sc.requiresBody ? 'script-request-body' : 'script-request-header');
+    const qType = selectQxScriptAction({
+      phase: sc.type,
+      requiresBody: sc.requiresBody,
+      scriptUrl: sc.scriptPath,
+      sourceText: mapped?.source || '',
+    }).action;
     qx.rewrite.push(...comments);
     if (sc.tag) qx.rewrite.push(`# ${sc.tag}`);
+    if (sc.argument && mapped?.qxArgumentBridge) qx.rewrite.push(`# [WayX] BoxJs/$prefs bridge active for argument=${sc.argument}`);
+    else if (sc.argument) qx.rewrite.push(`# [WayX] REVIEW REQUIRED: verify BoxJs/$prefs bridge for argument=${sc.argument}`);
+    if (sc.enable && mapped?.qxEnableBridge) qx.rewrite.push(`# [WayX] BoxJs/$prefs enable bridge active for enable=${sc.enable}`);
+    else if (sc.enable) qx.rewrite.push(`# [WayX] REVIEW REQUIRED: verify QX enable bridge for enable=${sc.enable}`);
     if (sc.argument || sc.enable || sc.binary) qx.rewrite.push(`# Loon script options preserved in source: ${[sc.argument && `argument=${sc.argument}`, sc.enable && `enable=${sc.enable}`, sc.binary && 'binary-body-mode=true'].filter(Boolean).join(', ')}`);
     qx.rewrite.push(`${sc.pattern} url ${qType} ${qxUrl}`);
 
@@ -509,17 +483,36 @@ function adaptSurgeScript(entry, source) {
   return out;
 }
 
-function adaptTiebaQX(entry, source, defaults) {
+function adaptDianPingQX(entry, source, defaults) {
+  if (entry.id !== 'DianPing') return source;
+  const fallback = String(defaults.get('davsdmpk_enable') ?? 'true').trim().toLowerCase() === 'false' ? 'false' : 'true';
+  const key = 'wayx.dianping.davsdmpk_enable';
+  return [
+    '// WayX BoxJs -> Quantumult X $prefs enable bridge',
+    '// Converted by: chance',
+    `const __wayxEnabledValue = $prefs.valueForKey(${JSON.stringify(key)});`,
+    `const __wayxEnabled = String(__wayxEnabledValue === null || __wayxEnabledValue === undefined ? ${JSON.stringify(fallback)} : __wayxEnabledValue).toLowerCase() === "true";`,
+    'if (!__wayxEnabled) {',
+    '  $done({});',
+    '} else {',
+    source,
+    '}',
+    '',
+  ].join('\n');
+}
+
+function adaptTiebaQX(entry, source, argumentLines = []) {
   if (entry.id !== 'Tieba') return source;
-  const raw = String(defaults.get('per_filter_video_thread') ?? 'false').trim().toLowerCase();
-  const value = raw === 'true' ? 'true' : 'false';
-  const re = /^(\s*)per_filter_video_thread:\s*(true|false),\s*(\/\/[^\n]*)$/m;
-  const m = source.match(re);
-  if (!m) throw new Error(`${entry.id}: cannot locate per_filter_video_thread default in tieba-proto.js`);
-  const indent = m[1];
-  const originalComment = m[3];
-  const replacement = `${indent}// Converted by chance: Quantumult X snippet cannot receive Loon [Argument]; apply the Loon default ${value}.\n${indent}per_filter_video_thread: ${value},\n${indent}// Original comment: ${originalComment.replace(/^\/\/\s*/, '')}`;
-  return source.replace(re, replacement);
+  if (!/\$argument\b/.test(source)) throw new Error(`${entry.id}: expected $argument usage was not found in tieba-proto.js`);
+  if (/\b(?:const|let|var)\s+\$argument\b/.test(source)) throw new Error(`${entry.id}: source declares $argument; automatic QX bridge would collide`);
+
+  const bridge = renderQxPrefsObjectBridge(
+    entry.id,
+    argumentLines,
+    ['per_filter_video_thread'],
+    { per_filter_video_thread: 'boolean' },
+  );
+  return bridge + source;
 }
 
 async function adaptPinDuoDuoCommon(entry, source) {
@@ -542,7 +535,7 @@ async function adaptPinDuoDuoCommon(entry, source) {
   return out;
 }
 
-async function syncScript(entry, url, defaults = new Map()) {
+async function syncScript(entry, url, defaults = new Map(), argumentLines = []) {
   const filename = decodeURIComponent(new URL(url).pathname.split('/').pop() || `${entry.id}.js`);
   const destDir = path.join(SCRIPT_DIR, entry.id);
   await fs.mkdir(destDir, { recursive: true });
@@ -559,13 +552,16 @@ async function syncScript(entry, url, defaults = new Map()) {
 
   if (entry.id === 'Tieba') {
     const qxDest = path.join(destDir, 'QuantumultX', filename);
-    await writeAdaptedScript(qxDest, entry, 'Quantumult X', url, adaptTiebaQX(entry, normalized, defaults));
+    await writeAdaptedScript(qxDest, entry, 'Quantumult X', url, adaptTiebaQX(entry, normalized, argumentLines));
     qxPath = qxDest;
   }
 
   if (entry.id === 'DianPing') {
+    const qxDest = path.join(destDir, 'QuantumultX', filename);
     const surgeDest = path.join(destDir, 'Surge', filename);
+    await writeAdaptedScript(qxDest, entry, 'Quantumult X', url, adaptDianPingQX(entry, normalized, defaults));
     await writeAdaptedScript(surgeDest, entry, 'Surge', url, adaptSurgeScript(entry, normalized));
+    qxPath = qxDest;
     surgePath = surgeDest;
   }
 
@@ -578,7 +574,7 @@ async function syncScript(entry, url, defaults = new Map()) {
   }
 
   const toRaw = file => `${RAW_BASE}/${path.relative(ROOT, file).split(path.sep).map(encodeURIComponent).join('/')}`;
-  return { qx: toRaw(qxPath), surge: toRaw(surgePath) };
+  return { qx: toRaw(qxPath), surge: toRaw(surgePath), source: normalized, qxArgumentBridge: entry.id === 'Tieba', qxEnableBridge: entry.id === 'DianPing' };
 }
 
 function scriptUrls(source) {
@@ -615,6 +611,7 @@ async function main() {
   const manifest = JSON.parse(await fs.readFile(MANIFEST, 'utf8'));
   await Promise.all([RESOURCE_DIR, TARGET_ROOT, SCRIPT_DIR].map(d => fs.mkdir(d, { recursive: true })));
   const failures = [];
+  const generatedBoxJsApps = [];
   for (const entry of manifest) {
     try {
       console.log(`\n== ${entry.id} ==`);
@@ -628,14 +625,21 @@ async function main() {
       console.log(`${changed ? 'updated' : 'unchanged'} source via ${fetchedFrom}; sha256=${sha256(source).slice(0, 12)}`);
 
       const scriptMap = new Map();
-      const sourceDefaults = argumentDefaults(parseLoon(source).sections.get('Argument'));
+      const parsedSource = parseLoon(source);
+      const argumentLines = parsedSource.sections.get('Argument') || [];
+      const sourceDefaults = argumentDefaults(argumentLines);
       for (const url of scriptUrls(source)) {
-        scriptMap.set(url, await syncScript(entry, url, sourceDefaults));
+        scriptMap.set(url, await syncScript(entry, url, sourceDefaults, argumentLines));
       }
 
-      const appRoot = path.join(TARGET_ROOT, entry.id);
-      const qxPath = path.join(appRoot, 'QuantumultX', entry.qx);
-      const sgPath = path.join(appRoot, 'Surge', entry.surge);
+      // Only publish BoxJs controls once the corresponding QX bridge is functional.
+      if (['Tieba', 'DianPing'].includes(entry.id) && argumentLines.length) {
+        const displayName = (source.match(/^#!name\s*=\s*(.+)$/m) || [])[1]?.trim() || entry.id;
+        generatedBoxJsApps.push(renderBoxJsApp({ ...entry, name: displayName }, argumentLines));
+      }
+
+      const qxPath = path.join(ROOT, qxTargetPath(entry));
+      const sgPath = path.join(ROOT, surgeTargetPath(entry));
       await Promise.all([
         path.dirname(qxPath),
         path.dirname(sgPath),
@@ -672,6 +676,18 @@ async function main() {
       console.error(`::error title=${entry.id}::${String(e.message).replaceAll('\n', '%0A')}`);
     }
   }
+  if (!failures.length && generatedBoxJsApps.length) {
+    const boxJsPath = path.join(ROOT, BOXJS_SUBSCRIPTION);
+    const current = JSON.parse(await fs.readFile(boxJsPath, 'utf8'));
+    const merged = mergeBoxJsSubscription(current, generatedBoxJsApps);
+    const next = JSON.stringify(merged, null, 2) + '\n';
+    const previous = normalizeNewlines(await fs.readFile(boxJsPath, 'utf8'));
+    if (previous !== next) {
+      await fs.writeFile(boxJsPath, next);
+      console.log(`BoxJs updated -> ${path.relative(ROOT, boxJsPath)}`);
+    }
+  }
+
   if (failures.length) {
     console.error('\nFailures:\n' + failures.join('\n\n'));
     process.exitCode = 1;

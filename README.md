@@ -8,10 +8,9 @@
 
 ```text
 WayX/
-├── adblock/
-│   └── <App-or-Category>/
-│       ├── QuantumultX/
-│       └── Surge/
+├── Adblock/
+│   ├── Quantumult X/
+│   └── Surge/
 ├── module/
 │   └── <App-or-Feature>/
 │       ├── QuantumultX/
@@ -26,7 +25,7 @@ WayX/
     └── QuantumultX/
 ```
 
-- `adblock/`：去广告、界面净化、HTTPDNS 屏蔽等广告/干扰项处理。这里保留对应的 `.snippet` / `.sgmodule`。
+- `Adblock/`：去广告、界面净化、HTTPDNS 屏蔽等广告/干扰项处理。这里保留对应的 `.snippet` / `.sgmodule`。
 - `module/`：非去广告类的功能模块，只放 `.snippet` / `.sgmodule`。
 - `script/`：JavaScript 脚本统一放这里；无论是模块配套脚本还是单脚本，都不放进 `module/`。
 - `rule/`：独立规则集。
@@ -34,8 +33,8 @@ WayX/
 
 ## 当前分类原则
 
-- HTTPDNS → `adblock/HTTPDNS/`
-- 去广告模块 / snippet → `adblock/<App>/`
+- HTTPDNS → `Adblock/Quantumult X/HTTPDNS.snippet` / `Adblock/Surge/HTTPDNS.sgmodule`
+- 去广告模块 / snippet → `Adblock/Quantumult X/` 与 `Adblock/Surge/`
 - 功能性 module / snippet → `module/<App-or-Feature>/`
 - JavaScript → `script/<App-or-Feature>/`
 - 独立规则 → `rule/`

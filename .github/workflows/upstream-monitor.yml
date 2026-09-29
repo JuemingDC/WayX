@@ -58,11 +58,21 @@ jobs:
         with:
           node-version: "24"
 
+      - name: Validate WayX converter core
+        if: steps.pending.outputs.blocked != 'true'
+        run: node converter/tests/checkpoint.mjs
+
       - name: Set up Python
         if: steps.pending.outputs.blocked != 'true'
         uses: actions/setup-python@v6
         with:
           python-version: "3.13"
+
+      - name: Syntax check conversion automation
+        if: steps.pending.outputs.blocked != 'true'
+        run: |
+          node --check .github/scripts/sync-convert.mjs
+          python -m py_compile .github/scripts/conversion_gate.py .github/scripts/validate_conversion_policy.py
 
       - name: Install sync dependency
         if: steps.pending.outputs.blocked != 'true'
@@ -174,7 +184,7 @@ jobs:
           set -euo pipefail
           git config user.name "chance-upstream-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A Resource/Loon adblock script monitor/state.json
+          git add -A Resource/Loon Adblock script boxjs monitor/state.json
           if [ -d upstream ]; then git add -A upstream; fi
           if git diff --cached --quiet; then
             echo "No Safe Tier changes to commit."
@@ -202,7 +212,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           BRANCH="work/upstream-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           git switch -c "$BRANCH"
-          git add -A Resource/Loon adblock script monitor/state.json
+          git add -A Resource/Loon Adblock script boxjs monitor/state.json
           if [ -d upstream ]; then git add -A upstream; fi
           if git diff --cached --quiet; then
             echo "Review was requested but no persistent repository files changed."
