@@ -6,7 +6,11 @@ import { selectQxScriptAction } from '../../converter/src/script.mjs';
 import { inspectQxScriptCompatibility, qxManualPortComment } from '../../converter/src/script-compat.mjs';
 import { minifyJq } from '../../converter/src/jq.mjs';
 import { BOXJS_SUBSCRIPTION, qxTargetPath, surgeTargetPath } from '../../converter/src/paths.mjs';
-import { analyzeSafeRewriteV2 } from '../../converter/src/rewrite-v2-safe.mjs';
+import { analyzeSafeRewriteV2, analyzeSimpleUrlRegexCondition } from '../../converter/src/rewrite-v2-safe.mjs';
+import { isRewriteV2, parseRewriteV2 } from '../../converter/src/rewrite-v2.mjs';
+import { validateRewriteV2Ast } from '../../converter/src/rewrite-v2-actions.mjs';
+import { qxMockPlanFromAction } from '../../converter/src/dependency.mjs';
+import { renderQxMockFileScript } from '../../converter/src/qx-mock.mjs';
 import { mergeBoxJsSubscription, renderBoxJsApp, renderQxPrefsObjectBridge } from '../../converter/src/argument.mjs';
 
 const ROOT = process.cwd();
@@ -42,6 +46,18 @@ async function fetchText(url, timeoutMs = 20000) {
   } finally { clearTimeout(timer); }
 }
 
+async function fetchBytes(url, timeoutMs = 20000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { headers: { 'User-Agent': UA, 'Accept': '*/*' }, redirect: 'follow', signal: controller.signal });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const bytes = Buffer.from(await res.arrayBuffer());
+    if (!bytes.length) throw new Error('empty response');
+    return bytes;
+  } finally { clearTimeout(timer); }
+}
+
 function candidates(url) {
   if (!url.includes('https://kelee.one/')) return [url];
   const suffix = url.slice('https://kelee.one'.length);
@@ -55,6 +71,15 @@ async function fetchWithFallback(url) {
   const errors = [];
   for (const candidate of candidates(url)) {
     try { return { text: await fetchText(candidate), fetchedFrom: candidate }; }
+    catch (e) { errors.push(`${candidate}: ${e.message}`); }
+  }
+  throw new Error(`all sources failed\n${errors.join('\n')}`);
+}
+
+async function fetchBytesWithFallback(url) {
+  const errors = [];
+  for (const candidate of candidates(url)) {
+    try { return { bytes: await fetchBytes(candidate), fetchedFrom: candidate }; }
     catch (e) { errors.push(`${candidate}: ${e.message}`); }
   }
   throw new Error(`all sources failed\n${errors.join('\n')}`);
@@ -111,15 +136,49 @@ function splitPatternAction(line) {
 
 
 function rewriteV2Action(line, target, ctx) {
+  if (!isRewriteV2(line)) return null;
+
+  // mock_file is a behavior-level conversion in QX: Loon reads a resource and
+  // synthesizes/replaces a body; QX reproduces that effect with a generated
+  // rewrite script instead of pretending mock_file is a native QX token.
+  if (target === 'qx') {
+    try {
+      const ast = parseRewriteV2(line);
+      validateRewriteV2Ast(ast);
+      if (ast.actions.length === 1 && /^(?:request|response)\.body\.mock_file$/.test(ast.actions[0].name)) {
+        const condition = analyzeSimpleUrlRegexCondition(ast.condition);
+        if (!condition.ok) {
+          return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${condition.reason}): ${line}` };
+        }
+        const plan = qxMockPlanFromAction(ast.actions[0], { pluginSourceUrl: ctx.sourceUrl });
+        const materialized = ctx.mockFiles?.get(line);
+        if (!materialized) throw new Error('mock_file was not materialized during conversion');
+        if (materialized.error) throw new Error(materialized.error);
+        const key = crypto.createHash('sha1').update(line).digest('hex').slice(0, 10);
+        const filename = `mock_file_${key}.js`;
+        const script = renderQxMockFileScript(plan, {
+          ...materialized,
+          stamp: ctx.stamp,
+          category: ctx.category,
+          sourceLine: line,
+        });
+        ctx.generatedScripts.set(filename, script);
+        return {
+          section: 'rewrite',
+          line: `${condition.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}`,
+        };
+      }
+    } catch (error) {
+      return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
+    }
+  }
+
   const parsed = analyzeSafeRewriteV2(line);
-  if (!parsed.matched) return null;
   if (!parsed.safe) {
     return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${parsed.reason}): ${line}` };
   }
-  // The Safe Tier analyzer validates phase, condition shape, regex flags,
-  // action arity, reject body semantics and status range before this point.
-  // Numeric status does not mechanically select QX reject-200; WayX keeps
-  // action/body semantics as the primary mapping rule.
+  // Direct primitives are chosen by resulting behavior. Example:
+  // Loon reject(200) -> QX reject-200, not QX reject (404).
   return rewriteAction(parsed.pattern, parsed.action, target, ctx);
 }
 
@@ -141,6 +200,42 @@ function sectionItems(lines = []) {
 
 function cleanComments(comments) {
   return comments.map(x => x || '').map(x => x.trim() ? x : '').filter((x, i, a) => !(x === '' && a[i - 1] === ''));
+}
+
+async function materializeQxMockFiles(entry, parsed) {
+  const out = new Map();
+  for (const item of sectionItems(parsed.sections.get('Rewrite'))) {
+    if (!item.line || !isRewriteV2(item.line)) continue;
+    try {
+      const ast = parseRewriteV2(item.line);
+      validateRewriteV2Ast(ast);
+      if (ast.actions.length !== 1 || !/^(?:request|response)\.body\.mock_file$/.test(ast.actions[0].name)) continue;
+      const condition = analyzeSimpleUrlRegexCondition(ast.condition);
+      if (!condition.ok) continue;
+
+      const plan = qxMockPlanFromAction(ast.actions[0], { pluginSourceUrl: entry.source });
+      if (plan.phase === 'request' && (plan.binary || plan.base64)) {
+        out.set(item.line, { error: 'Quantumult X request mock_file binary/bodyBytes output is not enabled without an official request-body example' });
+        continue;
+      }
+
+      if (plan.base64) {
+        const { text } = await fetchWithFallback(plan.url);
+        const compact = text.replace(/\s+/g, '');
+        if (!/^[A-Za-z0-9+/]*={0,2}$/.test(compact) || compact.length % 4 === 1) throw new Error('invalid Base64 mock_file content');
+        out.set(item.line, { bodyBase64: Buffer.from(compact, 'base64').toString('base64'), sourceFile: plan.url });
+      } else if (plan.binary) {
+        const { bytes } = await fetchBytesWithFallback(plan.url);
+        out.set(item.line, { bodyBase64: bytes.toString('base64'), sourceFile: plan.url });
+      } else {
+        const { text } = await fetchWithFallback(plan.url);
+        out.set(item.line, { bodyText: text, sourceFile: plan.url });
+      }
+    } catch (error) {
+      out.set(item.line, { error: String(error?.message || error).split('\n')[0] });
+    }
+  }
+  return out;
 }
 
 function qxRule(line) {
@@ -223,7 +318,7 @@ function rewriteAction(pattern, action, target, ctx) {
   const a = action.trim();
   const lower = a.toLowerCase();
   if (['reject', 'reject-dict', 'reject-array', 'reject-img', 'reject-200'].includes(lower)) {
-    if (target === 'qx') return { section: 'rewrite', line: `${pattern} url ${lower}` };
+    if (target === 'qx') return { section: 'rewrite', line: `${pattern} url ${lower === 'reject' ? 'reject-200' : lower}` };
     if (lower === 'reject') return { section: 'url', line: `${pattern} _ reject` };
     if (lower === 'reject-img') return { section: 'map', line: `${pattern} data-type=tiny-gif status-code=200` };
     const body = lower === 'reject-dict' ? '{}' : lower === 'reject-array' ? '[]' : '';
@@ -305,7 +400,7 @@ function sanitizeName(s) {
   return (s || 'script').replace(/[=,\r\n]/g, '_').trim().slice(0, 64) || 'script';
 }
 
-function convert(entry, source, scriptMap, stamp = nowCN()) {
+function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Map()) {
   const parsed = parseLoon(source);
   const defaults = argumentDefaults(parsed.sections.get('Argument'));
   const meta = [
@@ -319,8 +414,8 @@ function convert(entry, source, scriptMap, stamp = nowCN()) {
 
   const qx = { filter: [], rewrite: [], mitm: [], notes: [], generatedScripts: new Map() };
   const sg = { rule: [], url: [], map: [], body: [], script: [], mitm: [], notes: [], generatedScripts: new Map() };
-  const qctx = { id: entry.id, generatedScripts: qx.generatedScripts };
-  const sctx = { id: entry.id, generatedScripts: sg.generatedScripts };
+  const qctx = { id: entry.id, generatedScripts: qx.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, mockFiles: qxMockFiles };
+  const sctx = { id: entry.id, generatedScripts: sg.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category };
 
   // Preserve [Argument] semantics as comments. QX/Surge module arguments are not fabricated.
   if (parsed.sections.has('Argument')) {
@@ -637,6 +732,7 @@ async function main() {
 
       const scriptMap = new Map();
       const parsedSource = parseLoon(source);
+      const qxMockFiles = await materializeQxMockFiles(entry, parsedSource);
       const argumentLines = parsedSource.sections.get('Argument') || [];
       const sourceDefaults = argumentDefaults(argumentLines);
       for (const url of scriptUrls(source)) {
@@ -661,13 +757,13 @@ async function main() {
       const oldSg = sgExists ? normalizeNewlines(await fs.readFile(sgPath, 'utf8')) : null;
       const oldStamp = (oldQx?.match(/^# Converted:\s*(.+)$/m) || [])[1] || null;
       let stamp = changed || !oldStamp ? nowCN() : oldStamp;
-      let out = convert(entry, source, scriptMap, stamp);
+      let out = convert(entry, source, scriptMap, stamp, qxMockFiles);
 
       // Converter changes must also refresh outputs even when upstream LPX is unchanged.
       // Preserve the old conversion timestamp only if the generated content is actually identical.
       if (!changed && oldStamp && ((oldQx && oldQx !== out.qx) || (oldSg && oldSg !== out.surge))) {
         stamp = nowCN();
-        out = convert(entry, source, scriptMap, stamp);
+        out = convert(entry, source, scriptMap, stamp, qxMockFiles);
       }
 
       for (const [file, content] of out.generatedScripts) {

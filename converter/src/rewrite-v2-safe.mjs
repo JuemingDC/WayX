@@ -5,7 +5,7 @@ import { isRewriteV2, parseRewriteV2 } from './rewrite-v2.mjs';
 import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
 
 const SAFE_REJECT_ACTIONS = new Map([
-  ['reject', 'reject'],
+  ['reject', 'reject-200'],
   ['reject_dict', 'reject-dict'],
   ['reject_array', 'reject-array'],
   ['reject_img', 'reject-img'],
@@ -15,7 +15,7 @@ function review(reason, ast = null) {
   return { matched: true, safe: false, reason, ast };
 }
 
-function simpleUrlRegex(condition) {
+export function analyzeSimpleUrlRegexCondition(condition) {
   if (!condition || condition.type !== 'comparison') return { ok: false, reason: 'condition is compound or grouped' };
   if (condition.operator !== '~=') return { ok: false, reason: 'condition is not a URL regex match' };
   if (condition.left?.type !== 'variable' || condition.left.name !== 'url') return { ok: false, reason: 'left operand is not ${url}' };
@@ -33,6 +33,9 @@ function safeRejectAction(action) {
   if (status?.type !== 'number' || !Number.isInteger(status.value) || status.value < 100 || status.value > 599) {
     return { ok: false, reason: 'reject status must be an integer in Loon 100...599' };
   }
+  // QX reject-200/reject-dict/reject-array/reject-img are documented 200-response
+  // primitives. Other Loon status codes require a generated response script.
+  if (status.value !== 200) return { ok: false, reason: 'non-200 reject status requires a generated QX response script' };
   return { ok: true, action: mapped, sourceAction: action.name, status: status.value };
 }
 
@@ -46,10 +49,9 @@ export function analyzeSafeRewriteV2(line) {
     return review(`Rewrite v2 parse/action validation failed: ${String(error?.message || error).split('\n')[0]}`);
   }
 
-  if (ast.phase !== 'request') return review('response-phase Rewrite v2 remains Review Tier', ast);
   if (ast.actions.length !== 1) return review('action pipeline remains Review Tier', ast);
 
-  const condition = simpleUrlRegex(ast.condition);
+  const condition = analyzeSimpleUrlRegexCondition(ast.condition);
   if (!condition.ok) return review(condition.reason, ast);
 
   const action = safeRejectAction(ast.actions[0]);
@@ -59,6 +61,7 @@ export function analyzeSafeRewriteV2(line) {
     matched: true,
     safe: true,
     ast,
+    phase: ast.phase,
     pattern: condition.pattern,
     action: action.action,
     sourceAction: action.sourceAction,

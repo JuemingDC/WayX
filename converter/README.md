@@ -9,7 +9,7 @@ WayX 自有的 Loon Plugin → Quantumult X / Surge 转换核心。参考 KOP-XI
 - QX IP 类规则去除 `no-resolve`；
 - JQ 只做空白压缩，不重写 `walk/select/map/empty/any/if` 等算法；
 - RuCu6 `12306.js` → `script-analyze-echo-response`；`header.js` → `script-response-header`；
-- 普通远程 JS 保留原 URL；脚本正文兼容性由独立扫描/port registry 判断；
+- 普通远程 JS 优先保留原 URL；脚本正文兼容性由独立扫描判断，源脚本明确拒绝 QX 或依赖未证明可替代的 Loon-only API 时只保留注释，不为其制造可执行 fork；
 - Rewrite v2 已拆成 tokenizer/parser/AST、官方 Action registry 与 fail-closed Safe Tier analyzer；
 - 当前官方 Loon Rewrite v2 的 31 个 Action 已登记；只有目标平台官方资料能直接证明的 primitive 才进入自动映射；
 - `[Argument]` 可生成并合并 BoxJs descriptor；当前 Tieba 的 `$argument` Object 与 DianPing 的 `enable` 开关已经通过 QX `$prefs` bridge 实际接通；
@@ -19,11 +19,12 @@ WayX 自有的 Loon Plugin → Quantumult X / Surge 转换核心。参考 KOP-XI
 
 第二阶段新增：
 
-- QX script compatibility / port registry：已知 RuCu6 Bilibili protobuf 脚本因上游显式拒绝 QX 而阻断执行行；YouTube 的内置 QuanX adapter 作为已审查兼容项登记；
-- 未登记脚本会扫描显式 QX 拒绝、Loon-only `$utils`、QX runtime 信号；存在明确阻断项时输出 `MANUAL PORT REQUIRED`，不生成会报错的 QX 行；
-- `jq_file / mock_file` 已进入依赖 AST：JQ 和文本/Base64 mock 可以解析为可内联依赖，未证明安全的二进制 mock 保持 Review Tier；
+- QX script compatibility registry：已知 RuCu6 Bilibili protobuf 脚本因上游显式拒绝 QX 而阻断执行行；YouTube 的内置 QuanX adapter 作为已审查兼容项登记；
+- 未登记脚本会扫描显式 QX 拒绝、Loon-only `$utils`、QX runtime 信号；明确不支持时输出 `QUANTUMULT X UNSUPPORTED` 并注释保留源声明，适配路径不能绕过该阻断；
+- 转换原则改为“先判断 Loon 行为效果，再选择目标平台等效表达”：例如 URL regex + reject/`reject(200)` 在 QX 中使用 `reject-200`，`reject_dict/array/img(200)` 分别使用对应 QX 200 响应 primitive；
+- `jq_file / mock_file` 已进入依赖 AST：JQ 仍可解析并内联；QX `mock_file` 不再伪装成原生 token，而是在转换阶段读取依赖并写入生成脚本；response 使用 `script-echo-response`，request 文本 body 使用 `script-request-body`；QX 运行时不再为 mock 文件二次联网，二进制 response 用内嵌 Base64 还原为官方支持的 `bodyBytes`，二进制 request 暂不自动放行；
 - 上游同步会生成 RuCu6 脚本兼容性报告，PR CI 同时检查 converter tools。
 
 MyBlockAds JQ golden 已自动化：QX / Surge 当前 11 条 JQ 有序规则必须逐条一致，并锁定 10 个唯一表达式及有序指纹；该 fixture 不宣称已证明 Loon `/i` regex flag 与 QX regex 的等价性。
 
-下一阶段：把依赖 resolver 接入完整 RuCu6 Rewrite v2 生成器，并补目标平台的 regex flag 语义验证。
+下一阶段：继续把 Rewrite v2 的 redirect、JQ、Body/Header/JSON 修改和 Action pipeline 按行为语义接入生成器，并补 QX regex flag 的官方语义验证；复杂条件不做机械降级。

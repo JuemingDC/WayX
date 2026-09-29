@@ -5,6 +5,8 @@ import {
   inlineResolvedDependency,
   inspectQxScriptCompatibility,
   listRewriteV2Dependencies,
+  qxMockPlanFromAction,
+  renderQxMockFileScript,
   LOON_REWRITE_V2_ACTIONS,
   minifyJq,
   mergeBoxJsSubscription,
@@ -95,11 +97,12 @@ assert.throws(() => validateRewriteV2Ast(unknownAction), /not present in the cur
 
 const safeReject = analyzeSafeRewriteV2('request if ${url} ~= /^https:\\/\\/ad\\.example\\.com/ then reject(200)');
 assert.equal(safeReject.safe, true);
-assert.equal(safeReject.action, 'reject');
+assert.equal(safeReject.action, 'reject-200');
 assert.equal(safeReject.status, 200);
 assert.equal(analyzeSafeRewriteV2('request if ${url} ~= /ads/i then reject(200)').safe, false);
 assert.equal(analyzeSafeRewriteV2('request if ${url} ~= /ads/ then reject(451, "blocked")').safe, false);
-assert.equal(analyzeSafeRewriteV2('response if ${url} ~= /ads/ then reject_dict(200)').safe, false);
+assert.equal(analyzeSafeRewriteV2('response if ${url} ~= /ads/ then reject_dict(200)').safe, true);
+assert.equal(analyzeSafeRewriteV2('response if ${url} ~= /ads/ then reject_dict(451)').safe, false);
 assert.equal(analyzeSafeRewriteV2('request if ${url} ~= /ads/ then reject_dict(200) | request.header.del("X")').safe, false);
 
 const bilibiliCompat = inspectQxScriptCompatibility({
@@ -107,7 +110,14 @@ const bilibiliCompat = inspectQxScriptCompatibility({
   sourceText:'if (typeof $task < "u") throw new Error("QuantumultX is not supported"); function unzip(x){ return $utils.ungzip(x); }',
 });
 assert.equal(bilibiliCompat.executable, false);
-assert.equal(bilibiliCompat.status, 'manual-port');
+assert.equal(bilibiliCompat.status, 'unsupported');
+const bilibiliForkAttempt = inspectQxScriptCompatibility({
+  scriptUrl:'https://rucu6.pages.dev/Scripts/bilibili/request.js',
+  sourceText:'throw new Error("QuantumultX is not supported"); const x=$utils.ungzip(data);',
+  forkUrl:'https://raw.githubusercontent.com/JuemingDC/WayX/main/script/RuCu6/bilibili/request.js',
+});
+assert.equal(bilibiliForkAttempt.executable, false);
+assert.equal(bilibiliForkAttempt.status, 'unsupported');
 
 const youtubeCompat = inspectQxScriptCompatibility({
   scriptUrl:'https://rucu6.pages.dev/Scripts/youtube/response.js',
@@ -132,13 +142,40 @@ assert.equal(inlinedJq.action.args[0].value, 'del(.ads)');
 
 const mockFileAst = parseRewriteV2('response if ${url} ~= /api/ then response.body.mock_file("json", "mock.json", 200)');
 const mockSpec = dependencySpecFromAction(mockFileAst.actions[0], {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
-assert.equal(mockSpec.inlineSafeText, true);
-assert.equal(inlineResolvedDependency(mockFileAst.actions[0], '{"ok":true}', {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'}).action.name, 'response.body.mock');
+assert.equal(mockSpec.strategy, 'generated-qx-script');
+assert.equal(mockSpec.qxAction, 'script-echo-response');
+assert.throws(
+  () => inlineResolvedDependency(mockFileAst.actions[0], '{"ok":true}', {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'}),
+  /generated target script/,
+);
+const responseMockPlan = qxMockPlanFromAction(mockFileAst.actions[0], {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
+assert.equal(responseMockPlan.url, 'https://example.com/Plugins/mock.json');
+const responseMockScript = renderQxMockFileScript(responseMockPlan, {
+  stamp:'2026-09-29 09:00:00 +08:00',
+  category:'Adblock',
+  bodyText:'{"ok":true}',
+});
+assert.doesNotMatch(responseMockScript, /\$task\.fetch/);
+assert.match(responseMockScript, /HTTP\/1\.1 200 OK/);
+assert.match(responseMockScript, /const __wayxBody =/);
+assert.match(responseMockScript, /output\.body = __wayxBody/);
 
 const binaryMockAst = parseRewriteV2('response if ${url} ~= /image/ then response.body.mock_file("png", "image.png", 200)');
-assert.throws(
-  () => inlineResolvedDependency(binaryMockAst.actions[0], 'not-binary-safe', {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'}),
-  /binary mock file must stay Review Tier/,
-);
+const binaryMockPlan = qxMockPlanFromAction(binaryMockAst.actions[0], {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
+assert.equal(binaryMockPlan.binary, true);
+const binaryMockScript = renderQxMockFileScript(binaryMockPlan, {bodyBase64:'iVBORw0KGgo='});
+assert.doesNotMatch(binaryMockScript, /\$task\.fetch/);
+assert.match(binaryMockScript, /output\.bodyBytes = __wayxBase64ToArrayBuffer\(__wayxBodyBase64\)/);
+
+const requestMockAst = parseRewriteV2('request if ${url} ~= /api/ then request.body.mock_file("json", "request.json")');
+const requestMockPlan = qxMockPlanFromAction(requestMockAst.actions[0], {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
+assert.equal(requestMockPlan.qxAction, 'script-request-body');
+const requestMockScript = renderQxMockFileScript(requestMockPlan, {bodyText:'{"request":true}'});
+assert.doesNotMatch(requestMockScript, /\$task\.fetch/);
+assert.match(requestMockScript, /\$done\(\{headers, body: __wayxBody\}\)/);
+
+const requestBinaryMockAst = parseRewriteV2('request if ${url} ~= /upload/ then request.body.mock_file("png", "image.png")');
+const requestBinaryMockPlan = qxMockPlanFromAction(requestBinaryMockAst.actions[0], {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
+assert.throws(() => renderQxMockFileScript(requestBinaryMockPlan), /request mock_file binary\/bodyBytes output is not enabled/);
 
 console.log('WayX converter checkpoint tests passed');

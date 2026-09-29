@@ -1,5 +1,34 @@
 # WayX Converter Status
 
+## 2026-09-29 phase 3 — semantic QX conversion
+
+Implemented on `work/semantic-rewrite-mock-20260929` / PR #5:
+
+- Conversion policy is now explicitly behavior-first rather than token-by-token.
+- Loon URL-regex terminal reject semantics map to QX by observable response:
+  - `reject(200)` / plain reject-style URL blocking -> `reject-200`;
+  - `reject_dict(200)` -> `reject-dict`;
+  - `reject_array(200)` -> `reject-array`;
+  - `reject_img(200)` -> `reject-img`;
+  - non-200 status is not silently collapsed to a QX 200 primitive.
+- Simple response-phase reject rules may use the same QX terminal response primitive when URL condition and result are equivalent; phase spelling itself is not treated as the target behavior.
+- `request/response.body.mock_file` now has a QX generated-script strategy:
+  - response -> `script-echo-response`;
+  - request text body -> `script-request-body`;
+  - plugin-relative files resolve against the plugin URL;
+  - mock-file dependencies are fetched/materialized during conversion and embedded into the generated QX script, so the QX rewrite does not perform a second network fetch;
+  - response binary/Base64 files are embedded as Base64 and decoded to the official QX `bodyBytes` output form inside the generated script;
+  - request binary/bodyBytes remains disabled until an official request-body example proves that exact output contract.
+- Explicit source-level QX rejection and unported Loon-only `$utils` are hard blockers. A WayX adaptation/fork URL cannot override them; the original Loon script declaration remains commented in QX output.
+- PR #5 Converter Check passed after these changes.
+
+Current semantic boundary:
+
+- Regex flags such as Loon `/i` still require an official QX-supported equivalent before automatic promotion.
+- Compound conditions, captures and multi-action pipelines remain Review Tier until their complete behavior can be reproduced, rather than flattening them into independent target lines.
+- `mock_file` response/header pipelines still need a single generated script when header actions must execute in Loon order.
+- Surge behavior was not weakened by this QX phase; Surge-specific expansion continues from official Surge syntax.
+
 ## 2026-09-29 phase 2
 
 Completed in this branch:
@@ -35,13 +64,13 @@ Official behavior rechecked during this phase:
 
 ## Current boundary
 
-- Bilibili protobuf QX port is **not** fabricated. It remains a real manual-port item because replacing `$utils.ungzip` and its platform runtime requires a tested QX implementation.
+- Bilibili protobuf is treated as **unsupported in QX output**, not as a pending fork: the source explicitly rejects QX and depends on `$utils.ungzip`, so WayX preserves the Loon declaration as comments and emits no executable QX line.
 - Parsing or dependency resolution alone never promotes complex Rewrite v2 rules to Safe Tier.
-- Binary `mock_file` content is not coerced into UTF-8 text.
+- Binary response `mock_file` is materialized during conversion, embedded losslessly as Base64, and restored through the official QX `bodyBytes` output path; binary request `mock_file` remains disabled until its exact QX request-body output contract is officially evidenced.
 
 ## Next work
 
-1. Build the full RuCu6 Rewrite v2 source → target generator on top of the existing AST, action registry, script registry and dependency resolver.
-2. Add target-specific dependency materialization for QX/Surge with byte/text integrity checks.
+1. Extend the behavior-first Rewrite v2 generator to redirect, JQ, body/header/JSON modifications and safe pipelines.
+2. Generate one target script when a Loon pipeline has ordering or shared-state semantics that cannot be reproduced by independent QX lines.
 3. Add target-specific regex-flag handling only after QX support is proven from official material; current `/i` source rules remain outside the golden equivalence claim.
-4. After phase 2 is green and merged, rerun the upstream monitor from the new main; discard the stale pre-converter `work/upstream-36491808454-1` results.
+4. After PR #5 is merged, rerun upstream monitoring from the new main and discard stale pre-converter branch output.
