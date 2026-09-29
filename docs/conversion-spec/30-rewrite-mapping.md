@@ -11,7 +11,7 @@
 | `reject-array` | `url reject-array` | Map Local：`[]` + JSON |
 | `302 TARGET` | `url 302 TARGET` | `[URL Rewrite] REGEX TARGET 302` |
 | `307 TARGET` | `url 307 TARGET` | `[URL Rewrite] REGEX TARGET 307` |
-| request header replace | QX `request-header` 官方形式 | `[Header Rewrite]` |
+| legacy field-oriented request/response header mutation | QX 静态 `request-header` 不是同构字段操作，当前默认 Review | `[Header Rewrite]` |
 | request body replace | QX `request-body` | `[Body Rewrite]` |
 | response body replace | QX `response-body` | `[Body Rewrite]` |
 | request/response JQ | QX `jsonjq-*-body` | `http-*-jq` |
@@ -46,24 +46,29 @@ Surge [URL Rewrite]: REGEX _ reject
 
 ## 30.2 Rewrite v2 普通 reject
 
-Loon v2：
+Loon v2 的 `reject(status)` 必须保持状态码语义。
+
+### `reject(404)`
+
+项目既定映射：
+
 ```text
-reject(404)
-reject(200)
+QX    -> REGEX url reject
+Surge -> [URL Rewrite] REGEX _ reject
 ```
 
-QX：
+### `reject(200)`
+
 ```text
-REGEX url reject
+QX    -> REGEX url reject-200
+Surge -> [Map Local] REGEX data-type=text data="" status-code=200
 ```
 
-Surge：
-```ini
-[URL Rewrite]
-REGEX _ reject
-```
-
-普通 reject 不因为状态码自动改成 Map Local 或 echo script。
+其他固定 status 或带自定义 body 的 `reject(status, body)`：
+- 只有目标存在可证明等价原生表达时才静态转换；
+- QX 当前使用最小 response helper 保持 status/body；
+- Surge 可由 Map Local 精确表达的 response 语义使用 Map Local；
+- 不得把 `reject(200)` 降成 404 reject，也不得丢失自定义 body。
 
 ## 30.3 Rewrite v2 Body 类型优先
 
@@ -92,6 +97,15 @@ QX -> REGEX url reject
 ```
 
 完整 `URL-REGEX + REJECT-X` 表以 Block 20.2 为唯一 Rule 映射表；本节只强调它与旧 Rewrite reject 不同。
+
+## 30.4 Legacy Header 与 Rewrite v2 Header 的边界
+
+Legacy field-oriented Header Action 与 QX 官方静态 `request-header` / `url-and-header` 不是天然同构：
+- Loon legacy Header Action 按 Header 字段执行 add/del/replace；
+- QX 静态 `request-header` 示例是对完整请求 Header 文本执行正则替换；
+- 未证明等价前，legacy field-oriented Header → QX 保持 Review，不用“名字相似”强行映射。
+
+Rewrite v2 Header 的 QX 转换使用同 phase helper，见下一节。
 
 ## 30.4.1 Rewrite v2 Header → Quantumult X Header Script
 
