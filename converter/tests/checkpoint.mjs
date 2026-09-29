@@ -310,7 +310,7 @@ assert.equal(
 );
 assert.equal(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-body-json-del data.ads', 'qx', legacyCtx).line,
-  '^https:\\/\\/api\\.example\\.com url jsonjq-response-body \'delpaths([["data","ads"]])\'',
+  '^https:\\/\\/api\\.example\\.com url jsonjq-response-body \'del(.data.ads)\'',
 );
 assert.equal(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-del Server', 'surge', legacyCtx).lines[0],
