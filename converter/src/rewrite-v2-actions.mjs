@@ -80,14 +80,13 @@ export function validateRewriteV2Ast(ast) {
   return ast.actions.map(validateRewriteV2Action);
 }
 
-// Quantumult X capabilities are deliberately conservative. Only primitives
-// directly evidenced by the official sample are declared here; everything
-// else remains Review Tier until a separate semantic mapper proves equivalence.
+// QX primitives are selected by behavior, not spelling. In particular Loon's
+// terminal reject(200) behavior maps to QX reject-200, not QX reject (404).
 export const QX_REWRITE_PRIMITIVES = Object.freeze({
-  reject: 'reject',
-  reject_img: 'reject-img',
-  reject_dict: 'reject-dict',
-  reject_array: 'reject-array',
+  reject_200: 'reject-200',
+  reject_img_200: 'reject-img',
+  reject_dict_200: 'reject-dict',
+  reject_array_200: 'reject-array',
   redirect_302: '302',
   redirect_307: '307',
   request_json_jq: 'jsonjq-request-body',
@@ -96,12 +95,17 @@ export const QX_REWRITE_PRIMITIVES = Object.freeze({
   response_body_replace: 'response-body',
 });
 
+function statusIs200(action) {
+  const status = action.args?.[0];
+  return status?.type === 'number' && status.value === 200;
+}
+
 export function qxPrimitiveForRewriteV2Action(action) {
   validateRewriteV2Action(action);
-  if (action.name === 'reject') return QX_REWRITE_PRIMITIVES.reject;
-  if (action.name === 'reject_img') return QX_REWRITE_PRIMITIVES.reject_img;
-  if (action.name === 'reject_dict') return QX_REWRITE_PRIMITIVES.reject_dict;
-  if (action.name === 'reject_array') return QX_REWRITE_PRIMITIVES.reject_array;
+  if (action.name === 'reject') return statusIs200(action) && action.args.length === 1 ? QX_REWRITE_PRIMITIVES.reject_200 : null;
+  if (action.name === 'reject_img') return statusIs200(action) ? QX_REWRITE_PRIMITIVES.reject_img_200 : null;
+  if (action.name === 'reject_dict') return statusIs200(action) ? QX_REWRITE_PRIMITIVES.reject_dict_200 : null;
+  if (action.name === 'reject_array') return statusIs200(action) ? QX_REWRITE_PRIMITIVES.reject_array_200 : null;
   if (action.name === 'redirect') {
     const code = action.args[0];
     if (code?.type === 'number' && code.value === 302) return QX_REWRITE_PRIMITIVES.redirect_302;
