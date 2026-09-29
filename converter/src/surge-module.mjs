@@ -146,8 +146,11 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
       if (!/(?:^|,)\s*script-path=[^,\s]+/.test(body)) {
         throw new Error(`${entry.id}: Surge [Script] missing script-path: ${line}`);
       }
-      if ((type === 'http-request' || type === 'http-response') && !/(?:^|,)\s*pattern=/.test(body)) {
-        throw new Error(`${entry.id}: Surge HTTP script missing pattern: ${line}`);
+      if (type === 'http-request' || type === 'http-response') {
+        const patternMatch = body.match(/(?:^|,)\s*pattern=([^,]+)/);
+        if (!patternMatch) {
+          throw new Error(`${entry.id}: Surge HTTP script missing pattern: ${line}`);
+        }
       }
       if (type === 'cron' && !/(?:^|,)\s*cronexp=(?:"[^"]+"|'[^']+'|[^,]+)/.test(body)) {
         throw new Error(`${entry.id}: Surge cron script missing cronexp: ${line}`);

@@ -31,50 +31,41 @@ ${url} ~= /REGEX/ && ${request.method} == "POST"
 ```
 
 若目标静态声明只能表达 URL：
-- 不得丢 Method
-- 不得只保留 URL
-- 可使用目标官方 helper/script 机制
-- 若必须修改 Source Script 正文 → Review
+- 不得丢 Method；
+- 不得只保留 URL；
+- 可使用目标官方 helper/script 机制；
+- 若必须修改 Source Script 正文 → Review。
 
 ## 40.3 Regex literal
 
-源：
+Loon 源：
 ```text
 /^https:\/\/api\.example\.com/i
 ```
 
-目标 bare regex：
+Surge 官方 URL pattern 使用 bare regular expression，不使用 JavaScript 风格的最外层 `/.../` delimiter。官方示例写作：
+
 ```text
-^https:\/\/api\.example\.com
+^https://api\.example\.com
 ```
 
-只移除最外层 regex delimiter 与 flag 语法，不改 body。
-
-## 40.4 禁止 case-fold 造型
+因此 Surge 目标可将 Loon regex literal 中仅为分隔符存在而转义的 `\/` 还原为普通 `/`。
 
 禁止：
-```text
-^[hH][tT][tT][pP][sS]
-```
+- 把 regex flag 拼进正文；
+- 人工生成 `(?i)`；
+- 为了“整洁”重写捕获组、非捕获组、alternation 或 quantifier。
 
-禁止擅自生成：
-```text
-(?i)
-```
+## 40.4 Flags
 
-除非目标官方资料明确确认。
+- 记录 `i/m/s` 来源；
+- 目标没有官方 flag 字段时不发明表达法；
+- 若实际匹配明显依赖 flag，进入 Review；
+- Golden 不得把人工 case-fold 当作标准输出。
 
-## 40.5 Flags
+## 40.5 正则结构保持
 
-- 记录 `i/m/s` 来源。
-- 目标没有官方 flag 字段时不发明表达法。
-- 默认保留 bare regex body。
-- 若 path/header/body 的实际匹配明显依赖 flag，进入 Review。
-- Golden 不得把人工 case-fold 当成“标准输出”。
-
-## 40.6 正则结构
-
-必须保留：
+必须保持原始匹配结构，包括：
 - `^` / `$`
 - 捕获组
 - 非捕获组
@@ -83,12 +74,62 @@ ${url} ~= /REGEX/ && ${request.method} == "POST"
 - character class
 - quantifier
 
-不得为了“简洁”重写 regex。
+尤其是 URL Rewrite replacement 后续引用捕获组时，**不得改变捕获组编号或删除捕获组**。
 
-## 40.7 自动转换实现
+`(^https://example\.com/path)` 与 `^(https://example\.com/path)` 都是合法正则结构；WayX 不因格式偏好在二者之间强制改写。
+
+## 40.6 Surge 302 / 307 捕获替换
+
+Surge 官方 URL Rewrite 由三部分组成：
+
+```text
+<regex> <replacement> <type>
+```
+
+replacement 支持 `$1`、`$2` 等捕获组引用。
+
+Loon：
+
+```text
+request if ${url} ~= /(^https:\/\/example\.com\/path)(?:\?.*)/ as urlMatch then redirect(302, "${urlMatch.1}")
+```
+
+Surge：
+
+```ini
+[URL Rewrite]
+(^https://example\.com/path)(?:/?\?.*) $1 302
+```
+
+其中：
+- 前面的 `(...)` 是捕获组；
+- `$1` 是 Surge 官方 replacement 引用；
+- `302` 是 URL Rewrite 类型；
+- 这三个部分都必须保留，不能因“特殊字符”清理而删除。
+
+## 40.7 注释禁用规则
+
+若 Loon 源声明本身以 `#` 注释禁用，则：
+- 原始 Loon 注释必须保留；
+- 生成的 Surge 等价规则也必须继续注释；
+- 禁止在转换时自动启用。
+
+这是状态语义保持，不是转换失败。
+
+## 40.8 Surge canonical 输出
+
+WayX 对 Surge URL pattern 只做必要的目标格式处理：
+- 去掉 Loon regex literal 的最外层 delimiter/flag；
+- 将 `\/` 规范化为 bare-regex 中的 `/`；
+- 对 `URL-REGEX` 中本身含逗号的 pattern 保留 CSV 引号；
+- 保留捕获组结构和编号；
+- 保留合法的 `$1/$2` replacement。
+
+## 40.9 自动转换实现
 
 - Rewrite v2 condition parser/AST：`converter/src/rewrite-v2.mjs`
 - AST action/condition validation：`converter/src/rewrite-v2-actions.mjs`
 - Target regex compilation：`converter/src/target-regex.mjs`
 - Static/simple-condition target planner：`converter/src/rewrite-v2-semantic.mjs`
+- Surge module validator：`converter/src/surge-module.mjs`
 - Regression：`converter/tests/checkpoint.mjs`、`converter/tests/rucu6-rewrite-v2-coverage.mjs`

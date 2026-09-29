@@ -73,6 +73,31 @@ assert.equal(
   'plugin Argument Rewrite must not be frozen into an executable QX rewrite',
 );
 
+const disabledRewriteFixture = {
+  id:'DisabledRewriteFixture',
+  source:'https://example.invalid/disabled-rewrite.lpx',
+  qx:'DisabledRewriteFixture.snippet',
+  surge:'DisabledRewriteFixture.sgmodule',
+  category:'测试',
+};
+const disabledRewriteSource = `#!name=DisabledRewriteFixture
+[Rewrite]
+#response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\/mock\\?/i then response.body.mock("text", "OK", 200)
+#response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\/json\\?/i then response.json.jq(".data.ads = []")
+`;
+const disabledRewriteOutput = convert(disabledRewriteFixture, disabledRewriteSource, new Map(), STAMP);
+assert.match(disabledRewriteOutput.surge, /^\[Body Rewrite\]$/m);
+assert.match(disabledRewriteOutput.surge, /#response if \$\{url\} ~= \/\^https:\\\/\\\/api\\\.example\\\.com\\\/json\\\?\/i then response\.json\.jq/);
+assert.match(disabledRewriteOutput.surge, /# http-response-jq \^https:\/\/api\\\.example\\\.com\/json\\\? '\.data\.ads = \[\]'/);
+assert.match(disabledRewriteOutput.surge, /^\[Map Local\]$/m);
+assert.match(disabledRewriteOutput.surge, /#response if \$\{url\} ~= \/\^https:\\\/\\\/api\\\.example\\\.com\\\/mock\\\?\/i then response\.body\.mock\("text", "OK", 200\)/);
+assert.match(disabledRewriteOutput.surge, /# \^https:\/\/api\\\.example\\\.com\/mock\\\? data-type=text data="OK" status-code=200 header="Content-Type:text\/plain"/);
+assert.equal(
+  disabledRewriteOutput.surge.split(/\\r?\\n/).some(line => !line.trim().startsWith('#') && /api\\\.example\\\.com\\\/(?:mock|json)/.test(line)),
+  false,
+  'disabled source Rewrite entries must remain disabled after Surge conversion',
+);
+
 const cases = [
   {
     name:'HTTPDNS',
@@ -284,6 +309,21 @@ for (const testCase of cases) {
     assert.match(out.surge, /^#!arguments=.*displayUpList:auto.*sponsorBlock:true/m);
     assert.match(out.surge, /#!REQUIREMENT "'\{\{\{sponsorBlock\}\}\}'=='true'"/);
     assert.doesNotMatch(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
+    assert.match(
+      out.surge,
+      /#response if \$\{url\} ~= \/\^https:\\\/\\\/app\\\.bilibili\\\.com\\\/x\\\/v2\\\/splash\\\/list\\\?\/i then response\.body\.mock\("text", "OK", 200\)/,
+      'Bilibili: disabled source mock line must be preserved as a comment',
+    );
+    assert.match(
+      out.surge,
+      /# \^https:\/\/app\\\.bilibili\\\.com\/x\/v2\/splash\/list\\\? data-type=text data="OK" status-code=200 header="Content-Type:text\/plain"/,
+      'Bilibili: disabled response.body.mock must have a disabled Surge Map Local equivalent',
+    );
+    assert.match(
+      out.surge,
+      /# http-response-jq \^https:\/\/app\\\.bilibili\\\.com\/x\/v2\/splash\/\(show\|event\/list2\)\\\? '\.data \|= with_entries\(if \.key \| IN\("show", "event_list"\) then \.value = \[\] else \. end\)'/,
+      'Bilibili: disabled response.json.jq must have a disabled Surge Body Rewrite equivalent',
+    );
   }
 
   if (testCase.name === 'JingDong') {

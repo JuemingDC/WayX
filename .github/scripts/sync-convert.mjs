@@ -24,6 +24,7 @@ import { renderQxSnippetHeader } from '../../converter/src/metadata.mjs';
 import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
 import { planMitmLine } from '../../converter/src/mitm.mjs';
 import { fetchOriginalText, fetchOriginalBytes, resolveOriginalUrl } from '../../converter/src/source-fetch.mjs';
+import { canonicalizeSurgeUrlPattern } from '../../converter/src/target-regex.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -236,6 +237,42 @@ function cleanComments(comments) {
   return comments.map(x => x || '').map(x => x.trim() ? x : '').filter((x, i, a) => !(x === '' && a[i - 1] === ''));
 }
 
+function surgeSectionArray(sg, section) {
+  return ({url:sg.url, header:sg.header, map:sg.map, body:sg.body, script:sg.script})[section] || null;
+}
+
+function planDisabledSurgeRewriteComments(comments, ctx) {
+  const passthrough = [];
+  const routed = [];
+
+  for (const raw of comments || []) {
+    const trimmed = String(raw ?? '').trim();
+    const match = trimmed.match(/^#\s*((?:request|response)\s+if\b[\s\S]+)$/);
+    if (!match || !isRewriteV2(match[1])) {
+      passthrough.push(raw);
+      continue;
+    }
+
+    const sourceLine = match[1].trim();
+    const mapped = rewriteV2Action(sourceLine, 'surge', ctx);
+    if (!mapped || mapped.section === 'comment') {
+      passthrough.push(raw);
+      continue;
+    }
+
+    const lines = mapped.lines || [mapped.line];
+    routed.push({
+      section:mapped.section,
+      lines:[
+        raw,
+        ...lines.map(line => '# ' + line),
+      ],
+    });
+  }
+
+  return { passthrough, routed };
+}
+
 function qxHeaderRewriteInfo(line, argumentIds = []) {
   if (!line || !isRewriteV2(line)) return null;
   try {
@@ -434,6 +471,13 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   for (let rewriteIndex = 0; rewriteIndex < rewriteItems.length; rewriteIndex++) {
     const item = rewriteItems[rewriteIndex];
     const comments = cleanComments(item.comments);
+    const surgeCommentPlan = planDisabledSurgeRewriteComments(item.comments, sctx);
+    const surgeComments = cleanComments(surgeCommentPlan.passthrough);
+    for (const routed of surgeCommentPlan.routed) {
+      const dest = surgeSectionArray(sg, routed.section);
+      if (dest) dest.push(...routed.lines);
+      else sg.notes.push(...routed.lines);
+    }
     if (!item.line) continue;
 
     const qxConsumed = qxHeaderGroups.consumed.has(rewriteIndex);
@@ -451,8 +495,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
       qdest.push(...comments, qr.line);
     }
 
-    const sdest = ({url: sg.url, header: sg.header, map: sg.map, body: sg.body, script: sg.script})[sr.section] || sg.notes;
-    sdest.push(...comments, ...(sr.lines || [sr.line]));
+    const sdest = surgeSectionArray(sg, sr.section) || sg.notes;
+    sdest.push(...surgeComments, ...(sr.lines || [sr.line]));
   }
 
   let scriptIndex = 0;
@@ -572,7 +616,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
         surgeNeedsLineRequirement = true;
       }
 
-      const params = [`type=${sc.type}`, `pattern=${sc.pattern}`, `script-path=${surgeUrl}`];
+      const params = [`type=${sc.type}`, `pattern=${canonicalizeSurgeUrlPattern(sc.pattern)}`, `script-path=${surgeUrl}`];
       if (sc.requiresBody) {
         params.push('requires-body=true');
         params.push(`max-size=${sc.maxSize || '-1'}`);

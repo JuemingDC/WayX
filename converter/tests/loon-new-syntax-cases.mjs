@@ -81,7 +81,7 @@ const loonUrlImg = 'URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/e
 assert.equal(qxRule(loonUrlImg).line, '^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\? url reject-img');
 assert.equal(
   surgeRule(loonUrlImg),
-  'URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-TINYGIF'
+  'URL-REGEX,^https://a\\.line\\.me/er/lads/v\\d/ei\\?,REJECT-TINYGIF'
 );
 
 const loonLogicalRule = 'AND,((URL-REGEX,"^http:\\/\\/119\\.29\\.29\\.90\\/d\\?"),(USER-AGENT,"Example*")),DIRECT';
@@ -101,6 +101,6 @@ assert.equal(surgeRule(loonIpRule), loonIpRule);
 
 const loonUrlDrop = 'URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP';
 assert.equal(qxRule(loonUrlDrop).line, '^https:\\/\\/drop\\.example\\.com url reject');
-assert.equal(surgeRule(loonUrlDrop), loonUrlDrop);
+assert.equal(surgeRule(loonUrlDrop), 'URL-REGEX,^https://drop\\.example\\.com,REJECT-DROP');
 
 console.log('Loon new-syntax reference cases passed');

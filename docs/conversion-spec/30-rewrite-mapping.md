@@ -145,3 +145,28 @@ Surge：组合成等价 Map Local / header 行为。
 - QX helper renderer：`converter/src/qx-semantic-script.mjs`
 - Synthetic regression：`converter/tests/checkpoint.mjs`、`converter/tests/loon-new-syntax-cases.mjs`
 - Real syntax coverage：`converter/tests/rucu6-rewrite-v2-coverage.mjs`
+
+## 30.6.1 注释禁用的 Rewrite v2
+
+在 Loon `[Rewrite]` 中，形如：
+
+```text
+#response if ... then response.body.mock(...)
+#response if ... then response.json.jq(...)
+```
+
+的行不是普通说明文字，而是**被注释禁用的可执行 Rewrite 声明**。
+
+Surge 转换规则：
+
+- 先保留原始 Loon 注释行，满足来源注释保留要求；
+- 再使用与活动 Rewrite 完全相同的 generic planner 生成 Surge 等价语法；
+- 生成的 Surge 等价语法继续以 `#` 注释，禁止因转换而自动启用；
+- 按实际目标能力路由到对应 section，例如：
+  - `response.body.mock(...)` → commented `[Map Local]`；
+  - `response.json.jq(...)` → commented `[Body Rewrite]` / `http-response-jq`；
+- planner 无法证明等价时只保留原注释，不伪造目标语法；
+- 禁止按插件名、URL、作者或 Bilibili 特判。
+
+这一规则的目标是避免 Surge 模块中残留 Loon 可执行语法，同时保持源插件的禁用状态不变。
+
