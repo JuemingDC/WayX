@@ -12,6 +12,7 @@ import { fetchOriginalText } from '../src/source-fetch.mjs';
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
 const RESOURCE_DIR = path.join(ROOT, 'Resource/Loon');
+const GENERATED_SCRIPT_DIR = path.join(ROOT, 'script');
 
 const mode = process.argv.includes('--write') ? 'write' : 'check';
 
@@ -77,7 +78,14 @@ for (const entry of manifest) {
     validateQX(out.qx, entry);
     validateSurgeModule(out.surge, entry);
 
-    const differs = oldQx !== out.qx || oldSurge !== out.surge;
+    const helperDir = path.join(GENERATED_SCRIPT_DIR, entry.id);
+    const helperDiffs = [];
+    for (const [name, content] of out.generatedScripts) {
+      const oldHelper = await readIfExists(path.join(helperDir, name));
+      if (oldHelper !== content) helperDiffs.push(name);
+    }
+
+    const differs = oldQx !== out.qx || oldSurge !== out.surge || helperDiffs.length > 0;
     if (!differs) {
       console.log(entry.id + ': canonical outputs current');
       continue;
@@ -85,13 +93,12 @@ for (const entry of manifest) {
 
     changed.push(entry.id);
     if (mode === 'check') {
-      console.error('::error title=' + entry.id + '::canonical outputs are stale');
+      console.error('::error title=' + entry.id + '::canonical outputs/helpers are stale');
       continue;
     }
 
-    // A real regeneration is a conversion event. Refresh the timestamp only
-    // when content actually changes, then write both targets atomically enough
-    // for a normal Git working tree update.
+    // Refresh one shared conversion timestamp for targets and WayX-generated
+    // helper scripts. Source Script URLs remain untouched and are never mirrored.
     out = convert(entry, source, scripts, nowCN(), qxMockFiles, jqFiles);
     validateQX(out.qx, entry);
     validateSurgeModule(out.surge, entry);
@@ -100,7 +107,20 @@ for (const entry of manifest) {
     await fs.mkdir(path.dirname(surgePath), {recursive:true});
     await fs.writeFile(qxPath, out.qx);
     await fs.writeFile(surgePath, out.surge);
-    console.log(entry.id + ': regenerated ' + path.relative(ROOT, qxPath) + ' + ' + path.relative(ROOT, surgePath));
+
+    if (out.generatedScripts.size) {
+      await fs.mkdir(helperDir, {recursive:true});
+      for (const [name, content] of out.generatedScripts) {
+        await fs.writeFile(path.join(helperDir, name), content);
+      }
+    }
+
+    console.log(
+      entry.id + ': regenerated ' +
+      path.relative(ROOT, qxPath) + ' + ' +
+      path.relative(ROOT, surgePath) +
+      (out.generatedScripts.size ? ' + helpers=' + out.generatedScripts.size : '')
+    );
   } catch (error) {
     failures.push(entry.id + ': ' + (error?.stack || error));
     console.error('::error title=' + entry.id + '::' + String(error?.message || error).replaceAll('\n', '%0A'));
