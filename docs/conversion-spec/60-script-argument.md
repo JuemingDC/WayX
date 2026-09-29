@@ -117,7 +117,7 @@ Review：
 
 ## 60.6.1 Source Script URL 保留
 
-- 转换时可从原 `script-path` / `script("...")` URL 临时读取脚本正文做兼容性判断。
+- 转换时可从原 `script-path` / `script("...")` URL 临时读取脚本正文做兼容性判断；相对路径只允许相对原插件 `source` URL 解析。
 - 不把 Source Script 复制到 WayX 仓库。
 - 不把目标 QX/Surge 声明改写为 WayX raw URL。
 - 不使用 GitHub/第三方镜像替代原脚本。
@@ -130,5 +130,5 @@ Review：
 - Script v2 parser：`converter/src/script-v2.mjs`
 - Script v2 target planner：`converter/src/script-v2-target.mjs`
 - Loon Argument parser：`converter/src/argument.mjs`
-- Original Source Script fetch：`converter/src/source-fetch.mjs`
+- Original Source Script fetch / relative resolution：`converter/src/source-fetch.mjs`
 - Regression：`converter/tests/rucu6-script-v2-coverage.mjs`、`converter/tests/checkpoint.mjs`
