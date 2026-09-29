@@ -3,9 +3,12 @@
 // Category: Converter / Repository Audit
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { parseLoon, validateQX } from '../../.github/scripts/sync-convert.mjs';
+import { validateSurgeModule } from '../src/surge-module.mjs';
 
 const ROOT = process.cwd();
 const findings = [];
+const validated = { qx: 0, surge: 0, loon: 0 };
 
 async function walk(dir) {
   const out = [];
@@ -38,6 +41,12 @@ for (const file of files) {
   const lines = text.split('\n');
 
   if (rp.endsWith('.snippet')) {
+    try {
+      validateQX(text, {id:rp});
+      validated.qx++;
+    } catch (error) {
+      add(file, 1, 'qx-validator', error?.message || error);
+    }
     for (let i=0;i<lines.length;i++) {
       const t=lines[i].trim();
       if (/^#!/.test(t)) add(file,i+1,'qx-active-metadata',t);
@@ -54,6 +63,12 @@ for (const file of files) {
   }
 
   if (rp.endsWith('.sgmodule')) {
+    try {
+      validateSurgeModule(text, {id:rp});
+      validated.surge++;
+    } catch (error) {
+      add(file, 1, 'surge-validator', error?.message || error);
+    }
     for (let i=0;i<lines.length;i++) {
       const t=lines[i].trim();
       if (/^#!(?:author|icon|date|loon_version|homepage|tag|openurl|system_version|raw-url|tg-channel)\s*=/i.test(t)) add(file,i+1,'surge-nonmodule-metadata',t);
@@ -64,6 +79,15 @@ for (const file of files) {
       if (active(lines[i]) && /jq-path=https?:\/\//.test(lines[i])) add(file,i+1,'unresolved-jq-path',t);
       if (/^\[(?:Rewrite|Argument)\]$/i.test(t)) add(file,i+1,'source-section-in-surge',t);
       if (active(lines[i]) && /^(?:request|response)\s+if\b/i.test(t)) add(file,i+1,'loon-rewrite-v2-in-surge',t);
+    }
+  }
+
+  if (rp.endsWith('.lpx') && rp.startsWith('Resource/Loon/')) {
+    try {
+      parseLoon(text);
+      validated.loon++;
+    } catch (error) {
+      add(file, 1, 'source-plugin-parser', error?.message || error);
     }
   }
 
@@ -88,5 +112,5 @@ if (findings.length) {
   for (const f of findings) console.error(`${f.file}:${f.line} [${f.code}] ${f.text}`);
   process.exitCode = 1;
 } else {
-  console.log('Repository audit passed: target configs, converter code and script tree contain no banned/stale patterns.');
+  console.log(`Repository audit passed: QX=${validated.qx}, Surge=${validated.surge}, source plugins=${validated.loon}; no validator or stale-pattern findings.`);
 }
