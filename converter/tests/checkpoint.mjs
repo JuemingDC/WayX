@@ -187,7 +187,7 @@ assert.match(requestMockScript, /\$done\(\{headers, body: __wayxBody\}\)/);
 
 const requestBinaryMockAst = parseRewriteV2('request if ${url} ~= /upload/ then request.body.mock_file("png", "image.png")');
 const requestBinaryMockPlan = qxMockPlanFromAction(requestBinaryMockAst.actions[0], {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
-assert.throws(() => renderQxMockFileScript(requestBinaryMockPlan), /request mock_file binary\/bodyBytes output is not enabled/);
+assert.throws(() => renderQxMockFileScript(requestBinaryMockPlan), /request mock binary\/bodyBytes output is not enabled/);
 
 // Behavior-first target regex compilation: do not rely on undocumented (?i).
 const foldedUrl = compileRegexForTarget(parseRewriteV2('request if ${url} ~= /^https:\\/\\/Api\\.Example\\.com\\/[a-z]+/i then reject_dict(200)').condition.right, {subject:'url'});
