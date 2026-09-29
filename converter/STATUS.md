@@ -1,5 +1,37 @@
 # WayX Converter Status
 
+## 2026-09-29 phase 9 — canonical regeneration and checked-in consistency
+
+Implemented on `work/canonical-regeneration-20260929` / PR #12:
+
+- Added `converter/tools/regenerate-canonical.mjs`.
+- The tool imports the production converter instead of duplicating conversion logic.
+- Managed canonical sources:
+  - all 11 entries in `.github/sources/loon.json`;
+  - local RuCu6 `MyBlockAds`, because it already has an audited full-output golden and existing canonical targets.
+- Canonical regeneration is offline:
+  - reads checked-in Loon source files;
+  - resolves exact existing script mirrors under `script/<entry.id>/<filename>` when available;
+  - reads script bodies only for compatibility checks;
+  - never rewrites/wraps/forks source JavaScript;
+  - refuses future `mock_file/jq_file` dependencies unless their files have first been materialized for offline generation.
+- Rebuilt managed QX/Surge outputs with the current converter.
+- Surge generated modules now use the audited module header layer (`#!name`, `#!desc`, optional requirement/system) and preserve Loon-only metadata as ordinary comments.
+- QX managed snippets retain commented `# [filter_local] / # [rewrite_local] / # [mitm]` headings.
+- `MyBlockAds.sgmodule` was regenerated as well; its former active Loon `#!author/#!icon/#!date/#!loon_version` lines are now comments.
+- `QZXY` remains explicitly unmanaged by the Loon converter because it is a hand-maintained native target configuration.
+- Permanent `Converter Check` behavior:
+  - regenerates managed canonical outputs in the PR workspace;
+  - uploads the regenerated output artifact;
+  - fails if `Adblock/Quantumult X/` or `Adblock/Surge/` differs from the checked-in tree.
+- CI path triggers now also cover the Loon source manifest, Loon resources, mirrored scripts and canonical QX/Surge output directories.
+
+Next work:
+
+1. Extend Script v2 compound-condition conversion only where target behavior is complete and proven.
+2. Promote additional RuCu6 plugins into managed canonical output one at a time after their end-to-end golden is reviewed.
+3. Keep manual native targets such as QZXY outside automatic Loon regeneration.
+
 ## 2026-09-29 phase 8 — end-to-end full-output golden
 
 Implemented on `work/end-to-end-golden-20260929` / PR #11:
