@@ -169,7 +169,7 @@ jobs:
             done
             echo "## Work instruction"
             echo
-            echo "Read and execute CONVERSION_POLICY.md, LOON_NEW_SYNTAX_CONVERSION.md, and monitor/WORK_TASK_PROMPT.md strictly. A converter/validator failure is Review Tier and must never be committed directly to main."
+            echo "Read and execute CONVERSION_SPEC.md, the relevant docs/conversion-spec blocks, and monitor/WORK_TASK_PROMPT.md strictly. CONVERSION_POLICY.md and LOON_NEW_SYNTAX_CONVERSION.md are deprecated indexes only. A converter/validator failure is Review Tier and must never be committed directly to main."
           } > "$BODY"
           echo "body=$BODY" >> "$GITHUB_OUTPUT"
 
