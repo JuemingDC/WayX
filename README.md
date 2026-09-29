@@ -40,19 +40,21 @@ WayX/
 - 独立规则 → `rule/`
 - BoxJs JSON → `boxjs/`
 
-## 转换原则
+## 转换规范
 
-转换以“原本的形式和语义”优先，不为了统一写法而改变实现机制：
+唯一权威规范：[CONVERSION_SPEC.md](./CONVERSION_SPEC.md)。
+
+转换以“原行为与目标平台官方格式”优先，不为了统一写法而改变实现机制：
 
 - jq / JSON 结构化处理 → 目标平台原生 jq；
-- JavaScript → 保留原脚本和原逻辑，仅做目标平台必要 API/路径适配；
+- Source JavaScript → 原文件原样保留；只转换声明，不修改、wrapper、fork 或自动替换运行时 API；
 - URL Rewrite → 对应目标平台 URL Rewrite；
 - Header Rewrite → 对应目标平台 Header Rewrite；
 - Rule / Filter → 对应目标平台 Rule / Filter；
 - 本地响应 / reject-dict → 使用目标平台语义等价的本地响应机制；
 - MITM → 仅保留实际需要的 hostname。
 
-只有目标平台没有等价原生能力时，才允许换用脚本，并在文件注释中写明原因。
+只有非 Source Script 的 Rewrite/Mock 动作在目标平台确实缺少原生表达时，才允许生成最小 helper script；Source Script 本身不改写。
 
 转换时保留原注释，并追加转换时间、作者 chance、模块分类、目标平台与原始来源。
 
