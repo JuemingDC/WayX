@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { qxRule as canonicalQxRule, surgeRule as canonicalSurgeRule } from '../../converter/src/rule.mjs';
+import { qxRule as canonicalQxRule, surgeModuleRule, splitTopLevelCsv } from '../../converter/src/rule.mjs';
 import { selectQxScriptAction } from '../../converter/src/script.mjs';
 import { inspectQxScriptCompatibility, qxManualPortComment } from '../../converter/src/script-compat.mjs';
 import { minifyJq } from '../../converter/src/jq.mjs';
@@ -453,6 +453,397 @@ function parseScriptLine(line) {
 
 function sanitizeName(s) {
   return (s || 'script').replace(/[=,\r\n]/g, '_').trim().slice(0, 64) || 'script';
+}
+
+function surgeModuleHeader(headerLines, entry, stamp, needsCore20 = false) {
+  const clean = (headerLines || []).map(line => String(line).trimEnd());
+  const directive = key => {
+    const re = new RegExp('^#!' + key + '=(.*)
+  const parsed = parseLoon(source);
+  const meta = [
+    `# Converted: ${stamp}`,
+    '# Converted by: chance',
+    `# Category: ${entry.category}`,
+    `# Source: ${entry.source}`,
+  ];
+  const qxHeader = parsed.header.filter(l => !/^#\s*引用链接:/.test(l));
+  while (qxHeader.length && !qxHeader.at(-1).trim()) qxHeader.pop();
+
+  const qx = { filter: [], rewrite: [], mitm: [], notes: [], generatedScripts: new Map() };
+  const sg = { rule: [], url: [], header: [], map: [], body: [], script: [], mitm: [], notes: [], generatedScripts: new Map() };
+  const qctx = { id: entry.id, generatedScripts: qx.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, mockFiles: qxMockFiles };
+  const sctx = { id: entry.id, generatedScripts: sg.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category };
+
+  // Preserve [Argument] semantics as comments. QX/Surge module arguments are not fabricated.
+  if (parsed.sections.has('Argument')) {
+    const raw = parsed.sections.get('Argument').filter(x => x.trim());
+    qx.notes.push('# Original Loon [Argument] (BoxJs/$prefs bridge required; Review Tier until verified):', ...raw.map(x => x.trim().startsWith('#') ? x : `# ${x}`));
+    sg.notes.push('# Original Loon [Argument] (declaration-only conversion; typed/dynamic arguments stay Review):', ...raw.map(x => x.trim().startsWith('#') ? x : `# ${x}`));
+  }
+
+  for (const item of sectionItems(parsed.sections.get('Rule'))) {
+    const comments = cleanComments(item.comments);
+    if (!item.line) { qx.filter.push(...comments); sg.rule.push(...comments); continue; }
+    const qr = canonicalQxRule(item.line);
+    if (qr.kind === 'filter') qx.filter.push(...comments, qr.line);
+    else if (qr.kind === 'rewrite') qx.rewrite.push(...comments, qr.line);
+    else qx.filter.push(...comments, qr.line);
+    const sr = surgeModuleRule(item.line);
+    sg.rule.push(...comments, ...sr.lines);
+  }
+
+  for (const item of sectionItems(parsed.sections.get('Rewrite'))) {
+    const comments = cleanComments(item.comments);
+    if (!item.line) continue;
+
+    const qv2 = rewriteV2Action(item.line, 'qx', qctx);
+    const sv2 = rewriteV2Action(item.line, 'surge', sctx);
+    let qr, sr;
+    if (qv2 || sv2) {
+      qr = qv2;
+      sr = sv2;
+    } else {
+      const [pattern, action] = splitPatternAction(item.line);
+      qr = rewriteAction(pattern, action, 'qx', qctx);
+      sr = rewriteAction(pattern, action, 'surge', sctx);
+    }
+
+    const qdest = qr.section === 'rewrite' ? qx.rewrite : qx.notes;
+    const sdest = ({url: sg.url, header: sg.header, map: sg.map, body: sg.body, script: sg.script})[sr.section] || sg.notes;
+    qdest.push(...comments, qr.line);
+    sdest.push(...comments, ...(sr.lines || [sr.line]));
+  }
+
+  let scriptIndex = 0;
+  for (const item of sectionItems(parsed.sections.get('Script'))) {
+    const comments = cleanComments(item.comments);
+    if (!item.line) continue;
+
+    if (isScriptV2(item.line)) {
+      scriptIndex++;
+      let ast;
+      try {
+        ast = parseScriptV2(item.line);
+      } catch (error) {
+        qx.notes.push(...comments, `# Unsupported Loon Script v2 preserved (${String(error?.message || error).split('\n')[0]}): ${item.line}`);
+        sg.notes.push(...comments, `# Unsupported Loon Script v2 preserved (${String(error?.message || error).split('\n')[0]}): ${item.line}`);
+        continue;
+      }
+
+      const mapped = scriptMap.get(ast.script.path);
+      const sourceText = mapped?.source || '';
+      const qxUrl = mapped?.qx || ast.script.path;
+      const surgeUrl = mapped?.surge || ast.script.path;
+      const qxCompat = inspectQxScriptCompatibility({
+        scriptUrl: ast.script.path,
+        sourceText,
+        forkUrl: '',
+      });
+
+      qx.rewrite.push(...comments);
+      if (!qxCompat.executable) {
+        qx.rewrite.push(...qxManualPortComment({ scriptUrl: ast.script.path, result: qxCompat }));
+        qx.rewrite.push(`# Original Loon: ${item.line}`);
+      } else {
+        const qxPlan = qxScriptV2Plan(ast, { scriptUrl: qxUrl, sourceText });
+        if (!qxPlan.ok) {
+          qx.rewrite.push(`# [WayX] SCRIPT V2 REVIEW REQUIRED: ${qxPlan.reason}`);
+          qx.rewrite.push(`# Original Loon: ${item.line}`);
+        } else if (qxPlan.disabled) {
+          qx.rewrite.push(`# [WayX] Script disabled by source option: ${item.line}`);
+        } else {
+          if (qxPlan.tag) qx.rewrite.push(`# ${qxPlan.tag}`);
+          if (qxPlan.binaryBodyMode) qx.rewrite.push('# [WayX] Loon binary_body_mode=true; script source is preserved unchanged.');
+          for (const note of qxPlan.notes || []) qx.rewrite.push(`# [WayX] ${note}`);
+          qx.rewrite.push(qxPlan.line);
+        }
+      }
+
+      const name = sanitizeName((ast.options.find(x => x.name === 'tag')?.value?.value) || `${entry.id}_${String(scriptIndex).padStart(2, '0')}`);
+      const surgePlan = surgeScriptV2Plan(ast, { scriptUrl: surgeUrl, name });
+      sg.script.push(...comments);
+      if (!surgePlan.ok) {
+        sg.script.push(`# [WayX] SCRIPT V2 REVIEW REQUIRED: ${surgePlan.reason}`);
+        sg.script.push(`# Original Loon: ${item.line}`);
+      } else if (surgePlan.disabled) {
+        sg.script.push(`# [WayX] Script disabled by source option: ${item.line}`);
+      } else {
+        sg.script.push(surgePlan.line);
+      }
+      continue;
+    }
+
+    const sc = parseScriptLine(item.line);
+    if (!sc || !sc.scriptPath) {
+      qx.notes.push(...comments, `# Unsupported Loon Script preserved: ${item.line}`);
+      sg.notes.push(...comments, `# Unsupported Loon Script preserved: ${item.line}`);
+      continue;
+    }
+    scriptIndex++;
+    const mapped = scriptMap.get(sc.scriptPath);
+    const qxUrl = mapped?.qx || sc.scriptPath;
+    const surgeUrl = mapped?.surge || sc.scriptPath;
+    const qxCompat = inspectQxScriptCompatibility({
+      scriptUrl: sc.scriptPath,
+      sourceText: mapped?.source || '',
+      forkUrl: '',
+    });
+
+    const enableFixed = sc.enable ? String(sc.enable).trim().toLowerCase() : '';
+    const enableDynamic = Boolean(sc.enable) && !['true','false','1','0'].includes(enableFixed);
+
+    qx.rewrite.push(...comments);
+    if (sc.tag) qx.rewrite.push(`# ${sc.tag}`);
+    if (!qxCompat.executable) {
+      qx.rewrite.push(...qxManualPortComment({ scriptUrl: sc.scriptPath, result: qxCompat }));
+      qx.rewrite.push(`# Original Loon: ${item.line}`);
+    } else if (enableFixed === 'false' || enableFixed === '0') {
+      qx.rewrite.push(`# [WayX] Script disabled by source declaration: ${item.line}`);
+    } else if (sc.argument || enableDynamic) {
+      qx.rewrite.push('# [WayX] SCRIPT REVIEW REQUIRED: QX declaration cannot carry this Loon argument/enable semantics without changing the script.');
+      qx.rewrite.push(`# Original Loon: ${item.line}`);
+    } else {
+      const qType = selectQxScriptAction({
+        phase: sc.type,
+        requiresBody: sc.requiresBody,
+        scriptUrl: sc.scriptPath,
+        sourceText: mapped?.source || '',
+      }).action;
+      qx.rewrite.push(`${sc.pattern} url ${qType} ${qxUrl}`);
+    }
+
+    const name = sanitizeName(sc.tag || `${entry.id}_${String(scriptIndex).padStart(2, '0')}`);
+    sg.script.push(...comments);
+    if (enableFixed === 'false' || enableFixed === '0') {
+      sg.script.push(`# [WayX] Script disabled by source declaration: ${item.line}`);
+    } else if (enableDynamic) {
+      sg.script.push('# [WayX] SCRIPT REVIEW REQUIRED: dynamic Loon enable has no verified Surge declaration equivalent.');
+      sg.script.push(`# Original Loon: ${item.line}`);
+    } else if (sc.argument && /[\[{]\{?[^}\]]+\}?[\]}]/.test(sc.argument)) {
+      sg.script.push('# [WayX] SCRIPT REVIEW REQUIRED: dynamic/typed Loon argument is not converted because script source must remain unchanged.');
+      sg.script.push(`# Original Loon: ${item.line}`);
+    } else {
+      const params = [`type=${sc.type}`, `pattern=${sc.pattern}`, `script-path=${surgeUrl}`];
+      if (sc.requiresBody) {
+        params.push('requires-body=true');
+        params.push(`max-size=${sc.maxSize || '-1'}`);
+      }
+      if (sc.binary) params.push('binary-body-mode=true');
+      if (sc.timeout) params.push(`timeout=${sc.timeout}`);
+      if (sc.argument) params.push(`argument=${sc.argument}`);
+      sg.script.push(`${name} = ${params.join(',')}`);
+    }
+  }
+
+  const mitmLines = parsed.sections.get('MitM') || parsed.sections.get('MITM') || [];
+  for (const item of sectionItems(mitmLines)) {
+    const comments = cleanComments(item.comments);
+    if (!item.line) continue;
+    if (/^hostname\s*=/i.test(item.line)) {
+      const hosts = item.line.split('=').slice(1).join('=').trim();
+      qx.mitm.push(...comments, `hostname = ${hosts}`);
+      sg.mitm.push(...comments, `hostname = %APPEND% ${hosts}`);
+    } else {
+      qx.mitm.push(...comments, `# Unsupported Loon MITM option preserved: ${item.line}`);
+      sg.mitm.push(...comments, `# Unsupported Loon MITM option preserved: ${item.line}`);
+    }
+  }
+
+  const compact = arr => {
+    const out = [];
+    for (const line of arr) {
+      if (line === '' && out.at(-1) === '') continue;
+      out.push(line);
+    }
+    while (out.length && out.at(-1) === '') out.pop();
+    return out;
+  };
+
+  const qxOut = [
+    ...qxHeader, ...meta, '# Target: Quantumult X', '',
+    ...(qx.notes.length ? [...qx.notes, ''] : []),
+    '# [filter_local]', ...compact(qx.filter), '',
+    '# [rewrite_local]', ...compact(qx.rewrite), '',
+    '# [mitm]', ...compact(qx.mitm), ''
+  ].join('\n');
+
+  const surgeSections = [];
+  if (sg.notes.length) surgeSections.push(...sg.notes, '');
+  if (sg.rule.length) surgeSections.push('[Rule]', ...compact(sg.rule), '');
+  if (sg.url.length) surgeSections.push('[URL Rewrite]', ...compact(sg.url), '');
+  if (sg.header.length) surgeSections.push('[Header Rewrite]', ...compact(sg.header), '');
+  if (sg.body.length) surgeSections.push('[Body Rewrite]', ...compact(sg.body), '');
+  if (sg.map.length) surgeSections.push('[Map Local]', ...compact(sg.map), '');
+  if (sg.script.length) surgeSections.push('[Script]', ...compact(sg.script), '');
+  if (sg.mitm.length) surgeSections.push('[MITM]', ...compact(sg.mitm), '');
+
+  const needsCore20 = hasActiveLines(sg.body) || hasActiveLines(sg.map);
+  const surgeHeader = surgeModuleHeader(parsed.header, entry, stamp, needsCore20);
+  const sgOut = [...surgeHeader, '', ...surgeSections].join('\n').replace(/\n*$/, '\n');
+
+  return { qx: qxOut.replace(/\n*$/, '\n'), surge: sgOut, generatedScripts: new Map([...qx.generatedScripts, ...sg.generatedScripts]) };
+}
+
+async function syncScript(entry, url) {
+  const filename = decodeURIComponent(new URL(url).pathname.split('/').pop() || `${entry.id}.js`);
+  const destDir = path.join(SCRIPT_DIR, entry.id);
+  await fs.mkdir(destDir, { recursive: true });
+  const { text } = await fetchWithFallback(url);
+  const normalized = normalizeNewlines(text).replace(/\n*$/, '\n');
+  const dest = path.join(destDir, filename);
+  if (!await exists(dest) || normalizeNewlines(await fs.readFile(dest, 'utf8')) !== normalized) {
+    await fs.writeFile(dest, normalized);
+  }
+  const raw = `${RAW_BASE}/${path.relative(ROOT, dest).split(path.sep).map(encodeURIComponent).join('/')}`;
+  return { qx: raw, surge: raw, source: normalized, qxAdapted: false };
+}
+function scriptUrls(source) {
+  const urls = new Set([...source.matchAll(/script-path=([^,\s]+)/gi)].map(m => m[1].trim()));
+  const parsed = parseLoon(source);
+  for (const item of sectionItems(parsed.sections.get('Script'))) {
+    if (!item.line || !isScriptV2(item.line)) continue;
+    try { urls.add(parseScriptV2(item.line).script.path); }
+    catch {}
+  }
+  return [...urls];
+}
+
+function validateQX(text, entry) {
+  const activeSections = text.split('\n').filter(l => /^\[(filter_local|rewrite_local|mitm)\]$/i.test(l.trim()));
+  if (activeSections.length) throw new Error(`${entry.id}: Quantumult X section headings must be commented`);
+  for (const raw of text.split('\n')) {
+    const line = raw.trim();
+    if (!line || line.startsWith('#')) continue;
+    if (/^(?:ip-cidr|ip6-cidr|geoip|ip-asn),/i.test(line) && /,\s*no-resolve(?:,|$)/i.test(line)) {
+      throw new Error(`${entry.id}: Quantumult X IP-class rules must remove no-resolve`);
+    }
+  }
+  for (const bad of ['response-body-json-del', 'response-body-json-replace', 'response-body-json-jq', 'mock-response-body']) {
+    const active = text.split('\n').find(l => l.trim() && !l.trim().startsWith('#') && l.includes(bad));
+    if (active) throw new Error(`${entry.id}: unconverted QX token ${bad}`);
+  }
+  if (!text.includes('# [rewrite_local]') || !text.includes('# [mitm]') || !text.includes('# [filter_local]')) throw new Error(`${entry.id}: missing commented QX headings`);
+}
+
+function validateSurge(text, entry) {
+  const allowed = new Set(['Rule','Header Rewrite','URL Rewrite','Body Rewrite','Map Local','Script','MITM']);
+  for (const m of text.matchAll(/^\[([^\]]+)\]$/gm)) if (!allowed.has(m[1])) throw new Error(`${entry.id}: unsupported Surge section [${m[1]}]`);
+  for (const line of text.split('\n')) {
+    const m = line.match(/^hostname\s*=\s*(.+)$/i);
+    if (m && !m[1].trim().startsWith('%APPEND%')) throw new Error(`${entry.id}: Surge module MITM hostname must use %APPEND%`);
+  }
+}
+
+async function main() {
+  const manifest = JSON.parse(await fs.readFile(MANIFEST, 'utf8'));
+  await Promise.all([RESOURCE_DIR, TARGET_ROOT, SCRIPT_DIR].map(d => fs.mkdir(d, { recursive: true })));
+  const failures = [];
+  for (const entry of manifest) {
+    try {
+      console.log(`\n== ${entry.id} ==`);
+      const { text, fetchedFrom } = await fetchWithFallback(entry.source);
+      const source = cleanSource(text);
+      if (!/^#!name=/m.test(source) || !/^\[[^\]]+\]/m.test(source)) throw new Error('downloaded content is not a valid Loon plugin');
+      const sourcePath = path.join(RESOURCE_DIR, entry.file);
+      const old = await exists(sourcePath) ? normalizeNewlines(await fs.readFile(sourcePath, 'utf8')) : null;
+      const changed = old !== source;
+      if (changed) await fs.writeFile(sourcePath, source);
+      console.log(`${changed ? 'updated' : 'unchanged'} source via ${fetchedFrom}; sha256=${sha256(source).slice(0, 12)}`);
+
+      const scriptMap = new Map();
+      const parsedSource = parseLoon(source);
+      const qxMockFiles = await materializeQxMockFiles(entry, parsedSource);
+      const argumentLines = parsedSource.sections.get('Argument') || [];
+      for (const url of scriptUrls(source)) {
+        scriptMap.set(url, await syncScript(entry, url));
+      }
+
+      const qxPath = path.join(ROOT, qxTargetPath(entry));
+      const sgPath = path.join(ROOT, surgeTargetPath(entry));
+      await Promise.all([
+        path.dirname(qxPath),
+        path.dirname(sgPath),
+      ].map(d => fs.mkdir(d, { recursive: true })));
+      const qxExists = await exists(qxPath);
+      const sgExists = await exists(sgPath);
+      const oldQx = qxExists ? normalizeNewlines(await fs.readFile(qxPath, 'utf8')) : null;
+      const oldSg = sgExists ? normalizeNewlines(await fs.readFile(sgPath, 'utf8')) : null;
+      const oldStamp = (oldQx?.match(/^# Converted:\s*(.+)$/m) || [])[1] || null;
+      let stamp = changed || !oldStamp ? nowCN() : oldStamp;
+      let out = convert(entry, source, scriptMap, stamp, qxMockFiles);
+
+      // Converter changes must also refresh outputs even when upstream LPX is unchanged.
+      // Preserve the old conversion timestamp only if the generated content is actually identical.
+      if (!changed && oldStamp && ((oldQx && oldQx !== out.qx) || (oldSg && oldSg !== out.surge))) {
+        stamp = nowCN();
+        out = convert(entry, source, scriptMap, stamp, qxMockFiles);
+      }
+
+      for (const [file, content] of out.generatedScripts) {
+        const dir = path.join(SCRIPT_DIR, entry.id);
+        await fs.mkdir(dir, { recursive: true });
+        const dest = path.join(dir, file);
+        if (!await exists(dest) || normalizeNewlines(await fs.readFile(dest, 'utf8')) !== content) await fs.writeFile(dest, content);
+      }
+      validateQX(out.qx, entry);
+      validateSurge(out.surge, entry);
+      let outputChanged = false;
+      if (oldQx !== out.qx) { await fs.writeFile(qxPath, out.qx); outputChanged = true; }
+      if (oldSg !== out.surge) { await fs.writeFile(sgPath, out.surge); outputChanged = true; }
+      console.log(outputChanged ? `converted -> ${path.relative(ROOT, qxPath)}, ${path.relative(ROOT, sgPath)}` : 'conversion verified: outputs unchanged');
+    } catch (e) {
+      failures.push(`${entry.id}: ${e.stack || e.message}`);
+      console.error(`::error title=${entry.id}::${String(e.message).replaceAll('\n', '%0A')}`);
+    }
+  }
+  if (failures.length) {
+    console.error('\nFailures:\n' + failures.join('\n\n'));
+    process.exitCode = 1;
+  }
+}
+
+await main();, 'i');
+    for (const line of clean) {
+      const match = line.match(re);
+      if (match) return match[1].trim();
+    }
+    return null;
+  };
+
+  const name = directive('name') || entry.id;
+  const desc = directive('desc') || ('Converted from Loon plugin: ' + entry.id);
+  const system = directive('system');
+
+  const out = [
+    '#!name=' + name,
+    '#!desc=' + desc,
+  ];
+  if (system && /^(?:ios|mac)$/i.test(system)) out.push('#!system=' + system.toLowerCase());
+  if (needsCore20) out.push('#!requirement=CORE_VERSION>=20');
+
+  out.push('');
+  for (const raw of clean) {
+    const line = raw.trim();
+    if (!line) continue;
+    if (/^#!name=/i.test(line) || /^#!desc=/i.test(line) || /^#!system=/i.test(line)) continue;
+    if (line.startsWith('#!')) out.push('# Original Loon metadata: ' + line);
+    else out.push(raw);
+  }
+  out.push(
+    '# Converted: ' + stamp,
+    '# Author: chance',
+    '# Category: ' + entry.category,
+    '# Target: Surge',
+    '# Source: ' + entry.source,
+  );
+  return out;
+}
+
+function hasActiveLines(lines = []) {
+  return lines.some(raw => {
+    const line = String(raw).trim();
+    return line && !line.startsWith('#') && !line.startsWith(';') && !line.startsWith('//');
+  });
 }
 
 function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Map()) {
