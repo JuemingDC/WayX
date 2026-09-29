@@ -1,0 +1,35 @@
+name: Canonical Refresh (temporary)
+
+on:
+  push:
+    branches:
+      - work/canonical-regeneration-20260929
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: work/canonical-regeneration-20260929
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Regenerate canonical outputs
+        run: node converter/tools/regenerate-canonical.mjs --write
+      - name: Commit refreshed canonical outputs
+        shell: bash
+        run: |
+          if git diff --quiet -- "Adblock/Quantumult X" "Adblock/Surge"; then
+            echo "Canonical outputs already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "Adblock/Quantumult X" "Adblock/Surge"
+          git commit -m "chore: refresh canonical converter outputs"
+          git push origin HEAD:work/canonical-regeneration-20260929
