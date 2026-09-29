@@ -9,6 +9,7 @@ import {
   scriptV2ArgumentRefs,
   scriptV2DynamicOptionRefs,
 } from './script-v2.mjs';
+import { scriptV2PluginArgumentUsage } from './argument-usage.mjs';
 
 function unsupported(reason) {
   return { ok:false, reason };
@@ -25,10 +26,24 @@ function fixedOption(ast, name) {
   return null;
 }
 
-export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText = ''} = {}) {
+export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText = '', argumentIds = null} = {}) {
   if (!ast || ast.type !== 'script') return unsupported('expected Script v2 AST');
   const condition = scriptUrlCondition(ast);
   if (!condition.ok) return condition;
+
+  if (argumentIds !== null) {
+    const usage = scriptV2PluginArgumentUsage(ast, argumentIds);
+    const undeclared = [
+      ...usage.undeclaredObjectRefs,
+      ...usage.undeclaredOptionRefs.map(ref => ref.id),
+    ];
+    if (undeclared.length) {
+      return unsupported('undeclared plugin [Argument] reference(s): ' + [...new Set(undeclared)].sort().join(', '));
+    }
+    if (usage.conditionRefs.length) {
+      return unsupported('plugin [Argument] condition cannot be represented by the Quantumult X rewrite declaration: ' + usage.conditionRefs.join(', '));
+    }
+  }
 
   const enable = scriptOption(ast, 'enable');
   if (enable?.type === 'boolean' && enable.value === false) {
@@ -68,10 +83,24 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
   };
 }
 
-export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 'script'} = {}) {
+export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 'script', argumentIds = null} = {}) {
   if (!ast || ast.type !== 'script') return unsupported('expected Script v2 AST');
   const condition = scriptUrlCondition(ast);
   if (!condition.ok) return condition;
+
+  if (argumentIds !== null) {
+    const usage = scriptV2PluginArgumentUsage(ast, argumentIds);
+    const undeclared = [
+      ...usage.undeclaredObjectRefs,
+      ...usage.undeclaredOptionRefs.map(ref => ref.id),
+    ];
+    if (undeclared.length) {
+      return unsupported('undeclared plugin [Argument] reference(s): ' + [...new Set(undeclared)].sort().join(', '));
+    }
+    if (usage.conditionRefs.length) {
+      return unsupported('plugin [Argument] condition has no verified Surge Script declaration equivalent: ' + usage.conditionRefs.join(', '));
+    }
+  }
 
   const enable = scriptOption(ast, 'enable');
   if (enable?.type === 'boolean' && enable.value === false) {
