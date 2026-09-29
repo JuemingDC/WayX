@@ -1,5 +1,16 @@
 # WayX Converter Status
 
+## 2026-09-29 phase 10 — incremental RuCu6 canonical promotion and consistency hardening
+
+In progress on `work/rucu6-canonical-phase1-20260929` / PR #16:
+
+- Promote reviewed RuCu6 YouTube into managed canonical QX/Surge output using the production converter.
+- Keep Bilibili and JingDong for later one-at-a-time promotion instead of widening this review.
+- Correct the stale QX `[Argument]` note: current policy is declaration-only conversion; typed/dynamic arguments remain Review. No BoxJs/`$prefs` bridge, wrapper or source-script fork is generated.
+- Harden `Converter Check` so canonical verification detects untracked generated files as well as tracked diffs.
+- Existing end-to-end golden coverage remains the semantic baseline; source JavaScript remains unchanged.
+
+
 ## 2026-09-29 phase 9 — canonical regeneration and checked-in consistency
 
 Implemented on `work/canonical-regeneration-20260929` / PR #12:

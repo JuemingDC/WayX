@@ -29,6 +29,14 @@ const EXTRA_LOCAL_ENTRIES = [
     surge: 'MyBlockAds.sgmodule',
     category: '去广告',
   },
+  {
+    id: 'YouTube',
+    file: 'RuCu6/youtube.lpx',
+    source: 'https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Loon/RuCu6/youtube.lpx',
+    qx: 'YouTube.snippet',
+    surge: 'YouTube.sgmodule',
+    category: '去广告',
+  },
 ];
 
 
