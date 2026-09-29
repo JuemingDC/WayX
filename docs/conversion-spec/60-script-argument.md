@@ -40,49 +40,79 @@ script-analyze-echo-response
 
 **不转换。**
 
-Loon `[Argument]`、PluginObject、动态 `enable/timeout/debug` 属于 Loon 插件配置语义。WayX 不把这些内容转换为：
+QX snippet 不提供与 Loon Plugin `[Argument]` 对应的模块参数表。WayX 不把这些内容转换为 QX BoxJs、`$prefs`、URL fragment 或 wrapper。
 
-- QX snippet 参数；
-- BoxJs app / setting；
-- `$prefs` 配置；
-- URL fragment / `$environment.sourcePath` 参数；
-- wrapper 或 fork 后的自定义参数桥。
-
-BoxJs 仍可作为 WayX 中独立的 QX 功能存在，但它与 **Loon Plugin → QX** 自动转换链无关。
-
-转换器只在内部解析 `[Argument]`，用途仅有一个：判断某条 Rule / Rewrite / Script 是否依赖 Loon 插件参数。若依赖且目标声明无法保持同一语义，则该条进入 Review，不输出伪等价的活动配置。
-
-### 60.3.1 输出规则
-
-QX 成品：
+QX 侧规则：
 - 不复制源 `[Argument]` 区块；
 - 不输出 Argument usage 清单；
-- 不输出 Loon 参数默认值；
-- 不生成 BoxJs 配置；
-- 只在具体声明无法等价转换时保留必要的 Review / Unsupported 原因。
+- 不输出默认值形成伪参数 UI；
+- 某条 Rewrite/Script 依赖 Loon 参数且 QX 无法保持时，该声明进入 Review。
 
-禁止使用 Loon 默认值将动态配置“冻结”为静态配置。
+BoxJs 仍是 WayX 中独立的 QX 功能，但不属于 Loon Plugin → QX 自动转换。
 
-## 60.4 Rule PROXY 与 Argument 分离
+## 60.4 Loon [Argument] → Surge Module
 
-Loon Plugin 中的 `PROXY` 是 policy binding 语义，不视为普通 `[Argument]` id。
+Surge Module 官方支持参数表：
 
-QX Rule 转换时：
-- 保留目标 policy 名称 `PROXY`；
-- 不降级为 QX 内建小写 `proxy`；
-- 不通过 BoxJs 自动创建策略；
-- 用户目标配置中需要存在对应 policy，或由其自行绑定。
+```ini
+#!arguments=name:default,enabled:true
+#!arguments-desc=...
+```
 
-## 60.5 Surge Script
+参数引用统一使用：
 
-Surge 使用当前官方 Module Script 声明。
+```text
+{{{name}}}
+```
 
-可直接保持的固定声明字段按官方语法转换，例如：
-- `requires_body` → `requires-body`；
-- `binary_body_mode` → `binary-body-mode`；
-- 固定 timeout → `timeout=`。
+转换规则：
 
-Loon typed PluginObject、动态 enable 等没有经过验证的同构语义时仍进入 Review。WayX 不把 Loon `[Argument]` 区块自动改造成 Surge/QX 的参数 UI。
+- Loon 参数 id 保持为 Surge 参数名；若含 Surge 不允许的字符，规范化为字母/数字/下划线，发生重名冲突则 fail closed。
+- `input/select/switch` 的首个默认值转换到 `#!arguments`。
+- Loon `tag/desc` 和 select 可选值汇总到 `#!arguments-desc`，不伪造 Surge 不存在的 select/switch 控件类型。
+- Surge 参数默认值若包含 `#!arguments` 无法安全分隔的逗号或换行，进入 Review，不发明转义语法。
+- QX 不生成这些 metadata。
+
+Surge 官方参数表本质是文本替换，因此 Script 侧按 Surge 原生格式重新表达：
+
+### 60.4.1 PluginObject
+
+Loon：
+
+```text
+script("plugin.js", {${region}, ${level}, ${enabled}})
+```
+
+Surge：
+
+```ini
+#!arguments=region:CN,level:2,enabled:true
+[Script]
+name = ...,argument="{\"region\":\"{{{region}}}\",\"level\":{{{level}}},\"enabled\":{{{enabled}}}}"
+```
+
+类型规则：
+- Loon String → JSON quoted placeholder；
+- Loon Number / Boolean → JSON unquoted placeholder；
+- JSON key 继续使用原 Loon 参数名。
+
+Surge 的 `$argument` 本身是 String，因此这里输出 JSON String，而不是伪造 Object runtime。
+
+### 60.4.2 动态 Script options
+
+- Loon `timeout=${id}` → Surge `timeout={{{id}}}`；
+- Loon `debug=${id}` → Surge `debug={{{id}}}`；
+- Loon `enable=${id}` → Surge 行级 `#!REQUIREMENT`，比较该 Boolean 参数是否为 `true`；
+- 使用行级 Requirement 时模块必须声明 `#!requirement=CORE_VERSION>=22` 或更高。
+
+动态参数未声明、类型不符合或无法形成合法 Surge 声明时才进入 Review。
+
+## 60.5 Rule PROXY 与 Argument 分离
+
+Loon Plugin Rule 的 `PROXY` 是插件 policy binding，不等同于普通 `[Argument]` id。
+
+- QX：保留字面 `PROXY`，不降为小写内建 `proxy`。
+- Surge：继续服从 Surge Module Rule 的官方 policy 限制；不要仅因为存在 `#!arguments` 就假设任意外部 policy 可作为合法 Module Rule。
 
 ## 60.6 Script 兼容性与插件身份无关
 
