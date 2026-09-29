@@ -237,7 +237,7 @@ Source Catalog 可以包含具体插件名和原作者 URL，因为它只是数�
 - 插件：只请求 `entry.source`。
 - Source Script：只请求插件声明中的 `script-path` / `script("...")` URL。
 - 相对 dependency：只按插件原始 URL 解析后直接请求。
-- 禁止 GitHub 镜像、第三方镜像、备用域名和 fallback 链。
+- 禁止第三方 GitHub 副本、第三方镜像、备用域名和 fallback 链；若原作者官方 `source` 本身就是 GitHub/GitHub Raw，则该 URL 属于原作者源，可直接使用。
 - 原源不可达：本轮失败并进入 Review，不切换副本。
 - QX/Surge 中的 Source Script URL 必须继续指向源插件声明的 URL。
 - WayX 允许生成自己的 **helper script** 来补足目标平台缺失的 Rewrite/Mock 语义；这种 helper 是 converter 输出，不属于 Source Script 镜像。
