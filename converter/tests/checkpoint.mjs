@@ -70,7 +70,7 @@ assert.equal(qxRule('URL-REGEX,"^https:\\/\\/empty\\.example\\.com",REJECT-200')
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/image\\.example\\.com",REJECT-IMG').line, '^https:\\/\\/image\\.example\\.com url reject-img');
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/dict\\.example\\.com",REJECT-DICT').line, '^https:\\/\\/dict\\.example\\.com url reject-dict');
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/array\\.example\\.com",REJECT-ARRAY').line, '^https:\\/\\/array\\.example\\.com url reject-array');
-assert.equal(qxRule('URL-REGEX,"^https://drop\\.example\\.com",REJECT-DROP').line, '^https:\\/\\/drop\\.example\\.com url reject');
+assert.equal(qxRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP').line, '^https:\\/\\/drop\\.example\\.com url reject');
 assert.equal(qxRule('DOMAIN,example.com,DIRECT').line, 'host, example.com, direct');
 assert.equal(qxRule('DOMAIN,example.com,PROXY').line, 'host, example.com, PROXY');
 const surgeUrlReject200 = surgeModuleRule('URL-REGEX,"^https:\\/\\/empty\\.example\\.com",REJECT-200');
@@ -87,7 +87,7 @@ assert.equal(qxRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP')
 assert.equal(surgeRule('URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-IMG'), 'URL-REGEX,"^https://a\\.line\\.me/er/lads/v\\d/ei\\?",REJECT-TINYGIF');
 const surgeDropModule = surgeModuleRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP');
 assert.equal(surgeDropModule.kind, 'rule');
-assert.equal(surgeDropModule.line, 'URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP');
+assert.equal(surgeDropModule.line, 'URL-REGEX,"^https://drop\\.example\\.com",REJECT-DROP');
 assert.equal(surgeModuleRule('DOMAIN,drop.example.com,REJECT-NO-DROP').line, 'DOMAIN,drop.example.com,REJECT-NO-DROP');
 assert.equal(surgeModuleRule('DOMAIN,cell.example.com,CELLULAR').line, 'DOMAIN,cell.example.com,CELLULAR');
 assert.match(qxRule('AND, ((DOMAIN-SUFFIX, example.com), (PROTOCOL, TCP)), REJECT').line, /^# Unsupported logical rule for Quantumult X/);
@@ -97,7 +97,7 @@ assert.equal(surgeRule('DOMAIN, example.com, PROXY'), '# [WayX] Surge Module pol
 assert.equal(surgeModuleRule('DOMAIN-WILDCARD,api-*.example.com,REJECT').line, 'DOMAIN-WILDCARD,api-*.example.com,REJECT');
 assert.equal(surgeModuleRule('IP-ASN,13335,REJECT,no-resolve').line, 'IP-ASN,13335,REJECT,no-resolve');
 assert.equal(surgeModuleRule('USER-AGENT,"Example*",REJECT').line, 'USER-AGENT,"Example*",REJECT');
-assert.equal(surgeModuleRule('URL-REGEX,"^https://example\\.com/(a|b),?c",REJECT').line, 'URL-REGEX,"^https:\\/\\/example\\.com\\/(a|b),?c",REJECT');
+assert.equal(surgeModuleRule('URL-REGEX,"^https:\\/\\/example\\.com\\/(a|b),?c",REJECT').line, 'URL-REGEX,"^https://example\\.com/(a|b),?c",REJECT');
 assert.equal(surgeModuleRule('DEST-PORT,443,REJECT').line, 'DEST-PORT,443,REJECT');
 assert.equal(surgeModuleRule('PROTOCOL,QUIC,REJECT').line, 'PROTOCOL,QUIC,REJECT');
 assert.equal(surgeModuleRule('SUBNET,TYPE:CELLULAR,DIRECT').line, 'SUBNET,TYPE:CELLULAR,DIRECT');
