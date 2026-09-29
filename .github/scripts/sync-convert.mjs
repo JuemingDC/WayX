@@ -17,6 +17,7 @@ import { qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, 
 import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript } from '../../converter/src/qx-semantic-script.mjs';
 import { isScriptV2, parseScriptV2 } from '../../converter/src/script-v2.mjs';
 import { qxScriptV2Plan, surgeScriptV2Plan } from '../../converter/src/script-v2-target.mjs';
+import { analyzePluginArgumentUsage, argumentUsageSummary, rewriteV2PluginArgumentRefs } from '../../converter/src/argument-usage.mjs';
 import { hasActiveSurgeLines, renderSurgeModuleHeader, validateSurgeModule } from '../../converter/src/surge-module.mjs';
 import { renderQxSnippetHeader } from '../../converter/src/metadata.mjs';
 import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
@@ -77,6 +78,13 @@ function rewriteV2Action(line, target, ctx) {
   try {
     ast = parseRewriteV2(line);
     validateRewriteV2Ast(ast);
+    const argumentRefs = rewriteV2PluginArgumentRefs(ast, ctx.argumentIds || []);
+    if (argumentRefs.all.length) {
+      return {
+        section: 'comment',
+        line: `# [WayX] REWRITE V2 REVIEW REQUIRED: plugin [Argument] reference(s) ${argumentRefs.all.join(', ')} have no target declaration equivalent: ${line}`,
+      };
+    }
   } catch (error) {
     return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
   }
@@ -227,11 +235,12 @@ function cleanComments(comments) {
   return comments.map(x => x || '').map(x => x.trim() ? x : '').filter((x, i, a) => !(x === '' && a[i - 1] === ''));
 }
 
-function qxHeaderRewriteInfo(line) {
+function qxHeaderRewriteInfo(line, argumentIds = []) {
   if (!line || !isRewriteV2(line)) return null;
   try {
     const ast = parseRewriteV2(line);
     validateRewriteV2Ast(ast);
+    if (rewriteV2PluginArgumentRefs(ast, argumentIds).all.length) return null;
     if (!ast.actions.length || ast.actions.some(action =>
       !new RegExp('^' + ast.phase + '\\.header\\.(?:add|set|del|replace)$').test(action.name)
     )) return null;
@@ -252,7 +261,7 @@ function planAdjacentQxHeaderGroups(items, ctx) {
 
   for (let index = 0; index < items.length; index++) {
     if (consumed.has(index) || !items[index]?.line) continue;
-    const first = qxHeaderRewriteInfo(items[index].line);
+    const first = qxHeaderRewriteInfo(items[index].line, ctx.argumentIds || []);
     if (!first) continue;
 
     const actions = [...first.ast.actions];
@@ -262,7 +271,7 @@ function planAdjacentQxHeaderGroups(items, ctx) {
     for (let nextIndex = index + 1; nextIndex < items.length; nextIndex++) {
       const nextItem = items[nextIndex];
       if (!nextItem?.line || nextItem.comments.length) break;
-      const next = qxHeaderRewriteInfo(nextItem.line);
+      const next = qxHeaderRewriteInfo(nextItem.line, ctx.argumentIds || []);
       if (!next || next.signature !== first.signature) break;
       actions.push(...next.ast.actions);
       sourceLines.push(nextItem.line);
@@ -376,14 +385,35 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
 
   const qx = { filter: [], rewrite: [], mitm: [], notes: [], generatedScripts: new Map() };
   const sg = { rule: [], url: [], header: [], map: [], body: [], script: [], mitm: [], notes: [], generatedScripts: new Map() };
-  const qctx = { id: entry.id, generatedScripts: qx.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, mockFiles: qxMockFiles, jqFiles };
-  const sctx = { id: entry.id, generatedScripts: sg.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, jqFiles };
+  const argumentAnalysis = analyzePluginArgumentUsage({
+    argumentLines: parsed.sections.get('Argument') || [],
+    rewriteLines: parsed.sections.get('Rewrite') || [],
+    scriptLines: parsed.sections.get('Script') || [],
+    ruleLines: parsed.sections.get('Rule') || [],
+  });
+  const argumentIds = new Set(argumentAnalysis.declaredIds);
+  const qctx = { id: entry.id, generatedScripts: qx.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, mockFiles: qxMockFiles, jqFiles, argumentIds };
+  const sctx = { id: entry.id, generatedScripts: sg.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, jqFiles, argumentIds };
 
   // Preserve [Argument] semantics as comments. QX/Surge module arguments are not fabricated.
   if (parsed.sections.has('Argument')) {
     const raw = parsed.sections.get('Argument').filter(x => x.trim());
     qx.notes.push('# Source [Argument] (declaration-only conversion; typed/dynamic arguments stay Review):', ...raw.map(x => x.trim().startsWith('#') ? x : `# ${x}`));
     sg.notes.push('# Source [Argument] (declaration-only conversion; typed/dynamic arguments stay Review):', ...raw.map(x => x.trim().startsWith('#') ? x : `# ${x}`));
+
+    for (const item of argumentUsageSummary(argumentAnalysis).filter(item => item.used)) {
+      const line = `# [WayX] Argument usage: ${item.id} [${item.valueType}] -> ${item.uses.join(', ')}`;
+      qx.notes.push(line);
+      sg.notes.push(line);
+    }
+  }
+  if (argumentAnalysis.undeclaredRefs.length) {
+    const refs = [...new Set(argumentAnalysis.undeclaredRefs.map(ref => ref.id))].sort().join(', ');
+    qx.notes.push(`# [WayX] ARGUMENT REVIEW REQUIRED: undeclared plugin argument reference(s): ${refs}`);
+    sg.notes.push(`# [WayX] ARGUMENT REVIEW REQUIRED: undeclared plugin argument reference(s): ${refs}`);
+  }
+  if (argumentAnalysis.policyBindings.length) {
+    qx.notes.push('# [WayX] Policy binding: source PROXY is preserved as literal QX policy name PROXY; a matching target policy must exist.');
   }
 
   for (const item of sectionItems(parsed.sections.get('Rule'))) {
@@ -456,7 +486,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
         qx.rewrite.push(...qxManualPortComment({ scriptUrl: ast.script.path, result: qxCompat }));
         qx.rewrite.push(`# Source declaration: ${item.line}`);
       } else {
-        const qxPlan = qxScriptV2Plan(ast, { scriptUrl: qxUrl, sourceText });
+        const qxPlan = qxScriptV2Plan(ast, { scriptUrl: qxUrl, sourceText, argumentIds });
         if (!qxPlan.ok) {
           qx.rewrite.push(`# [WayX] SCRIPT V2 REVIEW REQUIRED: ${qxPlan.reason}`);
           qx.rewrite.push(`# Source declaration: ${item.line}`);
@@ -471,7 +501,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
       }
 
       const name = sanitizeName((ast.options.find(x => x.name === 'tag')?.value?.value) || `${entry.id}_${String(scriptIndex).padStart(2, '0')}`);
-      const surgePlan = surgeScriptV2Plan(ast, { scriptUrl: surgeUrl, name });
+      const surgePlan = surgeScriptV2Plan(ast, { scriptUrl: surgeUrl, name, argumentIds });
       sg.script.push(...comments);
       if (!surgePlan.ok) {
         sg.script.push(`# [WayX] SCRIPT V2 REVIEW REQUIRED: ${surgePlan.reason}`);

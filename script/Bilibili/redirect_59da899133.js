@@ -1,4 +1,4 @@
-// Converted: 2026-09-29 18:33:43 +08:00
+// Converted: 2026-09-29 21:03:27 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /(^https:\/\/live\.bilibili\.com\/\d+)(?:\/?\?.*)/i as urlMatch then redirect(302, "${urlMatch.1}")

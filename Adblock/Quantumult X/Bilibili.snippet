@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/bilibili.png
 # Updated: 2026-09-22 22:55
 
-# Converted: 2026-09-29 18:33:43 +08:00
+# Converted: 2026-09-29 21:03:27 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/bilibili.lpx
@@ -15,10 +15,15 @@
 # optimizeRequest=switch, true, false, tag=过滤「视频内」插播广告, desc=自动跳过视频内广告\n- true: 开启\n- false: 关闭
 # purifyComment=switch, true, false, tag=过滤「评论区」置顶广告, desc=-true: 开启\n- false: 关闭
 # sponsorBlock=switch, true, false, tag=空降助手
+# [WayX] Argument usage: displayUpList [string] -> Script argument-object
+# [WayX] Argument usage: optimizeRequest [boolean] -> Script enable
+# [WayX] Argument usage: purifyComment [boolean] -> Script argument-object
+# [WayX] Argument usage: sponsorBlock [boolean] -> Script enable
+# [WayX] Policy binding: source PROXY is preserved as literal QX policy name PROXY; a matching target policy must exist.
 
 # [filter_local]
 # 空降助手
-host, bsbsb.top, proxy
+host, bsbsb.top, PROXY
 
 # 禁用STUN & P2P
 # Unsupported logical rule for Quantumult X: AND, ((DOMAIN-SUFFIX, chat.bilibili.com), (OR, ((DOMAIN-KEYWORD, stun), (DOMAIN-KEYWORD, tracker), (DOMAIN-KEYWORD, p2p)))), REJECT

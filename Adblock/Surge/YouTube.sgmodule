@@ -5,7 +5,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/youtube.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-09-29 18:33:47 +08:00
+# Converted: 2026-09-29 21:03:30 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/youtube.lpx
@@ -17,6 +17,11 @@
 # blockUpload=switch, false, true, tag=隐藏上传按钮, desc=用于隐藏YouTube底栏的上传按钮
 # debug=switch, false, true, tag=启用调试模式, desc=此插件的调试模式
 # captionLang=select, "zh-Hans", "zh-Hant", "ja", "ko", "en", "off", tag=字幕翻译语言, desc=需要把YouTube字幕翻译翻译为何种语言
+# [WayX] Argument usage: blockImmersive [boolean] -> Script argument-object
+# [WayX] Argument usage: blockShorts [boolean] -> Script argument-object
+# [WayX] Argument usage: blockUpload [boolean] -> Script argument-object
+# [WayX] Argument usage: debug [boolean] -> Script argument-object
+# [WayX] Argument usage: captionLang [string] -> Script argument-object
 
 [Rule]
 #AND, ((DOMAIN, youtubei.googleapis.com), (PROTOCOL, UDP)), REJECT
