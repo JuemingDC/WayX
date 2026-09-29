@@ -6,6 +6,11 @@ on:
       - "converter/**"
       - ".github/scripts/sync-convert.mjs"
       - ".github/workflows/converter-check.yml"
+      - ".github/sources/loon.json"
+      - "Resource/Loon/**"
+      - "script/**"
+      - "Adblock/Quantumult X/**"
+      - "Adblock/Surge/**"
   workflow_dispatch:
 
 permissions:
