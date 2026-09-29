@@ -48,7 +48,6 @@ jobs:
       - name: Converter checkpoint
         run: |
           node converter/tests/checkpoint.mjs
-          node converter/tests/myblockads-golden.mjs
           node converter/tests/rucu6-rewrite-v2-coverage.mjs
           node converter/tests/rucu6-script-v2-coverage.mjs
           node converter/tests/loon-new-syntax-cases.mjs
@@ -73,6 +72,9 @@ jobs:
 
       - name: Verify generated helper references
         run: node converter/tests/generated-helper-refs.mjs
+
+      - name: Verify regenerated MyBlockAds golden
+        run: node converter/tests/myblockads-golden.mjs
 
       - name: Verify original Source Script URLs
         run: node converter/tests/source-script-url-preservation.mjs
