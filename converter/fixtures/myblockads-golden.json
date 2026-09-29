@@ -5,6 +5,6 @@
   "surge": "Adblock/Surge/MyBlockAds.sgmodule",
   "jqRuleCount": 11,
   "uniqueJqCount": 10,
-  "orderedPairsFnv1a64": "1c3e6cbe6804c9ae",
-  "note": "Fingerprint covers the reviewed ordered {pattern,jq} pairs shared by QX and Surge after target regex compilation. Loon /i is preserved by explicit ASCII case-folded character classes; the RuCu6 Reddit jq-path compatibility alias is resolved from the checked-in cached JQ dependency before target output. No unresolved jq-path token is permitted."
+  "orderedPairsFnv1a64": "8dce39e02a52eeb2",
+  "note": "Fingerprint covers the reviewed ordered {pattern,jq} pairs shared by QX and Surge using the official bare-regex declaration style. WayX does not expand Loon /i into per-character case classes or invent undocumented QX inline flags. The RuCu6 Reddit jq-path compatibility alias is resolved from the checked-in cached JQ dependency before target output; unresolved jq-path is forbidden."
 }
