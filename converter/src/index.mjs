@@ -14,3 +14,4 @@ export * from './rewrite-v2-semantic.mjs';
 export * from './qx-semantic-script.mjs';
 export * from './script-v2.mjs';
 export * from './script-v2-target.mjs';
+export * from './surge-module.mjs';
