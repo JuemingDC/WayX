@@ -248,6 +248,7 @@ export function renderQxHeaderScript(ast, options = {}) {
   }
 
   const source = ast.phase === 'request' ? '$request.headers' : '$response.headers';
+  const needsAdd = ast.actions.some(action => action.name.endsWith('.add'));
   const lines = [
     ...metadata(options),
     'const __wayxHeaders = {...' + source + '};',
@@ -255,10 +256,12 @@ export function renderQxHeaderScript(ast, options = {}) {
     '  const wanted = String(name).toLowerCase();',
     '  return Object.keys(__wayxHeaders).find(key => key.toLowerCase() === wanted);',
     '}',
-    'function __wayxAdd(name, value) {',
-    '  const key = __wayxKey(name);',
-    '  __wayxHeaders[key || name] = value;',
-    '}',
+    ...(needsAdd ? [
+      'function __wayxAdd(name, value) {',
+      '  const key = __wayxKey(name);',
+      '  __wayxHeaders[key || name] = value;',
+      '}',
+    ] : []),
     'function __wayxSet(name, value) {',
     '  const key = __wayxKey(name);',
     '  __wayxHeaders[key || name] = value;',
