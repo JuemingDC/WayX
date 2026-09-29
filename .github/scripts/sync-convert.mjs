@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { qxRule as canonicalQxRule, surgeRule as canonicalSurgeRule } from '../../converter/src/rule.mjs';
+import { qxRule as canonicalQxRule, surgeModuleRule, splitTopLevelCsv } from '../../converter/src/rule.mjs';
 import { selectQxScriptAction } from '../../converter/src/script.mjs';
 import { inspectQxScriptCompatibility, qxManualPortComment } from '../../converter/src/script-compat.mjs';
 import { minifyJq } from '../../converter/src/jq.mjs';
@@ -485,7 +485,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     if (qr.kind === 'filter') qx.filter.push(...comments, qr.line);
     else if (qr.kind === 'rewrite') qx.rewrite.push(...comments, qr.line);
     else qx.filter.push(...comments, qr.line);
-    sg.rule.push(...comments, canonicalSurgeRule(item.line));
+    const sr = surgeModuleRule(item.line);
+    sg.rule.push(...comments, ...sr.lines);
   }
 
   for (const item of sectionItems(parsed.sections.get('Rewrite'))) {
