@@ -1,19 +1,20 @@
 #!name=百度网盘去广告
 #!desc=移除开屏广告、首页卡片广告、传输页面广告、各类弹窗，精简侧拉抽屉和我的页面。
-#!openUrl=https://apps.apple.com/app/id547166701
-#!author=可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
-#!tag=去广告
-#!system=
-#!system_version=
-#!loon_version=3.4.0(962)
-#!homepage=https://hub.kelee.one
-#!icon=https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduNetDisk.png
-#!date=2026-06-01 17:11:35
-# Converted: 2026-09-28 13:08:22 +08:00
-# Converted by: chance
+#!requirement=CORE_VERSION>=20
+
+# Original Loon metadata: #!openUrl=https://apps.apple.com/app/id547166701
+# Original Loon metadata: #!author=可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Original Loon metadata: #!tag=去广告
+# Original Loon metadata: #!system_version=
+# Original Loon metadata: #!loon_version=3.4.0(962)
+# Original Loon metadata: #!homepage=https://hub.kelee.one
+# Original Loon metadata: #!icon=https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduNetDisk.png
+# Original Loon metadata: #!date=2026-06-01 17:11:35
+# Converted: 2026-09-29 12:06:21 +08:00
+# Author: chance
 # Category: 去广告
-# Source: https://kelee.one/Tool/Loon/Lpx/BaiduNetDisk_remove_ads.lpx
 # Target: Surge
+# Source: https://kelee.one/Tool/Loon/Lpx/BaiduNetDisk_remove_ads.lpx
 
 [Body Rewrite]
 

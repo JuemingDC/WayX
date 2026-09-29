@@ -9,16 +9,16 @@
 #!homepage=https://hub.kelee.one
 #!icon=https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/PinDuoDuo.png
 #!date=2026-07-11 20:21:39
-# Converted: 2026-09-28 13:14:56 +08:00
+# Converted: 2026-09-29 12:06:21 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/PinDuoDuo_remove_ads.lpx
 # Target: Quantumult X
 
 # [filter_local]
-# Loon rule not losslessly expressible in Quantumult X filter: AND, ((URL-REGEX, "^http:\/\/((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/d(\d)?"), (USER-AGENT, "*com.xunmeng.pinduoduo*")), REJECT
-# Loon rule not losslessly expressible in Quantumult X filter: AND, ((URL-REGEX, "^http:\/\/\[[0-9a-fA-F:]+\]\/d(\d)?\?"), (USER-AGENT, "*com.xunmeng.pinduoduo*")), REJECT
-# Loon rule not losslessly expressible in Quantumult X filter: AND, ((DOMAIN, api.pinduoduo.com), (PROTOCOL, QUIC)), REJECT
+# Loon logical rule (Quantumult X unsupported): AND, ((URL-REGEX, "^http:\/\/((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/d(\d)?"), (USER-AGENT, "*com.xunmeng.pinduoduo*")), REJECT
+# Loon logical rule (Quantumult X unsupported): AND, ((URL-REGEX, "^http:\/\/\[[0-9a-fA-F:]+\]\/d(\d)?\?"), (USER-AGENT, "*com.xunmeng.pinduoduo*")), REJECT
+# Loon logical rule (Quantumult X unsupported): AND, ((DOMAIN, api.pinduoduo.com), (PROTOCOL, QUIC)), REJECT
 host, titan.pinduoduo.com, reject
 host, xg.pinduoduo.com, reject
 host, cdl-1.pddpic.com, reject
@@ -57,19 +57,19 @@ host, apm-a.pinduoduo.com, reject
 
 ^https:\/\/api\.pinduoduo\.com\/api\/caterham\/v2\/query\/goods_detail_with_tags\? url reject-dict
 
-^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub\? url jsonjq-response-body 'del(.result.dy_module.irregular_banner_dy, .result.icon_set, .result.search_bar_hot_query, .result.dy_module.irregular_banner_dy)'
+^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub\? url jsonjq-response-body 'del(.result.dy_module.irregular_banner_dy,.result.icon_set,.result.search_bar_hot_query,.result.dy_module.irregular_banner_dy)'
 
 ^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub\? url jsonjq-response-body '.result.bottom_tabs? |= map(select(.link | IN("index.html", "chat_list.html", "personal.html"))) | .result.buffer_bottom_tabs? |= map(select(.link | IN("index.html", "chat_list.html", "personal.html"))) | .result.all_top_opts |= map(del(.selected_image, .image, .height, .width))'
 
 ^https:\/\/api\.pinduoduo\.com\/search\? url jsonjq-response-body 'del(.expansion)'
 
-^https:\/\/api\.pinduoduo\.com\/api\/philo\/personal\/hub\? url jsonjq-response-body 'del(.monthly_card_entrance, .personal_center_style_v2_vo, .icon_set.icons, .icon_set.top_personal_icons, .personal_banner)'
+^https:\/\/api\.pinduoduo\.com\/api\/philo\/personal\/hub\? url jsonjq-response-body 'del(.monthly_card_entrance,.personal_center_style_v2_vo,.icon_set.icons,.icon_set.top_personal_icons,.personal_banner)'
 
-^https:\/\/api\.pinduoduo\.com\/api\/oak\/integration\/render\? url jsonjq-response-body 'del(.bottom_section_list, .ui.bottom_section, .ui.live_section.float_info)'
+^https:\/\/api\.pinduoduo\.com\/api\/oak\/integration\/render\? url jsonjq-response-body 'del(.bottom_section_list,.ui.bottom_section,.ui.live_section.float_info)'
 
 ^https:\/\/api\.pinduoduo\.com\/api\/caterham\/v3\/query\/order_detail_group\? url jsonjq-response-body 'del(.data.goods_list)'
 
-^https:\/\/api\.pinduoduo\.com\/order\/ url jsonjq-response-body 'del(.marketing_banner_vo, .shipping.banner_above_recommend)'
+^https:\/\/api\.pinduoduo\.com\/order\/ url jsonjq-response-body 'del(.marketing_banner_vo,.shipping.banner_above_recommend)'
 
 ^https:\/\/api\.pinduoduo\.com\/api\/aristotle\/order_list_v4\? url jsonjq-response-body '.orders |= map(.order_buttons |= map(del(.order_growth_tip)))'
 # 移除扫码取件页面商品推荐及弹窗
