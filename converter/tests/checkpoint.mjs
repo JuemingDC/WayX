@@ -35,6 +35,8 @@ import {
   scriptV2ArgumentRefs,
   scriptV2DynamicOptionRefs,
   scriptOptionBoolean,
+  qxScriptV2Plan,
+  surgeScriptV2Plan,
   surgeRule,
   surgeTargetPath,
   validateRewriteV2Ast,
@@ -331,5 +333,29 @@ assert.throws(
   () => parseScriptV2('response if ${url} ~= /api/ then script("a.js") with unknown=true'),
   /unknown Script v2 option/,
 );
+
+const qxScriptV2Native = qxScriptV2Plan(
+  parseScriptV2('response if ${url} ~= /^https:\\/\\/api\\.example\\.com/i then script("https://example.com/a.js") with tag="API", requires_body=true'),
+  {scriptUrl:'https://example.com/a.js', sourceText:'$done({body:$response.body});'},
+);
+assert.equal(qxScriptV2Native.ok, true);
+assert.match(qxScriptV2Native.line, /url script-response-body https:\/\/example\.com\/a\.js$/);
+
+const surgeScriptV2Native = surgeScriptV2Plan(
+  parseScriptV2('request if ${url} ~= /submit/i then script("https://example.com/request.js") with requires_body=true, binary_body_mode=true'),
+  {scriptUrl:'https://example.com/request.js', name:'request_script'},
+);
+assert.equal(surgeScriptV2Native.ok, true);
+assert.match(surgeScriptV2Native.line, /^request_script = type=http-request,/);
+assert.match(surgeScriptV2Native.line, /requires-body=true/);
+assert.match(surgeScriptV2Native.line, /binary-body-mode=true/);
+
+const qxScriptV2NeedsBridge = qxScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'request.js'});
+assert.equal(qxScriptV2NeedsBridge.ok, false);
+assert.match(qxScriptV2NeedsBridge.reason, /dynamic enable|argument/);
+
+const surgeScriptV2NeedsBridge = surgeScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'request.js', name:'x'});
+assert.equal(surgeScriptV2NeedsBridge.ok, false);
+assert.match(surgeScriptV2NeedsBridge.reason, /dynamic enable|argument/);
 
 console.log('WayX converter checkpoint tests passed');
