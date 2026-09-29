@@ -18,9 +18,9 @@ import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, ren
 import { isScriptV2, parseScriptV2, splitScriptV2Csv } from '../../converter/src/script-v2.mjs';
 import { qxScriptV2Plan, surgeScriptV2Plan } from '../../converter/src/script-v2-target.mjs';
 import { analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs } from '../../converter/src/argument-usage.mjs';
-import { surgeArgumentMetadata, surgePluginObjectArgument, surgeDynamicOptionValue, surgeEnableRequirement, parseLegacyLoonPluginObjectRefs } from '../../converter/src/argument.mjs';
+import { surgeArgumentMetadata, surgePluginObjectArgument, surgeBooleanOptionValue, surgeTimeoutOptionValue, surgeEnableRequirement, parseLegacyLoonPluginObjectRefs } from '../../converter/src/argument.mjs';
 import { hasActiveSurgeLines, renderSurgeModuleHeader, validateSurgeModule } from '../../converter/src/surge-module.mjs';
-import { renderQxSnippetHeader } from '../../converter/src/metadata.mjs';
+import { renderQxSnippetHeader, sourcePlatformConstraint } from '../../converter/src/metadata.mjs';
 import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
 import { planMitmLine } from '../../converter/src/mitm.mjs';
 import { fetchOriginalText, fetchOriginalBytes, resolveOriginalUrl } from '../../converter/src/source-fetch.mjs';
@@ -49,6 +49,20 @@ function cleanSource(text) {
   return normalizeNewlines(text).replace(/\n*$/, '\n');
 }
 
+function canonicalLoonSectionName(name) {
+  const raw = String(name || '').trim();
+  const known = new Map([
+    ['argument','Argument'],
+    ['general','General'],
+    ['rule','Rule'],
+    ['rewrite','Rewrite'],
+    ['host','Host'],
+    ['script','Script'],
+    ['mitm','MITM'],
+  ]);
+  return known.get(raw.toLowerCase()) || raw;
+}
+
 function parseLoon(text) {
   const header = [];
   const sections = new Map();
@@ -56,7 +70,7 @@ function parseLoon(text) {
   for (const raw of normalizeNewlines(text).split('\n')) {
     const m = raw.trim().match(/^\[([^\]]+)\]$/);
     if (m) {
-      current = m[1];
+      current = canonicalLoonSectionName(m[1]);
       if (!sections.has(current)) sections.set(current, []);
       continue;
     }
