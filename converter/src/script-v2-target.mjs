@@ -16,8 +16,8 @@ function unsupported(reason) {
   return { ok:false, reason };
 }
 
-function scriptUrlCondition(ast) {
-  return simpleUrlRewriteCondition({type:'rewrite', condition:ast.condition});
+function scriptUrlCondition(ast, target = 'generic') {
+  return simpleUrlRewriteCondition({type:'rewrite', condition:ast.condition}, {target});
 }
 
 function fixedOption(ast, name) {
@@ -100,7 +100,7 @@ export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 's
     }
   }
 
-  const condition = scriptUrlCondition(ast);
+  const condition = scriptUrlCondition(ast, 'surge');
   if (!condition.ok) return condition;
 
   const enable = scriptOption(ast, 'enable');
