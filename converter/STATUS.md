@@ -1,5 +1,52 @@
 # WayX Converter Status
 
+## 2026-09-29 phase 5 — Loon Script v2 parser, native mapping and argument bridges
+
+Implemented on `work/script-v2-parser-20260929` / PR #8:
+
+- Added a dedicated HTTP Script v2 parser/AST instead of parsing new syntax with legacy `script-path=` regular expressions.
+- Current RuCu6 real-source inventory:
+  - 9 plugins;
+  - 110 active Script v2 declarations;
+  - 110 / 110 parsed and validated;
+  - 0 parse errors;
+  - response: 101;
+  - request: 9;
+  - `requires_body=true`: 108;
+  - `binary_body_mode=true`: 14;
+  - plugin-object argument declarations: 5;
+  - dynamic `enable`: 3.
+- Target planning is native-first:
+  - 103 / 110 declarations require no parameter bridge and map directly to QX rewrite script actions / Surge `[Script]`;
+  - QX uses `script-request-header/body` or `script-response-header/body` through the existing source-aware action selector;
+  - Surge uses official `type=http-request/http-response,pattern=...,script-path=...` plus `requires-body`, `max-size`, `binary-body-mode`, fixed `timeout` and `debug` when present.
+- Added per-declaration typed bridges for the 7 declarations that use Loon `[Argument]` and/or dynamic `enable`:
+  - QX: BoxJs settings + `$prefs`, then reconstruct the Loon typed `$argument` object before executing the original script;
+  - Surge: official Module `#!arguments` / `{{{name}}}` placeholders, then reconstruct typed values from Surge's String `$argument`;
+  - a bridge is generated per Script v2 declaration, not per source JS URL, so different declarations using the same script cannot leak parameter shape into each other.
+- Bridge generation refuses to wrap a source that declares its own `$argument`, avoiding lexical collisions.
+- QX source-runtime compatibility remains a hard gate before bridge generation:
+  - explicit QX rejection remains disabled;
+  - direct Loon `$utils` remains disabled;
+  - scripts that only use `$httpClient`, `$persistentStore` or `$loon` without any QX adapter evidence are disabled;
+  - scripts with an explicit QX runtime branch remain eligible.
+- RuCu6 Bilibili protobuf request/response scripts remain QX-disabled and are not forked.
+- RuCu6 YouTube request/response scripts remain eligible because the source has an explicit QuanX adapter.
+- Script v2 real-resource coverage is now part of PR CI, alongside Rewrite v2 and MyBlockAds golden tests.
+
+Current boundary:
+
+- Current RuCu6 Script v2 declarations all use simple URL-regex conditions; target planning remains fail-closed for compound/non-URL conditions until their complete behavior is preserved.
+- QX `binary_body_mode` is not invented as a config token; binary behavior is delegated to a script runtime already proven QX-compatible.
+- Unsupported script runtimes stay commented rather than receiving a compatibility fork.
+- Native target declarations are preferred over generated wrappers. Wrappers are used only to restore Loon parameter semantics that QX/Surge declarations cannot carry directly.
+
+Next work:
+
+1. Add end-to-end conversion golden coverage for representative Script v2 outputs: plain response-body, request-header, binary YouTube, QX-disabled Bilibili, Jingdong dynamic enable/Cookies, and YouTube typed argument object.
+2. Extend condition conversion only where complete Script v2 condition semantics can be reproduced.
+3. Re-run the upstream monitor after PR #8 merge so current RuCu6 outputs are regenerated from the new Script v2 pipeline.
+
 ## 2026-09-29 phase 4 — Rewrite v2 semantic coverage
 
 Implemented on `work/rewrite-v2-semantic-actions-20260929` / PR #6:
