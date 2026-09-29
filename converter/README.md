@@ -4,7 +4,7 @@ WayX 自有的 Loon Plugin → Quantumult X / Surge 转换核心。参考 KOP-XI
 
 当前检查点已经固化：
 
-- Loon `URL-REGEX` 按行为映射：`REJECT/REJECT-200` → QX `reject-200`，`REJECT-IMG` → `reject-img`，`REJECT-DROP` → QX `reject`；Surge 普通 profile 虽支持 `REJECT-DROP`，但官方 Module `[Rule]` 仅允许 `DIRECT / REJECT / REJECT-TINYGIF`，因此 `.sgmodule` 中 `REJECT-DROP / REJECT-NO-DROP` 规范化为 `REJECT`，`REJECT-IMG` → `REJECT-TINYGIF`；
+- Loon `URL-REGEX` 按行为映射：`REJECT/REJECT-200` → QX `reject-200`，`REJECT-IMG` → `reject-img`，`REJECT-DROP` → QX `reject`；Surge 的 Rule **类型**按官方 Rule index 尽量原样保留，包括 DOMAIN/DOMAIN-WILDCARD/IP-CIDR/IP-ASN/USER-AGENT/URL-REGEX/PROTOCOL/DEST-PORT/SUBNET/HOSTNAME-TYPE/AND/OR/NOT 等；但 `.sgmodule` 的 **策略**仍受官方 Module 文档限制，只能使用 `DIRECT / REJECT / REJECT-TINYGIF`。因此 `REJECT-IMG` → `REJECT-TINYGIF`，而 `REJECT-DROP / REJECT-NO-DROP` 不再降级成 `REJECT`，而是保留原规则注释等待 Review；
 - Quantumult X 不执行 `AND / OR / NOT`，保留原规则注释；
 - QX IP 类规则去除 `no-resolve`；
 - JQ 只做空白压缩，不重写 `walk/select/map/empty/any/if` 等算法；
@@ -43,7 +43,7 @@ Surge 模块输出另有独立规范化层，不复用 Loon 文件头或 Loon Ru
 - `.sgmodule` 顶部只生成官方模块元信息 `#!name / #!desc`，合法的 `#!system` 按需保留；Loon 的 `#!author / #!icon / #!date / #!loon_version` 改为普通注释原样保留；
 - WayX 的转换时间、作者 `chance`、模块分类、目标平台、来源以普通注释记录，不伪造未在官方手册确认的 `#!category`；
 - 使用 `[Body Rewrite]` 或 inline `[Map Local]` 时自动加入 `#!requirement=CORE_VERSION>=20`；
-- `[Rule]` 使用 Surge Module 允许的内部策略，并统一紧凑逗号格式；外部策略组如 `PROXY` 只保留注释，等待模块使用者绑定；
+- `[Rule]` 的规则类型按 Surge 当前官方 Rule Type Index 全量识别，并保留 Loon 与 Surge 共同支持的复杂组合（含 AND/OR/NOT 嵌套、URL-REGEX、USER-AGENT、PROTOCOL、no-resolve 等）；策略层单独按 Module 限制处理，外部策略组如 `PROXY` 只保留注释等待绑定；`REJECT-DROP / REJECT-NO-DROP` 因行为与 `REJECT` 不同，不再做有损归一化；
 - `[URL Rewrite]`、`[Header Rewrite]`、`[Body Rewrite]`、`[Map Local]`、`[Script]`、`[MITM]` 均按 Surge 官方 section 和参数形式输出；`[Script]` 使用现代 `name = type=...,pattern=...,script-path=...` 形式；
 - Module MITM hostname 始终使用 `hostname = %APPEND% ...`；
 - `converter/src/surge-module.mjs` 对生成结果做严格校验，防止 Loon 专属活动指令或非法 Surge Module Rule 重新进入输出。
