@@ -16,3 +16,4 @@ export * from './script-v2.mjs';
 export * from './script-v2-target.mjs';
 export * from './surge-module.mjs';
 export * from './metadata.mjs';
+export * from './legacy-rewrite.mjs';
