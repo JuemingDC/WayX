@@ -233,6 +233,11 @@ export function parseScriptV2(source) {
   if (argument && !['string','raw-string','plugin-object'].includes(argument.type)) {
     fail(raw, 'script argument must be a String/raw String or plugin object');
   }
+  if (argument?.type === 'plugin-object') {
+    if (!argument.items.length) fail(raw, 'plugin object argument must not be empty');
+    const names = argument.items.map(item => item.name);
+    if (new Set(names).size !== names.length) fail(raw, 'plugin object argument must not contain duplicate parameters');
+  }
 
   const tail = raw.slice(close + 1).trim();
   const options = [];
