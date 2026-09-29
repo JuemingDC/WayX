@@ -165,6 +165,8 @@ for (const testCase of cases) {
     sections:[...out.surge.matchAll(/^\[([^\]]+)\]$/gm)].map(m => m[1]),
   };
 
+  console.log('END_TO_END_ACTUAL ' + testCase.name + ' ' + JSON.stringify(actual));
+
   const expected = golden.cases[testCase.name];
   assert.ok(expected, testCase.name + ': missing golden fixture');
   for (const key of ['qxSha256','surgeSha256','qxBytes','surgeBytes','sourceScriptCount','generatedScriptCount','qxReview','surgeReview']) {
