@@ -77,6 +77,14 @@ assert.equal(
   'AND,((DOMAIN-KEYWORD,tnc),(OR,((DOMAIN-SUFFIX,capcutapi.com),(DOMAIN-SUFFIX,zijieapi.com)))),DIRECT',
 );
 assert.equal(surgeModuleRule('LOON-ONLY,foo,REJECT').reason, 'unsupported-rule-type');
+assert.equal(
+  surgeModuleRule('AND,((DOMAIN,example.com),(LOON-ONLY,foo)),REJECT').reason,
+  'unsupported-rule-type',
+);
+assert.equal(
+  surgeModuleRule('NOT,((DOMAIN,example.com),(DOMAIN,example.org)),REJECT').reason,
+  'unsupported-rule-type',
+);
 
 
 const surgeHeader = renderSurgeModuleHeader([
