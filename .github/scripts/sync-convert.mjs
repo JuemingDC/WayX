@@ -5,7 +5,7 @@ import { qxRule as canonicalQxRule, surgeRule as canonicalSurgeRule } from '../.
 import { selectQxScriptAction } from '../../converter/src/script.mjs';
 import { inspectQxScriptCompatibility, qxManualPortComment } from '../../converter/src/script-compat.mjs';
 import { minifyJq } from '../../converter/src/jq.mjs';
-import { BOXJS_SUBSCRIPTION, qxTargetPath, surgeTargetPath } from '../../converter/src/paths.mjs';
+import { qxTargetPath, surgeTargetPath } from '../../converter/src/paths.mjs';
 import { analyzeSafeRewriteV2 } from '../../converter/src/rewrite-v2-safe.mjs';
 import { isRewriteV2, parseRewriteV2 } from '../../converter/src/rewrite-v2.mjs';
 import { validateRewriteV2Ast } from '../../converter/src/rewrite-v2-actions.mjs';
@@ -13,7 +13,6 @@ import { qxMockPlanFromAction } from '../../converter/src/dependency.mjs';
 import { renderQxMockFileScript } from '../../converter/src/qx-mock.mjs';
 import { qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan, surgeHeaderRewritePlan, surgeInlineMockPlan, simpleUrlRewriteCondition } from '../../converter/src/rewrite-v2-semantic.mjs';
 import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript } from '../../converter/src/qx-semantic-script.mjs';
-import { mergeBoxJsSubscription, renderBoxJsApp, renderQxPrefsObjectBridge, renderQxScriptV2Bridge, renderSurgeScriptV2Bridge, renderSurgeModuleArguments } from '../../converter/src/argument.mjs';
 import { isScriptV2, parseScriptV2 } from '../../converter/src/script-v2.mjs';
 import { qxScriptV2Plan, surgeScriptV2Plan } from '../../converter/src/script-v2-target.mjs';
 
@@ -452,35 +451,12 @@ function parseScriptLine(line) {
   return { type, pattern, scriptPath, tag, requiresBody, binary, timeout, maxSize, argument, enable, original: line };
 }
 
-function argumentDefaults(lines = []) {
-  const out = new Map();
-  for (const item of sectionItems(lines)) {
-    if (!item.line) continue;
-    const idx = item.line.indexOf('=');
-    if (idx < 0) continue;
-    const name = item.line.slice(0, idx).trim();
-    const rhs = item.line.slice(idx + 1).trim();
-    const tokens = shellTokens(rhs.replace(/,/g, ' '));
-    // Loon: switch,true,false / select,"true","false". First value after type is default.
-    if (tokens.length >= 2) out.set(name, tokens[1].replace(/^['"]|['"]$/g, ''));
-  }
-  return out;
-}
-
-function resolveArgument(arg, defaults) {
-  if (!arg) return null;
-  return arg
-    .replace(/\[\{([^}]+)\}\]/g, (_, k) => defaults.get(k) ?? '')
-    .replace(/\{([^}]+)\}/g, (_, k) => defaults.get(k) ?? '');
-}
-
 function sanitizeName(s) {
   return (s || 'script').replace(/[=,\r\n]/g, '_').trim().slice(0, 64) || 'script';
 }
 
 function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Map()) {
   const parsed = parseLoon(source);
-  const defaults = argumentDefaults(parsed.sections.get('Argument'));
   const meta = [
     `# Converted: ${stamp}`,
     '# Converted by: chance',
@@ -490,8 +466,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   const header = parsed.header.filter(l => !/^#\s*引用链接:/.test(l));
   while (header.length && !header.at(-1).trim()) header.pop();
 
-  const qx = { filter: [], rewrite: [], mitm: [], notes: [], generatedScripts: new Map(), preferenceIds: new Set() };
-  const sg = { rule: [], url: [], header: [], map: [], body: [], script: [], mitm: [], notes: [], generatedScripts: new Map(), moduleArgumentIds: new Set() };
+  const qx = { filter: [], rewrite: [], mitm: [], notes: [], generatedScripts: new Map() };
+  const sg = { rule: [], url: [], header: [], map: [], body: [], script: [], mitm: [], notes: [], generatedScripts: new Map() };
   const qctx = { id: entry.id, generatedScripts: qx.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, mockFiles: qxMockFiles };
   const sctx = { id: entry.id, generatedScripts: sg.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category };
 
@@ -552,12 +528,12 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
 
       const mapped = scriptMap.get(ast.script.path);
       const sourceText = mapped?.source || '';
-      let qxUrl = mapped?.qx || ast.script.path;
-      let surgeUrl = mapped?.surge || ast.script.path;
+      const qxUrl = mapped?.qx || ast.script.path;
+      const surgeUrl = mapped?.surge || ast.script.path;
       const qxCompat = inspectQxScriptCompatibility({
         scriptUrl: ast.script.path,
         sourceText,
-        forkUrl: mapped?.qxAdapted ? qxUrl : '',
+        forkUrl: '',
       });
 
       qx.rewrite.push(...comments);
@@ -565,33 +541,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
         qx.rewrite.push(...qxManualPortComment({ scriptUrl: ast.script.path, result: qxCompat }));
         qx.rewrite.push(`# Original Loon: ${item.line}`);
       } else {
-        let qxBridge = null;
-        let qxBridgeError = null;
-        try {
-          qxBridge = renderQxScriptV2Bridge(entry.id, parsed.sections.get('Argument') || [], ast, sourceText, {
-            stamp,
-            category: entry.category,
-            sourceUrl: ast.script.path,
-          });
-          if (qxBridge.changed) {
-            const key = crypto.createHash('sha1').update('script-v2-qx\0' + item.line).digest('hex').slice(0, 10);
-            const filename = `scriptv2_qx_${key}.js`;
-            qx.generatedScripts.set(filename, qxBridge.source);
-            qxUrl = `${RAW_BASE}/script/${entry.id}/${filename}`;
-            for (const id of qxBridge.preferenceIds) qx.preferenceIds.add(id);
-          }
-        } catch (error) {
-          qxBridgeError = String(error?.message || error).split('\n')[0];
-        }
-
-        const qxPlan = qxBridgeError
-          ? {ok:false, reason:qxBridgeError}
-          : qxScriptV2Plan(ast, {
-              scriptUrl: qxUrl,
-              sourceText,
-              bridgeReady:Boolean(qxBridge?.changed),
-            });
-
+        const qxPlan = qxScriptV2Plan(ast, { scriptUrl: qxUrl, sourceText });
         if (!qxPlan.ok) {
           qx.rewrite.push(`# [WayX] SCRIPT V2 REVIEW REQUIRED: ${qxPlan.reason}`);
           qx.rewrite.push(`# Original Loon: ${item.line}`);
@@ -599,48 +549,21 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
           qx.rewrite.push(`# [WayX] Script disabled by source option: ${item.line}`);
         } else {
           if (qxPlan.tag) qx.rewrite.push(`# ${qxPlan.tag}`);
-          if (qxPlan.binaryBodyMode) qx.rewrite.push('# [WayX] Loon binary_body_mode=true; QX binary handling is delegated to the compatible script runtime.');
-          if (qxBridge?.changed) qx.rewrite.push('# [WayX] BoxJs/$prefs Script v2 bridge active.');
+          if (qxPlan.binaryBodyMode) qx.rewrite.push('# [WayX] Loon binary_body_mode=true; script source is preserved unchanged.');
+          for (const note of qxPlan.notes || []) qx.rewrite.push(`# [WayX] ${note}`);
           qx.rewrite.push(qxPlan.line);
         }
       }
 
       const name = sanitizeName((ast.options.find(x => x.name === 'tag')?.value?.value) || `${entry.id}_${String(scriptIndex).padStart(2, '0')}`);
+      const surgePlan = surgeScriptV2Plan(ast, { scriptUrl: surgeUrl, name });
       sg.script.push(...comments);
-      let surgeBridge = null;
-      let surgeBridgeError = null;
-      try {
-        surgeBridge = renderSurgeScriptV2Bridge(parsed.sections.get('Argument') || [], ast, sourceText, {
-          stamp,
-          category: entry.category,
-          sourceUrl: ast.script.path,
-        });
-        if (surgeBridge.changed) {
-          const key = crypto.createHash('sha1').update('script-v2-surge\0' + item.line).digest('hex').slice(0, 10);
-          const filename = `scriptv2_surge_${key}.js`;
-          sg.generatedScripts.set(filename, surgeBridge.source);
-          surgeUrl = `${RAW_BASE}/script/${entry.id}/${filename}`;
-          for (const id of surgeBridge.moduleArgumentIds) sg.moduleArgumentIds.add(id);
-        }
-      } catch (error) {
-        surgeBridgeError = String(error?.message || error).split('\n')[0];
-      }
-
-      const surgePlan = surgeBridgeError
-        ? {ok:false, reason:surgeBridgeError}
-        : surgeScriptV2Plan(ast, {
-            scriptUrl: surgeUrl,
-            name,
-            bridgeReady:Boolean(surgeBridge?.changed),
-            declarationArgument:surgeBridge?.declarationArgument || null,
-          });
       if (!surgePlan.ok) {
         sg.script.push(`# [WayX] SCRIPT V2 REVIEW REQUIRED: ${surgePlan.reason}`);
         sg.script.push(`# Original Loon: ${item.line}`);
       } else if (surgePlan.disabled) {
         sg.script.push(`# [WayX] Script disabled by source option: ${item.line}`);
       } else {
-        if (surgeBridge?.changed) sg.script.push('# [WayX] Surge module-argument Script v2 bridge active.');
         sg.script.push(surgePlan.line);
       }
       continue;
@@ -659,12 +582,21 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     const qxCompat = inspectQxScriptCompatibility({
       scriptUrl: sc.scriptPath,
       sourceText: mapped?.source || '',
-      forkUrl: mapped?.qxAdapted ? qxUrl : '',
+      forkUrl: '',
     });
+
+    const enableFixed = sc.enable ? String(sc.enable).trim().toLowerCase() : '';
+    const enableDynamic = Boolean(sc.enable) && !['true','false','1','0'].includes(enableFixed);
+
     qx.rewrite.push(...comments);
     if (sc.tag) qx.rewrite.push(`# ${sc.tag}`);
     if (!qxCompat.executable) {
       qx.rewrite.push(...qxManualPortComment({ scriptUrl: sc.scriptPath, result: qxCompat }));
+      qx.rewrite.push(`# Original Loon: ${item.line}`);
+    } else if (enableFixed === 'false' || enableFixed === '0') {
+      qx.rewrite.push(`# [WayX] Script disabled by source declaration: ${item.line}`);
+    } else if (sc.argument || enableDynamic) {
+      qx.rewrite.push('# [WayX] SCRIPT REVIEW REQUIRED: QX declaration cannot carry this Loon argument/enable semantics without changing the script.');
       qx.rewrite.push(`# Original Loon: ${item.line}`);
     } else {
       const qType = selectQxScriptAction({
@@ -673,27 +605,30 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
         scriptUrl: sc.scriptPath,
         sourceText: mapped?.source || '',
       }).action;
-      if (sc.argument && mapped?.qxArgumentBridge) qx.rewrite.push(`# [WayX] BoxJs/$prefs bridge active for argument=${sc.argument}`);
-      else if (sc.argument) qx.rewrite.push(`# [WayX] REVIEW REQUIRED: verify BoxJs/$prefs bridge for argument=${sc.argument}`);
-      if (sc.enable && mapped?.qxEnableBridge) qx.rewrite.push(`# [WayX] BoxJs/$prefs enable bridge active for enable=${sc.enable}`);
-      else if (sc.enable) qx.rewrite.push(`# [WayX] REVIEW REQUIRED: verify QX enable bridge for enable=${sc.enable}`);
-      if (sc.argument || sc.enable || sc.binary) qx.rewrite.push(`# Loon script options preserved in source: ${[sc.argument && `argument=${sc.argument}`, sc.enable && `enable=${sc.enable}`, sc.binary && 'binary-body-mode=true'].filter(Boolean).join(', ')}`);
       qx.rewrite.push(`${sc.pattern} url ${qType} ${qxUrl}`);
     }
 
-    const resolvedArg = resolveArgument(sc.argument, defaults);
     const name = sanitizeName(sc.tag || `${entry.id}_${String(scriptIndex).padStart(2, '0')}`);
-    const params = [`type=${sc.type}`, `pattern=${sc.pattern}`, `script-path=${surgeUrl}`];
-    if (sc.requiresBody) {
-      params.push('requires-body=true');
-      params.push(`max-size=${sc.maxSize || '-1'}`);
-    }
-    if (sc.binary) params.push('binary-body-mode=true');
-    if (sc.timeout) params.push(`timeout=${sc.timeout}`);
-    if (resolvedArg) params.push(`argument=${resolvedArg}`);
     sg.script.push(...comments);
-    if (sc.enable) sg.script.push(`# Loon per-script enable option ${sc.enable} uses its declared default in this Surge conversion.`);
-    sg.script.push(`${name} = ${params.join(',')}`);
+    if (enableFixed === 'false' || enableFixed === '0') {
+      sg.script.push(`# [WayX] Script disabled by source declaration: ${item.line}`);
+    } else if (enableDynamic) {
+      sg.script.push('# [WayX] SCRIPT REVIEW REQUIRED: dynamic Loon enable has no verified Surge declaration equivalent.');
+      sg.script.push(`# Original Loon: ${item.line}`);
+    } else if (sc.argument && /[\[{]\{?[^}\]]+\}?[\]}]/.test(sc.argument)) {
+      sg.script.push('# [WayX] SCRIPT REVIEW REQUIRED: dynamic/typed Loon argument is not converted because script source must remain unchanged.');
+      sg.script.push(`# Original Loon: ${item.line}`);
+    } else {
+      const params = [`type=${sc.type}`, `pattern=${sc.pattern}`, `script-path=${surgeUrl}`];
+      if (sc.requiresBody) {
+        params.push('requires-body=true');
+        params.push(`max-size=${sc.maxSize || '-1'}`);
+      }
+      if (sc.binary) params.push('binary-body-mode=true');
+      if (sc.timeout) params.push(`timeout=${sc.timeout}`);
+      if (sc.argument) params.push(`argument=${sc.argument}`);
+      sg.script.push(`${name} = ${params.join(',')}`);
+    }
   }
 
   const mitmLines = parsed.sections.get('MitM') || parsed.sections.get('MITM') || [];
@@ -737,145 +672,24 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   if (sg.map.length) surgeSections.push('[Map Local]', ...compact(sg.map), '');
   if (sg.script.length) surgeSections.push('[Script]', ...compact(sg.script), '');
   if (sg.mitm.length) surgeSections.push('[MITM]', ...compact(sg.mitm), '');
-  const surgeArgumentMeta = renderSurgeModuleArguments(parsed.sections.get('Argument') || [], [...sg.moduleArgumentIds]);
-  const sgOut = [...header, ...surgeArgumentMeta, ...meta, '# Target: Surge', '', ...surgeSections].join('\n').replace(/\n*$/, '\n');
+  const sgOut = [...header, ...meta, '# Target: Surge', '', ...surgeSections].join('\n').replace(/\n*$/, '\n');
 
-  return {
-    qx: qxOut.replace(/\n*$/, '\n'),
-    surge: sgOut,
-    generatedScripts: new Map([...qx.generatedScripts, ...sg.generatedScripts]),
-    qxPreferenceIds: [...qx.preferenceIds],
-  };
+  return { qx: qxOut.replace(/\n*$/, '\n'), surge: sgOut, generatedScripts: new Map([...qx.generatedScripts, ...sg.generatedScripts]) };
 }
 
-function convertedScriptMeta(entry, target, sourceUrl, stamp) {
-  return [
-    `// Converted: ${stamp}`,
-    '// Converted by: chance',
-    `// Category: ${entry.category}`,
-    `// Target: ${target}`,
-    `// Source: ${sourceUrl}`,
-    '',
-  ].join('\n');
-}
-
-async function writeAdaptedScript(dest, entry, target, sourceUrl, body) {
-  await fs.mkdir(path.dirname(dest), { recursive: true });
-  const normalizedBody = normalizeNewlines(body).replace(/^\/\/ Converted:.*\n\/\/ Converted by: chance\n\/\/ Category:.*\n\/\/ Target:.*\n\/\/ Source:.*\n\n/, '').replace(/\n*$/, '\n');
-  const old = await exists(dest) ? normalizeNewlines(await fs.readFile(dest, 'utf8')) : null;
-  const oldStamp = (old?.match(/^\/\/ Converted:\s*(.+)$/m) || [])[1] || null;
-  const candidate = convertedScriptMeta(entry, target, sourceUrl, oldStamp || nowCN()) + normalizedBody;
-  if (old === candidate) return false;
-  const output = convertedScriptMeta(entry, target, sourceUrl, nowCN()) + normalizedBody;
-  await fs.writeFile(dest, output);
-  return true;
-}
-
-function adaptSurgeScript(entry, source) {
-  if (entry.id !== 'DianPing') return source;
-  const out = source
-    .replace('$done({body: "", headers: "", status: "HTTP/1.1 404 Not Found"});', '$done({body: "", headers: {}, status: 404});')
-    .replace('$done({bodyBytes: hexStringToArrayBuffer(hexString),headers: header, status: "HTTP/1.1 200 OK"});', '$done({body: new Uint8Array(hexStringToArrayBuffer(hexString)), headers: header, status: 200});');
-  if (/bodyBytes\s*:/.test(out) || /status\s*:\s*["']HTTP\/1\.1/.test(out)) {
-    throw new Error(`${entry.id}: Surge script adapter could not remove Quantumult X-only response fields`);
-  }
-  return out;
-}
-
-function adaptDianPingQX(entry, source, defaults) {
-  if (entry.id !== 'DianPing') return source;
-  const fallback = String(defaults.get('davsdmpk_enable') ?? 'true').trim().toLowerCase() === 'false' ? 'false' : 'true';
-  const key = 'wayx.dianping.davsdmpk_enable';
-  return [
-    '// WayX BoxJs -> Quantumult X $prefs enable bridge',
-    '// Converted by: chance',
-    `const __wayxEnabledValue = $prefs.valueForKey(${JSON.stringify(key)});`,
-    `const __wayxEnabled = String(__wayxEnabledValue === null || __wayxEnabledValue === undefined ? ${JSON.stringify(fallback)} : __wayxEnabledValue).toLowerCase() === "true";`,
-    'if (!__wayxEnabled) {',
-    '  $done({});',
-    '} else {',
-    source,
-    '}',
-    '',
-  ].join('\n');
-}
-
-function adaptTiebaQX(entry, source, argumentLines = []) {
-  if (entry.id !== 'Tieba') return source;
-  if (!/\$argument\b/.test(source)) throw new Error(`${entry.id}: expected $argument usage was not found in tieba-proto.js`);
-  if (/\b(?:const|let|var)\s+\$argument\b/.test(source)) throw new Error(`${entry.id}: source declares $argument; automatic QX bridge would collide`);
-
-  const bridge = renderQxPrefsObjectBridge(
-    entry.id,
-    argumentLines,
-    ['per_filter_video_thread'],
-    { per_filter_video_thread: 'boolean' },
-  );
-  return bridge + source;
-}
-
-async function adaptPinDuoDuoCommon(entry, source) {
-  if (entry.id !== 'PinDuoDuo') return source;
-  const re = /https:\/\/kelee\.one\/Resource\/JavaScript\/PinDuoDuo\/[^"'\s]+\.js/g;
-  const urls = [...new Set(source.match(re) || [])];
-  let out = source;
-  for (const runtimeUrl of urls) {
-    const filename = decodeURIComponent(new URL(runtimeUrl).pathname.split('/').pop());
-    const { text } = await fetchWithFallback(runtimeUrl);
-    const nested = normalizeNewlines(text).replace(/\n*$/, '\n');
-    const dest = path.join(SCRIPT_DIR, entry.id, filename);
-    await fs.mkdir(path.dirname(dest), { recursive: true });
-    if (!await exists(dest) || normalizeNewlines(await fs.readFile(dest, 'utf8')) !== nested) await fs.writeFile(dest, nested);
-    out = out.split(runtimeUrl).join(`${RAW_BASE}/script/${entry.id}/${encodeURIComponent(filename)}`);
-  }
-  if (/https:\/\/kelee\.one\/Resource\/JavaScript\/PinDuoDuo\//.test(out)) {
-    throw new Error(`${entry.id}: unresolved Kelee runtime dependency remains in converted script`);
-  }
-  return out;
-}
-
-async function syncScript(entry, url, defaults = new Map(), argumentLines = []) {
+async function syncScript(entry, url) {
   const filename = decodeURIComponent(new URL(url).pathname.split('/').pop() || `${entry.id}.js`);
   const destDir = path.join(SCRIPT_DIR, entry.id);
   await fs.mkdir(destDir, { recursive: true });
   const { text } = await fetchWithFallback(url);
   const normalized = normalizeNewlines(text).replace(/\n*$/, '\n');
-
-  // Keep an exact upstream script copy when the common runtime script itself needs conversion.
-  const sourceDest = entry.id === 'PinDuoDuo' ? path.join(destDir, 'Source', filename) : path.join(destDir, filename);
-  await fs.mkdir(path.dirname(sourceDest), { recursive: true });
-  if (!await exists(sourceDest) || normalizeNewlines(await fs.readFile(sourceDest, 'utf8')) !== normalized) await fs.writeFile(sourceDest, normalized);
-
-  let qxPath = sourceDest;
-  let surgePath = sourceDest;
-
-  if (entry.id === 'Tieba') {
-    const qxDest = path.join(destDir, 'QuantumultX', filename);
-    await writeAdaptedScript(qxDest, entry, 'Quantumult X', url, adaptTiebaQX(entry, normalized, argumentLines));
-    qxPath = qxDest;
+  const dest = path.join(destDir, filename);
+  if (!await exists(dest) || normalizeNewlines(await fs.readFile(dest, 'utf8')) !== normalized) {
+    await fs.writeFile(dest, normalized);
   }
-
-  if (entry.id === 'DianPing') {
-    const qxDest = path.join(destDir, 'QuantumultX', filename);
-    const surgeDest = path.join(destDir, 'Surge', filename);
-    await writeAdaptedScript(qxDest, entry, 'Quantumult X', url, adaptDianPingQX(entry, normalized, defaults));
-    await writeAdaptedScript(surgeDest, entry, 'Surge', url, adaptSurgeScript(entry, normalized));
-    qxPath = qxDest;
-    surgePath = surgeDest;
-  }
-
-  if (entry.id === 'PinDuoDuo') {
-    const commonDest = path.join(destDir, filename);
-    const adapted = await adaptPinDuoDuoCommon(entry, normalized);
-    await writeAdaptedScript(commonDest, entry, 'Quantumult X / Surge', url, adapted);
-    qxPath = commonDest;
-    surgePath = commonDest;
-  }
-
-  const toRaw = file => `${RAW_BASE}/${path.relative(ROOT, file).split(path.sep).map(encodeURIComponent).join('/')}`;
-  return { qx: toRaw(qxPath), surge: toRaw(surgePath), source: normalized, qxAdapted: qxPath !== sourceDest, qxArgumentBridge: entry.id === 'Tieba', qxEnableBridge: entry.id === 'DianPing' };
+  const raw = `${RAW_BASE}/${path.relative(ROOT, dest).split(path.sep).map(encodeURIComponent).join('/')}`;
+  return { qx: raw, surge: raw, source: normalized, qxAdapted: false };
 }
-
 function scriptUrls(source) {
   const urls = new Set([...source.matchAll(/script-path=([^,\s]+)/gi)].map(m => m[1].trim()));
   const parsed = parseLoon(source);
@@ -917,7 +731,6 @@ async function main() {
   const manifest = JSON.parse(await fs.readFile(MANIFEST, 'utf8'));
   await Promise.all([RESOURCE_DIR, TARGET_ROOT, SCRIPT_DIR].map(d => fs.mkdir(d, { recursive: true })));
   const failures = [];
-  const generatedBoxJsApps = [];
   for (const entry of manifest) {
     try {
       console.log(`\n== ${entry.id} ==`);
@@ -934,15 +747,8 @@ async function main() {
       const parsedSource = parseLoon(source);
       const qxMockFiles = await materializeQxMockFiles(entry, parsedSource);
       const argumentLines = parsedSource.sections.get('Argument') || [];
-      const sourceDefaults = argumentDefaults(argumentLines);
       for (const url of scriptUrls(source)) {
-        scriptMap.set(url, await syncScript(entry, url, sourceDefaults, argumentLines));
-      }
-
-      // Only publish BoxJs controls once the corresponding QX bridge is functional.
-      if (['Tieba', 'DianPing'].includes(entry.id) && argumentLines.length) {
-        const displayName = (source.match(/^#!name\s*=\s*(.+)$/m) || [])[1]?.trim() || entry.id;
-        generatedBoxJsApps.push(renderBoxJsApp({ ...entry, name: displayName }, argumentLines));
+        scriptMap.set(url, await syncScript(entry, url));
       }
 
       const qxPath = path.join(ROOT, qxTargetPath(entry));
@@ -966,18 +772,6 @@ async function main() {
         out = convert(entry, source, scriptMap, stamp, qxMockFiles);
       }
 
-      if (out.qxPreferenceIds?.length && argumentLines.length) {
-        const used = new Set(out.qxPreferenceIds);
-        const usedArgumentLines = argumentLines.filter(raw => {
-          const idx = raw.indexOf('=');
-          return idx > 0 && used.has(raw.slice(0, idx).trim());
-        });
-        if (usedArgumentLines.length) {
-          const displayName = (source.match(/^#!name\s*=\s*(.+)$/m) || [])[1]?.trim() || entry.id;
-          generatedBoxJsApps.push(renderBoxJsApp({ ...entry, name: displayName }, usedArgumentLines));
-        }
-      }
-
       for (const [file, content] of out.generatedScripts) {
         const dir = path.join(SCRIPT_DIR, entry.id);
         await fs.mkdir(dir, { recursive: true });
@@ -995,18 +789,6 @@ async function main() {
       console.error(`::error title=${entry.id}::${String(e.message).replaceAll('\n', '%0A')}`);
     }
   }
-  if (!failures.length && generatedBoxJsApps.length) {
-    const boxJsPath = path.join(ROOT, BOXJS_SUBSCRIPTION);
-    const current = JSON.parse(await fs.readFile(boxJsPath, 'utf8'));
-    const merged = mergeBoxJsSubscription(current, generatedBoxJsApps);
-    const next = JSON.stringify(merged, null, 2) + '\n';
-    const previous = normalizeNewlines(await fs.readFile(boxJsPath, 'utf8'));
-    if (previous !== next) {
-      await fs.writeFile(boxJsPath, next);
-      console.log(`BoxJs updated -> ${path.relative(ROOT, boxJsPath)}`);
-    }
-  }
-
   if (failures.length) {
     console.error('\nFailures:\n' + failures.join('\n\n'));
     process.exitCode = 1;
