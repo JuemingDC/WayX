@@ -172,19 +172,3 @@ export function analyzePluginArgumentUsage({
     policyBindings,
   };
 }
-
-export function argumentUsageSummary(analysis) {
-  const out = [];
-  for (const arg of analysis?.arguments || []) {
-    const labels = [...new Set(arg.uses.map(use =>
-      use.kind === 'dynamic-option' ? 'Script ' + use.option : use.section + ' ' + use.kind
-    ))];
-    out.push({
-      id:arg.id,
-      used:arg.used,
-      valueType:arg.valueType,
-      uses:labels,
-    });
-  }
-  return out;
-}
