@@ -10,6 +10,7 @@ import { isRewriteV2, parseRewriteV2 } from '../src/rewrite-v2.mjs';
 import { validateRewriteV2Ast } from '../src/rewrite-v2-actions.mjs';
 import { jqDependencySpecFromAction } from '../src/dependency.mjs';
 import { minifyJqFile } from '../src/jq.mjs';
+import { loadLoonSourceCatalog } from '../src/source-catalog.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -143,7 +144,7 @@ function assertOfflineDependencies(entry, source) {
   }
 }
 
-const manifest = JSON.parse(await fs.readFile(MANIFEST, 'utf8'));
+const manifest = await loadLoonSourceCatalog(MANIFEST);
 const dependencyCache = await loadDependencyCache();
 const changed = [];
 const failures = [];
