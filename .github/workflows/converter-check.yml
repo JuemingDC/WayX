@@ -29,6 +29,7 @@ jobs:
           node --check converter/tests/rucu6-rewrite-v2-coverage.mjs
           node --check converter/tests/rucu6-script-v2-coverage.mjs
           node --check converter/tests/loon-new-syntax-cases.mjs
+          node --check converter/tests/surge-rule-coverage.mjs
       - name: Converter checkpoint
         run: |
           node converter/tests/checkpoint.mjs
@@ -36,3 +37,4 @@ jobs:
           node converter/tests/rucu6-rewrite-v2-coverage.mjs
           node converter/tests/rucu6-script-v2-coverage.mjs
           node converter/tests/loon-new-syntax-cases.mjs
+          node converter/tests/surge-rule-coverage.mjs
