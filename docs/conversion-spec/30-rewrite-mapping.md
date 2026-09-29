@@ -109,6 +109,8 @@ response.header.add/set/del/replace
 
 对 Quantumult X 不发明数组 Header、重复 raw Header 行或其他未在官方示例中证明的返回格式；`add` 在 QX Header 对象模型中写入匹配 Header 键。
 
+若 Loon 中存在**连续、同 phase、同 condition** 的多条 Header Rewrite，QX 输出必须将它们合并到一个 Header helper，并按源顺序执行全部动作，避免同一事务依赖多条同时命中的 QX rewrite。中间存在注释/空行或条件不同则不擅自跨边界合并。
+
 ## 30.5 Rewrite v2 Pipeline
 
 Loon：
