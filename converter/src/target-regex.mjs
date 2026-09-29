@@ -12,12 +12,19 @@ function fail(reason) {
   return { ok: false, reason };
 }
 
-export function compileRegexForTarget(regex, { subject = 'url' } = {}) {
+export function compileRegexForTarget(regex, { subject = 'url', target = 'generic' } = {}) {
   if (!regex || regex.type !== 'regex') throw new TypeError('Expected Rewrite v2 regex AST node');
 
-  const pattern = regex.pattern;
+  let pattern = regex.pattern;
   const flags = String(regex.flags || '');
   const notes = [];
+
+  if (target === 'surge' && subject === 'url') {
+    // Surge URL patterns are bare regular expressions, not /.../ literals.
+    // Remove Loon/JavaScript-only slash escaping and canonicalize a leading
+    // capture from (^...) to ^(...) without changing capture numbering.
+    pattern = pattern.replace(/\\\//g, '/').replace(/^\(\^/, '^(');
+  }
 
   if (flags.includes('i')) {
     notes.push('i-source-flag-not-expressed-in-target-declaration');
