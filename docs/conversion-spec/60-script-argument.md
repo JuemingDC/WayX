@@ -1,20 +1,21 @@
 # Block 60 — Script / Argument
 
-## 60.1 Source Script 唯一原则
+## 60.1 Source Script 原则
 
-**只转换 Script 声明，不转换 Source JavaScript 正文。**
+Source JavaScript 不做正文改写。
 
 禁止：
-- prepend
-- wrapper
-- fork
-- 自动 API 替换
-- 删除 QX 不支持检查
-- 为 `$argument` / `enable` 修改脚本
+- prepend / wrapper / fork；
+- 自动替换运行时 API；
+- 为了转换 Loon `[Argument]` 修改脚本；
+- 为了让参数可选而生成 QX BoxJs bridge。
 
-## 60.2 Quantumult X Script Action
+脚本正文可以用于一般兼容性判断，但**不得用于把 Loon 插件参数转换成 QX 参数配置**。
 
-Crossutility 官方 sample 已确认的 Script action 包括：
+## 60.2 Quantumult X Script 声明
+
+QX Script action 只使用官方 sample 已确认的声明形式：
+
 ```text
 script-request-header
 script-request-body
@@ -24,7 +25,7 @@ script-echo-response
 script-analyze-echo-response
 ```
 
-选择依据是脚本实际行为，不是文件名。
+选择依据是源声明和脚本实际阶段/Body 行为，不按插件名或作者特判。
 
 | Source 行为 | QX declaration |
 |---|---|
@@ -35,125 +36,87 @@ script-analyze-echo-response
 | response，只处理 header | `script-response-header` |
 | response，读取/修改 body | `script-response-body` |
 
-兼容检查至少包括：
-- 是否明确拒绝 QX；
-- 是否已有 QX adapter；
-- 是否依赖 Loon-only API；
-- binary 是否正确使用目标平台数据接口。
+## 60.3 Loon [Argument] → Quantumult X
 
-明确不支持 QX：
-```text
-# [WayX] QUANTUMULT X UNSUPPORTED
-# Source declaration: ...
-# Reason: ...
-```
+**不转换。**
 
-目标成品中的 Review/Unsupported 注释使用 `Source declaration`，不添加 `Original Loon`、`Loon resource` 等来源平台标签。
+Loon `[Argument]`、PluginObject、动态 `enable/timeout/debug` 属于 Loon 插件配置语义。WayX 不把这些内容转换为：
 
-不 fork。
+- QX snippet 参数；
+- BoxJs app / setting；
+- `$prefs` 配置；
+- URL fragment / `$environment.sourcePath` 参数；
+- wrapper 或 fork 后的自定义参数桥。
 
-## 60.3 Surge Script
+BoxJs 仍可作为 WayX 中独立的 QX 功能存在，但它与 **Loon Plugin → QX** 自动转换链无关。
 
-使用现代 Surge：
-```ini
-[Script]
-name = type=http-request,pattern=...,script-path=...
-name = type=http-response,pattern=...,script-path=...
-```
+转换器只在内部解析 `[Argument]`，用途仅有一个：判断某条 Rule / Rewrite / Script 是否依赖 Loon 插件参数。若依赖且目标声明无法保持同一语义，则该条进入 Review，不输出伪等价的活动配置。
 
-合法映射：
-- `requires_body` → `requires-body`
-- `binary_body_mode` → `binary-body-mode`
-- 固定 timeout → `timeout=`
+### 60.3.1 输出规则
 
-## 60.4 [Argument] → QX
+QX 成品：
+- 不复制源 `[Argument]` 区块；
+- 不输出 Argument usage 清单；
+- 不输出 Loon 参数默认值；
+- 不生成 BoxJs 配置；
+- 只在具体声明无法等价转换时保留必要的 Review / Unsupported 原因。
 
-QX snippet 没有 Loon `[Argument]` 同构语法。
+禁止使用 Loon 默认值将动态配置“冻结”为静态配置。
 
-因此 converter：
-- 不修改 Source Script 注入 `$prefs`
-- 不生成 wrapper 重建 typed object
-- 不用 BoxJs 偷偷改变 Source Script 接口
+## 60.4 Rule PROXY 与 Argument 分离
 
-若原脚本自身已支持 QX `$prefs` / QX adapter，可按原脚本接口使用；否则参数化 Script 声明进入 Review。
+Loon Plugin 中的 `PROXY` 是 policy binding 语义，不视为普通 `[Argument]` id。
 
-BoxJs 可以作为独立 QX 原生功能存在，但不能成为自动改造 Source Script 的手段。
+QX Rule 转换时：
+- 保留目标 policy 名称 `PROXY`；
+- 不降级为 QX 内建小写 `proxy`；
+- 不通过 BoxJs 自动创建策略；
+- 用户目标配置中需要存在对应 policy，或由其自行绑定。
 
-### 60.4.1 Plugin Argument 使用分型
+## 60.5 Surge Script
 
-Loon 官方定义的 `[Argument]` 是插件级 typed data，`input/select` 默认 String、可声明 Number，`switch` 为 Boolean；Script 的 PluginObject 会把这些类型保留到 `$argument`，动态 `enable` 也直接受插件参数控制。
+Surge 使用当前官方 Module Script 声明。
 
-converter 必须先做静态使用分析，再决定是否可自动转换。至少分为：
+可直接保持的固定声明字段按官方语法转换，例如：
+- `requires_body` → `requires-body`；
+- `binary_body_mode` → `binary-body-mode`；
+- 固定 timeout → `timeout=`。
 
-| 使用位置 | 目标处理 |
-|---|---|
-| 仅声明、未被任何执行项引用 | 保留声明注释；不制造运行时配置 |
-| Rewrite condition / action 引用 | QX / Surge 均 Review，除非未来存在经官方验证的同构参数机制 |
-| Script condition 引用 | QX / Surge 均 Review；不得只保留 URL 条件而丢掉参数条件 |
-| Script PluginObject `{\${id}}` | QX / Surge 均 Review；不得把 typed Object 改成 String |
-| Script dynamic `enable/timeout/debug` | QX / Surge 均 Review；不得冻结成默认值伪装为等价 |
-| 固定 String / Raw String `$argument` | QX Review；Surge 仅在 `argument=` 能传入完全相同 String 时直接 |
-| Rule `PROXY` | 这是插件 policy binding，不属于普通 `[Argument]` id；QX 保留字面 `PROXY`，Surge 继续要求 policy 绑定 |
+Loon typed PluginObject、动态 enable 等没有经过验证的同构语义时仍进入 Review。WayX 不把 Loon `[Argument]` 区块自动改造成 Surge/QX 的参数 UI。
 
-禁止：
-- 用 Loon 默认值静态替换参数后声称完成了参数转换；
-- 把 Boolean/Number/Object 序列化成 String 后继续自动执行；
-- 因 QX 支持 `$prefs` 或 `$environment.sourcePath` 就自动修改 Source Script；
-- 为实现参数 UI 自动生成 wrapper、fork 或插件特判。
+## 60.6 Script 兼容性与插件身份无关
 
-只有 Source Script **自身已经实现并实际读取**目标平台的参数接口，且转换器能从源码证明输入类型和行为等价时，才允许另行建立原生映射；仍不得修改 Source Script。
-
-## 60.5 [Argument] → Surge
-
-Surge `#!arguments` 只在**不改变 Source Script 接口**时使用。
-
-允许：
-- Source Script 原本接收 string `$argument`
-- Surge `argument=` 能传入完全相同字符串
-
-Review：
-- Loon typed object argument
-- Boolean/Number object 重建
-- dynamic `enable` 需要 wrapper 才能实现
-
-
-## 60.6 Script 兼容性判定必须与插件身份无关
-
-兼容性只允许依据 Source Script 内容与脚本声明本身判定。
-
-允许使用的证据：
-- 显式 Quantumult X 支持或拒绝；
-- `$task` / `$prefs` / `$notify`；
-- `$httpClient` / `$persistentStore`；
-- `$utils` / `$loon`；
-- body / bodyBytes；
+一般 Source Script 兼容性判断可依据：
+- 明确的目标平台支持/拒绝；
+- 已知运行时 API；
 - request/response phase；
-- binary 模式；
-- `$done` 返回形态。
+- body / bodyBytes；
+- `$done` 返回行为。
 
-禁止建立：
-- 按插件名的 adapter registry；
-- 按作者的 whitelist；
-- 按 script URL 路径的特判；
-- 按来源仓库的 compatibility override。
+禁止依据：
+- 插件名；
+- 作者；
+- script URL 路径；
+- 来源仓库；
+- Loon `[Argument]` 的值。
 
-如果脚本正文不可获得，且仅凭声明无法证明兼容，必须 Review。
+兼容性扫描不承担 Loon 参数转换职责。
 
-## 60.6.1 Source Script URL 保留
+## 60.7 Source Script URL
 
-- 转换时可从原 `script-path` / `script("...")` URL 临时读取脚本正文做兼容性判断；相对路径只允许相对原插件 `source` URL 解析。
-- 不把 Source Script 复制到 WayX 仓库。
-- 不把目标 QX/Surge 声明改写为 WayX raw URL。
-- 不使用 GitHub/第三方镜像替代原脚本。
-- 原脚本 URL 读取失败时进入 Review/automation failure，不能用副本继续生成“看似成功”的目标。
+- Source Script 保留原始 URL；
+- 不复制为 WayX 镜像；
+- 不用第三方 mirror/fallback；
+- URL 不可用或兼容性无法证明时 fail closed / Review；
+- WayX 为 Rewrite/Mock 等目标能力生成的 helper script 不属于 Source Script 镜像。
 
-## 60.7 自动转换实现
+## 60.8 实现索引
 
-- Legacy script behavior selection：`converter/src/script.mjs`
-- Source JS compatibility：`converter/src/script-compat.mjs`
+- Script action：`converter/src/script.mjs`
+- Script compatibility：`converter/src/script-compat.mjs`
 - Script v2 parser：`converter/src/script-v2.mjs`
 - Script v2 target planner：`converter/src/script-v2-target.mjs`
 - Loon Argument parser：`converter/src/argument.mjs`
-- Plugin Argument usage analysis：`converter/src/argument-usage.mjs`
-- Original Source Script fetch / relative resolution：`converter/src/source-fetch.mjs`
-- Regression：`converter/tests/rucu6-script-v2-coverage.mjs`、`converter/tests/checkpoint.mjs`
+- Argument dependency analysis：`converter/src/argument-usage.mjs`
+- Source fetch：`converter/src/source-fetch.mjs`
+- Regression：`converter/tests/checkpoint.mjs`、`converter/tests/end-to-end-golden.mjs`
