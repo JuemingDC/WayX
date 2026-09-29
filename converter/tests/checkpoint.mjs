@@ -206,10 +206,6 @@ assert.throws(
   /bare '\/'/,
 );
 assert.throws(
-  () => validateSurgeModule(validSurgeModule.replace('^https://ads\\.example\\.com _ reject', '(^https://ads\\.example\\.com) _ reject'), {id:'Demo'}),
-  /use '\^\(\.\.\.\)'/,
-);
-assert.throws(
   () => validateSurgeModule(validSurgeModule.replace('#!requirement=CORE_VERSION>=20\n', ''), {id:'Demo'}),
   /CORE_VERSION>=20/,
 );
@@ -651,9 +647,9 @@ const surgeRedirectV2 = surgeRedirectRewritePlan(redirectV2);
 assert.equal(surgeRedirectV2.ok, true);
 assert.equal(
   surgeRedirectV2.line,
-  '^(https://live\\.bilibili\\.com/\\d+)(?:/?\\?.*) $1 302',
+  '(^https://live\\.bilibili\\.com/\\d+)(?:/?\\?.*) $1 302',
 );
-assert.doesNotMatch(surgeRedirectV2.line, /^\(\^/);
+assert.match(surgeRedirectV2.line, /^\(\^/);
 assert.doesNotMatch(surgeRedirectV2.line, /\\\//);
 assert.match(surgeRedirectV2.line, /\$1 302$/);
 
