@@ -53,3 +53,14 @@ converter 先实现
 - 新目标平台官方能力；
 
 才允许改 converter。此时必须先修改对应规范块，再用 synthetic fixture 实现该语法类别，最后再用真实插件做回归验证。
+
+## 自动化实现文件
+
+- Source Catalog：`.github/sources/loon.json`
+- Source fetch + dependency fetch + generic conversion：`.github/scripts/sync-convert.mjs`
+- Canonical deterministic regeneration：`converter/tools/regenerate-canonical.mjs`
+- CI gate：`.github/workflows/converter-check.yml`
+- Upstream scheduled flow：`.github/workflows/upstream-monitor.yml`
+- Review classification：`.github/scripts/conversion_gate.py` + `.github/scripts/validate_conversion_policy.py`
+
+自动化脚本不得再维护第二份插件列表；所有 Loon source 必须从 Source Catalog 遍历。
