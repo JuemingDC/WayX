@@ -25,6 +25,7 @@ import {
   classifyLegacyRewrite,
   planLegacyRewrite,
   validateLoonSourceCatalog,
+  planMitmLine,
   planScriptMirrorPaths,
   mergeBoxJsSubscription,
   parseLoonArguments,
@@ -341,6 +342,34 @@ assert.equal(
   planLegacyRewrite('^https:\\/\\/ads\\.example\\.com', 'reject-dict', 'surge', legacyCtx).section,
   'map',
 );
+assert.equal(
+  planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject', 'qx', legacyCtx).line,
+  '^https:\\/\\/legacy\\.example\\.com url reject',
+);
+assert.equal(
+  planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject', 'surge', legacyCtx).line,
+  '^https:\\/\\/legacy\\.example\\.com _ reject',
+);
+assert.equal(
+  planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject-200', 'qx', legacyCtx).line,
+  '^https:\\/\\/legacy\\.example\\.com url reject-200',
+);
+assert.equal(
+  planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject-img', 'qx', legacyCtx).line,
+  '^https:\\/\\/legacy\\.example\\.com url reject-img',
+);
+assert.equal(
+  planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject-dict', 'qx', legacyCtx).line,
+  '^https:\\/\\/legacy\\.example\\.com url reject-dict',
+);
+assert.equal(
+  planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject-array', 'qx', legacyCtx).line,
+  '^https:\\/\\/legacy\\.example\\.com url reject-array',
+);
+
+assert.equal(planMitmLine('hostname = api.example.com, *.example.com', 'qx').line, 'hostname = api.example.com, *.example.com');
+assert.equal(planMitmLine('hostname = api.example.com, *.example.com', 'surge').line, 'hostname = %APPEND% api.example.com, *.example.com');
+assert.match(planMitmLine('ca-passphrase = secret', 'qx').line, /Unsupported source MITM option preserved/);
 assert.equal(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-body-json-del data.ads', 'qx', legacyCtx).line,
   '^https:\\/\\/api\\.example\\.com url jsonjq-response-body \'del(.data.ads)\'',
