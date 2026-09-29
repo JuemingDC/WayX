@@ -6,7 +6,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/jingdong.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-09-29 17:37:24 +08:00
+# Converted: 2026-09-29 21:03:27 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/jingdong.lpx
@@ -15,6 +15,8 @@
 # Source [Argument] (declaration-only conversion; typed/dynamic arguments stay Review):
 # Capture=switch, false, true, tag=账号捕获, desc=慢慢买 Cookies 捕获开关
 # Cookies=input, "", tag=账号信息, desc=这里需要输入慢慢买 Cookies 的值
+# [WayX] Argument usage: Capture [boolean] -> Script enable
+# [WayX] Argument usage: Cookies [string] -> Script argument-object
 
 [Rule]
 AND,((DOMAIN, api.m.jd.com), (PROTOCOL, TCP)),REJECT-NO-DROP
