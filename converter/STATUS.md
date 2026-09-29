@@ -1,5 +1,33 @@
 # WayX Converter Status
 
+## 2026-09-29 phase 7 — Surge sgmodule format audit
+
+Implemented on `work/surge-module-format-audit-v2-20260929` / PR #10:
+
+- Rechecked the converter against the current official Surge Manual from the official documentation entrypoint.
+- Surge output no longer copies the Loon plugin header as active module metadata.
+- Generated module metadata:
+  - `#!name`
+  - `#!desc`
+  - valid `#!system` when present
+  - `#!requirement=CORE_VERSION>=20` when active Body Rewrite or inline Map Local is emitted.
+- Loon-only metadata such as `#!author`, `#!icon`, `#!date`, `#!loon_version` is preserved as ordinary comments.
+- WayX conversion metadata remains ordinary comments: conversion time, author `chance`, category, target and source.
+- No undocumented Surge `#!category` directive is invented.
+- Surge Module `[Rule]` is normalized independently from a normal Surge profile:
+  - only `DIRECT / REJECT / REJECT-TINYGIF` are emitted as active module policies;
+  - Loon `REJECT-IMG` -> `REJECT-TINYGIF`;
+  - Loon/Surge profile `REJECT-DROP / REJECT-NO-DROP` are **not** collapsed to `REJECT`; because the official Module page still restricts module rules to `DIRECT / REJECT / REJECT-TINYGIF`, these policies stay commented for Review to preserve semantics;
+  - external policy names such as `PROXY` remain commented for user binding;
+  - the converter now recognizes the current official Surge Rule Type Index (DOMAIN family, IP family, USER-AGENT, URL-REGEX, process/source/port/network rules, AND/OR/NOT, SCRIPT, RULE-SET, FINAL) and preserves native Loon→Surge combinations such as nested logic, PROTOCOL=QUIC and `no-resolve`.
+- Section output is Surge-native: `[Rule]`, `[URL Rewrite]`, `[Header Rewrite]`, `[Body Rewrite]`, `[Map Local]`, `[Script]`, `[MITM]`.
+- URL reject uses `<pattern> _ reject`.
+- Header Rewrite uses official `http-request/http-response ... header-*` syntax.
+- Script declarations use modern `name = type=http-...,pattern=...,script-path=...` syntax.
+- Module MITM hostname uses `%APPEND%`.
+- Added reusable `converter/src/surge-module.mjs` formatter/validator and checkpoint coverage.
+- Source JavaScript remains unchanged; this phase changes only declaration/module formatting.
+
 ## 2026-09-29 phase 6 — declaration-only scripts and uploaded Loon syntax cases
 
 Implemented on `work/declaration-only-loon-cases-20260929` / PR #9.
@@ -35,7 +63,7 @@ User-provided Loon new-syntax cases are now locked by CI:
 Current rule behavior:
 
 - QX `URL-REGEX REJECT-DROP` -> native `url reject` by project policy.
-- Surge `REJECT-DROP` remains native `REJECT-DROP`.
+- QX `URL-REGEX REJECT-DROP` remains `url reject`; Surge profile itself supports `REJECT-DROP / REJECT-NO-DROP`, but the current official Module page still limits module `[Rule]` policies to `DIRECT / REJECT / REJECT-TINYGIF`. WayX therefore keeps those source rules commented for Review rather than changing their behavior.
 - QX `REJECT-IMG` -> `reject-img`.
 - Surge Loon `REJECT-IMG` rule policy -> `REJECT-TINYGIF`.
 - Ordinary Loon `reject(404)` continues to use native QX `reject` and Surge URL Rewrite `_ reject`.
@@ -48,7 +76,7 @@ Verification:
 - RuCu6 Rewrite v2 coverage: passed.
 - RuCu6 Script v2 declaration coverage: passed.
 - Uploaded Loon new-syntax regression cases: passed.
-- PR #9 final reviewed CI head: `f781466a7c78b290ab3743487948d12a59884022`.
+- PR #9 merged to `main` at `06482d4e8b258b7ca50aac84a7ac8d813036c0a9`.
 
 Historical phase-5 notes about generated Script v2 bridges are superseded by this phase.
 

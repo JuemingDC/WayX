@@ -4,7 +4,7 @@ WayX 自有的 Loon Plugin → Quantumult X / Surge 转换核心。参考 KOP-XI
 
 当前检查点已经固化：
 
-- Loon `URL-REGEX` 按行为映射：`REJECT/REJECT-200` → QX `reject-200`，`REJECT-IMG` → `reject-img`，`REJECT-DROP` → QX `reject`；Surge 的 `REJECT-DROP` 原样保留，`REJECT-IMG` → `REJECT-TINYGIF`；
+- Loon `URL-REGEX` 按行为映射：`REJECT/REJECT-200` → QX `reject-200`，`REJECT-IMG` → `reject-img`，`REJECT-DROP` → QX `reject`；Surge 的 Rule **类型**按官方 Rule index 尽量原样保留，包括 DOMAIN/DOMAIN-WILDCARD/IP-CIDR/IP-ASN/USER-AGENT/URL-REGEX/PROTOCOL/DEST-PORT/SUBNET/HOSTNAME-TYPE/AND/OR/NOT 等；但 `.sgmodule` 的 **策略**仍受官方 Module 文档限制，只能使用 `DIRECT / REJECT / REJECT-TINYGIF`。因此 `REJECT-IMG` → `REJECT-TINYGIF`，而 `REJECT-DROP / REJECT-NO-DROP` 不再降级成 `REJECT`，而是保留原规则注释等待 Review；
 - Quantumult X 不执行 `AND / OR / NOT`，保留原规则注释；
 - QX IP 类规则去除 `no-resolve`；
 - JQ 只做空白压缩，不重写 `walk/select/map/empty/any/if` 等算法；
@@ -38,6 +38,15 @@ MyBlockAds JQ golden 已自动化：QX / Surge 当前 11 条 JQ 有序规则必�
 
 当前 CI 会扫描实际 RuCu6 资源：9 个插件、175 条 Rewrite v2 中，QX 自动等价转换 174 条，Surge 175 条。QX 唯一保留 Review 的现存规则是 `response.header.add("content-disposition", "inline")`，因为 QX 官方脚本 Header 使用对象，无法保证 Loon 的“同名字段也追加第二条”语义。
 
+Surge 模块输出另有独立规范化层，不复用 Loon 文件头或 Loon Rule 排版：
+
+- `.sgmodule` 顶部只生成官方模块元信息 `#!name / #!desc`，合法的 `#!system` 按需保留；Loon 的 `#!author / #!icon / #!date / #!loon_version` 改为普通注释原样保留；
+- WayX 的转换时间、作者 `chance`、模块分类、目标平台、来源以普通注释记录，不伪造未在官方手册确认的 `#!category`；
+- 使用 `[Body Rewrite]` 或 inline `[Map Local]` 时自动加入 `#!requirement=CORE_VERSION>=20`；
+- `[Rule]` 的规则类型按 Surge 当前官方 Rule Type Index 全量识别，并保留 Loon 与 Surge 共同支持的复杂组合（含 AND/OR/NOT 嵌套、URL-REGEX、USER-AGENT、PROTOCOL、no-resolve 等）；策略层单独按 Module 限制处理，外部策略组如 `PROXY` 只保留注释等待绑定；`REJECT-DROP / REJECT-NO-DROP` 因行为与 `REJECT` 不同，不再做有损归一化；
+- `[URL Rewrite]`、`[Header Rewrite]`、`[Body Rewrite]`、`[Map Local]`、`[Script]`、`[MITM]` 均按 Surge 官方 section 和参数形式输出；`[Script]` 使用现代 `name = type=...,pattern=...,script-path=...` 形式；
+- Module MITM hostname 始终使用 `hostname = %APPEND% ...`；
+- `converter/src/surge-module.mjs` 对生成结果做严格校验，防止 Loon 专属活动指令或非法 Surge Module Rule 重新进入输出。
 第五阶段已接入 Loon HTTP Script v2，并在当前阶段修正为“声明层转换、脚本正文原样保留”：
 
 - 当前 RuCu6 9 个插件的 110 条活动 Script v2 全部进入正式 parser/AST，解析错误为 0；其中 response 101 条、request 9 条，108 条要求 body，14 条要求 binary body；

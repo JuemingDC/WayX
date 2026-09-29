@@ -37,6 +37,9 @@ import {
   qxScriptV2Plan,
   surgeScriptV2Plan,
   surgeRule,
+  surgeModuleRule,
+  renderSurgeModuleHeader,
+  validateSurgeModule,
   surgeTargetPath,
   validateRewriteV2Ast,
 } from '../src/index.mjs';
@@ -45,11 +48,119 @@ assert.equal(qxRule('URL-REGEX, "^https:\\/\\/ad\\.example\\.com", REJECT').line
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-IMG').line, '^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\? url reject-img');
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP').line, '^https:\\/\\/drop\\.example\\.com url reject');
 assert.equal(surgeRule('URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-IMG'), 'URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-TINYGIF');
-assert.equal(surgeRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP'), 'URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP');
+const surgeDropModule = surgeModuleRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP');
+assert.equal(surgeDropModule.kind, 'comment');
+assert.equal(surgeDropModule.reason, 'module-policy-restricted');
+assert.match(surgeDropModule.lines[0], /profile supports policy REJECT-DROP/);
 assert.match(qxRule('AND, ((DOMAIN-SUFFIX, example.com), (PROTOCOL, TCP)), REJECT').line, /^# Loon logical rule/);
 assert.equal(qxRule('IP-CIDR, 1.1.1.1/32, REJECT, no-resolve').line, 'ip-cidr, 1.1.1.1/32, reject');
-assert.equal(surgeRule('IP-CIDR, 1.1.1.1/32, REJECT, no-resolve'), 'IP-CIDR, 1.1.1.1/32, REJECT, no-resolve');
+assert.equal(surgeRule('IP-CIDR, 1.1.1.1/32, REJECT, no-resolve'), 'IP-CIDR,1.1.1.1/32,REJECT,no-resolve');
 assert.equal(surgeRule('DOMAIN, example.com, PROXY'), '# [WayX] Surge Module policy binding required: DOMAIN, example.com, PROXY');
+assert.equal(surgeModuleRule('DOMAIN-WILDCARD,api-*.example.com,REJECT').line, 'DOMAIN-WILDCARD,api-*.example.com,REJECT');
+assert.equal(surgeModuleRule('IP-ASN,13335,REJECT,no-resolve').line, 'IP-ASN,13335,REJECT,no-resolve');
+assert.equal(surgeModuleRule('USER-AGENT,"Example*",REJECT').line, 'USER-AGENT,"Example*",REJECT');
+assert.equal(surgeModuleRule('URL-REGEX,"^https:\\/\\/example\\.com\\/(a|b),?c",REJECT').line, 'URL-REGEX,"^https:\\/\\/example\\.com\\/(a|b),?c",REJECT');
+assert.equal(surgeModuleRule('DEST-PORT,443,REJECT').line, 'DEST-PORT,443,REJECT');
+assert.equal(surgeModuleRule('PROTOCOL,QUIC,REJECT').line, 'PROTOCOL,QUIC,REJECT');
+assert.equal(surgeModuleRule('SUBNET,TYPE:CELLULAR,DIRECT').line, 'SUBNET,TYPE:CELLULAR,DIRECT');
+assert.equal(surgeModuleRule('CELLULAR-RADIO,NR,DIRECT').line, 'CELLULAR-RADIO,NR,DIRECT');
+assert.equal(surgeModuleRule('HOSTNAME-TYPE,IPv6,REJECT').line, 'HOSTNAME-TYPE,IPv6,REJECT');
+assert.equal(surgeModuleRule('RULE-SET,https://example.com/list.list,REJECT,no-resolve').line, 'RULE-SET,https://example.com/list.list,REJECT,no-resolve');
+assert.equal(surgeModuleRule('SCRIPT,ssid-rule,DIRECT,requires-resolve').line, 'SCRIPT,ssid-rule,DIRECT,requires-resolve');
+assert.equal(surgeModuleRule('FINAL,DIRECT').line, 'FINAL,DIRECT');
+assert.equal(
+  surgeModuleRule('AND,((DOMAIN,api.pinduoduo.com),(PROTOCOL,QUIC)),REJECT').line,
+  'AND,((DOMAIN,api.pinduoduo.com),(PROTOCOL,QUIC)),REJECT',
+);
+assert.equal(
+  surgeModuleRule('AND,((DOMAIN-KEYWORD,tnc),(OR,((DOMAIN-SUFFIX,capcutapi.com),(DOMAIN-SUFFIX,zijieapi.com)))),DIRECT').line,
+  'AND,((DOMAIN-KEYWORD,tnc),(OR,((DOMAIN-SUFFIX,capcutapi.com),(DOMAIN-SUFFIX,zijieapi.com)))),DIRECT',
+);
+assert.equal(surgeModuleRule('LOON-ONLY,foo,REJECT').reason, 'unsupported-rule-type');
+assert.equal(
+  surgeModuleRule('AND,((DOMAIN,example.com),(LOON-ONLY,foo)),REJECT').reason,
+  'unsupported-rule-type',
+);
+assert.equal(
+  surgeModuleRule('NOT,((DOMAIN,example.com),(DOMAIN,example.org)),REJECT').reason,
+  'unsupported-rule-type',
+);
+
+
+const surgeHeader = renderSurgeModuleHeader([
+  '#!name=Demo',
+  '#!desc=Demo module',
+  '#!author=Loon Author',
+  '#!icon=https://example.com/icon.png',
+  '#!date=2026-09-29',
+  '#!loon_version=3.5.1(978)',
+  '# source comment',
+], {
+  id:'Demo',
+  category:'去广告 / 测试',
+  source:'https://example.com/demo.lpx',
+}, '2026-09-29 12:00:00 +08:00', {needsCore20:true});
+assert.equal(surgeHeader[0], '#!name=Demo');
+assert.equal(surgeHeader[1], '#!desc=Demo module');
+assert.equal(surgeHeader[2], '#!requirement=CORE_VERSION>=20');
+assert.ok(surgeHeader.includes('# Original Loon metadata: #!author=Loon Author'));
+assert.ok(surgeHeader.includes('# Original Loon metadata: #!icon=https://example.com/icon.png'));
+assert.ok(surgeHeader.includes('# Original Loon metadata: #!loon_version=3.5.1(978)'));
+assert.ok(surgeHeader.includes('# Author: chance'));
+assert.ok(surgeHeader.includes('# Category: 去广告 / 测试'));
+assert.equal(surgeHeader.some(line => /^#!(?:author|icon|date|loon_version)=/i.test(line)), false);
+
+const validSurgeModule = [
+  ...surgeHeader,
+  '',
+  '[Rule]',
+  'DOMAIN,ads.example.com,REJECT',
+  'IP-CIDR,1.1.1.1/32,REJECT,no-resolve',
+  'DOMAIN-WILDCARD,api-*.example.com,REJECT',
+  'PROTOCOL,QUIC,REJECT',
+  'DEST-PORT,443,REJECT',
+  'AND,((DOMAIN-SUFFIX,example.com),(PROTOCOL,TCP)),REJECT',
+  '',
+  '[URL Rewrite]',
+  '^https:\\/\\/ads\\.example\\.com _ reject',
+  '',
+  '[Header Rewrite]',
+  'http-response ^https:\\/\\/api\\.example\\.com header-del Server',
+  '',
+  '[Body Rewrite]',
+  'http-response-jq ^https:\\/\\/api\\.example\\.com \'del(.ads)\'',
+  '',
+  '[Map Local]',
+  '^https:\\/\\/mock\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"',
+  '',
+  '[Script]',
+  'demo = type=http-response,pattern=^https:\\/\\/api\\.example\\.com,script-path=https://example.com/demo.js,requires-body=true',
+  '',
+  '[MITM]',
+  'hostname = %APPEND% api.example.com',
+  '',
+].join('\n');
+assert.doesNotThrow(() => validateSurgeModule(validSurgeModule, {id:'Demo'}));
+assert.throws(
+  () => validateSurgeModule(validSurgeModule.replace('#!requirement=CORE_VERSION>=20\n', ''), {id:'Demo'}),
+  /CORE_VERSION>=20/,
+);
+assert.throws(
+  () => validateSurgeModule(validSurgeModule.replace('DOMAIN,ads.example.com,REJECT', 'DOMAIN,ads.example.com,REJECT-DROP'), {id:'Demo'}),
+  /DIRECT\/REJECT\/REJECT-TINYGIF/,
+);
+assert.throws(
+  () => validateSurgeModule(validSurgeModule.replace('DOMAIN-WILDCARD,api-*.example.com,REJECT', 'LOON-ONLY,foo,REJECT'), {id:'Demo'}),
+  /unsupported Surge rule type/,
+);
+assert.throws(
+  () => validateSurgeModule(validSurgeModule.replace('# Original Loon metadata: #!author=Loon Author', '#!author=Loon Author'), {id:'Demo'}),
+  /unsupported Surge module directive/,
+);
+assert.throws(
+  () => validateSurgeModule(validSurgeModule.replace('hostname = %APPEND% api.example.com', 'hostname = api.example.com'), {id:'Demo'}),
+  /%APPEND%/,
+);
 
 const compact = minifyJq('walk( if type == "object" then .a = [] | del(.b, .c) else . end )');
 assert.equal(compact.includes('"object"'), true);
