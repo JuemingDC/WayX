@@ -21,25 +21,6 @@ const DEPENDENCY_MANIFEST = path.join(ROOT, 'converter/dependencies/manifest.jso
 
 const mode = process.argv.includes('--write') ? 'write' : 'check';
 
-const EXTRA_LOCAL_ENTRIES = [
-  {
-    id: 'MyBlockAds',
-    file: 'RuCu6/myblockads.lpx',
-    source: 'https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Loon/RuCu6/myblockads.lpx',
-    qx: 'MyBlockAds.snippet',
-    surge: 'MyBlockAds.sgmodule',
-    category: '去广告',
-  },
-  {
-    id: 'YouTube',
-    file: 'RuCu6/youtube.lpx',
-    source: 'https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Loon/RuCu6/youtube.lpx',
-    qx: 'YouTube.snippet',
-    surge: 'YouTube.sgmodule',
-    category: '去广告',
-  },
-];
-
 
 const normalize = text => String(text ?? '').replace(/\r\n?/g, '\n').replace(/^\uFEFF/, '');
 const nowCN = () => new Intl.DateTimeFormat('sv-SE', {

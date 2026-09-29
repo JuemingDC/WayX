@@ -9,12 +9,14 @@ const files=[
     .filter(name=>name.endsWith('.mjs'))
     .map(name=>path.join(SRC,name)),
   path.join(ROOT,'.github','scripts','sync-convert.mjs'),
+  path.join(ROOT,'converter','tools','regenerate-canonical.mjs'),
 ];
 
 const forbiddenSymbols=[
   'QX_SCRIPT_OVERRIDES',
   'QX_SCRIPT_PORT_REGISTRY',
   'registeredQxScriptPort',
+  'EXTRA_LOCAL_ENTRIES',
 ];
 
 const identityComparisonPatterns=[
