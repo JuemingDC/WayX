@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {
+  analyzeSafeRewriteV2,
   LOON_REWRITE_V2_ACTIONS,
   minifyJq,
   parseLoonArguments,
@@ -65,5 +66,14 @@ const invalidBulk = parseRewriteV2('request if ${url} ~= /api/ then request.head
 assert.throws(() => validateRewriteV2Ast(invalidBulk), /equal lengths/);
 const unknownAction = parseRewriteV2('request if ${url} ~= /api/ then request.unknown("x")');
 assert.throws(() => validateRewriteV2Ast(unknownAction), /not present in the current official Loon Rewrite v2 registry/);
+
+const safeReject = analyzeSafeRewriteV2('request if ${url} ~= /^https:\\/\\/ad\\.example\\.com/ then reject(200)');
+assert.equal(safeReject.safe, true);
+assert.equal(safeReject.action, 'reject');
+assert.equal(safeReject.status, 200);
+assert.equal(analyzeSafeRewriteV2('request if ${url} ~= /ads/i then reject(200)').safe, false);
+assert.equal(analyzeSafeRewriteV2('request if ${url} ~= /ads/ then reject(451, "blocked")').safe, false);
+assert.equal(analyzeSafeRewriteV2('response if ${url} ~= /ads/ then reject_dict(200)').safe, false);
+assert.equal(analyzeSafeRewriteV2('request if ${url} ~= /ads/ then reject_dict(200) | request.header.del("X")').safe, false);
 
 console.log('WayX converter checkpoint tests passed');
