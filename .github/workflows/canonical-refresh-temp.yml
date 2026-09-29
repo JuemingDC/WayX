@@ -21,6 +21,10 @@ jobs:
           node-version: "22"
       - name: Regenerate canonical outputs
         run: node converter/tools/regenerate-canonical.mjs --write
+      - name: Dump end-to-end golden metrics
+        env:
+          WAYX_DUMP_GOLDEN: "1"
+        run: node converter/tests/end-to-end-golden.mjs
       - name: Commit refreshed canonical outputs
         shell: bash
         run: |
