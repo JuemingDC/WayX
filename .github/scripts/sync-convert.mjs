@@ -429,7 +429,8 @@ function parseScriptLine(line) {
   const maxSize = options.get('max-size');
   const argument = options.get('argument');
   const enable = options.get('enable') ?? options.get('enabled');
-  return { type, pattern, scriptPath, tag, requiresBody, binary, timeout, maxSize, argument, enable, original: line };
+  const debug = options.get('debug');
+  return { type, pattern, scriptPath, tag, requiresBody, binary, timeout, maxSize, argument, enable, debug, original: line };
 }
 
 function sanitizeName(s) {
@@ -603,6 +604,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
 
     const enableFixed = sc.enable ? String(sc.enable).trim().toLowerCase() : '';
     const enableDynamic = Boolean(sc.enable) && !['true','false','1','0'].includes(enableFixed);
+    const debugFixed = sc.debug ? String(sc.debug).trim().toLowerCase() : '';
+    const debugDynamic = Boolean(sc.debug) && !['true','false','1','0'].includes(debugFixed);
 
     qx.rewrite.push(...comments);
     if (sc.tag) qx.rewrite.push(`# ${sc.tag}`);
@@ -611,8 +614,23 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
       qx.rewrite.push(`# Source declaration: ${item.line}`);
     } else if (enableFixed === 'false' || enableFixed === '0') {
       qx.rewrite.push(`# [WayX] Script disabled by source declaration: ${item.line}`);
-    } else if (sc.argument || enableDynamic) {
-      qx.rewrite.push('# [WayX] SCRIPT REVIEW REQUIRED: QX declaration cannot carry this source argument/enable semantics without changing the script.');
+    } else if (
+      sc.argument ||
+      enableDynamic ||
+      sc.timeout ||
+      debugDynamic ||
+      sc.maxSize ||
+      (sc.binary && sc.type === 'http-request')
+    ) {
+      const gaps = [
+        sc.argument ? 'argument' : null,
+        enableDynamic ? 'dynamic enable' : null,
+        sc.timeout ? 'timeout' : null,
+        debugDynamic ? 'dynamic debug' : null,
+        sc.maxSize ? 'max-size' : null,
+        (sc.binary && sc.type === 'http-request') ? 'binary request body mode' : null,
+      ].filter(Boolean).join(', ');
+      qx.rewrite.push(`# [WayX] SCRIPT REVIEW REQUIRED: QX declaration cannot preserve source Script option(s): ${gaps}.`);
       qx.rewrite.push(`# Source declaration: ${item.line}`);
     } else {
       const qType = selectQxScriptAction({
@@ -621,6 +639,9 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
         scriptUrl: sc.scriptPath,
         sourceText: mapped?.source || '',
       }).action;
+      if (debugFixed === 'true' || debugFixed === '1') {
+        qx.rewrite.push('# [WayX] Source debug=true is UI/logging behavior and is not represented by the QX rewrite declaration.');
+      }
       qx.rewrite.push(`${sc.pattern} url ${qType} ${qxUrl}`);
     }
 
@@ -652,14 +673,20 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
       if (sc.timeout) {
         const timeoutRef = String(sc.timeout).match(/^\$?\{([A-Za-z_][\w-]*)\}$/);
         if (timeoutRef) {
-          const placeholder = surgeDynamicOptionValue(timeoutRef[1], surgeArgumentTable);
+          const placeholder = surgeTimeoutOptionValue(timeoutRef[1], surgeArgumentTable);
           if (!placeholder) {
-            sg.script.push('# [WayX] SCRIPT REVIEW REQUIRED: dynamic timeout references an undeclared Surge module argument.');
+            sg.script.push('# [WayX] SCRIPT REVIEW REQUIRED: dynamic timeout must reference a declared Number or strictly numeric positive String Surge module argument.');
             sg.script.push(`# Source declaration: ${item.line}`);
             continue;
           }
           params.push(`timeout=${placeholder}`);
         } else {
+          const value = Number(String(sc.timeout).trim());
+          if (!Number.isFinite(value) || value <= 0) {
+            sg.script.push('# [WayX] SCRIPT REVIEW REQUIRED: source timeout must be a finite positive number.');
+            sg.script.push(`# Source declaration: ${item.line}`);
+            continue;
+          }
           params.push(`timeout=${sc.timeout}`);
         }
       }
@@ -678,6 +705,24 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
           params.push(`argument=${sc.argument}`);
         }
       }
+
+      if (debugDynamic) {
+        const ref = String(sc.debug).match(/^\$?\{([A-Za-z_][\w-]*)\}$/);
+        const placeholder = ref ? surgeBooleanOptionValue(ref[1], surgeArgumentTable) : null;
+        if (!placeholder) {
+          sg.script.push('# [WayX] SCRIPT REVIEW REQUIRED: dynamic debug must reference a declared Boolean/switch Surge module argument.');
+          sg.script.push(`# Source declaration: ${item.line}`);
+          continue;
+        }
+        params.push(`debug=${placeholder}`);
+      } else if (debugFixed === 'true' || debugFixed === '1') {
+        params.push('debug=true');
+      } else if (debugFixed && !['false','0'].includes(debugFixed)) {
+        sg.script.push('# [WayX] SCRIPT REVIEW REQUIRED: source debug value is not Boolean.');
+        sg.script.push(`# Source declaration: ${item.line}`);
+        continue;
+      }
+
       sg.script.push(requirementPrefix + `${name} = ${params.join(',')}`);
     }
   }
