@@ -114,8 +114,10 @@ response if ${url} ~= /REGEX/i as urlMatch then ACTION
 
 ### Flag 处理
 
-- `/i`：目标语法没有独立 flag 参数时，优先改写为正则内联标志 `(?i)`；若目标 regex 引擎不接受，则保留原大小写语义所需的明确字符范围，不能直接丢弃。
-- 其他 flag 不得擅自忽略。
+- Quantumult X / Surge 的目标声明只使用各自官方文档或官方 sample 已展示的 bare-regex 形式。
+- Loon `/i` **不得**机械展开成 `[aA][pP][iI]` 一类逐字符大小写表达，也不得杜撰未在目标官方示例中确认的 `(?i)`。
+- 转换时保留正则主体；源 flag 单独记录为诊断信息。若某条规则的行为确实依赖大小写不敏感（尤其是大小写可能变化的 path/capture），不得把 bare-regex 输出宣称为无损等价，应进入 Review。
+- `m/s` 等其他 flag 同样不得凭空映射；目标语义不能证明时进入 Review。
 
 ## 4. [Rule] 转换
 
@@ -136,17 +138,20 @@ URL-REGEX
 AND / OR / NOT
 ```
 
-策略映射：
+Surge **Rule 类型**与 **Module policy** 必须分开判断。普通 Surge Profile 支持更多 policy，但官方 Module 的 `[Rule]` 只能使用：
 
 ```text
-DIRECT          -> DIRECT
-REJECT          -> REJECT
-REJECT-DROP     -> REJECT-DROP
-REJECT-NO-DROP  -> REJECT-NO-DROP
-REJECT-TINYGIF  -> REJECT-TINYGIF
+DIRECT
+REJECT
+REJECT-TINYGIF
 ```
 
-若 Loon 使用 `PROXY` 或任意非 Surge 内置策略名，**Module 中不得假定该策略存在**。保留为注释并标记需要用户策略绑定，除非该模块明确声明了可用的目标策略。
+因此：
+
+- Loon `REJECT-IMG` 的图片拒绝语义可映射为 Module `REJECT-TINYGIF`；
+- `REJECT-DROP / REJECT-NO-DROP` 与 `REJECT` 行为不同，不能为了通过 Module 校验而降级成 `REJECT`；在 Module 目标中保留原规则为 Review 注释；
+- Loon 使用 `PROXY` 或任意用户策略组时，Module 中不得假定该策略存在，保留为注释并标记需要用户绑定；
+- AND / OR / NOT、URL-REGEX、PROTOCOL、DEST-PORT 等只要属于 Surge 官方 Rule 类型，可以保持原组合语义；不要因为 Module policy 较少而错误删减 Rule 条件。
 
 ### 4.2 Quantumult X
 
