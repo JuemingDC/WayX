@@ -2,6 +2,19 @@
 
 > Current policy overrides historical implementation notes below when they conflict. As of Phase 12, upstream plugins/scripts/dependencies are original-source-only; no upstream mirror/cache is authoritative or used as fallback.
 
+## 2026-09-29 phase 13 — Quantumult X Header semantic bridge
+
+Current implementation:
+
+- Rechecked the official Quantumult X request/response Header script examples: `script-request-header` and `script-response-header` may read the phase Header object and return `$done({headers: ...})`.
+- Loon Rewrite v2 `request/response.header.add / set / del / replace` now share the QX phase-specific Header script bridge instead of requiring same-named target actions.
+- Same-phase Header pipelines remain a single generated helper so Loon left-to-right ordering is preserved.
+- QX mock pipelines use the same Header operation model.
+- No undocumented QX duplicate-header array/raw-header representation is invented; `header.add` is lowered to a write on the matched Header key in QX's documented Header object model.
+- The former sole RuCu6 QX Rewrite v2 Review item in `webpage.lpx` (`response.header.add("content-disposition", "inline")`) is now eligible for generated `script-response-header` conversion.
+
+This phase supersedes historical Phase 4/Current boundary notes that marked QX `header.add` as fail-closed.
+
 ## 2026-09-29 phase 12 — original-source-only pipeline and deterministic PR generation
 
 Current implementation:
