@@ -1,6 +1,6 @@
 # Chance Upstream Monitor
 # Author: chance
-# Updated: 2026-09-28
+# Updated: 2026-09-29
 # Category: Automation / Sync / Conversion / Work Handoff
 
 name: Upstream Monitor
@@ -87,7 +87,7 @@ jobs:
         if: steps.pending.outputs.blocked != 'true'
         run: mkdir -p monitor/.runtime
 
-      - name: Sync simple Loon sources and convert deterministically
+      - name: Sync all catalog Loon sources and convert deterministically
         if: steps.pending.outputs.blocked != 'true'
         id: loon_sync
         continue-on-error: true
@@ -142,7 +142,6 @@ jobs:
             echo "## Actions status"
             echo
             echo "- Loon converter: ${{ steps.loon_sync.outcome }}"
-            echo "- RuCu6 sync: ${{ steps.rucu6_sync.outcome }}"
             echo "- Validator: ${{ steps.validate.outcome }}"
             echo
             if [ -f "${{ steps.gate.outputs.summary }}" ]; then
