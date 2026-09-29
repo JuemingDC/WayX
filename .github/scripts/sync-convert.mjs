@@ -316,28 +316,6 @@ async function materializeQxMockFiles(entry, parsed) {
   return out;
 }
 
-function qxRule(line) {
-  const p = line.split(',').map(s => s.trim());
-  const type = (p[0] || '').toUpperCase();
-  const value = p[1] || '';
-  const policy = (p[2] || '').toLowerCase();
-  const map = {
-    'DOMAIN': 'host', 'DOMAIN-SUFFIX': 'host-suffix', 'DOMAIN-KEYWORD': 'host-keyword',
-    'DOMAIN-WILDCARD': 'host-wildcard', 'IP-CIDR': 'ip-cidr', 'IP-CIDR6': 'ip6-cidr',
-    'GEOIP': 'geoip', 'IP-ASN': 'ip-asn', 'USER-AGENT': 'user-agent'
-  };
-  if (map[type]) {
-    if (!['direct', 'reject', 'proxy'].includes(policy)) return { kind: 'comment', line: `# Loon rule policy not losslessly expressible in Quantumult X: ${line}` };
-    return { kind: 'filter', line: `${map[type]}, ${value}, ${policy}` };
-  }
-  if (type === 'URL-REGEX' && /^REJECT/.test((p[2] || '').toUpperCase())) return { kind: 'rewrite', line: `# Moved from Loon URL-REGEX Rule\n${value.replace(/^"|"$/g, '')} url reject-200` };
-  return { kind: 'comment', line: `# Loon rule not losslessly expressible in Quantumult X filter: ${line}` };
-}
-
-function surgeRule(line) {
-  return line.split(',').map(s => s.trim()).join(',');
-}
-
 function jqPath(pathText) {
   // Current whitelist uses identifier-safe dotted paths. Keep exact hierarchy.
   return '.' + pathText.split('.').map(k => /^[A-Za-z_][A-Za-z0-9_]*$/.test(k) ? k : `[${JSON.stringify(k)}]`).join('.').replace(/\.\[/g, '[');
@@ -744,7 +722,6 @@ async function main() {
       const scriptMap = new Map();
       const parsedSource = parseLoon(source);
       const qxMockFiles = await materializeQxMockFiles(entry, parsedSource);
-      const argumentLines = parsedSource.sections.get('Argument') || [];
       for (const url of scriptUrls(source)) {
         scriptMap.set(url, await syncScript(entry, url));
       }
