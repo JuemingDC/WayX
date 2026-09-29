@@ -246,6 +246,7 @@ for (const testCase of cases) {
   }
 
   if (testCase.name === 'Bilibili') {
+    assert.match(out.qx, /^host, bsbsb\.top, PROXY$/m, 'Bilibili: Loon plugin PROXY binding must remain literal in QX');
     assert.match(out.qx, /QUANTUMULT X UNSUPPORTED - source script disabled/);
     assert.equal(qxActive.some(line => /bilibili\/(?:request|response)\.js/.test(line)), false, 'Bilibili protobuf scripts must not be active in QX');
     assert.ok(qxActive.some(line => /bilibili\/json\.js/.test(line)), 'Bilibili JSON script declarations should remain available');
