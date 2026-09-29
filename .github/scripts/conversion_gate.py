@@ -25,7 +25,11 @@ BASIC_RULE_TYPES = {
     "DOMAIN", "DOMAIN-SUFFIX", "DOMAIN-KEYWORD", "DOMAIN-WILDCARD",
     "IP-CIDR", "IP-CIDR6", "GEOIP", "IP-ASN", "USER-AGENT",
 }
-BASIC_POLICIES = {"DIRECT", "REJECT", "PROXY"}
+BASIC_POLICIES = {"DIRECT", "REJECT"}
+URL_REGEX_SAFE_POLICIES = {
+    "REJECT", "REJECT-200", "REJECT-IMG", "REJECT-DICT", "REJECT-ARRAY",
+    "REJECT-DROP",
+}
 SIMPLE_REWRITE_ACTIONS = {
     "reject", "reject-200", "reject-img", "reject-dict", "reject-array",
 }
@@ -125,9 +129,9 @@ def simple_rule(line: str) -> tuple[bool, str]:
     extras = [x.lower() for x in parts[3:] if x]
 
     if rule_type == "URL-REGEX":
-        if policy == "REJECT" and not extras:
-            return True, "URL-REGEX REJECT uses project mapping to QX reject-200"
-        return False, "URL-REGEX safe tier only accepts REJECT"
+        if policy in URL_REGEX_SAFE_POLICIES and not extras:
+            return True, f"deterministic URL-REGEX {policy} target mapping"
+        return False, f"URL-REGEX policy {policy} or extra parameters require semantic review"
 
     if rule_type not in BASIC_RULE_TYPES:
         return False, f"rule type {rule_type} is outside safe tier"
@@ -194,10 +198,9 @@ def simple_mitm(line: str) -> tuple[bool, str]:
 
 def classify_resource(path: str, manifest_by_file: dict[str, dict]) -> list[str]:
     reasons: list[str] = []
-    name = Path(path).name
-    if path.startswith("Resource/Loon/RuCu6/"):
-        return ["RuCu6 uses Loon 3.5.x new syntax/scripts; changed source is Work-tier"]
-    entry = manifest_by_file.get(name)
+    prefix = "Resource/Loon/"
+    relative = path[len(prefix):] if path.startswith(prefix) else path
+    entry = manifest_by_file.get(relative)
     if not entry:
         return ["Loon resource is not declared in .github/sources/loon.json"]
 

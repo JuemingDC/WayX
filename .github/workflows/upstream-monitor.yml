@@ -65,6 +65,7 @@ jobs:
           node converter/tests/generic-identity.mjs
           node converter/tests/genericity-audit.mjs
           node converter/tests/spec-block-contract.mjs
+          python converter/tests/test_conversion_gate.py
           node converter/tests/myblockads-golden.mjs
 
       - name: Set up Python
@@ -77,7 +78,7 @@ jobs:
         if: steps.pending.outputs.blocked != 'true'
         run: |
           node --check .github/scripts/sync-convert.mjs
-          python -m py_compile .github/scripts/conversion_gate.py .github/scripts/validate_conversion_policy.py
+          python -m py_compile .github/scripts/conversion_gate.py .github/scripts/validate_conversion_policy.py converter/tests/test_conversion_gate.py
 
       - name: Install sync dependency
         if: steps.pending.outputs.blocked != 'true'
@@ -99,6 +100,8 @@ jobs:
 
       - name: Scan original Source Script compatibility
         if: steps.pending.outputs.blocked != 'true'
+        id: script_scan
+        continue-on-error: true
         run: node converter/tools/scan-script-compat.mjs
 
       - name: Check official upstream specifications
@@ -128,6 +131,7 @@ jobs:
           (steps.monitor.outputs.has_review == 'true' ||
            steps.gate.outputs.requires_work == 'true' ||
            steps.loon_sync.outcome != 'success' ||
+           steps.script_scan.outcome != 'success' ||
            steps.validate.outcome != 'success')
         id: review
         shell: bash
@@ -142,6 +146,7 @@ jobs:
             echo "## Actions status"
             echo
             echo "- Loon converter: ${{ steps.loon_sync.outcome }}"
+            echo "- Source Script scan: ${{ steps.script_scan.outcome }}"
             echo "- Validator: ${{ steps.validate.outcome }}"
             echo
             if [ -f "${{ steps.gate.outputs.summary }}" ]; then
@@ -174,6 +179,7 @@ jobs:
           steps.monitor.outputs.has_review != 'true' &&
           steps.gate.outputs.requires_work != 'true' &&
           steps.loon_sync.outcome == 'success' &&
+          steps.script_scan.outcome == 'success' &&
           steps.validate.outcome == 'success'
         shell: bash
         run: |
@@ -186,8 +192,12 @@ jobs:
             echo "No Safe Tier changes to commit."
             exit 0
           fi
+          REMOTE_MAIN="$(git ls-remote origin refs/heads/main | awk '{print $1}')"
+          if [ -z "$REMOTE_MAIN" ] || [ "$REMOTE_MAIN" != "$GITHUB_SHA" ]; then
+            echo "::notice::main advanced after this run started; skip Safe Tier push so a fresh run can regenerate from the new base."
+            exit 0
+          fi
           git commit -m "chore: sync upstream and apply safe conversions"
-          git pull --rebase origin main
           git push origin HEAD:main
 
       - name: Open Work review PR
@@ -196,6 +206,7 @@ jobs:
           (steps.monitor.outputs.has_review == 'true' ||
            steps.gate.outputs.requires_work == 'true' ||
            steps.loon_sync.outcome != 'success' ||
+           steps.script_scan.outcome != 'success' ||
            steps.validate.outcome != 'success')
         env:
           GH_TOKEN: ${{ github.token }}
@@ -210,8 +221,11 @@ jobs:
           git add -A Resource/Loon Adblock script boxjs monitor/state.json
           if [ -d upstream ]; then git add -A upstream; fi
           if git diff --cached --quiet; then
-            echo "Review was requested but no persistent repository files changed."
-            exit 0
+            MARKER="monitor/review-queue/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}.md"
+            mkdir -p "$(dirname "$MARKER")"
+            cp "$REVIEW_BODY" "$MARKER"
+            git add "$MARKER"
+            echo "Review requested without a normal repository diff; persisted $MARKER so the Work review PR cannot be lost."
           fi
           git commit -m "chore: prepare upstream Work review"
           git push --set-upstream origin "$BRANCH"

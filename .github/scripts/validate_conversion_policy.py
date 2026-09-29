@@ -25,8 +25,9 @@ QX_REWRITE_ACTIONS = {
     "reject", "reject-img", "reject-200", "reject-dict", "reject-array",
     "302", "307", "jsonjq-response-body", "jsonjq-request-body",
     "request-header", "request-body", "response-body", "echo-response",
-    "script-response-body", "script-echo-response", "script-response-header",
-    "script-request-header", "script-request-body", "url-and-header",
+    "script-response-body", "script-echo-response", "script-analyze-echo-response",
+    "script-response-header", "script-request-header", "script-request-body",
+    "url-and-header",
 }
 SURGE_SECTIONS = {
     "Rule", "URL Rewrite", "Header Rewrite", "Body Rewrite", "Map Local",
