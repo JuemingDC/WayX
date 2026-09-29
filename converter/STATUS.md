@@ -9,6 +9,7 @@ Current implementation:
 - Rechecked the official Quantumult X request/response Header script examples: `script-request-header` and `script-response-header` may read the phase Header object and return `$done({headers: ...})`.
 - Loon Rewrite v2 `request/response.header.add / set / del / replace` now share the QX phase-specific Header script bridge instead of requiring same-named target actions.
 - Same-phase Header pipelines remain a single generated helper so Loon left-to-right ordering is preserved.
+- Consecutive Loon Header declarations with the same phase and condition are coalesced into one QX Header hook; this prevents equivalent operations from depending on multiple simultaneously matching QX response/request rewrites.
 - QX mock pipelines use the same Header operation model.
 - No undocumented QX duplicate-header array/raw-header representation is invented; `header.add` is lowered to a write on the matched Header key in QX's documented Header object model.
 - The former sole RuCu6 QX Rewrite v2 Review item in `webpage.lpx` (`response.header.add("content-disposition", "inline")`) is now eligible for generated `script-response-header` conversion.
