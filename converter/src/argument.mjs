@@ -33,11 +33,13 @@ export function parseLoonArguments(lines = []) {
       ? 'boolean'
       : String(options.type || '').toLowerCase() === 'number' ? 'number' : 'string';
 
+    const hasDefault = values.length > 0 || kind === 'switch';
     args.push({
       id,
       kind,
       values,
-      defaultValue: values[0] ?? (kind === 'switch' ? 'false' : ''),
+      hasDefault,
+      defaultValue: values[0] ?? (kind === 'switch' ? 'false' : undefined),
       valueType,
       tag: options.tag || id,
       desc: options.desc || '',
@@ -93,10 +95,8 @@ export function surgeArgumentMetadata(argumentLines = []) {
   if (!table.entries.length) return { table, lines:[] };
 
   const args = table.entries.map(entry => {
-    const defaultValue = entry.defaultValue;
-    return defaultValue === undefined || defaultValue === null
-      ? entry.surgeName
-      : `${entry.surgeName}:${metadataDefaultValue(defaultValue, entry.id)}`;
+    if (!entry.hasDefault) return entry.surgeName;
+    return `${entry.surgeName}:${metadataDefaultValue(entry.defaultValue, entry.id)}`;
   });
 
   const desc = table.entries.map(entry => {
@@ -140,6 +140,9 @@ export function surgePluginObjectArgument(refs = [], table) {
   for (const id of refs) {
     const entry = table?.byId?.get(String(id));
     if (!entry) return {ok:false, reason:`undeclared Loon [Argument]: ${id}`};
+    if (!entry.hasDefault) {
+      return {ok:false, reason:`Loon [Argument] ${id} has no default; PluginObject missing-value null cannot be represented losslessly by Surge module substitution`};
+    }
     const key = JSON.stringify(entry.id);
     const placeholder = entry.placeholder;
     if (entry.valueType === 'string') {
@@ -156,7 +159,8 @@ export function surgePluginObjectArgument(refs = [], table) {
 
 export function surgeDynamicOptionValue(id, table) {
   const entry = table?.byId?.get(String(id));
-  return entry ? entry.placeholder : null;
+  if (!entry || !entry.hasDefault) return null;
+  return entry.placeholder;
 }
 
 export function surgeEnableRequirement(id, table) {
