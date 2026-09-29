@@ -18,13 +18,13 @@ export function qxRule(line){
   if(type==='URL-REGEX'){
     const action=QX_URL_REJECT_ACTIONS.get(policyRaw);
     if(action)return{kind:'rewrite',line:`${value} url ${action}`,reason:'wayx-url-regex-reject'};
-    if(policyRaw==='REJECT-DROP')return{kind:'comment',line:`# Loon URL-REGEX REJECT-DROP has no proven Quantumult X silent-drop equivalent: ${source}`,reason:'url-regex-reject-drop'};
+    if(policyRaw==='REJECT-DROP')return{kind:'rewrite',line:`${value} url reject`,reason:'wayx-url-regex-reject-drop'};
   }
   const qxType=QX_RULE_TYPES.get(type);
   if(!qxType)return{kind:'comment',line:`# Loon rule (Quantumult X unsupported): ${source}`,reason:'unsupported-type'};
   let policy;
   if(policyRaw==='DIRECT')policy='direct';
-  else if(policyRaw==='REJECT')policy='reject';
+  else if(policyRaw==='REJECT'||policyRaw==='REJECT-DROP'||policyRaw==='REJECT-NO-DROP')policy='reject';
   else if(policyRaw==='PROXY')policy='proxy';
   else if(/^REJECT/.test(policyRaw))return{kind:'comment',line:`# Loon reject policy has no proven equivalent Quantumult X filter behavior: ${source}`,reason:'unsupported-reject-policy'};
   else return{kind:'comment',line:`# Loon rule policy (Quantumult X unsupported): ${source}`,reason:'unsupported-policy'};
