@@ -97,7 +97,8 @@ export function renderSurgeModuleHeader(headerLines, entry, stamp, { needsCore20
 
   const system = directives.get('system');
   if (system && /^mac$/i.test(system)) out.push('#!system=mac');
-  if (needsCore20 || needsLineRequirement) out.push('#!requirement=CORE_VERSION>=20');
+  if (needsLineRequirement) out.push('#!requirement=CORE_VERSION>=22');
+  else if (needsCore20) out.push('#!requirement=CORE_VERSION>=20');
   out.push(...argumentMetadata);
 
   const meta = metadataComments(directives, 'Surge');
