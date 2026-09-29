@@ -10,7 +10,7 @@ import {
   scriptV2DynamicOptionRefs,
 } from './script-v2.mjs';
 import { scriptV2PluginArgumentUsage } from './argument-usage.mjs';
-import { surgePluginObjectArgument, surgeDynamicOptionValue, surgeEnableRequirement } from './argument.mjs';
+import { surgePluginObjectArgument, surgeBooleanOptionValue, surgeTimeoutOptionValue, surgeEnableRequirement } from './argument.mjs';
 
 function unsupported(reason) {
   return { ok:false, reason };
@@ -56,6 +56,10 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
 
   if (ast.script.argument) {
     return unsupported('Loon Script v2 $argument cannot be carried by the official Quantumult X rewrite declaration without changing the script');
+  }
+
+  if (ast.phase === 'request' && scriptOptionBoolean(ast, 'binary_body_mode', false)) {
+    return unsupported('binary request body mode has no verified Quantumult X request-body declaration/runtime path in the official sample');
   }
 
   const action = selectQxScriptAction({
@@ -130,8 +134,8 @@ export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 's
   const timeout = scriptOption(ast, 'timeout');
   if (timeout?.type === 'number') params.push('timeout=' + timeout.value);
   else if (timeout?.type === 'variable') {
-    const placeholder = surgeDynamicOptionValue(timeout.name, argumentTable);
-    if (!placeholder) return unsupported('dynamic timeout references undeclared Surge module argument: ' + timeout.name);
+    const placeholder = surgeTimeoutOptionValue(timeout.name, argumentTable);
+    if (!placeholder) return unsupported('dynamic timeout must reference a declared Number or strictly numeric positive String Surge module argument: ' + timeout.name);
     params.push('timeout=' + placeholder);
   }
 
@@ -149,8 +153,8 @@ export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 's
   const debug = scriptOption(ast, 'debug');
   if (debug?.type === 'boolean' && debug.value) params.push('debug=true');
   else if (debug?.type === 'variable') {
-    const placeholder = surgeDynamicOptionValue(debug.name, argumentTable);
-    if (!placeholder) return unsupported('dynamic debug references undeclared Surge module argument: ' + debug.name);
+    const placeholder = surgeBooleanOptionValue(debug.name, argumentTable);
+    if (!placeholder) return unsupported('dynamic debug must reference a declared Boolean/switch Surge module argument: ' + debug.name);
     params.push('debug=' + placeholder);
   }
 
