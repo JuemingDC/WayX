@@ -85,6 +85,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # pull_request checkout uses a synthetic merge ref. Canonical commits
+          # must be based on the actual PR head or the push is non-fast-forward.
+          git reset --hard
+          git clean -fd
+          git fetch origin "${{ github.head_ref }}"
+          git switch -C wayx-canonical "origin/${{ github.head_ref }}"
+          node converter/tools/regenerate-canonical.mjs --write
           git add -- "Adblock/Quantumult X" "Adblock/Surge"
           if git diff --cached --quiet; then
             echo "Canonical outputs already checked in."
