@@ -25,7 +25,7 @@ function fixedOption(ast, name) {
   return null;
 }
 
-export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText = '', bridgeReady = false} = {}) {
+export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText = ''} = {}) {
   if (!ast || ast.type !== 'script') return unsupported('expected Script v2 AST');
   const condition = scriptUrlCondition(ast);
   if (!condition.ok) return condition;
@@ -34,10 +34,13 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
   if (enable?.type === 'boolean' && enable.value === false) {
     return {ok:true, disabled:true, reason:'Loon Script v2 enable=false'};
   }
-  if (enable?.type === 'variable' && !bridgeReady) return unsupported('dynamic enable requires a QX preference bridge');
+  if (enable?.type === 'variable') {
+    return unsupported('dynamic enable cannot be carried by Quantumult X rewrite declaration without changing the script');
+  }
 
-  const arg = ast.script.argument;
-  if (arg && !bridgeReady) return unsupported('Script v2 argument requires a QX $argument bridge');
+  if (ast.script.argument) {
+    return unsupported('Loon Script v2 $argument cannot be carried by the official Quantumult X rewrite declaration without changing the script');
+  }
 
   const action = selectQxScriptAction({
     phase:ast.phase,
@@ -45,6 +48,12 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
     scriptUrl,
     sourceText,
   });
+
+  const notes = [...(condition.notes || [])];
+  const timeout = scriptOption(ast, 'timeout');
+  if (timeout) notes.push('Loon timeout is not represented in the Quantumult X rewrite declaration');
+  const debug = scriptOption(ast, 'debug');
+  if (debug?.type === 'boolean' && debug.value) notes.push('Loon debug=true has no Quantumult X rewrite declaration field');
 
   return {
     ok:true,
@@ -55,11 +64,11 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
     line:condition.pattern + ' url ' + action.action + ' ' + scriptUrl,
     tag:fixedOption(ast, 'tag'),
     binaryBodyMode:scriptOptionBoolean(ast, 'binary_body_mode', false),
-    notes:condition.notes,
+    notes,
   };
 }
 
-export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 'script', bridgeReady = false, declarationArgument = null} = {}) {
+export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 'script'} = {}) {
   if (!ast || ast.type !== 'script') return unsupported('expected Script v2 AST');
   const condition = scriptUrlCondition(ast);
   if (!condition.ok) return condition;
@@ -68,9 +77,8 @@ export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 's
   if (enable?.type === 'boolean' && enable.value === false) {
     return {ok:true, disabled:true, reason:'Loon Script v2 enable=false'};
   }
-  if (enable?.type === 'variable' && !bridgeReady) return unsupported('dynamic enable requires a Surge module-argument bridge');
-  if ((scriptV2ArgumentRefs(ast).length || ast.script.argument) && !bridgeReady) {
-    return unsupported('Script v2 argument requires a Surge $argument bridge');
+  if (enable?.type === 'variable') {
+    return unsupported('dynamic enable has no verified Surge Script declaration equivalent');
   }
 
   const params = [
@@ -87,13 +95,18 @@ export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 's
 
   const timeout = scriptOption(ast, 'timeout');
   if (timeout?.type === 'number') params.push('timeout=' + timeout.value);
-  else if (timeout?.type === 'variable') return unsupported('dynamic timeout requires a Surge module-argument bridge');
+  else if (timeout?.type === 'variable') return unsupported('dynamic timeout has no verified Surge Script declaration equivalent');
 
-  if (declarationArgument) params.push('argument=' + declarationArgument);
+  const argument = ast.script.argument;
+  if (argument?.type === 'string' || argument?.type === 'raw-string') {
+    params.push('argument=' + JSON.stringify(argument.value));
+  } else if (argument) {
+    return unsupported('Loon typed/object $argument cannot be preserved as Surge string $argument without changing the script');
+  }
 
   const debug = scriptOption(ast, 'debug');
   if (debug?.type === 'boolean' && debug.value) params.push('debug=true');
-  else if (debug?.type === 'variable') return unsupported('dynamic debug requires a Surge module-argument bridge');
+  else if (debug?.type === 'variable') return unsupported('dynamic debug has no verified Surge Script declaration equivalent');
 
   return {
     ok:true,
@@ -106,10 +119,13 @@ export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 's
   };
 }
 
-export function scriptV2BridgeNeeds(ast) {
+export function scriptV2DeclarationGaps(ast) {
   return {
     argumentRefs:scriptV2ArgumentRefs(ast),
     dynamicOptions:scriptV2DynamicOptionRefs(ast),
     hasArgument:Boolean(ast?.script?.argument),
   };
 }
+
+// Backward-compatible export name for callers that only inspect needs.
+export const scriptV2BridgeNeeds = scriptV2DeclarationGaps;
