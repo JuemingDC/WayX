@@ -18,6 +18,7 @@ import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, ren
 import { isScriptV2, parseScriptV2 } from '../../converter/src/script-v2.mjs';
 import { qxScriptV2Plan, surgeScriptV2Plan } from '../../converter/src/script-v2-target.mjs';
 import { analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs } from '../../converter/src/argument-usage.mjs';
+import { surgeArgumentMetadata, surgePluginObjectArgument, surgeDynamicOptionValue, surgeEnableRequirement } from '../../converter/src/argument.mjs';
 import { hasActiveSurgeLines, renderSurgeModuleHeader, validateSurgeModule } from '../../converter/src/surge-module.mjs';
 import { renderQxSnippetHeader } from '../../converter/src/metadata.mjs';
 import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
@@ -392,12 +393,14 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     ruleLines: parsed.sections.get('Rule') || [],
   });
   const argumentIds = new Set(argumentAnalysis.declaredIds);
+  const surgeArgumentPlan = surgeArgumentMetadata(parsed.sections.get('Argument') || []);
+  const surgeArgumentTable = surgeArgumentPlan.table;
+  let surgeNeedsLineRequirement = false;
   const qctx = { id: entry.id, generatedScripts: qx.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, mockFiles: qxMockFiles, jqFiles, argumentIds };
-  const sctx = { id: entry.id, generatedScripts: sg.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, jqFiles, argumentIds };
+  const sctx = { id: entry.id, generatedScripts: sg.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, jqFiles, argumentIds, argumentTable: surgeArgumentTable };
 
-  // Loon [Argument] is analysis-only. Do not emit or translate the source
-  // parameter declarations into QX/Surge target configuration. The analysis is
-  // used only to fail closed when an executable declaration depends on them.
+  // Loon [Argument] is never emitted into Quantumult X. Surge modules use
+  // official #!arguments metadata and {{{name}}} placeholders instead.
   if (argumentAnalysis.undeclaredRefs.length) {
     const refs = [...new Set(argumentAnalysis.undeclaredRefs.map(ref => ref.id))].sort().join(', ');
     qx.notes.push(`# [WayX] ARGUMENT REVIEW REQUIRED: undeclared source plugin argument reference(s): ${refs}`);
@@ -492,7 +495,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
       }
 
       const name = sanitizeName((ast.options.find(x => x.name === 'tag')?.value?.value) || `${entry.id}_${String(scriptIndex).padStart(2, '0')}`);
-      const surgePlan = surgeScriptV2Plan(ast, { scriptUrl: surgeUrl, name, argumentIds });
+      const surgePlan = surgeScriptV2Plan(ast, { scriptUrl: surgeUrl, name, argumentIds, argumentTable: surgeArgumentTable });
       sg.script.push(...comments);
       if (!surgePlan.ok) {
         sg.script.push(`# [WayX] SCRIPT V2 REVIEW REQUIRED: ${surgePlan.reason}`);
@@ -500,6 +503,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
       } else if (surgePlan.disabled) {
         sg.script.push(`# [WayX] Script disabled by source option: ${item.line}`);
       } else {
+        if (surgePlan.usesLineRequirement) surgeNeedsLineRequirement = true;
         sg.script.push(surgePlan.line);
       }
       continue;
@@ -548,22 +552,58 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     sg.script.push(...comments);
     if (enableFixed === 'false' || enableFixed === '0') {
       sg.script.push(`# [WayX] Script disabled by source declaration: ${item.line}`);
-    } else if (enableDynamic) {
-      sg.script.push('# [WayX] SCRIPT REVIEW REQUIRED: dynamic source enable has no verified Surge declaration equivalent.');
-      sg.script.push(`# Source declaration: ${item.line}`);
-    } else if (sc.argument && /[\[{]\{?[^}\]]+\}?[\]}]/.test(sc.argument)) {
-      sg.script.push('# [WayX] SCRIPT REVIEW REQUIRED: dynamic/typed source argument is not converted because script source must remain unchanged.');
-      sg.script.push(`# Source declaration: ${item.line}`);
     } else {
+      let requirementPrefix = '';
+      if (enableDynamic) {
+        const ref = String(sc.enable).match(/^\$?\{([A-Za-z_][\w-]*)\}$/);
+        const requirement = ref ? surgeEnableRequirement(ref[1], surgeArgumentTable) : null;
+        if (!requirement) {
+          sg.script.push('# [WayX] SCRIPT REVIEW REQUIRED: dynamic source enable cannot be mapped to a declared Surge module boolean argument.');
+          sg.script.push(`# Source declaration: ${item.line}`);
+          continue;
+        }
+        requirementPrefix = requirement + ' ';
+        surgeNeedsLineRequirement = true;
+      }
+
       const params = [`type=${sc.type}`, `pattern=${sc.pattern}`, `script-path=${surgeUrl}`];
       if (sc.requiresBody) {
         params.push('requires-body=true');
         params.push(`max-size=${sc.maxSize || '-1'}`);
       }
       if (sc.binary) params.push('binary-body-mode=true');
-      if (sc.timeout) params.push(`timeout=${sc.timeout}`);
-      if (sc.argument) params.push(`argument=${sc.argument}`);
-      sg.script.push(`${name} = ${params.join(',')}`);
+
+      if (sc.timeout) {
+        const timeoutRef = String(sc.timeout).match(/^\$?\{([A-Za-z_][\w-]*)\}$/);
+        if (timeoutRef) {
+          const placeholder = surgeDynamicOptionValue(timeoutRef[1], surgeArgumentTable);
+          if (!placeholder) {
+            sg.script.push('# [WayX] SCRIPT REVIEW REQUIRED: dynamic timeout references an undeclared Surge module argument.');
+            sg.script.push(`# Source declaration: ${item.line}`);
+            continue;
+          }
+          params.push(`timeout=${placeholder}`);
+        } else {
+          params.push(`timeout=${sc.timeout}`);
+        }
+      }
+
+      if (sc.argument) {
+        const refs = [...String(sc.argument).matchAll(/\{([A-Za-z_][\w-]*)\}/g)].map(match => match[1]);
+        const looksLikePluginObject = refs.length > 0 && /^\s*\[.*\]\s*$/.test(String(sc.argument));
+        if (looksLikePluginObject) {
+          const encoded = surgePluginObjectArgument(refs, surgeArgumentTable);
+          if (!encoded.ok) {
+            sg.script.push(`# [WayX] SCRIPT REVIEW REQUIRED: ${encoded.reason}`);
+            sg.script.push(`# Source declaration: ${item.line}`);
+            continue;
+          }
+          params.push('argument=' + encoded.value);
+        } else {
+          params.push(`argument=${sc.argument}`);
+        }
+      }
+      sg.script.push(requirementPrefix + `${name} = ${params.join(',')}`);
     }
   }
 
@@ -606,7 +646,11 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   if (sg.mitm.length) surgeSections.push('[MITM]', ...compact(sg.mitm), '');
 
   const needsCore20 = hasActiveSurgeLines(sg.body) || hasActiveSurgeLines(sg.map);
-  const surgeHeader = renderSurgeModuleHeader(parsed.header, entry, stamp, { needsCore20 });
+  const surgeHeader = renderSurgeModuleHeader(parsed.header, entry, stamp, {
+    needsCore20,
+    argumentMetadata:surgeArgumentPlan.lines,
+    needsLineRequirement:surgeNeedsLineRequirement,
+  });
   const sgOut = [...surgeHeader, '', ...surgeSections].join('\n').replace(/\n*$/, '\n');
 
   return { qx: qxOut.replace(/\n*$/, '\n'), surge: sgOut, generatedScripts: new Map([...qx.generatedScripts, ...sg.generatedScripts]) };
