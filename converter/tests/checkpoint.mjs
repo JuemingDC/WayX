@@ -641,6 +641,12 @@ assert.equal(qxPrimitiveForRewriteV2Action(reject404V2.actions[0]), 'reject');
 
 const surgeRedirectV2 = surgeRedirectRewritePlan(redirectV2);
 assert.equal(surgeRedirectV2.ok, true);
+assert.equal(
+  surgeRedirectV2.line,
+  '^(https://live\\.bilibili\\.com/\\d+)(?:/?\\?.*) $1 302',
+);
+assert.doesNotMatch(surgeRedirectV2.line, /^\(\^/);
+assert.doesNotMatch(surgeRedirectV2.line, /\\\//);
 assert.match(surgeRedirectV2.line, /\$1 302$/);
 
 const surgeReject404 = surgeRejectRewritePlan(reject404V2);
