@@ -378,7 +378,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     else if (qr.kind === 'rewrite') qx.rewrite.push(...comments, qr.line);
     else qx.filter.push(...comments, qr.line);
     const sr = surgeModuleRule(item.line);
-    sg.rule.push(...comments, ...sr.lines);
+    const sRuleDest = sr.section === 'map' ? sg.map : sg.rule;
+    sRuleDest.push(...comments, ...sr.lines);
   }
 
   for (const item of sectionItems(parsed.sections.get('Rewrite'))) {
