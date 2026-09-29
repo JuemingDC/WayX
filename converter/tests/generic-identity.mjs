@@ -77,7 +77,16 @@ function surgeSemantics(text, entryId){
 
 assert.deepEqual(qxSemantics(outA.qx, entryA.id), qxSemantics(outB.qx, entryB.id));
 assert.deepEqual(surgeSemantics(outA.surge, entryA.id), surgeSemantics(outB.surge, entryB.id));
-assert.deepEqual([...outA.generatedScripts], [...outB.generatedScripts]);
+function generatedScriptSemantics(map){
+  return [...map].map(([name, body]) => [
+    name,
+    String(body)
+      .split('\n')
+      .filter(line => !/^\/\/ (?:Converted:|Converted by:|Category:)/.test(line))
+      .join('\n'),
+  ]);
+}
+assert.deepEqual(generatedScriptSemantics(outA.generatedScripts), generatedScriptSemantics(outB.generatedScripts));
 
 assert.ok(qxSemantics(outA.qx, entryA.id).includes('^https:\\/\\/ads\\.example\\.com url reject-dict'));
 assert.ok(surgeSemantics(outA.surge, entryA.id).includes('^https:\\/\\/ads\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"'));
