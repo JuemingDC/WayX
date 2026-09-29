@@ -37,6 +37,9 @@ import {
   qxScriptV2Plan,
   surgeScriptV2Plan,
   surgeRule,
+  surgeModuleRule,
+  renderSurgeModuleHeader,
+  validateSurgeModule,
   surgeTargetPath,
   validateRewriteV2Ast,
 } from '../src/index.mjs';
@@ -45,11 +48,80 @@ assert.equal(qxRule('URL-REGEX, "^https:\\/\\/ad\\.example\\.com", REJECT').line
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-IMG').line, '^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\? url reject-img');
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP').line, '^https:\\/\\/drop\\.example\\.com url reject');
 assert.equal(surgeRule('URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-IMG'), 'URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-TINYGIF');
-assert.equal(surgeRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP'), 'URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP');
+assert.equal(surgeModuleRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP').line, 'URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT');
+assert.match(surgeModuleRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP').lines[0], /normalized to REJECT/);
 assert.match(qxRule('AND, ((DOMAIN-SUFFIX, example.com), (PROTOCOL, TCP)), REJECT').line, /^# Loon logical rule/);
 assert.equal(qxRule('IP-CIDR, 1.1.1.1/32, REJECT, no-resolve').line, 'ip-cidr, 1.1.1.1/32, reject');
-assert.equal(surgeRule('IP-CIDR, 1.1.1.1/32, REJECT, no-resolve'), 'IP-CIDR, 1.1.1.1/32, REJECT, no-resolve');
+assert.equal(surgeRule('IP-CIDR, 1.1.1.1/32, REJECT, no-resolve'), 'IP-CIDR,1.1.1.1/32,REJECT,no-resolve');
 assert.equal(surgeRule('DOMAIN, example.com, PROXY'), '# [WayX] Surge Module policy binding required: DOMAIN, example.com, PROXY');
+
+
+const surgeHeader = renderSurgeModuleHeader([
+  '#!name=Demo',
+  '#!desc=Demo module',
+  '#!author=Loon Author',
+  '#!icon=https://example.com/icon.png',
+  '#!date=2026-09-29',
+  '#!loon_version=3.5.1(978)',
+  '# source comment',
+], {
+  id:'Demo',
+  category:'去广告 / 测试',
+  source:'https://example.com/demo.lpx',
+}, '2026-09-29 12:00:00 +08:00', {needsCore20:true});
+assert.equal(surgeHeader[0], '#!name=Demo');
+assert.equal(surgeHeader[1], '#!desc=Demo module');
+assert.equal(surgeHeader[2], '#!requirement=CORE_VERSION>=20');
+assert.ok(surgeHeader.includes('# Original Loon metadata: #!author=Loon Author'));
+assert.ok(surgeHeader.includes('# Original Loon metadata: #!icon=https://example.com/icon.png'));
+assert.ok(surgeHeader.includes('# Original Loon metadata: #!loon_version=3.5.1(978)'));
+assert.ok(surgeHeader.includes('# Author: chance'));
+assert.ok(surgeHeader.includes('# Category: 去广告 / 测试'));
+assert.equal(surgeHeader.some(line => /^#!(?:author|icon|date|loon_version)=/i.test(line)), false);
+
+const validSurgeModule = [
+  ...surgeHeader,
+  '',
+  '[Rule]',
+  'DOMAIN,ads.example.com,REJECT',
+  'IP-CIDR,1.1.1.1/32,REJECT,no-resolve',
+  '',
+  '[URL Rewrite]',
+  '^https:\\/\\/ads\\.example\\.com _ reject',
+  '',
+  '[Header Rewrite]',
+  'http-response ^https:\\/\\/api\\.example\\.com header-del Server',
+  '',
+  '[Body Rewrite]',
+  'http-response-jq ^https:\\/\\/api\\.example\\.com \'del(.ads)\'',
+  '',
+  '[Map Local]',
+  '^https:\\/\\/mock\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"',
+  '',
+  '[Script]',
+  'demo = type=http-response,pattern=^https:\\/\\/api\\.example\\.com,script-path=https://example.com/demo.js,requires-body=true',
+  '',
+  '[MITM]',
+  'hostname = %APPEND% api.example.com',
+  '',
+].join('\n');
+assert.doesNotThrow(() => validateSurgeModule(validSurgeModule, {id:'Demo'}));
+assert.throws(
+  () => validateSurgeModule(validSurgeModule.replace('#!requirement=CORE_VERSION>=20\n', ''), {id:'Demo'}),
+  /CORE_VERSION>=20/,
+);
+assert.throws(
+  () => validateSurgeModule(validSurgeModule.replace('DOMAIN,ads.example.com,REJECT', 'DOMAIN,ads.example.com,REJECT-DROP'), {id:'Demo'}),
+  /DIRECT\/REJECT\/REJECT-TINYGIF/,
+);
+assert.throws(
+  () => validateSurgeModule(validSurgeModule.replace('# Original Loon metadata: #!author=Loon Author', '#!author=Loon Author'), {id:'Demo'}),
+  /unsupported Surge module directive/,
+);
+assert.throws(
+  () => validateSurgeModule(validSurgeModule.replace('hostname = %APPEND% api.example.com', 'hostname = api.example.com'), {id:'Demo'}),
+  /%APPEND%/,
+);
 
 const compact = minifyJq('walk( if type == "object" then .a = [] | del(.b, .c) else . end )');
 assert.equal(compact.includes('"object"'), true);
