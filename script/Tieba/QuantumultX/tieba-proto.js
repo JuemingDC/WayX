@@ -1,8 +1,17 @@
-// Converted: 2026-09-28 13:23:04 +08:00
+// Converted: 2026-09-29 07:57:00 +08:00
 // Converted by: chance
 // Category: 去广告
 // Target: Quantumult X
 // Source: https://kelee.one/Resource/JavaScript/Tieba/tieba-proto.js
+// WayX BoxJs -> Quantumult X $prefs bridge
+const __wayxPref = (key, fallback) => {
+  const value = $prefs.valueForKey(key);
+  return value === null || value === undefined ? fallback : value;
+};
+const $argument = {
+  "per_filter_video_thread": String(__wayxPref("wayx.tieba.per_filter_video_thread", "true")).toLowerCase() === "true",
+};
+
 /*
 脚本引用 https://raw.githubusercontent.com/app2smile/rules/master/js/tieba-proto.js
 */
@@ -149,9 +158,7 @@ if(resStatus !== 200) {
     } else if (url.includes("excellent/personalized")) {
         console.log('贴吧-personalized');
         const argOptions = {
-            // Converted by chance: Quantumult X snippet cannot receive Loon [Argument]; apply the Loon default true.
-            per_filter_video_thread: true,
-            // Original comment: ✅ 默认值改为 false（布尔）
+            per_filter_video_thread: false, // ✅ 默认值改为 false（布尔）
         };
         switch (typeof $argument) {
             case 'string':
