@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-import { minifyJq, parseRewriteV2 } from '../src/index.mjs';
+import { compileRegexForTarget, minifyJq, minifyJqFile, parseRewriteV2 } from '../src/index.mjs';
 
 const fixture = JSON.parse(await fs.readFile(new URL('../fixtures/myblockads-golden.json', import.meta.url), 'utf8'));
 const root = new URL('../../', import.meta.url);
 const source = await fs.readFile(new URL(fixture.source, root), 'utf8');
 const qx = await fs.readFile(new URL(fixture.quantumultX, root), 'utf8');
 const surge = await fs.readFile(new URL(fixture.surge, root), 'utf8');
+const dependencyCache = JSON.parse(await fs.readFile(new URL('../dependencies/manifest.json', import.meta.url), 'utf8'));
 
 function extractQx(text) {
   return text.split('\n').map(x => x.trim()).filter(x => x.includes(' url jsonjq-response-body ')).map(line => {
@@ -51,14 +52,21 @@ for (const ast of sourceJq) {
   assert.equal(ast.condition.left.type, 'variable');
   assert.equal(ast.condition.left.name, 'url');
   assert.equal(ast.condition.right.type, 'regex');
-  const pattern = ast.condition.right.pattern;
-  const target = qxPairs.find(x => x.pattern === pattern);
-  assert.ok(target, 'No target JQ rule for source URL regex: ' + pattern);
+  const compiled = compileRegexForTarget(ast.condition.right, {subject:'url'});
+  assert.equal(compiled.ok, true, 'Source URL regex cannot be compiled for target: ' + ast.condition.right.pattern);
+  const target = qxPairs.find(x => x.pattern === compiled.pattern);
+  assert.ok(target, 'No target JQ rule for compiled source URL regex: ' + compiled.pattern);
 
   const action = ast.actions[0];
   const jq = action.args[0]?.value;
   assert.equal(typeof jq, 'string');
-  if (!jq.startsWith('jq-path=')) {
+  if (jq.startsWith('jq-path=')) {
+    const url = jq.slice('jq-path='.length);
+    const rel = dependencyCache.resources?.[url];
+    assert.ok(rel, 'No cached JQ dependency for source jq-path: ' + url);
+    const cached = await fs.readFile(new URL('../../' + rel, import.meta.url), 'utf8');
+    assert.equal(target.jq, minifyJqFile(cached), 'Cached jq-path dependency changed target JQ semantics');
+  } else {
     assert.equal(target.jq, minifyJq(jq), 'Inline source JQ changed semantics/text beyond whitespace minification');
   }
 }
