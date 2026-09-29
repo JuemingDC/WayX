@@ -81,7 +81,7 @@ assert.equal(
 );
 for (const item of stats.reviewLines.filter(x => x.reason === 'external-policy')) {
   const mapped=surgeModuleRule(item.line);
-  assert.match(mapped.line, /policy binding required/i);
+  assert.match(mapped.lines.join('\n'), /policy binding required/i);
 }
 
 const types = [...stats.types.entries()].sort((a, b) => a[0].localeCompare(b[0]));
