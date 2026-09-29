@@ -58,6 +58,7 @@ converter 先实现
 
 - Source Catalog：`.github/sources/loon.json`
 - Source fetch + dependency fetch + generic conversion：`.github/scripts/sync-convert.mjs`
+- 陌生插件端到端 smoke：`converter/tests/unknown-plugin-pipeline.mjs`，必须实际通过 HTTP 原作者源验证 LPX → 相对 Script/JQ → QX/Surge/helper → 写文件。
 - Canonical deterministic regeneration：`converter/tools/regenerate-canonical.mjs`
 - CI gate：`.github/workflows/converter-check.yml`（同仓库 PR 可自动提交 deterministic canonical + WayX-generated helpers；外部 fork 只校验不写入）
 - Upstream scheduled flow：`.github/workflows/upstream-monitor.yml`
