@@ -175,7 +175,7 @@ function rewriteV2Action(line, target, ctx) {
     // Loon Header subtypes are lowered through QX's official phase-specific
     // script-request-header / script-response-header hooks. Keep a same-phase
     // pipeline in one helper so left-to-right action order is preserved.
-    if (ast.actions.length && ast.actions.every(a => new RegExp('^' + ast.phase + '\\.header\\.(?:add|set|del|replace)
+    if (ast.actions.length && ast.actions.every(a => new RegExp('^' + ast.phase + '\\.header\\.(?:add|set|del|replace)$').test(a.name))) {
       try {
         const plan = renderQxHeaderScript(ast, { stamp: ctx.stamp, category: ctx.category, sourceLine: line });
         const key = crypto.createHash('sha1').update('header\0' + line).digest('hex').slice(0, 10);
