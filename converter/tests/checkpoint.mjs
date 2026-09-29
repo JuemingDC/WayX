@@ -319,6 +319,10 @@ assert.equal(
 assert.deepEqual(parseLegacyLoonPluginObjectRefs('[{region},{level},{enabled}]'), ['region','level','enabled']);
 assert.deepEqual(parseLegacyLoonPluginObjectRefs('{region,level,enabled}'), ['region','level','enabled']);
 
+const noDefaultArgs = surgeArgumentMetadata(['optional=input,tag=可选']);
+assert.equal(noDefaultArgs.lines[0], '#!arguments=optional');
+assert.equal(surgePluginObjectArgument(['optional'], noDefaultArgs.table).ok, false);
+
 const surgeArgumentScript = surgeScriptV2Plan(
   parseScriptV2('request if ${url} ~= /api/ then script("https://example.com/a.js", {${region}, ${level}, ${enabled}}) with enable=${enabled}, timeout=${level}, debug=${enabled}, requires_body=true'),
   {
