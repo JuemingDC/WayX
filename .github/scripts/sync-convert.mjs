@@ -569,7 +569,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
         let qxBridgeError = null;
         try {
           qxBridge = renderQxScriptV2Bridge(entry.id, parsed.sections.get('Argument') || [], ast, sourceText, {
-            stamp: ctx?.stamp || stamp,
+            stamp,
             category: entry.category,
             sourceUrl: ast.script.path,
           });
