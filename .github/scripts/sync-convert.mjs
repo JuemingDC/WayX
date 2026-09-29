@@ -24,6 +24,7 @@ import { renderQxSnippetHeader } from '../../converter/src/metadata.mjs';
 import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
 import { planMitmLine } from '../../converter/src/mitm.mjs';
 import { fetchOriginalText, fetchOriginalBytes, resolveOriginalUrl } from '../../converter/src/source-fetch.mjs';
+import { canonicalizeSurgeUrlPattern } from '../../converter/src/target-regex.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -615,7 +616,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
         surgeNeedsLineRequirement = true;
       }
 
-      const params = [`type=${sc.type}`, `pattern=${sc.pattern}`, `script-path=${surgeUrl}`];
+      const params = [`type=${sc.type}`, `pattern=${canonicalizeSurgeUrlPattern(sc.pattern)}`, `script-path=${surgeUrl}`];
       if (sc.requiresBody) {
         params.push('requires-body=true');
         params.push(`max-size=${sc.maxSize || '-1'}`);
