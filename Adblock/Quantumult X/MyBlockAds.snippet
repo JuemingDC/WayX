@@ -4,11 +4,15 @@
 # Icon: https://rucu6.pages.dev/Icons/app/myblockads.png
 # Updated: 2026-09-27 18:30
 
-# Converted: 2026-09-29 17:23:21 +08:00
+# Converted: 2026-09-29 17:37:25 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/myblockads.lpx
 # Target: Quantumult X
+
+
+# Reddit //gql.reddit.com, gql-fed.reddit.com
+# Unsupported Loon Rewrite v2 preserved (JQ contains a single quote and requires script fallback): response if ${url} ~= /^https:\/\/gql(-fed)?\.reddit\.com/i then response.json.jq("jq-path=https://rucu6.pages.dev/JQLang/reddit.jq")
 
 # [filter_local]
 # ======= 0 ======= #
@@ -432,9 +436,6 @@ host, yandexmetrica.com, reject
 # 米家 //home.mi.com
 ^https:\/\/home\.mi\.com\/cgi-op\/api\/v1\/recommendation\/(?:banner|carousel\/banners|myTab|openingBanner) url reject-dict
 
-# Reddit //gql.reddit.com, gql-fed.reddit.com
-^https:\/\/gql(-fed)?\.reddit\.com url jsonjq-response-body 'walk(if type=="object" then (if .isNsfw==true then .isNsfw=false else . end)|(if .isNsfwMediaBlocked==true then .isNsfwMediaBlocked=false else . end)|(if .isNsfwContentShown==false then .isNsfwContentShown=true else . end)|(if (.commentsPageAds|type=="array") then (.commentsPageAds=[]) else . end)|(if ((.node|type=="object") and (.node.cells|type=="array") and (.node.cells|any(.__typename?=="AdMetadataCell" or .isAdPost?==true))) then empty else . end)|(if (.node|type=="object") and (.node.adPayload|type=="object") then empty else . end)|(if .__typename=="AdPost" then empty else . end) else . end)'
-
 # 太平洋寿险 //a.cpiccdn.com
 ^https:\/\/a\.cpiccdn\.com\/config-center\/api\/configfile\/images\/\d{8}\/\d{13}_(?:(?:630|945|1035)_\d{2,4}|123_48|136_136|207_210|408_408|750_750|1125_\d{4})\.(gif|jpg|png)$ url reject-dict
 
@@ -479,77 +480,77 @@ host, yandexmetrica.com, reject
 # 12306 //ad.12306.cn, mobile.12306.cn
 # 12306_splash
 # [WayX] i-source-flag-not-expressed-in-target-declaration
-^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList$ url script-analyze-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/MyBlockAds/12306.js
+^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList$ url script-request-body https://rucu6.pages.dev/Scripts/12306.js
 # 12306_ads
 # [WayX] i-source-flag-not-expressed-in-target-declaration
-^https:\/\/mobile\.12306\.cn\/otsmobile\/app\/mgs\/mgw\.htm$ url script-request-header https://raw.githubusercontent.com/JuemingDC/WayX/main/script/MyBlockAds/header.js
+^https:\/\/mobile\.12306\.cn\/otsmobile\/app\/mgs\/mgw\.htm$ url script-request-header https://rucu6.pages.dev/Scripts/header.js
 
 # 阿里云盘 //*api.alipan.com, member.alipan.com
 # aliyun_mine
 # [WayX] i-source-flag-not-expressed-in-target-declaration
-^https:\/\/(biz)?api\.alipan\.com\/apps\/v\d\/users?\/home\/(?:news|widgets) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/script/MyBlockAds/adrive.js
+^https:\/\/(biz)?api\.alipan\.com\/apps\/v\d\/users?\/home\/(?:news|widgets) url script-response-body https://rucu6.pages.dev/Scripts/adrive.js
 # aliyun_board
 # [WayX] i-source-flag-not-expressed-in-target-declaration
-^https:\/\/member\.alipan\.com\/v1\/users\/onboard_list url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/script/MyBlockAds/adrive.js
+^https:\/\/member\.alipan\.com\/v1\/users\/onboard_list url script-response-body https://rucu6.pages.dev/Scripts/adrive.js
 
 # 阿里巴巴 //acs.m.taobao.com, heic.alicdn.com, guide-acs.m.taobao.com, poplayer.template.alibaba.com
 # taobao_1
 # [WayX] i-source-flag-not-expressed-in-target-declaration
-^https:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.taobao\.(?:cloudvideo\.video\.query|wireless\.home\.splash\.awesome\.get) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/script/MyBlockAds/myblockads.js
+^https:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.taobao\.(?:cloudvideo\.video\.query|wireless\.home\.splash\.awesome\.get) url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
 # taobao_2
 # [WayX] i-source-flag-not-expressed-in-target-declaration
-^https:\/\/poplayer\.template\.alibaba\.com\/\w+\.json url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/script/MyBlockAds/myblockads.js
+^https:\/\/poplayer\.template\.alibaba\.com\/\w+\.json url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
 
 # 草榴社区 //2023.redircdn.com
 # caoliu
 # [WayX] i-source-flag-not-expressed-in-target-declaration
-^https:\/\/2023\.redircdn\.com\/web\/mob_post\.js\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/script/MyBlockAds/myblockads.js
+^https:\/\/2023\.redircdn\.com\/web\/mob_post\.js\? url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
 
 # 昌原云充 五代十路 //www.washpayer.com
 # changyuan
 # [WayX] i-source-flag-not-expressed-in-target-declaration
-^https:\/\/www\.washpayer\.com\/user\/message\/equipmentPara\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/script/MyBlockAds/changyuan.js
+^https:\/\/www\.washpayer\.com\/user\/message\/equipmentPara\? url script-response-body https://rucu6.pages.dev/Scripts/changyuan.js
 
 # 酷安 //api.coolapk.com
 # coolapk
 # [WayX] i-source-flag-not-expressed-in-target-declaration
-^https:\/\/api\.coolapk\.com\/v6\/(?:feed\/detail|feed\/replyList|page\/dataList|main\/dataList|main\/indexV8|main\/init) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/script/MyBlockAds/coolapk.js
+^https:\/\/api\.coolapk\.com\/v6\/(?:feed\/detail|feed\/replyList|page\/dataList|main\/dataList|main\/indexV8|main\/init) url script-response-body https://rucu6.pages.dev/Scripts/coolapk.js
 
 # 酷狗音乐 //adserviceretry.kglink.cn, gateway.kugou.com
 # kg_gateway
 # [WayX] i-source-flag-not-expressed-in-target-declaration
-^https:\/\/gateway\.kugou\.com\/(?:adp\/ad\/v1\/mine_top_banner|ads\.gateway\/v2\/home_card) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/script/MyBlockAds/kugou.js
+^https:\/\/gateway\.kugou\.com\/(?:adp\/ad\/v1\/mine_top_banner|ads\.gateway\/v2\/home_card) url script-response-body https://rucu6.pages.dev/Scripts/kugou.js
 # kg_linkcn
 # [WayX] i-source-flag-not-expressed-in-target-declaration
-^https?:\/\/adserviceretry\.kglink\.cn\/v\d\/mobile\w+ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/script/MyBlockAds/kugou.js
+^https?:\/\/adserviceretry\.kglink\.cn\/v\d\/mobile\w+ url script-response-body https://rucu6.pages.dev/Scripts/kugou.js
 
 # 微信封禁页面 //weixin110.qq.com, security.wechat.com
 # wechat
 # [WayX] i-source-flag-not-expressed-in-target-declaration
-^https\:\/\/(?:weixin110\.qq|security\.wechat)\.com\/cgi-bin\/mmspamsupport-bin\/newredirectconfirmcgi\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/script/MyBlockAds/wechat.js
+^https\:\/\/(?:weixin110\.qq|security\.wechat)\.com\/cgi-bin\/mmspamsupport-bin\/newredirectconfirmcgi\? url script-response-body https://rucu6.pages.dev/Scripts/wechat.js
 
 # 小米商城 //api.m.mi.com, shop-api.retail.mi.com
 # mi_mall
 # [WayX] i-source-flag-not-expressed-in-target-declaration
-^https:\/\/api\.m\.mi\.com\/v1\/app\/start url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/script/MyBlockAds/myblockads.js
+^https:\/\/api\.m\.mi\.com\/v1\/app\/start url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
 
 # 迅雷 //api-gateway-pan.xunlei.com
 # thunder
 # [WayX] i-source-flag-not-expressed-in-target-declaration
-^https:\/\/api-gateway-pan\.xunlei\.com\/content\/v1\/aggregate\/info\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/script/MyBlockAds/myblockads.js
+^https:\/\/api-gateway-pan\.xunlei\.com\/content\/v1\/aggregate\/info\? url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
 
 # 中国农业银行 //mobilepaas.abchina.com.cn
 # abchina
 # [WayX] i-source-flag-not-expressed-in-target-declaration
-^https:\/\/mobilepaas\.abchina\.com\.cn:441\/mgw\.htm$ url script-request-header https://raw.githubusercontent.com/JuemingDC/WayX/main/script/MyBlockAds/header.js
+^https:\/\/mobilepaas\.abchina\.com\.cn:441\/mgw\.htm$ url script-request-header https://rucu6.pages.dev/Scripts/header.js
 
 # 中国移动云盘 //ad.mcloud.139.com, jzts.cmpassport.com
 # cloud139_1
 # [WayX] i-source-flag-not-expressed-in-target-declaration
-^https:\/\/ad\.mcloud\.139\.com\/advertapi\/adv-filter\/ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/script/MyBlockAds/cloud139.js
+^https:\/\/ad\.mcloud\.139\.com\/advertapi\/adv-filter\/ url script-response-body https://rucu6.pages.dev/Scripts/cloud139.js
 # cloud139_2
 # [WayX] i-source-flag-not-expressed-in-target-declaration
-^https:\/\/jzts\.cmpassport\.com\/personalized\/getPushContent url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/script/MyBlockAds/cloud139.js
+^https:\/\/jzts\.cmpassport\.com\/personalized\/getPushContent url script-response-body https://rucu6.pages.dev/Scripts/cloud139.js
 
 # [mitm]
 hostname = ad.12306.cn, mobile.12306.cn, list-app-m.i4.cn, *api.alipan.com, member.alipan.com, acs.m.taobao.com, gw.alicdn.com, heic.alicdn.com, guide-acs.m.taobao.com, poplayer.template.alibaba.com, pan.baidu.com, 2023.redircdn.com, www.washpayer.com, oneapph5.dongfeng-nissan.com.cn, api.douban.com, img3.doubanio.com, qnmob3.doubanio.com, image.mybank.icbc.com.cn, hfapp-service.qweather.net, acs-m.freshippo.com, gab.122.gov.cn, api.coolapk.com, adserviceretry.kglink.cn, gateway.kugou.com, p0.pipi.cn, mme.api.moji.com, sns.api.moji.com, flowplus.meituan.net, img.meituan.net, s3plus.meituan.net, home.mi.com, gql.reddit.com, gql-fed.reddit.com, a.cpiccdn.com, osg-service.sgcc.com.cn, api.xiachufang.com, mp.weixin.qq.com, weixin110.qq.com, security.wechat.com, marketing-aibox.v.mitvos.com, api.m.mi.com, shop-api.retail.mi.com, xiaomishop.retail.mi.com, gateway.sccncdn.com, gateway.starcharge.com, api-gateway-pan.xunlei.com, api-shoulei-ssl.xunlei.com, conf-m-ssl.xunlei.com, login-service.mobile-bank.psbc.com, wallet.95516.com, mobilepaas.abchina.com.cn, ad.mcloud.139.com, jzts.cmpassport.com
