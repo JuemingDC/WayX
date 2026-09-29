@@ -63,6 +63,48 @@
         "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Telegram.png",
         "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Telegram.png"
       ]
+    },
+    {
+      "id": "juemingdc.tieba.qx",
+      "name": "百度贴吧去广告",
+      "descs_html": [
+        "由 WayX Converter 从 Loon [Argument] 生成；Quantumult X 通过 $prefs bridge 读取此配置。"
+      ],
+      "keys": [
+        "wayx.tieba.per_filter_video_thread"
+      ],
+      "settings": [
+        {
+          "id": "wayx.tieba.per_filter_video_thread",
+          "name": "拦截推荐页面视频帖",
+          "val": "true",
+          "desc": "此项决定是否拦截首页推荐标签下的视频帖",
+          "type": "selects",
+          "items": [
+            {
+              "key": "true",
+              "label": "true"
+            },
+            {
+              "key": "false",
+              "label": "false"
+            }
+          ]
+        }
+      ],
+      "author": "@JuemingDC",
+      "repo": "https://github.com/JuemingDC/WayX",
+      "_wayx": {
+        "managed": true,
+        "source_arguments": [
+          {
+            "id": "per_filter_video_thread",
+            "key": "wayx.tieba.per_filter_video_thread",
+            "default": "true",
+            "value_type": "string"
+          }
+        ]
+      }
     }
   ]
 }
