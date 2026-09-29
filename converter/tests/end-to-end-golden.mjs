@@ -4,14 +4,20 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {
   convert,
+  parseLoon,
   scriptUrls,
   validateQX,
 } from '../../.github/scripts/sync-convert.mjs';
 import { validateSurgeModule } from '../src/index.mjs';
+import { isRewriteV2, parseRewriteV2 } from '../src/rewrite-v2.mjs';
+import { validateRewriteV2Ast } from '../src/rewrite-v2-actions.mjs';
+import { jqDependencySpecFromAction } from '../src/dependency.mjs';
+import { minifyJqFile } from '../src/jq.mjs';
 
 const ROOT = process.cwd();
 const golden = JSON.parse(await fs.readFile(path.join(ROOT, 'converter/fixtures/end-to-end-golden.json'), 'utf8'));
 const STAMP = golden.stamp;
+const dependencyCache = JSON.parse(await fs.readFile(path.join(ROOT, 'converter/dependencies/manifest.json'), 'utf8'));
 
 const manifest = JSON.parse(await fs.readFile(path.join(ROOT, '.github/sources/loon.json'), 'utf8'));
 const byId = new Map(manifest.map(entry => [entry.id, entry]));
@@ -84,6 +90,29 @@ function passthroughScriptMap(source) {
   ]));
 }
 
+async function localJqFiles(entry, source) {
+  const out = new Map();
+  const parsed = parseLoon(source);
+  for (const raw of parsed.sections.get('Rewrite') || []) {
+    const line = raw.trim();
+    if (!line || line.startsWith('#') || line.startsWith(';') || line.startsWith('//') || !isRewriteV2(line)) continue;
+    const ast = parseRewriteV2(line);
+    validateRewriteV2Ast(ast);
+    if (ast.actions.length !== 1) continue;
+    const spec = jqDependencySpecFromAction(ast.actions[0], { pluginSourceUrl: entry.source });
+    if (!spec) continue;
+    const rel = dependencyCache.resources?.[spec.url];
+    assert.ok(rel, entry.id + ': missing cached JQ dependency for ' + spec.url);
+    out.set(line, {
+      content: minifyJqFile(await fs.readFile(path.join(ROOT, rel), 'utf8')),
+      sourceFile: spec.url,
+      localFile: rel,
+      legacyAlias: Boolean(spec.legacyAlias),
+    });
+  }
+  return out;
+}
+
 function activeLines(text) {
   return text.split('\n').filter(raw => {
     const line = raw.trim();
@@ -100,7 +129,8 @@ for (const testCase of cases) {
   assert.ok(testCase.entry, `${testCase.name}: missing manifest entry`);
   const source = await fs.readFile(path.join(ROOT, testCase.file), 'utf8');
   const scripts = passthroughScriptMap(source);
-  const out = convert(testCase.entry, source, scripts, STAMP, new Map());
+  const jqFiles = await localJqFiles(testCase.entry, source);
+  const out = convert(testCase.entry, source, scripts, STAMP, new Map(), jqFiles);
 
   validateQX(out.qx, testCase.entry);
   validateSurgeModule(out.surge, testCase.entry);
