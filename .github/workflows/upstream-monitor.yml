@@ -63,6 +63,7 @@ jobs:
         run: |
           node converter/tests/checkpoint.mjs
           node converter/tests/generic-identity.mjs
+          node converter/tests/unknown-plugin-pipeline.mjs
           node converter/tests/genericity-audit.mjs
           node converter/tests/spec-block-contract.mjs
           python converter/tests/test_conversion_gate.py
