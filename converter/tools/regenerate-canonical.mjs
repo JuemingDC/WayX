@@ -7,7 +7,7 @@ import { cleanSource, convert, materializeJqFiles, materializeQxMockFiles, parse
 import { qxTargetPath, surgeTargetPath } from '../src/paths.mjs';
 import { validateSurgeModule } from '../src/surge-module.mjs';
 import { loadLoonSourceCatalog } from '../src/source-catalog.mjs';
-import { fetchOriginalText } from '../src/source-fetch.mjs';
+import { fetchOriginalText, resolveOriginalUrl } from '../src/source-fetch.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -30,13 +30,14 @@ async function exists(file) {
   catch { return false; }
 }
 
-async function originalScriptMap(source) {
+async function originalScriptMap(source, pluginSourceUrl) {
   const map = new Map();
-  for (const url of scriptUrls(source)) {
-    const sourceText = normalize(await fetchOriginalText(url)).replace(/\n*$/, '\n');
-    map.set(url, {
-      qx: url,
-      surge: url,
+  for (const reference of scriptUrls(source)) {
+    const originalUrl = resolveOriginalUrl(reference, pluginSourceUrl);
+    const sourceText = normalize(await fetchOriginalText(originalUrl)).replace(/\n*$/, '\n');
+    map.set(reference, {
+      qx: originalUrl,
+      surge: originalUrl,
       source: sourceText,
       qxAdapted: false,
     });
@@ -69,7 +70,7 @@ for (const entry of manifest) {
     const oldQx = await readIfExists(qxPath);
     const oldSurge = await readIfExists(surgePath);
     const stamp = existingStamp(oldQx, oldSurge) || nowCN();
-    const scripts = await originalScriptMap(source);
+    const scripts = await originalScriptMap(source, entry.source);
     const parsed = parseLoon(source);
     const qxMockFiles = await materializeQxMockFiles(entry, parsed);
     const jqFiles = await materializeJqFiles(entry, parsed);
