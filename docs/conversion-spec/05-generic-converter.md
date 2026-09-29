@@ -272,3 +272,12 @@ CI 必须审计生产 converter，禁止出现已登记插件身份驱动的语�
 → real-plugin regression
 → canonical output
 ```
+
+## 5.13 自动转换实现
+
+- Source Catalog schema/validation：`converter/src/source-catalog.mjs`
+- Script dependency local-path planner：`converter/src/script-path.mjs`
+- Generic orchestration：`.github/scripts/sync-convert.mjs`
+- Offline canonical regeneration：`converter/tools/regenerate-canonical.mjs`
+- Identity invariance：`converter/tests/generic-identity.mjs`
+- Plugin-identity source audit：`converter/tests/genericity-audit.mjs`
