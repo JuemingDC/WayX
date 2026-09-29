@@ -30,6 +30,11 @@ function unquote(value) {
   return s;
 }
 
+function surgeCsvRegexField(value) {
+  const text = String(value ?? '');
+  return text.includes(',') ? '"' + text.replace(/"/g, '\\"') + '"' : text;
+}
+
 function splitLogicalSubrules(value) {
   const source = String(value ?? '').trim();
   if (!source.startsWith('(') || !source.endsWith(')')) return null;
@@ -189,7 +194,7 @@ export function surgeModuleRule(line) {
   // weakening them to a generic reject or dropping the response body semantics.
   if (type === 'URL-REGEX') {
     const pattern = canonicalizeSurgeUrlPattern(unquote(parts[1] || ''));
-    parts[1] = pattern;
+    parts[1] = surgeCsvRegexField(pattern);
     const sourcePolicy = String(parts[2] || '').toUpperCase();
     const mapLocal = {
       'REJECT-200': `${pattern} data-type=text data="" status-code=200`,
