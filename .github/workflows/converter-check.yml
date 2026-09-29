@@ -61,7 +61,6 @@ jobs:
           node converter/tests/genericity-audit.mjs
           node converter/tests/spec-block-contract.mjs
           python converter/tests/test_conversion_gate.py
-          node converter/tools/audit-repository.mjs
 
       - name: Repository script syntax
         shell: bash
@@ -74,6 +73,9 @@ jobs:
 
       - name: Regenerate canonical outputs
         run: node converter/tools/regenerate-canonical.mjs --write
+
+      - name: Audit regenerated repository
+        run: node converter/tools/audit-repository.mjs
 
       - name: Verify generated helper references
         run: node converter/tests/generated-helper-refs.mjs
