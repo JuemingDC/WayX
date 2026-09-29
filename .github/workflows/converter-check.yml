@@ -72,4 +72,11 @@ jobs:
             Adblock/Surge/*.sgmodule
 
       - name: Verify canonical outputs are checked in
-        run: git diff --exit-code -- "Adblock/Quantumult X" "Adblock/Surge"
+        shell: bash
+        run: |
+          set -euo pipefail
+          status="$(git status --porcelain --untracked-files=all -- "Adblock/Quantumult X" "Adblock/Surge")"
+          if [[ -n "$status" ]]; then
+            printf '%s\n' "$status"
+            exit 1
+          fi
