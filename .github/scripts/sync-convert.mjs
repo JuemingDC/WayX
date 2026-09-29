@@ -245,15 +245,15 @@ async function materializeQxMockFiles(entry, parsed) {
       }
 
       if (plan.base64) {
-        const { text } = { text: await fetchOriginalText(plan.url), fetchedFrom: plan.url };
+        const text = await fetchOriginalText(plan.url);
         const compact = text.replace(/\s+/g, '');
         if (!/^[A-Za-z0-9+/]*={0,2}$/.test(compact) || compact.length % 4 === 1) throw new Error('invalid Base64 mock_file content');
         out.set(item.line, { bodyBase64: Buffer.from(compact, 'base64').toString('base64'), sourceFile: plan.url });
       } else if (plan.binary) {
-        const { bytes } = { bytes: await fetchOriginalBytes(plan.url), fetchedFrom: plan.url };
+        const bytes = await fetchOriginalBytes(plan.url);
         out.set(item.line, { bodyBase64: bytes.toString('base64'), sourceFile: plan.url });
       } else {
-        const { text } = { text: await fetchOriginalText(plan.url), fetchedFrom: plan.url };
+        const text = await fetchOriginalText(plan.url);
         out.set(item.line, { bodyText: text, sourceFile: plan.url });
       }
     } catch (error) {
@@ -274,7 +274,7 @@ async function materializeJqFiles(entry, parsed) {
       const spec = jqDependencySpecFromAction(ast.actions[0], { pluginSourceUrl: entry.source });
       if (!spec) continue;
       if (!spec.resolvable || !spec.url) throw new Error(spec.reason || 'JQ dependency is not resolvable');
-      const { text } = { text: await fetchOriginalText(spec.url), fetchedFrom: spec.url };
+      const text = await fetchOriginalText(spec.url);
       out.set(item.line, {
         content: minifyJqFile(text),
         sourceFile: spec.url,
@@ -308,7 +308,7 @@ function sanitizeName(s) {
 
 function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Map(), jqFiles = new Map()) {
   const parsed = parseLoon(source);
-  const sourceHeader = parsed.header.filter(l => !/^#\s*引用链接:/.test(l));
+  const sourceHeader = parsed.header;
   const qxHeader = renderQxSnippetHeader(sourceHeader, entry, stamp);
 
   const qx = { filter: [], rewrite: [], mitm: [], notes: [], generatedScripts: new Map() };
