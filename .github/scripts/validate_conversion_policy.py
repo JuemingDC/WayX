@@ -93,13 +93,23 @@ def validate_qx(path: str, text: str, errors: list[str]) -> None:
             section = "mitm"; continue
         if not line or line.startswith(("#", ";", "//")):
             continue
-        if " if ${url} " in line or " then " in line:
+        if re.match(r"^(?:request|response)\s+if\b", line, re.I) or re.search(r"\sthen\s", line):
             errors.append(f"{path}: Loon new syntax leaked into executable QX line: {line}")
+        if re.search(r"\b(?:response-body-json-(?:del|replace|jq)|request-body-json-(?:del|replace|jq)|mock-(?:request|response)-body)\b", line, re.I):
+            errors.append(f"{path}: Loon legacy rewrite token leaked into executable QX line: {line}")
+        if re.search(r"\bjq-path=", line, re.I):
+            errors.append(f"{path}: unresolved jq-path dependency leaked into executable QX line: {line}")
+        if "(?i)" in line:
+            errors.append(f"{path}: undocumented inline (?i) regex modifier in executable QX line: {line}")
+        if re.search(r"\[hH\]\[tT\]\[tT\]\[pP\](?:\[sS\])?", line):
+            errors.append(f"{path}: generated case-folded HTTP scheme is forbidden in QX output: {line}")
         if section == "filter":
             parts = [x.strip() for x in line.split(",")]
             rule_type = parts[0].lower() if parts else ""
             if rule_type not in QX_FILTER_TYPES:
                 errors.append(f"{path}: QX filter type outside official sample allowlist: {rule_type}")
+            if len(parts) < 3:
+                errors.append(f"{path}: QX filter rule missing value/policy: {line}")
             if rule_type in QX_IP_TYPES and any(x.lower() == "no-resolve" for x in parts[3:]):
                 errors.append(f"{path}: QX IP-class rule must not contain no-resolve: {line}")
         elif section == "rewrite":
