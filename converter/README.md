@@ -29,7 +29,7 @@ MyBlockAds JQ golden 已自动化：QX / Surge 当前 11 条 JQ 有序规则必�
 
 第三/四阶段继续按“效果等价”扩展 Rewrite v2：
 
-- Loon URL regex 的 `/i` 不使用未在 QX 官方 sample 中证明的 `(?i)`；转换器把 ASCII 字母显式编译为大小写字符类，例如 `api` → `[aA][pP][iI]`。不能无损编译的 Unicode/特殊 escape 保持 Review；
+- Loon URL regex 的 `/i` 不再展开成 `[aA][pP][iI]`，也不使用未在 QX 官方 sample 中证明的 `(?i)`。目标声明保持 Crossutility 官方示例的 bare-regex 样式，原正则主体原样输出；无法由目标声明字段表达的源 flag 仅记录为转换诊断，不发明新语法；
 - redirect 的“只替换 URL 命中片段 + capture 模板”在 QX 侧使用生成的 `script-echo-response`，不假定 QX 302 replacement 支持未证明的捕获语义；
 - JSON delete/replace/JQ、可证明安全的 Body Replace 直接转为 QX/Surge 原生能力；
 - 普通 `reject(404)` 优先使用 QX 原生 `url reject`；只有目标端没有原生等价 primitive 的自定义状态/body 才进入生成响应脚本；Surge 普通 reject 使用 `[URL Rewrite] ... _ reject`，不使用 Map Local；
