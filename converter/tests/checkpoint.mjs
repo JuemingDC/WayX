@@ -150,20 +150,29 @@ assert.throws(
 );
 const responseMockPlan = qxMockPlanFromAction(mockFileAst.actions[0], {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
 assert.equal(responseMockPlan.url, 'https://example.com/Plugins/mock.json');
-const responseMockScript = renderQxMockFileScript(responseMockPlan, {stamp:'2026-09-29 09:00:00 +08:00', category:'Adblock'});
-assert.match(responseMockScript, /\$task\.fetch/);
+const responseMockScript = renderQxMockFileScript(responseMockPlan, {
+  stamp:'2026-09-29 09:00:00 +08:00',
+  category:'Adblock',
+  bodyText:'{"ok":true}',
+});
+assert.doesNotMatch(responseMockScript, /\$task\.fetch/);
 assert.match(responseMockScript, /HTTP\/1\.1 200 OK/);
-assert.match(responseMockScript, /output\.body = response\.body/);
+assert.match(responseMockScript, /const __wayxBody =/);
+assert.match(responseMockScript, /output\.body = __wayxBody/);
 
 const binaryMockAst = parseRewriteV2('response if ${url} ~= /image/ then response.body.mock_file("png", "image.png", 200)');
 const binaryMockPlan = qxMockPlanFromAction(binaryMockAst.actions[0], {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
 assert.equal(binaryMockPlan.binary, true);
-assert.match(renderQxMockFileScript(binaryMockPlan), /output\.bodyBytes = response\.bodyBytes/);
+const binaryMockScript = renderQxMockFileScript(binaryMockPlan, {bodyBase64:'iVBORw0KGgo='});
+assert.doesNotMatch(binaryMockScript, /\$task\.fetch/);
+assert.match(binaryMockScript, /output\.bodyBytes = __wayxBase64ToArrayBuffer\(__wayxBodyBase64\)/);
 
 const requestMockAst = parseRewriteV2('request if ${url} ~= /api/ then request.body.mock_file("json", "request.json")');
 const requestMockPlan = qxMockPlanFromAction(requestMockAst.actions[0], {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
 assert.equal(requestMockPlan.qxAction, 'script-request-body');
-assert.match(renderQxMockFileScript(requestMockPlan), /\$done\(\{headers, body: response\.body\}\)/);
+const requestMockScript = renderQxMockFileScript(requestMockPlan, {bodyText:'{"request":true}'});
+assert.doesNotMatch(requestMockScript, /\$task\.fetch/);
+assert.match(requestMockScript, /\$done\(\{headers, body: __wayxBody\}\)/);
 
 const requestBinaryMockAst = parseRewriteV2('request if ${url} ~= /upload/ then request.body.mock_file("png", "image.png")');
 const requestBinaryMockPlan = qxMockPlanFromAction(requestBinaryMockAst.actions[0], {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
