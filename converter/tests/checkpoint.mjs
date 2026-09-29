@@ -313,7 +313,7 @@ walk(
 const minifiedJqFile = minifyJqFile(jqFileWithComments);
 assert.equal(
   minifiedJqFile,
-  'walk(if .tag == "#keep" then .value else . end)',
+  'walk(if .tag=="#keep" then .value else . end)',
 );
 assert.match(minifiedJqFile, /"#keep"/);
 assert.doesNotMatch(minifiedJqFile, /file comment|executable comment/);
