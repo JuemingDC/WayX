@@ -189,6 +189,82 @@ export function surgeDirectRewritePlan(ast) {
   return unsupported('action requires generated script or target-specific mapping');
 }
 
+function loonTemplateToSurge(template, capture) {
+  const converted = String(template).replace(/\\$\\{([A-Za-z_][A-Za-z0-9_-]*)\\.(\\d+)\\}/g, (_, name, n) => {
+    if (!capture || name !== capture) throw new Error('URL replacement contains a non-URL capture');
+    return ' + n;
+  });
+  if (converted.includes(' + '{')) throw new Error('URL replacement contains a non-URL variable');
+  return converted;
+}
+
+export function surgeRedirectRewritePlan(ast) {
+  validateRewriteV2Ast(ast);
+  if (ast.actions.length !== 1 || !['redirect','url.replace'].includes(ast.actions[0].name)) {
+    return unsupported('Surge URL Rewrite mapping requires one redirect/url.replace action');
+  }
+  const condition = simpleUrlRewriteCondition(ast);
+  if (!condition.ok) return condition;
+  const action = ast.actions[0];
+
+  if (action.name === 'redirect') {
+    const status = action.args[0];
+    const target = stringNode(action.args[1]);
+    if (status?.type !== 'number' || ![302,307].includes(status.value)) return unsupported('redirect status must be 302 or 307');
+    if (target === null) return unsupported('redirect target must be a fixed string');
+    try {
+      const replacement = loonTemplateToSurge(target, condition.capture);
+      return { ok:true, strategy:'direct', section:'url', pattern:condition.pattern, line:`${condition.pattern} ${replacement} ${status.value}`, notes:condition.notes };
+    } catch (error) {
+      return unsupported(String(error.message || error));
+    }
+  }
+
+  const target = stringNode(action.args[0]);
+  if (target === null) return unsupported('url.replace target must be a fixed string');
+  try {
+    const replacement = loonTemplateToSurge(target, condition.capture);
+    return { ok:true, strategy:'direct', section:'url', pattern:condition.pattern, line:`${condition.pattern} ${replacement} header`, notes:condition.notes };
+  } catch (error) {
+    return unsupported(String(error.message || error));
+  }
+}
+
+function mapLocalData(value) {
+  return JSON.stringify(String(value));
+}
+
+export function surgeRejectRewritePlan(ast) {
+  validateRewriteV2Ast(ast);
+  if (ast.actions.length !== 1) return unsupported('Surge reject mapping requires exactly one action');
+  const condition = simpleUrlRewriteCondition(ast);
+  if (!condition.ok) return condition;
+  const action = ast.actions[0];
+  if (!['reject','reject_img','reject_dict','reject_array'].includes(action.name)) return unsupported('reject action has no direct Surge mapping');
+  const status = action.args[0];
+  if (status?.type !== 'number' || !Number.isInteger(status.value) || status.value < 200 || status.value > 599) {
+    return unsupported('Surge Map Local status must be 200...599 for this mapping');
+  }
+
+  if (action.name === 'reject_img') {
+    return { ok:true, strategy:'direct', section:'map', pattern:condition.pattern, line:`${condition.pattern} data-type=tiny-gif status-code=${status.value}`, notes:condition.notes };
+  }
+
+  let body = '', header = '';
+  if (action.name === 'reject_dict') { body = '{}'; header = ' header="Content-Type:application/json"'; }
+  else if (action.name === 'reject_array') { body = '[]'; header = ' header="Content-Type:application/json"'; }
+  else if (action.args.length > 1) {
+    body = stringNode(action.args[1]);
+    if (body === null) return unsupported('custom reject body must be a fixed string');
+    header = ' header="Content-Type:text/plain; charset=utf-8"';
+  }
+  return {
+    ok:true, strategy:'direct', section:'map', pattern:condition.pattern,
+    line:`${condition.pattern} data-type=text data=${mapLocalData(body)} status-code=${status.value}${header}`,
+    notes:condition.notes,
+  };
+}
+
 export function fixedStringValue(node) {
   return stringNode(node);
 }
