@@ -24,7 +24,7 @@
 
 GitHub Actions 已完成 Safe Tier：上游检查、确定性 Rule/Rewrite/JQ/MITM 转换、简单新增删除、目标文件重生成和 validator。不要无意义重做已验证的 Safe Tier。
 
-Work 只处理 Review Tier：JavaScript 内容、[Script]、依赖 Loon `[Argument]` 的声明、复杂逻辑规则、Loon 新语法未覆盖 action、自定义 Body、binary/base64、pipeline、helper script、converter/validator 失败、官方语法变更或任何无法证明无损的变化。Loon `[Argument]` 本身不转换为 QX/Surge 参数 UI 或 BoxJs。
+Work 只处理 Review Tier：JavaScript 内容、[Script]、依赖 Loon `[Argument]` 且目标格式无法确定表达的声明、复杂逻辑规则、Loon 新语法未覆盖 action、自定义 Body、binary/base64、pipeline、helper script、converter/validator 失败、官方语法变更或任何无法证明无损的变化。Loon `[Argument]` 不转换为 QX 参数 UI/BoxJs；Surge 必须按官方 Module `#!arguments` 与 `{{{name}}}` 占位符转换。
 
 ## 通用转换器约束
 
