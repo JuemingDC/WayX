@@ -727,11 +727,110 @@ function validateQX(text, entry) {
 }
 
 function validateSurge(text, entry) {
-  const allowed = new Set(['Rule','Header Rewrite','URL Rewrite','Body Rewrite','Map Local','Script','MITM']);
-  for (const m of text.matchAll(/^\[([^\]]+)\]$/gm)) if (!allowed.has(m[1])) throw new Error(`${entry.id}: unsupported Surge section [${m[1]}]`);
-  for (const line of text.split('\n')) {
-    const m = line.match(/^hostname\s*=\s*(.+)$/i);
-    if (m && !m[1].trim().startsWith('%APPEND%')) throw new Error(`${entry.id}: Surge module MITM hostname must use %APPEND%`);
+  const allowedSections = new Set(['Rule','URL Rewrite','Header Rewrite','Body Rewrite','Map Local','Script','MITM']);
+  const allowedTopDirectives = [
+    /^#!name=/i,
+    /^#!desc=/i,
+    /^#!system=/i,
+    /^#!requirement=/i,
+    /^#!arguments=/i,
+    /^#!arguments-desc=/i,
+  ];
+
+  if (!/^#!name=.+$/m.test(text)) throw new Error(`${entry.id}: Surge module missing #!name`);
+  if (!/^#!desc=.+$/m.test(text)) throw new Error(`${entry.id}: Surge module missing #!desc`);
+
+  let current = null;
+  let hasBodyRewrite = false;
+  let hasMapLocal = false;
+
+  for (const raw of text.split('\n')) {
+    const line = raw.trim();
+    if (!line) continue;
+
+    const section = line.match(/^\[([^\]]+)\]$/);
+    if (section) {
+      current = section[1];
+      if (!allowedSections.has(current)) {
+        throw new Error(`${entry.id}: unsupported Surge module section [${current}]`);
+      }
+      continue;
+    }
+
+    if (line.startsWith('#!')) {
+      if (current === null && allowedTopDirectives.some(re => re.test(line))) continue;
+      if (/^#!REQUIREMENT\b/.test(line)) continue;
+      throw new Error(`${entry.id}: unsupported Surge module directive: ${line}`);
+    }
+    if (line.startsWith('#') || line.startsWith(';') || line.startsWith('//')) continue;
+
+    if (current === null) {
+      throw new Error(`${entry.id}: active Surge content outside a section: ${line}`);
+    }
+
+    if (current === 'Rule') {
+      const parts = splitTopLevelCsv(line);
+      const policy = (parts[2] || '').toUpperCase();
+      if (!['DIRECT','REJECT','REJECT-TINYGIF'].includes(policy)) {
+        throw new Error(`${entry.id}: Surge module [Rule] policy must be DIRECT/REJECT/REJECT-TINYGIF: ${line}`);
+      }
+      if (line !== parts.join(',')) {
+        throw new Error(`${entry.id}: Surge module [Rule] must use canonical comma formatting: ${line}`);
+      }
+      continue;
+    }
+
+    if (current === 'URL Rewrite') {
+      if (!/\s(?:header|302|307|reject)$/.test(line)) {
+        throw new Error(`${entry.id}: invalid Surge URL Rewrite line: ${line}`);
+      }
+      if (/\sreject$/.test(line) && !/\s_\sreject$/.test(line)) {
+        throw new Error(`${entry.id}: Surge URL reject must use '<pattern> _ reject': ${line}`);
+      }
+      continue;
+    }
+
+    if (current === 'Header Rewrite') {
+      if (!/^http-(?:request|response)\s+\S+\s+header-(?:add|del|replace|replace-regex)\b/.test(line)) {
+        throw new Error(`${entry.id}: invalid Surge Header Rewrite line: ${line}`);
+      }
+      continue;
+    }
+
+    if (current === 'Body Rewrite') {
+      hasBodyRewrite = true;
+      if (!/^http-(?:request|response)(?:-jq)?\s+/.test(line)) {
+        throw new Error(`${entry.id}: invalid Surge Body Rewrite line: ${line}`);
+      }
+      continue;
+    }
+
+    if (current === 'Map Local') {
+      hasMapLocal = true;
+      if (!/\bdata-type=(?:file|text|tiny-gif|base64)\b/.test(line)) {
+        throw new Error(`${entry.id}: invalid Surge Map Local line: ${line}`);
+      }
+      continue;
+    }
+
+    if (current === 'Script') {
+      if (!/^[^=]+\s=\stype=http-(?:request|response),pattern=.+,script-path=/.test(line)) {
+        throw new Error(`${entry.id}: Surge [Script] must use modern 'name = type=...,pattern=...,script-path=...' syntax: ${line}`);
+      }
+      continue;
+    }
+
+    if (current === 'MITM') {
+      const match = line.match(/^hostname\s*=\s*(.+)$/i);
+      if (!match) throw new Error(`${entry.id}: unsupported Surge module MITM option: ${line}`);
+      if (!match[1].trim().startsWith('%APPEND%')) {
+        throw new Error(`${entry.id}: Surge module MITM hostname must use %APPEND%`);
+      }
+    }
+  }
+
+  if ((hasBodyRewrite || hasMapLocal) && !/^#!requirement=CORE_VERSION>=20$/m.test(text)) {
+    throw new Error(`${entry.id}: Body Rewrite / inline Map Local requires #!requirement=CORE_VERSION>=20`);
   }
 }
 
