@@ -27,6 +27,8 @@
 
 原规则不能静默删除。
 
+Loon `[Argument]` **声明区块本身不构成 Review 条件**，因为该区块不转换到 QX/Surge 参数配置。只有具体 Rewrite/Script 依赖这些参数并因此无法保持目标语义时，才进入 Review；generated target 中的 `SCRIPT/REWRITE/ARGUMENT REVIEW REQUIRED` 标记必须被 Gate 捕获。
+
 ## 80.2 Source 对账
 
 必须满足：
