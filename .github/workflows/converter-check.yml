@@ -28,9 +28,11 @@ jobs:
           node --check converter/tests/checkpoint.mjs
           node --check converter/tests/rucu6-rewrite-v2-coverage.mjs
           node --check converter/tests/rucu6-script-v2-coverage.mjs
+          node --check converter/tests/loon-new-syntax-cases.mjs
       - name: Converter checkpoint
         run: |
           node converter/tests/checkpoint.mjs
           node converter/tests/myblockads-golden.mjs
           node converter/tests/rucu6-rewrite-v2-coverage.mjs
           node converter/tests/rucu6-script-v2-coverage.mjs
+          node converter/tests/loon-new-syntax-cases.mjs

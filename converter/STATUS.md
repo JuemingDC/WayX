@@ -1,5 +1,57 @@
 # WayX Converter Status
 
+## 2026-09-29 phase 6 — declaration-only scripts and uploaded Loon syntax cases
+
+Implemented on `work/declaration-only-loon-cases-20260929` / PR #9.
+
+This phase supersedes the Script v2 source-bridge behavior recorded in phase 5:
+
+- Source JavaScript is never rewritten, wrapped, prefixed, or forked by the converter.
+- Script source may be read only for target-runtime compatibility checks.
+- Mirrored script files are exact normalized upstream copies.
+- Script v2 target conversion is declaration-only:
+  - 103 / 110 current RuCu6 declarations map natively;
+  - 3 dynamic-`enable` declarations stay Review;
+  - 4 typed/object-`$argument` declarations stay Review.
+- No QX BoxJs/`$prefs` wrapper is generated for Script v2.
+- No Surge wrapper is generated to reconstruct typed Loon `$argument`.
+- Fixed string Surge `argument=` remains allowed because Surge natively exposes it as the string `$argument`.
+- QX has no corresponding argument field in the official rewrite sample, so any Loon Script v2 argument remains Review in QX.
+- Removed obsolete modified-script artifacts for Tieba/DianPing/PinDuoDuo and restored PinDuoDuo root script to the exact source copy.
+- Removed managed BoxJs entries that existed only for script-body bridges; unrelated BoxJs apps remain untouched.
+
+User-provided Loon new-syntax cases are now locked by CI:
+
+- `response.json.delete`
+- `response.json.replace`
+- `response.json.jq`
+- `response.body.mock`
+- `reject_dict(200)`
+- `reject(404)`
+- `reject_img(200)`
+- `URL-REGEX ... REJECT-IMG`
+- `URL-REGEX ... REJECT-DROP`
+
+Current rule behavior:
+
+- QX `URL-REGEX REJECT-DROP` -> native `url reject` by project policy.
+- Surge `REJECT-DROP` remains native `REJECT-DROP`.
+- QX `REJECT-IMG` -> `reject-img`.
+- Surge Loon `REJECT-IMG` rule policy -> `REJECT-TINYGIF`.
+- Ordinary Loon `reject(404)` continues to use native QX `reject` and Surge URL Rewrite `_ reject`.
+
+Verification:
+
+- Converter syntax check: passed.
+- Converter checkpoint: passed.
+- MyBlockAds JQ golden: passed.
+- RuCu6 Rewrite v2 coverage: passed.
+- RuCu6 Script v2 declaration coverage: passed.
+- Uploaded Loon new-syntax regression cases: passed.
+- PR #9 final reviewed CI head: `f781466a7c78b290ab3743487948d12a59884022`.
+
+Historical phase-5 notes about generated Script v2 bridges are superseded by this phase.
+
 ## 2026-09-29 phase 5 — Loon Script v2 parser, native mapping and argument bridges
 
 Implemented on `work/script-v2-parser-20260929` / PR #8:
