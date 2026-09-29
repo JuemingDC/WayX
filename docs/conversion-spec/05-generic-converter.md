@@ -208,14 +208,14 @@ Source JavaScript 的兼容性只能依据**脚本内容和声明本身**判断�
 
 ```text
 source action
-→ resolve URL/path
-→ fetch/cache
+→ resolve original URL/path
+→ fetch original dependency directly
 → validate
-→ materialize semantic content
+→ materialize semantic content in memory
 → target planner
 ```
 
-禁止在 action converter 内为单个插件写固定依赖内容。
+禁止在 action converter 内为单个插件写固定依赖内容；禁止把上游 JQ/mock/Source Script 作为 WayX 持久化镜像或 fallback。
 
 ## 5.10 自动化契约
 

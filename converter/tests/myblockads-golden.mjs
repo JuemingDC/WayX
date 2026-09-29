@@ -1,13 +1,12 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-import { compileRegexForTarget, minifyJq, minifyJqFile, parseRewriteV2 } from '../src/index.mjs';
+import { compileRegexForTarget, minifyJq, parseRewriteV2 } from '../src/index.mjs';
 
 const fixture = JSON.parse(await fs.readFile(new URL('../fixtures/myblockads-golden.json', import.meta.url), 'utf8'));
 const root = new URL('../../', import.meta.url);
 const source = await fs.readFile(new URL(fixture.source, root), 'utf8');
 const qx = await fs.readFile(new URL(fixture.quantumultX, root), 'utf8');
 const surge = await fs.readFile(new URL(fixture.surge, root), 'utf8');
-const dependencyCache = JSON.parse(await fs.readFile(new URL('../dependencies/manifest.json', import.meta.url), 'utf8'));
 
 function extractQx(text) {
   return text.split('\n').map(x => x.trim()).filter(x => x.includes(' url jsonjq-response-body ')).map(line => {
@@ -47,6 +46,7 @@ const sourceJq = source.split('\n').map(x => x.trim())
   .map(parseRewriteV2);
 assert.equal(sourceJq.length, 3, 'Unexpected current MyBlockAds Rewrite v2 JQ count');
 
+let reviewedJq = 0;
 for (const ast of sourceJq) {
   assert.equal(ast.condition.type, 'comparison');
   assert.equal(ast.condition.left.type, 'variable');
@@ -54,21 +54,25 @@ for (const ast of sourceJq) {
   assert.equal(ast.condition.right.type, 'regex');
   const compiled = compileRegexForTarget(ast.condition.right, {subject:'url'});
   assert.equal(compiled.ok, true, 'Source URL regex cannot be compiled for target: ' + ast.condition.right.pattern);
-  const target = qxPairs.find(x => x.pattern === compiled.pattern);
-  assert.ok(target, 'No target JQ rule for compiled source URL regex: ' + compiled.pattern);
 
   const action = ast.actions[0];
   const jq = action.args[0]?.value;
   assert.equal(typeof jq, 'string');
-  if (jq.startsWith('jq-path=')) {
-    const url = jq.slice('jq-path='.length);
-    const rel = dependencyCache.resources?.[url];
-    assert.ok(rel, 'No cached JQ dependency for source jq-path: ' + url);
-    const cached = await fs.readFile(new URL('../../' + rel, import.meta.url), 'utf8');
-    assert.equal(minifyJq(target.jq), minifyJqFile(cached), 'Cached jq-path dependency changed target JQ semantics');
-  } else {
-    assert.equal(minifyJq(target.jq), minifyJq(jq), 'Inline source JQ changed semantics/text beyond whitespace normalization');
+
+  const target = qxPairs.find(x => x.pattern === compiled.pattern);
+  if (!target) {
+    reviewedJq += 1;
+    assert.match(jq, /^jq-path=https?:\/\//, 'Only source jq-path dependencies may currently remain Review in this fixture');
+    const qxReview = qx.split('\n').find(line => line.includes('response.json.jq("jq-path=') && /Unsupported Loon Rewrite v2 preserved/.test(line));
+    const surgeReview = surge.split('\n').find(line => line.includes('response.json.jq("jq-path=') && /Unsupported Loon Rewrite v2 preserved/.test(line));
+    assert.ok(qxReview, 'Missing QX Review preservation for source jq-path');
+    assert.ok(surgeReview, 'Missing Surge Review preservation for source jq-path');
+    continue;
   }
+
+  assert.equal(jq.startsWith('jq-path='), false, 'A source jq-path must not silently use a repository-cached dependency');
+  assert.equal(minifyJq(target.jq), minifyJq(jq), 'Inline source JQ changed semantics/text beyond whitespace normalization');
 }
+assert.equal(reviewedJq, fixture.jqReviewCount, 'Unexpected current MyBlockAds JQ Review count');
 
 console.log('MyBlockAds JQ golden fixture passed');

@@ -1,5 +1,29 @@
 # WayX Converter Status
 
+> Current policy overrides historical implementation notes below when they conflict. As of Phase 12, upstream plugins/scripts/dependencies are original-source-only; no upstream mirror/cache is authoritative or used as fallback.
+
+## 2026-09-29 phase 12 — original-source-only pipeline and deterministic PR generation
+
+Current implementation:
+
+- Source Catalog contains one authoritative `source` URL per Loon plugin; `mirrors` are rejected by schema/CI.
+- Plugins are fetched only from the original-author source URL.
+- Source Script URLs from `script-path` / Script v2 declarations remain unchanged in QX/Surge output. Script bodies are fetched directly only for compatibility analysis and are not copied into WayX.
+- JQ/mock dependencies are fetched directly from the original resolved URL and materialized in memory. Historical `converter/dependencies/` upstream caches were removed.
+- If an original plugin/script/dependency URL is unavailable or cannot be safely represented, conversion fails closed / enters Review rather than switching to a mirror.
+- WayX-generated helper scripts remain valid converter output when QX lacks a native equivalent; these are not Source Script mirrors.
+- `Converter Check` validates parser/semantic/golden/genericity/spec/canonical consistency and, for same-repository PRs only, may commit deterministic generated QX/Surge/helper outputs.
+- PR generation is race-safe: checkout uses the PR head SHA, remote head is rechecked before push, and a run skips its write if the PR head advanced while it was executing.
+- Scheduled `upstream-monitor` remains responsible for detecting/fetching upstream source changes and feeding the same generic converter.
+
+Verification target after the deterministic generated-output commit:
+- regeneration: `changed=0`;
+- generated helper references: pass;
+- MyBlockAds golden: 10 safely materialized JQ rules + 1 source jq-path fail-closed preservation;
+- original Source Script URL preservation: pass;
+- no source-script mirror/fallback/cache path.
+
+
 ## 2026-09-29 phase 10 — incremental RuCu6 canonical promotion and consistency hardening
 
 In progress on `work/rucu6-canonical-phase1-20260929` / PR #16:
@@ -343,5 +367,5 @@ Official behavior rechecked during this phase:
 - Loon `[Rule] URL-REGEX + REJECT-X` and legacy `[Rewrite] reject-X` are explicitly separated in Block 20/30 and synthetic tests.
 - Every conversion spec block is mapped to production implementation/test files; Block 70 now has a dedicated MITM planner.
 - RuCu6 managed LPX sources are declarative Source Catalog entries; duplicate `sync_rucu6.py` automation is removed.
-- Script dependency filenames use a generic collision-safe planner; unique basenames stay stable and real collisions receive deterministic hashes.
-- `converter-check` is verification-only. Scheduled `upstream-monitor` owns source fetch, deterministic conversion, validation, Safe Tier commit, and Review Tier PR handoff.
+- Source Script dependencies use their original declared URLs; no source-script mirror filename planner is part of the current pipeline.
+- `converter-check` validates and may safely commit deterministic generated outputs to same-repo PR heads; scheduled `upstream-monitor` owns upstream source fetch/update and Review/Safe Tier handoff.
