@@ -17,7 +17,7 @@ import { qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, 
 import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript } from '../../converter/src/qx-semantic-script.mjs';
 import { isScriptV2, parseScriptV2 } from '../../converter/src/script-v2.mjs';
 import { qxScriptV2Plan, surgeScriptV2Plan } from '../../converter/src/script-v2-target.mjs';
-import { analyzePluginArgumentUsage, argumentUsageSummary, rewriteV2PluginArgumentRefs } from '../../converter/src/argument-usage.mjs';
+import { analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs } from '../../converter/src/argument-usage.mjs';
 import { hasActiveSurgeLines, renderSurgeModuleHeader, validateSurgeModule } from '../../converter/src/surge-module.mjs';
 import { renderQxSnippetHeader } from '../../converter/src/metadata.mjs';
 import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
@@ -395,22 +395,13 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   const qctx = { id: entry.id, generatedScripts: qx.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, mockFiles: qxMockFiles, jqFiles, argumentIds };
   const sctx = { id: entry.id, generatedScripts: sg.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, jqFiles, argumentIds };
 
-  // Preserve [Argument] semantics as comments. QX/Surge module arguments are not fabricated.
-  if (parsed.sections.has('Argument')) {
-    const raw = parsed.sections.get('Argument').filter(x => x.trim());
-    qx.notes.push('# Source [Argument] (declaration-only conversion; typed/dynamic arguments stay Review):', ...raw.map(x => x.trim().startsWith('#') ? x : `# ${x}`));
-    sg.notes.push('# Source [Argument] (declaration-only conversion; typed/dynamic arguments stay Review):', ...raw.map(x => x.trim().startsWith('#') ? x : `# ${x}`));
-
-    for (const item of argumentUsageSummary(argumentAnalysis).filter(item => item.used)) {
-      const line = `# [WayX] Argument usage: ${item.id} [${item.valueType}] -> ${item.uses.join(', ')}`;
-      qx.notes.push(line);
-      sg.notes.push(line);
-    }
-  }
+  // Loon [Argument] is analysis-only. Do not emit or translate the source
+  // parameter declarations into QX/Surge target configuration. The analysis is
+  // used only to fail closed when an executable declaration depends on them.
   if (argumentAnalysis.undeclaredRefs.length) {
     const refs = [...new Set(argumentAnalysis.undeclaredRefs.map(ref => ref.id))].sort().join(', ');
-    qx.notes.push(`# [WayX] ARGUMENT REVIEW REQUIRED: undeclared plugin argument reference(s): ${refs}`);
-    sg.notes.push(`# [WayX] ARGUMENT REVIEW REQUIRED: undeclared plugin argument reference(s): ${refs}`);
+    qx.notes.push(`# [WayX] ARGUMENT REVIEW REQUIRED: undeclared source plugin argument reference(s): ${refs}`);
+    sg.notes.push(`# [WayX] ARGUMENT REVIEW REQUIRED: undeclared source plugin argument reference(s): ${refs}`);
   }
   if (argumentAnalysis.policyBindings.length) {
     qx.notes.push('# [WayX] Policy binding: source PROXY is preserved as literal QX policy name PROXY; a matching target policy must exist.');
