@@ -38,4 +38,14 @@ MyBlockAds JQ golden 已自动化：QX / Surge 当前 11 条 JQ 有序规则必�
 
 当前 CI 会扫描实际 RuCu6 资源：9 个插件、175 条 Rewrite v2 中，QX 自动等价转换 174 条，Surge 175 条。QX 唯一保留 Review 的现存规则是 `response.header.add("content-disposition", "inline")`，因为 QX 官方脚本 Header 使用对象，无法保证 Loon 的“同名字段也追加第二条”语义。
 
-下一阶段优先处理当前 110 条 Script v2：建立正式 parser/AST、typed argument bridge 和目标平台脚本执行映射；Rewrite v2 的复合条件继续保持 fail-closed，直到能整体保持条件与 Action 顺序。
+第五阶段已接入 Loon HTTP Script v2：
+
+- 当前 RuCu6 9 个插件的 110 条活动 Script v2 全部进入正式 parser/AST，解析错误为 0；其中 response 101 条、request 9 条，108 条要求 body，14 条要求 binary body；
+- 103 条不含动态参数的声明直接转为目标平台原生 Script 形式，不额外生成包装脚本；
+- 其余 7 条声明需要 [Argument] / dynamic enable：QX 使用 BoxJs + $prefs 恢复 Loon typed $argument；Surge 使用官方 Module #!arguments + {{{name}}}，再把 Surge String $argument 还原为 Loon 所需类型；
+- bridge 按“每条 Script v2 声明”单独生成，避免同一个上游 JS 在不同规则里收到错误参数；
+- QX 兼容性检查优先于 bridge。源脚本显式拒绝 QX、使用 $utils，或只包含 $httpClient/$persistentStore/$loon 而没有 QX adapter 时，仍只保留注释，不因参数 bridge 变成可执行；
+- Bilibili protobuf request/response 仍属于明确 QX 不支持项，不 fork；YouTube 的显式 QuanX adapter 可继续使用；
+- QX / Surge 原生能表达的 phase、requires-body、binary-body-mode、固定 timeout/debug 均直接写目标平台声明，不额外包脚本。
+
+下一阶段优先做 Script v2 的复合 condition 整体保持，以及用实际同步输出做端到端 golden；仍坚持原生声明优先、脚本仅用于目标平台确实缺少等价表达的情况。
