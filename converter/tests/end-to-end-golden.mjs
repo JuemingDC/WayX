@@ -96,6 +96,9 @@ function regressionScriptSource(url) {
   if (/\/12306\.js(?:\?|$)/i.test(url)) {
     return 'const body=$request.body; $done({status:"HTTP/1.1 200 OK",body});';
   }
+  if (/\/header\.js(?:\?|$)/i.test(url)) {
+    return 'const h=$request.headers; if(h) $done({status:"HTTP/1.1 404 Not Found"}); else $done({});';
+  }
   return 'const isQX=typeof $task!=="undefined"; $done({});';
 }
 
