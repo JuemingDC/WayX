@@ -97,7 +97,7 @@ jobs:
           node .github/scripts/sync-convert.mjs 2>&1 | tee monitor/.runtime/loon-sync.log
 
 
-      - name: Scan mirrored script compatibility
+      - name: Scan original Source Script compatibility
         if: steps.pending.outputs.blocked != 'true'
         run: node converter/tools/scan-script-compat.mjs
 
