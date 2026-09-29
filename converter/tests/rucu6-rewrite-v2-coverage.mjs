@@ -31,7 +31,7 @@ async function pluginFiles() {
 function sectionLines(text, wanted) {
   const out = [];
   let current = null;
-  for (const raw of sectionLines(text, 'Rewrite')) {
+  for (const raw of text.split(/\r?\n/)) {
     const match = raw.trim().match(/^\[([^\]]+)\]$/);
     if (match) {
       current = match[1];
@@ -119,7 +119,7 @@ const report = {
 for (const name of await pluginFiles()) {
   report.files++;
   const text = await fs.readFile(path.join(DIR, name), 'utf8');
-  for (const raw of text.split(/\r?\n/)) {
+  for (const raw of sectionLines(text, 'Rewrite')) {
     const line = raw.trim();
     if (!isRewriteV2(line)) continue;
     report.rewriteV2++;
