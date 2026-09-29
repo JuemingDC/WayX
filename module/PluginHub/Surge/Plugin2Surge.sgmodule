@@ -1,8 +1,9 @@
 #!name=可莉插件中心转 Surge
 #!desc=将 hub.kelee.one / pluginhub.kelee.one 的 Loon 插件导入链接转换为 Surge 模块安装，并交由 ScriptHub 转换
-#!author=chance
-#!category=工具
-#!date=2026-06-13 22:00
+#!requirement=CORE_VERSION>=20
+# Author: chance
+# Category: 工具
+# Date: 2026-06-13 22:00
 
 [General]
 force-http-engine-hosts = %APPEND% script.hub, *.script.hub

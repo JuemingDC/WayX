@@ -1,5 +1,39 @@
 # WayX Converter Status
 
+## 2026-09-29 phase 9 — canonical regeneration and checked-in consistency
+
+Implemented on `work/canonical-regeneration-20260929` / PR #12:
+
+- Added `converter/tools/regenerate-canonical.mjs`.
+- The tool imports the production converter instead of duplicating conversion logic.
+- Managed canonical sources:
+  - all 11 entries in `.github/sources/loon.json`;
+  - local RuCu6 `MyBlockAds`, because it already has an audited full-output golden and existing canonical targets.
+- Canonical regeneration is offline:
+  - reads checked-in Loon source files;
+  - resolves exact existing script mirrors under `script/<entry.id>/<filename>` when available;
+  - reads script bodies only for compatibility checks;
+  - never rewrites/wraps/forks source JavaScript;
+  - supports official `*.json.jq_file(...)` through conversion-time materialization; offline canonical generation requires the dependency to be registered in `converter/dependencies/manifest.json` and backed by a checked-in file;
+  - recognizes RuCu6's current `response.json.jq("jq-path=https://...")` only as a project-specific legacy compatibility alias. This is not treated or documented as official Loon Rewrite v2 syntax; it is resolved to the cached JQ before QX/Surge output;
+  - still refuses uncached `body.mock_file` dependencies in offline canonical mode until their bytes are explicitly materialized.
+- Rebuilt managed QX/Surge outputs with the current converter.
+- Surge generated modules now use the audited module header layer (`#!name`, `#!desc`, optional requirement/system) and preserve Loon-only metadata as ordinary comments.
+- QX managed snippets retain commented `# [filter_local] / # [rewrite_local] / # [mitm]` headings.
+- `MyBlockAds.sgmodule` was regenerated as well; its former active Loon `#!author/#!icon/#!date/#!loon_version` lines are now comments. The Reddit JQ dependency is cached at `converter/dependencies/rucu6/reddit.jq`, comment-stripped/minified outside strings, and inlined into both QX and Surge outputs; unresolved `jq-path=` is forbidden by golden tests.
+- `QZXY` remains explicitly unmanaged by the Loon converter because it is a hand-maintained native target configuration.
+- Permanent `Converter Check` behavior:
+  - regenerates managed canonical outputs in the PR workspace;
+  - uploads the regenerated output artifact;
+  - fails if `Adblock/Quantumult X/` or `Adblock/Surge/` differs from the checked-in tree.
+- CI path triggers now also cover the Loon source manifest, Loon resources, mirrored scripts and canonical QX/Surge output directories.
+
+Next work:
+
+1. Extend Script v2 compound-condition conversion only where target behavior is complete and proven.
+2. Promote additional RuCu6 plugins into managed canonical output one at a time after their end-to-end golden is reviewed.
+3. Keep manual native targets such as QZXY outside automatic Loon regeneration.
+
 ## 2026-09-29 phase 8 — end-to-end full-output golden
 
 Implemented on `work/end-to-end-golden-20260929` / PR #11:
@@ -163,9 +197,9 @@ Next work:
 Implemented on `work/rewrite-v2-semantic-actions-20260929` / PR #6:
 
 - Added a target-regex compiler for Loon flags.
-  - `/i` is compiled to explicit ASCII case-folded character classes instead of emitting undocumented QX inline modifiers.
+  - `/i` is **not** expanded into per-character ASCII case-fold classes and no undocumented QX inline modifier is emitted. Target declarations keep the source regex body in the documented bare-regex form.
   - `m/s` are elided only for URL/header subjects where CR/LF cannot occur; body regex remains fail-closed.
-  - Unicode or ambiguous case-folding remains Review Tier.
+  - Source regex flags that have no documented target declaration field are retained only as diagnostics; the converter does not invent target syntax.
 - Added behavior-first Rewrite v2 mapping:
   - QX/Surge JSON delete/replace/JQ.
   - Proven scalar body replacement.
@@ -240,7 +274,7 @@ Implemented on `work/semantic-rewrite-mock-20260929` / PR #5:
 
 Current semantic boundary:
 
-- Regex flags such as Loon `/i` still require an official QX-supported equivalent before automatic promotion.
+- Loon `/i` has no documented QX rewrite flag field in Crossutility's current sample. WayX therefore preserves the source regex body as bare QX regex and does not synthesize `[aA]` expansions or `(?i)`.
 - Compound conditions, captures and multi-action pipelines remain Review Tier until their complete behavior can be reproduced, rather than flattening them into independent target lines.
 - `mock_file` response/header pipelines still need a single generated script when header actions must execute in Loon order.
 - Surge behavior was not weakened by this QX phase; Surge-specific expansion continues from official Surge syntax.

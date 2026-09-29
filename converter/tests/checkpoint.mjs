@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {
   analyzeSafeRewriteV2,
   dependencySpecFromAction,
+  jqDependencySpecFromAction,
   inlineResolvedDependency,
   inspectQxScriptCompatibility,
   listRewriteV2Dependencies,
@@ -20,6 +21,7 @@ import {
   renderQxMockFileScript,
   LOON_REWRITE_V2_ACTIONS,
   minifyJq,
+  minifyJqFile,
   mergeBoxJsSubscription,
   parseLoonArguments,
   parseRewriteV2,
@@ -275,6 +277,47 @@ const inlinedJq = inlineResolvedDependency(jqFileAst.actions[0], 'del(.ads)', {p
 assert.equal(inlinedJq.action.name, 'response.json.jq');
 assert.equal(inlinedJq.action.args[0].value, 'del(.ads)');
 
+const legacyJqPathAst = parseRewriteV2(
+  'response if ${url} ~= /reddit/i then response.json.jq("jq-path=https://rucu6.pages.dev/JQLang/reddit.jq")'
+);
+const legacyJqSpec = jqDependencySpecFromAction(legacyJqPathAst.actions[0], {
+  pluginSourceUrl:'https://example.com/demo.lpx',
+});
+assert.equal(legacyJqSpec.kind, 'jq');
+assert.equal(legacyJqSpec.legacyAlias, true);
+assert.equal(legacyJqSpec.url, 'https://rucu6.pages.dev/JQLang/reddit.jq');
+const legacyJqDeps = listRewriteV2Dependencies(legacyJqPathAst, {
+  pluginSourceUrl:'https://example.com/demo.lpx',
+});
+assert.equal(legacyJqDeps.length, 1);
+assert.equal(legacyJqDeps[0].legacyAlias, true);
+const legacyJqInline = inlineResolvedDependency(
+  legacyJqPathAst.actions[0],
+  'walk(if type == "object" then . else . end)',
+  {pluginSourceUrl:'https://example.com/demo.lpx'},
+);
+assert.equal(legacyJqInline.action.name, 'response.json.jq');
+assert.equal(
+  legacyJqInline.action.args[0].value,
+  'walk(if type == "object" then . else . end)',
+);
+assert.doesNotMatch(legacyJqInline.action.args[0].value, /^jq-path=/);
+
+const jqFileWithComments = `# file comment
+walk(
+  if .tag == "#keep" then
+    # executable comment
+    .value
+  else . end
+)`;
+const minifiedJqFile = minifyJqFile(jqFileWithComments);
+assert.equal(
+  minifiedJqFile,
+  'walk(if .tag=="#keep" then .value else . end)',
+);
+assert.match(minifiedJqFile, /"#keep"/);
+assert.doesNotMatch(minifiedJqFile, /file comment|executable comment/);
+
 const mockFileAst = parseRewriteV2('response if ${url} ~= /api/ then response.body.mock_file("json", "mock.json", 200)');
 const mockSpec = dependencySpecFromAction(mockFileAst.actions[0], {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
 assert.equal(mockSpec.strategy, 'generated-qx-script');
@@ -313,11 +356,13 @@ const requestBinaryMockAst = parseRewriteV2('request if ${url} ~= /upload/ then 
 const requestBinaryMockPlan = qxMockPlanFromAction(requestBinaryMockAst.actions[0], {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
 assert.throws(() => renderQxMockFileScript(requestBinaryMockPlan), /request mock binary\/bodyBytes output is not enabled/);
 
-// Behavior-first target regex compilation: do not rely on undocumented (?i).
-const foldedUrl = compileRegexForTarget(parseRewriteV2('request if ${url} ~= /^https:\\/\\/Api\\.Example\\.com\\/[a-z]+/i then reject_dict(200)').condition.right, {subject:'url'});
-assert.equal(foldedUrl.ok, true);
-assert.match(foldedUrl.pattern, /^\^\[hH\]\[tT\]\[tT\]\[pP\]\[sS\]/);
-assert.match(foldedUrl.pattern, /\[a-zA-Z\]\+/);
+// Target declarations follow official bare-regex syntax. Loon /i is not
+// expanded into per-character case classes and no undocumented inline modifier
+// is invented.
+const bareUrl = compileRegexForTarget(parseRewriteV2('request if ${url} ~= /^https:\\/\\/Api\\.Example\\.com\\/[a-z]+/i then reject_dict(200)').condition.right, {subject:'url'});
+assert.equal(bareUrl.ok, true);
+assert.equal(bareUrl.pattern, '^https:\\/\\/Api\\.Example\\.com\\/[a-z]+');
+assert.ok(bareUrl.notes.includes('i-source-flag-not-expressed-in-target-declaration'));
 assert.equal(compileRegexForTarget(parseRewriteV2('response if ${url} ~= /api/ then response.body.replace(/a.b/s, "x")').actions[0].args[0], {subject:'body'}).ok, false);
 
 const qxDeleteV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /^https:\\/\\/api\\.example\\.com\\/feed/i then response.json.delete(["data.ads", "data.apps[0].promo"])'));
@@ -341,7 +386,7 @@ assert.match(surgeJqV2.line, /^http-response-jq /);
 const redirectV2 = parseRewriteV2('request if ${url} ~= /(^https:\\/\\/live\\.bilibili\\.com\\/\\d+)(?:\\/?\\?.*)/i as urlMatch then redirect(302, "${urlMatch.1}")');
 const redirectScript = renderQxRedirectScript(redirectV2, {stamp:'2026-09-29 10:00:00 +08:00', category:'Adblock'});
 assert.equal(redirectScript.qxAction, 'script-echo-response');
-assert.match(redirectScript.pattern, /\[bB\]\[iI\]\[lL\]\[iI\]/);
+assert.equal(redirectScript.pattern, '(^https:\\/\\/live\\.bilibili\\.com\\/\\d+)(?:\\/?\\?.*)');
 assert.match(redirectScript.script, /__wayxLocation/);
 assert.match(redirectScript.script, /HTTP\/1\.1 302 Found/);
 

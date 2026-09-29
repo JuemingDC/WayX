@@ -7,46 +7,44 @@
 #!tg-channel=https://t.me/inaisi
 #!date=
 #############################################
-# Converted: 2026-09-29 07:57:00 +08:00
+# Converted: 2026-09-29 12:06:21 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://raw.githubusercontent.com/fmz200/wool_scripts/main/Loon/plugin/split/partD/DianPing.lpx
 # Target: Quantumult X
 
-# Original Loon [Argument] (default values are used for conversion):
+# Original Loon [Argument] (BoxJs/$prefs bridge required; Review Tier until verified):
 # davsdmpk_enable = switch,true,false,tag=大众点评-脚本开关
 
 # [filter_local]
 
 # [rewrite_local]
 # 开屏广告
-^https?:\/\/103\.37\.155\.60\/fetch url reject
-^https?:\/\/catdot\.dianping\.com\/broker-service\/hijack url reject
-^https?:\/\/mapi\.dianping\.com\/mapi\/operating\/(?>indexopsmodules|loadsplashconfig) url reject
+^https?:\/\/103\.37\.155\.60\/fetch url reject-200
+^https?:\/\/catdot\.dianping\.com\/broker-service\/hijack url reject-200
+^https?:\/\/mapi\.dianping\.com\/mapi\/operating\/(?>indexopsmodules|loadsplashconfig) url reject-200
 ^https?:\/\/mapi\.dianping\.com\/mapi\/intelliindex url reject-dict
-^https?:\/\/mapi\.dianping\.com\/wdrpreload\/userprediction url reject
-^https?:\/\/mapi\.dianping\.com\/adshopping url reject
+^https?:\/\/mapi\.dianping\.com\/wdrpreload\/userprediction url reject-200
+^https?:\/\/mapi\.dianping\.com\/adshopping url reject-200
 ^https?:\/\/img\.meituan\.net\/goodsawardpic\/\w+\.gif url reject-img
-^https?:\/\/p\.meituan\.com\/api\/privacy\/config url reject
+^https?:\/\/p\.meituan\.com\/api\/privacy\/config url reject-200
 ^https?:\/\/rms\.meituan\.com\/api\/v\d\/rmsmina\/c\/queryWechatAdvertisement url reject-dict
-^https?:\/\/www\.dpfile\.com\/app\/fecommonservice-lottie\/ugc-write-done\/media url reject
-^https?:\/\/www\.dpfile\.com\/picasso\/picasso-qa\/src\/AnswerList\/AnswerList-bundle url reject
-^https?:\/\/www\.dpfile\.com\/sc\/indexpromotion url reject
-^https?:\/\/catfront\.dianping\.com\/api\/metric\?v=\d&p=rn_gcbu_mrn-joy-poidetail url reject
-^https?:\/\/awp-assets\.meituan\.net\/hfe\/fep\/\w+\.json url reject
-^https?:\/\/s3plus\.meituan\.net\/ocean-blk-index\/index\/blk_conf url reject
+^https?:\/\/www\.dpfile\.com\/app\/fecommonservice-lottie\/ugc-write-done\/media url reject-200
+^https?:\/\/www\.dpfile\.com\/picasso\/picasso-qa\/src\/AnswerList\/AnswerList-bundle url reject-200
+^https?:\/\/www\.dpfile\.com\/sc\/indexpromotion url reject-200
+^https?:\/\/catfront\.dianping\.com\/api\/metric\?v=\d&p=rn_gcbu_mrn-joy-poidetail url reject-200
+^https?:\/\/awp-assets\.meituan\.net\/hfe\/fep\/\w+\.json url reject-200
+^https?:\/\/s3plus\.meituan\.net\/ocean-blk-index\/index\/blk_conf url reject-200
 ^https?:\/\/p\d\.meituan\.net\/nrpresourcevenus\/\w+\.gif url reject-img
 ^https?:\/\/p\d\.meituan\.net\/travelcube\/(?!c129a661)\w+\.gif url reject-img
-^https?:\/\/ddplus\.meituan\.net\/v\d\/mss_\w+\/(?>ehc|titansx|ddblue|edfu)\/ url reject
+^https?:\/\/ddplus\.meituan\.net\/v\d\/mss_\w+\/(?>ehc|titansx|ddblue|edfu)\/ url reject-200
 # 开屏广告
 # 大众点评
-# Loon script options preserved in source: enable={davsdmpk_enable}
-# [WayX] BoxJs/$prefs enable bridge active for enable={davsdmpk_enable}
-^https?:\/\/img\.meituan\.net\/(?>dpmobile|goodsawardpic)\/ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/script/DianPing/QuantumultX/dianping.js
+# [WayX] SCRIPT REVIEW REQUIRED: QX declaration cannot carry this Loon argument/enable semantics without changing the script.
+# Original Loon: http-response ^https?:\/\/img\.meituan\.net\/(?>dpmobile|goodsawardpic)\/ script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js, requires-body=true, timeout=60, tag=大众点评, enable={davsdmpk_enable}
 # 大众点评
-# Loon script options preserved in source: enable={davsdmpk_enable}
-# [WayX] BoxJs/$prefs enable bridge active for enable={davsdmpk_enable}
-^https?:\/\/ddplus\.meituan\.net\/v\d\/mss_\w+\/picassovc url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/script/DianPing/QuantumultX/dianping.js
+# [WayX] SCRIPT REVIEW REQUIRED: QX declaration cannot carry this Loon argument/enable semantics without changing the script.
+# Original Loon: http-response ^https?:\/\/ddplus\.meituan\.net\/v\d\/mss_\w+\/picassovc script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js, requires-body=true, timeout=60, tag=大众点评, enable={davsdmpk_enable}
 
 # [mitm]
 hostname = 103.37.155.60, *.dianping.com, img.meituan.net, p.meituan.com, rms.meituan.com, www.dpfile.com, awp-assets.meituan.net, s3plus.meituan.net, p*.meituan.net, ddplus.meituan.net

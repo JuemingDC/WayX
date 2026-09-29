@@ -6,6 +6,11 @@ on:
       - "converter/**"
       - ".github/scripts/sync-convert.mjs"
       - ".github/workflows/converter-check.yml"
+      - ".github/sources/loon.json"
+      - "Resource/Loon/**"
+      - "script/**"
+      - "Adblock/Quantumult X/**"
+      - "Adblock/Surge/**"
   workflow_dispatch:
 
 permissions:
@@ -31,6 +36,7 @@ jobs:
           node --check converter/tests/loon-new-syntax-cases.mjs
           node --check converter/tests/surge-rule-coverage.mjs
           node --check converter/tests/end-to-end-golden.mjs
+          node --check converter/tools/regenerate-canonical.mjs
       - name: Converter checkpoint
         run: |
           node converter/tests/checkpoint.mjs
@@ -40,3 +46,19 @@ jobs:
           node converter/tests/loon-new-syntax-cases.mjs
           node converter/tests/surge-rule-coverage.mjs
           node converter/tests/end-to-end-golden.mjs
+
+      - name: Regenerate canonical outputs
+        run: node converter/tools/regenerate-canonical.mjs --write
+
+      - name: Upload regenerated canonical outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-converter-output
+          if-no-files-found: error
+          path: |
+            Adblock/Quantumult X/*.snippet
+            Adblock/Surge/*.sgmodule
+
+      - name: Verify canonical outputs are checked in
+        run: git diff --exit-code -- "Adblock/Quantumult X" "Adblock/Surge"

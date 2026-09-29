@@ -9,7 +9,7 @@
 #!homepage=https://hub.kelee.one
 #!icon=https://raw.githubusercontent.com/luestr/IconResource/main/Website_icon/120px/TencentAd.png
 #!date=2026-09-23 11:35:33
-# Converted: 2026-09-28 14:33:56 +08:00
+# Converted: 2026-09-29 12:06:21 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/BlockAdvertisers.lpx
@@ -18,10 +18,10 @@
 # [filter_local]
 host-keyword, adstrategy, reject
 
-# Loon rule not losslessly expressible in Quantumult X filter: AND, ((DOMAIN-KEYWORD, tnc), (OR, ((DOMAIN-SUFFIX, capcutapi.com), (DOMAIN-SUFFIX, zijieapi.com), (DOMAIN-SUFFIX, isnssdk.com), (DOMAIN-SUFFIX, toutiaoapi.com), (DOMAIN-SUFFIX, bytedance.com), (DOMAIN-SUFFIX, snssdk.com), (DOMAIN-SUFFIX, sgsnssdk.com)))), DIRECT
+# Loon logical rule (Quantumult X unsupported): AND, ((DOMAIN-KEYWORD, tnc), (OR, ((DOMAIN-SUFFIX, capcutapi.com), (DOMAIN-SUFFIX, zijieapi.com), (DOMAIN-SUFFIX, isnssdk.com), (DOMAIN-SUFFIX, toutiaoapi.com), (DOMAIN-SUFFIX, bytedance.com), (DOMAIN-SUFFIX, snssdk.com), (DOMAIN-SUFFIX, sgsnssdk.com)))), DIRECT
 
-# Loon rule not losslessly expressible in Quantumult X filter: AND, ((DOMAIN-KEYWORD, -ad-), (DOMAIN-SUFFIX, byteimg.com)), REJECT
-# Loon rule not losslessly expressible in Quantumult X filter: AND, ((DOMAIN-KEYWORD, ads), (DOMAIN-KEYWORD, -normal.zijieapi.com)), REJECT
+# Loon logical rule (Quantumult X unsupported): AND, ((DOMAIN-KEYWORD, -ad-), (DOMAIN-SUFFIX, byteimg.com)), REJECT
+# Loon logical rule (Quantumult X unsupported): AND, ((DOMAIN-KEYWORD, ads), (DOMAIN-KEYWORD, -normal.zijieapi.com)), REJECT
 host, lf-ad-ies.bytecdn.cn, reject
 host, dig.bdurl.net, reject
 host, extlog.snssdk.com, reject
@@ -233,7 +233,7 @@ host, adash.man.aliyuncs.com, reject
 host, adashx.m.taobao.com, reject
 host, applog.uc.cn, reject
 host, atoken.m.taobao.com, reject
-# Loon rule not losslessly expressible in Quantumult X filter: AND, ((DOMAIN-KEYWORD, adash), (DOMAIN-SUFFIX, ut.taobao.com)), REJECT
+# Loon logical rule (Quantumult X unsupported): AND, ((DOMAIN-KEYWORD, adash), (DOMAIN-SUFFIX, ut.taobao.com)), REJECT
 
 host, baichuan-sdk.alicdn.com, reject
 host, acs4baichuan.m.taobao.com, reject
@@ -482,10 +482,10 @@ host-suffix, tobidad.com, reject
 host, ep7.facebook.com, reject
 
 # [rewrite_local]
-^https:\/\/video-dsp\.pddpic\.com\/market-dsp-video\/ url reject
-^https:\/\/t-dsp\.pinduoduo\.com\/dspcb\/i\/mrk_ url reject
-^https:\/\/images\.pinduoduo\.com\/mrk\/ url reject
-^https:\/\/images\.pinduoduo\.com\/marketing_api\/ url reject
+^https:\/\/video-dsp\.pddpic\.com\/market-dsp-video\/ url reject-200
+^https:\/\/t-dsp\.pinduoduo\.com\/dspcb\/i\/mrk_ url reject-200
+^https:\/\/images\.pinduoduo\.com\/mrk\/ url reject-200
+^https:\/\/images\.pinduoduo\.com\/marketing_api\/ url reject-200
 
 # [mitm]
 hostname = video-dsp.pddpic.com, t-dsp.pinduoduo.com, images.pinduoduo.com

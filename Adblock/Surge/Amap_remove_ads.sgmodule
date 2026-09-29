@@ -1,19 +1,20 @@
 #!name=高德地图去广告
 #!desc=过滤高德地图开屏广告、各页面推广，精简我的页面。
-#!openUrl=https://apps.apple.com/app/id461703208
-#!author=RuCu6[https://github.com/RuCu6], kelv1n1n[https://github.com/kelv1n1n], 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
-#!tag=去广告
-#!system=
-#!system_version=
-#!loon_version=3.4.0(962)
-#!homepage=https://hub.kelee.one
-#!icon=https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Amap.png
-#!date=2026-06-01 17:11:35
-# Converted: 2026-09-28 13:14:56 +08:00
-# Converted by: chance
+#!requirement=CORE_VERSION>=20
+
+# Original Loon metadata: #!openUrl=https://apps.apple.com/app/id461703208
+# Original Loon metadata: #!author=RuCu6[https://github.com/RuCu6], kelv1n1n[https://github.com/kelv1n1n], 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Original Loon metadata: #!tag=去广告
+# Original Loon metadata: #!system_version=
+# Original Loon metadata: #!loon_version=3.4.0(962)
+# Original Loon metadata: #!homepage=https://hub.kelee.one
+# Original Loon metadata: #!icon=https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Amap.png
+# Original Loon metadata: #!date=2026-06-01 17:11:35
+# Converted: 2026-09-29 12:06:21 +08:00
+# Author: chance
 # Category: 去广告
-# Source: https://kelee.one/Tool/Loon/Lpx/Amap_remove_ads.lpx
 # Target: Surge
+# Source: https://kelee.one/Tool/Loon/Lpx/Amap_remove_ads.lpx
 
 [Rule]
 DOMAIN,amap-aos-info-nogw.amap.com,REJECT
@@ -21,7 +22,7 @@ DOMAIN,free-aos-cdn-image.amap.com,REJECT
 DOMAIN-SUFFIX,v.smtcdns.com,REJECT
 
 [Body Rewrite]
-http-response-jq ^https:\/\/m5\.amap\.com\/ws\/shield\/search_business\/process\/marketingOperationStructured\? 'del(.data.commonMaterial, .data.tipsOperationLocation, .data.resourcePlacement)'
+http-response-jq ^https:\/\/m5\.amap\.com\/ws\/shield\/search_business\/process\/marketingOperationStructured\? 'del(.data.commonMaterial,.data.tipsOperationLocation,.data.resourcePlacement)'
 http-response-jq ^https:\/\/m5\.amap\.com\/ws\/shield\/search_poi\/homepage\? 'del(.history_tags)'
 http-response-jq ^https:\/\/m5-zb\.amap\.com\/ws\/sharedtrip\/taxi\/order_detail_car_tips\? 'del(.data.carTips.data.popupInfo)'
 

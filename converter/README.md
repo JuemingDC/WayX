@@ -22,14 +22,14 @@ WayX 自有的 Loon Plugin → Quantumult X / Surge 转换核心。参考 KOP-XI
 - QX script compatibility registry：已知 RuCu6 Bilibili protobuf 脚本因上游显式拒绝 QX 而阻断执行行；YouTube 的内置 QuanX adapter 作为已审查兼容项登记；
 - 未登记脚本会扫描显式 QX 拒绝、Loon-only `$utils`、QX runtime 信号；明确不支持时输出 `QUANTUMULT X UNSUPPORTED` 并注释保留源声明，适配路径不能绕过该阻断；
 - 转换原则改为“先判断 Loon 行为效果，再选择目标平台等效表达”：例如 Loon `reject(404)` 直接使用 QX 原生 `reject`，`reject(200)` 使用 `reject-200`，`reject_dict/array/img(200)` 分别使用对应 QX 原生 primitive；
-- `jq_file / mock_file` 已进入依赖 AST：JQ 仍可解析并内联；QX `mock_file` 不再伪装成原生 token，而是在转换阶段读取依赖并写入生成脚本；response 使用 `script-echo-response`，request 文本 body 使用 `script-request-body`；QX 运行时不再为 mock 文件二次联网，二进制 response 用内嵌 Base64 还原为官方支持的 `bodyBytes`，二进制 request 暂不自动放行；
+- `jq_file / mock_file` 已进入依赖 AST：官方 `request/response.json.jq_file(...)` 会在转换期读取并内联真实 JQ；QX `mock_file` 不再伪装成原生 token，而是在转换阶段读取依赖并写入生成脚本；response 使用 `script-echo-response`，request 文本 body 使用 `script-request-body`；QX 运行时不再为 mock 文件二次联网，二进制 response 用内嵌 Base64 还原为官方支持的 `bodyBytes`，二进制 request 暂不自动放行；
 - 上游同步会生成 RuCu6 脚本兼容性报告，PR CI 同时检查 converter tools。
 
 MyBlockAds JQ golden 已自动化：QX / Surge 当前 11 条 JQ 有序规则必须逐条一致，并锁定 10 个唯一表达式及有序指纹。
 
 第三/四阶段继续按“效果等价”扩展 Rewrite v2：
 
-- Loon URL regex 的 `/i` 不使用未在 QX 官方 sample 中证明的 `(?i)`；转换器把 ASCII 字母显式编译为大小写字符类，例如 `api` → `[aA][pP][iI]`。不能无损编译的 Unicode/特殊 escape 保持 Review；
+- Loon URL regex 的 `/i` 不再展开成 `[aA][pP][iI]`，也不使用未在 QX 官方 sample 中证明的 `(?i)`。目标声明保持 Crossutility 官方示例的 bare-regex 样式，原正则主体原样输出；无法由目标声明字段表达的源 flag 仅记录为转换诊断，不发明新语法；
 - redirect 的“只替换 URL 命中片段 + capture 模板”在 QX 侧使用生成的 `script-echo-response`，不假定 QX 302 replacement 支持未证明的捕获语义；
 - JSON delete/replace/JQ、可证明安全的 Body Replace 直接转为 QX/Surge 原生能力；
 - 普通 `reject(404)` 优先使用 QX 原生 `url reject`；只有目标端没有原生等价 primitive 的自定义状态/body 才进入生成响应脚本；Surge 普通 reject 使用 `[URL Rewrite] ... _ reject`，不使用 Map Local；
@@ -56,6 +56,16 @@ Surge 模块输出另有独立规范化层，不复用 Loon 文件头或 Loon Ru
 - golden 只锁声明层和目标成品；源 Script JavaScript 不改写。Bilibili `request.js/response.js` 不得出现在活动 QX 行，YouTube/JingDong 不能通过包装脚本绕过参数限制；
 - golden fixture 位于 `converter/fixtures/end-to-end-golden.json`，完整测试位于 `converter/tests/end-to-end-golden.mjs`。
 
+Canonical 成品一致性现已进入 CI：
+
+- `converter/tools/regenerate-canonical.mjs` 直接复用正式 `convert()`，从仓库内已保存的 Loon 源文件离线生成 managed QX/Surge 成品；
+- managed 范围包括 `.github/sources/loon.json` 的 11 个条目，以及已有独立 golden 的 `Resource/Loon/RuCu6/myblockads.lpx`；MyBlockAds 当前使用的 `response.json.jq("jq-path=https://...")` **不是官方 Loon Rewrite v2 的 `json.jq_file` 语法**，WayX 只把这个已知写法作为 RuCu6 legacy compatibility alias 解析，并在生成目标配置前物化为真实 JQ；
+- 源脚本只读取仓库中的精确镜像用于兼容性判断，不改写正文；存在 `script/<entry.id>/<filename>` 时声明指向 WayX raw URL，否则保留源 URL；远程 JQ 依赖可通过 `converter/dependencies/manifest.json` 映射到已审核的仓库缓存，offline canonical 生成不得把 `jq-path=...` 字面量输出成 JQ；
+- 生成后继续执行 QX validator 和 Surge sgmodule validator；
+- PR CI 会先重新生成，再对 `Adblock/Quantumult X/` 与 `Adblock/Surge/` 做 `git diff --exit-code`。若转换器/源文件/脚本兼容性变化却没有同步提交成品，CI 会失败；
+- QZXY 是人工维护的目标原生配置，不属于 Loon converter managed entry，因此不会被该工具覆盖；
+- 当前 managed canonical 已全部用 phase 7/8 的新 converter 重建，Surge 不再保留活动的 Loon 专属 metadata。
+
 第五阶段已接入 Loon HTTP Script v2，并在当前阶段修正为“声明层转换、脚本正文原样保留”：
 
 - 当前 RuCu6 9 个插件的 110 条活动 Script v2 全部进入正式 parser/AST，解析错误为 0；其中 response 101 条、request 9 条，108 条要求 body，14 条要求 binary body；
@@ -66,4 +76,4 @@ Surge 模块输出另有独立规范化层，不复用 Loon 文件头或 Loon Ru
 - 旧 Tieba/DianPing/PinDuoDuo 的正文适配产物已退出转换主链，managed BoxJs bridge 项同步清理；
 - 用户提供的 Loon 新语法案例已加入独立 CI 回归测试，覆盖 JSON delete/replace/JQ、body.mock、reject/reject_dict/reject_img、URL-REGEX REJECT-IMG/REJECT-DROP。
 
-下一阶段优先把已合并转换器重新应用到仓库 canonical 产物，并增加“checked-in 成品 == converter 当前输出”的离线一致性检查；随后再扩展 Script v2 复合 condition。原则固定为：原生声明优先，源脚本正文绝不改写，无法声明层等价表达时保留 Review。
+下一阶段继续扩展 Script v2 复合 condition，并把更多已审核 RuCu6 插件逐步加入 managed canonical；新增 entry 前必须先通过完整 golden。原则固定为：原生声明优先，源脚本正文绝不改写，无法声明层等价表达时保留 Review。

@@ -27,14 +27,15 @@ export function renderSurgeModuleHeader(headerLines, entry, stamp, {needsCore20 
   ];
 
   const system = directive('system');
-  if (system && /^(?:ios|mac)$/i.test(system)) out.push('#!system=' + system.toLowerCase());
+  if (system && /^mac$/i.test(system)) out.push('#!system=mac');
   if (needsCore20) out.push('#!requirement=CORE_VERSION>=20');
 
   out.push('');
   for (const raw of clean) {
     const line = raw.trim();
     if (!line) continue;
-    if (/^#!name=/i.test(line) || /^#!desc=/i.test(line) || /^#!system=/i.test(line)) continue;
+    if (/^#!name=/i.test(line) || /^#!desc=/i.test(line)) continue;
+    if (/^#!system=/i.test(line) && system && /^mac$/i.test(system)) continue;
     if (line.startsWith('#!')) out.push('# Original Loon metadata: ' + line);
     else out.push(raw);
   }
@@ -50,14 +51,20 @@ export function renderSurgeModuleHeader(headerLines, entry, stamp, {needsCore20 
 }
 
 export function validateSurgeModule(text, entry = {id:'module'}) {
-  const allowedSections = new Set(['Rule','URL Rewrite','Header Rewrite','Body Rewrite','Map Local','Script','MITM']);
+  const fixedSections = new Set([
+    'General','Rule','URL Rewrite','Header Rewrite','Body Rewrite','Map Local',
+    'Script','MITM','Host','MTProto','Snell Server',
+  ]);
+  const allowedSection = name =>
+    fixedSections.has(name) || /^WireGuard\s+.+$/.test(name) || /^Ruleset\s+.+$/.test(name);
+
   const allowedTopDirectives = [
-    /^#!name=/i,
-    /^#!desc=/i,
-    /^#!system=/i,
-    /^#!requirement=/i,
-    /^#!arguments=/i,
-    /^#!arguments-desc=/i,
+    /^#!name=.+$/i,
+    /^#!desc=.+$/i,
+    /^#!system=mac$/i,
+    /^#!requirement=.+$/i,
+    /^#!arguments=.+$/i,
+    /^#!arguments-desc=.+$/i,
   ];
 
   if (!/^#!name=.+$/m.test(text)) throw new Error(`${entry.id}: Surge module missing #!name`);
@@ -65,7 +72,7 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
 
   let current = null;
   let hasBodyRewrite = false;
-  let hasMapLocal = false;
+  let hasInlineMapLocal = false;
 
   for (const raw of String(text).split('\n')) {
     const line = raw.trim();
@@ -74,7 +81,7 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
     const section = line.match(/^\[([^\]]+)\]$/);
     if (section) {
       current = section[1];
-      if (!allowedSections.has(current)) {
+      if (!allowedSection(current)) {
         throw new Error(`${entry.id}: unsupported Surge module section [${current}]`);
       }
       continue;
@@ -82,7 +89,7 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
 
     if (line.startsWith('#!')) {
       if (current === null && allowedTopDirectives.some(re => re.test(line))) continue;
-      if (/^#!REQUIREMENT\b/.test(line)) continue;
+      if (/^#!REQUIREMENT\b/.test(line)) continue; // official line-requirement prefix
       throw new Error(`${entry.id}: unsupported Surge module directive: ${line}`);
     }
     if (line.startsWith('#') || line.startsWith(';') || line.startsWith('//')) continue;
@@ -134,30 +141,63 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
     }
 
     if (current === 'Map Local') {
-      hasMapLocal = true;
       if (!/\bdata-type=(?:file|text|tiny-gif|base64)\b/.test(line)) {
         throw new Error(`${entry.id}: invalid Surge Map Local line: ${line}`);
       }
+      if (/\bdata-type=(?:text|tiny-gif|base64)\b/.test(line)) hasInlineMapLocal = true;
       continue;
     }
 
     if (current === 'Script') {
-      if (!/^[^=]+\s=\stype=http-(?:request|response),pattern=.+,script-path=/.test(line)) {
-        throw new Error(`${entry.id}: Surge [Script] must use modern 'name = type=...,pattern=...,script-path=...' syntax: ${line}`);
+      const declaration = line.match(/^([^=]+?)\s*=\s*(.+)$/);
+      if (!declaration) throw new Error(`${entry.id}: invalid Surge [Script] declaration: ${line}`);
+      const body = declaration[2];
+      const typeMatch = body.match(/(?:^|,)\s*type=([^,\s]+)/);
+      const type = typeMatch?.[1] || 'generic';
+      const allowedTypes = new Set(['http-request','http-response','rule','dns','event','cron','generic']);
+      if (!allowedTypes.has(type)) throw new Error(`${entry.id}: unsupported Surge script type '${type}': ${line}`);
+      if (!/(?:^|,)\s*script-path=[^,\s]+/.test(body)) {
+        throw new Error(`${entry.id}: Surge [Script] missing script-path: ${line}`);
+      }
+      if ((type === 'http-request' || type === 'http-response') && !/(?:^|,)\s*pattern=/.test(body)) {
+        throw new Error(`${entry.id}: Surge HTTP script missing pattern: ${line}`);
+      }
+      if (type === 'cron' && !/(?:^|,)\s*cronexp=(?:"[^"]+"|'[^']+'|[^,]+)/.test(body)) {
+        throw new Error(`${entry.id}: Surge cron script missing cronexp: ${line}`);
+      }
+      if (type === 'event' && !/(?:^|,)\s*event-name=[^,]+/.test(body)) {
+        throw new Error(`${entry.id}: Surge event script missing event-name: ${line}`);
       }
       continue;
     }
 
     if (current === 'MITM') {
-      const match = line.match(/^hostname\s*=\s*(.+)$/i);
-      if (!match) throw new Error(`${entry.id}: unsupported Surge module MITM option: ${line}`);
-      if (!match[1].trim().startsWith('%APPEND%')) {
-        throw new Error(`${entry.id}: Surge module MITM hostname must use %APPEND%`);
+      const match = line.match(/^([^=]+?)\s*=\s*(.+)$/);
+      if (!match) throw new Error(`${entry.id}: invalid Surge MITM option: ${line}`);
+      const key = match[1].trim();
+      if (!['hostname','skip-server-cert-verify'].includes(key)) {
+        throw new Error(`${entry.id}: Module may only manipulate hostname/skip-server-cert-verify in [MITM]: ${line}`);
       }
+      continue;
     }
+
+    if (current === 'General' || current === 'Host' ||
+        current === 'MTProto' || current === 'Snell Server' ||
+        /^WireGuard\s+/.test(current)) {
+      if (!/^[^=]+\s*=\s*.+$/.test(line)) {
+        throw new Error(`${entry.id}: invalid Surge [${current}] key/value line: ${line}`);
+      }
+      continue;
+    }
+
+    // [Ruleset *] contains rule entries and is accepted as an inline rule-set
+    // payload. Its per-line semantics are validated by Surge when the module is
+    // loaded; the section itself is explicitly supported by the Module manual.
+    if (/^Ruleset\s+/.test(current)) continue;
   }
 
-  if ((hasBodyRewrite || hasMapLocal) && !/^#!requirement=CORE_VERSION>=20$/m.test(text)) {
-    throw new Error(`${entry.id}: Body Rewrite / inline Map Local requires #!requirement=CORE_VERSION>=20`);
+  if ((hasBodyRewrite || hasInlineMapLocal) &&
+      !/^#!requirement=.*CORE_VERSION\s*>=\s*20/m.test(text)) {
+    throw new Error(`${entry.id}: Body Rewrite / inline Map Local requires #!requirement including CORE_VERSION>=20`);
   }
 }
