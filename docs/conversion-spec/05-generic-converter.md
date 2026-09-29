@@ -55,6 +55,7 @@ Descriptor 不得携带“此插件应该怎样转换”的语义开关。
 - `[Script]`；
 - `[Argument]`（QX 仅用于依赖分析；Surge 渲染为官方 Module `#!arguments` 参数表）；
 - `[MITM]`；
+- 其他当前尚未实现 target planner 的合法 Loon section（例如 `[General]` / `[Host]`）必须被识别并显式进入 Review，禁止静默丢弃；
 - 引用的 JQ / mock file；
 - 引用的 Source JavaScript（只读，用于兼容性判断）。
 
@@ -64,7 +65,8 @@ Descriptor 不得携带“此插件应该怎样转换”的语义开关。
 
 ```text
 normalize source
-→ parse plugin sections
+→ parse plugin sections（已知 section 名大小写归一化）
+→ 对未实现的活动 section 生成显式 Review
 → build semantic IR / AST
 → Rule converter
 → Rewrite converter
@@ -81,6 +83,11 @@ normalize source
 ```
 
 不得在流水线中插入“按插件名称修补结果”的步骤。
+
+Section parser 约束：
+- Loon 已知 section 名按大小写不敏感识别并归一化，例如 `[MitM]` / `[MITM]` 统一为 `MITM`；
+- 未实现 section 中只要存在活动声明，就必须保留源声明并进入 Review；
+- 未实现 section 不能因为当前 target planner 没有分支而被静默忽略。
 
 ## 5.4 Rule 转换器
 
