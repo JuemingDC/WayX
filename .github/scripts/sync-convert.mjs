@@ -6,11 +6,13 @@ import { selectQxScriptAction } from '../../converter/src/script.mjs';
 import { inspectQxScriptCompatibility, qxManualPortComment } from '../../converter/src/script-compat.mjs';
 import { minifyJq } from '../../converter/src/jq.mjs';
 import { BOXJS_SUBSCRIPTION, qxTargetPath, surgeTargetPath } from '../../converter/src/paths.mjs';
-import { analyzeSafeRewriteV2, analyzeSimpleUrlRegexCondition } from '../../converter/src/rewrite-v2-safe.mjs';
+import { analyzeSafeRewriteV2 } from '../../converter/src/rewrite-v2-safe.mjs';
 import { isRewriteV2, parseRewriteV2 } from '../../converter/src/rewrite-v2.mjs';
 import { validateRewriteV2Ast } from '../../converter/src/rewrite-v2-actions.mjs';
 import { qxMockPlanFromAction } from '../../converter/src/dependency.mjs';
 import { renderQxMockFileScript } from '../../converter/src/qx-mock.mjs';
+import { qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan, surgeHeaderRewritePlan, surgeInlineMockPlan, simpleUrlRewriteCondition } from '../../converter/src/rewrite-v2-semantic.mjs';
+import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript } from '../../converter/src/qx-semantic-script.mjs';
 import { mergeBoxJsSubscription, renderBoxJsApp, renderQxPrefsObjectBridge } from '../../converter/src/argument.mjs';
 
 const ROOT = process.cwd();
@@ -138,23 +140,25 @@ function splitPatternAction(line) {
 function rewriteV2Action(line, target, ctx) {
   if (!isRewriteV2(line)) return null;
 
-  // mock_file is a behavior-level conversion in QX: Loon reads a resource and
-  // synthesizes/replaces a body; QX reproduces that effect with a generated
-  // rewrite script instead of pretending mock_file is a native QX token.
+  let ast;
+  try {
+    ast = parseRewriteV2(line);
+    validateRewriteV2Ast(ast);
+  } catch (error) {
+    return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
+  }
+
   if (target === 'qx') {
-    try {
-      const ast = parseRewriteV2(line);
-      validateRewriteV2Ast(ast);
-      if (ast.actions.length === 1 && /^(?:request|response)\.body\.mock_file$/.test(ast.actions[0].name)) {
-        const condition = analyzeSimpleUrlRegexCondition(ast.condition);
-        if (!condition.ok) {
-          return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${condition.reason}): ${line}` };
-        }
+    // mock_file requires conversion-time dependency materialization.
+    if (ast.actions.length === 1 && /^(?:request|response)\.body\.mock_file$/.test(ast.actions[0].name)) {
+      try {
+        const condition = simpleUrlRewriteCondition(ast);
+        if (!condition.ok) throw new Error(condition.reason);
         const plan = qxMockPlanFromAction(ast.actions[0], { pluginSourceUrl: ctx.sourceUrl });
         const materialized = ctx.mockFiles?.get(line);
         if (!materialized) throw new Error('mock_file was not materialized during conversion');
         if (materialized.error) throw new Error(materialized.error);
-        const key = crypto.createHash('sha1').update(line).digest('hex').slice(0, 10);
+        const key = crypto.createHash('sha1').update('mock-file\0' + line).digest('hex').slice(0, 10);
         const filename = `mock_file_${key}.js`;
         const script = renderQxMockFileScript(plan, {
           ...materialized,
@@ -163,22 +167,94 @@ function rewriteV2Action(line, target, ctx) {
           sourceLine: line,
         });
         ctx.generatedScripts.set(filename, script);
-        return {
-          section: 'rewrite',
-          line: `${condition.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}`,
-        };
+        return { section: 'rewrite', line: `${condition.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}` };
+      } catch (error) {
+        return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
+      }
+    }
+
+    // Inline body.mock, including Loon's mock + response-header pipeline,
+    // becomes one QX script so mock-before-upstream and action ordering are kept.
+    if (ast.actions.some(a => /^(?:request|response)\.body\.mock$/.test(a.name))) {
+      try {
+        const plan = renderQxInlineMockScript(ast, { stamp: ctx.stamp, category: ctx.category, sourceLine: line });
+        const key = crypto.createHash('sha1').update('mock-inline\0' + line).digest('hex').slice(0, 10);
+        const filename = `mock_${key}.js`;
+        ctx.generatedScripts.set(filename, plan.script);
+        return { section: 'rewrite', line: `${plan.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}` };
+      } catch (error) {
+        return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
+      }
+    }
+
+    // Prefer a native QX primitive when its observable behavior is equivalent.
+    try {
+      const direct = qxDirectRewritePlan(ast);
+      if (direct.ok) return { section: direct.section, line: direct.line };
+    } catch (error) {
+      return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
+    }
+
+    // URL redirect in Loon replaces only the matched range. Use a generated
+    // echo-response script so capture/template behavior does not depend on an
+    // undocumented QX 302 replacement contract.
+    if (ast.actions.length === 1 && ast.actions[0].name === 'redirect') {
+      try {
+        const plan = renderQxRedirectScript(ast, { stamp: ctx.stamp, category: ctx.category, sourceLine: line });
+        const key = crypto.createHash('sha1').update('redirect\0' + line).digest('hex').slice(0, 10);
+        const filename = `redirect_${key}.js`;
+        ctx.generatedScripts.set(filename, plan.script);
+        return { section: 'rewrite', line: `${plan.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}` };
+      } catch (error) {
+        return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
+      }
+    }
+
+    // Preserve custom/non-200 reject response semantics with script-echo-response.
+    if (ast.actions.length === 1 && /^(?:reject|reject_dict|reject_array)$/.test(ast.actions[0].name)) {
+      try {
+        const plan = renderQxRejectScript(ast, { stamp: ctx.stamp, category: ctx.category, sourceLine: line });
+        const key = crypto.createHash('sha1').update('reject\0' + line).digest('hex').slice(0, 10);
+        const filename = `reject_${key}.js`;
+        ctx.generatedScripts.set(filename, plan.script);
+        return { section: 'rewrite', line: `${plan.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}` };
+      } catch (error) {
+        return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
+      }
+    }
+
+    // Header set/del/replace pipelines are kept in one QX script to preserve
+    // Loon's left-to-right action order. header.add remains fail-closed because
+    // QX's documented header object cannot represent duplicate header fields.
+    if (ast.actions.length && ast.actions.every(a => new RegExp('^' + ast.phase + '\\.header\\.(?:set|del|replace)$').test(a.name))) {
+      try {
+        const plan = renderQxHeaderScript(ast, { stamp: ctx.stamp, category: ctx.category, sourceLine: line });
+        const key = crypto.createHash('sha1').update('header\0' + line).digest('hex').slice(0, 10);
+        const filename = `header_${key}.js`;
+        ctx.generatedScripts.set(filename, plan.script);
+        return { section: 'rewrite', line: `${plan.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}` };
+      } catch (error) {
+        return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
+      }
+    }
+  }
+
+  if (target === 'surge') {
+    try {
+      for (const mapper of [surgeInlineMockPlan, surgeHeaderRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan]) {
+        const mapped = mapper(ast);
+        if (mapped.ok) return { section: mapped.section, line: mapped.line, lines: mapped.lines };
       }
     } catch (error) {
       return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
     }
   }
 
+  // Keep the older conservative subset as a final compatibility fallback.
   const parsed = analyzeSafeRewriteV2(line);
   if (!parsed.safe) {
     return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${parsed.reason}): ${line}` };
   }
-  // Direct primitives are chosen by resulting behavior. Example:
-  // Loon reject(200) -> QX reject-200, not QX reject (404).
   return rewriteAction(parsed.pattern, parsed.action, target, ctx);
 }
 
@@ -210,7 +286,7 @@ async function materializeQxMockFiles(entry, parsed) {
       const ast = parseRewriteV2(item.line);
       validateRewriteV2Ast(ast);
       if (ast.actions.length !== 1 || !/^(?:request|response)\.body\.mock_file$/.test(ast.actions[0].name)) continue;
-      const condition = analyzeSimpleUrlRegexCondition(ast.condition);
+      const condition = simpleUrlRewriteCondition(ast);
       if (!condition.ok) continue;
 
       const plan = qxMockPlanFromAction(ast.actions[0], { pluginSourceUrl: entry.source });
@@ -413,7 +489,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   while (header.length && !header.at(-1).trim()) header.pop();
 
   const qx = { filter: [], rewrite: [], mitm: [], notes: [], generatedScripts: new Map() };
-  const sg = { rule: [], url: [], map: [], body: [], script: [], mitm: [], notes: [], generatedScripts: new Map() };
+  const sg = { rule: [], url: [], header: [], map: [], body: [], script: [], mitm: [], notes: [], generatedScripts: new Map() };
   const qctx = { id: entry.id, generatedScripts: qx.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, mockFiles: qxMockFiles };
   const sctx = { id: entry.id, generatedScripts: sg.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category };
 
@@ -451,9 +527,9 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     }
 
     const qdest = qr.section === 'rewrite' ? qx.rewrite : qx.notes;
-    const sdest = ({url: sg.url, map: sg.map, body: sg.body, script: sg.script})[sr.section] || sg.notes;
+    const sdest = ({url: sg.url, header: sg.header, map: sg.map, body: sg.body, script: sg.script})[sr.section] || sg.notes;
     qdest.push(...comments, qr.line);
-    sdest.push(...comments, sr.line);
+    sdest.push(...comments, ...(sr.lines || [sr.line]));
   }
 
   let scriptIndex = 0;
@@ -545,6 +621,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   const surgeSections = [];
   if (sg.notes.length) surgeSections.push(...sg.notes, '');
   if (sg.rule.length) surgeSections.push('[Rule]', ...compact(sg.rule), '');
+  if (sg.header.length) surgeSections.push('[Header Rewrite]', ...compact(sg.header), '');
   if (sg.url.length) surgeSections.push('[URL Rewrite]', ...compact(sg.url), '');
   if (sg.body.length) surgeSections.push('[Body Rewrite]', ...compact(sg.body), '');
   if (sg.map.length) surgeSections.push('[Map Local]', ...compact(sg.map), '');
@@ -705,7 +782,7 @@ function validateQX(text, entry) {
 }
 
 function validateSurge(text, entry) {
-  const allowed = new Set(['Rule','URL Rewrite','Body Rewrite','Map Local','Script','MITM']);
+  const allowed = new Set(['Rule','Header Rewrite','URL Rewrite','Body Rewrite','Map Local','Script','MITM']);
   for (const m of text.matchAll(/^\[([^\]]+)\]$/gm)) if (!allowed.has(m[1])) throw new Error(`${entry.id}: unsupported Surge section [${m[1]}]`);
   for (const line of text.split('\n')) {
     const m = line.match(/^hostname\s*=\s*(.+)$/i);

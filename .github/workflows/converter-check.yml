@@ -26,7 +26,9 @@ jobs:
           done
           node --check .github/scripts/sync-convert.mjs
           node --check converter/tests/checkpoint.mjs
+          node --check converter/tests/rucu6-rewrite-v2-coverage.mjs
       - name: Converter checkpoint
         run: |
           node converter/tests/checkpoint.mjs
           node converter/tests/myblockads-golden.mjs
+          node converter/tests/rucu6-rewrite-v2-coverage.mjs

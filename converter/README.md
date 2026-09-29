@@ -25,6 +25,17 @@ WayX 自有的 Loon Plugin → Quantumult X / Surge 转换核心。参考 KOP-XI
 - `jq_file / mock_file` 已进入依赖 AST：JQ 仍可解析并内联；QX `mock_file` 不再伪装成原生 token，而是在转换阶段读取依赖并写入生成脚本；response 使用 `script-echo-response`，request 文本 body 使用 `script-request-body`；QX 运行时不再为 mock 文件二次联网，二进制 response 用内嵌 Base64 还原为官方支持的 `bodyBytes`，二进制 request 暂不自动放行；
 - 上游同步会生成 RuCu6 脚本兼容性报告，PR CI 同时检查 converter tools。
 
-MyBlockAds JQ golden 已自动化：QX / Surge 当前 11 条 JQ 有序规则必须逐条一致，并锁定 10 个唯一表达式及有序指纹；该 fixture 不宣称已证明 Loon `/i` regex flag 与 QX regex 的等价性。
+MyBlockAds JQ golden 已自动化：QX / Surge 当前 11 条 JQ 有序规则必须逐条一致，并锁定 10 个唯一表达式及有序指纹。
 
-下一阶段：继续把 Rewrite v2 的 redirect、JQ、Body/Header/JSON 修改和 Action pipeline 按行为语义接入生成器，并补 QX regex flag 的官方语义验证；复杂条件不做机械降级。
+第三/四阶段继续按“效果等价”扩展 Rewrite v2：
+
+- Loon URL regex 的 `/i` 不使用未在 QX 官方 sample 中证明的 `(?i)`；转换器把 ASCII 字母显式编译为大小写字符类，例如 `api` → `[aA][pP][iI]`。不能无损编译的 Unicode/特殊 escape 保持 Review；
+- redirect 的“只替换 URL 命中片段 + capture 模板”在 QX 侧使用生成的 `script-echo-response`，不假定 QX 302 replacement 支持未证明的捕获语义；
+- JSON delete/replace/JQ、可证明安全的 Body Replace 直接转为 QX/Surge 原生能力；
+- non-200/custom reject 在 QX 侧生成 `script-echo-response`，保留状态码和 body；
+- 同阶段 Header set/del/replace pipeline 在 QX 侧合并为一个脚本以保持顺序；Surge 使用官方 `[Header Rewrite]`，其中 Loon `set` 展开为 `header-del + header-add`；
+- inline response mock 及 mock + Header pipeline：QX 合成一个 echo-response 脚本；Surge 使用 `[Map Local]` 静态响应。
+
+当前 CI 会扫描实际 RuCu6 资源：9 个插件、175 条 Rewrite v2 中，QX 自动等价转换 174 条，Surge 175 条。QX 唯一保留 Review 的现存规则是 `response.header.add("content-disposition", "inline")`，因为 QX 官方脚本 Header 使用对象，无法保证 Loon 的“同名字段也追加第二条”语义。
+
+下一阶段优先处理当前 110 条 Script v2：建立正式 parser/AST、typed argument bridge 和目标平台脚本执行映射；Rewrite v2 的复合条件继续保持 fail-closed，直到能整体保持条件与 Action 顺序。

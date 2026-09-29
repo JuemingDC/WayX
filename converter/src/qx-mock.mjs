@@ -18,6 +18,8 @@ const MIME = Object.freeze({
   'form-data': 'multipart/form-data',
 });
 
+const TEXT_TYPES = new Set(['json','text','css','html','javascript','plain']);
+
 const REASON = Object.freeze({
   200: 'OK', 201: 'Created', 202: 'Accepted', 204: 'No Content',
   301: 'Moved Permanently', 302: 'Found', 307: 'Temporary Redirect', 308: 'Permanent Redirect',
@@ -28,6 +30,10 @@ const REASON = Object.freeze({
 
 export function qxMimeTypeForLoonMock(type = '') {
   return MIME[String(type || '').toLowerCase()] || 'application/octet-stream';
+}
+
+export function qxMockTypeIsBinary(type = '') {
+  return !TEXT_TYPES.has(String(type || '').toLowerCase());
 }
 
 function statusLine(status = 200) {
@@ -67,24 +73,59 @@ function base64Decoder() {
   ];
 }
 
-export function renderQxMockFileScript(plan, options = {}) {
-  if (!plan || !plan.url || !plan.phase) throw new TypeError('Expected a resolved QX mock_file plan');
+function headerHelpers() {
+  return [
+    'function __wayxHeaderKey(headers, name) {',
+    '  const wanted = String(name).toLowerCase();',
+    '  return Object.keys(headers).find(key => key.toLowerCase() === wanted);',
+    '}',
+    'function __wayxHeaderSet(headers, name, value) {',
+    '  const key = __wayxHeaderKey(headers, name);',
+    '  headers[key || name] = value;',
+    '}',
+    'function __wayxHeaderDel(headers, name) {',
+    '  const wanted = String(name).toLowerCase();',
+    '  for (const key of Object.keys(headers)) if (key.toLowerCase() === wanted) delete headers[key];',
+    '}',
+    'function __wayxHeaderReplace(headers, name, source, flags, replacement) {',
+    '  const key = __wayxHeaderKey(headers, name);',
+    '  if (key !== undefined) headers[key] = String(headers[key]).replace(new RegExp(source, flags), replacement);',
+    '}',
+  ];
+}
+
+function renderHeaderOps(lines, headerOps = []) {
+  if (!headerOps.length) return;
+  lines.push(...headerHelpers());
+  for (const op of headerOps) {
+    if (op.type === 'set') lines.push(`__wayxHeaderSet(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(op.value)});`);
+    else if (op.type === 'del') lines.push(`__wayxHeaderDel(headers, ${JSON.stringify(op.name)});`);
+    else if (op.type === 'replace') lines.push(`__wayxHeaderReplace(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(op.pattern)}, ${JSON.stringify(op.flags || '')}, ${JSON.stringify(op.replacement)});`);
+    else throw new Error('unsupported QX mock header operation: ' + op.type);
+  }
+}
+
+export function renderQxMockScript(plan, options = {}) {
+  if (!plan || !plan.phase) throw new TypeError('Expected a QX mock plan');
   if (!['request','response'].includes(plan.phase)) throw new Error(`Unsupported mock phase: ${plan.phase}`);
   if (plan.phase === 'request' && (plan.binary || plan.base64)) {
-    throw new Error('Quantumult X request mock_file binary/bodyBytes output is not enabled without an official request-body example');
+    throw new Error('Quantumult X request mock binary/bodyBytes output is not enabled without an official request-body example');
+  }
+  if ((options.headerOps || []).some(op => op.type === 'add')) {
+    throw new Error('Quantumult X documented header object cannot preserve duplicate header-add semantics');
   }
 
   const hasText = typeof options.bodyText === 'string';
   const hasBytes = typeof options.bodyBase64 === 'string' && options.bodyBase64.length > 0;
   if (plan.binary || plan.base64) {
-    if (!hasBytes) throw new Error('materialized mock_file bytes are required');
+    if (!hasBytes) throw new Error('mock bytes are required');
   } else if (!hasText) {
-    throw new Error('materialized mock_file text is required');
+    throw new Error('mock text is required');
   }
 
   const mime = qxMimeTypeForLoonMock(plan.contentType);
   const lines = [
-    ...meta({...options, sourceFile: options.sourceFile || plan.url}),
+    ...meta(options),
     `const __wayxContentType = ${JSON.stringify(mime)};`,
   ];
 
@@ -97,15 +138,22 @@ export function renderQxMockFileScript(plan, options = {}) {
 
   if (plan.phase === 'response') {
     lines.push('const headers = {"Content-Type": __wayxContentType};');
+    renderHeaderOps(lines, options.headerOps);
     lines.push(`const output = {status: ${JSON.stringify(statusLine(plan.status ?? 200))}, headers};`);
     if (plan.binary || plan.base64) lines.push('output.bodyBytes = __wayxBase64ToArrayBuffer(__wayxBodyBase64);');
     else lines.push('output.body = __wayxBody;');
     lines.push('$done(output);');
   } else {
     lines.push('const headers = {...$request.headers, "Content-Type": __wayxContentType};');
+    renderHeaderOps(lines, options.headerOps);
     lines.push('$done({headers, body: __wayxBody});');
   }
 
   lines.push('');
   return lines.join('\n');
+}
+
+export function renderQxMockFileScript(plan, options = {}) {
+  if (!plan?.url) throw new TypeError('Expected a resolved QX mock_file plan');
+  return renderQxMockScript(plan, {...options, sourceFile: options.sourceFile || plan.url});
 }
