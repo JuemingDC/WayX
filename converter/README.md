@@ -10,9 +10,10 @@ WayX 的 Loon Plugin → Quantumult X / Surge 通用转换器。核心原则是*
 - QX 只输出项目已确认支持的 snippet 语法；`filter_local / rewrite_local / mitm` 段名保持注释。
 - Surge 使用合法 sgmodule section/metadata。
 - QX Rule 中 Loon Plugin 的 `PROXY` 保留为字面 `PROXY` policy，不改成内建 `proxy`。
-- Loon `[Argument]` **不转换为 QX 参数或 BoxJs**。BoxJs 是独立功能，不属于 Loon Plugin 自动转换链。
-- `[Argument]` 仅用于内部依赖分析：若 Rewrite/Script 依赖插件参数而目标无法等价表达，该声明进入 Review。
-- QX/Surge 成品不复制 Loon `[Argument]` 区块和 Argument usage 清单。
+- Loon `[Argument]` **不转换为 QX 参数或 BoxJs**；QX 只用它做依赖分析。BoxJs 是独立功能，不属于 Loon Plugin 自动转换链。
+- Surge Module 将 Loon `[Argument]` 转成官方 `#!arguments / #!arguments-desc`，执行项使用 `{{{name}}}` 占位符。
+- Loon PluginObject 在 Surge Script 中转换为 JSON 字符串 `argument=`；动态 timeout/debug 使用占位符，动态 enable 使用官方行级 `#!REQUIREMENT`。
+- QX 成品不复制 Loon `[Argument]` 区块和 Argument usage 清单；Surge 只输出目标平台参数 metadata，不复制 Loon 原区块。
 - 不使用 Loon 参数默认值把动态行为静态化。
 
 ## Rewrite
