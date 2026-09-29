@@ -76,6 +76,25 @@ export function inspectQxScriptCompatibility({ scriptUrl = '', sourceText = '', 
 
   if (registered) return { ...registered, signals };
 
+  const qxEvidence = signals.qxTask || signals.qxPrefs || signals.qxNotify || signals.qxNamedAdapter;
+  const foreignRuntimeOnly =
+    (signals.surgeHttpClient || signals.surgePersistentStore || signals.loonObject) &&
+    !qxEvidence;
+  if (foreignRuntimeOnly) {
+    const APIs = [
+      signals.surgeHttpClient ? '$httpClient' : null,
+      signals.surgePersistentStore ? '$persistentStore' : null,
+      signals.loonObject ? '$loon' : null,
+    ].filter(Boolean).join(', ');
+    return {
+      status: 'unsupported',
+      executable: false,
+      reason: 'Script uses non-Quantumult-X runtime API(s) without a QX adapter: ' + APIs + '; keep the source declaration commented in QX output.',
+      registryId: null,
+      signals,
+    };
+  }
+
   // A WayX adaptation is allowed only for a source script that is otherwise
   // QX-compatible (for example an Argument/$prefs bridge), never to override
   // an explicit source-level incompatibility.
@@ -89,7 +108,6 @@ export function inspectQxScriptCompatibility({ scriptUrl = '', sourceText = '', 
     };
   }
 
-  const qxEvidence = signals.qxTask || signals.qxPrefs || signals.qxNotify || signals.qxNamedAdapter;
   return {
     status: qxEvidence ? 'runtime-evidence' : 'generic',
     executable: true,
