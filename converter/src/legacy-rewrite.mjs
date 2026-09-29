@@ -78,7 +78,7 @@ function parseJsonValue(token) {
 }
 
 function compileJsonMutation(phase, op, rest) {
-  if (op === 'jq') return { ok:true, jq:unquote(String(rest).trim()) };
+  if (op === 'jq') return { ok:true, jq:unquote(String(rest).trim()), preserve:true };
   const tokens = shellTokens(rest);
   if (op === 'add') return { ok:false, reason:'legacy json-add semantics are not compiled until add-vs-replace behavior is proven equivalent' };
   if (op === 'del') {
@@ -183,7 +183,7 @@ function planJson(pattern, action, parsed, target) {
   try { compiled=compileJsonMutation(parsed.phase, parsed.op, parsed.rest); }
   catch (error) { return review(pattern, action, String(error?.message || error)); }
   if (!compiled.ok) return review(pattern, action, compiled.reason);
-  const jq=minifyJq(compiled.jq);
+  const jq=compiled.preserve ? compiled.jq : minifyJq(compiled.jq);
   let quoted;
   try { quoted=quoteJq(jq); }
   catch (error) { return review(pattern, action, String(error?.message || error)); }
