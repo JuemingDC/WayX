@@ -6,3 +6,5 @@ export * from './argument.mjs';
 export * from './rewrite-v2.mjs';
 export * from './rewrite-v2-actions.mjs';
 export * from './rewrite-v2-safe.mjs';
+export * from './script-compat.mjs';
+export * from './dependency.mjs';
