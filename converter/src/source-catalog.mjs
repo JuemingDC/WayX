@@ -37,6 +37,10 @@ export function validateLoonSourceEntry(input) {
     if (!cleanString(input[field])) throw new Error(`catalog entry missing ${field}`);
   }
 
+  if (Object.prototype.hasOwnProperty.call(input, 'mirrors')) {
+    throw new Error('catalog mirrors are forbidden; use the original author source URL only');
+  }
+
   const entry = {
     id: cleanString(input.id),
     file: safeRelativePath(input.file, 'file'),
