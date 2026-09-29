@@ -597,6 +597,15 @@ function renderEntryConversion(entry, prepared, stamp = nowCN()) {
   return out;
 }
 
+async function writeSourceArtifact(entry, source, { root = ROOT } = {}) {
+  const sourcePath = path.join(root, 'Resource', 'Loon', entry.file);
+  await fs.mkdir(path.dirname(sourcePath), { recursive:true });
+  const old = await exists(sourcePath) ? normalizeNewlines(await fs.readFile(sourcePath, 'utf8')) : null;
+  const changed = old !== source;
+  if (changed) await fs.writeFile(sourcePath, source);
+  return { changed, sourcePath };
+}
+
 async function writeConversionArtifacts(entry, out, { root = ROOT } = {}) {
   const qxPath = path.join(root, qxTargetPath(entry));
   const surgePath = path.join(root, surgeTargetPath(entry));
@@ -649,11 +658,8 @@ async function main() {
       console.log(`\n== ${entry.id} ==`);
       const prepared = await prepareEntryConversion(entry);
       const source = prepared.source;
-      const sourcePath = path.join(RESOURCE_DIR, entry.file);
-      await fs.mkdir(path.dirname(sourcePath), { recursive:true });
-      const old = await exists(sourcePath) ? normalizeNewlines(await fs.readFile(sourcePath, 'utf8')) : null;
-      const changed = old !== source;
-      if (changed) await fs.writeFile(sourcePath, source);
+      const sourceWrite = await writeSourceArtifact(entry, source);
+      const changed = sourceWrite.changed;
       console.log(`${changed ? 'updated' : 'unchanged'} source via ${entry.source}; sha256=${sha256(source).slice(0, 12)}`);
 
       const qxPath = path.join(ROOT, qxTargetPath(entry));
@@ -705,4 +711,5 @@ export {
   scriptUrls,
   validateQX,
   writeConversionArtifacts,
+  writeSourceArtifact,
 };
