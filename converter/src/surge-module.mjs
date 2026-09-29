@@ -34,10 +34,37 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
   let current = null;
   let hasBodyRewrite = false;
   let hasInlineMapLocal = false;
+  let hasLineRequirement = false;
+  const declaredArguments = new Set();
+  let moduleRequirementCore = null;
 
   for (const raw of String(text).split('\n')) {
-    const line = raw.trim();
+    let line = raw.trim();
     if (!line) continue;
+
+    if (current === null) {
+      const args = line.match(/^#!arguments=(.+)$/i);
+      if (args) {
+        for (const item of args[1].split(',')) {
+          const name = item.split(':', 1)[0].trim();
+          if (!/^[A-Za-z0-9_]+$/.test(name)) {
+            throw new Error(`${entry.id}: invalid Surge module argument name: ${name}`);
+          }
+          if (declaredArguments.has(name)) {
+            throw new Error(`${entry.id}: duplicate Surge module argument: ${name}`);
+          }
+          declaredArguments.add(name);
+        }
+      }
+      const requirement = line.match(/^#!requirement=.*CORE_VERSION\s*>=\s*(\d+)/i);
+      if (requirement) moduleRequirementCore = Number(requirement[1]);
+    }
+
+    const lineRequirement = line.match(/^#!REQUIREMENT\s+(?:"(?:[^"\\]|\\.)*"|\S+)\s+(.+)$/);
+    if (lineRequirement) {
+      hasLineRequirement = true;
+      line = lineRequirement[1].trim();
+    }
 
     const section = line.match(/^\[([^\]]+)\]$/);
     if (section) {
@@ -50,7 +77,6 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
 
     if (line.startsWith('#!')) {
       if (current === null && allowedTopDirectives.some(re => re.test(line))) continue;
-      if (/^#!REQUIREMENT\b/.test(line)) continue; // official line-requirement prefix
       throw new Error(`${entry.id}: unsupported Surge module directive: ${line}`);
     }
     if (line.startsWith('#') || line.startsWith(';') || line.startsWith('//')) continue;
@@ -157,8 +183,16 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
     if (/^Ruleset\s+/.test(current)) continue;
   }
 
-  if ((hasBodyRewrite || hasInlineMapLocal) &&
-      !/^#!requirement=.*CORE_VERSION\s*>=\s*20/m.test(text)) {
-    throw new Error(`${entry.id}: Body Rewrite / inline Map Local requires #!requirement including CORE_VERSION>=20`);
+  if ((hasBodyRewrite || hasInlineMapLocal) && !(moduleRequirementCore >= 20)) {
+    throw new Error(`${entry.id}: Body Rewrite / inline Map Local requires #!requirement CORE_VERSION>=20 or newer`);
+  }
+  if (hasLineRequirement && !(moduleRequirementCore >= 22)) {
+    throw new Error(`${entry.id}: parameterized line requirements require #!requirement CORE_VERSION>=22 or newer`);
+  }
+
+  for (const match of String(text).matchAll(/\{\{\{([A-Za-z0-9_]+)\}\}\}/g)) {
+    if (!declaredArguments.has(match[1])) {
+      throw new Error(`${entry.id}: undeclared Surge module argument placeholder: ${match[1]}`);
+    }
   }
 }
