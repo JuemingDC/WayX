@@ -115,6 +115,14 @@ Review：
 
 如果脚本正文不可获得，且仅凭声明无法证明兼容，必须 Review。
 
+## 60.6.1 Source Script URL 保留
+
+- 转换时可从原 `script-path` / `script("...")` URL 临时读取脚本正文做兼容性判断。
+- 不把 Source Script 复制到 WayX 仓库。
+- 不把目标 QX/Surge 声明改写为 WayX raw URL。
+- 不使用 GitHub/第三方镜像替代原脚本。
+- 原脚本 URL 读取失败时进入 Review/automation failure，不能用副本继续生成“看似成功”的目标。
+
 ## 60.7 自动转换实现
 
 - Legacy script behavior selection：`converter/src/script.mjs`
@@ -122,5 +130,5 @@ Review：
 - Script v2 parser：`converter/src/script-v2.mjs`
 - Script v2 target planner：`converter/src/script-v2-target.mjs`
 - Loon Argument parser：`converter/src/argument.mjs`
-- Source-script mirror path planning：`converter/src/script-path.mjs`
+- Original Source Script fetch：`converter/src/source-fetch.mjs`
 - Regression：`converter/tests/rucu6-script-v2-coverage.mjs`、`converter/tests/checkpoint.mjs`
