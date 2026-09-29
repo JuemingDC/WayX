@@ -1,4 +1,4 @@
-// Loon [Argument] -> BoxJs descriptor / Quantumult X preference bridge
+// Loon [Argument] parser and optional descriptor generation
 // Author: chance
 // Category: Converter / Argument / BoxJs
 import { splitTopLevelCsv } from './rule.mjs';
