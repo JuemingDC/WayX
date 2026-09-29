@@ -30,6 +30,11 @@ import {
   renderBoxJsApp,
   rewriteV2ToSource,
   selectQxScriptAction,
+  parseScriptV2,
+  scriptV2ToSource,
+  scriptV2ArgumentRefs,
+  scriptV2DynamicOptionRefs,
+  scriptOptionBoolean,
   surgeRule,
   surgeTargetPath,
   validateRewriteV2Ast,
@@ -306,5 +311,25 @@ assert.equal(surgeGrpcMock.section, 'map');
 assert.match(surgeGrpcMock.line, /data-type=base64/);
 assert.match(surgeGrpcMock.line, /status-code=200/);
 assert.match(surgeGrpcMock.line, /Content-Type:text\/plain\|grpc-status:0/);
+
+const scriptV2Basic = parseScriptV2('response if ${url} ~= /^https:\\/\\/api\\.example\\.com/i then script("https://example.com/a.js") with tag="API", requires_body=true, binary_body_mode=false');
+assert.equal(scriptV2Basic.phase, 'response');
+assert.equal(scriptV2Basic.script.path, 'https://example.com/a.js');
+assert.equal(scriptOptionBoolean(scriptV2Basic, 'requires_body'), true);
+assert.equal(scriptOptionBoolean(scriptV2Basic, 'binary_body_mode'), false);
+assert.match(scriptV2ToSource(scriptV2Basic), /then script\("https:\/\/example\.com\/a\.js"\)/);
+
+const scriptV2ObjectArg = parseScriptV2('request if ${url} ~= /grpc/i then script("request.js", {${enabled}, ${lang}}) with enable=${enabled}, timeout=20, requires_body=true, binary_body_mode=true');
+assert.deepEqual(scriptV2ArgumentRefs(scriptV2ObjectArg), ['enabled','lang']);
+assert.deepEqual(scriptV2DynamicOptionRefs(scriptV2ObjectArg), [{option:'enable',id:'enabled'}]);
+assert.equal(scriptOptionBoolean(scriptV2ObjectArg, 'binary_body_mode'), true);
+assert.throws(
+  () => parseScriptV2('response if ${url} ~= /api/ then script("a.js") with requires_body=${enabled}'),
+  /requires_body: invalid value type/,
+);
+assert.throws(
+  () => parseScriptV2('response if ${url} ~= /api/ then script("a.js") with unknown=true'),
+  /unknown Script v2 option/,
+);
 
 console.log('WayX converter checkpoint tests passed');
