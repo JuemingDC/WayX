@@ -1,5 +1,61 @@
 # WayX Converter Status
 
+## 2026-09-29 phase 4 — Rewrite v2 semantic coverage
+
+Implemented on `work/rewrite-v2-semantic-actions-20260929` / PR #6:
+
+- Added a target-regex compiler for Loon flags.
+  - `/i` is compiled to explicit ASCII case-folded character classes instead of emitting undocumented QX inline modifiers.
+  - `m/s` are elided only for URL/header subjects where CR/LF cannot occur; body regex remains fail-closed.
+  - Unicode or ambiguous case-folding remains Review Tier.
+- Added behavior-first Rewrite v2 mapping:
+  - QX/Surge JSON delete/replace/JQ.
+  - Proven scalar body replacement.
+  - Redirect and URL replacement.
+  - Reject behavior including non-200/custom responses.
+  - Header pipelines.
+  - Inline mock and response mock + Header pipelines.
+- QX redirect uses a generated `script-echo-response` to reproduce Loon's matched-range replacement and named capture templates without assuming undocumented QX 302 capture syntax.
+- QX non-200/custom reject uses generated `script-echo-response`.
+- QX same-phase Header set/del/replace is combined into one generated script so left-to-right Loon ordering is preserved.
+- QX `header.add` remains fail-closed because the documented header object cannot guarantee duplicate-header semantics.
+- QX inline `body.mock` and response mock + Header pipelines are combined into one generated script.
+- Surge mappings were rechecked from the official Surge documentation entrypoint/manual:
+  - `[URL Rewrite]` for redirect/url.replace.
+  - `[Body Rewrite]` for body/JQ operations.
+  - `[Header Rewrite]` for header operations; Loon `set` becomes `header-del` + `header-add`.
+  - `[Map Local]` for static reject/mock responses that skip upstream.
+- Added a real-resource coverage scan to PR CI.
+
+Current RuCu6 Rewrite v2 coverage from CI:
+
+- 9 current RuCu6 plugins.
+- 175 Rewrite v2 entries.
+- Parse/action validation errors: 0.
+- Quantumult X: 174 / 175 automatically mapped.
+  - direct: 150
+  - generated inline mock: 7
+  - generated redirect: 9
+  - generated reject: 6
+  - generated header: 2
+  - Review: 1
+- Surge: 175 / 175 automatically mapped.
+  - Map Local reject: 124
+  - direct Body/JQ: 32
+  - Map Local mock: 7
+  - URL Rewrite: 9
+  - Header Rewrite: 3
+- The only current QX Rewrite v2 Review item is `webpage.lpx`:
+  `response.header.add("content-disposition", "inline")`.
+  It is intentionally not approximated because Loon `header.add` appends a second same-name field while QX's documented script headers are an object.
+
+Verification:
+
+- Converter syntax check: passed.
+- Converter checkpoint: passed.
+- MyBlockAds JQ golden: passed.
+- RuCu6 Rewrite v2 semantic coverage scan: passed.
+
 ## 2026-09-29 phase 3 — semantic QX conversion
 
 Implemented on `work/semantic-rewrite-mock-20260929` / PR #5:
@@ -65,12 +121,14 @@ Official behavior rechecked during this phase:
 ## Current boundary
 
 - Bilibili protobuf is treated as **unsupported in QX output**, not as a pending fork: the source explicitly rejects QX and depends on `$utils.ungzip`, so WayX preserves the Loon declaration as comments and emits no executable QX line.
-- Parsing or dependency resolution alone never promotes complex Rewrite v2 rules to Safe Tier.
+- Current Rewrite v2 simple URL-condition coverage is effectively complete for present RuCu6 sources; QX duplicate `header.add` remains intentionally unconverted.
+- Compound Rewrite v2 conditions, runtime-variable values and target-unprovable regex/body semantics remain fail-closed.
 - Binary response `mock_file` is materialized during conversion, embedded losslessly as Base64, and restored through the official QX `bodyBytes` output path; binary request `mock_file` remains disabled until its exact QX request-body output contract is officially evidenced.
 
 ## Next work
 
-1. Extend the behavior-first Rewrite v2 generator to redirect, JQ, body/header/JSON modifications and safe pipelines.
-2. Generate one target script when a Loon pipeline has ordering or shared-state semantics that cannot be reproduced by independent QX lines.
-3. Add target-specific regex-flag handling only after QX support is proven from official material; current `/i` source rules remain outside the golden equivalence claim.
-4. After PR #5 is merged, rerun upstream monitoring from the new main and discard stale pre-converter branch output.
+1. Parse current Loon Script v2 declarations into an AST instead of treating them as legacy `script-path=` lines.
+2. Preserve typed plugin arguments and `[Argument]` bindings for Script v2; use QX BoxJs/`$prefs` bridges only when needed.
+3. Map request/response phase, body/binary-body requirements, timeout and enable semantics to verified QX/Surge script forms.
+4. Keep explicit QX-incompatible source scripts commented and disabled; do not fork them.
+5. Add a Script v2 real-resource coverage report analogous to the Rewrite v2 report.
