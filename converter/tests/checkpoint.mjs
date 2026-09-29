@@ -26,7 +26,6 @@ import {
   planLegacyRewrite,
   validateLoonSourceCatalog,
   planMitmLine,
-  planScriptMirrorPaths,
   mergeBoxJsSubscription,
   parseLoonArguments,
   parseRewriteV2,
@@ -209,23 +208,6 @@ const compact = minifyJq('walk( if type == "object" then .a = [] | del(.b, .c) e
 assert.equal(compact.includes('"object"'), true);
 assert.equal(compact.includes('del(.b,.c)'), true);
 
-const mirrorUrls=[
-  'https://one.example.invalid/a/response.js',
-  'https://two.example.invalid/b/response.js',
-  'https://one.example.invalid/a/request.js',
-];
-const mirrorPlan=planScriptMirrorPaths(mirrorUrls);
-assert.equal(mirrorPlan.get(mirrorUrls[2]), 'request.js');
-assert.notEqual(mirrorPlan.get(mirrorUrls[0]), mirrorPlan.get(mirrorUrls[1]));
-assert.match(mirrorPlan.get(mirrorUrls[0]), /^response-[0-9a-f]{10}\.js$/);
-assert.deepEqual(
-  [...planScriptMirrorPaths([...mirrorUrls].reverse()).entries()].sort(),
-  [...mirrorPlan.entries()].sort(),
-);
-assert.equal(
-  new Set([...mirrorPlan.values()].map(x=>x.toLowerCase())).size,
-  mirrorPlan.size,
-);
 
 assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:true,scriptUrl:'https://example.com/request.js',sourceText:'$done({status:"HTTP/1.1 200 OK",body:$request.body});'}).action, 'script-analyze-echo-response');
 assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:false,scriptUrl:'https://example.com/header.js',sourceText:'$done({headers:$request.headers});'}).action, 'script-request-header');
@@ -262,6 +244,20 @@ const catalogFixture = validateLoonSourceCatalog([
   },
 ]);
 assert.equal(catalogFixture[0].id, 'UnknownPlugin');
+assert.throws(
+  () => validateLoonSourceCatalog([
+    {
+      id:'NoMirror',
+      file:'no-mirror.lpx',
+      source:'https://author.example.invalid/no-mirror.lpx',
+      qx:'NoMirror.snippet',
+      surge:'NoMirror.sgmodule',
+      category:'测试',
+      mirrors:['https://mirror.example.invalid/no-mirror.lpx'],
+    },
+  ]),
+  /mirrors are forbidden/,
+);
 assert.throws(
   () => validateLoonSourceCatalog([
     {id:'A',file:'a.lpx',source:'https://a.invalid/a.lpx',qx:'same.snippet',surge:'a.sgmodule',category:'x'},
