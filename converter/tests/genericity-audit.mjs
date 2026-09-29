@@ -4,9 +4,12 @@ import path from 'node:path';
 
 const ROOT=process.cwd();
 const SRC=path.join(ROOT,'converter','src');
-const files=(await fs.readdir(SRC))
-  .filter(name=>name.endsWith('.mjs'))
-  .map(name=>path.join(SRC,name));
+const files=[
+  ...(await fs.readdir(SRC))
+    .filter(name=>name.endsWith('.mjs'))
+    .map(name=>path.join(SRC,name)),
+  path.join(ROOT,'.github','scripts','sync-convert.mjs'),
+];
 
 const forbiddenSymbols=[
   'QX_SCRIPT_OVERRIDES',
