@@ -46,7 +46,8 @@ const mockAst = parseRewriteV2(
 );
 const qxMock = renderQxInlineMockScript(mockAst, {category:'Adblock'});
 assert.equal(qxMock.qxAction, 'script-echo-response');
-assert.match(qxMock.script, /"no":0/);
+assert.match(qxMock.script, /__wayxBody = /);
+assert.match(qxMock.script, /success/);
 const surgeMock = surgeInlineMockPlan(mockAst);
 assert.equal(surgeMock.ok, true);
 assert.equal(surgeMock.section, 'map');
