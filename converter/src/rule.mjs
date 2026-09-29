@@ -168,7 +168,7 @@ export function qxRule(line) {
   let policy;
   if (policyRaw === 'DIRECT') policy = 'direct';
   else if (policyRaw === 'REJECT' || policyRaw === 'REJECT-DROP' || policyRaw === 'REJECT-NO-DROP') policy = 'reject';
-  else if (policyRaw === 'PROXY') policy = 'proxy';
+  else if (policyRaw === 'PROXY') policy = 'PROXY';
   else if (/^REJECT/.test(policyRaw)) {
     return {kind:'comment', line:`# Unsupported reject policy for Quantumult X filter behavior: ${source}`, reason:'unsupported-reject-policy'};
   } else {
