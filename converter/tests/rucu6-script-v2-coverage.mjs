@@ -9,6 +9,7 @@ import {
   scriptOptionBoolean,
   qxScriptV2Plan,
   surgeScriptV2Plan,
+  buildSurgeArgumentTable,
 } from '../src/index.mjs';
 
 const ROOT = process.cwd();
@@ -44,6 +45,8 @@ const report = {
 
 for (const name of files) {
   const text = await fs.readFile(path.join(DIR, name), 'utf8');
+  const argumentTable = buildSurgeArgumentTable(sectionLines(text, 'Argument'));
+  const argumentIds = new Set(argumentTable.entries.map(entry => entry.id));
   for (const raw of sectionLines(text, 'Script')) {
     const line = raw.trim();
     if (!line || line.startsWith('#') || line.startsWith(';') || line.startsWith('//')) continue;
@@ -65,7 +68,7 @@ for (const name of files) {
         report.dynamicOptions[key] = (report.dynamicOptions[key] || 0) + 1;
       }
       const qxPlan = qxScriptV2Plan(ast, {scriptUrl:ast.script.path, sourceText:''});
-      const surgePlan = surgeScriptV2Plan(ast, {scriptUrl:ast.script.path, name:'coverage'});
+      const surgePlan = surgeScriptV2Plan(ast, {scriptUrl:ast.script.path, name:'coverage', argumentIds, argumentTable});
 
       const qxKey = qxPlan.ok ? (qxPlan.disabled ? 'disabled' : qxPlan.strategy) : 'REVIEW: ' + qxPlan.reason;
       const surgeKey = surgePlan.ok ? (surgePlan.disabled ? 'disabled' : surgePlan.strategy) : 'REVIEW: ' + surgePlan.reason;
