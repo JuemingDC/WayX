@@ -4,6 +4,7 @@
 
 import { simpleUrlRewriteCondition, fixedStringValue } from './rewrite-v2-semantic.mjs';
 import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
+import { qxMockTypeIsBinary, renderQxMockScript } from './qx-mock.mjs';
 
 const STATUS_TEXT = Object.freeze({
   200:'OK', 201:'Created', 202:'Accepted', 204:'No Content',
@@ -137,6 +138,140 @@ function fixed(node, what) {
   if (value === null) throw new Error(what + ' must be a fixed string');
   if (/\$\{/.test(value)) throw new Error(what + ' contains a runtime variable and needs a broader script bridge');
   return value;
+}
+
+function booleanArg(node, fallback = false) {
+  if (!node) return fallback;
+  if (node.type !== 'boolean') throw new Error('mock Base64 flag must be Boolean');
+  return node.value;
+}
+
+function numberArg(node, fallback = 200) {
+  if (!node) return fallback;
+  if (node.type !== 'number' || !Number.isInteger(node.value)) throw new Error('mock status must be an integer');
+  return node.value;
+}
+
+function headerOpsForMock(ast, mockAction) {
+  const ops = [];
+  for (const action of ast.actions) {
+    if (action === mockAction) continue;
+    if (!new RegExp('^' + ast.phase + '\\.header\\.(?:set|del|replace)
+  validateRewriteV2Ast(ast);
+  const condition = simpleUrlRewriteCondition(ast);
+  if (!condition.ok) throw new Error(condition.reason);
+  if (!ast.actions.length || ast.actions.some(a => !new RegExp('^' + ast.phase + '\\.header\\.(?:set|del|replace)$').test(a.name))) {
+    throw new Error('QX header script supports only same-phase set/del/replace actions');
+  }
+
+  const statements = [];
+  for (const action of ast.actions) {
+    for (const args of expandAction(action)) {
+      if (action.name.endsWith('.set')) {
+        statements.push(`__wayxSet(${JSON.stringify(fixed(args[0], 'header name'))}, ${JSON.stringify(fixed(args[1], 'header value'))});`);
+      } else if (action.name.endsWith('.del')) {
+        statements.push(`__wayxDel(${JSON.stringify(fixed(args[0], 'header name'))});`);
+      } else {
+        const name = fixed(args[0], 'header name');
+        const regex = args[1];
+        const replacement = fixed(args[2], 'header replacement');
+        if (regex?.type !== 'regex') throw new Error('header.replace regex is not fixed');
+        statements.push(`__wayxReplace(${JSON.stringify(name)}, ${JSON.stringify(regex.pattern)}, ${JSON.stringify(regex.flags || '')}, ${JSON.stringify(replacement)});`);
+      }
+    }
+  }
+
+  const source = ast.phase === 'request' ? '$request.headers' : '$response.headers';
+  const lines = [
+    ...metadata(options),
+    `const __wayxHeaders = {...${source}};`,
+    'function __wayxKey(name) {',
+    '  const wanted = String(name).toLowerCase();',
+    '  return Object.keys(__wayxHeaders).find(key => key.toLowerCase() === wanted);',
+    '}',
+    'function __wayxSet(name, value) {',
+    '  const key = __wayxKey(name);',
+    '  __wayxHeaders[key || name] = value;',
+    '}',
+    'function __wayxDel(name) {',
+    '  const wanted = String(name).toLowerCase();',
+    '  for (const key of Object.keys(__wayxHeaders)) if (key.toLowerCase() === wanted) delete __wayxHeaders[key];',
+    '}',
+    'function __wayxReplace(name, source, flags, replacement) {',
+    '  const key = __wayxKey(name);',
+    '  if (key !== undefined) __wayxHeaders[key] = String(__wayxHeaders[key]).replace(new RegExp(source, flags), replacement);',
+    '}',
+    ...statements,
+    '$done({headers: __wayxHeaders});',
+    '',
+  ];
+
+  return {
+    qxAction: ast.phase === 'request' ? 'script-request-header' : 'script-response-header',
+    pattern: condition.pattern,
+    script: lines.join('\n'),
+    notes: condition.notes,
+  };
+}
+).test(action.name)) {
+      throw new Error('QX mock pipeline supports only same-phase header set/del/replace actions');
+    }
+    for (const args of expandAction(action)) {
+      if (action.name.endsWith('.set')) {
+        ops.push({type:'set', name:fixed(args[0], 'header name'), value:fixed(args[1], 'header value')});
+      } else if (action.name.endsWith('.del')) {
+        ops.push({type:'del', name:fixed(args[0], 'header name')});
+      } else {
+        const regex = args[1];
+        if (regex?.type !== 'regex') throw new Error('header.replace regex is not fixed');
+        ops.push({
+          type:'replace',
+          name:fixed(args[0], 'header name'),
+          pattern:regex.pattern,
+          flags:regex.flags || '',
+          replacement:fixed(args[2], 'header replacement'),
+        });
+      }
+    }
+  }
+  return ops;
+}
+
+export function renderQxInlineMockScript(ast, options = {}) {
+  validateRewriteV2Ast(ast);
+  const condition = simpleUrlRewriteCondition(ast);
+  if (!condition.ok) throw new Error(condition.reason);
+  const mocks = ast.actions.filter(a => /^(?:request|response)\\.body\\.mock$/.test(a.name));
+  if (mocks.length !== 1) throw new Error('QX inline mock conversion requires exactly one body.mock action');
+  const mock = mocks[0];
+  if (!mock.name.startsWith(ast.phase + '.')) throw new Error('mock action phase does not match Rewrite phase');
+
+  const contentType = fixedStringValue(mock.args[0]);
+  const body = fixedStringValue(mock.args[1]);
+  if (contentType === null || body === null) throw new Error('inline mock content type/body must be fixed strings');
+
+  const isResponse = ast.phase === 'response';
+  const status = isResponse ? numberArg(mock.args[2], 200) : null;
+  const base64 = isResponse ? booleanArg(mock.args[3], false) : booleanArg(mock.args[2], false);
+  const binary = qxMockTypeIsBinary(contentType);
+  if (binary && !base64) throw new Error('binary inline mock must use Base64=true for a lossless QX conversion');
+  if (base64 && !/^[A-Za-z0-9+/]*={0,2}$/.test(body.replace(/\\s+/g, ''))) {
+    throw new Error('inline mock Base64 body is invalid');
+  }
+
+  const plan = {phase:ast.phase, contentType, status, base64, binary};
+  const headerOps = headerOpsForMock(ast, mock);
+  const scriptOptions = {
+    ...options,
+    headerOps,
+    ...(base64 || binary ? {bodyBase64:body.replace(/\\s+/g, '')} : {bodyText:body}),
+  };
+  return {
+    qxAction: isResponse ? 'script-echo-response' : 'script-request-body',
+    pattern: condition.pattern,
+    script: renderQxMockScript(plan, scriptOptions),
+    notes: condition.notes,
+  };
 }
 
 export function renderQxHeaderScript(ast, options = {}) {
