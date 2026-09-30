@@ -1,26 +1,24 @@
 #!name=WebPage
 #!desc=移除网页广告。
 #!requirement=CORE_VERSION>=20
+#!arguments=wayx_proxy_policy:DIRECT
+#!arguments-desc=wayx_proxy_policy: Loon PROXY policy binding — default DIRECT; set to the desired Surge proxy policy or policy group
 
 # Author: RuCu6[https://github.com/RuCu6]
 # Icon: https://rucu6.pages.dev/Icons/app/webpage.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-09-30 18:31:33 +08:00
+# Converted: 2026-09-30 19:15:05 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/webpage.lpx
 # Target: Surge
 
 [Rule]
-# [WayX] Source Loon plugin policy PROXY preserved without conversion; Surge Module cannot activate external policy names.
-# Source declaration: DOMAIN-SUFFIX, mypikpak.com, PROXY
-# [WayX] Source Loon plugin policy PROXY preserved without conversion; Surge Module cannot activate external policy names.
-# Source declaration: DOMAIN, 18hlw.com, PROXY
-# [WayX] Source Loon plugin policy PROXY preserved without conversion; Surge Module cannot activate external policy names.
-# Source declaration: DOMAIN, 8olbt.imsatcmn.cc, PROXY
-# [WayX] Source Loon plugin policy PROXY preserved without conversion; Surge Module cannot activate external policy names.
-# Source declaration: DOMAIN, yhg007.com, PROXY
+DOMAIN-SUFFIX,mypikpak.com,{{{wayx_proxy_policy}}}
+DOMAIN,18hlw.com,{{{wayx_proxy_policy}}}
+DOMAIN,8olbt.imsatcmn.cc,{{{wayx_proxy_policy}}}
+DOMAIN,yhg007.com,{{{wayx_proxy_policy}}}
 
 [URL Rewrite]
 # 解决 GitHub 速率限制返回429问题
