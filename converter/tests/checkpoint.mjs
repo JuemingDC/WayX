@@ -189,7 +189,7 @@ const validSurgeModule = [
   '^https:\\/\\/ads\\.example\\.com _ reject',
   '',
   '[Header Rewrite]',
-  'http-response ^https:\\/\\/api\\.example\\.com header-del Server',
+  'http-response ^https://api\\.example\\.com header-del Server',
   '',
   '[Body Rewrite]',
   'http-response-jq ^https://api\\.example\\.com \'del(.ads)\'',
@@ -752,7 +752,7 @@ assert.equal(classifyLegacyRewrite('mock-response-body data-type=json data="{}" 
 const legacyCtx = {id:'UnknownFixture', rawBase:'https://raw.githubusercontent.com/example/repo/main', generatedScripts:new Map()};
 assert.equal(
   planLegacyRewrite('^https:\\/\\/ads\\.example\\.com', 'reject', 'qx', legacyCtx).line,
-  '^https:\\/\\/ads\\.example\\.com url reject',
+  '^https://ads\\.example\\.com url reject',
 );
 assert.equal(
   planLegacyRewrite('^https:\\/\\/ads\\.example\\.com', 'reject-dict', 'surge', legacyCtx).section,
@@ -760,27 +760,27 @@ assert.equal(
 );
 assert.equal(
   planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject', 'qx', legacyCtx).line,
-  '^https:\\/\\/legacy\\.example\\.com url reject',
+  '^https://legacy\\.example\\.com url reject',
 );
 assert.equal(
   planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject', 'surge', legacyCtx).line,
-  '^https:\\/\\/legacy\\.example\\.com _ reject',
+  '^https://legacy\\.example\\.com _ reject',
 );
 assert.equal(
   planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject-200', 'qx', legacyCtx).line,
-  '^https:\\/\\/legacy\\.example\\.com url reject-200',
+  '^https://legacy\\.example\\.com url reject-200',
 );
 assert.equal(
   planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject-img', 'qx', legacyCtx).line,
-  '^https:\\/\\/legacy\\.example\\.com url reject-img',
+  '^https://legacy\\.example\\.com url reject-img',
 );
 assert.equal(
   planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject-dict', 'qx', legacyCtx).line,
-  '^https:\\/\\/legacy\\.example\\.com url reject-dict',
+  '^https://legacy\\.example\\.com url reject-dict',
 );
 assert.equal(
   planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject-array', 'qx', legacyCtx).line,
-  '^https:\\/\\/legacy\\.example\\.com url reject-array',
+  '^https://legacy\\.example\\.com url reject-array',
 );
 
 assert.equal(planMitmLine('hostname = api.example.com, *.example.com', 'qx').line, 'hostname = api.example.com, *.example.com');
@@ -788,7 +788,7 @@ assert.equal(planMitmLine('hostname = api.example.com, *.example.com', 'surge').
 assert.match(planMitmLine('ca-passphrase = secret', 'qx').line, /Unsupported source MITM option preserved/);
 assert.equal(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-body-json-del data.ads', 'qx', legacyCtx).line,
-  '^https:\\/\\/api\\.example\\.com url jsonjq-response-body \'del(.data.ads)\'',
+  '^https://api\\.example\\.com url jsonjq-response-body \'del(.data.ads)\'',
 );
 assert.equal(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-del Server', 'surge', legacyCtx).lines[0],
