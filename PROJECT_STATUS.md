@@ -4,12 +4,12 @@
 > 维护原则：本文件描述“当前 main 的真实状态”，不能替代 `CONVERSION_SPEC.md`；规范冲突时以 `CONVERSION_SPEC.md` 为唯一权威。
 
 - 审计日期：2026-09-30
-- 审计基线：PR #70 QX official capability drift gate / Converter Check #601
+- 审计基线：PR #71 scoped Loon adblock capability model / Converter Check #606
 - Source Catalog：20 个 Loon 去广告插件
 - Catalog 管理目标：20 个 Quantumult X snippet + 20 个 Surge sgmodule
 - Adblock 目录实际目标：21 个 QX + 21 个 Surge（额外包含手工维护的 `QZXY`）
-- 最近完整 Converter Check：#601，通过
-- 当前实现 PR：#70
+- 最近完整 Converter Check：#606，通过
+- 当前实现 PR：#71
 
 ---
 
@@ -73,7 +73,6 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 
 ### 2.5 Rule / Script / 其他项目标准
 
-- Surge 去广告 Module 的源 `FINAL` 直接丢弃，不改写成 catch-all。
 - QX / Surge Source Script 均不做 runtime compatibility scan，直接保留原始 Script URL；QX 仅在 declaration 不足以确定 header/body/echo action 时读取正文辅助分类。
 - QX 官方 sample 未确认的 Rule Type（逻辑规则、端口类等）只注释保留，不用 HTTP Rewrite Script 模拟。
 - Loon Plugin `PROXY` 保持用户策略绑定：QX 保留字面 `PROXY`；Surge Module 生成 `wayx_proxy_policy` 参数（默认 `DIRECT`）并把 Rule policy 写成 `{{{wayx_proxy_policy}}}`。
@@ -86,7 +85,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 
 ## 3. Review 库存
 
-2026-09-30 规范 v1.10 已把 QX Source Script 的 `binary-body-mode` / `binary_body_mode` 纳入 KOP-XIAO `resource-parser.js` 兼容口径。目标 Review inventory 为：
+2026-09-30 规范 v1.11 已把 QX Source Script 的 `binary-body-mode` / `binary_body_mode` 纳入 KOP-XIAO `resource-parser.js` 兼容口径。目标 Review inventory 为：
 
 - **Quantumult X：0**
 - **Surge：0**
@@ -102,7 +101,7 @@ QX Source Script declaration 的 `argument`、动态 `enable`、`timeout`、`bin
 - Source Script runtime compatibility；
 - QX logical Rule、`DEST-PORT` 等官方 sample 未确认 Rule Type（明确注释保留）；
 - Loon Plugin `PROXY` 在 Surge Module 中通过参数化 policy binding 转为活动 Rule，不再属于 Review/注释库存；
-- 完整 Surge Profile 可用但 Module Manual 未允许的 `REJECT-DROP / REJECT-NO-DROP / CELLULAR / CELLULAR-ONLY / HYBRID / NO-HYBRID`（源 Rule 注释保留）。
+- 无法按当前 Surge ad-block Module Rule 语义等价表达的源 policy 继续注释保留。
 
 当前 Catalog 目标已没有活动 Review marker；后续新语法、新插件或现有上游变化仍可能重新产生 Review/Issue。
 
@@ -117,7 +116,7 @@ v1.4 已重新生成全部 Catalog 管理的 QX snippet / Surge sgmodule，并�
 - Source Script declaration 继续引用原作者 URL；
 - Source Script runtime compatibility disabled marker 已移除；
 - QX 不支持 Rule 以注释形式对账，未生成 Rule helper；
-- Surge 的 Loon `PROXY` 已通过 `#!arguments` policy 参数转换为活动 Rule；Module Manual 未允许且没有参数化语义的完整 Profile built-in policy 继续只注释保留；
+- Surge 的 Loon `PROXY` 已通过 `#!arguments` policy 参数转换为活动 Rule；其它无法等价绑定的源 policy 继续只注释保留；
 - helper 文件引用存在且 action 类型通过 validator/CI；
 - Review inventory 目标已调整为 QX 0 / Surge 0 / Issue 0，并由 CI 自动核验。
 
@@ -174,7 +173,7 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 
 - [x] 已建立 Catalog-observed Rewrite v2 / Script v2 syntax inventory：`converter/tests/catalog-syntax-inventory.mjs` + `converter/fixtures/catalog-syntax-inventory.json`。当前基线为 175 条 Rewrite v2 / 110 条 Script v2；CI 只锁语法形态，不锁同类规则数量。新 action/参数形态/condition/capture/logical/regex flag/Script option/argument/option-set 或 multi-action signature 首次出现时 fail closed，必须先核对官方语义再更新基线；未观察到的 complex signature 仍不得预先放行。
 - 每次新增 QX 官方 sample 证据时，复核现有 Rewrite Review 是否可以安全降级为 native/helper；Rule 只在官方明确支持对应 Rule Type 后才改为活动 filter。
-- [x] 已建立 QX official capability drift gate：用户上传官方 `sample.txt` 作为人工确认起点，CI 实时读取 Crossutility 当前 `sample.conf` / `filter.snippet` / `sample-import-rewrite.snippet`，双向核对官方能力与 WayX validator registry。当前 `final / echo-response / url-and-header` 被明确分类为官方存在但 WayX 当前不主动输出；QX rewrite snippet MITM whitelist 收紧为官方示例确认的 `hostname`，删除无官方样例依据的 `skip-server-cert-verify` 放行。
+- [x] QX capability gate 已收窄为 Loon 去广告转换实际能力：仅核对 Rule 类型、WayX 实际使用的 Rewrite action 与 MITM `hostname` 是否仍有 Crossutility 官方依据；转换范围之外的能力不进入 registry。Surge 同样采用 Rule / Rewrite / hostname 边界。
 - [x] 对 generated helper 做行为级 runtime fixture，而不只做字符串/语法断言：`converter/tests/generated-helper-runtime.mjs` 已接入 CI，覆盖 request/response、组合条件、命中/未命中、Header/Body/JSON 顺序、capture、raw string、typed JSON、invalid JSON 失败隔离、Surge duplicate header，以及当前 observed QX mock complex signature。
 - 保持 `PROJECT_STATUS.md` 与实际 Review inventory 同步。
 
@@ -186,7 +185,6 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 
 - Loon regex `i/m/s` flags：**直接丢弃**。
 - regex body：**原样保留，不做全局格式转换**。
-- Surge source `FINAL`：**直接丢弃**。
 - legacy `jq-path=`：**直接丢弃**。
 - QX section heading：按项目约定注释。
 - QX / Surge Source Script：均不做 runtime compatibility scan；直接保留原 URL。
@@ -223,7 +221,6 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 - QX / Surge Review marker 数明显变化；
 - 新增 target native/helper 能力；
 - converter scope 改变；
-- 新增 intentional drop 标准；
 - canonical 管理边界变化；
 - 新发现会影响转换正确性的 bug。
 

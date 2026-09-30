@@ -102,23 +102,21 @@ export const SURGE_RULE_TYPES = new Set([
   'DEST-PORT', 'SRC-PORT', 'IN-PORT', 'SRC-IP', 'DEVICE-NAME', 'MAC-ADDRESS',
   'PROTOCOL', 'HOSTNAME-TYPE', 'SUBNET', 'CELLULAR-RADIO', 'CELLULAR-CARRIER',
   'AND', 'OR', 'NOT',
-  'SCRIPT', 'RULE-SET', 'FINAL',
+  'SCRIPT', 'RULE-SET',
 ]);
 
-// Surge Module Manual explicitly restricts [Rule] lines to these
-// internal policies. Other built-in profile policies may exist in a full
-// profile, but they are not emitted as active Module Rule policies.
+// Surge ad-block Module Rule policies that WayX may emit actively.
 export const SURGE_MODULE_POLICIES = new Set([
   'DIRECT', 'REJECT', 'REJECT-TINYGIF',
 ]);
 
-export const SURGE_PROFILE_BUILTIN_POLICIES = new Set([
-  'DIRECT', 'REJECT', 'REJECT-TINYGIF', 'REJECT-DROP', 'REJECT-NO-DROP',
+const LOON_RULE_POLICIES_COMMENT_ONLY = new Set([
+  'REJECT-DROP', 'REJECT-NO-DROP',
   'CELLULAR', 'CELLULAR-ONLY', 'HYBRID', 'NO-HYBRID',
 ]);
 
-function surgePolicyIndex(parts) {
-  return String(parts[0] || '').toUpperCase() === 'FINAL' ? 1 : 2;
+function surgePolicyIndex(_parts) {
+  return 2;
 }
 
 function normalizeSurgeRuleRegexes(line) {
@@ -148,9 +146,6 @@ export function surgeRuleTypesInTree(line, {subrule = false} = {}) {
     return {ok:false, types, reason:`unsupported-rule-type:${type}`};
   }
 
-  if (subrule && type === 'FINAL') {
-    return {ok:false, types, reason:'FINAL-cannot-be-a-logical-subrule'};
-  }
 
   if (['AND','OR','NOT'].includes(type)) {
     const subrules = splitLogicalSubrules(parts[1]);
@@ -207,12 +202,6 @@ export function surgeModuleRule(line, { proxyPolicyPlaceholder = null } = {}) {
   const parts = splitTopLevelCsv(source);
   const type = String(parts[0] || '').toUpperCase();
 
-  // WayX converts ad-block plugins, not a complete Surge policy graph.
-  // A source FINAL is intentionally discarded so a module cannot alter the
-  // user's global catch-all routing policy.
-  if (type === 'FINAL') {
-    return {kind:'drop', section:'rule', line:'', lines:[], reason:'drop-source-final'};
-  }
 
   // Loon URL-REGEX supports HTTP-response-shaped reject policies that are not
   // Surge Rule policies. Lower those to Surge's native Map Local instead of
@@ -288,10 +277,9 @@ export function surgeModuleRule(line, { proxyPolicyPlaceholder = null } = {}) {
     };
   }
 
-  // Full Surge profiles have more built-in policies than Module [Rule]
-  // officially permits. Keep those source declarations as comments rather than
-  // emitting an invalid sgmodule or approximating them with another policy.
-  if (!SURGE_MODULE_POLICIES.has(policy) && SURGE_PROFILE_BUILTIN_POLICIES.has(policy)) {
+  // Known Loon Rule policies that cannot be emitted losslessly by the Surge
+  // ad-block Module remain comments rather than being approximated.
+  if (LOON_RULE_POLICIES_COMMENT_ONLY.has(policy)) {
     return {
       kind:'comment',
       section:'rule',

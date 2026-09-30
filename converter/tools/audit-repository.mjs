@@ -63,11 +63,13 @@ for (const file of files) {
   }
 
   if (rp.endsWith('.sgmodule')) {
-    try {
-      validateSurgeModule(text, {id:rp});
-      validated.surge++;
-    } catch (error) {
-      add(file, 1, 'surge-validator', error?.message || error);
+    if (rp.startsWith('Adblock/Surge/')) {
+      try {
+        validateSurgeModule(text, {id:rp});
+        validated.surge++;
+      } catch (error) {
+        add(file, 1, 'surge-adblock-validator', error?.message || error);
+      }
     }
     for (let i=0;i<lines.length;i++) {
       const t=lines[i].trim();
@@ -112,5 +114,5 @@ if (findings.length) {
   for (const f of findings) console.error(`${f.file}:${f.line} [${f.code}] ${f.text}`);
   process.exitCode = 1;
 } else {
-  console.log(`Repository audit passed: QX=${validated.qx}, Surge=${validated.surge}, source plugins=${validated.loon}; no validator or stale-pattern findings.`);
+  console.log(`Repository audit passed: QX=${validated.qx}, Surge adblock=${validated.surge}, source plugins=${validated.loon}; no validator or stale-pattern findings.`);
 }

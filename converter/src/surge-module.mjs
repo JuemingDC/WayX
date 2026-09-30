@@ -11,13 +11,10 @@ export function hasActiveSurgeLines(lines = []) {
   });
 }
 
-export function validateSurgeModule(text, entry = {id:'module'}, {adblockScope = false} = {}) {
-  const fixedSections = new Set([
-    'General','Rule','URL Rewrite','Header Rewrite','Body Rewrite','Map Local',
-    'Script','MITM','Host','MTProto','Snell Server',
+export function validateSurgeModule(text, entry = {id:'module'}) {
+  const allowedSections = new Set([
+    'Rule','URL Rewrite','Header Rewrite','Body Rewrite','Map Local','Script','MITM',
   ]);
-  const allowedSection = name =>
-    fixedSections.has(name) || /^WireGuard\s+.+$/.test(name) || /^Ruleset\s+.+$/.test(name);
 
   const allowedTopDirectives = [
     /^#!name=.+$/i,
@@ -69,7 +66,7 @@ export function validateSurgeModule(text, entry = {id:'module'}, {adblockScope =
     const section = line.match(/^\[([^\]]+)\]$/);
     if (section) {
       current = section[1];
-      if (!allowedSection(current)) {
+      if (!allowedSections.has(current)) {
         throw new Error(`${entry.id}: unsupported Surge module section [${current}]`);
       }
       continue;
@@ -150,12 +147,9 @@ export function validateSurgeModule(text, entry = {id:'module'}, {adblockScope =
       const typeMatch = body.match(/(?:^|,)\s*type=([^,\s]+)/);
       if (!typeMatch) throw new Error(`${entry.id}: Surge [Script] declaration must include an explicit type: ${line}`);
       const type = typeMatch[1];
-      const repositoryTypes = new Set(['http-request','http-response','rule','dns','event','cron','generic']);
-      if (!repositoryTypes.has(type)) throw new Error(`${entry.id}: unsupported Surge script type '${type}': ${line}`);
-      // Cron/event/generic remain valid for unrelated hand-maintained modules.
-      // The WayX Loon->Adblock converter deliberately excludes those families.
-      if (adblockScope && ['event','cron','generic'].includes(type)) {
-        throw new Error(`${entry.id}: unsupported Surge script type '${type}' in WayX ad-block scope: ${line}`);
+      const rewriteScriptTypes = new Set(['http-request','http-response']);
+      if (!rewriteScriptTypes.has(type)) {
+        throw new Error(`${entry.id}: WayX ad-block Surge [Script] only accepts HTTP rewrite types: ${line}`);
       }
       if (!/(?:^|,)\s*script-path=[^,\s]+/.test(body)) {
         throw new Error(`${entry.id}: Surge [Script] missing script-path: ${line}`);
@@ -166,12 +160,6 @@ export function validateSurgeModule(text, entry = {id:'module'}, {adblockScope =
           throw new Error(`${entry.id}: Surge HTTP script missing pattern: ${line}`);
         }
       }
-      if (!adblockScope && type === 'cron' && !/(?:^|,)\s*cronexp=(?:"[^"]+"|'[^']+'|[^,]+)/.test(body)) {
-        throw new Error(`${entry.id}: Surge cron script missing cronexp: ${line}`);
-      }
-      if (!adblockScope && type === 'event' && !/(?:^|,)\s*event-name=[^,]+/.test(body)) {
-        throw new Error(`${entry.id}: Surge event script missing event-name: ${line}`);
-      }
       continue;
     }
 
@@ -179,25 +167,12 @@ export function validateSurgeModule(text, entry = {id:'module'}, {adblockScope =
       const match = line.match(/^([^=]+?)\s*=\s*(.+)$/);
       if (!match) throw new Error(`${entry.id}: invalid Surge MITM option: ${line}`);
       const key = match[1].trim();
-      if (!['hostname','skip-server-cert-verify'].includes(key)) {
-        throw new Error(`${entry.id}: Module may only manipulate hostname/skip-server-cert-verify in [MITM]: ${line}`);
+      if (key !== 'hostname') {
+        throw new Error(`${entry.id}: WayX ad-block Surge Module [MITM] only accepts hostname: ${line}`);
       }
       continue;
     }
 
-    if (current === 'General' || current === 'Host' ||
-        current === 'MTProto' || current === 'Snell Server' ||
-        /^WireGuard\s+/.test(current)) {
-      if (!/^[^=]+\s*=\s*.+$/.test(line)) {
-        throw new Error(`${entry.id}: invalid Surge [${current}] key/value line: ${line}`);
-      }
-      continue;
-    }
-
-    // [Ruleset *] contains rule entries and is accepted as an inline rule-set
-    // payload. Its per-line semantics are validated by Surge when the module is
-    // loaded; the section itself is explicitly supported by the Module manual.
-    if (/^Ruleset\s+/.test(current)) continue;
   }
 
   if ((hasBodyRewrite || hasInlineMapLocal) && !(moduleRequirementCore >= 20)) {

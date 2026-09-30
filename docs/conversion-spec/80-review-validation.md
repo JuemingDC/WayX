@@ -50,7 +50,6 @@ Issue marker 固定格式：
 
 原规则不能静默删除，但以下项目级丢弃项除外：
 - Loon regex literal 的 `i/m/s` flags；
-- 生成 Surge 去广告 Module 时的源 `FINAL`；
 - 非官方 legacy `json.jq("jq-path=...")` alias。
 
 Loon regex literal 的 `i/m/s` 是明确的转换丢弃项，不因 flags 存在进入 Review；按 Block 40 丢弃 flags 后继续语义映射，regex body 不做全局格式化。只有目标官方语法明确要求的局部适配才允许进入对应 target planner。
@@ -102,7 +101,7 @@ Source parser 遇到当前 grammar 未登记、但包含活动内容的 section 
 - section 合法
 - Rule type 属于当前官方 Rule Type
 - Logical Rule 递归合法
-- Module `[Rule]` policy 允许 Surge Module Manual 明确列出的 `DIRECT / REJECT / REJECT-TINYGIF`，以及已由 `#!arguments` 声明的完整 `{{{name}}}` policy 占位符；占位符必须引用已声明参数。完整 Profile 的其他 built-in policy 与未绑定的未知/用户 policy group 都不得直接作为活动 Module Rule
+- Module `[Rule]` policy 允许 `DIRECT / REJECT / REJECT-TINYGIF`，以及已由 `#!arguments` 声明的完整 `{{{name}}}` policy 占位符；占位符必须引用已声明参数。其它未绑定 policy 不得直接作为活动 Module Rule
 - 外部 policy 不作为活动 Module Rule
 - URL/Header/Body/Map Local/Script 参数合法
 - WayX 去广告转换输出中的活动 Script declaration 必须显式声明 type，且 Adblock-scope validator 不接受调度/事件/generic Script 类型；仓库中与本转换器无关的人工 Surge Module 仍按 Surge 自身合法类型校验，不受此范围限制
@@ -167,33 +166,29 @@ Inventory 只记录语法形态，不记录声明数量，因此同一语法的�
 - validator：`converter/tests/catalog-syntax-inventory.mjs`
 - CI：`.github/workflows/converter-check.yml`
 
-## 80.10 Quantumult X official capability drift gate
+## 80.10 Quantumult X / Surge scoped capability evidence gate
 
-QX validator whitelist 必须与官方样例形成双向对账，不能只在 converter 内维护一组无来源的字符串常量。
+WayX capability gate 只验证 **Loon 去广告插件转换实际会用到的能力**。QX 与 Surge 统一只关注：
 
-当前官方依据分层如下：
-- 用户提供的官方 `sample.txt`：人工确认基线；
-- Crossutility 官方 `sample.conf`：完整配置中的 filter / rewrite / Script / full-profile MITM 证据；
-- Crossutility 官方 `filter.snippet`：remote filter 资源格式证据；
-- Crossutility 官方 `sample-import-rewrite.snippet`：rewrite snippet 可执行内容与 snippet MITM key 证据。
+- Rule 类型；
+- Rewrite 类别（包括目标原生 Rewrite / Map Local / HTTP Script 等 WayX 实际生成路径）；
+- MITM `hostname`。
 
-CI 必须实时读取上述 Crossutility 当前样例并提取能力集合，与 `converter/fixtures/qx-official-capabilities.json` 比较。检测到官方能力集合变化时直接失败，不能自动扩大/缩小 WayX whitelist。
+其余目标软件 Profile 能力不进入 capability model，也不参与 drift 判断。
 
-WayX capability registry 固定分类为：
-- **executable**：validator 允许，且必须有当前官方样例依据；
-- **not emitted**：官方能力存在，但当前 Loon 去广告转换按项目标准不主动生成，必须在 registry 中写明原因；
-- **unknown**：官方新出现但尚未分类，CI fail closed。
+### Quantumult X
 
-当前明确的 not-emitted 能力包括：
-- filter `final`：WayX 去广告转换对源 `FINAL` 执行 intentional drop；
-- rewrite `echo-response`：当前 mock/materialization 使用专用语义路径，不直接生成该 action；
-- rewrite match kind `url-and-header`：当前 Loon converter 不凭空合成该 QX 声明。
-
-完整 `sample.conf [mitm]` 的 `passphrase / p12 / skip_validating_cert / skip_src_ip / skip_dst_ip` 不得自动加入 rewrite snippet whitelist。当前官方 `sample-import-rewrite.snippet` 只证明 `hostname` 可作为 snippet MITM key，因此 WayX QX snippet validator 只放行 `hostname`。历史残留的 `skip-server-cert-verify` 没有 Crossutility 官方样例依据，不得继续放行。
+- 用户提供的官方 `sample.txt` 作为人工确认基线；
+- CI 读取 Crossutility 当前 `sample.conf`、`filter.snippet`、`sample-import-rewrite.snippet`，只检查 WayX registry 中的 Rule/Rewrite/hostname 是否仍有官方依据；
+- 官方新增与 Loon 去广告转换无关的能力不触发 drift；
+- registry 只维护 WayX 实际使用的 Rule/Rewrite/hostname，不维护转换范围之外的能力分类。
 
 实现：
 - registry：`converter/src/qx-official-capabilities.mjs`
 - reviewed baseline：`converter/fixtures/qx-official-capabilities.json`
-- live drift test：`converter/tests/qx-official-capabilities.mjs`
+- evidence test：`converter/tests/qx-official-capabilities.mjs`
 - target validator：`.github/scripts/sync-convert.mjs::validateQX`
 
+### Surge
+
+Surge 的能力依据只从官方 Manual 中核对 WayX 实际生成的 Rule / URL Rewrite / Header Rewrite / Body Rewrite / Map Local / HTTP Script 与 MITM `hostname`。Module Manual 虽还描述其它完整模块配置项，但这些不属于 WayX Loon 去广告转换能力边界，validator 不为其建立白名单。

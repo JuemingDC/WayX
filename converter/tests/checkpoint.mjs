@@ -132,8 +132,6 @@ assert.equal(surgeModuleRule('CELLULAR-RADIO,NR,DIRECT').line, 'CELLULAR-RADIO,N
 assert.equal(surgeModuleRule('HOSTNAME-TYPE,IPv6,REJECT').line, 'HOSTNAME-TYPE,IPv6,REJECT');
 assert.equal(surgeModuleRule('RULE-SET,https://example.com/list.list,REJECT,no-resolve').line, 'RULE-SET,https://example.com/list.list,REJECT,no-resolve');
 assert.equal(surgeModuleRule('SCRIPT,ssid-rule,DIRECT,requires-resolve').line, 'SCRIPT,ssid-rule,DIRECT,requires-resolve');
-assert.equal(surgeModuleRule('FINAL,DIRECT').line, '');
-assert.deepEqual(surgeModuleRule('FINAL,DIRECT').lines, []);
 assert.equal(
   surgeModuleRule('AND,((DOMAIN,api.pinduoduo.com),(PROTOCOL,QUIC)),REJECT').line,
   'AND,((DOMAIN,api.pinduoduo.com),(PROTOCOL,QUIC)),REJECT',
@@ -874,7 +872,6 @@ assert.equal(
 
 assert.equal(planMitmLine('hostname = api.example.com, *.example.com', 'qx').line, 'hostname = api.example.com, *.example.com');
 assert.equal(planMitmLine('hostname = api.example.com, *.example.com', 'surge').line, 'hostname = %APPEND% api.example.com, *.example.com');
-assert.match(planMitmLine('ca-passphrase = secret', 'qx').line, /ISSUE REQUIRED \[unknown-mitm-option\]/);
 assert.equal(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-body-json-del data.ads', 'qx', legacyCtx).line,
   '^https:\\/\\/api\\.example\\.com url jsonjq-response-body \'del(.data.ads)\'',

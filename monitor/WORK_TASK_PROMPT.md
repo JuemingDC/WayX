@@ -40,7 +40,6 @@ Work 只处理 Review Tier：QX Rewrite 中无法无损承载的 Loon `[Argument
 - Rewrite/Mock 固定执行：目标原生格式 → 专用 semantic helper →（仅源单条声明真实存在且已登记的 multi-action signature）complex helper → 注释 Review/Issue。不得把相邻、同 condition 的独立源声明拼成 pipeline。Rule 不进入该 Script fallback。
 - Loon regex literal 只去掉最外层 `/.../` delimiter，并按项目标准丢弃 `i/m/s`；regex body 原样保留，禁止全局执行 `\\/ -> /`、case-fold、inline modifier 或其他 canonicalization。目标确有语法差异时只能在对应 target planner 内基于官方格式做局部适配。
 - QX 与 Surge 只有 source-authored 且 observed/registered 的多 action Rewrite 才进入 complex helper；既有 renderer 能力保留，但不能据此凭空放行未观察组合。脚本必须在一个文件内按源顺序完成全部 action。单 action 如需脚本只能走对应专用 semantic helper。
-- Surge 去广告 Module 中的源 `FINAL` 直接丢弃，禁止改写成活动 catch-all。
 - legacy `json.jq("jq-path=...")` 直接丢弃，不解析依赖、不生成目标规则。
 - QX `request.header.add` 仅使用已验证 whole-header 插入路径；QX `response.header.add` / legacy `response-header-add` 按项目决策直接注释保留，不用 set 冒充，也不再作为持续 Review 项。
 - QX Source Script：保留原 Script URL；argument 不注入，动态 enable 默认开启，timeout 与 binary-body-mode 忽略；固定 enable=false/0 仍禁用；header/body 只由 requires-body 决定。debug/max-size 等其它字段继续按 Block 60 的 WayX 自身规则单独判断。

@@ -1,4 +1,4 @@
-// Quantumult X official sample capability drift gate
+// Quantumult X official evidence gate for Loon ad-block conversion
 // Author: chance
 // Category: Converter / Quantumult X / Validation
 
@@ -8,9 +8,7 @@ import path from 'node:path';
 import {
   QX_WAYX_FILTER_TYPES,
   QX_WAYX_SCRIPT_ACTIONS,
-  QX_WAYX_REWRITE_MATCH_KINDS,
   QX_WAYX_NATIVE_REWRITE_ACTIONS,
-  QX_WAYX_NOT_EMITTED,
   QX_WAYX_SNIPPET_MITM_KEYS,
 } from '../src/qx-official-capabilities.mjs';
 
@@ -19,7 +17,6 @@ const fixture = JSON.parse(await fs.readFile(
   path.join(ROOT, 'converter/fixtures/qx-official-capabilities.json'),
   'utf8',
 ));
-
 const RAW = 'https://raw.githubusercontent.com/crossutility/Quantumult-X/master/';
 
 async function fetchText(name) {
@@ -37,9 +34,7 @@ async function fetchText(name) {
   throw new Error('failed to fetch official Quantumult X ' + name + ': ' + String(lastError?.message || lastError));
 }
 
-function sorted(values) {
-  return [...values].sort();
-}
+const sorted = values => [...values].sort();
 
 function sectionLines(text, wanted) {
   const out = [];
@@ -47,115 +42,59 @@ function sectionLines(text, wanted) {
   for (const raw of String(text).replace(/\r\n?/g, '\n').split('\n')) {
     const trimmed = raw.trim();
     const header = trimmed.match(/^\[([^\]]+)\]$/);
-    if (header) {
-      section = header[1].toLowerCase();
-      continue;
-    }
-    if (section !== wanted.toLowerCase()) continue;
-    out.push(trimmed);
+    if (header) { section = header[1].toLowerCase(); continue; }
+    if (section === wanted.toLowerCase()) out.push(trimmed);
   }
   return out;
 }
 
-function uncommentExample(line) {
+function uncomment(line) {
   const text = String(line || '').trim();
-  if (text.startsWith(';')) return text.slice(1).trim();
-  return text;
+  return text.startsWith(';') ? text.slice(1).trim() : text;
 }
 
-function extractFilterTypes(sample) {
-  const types = new Set();
-  for (const raw of sectionLines(sample, 'filter_local')) {
-    const line = uncommentExample(raw);
-    if (!line || line.startsWith('#')) continue;
-    const comma = line.indexOf(',');
-    if (comma < 1) continue;
-    types.add(line.slice(0, comma).trim().toLowerCase());
-  }
-  return types;
-}
-
-function rewriteActionFromTail(tail) {
-  const first = String(tail || '').trim().split(/\s+/)[0];
-  if (/^(?:302|307)$/.test(first)) return first;
-  return first || null;
-}
-
-function extractRewrite(sample) {
-  const actions = new Set();
-  const matchKinds = new Set();
-
-  for (const raw of sectionLines(sample, 'rewrite_local')) {
-    const line = uncommentExample(raw);
-    if (!line || line.startsWith('#')) continue;
-
-    const urlAndHeader = line.indexOf(' url-and-header ');
-    if (urlAndHeader >= 0) {
-      matchKinds.add('url-and-header');
-      const tail = line.slice(urlAndHeader + ' url-and-header '.length);
-      const action = rewriteActionFromTail(tail);
-      if (action) actions.add(action);
-      continue;
-    }
-
-    const url = line.indexOf(' url ');
-    if (url < 0) continue;
-    matchKinds.add('url');
-    const action = rewriteActionFromTail(line.slice(url + ' url '.length));
-    if (action) actions.add(action);
-  }
-
-  // The official sample documents these even though it does not provide one
-  // executable/commented example line for each of them.
-  if (/\bjsonjq-request-body\b/.test(sample)) actions.add('jsonjq-request-body');
-  for (const match of sample.matchAll(/\bscript-(?:request-(?:header|body)|response-(?:header|body)|echo-response|analyze-echo-response)\b/g)) {
-    actions.add(match[0]);
-  }
-
-  return { actions, matchKinds };
-}
-
-function extractFullMitmKeys(sample) {
-  const keys = new Set();
-  for (const raw of sectionLines(sample, 'mitm')) {
-    const line = uncommentExample(raw);
-    if (!line || line.startsWith('#')) continue;
-    const match = line.match(/^([A-Za-z0-9_-]+)\s*=/);
-    if (match) keys.add(match[1].toLowerCase());
-  }
-  return keys;
-}
-
-function extractSnippetMitmKeys(snippet) {
-  const keys = new Set();
-  for (const raw of String(snippet).replace(/\r\n?/g, '\n').split('\n')) {
-    const line = raw.trim();
-    if (!line || /^(?:#|;|\/\/)/.test(line)) continue;
-    const match = line.match(/^([A-Za-z0-9_-]+)\s*=/);
-    if (match) keys.add(match[1].toLowerCase());
-  }
-  return keys;
-}
-
-function extractFilterSnippetTypes(snippet) {
-  const types = new Set();
-  for (const raw of String(snippet).replace(/\r\n?/g, '\n').split('\n')) {
-    const line = raw.trim();
-    if (!line || /^(?:#|;|\/\/)/.test(line)) continue;
-    const comma = line.indexOf(',');
-    if (comma > 0) types.add(line.slice(0, comma).trim().toLowerCase());
-  }
-  return types;
-}
-
-function union(...sets) {
+function officialRuleTypes(sample) {
   const out = new Set();
-  for (const set of sets) for (const value of set) out.add(value);
+  for (const raw of sectionLines(sample, 'filter_local')) {
+    const line = uncomment(raw);
+    if (!line || line.startsWith('#')) continue;
+    const comma = line.indexOf(',');
+    if (comma > 0) out.add(line.slice(0, comma).trim().toLowerCase());
+  }
   return out;
 }
 
-function objectKeysSet(value) {
-  return new Set(Object.keys(value || {}));
+function officialRewriteActions(sample) {
+  const out = new Set();
+  for (const raw of sectionLines(sample, 'rewrite_local')) {
+    const line = uncomment(raw);
+    if (!line || line.startsWith('#')) continue;
+    const marker = line.indexOf(' url ');
+    if (marker < 0) continue; // url-and-header is outside WayX Loon-adblock scope
+    const tail = line.slice(marker + 5).trim();
+    const action = tail.split(/\s+/)[0];
+    if (action) out.add(action);
+  }
+  if (/\bjsonjq-request-body\b/.test(sample)) out.add('jsonjq-request-body');
+  for (const action of [
+    'script-request-header','script-request-body',
+    'script-response-header','script-response-body',
+    'script-echo-response','script-analyze-echo-response',
+  ]) {
+    if (sample.includes(action)) out.add(action);
+  }
+  return out;
+}
+
+function snippetMitmKeys(snippet) {
+  const out = new Set();
+  for (const raw of String(snippet).replace(/\r\n?/g, '\n').split('\n')) {
+    const line = raw.trim();
+    if (!line || /^(?:#|;|\/\/)/.test(line)) continue;
+    const match = line.match(/^([A-Za-z0-9_-]+)\s*=/);
+    if (match) out.add(match[1].toLowerCase());
+  }
+  return out;
 }
 
 const [sample, rewriteSnippet, filterSnippet] = await Promise.all([
@@ -164,73 +103,41 @@ const [sample, rewriteSnippet, filterSnippet] = await Promise.all([
   fetchText(fixture.authority.officialFilterSnippetPath),
 ]);
 
-const officialFilterTypes = extractFilterTypes(sample);
-const officialRewrite = extractRewrite(sample);
-const officialFullMitmKeys = extractFullMitmKeys(sample);
-const officialSnippetMitmKeys = extractSnippetMitmKeys(rewriteSnippet);
-const officialFilterSnippetTypes = extractFilterSnippetTypes(filterSnippet);
+const officialRules = officialRuleTypes(sample);
+const officialRewrites = officialRewriteActions(sample);
+const officialMitm = snippetMitmKeys(rewriteSnippet);
 
-assert.deepEqual(sorted(officialFilterTypes), fixture.filterTypes, 'official QX filter capability baseline drifted');
-assert.deepEqual(sorted(officialRewrite.matchKinds), fixture.rewriteMatchKinds, 'official QX rewrite match-kind baseline drifted');
-assert.deepEqual(sorted(officialRewrite.actions), fixture.urlRewriteActions, 'official QX rewrite action baseline drifted');
-assert.deepEqual(sorted(officialFullMitmKeys), fixture.fullConfigMitmKeys, 'official QX full-profile MITM baseline drifted');
-assert.deepEqual(sorted(officialSnippetMitmKeys), fixture.snippetMitmKeys, 'official QX rewrite-snippet MITM baseline drifted');
+assert.deepEqual(sorted(QX_WAYX_FILTER_TYPES), fixture.ruleTypes, 'QX Rule-type registry drifted from reviewed WayX adblock baseline');
+assert.deepEqual(sorted(QX_WAYX_NATIVE_REWRITE_ACTIONS), fixture.rewriteActions, 'QX Rewrite registry drifted from reviewed WayX adblock baseline');
+assert.deepEqual(sorted(QX_WAYX_SNIPPET_MITM_KEYS), fixture.mitmKeys, 'QX hostname registry drifted from reviewed WayX adblock baseline');
 
-for (const type of officialFilterSnippetTypes) {
-  assert.ok(officialFilterTypes.has(type), 'official filter.snippet uses unregistered filter type: ' + type);
+for (const type of fixture.ruleTypes) {
+  assert.ok(officialRules.has(type), 'WayX QX Rule type lost official sample evidence: ' + type);
+}
+for (const action of fixture.rewriteActions) {
+  assert.ok(officialRewrites.has(action), 'WayX QX Rewrite action lost official sample evidence: ' + action);
+}
+for (const key of fixture.mitmKeys) {
+  assert.ok(officialMitm.has(key), 'WayX QX MITM hostname key lost official rewrite-snippet evidence: ' + key);
 }
 
-const classifiedFilters = union(
-  QX_WAYX_FILTER_TYPES,
-  objectKeysSet(QX_WAYX_NOT_EMITTED.filterTypes),
-);
-assert.deepEqual(
-  sorted(classifiedFilters),
-  fixture.filterTypes,
-  'every official QX filter type must be either executable in WayX or explicitly classified as not emitted',
-);
+for (const action of QX_WAYX_SCRIPT_ACTIONS) {
+  assert.ok(fixture.rewriteActions.includes(action), 'QX Script action must remain inside the scoped Rewrite capability set: ' + action);
+}
 
-const classifiedRewriteActions = union(
-  QX_WAYX_NATIVE_REWRITE_ACTIONS,
-  objectKeysSet(QX_WAYX_NOT_EMITTED.urlRewriteActions),
-);
-assert.deepEqual(
-  sorted(classifiedRewriteActions),
-  fixture.urlRewriteActions,
-  'every official QX rewrite action must be either executable in WayX or explicitly classified as not emitted',
-);
-
-const classifiedMatchKinds = union(
-  QX_WAYX_REWRITE_MATCH_KINDS,
-  objectKeysSet(QX_WAYX_NOT_EMITTED.rewriteMatchKinds),
-);
-assert.deepEqual(
-  sorted(classifiedMatchKinds),
-  fixture.rewriteMatchKinds,
-  'every official QX rewrite match kind must be either executable in WayX or explicitly classified as not emitted',
-);
-
-assert.deepEqual(
-  sorted(QX_WAYX_SCRIPT_ACTIONS),
-  fixture.urlRewriteActions.filter(x => x.startsWith('script-')).sort(),
-  'WayX QX Script-action whitelist must match the official sample documentation',
-);
-
-assert.deepEqual(
-  sorted(QX_WAYX_SNIPPET_MITM_KEYS),
-  fixture.snippetMitmKeys,
-  'WayX QX snippet MITM whitelist must match the official rewrite snippet',
-);
-
-assert.equal(
-  /\bskip-server-cert-verify\b/.test(rewriteSnippet + '\n' + sample),
-  false,
-  'skip-server-cert-verify unexpectedly appeared in the current official QX samples; review the previous WayX restriction',
-);
+// The official filter resource is used only as supporting evidence for the
+// Rule types that WayX actually emits from Loon ad-block plugins.
+for (const raw of String(filterSnippet).split(/\r?\n/)) {
+  const line = raw.trim();
+  if (!line || /^(?:#|;|\/\/)/.test(line)) continue;
+  const comma = line.indexOf(',');
+  if (comma < 1) continue;
+  const type = line.slice(0, comma).trim().toLowerCase();
+  if (fixture.ruleTypes.includes(type)) assert.ok(officialRules.has(type));
+}
 
 console.log(
-  'Quantumult X official capability gate passed: ' +
-  fixture.filterTypes.length + ' filters / ' +
-  fixture.urlRewriteActions.length + ' rewrite actions / ' +
-  fixture.snippetMitmKeys.length + ' snippet MITM key(s)'
+  'Quantumult X scoped adblock capability gate passed: ' +
+  fixture.ruleTypes.length + ' Rule types / ' +
+  fixture.rewriteActions.length + ' Rewrite actions / hostname'
 );

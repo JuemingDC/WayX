@@ -7,7 +7,6 @@
 2. 不把单 host 自动变 wildcard。
 3. 不添加与实际 Rewrite/Script 无关的 host。
 4. HTTPS 目标动作需要 MITM 时，目标必须包含对应 hostname。
-5. 不迁移 Loon CA 私钥/证书内容。
 
 QX snippet：
 ```ini
@@ -36,9 +35,9 @@ Quantumult X 对最终进入 filter/rewrite 的源 Rule / Rewrite / Script decla
 
 WayX 转换说明属于目标 metadata，不是源规则注释，禁止进入 QX `{# ... #}` note。
 
-## 70.2.1 未支持 MITM option
+## 70.2.1 MITM 能力边界
 
-除当前已验证的 `hostname` 等目标可表达项外，源 MITM option 不得以普通 “Unsupported” 注释静默保留。无法映射时必须输出 `# [WayX] REVIEW REQUIRED` 与原 `# Source declaration:`，使 Source→Target 对账和 Gate 都能识别该语义项尚未转换。
+WayX 的 MITM capability model 只有 `hostname`。当前 Source Catalog 的活动 `[MITM]` 均为 `hostname`；若未来出现其它活动项，按未登记源语法 fail closed，不扩展为通用 Profile 配置转换。
 
 ## 70.3 WayX Metadata
 
