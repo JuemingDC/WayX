@@ -105,6 +105,9 @@ function headerHelpers(headerOps = []) {
 
 function renderHeaderOps(lines, headerOps = []) {
   if (!headerOps.length) return;
+  if (headerOps.some(op => op.type === 'add')) {
+    throw new Error('QX header.add cannot be represented losslessly with the official header object form');
+  }
   lines.push(...headerHelpers(headerOps));
   for (const op of headerOps) {
     if (op.type === 'add') lines.push(`__wayxHeaderAdd(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(op.value)});`);
