@@ -725,7 +725,7 @@ assert.match(complexConditionFlags.script, /response\.statusCode/);
 assert.match(complexConditionFlags.script, /__wayxHeader\("response","Content-Type"\)/);
 assert.throws(
   () => renderMixedRewriteScript(parseRewriteV2('response if ${unsupported.value} == "x" then response.header.del("Server") | response.body.replace(/x/, "y")'), {target:'qx'}),
-  /unsupported complex condition variable/,
+  /unsupported (?:complex|Rewrite v2) condition variable/,
 );
 
 const bulkV2 = parseRewriteV2('request if ${url} ~= /api/ then request.header.set(["X-A","X-B"],["1","2"])');
