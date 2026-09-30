@@ -237,7 +237,7 @@ assert.throws(
   /official Module set DIRECT\/REJECT\/REJECT-TINYGIF/,
 );
 const parameterizedPolicyModule = validSurgeModule
-  .replace('#!desc=Fixture', '#!desc=Fixture\n#!arguments=wayx_proxy_policy:DIRECT')
+  .replace('#!desc=Demo module', '#!desc=Demo module\n#!arguments=wayx_proxy_policy:DIRECT')
   .replace('DOMAIN,ads.example.com,REJECT', 'DOMAIN,ads.example.com,{{{wayx_proxy_policy}}}');
 assert.doesNotThrow(() => validateSurgeModule(parameterizedPolicyModule, {id:'Demo'}));
 assert.throws(
