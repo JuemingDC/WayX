@@ -125,7 +125,7 @@ Surge Module 不能定义 `[Proxy]` / `[Proxy Group]`，但官方 Parameter Tabl
 - Repository coverage：`converter/tests/surge-rule-coverage.mjs`。
 
 固定约束：
-- `rule-ast.mjs` 不得 import QX/Surge capability registry；
+- `rule-ast.mjs` 不得 import QX/Surge capability registry，也不得用目标平台白名单拒绝未知但可结构化的 Rule；
 - `rule-qx.mjs` / `rule-surge.mjs` 不得重新实现 source CSV / logical-subrule parser；
 - `rule.mjs` 只做兼容导出，不重新承载目标映射逻辑。
 
