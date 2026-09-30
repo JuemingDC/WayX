@@ -429,7 +429,7 @@ assert.equal(
 );
 assert.equal(
   planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject', 'surge', legacyCtx).line,
-  '^https://legacy\\.example\\.com _ reject',
+  '^https:\\/\\/legacy\\.example\\.com _ reject',
 );
 assert.equal(
   planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject-200', 'qx', legacyCtx).line,
@@ -604,8 +604,8 @@ assert.throws(() => renderQxMockFileScript(requestBinaryMockPlan), /request mock
 const bareUrl = compileRegexForTarget(parseRewriteV2('request if ${url} ~= /^https:\\/\\/Api\\.Example\\.com\\/[a-z]+/i then reject_dict(200)').condition.right, {subject:'url'});
 assert.equal(bareUrl.ok, true);
 assert.equal(bareUrl.pattern, '^https:\\/\\/Api\\.Example\\.com\\/[a-z]+');
-assert.ok(bareUrl.notes.includes('i-source-flag-not-expressed-in-target-declaration'));
-assert.equal(compileRegexForTarget(parseRewriteV2('response if ${url} ~= /api/ then response.body.replace(/a.b/s, "x")').actions[0].args[0], {subject:'body'}).ok, false);
+assert.deepEqual(bareUrl.notes, []);
+assert.equal(compileRegexForTarget(parseRewriteV2('response if ${url} ~= /api/ then response.body.replace(/a.b/s, "x")').actions[0].args[0], {subject:'body'}).ok, true);
 
 const qxDeleteV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /^https:\\/\\/api\\.example\\.com\\/feed/i then response.json.delete(["data.ads", "data.apps[0].promo"])'));
 assert.equal(qxDeleteV2.ok, true);
@@ -643,7 +643,7 @@ const surgeRedirectV2 = surgeRedirectRewritePlan(redirectV2);
 assert.equal(surgeRedirectV2.ok, true);
 assert.equal(
   surgeRedirectV2.line,
-  '(^https://live\\.bilibili\\.com/\\d+)(?:/?\\?.*) $1 302',
+  '(^https:\\/\\/live\\.bilibili\\.com\\/\\d+)(?:\\/?\\?.*) $1 302',
 );
 assert.match(surgeRedirectV2.line, /^\(\^/);
 assert.doesNotMatch(surgeRedirectV2.line, /\\\//);
