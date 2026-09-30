@@ -1074,6 +1074,13 @@ assert.match(surgeMockFile.line, /data-type=file/);
 assert.match(surgeMockFile.line, /https:\/\/example\.com\/Plugins\/mock\.json/);
 assert.match(surgeMockFile.line, /status-code=201/);
 
+const surgeMockFileHeaders = surgeMockFilePlan(
+  parseRewriteV2('response if ${url} ~= /file/i then response.body.mock_file("json", "mock.json", 200) | response.header.set("X-Test", "1")'),
+  {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'},
+);
+assert.equal(surgeMockFileHeaders.ok, true);
+assert.match(surgeMockFileHeaders.line, /Content-Type:application\/json\|X-Test:1/);
+
 const surgeRequestMock = renderSurgeRequestMockScript(
   parseRewriteV2('request if ${url} ~= /submit/i then request.body.mock("json", "{\\\"x\\\":1}")'),
   {category:'Rewrite'},
