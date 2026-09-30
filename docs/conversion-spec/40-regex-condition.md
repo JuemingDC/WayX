@@ -133,3 +133,8 @@ WayX 对 Surge URL pattern 只做必要的目标格式处理：
 - Static/simple-condition target planner：`converter/src/rewrite-v2-semantic.mjs`
 - Surge module validator：`converter/src/surge-module.mjs`
 - Regression：`converter/tests/checkpoint.mjs`、`converter/tests/rucu6-rewrite-v2-coverage.mjs`
+
+
+## 40.10 Complex helper typed equality
+
+Complex helper 的 `==` 必须按条件 literal 类型进行比较，而不能把目标运行时值与 parser AST 值直接做 JavaScript strict equality：String/raw-string 以字符串比较；Number 先按数值语义比较；Boolean 按布尔 literal 语义比较；`null` 匹配目标变量不存在/null 的情况。尤其是 QX/Surge 的 response status 运行时表示不得导致 Loon 数字状态条件失配。上述行为必须由实际 helper runtime fixture 验证。
