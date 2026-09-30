@@ -125,7 +125,9 @@ Helper 选择继续遵守最小实现原则：固定值、单 URL 条件的 Head
 
 `response.header.add` 例外：QX 官方 sample 的 Header object 返回形式不能证明重复同名 Header 可保留，因此不得用对象 set 冒充 add；在没有新的官方等价表示前注释 Review。
 
-对 Quantumult X 不发明数组 Header、重复 raw Header 行或其他未由官方 sample/已验证语法支持的返回格式。若 Loon 中存在**连续、同 phase、同 condition** 的多条 Header Rewrite，QX 输出必须将它们合并到一个 Header helper，并按源顺序执行全部动作；中间存在注释/空行或条件不同则不擅自跨边界合并。
+对 Quantumult X 不发明数组 Header、重复 raw Header 行或其他未由官方 sample/已验证语法支持的返回格式。
+
+**禁止把多条独立源声明合并成 pipeline。** 即使多条 Loon Rewrite 连续、同 phase、同 condition，也必须逐条转换；只有源 Loon 同一条声明本身使用 `ACTION1 | ACTION2` 时，才属于 multi-action pipeline。转换器不得为了“看起来更完整”而把相邻规则拼接成新的 AST、helper 或 `Source declaration: A | B`。
 ## 30.5 Rewrite v2 Pipeline
 
 Loon：
@@ -176,18 +178,44 @@ target native（仅当能整体严格等价）
 
 ## 30.5.1 Complex Rewrite Helper Registry
 
-复杂 Rewrite v2 的多 action pipeline 在原生目标能力不足时，可由通用 helper 按 AST condition/action 能力处理；禁止按插件身份特判。单 action 不进入该 registry。新增组合必须先增加 generic handler 与 synthetic fixture，不支持的组合保持 Review。
+Complex Registry 只处理**源 Loon 同一条 Rewrite v2 声明中真实存在的多 action pipeline**。禁止从两条或多条独立源规则“推导”或“拼装” complex AST。
+
+既有通用 renderer、condition compiler、Header/Body/JSON runtime 能力继续保留，作为已验证实现资产；但 production 的自动准入改为 **observed signature allowlist**：只有当前 Source Catalog 中实际出现、经过审计并登记的 action signature 才允许进入 complex handler。登记粒度是 action signature，不是插件 id、作者、域名或 URL，因此仍保持通用性。
+
+截至 2026-09-30，扫描全部 20 个 Catalog Loon 插件的活动 `[Rewrite]` 后，唯一真实 multi-action signature 为：
+
+```text
+response.body.mock | response.header.set
+```
+
+共 3 条活动源声明。Quantumult X 继续用一份 echo helper 完成 mock body + Header set；Surge 优先使用能整体保持行为的 Map Local。该类型登记后可服务任何未来出现相同 signature 的陌生插件。
+
+新增 complex signature 的固定流程：
+
+```text
+真实 Source Catalog 源声明出现新 signature
+→ converter 先注释该声明并标记 ISSUE REQUIRED
+→ Issue 审查源语义和目标官方能力
+→ 先更新规范/observed signature registry
+→ 再复用或扩展既有 renderer/handler
+→ synthetic + real-source inventory regression
+→ 才允许活动转换
+```
+
+不得仅因为既有 `renderMixedRewriteScript()`“技术上能生成 JavaScript”，就自动放行从未在真实 Loon 源中观察过的组合。
 
 固定路由顺序：
 
 ```text
 target native planner
 → dedicated semantic helper
-→ （仅 multi-action）Complex Rewrite Helper Registry
-→ REVIEW REQUIRED
+→ （仅 source-authored、已登记 multi-action）Complex Rewrite Helper Registry
+→ commented REVIEW REQUIRED / ISSUE REQUIRED
 ```
 
-当前 complex helper 可处理同 phase 的 Header/Body/JSON pipeline，以及需要 Surge Module 参数运行时参与的 Rewrite。Header 支持已验证的 `set / del / replace`，Surge 在 `full-header-mode=true` 下额外支持保持重复字段的 `add`；JSON 支持已验证的 `add / delete / replace`。所有 Action 必须严格按 Loon AST 从左到右执行，Body Replace 与 JSON Action 可以交错，禁止把 JSON 操作整体提前或延后。
+未登记 signature 属于 unknown complex syntax：必须注释源声明并标记 `ISSUE REQUIRED`，不得生成活动 helper。已登记 signature 若因目标能力缺口不能等价转换，则使用普通 `REVIEW REQUIRED`。
+
+当前 complex helper 底层 renderer 可处理同 phase 的 Header/Body/JSON pipeline，以及需要 Surge Module 参数运行时参与的 Rewrite。Header 支持已验证的 `set / del / replace`，Surge 在 `full-header-mode=true` 下额外支持保持重复字段的 `add`；JSON 支持已验证的 `add / delete / replace`。所有 Action 必须严格按 Loon AST 从左到右执行，Body Replace 与 JSON Action 可以交错，禁止把 JSON 操作整体提前或延后。
 
 条件编译当前只接受已验证的 `url`、`request.method`、`response.status`、固定 Header 读取，以及 `== / ~= / && / || / ()`。未知变量、未知运算符、无法证明等价的 capture 行为必须 fail closed。
 
