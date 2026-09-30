@@ -94,7 +94,7 @@ export function validateSurgeModule(text, entry = {id:'module'}, {adblockScope =
       const policyIndex = surgePolicyIndex(parts);
       const policy = String(parts[policyIndex] || '').toUpperCase();
       if (!SURGE_MODULE_POLICIES.has(policy)) {
-        throw new Error(`${entry.id}: Surge module [Rule] policy is not in the accepted built-in runtime set: ${line}`);
+        throw new Error(`${entry.id}: Surge module [Rule] policy is outside the official Module set DIRECT/REJECT/REJECT-TINYGIF: ${line}`);
       }
       if (line !== parts.join(',')) {
         throw new Error(`${entry.id}: Surge module [Rule] must use canonical top-level comma formatting: ${line}`);
