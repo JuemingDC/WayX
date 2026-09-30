@@ -432,30 +432,28 @@ assert.throws(
   /does not handle response\.json\.add/,
 );
 
-const flaggedHeaderHelper = renderQxHeaderScript(parseRewriteV2('request if ${url} ~= /api/i then request.header.replace("X-Test", /value/ms, "ok")'));
-assert.equal(flaggedHeaderHelper.script.includes('new RegExp("api", "i")'), false);
-assert.equal(flaggedHeaderHelper.script.includes('new RegExp(source, flags)'), false);
+const flaggedHeaderHelper = renderQxHeaderScript(parseRewriteV2(String.raw`request if ${url} ~= /api/i then request.header.replace("X-Test", /value/ms, "ok")`));
 assert.equal(flaggedHeaderHelper.pattern, 'api');
-assert.match(flaggedHeaderHelper.script, /__wayxReplace\("X-Test","value","ok"\)/);
-const flaggedRedirectHelper = renderQxRedirectScript(parseRewriteV2('request if ${url} ~= /\/old\/(.*)/ims as hit then redirect(302, "/new/${hit.1}")'));
-assert.equal(flaggedRedirectHelper.pattern, '\\/old\\/(.*)');
-assert.equal(flaggedRedirectHelper.script.includes('"ims"'), false);
-assert.match(flaggedRedirectHelper.script, /new RegExp\("\\\\/old\\\\\/\(\.\*\)"\)/);
+assert.equal(flaggedHeaderHelper.script.includes('"i"'), false);
+assert.equal(flaggedHeaderHelper.script.includes('"ms"'), false);
+assert.match(flaggedHeaderHelper.script, /__wayxReplace\("X-Test", "value", "ok"\)/);
 
-assert.equal(complexConditionFlags.script.includes('"i")'), false);
-assert.equal(complexConditionFlags.script.includes('"ms")'), false);
+const flaggedRedirectHelper = renderQxRedirectScript(parseRewriteV2(String.raw`request if ${url} ~= /\/old\/(.*)/ims as hit then redirect(302, "/new/${hit.1}")`));
+assert.equal(flaggedRedirectHelper.pattern, String.raw`\/old\/(.*)`);
+assert.equal(flaggedRedirectHelper.script.includes('"ims"'), false);
+assert.ok(flaggedRedirectHelper.script.includes('new RegExp("\\/old\\/(.*)")'));
 
 const complexConditionFlags = renderMixedRewriteScript(
-  parseRewriteV2('response if (${url} ~= /API/i || ${response.status} == 204) && ${response.header["Content-Type"]} == "application/json" then response.header.del("Server") | response.body.replace(/ADS/ms, "ok")'),
+  parseRewriteV2(String.raw`response if (${url} ~= /API/i || ${response.status} == 204) && ${response.header["Content-Type"]} == "application/json" then response.header.del("Server") | response.body.replace(/ADS/ms, "ok")`),
   {target:'qx'},
 );
 assert.match(complexConditionFlags.script, /new RegExp\("API"\)/);
-assert.equal(complexConditionFlags.script.includes('new RegExp("API","i")'), false);
-assert.equal(complexConditionFlags.script.includes('new RegExp("ADS","ms")'), false);
+assert.equal(complexConditionFlags.script.includes('"i")'), false);
+assert.equal(complexConditionFlags.script.includes('"ms")'), false);
 assert.match(complexConditionFlags.script, /response\.statusCode/);
 assert.match(complexConditionFlags.script, /__wayxHeader\("response","Content-Type"\)/);
 assert.throws(
-  () => renderMixedRewriteScript(parseRewriteV2('response if ${unsupported.value} == "x" then response.header.del("Server") | response.body.replace(/x/, "y")'), {target:'qx'}),
+  () => renderMixedRewriteScript(parseRewriteV2(String.raw`response if ${unsupported.value} == "x" then response.header.del("Server") | response.body.replace(/x/, "y")`), {target:'qx'}),
   /unsupported complex condition variable/,
 );
 
