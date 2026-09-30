@@ -698,8 +698,10 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     const active = sectionItems(sectionLines).filter(item => item.line).map(item => item.line);
     if (!active.length) continue;
     const reason = '# [WayX] ISSUE REQUIRED [unknown-source-section]: unsupported Loon source section [' + sectionName + '] is outside the current ad-block conversion grammar';
-    qx.notes.push(reason, ...active.map(line => '# Source declaration: ' + line));
-    sg.notes.push(reason, ...active.map(line => '# Source declaration: ' + line));
+    for (const line of active) {
+      qx.notes.push(reason, '# Source declaration: ' + line);
+      sg.notes.push(reason, '# Source declaration: ' + line);
+    }
   }
   const argumentAnalysis = analyzePluginArgumentUsage({
     argumentLines: parsed.sections.get('Argument') || [],
