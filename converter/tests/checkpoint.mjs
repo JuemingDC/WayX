@@ -1269,12 +1269,13 @@ const qxResponseBinaryNative = qxScriptV2Plan(
 assert.equal(qxResponseBinaryNative.ok, true);
 assert.match(qxResponseBinaryNative.line, /url script-response-body /);
 
-const qxRequestBinaryUnsupported = qxScriptV2Plan(
+const qxRequestBinaryIgnored = qxScriptV2Plan(
   parseScriptV2('request if ${url} ~= /upload/i then script("https://example.com/binary.js") with requires_body=true, binary_body_mode=true'),
   {scriptUrl:'https://example.com/binary.js', sourceText:'$done({bodyBytes:$request.bodyBytes});'},
 );
-assert.equal(qxRequestBinaryUnsupported.ok, false);
-assert.match(qxRequestBinaryUnsupported.reason, /request-body bodyBytes example/);
+assert.equal(qxRequestBinaryIgnored.ok, true);
+assert.match(qxRequestBinaryIgnored.line, /url script-request-body /);
+assert.ok(qxRequestBinaryIgnored.notes.some(note => /binary_body_mode=true ignored/i.test(note)));
 
 const surgeScriptV2Native = surgeScriptV2Plan(
   parseScriptV2('request if ${url} ~= /submit/i then script("https://example.com/request.js") with requires_body=true, binary_body_mode=true'),
@@ -1286,8 +1287,12 @@ assert.match(surgeScriptV2Native.line, /requires-body=true/);
 assert.match(surgeScriptV2Native.line, /binary-body-mode=true/);
 
 const qxScriptV2NeedsReview = qxScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'request.js'});
-assert.equal(qxScriptV2NeedsReview.ok, false);
-assert.match(qxScriptV2NeedsReview.reason, /request-body bodyBytes example/);
+assert.equal(qxScriptV2NeedsReview.ok, true);
+assert.match(qxScriptV2NeedsReview.line, /url script-request-body request\.js$/);
+assert.ok(qxScriptV2NeedsReview.notes.some(note => /binary_body_mode=true ignored/i.test(note)));
+assert.ok(qxScriptV2NeedsReview.notes.some(note => /defaults to enabled/i.test(note)));
+assert.ok(qxScriptV2NeedsReview.notes.some(note => /timeout ignored/i.test(note)));
+assert.ok(qxScriptV2NeedsReview.notes.some(note => /argument ignored/i.test(note)));
 
 const surgeScriptV2NeedsReview = surgeScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'request.js', name:'x'});
 assert.equal(surgeScriptV2NeedsReview.ok, false);
