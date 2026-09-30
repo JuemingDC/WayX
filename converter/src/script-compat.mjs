@@ -26,7 +26,7 @@ export function scriptRuntimeSignals(sourceText = '') {
     qxPrefs: /\$prefs\b/.test(source),
     qxNotify: /\$notify\b/.test(source),
     qxBodyBytes: /\bbodyBytes\b/.test(source),
-    qxNamedAdapter: /\b(?:QuanX|QuantumultX|isQuanX|isQuantumultX)\b/i.test(source),
+    qxNamedAdapter: /\b(?:QuanX|QuantumultX|isQX|isQuanX|isQuantumultX)\b/i.test(source),
     loonUtils: /\$utils\s*\./.test(source),
     surgeHttpClient: /\$httpClient\b/.test(source),
     surgePersistentStore: /\$persistentStore\b/.test(source),
