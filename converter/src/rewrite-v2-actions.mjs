@@ -92,7 +92,10 @@ function validateCondition(node, phase) {
   const name=node.left.name;
   const header=/^(request|response)\.header\[['"].+['"]\]$/.test(name);
   const known=name==='url'||name==='request.method'||name==='response.status'||header;
-  if(!known) throw conditionError('unsupported Rewrite v2 condition variable: '+name);
+  // Other variables may be declared plugin [Argument] references. Their
+  // declaration/type is validated by the argument-usage planner before any
+  // executable target rule is emitted, so keep them in the AST here.
+  if(!known) return;
   if(phase==='request' && (name==='response.status'||name.startsWith('response.header['))) throw conditionError('request phase cannot reference response data: '+name);
   if(node.operator==='~=') {
     if(node.right?.type!=='regex') throw conditionError('~= requires a Regex right-hand value');
