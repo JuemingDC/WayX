@@ -296,7 +296,8 @@ for (const testCase of cases) {
     assert.equal(actual.surgeReview, 0);
     assert.match(out.surge, /^#!arguments=.*captionLang:zh-Hans/m);
     assert.match(out.surge, /argument="\{\\\"captionLang\\\":\\\"\{\{\{captionLang\}\}\}\\\"\}"/);
-    assert.ok(qxActive.some(line => /youtube\/request\.js$/.test(line)), 'YouTube: native QX request script declaration missing');
+    assert.equal(qxActive.some(line => /youtube\/request\.js$/.test(line)), false, 'YouTube: request binary script must stay inactive until QX request bodyBytes is officially verified');
+    assert.match(out.qx, /request binary_body_mode=true has no verified Quantumult X request-body bodyBytes example/);
     assert.match(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
     assert.doesNotMatch(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
   }
