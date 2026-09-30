@@ -22,7 +22,7 @@ function captureNames(node, out = new Set()) {
 function capturedString(node, label, captures) {
   if (!node || !['string','raw-string'].includes(node.type)) throw new Error(label + ' must be a string');
   const value=String(node.value);
-  const parts=[]; let last=0; const re=/\\${([A-Za-z_][A-Za-z0-9_-]*)\\.(\\d+)}/g; let m;
+  const parts=[]; let last=0; const re=/\$\{([A-Za-z_][A-Za-z0-9_-]*)\.(\d+)\}/g; let m;
   while((m=re.exec(value))){
     if(!captures.has(m[1])) throw new Error('unknown capture alias: ' + m[1]);
     if(m.index>last) parts.push(JSON.stringify(value.slice(last,m.index)));
