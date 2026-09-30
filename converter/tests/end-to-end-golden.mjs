@@ -35,7 +35,7 @@ response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then response.head
 hostname=api.example.com
 `;
 const headerGroupOutput = convert(headerGroupFixture, headerGroupSource, new Map(), STAMP);
-assert.match(headerGroupOutput.qx, /REVIEW REQUIRED: header\.add duplicate semantics are not verified for qx/);
+assert.match(headerGroupOutput.qx, /REVIEW REQUIRED: QX header\.add cannot be represented losslessly/);
 assert.equal(
   headerGroupOutput.qx.split(/\r?\n/).some(line => !line.trim().startsWith('#') && /script-response-header/.test(line)),
   false,
@@ -105,7 +105,7 @@ request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header
 request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.set("X-B", "two")
 `;
 const requestAddSetOutput = convert(requestAddSetFixture, requestAddSetSource, new Map(), STAMP);
-assert.match(requestAddSetOutput.qx, /REVIEW REQUIRED: header\.add duplicate semantics are not verified for qx/);
+assert.match(requestAddSetOutput.qx, /REVIEW REQUIRED: QX header\.add cannot be represented losslessly/);
 assert.equal(
   requestAddSetOutput.qx.split(/\r?\n/).some(line => !line.trim().startsWith('#') && / url (?:request-header|script-request-header) /.test(line)),
   false,
@@ -157,7 +157,7 @@ assert.equal(
   false,
   'QX request.header.add with $ replacement syntax must not use the native replacement string',
 );
-assert.match(requestAddDollarOutput.qx, /REVIEW REQUIRED: header\.add duplicate semantics are not verified for qx/);
+assert.match(requestAddDollarOutput.qx, /REVIEW REQUIRED: QX header\.add cannot be represented losslessly/);
 
 
 const qxValidatorEntry = {id:'QxValidatorFixture'};
