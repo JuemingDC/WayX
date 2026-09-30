@@ -23,9 +23,18 @@ const fixture = JSON.parse(await fs.readFile(
 const RAW = 'https://raw.githubusercontent.com/crossutility/Quantumult-X/master/';
 
 async function fetchText(name) {
-  const response = await fetch(RAW + name, { signal:AbortSignal.timeout(15000) });
-  assert.equal(response.ok, true, 'failed to fetch official Quantumult X ' + name + ': HTTP ' + response.status);
-  return response.text();
+  let lastError = null;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const response = await fetch(RAW + name, { signal:AbortSignal.timeout(15000) });
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      return await response.text();
+    } catch (error) {
+      lastError = error;
+      if (attempt < 3) await new Promise(resolve => setTimeout(resolve, 500 * attempt));
+    }
+  }
+  throw new Error('failed to fetch official Quantumult X ' + name + ': ' + String(lastError?.message || lastError));
 }
 
 function sorted(values) {
