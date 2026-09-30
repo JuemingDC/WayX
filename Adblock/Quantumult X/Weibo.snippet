@@ -4,15 +4,14 @@
 # Icon: https://rucu6.pages.dev/Icons/app/weibo.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-09-30 17:43:10 +08:00
+# Converted: 2026-09-30 18:07:20 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/weibo.lpx
 # Target: Quantumult X
 
 # [filter_local]
-# 请求放行
-host-suffix, uve.weibo.com, direct
+{# 请求放行 #} host-suffix, uve.weibo.com, direct
 
 # 请求拦截
 # 微博开屏广告
@@ -46,8 +45,7 @@ host, u1.img.mobile.sina.cn, reject
 ^https:\/\/api\.weibo\.cn\/2\/video\/redpacket\? url reject-dict
 ^https:\/\/api\.weibo\.cn\/2\/!\/(?:search\/finder_nav_polling|sug\/list\/finderchange|was\/finder\/searchbarchange)\? url reject-dict
 
-# 视频页
-^https:\/\/api\.weibo\.cn\/2\/video\/tiny_video_info_show\? url reject-dict
+{# 视频页 #} ^https:\/\/api\.weibo\.cn\/2\/video\/tiny_video_info_show\? url reject-dict
 
 # 开屏广告 //*.uve.weibo.com
 ^https:\/\/bootrealtime\.uve\.weibo\.com\/v[23]\/ad\/realtime url reject-dict
