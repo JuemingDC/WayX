@@ -531,7 +531,11 @@ const captureMixedQx = renderMixedRewriteScript(
   {target:'qx'},
 );
 assert.match(captureMixedQx.script, /const __wayxCaptures=Object\.create\(null\)/);
-assert.ok(captureMixedQx.script.includes('__wayxCaptures["hit"]=String($request.url ?? "").match(new RegExp("\\/api\\/(foo)-(bar)"))'));
+const preservedCapturePattern='\\/api\\/(foo)-(bar)';
+assert.ok(
+  captureMixedQx.script.includes('new RegExp(' + JSON.stringify(preservedCapturePattern) + ')'),
+  'complex helper must preserve the regex body exactly while discarding source flags',
+);
 assert.equal(captureMixedQx.script.includes('"ims"'), false);
 assert.ok(captureMixedQx.script.includes('__wayxTpl([["c","hit",0],["s",":"],["c","hit",1],["s",":"],["c","hit",2]])'));
 const surgeHeaderAddMixed = renderMixedRewriteScript(
