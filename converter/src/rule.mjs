@@ -172,7 +172,7 @@ export function surgeRuleTypesInTree(line, {subrule = false} = {}) {
 export function qxRule(line) {
   const source = String(line).trim();
   if (/^(AND|OR|NOT)\s*,/i.test(source)) {
-    return {kind:'comment', line:`# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent\n# Source declaration: ${source}`, reason:'logical-rule'};
+    return {kind:'comment', line:`# [WayX] Quantumult X unsupported Rule type commented out; Rule conversion does not use Script fallback\n# Source declaration: ${source}`, reason:'unsupported-qx-rule-comment'};
   }
 
   const parts = splitTopLevelCsv(source);
@@ -188,7 +188,7 @@ export function qxRule(line) {
   }
 
   const qxType = QX_RULE_TYPES.get(type);
-  if (!qxType) return {kind:'comment', line:`# [WayX] REVIEW REQUIRED: Quantumult X Rule type ${type} is not verified and has no lossless script equivalent\n# Source declaration: ${source}`, reason:'unsupported-type'};
+  if (!qxType) return {kind:'comment', line:`# [WayX] Quantumult X unsupported Rule type ${type} commented out; Rule conversion does not use Script fallback\n# Source declaration: ${source}`, reason:'unsupported-qx-rule-comment'};
 
   let policy;
   if (policyRaw === 'DIRECT') policy = 'direct';
@@ -260,6 +260,22 @@ export function surgeModuleRule(line) {
 
   // Source image-reject behavior maps to Surge's tiny GIF reject policy.
   if (policy === 'REJECT-IMG') policy = 'REJECT-TINYGIF';
+
+  // Loon plugin policy PROXY is preserved without semantic remapping.
+  // Surge Module Rule lines can only use official internal policies, so PROXY
+  // cannot be emitted as an active module policy; preserve the source as comments.
+  if (policy === 'PROXY') {
+    return {
+      kind:'comment',
+      section:'rule',
+      line:'',
+      lines:[
+        '# [WayX] Source Loon plugin policy PROXY preserved without conversion; Surge Module cannot activate external policy names.',
+        `# Source declaration: ${source}`,
+      ],
+      reason:'source-proxy-policy-preserved',
+    };
+  }
 
   // Preserve runtime-supported built-in policies exactly. Unknown/external
   // policy-group names cannot be defined by a module and remain a binding note.
