@@ -839,13 +839,27 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
 
 async function inspectSourceScript(reference, pluginSourceUrl) {
   const originalUrl = resolveOriginalUrl(reference, pluginSourceUrl);
-  const normalized = normalizeNewlines(await fetchOriginalText(originalUrl)).replace(/\n*$/, '\n');
-  return {
-    qx: originalUrl,
-    surge: originalUrl,
-    source: normalized,
-    qxAdapted: false,
-  };
+  try {
+    const normalized = normalizeNewlines(await fetchOriginalText(originalUrl)).replace(/\n*$/, '\n');
+    return {
+      qx: originalUrl,
+      surge: originalUrl,
+      source: normalized,
+      qxAdapted: false,
+      sourceError: null,
+    };
+  } catch (error) {
+    // Surge does not require a runtime compatibility scan. Preserve the
+    // original URL for Surge while QX sees an unavailable source and fails
+    // closed through inspectQxScriptCompatibility().
+    return {
+      qx: originalUrl,
+      surge: originalUrl,
+      source: '',
+      qxAdapted: false,
+      sourceError: String(error?.message || error),
+    };
+  }
 }
 function scriptUrls(source) {
   const urls = new Set([...source.matchAll(/script-path=([^,\s]+)/gi)].map(m => m[1].trim()));
@@ -957,6 +971,7 @@ export {
   convert,
   materializeJqFiles,
   materializeMockFiles,
+  inspectSourceScript,
   parseLoon,
   scriptUrls,
   validateQX,
