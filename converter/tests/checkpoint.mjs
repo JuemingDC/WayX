@@ -817,9 +817,28 @@ assert.equal(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-del Server', 'surge', legacyCtx).lines[0],
   'http-response ^https://api\\.example\\.com header-del Server',
 );
+const legacyQxHeaderDel = planLegacyRewrite(
+  '^https:\\/\\/api\\.example\\.com',
+  'response-header-del Server',
+  'qx',
+  legacyCtx,
+);
+assert.equal(legacyQxHeaderDel.section, 'rewrite');
+assert.match(legacyQxHeaderDel.line, /url script-response-header .*legacy_header_.*\.js$/);
+assert.ok([...legacyCtx.generatedScripts.values()].some(script => /__wayxDel\("Server"\)/.test(script)));
+
+const legacyQxHeaderSet = planLegacyRewrite(
+  '^https:\\/\\/api\\.example\\.com',
+  'header-replace User-Agent Unknown',
+  'qx',
+  legacyCtx,
+);
+assert.equal(legacyQxHeaderSet.section, 'rewrite');
+assert.match(legacyQxHeaderSet.line, /url script-request-header .*legacy_header_.*\.js$/);
+
 assert.match(
-  planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-del Server', 'qx', legacyCtx).line,
-  /REVIEW REQUIRED/,
+  planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-add Set-Cookie a=1', 'qx', legacyCtx).line,
+  /REVIEW REQUIRED: QX header\.add cannot be represented losslessly/,
 );
 
 const explicitQxReject = inspectQxScriptCompatibility({
