@@ -70,6 +70,30 @@ assert.match(requestAddOutput.qx, /url script-response-header .*header_.*\.js/);
 assert.doesNotMatch(requestAddOutput.qx, /REVIEW REQUIRED/);
 assert.match(requestAddOutput.surge, /header-add X-Test one/);
 
+const requestReplaceCaptureFixture = {
+  id:'RequestHeaderReplaceCaptureFixture',
+  source:'https://example.invalid/request-header-replace-capture.lpx',
+  qx:'RequestHeaderReplaceCaptureFixture.snippet',
+  surge:'RequestHeaderReplaceCaptureFixture.sgmodule',
+  category:'测试',
+};
+const requestReplaceCaptureSource = `#!name=RequestHeaderReplaceCaptureFixture
+[Rewrite]
+request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.replace("User-Agent", /iPhone OS (\\d+)/, "iPhone OS $1")
+`;
+const requestReplaceCaptureOutput = convert(requestReplaceCaptureFixture, requestReplaceCaptureSource, new Map(), STAMP);
+assert.equal(
+  requestReplaceCaptureOutput.qx.split(/\\r?\\n/).some(line => !line.trim().startsWith('#') && / url request-header /.test(line)),
+  false,
+  'QX header.replace must not embed action-local captures into whole-header capture numbering',
+);
+assert.match(requestReplaceCaptureOutput.qx, /url script-request-header .*header_.*\.js/);
+assert.doesNotMatch(requestReplaceCaptureOutput.qx, /REVIEW REQUIRED/);
+const requestReplaceCaptureHelper = [...requestReplaceCaptureOutput.generatedScripts.values()].find(text => text.includes('User-Agent'));
+assert.ok(requestReplaceCaptureHelper, 'QX request.header.replace must generate a helper');
+assert.match(requestReplaceCaptureHelper, /__wayxWith\("iPhone OS \\$1",v=>__wayxHeaderReplace\("User-Agent","iPhone OS \\\\(\\\\d\+\\\\)",v\)\)/);
+assert.match(requestReplaceCaptureHelper, /toLowerCase\(\)/);
+
 
 const qxValidatorEntry = {id:'QxValidatorFixture'};
 const validQxValidatorText = `# Name: QxValidatorFixture
