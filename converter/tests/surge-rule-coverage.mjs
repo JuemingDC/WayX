@@ -55,6 +55,11 @@ for (const entry of manifest) {
     }
 
     const mapped = surgeModuleRule(line, {proxyPolicyPlaceholder:'{{{wayx_proxy_policy}}}'});
+    if (mapped.kind === 'rule' && mapped.reason === 'proxy-policy-argument') {
+      stats.boundProxy++;
+      assert.match(mapped.line, /\{\{\{wayx_proxy_policy\}\}\}/);
+      continue;
+    }
     if (mapped.kind === 'rule') {
       stats.native++;
       assert.equal(mapped.lines.at(-1), mapped.line);
@@ -63,11 +68,6 @@ for (const entry of manifest) {
     if (mapped.kind === 'drop') {
       assert.equal(mapped.reason, 'drop-source-final');
       stats.dropped++;
-      continue;
-    }
-    if (mapped.kind === 'rule' && mapped.reason === 'proxy-policy-argument') {
-      stats.boundProxy++;
-      assert.match(mapped.line, /\{\{\{wayx_proxy_policy\}\}\}/);
       continue;
     }
     if (mapped.kind === 'comment' && mapped.reason === 'unsupported-surge-module-policy') {
