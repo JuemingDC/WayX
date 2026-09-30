@@ -404,16 +404,25 @@ function qxNativeHeaderPlan(ast) {
   const action = ast.actions[0];
   if (action.name !== 'request.header.add') return null;
 
-  const nameNode=action.args[0], valueNode=action.args[1];
-  if (!nameNode || !['string','raw-string'].includes(nameNode.type) ||
-      !valueNode || !['string','raw-string'].includes(valueNode.type)) return null;
-  const name=String(nameNode.value), value=String(valueNode.value);
-  // QX replacement strings interpret $-references. Without an official
-  // literal-dollar escape contract, such values cannot use this native path.
-  if (!name || /[\s:\r\n]/.test(name) || /[\r\n$]/.test(value)) return null;
+  const names=action.args[0]?.type === 'array' ? action.args[0].items : [action.args[0]];
+  const values=action.args[1]?.type === 'array' ? action.args[1].items : [action.args[1]];
+  if (!names.length || names.length !== values.length) return null;
+
+  const pairs=[];
+  for(let i=0;i<names.length;i++){
+    const nameNode=names[i], valueNode=values[i];
+    if (!nameNode || !['string','raw-string'].includes(nameNode.type) ||
+        !valueNode || !['string','raw-string'].includes(valueNode.type)) return null;
+    const name=String(nameNode.value), value=String(valueNode.value);
+    // QX replacement strings interpret $-references. Without an official
+    // literal-dollar escape contract, such values cannot use this native path.
+    if (!name || /[\s:\r\n]/.test(name) || /[\r\n$]/.test(value)) return null;
+    pairs.push([name,value]);
+  }
 
   const headerPattern='^([^\\r\\n]+)(\\r\\n)';
-  const headerReplacement='$1$2' + name + ': ' + value + '$2';
+  const inserted=pairs.map(([name,value]) => name + ': ' + value + '$2').join('');
+  const headerReplacement='$1$2' + inserted;
   return {
     section:'rewrite',
     line:condition.pattern + ' url request-header ' + headerPattern + ' request-header ' + headerReplacement,
@@ -427,11 +436,6 @@ function planAdjacentQxHeaderGroups(items, ctx) {
     if (consumed.has(index) || !items[index]?.line) continue;
     const first = qxHeaderRewriteInfo(items[index].line, ctx.argumentIds || []);
     if (!first) continue;
-    // request.header.add can be represented natively one declaration at a time.
-    // Do not merge it into a helper group, because QX helper header objects do
-    // not prove duplicate-field preservation.
-    if (first.ast.actions.some(action => action.name === 'request.header.add')) continue;
-
     const actions = [...first.ast.actions];
     const sourceLines = [items[index].line];
     let end = index;
