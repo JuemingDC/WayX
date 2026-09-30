@@ -100,13 +100,13 @@ export function inspectQxScriptCompatibility({ sourceText = '' } = {}) {
     };
   }
 
-  // A script containing only platform-neutral request/response globals may be
-  // portable, but token scanning cannot prove all runtime calls. Mark it generic
-  // executable only when it uses no known foreign platform APIs.
+  // Absence of a known incompatible token is not positive Quantumult X
+  // compatibility evidence. WayX must fail closed: source scripts execute in QX
+  // only when the source contains explicit QX/runtime adapter evidence.
   return {
-    status: 'generic',
-    executable: true,
-    reason: 'No known platform-specific blocking signal was found; preserve the source script unchanged and use declaration semantics.',
+    status: 'review',
+    executable: false,
+    reason: 'No positive Quantumult X runtime compatibility evidence was found in the source script.',
     signals,
   };
 }
