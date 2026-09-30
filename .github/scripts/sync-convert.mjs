@@ -24,7 +24,6 @@ import { renderQxSnippetHeader } from '../../converter/src/metadata.mjs';
 import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
 import { planMitmLine } from '../../converter/src/mitm.mjs';
 import { fetchOriginalText, fetchOriginalBytes, resolveOriginalUrl } from '../../converter/src/source-fetch.mjs';
-import { canonicalizeSurgeUrlPattern } from '../../converter/src/target-regex.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -293,6 +292,24 @@ function qxHeaderRewriteInfo(line, argumentIds = []) {
   }
 }
 
+function qxNativeHeaderReplacePlan(ast) {
+  // QX native request-header/response-header rewrites the complete HTTP header block.
+  // Direct mapping is intentionally limited to one fixed header.replace action.
+  if (ast.actions.length !== 1 || !ast.actions[0].name.endsWith('.header.replace')) return null;
+  const condition = simpleUrlRewriteCondition(ast);
+  if (!condition.ok) return null;
+  const action = ast.actions[0];
+  const nameNode = action.args[0], regex = action.args[1], replacementNode = action.args[2];
+  if (!nameNode || !['string','raw-string'].includes(nameNode.type) || regex?.type !== 'regex' ||
+      !replacementNode || !['string','raw-string'].includes(replacementNode.type)) return null;
+  const name = String(nameNode.value), replacement = String(replacementNode.value);
+  if (/\s/.test(name) || /[\r\n]/.test(replacement) || replacement.includes('$' + '{')) return null;
+  const token = ast.phase === 'request' ? 'request-header' : 'response-header';
+  const headerName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const headerPattern = '(\\r\\n)' + headerName + ':\\s*' + regex.pattern + '(\\r\\n)';
+  const headerReplacement = '$1' + name + ': ' + replacement + '$2';
+  return {section:'rewrite', line:condition.pattern + ' url ' + token + ' ' + headerPattern + ' ' + token + ' ' + headerReplacement};
+}
 function planAdjacentQxHeaderGroups(items, ctx) {
   const plans = new Map();
   const consumed = new Set();
@@ -319,18 +336,20 @@ function planAdjacentQxHeaderGroups(items, ctx) {
     if (end === index) continue;
 
     const mergedAst = {...first.ast, actions};
-    const plan = renderQxHeaderScript(mergedAst, {
-      stamp: ctx.stamp,
-      category: ctx.category,
-      sourceLine: sourceLines.join(' | '),
-    });
-    const key = crypto.createHash('sha1').update('header\0' + sourceLines[0]).digest('hex').slice(0, 10);
-    const filename = `header_${key}.js`;
-    ctx.generatedScripts.set(filename, plan.script);
-    plans.set(index, {
-      section:'rewrite',
-      line:`${plan.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}`,
-    });
+    const nativePlan = qxNativeHeaderReplacePlan(mergedAst);
+    if (nativePlan) {
+      plans.set(index, nativePlan);
+    } else {
+      const plan = renderQxHeaderScript(mergedAst, {
+        stamp: ctx.stamp,
+        category: ctx.category,
+        sourceLine: sourceLines.join(' | '),
+      });
+      const key = crypto.createHash('sha1').update('header\0' + sourceLines[0]).digest('hex').slice(0, 10);
+      const filename = `header_${key}.js`;
+      ctx.generatedScripts.set(filename, plan.script);
+      plans.set(index, {section:'rewrite', line:`${plan.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}`});
+    }
     for (let consumedIndex = index + 1; consumedIndex <= end; consumedIndex++) consumed.add(consumedIndex);
   }
 
@@ -484,6 +503,10 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     let qr = qxHeaderGroups.plans.get(rewriteIndex) || null;
     let sr = rewriteV2Action(item.line, 'surge', sctx);
 
+    if (!qxConsumed && !qr) {
+      const headerInfo = qxHeaderRewriteInfo(item.line, qctx.argumentIds || []);
+      if (headerInfo) qr = qxNativeHeaderReplacePlan(headerInfo.ast);
+    }
     if (!qxConsumed && !qr) qr = rewriteV2Action(item.line, 'qx', qctx);
 
     const [pattern, action] = splitPatternAction(item.line);
@@ -616,7 +639,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
         surgeNeedsLineRequirement = true;
       }
 
-      const params = [`type=${sc.type}`, `pattern=${canonicalizeSurgeUrlPattern(sc.pattern)}`, `script-path=${surgeUrl}`];
+      const params = [`type=${sc.type}`, `pattern=${sc.pattern}`, `script-path=${surgeUrl}`];
       if (sc.requiresBody) {
         params.push('requires-body=true');
         params.push(`max-size=${sc.maxSize || '-1'}`);

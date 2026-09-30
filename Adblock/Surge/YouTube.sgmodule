@@ -7,7 +7,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/youtube.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-09-29 23:36:49 +08:00
+# Converted: 2026-09-30 08:53:08 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/youtube.lpx
@@ -20,16 +20,16 @@
 [URL Rewrite]
 # loon 专用写法
 # youtube 短链移除追踪参数
-(^https://youtu\.be/[\w-]+)(?:\?si=\w+) $1 302
+(^https:\/\/youtu\.be\/[\w-]+)(?:\?si=\w+) $1 302
 
 [Map Local]
 #response if ${url} ~= /^https:\/\/rr[\w-]+\.googlevideo\.com\/initplayback\?/i then response.body.mock("text", "", 200)
-# ^https://rr[\w-]+\.googlevideo\.com/initplayback\? data-type=text data="" status-code=200 header="Content-Type:text/plain"
+# ^https:\/\/rr[\w-]+\.googlevideo\.com\/initplayback\? data-type=text data="" status-code=200 header="Content-Type:text/plain"
 
 [Script]
-youtube_request_init = type=http-request,pattern=^https?://[\w-]+\.googlevideo\.com/initplayback.+&ack.*,script-path=https://rucu6.pages.dev/Scripts/youtube/request.js,requires-body=true,max-size=-1,binary-body-mode=true,argument="{\"captionLang\":\"{{{captionLang}}}\"}"
-youtube_request_log_event = type=http-request,pattern=^https://youtubei\.googleapis\.com/youtubei/v1/log_event,script-path=https://rucu6.pages.dev/Scripts/youtube/request.js,requires-body=true,max-size=-1,binary-body-mode=true
-youtube_response = type=http-response,pattern=^https://youtubei\.googleapis\.com/(?:youtubei/v1/(?:browse|config|log_event|next|player|search|reel/reel_watch_sequence|guide|account/get_setting|get_watch))(\?(.*))?$,script-path=https://rucu6.pages.dev/Scripts/youtube/response.js,requires-body=true,max-size=-1,binary-body-mode=true,argument="{\"blockImmersive\":{{{blockImmersive}}},\"blockShorts\":{{{blockShorts}}},\"blockUpload\":{{{blockUpload}}},\"debug\":{{{debug}}},\"captionLang\":\"{{{captionLang}}}\"}"
+youtube_request_init = type=http-request,pattern=^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.*,script-path=https://rucu6.pages.dev/Scripts/youtube/request.js,requires-body=true,max-size=-1,binary-body-mode=true,argument="{\"captionLang\":\"{{{captionLang}}}\"}"
+youtube_request_log_event = type=http-request,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event,script-path=https://rucu6.pages.dev/Scripts/youtube/request.js,requires-body=true,max-size=-1,binary-body-mode=true
+youtube_response = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/(?:youtubei\/v1\/(?:browse|config|log_event|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch))(\?(.*))?$,script-path=https://rucu6.pages.dev/Scripts/youtube/response.js,requires-body=true,max-size=-1,binary-body-mode=true,argument="{\"blockImmersive\":{{{blockImmersive}}},\"blockShorts\":{{{blockShorts}}},\"blockUpload\":{{{blockUpload}}},\"debug\":{{{debug}}},\"captionLang\":\"{{{captionLang}}}\"}"
 
 [MITM]
 hostname = %APPEND% rr*.googlevideo.com, youtu.be, youtubei.googleapis.com

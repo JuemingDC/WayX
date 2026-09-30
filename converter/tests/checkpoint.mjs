@@ -75,19 +75,19 @@ assert.equal(qxRule('DOMAIN,example.com,DIRECT').line, 'host, example.com, direc
 assert.equal(qxRule('DOMAIN,example.com,PROXY').line, 'host, example.com, PROXY');
 const surgeUrlReject200 = surgeModuleRule('URL-REGEX,"^https:\\/\\/empty\\.example\\.com",REJECT-200');
 assert.equal(surgeUrlReject200.section, 'map');
-assert.equal(surgeUrlReject200.line, '^https://empty\\.example\\.com data-type=text data="" status-code=200');
+assert.equal(surgeUrlReject200.line, '^https:\\/\\/empty\\.example\\.com data-type=text data="" status-code=200');
 const surgeUrlRejectDict = surgeModuleRule('URL-REGEX,"^https:\\/\\/dict\\.example\\.com",REJECT-DICT');
 assert.equal(surgeUrlRejectDict.section, 'map');
-assert.equal(surgeUrlRejectDict.line, '^https://dict\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"');
+assert.equal(surgeUrlRejectDict.line, '^https:\\/\\/dict\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"');
 const surgeUrlRejectArray = surgeModuleRule('URL-REGEX,"^https:\\/\\/array\\.example\\.com",REJECT-ARRAY');
 assert.equal(surgeUrlRejectArray.section, 'map');
-assert.equal(surgeUrlRejectArray.line, '^https://array\\.example\\.com data-type=text data="[]" status-code=200 header="Content-Type:application/json"');
+assert.equal(surgeUrlRejectArray.line, '^https:\\/\\/array\\.example\\.com data-type=text data="[]" status-code=200 header="Content-Type:application/json"');
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-IMG').line, '^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\? url reject-img');
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP').line, '^https:\\/\\/drop\\.example\\.com url reject');
-assert.equal(surgeRule('URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-IMG'), 'URL-REGEX,^https://a\\.line\\.me/er/lads/v\\d/ei\\?,REJECT-TINYGIF');
+assert.equal(surgeRule('URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-IMG'), 'URL-REGEX,^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?,REJECT-TINYGIF');
 const surgeDropModule = surgeModuleRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP');
 assert.equal(surgeDropModule.kind, 'rule');
-assert.equal(surgeDropModule.line, 'URL-REGEX,^https://drop\\.example\\.com,REJECT-DROP');
+assert.equal(surgeDropModule.line, 'URL-REGEX,^https:\\/\\/drop\\.example\\.com,REJECT-DROP');
 assert.equal(surgeModuleRule('DOMAIN,drop.example.com,REJECT-NO-DROP').line, 'DOMAIN,drop.example.com,REJECT-NO-DROP');
 assert.equal(surgeModuleRule('DOMAIN,cell.example.com,CELLULAR').line, 'DOMAIN,cell.example.com,CELLULAR');
 assert.match(qxRule('AND, ((DOMAIN-SUFFIX, example.com), (PROTOCOL, TCP)), REJECT').line, /^# Unsupported logical rule for Quantumult X/);
@@ -97,7 +97,7 @@ assert.equal(surgeRule('DOMAIN, example.com, PROXY'), '# [WayX] Surge Module pol
 assert.equal(surgeModuleRule('DOMAIN-WILDCARD,api-*.example.com,REJECT').line, 'DOMAIN-WILDCARD,api-*.example.com,REJECT');
 assert.equal(surgeModuleRule('IP-ASN,13335,REJECT,no-resolve').line, 'IP-ASN,13335,REJECT,no-resolve');
 assert.equal(surgeModuleRule('USER-AGENT,"Example*",REJECT').line, 'USER-AGENT,"Example*",REJECT');
-assert.equal(surgeModuleRule('URL-REGEX,"^https:\\/\\/example\\.com\\/(a|b),?c",REJECT').line, 'URL-REGEX,"^https://example\\.com/(a|b),?c",REJECT');
+assert.equal(surgeModuleRule('URL-REGEX,"^https:\\/\\/example\\.com\\/(a|b),?c",REJECT').line, 'URL-REGEX,"^https:\\/\\/example\\.com\\/(a|b),?c",REJECT');
 assert.equal(surgeModuleRule('DEST-PORT,443,REJECT').line, 'DEST-PORT,443,REJECT');
 assert.equal(surgeModuleRule('PROTOCOL,QUIC,REJECT').line, 'PROTOCOL,QUIC,REJECT');
 assert.equal(surgeModuleRule('SUBNET,TYPE:CELLULAR,DIRECT').line, 'SUBNET,TYPE:CELLULAR,DIRECT');
@@ -182,16 +182,16 @@ const validSurgeModule = [
   'AND,((DOMAIN-SUFFIX,example.com),(PROTOCOL,TCP)),REJECT',
   '',
   '[URL Rewrite]',
-  '^https://ads\\.example\\.com _ reject',
+  '^https:\\/\\/ads\\.example\\.com _ reject',
   '',
   '[Header Rewrite]',
-  'http-response ^https://api\\.example\\.com header-del Server',
+  'http-response ^https:\\/\\/api\\.example\\.com header-del Server',
   '',
   '[Body Rewrite]',
   'http-response-jq ^https://api\\.example\\.com \'del(.ads)\'',
   '',
   '[Map Local]',
-  '^https://mock\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"',
+  '^https:\\/\\/mock\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"',
   '',
   '[Script]',
   'demo = type=http-response,pattern=^https://api\\.example\\.com,script-path=https://example.com/demo.js,requires-body=true',
@@ -429,7 +429,7 @@ assert.equal(
 );
 assert.equal(
   planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject', 'surge', legacyCtx).line,
-  '^https://legacy\\.example\\.com _ reject',
+  '^https:\\/\\/legacy\\.example\\.com _ reject',
 );
 assert.equal(
   planLegacyRewrite('^https:\\/\\/legacy\\.example\\.com', 'reject-200', 'qx', legacyCtx).line,
@@ -457,7 +457,7 @@ assert.equal(
 );
 assert.equal(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-del Server', 'surge', legacyCtx).lines[0],
-  'http-response ^https://api\\.example\\.com header-del Server',
+  'http-response ^https:\\/\\/api\\.example\\.com header-del Server',
 );
 assert.match(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-del Server', 'qx', legacyCtx).line,
@@ -604,8 +604,8 @@ assert.throws(() => renderQxMockFileScript(requestBinaryMockPlan), /request mock
 const bareUrl = compileRegexForTarget(parseRewriteV2('request if ${url} ~= /^https:\\/\\/Api\\.Example\\.com\\/[a-z]+/i then reject_dict(200)').condition.right, {subject:'url'});
 assert.equal(bareUrl.ok, true);
 assert.equal(bareUrl.pattern, '^https:\\/\\/Api\\.Example\\.com\\/[a-z]+');
-assert.ok(bareUrl.notes.includes('i-source-flag-not-expressed-in-target-declaration'));
-assert.equal(compileRegexForTarget(parseRewriteV2('response if ${url} ~= /api/ then response.body.replace(/a.b/s, "x")').actions[0].args[0], {subject:'body'}).ok, false);
+assert.deepEqual(bareUrl.notes, []);
+assert.equal(compileRegexForTarget(parseRewriteV2('response if ${url} ~= /api/ then response.body.replace(/a.b/s, "x")').actions[0].args[0], {subject:'body'}).ok, true);
 
 const qxDeleteV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /^https:\\/\\/api\\.example\\.com\\/feed/i then response.json.delete(["data.ads", "data.apps[0].promo"])'));
 assert.equal(qxDeleteV2.ok, true);
@@ -643,10 +643,10 @@ const surgeRedirectV2 = surgeRedirectRewritePlan(redirectV2);
 assert.equal(surgeRedirectV2.ok, true);
 assert.equal(
   surgeRedirectV2.line,
-  '(^https://live\\.bilibili\\.com/\\d+)(?:/?\\?.*) $1 302',
+  '(^https:\\/\\/live\\.bilibili\\.com\\/\\d+)(?:\\/?\\?.*) $1 302',
 );
 assert.match(surgeRedirectV2.line, /^\(\^/);
-assert.doesNotMatch(surgeRedirectV2.line, /\\\//);
+assert.match(surgeRedirectV2.line, /\\\//);
 assert.match(surgeRedirectV2.line, /\$1 302$/);
 
 const surgeReject404 = surgeRejectRewritePlan(reject404V2);

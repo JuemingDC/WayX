@@ -1,7 +1,6 @@
 // WayX Loon Rule conversion core
 // Author: chance
 // Category: Converter / Rule
-import { canonicalizeSurgeUrlPattern } from './target-regex.mjs';
 
 function splitTopLevelCsv(input) {
   const out = [];
@@ -193,7 +192,7 @@ export function surgeModuleRule(line) {
   // Surge Rule policies. Lower those to Surge's native Map Local instead of
   // weakening them to a generic reject or dropping the response body semantics.
   if (type === 'URL-REGEX') {
-    const pattern = canonicalizeSurgeUrlPattern(unquote(parts[1] || ''));
+    const pattern = unquote(parts[1] || '');
     parts[1] = surgeCsvRegexField(pattern);
     const sourcePolicy = String(parts[2] || '').toUpperCase();
     const mapLocal = {
