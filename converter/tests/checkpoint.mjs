@@ -580,6 +580,73 @@ assert.deepEqual(
   runComplexScript(runtimeSurgeAdd.script, {response:{headers:[{field:'Set-Cookie',value:'a=1'}],body:'x'}}),
   {headers:[{field:'Set-Cookie',value:'a=1'},{field:'Set-Cookie',value:'b=2'}],body:'y'},
 );
+
+const runtimeRequest = renderMixedRewriteScript(
+  parseRewriteV2('request if ${request.method} == "POST" && ${request.header[\'X-Mode\']} ~= /edit/ then request.header.set("X-WayX", "1") | request.body.replace(/old/, "new")'),
+  {target:'qx'},
+);
+assert.deepEqual(
+  runComplexScript(runtimeRequest.script, {request:{url:'https://example.com/api',method:'POST',headers:{'X-Mode':'edit'},body:'old value'}}),
+  {headers:{'X-Mode':'edit','X-WayX':'1'},body:'new value'},
+);
+assert.deepEqual(
+  runComplexScript(runtimeRequest.script, {request:{url:'https://example.com/api',method:'GET',headers:{'X-Mode':'edit'},body:'old value'}}),
+  {},
+);
+
+const runtimeResponseCondition = renderMixedRewriteScript(
+  parseRewriteV2('response if (${response.status} == 201 || ${response.status} == 202) && ${response.header[\'Content-Type\']} ~= /json/ then response.header.replace("Content-Type", /json/, "problem+json") | response.body.replace(/ok/, "accepted")'),
+  {target:'surge'},
+);
+assert.deepEqual(
+  runComplexScript(runtimeResponseCondition.script, {response:{status:202,headers:{'Content-Type':'application/json'},body:'ok'}}),
+  {headers:{'Content-Type':'application/problem+json'},body:'accepted'},
+);
+
+const runtimeJsonAddExisting = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /api/ then response.json.add("data.keep", 2) | response.json.add("data.new.deep", true)'),
+  {target:'qx'},
+);
+assert.deepEqual(
+  runComplexScript(runtimeJsonAddExisting.script, {response:{body:'{"data":{"keep":1}}'}}),
+  {headers:{},body:'{"data":{"keep":1,"new":{"deep":true}}}'},
+);
+
+const runtimeJsonTyped = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /api/ then response.json.replace("n", 7) | response.json.replace("ok", false) | response.json.replace("none", null)'),
+  {target:'qx'},
+);
+assert.deepEqual(
+  runComplexScript(runtimeJsonTyped.script, {response:{body:'{"n":0,"ok":true,"none":"x"}'}}),
+  {headers:{},body:'{"n":7,"ok":false,"none":null}'},
+);
+
+const runtimeRawLiteral = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /api\\/(\\d+)/ as hit then response.header.set("X-Raw", `literal ${hit.1}`) | response.body.replace(/x/, `raw ${hit.1}`)'),
+  {target:'qx'},
+);
+assert.deepEqual(
+  runComplexScript(runtimeRawLiteral.script, {request:{url:'https://example.com/api/9'},response:{body:'x'}}),
+  {headers:{'X-Raw':'literal ${hit.1}'},body:'raw ${hit.1}'},
+);
+
+const runtimeOptionalCapture = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /api\\/(foo)?/ as hit then response.header.set("X-Optional", "${hit.1}") | response.body.replace(/x/, "y")'),
+  {target:'qx'},
+);
+assert.deepEqual(
+  runComplexScript(runtimeOptionalCapture.script, {request:{url:'https://example.com/api/'},response:{headers:{Keep:'yes'},body:'x'}}),
+  {headers:{Keep:'yes'},body:'y'},
+);
+
+const runtimeHeaderCase = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /api/ then response.header.set("x-test", "new") | response.header.del("SERVER") | response.body.replace(/x/, "y")'),
+  {target:'qx'},
+);
+assert.deepEqual(
+  runComplexScript(runtimeHeaderCase.script, {response:{headers:{'X-Test':'old',Server:'origin'},body:'x'}}),
+  {headers:{'X-Test':'new'},body:'y'},
+);
 assert.equal(surgeHeaderAddMixed.surgeType, 'http-response');
 assert.match(surgeHeaderAddMixed.script, /__wayxHeaders\.push\(\{field:n,value:v\}\)/);
 assert.match(surgeHeaderAddMixed.script, /Array\.isArray\(\$response\.headers\)/);
