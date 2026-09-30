@@ -95,7 +95,7 @@ for (const entry of manifest) {
 
     // Refresh one shared conversion timestamp for targets and WayX-generated
     // helper scripts. Source Script URLs remain untouched and are never mirrored.
-    out = convert(entry, source, scripts, nowCN(), qxMockFiles, jqFiles);
+    out = convertPlugin(entry, source, {scriptMap:scripts, stamp:nowCN(), mockFiles:qxMockFiles, jqFiles, rawBase:RAW_BASE});
     validateQX(out.qx, entry);
     validateSurgeModule(out.surge, entry, {adblockScope:true});
 
