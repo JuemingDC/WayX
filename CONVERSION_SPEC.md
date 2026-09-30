@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.15  
+版本：1.16  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -29,6 +29,7 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 17. CI 必须维护 Catalog-observed Loon `[Rule]` syntax inventory，但该 inventory **只做上游新语法报警，不得成为 production 支持白名单**。只锁会改变转换语义的形态：top-level / nested Rule Type、Policy、Rule 参数名与 type+parameter shape、logical operator、operator placement、字段形态与逻辑嵌套层级；不锁规则数量、域名/IP/regex 值、AND/OR 子项数量。首次出现的新形态必须 fail closed，并按 Loon 源语义 → QX 官方 sample / Surge 官方 Manual → 通用 converter/spec/tests 的顺序审查。MITM 不纳入该 inventory。
 18. Loon `[Rule]` production 转换必须采用 **source parser → target-neutral Rule AST → QX planner / Surge planner**。Parser 只负责 CSV/引号/逻辑子规则/Policy/参数结构，不得知道 QX/Surge 映射，也不得因目标平台不接受某个 Rule Type/逻辑组合而拒绝构建可结构化 AST；target planner 负责目标能力与 logical cardinality 校验，不得重新拆源字符串或按插件身份分支。AST 必须保留原始 source declaration、Rule Type、原始/解引号 value、Policy、参数及递归 logical children。QX planner 仅使用用户提供的官方 sample 已确认能力；Surge planner 按 `nssurge.com/llms.txt` → 官方 Manual。重构不得改变现有 canonical 语义输出。
 19. Loon `[Rewrite]` production 必须建立 **Legacy parser / Rewrite v2 parser → target-neutral Rewrite Semantic IR → QX / Surge planning** 的统一交接层。两套源 parser 必须保留，禁止为统一代码而把 Legacy Rewrite 强行改写成 Rewrite v2 源语法。IR 至少记录 source syntax、原声明、phase、condition、normalized semantic operation、pipeline 顺序及必要的 source-specific semantics（例如 Legacy 302/307 的完整 Location 与 Rewrite v2 redirect 的 matched-range template 必须区分）。Production 的 Rewrite 路由判断必须消费 IR，不得在 orchestration 中继续为同一 action 名称维护第二套分类正则。IR 本身不得 import QX/Surge capability registry。QX 仍只按用户上传官方 sample；Surge 仍按 `nssurge.com/llms.txt` → Manual，并保留官方 URL/Header/Body Rewrite、Map Local 与 HTTP Script 的行为差异。
+20. Rewrite 目标决策必须集中到 **`rewrite-qx.mjs::planQxRewrite()` / `rewrite-surge.mjs::planSurgeRewrite()`**。`.github/scripts/sync-convert.mjs` 只负责 source parse、依赖物化、Semantic IR 构建、调用 target planner 与结果落段，不得直接 import QX/Surge Rewrite renderer、complex registry 或自行维护 target fallback 顺序。两个 target planner 固定执行 `native → dedicated helper → observed source-authored complex helper → comment Review/Issue`，并且只消费 Rewrite Semantic IR / 其保留的 source AST payload。Legacy source-specific 低层 renderer 可以继续存在，但必须通过 target planner 入口调用；不得绕过 planner。旧 conservative fallback 不得调用不存在或未注册的函数；若没有已证明等价路径，必须显式返回 Review/Issue。
 
 
 ## 规范块
