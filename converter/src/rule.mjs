@@ -208,6 +208,13 @@ export function surgeModuleRule(line) {
   const parts = splitTopLevelCsv(source);
   const type = String(parts[0] || '').toUpperCase();
 
+  // WayX converts ad-block plugins, not a complete Surge policy graph.
+  // A source FINAL is intentionally discarded so a module cannot alter the
+  // user's global catch-all routing policy.
+  if (type === 'FINAL') {
+    return {kind:'drop', section:'rule', line:'', lines:[], reason:'drop-source-final'};
+  }
+
   // Loon URL-REGEX supports HTTP-response-shaped reject policies that are not
   // Surge Rule policies. Lower those to Surge's native Map Local instead of
   // weakening them to a generic reject or dropping the response body semantics.
