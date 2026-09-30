@@ -1,14 +1,14 @@
 #!name=哔哩哔哩
 #!desc=没有广告的哔哩哔哩更值得干杯。
 #!requirement=CORE_VERSION>=22
-#!arguments=displayUpList:auto,optimizeRequest:true,purifyComment:true,sponsorBlock:true
-#!arguments-desc=displayUpList: 显示 动态「最常访问」 — options=auto|show|hide — - auto: 仅当列表中存在直播状态时显示\n- show: 始终显示\n- hide: 始终隐藏\noptimizeRequest: 过滤「视频内」插播广告 — true/false — 自动跳过视频内广告\n- true: 开启\n- false: 关闭\npurifyComment: 过滤「评论区」置顶广告 — true/false — -true: 开启\n- false: 关闭\nsponsorBlock: 空降助手 — true/false
+#!arguments=displayUpList:auto,optimizeRequest:true,purifyComment:true,sponsorBlock:true,wayx_proxy_policy:DIRECT
+#!arguments-desc=displayUpList: 显示 动态「最常访问」 — options=auto|show|hide — - auto: 仅当列表中存在直播状态时显示\n- show: 始终显示\n- hide: 始终隐藏\noptimizeRequest: 过滤「视频内」插播广告 — true/false — 自动跳过视频内广告\n- true: 开启\n- false: 关闭\npurifyComment: 过滤「评论区」置顶广告 — true/false — -true: 开启\n- false: 关闭\nsponsorBlock: 空降助手 — true/false\nwayx_proxy_policy: Loon PROXY policy binding — default DIRECT; set to the desired Surge proxy policy or policy group
 
 # Author: RuCu6[https://github.com/RuCu6], kokoryh[https://github.com/kokoryh], 可莉🅥[https://gitlab.com/lodepuly/vpn_tool]
 # Icon: https://rucu6.pages.dev/Icons/app/bilibili.png
 # Updated: 2026-09-22 22:55
 
-# Converted: 2026-09-30 18:31:30 +08:00
+# Converted: 2026-09-30 19:15:01 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/bilibili.lpx
@@ -16,8 +16,7 @@
 
 [Rule]
 # 空降助手
-# [WayX] Source Loon plugin policy PROXY preserved without conversion; Surge Module cannot activate external policy names.
-# Source declaration: DOMAIN, bsbsb.top, PROXY
+DOMAIN,bsbsb.top,{{{wayx_proxy_policy}}}
 
 # 禁用STUN & P2P
 AND,((DOMAIN-SUFFIX,chat.bilibili.com),(OR,((DOMAIN-KEYWORD,stun),(DOMAIN-KEYWORD,tracker),(DOMAIN-KEYWORD,p2p)))),REJECT

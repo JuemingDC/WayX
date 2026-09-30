@@ -123,12 +123,16 @@ Loon Rewrite v2 中引用已声明 `[Argument]` 时，Surge 不得因为存在�
 4. helper 使用 `$argument` 读取参数，保持 String/Number/Boolean 类型；
 5. 仅当参数未声明、类型无法表达或 helper 仍无法保持源语义时才注释 Review。
 
-## 60.5 Rule PROXY 与 Argument 分离
+## 60.5 Rule PROXY 与 Module policy 参数
 
-Loon Plugin Rule 的 `PROXY` 是插件内部 policy binding，不等同于普通 `[Argument]` id，也不做策略转换。
+Loon Plugin Rule 的 `PROXY` 是插件内部“用户选择策略”绑定，不等同于普通固定 policy 名称。
 
 - QX：保留字面 `PROXY`，不降为小写内建 `proxy`。
-- Surge Module：官方 Module 不能定义 `[Proxy]` / `[Proxy Group]`，活动 Module Rule 也不能使用任意外部 policy 名称。因此源 `PROXY` Rule 只作为原声明注释保留，不改成 `DIRECT`、`REJECT` 或其他策略。
+- Surge Module：使用官方 Parameter Tables 机制生成独立策略参数。WayX 默认参数名为 `wayx_proxy_policy`（若与源参数重名则顺延后缀），默认值为 `DIRECT`，Rule policy 写成 `{{{wayx_proxy_policy}}}`。
+- 参数说明必须明确提示用户可改为现有 Surge 代理策略或策略组；默认 `DIRECT` 只是安装时安全默认值，不代表把源 `PROXY` 语义永久转换为直连。
+- 多条源 `PROXY` Rule 共用同一个策略参数，保持 Loon Plugin 的统一策略绑定语义。
+
+官方 Module 文档说明 `#!arguments` 声明的占位符会在应用 Module 前被替换；kokoryh/Sparkle 的 Bilibili Surge module 也使用同一模式，把该规则的 policy 位置写成参数占位符，并提示用户选择代理策略。
 
 ## 60.6 Source Script 检查范围
 

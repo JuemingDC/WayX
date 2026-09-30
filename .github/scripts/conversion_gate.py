@@ -185,7 +185,7 @@ def simple_rule(line: str) -> tuple[bool, str]:
             return False, "logical rule does not have expression/policy"
         policy = parts[2].upper()
         if policy in BASIC_POLICIES:
-            return True, "logical rule has deterministic targets: QX comment; Surge native/preserved/commented"
+            return True, "logical rule has deterministic targets: QX comment; Surge native/parameterized/commented"
         return False, f"logical rule policy {policy} is outside safe tier"
     # Use the same top-level CSV semantics for every Rule, not only
     # logical rules. URL-REGEX values and quoted fields may legitimately contain
@@ -203,7 +203,7 @@ def simple_rule(line: str) -> tuple[bool, str]:
         if policy in URL_REGEX_SAFE_POLICIES and not extras:
             return True, f"deterministic URL-REGEX {policy} target mapping"
         if policy == "PROXY" and not extras:
-            return True, "URL-REGEX PROXY is deterministically preserved/commented without policy remapping"
+            return True, "URL-REGEX PROXY is deterministically bound through a Surge module policy parameter"
         return False, f"URL-REGEX policy {policy} or extra parameters require semantic review"
 
     if rule_type not in BASIC_RULE_TYPES:

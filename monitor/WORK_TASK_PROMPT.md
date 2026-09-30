@@ -50,7 +50,7 @@ Work 只处理 Review Tier：QX 无法承载的 Loon `[Argument]`、Loon 新语�
 - 普通 Loon Rewrite `reject(status)` 按一般 `reject` 语义处理；不得仅为精确状态码生成 helper script。
 - Loon `[Rule] URL-REGEX,...,REJECT` 按 WayX 固定映射 → QX `REGEX url reject-200`。
 - `URL-REGEX + REJECT-200/REJECT-IMG/REJECT-DICT/REJECT-ARRAY/REJECT-DROP` 按 Block 20 的确定性映射处理。
-- Loon Plugin 内部 `PROXY` 不做策略转换：QX 保留字面 `PROXY`；Surge Module 因官方不能激活任意外部 policy，只保留源 Rule 注释，不改成其他策略。其他外部 policy/group 仍不得伪装成内建 policy。
+- Loon Plugin 内部 `PROXY` 保持用户策略绑定：QX 保留字面 `PROXY`；Surge Module 使用官方 `#!arguments` / `{{{name}}}` 生成 policy 参数绑定，默认 `DIRECT`，允许用户改成现有代理策略/策略组。其他未显式参数化的外部 policy/group 仍不得伪装成内建 policy。
 - QX IP 类规则必须删除 `no-resolve`；Surge 不执行这一删除规则。
 - QX snippet 的 filter/rewrite/mitm section 标题必须注释。
 - QX filter/rewrite 支持 `{# note #} rule`。源 `[Rule]`、`[Rewrite]`、`[Script]` 只要最终生成 QX filter/rewrite，都只在“一行源注释紧邻一条源声明，且下一行不是第二条连续活动声明、最终只生成一条活动 QX 行”时内联；若一条注释下面连续多条源声明、连续多行注释、注释本身是禁用源声明，必须保持普通 `#` 注释。WayX 转换说明绝不进入 QX note。
