@@ -6,7 +6,6 @@ import {
   jqDependencySpecFromAction,
   isDiscardedLegacyJqPathAction,
   inlineResolvedDependency,
-  inspectQxScriptCompatibility,
   listRewriteV2Dependencies,
   qxMockPlanFromAction,
   compileRegexForTarget,
@@ -98,10 +97,17 @@ assert.equal(surgeDropModule.kind, 'rule');
 assert.equal(surgeDropModule.line, 'URL-REGEX,^https:\\/\\/drop\\.example\\.com,REJECT-DROP');
 assert.equal(surgeModuleRule('DOMAIN,drop.example.com,REJECT-NO-DROP').line, 'DOMAIN,drop.example.com,REJECT-NO-DROP');
 assert.equal(surgeModuleRule('DOMAIN,cell.example.com,CELLULAR').line, 'DOMAIN,cell.example.com,CELLULAR');
-assert.match(qxRule('AND, ((DOMAIN-SUFFIX, example.com), (PROTOCOL, TCP)), REJECT').line, /^# \[WayX\] REVIEW REQUIRED:/);
+assert.match(qxRule('AND, ((DOMAIN-SUFFIX, example.com), (PROTOCOL, TCP)), REJECT').line, /unsupported Rule type commented out/);
 assert.equal(qxRule('IP-CIDR, 1.1.1.1/32, REJECT, no-resolve').line, 'ip-cidr, 1.1.1.1/32, reject');
 assert.equal(surgeRule('IP-CIDR, 1.1.1.1/32, REJECT, no-resolve'), 'IP-CIDR,1.1.1.1/32,REJECT,no-resolve');
-assert.match(surgeRule('DOMAIN, example.com, PROXY'), /^# \[WayX\] REVIEW REQUIRED:/);
+const surgeProxyPreserved = surgeModuleRule('DOMAIN, example.com, PROXY');
+assert.equal(surgeProxyPreserved.reason, 'source-proxy-policy-preserved');
+assert.match(surgeProxyPreserved.lines.join('\n'), /Source Loon plugin policy PROXY preserved without conversion/);
+const qxUnsupportedPort = qxRule('DEST-PORT,443,REJECT');
+assert.equal(qxUnsupportedPort.reason, 'unsupported-qx-rule-comment');
+assert.match(qxUnsupportedPort.line, /DEST-PORT/);
+assert.doesNotMatch(qxUnsupportedPort.line, /script-/);
+
 assert.equal(surgeModuleRule('DOMAIN-WILDCARD,api-*.example.com,REJECT').line, 'DOMAIN-WILDCARD,api-*.example.com,REJECT');
 assert.equal(surgeModuleRule('IP-ASN,13335,REJECT,no-resolve').line, 'IP-ASN,13335,REJECT,no-resolve');
 assert.equal(surgeModuleRule('USER-AGENT,"Example*",REJECT').line, 'USER-AGENT,"Example*",REJECT');
@@ -417,6 +423,13 @@ registerComplexRewriteHandler({
 assert.equal(planComplexRewrite(complexFixture, 'qx').line, 'handled-qx');
 assert.equal(planComplexRewrite(complexFixture, 'surge').line, 'handled-surge');
 assert.deepEqual(listComplexRewriteHandlers(), [{id:'checkpoint-mixed-response',targets:['qx','surge']}]);
+const singleComplexRejected = parseRewriteV2('response if ${url} ~= /api/ then response.header.del("Server")');
+assert.equal(planComplexRewrite(singleComplexRejected, 'qx').ok, false);
+assert.match(planComplexRewrite(singleComplexRejected, 'qx').reason, /multi-action/);
+assert.throws(
+  () => renderMixedRewriteScript(singleComplexRejected, {target:'qx'}),
+  /multi-action/,
+);
 
 const mixedResponse = parseRewriteV2('response if ${response.status} == 200 && ${url} ~= /api\\/v2/ then response.header.del("Server") | response.body.replace(/ads/, "ok")');
 const mixedQx = renderMixedRewriteScript(mixedResponse, {target:'qx'});
@@ -926,69 +939,6 @@ const legacyJsonAddSurge = planLegacyRewrite(
 );
 assert.equal(legacyJsonAddSurge.section, 'script');
 assert.match(legacyJsonAddSurge.line, /type=http-response,.*requires-body=true/);
-
-const explicitQxReject = inspectQxScriptCompatibility({
-  scriptUrl:'https://alpha.invalid/runtime.js',
-  sourceText:'throw new Error("QuantumultX is not supported"); const x=$utils.ungzip(data);',
-});
-assert.equal(explicitQxReject.executable, false);
-assert.equal(explicitQxReject.status, 'unsupported');
-
-const sameRejectedSourceDifferentIdentity = inspectQxScriptCompatibility({
-  scriptUrl:'https://totally-different.invalid/renamed.js',
-  sourceText:'throw new Error("QuantumultX is not supported"); const x=$utils.ungzip(data);',
-});
-assert.equal(sameRejectedSourceDifferentIdentity.executable, explicitQxReject.executable);
-assert.equal(sameRejectedSourceDifferentIdentity.status, explicitQxReject.status);
-
-const qxRuntimeEvidence = inspectQxScriptCompatibility({
-  scriptUrl:'https://unknown.invalid/response.js',
-  sourceText:'const platform = typeof $task < "u" ? "QuanX" : "Surge"; const x=$prefs.valueForKey("a");',
-});
-assert.equal(qxRuntimeEvidence.executable, true);
-assert.equal(qxRuntimeEvidence.status, 'runtime-evidence');
-
-const missingSourceReview = inspectQxScriptCompatibility({
-  scriptUrl:'https://unknown.invalid/no-source.js',
-  sourceText:'',
-});
-assert.equal(missingSourceReview.executable, false);
-assert.equal(missingSourceReview.status, 'review');
-
-const genericReject = inspectQxScriptCompatibility({
-  scriptUrl:'https://example.com/a.js',
-  sourceText:'throw new Error("Quantumult X is not supported");',
-});
-assert.equal(genericReject.executable, false);
-
-const surgeOnlyScript = inspectQxScriptCompatibility({
-  scriptUrl:'https://example.com/surge-only.js',
-  sourceText:'$httpClient.get("https://example.com", () => $done({})); const x=$persistentStore.read("x");',
-});
-assert.equal(surgeOnlyScript.executable, false);
-assert.match(surgeOnlyScript.reason, /\$httpClient/);
-
-const qxOfficialRuntimeOnlyScript = inspectQxScriptCompatibility({
-  scriptUrl:'https://example.com/header.js',
-  sourceText:'const h={...$request.headers}; h["X-Test"]="1"; $done({headers:h});',
-});
-assert.equal(qxOfficialRuntimeOnlyScript.executable, true);
-assert.equal(qxOfficialRuntimeOnlyScript.status, 'runtime-evidence');
-assert.match(qxOfficialRuntimeOnlyScript.reason, /official-sample runtime globals/);
-
-const unknownRuntimeScript = inspectQxScriptCompatibility({
-  scriptUrl:'https://example.com/unknown.js',
-  sourceText:'const x=$mystery.read(); $done({});',
-});
-assert.equal(unknownRuntimeScript.executable, false);
-assert.equal(unknownRuntimeScript.status, 'review');
-assert.match(unknownRuntimeScript.reason, /not verified by the Quantumult X official sample/);
-
-const dualRuntimeScript = inspectQxScriptCompatibility({
-  scriptUrl:'https://example.com/cross-platform.js',
-  sourceText:'const isQX = typeof $task !== "undefined"; if (isQX) $task.fetch({url:"https://example.com"}); else $httpClient.get("https://example.com",()=>{});',
-});
-assert.equal(dualRuntimeScript.executable, true);
 
 const jqFileAst = parseRewriteV2('response if ${url} ~= /api/ then response.json.jq_file("filters/remove-ads.jq")');
 const deps = listRewriteV2Dependencies(jqFileAst, {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
