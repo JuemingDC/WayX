@@ -7,7 +7,7 @@ const contracts=[
   ['00','docs/conversion-spec/00-authority.md',['converter/tests/genericity-audit.mjs','converter/tools/audit-repository.mjs']],
   ['05','docs/conversion-spec/05-generic-converter.md',['converter/src/source-catalog.mjs','converter/src/source-fetch.mjs','.github/scripts/sync-convert.mjs','.github/manual-assets.json','converter/tests/manual-assets.mjs']],
   ['10','docs/conversion-spec/10-target-format.md',['converter/src/paths.mjs','converter/src/metadata.mjs','converter/src/surge-module.mjs','converter/src/qx-official-capabilities.mjs','converter/src/surge-official-capabilities.mjs']],
-  ['20','docs/conversion-spec/20-rule-mapping.md',['converter/src/rule.mjs']],
+  ['20','docs/conversion-spec/20-rule-mapping.md',['converter/src/rule.mjs','converter/tests/catalog-rule-inventory.mjs','converter/fixtures/catalog-rule-inventory.json']],
   ['30','docs/conversion-spec/30-rewrite-mapping.md',['converter/src/legacy-rewrite.mjs','converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-semantic.mjs','converter/src/complex-rewrite-types.mjs','converter/src/complex-rewrite-registry.mjs','converter/tests/complex-source-inventory.mjs']],
   ['40','docs/conversion-spec/40-regex-condition.md',['converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-actions.mjs','converter/src/target-regex.mjs']],
   ['50','docs/conversion-spec/50-json-jq-mock.md',['converter/src/jq.mjs','converter/src/dependency.mjs','converter/src/qx-mock.mjs','converter/src/surge-mock.mjs']],
@@ -75,6 +75,7 @@ assert.match(surgeValidator,/SURGE_WAYX_REWRITE_SECTIONS/, 'Block 80: Surge vali
 const surgeCapabilities=await fs.readFile(path.join(ROOT,'converter/src/surge-official-capabilities.mjs'),'utf8');
 assert.match(surgeCapabilities,/SURGE_WAYX_RULE_TYPES/, 'Block 80: Surge Rule registry must be explicit and official-backed');
 assert.match(converterWorkflow,/surge-official-capabilities\.mjs/, 'Block 80: Converter Check must execute the Surge official capability gate');
+assert.match(converterWorkflow,/catalog-rule-inventory\.mjs/, 'Block 20/80: Converter Check must execute the Catalog Rule inventory gate');
 
 const index=await fs.readFile(path.join(ROOT,'docs/conversion-spec/95-implementation-index.md'),'utf8');
 for(const [block] of contracts) assert.match(index,new RegExp('\\| '+block+' \\|'), `implementation index missing Block ${block}`);

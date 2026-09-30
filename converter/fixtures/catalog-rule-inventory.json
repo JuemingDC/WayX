@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "scope": "Catalog-observed Loon [Rule] syntax shapes only; no MITM inventory",
+  "topLevelTypes": [
+    "AND",
+    "DEST-PORT",
+    "DOMAIN",
+    "DOMAIN-KEYWORD",
+    "DOMAIN-SUFFIX",
+    "IP-CIDR",
+    "IP-CIDR6",
+    "URL-REGEX",
+    "USER-AGENT"
+  ],
+  "nestedTypes": [
+    "DEST-PORT",
+    "DOMAIN",
+    "DOMAIN-KEYWORD",
+    "DOMAIN-SUFFIX",
+    "OR",
+    "PROTOCOL",
+    "URL-REGEX",
+    "USER-AGENT"
+  ],
+  "policies": [
+    "DIRECT",
+    "PROXY",
+    "REJECT",
+    "REJECT-NO-DROP"
+  ],
+  "parameterNames": [
+    "no-resolve"
+  ],
+  "parameterShapes": [
+    "IP-CIDR6:no-resolve",
+    "IP-CIDR:no-resolve"
+  ],
+  "logicalOperators": [
+    "AND",
+    "OR"
+  ],
+  "logicalPlacements": [
+    "AND:top",
+    "OR:nested"
+  ],
+  "topLevelFieldCounts": [
+    3,
+    4
+  ],
+  "nestedFieldCounts": [
+    2
+  ],
+  "maxLogicalDepth": 2
+}

@@ -119,3 +119,32 @@ Surge Module 不能定义 `[Proxy]` / `[Proxy Group]`，但官方 Parameter Tabl
 - Orchestration：`.github/scripts/sync-convert.mjs` 的 `[Rule]` 分发，只按 planner 返回的 section 写入 QX rewrite/filter 或 Surge Rule/Map Local。
 - Synthetic regression：`converter/tests/checkpoint.mjs`，必须逐项覆盖 `REJECT / REJECT-200 / REJECT-IMG / REJECT-DICT / REJECT-ARRAY / REJECT-DROP`。
 - Repository coverage：`converter/tests/surge-rule-coverage.mjs`。
+
+## 20.7 Catalog-observed Rule syntax inventory
+
+CI 必须扫描 Source Catalog 中当前活动的 Loon `[Rule]` 声明，并维护独立的 observed-syntax baseline。该 baseline 只用于发现上游第一次出现的新 Rule 语法形态，**不得反向定义 production converter 的支持范围**。
+
+Inventory 只锁以下会改变转换语义的维度：
+- top-level Rule Type；
+- logical sub-rule 中出现的 nested Rule Type；
+- top-level Policy；
+- Rule 参数名，以及 `RuleType:parameter` 组合；
+- logical operator 与其 top/nested placement；
+- top-level / nested 字段数量形态；
+- 最大 logical nesting depth。
+
+明确不锁：
+- Rule 声明数量；
+- DOMAIN/IP/regex 等实际匹配值；
+- AND/OR 子规则数量；
+- 插件名、作者、URL；
+- MITM。
+
+出现 baseline 差异时不得机械接受。必须先判断新形态的 Loon 源语义，再分别按 Quantumult X 官方 sample 与 Surge 官方 Manual 判断目标表达能力，然后更新通用 parser/planner/spec/tests；不得为某个具体插件增加特判。
+
+实现：
+- baseline：`converter/fixtures/catalog-rule-inventory.json`
+- inventory test：`converter/tests/catalog-rule-inventory.mjs`
+- generic Rule parser helpers：`converter/src/rule.mjs`
+- CI：`.github/workflows/converter-check.yml`
+
