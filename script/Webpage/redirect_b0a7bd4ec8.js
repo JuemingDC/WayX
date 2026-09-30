@@ -1,8 +1,8 @@
-// Converted: 2026-09-30 09:33:17 +08:00
+// Converted: 2026-09-30 10:13:52 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /^https?:\/\/translate\.google\.cn/i then redirect(302, "https://translate.google.com")
-const __wayxRe = new RegExp("^https?:\\/\\/translate\\.google\\.cn", "i");
+const __wayxRe = new RegExp("^https?:\\/\\/translate\\.google\\.cn");
 const __wayxUrl = $request.url;
 const __wayxMatch = __wayxRe.exec(__wayxUrl);
 if (!__wayxMatch) {
