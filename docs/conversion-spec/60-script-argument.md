@@ -185,7 +185,7 @@ Source Script 的跨平台运行时适配由原脚本自身负责，不属于 Wa
 - WayX 为 Rewrite/Mock 等目标能力生成的 helper script 不属于 Source Script 镜像；
 - helper script 只能补足 Rewrite/Mock 语义，不能用来模拟 QX 不支持的 Rule Type。
 
-## 60.8 实现索引
+## 60.8 自动化实现索引
 
 - Script action：`converter/src/script.mjs`
 - Script v2 parser：`converter/src/script-v2.mjs`
