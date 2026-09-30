@@ -138,7 +138,7 @@ Semantic IR 只描述源语义，不携带目标平台语法。至少保留：
 
 特别注意：相同“类别”不代表可丢弃来源差异。例如 Legacy `302 TARGET` / `307 TARGET` 是完整 redirect target，而 Rewrite v2 `redirect(...)` 当前语义是基于匹配区间/template 的重写；IR 必须明确区分，target planner 不得只因为两者都叫 redirect 就共用错误实现。
 
-Production orchestration 的 action 路由判断必须读取 IR operation，不允许继续用 action-name regex 维护另一套分类器。既有 target renderer 可以逐步迁移，但其输入必须来自 IR 所保留的 AST/semantic payload。
+Production orchestration 不再承担 target Rewrite 决策。它只负责 source parse、依赖物化、Semantic IR 构建与调用 `planQxRewrite()` / `planSurgeRewrite()`；不得直接 import target Rewrite renderer、complex registry 或用 action-name regex 决定 QX/Surge 路径。既有 native/helper renderer 作为低层实现由 target planner 调用，其输入必须来自 IR 所保留的 AST/semantic payload。
 
 所有 Rewrite 必须先分类，再转换。至少分为：
 
@@ -201,6 +201,8 @@ Unknown 与 Unsupported 必须分开：已知 Loon 语义、只是目标平台�
 
 ### Quantumult X
 
+Rewrite 顶层入口固定为 `converter/src/rewrite-qx.mjs::planQxRewrite(ir, ctx)`。该 planner 拥有 QX Rewrite 的 native/helper/complex/Review 顺序；orchestration 不得旁路。
+
 目标 planner 只能输出 Crossutility 官方 sample 已确认的：
 - filter；
 - rewrite action；
@@ -215,6 +217,8 @@ QX 的功能最终都落在：
 内部 IR 可以区分 URL/Header/Body/Mock/Script，但最终必须渲染为 QX 官方 snippet 支持的实际语法。
 
 ### Surge
+
+Rewrite 顶层入口固定为 `converter/src/rewrite-surge.mjs::planSurgeRewrite(ir, ctx)`。该 planner 拥有 Surge Rewrite 的 native/helper/complex/Review 顺序；orchestration 不得旁路。
 
 目标 planner 必须按 Surge 官方能力分流：
 - `[Rule]`
