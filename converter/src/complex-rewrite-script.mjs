@@ -81,9 +81,6 @@ function jsonValueSource(node, captures, guaranteed) {
   if (!node || !['string','raw-string','number','boolean','null'].includes(node.type)) throw new Error('JSON replacement value must be fixed');
   if (node.type === 'string') return capturedString(node, 'JSON replacement value', captures, guaranteed);
   if (node.type === 'raw-string') {
-    if (node.type === 'raw-string') {
-    try { return JSON.stringify(JSON.parse(node.value)); } catch { return JSON.stringify(node.value); }
-  }
     try { return JSON.stringify(JSON.parse(node.value)); } catch { return JSON.stringify(node.value); }
   }
   return JSON.stringify(node.value);
