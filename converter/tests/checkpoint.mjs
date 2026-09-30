@@ -438,8 +438,9 @@ assert.equal(flaggedHeaderHelper.script.includes('"i"'), false);
 assert.equal(flaggedHeaderHelper.script.includes('"ms"'), false);
 assert.match(flaggedHeaderHelper.script, /__wayxReplace\("X-Test", "value", "ok"\)/);
 
-const flaggedRedirectHelper = renderQxRedirectScript(parseRewriteV2(String.raw`request if ${url} ~= /\/old\/(.*)/ims as hit then redirect(302, "/new/${hit.1}")`));
-assert.equal(flaggedRedirectHelper.pattern, String.raw`\/old\/(.*)`);
+const flaggedRedirectSource = 'request if ${url} ~= /\\/old\\/(.*)/ims as hit then redirect(302, \"/new/${hit.1}\")';
+const flaggedRedirectHelper = renderQxRedirectScript(parseRewriteV2(flaggedRedirectSource));
+assert.equal(flaggedRedirectHelper.pattern, '\\/old\\/(.*)');
 assert.equal(flaggedRedirectHelper.script.includes('"ims"'), false);
 assert.ok(flaggedRedirectHelper.script.includes('new RegExp("\\/old\\/(.*)")'));
 
