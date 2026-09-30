@@ -159,7 +159,7 @@ target native planner
 → REVIEW REQUIRED
 ```
 
-当前 complex helper 可处理同 phase 的 Header + Body/JSON 有序组合。Header 支持 `set / del / replace`；JSON 支持已验证的 `delete / replace`。所有 action 必须严格按 Loon AST 左到右执行。JSON body 在 helper 内只解析一次，并在 pipeline 完成后序列化一次。
+当前 complex helper 可处理同 phase 的多 Action Body/JSON pipeline，以及 Header 与 Body/JSON 的有序组合。Header 支持已验证的 `set / del / replace`，Surge 在 `full-header-mode=true` 下额外支持保持重复字段的 `add`；JSON 支持已验证的 `delete / replace`。所有 Action 必须严格按 Loon AST 从左到右执行，Body Replace 与 JSON Action 可以交错，禁止把 JSON 操作整体提前或延后。
 
 条件编译当前只接受已验证的 `url`、`request.method`、`response.status`、固定 Header 读取，以及 `== / ~= / && / || / ()`。未知变量、未知运算符、无法证明等价的 capture 行为必须 fail closed。
 
@@ -209,14 +209,19 @@ Surge 转换规则：
 
 ### Named regex captures in complex helpers
 
-For a Loon condition of the form `~= /pattern/ as name`, a generated complex helper may preserve the complete JavaScript match object under that declared name and resolve action-string references `${name.0}`, `${name.1}`, etc. Index 0 is the complete match and positive indices are capture groups. References to undeclared capture names or unsupported interpolation forms must fail closed. Loon regex flags `i`, `m`, and `s` are parsed but are not propagated to the generated target `RegExp`; only the regex body is retained.
+For a Loon condition of the form `~= /pattern/ as name`, a generated complex helper may preserve the complete JavaScript match object under that declared name and resolve double-quoted action-string references `${name.0}`, `${name.1}`, etc. Index 0 is the complete match and positive indices are capture groups. Capture aliases must be unique, referenced indexes must not exceed the declared regex capture count, and an action-referenced capture must be guaranteed on every successful condition path. If an optional capture group has no runtime value, only that action is skipped and later actions continue. Raw strings never expand `${...}`. References to undeclared capture names or unsupported interpolation forms fail closed at conversion time. Loon regex flags `i`, `m`, and `s` are parsed but are not propagated to target `RegExp`; only the regex body is retained.
 
 
 ### Complex JSON runtime guard
 
-Generated mixed helpers must evaluate the Loon condition before parsing a JSON body. If the condition does not match, the helper returns without parsing or mutating the transaction. If the condition matches but the body cannot be parsed as JSON, the helper fails closed with an unchanged transaction; header/body mutations from the pipeline must not be partially applied.
+Generated complex helpers evaluate the Loon condition before running actions. JSON is parsed at the position of each JSON action, not globally before the pipeline. If one action fails at runtime (including invalid JSON or an unavailable optional capture), earlier completed changes are retained, that action is skipped, and later actions continue, matching Loon's documented left-to-right runtime failure semantics.
 
 
 ### Captures in complex JSON replacement values
 
 A string value passed to `json.replace` may resolve a previously declared named regex capture such as `${hit.1}` using the same capture resolver as header/body action strings. Fixed JSON primitives remain typed: numbers stay numbers, booleans stay booleans, and `null` stays JSON null. Undeclared capture aliases and unsupported interpolation forms fail closed. Loon `i/m/s` flags remain omitted from generated target regular expressions.
+
+
+### Complex helper source semantics
+
+The complex helper follows the current Loon Rewrite v2 execution contract: actions and batch elements execute left-to-right; runtime failure skips only the failing action while preserving earlier completed changes; Header/Body replacement `$0..$n` remains action-local; condition captures use `${name.n}`; raw strings are literal and do not expand variables. These rules are semantic requirements, not target-specific optimizations.

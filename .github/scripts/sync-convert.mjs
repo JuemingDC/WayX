@@ -51,9 +51,9 @@ registerComplexRewriteHandler({
   },
 });
 registerComplexRewriteHandler({
-  id: 'mixed-header-body-script',
+  id: 'complex-body-pipeline-script',
   targets: ['qx','surge'],
-  match: (ast, info) => info.families.includes('header-pipeline') && (info.families.includes('body-pipeline') || info.families.includes('json-pipeline')),
+  match: (ast, info) => ast.actions.length > 1 && (info.families.includes('body-pipeline') || info.families.includes('json-pipeline')),
   plan: (ast, target, ctx) => {
     try {
       const plan = renderMixedRewriteScript(ast, {target, stamp:ctx.stamp, category:ctx.category, sourceLine:ctx.sourceLine});
