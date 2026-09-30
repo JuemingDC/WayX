@@ -82,6 +82,9 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
     scriptUrl,
     sourceText,
   });
+  if (!action.action) {
+    return unsupported(action.reason);
+  }
 
   const notes = [...(condition.notes || [])];
 
