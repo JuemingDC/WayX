@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.6  
+版本：1.7  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -22,6 +22,7 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 10. QX `response.header.add` / legacy `response-header-add` 属于已知但当前官方 sample 未证明重复 Header 等价表达的能力缺口。按项目决策直接注释保留源声明，不生成 helper，也不再作为持续 Review 项。
 11. `QZXY.snippet` / `QZXY.sgmodule` 明确为 chance 手工维护资产，登记在 `.github/manual-assets.json`；不得加入 Loon Source Catalog，不参与 canonical regeneration，但仍接受 repository validator/audit。
 12. CI 必须自动生成 Source → Target reconciliation 与 Review/Issue inventory。Catalog 每个源有效语义项必须落入 converted / explicit-comment / Review / Issue / intentional-drop 之一；报告不对账时 fail closed。
+13. QX Source Script 声明的 `argument`、动态 `enable`、`timeout` 按 KOP-XIAO `resource-parser.js` 的转换口径处理：QX 只保留 pattern / Script action / 原始 script URL / requires-body 所决定的 header/body 类型；Script argument 不注入，动态 enable 视为默认开启，timeout 忽略。源明确 `enable=false` 仍保持禁用。该规则只适用于 Script declaration；Rewrite 条件/action 中的 `[Argument]` 引用仍按 Block 60 的独立语义分析处理。
 
 
 ## 规范块
