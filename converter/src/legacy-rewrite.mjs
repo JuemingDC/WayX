@@ -196,6 +196,7 @@ function planHeader(pattern, action, parsed, target, ctx) {
   const direction=parsed.phase === 'response' ? 'http-response' : 'http-request';
   const width=parsed.op === 'del' ? 1 : parsed.op === 'replace-regex' ? 3 : 2;
   if (!tokens.length || tokens.length % width) return review(pattern, action, 'invalid legacy header argument grouping');
+
   if (target === 'qx' && parsed.phase === 'request' && parsed.op === 'add') {
     const targetPattern=normalizeRegexBodyForTarget(pattern);
     const lines=[];
@@ -208,6 +209,7 @@ function planHeader(pattern, action, parsed, target, ctx) {
     }
     return {section:'rewrite', lines};
   }
+
   if (target === 'qx' && parsed.phase === 'request' && parsed.op === 'replace-regex') {
     const targetPattern=normalizeRegexBodyForTarget(pattern);
     const lines=[];
@@ -216,12 +218,12 @@ function planHeader(pattern, action, parsed, target, ctx) {
       if(!name || /[\s:\r\n]/.test(name) || /[\r\n]/.test(replacement)) {
         return review(pattern, action, 'legacy request header-replace-regex contains an unsafe field name/replacement');
       }
-      const escaped=name.replace(/[.*+?^${}()|[\]\\]/g,'\\  if (!tokens.length || tokens.length % width) return review(pattern, action, 'invalid legacy header argument grouping');
-  if (target === 'qx') {');
+      const escaped=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
       lines.push(targetPattern + ' url request-header (\\r\\n)' + escaped + ':\\s*' + normalizeRegexBodyForTarget(regex) + '(\\r\\n) request-header $1' + name + ': ' + replacement + '$2');
     }
     return {section:'rewrite', lines};
   }
+
   if (target === 'qx') {
     try {
       const ast=legacyHeaderAst(pattern, parsed, tokens);
@@ -241,6 +243,7 @@ function planHeader(pattern, action, parsed, target, ctx) {
       return review(pattern, action, String(error?.message || error));
     }
   }
+
   const targetPattern=normalizeRegexBodyForTarget(pattern);
   const lines=[];
   for(let i=0;i<tokens.length;i+=width){
@@ -250,7 +253,6 @@ function planHeader(pattern, action, parsed, target, ctx) {
   }
   return {section:'header', lines};
 }
-
 function planBodyRegex(pattern, action, parsed, target) {
   const tokens=shellTokens(parsed.rest).map(unquote);
   if (!tokens.length || tokens.length % 2) return review(pattern, action, 'body regex rewrite requires regex/replacement pairs');
