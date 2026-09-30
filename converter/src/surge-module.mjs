@@ -92,9 +92,17 @@ export function validateSurgeModule(text, entry = {id:'module'}, {adblockScope =
         throw new Error(`${entry.id}: unsupported Surge rule type/combination in module (${typeTree.reason}): ${line}`);
       }
       const policyIndex = surgePolicyIndex(parts);
-      const policy = String(parts[policyIndex] || '').toUpperCase();
-      if (!SURGE_MODULE_POLICIES.has(policy)) {
-        throw new Error(`${entry.id}: Surge module [Rule] policy is outside the official Module set DIRECT/REJECT/REJECT-TINYGIF: ${line}`);
+      const policyRaw = String(parts[policyIndex] || '');
+      const argumentPolicy = policyRaw.match(/^\{\{\{([A-Za-z0-9_]+)\}\}\}$/);
+      if (argumentPolicy) {
+        if (!declaredArguments.has(argumentPolicy[1])) {
+          throw new Error(`${entry.id}: Surge module [Rule] references undeclared policy argument ${argumentPolicy[1]}: ${line}`);
+        }
+      } else {
+        const policy = policyRaw.toUpperCase();
+        if (!SURGE_MODULE_POLICIES.has(policy)) {
+          throw new Error(`${entry.id}: Surge module [Rule] policy is outside the official Module set DIRECT/REJECT/REJECT-TINYGIF or a declared {{{argument}}}: ${line}`);
+        }
       }
       if (line !== parts.join(',')) {
         throw new Error(`${entry.id}: Surge module [Rule] must use canonical top-level comma formatting: ${line}`);
