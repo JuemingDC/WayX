@@ -37,7 +37,7 @@ WayX 转换说明属于目标 metadata，不是源规则注释，禁止进入 QX
 
 ## 70.2.1 MITM 能力边界
 
-WayX 只转换 Loon 去广告插件中的 `hostname`。CA、证书、服务器证书校验跳过及其它完整 Profile MITM 配置不进入 WayX capability model，也不建立目标映射。当前 Source Catalog 的活动 `[MITM]` 均只有 `hostname`；若未来出现其它活动项，按未登记源语法 fail closed，不为完整配置能力增加专用转换逻辑。
+WayX 的 MITM capability model 只有 `hostname`。当前 Source Catalog 的活动 `[MITM]` 均为 `hostname`；若未来出现其它活动项，按未登记源语法 fail closed，不扩展为通用 Profile 配置转换。
 
 ## 70.3 WayX Metadata
 
