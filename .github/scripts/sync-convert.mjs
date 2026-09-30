@@ -408,6 +408,10 @@ function looksLikeCommentedSourceDeclaration(text, sectionKind) {
     if (isRewriteV2(value)) return true;
     return /^\S+\s+(?:-\s+)?(?:reject(?:-[A-Za-z0-9-]+)?|302\b|307\b|header\b|(?:response-)?header-(?:add|del|replace|replace-regex)\b|(?:request|response)-body-(?:replace-regex|json-|mock)|mock-(?:request|response)-body\b)/i.test(value);
   }
+  if (sectionKind === 'script') {
+    if (isScriptV2(value)) return true;
+    return Boolean(parseScriptLine(value)?.scriptPath);
+  }
   return false;
 }
 
@@ -417,7 +421,7 @@ function qxInlineNoteCandidate(sectionLines, item, sectionKind) {
   const previousRaw = sectionLines[index - 1];
   const previous = String(previousRaw ?? '').trim();
   const note = sourceCommentText(previousRaw);
-  if (!previous || note === null || !note || note.includes('#}')) return null;
+  if (!previous || note === null || !note || note.includes('{#') || note.includes('#}')) return null;
 
   // Exactly one adjacent source comment only. Multiple comment lines remain
   // ordinary comments so they cannot be collapsed into one QX note.
@@ -801,8 +805,9 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     }
   }
 
+  const scriptSectionLines = parsed.sections.get('Script') || [];
   let scriptIndex = 0;
-  for (const item of sectionItems(parsed.sections.get('Script'))) {
+  for (const item of sectionItems(scriptSectionLines)) {
     const comments = cleanComments(item.comments);
     if (!item.line) continue;
 
@@ -822,18 +827,26 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
       const sourceText = mapped?.source || '';
       const qxUrl = mapped?.qx || ast.script.path;
       const surgeUrl = mapped?.surge || ast.script.path;
-      qx.rewrite.push(...comments);
       const qxPlan = qxScriptV2Plan(ast, { scriptUrl: qxUrl, sourceText, argumentIds });
       if (!qxPlan.ok) {
+        qx.rewrite.push(...comments);
         qx.rewrite.push(`# [WayX] SCRIPT V2 REVIEW REQUIRED: ${qxPlan.reason}`);
         qx.rewrite.push(`# Source declaration: ${item.line}`);
       } else if (qxPlan.disabled) {
+        qx.rewrite.push(...comments);
         qx.rewrite.push(`# [WayX] Script disabled by source option: ${item.line}`);
       } else {
+        const qxRendered = qxAttachInlineNote({
+          sectionLines: scriptSectionLines,
+          item,
+          sectionKind: 'script',
+          lines: [qxPlan.line],
+        });
+        qx.rewrite.push(...qxRendered.comments);
         if (qxPlan.tag) qx.rewrite.push(`# ${qxPlan.tag}`);
         if (qxPlan.binaryBodyMode) qx.rewrite.push('# [WayX] Source binary_body_mode=true; script source is preserved unchanged.');
         for (const note of qxPlan.notes || []) qx.rewrite.push(`# [WayX] ${note}`);
-        qx.rewrite.push(qxPlan.line);
+        qx.rewrite.push(...qxRendered.lines);
       }
 
       const name = sanitizeName((ast.options.find(x => x.name === 'tag')?.value?.value) || `${entry.id}_${String(scriptIndex).padStart(2, '0')}`);
@@ -865,11 +878,12 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     const enableFixed = sc.enable ? String(sc.enable).trim().toLowerCase() : '';
     const enableDynamic = Boolean(sc.enable) && !['true','false','1','0'].includes(enableFixed);
 
-    qx.rewrite.push(...comments);
-    if (sc.tag) qx.rewrite.push(`# ${sc.tag}`);
+    const qxTagLines = sc.tag ? [`# ${sc.tag}`] : [];
     if (enableFixed === 'false' || enableFixed === '0') {
+      qx.rewrite.push(...comments, ...qxTagLines);
       qx.rewrite.push(`# [WayX] Script disabled by source declaration: ${item.line}`);
     } else if (sc.argument || enableDynamic || sc.timeout || sc.maxSize || sc.binary) {
+      qx.rewrite.push(...comments, ...qxTagLines);
       qx.rewrite.push('# [WayX] SCRIPT REVIEW REQUIRED: QX declaration/helper cannot preserve this source argument/enable/timeout/max-size/binary option set without changing the source script.');
       qx.rewrite.push(`# Source declaration: ${item.line}`);
     } else {
@@ -879,7 +893,13 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
         scriptUrl: sc.scriptPath,
         sourceText: mapped?.source || '',
       }).action;
-      qx.rewrite.push(`${targetPattern} url ${qType} ${qxUrl}`);
+      const qxRendered = qxAttachInlineNote({
+        sectionLines: scriptSectionLines,
+        item,
+        sectionKind: 'script',
+        lines: [`${targetPattern} url ${qType} ${qxUrl}`],
+      });
+      qx.rewrite.push(...qxRendered.comments, ...qxTagLines, ...qxRendered.lines);
     }
 
     const name = sanitizeName(sc.tag || `${entry.id}_${String(scriptIndex).padStart(2, '0')}`);
