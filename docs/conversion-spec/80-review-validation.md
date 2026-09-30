@@ -1,4 +1,27 @@
-# Block 80 — Review / Validation / Golden
+# Block 80 — Review / Validation
+
+## 80.0 Review 与 Unknown Issue 分流
+
+WayX 对不可直接活动转换的内容分两类：
+
+- **REVIEW REQUIRED**：源语义已知，但目标平台缺少已证明等价能力，或需要人工确认已知能力边界。
+- **ISSUE REQUIRED**：源语法/action/section 未登记，或出现未登记的 source-authored complex signature，当前 converter 连“该如何正确转换”都不能证明。
+
+`ISSUE REQUIRED` 固定要求：
+1. 目标文件中只输出注释，必须保留完整 `Source declaration`；
+2. 不生成猜测性 helper、Rule、Rewrite 或 Script；
+3. 自动化扫描 marker，按稳定 fingerprint 创建或复用 GitHub Issue；
+4. Issue 未形成规范与实现依据前，该项不得进入 Safe Tier；
+5. 修复顺序仍是“规范 → generic implementation → synthetic test → real-source regression”。
+
+Issue marker 固定格式：
+
+```text
+# [WayX] ISSUE REQUIRED [<code>]: <reason>
+# Source declaration: <original source>
+```
+
+已知 QX/Surge 能力缺口不得为了“多开议题”改标 Unknown；Issue 只用于未登记/未知转换。 / Golden
 
 ## 80.1 Review 条件
 
