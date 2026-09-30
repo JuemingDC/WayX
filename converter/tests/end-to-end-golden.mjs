@@ -316,7 +316,6 @@ const directSourceScriptMap = new Map([[directSourceScriptUrl, {
   qx:directSourceScriptUrl,
   surge:directSourceScriptUrl,
   source:'throw new Error("Quantumult X is not supported"); const body=$utils.ungzip($response.bodyBytes);',
-  qxAdapted:false,
 }]]);
 const directSourceScriptOutput=convert(directSourceScriptFixture,directSourceScriptSource,directSourceScriptMap,STAMP);
 assert.ok(directSourceScriptOutput.qx.includes('script-response-body ' + directSourceScriptUrl));
@@ -448,7 +447,7 @@ function regressionScriptSource(url) {
 function passthroughScriptMap(source) {
   return new Map(scriptUrls(source).map(url => [
     url,
-    {qx:url, surge:url, source:regressionScriptSource(url), qxAdapted:false},
+    {qx:url, surge:url, source:regressionScriptSource(url)},
   ]));
 }
 
