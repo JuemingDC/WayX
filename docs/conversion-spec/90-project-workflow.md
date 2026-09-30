@@ -89,12 +89,28 @@ Source Catalog entry.source（原作者）
 
 WayX 自动生成的 target helper script 不属于 Source Script 镜像，可继续作为 converter 产物写入 `script/<id>/`。`regenerate-canonical.mjs` 必须与目标文件一起生成这些 helper；`generated-helper-refs.mjs` 必须确认所有 WayX raw helper URL 都有真实文件。
 
+## 目标 fallback 与项目级丢弃
+
+Rewrite/Mock 固定优先级：
+```text
+native target syntax
+→ verified helper script
+→ commented REVIEW REQUIRED
+```
+
+项目级直接丢弃：
+- Surge ad-block Module 的源 `FINAL`；
+- legacy `json.jq("jq-path=...")` alias；
+- Loon regex literal 的 `i/m/s` flags。
+
+这些丢弃项不得被后续 canonical regeneration 或 Work review 自动恢复。
+
 ## 自动化 Fail-Closed 约束
 
 - Gate 必须按 Rule/Rewrite/Script/MITM 的真实语义分类，不能按作者目录、插件目录、插件名整体升级或降级。
 - 外部 policy/group（例如未在目标 Module 中定义的 `PROXY`）不是内建 Safe policy，必须进入 Review。
 - Block 20 已定义的 `URL-REGEX + REJECT/REJECT-200/REJECT-IMG/REJECT-DICT/REJECT-ARRAY/REJECT-DROP` 属于确定性映射，可进入 Safe Tier。
-- Source Script compatibility scan 失败必须参与 Review 判定。
+- Quantumult X Source Script compatibility scan 失败必须参与 Review 判定；Surge 不做 Source Script runtime compatibility scan。
 - 只要 Review 条件成立，即使本轮没有普通 repository diff，也必须写入临时 `monitor/review-queue/<run>.md` 并创建 `work/upstream-*` PR；不能静默退出。
 - Work 完成前必须删除上述临时 review marker。
 - Safe Tier 结果只能推送到生成时使用的同一个 main 基线。若 remote main 在生成后前进，本轮跳过推送，由新一轮从新基线重新生成；禁止先生成再无条件 rebase 到新 main。
