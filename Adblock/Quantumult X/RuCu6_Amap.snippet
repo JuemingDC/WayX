@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/amap.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-09-30 16:17:47 +08:00
+# Converted: 2026-09-30 17:43:06 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/amap.lpx
@@ -12,7 +12,7 @@
 
 # [filter_local]
 # 移除广告下发请求
-# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent
+# [WayX] Quantumult X unsupported Rule type commented out; Rule conversion does not use Script fallback
 # Source declaration: AND, ((URL-REGEX, "^http:\/\/.+\/amdc\/mobileDispatch"), (USER-AGENT, "AMapiPhone*")), REJECT
 
 # [rewrite_local]
@@ -41,62 +41,34 @@
 ^https:\/\/m5-zb\.amap\.com\/ws\/boss\/(?:order\/car\/(?:feedback\/get_card_questions|feedback\/viptips|king_toolbox_car_bubble|remark\/satisfactionConf|rights_information)|tips\/onscene_visual_optimization) url reject-dict
 ^https:\/\/m5-zb\.amap\.com\/ws\/boss\/(?:pay\/web\/paySuccess\/info\/request|transportation\/diversion\/resource\/driving) url reject-dict
 ^https:\/\/m5-zb\.amap\.com\/ws\/sharedtrip\/taxi\/order_detail_car_tips\? url jsonjq-response-body 'delpaths([["data","carTips","data","popupInfo"]])'
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/amap.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/m5\.amap\.com\/ws\/aos\/perception\/publicTravel\/beforeNavi\?/i then script("https://rucu6.pages.dev/Scripts/amap.js") with tag="移除路线规划推广", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/amap.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/m5\.amap\.com\/ws\/bus\/plan\/integrate\?/i then script("https://rucu6.pages.dev/Scripts/amap.js") with tag="移除路线规划、导航结束页推广", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/amap.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/m5\.amap\.com\/ws\/c3frontend\/(?:af-(?:hotel|launch)\/page\/main|af-nearby\/nearby)/i then script("https://rucu6.pages.dev/Scripts/amap.js") with tag="移除导航详情页底部酒店、处理附近页", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/amap.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/m5\.amap\.com\/ws\/perception\/drive\/(?:routeInfo|routePlan)/i then script("https://rucu6.pages.dev/Scripts/amap.js") with tag="移除路线规划推广", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/amap.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/m5\.amap\.com\/ws\/shield\/search_bff\/hotword\?/i then script("https://rucu6.pages.dev/Scripts/amap.js") with tag="移除搜索栏推广", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/amap.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/m5\.amap\.com\/ws\/shield\/search_poi\/(?:mps|search\/sp|sug|tips_operation_location)/i then script("https://rucu6.pages.dev/Scripts/amap.js") with tag="移除搜索详情页推广", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/amap.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/m5\.amap\.com\/ws\/faas\/amap-navigation\/(?:card-service-plan-home|main-page)/i then script("https://rucu6.pages.dev/Scripts/amap.js") with tag="移除首页推广", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/amap.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/m5\.amap\.com\/ws\/shield\/frogserver\/aocs\/updatable\/1\?/i then script("https://rucu6.pages.dev/Scripts/amap.js") with tag="移除首页推广", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/amap.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/m5\.amap\.com\/ws\/shield\/dsp\/profile\/index\/nodefaasv3\?/i then script("https://rucu6.pages.dev/Scripts/amap.js") with tag="移除我的页面推广", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/amap.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/m5\.amap\.com\/ws\/shield\/search\/nearbyrec_smart\?/i then script("https://rucu6.pages.dev/Scripts/amap.js") with tag="移除附近页推广", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/amap.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/m5\.amap\.com\/ws\/valueadded\/alimama\/splash_screen\?/i then script("https://rucu6.pages.dev/Scripts/amap.js") with tag="移除开屏广告", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/amap.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/m5-zb\.amap\.com\/ws\/boss\/(?:car\/order\/content_info|order_web\/friendly_information)/i then script("https://rucu6.pages.dev/Scripts/amap.js") with tag="移除打车页推广卡片、弹窗", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/amap.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/m5-zb\.amap\.com\/ws\/promotion-web\/resource(\/home)?\?/i then script("https://rucu6.pages.dev/Scripts/amap.js") with tag="移除打车页红点角标、天气图标", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/amap.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/(?:info|m5)\.amap\.com\/ws\/shield\/search\/(?:common\/coupon\/info|poi\/detail)/i then script("https://rucu6.pages.dev/Scripts/amap.js") with tag="移除导航详情页推广", requires_body=true
+# 移除路线规划推广
+^https:\/\/m5\.amap\.com\/ws\/aos\/perception\/publicTravel\/beforeNavi\? url script-response-body https://rucu6.pages.dev/Scripts/amap.js
+# 移除路线规划、导航结束页推广
+^https:\/\/m5\.amap\.com\/ws\/bus\/plan\/integrate\? url script-response-body https://rucu6.pages.dev/Scripts/amap.js
+# 移除导航详情页底部酒店、处理附近页
+^https:\/\/m5\.amap\.com\/ws\/c3frontend\/(?:af-(?:hotel|launch)\/page\/main|af-nearby\/nearby) url script-response-body https://rucu6.pages.dev/Scripts/amap.js
+# 移除路线规划推广
+^https:\/\/m5\.amap\.com\/ws\/perception\/drive\/(?:routeInfo|routePlan) url script-response-body https://rucu6.pages.dev/Scripts/amap.js
+# 移除搜索栏推广
+^https:\/\/m5\.amap\.com\/ws\/shield\/search_bff\/hotword\? url script-response-body https://rucu6.pages.dev/Scripts/amap.js
+# 移除搜索详情页推广
+^https:\/\/m5\.amap\.com\/ws\/shield\/search_poi\/(?:mps|search\/sp|sug|tips_operation_location) url script-response-body https://rucu6.pages.dev/Scripts/amap.js
+# 移除首页推广
+^https:\/\/m5\.amap\.com\/ws\/faas\/amap-navigation\/(?:card-service-plan-home|main-page) url script-response-body https://rucu6.pages.dev/Scripts/amap.js
+# 移除首页推广
+^https:\/\/m5\.amap\.com\/ws\/shield\/frogserver\/aocs\/updatable\/1\? url script-response-body https://rucu6.pages.dev/Scripts/amap.js
+# 移除我的页面推广
+^https:\/\/m5\.amap\.com\/ws\/shield\/dsp\/profile\/index\/nodefaasv3\? url script-response-body https://rucu6.pages.dev/Scripts/amap.js
+# 移除附近页推广
+^https:\/\/m5\.amap\.com\/ws\/shield\/search\/nearbyrec_smart\? url script-response-body https://rucu6.pages.dev/Scripts/amap.js
+# 移除开屏广告
+^https:\/\/m5\.amap\.com\/ws\/valueadded\/alimama\/splash_screen\? url script-response-body https://rucu6.pages.dev/Scripts/amap.js
+# 移除打车页推广卡片、弹窗
+^https:\/\/m5-zb\.amap\.com\/ws\/boss\/(?:car\/order\/content_info|order_web\/friendly_information) url script-response-body https://rucu6.pages.dev/Scripts/amap.js
+# 移除打车页红点角标、天气图标
+^https:\/\/m5-zb\.amap\.com\/ws\/promotion-web\/resource(\/home)?\? url script-response-body https://rucu6.pages.dev/Scripts/amap.js
+# 移除导航详情页推广
+^https:\/\/(?:info|m5)\.amap\.com\/ws\/shield\/search\/(?:common\/coupon\/info|poi\/detail) url script-response-body https://rucu6.pages.dev/Scripts/amap.js
 
 # [mitm]
 hostname = *.amap.com

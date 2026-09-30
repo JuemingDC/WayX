@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/myblockads.png
 # Updated: 2026-09-27 18:30
 
-# Converted: 2026-09-30 16:17:49 +08:00
+# Converted: 2026-09-30 17:43:08 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/myblockads.lpx
@@ -17,7 +17,7 @@ host, ad.12306.cn, direct
 
 # ======= A ======= #
 # 阿里巴巴
-# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent
+# [WayX] Quantumult X unsupported Rule type commented out; Rule conversion does not use Script fallback
 # Source declaration: AND, ((URL-REGEX, "^http:\/\/.+\/amdc\/mobileDispatch"), (USER-AGENT, "Alibaba*")), REJECT
 host-suffix, ut.taobao.com, reject
 host, dns.alidns.com, reject
@@ -67,7 +67,7 @@ ip-cidr, 180.76.76.112/32, reject
 ip-cidr, 180.76.76.200/32, reject
 
 # 百度网盘
-# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent
+# [WayX] Quantumult X unsupported Rule type commented out; Rule conversion does not use Script fallback
 # Source declaration: AND, ((DOMAIN-SUFFIX, pan.baidu.com), (PROTOCOL, TCP)), REJECT
 
 # ======= C ======= #
@@ -101,11 +101,11 @@ host-suffix, mall.icbc.com.cn, reject
 host, pageviewp.icbc.com.cn, reject
 
 # 广告联盟
-# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent
+# [WayX] Quantumult X unsupported Rule type commented out; Rule conversion does not use Script fallback
 # Source declaration: AND, ((DOMAIN-KEYWORD, -misc-), (DOMAIN-SUFFIX, zijieapi.com)), REJECT
-# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent
+# [WayX] Quantumult X unsupported Rule type commented out; Rule conversion does not use Script fallback
 # Source declaration: AND, ((DOMAIN-KEYWORD, adx-), (DOMAIN-SUFFIX, statisticslinks.com)), REJECT
-# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent
+# [WayX] Quantumult X unsupported Rule type commented out; Rule conversion does not use Script fallback
 # Source declaration: AND, ((DOMAIN-KEYWORD, mssdk), (DOMAIN-SUFFIX, zijieapi.com)), REJECT
 host-keyword, -ad-sign.byteimg.com, reject
 host-keyword, -ad., reject
@@ -189,7 +189,7 @@ host, ws.tapjoyads.com, reject
 #DOMAIN-SUFFIX, ehaier.com, REJECT
 
 # 盒马
-# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent
+# [WayX] Quantumult X unsupported Rule type commented out; Rule conversion does not use Script fallback
 # Source declaration: AND, ((URL-REGEX, "^http:\/\/.+\/amdc\/mobileDispatch"), (USER-AGENT, "Hema4iPhone*")), REJECT
 
 # httpdns
@@ -328,7 +328,7 @@ host, splashimgbssdl.yun.kugou.com, reject
 host, tmead.y.qq.com, reject
 
 # 天猫精灵
-# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent
+# [WayX] Quantumult X unsupported Rule type commented out; Rule conversion does not use Script fallback
 # Source declaration: AND, ((URL-REGEX, "^http:\/\/.+\/amdc\/mobileDispatch"), (USER-AGENT, "TmallGenie*")), REJECT
 
 # ======= W ======= #
@@ -353,7 +353,7 @@ host, dns.weixin.qq.com.cn, reject
 host-suffix, vsdrwee.com, reject
 host, carlinaframh.com, reject
 host, tong.8888888888.bid, reject
-# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent
+# [WayX] Quantumult X unsupported Rule type commented out; Rule conversion does not use Script fallback
 # Source declaration: AND, ((OR, ((DOMAIN-KEYWORD, kc.), (DOMAIN-KEYWORD, kcc.), (DOMAIN-KEYWORD, kg.))), (DEST-PORT, 8008)), REJECT
 
 # 云闪付 开屏广告
@@ -484,96 +484,62 @@ host, yandexmetrica.com, reject
 # 云闪付 //wallet.95516.com
 ^https:\/\/wallet\.95516\.com(:10533)?\/s\/wl\/icon\/large\/1 url reject
 # 12306 //ad.12306.cn, mobile.12306.cn
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/12306.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: request if ${url} ~= /^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList$/i then script("https://rucu6.pages.dev/Scripts/12306.js") with tag="12306_splash", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/header.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: request if ${url} ~= /^https:\/\/mobile\.12306\.cn\/otsmobile\/app\/mgs\/mgw\.htm$/i then script("https://rucu6.pages.dev/Scripts/header.js") with tag="12306_ads"
+# 12306_splash
+^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList$ url script-request-body https://rucu6.pages.dev/Scripts/12306.js
+# 12306_ads
+^https:\/\/mobile\.12306\.cn\/otsmobile\/app\/mgs\/mgw\.htm$ url script-request-header https://rucu6.pages.dev/Scripts/header.js
 
 # 阿里云盘 //*api.alipan.com, member.alipan.com
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/adrive.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/(biz)?api\.alipan\.com\/apps\/v\d\/users?\/home\/(?:news|widgets)/i then script("https://rucu6.pages.dev/Scripts/adrive.js") with tag="aliyun_mine", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/adrive.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/member\.alipan\.com\/v1\/users\/onboard_list/i then script("https://rucu6.pages.dev/Scripts/adrive.js") with tag="aliyun_board", requires_body=true
+# aliyun_mine
+^https:\/\/(biz)?api\.alipan\.com\/apps\/v\d\/users?\/home\/(?:news|widgets) url script-response-body https://rucu6.pages.dev/Scripts/adrive.js
+# aliyun_board
+^https:\/\/member\.alipan\.com\/v1\/users\/onboard_list url script-response-body https://rucu6.pages.dev/Scripts/adrive.js
 
 # 阿里巴巴 //acs.m.taobao.com, heic.alicdn.com, guide-acs.m.taobao.com, poplayer.template.alibaba.com
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/myblockads.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.taobao\.(?:cloudvideo\.video\.query|wireless\.home\.splash\.awesome\.get)/i then script("https://rucu6.pages.dev/Scripts/myblockads.js") with tag="taobao_1", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/myblockads.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/poplayer\.template\.alibaba\.com\/\w+\.json/i then script("https://rucu6.pages.dev/Scripts/myblockads.js") with tag="taobao_2", requires_body=true
+# taobao_1
+^https:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.taobao\.(?:cloudvideo\.video\.query|wireless\.home\.splash\.awesome\.get) url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
+# taobao_2
+^https:\/\/poplayer\.template\.alibaba\.com\/\w+\.json url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
 
 # 草榴社区 //2023.redircdn.com
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/myblockads.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/2023\.redircdn\.com\/web\/mob_post\.js\?/i then script("https://rucu6.pages.dev/Scripts/myblockads.js") with tag="caoliu", requires_body=true
+# caoliu
+^https:\/\/2023\.redircdn\.com\/web\/mob_post\.js\? url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
 
 # 昌原云充 五代十路 //www.washpayer.com
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/changyuan.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/www\.washpayer\.com\/user\/message\/equipmentPara\?/i then script("https://rucu6.pages.dev/Scripts/changyuan.js") with tag="changyuan", requires_body=true
+# changyuan
+^https:\/\/www\.washpayer\.com\/user\/message\/equipmentPara\? url script-response-body https://rucu6.pages.dev/Scripts/changyuan.js
 
 # 酷安 //api.coolapk.com
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/coolapk.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/api\.coolapk\.com\/v6\/(?:feed\/detail|feed\/replyList|page\/dataList|main\/dataList|main\/indexV8|main\/init)/i then script("https://rucu6.pages.dev/Scripts/coolapk.js") with tag="coolapk", requires_body=true
+# coolapk
+^https:\/\/api\.coolapk\.com\/v6\/(?:feed\/detail|feed\/replyList|page\/dataList|main\/dataList|main\/indexV8|main\/init) url script-response-body https://rucu6.pages.dev/Scripts/coolapk.js
 
 # 酷狗音乐 //adserviceretry.kglink.cn, gateway.kugou.com
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/kugou.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/gateway\.kugou\.com\/(?:adp\/ad\/v1\/mine_top_banner|ads\.gateway\/v2\/home_card)/i then script("https://rucu6.pages.dev/Scripts/kugou.js") with tag="kg_gateway", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/kugou.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https?:\/\/adserviceretry\.kglink\.cn\/v\d\/mobile\w+/i then script("https://rucu6.pages.dev/Scripts/kugou.js") with tag="kg_linkcn", requires_body=true
+# kg_gateway
+^https:\/\/gateway\.kugou\.com\/(?:adp\/ad\/v1\/mine_top_banner|ads\.gateway\/v2\/home_card) url script-response-body https://rucu6.pages.dev/Scripts/kugou.js
+# kg_linkcn
+^https?:\/\/adserviceretry\.kglink\.cn\/v\d\/mobile\w+ url script-response-body https://rucu6.pages.dev/Scripts/kugou.js
 
 # 微信封禁页面 //weixin110.qq.com, security.wechat.com
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/wechat.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https\:\/\/(?:weixin110\.qq|security\.wechat)\.com\/cgi-bin\/mmspamsupport-bin\/newredirectconfirmcgi\?/i then script("https://rucu6.pages.dev/Scripts/wechat.js") with tag="wechat", requires_body=true
+# wechat
+^https\:\/\/(?:weixin110\.qq|security\.wechat)\.com\/cgi-bin\/mmspamsupport-bin\/newredirectconfirmcgi\? url script-response-body https://rucu6.pages.dev/Scripts/wechat.js
 
 # 小米商城 //api.m.mi.com, shop-api.retail.mi.com
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/myblockads.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/api\.m\.mi\.com\/v1\/app\/start/i then script("https://rucu6.pages.dev/Scripts/myblockads.js") with tag="mi_mall", requires_body=true
+# mi_mall
+^https:\/\/api\.m\.mi\.com\/v1\/app\/start url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
 
 # 迅雷 //api-gateway-pan.xunlei.com
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/myblockads.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/api-gateway-pan\.xunlei\.com\/content\/v1\/aggregate\/info\?/i then script("https://rucu6.pages.dev/Scripts/myblockads.js") with tag="thunder", requires_body=true
+# thunder
+^https:\/\/api-gateway-pan\.xunlei\.com\/content\/v1\/aggregate\/info\? url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
 
 # 中国农业银行 //mobilepaas.abchina.com.cn
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/header.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: request if ${url} ~= /^https:\/\/mobilepaas\.abchina\.com\.cn:441\/mgw\.htm$/i then script("https://rucu6.pages.dev/Scripts/header.js") with tag="abchina"
+# abchina
+^https:\/\/mobilepaas\.abchina\.com\.cn:441\/mgw\.htm$ url script-request-header https://rucu6.pages.dev/Scripts/header.js
 
 # 中国移动云盘 //ad.mcloud.139.com, jzts.cmpassport.com
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/cloud139.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/ad\.mcloud\.139\.com\/advertapi\/adv-filter\//i then script("https://rucu6.pages.dev/Scripts/cloud139.js") with tag="cloud139_1", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/cloud139.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/jzts\.cmpassport\.com\/personalized\/getPushContent/i then script("https://rucu6.pages.dev/Scripts/cloud139.js") with tag="cloud139_2", requires_body=true
+# cloud139_1
+^https:\/\/ad\.mcloud\.139\.com\/advertapi\/adv-filter\/ url script-response-body https://rucu6.pages.dev/Scripts/cloud139.js
+# cloud139_2
+^https:\/\/jzts\.cmpassport\.com\/personalized\/getPushContent url script-response-body https://rucu6.pages.dev/Scripts/cloud139.js
 
 # [mitm]
 hostname = ad.12306.cn, mobile.12306.cn, list-app-m.i4.cn, *api.alipan.com, member.alipan.com, acs.m.taobao.com, gw.alicdn.com, heic.alicdn.com, guide-acs.m.taobao.com, poplayer.template.alibaba.com, pan.baidu.com, 2023.redircdn.com, www.washpayer.com, oneapph5.dongfeng-nissan.com.cn, api.douban.com, img3.doubanio.com, qnmob3.doubanio.com, image.mybank.icbc.com.cn, hfapp-service.qweather.net, acs-m.freshippo.com, gab.122.gov.cn, api.coolapk.com, adserviceretry.kglink.cn, gateway.kugou.com, p0.pipi.cn, mme.api.moji.com, sns.api.moji.com, flowplus.meituan.net, img.meituan.net, s3plus.meituan.net, home.mi.com, gql.reddit.com, gql-fed.reddit.com, a.cpiccdn.com, osg-service.sgcc.com.cn, api.xiachufang.com, mp.weixin.qq.com, weixin110.qq.com, security.wechat.com, marketing-aibox.v.mitvos.com, api.m.mi.com, shop-api.retail.mi.com, xiaomishop.retail.mi.com, gateway.sccncdn.com, gateway.starcharge.com, api-gateway-pan.xunlei.com, api-shoulei-ssl.xunlei.com, conf-m-ssl.xunlei.com, login-service.mobile-bank.psbc.com, wallet.95516.com, mobilepaas.abchina.com.cn, ad.mcloud.139.com, jzts.cmpassport.com

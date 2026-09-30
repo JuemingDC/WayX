@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/zhihu.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-09-30 16:17:52 +08:00
+# Converted: 2026-09-30 17:43:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/zhihu.lpx
@@ -68,46 +68,26 @@ ip6-cidr, 2402:4e00:1200:ed00:0:9089:6dac:96b6/128, reject
 ^https:\/\/www\.zhihu\.com\/api\/v4\/(?:answers|questions)\/\d+\/related-readings url reject-dict
 ^https:\/\/www\.zhihu\.com\/commercial_api\/banners_v3\/mobile_banner url reject-dict
 ^https:\/\/zhuanlan\.zhihu\.com\/api\/articles\/\d+\/recommendation url reject-dict
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/zhihu.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/(?:api|page-info)\.zhihu\.com\/(?:answers|articles)\/v2\/\d+/i then script("https://rucu6.pages.dev/Scripts/zhihu.js") with tag="移除回答底部卡片推广", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/zhihu.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/api\.zhihu\.com\/commercial_api\/app_float_layer/i then script("https://rucu6.pages.dev/Scripts/zhihu.js") with tag="移除首页悬浮图标", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/zhihu.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/api\.zhihu\.com\/feed\/render\/tab\/config\?/i then script("https://rucu6.pages.dev/Scripts/zhihu.js") with tag="移除推荐信息流推广", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/zhihu.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/api\.zhihu\.com\/(?:moments_v3|topstory\/hot-lists\/total|topstory\/recommend)/i then script("https://rucu6.pages.dev/Scripts/zhihu.js") with tag="移除推荐信息流推广", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/zhihu.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/api\.zhihu\.com\/root\/tab/i then script("https://rucu6.pages.dev/Scripts/zhihu.js") with tag="精简顶部标签", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/zhihu.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/api\.zhihu\.com\/v2\/topstory\/hot-lists\/everyone-seeing\?/i then script("https://rucu6.pages.dev/Scripts/zhihu.js") with tag="移除热榜信息流推广", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/zhihu.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/api\.zhihu\.com\/next-(?:bff|data|render)/i then script("https://rucu6.pages.dev/Scripts/zhihu.js") with tag="移除下一个回答推广、评论区顶部推广", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/zhihu.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/www\.zhihu\.com\/api\/v4\/(?:articles|answers)\/\d+\/recommendations?\?/i then script("https://rucu6.pages.dev/Scripts/zhihu.js") with tag="移除回答详情页推广", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/zhihu.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/appcloud2\.zhihu\.com\/v3\/config/i then script("https://rucu6.pages.dev/Scripts/zhihu.js") with tag="拦截服务器推送配置 config", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/zhihu.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/m-cloud\.zhihu\.com\/api\/cloud\/zhihu\/config\/all\?/i then script("https://rucu6.pages.dev/Scripts/zhihu.js") with tag="拦截服务器推送配置 config all", requires_body=true
+# 移除回答底部卡片推广
+^https:\/\/(?:api|page-info)\.zhihu\.com\/(?:answers|articles)\/v2\/\d+ url script-response-body https://rucu6.pages.dev/Scripts/zhihu.js
+# 移除首页悬浮图标
+^https:\/\/api\.zhihu\.com\/commercial_api\/app_float_layer url script-response-body https://rucu6.pages.dev/Scripts/zhihu.js
+# 移除推荐信息流推广
+^https:\/\/api\.zhihu\.com\/feed\/render\/tab\/config\? url script-response-body https://rucu6.pages.dev/Scripts/zhihu.js
+# 移除推荐信息流推广
+^https:\/\/api\.zhihu\.com\/(?:moments_v3|topstory\/hot-lists\/total|topstory\/recommend) url script-response-body https://rucu6.pages.dev/Scripts/zhihu.js
+# 精简顶部标签
+^https:\/\/api\.zhihu\.com\/root\/tab url script-response-body https://rucu6.pages.dev/Scripts/zhihu.js
+# 移除热榜信息流推广
+^https:\/\/api\.zhihu\.com\/v2\/topstory\/hot-lists\/everyone-seeing\? url script-response-body https://rucu6.pages.dev/Scripts/zhihu.js
+# 移除下一个回答推广、评论区顶部推广
+^https:\/\/api\.zhihu\.com\/next-(?:bff|data|render) url script-response-body https://rucu6.pages.dev/Scripts/zhihu.js
+# 移除回答详情页推广
+^https:\/\/www\.zhihu\.com\/api\/v4\/(?:articles|answers)\/\d+\/recommendations?\? url script-response-body https://rucu6.pages.dev/Scripts/zhihu.js
+# 拦截服务器推送配置 config
+^https:\/\/appcloud2\.zhihu\.com\/v3\/config url script-response-body https://rucu6.pages.dev/Scripts/zhihu.js
+# 拦截服务器推送配置 config all
+^https:\/\/m-cloud\.zhihu\.com\/api\/cloud\/zhihu\/config\/all\? url script-response-body https://rucu6.pages.dev/Scripts/zhihu.js
 
 # [mitm]
 hostname = *.zhihu.com
