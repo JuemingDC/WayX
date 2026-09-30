@@ -118,17 +118,17 @@ function statements(ast, target) {
       }
       continue;
     }
-    if (action.name === ast.phase + '.json.delete' || action.name === ast.phase + '.json.replace') {
+    if (action.name === ast.phase + '.json.add' || action.name === ast.phase + '.json.delete' || action.name === ast.phase + '.json.replace') {
       body = true; json = true;
       for(const args of expand(action)){
         const path=jsonPath(fixed(args[0], 'JSON key path'));
         if(action.name.endsWith('.delete')) {
-          if (typeof path[path.length - 1] === 'number') throw new Error('json.delete array-index semantics are not verified');
           out.push('__wayxJsonAction(j=>__wayxJsonDelete(j,'+JSON.stringify(path)+'));');
         } else {
           const value=jsonValueSource(args[1], captures, guaranteed);
-          if(args[1]?.type==='string' && String(args[1].value).includes('${')) out.push('__wayxWith('+value+',v=>__wayxJsonAction(j=>__wayxJsonReplace(j,'+JSON.stringify(path)+',v)));');
-          else out.push('__wayxJsonAction(j=>__wayxJsonReplace(j,'+JSON.stringify(path)+','+value+'));');
+          const helper=action.name.endsWith('.add')?'__wayxJsonAdd':'__wayxJsonReplace';
+          if(args[1]?.type==='string' && String(args[1].value).includes('${')) out.push('__wayxWith('+value+',v=>__wayxJsonAction(j=>'+helper+'(j,'+JSON.stringify(path)+',v)));');
+          else out.push('__wayxJsonAction(j=>'+helper+'(j,'+JSON.stringify(path)+','+value+'));');
         }
       }
       continue;
@@ -167,7 +167,8 @@ export function renderMixedRewriteScript(ast, {target, stamp='', category='', so
     'function __wayxWith(v,fn){if(v!==undefined)fn(v)}',
     'function __wayxJsonAction(fn){try{const j=JSON.parse(String(__wayxBody ?? ""));fn(j);__wayxBody=JSON.stringify(j)}catch{}}',
     'function __wayxJsonParent(root,path){let x=root;for(let i=0;i<path.length-1;i++){if(x==null||!(path[i] in Object(x)))return null;x=x[path[i]];}return x;}',
-    'function __wayxJsonDelete(root,path){const p=__wayxJsonParent(root,path);if(p!=null)delete p[path[path.length-1]];}',
+    'function __wayxJsonAdd(root,path,value){let x=root;for(let i=0;i<path.length-1;i++){const k=path[i],next=path[i+1];if(x==null||typeof x!=="object")return;if(!(k in x))x[k]=typeof next==="number"?[]:{};x=x[k]}if(x!=null&&typeof x==="object"&&!(path[path.length-1] in x))x[path[path.length-1]]=value;}',
+    'function __wayxJsonDelete(root,path){const p=__wayxJsonParent(root,path);if(p==null)return;const k=path[path.length-1];if(Array.isArray(p)&&typeof k==="number"){if(k>=0&&k<p.length)p.splice(k,1);}else delete p[k];}',
     'function __wayxJsonReplace(root,path,value){const p=__wayxJsonParent(root,path);if(p!=null&&path[path.length-1] in Object(p))p[path[path.length-1]]=value;}',
     'function __wayxHeader(phase,name){const h=phase==="request"?$request.headers:$response.headers;const w=String(name).toLowerCase();if(Array.isArray(h)){const x=h.find(x=>String(x.field).toLowerCase()===w);return x?.value;}const k=Object.keys(h||{}).find(x=>x.toLowerCase()===w);return k===undefined?undefined:h[k];}',
     plan.headerAdd ? 'function __wayxAdd(n,v){__wayxHeaders.push({field:n,value:v});}' : null,
