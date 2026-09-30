@@ -45,6 +45,43 @@ assert.match(headerGroupOutput.surge, /header-add content-disposition inline/);
 assert.match(headerGroupOutput.surge, /header-del content-type/);
 assert.match(headerGroupOutput.surge, /header-add content-type text\/plain; charset=utf-8/);
 
+const qxValidatorEntry = {id:'QxValidatorFixture'};
+const validQxValidatorText = `# Name: QxValidatorFixture
+# [filter_local]
+host, example.com, reject
+# [rewrite_local]
+^https://example\\.com url reject
+# [mitm]
+hostname = example.com
+`;
+assert.doesNotThrow(() => validateQX(validQxValidatorText, qxValidatorEntry));
+assert.throws(
+  () => validateQX(validQxValidatorText.replace('host, example.com, reject', 'dest-port, 443, reject'), qxValidatorEntry),
+  /unsupported Quantumult X filter type/,
+);
+assert.throws(
+  () => validateQX(validQxValidatorText.replace('^https://example\\.com url reject', '(?i)^https://example\\.com url reject'), qxValidatorEntry),
+  /must not restore discarded Loon regex flags/,
+);
+assert.throws(
+  () => validateQX(validQxValidatorText.replace('^https://example\\.com url reject', '[hH][tT][tT][pP][sS]://example\\.com url reject'), qxValidatorEntry),
+  /manual HTTP case-fold/,
+);
+assert.throws(
+  () => validateQX(validQxValidatorText.replace('^https://example\\.com url reject', '^https://example\\.com url loon-private-action'), qxValidatorEntry),
+  /unsupported Quantumult X rewrite action/,
+);
+
+const outOfScopeSurgeScript = `#!name=ScopeFixture
+#!desc=Scope fixture
+[Script]
+task = type=cron,script-path=https://example.com/task.js,cronexp="0 8 * * *"
+`;
+assert.throws(
+  () => validateSurgeModule(outOfScopeSurgeScript, {id:'ScopeFixture'}),
+  /unsupported Surge script type 'cron' in WayX ad-block scope/,
+);
+
 const argumentRewriteFixture = {
   id:'ArgumentRewriteFixture',
   source:'https://example.invalid/argument-rewrite.lpx',
