@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/zhihu.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-09-29 23:36:49 +08:00
+# Converted: 2026-09-30 08:53:08 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/zhihu.lpx
@@ -69,34 +69,24 @@ ip6-cidr, 2402:4e00:1200:ed00:0:9089:6dac:96b6/128, reject
 ^https:\/\/www\.zhihu\.com\/commercial_api\/banners_v3\/mobile_banner url reject-dict
 ^https:\/\/zhuanlan\.zhihu\.com\/api\/articles\/\d+\/recommendation url reject-dict
 # 移除回答底部卡片推广
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/(?:api|page-info)\.zhihu\.com\/(?:answers|articles)\/v2\/\d+ url script-response-body https://rucu6.pages.dev/Scripts/zhihu.js
 # 移除首页悬浮图标
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/api\.zhihu\.com\/commercial_api\/app_float_layer url script-response-body https://rucu6.pages.dev/Scripts/zhihu.js
 # 移除推荐信息流推广
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/api\.zhihu\.com\/feed\/render\/tab\/config\? url script-response-body https://rucu6.pages.dev/Scripts/zhihu.js
 # 移除推荐信息流推广
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/api\.zhihu\.com\/(?:moments_v3|topstory\/hot-lists\/total|topstory\/recommend) url script-response-body https://rucu6.pages.dev/Scripts/zhihu.js
 # 精简顶部标签
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/api\.zhihu\.com\/root\/tab url script-response-body https://rucu6.pages.dev/Scripts/zhihu.js
 # 移除热榜信息流推广
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/api\.zhihu\.com\/v2\/topstory\/hot-lists\/everyone-seeing\? url script-response-body https://rucu6.pages.dev/Scripts/zhihu.js
 # 移除下一个回答推广、评论区顶部推广
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/api\.zhihu\.com\/next-(?:bff|data|render) url script-response-body https://rucu6.pages.dev/Scripts/zhihu.js
 # 移除回答详情页推广
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/www\.zhihu\.com\/api\/v4\/(?:articles|answers)\/\d+\/recommendations?\? url script-response-body https://rucu6.pages.dev/Scripts/zhihu.js
 # 拦截服务器推送配置 config
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/appcloud2\.zhihu\.com\/v3\/config url script-response-body https://rucu6.pages.dev/Scripts/zhihu.js
 # 拦截服务器推送配置 config all
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/m-cloud\.zhihu\.com\/api\/cloud\/zhihu\/config\/all\? url script-response-body https://rucu6.pages.dev/Scripts/zhihu.js
 
 # [mitm]

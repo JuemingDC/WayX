@@ -6,7 +6,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/xiaohongshu.png
 # Updated: 2026-09-14 11:00
 
-# Converted: 2026-09-29 23:36:49 +08:00
+# Converted: 2026-09-30 08:53:07 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/xiaohongshu.lpx
@@ -22,36 +22,36 @@ DOMAIN,t-ads.xiaohongshu.com,REJECT
 [Body Rewrite]
 
 # 搜索页
-http-response-jq ^https://edith\.xiaohongshu\.com/api/sns/v1/search/banner_list$ 'setpath(["data"]; {})'
-http-response-jq ^https://edith\.xiaohongshu\.com/api/sns/v1/search/hot_list$ 'setpath(["data","items"]; [])'
-http-response-jq ^https://edith\.xiaohongshu\.com/api/sns/v4/search/hint 'setpath(["data","hint_words"]; [])'
-http-response-jq ^https://edith\.xiaohongshu\.com/api/sns/v4/search/trending\? 'setpath(["data","queries"]; []) | setpath(["data","hint_word"]; {})'
+http-response-jq ^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/search\/banner_list$ 'setpath(["data"]; {})'
+http-response-jq ^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/search\/hot_list$ 'setpath(["data","items"]; [])'
+http-response-jq ^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v4\/search\/hint 'setpath(["data","hint_words"]; [])'
+http-response-jq ^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v4\/search\/trending\? 'setpath(["data","queries"]; []) | setpath(["data","hint_word"]; {})'
 
 [Map Local]
 # 小红书水印
-^https://ci\.xiaohongshu\.com/system_config/watermark data-type=tiny-gif status-code=200
+^https:\/\/ci\.xiaohongshu\.com\/system_config\/watermark data-type=tiny-gif status-code=200
 
 # 惊喜弹窗
-^https://edith\.xiaohongshu\.com/api/sns/v1/surprisebox/(?:get_style|open|submit_action) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https://www\.xiaohongshu\.com/api/marketing/box/trigger\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/surprisebox\/(?:get_style|open|submit_action) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/www\.xiaohongshu\.com\/api\/marketing\/box\/trigger\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 # 信息流
-^https://edith\.xiaohongshu\.com/api/sns/(?:v2/guide/user_banner|v3/note/guide) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https://www\.xiaohongshu\.com/api/sns/(?:v1/ads/resource|v2/hey/\w+/hey_gallery) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/(?:v2\/guide\/user_banner|v3\/note\/guide) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/www\.xiaohongshu\.com\/api\/sns\/(?:v1\/ads\/resource|v2\/hey\/\w+\/hey_gallery) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-移除图片和实况照片水印 = type=http-response,pattern=^https://edith\.xiaohongshu\.com/api/sns/v1/note/(?:imagefeed|live_photo/save),script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
-移除整体配置 ui = type=http-response,pattern=^https://edith\.xiaohongshu\.com/api/sns/v1/system/service/ui/config\?,script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
-移除开屏广告 config = type=http-response,pattern=^https://edith\.xiaohongshu\.com/api/sns/v1/system_service/config\?,script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
-移除开屏广告 splash_config = type=http-response,pattern=^https://edith\.xiaohongshu\.com/api/sns/v2/system_service/splash_config,script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
-移除详情页小部件、关注页感兴趣的人 = type=http-response,pattern=^https://edith\.xiaohongshu\.com/api/sns/v2/(?:note/widgets|user/followings/followfeed),script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
-移除信息流广告 = type=http-response,pattern=^https://edith\.xiaohongshu\.com/api/sns/v4/followfeed\?,script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
-移除详情页感兴趣的人 = type=http-response,pattern=^https://edith\.xiaohongshu\.com/api/sns/v5/recommend/user/follow_recommend\?,script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
-移除评论区实况照片水印 = type=http-response,pattern=^https://edith\.xiaohongshu\.com/api/sns/(?:v1/interaction/comment/video/download|v5/note/comment/list),script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
-移除图片和视频水印 = type=http-response,pattern=^https://edith\.xiaohongshu\.com/api/sns/(?:v2/note/feed|v3/note/videofeed),script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
-移除信息流广告 = type=http-response,pattern=^https://(?:edith|rec)\.xiaohongshu\.com/api/sns/v6/homefeed\?,script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
-移除搜索页广告 = type=http-response,pattern=^https://(?:edith|so)\.xiaohongshu\.com/api/sns/v10/search/notes\?,script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
-移除视频水印 = type=http-response,pattern=^https://(?:edith|rec|www)\.xiaohongshu\.com/api/sns/(?:v4/note/videofeed|v10/note/video/save),script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
+移除图片和实况照片水印 = type=http-response,pattern=^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/note\/(?:imagefeed|live_photo\/save),script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
+移除整体配置 ui = type=http-response,pattern=^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/system\/service\/ui\/config\?,script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
+移除开屏广告 config = type=http-response,pattern=^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/system_service\/config\?,script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
+移除开屏广告 splash_config = type=http-response,pattern=^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v2\/system_service\/splash_config,script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
+移除详情页小部件、关注页感兴趣的人 = type=http-response,pattern=^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v2\/(?:note\/widgets|user\/followings\/followfeed),script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
+移除信息流广告 = type=http-response,pattern=^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v4\/followfeed\?,script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
+移除详情页感兴趣的人 = type=http-response,pattern=^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v5\/recommend\/user\/follow_recommend\?,script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
+移除评论区实况照片水印 = type=http-response,pattern=^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/(?:v1\/interaction\/comment\/video\/download|v5\/note\/comment\/list),script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
+移除图片和视频水印 = type=http-response,pattern=^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/(?:v2\/note\/feed|v3\/note\/videofeed),script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
+移除信息流广告 = type=http-response,pattern=^https:\/\/(?:edith|rec)\.xiaohongshu\.com\/api\/sns\/v6\/homefeed\?,script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
+移除搜索页广告 = type=http-response,pattern=^https:\/\/(?:edith|so)\.xiaohongshu\.com\/api\/sns\/v10\/search\/notes\?,script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
+移除视频水印 = type=http-response,pattern=^https:\/\/(?:edith|rec|www)\.xiaohongshu\.com\/api\/sns\/(?:v4\/note\/videofeed|v10\/note\/video\/save),script-path=https://rucu6.pages.dev/Scripts/xiaohongshu.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% ci.xiaohongshu.com, edith.xiaohongshu.com, rec.xiaohongshu.com, so.xiaohongshu.com, www.xiaohongshu.com

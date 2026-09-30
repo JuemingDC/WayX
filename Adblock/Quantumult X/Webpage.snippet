@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/webpage.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-09-29 23:36:49 +08:00
+# Converted: 2026-09-30 08:53:07 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/webpage.lpx
@@ -45,67 +45,53 @@ https:\/\/(rule\.)?kelee\.one\/ url script-response-header https://raw.githubuse
 # ======= 普通网页 ======= #
 # 百度 //boxer.baidu.com, m.baidu.com, www.baidu.com, zhidao.baidu.com
 # baidu_boxer
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/boxer\.baidu\.com\/scheme\?scheme url script-request-body https://rucu6.pages.dev/Scripts/baidu/baiduNoRedirect.js
 # baidu_home
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/(?:www|m)\.baidu\.com(\/|\/\?(tn=&)?from=\d+\w)?$ url script-response-body https://rucu6.pages.dev/Scripts/webpage/baidu-index.js
 # baidu_zhidao
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/zhidao\.baidu\.com\/(?:question|index|\?fr|\?word) url script-response-body https://rucu6.pages.dev/Scripts/webpage/baidu-zhidao.js
 
 # 观影 //www.hgeme.com, www.xn--wcv59z.com
 # guanying_web_ads
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/www\.(?:hgeme|xn--wcv59z)\.com\/ url script-response-body https://rucu6.pages.dev/Scripts/webpage/myblockads.js
 
 # 移花宫 //yhg007.com, *.111107?.xyz
 # yihuagong_hash_ad
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/(?:yhg007\.com|[a-z]{8}\.111107\d\.xyz)\/hash\/(?:[a-fA-F0-9]{40}|[A-Z2-7]{32})\.html$ url script-response-body https://rucu6.pages.dev/Scripts/webpage/myblockads.js
 # yihuagong_search_ads
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/(?:yhg007\.com|[a-z]{8}\.111107\d\.xyz)\/search-[^\/]+\.html$ url script-response-body https://rucu6.pages.dev/Scripts/webpage/myblockads.js
 
 # ======= ooxx ======= #
 # 黑料网 //18hlw.com, 8olbt.imsatcmn.cc
 # 18hlw_web_ads
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/(?:18hlw\.com|8olbt\.imsatcmn\.cc)\/ url script-response-body https://rucu6.pages.dev/Scripts/webpage/myblockads.js
 
 # 夜未央 //miniapp2.52ywy.com
 # 52ywy_web_ads
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/miniapp2\.52ywy\.com\/(?:ywyminiappbot\/(?:getLatest|getLatestAll|getCategoryVideos|getSearch|series|movies|tv|av|getbloger)|player\/getPlayer)(\?|$) url script-response-body https://rucu6.pages.dev/Scripts/webpage/52ywy.js
 
 # 字母圈 //*.zimuquan*.top, *.zimuquan*.uk, *.zimuquan*.com
 # zmq_web_ads
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https?:\/\/[^\/]*zimuquan[^\/]*\/index\.php\/vod\/play\/ url script-response-body https://rucu6.pages.dev/Scripts/webpage/zimuquan.js
 
 # E-Hentai //e-hentai.org
 # ehentai_web_ads
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/e-hentai\.org\/g\/ url script-response-body https://rucu6.pages.dev/Scripts/webpage/ehentai.js
 
 # Hanime1 //hanime1.me
 # hanime_web_ads
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/hanime1\.me\/(?!(favicon|css|js|cdn-cgi|load)) url script-response-body https://rucu6.pages.dev/Scripts/webpage/hanime.js
 
 # JavDB //javdb.com
 # javdb_web_ads
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/javdb\.com\/(?!over18\?) url script-response-body https://rucu6.pages.dev/Scripts/webpage/myblockads.js
 
 # MissAV //missav.ai, missav.fans, missav.ws
 # missav_web_ads
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/missav\.(?:ai|fans|ws)\/(?!favicon)(?!(build|fonts|img|js|api|cdn-cgi)\/). url script-response-body https://rucu6.pages.dev/Scripts/webpage/missav.js
 
 # PornHub //*.pornhub.com
 # pornhub_web_ads
-# [WayX] i-source-flag-not-expressed-in-target-declaration
 ^https:\/\/cn\.pornhub\.com\/ url script-response-body https://rucu6.pages.dev/Scripts/webpage/pornhub.js
 
 # [mitm]
