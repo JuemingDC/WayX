@@ -39,6 +39,7 @@ MANUAL_REVIEW_RE = re.compile(
     r"Unsupported Loon|"
     r"Loon .*not losslessly expressible|"
     r"\[WayX\]\s*(?:"
+    r"REVIEW REQUIRED|"
     r"MANUAL PORT REQUIRED|"
     r"(?:SCRIPT(?: V2)?|REWRITE V2|ARGUMENT)\s+REVIEW REQUIRED|"
     r"QUANTUMULT X (?:REVIEW REQUIRED|UNSUPPORTED)"
