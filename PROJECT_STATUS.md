@@ -20,11 +20,11 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 核心转换原则：
 
 1. 目标平台原生格式能严格等价表达 → 使用原生格式。
-2. 原生格式不能严格等价 → 使用已验证的最小 helper / complex helper。
-3. helper 仍无法保持源语义 → 注释原声明并输出明确 Review。
+2. Rewrite/Mock 原生格式不能严格等价 → 使用对应专用 helper；多 action pipeline 才使用 complex helper。
+3. Rewrite helper 仍无法保持源语义 → 注释原声明并输出明确 Review；Rule 不使用 Script fallback。
 4. 不按插件名写特例；实现必须是通用语义能力。
 5. 所有新标准必须同步：规范 → converter → validator/gate → tests → Golden/canonical。
-6. Source JavaScript 本身不自动修改；只在目标声明与运行时兼容性有证据时启用。
+6. Source JavaScript 本身不自动修改；QX/Surge 均直接引用原 URL，不做 runtime compatibility gate，仅在必要时读取正文辅助选择 QX HTTP Script action。
 
 ---
 
@@ -51,7 +51,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 
 ### 2.3 Rewrite / Complex helper
 
-- QX、Surge 都可调用通用 complex helper。
+- QX、Surge 的多 action Rewrite pipeline 可调用通用 complex helper；单 action 不进入 complex helper。
 - 同 phase Header / Body / JSON pipeline 可保持源顺序。
 - condition named capture、`${name.n}`、action-local `$0...$n` 已分离处理。
 - Header 名称大小写不敏感语义已在 helper 中处理。
@@ -66,132 +66,63 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 - request mock 使用 request-body helper，不用 Map Local 冒充。
 - QX request/response mock 使用已验证 Script action/helper。
 - Legacy mock JSON 内部双引号截断问题已修复。
-- JSON add / delete / replace 与 complex helper 已支持。
+- JSON delete / replace 优先原生 JQ；JSON add 在原生无法保持 no-overwrite 语义时使用专用 helper；多 action JSON pipeline 使用 complex helper。
 - legacy `jq-path=` 已按项目标准彻底丢弃，不解析、不下载、不生成 Review。
 
 ### 2.5 Rule / Script / 其他项目标准
 
 - Surge 去广告 Module 的源 `FINAL` 直接丢弃，不改写成 catch-all。
-- Surge Source Script 不做 runtime compatibility scan，只按 Surge declaration 格式转换。
-- QX Source Script 使用 fail-closed 兼容性判断；无正向 QX runtime 证据不启用。
+- QX / Surge Source Script 均不做 runtime compatibility scan，直接保留原始 Script URL；QX 仅在 declaration 不足以确定 header/body/echo action 时读取正文辅助分类。
+- QX 官方 sample 未确认的 Rule Type（逻辑规则、端口类等）只注释保留，不用 HTTP Rewrite Script 模拟。
+- Loon Plugin `PROXY` 不做策略转换：QX 保留字面 `PROXY`；Surge Module 保留源 Rule 注释。
 - QX snippet 的 filter / rewrite / mitm section 标题保持注释形式。
 - Cron / Network Changed / Generic Script 不属于当前去广告 converter 范围。
 - Egern 不纳入 WayX 仓库当前目标。
 
 ---
 
-## 3. 当前 Review 库存
+## 3. Review 库存
 
-下面的数字是当前 canonical 目标文件中的 **Review marker 数量**，不是插件数量。
+2026-09-30 规范 v1.4 改变了 Review 分类口径，旧 main 中的 **139 个 QX / 5 个 Surge Review marker** 仅作为变更前基线，不再代表新规范下的待办数量：
 
-### 3.1 Quantumult X
+- 原先因“QX Source Script compatibility 不确定”产生的 marker 将随 canonical regeneration 移除；Source Script 不再经过 runtime compatibility gate。
+- QX logical Rule、`DEST-PORT` 等未受官方 sample 支持的 Rule Type 改为“注释保留的不支持语义项”，不再尝试 Script 等价，也不计为 Rewrite helper backlog。
+- Loon Plugin `PROXY` 在 Surge Module 中改为源 Rule 注释保留，不再将其视作可通过策略映射解决的 Review。
+- Script declaration 中无法表达的 Loon `[Argument]` / dynamic option、QX `response.header.add` 等真正的目标能力缺口仍保留 Review。
 
-当前：**139 个 Review marker / 14 个目标文件**。
-
-| 文件 | Review 数 |
-|---|---:|
-| Bilibili.snippet | 21 |
-| BlockAdvertisers.snippet | 4 |
-| DianPing.snippet | 2 |
-| HTTPDNS.snippet | 2 |
-| JingDong.snippet | 4 |
-| MyBlockAds.snippet | 25 |
-| PinDuoDuo_remove_ads.snippet | 3 |
-| RuCu6_Amap.snippet | 15 |
-| Tieba_remove_ads.snippet | 1 |
-| Webpage.snippet | 15 |
-| Weibo.snippet | 21 |
-| XiaoHongShu.snippet | 13 |
-| YouTube.snippet | 3 |
-| Zhihu.snippet | 10 |
-| **合计** | **139** |
-
-按原因汇总：
-
-| 原因 | Marker 数 | 当前状态 |
-|---|---:|---|
-| Source Script 被 QX fail-closed 禁用/Review | 111 | 最大 backlog；需逐脚本证明 QX runtime 兼容性 |
-| QX logical Rule 无已验证原生或无损脚本等价 | 21 | 等待官方 sample/可证明方案 |
-| QX `DEST-PORT` 未验证 | 4 | 严格按 QX sample，暂不猜测 |
-| Script argument/enable/timeout/max-size/binary option 无法保持 | 2 | DianPing；需继续 native/helper 方案分析 |
-| QX `response.header.add` 重复 Header 语义未验证 | 1 | 禁止用 set 冒充 add |
-| **合计** | **139** | |
-
-### 3.2 Surge
-
-当前：**5 个 Review marker / 2 个目标文件**。
-
-| 文件 | Review 数 | 原因 |
-|---|---:|---|
-| Bilibili.sgmodule | 1 | 外部 policy/group binding 无法由去广告 Module 无损定义 |
-| Webpage.sgmodule | 4 | 外部 policy/group binding 无法由去广告 Module 无损定义 |
-| **合计** | **5** | |
-
----
+本分支完成 canonical regeneration 后，必须重新由目标文件生成 Review inventory，再将精确数字写回本节；禁止沿用旧口径的 139 / 5 作为当前状态。
 
 ## 4. 待办工作
 
 ### P0 — 优先处理
 
-#### P0-1：降低 QX Source Script Review
+#### P0-1：重新生成 canonical 并重建 Review inventory
 
-当前有 111 个 Source Script disabled/review marker。
+执行 v1.4 后重新生成全部 Catalog 管理的 QX snippet / Surge sgmodule，并确认：
 
-处理要求：
+- Source Script declaration 仍引用原作者 URL；
+- 不再出现 Source Script runtime compatibility disabled marker；
+- QX 不支持 Rule 以注释形式对账，且没有生成 Rule helper；
+- Surge 的 Loon `PROXY` Rule 仅注释保留；
+- helper 文件引用均存在且与 action 类型匹配；
+- Review inventory 按新口径重新统计。
 
-- 逐脚本读取真实源码。
-- 只使用 QX 官方 sample 已确认的 runtime/global 作为正向证据。
-- 如果脚本已经支持 QX，允许按原 Source Script URL + 正确 QX Script action 启用。
-- 不自动 fork / wrapper / 修改 Source JS。
-- 若依赖 Loon/Surge 私有 API 且源脚本没有 QX adapter，继续 Review。
-- 每减少一类 Review，必须新增通用 compatibility fixture，而不是插件名特判。
+#### P0-2：QX Script option 保真
 
-验收：
-
-- compatibility 判定有官方依据；
-- checkpoint + genericity + end-to-end 全通过；
-- canonical Review 数可解释地下降；
-- Source Script URL 保持原始来源。
-
-#### P0-2：QX logical Rule / DEST-PORT
-
-当前：
-
-- logical Rule：21 个 Review marker
-- DEST-PORT：4 个 Review marker
-
-处理要求：
-
-- 继续以用户上传的 QX 官方 sample 为语法权威。
-- 先确认是否存在官方目标声明。
-- 无原生格式时，再评估是否存在真正等价的 QX Script/Rule 能力。
-- Rule 层语义不能用 HTTP Rewrite helper 冒充。
-- 仍无法严格等价时保持 Review。
-
-验收：
-
-- 不扩大或缩小匹配范围；
-- policy 行为不变；
-- 不引入未在 QX sample 证明的 filter type。
-
-#### P0-3：QX Script option 保真
-
-当前 DianPing 有 2 个 Review marker，涉及 source argument / enable / timeout / max-size / binary option 组合。
+Loon Script declaration 的 `[Argument]`、dynamic enable/timeout/debug、max-size、binary body 等仍按目标声明能力逐项判断。不得为了“直接引用原脚本”而忽略 declaration 层无法表达的 option。
 
 处理顺序：
 
 1. QX 原生 declaration；
-2. 已验证 helper；
+2. 若问题属于 Rewrite 语义而非 Source Script 本体，使用对应专用 helper；
 3. 仍无法保持则注释 Review。
 
-不得通过忽略 option 来假装转换成功。
+#### P0-3：QX `response.header.add`
 
-#### P0-4：QX `response.header.add`
+重复 Header 语义仍未由当前 QX 官方 sample 证明可用普通 Header object 等价表达：
 
-当前 1 个 Review marker。
-
-- 继续检查 QX 官方 sample 是否存在可保留同名重复 Header 的 response 表达。
-- `set` / 普通 Header object 赋值不能视为 `add`。
+- 禁止用 set 冒充 add；
+- 单 action 不借用 complex helper；
 - 无官方等价形式前保持 Review。
 
 ### P1 — 项目结构与可维护性
@@ -257,7 +188,7 @@ Target 已转换项
 ### P2 — 长期质量工作
 
 - 继续扩充陌生插件 generic fixtures，防止能力只对当前 20 个 Catalog 插件有效。
-- 每次新增 QX 官方 sample 证据时，复核现有 Review 是否可以安全降级为 native/helper。
+- 每次新增 QX 官方 sample 证据时，复核现有 Rewrite Review 是否可以安全降级为 native/helper；Rule 只在官方明确支持对应 Rule Type 后才改为活动 filter。
 - 定期复核 validator whitelist 是否与当前官方 sample 一致。
 - 对 generated helper 做行为级 runtime fixture，而不只做字符串/语法断言。
 - 保持 `PROJECT_STATUS.md` 与实际 Review inventory 同步。
@@ -273,7 +204,7 @@ Target 已转换项
 - Surge source `FINAL`：**直接丢弃**。
 - legacy `jq-path=`：**直接丢弃**。
 - QX section heading：按项目约定注释。
-- Surge Source Script：不做 runtime compatibility scan。
+- QX / Surge Source Script：均不做 runtime compatibility scan；直接保留原 URL。
 - QX `header.add`：禁止用 set 冒充。
 - Cron / Network Changed / Generic Script：当前去广告范围不处理。
 - Egern：当前不属于 WayX 仓库目标。
@@ -285,11 +216,11 @@ Target 已转换项
 
 - [ ] 先更新/确认 `CONVERSION_SPEC.md` 对应 Block。
 - [ ] 无插件名/作者名特判。
-- [ ] 目标原生 → verified helper → Review 顺序正确。
+- [ ] Rewrite/Mock 为目标原生 → dedicated helper → multi-action complex helper → Review；Rule 不走 Script fallback。
 - [ ] Regex 只丢 `i/m/s`，body 未被全局改写。
 - [ ] Source comments、转换时间、作者 chance、分类、Target、Source 保留。
 - [ ] QX section heading 仍为注释。
-- [ ] Source Script 未被自动修改。
+- [ ] Source Script 未被自动修改，且 QX/Surge 未按 runtime compatibility 扫描结果启用/禁用。
 - [ ] checkpoint / genericity / end-to-end / syntax 全通过。
 - [ ] canonical outputs 重新生成。
 - [ ] repository audit / helper refs / Golden / Source Script URL preservation 全通过。
