@@ -105,7 +105,7 @@ request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header
 request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.set("X-B", "two")
 `;
 const requestAddSetOutput = convert(requestAddSetFixture, requestAddSetSource, new Map(), STAMP);
-assert.match(requestAddSetOutput.qx, /REVIEW REQUIRED: QX header\.add cannot be represented losslessly/);
+assert.match(requestAddSetOutput.qx, /REVIEW REQUIRED: header\.add duplicate semantics are not verified for qx/);
 assert.equal(
   requestAddSetOutput.qx.split(/\r?\n/).some(line => !line.trim().startsWith('#') && / url (?:request-header|script-request-header) /.test(line)),
   false,
