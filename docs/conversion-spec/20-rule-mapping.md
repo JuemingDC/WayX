@@ -64,7 +64,7 @@ Loon `[Rule]` 中的 `URL-REGEX` 不能作为 Quantumult X 普通 `filter_local`
 关键约束：
 - `URL-REGEX + REJECT` 在 QX 固定为 `reject-200`，这是 WayX 对 Loon Rule 语义的项目映射。
 - `REJECT-IMG / REJECT-DICT / REJECT-ARRAY` 不得统一降级成普通 `reject`。
-- Surge Module 只有 `DIRECT / REJECT / REJECT-TINYGIF` 可作为活动 `[Rule]` policy。需要具体 HTTP body 的 `REJECT-200/DICT/ARRAY` 降到官方 `[Map Local]`；`REJECT-DROP / REJECT-NO-DROP / CELLULAR / CELLULAR-ONLY / HYBRID / NO-HYBRID` 虽属于完整 Surge Profile 的内建 policy，但公开 Module Manual 未允许它们作为 Module Rule policy，因此源声明只注释保留，不做近似替换。
+- Surge Module 只有 `DIRECT / REJECT / REJECT-TINYGIF` 可作为 WayX 活动 `[Rule]` policy。需要具体 HTTP body 的 `REJECT-200/DICT/ARRAY` 降到官方 `[Map Local]`；其它无法按当前 ad-block Module Rule 语义等价表达的源 policy 只注释保留，不做近似替换。
 - 本节只处理 Loon `[Rule]`。Loon 旧 `[Rewrite]` 的 reject 映射见 Block 30。
 
 ## 20.3 QX IP 参数
@@ -105,7 +105,7 @@ NOT,((Rule1)),Policy
 | `REJECT-TINYGIF` | URL 场景 → `reject-img` | `REJECT-TINYGIF` |
 | 用户策略组 | 只有明确存在对应 QX policy 时可执行 | Module 不允许假设 → Review |
 
-Surge 完整 Profile 的 built-in policy 集合比 Module Rule 更大，但 Module Manual 对模块 `[Rule]` 有额外限制：活动规则只允许 `DIRECT / REJECT / REJECT-TINYGIF`。WayX 不把完整 Profile 能力外推到 `.sgmodule`；未被 Module Manual 允许的 built-in policy 只注释保留。
+WayX 只按 Surge Module Manual 验证当前 ad-block `[Rule]` 输出；活动规则 policy 固定为 `DIRECT / REJECT / REJECT-TINYGIF` 或已声明的参数化 policy。其它源 policy 不进入目标能力扩展，只按现有注释/Review 路径处理。
 
 Loon 插件 [Rule] 中的 `PROXY` 具有插件内部策略选择语义，不转换成其他 policy。Quantumult X 保留字面 `PROXY`，不得静默降为内建小写 `proxy`。
 
