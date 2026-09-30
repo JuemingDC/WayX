@@ -427,6 +427,10 @@ assert.equal(mixedJsonQx.qxAction, 'script-response-body');
 assert.ok(mixedJsonQx.script.indexOf('__wayxDel("Server");') < mixedJsonQx.script.indexOf('__wayxJsonReplace(__wayxJson,["data","ads"],false);'));
 assert.ok(mixedJsonQx.script.indexOf('__wayxJsonReplace(__wayxJson,["data","ads"],false);') < mixedJsonQx.script.indexOf('__wayxJsonDelete(__wayxJson,["data","tracking"]);'));
 assert.match(mixedJsonQx.script, /JSON\.stringify\(__wayxJson\)/);
+assert.ok(mixedJsonQx.script.indexOf('if(') < mixedJsonQx.script.indexOf('JSON.parse(String(__wayxBody ?? ""))'));
+assert.match(mixedJsonQx.script, /try\{__wayxJson=JSON\.parse\(String\(__wayxBody \?\? ""\)\);\}catch\{__wayxJson=undefined;\}/);
+assert.match(mixedJsonQx.script, /if\(__wayxJson===undefined\)\{\$done\(\{\}\);\}else\{/);
+
 const mixedJsonNull = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /api/ then response.header.set("X-Test", "ok") | response.json.replace("data.value", null)'),
   {target:'qx'},
