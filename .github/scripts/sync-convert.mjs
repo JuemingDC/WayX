@@ -42,7 +42,7 @@ registerComplexRewriteHandler({
   match: ast => ast.actions.length > 0 && ast.actions.every(action => action.name.startsWith(ast.phase + '.header.')),
   plan: (ast, _target, ctx) => {
     try {
-      const plan = renderQxHeaderScript(ast, {stamp:ctx.stamp, category:ctx.category, sourceLine:ctx.sourceLine});
+      const plan = renderMixedRewriteScript(ast, {target:'qx', stamp:ctx.stamp, category:ctx.category, sourceLine:ctx.sourceLine});
       const key = crypto.createHash('sha1').update('header\0' + ctx.sourceLine).digest('hex').slice(0, 10);
       const filename = 'header_' + key + '.js';
       ctx.generatedScripts.set(filename, plan.script);
@@ -392,42 +392,32 @@ function qxHeaderRewriteInfo(line, argumentIds = []) {
   }
 }
 
-function qxNativeHeaderReplacePlan(ast) {
-  // The uploaded Crossutility sample verifies only the whole-block
-  // `request-header` primitive. Response header mutation must use the
-  // documented `script-response-header` path.
+function qxNativeHeaderPlan(ast) {
+  // The uploaded Crossutility sample verifies whole-block `request-header`.
+  // Native use is restricted to request.header.add, where inserting a new
+  // CRLF-delimited field preserves existing same-name fields. set/del/replace
+  // use script-request-header so Loon's case-insensitive field identity and
+  // action-local replacement captures remain intact.
   if (ast.phase !== 'request' || ast.actions.length !== 1) return null;
   const condition = simpleUrlRewriteCondition(ast);
   if (!condition.ok) return null;
   const action = ast.actions[0];
+  if (action.name !== 'request.header.add') return null;
 
-  if (action.name === 'request.header.add') {
-    const nameNode=action.args[0], valueNode=action.args[1];
-    if (!nameNode || !['string','raw-string'].includes(nameNode.type) ||
-        !valueNode || !['string','raw-string'].includes(valueNode.type)) return null;
-    const name=String(nameNode.value), value=String(valueNode.value);
-    if (!name || /[\s:\r\n]/.test(name) || /[\r\n]/.test(value) || value.includes('$' + '{')) return null;
-    // QX says request-header operates on the whole HTTP header string and may
-    // match CRLF. Insert after the request line; existing same-name fields are
-    // untouched, so this preserves Loon add rather than degrading to set.
-    const headerPattern='^([^\\r\\n]+)(\\r\\n)';
-    const headerReplacement='$1$2' + name + ': ' + value + '$2';
-    return {
-      section:'rewrite',
-      line:condition.pattern + ' url request-header ' + headerPattern + ' request-header ' + headerReplacement,
-    };
-  }
+  const nameNode=action.args[0], valueNode=action.args[1];
+  if (!nameNode || !['string','raw-string'].includes(nameNode.type) ||
+      !valueNode || !['string','raw-string'].includes(valueNode.type)) return null;
+  const name=String(nameNode.value), value=String(valueNode.value);
+  // QX replacement strings interpret $-references. Without an official
+  // literal-dollar escape contract, such values cannot use this native path.
+  if (!name || /[\s:\r\n]/.test(name) || /[\r\n$]/.test(value)) return null;
 
-  if (action.name !== 'request.header.replace') return null;
-  const nameNode = action.args[0], regex = action.args[1], replacementNode = action.args[2];
-  if (!nameNode || !['string','raw-string'].includes(nameNode.type) || regex?.type !== 'regex' ||
-      !replacementNode || !['string','raw-string'].includes(replacementNode.type)) return null;
-  const name = String(nameNode.value), replacement = String(replacementNode.value);
-  if (/\s/.test(name) || /[\r\n]/.test(replacement) || replacement.includes('$' + '{')) return null;
-  const headerName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const headerPattern = '(\\r\\n)' + headerName + ':\\s*' + regex.pattern + '(\\r\\n)';
-  const headerReplacement = '$1' + name + ': ' + replacement + '$2';
-  return {section:'rewrite', line:condition.pattern + ' url request-header ' + headerPattern + ' request-header ' + headerReplacement};
+  const headerPattern='^([^\\r\\n]+)(\\r\\n)';
+  const headerReplacement='$1$2' + name + ': ' + value + '$2';
+  return {
+    section:'rewrite',
+    line:condition.pattern + ' url request-header ' + headerPattern + ' request-header ' + headerReplacement,
+  };
 }
 function planAdjacentQxHeaderGroups(items, ctx) {
   const plans = new Map();
@@ -459,12 +449,13 @@ function planAdjacentQxHeaderGroups(items, ctx) {
     if (end === index) continue;
 
     const mergedAst = {...first.ast, actions};
-    const nativePlan = qxNativeHeaderReplacePlan(mergedAst);
+    const nativePlan = qxNativeHeaderPlan(mergedAst);
     if (nativePlan) {
       plans.set(index, nativePlan);
     } else {
       try {
-        const plan = renderQxHeaderScript(mergedAst, {
+        const plan = renderMixedRewriteScript(mergedAst, {
+          target:'qx',
           stamp: ctx.stamp,
           category: ctx.category,
           sourceLine: sourceLines.join(' | '),
@@ -637,7 +628,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
 
     if (!qxConsumed && !qr) {
       const headerInfo = qxHeaderRewriteInfo(item.line, qctx.argumentIds || []);
-      if (headerInfo) qr = qxNativeHeaderReplacePlan(headerInfo.ast);
+      if (headerInfo) qr = qxNativeHeaderPlan(headerInfo.ast);
     }
     if (!qxConsumed && !qr) qr = rewriteV2Action(item.line, 'qx', qctx);
 
