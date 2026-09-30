@@ -103,7 +103,7 @@ Parser 只负责源语法，不得包含目标平台知识。至少解析并保�
 - logical rule 的递归 children；
 - nested/top-level 位置。
 
-QX / Surge planner 只能消费 AST，不得再次对原始声明做 CSV 拆分、逻辑子规则拆分或插件身份判断。
+QX / Surge planner 只能消费 AST，不得再次对原始声明做 CSV 拆分、逻辑子规则拆分或插件身份判断。Parser 对未知但可结构化的 Rule Type 仍应成功产出 AST；某个逻辑组合是否合法、某 Rule Type 是否受目标支持，由 target planner/validator 决定。
 
 转换决策只允许依赖：
 - Rule Type；
