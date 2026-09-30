@@ -10,6 +10,7 @@ export * from './rewrite-v2-safe.mjs';
 export * from './script-compat.mjs';
 export * from './dependency.mjs';
 export * from './qx-mock.mjs';
+export * from './surge-mock.mjs';
 export * from './target-regex.mjs';
 export * from './rewrite-v2-semantic.mjs';
 export * from './qx-semantic-script.mjs';
