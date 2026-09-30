@@ -62,7 +62,7 @@ WayX/
 
 转换时保留原注释，并追加转换时间、作者 chance、模块分类、目标平台与原始来源。
 
-QX 当前支持 filter/rewrite 前置 note。WayX 只把严格一对一的源注释转成：
+QX 当前支持 filter/rewrite 前置 note。源 `[Rule]`、`[Rewrite]`、`[Script]` 只要最终生成 QX filter/rewrite，都只把严格一对一的源注释转成：
 
 ```text
 {# 注释 #} host-suffix, example.com, reject
