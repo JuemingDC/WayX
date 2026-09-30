@@ -44,6 +44,33 @@ assert.equal(
 assert.match(headerGroupOutput.surge, /header-add content-disposition inline/);
 assert.match(headerGroupOutput.surge, /header-del content-type/);
 assert.match(headerGroupOutput.surge, /header-add content-type text\/plain; charset=utf-8/);
+const requestAddFixture = {
+  id:'RequestHeaderAddFixture',
+  source:'https://example.invalid/request-header-add.lpx',
+  qx:'RequestHeaderAddFixture.snippet',
+  surge:'RequestHeaderAddFixture.sgmodule',
+  category:'测试',
+};
+const requestAddSource = `#!name=RequestHeaderAddFixture
+[Rewrite]
+request if ${url} ~= /^https:\/\/api\.example\.com\//i then request.header.add("X-Test", "one")
+response if ${url} ~= /^https:\/\/api\.example\.com\//i then response.header.replace("X-Test", /one/, "two")
+`;
+const requestAddOutput = convert(requestAddFixture, requestAddSource, new Map(), STAMP);
+assert.match(
+  requestAddOutput.qx,
+  /url request-header ^([^\\r\\n]+)(\\r\\n) request-header $1$2X-Test: one$2/,
+  'QX request.header.add must use whole request-header insertion rather than object set',
+);
+assert.equal(
+  requestAddOutput.qx.split(/\\r?\\n/).some(line => !line.trim().startsWith('#') && / url response-header /.test(line)),
+  false,
+  'QX must never emit the undocumented response-header rewrite token',
+);
+assert.match(requestAddOutput.qx, /url script-response-header .*header_.*\.js/);
+assert.doesNotMatch(requestAddOutput.qx, /REVIEW REQUIRED/);
+assert.match(requestAddOutput.surge, /header-add X-Test one/);
+
 
 const qxValidatorEntry = {id:'QxValidatorFixture'};
 const validQxValidatorText = `# Name: QxValidatorFixture
@@ -69,6 +96,10 @@ assert.throws(
 );
 assert.throws(
   () => validateQX(validQxValidatorText.replace('^https://example\\.com url reject', '^https://example\\.com url loon-private-action'), qxValidatorEntry),
+  /unsupported Quantumult X rewrite action/,
+);
+assert.throws(
+  () => validateQX(validQxValidatorText.replace('^https://example\\.com url reject', '^https://example\\.com url response-header x response-header y'), qxValidatorEntry),
   /unsupported Quantumult X rewrite action/,
 );
 
