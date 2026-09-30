@@ -3,6 +3,7 @@
 // Category: Converter / Legacy Rewrite
 import crypto from 'node:crypto';
 import { minifyJq, quoteJq } from './jq.mjs';
+import { normalizeRegexBodyForTarget } from './target-regex.mjs';
 
 const REJECT_ACTIONS = new Set(['reject','reject-200','reject-img','reject-dict','reject-array']);
 
@@ -152,10 +153,12 @@ function planHeader(pattern, action, parsed, target) {
   if (target === 'qx') {
     return review(pattern, action, 'Quantumult X official static rewrite sample does not provide a lossless field-oriented equivalent for this Loon header mutation');
   }
+  const targetPattern=normalizeRegexBodyForTarget(pattern);
   const lines=[];
   for(let i=0;i<tokens.length;i+=width){
     const args=tokens.slice(i,i+width).map(unquote);
-    lines.push(`${direction} ${pattern} header-${parsed.op} ${args.join(' ')}`);
+    if (parsed.op === 'replace-regex') args[1]=normalizeRegexBodyForTarget(args[1]);
+    lines.push(`${direction} ${targetPattern} header-${parsed.op} ${args.join(' ')}`);
   }
   return {section:'header', lines};
 }
@@ -163,14 +166,16 @@ function planHeader(pattern, action, parsed, target) {
 function planBodyRegex(pattern, action, parsed, target) {
   const tokens=shellTokens(parsed.rest).map(unquote);
   if (!tokens.length || tokens.length % 2) return review(pattern, action, 'body regex rewrite requires regex/replacement pairs');
+  const targetPattern=normalizeRegexBodyForTarget(pattern);
+  for(let i=0;i<tokens.length;i+=2) tokens[i]=normalizeRegexBodyForTarget(tokens[i]);
   if (target === 'qx') {
     const verb=parsed.phase === 'request' ? 'request-body' : 'response-body';
     const lines=[];
-    for(let i=0;i<tokens.length;i+=2) lines.push(`${pattern} url ${verb} ${tokens[i]} ${verb} ${tokens[i+1]}`);
+    for(let i=0;i<tokens.length;i+=2) lines.push(`${targetPattern} url ${verb} ${tokens[i]} ${verb} ${tokens[i+1]}`);
     return {section:'rewrite', lines};
   }
   const direction=parsed.phase === 'request' ? 'http-request' : 'http-response';
-  return {section:'body', line:`${direction} ${pattern} ${tokens.join(' ')}`};
+  return {section:'body', line:`${direction} ${targetPattern} ${tokens.join(' ')}`};
 }
 
 function planJson(pattern, action, parsed, target) {
@@ -182,12 +187,13 @@ function planJson(pattern, action, parsed, target) {
   let quoted;
   try { quoted=quoteJq(jq); }
   catch (error) { return review(pattern, action, String(error?.message || error)); }
+  const targetPattern=normalizeRegexBodyForTarget(pattern);
   if (target === 'qx') {
     const verb=parsed.phase === 'request' ? 'jsonjq-request-body' : 'jsonjq-response-body';
-    return {section:'rewrite', line:`${pattern} url ${verb} ${quoted}`};
+    return {section:'rewrite', line:`${targetPattern} url ${verb} ${quoted}`};
   }
   const verb=parsed.phase === 'request' ? 'http-request-jq' : 'http-response-jq';
-  return {section:'body', line:`${verb} ${pattern} ${quoted}`};
+  return {section:'body', line:`${verb} ${targetPattern} ${quoted}`};
 }
 
 function planMock(pattern, action, parsed, target, ctx) {
@@ -196,42 +202,43 @@ function planMock(pattern, action, parsed, target, ctx) {
   if (mock.base64) return review(pattern, action, 'legacy Base64 mock requires binary-safe dependency handling');
   if (parsed.phase === 'request') return review(pattern, action, 'legacy request-body mock requires a dedicated request-body helper plan');
   if (mock.data === null) return review(pattern, action, 'legacy response mock has no inline data');
+  const targetPattern=normalizeRegexBodyForTarget(pattern);
   if (target === 'surge') {
     const ct=contentType(mock.type);
     if (!ct) return review(pattern, action, 'binary response mock requires data-type/base64 or file materialization');
     return {
       section:'map',
-      line:`${pattern} data-type=text data=${JSON.stringify(mock.data)} status-code=${mock.status} header=${JSON.stringify('Content-Type:'+ct)}`,
+      line:`${targetPattern} data-type=text data=${JSON.stringify(mock.data)} status-code=${mock.status} header=${JSON.stringify('Content-Type:'+ct)}`,
     };
   }
-  if (mock.status === 200 && mock.type === 'json' && mock.data === '{}') return {section:'rewrite', line:`${pattern} url reject-dict`};
-  if (mock.status === 200 && mock.type === 'json' && mock.data === '[]') return {section:'rewrite', line:`${pattern} url reject-array`};
+  if (mock.status === 200 && mock.type === 'json' && mock.data === '{}') return {section:'rewrite', line:`${targetPattern} url reject-dict`};
+  if (mock.status === 200 && mock.type === 'json' && mock.data === '[]') return {section:'rewrite', line:`${targetPattern} url reject-array`};
   const key=crypto.createHash('sha1').update(pattern+action).digest('hex').slice(0,10);
   const filename=`mock_${key}.js`;
   ctx.generatedScripts.set(filename,mockScriptContent(mock));
-  return {section:'rewrite', line:`${pattern} url script-echo-response ${ctx.rawBase}/script/${ctx.id}/${filename}`};
+  return {section:'rewrite', line:`${targetPattern} url script-echo-response ${ctx.rawBase}/script/${ctx.id}/${filename}`};
 }
 
 export function planLegacyRewrite(pattern, action, target, ctx={}) {
-  if (target === 'surge') pattern = pattern;
+  const targetPattern=normalizeRegexBodyForTarget(pattern);
   const parsed=classifyLegacyRewrite(action);
   if (parsed.kind === 'reject') {
-    if (target === 'qx') return {section:'rewrite', line:`${pattern} url ${parsed.action}`};
-    if (parsed.action === 'reject') return {section:'url', line:`${pattern} _ reject`};
-    if (parsed.action === 'reject-img') return {section:'map', line:`${pattern} data-type=tiny-gif status-code=200`};
-    if (parsed.action === 'reject-dict') return {section:'map', line:`${pattern} data-type=text data="{}" status-code=200 header="Content-Type:application/json"`};
-    if (parsed.action === 'reject-array') return {section:'map', line:`${pattern} data-type=text data="[]" status-code=200 header="Content-Type:application/json"`};
-    return {section:'map', line:`${pattern} data-type=text data="" status-code=200`};
+    if (target === 'qx') return {section:'rewrite', line:`${targetPattern} url ${parsed.action}`};
+    if (parsed.action === 'reject') return {section:'url', line:`${targetPattern} _ reject`};
+    if (parsed.action === 'reject-img') return {section:'map', line:`${targetPattern} data-type=tiny-gif status-code=200`};
+    if (parsed.action === 'reject-dict') return {section:'map', line:`${targetPattern} data-type=text data="{}" status-code=200 header="Content-Type:application/json"`};
+    if (parsed.action === 'reject-array') return {section:'map', line:`${targetPattern} data-type=text data="[]" status-code=200 header="Content-Type:application/json"`};
+    return {section:'map', line:`${targetPattern} data-type=text data="" status-code=200`};
   }
   if (parsed.kind === 'reject-video') return review(pattern, action, 'target mapping for Loon reject-video is not yet proven by official target documentation');
   if (parsed.kind === 'redirect') {
     return target === 'qx'
-      ? {section:'rewrite', line:`${pattern} url ${parsed.status} ${parsed.target}`}
-      : {section:'url', line:`${pattern} ${parsed.target} ${parsed.status}`};
+      ? {section:'rewrite', line:`${targetPattern} url ${parsed.status} ${parsed.target}`}
+      : {section:'url', line:`${targetPattern} ${parsed.target} ${parsed.status}`};
   }
   if (parsed.kind === 'url-rewrite') {
     return target === 'surge'
-      ? {section:'url', line:`${pattern} ${parsed.target} header`}
+      ? {section:'url', line:`${targetPattern} ${parsed.target} header`}
       : review(pattern, action, 'Quantumult X official sample has no verified transparent URL-rewrite equivalent for Loon legacy header action');
   }
   if (parsed.kind === 'header') return planHeader(pattern, action, parsed, target);
