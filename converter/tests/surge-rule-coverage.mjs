@@ -27,7 +27,6 @@ const stats = {
   files: 0,
   rules: 0,
   native: 0,
-  dropped: 0,
   boundProxy: 0,
   unsupportedPolicy: 0,
   review: 0,
@@ -81,8 +80,8 @@ assert.ok(stats.files > 0, 'no Loon source files were scanned');
 assert.ok(stats.rules > 0, 'no Loon [Rule] entries were scanned');
 
 // Loon plugin PROXY is deterministically bound through a declared Module
-// argument placeholder. Full-profile built-in policies that the Module Manual
-// does not allow remain deterministic comments. Unknown external names remain Review.
+// argument placeholder. Source policies that cannot be represented by a Surge
+// ad-block Module Rule remain deterministic comments. Unknown external names remain Review.
 const unexpectedReview = stats.reviewLines.filter(x => x.reason !== 'external-policy');
 assert.equal(
   unexpectedReview.length,
@@ -97,6 +96,6 @@ for (const item of stats.reviewLines.filter(x => x.reason === 'external-policy')
 
 const types = [...stats.types.entries()].sort((a, b) => a[0].localeCompare(b[0]));
 console.log(
-  `Surge Rule coverage: files=${stats.files}, rules=${stats.rules}, native=${stats.native}, dropped=${stats.dropped}, boundProxy=${stats.boundProxy}, unsupportedPolicy=${stats.unsupportedPolicy}, review=${stats.review}`
+  `Surge Rule coverage: files=${stats.files}, rules=${stats.rules}, native=${stats.native}, boundProxy=${stats.boundProxy}, unsupportedPolicy=${stats.unsupportedPolicy}, review=${stats.review}`
 );
 console.log('Rule types: ' + types.map(([type, count]) => `${type}=${count}`).join(', '));
