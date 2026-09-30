@@ -69,7 +69,7 @@ for (const entry of manifest) {
 
     let out = convert(entry, source, scripts, stamp, qxMockFiles, jqFiles);
     validateQX(out.qx, entry);
-    validateSurgeModule(out.surge, entry);
+    validateSurgeModule(out.surge, entry, {adblockScope:true});
 
     const helperDir = path.join(GENERATED_SCRIPT_DIR, entry.id);
     const helperDiffs = [];
@@ -94,7 +94,7 @@ for (const entry of manifest) {
     // helper scripts. Source Script URLs remain untouched and are never mirrored.
     out = convert(entry, source, scripts, nowCN(), qxMockFiles, jqFiles);
     validateQX(out.qx, entry);
-    validateSurgeModule(out.surge, entry);
+    validateSurgeModule(out.surge, entry, {adblockScope:true});
 
     await fs.mkdir(path.dirname(qxPath), {recursive:true});
     await fs.mkdir(path.dirname(surgePath), {recursive:true});
