@@ -25,6 +25,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 4. 不按插件名写特例；实现必须是通用语义能力。
 5. 所有新标准必须同步：规范 → converter → validator/gate → tests → Golden/canonical。
 6. Source JavaScript 本身不自动修改；QX/Surge 均直接引用原 URL，不做 runtime compatibility gate，仅在必要时读取正文辅助选择 QX HTTP Script action。
+7. QX 源注释仅在严格一注释一规则时转换为 `{# note #}`；一条注释覆盖多条连续规则时保持普通注释，不能只绑定第一条。
 
 ---
 
@@ -76,6 +77,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 - QX 官方 sample 未确认的 Rule Type（逻辑规则、端口类等）只注释保留，不用 HTTP Rewrite Script 模拟。
 - Loon Plugin `PROXY` 不做策略转换：QX 保留字面 `PROXY`；Surge Module 保留源 Rule 注释。
 - QX snippet 的 filter / rewrite / mitm section 标题保持注释形式。
+- QX filter/rewrite 支持前置 `{# note #}`；converter 已按“单行注释 + 单条源规则 + 单条活动目标规则”限制内联，分组注释不内联。
 - Cron / Network Changed / Generic Script 不属于当前去广告 converter 范围。
 - Egern 不纳入 WayX 仓库当前目标。
 
@@ -218,7 +220,7 @@ Target 已转换项
 - [ ] 无插件名/作者名特判。
 - [ ] Rewrite/Mock 为目标原生 → dedicated helper → multi-action complex helper → Review；Rule 不走 Script fallback。
 - [ ] Regex 只丢 `i/m/s`，body 未被全局改写。
-- [ ] Source comments、转换时间、作者 chance、分类、Target、Source 保留。
+- [ ] Source comments、转换时间、作者 chance、分类、Target、Source 保留；QX 一对一注释正确内联，分组注释未误绑第一条规则。
 - [ ] QX section heading 仍为注释。
 - [ ] Source Script 未被自动修改，且 QX/Surge 未按 runtime compatibility 扫描结果启用/禁用。
 - [ ] checkpoint / genericity / end-to-end / syntax 全通过。
