@@ -70,7 +70,10 @@ normalize source
 → Rewrite converter
    ├─ legacy rewrite
    └─ Rewrite v2
-→ Script declaration converter
+→ Script converter
+   ├─ legacy Script parser
+   ├─ Script v2 parser
+   └─ target-neutral Script IR → QX / Surge Script planner
 → MITM converter
 → target planner
    ├─ Rule: target native → unsupported type commented out（不走 Script fallback）
@@ -197,11 +200,33 @@ Rule 不属于上述 fallback 链。QX 官方 sample 未确认的 Rule Type（�
 
 Unknown 与 Unsupported 必须分开：已知 Loon 语义、只是目标平台缺少等价能力，属于 Review；连源语义/语法类型或 complex signature 都未登记的内容属于 Unknown，必须携带 `ISSUE REQUIRED` 标记，以便自动化创建/复用议题。
 
+## 5.5.1 Script Semantic IR
+
+Loon `[Script]` 与 Rewrite 相同，source syntax 与 target planning 必须分层：
+
+```text
+Legacy Script source ─→ Legacy Script parser ─┐
+                                            ├→ Script Semantic IR → QX / Surge Script planner
+Script v2 source ─────→ Script v2 parser ────┘
+```
+
+Script IR 只保留源语义与必要 source-specific payload，至少包括：
+- `sourceSyntax`：`legacy` / `v2`；
+- 完整 source declaration；
+- HTTP phase；
+- URL pattern / condition；
+- 原始 Source Script path/URL；
+- argument；
+- enable / requires-body / binary-body-mode / timeout / max-size / debug / tag；
+- v2 AST 或 Legacy parser payload。
+
+IR 不得包含 QX Script action、Surge `type=http-*`、目标 section 或 capability registry。Production orchestration 只构建 IR 并调用 `planQxScript()` / `planSurgeScript()`；QX action 选择、Surge 参数展开和目标能力判断全部归 target planner。
+
 ## 5.6 Target Planner
 
 ### Quantumult X
 
-Rewrite 顶层入口固定为 `converter/src/rewrite-qx.mjs::planQxRewrite(ir, ctx)`。该 planner 拥有 QX Rewrite 的 native/helper/complex/Review 顺序；orchestration 不得旁路。
+Rewrite 顶层入口固定为 `converter/src/rewrite-qx.mjs::planQxRewrite(ir, ctx)`；Script 顶层入口固定为 `converter/src/script-qx.mjs::planQxScript(ir, ctx)`。两个 planner 的目标决策均不得由 orchestration 旁路。
 
 目标 planner 只能输出 Crossutility 官方 sample 已确认的：
 - filter；
@@ -218,7 +243,7 @@ QX 的功能最终都落在：
 
 ### Surge
 
-Rewrite 顶层入口固定为 `converter/src/rewrite-surge.mjs::planSurgeRewrite(ir, ctx)`。该 planner 拥有 Surge Rewrite 的 native/helper/complex/Review 顺序；orchestration 不得旁路。
+Rewrite 顶层入口固定为 `converter/src/rewrite-surge.mjs::planSurgeRewrite(ir, ctx)`；Script 顶层入口固定为 `converter/src/script-surge.mjs::planSurgeScript(ir, ctx)`。两个 planner 的目标决策均不得由 orchestration 旁路。
 
 目标 planner 必须按 Surge 官方能力分流：
 - `[Rule]`

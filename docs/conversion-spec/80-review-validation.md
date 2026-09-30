@@ -250,5 +250,24 @@ CI 必须验证 Rewrite target planning 已从 orchestration 中分离：
 - QX planner：`converter/src/rewrite-qx.mjs`
 - Surge planner：`converter/src/rewrite-surge.mjs`
 - architecture contract：`converter/tests/rewrite-target-planners.mjs`
+## 80.14 Script IR / target-planner architecture gate
+
+CI 必须验证 Script target planning 已从 orchestration 中分离：
+
+- Legacy Script 与 Script v2 都必须先构建 `script-ir.mjs` 的 target-neutral IR；
+- `sync-convert.mjs` 只允许调用 `planQxScript()` / `planSurgeScript()`，不得直接调用 `selectQxScriptAction()`、`qxScriptV2Plan()`、`surgeScriptV2Plan()`；
+- `sync-convert.mjs` 不得自行解析 `requires-body`、`binary-body-mode`、`timeout`、`max-size`、`argument`、`enable` 等 Legacy Script target semantics；
+- `script-ir.mjs` 不得 import QX/Surge capability registry，也不得包含 target action/section；
+- QX planner 必须只生成官方 sample 已确认的 Script rewrite action；
+- Surge planner 必须只生成官方 Manual 已确认的 `http-request/http-response` Script declaration 参数；
+- Source Script URL preservation、QX KOP-XIAO-compatible option policy、Surge Argument/enable mapping保持现状；
+- 纯架构迁移必须保持 canonical 输出不变。
+
+实现：
+- Legacy parser：`converter/src/script-legacy.mjs`
+- IR：`converter/src/script-ir.mjs`
+- QX planner：`converter/src/script-qx.mjs`
+- Surge planner：`converter/src/script-surge.mjs`
+- architecture contract：`converter/tests/script-ir-target-planners.mjs`
 
 

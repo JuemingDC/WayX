@@ -11,7 +11,7 @@ const contracts=[
   ['30','docs/conversion-spec/30-rewrite-mapping.md',['converter/src/rewrite-ir.mjs','converter/src/rewrite-qx.mjs','converter/src/rewrite-surge.mjs','converter/src/rewrite-plan-result.mjs','converter/src/legacy-rewrite.mjs','converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-semantic.mjs','converter/src/complex-rewrite-types.mjs','converter/src/complex-rewrite-registry.mjs','converter/tests/rewrite-ir.mjs','converter/tests/rewrite-target-planners.mjs','converter/tests/complex-source-inventory.mjs']],
   ['40','docs/conversion-spec/40-regex-condition.md',['converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-actions.mjs','converter/src/target-regex.mjs']],
   ['50','docs/conversion-spec/50-json-jq-mock.md',['converter/src/jq.mjs','converter/src/dependency.mjs','converter/src/qx-mock.mjs','converter/src/surge-mock.mjs']],
-  ['60','docs/conversion-spec/60-script-argument.md',['converter/src/script.mjs','converter/src/script-v2.mjs','converter/src/script-v2-target.mjs','converter/src/argument.mjs']],
+  ['60','docs/conversion-spec/60-script-argument.md',['converter/src/script.mjs','converter/src/script-legacy.mjs','converter/src/script-v2.mjs','converter/src/script-ir.mjs','converter/src/script-qx.mjs','converter/src/script-surge.mjs','converter/src/script-v2-target.mjs','converter/src/argument.mjs','converter/tests/script-ir-target-planners.mjs']],
   ['70','docs/conversion-spec/70-mitm-comments.md',['converter/src/mitm.mjs','converter/src/metadata.mjs']],
   ['80','docs/conversion-spec/80-review-validation.md',['converter/src/surge-module.mjs','converter/src/unknown-issue.mjs','converter/src/qx-official-capabilities.mjs','converter/src/surge-official-capabilities.mjs','converter/tools/conversion-reports.mjs','converter/tests/unknown-issue-markers.mjs','converter/tests/qx-official-capabilities.mjs','converter/tests/surge-official-capabilities.mjs','converter/tests/genericity-audit.mjs','converter/tests/generated-helper-refs.mjs','converter/tests/end-to-end-golden.mjs']],
   ['90','docs/conversion-spec/90-project-workflow.md',['.github/scripts/sync-convert.mjs','.github/scripts/propose-conversion-issues.mjs','converter/tools/regenerate-canonical.mjs','.github/workflows/converter-check.yml','.github/workflows/upstream-monitor.yml']],
@@ -98,6 +98,19 @@ assert.match(syncConverter,/QX_WAYX_SNIPPET_MITM_KEYS/, 'Block 80: QX validator 
 assert.match(syncConverter,/supportedSourceSections/, 'Block 80: source orchestration must explicitly account for unsupported active sections');
 assert.match(syncConverter,/ISSUE REQUIRED \[unknown-source-section\]/, 'Block 80: unknown active source sections must fail closed and request an issue');
 assert.equal(/inspectQxScriptCompatibility|qxManualPortComment/.test(syncConverter), false, 'Block 60: production converter must not gate Source Script execution on runtime compatibility scanning');
+const scriptIr=await fs.readFile(path.join(ROOT,'converter/src/script-ir.mjs'),'utf8');
+const scriptQx=await fs.readFile(path.join(ROOT,'converter/src/script-qx.mjs'),'utf8');
+const scriptSurge=await fs.readFile(path.join(ROOT,'converter/src/script-surge.mjs'),'utf8');
+assert.equal(/qx-official-capabilities|surge-official-capabilities/.test(scriptIr), false, 'Block 60: Script IR must remain target-neutral');
+assert.equal(/qxAction|surgeType|section:/.test(scriptIr), false, 'Block 60: Script IR must not encode target action or section');
+assert.match(syncConverter,/planQxScript\(ir/, 'Block 60: orchestration must delegate QX Script planning');
+assert.match(syncConverter,/planSurgeScript\(ir/, 'Block 60: orchestration must delegate Surge Script planning');
+assert.equal(/selectQxScriptAction\(|qxScriptV2Plan\(|surgeScriptV2Plan\(|function parseScriptLine\(/.test(syncConverter), false, 'Block 60: orchestration must not own Script target planning or Legacy parsing');
+assert.equal(/surgeEnableRequirement\(|surgeDynamicOptionValue\(|surgePluginObjectArgument\(|parseLegacyLoonPluginObjectRefs\(/.test(syncConverter), false, 'Block 60: orchestration must not expand Surge Script parameters');
+assert.equal(/normalizeRegexBodyForTarget\(sc\.pattern\)|sc\.requiresBody|sc\.binary|sc\.timeout|sc\.maxSize|sc\.argument|sc\.enable/.test(syncConverter), false, 'Block 60: orchestration must not route Legacy Script options');
+assert.match(scriptQx,/export function planQxScript\(ir/, 'Block 60: QX Script planner must consume Script IR');
+assert.match(scriptSurge,/export function planSurgeScript\(ir/, 'Block 60: Surge Script planner must consume Script IR');
+assert.match(converterWorkflow,/script-ir-target-planners\.mjs/, 'Block 60/80: Converter Check must execute Script IR target planner contract');
 const surgeValidator=await fs.readFile(path.join(ROOT,'converter/src/surge-module.mjs'),'utf8');
 assert.match(surgeValidator,/WayX ad-block Surge \[Script\] only accepts HTTP rewrite types/, 'Block 80: Surge validator must be explicitly scoped to ad-block rewrite scripts');
 assert.match(surgeValidator,/SURGE_WAYX_REWRITE_SECTIONS/, 'Block 80: Surge validator must consume the official-backed rewrite registry');

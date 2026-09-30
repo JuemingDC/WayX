@@ -1,5 +1,29 @@
 # Block 60 — Script / Argument
 
+## 60.0 Script IR / Target Planner 架构
+
+Loon `[Script]` 固定采用：
+
+```text
+Legacy http-request/http-response ─→ legacy Script parser ─┐
+                                                         ├→ target-neutral Script IR
+Script v2 request/response ───────→ Script v2 parser ───┘
+                                                         ├→ planQxScript()
+                                                         └→ planSurgeScript()
+```
+
+固定职责：
+- Legacy parser 只解析 Loon `http-request/http-response <pattern> key=value,...`；
+- Script v2 parser 继续由 `script-v2.mjs` 负责；
+- `script-ir.mjs` 统一保留 source syntax、source declaration、phase、pattern/condition、原始 script path、argument 与 options；
+- IR 不得写入 QX action、Surge `type=`、目标 section 或目标 capability；
+- QX planner 独占 `script-request-header/body`、`script-response-header/body`、`script-echo-response`、`script-analyze-echo-response` 的选择；
+- Surge planner 独占 `type=http-request/http-response` 与 `requires-body/max-size/binary-body-mode/timeout/argument/debug` 等声明展开；
+- `sync-convert.mjs` 不得重新解析 Legacy option 或自行决定任何 target Script action/parameter；
+- Source JavaScript 正文仍只允许为 QX action 类型判定提供行为信号，不做 runtime compatibility gate。
+
+本重构不改变现有 option policy，不扩大 Script scope，也不改写 Source Script URL。
+
 ## 60.1 Source Script 原则
 
 Source JavaScript 不做正文改写。
@@ -188,9 +212,13 @@ Source Script 的跨平台运行时适配由原脚本自身负责，不属于 Wa
 
 ## 60.8 自动化实现索引
 
-- Script action：`converter/src/script.mjs`
+- Script action behavior inspector：`converter/src/script.mjs`
+- Legacy Script parser：`converter/src/script-legacy.mjs`
 - Script v2 parser：`converter/src/script-v2.mjs`
-- Script v2 target planner：`converter/src/script-v2-target.mjs`
+- Script Semantic IR：`converter/src/script-ir.mjs`
+- QX Script planner：`converter/src/script-qx.mjs`
+- Surge Script planner：`converter/src/script-surge.mjs`
+- Script v2 low-level target renderer：`converter/src/script-v2-target.mjs`
 - Surge Rewrite argument helper：`converter/src/complex-rewrite-script.mjs`
 - Loon Argument parser：`converter/src/argument.mjs`
 - Argument dependency analysis：`converter/src/argument-usage.mjs`
