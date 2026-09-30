@@ -199,7 +199,7 @@ Quantumult X 与 Surge **均不做 Source JavaScript runtime compatibility 审�
 - 不 wrapper、fork、prepend 或改写 Source JavaScript；
 - Script phase、`requires_body` 等声明已足以决定目标 action 时，不需要读取脚本正文；
 - 只有 QX HTTP Script action 在声明不足以区分 header/body/echo 时，允许读取原脚本正文观察 request/response body 与 `$done` 返回形态，目的仅是选择正确的 rewrite action；
-- 源码读取失败本身不构成兼容性 Review，也不允许切换到镜像 URL；
+- 源码读取失败本身不构成“运行时兼容性” Review，也不允许切换到镜像 URL；但若 QX request-phase 因缺少源码仍无法区分 request mutation 与 synthetic response，则因 **action 类型无法确定** 进入 Review，禁止猜测；
 - 任何源码读取结果都不得用于修改 Source JavaScript 或把 Rule 转成 Script。
 
 兼容性是否由脚本作者自行跨平台处理，不属于 WayX converter 的判定职责。
@@ -240,7 +240,7 @@ Source Catalog 可以包含具体插件名和原作者 URL，因为它只是数�
 - Source Script：只请求插件声明中的 `script-path` / `script("...")` URL。
 - 相对 dependency：只按插件原始 URL 解析后直接请求。
 - 禁止第三方 GitHub 副本、第三方镜像、备用域名和 fallback 链；若原作者官方 `source` 本身就是 GitHub/GitHub Raw，则该 URL 属于原作者源，可直接使用。
-- Plugin/JQ/mock 等转换必需源不可达：本轮失败并进入 Review，不切换副本。Source Script 正文本身若仅用于可选 action 类型辅助判定，读取失败不禁用原始 Script URL 声明。
+- Plugin/JQ/mock 等转换必需源不可达：本轮失败并进入 Review，不切换副本。Source Script 正文读取失败不因“兼容性未知”禁用原始 URL；若 declaration 已足以确定 action 则继续转换，若 QX request-phase action 仍有歧义则仅该 QX 声明 Review。
 - QX/Surge 中的 Source Script URL 必须继续指向源插件声明的 URL。
 - WayX 允许生成自己的 **helper script** 来补足目标平台缺失的 Rewrite/Mock 语义；这种 helper 是 converter 输出，不属于 Source Script 镜像。
 
