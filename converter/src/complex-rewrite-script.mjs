@@ -12,6 +12,27 @@ function fixed(node, label) {
   }
   return String(node.value);
 }
+function captureNames(node, out = new Set()) {
+  if (!node) return out;
+  if (node.type === 'comparison' && node.capture) out.add(node.capture);
+  if (node.type === 'group') captureNames(node.expression, out);
+  if (node.type === 'logical') { captureNames(node.left, out); captureNames(node.right, out); }
+  return out;
+}
+function capturedString(node, label, captures) {
+  if (!node || !['string','raw-string'].includes(node.type)) throw new Error(label + ' must be a string');
+  const value=String(node.value);
+  const parts=[]; let last=0; const re=/\$\{([A-Za-z_][A-Za-z0-9_-]*)\.(\d+)\}/g; let m;
+  while((m=re.exec(value))){
+    if(!captures.has(m[1])) throw new Error('unknown capture alias: ' + m[1]);
+    if(m.index>last) parts.push(JSON.stringify(value.slice(last,m.index)));
+    parts.push('String(__wayxCaptures['+JSON.stringify(m[1])+']?.['+Number(m[2])+'] ?? "")');
+    last=re.lastIndex;
+  }
+  if(last===0){ if(value.includes('${')) throw new Error(label + ' contains unsupported interpolation'); return JSON.stringify(value); }
+  if(last<value.length) parts.push(JSON.stringify(value.slice(last)));
+  return parts.join('+') || '""';
+}
 function expand(action) {
   if (!action.args.some(arg => arg.type === 'array')) return [action.args];
   return action.args[0].items.map((_, i) => action.args.map(arg => arg.items[i]));
@@ -43,6 +64,7 @@ function jsonPath(text) {
 }
 function statements(ast, target) {
   const out = [];
+  const captures = captureNames(ast.condition);
   let body = false, headers = false, json = false, headerAdd = false;
   for (const action of ast.actions) {
     if (new RegExp('^' + ast.phase + '\\x2eheader\\x2e(?:add|set|del|replace)$').test(action.name)) {
@@ -52,12 +74,12 @@ function statements(ast, target) {
         if (action.name.endsWith('.add')) {
           if (target !== 'surge') throw new Error('header.add duplicate semantics are not verified for ' + target);
           headerAdd = true;
-          out.push('__wayxAdd(' + JSON.stringify(name) + ',' + JSON.stringify(fixed(args[1], 'header value')) + ');');
-        } else if (action.name.endsWith('.set')) out.push('__wayxSet(' + JSON.stringify(name) + ',' + JSON.stringify(fixed(args[1], 'header value')) + ');');
+          out.push('__wayxAdd(' + JSON.stringify(name) + ',' + capturedString(args[1], 'header value', captures) + ');');
+        } else if (action.name.endsWith('.set')) out.push('__wayxSet(' + JSON.stringify(name) + ',' + capturedString(args[1], 'header value', captures) + ');');
         else if (action.name.endsWith('.del')) out.push('__wayxDel(' + JSON.stringify(name) + ');');
         else {
           if (args[1]?.type !== 'regex') throw new Error('header.replace regex must be fixed');
-          out.push('__wayxHeaderReplace(' + JSON.stringify(name) + ',' + JSON.stringify(args[1].pattern) + ',' + JSON.stringify(fixed(args[2], 'header replacement')) + ');');
+          out.push('__wayxHeaderReplace(' + JSON.stringify(name) + ',' + JSON.stringify(args[1].pattern) + ',' + capturedString(args[2], 'header replacement', captures) + ');');
         }
       }
       continue;
@@ -78,7 +100,7 @@ function statements(ast, target) {
     if (action.name === ast.phase + '.body.replace') {
       if (action.args[0]?.type !== 'regex') throw new Error('body.replace regex must be fixed');
       body = true;
-      out.push('__wayxBody=String(__wayxBody ?? "").replace(new RegExp(' + JSON.stringify(action.args[0].pattern) + '),' + JSON.stringify(fixed(action.args[1], 'body replacement')) + ');');
+      out.push('__wayxBody=String(__wayxBody ?? "").replace(new RegExp(' + JSON.stringify(action.args[0].pattern) + '),' + capturedString(action.args[1], 'body replacement', captures) + ');');
       continue;
     }
     throw new Error('mixed helper does not handle ' + action.name);
@@ -97,6 +119,7 @@ export function renderMixedRewriteScript(ast, {target, stamp='', category='', so
     '// Converted by: chance',
     '// Category: ' + (category || 'Rewrite / Complex Helper'),
     sourceLine ? '// Source Loon: ' + sourceLine : null,
+    'const __wayxCaptures=Object.create(null);',
     plan.headerAdd ? 'let __wayxHeaders=Array.isArray(' + source + '.headers)?' + source + '.headers.map(x=>({field:x.field,value:x.value})):Object.entries(' + source + '.headers||{}).map(([field,value])=>({field,value}));' : 'let __wayxHeaders={...(' + source + '.headers||{})};',
     'let __wayxBody=' + source + '.body;',
     plan.json ? 'let __wayxJson=JSON.parse(String(__wayxBody ?? ""));' : null,

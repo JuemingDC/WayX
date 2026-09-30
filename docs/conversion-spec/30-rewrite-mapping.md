@@ -205,3 +205,8 @@ Surge 转换规则：
 
 这一规则的目标是避免 Surge 模块中残留 Loon 可执行语法，同时保持源插件的禁用状态不变。
 
+
+
+### Named regex captures in complex helpers
+
+For a Loon condition of the form `~= /pattern/ as name`, a generated complex helper may preserve the complete JavaScript match object under that declared name and resolve action-string references `${name.0}`, `${name.1}`, etc. Index 0 is the complete match and positive indices are capture groups. References to undeclared capture names or unsupported interpolation forms must fail closed. Loon regex flags `i`, `m`, and `s` are parsed but are not propagated to the generated target `RegExp`; only the regex body is retained.
