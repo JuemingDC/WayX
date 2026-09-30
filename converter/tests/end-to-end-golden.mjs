@@ -70,6 +70,48 @@ assert.match(requestAddOutput.qx, /url script-response-header .*header_.*\.js/);
 assert.doesNotMatch(requestAddOutput.qx, /REVIEW REQUIRED/);
 assert.match(requestAddOutput.surge, /header-add X-Test one/);
 
+const requestAddBulkFixture = {
+  id:'RequestHeaderAddBulkFixture',
+  source:'https://example.invalid/request-header-add-bulk.lpx',
+  qx:'RequestHeaderAddBulkFixture.snippet',
+  surge:'RequestHeaderAddBulkFixture.sgmodule',
+  category:'测试',
+};
+const requestAddBulkSource = `#!name=RequestHeaderAddBulkFixture
+[Rewrite]
+request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.add(["X-A","X-B"], ["one","two"])
+`;
+const requestAddBulkOutput = convert(requestAddBulkFixture, requestAddBulkSource, new Map(), STAMP);
+assert.ok(
+  requestAddBulkOutput.qx.includes('request-header $1$2X-A: one$2X-B: two$2'),
+  'QX bulk request.header.add must be emitted as one whole-header rewrite',
+);
+assert.equal(
+  requestAddBulkOutput.qx.split(/\\r?\\n/).filter(line => !line.trim().startsWith('#') && / url request-header /.test(line)).length,
+  1,
+  'QX bulk request.header.add must not split one Loon action into multiple target rewrite rules',
+);
+
+const requestAddSetFixture = {
+  id:'RequestHeaderAddSetFixture',
+  source:'https://example.invalid/request-header-add-set.lpx',
+  qx:'RequestHeaderAddSetFixture.snippet',
+  surge:'RequestHeaderAddSetFixture.sgmodule',
+  category:'测试',
+};
+const requestAddSetSource = `#!name=RequestHeaderAddSetFixture
+[Rewrite]
+request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.add("X-A", "one")
+request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.set("X-B", "two")
+`;
+const requestAddSetOutput = convert(requestAddSetFixture, requestAddSetSource, new Map(), STAMP);
+assert.match(requestAddSetOutput.qx, /REVIEW REQUIRED: header\.add duplicate semantics are not verified for qx/);
+assert.equal(
+  requestAddSetOutput.qx.split(/\\r?\\n/).some(line => !line.trim().startsWith('#') && / url (?:request-header|script-request-header) /.test(line)),
+  false,
+  'QX adjacent add+set must not be split into unproven multiple rewrite execution',
+);
+
 const requestReplaceCaptureFixture = {
   id:'RequestHeaderReplaceCaptureFixture',
   source:'https://example.invalid/request-header-replace-capture.lpx',
