@@ -24,9 +24,26 @@ function coarsePattern(ast) {
   if (found.length === 1) return found[0].right.pattern;
   return '(?:' + found.map(node => '(?:' + node.right.pattern + ')').join('|') + ')';
 }
+function jsonValue(node) {
+  if (!node || !['string','raw-string','number','boolean','null'].includes(node.type)) throw new Error('JSON replacement value must be fixed');
+  if (node.type === 'raw-string') {
+    try { return JSON.parse(node.value); } catch { return node.value; }
+  }
+  return node.value;
+}
+function jsonPath(text) {
+  const path=String(text||''); if(!path) throw new Error('JSON key path must not be empty');
+  const parts=[]; let i=0;
+  while(i<path.length){
+    if(path[i]==='.') { i++; continue; }
+    if(path[i]==='['){const m=path.slice(i).match(/^\[(\d+)\]/); if(!m) throw new Error('unsupported JSON key-path bracket syntax: '+path); parts.push(Number(m[1])); i+=m[0].length; continue;}
+    const m=path.slice(i).match(/^[^.[\]]+/); if(!m) throw new Error('invalid JSON key path: '+path); parts.push(m[0]); i+=m[0].length;
+  }
+  return parts;
+}
 function statements(ast) {
   const out = [];
-  let body = false, headers = false;
+  let body = false, headers = false, json = false;
   for (const action of ast.actions) {
     if (new RegExp('^' + ast.phase + '\\x2eheader\\x2e(?:set|del|replace)$').test(action.name)) {
       headers = true;
@@ -41,6 +58,16 @@ function statements(ast) {
       }
       continue;
     }
+    if (action.name === ast.phase + '.json.delete' || action.name === ast.phase + '.json.replace') {
+      body = true; json = true;
+      const groups=expand(action);
+      for(const args of groups){
+        const path=jsonPath(fixed(args[0], 'JSON key path'));
+        if(action.name.endsWith('.delete')) out.push('__wayxJsonDelete(__wayxJson,'+JSON.stringify(path)+');');
+        else out.push('__wayxJsonReplace(__wayxJson,'+JSON.stringify(path)+','+JSON.stringify(jsonValue(args[1]))+');');
+      }
+      continue;
+    }
     if (action.name === ast.phase + '.body.replace') {
       if (action.args[0]?.type !== 'regex') throw new Error('body.replace regex must be fixed');
       body = true;
@@ -49,8 +76,8 @@ function statements(ast) {
     }
     throw new Error('mixed helper does not handle ' + action.name);
   }
-  if (!body || !headers) throw new Error('mixed helper requires both header and body actions');
-  return {out, body, headers};
+  if (!body || !headers) throw new Error('mixed helper requires both header and body/JSON actions');
+  return {out, body, headers, json};
 }
 export function renderMixedRewriteScript(ast, {target, stamp='', category='', sourceLine=''}={}) {
   validateRewriteV2Ast(ast);
@@ -65,6 +92,10 @@ export function renderMixedRewriteScript(ast, {target, stamp='', category='', so
     sourceLine ? '// Source Loon: ' + sourceLine : null,
     'let __wayxHeaders={...(' + source + '.headers||{})};',
     'let __wayxBody=' + source + '.body;',
+    plan.json ? 'let __wayxJson=JSON.parse(String(__wayxBody ?? ""));' : null,
+    'function __wayxJsonParent(root,path){let x=root;for(let i=0;i<path.length-1;i++){if(x==null||!(path[i] in Object(x)))return null;x=x[path[i]];}return x;}',
+    'function __wayxJsonDelete(root,path){const p=__wayxJsonParent(root,path);if(p!=null)delete p[path[path.length-1]];}',
+    'function __wayxJsonReplace(root,path,value){const p=__wayxJsonParent(root,path);if(p!=null&&path[path.length-1] in Object(p))p[path[path.length-1]]=value;}',
     'function __wayxHeader(phase,name){const h=phase==="request"?$request.headers:$response.headers;const k=Object.keys(h||{}).find(x=>x.toLowerCase()===String(name).toLowerCase());return k===undefined?undefined:h[k];}',
     'function __wayxKey(n){return Object.keys(__wayxHeaders).find(k=>k.toLowerCase()===String(n).toLowerCase());}',
     'function __wayxSet(n,v){const k=__wayxKey(n);__wayxHeaders[k||n]=v;}',
@@ -72,6 +103,7 @@ export function renderMixedRewriteScript(ast, {target, stamp='', category='', so
     'function __wayxHeaderReplace(n,p,r){const k=__wayxKey(n);if(k!==undefined)__wayxHeaders[k]=String(__wayxHeaders[k]).replace(new RegExp(p),r);}',
     'if(' + condition + '){',
     ...plan.out.map(line => '  ' + line),
+    plan.json ? '  __wayxBody=JSON.stringify(__wayxJson);' : null,
     '  $done({headers:__wayxHeaders,body:__wayxBody});',
     '}else{$done({});}',
     '',
