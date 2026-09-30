@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.18  
+版本：1.19  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -32,6 +32,7 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 20. Rewrite 目标决策必须集中到 **`rewrite-qx.mjs::planQxRewrite()` / `rewrite-surge.mjs::planSurgeRewrite()`**。`.github/scripts/sync-convert.mjs` 只负责 source parse、依赖物化、Semantic IR 构建、调用 target planner 与结果落段，不得直接 import QX/Surge Rewrite renderer、complex registry 或自行维护 target fallback 顺序。两个 target planner 固定执行 `native → dedicated helper → observed source-authored complex helper → comment Review/Issue`，并且只消费 Rewrite Semantic IR / 其保留的 source AST payload。Planner 模块 import 本身不得向全局 complex registry 注入 handler；handler 只能在 planner 首次实际执行时惰性注册且同进程只注册一次，避免测试/调用方因 import 顺序受到副作用。Legacy source-specific 低层 renderer 可以继续存在，但必须通过 target planner 入口调用；不得绕过 planner。旧 conservative fallback 不得调用不存在或未注册的函数；若没有已证明等价路径，必须显式返回 Review/Issue。
 21. Loon `[Script]` production 必须采用 **Legacy Script parser / Script v2 parser → target-neutral Script IR → `script-qx.mjs::planQxScript()` / `script-surge.mjs::planSurgeScript()`**。Script IR 至少保留 source syntax、原声明、HTTP phase、URL condition/pattern、原始 Source Script URL、argument、enable/requires-body/binary-body-mode/timeout/max-size/debug/tag 及 v2 AST/source-specific payload，但不得包含 QX action、Surge `type=` 或 target capability registry。`.github/scripts/sync-convert.mjs` 只负责构建 IR、提供原脚本文本/Argument table 等上下文、调用 target planner 和渲染注释；不得再自行决定 QX `script-*-header/body/echo`、Surge `type=http-*` 参数或 Legacy Script option 取舍。QX planner 继续严格使用用户提供的 Crossutility 官方 sample 所确认 Script rewrite actions；Surge planner 继续按 `nssurge.com/llms.txt` → 官方 Manual 使用 `http-request/http-response`、`pattern`、`requires-body`、`max-size`、`binary-body-mode`、`timeout`、`argument` 等已确认参数。该重构不得修改 Source JavaScript、不得改变原始 Script URL、不得扩大当前 Script scope，并要求 canonical 输出保持不变。
 22. Loon source section / comment / header metadata 必须与目标渲染分层。`source-section.mjs` 统一负责活动声明与前置注释分组、空行压缩、源注释文本提取以及当前去广告 converter 支持的 source section scope；`source-metadata.mjs` 只把源 header 解析为 target-neutral metadata IR；QX `{# note #}` 绑定规则只允许存在于 `qx-comment.mjs`。`.github/scripts/sync-convert.mjs` 不得继续维护第二份 `sectionItems/cleanComments/sourceCommentText` 或 supported-section 白名单，也不得自行实现 QX inline-note 判定。Surge 保留普通源注释，不得复用 QX note 语义。未知活动 source section 必须继续逐声明 fail closed 为 `ISSUE REQUIRED`。本轮不修改 MITM 转换语义、不扩大支持 section、不得改变 metadata/canonical 输出。
+23. 目标 section routing 与最终文件拼装必须集中到 **`qx-output.mjs` / `surge-output.mjs`**。QX builder 固定管理 `notes/filter/rewrite/mitm` state，始终按官方 sample/项目约定渲染注释标题 `# [filter_local]`、`# [rewrite_local]`、`# [mitm]`，并负责 target header、空行压缩与最终换行；Surge builder 固定管理 `notes/rule/url/header/body/map/script/mitm` state，只对非空目标 section 按官方 section 名与固定顺序渲染 `[Rule] / [URL Rewrite] / [Header Rewrite] / [Body Rewrite] / [Map Local] / [Script] / [MITM]`，并负责 `needsCore20` 计算、Module header 与最终换行。`.github/scripts/sync-convert.mjs` 只允许通过 builder 的 state/destination API 写入 planner 结果，不得再次维护 section-name mapping、section title 顺序、`compact()` 或最终 `join()`。Builder 只负责结构与渲染，不得重新解释 Rule/Rewrite/Script/MITM 语义。纯架构迁移要求 canonical 输出为 0 diff。
 
 
 ## 规范块
