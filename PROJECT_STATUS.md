@@ -4,12 +4,12 @@
 > 维护原则：本文件描述“当前 main 的真实状态”，不能替代 `CONVERSION_SPEC.md`；规范冲突时以 `CONVERSION_SPEC.md` 为唯一权威。
 
 - 审计日期：2026-09-30
-- 审计基线：PR #67 binary-body-mode alignment / Converter Check #592
+- 审计基线：PR #68 generated helper runtime fixtures / Converter Check #595
 - Source Catalog：20 个 Loon 去广告插件
 - Catalog 管理目标：20 个 Quantumult X snippet + 20 个 Surge sgmodule
 - Adblock 目录实际目标：21 个 QX + 21 个 Surge（额外包含手工维护的 `QZXY`）
-- 最近完整 Converter Check：#592，通过
-- 当前实现 PR：#67
+- 最近完整 Converter Check：#595，通过
+- 当前实现 PR：#68
 
 ---
 
@@ -175,7 +175,7 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 - 后续优先从新的上游拉取结果或 GitHub 中实际出现的 Loon Rewrite v2 / Script v2 新语法插件扩充 observed syntax inventory；未观察到的 complex signature 仍不得预先放行。
 - 每次新增 QX 官方 sample 证据时，复核现有 Rewrite Review 是否可以安全降级为 native/helper；Rule 只在官方明确支持对应 Rule Type 后才改为活动 filter。
 - 定期复核 validator whitelist 是否与当前官方 sample 一致。
-- 对 generated helper 做行为级 runtime fixture，而不只做字符串/语法断言。
+- [x] 对 generated helper 做行为级 runtime fixture，而不只做字符串/语法断言：`converter/tests/generated-helper-runtime.mjs` 已接入 CI，覆盖 request/response、组合条件、命中/未命中、Header/Body/JSON 顺序、capture、raw string、typed JSON、invalid JSON 失败隔离、Surge duplicate header，以及当前 observed QX mock complex signature。
 - 保持 `PROJECT_STATUS.md` 与实际 Review inventory 同步。
 
 ---
@@ -206,7 +206,7 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 - [ ] Source comments、转换时间、作者 chance、分类、Target、Source 保留；QX 一对一注释正确内联，分组注释未误绑第一条规则。
 - [ ] QX section heading 仍为注释。
 - [ ] Source Script 未被自动修改，且 QX/Surge 未按 runtime compatibility 扫描结果启用/禁用。
-- [ ] checkpoint / genericity / end-to-end / syntax 全通过。
+- [x] checkpoint / genericity / end-to-end / syntax 全通过。
 - [ ] canonical outputs 重新生成。
 - [ ] repository audit / helper refs / Golden / Source Script URL preservation 全通过。
 - [x] Review / Issue inventory 已由 CI 自动统计。
