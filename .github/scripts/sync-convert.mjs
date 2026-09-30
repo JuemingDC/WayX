@@ -258,6 +258,38 @@ function rewriteV2Action(line, target, ctx) {
   }
 
   if (target === 'surge') {
+    if (ast.actions.length === 1 && ast.actions[0].name === 'response.body.mock_file') {
+      try {
+        const mapped = surgeMockFilePlan(ast, {
+          pluginSourceUrl: ctx.sourceUrl,
+          materialized: ctx.mockFiles?.get(line) || null,
+        });
+        if (mapped.ok) return {section:mapped.section, line:mapped.line, lines:mapped.lines};
+      } catch (error) {
+        // Continue to script fallback before commenting the source declaration.
+      }
+    }
+
+    if (ast.actions.length === 1 && /^(?:request)\.body\.(?:mock|mock_file)$/.test(ast.actions[0].name)) {
+      try {
+        const plan = renderSurgeRequestMockScript(ast, {
+          materialized: ast.actions[0].name.endsWith('_file') ? (ctx.mockFiles?.get(line) || null) : null,
+          stamp:ctx.stamp,
+          category:ctx.category,
+          sourceLine:line,
+        });
+        const key=crypto.createHash('sha1').update('surge-request-mock\0'+line).digest('hex').slice(0,10);
+        const filename='request_mock_'+key+'.js';
+        ctx.generatedScripts.set(filename, plan.script);
+        return {
+          section:'script',
+          line:'wayx_request_mock_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+RAW_BASE+'/script/'+ctx.id+'/'+filename+',requires-body=true'+(plan.binaryBodyMode?',binary-body-mode=true':''),
+        };
+      } catch (error) {
+        return rewriteReview(line, String(error?.message || error).split('\n')[0]);
+      }
+    }
+
     try {
       for (const mapper of [surgeInlineMockPlan, surgeHeaderRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan]) {
         const mapped = mapper(ast);
@@ -522,7 +554,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   const surgeArgumentTable = surgeArgumentPlan.table;
   let surgeNeedsLineRequirement = false;
   const qctx = { id: entry.id, generatedScripts: qx.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, mockFiles: qxMockFiles, jqFiles, argumentIds };
-  const sctx = { id: entry.id, generatedScripts: sg.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, jqFiles, argumentIds, argumentTable: surgeArgumentTable };
+  const sctx = { id: entry.id, generatedScripts: sg.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, mockFiles: qxMockFiles, jqFiles, argumentIds, argumentTable: surgeArgumentTable };
 
   // Loon [Argument] is never emitted into Quantumult X. Surge modules use
   // official #!arguments metadata and {{{name}}} placeholders instead.
@@ -577,12 +609,20 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     if (!sr) sr = planLegacyRewrite(pattern, action, 'surge', { ...sctx, rawBase: RAW_BASE });
 
     if (!qxConsumed) {
-      const qdest = qr.section === 'rewrite' ? qx.rewrite : qx.notes;
-      qdest.push(...comments, qr.line);
+      if (qr.section === 'drop') {
+        qx.rewrite.push(...comments);
+      } else {
+        const qdest = qr.section === 'rewrite' ? qx.rewrite : qx.notes;
+        qdest.push(...comments, qr.line);
+      }
     }
 
-    const sdest = surgeSectionArray(sg, sr.section) || sg.notes;
-    sdest.push(...surgeComments, ...(sr.lines || [sr.line]));
+    if (sr.section === 'drop') {
+      sg.notes.push(...surgeComments);
+    } else {
+      const sdest = surgeSectionArray(sg, sr.section) || sg.notes;
+      sdest.push(...surgeComments, ...(sr.lines || [sr.line]));
+    }
   }
 
   let scriptIndex = 0;
@@ -672,8 +712,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
       qx.rewrite.push(`# Source declaration: ${item.line}`);
     } else if (enableFixed === 'false' || enableFixed === '0') {
       qx.rewrite.push(`# [WayX] Script disabled by source declaration: ${item.line}`);
-    } else if (sc.argument || enableDynamic) {
-      qx.rewrite.push('# [WayX] SCRIPT REVIEW REQUIRED: QX declaration cannot carry this source argument/enable semantics without changing the script.');
+    } else if (sc.argument || enableDynamic || sc.timeout || sc.maxSize || sc.binary) {
+      qx.rewrite.push('# [WayX] SCRIPT REVIEW REQUIRED: QX declaration/helper cannot preserve this source argument/enable/timeout/max-size/binary option set without changing the source script.');
       qx.rewrite.push(`# Source declaration: ${item.line}`);
     } else {
       const qType = selectQxScriptAction({
