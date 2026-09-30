@@ -265,6 +265,8 @@ assert.doesNotMatch(qxLeadingNoteOutput.qx, /\{# Script group #\}/);
 assert.doesNotMatch(qxLeadingNoteOutput.qx, /^# Script note$/m);
 assert.doesNotMatch(qxLeadingNoteOutput.qx, /\{# (?:Converted|Converted by|Category|Target|Source)/);
 assert.match(qxLeadingNoteOutput.surge, /^# Work VPN$/m);
+assert.match(qxLeadingNoteOutput.surge, /^#!arguments=wayx_proxy_policy:DIRECT$/m);
+assert.match(qxLeadingNoteOutput.surge, /^DOMAIN-SUFFIX,example\.com,\{\{\{wayx_proxy_policy\}\}\}$/m);
 assert.match(qxLeadingNoteOutput.surge, /^# Block ads$/m);
 assert.match(qxLeadingNoteOutput.surge, /^# Script note$/m);
 assert.match(qxLeadingNoteOutput.surge, /^# Script group$/m);
@@ -567,9 +569,10 @@ for (const testCase of cases) {
     assert.doesNotMatch(out.qx, /Source \[Argument\]|Argument usage:/, 'Bilibili QX must not emit Loon plugin parameter UI/declarations');
     assert.doesNotMatch(out.qx, /QUANTUMULT X (?:UNSUPPORTED|REVIEW REQUIRED) - source script disabled/);
     assert.ok(qxActive.some(line => /bilibili\/(?:request|response|json)\.js/.test(line)), 'Bilibili Source Script declarations must keep original URLs without runtime compatibility gating');
-    assert.match(out.surge, /Source Loon plugin policy PROXY preserved without conversion/);
+    assert.doesNotMatch(out.surge, /Source Loon plugin policy PROXY requires a Surge module policy parameter binding/);
     assert.doesNotMatch(out.surge, /Source declaration:.*PROXY[\s\S]*REVIEW REQUIRED: Surge Module requires an external policy binding/);
-    assert.match(out.surge, /^#!arguments=.*displayUpList:auto.*sponsorBlock:true/m);
+    assert.match(out.surge, /^#!arguments=.*displayUpList:auto.*sponsorBlock:true.*wayx_proxy_policy:DIRECT/m);
+    assert.match(out.surge, /^DOMAIN,bsbsb\.top,\{\{\{wayx_proxy_policy\}\}\}$/m);
     assert.match(out.surge, /#!REQUIREMENT "'\{\{\{sponsorBlock\}\}\}'=='true'"/);
     assert.doesNotMatch(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
     assert.match(
