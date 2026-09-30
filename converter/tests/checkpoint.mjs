@@ -609,7 +609,7 @@ const runtimeJsonAddExisting = renderMixedRewriteScript(
 );
 assert.deepEqual(
   runComplexScript(runtimeJsonAddExisting.script, {response:{body:'{"data":{"keep":1}}'}}),
-  {headers:{},body:'{"data":{"keep":1,"new":{"deep":true}}}'},
+  {body:'{"data":{"keep":1,"new":{"deep":true}}}'},
 );
 
 const runtimeJsonTyped = renderMixedRewriteScript(
@@ -618,7 +618,7 @@ const runtimeJsonTyped = renderMixedRewriteScript(
 );
 assert.deepEqual(
   runComplexScript(runtimeJsonTyped.script, {response:{body:'{"n":0,"ok":true,"none":"x"}'}}),
-  {headers:{},body:'{"n":7,"ok":false,"none":null}'},
+  {body:'{"n":7,"ok":false,"none":null}'},
 );
 
 const runtimeRawLiteral = renderMixedRewriteScript(
