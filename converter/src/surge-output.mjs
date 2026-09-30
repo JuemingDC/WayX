@@ -53,6 +53,15 @@ export function appendSurgeOutput(state,section,...lines) {
   return true;
 }
 
+export function surgeRuleOutputDestination(state,section) {
+  return surgeOutputDestination(state,section==='map' ? 'map' : 'rule');
+}
+
+export function surgeRewriteOutputDestination(state,section) {
+  if (section==='drop') return surgeOutputDestination(state,'notes');
+  return surgeOutputDestination(state,section) || surgeOutputDestination(state,'notes');
+}
+
 export function renderSurgeOutput({
   state,
   headerLines,
