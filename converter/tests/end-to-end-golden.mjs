@@ -220,7 +220,7 @@ const argumentRewriteOutput = convert(argumentRewriteFixture, argumentRewriteSou
 assert.match(argumentRewriteOutput.qx, /REVIEW REQUIRED: Quantumult X cannot carry Loon plugin \[Argument\] references/);
 assert.doesNotMatch(argumentRewriteOutput.qx, /Source \[Argument\]|Argument usage:|enabled=switch|price=input/);
 assert.match(argumentRewriteOutput.surge, /^#!arguments=.*enabled:true.*price:9\.99/m);
-assert.match(argumentRewriteOutput.surge, /wayx_complex_.*type=http-response,pattern=.*script-path=.*argument=/);
+assert.match(argumentRewriteOutput.surge, /wayx_json_mutation_.*type=http-response,pattern=.*script-path=.*argument=/);
 assert.doesNotMatch(argumentRewriteOutput.surge, /REVIEW REQUIRED/);
 assert.equal(
   argumentRewriteOutput.qx.split(/\r?\n/).some(line => !line.trim().startsWith('#') && /jsonjq-response-body/.test(line)),
