@@ -25,6 +25,6 @@ export function planMitmLine(line, target) {
 
   return {
     section:'mitm',
-    line:`# Unsupported source MITM option preserved: ${source}`,
+    line:`# [WayX] REVIEW REQUIRED: unsupported source MITM option has no verified target equivalent\n# Source declaration: ${source}`,
   };
 }
