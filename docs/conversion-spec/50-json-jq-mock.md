@@ -101,6 +101,7 @@ response.json.jq("jq-path=https://...")
 
 - `jq_file` / `mock_file` 只从源插件声明或相对源 URL 解析出的原始地址读取；legacy `jq-path=` 不进入依赖流程。
 - dependency 内容只在本次转换进程内 materialize；不写入 `converter/dependencies/` 作为权威副本或 fallback。
+- `dependencySpecFromAction()` 必须保持 target-neutral：只描述原始依赖 URL、kind、phase、status、content-type、base64/binary 等 Loon 源语义；不得提前写入 `qxAction`、Surge section 或 target strategy。目标 action 只能在 `rewrite-qx.mjs` / `rewrite-surge.mjs` 中选择。
 - 原始依赖无法读取或无法安全嵌入目标语法时，进入 Review；不得使用仓库缓存替代。
 
 ## 50.7 自动转换实现
