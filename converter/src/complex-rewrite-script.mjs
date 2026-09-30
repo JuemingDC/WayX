@@ -12,26 +12,58 @@ function fixed(node, label) {
   }
   return String(node.value);
 }
-function captureNames(node, out = new Set()) {
-  if (!node) return out;
-  if (node.type === 'comparison' && node.capture) out.add(node.capture);
-  if (node.type === 'group') captureNames(node.expression, out);
-  if (node.type === 'logical') { captureNames(node.left, out); captureNames(node.right, out); }
-  return out;
+function captureGroupCount(pattern) {
+  let count=0, escaped=false, inClass=false;
+  for(let i=0;i<pattern.length;i++){
+    const ch=pattern[i];
+    if(escaped){escaped=false;continue}
+    if(ch==='\\\\'){escaped=true;continue}
+    if(ch==='['){inClass=true;continue}
+    if(ch===']'&&inClass){inClass=false;continue}
+    if(ch!=='('||inClass)continue;
+    if(pattern[i+1]!=='?'){count++;continue}
+    if(pattern[i+2]==='<' && pattern[i+3]!=='=' && pattern[i+3]!=='!') count++;
+  }
+  return count;
 }
-function capturedString(node, label, captures) {
+function captureInfo(node, map = new Map()) {
+  if (!node) return map;
+  if (node.type === 'comparison' && node.capture) {
+    if (map.has(node.capture)) throw new Error('duplicate capture alias: ' + node.capture);
+    map.set(node.capture, captureGroupCount(node.right?.pattern || ''));
+  }
+  if (node.type === 'group') captureInfo(node.expression, map);
+  if (node.type === 'logical') { captureInfo(node.left, map); captureInfo(node.right, map); }
+  return map;
+}
+function guaranteedCaptures(node) {
+  if (!node) return new Set();
+  if (node.type === 'comparison') return new Set(node.capture ? [node.capture] : []);
+  if (node.type === 'group') return guaranteedCaptures(node.expression);
+  if (node.type === 'logical') {
+    const left=guaranteedCaptures(node.left), right=guaranteedCaptures(node.right);
+    if(node.operator==='&&') return new Set([...left,...right]);
+    return new Set([...left].filter(x=>right.has(x)));
+  }
+  return new Set();
+}
+function capturedString(node, label, captures, guaranteed) {
   if (!node || !['string','raw-string'].includes(node.type)) throw new Error(label + ' must be a string');
   const value=String(node.value);
-  const parts=[]; let last=0; const re=/\$\{([A-Za-z_][A-Za-z0-9_-]*)\.(\d+)\}/g; let m;
+  if(node.type==='raw-string') return JSON.stringify(value);
+  const parts=[]; let last=0; const re=/\\$\\{([A-Za-z_][A-Za-z0-9_-]*)\\.(\\d+)\\}/g; let m;
   while((m=re.exec(value))){
-    if(!captures.has(m[1])) throw new Error('unknown capture alias: ' + m[1]);
-    if(m.index>last) parts.push(JSON.stringify(value.slice(last,m.index)));
-    parts.push('String(__wayxCaptures['+JSON.stringify(m[1])+']?.['+Number(m[2])+'] ?? "")');
+    const max=captures.get(m[1]);
+    if(max===undefined) throw new Error('unknown capture alias: ' + m[1]);
+    if(!guaranteed.has(m[1])) throw new Error('capture alias is not guaranteed on every successful condition path: ' + m[1]);
+    if(Number(m[2])>max) throw new Error('capture index exceeds regex capture-group count: ' + m[1] + '.' + m[2]);
+    if(m.index>last) parts.push(['s',value.slice(last,m.index)]);
+    parts.push(['c',m[1],Number(m[2])]);
     last=re.lastIndex;
   }
   if(last===0){ if(value.includes('${')) throw new Error(label + ' contains unsupported interpolation'); return JSON.stringify(value); }
-  if(last<value.length) parts.push(JSON.stringify(value.slice(last)));
-  return parts.join('+') || '""';
+  if(last<value.length) parts.push(['s',value.slice(last)]);
+  return '__wayxTpl(' + JSON.stringify(parts) + ')';
 }
 function expand(action) {
   if (!action.args.some(arg => arg.type === 'array')) return [action.args];
@@ -45,11 +77,13 @@ function coarsePattern(ast) {
   if (found.length === 1) return found[0].right.pattern;
   return '(?:' + found.map(node => '(?:' + node.right.pattern + ')').join('|') + ')';
 }
-function jsonValueSource(node, captures) {
+function jsonValueSource(node, captures, guaranteed) {
   if (!node || !['string','raw-string','number','boolean','null'].includes(node.type)) throw new Error('JSON replacement value must be fixed');
-  if (node.type === 'string') return capturedString(node, 'JSON replacement value', captures);
+  if (node.type === 'string') return capturedString(node, 'JSON replacement value', captures, guaranteed);
   if (node.type === 'raw-string') {
-    if (String(node.value).includes('${')) return capturedString(node, 'JSON replacement value', captures);
+    if (node.type === 'raw-string') {
+    try { return JSON.stringify(JSON.parse(node.value)); } catch { return JSON.stringify(node.value); }
+  }
     try { return JSON.stringify(JSON.parse(node.value)); } catch { return JSON.stringify(node.value); }
   }
   return JSON.stringify(node.value);
@@ -66,7 +100,8 @@ function jsonPath(text) {
 }
 function statements(ast, target) {
   const out = [];
-  const captures = captureNames(ast.condition);
+  const captures = captureInfo(ast.condition);
+  const guaranteed = guaranteedCaptures(ast.condition);
   let body = false, headers = false, json = false, headerAdd = false;
   for (const action of ast.actions) {
     if (new RegExp('^' + ast.phase + '\\x2eheader\\x2e(?:add|set|del|replace)$').test(action.name)) {
@@ -76,12 +111,12 @@ function statements(ast, target) {
         if (action.name.endsWith('.add')) {
           if (target !== 'surge') throw new Error('header.add duplicate semantics are not verified for ' + target);
           headerAdd = true;
-          out.push('__wayxAdd(' + JSON.stringify(name) + ',' + capturedString(args[1], 'header value', captures) + ');');
-        } else if (action.name.endsWith('.set')) out.push('__wayxSet(' + JSON.stringify(name) + ',' + capturedString(args[1], 'header value', captures) + ');');
+          out.push('__wayxAdd(' + JSON.stringify(name) + ',' + capturedString(args[1], 'header value', captures, guaranteed) + ');');
+        } else if (action.name.endsWith('.set')) out.push('__wayxSet(' + JSON.stringify(name) + ',' + capturedString(args[1], 'header value', captures, guaranteed) + ');');
         else if (action.name.endsWith('.del')) out.push('__wayxDel(' + JSON.stringify(name) + ');');
         else {
           if (args[1]?.type !== 'regex') throw new Error('header.replace regex must be fixed');
-          out.push('__wayxHeaderReplace(' + JSON.stringify(name) + ',' + JSON.stringify(args[1].pattern) + ',' + capturedString(args[2], 'header replacement', captures) + ');');
+          out.push('__wayxHeaderReplace(' + JSON.stringify(name) + ',' + JSON.stringify(args[1].pattern) + ',' + capturedString(args[2], 'header replacement', captures, guaranteed) + ');');
         }
       }
       continue;
@@ -95,14 +130,14 @@ function statements(ast, target) {
           if (typeof path[path.length - 1] === 'number') throw new Error('json.delete array-index semantics are not verified');
           out.push('__wayxJsonDelete(__wayxJson,'+JSON.stringify(path)+');');
         }
-        else out.push('__wayxJsonReplace(__wayxJson,'+JSON.stringify(path)+','+jsonValueSource(args[1], captures)+');');
+        else out.push('__wayxJsonReplace(__wayxJson,'+JSON.stringify(path)+','+jsonValueSource(args[1], captures, guaranteed)+');');
       }
       continue;
     }
     if (action.name === ast.phase + '.body.replace') {
       if (action.args[0]?.type !== 'regex') throw new Error('body.replace regex must be fixed');
       body = true;
-      out.push('__wayxBody=String(__wayxBody ?? "").replace(new RegExp(' + JSON.stringify(action.args[0].pattern) + '),' + capturedString(action.args[1], 'body replacement', captures) + ');');
+      out.push('__wayxBody=String(__wayxBody ?? "").replace(new RegExp(' + JSON.stringify(action.args[0].pattern) + '),' + capturedString(action.args[1], 'body replacement', captures, guaranteed) + ');');
       continue;
     }
     throw new Error('mixed helper does not handle ' + action.name);
