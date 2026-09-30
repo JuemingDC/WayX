@@ -170,6 +170,20 @@ host, example.com, reject
 hostname = example.com
 `;
 assert.doesNotThrow(() => validateQX(validQxValidatorText, qxValidatorEntry));
+assert.doesNotThrow(() => validateQX(
+  validQxValidatorText
+    .replace('host, example.com, reject', '{# Work VPN #} host, example.com, reject')
+    .replace('^https://example\\.com url reject', '{# Block ads #} ^https://example\\.com url reject'),
+  qxValidatorEntry,
+));
+assert.throws(
+  () => validateQX(validQxValidatorText.replace('host, example.com, reject', '{# malformed note host, example.com, reject'), qxValidatorEntry),
+  /malformed Quantumult X leading rule note/,
+);
+assert.throws(
+  () => validateQX(validQxValidatorText.replace('hostname = example.com', '{# MITM note #} hostname = example.com'), qxValidatorEntry),
+  /leading notes are only valid on filter\/rewrite rules/,
+);
 assert.throws(
   () => validateQX(validQxValidatorText.replace('host, example.com, reject', 'dest-port, 443, reject'), qxValidatorEntry),
   /unsupported Quantumult X filter type/,
@@ -200,6 +214,48 @@ assert.throws(
   () => validateSurgeModule(outOfScopeSurgeScript, {id:'ScopeFixture'}, {adblockScope:true}),
   /unsupported Surge script type 'cron' in WayX ad-block scope/,
 );
+
+const qxLeadingNoteFixture = {
+  id:'QxLeadingNoteFixture',
+  source:'https://example.invalid/qx-leading-note.lpx',
+  qx:'QxLeadingNoteFixture.snippet',
+  surge:'QxLeadingNoteFixture.sgmodule',
+  category:'测试',
+};
+const qxLeadingNoteSource = `#!name=QxLeadingNoteFixture
+[Rule]
+# Work VPN
+DOMAIN-SUFFIX,example.com,PROXY
+# Ad group
+DOMAIN,ads-a.example.com,REJECT
+DOMAIN,ads-b.example.com,REJECT
+# First comment
+# Second comment
+DOMAIN,two-comments.example.com,REJECT
+
+[Rewrite]
+# Block ads
+^https:\\/\\/ads\\.example\\.com reject
+# Rewrite group
+^https:\\/\\/a\\.example\\.com reject
+^https:\\/\\/b\\.example\\.com reject
+`;
+const qxLeadingNoteOutput=convert(qxLeadingNoteFixture,qxLeadingNoteSource,new Map(),STAMP);
+assert.match(qxLeadingNoteOutput.qx, /^\{# Work VPN #\} host-suffix, example\.com, PROXY$/m);
+assert.match(qxLeadingNoteOutput.qx, /^\{# Block ads #\} \^https:\\\/\\\/ads\\\.example\\\.com url reject$/m);
+assert.doesNotMatch(qxLeadingNoteOutput.qx, /^# Work VPN$/m);
+assert.doesNotMatch(qxLeadingNoteOutput.qx, /^# Block ads$/m);
+assert.match(qxLeadingNoteOutput.qx, /^# Ad group$/m);
+assert.doesNotMatch(qxLeadingNoteOutput.qx, /\{# Ad group #\}/);
+assert.match(qxLeadingNoteOutput.qx, /^# First comment$/m);
+assert.match(qxLeadingNoteOutput.qx, /^# Second comment$/m);
+assert.doesNotMatch(qxLeadingNoteOutput.qx, /\{# Second comment #\}/);
+assert.match(qxLeadingNoteOutput.qx, /^# Rewrite group$/m);
+assert.doesNotMatch(qxLeadingNoteOutput.qx, /\{# Rewrite group #\}/);
+assert.doesNotMatch(qxLeadingNoteOutput.qx, /\{# (?:Converted|Converted by|Category|Target|Source)/);
+assert.match(qxLeadingNoteOutput.surge, /^# Work VPN$/m);
+assert.match(qxLeadingNoteOutput.surge, /^# Block ads$/m);
+validateQX(qxLeadingNoteOutput.qx, qxLeadingNoteFixture);
 
 const argumentRewriteFixture = {
   id:'ArgumentRewriteFixture',
