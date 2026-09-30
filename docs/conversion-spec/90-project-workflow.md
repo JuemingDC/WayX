@@ -102,7 +102,6 @@ native target syntax
 Rule 不使用上述 Script fallback。Quantumult X 官方 sample 未确认的逻辑规则、端口类等 Rule Type 只保留为注释。
 
 项目级直接丢弃：
-- Surge ad-block Module 的源 `FINAL`；
 - legacy `json.jq("jq-path=...")` alias；
 - Loon regex literal 的 `i/m/s` flags。
 
