@@ -56,6 +56,8 @@ import {
   surgeTargetPath,
   validateRewriteV2Ast,
 } from '../src/index.mjs';
+import { classifyComplexRewrite, complexConditionKinds } from '../src/complex-rewrite.mjs';
+import { registerComplexRewriteHandler, planComplexRewrite, listComplexRewriteHandlers } from '../src/complex-rewrite-registry.mjs';
 
 assert.equal(qxRule('URL-REGEX, "^https:\\/\\/ad\\.example\\.com", REJECT').line, '^https:\\/\\/ad\\.example\\.com url reject-200');
 assert.equal(
@@ -388,6 +390,21 @@ assert.equal(pipelineV2.condition.operator, '&&');
 assert.equal(pipelineV2.actions.length, 2);
 validateRewriteV2Ast(pipelineV2);
 assert.match(rewriteV2ToSource(pipelineV2), /response\.header\.del.*\| response\.json\.jq/);
+
+const complexFixture = parseRewriteV2('response if ${response.status} == 200 && (${url} ~= /api/ || ${url} ~= /v2/) then response.header.del("Server") | response.json.replace("data.ads", false)');
+const complexClass = classifyComplexRewrite(complexFixture);
+assert.equal(complexClass.ok, true);
+assert.deepEqual(complexClass.families, ['header-pipeline','json-pipeline']);
+assert.deepEqual(complexConditionKinds(complexFixture.condition), ['&&','==','response.status','||','~=','url','~=','url']);
+registerComplexRewriteHandler({
+  id:'checkpoint-mixed-response',
+  targets:['qx','surge'],
+  match:(ast, info) => ast.phase === 'response' && info.families.length === 2,
+  plan:(_ast, target) => ({ok:true, section:'test', line:'handled-'+target}),
+});
+assert.equal(planComplexRewrite(complexFixture, 'qx').line, 'handled-qx');
+assert.equal(planComplexRewrite(complexFixture, 'surge').line, 'handled-surge');
+assert.deepEqual(listComplexRewriteHandlers(), [{id:'checkpoint-mixed-response',targets:['qx','surge']}]);
 
 const bulkV2 = parseRewriteV2('request if ${url} ~= /api/ then request.header.set(["X-A","X-B"],["1","2"])');
 validateRewriteV2Ast(bulkV2);
