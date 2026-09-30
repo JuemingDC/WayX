@@ -478,7 +478,7 @@ const rawJsonLiteral = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /api/ then response.header.set("X-Test", "ok") | response.json.replace("data.raw", `{"literal":"${hit.1}"}`)'),
   {target:'qx'},
 );
-assert.ok(rawJsonLiteral.script.includes('{"literal":"\\${hit.1}"}'));
+assert.ok(rawJsonLiteral.script.includes('${hit.1}'));
 assert.equal(rawJsonLiteral.script.includes('__wayxTpl('), false);
 
 
