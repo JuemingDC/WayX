@@ -4,7 +4,7 @@
 
 import { normalizeRegexBodyForTarget } from './target-regex.mjs';
 import { SURGE_WAYX_RULE_TYPES } from './surge-official-capabilities.mjs';
-import { parseLoonRuleAst, renderRuleAst, ruleTypesInAst } from './rule-ast.mjs';
+import { parseLoonRuleAst, renderRuleAst } from './rule-ast.mjs';
 
 export const SURGE_RULE_TYPES=SURGE_WAYX_RULE_TYPES;
 
@@ -32,13 +32,28 @@ function surgeValueRenderer(node) {
 }
 
 export function validateSurgeRuleAst(ast) {
-  const types=ruleTypesInAst(ast);
-  for (const type of types) {
-    if (!SURGE_RULE_TYPES.has(type)) {
-      return {ok:false,types,reason:`unsupported-rule-type:${type}`};
+  const types=[];
+
+  function visit(node) {
+    types.push(node.type);
+    if (!SURGE_RULE_TYPES.has(node.type)) {
+      return `unsupported-rule-type:${node.type}`;
     }
+    if (node.kind==='logical') {
+      if (node.type==='NOT' && node.children.length!==1) return 'NOT-requires-one-subrule';
+      if ((node.type==='AND' || node.type==='OR') && node.children.length<1) {
+        return `${node.type}-requires-subrules`;
+      }
+      for (const child of node.children) {
+        const reason=visit(child);
+        if (reason) return reason;
+      }
+    }
+    return null;
   }
-  return {ok:true,types,reason:null};
+
+  const reason=visit(ast);
+  return {ok:!reason,types,reason};
 }
 
 export function renderSurgeRuleAst(ast,{policyOverride=null}={}) {
