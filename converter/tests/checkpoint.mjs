@@ -435,8 +435,15 @@ assert.throws(
 const flaggedHeaderHelper = renderQxHeaderScript(parseRewriteV2('request if ${url} ~= /api/i then request.header.replace("X-Test", /value/ms, "ok")'));
 assert.equal(flaggedHeaderHelper.script.includes('new RegExp("api", "i")'), false);
 assert.equal(flaggedHeaderHelper.script.includes('new RegExp(source, flags)'), false);
-assert.match(flaggedHeaderHelper.script, /new RegExp\("api"\)/);
+assert.equal(flaggedHeaderHelper.pattern, 'api');
 assert.match(flaggedHeaderHelper.script, /__wayxReplace\("X-Test","value","ok"\)/);
+const flaggedRedirectHelper = renderQxRedirectScript(parseRewriteV2('request if ${url} ~= /\/old\/(.*)/ims as hit then redirect(302, "/new/${hit.1}")'));
+assert.equal(flaggedRedirectHelper.pattern, '\\/old\\/(.*)');
+assert.equal(flaggedRedirectHelper.script.includes('"ims"'), false);
+assert.match(flaggedRedirectHelper.script, /new RegExp\("\\\\/old\\\\\/\(\.\*\)"\)/);
+
+assert.equal(complexConditionFlags.script.includes('"i")'), false);
+assert.equal(complexConditionFlags.script.includes('"ms")'), false);
 
 const complexConditionFlags = renderMixedRewriteScript(
   parseRewriteV2('response if (${url} ~= /API/i || ${response.status} == 204) && ${response.header["Content-Type"]} == "application/json" then response.header.del("Server") | response.body.replace(/ADS/ms, "ok")'),
