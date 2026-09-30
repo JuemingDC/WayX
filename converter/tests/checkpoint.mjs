@@ -733,7 +733,7 @@ assert.match(flaggedHeaderHelper.script, /__wayxReplace\("X-Test", "value", "ok"
 
 const flaggedRedirectSource = 'request if ${url} ~= /\\/old\\/(.*)/ims as hit then redirect(302, \"/new/${hit.1}\")';
 const flaggedRedirectHelper = renderQxRedirectScript(parseRewriteV2(flaggedRedirectSource));
-assert.equal(flaggedRedirectHelper.pattern, '/old/(.*)');
+assert.equal(flaggedRedirectHelper.pattern, '\\/old\\/(.*)');
 assert.equal(flaggedRedirectHelper.script.includes('"ims"'), false);
 assert.ok(flaggedRedirectHelper.script.includes('new RegExp(' + JSON.stringify(flaggedRedirectHelper.pattern) + ')'));
 
