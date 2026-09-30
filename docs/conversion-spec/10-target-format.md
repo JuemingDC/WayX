@@ -20,7 +20,27 @@
 [mitm]
 ```
 
-只允许 Crossutility 官方 sample 已确认的字段 / action。
+只允许 Crossutility 官方 sample 已确认的字段 / action，以及当前 QX beta 已公开的 filter/rewrite 前置 note 语法。
+
+### 10.1.1 Filter / Rewrite 前置 Note
+
+QX 当前支持在 filter 或 rewrite 活动规则前增加：
+
+```text
+{# note #} host-suffix, example.com, proxy
+{# note #} ^https?://ads\.example\.com url reject
+```
+
+WayX 只在以下条件**同时成立**时把 Loon 原注释转换为 QX note：
+
+1. 源注释与源 Rule/Rewrite 紧邻，中间没有空行；
+2. 只有一行源注释；
+3. 该注释后只紧接一条活动源 Rule/Rewrite；若继续紧接第二条活动规则，则视为分组注释，不转 note；
+4. 注释内容不是被注释掉的 Rule/Rewrite declaration；
+5. 一条源声明最终只生成一条活动 QX filter/rewrite 行；
+6. WayX 自己的 Converted / Author / Category / Target / Source / Review 等转换说明永远不进入 `{# ... #}`。
+
+不满足时继续按普通 `#` 注释原位保留。Surge 输出不使用 QX note 语法。
 
 QX URL regex 采用官方示例的 **bare regex**：
 
