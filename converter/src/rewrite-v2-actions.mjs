@@ -75,8 +75,34 @@ export function validateRewriteV2Action(action) {
   return def;
 }
 
+function conditionError(message) {
+  const error=new Error(message);
+  error.code='WAYX_REWRITE_V2_CONDITION_INVALID';
+  return error;
+}
+function validateCondition(node, phase) {
+  if (!node) throw conditionError('missing Rewrite v2 condition');
+  if (node.type==='group') return validateCondition(node.expression, phase);
+  if (node.type==='logical') {
+    validateCondition(node.left, phase);
+    validateCondition(node.right, phase);
+    return;
+  }
+  if (node.type!=='comparison'||node.left?.type!=='variable') throw conditionError('condition left side must be a variable');
+  const name=node.left.name;
+  const header=/^(request|response)\.header\[['"].+['"]\]$/.test(name);
+  if(phase==='request' && (name==='response.status'||name.startsWith('response.header['))) throw conditionError('request phase cannot reference response data: '+name);
+  if(node.operator==='~=') {
+    if(node.right?.type!=='regex') throw conditionError('~= requires a Regex right-hand value');
+    return;
+  }
+  if(node.operator!=='==') throw conditionError('unsupported condition operator: '+node.operator);
+  if(name==='response.status' && node.right?.type!=='number' && node.right?.type!=='variable') throw conditionError('response.status equality requires Number or typed variable');
+  if(header && !['string','raw-string','null','variable'].includes(node.right?.type)) throw conditionError('header equality requires String, null, or String variable');
+}
 export function validateRewriteV2Ast(ast) {
   if (!ast || ast.type !== 'rewrite') throw new TypeError('Expected Rewrite v2 AST root');
+  validateCondition(ast.condition, ast.phase);
   return ast.actions.map(validateRewriteV2Action);
 }
 

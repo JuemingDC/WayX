@@ -656,13 +656,17 @@ assert.deepEqual(
   runComplexScript(runtimeNumericStatus.script, {response:{statusCode:204,status:204,headers:{},body:'x'}}),
   {headers:{'X-Status':'matched'},body:'y'},
 );
-const runtimeStringStatus = renderMixedRewriteScript(
-  parseRewriteV2('response if ${response.status} == "204" then response.header.set("X-Status", "string") | response.body.replace(/x/, "y")'),
-  {target:'surge'},
+assert.throws(
+  () => renderMixedRewriteScript(parseRewriteV2('response if ${response.status} == "204" then response.header.set("X-Status", "string") | response.body.replace(/x/, "y")'), {target:'surge'}),
+  /response\.status equality requires Number or typed variable/,
 );
-assert.deepEqual(
-  runComplexScript(runtimeStringStatus.script, {response:{status:204,headers:{},body:'x'}}),
-  {headers:{'X-Status':'string'},body:'y'},
+assert.throws(
+  () => renderMixedRewriteScript(parseRewriteV2('request if ${response.status} == 200 then request.header.set("X-Test", "bad") | request.body.replace(/x/, "y")'), {target:'qx'}),
+  /request phase cannot reference response data/,
+);
+assert.throws(
+  () => renderMixedRewriteScript(parseRewriteV2('request if ${request.header[\'X-Test\']} == 1 then request.header.set("X-Test", "bad") | request.body.replace(/x/, "y")'), {target:'qx'}),
+  /header equality requires String, null, or String variable/,
 );
 const runtimeNullHeader = renderMixedRewriteScript(
   parseRewriteV2('response if ${response.header[\'X-Missing\']} == null then response.header.set("X-Null", "yes") | response.body.replace(/x/, "y")'),
