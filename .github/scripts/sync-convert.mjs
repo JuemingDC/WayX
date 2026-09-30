@@ -132,22 +132,30 @@ function splitPatternAction(line) {
 }
 
 
+function rewriteReview(line, reason) {
+  return {
+    section:'comment',
+    line:'# [WayX] REVIEW REQUIRED: ' + reason + '\n# Source declaration: ' + line,
+  };
+}
+
 function rewriteV2Action(line, target, ctx) {
   if (!isRewriteV2(line)) return null;
 
   let ast;
+  let argumentRefs = {conditionRefs:[], actionRefs:[], all:[]};
   try {
     ast = parseRewriteV2(line);
     validateRewriteV2Ast(ast);
-    const argumentRefs = rewriteV2PluginArgumentRefs(ast, ctx.argumentIds || []);
-    if (argumentRefs.all.length) {
-      return {
-        section: 'comment',
-        line: `# [WayX] REWRITE V2 REVIEW REQUIRED: plugin [Argument] reference(s) ${argumentRefs.all.join(', ')} have no target declaration equivalent: ${line}`,
-      };
+    argumentRefs = rewriteV2PluginArgumentRefs(ast, ctx.argumentIds || []);
+    if (target === 'qx' && argumentRefs.all.length) {
+      return rewriteReview(line, 'Quantumult X cannot carry Loon plugin [Argument] references without changing the source script/runtime contract: ' + argumentRefs.all.join(', '));
+    }
+    if (ast.actions.length === 1 && isDiscardedLegacyJqPathAction(ast.actions[0])) {
+      return {section:'drop', line:'', reason:'discard-legacy-jq-path'};
     }
   } catch (error) {
-    return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
+    return rewriteReview(line, String(error?.message || error).split('\n')[0]);
   }
 
   try {
@@ -163,7 +171,7 @@ function rewriteV2Action(line, target, ctx) {
       }
     }
   } catch (error) {
-    return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
+    return rewriteReview(line, String(error?.message || error).split('\n')[0]);
   }
 
   if (target === 'qx') {
@@ -187,7 +195,7 @@ function rewriteV2Action(line, target, ctx) {
         ctx.generatedScripts.set(filename, script);
         return { section: 'rewrite', line: `${condition.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}` };
       } catch (error) {
-        return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
+        return rewriteReview(line, String(error?.message || error).split('\n')[0]);
       }
     }
 
@@ -201,7 +209,7 @@ function rewriteV2Action(line, target, ctx) {
         ctx.generatedScripts.set(filename, plan.script);
         return { section: 'rewrite', line: `${plan.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}` };
       } catch (error) {
-        return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
+        return rewriteReview(line, String(error?.message || error).split('\n')[0]);
       }
     }
 
@@ -210,7 +218,7 @@ function rewriteV2Action(line, target, ctx) {
       const direct = qxDirectRewritePlan(ast);
       if (direct.ok) return { section: direct.section, line: direct.line };
     } catch (error) {
-      return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
+      return rewriteReview(line, String(error?.message || error).split('\n')[0]);
     }
 
     // URL redirect in Loon replaces only the matched range. Use a generated
@@ -224,7 +232,7 @@ function rewriteV2Action(line, target, ctx) {
         ctx.generatedScripts.set(filename, plan.script);
         return { section: 'rewrite', line: `${plan.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}` };
       } catch (error) {
-        return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
+        return rewriteReview(line, String(error?.message || error).split('\n')[0]);
       }
     }
 
@@ -237,15 +245,15 @@ function rewriteV2Action(line, target, ctx) {
         ctx.generatedScripts.set(filename, plan.script);
         return { section: 'rewrite', line: `${plan.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}` };
       } catch (error) {
-        return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
+        return rewriteReview(line, String(error?.message || error).split('\n')[0]);
       }
     }
 
     // Non-native combinations enter the isolated registry only after the
     // native and dedicated planners above have declined them.
-    const complex = planComplexRewrite(ast, 'qx', {...ctx, sourceLine:line});
+    const complex = planComplexRewrite(ast, 'qx', {...ctx, sourceLine:line, argumentRefs:argumentRefs.all});
     if (complex.ok) return {section:complex.section, line:complex.line, lines:complex.lines};
-    if (complex.terminal) return {section:'comment', line:'# Unsupported Loon Rewrite v2 preserved (' + complex.reason + '): ' + line};
+    if (complex.terminal) return rewriteReview(line, complex.reason);
 
   }
 
@@ -256,17 +264,17 @@ function rewriteV2Action(line, target, ctx) {
         if (mapped.ok) return { section: mapped.section, line: mapped.line, lines: mapped.lines };
       }
     } catch (error) {
-      return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
+      return rewriteReview(line, String(error?.message || error).split('\n')[0]);
     }
-    const complex = planComplexRewrite(ast, 'surge', {...ctx, sourceLine:line});
+    const complex = planComplexRewrite(ast, 'surge', {...ctx, sourceLine:line, argumentRefs:argumentRefs.all});
     if (complex.ok) return {section:complex.section, line:complex.line, lines:complex.lines};
-    if (complex.terminal) return {section:'comment', line:'# Unsupported Loon Rewrite v2 preserved (' + complex.reason + '): ' + line};
+    if (complex.terminal) return rewriteReview(line, complex.reason);
   }
 
   // Keep the older conservative subset as a final compatibility fallback.
   const parsed = analyzeSafeRewriteV2(line);
   if (!parsed.safe) {
-    return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${parsed.reason}): ${line}` };
+    return rewriteReview(line, parsed.reason);
   }
   return rewriteAction(parsed.pattern, parsed.action, target, ctx);
 }
