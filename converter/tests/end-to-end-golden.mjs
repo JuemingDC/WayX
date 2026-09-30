@@ -287,8 +287,8 @@ const outOfScopeSurgeScript = `#!name=ScopeFixture
 task = type=cron,script-path=https://example.com/task.js,cronexp="0 8 * * *"
 `;
 assert.throws(
-  () => validateSurgeModule(outOfScopeSurgeScript, {id:'ScopeFixture'}, {adblockScope:true}),
-  /unsupported Surge script type 'cron' in WayX ad-block scope/,
+  () => validateSurgeModule(outOfScopeSurgeScript, {id:'ScopeFixture'}),
+  /WayX ad-block Surge \[Script\] only accepts HTTP rewrite types/,
 );
 
 const qxLeadingNoteFixture = {
