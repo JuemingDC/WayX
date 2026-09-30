@@ -4,12 +4,12 @@
 > 维护原则：本文件描述“当前 main 的真实状态”，不能替代 `CONVERSION_SPEC.md`；规范冲突时以 `CONVERSION_SPEC.md` 为唯一权威。
 
 - 审计日期：2026-09-30
-- 审计基线：PR #65 canonical regeneration / Converter Check #578
+- 审计基线：PR #67 binary-body-mode alignment / Converter Check #590+
 - Source Catalog：20 个 Loon 去广告插件
 - Catalog 管理目标：20 个 Quantumult X snippet + 20 个 Surge sgmodule
 - Adblock 目录实际目标：21 个 QX + 21 个 Surge（额外包含手工维护的 `QZXY`）
-- 最近完整 Converter Check：#587，通过
-- 当前实现 PR：#65
+- 最近完整 Converter Check：待 PR #67 最终 CI
+- 当前实现 PR：#67
 
 ---
 
@@ -86,22 +86,17 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 
 ## 3. Review 库存
 
-2026-09-30 规范 v1.6 canonical 已重新生成，并由 `converter/tools/conversion-reports.mjs` 自动统计。当前活动 Review marker 为：
+2026-09-30 规范 v1.8 已把 QX Source Script 的 `binary-body-mode` / `binary_body_mode` 纳入 KOP-XIAO `resource-parser.js` 兼容口径。目标 Review inventory 为：
 
-- **Quantumult X：5**
+- **Quantumult X：0**
 - **Surge：0**
 - **Unknown Issue：0**
 
-QX 5 项均为 request/binary body 能力缺口：
-- Tieba legacy HTTP Script：1；源声明带 `binary-body-mode=true`，QX request/response 二进制能力仍按现有官方样例边界判断；
-- Bilibili Script v2 request `binary_body_mode=true`：2；
-- YouTube Script v2 request `binary_body_mode=true`：2。
+QX Source Script declaration 的 `argument`、动态 `enable`、`timeout`、`binary-body-mode` / `binary_body_mode` 现在统一按 KOP-XIAO Script 转换取舍处理：argument 忽略，动态 enable 默认开启，timeout 与 binary body mode 忽略；header/body 只由 `requires-body` / `requires_body` 决定。固定 `enable=false/0` 仍保持禁用。
 
-QX Source Script declaration 的 `argument`、动态 `enable`、`timeout` 已按 KOP-XIAO `resource-parser.js` 的 Script 转换口径处理：argument 忽略，动态 enable 默认开启，timeout 忽略，因此不再占用 Review。固定 `enable=false/0` 仍保持禁用。
+这项兼容策略只覆盖上述 Script declaration 字段。`debug`、`max-size`、Rewrite 参数、未知语法等继续按 WayX 自身规范判断，不因为 KOP-XIAO 忽略其它字段而自动放行。
 
-`response.header.add` 已按项目决策改为明确注释保留，因此也不占用 Review inventory。
-
-按文件分布：Tieba 1、Bilibili 2、YouTube 2。DianPing、JingDong、Webpage 及其余 Catalog 目标均为 0。
+`response.header.add` 继续按项目决策明确注释保留，因此不占用 Review inventory。
 
 以下不再计入 Review：
 - Source Script runtime compatibility；
@@ -109,7 +104,7 @@ QX Source Script declaration 的 `argument`、动态 `enable`、`timeout` 已按
 - Loon Plugin `PROXY` 在 Surge Module 中通过参数化 policy binding 转为活动 Rule，不再属于 Review/注释库存；
 - 完整 Surge Profile 可用但 Module Manual 未允许的 `REJECT-DROP / REJECT-NO-DROP / CELLULAR / CELLULAR-ONLY / HYBRID / NO-HYBRID`（源 Rule 注释保留）。
 
-上述 5 项是当前仍保留的 QX request/binary body 能力缺口。
+当前 Catalog 目标已没有活动 Review marker；后续新语法、新插件或现有上游变化仍可能重新产生 Review/Issue。
 
 ## 4. 待办工作
 
@@ -124,11 +119,11 @@ v1.4 已重新生成全部 Catalog 管理的 QX snippet / Surge sgmodule，并�
 - QX 不支持 Rule 以注释形式对账，未生成 Rule helper；
 - Surge 的 Loon `PROXY` 已通过 `#!arguments` policy 参数转换为活动 Rule；Module Manual 未允许且没有参数化语义的完整 Profile built-in policy 继续只注释保留；
 - helper 文件引用存在且 action 类型通过 validator/CI；
-- Review inventory 已由 CI 自动重建为 QX 5 / Surge 0 / Issue 0。
+- Review inventory 目标已调整为 QX 0 / Surge 0 / Issue 0，并由 CI 自动核验。
 
 #### P0-2：QX Script option 保真
 
-Loon Source Script declaration 的 `argument`、dynamic enable、timeout 已按 KOP-XIAO parser 口径确定：QX 忽略 argument，动态 enable 默认开启，timeout 忽略。固定 enable=false/0 仍禁用。debug、max-size、binary body 等其余字段继续按目标声明能力逐项判断。
+Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binary body mode 已按 KOP-XIAO parser 口径确定：QX 忽略 argument，动态 enable 默认开启，timeout 与 binary body mode 忽略；header/body 只由 requires-body 决定。固定 enable=false/0 仍禁用。debug、max-size 等其它字段继续按 WayX 自身标准逐项判断。
 
 处理顺序：
 
@@ -173,7 +168,7 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout 已按 
 - 按 reason；
 - 手工资产与 Catalog 分开标识。
 
-当前自动结果：QX 5 / Surge 0 / Issue 0。基线用于 CI 新增 Review warning，不再依赖人工写死的旧库存数字。
+当前目标自动结果：QX 0 / Surge 0 / Issue 0。基线用于 CI 新增 Review warning，不再依赖人工写死的旧库存数字。
 
 ### P2 — 长期质量工作
 
