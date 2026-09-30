@@ -150,6 +150,25 @@ Surge：组合成等价 Map Local / header 行为。
 
 复杂 Rewrite v2 在原生目标能力不足时，可由通用 helper 按 AST condition/action 能力处理；禁止按插件身份特判。新增组合必须先增加 generic handler 与 synthetic fixture，不支持的组合保持 Review。
 
+固定路由顺序：
+
+```text
+target native planner
+→ dedicated semantic helper
+→ Complex Rewrite Helper Registry
+→ REVIEW REQUIRED
+```
+
+当前 complex helper 可处理同 phase 的 Header + Body/JSON 有序组合。Header 支持 `set / del / replace`；JSON 支持已验证的 `delete / replace`。所有 action 必须严格按 Loon AST 左到右执行。JSON body 在 helper 内只解析一次，并在 pipeline 完成后序列化一次。
+
+条件编译当前只接受已验证的 `url`、`request.method`、`response.status`、固定 Header 读取，以及 `== / ~= / && / || / ()`。未知变量、未知运算符、无法证明等价的 capture 行为必须 fail closed。
+
+Loon regex literal 的 `i / m / s` flags 在所有 native/helper 路径中均只解析、不传播；目标 helper 只能使用 regex body，不得通过 `new RegExp(pattern, flags)` 恢复这些 flags。
+
+Surge 的 `header.add` 与普通对象 Header 修改语义不同：官方定义为已有同名字段时继续追加。需要脚本保持重复字段时必须使用 `full-header-mode=true` 的 `[{field,value}]` 形式，禁止退化为对象赋值。Quantumult X 未验证等价的重复 Header 返回表示前，`header.add` complex fallback 保持 fail closed。
+
+`json.add` 在新增路径、对象/数组等语义未得到足够依据前保持 fail closed；不得用 `setpath` 等近似行为替代。
+
 ## 30.6 自动转换实现
 
 - Legacy classifier/planner：`converter/src/legacy-rewrite.mjs`
