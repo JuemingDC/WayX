@@ -1068,6 +1068,7 @@ assert.throws(() => renderQxMockFileScript(requestBinaryMockPlan), /request mock
 const bareUrl = compileRegexForTarget(parseRewriteV2('request if ${url} ~= /^https:\\/\\/Api\\.Example\\.com\\/[a-z]+/i then reject_dict(200)').condition.right, {subject:'url'});
 assert.equal(bareUrl.ok, true);
 assert.equal(bareUrl.pattern, '^https:\\/\\/Api\\.Example\\.com\\/[a-z]+');
+assert.equal(bareUrl.sourceFlags, 'i');
 assert.deepEqual(bareUrl.notes, []);
 assert.equal(compileRegexForTarget(parseRewriteV2('response if ${url} ~= /api/ then response.body.replace(/a.b/s, "x")').actions[0].args[0], {subject:'body'}).ok, true);
 
