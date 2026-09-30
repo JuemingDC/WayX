@@ -144,3 +144,9 @@ CI 必须额外检查：
 ## 80.8 Generated helper runtime execution
 
 Complex generated JavaScript must be executed in CI against synthetic request/response fixtures, not validated only by matching generated source text. Runtime fixtures must cover at least: request and response phases; method/status/header/URL conditions including grouped AND/OR logic; condition match/no-match; ordered Header/Body/JSON mutation; case-insensitive header lookup/mutation; named and optional captures; raw-string literal behavior; typed JSON replacement; JSON add no-overwrite and nested-path creation; invalid-JSON action failure with later actions continuing; and Surge duplicate-header preservation under full-header mode. Text assertions remain useful for target declaration shape but do not substitute for runtime execution.
+
+实现固定为：
+- `converter/tests/generated-helper-runtime.mjs` 使用 Node `vm` 直接执行 renderer 产出的 JavaScript，并注入目标运行时最小 `$request` / `$response` / `$argument` / `$done` fixture；
+- 测试必须断言 `$done()` 恰好调用一次，并检查实际返回对象/bytes，而不是只比较生成源码字符串；
+- `converter-check.yml` 将该 runtime fixture 作为独立 CI 步骤执行；
+- 当前 fixture 还额外覆盖 Catalog 已观察的 QX `response.body.mock | response.header.set` complex signature，包括 text body 与 Base64 `bodyBytes` 路径。
