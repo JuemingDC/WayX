@@ -46,6 +46,8 @@ Target 已转换语义项
 
 不允许静默丢行。
 
+Source parser 遇到当前 grammar 未登记、但包含活动内容的 section 时，必须把该 section 的活动声明逐项保留为明确 Review；不能因为 orchestration 没有对应分支就忽略整个 section。Script parse failure、未知 MITM option 等同理必须进入统一 Review marker。只有本规范明确列出的项目级丢弃项可以不生成目标语义。
+
 ## 80.3 Quantumult X Validator
 
 必须检查：
