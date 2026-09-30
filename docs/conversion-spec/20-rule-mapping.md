@@ -99,7 +99,7 @@ NOT,((Rule1)),Policy
 |---|---|---|
 | `DIRECT` | `direct` | `DIRECT` |
 | `REJECT` | `reject` | `REJECT` |
-| `PROXY` | `PROXY`（原样保留，不映射为内建 `proxy`） | 不做策略转换；源声明注释保留，不能作为活动 Module Rule |
+| `PROXY` | `PROXY`（原样保留，不映射为内建 `proxy`） | 生成 Module policy 参数并写为 `{{{wayx_proxy_policy}}}`；默认 `DIRECT`，用户可改为目标 Surge 代理策略/策略组 |
 | `REJECT-IMG` | URL 场景 → `reject-img` | `REJECT-TINYGIF` |
 | `REJECT-DROP` | 项目约定 → `reject` | 注释保留；Module Rule 官方未允许 |
 | `REJECT-NO-DROP` | `reject`（QX 不存在 Surge 自动升级机制） | 注释保留；Module Rule 官方未允许 |
@@ -114,7 +114,7 @@ Surge 完整 Profile 的 built-in policy 集合比 Module Rule 更大，但 Modu
 
 Loon 插件 [Rule] 中的 `PROXY` 具有插件内部策略选择语义，不转换成其他 policy。Quantumult X 保留字面 `PROXY`，不得静默降为内建小写 `proxy`。
 
-Surge Module 官方限制活动 Rule 只能使用 Module 可用的内部策略，且 Module 不能定义用户的 `[Proxy]` / `[Proxy Group]`。因此源 `PROXY` Rule 在 Surge 目标中**不做策略映射**：保留原声明为注释，不能把 `PROXY`、`DIRECT` 或其他策略作为“近似替代”。其他自定义外部 policy/group 同样不得伪装成内建 policy。
+Surge Module 不能定义 `[Proxy]` / `[Proxy Group]`，但官方 Parameter Tables 会在应用 Module 前把 `{{{name}}}` 替换成用户配置值。WayX 因此将 Loon Plugin 的 `PROXY` 视为“用户选择策略”的绑定语义：生成独立 Module 参数（默认 `DIRECT`），Rule 的 policy 写成对应 `{{{...}}}` 占位符。用户可在 Module 参数中填入现有 Surge 代理策略或策略组。这里不是把 `PROXY` 静默改成 `DIRECT`；`DIRECT` 只是参数默认值。其他任意自定义外部 policy/group 仍不得在无显式参数绑定时伪装成内建 policy。
 
 **Rule Type 的支持范围和 policy 的可用范围必须分开判断。**
 
