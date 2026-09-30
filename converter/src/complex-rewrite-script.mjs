@@ -67,7 +67,10 @@ function statements(ast, target) {
       const groups=expand(action);
       for(const args of groups){
         const path=jsonPath(fixed(args[0], 'JSON key path'));
-        if(action.name.endsWith('.delete')) out.push('__wayxJsonDelete(__wayxJson,'+JSON.stringify(path)+');');
+        if(action.name.endsWith('.delete')) {
+          if (typeof path[path.length - 1] === 'number') throw new Error('json.delete array-index semantics are not verified');
+          out.push('__wayxJsonDelete(__wayxJson,'+JSON.stringify(path)+');');
+        }
         else out.push('__wayxJsonReplace(__wayxJson,'+JSON.stringify(path)+','+JSON.stringify(jsonValue(args[1]))+');');
       }
       continue;

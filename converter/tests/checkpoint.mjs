@@ -427,6 +427,16 @@ assert.equal(mixedJsonQx.qxAction, 'script-response-body');
 assert.ok(mixedJsonQx.script.indexOf('__wayxDel("Server");') < mixedJsonQx.script.indexOf('__wayxJsonReplace(__wayxJson,["data","ads"],false);'));
 assert.ok(mixedJsonQx.script.indexOf('__wayxJsonReplace(__wayxJson,["data","ads"],false);') < mixedJsonQx.script.indexOf('__wayxJsonDelete(__wayxJson,["data","tracking"]);'));
 assert.match(mixedJsonQx.script, /JSON\.stringify\(__wayxJson\)/);
+const mixedJsonNull = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /api/ then response.header.set("X-Test", "ok") | response.json.replace("data.value", null)'),
+  {target:'qx'},
+);
+assert.match(mixedJsonNull.script, /__wayxJsonReplace\(__wayxJson,\["data","value"\],null\)/);
+assert.throws(
+  () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ then response.header.set("X-Test", "ok") | response.json.delete("items[0]")'), {target:'qx'}),
+  /json\.delete array-index semantics are not verified/,
+);
+
 const surgeHeaderAddMixed = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /api/ then response.header.add("Set-Cookie", "b=2") | response.header.set("X-Test", "ok") | response.body.replace(/ads/, "clean")'),
   {target:'surge'},
