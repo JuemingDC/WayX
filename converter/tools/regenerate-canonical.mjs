@@ -3,11 +3,10 @@
 // Category: Converter / Canonical Output
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { cleanSource, convert, materializeJqFiles, materializeQxMockFiles, parseLoon, scriptUrls, validateQX } from '../../.github/scripts/sync-convert.mjs';
+import { cleanSource, convert, inspectSourceScript, materializeJqFiles, materializeMockFiles, parseLoon, scriptUrls, validateQX } from '../../.github/scripts/sync-convert.mjs';
 import { qxTargetPath, surgeTargetPath } from '../src/paths.mjs';
 import { validateSurgeModule } from '../src/surge-module.mjs';
 import { loadLoonSourceCatalog } from '../src/source-catalog.mjs';
-import { fetchOriginalText, resolveOriginalUrl } from '../src/source-fetch.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -33,14 +32,7 @@ async function exists(file) {
 async function originalScriptMap(source, pluginSourceUrl) {
   const map = new Map();
   for (const reference of scriptUrls(source)) {
-    const originalUrl = resolveOriginalUrl(reference, pluginSourceUrl);
-    const sourceText = normalize(await fetchOriginalText(originalUrl)).replace(/\n*$/, '\n');
-    map.set(reference, {
-      qx: originalUrl,
-      surge: originalUrl,
-      source: sourceText,
-      qxAdapted: false,
-    });
+    map.set(reference, await inspectSourceScript(reference, pluginSourceUrl));
   }
   return map;
 }
@@ -72,7 +64,7 @@ for (const entry of manifest) {
     const stamp = existingStamp(oldQx, oldSurge) || nowCN();
     const scripts = await originalScriptMap(source, entry.source);
     const parsed = parseLoon(source);
-    const qxMockFiles = await materializeQxMockFiles(entry, parsed);
+    const qxMockFiles = await materializeMockFiles(entry, parsed);
     const jqFiles = await materializeJqFiles(entry, parsed);
 
     let out = convert(entry, source, scripts, stamp, qxMockFiles, jqFiles);

@@ -26,30 +26,6 @@ function numberValue(node, fallback) {
   return node.type === 'number' && Number.isFinite(node.value) ? node.value : fallback;
 }
 
-function legacyJqPathSpec(action) {
-  if (!/^(?:request|response)\.json\.jq$/.test(action?.name || '')) return null;
-  const value = stringValue(action.args?.[0]);
-  const match = value?.match(/^jq-path=(https?:\/\/\S+)$/i);
-  if (!match) return null;
-  let url;
-  try {
-    url = new URL(match[1]).href;
-  } catch {
-    return null;
-  }
-  return {
-    action: action.name,
-    kind: 'jq',
-    ref: match[1],
-    scope: 'legacy-jq-path',
-    url,
-    resolvable: true,
-    inlineName: action.name,
-    pathIndex: 0,
-    legacyAlias: true,
-  };
-}
-
 export function dependencySpecFromAction(action, { pluginSourceUrl = '' } = {}) {
   const def = FILE_ACTIONS[action?.name];
   if (!def) return null;
@@ -93,7 +69,13 @@ export function dependencySpecFromAction(action, { pluginSourceUrl = '' } = {}) 
 export function jqDependencySpecFromAction(action, { pluginSourceUrl = '' } = {}) {
   const official = dependencySpecFromAction(action, { pluginSourceUrl });
   if (official?.kind === 'jq') return { ...official, pathIndex: FILE_ACTIONS[action.name].pathIndex };
-  return legacyJqPathSpec(action);
+  return null;
+}
+
+export function isDiscardedLegacyJqPathAction(action) {
+  if (!/^(?:request|response)\.json\.jq$/.test(action?.name || '')) return false;
+  const value = stringValue(action.args?.[0]);
+  return /^jq-path=/i.test(String(value || '').trim());
 }
 
 export function inlineResolvedDependency(action, content, { pluginSourceUrl = '' } = {}) {

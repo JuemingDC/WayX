@@ -8,7 +8,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Tieba.png
 # Updated: 2026-06-01 17:11:35
 
-# Converted: 2026-09-30 12:45:46 +08:00
+# Converted: 2026-09-30 14:40:13 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Tieba_remove_ads.lpx
@@ -46,7 +46,7 @@ ip-cidr, 180.76.76.200/32, reject
 
 ^https?://tiebac\.baidu\.com/c/f/sidebar/home$ url jsonjq-response-body 'del(.game_center,.tools,.task_list,.vip_banner)'
 # ProtoBuf处理
-# [WayX] SCRIPT REVIEW REQUIRED: QX declaration cannot carry this source argument/enable semantics without changing the script.
+# [WayX] SCRIPT REVIEW REQUIRED: QX declaration/helper cannot preserve this source argument/enable/timeout/max-size/binary option set without changing the source script.
 # Source declaration: http-response ^https?:\/\/tieba(?:c)?\.baidu\.com\/c\/(f\/excellent\/personalized|f\/frs\/page|b\/ad\/adBid|f\/ad\/getFeedAd|f\/pb\/page|f\/frs\/generalTabList)\?cmd=\d+&format=protobuf script-path=https://kelee.one/Resource/JavaScript/Tieba/tieba-proto.js, requires-body=true, binary-body-mode=true, timeout=10, tag=ProtoBuf处理, argument=[{per_filter_video_thread}]
 
 # [mitm]

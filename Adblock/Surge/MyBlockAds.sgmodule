@@ -6,7 +6,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/myblockads.png
 # Updated: 2026-09-27 18:30
 
-# Converted: 2026-09-30 12:45:49 +08:00
+# Converted: 2026-09-30 14:40:15 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/myblockads.lpx
@@ -14,7 +14,6 @@
 
 
 # Reddit //gql.reddit.com, gql-fed.reddit.com
-# Unsupported Loon Rewrite v2 preserved (JQ contains a single quote outside a JSON string; target quoting is not proven safe): response if ${url} ~= /^https:\/\/gql(-fed)?\.reddit\.com/i then response.json.jq("jq-path=https://rucu6.pages.dev/JQLang/reddit.jq")
 
 [Rule]
 # ======= 0 ======= #

@@ -159,13 +159,13 @@ target native planner
 → REVIEW REQUIRED
 ```
 
-当前 complex helper 可处理同 phase 的多 Action Body/JSON pipeline，以及 Header 与 Body/JSON 的有序组合。Header 支持已验证的 `set / del / replace`，Surge 在 `full-header-mode=true` 下额外支持保持重复字段的 `add`；JSON 支持已验证的 `delete / replace`。所有 Action 必须严格按 Loon AST 从左到右执行，Body Replace 与 JSON Action 可以交错，禁止把 JSON 操作整体提前或延后。
+当前 complex helper 可处理同 phase 的 Header/Body/JSON pipeline，以及需要 Surge Module 参数运行时参与的 Rewrite。Header 支持已验证的 `set / del / replace`，Surge 在 `full-header-mode=true` 下额外支持保持重复字段的 `add`；JSON 支持已验证的 `add / delete / replace`。所有 Action 必须严格按 Loon AST 从左到右执行，Body Replace 与 JSON Action 可以交错，禁止把 JSON 操作整体提前或延后。
 
 条件编译当前只接受已验证的 `url`、`request.method`、`response.status`、固定 Header 读取，以及 `== / ~= / && / || / ()`。未知变量、未知运算符、无法证明等价的 capture 行为必须 fail closed。
 
 Loon regex literal 的 `i / m / s` flags 在所有 native/helper 路径中均只解析、不传播；flags 的存在本身不进入 Review。目标编译阶段同时去掉 literal delimiter，并将仅用于源 literal 的 `\/` 规范化为目标 bare-regex 的 `/`；目标 helper 不得通过 `new RegExp(pattern, flags)`、inline modifier 或 case-fold 恢复这些 flags。
 
-Surge 的 `header.add` 与普通对象 Header 修改语义不同：官方定义为已有同名字段时继续追加。需要脚本保持重复字段时必须使用 `full-header-mode=true` 的 `[{field,value}]` 形式，禁止退化为对象赋值。Quantumult X 未验证等价的重复 Header 返回表示前，`header.add` complex fallback 保持 fail closed。
+Surge 的 `header.add` 与普通对象 Header 修改语义不同。需要脚本保持重复字段时必须使用 `full-header-mode=true` 的 `[{field,value}]` 形式，禁止退化为对象赋值。Quantumult X 官方 sample 只证明 Header 对象与整块 Header Rewrite，未证明对象赋值可保留同名重复字段；因此 **QX 不得用 set/对象赋值冒充 add**。QX `header.add` 在没有已验证等价表示时，helper 失败后注释源声明。
 
 `json.add` 按 Loon JSON Key Path 语义处理：仅当目标 Key 不存在时新增；中间对象/数组路径按 Key Path 创建；批量参数按下标配对并从左到右执行。禁止把 `add` 退化成无条件覆盖。
 

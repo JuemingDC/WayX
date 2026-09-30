@@ -4,15 +4,11 @@
 # Icon: https://rucu6.pages.dev/Icons/app/myblockads.png
 # Updated: 2026-09-27 18:30
 
-# Converted: 2026-09-30 12:45:49 +08:00
+# Converted: 2026-09-30 14:40:15 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/myblockads.lpx
 # Target: Quantumult X
-
-
-# Reddit //gql.reddit.com, gql-fed.reddit.com
-# Unsupported Loon Rewrite v2 preserved (JQ contains a single quote outside a JSON string; target quoting is not proven safe): response if ${url} ~= /^https:\/\/gql(-fed)?\.reddit\.com/i then response.json.jq("jq-path=https://rucu6.pages.dev/JQLang/reddit.jq")
 
 # [filter_local]
 # ======= 0 ======= #
@@ -21,7 +17,8 @@ host, ad.12306.cn, direct
 
 # ======= A ======= #
 # 阿里巴巴
-# Unsupported logical rule for Quantumult X: AND, ((URL-REGEX, "^http:\/\/.+\/amdc\/mobileDispatch"), (USER-AGENT, "Alibaba*")), REJECT
+# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent
+# Source declaration: AND, ((URL-REGEX, "^http:\/\/.+\/amdc\/mobileDispatch"), (USER-AGENT, "Alibaba*")), REJECT
 host-suffix, ut.taobao.com, reject
 host, dns.alidns.com, reject
 host, ems.youku.com, reject
@@ -70,7 +67,8 @@ ip-cidr, 180.76.76.112/32, reject
 ip-cidr, 180.76.76.200/32, reject
 
 # 百度网盘
-# Unsupported logical rule for Quantumult X: AND, ((DOMAIN-SUFFIX, pan.baidu.com), (PROTOCOL, TCP)), REJECT
+# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent
+# Source declaration: AND, ((DOMAIN-SUFFIX, pan.baidu.com), (PROTOCOL, TCP)), REJECT
 
 # ======= C ======= #
 # 昌原云充
@@ -103,9 +101,12 @@ host-suffix, mall.icbc.com.cn, reject
 host, pageviewp.icbc.com.cn, reject
 
 # 广告联盟
-# Unsupported logical rule for Quantumult X: AND, ((DOMAIN-KEYWORD, -misc-), (DOMAIN-SUFFIX, zijieapi.com)), REJECT
-# Unsupported logical rule for Quantumult X: AND, ((DOMAIN-KEYWORD, adx-), (DOMAIN-SUFFIX, statisticslinks.com)), REJECT
-# Unsupported logical rule for Quantumult X: AND, ((DOMAIN-KEYWORD, mssdk), (DOMAIN-SUFFIX, zijieapi.com)), REJECT
+# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent
+# Source declaration: AND, ((DOMAIN-KEYWORD, -misc-), (DOMAIN-SUFFIX, zijieapi.com)), REJECT
+# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent
+# Source declaration: AND, ((DOMAIN-KEYWORD, adx-), (DOMAIN-SUFFIX, statisticslinks.com)), REJECT
+# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent
+# Source declaration: AND, ((DOMAIN-KEYWORD, mssdk), (DOMAIN-SUFFIX, zijieapi.com)), REJECT
 host-keyword, -ad-sign.byteimg.com, reject
 host-keyword, -ad., reject
 host-keyword, -ads-, reject
@@ -188,7 +189,8 @@ host, ws.tapjoyads.com, reject
 #DOMAIN-SUFFIX, ehaier.com, REJECT
 
 # 盒马
-# Unsupported logical rule for Quantumult X: AND, ((URL-REGEX, "^http:\/\/.+\/amdc\/mobileDispatch"), (USER-AGENT, "Hema4iPhone*")), REJECT
+# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent
+# Source declaration: AND, ((URL-REGEX, "^http:\/\/.+\/amdc\/mobileDispatch"), (USER-AGENT, "Hema4iPhone*")), REJECT
 
 # httpdns
 host, hdns.ksyun.com, reject
@@ -326,7 +328,8 @@ host, splashimgbssdl.yun.kugou.com, reject
 host, tmead.y.qq.com, reject
 
 # 天猫精灵
-# Unsupported logical rule for Quantumult X: AND, ((URL-REGEX, "^http:\/\/.+\/amdc\/mobileDispatch"), (USER-AGENT, "TmallGenie*")), REJECT
+# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent
+# Source declaration: AND, ((URL-REGEX, "^http:\/\/.+\/amdc\/mobileDispatch"), (USER-AGENT, "TmallGenie*")), REJECT
 
 # ======= W ======= #
 # 万能钥匙
@@ -350,7 +353,8 @@ host, dns.weixin.qq.com.cn, reject
 host-suffix, vsdrwee.com, reject
 host, carlinaframh.com, reject
 host, tong.8888888888.bid, reject
-# Unsupported logical rule for Quantumult X: AND, ((OR, ((DOMAIN-KEYWORD, kc.), (DOMAIN-KEYWORD, kcc.), (DOMAIN-KEYWORD, kg.))), (DEST-PORT, 8008)), REJECT
+# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent
+# Source declaration: AND, ((OR, ((DOMAIN-KEYWORD, kc.), (DOMAIN-KEYWORD, kcc.), (DOMAIN-KEYWORD, kg.))), (DEST-PORT, 8008)), REJECT
 
 # 云闪付 开屏广告
 host, ads.95516.com, reject
@@ -435,6 +439,8 @@ host, yandexmetrica.com, reject
 
 # 米家 //home.mi.com
 ^https://home\.mi\.com/cgi-op/api/v1/recommendation/(?:banner|carousel/banners|myTab|openingBanner) url reject-dict
+
+# Reddit //gql.reddit.com, gql-fed.reddit.com
 
 # 太平洋寿险 //a.cpiccdn.com
 ^https://a\.cpiccdn\.com/config-center/api/configfile/images/\d{8}/\d{13}_(?:(?:630|945|1035)_\d{2,4}|123_48|136_136|207_210|408_408|750_750|1125_\d{4})\.(gif|jpg|png)$ url reject-dict

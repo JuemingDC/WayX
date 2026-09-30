@@ -34,7 +34,11 @@
 | `SCRIPT` Rule | QX filter sample 未确认 → Review | `SCRIPT` | Surge 直接 |
 | `RULE-SET` | 不自动推断 | `RULE-SET` | QX Review |
 | `DOMAIN-SET` | 不自动推断 | `DOMAIN-SET` | QX Review |
-| `FINAL` | `final` 仅完整规则配置场景 | `FINAL` | plugin/module 默认 Review |
+| `FINAL` | `final` 仅完整规则配置场景 | **丢弃** | WayX 去广告 Module 不改写用户全局 catch-all |
+
+### FINAL 项目规则
+
+WayX 的目标是去广告插件转换，不负责接管用户主配置的最终路由。Loon 源插件中的 `FINAL` 在生成 Surge Module 时**直接丢弃**，不改写、不输出活动规则、也不进入 Review。这样可避免 Module 修改用户已有的全局 `FINAL` 行为。
 
 ## 20.2 `URL-REGEX` + `REJECT-X` 特殊映射
 

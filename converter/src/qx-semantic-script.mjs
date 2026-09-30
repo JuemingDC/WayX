@@ -224,16 +224,19 @@ export function renderQxHeaderScript(ast, options = {}) {
   validateRewriteV2Ast(ast);
   const condition = simpleUrlRewriteCondition(ast);
   if (!condition.ok) throw new Error(condition.reason);
-  if (!ast.actions.length || ast.actions.some(a => !new RegExp('^' + ast.phase + '\\.header\\.(?:add|set|del|replace)$').test(a.name))) {
+  if (!ast.actions.length || ast.actions.some(a =>
+    !new RegExp('^' + ast.phase + '\\.header\\.(?:add|set|del|replace)$').test(a.name)
+  )) {
     throw new Error('QX header script supports only same-phase add/set/del/replace actions');
+  }
+  if (ast.actions.some(action => action.name.endsWith('.add'))) {
+    throw new Error('QX header.add cannot be represented losslessly: the official header object form does not prove duplicate-header preservation');
   }
 
   const statements = [];
   for (const action of ast.actions) {
     for (const args of expandAction(action)) {
-      if (action.name.endsWith('.add')) {
-        statements.push('__wayxAdd(' + JSON.stringify(fixed(args[0], 'header name')) + ', ' + JSON.stringify(fixed(args[1], 'header value')) + ');');
-      } else if (action.name.endsWith('.set')) {
+      if (action.name.endsWith('.set')) {
         statements.push('__wayxSet(' + JSON.stringify(fixed(args[0], 'header name')) + ', ' + JSON.stringify(fixed(args[1], 'header value')) + ');');
       } else if (action.name.endsWith('.del')) {
         statements.push('__wayxDel(' + JSON.stringify(fixed(args[0], 'header name')) + ');');
@@ -248,7 +251,6 @@ export function renderQxHeaderScript(ast, options = {}) {
   }
 
   const source = ast.phase === 'request' ? '$request.headers' : '$response.headers';
-  const needsAdd = ast.actions.some(action => action.name.endsWith('.add'));
   const lines = [
     ...metadata(options),
     'const __wayxHeaders = {...' + source + '};',
@@ -256,12 +258,7 @@ export function renderQxHeaderScript(ast, options = {}) {
     '  const wanted = String(name).toLowerCase();',
     '  return Object.keys(__wayxHeaders).find(key => key.toLowerCase() === wanted);',
     '}',
-    ...(needsAdd ? [
-      'function __wayxAdd(name, value) {',
-      '  const key = __wayxKey(name);',
-      '  __wayxHeaders[key || name] = value;',
-      '}',
-    ] : []),
+
     'function __wayxSet(name, value) {',
     '  const key = __wayxKey(name);',
     '  __wayxHeaders[key || name] = value;',

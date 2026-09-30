@@ -76,18 +76,12 @@ function base64Decoder() {
 }
 
 function headerHelpers(headerOps = []) {
-  const needsAdd = headerOps.some(op => op.type === 'add');
   return [
     'function __wayxHeaderKey(headers, name) {',
     '  const wanted = String(name).toLowerCase();',
     '  return Object.keys(headers).find(key => key.toLowerCase() === wanted);',
     '}',
-    ...(needsAdd ? [
-      'function __wayxHeaderAdd(headers, name, value) {',
-      '  const key = __wayxHeaderKey(headers, name);',
-      '  headers[key || name] = value;',
-      '}',
-    ] : []),
+
     'function __wayxHeaderSet(headers, name, value) {',
     '  const key = __wayxHeaderKey(headers, name);',
     '  headers[key || name] = value;',
@@ -105,10 +99,12 @@ function headerHelpers(headerOps = []) {
 
 function renderHeaderOps(lines, headerOps = []) {
   if (!headerOps.length) return;
+  if (headerOps.some(op => op.type === 'add')) {
+    throw new Error('QX header.add cannot be represented losslessly with the official header object form');
+  }
   lines.push(...headerHelpers(headerOps));
   for (const op of headerOps) {
-    if (op.type === 'add') lines.push(`__wayxHeaderAdd(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(op.value)});`);
-    else if (op.type === 'set') lines.push(`__wayxHeaderSet(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(op.value)});`);
+    if (op.type === 'set') lines.push(`__wayxHeaderSet(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(op.value)});`);
     else if (op.type === 'del') lines.push(`__wayxHeaderDel(headers, ${JSON.stringify(op.name)});`);
     else if (op.type === 'replace') lines.push(`__wayxHeaderReplace(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(normalizeRegexBodyForTarget(op.pattern))}, ${JSON.stringify(op.replacement)});`);
     else throw new Error('unsupported QX mock header operation: ' + op.type);

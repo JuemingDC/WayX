@@ -4,6 +4,7 @@
 import { compileRegexForTarget, normalizeRegexBodyForTarget } from './target-regex.mjs';
 import { qxPrimitiveForRewriteV2Action, validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
 import { quoteJq } from './jq.mjs';
+import { dependencySpecFromAction } from './dependency.mjs';
 
 function unsupported(reason, extra = {}) {
   return { ok: false, reason, ...extra };
@@ -450,7 +451,7 @@ export function surgeInlineMockPlan(ast) {
     const body = fixedNoTemplate(mock.args[1], 'mock body');
     const status = intArg(mock.args[2], 200);
     const base64 = boolArg(mock.args[3], false);
-    if (status < 200 || status > 599) return unsupported('Surge Map Local cannot preserve this Loon mock status');
+    if (status < 200 || status > 999) return unsupported('Surge Map Local cannot preserve this Loon mock status');
     if (!Object.hasOwn(MOCK_MIME, type)) return unsupported('unsupported Loon mock content type: ' + type);
     if (!MOCK_TEXT_TYPES.has(type) && !base64) return unsupported('binary inline mock requires Base64=true for Surge Map Local');
 
@@ -480,6 +481,63 @@ export function surgeInlineMockPlan(ast) {
     return unsupported(String(error.message || error));
   }
 }
+
+export function surgeMockFilePlan(ast, {pluginSourceUrl = '', materialized = null} = {}) {
+  validateRewriteV2Ast(ast);
+  if (ast.phase !== 'response') {
+    return unsupported('Surge Map Local file mapping requires response phase');
+  }
+  const condition = simpleUrlRewriteCondition(ast, {target:'surge'});
+  if (!condition.ok) return condition;
+
+  const mocks = ast.actions.filter(action => action.name === 'response.body.mock_file');
+  if (mocks.length !== 1) return unsupported('Surge Map Local file mapping requires exactly one response.body.mock_file action');
+  if (ast.actions.some(action => action !== mocks[0] && !/^response\.header\.(?:add|set|del|replace)$/.test(action.name))) {
+    return unsupported('response mock_file may only combine response.header actions');
+  }
+
+  try {
+    const action = mocks[0];
+    const spec = dependencySpecFromAction(action, {pluginSourceUrl});
+    if (!spec?.resolvable || !spec.url) return unsupported(spec?.reason || 'mock_file is not resolvable');
+    if (spec.status < 200 || spec.status > 999) return unsupported('Surge Map Local cannot preserve this Loon mock_file status');
+    if (!Object.hasOwn(MOCK_MIME, spec.contentType)) return unsupported('unsupported Loon mock_file content type: ' + spec.contentType);
+
+    let dataType = 'file';
+    let data = spec.url;
+    if (spec.base64) {
+      if (!materialized || materialized.error || typeof materialized.bodyBase64 !== 'string') {
+        return unsupported(materialized?.error || 'Base64 mock_file content was not materialized');
+      }
+      dataType = 'base64';
+      data = materialized.bodyBase64;
+    }
+
+    const headers = [['Content-Type', MOCK_MIME[spec.contentType]]];
+    for (const item of ast.actions) {
+      if (item !== action) applyStaticHeaderAction(headers, item);
+    }
+    for (const pair of headers) {
+      if (/[\r\n|]/.test(pair[0]) || /[\r\n|]/.test(pair[1])) {
+        return unsupported('Map Local header contains a separator or line break and requires script fallback');
+      }
+    }
+    const headerValue = headers.map(pair => pair[0] + ':' + pair[1]).join('|');
+
+    return {
+      ok:true,
+      strategy:'direct',
+      section:'map',
+      pattern:condition.pattern,
+      line:condition.pattern + ' data-type=' + dataType + ' data=' + JSON.stringify(data) +
+        ' status-code=' + spec.status + (headerValue ? ' header=' + JSON.stringify(headerValue) : ''),
+      notes:condition.notes,
+    };
+  } catch (error) {
+    return unsupported(String(error?.message || error));
+  }
+}
+
 
 export function fixedStringValue(node) {
   return stringNode(node);

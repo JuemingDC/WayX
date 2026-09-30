@@ -27,6 +27,7 @@ const stats = {
   files: 0,
   rules: 0,
   native: 0,
+  dropped: 0,
   review: 0,
   reasons: new Map(),
   types: new Map(),
@@ -57,6 +58,11 @@ for (const entry of manifest) {
       assert.equal(mapped.lines.at(-1), mapped.line);
       continue;
     }
+    if (mapped.kind === 'drop') {
+      assert.equal(mapped.reason, 'drop-source-final');
+      stats.dropped++;
+      continue;
+    }
 
     stats.review++;
     stats.reasons.set(mapped.reason, (stats.reasons.get(mapped.reason) || 0) + 1);
@@ -81,11 +87,11 @@ assert.equal(
 );
 for (const item of stats.reviewLines.filter(x => x.reason === 'external-policy')) {
   const mapped=surgeModuleRule(item.line);
-  assert.match(mapped.lines.join('\n'), /policy binding required/i);
+  assert.match(mapped.lines.join('\n'), /REVIEW REQUIRED: Surge Module requires an external policy binding/i);
 }
 
 const types = [...stats.types.entries()].sort((a, b) => a[0].localeCompare(b[0]));
 console.log(
-  `Surge Rule coverage: files=${stats.files}, rules=${stats.rules}, native=${stats.native}, review=${stats.review}`
+  `Surge Rule coverage: files=${stats.files}, rules=${stats.rules}, native=${stats.native}, dropped=${stats.dropped}, review=${stats.review}`
 );
 console.log('Rule types: ' + types.map(([type, count]) => `${type}=${count}`).join(', '));

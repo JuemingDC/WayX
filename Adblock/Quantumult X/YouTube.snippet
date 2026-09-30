@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/youtube.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-09-30 12:45:51 +08:00
+# Converted: 2026-09-30 14:40:17 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/youtube.lpx
@@ -21,9 +21,8 @@
 (^https://youtu\.be/[\w-]+)(?:\?si=\w+) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/YouTube/redirect_26c750fd96.js
 # [WayX] SCRIPT V2 REVIEW REQUIRED: Loon Script v2 $argument cannot be carried by the official Quantumult X rewrite declaration without changing the script
 # Source declaration: request if ${url} ~= /^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.*/i then script("https://rucu6.pages.dev/Scripts/youtube/request.js", {${captionLang}}) with tag="youtube_request_init", requires_body=true, binary_body_mode=true
-# youtube_request_log_event
-# [WayX] Source binary_body_mode=true; script source is preserved unchanged.
-^https://youtubei\.googleapis\.com/youtubei/v1/log_event url script-request-body https://rucu6.pages.dev/Scripts/youtube/request.js
+# [WayX] SCRIPT V2 REVIEW REQUIRED: Loon request binary_body_mode=true has no verified Quantumult X request-body bodyBytes example
+# Source declaration: request if ${url} ~= /^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event/i then script("https://rucu6.pages.dev/Scripts/youtube/request.js") with tag="youtube_request_log_event", requires_body=true, binary_body_mode=true
 # [WayX] SCRIPT V2 REVIEW REQUIRED: Loon Script v2 $argument cannot be carried by the official Quantumult X rewrite declaration without changing the script
 # Source declaration: response if ${url} ~= /^https:\/\/youtubei\.googleapis\.com\/(?:youtubei\/v1\/(?:browse|config|log_event|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch))(\?(.*))?$/i then script("https://rucu6.pages.dev/Scripts/youtube/response.js", {${blockImmersive}, ${blockShorts}, ${blockUpload}, ${debug}, ${captionLang}}) with tag="youtube_response", requires_body=true, binary_body_mode=true
 

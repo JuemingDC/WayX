@@ -39,6 +39,7 @@ MANUAL_REVIEW_RE = re.compile(
     r"Unsupported Loon|"
     r"Loon .*not losslessly expressible|"
     r"\[WayX\]\s*(?:"
+    r"REVIEW REQUIRED|"
     r"MANUAL PORT REQUIRED|"
     r"(?:SCRIPT(?: V2)?|REWRITE V2|ARGUMENT)\s+REVIEW REQUIRED|"
     r"QUANTUMULT X (?:REVIEW REQUIRED|UNSUPPORTED)"
@@ -138,6 +139,8 @@ def simple_rule(line: str) -> tuple[bool, str]:
     if upper.startswith(("AND,", "OR,", "NOT,")):
         return False, "logical rule requires semantic review"
     parts = split_csv(line)
+    if parts and parts[0].upper() == "FINAL":
+        return True, "source FINAL is intentionally discarded for Surge ad-block modules"
     if len(parts) < 3:
         return False, "rule does not have type/value/policy"
     rule_type = parts[0].upper()
@@ -162,6 +165,11 @@ def simple_rule(line: str) -> tuple[bool, str]:
 
 
 def simple_rewrite_v2(line: str) -> tuple[bool, str] | None:
+    if re.fullmatch(
+        r"""(?:request|response)\s+if\s+.+\s+then\s+(?:request|response)\.json\.jq\(\s*["']jq-path=[^"']+["']\s*\)""",
+        line,
+    ):
+        return True, "legacy jq-path alias is intentionally discarded"
     m = re.fullmatch(
         r"request\s+if\s+\$\{url\}\s*~=\s*/((?:\\.|[^/])*)/([ims]*)\s+then\s+(.+)",
         line,
@@ -170,8 +178,6 @@ def simple_rewrite_v2(line: str) -> tuple[bool, str] | None:
         if " then " in line or re.match(r"^(request|response)\s+if\s+", line):
             return False, "Loon Rewrite v2 line is outside the deterministic simple subset"
         return None
-    if m.group(2):
-        return False, "Rewrite v2 regex flags require semantic review"
     action = m.group(3).strip()
     am = re.fullmatch(r"(reject|reject_dict|reject_array|reject_img)\(\s*(\d{3})\s*\)", action)
     if not am:

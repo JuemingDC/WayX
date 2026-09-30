@@ -40,8 +40,22 @@ assert ok, reason
 ok, reason = gate.simple_rule("DOMAIN,example.com,PROXY")
 assert not ok and "outside safe tier" in reason
 
+ok, reason = gate.simple_rule("FINAL,DIRECT")
+assert ok and "discarded" in reason
+
+
 ok, reason = gate.simple_old_rewrite(r"^https://ads\.example\.com reject")
 assert ok, reason
+
+ok, reason = gate.simple_rewrite_v2(r"request if ${url} ~= /ads/ims then reject(404)")
+assert ok, reason
+
+ok, reason = gate.simple_rewrite_v2(
+    r'response if ${url} ~= /reddit/i then response.json.jq("jq-path=https://example.com/reddit.jq")'
+)
+assert ok and "discarded" in reason
+
+
 
 # Vendor/subdirectory identity must not affect risk classification.
 old_text = gate.old_text
@@ -82,6 +96,7 @@ finally:
     gate.old_text = old_text
     gate.new_text = new_text
 
+assert gate.has_manual_review_marker("# [WayX] REVIEW REQUIRED: generic target fallback failed")
 assert gate.has_manual_review_marker("# [WayX] SCRIPT V2 REVIEW REQUIRED: source plugin parameter dependency")
 assert gate.has_manual_review_marker("# [WayX] REWRITE V2 REVIEW REQUIRED: source plugin parameter dependency")
 assert gate.has_manual_review_marker("# [WayX] ARGUMENT REVIEW REQUIRED: undeclared source plugin argument reference")

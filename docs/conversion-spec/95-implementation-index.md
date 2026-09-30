@@ -10,7 +10,7 @@
 | 20 | Rule / Policy / URL-REGEX reject-X | `rule.mjs` | `checkpoint.mjs`, `surge-rule-coverage.mjs` |
 | 30 | Legacy Rewrite + Rewrite v2 mapping | `legacy-rewrite.mjs`, `rewrite-v2*.mjs`, `qx-semantic-script.mjs` | `checkpoint.mjs`, `loon-new-syntax-cases.mjs`, `rucu6-rewrite-v2-coverage.mjs` |
 | 40 | Regex / condition AST | `rewrite-v2.mjs`, `rewrite-v2-actions.mjs`, `target-regex.mjs` | `checkpoint.mjs`, Rewrite v2 coverage |
-| 50 | JSON/JQ/mock/dependency | `jq.mjs`, `dependency.mjs`, `qx-mock.mjs`, `legacy-rewrite.mjs` | `checkpoint.mjs`, end-to-end Golden |
+| 50 | JSON/JQ/mock/dependency | `jq.mjs`, `dependency.mjs`, `qx-mock.mjs`, `surge-mock.mjs`, `legacy-rewrite.mjs` | `checkpoint.mjs`, end-to-end Golden |
 | 60 | Script declaration / Argument dependency analysis / compatibility | `script.mjs`, `script-compat.mjs`, `script-v2.mjs`, `script-v2-target.mjs`, `argument.mjs`, `argument-usage.mjs`, `source-fetch.mjs` | `rucu6-script-v2-coverage.mjs`, `source-script-url-preservation.mjs`, `checkpoint.mjs` |
 | 70 | MITM / comments / metadata | `mitm.mjs`, `metadata.mjs`, `sync-convert.mjs` comment pipeline | `checkpoint.mjs`, QX/Surge validators |
 | 80 | Review / validator / Golden / reconciliation | `validateQX`, `validateSurgeModule`, repository audit | genericity, Golden, `generated-helper-refs.mjs`, `source-script-url-preservation.mjs`, canonical consistency |
@@ -25,6 +25,7 @@
 → normalize + parse Loon sections
 → fetch Source JS + jq/mock dependencies directly from their original resolved URLs; Source JS is analysis-only and is not mirrored
 → Rule / Rewrite / Script / MITM generic planners
+→ target native planner → verified helper fallback → commented Review
 → QX snippet + Surge sgmodule renderer
 → QX validator + Surge validator
 → source/target reconciliation + genericity/golden checks

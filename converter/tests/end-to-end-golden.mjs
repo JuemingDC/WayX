@@ -35,17 +35,15 @@ response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then response.head
 hostname=api.example.com
 `;
 const headerGroupOutput = convert(headerGroupFixture, headerGroupSource, new Map(), STAMP);
-const responseHeaderLines = headerGroupOutput.qx.split(/\\r?\\n/).filter(line => / url script-response-header /.test(line));
-assert.equal(responseHeaderLines.length, 1, 'same-condition response Header actions must share one QX response-header hook');
-const headerGroupScripts = [...headerGroupOutput.generatedScripts.values()];
-assert.equal(headerGroupScripts.length, 1, 'grouped Header actions should generate one helper');
-assert.match(headerGroupScripts[0], /__wayxAdd\("content-disposition", "inline"\);/);
-assert.match(headerGroupScripts[0], /__wayxSet\("content-type", "text\/plain; charset=utf-8"\);/);
-assert.ok(
-  headerGroupScripts[0].indexOf('__wayxAdd("content-disposition", "inline");') <
-  headerGroupScripts[0].indexOf('__wayxSet("content-type", "text/plain; charset=utf-8");'),
-  'grouped QX Header helper must preserve source action order',
+assert.match(headerGroupOutput.qx, /REVIEW REQUIRED: QX header\.add cannot be represented losslessly/);
+assert.equal(
+  headerGroupOutput.qx.split(/\\r?\\n/).some(line => !line.trim().startsWith('#') && /script-response-header/.test(line)),
+  false,
+  'QX header.add must not be activated through object-set semantics',
 );
+assert.match(headerGroupOutput.surge, /header-add content-disposition inline/);
+assert.match(headerGroupOutput.surge, /header-del content-type/);
+assert.match(headerGroupOutput.surge, /header-add content-type text\/plain; charset=utf-8/);
 
 const argumentRewriteFixture = {
   id:'ArgumentRewriteFixture',
@@ -63,15 +61,19 @@ price=input,9.99,type=number,tag=Price
 response if \${enabled} == true && \${url} ~= /api/ then response.json.replace("data.price", \${price})
 `;
 const argumentRewriteOutput = convert(argumentRewriteFixture, argumentRewriteSource, new Map(), STAMP);
-assert.match(argumentRewriteOutput.qx, /REWRITE V2 REVIEW REQUIRED: plugin \[Argument\] reference\(s\) enabled, price/);
-assert.match(argumentRewriteOutput.surge, /REWRITE V2 REVIEW REQUIRED: plugin \[Argument\] reference\(s\) enabled, price/);
+assert.match(argumentRewriteOutput.qx, /REVIEW REQUIRED: Quantumult X cannot carry Loon plugin \[Argument\] references/);
 assert.doesNotMatch(argumentRewriteOutput.qx, /Source \[Argument\]|Argument usage:|enabled=switch|price=input/);
-assert.doesNotMatch(argumentRewriteOutput.surge, /Source \[Argument\]|Argument usage:|enabled=switch|price=input/);
+assert.match(argumentRewriteOutput.surge, /^#!arguments=.*enabled:true.*price:9\.99/m);
+assert.match(argumentRewriteOutput.surge, /wayx_complex_.*type=http-response,pattern=.*script-path=.*argument=/);
+assert.doesNotMatch(argumentRewriteOutput.surge, /REVIEW REQUIRED/);
 assert.equal(
   argumentRewriteOutput.qx.split(/\\r?\\n/).some(line => !line.trim().startsWith('#') && /jsonjq-response-body/.test(line)),
   false,
   'plugin Argument Rewrite must not be frozen into an executable QX rewrite',
 );
+const argumentHelper = [...argumentRewriteOutput.generatedScripts.values()].find(text => /__wayxArgs/.test(text));
+assert.ok(argumentHelper, 'Surge Argument Rewrite must generate a runtime helper');
+assert.match(argumentHelper, /JSON\.parse\(String\(\$argument/);
 
 const disabledRewriteFixture = {
   id:'DisabledRewriteFixture',
@@ -280,21 +282,22 @@ for (const testCase of cases) {
   }
 
   if (testCase.name === 'MyBlockAds') {
-    assert.equal(actual.qxReview, 0);
+    assert.equal(actual.qxReview, 8);
     assert.equal(actual.surgeReview, 0);
-    assert.match(out.qx, /response\.json\.jq\("jq-path=https:\/\/rucu6\.pages\.dev\/JQLang\/reddit\.jq"\)/);
-    assert.match(out.surge, /response\.json\.jq\("jq-path=https:\/\/rucu6\.pages\.dev\/JQLang\/reddit\.jq"\)/);
+    assert.doesNotMatch(out.qx, /jq-path=/);
+    assert.doesNotMatch(out.surge, /jq-path=/);
     assert.match(out.surge, /^\[Body Rewrite\]$/m);
     assert.match(out.surge, /^\[Map Local\]$/m);
   }
 
   if (testCase.name === 'YouTube') {
     assert.doesNotMatch(out.qx, /Source \[Argument\]|Argument usage:/, 'YouTube QX must not emit Loon plugin parameter UI/declarations');
-    assert.equal(actual.qxReview, 2);
+    assert.equal(actual.qxReview, 3);
     assert.equal(actual.surgeReview, 0);
     assert.match(out.surge, /^#!arguments=.*captionLang:zh-Hans/m);
     assert.match(out.surge, /argument="\{\\\"captionLang\\\":\\\"\{\{\{captionLang\}\}\}\\\"\}"/);
-    assert.ok(qxActive.some(line => /youtube\/request\.js$/.test(line)), 'YouTube: native QX request script declaration missing');
+    assert.equal(qxActive.some(line => /youtube\/request\.js$/.test(line)), false, 'YouTube: request binary script must stay inactive until QX request bodyBytes is officially verified');
+    assert.match(out.qx, /request binary_body_mode=true has no verified Quantumult X request-body bodyBytes example/);
     assert.match(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
     assert.doesNotMatch(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
   }
@@ -305,7 +308,8 @@ for (const testCase of cases) {
     assert.match(out.qx, /QUANTUMULT X UNSUPPORTED - source script disabled/);
     assert.equal(qxActive.some(line => /bilibili\/(?:request|response)\.js/.test(line)), false, 'Bilibili protobuf scripts must not be active in QX');
     assert.ok(qxActive.some(line => /bilibili\/json\.js/.test(line)), 'Bilibili JSON script declarations should remain available');
-    assert.equal(actual.surgeReview, 0);
+    assert.equal(actual.surgeReview, 1);
+    assert.match(out.surge, /REVIEW REQUIRED: Surge Module requires an external policy binding/);
     assert.match(out.surge, /^#!arguments=.*displayUpList:auto.*sponsorBlock:true/m);
     assert.match(out.surge, /#!REQUIREMENT "'\{\{\{sponsorBlock\}\}\}'=='true'"/);
     assert.doesNotMatch(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
@@ -325,7 +329,7 @@ for (const testCase of cases) {
   }
 
   if (testCase.name === 'JingDong') {
-    assert.equal(actual.qxReview, 2);
+    assert.equal(actual.qxReview, 3);
     assert.equal(actual.surgeReview, 0);
     assert.match(out.surge, /^#!arguments=Capture:false,Cookies:/m);
     assert.match(out.surge, /#!REQUIREMENT "'\{\{\{Capture\}\}\}'=='true'"/);

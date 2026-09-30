@@ -49,28 +49,22 @@ response.json.jq_file(path)
 3. 目标输出真实 JQ；
 4. 不把路径字符串当作 JQ 输出。
 
-RuCu6 当前存在：
+历史源中若出现：
 ```text
 response.json.jq("jq-path=https://...")
 ```
 
-这**不是 Loon 官方 jq_file 语法**。
-
-WayX 只允许将“已登记的已知 legacy alias”解析为依赖：
-- 必须在 dependency manifest 登记
-- 必须有缓存 JQ
-- 必须校验
-- 最终必须内联真实 JQ
-- 活动目标规则中禁止出现 `jq-path=`
+这不是 Loon 官方 `jq_file` 语法。WayX 将该 legacy `jq-path=` 写法列为**项目级丢弃项**：不解析、不下载、不缓存、不内联、不生成 helper、也不输出目标规则。只有官方 `request/response.json.jq_file(path)` 进入依赖解析。
 
 ## 50.4 response.body.mock / mock_file
 
 ### Surge
-优先 `[Map Local]`，保持：
-- status
-- Content-Type
-- text/json/binary/base64 类型
-- pipeline 中的 response header 行为
+`response.body.mock` / `response.body.mock_file` 优先 `[Map Local]`：
+- inline mock 使用 `text/base64`；
+- `mock_file` 使用官方 `data-type=file`，`data` 可为解析后的文件 URL；
+- Base64 文件可在转换期物化后使用 `data-type=base64`；
+- 保持 status、Content-Type 与可静态表达的 response header 行为；
+- Map Local 仍无法保持的条件/动作先尝试 HTTP helper，再注释 Review。
 
 ### Quantumult X
 - 明确空对象/空数组/图片可使用官方 reject-*；
@@ -87,13 +81,15 @@ WayX 只允许将“已登记的已知 legacy alias”解析为依赖：
 - binary request 若 bodyBytes 路径未由官方示例与测试确认 → Review。
 
 ### Surge
-- 能用 Body Rewrite 原生表达时优先原生；
-- 否则最小 helper；
-- 不得使用 Map Local 假装 request body rewrite。
+- `request.body.mock/mock_file` 不能用 Map Local 冒充 response mock；
+- 统一使用最小 `http-request` helper 修改 request body；
+- 文件内容在转换期从原始依赖 URL 物化后嵌入 helper；
+- binary/base64 使用 Surge 官方 `binary-body-mode=true` 与 `Uint8Array`；
+- helper 仍无法保持时注释 Review。
 
 ## 50.6 原始依赖读取原则
 
-- `jq_file` / `jq-path` / `mock_file` 只从源插件声明或相对源 URL 解析出的原始地址读取。
+- `jq_file` / `mock_file` 只从源插件声明或相对源 URL 解析出的原始地址读取；legacy `jq-path=` 不进入依赖流程。
 - dependency 内容只在本次转换进程内 materialize；不写入 `converter/dependencies/` 作为权威副本或 fallback。
 - 原始依赖无法读取或无法安全嵌入目标语法时，进入 Review；不得使用仓库缓存替代。
 
@@ -102,6 +98,7 @@ WayX 只允许将“已登记的已知 legacy alias”解析为依赖：
 - JQ normalize/minify：`converter/src/jq.mjs`
 - jq_file/mock_file dependency resolution：`converter/src/dependency.mjs`
 - QX mock_file helper：`converter/src/qx-mock.mjs`
+- Surge request mock helper：`converter/src/surge-mock.mjs`
 - QX inline mock/header helpers：`converter/src/qx-semantic-script.mjs`
 - Legacy JSON/JQ/mock：`converter/src/legacy-rewrite.mjs`
 - Rewrite v2 JSON/JQ/mock planner：`converter/src/rewrite-v2-semantic.mjs`
