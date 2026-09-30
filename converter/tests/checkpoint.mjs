@@ -437,6 +437,25 @@ assert.throws(
   /json\.delete array-index semantics are not verified/,
 );
 
+const captureMixedQx = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /\\/api\\/(foo)-(bar)/ims as hit then response.header.set("X-Capture", "${hit.0}:${hit.1}:${hit.2}") | response.body.replace(/token/, "${hit.2}")'),
+  {target:'qx'},
+);
+assert.match(captureMixedQx.script, /const __wayxCaptures=Object\.create\(null\)/);
+assert.ok(captureMixedQx.script.includes('__wayxCaptures["hit"]=String($request.url ?? "").match(new RegExp("\\\\/api\\\\/(foo)-(bar)"))'));
+assert.equal(captureMixedQx.script.includes('"ims"'), false);
+assert.ok(captureMixedQx.script.includes('String(__wayxCaptures["hit"]?.[0] ?? "")'));
+assert.ok(captureMixedQx.script.includes('String(__wayxCaptures["hit"]?.[1] ?? "")'));
+assert.ok(captureMixedQx.script.includes('String(__wayxCaptures["hit"]?.[2] ?? "")'));
+assert.throws(
+  () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ as hit then response.header.set("X-Test", "${other.1}") | response.body.replace(/x/, "y")'), {target:'qx'}),
+  /unknown capture alias: other/,
+);
+assert.throws(
+  () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ as hit then response.header.set("X-Test", "${hit.name}") | response.body.replace(/x/, "y")'), {target:'qx'}),
+  /header value contains unsupported interpolation/,
+);
+
 const surgeHeaderAddMixed = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /api/ then response.header.add("Set-Cookie", "b=2") | response.header.set("X-Test", "ok") | response.body.replace(/ads/, "clean")'),
   {target:'surge'},
