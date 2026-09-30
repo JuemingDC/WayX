@@ -710,8 +710,11 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     ruleLines: parsed.sections.get('Rule') || [],
   });
   const argumentIds = new Set(argumentAnalysis.declaredIds);
-  const surgeArgumentPlan = surgeArgumentMetadata(parsed.sections.get('Argument') || []);
+  const surgeArgumentPlan = surgeArgumentMetadata(parsed.sections.get('Argument') || [], {
+    proxyPolicyBinding: argumentAnalysis.policyBindings.length > 0,
+  });
   const surgeArgumentTable = surgeArgumentPlan.table;
+  const surgeProxyPolicyPlaceholder = surgeArgumentPlan.policyBinding?.placeholder || null;
   let surgeNeedsLineRequirement = false;
   const qctx = { id: entry.id, generatedScripts: qx.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, mockFiles: qxMockFiles, jqFiles, argumentIds };
   const sctx = { id: entry.id, generatedScripts: sg.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, mockFiles: qxMockFiles, jqFiles, argumentIds, argumentTable: surgeArgumentTable };
@@ -742,7 +745,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     if (qr.kind === 'filter') qx.filter.push(...qxRendered.comments, ...qxRendered.lines);
     else if (qr.kind === 'rewrite') qx.rewrite.push(...qxRendered.comments, ...qxRendered.lines);
     else qx.filter.push(...comments, qr.line);
-    const sr = surgeModuleRule(item.line);
+    const sr = surgeModuleRule(item.line, { proxyPolicyPlaceholder: surgeProxyPolicyPlaceholder });
     const sRuleDest = sr.section === 'map' ? sg.map : sg.rule;
     sRuleDest.push(...comments, ...sr.lines);
   }
