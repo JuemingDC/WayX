@@ -8,6 +8,7 @@ WayX 的 Loon Plugin → Quantumult X / Surge 通用转换器。核心原则是*
 - Source Plugin、Source Script、JQ/mock dependency 只使用原始来源；不使用镜像/fallback 替代。
 - Source JavaScript 不改写、不 wrapper、不 fork。
 - QX 只输出项目已确认支持的 snippet 语法；`filter_local / rewrite_local / mitm` 段名保持注释。
+- QX filter/rewrite 的源注释仅在严格“一条源注释 → 一条源规则 → 一条活动目标规则”时转换为 `{# note #} rule`；分组注释、多行注释和转换说明继续使用普通 `#`。
 - Surge 使用合法 sgmodule section/metadata。
 - Loon Plugin 的 `PROXY` 不做策略转换：QX 保留字面 `PROXY`；Surge Module 只注释保留源 Rule，不伪造外部 policy。
 - Loon `[Argument]` **不转换为 QX 参数或 BoxJs**；QX 只用它做依赖分析。BoxJs 是独立功能，不属于 Loon Plugin 自动转换链。
