@@ -4,6 +4,10 @@
 
 > 仅整理 Quantumult X 与 Surge。Egern 相关内容不纳入本仓库。
 
+## 项目状态
+
+当前进度、已知问题与待办优先级见：[PROJECT_STATUS.md](./PROJECT_STATUS.md)。
+
 ## 目录结构
 
 ```text
