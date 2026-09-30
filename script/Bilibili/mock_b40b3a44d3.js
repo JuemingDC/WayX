@@ -1,4 +1,4 @@
-// Converted: 2026-09-30 21:11:06 +08:00
+// Converted: 2026-09-30 21:45:35 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/search\/square\?/i then response.body.mock("text", "{\"code\":0,\"message\":\"0\",\"ttl\":1,\"data\":{\"type\":\"history\",\"title\":\"搜索历史\",\"search_hotword_revision\":2}}", 200)

@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/bilibili.png
 # Updated: 2026-09-22 22:55
 
-# Converted: 2026-09-30 21:11:06 +08:00
+# Converted: 2026-09-30 21:45:35 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/bilibili.lpx
@@ -93,37 +93,42 @@ host, app.biliapi.net, reject
 {# 哔哩哔哩漫画 开屏 && 底栏广告 #} ^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v1\.Comic\/(?:Flash|ListFlash|GetActivityTab|GetBubbles) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/mock_72464b6f06.js
 
 {# 哔哩哔哩漫画 广告 #} ^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v1\.(?:Comic\/AppInit|Home\/HomeFeed)\? url jsonjq-response-body '.data as $data | .data[("activity_tab", "flash", "operate") | select($data[.])]=null | if .data.feeds then .data.feeds |= map(select(.type | IN(15, 30) | not)) end'
-# [WayX] SCRIPT V2 REVIEW REQUIRED: Loon request binary_body_mode=true has no verified Quantumult X request-body bodyBytes example
-# Source declaration: request if ${url} ~= /^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.community\.service\.dm\.v1\.DM\/DmSegMobile$/i then script("https://rucu6.pages.dev/Scripts/bilibili/request.js") with enable=${sponsorBlock}, tag="移除视频内插播广告", requires_body=true, binary_body_mode=true
-# [WayX] SCRIPT V2 REVIEW REQUIRED: Loon request binary_body_mode=true has no verified Quantumult X request-body bodyBytes example
-# Source declaration: request if ${url} ~= /^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.main\.community\.reply\.v1\.Reply\/MainList$/i then script("https://rucu6.pages.dev/Scripts/bilibili/request.js", {${purifyComment}}) with enable=${optimizeRequest}, tag="移除评论区广告", requires_body=true, binary_body_mode=true
-# 移除动态页面广告
-# [WayX] Source binary_body_mode=true; script source is preserved unchanged.
+# 移除视频内插播广告
+# [WayX] Source dynamic enable=sponsorBlock ignored for Quantumult X; converted rule defaults to enabled.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
+^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.community\.service\.dm\.v1\.DM\/DmSegMobile$ url script-request-body https://rucu6.pages.dev/Scripts/bilibili/request.js
+# 移除评论区广告
+# [WayX] Source dynamic enable=optimizeRequest ignored for Quantumult X; converted rule defaults to enabled.
 # [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
+^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.main\.community\.reply\.v1\.Reply\/MainList$ url script-request-body https://rucu6.pages.dev/Scripts/bilibili/request.js
+# 移除动态页面广告
+# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.app\.dynamic\.v2\.Dynamic\/DynAll$ url script-response-body https://rucu6.pages.dev/Scripts/bilibili/response.js
 # 移除热门话题
-# [WayX] Source binary_body_mode=true; script source is preserved unchanged.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.app\.show\.v1\.Popular\/Index$ url script-response-body https://rucu6.pages.dev/Scripts/bilibili/response.js
 # 移除播放页面广告 playview
-# [WayX] Source binary_body_mode=true; script source is preserved unchanged.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.app\.playurl\.v1\.PlayURL\/PlayView$ url script-response-body https://rucu6.pages.dev/Scripts/bilibili/response.js
 # 移除播放页面广告 playerunite
-# [WayX] Source binary_body_mode=true; script source is preserved unchanged.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.app\.playerunite\.v1\.Player\/PlayViewUnite$ url script-response-body https://rucu6.pages.dev/Scripts/bilibili/response.js
 # 移除播放页面广告 view
-# [WayX] Source binary_body_mode=true; script source is preserved unchanged.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.app\.view\.v1\.View\/(?:View|ViewProgress)$ url script-response-body https://rucu6.pages.dev/Scripts/bilibili/response.js
 # 移除播放页面广告 viewunite
-# [WayX] Source binary_body_mode=true; script source is preserved unchanged.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.app\.viewunite\.v1\.View\/(?:AIRelateAsync|RelatesFeed|View|ViewProgress)$ url script-response-body https://rucu6.pages.dev/Scripts/bilibili/response.js
 # 移除交互式弹幕
-# [WayX] Source binary_body_mode=true; script source is preserved unchanged.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.community\.service\.dm\.v1\.DM\/DmView$ url script-response-body https://rucu6.pages.dev/Scripts/bilibili/response.js
 # 移除播放器开通会员横幅
-# [WayX] Source binary_body_mode=true; script source is preserved unchanged.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.pgc\.gateway\.player\.v2\.PlayURL\/PlayView$ url script-response-body https://rucu6.pages.dev/Scripts/bilibili/response.js
 # 移除搜索结果广告
-# [WayX] Source binary_body_mode=true; script source is preserved unchanged.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.polymer\.app\.search\.v1\.Search\/SearchAll$ url script-response-body https://rucu6.pages.dev/Scripts/bilibili/response.js
 
 # 以上为 Proto 处理, 以下为 JSON 处理

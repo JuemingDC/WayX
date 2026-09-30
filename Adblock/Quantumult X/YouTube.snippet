@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/youtube.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-09-30 21:11:10 +08:00
+# Converted: 2026-09-30 21:45:40 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/youtube.lpx
@@ -19,13 +19,16 @@
 #response if ${url} ~= /^https:\/\/rr[\w-]+\.googlevideo\.com\/initplayback\?/i then response.body.mock("text", "", 200)
 # youtube 短链移除追踪参数
 (^https:\/\/youtu\.be\/[\w-]+)(?:\?si=\w+) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/YouTube/redirect_26c750fd96.js
-# [WayX] SCRIPT V2 REVIEW REQUIRED: Loon request binary_body_mode=true has no verified Quantumult X request-body bodyBytes example
-# Source declaration: request if ${url} ~= /^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.*/i then script("https://rucu6.pages.dev/Scripts/youtube/request.js", {${captionLang}}) with tag="youtube_request_init", requires_body=true, binary_body_mode=true
-# [WayX] SCRIPT V2 REVIEW REQUIRED: Loon request binary_body_mode=true has no verified Quantumult X request-body bodyBytes example
-# Source declaration: request if ${url} ~= /^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event/i then script("https://rucu6.pages.dev/Scripts/youtube/request.js") with tag="youtube_request_log_event", requires_body=true, binary_body_mode=true
-# youtube_response
-# [WayX] Source binary_body_mode=true; script source is preserved unchanged.
+# youtube_request_init
 # [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
+^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.* url script-request-body https://rucu6.pages.dev/Scripts/youtube/request.js
+# youtube_request_log_event
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
+^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event url script-request-body https://rucu6.pages.dev/Scripts/youtube/request.js
+# youtube_response
+# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https:\/\/youtubei\.googleapis\.com\/(?:youtubei\/v1\/(?:browse|config|log_event|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch))(\?(.*))?$ url script-response-body https://rucu6.pages.dev/Scripts/youtube/response.js
 
 # [mitm]
