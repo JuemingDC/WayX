@@ -19,7 +19,7 @@ Updated: 2026-09-30
 - Loon `[Argument]` is **not converted** to QX parameter configuration or BoxJs.
 - QX outputs do not copy source `[Argument]` declarations or Argument usage lists.
 - Surge modules convert Loon `[Argument]` to `#!arguments / #!arguments-desc` and `{{{name}}}` placeholders; PluginObject is emitted as JSON string `argument=` and dynamic Script options use target-native placeholders/line requirements.
-- If a QX declaration depends on Loon plugin arguments and cannot be represented with the same semantics, it remains non-executable with a Review/Unsupported reason.
+- If a QX declaration depends on Loon plugin arguments and cannot be represented with the same semantics, it remains non-executable with a Review reason. Policy-selection binding is handled separately: Loon `PROXY` rules keep literal `PROXY` in QX and use a Surge module policy parameter.
 - Independent BoxJs content under `boxjs/` remains supported and is outside the Loon converter pipeline.
 
 ## Surge
@@ -48,6 +48,9 @@ Updated: 2026-09-30
 - Generic complex renderer capability is retained, but production admits only source-authored multi-action signatures observed in the Source Catalog and explicitly registered. Adjacent independent rules are never synthesized into a pipeline; single-action fallbacks use dedicated semantic helpers.
 - Source Script text may be inspected only to refine QX HTTP action type, not to judge runtime compatibility.
 - Unknown source syntax/action/section or an unregistered complex signature is commented out with `ISSUE REQUIRED`; the scheduled workflow proposes a deduplicated GitHub Issue before any Safe Tier commit.
+- QX `response.header.add` is an explicit commented limitation, not an ongoing Review item.
+- QZXY is declared in `.github/manual-assets.json` and remains hand-maintained outside canonical regeneration.
+- CI generates machine-readable reconciliation and Review/Issue inventory reports; reconciliation mismatch fails closed.
 
 ## Removed / obsolete directions
 
