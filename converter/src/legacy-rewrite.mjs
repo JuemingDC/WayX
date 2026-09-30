@@ -4,6 +4,7 @@
 import crypto from 'node:crypto';
 import { minifyJq, quoteJq } from './jq.mjs';
 import { normalizeRegexBodyForTarget } from './target-regex.mjs';
+import { renderQxHeaderScript } from './qx-semantic-script.mjs';
 
 const REJECT_ACTIONS = new Set(['reject','reject-200','reject-img','reject-dict','reject-array']);
 
@@ -145,13 +146,74 @@ export function classifyLegacyRewrite(action) {
   return {kind:'unknown', raw};
 }
 
-function planHeader(pattern, action, parsed, target) {
+function legacyStringNode(value) {
+  return {type:'string', value:String(value), raw:JSON.stringify(String(value))};
+}
+
+function legacyRegexNode(pattern) {
+  return {type:'regex', pattern:String(pattern), flags:'', raw:'/' + String(pattern).replaceAll('/', '\\/') + '/'};
+}
+
+function legacyHeaderAst(pattern, parsed, tokens) {
+  const width=parsed.op === 'del' ? 1 : parsed.op === 'replace-regex' ? 3 : 2;
+  const actions=[];
+  for(let i=0;i<tokens.length;i+=width){
+    const args=tokens.slice(i,i+width).map(unquote);
+    let suffix;
+    let nodes;
+    if(parsed.op === 'del'){
+      suffix='del';
+      nodes=[legacyStringNode(args[0])];
+    }else if(parsed.op === 'add'){
+      suffix='add';
+      nodes=[legacyStringNode(args[0]), legacyStringNode(args[1])];
+    }else if(parsed.op === 'replace'){
+      // Legacy header-replace is the set/replace-whole-field operation.
+      suffix='set';
+      nodes=[legacyStringNode(args[0]), legacyStringNode(args[1])];
+    }else{
+      suffix='replace';
+      nodes=[legacyStringNode(args[0]), legacyRegexNode(args[1]), legacyStringNode(args[2])];
+    }
+    actions.push({type:'action', name:parsed.phase + '.header.' + suffix, args:nodes});
+  }
+  return {
+    type:'rewrite',
+    phase:parsed.phase,
+    condition:{
+      type:'comparison',
+      operator:'~=',
+      left:{type:'variable', name:'url'},
+      right:legacyRegexNode(pattern),
+      capture:null,
+    },
+    actions,
+  };
+}
+
+function planHeader(pattern, action, parsed, target, ctx) {
   const tokens=shellTokens(parsed.rest);
   const direction=parsed.phase === 'response' ? 'http-response' : 'http-request';
   const width=parsed.op === 'del' ? 1 : parsed.op === 'replace-regex' ? 3 : 2;
   if (!tokens.length || tokens.length % width) return review(pattern, action, 'invalid legacy header argument grouping');
   if (target === 'qx') {
-    return review(pattern, action, 'Quantumult X official static rewrite sample does not provide a lossless field-oriented equivalent for this Loon header mutation');
+    try {
+      const ast=legacyHeaderAst(pattern, parsed, tokens);
+      const plan=renderQxHeaderScript(ast, {
+        stamp:ctx.stamp || '',
+        category:ctx.category || 'Rewrite / Legacy Header',
+        sourceLine:pattern + ' ' + action,
+      });
+      const key=crypto.createHash('sha1').update('legacy-header\\0'+pattern+'\\0'+action).digest('hex').slice(0,10);
+      const filename='legacy_header_'+key+'.js';
+      ctx.generatedScripts.set(filename, plan.script);
+      return {
+        section:'rewrite',
+        line:plan.pattern + ' url ' + plan.qxAction + ' ' + ctx.rawBase + '/script/' + ctx.id + '/' + filename,
+      };
+    } catch (error) {
+      return review(pattern, action, String(error?.message || error));
+    }
   }
   const targetPattern=normalizeRegexBodyForTarget(pattern);
   const lines=[];
@@ -241,7 +303,7 @@ export function planLegacyRewrite(pattern, action, target, ctx={}) {
       ? {section:'url', line:`${targetPattern} ${parsed.target} header`}
       : review(pattern, action, 'Quantumult X official sample has no verified transparent URL-rewrite equivalent for Loon legacy header action');
   }
-  if (parsed.kind === 'header') return planHeader(pattern, action, parsed, target);
+  if (parsed.kind === 'header') return planHeader(pattern, action, parsed, target, ctx);
   if (parsed.kind === 'body-regex') return planBodyRegex(pattern, action, parsed, target);
   if (parsed.kind === 'json') return planJson(pattern, action, parsed, target);
   if (parsed.kind === 'mock') return planMock(pattern, action, parsed, target, ctx);
