@@ -474,6 +474,13 @@ const rawCaptureLiteral = renderMixedRewriteScript(
 assert.ok(rawCaptureLiteral.script.includes('"literal ${hit.1}"'));
 assert.ok(rawCaptureLiteral.script.includes('"raw ${hit.1}"'));
 assert.equal(rawCaptureLiteral.script.includes('__wayxTpl([["s","literal '), false);
+const rawJsonLiteral = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /api/ then response.header.set("X-Test", "ok") | response.json.replace("data.raw", `{"literal":"${hit.1}"}`)'),
+  {target:'qx'},
+);
+assert.ok(rawJsonLiteral.script.includes('{"literal":"\\${hit.1}"}'));
+assert.equal(rawJsonLiteral.script.includes('__wayxTpl('), false);
+
 
 assert.throws(
   () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ as hit then response.header.set("X-Test", "${other.1}") | response.body.replace(/x/, "y")'), {target:'qx'}),
