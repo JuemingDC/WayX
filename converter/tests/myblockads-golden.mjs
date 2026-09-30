@@ -51,7 +51,7 @@ const sourceJq = source.split('\n').map(x => x.trim())
   .map(parseRewriteV2);
 assert.equal(sourceJq.length, 3, 'Unexpected current MyBlockAds Rewrite v2 JQ count');
 
-let reviewedJq = 0;
+let discardedJq = 0;
 for (const ast of sourceJq) {
   assert.equal(ast.condition.type, 'comparison');
   assert.equal(ast.condition.left.type, 'variable');
@@ -65,19 +65,17 @@ for (const ast of sourceJq) {
   assert.equal(typeof jq, 'string');
 
   const target = qxPairs.find(x => x.pattern === compiled.pattern);
-  if (!target) {
-    reviewedJq += 1;
-    assert.match(jq, /^jq-path=https?:\/\//, 'Only source jq-path dependencies may currently remain Review in this fixture');
-    const qxReview = qx.split('\n').find(line => line.includes('response.json.jq("jq-path=') && /Unsupported Loon Rewrite v2 preserved/.test(line));
-    const surgeReview = surge.split('\n').find(line => line.includes('response.json.jq("jq-path=') && /Unsupported Loon Rewrite v2 preserved/.test(line));
-    assert.ok(qxReview, 'Missing QX Review preservation for source jq-path');
-    assert.ok(surgeReview, 'Missing Surge Review preservation for source jq-path');
+  if (/^jq-path=/i.test(jq)) {
+    discardedJq += 1;
+    assert.equal(target, undefined, 'Legacy jq-path action must be discarded instead of converted');
+    assert.equal(qx.includes(jq), false, 'QX target must not preserve discarded jq-path text');
+    assert.equal(surge.includes(jq), false, 'Surge target must not preserve discarded jq-path text');
     continue;
   }
 
-  assert.equal(jq.startsWith('jq-path='), false, 'A source jq-path must not silently use a repository-cached dependency');
+  assert.ok(target, 'Inline source JQ must remain converted: ' + compiled.pattern);
   assert.equal(minifyJq(target.jq), minifyJq(jq), 'Inline source JQ changed semantics/text beyond whitespace normalization');
 }
-assert.equal(reviewedJq, fixture.jqReviewCount, 'Unexpected current MyBlockAds JQ Review count');
+assert.equal(discardedJq, fixture.jqDiscardCount, 'Unexpected current MyBlockAds discarded jq-path count');
 
 console.log('MyBlockAds JQ golden fixture passed');
