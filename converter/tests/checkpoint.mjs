@@ -647,6 +647,31 @@ assert.deepEqual(
   runComplexScript(runtimeHeaderCase.script, {response:{headers:{'X-Test':'old',Server:'origin'},body:'x'}}),
   {headers:{'X-Test':'new'},body:'y'},
 );
+
+const runtimeNumericStatus = renderMixedRewriteScript(
+  parseRewriteV2('response if ${response.status} == 204 then response.header.set("X-Status", "matched") | response.body.replace(/x/, "y")'),
+  {target:'qx'},
+);
+assert.deepEqual(
+  runComplexScript(runtimeNumericStatus.script, {response:{statusCode:204,status:204,headers:{},body:'x'}}),
+  {headers:{'X-Status':'matched'},body:'y'},
+);
+const runtimeStringStatus = renderMixedRewriteScript(
+  parseRewriteV2('response if ${response.status} == "204" then response.header.set("X-Status", "string") | response.body.replace(/x/, "y")'),
+  {target:'surge'},
+);
+assert.deepEqual(
+  runComplexScript(runtimeStringStatus.script, {response:{status:204,headers:{},body:'x'}}),
+  {headers:{'X-Status':'string'},body:'y'},
+);
+const runtimeNullHeader = renderMixedRewriteScript(
+  parseRewriteV2('response if ${response.header[\'X-Missing\']} == null then response.header.set("X-Null", "yes") | response.body.replace(/x/, "y")'),
+  {target:'qx'},
+);
+assert.deepEqual(
+  runComplexScript(runtimeNullHeader.script, {response:{headers:{},body:'x'}}),
+  {headers:{'X-Null':'yes'},body:'y'},
+);
 assert.equal(surgeHeaderAddMixed.surgeType, 'http-response');
 assert.match(surgeHeaderAddMixed.script, /__wayxHeaders\.push\(\{field:n,value:v\}\)/);
 assert.match(surgeHeaderAddMixed.script, /Array\.isArray\(\$response\.headers\)/);
