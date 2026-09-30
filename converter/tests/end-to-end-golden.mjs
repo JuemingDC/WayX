@@ -134,10 +134,11 @@ assert.doesNotMatch(requestReplaceCaptureOutput.qx, /REVIEW REQUIRED/);
 const requestReplaceCaptureHelper = [...requestReplaceCaptureOutput.generatedScripts.values()].find(text => text.includes('User-Agent'));
 assert.ok(requestReplaceCaptureHelper, 'QX request.header.replace must generate a helper');
 assert.ok(
-  requestReplaceCaptureHelper.includes('__wayxWith("iPhone OS $1",v=>__wayxHeaderReplace("User-Agent","iPhone OS (\\\\d+)",v));'),
+  requestReplaceCaptureHelper.includes('__wayxReplace("User-Agent", "iPhone OS (\\\\d+)", "iPhone OS $1");'),
   'QX header helper must preserve action-local $1 replacement and regex capture source',
 );
 assert.match(requestReplaceCaptureHelper, /toLowerCase\(\)/);
+assert.doesNotMatch(requestReplaceCaptureHelper, /__wayxJsonAdd|__wayxJsonDelete|__wayxBody=/);
 
 const requestAddDollarFixture = {
   id:'RequestHeaderAddDollarFixture',
