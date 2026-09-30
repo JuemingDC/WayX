@@ -59,9 +59,11 @@ WayX/
 - 本地响应 / reject-dict → 使用目标平台语义等价的本地响应机制；
 - MITM → 仅保留实际需要的 hostname。
 
-只有 Rewrite/Mock 在目标平台确实缺少严格等价的原生表达时，才允许生成 helper script；Rule 不用 Script 补齐。通用 complex helper 只处理多 action pipeline，单 action 必须使用对应专用 helper。Source Script 本身不改写。
+只有 Rewrite/Mock 在目标平台确实缺少严格等价的原生表达时，才允许生成 helper script；Rule 不用 Script 补齐。Complex helper 只处理**源单条声明真实写出的**多 action pipeline，并且 production 只放行当前 Source Catalog 已观察、已登记的 action signature；禁止把相邻规则凭空组合。单 action 必须使用对应专用 helper。Source Script 本身不改写。
 
 转换时保留原注释，并追加转换时间、作者 chance、模块分类、目标平台与原始来源。
+
+遇到未知语法、未知 action、未知 section 或未登记 complex signature 时，WayX 先把该源声明以注释保留，不生成猜测性活动规则，并写入 `ISSUE REQUIRED` marker；上游自动化随后创建/复用 GitHub Issue。已知语义但目标能力不足仍使用普通 Review。
 
 QX 当前支持 filter/rewrite 前置 note。源 `[Rule]`、`[Rewrite]`、`[Script]` 只要最终生成 QX filter/rewrite，都只把严格一对一的源注释转成：
 

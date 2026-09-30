@@ -24,7 +24,7 @@ import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
 import { planMitmLine } from '../../converter/src/mitm.mjs';
 import { fetchOriginalText, fetchOriginalBytes, resolveOriginalUrl } from '../../converter/src/source-fetch.mjs';
 import { registerComplexRewriteHandler, planComplexRewrite } from '../../converter/src/complex-rewrite-registry.mjs';
-import { renderMixedRewriteScript, renderSingleJsonMutationScript } from '../../converter/src/complex-rewrite-script.mjs';
+import { renderMixedRewriteScript, renderSingleJsonMutationScript, renderObservedComplexRewriteScript } from '../../converter/src/complex-rewrite-script.mjs';
 import { normalizeRegexBodyForTarget } from '../../converter/src/target-regex.mjs';
 import { renderSurgeRequestMockScript } from '../../converter/src/surge-mock.mjs';
 
@@ -48,6 +48,32 @@ function renderMinimalQxHeaderHelper(ast, options) {
     }
   }
 }
+
+registerComplexRewriteHandler({
+  id: 'qx-observed-source-pipeline',
+  targets: ['qx'],
+  match: (_ast, _info, ctx) => ctx.observedComplexType?.id === 'response-mock-header-set',
+  plan: (ast, target, ctx) => {
+    try {
+      const plan = renderObservedComplexRewriteScript(ast, {
+        target,
+        stamp:ctx.stamp,
+        category:ctx.category,
+        sourceLine:ctx.sourceLine,
+      });
+      const key = crypto.createHash('sha1').update('mock-inline\0' + ctx.sourceLine).digest('hex').slice(0, 10);
+      const filename = 'mock_' + key + '.js';
+      ctx.generatedScripts.set(filename, plan.script);
+      return {
+        ok:true,
+        section:'rewrite',
+        line:plan.pattern + ' url ' + plan.qxAction + ' ' + RAW_BASE + '/script/' + ctx.id + '/' + filename,
+      };
+    } catch (error) {
+      return {ok:false, terminal:true, reason:String(error?.message || error)};
+    }
+  },
+});
 
 registerComplexRewriteHandler({
   id: 'qx-same-phase-header-script',
@@ -152,6 +178,27 @@ function rewriteReview(line, reason) {
   };
 }
 
+function rewriteIssue(line, code, reason) {
+  return {
+    section:'comment',
+    line:'# [WayX] ISSUE REQUIRED [' + code + ']: ' + reason + '\n# Source declaration: ' + line,
+    issue:true,
+    issueCode:code,
+  };
+}
+
+function rewriteErrorResult(line, error) {
+  const reason = String(error?.message || error).split('\n')[0];
+  if (error instanceof SyntaxError) return rewriteIssue(line, 'unknown-rewrite-v2-syntax', reason);
+  if (error?.code === 'WAYX_REWRITE_V2_ACTION_INVALID' && /not present in the current official Loon Rewrite v2 registry/i.test(reason)) {
+    return rewriteIssue(line, 'unknown-rewrite-v2-action', reason);
+  }
+  if (error?.code === 'WAYX_REWRITE_V2_CONDITION_INVALID' && /unsupported|unknown|must be a variable/i.test(reason)) {
+    return rewriteIssue(line, 'unknown-rewrite-v2-condition', reason);
+  }
+  return rewriteReview(line, reason);
+}
+
 function rewriteV2Action(line, target, ctx) {
   if (!isRewriteV2(line)) return null;
 
@@ -168,7 +215,7 @@ function rewriteV2Action(line, target, ctx) {
       return {section:'drop', line:'', reason:'discard-legacy-jq-path'};
     }
   } catch (error) {
-    return rewriteReview(line, String(error?.message || error).split('\n')[0]);
+    return rewriteErrorResult(line, error);
   }
 
   try {
@@ -212,9 +259,9 @@ function rewriteV2Action(line, target, ctx) {
       }
     }
 
-    // Inline body.mock, including Loon's mock + response-header pipeline,
-    // becomes one QX script so mock-before-upstream and action ordering are kept.
-    if (ast.actions.some(a => /^(?:request|response)\.body\.mock$/.test(a.name))) {
+    // Single body.mock uses its dedicated helper. Source-authored multi-action
+    // mock pipelines are admitted only through the observed complex registry.
+    if (ast.actions.length === 1 && ast.actions.some(a => /^(?:request|response)\.body\.mock$/.test(a.name))) {
       try {
         const plan = renderQxInlineMockScript(ast, { stamp: ctx.stamp, category: ctx.category, sourceLine: line });
         const key = crypto.createHash('sha1').update('mock-inline\0' + line).digest('hex').slice(0, 10);
@@ -294,7 +341,7 @@ function rewriteV2Action(line, target, ctx) {
     // native and dedicated planners above have declined them.
     const complex = planComplexRewrite(ast, 'qx', {...ctx, sourceLine:line, argumentRefs:argumentRefs.all});
     if (complex.ok) return {section:complex.section, line:complex.line, lines:complex.lines};
-    if (complex.terminal) return rewriteReview(line, complex.reason);
+    if (complex.terminal) return complex.issue ? rewriteIssue(line, complex.issueCode || 'unknown-complex-rewrite', complex.reason) : rewriteReview(line, complex.reason);
 
   }
 
@@ -360,7 +407,7 @@ function rewriteV2Action(line, target, ctx) {
 
     const complex = planComplexRewrite(ast, 'surge', {...ctx, sourceLine:line, argumentRefs:argumentRefs.all});
     if (complex.ok) return {section:complex.section, line:complex.line, lines:complex.lines};
-    if (complex.terminal) return rewriteReview(line, complex.reason);
+    if (complex.terminal) return complex.issue ? rewriteIssue(line, complex.issueCode || 'unknown-complex-rewrite', complex.reason) : rewriteReview(line, complex.reason);
   }
 
   // Keep the older conservative syntax subset as a final parser/planner fallback.
@@ -557,55 +604,6 @@ function qxNativeHeaderPlan(ast) {
     line:condition.pattern + ' url request-header ' + headerPattern + ' request-header ' + headerReplacement,
   };
 }
-function planAdjacentQxHeaderGroups(items, ctx) {
-  const plans = new Map();
-  const consumed = new Set();
-
-  for (let index = 0; index < items.length; index++) {
-    if (consumed.has(index) || !items[index]?.line) continue;
-    const first = qxHeaderRewriteInfo(items[index].line, ctx.argumentIds || []);
-    if (!first) continue;
-    const actions = [...first.ast.actions];
-    const sourceLines = [items[index].line];
-    let end = index;
-
-    for (let nextIndex = index + 1; nextIndex < items.length; nextIndex++) {
-      const nextItem = items[nextIndex];
-      if (!nextItem?.line || nextItem.comments.length) break;
-      const next = qxHeaderRewriteInfo(nextItem.line, ctx.argumentIds || []);
-      if (!next || next.signature !== first.signature) break;
-      actions.push(...next.ast.actions);
-      sourceLines.push(nextItem.line);
-      end = nextIndex;
-    }
-
-    if (end === index) continue;
-
-    const mergedAst = {...first.ast, actions};
-    const nativePlan = qxNativeHeaderPlan(mergedAst);
-    if (nativePlan) {
-      plans.set(index, {...nativePlan, qxInlineNoteEligible:false});
-    } else {
-      try {
-        const plan = renderMinimalQxHeaderHelper(mergedAst, {
-          stamp: ctx.stamp,
-          category: ctx.category,
-          sourceLine: sourceLines.join(' | '),
-        });
-        const key = crypto.createHash('sha1').update('header\0' + sourceLines[0]).digest('hex').slice(0, 10);
-        const filename = `header_${key}.js`;
-        ctx.generatedScripts.set(filename, plan.script);
-        plans.set(index, {section:'rewrite', line:`${plan.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}`, qxInlineNoteEligible:false});
-      } catch (error) {
-        plans.set(index, {...rewriteReview(sourceLines.join(' | '), String(error?.message || error).split('\n')[0]), qxInlineNoteEligible:false});
-      }
-    }
-    for (let consumedIndex = index + 1; consumedIndex <= end; consumedIndex++) consumed.add(consumedIndex);
-  }
-
-  return {plans, consumed};
-}
-
 async function materializeMockFiles(entry, parsed) {
   const out = new Map();
   for (const item of sectionItems(parsed.sections.get('Rewrite'))) {
@@ -699,9 +697,11 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     if (supportedSourceSections.has(sectionName)) continue;
     const active = sectionItems(sectionLines).filter(item => item.line).map(item => item.line);
     if (!active.length) continue;
-    const reason = '# [WayX] REVIEW REQUIRED: unsupported Loon source section [' + sectionName + '] is outside the current ad-block conversion grammar';
-    qx.notes.push(reason, ...active.map(line => '# Source declaration: ' + line));
-    sg.notes.push(reason, ...active.map(line => '# Source declaration: ' + line));
+    const reason = '# [WayX] ISSUE REQUIRED [unknown-source-section]: unsupported Loon source section [' + sectionName + '] is outside the current ad-block conversion grammar';
+    for (const line of active) {
+      qx.notes.push(reason, '# Source declaration: ' + line);
+      sg.notes.push(reason, '# Source declaration: ' + line);
+    }
   }
   const argumentAnalysis = analyzePluginArgumentUsage({
     argumentLines: parsed.sections.get('Argument') || [],
@@ -752,7 +752,6 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
 
   const rewriteSectionLines = parsed.sections.get('Rewrite') || [];
   const rewriteItems = sectionItems(rewriteSectionLines);
-  const qxHeaderGroups = planAdjacentQxHeaderGroups(rewriteItems, qctx);
 
   for (let rewriteIndex = 0; rewriteIndex < rewriteItems.length; rewriteIndex++) {
     const item = rewriteItems[rewriteIndex];
@@ -766,37 +765,32 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     }
     if (!item.line) continue;
 
-    const qxConsumed = qxHeaderGroups.consumed.has(rewriteIndex);
-    let qr = qxHeaderGroups.plans.get(rewriteIndex) || null;
+    let qr = null;
     let sr = rewriteV2Action(item.line, 'surge', sctx);
 
-    if (!qxConsumed && !qr) {
-      const headerInfo = qxHeaderRewriteInfo(item.line, qctx.argumentIds || []);
-      if (headerInfo) qr = qxNativeHeaderPlan(headerInfo.ast);
-    }
-    if (!qxConsumed && !qr) qr = rewriteV2Action(item.line, 'qx', qctx);
+    const headerInfo = qxHeaderRewriteInfo(item.line, qctx.argumentIds || []);
+    if (headerInfo) qr = qxNativeHeaderPlan(headerInfo.ast);
+    if (!qr) qr = rewriteV2Action(item.line, 'qx', qctx);
 
     const [pattern, action] = splitPatternAction(item.line);
-    if (!qxConsumed && !qr) qr = planLegacyRewrite(pattern, action, 'qx', { ...qctx, rawBase: RAW_BASE });
+    if (!qr) qr = planLegacyRewrite(pattern, action, 'qx', { ...qctx, rawBase: RAW_BASE });
     if (!sr) sr = planLegacyRewrite(pattern, action, 'surge', { ...sctx, rawBase: RAW_BASE });
 
-    if (!qxConsumed) {
-      if (qr.section === 'drop') {
-        qx.rewrite.push(...comments);
+    if (qr.section === 'drop') {
+      qx.rewrite.push(...comments);
+    } else {
+      const qdest = qr.section === 'rewrite' ? qx.rewrite : qx.notes;
+      if (qr.section === 'rewrite') {
+        const qxRendered = qxAttachInlineNote({
+          sectionLines: rewriteSectionLines,
+          item,
+          sectionKind: 'rewrite',
+          lines: qr.lines || [qr.line],
+          eligible: qr.qxInlineNoteEligible !== false,
+        });
+        qdest.push(...qxRendered.comments, ...qxRendered.lines);
       } else {
-        const qdest = qr.section === 'rewrite' ? qx.rewrite : qx.notes;
-        if (qr.section === 'rewrite') {
-          const qxRendered = qxAttachInlineNote({
-            sectionLines: rewriteSectionLines,
-            item,
-            sectionKind: 'rewrite',
-            lines: qr.lines || [qr.line],
-            eligible: qr.qxInlineNoteEligible !== false,
-          });
-          qdest.push(...qxRendered.comments, ...qxRendered.lines);
-        } else {
-          qdest.push(...comments, ...(qr.lines || [qr.line]));
-        }
+        qdest.push(...comments, ...(qr.lines || [qr.line]));
       }
     }
 
@@ -821,8 +815,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
         ast = parseScriptV2(item.line);
       } catch (error) {
         const reason = String(error?.message || error).split('\n')[0];
-        qx.notes.push(...comments, `# [WayX] SCRIPT V2 REVIEW REQUIRED: source declaration parse failed: ${reason}`, `# Source declaration: ${item.line}`);
-        sg.notes.push(...comments, `# [WayX] SCRIPT V2 REVIEW REQUIRED: source declaration parse failed: ${reason}`, `# Source declaration: ${item.line}`);
+        qx.notes.push(...comments, `# [WayX] ISSUE REQUIRED [unknown-script-v2-syntax]: source declaration parse failed: ${reason}`, `# Source declaration: ${item.line}`);
+        sg.notes.push(...comments, `# [WayX] ISSUE REQUIRED [unknown-script-v2-syntax]: source declaration parse failed: ${reason}`, `# Source declaration: ${item.line}`);
         continue;
       }
 
@@ -869,8 +863,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
 
     const sc = parseScriptLine(item.line);
     if (!sc || !sc.scriptPath) {
-      qx.notes.push(...comments, '# [WayX] SCRIPT REVIEW REQUIRED: unsupported source Script declaration has no verified target mapping', `# Source declaration: ${item.line}`);
-      sg.notes.push(...comments, '# [WayX] SCRIPT REVIEW REQUIRED: unsupported source Script declaration has no verified target mapping', `# Source declaration: ${item.line}`);
+      qx.notes.push(...comments, '# [WayX] ISSUE REQUIRED [unknown-script-declaration]: unsupported source Script declaration is outside the registered grammar', `# Source declaration: ${item.line}`);
+      sg.notes.push(...comments, '# [WayX] ISSUE REQUIRED [unknown-script-declaration]: unsupported source Script declaration is outside the registered grammar', `# Source declaration: ${item.line}`);
       continue;
     }
     scriptIndex++;

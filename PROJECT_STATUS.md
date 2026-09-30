@@ -20,7 +20,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 核心转换原则：
 
 1. 目标平台原生格式能严格等价表达 → 使用原生格式。
-2. Rewrite/Mock 原生格式不能严格等价 → 使用对应专用 helper；多 action pipeline 才使用 complex helper。
+2. Rewrite/Mock 原生格式不能严格等价 → 使用对应专用 helper；只有源单条声明真实写出的、已观察登记的 multi-action signature 才使用 complex helper，禁止把相邻规则组合。
 3. Rewrite helper 仍无法保持源语义 → 注释原声明并输出明确 Review；Rule 不使用 Script fallback。
 4. 不按插件名写特例；实现必须是通用语义能力。
 5. 所有新标准必须同步：规范 → converter → validator/gate → tests → Golden/canonical。
@@ -36,7 +36,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 - `CONVERSION_SPEC.md` + Block 00–95 已建立为唯一规范链。
 - Source Catalog 驱动 canonical regeneration。
 - 已建立 QX / Surge validator、repository audit、Golden、genericity、helper reference、Source Script URL preservation 等检查。
-- 未知 Loon section、Script parse failure、未知 MITM option 不再静默丢失，统一进入 Review。
+- 未知 Loon section、Script parse failure、未知 MITM option、未知 Rewrite action 与未登记 complex signature 不再静默丢失：先注释并标记 `ISSUE REQUIRED`，再由自动化创建/复用议题。
 - Work 审查规则已同步 native → helper → Review、regex body 保持等标准。
 
 ### 2.2 Regex
@@ -52,8 +52,9 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 
 ### 2.3 Rewrite / Complex helper
 
-- QX、Surge 的多 action Rewrite pipeline 可调用通用 complex helper；单 action 不进入 complex helper。
-- 同 phase Header / Body / JSON pipeline 可保持源顺序。
+- Complex renderer 的既有 Header/Body/JSON 能力继续保留；production 只准入 source-authored + observed signature。
+- 2026-09-30 扫描 20 个 Catalog Loon 插件，当前唯一活动 complex signature 为 `response.body.mock | response.header.set`（3 条），已登记为通用类型。
+- 相邻、同 condition 的独立 Rewrite 不再合并；Webpage 的独立 `response.header.add` / `response.header.set` 将分别转换。
 - condition named capture、`${name.n}`、action-local `$0...$n` 已分离处理。
 - Header 名称大小写不敏感语义已在 helper 中处理。
 - QX `request.header.add` 仅在能严格证明等价时使用 `request-header` 原生插入。
@@ -231,7 +232,7 @@ Target 已转换项
 
 - [ ] 先更新/确认 `CONVERSION_SPEC.md` 对应 Block。
 - [ ] 无插件名/作者名特判。
-- [ ] Rewrite/Mock 为目标原生 → dedicated helper → multi-action complex helper → Review；Rule 不走 Script fallback。
+- [x] Rewrite/Mock 路由已收紧为 target native → dedicated helper → observed source-authored complex helper → Review/Issue；Rule 不走 Script fallback。
 - [ ] Regex 只丢 `i/m/s`，body 未被全局改写。
 - [ ] Source comments、转换时间、作者 chance、分类、Target、Source 保留；QX 一对一注释正确内联，分组注释未误绑第一条规则。
 - [ ] QX section heading 仍为注释。

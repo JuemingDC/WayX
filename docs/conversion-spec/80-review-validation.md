@@ -1,8 +1,31 @@
 # Block 80 — Review / Validation / Golden
 
+## 80.0 Review 与 Unknown Issue 分流
+
+WayX 对不可直接活动转换的内容分两类：
+
+- **REVIEW REQUIRED**：源语义已知，但目标平台缺少已证明等价能力，或需要人工确认已知能力边界。
+- **ISSUE REQUIRED**：源语法/action/section 未登记，或出现未登记的 source-authored complex signature，当前 converter 连“该如何正确转换”都不能证明。
+
+`ISSUE REQUIRED` 固定要求：
+1. 目标文件中只输出注释，必须保留完整 `Source declaration`；
+2. 不生成猜测性 helper、Rule、Rewrite 或 Script；
+3. 自动化扫描 marker，按稳定 fingerprint 创建或复用 GitHub Issue；
+4. Issue 未形成规范与实现依据前，该项不得进入 Safe Tier；
+5. 修复顺序仍是“规范 → generic implementation → synthetic test → real-source regression”。
+
+Issue marker 固定格式：
+
+```text
+# [WayX] ISSUE REQUIRED [<code>]: <reason>
+# Source declaration: <original source>
+```
+
+已知 QX/Surge 能力缺口不得为了“多开议题”改标 Unknown；Issue 只用于未登记/未知转换。
+
 ## 80.1 Review 条件
 
-所有 Rewrite/Mock 先执行“目标原生 → 专用 semantic helper →（仅多 action）complex helper → 注释 Review”。只有对应 helper 仍无法保持时才进入下列 Review 条件。Rule 不走 Script fallback；QX 不支持的 Rule Type 直接注释保留：
+所有 Rewrite/Mock 先执行“目标原生 → 专用 semantic helper →（仅 source-authored 且已登记的多 action）complex helper → 注释 Review/Issue”。只有对应 helper 仍无法保持时才进入下列 Review 条件。Rule 不走 Script fallback；QX 不支持的 Rule Type 直接注释保留：
 
 出现以下任一项必须 Review：
 - 目标官方资料与已验证脚本接口都没有可保持语义的路径
@@ -41,12 +64,13 @@ Loon `[Argument]` **声明区块本身不构成 Review 条件**。QX 忽略参�
 Target 已转换语义项
 + 明确注释保留的不支持语义项
 + 明确 Review 语义项
++ 明确 ISSUE REQUIRED 语义项
 = Source 有效语义项
 ```
 
 不允许静默丢行。
 
-Source parser 遇到当前 grammar 未登记、但包含活动内容的 section 时，必须把该 section 的活动声明逐项保留为明确 Review；不能因为 orchestration 没有对应分支就忽略整个 section。Script parse failure、未知 MITM option 等同理必须进入统一 Review marker。只有本规范明确列出的项目级丢弃项可以不生成目标语义。
+Source parser 遇到当前 grammar 未登记、但包含活动内容的 section 时，必须把该 section 的活动声明逐项保留为 `ISSUE REQUIRED`；不能因为 orchestration 没有对应分支就忽略整个 section。Script parse failure、未知 MITM option、未知 Rewrite action、未登记 complex signature 同理必须先注释并进入 Unknown Issue marker。只有本规范明确列出的项目级丢弃项可以不生成目标语义。
 
 ## 80.3 Quantumult X Validator
 

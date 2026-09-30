@@ -62,7 +62,8 @@ import {
 } from '../src/index.mjs';
 import { classifyComplexRewrite, complexConditionKinds } from '../src/complex-rewrite.mjs';
 import { registerComplexRewriteHandler, planComplexRewrite, listComplexRewriteHandlers } from '../src/complex-rewrite-registry.mjs';
-import { renderMixedRewriteScript, renderSingleJsonMutationScript } from '../src/complex-rewrite-script.mjs';
+import { renderMixedRewriteScript, renderSingleJsonMutationScript, renderObservedComplexRewriteScript } from '../src/complex-rewrite-script.mjs';
+import { observedComplexRewriteType, complexRewriteSignature } from '../src/complex-rewrite-types.mjs';
 
 assert.equal(qxRule('URL-REGEX, "^https:\\/\\/ad\\.example\\.com", REJECT').line, '^https:\\/\\/ad\\.example\\.com url reject-200');
 assert.equal(
@@ -441,15 +442,36 @@ const complexClass = classifyComplexRewrite(complexFixture);
 assert.equal(complexClass.ok, true);
 assert.deepEqual(complexClass.families, ['header-pipeline','json-pipeline']);
 assert.deepEqual(complexConditionKinds(complexFixture.condition), ['&&','==','response.status','||','~=','url','~=','url']);
+const unobservedComplex = planComplexRewrite(complexFixture, 'qx');
+assert.equal(unobservedComplex.ok, false);
+assert.equal(unobservedComplex.terminal, true);
+assert.equal(unobservedComplex.issue, true);
+assert.equal(unobservedComplex.issueCode, 'unknown-complex-rewrite');
+assert.match(unobservedComplex.reason, /response\.header\.del \| response\.json\.replace/);
+
+const observedComplexFixture = parseRewriteV2('response if ${url} ~= /api/ then response.body.mock("text", "{}", 200, false) | response.header.set("X-Test", "ok")');
+assert.equal(complexRewriteSignature(observedComplexFixture), 'response.body.mock | response.header.set');
+assert.equal(observedComplexRewriteType(observedComplexFixture)?.id, 'response-mock-header-set');
+const observedClass = classifyComplexRewrite(observedComplexFixture);
+assert.equal(observedClass.ok, true);
+assert.deepEqual(observedClass.families, ['mock-pipeline','header-pipeline']);
 registerComplexRewriteHandler({
-  id:'checkpoint-mixed-response',
+  id:'checkpoint-observed-response',
   targets:['qx','surge'],
-  match:(ast, info) => ast.phase === 'response' && info.families.length === 2,
+  match:(_ast, _info, ctx) => ctx.observedComplexType?.id === 'response-mock-header-set',
   plan:(_ast, target) => ({ok:true, section:'test', line:'handled-'+target}),
 });
-assert.equal(planComplexRewrite(complexFixture, 'qx').line, 'handled-qx');
-assert.equal(planComplexRewrite(complexFixture, 'surge').line, 'handled-surge');
-assert.deepEqual(listComplexRewriteHandlers(), [{id:'checkpoint-mixed-response',targets:['qx','surge']}]);
+assert.equal(planComplexRewrite(observedComplexFixture, 'qx').line, 'handled-qx');
+assert.equal(planComplexRewrite(observedComplexFixture, 'surge').line, 'handled-surge');
+assert.deepEqual(listComplexRewriteHandlers(), [{id:'checkpoint-observed-response',targets:['qx','surge']}]);
+
+const observedQxScript = renderObservedComplexRewriteScript(observedComplexFixture, {target:'qx'});
+assert.equal(observedQxScript.qxAction, 'script-echo-response');
+assert.match(observedQxScript.script, /X-Test/);
+assert.throws(
+  () => renderObservedComplexRewriteScript(complexFixture, {target:'qx'}),
+  /unregistered source-authored complex Rewrite signature/,
+);
 const singleComplexRejected = parseRewriteV2('response if ${url} ~= /api/ then response.header.del("Server")');
 assert.equal(planComplexRewrite(singleComplexRejected, 'qx').ok, false);
 assert.match(planComplexRewrite(singleComplexRejected, 'qx').reason, /multi-action/);
@@ -852,7 +874,7 @@ assert.equal(
 
 assert.equal(planMitmLine('hostname = api.example.com, *.example.com', 'qx').line, 'hostname = api.example.com, *.example.com');
 assert.equal(planMitmLine('hostname = api.example.com, *.example.com', 'surge').line, 'hostname = %APPEND% api.example.com, *.example.com');
-assert.match(planMitmLine('ca-passphrase = secret', 'qx').line, /REVIEW REQUIRED: unsupported source MITM option/);
+assert.match(planMitmLine('ca-passphrase = secret', 'qx').line, /ISSUE REQUIRED \[unknown-mitm-option\]/);
 assert.equal(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-body-json-del data.ads', 'qx', legacyCtx).line,
   '^https:\\/\\/api\\.example\\.com url jsonjq-response-body \'del(.data.ads)\'',

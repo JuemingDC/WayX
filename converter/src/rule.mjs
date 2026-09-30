@@ -241,7 +241,7 @@ export function surgeModuleRule(line, { proxyPolicyPlaceholder = null } = {}) {
   if (!typeTree.ok) {
     return {
       kind:'comment',
-      lines:[`# [WayX] REVIEW REQUIRED: Surge Rule type/combination has no verified native or lossless script equivalent (${typeTree.reason})`,`# Source declaration: ${source}`],
+      lines:[`# [WayX] ISSUE REQUIRED [unknown-rule-type]: Surge Rule type/combination is not registered (${typeTree.reason})`,`# Source declaration: ${source}`],
       reason:'unsupported-rule-type',
     };
   }
@@ -250,7 +250,7 @@ export function surgeModuleRule(line, { proxyPolicyPlaceholder = null } = {}) {
   if (parts.length <= policyIndex || !parts[policyIndex]) {
     return {
       kind:'comment',
-      lines:[`# [WayX] REVIEW REQUIRED: invalid/unsupported source Rule cannot be converted losslessly`,`# Source declaration: ${source}`],
+      lines:[`# [WayX] ISSUE REQUIRED [invalid-source-rule]: invalid/unsupported source Rule cannot be parsed into a verified target mapping`,`# Source declaration: ${source}`],
       reason:'invalid-rule',
     };
   }

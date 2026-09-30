@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.4  
+版本：1.5  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -16,6 +16,9 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 4. Loon Plugin 内部策略 `PROXY` 保持“用户选择策略”语义：QX 保留字面 `PROXY`；Surge Module 生成官方 `#!arguments` policy 参数并在 Rule 中使用 `{{{...}}}` 占位符，默认 `DIRECT`，用户可改为已有代理策略/策略组。
 5. 通用 Complex Rewrite helper 只处理多 action pipeline（`actions.length >= 2`），脚本负责按源顺序完成整条多 action 语义；单 action 如确需脚本，必须走对应的专用 semantic helper。
 6. QX filter/rewrite 支持 `{# note #} rule` 前置 note。源 `[Rule]` / `[Rewrite]` / `[Script]` 只要最终生成一条活动 QX filter/rewrite，都按同一规则处理：只有“单行源注释紧邻一条源声明，且该注释不覆盖后续连续多条声明、最终只生成一条活动 QX 规则”时才转换；分组注释、连续多行注释、被注释掉的源声明和 WayX 转换说明继续使用普通 `#` 注释。
+7. Complex Rewrite 只接受**源 Loon 本身使用 `|` 声明的多 action pipeline**；禁止把相邻、同条件或看似可合并的多条独立源声明拼成虚构 pipeline。Complex renderer 既有能力代码继续保留，但 production 只有在“当前 Source Catalog 已实际观察到并登记的 action signature”时才能启用。
+8. 2026-09-30 对全部 20 个 Catalog Loon 插件的活动 Rewrite 审计只发现一种源生 complex signature：`response.body.mock | response.header.set`（3 条）。该类型作为通用 signature 登记，不按 Bilibili/作者/URL 特判。
+9. 遇到未知语法、未知 action、未登记 complex signature 或其他无法确定转换方式的活动内容时，固定 **fail closed**：目标侧先注释保留源声明，不生成猜测性活动规则；同时输出 `ISSUE REQUIRED` 标记，由自动化提议 GitHub Issue。已知但目标平台缺少等价能力的情况继续使用普通 Review，不滥用 unknown issue。
 
 
 ## 规范块

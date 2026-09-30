@@ -8,13 +8,13 @@ const contracts=[
   ['05','docs/conversion-spec/05-generic-converter.md',['converter/src/source-catalog.mjs','converter/src/source-fetch.mjs','.github/scripts/sync-convert.mjs']],
   ['10','docs/conversion-spec/10-target-format.md',['converter/src/paths.mjs','converter/src/metadata.mjs','converter/src/surge-module.mjs']],
   ['20','docs/conversion-spec/20-rule-mapping.md',['converter/src/rule.mjs']],
-  ['30','docs/conversion-spec/30-rewrite-mapping.md',['converter/src/legacy-rewrite.mjs','converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-semantic.mjs']],
+  ['30','docs/conversion-spec/30-rewrite-mapping.md',['converter/src/legacy-rewrite.mjs','converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-semantic.mjs','converter/src/complex-rewrite-types.mjs','converter/src/complex-rewrite-registry.mjs','converter/tests/complex-source-inventory.mjs']],
   ['40','docs/conversion-spec/40-regex-condition.md',['converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-actions.mjs','converter/src/target-regex.mjs']],
   ['50','docs/conversion-spec/50-json-jq-mock.md',['converter/src/jq.mjs','converter/src/dependency.mjs','converter/src/qx-mock.mjs','converter/src/surge-mock.mjs']],
   ['60','docs/conversion-spec/60-script-argument.md',['converter/src/script.mjs','converter/src/script-v2.mjs','converter/src/script-v2-target.mjs','converter/src/argument.mjs']],
   ['70','docs/conversion-spec/70-mitm-comments.md',['converter/src/mitm.mjs','converter/src/metadata.mjs']],
-  ['80','docs/conversion-spec/80-review-validation.md',['converter/src/surge-module.mjs','converter/tests/genericity-audit.mjs','converter/tests/generated-helper-refs.mjs','converter/tests/end-to-end-golden.mjs']],
-  ['90','docs/conversion-spec/90-project-workflow.md',['.github/scripts/sync-convert.mjs','converter/tools/regenerate-canonical.mjs','.github/workflows/converter-check.yml','.github/workflows/upstream-monitor.yml']],
+  ['80','docs/conversion-spec/80-review-validation.md',['converter/src/surge-module.mjs','converter/src/unknown-issue.mjs','converter/tests/unknown-issue-markers.mjs','converter/tests/genericity-audit.mjs','converter/tests/generated-helper-refs.mjs','converter/tests/end-to-end-golden.mjs']],
+  ['90','docs/conversion-spec/90-project-workflow.md',['.github/scripts/sync-convert.mjs','.github/scripts/propose-conversion-issues.mjs','converter/tools/regenerate-canonical.mjs','.github/workflows/converter-check.yml','.github/workflows/upstream-monitor.yml']],
 ];
 
 for(const [block,doc,impls] of contracts){
@@ -53,10 +53,15 @@ assert.match(targetRegex,/return String\(pattern \?\? ''\);/, 'Block 40: target 
 assert.equal(/replace\([^\n]*\\\\\\\//.test(targetRegex), false, 'Block 40: target regex compiler must not globally rewrite escaped slashes');
 assert.match(targetRegex,/sourceFlags:\s*flags/, 'Block 40: discarded source flags must remain observable metadata without being propagated');
 assert.match(syncConverter,/planComplexRewrite\(/, 'Block 30: unified converter must keep the complex helper planner in the target fallback chain');
+assert.equal(/planAdjacentQxHeaderGroups/.test(syncConverter), false, 'Block 30: independent source Rewrite declarations must never be merged into synthetic pipelines');
+const complexTypes=await fs.readFile(path.join(ROOT,'converter/src/complex-rewrite-types.mjs'),'utf8');
+assert.match(complexTypes,/response\.body\.mock.*response\.header\.set/s, 'Block 30: observed Bilibili-source complex signature must be registered generically');
+assert.match(upstreamWorkflow,/propose-conversion-issues\.mjs/, 'Block 80/90: unknown markers must be proposed as GitHub issues');
+assert.match(upstreamWorkflow,/steps\.issues\.outputs\.has_unknown/, 'Block 90: unknown issue markers must block Safe Tier direct commit');
 assert.match(syncConverter,/QX_FILTER_TYPES/, 'Block 80: QX validator must maintain an explicit active filter whitelist');
 assert.match(syncConverter,/QX_SCRIPT_ACTIONS/, 'Block 80: QX validator must maintain an explicit Script action whitelist');
 assert.match(syncConverter,/supportedSourceSections/, 'Block 80: source orchestration must explicitly account for unsupported active sections');
-assert.match(syncConverter,/unsupported Loon source section/, 'Block 80: unknown active source sections must become explicit Review');
+assert.match(syncConverter,/ISSUE REQUIRED \[unknown-source-section\]/, 'Block 80: unknown active source sections must fail closed and request an issue');
 assert.equal(/inspectQxScriptCompatibility|qxManualPortComment/.test(syncConverter), false, 'Block 60: production converter must not gate Source Script execution on runtime compatibility scanning');
 const surgeValidator=await fs.readFile(path.join(ROOT,'converter/src/surge-module.mjs'),'utf8');
 assert.match(surgeValidator,/adblockScope/, 'Block 80: Surge script-family scope restriction must be explicit and converter-specific');

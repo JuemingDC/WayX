@@ -8,13 +8,13 @@
 | 05 | Catalog、通用流水线、陌生插件 | `source-catalog.mjs`, `source-fetch.mjs`, `sync-convert.mjs`, `regenerate-canonical.mjs` | `generic-identity.mjs`, `genericity-audit.mjs` |
 | 10 | QX/Surge 目标文件结构 | `paths.mjs`, `metadata.mjs`, `surge-module.mjs` | `checkpoint.mjs`, target validators |
 | 20 | Rule / Policy / URL-REGEX reject-X | `rule.mjs` | `checkpoint.mjs`, `surge-rule-coverage.mjs` |
-| 30 | Legacy Rewrite + Rewrite v2 mapping | `legacy-rewrite.mjs`, `rewrite-v2*.mjs`, `qx-semantic-script.mjs` | `checkpoint.mjs`, `loon-new-syntax-cases.mjs`, `rucu6-rewrite-v2-coverage.mjs` |
+| 30 | Legacy Rewrite + Rewrite v2 mapping / observed complex signatures | `legacy-rewrite.mjs`, `rewrite-v2*.mjs`, `complex-rewrite*.mjs`, `qx-semantic-script.mjs` | `checkpoint.mjs`, `loon-new-syntax-cases.mjs`, `rucu6-rewrite-v2-coverage.mjs`, `complex-source-inventory.mjs` |
 | 40 | Regex / condition AST | `rewrite-v2.mjs`, `rewrite-v2-actions.mjs`, `target-regex.mjs` | `checkpoint.mjs`, Rewrite v2 coverage |
 | 50 | JSON/JQ/mock/dependency | `jq.mjs`, `dependency.mjs`, `qx-mock.mjs`, `surge-mock.mjs`, `legacy-rewrite.mjs` | `checkpoint.mjs`, end-to-end Golden |
 | 60 | Script declaration / action-type inspection / Argument dependency analysis | `script.mjs`, `script-v2.mjs`, `script-v2-target.mjs`, `argument.mjs`, `argument-usage.mjs`, `source-fetch.mjs` | `rucu6-script-v2-coverage.mjs`, `source-script-url-preservation.mjs`, `checkpoint.mjs` |
 | 70 | MITM / comments / metadata | `mitm.mjs`, `metadata.mjs`, `sync-convert.mjs` comment pipeline | `checkpoint.mjs`, QX/Surge validators |
-| 80 | Review / validator / Golden / reconciliation | `validateQX`, `validateSurgeModule`, repository audit | genericity, Golden, `generated-helper-refs.mjs`, `source-script-url-preservation.mjs`, canonical consistency |
-| 90 | 拉源→依赖→转换→生成→审核/提交 | `.github/sources/loon.json`, `sync-convert.mjs`, `upstream-monitor.yml`, `converter-check.yml` | full CI |
+| 80 | Review / Unknown Issue / validator / Golden / reconciliation | `validateQX`, `validateSurgeModule`, `unknown-issue.mjs`, repository audit | genericity, Golden, `unknown-issue-markers.mjs`, `generated-helper-refs.mjs`, `source-script-url-preservation.mjs`, canonical consistency |
+| 90 | 拉源→依赖→转换→生成→Issue/审核/提交 | `.github/sources/loon.json`, `sync-convert.mjs`, `propose-conversion-issues.mjs`, `upstream-monitor.yml`, `converter-check.yml` | full CI |
     
 ## 固定端到端数据流
 
@@ -25,7 +25,7 @@
 → normalize + parse Loon sections
 → fetch Source JS + jq/mock dependencies directly from their original resolved URLs; Source JS is analysis-only and is not mirrored
 → Rule / Rewrite / Script / MITM generic planners
-→ target native planner → verified helper fallback → commented Review
+→ target native planner → dedicated helper → observed complex helper → commented Review/Issue
 → QX snippet + Surge sgmodule renderer
 → QX validator + Surge validator
 → source/target reconciliation + genericity/golden checks

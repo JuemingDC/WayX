@@ -122,3 +122,5 @@ assert not gate.has_manual_review_marker("# Source [Argument] legacy comment onl
 assert "script-analyze-echo-response" in validator.QX_REWRITE_ACTIONS
 
 print("Conversion gate semantic contract passed")
+
+assert gate.has_manual_review_marker("# [WayX] ISSUE REQUIRED [unknown-complex-rewrite]: test")

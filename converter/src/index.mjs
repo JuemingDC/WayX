@@ -21,3 +21,8 @@ export * from './legacy-rewrite.mjs';
 export * from './source-catalog.mjs';
 export * from './mitm.mjs';
 export * from './source-fetch.mjs';
+export * from './complex-rewrite.mjs';
+export * from './complex-rewrite-types.mjs';
+export * from './complex-rewrite-registry.mjs';
+export * from './complex-rewrite-script.mjs';
+export * from './unknown-issue.mjs';

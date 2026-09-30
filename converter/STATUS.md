@@ -45,8 +45,9 @@ Updated: 2026-09-30
 
 - QX unsupported Rule types are commented out; Rule never falls back to Script.
 - Rewrite/Mock may use Script only after exact target-native expression is unavailable.
-- The generic complex helper is reserved for multi-action pipelines; single-action script fallbacks use dedicated semantic helpers.
+- Generic complex renderer capability is retained, but production admits only source-authored multi-action signatures observed in the Source Catalog and explicitly registered. Adjacent independent rules are never synthesized into a pipeline; single-action fallbacks use dedicated semantic helpers.
 - Source Script text may be inspected only to refine QX HTTP action type, not to judge runtime compatibility.
+- Unknown source syntax/action/section or an unregistered complex signature is commented out with `ISSUE REQUIRED`; the scheduled workflow proposes a deduplicated GitHub Issue before any Safe Tier commit.
 
 ## Removed / obsolete directions
 

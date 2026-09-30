@@ -74,8 +74,8 @@ normalize source
 → MITM converter
 → target planner
    ├─ Rule: target native → unsupported type commented out（不走 Script fallback）
-   ├─ Quantumult X Rewrite/Mock: native → dedicated helper → multi-action complex helper → commented Review
-   └─ Surge Rewrite/Mock: native → dedicated helper → multi-action complex helper → commented Review
+   ├─ Quantumult X Rewrite/Mock: native → dedicated helper → observed multi-action complex helper → commented Review/Issue
+   └─ Surge Rewrite/Mock: native → dedicated helper → observed multi-action complex helper → commented Review/Issue
 → validator
 → source/target reconciliation
 → output
@@ -140,17 +140,22 @@ normalize source
    - Script v2
 
 8. **Pipeline / Composite**
-   - 多 action Rewrite v2
-   - 必须保持顺序和终止语义
+   - 仅指源 Loon 单条声明真实写出的 `ACTION1 | ACTION2 ...`；
+   - 必须保持顺序和终止语义；
+   - 禁止把相邻、同条件的独立源声明合并成 pipeline；
+   - production complex helper 仅放行 Source Catalog 已观察并登记的 action signature。
 
 9. **Unknown Rewrite**
    - 先判断目标原生格式能否严格保持语义；
    - 原生不足时才考虑对应的专用 helper；
-   - 只有包含多个 action 的 pipeline 才进入通用 complex helper；
-   - helper 仍无法保持时注释源声明并进入 Review；
-   - 不静默猜测。
+   - 源生 multi-action 且 signature 已登记时才进入 complex helper；
+   - 未知语法、未知 action、未登记 complex signature：**先注释源声明，再输出 `ISSUE REQUIRED`**；
+   - 已知语义但目标能力不足：注释源声明并进入普通 Review；
+   - 两类情况都不得静默猜测或生成“可能能跑”的活动规则。
 
 Rule 不属于上述 fallback 链。QX 官方 sample 未确认的 Rule Type（例如逻辑规则、端口类等）直接保留为注释，不转换成 Script。
+
+Unknown 与 Unsupported 必须分开：已知 Loon 语义、只是目标平台缺少等价能力，属于 Review；连源语义/语法类型或 complex signature 都未登记的内容属于 Unknown，必须携带 `ISSUE REQUIRED` 标记，以便自动化创建/复用议题。
 
 ## 5.6 Target Planner
 

@@ -65,6 +65,8 @@ jobs:
           node converter/tests/generic-identity.mjs
           node converter/tests/genericity-audit.mjs
           node converter/tests/spec-block-contract.mjs
+          node converter/tests/complex-source-inventory.mjs
+          node converter/tests/unknown-issue-markers.mjs
           python converter/tests/test_conversion_gate.py
           node converter/tests/myblockads-golden.mjs
 
@@ -78,6 +80,7 @@ jobs:
         if: steps.pending.outputs.blocked != 'true'
         run: |
           node --check .github/scripts/sync-convert.mjs
+          node --check .github/scripts/propose-conversion-issues.mjs
           python -m py_compile .github/scripts/conversion_gate.py .github/scripts/validate_conversion_policy.py converter/tests/test_conversion_gate.py
 
       - name: Install sync dependency
@@ -114,6 +117,14 @@ jobs:
           set -o pipefail
           python .github/scripts/validate_conversion_policy.py 2>&1 | tee monitor/.runtime/validator.log
 
+      - name: Propose issues for unknown conversions
+        if: steps.pending.outputs.blocked != 'true'
+        id: issues
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node .github/scripts/propose-conversion-issues.mjs
+
       - name: Classify conversion changes
         if: steps.pending.outputs.blocked != 'true'
         id: gate
@@ -124,6 +135,8 @@ jobs:
           steps.pending.outputs.blocked != 'true' &&
           (steps.monitor.outputs.has_review == 'true' ||
            steps.gate.outputs.requires_work == 'true' ||
+           steps.issues.outputs.has_unknown == 'true' ||
+           steps.issues.outcome != 'success' ||
            steps.loon_sync.outcome != 'success' ||
            steps.validate.outcome != 'success')
         id: review
@@ -140,6 +153,7 @@ jobs:
             echo
             echo "- Loon converter: ${{ steps.loon_sync.outcome }}"
             echo "- Validator: ${{ steps.validate.outcome }}"
+            echo "- Unknown issue proposer: ${{ steps.issues.outcome }}"
             echo
             if [ -f "${{ steps.gate.outputs.summary }}" ]; then
               cat "${{ steps.gate.outputs.summary }}"
@@ -147,6 +161,10 @@ jobs:
             fi
             if [ -f "${{ steps.monitor.outputs.review_summary }}" ]; then
               cat "${{ steps.monitor.outputs.review_summary }}"
+              echo
+            fi
+            if [ -f "${{ steps.issues.outputs.summary }}" ]; then
+              cat "${{ steps.issues.outputs.summary }}"
               echo
             fi
             for LOG in monitor/.runtime/loon-sync.log monitor/.runtime/validator.log; do
@@ -170,6 +188,8 @@ jobs:
           steps.pending.outputs.blocked != 'true' &&
           steps.monitor.outputs.has_review != 'true' &&
           steps.gate.outputs.requires_work != 'true' &&
+          steps.issues.outputs.has_unknown != 'true' &&
+          steps.issues.outcome == 'success' &&
           steps.loon_sync.outcome == 'success' &&
           steps.validate.outcome == 'success'
         shell: bash
@@ -196,6 +216,8 @@ jobs:
           steps.pending.outputs.blocked != 'true' &&
           (steps.monitor.outputs.has_review == 'true' ||
            steps.gate.outputs.requires_work == 'true' ||
+           steps.issues.outputs.has_unknown == 'true' ||
+           steps.issues.outcome != 'success' ||
            steps.loon_sync.outcome != 'success' ||
            steps.validate.outcome != 'success')
         env:

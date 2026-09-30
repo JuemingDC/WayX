@@ -35,15 +35,53 @@ response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then response.head
 hostname=api.example.com
 `;
 const headerGroupOutput = convert(headerGroupFixture, headerGroupSource, new Map(), STAMP);
-assert.match(headerGroupOutput.qx, /REVIEW REQUIRED: header\.add duplicate semantics are not verified for qx/);
+assert.match(headerGroupOutput.qx, /REVIEW REQUIRED: QX header\.add cannot be represented losslessly/);
 assert.equal(
-  headerGroupOutput.qx.split(/\r?\n/).some(line => !line.trim().startsWith('#') && /script-response-header/.test(line)),
-  false,
-  'QX header.add must not be activated through object-set semantics',
+  headerGroupOutput.qx.split(/\r?\n/).filter(line => !line.trim().startsWith('#') && /script-response-header/.test(line)).length,
+  1,
+  'the independent response.header.set rule must remain active even when the preceding independent response.header.add is Review',
+);
+assert.doesNotMatch(
+  headerGroupOutput.qx,
+  /Source declaration: .*response\.header\.add.* \| response if .*response\.header\.set/,
+  'converter must never invent a pipeline by joining adjacent source declarations',
 );
 assert.match(headerGroupOutput.surge, /header-add content-disposition inline/);
 assert.match(headerGroupOutput.surge, /header-del content-type/);
 assert.match(headerGroupOutput.surge, /header-add content-type text\/plain; charset=utf-8/);
+
+const unknownComplexFixture = {
+  id:'UnknownComplexFixture',
+  source:'https://example.invalid/unknown-complex.lpx',
+  qx:'UnknownComplexFixture.snippet',
+  surge:'UnknownComplexFixture.sgmodule',
+  category:'测试',
+};
+const unknownComplexSource = `#!name=UnknownComplexFixture
+[Rewrite]
+response if \${url} ~= /api/ then response.header.set("X-Test", "ok") | response.json.replace("data.ads", false)
+`;
+const unknownComplexOutput = convert(unknownComplexFixture, unknownComplexSource, new Map(), STAMP);
+assert.match(unknownComplexOutput.qx, /ISSUE REQUIRED \[unknown-complex-rewrite\]/);
+assert.match(unknownComplexOutput.surge, /ISSUE REQUIRED \[unknown-complex-rewrite\]/);
+assert.doesNotMatch(unknownComplexOutput.qx, /complex_qx_/);
+assert.doesNotMatch(unknownComplexOutput.surge, /wayx_complex_/);
+
+const unknownActionFixture = {
+  id:'UnknownActionFixture',
+  source:'https://example.invalid/unknown-action.lpx',
+  qx:'UnknownActionFixture.snippet',
+  surge:'UnknownActionFixture.sgmodule',
+  category:'测试',
+};
+const unknownActionSource = `#!name=UnknownActionFixture
+[Rewrite]
+response if \${url} ~= /api/ then response.future.magic("x")
+`;
+const unknownActionOutput = convert(unknownActionFixture, unknownActionSource, new Map(), STAMP);
+assert.match(unknownActionOutput.qx, /ISSUE REQUIRED \[unknown-rewrite-v2-action\]/);
+assert.match(unknownActionOutput.surge, /ISSUE REQUIRED \[unknown-rewrite-v2-action\]/);
+
 const requestAddFixture = {
   id:'RequestHeaderAddFixture',
   source:'https://example.invalid/request-header-add.lpx',
@@ -105,11 +143,16 @@ request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header
 request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.set("X-B", "two")
 `;
 const requestAddSetOutput = convert(requestAddSetFixture, requestAddSetSource, new Map(), STAMP);
-assert.match(requestAddSetOutput.qx, /REVIEW REQUIRED: header\.add duplicate semantics are not verified for qx/);
+assert.doesNotMatch(requestAddSetOutput.qx, /REVIEW REQUIRED/);
 assert.equal(
-  requestAddSetOutput.qx.split(/\r?\n/).some(line => !line.trim().startsWith('#') && / url (?:request-header|script-request-header) /.test(line)),
-  false,
-  'QX adjacent add+set must not be split into unproven multiple rewrite execution',
+  requestAddSetOutput.qx.split(/\r?\n/).filter(line => !line.trim().startsWith('#') && / url (?:request-header|script-request-header) /.test(line)).length,
+  2,
+  'independent request add+set declarations must remain two independent target rewrites',
+);
+assert.doesNotMatch(
+  requestAddSetOutput.qx,
+  /Source declaration: .*request\.header\.add.* \| request if .*request\.header\.set/,
+  'adjacent request header rules must never be synthesized into a pipeline',
 );
 
 const requestReplaceCaptureFixture = {
@@ -348,9 +391,9 @@ const unknownSectionSource = `#!name=UnknownSectionFixture
 foo = bar
 `;
 const unknownSectionOutput = convert(unknownSectionFixture, unknownSectionSource, new Map(), STAMP);
-assert.match(unknownSectionOutput.qx, /REVIEW REQUIRED: unsupported Loon source section \[FutureFeature\]/);
+assert.match(unknownSectionOutput.qx, /ISSUE REQUIRED \[unknown-source-section\]: unsupported Loon source section \[FutureFeature\]/);
 assert.match(unknownSectionOutput.qx, /# Source declaration: foo = bar/);
-assert.match(unknownSectionOutput.surge, /REVIEW REQUIRED: unsupported Loon source section \[FutureFeature\]/);
+assert.match(unknownSectionOutput.surge, /ISSUE REQUIRED \[unknown-source-section\]: unsupported Loon source section \[FutureFeature\]/);
 assert.match(unknownSectionOutput.surge, /# Source declaration: foo = bar/);
 
 const disabledRewriteOutput = convert(disabledRewriteFixture, disabledRewriteSource, new Map(), STAMP);
