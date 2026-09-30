@@ -646,7 +646,7 @@ assert.equal(
   '(^https:\\/\\/live\\.bilibili\\.com\\/\\d+)(?:\\/?\\?.*) $1 302',
 );
 assert.match(surgeRedirectV2.line, /^\(\^/);
-assert.doesNotMatch(surgeRedirectV2.line, /\\\//);
+assert.match(surgeRedirectV2.line, /\\\//);
 assert.match(surgeRedirectV2.line, /\$1 302$/);
 
 const surgeReject404 = surgeRejectRewritePlan(reject404V2);
