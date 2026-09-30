@@ -105,9 +105,16 @@ assert.match(surgeCellularModule.lines.join('\n'), /CELLULAR commented out/);
 assert.match(qxRule('AND, ((DOMAIN-SUFFIX, example.com), (PROTOCOL, TCP)), REJECT').line, /unsupported Rule type commented out/);
 assert.equal(qxRule('IP-CIDR, 1.1.1.1/32, REJECT, no-resolve').line, 'ip-cidr, 1.1.1.1/32, reject');
 assert.equal(surgeRule('IP-CIDR, 1.1.1.1/32, REJECT, no-resolve'), 'IP-CIDR,1.1.1.1/32,REJECT,no-resolve');
-const surgeProxyPreserved = surgeModuleRule('DOMAIN, example.com, PROXY');
-assert.equal(surgeProxyPreserved.reason, 'source-proxy-policy-preserved');
-assert.match(surgeProxyPreserved.lines.join('\n'), /Source Loon plugin policy PROXY preserved without conversion/);
+const proxyPolicyArgs = surgeArgumentMetadata([], {proxyPolicyBinding:true});
+assert.match(proxyPolicyArgs.lines[0], /^#!arguments=wayx_proxy_policy:DIRECT$/);
+assert.match(proxyPolicyArgs.lines[1], /wayx_proxy_policy: Loon PROXY policy binding/);
+assert.equal(proxyPolicyArgs.policyBinding.placeholder, '{{{wayx_proxy_policy}}}');
+const surgeProxyBound = surgeModuleRule('DOMAIN, example.com, PROXY', {
+  proxyPolicyPlaceholder: proxyPolicyArgs.policyBinding.placeholder,
+});
+assert.equal(surgeProxyBound.kind, 'rule');
+assert.equal(surgeProxyBound.reason, 'proxy-policy-argument');
+assert.equal(surgeProxyBound.line, 'DOMAIN,example.com,{{{wayx_proxy_policy}}}');
 const qxUnsupportedPort = qxRule('DEST-PORT,443,REJECT');
 assert.equal(qxUnsupportedPort.reason, 'unsupported-qx-rule-comment');
 assert.match(qxUnsupportedPort.line, /DEST-PORT/);
@@ -228,6 +235,17 @@ assert.throws(
 assert.throws(
   () => validateSurgeModule(validSurgeModule.replace('DOMAIN,ads.example.com,REJECT', 'DOMAIN,ads.example.com,REJECT-DROP'), {id:'Demo'}),
   /official Module set DIRECT\/REJECT\/REJECT-TINYGIF/,
+);
+const parameterizedPolicyModule = validSurgeModule
+  .replace('#!desc=Fixture', '#!desc=Fixture\n#!arguments=wayx_proxy_policy:DIRECT')
+  .replace('DOMAIN,ads.example.com,REJECT', 'DOMAIN,ads.example.com,{{{wayx_proxy_policy}}}');
+assert.doesNotThrow(() => validateSurgeModule(parameterizedPolicyModule, {id:'Demo'}));
+assert.throws(
+  () => validateSurgeModule(
+    validSurgeModule.replace('DOMAIN,ads.example.com,REJECT', 'DOMAIN,ads.example.com,{{{missing_policy}}}'),
+    {id:'Demo'},
+  ),
+  /undeclared policy argument missing_policy/,
 );
 assert.throws(
   () => validateSurgeModule(validSurgeModule.replace('DOMAIN-WILDCARD,api-*.example.com,REJECT', 'LOON-ONLY,foo,REJECT'), {id:'Demo'}),
