@@ -30,6 +30,8 @@ export * from './qx-output.mjs';
 export * from './output-lines.mjs';
 export * from './legacy-rewrite.mjs';
 export * from './source-catalog.mjs';
+export * from './conversion-pipeline.mjs';
+export * from './plugin-parser.mjs';
 export * from './mitm.mjs';
 export * from './source-fetch.mjs';
 export * from './qx-comment.mjs';
