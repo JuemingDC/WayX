@@ -150,3 +150,20 @@ Complex generated JavaScript must be executed in CI against synthetic request/re
 - 测试必须断言 `$done()` 恰好调用一次，并检查实际返回对象/bytes，而不是只比较生成源码字符串；
 - `converter-check.yml` 将该 runtime fixture 作为独立 CI 步骤执行；
 - 当前 fixture 还额外覆盖 Catalog 已观察的 QX `response.body.mock | response.header.set` complex signature，包括 text body 与 Base64 `bodyBytes` 路径。
+
+## 80.9 Catalog-observed v2 syntax inventory
+
+CI 必须扫描 Source Catalog 中当前实际存在的 Loon Rewrite v2 / Script v2，并与 `converter/fixtures/catalog-syntax-inventory.json` 的人工确认基线比较。
+
+Inventory 只记录语法形态，不记录声明数量，因此同一语法的规则增删不会单独触发失败。至少必须覆盖：
+- Rewrite v2：phase、condition comparison、capture、logical operator、group、regex flags、action name、action argument shape、source-authored multi-action signature；
+- Script v2：phase、condition shape、regex flags、script path type、argument kind、option name/value type 与 option-set；
+- `[Rewrite]` / `[Script]` 中以 `request` / `response` 开头但已不符合当前 v2 grammar 的活动声明必须立即失败。
+
+出现 inventory 差异时不得机械更新 fixture。必须先确认这是上游真实新增/删除的语法形态，并按“Loon 源语义 → QX 官方 sample / Surge 官方 Manual → CONVERSION_SPEC → generic parser/planner → tests → inventory baseline”的顺序处理。Parser 已能解析不等于该新形态已经获得 production 放行资格。
+
+实现：
+- baseline：`converter/fixtures/catalog-syntax-inventory.json`
+- validator：`converter/tests/catalog-syntax-inventory.mjs`
+- CI：`.github/workflows/converter-check.yml`
+
