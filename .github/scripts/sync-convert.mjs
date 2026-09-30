@@ -8,7 +8,7 @@ import { minifyJqFile } from '../../converter/src/jq.mjs';
 import { qxTargetPath, surgeTargetPath } from '../../converter/src/paths.mjs';
 import { isRewriteV2, parseRewriteV2 } from '../../converter/src/rewrite-v2.mjs';
 import { validateRewriteV2Ast } from '../../converter/src/rewrite-v2-actions.mjs';
-import { inlineResolvedDependency, jqDependencySpecFromAction, qxMockPlanFromAction, isDiscardedLegacyJqPathAction } from '../../converter/src/dependency.mjs';
+import { dependencySpecFromAction, inlineResolvedDependency, jqDependencySpecFromAction, isDiscardedLegacyJqPathAction } from '../../converter/src/dependency.mjs';
 import { simpleUrlRewriteCondition } from '../../converter/src/rewrite-v2-semantic.mjs';
 import { isScriptV2, parseScriptV2, splitScriptV2Csv } from '../../converter/src/script-v2.mjs';
 import { qxScriptV2Plan, surgeScriptV2Plan } from '../../converter/src/script-v2-target.mjs';
@@ -266,7 +266,7 @@ async function materializeMockFiles(entry, parsed) {
       const condition = simpleUrlRewriteCondition(ast);
       if (!condition.ok) continue;
 
-      const plan = qxMockPlanFromAction(mockFileActions[0], { pluginSourceUrl: entry.source });
+      const plan = dependencySpecFromAction(mockFileActions[0], { pluginSourceUrl: entry.source });
       if (plan.base64) {
         const text = await fetchOriginalText(plan.url);
         const compact = text.replace(/\s+/g, '');
