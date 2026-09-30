@@ -105,15 +105,13 @@ export const SURGE_RULE_TYPES = new Set([
   'SCRIPT', 'RULE-SET',
 ]);
 
-// Surge Module Manual explicitly restricts [Rule] lines to these
-// internal policies. Other built-in profile policies may exist in a full
-// profile, but they are not emitted as active Module Rule policies.
+// Surge ad-block Module Rule policies that WayX may emit actively.
 export const SURGE_MODULE_POLICIES = new Set([
   'DIRECT', 'REJECT', 'REJECT-TINYGIF',
 ]);
 
-export const SURGE_PROFILE_BUILTIN_POLICIES = new Set([
-  'DIRECT', 'REJECT', 'REJECT-TINYGIF', 'REJECT-DROP', 'REJECT-NO-DROP',
+const LOON_RULE_POLICIES_COMMENT_ONLY = new Set([
+  'REJECT-DROP', 'REJECT-NO-DROP',
   'CELLULAR', 'CELLULAR-ONLY', 'HYBRID', 'NO-HYBRID',
 ]);
 
@@ -279,10 +277,9 @@ export function surgeModuleRule(line, { proxyPolicyPlaceholder = null } = {}) {
     };
   }
 
-  // Full Surge profiles have more built-in policies than Module [Rule]
-  // officially permits. Keep those source declarations as comments rather than
-  // emitting an invalid sgmodule or approximating them with another policy.
-  if (!SURGE_MODULE_POLICIES.has(policy) && SURGE_PROFILE_BUILTIN_POLICIES.has(policy)) {
+  // Known Loon Rule policies that cannot be emitted losslessly by the Surge
+  // ad-block Module remain comments rather than being approximated.
+  if (LOON_RULE_POLICIES_COMMENT_ONLY.has(policy)) {
     return {
       kind:'comment',
       section:'rule',
