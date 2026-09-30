@@ -165,7 +165,7 @@ export function planSurgeRewrite(ir,ctx={}) {
         ? surgeRewriteArgumentPayload(argumentRefs,ctx.argumentTable)
         : {ok:true,value:null};
       if (!payload.ok) throw new Error(payload.reason);
-      const key=crypto.createHash('sha1').update('json-mutation-surge\\0'+source).digest('hex').slice(0,10);
+      const key=crypto.createHash('sha1').update('json-mutation-surge\0'+source).digest('hex').slice(0,10);
       const filename='json_mutation_surge_'+key+'.js';
       ctx.generatedScripts.set(filename,plan.script);
       return {
