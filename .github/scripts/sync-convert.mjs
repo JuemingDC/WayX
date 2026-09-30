@@ -374,21 +374,88 @@ function rewriteV2Action(line, target, ctx) {
 function sectionItems(lines = []) {
   const items = [];
   let pending = [];
-  for (const raw of lines) {
+  for (let sourceIndex = 0; sourceIndex < lines.length; sourceIndex++) {
+    const raw = lines[sourceIndex];
     const t = raw.trim();
     if (!t || t.startsWith('#') || t.startsWith(';') || t.startsWith('//')) {
       pending.push(raw);
       continue;
     }
-    items.push({ comments: pending, line: t });
+    items.push({ comments: pending, line: t, sourceIndex });
     pending = [];
   }
-  if (pending.length) items.push({ comments: pending, line: null });
+  if (pending.length) items.push({ comments: pending, line: null, sourceIndex: lines.length });
   return items;
 }
 
 function cleanComments(comments) {
   return comments.map(x => x || '').map(x => x.trim() ? x : '').filter((x, i, a) => !(x === '' && a[i - 1] === ''));
+}
+
+function sourceCommentText(raw) {
+  const text = String(raw ?? '').trim();
+  const match = text.match(/^(?:#|;|\/\/)\s*(.*?)\s*$/);
+  return match ? match[1].trim() : null;
+}
+
+function looksLikeCommentedSourceDeclaration(text, sectionKind) {
+  const value = String(text || '').trim();
+  if (!value) return false;
+  if (sectionKind === 'rule') {
+    return /^(?:[A-Z][A-Z0-9-]*|AND|OR|NOT)\s*,/i.test(value);
+  }
+  if (sectionKind === 'rewrite') {
+    if (isRewriteV2(value)) return true;
+    return /^\S+\s+(?:-\s+)?(?:reject(?:-[A-Za-z0-9-]+)?|302\b|307\b|header\b|(?:response-)?header-(?:add|del|replace|replace-regex)\b|(?:request|response)-body-(?:replace-regex|json-|mock)|mock-(?:request|response)-body\b)/i.test(value);
+  }
+  return false;
+}
+
+function qxInlineNoteCandidate(sectionLines, item, sectionKind) {
+  if (!item?.line || !Number.isInteger(item.sourceIndex) || item.sourceIndex < 1) return null;
+  const index = item.sourceIndex;
+  const previousRaw = sectionLines[index - 1];
+  const previous = String(previousRaw ?? '').trim();
+  const note = sourceCommentText(previousRaw);
+  if (!previous || note === null || !note || note.includes('#}')) return null;
+
+  // Exactly one adjacent source comment only. Multiple comment lines remain
+  // ordinary comments so they cannot be collapsed into one QX note.
+  if (index >= 2 && sourceCommentText(sectionLines[index - 2]) !== null) return null;
+
+  // If another active source declaration immediately follows, the single
+  // comment is treated as a group comment and must not be attached to only
+  // the first target rule.
+  if (index + 1 < sectionLines.length) {
+    const next = String(sectionLines[index + 1] ?? '').trim();
+    if (next && sourceCommentText(sectionLines[index + 1]) === null) return null;
+  }
+
+  // A commented-out Rule/Rewrite line is source content, not a human note.
+  if (looksLikeCommentedSourceDeclaration(note, sectionKind)) return null;
+
+  return { text: note, raw: previousRaw };
+}
+
+function qxAttachInlineNote({sectionLines, item, sectionKind, lines, eligible = true}) {
+  const output = (lines || []).filter(line => line !== undefined && line !== null && String(line).length);
+  const candidate = eligible ? qxInlineNoteCandidate(sectionLines, item, sectionKind) : null;
+  const singleActive =
+    candidate &&
+    output.length === 1 &&
+    !String(output[0]).includes('\n') &&
+    !String(output[0]).trim().startsWith('#');
+
+  if (!singleActive) {
+    return { comments: cleanComments(item.comments), lines: output };
+  }
+
+  const remaining = [...item.comments];
+  if (remaining.length && remaining.at(-1) === candidate.raw) remaining.pop();
+  return {
+    comments: cleanComments(remaining),
+    lines: [`{# ${candidate.text} #} ${output[0]}`],
+  };
 }
 
 function surgeSectionArray(sg, section) {
@@ -513,7 +580,7 @@ function planAdjacentQxHeaderGroups(items, ctx) {
     const mergedAst = {...first.ast, actions};
     const nativePlan = qxNativeHeaderPlan(mergedAst);
     if (nativePlan) {
-      plans.set(index, nativePlan);
+      plans.set(index, {...nativePlan, qxInlineNoteEligible:false});
     } else {
       try {
         const plan = renderMinimalQxHeaderHelper(mergedAst, {
@@ -524,9 +591,9 @@ function planAdjacentQxHeaderGroups(items, ctx) {
         const key = crypto.createHash('sha1').update('header\0' + sourceLines[0]).digest('hex').slice(0, 10);
         const filename = `header_${key}.js`;
         ctx.generatedScripts.set(filename, plan.script);
-        plans.set(index, {section:'rewrite', line:`${plan.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}`});
+        plans.set(index, {section:'rewrite', line:`${plan.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}`, qxInlineNoteEligible:false});
       } catch (error) {
-        plans.set(index, rewriteReview(sourceLines.join(' | '), String(error?.message || error).split('\n')[0]));
+        plans.set(index, {...rewriteReview(sourceLines.join(' | '), String(error?.message || error).split('\n')[0]), qxInlineNoteEligible:false});
       }
     }
     for (let consumedIndex = index + 1; consumedIndex <= end; consumedIndex++) consumed.add(consumedIndex);
@@ -656,19 +723,28 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     qx.notes.push('# [WayX] Policy binding: source PROXY is preserved as literal QX policy name PROXY; a matching target policy must exist.');
   }
 
-  for (const item of sectionItems(parsed.sections.get('Rule'))) {
+  const ruleSectionLines = parsed.sections.get('Rule') || [];
+  for (const item of sectionItems(ruleSectionLines)) {
     const comments = cleanComments(item.comments);
     if (!item.line) { qx.filter.push(...comments); sg.rule.push(...comments); continue; }
     const qr = canonicalQxRule(item.line);
-    if (qr.kind === 'filter') qx.filter.push(...comments, qr.line);
-    else if (qr.kind === 'rewrite') qx.rewrite.push(...comments, qr.line);
+    const qxRendered = qxAttachInlineNote({
+      sectionLines: ruleSectionLines,
+      item,
+      sectionKind: 'rule',
+      lines: [qr.line],
+      eligible: qr.kind === 'filter' || qr.kind === 'rewrite',
+    });
+    if (qr.kind === 'filter') qx.filter.push(...qxRendered.comments, ...qxRendered.lines);
+    else if (qr.kind === 'rewrite') qx.rewrite.push(...qxRendered.comments, ...qxRendered.lines);
     else qx.filter.push(...comments, qr.line);
     const sr = surgeModuleRule(item.line);
     const sRuleDest = sr.section === 'map' ? sg.map : sg.rule;
     sRuleDest.push(...comments, ...sr.lines);
   }
 
-  const rewriteItems = sectionItems(parsed.sections.get('Rewrite'));
+  const rewriteSectionLines = parsed.sections.get('Rewrite') || [];
+  const rewriteItems = sectionItems(rewriteSectionLines);
   const qxHeaderGroups = planAdjacentQxHeaderGroups(rewriteItems, qctx);
 
   for (let rewriteIndex = 0; rewriteIndex < rewriteItems.length; rewriteIndex++) {
@@ -702,7 +778,18 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
         qx.rewrite.push(...comments);
       } else {
         const qdest = qr.section === 'rewrite' ? qx.rewrite : qx.notes;
-        qdest.push(...comments, ...(qr.lines || [qr.line]));
+        if (qr.section === 'rewrite') {
+          const qxRendered = qxAttachInlineNote({
+            sectionLines: rewriteSectionLines,
+            item,
+            sectionKind: 'rewrite',
+            lines: qr.lines || [qr.line],
+            eligible: qr.qxInlineNoteEligible !== false,
+          });
+          qdest.push(...qxRendered.comments, ...qxRendered.lines);
+        } else {
+          qdest.push(...comments, ...(qr.lines || [qr.line]));
+        }
       }
     }
 
@@ -948,7 +1035,22 @@ const QX_SCRIPT_ACTIONS = new Set([
   'script-echo-response','script-analyze-echo-response',
 ]);
 
+function stripQxLeadingNote(line, entry) {
+  const text = String(line ?? '').trim();
+  if (!text.startsWith('{#')) return {line:text, note:null};
+  const match = text.match(/^\{#\s*(.*?)\s*#\}\s+(.+)$/);
+  if (!match || !match[1].trim() || !match[2].trim()) {
+    throw new Error(`${entry.id}: malformed Quantumult X leading rule note: ${line}`);
+  }
+  return {line:match[2].trim(), note:match[1].trim()};
+}
+
 function validateQxExecutableLine(line, entry) {
+  const noted = stripQxLeadingNote(line, entry);
+  line = noted.line;
+  if (noted.note && /^(?:hostname|skip-server-cert-verify)\s*=/.test(line)) {
+    throw new Error(`${entry.id}: Quantumult X leading notes are only valid on filter/rewrite rules: ${line}`);
+  }
   if (/^(?:hostname|skip-server-cert-verify)\s*=/.test(line)) return;
 
   const urlMarker = line.indexOf(' url ');
