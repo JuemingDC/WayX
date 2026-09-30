@@ -61,7 +61,7 @@ registerComplexRewriteHandler({
       const filename = 'complex_' + key + '.js';
       ctx.generatedScripts.set(filename, plan.script);
       if (target === 'qx') return {ok:true, section:'rewrite', line:plan.pattern + ' url ' + plan.qxAction + ' ' + RAW_BASE + '/script/' + ctx.id + '/' + filename};
-      return {ok:true, section:'script', line:'wayx_complex_' + key + ' = type=' + plan.surgeType + ',pattern=' + plan.pattern + ',script-path=' + RAW_BASE + '/script/' + ctx.id + '/' + filename + ',requires-body=true'};
+      return {ok:true, section:'script', line:'wayx_complex_' + key + ' = type=' + plan.surgeType + ',pattern=' + plan.pattern + ',script-path=' + RAW_BASE + '/script/' + ctx.id + '/' + filename + ',requires-body=true' + (plan.fullHeaderMode ? ',full-header-mode=true' : '')};
     } catch (error) {
       return {ok:false, terminal:true, reason:String(error?.message || error)};
     }
