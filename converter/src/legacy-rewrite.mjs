@@ -4,6 +4,10 @@
 import crypto from 'node:crypto';
 import { minifyJq, quoteJq } from './jq.mjs';
 import { normalizeRegexBodyForTarget } from './target-regex.mjs';
+import { renderQxHeaderScript, renderQxInlineMockScript } from './qx-semantic-script.mjs';
+import { surgeInlineMockPlan } from './rewrite-v2-semantic.mjs';
+import { renderSurgeRequestMockScript } from './surge-mock.mjs';
+import { renderMixedRewriteScript } from './complex-rewrite-script.mjs';
 
 const REJECT_ACTIONS = new Set(['reject','reject-200','reject-img','reject-dict','reject-array']);
 
@@ -76,7 +80,6 @@ function parseJsonValue(token) {
 function compileJsonMutation(phase, op, rest) {
   if (op === 'jq') return { ok:true, jq:unquote(String(rest).trim()), preserve:true };
   const tokens = shellTokens(rest);
-  if (op === 'add') return { ok:false, reason:'legacy json-add semantics are not compiled until add-vs-replace behavior is proven equivalent' };
   if (op === 'del') {
     if (!tokens.length) return { ok:false, reason:'missing JSON path' };
     const paths = tokens.map(unquote).map(jqAccess);
@@ -96,33 +99,31 @@ function compileJsonMutation(phase, op, rest) {
   return { ok:false, reason:'unsupported JSON operation' };
 }
 
+function parseMockData(rest) {
+  const source=String(rest || '');
+  const quotedStart=source.search(/\bdata="/i);
+  if(quotedStart >= 0){
+    const valueStart=source.indexOf('"', quotedStart) + 1;
+    const tail=source.slice(valueStart);
+    const marker=tail.match(/"\s+(?=(?:status-code|data-path|mock-data-is-base64)=)/i);
+    const end=marker ? valueStart + marker.index : source.lastIndexOf('"');
+    if(end >= valueStart){
+      return source.slice(valueStart,end)
+        .replace(/\\"/g, '"')
+        .replace(/\\n/g, '\n')
+        .replace(/\\\\/g, '\\');
+    }
+  }
+  const unquoted=source.match(/\bdata=([^\s]+)/i);
+  return unquoted ? unquoted[1] : null;
+}
+
 function parseMock(rest) {
   const type = (rest.match(/\bdata-type=([^\s]+)/i) || [])[1] || 'text';
   const status = Number((rest.match(/\bstatus-code=(\d+)/i) || [])[1] || 200);
   const dataPath = (rest.match(/\bdata-path=([^\s]+)/i) || [])[1] || null;
   const base64 = /\bmock-data-is-base64=(?:true|1)\b/i.test(rest);
-  let data = null;
-  const dm = rest.match(/\bdata="((?:\\.|[^"])*)"/i);
-  if (dm) data = dm[1].replace(/\\"/g, '"').replace(/\\n/g, '\n').replace(/\\\\/g, '\\');
-  else {
-    const du = rest.match(/\bdata=([^\s]+)/i);
-    if (du) data = du[1];
-  }
-  return { type, status, data, dataPath, base64 };
-}
-
-function contentType(type) {
-  if (type === 'json') return 'application/json';
-  if (type === 'html') return 'text/html';
-  if (type === 'javascript') return 'application/javascript';
-  if (type === 'css') return 'text/css';
-  if (['png','gif','jpeg','tiff','svg','mp4'].includes(type)) return null;
-  return 'text/plain';
-}
-
-function mockScriptContent(mock) {
-  const ct = contentType(mock.type) || 'application/octet-stream';
-  return `// Generated from generic Loon mock-response-body by chance\n$done({status: "HTTP/1.1 ${mock.status} OK", headers: {"Content-Type": ${JSON.stringify(ct)}}, body: ${JSON.stringify(mock.data ?? '')}});\n`;
+  return { type, status, data:parseMockData(rest), dataPath, base64 };
 }
 
 export function classifyLegacyRewrite(action) {
@@ -145,14 +146,104 @@ export function classifyLegacyRewrite(action) {
   return {kind:'unknown', raw};
 }
 
-function planHeader(pattern, action, parsed, target) {
+function legacyStringNode(value) {
+  return {type:'string', value:String(value), raw:JSON.stringify(String(value))};
+}
+
+function legacyRegexNode(pattern) {
+  return {type:'regex', pattern:String(pattern), flags:'', raw:'/' + String(pattern).replaceAll('/', '\\/') + '/'};
+}
+
+function legacyHeaderAst(pattern, parsed, tokens) {
+  const width=parsed.op === 'del' ? 1 : parsed.op === 'replace-regex' ? 3 : 2;
+  const actions=[];
+  for(let i=0;i<tokens.length;i+=width){
+    const args=tokens.slice(i,i+width).map(unquote);
+    let suffix;
+    let nodes;
+    if(parsed.op === 'del'){
+      suffix='del';
+      nodes=[legacyStringNode(args[0])];
+    }else if(parsed.op === 'add'){
+      suffix='add';
+      nodes=[legacyStringNode(args[0]), legacyStringNode(args[1])];
+    }else if(parsed.op === 'replace'){
+      // Legacy header-replace is the set/replace-whole-field operation.
+      suffix='set';
+      nodes=[legacyStringNode(args[0]), legacyStringNode(args[1])];
+    }else{
+      suffix='replace';
+      nodes=[legacyStringNode(args[0]), legacyRegexNode(args[1]), legacyStringNode(args[2])];
+    }
+    actions.push({type:'action', name:parsed.phase + '.header.' + suffix, args:nodes});
+  }
+  return {
+    type:'rewrite',
+    phase:parsed.phase,
+    condition:{
+      type:'comparison',
+      operator:'~=',
+      left:{type:'variable', name:'url'},
+      right:legacyRegexNode(pattern),
+      capture:null,
+    },
+    actions,
+  };
+}
+
+function planHeader(pattern, action, parsed, target, ctx) {
   const tokens=shellTokens(parsed.rest);
   const direction=parsed.phase === 'response' ? 'http-response' : 'http-request';
   const width=parsed.op === 'del' ? 1 : parsed.op === 'replace-regex' ? 3 : 2;
   if (!tokens.length || tokens.length % width) return review(pattern, action, 'invalid legacy header argument grouping');
-  if (target === 'qx') {
-    return review(pattern, action, 'Quantumult X official static rewrite sample does not provide a lossless field-oriented equivalent for this Loon header mutation');
+
+  if (target === 'qx' && parsed.phase === 'request' && parsed.op === 'add') {
+    const targetPattern=normalizeRegexBodyForTarget(pattern);
+    const lines=[];
+    for(let i=0;i<tokens.length;i+=width){
+      const [name,value]=tokens.slice(i,i+width).map(unquote);
+      if(!name || /[\s:\r\n]/.test(name) || /[\r\n]/.test(value)) {
+        return review(pattern, action, 'legacy request header-add contains an unsafe field name/value for QX whole-header rewrite');
+      }
+      lines.push(targetPattern + ' url request-header ^([^\\r\\n]+)(\\r\\n) request-header $1$2' + name + ': ' + value + '$2');
+    }
+    return {section:'rewrite', lines};
   }
+
+  if (target === 'qx' && parsed.phase === 'request' && parsed.op === 'replace-regex') {
+    const targetPattern=normalizeRegexBodyForTarget(pattern);
+    const lines=[];
+    for(let i=0;i<tokens.length;i+=width){
+      const [name,regex,replacement]=tokens.slice(i,i+width).map(unquote);
+      if(!name || /[\s:\r\n]/.test(name) || /[\r\n]/.test(replacement)) {
+        return review(pattern, action, 'legacy request header-replace-regex contains an unsafe field name/replacement');
+      }
+      const escaped=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+      lines.push(targetPattern + ' url request-header (\\r\\n)' + escaped + ':\\s*' + normalizeRegexBodyForTarget(regex) + '(\\r\\n) request-header $1' + name + ': ' + replacement + '$2');
+    }
+    return {section:'rewrite', lines};
+  }
+
+  if (target === 'qx') {
+    try {
+      const ast=legacyHeaderAst(pattern, parsed, tokens);
+      const plan=renderQxHeaderScript(ast, {
+        stamp:ctx.stamp || '',
+        category:ctx.category || 'Rewrite / Legacy Header',
+        sourceLine:pattern + ' ' + action,
+      });
+      const key=crypto.createHash('sha1').update('legacy-header\\0'+pattern+'\\0'+action).digest('hex').slice(0,10);
+      const filename='legacy_header_'+key+'.js';
+      ctx.generatedScripts.set(filename, plan.script);
+      return {
+        section:'rewrite',
+        line:plan.pattern + ' url ' + plan.qxAction + ' ' + ctx.rawBase + '/script/' + ctx.id + '/' + filename,
+      };
+    } catch (error) {
+      return review(pattern, action, String(error?.message || error));
+    }
+  }
+
   const targetPattern=normalizeRegexBodyForTarget(pattern);
   const lines=[];
   for(let i=0;i<tokens.length;i+=width){
@@ -162,7 +253,6 @@ function planHeader(pattern, action, parsed, target) {
   }
   return {section:'header', lines};
 }
-
 function planBodyRegex(pattern, action, parsed, target) {
   const tokens=shellTokens(parsed.rest).map(unquote);
   if (!tokens.length || tokens.length % 2) return review(pattern, action, 'body regex rewrite requires regex/replacement pairs');
@@ -178,7 +268,58 @@ function planBodyRegex(pattern, action, parsed, target) {
   return {section:'body', line:`${direction} ${targetPattern} ${tokens.join(' ')}`};
 }
 
-function planJson(pattern, action, parsed, target) {
+function legacyValueNode(token) {
+  const value=parseJsonValue(token);
+  if(value === null) return {type:'null', value:null, raw:'null'};
+  if(typeof value === 'boolean') return {type:'boolean', value, raw:String(value)};
+  if(typeof value === 'number' && Number.isFinite(value)) return {type:'number', value, raw:String(value)};
+  if(typeof value === 'string') return legacyStringNode(value);
+  throw new Error('legacy JSON value object/array syntax is not yet proven equivalent');
+}
+
+function legacyJsonAddAst(pattern, parsed) {
+  const tokens=shellTokens(parsed.rest);
+  if (!tokens.length || tokens.length % 2) throw new Error('json-add requires path/value pairs');
+  const actions=[];
+  for(let i=0;i<tokens.length;i+=2){
+    const path=unquote(tokens[i]);
+    if(!jqPath(path)) throw new Error('unsupported JSON path syntax');
+    actions.push({
+      type:'action',
+      name:parsed.phase + '.json.add',
+      args:[legacyStringNode(path), legacyValueNode(tokens[i+1])],
+    });
+  }
+  return {
+    type:'rewrite',
+    phase:parsed.phase,
+    condition:{type:'comparison',operator:'~=',left:{type:'variable',name:'url'},right:legacyRegexNode(pattern),capture:null},
+    actions,
+  };
+}
+
+function planJson(pattern, action, parsed, target, ctx) {
+  if(parsed.op === 'add'){
+    try{
+      const ast=legacyJsonAddAst(pattern, parsed);
+      const plan=renderMixedRewriteScript(ast, {
+        target,
+        stamp:ctx.stamp || '',
+        category:ctx.category || 'Rewrite / Legacy JSON',
+        sourceLine:pattern + ' ' + action,
+      });
+      const key=crypto.createHash('sha1').update('legacy-json-add\\0'+target+'\\0'+pattern+'\\0'+action).digest('hex').slice(0,10);
+      const filename='legacy_json_add_'+target+'_'+key+'.js';
+      ctx.generatedScripts.set(filename, plan.script);
+      if(target === 'qx'){
+        return {section:'rewrite', line:plan.pattern+' url '+plan.qxAction+' '+ctx.rawBase+'/script/'+ctx.id+'/'+filename};
+      }
+      return {section:'script', line:'wayx_legacy_json_add_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+ctx.rawBase+'/script/'+ctx.id+'/'+filename+',requires-body=true'};
+    }catch(error){
+      return review(pattern, action, String(error?.message || error));
+    }
+  }
+
   let compiled;
   try { compiled=compileJsonMutation(parsed.phase, parsed.op, parsed.rest); }
   catch (error) { return review(pattern, action, String(error?.message || error)); }
@@ -196,27 +337,72 @@ function planJson(pattern, action, parsed, target) {
   return {section:'body', line:`${verb} ${targetPattern} ${quoted}`};
 }
 
+function legacyMockAst(pattern, parsed) {
+  const mock=parsed.mock;
+  const args=[
+    legacyStringNode(mock.type),
+    legacyStringNode(mock.data),
+  ];
+  if(parsed.phase === 'response'){
+    args.push({type:'number', value:mock.status, raw:String(mock.status)});
+    if(mock.base64) args.push({type:'boolean', value:true, raw:'true'});
+  }else if(mock.base64){
+    args.push({type:'boolean', value:true, raw:'true'});
+  }
+  return {
+    type:'rewrite',
+    phase:parsed.phase,
+    condition:{
+      type:'comparison',
+      operator:'~=',
+      left:{type:'variable', name:'url'},
+      right:legacyRegexNode(pattern),
+      capture:null,
+    },
+    actions:[{type:'action', name:parsed.phase + '.body.mock', args}],
+  };
+}
+
 function planMock(pattern, action, parsed, target, ctx) {
   const mock=parsed.mock;
-  if (mock.dataPath) return review(pattern, action, 'legacy mock data-path requires dependency materialization before conversion');
-  if (mock.base64) return review(pattern, action, 'legacy Base64 mock requires binary-safe dependency handling');
-  if (parsed.phase === 'request') return review(pattern, action, 'legacy request-body mock requires a dedicated request-body helper plan');
-  if (mock.data === null) return review(pattern, action, 'legacy response mock has no inline data');
-  const targetPattern=normalizeRegexBodyForTarget(pattern);
-  if (target === 'surge') {
-    const ct=contentType(mock.type);
-    if (!ct) return review(pattern, action, 'binary response mock requires data-type/base64 or file materialization');
+  if (mock.dataPath) return review(pattern, action, 'legacy mock data-path requires source dependency materialization before a native/helper target can be proven');
+  if (mock.data === null) return review(pattern, action, 'legacy body mock has no inline data');
+
+  try {
+    const ast=legacyMockAst(pattern, parsed);
+    if(target === 'qx'){
+      const plan=renderQxInlineMockScript(ast, {
+        stamp:ctx.stamp || '',
+        category:ctx.category || 'Rewrite / Legacy Mock',
+        sourceLine:pattern + ' ' + action,
+      });
+      const key=crypto.createHash('sha1').update('legacy-mock\\0'+pattern+'\\0'+action).digest('hex').slice(0,10);
+      const filename='legacy_mock_'+key+'.js';
+      ctx.generatedScripts.set(filename, plan.script);
+      return {section:'rewrite', line:plan.pattern + ' url ' + plan.qxAction + ' ' + ctx.rawBase + '/script/' + ctx.id + '/' + filename};
+    }
+
+    if(parsed.phase === 'response'){
+      const direct=surgeInlineMockPlan(ast);
+      if(direct.ok) return {section:direct.section, line:direct.line, lines:direct.lines};
+      return review(pattern, action, direct.reason);
+    }
+
+    const plan=renderSurgeRequestMockScript(ast, {
+      stamp:ctx.stamp || '',
+      category:ctx.category || 'Rewrite / Legacy Mock',
+      sourceLine:pattern + ' ' + action,
+    });
+    const key=crypto.createHash('sha1').update('legacy-request-mock\\0'+pattern+'\\0'+action).digest('hex').slice(0,10);
+    const filename='legacy_request_mock_'+key+'.js';
+    ctx.generatedScripts.set(filename, plan.script);
     return {
-      section:'map',
-      line:`${targetPattern} data-type=text data=${JSON.stringify(mock.data)} status-code=${mock.status} header=${JSON.stringify('Content-Type:'+ct)}`,
+      section:'script',
+      line:'wayx_legacy_request_mock_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+ctx.rawBase+'/script/'+ctx.id+'/'+filename+',requires-body=true'+(plan.binaryBodyMode?',binary-body-mode=true':''),
     };
+  } catch (error) {
+    return review(pattern, action, String(error?.message || error));
   }
-  if (mock.status === 200 && mock.type === 'json' && mock.data === '{}') return {section:'rewrite', line:`${targetPattern} url reject-dict`};
-  if (mock.status === 200 && mock.type === 'json' && mock.data === '[]') return {section:'rewrite', line:`${targetPattern} url reject-array`};
-  const key=crypto.createHash('sha1').update(pattern+action).digest('hex').slice(0,10);
-  const filename=`mock_${key}.js`;
-  ctx.generatedScripts.set(filename,mockScriptContent(mock));
-  return {section:'rewrite', line:`${targetPattern} url script-echo-response ${ctx.rawBase}/script/${ctx.id}/${filename}`};
 }
 
 export function planLegacyRewrite(pattern, action, target, ctx={}) {
@@ -241,9 +427,9 @@ export function planLegacyRewrite(pattern, action, target, ctx={}) {
       ? {section:'url', line:`${targetPattern} ${parsed.target} header`}
       : review(pattern, action, 'Quantumult X official sample has no verified transparent URL-rewrite equivalent for Loon legacy header action');
   }
-  if (parsed.kind === 'header') return planHeader(pattern, action, parsed, target);
+  if (parsed.kind === 'header') return planHeader(pattern, action, parsed, target, ctx);
   if (parsed.kind === 'body-regex') return planBodyRegex(pattern, action, parsed, target);
-  if (parsed.kind === 'json') return planJson(pattern, action, parsed, target);
+  if (parsed.kind === 'json') return planJson(pattern, action, parsed, target, ctx);
   if (parsed.kind === 'mock') return planMock(pattern, action, parsed, target, ctx);
   return review(pattern, action, 'unsupported Loon legacy Rewrite action');
 }

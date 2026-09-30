@@ -46,18 +46,23 @@ Target 已转换语义项
 
 不允许静默丢行。
 
+Source parser 遇到当前 grammar 未登记、但包含活动内容的 section 时，必须把该 section 的活动声明逐项保留为明确 Review；不能因为 orchestration 没有对应分支就忽略整个 section。Script parse failure、未知 MITM option 等同理必须进入统一 Review marker。只有本规范明确列出的项目级丢弃项可以不生成目标语义。
+
 ## 80.3 Quantumult X Validator
 
 必须检查：
-- 只使用 Crossutility 官方 sample 已确认 filter/action；
+- 每一条活动行都必须能分类为 Crossutility 官方 sample 已确认的 QX filter、rewrite action 或 MITM key；未知活动行直接失败；
+- filter type 只允许当前转换规范已经确认的 QX 类型；
+- rewrite action 只允许官方 sample 已确认的 reject / redirect / request-header / body / jsonjq / Script action；
+- Script action 名称只允许 `script-request-header / script-request-body / script-response-header / script-response-body / script-echo-response / script-analyze-echo-response`；
 - section 标题全部注释化；
 - snippet 头部不存在活动 `#!...` 来源 metadata；
 - 无 `[hH][tT][tT][pP]` 自动 case-fold；
-- 无未经官方确认的 `(?i)`；
+- 无未经官方确认的 `(?i)` / `(?m)` / `(?s)` 恢复 flags；
 - QX IP filter 不含 `no-resolve`；
 - 无 Loon/Surge 私有 action；
 - 无活动 `jq-path=`，且 legacy `jq-path=` 不得出现在目标语义项中；
-- Script action 与脚本行为匹配。
+- Script action 与脚本行为匹配；Source Script 无正向 QX 兼容证据时必须保持注释/Review。
 
 ## 80.4 Surge Validator
 
@@ -69,6 +74,7 @@ Target 已转换语义项
 - Module policy 仅使用当前官方资料或当前 Surge App 运行时已直接验证的内建值；未知/用户 policy group 不作为活动 Rule
 - 外部 policy 不作为活动 Module Rule
 - URL/Header/Body/Map Local/Script 参数合法
+- WayX 去广告转换输出中的活动 Script declaration 必须显式声明 type，且 Adblock-scope validator 不接受调度/事件/generic Script 类型；仓库中与本转换器无关的人工 Surge Module 仍按 Surge 自身合法类型校验，不受此范围限制
 - 自动转换生成的 MITM hostname 使用 `%APPEND%`；validator 同时接受官方合法的 hostname override
 - 不存在来源插件专属活动 metadata
 - 不存在来源平台 Rewrite v2 行

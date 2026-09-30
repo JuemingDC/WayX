@@ -393,22 +393,41 @@ function qxHeaderRewriteInfo(line, argumentIds = []) {
 }
 
 function qxNativeHeaderReplacePlan(ast) {
-  // QX native request-header/response-header rewrites the complete HTTP header block.
-  // Direct mapping is intentionally limited to one fixed header.replace action.
-  if (ast.actions.length !== 1 || !ast.actions[0].name.endsWith('.header.replace')) return null;
+  // The uploaded Crossutility sample verifies only the whole-block
+  // `request-header` primitive. Response header mutation must use the
+  // documented `script-response-header` path.
+  if (ast.phase !== 'request' || ast.actions.length !== 1) return null;
   const condition = simpleUrlRewriteCondition(ast);
   if (!condition.ok) return null;
   const action = ast.actions[0];
+
+  if (action.name === 'request.header.add') {
+    const nameNode=action.args[0], valueNode=action.args[1];
+    if (!nameNode || !['string','raw-string'].includes(nameNode.type) ||
+        !valueNode || !['string','raw-string'].includes(valueNode.type)) return null;
+    const name=String(nameNode.value), value=String(valueNode.value);
+    if (!name || /[\s:\r\n]/.test(name) || /[\r\n]/.test(value) || value.includes('$' + '{')) return null;
+    // QX says request-header operates on the whole HTTP header string and may
+    // match CRLF. Insert after the request line; existing same-name fields are
+    // untouched, so this preserves Loon add rather than degrading to set.
+    const headerPattern='^([^\\r\\n]+)(\\r\\n)';
+    const headerReplacement='$1$2' + name + ': ' + value + '$2';
+    return {
+      section:'rewrite',
+      line:condition.pattern + ' url request-header ' + headerPattern + ' request-header ' + headerReplacement,
+    };
+  }
+
+  if (action.name !== 'request.header.replace') return null;
   const nameNode = action.args[0], regex = action.args[1], replacementNode = action.args[2];
   if (!nameNode || !['string','raw-string'].includes(nameNode.type) || regex?.type !== 'regex' ||
       !replacementNode || !['string','raw-string'].includes(replacementNode.type)) return null;
   const name = String(nameNode.value), replacement = String(replacementNode.value);
   if (/\s/.test(name) || /[\r\n]/.test(replacement) || replacement.includes('$' + '{')) return null;
-  const token = ast.phase === 'request' ? 'request-header' : 'response-header';
   const headerName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const headerPattern = '(\\r\\n)' + headerName + ':\\s*' + regex.pattern + '(\\r\\n)';
   const headerReplacement = '$1' + name + ': ' + replacement + '$2';
-  return {section:'rewrite', line:condition.pattern + ' url ' + token + ' ' + headerPattern + ' ' + token + ' ' + headerReplacement};
+  return {section:'rewrite', line:condition.pattern + ' url request-header ' + headerPattern + ' request-header ' + headerReplacement};
 }
 function planAdjacentQxHeaderGroups(items, ctx) {
   const plans = new Map();
@@ -418,6 +437,10 @@ function planAdjacentQxHeaderGroups(items, ctx) {
     if (consumed.has(index) || !items[index]?.line) continue;
     const first = qxHeaderRewriteInfo(items[index].line, ctx.argumentIds || []);
     if (!first) continue;
+    // request.header.add can be represented natively one declaration at a time.
+    // Do not merge it into a helper group, because QX helper header objects do
+    // not prove duplicate-field preservation.
+    if (first.ast.actions.some(action => action.name === 'request.header.add')) continue;
 
     const actions = [...first.ast.actions];
     const sourceLines = [items[index].line];
@@ -548,6 +571,15 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
 
   const qx = { filter: [], rewrite: [], mitm: [], notes: [], generatedScripts: new Map() };
   const sg = { rule: [], url: [], header: [], map: [], body: [], script: [], mitm: [], notes: [], generatedScripts: new Map() };
+  const supportedSourceSections = new Set(['Argument','Rule','Rewrite','Script','MITM','MitM']);
+  for (const [sectionName, sectionLines] of parsed.sections) {
+    if (supportedSourceSections.has(sectionName)) continue;
+    const active = sectionItems(sectionLines).filter(item => item.line).map(item => item.line);
+    if (!active.length) continue;
+    const reason = '# [WayX] REVIEW REQUIRED: unsupported Loon source section [' + sectionName + '] is outside the current ad-block conversion grammar';
+    qx.notes.push(reason, ...active.map(line => '# Source declaration: ' + line));
+    sg.notes.push(reason, ...active.map(line => '# Source declaration: ' + line));
+  }
   const argumentAnalysis = analyzePluginArgumentUsage({
     argumentLines: parsed.sections.get('Argument') || [],
     rewriteLines: parsed.sections.get('Rewrite') || [],
@@ -618,7 +650,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
         qx.rewrite.push(...comments);
       } else {
         const qdest = qr.section === 'rewrite' ? qx.rewrite : qx.notes;
-        qdest.push(...comments, qr.line);
+        qdest.push(...comments, ...(qr.lines || [qr.line]));
       }
     }
 
@@ -641,8 +673,9 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
       try {
         ast = parseScriptV2(item.line);
       } catch (error) {
-        qx.notes.push(...comments, `# Unsupported source Script v2 preserved (${String(error?.message || error).split('\n')[0]}): ${item.line}`);
-        sg.notes.push(...comments, `# Unsupported source Script v2 preserved (${String(error?.message || error).split('\n')[0]}): ${item.line}`);
+        const reason = String(error?.message || error).split('\n')[0];
+        qx.notes.push(...comments, `# [WayX] SCRIPT V2 REVIEW REQUIRED: source declaration parse failed: ${reason}`, `# Source declaration: ${item.line}`);
+        sg.notes.push(...comments, `# [WayX] SCRIPT V2 REVIEW REQUIRED: source declaration parse failed: ${reason}`, `# Source declaration: ${item.line}`);
         continue;
       }
 
@@ -692,8 +725,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
 
     const sc = parseScriptLine(item.line);
     if (!sc || !sc.scriptPath) {
-      qx.notes.push(...comments, `# Unsupported source Script preserved: ${item.line}`);
-      sg.notes.push(...comments, `# Unsupported source Script preserved: ${item.line}`);
+      qx.notes.push(...comments, '# [WayX] SCRIPT REVIEW REQUIRED: unsupported source Script declaration has no verified target mapping', `# Source declaration: ${item.line}`);
+      sg.notes.push(...comments, '# [WayX] SCRIPT REVIEW REQUIRED: unsupported source Script declaration has no verified target mapping', `# Source declaration: ${item.line}`);
       continue;
     }
     scriptIndex++;
@@ -873,18 +906,77 @@ function scriptUrls(source) {
   return [...urls];
 }
 
+const QX_FILTER_TYPES = new Set([
+  'host','host-suffix','host-keyword','host-wildcard',
+  'ip-cidr','ip6-cidr','geoip','ip-asn','user-agent',
+]);
+const QX_SCRIPT_ACTIONS = new Set([
+  'script-request-header','script-request-body',
+  'script-response-header','script-response-body',
+  'script-echo-response','script-analyze-echo-response',
+]);
+
+function validateQxExecutableLine(line, entry) {
+  if (/^(?:hostname|skip-server-cert-verify)\s*=/.test(line)) return;
+
+  const urlMarker = line.indexOf(' url ');
+  if (urlMarker >= 0) {
+    const pattern = line.slice(0, urlMarker).trim();
+    const action = line.slice(urlMarker + 5).trim();
+    if (!pattern) throw new Error(`${entry.id}: Quantumult X rewrite line has an empty URL pattern: ${line}`);
+
+    if (/^(?:reject|reject-200|reject-img|reject-dict|reject-array)$/.test(action)) return;
+    if (/^(?:302|307)\s+\S+$/.test(action)) return;
+    if (/^jsonjq-(?:request|response)-body\s+'.+'$/.test(action)) return;
+    if (/^(?:request|response)-body\s+.+\s+(?:request|response)-body\s+.+$/.test(action)) return;
+    if (/^request-header\s+.+\s+request-header\s+.+$/.test(action)) return;
+
+    const script = action.match(/^(script-[a-z-]+)\s+(\S+)$/);
+    if (script && QX_SCRIPT_ACTIONS.has(script[1])) return;
+
+    throw new Error(`${entry.id}: unverified/unsupported Quantumult X rewrite action: ${action}`);
+  }
+
+  const comma = line.indexOf(',');
+  if (comma > 0) {
+    const type = line.slice(0, comma).trim().toLowerCase();
+    if (!QX_FILTER_TYPES.has(type)) {
+      throw new Error(`${entry.id}: unverified/unsupported Quantumult X filter type: ${type}`);
+    }
+    const fields = line.split(',').map(part => part.trim());
+    if (fields.length < 3 || !fields[1] || !fields[2]) {
+      throw new Error(`${entry.id}: malformed Quantumult X filter line: ${line}`);
+    }
+    if (['ip-cidr','ip6-cidr','geoip','ip-asn'].includes(type) && fields.slice(3).some(x => x.toLowerCase() === 'no-resolve')) {
+      throw new Error(`${entry.id}: Quantumult X IP-class rules must remove no-resolve`);
+    }
+    return;
+  }
+
+  throw new Error(`${entry.id}: unclassified active Quantumult X line: ${line}`);
+}
+
 function validateQX(text, entry) {
   const activeMetadata = text.split('\n').filter(l => /^#!/.test(l.trim()));
   if (activeMetadata.length) throw new Error(`${entry.id}: Quantumult X snippet metadata must be plain comments, not active #! directives`);
   const activeSections = text.split('\n').filter(l => /^\[(filter_local|rewrite_local|mitm)\]$/i.test(l.trim()));
   if (activeSections.length) throw new Error(`${entry.id}: Quantumult X section headings must be commented`);
+
   for (const raw of text.split('\n')) {
     const line = raw.trim();
     if (!line || line.startsWith('#')) continue;
-    if (/^(?:ip-cidr|ip6-cidr|geoip|ip-asn),/i.test(line) && /,\s*no-resolve(?:,|$)/i.test(line)) {
-      throw new Error(`${entry.id}: Quantumult X IP-class rules must remove no-resolve`);
+    if (/\(\?[ims](?:[:)])?/i.test(line)) {
+      throw new Error(`${entry.id}: Quantumult X output must not restore discarded Loon regex flags with inline modifiers: ${line}`);
     }
+    if (/\[hH\]\[tT\]\[tT\]\[pP\](?:\[sS\])?/.test(line)) {
+      throw new Error(`${entry.id}: Quantumult X output must not emulate case-insensitive flags with manual HTTP case-fold classes: ${line}`);
+    }
+    if (/jq-path=/i.test(line)) {
+      throw new Error(`${entry.id}: discarded legacy jq-path alias leaked into active Quantumult X output: ${line}`);
+    }
+    validateQxExecutableLine(line, entry);
   }
+
   for (const bad of ['response-body-json-del', 'response-body-json-replace', 'response-body-json-jq', 'mock-response-body']) {
     const active = text.split('\n').find(l => l.trim() && !l.trim().startsWith('#') && l.includes(bad));
     if (active) throw new Error(`${entry.id}: unconverted QX token ${bad}`);
@@ -948,7 +1040,7 @@ async function main() {
         if (!await exists(dest) || normalizeNewlines(await fs.readFile(dest, 'utf8')) !== content) await fs.writeFile(dest, content);
       }
       validateQX(out.qx, entry);
-      validateSurgeModule(out.surge, entry);
+      validateSurgeModule(out.surge, entry, {adblockScope:true});
       let outputChanged = false;
       if (oldQx !== out.qx) { await fs.writeFile(qxPath, out.qx); outputChanged = true; }
       if (oldSg !== out.surge) { await fs.writeFile(sgPath, out.surge); outputChanged = true; }

@@ -8,7 +8,13 @@
 
 export function scriptRuntimeSignals(sourceText = '') {
   const source = String(sourceText || '');
+  const dollarGlobals = [...new Set([...source.matchAll(/\$[A-Za-z_][A-Za-z0-9_]*/g)].map(match => match[0]))];
+  const qxDocumentedGlobals = new Set(['$request','$response','$done','$notify','$prefs','$task','$environment']);
+  const knownForeignGlobals = new Set(['$utils','$httpClient','$persistentStore','$loon']);
+  const unknownDollarGlobals = dollarGlobals.filter(name => !qxDocumentedGlobals.has(name) && !knownForeignGlobals.has(name));
   return {
+    dollarGlobals,
+    unknownDollarGlobals,
     sourceAvailable: Boolean(source.trim()),
     explicitQxRejection:
       /quantumult\s*x[^\n]{0,160}(?:not\s+support|unsupported|not\s+supported|does\s+not\s+support)/i.test(source) ||
@@ -20,12 +26,15 @@ export function scriptRuntimeSignals(sourceText = '') {
     qxPrefs: /\$prefs\b/.test(source),
     qxNotify: /\$notify\b/.test(source),
     qxBodyBytes: /\bbodyBytes\b/.test(source),
-    qxNamedAdapter: /\b(?:QuanX|QuantumultX|isQuanX|isQuantumultX)\b/i.test(source),
+    qxNamedAdapter: /\b(?:QuanX|QuantumultX|isQX|isQuanX|isQuantumultX)\b/i.test(source),
     loonUtils: /\$utils\s*\./.test(source),
     surgeHttpClient: /\$httpClient\b/.test(source),
     surgePersistentStore: /\$persistentStore\b/.test(source),
     loonObject: /\$loon\b/.test(source),
     done: /\$done\s*\(/.test(source),
+    qxDocumentedRuntimeOnly:
+      dollarGlobals.length > 0 &&
+      dollarGlobals.every(name => qxDocumentedGlobals.has(name)),
   };
 }
 
@@ -66,47 +75,56 @@ export function inspectQxScriptCompatibility({ sourceText = '' } = {}) {
     };
   }
 
+  const foreignApis = [
+    signals.surgeHttpClient ? '$httpClient' : null,
+    signals.surgePersistentStore ? '$persistentStore' : null,
+    signals.loonObject ? '$loon' : null,
+  ].filter(Boolean);
+
+  if (signals.unknownDollarGlobals.length) {
+    return {
+      status: 'review',
+      executable: false,
+      reason: 'Script contains runtime global(s) not verified by the Quantumult X official sample: ' + signals.unknownDollarGlobals.join(', ') + '.',
+      signals,
+    };
+  }
+
+  // Mixed foreign/QX runtime code is executable only when the source itself
+  // contains an explicit QX adapter/support signal. A token from both runtimes
+  // without such a branch is not enough to prove control-flow safety.
+  if (foreignApis.length && !(signals.qxNamedAdapter || signals.explicitQxSupport)) {
+    return {
+      status: 'review',
+      executable: false,
+      reason: 'Script mixes non-Quantumult-X runtime API(s) without a proven QX adapter branch: ' + foreignApis.join(', ') + '.',
+      signals,
+    };
+  }
+
   const qxEvidence =
     signals.qxTask ||
     signals.qxPrefs ||
     signals.qxNotify ||
     signals.qxNamedAdapter ||
-    signals.explicitQxSupport;
-
-  const foreignRuntimeOnly =
-    (signals.surgeHttpClient || signals.surgePersistentStore || signals.loonObject) &&
-    !qxEvidence;
-
-  if (foreignRuntimeOnly) {
-    const APIs = [
-      signals.surgeHttpClient ? '$httpClient' : null,
-      signals.surgePersistentStore ? '$persistentStore' : null,
-      signals.loonObject ? '$loon' : null,
-    ].filter(Boolean).join(', ');
-    return {
-      status: 'unsupported',
-      executable: false,
-      reason: 'Script uses non-Quantumult-X runtime API(s) without QX adapter evidence: ' + APIs + '.',
-      signals,
-    };
-  }
+    signals.explicitQxSupport ||
+    (signals.qxDocumentedRuntimeOnly && signals.done);
 
   if (qxEvidence) {
     return {
       status: 'runtime-evidence',
       executable: true,
-      reason: 'Script source contains Quantumult X runtime evidence and no blocking incompatibility signal.',
+      reason: signals.qxDocumentedRuntimeOnly && signals.done
+        ? 'Script uses only Quantumult X official-sample runtime globals and completes with $done().'
+        : 'Script source contains Quantumult X runtime/adapter evidence and no blocking incompatibility signal.',
       signals,
     };
   }
 
-  // A script containing only platform-neutral request/response globals may be
-  // portable, but token scanning cannot prove all runtime calls. Mark it generic
-  // executable only when it uses no known foreign platform APIs.
   return {
-    status: 'generic',
-    executable: true,
-    reason: 'No known platform-specific blocking signal was found; preserve the source script unchanged and use declaration semantics.',
+    status: 'review',
+    executable: false,
+    reason: 'No positive Quantumult X runtime compatibility evidence was found in the source script.',
     signals,
   };
 }

@@ -8,7 +8,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Tieba.png
 # Updated: 2026-06-01 17:11:35
 
-# Converted: 2026-09-30 14:40:13 +08:00
+# Converted: 2026-09-30 15:09:20 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Tieba_remove_ads.lpx
@@ -28,7 +28,7 @@ ip-cidr, 180.76.76.200/32, reject
 ^https?://tiebac\.baidu\.com/c/f/forum/getInterestClassList$ url reject-dict
 
 ^https?://tiebac\.baidu\.com/c/f/search/discover$ url reject-dict
-^https?://tieba\.baidu\.com/mo/q/search/startPage\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Tieba/mock_7691f508b1.js
+^https?://tieba\.baidu\.com/mo/q/search/startPage\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Tieba/legacy_mock_11dc73bc81.js
 
 ^https?://tiebac\.baidu\.com/c/u/user/profile$ url jsonjq-response-body 'del(.url_map,.user_agent_info,.bubble_info,.duxiaoman_entry,.uc_card,.finance_tab,.vip_banner,.ala_live_info,.recom_naws_list,.duxiaoman,.user.consume_info,.namoaixud_entry)'
 ^https?://tiebac\.baidu\.com/c/u/user/profile$ url jsonjq-response-body 'setpath(["user","shake_ad_switch","is_show"]; 0)'
@@ -46,7 +46,9 @@ ip-cidr, 180.76.76.200/32, reject
 
 ^https?://tiebac\.baidu\.com/c/f/sidebar/home$ url jsonjq-response-body 'del(.game_center,.tools,.task_list,.vip_banner)'
 # ProtoBuf处理
-# [WayX] SCRIPT REVIEW REQUIRED: QX declaration/helper cannot preserve this source argument/enable/timeout/max-size/binary option set without changing the source script.
+# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
+# Script: https://kelee.one/Resource/JavaScript/Tieba/tieba-proto.js
+# Reason: Script contains runtime global(s) not verified by the Quantumult X official sample: $Type, $argument, $notification.
 # Source declaration: http-response ^https?:\/\/tieba(?:c)?\.baidu\.com\/c\/(f\/excellent\/personalized|f\/frs\/page|b\/ad\/adBid|f\/ad\/getFeedAd|f\/pb\/page|f\/frs\/generalTabList)\?cmd=\d+&format=protobuf script-path=https://kelee.one/Resource/JavaScript/Tieba/tieba-proto.js, requires-body=true, binary-body-mode=true, timeout=10, tag=ProtoBuf处理, argument=[{per_filter_video_thread}]
 
 # [mitm]

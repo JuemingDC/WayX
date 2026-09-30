@@ -99,25 +99,27 @@ Loon 将 Header 操作细分为 `add / set / del / replace`。Quantumult X 官�
 
 ### 原生直转子集
 
-单条、固定参数、单 URL 条件的 `header.replace`，在完整 Header block 上能够严格表达时：
+Crossutility 官方 sample 只确认完整 **request Header block** 的 `request-header` rewrite，没有活动 `response-header` rewrite token。WayX 因此只在 request phase 使用该原生能力。
+
+单条、固定参数、单 URL 条件时：
 
 ```text
-request.header.replace(...)  -> request-header
-response.header.replace(...) -> response-header
+request.header.replace(...) -> request-header
+request.header.add(...)     -> request-header（在首个 CRLF 后插入新 Header 行）
 ```
 
-输出沿用 QX Header Rewrite 的“URL + header regex + replacement”形式。不得扩大 URL/Header 匹配范围，不得改变捕获组编号。
+`request.header.add` 的原生转换不得先查找/覆盖同名字段；它通过整块 Header 字符串插入新行，保留已有同名 Header，因此是 add 而不是 set。输出不得扩大 URL/Header 匹配范围，不得改变 capture 编号。
 
 ### Script fallback
-
-以下情况继续使用：
 
 ```text
 request  -> script-request-header
 response -> script-response-header
 ```
 
-包括 `add / set / del`、多个 Header action、需要保持 pipeline 顺序、动态参数，以及任何无法证明与原生 Header Rewrite 严格等价的情况。生成 helper 读取 `$request.headers` 或 `$response.headers`，完成对应 Header 对象操作后以 `$done({headers: ...})` 返回。
+`request.header.set / del`、多动作 pipeline，以及 response phase 的 `set / del / replace` 等无法由官方静态 token 严格表达的行为使用 helper。生成 helper 读取 `$request.headers` 或 `$response.headers` 后以 `$done({headers: ...})` 返回。
+
+`response.header.add` 例外：QX 官方 sample 的 Header object 返回形式不能证明重复同名 Header 可保留，因此不得用对象 set 冒充 add；在没有新的官方等价表示前注释 Review。
 
 对 Quantumult X 不发明数组 Header、重复 raw Header 行或其他未由官方 sample/已验证语法支持的返回格式。若 Loon 中存在**连续、同 phase、同 condition** 的多条 Header Rewrite，QX 输出必须将它们合并到一个 Header helper，并按源顺序执行全部动作；中间存在注释/空行或条件不同则不擅自跨边界合并。
 
@@ -165,7 +167,11 @@ target native planner
 
 Loon regex literal 的 `i / m / s` flags 在所有 native/helper 路径中均只解析、不传播；flags 的存在本身不进入 Review。目标编译阶段同时去掉 literal delimiter，并将仅用于源 literal 的 `\/` 规范化为目标 bare-regex 的 `/`；目标 helper 不得通过 `new RegExp(pattern, flags)`、inline modifier 或 case-fold 恢复这些 flags。
 
-Surge 的 `header.add` 与普通对象 Header 修改语义不同。需要脚本保持重复字段时必须使用 `full-header-mode=true` 的 `[{field,value}]` 形式，禁止退化为对象赋值。Quantumult X 官方 sample 只证明 Header 对象与整块 Header Rewrite，未证明对象赋值可保留同名重复字段；因此 **QX 不得用 set/对象赋值冒充 add**。QX `header.add` 在没有已验证等价表示时，helper 失败后注释源声明。
+Surge 的 `header.add` 与普通对象 Header 修改语义不同。需要脚本保持重复字段时必须使用 `full-header-mode=true` 的 `[{field,value}]` 形式，禁止退化为对象赋值。Quantumult X 同样不得用 set/对象赋值冒充 add：request phase 可用官方 `request-header` 整块字符串插入保留重复字段；response phase 没有已验证的重复 Header 表示，因此 `response.header.add` 注释 Review。
+
+Legacy Rewrite 同样遵守 native → helper → Review：request phase 的旧版 `header-add` 与 `header-replace-regex` 可复用官方 `request-header` 整块 Header rewrite；`header-replace / header-del` 以及 response phase 的可脚本化操作使用最小 Header helper。旧版 `response-header-add` 与新版 `response.header.add` 一样，在 QX 无重复字段等价表示时保持 Review。
+
+旧版 `mock-request-body / mock-response-body` 先归一化到与 Rewrite v2 `request/response.body.mock` 相同的语义计划：QX 使用已验证的 request-body/echo helper，Surge response 优先 Map Local、request 使用 `http-request` helper。旧版 mock 的 `data="..."` 必须按属性边界取完整内容，不能因 JSON 内部双引号提前截断。旧版 `*-body-json-add` 对可证明的标量值复用 Complex JSON helper，保持“仅 key 不存在时新增”的语义；无法证明的 object/array legacy value 才进入 Review。
 
 `json.add` 按 Loon JSON Key Path 语义处理：仅当目标 Key 不存在时新增；中间对象/数组路径按 Key Path 创建；批量参数按下标配对并从左到右执行。禁止把 `add` 退化成无条件覆盖。
 

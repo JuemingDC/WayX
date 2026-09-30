@@ -808,7 +808,7 @@ assert.equal(
 
 assert.equal(planMitmLine('hostname = api.example.com, *.example.com', 'qx').line, 'hostname = api.example.com, *.example.com');
 assert.equal(planMitmLine('hostname = api.example.com, *.example.com', 'surge').line, 'hostname = %APPEND% api.example.com, *.example.com');
-assert.match(planMitmLine('ca-passphrase = secret', 'qx').line, /Unsupported source MITM option preserved/);
+assert.match(planMitmLine('ca-passphrase = secret', 'qx').line, /REVIEW REQUIRED: unsupported source MITM option/);
 assert.equal(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-body-json-del data.ads', 'qx', legacyCtx).line,
   '^https://api\\.example\\.com url jsonjq-response-body \'del(.data.ads)\'',
@@ -817,10 +817,90 @@ assert.equal(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-del Server', 'surge', legacyCtx).lines[0],
   'http-response ^https://api\\.example\\.com header-del Server',
 );
-assert.match(
-  planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-del Server', 'qx', legacyCtx).line,
-  /REVIEW REQUIRED/,
+const legacyQxHeaderDel = planLegacyRewrite(
+  '^https:\\/\\/api\\.example\\.com',
+  'response-header-del Server',
+  'qx',
+  legacyCtx,
 );
+assert.equal(legacyQxHeaderDel.section, 'rewrite');
+assert.match(legacyQxHeaderDel.line, /url script-response-header .*legacy_header_.*\.js$/);
+assert.ok([...legacyCtx.generatedScripts.values()].some(script => /__wayxDel\("Server"\)/.test(script)));
+
+const legacyQxHeaderSet = planLegacyRewrite(
+  '^https:\\/\\/api\\.example\\.com',
+  'header-replace User-Agent Unknown',
+  'qx',
+  legacyCtx,
+);
+assert.equal(legacyQxHeaderSet.section, 'rewrite');
+assert.match(legacyQxHeaderSet.line, /url script-request-header .*legacy_header_.*\.js$/);
+
+assert.match(
+  planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-add Set-Cookie a=1', 'qx', legacyCtx).line,
+  /REVIEW REQUIRED: QX header\.add cannot be represented losslessly/,
+);
+
+const legacyNestedMock = classifyLegacyRewrite(
+  'mock-response-body data-type=json data="{"no":0,"error":"success"}" status-code=200',
+);
+assert.equal(legacyNestedMock.mock.data, '{"no":0,"error":"success"}');
+
+const legacyResponseMockQx = planLegacyRewrite(
+  '^https:\\/\\/tieba\\.example\\.com/mock',
+  'mock-response-body data-type=json data="{"no":0,"error":"success"}" status-code=200',
+  'qx',
+  legacyCtx,
+);
+assert.equal(legacyResponseMockQx.section, 'rewrite');
+assert.match(legacyResponseMockQx.line, /url script-echo-response .*legacy_mock_.*\.js$/);
+assert.ok([...legacyCtx.generatedScripts.values()].some(script => script.includes('{"no":0,"error":"success"}')));
+
+const legacyResponseMockSurge = planLegacyRewrite(
+  '^https:\\/\\/tieba\\.example\\.com/mock',
+  'mock-response-body data-type=json data="{"no":0,"error":"success"}" status-code=200',
+  'surge',
+  legacyCtx,
+);
+assert.equal(legacyResponseMockSurge.section, 'map');
+assert.match(legacyResponseMockSurge.line, /data="\{\\\"no\\\":0,\\\"error\\\":\\\"success\\\"\}"/);
+
+const legacyRequestMockQx = planLegacyRewrite(
+  '^https:\\/\\/api\\.example\\.com/submit',
+  'mock-request-body data-type=json data="{"x":1}"',
+  'qx',
+  legacyCtx,
+);
+assert.equal(legacyRequestMockQx.section, 'rewrite');
+assert.match(legacyRequestMockQx.line, /url script-request-body .*legacy_mock_.*\.js$/);
+
+const legacyRequestMockSurge = planLegacyRewrite(
+  '^https:\\/\\/api\\.example\\.com/submit',
+  'mock-request-body data-type=json data="{"x":1}"',
+  'surge',
+  legacyCtx,
+);
+assert.equal(legacyRequestMockSurge.section, 'script');
+assert.match(legacyRequestMockSurge.line, /type=http-request,.*requires-body=true/);
+
+const legacyJsonAddQx = planLegacyRewrite(
+  '^https:\\/\\/api\\.example\\.com',
+  'response-body-json-add data.enabled true data.count 2',
+  'qx',
+  legacyCtx,
+);
+assert.equal(legacyJsonAddQx.section, 'rewrite');
+assert.match(legacyJsonAddQx.line, /url script-response-body .*legacy_json_add_qx_.*\.js$/);
+assert.ok([...legacyCtx.generatedScripts.values()].some(script => /__wayxJsonAdd/.test(script) && /"enabled"/.test(script)));
+
+const legacyJsonAddSurge = planLegacyRewrite(
+  '^https:\\/\\/api\\.example\\.com',
+  'response-body-json-add data.enabled true',
+  'surge',
+  legacyCtx,
+);
+assert.equal(legacyJsonAddSurge.section, 'script');
+assert.match(legacyJsonAddSurge.line, /type=http-response,.*requires-body=true/);
 
 const explicitQxReject = inspectQxScriptCompatibility({
   scriptUrl:'https://alpha.invalid/runtime.js',
@@ -862,6 +942,22 @@ const surgeOnlyScript = inspectQxScriptCompatibility({
 });
 assert.equal(surgeOnlyScript.executable, false);
 assert.match(surgeOnlyScript.reason, /\$httpClient/);
+
+const qxOfficialRuntimeOnlyScript = inspectQxScriptCompatibility({
+  scriptUrl:'https://example.com/header.js',
+  sourceText:'const h={...$request.headers}; h["X-Test"]="1"; $done({headers:h});',
+});
+assert.equal(qxOfficialRuntimeOnlyScript.executable, true);
+assert.equal(qxOfficialRuntimeOnlyScript.status, 'runtime-evidence');
+assert.match(qxOfficialRuntimeOnlyScript.reason, /official-sample runtime globals/);
+
+const unknownRuntimeScript = inspectQxScriptCompatibility({
+  scriptUrl:'https://example.com/unknown.js',
+  sourceText:'const x=$mystery.read(); $done({});',
+});
+assert.equal(unknownRuntimeScript.executable, false);
+assert.equal(unknownRuntimeScript.status, 'review');
+assert.match(unknownRuntimeScript.reason, /not verified by the Quantumult X official sample/);
 
 const dualRuntimeScript = inspectQxScriptCompatibility({
   scriptUrl:'https://example.com/cross-platform.js',

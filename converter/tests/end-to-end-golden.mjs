@@ -44,6 +44,74 @@ assert.equal(
 assert.match(headerGroupOutput.surge, /header-add content-disposition inline/);
 assert.match(headerGroupOutput.surge, /header-del content-type/);
 assert.match(headerGroupOutput.surge, /header-add content-type text\/plain; charset=utf-8/);
+const requestAddFixture = {
+  id:'RequestHeaderAddFixture',
+  source:'https://example.invalid/request-header-add.lpx',
+  qx:'RequestHeaderAddFixture.snippet',
+  surge:'RequestHeaderAddFixture.sgmodule',
+  category:'测试',
+};
+const requestAddSource = `#!name=RequestHeaderAddFixture
+[Rewrite]
+request if ${url} ~= /^https:\/\/api\.example\.com\//i then request.header.add("X-Test", "one")
+response if ${url} ~= /^https:\/\/api\.example\.com\//i then response.header.replace("X-Test", /one/, "two")
+`;
+const requestAddOutput = convert(requestAddFixture, requestAddSource, new Map(), STAMP);
+assert.match(
+  requestAddOutput.qx,
+  /url request-header ^([^\\r\\n]+)(\\r\\n) request-header $1$2X-Test: one$2/,
+  'QX request.header.add must use whole request-header insertion rather than object set',
+);
+assert.equal(
+  requestAddOutput.qx.split(/\\r?\\n/).some(line => !line.trim().startsWith('#') && / url response-header /.test(line)),
+  false,
+  'QX must never emit the undocumented response-header rewrite token',
+);
+assert.match(requestAddOutput.qx, /url script-response-header .*header_.*\.js/);
+assert.doesNotMatch(requestAddOutput.qx, /REVIEW REQUIRED/);
+assert.match(requestAddOutput.surge, /header-add X-Test one/);
+
+
+const qxValidatorEntry = {id:'QxValidatorFixture'};
+const validQxValidatorText = `# Name: QxValidatorFixture
+# [filter_local]
+host, example.com, reject
+# [rewrite_local]
+^https://example\\.com url reject
+# [mitm]
+hostname = example.com
+`;
+assert.doesNotThrow(() => validateQX(validQxValidatorText, qxValidatorEntry));
+assert.throws(
+  () => validateQX(validQxValidatorText.replace('host, example.com, reject', 'dest-port, 443, reject'), qxValidatorEntry),
+  /unsupported Quantumult X filter type/,
+);
+assert.throws(
+  () => validateQX(validQxValidatorText.replace('^https://example\\.com url reject', '(?i)^https://example\\.com url reject'), qxValidatorEntry),
+  /must not restore discarded Loon regex flags/,
+);
+assert.throws(
+  () => validateQX(validQxValidatorText.replace('^https://example\\.com url reject', '[hH][tT][tT][pP][sS]://example\\.com url reject'), qxValidatorEntry),
+  /manual HTTP case-fold/,
+);
+assert.throws(
+  () => validateQX(validQxValidatorText.replace('^https://example\\.com url reject', '^https://example\\.com url loon-private-action'), qxValidatorEntry),
+  /unsupported Quantumult X rewrite action/,
+);
+assert.throws(
+  () => validateQX(validQxValidatorText.replace('^https://example\\.com url reject', '^https://example\\.com url response-header x response-header y'), qxValidatorEntry),
+  /unsupported Quantumult X rewrite action/,
+);
+
+const outOfScopeSurgeScript = `#!name=ScopeFixture
+#!desc=Scope fixture
+[Script]
+task = type=cron,script-path=https://example.com/task.js,cronexp="0 8 * * *"
+`;
+assert.throws(
+  () => validateSurgeModule(outOfScopeSurgeScript, {id:'ScopeFixture'}, {adblockScope:true}),
+  /unsupported Surge script type 'cron' in WayX ad-block scope/,
+);
 
 const argumentRewriteFixture = {
   id:'ArgumentRewriteFixture',
@@ -87,6 +155,23 @@ const disabledRewriteSource = `#!name=DisabledRewriteFixture
 #response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\/mock\\?/i then response.body.mock("text", "OK", 200)
 #response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\/json\\?/i then response.json.jq(".data.ads = []")
 `;
+const unknownSectionFixture = {
+  id:'UnknownSectionFixture',
+  source:'https://example.invalid/unknown-section.lpx',
+  qx:'UnknownSectionFixture.snippet',
+  surge:'UnknownSectionFixture.sgmodule',
+  category:'测试',
+};
+const unknownSectionSource = `#!name=UnknownSectionFixture
+[FutureFeature]
+foo = bar
+`;
+const unknownSectionOutput = convert(unknownSectionFixture, unknownSectionSource, new Map(), STAMP);
+assert.match(unknownSectionOutput.qx, /REVIEW REQUIRED: unsupported Loon source section \[FutureFeature\]/);
+assert.match(unknownSectionOutput.qx, /# Source declaration: foo = bar/);
+assert.match(unknownSectionOutput.surge, /REVIEW REQUIRED: unsupported Loon source section \[FutureFeature\]/);
+assert.match(unknownSectionOutput.surge, /# Source declaration: foo = bar/);
+
 const disabledRewriteOutput = convert(disabledRewriteFixture, disabledRewriteSource, new Map(), STAMP);
 assert.match(disabledRewriteOutput.surge, /^\[Body Rewrite\]$/m);
 assert.match(disabledRewriteOutput.surge, /#response if \$\{url\} ~= \/\^https:\\\/\\\/api\\\.example\\\.com\\\/json\\\?\/i then response\.json\.jq/);

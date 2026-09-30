@@ -11,7 +11,7 @@ export function hasActiveSurgeLines(lines = []) {
   });
 }
 
-export function validateSurgeModule(text, entry = {id:'module'}) {
+export function validateSurgeModule(text, entry = {id:'module'}, {adblockScope = false} = {}) {
   const fixedSections = new Set([
     'General','Rule','URL Rewrite','Header Rewrite','Body Rewrite','Map Local',
     'Script','MITM','Host','MTProto','Snell Server',
@@ -140,9 +140,15 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
       if (!declaration) throw new Error(`${entry.id}: invalid Surge [Script] declaration: ${line}`);
       const body = declaration[2];
       const typeMatch = body.match(/(?:^|,)\s*type=([^,\s]+)/);
-      const type = typeMatch?.[1] || 'generic';
-      const allowedTypes = new Set(['http-request','http-response','rule','dns','event','cron','generic']);
-      if (!allowedTypes.has(type)) throw new Error(`${entry.id}: unsupported Surge script type '${type}': ${line}`);
+      if (!typeMatch) throw new Error(`${entry.id}: Surge [Script] declaration must include an explicit type: ${line}`);
+      const type = typeMatch[1];
+      const repositoryTypes = new Set(['http-request','http-response','rule','dns','event','cron','generic']);
+      if (!repositoryTypes.has(type)) throw new Error(`${entry.id}: unsupported Surge script type '${type}': ${line}`);
+      // Cron/event/generic remain valid for unrelated hand-maintained modules.
+      // The WayX Loon->Adblock converter deliberately excludes those families.
+      if (adblockScope && ['event','cron','generic'].includes(type)) {
+        throw new Error(`${entry.id}: unsupported Surge script type '${type}' in WayX ad-block scope: ${line}`);
+      }
       if (!/(?:^|,)\s*script-path=[^,\s]+/.test(body)) {
         throw new Error(`${entry.id}: Surge [Script] missing script-path: ${line}`);
       }
@@ -152,10 +158,10 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
           throw new Error(`${entry.id}: Surge HTTP script missing pattern: ${line}`);
         }
       }
-      if (type === 'cron' && !/(?:^|,)\s*cronexp=(?:"[^"]+"|'[^']+'|[^,]+)/.test(body)) {
+      if (!adblockScope && type === 'cron' && !/(?:^|,)\s*cronexp=(?:"[^"]+"|'[^']+'|[^,]+)/.test(body)) {
         throw new Error(`${entry.id}: Surge cron script missing cronexp: ${line}`);
       }
-      if (type === 'event' && !/(?:^|,)\s*event-name=[^,]+/.test(body)) {
+      if (!adblockScope && type === 'event' && !/(?:^|,)\s*event-name=[^,]+/.test(body)) {
         throw new Error(`${entry.id}: Surge event script missing event-name: ${line}`);
       }
       continue;

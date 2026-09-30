@@ -48,6 +48,15 @@ assert.match(canonicalRunner,/materializeMockFiles\(entry, parsed\)/, 'Block 50:
 assert.match(canonicalRunner,/inspectSourceScript\(reference, pluginSourceUrl\)/, 'Block 60: canonical runner must delegate Source Script resolution/reading to the shared inspector');
 assert.match(syncConverter,/resolveOriginalUrl\(reference, pluginSourceUrl\)/, 'Block 60: shared Source Script inspector must resolve relative refs against the original plugin URL');
 assert.match(syncConverter,/fetchOriginalText\(originalUrl\)/, 'Block 60: QX compatibility inspection must read the resolved original Source Script URL when available');
+assert.match(syncConverter,/QX_FILTER_TYPES/, 'Block 80: QX validator must maintain an explicit active filter whitelist');
+assert.match(syncConverter,/QX_SCRIPT_ACTIONS/, 'Block 80: QX validator must maintain an explicit Script action whitelist');
+assert.match(syncConverter,/supportedSourceSections/, 'Block 80: source orchestration must explicitly account for unsupported active sections');
+assert.match(syncConverter,/unsupported Loon source section/, 'Block 80: unknown active source sections must become explicit Review');
+const scriptCompat=await fs.readFile(path.join(ROOT,'converter/src/script-compat.mjs'),'utf8');
+assert.match(scriptCompat,/unknownDollarGlobals/, 'Block 60: unknown runtime globals must fail QX compatibility closed');
+assert.match(scriptCompat,/qxDocumentedRuntimeOnly/, 'Block 60: official QX runtime-only scripts must be recognized by documented globals');
+const surgeValidator=await fs.readFile(path.join(ROOT,'converter/src/surge-module.mjs'),'utf8');
+assert.match(surgeValidator,/adblockScope/, 'Block 80: Surge script-family scope restriction must be explicit and converter-specific');
 
 const index=await fs.readFile(path.join(ROOT,'docs/conversion-spec/95-implementation-index.md'),'utf8');
 for(const [block] of contracts) assert.match(index,new RegExp('\\| '+block+' \\|'), `implementation index missing Block ${block}`);

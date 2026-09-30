@@ -35,6 +35,10 @@ http-response-jq REGEX 'JQ'
 
 不得把 Number/String/Boolean/null/Object/Array 互相改变类型。
 
+## 50.2.1 Legacy JSON add
+
+旧版 `request/response-body-json-add` 不得按 replace 处理。对 String / Number / Boolean / null 等可证明类型，转换器生成与 Rewrite v2 `json.add` 相同的 JS helper：目标路径已存在时不覆盖，缺失的中间路径按已验证 Key Path 规则创建。旧版 object/array value 若无法无损解析为当前 AST 类型则注释 Review，不猜测类型。
+
 ## 50.3 jq_file
 
 Loon 官方：
@@ -58,6 +62,9 @@ response.json.jq("jq-path=https://...")
 
 ## 50.4 response.body.mock / mock_file
 
+旧版 `mock-response-body` 与新版 `response.body.mock` 共用同一目标语义。内联 `data="..."` 允许包含 JSON 自身的双引号，解析必须以其后的 `status-code / data-path / mock-data-is-base64` 属性边界（或行尾最终引号）确定内容范围，禁止按第一个内部引号截断 Body。
+
+
 ### Surge
 `response.body.mock` / `response.body.mock_file` 优先 `[Map Local]`：
 - inline mock 使用 `text/base64`；
@@ -75,6 +82,9 @@ response.json.jq("jq-path=https://...")
 - helper 只实现当前 Mock Action，不修改 Source Script。
 
 ## 50.5 request.body.mock / mock_file
+
+旧版 `mock-request-body` 同样先归一化为 request mock 语义；QX 使用 `script-request-body` helper，Surge 使用 `http-request` helper。不能用 Map Local 替代 request mock，因为 Map Local 生成的是响应而不是修改上游请求。
+
 
 ### QX
 - 文本/JSON请求 body：`script-request-body` helper；
