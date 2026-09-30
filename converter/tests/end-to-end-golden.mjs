@@ -250,8 +250,8 @@ const directSourceScriptMap = new Map([[directSourceScriptUrl, {
   qxAdapted:false,
 }]]);
 const directSourceScriptOutput=convert(directSourceScriptFixture,directSourceScriptSource,directSourceScriptMap,STAMP);
-assert.match(directSourceScriptOutput.qx, new RegExp('script-response-body ' + directSourceScriptUrl.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\const disabledRewriteFixture = {')));
-assert.match(directSourceScriptOutput.surge, new RegExp('script-path=' + directSourceScriptUrl.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\const disabledRewriteFixture = {')));
+assert.ok(directSourceScriptOutput.qx.includes('script-response-body ' + directSourceScriptUrl));
+assert.ok(directSourceScriptOutput.surge.includes('script-path=' + directSourceScriptUrl));
 assert.doesNotMatch(directSourceScriptOutput.qx, /source script disabled/i);
 
 const disabledRewriteFixture = {
