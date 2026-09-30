@@ -294,7 +294,8 @@ function rewriteV2Action(line, target, ctx) {
 
     // A single Header mutation that QX cannot express natively may use the
     // dedicated Header helper. The generic complex helper remains multi-action only.
-    if (ast.actions.length === 1 && new RegExp('^' + ast.phase + '\\x2eheader\\x2e(?:set|del|replace|add)
+    if (ast.actions.length === 1 && new RegExp('^' + ast.phase + '\\x2eheader\\x2e(?:set|del|replace|add)$').test(ast.actions[0].name)) {
+      try {
         const plan = renderQxHeaderScript(ast, {stamp:ctx.stamp, category:ctx.category, sourceLine:line});
         const key = crypto.createHash('sha1').update('header-single\\0' + line).digest('hex').slice(0, 10);
         const filename = 'header_' + key + '.js';
