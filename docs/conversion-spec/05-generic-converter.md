@@ -73,8 +73,8 @@ normalize source
 → Script declaration converter
 → MITM converter
 → target planner
-   ├─ Quantumult X
-   └─ Surge
+   ├─ Quantumult X: native → verified helper script → commented Review
+   └─ Surge: native → verified helper script → commented Review
 → validator
 → source/target reconciliation
 → output
@@ -143,8 +143,10 @@ normalize source
    - 必须保持顺序和终止语义
 
 9. **Unknown**
-   - 不静默猜测；
-   - 保留原声明并进入 Review。
+   - 先判断能否用目标官方脚本机制保持语义；
+   - 能保持则生成最小 helper；
+   - helper 仍无法保持时注释源声明并进入 Review；
+   - 不静默猜测。
 
 ## 5.6 Target Planner
 
