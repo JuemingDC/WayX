@@ -63,12 +63,12 @@ Loon `[Rule]` 中的 `URL-REGEX` 不能作为 Quantumult X 普通 `filter_local`
 | `URL-REGEX,REGEX,REJECT-IMG` | `REGEX url reject-img` | `[Rule] URL-REGEX,REGEX,REJECT-TINYGIF` |
 | `URL-REGEX,REGEX,REJECT-DICT` | `REGEX url reject-dict` | `[Map Local] REGEX data-type=text data="{}" status-code=200 header="Content-Type:application/json"` |
 | `URL-REGEX,REGEX,REJECT-ARRAY` | `REGEX url reject-array` | `[Map Local] REGEX data-type=text data="[]" status-code=200 header="Content-Type:application/json"` |
-| `URL-REGEX,REGEX,REJECT-DROP` | `REGEX url reject` | `[Rule] URL-REGEX,REGEX,REJECT-DROP` |
+| `URL-REGEX,REGEX,REJECT-DROP` | `REGEX url reject` | 注释保留；Surge Module `[Rule]` 官方不允许 `REJECT-DROP` |
 
 关键约束：
 - `URL-REGEX + REJECT` 在 QX 固定为 `reject-200`，这是 WayX 对 Loon Rule 语义的项目映射。
 - `REJECT-IMG / REJECT-DICT / REJECT-ARRAY` 不得统一降级成普通 `reject`。
-- Surge 能用原生 Rule policy 表达时保留 Rule；需要具体 HTTP body 的 `REJECT-200/DICT/ARRAY` 降到官方 `[Map Local]`，不能伪装成普通 Rule reject。
+- Surge Module 只有 `DIRECT / REJECT / REJECT-TINYGIF` 可作为活动 `[Rule]` policy。需要具体 HTTP body 的 `REJECT-200/DICT/ARRAY` 降到官方 `[Map Local]`；`REJECT-DROP / REJECT-NO-DROP / CELLULAR / CELLULAR-ONLY / HYBRID / NO-HYBRID` 虽属于完整 Surge Profile 的内建 policy，但公开 Module Manual 未允许它们作为 Module Rule policy，因此源声明只注释保留，不做近似替换。
 - 本节只处理 Loon `[Rule]`。Loon 旧 `[Rewrite]` 的 reject 映射见 Block 30。
 
 ## 20.3 QX IP 参数
@@ -101,16 +101,16 @@ NOT,((Rule1)),Policy
 | `REJECT` | `reject` | `REJECT` |
 | `PROXY` | `PROXY`（原样保留，不映射为内建 `proxy`） | 不做策略转换；源声明注释保留，不能作为活动 Module Rule |
 | `REJECT-IMG` | URL 场景 → `reject-img` | `REJECT-TINYGIF` |
-| `REJECT-DROP` | 项目约定 → `reject` | `REJECT-DROP`（当前 App Module 运行时已验证） |
-| `REJECT-NO-DROP` | `reject`（QX 不存在 Surge 自动升级机制） | `REJECT-NO-DROP`（当前 App Module 运行时已验证） |
-| `CELLULAR` | Review | `CELLULAR`（当前 App Module 运行时已验证） |
-| `CELLULAR-ONLY` | Review | `CELLULAR-ONLY`（当前 App Module 运行时已验证） |
-| `HYBRID` | Review | `HYBRID`（当前 App Module 运行时已验证） |
-| `NO-HYBRID` | Review | `NO-HYBRID`（当前 App Module 运行时已验证） |
+| `REJECT-DROP` | 项目约定 → `reject` | 注释保留；Module Rule 官方未允许 |
+| `REJECT-NO-DROP` | `reject`（QX 不存在 Surge 自动升级机制） | 注释保留；Module Rule 官方未允许 |
+| `CELLULAR` | Review | 注释保留；Module Rule 官方未允许 |
+| `CELLULAR-ONLY` | Review | 注释保留；Module Rule 官方未允许 |
+| `HYBRID` | Review | 注释保留；Module Rule 官方未允许 |
+| `NO-HYBRID` | Review | 注释保留；Module Rule 官方未允许 |
 | `REJECT-TINYGIF` | URL 场景 → `reject-img` | `REJECT-TINYGIF` |
 | 用户策略组 | 只有明确存在对应 QX policy 时可执行 | Module 不允许假设 → Review |
 
-公开 Surge Module Manual 当前仍列出较窄的 policy 范围；但当前 Surge App 的模块 Rule 编辑器/运行时已直接验证 `REJECT-DROP / REJECT-NO-DROP / CELLULAR / CELLULAR-ONLY / HYBRID / NO-HYBRID` 可作为 Module Rule 内建 policy 使用。WayX 对这组**运行时已验证的内建值**原样保留，绝不降级为其他 policy。
+Surge 完整 Profile 的 built-in policy 集合比 Module Rule 更大，但 Module Manual 对模块 `[Rule]` 有额外限制：活动规则只允许 `DIRECT / REJECT / REJECT-TINYGIF`。WayX 不把完整 Profile 能力外推到 `.sgmodule`；未被 Module Manual 允许的 built-in policy 只注释保留。
 
 Loon 插件 [Rule] 中的 `PROXY` 具有插件内部策略选择语义，不转换成其他 policy。Quantumult X 保留字面 `PROXY`，不得静默降为内建小写 `proxy`。
 
