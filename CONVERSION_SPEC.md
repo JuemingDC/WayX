@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.9  
+版本：1.10  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -24,6 +24,7 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 12. CI 必须自动生成 Source → Target reconciliation 与 Review/Issue inventory。Catalog 每个源有效语义项必须落入 converted / explicit-comment / Review / Issue / intentional-drop 之一；报告不对账时 fail closed。
 13. QX Source Script 声明的 `argument`、动态 `enable`、`timeout`、`binary-body-mode` / `binary_body_mode` 按 KOP-XIAO `resource-parser.js` 的转换口径处理：QX 只保留 pattern / Script action / 原始 script URL，并由 `requires-body` / `requires_body` 单独决定 header/body 类型；Script argument 不注入，动态 enable 视为默认开启，timeout 与 binary body mode 均忽略。源明确 `enable=false` 仍保持禁用。该规则只适用于 Script declaration；Rewrite 条件/action 中的 `[Argument]` 引用以及 debug/max-size 等其它字段继续按 WayX 自身规范独立判断。
 14. CI 必须维护 Catalog-observed Loon Rewrite v2 / Script v2 syntax inventory。Inventory 只锁定“语法形态”而不锁规则数量，包括 phase、condition comparison/capture/logical/group/regex flags、Rewrite action/argument shape/multi-action signature，以及 Script path/argument/option shape 与 option-set。任何当前 Catalog 首次出现的新语法形态必须 fail closed；不得仅因 parser 已经能解析就自动放行。处理顺序固定为：核对当前 Loon 源语义 → 核对 Quantumult X 官方 sample 与 Surge 官方 Manual → 更新 CONVERSION_SPEC/generic implementation/tests → 人工确认后才更新 inventory baseline。
+15. Quantumult X validator whitelist 必须与官方样例建立双向能力对账。权威基线以用户提供的官方 `sample.txt` 为人工确认起点，并由 CI 实时读取 Crossutility 官方仓库当前 `sample.conf`、`filter.snippet`、`sample-import-rewrite.snippet` 检查能力漂移。每个官方 filter / rewrite action / rewrite match kind / snippet MITM key 必须归入“WayX 可执行”或“已明确分类为当前不输出”之一；WayX 可执行 whitelist 中也不得存在官方样例没有依据的能力。完整 Profile `[mitm]` key 与 rewrite snippet key 必须分开判断，不能把完整配置字段自动视为 snippet 可用字段。
 
 
 ## 规范块
