@@ -169,6 +169,8 @@ Surge 的 `header.add` 与普通对象 Header 修改语义不同。需要脚本�
 
 Legacy Rewrite 同样遵守 native → helper → Review：QX 旧版 `header-replace / header-del / header-replace-regex` 若无静态字段级原生等价形式，转换为最小 `script-request-header / script-response-header` helper；旧版 `header-add` 因重复 Header 语义与新版 `*.header.add` 相同，仍不得用 set 冒充，helper 无法证明重复字段保持时进入 Review。
 
+旧版 `mock-request-body / mock-response-body` 先归一化到与 Rewrite v2 `request/response.body.mock` 相同的语义计划：QX 使用已验证的 request-body/echo helper，Surge response 优先 Map Local、request 使用 `http-request` helper。旧版 mock 的 `data="..."` 必须按属性边界取完整内容，不能因 JSON 内部双引号提前截断。旧版 `*-body-json-add` 对可证明的标量值复用 Complex JSON helper，保持“仅 key 不存在时新增”的语义；无法证明的 object/array legacy value 才进入 Review。
+
 `json.add` 按 Loon JSON Key Path 语义处理：仅当目标 Key 不存在时新增；中间对象/数组路径按 Key Path 创建；批量参数按下标配对并从左到右执行。禁止把 `add` 退化成无条件覆盖。
 
 `json.delete` 删除对象 Key；Key Path 最终指向数组索引（如 `items[0]`）时必须删除该元素并压缩数组，禁止使用 JavaScript `delete` 产生稀疏数组。`json.replace(..., null)` 保持 JSON `null` 类型，不得转换为字符串 `"null"`。
