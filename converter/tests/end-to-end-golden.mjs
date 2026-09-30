@@ -37,7 +37,7 @@ hostname=api.example.com
 const headerGroupOutput = convert(headerGroupFixture, headerGroupSource, new Map(), STAMP);
 assert.match(headerGroupOutput.qx, /REVIEW REQUIRED: header\.add duplicate semantics are not verified for qx/);
 assert.equal(
-  headerGroupOutput.qx.split(/\\r?\\n/).some(line => !line.trim().startsWith('#') && /script-response-header/.test(line)),
+  headerGroupOutput.qx.split(/\r?\n/).some(line => !line.trim().startsWith('#') && /script-response-header/.test(line)),
   false,
   'QX header.add must not be activated through object-set semantics',
 );
@@ -62,7 +62,7 @@ assert.ok(
   'QX request.header.add must use whole request-header insertion rather than object set\n' + requestAddOutput.qx,
 );
 assert.equal(
-  requestAddOutput.qx.split(/\\r?\\n/).some(line => !line.trim().startsWith('#') && / url response-header /.test(line)),
+  requestAddOutput.qx.split(/\r?\n/).some(line => !line.trim().startsWith('#') && / url response-header /.test(line)),
   false,
   'QX must never emit the undocumented response-header rewrite token',
 );
@@ -87,7 +87,7 @@ assert.ok(
   'QX bulk request.header.add must be emitted as one whole-header rewrite',
 );
 assert.equal(
-  requestAddBulkOutput.qx.split(/\\r?\\n/).filter(line => !line.trim().startsWith('#') && / url request-header /.test(line)).length,
+  requestAddBulkOutput.qx.split(/\r?\n/).filter(line => !line.trim().startsWith('#') && / url request-header /.test(line)).length,
   1,
   'QX bulk request.header.add must not split one Loon action into multiple target rewrite rules',
 );
@@ -107,7 +107,7 @@ request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header
 const requestAddSetOutput = convert(requestAddSetFixture, requestAddSetSource, new Map(), STAMP);
 assert.match(requestAddSetOutput.qx, /REVIEW REQUIRED: header\.add duplicate semantics are not verified for qx/);
 assert.equal(
-  requestAddSetOutput.qx.split(/\\r?\\n/).some(line => !line.trim().startsWith('#') && / url (?:request-header|script-request-header) /.test(line)),
+  requestAddSetOutput.qx.split(/\r?\n/).some(line => !line.trim().startsWith('#') && / url (?:request-header|script-request-header) /.test(line)),
   false,
   'QX adjacent add+set must not be split into unproven multiple rewrite execution',
 );
@@ -125,7 +125,7 @@ request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header
 `;
 const requestReplaceCaptureOutput = convert(requestReplaceCaptureFixture, requestReplaceCaptureSource, new Map(), STAMP);
 assert.equal(
-  requestReplaceCaptureOutput.qx.split(/\\r?\\n/).some(line => !line.trim().startsWith('#') && / url request-header /.test(line)),
+  requestReplaceCaptureOutput.qx.split(/\r?\n/).some(line => !line.trim().startsWith('#') && / url request-header /.test(line)),
   false,
   'QX header.replace must not embed action-local captures into whole-header capture numbering',
 );
@@ -152,7 +152,7 @@ request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header
 `;
 const requestAddDollarOutput = convert(requestAddDollarFixture, requestAddDollarSource, new Map(), STAMP);
 assert.equal(
-  requestAddDollarOutput.qx.split(/\\r?\\n/).some(line => !line.trim().startsWith('#') && / url request-header /.test(line)),
+  requestAddDollarOutput.qx.split(/\r?\n/).some(line => !line.trim().startsWith('#') && / url request-header /.test(line)),
   false,
   'QX request.header.add with $ replacement syntax must not use the native replacement string',
 );
@@ -222,7 +222,7 @@ assert.match(argumentRewriteOutput.surge, /^#!arguments=.*enabled:true.*price:9\
 assert.match(argumentRewriteOutput.surge, /wayx_complex_.*type=http-response,pattern=.*script-path=.*argument=/);
 assert.doesNotMatch(argumentRewriteOutput.surge, /REVIEW REQUIRED/);
 assert.equal(
-  argumentRewriteOutput.qx.split(/\\r?\\n/).some(line => !line.trim().startsWith('#') && /jsonjq-response-body/.test(line)),
+  argumentRewriteOutput.qx.split(/\r?\n/).some(line => !line.trim().startsWith('#') && /jsonjq-response-body/.test(line)),
   false,
   'plugin Argument Rewrite must not be frozen into an executable QX rewrite',
 );
@@ -267,7 +267,7 @@ assert.match(disabledRewriteOutput.surge, /^\[Map Local\]$/m);
 assert.match(disabledRewriteOutput.surge, /#response if \$\{url\} ~= \/\^https:\\\/\\\/api\\\.example\\\.com\\\/mock\\\?\/i then response\.body\.mock\("text", "OK", 200\)/);
 assert.match(disabledRewriteOutput.surge, /# \^https:\/\/api\\\.example\\\.com\/mock\\\? data-type=text data="OK" status-code=200 header="Content-Type:text\/plain"/);
 assert.equal(
-  disabledRewriteOutput.surge.split(/\\r?\\n/).some(line => !line.trim().startsWith('#') && /api\\\.example\\\.com\/(?:mock|json)/.test(line)),
+  disabledRewriteOutput.surge.split(/\r?\n/).some(line => !line.trim().startsWith('#') && /api\\\.example\\\.com\/(?:mock|json)/.test(line)),
   false,
   'disabled source Rewrite entries must remain disabled after Surge conversion',
 );
