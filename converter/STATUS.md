@@ -15,7 +15,7 @@ Updated: 2026-09-30
 - QX snippet section labels remain comments.
 - QX filter/rewrite 已支持 `[Rule]` / `[Rewrite]` / `[Script]` 来源的一对一注释转 `{# note #} rule`；分组注释、多行注释、被禁用声明与 WayX metadata 不内联。
 - Rule mapping is behavior-based.
-- Loon Plugin `PROXY` policy binding is preserved as literal `PROXY`; it is not lowered to built-in `proxy`.
+- Loon Plugin `PROXY` stays literal in QX. Surge Module now preserves its user-selected policy semantics through a declared `#!arguments` policy placeholder.
 - Loon `[Argument]` is **not converted** to QX parameter configuration or BoxJs.
 - QX outputs do not copy source `[Argument]` declarations or Argument usage lists.
 - Surge modules convert Loon `[Argument]` to `#!arguments / #!arguments-desc` and `{{{name}}}` placeholders; PluginObject is emitted as JSON string `argument=` and dynamic Script options use target-native placeholders/line requirements.
@@ -25,7 +25,7 @@ Updated: 2026-09-30
 ## Surge
 
 - Generated output uses sgmodule sections and validated metadata.
-- Loon plugin `PROXY` is not remapped: QX keeps literal `PROXY`; Surge Module preserves the source Rule as comments because external policy names cannot be activated by the module.
+- Loon plugin `PROXY` is not collapsed to another fixed policy: QX keeps literal `PROXY`; Surge Module emits an active Rule using a declared policy parameter, defaulting to `DIRECT` and allowing the user to bind an existing proxy policy/group.
 - Loon typed/dynamic plugin parameters are not fabricated into target configuration when no verified equivalent exists.
 
 ## Converter architecture
