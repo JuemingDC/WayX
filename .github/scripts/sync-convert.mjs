@@ -281,9 +281,960 @@ function rewriteV2Action(line, target, ctx) {
       return rewriteReview(line, String(error?.message || error).split('\n')[0]);
     }
 
+    // response.header.add duplicate-field semantics are not proven by the
+    // current official QX sample. Per project policy this known limitation is
+    // explicitly commented out rather than kept as an actionable Review.
+    if (ast.actions.length === 1 && ast.actions[0].name === 'response.header.add') {
+      return {
+        section:'comment',
+        line:'# [WayX] Quantumult X unsupported response.header.add commented out; duplicate-header preservation is not verified by the official sample.\n# Source declaration: ' + line,
+        reason:'unsupported-qx-response-header-add-comment',
+      };
+    }
+
     // A single Header mutation that QX cannot express natively may use the
     // dedicated Header helper. The generic complex helper remains multi-action only.
-    if (ast.actions.length === 1 && new RegExp('^' + ast.phase + '\\x2eheader\\x2e(?:set|del|replace|add)$').test(ast.actions[0].name)) {
+    if (ast.actions.length === 1 && new RegExp('^' + ast.phase + '\\x2eheader\\x2e(?:set|del|replace|add)
+      try {
+        const plan = renderQxHeaderScript(ast, {stamp:ctx.stamp, category:ctx.category, sourceLine:line});
+        const key = crypto.createHash('sha1').update('header-single\\0' + line).digest('hex').slice(0, 10);
+        const filename = 'header_' + key + '.js';
+        ctx.generatedScripts.set(filename, plan.script);
+        return {section:'rewrite', line:plan.pattern + ' url ' + plan.qxAction + ' ' + RAW_BASE + '/script/' + ctx.id + '/' + filename};
+      } catch (error) {
+        return rewriteReview(line, String(error?.message || error).split('\n')[0]);
+      }
+    }
+
+    // json.add has no direct no-overwrite primitive in the verified QX sample.
+    // Use a dedicated single-action semantic helper rather than the complex pipeline helper.
+    if (ast.actions.length === 1 && ast.actions[0].name === ast.phase + '.json.add') {
+      try {
+        const plan = renderSingleJsonMutationScript(ast, {target:'qx', stamp:ctx.stamp, category:ctx.category, sourceLine:line});
+        const key = crypto.createHash('sha1').update('json-add-qx\\0' + line).digest('hex').slice(0, 10);
+        const filename = 'json_add_qx_' + key + '.js';
+        ctx.generatedScripts.set(filename, plan.script);
+        return {section:'rewrite', line:plan.pattern + ' url ' + plan.qxAction + ' ' + RAW_BASE + '/script/' + ctx.id + '/' + filename};
+      } catch (error) {
+        return rewriteReview(line, String(error?.message || error).split('\n')[0]);
+      }
+    }
+
+    // URL redirect in Loon replaces only the matched range. Use a generated
+    // echo-response script so capture/template behavior does not depend on an
+    // undocumented QX 302 replacement contract.
+    if (ast.actions.length === 1 && ast.actions[0].name === 'redirect') {
+      try {
+        const plan = renderQxRedirectScript(ast, { stamp: ctx.stamp, category: ctx.category, sourceLine: line });
+        const key = crypto.createHash('sha1').update('redirect\0' + line).digest('hex').slice(0, 10);
+        const filename = `redirect_${key}.js`;
+        ctx.generatedScripts.set(filename, plan.script);
+        return { section: 'rewrite', line: `${plan.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}` };
+      } catch (error) {
+        return rewriteReview(line, String(error?.message || error).split('\n')[0]);
+      }
+    }
+
+    // Use a generated response only when QX has no exact native reject primitive.
+    if (ast.actions.length === 1 && /^(?:reject|reject_dict|reject_array)$/.test(ast.actions[0].name)) {
+      try {
+        const plan = renderQxRejectScript(ast, { stamp: ctx.stamp, category: ctx.category, sourceLine: line });
+        const key = crypto.createHash('sha1').update('reject\0' + line).digest('hex').slice(0, 10);
+        const filename = `reject_${key}.js`;
+        ctx.generatedScripts.set(filename, plan.script);
+        return { section: 'rewrite', line: `${plan.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}` };
+      } catch (error) {
+        return rewriteReview(line, String(error?.message || error).split('\n')[0]);
+      }
+    }
+
+    // Non-native combinations enter the isolated registry only after the
+    // native and dedicated planners above have declined them.
+    const complex = planComplexRewrite(ast, 'qx', {...ctx, sourceLine:line, argumentRefs:argumentRefs.all});
+    if (complex.ok) return {section:complex.section, line:complex.line, lines:complex.lines};
+    if (complex.terminal) return complex.issue ? rewriteIssue(line, complex.issueCode || 'unknown-complex-rewrite', complex.reason) : rewriteReview(line, complex.reason);
+
+  }
+
+  if (target === 'surge') {
+    if (ast.actions.some(action => action.name === 'response.body.mock_file')) {
+      try {
+        const mapped = surgeMockFilePlan(ast, {
+          pluginSourceUrl: ctx.sourceUrl,
+          materialized: ctx.mockFiles?.get(line) || null,
+        });
+        if (mapped.ok) return {section:mapped.section, line:mapped.line, lines:mapped.lines};
+      } catch (error) {
+        // Continue to script fallback before commenting the source declaration.
+      }
+    }
+
+    if (ast.actions.length === 1 && /^(?:request)\.body\.(?:mock|mock_file)$/.test(ast.actions[0].name)) {
+      try {
+        const plan = renderSurgeRequestMockScript(ast, {
+          materialized: ast.actions[0].name.endsWith('_file') ? (ctx.mockFiles?.get(line) || null) : null,
+          stamp:ctx.stamp,
+          category:ctx.category,
+          sourceLine:line,
+        });
+        const key=crypto.createHash('sha1').update('surge-request-mock\0'+line).digest('hex').slice(0,10);
+        const filename='request_mock_'+key+'.js';
+        ctx.generatedScripts.set(filename, plan.script);
+        return {
+          section:'script',
+          line:'wayx_request_mock_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+RAW_BASE+'/script/'+ctx.id+'/'+filename+',requires-body=true'+(plan.binaryBodyMode?',binary-body-mode=true':''),
+        };
+      } catch (error) {
+        return rewriteReview(line, String(error?.message || error).split('\n')[0]);
+      }
+    }
+
+    if (!argumentRefs.all.length) {
+      try {
+        for (const mapper of [surgeInlineMockPlan, surgeHeaderRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan]) {
+          const mapped = mapper(ast);
+          if (mapped.ok) return { section: mapped.section, line: mapped.line, lines: mapped.lines };
+        }
+      } catch {
+        // Native planning failed; continue to the generic Surge script fallback.
+      }
+    }
+    if (ast.actions.length === 1 && new RegExp('^' + ast.phase + '\\x2ejson\\x2e(?:add|delete|replace)$').test(ast.actions[0].name)) {
+      try {
+        const plan = renderSingleJsonMutationScript(ast, {target:'surge', stamp:ctx.stamp, category:ctx.category, sourceLine:line, argumentTable:ctx.argumentTable});
+        const payload = argumentRefs.all.length ? surgeRewriteArgumentPayload(argumentRefs.all, ctx.argumentTable) : {ok:true, value:null};
+        if (!payload.ok) throw new Error(payload.reason);
+        const key = crypto.createHash('sha1').update('json-mutation-surge\\0' + line).digest('hex').slice(0, 10);
+        const filename = 'json_mutation_surge_' + key + '.js';
+        ctx.generatedScripts.set(filename, plan.script);
+        return {
+          section:'script',
+          line:'wayx_json_mutation_' + key + ' = type=' + plan.surgeType + ',pattern=' + plan.pattern + ',script-path=' + RAW_BASE + '/script/' + ctx.id + '/' + filename + ',requires-body=true' + (payload.value ? ',argument=' + payload.value : ''),
+        };
+      } catch (error) {
+        return rewriteReview(line, String(error?.message || error).split('\n')[0]);
+      }
+    }
+
+    const complex = planComplexRewrite(ast, 'surge', {...ctx, sourceLine:line, argumentRefs:argumentRefs.all});
+    if (complex.ok) return {section:complex.section, line:complex.line, lines:complex.lines};
+    if (complex.terminal) return complex.issue ? rewriteIssue(line, complex.issueCode || 'unknown-complex-rewrite', complex.reason) : rewriteReview(line, complex.reason);
+  }
+
+  // Keep the older conservative syntax subset as a final parser/planner fallback.
+  const parsed = analyzeSafeRewriteV2(line);
+  if (!parsed.safe) {
+    return rewriteReview(line, parsed.reason);
+  }
+  return rewriteAction(parsed.pattern, parsed.action, target, ctx);
+}
+
+function sectionItems(lines = []) {
+  const items = [];
+  let pending = [];
+  for (let sourceIndex = 0; sourceIndex < lines.length; sourceIndex++) {
+    const raw = lines[sourceIndex];
+    const t = raw.trim();
+    if (!t || t.startsWith('#') || t.startsWith(';') || t.startsWith('//')) {
+      pending.push(raw);
+      continue;
+    }
+    items.push({ comments: pending, line: t, sourceIndex });
+    pending = [];
+  }
+  if (pending.length) items.push({ comments: pending, line: null, sourceIndex: lines.length });
+  return items;
+}
+
+function cleanComments(comments) {
+  return comments.map(x => x || '').map(x => x.trim() ? x : '').filter((x, i, a) => !(x === '' && a[i - 1] === ''));
+}
+
+function sourceCommentText(raw) {
+  const text = String(raw ?? '').trim();
+  const match = text.match(/^(?:#|;|\/\/)\s*(.*?)\s*$/);
+  return match ? match[1].trim() : null;
+}
+
+function looksLikeCommentedSourceDeclaration(text, sectionKind) {
+  const value = String(text || '').trim();
+  if (!value) return false;
+  if (sectionKind === 'rule') {
+    return /^(?:[A-Z][A-Z0-9-]*|AND|OR|NOT)\s*,/i.test(value);
+  }
+  if (sectionKind === 'rewrite') {
+    if (isRewriteV2(value)) return true;
+    return /^\S+\s+(?:-\s+)?(?:reject(?:-[A-Za-z0-9-]+)?|302\b|307\b|header\b|(?:response-)?header-(?:add|del|replace|replace-regex)\b|(?:request|response)-body-(?:replace-regex|json-|mock)|mock-(?:request|response)-body\b)/i.test(value);
+  }
+  if (sectionKind === 'script') {
+    if (isScriptV2(value)) return true;
+    return Boolean(parseScriptLine(value)?.scriptPath);
+  }
+  return false;
+}
+
+function qxInlineNoteCandidate(sectionLines, item, sectionKind) {
+  if (!item?.line || !Number.isInteger(item.sourceIndex) || item.sourceIndex < 1) return null;
+  const index = item.sourceIndex;
+  const previousRaw = sectionLines[index - 1];
+  const previous = String(previousRaw ?? '').trim();
+  const note = sourceCommentText(previousRaw);
+  if (!previous || note === null || !note || note.includes('{#') || note.includes('#}')) return null;
+
+  // Exactly one adjacent source comment only. Multiple comment lines remain
+  // ordinary comments so they cannot be collapsed into one QX note.
+  if (index >= 2 && sourceCommentText(sectionLines[index - 2]) !== null) return null;
+
+  // If another active source declaration immediately follows, the single
+  // comment is treated as a group comment and must not be attached to only
+  // the first target rule.
+  if (index + 1 < sectionLines.length) {
+    const next = String(sectionLines[index + 1] ?? '').trim();
+    if (next && sourceCommentText(sectionLines[index + 1]) === null) return null;
+  }
+
+  // A commented-out Rule/Rewrite line is source content, not a human note.
+  if (looksLikeCommentedSourceDeclaration(note, sectionKind)) return null;
+
+  return { text: note, raw: previousRaw };
+}
+
+function qxAttachInlineNote({sectionLines, item, sectionKind, lines, eligible = true}) {
+  const output = (lines || []).filter(line => line !== undefined && line !== null && String(line).length);
+  const candidate = eligible ? qxInlineNoteCandidate(sectionLines, item, sectionKind) : null;
+  const singleActive =
+    candidate &&
+    output.length === 1 &&
+    !String(output[0]).includes('\n') &&
+    !String(output[0]).trim().startsWith('#');
+
+  if (!singleActive) {
+    return { comments: cleanComments(item.comments), lines: output };
+  }
+
+  const remaining = [...item.comments];
+  if (remaining.length && remaining.at(-1) === candidate.raw) remaining.pop();
+  return {
+    comments: cleanComments(remaining),
+    lines: [`{# ${candidate.text} #} ${output[0]}`],
+  };
+}
+
+function surgeSectionArray(sg, section) {
+  return ({url:sg.url, header:sg.header, map:sg.map, body:sg.body, script:sg.script})[section] || null;
+}
+
+function planDisabledSurgeRewriteComments(comments, ctx) {
+  const passthrough = [];
+  const routed = [];
+
+  for (const raw of comments || []) {
+    const trimmed = String(raw ?? '').trim();
+    const match = trimmed.match(/^#\s*((?:request|response)\s+if\b[\s\S]+)$/);
+    if (!match || !isRewriteV2(match[1])) {
+      passthrough.push(raw);
+      continue;
+    }
+
+    const sourceLine = match[1].trim();
+    const mapped = rewriteV2Action(sourceLine, 'surge', ctx);
+    if (!mapped || mapped.section === 'comment') {
+      passthrough.push(raw);
+      continue;
+    }
+    if (mapped.section === 'drop') {
+      continue;
+    }
+
+    const lines = mapped.lines || [mapped.line];
+    routed.push({
+      section:mapped.section,
+      lines:[
+        raw,
+        ...lines.map(line => '# ' + line),
+      ],
+    });
+  }
+
+  return { passthrough, routed };
+}
+
+function qxHeaderRewriteInfo(line, argumentIds = []) {
+  if (!line || !isRewriteV2(line)) return null;
+  try {
+    const ast = parseRewriteV2(line);
+    validateRewriteV2Ast(ast);
+    if (rewriteV2PluginArgumentRefs(ast, argumentIds).all.length) return null;
+    if (!ast.actions.length || ast.actions.some(action =>
+      !new RegExp('^' + ast.phase + '\\.header\\.(?:add|set|del|replace)$').test(action.name)
+    )) return null;
+    const condition = simpleUrlRewriteCondition(ast);
+    if (!condition.ok) return null;
+    return {
+      ast,
+      signature: ast.phase + '\0' + JSON.stringify(ast.condition),
+    };
+  } catch {
+    return null;
+  }
+}
+
+function qxNativeHeaderPlan(ast) {
+  // The uploaded Crossutility sample verifies whole-block `request-header`.
+  // Native use is restricted to request.header.add, where inserting a new
+  // CRLF-delimited field preserves existing same-name fields. set/del/replace
+  // use script-request-header so Loon's case-insensitive field identity and
+  // action-local replacement captures remain intact.
+  if (ast.phase !== 'request' || ast.actions.length !== 1) return null;
+  const condition = simpleUrlRewriteCondition(ast);
+  if (!condition.ok) return null;
+  const action = ast.actions[0];
+  if (action.name !== 'request.header.add') return null;
+
+  const names=action.args[0]?.type === 'array' ? action.args[0].items : [action.args[0]];
+  const values=action.args[1]?.type === 'array' ? action.args[1].items : [action.args[1]];
+  if (!names.length || names.length !== values.length) return null;
+
+  const pairs=[];
+  for(let i=0;i<names.length;i++){
+    const nameNode=names[i], valueNode=values[i];
+    if (!nameNode || !['string','raw-string'].includes(nameNode.type) ||
+        !valueNode || !['string','raw-string'].includes(valueNode.type)) return null;
+    const name=String(nameNode.value), value=String(valueNode.value);
+    // QX replacement strings interpret $-references. Without an official
+    // literal-dollar escape contract, such values cannot use this native path.
+    if (!name || /[\s:\r\n]/.test(name) || /[\r\n$]/.test(value)) return null;
+    pairs.push([name,value]);
+  }
+
+  const headerPattern='^([^\\r\\n]+)(\\r\\n)';
+  const inserted=pairs.map(([name,value]) => name + ': ' + value + '$2').join('');
+  const headerReplacement='$1$2' + inserted;
+  return {
+    section:'rewrite',
+    line:condition.pattern + ' url request-header ' + headerPattern + ' request-header ' + headerReplacement,
+  };
+}
+async function materializeMockFiles(entry, parsed) {
+  const out = new Map();
+  for (const item of sectionItems(parsed.sections.get('Rewrite'))) {
+    if (!item.line || !isRewriteV2(item.line)) continue;
+    try {
+      const ast = parseRewriteV2(item.line);
+      validateRewriteV2Ast(ast);
+      const mockFileActions = ast.actions.filter(action => /^(?:request|response)\.body\.mock_file$/.test(action.name));
+      if (mockFileActions.length !== 1) continue;
+      const condition = simpleUrlRewriteCondition(ast);
+      if (!condition.ok) continue;
+
+      const plan = qxMockPlanFromAction(mockFileActions[0], { pluginSourceUrl: entry.source });
+      if (plan.base64) {
+        const text = await fetchOriginalText(plan.url);
+        const compact = text.replace(/\s+/g, '');
+        if (!/^[A-Za-z0-9+/]*={0,2}$/.test(compact) || compact.length % 4 === 1) throw new Error('invalid Base64 mock_file content');
+        out.set(item.line, { bodyBase64: Buffer.from(compact, 'base64').toString('base64'), sourceFile: plan.url });
+      } else if (plan.binary) {
+        const bytes = await fetchOriginalBytes(plan.url);
+        out.set(item.line, { bodyBase64: bytes.toString('base64'), sourceFile: plan.url });
+      } else {
+        const text = await fetchOriginalText(plan.url);
+        out.set(item.line, { bodyText: text, sourceFile: plan.url });
+      }
+    } catch (error) {
+      out.set(item.line, { error: String(error?.message || error).split('\n')[0] });
+    }
+  }
+  return out;
+}
+
+async function materializeJqFiles(entry, parsed) {
+  const out = new Map();
+  for (const item of sectionItems(parsed.sections.get('Rewrite'))) {
+    if (!item.line || !isRewriteV2(item.line)) continue;
+    try {
+      const ast = parseRewriteV2(item.line);
+      validateRewriteV2Ast(ast);
+      if (ast.actions.length !== 1) continue;
+      const spec = jqDependencySpecFromAction(ast.actions[0], { pluginSourceUrl: entry.source });
+      if (!spec) continue;
+      if (!spec.resolvable || !spec.url) throw new Error(spec.reason || 'JQ dependency is not resolvable');
+      const text = await fetchOriginalText(spec.url);
+      out.set(item.line, {
+        content: minifyJqFile(text),
+        sourceFile: spec.url,
+        legacyAlias: Boolean(spec.legacyAlias),
+      });
+    } catch (error) {
+      out.set(item.line, { error: String(error?.message || error).split('\n')[0] });
+    }
+  }
+  return out;
+}
+
+function parseScriptLine(line) {
+  const m = line.match(/^(http-request|http-response)\s+(\S+)\s+(.+)$/i);
+  if (!m) return null;
+  const type = m[1].toLowerCase(), pattern = m[2], rest = m[3];
+  const options = new Map();
+  for (const token of splitScriptV2Csv(rest)) {
+    const eq = token.indexOf('=');
+    if (eq < 1) continue;
+    options.set(token.slice(0, eq).trim().toLowerCase(), token.slice(eq + 1).trim());
+  }
+  const scriptPath = options.get('script-path');
+  const tag = options.get('tag');
+  const requiresBody = /^(?:true|1)$/i.test(options.get('requires-body') || '');
+  const binary = /^(?:true|1)$/i.test(options.get('binary-body-mode') || '');
+  const timeout = options.get('timeout');
+  const maxSize = options.get('max-size');
+  const argument = options.get('argument');
+  const enable = options.get('enable') ?? options.get('enabled');
+  return { type, pattern, scriptPath, tag, requiresBody, binary, timeout, maxSize, argument, enable, original: line };
+}
+
+function sanitizeName(s) {
+  return (s || 'script').replace(/[=,\r\n]/g, '_').trim().slice(0, 64) || 'script';
+}
+
+function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Map(), jqFiles = new Map()) {
+  const parsed = parseLoon(source);
+  const sourceHeader = parsed.header;
+  const qxHeader = renderQxSnippetHeader(sourceHeader, entry, stamp);
+
+  const qx = { filter: [], rewrite: [], mitm: [], notes: [], generatedScripts: new Map() };
+  const sg = { rule: [], url: [], header: [], map: [], body: [], script: [], mitm: [], notes: [], generatedScripts: new Map() };
+  const supportedSourceSections = new Set(['Argument','Rule','Rewrite','Script','MITM','MitM']);
+  for (const [sectionName, sectionLines] of parsed.sections) {
+    if (supportedSourceSections.has(sectionName)) continue;
+    const active = sectionItems(sectionLines).filter(item => item.line).map(item => item.line);
+    if (!active.length) continue;
+    const reason = '# [WayX] ISSUE REQUIRED [unknown-source-section]: unsupported Loon source section [' + sectionName + '] is outside the current ad-block conversion grammar';
+    for (const line of active) {
+      qx.notes.push(reason, '# Source declaration: ' + line);
+      sg.notes.push(reason, '# Source declaration: ' + line);
+    }
+  }
+  const argumentAnalysis = analyzePluginArgumentUsage({
+    argumentLines: parsed.sections.get('Argument') || [],
+    rewriteLines: parsed.sections.get('Rewrite') || [],
+    scriptLines: parsed.sections.get('Script') || [],
+    ruleLines: parsed.sections.get('Rule') || [],
+  });
+  const argumentIds = new Set(argumentAnalysis.declaredIds);
+  const surgeArgumentPlan = surgeArgumentMetadata(parsed.sections.get('Argument') || [], {
+    proxyPolicyBinding: argumentAnalysis.policyBindings.length > 0,
+  });
+  const surgeArgumentTable = surgeArgumentPlan.table;
+  const surgeProxyPolicyPlaceholder = surgeArgumentPlan.policyBinding?.placeholder || null;
+  let surgeNeedsLineRequirement = false;
+  const qctx = { id: entry.id, generatedScripts: qx.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, mockFiles: qxMockFiles, jqFiles, argumentIds };
+  const sctx = { id: entry.id, generatedScripts: sg.generatedScripts, sourceUrl: entry.source, stamp, category: entry.category, mockFiles: qxMockFiles, jqFiles, argumentIds, argumentTable: surgeArgumentTable };
+
+  // Loon [Argument] is never emitted into Quantumult X. Surge modules use
+  // official #!arguments metadata and {{{name}}} placeholders instead.
+  if (argumentAnalysis.undeclaredRefs.length) {
+    const refs = [...new Set(argumentAnalysis.undeclaredRefs.map(ref => ref.id))].sort().join(', ');
+    qx.notes.push(`# [WayX] ARGUMENT REVIEW REQUIRED: undeclared source plugin argument reference(s): ${refs}`);
+    sg.notes.push(`# [WayX] ARGUMENT REVIEW REQUIRED: undeclared source plugin argument reference(s): ${refs}`);
+  }
+  if (argumentAnalysis.policyBindings.length) {
+    qx.notes.push('# [WayX] Policy binding: source PROXY is preserved as literal QX policy name PROXY; a matching target policy must exist.');
+  }
+
+  const ruleSectionLines = parsed.sections.get('Rule') || [];
+  for (const item of sectionItems(ruleSectionLines)) {
+    const comments = cleanComments(item.comments);
+    if (!item.line) { qx.filter.push(...comments); sg.rule.push(...comments); continue; }
+    const qr = canonicalQxRule(item.line);
+    const qxRendered = qxAttachInlineNote({
+      sectionLines: ruleSectionLines,
+      item,
+      sectionKind: 'rule',
+      lines: [qr.line],
+      eligible: qr.kind === 'filter' || qr.kind === 'rewrite',
+    });
+    if (qr.kind === 'filter') qx.filter.push(...qxRendered.comments, ...qxRendered.lines);
+    else if (qr.kind === 'rewrite') qx.rewrite.push(...qxRendered.comments, ...qxRendered.lines);
+    else qx.filter.push(...comments, qr.line);
+    const sr = surgeModuleRule(item.line, { proxyPolicyPlaceholder: surgeProxyPolicyPlaceholder });
+    const sRuleDest = sr.section === 'map' ? sg.map : sg.rule;
+    sRuleDest.push(...comments, ...sr.lines);
+  }
+
+  const rewriteSectionLines = parsed.sections.get('Rewrite') || [];
+  const rewriteItems = sectionItems(rewriteSectionLines);
+
+  for (let rewriteIndex = 0; rewriteIndex < rewriteItems.length; rewriteIndex++) {
+    const item = rewriteItems[rewriteIndex];
+    const comments = cleanComments(item.comments);
+    const surgeCommentPlan = planDisabledSurgeRewriteComments(item.comments, sctx);
+    const surgeComments = cleanComments(surgeCommentPlan.passthrough);
+    for (const routed of surgeCommentPlan.routed) {
+      const dest = surgeSectionArray(sg, routed.section);
+      if (dest) dest.push(...routed.lines);
+      else sg.notes.push(...routed.lines);
+    }
+    if (!item.line) continue;
+
+    let qr = null;
+    let sr = rewriteV2Action(item.line, 'surge', sctx);
+
+    const headerInfo = qxHeaderRewriteInfo(item.line, qctx.argumentIds || []);
+    if (headerInfo) qr = qxNativeHeaderPlan(headerInfo.ast);
+    if (!qr) qr = rewriteV2Action(item.line, 'qx', qctx);
+
+    const [pattern, action] = splitPatternAction(item.line);
+    if (!qr) qr = planLegacyRewrite(pattern, action, 'qx', { ...qctx, rawBase: RAW_BASE });
+    if (!sr) sr = planLegacyRewrite(pattern, action, 'surge', { ...sctx, rawBase: RAW_BASE });
+
+    if (qr.section === 'drop') {
+      qx.rewrite.push(...comments);
+    } else {
+      const qdest = qr.section === 'rewrite' ? qx.rewrite : qx.notes;
+      if (qr.section === 'rewrite') {
+        const qxRendered = qxAttachInlineNote({
+          sectionLines: rewriteSectionLines,
+          item,
+          sectionKind: 'rewrite',
+          lines: qr.lines || [qr.line],
+          eligible: qr.qxInlineNoteEligible !== false,
+        });
+        qdest.push(...qxRendered.comments, ...qxRendered.lines);
+      } else {
+        qdest.push(...comments, ...(qr.lines || [qr.line]));
+      }
+    }
+
+    if (sr.section === 'drop') {
+      sg.notes.push(...surgeComments);
+    } else {
+      const sdest = surgeSectionArray(sg, sr.section) || sg.notes;
+      sdest.push(...surgeComments, ...(sr.lines || [sr.line]));
+    }
+  }
+
+  const scriptSectionLines = parsed.sections.get('Script') || [];
+  let scriptIndex = 0;
+  for (const item of sectionItems(scriptSectionLines)) {
+    const comments = cleanComments(item.comments);
+    if (!item.line) continue;
+
+    if (isScriptV2(item.line)) {
+      scriptIndex++;
+      let ast;
+      try {
+        ast = parseScriptV2(item.line);
+      } catch (error) {
+        const reason = String(error?.message || error).split('\n')[0];
+        qx.notes.push(...comments, `# [WayX] ISSUE REQUIRED [unknown-script-v2-syntax]: source declaration parse failed: ${reason}`, `# Source declaration: ${item.line}`);
+        sg.notes.push(...comments, `# [WayX] ISSUE REQUIRED [unknown-script-v2-syntax]: source declaration parse failed: ${reason}`, `# Source declaration: ${item.line}`);
+        continue;
+      }
+
+      const mapped = scriptMap.get(ast.script.path);
+      const sourceText = mapped?.source || '';
+      const qxUrl = mapped?.qx || ast.script.path;
+      const surgeUrl = mapped?.surge || ast.script.path;
+      const qxPlan = qxScriptV2Plan(ast, { scriptUrl: qxUrl, sourceText, argumentIds });
+      if (!qxPlan.ok) {
+        qx.rewrite.push(...comments);
+        qx.rewrite.push(`# [WayX] SCRIPT V2 REVIEW REQUIRED: ${qxPlan.reason}`);
+        qx.rewrite.push(`# Source declaration: ${item.line}`);
+      } else if (qxPlan.disabled) {
+        qx.rewrite.push(...comments);
+        qx.rewrite.push(`# [WayX] Script disabled by source option: ${item.line}`);
+      } else {
+        const qxRendered = qxAttachInlineNote({
+          sectionLines: scriptSectionLines,
+          item,
+          sectionKind: 'script',
+          lines: [qxPlan.line],
+        });
+        qx.rewrite.push(...qxRendered.comments);
+        if (qxPlan.tag) qx.rewrite.push(`# ${qxPlan.tag}`);
+        if (qxPlan.binaryBodyMode) qx.rewrite.push('# [WayX] Source binary_body_mode=true; script source is preserved unchanged.');
+        for (const note of qxPlan.notes || []) qx.rewrite.push(`# [WayX] ${note}`);
+        qx.rewrite.push(...qxRendered.lines);
+      }
+
+      const name = sanitizeName((ast.options.find(x => x.name === 'tag')?.value?.value) || `${entry.id}_${String(scriptIndex).padStart(2, '0')}`);
+      const surgePlan = surgeScriptV2Plan(ast, { scriptUrl: surgeUrl, name, argumentIds, argumentTable: surgeArgumentTable });
+      sg.script.push(...comments);
+      if (!surgePlan.ok) {
+        sg.script.push(`# [WayX] SCRIPT V2 REVIEW REQUIRED: ${surgePlan.reason}`);
+        sg.script.push(`# Source declaration: ${item.line}`);
+      } else if (surgePlan.disabled) {
+        sg.script.push(`# [WayX] Script disabled by source option: ${item.line}`);
+      } else {
+        if (surgePlan.usesLineRequirement) surgeNeedsLineRequirement = true;
+        sg.script.push(surgePlan.line);
+      }
+      continue;
+    }
+
+    const sc = parseScriptLine(item.line);
+    if (!sc || !sc.scriptPath) {
+      qx.notes.push(...comments, '# [WayX] ISSUE REQUIRED [unknown-script-declaration]: unsupported source Script declaration is outside the registered grammar', `# Source declaration: ${item.line}`);
+      sg.notes.push(...comments, '# [WayX] ISSUE REQUIRED [unknown-script-declaration]: unsupported source Script declaration is outside the registered grammar', `# Source declaration: ${item.line}`);
+      continue;
+    }
+    scriptIndex++;
+    const mapped = scriptMap.get(sc.scriptPath);
+    const qxUrl = mapped?.qx || sc.scriptPath;
+    const surgeUrl = mapped?.surge || sc.scriptPath;
+    const targetPattern = normalizeRegexBodyForTarget(sc.pattern);
+    const enableFixed = sc.enable ? String(sc.enable).trim().toLowerCase() : '';
+    const enableDynamic = Boolean(sc.enable) && !['true','false','1','0'].includes(enableFixed);
+
+    const qxTagLines = sc.tag ? [`# ${sc.tag}`] : [];
+    if (enableFixed === 'false' || enableFixed === '0') {
+      qx.rewrite.push(...comments, ...qxTagLines);
+      qx.rewrite.push(`# [WayX] Script disabled by source declaration: ${item.line}`);
+    } else if (sc.argument || enableDynamic || sc.timeout || sc.maxSize || sc.binary) {
+      qx.rewrite.push(...comments, ...qxTagLines);
+      qx.rewrite.push('# [WayX] SCRIPT REVIEW REQUIRED: QX declaration/helper cannot preserve this source argument/enable/timeout/max-size/binary option set without changing the source script.');
+      qx.rewrite.push(`# Source declaration: ${item.line}`);
+    } else {
+      const qAction = selectQxScriptAction({
+        phase: sc.type,
+        requiresBody: sc.requiresBody,
+        scriptUrl: sc.scriptPath,
+        sourceText: mapped?.source || '',
+      });
+      if (!qAction.action) {
+        qx.rewrite.push(...comments, ...qxTagLines);
+        qx.rewrite.push(`# [WayX] SCRIPT REVIEW REQUIRED: ${qAction.reason}`);
+        qx.rewrite.push(`# Source declaration: ${item.line}`);
+      } else {
+        const qxRendered = qxAttachInlineNote({
+          sectionLines: scriptSectionLines,
+          item,
+          sectionKind: 'script',
+          lines: [`${targetPattern} url ${qAction.action} ${qxUrl}`],
+        });
+        qx.rewrite.push(...qxRendered.comments, ...qxTagLines, ...qxRendered.lines);
+      }
+    }
+
+    const name = sanitizeName(sc.tag || `${entry.id}_${String(scriptIndex).padStart(2, '0')}`);
+    sg.script.push(...comments);
+    if (enableFixed === 'false' || enableFixed === '0') {
+      sg.script.push(`# [WayX] Script disabled by source declaration: ${item.line}`);
+    } else {
+      let requirementPrefix = '';
+      if (enableDynamic) {
+        const ref = String(sc.enable).match(/^\$?\{([A-Za-z_][\w-]*)\}$/);
+        const requirement = ref ? surgeEnableRequirement(ref[1], surgeArgumentTable) : null;
+        if (!requirement) {
+          sg.script.push('# [WayX] SCRIPT REVIEW REQUIRED: dynamic source enable cannot be mapped to a declared Surge module boolean argument.');
+          sg.script.push(`# Source declaration: ${item.line}`);
+          continue;
+        }
+        requirementPrefix = requirement + ' ';
+        surgeNeedsLineRequirement = true;
+      }
+
+      const params = [`type=${sc.type}`, `pattern=${targetPattern}`, `script-path=${surgeUrl}`];
+      if (sc.requiresBody) {
+        params.push('requires-body=true');
+        params.push(`max-size=${sc.maxSize || '-1'}`);
+      }
+      if (sc.binary) params.push('binary-body-mode=true');
+
+      if (sc.timeout) {
+        const timeoutRef = String(sc.timeout).match(/^\$?\{([A-Za-z_][\w-]*)\}$/);
+        if (timeoutRef) {
+          const placeholder = surgeDynamicOptionValue(timeoutRef[1], surgeArgumentTable);
+          if (!placeholder) {
+            sg.script.push('# [WayX] SCRIPT REVIEW REQUIRED: dynamic timeout references an undeclared Surge module argument.');
+            sg.script.push(`# Source declaration: ${item.line}`);
+            continue;
+          }
+          params.push(`timeout=${placeholder}`);
+        } else {
+          params.push(`timeout=${sc.timeout}`);
+        }
+      }
+
+      if (sc.argument) {
+        const refs = parseLegacyLoonPluginObjectRefs(sc.argument);
+        if (refs) {
+          const encoded = surgePluginObjectArgument(refs, surgeArgumentTable);
+          if (!encoded.ok) {
+            sg.script.push(`# [WayX] SCRIPT REVIEW REQUIRED: ${encoded.reason}`);
+            sg.script.push(`# Source declaration: ${item.line}`);
+            continue;
+          }
+          params.push('argument=' + encoded.value);
+        } else {
+          params.push(`argument=${sc.argument}`);
+        }
+      }
+      sg.script.push(requirementPrefix + `${name} = ${params.join(',')}`);
+    }
+  }
+
+  const mitmLines = parsed.sections.get('MitM') || parsed.sections.get('MITM') || [];
+  for (const item of sectionItems(mitmLines)) {
+    const comments = cleanComments(item.comments);
+    if (!item.line) continue;
+    const qPlan = planMitmLine(item.line, 'qx');
+    const sPlan = planMitmLine(item.line, 'surge');
+    qx.mitm.push(...comments, qPlan.line);
+    sg.mitm.push(...comments, sPlan.line);
+  }
+
+  const compact = arr => {
+    const out = [];
+    for (const line of arr) {
+      if (line === '' && out.at(-1) === '') continue;
+      out.push(line);
+    }
+    while (out.length && out.at(-1) === '') out.pop();
+    return out;
+  };
+
+  const qxOut = [
+    ...qxHeader, '',
+    ...(qx.notes.length ? [...qx.notes, ''] : []),
+    '# [filter_local]', ...compact(qx.filter), '',
+    '# [rewrite_local]', ...compact(qx.rewrite), '',
+    '# [mitm]', ...compact(qx.mitm), ''
+  ].join('\n');
+
+  const surgeSections = [];
+  if (sg.notes.length) surgeSections.push(...sg.notes, '');
+  if (sg.rule.length) surgeSections.push('[Rule]', ...compact(sg.rule), '');
+  if (sg.url.length) surgeSections.push('[URL Rewrite]', ...compact(sg.url), '');
+  if (sg.header.length) surgeSections.push('[Header Rewrite]', ...compact(sg.header), '');
+  if (sg.body.length) surgeSections.push('[Body Rewrite]', ...compact(sg.body), '');
+  if (sg.map.length) surgeSections.push('[Map Local]', ...compact(sg.map), '');
+  if (sg.script.length) surgeSections.push('[Script]', ...compact(sg.script), '');
+  if (sg.mitm.length) surgeSections.push('[MITM]', ...compact(sg.mitm), '');
+
+  const needsCore20 = hasActiveSurgeLines(sg.body) || hasActiveSurgeLines(sg.map);
+  const surgeHeader = renderSurgeModuleHeader(parsed.header, entry, stamp, {
+    needsCore20,
+    argumentMetadata:surgeArgumentPlan.lines,
+    needsLineRequirement:surgeNeedsLineRequirement,
+  });
+  const sgOut = [...surgeHeader, '', ...surgeSections].join('\n').replace(/\n*$/, '\n');
+
+  return { qx: qxOut.replace(/\n*$/, '\n'), surge: sgOut, generatedScripts: new Map([...qx.generatedScripts, ...sg.generatedScripts]) };
+
+}
+
+async function inspectSourceScript(reference, pluginSourceUrl) {
+  const originalUrl = resolveOriginalUrl(reference, pluginSourceUrl);
+  try {
+    const normalized = normalizeNewlines(await fetchOriginalText(originalUrl)).replace(/\n*$/, '\n');
+    return {
+      qx: originalUrl,
+      surge: originalUrl,
+      source: normalized,
+      sourceError: null,
+    };
+  } catch (error) {
+    // Source Script content is optional and is read only to refine the target
+    // rewrite action type. Runtime compatibility is not gated for QX or Surge;
+    // both targets keep the original Source Script URL unchanged.
+    return {
+      qx: originalUrl,
+      surge: originalUrl,
+      source: '',
+      sourceError: String(error?.message || error),
+    };
+  }
+}
+function scriptUrls(source) {
+  const urls = new Set([...source.matchAll(/script-path=([^,\s]+)/gi)].map(m => m[1].trim()));
+  const parsed = parseLoon(source);
+  for (const item of sectionItems(parsed.sections.get('Script'))) {
+    if (!item.line || !isScriptV2(item.line)) continue;
+    try { urls.add(parseScriptV2(item.line).script.path); }
+    catch {}
+  }
+  return [...urls];
+}
+
+const QX_FILTER_TYPES = new Set([
+  'host','host-suffix','host-keyword','host-wildcard',
+  'ip-cidr','ip6-cidr','geoip','ip-asn','user-agent',
+]);
+const QX_SCRIPT_ACTIONS = new Set([
+  'script-request-header','script-request-body',
+  'script-response-header','script-response-body',
+  'script-echo-response','script-analyze-echo-response',
+]);
+
+function stripQxLeadingNote(line, entry) {
+  const text = String(line ?? '').trim();
+  if (!text.startsWith('{#')) return {line:text, note:null};
+  const match = text.match(/^\{#\s*(.*?)\s*#\}\s+(.+)$/);
+  if (!match || !match[1].trim() || !match[2].trim()) {
+    throw new Error(`${entry.id}: malformed Quantumult X leading rule note: ${line}`);
+  }
+  return {line:match[2].trim(), note:match[1].trim()};
+}
+
+function validateQxExecutableLine(line, entry) {
+  const noted = stripQxLeadingNote(line, entry);
+  line = noted.line;
+  if (noted.note && /^(?:hostname|skip-server-cert-verify)\s*=/.test(line)) {
+    throw new Error(`${entry.id}: Quantumult X leading notes are only valid on filter/rewrite rules: ${line}`);
+  }
+  if (/^(?:hostname|skip-server-cert-verify)\s*=/.test(line)) return;
+
+  const urlMarker = line.indexOf(' url ');
+  if (urlMarker >= 0) {
+    const pattern = line.slice(0, urlMarker).trim();
+    const action = line.slice(urlMarker + 5).trim();
+    if (!pattern) throw new Error(`${entry.id}: Quantumult X rewrite line has an empty URL pattern: ${line}`);
+
+    if (/^(?:reject|reject-200|reject-img|reject-dict|reject-array)$/.test(action)) return;
+    if (/^(?:302|307)\s+\S+$/.test(action)) return;
+    if (/^jsonjq-(?:request|response)-body\s+'.+'$/.test(action)) return;
+    if (/^(?:request|response)-body\s+.+\s+(?:request|response)-body\s+.+$/.test(action)) return;
+    if (/^request-header\s+.+\s+request-header\s+.+$/.test(action)) return;
+
+    const script = action.match(/^(script-[a-z-]+)\s+(\S+)$/);
+    if (script && QX_SCRIPT_ACTIONS.has(script[1])) return;
+
+    throw new Error(`${entry.id}: unverified/unsupported Quantumult X rewrite action: ${action}`);
+  }
+
+  const comma = line.indexOf(',');
+  if (comma > 0) {
+    const type = line.slice(0, comma).trim().toLowerCase();
+    if (!QX_FILTER_TYPES.has(type)) {
+      throw new Error(`${entry.id}: unverified/unsupported Quantumult X filter type: ${type}`);
+    }
+    const fields = line.split(',').map(part => part.trim());
+    if (fields.length < 3 || !fields[1] || !fields[2]) {
+      throw new Error(`${entry.id}: malformed Quantumult X filter line: ${line}`);
+    }
+    if (['ip-cidr','ip6-cidr','geoip','ip-asn'].includes(type) && fields.slice(3).some(x => x.toLowerCase() === 'no-resolve')) {
+      throw new Error(`${entry.id}: Quantumult X IP-class rules must remove no-resolve`);
+    }
+    return;
+  }
+
+  throw new Error(`${entry.id}: unclassified active Quantumult X line: ${line}`);
+}
+
+function validateQX(text, entry) {
+  const activeMetadata = text.split('\n').filter(l => /^#!/.test(l.trim()));
+  if (activeMetadata.length) throw new Error(`${entry.id}: Quantumult X snippet metadata must be plain comments, not active #! directives`);
+  const activeSections = text.split('\n').filter(l => /^\[(filter_local|rewrite_local|mitm)\]$/i.test(l.trim()));
+  if (activeSections.length) throw new Error(`${entry.id}: Quantumult X section headings must be commented`);
+
+  for (const raw of text.split('\n')) {
+    const line = raw.trim();
+    if (!line || line.startsWith('#')) continue;
+    if (/\(\?[ims](?:[:)])?/i.test(line)) {
+      throw new Error(`${entry.id}: Quantumult X output must not restore discarded Loon regex flags with inline modifiers: ${line}`);
+    }
+    if (/\[hH\]\[tT\]\[tT\]\[pP\](?:\[sS\])?/.test(line)) {
+      throw new Error(`${entry.id}: Quantumult X output must not emulate case-insensitive flags with manual HTTP case-fold classes: ${line}`);
+    }
+    if (/jq-path=/i.test(line)) {
+      throw new Error(`${entry.id}: discarded legacy jq-path alias leaked into active Quantumult X output: ${line}`);
+    }
+    validateQxExecutableLine(line, entry);
+  }
+
+  for (const bad of ['response-body-json-del', 'response-body-json-replace', 'response-body-json-jq', 'mock-response-body']) {
+    const active = text.split('\n').find(l => l.trim() && !l.trim().startsWith('#') && l.includes(bad));
+    if (active) throw new Error(`${entry.id}: unconverted QX token ${bad}`);
+  }
+  const commentedSections = ['# [filter_local]', '# [rewrite_local]', '# [mitm]'].filter(section => text.includes(section));
+  if (!commentedSections.length) throw new Error(`${entry.id}: missing commented QX section heading`);
+}
+
+
+async function main() {
+  const manifest = await loadLoonSourceCatalog(MANIFEST);
+  await Promise.all([RESOURCE_DIR, TARGET_ROOT, SCRIPT_DIR].map(d => fs.mkdir(d, { recursive: true })));
+  const failures = [];
+  for (const entry of manifest) {
+    try {
+      console.log(`\n== ${entry.id} ==`);
+      const text = await fetchOriginalText(entry.source);
+      const fetchedFrom = entry.source;
+      const source = cleanSource(text);
+      if (!/^#!name=/m.test(source) || !/^\[[^\]]+\]/m.test(source)) throw new Error('downloaded content is not a valid Loon plugin');
+      const sourcePath = path.join(RESOURCE_DIR, entry.file);
+      const old = await exists(sourcePath) ? normalizeNewlines(await fs.readFile(sourcePath, 'utf8')) : null;
+      const changed = old !== source;
+      if (changed) await fs.writeFile(sourcePath, source);
+      console.log(`${changed ? 'updated' : 'unchanged'} source via ${fetchedFrom}; sha256=${sha256(source).slice(0, 12)}`);
+
+      const scriptMap = new Map();
+      const parsedSource = parseLoon(source);
+      const qxMockFiles = await materializeMockFiles(entry, parsedSource);
+      const jqFiles = await materializeJqFiles(entry, parsedSource);
+      const discoveredScriptUrls = scriptUrls(source);
+      for (const reference of discoveredScriptUrls) {
+        scriptMap.set(reference, await inspectSourceScript(reference, entry.source));
+      }
+
+      const qxPath = path.join(ROOT, qxTargetPath(entry));
+      const sgPath = path.join(ROOT, surgeTargetPath(entry));
+      await Promise.all([
+        path.dirname(qxPath),
+        path.dirname(sgPath),
+      ].map(d => fs.mkdir(d, { recursive: true })));
+      const qxExists = await exists(qxPath);
+      const sgExists = await exists(sgPath);
+      const oldQx = qxExists ? normalizeNewlines(await fs.readFile(qxPath, 'utf8')) : null;
+      const oldSg = sgExists ? normalizeNewlines(await fs.readFile(sgPath, 'utf8')) : null;
+      const oldStamp = (oldQx?.match(/^# Converted:\s*(.+)$/m) || [])[1] || null;
+      let stamp = changed || !oldStamp ? nowCN() : oldStamp;
+      let out = convert(entry, source, scriptMap, stamp, qxMockFiles, jqFiles);
+
+      // Converter changes must also refresh outputs even when upstream LPX is unchanged.
+      // Preserve the old conversion timestamp only if the generated content is actually identical.
+      if (!changed && oldStamp && ((oldQx && oldQx !== out.qx) || (oldSg && oldSg !== out.surge))) {
+        stamp = nowCN();
+        out = convert(entry, source, scriptMap, stamp, qxMockFiles, jqFiles);
+      }
+
+      for (const [file, content] of out.generatedScripts) {
+        const dir = path.join(SCRIPT_DIR, entry.id);
+        await fs.mkdir(dir, { recursive: true });
+        const dest = path.join(dir, file);
+        if (!await exists(dest) || normalizeNewlines(await fs.readFile(dest, 'utf8')) !== content) await fs.writeFile(dest, content);
+      }
+      validateQX(out.qx, entry);
+      validateSurgeModule(out.surge, entry, {adblockScope:true});
+      let outputChanged = false;
+      if (oldQx !== out.qx) { await fs.writeFile(qxPath, out.qx); outputChanged = true; }
+      if (oldSg !== out.surge) { await fs.writeFile(sgPath, out.surge); outputChanged = true; }
+      console.log(outputChanged ? `converted -> ${path.relative(ROOT, qxPath)}, ${path.relative(ROOT, sgPath)}` : 'conversion verified: outputs unchanged');
+    } catch (e) {
+      failures.push(`${entry.id}: ${e.stack || e.message}`);
+      console.error(`::error title=${entry.id}::${String(e.message).replaceAll('\n', '%0A')}`);
+    }
+  }
+  if (failures.length) {
+    console.error('\nFailures:\n' + failures.join('\n\n'));
+    process.exitCode = 1;
+  }
+}
+
+const __wayxIsMain = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url));
+if (__wayxIsMain) await main();
+
+export {
+  cleanSource,
+  convert,
+  materializeJqFiles,
+  materializeMockFiles,
+  inspectSourceScript,
+  parseLoon,
+  scriptUrls,
+  validateQX,
+};).test(ast.actions[0].name)) {
       try {
         const plan = renderQxHeaderScript(ast, {stamp:ctx.stamp, category:ctx.category, sourceLine:line});
         const key = crypto.createHash('sha1').update('header-single\\0' + line).digest('hex').slice(0, 10);
