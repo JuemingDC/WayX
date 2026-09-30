@@ -2,6 +2,7 @@
 // Author: chance
 // Category: Converter / Surge Module
 import { splitTopLevelCsv, surgePolicyIndex, surgeRuleTypesInTree, SURGE_MODULE_POLICIES } from './rule.mjs';
+import { SURGE_WAYX_REWRITE_SECTIONS, SURGE_WAYX_URL_REWRITE_TYPES, SURGE_WAYX_HEADER_REWRITE_ACTIONS, SURGE_WAYX_BODY_REWRITE_TYPES, SURGE_WAYX_MAP_LOCAL_DATA_TYPES, SURGE_WAYX_SCRIPT_TYPES, SURGE_WAYX_MITM_KEYS } from './surge-official-capabilities.mjs';
 export { renderSurgeModuleHeader } from './metadata.mjs';
 
 export function hasActiveSurgeLines(lines = []) {
@@ -12,9 +13,7 @@ export function hasActiveSurgeLines(lines = []) {
 }
 
 export function validateSurgeModule(text, entry = {id:'module'}) {
-  const allowedSections = new Set([
-    'Rule','URL Rewrite','Header Rewrite','Body Rewrite','Map Local','Script','MITM',
-  ]);
+  const allowedSections = new Set(['Rule', ...SURGE_WAYX_REWRITE_SECTIONS, 'MITM']);
 
   const allowedTopDirectives = [
     /^#!name=.+$/i,
@@ -108,17 +107,19 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
     }
 
     if (current === 'URL Rewrite') {
-      if (!/\s(?:header|302|307|reject)$/.test(line)) {
+      const type = line.trim().split(/\s+/).at(-1);
+      if (!SURGE_WAYX_URL_REWRITE_TYPES.has(type)) {
         throw new Error(`${entry.id}: invalid Surge URL Rewrite line: ${line}`);
       }
-      if (/\sreject$/.test(line) && !/\s_\sreject$/.test(line)) {
+      if (type === 'reject' && !/\s_\sreject$/.test(line)) {
         throw new Error(`${entry.id}: Surge URL reject must use '<pattern> _ reject': ${line}`);
       }
       continue;
     }
 
     if (current === 'Header Rewrite') {
-      if (!/^http-(?:request|response)\s+\S+\s+header-(?:add|del|replace|replace-regex)\b/.test(line)) {
+      const match = line.match(/^http-(?:request|response)\s+\S+\s+(header-[a-z-]+)\b/);
+      if (!match || !SURGE_WAYX_HEADER_REWRITE_ACTIONS.has(match[1])) {
         throw new Error(`${entry.id}: invalid Surge Header Rewrite line: ${line}`);
       }
       continue;
@@ -126,17 +127,19 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
 
     if (current === 'Body Rewrite') {
       hasBodyRewrite = true;
-      if (!/^http-(?:request|response)(?:-jq)?\s+/.test(line)) {
+      const type = line.trim().split(/\s+/, 1)[0];
+      if (!SURGE_WAYX_BODY_REWRITE_TYPES.has(type)) {
         throw new Error(`${entry.id}: invalid Surge Body Rewrite line: ${line}`);
       }
       continue;
     }
 
     if (current === 'Map Local') {
-      if (!/\bdata-type=(?:file|text|tiny-gif|base64)\b/.test(line)) {
+      const dataType = line.match(/\bdata-type=([^\s]+)/)?.[1];
+      if (!dataType || !SURGE_WAYX_MAP_LOCAL_DATA_TYPES.has(dataType)) {
         throw new Error(`${entry.id}: invalid Surge Map Local line: ${line}`);
       }
-      if (/\bdata-type=(?:text|tiny-gif|base64)\b/.test(line)) hasInlineMapLocal = true;
+      if (dataType !== 'file') hasInlineMapLocal = true;
       continue;
     }
 
@@ -147,8 +150,7 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
       const typeMatch = body.match(/(?:^|,)\s*type=([^,\s]+)/);
       if (!typeMatch) throw new Error(`${entry.id}: Surge [Script] declaration must include an explicit type: ${line}`);
       const type = typeMatch[1];
-      const rewriteScriptTypes = new Set(['http-request','http-response']);
-      if (!rewriteScriptTypes.has(type)) {
+      if (!SURGE_WAYX_SCRIPT_TYPES.has(type)) {
         throw new Error(`${entry.id}: WayX ad-block Surge [Script] only accepts HTTP rewrite types: ${line}`);
       }
       if (!/(?:^|,)\s*script-path=[^,\s]+/.test(body)) {
@@ -167,7 +169,7 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
       const match = line.match(/^([^=]+?)\s*=\s*(.+)$/);
       if (!match) throw new Error(`${entry.id}: invalid Surge MITM option: ${line}`);
       const key = match[1].trim();
-      if (key !== 'hostname') {
+      if (!SURGE_WAYX_MITM_KEYS.has(key)) {
         throw new Error(`${entry.id}: WayX ad-block Surge Module [MITM] only accepts hostname: ${line}`);
       }
       continue;
