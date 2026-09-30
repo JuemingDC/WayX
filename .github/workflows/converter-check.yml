@@ -48,6 +48,7 @@ jobs:
           node --check converter/tests/spec-block-contract.mjs
           node --check converter/tests/complex-source-inventory.mjs
           node --check converter/tests/catalog-syntax-inventory.mjs
+          node --check converter/tests/catalog-rule-inventory.mjs
           node --check converter/tests/qx-official-capabilities.mjs
           node --check converter/tests/surge-official-capabilities.mjs
           node --check converter/tests/unknown-issue-markers.mjs
@@ -73,6 +74,7 @@ jobs:
           node converter/tests/spec-block-contract.mjs
           node converter/tests/complex-source-inventory.mjs
           node converter/tests/catalog-syntax-inventory.mjs
+          node converter/tests/catalog-rule-inventory.mjs
           node converter/tests/unknown-issue-markers.mjs
           node converter/tests/manual-assets.mjs
           python converter/tests/test_conversion_gate.py
