@@ -1,5 +1,6 @@
 {
-  "version": 1,
+  "version": 2,
+  "scope": "Loon ad-block conversion only: Rule types, Rewrite actions, MITM hostname",
   "authority": {
     "uploadedSample": "sample.txt",
     "officialRepository": "crossutility/Quantumult-X",
@@ -9,8 +10,7 @@
     "officialFilterSnippetPath": "filter.snippet",
     "checkedAt": "2026-09-30"
   },
-  "filterTypes": [
-    "final",
+  "ruleTypes": [
     "geoip",
     "host",
     "host-keyword",
@@ -21,14 +21,9 @@
     "ip6-cidr",
     "user-agent"
   ],
-  "rewriteMatchKinds": [
-    "url",
-    "url-and-header"
-  ],
-  "urlRewriteActions": [
+  "rewriteActions": [
     "302",
     "307",
-    "echo-response",
     "jsonjq-request-body",
     "jsonjq-response-body",
     "reject",
@@ -46,19 +41,7 @@
     "script-response-body",
     "script-response-header"
   ],
-  "documentedOnlyUrlRewriteActions": [
-    "jsonjq-request-body",
-    "script-analyze-echo-response"
-  ],
-  "snippetMitmKeys": [
+  "mitmKeys": [
     "hostname"
-  ],
-  "fullConfigMitmKeys": [
-    "hostname",
-    "p12",
-    "passphrase",
-    "skip_dst_ip",
-    "skip_src_ip",
-    "skip_validating_cert"
   ]
 }
