@@ -58,8 +58,3 @@ export function selectQxScriptAction({phase,requiresBody=false,sourceText=''}) {
   };
 }
 
-export function hasExplicitQxRejection(sourceText){
-  const s=String(sourceText||'');
-  return /quantumult\s*x[^\n]{0,120}(?:not\s+support|unsupported|not\s+supported)/i.test(s) ||
-    /(?:not\s+support|unsupported|not\s+supported)[^\n]{0,120}quantumult\s*x/i.test(s);
-}
