@@ -634,9 +634,9 @@ for (const testCase of cases) {
     assert.doesNotMatch(out.qx, /Source \[Argument\]|Argument usage:/, 'YouTube QX must not emit Loon plugin parameter UI/declarations');
     assert.match(out.surge, /^#!arguments=.*captionLang:zh-Hans/m);
     assert.match(out.surge, /argument="\{\\\"captionLang\\\":\\\"\{\{\{captionLang\}\}\}\\\"\}"/);
-    assert.equal(qxActive.some(line => /youtube\/request\.js$/.test(line)), false, 'YouTube: request binary script must stay inactive until QX request bodyBytes is officially verified');
-    assert.match(out.qx, /request binary_body_mode=true has no verified Quantumult X request-body bodyBytes example/);
-    assert.match(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
+    assert.ok(qxActive.some(line => /youtube\/request\.js$/.test(line)), 'YouTube: request binary scripts must follow KOP-XIAO and remain active as script-request-body');
+    assert.match(out.qx, /binary_body_mode=true ignored for Quantumult X/);
+    assert.doesNotMatch(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
     assert.doesNotMatch(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
   }
 
@@ -645,6 +645,8 @@ for (const testCase of cases) {
     assert.doesNotMatch(out.qx, /Source \[Argument\]|Argument usage:/, 'Bilibili QX must not emit Loon plugin parameter UI/declarations');
     assert.doesNotMatch(out.qx, /QUANTUMULT X (?:UNSUPPORTED|REVIEW REQUIRED) - source script disabled/);
     assert.ok(qxActive.some(line => /bilibili\/(?:request|response|json)\.js/.test(line)), 'Bilibili Source Script declarations must keep original URLs without runtime compatibility gating');
+    assert.match(out.qx, /binary_body_mode=true ignored for Quantumult X/);
+    assert.doesNotMatch(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
     assert.doesNotMatch(out.surge, /Source Loon plugin policy PROXY requires a Surge module policy parameter binding/);
     assert.doesNotMatch(out.surge, /Source declaration:.*PROXY[\s\S]*REVIEW REQUIRED: Surge Module requires an external policy binding/);
     assert.match(out.surge, /^#!arguments=.*displayUpList:auto.*sponsorBlock:true.*wayx_proxy_policy:DIRECT/m);

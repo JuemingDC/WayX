@@ -72,12 +72,7 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
   }
   const binaryBodyMode = scriptOptionBoolean(ast, 'binary_body_mode', false);
   if (binaryBodyMode) {
-    if (ast.phase !== 'response') {
-      return unsupported('Loon request binary_body_mode=true has no verified Quantumult X request-body bodyBytes example');
-    }
-    if (!scriptOptionBoolean(ast, 'requires_body', false)) {
-      return unsupported('Loon response binary_body_mode=true requires a Quantumult X response-body declaration');
-    }
+    notes.push('Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.');
   }
 
   const action = selectQxScriptAction({

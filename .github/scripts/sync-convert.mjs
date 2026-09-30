@@ -852,7 +852,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
         });
         qx.rewrite.push(...qxRendered.comments);
         if (qxPlan.tag) qx.rewrite.push(`# ${qxPlan.tag}`);
-        if (qxPlan.binaryBodyMode) qx.rewrite.push('# [WayX] Source binary_body_mode=true; script source is preserved unchanged.');
+        // binary_body_mode is already documented through qxPlan.notes; QX follows KOP-XIAO and selects the body action from requires_body only.
         for (const note of qxPlan.notes || []) qx.rewrite.push(`# [WayX] ${note}`);
         qx.rewrite.push(...qxRendered.lines);
       }
@@ -891,12 +891,13 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     if (sc.argument) qxIgnoredOptionLines.push('# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.');
     if (enableDynamic) qxIgnoredOptionLines.push('# [WayX] Source dynamic enable ignored for Quantumult X; converted rule defaults to enabled.');
     if (sc.timeout) qxIgnoredOptionLines.push('# [WayX] Source Script timeout ignored for Quantumult X.');
+    if (sc.binary) qxIgnoredOptionLines.push('# [WayX] Source binary-body-mode=true ignored for Quantumult X; requires-body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.');
     if (enableFixed === 'false' || enableFixed === '0') {
       qx.rewrite.push(...comments, ...qxTagLines);
       qx.rewrite.push(`# [WayX] Script disabled by source declaration: ${item.line}`);
-    } else if (sc.maxSize || sc.binary) {
+    } else if (sc.maxSize) {
       qx.rewrite.push(...comments, ...qxTagLines, ...qxIgnoredOptionLines);
-      qx.rewrite.push('# [WayX] SCRIPT REVIEW REQUIRED: QX declaration/helper cannot preserve this source max-size/binary option set without changing the source script.');
+      qx.rewrite.push('# [WayX] SCRIPT REVIEW REQUIRED: QX declaration/helper cannot preserve this source max-size option without changing the source script.');
       qx.rewrite.push(`# Source declaration: ${item.line}`);
     } else {
       const qAction = selectQxScriptAction({
