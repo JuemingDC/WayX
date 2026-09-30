@@ -35,6 +35,15 @@ export function appendQxOutput(state,section,...lines) {
   return true;
 }
 
+export function qxRuleOutputDestination(state,kind) {
+  return qxOutputDestination(state,kind==='rewrite' ? 'rewrite' : 'filter');
+}
+
+export function qxRewriteOutputDestination(state,section) {
+  if (section==='rewrite' || section==='drop') return qxOutputDestination(state,'rewrite');
+  return qxOutputDestination(state,'notes');
+}
+
 export function renderQxOutput({state,headerLines,entry,stamp}) {
   const header=renderQxSnippetHeader(headerLines,entry,stamp);
   const lines=[
