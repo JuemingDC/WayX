@@ -819,7 +819,7 @@ assert.equal(
 );
 assert.equal(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-del Server', 'surge', legacyCtx).lines[0],
-  'http-response ^https://api\\.example\\.com header-del Server',
+  'http-response ^https:\\/\\/api\\.example\\.com header-del Server',
 );
 const legacyQxHeaderDel = planLegacyRewrite(
   '^https:\\/\\/api\\.example\\.com',
