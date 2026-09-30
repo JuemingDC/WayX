@@ -28,6 +28,8 @@ const stats = {
   rules: 0,
   native: 0,
   dropped: 0,
+  preserved: 0,
+  unsupportedPolicy: 0,
   review: 0,
   reasons: new Map(),
   types: new Map(),
@@ -63,6 +65,16 @@ for (const entry of manifest) {
       stats.dropped++;
       continue;
     }
+    if (mapped.kind === 'comment' && mapped.reason === 'source-proxy-policy-preserved') {
+      stats.preserved++;
+      assert.match(mapped.lines.join('\n'), /Source Loon plugin policy PROXY preserved without conversion/);
+      continue;
+    }
+    if (mapped.kind === 'comment' && mapped.reason === 'unsupported-surge-module-policy') {
+      stats.unsupportedPolicy++;
+      assert.match(mapped.lines.join('\n'), /Module Rule supports only DIRECT\/REJECT\/REJECT-TINYGIF/);
+      continue;
+    }
 
     stats.review++;
     stats.reasons.set(mapped.reason, (stats.reasons.get(mapped.reason) || 0) + 1);
@@ -73,11 +85,9 @@ for (const entry of manifest) {
 assert.ok(stats.files > 0, 'no Loon source files were scanned');
 assert.ok(stats.rules > 0, 'no Loon [Rule] entries were scanned');
 
-// Surge profiles may bind rules to named proxy policies/groups, but Surge
-// Modules can only insert rules using internal policies because Modules cannot
-// modify [Proxy] / [Proxy Group]. Those source rules are therefore an expected
-// Review condition, not a syntax-conversion failure. Any other review reason
-// still fails coverage so no unsupported rule is silently approximated.
+// Loon plugin PROXY and full-profile built-in policies that the Module Manual
+// does not allow are deterministic commented source rules. Unknown external
+// policy names remain explicit Review conditions.
 const unexpectedReview = stats.reviewLines.filter(x => x.reason !== 'external-policy');
 assert.equal(
   unexpectedReview.length,
@@ -92,6 +102,6 @@ for (const item of stats.reviewLines.filter(x => x.reason === 'external-policy')
 
 const types = [...stats.types.entries()].sort((a, b) => a[0].localeCompare(b[0]));
 console.log(
-  `Surge Rule coverage: files=${stats.files}, rules=${stats.rules}, native=${stats.native}, dropped=${stats.dropped}, review=${stats.review}`
+  `Surge Rule coverage: files=${stats.files}, rules=${stats.rules}, native=${stats.native}, dropped=${stats.dropped}, preserved=${stats.preserved}, unsupportedPolicy=${stats.unsupportedPolicy}, review=${stats.review}`
 );
 console.log('Rule types: ' + types.map(([type, count]) => `${type}=${count}`).join(', '));

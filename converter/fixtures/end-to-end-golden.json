@@ -1,15 +1,15 @@
 {
-  "version": 1,
+  "version": 2,
   "stamp": "2026-09-29 12:00:00 +08:00",
   "cases": {
     "HTTPDNS": {
-      "qxSha256": "a6b9c1a229bb3924dfdb294c139fc9f4075f200b2e96450502f7235202bd9f3a",
+      "qxSha256": "3a8125f428d3f4851abcaaa0961ba35daf65f0fbe5d15ef908a6e1f1da09937b",
       "surgeSha256": "ddaf1a02607861806c6a9fa9e8250e94219e9333ed86b782481c6c6d88a18d8e",
-      "qxBytes": 8043,
+      "qxBytes": 8041,
       "surgeBytes": 8681,
       "sourceScriptCount": 0,
       "generatedScriptCount": 0,
-      "qxReview": 2,
+      "qxReview": 0,
       "surgeReview": 0,
       "sections": [
         "Rule",
@@ -19,13 +19,13 @@
       ]
     },
     "PinDuoDuo": {
-      "qxSha256": "11cca768c970327f93ae393134bb3ec4f61278a33f326b61a9fbe1897431effd",
+      "qxSha256": "e3873b7045c4ca4bae9a8da1051ab8c8540548d01de8a1d5f1ced7ee5327e680",
       "surgeSha256": "485da7c9759417690893275daaaaf6889b558364a387e28886491db70c24d6db",
-      "qxBytes": 5402,
+      "qxBytes": 5399,
       "surgeBytes": 6296,
       "sourceScriptCount": 1,
       "generatedScriptCount": 0,
-      "qxReview": 3,
+      "qxReview": 0,
       "surgeReview": 0,
       "sections": [
         "Rule",
@@ -36,13 +36,13 @@
       ]
     },
     "MyBlockAds": {
-      "qxSha256": "b1f4925dd035069b81b06427bc7069e8c921fa4afaf35058ec657b52a69409fd",
+      "qxSha256": "b15a387d21d99d9679091b4e39efef32eb09aa34122448dd7e0ea637e3542c26",
       "surgeSha256": "1a1708311904b17404b2d5a0580324c51771dada0a0edb8a5d2f57a9f99b10bb",
-      "qxBytes": 24002,
+      "qxBytes": 24106,
       "surgeBytes": 26736,
       "sourceScriptCount": 9,
       "generatedScriptCount": 0,
-      "qxReview": 8,
+      "qxReview": 0,
       "surgeReview": 0,
       "sections": [
         "Rule",
@@ -71,14 +71,14 @@
       ]
     },
     "Bilibili": {
-      "qxSha256": "054df287b1fa1400ef18dc52da9cc27d61af88f151cf1f8c2a710a2efccc617e",
-      "surgeSha256": "4e5167f4c650f6cafbc1d2be936bec10fcfbab29ad1152126493cf0920cdf271",
-      "qxBytes": 14684,
-      "surgeBytes": 12976,
+      "qxSha256": "15bf13f975078f13c263b1c9d9947b4e8d0a52ab0e7c1ba8abeb88976916b00b",
+      "surgeSha256": "cad6bd91c1275ed48415eaa04a8c24bf660645181297d09b72b3e53561c1ebd1",
+      "qxBytes": 12608,
+      "surgeBytes": 13590,
       "sourceScriptCount": 3,
       "generatedScriptCount": 9,
-      "qxReview": 5,
-      "surgeReview": 1,
+      "qxReview": 3,
+      "surgeReview": 0,
       "sections": [
         "Rule",
         "URL Rewrite",
@@ -89,13 +89,13 @@
       ]
     },
     "JingDong": {
-      "qxSha256": "4241fc776a0ef51eb0ad0110f811a670dfe80e9816bf6cead062b7a57e6d1239",
-      "surgeSha256": "5ccf8990092c5900825bbd4be479aa30c24c9c8270783c84ab6124739218eec5",
-      "qxBytes": 2518,
-      "surgeBytes": 2401,
+      "qxSha256": "17ec70ce8b5c95ca356c7a87b3236d2905c19cd18f71b19a798c142a11bb1341",
+      "surgeSha256": "06b516e7360af91be80d4e68a80aa5b624aab3f67d9d124071442e81ff67cb9d",
+      "qxBytes": 2517,
+      "surgeBytes": 2560,
       "sourceScriptCount": 3,
       "generatedScriptCount": 0,
-      "qxReview": 3,
+      "qxReview": 2,
       "surgeReview": 0,
       "sections": [
         "Rule",

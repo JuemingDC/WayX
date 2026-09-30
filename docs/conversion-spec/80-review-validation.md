@@ -2,7 +2,7 @@
 
 ## 80.1 Review 条件
 
-所有 Rewrite/Mock 先执行“目标原生 → 已验证 helper script → 注释 Review”。只有 helper 仍无法保持时才进入下列 Review 条件：
+所有 Rewrite/Mock 先执行“目标原生 → 专用 semantic helper →（仅多 action）complex helper → 注释 Review”。只有对应 helper 仍无法保持时才进入下列 Review 条件。Rule 不走 Script fallback；QX 不支持的 Rule Type 直接注释保留：
 
 出现以下任一项必须 Review：
 - 目标官方资料与已验证脚本接口都没有可保持语义的路径
@@ -17,7 +17,6 @@
 - QX 需要官方 sample 未出现的 filter/action
 - JQ 依赖无法物化
 - mock_file 依赖缺失
-- Quantumult X Source Script compatibility 不确定
 
 格式：
 ```text
@@ -40,6 +39,7 @@ Loon `[Argument]` **声明区块本身不构成 Review 条件**。QX 忽略参�
 必须满足：
 ```text
 Target 已转换语义项
++ 明确注释保留的不支持语义项
 + 明确 Review 语义项
 = Source 有效语义项
 ```
@@ -55,6 +55,7 @@ Source parser 遇到当前 grammar 未登记、但包含活动内容的 section 
 - filter type 只允许当前转换规范已经确认的 QX 类型；
 - rewrite action 只允许官方 sample 已确认的 reject / redirect / request-header / body / jsonjq / Script action；
 - Script action 名称只允许 `script-request-header / script-request-body / script-response-header / script-response-body / script-echo-response / script-analyze-echo-response`；
+- 允许 filter/rewrite 活动行使用当前 QX beta 已确认的 `{# note #} ` 前缀；validator 必须先剥离 note 再校验真实规则语法。note 为空、闭合不完整，或用于 MITM/hostname 等非 filter/rewrite 行时直接失败；
 - section 标题全部注释化；
 - snippet 头部不存在活动 `#!...` 来源 metadata；
 - 无 `[hH][tT][tT][pP]` 自动 case-fold；
@@ -62,7 +63,7 @@ Source parser 遇到当前 grammar 未登记、但包含活动内容的 section 
 - QX IP filter 不含 `no-resolve`；
 - 无 Loon/Surge 私有 action；
 - 无活动 `jq-path=`，且 legacy `jq-path=` 不得出现在目标语义项中；
-- Script action 与脚本行为匹配；Source Script 无正向 QX 兼容证据时必须保持注释/Review。
+- Script action 必须属于官方 sample 已确认 action；可依据源 declaration 和必要时读取到的 body/echo 行为选择 action。不得再以 Source Script runtime compatibility 扫描结果作为启用条件。
 
 ## 80.4 Surge Validator
 
@@ -71,7 +72,7 @@ Source parser 遇到当前 grammar 未登记、但包含活动内容的 section 
 - section 合法
 - Rule type 属于当前官方 Rule Type
 - Logical Rule 递归合法
-- Module policy 仅使用当前官方资料或当前 Surge App 运行时已直接验证的内建值；未知/用户 policy group 不作为活动 Rule
+- Module `[Rule]` policy 仅允许 Surge Module Manual 明确列出的 `DIRECT / REJECT / REJECT-TINYGIF`；完整 Profile 的其他 built-in policy 与未知/用户 policy group 都不得作为活动 Module Rule
 - 外部 policy 不作为活动 Module Rule
 - URL/Header/Body/Map Local/Script 参数合法
 - WayX 去广告转换输出中的活动 Script declaration 必须显式声明 type，且 Adblock-scope validator 不接受调度/事件/generic Script 类型；仓库中与本转换器无关的人工 Surge Module 仍按 Surge 自身合法类型校验，不受此范围限制

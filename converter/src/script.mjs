@@ -24,6 +24,18 @@ export function selectQxScriptAction({phase,requiresBody=false,sourceText=''}) {
 
   const signals=scriptBehaviorSignals(sourceText);
 
+  // A request-phase Loon script can either mutate the outgoing request or
+  // synthesize an immediate HTTP response. QX uses different rewrite actions
+  // for those behaviors, so do not guess when source inspection is unavailable.
+  if(p==='request' && !signals.sourceAvailable) {
+    return {
+      action:null,
+      reason:'request-phase source inspection is unavailable; cannot distinguish request mutation from synthetic response',
+      override:false,
+      signals,
+    };
+  }
+
   if(p==='request') {
     if(signals.returnsHttpResponse) {
       const waitsForBody=Boolean(requiresBody || signals.readsRequestBody);
@@ -58,8 +70,3 @@ export function selectQxScriptAction({phase,requiresBody=false,sourceText=''}) {
   };
 }
 
-export function hasExplicitQxRejection(sourceText){
-  const s=String(sourceText||'');
-  return /quantumult\s*x[^\n]{0,120}(?:not\s+support|unsupported|not\s+supported)/i.test(s) ||
-    /(?:not\s+support|unsupported|not\s+supported)[^\n]{0,120}quantumult\s*x/i.test(s);
-}

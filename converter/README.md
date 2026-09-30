@@ -8,8 +8,9 @@ WayX 的 Loon Plugin → Quantumult X / Surge 通用转换器。核心原则是*
 - Source Plugin、Source Script、JQ/mock dependency 只使用原始来源；不使用镜像/fallback 替代。
 - Source JavaScript 不改写、不 wrapper、不 fork。
 - QX 只输出项目已确认支持的 snippet 语法；`filter_local / rewrite_local / mitm` 段名保持注释。
+- QX filter/rewrite 的源注释统一覆盖 `[Rule]` / `[Rewrite]` / `[Script]` 来源；仅在严格“一条源注释 → 一条源声明 → 一条活动目标规则”时转换为 `{# note #} rule`；分组注释、多行注释和转换说明继续使用普通 `#`。
 - Surge 使用合法 sgmodule section/metadata。
-- QX Rule 中 Loon Plugin 的 `PROXY` 保留为字面 `PROXY` policy，不改成内建 `proxy`。
+- Loon Plugin 的 `PROXY` 不做策略转换：QX 保留字面 `PROXY`；Surge Module 只注释保留源 Rule，不伪造外部 policy。
 - Loon `[Argument]` **不转换为 QX 参数或 BoxJs**；QX 只用它做依赖分析。BoxJs 是独立功能，不属于 Loon Plugin 自动转换链。
 - Surge Module 将 Loon `[Argument]` 转成官方 `#!arguments / #!arguments-desc`，执行项使用 `{{{name}}}` 占位符。
 - Loon PluginObject 在 Surge Script 中转换为 JSON 字符串 `argument=`；动态 timeout/debug 使用占位符，动态 enable 使用官方行级 `#!REQUIREMENT`。
@@ -21,13 +22,14 @@ WayX 的 Loon Plugin → Quantumult X / Surge 通用转换器。核心原则是*
 - Rewrite v2 使用 tokenizer/parser/AST 与 action registry。
 - 只有目标平台已确认能保持语义的 action 才自动转换。
 - JSON/JQ/body/header/mock/redirect 等按目标原生能力优先；无等价能力时才生成最小 helper。
-- QX 不支持的复杂 Rule/condition 不做扩大或删条件处理。
+- QX 官方 sample 未确认的 Rule Type（逻辑规则、端口类等）直接注释保留，不扩大/删条件，也不使用 Script fallback。
 
 ## Script
 
-- 只转换声明层。
-- Script v2 的 typed PluginObject、动态 enable/timeout/debug 等若无法保持语义，进入 Review。
-- Script compatibility 扫描只用于判断原脚本能否在目标运行时执行，不用于把 Loon 参数转换成 QX 配置。
+- Source Script 只转换声明层，QX/Surge 均直接引用原脚本 URL，不做 runtime compatibility gate。
+- 仅在 QX declaration 需要判定 header/body/echo action 类型时读取脚本正文辅助分类。
+- Script v2 的 typed PluginObject、动态 enable/timeout/debug 等若无法保持声明语义，进入 Review。
+- 通用 complex helper 只处理 Rewrite v2 多 action pipeline；单 action 需要脚本时走专用 semantic helper。
 
 ## 自动化
 

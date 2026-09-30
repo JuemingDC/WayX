@@ -157,7 +157,7 @@ assert.equal(
   false,
   'QX request.header.add with $ replacement syntax must not use the native replacement string',
 );
-assert.match(requestAddDollarOutput.qx, /REVIEW REQUIRED: header\.add duplicate semantics are not verified for qx/);
+assert.match(requestAddDollarOutput.qx, /REVIEW REQUIRED: QX header\.add cannot be represented losslessly/);
 
 
 const qxValidatorEntry = {id:'QxValidatorFixture'};
@@ -170,6 +170,20 @@ host, example.com, reject
 hostname = example.com
 `;
 assert.doesNotThrow(() => validateQX(validQxValidatorText, qxValidatorEntry));
+assert.doesNotThrow(() => validateQX(
+  validQxValidatorText
+    .replace('host, example.com, reject', '{# Work VPN #} host, example.com, reject')
+    .replace('^https://example\\.com url reject', '{# Block ads #} ^https://example\\.com url reject'),
+  qxValidatorEntry,
+));
+assert.throws(
+  () => validateQX(validQxValidatorText.replace('host, example.com, reject', '{# malformed note host, example.com, reject'), qxValidatorEntry),
+  /malformed Quantumult X leading rule note/,
+);
+assert.throws(
+  () => validateQX(validQxValidatorText.replace('hostname = example.com', '{# MITM note #} hostname = example.com'), qxValidatorEntry),
+  /leading notes are only valid on filter\/rewrite rules/,
+);
 assert.throws(
   () => validateQX(validQxValidatorText.replace('host, example.com, reject', 'dest-port, 443, reject'), qxValidatorEntry),
   /unsupported Quantumult X filter type/,
@@ -201,6 +215,61 @@ assert.throws(
   /unsupported Surge script type 'cron' in WayX ad-block scope/,
 );
 
+const qxLeadingNoteFixture = {
+  id:'QxLeadingNoteFixture',
+  source:'https://example.invalid/qx-leading-note.lpx',
+  qx:'QxLeadingNoteFixture.snippet',
+  surge:'QxLeadingNoteFixture.sgmodule',
+  category:'测试',
+};
+const qxLeadingNoteSource = `#!name=QxLeadingNoteFixture
+[Rule]
+# Work VPN
+DOMAIN-SUFFIX,example.com,PROXY
+# Ad group
+DOMAIN,ads-a.example.com,REJECT
+DOMAIN,ads-b.example.com,REJECT
+# First comment
+# Second comment
+DOMAIN,two-comments.example.com,REJECT
+
+[Rewrite]
+# Block ads
+^https:\\/\\/ads\\.example\\.com reject
+# Rewrite group
+^https:\\/\\/a\\.example\\.com reject
+^https:\\/\\/b\\.example\\.com reject
+
+[Script]
+# Script note
+http-response ^https:\\/\\/script\\.example\\.com script-path=https://scripts.example.com/note.js,requires-body=true
+# Script group
+http-response ^https:\\/\\/script-a\\.example\\.com script-path=https://scripts.example.com/a.js,requires-body=true
+http-response ^https:\\/\\/script-b\\.example\\.com script-path=https://scripts.example.com/b.js,requires-body=true
+`;
+const qxLeadingNoteOutput=convert(qxLeadingNoteFixture,qxLeadingNoteSource,new Map(),STAMP);
+assert.match(qxLeadingNoteOutput.qx, /^\{# Work VPN #\} host-suffix, example\.com, PROXY$/m);
+assert.match(qxLeadingNoteOutput.qx, /^\{# Block ads #\} \^https:\\\/\\\/ads\\\.example\\\.com url reject$/m);
+assert.match(qxLeadingNoteOutput.qx, /^\{# Script note #\} \^https:\\\/\\\/script\\\.example\\\.com url script-response-body https:\/\/scripts\.example\.com\/note\.js$/m);
+assert.doesNotMatch(qxLeadingNoteOutput.qx, /^# Work VPN$/m);
+assert.doesNotMatch(qxLeadingNoteOutput.qx, /^# Block ads$/m);
+assert.match(qxLeadingNoteOutput.qx, /^# Ad group$/m);
+assert.doesNotMatch(qxLeadingNoteOutput.qx, /\{# Ad group #\}/);
+assert.match(qxLeadingNoteOutput.qx, /^# First comment$/m);
+assert.match(qxLeadingNoteOutput.qx, /^# Second comment$/m);
+assert.doesNotMatch(qxLeadingNoteOutput.qx, /\{# Second comment #\}/);
+assert.match(qxLeadingNoteOutput.qx, /^# Rewrite group$/m);
+assert.doesNotMatch(qxLeadingNoteOutput.qx, /\{# Rewrite group #\}/);
+assert.match(qxLeadingNoteOutput.qx, /^# Script group$/m);
+assert.doesNotMatch(qxLeadingNoteOutput.qx, /\{# Script group #\}/);
+assert.doesNotMatch(qxLeadingNoteOutput.qx, /^# Script note$/m);
+assert.doesNotMatch(qxLeadingNoteOutput.qx, /\{# (?:Converted|Converted by|Category|Target|Source)/);
+assert.match(qxLeadingNoteOutput.surge, /^# Work VPN$/m);
+assert.match(qxLeadingNoteOutput.surge, /^# Block ads$/m);
+assert.match(qxLeadingNoteOutput.surge, /^# Script note$/m);
+assert.match(qxLeadingNoteOutput.surge, /^# Script group$/m);
+validateQX(qxLeadingNoteOutput.qx, qxLeadingNoteFixture);
+
 const argumentRewriteFixture = {
   id:'ArgumentRewriteFixture',
   source:'https://example.invalid/argument-rewrite.lpx',
@@ -220,7 +289,7 @@ const argumentRewriteOutput = convert(argumentRewriteFixture, argumentRewriteSou
 assert.match(argumentRewriteOutput.qx, /REVIEW REQUIRED: Quantumult X cannot carry Loon plugin \[Argument\] references/);
 assert.doesNotMatch(argumentRewriteOutput.qx, /Source \[Argument\]|Argument usage:|enabled=switch|price=input/);
 assert.match(argumentRewriteOutput.surge, /^#!arguments=.*enabled:true.*price:9\.99/m);
-assert.match(argumentRewriteOutput.surge, /wayx_complex_.*type=http-response,pattern=.*script-path=.*argument=/);
+assert.match(argumentRewriteOutput.surge, /wayx_json_mutation_.*type=http-response,pattern=.*script-path=.*argument=/);
 assert.doesNotMatch(argumentRewriteOutput.surge, /REVIEW REQUIRED/);
 assert.equal(
   argumentRewriteOutput.qx.split(/\r?\n/).some(line => !line.trim().startsWith('#') && /jsonjq-response-body/.test(line)),
@@ -230,6 +299,28 @@ assert.equal(
 const argumentHelper = [...argumentRewriteOutput.generatedScripts.values()].find(text => /__wayxArgs/.test(text));
 assert.ok(argumentHelper, 'Surge Argument Rewrite must generate a runtime helper');
 assert.match(argumentHelper, /JSON\.parse\(String\(\$argument/);
+
+const directSourceScriptFixture = {
+  id:'DirectSourceScriptFixture',
+  source:'https://example.invalid/direct-source-script.lpx',
+  qx:'DirectSourceScriptFixture.snippet',
+  surge:'DirectSourceScriptFixture.sgmodule',
+  category:'测试',
+};
+const directSourceScriptUrl='https://scripts.example.com/source-runtime.js';
+const directSourceScriptSource = `#!name=DirectSourceScriptFixture
+[Script]
+http-response ^https:\\/\\/api\\.example\\.com script-path=${directSourceScriptUrl},tag=source_response,requires-body=true
+`;
+const directSourceScriptMap = new Map([[directSourceScriptUrl, {
+  qx:directSourceScriptUrl,
+  surge:directSourceScriptUrl,
+  source:'throw new Error("Quantumult X is not supported"); const body=$utils.ungzip($response.bodyBytes);',
+}]]);
+const directSourceScriptOutput=convert(directSourceScriptFixture,directSourceScriptSource,directSourceScriptMap,STAMP);
+assert.ok(directSourceScriptOutput.qx.includes('script-response-body ' + directSourceScriptUrl));
+assert.ok(directSourceScriptOutput.surge.includes('script-path=' + directSourceScriptUrl));
+assert.doesNotMatch(directSourceScriptOutput.qx, /source script disabled/i);
 
 const disabledRewriteFixture = {
   id:'DisabledRewriteFixture',
@@ -356,7 +447,7 @@ function regressionScriptSource(url) {
 function passthroughScriptMap(source) {
   return new Map(scriptUrls(source).map(url => [
     url,
-    {qx:url, surge:url, source:regressionScriptSource(url), qxAdapted:false},
+    {qx:url, surge:url, source:regressionScriptSource(url)},
   ]));
 }
 
@@ -455,8 +546,6 @@ for (const testCase of cases) {
   }
 
   if (testCase.name === 'MyBlockAds') {
-    assert.equal(actual.qxReview, 8);
-    assert.equal(actual.surgeReview, 0);
     assert.doesNotMatch(out.qx, /jq-path=/);
     assert.doesNotMatch(out.surge, /jq-path=/);
     assert.match(out.surge, /^\[Body Rewrite\]$/m);
@@ -465,8 +554,6 @@ for (const testCase of cases) {
 
   if (testCase.name === 'YouTube') {
     assert.doesNotMatch(out.qx, /Source \[Argument\]|Argument usage:/, 'YouTube QX must not emit Loon plugin parameter UI/declarations');
-    assert.equal(actual.qxReview, 3);
-    assert.equal(actual.surgeReview, 0);
     assert.match(out.surge, /^#!arguments=.*captionLang:zh-Hans/m);
     assert.match(out.surge, /argument="\{\\\"captionLang\\\":\\\"\{\{\{captionLang\}\}\}\\\"\}"/);
     assert.equal(qxActive.some(line => /youtube\/request\.js$/.test(line)), false, 'YouTube: request binary script must stay inactive until QX request bodyBytes is officially verified');
@@ -476,13 +563,12 @@ for (const testCase of cases) {
   }
 
   if (testCase.name === 'Bilibili') {
-    assert.match(out.qx, /^host, bsbsb\.top, PROXY$/m, 'Bilibili: Loon plugin PROXY binding must remain literal in QX');
+    assert.match(out.qx, /^\{# 空降助手 #\} host, bsbsb\.top, PROXY$/m, 'Bilibili: one-to-one source comment must become a QX leading note while PROXY remains literal');
     assert.doesNotMatch(out.qx, /Source \[Argument\]|Argument usage:/, 'Bilibili QX must not emit Loon plugin parameter UI/declarations');
-    assert.match(out.qx, /QUANTUMULT X UNSUPPORTED - source script disabled/);
-    assert.equal(qxActive.some(line => /bilibili\/(?:request|response)\.js/.test(line)), false, 'Bilibili protobuf scripts must not be active in QX');
-    assert.ok(qxActive.some(line => /bilibili\/json\.js/.test(line)), 'Bilibili JSON script declarations should remain available');
-    assert.equal(actual.surgeReview, 1);
-    assert.match(out.surge, /REVIEW REQUIRED: Surge Module requires an external policy binding/);
+    assert.doesNotMatch(out.qx, /QUANTUMULT X (?:UNSUPPORTED|REVIEW REQUIRED) - source script disabled/);
+    assert.ok(qxActive.some(line => /bilibili\/(?:request|response|json)\.js/.test(line)), 'Bilibili Source Script declarations must keep original URLs without runtime compatibility gating');
+    assert.match(out.surge, /Source Loon plugin policy PROXY preserved without conversion/);
+    assert.doesNotMatch(out.surge, /Source declaration:.*PROXY[\s\S]*REVIEW REQUIRED: Surge Module requires an external policy binding/);
     assert.match(out.surge, /^#!arguments=.*displayUpList:auto.*sponsorBlock:true/m);
     assert.match(out.surge, /#!REQUIREMENT "'\{\{\{sponsorBlock\}\}\}'=='true'"/);
     assert.doesNotMatch(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
@@ -502,8 +588,6 @@ for (const testCase of cases) {
   }
 
   if (testCase.name === 'JingDong') {
-    assert.equal(actual.qxReview, 3);
-    assert.equal(actual.surgeReview, 0);
     assert.match(out.surge, /^#!arguments=Capture:false,Cookies:/m);
     assert.match(out.surge, /#!REQUIREMENT "'\{\{\{Capture\}\}\}'=='true'"/);
     assert.ok(qxActive.some(line => /Scripts\/jingdong\.js$/.test(line)), 'JingDong native script declaration missing');

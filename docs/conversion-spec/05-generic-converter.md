@@ -56,7 +56,7 @@ Descriptor 不得携带“此插件应该怎样转换”的语义开关。
 - `[Argument]`（QX 仅用于依赖分析；Surge 渲染为官方 Module `#!arguments` 参数表）；
 - `[MITM]`；
 - 引用的 JQ / mock file；
-- 引用的 Source JavaScript（只读，用于兼容性判断）。
+- 引用的 Source JavaScript（只读；不做 runtime compatibility 审查，仅在声明不足以判定 QX HTTP Script action 时辅助判断 header/body/echo 类型）。
 
 ## 5.3 固定处理流水线
 
@@ -73,8 +73,9 @@ normalize source
 → Script declaration converter
 → MITM converter
 → target planner
-   ├─ Quantumult X: native → verified helper script → commented Review
-   └─ Surge: native → verified helper script → commented Review
+   ├─ Rule: target native → unsupported type commented out（不走 Script fallback）
+   ├─ Quantumult X Rewrite/Mock: native → dedicated helper → multi-action complex helper → commented Review
+   └─ Surge Rewrite/Mock: native → dedicated helper → multi-action complex helper → commented Review
 → validator
 → source/target reconciliation
 → output
@@ -142,11 +143,14 @@ normalize source
    - 多 action Rewrite v2
    - 必须保持顺序和终止语义
 
-9. **Unknown**
-   - 先判断能否用目标官方脚本机制保持语义；
-   - 能保持则生成最小 helper；
+9. **Unknown Rewrite**
+   - 先判断目标原生格式能否严格保持语义；
+   - 原生不足时才考虑对应的专用 helper；
+   - 只有包含多个 action 的 pipeline 才进入通用 complex helper；
    - helper 仍无法保持时注释源声明并进入 Review；
    - 不静默猜测。
+
+Rule 不属于上述 fallback 链。QX 官方 sample 未确认的 Rule Type（例如逻辑规则、端口类等）直接保留为注释，不转换成 Script。
 
 ## 5.6 Target Planner
 
@@ -186,23 +190,19 @@ Surge 官方存在 `[Map Local]` 时，优先用其原生表达 status/body/head
 
 QX 若存在官方等价 `reject-dict/reject-array/reject-img/reject-200`，优先原生；否则仅在规范允许时生成最小 helper。
 
-## 5.8 Script 兼容性
+## 5.8 Source Script 检查范围
 
-Source JavaScript 的兼容性只能依据**脚本内容和声明本身**判断。
+Quantumult X 与 Surge **均不做 Source JavaScript runtime compatibility 审查**。Source Script 本体不因运行时 token、平台分支、作者、仓库或 URL 路径被启用/禁用。
 
-允许检查：
-- 是否显式拒绝 Quantumult X；
-- 是否使用 `$utils` / `$loon`；
-- 是否使用 `$task` / `$prefs` / `$notify`；
-- 是否使用 `$httpClient` / `$persistentStore`；
-- request / response / body / binary 行为。
+固定规则：
+- 目标声明直接保留并引用源插件中的原始 Script URL；
+- 不 wrapper、fork、prepend 或改写 Source JavaScript；
+- Script phase、`requires_body` 等声明已足以决定目标 action 时，不需要读取脚本正文；
+- 只有 QX HTTP Script action 在声明不足以区分 header/body/echo 时，允许读取原脚本正文观察 request/response body 与 `$done` 返回形态，目的仅是选择正确的 rewrite action；
+- 源码读取失败本身不构成“运行时兼容性” Review，也不允许切换到镜像 URL；但若 QX request-phase 因缺少源码仍无法区分 request mutation 与 synthetic response，则因 **action 类型无法确定** 进入 Review，禁止猜测；
+- 任何源码读取结果都不得用于修改 Source JavaScript 或把 Rule 转成 Script。
 
-禁止：
-- 通过 script URL 路径识别某个项目；
-- 为某个作者维护 compatibility whitelist；
-- 通过插件名强制选择 adapter。
-
-如果源码不可获得、且兼容性无法从声明证明，进入 Review，不假设兼容。
+兼容性是否由脚本作者自行跨平台处理，不属于 WayX converter 的判定职责。
 
 ## 5.9 Dependency Resolver
 
@@ -225,7 +225,7 @@ GitHub Action 的职责：
 
 1. 从 Source Catalog 获取待处理资源；
 2. **只从 descriptor 中的原作者 `source` URL 下载/更新源插件；Catalog 不允许 mirror/fallback 字段；**
-3. 对插件声明的 Source Script / JQ / mock dependency，**只访问声明或相对解析得到的原始 URL**；Source Script 仅临时读取用于兼容性判断，不复制到 WayX，不改写目标引用；
+3. 对插件声明的 Source Script / JQ / mock dependency，**只访问声明或相对解析得到的原始 URL**；Source Script 不做 runtime compatibility 审查，仅在 QX action 类型需要补充判定时临时读取，不复制到 WayX，不改写目标引用；
 4. 对每个资源调用**同一个 generic converter**；
 5. 运行 QX / Surge validator；
 6. 运行 source/target 对账；
@@ -240,7 +240,7 @@ Source Catalog 可以包含具体插件名和原作者 URL，因为它只是数�
 - Source Script：只请求插件声明中的 `script-path` / `script("...")` URL。
 - 相对 dependency：只按插件原始 URL 解析后直接请求。
 - 禁止第三方 GitHub 副本、第三方镜像、备用域名和 fallback 链；若原作者官方 `source` 本身就是 GitHub/GitHub Raw，则该 URL 属于原作者源，可直接使用。
-- 原源不可达：本轮失败并进入 Review，不切换副本。
+- Plugin/JQ/mock 等转换必需源不可达：本轮失败并进入 Review，不切换副本。Source Script 正文读取失败不因“兼容性未知”禁用原始 URL；若 declaration 已足以确定 action 则继续转换，若 QX request-phase action 仍有歧义则仅该 QX 声明 Review。
 - QX/Surge 中的 Source Script URL 必须继续指向源插件声明的 URL。
 - WayX 允许生成自己的 **helper script** 来补足目标平台缺失的 Rewrite/Mock 语义；这种 helper 是 converter 输出，不属于 Source Script 镜像。
 

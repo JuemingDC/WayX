@@ -16,25 +16,37 @@
 | `IP-ASN` | `ip-asn` | `IP-ASN` | 直接 |
 | `USER-AGENT` | `user-agent` | `USER-AGENT` | 直接 |
 | `URL-REGEX` | 不进普通 filter；按 Policy 映射到 QX rewrite | `URL-REGEX` | 分 Policy |
-| `SRC-PORT` | 官方 sample 未确认 → Review | `SRC-PORT` | Surge 直接 |
-| `DEST-PORT` | 官方 sample 未确认 → Review | `DEST-PORT` | Surge 直接 |
-| `PROTOCOL` | 官方 sample 未确认 → Review | `PROTOCOL` | Surge 直接 |
-| `SUBNET` | 官方 sample 未确认 → Review | `SUBNET` | Surge 直接 |
-| `CELLULAR-RADIO` | 官方 sample 未确认 → Review | `CELLULAR-RADIO` | Surge 直接 |
-| `CELLULAR-CARRIER` | 官方 sample 未确认 → Review | `CELLULAR-CARRIER` | Surge 直接 |
-| `HOSTNAME-TYPE` | 官方 sample 未确认 → Review | `HOSTNAME-TYPE` | Surge 直接 |
-| `SRC-IP` | 官方 sample 未确认 → Review | `SRC-IP` | Surge 直接 |
-| `IN-PORT` | 官方 sample 未确认 → Review | `IN-PORT` | Surge 直接 |
-| `DEVICE-NAME` | 官方 sample 未确认 → Review | `DEVICE-NAME` | Surge 直接 |
-| `MAC-ADDRESS` | 官方 sample 未确认 → Review | `MAC-ADDRESS` | Surge 直接 |
-| `PROCESS-NAME` | 官方 sample 未确认 → Review | `PROCESS-NAME` | Surge 直接，遵守平台限制 |
-| `AND` | 官方 sample 未确认 → Review | `AND` | Surge 直接 |
-| `OR` | 官方 sample 未确认 → Review | `OR` | Surge 直接 |
-| `NOT` | 官方 sample 未确认 → Review | `NOT` | Surge 直接 |
-| `SCRIPT` Rule | QX filter sample 未确认 → Review | `SCRIPT` | Surge 直接 |
-| `RULE-SET` | 不自动推断 | `RULE-SET` | QX Review |
-| `DOMAIN-SET` | 不自动推断 | `DOMAIN-SET` | QX Review |
+| `SRC-PORT` | 注释保留；不走 Script fallback | `SRC-PORT` | Surge 直接 |
+| `DEST-PORT` | 注释保留；不走 Script fallback | `DEST-PORT` | Surge 直接 |
+| `PROTOCOL` | 注释保留；不走 Script fallback | `PROTOCOL` | Surge 直接 |
+| `SUBNET` | 注释保留；不走 Script fallback | `SUBNET` | Surge 直接 |
+| `CELLULAR-RADIO` | 注释保留；不走 Script fallback | `CELLULAR-RADIO` | Surge 直接 |
+| `CELLULAR-CARRIER` | 注释保留；不走 Script fallback | `CELLULAR-CARRIER` | Surge 直接 |
+| `HOSTNAME-TYPE` | 注释保留；不走 Script fallback | `HOSTNAME-TYPE` | Surge 直接 |
+| `SRC-IP` | 注释保留；不走 Script fallback | `SRC-IP` | Surge 直接 |
+| `IN-PORT` | 注释保留；不走 Script fallback | `IN-PORT` | Surge 直接 |
+| `DEVICE-NAME` | 注释保留；不走 Script fallback | `DEVICE-NAME` | Surge 直接 |
+| `MAC-ADDRESS` | 注释保留；不走 Script fallback | `MAC-ADDRESS` | Surge 直接 |
+| `PROCESS-NAME` | 注释保留；不走 Script fallback | `PROCESS-NAME` | Surge 直接，遵守平台限制 |
+| `AND` | 注释保留；不走 Script fallback | `AND` | Surge 直接 |
+| `OR` | 注释保留；不走 Script fallback | `OR` | Surge 直接 |
+| `NOT` | 注释保留；不走 Script fallback | `NOT` | Surge 直接 |
+| `SCRIPT` Rule | 注释保留；不走 Script fallback | `SCRIPT` | Surge 直接 |
+| `RULE-SET` | 注释保留；不自动推断、不走 Script fallback | `RULE-SET` | QX 注释 / Surge 直接 |
+| `DOMAIN-SET` | 注释保留；不自动推断、不走 Script fallback | `DOMAIN-SET` | QX 注释 / Surge 直接 |
 | `FINAL` | `final` 仅完整规则配置场景 | **丢弃** | WayX 去广告 Module 不改写用户全局 catch-all |
+
+### Quantumult X 不支持 Rule 的固定处理
+
+Quantumult X Rule/Filter 只输出用户提供的 Crossutility 官方 sample 已确认的类型。逻辑规则、端口类规则及其他 sample 未确认的 Loon Rule Type：
+
+- 保留原注释；
+- 将原 Rule 声明作为注释保留；
+- 不输出活动 QX filter；
+- 不尝试用 HTTP Rewrite Script、helper 或 complex helper 模拟 Rule 层匹配；
+- 不扩大或拆解源 Rule 条件。
+
+Rule 与 Rewrite 的 fallback 链严格分离：**只有 Rewrite/Mock 在目标原生语法不足时才允许考虑脚本。**
 
 ### FINAL 项目规则
 
@@ -51,12 +63,12 @@ Loon `[Rule]` 中的 `URL-REGEX` 不能作为 Quantumult X 普通 `filter_local`
 | `URL-REGEX,REGEX,REJECT-IMG` | `REGEX url reject-img` | `[Rule] URL-REGEX,REGEX,REJECT-TINYGIF` |
 | `URL-REGEX,REGEX,REJECT-DICT` | `REGEX url reject-dict` | `[Map Local] REGEX data-type=text data="{}" status-code=200 header="Content-Type:application/json"` |
 | `URL-REGEX,REGEX,REJECT-ARRAY` | `REGEX url reject-array` | `[Map Local] REGEX data-type=text data="[]" status-code=200 header="Content-Type:application/json"` |
-| `URL-REGEX,REGEX,REJECT-DROP` | `REGEX url reject` | `[Rule] URL-REGEX,REGEX,REJECT-DROP` |
+| `URL-REGEX,REGEX,REJECT-DROP` | `REGEX url reject` | 注释保留；Surge Module `[Rule]` 官方不允许 `REJECT-DROP` |
 
 关键约束：
 - `URL-REGEX + REJECT` 在 QX 固定为 `reject-200`，这是 WayX 对 Loon Rule 语义的项目映射。
 - `REJECT-IMG / REJECT-DICT / REJECT-ARRAY` 不得统一降级成普通 `reject`。
-- Surge 能用原生 Rule policy 表达时保留 Rule；需要具体 HTTP body 的 `REJECT-200/DICT/ARRAY` 降到官方 `[Map Local]`，不能伪装成普通 Rule reject。
+- Surge Module 只有 `DIRECT / REJECT / REJECT-TINYGIF` 可作为活动 `[Rule]` policy。需要具体 HTTP body 的 `REJECT-200/DICT/ARRAY` 降到官方 `[Map Local]`；`REJECT-DROP / REJECT-NO-DROP / CELLULAR / CELLULAR-ONLY / HYBRID / NO-HYBRID` 虽属于完整 Surge Profile 的内建 policy，但公开 Module Manual 未允许它们作为 Module Rule policy，因此源声明只注释保留，不做近似替换。
 - 本节只处理 Loon `[Rule]`。Loon 旧 `[Rewrite]` 的 reject 映射见 Block 30。
 
 ## 20.3 QX IP 参数
@@ -87,22 +99,22 @@ NOT,((Rule1)),Policy
 |---|---|---|
 | `DIRECT` | `direct` | `DIRECT` |
 | `REJECT` | `reject` | `REJECT` |
-| `PROXY` | `PROXY`（保留为外部 policy 绑定，不映射为内建 `proxy`） | 不假设用户存在 PROXY 组 → Review |
+| `PROXY` | `PROXY`（原样保留，不映射为内建 `proxy`） | 不做策略转换；源声明注释保留，不能作为活动 Module Rule |
 | `REJECT-IMG` | URL 场景 → `reject-img` | `REJECT-TINYGIF` |
-| `REJECT-DROP` | 项目约定 → `reject` | `REJECT-DROP`（当前 App Module 运行时已验证） |
-| `REJECT-NO-DROP` | `reject`（QX 不存在 Surge 自动升级机制） | `REJECT-NO-DROP`（当前 App Module 运行时已验证） |
-| `CELLULAR` | Review | `CELLULAR`（当前 App Module 运行时已验证） |
-| `CELLULAR-ONLY` | Review | `CELLULAR-ONLY`（当前 App Module 运行时已验证） |
-| `HYBRID` | Review | `HYBRID`（当前 App Module 运行时已验证） |
-| `NO-HYBRID` | Review | `NO-HYBRID`（当前 App Module 运行时已验证） |
+| `REJECT-DROP` | 项目约定 → `reject` | 注释保留；Module Rule 官方未允许 |
+| `REJECT-NO-DROP` | `reject`（QX 不存在 Surge 自动升级机制） | 注释保留；Module Rule 官方未允许 |
+| `CELLULAR` | Review | 注释保留；Module Rule 官方未允许 |
+| `CELLULAR-ONLY` | Review | 注释保留；Module Rule 官方未允许 |
+| `HYBRID` | Review | 注释保留；Module Rule 官方未允许 |
+| `NO-HYBRID` | Review | 注释保留；Module Rule 官方未允许 |
 | `REJECT-TINYGIF` | URL 场景 → `reject-img` | `REJECT-TINYGIF` |
 | 用户策略组 | 只有明确存在对应 QX policy 时可执行 | Module 不允许假设 → Review |
 
-公开 Surge Module Manual 当前仍列出较窄的 policy 范围；但当前 Surge App 的模块 Rule 编辑器/运行时已直接验证 `REJECT-DROP / REJECT-NO-DROP / CELLULAR / CELLULAR-ONLY / HYBRID / NO-HYBRID` 可作为 Module Rule 内建 policy 使用。WayX 对这组**运行时已验证的内建值**原样保留，绝不降级为其他 policy。
+Surge 完整 Profile 的 built-in policy 集合比 Module Rule 更大，但 Module Manual 对模块 `[Rule]` 有额外限制：活动规则只允许 `DIRECT / REJECT / REJECT-TINYGIF`。WayX 不把完整 Profile 能力外推到 `.sgmodule`；未被 Module Manual 允许的 built-in policy 只注释保留。
 
-Loon 插件 [Rule] 中的 `PROXY` 具有插件策略选择语义：Loon 官方定义其为“由用户选择策略组”的保留策略，而不是普通的固定内建 `proxy`。Quantumult X snippet 没有与 Loon 插件策略选择器同构的参数界面，因此转换到 QX 时必须保留字面 `PROXY` 作为外部 policy 名称；不得静默降为 QX 内建小写 `proxy`。该输出仍属于 Review/用户绑定：用户需要在 QX 中提供名为 `PROXY` 的对应策略，或在导入层显式绑定目标策略。
+Loon 插件 [Rule] 中的 `PROXY` 具有插件内部策略选择语义，不转换成其他 policy。Quantumult X 保留字面 `PROXY`，不得静默降为内建小写 `proxy`。
 
-用户自定义策略组（例如源中的 `PROXY`）仍不得假定存在，必须 Review/绑定提示。
+Surge Module 官方限制活动 Rule 只能使用 Module 可用的内部策略，且 Module 不能定义用户的 `[Proxy]` / `[Proxy Group]`。因此源 `PROXY` Rule 在 Surge 目标中**不做策略映射**：保留原声明为注释，不能把 `PROXY`、`DIRECT` 或其他策略作为“近似替代”。其他自定义外部 policy/group 同样不得伪装成内建 policy。
 
 **Rule Type 的支持范围和 policy 的可用范围必须分开判断。**
 

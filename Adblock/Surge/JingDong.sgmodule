@@ -8,14 +8,15 @@
 # Icon: https://rucu6.pages.dev/Icons/app/jingdong.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-09-30 16:17:48 +08:00
+# Converted: 2026-09-30 18:31:30 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/jingdong.lpx
 # Target: Surge
 
 [Rule]
-AND,((DOMAIN,api.m.jd.com),(PROTOCOL,TCP)),REJECT-NO-DROP
+# [WayX] Surge Module unsupported Rule policy REJECT-NO-DROP commented out; Module Rule supports only DIRECT/REJECT/REJECT-TINYGIF.
+# Source declaration: AND, ((DOMAIN, api.m.jd.com), (PROTOCOL, TCP)), REJECT-NO-DROP
 
 [Body Rewrite]
 http-response-jq ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=basicConfig 'setpath(["data","JDMessage","socketmonitor","isSocketEstablishedAhead"]; 0) | setpath(["data","JDMessage","socketmonitor","isSocketReport"]; 0) | setpath(["data","JDHttpToolKit","httpdns","httpdns"]; 0)'

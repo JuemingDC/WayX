@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/bilibili.png
 # Updated: 2026-09-22 22:55
 
-# Converted: 2026-09-30 16:17:47 +08:00
+# Converted: 2026-09-30 18:31:30 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/bilibili.lpx
@@ -13,11 +13,10 @@
 # [WayX] Policy binding: source PROXY is preserved as literal QX policy name PROXY; a matching target policy must exist.
 
 # [filter_local]
-# 空降助手
-host, bsbsb.top, PROXY
+{# 空降助手 #} host, bsbsb.top, PROXY
 
 # 禁用STUN & P2P
-# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent
+# [WayX] Quantumult X unsupported Rule type commented out; Rule conversion does not use Script fallback
 # Source declaration: AND, ((DOMAIN-SUFFIX, chat.bilibili.com), (OR, ((DOMAIN-KEYWORD, stun), (DOMAIN-KEYWORD, tracker), (DOMAIN-KEYWORD, p2p)))), REJECT
 
 # 垃圾CDN
@@ -30,13 +29,13 @@ host, app.biliapi.com, reject
 host, app.biliapi.net, reject
 
 # p2p
-# [WayX] REVIEW REQUIRED: Quantumult X Rule type DEST-PORT is not verified and has no lossless script equivalent
+# [WayX] Quantumult X unsupported Rule type DEST-PORT commented out; Rule conversion does not use Script fallback
 # Source declaration: DEST-PORT, 4480, REJECT-NO-DROP
-# [WayX] REVIEW REQUIRED: Quantumult X Rule type DEST-PORT is not verified and has no lossless script equivalent
+# [WayX] Quantumult X unsupported Rule type DEST-PORT commented out; Rule conversion does not use Script fallback
 # Source declaration: DEST-PORT, 4483, REJECT-NO-DROP
-# [WayX] REVIEW REQUIRED: Quantumult X Rule type DEST-PORT is not verified and has no lossless script equivalent
+# [WayX] Quantumult X unsupported Rule type DEST-PORT commented out; Rule conversion does not use Script fallback
 # Source declaration: DEST-PORT, 8082, REJECT-NO-DROP
-# [WayX] REVIEW REQUIRED: Quantumult X Rule type DEST-PORT is not verified and has no lossless script equivalent
+# [WayX] Quantumult X unsupported Rule type DEST-PORT commented out; Rule conversion does not use Script fallback
 # Source declaration: DEST-PORT, 9102, REJECT-NO-DROP
 
 # 开屏广告
@@ -49,8 +48,7 @@ host, app.biliapi.net, reject
 ^https:\/\/api\.bilibili\.com\/pgc\/page\/channel\? url jsonjq-response-body '.data.modules |= map(select(.type != "TIP") | if .type == "BANNER" then .module_data.items |= map(select(.url | startswith("https://www.bilibili.com/blackboard/era/") | not)) else . end)'
 ^https:\/\/api\.bilibili\.com\/pgc\/view\/v2\/app\/season\? url jsonjq-response-body 'del(.data.payment)'
 
-# 直播间
-^https:\/\/api\.live\.bilibili\.com\/xlive\/(?:app-interface\/v2\/index\/feed|app-room\/v1\/index\/getInfoBy(?:Room|User))\? url jsonjq-response-body '.data |= (del(.play_together_info, .play_together_info_v2, .activity_banner_info) | if .function_card then .function_card[] = null end | if .new_tab_info.outer_list then .new_tab_info.outer_list |= map(select(.biz_id != 33)) end | if .card_list then .card_list |= map(select(.card_type | IN("banner_v2", "activity_card_v1") | not)) end | reduce ([["show_reserve_status"], false], [["reserve_info", "show_reserve_status"], false], [["shopping_info", "is_show"], 0]) as [$path, $value] (.; if getpath($path) then setpath($path; $value) end))'
+{# 直播间 #} ^https:\/\/api\.live\.bilibili\.com\/xlive\/(?:app-interface\/v2\/index\/feed|app-room\/v1\/index\/getInfoBy(?:Room|User))\? url jsonjq-response-body '.data |= (del(.play_together_info, .play_together_info_v2, .activity_banner_info) | if .function_card then .function_card[] = null end | if .new_tab_info.outer_list then .new_tab_info.outer_list |= map(select(.biz_id != 33)) end | if .card_list then .card_list |= map(select(.card_type | IN("banner_v2", "activity_card_v1") | not)) end | reduce ([["show_reserve_status"], false], [["reserve_info", "show_reserve_status"], false], [["shopping_info", "is_show"], 0]) as [$path, $value] (.; if getpath($path) then setpath($path; $value) end))'
 
 # 开屏广告
 ^https:\/\/app\.bilibili\.com\/x\/resource\/peak\/download url reject-dict
@@ -58,14 +56,11 @@ host, app.biliapi.net, reject
 #response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/splash\/list\?/i then response.body.mock("text", "OK", 200)
 #response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/splash\/(show|event\/list2)\?/i then response.json.jq(".data |= with_entries(if .key | IN(\"show\", \"event_list\") then .value = [] else . end)")
 
-# 屏蔽STUN
-^https:\/\/api\.bilibili\.com\/x\/pd-proxy\/tracker\? url jsonjq-response-body '.data[][]?="stun.chat.bilibili.com:3478"'
+{# 屏蔽STUN #} ^https:\/\/api\.bilibili\.com\/x\/pd-proxy\/tracker\? url jsonjq-response-body '.data[][]?="stun.chat.bilibili.com:3478"'
 
-# 满意度调研
-^https:\/\/api\.bilibili\.com\/x\/v2\/dm\/qoe\/show\? url reject-dict
+{# 满意度调研 #} ^https:\/\/api\.bilibili\.com\/x\/v2\/dm\/qoe\/show\? url reject-dict
 
-# 大会员广告
-^https:\/\/api\.bilibili\.com\/x\/vip\/ads\/materials\? url reject-dict
+{# 大会员广告 #} ^https:\/\/api\.bilibili\.com\/x\/vip\/ads\/materials\? url reject-dict
 
 # 直播广告
 ^https:\/\/api\.live\.bilibili\.com\/xlive\/e-commerce-interface\/v1\/ecommerce-user\/get_shopping_info\? url reject-dict
@@ -75,108 +70,72 @@ host, app.biliapi.net, reject
 ^https:\/\/api\.bilibili\.com\/x\/web-interface\/zone\?jsonp url reject-dict
 ^https:\/\/app\.bilibili\.com\/x\/resource\/ip url reject-dict
 
-# 首页标签栏热更新
-^https:\/\/app\.bilibili\.com\/x\/resource\/patch\/tab(\/v2)?\? url reject-dict
+{# 首页标签栏热更新 #} ^https:\/\/app\.bilibili\.com\/x\/resource\/patch\/tab(\/v2)?\? url reject-dict
 
-# 移除皮肤推送
-^https:\/\/app\.bilibili\.com\/x\/resource\/show\/skin\? url jsonjq-response-body 'delpaths([["data","common_equip"]])'
+{# 移除皮肤推送 #} ^https:\/\/app\.bilibili\.com\/x\/resource\/show\/skin\? url jsonjq-response-body 'delpaths([["data","common_equip"]])'
 
-# 移除右上角活动入口
-^https:\/\/app\.bilibili\.com\/x\/resource\/top\/activity\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/mock_32839594a9.js
+{# 移除右上角活动入口 #} ^https:\/\/app\.bilibili\.com\/x\/resource\/top\/activity\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/mock_32839594a9.js
 
-# 搜索框填充词
-^https:\/\/app\.bilibili\.com\/x\/v2\/search\/square\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/mock_b40b3a44d3.js
+{# 搜索框填充词 #} ^https:\/\/app\.bilibili\.com\/x\/v2\/search\/square\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/mock_b40b3a44d3.js
 
-# 屏蔽默认搜索框关键词
-^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.interface\.v1\.Search\/DefaultWords$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/mock_fbdd48ab53.js
+{# 屏蔽默认搜索框关键词 #} ^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.interface\.v1\.Search\/DefaultWords$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/mock_fbdd48ab53.js
 
-# 青少年模式
-^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.interface\.v1\.Teenagers\/ModeStatus$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/mock_47c3f75a2a.js
+{# 青少年模式 #} ^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.interface\.v1\.Teenagers\/ModeStatus$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/mock_47c3f75a2a.js
 
-# 视频暂停广告
-^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.(?:view\.v1\.View\/TFInfo|viewunite\.v1\.View\/(?:PlayPause|ViewEndPage))$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/mock_70cda67371.js
+{# 视频暂停广告 #} ^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.(?:view\.v1\.View\/TFInfo|viewunite\.v1\.View\/(?:PlayPause|ViewEndPage))$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/mock_70cda67371.js
 
-# 移除直播间链接跟踪参数
-(^https:\/\/live\.bilibili\.com\/\d+)(?:\/?\?.*) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/redirect_59da899133.js
+{# 移除直播间链接跟踪参数 #} (^https:\/\/live\.bilibili\.com\/\d+)(?:\/?\?.*) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/redirect_59da899133.js
 
-# 移除直播间游戏推广
-^https:\/\/line3-h5-mobile-api\.biligame\.com\/game\/live\/large_card_material\? url reject-dict
+{# 移除直播间游戏推广 #} ^https:\/\/line3-h5-mobile-api\.biligame\.com\/game\/live\/large_card_material\? url reject-dict
 
-# 移除视频链接跟踪参数
-(^https:\/\/(?:www|m)\.bilibili\.com\/video\/(?:BV\w{10}|av\d{9}))(?:\/?\?.*) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/redirect_089914b029.js
+{# 移除视频链接跟踪参数 #} (^https:\/\/(?:www|m)\.bilibili\.com\/video\/(?:BV\w{10}|av\d{9}))(?:\/?\?.*) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/redirect_089914b029.js
 
-# 哔哩哔哩漫画 开屏 && 底栏广告
-^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v1\.Comic\/(?:Flash|ListFlash|GetActivityTab|GetBubbles) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/mock_72464b6f06.js
+{# 哔哩哔哩漫画 开屏 && 底栏广告 #} ^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v1\.Comic\/(?:Flash|ListFlash|GetActivityTab|GetBubbles) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/mock_72464b6f06.js
 
-# 哔哩哔哩漫画 广告
-^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v1\.(?:Comic\/AppInit|Home\/HomeFeed)\? url jsonjq-response-body '.data as $data | .data[("activity_tab", "flash", "operate") | select($data[.])]=null | if .data.feeds then .data.feeds |= map(select(.type | IN(15, 30) | not)) end'
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/bilibili/request.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
+{# 哔哩哔哩漫画 广告 #} ^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v1\.(?:Comic\/AppInit|Home\/HomeFeed)\? url jsonjq-response-body '.data as $data | .data[("activity_tab", "flash", "operate") | select($data[.])]=null | if .data.feeds then .data.feeds |= map(select(.type | IN(15, 30) | not)) end'
+# [WayX] SCRIPT V2 REVIEW REQUIRED: dynamic enable cannot be carried by Quantumult X rewrite declaration without changing the script
 # Source declaration: request if ${url} ~= /^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.community\.service\.dm\.v1\.DM\/DmSegMobile$/i then script("https://rucu6.pages.dev/Scripts/bilibili/request.js") with enable=${sponsorBlock}, tag="移除视频内插播广告", requires_body=true, binary_body_mode=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/bilibili/request.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
+# [WayX] SCRIPT V2 REVIEW REQUIRED: dynamic enable cannot be carried by Quantumult X rewrite declaration without changing the script
 # Source declaration: request if ${url} ~= /^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.main\.community\.reply\.v1\.Reply\/MainList$/i then script("https://rucu6.pages.dev/Scripts/bilibili/request.js", {${purifyComment}}) with enable=${optimizeRequest}, tag="移除评论区广告", requires_body=true, binary_body_mode=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/bilibili/response.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
+# [WayX] SCRIPT V2 REVIEW REQUIRED: Loon Script v2 $argument cannot be carried by the official Quantumult X rewrite declaration without changing the script
 # Source declaration: response if ${url} ~= /^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.app\.dynamic\.v2\.Dynamic\/DynAll$/i then script("https://rucu6.pages.dev/Scripts/bilibili/response.js", {${displayUpList}}) with tag="移除动态页面广告", requires_body=true, binary_body_mode=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/bilibili/response.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.app\.show\.v1\.Popular\/Index$/i then script("https://rucu6.pages.dev/Scripts/bilibili/response.js") with tag="移除热门话题", requires_body=true, binary_body_mode=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/bilibili/response.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.app\.playurl\.v1\.PlayURL\/PlayView$/i then script("https://rucu6.pages.dev/Scripts/bilibili/response.js") with tag="移除播放页面广告 playview", requires_body=true, binary_body_mode=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/bilibili/response.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.app\.playerunite\.v1\.Player\/PlayViewUnite$/i then script("https://rucu6.pages.dev/Scripts/bilibili/response.js") with tag="移除播放页面广告 playerunite", requires_body=true, binary_body_mode=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/bilibili/response.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.app\.view\.v1\.View\/(?:View|ViewProgress)$/i then script("https://rucu6.pages.dev/Scripts/bilibili/response.js") with tag="移除播放页面广告 view", requires_body=true, binary_body_mode=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/bilibili/response.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.app\.viewunite\.v1\.View\/(?:AIRelateAsync|RelatesFeed|View|ViewProgress)$/i then script("https://rucu6.pages.dev/Scripts/bilibili/response.js") with tag="移除播放页面广告 viewunite", requires_body=true, binary_body_mode=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/bilibili/response.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.community\.service\.dm\.v1\.DM\/DmView$/i then script("https://rucu6.pages.dev/Scripts/bilibili/response.js") with tag="移除交互式弹幕", requires_body=true, binary_body_mode=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/bilibili/response.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.pgc\.gateway\.player\.v2\.PlayURL\/PlayView$/i then script("https://rucu6.pages.dev/Scripts/bilibili/response.js") with tag="移除播放器开通会员横幅", requires_body=true, binary_body_mode=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/bilibili/response.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.polymer\.app\.search\.v1\.Search\/SearchAll$/i then script("https://rucu6.pages.dev/Scripts/bilibili/response.js") with tag="移除搜索结果广告", requires_body=true, binary_body_mode=true
+# 移除热门话题
+# [WayX] Source binary_body_mode=true; script source is preserved unchanged.
+^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.app\.show\.v1\.Popular\/Index$ url script-response-body https://rucu6.pages.dev/Scripts/bilibili/response.js
+# 移除播放页面广告 playview
+# [WayX] Source binary_body_mode=true; script source is preserved unchanged.
+^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.app\.playurl\.v1\.PlayURL\/PlayView$ url script-response-body https://rucu6.pages.dev/Scripts/bilibili/response.js
+# 移除播放页面广告 playerunite
+# [WayX] Source binary_body_mode=true; script source is preserved unchanged.
+^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.app\.playerunite\.v1\.Player\/PlayViewUnite$ url script-response-body https://rucu6.pages.dev/Scripts/bilibili/response.js
+# 移除播放页面广告 view
+# [WayX] Source binary_body_mode=true; script source is preserved unchanged.
+^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.app\.view\.v1\.View\/(?:View|ViewProgress)$ url script-response-body https://rucu6.pages.dev/Scripts/bilibili/response.js
+# 移除播放页面广告 viewunite
+# [WayX] Source binary_body_mode=true; script source is preserved unchanged.
+^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.app\.viewunite\.v1\.View\/(?:AIRelateAsync|RelatesFeed|View|ViewProgress)$ url script-response-body https://rucu6.pages.dev/Scripts/bilibili/response.js
+# 移除交互式弹幕
+# [WayX] Source binary_body_mode=true; script source is preserved unchanged.
+^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.community\.service\.dm\.v1\.DM\/DmView$ url script-response-body https://rucu6.pages.dev/Scripts/bilibili/response.js
+# 移除播放器开通会员横幅
+# [WayX] Source binary_body_mode=true; script source is preserved unchanged.
+^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.pgc\.gateway\.player\.v2\.PlayURL\/PlayView$ url script-response-body https://rucu6.pages.dev/Scripts/bilibili/response.js
+# 移除搜索结果广告
+# [WayX] Source binary_body_mode=true; script source is preserved unchanged.
+^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.polymer\.app\.search\.v1\.Search\/SearchAll$ url script-response-body https://rucu6.pages.dev/Scripts/bilibili/response.js
 
 # 以上为 Proto 处理, 以下为 JSON 处理
 
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/bilibili/json.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/api\.bilibili\.com\/pgc\/page\/(?:bangumi|cinema\/tab)/i then script("https://rucu6.pages.dev/Scripts/bilibili/json.js") with tag="移除观影页广告", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/bilibili/json.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/splash/i then script("https://rucu6.pages.dev/Scripts/bilibili/json.js") with tag="移除开屏广告", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/bilibili/json.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/resource\/show\/tab\/v2\?/i then script("https://rucu6.pages.dev/Scripts/bilibili/json.js") with tag="精简首页顶部标签", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/bilibili/json.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/account\/mine/i then script("https://rucu6.pages.dev/Scripts/bilibili/json.js") with tag="精简我的页面", requires_body=true
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/bilibili/json.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index/i then script("https://rucu6.pages.dev/Scripts/bilibili/json.js") with tag="移除首页推荐广告", requires_body=true
+# 移除观影页广告
+^https:\/\/api\.bilibili\.com\/pgc\/page\/(?:bangumi|cinema\/tab) url script-response-body https://rucu6.pages.dev/Scripts/bilibili/json.js
+# 移除开屏广告
+^https:\/\/app\.bilibili\.com\/x\/v2\/splash url script-response-body https://rucu6.pages.dev/Scripts/bilibili/json.js
+# 精简首页顶部标签
+^https:\/\/app\.bilibili\.com\/x\/resource\/show\/tab\/v2\? url script-response-body https://rucu6.pages.dev/Scripts/bilibili/json.js
+# 精简我的页面
+^https:\/\/app\.bilibili\.com\/x\/v2\/account\/mine url script-response-body https://rucu6.pages.dev/Scripts/bilibili/json.js
+# 移除首页推荐广告
+^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index url script-response-body https://rucu6.pages.dev/Scripts/bilibili/json.js
 
 # [mitm]
 hostname = *live.bilibili.com, *api.biligame.com, ap?.bilibili.com, grpc.biliapi.net, m.bilibili.com, manga.bilibili.com, www.bilibili.com

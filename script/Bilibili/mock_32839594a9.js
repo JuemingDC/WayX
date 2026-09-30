@@ -1,4 +1,4 @@
-// Converted: 2026-09-30 16:17:47 +08:00
+// Converted: 2026-09-30 18:31:30 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/resource\/top\/activity\?/i then response.body.mock("text", "{\"code\":-404,\"message\":\"啥都木有\",\"ttl\":1,\"data\":null}", 200)

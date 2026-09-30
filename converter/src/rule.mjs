@@ -105,12 +105,11 @@ export const SURGE_RULE_TYPES = new Set([
   'SCRIPT', 'RULE-SET', 'FINAL',
 ]);
 
-// Current Surge app runtime accepts these built-in policies in module Rule UI.
-// The public Module manual still documents only DIRECT/REJECT/REJECT-TINYGIF;
-// keep the broader runtime set explicit instead of silently collapsing behavior.
+// Surge Module Manual explicitly restricts [Rule] lines to these
+// internal policies. Other built-in profile policies may exist in a full
+// profile, but they are not emitted as active Module Rule policies.
 export const SURGE_MODULE_POLICIES = new Set([
-  'DIRECT', 'REJECT', 'REJECT-TINYGIF', 'REJECT-DROP', 'REJECT-NO-DROP',
-  'CELLULAR', 'CELLULAR-ONLY', 'HYBRID', 'NO-HYBRID',
+  'DIRECT', 'REJECT', 'REJECT-TINYGIF',
 ]);
 
 export const SURGE_PROFILE_BUILTIN_POLICIES = new Set([
@@ -172,7 +171,7 @@ export function surgeRuleTypesInTree(line, {subrule = false} = {}) {
 export function qxRule(line) {
   const source = String(line).trim();
   if (/^(AND|OR|NOT)\s*,/i.test(source)) {
-    return {kind:'comment', line:`# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent\n# Source declaration: ${source}`, reason:'logical-rule'};
+    return {kind:'comment', line:`# [WayX] Quantumult X unsupported Rule type commented out; Rule conversion does not use Script fallback\n# Source declaration: ${source}`, reason:'unsupported-qx-rule-comment'};
   }
 
   const parts = splitTopLevelCsv(source);
@@ -188,7 +187,7 @@ export function qxRule(line) {
   }
 
   const qxType = QX_RULE_TYPES.get(type);
-  if (!qxType) return {kind:'comment', line:`# [WayX] REVIEW REQUIRED: Quantumult X Rule type ${type} is not verified and has no lossless script equivalent\n# Source declaration: ${source}`, reason:'unsupported-type'};
+  if (!qxType) return {kind:'comment', line:`# [WayX] Quantumult X unsupported Rule type ${type} commented out; Rule conversion does not use Script fallback\n# Source declaration: ${source}`, reason:'unsupported-qx-rule-comment'};
 
   let policy;
   if (policyRaw === 'DIRECT') policy = 'direct';
@@ -261,8 +260,40 @@ export function surgeModuleRule(line) {
   // Source image-reject behavior maps to Surge's tiny GIF reject policy.
   if (policy === 'REJECT-IMG') policy = 'REJECT-TINYGIF';
 
-  // Preserve runtime-supported built-in policies exactly. Unknown/external
-  // policy-group names cannot be defined by a module and remain a binding note.
+  // Loon plugin policy PROXY is preserved without semantic remapping.
+  // Surge Module Rule lines can only use official internal policies, so PROXY
+  // cannot be emitted as an active module policy; preserve the source as comments.
+  if (policy === 'PROXY') {
+    return {
+      kind:'comment',
+      section:'rule',
+      line:'',
+      lines:[
+        '# [WayX] Source Loon plugin policy PROXY preserved without conversion; Surge Module cannot activate external policy names.',
+        `# Source declaration: ${source}`,
+      ],
+      reason:'source-proxy-policy-preserved',
+    };
+  }
+
+  // Full Surge profiles have more built-in policies than Module [Rule]
+  // officially permits. Keep those source declarations as comments rather than
+  // emitting an invalid sgmodule or approximating them with another policy.
+  if (!SURGE_MODULE_POLICIES.has(policy) && SURGE_PROFILE_BUILTIN_POLICIES.has(policy)) {
+    return {
+      kind:'comment',
+      section:'rule',
+      line:'',
+      lines:[
+        `# [WayX] Surge Module unsupported Rule policy ${policy} commented out; Module Rule supports only DIRECT/REJECT/REJECT-TINYGIF.`,
+        `# Source declaration: ${source}`,
+      ],
+      reason:'unsupported-surge-module-policy',
+    };
+  }
+
+  // Unknown/external policy-group names cannot be defined by a module and
+  // remain a Review condition.
   if (!SURGE_MODULE_POLICIES.has(policy)) {
     return {
       kind:'comment',

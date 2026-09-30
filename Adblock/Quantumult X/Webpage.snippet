@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/webpage.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-09-30 16:17:51 +08:00
+# Converted: 2026-09-30 18:31:33 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/webpage.lpx
@@ -30,14 +30,12 @@ host, yhg007.com, PROXY
 ^https?:\/\/(www\.)?(?:g|google)\.cn url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/redirect_c6b7d5dbe6.js
 ^https?:\/\/translate\.google\.cn url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/redirect_b0a7bd4ec8.js
 
-# Avple 跳转弹窗 //asserts.avple.tv
-^https:\/\/asserts\.avple\.tv\/file\/avple-images\/ad\.js url reject
+{# Avple 跳转弹窗 //asserts.avple.tv #} ^https:\/\/asserts\.avple\.tv\/file\/avple-images\/ad\.js url reject
 
 # 可莉仓库解除 UA 限制 //kelee.one
-https:\/\/(rule\.)?kelee\.one\/ url script-request-header https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/header_eb9fc300bc.js
+https:\/\/(rule\.)?kelee\.one\/ url script-request-header https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/header_7c762e30f8.js
 
-# E-Hentai (https://e-hentai.org) //e-hentai.org, exhentai.org
-^https:\/\/exhentai\.org url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/redirect_1cb6a93724.js
+{# E-Hentai (https://e-hentai.org) //e-hentai.org, exhentai.org #} ^https:\/\/exhentai\.org url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/redirect_1cb6a93724.js
 
 # PornHub (https://cn.pornhub.com/) //*.pornhub.com
 ^(https:\/\/cn\.pornhub\.com\/view_video\.php\?viewkey=[^&]+)&.*$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/redirect_36a839ae2e.js
@@ -45,83 +43,47 @@ https:\/\/(rule\.)?kelee\.one\/ url script-request-header https://raw.githubuser
 ^https:\/\/cn\.pornhub\.com\/(?:interstitial|_xa\/ads) url reject-dict
 # ======= 普通网页 ======= #
 # 百度 //boxer.baidu.com, m.baidu.com, www.baidu.com, zhidao.baidu.com
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/baidu/baiduNoRedirect.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: request if ${url} ~= /^https:\/\/boxer\.baidu\.com\/scheme\?scheme/i then script("https://rucu6.pages.dev/Scripts/baidu/baiduNoRedirect.js") with tag="baidu_boxer", requires_body=true, binary_body_mode=false
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/webpage/baidu-index.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/(?:www|m)\.baidu\.com(\/|\/\?(tn=&)?from=\d+\w)?$/i then script("https://rucu6.pages.dev/Scripts/webpage/baidu-index.js") with tag="baidu_home", requires_body=true, binary_body_mode=false
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/webpage/baidu-zhidao.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/zhidao\.baidu\.com\/(?:question|index|\?fr|\?word)/i then script("https://rucu6.pages.dev/Scripts/webpage/baidu-zhidao.js") with tag="baidu_zhidao", requires_body=true, binary_body_mode=false
+# baidu_boxer
+^https:\/\/boxer\.baidu\.com\/scheme\?scheme url script-request-body https://rucu6.pages.dev/Scripts/baidu/baiduNoRedirect.js
+# baidu_home
+^https:\/\/(?:www|m)\.baidu\.com(\/|\/\?(tn=&)?from=\d+\w)?$ url script-response-body https://rucu6.pages.dev/Scripts/webpage/baidu-index.js
+# baidu_zhidao
+^https:\/\/zhidao\.baidu\.com\/(?:question|index|\?fr|\?word) url script-response-body https://rucu6.pages.dev/Scripts/webpage/baidu-zhidao.js
 
-# 观影 //www.hgeme.com, www.xn--wcv59z.com
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/webpage/myblockads.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/www\.(?:hgeme|xn--wcv59z)\.com\//i then script("https://rucu6.pages.dev/Scripts/webpage/myblockads.js") with tag="guanying_web_ads", requires_body=true, binary_body_mode=false
+# guanying_web_ads
+{# 观影 //www.hgeme.com, www.xn--wcv59z.com #} ^https:\/\/www\.(?:hgeme|xn--wcv59z)\.com\/ url script-response-body https://rucu6.pages.dev/Scripts/webpage/myblockads.js
 
 # 移花宫 //yhg007.com, *.111107?.xyz
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/webpage/myblockads.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/(?:yhg007\.com|[a-z]{8}\.111107\d\.xyz)\/hash\/(?:[a-fA-F0-9]{40}|[A-Z2-7]{32})\.html$/i then script("https://rucu6.pages.dev/Scripts/webpage/myblockads.js") with tag="yihuagong_hash_ad", requires_body=true, binary_body_mode=false
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/webpage/myblockads.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/(?:yhg007\.com|[a-z]{8}\.111107\d\.xyz)\/search-[^\/]+\.html$/i then script("https://rucu6.pages.dev/Scripts/webpage/myblockads.js") with tag="yihuagong_search_ads", requires_body=true, binary_body_mode=false
+# yihuagong_hash_ad
+^https:\/\/(?:yhg007\.com|[a-z]{8}\.111107\d\.xyz)\/hash\/(?:[a-fA-F0-9]{40}|[A-Z2-7]{32})\.html$ url script-response-body https://rucu6.pages.dev/Scripts/webpage/myblockads.js
+# yihuagong_search_ads
+^https:\/\/(?:yhg007\.com|[a-z]{8}\.111107\d\.xyz)\/search-[^\/]+\.html$ url script-response-body https://rucu6.pages.dev/Scripts/webpage/myblockads.js
 
 # ======= ooxx ======= #
 # 黑料网 //18hlw.com, 8olbt.imsatcmn.cc
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/webpage/myblockads.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/(?:18hlw\.com|8olbt\.imsatcmn\.cc)\//i then script("https://rucu6.pages.dev/Scripts/webpage/myblockads.js") with tag="18hlw_web_ads", requires_body=true, binary_body_mode=false
+# 18hlw_web_ads
+^https:\/\/(?:18hlw\.com|8olbt\.imsatcmn\.cc)\/ url script-response-body https://rucu6.pages.dev/Scripts/webpage/myblockads.js
 
-# 夜未央 //miniapp2.52ywy.com
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/webpage/52ywy.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/miniapp2\.52ywy\.com\/(?:ywyminiappbot\/(?:getLatest|getLatestAll|getCategoryVideos|getSearch|series|movies|tv|av|getbloger)|player\/getPlayer)(\?|$)/i then script("https://rucu6.pages.dev/Scripts/webpage/52ywy.js") with tag="52ywy_web_ads", requires_body=true, binary_body_mode=false
+# 52ywy_web_ads
+{# 夜未央 //miniapp2.52ywy.com #} ^https:\/\/miniapp2\.52ywy\.com\/(?:ywyminiappbot\/(?:getLatest|getLatestAll|getCategoryVideos|getSearch|series|movies|tv|av|getbloger)|player\/getPlayer)(\?|$) url script-response-body https://rucu6.pages.dev/Scripts/webpage/52ywy.js
 
-# 字母圈 //*.zimuquan*.top, *.zimuquan*.uk, *.zimuquan*.com
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/webpage/zimuquan.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https?:\/\/[^\/]*zimuquan[^\/]*\/index\.php\/vod\/play\//i then script("https://rucu6.pages.dev/Scripts/webpage/zimuquan.js") with tag="zmq_web_ads", requires_body=true, binary_body_mode=false
+# zmq_web_ads
+{# 字母圈 //*.zimuquan*.top, *.zimuquan*.uk, *.zimuquan*.com #} ^https?:\/\/[^\/]*zimuquan[^\/]*\/index\.php\/vod\/play\/ url script-response-body https://rucu6.pages.dev/Scripts/webpage/zimuquan.js
 
-# E-Hentai //e-hentai.org
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/webpage/ehentai.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/e-hentai\.org\/g\//i then script("https://rucu6.pages.dev/Scripts/webpage/ehentai.js") with tag="ehentai_web_ads", requires_body=true, binary_body_mode=false
+# ehentai_web_ads
+{# E-Hentai //e-hentai.org #} ^https:\/\/e-hentai\.org\/g\/ url script-response-body https://rucu6.pages.dev/Scripts/webpage/ehentai.js
 
-# Hanime1 //hanime1.me
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/webpage/hanime.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/hanime1\.me\/(?!(favicon|css|js|cdn-cgi|load))/i then script("https://rucu6.pages.dev/Scripts/webpage/hanime.js") with tag="hanime_web_ads", requires_body=true, binary_body_mode=false
+# hanime_web_ads
+{# Hanime1 //hanime1.me #} ^https:\/\/hanime1\.me\/(?!(favicon|css|js|cdn-cgi|load)) url script-response-body https://rucu6.pages.dev/Scripts/webpage/hanime.js
 
-# JavDB //javdb.com
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/webpage/myblockads.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/javdb\.com\/(?!over18\?)/i then script("https://rucu6.pages.dev/Scripts/webpage/myblockads.js") with tag="javdb_web_ads", requires_body=true, binary_body_mode=false
+# javdb_web_ads
+{# JavDB //javdb.com #} ^https:\/\/javdb\.com\/(?!over18\?) url script-response-body https://rucu6.pages.dev/Scripts/webpage/myblockads.js
 
-# MissAV //missav.ai, missav.fans, missav.ws
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/webpage/missav.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/missav\.(?:ai|fans|ws)\/(?!favicon)(?!(build|fonts|img|js|api|cdn-cgi)\/)./i then script("https://rucu6.pages.dev/Scripts/webpage/missav.js") with tag="missav_web_ads", requires_body=true, binary_body_mode=false
+# missav_web_ads
+{# MissAV //missav.ai, missav.fans, missav.ws #} ^https:\/\/missav\.(?:ai|fans|ws)\/(?!favicon)(?!(build|fonts|img|js|api|cdn-cgi)\/). url script-response-body https://rucu6.pages.dev/Scripts/webpage/missav.js
 
-# PornHub //*.pornhub.com
-# [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
-# Script: https://rucu6.pages.dev/Scripts/webpage/pornhub.js
-# Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.
-# Source declaration: response if ${url} ~= /^https:\/\/cn\.pornhub\.com\//i then script("https://rucu6.pages.dev/Scripts/webpage/pornhub.js") with tag="pornhub_web_ads", requires_body=true, binary_body_mode=false
+# pornhub_web_ads
+{# PornHub //*.pornhub.com #} ^https:\/\/cn\.pornhub\.com\/ url script-response-body https://rucu6.pages.dev/Scripts/webpage/pornhub.js
 
 # [mitm]
 hostname = *.google.cn, asserts.avple.tv, kelee.one, rule.kelee.one, e-hentai.org, exhentai.org, *.pornhub.com, boxer.baidu.com, m.baidu.com, www.baidu.com, zhidao.baidu.com, www.hgeme.com, www.xn--wcv59z.com, yhg007.com, *.111107?.xyz, 18hlw.com, 8olbt.imsatcmn.cc, miniapp2.52ywy.com, *.zimuquan*.top, *.zimuquan*.uk, *.zimuquan*.com, hanime1.me, javdb.com, missav.ai, missav.fans, missav.ws

@@ -151,16 +151,39 @@ response.body.mock(...) | response.header.set(...)
 QX：一个 echo helper 完成 body + header。  
 Surge：组合成等价 Map Local / header 行为。
 
+## 30.5.1 Script fallback 边界
+
+脚本 fallback 只用于 Rewrite/Mock，不用于 Rule。
+
+固定顺序：
+
+```text
+single action:
+target native
+→ dedicated semantic helper（仅当原生无法严格等价）
+→ REVIEW REQUIRED
+
+multi action:
+target native（仅当能整体严格等价）
+→ dedicated semantic helper（若有）
+→ Complex Rewrite Helper Registry
+→ REVIEW REQUIRED
+```
+
+通用 Complex Rewrite helper 只接受 `actions.length >= 2`。它生成一份脚本文件，在脚本内部按 Loon 源顺序执行全部 action，并保持 condition、Body/Header/JSON 的先后关系。不得把一个多 action pipeline 拆成多个互不保证执行顺序的目标声明。
+
+单 action 即使需要 Script，也必须使用对应的专用 semantic helper（例如 Header、JSON add、Mock、Redirect 等），不能借用 Complex helper。
+
 ## 30.5.1 Complex Rewrite Helper Registry
 
-复杂 Rewrite v2 在原生目标能力不足时，可由通用 helper 按 AST condition/action 能力处理；禁止按插件身份特判。新增组合必须先增加 generic handler 与 synthetic fixture，不支持的组合保持 Review。
+复杂 Rewrite v2 的多 action pipeline 在原生目标能力不足时，可由通用 helper 按 AST condition/action 能力处理；禁止按插件身份特判。单 action 不进入该 registry。新增组合必须先增加 generic handler 与 synthetic fixture，不支持的组合保持 Review。
 
 固定路由顺序：
 
 ```text
 target native planner
 → dedicated semantic helper
-→ Complex Rewrite Helper Registry
+→ （仅 multi-action）Complex Rewrite Helper Registry
 → REVIEW REQUIRED
 ```
 
