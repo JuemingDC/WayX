@@ -101,7 +101,7 @@ QX Source Script declaration 的 `argument`、动态 `enable`、`timeout`、`bin
 - Source Script runtime compatibility；
 - QX logical Rule、`DEST-PORT` 等官方 sample 未确认 Rule Type（明确注释保留）；
 - Loon Plugin `PROXY` 在 Surge Module 中通过参数化 policy binding 转为活动 Rule，不再属于 Review/注释库存；
-- 完整 Surge Profile 可用但 Module Manual 未允许的 `REJECT-DROP / REJECT-NO-DROP / CELLULAR / CELLULAR-ONLY / HYBRID / NO-HYBRID`（源 Rule 注释保留）。
+- 无法按当前 Surge ad-block Module Rule 语义等价表达的源 policy 继续注释保留。
 
 当前 Catalog 目标已没有活动 Review marker；后续新语法、新插件或现有上游变化仍可能重新产生 Review/Issue。
 
@@ -116,7 +116,7 @@ v1.4 已重新生成全部 Catalog 管理的 QX snippet / Surge sgmodule，并�
 - Source Script declaration 继续引用原作者 URL；
 - Source Script runtime compatibility disabled marker 已移除；
 - QX 不支持 Rule 以注释形式对账，未生成 Rule helper；
-- Surge 的 Loon `PROXY` 已通过 `#!arguments` policy 参数转换为活动 Rule；Module Manual 未允许且没有参数化语义的完整 Profile built-in policy 继续只注释保留；
+- Surge 的 Loon `PROXY` 已通过 `#!arguments` policy 参数转换为活动 Rule；其它无法等价绑定的源 policy 继续只注释保留；
 - helper 文件引用存在且 action 类型通过 validator/CI；
 - Review inventory 目标已调整为 QX 0 / Surge 0 / Issue 0，并由 CI 自动核验。
 
@@ -173,7 +173,7 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 
 - [x] 已建立 Catalog-observed Rewrite v2 / Script v2 syntax inventory：`converter/tests/catalog-syntax-inventory.mjs` + `converter/fixtures/catalog-syntax-inventory.json`。当前基线为 175 条 Rewrite v2 / 110 条 Script v2；CI 只锁语法形态，不锁同类规则数量。新 action/参数形态/condition/capture/logical/regex flag/Script option/argument/option-set 或 multi-action signature 首次出现时 fail closed，必须先核对官方语义再更新基线；未观察到的 complex signature 仍不得预先放行。
 - 每次新增 QX 官方 sample 证据时，复核现有 Rewrite Review 是否可以安全降级为 native/helper；Rule 只在官方明确支持对应 Rule Type 后才改为活动 filter。
-- [x] QX capability gate 已收窄为 Loon 去广告转换实际能力：仅核对 Rule 类型、WayX 实际使用的 Rewrite action 与 MITM `hostname` 是否仍有 Crossutility 官方依据；不再枚举 `FINAL`、`url-and-header`、完整 Profile MITM/证书/skip 配置，也不维护 not-emitted 分类。Surge 同样采用 Rule / Rewrite / hostname 边界。
+- [x] QX capability gate 已收窄为 Loon 去广告转换实际能力：仅核对 Rule 类型、WayX 实际使用的 Rewrite action 与 MITM `hostname` 是否仍有 Crossutility 官方依据；转换范围之外的能力不进入 registry。Surge 同样采用 Rule / Rewrite / hostname 边界。
 - [x] 对 generated helper 做行为级 runtime fixture，而不只做字符串/语法断言：`converter/tests/generated-helper-runtime.mjs` 已接入 CI，覆盖 request/response、组合条件、命中/未命中、Header/Body/JSON 顺序、capture、raw string、typed JSON、invalid JSON 失败隔离、Surge duplicate header，以及当前 observed QX mock complex signature。
 - 保持 `PROJECT_STATUS.md` 与实际 Review inventory 同步。
 
