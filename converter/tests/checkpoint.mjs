@@ -1286,7 +1286,7 @@ assert.match(surgeScriptV2Native.line, /^request_script = type=http-request,/);
 assert.match(surgeScriptV2Native.line, /requires-body=true/);
 assert.match(surgeScriptV2Native.line, /binary-body-mode=true/);
 
-const qxScriptV2NeedsReview = qxScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'request.js'});
+const qxScriptV2NeedsReview = qxScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'request.js', sourceText:'$done({body:$request.body});'});
 assert.equal(qxScriptV2NeedsReview.ok, true);
 assert.match(qxScriptV2NeedsReview.line, /url script-request-body request\.js$/);
 assert.ok(qxScriptV2NeedsReview.notes.some(note => /binary_body_mode=true ignored/i.test(note)));
