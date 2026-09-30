@@ -48,18 +48,24 @@ function guaranteedCaptures(node) {
   }
   return new Set();
 }
-function capturedString(node, label, captures, guaranteed) {
+function capturedString(node, label, captures, guaranteed, argumentTable = null) {
   if (!node || !['string','raw-string'].includes(node.type)) throw new Error(label + ' must be a string');
   const value=String(node.value);
   if(node.type==='raw-string') return JSON.stringify(value);
-  const parts=[]; let last=0; const re=/\$\{([A-Za-z_][A-Za-z0-9_-]*)\.(\d+)\}/g; let m;
+  const parts=[]; let last=0; const re=/\$\{([A-Za-z_][A-Za-z0-9_-]*)(?:\.(\d+))?\}/g; let m;
   while((m=re.exec(value))){
-    const max=captures.get(m[1]);
-    if(max===undefined) throw new Error('unknown capture alias: ' + m[1]);
-    if(!guaranteed.has(m[1])) throw new Error('capture alias is not guaranteed on every successful condition path: ' + m[1]);
-    if(Number(m[2])>max) throw new Error('capture index exceeds regex capture-group count: ' + m[1] + '.' + m[2]);
     if(m.index>last) parts.push(['s',value.slice(last,m.index)]);
-    parts.push(['c',m[1],Number(m[2])]);
+    if(m[2] !== undefined){
+      const max=captures.get(m[1]);
+      if(max===undefined) throw new Error('unknown capture alias: ' + m[1]);
+      if(!guaranteed.has(m[1])) throw new Error('capture alias is not guaranteed on every successful condition path: ' + m[1]);
+      if(Number(m[2])>max) throw new Error('capture index exceeds regex capture-group count: ' + m[1] + '.' + m[2]);
+      parts.push(['c',m[1],Number(m[2])]);
+    } else {
+      const entry=argumentTable?.byId?.get(m[1]);
+      if(!entry) throw new Error('unknown plugin argument interpolation: ' + m[1]);
+      parts.push(['a',entry.id]);
+    }
     last=re.lastIndex;
   }
   if(last===0){ if(value.includes('${')) throw new Error(label + ' contains unsupported interpolation'); return JSON.stringify(value); }
@@ -78,9 +84,15 @@ function coarsePattern(ast) {
   if (found.length === 1) return normalizeRegexBodyForTarget(found[0].right.pattern);
   return '(?:' + found.map(node => '(?:' + normalizeRegexBodyForTarget(node.right.pattern) + ')').join('|') + ')';
 }
-function jsonValueSource(node, captures, guaranteed) {
-  if (!node || !['string','raw-string','number','boolean','null'].includes(node.type)) throw new Error('JSON replacement value must be fixed');
-  if (node.type === 'string') return capturedString(node, 'JSON replacement value', captures, guaranteed);
+function jsonValueSource(node, captures, guaranteed, argumentTable = null) {
+  if (!node) throw new Error('JSON replacement value is missing');
+  if (node.type === 'variable') {
+    const entry=argumentTable?.byId?.get(node.name);
+    if(!entry) throw new Error('undeclared JSON replacement argument: ' + node.name);
+    return '__wayxArgs[' + JSON.stringify(entry.id) + ']';
+  }
+  if (!['string','raw-string','number','boolean','null'].includes(node.type)) throw new Error('JSON replacement value must be fixed or a declared plugin argument');
+  if (node.type === 'string') return capturedString(node, 'JSON replacement value', captures, guaranteed, argumentTable);
   if (node.type === 'raw-string') return JSON.stringify(node.value);
   return JSON.stringify(node.value);
 }
@@ -94,7 +106,7 @@ function jsonPath(text) {
   }
   return parts;
 }
-function statements(ast, target) {
+function statements(ast, target, {argumentTable = null} = {}) {
   const out = [];
   const captures = captureInfo(ast.condition);
   const guaranteed = guaranteedCaptures(ast.condition);
@@ -107,14 +119,14 @@ function statements(ast, target) {
         if (action.name.endsWith('.add')) {
           if (target !== 'surge') throw new Error('header.add duplicate semantics are not verified for ' + target);
           headerAdd = true;
-          out.push('__wayxWith(' + capturedString(args[1], 'header value', captures, guaranteed) + ',v=>__wayxAdd(' + JSON.stringify(name) + ',v));');
+          out.push('__wayxWith(' + capturedString(args[1], 'header value', captures, guaranteed, argumentTable) + ',v=>__wayxAdd(' + JSON.stringify(name) + ',v));');
         } else if (action.name.endsWith('.set')) {
-          out.push('__wayxWith(' + capturedString(args[1], 'header value', captures, guaranteed) + ',v=>__wayxSet(' + JSON.stringify(name) + ',v));');
+          out.push('__wayxWith(' + capturedString(args[1], 'header value', captures, guaranteed, argumentTable) + ',v=>__wayxSet(' + JSON.stringify(name) + ',v));');
         } else if (action.name.endsWith('.del')) {
           out.push('__wayxDel(' + JSON.stringify(name) + ');');
         } else {
           if (args[1]?.type !== 'regex') throw new Error('header.replace regex must be fixed');
-          out.push('__wayxWith(' + capturedString(args[2], 'header replacement', captures, guaranteed) + ',v=>__wayxHeaderReplace(' + JSON.stringify(name) + ',' + JSON.stringify(normalizeRegexBodyForTarget(args[1].pattern)) + ',v));');
+          out.push('__wayxWith(' + capturedString(args[2], 'header replacement', captures, guaranteed, argumentTable) + ',v=>__wayxHeaderReplace(' + JSON.stringify(name) + ',' + JSON.stringify(normalizeRegexBodyForTarget(args[1].pattern)) + ',v));');
         }
       }
       continue;
@@ -126,7 +138,7 @@ function statements(ast, target) {
         if(action.name.endsWith('.delete')) {
           out.push('__wayxJsonAction(j=>__wayxJsonDelete(j,'+JSON.stringify(path)+'));');
         } else {
-          const value=jsonValueSource(args[1], captures, guaranteed);
+          const value=jsonValueSource(args[1], captures, guaranteed, argumentTable);
           const helper=action.name.endsWith('.add')?'__wayxJsonAdd':'__wayxJsonReplace';
           if(args[1]?.type==='string' && String(args[1].value).includes('${')) out.push('__wayxWith('+value+',v=>__wayxJsonAction(j=>'+helper+'(j,'+JSON.stringify(path)+',v)));');
           else out.push('__wayxJsonAction(j=>'+helper+'(j,'+JSON.stringify(path)+','+value+'));');
@@ -138,7 +150,7 @@ function statements(ast, target) {
       body = true;
       for(const args of expand(action)){
         if (args[0]?.type !== 'regex') throw new Error('body.replace regex must be fixed');
-        const replacement=capturedString(args[1], 'body replacement', captures, guaranteed);
+        const replacement=capturedString(args[1], 'body replacement', captures, guaranteed, argumentTable);
         if(args[1]?.type==='string' && String(args[1].value).includes('${')) out.push('__wayxWith('+replacement+',v=>{__wayxBody=String(__wayxBody ?? "").replace(new RegExp('+JSON.stringify(normalizeRegexBodyForTarget(args[0].pattern))+'),v);});');
         else out.push('__wayxBody=String(__wayxBody ?? "").replace(new RegExp('+JSON.stringify(normalizeRegexBodyForTarget(args[0].pattern))+'),'+replacement+');');
       }
@@ -146,26 +158,27 @@ function statements(ast, target) {
     }
     throw new Error('complex helper does not handle ' + action.name);
   }
-  if (!body) throw new Error('complex helper requires at least one body/JSON action');
+  if (!body && !headers) throw new Error('complex helper requires at least one Header/Body/JSON action');
   return {out, body, headers, json, headerAdd};
 
 }
-export function renderMixedRewriteScript(ast, {target, stamp='', category='', sourceLine=''}={}) {
+export function renderMixedRewriteScript(ast, {target, stamp='', category='', sourceLine='', argumentTable=null}={}) {
   validateRewriteV2Ast(ast);
   if (!['qx','surge'].includes(target)) throw new Error('invalid mixed helper target');
-  const plan = statements(ast, target);
-  const condition = compileComplexCondition(ast.condition, target);
+  const plan = statements(ast, target, {argumentTable});
+  const condition = compileComplexCondition(ast.condition, target, {argumentTable});
   const source = ast.phase === 'request' ? '$request' : '$response';
-  const doneValue = plan.headers ? '{headers:__wayxHeaders,body:__wayxBody}' : '{body:__wayxBody}';
+  const doneValue = plan.headers && plan.body ? '{headers:__wayxHeaders,body:__wayxBody}' : plan.headers ? '{headers:__wayxHeaders}' : '{body:__wayxBody}';
   const lines = [
     stamp ? '// Converted: ' + stamp : null,
     '// Converted by: chance',
     '// Category: ' + (category || 'Rewrite / Complex Helper'),
     sourceLine ? '// Source Loon: ' + sourceLine : null,
     'const __wayxCaptures=Object.create(null);',
+    argumentTable ? 'let __wayxArgs={};try{__wayxArgs=JSON.parse(String($argument||"{}"))}catch{}' : null,
     plan.headerAdd ? 'let __wayxHeaders=Array.isArray(' + source + '.headers)?' + source + '.headers.map(x=>({field:x.field,value:x.value})):Object.entries(' + source + '.headers||{}).map(([field,value])=>({field,value}));' : 'let __wayxHeaders={...(' + source + '.headers||{})};',
     'let __wayxBody=' + source + '.body;',
-    'function __wayxTpl(parts){let out="";for(const p of parts){if(p[0]==="s"){out+=p[1];continue}const v=__wayxCaptures[p[1]]?.[p[2]];if(v===undefined)return undefined;out+=String(v)}return out}',
+    'function __wayxTpl(parts){let out="";for(const p of parts){if(p[0]==="s"){out+=p[1];continue}if(p[0]==="a"){const v=__wayxArgs[p[1]];if(v===undefined)return undefined;out+=String(v);continue}const v=__wayxCaptures[p[1]]?.[p[2]];if(v===undefined)return undefined;out+=String(v)}return out}',
     'function __wayxWith(v,fn){if(v!==undefined)fn(v)}',
     'function __wayxJsonAction(fn){try{const j=JSON.parse(String(__wayxBody ?? ""));fn(j);__wayxBody=JSON.stringify(j)}catch{}}',
     'function __wayxJsonParent(root,path){let x=root;for(let i=0;i<path.length-1;i++){if(x==null||!(path[i] in Object(x)))return null;x=x[path[i]];}return x;}',
@@ -184,5 +197,8 @@ export function renderMixedRewriteScript(ast, {target, stamp='', category='', so
     '}else{$done({});}',
     '',
   ].filter(line => line !== null);
-  return {pattern:coarsePattern(ast),script:lines.join('\n'),qxAction:ast.phase==='request'?'script-request-body':'script-response-body',surgeType:ast.phase==='request'?'http-request':'http-response',requiresBody:plan.body,fullHeaderMode:plan.headerAdd};
+  const qxAction = plan.body
+    ? (ast.phase==='request'?'script-request-body':'script-response-body')
+    : (ast.phase==='request'?'script-request-header':'script-response-header');
+  return {pattern:coarsePattern(ast),script:lines.join('\n'),qxAction,surgeType:ast.phase==='request'?'http-request':'http-response',requiresBody:plan.body,fullHeaderMode:plan.headerAdd};
 }
