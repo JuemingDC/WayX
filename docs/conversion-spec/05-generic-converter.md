@@ -64,7 +64,8 @@ Descriptor 不得携带“此插件应该怎样转换”的语义开关。
 
 ```text
 normalize source
-→ parse plugin sections
+→ parse plugin sections + source header metadata IR
+→ group source declarations/comments target-neutrally
 → build semantic IR / AST
 → Rule converter
 → Rewrite converter
@@ -85,6 +86,27 @@ normalize source
 ```
 
 不得在流水线中插入“按插件名称修补结果”的步骤。
+
+## 5.3.1 Source section / comment / metadata 分层
+
+Plugin section orchestration 固定拆分为：
+
+```text
+raw source
+→ source section parser
+→ source-section item/comment grouping
+→ source metadata IR
+→ Rule / Rewrite / Script planners
+→ target-specific comment / metadata renderer
+```
+
+约束：
+- `source-section.mjs` 只识别“注释/空行/活动声明”及当前 converter 支持的 source section 名称，不包含 QX/Surge target 语法；
+- `source-metadata.mjs` 只解析 `#!key=value` 与普通 header comment，不生成目标 metadata；
+- QX 的 `{# note #}` 绑定属于 target-specific rendering，只能由 `qx-comment.mjs` 执行；
+- Surge 不使用 QX inline-note 机制，继续按源顺序保留普通注释；
+- unknown active source section 必须逐声明进入 Issue，对空 section/纯注释 section 不误报；
+- orchestration 不得再维护上述 parser/白名单的第二份实现。
 
 ## 5.4 Rule 转换器
 
