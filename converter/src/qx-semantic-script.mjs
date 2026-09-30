@@ -58,7 +58,7 @@ export function renderQxRedirectScript(ast, options = {}) {
 
   const lines = [
     ...metadata(options),
-    'const __wayxRe = new RegExp(' + JSON.stringify(condition.regex.pattern) + ', ' + JSON.stringify(condition.regex.flags || '') + ');',
+    'const __wayxRe = new RegExp(' + JSON.stringify(condition.regex.pattern) + ');',
     'const __wayxUrl = $request.url;',
     'const __wayxMatch = __wayxRe.exec(__wayxUrl);',
     'if (!__wayxMatch) {',
@@ -173,7 +173,6 @@ function headerOpsForMock(ast, mockAction) {
           type:'replace',
           name:fixed(args[0], 'header name'),
           pattern:regex.pattern,
-          flags:regex.flags || '',
           replacement:fixed(args[2], 'header replacement'),
         });
       }
@@ -242,7 +241,7 @@ export function renderQxHeaderScript(ast, options = {}) {
         const regex = args[1];
         const replacement = fixed(args[2], 'header replacement');
         if (regex?.type !== 'regex') throw new Error('header.replace regex is not fixed');
-        statements.push('__wayxReplace(' + JSON.stringify(name) + ', ' + JSON.stringify(regex.pattern) + ', ' + JSON.stringify(regex.flags || '') + ', ' + JSON.stringify(replacement) + ');');
+        statements.push('__wayxReplace(' + JSON.stringify(name) + ', ' + JSON.stringify(regex.pattern) + ', ' + JSON.stringify(replacement) + ');');
       }
     }
   }
