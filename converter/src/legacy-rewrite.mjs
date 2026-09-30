@@ -7,7 +7,7 @@ import { normalizeRegexBodyForTarget } from './target-regex.mjs';
 import { renderQxHeaderScript, renderQxInlineMockScript } from './qx-semantic-script.mjs';
 import { surgeInlineMockPlan } from './rewrite-v2-semantic.mjs';
 import { renderSurgeRequestMockScript } from './surge-mock.mjs';
-import { renderMixedRewriteScript } from './complex-rewrite-script.mjs';
+import { renderSingleJsonAddScript } from './complex-rewrite-script.mjs';
 
 const REJECT_ACTIONS = new Set(['reject','reject-200','reject-img','reject-dict','reject-array']);
 
@@ -293,7 +293,7 @@ function planJson(pattern, action, parsed, target, ctx) {
   if(parsed.op === 'add'){
     try{
       const ast=legacyJsonAddAst(pattern, parsed);
-      const plan=renderMixedRewriteScript(ast, {
+      const plan=renderSingleJsonAddScript(ast, {
         target,
         stamp:ctx.stamp || '',
         category:ctx.category || 'Rewrite / Legacy JSON',
