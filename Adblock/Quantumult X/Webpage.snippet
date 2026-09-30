@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/webpage.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-09-30 15:59:09 +08:00
+# Converted: 2026-09-30 16:17:51 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/webpage.lpx
@@ -27,22 +27,22 @@ host, yhg007.com, PROXY
 
 # 桌面端请使用 https://google.com/ncr
 # 谷歌服务重定向 //*.google.cn
-^https?://(www\.)?(?:g|google)\.cn url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/redirect_c6b7d5dbe6.js
-^https?://translate\.google\.cn url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/redirect_b0a7bd4ec8.js
+^https?:\/\/(www\.)?(?:g|google)\.cn url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/redirect_c6b7d5dbe6.js
+^https?:\/\/translate\.google\.cn url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/redirect_b0a7bd4ec8.js
 
 # Avple 跳转弹窗 //asserts.avple.tv
-^https://asserts\.avple\.tv/file/avple-images/ad\.js url reject
+^https:\/\/asserts\.avple\.tv\/file\/avple-images\/ad\.js url reject
 
 # 可莉仓库解除 UA 限制 //kelee.one
-https://(rule\.)?kelee\.one/ url script-request-header https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/header_eb9fc300bc.js
+https:\/\/(rule\.)?kelee\.one\/ url script-request-header https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/header_eb9fc300bc.js
 
 # E-Hentai (https://e-hentai.org) //e-hentai.org, exhentai.org
-^https://exhentai\.org url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/redirect_1cb6a93724.js
+^https:\/\/exhentai\.org url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/redirect_1cb6a93724.js
 
 # PornHub (https://cn.pornhub.com/) //*.pornhub.com
-^(https://cn\.pornhub\.com/view_video\.php\?viewkey=[^&]+)&.*$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/redirect_36a839ae2e.js
-^https://www\.pornhub\.com/ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/redirect_4e266d46a5.js
-^https://cn\.pornhub\.com/(?:interstitial|_xa/ads) url reject-dict
+^(https:\/\/cn\.pornhub\.com\/view_video\.php\?viewkey=[^&]+)&.*$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/redirect_36a839ae2e.js
+^https:\/\/www\.pornhub\.com\/ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/redirect_4e266d46a5.js
+^https:\/\/cn\.pornhub\.com\/(?:interstitial|_xa\/ads) url reject-dict
 # ======= 普通网页 ======= #
 # 百度 //boxer.baidu.com, m.baidu.com, www.baidu.com, zhidao.baidu.com
 # [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:

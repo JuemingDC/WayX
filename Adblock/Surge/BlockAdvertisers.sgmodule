@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/Website_icon/120px/TencentAd.png
 # Updated: 2026-09-23 11:35:33
 
-# Converted: 2026-09-30 14:40:13 +08:00
+# Converted: 2026-09-30 16:17:46 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/BlockAdvertisers.lpx
@@ -480,10 +480,10 @@ DOMAIN-SUFFIX,tobidad.com,REJECT
 DOMAIN,ep7.facebook.com,REJECT
 
 [URL Rewrite]
-^https://video-dsp\.pddpic\.com/market-dsp-video/ _ reject
-^https://t-dsp\.pinduoduo\.com/dspcb/i/mrk_ _ reject
-^https://images\.pinduoduo\.com/mrk/ _ reject
-^https://images\.pinduoduo\.com/marketing_api/ _ reject
+^https:\/\/video-dsp\.pddpic\.com\/market-dsp-video\/ _ reject
+^https:\/\/t-dsp\.pinduoduo\.com\/dspcb\/i\/mrk_ _ reject
+^https:\/\/images\.pinduoduo\.com\/mrk\/ _ reject
+^https:\/\/images\.pinduoduo\.com\/marketing_api\/ _ reject
 
 [MITM]
 hostname = %APPEND% video-dsp.pddpic.com, t-dsp.pinduoduo.com, images.pinduoduo.com

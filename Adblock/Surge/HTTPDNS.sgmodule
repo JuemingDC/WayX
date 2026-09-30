@@ -8,7 +8,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/Other_icon/120px/HTTPDNS.png
 # Updated: 2026-09-28 14:29:55
 
-# Converted: 2026-09-30 14:40:13 +08:00
+# Converted: 2026-09-30 16:17:46 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Block_HTTPDNS.lpx
@@ -23,24 +23,24 @@ USER-AGENT,"httpsdns*",REJECT
 USER-AGENT,"Httpdns*",REJECT
 USER-AGENT,"Httpsdns*",REJECT
 
-AND,((URL-REGEX,^http://119\.29\.29\.90/d\?),(USER-AGENT,%E5%98%80%E5%97%92%E5%87%BA%E8%A1%8C*)),DIRECT
-AND,((URL-REGEX,^http://119\.28\.28\.90/d\?),(USER-AGENT,%E5%98%80%E5%97%92%E5%87%BA%E8%A1%8C*)),DIRECT
+AND,((URL-REGEX,^http:\/\/119\.29\.29\.90\/d\?),(USER-AGENT,%E5%98%80%E5%97%92%E5%87%BA%E8%A1%8C*)),DIRECT
+AND,((URL-REGEX,^http:\/\/119\.28\.28\.90\/d\?),(USER-AGENT,%E5%98%80%E5%97%92%E5%87%BA%E8%A1%8C*)),DIRECT
 
-URL-REGEX,^http://((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(?:/v?[0-9]+)?/(?:sign_)?(?:(?:d|ss)[46]?|resolve)\?,REJECT
+URL-REGEX,^http:\/\/((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(?:\/v?[0-9]+)?\/(?:sign_)?(?:(?:d|ss)[46]?|resolve)\?,REJECT
 
-URL-REGEX,^http://\[[0-9a-fA-F:]+\](?:/v?[0-9]+)?/(?:sign_)?(?:(?:d|ss)[46]?|resolve)\?,REJECT
+URL-REGEX,^http:\/\/\[[0-9a-fA-F:]+\](?:\/v?[0-9]+)?\/(?:sign_)?(?:(?:d|ss)[46]?|resolve)\?,REJECT
 
 DOMAIN,yyapp-httpdns.gslb.yy.com,REJECT
 DOMAIN,union-httpdns.gslb.yy.com,REJECT
 DOMAIN,yuyin-httpdns.gslb.yy.com,REJECT
 DOMAIN,httpdns-v6.gslb.yy.com,REJECT
 
-URL-REGEX,^http://103\.44\.58\.64/md\?,REJECT
+URL-REGEX,^http:\/\/103\.44\.58\.64\/md\?,REJECT
 
-URL-REGEX,^http://cdn\.wup\.huya\.com/launch/queryHttpDns,REJECT
+URL-REGEX,^http:\/\/cdn\.wup\.huya\.com\/launch\/queryHttpDns,REJECT
 
 DOMAIN,dns2.q2cdn.com,REJECT
-URL-REGEX,^http://xmc\.ximalaya\.com/xmlymain-login-web/login/,REJECT
+URL-REGEX,^http:\/\/xmc\.ximalaya\.com\/xmlymain-login-web\/login\/,REJECT
 
 DOMAIN,dns.weixin.qq.com,REJECT
 DOMAIN,dns.weixin.qq.com.cn,REJECT
@@ -108,11 +108,11 @@ DOMAIN,ucdc.upaas.quark.cn,REJECT
 
 DOMAIN,httpdns.danuoyi.tbcache.com,REJECT
 
-URL-REGEX,^http://amdc\.m\.taobao\.com/amdc/mobileDispatch,REJECT
-URL-REGEX,^http://47\.246\.103\.9/amdc/mobileDispatch,REJECT
-URL-REGEX,^http://47\.246\.103\.10/amdc/mobileDispatch,REJECT
-URL-REGEX,^http://59\.82\.113\.10/amdc/mobileDispatch,REJECT
-URL-REGEX,^http://59\.82\.113\.219/amdc/mobileDispatch,REJECT
+URL-REGEX,^http:\/\/amdc\.m\.taobao\.com\/amdc\/mobileDispatch,REJECT
+URL-REGEX,^http:\/\/47\.246\.103\.9\/amdc\/mobileDispatch,REJECT
+URL-REGEX,^http:\/\/47\.246\.103\.10\/amdc\/mobileDispatch,REJECT
+URL-REGEX,^http:\/\/59\.82\.113\.10\/amdc\/mobileDispatch,REJECT
+URL-REGEX,^http:\/\/59\.82\.113\.219\/amdc\/mobileDispatch,REJECT
 
 DOMAIN,httpdns.cctv.com,REJECT
 
@@ -165,7 +165,7 @@ DOMAIN,apidns-js.kwd.inkuai.com,REJECT
 DOMAIN,httpdns.meituan.com,REJECT
 DOMAIN,httpdnsmultiapi.meituan.com,REJECT
 DOMAIN,httpdnsmultiapivip.meituan.com,REJECT
-URL-REGEX,^http://103\.37\.155\.60/fetch,REJECT
+URL-REGEX,^http:\/\/103\.37\.155\.60\/fetch,REJECT
 
 DOMAIN,httpdns.music.163.com,REJECT
 DOMAIN,httpdns.n.netease.com,REJECT
@@ -186,10 +186,10 @@ DOMAIN,httpdns.calorietech.com,REJECT
 DOMAIN,dns.weibo.cn,REJECT
 IP-CIDR,39.97.130.51/32,REJECT,no-resolve
 IP-CIDR,39.97.128.148/32,REJECT,no-resolve
-URL-REGEX,^http://api\.weibo\.cn/\d+/httpdns/config,REJECT
-URL-REGEX,^http://api\.weibo\.cn/httpdns/config,REJECT
+URL-REGEX,^http:\/\/api\.weibo\.cn\/\d+\/httpdns\/config,REJECT
+URL-REGEX,^http:\/\/api\.weibo\.cn\/httpdns\/config,REJECT
 
-URL-REGEX,^http://((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/v\d/resolv\?,REJECT
+URL-REGEX,^http:\/\/((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/v\d\/resolv\?,REJECT
 IP-CIDR,103.41.167.237/32,REJECT,no-resolve
 IP-CIDR,118.89.204.198/32,REJECT,no-resolve
 IP-CIDR,182.61.194.7/32,REJECT,no-resolve
@@ -211,26 +211,26 @@ IP-CIDR,81.71.61.216/32,REJECT,no-resolve
 
 DOMAIN,httpdns.immomo.com,REJECT
 
-URL-REGEX,^http://((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?):\d+/httpdns/,REJECT
+URL-REGEX,^http:\/\/((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?):\d+\/httpdns\/,REJECT
 
-URL-REGEX,^http://\[[0-9a-fA-F:]+\]:\d+/httpdns/,REJECT
+URL-REGEX,^http:\/\/\[[0-9a-fA-F:]+\]:\d+\/httpdns\/,REJECT
 
 DOMAIN,httpdns.zybang.com,REJECT
 
 [URL Rewrite]
 
-^https?://cdn\.wup\.huya\.com/monitor/monitor\.jsp _ reject
+^https?:\/\/cdn\.wup\.huya\.com\/monitor\/monitor\.jsp _ reject
 
-^https://gslbali\.ximalaya\.com/linkeye-cloud/httpdns/ _ reject
+^https:\/\/gslbali\.ximalaya\.com\/linkeye-cloud\/httpdns\/ _ reject
 
 [Map Local]
-^https?://appconf\.mail\.163\.com/mailmaster/api/http/urlConfig\.do$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https?:\/\/appconf\.mail\.163\.com\/mailmaster\/api\/http\/urlConfig\.do$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https://msglb\.91160\.com/msg/outer/broker/get$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/msglb\.91160\.com\/msg\/outer\/broker\/get$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https://ucdc\d?-upaas\.uc\.cn/api/v\d/dns_query\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/ucdc\d?-upaas\.uc\.cn\/api\/v\d\/dns_query\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https://gw-cn\.jiaoliuqu\.com/taqu-im-broadcast-srv/v\d/Comet/get\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/gw-cn\.jiaoliuqu\.com\/taqu-im-broadcast-srv\/v\d\/Comet\/get\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% appconf.mail.163.com, msglb.91160.com, ucdc2-upaas.uc.cn, gw-cn.jiaoliuqu.com
