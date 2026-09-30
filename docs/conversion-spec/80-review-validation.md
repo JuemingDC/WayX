@@ -101,7 +101,7 @@ Source parser 遇到当前 grammar 未登记、但包含活动内容的 section 
 - section 合法
 - Rule type 属于当前官方 Rule Type
 - Logical Rule 递归合法
-- Module `[Rule]` policy 允许 Surge Module Manual 明确列出的 `DIRECT / REJECT / REJECT-TINYGIF`，以及已由 `#!arguments` 声明的完整 `{{{name}}}` policy 占位符；占位符必须引用已声明参数。完整 Profile 的其他 built-in policy 与未绑定的未知/用户 policy group 都不得直接作为活动 Module Rule
+- Module `[Rule]` policy 允许 `DIRECT / REJECT / REJECT-TINYGIF`，以及已由 `#!arguments` 声明的完整 `{{{name}}}` policy 占位符；占位符必须引用已声明参数。其它未绑定 policy 不得直接作为活动 Module Rule
 - 外部 policy 不作为活动 Module Rule
 - URL/Header/Body/Map Local/Script 参数合法
 - WayX 去广告转换输出中的活动 Script declaration 必须显式声明 type，且 Adblock-scope validator 不接受调度/事件/generic Script 类型；仓库中与本转换器无关的人工 Surge Module 仍按 Surge 自身合法类型校验，不受此范围限制
@@ -168,20 +168,20 @@ Inventory 只记录语法形态，不记录声明数量，因此同一语法的�
 
 ## 80.10 Quantumult X / Surge scoped capability evidence gate
 
-WayX 的目标不是验证目标软件的完整 Profile 能力，而是验证 **Loon 去广告插件转换实际会用到的能力**。QX 与 Surge 的 capability gate 统一只关注：
+WayX capability gate 只验证 **Loon 去广告插件转换实际会用到的能力**。QX 与 Surge 统一只关注：
 
 - Rule 类型；
 - Rewrite 类别（包括目标原生 Rewrite / Map Local / HTTP Script 等 WayX 实际生成路径）；
 - MITM `hostname`。
 
-明确不进入 capability model：`FINAL`、CA/证书、p12/passphrase、服务器证书校验跳过、源/目标 IP skip、全局路由兜底及其它完整 Profile 配置项。
+其余目标软件 Profile 能力不进入 capability model，也不参与 drift 判断。
 
 ### Quantumult X
 
 - 用户提供的官方 `sample.txt` 作为人工确认基线；
 - CI 读取 Crossutility 当前 `sample.conf`、`filter.snippet`、`sample-import-rewrite.snippet`，只检查 WayX registry 中的 Rule/Rewrite/hostname 是否仍有官方依据；
 - 官方新增与 Loon 去广告转换无关的能力不触发 drift；
-- registry 不再维护 `final`、`url-and-header`、完整 Profile MITM key 或“not emitted”分类。
+- registry 只维护 WayX 实际使用的 Rule/Rewrite/hostname，不维护转换范围之外的能力分类。
 
 实现：
 - registry：`converter/src/qx-official-capabilities.mjs`
