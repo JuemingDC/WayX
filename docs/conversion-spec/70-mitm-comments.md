@@ -32,6 +32,10 @@ hostname = %APPEND% api.example.com, *.example.com
 - 上游兼容说明
 - 依赖说明
 
+Quantumult X 对 Rule / Rewrite 注释额外应用“一注释一规则”规则：只有单行注释紧邻且只对应一条源规则、并最终生成一条活动 QX filter/rewrite 时，才转换成 `{# note #} rule`。如果一条注释下面连续有多条规则、存在多行注释、注释本身是被禁用的源规则，或一条源规则展开为多条目标规则，则继续保留普通 `#` 注释，不强行绑定到其中一条。
+
+WayX 转换说明属于目标 metadata，不是源规则注释，禁止进入 QX `{# ... #}` note。
+
 ## 70.2.1 未支持 MITM option
 
 除当前已验证的 `hostname` 等目标可表达项外，源 MITM option 不得以普通 “Unsupported” 注释静默保留。无法映射时必须输出 `# [WayX] REVIEW REQUIRED` 与原 `# Source declaration:`，使 Source→Target 对账和 Gate 都能识别该语义项尚未转换。
