@@ -147,6 +147,7 @@ function statements(ast, target) {
   }
   if (!body) throw new Error('complex helper requires at least one body/JSON action');
   return {out, body, headers, json, headerAdd};
+
 }
 export function renderMixedRewriteScript(ast, {target, stamp='', category='', sourceLine=''}={}) {
   validateRewriteV2Ast(ast);
@@ -182,5 +183,5 @@ export function renderMixedRewriteScript(ast, {target, stamp='', category='', so
     '}else{$done({});}',
     '',
   ].filter(line => line !== null);
-  return {pattern:coarsePattern(ast),script:lines.join('\n'),qxAction:ast.phase==='request'?'script-request-body':'script-response-body',surgeType:ast.phase==='request'?'http-request':'http-response',requiresBody:true,fullHeaderMode:plan.headerAdd};
+  return {pattern:coarsePattern(ast),script:lines.join('\n'),qxAction:ast.phase==='request'?'script-request-body':'script-response-body',surgeType:ast.phase==='request'?'http-request':'http-response',requiresBody:plan.body,fullHeaderMode:plan.headerAdd};
 }
