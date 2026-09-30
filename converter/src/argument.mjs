@@ -90,16 +90,15 @@ export function buildSurgeArgumentTable(argumentLines = []) {
   };
 }
 
-export function surgeArgumentMetadata(argumentLines = []) {
+export function surgeArgumentMetadata(argumentLines = [], { proxyPolicyBinding = false } = {}) {
   const table = buildSurgeArgumentTable(argumentLines);
-  if (!table.entries.length) return { table, lines:[] };
 
   const args = table.entries.map(entry => {
     if (!entry.hasDefault) return entry.surgeName;
     return `${entry.surgeName}:${metadataDefaultValue(entry.defaultValue, entry.id)}`;
   });
 
-  const desc = table.entries.map(entry => {
+  const descriptions = table.entries.map(entry => {
     const pieces = [entry.tag || entry.id];
     if (entry.kind === 'select' && entry.values.length) {
       pieces.push('options=' + entry.values.join('|'));
@@ -108,11 +107,33 @@ export function surgeArgumentMetadata(argumentLines = []) {
     }
     if (entry.desc) pieces.push(entry.desc);
     return `${entry.surgeName}: ${pieces.join(' — ')}`;
-  }).join('\\n');
+  });
+
+  let policyBinding = null;
+  if (proxyPolicyBinding) {
+    const usedNames = new Set(table.entries.map(entry => entry.surgeName));
+    let surgeName = 'wayx_proxy_policy';
+    let suffix = 2;
+    while (usedNames.has(surgeName)) surgeName = `wayx_proxy_policy_${suffix++}`;
+
+    // Sparkle's Surge Bilibili module demonstrates this exact pattern:
+    // bind a Rule policy through a Module parameter, default DIRECT, and let
+    // the user replace it with a proxy policy/group without defining [Proxy]
+    // or [Proxy Group] inside the module.
+    args.push(`${surgeName}:DIRECT`);
+    descriptions.push(`${surgeName}: Loon PROXY policy binding — default DIRECT; set to the desired Surge proxy policy or policy group`);
+    policyBinding = {
+      surgeName,
+      placeholder:`{{{${surgeName}}}}`,
+      defaultValue:'DIRECT',
+    };
+  }
+
+  if (!args.length) return { table, lines:[], policyBinding };
 
   const lines = ['#!arguments=' + args.join(',')];
-  if (desc) lines.push('#!arguments-desc=' + desc);
-  return { table, lines };
+  if (descriptions.length) lines.push('#!arguments-desc=' + descriptions.join('\\n'));
+  return { table, lines, policyBinding };
 }
 
 export function surgeArgumentPlaceholder(id, table) {
