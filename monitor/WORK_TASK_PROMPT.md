@@ -1,6 +1,6 @@
 # WayX — ChatGPT Work 上游语义审查任务
 
-版本：2.6  
+版本：2.7  
 作者：chance  
 更新时间：2026-09-30  
 类型：Automation / Upstream Semantic Review
@@ -42,7 +42,7 @@ Work 只处理 Review Tier：QX 无法承载的 Loon `[Argument]`、Loon 新语�
 - QX 与 Surge 只有 source-authored 且 observed/registered 的多 action Rewrite 才进入 complex helper；既有 renderer 能力保留，但不能据此凭空放行未观察组合。脚本必须在一个文件内按源顺序完成全部 action。单 action 如需脚本只能走对应专用 semantic helper。
 - Surge 去广告 Module 中的源 `FINAL` 直接丢弃，禁止改写成活动 catch-all。
 - legacy `json.jq("jq-path=...")` 直接丢弃，不解析依赖、不生成目标规则。
-- QX `header.add` 不得用 set/对象赋值冒充；没有已验证重复 Header 表示时注释 Review。
+- QX `request.header.add` 仅使用已验证 whole-header 插入路径；QX `response.header.add` / legacy `response-header-add` 按项目决策直接注释保留，不用 set 冒充，也不再作为持续 Review 项。
 - QX 与 Surge Source Script 都不做 runtime compatibility scan；直接保留原脚本 URL。仅在 QX HTTP Script action 类型无法由 declaration 明确判断时读取正文辅助判定 header/body/echo，不据此启用或禁用脚本。
 - 语义一致性优先于状态码表面一致。
 - `reject_dict(200)` → QX `reject-dict`，不得因 200 变成 `reject-200`。
@@ -55,6 +55,8 @@ Work 只处理 Review Tier：QX 无法承载的 Loon `[Argument]`、Loon 新语�
 - QX snippet 的 filter/rewrite/mitm section 标题必须注释。
 - QX filter/rewrite 支持 `{# note #} rule`。源 `[Rule]`、`[Rewrite]`、`[Script]` 只要最终生成 QX filter/rewrite，都只在“一行源注释紧邻一条源声明，且下一行不是第二条连续活动声明、最终只生成一条活动 QX 行”时内联；若一条注释下面连续多条源声明、连续多行注释、注释本身是禁用源声明，必须保持普通 `#` 注释。WayX 转换说明绝不进入 QX note。
 - 转换时保留原注释，添加转换时间、作者 `chance`、模块分类、Target、Source。
+- QZXY 是 `.github/manual-assets.json` 中的手工维护资产，不允许 Work 把它加入 Loon Source Catalog 或让 canonical regeneration 覆盖。
+- 每次审查必须查看 `conversion-reconciliation` 与 `review-inventory` 报告；reconciliation 不闭合时不能标记 work-complete。
 - 遇到未知语法/action/section/complex signature 时先注释源声明并写 `ISSUE REQUIRED`，不得猜测转换；确认对应 GitHub Issue 已创建或复用。Issue 解决前不得把该项改成活动规则。已知目标能力缺口继续走普通 Review。
 - 不扩大 MITM、正则或域名匹配范围。
 
