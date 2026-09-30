@@ -91,6 +91,8 @@ function validateCondition(node, phase) {
   if (node.type!=='comparison'||node.left?.type!=='variable') throw conditionError('condition left side must be a variable');
   const name=node.left.name;
   const header=/^(request|response)\.header\[['"].+['"]\]$/.test(name);
+  const known=name==='url'||name==='request.method'||name==='response.status'||header;
+  if(!known) throw conditionError('unsupported Rewrite v2 condition variable: '+name);
   if(phase==='request' && (name==='response.status'||name.startsWith('response.header['))) throw conditionError('request phase cannot reference response data: '+name);
   if(node.operator==='~=') {
     if(node.right?.type!=='regex') throw conditionError('~= requires a Regex right-hand value');
@@ -98,6 +100,8 @@ function validateCondition(node, phase) {
   }
   if(node.operator!=='==') throw conditionError('unsupported condition operator: '+node.operator);
   if(name==='response.status' && node.right?.type!=='number' && node.right?.type!=='variable') throw conditionError('response.status equality requires Number or typed variable');
+  if(name==='request.method' && !['string','raw-string','variable'].includes(node.right?.type)) throw conditionError('request.method equality requires String or typed variable');
+  if(name==='url' && !['string','raw-string','variable'].includes(node.right?.type)) throw conditionError('url equality requires String or typed variable');
   if(header && !['string','raw-string','null','variable'].includes(node.right?.type)) throw conditionError('header equality requires String, null, or String variable');
 }
 export function validateRewriteV2Ast(ast) {
