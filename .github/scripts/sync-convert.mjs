@@ -548,6 +548,15 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
 
   const qx = { filter: [], rewrite: [], mitm: [], notes: [], generatedScripts: new Map() };
   const sg = { rule: [], url: [], header: [], map: [], body: [], script: [], mitm: [], notes: [], generatedScripts: new Map() };
+  const supportedSourceSections = new Set(['Argument','Rule','Rewrite','Script','MITM','MitM']);
+  for (const [sectionName, sectionLines] of parsed.sections) {
+    if (supportedSourceSections.has(sectionName)) continue;
+    const active = sectionItems(sectionLines).filter(item => item.line).map(item => item.line);
+    if (!active.length) continue;
+    const reason = '# [WayX] REVIEW REQUIRED: unsupported Loon source section [' + sectionName + '] is outside the current ad-block conversion grammar';
+    qx.notes.push(reason, ...active.map(line => '# Source declaration: ' + line));
+    sg.notes.push(reason, ...active.map(line => '# Source declaration: ' + line));
+  }
   const argumentAnalysis = analyzePluginArgumentUsage({
     argumentLines: parsed.sections.get('Argument') || [],
     rewriteLines: parsed.sections.get('Rewrite') || [],
@@ -641,8 +650,9 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
       try {
         ast = parseScriptV2(item.line);
       } catch (error) {
-        qx.notes.push(...comments, `# Unsupported source Script v2 preserved (${String(error?.message || error).split('\n')[0]}): ${item.line}`);
-        sg.notes.push(...comments, `# Unsupported source Script v2 preserved (${String(error?.message || error).split('\n')[0]}): ${item.line}`);
+        const reason = String(error?.message || error).split('\n')[0];
+        qx.notes.push(...comments, `# [WayX] SCRIPT V2 REVIEW REQUIRED: source declaration parse failed: ${reason}`, `# Source declaration: ${item.line}`);
+        sg.notes.push(...comments, `# [WayX] SCRIPT V2 REVIEW REQUIRED: source declaration parse failed: ${reason}`, `# Source declaration: ${item.line}`);
         continue;
       }
 
@@ -692,8 +702,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
 
     const sc = parseScriptLine(item.line);
     if (!sc || !sc.scriptPath) {
-      qx.notes.push(...comments, `# Unsupported source Script preserved: ${item.line}`);
-      sg.notes.push(...comments, `# Unsupported source Script preserved: ${item.line}`);
+      qx.notes.push(...comments, '# [WayX] SCRIPT REVIEW REQUIRED: unsupported source Script declaration has no verified target mapping', `# Source declaration: ${item.line}`);
+      sg.notes.push(...comments, '# [WayX] SCRIPT REVIEW REQUIRED: unsupported source Script declaration has no verified target mapping', `# Source declaration: ${item.line}`);
       continue;
     }
     scriptIndex++;
