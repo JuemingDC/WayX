@@ -88,10 +88,10 @@ const disabledRewriteSource = `#!name=DisabledRewriteFixture
 const disabledRewriteOutput = convert(disabledRewriteFixture, disabledRewriteSource, new Map(), STAMP);
 assert.match(disabledRewriteOutput.surge, /^\[Body Rewrite\]$/m);
 assert.match(disabledRewriteOutput.surge, /#response if \$\{url\} ~= \/\^https:\\\/\\\/api\\\.example\\\.com\\\/json\\\?\/i then response\.json\.jq/);
-assert.match(disabledRewriteOutput.surge, /# http-response-jq \\^https:\\\/\\\/api\\\.example\\\.com\\\/json\\\? '\.data\.ads = \[\]'/);
+assert.match(disabledRewriteOutput.surge, /# http-response-jq \^https:\\\/\\\/api\\\.example\\\.com\\\/json\\\? '\.data\.ads = \[\]'/);
 assert.match(disabledRewriteOutput.surge, /^\[Map Local\]$/m);
 assert.match(disabledRewriteOutput.surge, /#response if \$\{url\} ~= \/\^https:\\\/\\\/api\\\.example\\\.com\\\/mock\\\?\/i then response\.body\.mock\("text", "OK", 200\)/);
-assert.match(disabledRewriteOutput.surge, /# \\^https:\\\/\\\/api\\\.example\\\.com\\\/mock\\\? data-type=text data="OK" status-code=200 header="Content-Type:text\/plain"/);
+assert.match(disabledRewriteOutput.surge, /# \^https:\\\/\\\/api\\\.example\\\.com\\\/mock\\\? data-type=text data="OK" status-code=200 header="Content-Type:text\/plain"/);
 assert.equal(
   disabledRewriteOutput.surge.split(/\\r?\\n/).some(line => !line.trim().startsWith('#') && /api\\\.example\\\.com\\\/(?:mock|json)/.test(line)),
   false,
