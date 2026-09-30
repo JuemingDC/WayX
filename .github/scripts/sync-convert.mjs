@@ -12,8 +12,9 @@ import { simpleUrlRewriteCondition } from '../../converter/src/rewrite-v2-semant
 import { isScriptV2, parseScriptV2 } from '../../converter/src/script-v2.mjs';
 import { analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs } from '../../converter/src/argument-usage.mjs';
 import { surgeArgumentMetadata } from '../../converter/src/argument.mjs';
-import { hasActiveSurgeLines, renderSurgeModuleHeader, validateSurgeModule } from '../../converter/src/surge-module.mjs';
-import { renderQxSnippetHeader } from '../../converter/src/metadata.mjs';
+import { validateSurgeModule } from '../../converter/src/surge-module.mjs';
+import { createQxOutputState, appendQxOutput, qxRuleOutputDestination, qxRewriteOutputDestination, renderQxOutput } from '../../converter/src/qx-output.mjs';
+import { createSurgeOutputState, appendSurgeOutput, surgeOutputDestination, surgeRuleOutputDestination, surgeRewriteOutputDestination, renderSurgeOutput } from '../../converter/src/surge-output.mjs';
 import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection } from '../../converter/src/source-section.mjs';
 import { attachQxInlineNote } from '../../converter/src/qx-comment.mjs';
 import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
@@ -128,9 +129,6 @@ function rewriteV2Action(line, target, ctx) {
 }
 
 
-function surgeSectionArray(sg, section) {
-  return ({url:sg.url, header:sg.header, map:sg.map, body:sg.body, script:sg.script})[section] || null;
-}
 
 function planDisabledSurgeRewriteComments(comments, ctx) {
   const passthrough = [];
