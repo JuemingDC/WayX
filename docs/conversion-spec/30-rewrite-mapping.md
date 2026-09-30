@@ -167,6 +167,8 @@ Loon regex literal 的 `i / m / s` flags 在所有 native/helper 路径中均只
 
 Surge 的 `header.add` 与普通对象 Header 修改语义不同。需要脚本保持重复字段时必须使用 `full-header-mode=true` 的 `[{field,value}]` 形式，禁止退化为对象赋值。Quantumult X 官方 sample 只证明 Header 对象与整块 Header Rewrite，未证明对象赋值可保留同名重复字段；因此 **QX 不得用 set/对象赋值冒充 add**。QX `header.add` 在没有已验证等价表示时，helper 失败后注释源声明。
 
+Legacy Rewrite 同样遵守 native → helper → Review：QX 旧版 `header-replace / header-del / header-replace-regex` 若无静态字段级原生等价形式，转换为最小 `script-request-header / script-response-header` helper；旧版 `header-add` 因重复 Header 语义与新版 `*.header.add` 相同，仍不得用 set 冒充，helper 无法证明重复字段保持时进入 Review。
+
 `json.add` 按 Loon JSON Key Path 语义处理：仅当目标 Key 不存在时新增；中间对象/数组路径按 Key Path 创建；批量参数按下标配对并从左到右执行。禁止把 `add` 退化成无条件覆盖。
 
 `json.delete` 删除对象 Key；Key Path 最终指向数组索引（如 `items[0]`）时必须删除该元素并压缩数组，禁止使用 JavaScript `delete` 产生稀疏数组。`json.replace(..., null)` 保持 JSON `null` 类型，不得转换为字符串 `"null"`。
