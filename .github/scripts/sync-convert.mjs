@@ -40,7 +40,7 @@ registerComplexRewriteHandler({
   plan: (ast, _target, ctx) => {
     try {
       const plan = renderQxHeaderScript(ast, {stamp:ctx.stamp, category:ctx.category, sourceLine:ctx.sourceLine});
-      const key = crypto.createHash('sha1').update('header' + ctx.sourceLine).digest('hex').slice(0, 10);
+      const key = crypto.createHash('sha1').update('header\\0' + ctx.sourceLine).digest('hex').slice(0, 10);
       const filename = 'header_' + key + '.js';
       ctx.generatedScripts.set(filename, plan.script);
       return {ok:true, section:'rewrite', line:plan.pattern + ' url ' + plan.qxAction + ' ' + RAW_BASE + '/script/' + ctx.id + '/' + filename};
