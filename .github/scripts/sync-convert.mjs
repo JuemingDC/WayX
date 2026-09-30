@@ -24,7 +24,7 @@ import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
 import { planMitmLine } from '../../converter/src/mitm.mjs';
 import { fetchOriginalText, fetchOriginalBytes, resolveOriginalUrl } from '../../converter/src/source-fetch.mjs';
 import { registerComplexRewriteHandler, planComplexRewrite } from '../../converter/src/complex-rewrite-registry.mjs';
-import { renderMixedRewriteScript, renderSingleJsonAddScript } from '../../converter/src/complex-rewrite-script.mjs';
+import { renderMixedRewriteScript, renderSingleJsonMutationScript } from '../../converter/src/complex-rewrite-script.mjs';
 import { normalizeRegexBodyForTarget } from '../../converter/src/target-regex.mjs';
 import { renderSurgeRequestMockScript } from '../../converter/src/surge-mock.mjs';
 
@@ -252,7 +252,7 @@ function rewriteV2Action(line, target, ctx) {
     // Use a dedicated single-action semantic helper rather than the complex pipeline helper.
     if (ast.actions.length === 1 && ast.actions[0].name === ast.phase + '.json.add') {
       try {
-        const plan = renderSingleJsonAddScript(ast, {target:'qx', stamp:ctx.stamp, category:ctx.category, sourceLine:line});
+        const plan = renderSingleJsonMutationScript(ast, {target:'qx', stamp:ctx.stamp, category:ctx.category, sourceLine:line});
         const key = crypto.createHash('sha1').update('json-add-qx\\0' + line).digest('hex').slice(0, 10);
         const filename = 'json_add_qx_' + key + '.js';
         ctx.generatedScripts.set(filename, plan.script);
@@ -341,17 +341,17 @@ function rewriteV2Action(line, target, ctx) {
         // Native planning failed; continue to the generic Surge script fallback.
       }
     }
-    if (ast.actions.length === 1 && ast.actions[0].name === ast.phase + '.json.add') {
+    if (ast.actions.length === 1 && new RegExp('^' + ast.phase + '\\x2ejson\\x2e(?:add|delete|replace)$').test(ast.actions[0].name)) {
       try {
-        const plan = renderSingleJsonAddScript(ast, {target:'surge', stamp:ctx.stamp, category:ctx.category, sourceLine:line, argumentTable:ctx.argumentTable});
+        const plan = renderSingleJsonMutationScript(ast, {target:'surge', stamp:ctx.stamp, category:ctx.category, sourceLine:line, argumentTable:ctx.argumentTable});
         const payload = argumentRefs.all.length ? surgeRewriteArgumentPayload(argumentRefs.all, ctx.argumentTable) : {ok:true, value:null};
         if (!payload.ok) throw new Error(payload.reason);
-        const key = crypto.createHash('sha1').update('json-add-surge\\0' + line).digest('hex').slice(0, 10);
-        const filename = 'json_add_surge_' + key + '.js';
+        const key = crypto.createHash('sha1').update('json-mutation-surge\\0' + line).digest('hex').slice(0, 10);
+        const filename = 'json_mutation_surge_' + key + '.js';
         ctx.generatedScripts.set(filename, plan.script);
         return {
           section:'script',
-          line:'wayx_json_add_' + key + ' = type=' + plan.surgeType + ',pattern=' + plan.pattern + ',script-path=' + RAW_BASE + '/script/' + ctx.id + '/' + filename + ',requires-body=true' + (payload.value ? ',argument=' + payload.value : ''),
+          line:'wayx_json_mutation_' + key + ' = type=' + plan.surgeType + ',pattern=' + plan.pattern + ',script-path=' + RAW_BASE + '/script/' + ctx.id + '/' + filename + ',requires-body=true' + (payload.value ? ',argument=' + payload.value : ''),
         };
       } catch (error) {
         return rewriteReview(line, String(error?.message || error).split('\n')[0]);
