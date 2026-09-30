@@ -50,6 +50,7 @@ jobs:
           node --check converter/tests/catalog-syntax-inventory.mjs
           node --check converter/tests/catalog-rule-inventory.mjs
           node --check converter/tests/rule-ast.mjs
+          node --check converter/tests/rewrite-ir.mjs
           node --check converter/tests/qx-official-capabilities.mjs
           node --check converter/tests/surge-official-capabilities.mjs
           node --check converter/tests/unknown-issue-markers.mjs
@@ -77,6 +78,7 @@ jobs:
           node converter/tests/catalog-syntax-inventory.mjs
           node converter/tests/catalog-rule-inventory.mjs
           node converter/tests/rule-ast.mjs
+          node converter/tests/rewrite-ir.mjs
           node converter/tests/unknown-issue-markers.mjs
           node converter/tests/manual-assets.mjs
           python converter/tests/test_conversion_gate.py
