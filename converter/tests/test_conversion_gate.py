@@ -40,6 +40,13 @@ assert ok, reason
 ok, reason = gate.simple_rule("DOMAIN,example.com,PROXY")
 assert ok and "deterministic" in reason
 
+for policy in ("REJECT-DROP", "REJECT-NO-DROP"):
+    ok, reason = gate.simple_rule(f"DOMAIN,example.com,{policy}")
+    assert ok, (policy, reason)
+
+ok, reason = gate.simple_rule("AND,((DOMAIN,example.com),(PROTOCOL,TCP)),REJECT-NO-DROP")
+assert ok and "deterministic" in reason
+
 ok, reason = gate.simple_rule("DEST-PORT,443,REJECT")
 assert ok and "deterministic" in reason
 
