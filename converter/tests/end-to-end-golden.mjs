@@ -292,7 +292,7 @@ for (const testCase of cases) {
 
   if (testCase.name === 'YouTube') {
     assert.doesNotMatch(out.qx, /Source \[Argument\]|Argument usage:/, 'YouTube QX must not emit Loon plugin parameter UI/declarations');
-    assert.equal(actual.qxReview, 2);
+    assert.equal(actual.qxReview, 3);
     assert.equal(actual.surgeReview, 0);
     assert.match(out.surge, /^#!arguments=.*captionLang:zh-Hans/m);
     assert.match(out.surge, /argument="\{\\\"captionLang\\\":\\\"\{\{\{captionLang\}\}\}\\\"\}"/);
