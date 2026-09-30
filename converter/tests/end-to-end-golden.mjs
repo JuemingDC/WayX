@@ -391,9 +391,9 @@ const unknownSectionSource = `#!name=UnknownSectionFixture
 foo = bar
 `;
 const unknownSectionOutput = convert(unknownSectionFixture, unknownSectionSource, new Map(), STAMP);
-assert.match(unknownSectionOutput.qx, /REVIEW REQUIRED: unsupported Loon source section \[FutureFeature\]/);
+assert.match(unknownSectionOutput.qx, /ISSUE REQUIRED \\[unknown-source-section\\]: unsupported Loon source section \\[FutureFeature\\]/);
 assert.match(unknownSectionOutput.qx, /# Source declaration: foo = bar/);
-assert.match(unknownSectionOutput.surge, /REVIEW REQUIRED: unsupported Loon source section \[FutureFeature\]/);
+assert.match(unknownSectionOutput.surge, /ISSUE REQUIRED \\[unknown-source-section\\]: unsupported Loon source section \\[FutureFeature\\]/);
 assert.match(unknownSectionOutput.surge, /# Source declaration: foo = bar/);
 
 const disabledRewriteOutput = convert(disabledRewriteFixture, disabledRewriteSource, new Map(), STAMP);
