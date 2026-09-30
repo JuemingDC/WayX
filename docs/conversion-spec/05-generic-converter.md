@@ -117,7 +117,28 @@ QX / Surge planner 只能消费 AST，不得再次对原始声明做 CSV 拆分�
 - Surge planner：按 `nssurge.com/llms.txt` 指定优先级核对官方 Manual，并保留合法 logical tree/Rule 参数；
 - 任一目标不支持时按 Block 20 的 comment/Review/Issue 规则 fail closed，不允许修改 AST 来迁就目标。
 
-## 5.5 Rewrite 分型
+## 5.5 Rewrite Semantic IR 与分型
+
+Legacy Rewrite 与 Rewrite v2 **保留独立 source parser**，但 parser 完成后必须统一进入 target-neutral Rewrite Semantic IR：
+
+```text
+Legacy Rewrite source ─→ Legacy parser ─┐
+                                      ├→ Rewrite Semantic IR → QX / Surge planning
+Rewrite v2 source ────→ Rewrite v2 AST ┘
+```
+
+Semantic IR 只描述源语义，不携带目标平台语法。至少保留：
+- `sourceSyntax`：`legacy` / `v2`；
+- 完整 source declaration；
+- phase / condition；
+- 按源顺序排列的 semantic operations；
+- 是否 source-authored pipeline；
+- operation 的 normalized kind；
+- 必须保真的 source-specific semantics。
+
+特别注意：相同“类别”不代表可丢弃来源差异。例如 Legacy `302 TARGET` / `307 TARGET` 是完整 redirect target，而 Rewrite v2 `redirect(...)` 当前语义是基于匹配区间/template 的重写；IR 必须明确区分，target planner 不得只因为两者都叫 redirect 就共用错误实现。
+
+Production orchestration 的 action 路由判断必须读取 IR operation，不允许继续用 action-name regex 维护另一套分类器。既有 target renderer 可以逐步迁移，但其输入必须来自 IR 所保留的 AST/semantic payload。
 
 所有 Rewrite 必须先分类，再转换。至少分为：
 
