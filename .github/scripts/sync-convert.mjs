@@ -25,6 +25,7 @@ import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
 import { planMitmLine } from '../../converter/src/mitm.mjs';
 import { fetchOriginalText, fetchOriginalBytes, resolveOriginalUrl } from '../../converter/src/source-fetch.mjs';
 import { registerComplexRewriteHandler, planComplexRewrite } from '../../converter/src/complex-rewrite-registry.mjs';
+import { renderMixedRewriteScript } from '../../converter/src/complex-rewrite-script.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -49,6 +50,24 @@ registerComplexRewriteHandler({
     }
   },
 });
+registerComplexRewriteHandler({
+  id: 'mixed-header-body-script',
+  targets: ['qx','surge'],
+  match: (ast, info) => info.families.includes('header-pipeline') && info.families.includes('body-pipeline'),
+  plan: (ast, target, ctx) => {
+    try {
+      const plan = renderMixedRewriteScript(ast, {target, stamp:ctx.stamp, category:ctx.category, sourceLine:ctx.sourceLine});
+      const key = crypto.createHash('sha1').update('complex-mixed\0' + ctx.sourceLine).digest('hex').slice(0, 10);
+      const filename = 'complex_' + key + '.js';
+      ctx.generatedScripts.set(filename, plan.script);
+      if (target === 'qx') return {ok:true, section:'rewrite', line:plan.pattern + ' url ' + plan.qxAction + ' ' + RAW_BASE + '/script/' + ctx.id + '/' + filename};
+      return {ok:true, section:'script', line:'wayx_complex_' + key + ' = type=' + plan.surgeType + ',pattern=' + plan.pattern + ',script-path=' + RAW_BASE + '/script/' + ctx.id + '/' + filename + ',requires-body=true'};
+    } catch (error) {
+      return {ok:false, terminal:true, reason:String(error?.message || error)};
+    }
+  },
+});
+
 
 
 const nowCN = () => new Intl.DateTimeFormat('sv-SE', {
@@ -217,6 +236,9 @@ function rewriteV2Action(line, target, ctx) {
     } catch (error) {
       return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
     }
+    const complex = planComplexRewrite(ast, 'surge', {...ctx, sourceLine:line});
+    if (complex.ok) return {section:complex.section, line:complex.line, lines:complex.lines};
+    if (complex.terminal) return {section:'comment', line:'# Unsupported Loon Rewrite v2 preserved (' + complex.reason + '): ' + line};
   }
 
   // Keep the older conservative subset as a final compatibility fallback.
