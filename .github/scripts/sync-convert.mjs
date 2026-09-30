@@ -14,7 +14,7 @@ import { validateRewriteV2Ast } from '../../converter/src/rewrite-v2-actions.mjs
 import { inlineResolvedDependency, jqDependencySpecFromAction, qxMockPlanFromAction, isDiscardedLegacyJqPathAction } from '../../converter/src/dependency.mjs';
 import { renderQxMockFileScript } from '../../converter/src/qx-mock.mjs';
 import { qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan, surgeHeaderRewritePlan, surgeInlineMockPlan, surgeMockFilePlan, simpleUrlRewriteCondition } from '../../converter/src/rewrite-v2-semantic.mjs';
-import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript } from '../../converter/src/qx-semantic-script.mjs';
+import { renderQxRedirectScript, renderQxRejectScript, renderQxInlineMockScript } from '../../converter/src/qx-semantic-script.mjs';
 import { isScriptV2, parseScriptV2, splitScriptV2Csv } from '../../converter/src/script-v2.mjs';
 import { qxScriptV2Plan, surgeScriptV2Plan } from '../../converter/src/script-v2-target.mjs';
 import { analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs } from '../../converter/src/argument-usage.mjs';
