@@ -841,6 +841,67 @@ assert.match(
   /REVIEW REQUIRED: QX header\.add cannot be represented losslessly/,
 );
 
+const legacyNestedMock = classifyLegacyRewrite(
+  'mock-response-body data-type=json data="{"no":0,"error":"success"}" status-code=200',
+);
+assert.equal(legacyNestedMock.mock.data, '{"no":0,"error":"success"}');
+
+const legacyResponseMockQx = planLegacyRewrite(
+  '^https:\\/\\/tieba\\.example\\.com/mock',
+  'mock-response-body data-type=json data="{"no":0,"error":"success"}" status-code=200',
+  'qx',
+  legacyCtx,
+);
+assert.equal(legacyResponseMockQx.section, 'rewrite');
+assert.match(legacyResponseMockQx.line, /url script-echo-response .*legacy_mock_.*\.js$/);
+assert.ok([...legacyCtx.generatedScripts.values()].some(script => script.includes('{"no":0,"error":"success"}')));
+
+const legacyResponseMockSurge = planLegacyRewrite(
+  '^https:\\/\\/tieba\\.example\\.com/mock',
+  'mock-response-body data-type=json data="{"no":0,"error":"success"}" status-code=200',
+  'surge',
+  legacyCtx,
+);
+assert.equal(legacyResponseMockSurge.section, 'map');
+assert.match(legacyResponseMockSurge.line, /data="\{\\\"no\\\":0,\\\"error\\\":\\\"success\\\"\}"/);
+
+const legacyRequestMockQx = planLegacyRewrite(
+  '^https:\\/\\/api\\.example\\.com/submit',
+  'mock-request-body data-type=json data="{"x":1}"',
+  'qx',
+  legacyCtx,
+);
+assert.equal(legacyRequestMockQx.section, 'rewrite');
+assert.match(legacyRequestMockQx.line, /url script-request-body .*legacy_mock_.*\.js$/);
+
+const legacyRequestMockSurge = planLegacyRewrite(
+  '^https:\\/\\/api\\.example\\.com/submit',
+  'mock-request-body data-type=json data="{"x":1}"',
+  'surge',
+  legacyCtx,
+);
+assert.equal(legacyRequestMockSurge.section, 'script');
+assert.match(legacyRequestMockSurge.line, /type=http-request,.*requires-body=true/);
+
+const legacyJsonAddQx = planLegacyRewrite(
+  '^https:\\/\\/api\\.example\\.com',
+  'response-body-json-add data.enabled true data.count 2',
+  'qx',
+  legacyCtx,
+);
+assert.equal(legacyJsonAddQx.section, 'rewrite');
+assert.match(legacyJsonAddQx.line, /url script-response-body .*legacy_json_add_qx_.*\.js$/);
+assert.ok([...legacyCtx.generatedScripts.values()].some(script => /__wayxJsonAdd/.test(script) && /"enabled"/.test(script)));
+
+const legacyJsonAddSurge = planLegacyRewrite(
+  '^https:\\/\\/api\\.example\\.com',
+  'response-body-json-add data.enabled true',
+  'surge',
+  legacyCtx,
+);
+assert.equal(legacyJsonAddSurge.section, 'script');
+assert.match(legacyJsonAddSurge.line, /type=http-response,.*requires-body=true/);
+
 const explicitQxReject = inspectQxScriptCompatibility({
   scriptUrl:'https://alpha.invalid/runtime.js',
   sourceText:'throw new Error("QuantumultX is not supported"); const x=$utils.ungzip(data);',
