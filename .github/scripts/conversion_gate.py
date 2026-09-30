@@ -139,6 +139,8 @@ def simple_rule(line: str) -> tuple[bool, str]:
     if upper.startswith(("AND,", "OR,", "NOT,")):
         return False, "logical rule requires semantic review"
     parts = split_csv(line)
+    if parts and parts[0].upper() == "FINAL":
+        return True, "source FINAL is intentionally discarded for Surge ad-block modules"
     if len(parts) < 3:
         return False, "rule does not have type/value/policy"
     rule_type = parts[0].upper()
@@ -163,6 +165,11 @@ def simple_rule(line: str) -> tuple[bool, str]:
 
 
 def simple_rewrite_v2(line: str) -> tuple[bool, str] | None:
+    if re.fullmatch(
+        r"""(?:request|response)\s+if\s+.+\s+then\s+(?:request|response)\.json\.jq\(\s*["']jq-path=[^"']+["']\s*\)""",
+        line,
+    ):
+        return True, "legacy jq-path alias is intentionally discarded"
     m = re.fullmatch(
         r"request\s+if\s+\$\{url\}\s*~=\s*/((?:\\.|[^/])*)/([ims]*)\s+then\s+(.+)",
         line,
