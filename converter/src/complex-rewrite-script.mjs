@@ -164,6 +164,7 @@ function statements(ast, target, {argumentTable = null} = {}) {
 }
 export function renderMixedRewriteScript(ast, {target, stamp='', category='', sourceLine='', argumentTable=null}={}) {
   validateRewriteV2Ast(ast);
+  if (!Array.isArray(ast?.actions) || ast.actions.length < 2) throw new Error('complex helper requires a multi-action Rewrite pipeline');
   if (!['qx','surge'].includes(target)) throw new Error('invalid mixed helper target');
   const plan = statements(ast, target, {argumentTable});
   const condition = compileComplexCondition(ast.condition, target, {argumentTable});
