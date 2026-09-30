@@ -27,6 +27,7 @@ import { registerComplexRewriteHandler, planComplexRewrite } from '../../convert
 import { renderMixedRewriteScript, renderSingleJsonMutationScript, renderObservedComplexRewriteScript } from '../../converter/src/complex-rewrite-script.mjs';
 import { normalizeRegexBodyForTarget } from '../../converter/src/target-regex.mjs';
 import { renderSurgeRequestMockScript } from '../../converter/src/surge-mock.mjs';
+import { QX_WAYX_FILTER_TYPES, QX_WAYX_SCRIPT_ACTIONS, QX_WAYX_SNIPPET_MITM_KEYS } from '../../converter/src/qx-official-capabilities.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -1062,16 +1063,6 @@ function scriptUrls(source) {
   return [...urls];
 }
 
-const QX_FILTER_TYPES = new Set([
-  'host','host-suffix','host-keyword','host-wildcard',
-  'ip-cidr','ip6-cidr','geoip','ip-asn','user-agent',
-]);
-const QX_SCRIPT_ACTIONS = new Set([
-  'script-request-header','script-request-body',
-  'script-response-header','script-response-body',
-  'script-echo-response','script-analyze-echo-response',
-]);
-
 function stripQxLeadingNote(line, entry) {
   const text = String(line ?? '').trim();
   if (!text.startsWith('{#')) return {line:text, note:null};
@@ -1085,10 +1076,16 @@ function stripQxLeadingNote(line, entry) {
 function validateQxExecutableLine(line, entry) {
   const noted = stripQxLeadingNote(line, entry);
   line = noted.line;
-  if (noted.note && /^(?:hostname|skip-server-cert-verify)\s*=/.test(line)) {
+  if (noted.note && /^([A-Za-z0-9_-]+)\s*=/.test(line)) {
     throw new Error(`${entry.id}: Quantumult X leading notes are only valid on filter/rewrite rules: ${line}`);
   }
-  if (/^(?:hostname|skip-server-cert-verify)\s*=/.test(line)) return;
+  const mitm = line.match(/^([A-Za-z0-9_-]+)\s*=/);
+  if (mitm) {
+    if (!QX_WAYX_SNIPPET_MITM_KEYS.has(mitm[1].toLowerCase())) {
+      throw new Error(`${entry.id}: unverified/unsupported Quantumult X snippet MITM key: ${mitm[1]}`);
+    }
+    return;
+  }
 
   const urlMarker = line.indexOf(' url ');
   if (urlMarker >= 0) {
@@ -1103,7 +1100,7 @@ function validateQxExecutableLine(line, entry) {
     if (/^request-header\s+.+\s+request-header\s+.+$/.test(action)) return;
 
     const script = action.match(/^(script-[a-z-]+)\s+(\S+)$/);
-    if (script && QX_SCRIPT_ACTIONS.has(script[1])) return;
+    if (script && QX_WAYX_SCRIPT_ACTIONS.has(script[1])) return;
 
     throw new Error(`${entry.id}: unverified/unsupported Quantumult X rewrite action: ${action}`);
   }
@@ -1111,7 +1108,7 @@ function validateQxExecutableLine(line, entry) {
   const comma = line.indexOf(',');
   if (comma > 0) {
     const type = line.slice(0, comma).trim().toLowerCase();
-    if (!QX_FILTER_TYPES.has(type)) {
+    if (!QX_WAYX_FILTER_TYPES.has(type)) {
       throw new Error(`${entry.id}: unverified/unsupported Quantumult X filter type: ${type}`);
     }
     const fields = line.split(',').map(part => part.trim());

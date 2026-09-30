@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "authority": {
+    "uploadedSample": "sample.txt",
+    "officialRepository": "crossutility/Quantumult-X",
+    "officialSamplePath": "sample.conf",
+    "officialSampleShaChecked": "d01bade51dc0466d5f4f84714509f420a7f1b245",
+    "officialRewriteSnippetPath": "sample-import-rewrite.snippet",
+    "officialFilterSnippetPath": "filter.snippet",
+    "checkedAt": "2026-09-30"
+  },
+  "filterTypes": [
+    "final",
+    "geoip",
+    "host",
+    "host-keyword",
+    "host-suffix",
+    "host-wildcard",
+    "ip-asn",
+    "ip-cidr",
+    "ip6-cidr",
+    "user-agent"
+  ],
+  "rewriteMatchKinds": [
+    "url",
+    "url-and-header"
+  ],
+  "urlRewriteActions": [
+    "302",
+    "307",
+    "echo-response",
+    "jsonjq-request-body",
+    "jsonjq-response-body",
+    "reject",
+    "reject-200",
+    "reject-array",
+    "reject-dict",
+    "reject-img",
+    "request-body",
+    "request-header",
+    "response-body",
+    "script-analyze-echo-response",
+    "script-echo-response",
+    "script-request-body",
+    "script-request-header",
+    "script-response-body",
+    "script-response-header"
+  ],
+  "documentedOnlyUrlRewriteActions": [
+    "jsonjq-request-body",
+    "script-analyze-echo-response"
+  ],
+  "snippetMitmKeys": [
+    "hostname"
+  ],
+  "fullConfigMitmKeys": [
+    "hostname",
+    "p12",
+    "passphrase",
+    "skip_dst_ip",
+    "skip_src_ip",
+    "skip_validating_cert"
+  ]
+}

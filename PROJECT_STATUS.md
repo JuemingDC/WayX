@@ -4,12 +4,12 @@
 > 维护原则：本文件描述“当前 main 的真实状态”，不能替代 `CONVERSION_SPEC.md`；规范冲突时以 `CONVERSION_SPEC.md` 为唯一权威。
 
 - 审计日期：2026-09-30
-- 审计基线：PR #69 Catalog-observed v2 syntax inventory / Converter Check #597
+- 审计基线：PR #70 QX official capability drift gate / Converter Check #601
 - Source Catalog：20 个 Loon 去广告插件
 - Catalog 管理目标：20 个 Quantumult X snippet + 20 个 Surge sgmodule
 - Adblock 目录实际目标：21 个 QX + 21 个 Surge（额外包含手工维护的 `QZXY`）
-- 最近完整 Converter Check：#597，通过
-- 当前实现 PR：#69
+- 最近完整 Converter Check：#601，通过
+- 当前实现 PR：#70
 
 ---
 
@@ -86,7 +86,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 
 ## 3. Review 库存
 
-2026-09-30 规范 v1.9 已把 QX Source Script 的 `binary-body-mode` / `binary_body_mode` 纳入 KOP-XIAO `resource-parser.js` 兼容口径。目标 Review inventory 为：
+2026-09-30 规范 v1.10 已把 QX Source Script 的 `binary-body-mode` / `binary_body_mode` 纳入 KOP-XIAO `resource-parser.js` 兼容口径。目标 Review inventory 为：
 
 - **Quantumult X：0**
 - **Surge：0**
@@ -174,7 +174,7 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 
 - [x] 已建立 Catalog-observed Rewrite v2 / Script v2 syntax inventory：`converter/tests/catalog-syntax-inventory.mjs` + `converter/fixtures/catalog-syntax-inventory.json`。当前基线为 175 条 Rewrite v2 / 110 条 Script v2；CI 只锁语法形态，不锁同类规则数量。新 action/参数形态/condition/capture/logical/regex flag/Script option/argument/option-set 或 multi-action signature 首次出现时 fail closed，必须先核对官方语义再更新基线；未观察到的 complex signature 仍不得预先放行。
 - 每次新增 QX 官方 sample 证据时，复核现有 Rewrite Review 是否可以安全降级为 native/helper；Rule 只在官方明确支持对应 Rule Type 后才改为活动 filter。
-- 定期复核 validator whitelist 是否与当前官方 sample 一致；本轮已重新核对用户上传 QX `sample.txt` 与 Crossutility 当前 sample，并按 Surge `llms.txt` → Manual 的官方优先级确认 HTTP Script/full-header-mode 契约。
+- [x] 已建立 QX official capability drift gate：用户上传官方 `sample.txt` 作为人工确认起点，CI 实时读取 Crossutility 当前 `sample.conf` / `filter.snippet` / `sample-import-rewrite.snippet`，双向核对官方能力与 WayX validator registry。当前 `final / echo-response / url-and-header` 被明确分类为官方存在但 WayX 当前不主动输出；QX rewrite snippet MITM whitelist 收紧为官方示例确认的 `hostname`，删除无官方样例依据的 `skip-server-cert-verify` 放行。
 - [x] 对 generated helper 做行为级 runtime fixture，而不只做字符串/语法断言：`converter/tests/generated-helper-runtime.mjs` 已接入 CI，覆盖 request/response、组合条件、命中/未命中、Header/Body/JSON 顺序、capture、raw string、typed JSON、invalid JSON 失败隔离、Surge duplicate header，以及当前 observed QX mock complex signature。
 - 保持 `PROJECT_STATUS.md` 与实际 Review inventory 同步。
 

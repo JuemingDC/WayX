@@ -167,3 +167,33 @@ Inventory 只记录语法形态，不记录声明数量，因此同一语法的�
 - validator：`converter/tests/catalog-syntax-inventory.mjs`
 - CI：`.github/workflows/converter-check.yml`
 
+## 80.10 Quantumult X official capability drift gate
+
+QX validator whitelist 必须与官方样例形成双向对账，不能只在 converter 内维护一组无来源的字符串常量。
+
+当前官方依据分层如下：
+- 用户提供的官方 `sample.txt`：人工确认基线；
+- Crossutility 官方 `sample.conf`：完整配置中的 filter / rewrite / Script / full-profile MITM 证据；
+- Crossutility 官方 `filter.snippet`：remote filter 资源格式证据；
+- Crossutility 官方 `sample-import-rewrite.snippet`：rewrite snippet 可执行内容与 snippet MITM key 证据。
+
+CI 必须实时读取上述 Crossutility 当前样例并提取能力集合，与 `converter/fixtures/qx-official-capabilities.json` 比较。检测到官方能力集合变化时直接失败，不能自动扩大/缩小 WayX whitelist。
+
+WayX capability registry 固定分类为：
+- **executable**：validator 允许，且必须有当前官方样例依据；
+- **not emitted**：官方能力存在，但当前 Loon 去广告转换按项目标准不主动生成，必须在 registry 中写明原因；
+- **unknown**：官方新出现但尚未分类，CI fail closed。
+
+当前明确的 not-emitted 能力包括：
+- filter `final`：WayX 去广告转换对源 `FINAL` 执行 intentional drop；
+- rewrite `echo-response`：当前 mock/materialization 使用专用语义路径，不直接生成该 action；
+- rewrite match kind `url-and-header`：当前 Loon converter 不凭空合成该 QX 声明。
+
+完整 `sample.conf [mitm]` 的 `passphrase / p12 / skip_validating_cert / skip_src_ip / skip_dst_ip` 不得自动加入 rewrite snippet whitelist。当前官方 `sample-import-rewrite.snippet` 只证明 `hostname` 可作为 snippet MITM key，因此 WayX QX snippet validator 只放行 `hostname`。历史残留的 `skip-server-cert-verify` 没有 Crossutility 官方样例依据，不得继续放行。
+
+实现：
+- registry：`converter/src/qx-official-capabilities.mjs`
+- reviewed baseline：`converter/fixtures/qx-official-capabilities.json`
+- live drift test：`converter/tests/qx-official-capabilities.mjs`
+- target validator：`.github/scripts/sync-convert.mjs::validateQX`
+

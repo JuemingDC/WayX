@@ -48,6 +48,7 @@ jobs:
           node --check converter/tests/spec-block-contract.mjs
           node --check converter/tests/complex-source-inventory.mjs
           node --check converter/tests/catalog-syntax-inventory.mjs
+          node --check converter/tests/qx-official-capabilities.mjs
           node --check converter/tests/unknown-issue-markers.mjs
           node --check converter/tests/manual-assets.mjs
           node --check .github/scripts/propose-conversion-issues.mjs
@@ -74,6 +75,9 @@ jobs:
           node converter/tests/unknown-issue-markers.mjs
           node converter/tests/manual-assets.mjs
           python converter/tests/test_conversion_gate.py
+
+      - name: Quantumult X official capability drift gate
+        run: node converter/tests/qx-official-capabilities.mjs
 
       - name: Generated helper runtime fixtures
         run: node converter/tests/generated-helper-runtime.mjs
