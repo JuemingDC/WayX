@@ -543,16 +543,29 @@ assert.equal(surgeHeaderAddMixed.requiresBody, true);
 assert.equal(mixedSurge.requiresBody, true);
 assert.equal(mixedSurge.fullHeaderMode, false);
 
-function runComplexScript(script, {request={}, response={}}={}) {
+function runComplexScript(script, {request={}, response={}, argument=''}={}) {
   let result;
   const sandbox = {
     $request:{url:'https://example.com/api',method:'GET',headers:{},body:'',...request},
     $response:{status:200,headers:{},body:'',...response},
+    $argument:argument,
     $done(value={}){ result=value; },
   };
   vm.runInNewContext(script, sandbox, {timeout:1000});
   return JSON.parse(JSON.stringify(result));
 }
+const runtimeSurgeArgument = renderMixedRewriteScript(
+  parseRewriteV2('response if ${enabled} == true && ${url} ~= /api/ then response.json.replace("n", ${level})'),
+  {target:'surge', argumentTable:surgeArgs.table},
+);
+assert.deepEqual(
+  runComplexScript(runtimeSurgeArgument.script, {
+    argument:'{"enabled":true,"level":2,"region":"CN"}',
+    response:{body:'{"n":0}'},
+  }),
+  {body:'{"n":2}'},
+);
+
 const runtimeOrdered = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /api/ then response.header.set("X-Step", "one") | response.body.replace(/"a":1/, "\\"a\\":2") | response.json.add("b", true) | response.json.delete("items[0]") | response.header.del("Server")'),
   {target:'qx'},
