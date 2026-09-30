@@ -116,10 +116,9 @@ export function surgeArgumentMetadata(argumentLines = [], { proxyPolicyBinding =
     let suffix = 2;
     while (usedNames.has(surgeName)) surgeName = `wayx_proxy_policy_${suffix++}`;
 
-    // Sparkle's Surge Bilibili module demonstrates this exact pattern:
-    // bind a Rule policy through a Module parameter, default DIRECT, and let
-    // the user replace it with a proxy policy/group without defining [Proxy]
-    // or [Proxy Group] inside the module.
+    // Bind a Rule policy through the official Module parameter mechanism,
+    // default DIRECT, and let the user replace it with a proxy policy/group
+    // without defining [Proxy] or [Proxy Group] inside the module.
     args.push(`${surgeName}:DIRECT`);
     descriptions.push(`${surgeName}: Loon PROXY policy binding — default DIRECT; set to the desired Surge proxy policy or policy group`);
     policyBinding = {
