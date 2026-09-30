@@ -221,4 +221,16 @@ Surge production validator 与 official capability gate 必须共用同一 regis
 5. 确认转换语义后才更新 observed baseline。
 
 MITM 不属于该 inventory。
+## 80.12 Rewrite Semantic IR architecture gate
+
+`converter/tests/rewrite-ir.mjs` 必须作为 Converter Check checkpoint 执行。它验证 Legacy Rewrite 与 Rewrite v2 在进入目标规划前都能形成 target-neutral Semantic IR，并检查以下契约：
+
+- IR 不 import Quantumult X / Surge capability registry；
+- Legacy 与 v2 的相同语义类别可归入统一 operation kind；
+- source-specific semantics 必须保留，例如 Legacy 302/307 的 `absolute-location` 与 Rewrite v2 redirect 的 `matched-range-template` 不得合并；
+- source-authored multi-action 顺序保持；
+- production `rewriteV2Action()` 的路由判断必须通过 `rewriteV2AstToSemanticIr()` / `singleRewriteOperation()`，不得恢复第二套 action-name regex 分类器；
+- `planLegacyRewrite()` 必须先调用 `legacyRewriteToSemanticIr()` 再进入目标映射。
+
+这个 gate 只约束架构与语义保真，不扩大任何 QX/Surge 能力。目标输出仍分别受 QX 官方 sample 和 Surge 官方 Manual/capability gate 约束。
 
