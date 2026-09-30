@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "scope": "Loon ad-block conversion only: Rule types, Rewrite categories, MITM hostname",
+  "authority": {
+    "entrypoint": "https://nssurge.com/llms.txt",
+    "releaseNotes": "https://nssurge.com/support/mac/release-notes",
+    "manual": "https://manual.nssurge.com/",
+    "checkedAt": "2026-09-30"
+  },
+  "docs": {
+    "ruleOverview": "https://manual.nssurge.com/rules/overview.html",
+    "urlRewrite": "https://manual.nssurge.com/http/url-rewrite.html",
+    "headerRewrite": "https://manual.nssurge.com/http/header-rewrite.html",
+    "bodyRewrite": "https://manual.nssurge.com/http/body-rewrite.html",
+    "mapLocal": "https://manual.nssurge.com/http/map-local.html",
+    "httpRequestScript": "https://manual.nssurge.com/scripting/http-request.html",
+    "httpResponseScript": "https://manual.nssurge.com/scripting/http-response.html",
+    "mitm": "https://manual.nssurge.com/http/mitm.html"
+  },
+  "ruleTypes": [
+    "AND",
+    "CELLULAR-CARRIER",
+    "CELLULAR-RADIO",
+    "DEST-PORT",
+    "DEVICE-NAME",
+    "DOMAIN",
+    "DOMAIN-KEYWORD",
+    "DOMAIN-SET",
+    "DOMAIN-SUFFIX",
+    "DOMAIN-WILDCARD",
+    "GEOIP",
+    "HOSTNAME-TYPE",
+    "IN-PORT",
+    "IP-ASN",
+    "IP-CIDR",
+    "IP-CIDR6",
+    "MAC-ADDRESS",
+    "NOT",
+    "OR",
+    "PROCESS-NAME",
+    "PROTOCOL",
+    "RULE-SET",
+    "SCRIPT",
+    "SRC-IP",
+    "SRC-PORT",
+    "SUBNET",
+    "URL-REGEX",
+    "USER-AGENT"
+  ],
+  "rewrite": {
+    "sections": [
+      "Body Rewrite",
+      "Header Rewrite",
+      "Map Local",
+      "Script",
+      "URL Rewrite"
+    ],
+    "urlRewriteTypes": [
+      "302",
+      "307",
+      "header",
+      "reject"
+    ],
+    "headerRewriteActions": [
+      "header-add",
+      "header-del",
+      "header-replace",
+      "header-replace-regex"
+    ],
+    "bodyRewriteTypes": [
+      "http-request",
+      "http-request-jq",
+      "http-response",
+      "http-response-jq"
+    ],
+    "mapLocalDataTypes": [
+      "base64",
+      "file",
+      "text",
+      "tiny-gif"
+    ],
+    "scriptTypes": [
+      "http-request",
+      "http-response"
+    ]
+  },
+  "mitmKeys": [
+    "hostname"
+  ]
+}

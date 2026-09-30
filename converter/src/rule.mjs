@@ -3,6 +3,7 @@
 // Category: Converter / Rule
 
 import { normalizeRegexBodyForTarget } from './target-regex.mjs';
+import { SURGE_WAYX_RULE_TYPES } from './surge-official-capabilities.mjs';
 
 function splitTopLevelCsv(input) {
   const out = [];
@@ -91,19 +92,7 @@ const QX_URL_REJECT_ACTIONS = new Map([
   ['REJECT-ARRAY','reject-array'],
 ]);
 
-// Current official Surge Rule type index.
-// Keep this separate from Module policy restrictions: rule TYPE support is broad,
-// while .sgmodule policy names are explicitly restricted by the Module manual.
-export const SURGE_RULE_TYPES = new Set([
-  'DOMAIN', 'DOMAIN-SUFFIX', 'DOMAIN-KEYWORD', 'DOMAIN-WILDCARD', 'DOMAIN-SET',
-  'IP-CIDR', 'IP-CIDR6', 'GEOIP', 'IP-ASN',
-  'USER-AGENT', 'URL-REGEX',
-  'PROCESS-NAME',
-  'DEST-PORT', 'SRC-PORT', 'IN-PORT', 'SRC-IP', 'DEVICE-NAME', 'MAC-ADDRESS',
-  'PROTOCOL', 'HOSTNAME-TYPE', 'SUBNET', 'CELLULAR-RADIO', 'CELLULAR-CARRIER',
-  'AND', 'OR', 'NOT',
-  'SCRIPT', 'RULE-SET',
-]);
+export const SURGE_RULE_TYPES = SURGE_WAYX_RULE_TYPES;
 
 // Surge ad-block Module Rule policies that WayX may emit actively.
 export const SURGE_MODULE_POLICIES = new Set([
