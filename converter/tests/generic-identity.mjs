@@ -89,8 +89,8 @@ function generatedScriptSemantics(map){
 assert.deepEqual(generatedScriptSemantics(outA.generatedScripts), generatedScriptSemantics(outB.generatedScripts));
 
 assert.ok(qxSemantics(outA.qx, entryA.id).includes('^https:\\/\\/ads\\.example\\.com url reject-dict'));
-assert.ok(surgeSemantics(outA.surge, entryA.id).includes('^https://ads\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"'));
-assert.ok(surgeSemantics(outA.surge, entryA.id).some(x=>x.startsWith('http-response ^https://api\\.example\\.com enabled:true enabled:false')));
+assert.ok(surgeSemantics(outA.surge, entryA.id).includes('^https:\\/\\/ads\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"'));
+assert.ok(surgeSemantics(outA.surge, entryA.id).some(x=>x.startsWith('http-response ^https:\\/\\/api\\.example\\.com enabled:true enabled:false')));
 assert.ok(qxSemantics(outA.qx, entryA.id).some(x=>x.includes("jsonjq-response-body 'del(.data.ads)'")));
 assert.ok(qxSemantics(outA.qx, entryA.id).some(x=>x.includes('script-response-body https://scripts.example.com/generic.js')));
 
