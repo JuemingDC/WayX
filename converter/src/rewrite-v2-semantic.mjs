@@ -4,6 +4,7 @@
 import { compileRegexForTarget, normalizeRegexBodyForTarget } from './target-regex.mjs';
 import { qxPrimitiveForRewriteV2Action, validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
 import { quoteJq } from './jq.mjs';
+import { dependencySpecFromAction } from './dependency.mjs';
 
 function unsupported(reason, extra = {}) {
   return { ok: false, reason, ...extra };
@@ -450,7 +451,7 @@ export function surgeInlineMockPlan(ast) {
     const body = fixedNoTemplate(mock.args[1], 'mock body');
     const status = intArg(mock.args[2], 200);
     const base64 = boolArg(mock.args[3], false);
-    if (status < 200 || status > 599) return unsupported('Surge Map Local cannot preserve this Loon mock status');
+    if (status < 200 || status > 999) return unsupported('Surge Map Local cannot preserve this Loon mock status');
     if (!Object.hasOwn(MOCK_MIME, type)) return unsupported('unsupported Loon mock content type: ' + type);
     if (!MOCK_TEXT_TYPES.has(type) && !base64) return unsupported('binary inline mock requires Base64=true for Surge Map Local');
 
@@ -478,6 +479,46 @@ export function surgeInlineMockPlan(ast) {
     return {ok:true, strategy:'direct', section:'map', pattern:condition.pattern, line, notes:condition.notes};
   } catch (error) {
     return unsupported(String(error.message || error));
+  }
+}
+
+export function surgeMockFilePlan(ast, {pluginSourceUrl = '', materialized = null} = {}) {
+  validateRewriteV2Ast(ast);
+  if (ast.phase !== 'response' || ast.actions.length !== 1 || ast.actions[0].name !== 'response.body.mock_file') {
+    return unsupported('Surge Map Local file mapping requires one response.body.mock_file action');
+  }
+  const condition = simpleUrlRewriteCondition(ast, {target:'surge'});
+  if (!condition.ok) return condition;
+
+  try {
+    const action = ast.actions[0];
+    const spec = dependencySpecFromAction(action, {pluginSourceUrl});
+    if (!spec?.resolvable || !spec.url) return unsupported(spec?.reason || 'mock_file is not resolvable');
+    if (spec.status < 200 || spec.status > 999) return unsupported('Surge Map Local cannot preserve this Loon mock_file status');
+    if (!Object.hasOwn(MOCK_MIME, spec.contentType)) return unsupported('unsupported Loon mock_file content type: ' + spec.contentType);
+
+    let dataType = 'file';
+    let data = spec.url;
+    if (spec.base64) {
+      if (!materialized || materialized.error || typeof materialized.bodyBase64 !== 'string') {
+        return unsupported(materialized?.error || 'Base64 mock_file content was not materialized');
+      }
+      dataType = 'base64';
+      data = materialized.bodyBase64;
+    }
+
+    const header = 'Content-Type:' + MOCK_MIME[spec.contentType];
+    return {
+      ok:true,
+      strategy:'direct',
+      section:'map',
+      pattern:condition.pattern,
+      line:condition.pattern + ' data-type=' + dataType + ' data=' + JSON.stringify(data) +
+        ' status-code=' + spec.status + ' header=' + JSON.stringify(header),
+      notes:condition.notes,
+    };
+  } catch (error) {
+    return unsupported(String(error?.message || error));
   }
 }
 
