@@ -59,6 +59,12 @@ Loon `[Argument]` **声明区块本身不构成 Review 条件**。QX 忽略参�
 
 ## 80.2 Source 对账
 
+CI 的对账实现由 `converter/tools/conversion-reports.mjs` 自动生成 JSON + Markdown。Catalog 中每个非 `[Argument]` 活动源声明必须在每个目标平台归入以下且仅以下一类：`converted`、`unsupported/commented`、`review`、`issue`、`disabled`、`intentionalDrop`。
+
+报告同时记录目标活动行、WayX generated helper 引用与 Source Script 引用。出现目标 `Source declaration` 无法匹配原源声明，或任一 Catalog 插件无法完成上述对账时，CI 必须失败。
+
+Review inventory 由同一工具自动生成，按 QX/Surge、文件、reason 统计 Review 与 Issue。基线只用于新增 Review warning，不作为转换规范本身。
+
 必须满足：
 ```text
 Target 已转换语义项
