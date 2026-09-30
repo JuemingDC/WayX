@@ -10,8 +10,6 @@ import { renderSurgeRequestMockScript } from './surge-mock.mjs';
 import { renderMixedRewriteScript, renderSingleJsonAddScript } from './complex-rewrite-script.mjs';
 import { classifyLegacyRewriteAction, legacyRewriteToSemanticIr } from './rewrite-ir.mjs';
 
-const REJECT_ACTIONS = new Set(['reject','reject-200','reject-img','reject-dict','reject-array']);
-
 function review(pattern, action, reason) {
   return {
     section:'comment',
@@ -109,32 +107,6 @@ function compileJsonMutation(phase, op, rest) {
   return { ok:false, reason:'unsupported JSON operation' };
 }
 
-function parseMockData(rest) {
-  const source=String(rest || '');
-  const quotedStart=source.search(/\bdata="/i);
-  if(quotedStart >= 0){
-    const valueStart=source.indexOf('"', quotedStart) + 1;
-    const tail=source.slice(valueStart);
-    const marker=tail.match(/"\s+(?=(?:status-code|data-path|mock-data-is-base64)=)/i);
-    const end=marker ? valueStart + marker.index : source.lastIndexOf('"');
-    if(end >= valueStart){
-      return source.slice(valueStart,end)
-        .replace(/\\"/g, '"')
-        .replace(/\\n/g, '\n')
-        .replace(/\\\\/g, '\\');
-    }
-  }
-  const unquoted=source.match(/\bdata=([^\s]+)/i);
-  return unquoted ? unquoted[1] : null;
-}
-
-function parseMock(rest) {
-  const type = (rest.match(/\bdata-type=([^\s]+)/i) || [])[1] || 'text';
-  const status = Number((rest.match(/\bstatus-code=(\d+)/i) || [])[1] || 200);
-  const dataPath = (rest.match(/\bdata-path=([^\s]+)/i) || [])[1] || null;
-  const base64 = /\bmock-data-is-base64=(?:true|1)\b/i.test(rest);
-  return { type, status, data:parseMockData(rest), dataPath, base64 };
-}
 
 export function classifyLegacyRewrite(action) {
   const parsed=classifyLegacyRewriteAction(action);
