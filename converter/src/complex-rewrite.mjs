@@ -64,6 +64,7 @@ export function compileComplexCondition(node, target) {
   if (node.operator === '==') return '(' + left + ' === ' + fixedConditionValue(node.right) + ')';
   if (node.operator === '~=' && node.right?.type === 'regex') {
     // Loon i/m/s flags are intentionally not propagated to targets.
+    if (node.capture) return '((__wayxCaptures[' + JSON.stringify(node.capture) + ']=String(' + left + ' ?? "").match(new RegExp(' + JSON.stringify(node.right.pattern) + ')))!==null)';
     return '(new RegExp(' + JSON.stringify(node.right.pattern) + ').test(String(' + left + ' ?? "")))';
   }
   throw new Error('unsupported complex comparison');
