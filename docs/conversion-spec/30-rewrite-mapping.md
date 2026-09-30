@@ -42,6 +42,7 @@ native target primitive
 - 直接注册/调用 complex Rewrite handler；
 - 通过 raw action-name regex 判断 target 路径；
 - 保留未定义或隐式 fallback。
+- 在模块 import 阶段修改全局 complex registry；handler 必须由 target planner 首次执行时惰性、幂等注册。
 
 Legacy Rewrite 的 source-specific helper 可以继续存在于 `legacy-rewrite.mjs`，但必须由 QX/Surge target planner 调用；其存在不构成 orchestration 旁路。
 
