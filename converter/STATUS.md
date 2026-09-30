@@ -49,6 +49,7 @@ Updated: 2026-09-30
 - Source Script text may be inspected only to refine QX HTTP action type, not to judge runtime compatibility.
 - Unknown source syntax/action/section or an unregistered complex signature is commented out with `ISSUE REQUIRED`; the scheduled workflow proposes a deduplicated GitHub Issue before any Safe Tier commit.
 - QX `response.header.add` is an explicit commented limitation, not an ongoing Review item.
+- QX Source Script `argument` / dynamic `enable` / `timeout` / binary body mode follow KOP-XIAO `resource-parser.js`: argument is dropped, dynamic enable defaults on, timeout and binary body mode are ignored, while `requires-body` alone selects header/body action. Other fields such as debug/max-size remain under WayX-specific validation.
 - QZXY is declared in `.github/manual-assets.json` and remains hand-maintained outside canonical regeneration.
 - CI generates machine-readable reconciliation and Review/Issue inventory reports; reconciliation mismatch fails closed.
 
