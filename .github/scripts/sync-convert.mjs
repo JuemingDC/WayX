@@ -258,7 +258,7 @@ function rewriteV2Action(line, target, ctx) {
   }
 
   if (target === 'surge') {
-    if (ast.actions.length === 1 && ast.actions[0].name === 'response.body.mock_file') {
+    if (ast.actions.some(action => action.name === 'response.body.mock_file')) {
       try {
         const mapped = surgeMockFilePlan(ast, {
           pluginSourceUrl: ctx.sourceUrl,
@@ -467,11 +467,12 @@ async function materializeMockFiles(entry, parsed) {
     try {
       const ast = parseRewriteV2(item.line);
       validateRewriteV2Ast(ast);
-      if (ast.actions.length !== 1 || !/^(?:request|response)\.body\.mock_file$/.test(ast.actions[0].name)) continue;
+      const mockFileActions = ast.actions.filter(action => /^(?:request|response)\.body\.mock_file$/.test(action.name));
+      if (mockFileActions.length !== 1) continue;
       const condition = simpleUrlRewriteCondition(ast);
       if (!condition.ok) continue;
 
-      const plan = qxMockPlanFromAction(ast.actions[0], { pluginSourceUrl: entry.source });
+      const plan = qxMockPlanFromAction(mockFileActions[0], { pluginSourceUrl: entry.source });
       if (plan.base64) {
         const text = await fetchOriginalText(plan.url);
         const compact = text.replace(/\s+/g, '');
