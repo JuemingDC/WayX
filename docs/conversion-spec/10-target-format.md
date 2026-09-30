@@ -25,7 +25,7 @@
 QX URL regex 采用官方示例的 **bare regex**：
 
 ```text
-^https:\/\/api\.example\.com\/ url reject
+^https://api\.example\.com/ url reject
 ```
 
 禁止：
