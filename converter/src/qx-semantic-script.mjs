@@ -224,7 +224,16 @@ export function renderQxHeaderScript(ast, options = {}) {
   validateRewriteV2Ast(ast);
   const condition = simpleUrlRewriteCondition(ast);
   if (!condition.ok) throw new Error(condition.reason);
-  if (!ast.actions.length || ast.actions.some(a => !new RegExp('^' + ast.phase + '\\.header\\.(?:add|set|del|replace)
+  if (!ast.actions.length || ast.actions.some(a =>
+    !new RegExp('^' + ast.phase + '\\.header\\.(?:add|set|del|replace)$').test(a.name)
+  )) {
+    throw new Error('QX header script supports only same-phase add/set/del/replace actions');
+  }
+  if (ast.actions.some(action => action.name.endsWith('.add'))) {
+    throw new Error('QX header.add cannot be represented losslessly: the official header object form does not prove duplicate-header preservation');
+  }
+
+  const statements = [];
   for (const action of ast.actions) {
     for (const args of expandAction(action)) {
       if (action.name.endsWith('.set')) {
