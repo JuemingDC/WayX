@@ -3,28 +3,29 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { qxRule as canonicalQxRule, surgeModuleRule } from '../../converter/src/rule.mjs';
-import { selectQxScriptAction } from '../../converter/src/script.mjs';
 import { minifyJqFile } from '../../converter/src/jq.mjs';
 import { qxTargetPath, surgeTargetPath } from '../../converter/src/paths.mjs';
 import { isRewriteV2, parseRewriteV2 } from '../../converter/src/rewrite-v2.mjs';
 import { validateRewriteV2Ast } from '../../converter/src/rewrite-v2-actions.mjs';
 import { dependencySpecFromAction, inlineResolvedDependency, jqDependencySpecFromAction, isDiscardedLegacyJqPathAction } from '../../converter/src/dependency.mjs';
 import { simpleUrlRewriteCondition } from '../../converter/src/rewrite-v2-semantic.mjs';
-import { isScriptV2, parseScriptV2, splitScriptV2Csv } from '../../converter/src/script-v2.mjs';
-import { qxScriptV2Plan, surgeScriptV2Plan } from '../../converter/src/script-v2-target.mjs';
+import { isScriptV2, parseScriptV2 } from '../../converter/src/script-v2.mjs';
 import { analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs } from '../../converter/src/argument-usage.mjs';
-import { surgeArgumentMetadata, surgePluginObjectArgument, surgeDynamicOptionValue, surgeEnableRequirement, parseLegacyLoonPluginObjectRefs } from '../../converter/src/argument.mjs';
+import { surgeArgumentMetadata } from '../../converter/src/argument.mjs';
 import { hasActiveSurgeLines, renderSurgeModuleHeader, validateSurgeModule } from '../../converter/src/surge-module.mjs';
 import { renderQxSnippetHeader } from '../../converter/src/metadata.mjs';
 import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
 import { planMitmLine } from '../../converter/src/mitm.mjs';
 import { fetchOriginalText, fetchOriginalBytes, resolveOriginalUrl } from '../../converter/src/source-fetch.mjs';
-import { normalizeRegexBodyForTarget } from '../../converter/src/target-regex.mjs';
 import { QX_WAYX_FILTER_TYPES, QX_WAYX_SCRIPT_ACTIONS, QX_WAYX_SNIPPET_MITM_KEYS } from '../../converter/src/qx-official-capabilities.mjs';
 import { legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from '../../converter/src/rewrite-ir.mjs';
 import { planQxRewrite } from '../../converter/src/rewrite-qx.mjs';
 import { planSurgeRewrite } from '../../converter/src/rewrite-surge.mjs';
 import { rewriteReview, rewriteIssue } from '../../converter/src/rewrite-plan-result.mjs';
+import { parseLegacyScriptLine } from '../../converter/src/script-legacy.mjs';
+import { legacyScriptToSemanticIr, scriptV2AstToSemanticIr } from '../../converter/src/script-ir.mjs';
+import { planQxScript } from '../../converter/src/script-qx.mjs';
+import { planSurgeScript } from '../../converter/src/script-surge.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -163,7 +164,7 @@ function looksLikeCommentedSourceDeclaration(text, sectionKind) {
   }
   if (sectionKind === 'script') {
     if (isScriptV2(value)) return true;
-    return Boolean(parseScriptLine(value)?.scriptPath);
+    return Boolean(parseLegacyScriptLine(value)?.script?.path);
   }
   return false;
 }
@@ -310,26 +311,6 @@ async function materializeJqFiles(entry, parsed) {
   return out;
 }
 
-function parseScriptLine(line) {
-  const m = line.match(/^(http-request|http-response)\s+(\S+)\s+(.+)$/i);
-  if (!m) return null;
-  const type = m[1].toLowerCase(), pattern = m[2], rest = m[3];
-  const options = new Map();
-  for (const token of splitScriptV2Csv(rest)) {
-    const eq = token.indexOf('=');
-    if (eq < 1) continue;
-    options.set(token.slice(0, eq).trim().toLowerCase(), token.slice(eq + 1).trim());
-  }
-  const scriptPath = options.get('script-path');
-  const tag = options.get('tag');
-  const requiresBody = /^(?:true|1)$/i.test(options.get('requires-body') || '');
-  const binary = /^(?:true|1)$/i.test(options.get('binary-body-mode') || '');
-  const timeout = options.get('timeout');
-  const maxSize = options.get('max-size');
-  const argument = options.get('argument');
-  const enable = options.get('enable') ?? options.get('enabled');
-  return { type, pattern, scriptPath, tag, requiresBody, binary, timeout, maxSize, argument, enable, original: line };
-}
 
 function sanitizeName(s) {
   return (s || 'script').replace(/[=,\r\n]/g, '_').trim().slice(0, 64) || 'script';
@@ -457,163 +438,77 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     const comments = cleanComments(item.comments);
     if (!item.line) continue;
 
+    let ir;
+    let sourceSyntax;
     if (isScriptV2(item.line)) {
-      scriptIndex++;
-      let ast;
+      sourceSyntax='v2';
       try {
-        ast = parseScriptV2(item.line);
+        ir=scriptV2AstToSemanticIr(parseScriptV2(item.line),{source:item.line});
       } catch (error) {
-        const reason = String(error?.message || error).split('\n')[0];
+        const reason=String(error?.message || error).split('\n')[0];
         qx.notes.push(...comments, `# [WayX] ISSUE REQUIRED [unknown-script-v2-syntax]: source declaration parse failed: ${reason}`, `# Source declaration: ${item.line}`);
         sg.notes.push(...comments, `# [WayX] ISSUE REQUIRED [unknown-script-v2-syntax]: source declaration parse failed: ${reason}`, `# Source declaration: ${item.line}`);
         continue;
       }
-
-      const mapped = scriptMap.get(ast.script.path);
-      const sourceText = mapped?.source || '';
-      const qxUrl = mapped?.qx || ast.script.path;
-      const surgeUrl = mapped?.surge || ast.script.path;
-      const qxPlan = qxScriptV2Plan(ast, { scriptUrl: qxUrl, sourceText, argumentIds });
-      if (!qxPlan.ok) {
-        qx.rewrite.push(...comments);
-        qx.rewrite.push(`# [WayX] SCRIPT V2 REVIEW REQUIRED: ${qxPlan.reason}`);
-        qx.rewrite.push(`# Source declaration: ${item.line}`);
-      } else if (qxPlan.disabled) {
-        qx.rewrite.push(...comments);
-        qx.rewrite.push(`# [WayX] Script disabled by source option: ${item.line}`);
-      } else {
-        const qxRendered = qxAttachInlineNote({
-          sectionLines: scriptSectionLines,
-          item,
-          sectionKind: 'script',
-          lines: [qxPlan.line],
-        });
-        qx.rewrite.push(...qxRendered.comments);
-        if (qxPlan.tag) qx.rewrite.push(`# ${qxPlan.tag}`);
-        // binary_body_mode is already documented through qxPlan.notes; QX follows KOP-XIAO and selects the body action from requires_body only.
-        for (const note of qxPlan.notes || []) qx.rewrite.push(`# [WayX] ${note}`);
-        qx.rewrite.push(...qxRendered.lines);
+    } else {
+      sourceSyntax='legacy';
+      const parsedLegacy=parseLegacyScriptLine(item.line);
+      if (!parsedLegacy?.script?.path) {
+        qx.notes.push(...comments, '# [WayX] ISSUE REQUIRED [unknown-script-declaration]: unsupported source Script declaration is outside the registered grammar', `# Source declaration: ${item.line}`);
+        sg.notes.push(...comments, '# [WayX] ISSUE REQUIRED [unknown-script-declaration]: unsupported source Script declaration is outside the registered grammar', `# Source declaration: ${item.line}`);
+        continue;
       }
-
-      const name = sanitizeName((ast.options.find(x => x.name === 'tag')?.value?.value) || `${entry.id}_${String(scriptIndex).padStart(2, '0')}`);
-      const surgePlan = surgeScriptV2Plan(ast, { scriptUrl: surgeUrl, name, argumentIds, argumentTable: surgeArgumentTable });
-      sg.script.push(...comments);
-      if (!surgePlan.ok) {
-        sg.script.push(`# [WayX] SCRIPT V2 REVIEW REQUIRED: ${surgePlan.reason}`);
-        sg.script.push(`# Source declaration: ${item.line}`);
-      } else if (surgePlan.disabled) {
-        sg.script.push(`# [WayX] Script disabled by source option: ${item.line}`);
-      } else {
-        if (surgePlan.usesLineRequirement) surgeNeedsLineRequirement = true;
-        sg.script.push(surgePlan.line);
-      }
-      continue;
+      ir=legacyScriptToSemanticIr(parsedLegacy,{source:item.line});
     }
 
-    const sc = parseScriptLine(item.line);
-    if (!sc || !sc.scriptPath) {
-      qx.notes.push(...comments, '# [WayX] ISSUE REQUIRED [unknown-script-declaration]: unsupported source Script declaration is outside the registered grammar', `# Source declaration: ${item.line}`);
-      sg.notes.push(...comments, '# [WayX] ISSUE REQUIRED [unknown-script-declaration]: unsupported source Script declaration is outside the registered grammar', `# Source declaration: ${item.line}`);
-      continue;
-    }
     scriptIndex++;
-    const mapped = scriptMap.get(sc.scriptPath);
-    const qxUrl = mapped?.qx || sc.scriptPath;
-    const surgeUrl = mapped?.surge || sc.scriptPath;
-    const targetPattern = normalizeRegexBodyForTarget(sc.pattern);
-    const enableFixed = sc.enable ? String(sc.enable).trim().toLowerCase() : '';
-    const enableDynamic = Boolean(sc.enable) && !['true','false','1','0'].includes(enableFixed);
+    const mapped=scriptMap.get(ir.script.path);
+    const sourceText=mapped?.source || '';
+    const qxUrl=mapped?.qx || ir.script.path;
+    const surgeUrl=mapped?.surge || ir.script.path;
+    const qxPlan=planQxScript(ir,{scriptUrl:qxUrl,sourceText,argumentIds});
 
-    const qxTagLines = sc.tag ? [`# ${sc.tag}`] : [];
-    const qxIgnoredOptionLines = [];
-    if (sc.argument) qxIgnoredOptionLines.push('# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.');
-    if (enableDynamic) qxIgnoredOptionLines.push('# [WayX] Source dynamic enable ignored for Quantumult X; converted rule defaults to enabled.');
-    if (sc.timeout) qxIgnoredOptionLines.push('# [WayX] Source Script timeout ignored for Quantumult X.');
-    if (sc.binary) qxIgnoredOptionLines.push('# [WayX] Source binary-body-mode=true ignored for Quantumult X; requires-body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.');
-    if (enableFixed === 'false' || enableFixed === '0') {
-      qx.rewrite.push(...comments, ...qxTagLines);
-      qx.rewrite.push(`# [WayX] Script disabled by source declaration: ${item.line}`);
-    } else if (sc.maxSize) {
-      qx.rewrite.push(...comments, ...qxTagLines, ...qxIgnoredOptionLines);
-      qx.rewrite.push('# [WayX] SCRIPT REVIEW REQUIRED: QX declaration/helper cannot preserve this source max-size option without changing the source script.');
+    if (!qxPlan.ok) {
+      qx.rewrite.push(...comments);
+      if (sourceSyntax==='legacy' && ir.sourcePayload.tag) qx.rewrite.push(`# ${ir.sourcePayload.tag}`);
+      qx.rewrite.push(`# [WayX] ${sourceSyntax==='v2' ? 'SCRIPT V2' : 'SCRIPT'} REVIEW REQUIRED: ${qxPlan.reason}`);
       qx.rewrite.push(`# Source declaration: ${item.line}`);
+    } else if (qxPlan.disabled) {
+      qx.rewrite.push(...comments);
+      if (sourceSyntax==='legacy' && ir.sourcePayload.tag) qx.rewrite.push(`# ${ir.sourcePayload.tag}`);
+      qx.rewrite.push(`# [WayX] Script disabled by source ${sourceSyntax==='v2' ? 'option' : 'declaration'}: ${item.line}`);
     } else {
-      const qAction = selectQxScriptAction({
-        phase: sc.type,
-        requiresBody: sc.requiresBody,
-        scriptUrl: sc.scriptPath,
-        sourceText: mapped?.source || '',
+      const qxRendered=qxAttachInlineNote({
+        sectionLines:scriptSectionLines,
+        item,
+        sectionKind:'script',
+        lines:[qxPlan.line],
       });
-      if (!qAction.action) {
-        qx.rewrite.push(...comments, ...qxTagLines);
-        qx.rewrite.push(`# [WayX] SCRIPT REVIEW REQUIRED: ${qAction.reason}`);
-        qx.rewrite.push(`# Source declaration: ${item.line}`);
-      } else {
-        const qxRendered = qxAttachInlineNote({
-          sectionLines: scriptSectionLines,
-          item,
-          sectionKind: 'script',
-          lines: [`${targetPattern} url ${qAction.action} ${qxUrl}`],
-        });
-        qx.rewrite.push(...qxRendered.comments, ...qxTagLines, ...qxIgnoredOptionLines, ...qxRendered.lines);
-      }
+      qx.rewrite.push(...qxRendered.comments);
+      if (qxPlan.tag) qx.rewrite.push(`# ${qxPlan.tag}`);
+      for (const note of qxPlan.notes || []) qx.rewrite.push(`# [WayX] ${note}`);
+      qx.rewrite.push(...qxRendered.lines);
     }
 
-    const name = sanitizeName(sc.tag || `${entry.id}_${String(scriptIndex).padStart(2, '0')}`);
+    const sourceTag=sourceSyntax==='v2'
+      ? ir.sourcePayload.options.find(x=>x.name==='tag')?.value?.value
+      : ir.sourcePayload.tag;
+    const name=sanitizeName(sourceTag || `${entry.id}_${String(scriptIndex).padStart(2,'0')}`);
+    const surgePlan=planSurgeScript(ir,{
+      scriptUrl:surgeUrl,
+      name,
+      argumentIds,
+      argumentTable:surgeArgumentTable,
+    });
     sg.script.push(...comments);
-    if (enableFixed === 'false' || enableFixed === '0') {
-      sg.script.push(`# [WayX] Script disabled by source declaration: ${item.line}`);
+    if (!surgePlan.ok) {
+      sg.script.push(`# [WayX] ${sourceSyntax==='v2' ? 'SCRIPT V2' : 'SCRIPT'} REVIEW REQUIRED: ${surgePlan.reason}`);
+      sg.script.push(`# Source declaration: ${item.line}`);
+    } else if (surgePlan.disabled) {
+      sg.script.push(`# [WayX] Script disabled by source ${sourceSyntax==='v2' ? 'option' : 'declaration'}: ${item.line}`);
     } else {
-      let requirementPrefix = '';
-      if (enableDynamic) {
-        const ref = String(sc.enable).match(/^\$?\{([A-Za-z_][\w-]*)\}$/);
-        const requirement = ref ? surgeEnableRequirement(ref[1], surgeArgumentTable) : null;
-        if (!requirement) {
-          sg.script.push('# [WayX] SCRIPT REVIEW REQUIRED: dynamic source enable cannot be mapped to a declared Surge module boolean argument.');
-          sg.script.push(`# Source declaration: ${item.line}`);
-          continue;
-        }
-        requirementPrefix = requirement + ' ';
-        surgeNeedsLineRequirement = true;
-      }
-
-      const params = [`type=${sc.type}`, `pattern=${targetPattern}`, `script-path=${surgeUrl}`];
-      if (sc.requiresBody) {
-        params.push('requires-body=true');
-        params.push(`max-size=${sc.maxSize || '-1'}`);
-      }
-      if (sc.binary) params.push('binary-body-mode=true');
-
-      if (sc.timeout) {
-        const timeoutRef = String(sc.timeout).match(/^\$?\{([A-Za-z_][\w-]*)\}$/);
-        if (timeoutRef) {
-          const placeholder = surgeDynamicOptionValue(timeoutRef[1], surgeArgumentTable);
-          if (!placeholder) {
-            sg.script.push('# [WayX] SCRIPT REVIEW REQUIRED: dynamic timeout references an undeclared Surge module argument.');
-            sg.script.push(`# Source declaration: ${item.line}`);
-            continue;
-          }
-          params.push(`timeout=${placeholder}`);
-        } else {
-          params.push(`timeout=${sc.timeout}`);
-        }
-      }
-
-      if (sc.argument) {
-        const refs = parseLegacyLoonPluginObjectRefs(sc.argument);
-        if (refs) {
-          const encoded = surgePluginObjectArgument(refs, surgeArgumentTable);
-          if (!encoded.ok) {
-            sg.script.push(`# [WayX] SCRIPT REVIEW REQUIRED: ${encoded.reason}`);
-            sg.script.push(`# Source declaration: ${item.line}`);
-            continue;
-          }
-          params.push('argument=' + encoded.value);
-        } else {
-          params.push(`argument=${sc.argument}`);
-        }
-      }
-      sg.script.push(requirementPrefix + `${name} = ${params.join(',')}`);
+      if (surgePlan.usesLineRequirement) surgeNeedsLineRequirement=true;
+      sg.script.push(surgePlan.line);
     }
   }
 
