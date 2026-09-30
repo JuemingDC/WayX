@@ -12,7 +12,7 @@
 
 #############################################
 
-# Converted: 2026-09-30 08:53:02 +08:00
+# Converted: 2026-09-30 12:45:46 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://raw.githubusercontent.com/fmz200/wool_scripts/main/Loon/plugin/split/partD/DianPing.lpx
@@ -20,31 +20,31 @@
 
 [URL Rewrite]
 # 开屏广告
-^https?:\/\/103\.37\.155\.60\/fetch _ reject
-^https?:\/\/catdot\.dianping\.com\/broker-service\/hijack _ reject
-^https?:\/\/mapi\.dianping\.com\/mapi\/operating\/(?>indexopsmodules|loadsplashconfig) _ reject
-^https?:\/\/mapi\.dianping\.com\/wdrpreload\/userprediction _ reject
-^https?:\/\/mapi\.dianping\.com\/adshopping _ reject
-^https?:\/\/p\.meituan\.com\/api\/privacy\/config _ reject
-^https?:\/\/www\.dpfile\.com\/app\/fecommonservice-lottie\/ugc-write-done\/media _ reject
-^https?:\/\/www\.dpfile\.com\/picasso\/picasso-qa\/src\/AnswerList\/AnswerList-bundle _ reject
-^https?:\/\/www\.dpfile\.com\/sc\/indexpromotion _ reject
-^https?:\/\/catfront\.dianping\.com\/api\/metric\?v=\d&p=rn_gcbu_mrn-joy-poidetail _ reject
-^https?:\/\/awp-assets\.meituan\.net\/hfe\/fep\/\w+\.json _ reject
-^https?:\/\/s3plus\.meituan\.net\/ocean-blk-index\/index\/blk_conf _ reject
-^https?:\/\/ddplus\.meituan\.net\/v\d\/mss_\w+\/(?>ehc|titansx|ddblue|edfu)\/ _ reject
+^https?://103\.37\.155\.60/fetch _ reject
+^https?://catdot\.dianping\.com/broker-service/hijack _ reject
+^https?://mapi\.dianping\.com/mapi/operating/(?>indexopsmodules|loadsplashconfig) _ reject
+^https?://mapi\.dianping\.com/wdrpreload/userprediction _ reject
+^https?://mapi\.dianping\.com/adshopping _ reject
+^https?://p\.meituan\.com/api/privacy/config _ reject
+^https?://www\.dpfile\.com/app/fecommonservice-lottie/ugc-write-done/media _ reject
+^https?://www\.dpfile\.com/picasso/picasso-qa/src/AnswerList/AnswerList-bundle _ reject
+^https?://www\.dpfile\.com/sc/indexpromotion _ reject
+^https?://catfront\.dianping\.com/api/metric\?v=\d&p=rn_gcbu_mrn-joy-poidetail _ reject
+^https?://awp-assets\.meituan\.net/hfe/fep/\w+\.json _ reject
+^https?://s3plus\.meituan\.net/ocean-blk-index/index/blk_conf _ reject
+^https?://ddplus\.meituan\.net/v\d/mss_\w+/(?>ehc|titansx|ddblue|edfu)/ _ reject
 
 [Map Local]
-^https?:\/\/mapi\.dianping\.com\/mapi\/intelliindex data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https?:\/\/img\.meituan\.net\/goodsawardpic\/\w+\.gif data-type=tiny-gif status-code=200
-^https?:\/\/rms\.meituan\.com\/api\/v\d\/rmsmina\/c\/queryWechatAdvertisement data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https?:\/\/p\d\.meituan\.net\/nrpresourcevenus\/\w+\.gif data-type=tiny-gif status-code=200
-^https?:\/\/p\d\.meituan\.net\/travelcube\/(?!c129a661)\w+\.gif data-type=tiny-gif status-code=200
+^https?://mapi\.dianping\.com/mapi/intelliindex data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https?://img\.meituan\.net/goodsawardpic/\w+\.gif data-type=tiny-gif status-code=200
+^https?://rms\.meituan\.com/api/v\d/rmsmina/c/queryWechatAdvertisement data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https?://p\d\.meituan\.net/nrpresourcevenus/\w+\.gif data-type=tiny-gif status-code=200
+^https?://p\d\.meituan\.net/travelcube/(?!c129a661)\w+\.gif data-type=tiny-gif status-code=200
 
 [Script]
 # 开屏广告
-#!REQUIREMENT "'{{{davsdmpk_enable}}}'=='true'" 大众点评 = type=http-response,pattern=^https?:\/\/img\.meituan\.net\/(?>dpmobile|goodsawardpic)\/,script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js,requires-body=true,max-size=-1,timeout=60
-#!REQUIREMENT "'{{{davsdmpk_enable}}}'=='true'" 大众点评 = type=http-response,pattern=^https?:\/\/ddplus\.meituan\.net\/v\d\/mss_\w+\/picassovc,script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js,requires-body=true,max-size=-1,timeout=60
+#!REQUIREMENT "'{{{davsdmpk_enable}}}'=='true'" 大众点评 = type=http-response,pattern=^https?://img\.meituan\.net/(?>dpmobile|goodsawardpic)/,script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js,requires-body=true,max-size=-1,timeout=60
+#!REQUIREMENT "'{{{davsdmpk_enable}}}'=='true'" 大众点评 = type=http-response,pattern=^https?://ddplus\.meituan\.net/v\d/mss_\w+/picassovc,script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js,requires-body=true,max-size=-1,timeout=60
 
 [MITM]
 hostname = %APPEND% 103.37.155.60, *.dianping.com, img.meituan.net, p.meituan.com, rms.meituan.com, www.dpfile.com, awp-assets.meituan.net, s3plus.meituan.net, p*.meituan.net, ddplus.meituan.net

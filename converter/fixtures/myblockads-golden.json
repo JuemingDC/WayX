@@ -5,7 +5,7 @@
   "surge": "Adblock/Surge/MyBlockAds.sgmodule",
   "jqRuleCount": 10,
   "uniqueJqCount": 9,
-  "orderedPairsFnv1a64": "15b565d3b1b299e2",
-  "note": "Fingerprint covers the 10 reviewed ordered {pattern,jq} pairs shared by QX and Surge. One current source jq-path dependency (Reddit) remains explicit Review because the original dependency cannot be proven safe for single-quoted target embedding. Production conversion reads the original dependency URL directly; repository-cached JQ content is not an authority or fallback.",
+  "orderedPairsFnv1a64": "e31dfc68d921ed6a",
+  "note": "Fingerprint covers the 10 reviewed ordered {pattern,jq} pairs shared by QX and Surge after target bare-regex normalization. One current source jq-path dependency (Reddit) remains explicit Review because the original dependency cannot be proven safe for single-quoted target embedding. Production conversion reads the original dependency URL directly; repository-cached JQ content is not an authority or fallback.",
   "jqReviewCount": 1
 }

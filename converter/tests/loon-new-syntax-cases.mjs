@@ -78,16 +78,16 @@ assert.equal(rejectImgSurge.section, 'map');
 assert.match(rejectImgSurge.line, /data-type=tiny-gif status-code=200/);
 
 const loonUrlImg = 'URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-IMG';
-assert.equal(qxRule(loonUrlImg).line, '^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\? url reject-img');
+assert.equal(qxRule(loonUrlImg).line, '^https://a\\.line\\.me/er/lads/v\\d/ei\\? url reject-img');
 assert.equal(
   surgeRule(loonUrlImg),
-  'URL-REGEX,^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?,REJECT-TINYGIF'
+  'URL-REGEX,^https://a\\.line\\.me/er/lads/v\\d/ei\\?,REJECT-TINYGIF'
 );
 
 const loonLogicalRule = 'AND,((URL-REGEX,"^http:\\/\\/119\\.29\\.29\\.90\\/d\\?"),(USER-AGENT,"Example*")),DIRECT';
 assert.equal(
   surgeRule(loonLogicalRule),
-  'AND,((URL-REGEX,"^http:\\/\\/119\\.29\\.29\\.90\\/d\\?"),(USER-AGENT,"Example*")),DIRECT',
+  'AND,((URL-REGEX,^http://119\\.29\\.29\\.90/d\\?),(USER-AGENT,"Example*")),DIRECT',
 );
 
 const loonNestedLogicalRule = 'AND,((DOMAIN-KEYWORD,tnc),(OR,((DOMAIN-SUFFIX,capcutapi.com),(DOMAIN-SUFFIX,zijieapi.com)))),DIRECT';
@@ -100,7 +100,7 @@ const loonIpRule = 'IP-CIDR,39.156.140.30/32,REJECT,no-resolve';
 assert.equal(surgeRule(loonIpRule), loonIpRule);
 
 const loonUrlDrop = 'URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP';
-assert.equal(qxRule(loonUrlDrop).line, '^https:\\/\\/drop\\.example\\.com url reject');
-assert.equal(surgeRule(loonUrlDrop), 'URL-REGEX,^https:\\/\\/drop\\.example\\.com,REJECT-DROP');
+assert.equal(qxRule(loonUrlDrop).line, '^https://drop\\.example\\.com url reject');
+assert.equal(surgeRule(loonUrlDrop), 'URL-REGEX,^https://drop\\.example\\.com,REJECT-DROP');
 
 console.log('Loon new-syntax reference cases passed');

@@ -2,6 +2,8 @@
 // Author: chance
 // Category: Converter / Rule
 
+import { normalizeRegexBodyForTarget } from './target-regex.mjs';
+
 function splitTopLevelCsv(input) {
   const out = [];
   let buf = '', quote = null, esc = false, depth = 0;
@@ -120,6 +122,23 @@ function surgePolicyIndex(parts) {
   return String(parts[0] || '').toUpperCase() === 'FINAL' ? 1 : 2;
 }
 
+function normalizeSurgeRuleRegexes(line) {
+  const parts = splitTopLevelCsv(String(line ?? '').trim());
+  const type = String(parts[0] || '').toUpperCase();
+  if (type === 'URL-REGEX') {
+    parts[1] = surgeCsvRegexField(normalizeRegexBodyForTarget(unquote(parts[1] || '')));
+    return parts.join(',');
+  }
+  if (['AND','OR','NOT'].includes(type)) {
+    const subrules = splitLogicalSubrules(parts[1]);
+    if (subrules?.length) {
+      parts[1] = '(' + subrules.map(child => '(' + normalizeSurgeRuleRegexes(child) + ')').join(',') + ')';
+    }
+  }
+  return parts.join(',');
+}
+
+
 export function surgeRuleTypesInTree(line, {subrule = false} = {}) {
   const parts = splitTopLevelCsv(String(line ?? '').trim());
   const type = String(parts[0] || '').toUpperCase();
@@ -158,7 +177,8 @@ export function qxRule(line) {
 
   const parts = splitTopLevelCsv(source);
   const type = (parts[0] || '').toUpperCase();
-  const value = unquote(parts[1] || '');
+  const sourceValue = unquote(parts[1] || '');
+  const value = type === 'URL-REGEX' ? normalizeRegexBodyForTarget(sourceValue) : sourceValue;
   const policyRaw = (parts[2] || '').toUpperCase();
 
   if (type === 'URL-REGEX') {
@@ -192,7 +212,7 @@ export function surgeModuleRule(line) {
   // Surge Rule policies. Lower those to Surge's native Map Local instead of
   // weakening them to a generic reject or dropping the response body semantics.
   if (type === 'URL-REGEX') {
-    const pattern = unquote(parts[1] || '');
+    const pattern = normalizeRegexBodyForTarget(unquote(parts[1] || ''));
     parts[1] = surgeCsvRegexField(pattern);
     const sourcePolicy = String(parts[2] || '').toUpperCase();
     const mapLocal = {
@@ -245,7 +265,7 @@ export function surgeModuleRule(line) {
   }
 
   parts[policyIndex] = policy;
-  const lineOut = parts.join(',');
+  const lineOut = normalizeSurgeRuleRegexes(parts.join(','));
   return {
     kind:'rule',
     section:'rule',

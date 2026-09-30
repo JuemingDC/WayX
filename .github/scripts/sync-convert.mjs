@@ -26,6 +26,7 @@ import { planMitmLine } from '../../converter/src/mitm.mjs';
 import { fetchOriginalText, fetchOriginalBytes, resolveOriginalUrl } from '../../converter/src/source-fetch.mjs';
 import { registerComplexRewriteHandler, planComplexRewrite } from '../../converter/src/complex-rewrite-registry.mjs';
 import { renderMixedRewriteScript } from '../../converter/src/complex-rewrite-script.mjs';
+import { normalizeRegexBodyForTarget } from '../../converter/src/target-regex.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -625,6 +626,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     const mapped = scriptMap.get(sc.scriptPath);
     const qxUrl = mapped?.qx || sc.scriptPath;
     const surgeUrl = mapped?.surge || sc.scriptPath;
+    const targetPattern = normalizeRegexBodyForTarget(sc.pattern);
     const qxCompat = inspectQxScriptCompatibility({
       scriptUrl: sc.scriptPath,
       sourceText: mapped?.source || '',
@@ -651,7 +653,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
         scriptUrl: sc.scriptPath,
         sourceText: mapped?.source || '',
       }).action;
-      qx.rewrite.push(`${sc.pattern} url ${qType} ${qxUrl}`);
+      qx.rewrite.push(`${targetPattern} url ${qType} ${qxUrl}`);
     }
 
     const name = sanitizeName(sc.tag || `${entry.id}_${String(scriptIndex).padStart(2, '0')}`);
@@ -672,7 +674,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
         surgeNeedsLineRequirement = true;
       }
 
-      const params = [`type=${sc.type}`, `pattern=${sc.pattern}`, `script-path=${surgeUrl}`];
+      const params = [`type=${sc.type}`, `pattern=${targetPattern}`, `script-path=${surgeUrl}`];
       if (sc.requiresBody) {
         params.push('requires-body=true');
         params.push(`max-size=${sc.maxSize || '-1'}`);

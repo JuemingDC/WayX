@@ -1,7 +1,7 @@
 // WayX behavior-first Rewrite v2 semantic mapper
 // Author: chance
 // Category: Converter / Rewrite v2 / Semantic Mapping
-import { compileRegexForTarget } from './target-regex.mjs';
+import { compileRegexForTarget, normalizeRegexBodyForTarget } from './target-regex.mjs';
 import { qxPrimitiveForRewriteV2Action, validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
 import { quoteJq } from './jq.mjs';
 
@@ -424,7 +424,7 @@ function applyStaticHeaderAction(headers, action) {
       const regex = args[1];
       const replacement = fixedNoTemplate(args[2], 'header replacement');
       if (regex?.type !== 'regex') throw new Error('header.replace regex must be fixed');
-      const re = new RegExp(regex.pattern, String(regex.flags || ''));
+      const re = new RegExp(normalizeRegexBodyForTarget(regex.pattern));
       const wanted = name.toLowerCase();
       for (const pair of headers) {
         if (pair[0].toLowerCase() === wanted) pair[1] = String(pair[1]).replace(re, replacement);

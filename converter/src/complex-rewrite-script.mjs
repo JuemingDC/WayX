@@ -5,6 +5,7 @@
 import { findRewriteComparisons } from './rewrite-v2.mjs';
 import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
 import { compileComplexCondition } from './complex-rewrite.mjs';
+import { normalizeRegexBodyForTarget } from './target-regex.mjs';
 
 function fixed(node, label) {
   if (!node || !['string','raw-string'].includes(node.type) || (node.type === 'string' && String(node.value).includes('${'))) {
@@ -74,8 +75,8 @@ function coarsePattern(ast) {
     node.operator === '~=' && node.left?.type === 'variable' && node.left.name === 'url' && node.right?.type === 'regex'
   );
   if (!found.length) return '^https?://';
-  if (found.length === 1) return found[0].right.pattern;
-  return '(?:' + found.map(node => '(?:' + node.right.pattern + ')').join('|') + ')';
+  if (found.length === 1) return normalizeRegexBodyForTarget(found[0].right.pattern);
+  return '(?:' + found.map(node => '(?:' + normalizeRegexBodyForTarget(node.right.pattern) + ')').join('|') + ')';
 }
 function jsonValueSource(node, captures, guaranteed) {
   if (!node || !['string','raw-string','number','boolean','null'].includes(node.type)) throw new Error('JSON replacement value must be fixed');
@@ -113,7 +114,7 @@ function statements(ast, target) {
           out.push('__wayxDel(' + JSON.stringify(name) + ');');
         } else {
           if (args[1]?.type !== 'regex') throw new Error('header.replace regex must be fixed');
-          out.push('__wayxWith(' + capturedString(args[2], 'header replacement', captures, guaranteed) + ',v=>__wayxHeaderReplace(' + JSON.stringify(name) + ',' + JSON.stringify(args[1].pattern) + ',v));');
+          out.push('__wayxWith(' + capturedString(args[2], 'header replacement', captures, guaranteed) + ',v=>__wayxHeaderReplace(' + JSON.stringify(name) + ',' + JSON.stringify(normalizeRegexBodyForTarget(args[1].pattern)) + ',v));');
         }
       }
       continue;
@@ -138,8 +139,8 @@ function statements(ast, target) {
       for(const args of expand(action)){
         if (args[0]?.type !== 'regex') throw new Error('body.replace regex must be fixed');
         const replacement=capturedString(args[1], 'body replacement', captures, guaranteed);
-        if(args[1]?.type==='string' && String(args[1].value).includes('${')) out.push('__wayxWith('+replacement+',v=>{__wayxBody=String(__wayxBody ?? "").replace(new RegExp('+JSON.stringify(args[0].pattern)+'),v);});');
-        else out.push('__wayxBody=String(__wayxBody ?? "").replace(new RegExp('+JSON.stringify(args[0].pattern)+'),'+replacement+');');
+        if(args[1]?.type==='string' && String(args[1].value).includes('${')) out.push('__wayxWith('+replacement+',v=>{__wayxBody=String(__wayxBody ?? "").replace(new RegExp('+JSON.stringify(normalizeRegexBodyForTarget(args[0].pattern))+'),v);});');
+        else out.push('__wayxBody=String(__wayxBody ?? "").replace(new RegExp('+JSON.stringify(normalizeRegexBodyForTarget(args[0].pattern))+'),'+replacement+');');
       }
       continue;
     }

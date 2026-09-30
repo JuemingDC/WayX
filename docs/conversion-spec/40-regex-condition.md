@@ -49,7 +49,7 @@ Surge 官方 URL pattern 使用 bare regular expression，不使用 JavaScript �
 ^https://api\.example\.com
 ```
 
-WayX 不以“格式规范化”为理由改写 regex body。Loon parser 去除最外层 delimiter 与 flags 后，regex body 按源结构保留；其中 `\/` 与 `/` 在目标正则中虽可表示相同斜杠，但转换器不得仅为样式统一批量替换。
+WayX 按目标软件的 bare-regex 格式输出。Loon parser 识别最外层 delimiter 与 flags；进入目标编译阶段后，必须去掉最外层 delimiter，丢弃 `i/m/s`，并将仅用于 Loon/JavaScript regex literal 的 `\/` 规范化为目标端的 `/`。除这类源 literal 外壳/转义处理外，不得改变 regex 的匹配结构。
 
 禁止：
 - 把 regex flag 拼进正文；
@@ -58,10 +58,11 @@ WayX 不以“格式规范化”为理由改写 regex body。Loon parser 去除�
 
 ## 40.4 Flags
 
-- Loon regex literal 的 `i/m/s` 属于源 delimiter metadata；输出目标声明时去除，不拼入 regex body；
-- 目标没有官方 flag 字段时不发明 `(?i)`、人工 case-fold 或其他替代表达；
-- regex body 保持原样，不因 flag 进行结构改写；
-- Golden 锁定“去除源 flag、保留 regex body”的结果。
+- Loon regex literal 的 `i/m/s` 在 WayX 转换中**无条件丢弃**；flags 的存在本身不构成 Review；
+- 不得把 flags 拼入 regex body，也不得通过 `(?i)`、人工 case-fold、`new RegExp(pattern, flags)` 或其他方式恢复；
+- 去掉 literal delimiter 后，将 `\/` 规范化为目标 bare-regex 的 `/`；
+- 除目标格式所需的上述处理外，regex 的捕获组、lookaround、character class、alternation、quantifier、anchor 等结构保持不变；
+- Golden 锁定“丢弃 `i/m/s` + 目标格式化 regex body”的结果。
 
 ## 40.5 正则结构保持
 
@@ -119,8 +120,8 @@ Surge：
 ## 40.8 Surge canonical 输出
 
 WayX 对 Surge URL pattern 只做必要的目标格式处理：
-- 去掉 Loon regex literal 的最外层 delimiter/flag；
-- 保留 regex body 原有的 `\/` 或 `/` 写法，不做全局斜杠 canonicalization；
+- 去掉 Loon regex literal 的最外层 delimiter，并丢弃 `i/m/s`；
+- 将仅用于源 literal 的 `\/` 规范化为 bare-regex 的 `/`；
 - 对 `URL-REGEX` 中本身含逗号的 pattern 保留 CSV 引号；
 - 保留捕获组结构和编号；
 - 保留合法的 `$1/$2` replacement。

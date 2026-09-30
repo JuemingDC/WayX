@@ -2,6 +2,8 @@
 // Author: chance
 // Category: Converter / Quantumult X / Mock
 
+import { normalizeRegexBodyForTarget } from './target-regex.mjs';
+
 const MIME = Object.freeze({
   json: 'application/json',
   text: 'text/plain; charset=utf-8',
@@ -94,9 +96,9 @@ function headerHelpers(headerOps = []) {
     '  const wanted = String(name).toLowerCase();',
     '  for (const key of Object.keys(headers)) if (key.toLowerCase() === wanted) delete headers[key];',
     '}',
-    'function __wayxHeaderReplace(headers, name, source, flags, replacement) {',
+    'function __wayxHeaderReplace(headers, name, source, replacement) {',
     '  const key = __wayxHeaderKey(headers, name);',
-    '  if (key !== undefined) headers[key] = String(headers[key]).replace(new RegExp(source, flags), replacement);',
+    '  if (key !== undefined) headers[key] = String(headers[key]).replace(new RegExp(source), replacement);',
     '}',
   ];
 }
@@ -108,7 +110,7 @@ function renderHeaderOps(lines, headerOps = []) {
     if (op.type === 'add') lines.push(`__wayxHeaderAdd(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(op.value)});`);
     else if (op.type === 'set') lines.push(`__wayxHeaderSet(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(op.value)});`);
     else if (op.type === 'del') lines.push(`__wayxHeaderDel(headers, ${JSON.stringify(op.name)});`);
-    else if (op.type === 'replace') lines.push(`__wayxHeaderReplace(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(op.pattern)}, ${JSON.stringify(op.flags || '')}, ${JSON.stringify(op.replacement)});`);
+    else if (op.type === 'replace') lines.push(`__wayxHeaderReplace(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(normalizeRegexBodyForTarget(op.pattern))}, ${JSON.stringify(op.replacement)});`);
     else throw new Error('unsupported QX mock header operation: ' + op.type);
   }
 }

@@ -3,6 +3,7 @@
 // Category: Converter / Rewrite v2 / Safe Tier
 import { isRewriteV2, parseRewriteV2 } from './rewrite-v2.mjs';
 import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
+import { normalizeRegexBodyForTarget } from './target-regex.mjs';
 
 const SAFE_REJECT_ACTIONS = new Map([
   ['reject_dict', 'reject-dict'],
@@ -20,8 +21,7 @@ export function analyzeSimpleUrlRegexCondition(condition) {
   if (condition.left?.type !== 'variable' || condition.left.name !== 'url') return { ok: false, reason: 'left operand is not ${url}' };
   if (condition.right?.type !== 'regex') return { ok: false, reason: 'right operand is not a literal regex' };
   if (condition.capture) return { ok: false, reason: 'as capture requires semantic review' };
-  if (condition.right.flags) return { ok: false, reason: 'regex flags require target-regex review' };
-  return { ok: true, pattern: condition.right.pattern };
+  return { ok: true, pattern: normalizeRegexBodyForTarget(condition.right.pattern) };
 }
 
 function safeRejectAction(action) {

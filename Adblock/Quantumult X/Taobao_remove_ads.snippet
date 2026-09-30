@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Taobao.png
 # Updated: 2026-06-01 17:11:35
 
-# Converted: 2026-09-30 08:53:02 +08:00
+# Converted: 2026-09-30 12:45:46 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Taobao_remove_ads.lpx
@@ -22,22 +22,22 @@ host, h-adashx.ut.taobao.com, reject
 host, ut.taobao.com, reject
 
 # [rewrite_local]
-^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.fliggy\.crm\.screen\.(allresource|predict) url reject-dict
-^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.alibaba\.advertisementservice\.getadv url reject-dict
-^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.alimama\.etao\.config\.query\/.+?etao_advertise url reject-dict
-^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.alimusic\.common\.mobileservice\.startinit url reject-dict
-^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.etao\.noah\.query\/.+tao_splash url reject-dict
-^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.mtopadvertiseapi\.queryadvertise url reject-dict
-^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.o2o\.ad\.gateway\.get url reject-dict
-^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.taobao\.idle\.home\.welcome url reject-dict
-^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.trip\.activity\.querytmsresources url reject-dict
-^https:\/\/(?:gw|heic)\.alicdn\.com\/imgextra\/i\d\/\d*\/?[\w!]+-\d-(?:octopus|tps)-(?:1080|1125)-\d{4}\.(?:jpg|png)_(?:1\d{3}|9\d{2})x(?:\d|1\d{3}|9\d{2})q[59]0 url reject-dict
-^https:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.taobao\.(volvo\.secondfloor\.getconfig|wireless\.home\.newface\.awesome\.get) url reject-dict
+^https://acs\.m\.taobao\.com/gw/mtop\.fliggy\.crm\.screen\.(allresource|predict) url reject-dict
+^https://acs\.m\.taobao\.com/gw/mtop\.alibaba\.advertisementservice\.getadv url reject-dict
+^https://acs\.m\.taobao\.com/gw/mtop\.alimama\.etao\.config\.query/.+?etao_advertise url reject-dict
+^https://acs\.m\.taobao\.com/gw/mtop\.alimusic\.common\.mobileservice\.startinit url reject-dict
+^https://acs\.m\.taobao\.com/gw/mtop\.etao\.noah\.query/.+tao_splash url reject-dict
+^https://acs\.m\.taobao\.com/gw/mtop\.film\.mtopadvertiseapi\.queryadvertise url reject-dict
+^https://acs\.m\.taobao\.com/gw/mtop\.o2o\.ad\.gateway\.get url reject-dict
+^https://acs\.m\.taobao\.com/gw/mtop\.taobao\.idle\.home\.welcome url reject-dict
+^https://acs\.m\.taobao\.com/gw/mtop\.trip\.activity\.querytmsresources url reject-dict
+^https://(?:gw|heic)\.alicdn\.com/imgextra/i\d/\d*/?[\w!]+-\d-(?:octopus|tps)-(?:1080|1125)-\d{4}\.(?:jpg|png)_(?:1\d{3}|9\d{2})x(?:\d|1\d{3}|9\d{2})q[59]0 url reject-dict
+^https://guide-acs\.m\.taobao\.com/gw/mtop\.taobao\.(volvo\.secondfloor\.getconfig|wireless\.home\.newface\.awesome\.get) url reject-dict
 # 移除淘宝开屏广告
-^https:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.taobao\.(cloudvideo\.video\.query|wireless\.home\.splash\.awesome\.get) url script-response-body https://kelee.one/Resource/JavaScript/Taobao/Taobao_remove_ads.js
+^https://guide-acs\.m\.taobao\.com/gw/mtop\.taobao\.(cloudvideo\.video\.query|wireless\.home\.splash\.awesome\.get) url script-response-body https://kelee.one/Resource/JavaScript/Taobao/Taobao_remove_ads.js
 
 # 移除淘宝开屏广告
-^https:\/\/poplayer\.template\.alibaba\.com\/\w+\.json url script-response-body https://kelee.one/Resource/JavaScript/Taobao/Taobao_remove_ads.js
+^https://poplayer\.template\.alibaba\.com/\w+\.json url script-response-body https://kelee.one/Resource/JavaScript/Taobao/Taobao_remove_ads.js
 
 # [mitm]
 hostname = acs.m.taobao.com, heic.alicdn.com, guide-acs.m.taobao.com, poplayer.template.alibaba.com

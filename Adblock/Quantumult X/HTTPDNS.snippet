@@ -6,7 +6,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/Other_icon/120px/HTTPDNS.png
 # Updated: 2026-09-28 14:29:55
 
-# Converted: 2026-09-30 08:53:01 +08:00
+# Converted: 2026-09-30 12:45:46 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Block_HTTPDNS.lpx
@@ -193,40 +193,40 @@ host, httpdns.zybang.com, reject
 
 # [rewrite_local]
 
-^http:\/\/((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(?:\/v?[0-9]+)?\/(?:sign_)?(?:(?:d|ss)[46]?|resolve)\? url reject-200
+^http://((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(?:/v?[0-9]+)?/(?:sign_)?(?:(?:d|ss)[46]?|resolve)\? url reject-200
 
-^http:\/\/\[[0-9a-fA-F:]+\](?:\/v?[0-9]+)?\/(?:sign_)?(?:(?:d|ss)[46]?|resolve)\? url reject-200
+^http://\[[0-9a-fA-F:]+\](?:/v?[0-9]+)?/(?:sign_)?(?:(?:d|ss)[46]?|resolve)\? url reject-200
 
-^http:\/\/103\.44\.58\.64\/md\? url reject-200
+^http://103\.44\.58\.64/md\? url reject-200
 
-^http:\/\/cdn\.wup\.huya\.com\/launch\/queryHttpDns url reject-200
-^http:\/\/xmc\.ximalaya\.com\/xmlymain-login-web\/login\/ url reject-200
+^http://cdn\.wup\.huya\.com/launch/queryHttpDns url reject-200
+^http://xmc\.ximalaya\.com/xmlymain-login-web/login/ url reject-200
 
-^http:\/\/amdc\.m\.taobao\.com\/amdc\/mobileDispatch url reject-200
-^http:\/\/47\.246\.103\.9\/amdc\/mobileDispatch url reject-200
-^http:\/\/47\.246\.103\.10\/amdc\/mobileDispatch url reject-200
-^http:\/\/59\.82\.113\.10\/amdc\/mobileDispatch url reject-200
-^http:\/\/59\.82\.113\.219\/amdc\/mobileDispatch url reject-200
-^http:\/\/103\.37\.155\.60\/fetch url reject-200
-^http:\/\/api\.weibo\.cn\/\d+\/httpdns\/config url reject-200
-^http:\/\/api\.weibo\.cn\/httpdns\/config url reject-200
+^http://amdc\.m\.taobao\.com/amdc/mobileDispatch url reject-200
+^http://47\.246\.103\.9/amdc/mobileDispatch url reject-200
+^http://47\.246\.103\.10/amdc/mobileDispatch url reject-200
+^http://59\.82\.113\.10/amdc/mobileDispatch url reject-200
+^http://59\.82\.113\.219/amdc/mobileDispatch url reject-200
+^http://103\.37\.155\.60/fetch url reject-200
+^http://api\.weibo\.cn/\d+/httpdns/config url reject-200
+^http://api\.weibo\.cn/httpdns/config url reject-200
 
-^http:\/\/((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/v\d\/resolv\? url reject-200
+^http://((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/v\d/resolv\? url reject-200
 
-^http:\/\/((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?):\d+\/httpdns\/ url reject-200
+^http://((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?):\d+/httpdns/ url reject-200
 
-^http:\/\/\[[0-9a-fA-F:]+\]:\d+\/httpdns\/ url reject-200
-^https?:\/\/appconf\.mail\.163\.com\/mailmaster\/api\/http\/urlConfig\.do$ url reject-dict
+^http://\[[0-9a-fA-F:]+\]:\d+/httpdns/ url reject-200
+^https?://appconf\.mail\.163\.com/mailmaster/api/http/urlConfig\.do$ url reject-dict
 
-^https?:\/\/cdn\.wup\.huya\.com\/monitor\/monitor\.jsp url reject
+^https?://cdn\.wup\.huya\.com/monitor/monitor\.jsp url reject
 
-^https:\/\/msglb\.91160\.com\/msg\/outer\/broker\/get$ url reject-dict
+^https://msglb\.91160\.com/msg/outer/broker/get$ url reject-dict
 
-^https:\/\/gslbali\.ximalaya\.com\/linkeye-cloud\/httpdns\/ url reject
+^https://gslbali\.ximalaya\.com/linkeye-cloud/httpdns/ url reject
 
-^https:\/\/ucdc\d?-upaas\.uc\.cn\/api\/v\d\/dns_query\? url reject-dict
+^https://ucdc\d?-upaas\.uc\.cn/api/v\d/dns_query\? url reject-dict
 
-^https:\/\/gw-cn\.jiaoliuqu\.com\/taqu-im-broadcast-srv\/v\d\/Comet\/get\? url reject-dict
+^https://gw-cn\.jiaoliuqu\.com/taqu-im-broadcast-srv/v\d/Comet/get\? url reject-dict
 
 # [mitm]
 hostname = appconf.mail.163.com, msglb.91160.com, ucdc2-upaas.uc.cn, gw-cn.jiaoliuqu.com

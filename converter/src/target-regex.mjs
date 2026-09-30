@@ -2,20 +2,23 @@
 // Author: chance
 // Category: Converter / Regex / Cross-platform
 //
-// Target rewrite declarations use the target platform's documented regex form.
-// Loon /i, /m and /s flags are source-literal metadata only: WayX strips them
-// during conversion and preserves the regex body without synthesizing target
-// modifiers or case-fold expansions.
+// Loon uses JavaScript-style /.../ regex literals. QX and Surge target
+// declarations use bare regex patterns. During conversion WayX discards the
+// Loon i/m/s flags and removes literal-only slash escaping (\/) so generated
+// patterns follow the target declaration format without changing the remaining
+// regex structure.
+
+export function normalizeRegexBodyForTarget(pattern) {
+  return String(pattern ?? '').replace(/\\\//g, '/');
+}
 
 export function compileRegexForTarget(regex, { subject = 'url', target = 'generic' } = {}) {
   if (!regex || regex.type !== 'regex') throw new TypeError('Expected Rewrite v2 regex AST node');
 
-  const pattern = regex.pattern;
+  const pattern = normalizeRegexBodyForTarget(regex.pattern);
   const flags = String(regex.flags || '');
 
-  // Loon regex flags (i/m/s) belong to the source literal syntax. WayX
-  // intentionally does not emulate or propagate them into QX/Surge
-  // declarations. Preserve the regex body and let the target declaration use
-  // only syntax officially supported by that target.
+  // i/m/s are intentionally source-only metadata. Never synthesize inline
+  // modifiers, case-fold expansions, or target helper flags.
   return { ok: true, pattern, sourceFlags: flags, notes: [] };
 }
