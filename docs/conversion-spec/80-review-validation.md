@@ -72,7 +72,7 @@ Target 已转换语义项
 - Module policy 仅使用当前官方资料或当前 Surge App 运行时已直接验证的内建值；未知/用户 policy group 不作为活动 Rule
 - 外部 policy 不作为活动 Module Rule
 - URL/Header/Body/Map Local/Script 参数合法
-- WayX 去广告范围内的活动 Script declaration 必须显式声明 type；validator 不接受项目范围外的调度/事件/generic Script 类型
+- WayX 去广告转换输出中的活动 Script declaration 必须显式声明 type，且 Adblock-scope validator 不接受调度/事件/generic Script 类型；仓库中与本转换器无关的人工 Surge Module 仍按 Surge 自身合法类型校验，不受此范围限制
 - 自动转换生成的 MITM hostname 使用 `%APPEND%`；validator 同时接受官方合法的 hostname override
 - 不存在来源插件专属活动 metadata
 - 不存在来源平台 Rewrite v2 行
