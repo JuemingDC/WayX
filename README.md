@@ -55,6 +55,7 @@ WayX/
 - URL Rewrite → 对应目标平台 URL Rewrite；
 - Header Rewrite → 对应目标平台 Header Rewrite；
 - Rule / Filter → 对应目标平台 Rule / Filter；
+- Loon Plugin Rule 的 `PROXY` → QX 保留字面 `PROXY`；Surge Module 生成官方 `#!arguments` policy 参数并在 Rule 中使用 `{{{...}}}`，默认 `DIRECT`，用户可改为已有代理策略/策略组；
 - 本地响应 / reject-dict → 使用目标平台语义等价的本地响应机制；
 - MITM → 仅保留实际需要的 hostname。
 
