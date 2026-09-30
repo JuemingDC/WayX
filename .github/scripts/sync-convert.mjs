@@ -375,12 +375,12 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
 
     if (!qxPlan.ok) {
       qxScriptDest.push(...comments);
-      if (sourceSyntax==='legacy' && ir.sourcePayload.tag) qx.rewrite.push(`# ${ir.sourcePayload.tag}`);
+      if (sourceSyntax==='legacy' && ir.sourcePayload.tag) qxScriptDest.push(`# ${ir.sourcePayload.tag}`);
       qxScriptDest.push(`# [WayX] ${sourceSyntax==='v2' ? 'SCRIPT V2' : 'SCRIPT'} REVIEW REQUIRED: ${qxPlan.reason}`);
       qxScriptDest.push(`# Source declaration: ${item.line}`);
     } else if (qxPlan.disabled) {
       qxScriptDest.push(...comments);
-      if (sourceSyntax==='legacy' && ir.sourcePayload.tag) qx.rewrite.push(`# ${ir.sourcePayload.tag}`);
+      if (sourceSyntax==='legacy' && ir.sourcePayload.tag) qxScriptDest.push(`# ${ir.sourcePayload.tag}`);
       qxScriptDest.push(`# [WayX] Script disabled by source ${sourceSyntax==='v2' ? 'option' : 'declaration'}: ${item.line}`);
     } else {
       const qxRendered=attachQxInlineNote({
@@ -390,8 +390,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
         lines:[qxPlan.line],
       });
       qxScriptDest.push(...qxRendered.comments);
-      if (qxPlan.tag) qx.rewrite.push(`# ${qxPlan.tag}`);
-      for (const note of qxPlan.notes || []) qx.rewrite.push(`# [WayX] ${note}`);
+      if (qxPlan.tag) qxScriptDest.push(`# ${qxPlan.tag}`);
+      for (const note of qxPlan.notes || []) qxScriptDest.push(`# [WayX] ${note}`);
       qxScriptDest.push(...qxRendered.lines);
     }
 
