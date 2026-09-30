@@ -75,7 +75,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 - Surge 去广告 Module 的源 `FINAL` 直接丢弃，不改写成 catch-all。
 - QX / Surge Source Script 均不做 runtime compatibility scan，直接保留原始 Script URL；QX 仅在 declaration 不足以确定 header/body/echo action 时读取正文辅助分类。
 - QX 官方 sample 未确认的 Rule Type（逻辑规则、端口类等）只注释保留，不用 HTTP Rewrite Script 模拟。
-- Loon Plugin `PROXY` 不做策略转换：QX 保留字面 `PROXY`；Surge Module 保留源 Rule 注释。
+- Loon Plugin `PROXY` 保持用户策略绑定：QX 保留字面 `PROXY`；Surge Module 生成 `wayx_proxy_policy` 参数（默认 `DIRECT`）并把 Rule policy 写成 `{{{wayx_proxy_policy}}}`。
 - QX snippet 的 filter / rewrite / mitm section 标题保持注释形式。
 - QX filter/rewrite 支持前置 `{# note #}`；converter 已按“单行注释 + 单条源声明 + 单条活动目标规则”限制 `[Rule]` / `[Rewrite]` / `[Script]` 来源内联，分组注释不内联。
 - Cron / Network Changed / Generic Script 不属于当前去广告 converter 范围。
@@ -102,7 +102,7 @@ QX 12 项按原因分布：
 以下不再计入 Review：
 - Source Script runtime compatibility；
 - QX logical Rule、`DEST-PORT` 等官方 sample 未确认 Rule Type（明确注释保留）；
-- Loon Plugin `PROXY` 在 Surge Module 中的策略绑定（源 Rule 注释保留）；
+- Loon Plugin `PROXY` 在 Surge Module 中通过参数化 policy binding 转为活动 Rule，不再属于 Review/注释库存；
 - 完整 Surge Profile 可用但 Module Manual 未允许的 `REJECT-DROP / REJECT-NO-DROP / CELLULAR / CELLULAR-ONLY / HYBRID / NO-HYBRID`（源 Rule 注释保留）。
 
 上述 12 项是已知目标能力缺口，不是 converter/PR 未处理错误；后续只有在获得新的官方目标能力依据时再消减。
@@ -118,7 +118,7 @@ v1.4 已重新生成全部 Catalog 管理的 QX snippet / Surge sgmodule，并�
 - Source Script declaration 继续引用原作者 URL；
 - Source Script runtime compatibility disabled marker 已移除；
 - QX 不支持 Rule 以注释形式对账，未生成 Rule helper；
-- Surge 的 Loon `PROXY` 以及 Module Manual 未允许的完整 Profile built-in policy 均只注释保留；
+- Surge 的 Loon `PROXY` 已通过 `#!arguments` policy 参数转换为活动 Rule；Module Manual 未允许且没有参数化语义的完整 Profile built-in policy 继续只注释保留；
 - helper 文件引用存在且 action 类型通过 validator/CI；
 - Review inventory 已按新口径重建为 QX 12 / Surge 0。
 
