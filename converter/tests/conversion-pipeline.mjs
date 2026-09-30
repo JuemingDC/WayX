@@ -27,7 +27,7 @@ const source=[
   'DOMAIN-SUFFIX,ads.example,REJECT',
   '',
   '[Rewrite]',
-  '^https://api\\.example\\.com/ads url reject-dict',
+  '^https://old\\.example\\.com 302 https://new.example.com',
   '',
   '[Script]',
   'http-response ^https://api\\.example\\.com script-path=https://example.com/resp.js, requires-body=true, tag=Resp',
@@ -55,7 +55,7 @@ const out=convertPlugin(entry,source,{
 
 assert.match(out.qx,/^# Name: Demo$/m);
 assert.match(out.qx,/\{# ad domain #\} host-suffix, ads\.example, reject/);
-assert.match(out.qx,/\^https:\/\/api\\\.example\\\.com\/ads url reject-dict/);
+assert.match(out.qx,/\^https:\/\/old\\\.example\\\.com url 302 https:\/\/new\.example\.com/);
 assert.match(out.qx,/script-response-body https:\/\/example\.com\/resp\.js/);
 assert.match(out.qx,/ISSUE REQUIRED \[unknown-source-section\]/);
 assert.match(out.qx,/# Source declaration: ACTIVE,unknown/);
@@ -63,8 +63,8 @@ assert.match(out.qx,/# Source declaration: ACTIVE,unknown/);
 assert.match(out.surge,/^#!name=Demo$/m);
 assert.match(out.surge,/^\[Rule\]$/m);
 assert.match(out.surge,/DOMAIN-SUFFIX,ads\.example,REJECT/);
-assert.match(out.surge,/^\[Map Local\]$/m);
-assert.match(out.surge,/data-type=text/);
+assert.match(out.surge,/^\[URL Rewrite\]$/m);
+assert.match(out.surge,/\^https:\/\/old\\\.example\\\.com https:\/\/new\.example\.com 302/);
 assert.match(out.surge,/^\[Script\]$/m);
 assert.match(out.surge,/Resp = type=http-response/);
 assert.match(out.surge,/ISSUE REQUIRED \[unknown-source-section\]/);
