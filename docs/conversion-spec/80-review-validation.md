@@ -191,4 +191,18 @@ WayX capability gate 只验证 **Loon 去广告插件转换实际会用到的能
 
 ### Surge
 
-Surge 的能力依据只从官方 Manual 中核对 WayX 实际生成的 Rule / URL Rewrite / Header Rewrite / Body Rewrite / Map Local / HTTP Script 与 MITM `hostname`。Module Manual 虽还描述其它完整模块配置项，但这些不属于 WayX Loon 去广告转换能力边界，validator 不为其建立白名单。
+Surge 的能力依据只从官方文档链核对 WayX 实际生成的 Rule / URL Rewrite / Header Rewrite / Body Rewrite / Map Local / HTTP Script 与 MITM `hostname`：
+
+1. 先读取 `https://nssurge.com/llms.txt` 确认文档优先级；
+2. 配置语法与语义以 `https://manual.nssurge.com/` 为权威；
+3. 涉及近期版本变化时核对官方 release notes；
+4. CI 只验证 WayX registry 中已使用能力仍有官方 Manual 证据，不枚举 Surge 其它 Profile/Module 功能。
+
+Surge production validator 与 official capability gate 必须共用同一 registry，禁止在 `rule.mjs` / `surge-module.mjs` 中另维护一份重复白名单。
+
+实现：
+- registry：`converter/src/surge-official-capabilities.mjs`
+- reviewed baseline：`converter/fixtures/surge-official-capabilities.json`
+- live evidence test：`converter/tests/surge-official-capabilities.mjs`
+- target validator：`converter/src/surge-module.mjs::validateSurgeModule`
+- Rule planner：`converter/src/rule.mjs`
