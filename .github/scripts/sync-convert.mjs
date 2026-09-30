@@ -355,6 +355,9 @@ function planDisabledSurgeRewriteComments(comments, ctx) {
       passthrough.push(raw);
       continue;
     }
+    if (mapped.section === 'drop') {
+      continue;
+    }
 
     const lines = mapped.lines || [mapped.line];
     routed.push({
