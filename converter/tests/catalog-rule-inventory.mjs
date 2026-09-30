@@ -5,7 +5,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { splitTopLevelCsv, splitLogicalSubrules } from '../src/rule.mjs';
+import { parseLoonRuleAst } from '../src/rule-ast.mjs';
 
 const ROOT=process.cwd();
 const manifest=JSON.parse(await fs.readFile(
@@ -32,54 +32,32 @@ const inventory={
 
 let declarationCount=0;
 
-function parameterName(raw) {
-  return String(raw||'').trim().split('=',1)[0].toLowerCase();
-}
+function collectNode(node,{logicalDepth=0,file='unknown'}={}) {
+  const nested=node.nested;
+  (nested ? inventory.nestedTypes : inventory.topLevelTypes).add(node.type);
+  (nested ? inventory.nestedFieldCounts : inventory.topLevelFieldCounts).add(node.fieldCount);
 
-function parseRuleNode(source,{nested=false,logicalDepth=0,file='unknown'}={}) {
-  const parts=splitTopLevelCsv(String(source).trim());
-  const type=String(parts[0]||'').toUpperCase();
-  assert.ok(type, `${file}: missing Rule type: ${source}`);
-
-  (nested ? inventory.nestedTypes : inventory.topLevelTypes).add(type);
-  (nested ? inventory.nestedFieldCounts : inventory.topLevelFieldCounts).add(parts.length);
-
-  const logical=['AND','OR','NOT'].includes(type);
-  if (logical) {
-    inventory.logicalOperators.add(type);
-    inventory.logicalPlacements.add(type+':' + (nested?'nested':'top'));
-    const depth=logicalDepth+1;
-    inventory.maxLogicalDepth=Math.max(inventory.maxLogicalDepth,depth);
-
-    const children=splitLogicalSubrules(parts[1]);
-    assert.ok(children?.length, `${file}: unparseable logical Rule children: ${source}`);
-
-    if (!nested) {
-      assert.ok(parts.length>=3 && parts[2], `${file}: top-level logical Rule missing policy: ${source}`);
-      inventory.policies.add(String(parts[2]).trim().toUpperCase());
-      for (const raw of parts.slice(3)) {
-        const name=parameterName(raw);
-        if (!name) continue;
-        inventory.parameterNames.add(name);
-        inventory.parameterShapes.add(type+':'+name);
-      }
-    }
-
-    for (const child of children) {
-      parseRuleNode(child,{nested:true,logicalDepth:depth,file});
-    }
-    return;
+  if (!nested) {
+    assert.ok(node.policyRaw, `${file}: top-level Rule missing policy: ${node.source}`);
+    inventory.policies.add(node.policy);
   }
 
-  if (nested) return;
+  for (const param of node.params) {
+    if (!param.name) continue;
+    inventory.parameterNames.add(param.name);
+    inventory.parameterShapes.add(node.type+':'+param.name);
+  }
 
-  assert.ok(parts.length>=3 && parts[2], `${file}: top-level Rule missing policy: ${source}`);
-  inventory.policies.add(String(parts[2]).trim().toUpperCase());
-  for (const raw of parts.slice(3)) {
-    const name=parameterName(raw);
-    if (!name) continue;
-    inventory.parameterNames.add(name);
-    inventory.parameterShapes.add(type+':'+name);
+  let nextLogicalDepth=logicalDepth;
+  if (node.kind==='logical') {
+    inventory.logicalOperators.add(node.type);
+    inventory.logicalPlacements.add(node.type+':' + (nested?'nested':'top'));
+    nextLogicalDepth=logicalDepth+1;
+    inventory.maxLogicalDepth=Math.max(inventory.maxLogicalDepth,nextLogicalDepth);
+  }
+
+  for (const child of node.children) {
+    collectNode(child,{logicalDepth:nextLogicalDepth,file});
   }
 }
 
@@ -104,7 +82,9 @@ for (const entry of manifest) {
   const text=await fs.readFile(file,'utf8');
   for (const line of activeRuleLines(text)) {
     declarationCount++;
-    parseRuleNode(line,{file:entry.file});
+    const parsed=parseLoonRuleAst(line);
+    assert.ok(parsed.ok, `${entry.file}: Rule AST parse failed (${parsed.reason}): ${line}`);
+    collectNode(parsed.ast,{file:entry.file});
   }
 }
 

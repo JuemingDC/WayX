@@ -115,10 +115,19 @@ Surge Module 不能定义 `[Proxy]` / `[Proxy Group]`，但官方 Parameter Tabl
 
 ## 20.6 自动转换实现
 
-- Production：`converter/src/rule.mjs`
+- Source parser / AST：`converter/src/rule-ast.mjs`
+- QX planner：`converter/src/rule-qx.mjs`
+- Surge planner：`converter/src/rule-surge.mjs`
+- Public compatibility facade：`converter/src/rule.mjs`
 - Orchestration：`.github/scripts/sync-convert.mjs` 的 `[Rule]` 分发，只按 planner 返回的 section 写入 QX rewrite/filter 或 Surge Rule/Map Local。
-- Synthetic regression：`converter/tests/checkpoint.mjs`，必须逐项覆盖 `REJECT / REJECT-200 / REJECT-IMG / REJECT-DICT / REJECT-ARRAY / REJECT-DROP`。
+- Synthetic AST contract：`converter/tests/rule-ast.mjs`
+- Synthetic target regression：`converter/tests/checkpoint.mjs`，必须逐项覆盖 `REJECT / REJECT-200 / REJECT-IMG / REJECT-DICT / REJECT-ARRAY / REJECT-DROP`。
 - Repository coverage：`converter/tests/surge-rule-coverage.mjs`。
+
+固定约束：
+- `rule-ast.mjs` 不得 import QX/Surge capability registry，也不得用目标平台白名单拒绝未知但可结构化的 Rule；
+- `rule-qx.mjs` / `rule-surge.mjs` 不得重新实现 source CSV / logical-subrule parser；
+- `rule.mjs` 只做兼容导出，不重新承载目标映射逻辑。
 
 ## 20.7 Catalog-observed Rule syntax inventory
 
@@ -145,6 +154,6 @@ Inventory 只锁以下会改变转换语义的维度：
 实现：
 - baseline：`converter/fixtures/catalog-rule-inventory.json`
 - inventory test：`converter/tests/catalog-rule-inventory.mjs`
-- generic Rule parser helpers：`converter/src/rule.mjs`
+- generic Rule parser / AST：`converter/src/rule-ast.mjs`
 - CI：`.github/workflows/converter-check.yml`
 

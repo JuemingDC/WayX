@@ -85,18 +85,37 @@ normalize source
 
 ## 5.4 Rule 转换器
 
-`[Rule]` 必须：
-1. 解析 Rule Type；
-2. 解析参数；
-3. 解析 Policy；
-4. 对 logical rule 递归生成 AST；
-5. 按 Block 20 映射到目标平台。
+`[Rule]` 固定分为三层：
+
+```text
+Loon Rule source line
+→ target-neutral Rule AST
+→ QX Rule planner
+→ Surge Rule planner
+```
+
+Parser 只负责源语法，不得包含目标平台知识。至少解析并保留：
+- 原始 source declaration；
+- top-level / nested Rule Type；
+- 原始 value field 与解引号后的 value；
+- top-level Policy；
+- Rule 参数（raw/name/value）；
+- logical rule 的递归 children；
+- nested/top-level 位置。
+
+QX / Surge planner 只能消费 AST，不得再次对原始声明做 CSV 拆分、逻辑子规则拆分或插件身份判断。Parser 对未知但可结构化的 Rule Type 仍应成功产出 AST；某个逻辑组合是否合法、某 Rule Type 是否受目标支持，由 target planner/validator 决定。
 
 转换决策只允许依赖：
 - Rule Type；
+- value / logical children；
 - 参数；
 - Policy；
 - 目标平台官方能力。
+
+目标 planner 的职责必须分离：
+- QX planner：只按用户提供的 Crossutility 官方 sample 确认的 filter/rewrite 能力映射；
+- Surge planner：按 `nssurge.com/llms.txt` 指定优先级核对官方 Manual，并保留合法 logical tree/Rule 参数；
+- 任一目标不支持时按 Block 20 的 comment/Review/Issue 规则 fail closed，不允许修改 AST 来迁就目标。
 
 ## 5.5 Rewrite 分型
 

@@ -4,12 +4,12 @@
 > 维护原则：本文件描述“当前 main 的真实状态”，不能替代 `CONVERSION_SPEC.md`；规范冲突时以 `CONVERSION_SPEC.md` 为唯一权威。
 
 - 审计日期：2026-09-30
-- 审计基线：PR #73 Catalog-observed Rule syntax inventory / Converter Check #611
+- 审计基线：PR #74 target-neutral Rule AST planners / Converter Check #616
 - Source Catalog：20 个 Loon 去广告插件
 - Catalog 管理目标：20 个 Quantumult X snippet + 20 个 Surge sgmodule
 - Adblock 目录实际目标：21 个 QX + 21 个 Surge（额外包含手工维护的 `QZXY`）
-- 最近完整 Converter Check：#611，通过
-- 当前实现 PR：#73
+- 最近完整 Converter Check：#616，通过
+- 当前实现 PR：#74
 
 ---
 
@@ -85,7 +85,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 
 ## 3. Review 库存
 
-2026-09-30 规范 v1.13 已把 QX Source Script 的 `binary-body-mode` / `binary_body_mode` 纳入 KOP-XIAO `resource-parser.js` 兼容口径。目标 Review inventory 为：
+2026-09-30 规范 v1.14 已把 QX Source Script 的 `binary-body-mode` / `binary_body_mode` 纳入 KOP-XIAO `resource-parser.js` 兼容口径。目标 Review inventory 为：
 
 - **Quantumult X：0**
 - **Surge：0**
@@ -173,6 +173,7 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 
 - [x] 已建立 Catalog-observed Rewrite v2 / Script v2 syntax inventory：`converter/tests/catalog-syntax-inventory.mjs` + `converter/fixtures/catalog-syntax-inventory.json`。当前基线为 175 条 Rewrite v2 / 110 条 Script v2；CI 只锁语法形态，不锁同类规则数量。新 action/参数形态/condition/capture/logical/regex flag/Script option/argument/option-set 或 multi-action signature 首次出现时 fail closed，必须先核对官方语义再更新基线；未观察到的 complex signature 仍不得预先放行。
 - [x] 已建立 Catalog-observed Rule inventory：只锁 top/nested Rule Type、Policy、Rule parameter、logical operator/placement、字段形态与最大嵌套层级；不锁规则数量、匹配值或 AND/OR 子项数量，MITM 不进入 inventory。该 gate 仅用于发现上游新语法，不能反向成为 production 支持白名单。
+- [x] Rule production 已重构为 `rule-ast.mjs` → `rule-qx.mjs` / `rule-surge.mjs`：source parser 只构建 target-neutral AST，未知但可结构化 Rule 仍能进入 AST；QX/Surge planner 分别做目标能力与 logical semantics 校验。`rule.mjs` 仅保留兼容 facade，Catalog Rule inventory 也改为遍历同一 production AST。
 - 每次新增 QX 官方 sample 证据时，复核现有 Rewrite Review 是否可以安全降级为 native/helper；Rule 只在官方明确支持对应 Rule Type 后才改为活动 filter。
 - [x] QX capability gate 已收窄为 Loon 去广告转换实际能力：仅核对 Rule 类型、WayX 实际使用的 Rewrite action 与 MITM `hostname` 是否仍有 Crossutility 官方依据；转换范围之外的能力不进入 registry。Surge 同样采用 Rule / Rewrite / hostname 边界。
 - [x] Surge official capability gate 已落地：production `rule.mjs` / `surge-module.mjs` 共用 `surge-official-capabilities.mjs`；CI 实时读取 Surge 官方 Manual，只验证 WayX 实际使用的 28 个 Rule Type、URL/Header/Body Rewrite、Map Local、HTTP request/response Script 与 MITM `hostname` 仍有官方依据。Surge 其它 Profile/Module 能力不进入本 gate。
