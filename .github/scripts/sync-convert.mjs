@@ -77,8 +77,8 @@ registerComplexRewriteHandler({
   plan: (ast, target, ctx) => {
     try {
       const plan = renderMixedRewriteScript(ast, {target, stamp:ctx.stamp, category:ctx.category, sourceLine:ctx.sourceLine, argumentTable:target === 'surge' ? ctx.argumentTable : null});
-      const key = crypto.createHash('sha1').update('complex-mixed\0' + ctx.sourceLine).digest('hex').slice(0, 10);
-      const filename = 'complex_' + key + '.js';
+      const key = crypto.createHash('sha1').update('complex-mixed\0' + target + '\0' + ctx.sourceLine).digest('hex').slice(0, 10);
+      const filename = 'complex_' + target + '_' + key + '.js';
       ctx.generatedScripts.set(filename, plan.script);
       if (target === 'qx') return {ok:true, section:'rewrite', line:plan.pattern + ' url ' + plan.qxAction + ' ' + RAW_BASE + '/script/' + ctx.id + '/' + filename};
       const payload = ctx.argumentRefs?.length ? surgeRewriteArgumentPayload(ctx.argumentRefs, ctx.argumentTable) : {ok:true, value:null};
@@ -295,8 +295,8 @@ function rewriteV2Action(line, target, ctx) {
         const mapped = mapper(ast);
         if (mapped.ok) return { section: mapped.section, line: mapped.line, lines: mapped.lines };
       }
-    } catch (error) {
-      return rewriteReview(line, String(error?.message || error).split('\n')[0]);
+    } catch {
+      // Native planning failed; continue to the generic Surge script fallback.
     }
     const complex = planComplexRewrite(ast, 'surge', {...ctx, sourceLine:line, argumentRefs:argumentRefs.all});
     if (complex.ok) return {section:complex.section, line:complex.line, lines:complex.lines};
