@@ -2,47 +2,24 @@
 // Author: chance
 // Category: Converter / Regex / Cross-platform
 //
-// Target rewrite declarations follow the target platform's documented bare-regex
-// syntax. Do not expand Loon /i into [aA][pP][iI] character classes and do not
-// invent an undocumented inline modifier for Quantumult X / Surge.
-// The source regex body is preserved verbatim; flags that have no documented
-// declaration field are recorded in notes for review/diagnostics.
+// Target rewrite declarations use the target platform's documented regex form.
+// Loon /i, /m and /s flags are source-literal metadata only: WayX strips them
+// during conversion and preserves the regex body without synthesizing target
+// modifiers or case-fold expansions.
 
 function fail(reason) {
   return { ok: false, reason };
 }
 
-export function canonicalizeSurgeUrlPattern(pattern) {
-  return String(pattern ?? '').replace(/\\\//g, '/');
-}
-
 export function compileRegexForTarget(regex, { subject = 'url', target = 'generic' } = {}) {
   if (!regex || regex.type !== 'regex') throw new TypeError('Expected Rewrite v2 regex AST node');
 
-  let pattern = regex.pattern;
+  const pattern = regex.pattern;
   const flags = String(regex.flags || '');
-  const notes = [];
 
-  if (target === 'surge' && subject === 'url') {
-    // Surge URL patterns are bare regular expressions, not /.../ literals.
-    // Remove only Loon/JavaScript-literal slash escaping. Preserve capture
-    // group structure exactly because Surge replacement may reference $1/$2.
-    pattern = canonicalizeSurgeUrlPattern(pattern);
-  }
-
-  if (flags.includes('i')) {
-    notes.push('i-source-flag-not-expressed-in-target-declaration');
-  }
-
-  if (flags.includes('m') || flags.includes('s')) {
-    if (!['url','header'].includes(subject)) {
-      return fail('m/s regex flags require target-specific body regex semantics');
-    }
-    // URL/header match declarations use the documented bare regular-expression
-    // form. Preserve the source pattern and do not synthesize target-only syntax.
-    if (flags.includes('m')) notes.push('m-source-flag-not-expressed-in-target-declaration');
-    if (flags.includes('s')) notes.push('s-source-flag-not-expressed-in-target-declaration');
-  }
-
-  return { ok: true, pattern, sourceFlags: flags, notes };
+  // Loon regex flags (i/m/s) belong to the source literal syntax. WayX
+  // intentionally does not emulate or propagate them into QX/Surge
+  // declarations. Preserve the regex body and let the target declaration use
+  // only syntax officially supported by that target.
+  return { ok: true, pattern, sourceFlags: flags, notes: [] };
 }
