@@ -67,6 +67,7 @@ jobs:
           node converter/tests/spec-block-contract.mjs
           node converter/tests/complex-source-inventory.mjs
           node converter/tests/unknown-issue-markers.mjs
+          node converter/tests/manual-assets.mjs
           python converter/tests/test_conversion_gate.py
           node converter/tests/myblockads-golden.mjs
 
@@ -81,6 +82,7 @@ jobs:
         run: |
           node --check .github/scripts/sync-convert.mjs
           node --check .github/scripts/propose-conversion-issues.mjs
+          node --check converter/tools/conversion-reports.mjs
           python -m py_compile .github/scripts/conversion_gate.py .github/scripts/validate_conversion_policy.py converter/tests/test_conversion_gate.py
 
       - name: Install sync dependency
@@ -117,6 +119,12 @@ jobs:
           set -o pipefail
           python .github/scripts/validate_conversion_policy.py 2>&1 | tee monitor/.runtime/validator.log
 
+      - name: Generate reconciliation and Review inventory
+        if: steps.pending.outputs.blocked != 'true'
+        id: reports
+        continue-on-error: true
+        run: node converter/tools/conversion-reports.mjs
+
       - name: Propose issues for unknown conversions
         if: steps.pending.outputs.blocked != 'true'
         id: issues
@@ -137,6 +145,7 @@ jobs:
            steps.gate.outputs.requires_work == 'true' ||
            steps.issues.outputs.has_unknown == 'true' ||
            steps.issues.outcome != 'success' ||
+           steps.reports.outcome != 'success' ||
            steps.loon_sync.outcome != 'success' ||
            steps.validate.outcome != 'success')
         id: review
@@ -154,6 +163,7 @@ jobs:
             echo "- Loon converter: ${{ steps.loon_sync.outcome }}"
             echo "- Validator: ${{ steps.validate.outcome }}"
             echo "- Unknown issue proposer: ${{ steps.issues.outcome }}"
+            echo "- Reconciliation/review reports: ${{ steps.reports.outcome }}"
             echo
             if [ -f "${{ steps.gate.outputs.summary }}" ]; then
               cat "${{ steps.gate.outputs.summary }}"
@@ -167,6 +177,12 @@ jobs:
               cat "${{ steps.issues.outputs.summary }}"
               echo
             fi
+            for REPORT in monitor/.runtime/conversion-reconciliation.md monitor/.runtime/review-inventory.md; do
+              if [ -f "$REPORT" ]; then
+                cat "$REPORT"
+                echo
+              fi
+            done
             for LOG in monitor/.runtime/loon-sync.log monitor/.runtime/validator.log; do
               if [ -s "$LOG" ]; then
                 echo "## $(basename "$LOG")"
@@ -190,6 +206,7 @@ jobs:
           steps.gate.outputs.requires_work != 'true' &&
           steps.issues.outputs.has_unknown != 'true' &&
           steps.issues.outcome == 'success' &&
+          steps.reports.outcome == 'success' &&
           steps.loon_sync.outcome == 'success' &&
           steps.validate.outcome == 'success'
         shell: bash
@@ -211,6 +228,18 @@ jobs:
           git commit -m "chore: sync upstream and apply safe conversions"
           git push origin HEAD:main
 
+      - name: Upload reconciliation and Review inventory
+        if: always() && steps.pending.outputs.blocked != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: conversion-reports
+          if-no-files-found: warn
+          path: |
+            monitor/.runtime/conversion-reconciliation.json
+            monitor/.runtime/conversion-reconciliation.md
+            monitor/.runtime/review-inventory.json
+            monitor/.runtime/review-inventory.md
+
       - name: Open Work review PR
         if: >
           steps.pending.outputs.blocked != 'true' &&
@@ -218,6 +247,7 @@ jobs:
            steps.gate.outputs.requires_work == 'true' ||
            steps.issues.outputs.has_unknown == 'true' ||
            steps.issues.outcome != 'success' ||
+           steps.reports.outcome != 'success' ||
            steps.loon_sync.outcome != 'success' ||
            steps.validate.outcome != 'success')
         env:

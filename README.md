@@ -63,6 +63,10 @@ WayX/
 
 转换时保留原注释，并追加转换时间、作者 chance、模块分类、目标平台与原始来源。
 
+`QZXY.snippet` / `QZXY.sgmodule` 为 chance 手工维护资产，登记在 `.github/manual-assets.json`，不进入 Loon Source Catalog，也不参与 canonical regeneration；但仍接受目标格式 validator 与 repository audit。
+
+CI 会自动生成 Source → Target reconciliation 和 Review/Issue inventory。每个 Catalog 源有效语义项必须能对账到活动转换、明确注释、Review、Issue、源禁用或规范允许丢弃中的一种；对账失败直接阻止通过。
+
 遇到未知语法、未知 action、未知 section 或未登记 complex signature 时，WayX 先把该源声明以注释保留，不生成猜测性活动规则，并写入 `ISSUE REQUIRED` marker；上游自动化随后创建/复用 GitHub Issue。已知语义但目标能力不足仍使用普通 Review。
 
 QX 当前支持 filter/rewrite 前置 note。源 `[Rule]`、`[Rewrite]`、`[Script]` 只要最终生成 QX filter/rewrite，都只把严格一对一的源注释转成：

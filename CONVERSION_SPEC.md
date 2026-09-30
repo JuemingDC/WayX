@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.5  
+版本：1.6  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -19,6 +19,9 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 7. Complex Rewrite 只接受**源 Loon 本身使用 `|` 声明的多 action pipeline**；禁止把相邻、同条件或看似可合并的多条独立源声明拼成虚构 pipeline。Complex renderer 既有能力代码继续保留，但 production 只有在“当前 Source Catalog 已实际观察到并登记的 action signature”时才能启用。
 8. 2026-09-30 对全部 20 个 Catalog Loon 插件的活动 Rewrite 审计只发现一种源生 complex signature：`response.body.mock | response.header.set`（3 条）。该类型作为通用 signature 登记，不按 Bilibili/作者/URL 特判。
 9. 遇到未知语法、未知 action、未登记 complex signature 或其他无法确定转换方式的活动内容时，固定 **fail closed**：目标侧先注释保留源声明，不生成猜测性活动规则；同时输出 `ISSUE REQUIRED` 标记，由自动化提议 GitHub Issue。已知但目标平台缺少等价能力的情况继续使用普通 Review，不滥用 unknown issue。
+10. QX `response.header.add` / legacy `response-header-add` 属于已知但当前官方 sample 未证明重复 Header 等价表达的能力缺口。按项目决策直接注释保留源声明，不生成 helper，也不再作为持续 Review 项。
+11. `QZXY.snippet` / `QZXY.sgmodule` 明确为 chance 手工维护资产，登记在 `.github/manual-assets.json`；不得加入 Loon Source Catalog，不参与 canonical regeneration，但仍接受 repository validator/audit。
+12. CI 必须自动生成 Source → Target reconciliation 与 Review/Issue inventory。Catalog 每个源有效语义项必须落入 converted / explicit-comment / Review / Issue / intentional-drop 之一；报告不对账时 fail closed。
 
 
 ## 规范块

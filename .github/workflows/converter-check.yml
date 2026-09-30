@@ -8,6 +8,7 @@ on:
       - ".github/scripts/propose-conversion-issues.mjs"
       - ".github/workflows/converter-check.yml"
       - ".github/sources/loon.json"
+      - ".github/manual-assets.json"
       - "CONVERSION_SPEC.md"
       - "docs/conversion-spec/**"
       - "Resource/Loon/**"
@@ -47,12 +48,14 @@ jobs:
           node --check converter/tests/spec-block-contract.mjs
           node --check converter/tests/complex-source-inventory.mjs
           node --check converter/tests/unknown-issue-markers.mjs
+          node --check converter/tests/manual-assets.mjs
           node --check .github/scripts/propose-conversion-issues.mjs
           node --check converter/tests/generated-helper-refs.mjs
           node --check converter/tests/source-script-url-preservation.mjs
           python -m py_compile converter/tests/test_conversion_gate.py
           node --check converter/tools/regenerate-canonical.mjs
           node --check converter/tools/audit-repository.mjs
+          node --check converter/tools/conversion-reports.mjs
       - name: Converter checkpoint
         run: |
           node converter/tests/checkpoint.mjs
@@ -66,6 +69,7 @@ jobs:
           node converter/tests/spec-block-contract.mjs
           node converter/tests/complex-source-inventory.mjs
           node converter/tests/unknown-issue-markers.mjs
+          node converter/tests/manual-assets.mjs
           python converter/tests/test_conversion_gate.py
 
       - name: Repository script syntax
@@ -82,6 +86,9 @@ jobs:
 
       - name: Audit regenerated repository
         run: node converter/tools/audit-repository.mjs
+
+      - name: Generate reconciliation and Review inventory
+        run: node converter/tools/conversion-reports.mjs
 
       - name: Verify generated helper references
         run: node converter/tests/generated-helper-refs.mjs
@@ -102,6 +109,10 @@ jobs:
             Adblock/Quantumult X/*.snippet
             Adblock/Surge/*.sgmodule
             script/**
+            monitor/.runtime/conversion-reconciliation.json
+            monitor/.runtime/conversion-reconciliation.md
+            monitor/.runtime/review-inventory.json
+            monitor/.runtime/review-inventory.md
 
       - name: Commit deterministic generated outputs to same-repo PR
         if: >-

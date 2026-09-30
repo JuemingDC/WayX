@@ -281,6 +281,17 @@ function rewriteV2Action(line, target, ctx) {
       return rewriteReview(line, String(error?.message || error).split('\n')[0]);
     }
 
+    // response.header.add duplicate-field semantics are not proven by the
+    // current official QX sample. Per project policy this known limitation is
+    // explicitly commented out rather than kept as an actionable Review.
+    if (ast.actions.length === 1 && ast.actions[0].name === 'response.header.add') {
+      return {
+        section:'comment',
+        line:'# [WayX] Quantumult X unsupported response.header.add commented out; duplicate-header preservation is not verified by the official sample.\n# Source declaration: ' + line,
+        reason:'unsupported-qx-response-header-add-comment',
+      };
+    }
+
     // A single Header mutation that QX cannot express natively may use the
     // dedicated Header helper. The generic complex helper remains multi-action only.
     if (ast.actions.length === 1 && new RegExp('^' + ast.phase + '\\x2eheader\\x2e(?:set|del|replace|add)$').test(ast.actions[0].name)) {
