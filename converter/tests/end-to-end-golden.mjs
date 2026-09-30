@@ -492,11 +492,11 @@ for (const testCase of cases) {
       'Bilibili: disabled source mock line must be preserved as a comment',
     );
     assert.ok(
-      out.surge.includes('# ^https://app\\.bilibili\\.com/x/v2/splash/list\\? data-type=text data="OK" status-code=200 header="Content-Type:text/plain"'),
+      out.surge.includes('# ^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/splash\\/list\\? data-type=text data="OK" status-code=200 header="Content-Type:text/plain"'),
       'Bilibili: disabled response.body.mock must have a disabled Surge Map Local equivalent',
     );
     assert.ok(
-      out.surge.includes("# http-response-jq ^https://app\\.bilibili\\.com/x/v2/splash/(show|event/list2)\\? '.data |= with_entries("),
+      out.surge.includes("# http-response-jq ^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/splash\\/(show|event\\/list2)\\? '.data |= with_entries("),
       'Bilibili: disabled response.json.jq must have a disabled Surge Body Rewrite equivalent',
     );
   }
