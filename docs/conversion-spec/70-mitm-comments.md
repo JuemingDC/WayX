@@ -32,6 +32,10 @@ hostname = %APPEND% api.example.com, *.example.com
 - 上游兼容说明
 - 依赖说明
 
+## 70.2.1 未支持 MITM option
+
+除当前已验证的 `hostname` 等目标可表达项外，源 MITM option 不得以普通 “Unsupported” 注释静默保留。无法映射时必须输出 `# [WayX] REVIEW REQUIRED` 与原 `# Source declaration:`，使 Source→Target 对账和 Gate 都能识别该语义项尚未转换。
+
 ## 70.3 WayX Metadata
 
 目标文件追加必要的 WayX 转换信息：
