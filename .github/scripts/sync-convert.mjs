@@ -4,7 +4,6 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { qxRule as canonicalQxRule, surgeModuleRule } from '../../converter/src/rule.mjs';
 import { selectQxScriptAction } from '../../converter/src/script.mjs';
-import { inspectQxScriptCompatibility, qxManualPortComment } from '../../converter/src/script-compat.mjs';
 import { minifyJqFile } from '../../converter/src/jq.mjs';
 import { planLegacyRewrite } from '../../converter/src/legacy-rewrite.mjs';
 import { qxTargetPath, surgeTargetPath } from '../../converter/src/paths.mjs';
@@ -40,6 +39,7 @@ function renderMinimalQxHeaderHelper(ast, options) {
   try {
     return renderQxHeaderScript(ast, options);
   } catch (compactError) {
+    if ((ast?.actions?.length || 0) < 2) throw compactError;
     try {
       return renderMixedRewriteScript(ast, {target:'qx', ...options});
     } catch (mixedError) {
@@ -690,29 +690,18 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
       const sourceText = mapped?.source || '';
       const qxUrl = mapped?.qx || ast.script.path;
       const surgeUrl = mapped?.surge || ast.script.path;
-      const qxCompat = inspectQxScriptCompatibility({
-        scriptUrl: ast.script.path,
-        sourceText,
-        forkUrl: '',
-      });
-
       qx.rewrite.push(...comments);
-      if (!qxCompat.executable) {
-        qx.rewrite.push(...qxManualPortComment({ scriptUrl: ast.script.path, result: qxCompat }));
+      const qxPlan = qxScriptV2Plan(ast, { scriptUrl: qxUrl, sourceText, argumentIds });
+      if (!qxPlan.ok) {
+        qx.rewrite.push(`# [WayX] SCRIPT V2 REVIEW REQUIRED: ${qxPlan.reason}`);
         qx.rewrite.push(`# Source declaration: ${item.line}`);
+      } else if (qxPlan.disabled) {
+        qx.rewrite.push(`# [WayX] Script disabled by source option: ${item.line}`);
       } else {
-        const qxPlan = qxScriptV2Plan(ast, { scriptUrl: qxUrl, sourceText, argumentIds });
-        if (!qxPlan.ok) {
-          qx.rewrite.push(`# [WayX] SCRIPT V2 REVIEW REQUIRED: ${qxPlan.reason}`);
-          qx.rewrite.push(`# Source declaration: ${item.line}`);
-        } else if (qxPlan.disabled) {
-          qx.rewrite.push(`# [WayX] Script disabled by source option: ${item.line}`);
-        } else {
-          if (qxPlan.tag) qx.rewrite.push(`# ${qxPlan.tag}`);
-          if (qxPlan.binaryBodyMode) qx.rewrite.push('# [WayX] Source binary_body_mode=true; script source is preserved unchanged.');
-          for (const note of qxPlan.notes || []) qx.rewrite.push(`# [WayX] ${note}`);
-          qx.rewrite.push(qxPlan.line);
-        }
+        if (qxPlan.tag) qx.rewrite.push(`# ${qxPlan.tag}`);
+        if (qxPlan.binaryBodyMode) qx.rewrite.push('# [WayX] Source binary_body_mode=true; script source is preserved unchanged.');
+        for (const note of qxPlan.notes || []) qx.rewrite.push(`# [WayX] ${note}`);
+        qx.rewrite.push(qxPlan.line);
       }
 
       const name = sanitizeName((ast.options.find(x => x.name === 'tag')?.value?.value) || `${entry.id}_${String(scriptIndex).padStart(2, '0')}`);
@@ -741,21 +730,12 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     const qxUrl = mapped?.qx || sc.scriptPath;
     const surgeUrl = mapped?.surge || sc.scriptPath;
     const targetPattern = normalizeRegexBodyForTarget(sc.pattern);
-    const qxCompat = inspectQxScriptCompatibility({
-      scriptUrl: sc.scriptPath,
-      sourceText: mapped?.source || '',
-      forkUrl: '',
-    });
-
     const enableFixed = sc.enable ? String(sc.enable).trim().toLowerCase() : '';
     const enableDynamic = Boolean(sc.enable) && !['true','false','1','0'].includes(enableFixed);
 
     qx.rewrite.push(...comments);
     if (sc.tag) qx.rewrite.push(`# ${sc.tag}`);
-    if (!qxCompat.executable) {
-      qx.rewrite.push(...qxManualPortComment({ scriptUrl: sc.scriptPath, result: qxCompat }));
-      qx.rewrite.push(`# Source declaration: ${item.line}`);
-    } else if (enableFixed === 'false' || enableFixed === '0') {
+    if (enableFixed === 'false' || enableFixed === '0') {
       qx.rewrite.push(`# [WayX] Script disabled by source declaration: ${item.line}`);
     } else if (sc.argument || enableDynamic || sc.timeout || sc.maxSize || sc.binary) {
       qx.rewrite.push('# [WayX] SCRIPT REVIEW REQUIRED: QX declaration/helper cannot preserve this source argument/enable/timeout/max-size/binary option set without changing the source script.');
@@ -890,9 +870,9 @@ async function inspectSourceScript(reference, pluginSourceUrl) {
       sourceError: null,
     };
   } catch (error) {
-    // Surge does not require a runtime compatibility scan. Preserve the
-    // original URL for Surge while QX sees an unavailable source and fails
-    // closed through inspectQxScriptCompatibility().
+    // Source Script content is optional and is read only to refine the target
+    // rewrite action type. Runtime compatibility is not gated for QX or Surge;
+    // both targets keep the original Source Script URL unchanged.
     return {
       qx: originalUrl,
       surge: originalUrl,
