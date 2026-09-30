@@ -85,29 +85,42 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 
 ## 3. Review 库存
 
-2026-09-30 规范 v1.4 改变了 Review 分类口径，旧 main 中的 **139 个 QX / 5 个 Surge Review marker** 仅作为变更前基线，不再代表新规范下的待办数量：
+2026-09-30 规范 v1.4 canonical 已重新生成并按 20 个 Source Catalog 目标重新统计。当前活动 Review marker 为：
 
-- 原先因“QX Source Script compatibility 不确定”产生的 marker 将随 canonical regeneration 移除；Source Script 不再经过 runtime compatibility gate。
-- QX logical Rule、`DEST-PORT` 等未受官方 sample 支持的 Rule Type 改为“注释保留的不支持语义项”，不再尝试 Script 等价，也不计为 Rewrite helper backlog。
-- Loon Plugin `PROXY` 在 Surge Module 中改为源 Rule 注释保留，不再将其视作可通过策略映射解决的 Review。
-- Script declaration 中无法表达的 Loon `[Argument]` / dynamic option、QX `response.header.add` 等真正的目标能力缺口仍保留 Review。
+- **Quantumult X：12**
+- **Surge：0**
 
-本分支完成 canonical regeneration 后，必须重新由目标文件生成 Review inventory，再将精确数字写回本节；禁止沿用旧口径的 139 / 5 作为当前状态。
+QX 12 项按原因分布：
+- legacy Script declaration 的 argument / enable / timeout / max-size / binary option 无法由 QX 声明无损承载：3；
+- Script v2 dynamic enable：3；
+- Script v2 `$argument`：4；
+- request `binary_body_mode=true` 缺少同等级 QX request bodyBytes 官方样例：1；
+- `response.header.add` 重复 Header 语义未验证：1。
+
+按文件分布：Tieba 1、DianPing 2、Bilibili 3、JingDong 2、Webpage 1、YouTube 3。其余 Catalog 目标为 0。
+
+以下不再计入 Review：
+- Source Script runtime compatibility；
+- QX logical Rule、`DEST-PORT` 等官方 sample 未确认 Rule Type（明确注释保留）；
+- Loon Plugin `PROXY` 在 Surge Module 中的策略绑定（源 Rule 注释保留）；
+- 完整 Surge Profile 可用但 Module Manual 未允许的 `REJECT-DROP / REJECT-NO-DROP / CELLULAR / CELLULAR-ONLY / HYBRID / NO-HYBRID`（源 Rule 注释保留）。
+
+上述 12 项是已知目标能力缺口，不是 converter/PR 未处理错误；后续只有在获得新的官方目标能力依据时再消减。
 
 ## 4. 待办工作
 
 ### P0 — 优先处理
 
-#### P0-1：重新生成 canonical 并重建 Review inventory
+#### P0-1：重新生成 canonical 并重建 Review inventory — 已完成
 
-执行 v1.4 后重新生成全部 Catalog 管理的 QX snippet / Surge sgmodule，并确认：
+v1.4 已重新生成全部 Catalog 管理的 QX snippet / Surge sgmodule，并完成以下检查：
 
-- Source Script declaration 仍引用原作者 URL；
-- 不再出现 Source Script runtime compatibility disabled marker；
-- QX 不支持 Rule 以注释形式对账，且没有生成 Rule helper；
-- Surge 的 Loon `PROXY` Rule 仅注释保留；
-- helper 文件引用均存在且与 action 类型匹配；
-- Review inventory 按新口径重新统计。
+- Source Script declaration 继续引用原作者 URL；
+- Source Script runtime compatibility disabled marker 已移除；
+- QX 不支持 Rule 以注释形式对账，未生成 Rule helper；
+- Surge 的 Loon `PROXY` 以及 Module Manual 未允许的完整 Profile built-in policy 均只注释保留；
+- helper 文件引用存在且 action 类型通过 validator/CI；
+- Review inventory 已按新口径重建为 QX 12 / Surge 0。
 
 #### P0-2：QX Script option 保真
 
