@@ -1,4 +1,4 @@
-// Converted: 2026-09-30 10:13:50 +08:00
+// Converted: 2026-09-30 12:45:47 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.interface\.v1\.Teenagers\/ModeStatus$/i then response.body.mock("text", "AAAAABMKEQgCEgl0ZWVuYWdlcnMgAioA", 200, true) | response.header.set("grpc-status", "0")
@@ -34,9 +34,9 @@ function __wayxHeaderDel(headers, name) {
   const wanted = String(name).toLowerCase();
   for (const key of Object.keys(headers)) if (key.toLowerCase() === wanted) delete headers[key];
 }
-function __wayxHeaderReplace(headers, name, source, flags, replacement) {
+function __wayxHeaderReplace(headers, name, source, replacement) {
   const key = __wayxHeaderKey(headers, name);
-  if (key !== undefined) headers[key] = String(headers[key]).replace(new RegExp(source, flags), replacement);
+  if (key !== undefined) headers[key] = String(headers[key]).replace(new RegExp(source), replacement);
 }
 __wayxHeaderSet(headers, "grpc-status", "0");
 const output = {status: "HTTP/1.1 200 OK", headers};

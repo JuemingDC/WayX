@@ -1,8 +1,8 @@
-// Converted: 2026-09-30 10:13:53 +08:00
+// Converted: 2026-09-30 12:45:51 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /(^https:\/\/youtu\.be\/[\w-]+)(?:\?si=\w+)/i as urlMatch then redirect(302, "${urlMatch.1}")
-const __wayxRe = new RegExp("(^https:\\/\\/youtu\\.be\\/[\\w-]+)(?:\\?si=\\w+)");
+const __wayxRe = new RegExp("(^https://youtu\\.be/[\\w-]+)(?:\\?si=\\w+)");
 const __wayxUrl = $request.url;
 const __wayxMatch = __wayxRe.exec(__wayxUrl);
 if (!__wayxMatch) {
