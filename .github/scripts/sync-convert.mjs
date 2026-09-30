@@ -13,7 +13,7 @@ import { isScriptV2, parseScriptV2 } from '../../converter/src/script-v2.mjs';
 import { analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs } from '../../converter/src/argument-usage.mjs';
 import { surgeArgumentMetadata } from '../../converter/src/argument.mjs';
 import { validateSurgeModule } from '../../converter/src/surge-module.mjs';
-import { createQxOutputState, appendQxOutput, qxRuleOutputDestination, qxRewriteOutputDestination, renderQxOutput } from '../../converter/src/qx-output.mjs';
+import { createQxOutputState, appendQxOutput, qxOutputDestination, qxRuleOutputDestination, qxRewriteOutputDestination, renderQxOutput } from '../../converter/src/qx-output.mjs';
 import { createSurgeOutputState, appendSurgeOutput, surgeOutputDestination, surgeRuleOutputDestination, surgeRewriteOutputDestination, renderSurgeOutput } from '../../converter/src/surge-output.mjs';
 import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection } from '../../converter/src/source-section.mjs';
 import { attachQxInlineNote } from '../../converter/src/qx-comment.mjs';
