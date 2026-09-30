@@ -96,3 +96,8 @@ CI 必须额外检查：
 - Generated helper reference existence：`converter/tests/generated-helper-refs.mjs`
 - Original Source Script URL preservation：`converter/tests/source-script-url-preservation.mjs`
 - End-to-end Golden：`converter/tests/end-to-end-golden.mjs` + `converter/fixtures/end-to-end-golden.json`
+
+
+## 80.8 Generated helper runtime execution
+
+Complex generated JavaScript must be executed in CI against synthetic request/response fixtures, not validated only by matching generated source text. Runtime fixtures must cover at least: condition match/no-match, ordered Header/Body/JSON mutation, named captures, invalid-JSON action failure with later actions continuing, and Surge duplicate-header preservation under full-header mode. Text assertions remain useful for target declaration shape but do not substitute for runtime execution.

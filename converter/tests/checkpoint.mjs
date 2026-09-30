@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import vm from 'node:vm';
 import {
   analyzeSafeRewriteV2,
   dependencySpecFromAction,
@@ -531,6 +532,54 @@ assert.equal(surgeHeaderAddMixed.fullHeaderMode, true);
 assert.equal(surgeHeaderAddMixed.requiresBody, true);
 assert.equal(mixedSurge.requiresBody, true);
 assert.equal(mixedSurge.fullHeaderMode, false);
+
+function runComplexScript(script, {request={}, response={}}={}) {
+  let result;
+  const sandbox = {
+    $request:{url:'https://example.com/api',method:'GET',headers:{},body:'',...request},
+    $response:{status:200,headers:{},body:'',...response},
+    $done(value={}){ result=value; },
+  };
+  vm.runInNewContext(script, sandbox, {timeout:1000});
+  return JSON.parse(JSON.stringify(result));
+}
+const runtimeOrdered = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /api/ then response.header.set("X-Step", "one") | response.body.replace(/"a":1/, "\\"a\\":2") | response.json.add("b", true) | response.json.delete("items[0]") | response.header.del("Server")'),
+  {target:'qx'},
+);
+assert.deepEqual(
+  runComplexScript(runtimeOrdered.script, {response:{headers:{Server:'origin'},body:'{"a":1,"items":["x","y"]}'}}),
+  {headers:{'X-Step':'one'},body:'{"a":2,"items":["y"],"b":true}'},
+);
+const runtimeNoMatch = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /private/ then response.header.set("X-Test", "changed") | response.body.replace(/x/, "y")'),
+  {target:'qx'},
+);
+assert.deepEqual(runComplexScript(runtimeNoMatch.script, {response:{headers:{Keep:'yes'},body:'x'}}), {});
+const runtimeCapture = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /api\\/(\\d+)/ as hit then response.header.set("X-ID", "${hit.1}") | response.json.replace("id", "${hit.1}")'),
+  {target:'qx'},
+);
+assert.deepEqual(
+  runComplexScript(runtimeCapture.script, {request:{url:'https://example.com/api/42'},response:{headers:{},body:'{"id":"old"}'}}),
+  {headers:{'X-ID':'42'},body:'{"id":"42"}'},
+);
+const runtimeInvalidJson = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /api/ then response.header.set("X-Before", "yes") | response.json.replace("id", 2) | response.header.set("X-After", "yes")'),
+  {target:'qx'},
+);
+assert.deepEqual(
+  runComplexScript(runtimeInvalidJson.script, {response:{headers:{},body:'not-json'}}),
+  {headers:{'X-Before':'yes','X-After':'yes'},body:'not-json'},
+);
+const runtimeSurgeAdd = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /api/ then response.header.add("Set-Cookie", "b=2") | response.body.replace(/x/, "y")'),
+  {target:'surge'},
+);
+assert.deepEqual(
+  runComplexScript(runtimeSurgeAdd.script, {response:{headers:[{field:'Set-Cookie',value:'a=1'}],body:'x'}}),
+  {headers:[{field:'Set-Cookie',value:'a=1'},{field:'Set-Cookie',value:'b=2'}],body:'y'},
+);
 assert.equal(surgeHeaderAddMixed.surgeType, 'http-response');
 assert.match(surgeHeaderAddMixed.script, /__wayxHeaders\.push\(\{field:n,value:v\}\)/);
 assert.match(surgeHeaderAddMixed.script, /Array\.isArray\(\$response\.headers\)/);
