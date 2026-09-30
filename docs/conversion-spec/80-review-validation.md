@@ -240,6 +240,7 @@ CI 必须验证 Rewrite target planning 已从 orchestration 中分离：
 - `sync-convert.mjs` 只能调用 `planQxRewrite()` / `planSurgeRewrite()`；
 - `sync-convert.mjs` 不得直接 import `qx-semantic-script.mjs`、`surge-mock.mjs`、`rewrite-v2-semantic.mjs` 的 target mapper 或 `complex-rewrite-registry.mjs`；
 - QX/Surge complex handler 注册归各自 target planner 所有；
+- planner import 必须无 complex-registry 副作用；handler 只允许在首次 `planQxRewrite()` / `planSurgeRewrite()` 时幂等注册；
 - `rewrite-qx.mjs` 只按用户上传 QX 官方 sample 已确认 action 选择 native 路径；
 - `rewrite-surge.mjs` 只按 Surge 官方 Manual 已确认 URL/Header/Body Rewrite、Map Local 与 HTTP Script 选择目标路径；
 - planner 无映射时必须返回明确 Review/Issue，禁止调用未定义 fallback；
