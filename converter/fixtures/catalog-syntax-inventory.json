@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "scope": "Catalog-observed Loon Rewrite v2 / Script v2 syntax shapes",
+  "rewriteV2": {
+    "phases": [
+      "request",
+      "response"
+    ],
+    "conditionComparisons": [
+      "url ~= regex"
+    ],
+    "captureModes": [
+      "capture",
+      "none"
+    ],
+    "logicalOperators": [],
+    "grouping": [],
+    "regexFlags": [
+      "i"
+    ],
+    "actionNames": [
+      "redirect",
+      "reject",
+      "reject_dict",
+      "reject_img",
+      "request.header.set",
+      "response.body.mock",
+      "response.body.replace",
+      "response.header.add",
+      "response.header.set",
+      "response.json.delete",
+      "response.json.jq",
+      "response.json.replace"
+    ],
+    "actionShapes": [
+      "redirect(number,string)",
+      "reject(number)",
+      "reject_dict(number)",
+      "reject_img(number)",
+      "request.header.set(string,string)",
+      "response.body.mock(string,string)",
+      "response.body.mock(string,string,number)",
+      "response.body.mock(string,string,number,boolean)",
+      "response.body.replace(regex,string)",
+      "response.header.add(string,string)",
+      "response.header.set(string,string)",
+      "response.json.delete(array<string>)",
+      "response.json.delete(string)",
+      "response.json.jq(string)",
+      "response.json.replace(array<string>,array<number>)",
+      "response.json.replace(array<string>,array<raw-string>)",
+      "response.json.replace(string,raw-string)"
+    ],
+    "multiActionSignatures": [
+      "response.body.mock | response.header.set"
+    ]
+  },
+  "scriptV2": {
+    "phases": [
+      "request",
+      "response"
+    ],
+    "conditionComparisons": [
+      "url ~= regex"
+    ],
+    "captureModes": [
+      "none"
+    ],
+    "logicalOperators": [],
+    "grouping": [],
+    "regexFlags": [
+      "i"
+    ],
+    "pathTypes": [
+      "string"
+    ],
+    "argumentKinds": [
+      "none",
+      "plugin-object"
+    ],
+    "optionNames": [
+      "binary_body_mode",
+      "enable",
+      "requires_body",
+      "tag"
+    ],
+    "optionShapes": [
+      "binary_body_mode:boolean",
+      "enable:variable",
+      "requires_body:boolean",
+      "tag:string"
+    ],
+    "optionSets": [
+      "binary_body_mode|enable|requires_body|tag",
+      "binary_body_mode|requires_body|tag",
+      "requires_body|tag",
+      "tag"
+    ]
+  }
+}
