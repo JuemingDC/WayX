@@ -60,8 +60,6 @@ export function dependencySpecFromAction(action, { pluginSourceUrl = '' } = {}) 
     spec.phase = action.name.startsWith('request.') ? 'request' : 'response';
     spec.status = spec.phase === 'response' ? numberValue(action.args?.[2], 200) : null;
     spec.binary = !TEXT_MOCK_TYPES.has(contentType);
-    spec.qxAction = spec.phase === 'response' ? 'script-echo-response' : 'script-request-body';
-    spec.strategy = 'generated-qx-script';
   }
   return spec;
 }
@@ -102,7 +100,7 @@ export function qxMockPlanFromAction(action, { pluginSourceUrl = '' } = {}) {
   if (!spec.resolvable) throw new Error(`${action.name}: ${spec.reason}`);
   return {
     phase: spec.phase,
-    qxAction: spec.qxAction,
+    qxAction: spec.phase === 'response' ? 'script-echo-response' : 'script-request-body',
     url: spec.url,
     contentType: spec.contentType,
     status: spec.status,
