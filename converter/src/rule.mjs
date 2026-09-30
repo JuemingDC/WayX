@@ -263,7 +263,7 @@ export function surgeModuleRule(line, { proxyPolicyPlaceholder = null } = {}) {
   // Loon plugin PROXY is a user-selected policy binding. Surge Module
   // parameter tables are substituted before the module is applied, so bind
   // PROXY through a declared {{{...}}} policy parameter when the orchestrator
-  // provides one. This mirrors kokoryh/Sparkle's Bilibili Surge module.
+  // provides one.
   if (policy === 'PROXY') {
     if (!proxyPolicyPlaceholder) {
       return {
