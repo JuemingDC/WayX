@@ -12,6 +12,8 @@ Source JavaScript 不做正文改写。
 
 脚本正文只用于 **Quantumult X** 兼容性判断，并且不得用于把 Loon 插件参数转换成 QX 参数配置。Surge 侧不做 Source Script runtime 兼容性扫描，直接按 Surge 官方 Script 声明格式转换源 declaration 与参数。
 
+WayX 去广告转换的 Script 范围只包含 HTTP request/response 声明。项目中不为非 HTTP 调度/事件类 Script 建立 parser、planner 或 target validator 兼容分支。
+
 ## 60.2 Quantumult X Script 声明
 
 QX Script action 只使用官方 sample 已确认的声明形式：
@@ -129,6 +131,8 @@ Loon Plugin Rule 的 `PROXY` 是插件 policy binding，不等同于普通 `[Arg
 - Surge：继续服从 Surge Module Rule 的官方 policy 限制；不要仅因为存在 `#!arguments` 就假设任意外部 policy 可作为合法 Module Rule。
 
 ## 60.6 Quantumult X Script 兼容性与插件身份无关
+
+QX Source Script 兼容性判断必须 **fail closed**：只有存在正向 QX/runtime adapter 证据且没有阻断信号时才允许活动执行；仅仅“没有发现 Loon/Surge 私有 token”不能作为兼容证明。
 
 QX Source Script 兼容性判断可依据：
 - 明确的目标平台支持/拒绝；
