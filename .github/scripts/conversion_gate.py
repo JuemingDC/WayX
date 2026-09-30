@@ -24,8 +24,13 @@ SUMMARY = RUNTIME / "conversion_gate.md"
 BASIC_RULE_TYPES = {
     "DOMAIN", "DOMAIN-SUFFIX", "DOMAIN-KEYWORD", "DOMAIN-WILDCARD",
     "IP-CIDR", "IP-CIDR6", "GEOIP", "IP-ASN", "USER-AGENT",
+    # QX does not activate these types; the converter deterministically keeps
+    # them as comments while Surge Module uses its native Rule form.
+    "SRC-PORT", "DEST-PORT", "PROTOCOL", "SUBNET", "CELLULAR-RADIO",
+    "CELLULAR-CARRIER", "HOSTNAME-TYPE", "SRC-IP", "IN-PORT",
+    "DEVICE-NAME", "MAC-ADDRESS", "PROCESS-NAME",
 }
-BASIC_POLICIES = {"DIRECT", "REJECT"}
+BASIC_POLICIES = {"DIRECT", "REJECT", "PROXY"}
 URL_REGEX_SAFE_POLICIES = {
     "REJECT", "REJECT-200", "REJECT-IMG", "REJECT-DICT", "REJECT-ARRAY",
     "REJECT-DROP",
@@ -129,15 +134,58 @@ def changed_lines(old: list[str], new: list[str]) -> list[str]:
 
 
 def split_csv(line: str) -> list[str]:
-    # Rule lines used by the safe tier do not contain nested comma expressions.
-    # Nested logical rules are rejected before this parser is relied on.
     return [part.strip() for part in line.split(",")]
+
+
+def split_top_level_csv(line: str) -> list[str]:
+    out: list[str] = []
+    buf: list[str] = []
+    quote: str | None = None
+    escaped = False
+    depth = 0
+    for ch in line:
+        if quote is not None:
+            buf.append(ch)
+            if escaped:
+                escaped = False
+                continue
+            if ch == "\\":
+                escaped = True
+                continue
+            if ch == quote:
+                quote = None
+            continue
+        if ch in {'"', "'"}:
+            quote = ch
+            buf.append(ch)
+            continue
+        if ch == "(":
+            depth += 1
+            buf.append(ch)
+            continue
+        if ch == ")":
+            depth = max(0, depth - 1)
+            buf.append(ch)
+            continue
+        if ch == "," and depth == 0:
+            out.append("".join(buf).strip())
+            buf = []
+            continue
+        buf.append(ch)
+    out.append("".join(buf).strip())
+    return out
 
 
 def simple_rule(line: str) -> tuple[bool, str]:
     upper = line.upper()
     if upper.startswith(("AND,", "OR,", "NOT,")):
-        return False, "logical rule requires semantic review"
+        parts = split_top_level_csv(line)
+        if len(parts) < 3:
+            return False, "logical rule does not have expression/policy"
+        policy = parts[2].upper()
+        if policy in BASIC_POLICIES:
+            return True, "logical rule has deterministic targets: QX comment; Surge native/preserved"
+        return False, f"logical rule policy {policy} is outside safe tier"
     parts = split_csv(line)
     if parts and parts[0].upper() == "FINAL":
         return True, "source FINAL is intentionally discarded for Surge ad-block modules"
@@ -150,6 +198,8 @@ def simple_rule(line: str) -> tuple[bool, str]:
     if rule_type == "URL-REGEX":
         if policy in URL_REGEX_SAFE_POLICIES and not extras:
             return True, f"deterministic URL-REGEX {policy} target mapping"
+        if policy == "PROXY" and not extras:
+            return True, "URL-REGEX PROXY is deterministically preserved/commented without policy remapping"
         return False, f"URL-REGEX policy {policy} or extra parameters require semantic review"
 
     if rule_type not in BASIC_RULE_TYPES:
