@@ -43,6 +43,13 @@ function fixedConditionValue(node) {
   }
   return JSON.stringify(node.value);
 }
+function conditionEquality(left, node) {
+  const value=fixedConditionValue(node);
+  if(node.type==='string'||node.type==='raw-string') return '(String(' + left + ' ?? "") === ' + value + ')';
+  if(node.type==='number') return '(Number(' + left + ') === ' + value + ')';
+  if(node.type==='boolean') return '((String(' + left + ').toLowerCase()==="true") === ' + value + ')';
+  return '(' + left + ' == null)';
+}
 
 function runtimeConditionVariable(name, target) {
   if (name === 'url') return '$request.url';
@@ -61,7 +68,7 @@ export function compileComplexCondition(node, target) {
   }
   if (node?.type !== 'comparison' || node.left?.type !== 'variable') throw new Error('unsupported complex condition shape');
   const left = runtimeConditionVariable(node.left.name, target);
-  if (node.operator === '==') return '(' + left + ' === ' + fixedConditionValue(node.right) + ')';
+  if (node.operator === '==') return conditionEquality(left, node.right);
   if (node.operator === '~=' && node.right?.type === 'regex') {
     // Loon i/m/s flags are intentionally not propagated to targets.
     if (node.capture) return '((__wayxCaptures[' + JSON.stringify(node.capture) + ']=String(' + left + ' ?? "").match(new RegExp(' + JSON.stringify(node.right.pattern) + ')))!==null)';
