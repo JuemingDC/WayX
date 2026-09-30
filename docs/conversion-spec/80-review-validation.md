@@ -11,7 +11,6 @@
 - dynamic enable 无目标声明能力
 - pipeline 无法保持顺序
 - binary request body 无已验证路径
-- regex flag 对实际行为明显关键但目标无官方表达
 - Surge Module 需要用户 policy group
 - QX 需要官方 sample 未出现的 filter/action
 - JQ 依赖无法物化
@@ -26,6 +25,8 @@
 ```
 
 原规则不能静默删除。
+
+Loon regex literal 的 `i/m/s` 是明确的转换丢弃项，不因 flags 存在进入 Review；按 Block 40 丢弃 flags 后继续进行目标 bare-regex 格式化与语义映射。
 
 Loon `[Argument]` **声明区块本身不构成 Review 条件**。QX 忽略参数 UI，只做依赖分析；Surge 按 Block 60 确定性转换为 `#!arguments` 与 `{{{name}}}` 占位符。只有具体 Rewrite/Script 的参数依赖无法按目标官方格式表达时，才进入 Review；generated target 中的 `SCRIPT/REWRITE/ARGUMENT REVIEW REQUIRED` 标记必须被 Gate 捕获。
 
