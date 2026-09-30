@@ -3,7 +3,9 @@
 // Category: Converter / Canonical Output
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { cleanSource, convert, inspectSourceScript, materializeJqFiles, materializeMockFiles, parseLoon, scriptUrls, validateQX } from '../../.github/scripts/sync-convert.mjs';
+import { inspectSourceScript, materializeJqFiles, materializeMockFiles, scriptUrls, validateQX } from '../../.github/scripts/sync-convert.mjs';
+import { normalizePluginSource, parseLoonPlugin } from '../src/plugin-parser.mjs';
+import { convertPlugin } from '../src/conversion-pipeline.mjs';
 import { qxTargetPath, surgeTargetPath } from '../src/paths.mjs';
 import { validateSurgeModule } from '../src/surge-module.mjs';
 import { loadLoonSourceCatalog } from '../src/source-catalog.mjs';
@@ -12,6 +14,7 @@ const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
 const RESOURCE_DIR = path.join(ROOT, 'Resource/Loon');
 const GENERATED_SCRIPT_DIR = path.join(ROOT, 'script');
+const RAW_BASE = 'https://raw.githubusercontent.com/JuemingDC/WayX/main';
 
 const mode = process.argv.includes('--write') ? 'write' : 'check';
 
@@ -56,18 +59,18 @@ const failures = [];
 for (const entry of manifest) {
   try {
     const sourcePath = path.join(RESOURCE_DIR, entry.file);
-    const source = cleanSource(await fs.readFile(sourcePath, 'utf8'));
+    const source = normalizePluginSource(await fs.readFile(sourcePath, 'utf8')).replace(/\n*$/, '\n');
     const qxPath = path.join(ROOT, qxTargetPath(entry));
     const surgePath = path.join(ROOT, surgeTargetPath(entry));
     const oldQx = await readIfExists(qxPath);
     const oldSurge = await readIfExists(surgePath);
     const stamp = existingStamp(oldQx, oldSurge) || nowCN();
     const scripts = await originalScriptMap(source, entry.source);
-    const parsed = parseLoon(source);
+    const parsed = parseLoonPlugin(source);
     const qxMockFiles = await materializeMockFiles(entry, parsed);
     const jqFiles = await materializeJqFiles(entry, parsed);
 
-    let out = convert(entry, source, scripts, stamp, qxMockFiles, jqFiles);
+    let out = convertPlugin(entry, source, {scriptMap:scripts, stamp, mockFiles:qxMockFiles, jqFiles, rawBase:RAW_BASE});
     validateQX(out.qx, entry);
     validateSurgeModule(out.surge, entry, {adblockScope:true});
 
