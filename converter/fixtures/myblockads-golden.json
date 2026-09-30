@@ -6,6 +6,6 @@
   "jqRuleCount": 10,
   "uniqueJqCount": 9,
   "orderedPairsFnv1a64": "e31dfc68d921ed6a",
-  "note": "Fingerprint covers the 10 reviewed ordered {pattern,jq} pairs shared by QX and Surge after target bare-regex normalization. One current source jq-path dependency (Reddit) remains explicit Review because the original dependency cannot be proven safe for single-quoted target embedding. Production conversion reads the original dependency URL directly; repository-cached JQ content is not an authority or fallback.",
-  "jqReviewCount": 1
+  "note": "Fingerprint covers the ordered target {pattern,jq} pairs shared by QX and Surge. Legacy json.jq(\"jq-path=...\") input is intentionally discarded and is not preserved as Review or dependency.",
+  "jqDiscardCount": 1
 }
