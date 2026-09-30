@@ -502,10 +502,18 @@ assert.throws(
   () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ as hit then response.header.set("X-Test", "${hit.name}") | response.body.replace(/x/, "y")'), {target:'qx'}),
   /header value contains unsupported interpolation/,
 );
-assert.throws(
-  () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ then response.header.set("X-Test", "ok") | response.json.delete("items[0]")'), {target:'qx'}),
-  /json\.delete array-index semantics are not verified/,
+const jsonAddDelete = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /api/ then response.json.add("data.new.enabled", true) | response.json.delete("items[0]") | response.body.replace(/done/, "ok")'),
+  {target:'qx'},
 );
+assert.match(jsonAddDelete.script, /__wayxJsonAdd\(j,\["data","new","enabled"\],true\)/);
+assert.match(jsonAddDelete.script, /Array\.isArray\(p\).*p\.splice\(k,1\)/);
+assert.ok(jsonAddDelete.script.indexOf('__wayxJsonAdd(j,["data","new","enabled"],true)') < jsonAddDelete.script.indexOf('__wayxJsonDelete(j,["items",0])'));
+const jsonAddBatch = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /api/ then response.json.add(["data.a", "data.b"], [1, true]) | response.body.replace(/x/, "y")'),
+  {target:'surge'},
+);
+assert.ok(jsonAddBatch.script.indexOf('__wayxJsonAdd(j,["data","a"],1)') < jsonAddBatch.script.indexOf('__wayxJsonAdd(j,["data","b"],true)'));
 
 const captureMixedQx = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /\\/api\\/(foo)-(bar)/ims as hit then response.header.set("X-Capture", "${hit.0}:${hit.1}:${hit.2}") | response.body.replace(/token/, "${hit.2}")'),
