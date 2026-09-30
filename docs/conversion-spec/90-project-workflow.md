@@ -108,6 +108,14 @@ Rule 不使用上述 Script fallback。Quantumult X 官方 sample 未确认的�
 
 这些丢弃项不得被后续 canonical regeneration 或 Work review 自动恢复。
 
+## 手工资产与自动报告
+
+- `.github/sources/loon.json` 只管理自动拉取/自动转换的 Loon Catalog。
+- `.github/manual-assets.json` 只登记手工维护目标资产；当前为 QZXY。自动转换不得覆盖该清单中的文件。
+- canonical regeneration 后必须运行 `converter/tools/conversion-reports.mjs`，生成 reconciliation 与 Review/Issue inventory。
+- Converter Check 对 reconciliation 不一致直接失败；Upstream Monitor 将报告失败转入 Work review，不允许 Safe Tier 直推。
+- 两套 workflow 都上传 JSON + Markdown 报告 artifact。
+
 ## Unknown conversion Issue 提交流程
 
 生成后的 QX/Surge 文件若含 `# [WayX] ISSUE REQUIRED [...]`，自动化必须在 Safe commit 之前运行 issue proposer：
