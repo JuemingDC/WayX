@@ -229,18 +229,17 @@ function sanitizeName(s) {
 function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Map(), jqFiles = new Map()) {
   const parsed = parseLoon(source);
   const sourceHeader = parsed.header;
-  const qxHeader = renderQxSnippetHeader(sourceHeader, entry, stamp);
 
-  const qx = { filter: [], rewrite: [], mitm: [], notes: [], generatedScripts: new Map() };
-  const sg = { rule: [], url: [], header: [], map: [], body: [], script: [], mitm: [], notes: [], generatedScripts: new Map() };
+  const qx = createQxOutputState();
+  const sg = createSurgeOutputState();
   for (const [sectionName, sectionLines] of parsed.sections) {
     if (isSupportedSourceSection(sectionName)) continue;
     const active = groupSourceSectionItems(sectionLines).filter(item => item.line).map(item => item.line);
     if (!active.length) continue;
     const reason = '# [WayX] ISSUE REQUIRED [unknown-source-section]: unsupported Loon source section [' + sectionName + '] is outside the current ad-block conversion grammar';
     for (const line of active) {
-      qx.notes.push(reason, '# Source declaration: ' + line);
-      sg.notes.push(reason, '# Source declaration: ' + line);
+      appendQxOutput(qx,'notes',reason,'# Source declaration: ' + line);
+      appendSurgeOutput(sg,'notes',reason,'# Source declaration: ' + line);
     }
   }
   const argumentAnalysis = analyzePluginArgumentUsage({
@@ -263,17 +262,21 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   // official #!arguments metadata and {{{name}}} placeholders instead.
   if (argumentAnalysis.undeclaredRefs.length) {
     const refs = [...new Set(argumentAnalysis.undeclaredRefs.map(ref => ref.id))].sort().join(', ');
-    qx.notes.push(`# [WayX] ARGUMENT REVIEW REQUIRED: undeclared source plugin argument reference(s): ${refs}`);
-    sg.notes.push(`# [WayX] ARGUMENT REVIEW REQUIRED: undeclared source plugin argument reference(s): ${refs}`);
+    appendQxOutput(qx,'notes',`# [WayX] ARGUMENT REVIEW REQUIRED: undeclared source plugin argument reference(s): ${refs}`);
+    appendSurgeOutput(sg,'notes',`# [WayX] ARGUMENT REVIEW REQUIRED: undeclared source plugin argument reference(s): ${refs}`);
   }
   if (argumentAnalysis.policyBindings.length) {
-    qx.notes.push('# [WayX] Policy binding: source PROXY is preserved as literal QX policy name PROXY; a matching target policy must exist.');
+    appendQxOutput(qx,'notes','# [WayX] Policy binding: source PROXY is preserved as literal QX policy name PROXY; a matching target policy must exist.');
   }
 
   const ruleSectionLines = parsed.sections.get('Rule') || [];
   for (const item of groupSourceSectionItems(ruleSectionLines)) {
     const comments = cleanSourceComments(item.comments);
-    if (!item.line) { qx.filter.push(...comments); sg.rule.push(...comments); continue; }
+    if (!item.line) {
+      qxOutputDestination(qx,'filter').push(...comments);
+      surgeOutputDestination(sg,'rule').push(...comments);
+      continue;
+    }
     const qr = canonicalQxRule(item.line);
     const qxRendered = attachQxInlineNote({
       sectionLines: ruleSectionLines,
@@ -282,12 +285,11 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
       lines: [qr.line],
       eligible: qr.kind === 'filter' || qr.kind === 'rewrite',
     });
-    if (qr.kind === 'filter') qx.filter.push(...qxRendered.comments, ...qxRendered.lines);
-    else if (qr.kind === 'rewrite') qx.rewrite.push(...qxRendered.comments, ...qxRendered.lines);
-    else qx.filter.push(...comments, qr.line);
-    const sr = surgeModuleRule(item.line, { proxyPolicyPlaceholder: surgeProxyPolicyPlaceholder });
-    const sRuleDest = sr.section === 'map' ? sg.map : sg.rule;
-    sRuleDest.push(...comments, ...sr.lines);
+    const qxRuleDest = qxRuleOutputDestination(qx,qr.kind);
+    if (qr.kind === 'filter' || qr.kind === 'rewrite') qxRuleDest.push(...qxRendered.comments,...qxRendered.lines);
+    else qxRuleDest.push(...comments,qr.line);
+    const sr = surgeModuleRule(item.line,{proxyPolicyPlaceholder:surgeProxyPolicyPlaceholder});
+    surgeRuleOutputDestination(sg,sr.section).push(...comments,...sr.lines);
   }
 
   const rewriteSectionLines = parsed.sections.get('Rewrite') || [];
@@ -299,9 +301,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     const surgeCommentPlan = planDisabledSurgeRewriteComments(item.comments, sctx);
     const surgeComments = cleanSourceComments(surgeCommentPlan.passthrough);
     for (const routed of surgeCommentPlan.routed) {
-      const dest = surgeSectionArray(sg, routed.section);
-      if (dest) dest.push(...routed.lines);
-      else sg.notes.push(...routed.lines);
+      (surgeOutputDestination(sg,routed.section) || surgeOutputDestination(sg,'notes')).push(...routed.lines);
     }
     if (!item.line) continue;
 
@@ -315,30 +315,25 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
       if (!sr) sr = planSurgeRewrite(ir, {...sctx, sourceLine:item.line});
     }
 
-    if (qr.section === 'drop') {
-      qx.rewrite.push(...comments);
+    const qdest=qxRewriteOutputDestination(qx,qr.section);
+    if (qr.section==='drop') {
+      qdest.push(...comments);
+    } else if (qr.section==='rewrite') {
+      const qxRendered=attachQxInlineNote({
+        sectionLines:rewriteSectionLines,
+        item,
+        sectionKind:'rewrite',
+        lines:qr.lines || [qr.line],
+        eligible:qr.qxInlineNoteEligible !== false,
+      });
+      qdest.push(...qxRendered.comments,...qxRendered.lines);
     } else {
-      const qdest = qr.section === 'rewrite' ? qx.rewrite : qx.notes;
-      if (qr.section === 'rewrite') {
-        const qxRendered = attachQxInlineNote({
-          sectionLines: rewriteSectionLines,
-          item,
-          sectionKind: 'rewrite',
-          lines: qr.lines || [qr.line],
-          eligible: qr.qxInlineNoteEligible !== false,
-        });
-        qdest.push(...qxRendered.comments, ...qxRendered.lines);
-      } else {
-        qdest.push(...comments, ...(qr.lines || [qr.line]));
-      }
+      qdest.push(...comments,...(qr.lines || [qr.line]));
     }
 
-    if (sr.section === 'drop') {
-      sg.notes.push(...surgeComments);
-    } else {
-      const sdest = surgeSectionArray(sg, sr.section) || sg.notes;
-      sdest.push(...surgeComments, ...(sr.lines || [sr.line]));
-    }
+    const sdest=surgeRewriteOutputDestination(sg,sr.section);
+    if (sr.section==='drop') sdest.push(...surgeComments);
+    else sdest.push(...surgeComments,...(sr.lines || [sr.line]));
   }
 
   const scriptSectionLines = parsed.sections.get('Script') || [];
@@ -355,16 +350,16 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
         ir=scriptV2AstToSemanticIr(parseScriptV2(item.line),{source:item.line});
       } catch (error) {
         const reason=String(error?.message || error).split('\n')[0];
-        qx.notes.push(...comments, `# [WayX] ISSUE REQUIRED [unknown-script-v2-syntax]: source declaration parse failed: ${reason}`, `# Source declaration: ${item.line}`);
-        sg.notes.push(...comments, `# [WayX] ISSUE REQUIRED [unknown-script-v2-syntax]: source declaration parse failed: ${reason}`, `# Source declaration: ${item.line}`);
+        appendQxOutput(qx,'notes',...comments,`# [WayX] ISSUE REQUIRED [unknown-script-v2-syntax]: source declaration parse failed: ${reason}`,`# Source declaration: ${item.line}`);
+        appendSurgeOutput(sg,'notes',...comments,`# [WayX] ISSUE REQUIRED [unknown-script-v2-syntax]: source declaration parse failed: ${reason}`,`# Source declaration: ${item.line}`);
         continue;
       }
     } else {
       sourceSyntax='legacy';
       const parsedLegacy=parseLegacyScriptLine(item.line);
       if (!parsedLegacy?.script?.path) {
-        qx.notes.push(...comments, '# [WayX] ISSUE REQUIRED [unknown-script-declaration]: unsupported source Script declaration is outside the registered grammar', `# Source declaration: ${item.line}`);
-        sg.notes.push(...comments, '# [WayX] ISSUE REQUIRED [unknown-script-declaration]: unsupported source Script declaration is outside the registered grammar', `# Source declaration: ${item.line}`);
+        appendQxOutput(qx,'notes',...comments,'# [WayX] ISSUE REQUIRED [unknown-script-declaration]: unsupported source Script declaration is outside the registered grammar',`# Source declaration: ${item.line}`);
+        appendSurgeOutput(sg,'notes',...comments,'# [WayX] ISSUE REQUIRED [unknown-script-declaration]: unsupported source Script declaration is outside the registered grammar',`# Source declaration: ${item.line}`);
         continue;
       }
       ir=legacyScriptToSemanticIr(parsedLegacy,{source:item.line});
@@ -376,16 +371,17 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     const qxUrl=mapped?.qx || ir.script.path;
     const surgeUrl=mapped?.surge || ir.script.path;
     const qxPlan=planQxScript(ir,{scriptUrl:qxUrl,sourceText,argumentIds});
+    const qxScriptDest=qxOutputDestination(qx,'rewrite');
 
     if (!qxPlan.ok) {
-      qx.rewrite.push(...comments);
+      qxScriptDest.push(...comments);
       if (sourceSyntax==='legacy' && ir.sourcePayload.tag) qx.rewrite.push(`# ${ir.sourcePayload.tag}`);
-      qx.rewrite.push(`# [WayX] ${sourceSyntax==='v2' ? 'SCRIPT V2' : 'SCRIPT'} REVIEW REQUIRED: ${qxPlan.reason}`);
-      qx.rewrite.push(`# Source declaration: ${item.line}`);
+      qxScriptDest.push(`# [WayX] ${sourceSyntax==='v2' ? 'SCRIPT V2' : 'SCRIPT'} REVIEW REQUIRED: ${qxPlan.reason}`);
+      qxScriptDest.push(`# Source declaration: ${item.line}`);
     } else if (qxPlan.disabled) {
-      qx.rewrite.push(...comments);
+      qxScriptDest.push(...comments);
       if (sourceSyntax==='legacy' && ir.sourcePayload.tag) qx.rewrite.push(`# ${ir.sourcePayload.tag}`);
-      qx.rewrite.push(`# [WayX] Script disabled by source ${sourceSyntax==='v2' ? 'option' : 'declaration'}: ${item.line}`);
+      qxScriptDest.push(`# [WayX] Script disabled by source ${sourceSyntax==='v2' ? 'option' : 'declaration'}: ${item.line}`);
     } else {
       const qxRendered=attachQxInlineNote({
         sectionLines:scriptSectionLines,
@@ -393,10 +389,10 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
         sectionKind:'script',
         lines:[qxPlan.line],
       });
-      qx.rewrite.push(...qxRendered.comments);
+      qxScriptDest.push(...qxRendered.comments);
       if (qxPlan.tag) qx.rewrite.push(`# ${qxPlan.tag}`);
       for (const note of qxPlan.notes || []) qx.rewrite.push(`# [WayX] ${note}`);
-      qx.rewrite.push(...qxRendered.lines);
+      qxScriptDest.push(...qxRendered.lines);
     }
 
     const sourceTag=sourceSyntax==='v2'
@@ -409,15 +405,16 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
       argumentIds,
       argumentTable:surgeArgumentTable,
     });
-    sg.script.push(...comments);
+    const surgeScriptDest=surgeOutputDestination(sg,'script');
+    surgeScriptDest.push(...comments);
     if (!surgePlan.ok) {
-      sg.script.push(`# [WayX] ${sourceSyntax==='v2' ? 'SCRIPT V2' : 'SCRIPT'} REVIEW REQUIRED: ${surgePlan.reason}`);
-      sg.script.push(`# Source declaration: ${item.line}`);
+      surgeScriptDest.push(`# [WayX] ${sourceSyntax==='v2' ? 'SCRIPT V2' : 'SCRIPT'} REVIEW REQUIRED: ${surgePlan.reason}`);
+      surgeScriptDest.push(`# Source declaration: ${item.line}`);
     } else if (surgePlan.disabled) {
-      sg.script.push(`# [WayX] Script disabled by source ${sourceSyntax==='v2' ? 'option' : 'declaration'}: ${item.line}`);
+      surgeScriptDest.push(`# [WayX] Script disabled by source ${sourceSyntax==='v2' ? 'option' : 'declaration'}: ${item.line}`);
     } else {
       if (surgePlan.usesLineRequirement) surgeNeedsLineRequirement=true;
-      sg.script.push(surgePlan.line);
+      surgeScriptDest.push(surgePlan.line);
     }
   }
 
@@ -427,47 +424,30 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     if (!item.line) continue;
     const qPlan = planMitmLine(item.line, 'qx');
     const sPlan = planMitmLine(item.line, 'surge');
-    qx.mitm.push(...comments, qPlan.line);
-    sg.mitm.push(...comments, sPlan.line);
+    qxOutputDestination(qx,'mitm').push(...comments,qPlan.line);
+    surgeOutputDestination(sg,'mitm').push(...comments,sPlan.line);
   }
 
-  const compact = arr => {
-    const out = [];
-    for (const line of arr) {
-      if (line === '' && out.at(-1) === '') continue;
-      out.push(line);
-    }
-    while (out.length && out.at(-1) === '') out.pop();
-    return out;
-  };
-
-  const qxOut = [
-    ...qxHeader, '',
-    ...(qx.notes.length ? [...qx.notes, ''] : []),
-    '# [filter_local]', ...compact(qx.filter), '',
-    '# [rewrite_local]', ...compact(qx.rewrite), '',
-    '# [mitm]', ...compact(qx.mitm), ''
-  ].join('\n');
-
-  const surgeSections = [];
-  if (sg.notes.length) surgeSections.push(...sg.notes, '');
-  if (sg.rule.length) surgeSections.push('[Rule]', ...compact(sg.rule), '');
-  if (sg.url.length) surgeSections.push('[URL Rewrite]', ...compact(sg.url), '');
-  if (sg.header.length) surgeSections.push('[Header Rewrite]', ...compact(sg.header), '');
-  if (sg.body.length) surgeSections.push('[Body Rewrite]', ...compact(sg.body), '');
-  if (sg.map.length) surgeSections.push('[Map Local]', ...compact(sg.map), '');
-  if (sg.script.length) surgeSections.push('[Script]', ...compact(sg.script), '');
-  if (sg.mitm.length) surgeSections.push('[MITM]', ...compact(sg.mitm), '');
-
-  const needsCore20 = hasActiveSurgeLines(sg.body) || hasActiveSurgeLines(sg.map);
-  const surgeHeader = renderSurgeModuleHeader(parsed.header, entry, stamp, {
-    needsCore20,
+  const qxOut=renderQxOutput({
+    state:qx,
+    headerLines:sourceHeader,
+    entry,
+    stamp,
+  });
+  const sgOut=renderSurgeOutput({
+    state:sg,
+    headerLines:parsed.header,
+    entry,
+    stamp,
     argumentMetadata:surgeArgumentPlan.lines,
     needsLineRequirement:surgeNeedsLineRequirement,
   });
-  const sgOut = [...surgeHeader, '', ...surgeSections].join('\n').replace(/\n*$/, '\n');
 
-  return { qx: qxOut.replace(/\n*$/, '\n'), surge: sgOut, generatedScripts: new Map([...qx.generatedScripts, ...sg.generatedScripts]) };
+  return {
+    qx:qxOut,
+    surge:sgOut,
+    generatedScripts:new Map([...qx.generatedScripts,...sg.generatedScripts]),
+  };
 
 }
 
