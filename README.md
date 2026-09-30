@@ -62,6 +62,15 @@ WayX/
 
 转换时保留原注释，并追加转换时间、作者 chance、模块分类、目标平台与原始来源。
 
+QX 当前支持 filter/rewrite 前置 note。WayX 只把严格一对一的源注释转成：
+
+```text
+{# 注释 #} host-suffix, example.com, reject
+{# 注释 #} ^https://ads\.example\.com url reject
+```
+
+如果一条注释下面连续对应多条源规则、存在多行连续注释、注释本身是被禁用的源规则，或一条源声明展开成多条 QX 行，则保持普通 `#` 注释。WayX 自己的转换说明不会写入 `{# ... #}`。
+
 Quantumult X snippet 按项目约定将分段标题保留为注释形式，例如：
 
 ```text
