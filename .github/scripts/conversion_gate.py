@@ -187,7 +187,10 @@ def simple_rule(line: str) -> tuple[bool, str]:
         if policy in BASIC_POLICIES:
             return True, "logical rule has deterministic targets: QX comment; Surge native/preserved/commented"
         return False, f"logical rule policy {policy} is outside safe tier"
-    parts = split_csv(line)
+    # Use the same top-level CSV semantics for every Rule, not only
+    # logical rules. URL-REGEX values and quoted fields may legitimately contain
+    # commas; naive split(",") would create false Work classifications.
+    parts = split_top_level_csv(line)
     if parts and parts[0].upper() == "FINAL":
         return True, "source FINAL is intentionally discarded for Surge ad-block modules"
     if len(parts) < 3:
