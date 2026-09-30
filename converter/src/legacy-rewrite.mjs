@@ -196,6 +196,32 @@ function planHeader(pattern, action, parsed, target, ctx) {
   const direction=parsed.phase === 'response' ? 'http-response' : 'http-request';
   const width=parsed.op === 'del' ? 1 : parsed.op === 'replace-regex' ? 3 : 2;
   if (!tokens.length || tokens.length % width) return review(pattern, action, 'invalid legacy header argument grouping');
+  if (target === 'qx' && parsed.phase === 'request' && parsed.op === 'add') {
+    const targetPattern=normalizeRegexBodyForTarget(pattern);
+    const lines=[];
+    for(let i=0;i<tokens.length;i+=width){
+      const [name,value]=tokens.slice(i,i+width).map(unquote);
+      if(!name || /[\s:\r\n]/.test(name) || /[\r\n]/.test(value)) {
+        return review(pattern, action, 'legacy request header-add contains an unsafe field name/value for QX whole-header rewrite');
+      }
+      lines.push(targetPattern + ' url request-header ^([^\\r\\n]+)(\\r\\n) request-header $1$2' + name + ': ' + value + '$2');
+    }
+    return {section:'rewrite', lines};
+  }
+  if (target === 'qx' && parsed.phase === 'request' && parsed.op === 'replace-regex') {
+    const targetPattern=normalizeRegexBodyForTarget(pattern);
+    const lines=[];
+    for(let i=0;i<tokens.length;i+=width){
+      const [name,regex,replacement]=tokens.slice(i,i+width).map(unquote);
+      if(!name || /[\s:\r\n]/.test(name) || /[\r\n]/.test(replacement)) {
+        return review(pattern, action, 'legacy request header-replace-regex contains an unsafe field name/replacement');
+      }
+      const escaped=name.replace(/[.*+?^${}()|[\]\\]/g,'\\  if (!tokens.length || tokens.length % width) return review(pattern, action, 'invalid legacy header argument grouping');
+  if (target === 'qx') {');
+      lines.push(targetPattern + ' url request-header (\\r\\n)' + escaped + ':\\s*' + normalizeRegexBodyForTarget(regex) + '(\\r\\n) request-header $1' + name + ': ' + replacement + '$2');
+    }
+    return {section:'rewrite', lines};
+  }
   if (target === 'qx') {
     try {
       const ast=legacyHeaderAst(pattern, parsed, tokens);
