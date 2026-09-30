@@ -225,8 +225,9 @@ assert.throws(
   () => validateSurgeModule(validSurgeModule.replace('#!requirement=CORE_VERSION>=20\n', ''), {id:'Demo'}),
   /CORE_VERSION>=20/,
 );
-assert.doesNotThrow(
+assert.throws(
   () => validateSurgeModule(validSurgeModule.replace('DOMAIN,ads.example.com,REJECT', 'DOMAIN,ads.example.com,REJECT-DROP'), {id:'Demo'}),
+  /official Module set DIRECT\/REJECT\/REJECT-TINYGIF/,
 );
 assert.throws(
   () => validateSurgeModule(validSurgeModule.replace('DOMAIN-WILDCARD,api-*.example.com,REJECT', 'LOON-ONLY,foo,REJECT'), {id:'Demo'}),
