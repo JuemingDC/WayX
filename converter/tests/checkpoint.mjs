@@ -58,6 +58,7 @@ import {
 } from '../src/index.mjs';
 import { classifyComplexRewrite, complexConditionKinds } from '../src/complex-rewrite.mjs';
 import { registerComplexRewriteHandler, planComplexRewrite, listComplexRewriteHandlers } from '../src/complex-rewrite-registry.mjs';
+import { renderMixedRewriteScript } from '../src/complex-rewrite-script.mjs';
 
 assert.equal(qxRule('URL-REGEX, "^https:\\/\\/ad\\.example\\.com", REJECT').line, '^https:\\/\\/ad\\.example\\.com url reject-200');
 assert.equal(
@@ -405,6 +406,20 @@ registerComplexRewriteHandler({
 assert.equal(planComplexRewrite(complexFixture, 'qx').line, 'handled-qx');
 assert.equal(planComplexRewrite(complexFixture, 'surge').line, 'handled-surge');
 assert.deepEqual(listComplexRewriteHandlers(), [{id:'checkpoint-mixed-response',targets:['qx','surge']}]);
+
+const mixedResponse = parseRewriteV2('response if ${response.status} == 200 && ${url} ~= /api\\/v2/ then response.header.del("Server") | response.body.replace(/ads/, "ok")');
+const mixedQx = renderMixedRewriteScript(mixedResponse, {target:'qx'});
+assert.equal(mixedQx.qxAction, 'script-response-body');
+assert.equal(mixedQx.requiresBody, true);
+assert.match(mixedQx.script, /response\.statusCode/);
+assert.ok(mixedQx.script.indexOf('__wayxDel("Server")') < mixedQx.script.indexOf('__wayxBody='));
+const mixedSurge = renderMixedRewriteScript(mixedResponse, {target:'surge'});
+assert.equal(mixedSurge.surgeType, 'http-response');
+assert.match(mixedSurge.script, /\$response\.status/);
+assert.throws(
+  () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ then response.header.add("Set-Cookie","a=1") | response.body.replace(/x/,"y")'), {target:'qx'}),
+  /does not handle response\.header\.add/,
+);
 
 const bulkV2 = parseRewriteV2('request if ${url} ~= /api/ then request.header.set(["X-A","X-B"],["1","2"])');
 validateRewriteV2Ast(bulkV2);
