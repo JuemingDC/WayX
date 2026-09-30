@@ -95,8 +95,8 @@ Rewrite/Mock 固定优先级：
 ```text
 native target syntax
 → dedicated semantic helper
-→ multi-action complex helper（仅 actions >= 2）
-→ commented REVIEW REQUIRED
+→ observed multi-action complex helper（仅源声明 actions >= 2 且 signature 已登记）
+→ commented REVIEW REQUIRED / ISSUE REQUIRED
 ```
 
 Rule 不使用上述 Script fallback。Quantumult X 官方 sample 未确认的逻辑规则、端口类等 Rule Type 只保留为注释。
@@ -108,13 +108,25 @@ Rule 不使用上述 Script fallback。Quantumult X 官方 sample 未确认的�
 
 这些丢弃项不得被后续 canonical regeneration 或 Work review 自动恢复。
 
+## Unknown conversion Issue 提交流程
+
+生成后的 QX/Surge 文件若含 `# [WayX] ISSUE REQUIRED [...]`，自动化必须在 Safe commit 之前运行 issue proposer：
+
+1. 读取 marker + 紧随其后的完整 `Source declaration`；
+2. 用 issue code + source declaration 计算稳定 fingerprint；
+3. 搜索 open/closed 历史 Issue，已有相同 fingerprint 时复用，不重复创建；
+4. 没有时创建 `conversion-unknown` Issue，记录原因、源声明和命中的目标文件；
+5. 本轮必须进入 Work Review，禁止直接推 main。
+
+Issue 是“未知语义待决”的追踪载体，不替代目标文件中的注释保留，也不允许自动化自行猜答案。
+
 ## 自动化 Fail-Closed 约束
 
 - Gate 必须按 Rule/Rewrite/Script/MITM 的真实语义分类，不能按作者目录、插件目录、插件名整体升级或降级。
 - Loon Plugin 的 `PROXY` 保持“用户选择策略”语义：QX 保留字面 `PROXY`；Surge Module 通过 `#!arguments` + `{{{policy}}}` 建立策略参数绑定，默认 `DIRECT`，用户可改为已有代理策略/策略组。其他未显式参数化的外部 policy/group 仍不得伪装成内建 Safe policy。
 - Block 20 已定义的 `URL-REGEX + REJECT/REJECT-200/REJECT-IMG/REJECT-DICT/REJECT-ARRAY/REJECT-DROP` 属于确定性映射，可进入 Safe Tier。
 - Quantumult X 与 Surge 均不运行 Source Script compatibility scan。原脚本 URL 直接保留；正文读取失败本身不触发 compatibility Review。
-- 只要 Review 条件成立，即使本轮没有普通 repository diff，也必须写入临时 `monitor/review-queue/<run>.md` 并创建 `work/upstream-*` PR；不能静默退出。
+- 只要 Review 或 Unknown Issue 条件成立，即使本轮没有普通 repository diff，也必须写入临时 `monitor/review-queue/<run>.md` 并创建 `work/upstream-*` PR；不能静默退出。
 - Work 完成前必须删除上述临时 review marker。
 - Safe Tier 结果只能推送到生成时使用的同一个 main 基线。若 remote main 在生成后前进，本轮跳过推送，由新一轮从新基线重新生成；禁止先生成再无条件 rebase 到新 main。
 
