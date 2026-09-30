@@ -925,7 +925,7 @@ assert.match(legacyQxHeaderAddBulk.line, /request-header \$1\$2X-A: one\$2X-B: t
 
 assert.match(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-add Set-Cookie a=1', 'qx', legacyCtx).line,
-  /REVIEW REQUIRED: QX header\.add cannot be represented losslessly/,
+  /Quantumult X unsupported legacy response-header-add commented out/,
 );
 
 const legacyNestedMock = classifyLegacyRewrite(
