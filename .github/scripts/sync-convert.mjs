@@ -14,7 +14,7 @@ import { validateRewriteV2Ast } from '../../converter/src/rewrite-v2-actions.mjs
 import { inlineResolvedDependency, jqDependencySpecFromAction, qxMockPlanFromAction, isDiscardedLegacyJqPathAction } from '../../converter/src/dependency.mjs';
 import { renderQxMockFileScript } from '../../converter/src/qx-mock.mjs';
 import { qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan, surgeHeaderRewritePlan, surgeInlineMockPlan, surgeMockFilePlan, simpleUrlRewriteCondition } from '../../converter/src/rewrite-v2-semantic.mjs';
-import { renderQxRedirectScript, renderQxRejectScript, renderQxInlineMockScript } from '../../converter/src/qx-semantic-script.mjs';
+import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript } from '../../converter/src/qx-semantic-script.mjs';
 import { isScriptV2, parseScriptV2, splitScriptV2Csv } from '../../converter/src/script-v2.mjs';
 import { qxScriptV2Plan, surgeScriptV2Plan } from '../../converter/src/script-v2-target.mjs';
 import { analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs } from '../../converter/src/argument-usage.mjs';
@@ -36,13 +36,26 @@ const TARGET_ROOT = path.join(ROOT, 'Adblock');
 const SCRIPT_DIR = path.join(ROOT, 'script');
 const RAW_BASE = 'https://raw.githubusercontent.com/JuemingDC/WayX/main';
 
+function renderMinimalQxHeaderHelper(ast, options) {
+  try {
+    return renderQxHeaderScript(ast, options);
+  } catch (compactError) {
+    try {
+      return renderMixedRewriteScript(ast, {target:'qx', ...options});
+    } catch (mixedError) {
+      // The broader helper is the final capability check, so expose its reason.
+      throw mixedError;
+    }
+  }
+}
+
 registerComplexRewriteHandler({
   id: 'qx-same-phase-header-script',
   targets: ['qx'],
   match: ast => ast.actions.length > 0 && ast.actions.every(action => action.name.startsWith(ast.phase + '.header.')),
   plan: (ast, _target, ctx) => {
     try {
-      const plan = renderMixedRewriteScript(ast, {target:'qx', stamp:ctx.stamp, category:ctx.category, sourceLine:ctx.sourceLine});
+      const plan = renderMinimalQxHeaderHelper(ast, {stamp:ctx.stamp, category:ctx.category, sourceLine:ctx.sourceLine});
       const key = crypto.createHash('sha1').update('header\0' + ctx.sourceLine).digest('hex').slice(0, 10);
       const filename = 'header_' + key + '.js';
       ctx.generatedScripts.set(filename, plan.script);
@@ -458,8 +471,7 @@ function planAdjacentQxHeaderGroups(items, ctx) {
       plans.set(index, nativePlan);
     } else {
       try {
-        const plan = renderMixedRewriteScript(mergedAst, {
-          target:'qx',
+        const plan = renderMinimalQxHeaderHelper(mergedAst, {
           stamp: ctx.stamp,
           category: ctx.category,
           sourceLine: sourceLines.join(' | '),
