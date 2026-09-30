@@ -1,6 +1,6 @@
 # WayX — ChatGPT Work 上游语义审查任务
 
-版本：2.7  
+版本：2.8  
 作者：chance  
 更新时间：2026-09-30  
 类型：Automation / Upstream Semantic Review
@@ -24,7 +24,7 @@
 
 GitHub Actions 已完成 Safe Tier：上游检查、确定性 Rule/Rewrite/JQ/MITM 转换、简单新增删除、目标文件重生成和 validator。不要无意义重做已验证的 Safe Tier。
 
-Work 只处理 Review Tier：QX 无法承载的 Loon `[Argument]`、Loon 新语法未覆盖 action、自定义 Body、binary/base64、pipeline、helper script、converter/validator 失败、官方语法变更或任何 Rewrite native + helper 均无法证明无损的变化。QX 不支持的 Rule Type（含逻辑规则、端口类等）按规范注释保留，不以 Script 方式补齐。Loon `[Argument]` 不转换为 QX 参数 UI/BoxJs；Surge 必须按官方 Module `#!arguments` / `{{{name}}}` 转换，Rewrite 必要时通过 `argument=` + `$argument` helper 承载。
+Work 只处理 Review Tier：QX Rewrite 中无法无损承载的 Loon `[Argument]`、Loon 新语法未覆盖 action、自定义 Body、binary/base64、pipeline、helper script、converter/validator 失败、官方语法变更或任何 Rewrite native + helper 均无法证明无损的变化。QX Source Script declaration 的 argument / dynamic enable / timeout 不属于 Review：argument 按 KOP-XIAO parser 口径忽略，dynamic enable 默认开启，timeout 忽略。QX 不支持的 Rule Type（含逻辑规则、端口类等）按规范注释保留，不以 Script 方式补齐。Loon `[Argument]` 不转换为 QX 参数 UI/BoxJs；Surge 必须按官方 Module `#!arguments` / `{{{name}}}` 转换，Rewrite 必要时通过 `argument=` + `$argument` helper 承载。
 
 ## 通用转换器约束
 
@@ -43,6 +43,7 @@ Work 只处理 Review Tier：QX 无法承载的 Loon `[Argument]`、Loon 新语�
 - Surge 去广告 Module 中的源 `FINAL` 直接丢弃，禁止改写成活动 catch-all。
 - legacy `json.jq("jq-path=...")` 直接丢弃，不解析依赖、不生成目标规则。
 - QX `request.header.add` 仅使用已验证 whole-header 插入路径；QX `response.header.add` / legacy `response-header-add` 按项目决策直接注释保留，不用 set 冒充，也不再作为持续 Review 项。
+- QX Source Script：保留原 Script URL；argument 不注入，动态 enable 默认开启，timeout 忽略；固定 enable=false/0 仍禁用。binary/max-size 等未明确放行字段继续按 Block 60 单独判断。
 - QX 与 Surge Source Script 都不做 runtime compatibility scan；直接保留原脚本 URL。仅在 QX HTTP Script action 类型无法由 declaration 明确判断时读取正文辅助判定 header/body/echo，不据此启用或禁用脚本。
 - 语义一致性优先于状态码表面一致。
 - `reject_dict(200)` → QX `reject-dict`，不得因 200 变成 `reject-200`。

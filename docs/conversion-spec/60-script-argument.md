@@ -43,17 +43,43 @@ script-analyze-echo-response
 
 ## 60.3 Loon [Argument] → Quantumult X
 
-**不转换。**
+QX snippet 不复制 Loon Plugin `[Argument]` 参数 UI，也不生成 BoxJs / `$prefs` / URL fragment / wrapper。
 
-QX snippet 不提供与 Loon Plugin `[Argument]` 对应的模块参数表。WayX 不把这些内容转换为 QX BoxJs、`$prefs`、URL fragment 或 wrapper。
+### 60.3.1 Source Script declaration
 
-QX 侧规则：
-- 不复制源 `[Argument]` 区块；
-- 不输出 Argument usage 清单；
-- 不输出默认值形成伪参数 UI；
-- 某条 Rewrite/Script 依赖 Loon 参数时先判断现有 QX helper 是否能在不引入伪参数存储的前提下保持；不能则注释该声明并 Review。
+这里按 KOP-XIAO 当前 `Scripts/resource-parser.js` 的实际 Script 转换口径处理。其 `SCP2QX()` 对 Surge/HTTP Script 声明只提取：
 
-BoxJs 仍是 WayX 中独立的 QX 功能，但不属于 Loon Plugin → QX 自动转换。
+- `pattern`；
+- `script-path`；
+- `type=http-request/http-response`；
+- `requires-body`，据此选择 QX `script-*-header/body`。
+
+该实现没有读取或传递 `argument`、`enable`、`timeout`。WayX 对 Loon legacy Script / Script v2 采用同样的 QX 声明层策略：
+
+- Script `argument` / PluginObject：**忽略，不生成 QX 参数，也不因此 Review**；
+- 动态 `enable=${id}` / `enable={id}`：**忽略动态开关，QX 规则默认开启**；
+- 固定 `enable=false/0`：仍按源声明禁用；
+- `timeout`：**忽略，不因此 Review**；
+- `tag`、源注释、原始 Script URL 保留；
+- `requires_body` 继续决定 header/body Script action；
+- `binary_body_mode`、`max-size` 等未包含在本次用户决策中的能力仍按 QX 官方样例与现有规范单独判断，不因为 KOP-XIAO 忽略其它字段就自动放行。
+
+为便于审计，WayX 在生成的 QX snippet 中用普通注释记录被忽略的 Script argument / dynamic enable / timeout；这些说明不是 Review marker。
+
+参考实现：
+`https://github.com/KOP-XIAO/QuantumultX/blob/master/Scripts/resource-parser.js` → `SCP2QX()`。
+
+### 60.3.2 Rewrite 中的 [Argument]
+
+上述“忽略”规则**只针对 Source Script declaration**。Rewrite v2 条件或 action 中的参数会直接改变匹配范围、替换值、JSON/Header 行为，不能按 Script 参数同样丢弃。
+
+因此 Rewrite 参数仍按既有流程：
+
+1. 能在 QX 原生声明中确定性表达 → native；
+2. Rewrite 语义可由已登记专用 helper 无损表达 → helper；
+3. 否则注释 Review/Issue。
+
+QX 仍不复制源 `[Argument]` 区块本身，也不生成参数 UI。
 
 ## 60.4 Loon [Argument] → Surge Module
 
@@ -159,7 +185,7 @@ Source Script 的跨平台运行时适配由原脚本自身负责，不属于 Wa
 - WayX 为 Rewrite/Mock 等目标能力生成的 helper script 不属于 Source Script 镜像；
 - helper script 只能补足 Rewrite/Mock 语义，不能用来模拟 QX 不支持的 Rule Type。
 
-## 60.8 实现索引
+## 60.8 自动化实现索引
 
 - Script action：`converter/src/script.mjs`
 - Script v2 parser：`converter/src/script-v2.mjs`

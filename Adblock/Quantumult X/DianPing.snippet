@@ -8,7 +8,7 @@
 
 #############################################
 
-# Converted: 2026-09-30 16:17:46 +08:00
+# Converted: 2026-09-30 21:11:05 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://raw.githubusercontent.com/fmz200/wool_scripts/main/Loon/plugin/split/partD/DianPing.lpx
@@ -38,11 +38,13 @@
 ^https?:\/\/ddplus\.meituan\.net\/v\d\/mss_\w+\/(?>ehc|titansx|ddblue|edfu)\/ url reject
 # 开屏广告
 # 大众点评
-# [WayX] SCRIPT REVIEW REQUIRED: QX declaration/helper cannot preserve this source argument/enable/timeout/max-size/binary option set without changing the source script.
-# Source declaration: http-response ^https?:\/\/img\.meituan\.net\/(?>dpmobile|goodsawardpic)\/ script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js, requires-body=true, timeout=60, tag=大众点评, enable={davsdmpk_enable}
+# [WayX] Source dynamic enable ignored for Quantumult X; converted rule defaults to enabled.
+# [WayX] Source Script timeout ignored for Quantumult X.
+^https?:\/\/img\.meituan\.net\/(?>dpmobile|goodsawardpic)\/ url script-response-body https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js
 # 大众点评
-# [WayX] SCRIPT REVIEW REQUIRED: QX declaration/helper cannot preserve this source argument/enable/timeout/max-size/binary option set without changing the source script.
-# Source declaration: http-response ^https?:\/\/ddplus\.meituan\.net\/v\d\/mss_\w+\/picassovc script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js, requires-body=true, timeout=60, tag=大众点评, enable={davsdmpk_enable}
+# [WayX] Source dynamic enable ignored for Quantumult X; converted rule defaults to enabled.
+# [WayX] Source Script timeout ignored for Quantumult X.
+^https?:\/\/ddplus\.meituan\.net\/v\d\/mss_\w+\/picassovc url script-response-body https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js
 
 # [mitm]
 hostname = 103.37.155.60, *.dianping.com, img.meituan.net, p.meituan.com, rms.meituan.com, www.dpfile.com, awp-assets.meituan.net, s3plus.meituan.net, p*.meituan.net, ddplus.meituan.net

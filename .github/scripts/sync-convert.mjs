@@ -887,12 +887,16 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     const enableDynamic = Boolean(sc.enable) && !['true','false','1','0'].includes(enableFixed);
 
     const qxTagLines = sc.tag ? [`# ${sc.tag}`] : [];
+    const qxIgnoredOptionLines = [];
+    if (sc.argument) qxIgnoredOptionLines.push('# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.');
+    if (enableDynamic) qxIgnoredOptionLines.push('# [WayX] Source dynamic enable ignored for Quantumult X; converted rule defaults to enabled.');
+    if (sc.timeout) qxIgnoredOptionLines.push('# [WayX] Source Script timeout ignored for Quantumult X.');
     if (enableFixed === 'false' || enableFixed === '0') {
       qx.rewrite.push(...comments, ...qxTagLines);
       qx.rewrite.push(`# [WayX] Script disabled by source declaration: ${item.line}`);
-    } else if (sc.argument || enableDynamic || sc.timeout || sc.maxSize || sc.binary) {
-      qx.rewrite.push(...comments, ...qxTagLines);
-      qx.rewrite.push('# [WayX] SCRIPT REVIEW REQUIRED: QX declaration/helper cannot preserve this source argument/enable/timeout/max-size/binary option set without changing the source script.');
+    } else if (sc.maxSize || sc.binary) {
+      qx.rewrite.push(...comments, ...qxTagLines, ...qxIgnoredOptionLines);
+      qx.rewrite.push('# [WayX] SCRIPT REVIEW REQUIRED: QX declaration/helper cannot preserve this source max-size/binary option set without changing the source script.');
       qx.rewrite.push(`# Source declaration: ${item.line}`);
     } else {
       const qAction = selectQxScriptAction({
@@ -912,7 +916,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
           sectionKind: 'script',
           lines: [`${targetPattern} url ${qAction.action} ${qxUrl}`],
         });
-        qx.rewrite.push(...qxRendered.comments, ...qxTagLines, ...qxRendered.lines);
+        qx.rewrite.push(...qxRendered.comments, ...qxTagLines, ...qxIgnoredOptionLines, ...qxRendered.lines);
       }
     }
 

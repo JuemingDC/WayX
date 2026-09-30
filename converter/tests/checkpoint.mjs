@@ -1287,7 +1287,7 @@ assert.match(surgeScriptV2Native.line, /binary-body-mode=true/);
 
 const qxScriptV2NeedsReview = qxScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'request.js'});
 assert.equal(qxScriptV2NeedsReview.ok, false);
-assert.match(qxScriptV2NeedsReview.reason, /dynamic enable|argument/);
+assert.match(qxScriptV2NeedsReview.reason, /request-body bodyBytes example/);
 
 const surgeScriptV2NeedsReview = surgeScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'request.js', name:'x'});
 assert.equal(surgeScriptV2NeedsReview.ok, false);
@@ -1304,7 +1304,17 @@ const fixedQxArgument = qxScriptV2Plan(
   parseScriptV2('response if ${url} ~= /api/ then script("a.js", "plain-string") with requires_body=true'),
   {scriptUrl:'a.js'},
 );
-assert.equal(fixedQxArgument.ok, false);
-assert.match(fixedQxArgument.reason, /cannot be carried by the official Quantumult X rewrite declaration/);
+assert.equal(fixedQxArgument.ok, true);
+assert.match(fixedQxArgument.line, /url script-response-body a\.js$/);
+assert.ok(fixedQxArgument.notes.some(note => /argument ignored/i.test(note)));
+
+const qxIgnoredDynamicOptions = qxScriptV2Plan(
+  parseScriptV2('response if ${url} ~= /api/ then script("a.js", {${enabled}}) with enable=${enabled}, timeout=60, requires_body=true'),
+  {scriptUrl:'a.js', argumentIds:new Set(['enabled']), sourceText:'$done({body:$response.body});'},
+);
+assert.equal(qxIgnoredDynamicOptions.ok, true);
+assert.ok(qxIgnoredDynamicOptions.notes.some(note => /defaults to enabled/i.test(note)));
+assert.ok(qxIgnoredDynamicOptions.notes.some(note => /timeout ignored/i.test(note)));
+assert.ok(qxIgnoredDynamicOptions.notes.some(note => /argument ignored/i.test(note)));
 
 console.log('WayX converter checkpoint tests passed');
