@@ -2,6 +2,8 @@
 // Author: chance
 // Category: Converter / Metadata
 
+import { parseSourceMetadataHeader } from './source-metadata.mjs';
+
 const KNOWN_LABELS = new Map([
   ['author', 'Author'],
   ['homepage', 'Homepage'],
@@ -14,21 +16,6 @@ const KNOWN_LABELS = new Map([
   ['system', 'Platform'],
   ['system_version', 'System Version'],
 ]);
-
-function parseHeader(headerLines = []) {
-  const directives = new Map();
-  const comments = [];
-  for (const raw of headerLines) {
-    const line = String(raw ?? '').trimEnd();
-    const m = line.trim().match(/^#!([^=]+)=(.*)$/);
-    if (m) {
-      directives.set(m[1].trim().toLowerCase(), m[2].trim());
-      continue;
-    }
-    comments.push(line);
-  }
-  return { directives, comments };
-}
 
 function targetText(value, target) {
   if (!value) return value;
@@ -62,7 +49,7 @@ function preservedComments(lines) {
 }
 
 export function renderQxSnippetHeader(headerLines, entry, stamp) {
-  const { directives, comments } = parseHeader(headerLines);
+  const { directives, comments } = parseSourceMetadataHeader(headerLines);
   const out = [];
   const name = directives.get('name') || entry.id;
   const desc = targetText(directives.get('desc') || '', 'Quantumult X');
@@ -87,7 +74,7 @@ export function renderQxSnippetHeader(headerLines, entry, stamp) {
 }
 
 export function renderSurgeModuleHeader(headerLines, entry, stamp, { needsCore20 = false, argumentMetadata = [], needsLineRequirement = false } = {}) {
-  const { directives, comments } = parseHeader(headerLines);
+  const { directives, comments } = parseSourceMetadataHeader(headerLines);
   const name = directives.get('name') || entry.id;
   const desc = targetText(directives.get('desc') || entry.id, 'Surge');
   const out = [
