@@ -18,3 +18,21 @@ export function classifyComplexRewrite(ast) {
 }
 
 export const COMPLEX_REWRITE_FAMILIES = families.map(x => x.id);
+
+export function complexConditionKinds(node, out = []) {
+  if (!node) return out;
+  if (node.type === 'group') return complexConditionKinds(node.expression, out);
+  if (node.type === 'logical') {
+    out.push(node.operator);
+    complexConditionKinds(node.left, out);
+    complexConditionKinds(node.right, out);
+    return out;
+  }
+  if (node.type === 'comparison') {
+    out.push(node.operator);
+    out.push(node.left?.name || 'unknown');
+    return out;
+  }
+  out.push('unsupported');
+  return out;
+}
