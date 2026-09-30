@@ -121,6 +121,8 @@ response -> script-response-header
 
 `request.header.set / del / replace`、多动作 pipeline，以及 response phase 的 `set / del / replace` 等无法由官方静态 token 严格表达的行为使用 helper。helper 对 Header 名称执行大小写不敏感查找，并让 `header.replace` 的正则只作用于该 Header 值，因此保持 Action-local `$0...$n` 捕获语义。生成 helper 读取 `$request.headers` 或 `$response.headers` 后以 `$done({headers: ...})` 返回。
 
+Helper 选择继续遵守最小实现原则：固定值、单 URL 条件的 Header-only 操作优先生成专用 Header helper；只有出现 condition capture、运行时模板或更复杂条件时才使用通用 Complex helper。Header-only helper 不应携带无关 JSON/Body mutation runtime。
+
 `response.header.add` 例外：QX 官方 sample 的 Header object 返回形式不能证明重复同名 Header 可保留，因此不得用对象 set 冒充 add；在没有新的官方等价表示前注释 Review。
 
 对 Quantumult X 不发明数组 Header、重复 raw Header 行或其他未由官方 sample/已验证语法支持的返回格式。若 Loon 中存在**连续、同 phase、同 condition** 的多条 Header Rewrite，QX 输出必须将它们合并到一个 Header helper，并按源顺序执行全部动作；中间存在注释/空行或条件不同则不擅自跨边界合并。
