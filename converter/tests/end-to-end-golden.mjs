@@ -124,6 +124,23 @@ const disabledRewriteSource = `#!name=DisabledRewriteFixture
 #response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\/mock\\?/i then response.body.mock("text", "OK", 200)
 #response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\/json\\?/i then response.json.jq(".data.ads = []")
 `;
+const unknownSectionFixture = {
+  id:'UnknownSectionFixture',
+  source:'https://example.invalid/unknown-section.lpx',
+  qx:'UnknownSectionFixture.snippet',
+  surge:'UnknownSectionFixture.sgmodule',
+  category:'测试',
+};
+const unknownSectionSource = `#!name=UnknownSectionFixture
+[FutureFeature]
+foo = bar
+`;
+const unknownSectionOutput = convert(unknownSectionFixture, unknownSectionSource, new Map(), STAMP);
+assert.match(unknownSectionOutput.qx, /REVIEW REQUIRED: unsupported Loon source section \[FutureFeature\]/);
+assert.match(unknownSectionOutput.qx, /# Source declaration: foo = bar/);
+assert.match(unknownSectionOutput.surge, /REVIEW REQUIRED: unsupported Loon source section \[FutureFeature\]/);
+assert.match(unknownSectionOutput.surge, /# Source declaration: foo = bar/);
+
 const disabledRewriteOutput = convert(disabledRewriteFixture, disabledRewriteSource, new Map(), STAMP);
 assert.match(disabledRewriteOutput.surge, /^\[Body Rewrite\]$/m);
 assert.match(disabledRewriteOutput.surge, /#response if \$\{url\} ~= \/\^https:\\\/\\\/api\\\.example\\\.com\\\/json\\\?\/i then response\.json\.jq/);
