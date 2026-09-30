@@ -836,6 +836,18 @@ const legacyQxHeaderSet = planLegacyRewrite(
 assert.equal(legacyQxHeaderSet.section, 'rewrite');
 assert.match(legacyQxHeaderSet.line, /url script-request-header .*legacy_header_.*\.js$/);
 
+const legacyQxHeaderRegex = planLegacyRewrite(
+  '^https:\\/\\/api\\.example\\.com',
+  'header-replace-regex X-Test v(\\d+) n$1',
+  'qx',
+  legacyCtx,
+);
+assert.equal(legacyQxHeaderRegex.section, 'rewrite');
+assert.match(legacyQxHeaderRegex.line, /url script-request-header .*legacy_header_.*\.js$/);
+const legacyHeaderRegexHelper = [...legacyCtx.generatedScripts.values()].find(script => script.includes('"X-Test"') && script.includes('n$1'));
+assert.ok(legacyHeaderRegexHelper, 'legacy QX header-replace-regex must use helper when replacement captures are local');
+assert.match(legacyHeaderRegexHelper, /new RegExp\(source\), replacement/);
+
 assert.match(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-add Set-Cookie a=1', 'qx', legacyCtx).line,
   /REVIEW REQUIRED: QX header\.add cannot be represented losslessly/,
