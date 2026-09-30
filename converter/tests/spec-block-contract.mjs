@@ -8,7 +8,7 @@ const contracts=[
   ['05','docs/conversion-spec/05-generic-converter.md',['converter/src/source-catalog.mjs','converter/src/source-fetch.mjs','.github/scripts/sync-convert.mjs','.github/manual-assets.json','converter/tests/manual-assets.mjs']],
   ['10','docs/conversion-spec/10-target-format.md',['converter/src/paths.mjs','converter/src/metadata.mjs','converter/src/surge-module.mjs','converter/src/qx-official-capabilities.mjs','converter/src/surge-official-capabilities.mjs']],
   ['20','docs/conversion-spec/20-rule-mapping.md',['converter/src/rule-ast.mjs','converter/src/rule-qx.mjs','converter/src/rule-surge.mjs','converter/src/rule.mjs','converter/tests/rule-ast.mjs','converter/tests/catalog-rule-inventory.mjs','converter/fixtures/catalog-rule-inventory.json']],
-  ['30','docs/conversion-spec/30-rewrite-mapping.md',['converter/src/legacy-rewrite.mjs','converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-semantic.mjs','converter/src/complex-rewrite-types.mjs','converter/src/complex-rewrite-registry.mjs','converter/tests/complex-source-inventory.mjs']],
+  ['30','docs/conversion-spec/30-rewrite-mapping.md',['converter/src/rewrite-ir.mjs','converter/src/legacy-rewrite.mjs','converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-semantic.mjs','converter/src/complex-rewrite-types.mjs','converter/src/complex-rewrite-registry.mjs','converter/tests/rewrite-ir.mjs','converter/tests/complex-source-inventory.mjs']],
   ['40','docs/conversion-spec/40-regex-condition.md',['converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-actions.mjs','converter/src/target-regex.mjs']],
   ['50','docs/conversion-spec/50-json-jq-mock.md',['converter/src/jq.mjs','converter/src/dependency.mjs','converter/src/qx-mock.mjs','converter/src/surge-mock.mjs']],
   ['60','docs/conversion-spec/60-script-argument.md',['converter/src/script.mjs','converter/src/script-v2.mjs','converter/src/script-v2-target.mjs','converter/src/argument.mjs']],
@@ -54,6 +54,16 @@ assert.equal(/replace\([^\n]*\\\\\\\//.test(targetRegex), false, 'Block 40: targ
 assert.match(targetRegex,/sourceFlags:\s*flags/, 'Block 40: discarded source flags must remain observable metadata without being propagated');
 assert.match(syncConverter,/planComplexRewrite\(/, 'Block 30: unified converter must keep the complex helper planner in the target fallback chain');
 assert.equal(/planAdjacentQxHeaderGroups/.test(syncConverter), false, 'Block 30: independent source Rewrite declarations must never be merged into synthetic pipelines');
+const rewriteIr=await fs.readFile(path.join(ROOT,'converter/src/rewrite-ir.mjs'),'utf8');
+const legacyRewrite=await fs.readFile(path.join(ROOT,'converter/src/legacy-rewrite.mjs'),'utf8');
+assert.equal(/qx-official-capabilities|surge-official-capabilities/.test(rewriteIr), false, 'Block 30: Rewrite Semantic IR must stay target-neutral');
+assert.match(legacyRewrite,/legacyRewriteToSemanticIr\(pattern, action\)/, 'Block 30: Legacy Rewrite planner must route through Semantic IR');
+assert.match(syncConverter,/rewriteV2AstToSemanticIr\(ast, \{source:line\}\)/, 'Block 30: Rewrite v2 orchestration must build Semantic IR after source normalization');
+assert.match(syncConverter,/singleRewriteOperation\(ir\)/, 'Block 30: Rewrite v2 routing must consume normalized Semantic IR operations');
+assert.equal(/ast\.actions\[0\]\.name === 'response\.header\.add'/.test(syncConverter), false, 'Block 30: orchestration must not restore raw action-name routing for response.header.add');
+assert.equal(/ast\.actions\[0\]\.name === 'redirect'/.test(syncConverter), false, 'Block 30: orchestration must not restore raw action-name routing for redirect');
+assert.equal(/action => action\.name === 'response\.body\.mock_file'/.test(syncConverter), false, 'Block 30: orchestration must not restore raw action-name routing for mock_file');
+assert.match(converterWorkflow,/rewrite-ir\.mjs/, 'Block 30/80: Converter Check must execute Rewrite Semantic IR contract');
 const complexTypes=await fs.readFile(path.join(ROOT,'converter/src/complex-rewrite-types.mjs'),'utf8');
 assert.match(complexTypes,/response\.body\.mock.*response\.header\.set/s, 'Block 30: observed Bilibili-source complex signature must be registered generically');
 assert.match(upstreamWorkflow,/propose-conversion-issues\.mjs/, 'Block 80/90: unknown markers must be proposed as GitHub issues');
