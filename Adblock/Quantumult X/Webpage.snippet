@@ -4,14 +4,14 @@
 # Icon: https://rucu6.pages.dev/Icons/app/webpage.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-09-30 15:05:54 +08:00
+# Converted: 2026-09-30 15:52:32 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/webpage.lpx
 # Target: Quantumult X
 
 # [WayX] Policy binding: source PROXY is preserved as literal QX policy name PROXY; a matching target policy must exist.
-# [WayX] REVIEW REQUIRED: QX header.add cannot be represented losslessly: the official header object form does not prove duplicate-header preservation
+# [WayX] REVIEW REQUIRED: header.add duplicate semantics are not verified for qx
 # Source declaration: response if ${url} ~= /https:\/\/(rule\.)?kelee\.one\//i then response.header.add("content-disposition", "inline") | response if ${url} ~= /https:\/\/(rule\.)?kelee\.one\//i then response.header.set("content-type", "text/plain; charset=utf-8")
 
 # [filter_local]

@@ -1,4 +1,4 @@
-// Converted: 2026-09-30 15:05:54 +08:00
+// Converted: 2026-09-30 15:52:32 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /^(https:\/\/cn\.pornhub\.com\/view_video\.php\?viewkey=[^&]+)&.*$/i as urlMatch then redirect(302, "${urlMatch.1}")
