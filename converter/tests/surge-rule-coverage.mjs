@@ -28,7 +28,7 @@ const stats = {
   rules: 0,
   native: 0,
   dropped: 0,
-  preserved: 0,
+  boundProxy: 0,
   unsupportedPolicy: 0,
   review: 0,
   reasons: new Map(),
@@ -54,7 +54,7 @@ for (const entry of manifest) {
       stats.types.set(type, (stats.types.get(type) || 0) + 1);
     }
 
-    const mapped = surgeModuleRule(line);
+    const mapped = surgeModuleRule(line, {proxyPolicyPlaceholder:'{{{wayx_proxy_policy}}}'});
     if (mapped.kind === 'rule') {
       stats.native++;
       assert.equal(mapped.lines.at(-1), mapped.line);
@@ -65,9 +65,9 @@ for (const entry of manifest) {
       stats.dropped++;
       continue;
     }
-    if (mapped.kind === 'comment' && mapped.reason === 'source-proxy-policy-preserved') {
-      stats.preserved++;
-      assert.match(mapped.lines.join('\n'), /Source Loon plugin policy PROXY preserved without conversion/);
+    if (mapped.kind === 'rule' && mapped.reason === 'proxy-policy-argument') {
+      stats.boundProxy++;
+      assert.match(mapped.line, /\{\{\{wayx_proxy_policy\}\}\}/);
       continue;
     }
     if (mapped.kind === 'comment' && mapped.reason === 'unsupported-surge-module-policy') {
@@ -85,9 +85,9 @@ for (const entry of manifest) {
 assert.ok(stats.files > 0, 'no Loon source files were scanned');
 assert.ok(stats.rules > 0, 'no Loon [Rule] entries were scanned');
 
-// Loon plugin PROXY and full-profile built-in policies that the Module Manual
-// does not allow are deterministic commented source rules. Unknown external
-// policy names remain explicit Review conditions.
+// Loon plugin PROXY is deterministically bound through a declared Module
+// argument placeholder. Full-profile built-in policies that the Module Manual
+// does not allow remain deterministic comments. Unknown external names remain Review.
 const unexpectedReview = stats.reviewLines.filter(x => x.reason !== 'external-policy');
 assert.equal(
   unexpectedReview.length,
@@ -96,12 +96,12 @@ assert.equal(
     unexpectedReview.map(x => `${x.file}: [${x.reason}] ${x.line}`).join('\n'),
 );
 for (const item of stats.reviewLines.filter(x => x.reason === 'external-policy')) {
-  const mapped=surgeModuleRule(item.line);
+  const mapped=surgeModuleRule(item.line, {proxyPolicyPlaceholder:'{{{wayx_proxy_policy}}}'});
   assert.match(mapped.lines.join('\n'), /REVIEW REQUIRED: Surge Module requires an external policy binding/i);
 }
 
 const types = [...stats.types.entries()].sort((a, b) => a[0].localeCompare(b[0]));
 console.log(
-  `Surge Rule coverage: files=${stats.files}, rules=${stats.rules}, native=${stats.native}, dropped=${stats.dropped}, preserved=${stats.preserved}, unsupportedPolicy=${stats.unsupportedPolicy}, review=${stats.review}`
+  `Surge Rule coverage: files=${stats.files}, rules=${stats.rules}, native=${stats.native}, dropped=${stats.dropped}, boundProxy=${stats.boundProxy}, unsupportedPolicy=${stats.unsupportedPolicy}, review=${stats.review}`
 );
 console.log('Rule types: ' + types.map(([type, count]) => `${type}=${count}`).join(', '));
