@@ -6,6 +6,7 @@ import { minifyJqFile } from '../../converter/src/jq.mjs';
 import { qxTargetPath, surgeTargetPath } from '../../converter/src/paths.mjs';
 import { isRewriteV2, parseRewriteV2 } from '../../converter/src/rewrite-v2.mjs';
 import { validateRewriteV2Ast } from '../../converter/src/rewrite-v2-actions.mjs';
+import { dependencySpecFromAction, jqDependencySpecFromAction } from '../../converter/src/dependency.mjs';
 import { simpleUrlRewriteCondition } from '../../converter/src/rewrite-v2-semantic.mjs';
 import { isScriptV2, parseScriptV2 } from '../../converter/src/script-v2.mjs';
 import { validateSurgeModule } from '../../converter/src/surge-module.mjs';
