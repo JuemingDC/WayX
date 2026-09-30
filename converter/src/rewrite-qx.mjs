@@ -214,7 +214,7 @@ export function planQxRewrite(ir, ctx={}) {
   if (singleOp?.kind==='header' && singleOp.phase===ir.phase) {
     try {
       const plan=renderQxHeaderScript(ast,{stamp:ctx.stamp,category:ctx.category,sourceLine:source});
-      const key=crypto.createHash('sha1').update('header-single\\0'+source).digest('hex').slice(0,10);
+      const key=crypto.createHash('sha1').update('header-single\0'+source).digest('hex').slice(0,10);
       const filename='header_'+key+'.js';
       ctx.generatedScripts.set(filename,plan.script);
       return {section:'rewrite',line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/script/'+ctx.id+'/'+filename};
@@ -226,7 +226,7 @@ export function planQxRewrite(ir, ctx={}) {
   if (singleOp?.kind==='json' && singleOp.operation==='add' && singleOp.phase===ir.phase) {
     try {
       const plan=renderSingleJsonMutationScript(ast,{target:'qx',stamp:ctx.stamp,category:ctx.category,sourceLine:source});
-      const key=crypto.createHash('sha1').update('json-add-qx\\0'+source).digest('hex').slice(0,10);
+      const key=crypto.createHash('sha1').update('json-add-qx\0'+source).digest('hex').slice(0,10);
       const filename='json_add_qx_'+key+'.js';
       ctx.generatedScripts.set(filename,plan.script);
       return {section:'rewrite',line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/script/'+ctx.id+'/'+filename};
