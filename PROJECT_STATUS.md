@@ -85,7 +85,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 
 ## 3. Review 库存
 
-2026-10-01 规范 v1.17 已把 QX Source Script 的 `binary-body-mode` / `binary_body_mode` 纳入 KOP-XIAO `resource-parser.js` 兼容口径。目标 Review inventory 为：
+2026-10-01 规范 v1.18 已把 QX Source Script 的 `binary-body-mode` / `binary_body_mode` 纳入 KOP-XIAO `resource-parser.js` 兼容口径。目标 Review inventory 为：
 
 - **Quantumult X：0**
 - **Surge：0**
@@ -177,6 +177,7 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 - [x] Rewrite production 已建立统一 Semantic IR 交接层：Legacy Rewrite 与 Rewrite v2 保留独立 source parser，但均归一为 `rewrite-ir.mjs` 的 target-neutral operation model；production Rewrite v2 路由改为读取 IR operation，Legacy planner 也先经 IR 分类。IR 明确保留 Legacy absolute redirect 与 Rewrite v2 matched-range redirect 等来源语义差异，不因统一类别而强制共用错误映射。
 - [x] Rewrite target 决策已集中到 `rewrite-qx.mjs::planQxRewrite()` / `rewrite-surge.mjs::planSurgeRewrite()`：`sync-convert.mjs` 只负责 parse、依赖物化、IR 构建和 planner 调用；QX header 特判、native/helper/complex fallback 与 complex-handler 注册均移入对应 target planner。旧未定义 `rewriteAction(...)` conservative fallback 已移除，未证明等价路径统一显式 Review/Issue。
 - [x] Script production 已重构为 Legacy Script parser / Script v2 parser → `script-ir.mjs` target-neutral IR → `script-qx.mjs::planQxScript()` / `script-surge.mjs::planSurgeScript()`：`sync-convert.mjs` 不再选择 QX `script-*-header/body/echo`，也不再展开 Surge `type=http-*`、requires-body/max-size/binary/timeout/argument/enable 参数；Source Script URL、现有 QX KOP-XIAO-compatible option policy 与 Surge HTTP Script 语义保持不变。
+- [x] Source section/comment/header metadata orchestration 已拆分：`source-section.mjs` 统一活动声明与前置注释分组及 supported-section scope，`source-metadata.mjs` 生成 target-neutral header metadata IR，`qx-comment.mjs` 独占 QX `{# note #}` 绑定规则；`sync-convert.mjs` 不再维护第二份 comment parser/section whitelist。MITM planner/hostname 语义未改。
 - 每次新增 QX 官方 sample 证据时，复核现有 Rewrite Review 是否可以安全降级为 native/helper；Rule 只在官方明确支持对应 Rule Type 后才改为活动 filter。
 - [x] QX capability gate 已收窄为 Loon 去广告转换实际能力：仅核对 Rule 类型、WayX 实际使用的 Rewrite action 与 MITM `hostname` 是否仍有 Crossutility 官方依据；转换范围之外的能力不进入 registry。Surge 同样采用 Rule / Rewrite / hostname 边界。
 - [x] Surge official capability gate 已落地：production `rule.mjs` / `surge-module.mjs` 共用 `surge-official-capabilities.mjs`；CI 实时读取 Surge 官方 Manual，只验证 WayX 实际使用的 28 个 Rule Type、URL/Header/Body Rewrite、Map Local、HTTP request/response Script 与 MITM `hostname` 仍有官方依据。Surge 其它 Profile/Module 能力不进入本 gate。
