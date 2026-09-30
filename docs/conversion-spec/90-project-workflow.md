@@ -8,7 +8,7 @@
 4. 审计 canonical QX snippets。
 5. 审计 canonical Surge sgmodules。
 6. 审计 `module/` 人工模块。
-7. 审计 `script/` 路径与声明兼容性；**不修改脚本正文**。
+7. 审计 `script/` 路径与声明类型；**不做 Source Script runtime compatibility 审查，不修改脚本正文**。
 8. 审计 GitHub Actions / monitor，只允许遍历 Source Catalog 并调用同一个 generic converter。
 9. 重新生成 managed canonical。
 10. 全量 diff。
@@ -74,7 +74,7 @@ Source Catalog entry.source（原作者）
 → 直接下载 Loon plugin
 → 解析 plugin 中原始 script/dependency URL
 → 直接读取原 Source Script / dependency
-→ 只在内存中做兼容性/语义分析
+→ Source Script 仅在必要时做 HTTP action 类型辅助分析；dependency 做语义分析
 → 通用 converter
 → QX / Surge
 → validator / reconciliation
@@ -94,9 +94,12 @@ WayX 自动生成的 target helper script 不属于 Source Script 镜像，可�
 Rewrite/Mock 固定优先级：
 ```text
 native target syntax
-→ verified helper script
+→ dedicated semantic helper
+→ multi-action complex helper（仅 actions >= 2）
 → commented REVIEW REQUIRED
 ```
+
+Rule 不使用上述 Script fallback。Quantumult X 官方 sample 未确认的逻辑规则、端口类等 Rule Type 只保留为注释。
 
 项目级直接丢弃：
 - Surge ad-block Module 的源 `FINAL`；
@@ -108,9 +111,9 @@ native target syntax
 ## 自动化 Fail-Closed 约束
 
 - Gate 必须按 Rule/Rewrite/Script/MITM 的真实语义分类，不能按作者目录、插件目录、插件名整体升级或降级。
-- 外部 policy/group（例如未在目标 Module 中定义的 `PROXY`）不是内建 Safe policy，必须进入 Review。
+- Loon Plugin 的 `PROXY` 不做策略转换：QX 保留字面 `PROXY`；Surge Module 仅将源 Rule 注释保留，因为 Module 不能定义/激活任意外部 policy。其他外部 policy/group 仍不得伪装成内建 Safe policy。
 - Block 20 已定义的 `URL-REGEX + REJECT/REJECT-200/REJECT-IMG/REJECT-DICT/REJECT-ARRAY/REJECT-DROP` 属于确定性映射，可进入 Safe Tier。
-- Quantumult X Source Script compatibility scan 失败必须参与 Review 判定；Surge 不做 Source Script runtime compatibility scan。
+- Quantumult X 与 Surge 均不运行 Source Script compatibility scan。原脚本 URL 直接保留；正文读取失败本身不触发 compatibility Review。
 - 只要 Review 条件成立，即使本轮没有普通 repository diff，也必须写入临时 `monitor/review-queue/<run>.md` 并创建 `work/upstream-*` PR；不能静默退出。
 - Work 完成前必须删除上述临时 review marker。
 - Safe Tier 结果只能推送到生成时使用的同一个 main 基线。若 remote main 在生成后前进，本轮跳过推送，由新一轮从新基线重新生成；禁止先生成再无条件 rebase 到新 main。
