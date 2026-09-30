@@ -269,5 +269,24 @@ CI 必须验证 Script target planning 已从 orchestration 中分离：
 - QX planner：`converter/src/script-qx.mjs`
 - Surge planner：`converter/src/script-surge.mjs`
 - architecture contract：`converter/tests/script-ir-target-planners.mjs`
+## 80.15 Source section / comment / metadata architecture gate
+
+CI 必须验证 source orchestration 不再在 `sync-convert.mjs` 内重复实现 comment/metadata parsing：
+
+- source item/comment grouping 固定由 `source-section.mjs` 提供；
+- supported source section scope 固定由同一模块导出，orchestration 不得本地维护第二份 Set；
+- header `#!key=value` parsing 固定由 `source-metadata.mjs` 提供；
+- QX `{# note #}` 只由 `qx-comment.mjs` 负责；
+- QX note 必须继续满足“一条原始单行注释 + 一条源声明 + 一条活动目标 filter/rewrite”的现有约束；
+- Surge 普通 source comment 不经过 QX note 逻辑；
+- unknown active source section 仍逐声明产生 `ISSUE REQUIRED [unknown-source-section]`；
+- 本架构迁移不得修改 MITM 语义、目标 metadata 内容或 canonical 输出。
+
+实现：
+- source section/comment：`converter/src/source-section.mjs`
+- source metadata IR：`converter/src/source-metadata.mjs`
+- QX inline note：`converter/src/qx-comment.mjs`
+- target metadata renderer：`converter/src/metadata.mjs`
+- contract：`converter/tests/source-section-comments.mjs`
 
 

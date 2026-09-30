@@ -5,14 +5,14 @@ import path from 'node:path';
 const ROOT=process.cwd();
 const contracts=[
   ['00','docs/conversion-spec/00-authority.md',['converter/tests/genericity-audit.mjs','converter/tools/audit-repository.mjs']],
-  ['05','docs/conversion-spec/05-generic-converter.md',['converter/src/source-catalog.mjs','converter/src/source-fetch.mjs','.github/scripts/sync-convert.mjs','.github/manual-assets.json','converter/tests/manual-assets.mjs']],
+  ['05','docs/conversion-spec/05-generic-converter.md',['converter/src/source-catalog.mjs','converter/src/source-section.mjs','converter/src/source-metadata.mjs','converter/src/source-fetch.mjs','.github/scripts/sync-convert.mjs','.github/manual-assets.json','converter/tests/source-section-comments.mjs','converter/tests/manual-assets.mjs']],
   ['10','docs/conversion-spec/10-target-format.md',['converter/src/paths.mjs','converter/src/metadata.mjs','converter/src/surge-module.mjs','converter/src/qx-official-capabilities.mjs','converter/src/surge-official-capabilities.mjs']],
   ['20','docs/conversion-spec/20-rule-mapping.md',['converter/src/rule-ast.mjs','converter/src/rule-qx.mjs','converter/src/rule-surge.mjs','converter/src/rule.mjs','converter/tests/rule-ast.mjs','converter/tests/catalog-rule-inventory.mjs','converter/fixtures/catalog-rule-inventory.json']],
   ['30','docs/conversion-spec/30-rewrite-mapping.md',['converter/src/rewrite-ir.mjs','converter/src/rewrite-qx.mjs','converter/src/rewrite-surge.mjs','converter/src/rewrite-plan-result.mjs','converter/src/legacy-rewrite.mjs','converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-semantic.mjs','converter/src/complex-rewrite-types.mjs','converter/src/complex-rewrite-registry.mjs','converter/tests/rewrite-ir.mjs','converter/tests/rewrite-target-planners.mjs','converter/tests/complex-source-inventory.mjs']],
   ['40','docs/conversion-spec/40-regex-condition.md',['converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-actions.mjs','converter/src/target-regex.mjs']],
   ['50','docs/conversion-spec/50-json-jq-mock.md',['converter/src/jq.mjs','converter/src/dependency.mjs','converter/src/qx-mock.mjs','converter/src/surge-mock.mjs']],
   ['60','docs/conversion-spec/60-script-argument.md',['converter/src/script.mjs','converter/src/script-legacy.mjs','converter/src/script-v2.mjs','converter/src/script-ir.mjs','converter/src/script-qx.mjs','converter/src/script-surge.mjs','converter/src/script-v2-target.mjs','converter/src/argument.mjs','converter/tests/script-ir-target-planners.mjs']],
-  ['70','docs/conversion-spec/70-mitm-comments.md',['converter/src/mitm.mjs','converter/src/metadata.mjs']],
+  ['70','docs/conversion-spec/70-mitm-comments.md',['converter/src/mitm.mjs','converter/src/source-section.mjs','converter/src/source-metadata.mjs','converter/src/qx-comment.mjs','converter/src/metadata.mjs','converter/tests/source-section-comments.mjs']],
   ['80','docs/conversion-spec/80-review-validation.md',['converter/src/surge-module.mjs','converter/src/unknown-issue.mjs','converter/src/qx-official-capabilities.mjs','converter/src/surge-official-capabilities.mjs','converter/tools/conversion-reports.mjs','converter/tests/unknown-issue-markers.mjs','converter/tests/qx-official-capabilities.mjs','converter/tests/surge-official-capabilities.mjs','converter/tests/genericity-audit.mjs','converter/tests/generated-helper-refs.mjs','converter/tests/end-to-end-golden.mjs']],
   ['90','docs/conversion-spec/90-project-workflow.md',['.github/scripts/sync-convert.mjs','.github/scripts/propose-conversion-issues.mjs','converter/tools/regenerate-canonical.mjs','.github/workflows/converter-check.yml','.github/workflows/upstream-monitor.yml']],
 ];
@@ -95,7 +95,7 @@ assert.match(upstreamWorkflow,/steps\.issues\.outputs\.has_unknown/, 'Block 90: 
 assert.match(syncConverter,/QX_WAYX_FILTER_TYPES/, 'Block 80: QX validator must consume the explicit official-backed active filter whitelist');
 assert.match(syncConverter,/QX_WAYX_SCRIPT_ACTIONS/, 'Block 80: QX validator must consume the explicit official-backed Script action whitelist');
 assert.match(syncConverter,/QX_WAYX_SNIPPET_MITM_KEYS/, 'Block 80: QX validator must consume the official-backed snippet MITM whitelist');
-assert.match(syncConverter,/supportedSourceSections/, 'Block 80: source orchestration must explicitly account for unsupported active sections');
+assert.match(syncConverter,/isSupportedSourceSection\(/, 'Block 80: source orchestration must explicitly account for unsupported active sections through the shared source-section scope');
 assert.match(syncConverter,/ISSUE REQUIRED \[unknown-source-section\]/, 'Block 80: unknown active source sections must fail closed and request an issue');
 assert.equal(/inspectQxScriptCompatibility|qxManualPortComment/.test(syncConverter), false, 'Block 60: production converter must not gate Source Script execution on runtime compatibility scanning');
 const scriptIr=await fs.readFile(path.join(ROOT,'converter/src/script-ir.mjs'),'utf8');
@@ -111,6 +111,21 @@ assert.equal(/normalizeRegexBodyForTarget\(sc\.pattern\)|sc\.requiresBody|sc\.bi
 assert.match(scriptQx,/export function planQxScript\(ir/, 'Block 60: QX Script planner must consume Script IR');
 assert.match(scriptSurge,/export function planSurgeScript\(ir/, 'Block 60: Surge Script planner must consume Script IR');
 assert.match(converterWorkflow,/script-ir-target-planners\.mjs/, 'Block 60/80: Converter Check must execute Script IR target planner contract');
+const sourceSection=await fs.readFile(path.join(ROOT,'converter/src/source-section.mjs'),'utf8');
+const sourceMetadata=await fs.readFile(path.join(ROOT,'converter/src/source-metadata.mjs'),'utf8');
+const qxComment=await fs.readFile(path.join(ROOT,'converter/src/qx-comment.mjs'),'utf8');
+const metadataRenderer=await fs.readFile(path.join(ROOT,'converter/src/metadata.mjs'),'utf8');
+assert.equal(/QX|Quantumult|Surge|target/i.test(sourceSection.replace(/Category:[^\n]*/g,'')), false, 'Block 05/70: source-section grouping must remain target-neutral');
+assert.equal(/QX|Quantumult|Surge|target/i.test(sourceMetadata.replace(/Category:[^\n]*/g,'')), false, 'Block 70: source metadata parser must remain target-neutral');
+assert.match(syncConverter,/groupSourceSectionItems\(/, 'Block 05/70: orchestration must consume shared source section grouping');
+assert.match(syncConverter,/cleanSourceComments\(/, 'Block 70: orchestration must consume shared source comment cleaning');
+assert.match(syncConverter,/isSupportedSourceSection\(/, 'Block 05/80: orchestration must consume shared supported-section scope');
+assert.match(syncConverter,/attachQxInlineNote\(/, 'Block 70: orchestration must delegate QX inline-note rendering');
+assert.equal(/function sectionItems\(|function cleanComments\(|function sourceCommentText\(|function qxInlineNoteCandidate\(|function qxAttachInlineNote\(|supportedSourceSections\s*=/.test(syncConverter), false, 'Block 05/70: orchestration must not restore duplicate source comment/section parsing');
+assert.match(metadataRenderer,/parseSourceMetadataHeader\(headerLines\)/, 'Block 70: target metadata renderer must consume source metadata IR');
+assert.equal(/function parseHeader\(/.test(metadataRenderer), false, 'Block 70: metadata renderer must not reparse source header directives');
+assert.match(qxComment,/export function attachQxInlineNote/, 'Block 70: QX note logic must live in target-specific renderer');
+assert.match(converterWorkflow,/source-section-comments\.mjs/, 'Block 70/80: Converter Check must execute source section/comment contract');
 const surgeValidator=await fs.readFile(path.join(ROOT,'converter/src/surge-module.mjs'),'utf8');
 assert.match(surgeValidator,/WayX ad-block Surge \[Script\] only accepts HTTP rewrite types/, 'Block 80: Surge validator must be explicitly scoped to ad-block rewrite scripts');
 assert.match(surgeValidator,/SURGE_WAYX_REWRITE_SECTIONS/, 'Block 80: Surge validator must consume the official-backed rewrite registry');

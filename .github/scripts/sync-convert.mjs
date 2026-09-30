@@ -14,6 +14,8 @@ import { analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs } from '../../c
 import { surgeArgumentMetadata } from '../../converter/src/argument.mjs';
 import { hasActiveSurgeLines, renderSurgeModuleHeader, validateSurgeModule } from '../../converter/src/surge-module.mjs';
 import { renderQxSnippetHeader } from '../../converter/src/metadata.mjs';
+import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection } from '../../converter/src/source-section.mjs';
+import { attachQxInlineNote } from '../../converter/src/qx-comment.mjs';
 import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
 import { planMitmLine } from '../../converter/src/mitm.mjs';
 import { fetchOriginalText, fetchOriginalBytes, resolveOriginalUrl } from '../../converter/src/source-fetch.mjs';
@@ -125,96 +127,6 @@ function rewriteV2Action(line, target, ctx) {
   return planner(ir, {...ctx, sourceLine:line, argumentRefs:argumentRefs.all});
 }
 
-function sectionItems(lines = []) {
-  const items = [];
-  let pending = [];
-  for (let sourceIndex = 0; sourceIndex < lines.length; sourceIndex++) {
-    const raw = lines[sourceIndex];
-    const t = raw.trim();
-    if (!t || t.startsWith('#') || t.startsWith(';') || t.startsWith('//')) {
-      pending.push(raw);
-      continue;
-    }
-    items.push({ comments: pending, line: t, sourceIndex });
-    pending = [];
-  }
-  if (pending.length) items.push({ comments: pending, line: null, sourceIndex: lines.length });
-  return items;
-}
-
-function cleanComments(comments) {
-  return comments.map(x => x || '').map(x => x.trim() ? x : '').filter((x, i, a) => !(x === '' && a[i - 1] === ''));
-}
-
-function sourceCommentText(raw) {
-  const text = String(raw ?? '').trim();
-  const match = text.match(/^(?:#|;|\/\/)\s*(.*?)\s*$/);
-  return match ? match[1].trim() : null;
-}
-
-function looksLikeCommentedSourceDeclaration(text, sectionKind) {
-  const value = String(text || '').trim();
-  if (!value) return false;
-  if (sectionKind === 'rule') {
-    return /^(?:[A-Z][A-Z0-9-]*|AND|OR|NOT)\s*,/i.test(value);
-  }
-  if (sectionKind === 'rewrite') {
-    if (isRewriteV2(value)) return true;
-    return /^\S+\s+(?:-\s+)?(?:reject(?:-[A-Za-z0-9-]+)?|302\b|307\b|header\b|(?:response-)?header-(?:add|del|replace|replace-regex)\b|(?:request|response)-body-(?:replace-regex|json-|mock)|mock-(?:request|response)-body\b)/i.test(value);
-  }
-  if (sectionKind === 'script') {
-    if (isScriptV2(value)) return true;
-    return Boolean(parseLegacyScriptLine(value)?.script?.path);
-  }
-  return false;
-}
-
-function qxInlineNoteCandidate(sectionLines, item, sectionKind) {
-  if (!item?.line || !Number.isInteger(item.sourceIndex) || item.sourceIndex < 1) return null;
-  const index = item.sourceIndex;
-  const previousRaw = sectionLines[index - 1];
-  const previous = String(previousRaw ?? '').trim();
-  const note = sourceCommentText(previousRaw);
-  if (!previous || note === null || !note || note.includes('{#') || note.includes('#}')) return null;
-
-  // Exactly one adjacent source comment only. Multiple comment lines remain
-  // ordinary comments so they cannot be collapsed into one QX note.
-  if (index >= 2 && sourceCommentText(sectionLines[index - 2]) !== null) return null;
-
-  // If another active source declaration immediately follows, the single
-  // comment is treated as a group comment and must not be attached to only
-  // the first target rule.
-  if (index + 1 < sectionLines.length) {
-    const next = String(sectionLines[index + 1] ?? '').trim();
-    if (next && sourceCommentText(sectionLines[index + 1]) === null) return null;
-  }
-
-  // A commented-out Rule/Rewrite line is source content, not a human note.
-  if (looksLikeCommentedSourceDeclaration(note, sectionKind)) return null;
-
-  return { text: note, raw: previousRaw };
-}
-
-function qxAttachInlineNote({sectionLines, item, sectionKind, lines, eligible = true}) {
-  const output = (lines || []).filter(line => line !== undefined && line !== null && String(line).length);
-  const candidate = eligible ? qxInlineNoteCandidate(sectionLines, item, sectionKind) : null;
-  const singleActive =
-    candidate &&
-    output.length === 1 &&
-    !String(output[0]).includes('\n') &&
-    !String(output[0]).trim().startsWith('#');
-
-  if (!singleActive) {
-    return { comments: cleanComments(item.comments), lines: output };
-  }
-
-  const remaining = [...item.comments];
-  if (remaining.length && remaining.at(-1) === candidate.raw) remaining.pop();
-  return {
-    comments: cleanComments(remaining),
-    lines: [`{# ${candidate.text} #} ${output[0]}`],
-  };
-}
 
 function surgeSectionArray(sg, section) {
   return ({url:sg.url, header:sg.header, map:sg.map, body:sg.body, script:sg.script})[section] || null;
@@ -257,7 +169,7 @@ function planDisabledSurgeRewriteComments(comments, ctx) {
 
 async function materializeMockFiles(entry, parsed) {
   const out = new Map();
-  for (const item of sectionItems(parsed.sections.get('Rewrite'))) {
+  for (const item of groupSourceSectionItems(parsed.sections.get('Rewrite'))) {
     if (!item.line || !isRewriteV2(item.line)) continue;
     try {
       const ast = parseRewriteV2(item.line);
@@ -289,7 +201,7 @@ async function materializeMockFiles(entry, parsed) {
 
 async function materializeJqFiles(entry, parsed) {
   const out = new Map();
-  for (const item of sectionItems(parsed.sections.get('Rewrite'))) {
+  for (const item of groupSourceSectionItems(parsed.sections.get('Rewrite'))) {
     if (!item.line || !isRewriteV2(item.line)) continue;
     try {
       const ast = parseRewriteV2(item.line);
@@ -323,10 +235,9 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
 
   const qx = { filter: [], rewrite: [], mitm: [], notes: [], generatedScripts: new Map() };
   const sg = { rule: [], url: [], header: [], map: [], body: [], script: [], mitm: [], notes: [], generatedScripts: new Map() };
-  const supportedSourceSections = new Set(['Argument','Rule','Rewrite','Script','MITM','MitM']);
   for (const [sectionName, sectionLines] of parsed.sections) {
-    if (supportedSourceSections.has(sectionName)) continue;
-    const active = sectionItems(sectionLines).filter(item => item.line).map(item => item.line);
+    if (isSupportedSourceSection(sectionName)) continue;
+    const active = groupSourceSectionItems(sectionLines).filter(item => item.line).map(item => item.line);
     if (!active.length) continue;
     const reason = '# [WayX] ISSUE REQUIRED [unknown-source-section]: unsupported Loon source section [' + sectionName + '] is outside the current ad-block conversion grammar';
     for (const line of active) {
@@ -362,11 +273,11 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   }
 
   const ruleSectionLines = parsed.sections.get('Rule') || [];
-  for (const item of sectionItems(ruleSectionLines)) {
-    const comments = cleanComments(item.comments);
+  for (const item of groupSourceSectionItems(ruleSectionLines)) {
+    const comments = cleanSourceComments(item.comments);
     if (!item.line) { qx.filter.push(...comments); sg.rule.push(...comments); continue; }
     const qr = canonicalQxRule(item.line);
-    const qxRendered = qxAttachInlineNote({
+    const qxRendered = attachQxInlineNote({
       sectionLines: ruleSectionLines,
       item,
       sectionKind: 'rule',
@@ -382,13 +293,13 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   }
 
   const rewriteSectionLines = parsed.sections.get('Rewrite') || [];
-  const rewriteItems = sectionItems(rewriteSectionLines);
+  const rewriteItems = groupSourceSectionItems(rewriteSectionLines);
 
   for (let rewriteIndex = 0; rewriteIndex < rewriteItems.length; rewriteIndex++) {
     const item = rewriteItems[rewriteIndex];
-    const comments = cleanComments(item.comments);
+    const comments = cleanSourceComments(item.comments);
     const surgeCommentPlan = planDisabledSurgeRewriteComments(item.comments, sctx);
-    const surgeComments = cleanComments(surgeCommentPlan.passthrough);
+    const surgeComments = cleanSourceComments(surgeCommentPlan.passthrough);
     for (const routed of surgeCommentPlan.routed) {
       const dest = surgeSectionArray(sg, routed.section);
       if (dest) dest.push(...routed.lines);
@@ -411,7 +322,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     } else {
       const qdest = qr.section === 'rewrite' ? qx.rewrite : qx.notes;
       if (qr.section === 'rewrite') {
-        const qxRendered = qxAttachInlineNote({
+        const qxRendered = attachQxInlineNote({
           sectionLines: rewriteSectionLines,
           item,
           sectionKind: 'rewrite',
@@ -434,8 +345,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
 
   const scriptSectionLines = parsed.sections.get('Script') || [];
   let scriptIndex = 0;
-  for (const item of sectionItems(scriptSectionLines)) {
-    const comments = cleanComments(item.comments);
+  for (const item of groupSourceSectionItems(scriptSectionLines)) {
+    const comments = cleanSourceComments(item.comments);
     if (!item.line) continue;
 
     let ir;
@@ -478,7 +389,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
       if (sourceSyntax==='legacy' && ir.sourcePayload.tag) qx.rewrite.push(`# ${ir.sourcePayload.tag}`);
       qx.rewrite.push(`# [WayX] Script disabled by source ${sourceSyntax==='v2' ? 'option' : 'declaration'}: ${item.line}`);
     } else {
-      const qxRendered=qxAttachInlineNote({
+      const qxRendered=attachQxInlineNote({
         sectionLines:scriptSectionLines,
         item,
         sectionKind:'script',
@@ -513,8 +424,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
   }
 
   const mitmLines = parsed.sections.get('MitM') || parsed.sections.get('MITM') || [];
-  for (const item of sectionItems(mitmLines)) {
-    const comments = cleanComments(item.comments);
+  for (const item of groupSourceSectionItems(mitmLines)) {
+    const comments = cleanSourceComments(item.comments);
     if (!item.line) continue;
     const qPlan = planMitmLine(item.line, 'qx');
     const sPlan = planMitmLine(item.line, 'surge');
@@ -587,7 +498,7 @@ async function inspectSourceScript(reference, pluginSourceUrl) {
 function scriptUrls(source) {
   const urls = new Set([...source.matchAll(/script-path=([^,\s]+)/gi)].map(m => m[1].trim()));
   const parsed = parseLoon(source);
-  for (const item of sectionItems(parsed.sections.get('Script'))) {
+  for (const item of groupSourceSectionItems(parsed.sections.get('Script'))) {
     if (!item.line || !isScriptV2(item.line)) continue;
     try { urls.add(parseScriptV2(item.line).script.path); }
     catch {}
