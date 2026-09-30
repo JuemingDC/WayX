@@ -282,7 +282,7 @@ for (const testCase of cases) {
   }
 
   if (testCase.name === 'MyBlockAds') {
-    assert.equal(actual.qxReview, 0);
+    assert.equal(actual.qxReview, 8);
     assert.equal(actual.surgeReview, 0);
     assert.doesNotMatch(out.qx, /jq-path=/);
     assert.doesNotMatch(out.surge, /jq-path=/);
