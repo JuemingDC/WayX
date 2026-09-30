@@ -58,6 +58,18 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
     return unsupported('Loon Script v2 $argument cannot be carried by the official Quantumult X rewrite declaration without changing the script');
   }
 
+  const timeout = scriptOption(ast, 'timeout');
+  if (timeout) {
+    return unsupported('Loon Script v2 timeout has no verified Quantumult X rewrite declaration or lossless helper bridge');
+  }
+  const debug = scriptOption(ast, 'debug');
+  if (debug?.type === 'boolean' && debug.value) {
+    return unsupported('Loon Script v2 debug=true has no verified Quantumult X rewrite declaration or lossless helper bridge');
+  }
+  if (scriptOptionBoolean(ast, 'binary_body_mode', false)) {
+    return unsupported('Loon Script v2 binary_body_mode=true has no verified Quantumult X rewrite declaration or lossless helper bridge');
+  }
+
   const action = selectQxScriptAction({
     phase:ast.phase,
     requiresBody:scriptOptionBoolean(ast, 'requires_body', false),
@@ -66,10 +78,6 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
   });
 
   const notes = [...(condition.notes || [])];
-  const timeout = scriptOption(ast, 'timeout');
-  if (timeout) notes.push('Loon timeout is not represented in the Quantumult X rewrite declaration');
-  const debug = scriptOption(ast, 'debug');
-  if (debug?.type === 'boolean' && debug.value) notes.push('Loon debug=true has no Quantumult X rewrite declaration field');
 
   return {
     ok:true,
@@ -79,7 +87,7 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
     action:action.action,
     line:condition.pattern + ' url ' + action.action + ' ' + scriptUrl,
     tag:fixedOption(ast, 'tag'),
-    binaryBodyMode:scriptOptionBoolean(ast, 'binary_body_mode', false),
+    binaryBodyMode:false,
     notes,
   };
 }
