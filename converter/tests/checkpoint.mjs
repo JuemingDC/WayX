@@ -1134,6 +1134,20 @@ const qxScriptV2Native = qxScriptV2Plan(
 assert.equal(qxScriptV2Native.ok, true);
 assert.match(qxScriptV2Native.line, /url script-response-body https:\/\/example\.com\/a\.js$/);
 
+const qxResponseBinaryNative = qxScriptV2Plan(
+  parseScriptV2('response if ${url} ~= /image/i then script("https://example.com/binary.js") with requires_body=true, binary_body_mode=true'),
+  {scriptUrl:'https://example.com/binary.js', sourceText:'$done({bodyBytes:$response.bodyBytes});'},
+);
+assert.equal(qxResponseBinaryNative.ok, true);
+assert.match(qxResponseBinaryNative.line, /url script-response-body /);
+
+const qxRequestBinaryUnsupported = qxScriptV2Plan(
+  parseScriptV2('request if ${url} ~= /upload/i then script("https://example.com/binary.js") with requires_body=true, binary_body_mode=true'),
+  {scriptUrl:'https://example.com/binary.js', sourceText:'$done({bodyBytes:$request.bodyBytes});'},
+);
+assert.equal(qxRequestBinaryUnsupported.ok, false);
+assert.match(qxRequestBinaryUnsupported.reason, /request-body bodyBytes example/);
+
 const surgeScriptV2Native = surgeScriptV2Plan(
   parseScriptV2('request if ${url} ~= /submit/i then script("https://example.com/request.js") with requires_body=true, binary_body_mode=true'),
   {scriptUrl:'https://example.com/request.js', name:'request_script'},
