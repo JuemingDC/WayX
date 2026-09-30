@@ -1,4 +1,4 @@
-// Converted: 2026-10-01 06:39:14 +08:00
+// Converted: 2026-10-01 06:41:48 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /^https:\/\/exhentai\.org/i then redirect(307, "https://e-hentai.org")
