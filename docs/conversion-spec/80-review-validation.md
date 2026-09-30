@@ -49,15 +49,18 @@ Target 已转换语义项
 ## 80.3 Quantumult X Validator
 
 必须检查：
-- 只使用 Crossutility 官方 sample 已确认 filter/action；
+- 每一条活动行都必须能分类为 Crossutility 官方 sample 已确认的 QX filter、rewrite action 或 MITM key；未知活动行直接失败；
+- filter type 只允许当前转换规范已经确认的 QX 类型；
+- rewrite action 只允许官方 sample 已确认的 reject / redirect / request-header / body / jsonjq / Script action；
+- Script action 名称只允许 `script-request-header / script-request-body / script-response-header / script-response-body / script-echo-response / script-analyze-echo-response`；
 - section 标题全部注释化；
 - snippet 头部不存在活动 `#!...` 来源 metadata；
 - 无 `[hH][tT][tT][pP]` 自动 case-fold；
-- 无未经官方确认的 `(?i)`；
+- 无未经官方确认的 `(?i)` / `(?m)` / `(?s)` 恢复 flags；
 - QX IP filter 不含 `no-resolve`；
 - 无 Loon/Surge 私有 action；
 - 无活动 `jq-path=`，且 legacy `jq-path=` 不得出现在目标语义项中；
-- Script action 与脚本行为匹配。
+- Script action 与脚本行为匹配；Source Script 无正向 QX 兼容证据时必须保持注释/Review。
 
 ## 80.4 Surge Validator
 
@@ -69,6 +72,7 @@ Target 已转换语义项
 - Module policy 仅使用当前官方资料或当前 Surge App 运行时已直接验证的内建值；未知/用户 policy group 不作为活动 Rule
 - 外部 policy 不作为活动 Module Rule
 - URL/Header/Body/Map Local/Script 参数合法
+- WayX 去广告范围内的活动 Script declaration 必须显式声明 type；validator 不接受项目范围外的调度/事件/generic Script 类型
 - 自动转换生成的 MITM hostname 使用 `%APPEND%`；validator 同时接受官方合法的 hostname override
 - 不存在来源插件专属活动 metadata
 - 不存在来源平台 Rewrite v2 行
