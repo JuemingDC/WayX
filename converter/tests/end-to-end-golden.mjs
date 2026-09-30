@@ -35,7 +35,7 @@ response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then response.head
 hostname=api.example.com
 `;
 const headerGroupOutput = convert(headerGroupFixture, headerGroupSource, new Map(), STAMP);
-assert.match(headerGroupOutput.qx, /REVIEW REQUIRED: header\.add duplicate semantics are not verified for qx/);
+assert.match(headerGroupOutput.qx, /REVIEW REQUIRED: QX header\.add cannot be represented losslessly/);
 assert.equal(
   headerGroupOutput.qx.split(/\r?\n/).filter(line => !line.trim().startsWith('#') && /script-response-header/.test(line)).length,
   1,
