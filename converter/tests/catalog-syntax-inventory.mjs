@@ -8,8 +8,8 @@ import path from 'node:path';
 import {
   isRewriteV2,
   parseRewriteV2,
-  validateRewriteV2Ast,
 } from '../src/rewrite-v2.mjs';
+import { validateRewriteV2Ast } from '../src/rewrite-v2-actions.mjs';
 import {
   isScriptV2,
   parseScriptV2,
