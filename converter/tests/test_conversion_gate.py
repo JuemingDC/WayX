@@ -34,6 +34,9 @@ for policy in (
 ok, reason = gate.simple_rule("URL-REGEX,^https://ads\\.example\\.com,REJECT-NO-DROP")
 assert not ok and "require semantic review" in reason
 
+ok, reason = gate.simple_rule(r'URL-REGEX,"^https://api\\.example\\.com/(?:a,b)$",REJECT')
+assert ok, reason
+
 ok, reason = gate.simple_rule("DOMAIN,example.com,DIRECT")
 assert ok, reason
 
