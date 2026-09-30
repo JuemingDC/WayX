@@ -51,14 +51,14 @@ WayX/
 转换以“原行为与目标平台官方格式”优先，不为了统一写法而改变实现机制：
 
 - jq / JSON 结构化处理 → 目标平台原生 jq；
-- Source JavaScript → 原文件原样保留；只转换声明，不修改、wrapper、fork 或自动替换运行时 API；
+- Source JavaScript → 原文件原样保留并直接引用原 URL；QX/Surge 均不做 runtime compatibility gate，只转换声明，不修改、wrapper、fork 或自动替换运行时 API；
 - URL Rewrite → 对应目标平台 URL Rewrite；
 - Header Rewrite → 对应目标平台 Header Rewrite；
 - Rule / Filter → 对应目标平台 Rule / Filter；
 - 本地响应 / reject-dict → 使用目标平台语义等价的本地响应机制；
 - MITM → 仅保留实际需要的 hostname。
 
-只有非 Source Script 的 Rewrite/Mock 动作在目标平台确实缺少原生表达时，才允许生成最小 helper script；Source Script 本身不改写。
+只有 Rewrite/Mock 在目标平台确实缺少严格等价的原生表达时，才允许生成 helper script；Rule 不用 Script 补齐。通用 complex helper 只处理多 action pipeline，单 action 必须使用对应专用 helper。Source Script 本身不改写。
 
 转换时保留原注释，并追加转换时间、作者 chance、模块分类、目标平台与原始来源。
 
