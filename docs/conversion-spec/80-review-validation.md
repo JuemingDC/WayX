@@ -206,3 +206,19 @@ Surge production validator 与 official capability gate 必须共用同一 regis
 - live evidence test：`converter/tests/surge-official-capabilities.mjs`
 - target validator：`converter/src/surge-module.mjs::validateSurgeModule`
 - Rule planner：`converter/src/rule.mjs`
+
+## 80.11 Catalog-observed Rule inventory gate
+
+`converter/tests/catalog-rule-inventory.mjs` 必须作为 Converter Check checkpoint 执行，并与 `converter/fixtures/catalog-rule-inventory.json` 比较。
+
+这个 gate 是 **source-change detector**，不是目标平台白名单：当前 Catalog 没出现某个 Rule Type，不代表通用 converter 永久不支持它；反之，parser 能解析某个新类型，也不代表无需审查即可自动更新 baseline。
+
+首次出现新的 Rule Type / Policy / parameter / logical placement / nesting shape 时 CI 失败。处理顺序固定为：
+1. 确认 Loon 源语义；
+2. QX：只使用用户提供的官方 sample 所支持格式判断；
+3. Surge：先查 `nssurge.com/llms.txt`，再按官方 Manual 判断；
+4. 更新通用 spec / parser / planner / synthetic regression；
+5. 确认转换语义后才更新 observed baseline。
+
+MITM 不属于该 inventory。
+
