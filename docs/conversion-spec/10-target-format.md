@@ -33,9 +33,9 @@ QX 当前支持在 filter 或 rewrite 活动规则前增加：
 
 WayX 只在以下条件**同时成立**时把 Loon 原注释转换为 QX note：
 
-1. 源注释与源 Rule/Rewrite 紧邻，中间没有空行；
+1. 源注释与源 `[Rule]` / `[Rewrite]` / `[Script]` 中最终生成 QX filter/rewrite 的声明紧邻，中间没有空行；
 2. 只有一行源注释；
-3. 该注释后只紧接一条活动源 Rule/Rewrite；若继续紧接第二条活动规则，则视为分组注释，不转 note；
+3. 该注释后只紧接一条活动源声明；若继续紧接第二条活动声明，则视为分组注释，不转 note；
 4. 注释内容不是被注释掉的 Rule/Rewrite declaration；
 5. 一条源声明最终只生成一条活动 QX filter/rewrite 行；
 6. WayX 自己的 Converted / Author / Category / Target / Source / Review 等转换说明永远不进入 `{# ... #}`。
