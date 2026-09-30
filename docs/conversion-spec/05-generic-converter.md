@@ -241,6 +241,8 @@ GitHub Action 的职责：
 
 Source Catalog 可以包含具体插件名和原作者 URL，因为它只是数据清单；converter source code 不得根据 Catalog 中的身份字段改变转换算法。
 
+手工维护资产不进入 Source Catalog。当前 `QZXY` 由 `.github/manual-assets.json` 单独声明，canonical regeneration 不得创建、删除或覆盖这些路径；repository validator/audit 仍必须验证其目标格式。新增手工资产必须先登记该 manifest，避免“未被 Catalog 管理”与“意外漏管”混淆。
+
 ### 5.10.1 原作者源唯一原则
 
 - 插件：只请求 `entry.source`。
@@ -295,6 +297,8 @@ CI 必须审计生产 converter，禁止出现已登记插件身份驱动的语�
 ## 5.13 自动转换实现
 
 - Source Catalog schema/validation：`converter/src/source-catalog.mjs`
+- Hand-maintained asset manifest：`.github/manual-assets.json`
+- Manual asset contract：`converter/tests/manual-assets.mjs`
 - Original-source fetch layer：`converter/src/source-fetch.mjs`
 - Generic orchestration：`.github/scripts/sync-convert.mjs`
 - Offline canonical regeneration：`converter/tools/regenerate-canonical.mjs`
