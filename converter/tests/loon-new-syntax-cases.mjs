@@ -87,7 +87,7 @@ assert.equal(
 const loonLogicalRule = 'AND,((URL-REGEX,"^http:\\/\\/119\\.29\\.29\\.90\\/d\\?"),(USER-AGENT,"Example*")),DIRECT';
 assert.equal(
   surgeRule(loonLogicalRule),
-  'AND,((URL-REGEX,^http://119\\.29\\.29\\.90/d\\?),(USER-AGENT,"Example*")),DIRECT',
+  'AND,((URL-REGEX,^http:\\/\\/119\\.29\\.29\\.90\\/d\\?),(USER-AGENT,"Example*")),DIRECT',
 );
 
 const loonNestedLogicalRule = 'AND,((DOMAIN-KEYWORD,tnc),(OR,((DOMAIN-SUFFIX,capcutapi.com),(DOMAIN-SUFFIX,zijieapi.com)))),DIRECT';
