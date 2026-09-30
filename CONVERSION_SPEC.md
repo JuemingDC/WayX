@@ -15,7 +15,7 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 3. Source JavaScript 在 Quantumult X 与 Surge 中均不做 runtime compatibility 审查。目标声明直接引用原脚本 URL；仅在需要判定 HTTP Script 的 header/body/echo action 类型时读取源码辅助分类。
 4. Loon Plugin 内部策略 `PROXY` 不做语义替换：QX 保留字面 `PROXY`；Surge Module 因官方禁止活动 Rule 使用外部 policy 名称，仅将源声明原样注释保留，不改写成其他策略。
 5. 通用 Complex Rewrite helper 只处理多 action pipeline（`actions.length >= 2`），脚本负责按源顺序完成整条多 action 语义；单 action 如确需脚本，必须走对应的专用 semantic helper。
-6. QX filter/rewrite 支持 `{# note #} rule` 前置 note。只有“单行源注释紧邻一条源规则，且该注释不覆盖后续连续多条规则、最终只生成一条活动 QX 规则”时才转换；分组注释、连续多行注释、被注释掉的源规则和 WayX 转换说明继续使用普通 `#` 注释。
+6. QX filter/rewrite 支持 `{# note #} rule` 前置 note。源 `[Rule]` / `[Rewrite]` / `[Script]` 只要最终生成一条活动 QX filter/rewrite，都按同一规则处理：只有“单行源注释紧邻一条源声明，且该注释不覆盖后续连续多条声明、最终只生成一条活动 QX 规则”时才转换；分组注释、连续多行注释、被注释掉的源规则和 WayX 转换说明继续使用普通 `#` 注释。
 
 
 ## 规范块
