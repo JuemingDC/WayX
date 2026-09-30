@@ -233,4 +233,22 @@ MITM 不属于该 inventory。
 - `planLegacyRewrite()` 必须先调用 `legacyRewriteToSemanticIr()` 再进入目标映射。
 
 这个 gate 只约束架构与语义保真，不扩大任何 QX/Surge 能力。目标输出仍分别受 QX 官方 sample 和 Surge 官方 Manual/capability gate 约束。
+## 80.13 Rewrite target-planner architecture gate
+
+CI 必须验证 Rewrite target planning 已从 orchestration 中分离：
+
+- `sync-convert.mjs` 只能调用 `planQxRewrite()` / `planSurgeRewrite()`；
+- `sync-convert.mjs` 不得直接 import `qx-semantic-script.mjs`、`surge-mock.mjs`、`rewrite-v2-semantic.mjs` 的 target mapper 或 `complex-rewrite-registry.mjs`；
+- QX/Surge complex handler 注册归各自 target planner 所有；
+- planner import 必须无 complex-registry 副作用；handler 只允许在首次 `planQxRewrite()` / `planSurgeRewrite()` 时幂等注册；
+- `rewrite-qx.mjs` 只按用户上传 QX 官方 sample 已确认 action 选择 native 路径；
+- `rewrite-surge.mjs` 只按 Surge 官方 Manual 已确认 URL/Header/Body Rewrite、Map Local 与 HTTP Script 选择目标路径；
+- planner 无映射时必须返回明确 Review/Issue，禁止调用未定义 fallback；
+- canonical 输出在纯架构迁移中必须保持不变。
+
+实现：
+- QX planner：`converter/src/rewrite-qx.mjs`
+- Surge planner：`converter/src/rewrite-surge.mjs`
+- architecture contract：`converter/tests/rewrite-target-planners.mjs`
+
 

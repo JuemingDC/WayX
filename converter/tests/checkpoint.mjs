@@ -1022,14 +1022,20 @@ assert.doesNotMatch(minifiedJqFile, /file comment|executable comment/);
 
 const mockFileAst = parseRewriteV2('response if ${url} ~= /api/ then response.body.mock_file("json", "mock.json", 200)');
 const mockSpec = dependencySpecFromAction(mockFileAst.actions[0], {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
-assert.equal(mockSpec.strategy, 'generated-qx-script');
-assert.equal(mockSpec.qxAction, 'script-echo-response');
+assert.equal(mockSpec.kind, 'mock');
+assert.equal(mockSpec.phase, 'response');
+assert.equal(mockSpec.url, 'https://example.com/Plugins/mock.json');
+assert.equal(mockSpec.base64, false);
+assert.equal(mockSpec.binary, false);
+assert.equal(Object.hasOwn(mockSpec, 'strategy'), false);
+assert.equal(Object.hasOwn(mockSpec, 'qxAction'), false);
 assert.throws(
   () => inlineResolvedDependency(mockFileAst.actions[0], '{"ok":true}', {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'}),
   /generated target script/,
 );
 const responseMockPlan = qxMockPlanFromAction(mockFileAst.actions[0], {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
 assert.equal(responseMockPlan.url, 'https://example.com/Plugins/mock.json');
+assert.equal(responseMockPlan.qxAction, 'script-echo-response');
 const responseMockScript = renderQxMockFileScript(responseMockPlan, {
   stamp:'2026-09-29 09:00:00 +08:00',
   category:'Adblock',

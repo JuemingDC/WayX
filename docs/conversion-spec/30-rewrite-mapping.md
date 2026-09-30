@@ -20,6 +20,32 @@ IR 必须保留 source action/AST，不得为了统一分类丢弃 typed argumen
 
 目标 planner 仍遵守本块后续映射与 fallback 链；建立 IR **不等于**允许把相似但语义不同的 Legacy/v2 action 强行共用 native mapping。
 
+
+## 30.0.1 Target planner 边界
+
+Rewrite Semantic IR 形成后，所有目标决策固定进入：
+
+- Quantumult X：`converter/src/rewrite-qx.mjs::planQxRewrite(ir, ctx)`
+- Surge：`converter/src/rewrite-surge.mjs::planSurgeRewrite(ir, ctx)`
+
+两个 planner 统一拥有目标 fallback 顺序：
+
+```text
+native target primitive
+→ dedicated semantic helper
+→ observed source-authored complex helper
+→ explicit comment Review / Issue
+```
+
+`.github/scripts/sync-convert.mjs` 不得再：
+- 直接调用 QX/Surge Rewrite renderer；
+- 直接注册/调用 complex Rewrite handler；
+- 通过 raw action-name regex 判断 target 路径；
+- 保留未定义或隐式 fallback。
+- 在模块 import 阶段修改全局 complex registry；handler 必须由 target planner 首次执行时惰性、幂等注册。
+
+Legacy Rewrite 的 source-specific helper 可以继续存在于 `legacy-rewrite.mjs`，但必须由 QX/Surge target planner 调用；其存在不构成 orchestration 旁路。
+
 ## 30.1 Loon 旧 Rewrite
 
 | Loon Action | Quantumult X | Surge |

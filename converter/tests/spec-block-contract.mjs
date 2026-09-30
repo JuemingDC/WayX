@@ -8,7 +8,7 @@ const contracts=[
   ['05','docs/conversion-spec/05-generic-converter.md',['converter/src/source-catalog.mjs','converter/src/source-fetch.mjs','.github/scripts/sync-convert.mjs','.github/manual-assets.json','converter/tests/manual-assets.mjs']],
   ['10','docs/conversion-spec/10-target-format.md',['converter/src/paths.mjs','converter/src/metadata.mjs','converter/src/surge-module.mjs','converter/src/qx-official-capabilities.mjs','converter/src/surge-official-capabilities.mjs']],
   ['20','docs/conversion-spec/20-rule-mapping.md',['converter/src/rule-ast.mjs','converter/src/rule-qx.mjs','converter/src/rule-surge.mjs','converter/src/rule.mjs','converter/tests/rule-ast.mjs','converter/tests/catalog-rule-inventory.mjs','converter/fixtures/catalog-rule-inventory.json']],
-  ['30','docs/conversion-spec/30-rewrite-mapping.md',['converter/src/rewrite-ir.mjs','converter/src/legacy-rewrite.mjs','converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-semantic.mjs','converter/src/complex-rewrite-types.mjs','converter/src/complex-rewrite-registry.mjs','converter/tests/rewrite-ir.mjs','converter/tests/complex-source-inventory.mjs']],
+  ['30','docs/conversion-spec/30-rewrite-mapping.md',['converter/src/rewrite-ir.mjs','converter/src/rewrite-qx.mjs','converter/src/rewrite-surge.mjs','converter/src/rewrite-plan-result.mjs','converter/src/legacy-rewrite.mjs','converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-semantic.mjs','converter/src/complex-rewrite-types.mjs','converter/src/complex-rewrite-registry.mjs','converter/tests/rewrite-ir.mjs','converter/tests/rewrite-target-planners.mjs','converter/tests/complex-source-inventory.mjs']],
   ['40','docs/conversion-spec/40-regex-condition.md',['converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-actions.mjs','converter/src/target-regex.mjs']],
   ['50','docs/conversion-spec/50-json-jq-mock.md',['converter/src/jq.mjs','converter/src/dependency.mjs','converter/src/qx-mock.mjs','converter/src/surge-mock.mjs']],
   ['60','docs/conversion-spec/60-script-argument.md',['converter/src/script.mjs','converter/src/script-v2.mjs','converter/src/script-v2-target.mjs','converter/src/argument.mjs']],
@@ -46,24 +46,43 @@ assert.equal(/EXTRA_LOCAL_ENTRIES|RuCu6\/youtube\.lpx|RuCu6\/myblockads\.lpx/.te
 assert.equal(/DEPENDENCY_MANIFEST|localJqFiles|assertOfflineDependencies/.test(canonicalRunner), false, 'Block 50/90: canonical runner must not fall back to repository dependency caches');
 assert.match(canonicalRunner,/materializeJqFiles\(entry, parsed\)/, 'Block 50: canonical runner must fetch JQ from original dependency URLs through the shared materializer');
 assert.match(canonicalRunner,/materializeMockFiles\(entry, parsed\)/, 'Block 50: canonical runner must fetch mock_file from original dependency URLs through the shared materializer');
+const dependencySource=await fs.readFile(path.join(ROOT,'converter/src/dependency.mjs'),'utf8');
+const dependencySpecBody=(dependencySource.match(/export function dependencySpecFromAction[\s\S]*?\n\}/)||[''])[0];
+assert.equal(/qxAction|generated-qx-script|surge/i.test(dependencySpecBody), false, 'Block 50: dependencySpecFromAction must remain target-neutral');
 assert.match(canonicalRunner,/inspectSourceScript\(reference, pluginSourceUrl\)/, 'Block 60: canonical runner must delegate optional Source Script action-type inspection to the shared inspector');
 assert.match(syncConverter,/resolveOriginalUrl\(reference, pluginSourceUrl\)/, 'Block 60: shared Source Script inspector must resolve relative refs against the original plugin URL');
 assert.match(syncConverter,/fetchOriginalText\(originalUrl\)/, 'Block 60: optional QX action-type inspection must read only the resolved original Source Script URL when available');
 assert.match(targetRegex,/return String\(pattern \?\? ''\);/, 'Block 40: target regex normalization must preserve the regex body');
 assert.equal(/replace\([^\n]*\\\\\\\//.test(targetRegex), false, 'Block 40: target regex compiler must not globally rewrite escaped slashes');
 assert.match(targetRegex,/sourceFlags:\s*flags/, 'Block 40: discarded source flags must remain observable metadata without being propagated');
-assert.match(syncConverter,/planComplexRewrite\(/, 'Block 30: unified converter must keep the complex helper planner in the target fallback chain');
+assert.equal(/planComplexRewrite\(/.test(syncConverter), false, 'Block 30: orchestration must not own the complex Rewrite fallback chain');
 assert.equal(/planAdjacentQxHeaderGroups/.test(syncConverter), false, 'Block 30: independent source Rewrite declarations must never be merged into synthetic pipelines');
 const rewriteIr=await fs.readFile(path.join(ROOT,'converter/src/rewrite-ir.mjs'),'utf8');
 const legacyRewrite=await fs.readFile(path.join(ROOT,'converter/src/legacy-rewrite.mjs'),'utf8');
 assert.equal(/qx-official-capabilities|surge-official-capabilities/.test(rewriteIr), false, 'Block 30: Rewrite Semantic IR must stay target-neutral');
 assert.match(legacyRewrite,/legacyRewriteToSemanticIr\(pattern, action\)/, 'Block 30: Legacy Rewrite planner must route through Semantic IR');
 assert.match(syncConverter,/rewriteV2AstToSemanticIr\(ast, \{source:line\}\)/, 'Block 30: Rewrite v2 orchestration must build Semantic IR after source normalization');
-assert.match(syncConverter,/singleRewriteOperation\(ir\)/, 'Block 30: Rewrite v2 routing must consume normalized Semantic IR operations');
+assert.equal(/singleRewriteOperation\(ir\)/.test(syncConverter), false, 'Block 30: orchestration must not own target semantic-operation routing');
 assert.equal(/ast\.actions\[0\]\.name === 'response\.header\.add'/.test(syncConverter), false, 'Block 30: orchestration must not restore raw action-name routing for response.header.add');
 assert.equal(/ast\.actions\[0\]\.name === 'redirect'/.test(syncConverter), false, 'Block 30: orchestration must not restore raw action-name routing for redirect');
 assert.equal(/action => action\.name === 'response\.body\.mock_file'/.test(syncConverter), false, 'Block 30: orchestration must not restore raw action-name routing for mock_file');
 assert.match(converterWorkflow,/rewrite-ir\.mjs/, 'Block 30/80: Converter Check must execute Rewrite Semantic IR contract');
+const rewriteQx=await fs.readFile(path.join(ROOT,'converter/src/rewrite-qx.mjs'),'utf8');
+const rewriteSurge=await fs.readFile(path.join(ROOT,'converter/src/rewrite-surge.mjs'),'utf8');
+assert.match(syncConverter,/planQxRewrite\(ir/, 'Block 30: orchestration must delegate QX Rewrite planning');
+assert.match(syncConverter,/planSurgeRewrite\(ir/, 'Block 30: orchestration must delegate Surge Rewrite planning');
+assert.equal(/qx-semantic-script\.mjs|surge-mock\.mjs|complex-rewrite-registry\.mjs|rewrite-v2-semantic\.mjs.*(?:qxDirectRewritePlan|surgeDirectRewritePlan)/.test(syncConverter), false, 'Block 30: orchestration must not import target Rewrite renderers or complex registry');
+assert.equal(/function qxNativeHeaderPlan|function qxHeaderRewriteInfo/.test(syncConverter), false, 'Block 30: QX Rewrite special routing must live in the QX planner');
+assert.equal(/\brewriteAction\s*\(/.test(syncConverter), false, 'Block 30: undefined legacy conservative fallback must not return');
+assert.match(rewriteQx,/export function planQxRewrite\(ir/, 'Block 30: QX Rewrite planner entry must consume Semantic IR');
+assert.match(rewriteSurge,/export function planSurgeRewrite\(ir/, 'Block 30: Surge Rewrite planner entry must consume Semantic IR');
+assert.match(rewriteQx,/planComplexRewrite\(ast,'qx'/, 'Block 30: QX planner must own its complex fallback');
+assert.match(rewriteSurge,/planComplexRewrite\(ast,'surge'/, 'Block 30: Surge planner must own its complex fallback');
+assert.match(rewriteQx,/function ensureQxRewriteHandlers\(\)/, 'Block 30: QX complex handlers must register lazily');
+assert.match(rewriteSurge,/function ensureSurgeRewriteHandlers\(\)/, 'Block 30: Surge complex handlers must register lazily');
+assert.ok(rewriteQx.indexOf('registerComplexRewriteHandler({') > rewriteQx.indexOf('function ensureQxRewriteHandlers()'), 'Block 30: QX planner import must not register handlers at top level');
+assert.ok(rewriteSurge.indexOf('registerComplexRewriteHandler({') > rewriteSurge.indexOf('function ensureSurgeRewriteHandlers()'), 'Block 30: Surge planner import must not register handlers at top level');
+assert.match(converterWorkflow,/rewrite-target-planners\.mjs/, 'Block 30/80: Converter Check must execute target planner contract');
 const complexTypes=await fs.readFile(path.join(ROOT,'converter/src/complex-rewrite-types.mjs'),'utf8');
 assert.match(complexTypes,/response\.body\.mock.*response\.header\.set/s, 'Block 30: observed Bilibili-source complex signature must be registered generically');
 assert.match(upstreamWorkflow,/propose-conversion-issues\.mjs/, 'Block 80/90: unknown markers must be proposed as GitHub issues');
