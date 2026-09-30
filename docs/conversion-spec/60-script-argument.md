@@ -27,6 +27,8 @@ script-analyze-echo-response
 
 选择依据是源声明和脚本实际阶段/Body 行为，不按插件名或作者特判。
 
+`binary_body_mode=true` 不要求目标声明存在同名字段。若目标官方脚本运行时已经提供等价二进制 body 接口，则按能力映射：当前 QX **response** 侧已由官方 `sample-bytes-rewrite.js` 验证 `bodyBytes`，可使用 `script-response-body`；QX request 侧在没有同等级官方样例前保持 Review。
+
 | Source 行为 | QX declaration |
 |---|---|
 | request，不需要 body | `script-request-header` |
@@ -35,6 +37,7 @@ script-analyze-echo-response
 | request 阶段生成 response 且需要 request body | `script-analyze-echo-response` |
 | response，只处理 header | `script-response-header` |
 | response，读取/修改 body | `script-response-body` |
+| response，读取/修改 binary body | `script-response-body`；Crossutility 官方 `sample-bytes-rewrite.js` 已确认 `$response.bodyBytes` / `$done({bodyBytes})` |
 
 ## 60.3 Loon [Argument] → Quantumult X
 
