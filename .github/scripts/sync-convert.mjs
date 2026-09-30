@@ -290,13 +290,15 @@ function rewriteV2Action(line, target, ctx) {
       }
     }
 
-    try {
-      for (const mapper of [surgeInlineMockPlan, surgeHeaderRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan]) {
-        const mapped = mapper(ast);
-        if (mapped.ok) return { section: mapped.section, line: mapped.line, lines: mapped.lines };
+    if (!argumentRefs.all.length) {
+      try {
+        for (const mapper of [surgeInlineMockPlan, surgeHeaderRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan]) {
+          const mapped = mapper(ast);
+          if (mapped.ok) return { section: mapped.section, line: mapped.line, lines: mapped.lines };
+        }
+      } catch {
+        // Native planning failed; continue to the generic Surge script fallback.
       }
-    } catch {
-      // Native planning failed; continue to the generic Surge script fallback.
     }
     const complex = planComplexRewrite(ast, 'surge', {...ctx, sourceLine:line, argumentRefs:argumentRefs.all});
     if (complex.ok) return {section:complex.section, line:complex.line, lines:complex.lines};
