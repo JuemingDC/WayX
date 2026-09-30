@@ -863,6 +863,14 @@ const surgeOnlyScript = inspectQxScriptCompatibility({
 assert.equal(surgeOnlyScript.executable, false);
 assert.match(surgeOnlyScript.reason, /\$httpClient/);
 
+const neutralUnprovenScript = inspectQxScriptCompatibility({
+  scriptUrl:'https://example.com/neutral.js',
+  sourceText:'const h={...$request.headers}; h["X-Test"]="1"; $done({headers:h});',
+});
+assert.equal(neutralUnprovenScript.executable, false);
+assert.equal(neutralUnprovenScript.status, 'review');
+assert.match(neutralUnprovenScript.reason, /positive Quantumult X runtime compatibility evidence/);
+
 const dualRuntimeScript = inspectQxScriptCompatibility({
   scriptUrl:'https://example.com/cross-platform.js',
   sourceText:'const isQX = typeof $task !== "undefined"; if (isQX) $task.fetch({url:"https://example.com"}); else $httpClient.get("https://example.com",()=>{});',
