@@ -75,13 +75,13 @@ assert.equal(qxRule('DOMAIN,example.com,DIRECT').line, 'host, example.com, direc
 assert.equal(qxRule('DOMAIN,example.com,PROXY').line, 'host, example.com, PROXY');
 const surgeUrlReject200 = surgeModuleRule('URL-REGEX,"^https:\\/\\/empty\\.example\\.com",REJECT-200');
 assert.equal(surgeUrlReject200.section, 'map');
-assert.equal(surgeUrlReject200.line, '^https://empty\\.example\\.com data-type=text data="" status-code=200');
+assert.equal(surgeUrlReject200.line, '^https:\\/\\/empty\\.example\\.com data-type=text data="" status-code=200');
 const surgeUrlRejectDict = surgeModuleRule('URL-REGEX,"^https:\\/\\/dict\\.example\\.com",REJECT-DICT');
 assert.equal(surgeUrlRejectDict.section, 'map');
-assert.equal(surgeUrlRejectDict.line, '^https://dict\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"');
+assert.equal(surgeUrlRejectDict.line, '^https:\\/\\/dict\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"');
 const surgeUrlRejectArray = surgeModuleRule('URL-REGEX,"^https:\\/\\/array\\.example\\.com",REJECT-ARRAY');
 assert.equal(surgeUrlRejectArray.section, 'map');
-assert.equal(surgeUrlRejectArray.line, '^https://array\\.example\\.com data-type=text data="[]" status-code=200 header="Content-Type:application/json"');
+assert.equal(surgeUrlRejectArray.line, '^https:\\/\\/array\\.example\\.com data-type=text data="[]" status-code=200 header="Content-Type:application/json"');
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-IMG').line, '^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\? url reject-img');
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP').line, '^https:\\/\\/drop\\.example\\.com url reject');
 assert.equal(surgeRule('URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-IMG'), 'URL-REGEX,^https://a\\.line\\.me/er/lads/v\\d/ei\\?,REJECT-TINYGIF');
@@ -182,16 +182,16 @@ const validSurgeModule = [
   'AND,((DOMAIN-SUFFIX,example.com),(PROTOCOL,TCP)),REJECT',
   '',
   '[URL Rewrite]',
-  '^https://ads\\.example\\.com _ reject',
+  '^https:\\/\\/ads\\.example\\.com _ reject',
   '',
   '[Header Rewrite]',
-  'http-response ^https://api\\.example\\.com header-del Server',
+  'http-response ^https:\\/\\/api\\.example\\.com header-del Server',
   '',
   '[Body Rewrite]',
   'http-response-jq ^https://api\\.example\\.com \'del(.ads)\'',
   '',
   '[Map Local]',
-  '^https://mock\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"',
+  '^https:\\/\\/mock\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"',
   '',
   '[Script]',
   'demo = type=http-response,pattern=^https://api\\.example\\.com,script-path=https://example.com/demo.js,requires-body=true',
@@ -457,7 +457,7 @@ assert.equal(
 );
 assert.equal(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-del Server', 'surge', legacyCtx).lines[0],
-  'http-response ^https://api\\.example\\.com header-del Server',
+  'http-response ^https:\\/\\/api\\.example\\.com header-del Server',
 );
 assert.match(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-del Server', 'qx', legacyCtx).line,
