@@ -28,6 +28,7 @@ const stats = {
   rules: 0,
   native: 0,
   dropped: 0,
+  preserved: 0,
   review: 0,
   reasons: new Map(),
   types: new Map(),
@@ -63,6 +64,11 @@ for (const entry of manifest) {
       stats.dropped++;
       continue;
     }
+    if (mapped.kind === 'comment' && mapped.reason === 'source-proxy-policy-preserved') {
+      stats.preserved++;
+      assert.match(mapped.lines.join('\n'), /Source Loon plugin policy PROXY preserved without conversion/);
+      continue;
+    }
 
     stats.review++;
     stats.reasons.set(mapped.reason, (stats.reasons.get(mapped.reason) || 0) + 1);
@@ -73,11 +79,10 @@ for (const entry of manifest) {
 assert.ok(stats.files > 0, 'no Loon source files were scanned');
 assert.ok(stats.rules > 0, 'no Loon [Rule] entries were scanned');
 
-// Surge profiles may bind rules to named proxy policies/groups, but Surge
-// Modules can only insert rules using internal policies because Modules cannot
-// modify [Proxy] / [Proxy Group]. Those source rules are therefore an expected
-// Review condition, not a syntax-conversion failure. Any other review reason
-// still fails coverage so no unsupported rule is silently approximated.
+// Loon plugin PROXY is intentionally preserved as a commented source rule:
+// Surge Modules cannot define [Proxy]/[Proxy Group] or activate arbitrary
+// external policy names. Other external policy names remain explicit Review
+// conditions so no unsupported policy is silently approximated.
 const unexpectedReview = stats.reviewLines.filter(x => x.reason !== 'external-policy');
 assert.equal(
   unexpectedReview.length,
@@ -92,6 +97,6 @@ for (const item of stats.reviewLines.filter(x => x.reason === 'external-policy')
 
 const types = [...stats.types.entries()].sort((a, b) => a[0].localeCompare(b[0]));
 console.log(
-  `Surge Rule coverage: files=${stats.files}, rules=${stats.rules}, native=${stats.native}, dropped=${stats.dropped}, review=${stats.review}`
+  `Surge Rule coverage: files=${stats.files}, rules=${stats.rules}, native=${stats.native}, dropped=${stats.dropped}, preserved=${stats.preserved}, review=${stats.review}`
 );
 console.log('Rule types: ' + types.map(([type, count]) => `${type}=${count}`).join(', '));
