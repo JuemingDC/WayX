@@ -24,6 +24,9 @@
 - 官方 `rewrite.md`
 - 官方 `sample-import-rewrite.snippet`
 - 项目上传的官方 `sample.txt`
+- 当前 Quantumult X beta App 内置的官方更新说明 / 语法示例；当其明确展示了尚未同步到 GitHub sample 的新语法时，只采用该说明已经逐字证明的具体能力，不向相邻语法做推断。
+
+2026-09-30 当前 beta 内置说明已明确展示 filter/rewrite 前置 note：`{# note #} rule`。WayX 因此只启用这一确切前缀形式，并按 Block 10 / 70 的一对一源注释约束生成。
 
 ### Surge
 每次修改 Surge 规则前必须先读取：
