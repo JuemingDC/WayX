@@ -259,8 +259,8 @@ function rewriteV2Action(line, target, ctx) {
       }
     }
 
-    // Inline body.mock, including Loon's mock + response-header pipeline,
-    // becomes one QX script so mock-before-upstream and action ordering are kept.
+    // Single body.mock uses its dedicated helper. Source-authored multi-action
+    // mock pipelines are admitted only through the observed complex registry.
     if (ast.actions.length === 1 && ast.actions.some(a => /^(?:request|response)\.body\.mock$/.test(a.name))) {
       try {
         const plan = renderQxInlineMockScript(ast, { stamp: ctx.stamp, category: ctx.category, sourceLine: line });
@@ -861,8 +861,8 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
 
     const sc = parseScriptLine(item.line);
     if (!sc || !sc.scriptPath) {
-      qx.notes.push(...comments, '# [WayX] SCRIPT REVIEW REQUIRED: unsupported source Script declaration has no verified target mapping', `# Source declaration: ${item.line}`);
-      sg.notes.push(...comments, '# [WayX] SCRIPT REVIEW REQUIRED: unsupported source Script declaration has no verified target mapping', `# Source declaration: ${item.line}`);
+      qx.notes.push(...comments, '# [WayX] ISSUE REQUIRED [unknown-script-declaration]: unsupported source Script declaration is outside the registered grammar', `# Source declaration: ${item.line}`);
+      sg.notes.push(...comments, '# [WayX] ISSUE REQUIRED [unknown-script-declaration]: unsupported source Script declaration is outside the registered grammar', `# Source declaration: ${item.line}`);
       continue;
     }
     scriptIndex++;
