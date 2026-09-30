@@ -239,10 +239,18 @@ DOMAIN,two-comments.example.com,REJECT
 # Rewrite group
 ^https:\\/\\/a\\.example\\.com reject
 ^https:\\/\\/b\\.example\\.com reject
+
+[Script]
+# Script note
+http-response ^https:\\/\\/script\\.example\\.com script-path=https://scripts.example.com/note.js,requires-body=true
+# Script group
+http-response ^https:\\/\\/script-a\\.example\\.com script-path=https://scripts.example.com/a.js,requires-body=true
+http-response ^https:\\/\\/script-b\\.example\\.com script-path=https://scripts.example.com/b.js,requires-body=true
 `;
 const qxLeadingNoteOutput=convert(qxLeadingNoteFixture,qxLeadingNoteSource,new Map(),STAMP);
 assert.match(qxLeadingNoteOutput.qx, /^\{# Work VPN #\} host-suffix, example\.com, PROXY$/m);
 assert.match(qxLeadingNoteOutput.qx, /^\{# Block ads #\} \^https:\\\/\\\/ads\\\.example\\\.com url reject$/m);
+assert.match(qxLeadingNoteOutput.qx, /^\{# Script note #\} \^https:\\\/\\\/script\\\.example\\\.com url script-response-body https:\/\/scripts\.example\.com\/note\.js$/m);
 assert.doesNotMatch(qxLeadingNoteOutput.qx, /^# Work VPN$/m);
 assert.doesNotMatch(qxLeadingNoteOutput.qx, /^# Block ads$/m);
 assert.match(qxLeadingNoteOutput.qx, /^# Ad group$/m);
@@ -252,9 +260,14 @@ assert.match(qxLeadingNoteOutput.qx, /^# Second comment$/m);
 assert.doesNotMatch(qxLeadingNoteOutput.qx, /\{# Second comment #\}/);
 assert.match(qxLeadingNoteOutput.qx, /^# Rewrite group$/m);
 assert.doesNotMatch(qxLeadingNoteOutput.qx, /\{# Rewrite group #\}/);
+assert.match(qxLeadingNoteOutput.qx, /^# Script group$/m);
+assert.doesNotMatch(qxLeadingNoteOutput.qx, /\{# Script group #\}/);
+assert.doesNotMatch(qxLeadingNoteOutput.qx, /^# Script note$/m);
 assert.doesNotMatch(qxLeadingNoteOutput.qx, /\{# (?:Converted|Converted by|Category|Target|Source)/);
 assert.match(qxLeadingNoteOutput.surge, /^# Work VPN$/m);
 assert.match(qxLeadingNoteOutput.surge, /^# Block ads$/m);
+assert.match(qxLeadingNoteOutput.surge, /^# Script note$/m);
+assert.match(qxLeadingNoteOutput.surge, /^# Script group$/m);
 validateQX(qxLeadingNoteOutput.qx, qxLeadingNoteFixture);
 
 const argumentRewriteFixture = {
