@@ -650,7 +650,7 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
         qx.rewrite.push(...comments);
       } else {
         const qdest = qr.section === 'rewrite' ? qx.rewrite : qx.notes;
-        qdest.push(...comments, qr.line);
+        qdest.push(...comments, ...(qr.lines || [qr.line]));
       }
     }
 
