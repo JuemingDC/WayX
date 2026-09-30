@@ -45,7 +45,7 @@ function statements(ast, target) {
   const out = [];
   let body = false, headers = false, json = false, headerAdd = false;
   for (const action of ast.actions) {
-    if (new RegExp('^' + ast.phase + '\\x2eheader\\x2e(?:add|set|del|replace)
+    if (new RegExp('^' + ast.phase + '\\x2eheader\\x2e(?:add|set|del|replace)$').test(action.name)) {
       headers = true;
       for (const args of expand(action)) {
         const name = fixed(args[0], 'header name');
