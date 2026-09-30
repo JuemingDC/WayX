@@ -4,6 +4,7 @@ import {
   analyzeSafeRewriteV2,
   dependencySpecFromAction,
   jqDependencySpecFromAction,
+  isDiscardedLegacyJqPathAction,
   inlineResolvedDependency,
   inspectQxScriptCompatibility,
   listRewriteV2Dependencies,
@@ -15,11 +16,13 @@ import {
   surgeRejectRewritePlan,
   surgeHeaderRewritePlan,
   surgeInlineMockPlan,
+  surgeMockFilePlan,
   renderQxRedirectScript,
   renderQxRejectScript,
   renderQxHeaderScript,
   renderQxInlineMockScript,
   renderQxMockFileScript,
+  renderSurgeRequestMockScript,
   LOON_REWRITE_V2_ACTIONS,
   minifyJq,
   minifyJqFile,
@@ -32,6 +35,7 @@ import {
   parseLoonArguments,
   surgeArgumentMetadata,
   surgePluginObjectArgument,
+  surgeRewriteArgumentPayload,
   surgeEnableRequirement,
   parseLegacyLoonPluginObjectRefs,
   analyzePluginArgumentUsage,
@@ -109,7 +113,8 @@ assert.equal(surgeModuleRule('CELLULAR-RADIO,NR,DIRECT').line, 'CELLULAR-RADIO,N
 assert.equal(surgeModuleRule('HOSTNAME-TYPE,IPv6,REJECT').line, 'HOSTNAME-TYPE,IPv6,REJECT');
 assert.equal(surgeModuleRule('RULE-SET,https://example.com/list.list,REJECT,no-resolve').line, 'RULE-SET,https://example.com/list.list,REJECT,no-resolve');
 assert.equal(surgeModuleRule('SCRIPT,ssid-rule,DIRECT,requires-resolve').line, 'SCRIPT,ssid-rule,DIRECT,requires-resolve');
-assert.equal(surgeModuleRule('FINAL,DIRECT').line, 'FINAL,DIRECT');
+assert.equal(surgeModuleRule('FINAL,DIRECT').line, '');
+assert.deepEqual(surgeModuleRule('FINAL,DIRECT').lines, []);
 assert.equal(
   surgeModuleRule('AND,((DOMAIN,api.pinduoduo.com),(PROTOCOL,QUIC)),REJECT').line,
   'AND,((DOMAIN,api.pinduoduo.com),(PROTOCOL,QUIC)),REJECT',
@@ -314,6 +319,11 @@ const surgeArgs = surgeArgumentMetadata([
 assert.equal(surgeArgs.lines[0], '#!arguments=region:CN,level:2,enabled:true');
 assert.match(surgeArgs.lines[1], /^#!arguments-desc=/);
 assert.equal(surgeEnableRequirement('enabled', surgeArgs.table), '#!REQUIREMENT "\'{{{enabled}}}\'==\'true\'"');
+const surgeRewritePayload = surgeRewriteArgumentPayload(['region','level','enabled'], surgeArgs.table);
+assert.equal(surgeRewritePayload.ok, true);
+assert.match(surgeRewritePayload.value, /region/);
+assert.match(surgeRewritePayload.value, /\{\{\{level\}\}\}/);
+
 const surgeObject = surgePluginObjectArgument(['region','level','enabled'], surgeArgs.table);
 assert.equal(surgeObject.ok, true);
 assert.equal(
@@ -857,28 +867,13 @@ assert.equal(inlinedJq.action.args[0].value, 'del(.ads)');
 const legacyJqPathAst = parseRewriteV2(
   'response if ${url} ~= /reddit/i then response.json.jq("jq-path=https://rucu6.pages.dev/JQLang/reddit.jq")'
 );
-const legacyJqSpec = jqDependencySpecFromAction(legacyJqPathAst.actions[0], {
+assert.equal(isDiscardedLegacyJqPathAction(legacyJqPathAst.actions[0]), true);
+assert.equal(jqDependencySpecFromAction(legacyJqPathAst.actions[0], {
   pluginSourceUrl:'https://example.com/demo.lpx',
-});
-assert.equal(legacyJqSpec.kind, 'jq');
-assert.equal(legacyJqSpec.legacyAlias, true);
-assert.equal(legacyJqSpec.url, 'https://rucu6.pages.dev/JQLang/reddit.jq');
-const legacyJqDeps = listRewriteV2Dependencies(legacyJqPathAst, {
+}), null);
+assert.deepEqual(listRewriteV2Dependencies(legacyJqPathAst, {
   pluginSourceUrl:'https://example.com/demo.lpx',
-});
-assert.equal(legacyJqDeps.length, 1);
-assert.equal(legacyJqDeps[0].legacyAlias, true);
-const legacyJqInline = inlineResolvedDependency(
-  legacyJqPathAst.actions[0],
-  'walk(if type == "object" then . else . end)',
-  {pluginSourceUrl:'https://example.com/demo.lpx'},
-);
-assert.equal(legacyJqInline.action.name, 'response.json.jq');
-assert.equal(
-  legacyJqInline.action.args[0].value,
-  'walk(if type == "object" then . else . end)',
-);
-assert.doesNotMatch(legacyJqInline.action.args[0].value, /^jq-path=/);
+}), []);
 
 const jqFileWithComments = `# file comment
 walk(
@@ -999,13 +994,13 @@ const qxHeaderScript = renderQxHeaderScript(qxHeaderV2, {category:'Rewrite'});
 assert.equal(qxHeaderScript.qxAction, 'script-request-header');
 assert.match(qxHeaderScript.script, /__wayxSet/);
 assert.match(qxHeaderScript.script, /__wayxDel/);
-const qxHeaderAdd = renderQxHeaderScript(
-  parseRewriteV2('response if ${url} ~= /api/i then response.header.add("X-A", "1")'),
-  {category:'Rewrite'},
+assert.throws(
+  () => renderQxHeaderScript(
+    parseRewriteV2('response if ${url} ~= /api/i then response.header.add("X-A", "1")'),
+    {category:'Rewrite'},
+  ),
+  /header\.add cannot be represented losslessly/,
 );
-assert.equal(qxHeaderAdd.qxAction, 'script-response-header');
-assert.match(qxHeaderAdd.script, /__wayxAdd\("X-A", "1"\)/);
-assert.match(qxHeaderAdd.script, /\$done\(\{headers: __wayxHeaders\}\)/);
 
 const inlineTextMock = renderQxInlineMockScript(
   parseRewriteV2('response if ${url} ~= /api/i then response.body.mock("text", "{\\\"ok\\\":true}", 200)'),
@@ -1031,12 +1026,13 @@ const requestInlineMock = renderQxInlineMockScript(
 assert.equal(requestInlineMock.qxAction, 'script-request-body');
 assert.match(requestInlineMock.script, /\$done\(\{headers, body: __wayxBody\}\)/);
 
-const qxMockHeaderAdd = renderQxInlineMockScript(
-  parseRewriteV2('response if ${url} ~= /api/i then response.body.mock("text", "x", 200) | response.header.add("X-Test", "a=1")'),
-  {category:'Rewrite'},
+assert.throws(
+  () => renderQxInlineMockScript(
+    parseRewriteV2('response if ${url} ~= /api/i then response.body.mock("text", "x", 200) | response.header.add("X-Test", "a=1")'),
+    {category:'Rewrite'},
+  ),
+  /header\.add cannot be represented losslessly/,
 );
-assert.equal(qxMockHeaderAdd.qxAction, 'script-echo-response');
-assert.match(qxMockHeaderAdd.script, /__wayxHeaderAdd\(headers, "X-Test", "a=1"\)/);
 
 const surgeHeaderSet = surgeHeaderRewritePlan(
   parseRewriteV2('request if ${url} ~= /api/i then request.header.set("X-Test", "1") | request.header.del("Cookie")')
@@ -1054,6 +1050,24 @@ const surgeHeaderAdd = surgeHeaderRewritePlan(
 assert.equal(surgeHeaderAdd.ok, true);
 assert.equal(surgeHeaderAdd.lines.length, 1);
 assert.match(surgeHeaderAdd.lines[0], /header-add Set-Cookie a=1$/);
+
+const surgeMockFile = surgeMockFilePlan(
+  parseRewriteV2('response if ${url} ~= /file/i then response.body.mock_file("json", "mock.json", 201)'),
+  {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'},
+);
+assert.equal(surgeMockFile.ok, true);
+assert.equal(surgeMockFile.section, 'map');
+assert.match(surgeMockFile.line, /data-type=file/);
+assert.match(surgeMockFile.line, /https:\/\/example\.com\/Plugins\/mock\.json/);
+assert.match(surgeMockFile.line, /status-code=201/);
+
+const surgeRequestMock = renderSurgeRequestMockScript(
+  parseRewriteV2('request if ${url} ~= /submit/i then request.body.mock("json", "{\\\"x\\\":1}")'),
+  {category:'Rewrite'},
+);
+assert.equal(surgeRequestMock.surgeType, 'http-request');
+assert.equal(surgeRequestMock.requiresBody, true);
+assert.match(surgeRequestMock.script, /\$done\(\{headers,body:__wayxBody\}\)/);
 
 const surgeGrpcMock = surgeInlineMockPlan(
   parseRewriteV2('response if ${url} ~= /grpc/i then response.body.mock("text", "AAAAAAA=", 200, true) | response.header.set("grpc-status", "0")')
