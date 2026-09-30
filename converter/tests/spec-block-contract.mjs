@@ -6,7 +6,7 @@ const ROOT=process.cwd();
 const contracts=[
   ['00','docs/conversion-spec/00-authority.md',['converter/tests/genericity-audit.mjs','converter/tools/audit-repository.mjs']],
   ['05','docs/conversion-spec/05-generic-converter.md',['converter/src/source-catalog.mjs','converter/src/source-section.mjs','converter/src/source-metadata.mjs','converter/src/source-fetch.mjs','.github/scripts/sync-convert.mjs','.github/manual-assets.json','converter/tests/source-section-comments.mjs','converter/tests/manual-assets.mjs']],
-  ['10','docs/conversion-spec/10-target-format.md',['converter/src/paths.mjs','converter/src/metadata.mjs','converter/src/surge-module.mjs','converter/src/qx-official-capabilities.mjs','converter/src/surge-official-capabilities.mjs']],
+  ['10','docs/conversion-spec/10-target-format.md',['converter/src/paths.mjs','converter/src/metadata.mjs','converter/src/output-lines.mjs','converter/src/qx-output.mjs','converter/src/surge-output.mjs','converter/src/surge-module.mjs','converter/src/qx-official-capabilities.mjs','converter/src/surge-official-capabilities.mjs','converter/tests/target-output-builders.mjs']],
   ['20','docs/conversion-spec/20-rule-mapping.md',['converter/src/rule-ast.mjs','converter/src/rule-qx.mjs','converter/src/rule-surge.mjs','converter/src/rule.mjs','converter/tests/rule-ast.mjs','converter/tests/catalog-rule-inventory.mjs','converter/fixtures/catalog-rule-inventory.json']],
   ['30','docs/conversion-spec/30-rewrite-mapping.md',['converter/src/rewrite-ir.mjs','converter/src/rewrite-qx.mjs','converter/src/rewrite-surge.mjs','converter/src/rewrite-plan-result.mjs','converter/src/legacy-rewrite.mjs','converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-semantic.mjs','converter/src/complex-rewrite-types.mjs','converter/src/complex-rewrite-registry.mjs','converter/tests/rewrite-ir.mjs','converter/tests/rewrite-target-planners.mjs','converter/tests/complex-source-inventory.mjs']],
   ['40','docs/conversion-spec/40-regex-condition.md',['converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-actions.mjs','converter/src/target-regex.mjs']],
@@ -126,6 +126,26 @@ assert.match(metadataRenderer,/parseSourceMetadataHeader\(headerLines\)/, 'Block
 assert.equal(/function parseHeader\(/.test(metadataRenderer), false, 'Block 70: metadata renderer must not reparse source header directives');
 assert.match(qxComment,/export function attachQxInlineNote/, 'Block 70: QX note logic must live in target-specific renderer');
 assert.match(converterWorkflow,/source-section-comments\.mjs/, 'Block 70/80: Converter Check must execute source section/comment contract');
+const qxOutput=await fs.readFile(path.join(ROOT,'converter/src/qx-output.mjs'),'utf8');
+const surgeOutput=await fs.readFile(path.join(ROOT,'converter/src/surge-output.mjs'),'utf8');
+const convertBody=(syncConverter.match(/function convert\([\s\S]*?\n\}\n\nasync function inspectSourceScript/)||[''])[0];
+assert.match(syncConverter,/createQxOutputState\(\)/, 'Block 10/80: orchestration must use QX output state');
+assert.match(syncConverter,/createSurgeOutputState\(\)/, 'Block 10/80: orchestration must use Surge output state');
+assert.match(syncConverter,/renderQxOutput\(/, 'Block 10/80: orchestration must delegate QX final assembly');
+assert.match(syncConverter,/renderSurgeOutput\(/, 'Block 10/80: orchestration must delegate Surge final assembly');
+assert.match(syncConverter,/qxRuleOutputDestination\(/, 'Block 10: QX Rule section routing must use builder API');
+assert.match(syncConverter,/qxRewriteOutputDestination\(/, 'Block 10: QX Rewrite section routing must use builder API');
+assert.match(syncConverter,/surgeRuleOutputDestination\(/, 'Block 10: Surge Rule section routing must use builder API');
+assert.match(syncConverter,/surgeRewriteOutputDestination\(/, 'Block 10: Surge Rewrite section routing must use builder API');
+assert.equal(/\bqx\.(?:filter|rewrite|notes|mitm)\b|\bsg\.(?:rule|url|header|body|map|script|mitm|notes)\b/.test(syncConverter), false, 'Block 10: orchestration must not access target section arrays directly');
+assert.equal(/const\s+compact\s*=|\[URL Rewrite\]|\[Header Rewrite\]|\[Body Rewrite\]|\[Map Local\]/.test(convertBody), false, 'Block 10: convert() must not own target section titles or local compaction');
+assert.equal(/# \[filter_local\]|# \[rewrite_local\]|# \[mitm\]/.test(convertBody), false, 'Block 10: convert() must not own QX section titles');
+assert.equal(/renderQxSnippetHeader|renderSurgeModuleHeader|hasActiveSurgeLines/.test(convertBody), false, 'Block 10: convert() must not own target header assembly or Surge core requirement calculation');
+assert.equal(/from '.\/(?:rule|rewrite|script)-/.test(qxOutput), false, 'Block 10: QX output builder must not import semantic planners');
+assert.equal(/from '.\/(?:rule|rewrite|script)-/.test(surgeOutput), false, 'Block 10: Surge output builder must not import semantic planners');
+assert.match(qxOutput,/# \[filter_local\][\s\S]*# \[rewrite_local\][\s\S]*# \[mitm\]/, 'Block 10: QX builder must own fixed commented section order');
+assert.match(surgeOutput,/\['rule','\[Rule\]'\][\s\S]*\['url','\[URL Rewrite\]'\][\s\S]*\['header','\[Header Rewrite\]'\][\s\S]*\['body','\[Body Rewrite\]'\][\s\S]*\['map','\[Map Local\]'\][\s\S]*\['script','\[Script\]'\][\s\S]*\['mitm','\[MITM\]'\]/, 'Block 10: Surge builder must own fixed section order');
+assert.match(converterWorkflow,/target-output-builders\.mjs/, 'Block 10/80: Converter Check must execute output builder contract');
 const surgeValidator=await fs.readFile(path.join(ROOT,'converter/src/surge-module.mjs'),'utf8');
 assert.match(surgeValidator,/WayX ad-block Surge \[Script\] only accepts HTTP rewrite types/, 'Block 80: Surge validator must be explicitly scoped to ad-block rewrite scripts');
 assert.match(surgeValidator,/SURGE_WAYX_REWRITE_SECTIONS/, 'Block 80: Surge validator must consume the official-backed rewrite registry');

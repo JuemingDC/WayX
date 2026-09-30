@@ -288,5 +288,22 @@ CI 必须验证 source orchestration 不再在 `sync-convert.mjs` 内重复实�
 - QX inline note：`converter/src/qx-comment.mjs`
 - target metadata renderer：`converter/src/metadata.mjs`
 - contract：`converter/tests/source-section-comments.mjs`
+## 80.16 Target output-builder architecture gate
 
+CI 必须验证目标 section routing/final render 已从 orchestration 中分离：
+
+- `sync-convert.mjs` 必须使用 `createQxOutputState()` / `createSurgeOutputState()`；
+- QX target destination 必须通过 `qxOutputDestination()`，Surge target destination 必须通过 `surgeOutputDestination()`；
+- `sync-convert.mjs` 不得再维护 QX/Surge section-key→array object literal、Surge section title mapping、QX 固定 section 标题、局部 `compact()` 或最终 target `.join('\n')`；
+- QX builder 必须始终输出三个注释 section 标题并保持 `notes → filter → rewrite → mitm` 顺序；
+- Surge builder 必须只输出非空 section，固定顺序为 Rule → URL Rewrite → Header Rewrite → Body Rewrite → Map Local → Script → MITM；
+- Surge `needsCore20` 必须由 builder 根据 Body Rewrite / Map Local 活动行计算；
+- builders 不得 import Rule/Rewrite/Script planners，不得解释 source semantics；
+- 纯架构迁移要求 Catalog canonical 与 generated helpers 0 diff。
+
+实现：
+- shared line compaction：`converter/src/output-lines.mjs`
+- QX builder：`converter/src/qx-output.mjs`
+- Surge builder：`converter/src/surge-output.mjs`
+- contract：`converter/tests/target-output-builders.mjs`
 

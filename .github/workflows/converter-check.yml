@@ -54,6 +54,7 @@ jobs:
           node --check converter/tests/rewrite-target-planners.mjs
           node --check converter/tests/script-ir-target-planners.mjs
           node --check converter/tests/source-section-comments.mjs
+          node --check converter/tests/target-output-builders.mjs
           node --check converter/tests/qx-official-capabilities.mjs
           node --check converter/tests/surge-official-capabilities.mjs
           node --check converter/tests/unknown-issue-markers.mjs
@@ -85,6 +86,7 @@ jobs:
           node converter/tests/rewrite-target-planners.mjs
           node converter/tests/script-ir-target-planners.mjs
           node converter/tests/source-section-comments.mjs
+          node converter/tests/target-output-builders.mjs
           node converter/tests/unknown-issue-markers.mjs
           node converter/tests/manual-assets.mjs
           python converter/tests/test_conversion_gate.py

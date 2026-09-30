@@ -95,9 +95,43 @@ Surge Module：
 
 不得把 Loon `[Rewrite]`、`request if ... then ...` 原样作为 Surge 可执行内容。
 
+## 10.4 Output builder 固定顺序
+
+Quantumult X builder 固定输出：
+
+```text
+<header/comments>
+<optional notes>
+# [filter_local]
+...
+# [rewrite_local]
+...
+# [mitm]
+...
+```
+
+即使某个 QX section 当前为空，三个注释 section 标题仍保留，以匹配 WayX snippet 固定格式。
+
+Surge builder 只输出有内容的 section，固定顺序为：
+
+```text
+[Rule]
+[URL Rewrite]
+[Header Rewrite]
+[Body Rewrite]
+[Map Local]
+[Script]
+[MITM]
+```
+
+普通 notes 位于第一个 Surge section 之前。`[Body Rewrite]` 或 `[Map Local]` 含活动行时，由 Surge builder 计算 `needsCore20` 并传给 Module header renderer；line requirement 仍由 Script planner/orchestration 提供的状态决定。
+
 ## 10.6 自动转换实现
 
 - QX/Surge output path：`converter/src/paths.mjs`
 - QX/Surge metadata/header：`converter/src/metadata.mjs`
+- QX output state/final render：`converter/src/qx-output.mjs`
+- Surge output state/final render：`converter/src/surge-output.mjs`
+- Shared line compaction：`converter/src/output-lines.mjs`
 - Surge module section/header validator：`converter/src/surge-module.mjs`
-- Final render/orchestration：`.github/scripts/sync-convert.mjs`
+- Orchestration：`.github/scripts/sync-convert.mjs`（只写 builder state，不负责 section title/final assembly）
