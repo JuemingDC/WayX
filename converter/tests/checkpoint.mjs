@@ -62,7 +62,7 @@ import {
 } from '../src/index.mjs';
 import { classifyComplexRewrite, complexConditionKinds } from '../src/complex-rewrite.mjs';
 import { registerComplexRewriteHandler, planComplexRewrite, listComplexRewriteHandlers } from '../src/complex-rewrite-registry.mjs';
-import { renderMixedRewriteScript } from '../src/complex-rewrite-script.mjs';
+import { renderMixedRewriteScript, renderSingleJsonMutationScript } from '../src/complex-rewrite-script.mjs';
 
 assert.equal(qxRule('URL-REGEX, "^https:\\/\\/ad\\.example\\.com", REJECT').line, '^https:\\/\\/ad\\.example\\.com url reject-200');
 assert.equal(
@@ -571,7 +571,7 @@ function runComplexScript(script, {request={}, response={}, argument=''}={}) {
   vm.runInNewContext(script, sandbox, {timeout:1000});
   return JSON.parse(JSON.stringify(result));
 }
-const runtimeSurgeArgument = renderMixedRewriteScript(
+const runtimeSurgeArgument = renderSingleJsonMutationScript(
   parseRewriteV2('response if ${enabled} == true && ${url} ~= /api/ then response.json.replace("n", ${level})'),
   {target:'surge', argumentTable:surgeArgs.table},
 );
