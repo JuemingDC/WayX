@@ -55,6 +55,7 @@ Source parser 遇到当前 grammar 未登记、但包含活动内容的 section 
 - filter type 只允许当前转换规范已经确认的 QX 类型；
 - rewrite action 只允许官方 sample 已确认的 reject / redirect / request-header / body / jsonjq / Script action；
 - Script action 名称只允许 `script-request-header / script-request-body / script-response-header / script-response-body / script-echo-response / script-analyze-echo-response`；
+- 允许 filter/rewrite 活动行使用当前 QX beta 已确认的 `{# note #} ` 前缀；validator 必须先剥离 note 再校验真实规则语法。note 为空、闭合不完整，或用于 MITM/hostname 等非 filter/rewrite 行时直接失败；
 - section 标题全部注释化；
 - snippet 头部不存在活动 `#!...` 来源 metadata；
 - 无 `[hH][tT][tT][pP]` 自动 case-fold；
