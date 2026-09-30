@@ -73,8 +73,8 @@ assert.equal(planQxRuleAst(unknown.ast).reason,'unsupported-qx-rule-comment');
 assert.equal(planSurgeModuleRuleAst(unknown.ast).reason,'unsupported-rule-type');
 
 const invalidNot=parseLoonRuleAst('NOT, ((DOMAIN, a.example), (DOMAIN, b.example)), REJECT');
-assert.equal(invalidNot.ok,false);
-assert.equal(invalidNot.reason,'NOT-requires-one-subrule');
+assert.equal(invalidNot.ok,true);
+assert.equal(planSurgeModuleRuleAst(invalidNot.ast).reason,'unsupported-rule-type');
 
 const malformed=parseLoonRuleAst('AND, DOMAIN, REJECT');
 assert.equal(malformed.ok,false);
