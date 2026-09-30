@@ -169,6 +169,8 @@ Surge 的 `header.add` 与普通对象 Header 修改语义不同：官方定义�
 
 `json.add` 在新增路径、对象/数组等语义未得到足够依据前保持 fail closed；不得用 `setpath` 等近似行为替代。
 
+`json.delete` 的对象键删除可继续由已验证 helper 处理；最终 key 为数组索引（如 `items[0]`）时，在 Loon 的数组删除/收缩语义未得到足够依据前必须 fail closed，禁止用 JavaScript `delete` 的稀疏数组行为或擅自改用 `splice` 猜测语义。`json.replace(..., null)` 保持 JSON `null` 类型，不得转换为字符串 `"null"`。
+
 ## 30.6 自动转换实现
 
 - Legacy classifier/planner：`converter/src/legacy-rewrite.mjs`
