@@ -31,6 +31,7 @@ const converterWorkflow=await fs.readFile(path.join(ROOT,'.github/workflows/conv
 const canonicalRunner=await fs.readFile(path.join(ROOT,'converter/tools/regenerate-canonical.mjs'),'utf8');
 const sourceCatalog=await fs.readFile(path.join(ROOT,'.github/sources/loon.json'),'utf8');
 const syncConverter=await fs.readFile(path.join(ROOT,'.github/scripts/sync-convert.mjs'),'utf8');
+const targetRegex=await fs.readFile(path.join(ROOT,'converter/src/target-regex.mjs'),'utf8');
 assert.equal(/"mirrors"\s*:/.test(sourceCatalog), false, 'Block 90: Source Catalog must not contain mirrors');
 assert.equal(/entry\.mirrors|fetchWithFallback|planScriptMirrorPaths/.test(syncConverter), false, 'Block 90: converter must not use source/script mirror fallback');
 assert.match(syncConverter,/fetchOriginalText\(entry\.source\)/, 'Block 90: plugin fetch must use original descriptor source');
@@ -48,6 +49,10 @@ assert.match(canonicalRunner,/materializeMockFiles\(entry, parsed\)/, 'Block 50:
 assert.match(canonicalRunner,/inspectSourceScript\(reference, pluginSourceUrl\)/, 'Block 60: canonical runner must delegate Source Script resolution/reading to the shared inspector');
 assert.match(syncConverter,/resolveOriginalUrl\(reference, pluginSourceUrl\)/, 'Block 60: shared Source Script inspector must resolve relative refs against the original plugin URL');
 assert.match(syncConverter,/fetchOriginalText\(originalUrl\)/, 'Block 60: QX compatibility inspection must read the resolved original Source Script URL when available');
+assert.match(targetRegex,/return String\(pattern \?\? ''\);/, 'Block 40: target regex normalization must preserve the regex body');
+assert.equal(/replace\([^\n]*\\\\\\\//.test(targetRegex), false, 'Block 40: target regex compiler must not globally rewrite escaped slashes');
+assert.match(targetRegex,/sourceFlags:\s*flags/, 'Block 40: discarded source flags must remain observable metadata without being propagated');
+assert.match(syncConverter,/planComplexRewrite\(/, 'Block 30: unified converter must keep the complex helper planner in the target fallback chain');
 assert.match(syncConverter,/QX_FILTER_TYPES/, 'Block 80: QX validator must maintain an explicit active filter whitelist');
 assert.match(syncConverter,/QX_SCRIPT_ACTIONS/, 'Block 80: QX validator must maintain an explicit Script action whitelist');
 assert.match(syncConverter,/supportedSourceSections/, 'Block 80: source orchestration must explicitly account for unsupported active sections');
