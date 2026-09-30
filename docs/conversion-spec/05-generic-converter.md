@@ -98,6 +98,7 @@ raw source
 → source metadata IR
 → Rule / Rewrite / Script planners
 → target-specific comment / metadata renderer
+→ QX / Surge output builder
 ```
 
 约束：
@@ -107,6 +108,26 @@ raw source
 - Surge 不使用 QX inline-note 机制，继续按源顺序保留普通注释；
 - unknown active source section 必须逐声明进入 Issue，对空 section/纯注释 section 不误报；
 - orchestration 不得再维护上述 parser/白名单的第二份实现。
+
+## 5.3.2 Target output builder
+
+Planner 结果的“落到哪个目标 section、按什么 section 顺序输出、如何压缩空行、如何与目标 header 拼装”不属于 source orchestration，必须由 target output builder 管理：
+
+```text
+planner result
+→ target output state
+→ target section routing
+→ target header + ordered sections
+→ final text
+```
+
+固定边界：
+- QX：`qx-output.mjs` 管理 `notes/filter/rewrite/mitm`；
+- Surge：`surge-output.mjs` 管理 `notes/rule/url/header/body/map/script/mitm`；
+- orchestration 不得维护目标 section 标题、顺序或第二份 section-key→array mapping；
+- output builder 不得解析源 Rule/Rewrite/Script，也不得改变 planner 语义，只做目标结构化落段；
+- generated helper Map 可以作为 output state 的附属物，但 builder 不生成 helper 语义；
+- 纯架构迁移必须保持 byte-equivalent canonical 内容（转换时间戳除非真正 regeneration，否则不允许漂移）。
 
 ## 5.4 Rule 转换器
 
