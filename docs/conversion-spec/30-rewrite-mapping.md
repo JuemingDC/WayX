@@ -210,3 +210,8 @@ Surge 转换规则：
 ### Named regex captures in complex helpers
 
 For a Loon condition of the form `~= /pattern/ as name`, a generated complex helper may preserve the complete JavaScript match object under that declared name and resolve action-string references `${name.0}`, `${name.1}`, etc. Index 0 is the complete match and positive indices are capture groups. References to undeclared capture names or unsupported interpolation forms must fail closed. Loon regex flags `i`, `m`, and `s` are parsed but are not propagated to the generated target `RegExp`; only the regex body is retained.
+
+
+### Complex JSON runtime guard
+
+Generated mixed helpers must evaluate the Loon condition before parsing a JSON body. If the condition does not match, the helper returns without parsing or mutating the transaction. If the condition matches but the body cannot be parsed as JSON, the helper fails closed with an unchanged transaction; header/body mutations from the pipeline must not be partially applied.
