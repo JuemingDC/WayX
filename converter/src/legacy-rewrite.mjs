@@ -224,6 +224,14 @@ function planHeader(pattern, action, parsed, target, ctx) {
   }
 
 
+  if (target === 'qx' && parsed.phase === 'response' && parsed.op === 'add') {
+    return {
+      section:'comment',
+      line:'# [WayX] Quantumult X unsupported legacy response-header-add commented out; duplicate-header preservation is not verified by the official sample.\n# Source declaration: ' + pattern + ' ' + action,
+      reason:'unsupported-qx-response-header-add-comment',
+    };
+  }
+
   if (target === 'qx') {
     try {
       const ast=legacyHeaderAst(pattern, parsed, tokens);
