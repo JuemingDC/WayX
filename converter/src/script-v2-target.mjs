@@ -66,8 +66,14 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
   if (debug?.type === 'boolean' && debug.value) {
     return unsupported('Loon Script v2 debug=true has no verified Quantumult X rewrite declaration or lossless helper bridge');
   }
-  if (scriptOptionBoolean(ast, 'binary_body_mode', false)) {
-    return unsupported('Loon Script v2 binary_body_mode=true has no verified Quantumult X rewrite declaration or lossless helper bridge');
+  const binaryBodyMode = scriptOptionBoolean(ast, 'binary_body_mode', false);
+  if (binaryBodyMode) {
+    if (ast.phase !== 'response') {
+      return unsupported('Loon request binary_body_mode=true has no verified Quantumult X request-body bodyBytes example');
+    }
+    if (!scriptOptionBoolean(ast, 'requires_body', false)) {
+      return unsupported('Loon response binary_body_mode=true requires a Quantumult X response-body declaration');
+    }
   }
 
   const action = selectQxScriptAction({
@@ -87,7 +93,7 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
     action:action.action,
     line:condition.pattern + ' url ' + action.action + ' ' + scriptUrl,
     tag:fixedOption(ast, 'tag'),
-    binaryBodyMode:false,
+    binaryBodyMode,
     notes,
   };
 }
