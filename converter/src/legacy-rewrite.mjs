@@ -8,6 +8,7 @@ import { renderQxHeaderScript, renderQxInlineMockScript } from './qx-semantic-sc
 import { surgeInlineMockPlan } from './rewrite-v2-semantic.mjs';
 import { renderSurgeRequestMockScript } from './surge-mock.mjs';
 import { renderMixedRewriteScript, renderSingleJsonAddScript } from './complex-rewrite-script.mjs';
+import { classifyLegacyRewriteAction, legacyRewriteToSemanticIr } from './rewrite-ir.mjs';
 
 const REJECT_ACTIONS = new Set(['reject','reject-200','reject-img','reject-dict','reject-array']);
 
@@ -136,23 +137,16 @@ function parseMock(rest) {
 }
 
 export function classifyLegacyRewrite(action) {
-  const raw=String(action ?? '').trim();
-  const lower=raw.toLowerCase();
-  if (REJECT_ACTIONS.has(lower)) return {kind:'reject', action:lower};
-  if (lower === 'reject-video') return {kind:'reject-video'};
-  let m=raw.match(/^(302|307)\s+(.+)$/i);
-  if (m) return {kind:'redirect', status:Number(m[1]), target:m[2]};
-  m=raw.match(/^header\s+(.+)$/i);
-  if (m) return {kind:'url-rewrite', target:m[1]};
-  m=raw.match(/^(response-)?header-(add|del|replace|replace-regex)\s+(.+)$/i);
-  if (m) return {kind:'header', phase:m[1] ? 'response':'request', op:m[2].toLowerCase(), rest:m[3]};
-  m=raw.match(/^(request|response)-body-replace-regex\s+(.+)$/i);
-  if (m) return {kind:'body-regex', phase:m[1].toLowerCase(), rest:m[2]};
-  m=raw.match(/^(request|response)-body-json-(add|replace|del|jq)\s+(.+)$/i);
-  if (m) return {kind:'json', phase:m[1].toLowerCase(), op:m[2].toLowerCase(), rest:m[3]};
-  m=raw.match(/^mock-(request|response)-body\s+(.+)$/i);
-  if (m) return {kind:'mock', phase:m[1].toLowerCase(), mock:parseMock(m[2])};
-  return {kind:'unknown', raw};
+  const parsed=classifyLegacyRewriteAction(action);
+  if (parsed.kind === 'reject' && parsed.variant === 'video') return {kind:'reject-video'};
+  if (parsed.kind === 'header') return {kind:'header', phase:parsed.phase, op:parsed.operation, rest:parsed.rest};
+  if (parsed.kind === 'body-regex') return {kind:'body-regex', phase:parsed.phase, rest:parsed.rest};
+  if (parsed.kind === 'json') return {kind:'json', phase:parsed.phase, op:parsed.operation, rest:parsed.rest};
+  if (parsed.kind === 'mock') return {kind:'mock', phase:parsed.phase, mock:parsed.mock};
+  if (parsed.kind === 'reject') return {kind:'reject', action:parsed.action};
+  if (parsed.kind === 'redirect') return {kind:'redirect', status:parsed.status, target:parsed.target};
+  if (parsed.kind === 'url-rewrite') return {kind:'url-rewrite', target:parsed.target};
+  return {kind:'unknown', raw:parsed.raw};
 }
 
 function legacyStringNode(value) {
@@ -416,8 +410,10 @@ function planMock(pattern, action, parsed, target, ctx) {
 
 export function planLegacyRewrite(pattern, action, target, ctx={}) {
   const targetPattern=normalizeRegexBodyForTarget(pattern);
+  const ir=legacyRewriteToSemanticIr(pattern, action);
+  const operation=ir.operations[0];
   const parsed=classifyLegacyRewrite(action);
-  if (parsed.kind === 'reject') {
+  if (operation.kind === 'reject' && operation.variant !== 'video') {
     if (target === 'qx') return {section:'rewrite', line:`${targetPattern} url ${parsed.action}`};
     if (parsed.action === 'reject') return {section:'url', line:`${targetPattern} _ reject`};
     if (parsed.action === 'reject-img') return {section:'map', line:`${targetPattern} data-type=tiny-gif status-code=200`};
@@ -425,20 +421,20 @@ export function planLegacyRewrite(pattern, action, target, ctx={}) {
     if (parsed.action === 'reject-array') return {section:'map', line:`${targetPattern} data-type=text data="[]" status-code=200 header="Content-Type:application/json"`};
     return {section:'map', line:`${targetPattern} data-type=text data="" status-code=200`};
   }
-  if (parsed.kind === 'reject-video') return review(pattern, action, 'target mapping for Loon reject-video is not yet proven by official target documentation');
-  if (parsed.kind === 'redirect') {
+  if (operation.kind === 'reject' && operation.variant === 'video') return review(pattern, action, 'target mapping for Loon reject-video is not yet proven by official target documentation');
+  if (operation.kind === 'redirect') {
     return target === 'qx'
       ? {section:'rewrite', line:`${targetPattern} url ${parsed.status} ${parsed.target}`}
       : {section:'url', line:`${targetPattern} ${parsed.target} ${parsed.status}`};
   }
-  if (parsed.kind === 'url-rewrite') {
+  if (operation.kind === 'url-rewrite') {
     return target === 'surge'
       ? {section:'url', line:`${targetPattern} ${parsed.target} header`}
       : review(pattern, action, 'Quantumult X official sample has no verified transparent URL-rewrite equivalent for Loon legacy header action');
   }
-  if (parsed.kind === 'header') return planHeader(pattern, action, parsed, target, ctx);
-  if (parsed.kind === 'body-regex') return planBodyRegex(pattern, action, parsed, target);
-  if (parsed.kind === 'json') return planJson(pattern, action, parsed, target, ctx);
-  if (parsed.kind === 'mock') return planMock(pattern, action, parsed, target, ctx);
+  if (operation.kind === 'header') return planHeader(pattern, action, parsed, target, ctx);
+  if (operation.kind === 'body-regex') return planBodyRegex(pattern, action, parsed, target);
+  if (operation.kind === 'json') return planJson(pattern, action, parsed, target, ctx);
+  if (operation.kind === 'mock') return planMock(pattern, action, parsed, target, ctx);
   return issue(pattern, action, 'unknown-legacy-rewrite-action', 'unsupported Loon legacy Rewrite action is outside the registered grammar');
 }
