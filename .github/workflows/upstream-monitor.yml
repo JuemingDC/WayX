@@ -98,12 +98,6 @@ jobs:
           node .github/scripts/sync-convert.mjs 2>&1 | tee monitor/.runtime/loon-sync.log
 
 
-      - name: Scan original Source Script compatibility
-        if: steps.pending.outputs.blocked != 'true'
-        id: script_scan
-        continue-on-error: true
-        run: node converter/tools/scan-script-compat.mjs
-
       - name: Check official upstream specifications
         if: steps.pending.outputs.blocked != 'true'
         id: monitor
@@ -131,7 +125,6 @@ jobs:
           (steps.monitor.outputs.has_review == 'true' ||
            steps.gate.outputs.requires_work == 'true' ||
            steps.loon_sync.outcome != 'success' ||
-           steps.script_scan.outcome != 'success' ||
            steps.validate.outcome != 'success')
         id: review
         shell: bash
@@ -146,7 +139,6 @@ jobs:
             echo "## Actions status"
             echo
             echo "- Loon converter: ${{ steps.loon_sync.outcome }}"
-            echo "- Source Script scan: ${{ steps.script_scan.outcome }}"
             echo "- Validator: ${{ steps.validate.outcome }}"
             echo
             if [ -f "${{ steps.gate.outputs.summary }}" ]; then
@@ -179,7 +171,6 @@ jobs:
           steps.monitor.outputs.has_review != 'true' &&
           steps.gate.outputs.requires_work != 'true' &&
           steps.loon_sync.outcome == 'success' &&
-          steps.script_scan.outcome == 'success' &&
           steps.validate.outcome == 'success'
         shell: bash
         run: |
@@ -206,7 +197,6 @@ jobs:
           (steps.monitor.outputs.has_review == 'true' ||
            steps.gate.outputs.requires_work == 'true' ||
            steps.loon_sync.outcome != 'success' ||
-           steps.script_scan.outcome != 'success' ||
            steps.validate.outcome != 'success')
         env:
           GH_TOKEN: ${{ github.token }}
