@@ -424,24 +424,25 @@ assert.throws(
 const mixedJson = parseRewriteV2('response if ${url} ~= /api/ then response.header.del("Server") | response.json.replace("data.ads", false) | response.json.delete("data.tracking")');
 const mixedJsonQx = renderMixedRewriteScript(mixedJson, {target:'qx'});
 assert.equal(mixedJsonQx.qxAction, 'script-response-body');
-assert.ok(mixedJsonQx.script.indexOf('__wayxDel("Server");') < mixedJsonQx.script.indexOf('__wayxJsonReplace(__wayxJson,["data","ads"],false);'));
-assert.ok(mixedJsonQx.script.indexOf('__wayxJsonReplace(__wayxJson,["data","ads"],false);') < mixedJsonQx.script.indexOf('__wayxJsonDelete(__wayxJson,["data","tracking"]);'));
-assert.match(mixedJsonQx.script, /JSON\.stringify\(__wayxJson\)/);
-assert.ok(mixedJsonQx.script.indexOf('if(') < mixedJsonQx.script.indexOf('JSON.parse(String(__wayxBody ?? ""))'));
-assert.match(mixedJsonQx.script, /try\{__wayxJson=JSON\.parse\(String\(__wayxBody \?\? ""\)\);\}catch\{__wayxJson=undefined;\}/);
-assert.match(mixedJsonQx.script, /if\(__wayxJson===undefined\)\{\$done\(\{\}\);\}else\{/);
+assert.ok(mixedJsonQx.script.indexOf('__wayxDel("Server");') < mixedJsonQx.script.indexOf('__wayxJsonAction(j=>__wayxJsonReplace(j,["data","ads"],false));'));
+assert.ok(mixedJsonQx.script.indexOf('__wayxJsonReplace(j,["data","ads"],false)') < mixedJsonQx.script.indexOf('__wayxJsonDelete(j,["data","tracking"])'));
+assert.match(mixedJsonQx.script, /function __wayxJsonAction\(fn\)\{try\{const j=JSON\.parse/);
+assert.match(mixedJsonQx.script, /catch\{\}\}/);
 
 const mixedJsonNull = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /api/ then response.header.set("X-Test", "ok") | response.json.replace("data.value", null)'),
   {target:'qx'},
 );
-assert.match(mixedJsonNull.script, /__wayxJsonReplace\(__wayxJson,\["data","value"\],null\)/);
+assert.match(mixedJsonNull.script, /__wayxJsonReplace\(j,\["data","value"\],null\)/);
+
 const mixedJsonCapture = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /\\/users\\/(\\d+)/ims as hit then response.header.set("X-User", "${hit.1}") | response.json.replace("data.user", "${hit.1}")'),
   {target:'qx'},
 );
-assert.ok(mixedJsonCapture.script.includes('__wayxJsonReplace(__wayxJson,["data","user"],String(__wayxCaptures["hit"]?.[1] ?? ""));'));
+assert.ok(mixedJsonCapture.script.includes('__wayxTpl([["c","hit",1]])'));
+assert.ok(mixedJsonCapture.script.includes('v=>__wayxJsonAction(j=>__wayxJsonReplace(j,["data","user"],v))'));
 assert.equal(mixedJsonCapture.script.includes('"ims"'), false);
+
 const mixedJsonTyped = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /api/ then response.header.set("X-Test", "ok") | response.json.replace("data.n", 7) | response.json.replace("data.ok", true) | response.json.replace("data.none", null)'),
   {target:'qx'},
@@ -449,11 +450,51 @@ const mixedJsonTyped = renderMixedRewriteScript(
 assert.match(mixedJsonTyped.script, /\["data","n"\],7\)/);
 assert.match(mixedJsonTyped.script, /\["data","ok"\],true\)/);
 assert.match(mixedJsonTyped.script, /\["data","none"\],null\)/);
+
+const orderedBodyJson = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /api/ then response.body.replace(/one/, "two") | response.json.replace("data.ok", true) | response.body.replace(/three/, "four")'),
+  {target:'qx'},
+);
+const firstBody=orderedBodyJson.script.indexOf('.replace(new RegExp("one")');
+const jsonStep=orderedBodyJson.script.indexOf('__wayxJsonReplace(j,["data","ok"],true)');
+const secondBody=orderedBodyJson.script.indexOf('.replace(new RegExp("three")');
+assert.ok(firstBody >= 0 && firstBody < jsonStep && jsonStep < secondBody);
+
+const pureBodyBatch = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /api/ then response.body.replace([/one/, /two/], ["1", "2"]) | response.json.replace("data.ok", true)'),
+  {target:'surge'},
+);
+assert.ok(pureBodyBatch.script.indexOf('new RegExp("one")') < pureBodyBatch.script.indexOf('new RegExp("two")'));
+assert.ok(pureBodyBatch.script.indexOf('new RegExp("two")') < pureBodyBatch.script.indexOf('__wayxJsonReplace(j,["data","ok"],true)'));
+
+const rawCaptureLiteral = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /item\\/(\\d+)/ as hit then response.header.set("X-Test", `literal ${hit.1}`) | response.body.replace(/x/, `raw ${hit.1}`)'),
+  {target:'qx'},
+);
+assert.ok(rawCaptureLiteral.script.includes('"literal ${hit.1}"'));
+assert.ok(rawCaptureLiteral.script.includes('"raw ${hit.1}"'));
+assert.equal(rawCaptureLiteral.script.includes('__wayxTpl([["s","literal '), false);
+
 assert.throws(
-  () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ as hit then response.header.set("X-Test", "ok") | response.json.replace("data.user", "${other.1}")'), {target:'qx'}),
+  () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ as hit then response.header.set("X-Test", "${other.1}") | response.body.replace(/x/, "y")'), {target:'qx'}),
   /unknown capture alias: other/,
 );
-
+assert.throws(
+  () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /item\\/(\\d+)/ as hit then response.header.set("X-Test", "${hit.2}") | response.body.replace(/x/, "y")'), {target:'qx'}),
+  /capture index exceeds regex capture-group count: hit\.2/,
+);
+assert.throws(
+  () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /a(\\d+)/ as hit || ${url} ~= /b/ then response.header.set("X-Test", "${hit.1}") | response.body.replace(/x/, "y")'), {target:'qx'}),
+  /capture alias is not guaranteed on every successful condition path: hit/,
+);
+assert.throws(
+  () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /a(\\d+)/ as hit && ${request.header[\'X-Test\']} ~= /b(\\d+)/ as hit then response.header.set("X-Test", "${hit.1}") | response.body.replace(/x/, "y")'), {target:'qx'}),
+  /duplicate capture alias: hit/,
+);
+assert.throws(
+  () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ as hit then response.header.set("X-Test", "${hit.name}") | response.body.replace(/x/, "y")'), {target:'qx'}),
+  /header value contains unsupported interpolation/,
+);
 assert.throws(
   () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ then response.header.set("X-Test", "ok") | response.json.delete("items[0]")'), {target:'qx'}),
   /json\.delete array-index semantics are not verified/,
@@ -466,18 +507,7 @@ const captureMixedQx = renderMixedRewriteScript(
 assert.match(captureMixedQx.script, /const __wayxCaptures=Object\.create\(null\)/);
 assert.ok(captureMixedQx.script.includes('__wayxCaptures["hit"]=String($request.url ?? "").match(new RegExp("\\\\/api\\\\/(foo)-(bar)"))'));
 assert.equal(captureMixedQx.script.includes('"ims"'), false);
-assert.ok(captureMixedQx.script.includes('String(__wayxCaptures["hit"]?.[0] ?? "")'));
-assert.ok(captureMixedQx.script.includes('String(__wayxCaptures["hit"]?.[1] ?? "")'));
-assert.ok(captureMixedQx.script.includes('String(__wayxCaptures["hit"]?.[2] ?? "")'));
-assert.throws(
-  () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ as hit then response.header.set("X-Test", "${other.1}") | response.body.replace(/x/, "y")'), {target:'qx'}),
-  /unknown capture alias: other/,
-);
-assert.throws(
-  () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ as hit then response.header.set("X-Test", "${hit.name}") | response.body.replace(/x/, "y")'), {target:'qx'}),
-  /header value contains unsupported interpolation/,
-);
-
+assert.ok(captureMixedQx.script.includes('__wayxTpl([["c","hit",0],["s",":"],["c","hit",1],["s",":"],["c","hit",2]])'));
 const surgeHeaderAddMixed = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /api/ then response.header.add("Set-Cookie", "b=2") | response.header.set("X-Test", "ok") | response.body.replace(/ads/, "clean")'),
   {target:'surge'},
