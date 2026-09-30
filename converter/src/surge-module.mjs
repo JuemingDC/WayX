@@ -179,8 +179,8 @@ export function validateSurgeModule(text, entry = {id:'module'}, {adblockScope =
       const match = line.match(/^([^=]+?)\s*=\s*(.+)$/);
       if (!match) throw new Error(`${entry.id}: invalid Surge MITM option: ${line}`);
       const key = match[1].trim();
-      if (!['hostname','skip-server-cert-verify'].includes(key)) {
-        throw new Error(`${entry.id}: Module may only manipulate hostname/skip-server-cert-verify in [MITM]: ${line}`);
+      if (key !== 'hostname') {
+        throw new Error(`${entry.id}: WayX ad-block Surge Module [MITM] only accepts hostname: ${line}`);
       }
       continue;
     }
