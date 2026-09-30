@@ -2,14 +2,17 @@
 // Author: chance
 // Category: Converter / Regex / Cross-platform
 //
-// Loon uses JavaScript-style /.../ regex literals. QX and Surge target
-// declarations use bare regex patterns. During conversion WayX discards the
-// Loon i/m/s flags and removes literal-only slash escaping (\/) so generated
-// patterns follow the target declaration format without changing the remaining
-// regex structure.
+// Loon Rewrite v2 uses JavaScript-style /.../ regex literals. Target
+// declarations use their own bare/string regex fields. WayX removes only the
+// Loon literal wrapper at parse time and intentionally discards source i/m/s
+// flags by project standard. The regex body itself is preserved byte-for-byte;
+// target-specific planners may adapt it only when an official target syntax
+// requires a local change.
 
 export function normalizeRegexBodyForTarget(pattern) {
-  return String(pattern ?? '').replace(/\\\//g, '/');
+  // Historical name kept to avoid broad call-site churn. This is deliberately
+  // an identity operation: no global \/ -> / or other regex-body rewriting.
+  return String(pattern ?? '');
 }
 
 export function compileRegexForTarget(regex, { subject = 'url', target = 'generic' } = {}) {
