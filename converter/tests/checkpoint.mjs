@@ -432,6 +432,12 @@ assert.throws(
   /does not handle response\.json\.add/,
 );
 
+const flaggedHeaderHelper = renderQxHeaderScript(parseRewriteV2('request if ${url} ~= /api/i then request.header.replace("X-Test", /value/ms, "ok")'));
+assert.equal(flaggedHeaderHelper.script.includes('new RegExp("api", "i")'), false);
+assert.equal(flaggedHeaderHelper.script.includes('new RegExp(source, flags)'), false);
+assert.match(flaggedHeaderHelper.script, /new RegExp\("api"\)/);
+assert.match(flaggedHeaderHelper.script, /__wayxReplace\("X-Test","value","ok"\)/);
+
 const bulkV2 = parseRewriteV2('request if ${url} ~= /api/ then request.header.set(["X-A","X-B"],["1","2"])');
 validateRewriteV2Ast(bulkV2);
 assert.equal(LOON_REWRITE_V2_ACTIONS.size, 31);
