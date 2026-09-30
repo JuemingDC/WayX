@@ -95,7 +95,7 @@ assert.match(upstreamWorkflow,/steps\.issues\.outputs\.has_unknown/, 'Block 90: 
 assert.match(syncConverter,/QX_WAYX_FILTER_TYPES/, 'Block 80: QX validator must consume the explicit official-backed active filter whitelist');
 assert.match(syncConverter,/QX_WAYX_SCRIPT_ACTIONS/, 'Block 80: QX validator must consume the explicit official-backed Script action whitelist');
 assert.match(syncConverter,/QX_WAYX_SNIPPET_MITM_KEYS/, 'Block 80: QX validator must consume the official-backed snippet MITM whitelist');
-assert.match(syncConverter,/supportedSourceSections/, 'Block 80: source orchestration must explicitly account for unsupported active sections');
+assert.match(syncConverter,/isSupportedSourceSection\(/, 'Block 80: source orchestration must explicitly account for unsupported active sections through the shared source-section scope');
 assert.match(syncConverter,/ISSUE REQUIRED \[unknown-source-section\]/, 'Block 80: unknown active source sections must fail closed and request an issue');
 assert.equal(/inspectQxScriptCompatibility|qxManualPortComment/.test(syncConverter), false, 'Block 60: production converter must not gate Source Script execution on runtime compatibility scanning');
 const scriptIr=await fs.readFile(path.join(ROOT,'converter/src/script-ir.mjs'),'utf8');
