@@ -316,12 +316,12 @@ for (const testCase of cases) {
     );
     assert.match(
       out.surge,
-      /# \^https:\/\/app\\\.bilibili\\\.com\/x\/v2\/splash\/list\\\? data-type=text data="OK" status-code=200 header="Content-Type:text\/plain"/,
+      /# \^https:\\\/\\\/app\\\.bilibili\\\.com\\\/x\\\/v2\\\/splash\\\/list\\\? data-type=text data="OK" status-code=200 header="Content-Type:text\/plain"/,
       'Bilibili: disabled response.body.mock must have a disabled Surge Map Local equivalent',
     );
     assert.match(
       out.surge,
-      /# http-response-jq \^https:\/\/app\\\.bilibili\\\.com\/x\/v2\/splash\/\(show\|event\/list2\)\\\? '\.data \|= with_entries\(if \.key \| IN\("show", "event_list"\) then \.value = \[\] else \. end\)'/,
+      /# http-response-jq \^https:\\\/\\\/app\\\.bilibili\\\.com\\\/x\\\/v2\\\/splash\\\/\(show\|event\\\/list2\)\\\? '\.data \|= with_entries\(if \.key \| IN\("show", "event_list"\) then \.value = \[\] else \. end\)'/,
       'Bilibili: disabled response.json.jq must have a disabled Surge Body Rewrite equivalent',
     );
   }
