@@ -48,6 +48,38 @@ assert.doesNotMatch(
   'converter must never invent a pipeline by joining adjacent source declarations',
 );
 assert.match(headerGroupOutput.surge, /header-add content-disposition inline/);
+
+const qxIgnoredOptionsFixture = {
+  id:'IgnoredOptionsFixture',
+  category:'Adblock',
+  source:'https://example.com/ignored-options.lpx',
+  qx:'IgnoredOptionsFixture.snippet',
+  surge:'IgnoredOptionsFixture.sgmodule',
+};
+const qxIgnoredOptionsSource = `#!name=IgnoredOptionsFixture
+
+[Argument]
+enabled=switch,false,true,tag=开关
+lang=select,"zh-Hans","en",tag=语言
+
+[Script]
+http-response ^https://api\\.example\\.com/ script-path=https://example.com/legacy.js, requires-body=true, timeout=60, argument=[{lang}], enable={enabled}, tag=Legacy
+response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\/v2/ then script("https://example.com/v2.js", {\${lang}}) with enable=\${enabled}, timeout=30, tag="V2", requires_body=true
+
+[MITM]
+hostname=api.example.com
+`;
+const ignoredScriptMap = new Map([
+  ['https://example.com/legacy.js',{qx:'https://example.com/legacy.js',surge:'https://example.com/legacy.js',source:'$done({body:$response.body});'}],
+  ['https://example.com/v2.js',{qx:'https://example.com/v2.js',surge:'https://example.com/v2.js',source:'$done({body:$response.body});'}],
+]);
+const qxIgnoredOptionsOutput = convert(qxIgnoredOptionsFixture, qxIgnoredOptionsSource, ignoredScriptMap, STAMP);
+assert.doesNotMatch(qxIgnoredOptionsOutput.qx, /SCRIPT(?: V2)? REVIEW REQUIRED/);
+assert.match(qxIgnoredOptionsOutput.qx, /Source dynamic enable ignored for Quantumult X; converted rule defaults to enabled/);
+assert.match(qxIgnoredOptionsOutput.qx, /Source Script timeout ignored for Quantumult X/);
+assert.match(qxIgnoredOptionsOutput.qx, /Source Script argument ignored for Quantumult X/);
+assert.match(qxIgnoredOptionsOutput.qx, /url script-response-body https:\/\/example\.com\/legacy\.js/);
+assert.match(qxIgnoredOptionsOutput.qx, /url script-response-body https:\/\/example\.com\/v2\.js/);
 assert.match(headerGroupOutput.surge, /header-del content-type/);
 assert.match(headerGroupOutput.surge, /header-add content-type text\/plain; charset=utf-8/);
 
