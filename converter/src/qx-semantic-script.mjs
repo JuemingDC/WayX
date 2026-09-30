@@ -5,6 +5,7 @@
 import { simpleUrlRewriteCondition, fixedStringValue } from './rewrite-v2-semantic.mjs';
 import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
 import { qxMockTypeIsBinary, renderQxMockScript } from './qx-mock.mjs';
+import { normalizeRegexBodyForTarget } from './target-regex.mjs';
 
 const STATUS_TEXT = Object.freeze({
   200:'OK', 201:'Created', 202:'Accepted', 204:'No Content',
@@ -58,7 +59,7 @@ export function renderQxRedirectScript(ast, options = {}) {
 
   const lines = [
     ...metadata(options),
-    'const __wayxRe = new RegExp(' + JSON.stringify(condition.regex.pattern) + ');',
+    'const __wayxRe = new RegExp(' + JSON.stringify(condition.pattern) + ');',
     'const __wayxUrl = $request.url;',
     'const __wayxMatch = __wayxRe.exec(__wayxUrl);',
     'if (!__wayxMatch) {',
@@ -172,7 +173,7 @@ function headerOpsForMock(ast, mockAction) {
         ops.push({
           type:'replace',
           name:fixed(args[0], 'header name'),
-          pattern:regex.pattern,
+          pattern:normalizeRegexBodyForTarget(regex.pattern),
           replacement:fixed(args[2], 'header replacement'),
         });
       }
@@ -241,7 +242,7 @@ export function renderQxHeaderScript(ast, options = {}) {
         const regex = args[1];
         const replacement = fixed(args[2], 'header replacement');
         if (regex?.type !== 'regex') throw new Error('header.replace regex is not fixed');
-        statements.push('__wayxReplace(' + JSON.stringify(name) + ', ' + JSON.stringify(regex.pattern) + ', ' + JSON.stringify(replacement) + ');');
+        statements.push('__wayxReplace(' + JSON.stringify(name) + ', ' + JSON.stringify(normalizeRegexBodyForTarget(regex.pattern)) + ', ' + JSON.stringify(replacement) + ');');
       }
     }
   }
