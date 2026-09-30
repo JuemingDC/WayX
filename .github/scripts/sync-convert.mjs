@@ -1007,7 +1007,7 @@ async function main() {
         if (!await exists(dest) || normalizeNewlines(await fs.readFile(dest, 'utf8')) !== content) await fs.writeFile(dest, content);
       }
       validateQX(out.qx, entry);
-      validateSurgeModule(out.surge, entry);
+      validateSurgeModule(out.surge, entry, {adblockScope:true});
       let outputChanged = false;
       if (oldQx !== out.qx) { await fs.writeFile(qxPath, out.qx); outputChanged = true; }
       if (oldSg !== out.surge) { await fs.writeFile(sgPath, out.surge); outputChanged = true; }
