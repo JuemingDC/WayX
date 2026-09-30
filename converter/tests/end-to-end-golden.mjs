@@ -551,7 +551,7 @@ for (const testCase of cases) {
   }
 
   if (testCase.name === 'Bilibili') {
-    assert.match(out.qx, /^host, bsbsb\.top, PROXY$/m, 'Bilibili: Loon plugin PROXY binding must remain literal in QX');
+    assert.match(out.qx, /^\{# 空降助手 #\} host, bsbsb\.top, PROXY$/m, 'Bilibili: one-to-one source comment must become a QX leading note while PROXY remains literal');
     assert.doesNotMatch(out.qx, /Source \[Argument\]|Argument usage:/, 'Bilibili QX must not emit Loon plugin parameter UI/declarations');
     assert.doesNotMatch(out.qx, /QUANTUMULT X (?:UNSUPPORTED|REVIEW REQUIRED) - source script disabled/);
     assert.ok(qxActive.some(line => /bilibili\/(?:request|response|json)\.js/.test(line)), 'Bilibili Source Script declarations must keep original URLs without runtime compatibility gating');
