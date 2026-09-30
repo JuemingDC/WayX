@@ -6,7 +6,7 @@
 |---|---|---|---|
 | 00 | 官方依据、优先级、行为优先 | 无独立语义转换；由 CI gate 执行 | `genericity-audit.mjs`, `audit-repository.mjs`, `spec-block-contract.mjs` |
 | 05 | Catalog、手工资产边界、source section/comment orchestration、通用流水线、陌生插件 | `source-catalog.mjs`, `source-section.mjs`, `source-metadata.mjs`, `.github/manual-assets.json`, `source-fetch.mjs`, `sync-convert.mjs`, `regenerate-canonical.mjs` | `source-section-comments.mjs`, `generic-identity.mjs`, `genericity-audit.mjs`, `manual-assets.mjs` |
-| 10 | QX/Surge 目标文件结构 | `paths.mjs`, `metadata.mjs`, `surge-module.mjs`, `qx-official-capabilities.mjs`, `surge-official-capabilities.mjs` | `checkpoint.mjs`, `qx-official-capabilities.mjs`, `surge-official-capabilities.mjs`, target validators |
+| 10 | QX/Surge 目标文件结构 / section routing / final assembly | `paths.mjs`, `metadata.mjs`, `output-lines.mjs`, `qx-output.mjs`, `surge-output.mjs`, `surge-module.mjs`, `qx-official-capabilities.mjs`, `surge-official-capabilities.mjs` | `target-output-builders.mjs`, `checkpoint.mjs`, `qx-official-capabilities.mjs`, `surge-official-capabilities.mjs`, target validators |
 | 20 | Rule AST / Policy / URL-REGEX reject-X | `rule-ast.mjs`, `rule-qx.mjs`, `rule-surge.mjs`, `rule.mjs` facade | `rule-ast.mjs`, `checkpoint.mjs`, `surge-rule-coverage.mjs`, `catalog-rule-inventory.mjs` |
 | 30 | Legacy/v2 source parsers → Rewrite Semantic IR → QX/Surge target planners / observed complex signatures | `rewrite-ir.mjs`, `rewrite-qx.mjs`, `rewrite-surge.mjs`, `legacy-rewrite.mjs`, `rewrite-v2*.mjs`, `complex-rewrite*.mjs`, target renderers | `rewrite-ir.mjs`, `rewrite-target-planners.mjs`, `checkpoint.mjs`, `loon-new-syntax-cases.mjs`, `rucu6-rewrite-v2-coverage.mjs`, `complex-source-inventory.mjs`, `catalog-syntax-inventory.mjs` |
 | 40 | Regex / condition AST | `rewrite-v2.mjs`, `rewrite-v2-actions.mjs`, `target-regex.mjs` | `checkpoint.mjs`, Rewrite v2 coverage |
@@ -29,7 +29,7 @@
 → Legacy Script parser / Script v2 parser → target-neutral Script IR → script-qx.mjs / script-surge.mjs
 → MITM generic planner
 → target native planner → dedicated helper → observed complex helper → commented Review/Issue
-→ QX snippet + Surge sgmodule renderer
+→ QX output builder / Surge output builder → final snippet/module
 → QX validator + Surge validator
 → machine-readable source/target reconciliation + Review/Issue inventory + genericity/golden checks
 → canonical + generated-helper regeneration consistency
