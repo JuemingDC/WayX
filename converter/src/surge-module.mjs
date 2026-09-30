@@ -11,7 +11,7 @@ export function hasActiveSurgeLines(lines = []) {
   });
 }
 
-export function validateSurgeModule(text, entry = {id:'module'}, {adblockScope = false} = {}) {
+export function validateSurgeModule(text, entry = {id:'module'}) {
   const allowedSections = new Set([
     'Rule','URL Rewrite','Header Rewrite','Body Rewrite','Map Local','Script','MITM',
   ]);
