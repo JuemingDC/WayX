@@ -2,8 +2,10 @@
 
 ## 80.1 Review 条件
 
+所有 Rewrite/Mock 先执行“目标原生 → 已验证 helper script → 注释 Review”。只有 helper 仍无法保持时才进入下列 Review 条件：
+
 出现以下任一项必须 Review：
-- 目标官方资料没有对应语法
+- 目标官方资料与已验证脚本接口都没有可保持语义的路径
 - 必须删除源条件才能转换
 - 必须扩大 regex/domain
 - 必须修改 Source JavaScript
@@ -15,7 +17,7 @@
 - QX 需要官方 sample 未出现的 filter/action
 - JQ 依赖无法物化
 - mock_file 依赖缺失
-- Script compatibility 不确定
+- Quantumult X Source Script compatibility 不确定
 
 格式：
 ```text
@@ -24,11 +26,14 @@
 # Reason: ...
 ```
 
-原规则不能静默删除。
+原规则不能静默删除，但以下项目级丢弃项除外：
+- Loon regex literal 的 `i/m/s` flags；
+- 生成 Surge 去广告 Module 时的源 `FINAL`；
+- 非官方 legacy `json.jq("jq-path=...")` alias。
 
 Loon regex literal 的 `i/m/s` 是明确的转换丢弃项，不因 flags 存在进入 Review；按 Block 40 丢弃 flags 后继续进行目标 bare-regex 格式化与语义映射。
 
-Loon `[Argument]` **声明区块本身不构成 Review 条件**。QX 忽略参数 UI，只做依赖分析；Surge 按 Block 60 确定性转换为 `#!arguments` 与 `{{{name}}}` 占位符。只有具体 Rewrite/Script 的参数依赖无法按目标官方格式表达时，才进入 Review；generated target 中的 `SCRIPT/REWRITE/ARGUMENT REVIEW REQUIRED` 标记必须被 Gate 捕获。
+Loon `[Argument]` **声明区块本身不构成 Review 条件**。QX 忽略参数 UI，只做依赖分析；Surge 按 Block 60 转换为 `#!arguments` / `{{{name}}}`，必要时使用带 `argument=` 的 helper。只有 helper 也无法保持时才进入 Review；所有 `# [WayX] REVIEW REQUIRED` 及 SCRIPT/REWRITE/ARGUMENT 专用 marker 都必须被 Gate 捕获。
 
 ## 80.2 Source 对账
 
@@ -51,7 +56,7 @@ Target 已转换语义项
 - 无未经官方确认的 `(?i)`；
 - QX IP filter 不含 `no-resolve`；
 - 无 Loon/Surge 私有 action；
-- 无活动 `jq-path=`；
+- 无活动 `jq-path=`，且 legacy `jq-path=` 不得出现在目标语义项中；
 - Script action 与脚本行为匹配。
 
 ## 80.4 Surge Validator
