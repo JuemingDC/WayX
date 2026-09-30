@@ -1,6 +1,6 @@
 # WayX — ChatGPT Work 上游语义审查任务
 
-版本：2.4  
+版本：2.5  
 作者：chance  
 更新时间：2026-09-30  
 类型：Automation / Upstream Semantic Review
@@ -53,6 +53,7 @@ Work 只处理 Review Tier：QX 无法承载的 Loon `[Argument]`、Loon 新语�
 - Loon Plugin 内部 `PROXY` 不做策略转换：QX 保留字面 `PROXY`；Surge Module 因官方不能激活任意外部 policy，只保留源 Rule 注释，不改成其他策略。其他外部 policy/group 仍不得伪装成内建 policy。
 - QX IP 类规则必须删除 `no-resolve`；Surge 不执行这一删除规则。
 - QX snippet 的 filter/rewrite/mitm section 标题必须注释。
+- QX filter/rewrite 支持 `{# note #} rule`。只在“一行源注释紧邻一条源规则，且下一行不是第二条连续活动规则、最终只生成一条活动 QX 行”时内联；若一条注释下面连续多条规则、连续多行注释、注释本身是禁用源规则，必须保持普通 `#` 注释。WayX 转换说明绝不进入 QX note。
 - 转换时保留原注释，添加转换时间、作者 `chance`、模块分类、Target、Source。
 - 不扩大 MITM、正则或域名匹配范围。
 
