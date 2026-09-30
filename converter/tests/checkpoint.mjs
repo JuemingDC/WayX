@@ -421,6 +421,17 @@ assert.throws(
   /does not handle response\.header\.add/,
 );
 
+const mixedJson = parseRewriteV2('response if ${url} ~= /api/ then response.header.del("Server") | response.json.replace("data.ads", false) | response.json.delete("data.tracking")');
+const mixedJsonQx = renderMixedRewriteScript(mixedJson, {target:'qx'});
+assert.equal(mixedJsonQx.qxAction, 'script-response-body');
+assert.ok(mixedJsonQx.script.indexOf('__wayxDel("Server");') < mixedJsonQx.script.indexOf('__wayxJsonReplace(__wayxJson,["data","ads"],false);'));
+assert.ok(mixedJsonQx.script.indexOf('__wayxJsonReplace(__wayxJson,["data","ads"],false);') < mixedJsonQx.script.indexOf('__wayxJsonDelete(__wayxJson,["data","tracking"]);'));
+assert.match(mixedJsonQx.script, /JSON\.stringify\(__wayxJson\)/);
+assert.throws(
+  () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ then response.header.del("Server") | response.json.add("data.new", true)'), {target:'qx'}),
+  /does not handle response\.json\.add/,
+);
+
 const bulkV2 = parseRewriteV2('request if ${url} ~= /api/ then request.header.set(["X-A","X-B"],["1","2"])');
 validateRewriteV2Ast(bulkV2);
 assert.equal(LOON_REWRITE_V2_ACTIONS.size, 31);
