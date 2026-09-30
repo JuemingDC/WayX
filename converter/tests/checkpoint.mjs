@@ -427,6 +427,18 @@ assert.equal(mixedJsonQx.qxAction, 'script-response-body');
 assert.ok(mixedJsonQx.script.indexOf('__wayxDel("Server");') < mixedJsonQx.script.indexOf('__wayxJsonReplace(__wayxJson,["data","ads"],false);'));
 assert.ok(mixedJsonQx.script.indexOf('__wayxJsonReplace(__wayxJson,["data","ads"],false);') < mixedJsonQx.script.indexOf('__wayxJsonDelete(__wayxJson,["data","tracking"]);'));
 assert.match(mixedJsonQx.script, /JSON\.stringify\(__wayxJson\)/);
+const surgeHeaderAddMixed = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /api/ then response.header.add("Set-Cookie", "b=2") | response.header.set("X-Test", "ok") | response.body.replace(/ads/, "clean")'),
+  {target:'surge'},
+);
+assert.equal(surgeHeaderAddMixed.fullHeaderMode, true);
+assert.equal(surgeHeaderAddMixed.surgeType, 'http-response');
+assert.match(surgeHeaderAddMixed.script, /__wayxHeaders\.push\(\{field:n,value:v\}\)/);
+assert.match(surgeHeaderAddMixed.script, /Array\.isArray\(\$response\.headers\)/);
+assert.throws(
+  () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ then response.header.add("Set-Cookie", "b=2") | response.body.replace(/ads/, "clean")'), {target:'qx'}),
+  /header\.add duplicate semantics are not verified for qx/,
+);
 assert.throws(
   () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ then response.header.del("Server") | response.json.add("data.new", true)'), {target:'qx'}),
   /does not handle response\.json\.add/,
