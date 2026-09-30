@@ -24,7 +24,7 @@
 
 GitHub Actions 已完成 Safe Tier：上游检查、确定性 Rule/Rewrite/JQ/MITM 转换、简单新增删除、目标文件重生成和 validator。不要无意义重做已验证的 Safe Tier。
 
-Work 只处理 Review Tier：JavaScript 内容、[Script]、依赖 Loon `[Argument]` 且目标格式无法确定表达的声明、复杂逻辑规则、Loon 新语法未覆盖 action、自定义 Body、binary/base64、pipeline、helper script、converter/validator 失败、官方语法变更或任何无法证明无损的变化。Loon `[Argument]` 不转换为 QX 参数 UI/BoxJs；Surge 必须按官方 Module `#!arguments` 与 `{{{name}}}` 占位符转换。
+Work 只处理 Review Tier：JavaScript 内容、[Script]、QX 无法承载的 Loon `[Argument]`、复杂逻辑规则、Loon 新语法未覆盖 action、自定义 Body、binary/base64、pipeline、helper script、converter/validator 失败、官方语法变更或任何 native + helper 均无法证明无损的变化。Loon `[Argument]` 不转换为 QX 参数 UI/BoxJs；Surge 必须按官方 Module `#!arguments` / `{{{name}}}` 转换，Rewrite 必要时通过 `argument=` + `$argument` helper 承载。
 
 ## 通用转换器约束
 
@@ -37,6 +37,11 @@ Work 只处理 Review Tier：JavaScript 内容、[Script]、依赖 Loon `[Argume
 
 ## 核心转换规则
 
+- Rewrite/Mock 固定执行：目标原生格式 → 已验证 helper script → 注释 Review；不得因为原生格式不足就直接放弃。
+- Surge 去广告 Module 中的源 `FINAL` 直接丢弃，禁止改写成活动 catch-all。
+- legacy `json.jq("jq-path=...")` 直接丢弃，不解析依赖、不生成目标规则。
+- QX `header.add` 不得用 set/对象赋值冒充；没有已验证重复 Header 表示时注释 Review。
+- Surge Source Script 不做 runtime compatibility scan；按官方 Script declaration 直接转换。
 - 语义一致性优先于状态码表面一致。
 - `reject_dict(200)` → QX `reject-dict`，不得因 200 变成 `reject-200`。
 - `reject_array(status)` / `reject_img(status)` 同理保持 Body/Action 语义。
