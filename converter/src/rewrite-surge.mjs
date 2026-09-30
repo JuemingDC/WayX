@@ -29,67 +29,74 @@ function rawBase(ctx) {
   return base;
 }
 
-registerComplexRewriteHandler({
-  id:'surge-same-phase-header-script',
-  targets:['surge'],
-  match:ast=>ast.actions.length>0 && ast.actions.every(action=>action.name.startsWith(ast.phase+'.header.')),
-  plan:(ast,_target,ctx)=>{
-    try {
-      const plan=renderMixedRewriteScript(ast,{
-        target:'surge',
-        stamp:ctx.stamp,
-        category:ctx.category,
-        sourceLine:ctx.sourceLine,
-        argumentTable:ctx.argumentTable,
-      });
-      const payload=ctx.argumentRefs?.length
-        ? surgeRewriteArgumentPayload(ctx.argumentRefs,ctx.argumentTable)
-        : {ok:true,value:null};
-      if (!payload.ok) throw new Error(payload.reason);
-      const key=crypto.createHash('sha1').update('header-surge\0'+ctx.sourceLine).digest('hex').slice(0,10);
-      const filename='header_'+key+'.js';
-      ctx.generatedScripts.set(filename,plan.script);
-      return {
-        ok:true,
-        section:'script',
-        line:'wayx_header_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+rawBase(ctx)+'/script/'+ctx.id+'/'+filename+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:''),
-      };
-    } catch (error) {
-      return {ok:false,terminal:true,reason:String(error?.message||error)};
-    }
-  },
-});
-
-registerComplexRewriteHandler({
-  id:'surge-complex-body-pipeline-script',
-  targets:['surge'],
-  match:(_ast,info)=>info.families.includes('body-pipeline') || info.families.includes('json-pipeline'),
-  plan:(ast,_target,ctx)=>{
-    try {
-      const plan=renderMixedRewriteScript(ast,{
-        target:'surge',
-        stamp:ctx.stamp,
-        category:ctx.category,
-        sourceLine:ctx.sourceLine,
-        argumentTable:ctx.argumentTable,
-      });
-      const payload=ctx.argumentRefs?.length
-        ? surgeRewriteArgumentPayload(ctx.argumentRefs,ctx.argumentTable)
-        : {ok:true,value:null};
-      if (!payload.ok) throw new Error(payload.reason);
-      const key=crypto.createHash('sha1').update('complex-mixed\0surge\0'+ctx.sourceLine).digest('hex').slice(0,10);
-      const filename='complex_surge_'+key+'.js';
-      ctx.generatedScripts.set(filename,plan.script);
-      return {
-        ok:true,
-        section:'script',
-        line:'wayx_complex_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+rawBase(ctx)+'/script/'+ctx.id+'/'+filename+(plan.requiresBody?',requires-body=true':'')+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:''),
-      };
-    } catch (error) {
-      return {ok:false,terminal:true,reason:String(error?.message||error)};
-    }
-  },
-});
+let surgeRewriteHandlersRegistered=false;
+function ensureSurgeRewriteHandlers() {
+  if (surgeRewriteHandlersRegistered) return;
+  surgeRewriteHandlersRegistered=true;
+  registerComplexRewriteHandler({
+    id:'surge-same-phase-header-script',
+    targets:['surge'],
+    match:ast=>ast.actions.length>0 && ast.actions.every(action=>action.name.startsWith(ast.phase+'.header.')),
+    plan:(ast,_target,ctx)=>{
+      try {
+        const plan=renderMixedRewriteScript(ast,{
+          target:'surge',
+          stamp:ctx.stamp,
+          category:ctx.category,
+          sourceLine:ctx.sourceLine,
+          argumentTable:ctx.argumentTable,
+        });
+        const payload=ctx.argumentRefs?.length
+          ? surgeRewriteArgumentPayload(ctx.argumentRefs,ctx.argumentTable)
+          : {ok:true,value:null};
+        if (!payload.ok) throw new Error(payload.reason);
+        const key=crypto.createHash('sha1').update('header-surge\0'+ctx.sourceLine).digest('hex').slice(0,10);
+        const filename='header_'+key+'.js';
+        ctx.generatedScripts.set(filename,plan.script);
+        return {
+          ok:true,
+          section:'script',
+          line:'wayx_header_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+rawBase(ctx)+'/script/'+ctx.id+'/'+filename+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:''),
+        };
+      } catch (error) {
+        return {ok:false,terminal:true,reason:String(error?.message||error)};
+      }
+    },
+  });
+  
+  registerComplexRewriteHandler({
+    id:'surge-complex-body-pipeline-script',
+    targets:['surge'],
+    match:(_ast,info)=>info.families.includes('body-pipeline') || info.families.includes('json-pipeline'),
+    plan:(ast,_target,ctx)=>{
+      try {
+        const plan=renderMixedRewriteScript(ast,{
+          target:'surge',
+          stamp:ctx.stamp,
+          category:ctx.category,
+          sourceLine:ctx.sourceLine,
+          argumentTable:ctx.argumentTable,
+        });
+        const payload=ctx.argumentRefs?.length
+          ? surgeRewriteArgumentPayload(ctx.argumentRefs,ctx.argumentTable)
+          : {ok:true,value:null};
+        if (!payload.ok) throw new Error(payload.reason);
+        const key=crypto.createHash('sha1').update('complex-mixed\0surge\0'+ctx.sourceLine).digest('hex').slice(0,10);
+        const filename='complex_surge_'+key+'.js';
+        ctx.generatedScripts.set(filename,plan.script);
+        return {
+          ok:true,
+          section:'script',
+          line:'wayx_complex_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+rawBase(ctx)+'/script/'+ctx.id+'/'+filename+(plan.requiresBody?',requires-body=true':'')+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:''),
+        };
+      } catch (error) {
+        return {ok:false,terminal:true,reason:String(error?.message||error)};
+      }
+    },
+  });
+  
+  
+}
 
 export function planSurgeRewrite(ir,ctx={}) {
   if (!ir || ir.type!=='rewrite-semantic-ir') throw new TypeError('Expected Rewrite Semantic IR');
@@ -97,6 +104,8 @@ export function planSurgeRewrite(ir,ctx={}) {
   if (ir.sourceSyntax!=='v2') {
     return rewriteIssue(sourceLine(ir,ctx),'unknown-rewrite-source-syntax','unsupported Rewrite source syntax');
   }
+
+  ensureSurgeRewriteHandlers();
 
   const source=sourceLine(ir,ctx);
   const ast=ir.ast;
