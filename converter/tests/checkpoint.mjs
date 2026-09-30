@@ -412,7 +412,7 @@ const mixedQx = renderMixedRewriteScript(mixedResponse, {target:'qx'});
 assert.equal(mixedQx.qxAction, 'script-response-body');
 assert.equal(mixedQx.requiresBody, true);
 assert.match(mixedQx.script, /response\.statusCode/);
-assert.ok(mixedQx.script.indexOf('__wayxDel("Server")') < mixedQx.script.indexOf('__wayxBody='));
+assert.ok(mixedQx.script.indexOf('__wayxDel("Server");') < mixedQx.script.indexOf('.replace(new RegExp("ads")'));
 const mixedSurge = renderMixedRewriteScript(mixedResponse, {target:'surge'});
 assert.equal(mixedSurge.surgeType, 'http-response');
 assert.match(mixedSurge.script, /\$response\.status/);
