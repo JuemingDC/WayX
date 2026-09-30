@@ -1,8 +1,8 @@
 // Converted: 2026-09-30 19:54:59 +08:00
 // Converted by: chance
 // Category: 去广告
-// Source Loon: request if ${url} ~= /https:\/\/(rule\.)?kelee\.one\//i then request.header.set("user-agent", "Loon/786 CFNetwork/1568.200.51 Darwin/24.1.0")
-const __wayxHeaders = {...$request.headers};
+// Source Loon: response if ${url} ~= /https:\/\/(rule\.)?kelee\.one\//i then response.header.set("content-type", "text/plain; charset=utf-8")
+const __wayxHeaders = {...$response.headers};
 function __wayxKey(name) {
   const wanted = String(name).toLowerCase();
   return Object.keys(__wayxHeaders).find(key => key.toLowerCase() === wanted);
@@ -19,5 +19,5 @@ function __wayxReplace(name, source, replacement) {
   const key = __wayxKey(name);
   if (key !== undefined) __wayxHeaders[key] = String(__wayxHeaders[key]).replace(new RegExp(source), replacement);
 }
-__wayxSet("user-agent", "Loon/786 CFNetwork/1568.200.51 Darwin/24.1.0");
+__wayxSet("content-type", "text/plain; charset=utf-8");
 $done({headers: __wayxHeaders});
