@@ -1,5 +1,25 @@
 # Block 30 — Rewrite 映射规范
 
+
+## 30.0 统一 Semantic IR 契约
+
+Legacy Rewrite 与 Rewrite v2 的**源 grammar 不合并**；统一点位于 source parse 之后。Production 必须通过 `converter/src/rewrite-ir.mjs` 形成 target-neutral Semantic IR，再进入目标规划。
+
+统一 operation kind 至少包括：
+- `reject`
+- `redirect`
+- `url-rewrite`
+- `header`
+- `body-regex`
+- `json`
+- `mock`
+- `action`（已解析但尚未归入以上类别）
+- `unknown`
+
+IR 必须保留 source action/AST，不得为了统一分类丢弃 typed argument、capture/template、pipeline 顺序或 Legacy 特有参数。Source-authored 多 action 的 operation 顺序必须与源声明一致。
+
+目标 planner 仍遵守本块后续映射与 fallback 链；建立 IR **不等于**允许把相似但语义不同的 Legacy/v2 action 强行共用 native mapping。
+
 ## 30.1 Loon 旧 Rewrite
 
 | Loon Action | Quantumult X | Surge |
