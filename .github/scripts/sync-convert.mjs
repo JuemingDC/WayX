@@ -887,19 +887,25 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
       qx.rewrite.push('# [WayX] SCRIPT REVIEW REQUIRED: QX declaration/helper cannot preserve this source argument/enable/timeout/max-size/binary option set without changing the source script.');
       qx.rewrite.push(`# Source declaration: ${item.line}`);
     } else {
-      const qType = selectQxScriptAction({
+      const qAction = selectQxScriptAction({
         phase: sc.type,
         requiresBody: sc.requiresBody,
         scriptUrl: sc.scriptPath,
         sourceText: mapped?.source || '',
-      }).action;
-      const qxRendered = qxAttachInlineNote({
-        sectionLines: scriptSectionLines,
-        item,
-        sectionKind: 'script',
-        lines: [`${targetPattern} url ${qType} ${qxUrl}`],
       });
-      qx.rewrite.push(...qxRendered.comments, ...qxTagLines, ...qxRendered.lines);
+      if (!qAction.action) {
+        qx.rewrite.push(...comments, ...qxTagLines);
+        qx.rewrite.push(`# [WayX] SCRIPT REVIEW REQUIRED: ${qAction.reason}`);
+        qx.rewrite.push(`# Source declaration: ${item.line}`);
+      } else {
+        const qxRendered = qxAttachInlineNote({
+          sectionLines: scriptSectionLines,
+          item,
+          sectionKind: 'script',
+          lines: [`${targetPattern} url ${qAction.action} ${qxUrl}`],
+        });
+        qx.rewrite.push(...qxRendered.comments, ...qxTagLines, ...qxRendered.lines);
+      }
     }
 
     const name = sanitizeName(sc.tag || `${entry.id}_${String(scriptIndex).padStart(2, '0')}`);
