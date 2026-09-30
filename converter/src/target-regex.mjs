@@ -12,6 +12,33 @@ export function normalizeRegexBodyForTarget(pattern) {
   return String(pattern ?? '').replace(/\\\//g, '/');
 }
 
+export function regexHasCapturingGroup(pattern) {
+  const source=String(pattern ?? '');
+  let escaped=false, inClass=false;
+  for(let i=0;i<source.length;i++){
+    const ch=source[i];
+    if(escaped){ escaped=false; continue; }
+    if(ch==='\\'){ escaped=true; continue; }
+    if(ch==='['){ inClass=true; continue; }
+    if(ch===']' && inClass){ inClass=false; continue; }
+    if(inClass || ch!=='(') continue;
+
+    if(source[i+1] !== '?') return true;
+    if(source.startsWith('(?:', i) ||
+       source.startsWith('(?=', i) ||
+       source.startsWith('(?!', i) ||
+       source.startsWith('(?<=', i) ||
+       source.startsWith('(?<!', i)) {
+      continue;
+    }
+    // Named captures such as (?<name>...) and any unknown (?...) form are
+    // treated conservatively as capturing/unsafe for target replacement-group
+    // renumbering.
+    return true;
+  }
+  return false;
+}
+
 export function compileRegexForTarget(regex, { subject = 'url', target = 'generic' } = {}) {
   if (!regex || regex.type !== 'regex') throw new TypeError('Expected Rewrite v2 regex AST node');
 
