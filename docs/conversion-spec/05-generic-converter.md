@@ -180,6 +180,8 @@ QX 的功能最终都落在：
 - `[Script]`
 - `[MITM]`
 
+Loon Plugin Rule 的 `PROXY` 视为用户策略绑定：目标 Module 通过官方 Parameter Tables 生成 `#!arguments` 参数，并在 Rule policy 位置写入对应 `{{{...}}}` 占位符；不得固定替换成某个代理组名，也不得按插件身份特判。
+
 不得把不同语义为了实现方便全部塞进 `[Script]`。
 
 ## 5.7 Mock / Map Local 原则
