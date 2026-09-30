@@ -111,7 +111,7 @@ Rule 不使用上述 Script fallback。Quantumult X 官方 sample 未确认的�
 ## 自动化 Fail-Closed 约束
 
 - Gate 必须按 Rule/Rewrite/Script/MITM 的真实语义分类，不能按作者目录、插件目录、插件名整体升级或降级。
-- Loon Plugin 的 `PROXY` 不做策略转换：QX 保留字面 `PROXY`；Surge Module 仅将源 Rule 注释保留，因为 Module 不能定义/激活任意外部 policy。其他外部 policy/group 仍不得伪装成内建 Safe policy。
+- Loon Plugin 的 `PROXY` 保持“用户选择策略”语义：QX 保留字面 `PROXY`；Surge Module 通过 `#!arguments` + `{{{policy}}}` 建立策略参数绑定，默认 `DIRECT`，用户可改为已有代理策略/策略组。其他未显式参数化的外部 policy/group 仍不得伪装成内建 Safe policy。
 - Block 20 已定义的 `URL-REGEX + REJECT/REJECT-200/REJECT-IMG/REJECT-DICT/REJECT-ARRAY/REJECT-DROP` 属于确定性映射，可进入 Safe Tier。
 - Quantumult X 与 Surge 均不运行 Source Script compatibility scan。原脚本 URL 直接保留；正文读取失败本身不触发 compatibility Review。
 - 只要 Review 条件成立，即使本轮没有普通 repository diff，也必须写入临时 `monitor/review-queue/<run>.md` 并创建 `work/upstream-*` PR；不能静默退出。
