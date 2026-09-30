@@ -10,7 +10,7 @@ Source JavaScript 不做正文改写。
 - 为了转换 Loon `[Argument]` 修改脚本；
 - 为了让参数可选而生成 QX BoxJs bridge。
 
-脚本正文只用于 **Quantumult X** 兼容性判断，并且不得用于把 Loon 插件参数转换成 QX 参数配置。Surge 侧不做 Source Script runtime 兼容性扫描，直接按 Surge 官方 Script 声明格式转换源 declaration 与参数。
+Quantumult X 与 Surge 均不做 Source Script runtime compatibility 审查。目标声明直接引用原脚本 URL；脚本正文仅在 QX 的 HTTP Script declaration 不能单凭源声明确定 header/body/echo action 时，作为辅助行为信息读取。该读取不承担兼容性判定，也不得用于把 Loon 插件参数转换成 QX 参数配置。
 
 WayX 去广告转换的 Script 范围只包含 HTTP request/response 声明。项目中不为非 HTTP 调度/事件类 Script 建立 parser、planner 或 target validator 兼容分支。
 
@@ -125,44 +125,39 @@ Loon Rewrite v2 中引用已声明 `[Argument]` 时，Surge 不得因为存在�
 
 ## 60.5 Rule PROXY 与 Argument 分离
 
-Loon Plugin Rule 的 `PROXY` 是插件 policy binding，不等同于普通 `[Argument]` id。
+Loon Plugin Rule 的 `PROXY` 是插件内部 policy binding，不等同于普通 `[Argument]` id，也不做策略转换。
 
 - QX：保留字面 `PROXY`，不降为小写内建 `proxy`。
-- Surge：继续服从 Surge Module Rule 的官方 policy 限制；不要仅因为存在 `#!arguments` 就假设任意外部 policy 可作为合法 Module Rule。
+- Surge Module：官方 Module 不能定义 `[Proxy]` / `[Proxy Group]`，活动 Module Rule 也不能使用任意外部 policy 名称。因此源 `PROXY` Rule 只作为原声明注释保留，不改成 `DIRECT`、`REJECT` 或其他策略。
 
-## 60.6 Quantumult X Script 兼容性与插件身份无关
+## 60.6 Source Script 检查范围
 
-QX Source Script 兼容性判断必须 **fail closed**：只有存在正向 QX/runtime adapter 证据且没有阻断信号时才允许活动执行；仅仅“没有发现 Loon/Surge 私有 token”不能作为兼容证明。
+WayX 不判断 Source JavaScript 是否“兼容 Quantumult X / Surge”。
 
-QX Source Script 兼容性判断可依据：
-- 明确的目标平台支持/拒绝；
-- 已知运行时 API；
-- request/response phase；
-- body / bodyBytes；
-- `$done` 返回行为。
+固定行为：
 
-禁止依据：
-- 插件名；
-- 作者；
-- script URL 路径；
-- 来源仓库；
-- Loon `[Argument]` 的值。
+- QX 与 Surge 都直接引用源插件声明的原始 Script URL；
+- 不依据 `$utils`、`$httpClient`、`$task`、`$prefs`、`$loon` 等 runtime token 启用或禁用 Source Script；
+- 不依据插件名、作者、来源仓库或 Script URL 路径做判断；
+- 不修改、wrapper、fork、prepend Source JavaScript；
+- 仅在 QX action 类型不能由 declaration 明确决定时，允许读取脚本正文判断是否读取 request/response body、是否直接构造 response，从而选择 `script-*-header/body/echo`；
+- 源码正文读取失败时，不因“兼容性未知”禁用脚本；应优先使用源 declaration 已明确的信息进行 action 选择。
 
-兼容性扫描不承担 Loon 参数转换职责。**Surge 不执行这一步扫描。**
+Source Script 的跨平台运行时适配由原脚本自身负责，不属于 WayX converter 的兼容性门禁。
 
 ## 60.7 Source Script URL
 
 - Source Script 保留原始 URL；
 - 不复制为 WayX 镜像；
 - 不用第三方 mirror/fallback；
-- QX：URL 不可用或兼容性无法证明时 fail closed / Review；
-- Surge：不做 runtime compatibility scan，只要求原始 URL 可解析并按官方 Script declaration 转换；
-- WayX 为 Rewrite/Mock 等目标能力生成的 helper script 不属于 Source Script 镜像。
+- QX 与 Surge 均不做 Source Script runtime compatibility scan；
+- Source Script 正文读取只用于必要的 QX action 类型辅助判定；
+- WayX 为 Rewrite/Mock 等目标能力生成的 helper script 不属于 Source Script 镜像；
+- helper script 只能补足 Rewrite/Mock 语义，不能用来模拟 QX 不支持的 Rule Type。
 
 ## 60.8 实现索引
 
 - Script action：`converter/src/script.mjs`
-- Script compatibility：`converter/src/script-compat.mjs`
 - Script v2 parser：`converter/src/script-v2.mjs`
 - Script v2 target planner：`converter/src/script-v2-target.mjs`
 - Surge Rewrite argument helper：`converter/src/complex-rewrite-script.mjs`
