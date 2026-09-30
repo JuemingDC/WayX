@@ -670,7 +670,11 @@ for (const testCase of cases) {
     assert.match(out.surge, /^#!arguments=Capture:false,Cookies:/m);
     assert.match(out.surge, /#!REQUIREMENT "'\{\{\{Capture\}\}\}'=='true'"/);
     assert.ok(qxActive.some(line => /Scripts\/jingdong\.js$/.test(line)), 'JingDong native script declaration missing');
-    assert.match(out.qx, /dynamic enable cannot be carried|SCRIPT V2 REVIEW REQUIRED/);
+    assert.ok(qxActive.some(line => /Scripts\/manmanbuy_ck\.js$/.test(line)), 'JingDong dynamic-enable request script must default to active in QX');
+    assert.ok(qxActive.some(line => /Scripts\/jd_price\.js$/.test(line)), 'JingDong argument-bearing response script must remain active in QX');
+    assert.doesNotMatch(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
+    assert.match(out.qx, /Source dynamic enable=Capture ignored for Quantumult X; converted rule defaults to enabled/);
+    assert.match(out.qx, /Source Script argument ignored for Quantumult X/);
   }
 
   report.push(actual);
