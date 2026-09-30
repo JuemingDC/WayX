@@ -25,12 +25,13 @@ BASIC_RULE_TYPES = {
     "DOMAIN", "DOMAIN-SUFFIX", "DOMAIN-KEYWORD", "DOMAIN-WILDCARD",
     "IP-CIDR", "IP-CIDR6", "GEOIP", "IP-ASN", "USER-AGENT",
     # QX does not activate these types; the converter deterministically keeps
-    # them as comments while Surge Module uses its native Rule form.
+    # them as comments while Surge Module either uses a native Rule form or a
+    # deterministic unsupported-policy comment.
     "SRC-PORT", "DEST-PORT", "PROTOCOL", "SUBNET", "CELLULAR-RADIO",
     "CELLULAR-CARRIER", "HOSTNAME-TYPE", "SRC-IP", "IN-PORT",
     "DEVICE-NAME", "MAC-ADDRESS", "PROCESS-NAME",
 }
-BASIC_POLICIES = {"DIRECT", "REJECT", "PROXY"}
+BASIC_POLICIES = {"DIRECT", "REJECT", "REJECT-DROP", "REJECT-NO-DROP", "PROXY"}
 URL_REGEX_SAFE_POLICIES = {
     "REJECT", "REJECT-200", "REJECT-IMG", "REJECT-DICT", "REJECT-ARRAY",
     "REJECT-DROP",
@@ -184,7 +185,7 @@ def simple_rule(line: str) -> tuple[bool, str]:
             return False, "logical rule does not have expression/policy"
         policy = parts[2].upper()
         if policy in BASIC_POLICIES:
-            return True, "logical rule has deterministic targets: QX comment; Surge native/preserved"
+            return True, "logical rule has deterministic targets: QX comment; Surge native/preserved/commented"
         return False, f"logical rule policy {policy} is outside safe tier"
     parts = split_csv(line)
     if parts and parts[0].upper() == "FINAL":
