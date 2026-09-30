@@ -1,4 +1,4 @@
-// Converted: 2026-09-30 15:52:32 +08:00
+// Converted: 2026-09-30 15:59:09 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /^https?:\/\/translate\.google\.cn/i then redirect(302, "https://translate.google.com")
