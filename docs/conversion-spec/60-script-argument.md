@@ -141,7 +141,7 @@ WayX 不判断 Source JavaScript 是否“兼容 Quantumult X / Surge”。
 - 不依据插件名、作者、来源仓库或 Script URL 路径做判断；
 - 不修改、wrapper、fork、prepend Source JavaScript；
 - 仅在 QX action 类型不能由 declaration 明确决定时，允许读取脚本正文判断是否读取 request/response body、是否直接构造 response，从而选择 `script-*-header/body/echo`；
-- 源码正文读取失败时，不因“兼容性未知”禁用脚本；应优先使用源 declaration 已明确的信息进行 action 选择。
+- 源码正文读取失败时，不因“兼容性未知”禁用脚本；应先使用源 declaration 已明确的信息。若 QX request-phase declaration 仍无法区分“修改 request”与“直接构造 HTTP response”，则该 QX 声明进入 Review，不能猜成 `script-request-*` 或 `script-echo-response`。Surge 仍直接引用原脚本 URL。
 
 Source Script 的跨平台运行时适配由原脚本自身负责，不属于 WayX converter 的兼容性门禁。
 
