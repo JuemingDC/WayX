@@ -4,13 +4,15 @@
 # Icon: https://rucu6.pages.dev/Icons/app/webpage.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-09-30 12:45:51 +08:00
+# Converted: 2026-09-30 14:40:16 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/webpage.lpx
 # Target: Quantumult X
 
 # [WayX] Policy binding: source PROXY is preserved as literal QX policy name PROXY; a matching target policy must exist.
+# [WayX] REVIEW REQUIRED: QX header.add cannot be represented losslessly: the official header object form does not prove duplicate-header preservation
+# Source declaration: response if ${url} ~= /https:\/\/(rule\.)?kelee\.one\//i then response.header.add("content-disposition", "inline") | response if ${url} ~= /https:\/\/(rule\.)?kelee\.one\//i then response.header.set("content-type", "text/plain; charset=utf-8")
 
 # [filter_local]
 host-suffix, mypikpak.com, PROXY
@@ -33,7 +35,6 @@ host, yhg007.com, PROXY
 
 # 可莉仓库解除 UA 限制 //kelee.one
 https://(rule\.)?kelee\.one/ url script-request-header https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/header_eb9fc300bc.js
-https://(rule\.)?kelee\.one/ url script-response-header https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/header_19980350e5.js
 
 # E-Hentai (https://e-hentai.org) //e-hentai.org, exhentai.org
 ^https://exhentai\.org url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Webpage/redirect_1cb6a93724.js

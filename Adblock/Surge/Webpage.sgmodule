@@ -6,17 +6,21 @@
 # Icon: https://rucu6.pages.dev/Icons/app/webpage.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-09-30 12:45:51 +08:00
+# Converted: 2026-09-30 14:40:16 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/webpage.lpx
 # Target: Surge
 
 [Rule]
-# [WayX] Surge Module policy binding required: DOMAIN-SUFFIX, mypikpak.com, PROXY
-# [WayX] Surge Module policy binding required: DOMAIN, 18hlw.com, PROXY
-# [WayX] Surge Module policy binding required: DOMAIN, 8olbt.imsatcmn.cc, PROXY
-# [WayX] Surge Module policy binding required: DOMAIN, yhg007.com, PROXY
+# [WayX] REVIEW REQUIRED: Surge Module requires an external policy binding that cannot be defined losslessly by this ad-block module
+# Source declaration: DOMAIN-SUFFIX, mypikpak.com, PROXY
+# [WayX] REVIEW REQUIRED: Surge Module requires an external policy binding that cannot be defined losslessly by this ad-block module
+# Source declaration: DOMAIN, 18hlw.com, PROXY
+# [WayX] REVIEW REQUIRED: Surge Module requires an external policy binding that cannot be defined losslessly by this ad-block module
+# Source declaration: DOMAIN, 8olbt.imsatcmn.cc, PROXY
+# [WayX] REVIEW REQUIRED: Surge Module requires an external policy binding that cannot be defined losslessly by this ad-block module
+# Source declaration: DOMAIN, yhg007.com, PROXY
 
 [URL Rewrite]
 # 解决 GitHub 速率限制返回429问题

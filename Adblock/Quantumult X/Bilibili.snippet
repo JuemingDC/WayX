@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/bilibili.png
 # Updated: 2026-09-22 22:55
 
-# Converted: 2026-09-30 12:45:47 +08:00
+# Converted: 2026-09-30 14:40:14 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/bilibili.lpx
@@ -17,7 +17,8 @@
 host, bsbsb.top, PROXY
 
 # 禁用STUN & P2P
-# Unsupported logical rule for Quantumult X: AND, ((DOMAIN-SUFFIX, chat.bilibili.com), (OR, ((DOMAIN-KEYWORD, stun), (DOMAIN-KEYWORD, tracker), (DOMAIN-KEYWORD, p2p)))), REJECT
+# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent
+# Source declaration: AND, ((DOMAIN-SUFFIX, chat.bilibili.com), (OR, ((DOMAIN-KEYWORD, stun), (DOMAIN-KEYWORD, tracker), (DOMAIN-KEYWORD, p2p)))), REJECT
 
 # 垃圾CDN
 #AND, ((NOT, ((DEST-PORT, 8000))), (USER-AGENT, "Bilibili Freedoooooom/MarkII")), REJECT-NO-DROP
@@ -29,10 +30,14 @@ host, app.biliapi.com, reject
 host, app.biliapi.net, reject
 
 # p2p
-# Unsupported rule for Quantumult X: DEST-PORT, 4480, REJECT-NO-DROP
-# Unsupported rule for Quantumult X: DEST-PORT, 4483, REJECT-NO-DROP
-# Unsupported rule for Quantumult X: DEST-PORT, 8082, REJECT-NO-DROP
-# Unsupported rule for Quantumult X: DEST-PORT, 9102, REJECT-NO-DROP
+# [WayX] REVIEW REQUIRED: Quantumult X Rule type DEST-PORT is not verified and has no lossless script equivalent
+# Source declaration: DEST-PORT, 4480, REJECT-NO-DROP
+# [WayX] REVIEW REQUIRED: Quantumult X Rule type DEST-PORT is not verified and has no lossless script equivalent
+# Source declaration: DEST-PORT, 4483, REJECT-NO-DROP
+# [WayX] REVIEW REQUIRED: Quantumult X Rule type DEST-PORT is not verified and has no lossless script equivalent
+# Source declaration: DEST-PORT, 8082, REJECT-NO-DROP
+# [WayX] REVIEW REQUIRED: Quantumult X Rule type DEST-PORT is not verified and has no lossless script equivalent
+# Source declaration: DEST-PORT, 9102, REJECT-NO-DROP
 
 # 开屏广告
 #URL-REGEX, "^http:\/\/upos-sz-static\.bilivideo\.com\/ssaxcode\/\w{2}\/\w{2}\/\w{32}-1-SPLASH", REJECT-VIDEO-NO-DROP
