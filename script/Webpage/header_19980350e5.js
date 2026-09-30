@@ -1,4 +1,4 @@
-// Converted: 2026-09-30 09:26:35 +08:00
+// Converted: 2026-09-30 09:33:17 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /https:\/\/(rule\.)?kelee\.one\//i then response.header.add("content-disposition", "inline") | response if ${url} ~= /https:\/\/(rule\.)?kelee\.one\//i then response.header.set("content-type", "text/plain; charset=utf-8")
