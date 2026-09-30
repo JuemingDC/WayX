@@ -1,8 +1,8 @@
-// Converted: 2026-09-30 09:33:17 +08:00
+// Converted: 2026-09-30 10:13:52 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /^(https:\/\/cn\.pornhub\.com\/view_video\.php\?viewkey=[^&]+)&.*$/i as urlMatch then redirect(302, "${urlMatch.1}")
-const __wayxRe = new RegExp("^(https:\\/\\/cn\\.pornhub\\.com\\/view_video\\.php\\?viewkey=[^&]+)&.*$", "i");
+const __wayxRe = new RegExp("^(https:\\/\\/cn\\.pornhub\\.com\\/view_video\\.php\\?viewkey=[^&]+)&.*$");
 const __wayxUrl = $request.url;
 const __wayxMatch = __wayxRe.exec(__wayxUrl);
 if (!__wayxMatch) {

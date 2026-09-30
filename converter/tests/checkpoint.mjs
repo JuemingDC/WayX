@@ -442,7 +442,7 @@ const flaggedRedirectSource = 'request if ${url} ~= /\\/old\\/(.*)/ims as hit th
 const flaggedRedirectHelper = renderQxRedirectScript(parseRewriteV2(flaggedRedirectSource));
 assert.equal(flaggedRedirectHelper.pattern, '\\/old\\/(.*)');
 assert.equal(flaggedRedirectHelper.script.includes('"ims"'), false);
-assert.ok(flaggedRedirectHelper.script.includes('new RegExp("\\/old\\/(.*)")'));
+assert.ok(flaggedRedirectHelper.script.includes('new RegExp(' + JSON.stringify(flaggedRedirectHelper.pattern) + ')'));
 
 const complexConditionFlags = renderMixedRewriteScript(
   parseRewriteV2('response if (${url} ~= /API/i || ${response.status} == 204) && ${response.header["Content-Type"]} == "application/json" then response.header.del("Server") | response.body.replace(/ADS/ms, "ok")'),

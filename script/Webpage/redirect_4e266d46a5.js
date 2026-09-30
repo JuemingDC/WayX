@@ -1,8 +1,8 @@
-// Converted: 2026-09-30 09:33:17 +08:00
+// Converted: 2026-09-30 10:13:52 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /^https:\/\/www\.pornhub\.com\//i then redirect(302, "https://cn.pornhub.com/")
-const __wayxRe = new RegExp("^https:\\/\\/www\\.pornhub\\.com\\/", "i");
+const __wayxRe = new RegExp("^https:\\/\\/www\\.pornhub\\.com\\/");
 const __wayxUrl = $request.url;
 const __wayxMatch = __wayxRe.exec(__wayxUrl);
 if (!__wayxMatch) {
