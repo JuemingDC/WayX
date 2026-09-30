@@ -363,7 +363,7 @@ function rewriteV2Action(line, target, ctx) {
     if (complex.terminal) return rewriteReview(line, complex.reason);
   }
 
-  // Keep the older conservative subset as a final compatibility fallback.
+  // Keep the older conservative syntax subset as a final parser/planner fallback.
   const parsed = analyzeSafeRewriteV2(line);
   if (!parsed.safe) {
     return rewriteReview(line, parsed.reason);
@@ -1024,7 +1024,6 @@ async function inspectSourceScript(reference, pluginSourceUrl) {
       qx: originalUrl,
       surge: originalUrl,
       source: normalized,
-      qxAdapted: false,
       sourceError: null,
     };
   } catch (error) {
@@ -1035,7 +1034,6 @@ async function inspectSourceScript(reference, pluginSourceUrl) {
       qx: originalUrl,
       surge: originalUrl,
       source: '',
-      qxAdapted: false,
       sourceError: String(error?.message || error),
     };
   }
