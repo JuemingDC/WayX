@@ -116,10 +116,6 @@ export function parseLoonRuleAst(line,{nested=false}={}) {
   if (!childSources?.length) {
     return {ok:false,ast,reason:`invalid-${type}-subrules`};
   }
-  if (type==='NOT' && childSources.length!==1) {
-    return {ok:false,ast,reason:'NOT-requires-one-subrule'};
-  }
-
   for (const childSource of childSources) {
     const child=parseLoonRuleAst(childSource,{nested:true});
     if (!child.ok) return {ok:false,ast,reason:child.reason};
