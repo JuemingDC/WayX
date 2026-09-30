@@ -1,6 +1,6 @@
 # WayX — ChatGPT Work 上游语义审查任务
 
-版本：2.5  
+版本：2.6  
 作者：chance  
 更新时间：2026-09-30  
 类型：Automation / Upstream Semantic Review
@@ -37,9 +37,9 @@ Work 只处理 Review Tier：QX 无法承载的 Loon `[Argument]`、Loon 新语�
 
 ## 核心转换规则
 
-- Rewrite/Mock 固定执行：目标原生格式 → 专用 semantic helper →（仅多 action）complex helper → 注释 Review；不得因为原生格式不足就直接放弃。Rule 不进入该 Script fallback。
+- Rewrite/Mock 固定执行：目标原生格式 → 专用 semantic helper →（仅源单条声明真实存在且已登记的 multi-action signature）complex helper → 注释 Review/Issue。不得把相邻、同 condition 的独立源声明拼成 pipeline。Rule 不进入该 Script fallback。
 - Loon regex literal 只去掉最外层 `/.../` delimiter，并按项目标准丢弃 `i/m/s`；regex body 原样保留，禁止全局执行 `\\/ -> /`、case-fold、inline modifier 或其他 canonicalization。目标确有语法差异时只能在对应 target planner 内基于官方格式做局部适配。
-- QX 与 Surge 的多 action Rewrite 才进入通用 complex helper；脚本必须在一个文件内按源顺序完成全部 action。单 action 如需脚本只能走对应专用 semantic helper，不能借用 complex helper。
+- QX 与 Surge 只有 source-authored 且 observed/registered 的多 action Rewrite 才进入 complex helper；既有 renderer 能力保留，但不能据此凭空放行未观察组合。脚本必须在一个文件内按源顺序完成全部 action。单 action 如需脚本只能走对应专用 semantic helper。
 - Surge 去广告 Module 中的源 `FINAL` 直接丢弃，禁止改写成活动 catch-all。
 - legacy `json.jq("jq-path=...")` 直接丢弃，不解析依赖、不生成目标规则。
 - QX `header.add` 不得用 set/对象赋值冒充；没有已验证重复 Header 表示时注释 Review。
@@ -55,6 +55,7 @@ Work 只处理 Review Tier：QX 无法承载的 Loon `[Argument]`、Loon 新语�
 - QX snippet 的 filter/rewrite/mitm section 标题必须注释。
 - QX filter/rewrite 支持 `{# note #} rule`。源 `[Rule]`、`[Rewrite]`、`[Script]` 只要最终生成 QX filter/rewrite，都只在“一行源注释紧邻一条源声明，且下一行不是第二条连续活动声明、最终只生成一条活动 QX 行”时内联；若一条注释下面连续多条源声明、连续多行注释、注释本身是禁用源声明，必须保持普通 `#` 注释。WayX 转换说明绝不进入 QX note。
 - 转换时保留原注释，添加转换时间、作者 `chance`、模块分类、Target、Source。
+- 遇到未知语法/action/section/complex signature 时先注释源声明并写 `ISSUE REQUIRED`，不得猜测转换；确认对应 GitHub Issue 已创建或复用。Issue 解决前不得把该项改成活动规则。已知目标能力缺口继续走普通 Review。
 - 不扩大 MITM、正则或域名匹配范围。
 
 ## 脚本处理
