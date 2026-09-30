@@ -157,6 +157,25 @@ export function surgePluginObjectArgument(refs = [], table) {
   return {ok:true, value:JSON.stringify(jsonTemplate)};
 }
 
+export function surgeRewriteArgumentPayload(refs = [], table) {
+  const unique = [...new Set(refs.map(String))];
+  const fields = [];
+  for (const id of unique) {
+    const entry = table?.byId?.get(id);
+    if (!entry) return {ok:false, reason:`undeclared Loon [Argument]: ${id}`};
+    const key = JSON.stringify(entry.id);
+    if (entry.valueType === 'string') {
+      fields.push(`${key}:${JSON.stringify(entry.placeholder)}`);
+    } else if (entry.valueType === 'number' || entry.valueType === 'boolean') {
+      fields.push(`${key}:${entry.placeholder}`);
+    } else {
+      return {ok:false, reason:`unsupported Loon [Argument] value type for ${id}: ${entry.valueType}`};
+    }
+  }
+  const template = '{' + fields.join(',') + '}';
+  return {ok:true, value:JSON.stringify(template)};
+}
+
 export function surgeDynamicOptionValue(id, table) {
   const entry = table?.byId?.get(String(id));
   if (!entry || !entry.hasDefault) return null;
