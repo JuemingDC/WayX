@@ -167,9 +167,9 @@ Loon regex literal 的 `i / m / s` flags 在所有 native/helper 路径中均只
 
 Surge 的 `header.add` 与普通对象 Header 修改语义不同：官方定义为已有同名字段时继续追加。需要脚本保持重复字段时必须使用 `full-header-mode=true` 的 `[{field,value}]` 形式，禁止退化为对象赋值。Quantumult X 未验证等价的重复 Header 返回表示前，`header.add` complex fallback 保持 fail closed。
 
-`json.add` 在新增路径、对象/数组等语义未得到足够依据前保持 fail closed；不得用 `setpath` 等近似行为替代。
+`json.add` 按 Loon JSON Key Path 语义处理：仅当目标 Key 不存在时新增；中间对象/数组路径按 Key Path 创建；批量参数按下标配对并从左到右执行。禁止把 `add` 退化成无条件覆盖。
 
-`json.delete` 的对象键删除可继续由已验证 helper 处理；最终 key 为数组索引（如 `items[0]`）时，在 Loon 的数组删除/收缩语义未得到足够依据前必须 fail closed，禁止用 JavaScript `delete` 的稀疏数组行为或擅自改用 `splice` 猜测语义。`json.replace(..., null)` 保持 JSON `null` 类型，不得转换为字符串 `"null"`。
+`json.delete` 删除对象 Key；Key Path 最终指向数组索引（如 `items[0]`）时必须删除该元素并压缩数组，禁止使用 JavaScript `delete` 产生稀疏数组。`json.replace(..., null)` 保持 JSON `null` 类型，不得转换为字符串 `"null"`。
 
 ## 30.6 自动转换实现
 
