@@ -138,3 +138,14 @@ WayX 对 Surge URL pattern 只做必要的目标格式处理：
 ## 40.10 Complex helper typed equality
 
 Complex helper 的 `==` 必须按条件 literal 类型进行比较，而不能把目标运行时值与 parser AST 值直接做 JavaScript strict equality：String/raw-string 以字符串比较；Number 先按数值语义比较；Boolean 按布尔 literal 语义比较；`null` 匹配目标变量不存在/null 的情况。尤其是 QX/Surge 的 response status 运行时表示不得导致 Loon 数字状态条件失配。上述行为必须由实际 helper runtime fixture 验证。
+
+
+## 40.11 Condition type and phase validation
+
+转换前必须按 Loon 当前 Rewrite v2 条件类型约束验证 AST：
+- `${response.status}` 是 Number，只允许与 Number 或已知 Number 类型插件变量做 `==`；不得把字符串 `"204"` 自动强制转换为数字状态码。
+- Header 变量是 String 或 null；Header 的 `==` 固定值只允许 String/raw-string/null，或已知 String 类型插件变量；不得接受 Number/Boolean 固定值。
+- request phase 不得引用 `${response.status}` 或 `${response.header['...']}`。
+- `~=` 的右侧必须是 Regex（插件变量 Regex 的独立支持须有明确类型与目标端映射后再开放）。
+
+这些属于源语法有效性约束，不能靠目标 helper 的 JavaScript coercion 修复无效源表达式。
