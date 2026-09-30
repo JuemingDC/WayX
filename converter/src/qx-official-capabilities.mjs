@@ -13,6 +13,8 @@ export const QX_WAYX_SCRIPT_ACTIONS = new Set([
   'script-echo-response','script-analyze-echo-response',
 ]);
 
+export const QX_WAYX_REWRITE_MATCH_KINDS = new Set(['url']);
+
 export const QX_WAYX_NATIVE_REWRITE_ACTIONS = new Set([
   'reject','reject-200','reject-img','reject-dict','reject-array',
   '302','307',
