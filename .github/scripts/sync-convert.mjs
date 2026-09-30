@@ -393,22 +393,41 @@ function qxHeaderRewriteInfo(line, argumentIds = []) {
 }
 
 function qxNativeHeaderReplacePlan(ast) {
-  // QX native request-header/response-header rewrites the complete HTTP header block.
-  // Direct mapping is intentionally limited to one fixed header.replace action.
-  if (ast.actions.length !== 1 || !ast.actions[0].name.endsWith('.header.replace')) return null;
+  // The uploaded Crossutility sample verifies only the whole-block
+  // `request-header` primitive. Response header mutation must use the
+  // documented `script-response-header` path.
+  if (ast.phase !== 'request' || ast.actions.length !== 1) return null;
   const condition = simpleUrlRewriteCondition(ast);
   if (!condition.ok) return null;
   const action = ast.actions[0];
+
+  if (action.name === 'request.header.add') {
+    const nameNode=action.args[0], valueNode=action.args[1];
+    if (!nameNode || !['string','raw-string'].includes(nameNode.type) ||
+        !valueNode || !['string','raw-string'].includes(valueNode.type)) return null;
+    const name=String(nameNode.value), value=String(valueNode.value);
+    if (!name || /[\s:\r\n]/.test(name) || /[\r\n]/.test(value) || value.includes('$' + '{')) return null;
+    // QX says request-header operates on the whole HTTP header string and may
+    // match CRLF. Insert after the request line; existing same-name fields are
+    // untouched, so this preserves Loon add rather than degrading to set.
+    const headerPattern='^([^\\r\\n]+)(\\r\\n)';
+    const headerReplacement='$1$2' + name + ': ' + value + '$2';
+    return {
+      section:'rewrite',
+      line:condition.pattern + ' url request-header ' + headerPattern + ' request-header ' + headerReplacement,
+    };
+  }
+
+  if (action.name !== 'request.header.replace') return null;
   const nameNode = action.args[0], regex = action.args[1], replacementNode = action.args[2];
   if (!nameNode || !['string','raw-string'].includes(nameNode.type) || regex?.type !== 'regex' ||
       !replacementNode || !['string','raw-string'].includes(replacementNode.type)) return null;
   const name = String(nameNode.value), replacement = String(replacementNode.value);
   if (/\s/.test(name) || /[\r\n]/.test(replacement) || replacement.includes('$' + '{')) return null;
-  const token = ast.phase === 'request' ? 'request-header' : 'response-header';
   const headerName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const headerPattern = '(\\r\\n)' + headerName + ':\\s*' + regex.pattern + '(\\r\\n)';
   const headerReplacement = '$1' + name + ': ' + replacement + '$2';
-  return {section:'rewrite', line:condition.pattern + ' url ' + token + ' ' + headerPattern + ' ' + token + ' ' + headerReplacement};
+  return {section:'rewrite', line:condition.pattern + ' url request-header ' + headerPattern + ' request-header ' + headerReplacement};
 }
 function planAdjacentQxHeaderGroups(items, ctx) {
   const plans = new Map();
@@ -418,6 +437,10 @@ function planAdjacentQxHeaderGroups(items, ctx) {
     if (consumed.has(index) || !items[index]?.line) continue;
     const first = qxHeaderRewriteInfo(items[index].line, ctx.argumentIds || []);
     if (!first) continue;
+    // request.header.add can be represented natively one declaration at a time.
+    // Do not merge it into a helper group, because QX helper header objects do
+    // not prove duplicate-field preservation.
+    if (first.ast.actions.some(action => action.name === 'request.header.add')) continue;
 
     const actions = [...first.ast.actions];
     const sourceLines = [items[index].line];
