@@ -122,6 +122,23 @@ function surgePolicyIndex(parts) {
   return String(parts[0] || '').toUpperCase() === 'FINAL' ? 1 : 2;
 }
 
+function normalizeSurgeRuleRegexes(line) {
+  const parts = splitTopLevelCsv(String(line ?? '').trim());
+  const type = String(parts[0] || '').toUpperCase();
+  if (type === 'URL-REGEX') {
+    parts[1] = surgeCsvRegexField(normalizeRegexBodyForTarget(unquote(parts[1] || '')));
+    return parts.join(',');
+  }
+  if (['AND','OR','NOT'].includes(type)) {
+    const subrules = splitLogicalSubrules(parts[1]);
+    if (subrules?.length) {
+      parts[1] = '(' + subrules.map(child => '(' + normalizeSurgeRuleRegexes(child) + ')').join(',') + ')';
+    }
+  }
+  return parts.join(',');
+}
+
+
 export function surgeRuleTypesInTree(line, {subrule = false} = {}) {
   const parts = splitTopLevelCsv(String(line ?? '').trim());
   const type = String(parts[0] || '').toUpperCase();
@@ -248,7 +265,7 @@ export function surgeModuleRule(line) {
   }
 
   parts[policyIndex] = policy;
-  const lineOut = parts.join(',');
+  const lineOut = normalizeSurgeRuleRegexes(parts.join(','));
   return {
     kind:'rule',
     section:'rule',
