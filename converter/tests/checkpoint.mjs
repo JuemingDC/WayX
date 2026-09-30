@@ -535,10 +535,11 @@ assert.throws(
   () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ then response.header.add("Set-Cookie", "b=2") | response.body.replace(/ads/, "clean")'), {target:'qx'}),
   /header\.add duplicate semantics are not verified for qx/,
 );
-assert.throws(
-  () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ then response.header.del("Server") | response.json.add("data.new", true)'), {target:'qx'}),
-  /does not handle response\.json\.add/,
+const mixedJsonAdd = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /api/ then response.header.del("Server") | response.json.add("data.new", true)'),
+  {target:'qx'},
 );
+assert.match(mixedJsonAdd.script, /__wayxJsonAdd\(j,\["data","new"\],true\)/);
 
 const flaggedHeaderHelper = renderQxHeaderScript(parseRewriteV2('request if ${url} ~= /api/i then request.header.replace("X-Test", /value/ms, "ok")'));
 assert.equal(flaggedHeaderHelper.pattern, 'api');
