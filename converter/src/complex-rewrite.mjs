@@ -36,3 +36,35 @@ export function complexConditionKinds(node, out = []) {
   out.push('unsupported');
   return out;
 }
+
+function fixedConditionValue(node) {
+  if (!node || !['string','raw-string','number','boolean','null'].includes(node.type)) {
+    throw new Error('complex condition value must be fixed');
+  }
+  return JSON.stringify(node.value);
+}
+
+function runtimeConditionVariable(name, target) {
+  if (name === 'url') return '$request.url';
+  if (name === 'request.method') return '$request.method';
+  if (name === 'response.status') return target === 'qx' ? '$response.statusCode' : '$response.status';
+  const header = String(name).match(/^(request|response)\.header\[['"](.+?)['"]\]$/);
+  if (header) return '__wayxHeader(' + JSON.stringify(header[1]) + ',' + JSON.stringify(header[2]) + ')';
+  throw new Error('unsupported complex condition variable: ' + name);
+}
+
+export function compileComplexCondition(node, target) {
+  if (node?.type === 'group') return '(' + compileComplexCondition(node.expression, target) + ')';
+  if (node?.type === 'logical') {
+    if (!['&&','||'].includes(node.operator)) throw new Error('unsupported complex logical operator: ' + node.operator);
+    return '(' + compileComplexCondition(node.left, target) + ' ' + node.operator + ' ' + compileComplexCondition(node.right, target) + ')';
+  }
+  if (node?.type !== 'comparison' || node.left?.type !== 'variable') throw new Error('unsupported complex condition shape');
+  const left = runtimeConditionVariable(node.left.name, target);
+  if (node.operator === '==') return '(' + left + ' === ' + fixedConditionValue(node.right) + ')';
+  if (node.operator === '~=' && node.right?.type === 'regex') {
+    // Loon i/m/s flags are intentionally not propagated to targets.
+    return '(new RegExp(' + JSON.stringify(node.right.pattern) + ').test(String(' + left + ' ?? "")))';
+  }
+  throw new Error('unsupported complex comparison');
+}
