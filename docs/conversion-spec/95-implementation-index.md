@@ -5,7 +5,7 @@
 | Block | 语义职责 | Production / Automation | Contract / Regression |
 |---|---|---|---|
 | 00 | 官方依据、优先级、行为优先 | 无独立语义转换；由 CI gate 执行 | `genericity-audit.mjs`, `audit-repository.mjs`, `spec-block-contract.mjs` |
-| 05 | Catalog、手工资产边界、source section/comment orchestration、通用流水线、陌生插件 | `source-catalog.mjs`, `source-section.mjs`, `source-metadata.mjs`, `.github/manual-assets.json`, `source-fetch.mjs`, `sync-convert.mjs`, `regenerate-canonical.mjs` | `source-section-comments.mjs`, `generic-identity.mjs`, `genericity-audit.mjs`, `manual-assets.mjs` |
+| 05 | Catalog、手工资产边界、whole-plugin parser、pure conversion pipeline、source section/comment orchestration、陌生插件 | `source-catalog.mjs`, `plugin-parser.mjs`, `conversion-pipeline.mjs`, `source-section.mjs`, `source-metadata.mjs`, `.github/manual-assets.json`, `source-fetch.mjs`, `sync-convert.mjs`, `regenerate-canonical.mjs` | `conversion-pipeline.mjs`, `source-section-comments.mjs`, `generic-identity.mjs`, `genericity-audit.mjs`, `manual-assets.mjs` |
 | 10 | QX/Surge 目标文件结构 / section routing / final assembly | `paths.mjs`, `metadata.mjs`, `output-lines.mjs`, `qx-output.mjs`, `surge-output.mjs`, `surge-module.mjs`, `qx-official-capabilities.mjs`, `surge-official-capabilities.mjs` | `target-output-builders.mjs`, `checkpoint.mjs`, `qx-official-capabilities.mjs`, `surge-official-capabilities.mjs`, target validators |
 | 20 | Rule AST / Policy / URL-REGEX reject-X | `rule-ast.mjs`, `rule-qx.mjs`, `rule-surge.mjs`, `rule.mjs` facade | `rule-ast.mjs`, `checkpoint.mjs`, `surge-rule-coverage.mjs`, `catalog-rule-inventory.mjs` |
 | 30 | Legacy/v2 source parsers → Rewrite Semantic IR → QX/Surge target planners / observed complex signatures | `rewrite-ir.mjs`, `rewrite-qx.mjs`, `rewrite-surge.mjs`, `legacy-rewrite.mjs`, `rewrite-v2*.mjs`, `complex-rewrite*.mjs`, target renderers | `rewrite-ir.mjs`, `rewrite-target-planners.mjs`, `checkpoint.mjs`, `loon-new-syntax-cases.mjs`, `rucu6-rewrite-v2-coverage.mjs`, `complex-source-inventory.mjs`, `catalog-syntax-inventory.mjs` |
@@ -22,7 +22,8 @@
 .github/sources/loon.json
 → validate Source Catalog
 → fetch plugin directly from descriptor `source` only
-→ normalize + parse Loon sections → source-section item/comment grouping + source metadata IR
+→ normalize + `plugin-parser.mjs` → source-section item/comment grouping + source metadata IR
+→ `conversion-pipeline.mjs::convertPlugin()`
 → fetch Source JS + jq/mock dependencies directly from their original resolved URLs; Source JS is analysis-only and is not mirrored
 → Rule source parser → target-neutral Rule AST → QX/Surge Rule planners
 → Legacy Rewrite parser / Rewrite v2 parser → target-neutral Rewrite Semantic IR → rewrite-qx.mjs / rewrite-surge.mjs

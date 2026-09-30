@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import { convert, validateQX } from '../../.github/scripts/sync-convert.mjs';
+import { validateQX } from '../../.github/scripts/sync-convert.mjs';
+import { convertPlugin } from '../src/conversion-pipeline.mjs';
 import { validateSurgeModule } from '../src/surge-module.mjs';
 
 const sourceA = `#!name=Unknown Alpha
@@ -53,8 +54,9 @@ const entryB = {
 };
 
 const stamp='2026-09-29 12:00:00 +08:00';
-const outA=convert(entryA, sourceA, scriptMap, stamp, new Map(), new Map());
-const outB=convert(entryB, sourceB, scriptMap, stamp, new Map(), new Map());
+const ctx={scriptMap,stamp,mockFiles:new Map(),jqFiles:new Map(),rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'};
+const outA=convertPlugin(entryA,sourceA,ctx);
+const outB=convertPlugin(entryB,sourceB,ctx);
 
 validateQX(outA.qx, entryA);
 validateQX(outB.qx, entryB);

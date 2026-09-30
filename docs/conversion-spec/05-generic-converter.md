@@ -129,6 +129,29 @@ planner result
 - generated helper Map 可以作为 output state 的附属物，但 builder 不生成 helper 语义；
 - 纯架构迁移必须保持 byte-equivalent canonical 内容（转换时间戳除非真正 regeneration，否则不允许漂移）。
 
+## 5.3.3 Plugin parser / conversion pipeline core
+
+GitHub Actions / file I/O orchestration 与纯转换核心必须分离：
+
+```text
+raw Loon source
+→ plugin-parser.mjs
+→ parsed plugin {header, sections}
+→ conversion-pipeline.mjs::convertPlugin()
+→ Rule / Rewrite / Script / MITM planners
+→ QX / Surge output builders
+→ { qx, surge, generatedScripts }
+```
+
+职责边界：
+- `plugin-parser.mjs` 是唯一整体 section parser，负责 BOM/newline normalization 与 `[Section]` 切分；
+- `conversion-pipeline.mjs` 只接受 entry/source/stamp 以及已经物化的 `scriptMap/mockFiles/jqFiles/rawBase` 等 context，不做文件或网络 I/O；
+- pipeline 负责 unknown-section fail-closed、Argument analysis、Rule/Rewrite/Script/MITM dispatch、planner context 和 output builder 调用；
+- `.github/scripts/sync-convert.mjs` 只负责 source/dependency/Source Script 获取、调用 pipeline、validator 与写文件；
+- `regenerate-canonical.mjs` 必须直接复用同一个 parser/pipeline，而不是借道 sync 脚本取得转换核心；
+- parser/pipeline 不得 import `fs`, `path`, HTTP fetch、Source Catalog 或 GitHub API；
+- 外部依赖缺失时继续由既有 Review/Issue 语义 fail closed，不能由 pipeline 自行联网补取。
+
 ## 5.4 Rule 转换器
 
 `[Rule]` 固定分为三层：

@@ -306,4 +306,21 @@ CI 必须验证目标 section routing/final render 已从 orchestration 中分�
 - QX builder：`converter/src/qx-output.mjs`
 - Surge builder：`converter/src/surge-output.mjs`
 - contract：`converter/tests/target-output-builders.mjs`
+## 80.17 Plugin parser / conversion-pipeline architecture gate
+
+CI 必须验证纯转换核心已经脱离 GitHub/I/O orchestration：
+
+- `plugin-parser.mjs` 是整体 Loon section parser；`sync-convert.mjs` 不得重新定义 `parseLoon()`；
+- `conversion-pipeline.mjs` 导出唯一 production `convertPlugin()`；`sync-convert.mjs` 不得重新定义 `convert()` 或直接 import Rule/Rewrite/Script/MITM planner；
+- `conversion-pipeline.mjs` 不得 import Node `fs/path`、Source Catalog、source-fetch 或任何网络/GitHub 工具；
+- pipeline 必须消费已物化的 `scriptMap/mockFiles/jqFiles` context，禁止自行 fetch；
+- unknown source section、Argument review、disabled Script/Rewrite comments、planner dispatch 与 target output builder 调用均由 pipeline 负责；
+- `regenerate-canonical.mjs` 必须直接 import `convertPlugin()` 与 plugin parser；
+- `sync-convert.mjs` 只保留 fetch/materialize/validate/write orchestration；
+- 纯架构迁移要求 Catalog canonical 与 generated helper 0 diff。
+
+实现：
+- whole-plugin parser：`converter/src/plugin-parser.mjs`
+- pure conversion core：`converter/src/conversion-pipeline.mjs`
+- contract：`converter/tests/conversion-pipeline.mjs`
 

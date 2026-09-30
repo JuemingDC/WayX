@@ -57,13 +57,17 @@ converter 先实现
 ## 自动化实现文件
 
 - Source Catalog：`.github/sources/loon.json`
-- Source fetch + dependency fetch + generic conversion：`.github/scripts/sync-convert.mjs`
-- Canonical deterministic regeneration：`converter/tools/regenerate-canonical.mjs`
+- Source fetch + dependency fetch + validation/write orchestration：`.github/scripts/sync-convert.mjs`
+- Whole-plugin parser：`converter/src/plugin-parser.mjs`
+- Pure generic conversion core：`converter/src/conversion-pipeline.mjs`
+- Canonical deterministic regeneration：`converter/tools/regenerate-canonical.mjs`（直接复用 parser/pipeline）
 - CI gate：`.github/workflows/converter-check.yml`（同仓库 PR 可自动提交 deterministic canonical + WayX-generated helpers；外部 fork 只校验不写入）
 - Upstream scheduled flow：`.github/workflows/upstream-monitor.yml`
 - Review classification：`.github/scripts/conversion_gate.py` + `.github/scripts/validate_conversion_policy.py`
 
 自动化脚本不得再维护第二份插件列表；所有 Loon source 必须从 Source Catalog 遍历。
+
+`sync-convert.mjs` 不得承载 Rule/Rewrite/Script/MITM semantic dispatch 或最终 target assembly。生产转换与 canonical regeneration 必须调用同一个 `convertPlugin()`，避免“在线同步一套转换逻辑、离线 regeneration 另一套转换逻辑”。
 
 ## 原作者源唯一链路
 
