@@ -8,7 +8,7 @@
 - Source Catalog：20 个 Loon 去广告插件
 - Catalog 管理目标：20 个 Quantumult X snippet + 20 个 Surge sgmodule
 - Adblock 目录实际目标：21 个 QX + 21 个 Surge（额外包含手工维护的 `QZXY`）
-- 最近完整 Converter Check：#584，通过
+- 最近完整 Converter Check：#587，通过
 - 当前实现 PR：#65
 
 ---
