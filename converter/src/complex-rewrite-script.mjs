@@ -162,10 +162,9 @@ function statements(ast, target, {argumentTable = null} = {}) {
   return {out, body, headers, json, headerAdd};
 
 }
-export function renderMixedRewriteScript(ast, {target, stamp='', category='', sourceLine='', argumentTable=null}={}) {
+function renderRewriteScript(ast, {target, stamp='', category='', sourceLine='', argumentTable=null}={}) {
   validateRewriteV2Ast(ast);
-  if (!Array.isArray(ast?.actions) || ast.actions.length < 2) throw new Error('complex helper requires a multi-action Rewrite pipeline');
-  if (!['qx','surge'].includes(target)) throw new Error('invalid mixed helper target');
+  if (!['qx','surge'].includes(target)) throw new Error('invalid rewrite helper target');
   const plan = statements(ast, target, {argumentTable});
   const condition = compileComplexCondition(ast.condition, target, {argumentTable});
   const source = ast.phase === 'request' ? '$request' : '$response';
@@ -202,4 +201,20 @@ export function renderMixedRewriteScript(ast, {target, stamp='', category='', so
     ? (ast.phase==='request'?'script-request-body':'script-response-body')
     : (ast.phase==='request'?'script-request-header':'script-response-header');
   return {pattern:coarsePattern(ast),script:lines.join('\n'),qxAction,surgeType:ast.phase==='request'?'http-request':'http-response',requiresBody:plan.body,fullHeaderMode:plan.headerAdd};
+}
+
+export function renderMixedRewriteScript(ast, options = {}) {
+  validateRewriteV2Ast(ast);
+  if (!Array.isArray(ast?.actions) || ast.actions.length < 2) {
+    throw new Error('complex helper requires a multi-action Rewrite pipeline');
+  }
+  return renderRewriteScript(ast, options);
+}
+
+export function renderSingleJsonAddScript(ast, options = {}) {
+  validateRewriteV2Ast(ast);
+  if (!Array.isArray(ast?.actions) || ast.actions.length !== 1 || !/^(?:request|response)\.json\.add$/.test(ast.actions[0]?.name || '')) {
+    throw new Error('single JSON-add helper requires exactly one json.add action');
+  }
+  return renderRewriteScript(ast, options);
 }
