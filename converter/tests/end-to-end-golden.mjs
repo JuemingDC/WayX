@@ -3,16 +3,16 @@ import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {
-  convert,
-  parseLoon,
   scriptUrls,
   validateQX,
 } from '../../.github/scripts/sync-convert.mjs';
-import { validateSurgeModule } from '../src/index.mjs';
+import { convertPlugin, validateSurgeModule } from '../src/index.mjs';
 
 const ROOT = process.cwd();
 const golden = JSON.parse(await fs.readFile(path.join(ROOT, 'converter/fixtures/end-to-end-golden.json'), 'utf8'));
 const STAMP = golden.stamp;
+const RAW_BASE='https://raw.githubusercontent.com/JuemingDC/WayX/main';
+const convert=(entry,source,scriptMap,stamp,mockFiles=new Map(),jqFiles=new Map())=>convertPlugin(entry,source,{scriptMap,stamp,mockFiles,jqFiles,rawBase:RAW_BASE});
 
 const manifest = JSON.parse(await fs.readFile(path.join(ROOT, '.github/sources/loon.json'), 'utf8'));
 const byId = new Map(manifest.map(entry => [entry.id, entry]));
