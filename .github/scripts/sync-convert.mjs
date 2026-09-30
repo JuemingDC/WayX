@@ -435,15 +435,19 @@ function planAdjacentQxHeaderGroups(items, ctx) {
     if (nativePlan) {
       plans.set(index, nativePlan);
     } else {
-      const plan = renderQxHeaderScript(mergedAst, {
-        stamp: ctx.stamp,
-        category: ctx.category,
-        sourceLine: sourceLines.join(' | '),
-      });
-      const key = crypto.createHash('sha1').update('header\0' + sourceLines[0]).digest('hex').slice(0, 10);
-      const filename = `header_${key}.js`;
-      ctx.generatedScripts.set(filename, plan.script);
-      plans.set(index, {section:'rewrite', line:`${plan.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}`});
+      try {
+        const plan = renderQxHeaderScript(mergedAst, {
+          stamp: ctx.stamp,
+          category: ctx.category,
+          sourceLine: sourceLines.join(' | '),
+        });
+        const key = crypto.createHash('sha1').update('header\0' + sourceLines[0]).digest('hex').slice(0, 10);
+        const filename = `header_${key}.js`;
+        ctx.generatedScripts.set(filename, plan.script);
+        plans.set(index, {section:'rewrite', line:`${plan.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}`});
+      } catch (error) {
+        plans.set(index, rewriteReview(sourceLines.join(' | '), String(error?.message || error).split('\n')[0]));
+      }
     }
     for (let consumedIndex = index + 1; consumedIndex <= end; consumedIndex++) consumed.add(consumedIndex);
   }
@@ -451,7 +455,7 @@ function planAdjacentQxHeaderGroups(items, ctx) {
   return {plans, consumed};
 }
 
-async function materializeQxMockFiles(entry, parsed) {
+async function materializeMockFiles(entry, parsed) {
   const out = new Map();
   for (const item of sectionItems(parsed.sections.get('Rewrite'))) {
     if (!item.line || !isRewriteV2(item.line)) continue;
@@ -463,11 +467,6 @@ async function materializeQxMockFiles(entry, parsed) {
       if (!condition.ok) continue;
 
       const plan = qxMockPlanFromAction(ast.actions[0], { pluginSourceUrl: entry.source });
-      if (plan.phase === 'request' && (plan.binary || plan.base64)) {
-        out.set(item.line, { error: 'Quantumult X request mock_file binary/bodyBytes output is not enabled without an official request-body example' });
-        continue;
-      }
-
       if (plan.base64) {
         const text = await fetchOriginalText(plan.url);
         const compact = text.replace(/\s+/g, '');
@@ -894,7 +893,7 @@ async function main() {
 
       const scriptMap = new Map();
       const parsedSource = parseLoon(source);
-      const qxMockFiles = await materializeQxMockFiles(entry, parsedSource);
+      const qxMockFiles = await materializeMockFiles(entry, parsedSource);
       const jqFiles = await materializeJqFiles(entry, parsedSource);
       const discoveredScriptUrls = scriptUrls(source);
       for (const reference of discoveredScriptUrls) {
@@ -952,7 +951,7 @@ export {
   cleanSource,
   convert,
   materializeJqFiles,
-  materializeQxMockFiles,
+  materializeMockFiles,
   parseLoon,
   scriptUrls,
   validateQX,
