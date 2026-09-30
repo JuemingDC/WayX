@@ -29,7 +29,7 @@ WayX 的 Loon Plugin → Quantumult X / Surge 通用转换器。核心原则是*
 
 - Source Script 只转换声明层，QX/Surge 均直接引用原脚本 URL，不做 runtime compatibility gate。
 - 仅在 QX declaration 需要判定 header/body/echo action 类型时读取脚本正文辅助分类。
-- QX Script v2/legacy Script 的 argument 按 KOP-XIAO parser 口径忽略，动态 enable 默认开启，timeout 忽略；固定 enable=false/0 仍禁用。Rewrite 参数、debug、binary/max-size 等仍按各自能力单独判断。
+- QX Script v2/legacy Script 的 argument 按 KOP-XIAO parser 口径忽略，动态 enable 默认开启，timeout 与 binary-body-mode 忽略；header/body 只由 requires-body 决定；固定 enable=false/0 仍禁用。Rewrite 参数、debug、max-size 等其它字段仍按 WayX 自身能力单独判断。
 - 通用 complex renderer 代码继续保留，但 production 只处理源单条 Rewrite v2 中真实存在且已登记的 multi-action signature；禁止合并相邻独立规则。单 action 需要脚本时走专用 semantic helper。
 
 ## 自动化
