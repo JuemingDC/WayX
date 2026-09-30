@@ -45,12 +45,14 @@ function coarsePattern(ast) {
   if (found.length === 1) return found[0].right.pattern;
   return '(?:' + found.map(node => '(?:' + node.right.pattern + ')').join('|') + ')';
 }
-function jsonValue(node) {
+function jsonValueSource(node, captures) {
   if (!node || !['string','raw-string','number','boolean','null'].includes(node.type)) throw new Error('JSON replacement value must be fixed');
+  if (node.type === 'string') return capturedString(node, 'JSON replacement value', captures);
   if (node.type === 'raw-string') {
-    try { return JSON.parse(node.value); } catch { return node.value; }
+    if (String(node.value).includes('${')) return capturedString(node, 'JSON replacement value', captures);
+    try { return JSON.stringify(JSON.parse(node.value)); } catch { return JSON.stringify(node.value); }
   }
-  return node.value;
+  return JSON.stringify(node.value);
 }
 function jsonPath(text) {
   const path=String(text||''); if(!path) throw new Error('JSON key path must not be empty');
@@ -93,7 +95,7 @@ function statements(ast, target) {
           if (typeof path[path.length - 1] === 'number') throw new Error('json.delete array-index semantics are not verified');
           out.push('__wayxJsonDelete(__wayxJson,'+JSON.stringify(path)+');');
         }
-        else out.push('__wayxJsonReplace(__wayxJson,'+JSON.stringify(path)+','+JSON.stringify(jsonValue(args[1]))+');');
+        else out.push('__wayxJsonReplace(__wayxJson,'+JSON.stringify(path)+','+jsonValueSource(args[1], captures)+');');
       }
       continue;
     }

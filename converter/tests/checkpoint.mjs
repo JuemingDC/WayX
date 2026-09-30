@@ -436,6 +436,24 @@ const mixedJsonNull = renderMixedRewriteScript(
   {target:'qx'},
 );
 assert.match(mixedJsonNull.script, /__wayxJsonReplace\(__wayxJson,\["data","value"\],null\)/);
+const mixedJsonCapture = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /\\/users\\/(\\d+)/ims as hit then response.header.set("X-User", "${hit.1}") | response.json.replace("data.user", "${hit.1}")'),
+  {target:'qx'},
+);
+assert.ok(mixedJsonCapture.script.includes('__wayxJsonReplace(__wayxJson,["data","user"],String(__wayxCaptures["hit"]?.[1] ?? ""));'));
+assert.equal(mixedJsonCapture.script.includes('"ims"'), false);
+const mixedJsonTyped = renderMixedRewriteScript(
+  parseRewriteV2('response if ${url} ~= /api/ then response.header.set("X-Test", "ok") | response.json.replace("data.n", 7) | response.json.replace("data.ok", true) | response.json.replace("data.none", null)'),
+  {target:'qx'},
+);
+assert.match(mixedJsonTyped.script, /\["data","n"\],7\)/);
+assert.match(mixedJsonTyped.script, /\["data","ok"\],true\)/);
+assert.match(mixedJsonTyped.script, /\["data","none"\],null\)/);
+assert.throws(
+  () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ as hit then response.header.set("X-Test", "ok") | response.json.replace("data.user", "${other.1}")'), {target:'qx'}),
+  /unknown capture alias: other/,
+);
+
 assert.throws(
   () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ then response.header.set("X-Test", "ok") | response.json.delete("items[0]")'), {target:'qx'}),
   /json\.delete array-index semantics are not verified/,

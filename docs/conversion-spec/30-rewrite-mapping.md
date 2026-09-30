@@ -215,3 +215,8 @@ For a Loon condition of the form `~= /pattern/ as name`, a generated complex hel
 ### Complex JSON runtime guard
 
 Generated mixed helpers must evaluate the Loon condition before parsing a JSON body. If the condition does not match, the helper returns without parsing or mutating the transaction. If the condition matches but the body cannot be parsed as JSON, the helper fails closed with an unchanged transaction; header/body mutations from the pipeline must not be partially applied.
+
+
+### Captures in complex JSON replacement values
+
+A string value passed to `json.replace` may resolve a previously declared named regex capture such as `${hit.1}` using the same capture resolver as header/body action strings. Fixed JSON primitives remain typed: numbers stay numbers, booleans stay booleans, and `null` stays JSON null. Undeclared capture aliases and unsupported interpolation forms fail closed. Loon `i/m/s` flags remain omitted from generated target regular expressions.
