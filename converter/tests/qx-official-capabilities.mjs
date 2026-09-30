@@ -125,8 +125,8 @@ for (const action of QX_WAYX_SCRIPT_ACTIONS) {
   assert.ok(fixture.rewriteActions.includes(action), 'QX Script action must remain inside the scoped Rewrite capability set: ' + action);
 }
 
-// The official filter resource is used only as supporting evidence for scoped
-// Rule types. Full-profile-only types such as FINAL are deliberately ignored.
+// The official filter resource is used only as supporting evidence for the
+// Rule types that WayX actually emits from Loon ad-block plugins.
 for (const raw of String(filterSnippet).split(/\r?\n/)) {
   const line = raw.trim();
   if (!line || /^(?:#|;|\/\/)/.test(line)) continue;
