@@ -36,82 +36,89 @@ function renderMinimalQxHeaderHelper(ast, options) {
   }
 }
 
-registerComplexRewriteHandler({
-  id:'qx-observed-source-pipeline',
-  targets:['qx'],
-  match:(_ast,_info,ctx)=>ctx.observedComplexType?.id==='response-mock-header-set',
-  plan:(ast,target,ctx)=>{
-    try {
-      const plan=renderObservedComplexRewriteScript(ast,{
-        target,
-        stamp:ctx.stamp,
-        category:ctx.category,
-        sourceLine:ctx.sourceLine,
-      });
-      const key=crypto.createHash('sha1').update('mock-inline\0'+ctx.sourceLine).digest('hex').slice(0,10);
-      const filename='mock_'+key+'.js';
-      ctx.generatedScripts.set(filename,plan.script);
-      return {
-        ok:true,
-        section:'rewrite',
-        line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/script/'+ctx.id+'/'+filename,
-      };
-    } catch (error) {
-      return {ok:false,terminal:true,reason:String(error?.message||error)};
-    }
-  },
-});
-
-registerComplexRewriteHandler({
-  id:'qx-same-phase-header-script',
-  targets:['qx'],
-  match:ast=>ast.actions.length>0 && ast.actions.every(action=>action.name.startsWith(ast.phase+'.header.')),
-  plan:(ast,_target,ctx)=>{
-    try {
-      const plan=renderMinimalQxHeaderHelper(ast,{
-        stamp:ctx.stamp,
-        category:ctx.category,
-        sourceLine:ctx.sourceLine,
-      });
-      const key=crypto.createHash('sha1').update('header\0'+ctx.sourceLine).digest('hex').slice(0,10);
-      const filename='header_'+key+'.js';
-      ctx.generatedScripts.set(filename,plan.script);
-      return {
-        ok:true,
-        section:'rewrite',
-        line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/script/'+ctx.id+'/'+filename,
-      };
-    } catch (error) {
-      return {ok:false,terminal:true,reason:String(error?.message||error)};
-    }
-  },
-});
-
-registerComplexRewriteHandler({
-  id:'qx-complex-body-pipeline-script',
-  targets:['qx'],
-  match:(_ast,info)=>info.families.includes('body-pipeline') || info.families.includes('json-pipeline'),
-  plan:(ast,_target,ctx)=>{
-    try {
-      const plan=renderMixedRewriteScript(ast,{
-        target:'qx',
-        stamp:ctx.stamp,
-        category:ctx.category,
-        sourceLine:ctx.sourceLine,
-      });
-      const key=crypto.createHash('sha1').update('complex-mixed\0qx\0'+ctx.sourceLine).digest('hex').slice(0,10);
-      const filename='complex_qx_'+key+'.js';
-      ctx.generatedScripts.set(filename,plan.script);
-      return {
-        ok:true,
-        section:'rewrite',
-        line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/script/'+ctx.id+'/'+filename,
-      };
-    } catch (error) {
-      return {ok:false,terminal:true,reason:String(error?.message||error)};
-    }
-  },
-});
+let qxRewriteHandlersRegistered=false;
+function ensureQxRewriteHandlers() {
+  if (qxRewriteHandlersRegistered) return;
+  qxRewriteHandlersRegistered=true;
+  registerComplexRewriteHandler({
+    id:'qx-observed-source-pipeline',
+    targets:['qx'],
+    match:(_ast,_info,ctx)=>ctx.observedComplexType?.id==='response-mock-header-set',
+    plan:(ast,target,ctx)=>{
+      try {
+        const plan=renderObservedComplexRewriteScript(ast,{
+          target,
+          stamp:ctx.stamp,
+          category:ctx.category,
+          sourceLine:ctx.sourceLine,
+        });
+        const key=crypto.createHash('sha1').update('mock-inline\0'+ctx.sourceLine).digest('hex').slice(0,10);
+        const filename='mock_'+key+'.js';
+        ctx.generatedScripts.set(filename,plan.script);
+        return {
+          ok:true,
+          section:'rewrite',
+          line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/script/'+ctx.id+'/'+filename,
+        };
+      } catch (error) {
+        return {ok:false,terminal:true,reason:String(error?.message||error)};
+      }
+    },
+  });
+  
+  registerComplexRewriteHandler({
+    id:'qx-same-phase-header-script',
+    targets:['qx'],
+    match:ast=>ast.actions.length>0 && ast.actions.every(action=>action.name.startsWith(ast.phase+'.header.')),
+    plan:(ast,_target,ctx)=>{
+      try {
+        const plan=renderMinimalQxHeaderHelper(ast,{
+          stamp:ctx.stamp,
+          category:ctx.category,
+          sourceLine:ctx.sourceLine,
+        });
+        const key=crypto.createHash('sha1').update('header\0'+ctx.sourceLine).digest('hex').slice(0,10);
+        const filename='header_'+key+'.js';
+        ctx.generatedScripts.set(filename,plan.script);
+        return {
+          ok:true,
+          section:'rewrite',
+          line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/script/'+ctx.id+'/'+filename,
+        };
+      } catch (error) {
+        return {ok:false,terminal:true,reason:String(error?.message||error)};
+      }
+    },
+  });
+  
+  registerComplexRewriteHandler({
+    id:'qx-complex-body-pipeline-script',
+    targets:['qx'],
+    match:(_ast,info)=>info.families.includes('body-pipeline') || info.families.includes('json-pipeline'),
+    plan:(ast,_target,ctx)=>{
+      try {
+        const plan=renderMixedRewriteScript(ast,{
+          target:'qx',
+          stamp:ctx.stamp,
+          category:ctx.category,
+          sourceLine:ctx.sourceLine,
+        });
+        const key=crypto.createHash('sha1').update('complex-mixed\0qx\0'+ctx.sourceLine).digest('hex').slice(0,10);
+        const filename='complex_qx_'+key+'.js';
+        ctx.generatedScripts.set(filename,plan.script);
+        return {
+          ok:true,
+          section:'rewrite',
+          line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/script/'+ctx.id+'/'+filename,
+        };
+      } catch (error) {
+        return {ok:false,terminal:true,reason:String(error?.message||error)};
+      }
+    },
+  });
+  
+  
+}
 
 function qxNativeHeaderPlan(ast) {
   if (ast?.phase!=='request' || ast.actions?.length!==1) return null;
@@ -148,6 +155,8 @@ export function planQxRewrite(ir, ctx={}) {
   if (ir.sourceSyntax!=='v2') {
     return rewriteIssue(sourceLine(ir,ctx),'unknown-rewrite-source-syntax','unsupported Rewrite source syntax');
   }
+
+  ensureQxRewriteHandlers();
 
   const source=sourceLine(ir,ctx);
   const ast=ir.ast;
