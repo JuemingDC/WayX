@@ -108,7 +108,7 @@ function extractRewrite(sample) {
   // The official sample documents these even though it does not provide one
   // executable/commented example line for each of them.
   if (/\bjsonjq-request-body\b/.test(sample)) actions.add('jsonjq-request-body');
-  for (const match of sample.matchAll(/\bscript-(?:request|response|echo|analyze)[a-z-]*\b/g)) {
+  for (const match of sample.matchAll(/\bscript-(?:request-(?:header|body)|response-(?:header|body)|echo-response|analyze-echo-response)\b/g)) {
     actions.add(match[0]);
   }
 
