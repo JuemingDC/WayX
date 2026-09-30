@@ -484,14 +484,20 @@ export function surgeInlineMockPlan(ast) {
 
 export function surgeMockFilePlan(ast, {pluginSourceUrl = '', materialized = null} = {}) {
   validateRewriteV2Ast(ast);
-  if (ast.phase !== 'response' || ast.actions.length !== 1 || ast.actions[0].name !== 'response.body.mock_file') {
-    return unsupported('Surge Map Local file mapping requires one response.body.mock_file action');
+  if (ast.phase !== 'response') {
+    return unsupported('Surge Map Local file mapping requires response phase');
   }
   const condition = simpleUrlRewriteCondition(ast, {target:'surge'});
   if (!condition.ok) return condition;
 
+  const mocks = ast.actions.filter(action => action.name === 'response.body.mock_file');
+  if (mocks.length !== 1) return unsupported('Surge Map Local file mapping requires exactly one response.body.mock_file action');
+  if (ast.actions.some(action => action !== mocks[0] && !/^response\.header\.(?:add|set|del|replace)$/.test(action.name))) {
+    return unsupported('response mock_file may only combine response.header actions');
+  }
+
   try {
-    const action = ast.actions[0];
+    const action = mocks[0];
     const spec = dependencySpecFromAction(action, {pluginSourceUrl});
     if (!spec?.resolvable || !spec.url) return unsupported(spec?.reason || 'mock_file is not resolvable');
     if (spec.status < 200 || spec.status > 999) return unsupported('Surge Map Local cannot preserve this Loon mock_file status');
@@ -507,20 +513,31 @@ export function surgeMockFilePlan(ast, {pluginSourceUrl = '', materialized = nul
       data = materialized.bodyBase64;
     }
 
-    const header = 'Content-Type:' + MOCK_MIME[spec.contentType];
+    const headers = [['Content-Type', MOCK_MIME[spec.contentType]]];
+    for (const item of ast.actions) {
+      if (item !== action) applyStaticHeaderAction(headers, item);
+    }
+    for (const pair of headers) {
+      if (/[\r\n|]/.test(pair[0]) || /[\r\n|]/.test(pair[1])) {
+        return unsupported('Map Local header contains a separator or line break and requires script fallback');
+      }
+    }
+    const headerValue = headers.map(pair => pair[0] + ':' + pair[1]).join('|');
+
     return {
       ok:true,
       strategy:'direct',
       section:'map',
       pattern:condition.pattern,
       line:condition.pattern + ' data-type=' + dataType + ' data=' + JSON.stringify(data) +
-        ' status-code=' + spec.status + ' header=' + JSON.stringify(header),
+        ' status-code=' + spec.status + (headerValue ? ' header=' + JSON.stringify(headerValue) : ''),
       notes:condition.notes,
     };
   } catch (error) {
     return unsupported(String(error?.message || error));
   }
 }
+
 
 export function fixedStringValue(node) {
   return stringNode(node);
