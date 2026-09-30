@@ -146,6 +146,10 @@ response.body.mock(...) | response.header.set(...)
 QX：一个 echo helper 完成 body + header。  
 Surge：组合成等价 Map Local / header 行为。
 
+## 30.5.1 Complex Rewrite Helper Registry
+
+复杂 Rewrite v2 在原生目标能力不足时，可由通用 helper 按 AST condition/action 能力处理；禁止按插件身份特判。新增组合必须先增加 generic handler 与 synthetic fixture，不支持的组合保持 Review。
+
 ## 30.6 自动转换实现
 
 - Legacy classifier/planner：`converter/src/legacy-rewrite.mjs`
