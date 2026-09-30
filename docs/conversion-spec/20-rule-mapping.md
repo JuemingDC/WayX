@@ -34,7 +34,6 @@
 | `SCRIPT` Rule | 注释保留；不走 Script fallback | `SCRIPT` | Surge 直接 |
 | `RULE-SET` | 注释保留；不自动推断、不走 Script fallback | `RULE-SET` | QX 注释 / Surge 直接 |
 | `DOMAIN-SET` | 注释保留；不自动推断、不走 Script fallback | `DOMAIN-SET` | QX 注释 / Surge 直接 |
-| `FINAL` | `final` 仅完整规则配置场景 | **丢弃** | WayX 去广告 Module 不改写用户全局 catch-all |
 
 ### Quantumult X 不支持 Rule 的固定处理
 
@@ -48,9 +47,6 @@ Quantumult X Rule/Filter 只输出用户提供的 Crossutility 官方 sample 已
 
 Rule 与 Rewrite 的 fallback 链严格分离：**只有 Rewrite/Mock 在目标原生语法不足时才允许考虑脚本。**
 
-### FINAL 项目规则
-
-WayX 的目标是去广告插件转换，不负责接管用户主配置的最终路由。Loon 源插件中的 `FINAL` 在生成 Surge Module 时**直接丢弃**，不改写、不输出活动规则、也不进入 Review。这样可避免 Module 修改用户已有的全局 `FINAL` 行为。
 
 ## 20.2 `URL-REGEX` + `REJECT-X` 特殊映射
 
@@ -90,7 +86,6 @@ NOT,((Rule1)),Policy
 - 递归验证子 Rule Type
 - 不拆平
 - 不把子条件扩大成独立 Rule
-- `FINAL` 不得作为子 Rule
 - 合法 sub-rule flag 保留
 
 ## 20.5 Policy 对应
