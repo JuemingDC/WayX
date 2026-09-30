@@ -163,7 +163,7 @@ target native planner
 
 条件编译当前只接受已验证的 `url`、`request.method`、`response.status`、固定 Header 读取，以及 `== / ~= / && / || / ()`。未知变量、未知运算符、无法证明等价的 capture 行为必须 fail closed。
 
-Loon regex literal 的 `i / m / s` flags 在所有 native/helper 路径中均只解析、不传播；目标 helper 只能使用 regex body，不得通过 `new RegExp(pattern, flags)` 恢复这些 flags。
+Loon regex literal 的 `i / m / s` flags 在所有 native/helper 路径中均只解析、不传播；flags 的存在本身不进入 Review。目标编译阶段同时去掉 literal delimiter，并将仅用于源 literal 的 `\/` 规范化为目标 bare-regex 的 `/`；目标 helper 不得通过 `new RegExp(pattern, flags)`、inline modifier 或 case-fold 恢复这些 flags。
 
 Surge 的 `header.add` 与普通对象 Header 修改语义不同：官方定义为已有同名字段时继续追加。需要脚本保持重复字段时必须使用 `full-header-mode=true` 的 `[{field,value}]` 形式，禁止退化为对象赋值。Quantumult X 未验证等价的重复 Header 返回表示前，`header.add` complex fallback 保持 fail closed。
 
