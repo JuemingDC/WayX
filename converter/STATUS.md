@@ -13,7 +13,7 @@ Updated: 2026-09-30
 ## Quantumult X
 
 - QX snippet section labels remain comments.
-- QX filter/rewrite 已支持一对一源注释转 `{# note #} rule`；分组注释、多行注释、被禁用规则与 WayX metadata 不内联。
+- QX filter/rewrite 已支持 `[Rule]` / `[Rewrite]` / `[Script]` 来源的一对一注释转 `{# note #} rule`；分组注释、多行注释、被禁用声明与 WayX metadata 不内联。
 - Rule mapping is behavior-based.
 - Loon Plugin `PROXY` policy binding is preserved as literal `PROXY`; it is not lowered to built-in `proxy`.
 - Loon `[Argument]` is **not converted** to QX parameter configuration or BoxJs.
