@@ -72,7 +72,7 @@ Source parser 遇到当前 grammar 未登记、但包含活动内容的 section 
 - section 合法
 - Rule type 属于当前官方 Rule Type
 - Logical Rule 递归合法
-- Module `[Rule]` policy 仅允许 Surge Module Manual 明确列出的 `DIRECT / REJECT / REJECT-TINYGIF`；完整 Profile 的其他 built-in policy 与未知/用户 policy group 都不得作为活动 Module Rule
+- Module `[Rule]` policy 允许 Surge Module Manual 明确列出的 `DIRECT / REJECT / REJECT-TINYGIF`，以及已由 `#!arguments` 声明的完整 `{{{name}}}` policy 占位符；占位符必须引用已声明参数。完整 Profile 的其他 built-in policy 与未绑定的未知/用户 policy group 都不得直接作为活动 Module Rule
 - 外部 policy 不作为活动 Module Rule
 - URL/Header/Body/Map Local/Script 参数合法
 - WayX 去广告转换输出中的活动 Script declaration 必须显式声明 type，且 Adblock-scope validator 不接受调度/事件/generic Script 类型；仓库中与本转换器无关的人工 Surge Module 仍按 Surge 自身合法类型校验，不受此范围限制
