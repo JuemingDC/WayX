@@ -17,6 +17,9 @@ export function registerComplexRewriteHandler(definition) {
 export function planComplexRewrite(ast, target, context = {}) {
   const classified = classifyComplexRewrite(ast);
   if (!classified.ok) return classified;
+  if (!Array.isArray(ast?.actions) || ast.actions.length < 2) {
+    return {ok:false, reason:'complex Rewrite helper is reserved for multi-action pipelines', classified};
+  }
   for (const handler of handlers) {
     if (!handler.targets.includes(target)) continue;
     if (!handler.match(ast, classified, context)) continue;
