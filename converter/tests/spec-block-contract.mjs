@@ -78,6 +78,10 @@ assert.match(rewriteQx,/export function planQxRewrite\(ir/, 'Block 30: QX Rewrit
 assert.match(rewriteSurge,/export function planSurgeRewrite\(ir/, 'Block 30: Surge Rewrite planner entry must consume Semantic IR');
 assert.match(rewriteQx,/planComplexRewrite\(ast,'qx'/, 'Block 30: QX planner must own its complex fallback');
 assert.match(rewriteSurge,/planComplexRewrite\(ast,'surge'/, 'Block 30: Surge planner must own its complex fallback');
+assert.match(rewriteQx,/function ensureQxRewriteHandlers\(\)/, 'Block 30: QX complex handlers must register lazily');
+assert.match(rewriteSurge,/function ensureSurgeRewriteHandlers\(\)/, 'Block 30: Surge complex handlers must register lazily');
+assert.ok(rewriteQx.indexOf('registerComplexRewriteHandler({') > rewriteQx.indexOf('function ensureQxRewriteHandlers()'), 'Block 30: QX planner import must not register handlers at top level');
+assert.ok(rewriteSurge.indexOf('registerComplexRewriteHandler({') > rewriteSurge.indexOf('function ensureSurgeRewriteHandlers()'), 'Block 30: Surge planner import must not register handlers at top level');
 assert.match(converterWorkflow,/rewrite-target-planners\.mjs/, 'Block 30/80: Converter Check must execute target planner contract');
 const complexTypes=await fs.readFile(path.join(ROOT,'converter/src/complex-rewrite-types.mjs'),'utf8');
 assert.match(complexTypes,/response\.body\.mock.*response\.header\.set/s, 'Block 30: observed Bilibili-source complex signature must be registered generically');
