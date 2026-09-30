@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/myblockads.png
 # Updated: 2026-09-27 18:30
 
-# Converted: 2026-09-30 18:07:18 +08:00
+# Converted: 2026-09-30 18:31:32 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/myblockads.lpx
@@ -480,17 +480,14 @@ host, switch.cup.com.cn, reject
 # taobao_2
 ^https:\/\/poplayer\.template\.alibaba\.com\/\w+\.json url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
 
-# 草榴社区 //2023.redircdn.com
 # caoliu
-^https:\/\/2023\.redircdn\.com\/web\/mob_post\.js\? url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
+{# 草榴社区 //2023.redircdn.com #} ^https:\/\/2023\.redircdn\.com\/web\/mob_post\.js\? url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
 
-# 昌原云充 五代十路 //www.washpayer.com
 # changyuan
-^https:\/\/www\.washpayer\.com\/user\/message\/equipmentPara\? url script-response-body https://rucu6.pages.dev/Scripts/changyuan.js
+{# 昌原云充 五代十路 //www.washpayer.com #} ^https:\/\/www\.washpayer\.com\/user\/message\/equipmentPara\? url script-response-body https://rucu6.pages.dev/Scripts/changyuan.js
 
-# 酷安 //api.coolapk.com
 # coolapk
-^https:\/\/api\.coolapk\.com\/v6\/(?:feed\/detail|feed\/replyList|page\/dataList|main\/dataList|main\/indexV8|main\/init) url script-response-body https://rucu6.pages.dev/Scripts/coolapk.js
+{# 酷安 //api.coolapk.com #} ^https:\/\/api\.coolapk\.com\/v6\/(?:feed\/detail|feed\/replyList|page\/dataList|main\/dataList|main\/indexV8|main\/init) url script-response-body https://rucu6.pages.dev/Scripts/coolapk.js
 
 # 酷狗音乐 //adserviceretry.kglink.cn, gateway.kugou.com
 # kg_gateway
@@ -498,21 +495,17 @@ host, switch.cup.com.cn, reject
 # kg_linkcn
 ^https?:\/\/adserviceretry\.kglink\.cn\/v\d\/mobile\w+ url script-response-body https://rucu6.pages.dev/Scripts/kugou.js
 
-# 微信封禁页面 //weixin110.qq.com, security.wechat.com
 # wechat
-^https\:\/\/(?:weixin110\.qq|security\.wechat)\.com\/cgi-bin\/mmspamsupport-bin\/newredirectconfirmcgi\? url script-response-body https://rucu6.pages.dev/Scripts/wechat.js
+{# 微信封禁页面 //weixin110.qq.com, security.wechat.com #} ^https\:\/\/(?:weixin110\.qq|security\.wechat)\.com\/cgi-bin\/mmspamsupport-bin\/newredirectconfirmcgi\? url script-response-body https://rucu6.pages.dev/Scripts/wechat.js
 
-# 小米商城 //api.m.mi.com, shop-api.retail.mi.com
 # mi_mall
-^https:\/\/api\.m\.mi\.com\/v1\/app\/start url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
+{# 小米商城 //api.m.mi.com, shop-api.retail.mi.com #} ^https:\/\/api\.m\.mi\.com\/v1\/app\/start url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
 
-# 迅雷 //api-gateway-pan.xunlei.com
 # thunder
-^https:\/\/api-gateway-pan\.xunlei\.com\/content\/v1\/aggregate\/info\? url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
+{# 迅雷 //api-gateway-pan.xunlei.com #} ^https:\/\/api-gateway-pan\.xunlei\.com\/content\/v1\/aggregate\/info\? url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
 
-# 中国农业银行 //mobilepaas.abchina.com.cn
 # abchina
-^https:\/\/mobilepaas\.abchina\.com\.cn:441\/mgw\.htm$ url script-request-header https://rucu6.pages.dev/Scripts/header.js
+{# 中国农业银行 //mobilepaas.abchina.com.cn #} ^https:\/\/mobilepaas\.abchina\.com\.cn:441\/mgw\.htm$ url script-request-header https://rucu6.pages.dev/Scripts/header.js
 
 # 中国移动云盘 //ad.mcloud.139.com, jzts.cmpassport.com
 # cloud139_1
