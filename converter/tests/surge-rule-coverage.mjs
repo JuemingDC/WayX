@@ -65,11 +65,6 @@ for (const entry of manifest) {
       assert.equal(mapped.lines.at(-1), mapped.line);
       continue;
     }
-    if (mapped.kind === 'drop') {
-      assert.equal(mapped.reason, 'drop-source-final');
-      stats.dropped++;
-      continue;
-    }
     if (mapped.kind === 'comment' && mapped.reason === 'unsupported-surge-module-policy') {
       stats.unsupportedPolicy++;
       assert.match(mapped.lines.join('\n'), /Module Rule supports only DIRECT\/REJECT\/REJECT-TINYGIF/);
