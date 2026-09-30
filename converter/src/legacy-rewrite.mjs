@@ -199,15 +199,19 @@ function planHeader(pattern, action, parsed, target, ctx) {
 
   if (target === 'qx' && parsed.phase === 'request' && parsed.op === 'add') {
     const targetPattern=normalizeRegexBodyForTarget(pattern);
-    const lines=[];
+    const pairs=[];
     for(let i=0;i<tokens.length;i+=width){
       const [name,value]=tokens.slice(i,i+width).map(unquote);
       if(!name || /[\s:\r\n]/.test(name) || /[\r\n$]/.test(value)) {
         return review(pattern, action, 'legacy request header-add contains an unsafe field name/value for QX whole-header rewrite');
       }
-      lines.push(targetPattern + ' url request-header ^([^\\r\\n]+)(\\r\\n) request-header $1$2' + name + ': ' + value + '$2');
+      pairs.push([name,value]);
     }
-    return {section:'rewrite', lines};
+    const inserted=pairs.map(([name,value]) => name + ': ' + value + '$2').join('');
+    return {
+      section:'rewrite',
+      line:targetPattern + ' url request-header ^([^\\r\\n]+)(\\r\\n) request-header $1$2' + inserted,
+    };
   }
 
 
