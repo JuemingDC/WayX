@@ -170,8 +170,6 @@ def simple_rewrite_v2(line: str) -> tuple[bool, str] | None:
         if " then " in line or re.match(r"^(request|response)\s+if\s+", line):
             return False, "Loon Rewrite v2 line is outside the deterministic simple subset"
         return None
-    if m.group(2):
-        return False, "Rewrite v2 regex flags require semantic review"
     action = m.group(3).strip()
     am = re.fullmatch(r"(reject|reject_dict|reject_array|reject_img)\(\s*(\d{3})\s*\)", action)
     if not am:
