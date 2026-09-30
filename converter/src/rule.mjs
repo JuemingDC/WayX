@@ -172,7 +172,7 @@ export function surgeRuleTypesInTree(line, {subrule = false} = {}) {
 export function qxRule(line) {
   const source = String(line).trim();
   if (/^(AND|OR|NOT)\s*,/i.test(source)) {
-    return {kind:'comment', line:`# Unsupported logical rule for Quantumult X: ${source}`, reason:'logical-rule'};
+    return {kind:'comment', line:`# [WayX] REVIEW REQUIRED: Quantumult X logical Rule has no verified native or lossless script equivalent\n# Source declaration: ${source}`, reason:'logical-rule'};
   }
 
   const parts = splitTopLevelCsv(source);
@@ -188,16 +188,16 @@ export function qxRule(line) {
   }
 
   const qxType = QX_RULE_TYPES.get(type);
-  if (!qxType) return {kind:'comment', line:`# Unsupported rule for Quantumult X: ${source}`, reason:'unsupported-type'};
+  if (!qxType) return {kind:'comment', line:`# [WayX] REVIEW REQUIRED: Quantumult X Rule type ${type} is not verified and has no lossless script equivalent\n# Source declaration: ${source}`, reason:'unsupported-type'};
 
   let policy;
   if (policyRaw === 'DIRECT') policy = 'direct';
   else if (policyRaw === 'REJECT' || policyRaw === 'REJECT-DROP' || policyRaw === 'REJECT-NO-DROP') policy = 'reject';
   else if (policyRaw === 'PROXY') policy = 'PROXY';
   else if (/^REJECT/.test(policyRaw)) {
-    return {kind:'comment', line:`# Unsupported reject policy for Quantumult X filter behavior: ${source}`, reason:'unsupported-reject-policy'};
+    return {kind:'comment', line:`# [WayX] REVIEW REQUIRED: Quantumult X cannot preserve source reject policy ${policyRaw} in filter syntax or a lossless script equivalent\n# Source declaration: ${source}`, reason:'unsupported-reject-policy'};
   } else {
-    return {kind:'comment', line:`# Unsupported Quantumult X rule policy: ${source}`, reason:'unsupported-policy'};
+    return {kind:'comment', line:`# [WayX] REVIEW REQUIRED: Quantumult X Rule policy ${policyRaw} is not verified and has no lossless script equivalent\n# Source declaration: ${source}`, reason:'unsupported-policy'};
   }
 
   return {kind:'filter', line:`${qxType}, ${value}, ${policy}`, reason:'native-filter'};
@@ -242,7 +242,7 @@ export function surgeModuleRule(line) {
   if (!typeTree.ok) {
     return {
       kind:'comment',
-      lines:[`# [WayX] Surge rule type/combination unsupported by current official manual (${typeTree.reason}): ${source}`],
+      lines:[`# [WayX] REVIEW REQUIRED: Surge Rule type/combination has no verified native or lossless script equivalent (${typeTree.reason})`,`# Source declaration: ${source}`],
       reason:'unsupported-rule-type',
     };
   }
@@ -251,7 +251,7 @@ export function surgeModuleRule(line) {
   if (parts.length <= policyIndex || !parts[policyIndex]) {
     return {
       kind:'comment',
-      lines:[`# [WayX] Invalid/unsupported source rule preserved: ${source}`],
+      lines:[`# [WayX] REVIEW REQUIRED: invalid/unsupported source Rule cannot be converted losslessly`,`# Source declaration: ${source}`],
       reason:'invalid-rule',
     };
   }
@@ -266,7 +266,7 @@ export function surgeModuleRule(line) {
   if (!SURGE_MODULE_POLICIES.has(policy)) {
     return {
       kind:'comment',
-      lines:[`# [WayX] Surge Module policy binding required: ${source}`],
+      lines:[`# [WayX] REVIEW REQUIRED: Surge Module requires an external policy binding that cannot be defined losslessly by this ad-block module`,`# Source declaration: ${source}`],
       reason:'external-policy',
     };
   }
