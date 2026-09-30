@@ -7,7 +7,7 @@
 | 00 | 官方依据、优先级、行为优先 | 无独立语义转换；由 CI gate 执行 | `genericity-audit.mjs`, `audit-repository.mjs`, `spec-block-contract.mjs` |
 | 05 | Catalog、手工资产边界、通用流水线、陌生插件 | `source-catalog.mjs`, `.github/manual-assets.json`, `source-fetch.mjs`, `sync-convert.mjs`, `regenerate-canonical.mjs` | `generic-identity.mjs`, `genericity-audit.mjs`, `manual-assets.mjs` |
 | 10 | QX/Surge 目标文件结构 | `paths.mjs`, `metadata.mjs`, `surge-module.mjs`, `qx-official-capabilities.mjs`, `surge-official-capabilities.mjs` | `checkpoint.mjs`, `qx-official-capabilities.mjs`, `surge-official-capabilities.mjs`, target validators |
-| 20 | Rule / Policy / URL-REGEX reject-X | `rule.mjs` | `checkpoint.mjs`, `surge-rule-coverage.mjs`, `catalog-rule-inventory.mjs` |
+| 20 | Rule AST / Policy / URL-REGEX reject-X | `rule-ast.mjs`, `rule-qx.mjs`, `rule-surge.mjs`, `rule.mjs` facade | `rule-ast.mjs`, `checkpoint.mjs`, `surge-rule-coverage.mjs`, `catalog-rule-inventory.mjs` |
 | 30 | Legacy Rewrite + Rewrite v2 mapping / observed complex signatures | `legacy-rewrite.mjs`, `rewrite-v2*.mjs`, `complex-rewrite*.mjs`, `qx-semantic-script.mjs` | `checkpoint.mjs`, `loon-new-syntax-cases.mjs`, `rucu6-rewrite-v2-coverage.mjs`, `complex-source-inventory.mjs`, `catalog-syntax-inventory.mjs` |
 | 40 | Regex / condition AST | `rewrite-v2.mjs`, `rewrite-v2-actions.mjs`, `target-regex.mjs` | `checkpoint.mjs`, Rewrite v2 coverage |
 | 50 | JSON/JQ/mock/dependency | `jq.mjs`, `dependency.mjs`, `qx-mock.mjs`, `surge-mock.mjs`, `legacy-rewrite.mjs` | `checkpoint.mjs`, end-to-end Golden |
@@ -24,7 +24,8 @@
 → fetch plugin directly from descriptor `source` only
 → normalize + parse Loon sections
 → fetch Source JS + jq/mock dependencies directly from their original resolved URLs; Source JS is analysis-only and is not mirrored
-→ Rule / Rewrite / Script / MITM generic planners
+→ Rule source parser → target-neutral Rule AST → QX/Surge Rule planners
+→ Rewrite / Script / MITM generic planners
 → target native planner → dedicated helper → observed complex helper → commented Review/Issue
 → QX snippet + Surge sgmodule renderer
 → QX validator + Surge validator
