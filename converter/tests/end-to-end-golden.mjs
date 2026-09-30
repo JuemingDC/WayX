@@ -53,8 +53,8 @@ const requestAddFixture = {
 };
 const requestAddSource = `#!name=RequestHeaderAddFixture
 [Rewrite]
-request if \${url} ~= /^https:\/\/api\.example\.com\//i then request.header.add("X-Test", "one")
-response if \${url} ~= /^https:\/\/api\.example\.com\//i then response.header.replace("X-Test", /one/, "two")
+request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.add("X-Test", "one")
+response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then response.header.replace("X-Test", /one/, "two")
 `;
 const requestAddOutput = convert(requestAddFixture, requestAddSource, new Map(), STAMP);
 assert.ok(
