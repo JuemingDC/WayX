@@ -40,11 +40,21 @@ assert ok, reason
 ok, reason = gate.simple_rule("DOMAIN,example.com,PROXY")
 assert not ok and "outside safe tier" in reason
 
+ok, reason = gate.simple_rule("FINAL,DIRECT")
+assert ok and "discarded" in reason
+
+
 ok, reason = gate.simple_old_rewrite(r"^https://ads\.example\.com reject")
 assert ok, reason
 
 ok, reason = gate.simple_rewrite_v2(r"request if ${url} ~= /ads/ims then reject(404)")
 assert ok, reason
+
+ok, reason = gate.simple_rewrite_v2(
+    r'response if ${url} ~= /reddit/i then response.json.jq("jq-path=https://example.com/reddit.jq")'
+)
+assert ok and "discarded" in reason
+
 
 
 # Vendor/subdirectory identity must not affect risk classification.
