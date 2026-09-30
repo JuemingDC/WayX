@@ -46,6 +46,9 @@ assert.equal(/EXTRA_LOCAL_ENTRIES|RuCu6\/youtube\.lpx|RuCu6\/myblockads\.lpx/.te
 assert.equal(/DEPENDENCY_MANIFEST|localJqFiles|assertOfflineDependencies/.test(canonicalRunner), false, 'Block 50/90: canonical runner must not fall back to repository dependency caches');
 assert.match(canonicalRunner,/materializeJqFiles\(entry, parsed\)/, 'Block 50: canonical runner must fetch JQ from original dependency URLs through the shared materializer');
 assert.match(canonicalRunner,/materializeMockFiles\(entry, parsed\)/, 'Block 50: canonical runner must fetch mock_file from original dependency URLs through the shared materializer');
+const dependencySource=await fs.readFile(path.join(ROOT,'converter/src/dependency.mjs'),'utf8');
+const dependencySpecBody=(dependencySource.match(/export function dependencySpecFromAction[\s\S]*?\n\}/)||[''])[0];
+assert.equal(/qxAction|generated-qx-script|surge/i.test(dependencySpecBody), false, 'Block 50: dependencySpecFromAction must remain target-neutral');
 assert.match(canonicalRunner,/inspectSourceScript\(reference, pluginSourceUrl\)/, 'Block 60: canonical runner must delegate optional Source Script action-type inspection to the shared inspector');
 assert.match(syncConverter,/resolveOriginalUrl\(reference, pluginSourceUrl\)/, 'Block 60: shared Source Script inspector must resolve relative refs against the original plugin URL');
 assert.match(syncConverter,/fetchOriginalText\(originalUrl\)/, 'Block 60: optional QX action-type inspection must read only the resolved original Source Script URL when available');
