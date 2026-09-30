@@ -438,6 +438,20 @@ assert.equal(flaggedHeaderHelper.script.includes('new RegExp(source, flags)'), f
 assert.match(flaggedHeaderHelper.script, /new RegExp\("api"\)/);
 assert.match(flaggedHeaderHelper.script, /__wayxReplace\("X-Test","value","ok"\)/);
 
+const complexConditionFlags = renderMixedRewriteScript(
+  parseRewriteV2('response if (${url} ~= /API/i || ${response.status} == 204) && ${response.header["Content-Type"]} == "application/json" then response.header.del("Server") | response.body.replace(/ADS/ms, "ok")'),
+  {target:'qx'},
+);
+assert.match(complexConditionFlags.script, /new RegExp\("API"\)/);
+assert.equal(complexConditionFlags.script.includes('new RegExp("API","i")'), false);
+assert.equal(complexConditionFlags.script.includes('new RegExp("ADS","ms")'), false);
+assert.match(complexConditionFlags.script, /response\.statusCode/);
+assert.match(complexConditionFlags.script, /__wayxHeader\("response","Content-Type"\)/);
+assert.throws(
+  () => renderMixedRewriteScript(parseRewriteV2('response if ${unsupported.value} == "x" then response.header.del("Server") | response.body.replace(/x/, "y")'), {target:'qx'}),
+  /unsupported complex condition variable/,
+);
+
 const bulkV2 = parseRewriteV2('request if ${url} ~= /api/ then request.header.set(["X-A","X-B"],["1","2"])');
 validateRewriteV2Ast(bulkV2);
 assert.equal(LOON_REWRITE_V2_ACTIONS.size, 31);
