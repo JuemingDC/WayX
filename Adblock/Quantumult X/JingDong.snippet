@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/jingdong.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-09-30 18:31:30 +08:00
+# Converted: 2026-09-30 21:11:06 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/jingdong.lpx
@@ -18,12 +18,14 @@
 ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(?:cartCouponRecommendGoods|intelligentRecommendSku|obtainGrowingInfo|recommendShop|searchBoxWord|stationPullService|uniformRecommend) url reject-dict
 ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=basicConfig url jsonjq-response-body 'setpath(["data","JDMessage","socketmonitor","isSocketEstablishedAhead"]; 0) | setpath(["data","JDMessage","socketmonitor","isSocketReport"]; 0) | setpath(["data","JDHttpToolKit","httpdns","httpdns"]; 0)'
 ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=cart url jsonjq-response-body 'delpaths([["cartLocationMap","loc_emptyCartFloor2"]]) | delpaths([["emptyCartRecommendFloor"]])'
-# [WayX] SCRIPT V2 REVIEW REQUIRED: dynamic enable cannot be carried by Quantumult X rewrite declaration without changing the script
-# Source declaration: request if ${url} ~= /^https:\/\/apapia-sqk-weblogic\.manmanbuy\.com\/baoliao\/center\/menu$/i then script("https://rucu6.pages.dev/Scripts/manmanbuy_ck.js") with enable=${Capture}, tag="manmanbuy_cookies", requires_body=true, binary_body_mode=false
+# manmanbuy_cookies
+# [WayX] Source dynamic enable=Capture ignored for Quantumult X; converted rule defaults to enabled.
+^https:\/\/apapia-sqk-weblogic\.manmanbuy\.com\/baoliao\/center\/menu$ url script-request-body https://rucu6.pages.dev/Scripts/manmanbuy_ck.js
 # jingdong_noad
 ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(?:deliverLayer|getTabHomeInfo|myOrderInfo|orderTrackBusiness|personinfoBusiness|start|welcomeHome) url script-response-body https://rucu6.pages.dev/Scripts/jingdong.js
-# [WayX] SCRIPT V2 REVIEW REQUIRED: Loon Script v2 $argument cannot be carried by the official Quantumult X rewrite declaration without changing the script
-# Source declaration: response if ${url} ~= /^https:\/\/in\.m\.jd\.com\/product\/graphext\/\d+\.html\?/i then script("https://rucu6.pages.dev/Scripts/jd_price.js", {${Cookies}}) with tag="jd_price", requires_body=true
+# jd_price
+# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
+^https:\/\/in\.m\.jd\.com\/product\/graphext\/\d+\.html\? url script-response-body https://rucu6.pages.dev/Scripts/jd_price.js
 
 # [mitm]
 hostname = apapia-sqk-weblogic.manmanbuy.com, api.m.jd.com, in.m.jd.com
