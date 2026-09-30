@@ -38,7 +38,13 @@ ok, reason = gate.simple_rule("DOMAIN,example.com,DIRECT")
 assert ok, reason
 
 ok, reason = gate.simple_rule("DOMAIN,example.com,PROXY")
-assert not ok and "outside safe tier" in reason
+assert ok and "deterministic" in reason
+
+ok, reason = gate.simple_rule("DEST-PORT,443,REJECT")
+assert ok and "deterministic" in reason
+
+ok, reason = gate.simple_rule("AND,((DOMAIN,example.com),(PROTOCOL,TCP)),REJECT")
+assert ok and "deterministic" in reason
 
 ok, reason = gate.simple_rule("FINAL,DIRECT")
 assert ok and "discarded" in reason
@@ -80,7 +86,7 @@ try:
         "Resource/Loon/UnknownVendor/unfamiliar.lpx",
         manifest,
     )
-    assert reasons and any("policy PROXY" in item for item in reasons), reasons
+    assert reasons == [], reasons
 
     # Loon [Argument] is not converted into target parameter UI. An Argument-only
     # source change is safe by itself; dependent executable declarations are
