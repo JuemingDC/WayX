@@ -882,13 +882,21 @@ const surgeOnlyScript = inspectQxScriptCompatibility({
 assert.equal(surgeOnlyScript.executable, false);
 assert.match(surgeOnlyScript.reason, /\$httpClient/);
 
-const neutralUnprovenScript = inspectQxScriptCompatibility({
-  scriptUrl:'https://example.com/neutral.js',
+const qxOfficialRuntimeOnlyScript = inspectQxScriptCompatibility({
+  scriptUrl:'https://example.com/header.js',
   sourceText:'const h={...$request.headers}; h["X-Test"]="1"; $done({headers:h});',
 });
-assert.equal(neutralUnprovenScript.executable, false);
-assert.equal(neutralUnprovenScript.status, 'review');
-assert.match(neutralUnprovenScript.reason, /positive Quantumult X runtime compatibility evidence/);
+assert.equal(qxOfficialRuntimeOnlyScript.executable, true);
+assert.equal(qxOfficialRuntimeOnlyScript.status, 'runtime-evidence');
+assert.match(qxOfficialRuntimeOnlyScript.reason, /official-sample runtime globals/);
+
+const unknownRuntimeScript = inspectQxScriptCompatibility({
+  scriptUrl:'https://example.com/unknown.js',
+  sourceText:'const x=$mystery.read(); $done({});',
+});
+assert.equal(unknownRuntimeScript.executable, false);
+assert.equal(unknownRuntimeScript.status, 'review');
+assert.match(unknownRuntimeScript.reason, /not verified by the Quantumult X official sample/);
 
 const dualRuntimeScript = inspectQxScriptCompatibility({
   scriptUrl:'https://example.com/cross-platform.js',
