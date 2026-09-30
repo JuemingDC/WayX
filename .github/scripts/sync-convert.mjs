@@ -243,7 +243,7 @@ function rewriteV2Action(line, target, ctx) {
     // mock_file requires conversion-time dependency materialization.
     if (singleOp?.kind === 'mock' && singleOp.operation === 'file') {
       try {
-        const condition = simpleUrlRewriteCondition(ast);
+        const condition = simpleUrlRewriteCondition(ir.ast);
         if (!condition.ok) throw new Error(condition.reason);
         const plan = qxMockPlanFromAction(singleOp.sourceAction, { pluginSourceUrl: ctx.sourceUrl });
         const materialized = ctx.mockFiles?.get(line);
@@ -341,7 +341,7 @@ function rewriteV2Action(line, target, ctx) {
     }
 
     // Use a generated response only when QX has no exact native reject primitive.
-    if (ast.actions.length === 1 && /^(?:reject|reject_dict|reject_array)$/.test(ast.actions[0].name)) {
+    if (singleOp?.kind === 'reject' && ['reject','reject_dict','reject_array'].includes(singleOp.actionName)) {
       try {
         const plan = renderQxRejectScript(ir.ast, { stamp: ctx.stamp, category: ctx.category, sourceLine: line });
         const key = crypto.createHash('sha1').update('reject\0' + line).digest('hex').slice(0, 10);
@@ -362,7 +362,7 @@ function rewriteV2Action(line, target, ctx) {
   }
 
   if (target === 'surge') {
-    if (ast.actions.some(action => action.name === 'response.body.mock_file')) {
+    if (ir.operations.some(op => op.kind === 'mock' && op.phase === 'response' && op.operation === 'file')) {
       try {
         const mapped = surgeMockFilePlan(ir.ast, {
           pluginSourceUrl: ctx.sourceUrl,
