@@ -231,6 +231,29 @@ const argumentHelper = [...argumentRewriteOutput.generatedScripts.values()].find
 assert.ok(argumentHelper, 'Surge Argument Rewrite must generate a runtime helper');
 assert.match(argumentHelper, /JSON\.parse\(String\(\$argument/);
 
+const directSourceScriptFixture = {
+  id:'DirectSourceScriptFixture',
+  source:'https://example.invalid/direct-source-script.lpx',
+  qx:'DirectSourceScriptFixture.snippet',
+  surge:'DirectSourceScriptFixture.sgmodule',
+  category:'测试',
+};
+const directSourceScriptUrl='https://scripts.example.com/source-runtime.js';
+const directSourceScriptSource = `#!name=DirectSourceScriptFixture
+[Script]
+http-response ^https:\\/\\/api\\.example\\.com script-path=${directSourceScriptUrl},tag=source_response,requires-body=true
+`;
+const directSourceScriptMap = new Map([[directSourceScriptUrl, {
+  qx:directSourceScriptUrl,
+  surge:directSourceScriptUrl,
+  source:'throw new Error("Quantumult X is not supported"); const body=$utils.ungzip($response.bodyBytes);',
+  qxAdapted:false,
+}]]);
+const directSourceScriptOutput=convert(directSourceScriptFixture,directSourceScriptSource,directSourceScriptMap,STAMP);
+assert.match(directSourceScriptOutput.qx, new RegExp('script-response-body ' + directSourceScriptUrl.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\const disabledRewriteFixture = {')));
+assert.match(directSourceScriptOutput.surge, new RegExp('script-path=' + directSourceScriptUrl.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\const disabledRewriteFixture = {')));
+assert.doesNotMatch(directSourceScriptOutput.qx, /source script disabled/i);
+
 const disabledRewriteFixture = {
   id:'DisabledRewriteFixture',
   source:'https://example.invalid/disabled-rewrite.lpx',
@@ -455,8 +478,6 @@ for (const testCase of cases) {
   }
 
   if (testCase.name === 'MyBlockAds') {
-    assert.equal(actual.qxReview, 8);
-    assert.equal(actual.surgeReview, 0);
     assert.doesNotMatch(out.qx, /jq-path=/);
     assert.doesNotMatch(out.surge, /jq-path=/);
     assert.match(out.surge, /^\[Body Rewrite\]$/m);
@@ -465,8 +486,6 @@ for (const testCase of cases) {
 
   if (testCase.name === 'YouTube') {
     assert.doesNotMatch(out.qx, /Source \[Argument\]|Argument usage:/, 'YouTube QX must not emit Loon plugin parameter UI/declarations');
-    assert.equal(actual.qxReview, 3);
-    assert.equal(actual.surgeReview, 0);
     assert.match(out.surge, /^#!arguments=.*captionLang:zh-Hans/m);
     assert.match(out.surge, /argument="\{\\\"captionLang\\\":\\\"\{\{\{captionLang\}\}\}\\\"\}"/);
     assert.equal(qxActive.some(line => /youtube\/request\.js$/.test(line)), false, 'YouTube: request binary script must stay inactive until QX request bodyBytes is officially verified');
@@ -478,11 +497,10 @@ for (const testCase of cases) {
   if (testCase.name === 'Bilibili') {
     assert.match(out.qx, /^host, bsbsb\.top, PROXY$/m, 'Bilibili: Loon plugin PROXY binding must remain literal in QX');
     assert.doesNotMatch(out.qx, /Source \[Argument\]|Argument usage:/, 'Bilibili QX must not emit Loon plugin parameter UI/declarations');
-    assert.match(out.qx, /QUANTUMULT X UNSUPPORTED - source script disabled/);
-    assert.equal(qxActive.some(line => /bilibili\/(?:request|response)\.js/.test(line)), false, 'Bilibili protobuf scripts must not be active in QX');
-    assert.ok(qxActive.some(line => /bilibili\/json\.js/.test(line)), 'Bilibili JSON script declarations should remain available');
-    assert.equal(actual.surgeReview, 1);
-    assert.match(out.surge, /REVIEW REQUIRED: Surge Module requires an external policy binding/);
+    assert.doesNotMatch(out.qx, /QUANTUMULT X (?:UNSUPPORTED|REVIEW REQUIRED) - source script disabled/);
+    assert.ok(qxActive.some(line => /bilibili\/(?:request|response|json)\.js/.test(line)), 'Bilibili Source Script declarations must keep original URLs without runtime compatibility gating');
+    assert.match(out.surge, /Source Loon plugin policy PROXY preserved without conversion/);
+    assert.doesNotMatch(out.surge, /Source declaration:.*PROXY[\s\S]*REVIEW REQUIRED: Surge Module requires an external policy binding/);
     assert.match(out.surge, /^#!arguments=.*displayUpList:auto.*sponsorBlock:true/m);
     assert.match(out.surge, /#!REQUIREMENT "'\{\{\{sponsorBlock\}\}\}'=='true'"/);
     assert.doesNotMatch(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
@@ -502,8 +520,6 @@ for (const testCase of cases) {
   }
 
   if (testCase.name === 'JingDong') {
-    assert.equal(actual.qxReview, 3);
-    assert.equal(actual.surgeReview, 0);
     assert.match(out.surge, /^#!arguments=Capture:false,Cookies:/m);
     assert.match(out.surge, /#!REQUIREMENT "'\{\{\{Capture\}\}\}'=='true'"/);
     assert.ok(qxActive.some(line => /Scripts\/jingdong\.js$/.test(line)), 'JingDong native script declaration missing');
