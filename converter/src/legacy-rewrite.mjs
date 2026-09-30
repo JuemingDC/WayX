@@ -202,7 +202,7 @@ function planHeader(pattern, action, parsed, target, ctx) {
     const lines=[];
     for(let i=0;i<tokens.length;i+=width){
       const [name,value]=tokens.slice(i,i+width).map(unquote);
-      if(!name || /[\s:\r\n]/.test(name) || /[\r\n]/.test(value)) {
+      if(!name || /[\s:\r\n]/.test(name) || /[\r\n$]/.test(value)) {
         return review(pattern, action, 'legacy request header-add contains an unsafe field name/value for QX whole-header rewrite');
       }
       lines.push(targetPattern + ' url request-header ^([^\\r\\n]+)(\\r\\n) request-header $1$2' + name + ': ' + value + '$2');
@@ -210,19 +210,6 @@ function planHeader(pattern, action, parsed, target, ctx) {
     return {section:'rewrite', lines};
   }
 
-  if (target === 'qx' && parsed.phase === 'request' && parsed.op === 'replace-regex') {
-    const targetPattern=normalizeRegexBodyForTarget(pattern);
-    const lines=[];
-    for(let i=0;i<tokens.length;i+=width){
-      const [name,regex,replacement]=tokens.slice(i,i+width).map(unquote);
-      if(!name || /[\s:\r\n]/.test(name) || /[\r\n]/.test(replacement)) {
-        return review(pattern, action, 'legacy request header-replace-regex contains an unsafe field name/replacement');
-      }
-      const escaped=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-      lines.push(targetPattern + ' url request-header (\\r\\n)' + escaped + ':\\s*' + normalizeRegexBodyForTarget(regex) + '(\\r\\n) request-header $1' + name + ': ' + replacement + '$2');
-    }
-    return {section:'rewrite', lines};
-  }
 
   if (target === 'qx') {
     try {
