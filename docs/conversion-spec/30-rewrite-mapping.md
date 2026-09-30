@@ -225,3 +225,8 @@ A string value passed to `json.replace` may resolve a previously declared named 
 ### Complex helper source semantics
 
 The complex helper follows the current Loon Rewrite v2 execution contract: actions and batch elements execute left-to-right; runtime failure skips only the failing action while preserving earlier completed changes; Header/Body replacement `$0..$n` remains action-local; condition captures use `${name.n}`; raw strings are literal and do not expand variables. These rules are semantic requirements, not target-specific optimizations.
+
+
+### Complex helper target flags
+
+Generated target declarations must request only the runtime capabilities the helper actually uses. A helper that reads or mutates a body requires body access; Surge therefore emits `requires-body=true` for these helpers. `full-header-mode=true` is emitted only when duplicate-header semantics must be preserved (currently verified Surge `header.add` paths). Do not enable full-header mode for ordinary set/delete/replace pipelines. This follows Surge's official HTTP Script contract and avoids unnecessary buffering/header representation changes.
