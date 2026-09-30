@@ -528,6 +528,9 @@ const surgeHeaderAddMixed = renderMixedRewriteScript(
   {target:'surge'},
 );
 assert.equal(surgeHeaderAddMixed.fullHeaderMode, true);
+assert.equal(surgeHeaderAddMixed.requiresBody, true);
+assert.equal(mixedSurge.requiresBody, true);
+assert.equal(mixedSurge.fullHeaderMode, false);
 assert.equal(surgeHeaderAddMixed.surgeType, 'http-response');
 assert.match(surgeHeaderAddMixed.script, /__wayxHeaders\.push\(\{field:n,value:v\}\)/);
 assert.match(surgeHeaderAddMixed.script, /Array\.isArray\(\$response\.headers\)/);
