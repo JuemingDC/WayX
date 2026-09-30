@@ -507,6 +507,10 @@ function convert(entry, source, scriptMap, stamp = nowCN(), qxMockFiles = new Ma
     let qr = qxHeaderGroups.plans.get(rewriteIndex) || null;
     let sr = rewriteV2Action(item.line, 'surge', sctx);
 
+    if (!qxConsumed && !qr) {
+      const headerInfo = qxHeaderRewriteInfo(item.line, qctx.argumentIds || []);
+      if (headerInfo) qr = qxNativeHeaderReplacePlan(headerInfo.ast);
+    }
     if (!qxConsumed && !qr) qr = rewriteV2Action(item.line, 'qx', qctx);
 
     const [pattern, action] = splitPatternAction(item.line);
