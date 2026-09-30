@@ -143,11 +143,16 @@ request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header
 request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.set("X-B", "two")
 `;
 const requestAddSetOutput = convert(requestAddSetFixture, requestAddSetSource, new Map(), STAMP);
-assert.match(requestAddSetOutput.qx, /REVIEW REQUIRED: header\.add duplicate semantics are not verified for qx/);
+assert.doesNotMatch(requestAddSetOutput.qx, /REVIEW REQUIRED/);
 assert.equal(
-  requestAddSetOutput.qx.split(/\r?\n/).some(line => !line.trim().startsWith('#') && / url (?:request-header|script-request-header) /.test(line)),
-  false,
-  'QX adjacent add+set must not be split into unproven multiple rewrite execution',
+  requestAddSetOutput.qx.split(/\r?\n/).filter(line => !line.trim().startsWith('#') && / url (?:request-header|script-request-header) /.test(line)).length,
+  2,
+  'independent request add+set declarations must remain two independent target rewrites',
+);
+assert.doesNotMatch(
+  requestAddSetOutput.qx,
+  /Source declaration: .*request\.header\.add.* \| request if .*request\.header\.set/,
+  'adjacent request header rules must never be synthesized into a pipeline',
 );
 
 const requestReplaceCaptureFixture = {
