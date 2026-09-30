@@ -3,7 +3,6 @@
 // Category: Converter / Legacy Rewrite
 import crypto from 'node:crypto';
 import { minifyJq, quoteJq } from './jq.mjs';
-import { canonicalizeSurgeUrlPattern } from './target-regex.mjs';
 
 const REJECT_ACTIONS = new Set(['reject','reject-200','reject-img','reject-dict','reject-array']);
 
@@ -214,7 +213,7 @@ function planMock(pattern, action, parsed, target, ctx) {
 }
 
 export function planLegacyRewrite(pattern, action, target, ctx={}) {
-  if (target === 'surge') pattern = canonicalizeSurgeUrlPattern(pattern);
+  if (target === 'surge') pattern = pattern;
   const parsed=classifyLegacyRewrite(action);
   if (parsed.kind === 'reject') {
     if (target === 'qx') return {section:'rewrite', line:`${pattern} url ${parsed.action}`};
