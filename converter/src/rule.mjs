@@ -105,12 +105,11 @@ export const SURGE_RULE_TYPES = new Set([
   'SCRIPT', 'RULE-SET', 'FINAL',
 ]);
 
-// Current Surge app runtime accepts these built-in policies in module Rule UI.
-// The public Module manual still documents only DIRECT/REJECT/REJECT-TINYGIF;
-// keep the broader runtime set explicit instead of silently collapsing behavior.
+// Surge Module Manual explicitly restricts [Rule] lines to these
+// internal policies. Other built-in profile policies may exist in a full
+// profile, but they are not emitted as active Module Rule policies.
 export const SURGE_MODULE_POLICIES = new Set([
-  'DIRECT', 'REJECT', 'REJECT-TINYGIF', 'REJECT-DROP', 'REJECT-NO-DROP',
-  'CELLULAR', 'CELLULAR-ONLY', 'HYBRID', 'NO-HYBRID',
+  'DIRECT', 'REJECT', 'REJECT-TINYGIF',
 ]);
 
 export const SURGE_PROFILE_BUILTIN_POLICIES = new Set([
@@ -277,8 +276,24 @@ export function surgeModuleRule(line) {
     };
   }
 
-  // Preserve runtime-supported built-in policies exactly. Unknown/external
-  // policy-group names cannot be defined by a module and remain a binding note.
+  // Full Surge profiles have more built-in policies than Module [Rule]
+  // officially permits. Keep those source declarations as comments rather than
+  // emitting an invalid sgmodule or approximating them with another policy.
+  if (!SURGE_MODULE_POLICIES.has(policy) && SURGE_PROFILE_BUILTIN_POLICIES.has(policy)) {
+    return {
+      kind:'comment',
+      section:'rule',
+      line:'',
+      lines:[
+        `# [WayX] Surge Module unsupported Rule policy ${policy} commented out; Module Rule supports only DIRECT/REJECT/REJECT-TINYGIF.`,
+        `# Source declaration: ${source}`,
+      ],
+      reason:'unsupported-surge-module-policy',
+    };
+  }
+
+  // Unknown/external policy-group names cannot be defined by a module and
+  // remain a Review condition.
   if (!SURGE_MODULE_POLICIES.has(policy)) {
     return {
       kind:'comment',
