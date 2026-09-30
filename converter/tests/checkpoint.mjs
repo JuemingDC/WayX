@@ -874,7 +874,7 @@ assert.equal(
 
 assert.equal(planMitmLine('hostname = api.example.com, *.example.com', 'qx').line, 'hostname = api.example.com, *.example.com');
 assert.equal(planMitmLine('hostname = api.example.com, *.example.com', 'surge').line, 'hostname = %APPEND% api.example.com, *.example.com');
-assert.match(planMitmLine('ca-passphrase = secret', 'qx').line, /REVIEW REQUIRED: unsupported source MITM option/);
+assert.match(planMitmLine('ca-passphrase = secret', 'qx').line, /ISSUE REQUIRED \[unknown-mitm-option\]/);
 assert.equal(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-body-json-del data.ads', 'qx', legacyCtx).line,
   '^https:\\/\\/api\\.example\\.com url jsonjq-response-body \'del(.data.ads)\'',
