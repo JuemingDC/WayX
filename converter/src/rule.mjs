@@ -306,4 +306,4 @@ export function surgeRule(line) {
   return surgeModuleRule(line).lines.join('\n');
 }
 
-export { splitTopLevelCsv, surgePolicyIndex };
+export { splitTopLevelCsv, splitLogicalSubrules, surgePolicyIndex };
