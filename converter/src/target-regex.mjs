@@ -7,10 +7,6 @@
 // during conversion and preserves the regex body without synthesizing target
 // modifiers or case-fold expansions.
 
-function fail(reason) {
-  return { ok: false, reason };
-}
-
 export function compileRegexForTarget(regex, { subject = 'url', target = 'generic' } = {}) {
   if (!regex || regex.type !== 'regex') throw new TypeError('Expected Rewrite v2 regex AST node');
 
