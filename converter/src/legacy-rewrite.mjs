@@ -18,6 +18,15 @@ function review(pattern, action, reason) {
   };
 }
 
+function issue(pattern, action, code, reason) {
+  return {
+    section:'comment',
+    line:`# [WayX] ISSUE REQUIRED [${code}]: ${reason}\n# Source declaration: ${pattern} ${action}`,
+    issue:true,
+    issueCode:code,
+  };
+}
+
 function shellTokens(input) {
   const out = [];
   let cur = '', quote = null, esc = false;
@@ -423,5 +432,5 @@ export function planLegacyRewrite(pattern, action, target, ctx={}) {
   if (parsed.kind === 'body-regex') return planBodyRegex(pattern, action, parsed, target);
   if (parsed.kind === 'json') return planJson(pattern, action, parsed, target, ctx);
   if (parsed.kind === 'mock') return planMock(pattern, action, parsed, target, ctx);
-  return review(pattern, action, 'unsupported Loon legacy Rewrite action');
+  return issue(pattern, action, 'unknown-legacy-rewrite-action', 'unsupported Loon legacy Rewrite action is outside the registered grammar');
 }
