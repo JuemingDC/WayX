@@ -290,7 +290,7 @@ def main() -> int:
 
     for path in changed:
         if path.startswith("script/"):
-            reasons.append(f"{path}: JavaScript bytes changed; runtime compatibility must be rechecked")
+            reasons.append(f"{path}: WayX-managed JavaScript bytes changed; generated/helper behavior must be rechecked")
             continue
         if path.startswith("Resource/Loon/") and path.endswith(".lpx"):
             r = classify_resource(path, by_file)
@@ -313,7 +313,7 @@ def main() -> int:
                 _, sections = parse_sections(new_text(source_path))
                 script_lines = executable(sections.get("Script", []))
                 if script_lines:
-                    reasons.append(f"{path}: newly generated target comes from a source with [Script]; runtime semantics require Work")
+                    reasons.append(f"{path}: newly generated target comes from a source with [Script]; declaration/action semantics require Work")
                     continue
 
             safe_notes.append(f"{path}: generated target passed semantic marker gate")
