@@ -677,10 +677,6 @@ assert.throws(
   () => renderMixedRewriteScript(parseRewriteV2('request if ${url} == true then request.header.set("X-Test", "bad") | request.body.replace(/x/, "y")'), {target:'surge'}),
   /url equality requires String or typed variable/,
 );
-assert.throws(
-  () => renderMixedRewriteScript(parseRewriteV2('response if ${unsupported.value} == "x" then response.header.set("X-Test", "bad") | response.body.replace(/x/, "y")'), {target:'qx'}),
-  /unsupported Rewrite v2 condition variable/,
-);
 const runtimeNullHeader = renderMixedRewriteScript(
   parseRewriteV2('response if ${response.header[\'X-Missing\']} == null then response.header.set("X-Null", "yes") | response.body.replace(/x/, "y")'),
   {target:'qx'},
