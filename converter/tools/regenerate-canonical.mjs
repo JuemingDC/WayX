@@ -3,7 +3,7 @@
 // Category: Converter / Canonical Output
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { cleanSource, convert, materializeJqFiles, materializeQxMockFiles, parseLoon, scriptUrls, validateQX } from '../../.github/scripts/sync-convert.mjs';
+import { cleanSource, convert, materializeJqFiles, materializeMockFiles, parseLoon, scriptUrls, validateQX } from '../../.github/scripts/sync-convert.mjs';
 import { qxTargetPath, surgeTargetPath } from '../src/paths.mjs';
 import { validateSurgeModule } from '../src/surge-module.mjs';
 import { loadLoonSourceCatalog } from '../src/source-catalog.mjs';
@@ -72,7 +72,7 @@ for (const entry of manifest) {
     const stamp = existingStamp(oldQx, oldSurge) || nowCN();
     const scripts = await originalScriptMap(source, entry.source);
     const parsed = parseLoon(source);
-    const qxMockFiles = await materializeQxMockFiles(entry, parsed);
+    const qxMockFiles = await materializeMockFiles(entry, parsed);
     const jqFiles = await materializeJqFiles(entry, parsed);
 
     let out = convert(entry, source, scripts, stamp, qxMockFiles, jqFiles);
