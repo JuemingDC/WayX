@@ -38,6 +38,8 @@ Work 只处理 Review Tier：JavaScript 内容、[Script]、QX 无法承载的 L
 ## 核心转换规则
 
 - Rewrite/Mock 固定执行：目标原生格式 → 已验证 helper script → 注释 Review；不得因为原生格式不足就直接放弃。
+- Loon regex literal 只去掉最外层 `/.../` delimiter，并按项目标准丢弃 `i/m/s`；regex body 原样保留，禁止全局执行 `\\/ -> /`、case-fold、inline modifier 或其他 canonicalization。目标确有语法差异时只能在对应 target planner 内基于官方格式做局部适配。
+- QX 与 Surge 的复杂 Rewrite 都必须优先复用通用 complex/helper pipeline；仅当目标原生声明能严格等价时才走 native，helper 仍无法保持语义时才注释 Review。
 - Surge 去广告 Module 中的源 `FINAL` 直接丢弃，禁止改写成活动 catch-all。
 - legacy `json.jq("jq-path=...")` 直接丢弃，不解析依赖、不生成目标规则。
 - QX `header.add` 不得用 set/对象赋值冒充；没有已验证重复 Header 表示时注释 Review。
