@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/xiaohongshu.png
 # Updated: 2026-09-14 11:00
 
-# Converted: 2026-09-30 15:05:55 +08:00
+# Converted: 2026-09-30 16:17:51 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/xiaohongshu.lpx
@@ -20,21 +20,21 @@ host, t-ads.xiaohongshu.com, reject
 
 # [rewrite_local]
 # 小红书水印
-^https://ci\.xiaohongshu\.com/system_config/watermark url reject-img
+^https:\/\/ci\.xiaohongshu\.com\/system_config\/watermark url reject-img
 
 # 惊喜弹窗
-^https://edith\.xiaohongshu\.com/api/sns/v1/surprisebox/(?:get_style|open|submit_action) url reject-dict
-^https://www\.xiaohongshu\.com/api/marketing/box/trigger\? url reject-dict
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/surprisebox\/(?:get_style|open|submit_action) url reject-dict
+^https:\/\/www\.xiaohongshu\.com\/api\/marketing\/box\/trigger\? url reject-dict
 
 # 信息流
-^https://edith\.xiaohongshu\.com/api/sns/(?:v2/guide/user_banner|v3/note/guide) url reject-dict
-^https://www\.xiaohongshu\.com/api/sns/(?:v1/ads/resource|v2/hey/\w+/hey_gallery) url reject-dict
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/(?:v2\/guide\/user_banner|v3\/note\/guide) url reject-dict
+^https:\/\/www\.xiaohongshu\.com\/api\/sns\/(?:v1\/ads\/resource|v2\/hey\/\w+\/hey_gallery) url reject-dict
 
 # 搜索页
-^https://edith\.xiaohongshu\.com/api/sns/v1/search/banner_list$ url jsonjq-response-body 'setpath(["data"]; {})'
-^https://edith\.xiaohongshu\.com/api/sns/v1/search/hot_list$ url jsonjq-response-body 'setpath(["data","items"]; [])'
-^https://edith\.xiaohongshu\.com/api/sns/v4/search/hint url jsonjq-response-body 'setpath(["data","hint_words"]; [])'
-^https://edith\.xiaohongshu\.com/api/sns/v4/search/trending\? url jsonjq-response-body 'setpath(["data","queries"]; []) | setpath(["data","hint_word"]; {})'
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/search\/banner_list$ url jsonjq-response-body 'setpath(["data"]; {})'
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/search\/hot_list$ url jsonjq-response-body 'setpath(["data","items"]; [])'
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v4\/search\/hint url jsonjq-response-body 'setpath(["data","hint_words"]; [])'
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v4\/search\/trending\? url jsonjq-response-body 'setpath(["data","queries"]; []) | setpath(["data","hint_word"]; {})'
 # [WayX] QUANTUMULT X REVIEW REQUIRED - source script disabled:
 # Script: https://rucu6.pages.dev/Scripts/xiaohongshu.js
 # Reason: No positive Quantumult X runtime compatibility evidence was found in the source script.

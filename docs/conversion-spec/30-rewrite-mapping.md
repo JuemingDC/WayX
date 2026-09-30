@@ -11,7 +11,8 @@
 | `reject-array` | `url reject-array` | Map Local：`[]` + JSON |
 | `302 TARGET` | `url 302 TARGET` | `[URL Rewrite] REGEX TARGET 302` |
 | `307 TARGET` | `url 307 TARGET` | `[URL Rewrite] REGEX TARGET 307` |
-| request header replace | QX `request-header` 官方形式 | `[Header Rewrite]` |
+| request header add | QX `request-header`（仅安全固定值） | `[Header Rewrite]` |
+| request header set/del/replace | QX `script-request-header` helper | `[Header Rewrite]` |
 | request body replace | QX `request-body` | `[Body Rewrite]` |
 | response body replace | QX `response-body` | `[Body Rewrite]` |
 | request/response JQ | QX `jsonjq-*-body` | `http-*-jq` |
@@ -101,14 +102,15 @@ Loon 将 Header 操作细分为 `add / set / del / replace`。Quantumult X 官�
 
 Crossutility 官方 sample 只确认完整 **request Header block** 的 `request-header` rewrite，没有活动 `response-header` rewrite token。WayX 因此只在 request phase 使用该原生能力。
 
-单条、固定参数、单 URL 条件时：
+原生直转只保留单条、固定参数、单 URL 条件的 `request.header.add`：
 
 ```text
-request.header.replace(...) -> request-header
-request.header.add(...)     -> request-header（在首个 CRLF 后插入新 Header 行）
+request.header.add(...) -> request-header（在首个 CRLF 后插入新 Header 行）
 ```
 
-`request.header.add` 的原生转换不得先查找/覆盖同名字段；它通过整块 Header 字符串插入新行，保留已有同名 Header，因此是 add 而不是 set。输出不得扩大 URL/Header 匹配范围，不得改变 capture 编号。
+`request.header.add` 的原生转换不得先查找/覆盖同名字段；它通过整块 Header 字符串插入新行，保留已有同名 Header，因此是 add 而不是 set。Header 值含 `$` 时不走该原生路径，因为 QX replacement string 的 literal-dollar 转义没有在官方 sample 中得到证明。
+
+`request.header.replace` **不再原生嵌入**到整块 Header 正则。Loon Header 名称匹配不区分大小写，且 replacement 的 `$0...$n` 属于 Action 自己的正则捕获；如果为了 QX whole-header rewrite 额外加入 CRLF 捕获组，会改变捕获编号，也可能改变 `^ / $` 等正则上下文。因此统一进入 helper。
 
 ### Script fallback
 
@@ -117,12 +119,13 @@ request  -> script-request-header
 response -> script-response-header
 ```
 
-`request.header.set / del`、多动作 pipeline，以及 response phase 的 `set / del / replace` 等无法由官方静态 token 严格表达的行为使用 helper。生成 helper 读取 `$request.headers` 或 `$response.headers` 后以 `$done({headers: ...})` 返回。
+`request.header.set / del / replace`、多动作 pipeline，以及 response phase 的 `set / del / replace` 等无法由官方静态 token 严格表达的行为使用 helper。helper 对 Header 名称执行大小写不敏感查找，并让 `header.replace` 的正则只作用于该 Header 值，因此保持 Action-local `$0...$n` 捕获语义。生成 helper 读取 `$request.headers` 或 `$response.headers` 后以 `$done({headers: ...})` 返回。
+
+Helper 选择继续遵守最小实现原则：固定值、单 URL 条件的 Header-only 操作优先生成专用 Header helper；只有出现 condition capture、运行时模板或更复杂条件时才使用通用 Complex helper。Header-only helper 不应携带无关 JSON/Body mutation runtime。
 
 `response.header.add` 例外：QX 官方 sample 的 Header object 返回形式不能证明重复同名 Header 可保留，因此不得用对象 set 冒充 add；在没有新的官方等价表示前注释 Review。
 
 对 Quantumult X 不发明数组 Header、重复 raw Header 行或其他未由官方 sample/已验证语法支持的返回格式。若 Loon 中存在**连续、同 phase、同 condition** 的多条 Header Rewrite，QX 输出必须将它们合并到一个 Header helper，并按源顺序执行全部动作；中间存在注释/空行或条件不同则不擅自跨边界合并。
-
 ## 30.5 Rewrite v2 Pipeline
 
 Loon：
@@ -165,11 +168,11 @@ target native planner
 
 条件编译当前只接受已验证的 `url`、`request.method`、`response.status`、固定 Header 读取，以及 `== / ~= / && / || / ()`。未知变量、未知运算符、无法证明等价的 capture 行为必须 fail closed。
 
-Loon regex literal 的 `i / m / s` flags 在所有 native/helper 路径中均只解析、不传播；flags 的存在本身不进入 Review。目标编译阶段同时去掉 literal delimiter，并将仅用于源 literal 的 `\/` 规范化为目标 bare-regex 的 `/`；目标 helper 不得通过 `new RegExp(pattern, flags)`、inline modifier 或 case-fold 恢复这些 flags。
+Loon regex literal 的 `i / m / s` flags 在所有 native/helper 路径中均只解析、不传播；flags 的存在本身不进入 Review。parser 去掉 literal delimiter 后，regex body 原样保留，不再全局执行 `\/ -> /` 或其他 canonicalization；目标 helper 不得通过 `new RegExp(pattern, flags)`、inline modifier 或 case-fold 恢复这些 flags。若目标软件确有语法差异，只能由对应 target planner 基于官方格式做局部适配。
 
 Surge 的 `header.add` 与普通对象 Header 修改语义不同。需要脚本保持重复字段时必须使用 `full-header-mode=true` 的 `[{field,value}]` 形式，禁止退化为对象赋值。Quantumult X 同样不得用 set/对象赋值冒充 add：request phase 可用官方 `request-header` 整块字符串插入保留重复字段；response phase 没有已验证的重复 Header 表示，因此 `response.header.add` 注释 Review。
 
-Legacy Rewrite 同样遵守 native → helper → Review：request phase 的旧版 `header-add` 与 `header-replace-regex` 可复用官方 `request-header` 整块 Header rewrite；`header-replace / header-del` 以及 response phase 的可脚本化操作使用最小 Header helper。旧版 `response-header-add` 与新版 `response.header.add` 一样，在 QX 无重复字段等价表示时保持 Review。
+Legacy Rewrite 同样遵守 native → helper → Review：request phase 的旧版 `header-add` 在值不含未证明的 replacement `$` 语法时可复用官方 `request-header` 插入；`header-replace / header-del / header-replace-regex` 以及 response phase 的可脚本化操作使用最小 Header helper。旧版 `header-replace-regex` 的 `$n` 必须继续引用它自己的正则捕获，不能被 whole-header CRLF 捕获组改号。旧版 `response-header-add` 与新版 `response.header.add` 一样，在 QX 无重复字段等价表示时保持 Review。
 
 旧版 `mock-request-body / mock-response-body` 先归一化到与 Rewrite v2 `request/response.body.mock` 相同的语义计划：QX 使用已验证的 request-body/echo helper，Surge response 优先 Map Local、request 使用 `http-request` helper。旧版 mock 的 `data="..."` 必须按属性边界取完整内容，不能因 JSON 内部双引号提前截断。旧版 `*-body-json-add` 对可证明的标量值复用 Complex JSON helper，保持“仅 key 不存在时新增”的语义；无法证明的 object/array legacy value 才进入 Review。
 

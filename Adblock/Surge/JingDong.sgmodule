@@ -8,7 +8,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/jingdong.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-09-30 15:05:51 +08:00
+# Converted: 2026-09-30 16:17:48 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/jingdong.lpx
@@ -18,16 +18,16 @@
 AND,((DOMAIN,api.m.jd.com),(PROTOCOL,TCP)),REJECT-NO-DROP
 
 [Body Rewrite]
-http-response-jq ^https://api\.m\.jd\.com/client\.action\?functionId=basicConfig 'setpath(["data","JDMessage","socketmonitor","isSocketEstablishedAhead"]; 0) | setpath(["data","JDMessage","socketmonitor","isSocketReport"]; 0) | setpath(["data","JDHttpToolKit","httpdns","httpdns"]; 0)'
-http-response-jq ^https://api\.m\.jd\.com/client\.action\?functionId=cart 'delpaths([["cartLocationMap","loc_emptyCartFloor2"]]) | delpaths([["emptyCartRecommendFloor"]])'
+http-response-jq ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=basicConfig 'setpath(["data","JDMessage","socketmonitor","isSocketEstablishedAhead"]; 0) | setpath(["data","JDMessage","socketmonitor","isSocketReport"]; 0) | setpath(["data","JDHttpToolKit","httpdns","httpdns"]; 0)'
+http-response-jq ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=cart 'delpaths([["cartLocationMap","loc_emptyCartFloor2"]]) | delpaths([["emptyCartRecommendFloor"]])'
 
 [Map Local]
-^https://api\.m\.jd\.com/client\.action\?functionId=(?:cartCouponRecommendGoods|intelligentRecommendSku|obtainGrowingInfo|recommendShop|searchBoxWord|stationPullService|uniformRecommend) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(?:cartCouponRecommendGoods|intelligentRecommendSku|obtainGrowingInfo|recommendShop|searchBoxWord|stationPullService|uniformRecommend) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-#!REQUIREMENT "'{{{Capture}}}'=='true'" manmanbuy_cookies = type=http-request,pattern=^https://apapia-sqk-weblogic\.manmanbuy\.com/baoliao/center/menu$,script-path=https://rucu6.pages.dev/Scripts/manmanbuy_ck.js,requires-body=true,max-size=-1
-jingdong_noad = type=http-response,pattern=^https://api\.m\.jd\.com/client\.action\?functionId=(?:deliverLayer|getTabHomeInfo|myOrderInfo|orderTrackBusiness|personinfoBusiness|start|welcomeHome),script-path=https://rucu6.pages.dev/Scripts/jingdong.js,requires-body=true,max-size=-1
-jd_price = type=http-response,pattern=^https://in\.m\.jd\.com/product/graphext/\d+\.html\?,script-path=https://rucu6.pages.dev/Scripts/jd_price.js,requires-body=true,max-size=-1,argument="{\"Cookies\":\"{{{Cookies}}}\"}"
+#!REQUIREMENT "'{{{Capture}}}'=='true'" manmanbuy_cookies = type=http-request,pattern=^https:\/\/apapia-sqk-weblogic\.manmanbuy\.com\/baoliao\/center\/menu$,script-path=https://rucu6.pages.dev/Scripts/manmanbuy_ck.js,requires-body=true,max-size=-1
+jingdong_noad = type=http-response,pattern=^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(?:deliverLayer|getTabHomeInfo|myOrderInfo|orderTrackBusiness|personinfoBusiness|start|welcomeHome),script-path=https://rucu6.pages.dev/Scripts/jingdong.js,requires-body=true,max-size=-1
+jd_price = type=http-response,pattern=^https:\/\/in\.m\.jd\.com\/product\/graphext\/\d+\.html\?,script-path=https://rucu6.pages.dev/Scripts/jd_price.js,requires-body=true,max-size=-1,argument="{\"Cookies\":\"{{{Cookies}}}\"}"
 
 [MITM]
 hostname = %APPEND% apapia-sqk-weblogic.manmanbuy.com, api.m.jd.com, in.m.jd.com

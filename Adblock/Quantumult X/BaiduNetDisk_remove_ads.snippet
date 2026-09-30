@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduNetDisk.png
 # Updated: 2026-06-01 17:11:35
 
-# Converted: 2026-09-30 12:45:46 +08:00
+# Converted: 2026-09-30 16:17:46 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduNetDisk_remove_ads.lpx
@@ -16,20 +16,20 @@
 # [filter_local]
 
 # [rewrite_local]
-^https://pan\.baidu\.com/api/getconfig\? url reject-dict
-^https://pan\.baidu\.com/api/getsyscfg\? url reject-dict
+^https:\/\/pan\.baidu\.com\/api\/getconfig\? url reject-dict
+^https:\/\/pan\.baidu\.com\/api\/getsyscfg\? url reject-dict
 
-^https://pan\.baidu\.com/api/taskscore/tasklist\? url reject-dict
+^https:\/\/pan\.baidu\.com\/api\/taskscore\/tasklist\? url reject-dict
 
-^https://pan\.baidu\.com/act/api/activityentry\? url reject-dict
+^https:\/\/pan\.baidu\.com\/act\/api\/activityentry\? url reject-dict
 
-^https://pan\.baidu\.com/rest/\d\.\d/pcs/adv\? url reject-dict
+^https:\/\/pan\.baidu\.com\/rest\/\d\.\d\/pcs\/adv\? url reject-dict
 
-^https://pan\.baidu\.com/api/plugin/get\? url reject-dict
+^https:\/\/pan\.baidu\.com\/api\/plugin\/get\? url reject-dict
 
-^https://pan\.baidu\.com/recommend/query/list\? url reject-dict
+^https:\/\/pan\.baidu\.com\/recommend\/query\/list\? url reject-dict
 
-^https://pan\.baidu\.com/feed/kingkongdistrict\? url jsonjq-response-body '.data.data |= map(select(.type != "novel" and .type != "shortplay" and .type != "print" and .type != "job_hunt"))'
+^https:\/\/pan\.baidu\.com\/feed\/kingkongdistrict\? url jsonjq-response-body '.data.data |= map(select(.type != "novel" and .type != "shortplay" and .type != "print" and .type != "job_hunt"))'
 
 # [mitm]
 hostname = pan.baidu.com

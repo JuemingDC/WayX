@@ -1,8 +1,8 @@
-// Converted: 2026-09-30 15:05:50 +08:00
+// Converted: 2026-09-30 16:17:47 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /(^https:\/\/(?:www|m)\.bilibili\.com\/video\/(?:BV\w{10}|av\d{9}))(?:\/?\?.*)/i as urlMatch then redirect(302, "${urlMatch.1}")
-const __wayxRe = new RegExp("(^https://(?:www|m)\\.bilibili\\.com/video/(?:BV\\w{10}|av\\d{9}))(?:/?\\?.*)");
+const __wayxRe = new RegExp("(^https:\\/\\/(?:www|m)\\.bilibili\\.com\\/video\\/(?:BV\\w{10}|av\\d{9}))(?:\\/?\\?.*)");
 const __wayxUrl = $request.url;
 const __wayxMatch = __wayxRe.exec(__wayxUrl);
 if (!__wayxMatch) {

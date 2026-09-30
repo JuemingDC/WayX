@@ -31,7 +31,7 @@
 - 生成 Surge 去广告 Module 时的源 `FINAL`；
 - 非官方 legacy `json.jq("jq-path=...")` alias。
 
-Loon regex literal 的 `i/m/s` 是明确的转换丢弃项，不因 flags 存在进入 Review；按 Block 40 丢弃 flags 后继续进行目标 bare-regex 格式化与语义映射。
+Loon regex literal 的 `i/m/s` 是明确的转换丢弃项，不因 flags 存在进入 Review；按 Block 40 丢弃 flags 后继续语义映射，regex body 不做全局格式化。只有目标官方语法明确要求的局部适配才允许进入对应 target planner。
 
 Loon `[Argument]` **声明区块本身不构成 Review 条件**。QX 忽略参数 UI，只做依赖分析；Surge 按 Block 60 转换为 `#!arguments` / `{{{name}}}`，必要时使用带 `argument=` 的 helper。只有 helper 也无法保持时才进入 Review；所有 `# [WayX] REVIEW REQUIRED` 及 SCRIPT/REWRITE/ARGUMENT 专用 marker 都必须被 Gate 捕获。
 
