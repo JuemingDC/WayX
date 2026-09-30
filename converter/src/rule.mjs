@@ -202,7 +202,7 @@ export function qxRule(line) {
   return {kind:'filter', line:`${qxType}, ${value}, ${policy}`, reason:'native-filter'};
 }
 
-export function surgeModuleRule(line) {
+export function surgeModuleRule(line, { proxyPolicyPlaceholder = null } = {}) {
   const source = String(line).trim();
   const parts = splitTopLevelCsv(source);
   const type = String(parts[0] || '').toUpperCase();
@@ -260,19 +260,31 @@ export function surgeModuleRule(line) {
   // Source image-reject behavior maps to Surge's tiny GIF reject policy.
   if (policy === 'REJECT-IMG') policy = 'REJECT-TINYGIF';
 
-  // Loon plugin policy PROXY is preserved without semantic remapping.
-  // Surge Module Rule lines can only use official internal policies, so PROXY
-  // cannot be emitted as an active module policy; preserve the source as comments.
+  // Loon plugin PROXY is a user-selected policy binding. Surge Module
+  // parameter tables are substituted before the module is applied, so bind
+  // PROXY through a declared {{{...}}} policy parameter when the orchestrator
+  // provides one. This mirrors kokoryh/Sparkle's Bilibili Surge module.
   if (policy === 'PROXY') {
+    if (!proxyPolicyPlaceholder) {
+      return {
+        kind:'comment',
+        section:'rule',
+        line:'',
+        lines:[
+          '# [WayX] Source Loon plugin policy PROXY requires a Surge module policy parameter binding.',
+          `# Source declaration: ${source}`,
+        ],
+        reason:'source-proxy-policy-needs-argument',
+      };
+    }
+    parts[policyIndex] = proxyPolicyPlaceholder;
+    const lineOut = normalizeSurgeRuleRegexes(parts.join(','));
     return {
-      kind:'comment',
+      kind:'rule',
       section:'rule',
-      line:'',
-      lines:[
-        '# [WayX] Source Loon plugin policy PROXY preserved without conversion; Surge Module cannot activate external policy names.',
-        `# Source declaration: ${source}`,
-      ],
-      reason:'source-proxy-policy-preserved',
+      line:lineOut,
+      lines:[lineOut],
+      reason:'proxy-policy-argument',
     };
   }
 
