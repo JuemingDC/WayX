@@ -58,8 +58,8 @@
 
 优先级：
 1. 目标平台原生能力
-2. WayX 最小 helper script（仅用于非 Source Script 的 Action 补足）
-3. Review 注释
+2. WayX semantic helper script（仅用于 Rewrite/Mock Action 补足；complex helper 仅多 action）
+3. Review / unsupported 注释
 
 目标平台原生能做时，不得为了“统一”改成脚本。
 
@@ -73,7 +73,7 @@
 - 不自动替换 API
 - 不为了 `$argument`、dynamic `enable`、`$prefs` 修改脚本
 
-允许读取源码做兼容性判断。若脚本不支持目标平台，注释声明，不执行。
+不做 Source Script runtime compatibility 判断。目标声明直接引用原脚本 URL；仅在 QX HTTP Script action 不能由 declaration 明确决定时，允许读取正文辅助判断 header/body/echo 类型。
 
 ## 0.6 自动执行约束
 
