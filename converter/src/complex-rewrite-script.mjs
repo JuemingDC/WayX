@@ -7,7 +7,7 @@ import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
 import { compileComplexCondition } from './complex-rewrite.mjs';
 
 function fixed(node, label) {
-  if (!node || !['string','raw-string'].includes(node.type) || String(node.value).includes('${')) {
+  if (!node || !['string','raw-string'].includes(node.type) || (node.type === 'string' && String(node.value).includes('${'))) {
     throw new Error(label + ' must be a fixed string');
   }
   return String(node.value);
@@ -154,6 +154,7 @@ export function renderMixedRewriteScript(ast, {target, stamp='', category='', so
   const plan = statements(ast, target);
   const condition = compileComplexCondition(ast.condition, target);
   const source = ast.phase === 'request' ? '$request' : '$response';
+  const doneValue = plan.headers ? '{headers:__wayxHeaders,body:__wayxBody}' : '{body:__wayxBody}';
   const lines = [
     stamp ? '// Converted: ' + stamp : null,
     '// Converted by: chance',
@@ -162,7 +163,9 @@ export function renderMixedRewriteScript(ast, {target, stamp='', category='', so
     'const __wayxCaptures=Object.create(null);',
     plan.headerAdd ? 'let __wayxHeaders=Array.isArray(' + source + '.headers)?' + source + '.headers.map(x=>({field:x.field,value:x.value})):Object.entries(' + source + '.headers||{}).map(([field,value])=>({field,value}));' : 'let __wayxHeaders={...(' + source + '.headers||{})};',
     'let __wayxBody=' + source + '.body;',
-    plan.json ? 'let __wayxJson;' : null,
+    'function __wayxTpl(parts){let out="";for(const p of parts){if(p[0]==="s"){out+=p[1];continue}const v=__wayxCaptures[p[1]]?.[p[2]];if(v===undefined)return undefined;out+=String(v)}return out}',
+    'function __wayxWith(v,fn){if(v!==undefined)fn(v)}',
+    'function __wayxJsonAction(fn){try{const j=JSON.parse(String(__wayxBody ?? ""));fn(j);__wayxBody=JSON.stringify(j)}catch{}}',
     'function __wayxJsonParent(root,path){let x=root;for(let i=0;i<path.length-1;i++){if(x==null||!(path[i] in Object(x)))return null;x=x[path[i]];}return x;}',
     'function __wayxJsonDelete(root,path){const p=__wayxJsonParent(root,path);if(p!=null)delete p[path[path.length-1]];}',
     'function __wayxJsonReplace(root,path,value){const p=__wayxJsonParent(root,path);if(p!=null&&path[path.length-1] in Object(p))p[path[path.length-1]]=value;}',
@@ -173,12 +176,8 @@ export function renderMixedRewriteScript(ast, {target, stamp='', category='', so
     plan.headerAdd ? 'function __wayxHeaderReplace(n,p,r){const w=String(n).toLowerCase();for(const x of __wayxHeaders)if(String(x.field).toLowerCase()===w)x.value=String(x.value).replace(new RegExp(p),r);}' : 'function __wayxHeaderReplace(n,p,r){const k=__wayxKey(n);if(k!==undefined)__wayxHeaders[k]=String(__wayxHeaders[k]).replace(new RegExp(p),r);}',
     plan.headerAdd ? null : 'function __wayxKey(n){return Object.keys(__wayxHeaders).find(k=>k.toLowerCase()===String(n).toLowerCase());}',
     'if(' + condition + '){',
-    plan.json ? '  try{__wayxJson=JSON.parse(String(__wayxBody ?? ""));}catch{__wayxJson=undefined;}' : null,
-    plan.json ? '  if(__wayxJson===undefined){$done({});}else{' : null,
-    ...plan.out.map(line => (plan.json ? '    ' : '  ') + line),
-    plan.json ? '    __wayxBody=JSON.stringify(__wayxJson);' : null,
-    plan.json ? '    $done({headers:__wayxHeaders,body:__wayxBody});' : '  $done({headers:__wayxHeaders,body:__wayxBody});',
-    plan.json ? '  }' : null,
+    ...plan.out.map(line => '  ' + line),
+    '  $done(' + doneValue + ');',
     '}else{$done({});}',
     '',
   ].filter(line => line !== null);
