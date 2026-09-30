@@ -3,7 +3,8 @@
 // Category: Converter / Repository Audit
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { parseLoon, validateQX } from '../../.github/scripts/sync-convert.mjs';
+import { validateQX } from '../../.github/scripts/sync-convert.mjs';
+import { parseLoonPlugin } from '../src/plugin-parser.mjs';
 import { validateSurgeModule } from '../src/surge-module.mjs';
 
 const ROOT = process.cwd();
@@ -86,7 +87,7 @@ for (const file of files) {
 
   if (rp.endsWith('.lpx') && rp.startsWith('Resource/Loon/')) {
     try {
-      parseLoon(text);
+      parseLoonPlugin(text);
       validated.loon++;
     } catch (error) {
       add(file, 1, 'source-plugin-parser', error?.message || error);
