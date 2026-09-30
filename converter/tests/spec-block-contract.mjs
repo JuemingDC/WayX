@@ -11,7 +11,7 @@ const contracts=[
   ['30','docs/conversion-spec/30-rewrite-mapping.md',['converter/src/legacy-rewrite.mjs','converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-semantic.mjs']],
   ['40','docs/conversion-spec/40-regex-condition.md',['converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-actions.mjs','converter/src/target-regex.mjs']],
   ['50','docs/conversion-spec/50-json-jq-mock.md',['converter/src/jq.mjs','converter/src/dependency.mjs','converter/src/qx-mock.mjs','converter/src/surge-mock.mjs']],
-  ['60','docs/conversion-spec/60-script-argument.md',['converter/src/script.mjs','converter/src/script-compat.mjs','converter/src/script-v2.mjs','converter/src/script-v2-target.mjs','converter/src/argument.mjs']],
+  ['60','docs/conversion-spec/60-script-argument.md',['converter/src/script.mjs','converter/src/script-v2.mjs','converter/src/script-v2-target.mjs','converter/src/argument.mjs']],
   ['70','docs/conversion-spec/70-mitm-comments.md',['converter/src/mitm.mjs','converter/src/metadata.mjs']],
   ['80','docs/conversion-spec/80-review-validation.md',['converter/src/surge-module.mjs','converter/tests/genericity-audit.mjs','converter/tests/generated-helper-refs.mjs','converter/tests/end-to-end-golden.mjs']],
   ['90','docs/conversion-spec/90-project-workflow.md',['.github/scripts/sync-convert.mjs','converter/tools/regenerate-canonical.mjs','.github/workflows/converter-check.yml','.github/workflows/upstream-monitor.yml']],
@@ -37,7 +37,7 @@ assert.equal(/entry\.mirrors|fetchWithFallback|planScriptMirrorPaths/.test(syncC
 assert.match(syncConverter,/fetchOriginalText\(entry\.source\)/, 'Block 90: plugin fetch must use original descriptor source');
 assert.equal(/sync_rucu6\.py|rucu6_sync/.test(upstreamWorkflow), false, 'Block 90: duplicate RuCu6 sync path must not return');
 assert.match(upstreamWorkflow,/monitor\/review-queue\//, 'Block 90: Review without normal diff must still persist a Work-review PR marker');
-assert.match(upstreamWorkflow,/steps\.script_scan\.outcome != 'success'/, 'Block 90: Source Script scan failures must enter Review');
+assert.equal(/script_scan|scan-script-compat/.test(upstreamWorkflow), false, 'Block 60/90: Source Script compatibility scan must not remain in automation');
 assert.match(upstreamWorkflow,/REMOTE_MAIN/, 'Block 90: Safe Tier push must verify the main generation baseline');
 assert.equal(/git pull --rebase origin main/.test(upstreamWorkflow), false, 'Block 90: generated Safe Tier output must not be rebased onto a newer main without regeneration');
 assert.match(upstreamWorkflow,/node \.github\/scripts\/sync-convert\.mjs/, 'Block 90: scheduled workflow must call the unified converter');
@@ -46,9 +46,9 @@ assert.equal(/EXTRA_LOCAL_ENTRIES|RuCu6\/youtube\.lpx|RuCu6\/myblockads\.lpx/.te
 assert.equal(/DEPENDENCY_MANIFEST|localJqFiles|assertOfflineDependencies/.test(canonicalRunner), false, 'Block 50/90: canonical runner must not fall back to repository dependency caches');
 assert.match(canonicalRunner,/materializeJqFiles\(entry, parsed\)/, 'Block 50: canonical runner must fetch JQ from original dependency URLs through the shared materializer');
 assert.match(canonicalRunner,/materializeMockFiles\(entry, parsed\)/, 'Block 50: canonical runner must fetch mock_file from original dependency URLs through the shared materializer');
-assert.match(canonicalRunner,/inspectSourceScript\(reference, pluginSourceUrl\)/, 'Block 60: canonical runner must delegate Source Script resolution/reading to the shared inspector');
+assert.match(canonicalRunner,/inspectSourceScript\(reference, pluginSourceUrl\)/, 'Block 60: canonical runner must delegate optional Source Script action-type inspection to the shared inspector');
 assert.match(syncConverter,/resolveOriginalUrl\(reference, pluginSourceUrl\)/, 'Block 60: shared Source Script inspector must resolve relative refs against the original plugin URL');
-assert.match(syncConverter,/fetchOriginalText\(originalUrl\)/, 'Block 60: QX compatibility inspection must read the resolved original Source Script URL when available');
+assert.match(syncConverter,/fetchOriginalText\(originalUrl\)/, 'Block 60: optional QX action-type inspection must read only the resolved original Source Script URL when available');
 assert.match(targetRegex,/return String\(pattern \?\? ''\);/, 'Block 40: target regex normalization must preserve the regex body');
 assert.equal(/replace\([^\n]*\\\\\\\//.test(targetRegex), false, 'Block 40: target regex compiler must not globally rewrite escaped slashes');
 assert.match(targetRegex,/sourceFlags:\s*flags/, 'Block 40: discarded source flags must remain observable metadata without being propagated');
@@ -57,9 +57,7 @@ assert.match(syncConverter,/QX_FILTER_TYPES/, 'Block 80: QX validator must maint
 assert.match(syncConverter,/QX_SCRIPT_ACTIONS/, 'Block 80: QX validator must maintain an explicit Script action whitelist');
 assert.match(syncConverter,/supportedSourceSections/, 'Block 80: source orchestration must explicitly account for unsupported active sections');
 assert.match(syncConverter,/unsupported Loon source section/, 'Block 80: unknown active source sections must become explicit Review');
-const scriptCompat=await fs.readFile(path.join(ROOT,'converter/src/script-compat.mjs'),'utf8');
-assert.match(scriptCompat,/unknownDollarGlobals/, 'Block 60: unknown runtime globals must fail QX compatibility closed');
-assert.match(scriptCompat,/qxDocumentedRuntimeOnly/, 'Block 60: official QX runtime-only scripts must be recognized by documented globals');
+assert.equal(/inspectQxScriptCompatibility|qxManualPortComment/.test(syncConverter), false, 'Block 60: production converter must not gate Source Script execution on runtime compatibility scanning');
 const surgeValidator=await fs.readFile(path.join(ROOT,'converter/src/surge-module.mjs'),'utf8');
 assert.match(surgeValidator,/adblockScope/, 'Block 80: Surge script-family scope restriction must be explicit and converter-specific');
 
