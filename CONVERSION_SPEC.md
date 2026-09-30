@@ -1,12 +1,21 @@
 # WayX Conversion Specification
 
-版本：1.3  
+版本：1.4  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
 WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入本仓库；需要时另立规范。
 
 本规范采用“分块规范”结构。转换器、测试、canonical 输出、Golden 都必须服从本规范，不能反过来用现有代码定义规范。
+
+## 2026-09-30 规范更新
+
+1. Quantumult X 对官方 sample 未确认的 Rule Type（包括逻辑规则、端口类等）只保留为注释，不生成活动规则，也不使用 Script 兜底。
+2. Script fallback 仅属于 Rewrite/Mock 语义：目标原生格式无法严格等价表达时，才考虑专用 helper；Rule 不进入 Script fallback。
+3. Source JavaScript 在 Quantumult X 与 Surge 中均不做 runtime compatibility 审查。目标声明直接引用原脚本 URL；仅在需要判定 HTTP Script 的 header/body/echo action 类型时读取源码辅助分类。
+4. Loon Plugin 内部策略 `PROXY` 不做语义替换：QX 保留字面 `PROXY`；Surge Module 因官方禁止活动 Rule 使用外部 policy 名称，仅将源声明原样注释保留，不改写成其他策略。
+5. 通用 Complex Rewrite helper 只处理多 action pipeline（`actions.length >= 2`），脚本负责按源顺序完成整条多 action 语义；单 action 如确需脚本，必须走对应的专用 semantic helper。
+
 
 ## 规范块
 
