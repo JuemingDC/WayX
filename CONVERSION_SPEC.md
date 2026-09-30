@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.8  
+版本：1.9  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -23,6 +23,7 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 11. `QZXY.snippet` / `QZXY.sgmodule` 明确为 chance 手工维护资产，登记在 `.github/manual-assets.json`；不得加入 Loon Source Catalog，不参与 canonical regeneration，但仍接受 repository validator/audit。
 12. CI 必须自动生成 Source → Target reconciliation 与 Review/Issue inventory。Catalog 每个源有效语义项必须落入 converted / explicit-comment / Review / Issue / intentional-drop 之一；报告不对账时 fail closed。
 13. QX Source Script 声明的 `argument`、动态 `enable`、`timeout`、`binary-body-mode` / `binary_body_mode` 按 KOP-XIAO `resource-parser.js` 的转换口径处理：QX 只保留 pattern / Script action / 原始 script URL，并由 `requires-body` / `requires_body` 单独决定 header/body 类型；Script argument 不注入，动态 enable 视为默认开启，timeout 与 binary body mode 均忽略。源明确 `enable=false` 仍保持禁用。该规则只适用于 Script declaration；Rewrite 条件/action 中的 `[Argument]` 引用以及 debug/max-size 等其它字段继续按 WayX 自身规范独立判断。
+14. CI 必须维护 Catalog-observed Loon Rewrite v2 / Script v2 syntax inventory。Inventory 只锁定“语法形态”而不锁规则数量，包括 phase、condition comparison/capture/logical/group/regex flags、Rewrite action/argument shape/multi-action signature，以及 Script path/argument/option shape 与 option-set。任何当前 Catalog 首次出现的新语法形态必须 fail closed；不得仅因 parser 已经能解析就自动放行。处理顺序固定为：核对当前 Loon 源语义 → 核对 Quantumult X 官方 sample 与 Surge 官方 Manual → 更新 CONVERSION_SPEC/generic implementation/tests → 人工确认后才更新 inventory baseline。
 
 
 ## 规范块
