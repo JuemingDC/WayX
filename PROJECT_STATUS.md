@@ -4,12 +4,12 @@
 > 维护原则：本文件描述“当前 main 的真实状态”，不能替代 `CONVERSION_SPEC.md`；规范冲突时以 `CONVERSION_SPEC.md` 为唯一权威。
 
 - 审计日期：2026-09-30
-- 审计基线：`main @ f29cbd71d5ce0f9b71036128dace17b5ecd0dd41`
+- 审计基线：PR #65 canonical regeneration / Converter Check #578
 - Source Catalog：20 个 Loon 去广告插件
 - Catalog 管理目标：20 个 Quantumult X snippet + 20 个 Surge sgmodule
 - Adblock 目录实际目标：21 个 QX + 21 个 Surge（额外包含手工维护的 `QZXY`）
-- 最近完整 Converter Check：#520，通过
-- 当前 open PR：0（本状态文件创建前）
+- 最近完整 Converter Check：#578，通过
+- 当前实现 PR：#65
 
 ---
 
@@ -58,7 +58,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 - condition named capture、`${name.n}`、action-local `$0...$n` 已分离处理。
 - Header 名称大小写不敏感语义已在 helper 中处理。
 - QX `request.header.add` 仅在能严格证明等价时使用 `request-header` 原生插入。
-- QX `header.set / del / replace` 使用 Header helper；`response.header.add` 因重复 Header 表达未验证，保持 Review。
+- QX `header.set / del / replace` 使用 Header helper；`response.header.add` / legacy `response-header-add` 因重复 Header 表达未验证，按用户决策直接注释保留，不再计入 Review。
 - Surge `header.add` 在需要重复字段时使用 `full-header-mode=true`。
 - Legacy Rewrite 已接入 native → helper → Review 路径。
 
@@ -86,17 +86,19 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 
 ## 3. Review 库存
 
-2026-09-30 规范 v1.4 canonical 已重新生成并按 20 个 Source Catalog 目标重新统计。当前活动 Review marker 为：
+2026-09-30 规范 v1.6 canonical 已重新生成，并由 `converter/tools/conversion-reports.mjs` 自动统计。当前活动 Review marker 为：
 
-- **Quantumult X：12**
+- **Quantumult X：11**
 - **Surge：0**
+- **Unknown Issue：0**
 
-QX 12 项按原因分布：
+QX 11 项按原因分布：
 - legacy Script declaration 的 argument / enable / timeout / max-size / binary option 无法由 QX 声明无损承载：3；
 - Script v2 dynamic enable：3；
 - Script v2 `$argument`：4；
-- request `binary_body_mode=true` 缺少同等级 QX request bodyBytes 官方样例：1；
-- `response.header.add` 重复 Header 语义未验证：1。
+- request `binary_body_mode=true` 缺少同等级 QX request bodyBytes 官方样例：1。
+
+`response.header.add` 已按项目决策改为明确注释保留，因此不再占用 Review inventory。
 
 按文件分布：Tieba 1、DianPing 2、Bilibili 3、JingDong 2、Webpage 1、YouTube 3。其余 Catalog 目标为 0。
 
@@ -106,7 +108,7 @@ QX 12 项按原因分布：
 - Loon Plugin `PROXY` 在 Surge Module 中通过参数化 policy binding 转为活动 Rule，不再属于 Review/注释库存；
 - 完整 Surge Profile 可用但 Module Manual 未允许的 `REJECT-DROP / REJECT-NO-DROP / CELLULAR / CELLULAR-ONLY / HYBRID / NO-HYBRID`（源 Rule 注释保留）。
 
-上述 12 项是已知目标能力缺口，不是 converter/PR 未处理错误；后续只有在获得新的官方目标能力依据时再消减。
+上述 11 项是已知 QX 声明层/运行时输入能力缺口，不是 converter/PR 未处理错误；后续只有在获得新的官方目标能力依据时再消减。
 
 ## 4. 待办工作
 
@@ -121,7 +123,7 @@ v1.4 已重新生成全部 Catalog 管理的 QX snippet / Surge sgmodule，并�
 - QX 不支持 Rule 以注释形式对账，未生成 Rule helper；
 - Surge 的 Loon `PROXY` 已通过 `#!arguments` policy 参数转换为活动 Rule；Module Manual 未允许且没有参数化语义的完整 Profile built-in policy 继续只注释保留；
 - helper 文件引用存在且 action 类型通过 validator/CI；
-- Review inventory 已按新口径重建为 QX 12 / Surge 0。
+- Review inventory 已由 CI 自动重建为 QX 11 / Surge 0 / Issue 0。
 
 #### P0-2：QX Script option 保真
 
@@ -133,77 +135,48 @@ Loon Script declaration 的 `[Argument]`、dynamic enable/timeout/debug、max-si
 2. 若问题属于 Rewrite 语义而非 Source Script 本体，使用对应专用 helper；
 3. 仍无法保持则注释 Review。
 
-#### P0-3：QX `response.header.add`
+#### P0-3：QX `response.header.add` — 已完成（明确注释）
 
-重复 Header 语义仍未由当前 QX 官方 sample 证明可用普通 Header object 等价表达：
+重复 Header 语义仍未由当前 QX 官方 sample 证明可用普通 Header object 等价表达。按用户决策：
 
 - 禁止用 set 冒充 add；
-- 单 action 不借用 complex helper；
-- 无官方等价形式前保持 Review。
+- 不生成 dedicated/complex helper；
+- 新版 `response.header.add` 与 legacy `response-header-add` 均保留完整 Source declaration 并注释掉；
+- 不再计入持续 Review inventory。
 
 ### P1 — 项目结构与可维护性
 
-#### P1-1：明确 QZXY 的管理方式
-
-当前 Source Catalog 有 20 个插件，但 QX / Surge Adblock 目录各有 21 个文件。
-
-额外文件：
+#### P1-1：QZXY 手工维护边界 — 已完成
 
 - `Adblock/Quantumult X/QZXY.snippet`
 - `Adblock/Surge/QZXY.sgmodule`
 
-QZXY 当前是手工维护/独立来源，不受 Source Catalog canonical regeneration 管理。
+已登记到 `.github/manual-assets.json`，固定由 chance 手工维护：
+- 不进入 `.github/sources/loon.json`；
+- 不参与 canonical regeneration；
+- 自动转换不得创建、删除或覆盖；
+- 仍由 QX / Surge validator 与 repository audit 检查格式。
 
-需要二选一：
+#### P1-2：Source → Target reconciliation — 已完成
 
-- A. 保持手工资产，并在 Source Catalog / README / audit 中明确 exemption；
-- B. 建立正式 source descriptor，把它纳入统一生成链。
+新增 `converter/tools/conversion-reports.mjs`，CI 自动生成 JSON + Markdown reconciliation。20 个 Catalog 插件的每条非 `[Argument]` 活动源声明必须归入 converted / unsupported-commented / Review / Issue / disabled / intentional-drop 之一；出现未匹配 Source declaration 或无法闭合时 CI 失败。
 
-在决定前，不允许 canonical 工具误删或覆盖 QZXY。
+报告同时统计目标活动行、WayX generated helper 引用和 Source Script 引用。
 
-#### P1-2：生成机器可读的 Source → Target reconciliation 报告
+#### P1-3：自动 Review / Issue inventory — 已完成
 
-当前已经 fail-closed，但还缺一个统一的逐语义项报告。
+同一工具自动统计：
+- QX / Surge Review 总数；
+- Unknown Issue 总数；
+- 按文件；
+- 按 reason；
+- 手工资产与 Catalog 分开标识。
 
-目标：
-
-```text
-Source 有效语义项
-=
-Target 已转换项
-+
-明确 Review 项
-+
-规范允许丢弃项
-```
-
-建议由 CI 输出 JSON/Markdown summary，包括：
-
-- source item 数
-- native 转换数
-- helper 转换数
-- Review 数
-- intentional drop 数
-- 按 action/rule 类型分类
-
-这样可避免只依赖 Golden/hash 与 Review marker 观察项目健康度。
-
-#### P1-3：自动生成 Review inventory
-
-当前本文件中的 139 / 5 是人工审计结果。
-
-建议增加脚本从 canonical 输出自动统计：
-
-- QX / Surge Review 总数
-- 按文件
-- 按 reason
-- 与上一次 main 比较增减
-
-如果 Review 意外增加，CI 应至少输出明显 warning。
+当前自动结果：QX 11 / Surge 0 / Issue 0。基线用于 CI 新增 Review warning，不再依赖人工写死的旧库存数字。
 
 ### P2 — 长期质量工作
 
-- 继续扩充陌生插件 generic fixtures，防止能力只对当前 20 个 Catalog 插件有效。
+- 后续优先从新的上游拉取结果或 GitHub 中实际出现的 Loon Rewrite v2 / Script v2 新语法插件扩充 observed syntax inventory；未观察到的 complex signature 仍不得预先放行。
 - 每次新增 QX 官方 sample 证据时，复核现有 Rewrite Review 是否可以安全降级为 native/helper；Rule 只在官方明确支持对应 Rule Type 后才改为活动 filter。
 - 定期复核 validator whitelist 是否与当前官方 sample 一致。
 - 对 generated helper 做行为级 runtime fixture，而不只做字符串/语法断言。
@@ -240,8 +213,8 @@ Target 已转换项
 - [ ] checkpoint / genericity / end-to-end / syntax 全通过。
 - [ ] canonical outputs 重新生成。
 - [ ] repository audit / helper refs / Golden / Source Script URL preservation 全通过。
-- [ ] 重新统计 Review inventory。
-- [ ] 如果进度、Review 数或已知问题变化，更新本文件。
+- [x] Review / Issue inventory 已由 CI 自动统计。
+- [x] 本轮进度、Review 数与已知问题已同步。
 
 ---
 
