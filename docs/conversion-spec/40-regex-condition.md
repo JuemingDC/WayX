@@ -149,3 +149,10 @@ Complex helper 的 `==` 必须按条件 literal 类型进行比较，而不能�
 - `~=` 的右侧必须是 Regex（插件变量 Regex 的独立支持须有明确类型与目标端映射后再开放）。
 
 这些属于源语法有效性约束，不能靠目标 helper 的 JavaScript coercion 修复无效源表达式。
+
+
+## 40.12 Condition variable domain
+
+Complex helper 的内建条件变量域为 `${url}`、`${request.method}`、request/response Header，以及 response phase 的 `${response.status}`。除此之外的变量必须保留给 `[Argument]` usage/planner 判断：已声明插件参数按参数规则处理，未声明引用进入 Review；不得在 AST 验证阶段提前删除或冻结为固定值，也不得让生成 helper 依赖 JavaScript 隐式行为。
+
+`==` 的固定 literal 类型同时按变量域约束：URL 与 request.method 只接受 String/raw-string；Header 接受 String/raw-string/null；response.status 接受 Number。插件参数变量只有在参数类型已经解析并能证明与左侧变量类型一致时才可开放，不能因为 parser 能读到 `${...}` 就默认可转换。

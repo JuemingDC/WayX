@@ -668,6 +668,15 @@ assert.throws(
   () => renderMixedRewriteScript(parseRewriteV2('request if ${request.header[\'X-Test\']} == 1 then request.header.set("X-Test", "bad") | request.body.replace(/x/, "y")'), {target:'qx'}),
   /header equality requires String, null, or String variable/,
 );
+
+assert.throws(
+  () => renderMixedRewriteScript(parseRewriteV2('request if ${request.method} == 1 then request.header.set("X-Test", "bad") | request.body.replace(/x/, "y")'), {target:'qx'}),
+  /request\.method equality requires String or typed variable/,
+);
+assert.throws(
+  () => renderMixedRewriteScript(parseRewriteV2('request if ${url} == true then request.header.set("X-Test", "bad") | request.body.replace(/x/, "y")'), {target:'surge'}),
+  /url equality requires String or typed variable/,
+);
 const runtimeNullHeader = renderMixedRewriteScript(
   parseRewriteV2('response if ${response.header[\'X-Missing\']} == null then response.header.set("X-Null", "yes") | response.body.replace(/x/, "y")'),
   {target:'qx'},
@@ -712,7 +721,7 @@ assert.match(complexConditionFlags.script, /response\.statusCode/);
 assert.match(complexConditionFlags.script, /__wayxHeader\("response","Content-Type"\)/);
 assert.throws(
   () => renderMixedRewriteScript(parseRewriteV2('response if ${unsupported.value} == "x" then response.header.del("Server") | response.body.replace(/x/, "y")'), {target:'qx'}),
-  /unsupported complex condition variable/,
+  /unsupported (?:complex|Rewrite v2) condition variable/,
 );
 
 const bulkV2 = parseRewriteV2('request if ${url} ~= /api/ then request.header.set(["X-A","X-B"],["1","2"])');
