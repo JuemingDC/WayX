@@ -479,7 +479,7 @@ const rawJsonLiteral = renderMixedRewriteScript(
   {target:'qx'},
 );
 assert.ok(rawJsonLiteral.script.includes('${hit.1}'));
-assert.equal((rawJsonLiteral.script.match(/__wayxTpl\\\(/g) || []).length, 1);
+assert.equal((rawJsonLiteral.script.match(/__wayxTpl\(/g) || []).length, 1);
 
 
 assert.throws(
