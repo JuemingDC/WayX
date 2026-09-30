@@ -23,13 +23,14 @@ WayX 的 Loon Plugin → Quantumult X / Surge 通用转换器。核心原则是*
 - 只有目标平台已确认能保持语义的 action 才自动转换。
 - JSON/JQ/body/header/mock/redirect 等按目标原生能力优先；无等价能力时才生成最小 helper。
 - QX 官方 sample 未确认的 Rule Type（逻辑规则、端口类等）直接注释保留，不扩大/删条件，也不使用 Script fallback。
+- 未知语法/action/section 或未登记 complex signature 固定先注释，再输出 `ISSUE REQUIRED` 供自动化创建议题；已知目标能力缺口继续使用普通 Review。
 
 ## Script
 
 - Source Script 只转换声明层，QX/Surge 均直接引用原脚本 URL，不做 runtime compatibility gate。
 - 仅在 QX declaration 需要判定 header/body/echo action 类型时读取脚本正文辅助分类。
 - Script v2 的 typed PluginObject、动态 enable/timeout/debug 等若无法保持声明语义，进入 Review。
-- 通用 complex helper 只处理 Rewrite v2 多 action pipeline；单 action 需要脚本时走专用 semantic helper。
+- 通用 complex renderer 代码继续保留，但 production 只处理源单条 Rewrite v2 中真实存在且已登记的 multi-action signature；禁止合并相邻独立规则。单 action 需要脚本时走专用 semantic helper。
 
 ## 自动化
 
