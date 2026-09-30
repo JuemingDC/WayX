@@ -16,10 +16,8 @@ export function registerComplexRewriteHandler(definition) {
 }
 
 export function planComplexRewrite(ast, target, context = {}) {
-  const classified = classifyComplexRewrite(ast);
-  if (!classified.ok) return classified;
   if (!Array.isArray(ast?.actions) || ast.actions.length < 2) {
-    return {ok:false, reason:'complex Rewrite helper is reserved for source-authored multi-action pipelines', classified};
+    return {ok:false, reason:'complex Rewrite helper is reserved for source-authored multi-action pipelines'};
   }
   const observed = observedComplexRewriteType(ast);
   if (!observed) {
@@ -29,6 +27,16 @@ export function planComplexRewrite(ast, target, context = {}) {
       issue:true,
       issueCode:'unknown-complex-rewrite',
       reason:'unregistered source-authored complex Rewrite signature: ' + complexRewriteSignature(ast),
+    };
+  }
+  const classified = classifyComplexRewrite(ast);
+  if (!classified.ok) {
+    return {
+      ok:false,
+      terminal:true,
+      issue:true,
+      issueCode:'observed-complex-implementation-gap',
+      reason:'registered complex Rewrite type cannot be classified: ' + classified.reason,
       classified,
     };
   }
