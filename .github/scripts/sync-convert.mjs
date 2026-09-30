@@ -24,6 +24,7 @@ import { renderQxSnippetHeader } from '../../converter/src/metadata.mjs';
 import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
 import { planMitmLine } from '../../converter/src/mitm.mjs';
 import { fetchOriginalText, fetchOriginalBytes, resolveOriginalUrl } from '../../converter/src/source-fetch.mjs';
+import { registerComplexRewriteHandler, planComplexRewrite } from '../../converter/src/complex-rewrite-registry.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -31,6 +32,24 @@ const RESOURCE_DIR = path.join(ROOT, 'Resource/Loon');
 const TARGET_ROOT = path.join(ROOT, 'Adblock');
 const SCRIPT_DIR = path.join(ROOT, 'script');
 const RAW_BASE = 'https://raw.githubusercontent.com/JuemingDC/WayX/main';
+
+registerComplexRewriteHandler({
+  id: 'qx-same-phase-header-script',
+  targets: ['qx'],
+  match: ast => ast.actions.length > 0 && ast.actions.every(action => action.name.startsWith(ast.phase + '.header.')),
+  plan: (ast, _target, ctx) => {
+    try {
+      const plan = renderQxHeaderScript(ast, {stamp:ctx.stamp, category:ctx.category, sourceLine:ctx.sourceLine});
+      const key = crypto.createHash('sha1').update('header' + ctx.sourceLine).digest('hex').slice(0, 10);
+      const filename = 'header_' + key + '.js';
+      ctx.generatedScripts.set(filename, plan.script);
+      return {ok:true, section:'rewrite', line:plan.pattern + ' url ' + plan.qxAction + ' ' + RAW_BASE + '/script/' + ctx.id + '/' + filename};
+    } catch (error) {
+      return {ok:false, terminal:true, reason:String(error?.message || error)};
+    }
+  },
+});
+
 
 const nowCN = () => new Intl.DateTimeFormat('sv-SE', {
   timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit',
@@ -181,20 +200,12 @@ function rewriteV2Action(line, target, ctx) {
       }
     }
 
-    // Loon Header subtypes are lowered through QX's official phase-specific
-    // script-request-header / script-response-header hooks. Keep a same-phase
-    // pipeline in one helper so left-to-right action order is preserved.
-    if (ast.actions.length && ast.actions.every(a => new RegExp('^' + ast.phase + '\\.header\\.(?:add|set|del|replace)$').test(a.name))) {
-      try {
-        const plan = renderQxHeaderScript(ast, { stamp: ctx.stamp, category: ctx.category, sourceLine: line });
-        const key = crypto.createHash('sha1').update('header\0' + line).digest('hex').slice(0, 10);
-        const filename = `header_${key}.js`;
-        ctx.generatedScripts.set(filename, plan.script);
-        return { section: 'rewrite', line: `${plan.pattern} url ${plan.qxAction} ${RAW_BASE}/script/${ctx.id}/${filename}` };
-      } catch (error) {
-        return { section: 'comment', line: `# Unsupported Loon Rewrite v2 preserved (${String(error?.message || error).split('\n')[0]}): ${line}` };
-      }
-    }
+    // Non-native combinations enter the isolated registry only after the
+    // native and dedicated planners above have declined them.
+    const complex = planComplexRewrite(ast, 'qx', {...ctx, sourceLine:line});
+    if (complex.ok) return {section:complex.section, line:complex.line, lines:complex.lines};
+    if (complex.terminal) return {section:'comment', line:'# Unsupported Loon Rewrite v2 preserved (' + complex.reason + '): ' + line};
+
   }
 
   if (target === 'surge') {
