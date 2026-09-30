@@ -7,7 +7,7 @@ const contracts=[
   ['00','docs/conversion-spec/00-authority.md',['converter/tests/genericity-audit.mjs','converter/tools/audit-repository.mjs']],
   ['05','docs/conversion-spec/05-generic-converter.md',['converter/src/source-catalog.mjs','converter/src/source-fetch.mjs','.github/scripts/sync-convert.mjs','.github/manual-assets.json','converter/tests/manual-assets.mjs']],
   ['10','docs/conversion-spec/10-target-format.md',['converter/src/paths.mjs','converter/src/metadata.mjs','converter/src/surge-module.mjs','converter/src/qx-official-capabilities.mjs','converter/src/surge-official-capabilities.mjs']],
-  ['20','docs/conversion-spec/20-rule-mapping.md',['converter/src/rule.mjs','converter/tests/catalog-rule-inventory.mjs','converter/fixtures/catalog-rule-inventory.json']],
+  ['20','docs/conversion-spec/20-rule-mapping.md',['converter/src/rule-ast.mjs','converter/src/rule-qx.mjs','converter/src/rule-surge.mjs','converter/src/rule.mjs','converter/tests/rule-ast.mjs','converter/tests/catalog-rule-inventory.mjs','converter/fixtures/catalog-rule-inventory.json']],
   ['30','docs/conversion-spec/30-rewrite-mapping.md',['converter/src/legacy-rewrite.mjs','converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-semantic.mjs','converter/src/complex-rewrite-types.mjs','converter/src/complex-rewrite-registry.mjs','converter/tests/complex-source-inventory.mjs']],
   ['40','docs/conversion-spec/40-regex-condition.md',['converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-actions.mjs','converter/src/target-regex.mjs']],
   ['50','docs/conversion-spec/50-json-jq-mock.md',['converter/src/jq.mjs','converter/src/dependency.mjs','converter/src/qx-mock.mjs','converter/src/surge-mock.mjs']],
@@ -76,6 +76,17 @@ const surgeCapabilities=await fs.readFile(path.join(ROOT,'converter/src/surge-of
 assert.match(surgeCapabilities,/SURGE_WAYX_RULE_TYPES/, 'Block 80: Surge Rule registry must be explicit and official-backed');
 assert.match(converterWorkflow,/surge-official-capabilities\.mjs/, 'Block 80: Converter Check must execute the Surge official capability gate');
 assert.match(converterWorkflow,/catalog-rule-inventory\.mjs/, 'Block 20/80: Converter Check must execute the Catalog Rule inventory gate');
+const ruleAst=await fs.readFile(path.join(ROOT,'converter/src/rule-ast.mjs'),'utf8');
+const ruleQx=await fs.readFile(path.join(ROOT,'converter/src/rule-qx.mjs'),'utf8');
+const ruleSurge=await fs.readFile(path.join(ROOT,'converter/src/rule-surge.mjs'),'utf8');
+const ruleFacade=await fs.readFile(path.join(ROOT,'converter/src/rule.mjs'),'utf8');
+assert.equal(/qx-official-capabilities|surge-official-capabilities/.test(ruleAst), false, 'Block 20: target-neutral Rule AST parser must not import target capability registries');
+assert.match(ruleQx,/planQxRuleAst\(ast\)/, 'Block 20: QX Rule planner must consume AST');
+assert.match(ruleSurge,/planSurgeModuleRuleAst\(ast/, 'Block 20: Surge Rule planner must consume AST');
+assert.equal(/splitTopLevelCsv|splitLogicalSubrules/.test(ruleQx), false, 'Block 20: QX planner must not reparse source Rule strings');
+assert.equal(/splitTopLevelCsv|splitLogicalSubrules/.test(ruleSurge), false, 'Block 20: Surge planner must not reimplement source Rule parsing');
+assert.match(ruleFacade,/parseLoonRuleAst\(source\)/, 'Block 20: public Rule facade must parse once before target planning');
+assert.match(converterWorkflow,/rule-ast\.mjs/, 'Block 20: Converter Check must execute Rule AST contract');
 
 const index=await fs.readFile(path.join(ROOT,'docs/conversion-spec/95-implementation-index.md'),'utf8');
 for(const [block] of contracts) assert.match(index,new RegExp('\\| '+block+' \\|'), `implementation index missing Block ${block}`);
