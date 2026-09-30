@@ -31,10 +31,13 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
   if (!ast || ast.type !== 'script') return unsupported('expected Script v2 AST');
   if (argumentIds !== null) {
     const usage = scriptV2PluginArgumentUsage(ast, argumentIds);
-    const undeclared = [
-      ...usage.undeclaredObjectRefs,
-      ...usage.undeclaredOptionRefs.map(ref => ref.id),
-    ];
+    // QX follows the KOP-XIAO resource-parser behavior for Script declaration
+    // arguments/options: Script argument payloads and dynamic enable/timeout are
+    // discarded at conversion time. Only Argument references that change the
+    // match condition, or other still-significant dynamic options, remain blockers.
+    const undeclared = usage.undeclaredOptionRefs
+      .filter(ref => !['enable','timeout'].includes(ref.option))
+      .map(ref => ref.id);
     if (undeclared.length) {
       return unsupported('undeclared plugin [Argument] reference(s): ' + [...new Set(undeclared)].sort().join(', '));
     }
@@ -45,22 +48,23 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
 
   const condition = scriptUrlCondition(ast);
   if (!condition.ok) return condition;
+  const notes = [...(condition.notes || [])];
 
   const enable = scriptOption(ast, 'enable');
   if (enable?.type === 'boolean' && enable.value === false) {
     return {ok:true, disabled:true, reason:'Loon Script v2 enable=false'};
   }
   if (enable?.type === 'variable') {
-    return unsupported('dynamic enable cannot be carried by Quantumult X rewrite declaration without changing the script');
+    notes.push('Source dynamic enable=' + enable.name + ' ignored for Quantumult X; converted rule defaults to enabled.');
   }
 
   if (ast.script.argument) {
-    return unsupported('Loon Script v2 $argument cannot be carried by the official Quantumult X rewrite declaration without changing the script');
+    notes.push('Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.');
   }
 
   const timeout = scriptOption(ast, 'timeout');
   if (timeout) {
-    return unsupported('Loon Script v2 timeout has no verified Quantumult X rewrite declaration or lossless helper bridge');
+    notes.push('Source Script timeout ignored for Quantumult X.');
   }
   const debug = scriptOption(ast, 'debug');
   if (debug?.type === 'boolean' && debug.value) {
@@ -85,8 +89,6 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
   if (!action.action) {
     return unsupported(action.reason);
   }
-
-  const notes = [...(condition.notes || [])];
 
   return {
     ok:true,
