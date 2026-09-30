@@ -91,8 +91,30 @@ assert.match(requestReplaceCaptureOutput.qx, /url script-request-header .*header
 assert.doesNotMatch(requestReplaceCaptureOutput.qx, /REVIEW REQUIRED/);
 const requestReplaceCaptureHelper = [...requestReplaceCaptureOutput.generatedScripts.values()].find(text => text.includes('User-Agent'));
 assert.ok(requestReplaceCaptureHelper, 'QX request.header.replace must generate a helper');
-assert.match(requestReplaceCaptureHelper, /__wayxWith\("iPhone OS \\$1",v=>__wayxHeaderReplace\("User-Agent","iPhone OS \\\\(\\\\d\+\\\\)",v\)\)/);
+assert.ok(
+  requestReplaceCaptureHelper.includes('__wayxWith("iPhone OS $1",v=>__wayxHeaderReplace("User-Agent","iPhone OS (\\\\d+)",v));'),
+  'QX header helper must preserve action-local $1 replacement and regex capture source',
+);
 assert.match(requestReplaceCaptureHelper, /toLowerCase\(\)/);
+
+const requestAddDollarFixture = {
+  id:'RequestHeaderAddDollarFixture',
+  source:'https://example.invalid/request-header-add-dollar.lpx',
+  qx:'RequestHeaderAddDollarFixture.snippet',
+  surge:'RequestHeaderAddDollarFixture.sgmodule',
+  category:'测试',
+};
+const requestAddDollarSource = `#!name=RequestHeaderAddDollarFixture
+[Rewrite]
+request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.add("X-Price", "price $1")
+`;
+const requestAddDollarOutput = convert(requestAddDollarFixture, requestAddDollarSource, new Map(), STAMP);
+assert.equal(
+  requestAddDollarOutput.qx.split(/\\r?\\n/).some(line => !line.trim().startsWith('#') && / url request-header /.test(line)),
+  false,
+  'QX request.header.add with $ replacement syntax must not use the native replacement string',
+);
+assert.match(requestAddDollarOutput.qx, /REVIEW REQUIRED: header\.add duplicate semantics are not verified for qx/);
 
 
 const qxValidatorEntry = {id:'QxValidatorFixture'};
