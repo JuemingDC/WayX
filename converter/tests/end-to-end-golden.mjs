@@ -53,13 +53,12 @@ const requestAddFixture = {
 };
 const requestAddSource = `#!name=RequestHeaderAddFixture
 [Rewrite]
-request if ${url} ~= /^https:\/\/api\.example\.com\//i then request.header.add("X-Test", "one")
-response if ${url} ~= /^https:\/\/api\.example\.com\//i then response.header.replace("X-Test", /one/, "two")
+request if \${url} ~= /^https:\/\/api\.example\.com\//i then request.header.add("X-Test", "one")
+response if \${url} ~= /^https:\/\/api\.example\.com\//i then response.header.replace("X-Test", /one/, "two")
 `;
 const requestAddOutput = convert(requestAddFixture, requestAddSource, new Map(), STAMP);
-assert.match(
-  requestAddOutput.qx,
-  /url request-header ^([^\\r\\n]+)(\\r\\n) request-header $1$2X-Test: one$2/,
+assert.ok(
+  requestAddOutput.qx.includes('url request-header ^([^\\\\r\\\\n]+)(\\\\r\\\\n) request-header $1$2X-Test: one$2'),
   'QX request.header.add must use whole request-header insertion rather than object set',
 );
 assert.equal(
