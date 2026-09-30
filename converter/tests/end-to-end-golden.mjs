@@ -59,7 +59,7 @@ response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then response.head
 const requestAddOutput = convert(requestAddFixture, requestAddSource, new Map(), STAMP);
 assert.ok(
   requestAddOutput.qx.includes('url request-header ^([^\\\\r\\\\n]+)(\\\\r\\\\n) request-header $1$2X-Test: one$2'),
-  'QX request.header.add must use whole request-header insertion rather than object set',
+  'QX request.header.add must use whole request-header insertion rather than object set\n' + requestAddOutput.qx,
 );
 assert.equal(
   requestAddOutput.qx.split(/\\r?\\n/).some(line => !line.trim().startsWith('#') && / url response-header /.test(line)),
