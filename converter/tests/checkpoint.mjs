@@ -249,6 +249,9 @@ assert.equal(compact.includes('del(.b,.c)'), true);
 assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:true,scriptUrl:'https://example.com/request.js',sourceText:'$done({status:"HTTP/1.1 200 OK",body:$request.body});'}).action, 'script-analyze-echo-response');
 assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:false,scriptUrl:'https://example.com/header.js',sourceText:'$done({headers:$request.headers});'}).action, 'script-request-header');
 assert.equal(selectQxScriptAction({phase:'http-response',requiresBody:true,scriptUrl:'https://example.com/a.js'}).action, 'script-response-body');
+const unavailableRequestAction = selectQxScriptAction({phase:'http-request',requiresBody:true,scriptUrl:'https://example.com/unavailable.js',sourceText:''});
+assert.equal(unavailableRequestAction.action, null);
+assert.match(unavailableRequestAction.reason, /cannot distinguish request mutation from synthetic response/);
 const identityActionA = selectQxScriptAction({
   phase:'http-request',
   requiresBody:true,
