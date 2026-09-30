@@ -418,7 +418,7 @@ assert.equal(mixedSurge.surgeType, 'http-response');
 assert.match(mixedSurge.script, /\$response\.status/);
 assert.throws(
   () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ then response.header.add("Set-Cookie","a=1") | response.body.replace(/x/,"y")'), {target:'qx'}),
-  /does not handle response\.header\.add/,
+  /header\.add duplicate semantics are not verified for qx/,
 );
 
 const mixedJson = parseRewriteV2('response if ${url} ~= /api/ then response.header.del("Server") | response.json.replace("data.ads", false) | response.json.delete("data.tracking")');
