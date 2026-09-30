@@ -11,14 +11,14 @@ import { qxTargetPath, surgeTargetPath } from '../../converter/src/paths.mjs';
 import { analyzeSafeRewriteV2 } from '../../converter/src/rewrite-v2-safe.mjs';
 import { isRewriteV2, parseRewriteV2 } from '../../converter/src/rewrite-v2.mjs';
 import { validateRewriteV2Ast } from '../../converter/src/rewrite-v2-actions.mjs';
-import { inlineResolvedDependency, jqDependencySpecFromAction, qxMockPlanFromAction } from '../../converter/src/dependency.mjs';
+import { inlineResolvedDependency, jqDependencySpecFromAction, qxMockPlanFromAction, isDiscardedLegacyJqPathAction } from '../../converter/src/dependency.mjs';
 import { renderQxMockFileScript } from '../../converter/src/qx-mock.mjs';
-import { qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan, surgeHeaderRewritePlan, surgeInlineMockPlan, simpleUrlRewriteCondition } from '../../converter/src/rewrite-v2-semantic.mjs';
+import { qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan, surgeHeaderRewritePlan, surgeInlineMockPlan, surgeMockFilePlan, simpleUrlRewriteCondition } from '../../converter/src/rewrite-v2-semantic.mjs';
 import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript } from '../../converter/src/qx-semantic-script.mjs';
 import { isScriptV2, parseScriptV2, splitScriptV2Csv } from '../../converter/src/script-v2.mjs';
 import { qxScriptV2Plan, surgeScriptV2Plan } from '../../converter/src/script-v2-target.mjs';
 import { analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs } from '../../converter/src/argument-usage.mjs';
-import { surgeArgumentMetadata, surgePluginObjectArgument, surgeDynamicOptionValue, surgeEnableRequirement, parseLegacyLoonPluginObjectRefs } from '../../converter/src/argument.mjs';
+import { surgeArgumentMetadata, surgePluginObjectArgument, surgeRewriteArgumentPayload, surgeDynamicOptionValue, surgeEnableRequirement, parseLegacyLoonPluginObjectRefs } from '../../converter/src/argument.mjs';
 import { hasActiveSurgeLines, renderSurgeModuleHeader, validateSurgeModule } from '../../converter/src/surge-module.mjs';
 import { renderQxSnippetHeader } from '../../converter/src/metadata.mjs';
 import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
@@ -27,6 +27,7 @@ import { fetchOriginalText, fetchOriginalBytes, resolveOriginalUrl } from '../..
 import { registerComplexRewriteHandler, planComplexRewrite } from '../../converter/src/complex-rewrite-registry.mjs';
 import { renderMixedRewriteScript } from '../../converter/src/complex-rewrite-script.mjs';
 import { normalizeRegexBodyForTarget } from '../../converter/src/target-regex.mjs';
+import { renderSurgeRequestMockScript } from '../../converter/src/surge-mock.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -52,17 +53,37 @@ registerComplexRewriteHandler({
   },
 });
 registerComplexRewriteHandler({
+  id: 'surge-same-phase-header-script',
+  targets: ['surge'],
+  match: ast => ast.actions.length > 0 && ast.actions.every(action => action.name.startsWith(ast.phase + '.header.')),
+  plan: (ast, _target, ctx) => {
+    try {
+      const plan = renderMixedRewriteScript(ast, {target:'surge', stamp:ctx.stamp, category:ctx.category, sourceLine:ctx.sourceLine, argumentTable:ctx.argumentTable});
+      const payload = ctx.argumentRefs?.length ? surgeRewriteArgumentPayload(ctx.argumentRefs, ctx.argumentTable) : {ok:true, value:null};
+      if (!payload.ok) throw new Error(payload.reason);
+      const key = crypto.createHash('sha1').update('header-surge\0' + ctx.sourceLine).digest('hex').slice(0, 10);
+      const filename = 'header_' + key + '.js';
+      ctx.generatedScripts.set(filename, plan.script);
+      return {ok:true, section:'script', line:'wayx_header_' + key + ' = type=' + plan.surgeType + ',pattern=' + plan.pattern + ',script-path=' + RAW_BASE + '/script/' + ctx.id + '/' + filename + (plan.fullHeaderMode ? ',full-header-mode=true' : '') + (payload.value ? ',argument=' + payload.value : '')};
+    } catch (error) {
+      return {ok:false, terminal:true, reason:String(error?.message || error)};
+    }
+  },
+});
+registerComplexRewriteHandler({
   id: 'complex-body-pipeline-script',
   targets: ['qx','surge'],
-  match: (ast, info) => ast.actions.length > 1 && (info.families.includes('body-pipeline') || info.families.includes('json-pipeline')),
+  match: (ast, info, ctx) => (ast.actions.length > 1 || Boolean(ctx.argumentRefs?.length)) && (info.families.includes('body-pipeline') || info.families.includes('json-pipeline')),
   plan: (ast, target, ctx) => {
     try {
-      const plan = renderMixedRewriteScript(ast, {target, stamp:ctx.stamp, category:ctx.category, sourceLine:ctx.sourceLine});
+      const plan = renderMixedRewriteScript(ast, {target, stamp:ctx.stamp, category:ctx.category, sourceLine:ctx.sourceLine, argumentTable:target === 'surge' ? ctx.argumentTable : null});
       const key = crypto.createHash('sha1').update('complex-mixed\0' + ctx.sourceLine).digest('hex').slice(0, 10);
       const filename = 'complex_' + key + '.js';
       ctx.generatedScripts.set(filename, plan.script);
       if (target === 'qx') return {ok:true, section:'rewrite', line:plan.pattern + ' url ' + plan.qxAction + ' ' + RAW_BASE + '/script/' + ctx.id + '/' + filename};
-      return {ok:true, section:'script', line:'wayx_complex_' + key + ' = type=' + plan.surgeType + ',pattern=' + plan.pattern + ',script-path=' + RAW_BASE + '/script/' + ctx.id + '/' + filename + (plan.requiresBody ? ',requires-body=true' : '') + (plan.fullHeaderMode ? ',full-header-mode=true' : '')};
+      const payload = ctx.argumentRefs?.length ? surgeRewriteArgumentPayload(ctx.argumentRefs, ctx.argumentTable) : {ok:true, value:null};
+      if (!payload.ok) throw new Error(payload.reason);
+      return {ok:true, section:'script', line:'wayx_complex_' + key + ' = type=' + plan.surgeType + ',pattern=' + plan.pattern + ',script-path=' + RAW_BASE + '/script/' + ctx.id + '/' + filename + (plan.requiresBody ? ',requires-body=true' : '') + (plan.fullHeaderMode ? ',full-header-mode=true' : '') + (payload.value ? ',argument=' + payload.value : '')};
     } catch (error) {
       return {ok:false, terminal:true, reason:String(error?.message || error)};
     }
