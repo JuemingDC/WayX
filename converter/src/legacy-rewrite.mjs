@@ -380,9 +380,13 @@ function planMock(pattern, action, parsed, target, ctx) {
   }
 }
 
-export function planLegacyRewrite(pattern, action, target, ctx={}) {
+export function planLegacyRewriteIr(ir, target, ctx={}) {
+  if (!ir || ir.type !== 'rewrite-semantic-ir' || ir.sourceSyntax !== 'legacy') {
+    throw new TypeError('Expected Legacy Rewrite Semantic IR');
+  }
+  const pattern=ir.sourcePayload?.pattern ?? '';
+  const action=ir.sourcePayload?.action ?? '';
   const targetPattern=normalizeRegexBodyForTarget(pattern);
-  const ir=legacyRewriteToSemanticIr(pattern, action);
   const operation=ir.operations[0];
   const parsed=classifyLegacyRewrite(action);
   if (operation.kind === 'reject' && operation.variant !== 'video') {
@@ -409,4 +413,8 @@ export function planLegacyRewrite(pattern, action, target, ctx={}) {
   if (operation.kind === 'json') return planJson(pattern, action, parsed, target, ctx);
   if (operation.kind === 'mock') return planMock(pattern, action, parsed, target, ctx);
   return issue(pattern, action, 'unknown-legacy-rewrite-action', 'unsupported Loon legacy Rewrite action is outside the registered grammar');
+}
+
+export function planLegacyRewrite(pattern, action, target, ctx={}) {
+  return planLegacyRewriteIr(legacyRewriteToSemanticIr(pattern, action), target, ctx);
 }
