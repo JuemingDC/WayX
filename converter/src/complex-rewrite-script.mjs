@@ -80,9 +80,7 @@ function coarsePattern(ast) {
 function jsonValueSource(node, captures, guaranteed) {
   if (!node || !['string','raw-string','number','boolean','null'].includes(node.type)) throw new Error('JSON replacement value must be fixed');
   if (node.type === 'string') return capturedString(node, 'JSON replacement value', captures, guaranteed);
-  if (node.type === 'raw-string') {
-    try { return JSON.stringify(JSON.parse(node.value)); } catch { return JSON.stringify(node.value); }
-  }
+  if (node.type === 'raw-string') return JSON.stringify(node.value);
   return JSON.stringify(node.value);
 }
 function jsonPath(text) {
@@ -101,45 +99,53 @@ function statements(ast, target) {
   const guaranteed = guaranteedCaptures(ast.condition);
   let body = false, headers = false, json = false, headerAdd = false;
   for (const action of ast.actions) {
-    if (new RegExp('^' + ast.phase + '\\x2eheader\\x2e(?:add|set|del|replace)$').test(action.name)) {
+    if (new RegExp('^' + ast.phase + '\\\\x2eheader\\\\x2e(?:add|set|del|replace)$').test(action.name)) {
       headers = true;
       for (const args of expand(action)) {
         const name = fixed(args[0], 'header name');
         if (action.name.endsWith('.add')) {
           if (target !== 'surge') throw new Error('header.add duplicate semantics are not verified for ' + target);
           headerAdd = true;
-          out.push('__wayxAdd(' + JSON.stringify(name) + ',' + capturedString(args[1], 'header value', captures, guaranteed) + ');');
-        } else if (action.name.endsWith('.set')) out.push('__wayxSet(' + JSON.stringify(name) + ',' + capturedString(args[1], 'header value', captures, guaranteed) + ');');
-        else if (action.name.endsWith('.del')) out.push('__wayxDel(' + JSON.stringify(name) + ');');
-        else {
+          out.push('__wayxWith(' + capturedString(args[1], 'header value', captures, guaranteed) + ',v=>__wayxAdd(' + JSON.stringify(name) + ',v));');
+        } else if (action.name.endsWith('.set')) {
+          out.push('__wayxWith(' + capturedString(args[1], 'header value', captures, guaranteed) + ',v=>__wayxSet(' + JSON.stringify(name) + ',v));');
+        } else if (action.name.endsWith('.del')) {
+          out.push('__wayxDel(' + JSON.stringify(name) + ');');
+        } else {
           if (args[1]?.type !== 'regex') throw new Error('header.replace regex must be fixed');
-          out.push('__wayxHeaderReplace(' + JSON.stringify(name) + ',' + JSON.stringify(args[1].pattern) + ',' + capturedString(args[2], 'header replacement', captures, guaranteed) + ');');
+          out.push('__wayxWith(' + capturedString(args[2], 'header replacement', captures, guaranteed) + ',v=>__wayxHeaderReplace(' + JSON.stringify(name) + ',' + JSON.stringify(args[1].pattern) + ',v));');
         }
       }
       continue;
     }
     if (action.name === ast.phase + '.json.delete' || action.name === ast.phase + '.json.replace') {
       body = true; json = true;
-      const groups=expand(action);
-      for(const args of groups){
+      for(const args of expand(action)){
         const path=jsonPath(fixed(args[0], 'JSON key path'));
         if(action.name.endsWith('.delete')) {
           if (typeof path[path.length - 1] === 'number') throw new Error('json.delete array-index semantics are not verified');
-          out.push('__wayxJsonDelete(__wayxJson,'+JSON.stringify(path)+');');
+          out.push('__wayxJsonAction(j=>__wayxJsonDelete(j,'+JSON.stringify(path)+'));');
+        } else {
+          const value=jsonValueSource(args[1], captures, guaranteed);
+          if(args[1]?.type==='string' && String(args[1].value).includes('${')) out.push('__wayxWith('+value+',v=>__wayxJsonAction(j=>__wayxJsonReplace(j,'+JSON.stringify(path)+',v)));');
+          else out.push('__wayxJsonAction(j=>__wayxJsonReplace(j,'+JSON.stringify(path)+','+value+'));');
         }
-        else out.push('__wayxJsonReplace(__wayxJson,'+JSON.stringify(path)+','+jsonValueSource(args[1], captures, guaranteed)+');');
       }
       continue;
     }
     if (action.name === ast.phase + '.body.replace') {
-      if (action.args[0]?.type !== 'regex') throw new Error('body.replace regex must be fixed');
       body = true;
-      out.push('__wayxBody=String(__wayxBody ?? "").replace(new RegExp(' + JSON.stringify(action.args[0].pattern) + '),' + capturedString(action.args[1], 'body replacement', captures, guaranteed) + ');');
+      for(const args of expand(action)){
+        if (args[0]?.type !== 'regex') throw new Error('body.replace regex must be fixed');
+        const replacement=capturedString(args[1], 'body replacement', captures, guaranteed);
+        if(args[1]?.type==='string' && String(args[1].value).includes('${')) out.push('__wayxWith('+replacement+',v=>{__wayxBody=String(__wayxBody ?? "").replace(new RegExp('+JSON.stringify(args[0].pattern)+'),v);});');
+        else out.push('__wayxBody=String(__wayxBody ?? "").replace(new RegExp('+JSON.stringify(args[0].pattern)+'),'+replacement+');');
+      }
       continue;
     }
-    throw new Error('mixed helper does not handle ' + action.name);
+    throw new Error('complex helper does not handle ' + action.name);
   }
-  if (!body || !headers) throw new Error('mixed helper requires both header and body/JSON actions');
+  if (!body) throw new Error('complex helper requires at least one body/JSON action');
   return {out, body, headers, json, headerAdd};
 }
 export function renderMixedRewriteScript(ast, {target, stamp='', category='', sourceLine=''}={}) {
