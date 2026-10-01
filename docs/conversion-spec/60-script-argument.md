@@ -222,5 +222,7 @@ Source Script 的跨平台运行时适配由原脚本自身负责，不属于 Wa
 - Surge Rewrite argument helper：`converter/src/complex-rewrite-script.mjs`
 - Loon Argument parser：`converter/src/argument.mjs`
 - Argument dependency analysis：`converter/src/argument-usage.mjs`
-- Source fetch：`converter/src/source-fetch.mjs`
+- Source Script discovery/materialization：`converter/src/source-script-materializer.mjs`
+- Shared conversion context：`converter/src/conversion-context.mjs`
+- Original source fetch primitive：`converter/src/source-fetch.mjs`
 - Regression：`converter/tests/checkpoint.mjs`、`converter/tests/end-to-end-golden.mjs`
