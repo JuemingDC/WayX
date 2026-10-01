@@ -9,7 +9,7 @@ import { qxDirectRewritePlan, simpleUrlRewriteCondition } from './rewrite-v2-sem
 import { renderQxMockFileScript } from './qx-mock.mjs';
 import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript } from './qx-semantic-script.mjs';
 import { registerComplexRewriteHandler, planComplexRewrite } from './complex-rewrite-registry.mjs';
-import { renderMixedRewriteScript, renderSingleJsonMutationScript, renderObservedComplexRewriteScript } from './complex-rewrite-script.mjs';
+import { renderMixedRewriteScript, renderSingleJsonMutationScript } from './complex-rewrite-script.mjs';
 import { rewriteReview, rewriteIssue } from './rewrite-plan-result.mjs';
 import { singleRewriteOperation } from './rewrite-ir.mjs';
 
@@ -41,13 +41,24 @@ function ensureQxRewriteHandlers() {
   if (qxRewriteHandlersRegistered) return;
   qxRewriteHandlersRegistered=true;
   registerComplexRewriteHandler({
-    id:'qx-observed-source-pipeline',
+    id:'qx-inline-mock-header-pipeline',
     targets:['qx'],
-    match:(_ast,_info,ctx)=>ctx.observedComplexType?.id==='response-mock-header-set',
-    plan:(ast,target,ctx)=>{
+    match:ast=>{
+      const mockName=ast.phase+'.body.mock';
+      const headerNames=new Set([
+        ast.phase+'.header.add',
+        ast.phase+'.header.set',
+        ast.phase+'.header.del',
+        ast.phase+'.header.replace',
+      ]);
+      const mocks=ast.actions.filter(action=>action.name===mockName);
+      return mocks.length===1 && ast.actions.every(action=>
+        action.name===mockName || headerNames.has(action.name)
+      );
+    },
+    plan:(ast,_target,ctx)=>{
       try {
-        const plan=renderObservedComplexRewriteScript(ast,{
-          target,
+        const plan=renderQxInlineMockScript(ast,{
           stamp:ctx.stamp,
           category:ctx.category,
           sourceLine:ctx.sourceLine,
@@ -60,7 +71,7 @@ function ensureQxRewriteHandlers() {
           section:'rewrite',
           line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/script/'+ctx.id+'/'+filename,
         };
-      } catch (error) {
+      } catch(error){
         return {ok:false,terminal:true,reason:String(error?.message||error)};
       }
     },

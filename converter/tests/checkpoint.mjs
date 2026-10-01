@@ -64,8 +64,7 @@ import {
 } from '../src/index.mjs';
 import { classifyComplexRewrite, complexConditionKinds } from '../src/complex-rewrite.mjs';
 import { registerComplexRewriteHandler, planComplexRewrite, listComplexRewriteHandlers } from '../src/complex-rewrite-registry.mjs';
-import { renderMixedRewriteScript, renderSingleJsonMutationScript, renderObservedComplexRewriteScript } from '../src/complex-rewrite-script.mjs';
-import { observedComplexRewriteType, complexRewriteSignature } from '../src/complex-rewrite-types.mjs';
+import { renderMixedRewriteScript, renderSingleJsonMutationScript } from '../src/complex-rewrite-script.mjs';
 
 assert.equal(qxRule('URL-REGEX, "^https:\\/\\/ad\\.example\\.com", REJECT').line, '^https:\\/\\/ad\\.example\\.com url reject-200');
 assert.equal(
@@ -442,36 +441,28 @@ const complexClass = classifyComplexRewrite(complexFixture);
 assert.equal(complexClass.ok, true);
 assert.deepEqual(complexClass.families, ['header-pipeline','json-pipeline']);
 assert.deepEqual(complexConditionKinds(complexFixture.condition), ['&&','==','response.status','||','~=','url','~=','url']);
-const unobservedComplex = planComplexRewrite(complexFixture, 'qx');
-assert.equal(unobservedComplex.ok, false);
-assert.equal(unobservedComplex.terminal, true);
-assert.equal(unobservedComplex.issue, true);
-assert.equal(unobservedComplex.issueCode, 'unknown-complex-rewrite');
-assert.match(unobservedComplex.reason, /response\.header\.del \| response\.json\.replace/);
+const unhandledGeneric = planComplexRewrite(complexFixture, 'unit');
+assert.equal(unhandledGeneric.ok, false);
+assert.equal(unhandledGeneric.terminal, true);
+assert.notEqual(unhandledGeneric.issue, true);
+assert.match(unhandledGeneric.reason, /no verified generic complex Rewrite handler/);
 
-const observedComplexFixture = parseRewriteV2('response if ${url} ~= /api/ then response.body.mock("text", "{}", 200, false) | response.header.set("X-Test", "ok")');
-assert.equal(complexRewriteSignature(observedComplexFixture), 'response.body.mock | response.header.set');
-assert.equal(observedComplexRewriteType(observedComplexFixture)?.id, 'response-mock-header-set');
-const observedClass = classifyComplexRewrite(observedComplexFixture);
-assert.equal(observedClass.ok, true);
-assert.deepEqual(observedClass.families, ['mock-pipeline','header-pipeline']);
 registerComplexRewriteHandler({
-  id:'checkpoint-observed-response',
-  targets:['qx','surge'],
-  match:(_ast, _info, ctx) => ctx.observedComplexType?.id === 'response-mock-header-set',
+  id:'checkpoint-generic-family',
+  targets:['unit'],
+  match:(_ast, info) => info.families.includes('header-pipeline') && info.families.includes('json-pipeline'),
   plan:(_ast, target) => ({ok:true, section:'test', line:'handled-'+target}),
 });
-assert.equal(planComplexRewrite(observedComplexFixture, 'qx').line, 'handled-qx');
-assert.equal(planComplexRewrite(observedComplexFixture, 'surge').line, 'handled-surge');
-assert.deepEqual(listComplexRewriteHandlers(), [{id:'checkpoint-observed-response',targets:['qx','surge']}]);
+assert.equal(planComplexRewrite(complexFixture, 'unit').line, 'handled-unit');
+assert.deepEqual(listComplexRewriteHandlers(), [{id:'checkpoint-generic-family',targets:['unit']}]);
 
-const observedQxScript = renderObservedComplexRewriteScript(observedComplexFixture, {target:'qx'});
-assert.equal(observedQxScript.qxAction, 'script-echo-response');
-assert.match(observedQxScript.script, /X-Test/);
-assert.throws(
-  () => renderObservedComplexRewriteScript(complexFixture, {target:'qx'}),
-  /unregistered source-authored complex Rewrite signature/,
-);
+const genericMockFixture = parseRewriteV2('response if ${url} ~= /api/ then response.body.mock("text", "{}", 200, false) | response.header.set("X-Test", "ok")');
+const genericMockClass = classifyComplexRewrite(genericMockFixture);
+assert.equal(genericMockClass.ok, true);
+assert.deepEqual(genericMockClass.families, ['mock-pipeline','header-pipeline']);
+const genericQxMockScript = renderQxInlineMockScript(genericMockFixture);
+assert.equal(genericQxMockScript.qxAction, 'script-echo-response');
+assert.match(genericQxMockScript.script, /X-Test/);
 const singleComplexRejected = parseRewriteV2('response if ${url} ~= /api/ then response.header.del("Server")');
 assert.equal(planComplexRewrite(singleComplexRejected, 'qx').ok, false);
 assert.match(planComplexRewrite(singleComplexRejected, 'qx').reason, /multi-action/);

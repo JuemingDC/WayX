@@ -1,23 +1,16 @@
 {
-  "version": 1,
-  "scope": "Catalog-observed Loon Legacy Rewrite / Script syntax shapes",
+  "version": 2,
+  "scope": "Catalog-observed Loon Legacy semantic identifiers only; valid option/value/order combinations are grammar/planner concerns",
   "legacyRewrite": {
     "actionKinds": [
       "json",
       "mock",
       "reject"
     ],
-    "actionShapes": [
-      "json:response:del",
-      "json:response:jq",
-      "json:response:replace",
-      "mock:response:inline",
-      "reject:dict",
-      "reject:generic",
-      "reject:image"
-    ],
-    "mockOptionSets": [
-      "data|data-type|status-code"
+    "mockOptionNames": [
+      "data",
+      "data-type",
+      "status-code"
     ]
   },
   "legacyScript": {
@@ -32,20 +25,6 @@
       "script-path",
       "tag",
       "timeout"
-    ],
-    "optionShapes": [
-      "argument:raw-string",
-      "binary-body-mode:boolean",
-      "enable:variable",
-      "requires-body:boolean",
-      "script-path:raw-string",
-      "tag:raw-string",
-      "timeout:number"
-    ],
-    "optionSets": [
-      "argument|binary-body-mode|requires-body|script-path|tag|timeout",
-      "enable|requires-body|script-path|tag|timeout",
-      "requires-body|script-path|tag"
     ]
   }
 }

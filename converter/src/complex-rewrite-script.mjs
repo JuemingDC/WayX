@@ -6,8 +6,6 @@ import { findRewriteComparisons } from './rewrite-v2.mjs';
 import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
 import { compileComplexCondition } from './complex-rewrite.mjs';
 import { normalizeRegexBodyForTarget } from './target-regex.mjs';
-import { observedComplexRewriteType } from './complex-rewrite-types.mjs';
-import { renderQxInlineMockScript } from './qx-semantic-script.mjs';
 
 function fixed(node, label) {
   if (!node || !['string','raw-string'].includes(node.type) || (node.type === 'string' && String(node.value).includes('${'))) {
@@ -203,26 +201,6 @@ function renderRewriteScript(ast, {target, stamp='', category='', sourceLine='',
     ? (ast.phase==='request'?'script-request-body':'script-response-body')
     : (ast.phase==='request'?'script-request-header':'script-response-header');
   return {pattern:coarsePattern(ast),script:lines.join('\n'),qxAction,surgeType:ast.phase==='request'?'http-request':'http-response',requiresBody:plan.body,fullHeaderMode:plan.headerAdd};
-}
-
-export function renderObservedComplexRewriteScript(ast, options = {}) {
-  validateRewriteV2Ast(ast);
-  if (!Array.isArray(ast?.actions) || ast.actions.length < 2) {
-    throw new Error('observed complex helper requires a source-authored multi-action Rewrite pipeline');
-  }
-  const observed = observedComplexRewriteType(ast);
-  if (!observed) {
-    throw new Error('unregistered source-authored complex Rewrite signature');
-  }
-
-  if (observed.id === 'response-mock-header-set') {
-    if (options.target !== 'qx') {
-      throw new Error('response-mock-header-set uses target-native planning outside Quantumult X');
-    }
-    return renderQxInlineMockScript(ast, options);
-  }
-
-  throw new Error('observed complex Rewrite type has no renderer: ' + observed.id);
 }
 
 export function renderMixedRewriteScript(ast, options = {}) {

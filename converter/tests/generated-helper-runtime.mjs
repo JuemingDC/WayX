@@ -5,10 +5,8 @@
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import { parseRewriteV2 } from '../src/rewrite-v2.mjs';
-import {
-  renderMixedRewriteScript,
-  renderObservedComplexRewriteScript,
-} from '../src/complex-rewrite-script.mjs';
+import { renderMixedRewriteScript } from '../src/complex-rewrite-script.mjs';
+import { renderQxInlineMockScript } from '../src/qx-semantic-script.mjs';
 
 function clone(value) {
   return value === undefined ? undefined : JSON.parse(JSON.stringify(value));
@@ -137,10 +135,10 @@ function runGenerated(script, { request = {}, response = {}, argument = '' } = {
   ]);
 }
 
-// Production observed complex signature: QX response mock + header.set.
+// Generic QX inline mock pipeline: response mock + header.set.
 {
   const ast = parseRewriteV2('response if ${url} ~= /mock/ then response.body.mock("json", `{"ok":true}`, 201, false) | response.header.set("X-Test", "ok")');
-  const plan = renderObservedComplexRewriteScript(ast, { target:'qx' });
+  const plan = renderQxInlineMockScript(ast);
   const result = normalize(runGenerated(plan.script, {
     request:{ url:'https://example.test/mock' },
   }));
@@ -150,10 +148,10 @@ function runGenerated(script, { request = {}, response = {}, argument = '' } = {
   assert.equal(result.body, '{"ok":true}');
 }
 
-// Production observed complex signature: binary QX response mock returns bodyBytes losslessly.
+// Generic QX inline mock pipeline: binary response mock returns bodyBytes losslessly.
 {
   const ast = parseRewriteV2('response if ${url} ~= /binary/ then response.body.mock("png", "AQID", 200, true) | response.header.set("X-Binary", "yes")');
-  const plan = renderObservedComplexRewriteScript(ast, { target:'qx' });
+  const plan = renderQxInlineMockScript(ast);
   const result = runGenerated(plan.script, { request:{ url:'https://example.test/binary' } });
   assert.equal(result.status, 'HTTP/1.1 200 OK');
   assert.equal(result.headers['Content-Type'], 'image/png');

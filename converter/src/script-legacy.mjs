@@ -3,6 +3,19 @@
 // Category: Converter / Script / Source Parsing
 
 import { splitScriptV2Csv } from './script-v2.mjs';
+export const LOON_LEGACY_SCRIPT_OPTION_NAMES = new Set([
+  'script-path',
+  'tag',
+  'requires-body',
+  'binary-body-mode',
+  'timeout',
+  'max-size',
+  'argument',
+  'enable',
+  'enabled',
+  'debug',
+]);
+
 
 export function parseLegacyScriptLine(source) {
   const raw=String(source ?? '').trim();
@@ -18,9 +31,10 @@ export function parseLegacyScriptLine(source) {
 
   for (const token of splitScriptV2Csv(rest)) {
     const eq=token.indexOf('=');
-    if (eq<1) continue;
+    if (eq<1) return null;
     const name=token.slice(0,eq).trim().toLowerCase();
     const value=token.slice(eq+1).trim();
+    if(!LOON_LEGACY_SCRIPT_OPTION_NAMES.has(name) || options.has(name) || !value) return null;
     options.set(name,value);
     optionList.push({type:'option',name,value,raw:token});
   }

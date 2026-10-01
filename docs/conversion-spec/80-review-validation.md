@@ -150,21 +150,25 @@ Complex generated JavaScript must be executed in CI against synthetic request/re
 - `converter-check.yml` 将该 runtime fixture 作为独立 CI 步骤执行；
 - 当前 fixture 还额外覆盖 Catalog 已观察的 QX `response.body.mock | response.header.set` complex signature，包括 text body 与 Base64 `bodyBytes` 路径。
 
-## 80.9 Catalog-observed v2 syntax inventory
+## 80.9 Catalog-observed v2 semantic-token inventory
 
-CI 必须扫描 Source Catalog 中当前实际存在的 Loon Rewrite v2 / Script v2，并与 `converter/fixtures/catalog-syntax-inventory.json` 的人工确认基线比较。
+CI 必须扫描 Source Catalog 中当前实际存在的 Loon Rewrite v2 / Script v2，并与 `converter/fixtures/catalog-syntax-inventory.json` 的 semantic-token baseline 比较。
 
-Inventory 只记录语法形态，不记录声明数量，因此同一语法的规则增删不会单独触发失败。至少必须覆盖：
-- Rewrite v2：phase、condition comparison、capture、logical operator、group、regex flags、action name、action argument shape、source-authored multi-action signature；
-- Script v2：phase、condition shape、regex flags、script path type、argument kind、option name/value type 与 option-set；
-- `[Rewrite]` / `[Script]` 中以 `request` / `response` 开头但已不符合当前 v2 grammar 的活动声明必须立即失败。
+Inventory 只记录真正会引入新语义类别的 identifier：
 
-出现 inventory 差异时不得机械更新 fixture。必须先确认这是上游真实新增/删除的语法形态，并按“Loon 源语义 → QX 官方 sample / Surge 官方 Manual → CONVERSION_SPEC → generic parser/planner → tests → inventory baseline”的顺序处理。Parser 已能解析不等于该新形态已经获得 production 放行资格。
+- Rewrite v2：phase、condition variable class、condition operator、logical operator、action name；
+- Script v2：phase、condition variable class、condition operator、logical operator、option name；
+- `[Rewrite]` / `[Script]` 中以 `request` / `response` 开头但已不符合当前 source grammar 的活动声明必须立即失败。
+
+明确不得进入 baseline：action 参数 arity/type 组合、完整 multi-action signature、grouping、regex flag 组合、Script path/argument kind、option value shape、option 顺序与 option-set。上述合法性由 source parser、action/option registry 与 target planner 负责。
+
+因此一个已支持 action 第一次采用另一个合法参数形式、已知 option 以新的顺序/子集出现、或 multi-action pipeline 出现新的已支持 family 组合，都不得仅因 Catalog 以前没见过而 fail。只有真正新的 phase / condition variable class / operator / action name / Script option name 才触发 semantic-token baseline 审查。
 
 实现：
 - baseline：`converter/fixtures/catalog-syntax-inventory.json`
 - validator：`converter/tests/catalog-syntax-inventory.mjs`
 - CI：`.github/workflows/converter-check.yml`
+
 
 ## 80.10 Quantumult X / Surge scoped capability evidence gate
 
@@ -400,22 +404,24 @@ CI 必须验证在线 sync 与 canonical regeneration 的失败诊断已收口�
 - behavior contract：`converter/tests/workflow-diagnostics.mjs`
 - architecture contract：`converter/tests/spec-block-contract.mjs`
 
-## 80.22 Catalog Legacy syntax inventory gate
+## 80.22 Catalog Legacy semantic-token inventory gate
 
-CI 必须扫描全部 Source Catalog 的活动 Legacy Rewrite / Legacy Script 声明，并与人工确认 baseline 对比：
+CI 必须扫描全部 Source Catalog 的活动 Legacy Rewrite / Legacy Script，并与人工确认的 semantic-token baseline 对比：
 
-- Legacy Rewrite：跳过 Rewrite v2 后，按 production legacy declaration split + `classifyLegacyRewriteAction()` 记录 action kinds/shapes；
-- 当前 baseline 中不得存在 `unknown` legacy Rewrite；新 unknown action 必须立即失败，不允许仅因 production 最终会生成 Issue 就更新 baseline；
-- mock 只记录 option key 组合，不记录 data/status/path 的具体值；
-- Legacy Script：跳过 Script v2 后，所有活动 HTTP Script 声明必须由 `parseLegacyScriptLine()` 成功解析；
-- 记录 Script phase、option names、value shapes、option-set；不锁 script path/pattern/具体参数值或声明数量；
-- baseline 变更提示必须明确“禁止机械更新”，要求先审查 Loon source semantics，再判断是否需要 QX/Surge 官方能力核对和 converter/spec/tests 变更；
-- inventory 只用于发现新上游语法，不得成为 target capability whitelist；
-- 本 gate 不改 target 输出，canonical/helper 必须 0 diff。
+- Legacy Rewrite 使用 production `classifyLegacyRewriteAction()`；unknown action 必须失败；
+- baseline 只记录 action category 与 mock option name；
+- request/response placement、operation/reject variant/redirect status 组合、mock option-set 与具体参数值不得进入 baseline；
+- Legacy mock production parser 必须显式拒绝未知 option name，不能依赖 observed option-set 间接发现；
+- Legacy Script 使用 production `parseLegacyScriptLine()`；不在注册 grammar 内的声明必须失败；
+- baseline 只记录 HTTP phase 与 option name；
+- option value shape、option 顺序、option-set、script URL/pattern/tag/argument 内容不得进入 baseline；
+- production Legacy Script parser 必须显式拒绝未知 option name 与重复 option；
+- 已知 action/option 的新合法组合不得触发 baseline failure。
 
 实现：
 - inventory test：`converter/tests/catalog-legacy-syntax-inventory.mjs`
 - baseline fixture：`converter/fixtures/catalog-legacy-syntax-inventory.json`
+
 
 ## 80.23 Actions-only upstream automation gate
 

@@ -78,6 +78,20 @@ assert.equal(singleRewriteOperation(legacyMock).kind,'mock');
 assert.equal(singleRewriteOperation(legacyMock).operation,'inline');
 assert.equal(singleRewriteOperation(legacyMock).mock.status,201);
 
+const legacyMockReordered=legacyRewriteToSemanticIr(
+  '^https://api\\.example\\.com',
+  'mock-response-body status-code=202 data="ok" data-type=text',
+);
+assert.equal(singleRewriteOperation(legacyMockReordered).kind,'mock');
+assert.equal(singleRewriteOperation(legacyMockReordered).mock.status,202);
+
+const legacyMockUnknown=legacyRewriteToSemanticIr(
+  '^https://api\\.example\\.com',
+  'mock-response-body data-type=text data="ok" future-option=true',
+);
+assert.equal(singleRewriteOperation(legacyMockUnknown).kind,'unknown');
+assert.match(singleRewriteOperation(legacyMockUnknown).reason,/future-option/);
+
 const v2MockSource='response if ${url} ~= /api/ then response.body.mock("json","{}",201,false)';
 const v2Mock=rewriteV2AstToSemanticIr(parseRewriteV2(v2MockSource));
 assert.equal(singleRewriteOperation(v2Mock).kind,'mock');

@@ -73,25 +73,59 @@ const surgeJson=planSurgeRewrite(jsonAddIr,surgeJsonCtx);
 assert.equal(surgeJson.section,'script');
 assert.equal(surgeJsonCtx.generatedScripts.size,1);
 
-const observedSource='response if ${url} ~= /api/ then response.body.mock("text","{}",200,false) | response.header.set("X-Test","ok")';
-const observedIr=v2(observedSource);
-const qxObservedCtx=ctx();
-const qxObserved=planQxRewrite(observedIr,qxObservedCtx);
-assert.equal(qxObserved.section,'rewrite');
-assert.equal(qxObservedCtx.generatedScripts.size,1);
-const surgeObserved=planSurgeRewrite(observedIr,ctx());
-assert.equal(surgeObserved.section,'map');
+const mockHeaderSource='response if ${url} ~= /api/ then response.body.mock("text","{}",200,false) | response.header.set("X-Test","ok")';
+const mockHeaderIr=v2(mockHeaderSource);
+const qxMockHeaderCtx=ctx();
+const qxMockHeader=planQxRewrite(mockHeaderIr,qxMockHeaderCtx);
+assert.equal(qxMockHeader.section,'rewrite');
+assert.equal(qxMockHeaderCtx.generatedScripts.size,1);
+const surgeMockHeader=planSurgeRewrite(mockHeaderIr,ctx());
+assert.equal(surgeMockHeader.section,'map');
 
-const unknownComplexSource='response if ${url} ~= /api/ then response.header.del("Server") | response.body.replace(/x/,"y")';
-const unknownComplex=v2(unknownComplexSource);
-const qxUnknown=planQxRewrite(unknownComplex,ctx());
-assert.equal(qxUnknown.section,'comment');
-assert.equal(qxUnknown.issue,true);
-assert.equal(qxUnknown.issueCode,'unknown-complex-rewrite');
-const surgeUnknown=planSurgeRewrite(unknownComplex,ctx());
-assert.equal(surgeUnknown.section,'comment');
-assert.equal(surgeUnknown.issue,true);
-assert.equal(surgeUnknown.issueCode,'unknown-complex-rewrite');
+const mockDelSource='response if ${url} ~= /api/ then response.body.mock("text","{}",200,false) | response.header.del("Server")';
+const qxMockDelCtx=ctx();
+const qxMockDel=planQxRewrite(v2(mockDelSource),qxMockDelCtx);
+assert.equal(qxMockDel.section,'rewrite');
+assert.equal(qxMockDelCtx.generatedScripts.size,1);
+assert.equal(planSurgeRewrite(v2(mockDelSource),ctx()).section,'map');
+
+const mixedSource='response if ${url} ~= /api/ then response.header.del("Server") | response.body.replace(/x/,"y")';
+const mixedIr=v2(mixedSource);
+const qxMixedCtx=ctx();
+const qxMixed=planQxRewrite(mixedIr,qxMixedCtx);
+assert.equal(qxMixed.section,'rewrite');
+assert.equal(qxMixed.issue,undefined);
+assert.equal(qxMixedCtx.generatedScripts.size,1);
+const surgeMixedCtx=ctx();
+const surgeMixed=planSurgeRewrite(mixedIr,surgeMixedCtx);
+assert.equal(surgeMixed.section,'script');
+assert.equal(surgeMixed.issue,undefined);
+assert.equal(surgeMixedCtx.generatedScripts.size,1);
+
+const threeActionSource='response if ${url} ~= /api/ then response.header.del("Server") | response.body.replace(/x/,"y") | response.json.delete("data.ad")';
+const qxThreeCtx=ctx();
+const qxThree=planQxRewrite(v2(threeActionSource),qxThreeCtx);
+assert.equal(qxThree.section,'rewrite');
+assert.equal(qxThreeCtx.generatedScripts.size,1);
+const qxThreeScript=[...qxThreeCtx.generatedScripts.values()][0];
+const qxActionBody=qxThreeScript.slice(qxThreeScript.indexOf('if('));
+assert.ok(qxActionBody.indexOf('__wayxDel("Server");') < qxActionBody.indexOf('__wayxBody=String'));
+assert.ok(qxActionBody.indexOf('__wayxBody=String') < qxActionBody.indexOf('__wayxJsonAction(j=>__wayxJsonDelete'));
+
+const surgeThreeCtx=ctx();
+const surgeThree=planSurgeRewrite(v2(threeActionSource),surgeThreeCtx);
+assert.equal(surgeThree.section,'script');
+assert.equal(surgeThreeCtx.generatedScripts.size,1);
+
+const unsupportedKnownComplexSource='response if ${url} ~= /api/ then response.json.jq(".") | response.header.set("X-Test","ok")';
+const qxUnsupportedKnown=planQxRewrite(v2(unsupportedKnownComplexSource),ctx());
+assert.equal(qxUnsupportedKnown.section,'comment');
+assert.notEqual(qxUnsupportedKnown.issue,true);
+assert.match(qxUnsupportedKnown.line,/REVIEW REQUIRED/);
+const surgeUnsupportedKnown=planSurgeRewrite(v2(unsupportedKnownComplexSource),ctx());
+assert.equal(surgeUnsupportedKnown.section,'comment');
+assert.notEqual(surgeUnsupportedKnown.issue,true);
+assert.match(surgeUnsupportedKnown.line,/REVIEW REQUIRED/);
 
 const qxArgument=planQxRewrite(
   v2('response if ${enabled} == true && ${url} ~= /api/ then response.json.replace("data.ok",true)'),

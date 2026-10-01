@@ -20,6 +20,21 @@ assert.equal(legacyParsed.binaryBodyMode,true);
 assert.equal(legacyParsed.timeout,'9');
 assert.equal(legacyParsed.argument,'{"mode":"x"}');
 
+const legacyReordered=parseLegacyScriptLine(
+  'http-response ^https://api\\.example\\.com tag=Resp, timeout=9, script-path=https://example.com/resp.js, argument={"mode":"x"}, binary-body-mode=true, requires-body=true'
+);
+assert.equal(legacyReordered.script.path,'https://example.com/resp.js');
+assert.equal(legacyReordered.requiresBody,true);
+assert.equal(legacyReordered.timeout,'9');
+assert.equal(
+  parseLegacyScriptLine('http-response ^https://api\\.example\\.com script-path=https://example.com/resp.js, future-option=true'),
+  null,
+);
+assert.equal(
+  parseLegacyScriptLine('http-response ^https://api\\.example\\.com script-path=https://example.com/a.js, tag=A, tag=B'),
+  null,
+);
+
 const legacyIr=legacyScriptToSemanticIr(legacyParsed,{source:legacySource});
 assert.equal(legacyIr.type,'script-semantic-ir');
 assert.equal(legacyIr.sourceSyntax,'legacy');
@@ -64,6 +79,13 @@ assert.equal(/debug|max-size/i.test(qxLegacyDroppedOptions.notes.join('\n')),fal
 
 const v2Source='response if ${url} ~= /api/ then script("https://example.com/v2.js") with requires_body=true, binary_body_mode=true, tag="V2"';
 const v2Ast=parseScriptV2(v2Source);
+const v2Reordered=parseScriptV2(
+  'response if ${url} ~= /api/ then script("https://example.com/v2.js") with tag="V2", binary_body_mode=true, requires_body=true'
+);
+assert.deepEqual(
+  v2Reordered.options.map(option=>option.name),
+  ['tag','binary_body_mode','requires_body'],
+);
 const v2Ir=scriptV2AstToSemanticIr(v2Ast,{source:v2Source});
 assert.equal(v2Ir.sourceSyntax,'v2');
 assert.equal(v2Ir.phase,'response');
