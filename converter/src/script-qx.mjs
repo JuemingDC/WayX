@@ -46,12 +46,6 @@ export function planQxScript(ir,ctx={}) {
   if (sc.binaryBodyMode) {
     notes.push('Source binary-body-mode=true ignored for Quantumult X; requires-body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.');
   }
-  if (sc.debug) {
-    notes.push('Source Script debug ignored for Quantumult X.');
-  }
-  if (sc.maxSize) {
-    notes.push('Source Script max-size ignored for Quantumult X.');
-  }
 
   if (enableFixed==='false' || enableFixed==='0') {
     return {ok:true,disabled:true,reason:'Loon Legacy Script enable=false',tag:sc.tag,notes};
