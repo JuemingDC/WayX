@@ -73,14 +73,15 @@ for(const root of executableRoots){
     if(rel === '.github/converter/tests/repository-layout.mjs') continue;
     const text=await fs.readFile(path.join(ROOT,rel),'utf8');
     const checks=[
-      {re:/(^|[\s'"`(])converter\//gm,label:'root converter/'},
-      {re:/(^|[\s'"`(])monitor\//gm,label:'root monitor/'},
-      {re:/(^|[\s'"`(])docs\/conversion-spec\//gm,label:'root docs/conversion-spec/'},
-      {re:/(^|[\s'\"`(])boxjs\//gm,label:'lowercase boxjs/'},
-      {re:/(^|[\s'\"`(])module\//gm,label:'lowercase module/'},
-      {re:/(^|[\s'\"`(])rule\//gm,label:'lowercase rule/'},
-      {re:/(^|[\s'\"`(])script\//gm,label:'lowercase script/'},
-      {re:/\/main\/script\//gm,label:'lowercase Raw GitHub /script/'},
+      {re:/(^|[\s'"\`(])converter\//gm,label:'root converter/'},
+      {re:/(^|[\s'"\`(])monitor\//gm,label:'root monitor/'},
+      {re:/(^|[\s'"\`(])docs\/conversion-spec\//gm,label:'root docs/conversion-spec/'},
+      {re:/['"\`]boxjs\//g,label:'lowercase boxjs path'},
+      {re:/['"\`]module\//g,label:'lowercase module path'},
+      {re:/['"\`]rule\//g,label:'lowercase rule path'},
+      {re:/['"\`]script\//g,label:'lowercase script path'},
+      {re:/path\.join\([^\n)]*['"](?:boxjs|module|rule|script)['"]/g,label:'lowercase root directory in path.join'},
+      {re:/\/main\/script\//g,label:'lowercase Raw GitHub /script/'},
     ];
     for(const {re,label} of checks){
       if(re.test(text)) stale.push(rel+': '+label);
