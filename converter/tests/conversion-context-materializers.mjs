@@ -14,6 +14,7 @@ import {
   materializeSourceScripts,
 } from '../src/source-script-materializer.mjs';
 import { materializeConversionContext } from '../src/conversion-context.mjs';
+import { convertPlugin } from '../src/conversion-pipeline.mjs';
 
 const entry={
   id:'MaterializerFixture',
@@ -112,5 +113,19 @@ assert.ok(fetchedText.includes('https://example.com/plugins/mock.json'));
 assert.ok(fetchedText.includes('https://example.com/plugins/legacy.js'));
 assert.ok(fetchedText.includes('https://example.com/plugins/scripts/v2.js'));
 assert.ok(fetchedBytes.includes('https://example.com/plugins/image.bin'));
+
+const conversionOptions={
+  parsed:context.parsed,
+  scriptMap:context.scriptMap,
+  mockFiles:context.mockFiles,
+  jqFiles:context.jqFiles,
+  stamp:'2026-10-01 00:00:00 +08:00',
+  rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main',
+};
+const baseline=convertPlugin(entry,source,conversionOptions);
+const reused=convertPlugin(entry,'#!name=Different\\n[Rule]\\nDOMAIN,wrong.example,DIRECT\\n',conversionOptions);
+assert.equal(reused.qx,baseline.qx,'convertPlugin must consume the provided parsed plugin instead of reparsing source');
+assert.equal(reused.surge,baseline.surge,'Surge output must use the same materialized parsed plugin');
+assert.deepEqual([...reused.generatedScripts], [...baseline.generatedScripts]);
 
 console.log('Conversion-context materializer contract passed');
