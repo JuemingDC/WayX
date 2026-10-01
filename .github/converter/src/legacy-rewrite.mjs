@@ -2,7 +2,7 @@
 // Author: chance
 // Category: Converter / Legacy Rewrite
 import crypto from 'node:crypto';
-import { minifyJq, quoteJq } from './jq.mjs';
+import { minifyJq, quoteJq, renderFixedPathDeleteJq } from './jq.mjs';
 import { normalizeRegexBodyForTarget } from './target-regex.mjs';
 import { renderQxHeaderScript, renderQxInlineMockScript } from './qx-semantic-script.mjs';
 import { surgeInlineMockPlan } from './rewrite-v2-semantic.mjs';
@@ -92,11 +92,7 @@ function compileJsonMutation(phase, op, rest) {
     if (!tokens.length) return { ok:false, reason:'missing JSON path' };
     const paths = tokens.map(unquote).map(path => ({parts:jqPath(path), access:jqAccess(path)}));
     if (paths.some(path => !path.parts || !path.access)) return { ok:false, reason:'unsupported JSON path syntax' };
-    if (paths.length === 1) return {ok:true, jq:`del(${paths[0].access})`};
-    if (paths.some(path => path.parts.some(part => typeof part === 'number'))) {
-      return {ok:true, jq:paths.map(path => `del(${path.access})`).join(' | ')};
-    }
-    return {ok:true, jq:'del(' + paths.map(path => path.access).join(', ') + ')'};
+    return {ok:true, jq:renderFixedPathDeleteJq(paths.map(path => ({parts:path.parts, selector:path.access})))};
   }
 
   if (op === 'add' || op === 'replace') {
