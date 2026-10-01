@@ -78,8 +78,8 @@ normalize source
 → MITM converter
 → target planner
    ├─ Rule: target native → unsupported type commented out（不走 Script fallback）
-   ├─ Quantumult X Rewrite/Mock: native → dedicated helper → observed multi-action complex helper → commented Review/Issue
-   └─ Surge Rewrite/Mock: native → dedicated helper → observed multi-action complex helper → commented Review/Issue
+   ├─ Quantumult X Rewrite/Mock: native → dedicated helper → source-authored generic complex helper → commented Review/Issue
+   └─ Surge Rewrite/Mock: native → dedicated helper → source-authored generic complex helper → commented Review/Issue
 → validator
 → source/target reconciliation
 → output
