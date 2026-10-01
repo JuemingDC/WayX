@@ -81,22 +81,22 @@ assert.match(qxIgnoredOptionsOutput.qx, /url script-response-body https:\/\/exam
 assert.match(headerGroupOutput.surge, /header-del content-type/);
 assert.match(headerGroupOutput.surge, /header-add content-type text\/plain; charset=utf-8/);
 
-const unknownComplexFixture = {
-  id:'UnknownComplexFixture',
-  source:'https://example.invalid/unknown-complex.lpx',
-  qx:'UnknownComplexFixture.snippet',
-  surge:'UnknownComplexFixture.sgmodule',
+const genericComplexFixture = {
+  id:'GenericComplexFixture',
+  source:'https://example.invalid/generic-complex.lpx',
+  qx:'GenericComplexFixture.snippet',
+  surge:'GenericComplexFixture.sgmodule',
   category:'测试',
 };
-const unknownComplexSource = `#!name=UnknownComplexFixture
+const genericComplexSource = `#!name=GenericComplexFixture
 [Rewrite]
-response if \${url} ~= /api/ then response.header.set("X-Test", "ok") | response.json.replace("data.ads", false)
+response if ${url} ~= /api/ then response.header.set("X-Test", "ok") | response.json.replace("data.ads", false)
 `;
-const unknownComplexOutput = convert(unknownComplexFixture, unknownComplexSource, new Map(), STAMP);
-assert.match(unknownComplexOutput.qx, /ISSUE REQUIRED \[unknown-complex-rewrite\]/);
-assert.match(unknownComplexOutput.surge, /ISSUE REQUIRED \[unknown-complex-rewrite\]/);
-assert.doesNotMatch(unknownComplexOutput.qx, /complex_qx_/);
-assert.doesNotMatch(unknownComplexOutput.surge, /wayx_complex_/);
+const genericComplexOutput = convert(genericComplexFixture, genericComplexSource, new Map(), STAMP);
+assert.doesNotMatch(genericComplexOutput.qx, /ISSUE REQUIRED|REVIEW REQUIRED/);
+assert.doesNotMatch(genericComplexOutput.surge, /ISSUE REQUIRED|REVIEW REQUIRED/);
+assert.match(genericComplexOutput.qx, /complex_qx_/);
+assert.match(genericComplexOutput.surge, /wayx_complex_/);
 
 const unknownActionFixture = {
   id:'UnknownActionFixture',
