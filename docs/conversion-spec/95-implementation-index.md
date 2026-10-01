@@ -8,7 +8,7 @@
 | 05 | Catalog、手工资产边界、whole-plugin parser、shared conversion context、pure conversion pipeline、source section/comment orchestration、陌生插件 | `source-catalog.mjs`, `plugin-parser.mjs`, `dependency-materializer.mjs`, `source-script-materializer.mjs`, `conversion-context.mjs`, `conversion-pipeline.mjs`, `managed-artifacts.mjs`, `workflow-diagnostics.mjs`, `upstream-run-report.mjs`, `source-section.mjs`, `source-metadata.mjs`, `.github/manual-assets.json`, `source-fetch.mjs`, `sync-convert.mjs`, `regenerate-canonical.mjs` | `conversion-context-materializers.mjs`, `conversion-pipeline.mjs`, `source-section-comments.mjs`, `generic-identity.mjs`, `genericity-audit.mjs`, `manual-assets.mjs` |
 | 10 | QX/Surge 目标文件结构 / section routing / final assembly | `paths.mjs`, `metadata.mjs`, `output-lines.mjs`, `qx-output.mjs`, `surge-output.mjs`, `qx-snippet-validator.mjs`, `surge-module.mjs`, `qx-official-capabilities.mjs`, `surge-official-capabilities.mjs` | `target-output-builders.mjs`, `checkpoint.mjs`, `qx-official-capabilities.mjs`, `surge-official-capabilities.mjs`, target validators |
 | 20 | Rule AST / Policy / URL-REGEX reject-X | `rule-ast.mjs`, `rule-qx.mjs`, `rule-surge.mjs`, `rule.mjs` facade | `rule-ast.mjs`, `checkpoint.mjs`, `surge-rule-coverage.mjs`, `catalog-rule-inventory.mjs` |
-| 30 | Legacy/v2 source parsers → Rewrite Semantic IR → QX/Surge target planners / observed complex signatures | `rewrite-ir.mjs`, `rewrite-qx.mjs`, `rewrite-surge.mjs`, `legacy-rewrite.mjs`, `rewrite-v2*.mjs`, `complex-rewrite*.mjs`, target renderers | `rewrite-ir.mjs`, `rewrite-target-planners.mjs`, `checkpoint.mjs`, `loon-new-syntax-cases.mjs`, `complex-source-inventory.mjs`, `catalog-syntax-inventory.mjs` |
+| 30 | Legacy/v2 source parsers → Rewrite Semantic IR → QX/Surge target planners / generic complex action families | `rewrite-ir.mjs`, `rewrite-qx.mjs`, `rewrite-surge.mjs`, `legacy-rewrite.mjs`, `rewrite-v2*.mjs`, `complex-rewrite*.mjs`, target renderers | `rewrite-ir.mjs`, `rewrite-target-planners.mjs`, `checkpoint.mjs`, `loon-new-syntax-cases.mjs`, `complex-source-inventory.mjs`, `catalog-syntax-inventory.mjs` |
 | 40 | Regex / condition AST | `rewrite-v2.mjs`, `rewrite-v2-actions.mjs`, `target-regex.mjs` | `checkpoint.mjs`, Rewrite v2 coverage |
 | 50 | JSON/JQ/mock/dependency discovery/materialization | `jq.mjs`, `dependency.mjs`, `dependency-materializer.mjs`, `conversion-context.mjs`, `qx-mock.mjs`, `surge-mock.mjs`, `legacy-rewrite.mjs` | `conversion-context-materializers.mjs`, `checkpoint.mjs`, end-to-end Golden |
 | 60 | Legacy/v2 Script parser → target-neutral Script IR → QX/Surge Script planner / Source Script materialization / Argument analysis | `script-legacy.mjs`, `script-v2.mjs`, `script-ir.mjs`, `script-qx.mjs`, `script-surge.mjs`, `script.mjs`, `script-v2-target.mjs`, `argument.mjs`, `argument-usage.mjs`, `source-script-materializer.mjs`, `conversion-context.mjs`, `source-fetch.mjs` | `conversion-context-materializers.mjs`, `script-ir-target-planners.mjs`, `catalog-syntax-inventory.mjs`, `source-script-url-preservation.mjs`, `checkpoint.mjs` |
@@ -32,7 +32,7 @@
 → Legacy Rewrite parser / Rewrite v2 parser → target-neutral Rewrite Semantic IR → rewrite-qx.mjs / rewrite-surge.mjs
 → Legacy Script parser / Script v2 parser → target-neutral Script IR → script-qx.mjs / script-surge.mjs
 → MITM generic planner
-→ target native planner → dedicated helper → observed complex helper → commented Review/Issue
+→ target native planner → dedicated helper → source-authored generic complex helper → commented Review/Issue
 → QX output builder / Surge output builder → final snippet/module
 → generated-helper managed write/diff primitives
 → `qx-snippet-validator.mjs` + `surge-module.mjs` target validation
@@ -50,4 +50,4 @@
 
 - Test：`converter/tests/catalog-legacy-syntax-inventory.mjs`
 - Baseline：`converter/fixtures/catalog-legacy-syntax-inventory.json`
-- Scope：Legacy Rewrite / Legacy HTTP Script observed syntax only; no target capability expansion.
+- Scope：Legacy Rewrite / Legacy HTTP Script semantic identifiers only; valid option/value/order combinations are source grammar/planner concerns.
