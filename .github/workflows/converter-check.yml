@@ -104,6 +104,7 @@ jobs:
           node converter/tests/workflow-control.mjs
           node converter/tests/upstream-automation.mjs
           node converter/tests/source-fetch.mjs
+          python converter/tests/validate_conversion_policy.py
           node converter/tests/manual-assets.mjs
 
       - name: Quantumult X official capability drift gate
@@ -122,7 +123,7 @@ jobs:
           while IFS= read -r -d '' file; do
             node --check "$file"
           done < <(find script converter .github/scripts -type f \( -name '*.js' -o -name '*.mjs' \) -print0)
-          python -m py_compile converter/tools/fetch-upstream.py .github/scripts/*.py monitor/*.py
+          python -m py_compile converter/tools/fetch-upstream.py converter/tests/validate_conversion_policy.py .github/scripts/*.py monitor/*.py
 
       - name: Regenerate canonical outputs
         run: node converter/tools/regenerate-canonical.mjs --write
