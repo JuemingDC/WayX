@@ -20,7 +20,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 核心转换原则：
 
 1. 目标平台原生格式能严格等价表达 → 使用原生格式。
-2. Rewrite/Mock 原生格式不能严格等价 → 使用对应专用 helper；只有源单条声明真实写出的、已观察登记的 multi-action signature 才使用 complex helper，禁止把相邻规则组合。
+2. Rewrite/Mock 原生格式不能严格等价 → 使用对应专用 helper；源单条声明真实写出的 multi-action pipeline 可按通用 action family + renderer 能力进入 complex helper，禁止把相邻规则组合，也禁止按 Catalog 已观察完整 signature 建白名单。
 3. Rewrite helper 仍无法保持源语义 → 注释原声明并输出明确 Review；Rule 不使用 Script fallback。
 4. 不按插件名写特例；实现必须是通用语义能力。
 5. 所有新标准必须同步：规范 → converter → validator/gate → tests → Golden/canonical。
@@ -52,7 +52,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 
 ### 2.3 Rewrite / Complex helper
 
-- Complex renderer 的既有 Header/Body/JSON 能力继续保留；production 只准入 source-authored + observed signature。
+- Complex renderer 按 source-authored multi-action AST + generic action family 准入；已支持 family 的新 cardinality/顺序/组合不再要求 observed signature 登记，renderer 无法保真时 Review。
 - 2026-09-30 扫描 20 个 Catalog Loon 插件，当前唯一活动 complex signature 为 `response.body.mock | response.header.set`（3 条），已登记为通用类型。
 - 相邻、同 condition 的独立 Rewrite 不再合并；Webpage 的独立 `response.header.add` / `response.header.set` 将分别转换。
 - condition named capture、`${name.n}`、action-local `$0...$n` 已分离处理。
@@ -164,7 +164,7 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 ### P2 — 长期质量工作
 
 - [x] 已建立 Catalog-observed Legacy Rewrite / Legacy Script syntax inventory：`converter/tests/catalog-legacy-syntax-inventory.mjs` + `converter/fixtures/catalog-legacy-syntax-inventory.json`。当前 Catalog 为 116 条 Legacy Rewrite / 20 条 Legacy Script；无 unknown Legacy Rewrite、无无法解析 Legacy Script。该 gate 使用 production classifier/parser，只锁 action/option 语法形态，不锁具体 URL/pattern/value/数量。Converter Check #665 全绿，canonical/helper 0 diff。
-- [x] 已建立 Catalog-observed Rewrite v2 / Script v2 syntax inventory：`converter/tests/catalog-syntax-inventory.mjs` + `converter/fixtures/catalog-syntax-inventory.json`。当前基线为 175 条 Rewrite v2 / 110 条 Script v2；CI 只锁语法形态，不锁同类规则数量。新 action/参数形态/condition/capture/logical/regex flag/Script option/argument/option-set 或 multi-action signature 首次出现时 fail closed，必须先核对官方语义再更新基线；未观察到的 complex signature 仍不得预先放行。
+- [x] Rewrite v2 / Script v2 inventory 已升级为 semantic-token gate：只锁 phase、condition variable/operator、logical operator、Rewrite action name、Script option name；不锁 action 参数 shape/arity、完整 multi-action signature、grouping/regex flag 组合、Script path/argument kind、option value/order/option-set。组合合法性由 parser/registry/planner 负责。
 - [x] Catalog-observed Rule inventory 已升级为 v2 semantic-token gate：只锁递归 Rule Type、top-level Policy、parameter name、logical operator；不再锁 top/nested placement、RuleType:parameter 组合、字段数量、AND/OR 子项数量、operator placement 或已观察最大嵌套深度。Rule AST 对 AND/OR 任意合法子项数量递归处理，Loon `NOT` 单子项约束由 source parser 执行，Surge 最大 logical nesting depth 10 由 target planner 执行。PR #93 / Converter Check #682 全绿，canonical/helper 0 diff。
 - [x] Rule production 已重构为 `rule-ast.mjs` → `rule-qx.mjs` / `rule-surge.mjs`：source parser 只构建 target-neutral AST，未知但可结构化 Rule 仍能进入 AST；QX/Surge planner 分别做目标能力与 logical semantics 校验。`rule.mjs` 仅保留兼容 facade，Catalog Rule inventory 也改为遍历同一 production AST。
 - [x] Rewrite production 已建立统一 Semantic IR 交接层：Legacy Rewrite 与 Rewrite v2 保留独立 source parser，但均归一为 `rewrite-ir.mjs` 的 target-neutral operation model；production Rewrite v2 路由改为读取 IR operation，Legacy planner 也先经 IR 分类。IR 明确保留 Legacy absolute redirect 与 Rewrite v2 matched-range redirect 等来源语义差异，不因统一类别而强制共用错误映射。
@@ -186,7 +186,7 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 - 每次新增 QX 官方 sample 证据时，复核现有 Rewrite Review 是否可以安全降级为 native/helper；Rule 只在官方明确支持对应 Rule Type 后才改为活动 filter。
 - [x] QX capability gate 已收窄为 Loon 去广告转换实际能力：仅核对 Rule 类型、WayX 实际使用的 Rewrite action 与 MITM `hostname` 是否仍有 Crossutility 官方依据；转换范围之外的能力不进入 registry。Surge 同样采用 Rule / Rewrite / hostname 边界。
 - [x] Surge official capability gate 已落地：production `rule.mjs` / `surge-module.mjs` 共用 `surge-official-capabilities.mjs`；CI 实时读取 Surge 官方 Manual，只验证 WayX 实际使用的 28 个 Rule Type、URL/Header/Body Rewrite、Map Local、HTTP request/response Script 与 MITM `hostname` 仍有官方依据。Surge 其它 Profile/Module 能力不进入本 gate。
-- [x] 对 generated helper 做行为级 runtime fixture，而不只做字符串/语法断言：`converter/tests/generated-helper-runtime.mjs` 已接入 CI，覆盖 request/response、组合条件、命中/未命中、Header/Body/JSON 顺序、capture、raw string、typed JSON、invalid JSON 失败隔离、Surge duplicate header，以及当前 observed QX mock complex signature。
+- [x] 对 generated helper 做行为级 runtime fixture，而不只做字符串/语法断言：`converter/tests/generated-helper-runtime.mjs` 已接入 CI，覆盖 request/response、组合条件、命中/未命中、Header/Body/JSON 顺序、capture、raw string、typed JSON、invalid JSON 失败隔离、Surge duplicate header，以及通用 QX inline mock + Header pipeline。
 - 保持 `PROJECT_STATUS.md` 与实际 Review inventory 同步。
 
 ---
@@ -211,7 +211,7 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 
 - [ ] 先更新/确认 `CONVERSION_SPEC.md` 对应 Block。
 - [ ] 无插件名/作者名特判。
-- [x] Rewrite/Mock 路由已收紧为 target native → dedicated helper → observed source-authored complex helper → Review/Issue；Rule 不走 Script fallback。
+- [x] Rewrite/Mock 路由为 target native → dedicated helper → source-authored generic complex helper → Review/Issue；Complex production 不再使用 observed full-signature whitelist，已知 action 的新组合可由 renderer 通用处理，未知 action 才 Issue。
 - [ ] Regex 只丢 `i/m/s`，body 未被全局改写。
 - [ ] Source comments、转换时间、作者 chance、分类、Target、Source 保留；QX 一对一注释正确内联，分组注释未误绑第一条规则。
 - [ ] QX section heading 仍为注释。
