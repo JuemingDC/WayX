@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.22  
+版本：1.23  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -36,6 +36,7 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 24. Loon plugin 整体解析与纯转换调度必须从 GitHub/I/O orchestration 中分离。`plugin-parser.mjs` 是唯一整体 section parser，负责 BOM/newline normalization、header 与 section map 构建；`conversion-pipeline.mjs::convertPlugin()` 是唯一纯转换入口，负责 unknown-section fail-closed、Argument analysis、Rule/Rewrite/Script/MITM 调度、planner context 构建与 QX/Surge output builder 调用。`.github/scripts/sync-convert.mjs` 不得继续定义 `parseLoon()`、`convert()`、Rewrite/Script section dispatch 或 planner 调用链；它只负责原作者 plugin source 获取、调用统一 conversion-context materializer、调用 `convertPlugin()`、validator、canonical 文件写入与自动化提交。`conversion-pipeline.mjs` 不得 import `fs/path`、网络 fetch、Source Catalog 或 GitHub/runtime I/O；外部 JQ/mock/Source Script 必须由调用方物化后通过 context 注入。`regenerate-canonical.mjs` 必须直接调用同一个 `materializeConversionContext()` / `conversion-pipeline.mjs`，由 shared context 统一调用 `plugin-parser.mjs`，不得通过 `sync-convert.mjs` 取得转换核心。纯架构迁移要求 canonical/helper 0 diff。
 25. 外部转换输入物化必须集中到 **`dependency-materializer.mjs`、`source-script-materializer.mjs` 与 `conversion-context.mjs`**。`dependency-materializer.mjs` 独占 Rewrite v2 `jq_file/mock_file` 的发现、原始 URL 解析、文本/bytes 获取、Base64 校验与 JQ minify，并以 source declaration 为 key 返回 `jqFiles/mockFiles`；`source-script-materializer.mjs` 独占 Legacy/Script v2 Source Script URL 发现、相对 URL 解析与可选源码读取，始终把 QX/Surge URL 保持为解析后的原作者 URL，不做 runtime compatibility gate、不镜像、不改写。`conversion-context.mjs::materializeConversionContext()` 固定组合 plugin parser + 两类 materializer，返回 `{parsed, scriptMap, mockFiles, jqFiles}`，是 `sync-convert.mjs` 与 `regenerate-canonical.mjs` 唯一允许使用的外部转换上下文入口。`sync-convert.mjs` 不得再 import Rewrite/Script parser、dependency spec、JQ minifier、`groupSourceSectionItems()` 或 `fetchOriginalBytes()` 来自行发现/下载依赖；canonical runner 也不得借道 `sync-convert.mjs` 获取 materializer。Materializer 只能使用 `source-fetch.mjs` 的原作者直连 fetch/URL resolver，不得加入 mirror/cache fallback。纯架构迁移要求 canonical/helper 0 diff。
 26. `materializeConversionContext()` 返回的 `parsed` 必须作为同一次转换的权威 whole-plugin parse result 继续传入 `convertPlugin()`；`sync-convert.mjs` 与 `regenerate-canonical.mjs` 禁止在 materialization 后让 pipeline 对同一 source 再做第二次整体解析。`convertPlugin()` 为独立测试/调用方保留“未提供 `parsed` 时自行调用 `parseLoonPlugin(source)`”的纯函数 fallback，但 production/canonical 路径必须显式复用 context 中的 `parsed`。该收口只消除重复解析，不改变 Rule/Rewrite/Script/MITM 语义、目标格式、canonical 或 generated helper。
+27. Quantumult X 成品校验必须由 **`converter/src/qx-snippet-validator.mjs`** 统一负责。该 validator 直接消费 `qx-official-capabilities.mjs` 的 WayX ad-block capability registry，校验活动 QX filter/rewrite/MITM 行、注释 section 标题、禁止活动 `#!` metadata、被丢弃 regex flag 的恢复、`jq-path=` 泄漏及未转换 token。`.github/scripts/sync-convert.mjs` 只能 import/call `validateQX()`，不得重新定义 `validateQX()`、`validateQxExecutableLine()`、QX capability whitelist 或目标语法分类；canonical runner、repository audit、Golden/genericity tests 也必须直接 import converter-owned validator，不得借道 sync orchestration。此迁移不得增加或删除任何 QX 可执行语法，官方依据仍以用户上传 sample + Crossutility 当前官方 sample/capability gate 为准，canonical/helper 必须 0 diff。
 
 
 ## 规范块
