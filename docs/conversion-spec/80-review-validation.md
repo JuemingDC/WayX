@@ -448,15 +448,16 @@ CI 必须验证 scheduled upstream flow 不再依赖任何 ChatGPT Work handoff�
 CI 必须验证 online sync 与 canonical regeneration 不再各自拼装相同的 materialize/convert/target-validation 链：
 
 - `converter/src/conversion-runner.mjs` 是 workflow-facing 的 materialize/convert/target-validation 组合层；
-- `materializeConversionRunContext()` 只委托 `materializeConversionContext()`；`convertAndValidatePlugin()` 固定执行 `convertPlugin() → validateQX() → validateSurgeModule()`；
+- `materializeConversionRunContext()` 只委托 `materializeConversionContext()`；`convertPluginWithContext()` 只执行 context → `convertPlugin()` 映射；`validateConvertedPlugin()` 固定执行 `validateQX() → validateSurgeModule()`；
 - online sync 继续保持 materialize 在 old-target/stamp read 之前；canonical 继续保持 old-target/stamp read 在 materialize 之前，不得为统一函数改变现有顺序；
-- timestamp 刷新重跑必须复用第一次 materialize 的 context，仅再次执行 convert + 两个 target validator；
+- online sync 的第一次 convert 若只用于判断 converter output drift，必须保持**未校验**状态；只有最终选定 output 才进入 `validateConvertedPlugin()`；
+- timestamp 刷新重跑必须复用第一次 materialize 的 context；canonical 的每个最终候选 output 仍按原顺序 validate；
 - runner 不得 import Source Catalog、source fetch、managed artifact I/O、workflow diagnostics、timestamp helper 或 GitHub/runtime I/O；
 - runner 不得判断 source change、converter output drift、canonical stale、check/write mode，也不得写 helper/target/source；
 - online sync 必须通过 stage callback 继续得到 `materialize-context / convert / validate-qx / validate-surge`，hard-failure report 的阶段语义不得退化；
 - canonical runner 继续保留其现有 Surge `adblockScope` validator options；online sync 继续保留默认 validator 调用语义；
 - `sync-convert.mjs` / `regenerate-canonical.mjs` 不得直接 import `conversion-context.mjs`、`conversion-pipeline.mjs`、`qx-snippet-validator.mjs` 或 `surge-module.mjs` 来重建该链；
-- behavior contract 必须覆盖 materialize delegation、context reuse、`convert → validate-qx → validate-surge` stage 顺序、timestamp-only re-render 与两目标 validator 成功；
+- behavior contract 必须覆盖 materialize delegation、context reuse、convert 与 validate 可独立调用、`validate-qx → validate-surge` stage 顺序、timestamp-only re-render 与两目标 validator 成功；
 - 全 Catalog canonical 与 generated helper 必须 0 diff。
 
 实现：
