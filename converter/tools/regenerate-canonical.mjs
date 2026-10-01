@@ -2,11 +2,11 @@
 // Author: chance
 // Category: Converter / Canonical Output
 import path from 'node:path';
-import { validateQX } from '../src/qx-snippet-validator.mjs';
-import { convertPlugin } from '../src/conversion-pipeline.mjs';
-import { materializeConversionContext } from '../src/conversion-context.mjs';
-import { validateSurgeModule } from '../src/surge-module.mjs';
 import { loadLoonSourceCatalog } from '../src/source-catalog.mjs';
+import {
+  materializeConversionRunContext,
+  convertAndValidatePlugin,
+} from '../src/conversion-runner.mjs';
 import { createWorkflowFailureReporter, formatWorkflowErrorAnnotation } from '../src/workflow-diagnostics.mjs';
 import {
   firstConversionStamp,
@@ -40,16 +40,13 @@ for (const entry of manifest) {
     const oldQx = targetState.qx;
     const oldSurge = targetState.surge;
     const stamp = firstConversionStamp([oldQx, oldSurge], {trim:true}) || nowConversionStamp();
-    const {
-      parsed,
-      scriptMap,
-      mockFiles,
-      jqFiles,
-    } = await materializeConversionContext(entry, source);
+    const context = await materializeConversionRunContext(entry,source);
 
-    let out = convertPlugin(entry, source, {parsed, scriptMap, stamp, mockFiles, jqFiles, rawBase:RAW_BASE});
-    validateQX(out.qx, entry);
-    validateSurgeModule(out.surge, entry, {adblockScope:true});
+    let out = convertAndValidatePlugin(entry,source,context,{
+      stamp,
+      rawBase:RAW_BASE,
+      surgeValidationOptions:{adblockScope:true},
+    });
 
     const helperDiffs = await generatedScriptDiffs(ROOT, entry, out.generatedScripts);
 
@@ -67,9 +64,11 @@ for (const entry of manifest) {
 
     // Refresh one shared conversion timestamp for targets and WayX-generated
     // helper scripts. Source Script URLs remain untouched and are never mirrored.
-    out = convertPlugin(entry, source, {parsed, scriptMap, stamp:nowConversionStamp(), mockFiles, jqFiles, rawBase:RAW_BASE});
-    validateQX(out.qx, entry);
-    validateSurgeModule(out.surge, entry, {adblockScope:true});
+    out = convertAndValidatePlugin(entry,source,context,{
+      stamp:nowConversionStamp(),
+      rawBase:RAW_BASE,
+      surgeValidationOptions:{adblockScope:true},
+    });
 
     await writeManagedTargets(targetState, out);
     await syncGeneratedScripts(ROOT, entry, out.generatedScripts);
