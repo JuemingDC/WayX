@@ -5,7 +5,8 @@ import { fetchOriginalText } from '../../converter/src/source-fetch.mjs';
 import { createWorkflowFailureReporter } from '../../converter/src/workflow-diagnostics.mjs';
 import {
   materializeConversionRunContext,
-  convertAndValidatePlugin,
+  convertPluginWithContext,
+  validateConvertedPlugin,
 } from '../../converter/src/conversion-runner.mjs';
 import {
   conversionStampFromText,
@@ -63,7 +64,7 @@ async function main() {
       const oldStamp = conversionStampFromText(oldQx);
       let stamp = changed || !oldStamp ? nowConversionStamp() : oldStamp;
 
-      let out = convertAndValidatePlugin(entry,source,context,{
+      let out = convertPluginWithContext(entry,source,context,{
         stamp,
         rawBase:RAW_BASE,
         onStage:value=>{ stage=value; },
@@ -72,12 +73,16 @@ async function main() {
       // Converter changes must also refresh outputs even when upstream LPX is unchanged.
       if (!changed && oldStamp && ((oldQx && oldQx !== out.qx) || (oldSg && oldSg !== out.surge))) {
         stamp = nowConversionStamp();
-        out = convertAndValidatePlugin(entry,source,context,{
+        out = convertPluginWithContext(entry,source,context,{
           stamp,
           rawBase:RAW_BASE,
           onStage:value=>{ stage=value; },
         });
       }
+
+      validateConvertedPlugin(entry,out,{
+        onStage:value=>{ stage=value; },
+      });
 
       // No managed files for this plugin are written before conversion + both target validators succeed.
       stage='write-generated-helpers';
