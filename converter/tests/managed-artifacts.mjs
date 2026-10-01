@@ -9,6 +9,7 @@ import {
   inspectManagedSource,
   isWayxGeneratedHelperFilename,
   managedSourceDigest,
+  managedTargetDiffs,
   normalizeManagedSource,
   readCatalogSource,
   readManagedTargetState,
@@ -55,6 +56,7 @@ try {
 
   const qx='# Converted: 2026-10-01 08:00:00 +08:00\n# [filter_local]\nhost, example.com, reject\n# [rewrite_local]\n# [mitm]\n';
   const surge='# Converted: 2026-10-01 09:00:00 +08:00\n[Rule]\nDOMAIN,example.com,REJECT\n';
+  assert.deepEqual(managedTargetDiffs(targets,{qx,surge}),['qx','surge']);
   assert.deepEqual(await writeManagedTargets(targets,{qx,surge}),['qx','surge']);
 
   targets=await readManagedTargetState(root,entry);
@@ -63,6 +65,12 @@ try {
   assert.equal(conversionStampFromText(targets.qx),'2026-10-01 08:00:00 +08:00');
   assert.equal(firstConversionStamp([targets.qx,targets.surge],{trim:true}),'2026-10-01 08:00:00 +08:00');
   assert.equal(firstConversionStamp([null,targets.surge],{trim:true}),'2026-10-01 09:00:00 +08:00');
+  assert.deepEqual(managedTargetDiffs(targets,{qx,surge}),[]);
+  assert.deepEqual(
+    managedTargetDiffs({...targets,surge:null},{qx,surge}),
+    ['surge'],
+    'missing canonical targets are stale and must be reported as target diffs',
+  );
   assert.deepEqual(await writeManagedTargets(targets,{qx,surge}),[]);
 
   const helpers=new Map([
