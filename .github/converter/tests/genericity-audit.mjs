@@ -3,13 +3,13 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 const ROOT=process.cwd();
-const SRC=path.join(ROOT,'converter','src');
+const SRC=path.join(ROOT,'.github','converter','src');
 const files=[
   ...(await fs.readdir(SRC))
     .filter(name=>name.endsWith('.mjs'))
     .map(name=>path.join(SRC,name)),
   path.join(ROOT,'.github','scripts','sync-convert.mjs'),
-  path.join(ROOT,'converter','tools','regenerate-canonical.mjs'),
+  path.join(ROOT,'.github','converter','tools','regenerate-canonical.mjs'),
 ];
 
 const forbiddenSymbols=[
