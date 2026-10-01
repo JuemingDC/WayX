@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/PinDuoDuo.png
 # Updated: 2026-07-11 20:21:39
 
-# Converted: 2026-10-01 14:35:50 +08:00
+# Converted: 2026-10-01 17:29:49 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/PinDuoDuo_remove_ads.lpx
 # Target: Surge
@@ -36,19 +36,19 @@ DOMAIN,apm-a.pinduoduo.com,REJECT
 
 [Body Rewrite]
 
-http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub\? 'del(.result.dy_module.irregular_banner_dy,.result.icon_set,.result.search_bar_hot_query,.result.dy_module.irregular_banner_dy)'
+http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub\? 'delpaths([["result","dy_module","irregular_banner_dy"],["result","icon_set"],["result","search_bar_hot_query"],["result","dy_module","irregular_banner_dy"]])'
 
 http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub\? '.result.bottom_tabs? |= map(select(.link | IN("index.html", "chat_list.html", "personal.html"))) | .result.buffer_bottom_tabs? |= map(select(.link | IN("index.html", "chat_list.html", "personal.html"))) | .result.all_top_opts |= map(del(.selected_image, .image, .height, .width))'
 
 http-response-jq ^https:\/\/api\.pinduoduo\.com\/search\? 'del(.expansion)'
 
-http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/philo\/personal\/hub\? 'del(.monthly_card_entrance,.personal_center_style_v2_vo,.icon_set.icons,.icon_set.top_personal_icons,.personal_banner)'
+http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/philo\/personal\/hub\? 'delpaths([["monthly_card_entrance"],["personal_center_style_v2_vo"],["icon_set","icons"],["icon_set","top_personal_icons"],["personal_banner"]])'
 
-http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/oak\/integration\/render\? 'del(.bottom_section_list,.ui.bottom_section,.ui.live_section.float_info)'
+http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/oak\/integration\/render\? 'delpaths([["bottom_section_list"],["ui","bottom_section"],["ui","live_section","float_info"]])'
 
 http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/caterham\/v3\/query\/order_detail_group\? 'del(.data.goods_list)'
 
-http-response-jq ^https:\/\/api\.pinduoduo\.com\/order\/ 'del(.marketing_banner_vo,.shipping.banner_above_recommend)'
+http-response-jq ^https:\/\/api\.pinduoduo\.com\/order\/ 'delpaths([["marketing_banner_vo"],["shipping","banner_above_recommend"]])'
 
 http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/aristotle\/order_list_v4\? '.orders |= map(.order_buttons |= map(del(.order_growth_tip)))'
 
