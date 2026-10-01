@@ -270,7 +270,7 @@ Legacy Rewrite 同样遵守 native → helper → Review：request phase 的旧�
 
 WayX 对 Key Path JSON Action 固定采用项目选定的 Stash-compatible 语义：`json.add` 在 `getpath(PATH) == null` 时写入，因此“路径不存在”与“当前值为 JSON null”都可新增，已有 `false/0/""/[]/{}` 均不得覆盖；`json.replace` 仅在 `getpath(PATH)` 为 jq truthy 时 `setpath`，因此路径不存在、`null`、`false` 不替换，而 `0/""/[]/{}` 可替换。禁止把 add/replace 统一退化成裸 `setpath`。
 
-`json.delete` 不增加 `getpath` guard。固定单路径使用 `del(PATH)`；多个不含数组索引的固定路径必须合并为一个 `del(PATH1, PATH2, ...)`，不得退回 `delpaths([...])`。批量路径只要包含数组索引，就必须按源顺序串联多个 `del(...)`，因为一次多路径 `del` 与逐项删除在数组索引位移场景下结果不同。Complex JS helper 同样必须用 `splice` 删除数组元素，禁止 JavaScript `delete` 产生稀疏数组。
+`json.delete` 不增加 `getpath` guard。固定单路径使用 `del(PATH)`；多个不含数组索引的固定路径必须合并为一个 `del(PATH1, PATH2, ...)`，不得退回 `delpaths([...])`。批量路径只要包含数组索引，就必须按源顺序串联多个 `del(...)`，因为一次多路径 `del` 与逐项删除在数组索引位移场景下结果不同。Complex JS helper 同样必须用 `splice` 删除数组元素，禁止 JavaScript `delete` 产生稀疏数组。jq `delpaths(PATHS)` 仅用于源 jq/jq_file 已经声明的 Path Array 语义，或未来明确的 Path Array IR；不得由普通 Loon Key Path delete 自动生成。
 
 所有 JSON batch 参数必须按相同下标配对并从左到右执行，不得排序、去重或重排。`json.replace(..., null)` 等 value 必须保持原 JSON 类型，不得把 Number/String/Boolean/null/Object/Array 相互转换。
 
