@@ -94,6 +94,8 @@ const sgText=renderSurgeOutput({
 });
 assert.match(sgText,/^#!name=Demo$/m);
 assert.match(sgText,/^#!desc=Demo Surge plugin$/m);
+assert.match(sgText,/^#!category=WayX$/m);
+assert.doesNotMatch(sgText,/^# Category:/m);
 assert.match(sgText,/^#!requirement=CORE_VERSION>=20$/m);
 assert.match(sgText,/^#!arguments=mode:on$/m);
 const surgeOrder=[
