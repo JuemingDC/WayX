@@ -37,10 +37,10 @@ WayX 的 Loon Plugin → Quantumult X / Surge 通用转换器。核心原则是*
 主要入口：
 
 - Production converter：`.github/scripts/sync-convert.mjs`
-- Canonical regeneration：`converter/tools/regenerate-canonical.mjs`
-- QX/Surge validators：production converter + `converter/src/surge-module.mjs`
-- Genericity audit：`converter/tests/genericity-audit.mjs`
-- End-to-end golden：`converter/tests/end-to-end-golden.mjs`
+- Canonical regeneration：`.github/converter/tools/regenerate-canonical.mjs`
+- QX/Surge validators：production converter + `.github/converter/src/surge-module.mjs`
+- Genericity audit：`.github/converter/tests/genericity-audit.mjs`
+- End-to-end golden：`.github/converter/tests/end-to-end-golden.mjs`
 - Converter Check：`.github/workflows/converter-check.yml`
 
 新增语法或能力必须按：

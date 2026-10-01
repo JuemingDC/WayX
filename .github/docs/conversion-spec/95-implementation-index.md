@@ -53,6 +53,6 @@
 
 ### Catalog Legacy syntax inventory
 
-- Test：`converter/tests/catalog-legacy-syntax-inventory.mjs`
-- Baseline：`converter/fixtures/catalog-legacy-syntax-inventory.json`
+- Test：`.github/converter/tests/catalog-legacy-syntax-inventory.mjs`
+- Baseline：`.github/converter/fixtures/catalog-legacy-syntax-inventory.json`
 - Scope：Legacy Rewrite / Legacy HTTP Script semantic identifiers only; valid option/value/order combinations are source grammar/planner concerns.

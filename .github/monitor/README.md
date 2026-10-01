@@ -41,19 +41,19 @@ hard sync failure 采用单插件事务边界：conversion + QX/Surge validation
 
 ## 官方规范监控
 
-`monitor/monitor_upstreams.py` 只记录监控源变化、更新 `monitor/state.json` / `upstream/` mirror，并生成 `monitor/.runtime/upstream_changes.md`。官方规范变化本身不创建 Work PR，也不阻断已验证插件的自动同步。
+`.github/monitor/monitor_upstreams.py` 只记录监控源变化、更新 `.github/monitor/state.json` / `upstream/` mirror，并生成 `.github/monitor/.runtime/upstream_changes.md`。官方规范变化本身不创建 Work PR，也不阻断已验证插件的自动同步。
 
 ## 核心文件
 
-- `CONVERSION_SPEC.md`：唯一权威转换规范。
-- `docs/conversion-spec/`：分块规范。
+- `.github/CONVERSION_SPEC.md`：唯一权威转换规范。
+- `.github/docs/conversion-spec/`：分块规范。
 - `.github/sources/loon.json`：唯一 Loon Source Catalog。
 - `.github/scripts/sync-convert.mjs`：原作者拉取、转换、目标校验与成功插件落盘。
 - `.github/scripts/propose-conversion-issues.mjs`：Review/Issue/hard failure 自动 Issue。
 - `.github/scripts/validate_conversion_policy.py`：目标格式硬校验。
-- `converter/tools/audit-repository.mjs`：仓库级审计。
-- `converter/tools/conversion-reports.mjs`：reconciliation + Review/Issue inventory。
-- `monitor/monitor_upstreams.py`：官方规范/仓库变化记录。
+- `.github/converter/tools/audit-repository.mjs`：仓库级审计。
+- `.github/converter/tools/conversion-reports.mjs`：reconciliation + Review/Issue inventory。
+- `.github/monitor/monitor_upstreams.py`：官方规范/仓库变化记录。
 - `.github/workflows/upstream-monitor.yml`：每天 01:00 自动调度器。
 
-`monitor/.runtime/` 与 `.github/reports/` 不提交。
+`.github/monitor/.runtime/` 与 `.github/reports/` 不提交。
