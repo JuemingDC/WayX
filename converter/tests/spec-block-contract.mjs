@@ -187,7 +187,8 @@ assert.equal(/function parseLoon\(|function convert\(|planQxRewrite|planSurgeRew
 assert.match(pluginParser,/export function parseLoonPlugin\(text\)/, 'Block 05: whole-plugin parser must be explicit and reusable');
 assert.match(conversionPipeline,/export function convertPlugin\(entry,source/, 'Block 05/80: pure conversion core must expose convertPlugin');
 assert.equal(/node:fs|node:path|source-fetch|source-catalog|fetchOriginal|https?:\/\//.test(conversionPipeline), false, 'Block 05/80: pure conversion pipeline must not perform I/O or network fetch');
-assert.match(canonicalRunner,/from '\.\.\/src\/plugin-parser\.mjs'/, 'Block 05/90: canonical runner must import the shared plugin parser directly');
+assert.equal(/from '\.\.\/src\/plugin-parser\.mjs'/.test(canonicalRunner), false, 'Block 05/90: canonical runner must not duplicate managed source normalization');
+assert.match(managedArtifacts,/from '\.\/plugin-parser\.mjs'/, 'Block 05/80: managed artifact I/O must reuse the shared plugin normalizer');
 assert.match(canonicalRunner,/from '\.\.\/src\/conversion-pipeline\.mjs'/, 'Block 05/90: canonical runner must import the shared conversion pipeline directly');
 assert.equal(/\bconvert\(|\bparseLoon\(/.test(canonicalRunner), false, 'Block 05/90: canonical runner must not depend on legacy sync-convert conversion core');
 assert.match(converterWorkflow,/conversion-pipeline\.mjs/, 'Block 05/80: Converter Check must execute conversion pipeline contract');
