@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/myblockads.png
 # Updated: 2026-09-27 18:30
 
-# Converted: 2026-09-30 18:31:32 +08:00
+# Converted: 2026-10-01 13:58:17 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/myblockads.lpx
@@ -464,7 +464,7 @@ host, switch.cup.com.cn, reject
 {# 云闪付 //wallet.95516.com #} ^https:\/\/wallet\.95516\.com(:10533)?\/s\/wl\/icon\/large\/1 url reject
 # 12306 //ad.12306.cn, mobile.12306.cn
 # 12306_splash
-^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList$ url script-request-body https://rucu6.pages.dev/Scripts/12306.js
+^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList$ url script-analyze-echo-response https://rucu6.pages.dev/Scripts/12306.js
 # 12306_ads
 ^https:\/\/mobile\.12306\.cn\/otsmobile\/app\/mgs\/mgw\.htm$ url script-request-header https://rucu6.pages.dev/Scripts/header.js
 
