@@ -19,7 +19,7 @@ Script v2 request/response ───────→ Script v2 parser ───�
 - IR 不得写入 QX action、Surge `type=`、目标 section 或目标 capability；
 - QX planner 独占 `script-request-header/body`、`script-response-header/body`、`script-echo-response`、`script-analyze-echo-response` 的选择；
 - Surge planner 独占 `type=http-request/http-response` 与 `requires-body/max-size/binary-body-mode/timeout/argument/debug` 等声明展开；
-- `sync-convert.mjs` 不得重新解析 Legacy option 或自行决定任何 target Script action/parameter；
+- `conversion-pipeline.mjs` 不得重新解析 Legacy option 或自行决定任何 target Script action/parameter；`sync-convert.mjs` 不参与 Script semantic dispatch；
 - Source JavaScript 正文仍只允许为 QX action 类型判定提供行为信号，不做 runtime compatibility gate。
 
 本重构不改变现有 option policy，不扩大 Script scope，也不改写 Source Script URL。
