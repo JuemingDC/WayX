@@ -54,6 +54,29 @@ assert.match(qxLegacy.notes.join('\n'),/argument ignored/);
 assert.match(qxLegacy.notes.join('\n'),/timeout ignored/);
 assert.match(qxLegacy.notes.join('\n'),/binary-body-mode=true ignored/);
 
+const requestV2Source='request if ${url} ~= /request/ then script("https://example.com/request.js") with requires_body=true, tag="Req"';
+const requestV2Ir=scriptV2AstToSemanticIr(parseScriptV2(requestV2Source),{source:requestV2Source});
+const qxRequestV2=planQxScript(requestV2Ir,{
+  scriptUrl:'https://example.com/request.js',
+  // Mirrors multi-platform scripts such as RuCu6 12306.js: the QX branch
+  // mutates request body while another platform branch contains response:{}.
+  sourceText:'const isQuanX=typeof $task!=="undefined"; if(isQuanX){$done({body:"x"});}else{$done({response:{body:"x"}});}',
+  argumentIds:new Set(),
+});
+assert.equal(qxRequestV2.ok,true);
+assert.match(qxRequestV2.line,/ url script-request-body https:\/\/example\.com\/request\.js$/);
+assert.doesNotMatch(qxRequestV2.line,/script-(?:analyze-)?echo-response/);
+
+const requestNoBodyIr=scriptV2AstToSemanticIr(
+  parseScriptV2('request if ${url} ~= /header/ then script("https://example.com/header.js")'),
+);
+const qxRequestNoBody=planQxScript(requestNoBodyIr,{
+  scriptUrl:'https://example.com/header.js',
+  sourceText:'$done({status:"HTTP/1.1 200 OK",body:"synthetic"});',
+  argumentIds:new Set(),
+});
+assert.match(qxRequestNoBody.line,/ url script-request-header https:\/\/example\.com\/header\.js$/);
+
 const surgeLegacy=planSurgeScript(legacyIr,{name:'Resp'});
 assert.equal(surgeLegacy.ok,true);
 assert.equal(surgeLegacy.section,'script');
