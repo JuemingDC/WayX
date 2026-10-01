@@ -323,4 +323,23 @@ CI 必须验证纯转换核心已经脱离 GitHub/I/O orchestration：
 - whole-plugin parser：`converter/src/plugin-parser.mjs`
 - pure conversion core：`converter/src/conversion-pipeline.mjs`
 - contract：`converter/tests/conversion-pipeline.mjs`
+## 80.18 Conversion-context materializer architecture gate
+
+CI 必须验证外部依赖与 Source Script 物化已经从 `sync-convert.mjs` / canonical runner 中集中：
+
+- `dependency-materializer.mjs` 负责 Rewrite v2 jq_file/mock_file discovery、原 URL fetch、Base64/JQ 处理；
+- `source-script-materializer.mjs` 负责 Legacy/Script v2 script URL discovery、相对 URL resolver、可选源码读取；
+- `conversion-context.mjs::materializeConversionContext()` 必须组合 parser + 两类 materializer，并返回 `parsed/scriptMap/mockFiles/jqFiles`；
+- `sync-convert.mjs` 不得 import `rewrite-v2*`, `dependency.mjs`, `jq.mjs`, `script-v2.mjs`, `source-section.mjs` 或 `fetchOriginalBytes()` 来自行 materialize；
+- `regenerate-canonical.mjs` 不得从 `sync-convert.mjs` import materializer/Source Script inspector；
+- materializer 必须继续使用 `source-fetch.mjs` 的原作者直连 resolver/fetch，不得新增 mirror/cache fallback；
+- Source Script materializer 必须保持 QX/Surge URL 为解析后的原作者 URL，正文失败只记录 `sourceError`；
+- pure `conversion-pipeline.mjs` 继续禁止任何 fetch；
+- 纯架构迁移要求 canonical/helper 0 diff。
+
+实现：
+- dependency materializer：`converter/src/dependency-materializer.mjs`
+- Source Script materializer：`converter/src/source-script-materializer.mjs`
+- context aggregator：`converter/src/conversion-context.mjs`
+- contract：`converter/tests/conversion-context-materializers.mjs`
 
