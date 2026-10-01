@@ -5,7 +5,8 @@ import path from 'node:path';
 import { loadLoonSourceCatalog } from '../src/source-catalog.mjs';
 import {
   materializeConversionRunContext,
-  convertAndValidatePlugin,
+  convertPluginWithContext,
+  validateConvertedPlugin,
 } from '../src/conversion-runner.mjs';
 import { createWorkflowFailureReporter, formatWorkflowErrorAnnotation } from '../src/workflow-diagnostics.mjs';
 import {
@@ -42,11 +43,11 @@ for (const entry of manifest) {
     const stamp = firstConversionStamp([oldQx, oldSurge], {trim:true}) || nowConversionStamp();
     const context = await materializeConversionRunContext(entry,source);
 
-    let out = convertAndValidatePlugin(entry,source,context,{
+    let out = convertPluginWithContext(entry,source,context,{
       stamp,
       rawBase:RAW_BASE,
-      surgeValidationOptions:{adblockScope:true},
     });
+    validateConvertedPlugin(entry,out,{surgeValidationOptions:{adblockScope:true}});
 
     const helperDiffs = await generatedScriptDiffs(ROOT, entry, out.generatedScripts);
 
@@ -64,11 +65,11 @@ for (const entry of manifest) {
 
     // Refresh one shared conversion timestamp for targets and WayX-generated
     // helper scripts. Source Script URLs remain untouched and are never mirrored.
-    out = convertAndValidatePlugin(entry,source,context,{
+    out = convertPluginWithContext(entry,source,context,{
       stamp:nowConversionStamp(),
       rawBase:RAW_BASE,
-      surgeValidationOptions:{adblockScope:true},
     });
+    validateConvertedPlugin(entry,out,{surgeValidationOptions:{adblockScope:true}});
 
     await writeManagedTargets(targetState, out);
     await syncGeneratedScripts(ROOT, entry, out.generatedScripts);
