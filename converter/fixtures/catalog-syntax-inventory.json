@@ -6,8 +6,12 @@
       "request",
       "response"
     ],
-    "conditionVariables": [],
-    "conditionOperators": [],
+    "conditionVariables": [
+      "url"
+    ],
+    "conditionOperators": [
+      "~="
+    ],
     "logicalOperators": [],
     "actionNames": [
       "redirect",
@@ -29,8 +33,12 @@
       "request",
       "response"
     ],
-    "conditionVariables": [],
-    "conditionOperators": [],
+    "conditionVariables": [
+      "url"
+    ],
+    "conditionOperators": [
+      "~="
+    ],
     "logicalOperators": [],
     "optionNames": [
       "binary_body_mode",
