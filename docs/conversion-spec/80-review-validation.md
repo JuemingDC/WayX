@@ -11,7 +11,7 @@ WayX 对不可直接活动转换的内容分两类：
 1. 目标文件中只输出注释，必须保留完整 `Source declaration`；
 2. 不生成猜测性 helper、Rule、Rewrite 或 Script；
 3. 自动化扫描 marker，按稳定 fingerprint 创建或复用 GitHub Issue；
-4. Issue 未形成规范与实现依据前，该项不得进入 Safe Tier；
+4. Issue 未形成规范与实现依据前，该项不得生成猜测性活动目标规则；
 5. 修复顺序仍是“规范 → generic implementation → synthetic test → real-source regression”。
 
 Issue marker 固定格式：
