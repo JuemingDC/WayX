@@ -86,8 +86,9 @@ const qxV2Debug=planQxScript(v2DebugIr,{
   argumentIds:new Set(),
 });
 assert.equal(qxV2Debug.ok,true);
-assert.equal(/debug/i.test(qxV2Debug.line),false);
-assert.equal(/debug/i.test(qxV2Debug.notes.join('\n')),false);
+assert.match(qxV2Debug.line,/ url script-response-header https:\/\/example\.com\/debug\.js$/);
+assert.equal(/(?:^|[,\s])debug=/.test(qxV2Debug.line),false);
+assert.equal(/Source Script debug|debug ignored/i.test(qxV2Debug.notes.join('\n')),false);
 
 const v2DynamicDebugSource='response if ${url} ~= /debug-dynamic/ then script("https://example.com/debug-dynamic.js") with debug=${debugSwitch}, tag="DebugDynamic"';
 const v2DynamicDebugIr=scriptV2AstToSemanticIr(parseScriptV2(v2DynamicDebugSource),{source:v2DynamicDebugSource});
@@ -97,8 +98,9 @@ const qxV2DynamicDebug=planQxScript(v2DynamicDebugIr,{
   argumentIds:new Set(),
 });
 assert.equal(qxV2DynamicDebug.ok,true);
-assert.equal(/debugSwitch|debug/i.test(qxV2DynamicDebug.line),false);
-assert.equal(/debugSwitch|debug/i.test(qxV2DynamicDebug.notes.join('\n')),false);
+assert.match(qxV2DynamicDebug.line,/ url script-response-header https:\/\/example\.com\/debug-dynamic\.js$/);
+assert.equal(/debugSwitch|(?:^|[,\s])debug=/.test(qxV2DynamicDebug.line),false);
+assert.equal(/debugSwitch|Source Script debug|debug ignored/i.test(qxV2DynamicDebug.notes.join('\n')),false);
 
 const surgeV2=planSurgeScript(v2Ir,{
   scriptUrl:'https://example.com/v2.js',
