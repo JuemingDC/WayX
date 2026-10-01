@@ -198,7 +198,8 @@ jobs:
             echo "- Original source: https://kelee.one/Tool/Loon/Lpx/FleaMarket_remove_ads.lpx"
             echo "- Selected User-Agent: \`$KELEE_UA\`"
             echo "- Deletion scope: Loon source + QX + Surge + generated helper directory"
-            echo "- Fetch path: Python urllib.request with active Loon UA"\n            echo "- Conversion path: converter/tools/regenerate-canonical.mjs --write"
+            echo "- Fetch path: Python urllib.request with active Loon UA"
+            echo "- Conversion path: converter/tools/regenerate-canonical.mjs --write"
             echo
             if [ -f monitor/.runtime/fleamarket-kelee-ua/after.sha256 ] && cmp -s monitor/.runtime/fleamarket-kelee-ua/before.sha256 monitor/.runtime/fleamarket-kelee-ua/after.sha256; then
               echo "- Result: regenerated artifacts are byte-identical to baseline."
