@@ -5,7 +5,8 @@
 import assert from 'node:assert/strict';
 import {
   materializeConversionRunContext,
-  convertAndValidatePlugin,
+  convertPluginWithContext,
+  validateConvertedPlugin,
 } from '../src/conversion-runner.mjs';
 
 const entry={
@@ -29,12 +30,16 @@ const firstStages=[];
 const context=await materializeConversionRunContext(entry,source,{
   onStage:stage=>firstStages.push(stage),
 });
-const first=convertAndValidatePlugin(entry,source,context,{
+const first=convertPluginWithContext(entry,source,context,{
   stamp:'2026-10-01 12:00:00 +08:00',
   rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main',
   onStage:stage=>firstStages.push(stage),
 });
+assert.deepEqual(firstStages,['materialize-context','convert']);
 
+validateConvertedPlugin(entry,first,{
+  onStage:stage=>firstStages.push(stage),
+});
 assert.deepEqual(firstStages,[
   'materialize-context',
   'convert',
@@ -45,13 +50,17 @@ assert.match(first.qx,/^# Converted: 2026-10-01 12:00:00 \+08:00$/m);
 assert.match(first.surge,/^# Converted: 2026-10-01 12:00:00 \+08:00$/m);
 
 const rerunStages=[];
-const second=convertAndValidatePlugin(entry,source,context,{
+const second=convertPluginWithContext(entry,source,context,{
   stamp:'2026-10-01 12:01:00 +08:00',
   rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main',
+  onStage:stage=>rerunStages.push(stage),
+});
+assert.deepEqual(rerunStages,['convert']);
+
+validateConvertedPlugin(entry,second,{
   surgeValidationOptions:{adblockScope:true},
   onStage:stage=>rerunStages.push(stage),
 });
-
 assert.deepEqual(rerunStages,[
   'convert',
   'validate-qx',
