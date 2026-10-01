@@ -66,7 +66,7 @@ Source Catalog entry.source
 → generic convertPlugin()
 → QX validator
 → Surge validator
-→ 成功插件写 generated helper / target / Source
+→ 成功插件同步 generated helper（含安全 prune）/ target / Source
 → 继续处理下一个插件
 → 官方规范/仓库 monitor
 → repository validator + audit
