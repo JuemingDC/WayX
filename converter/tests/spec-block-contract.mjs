@@ -13,8 +13,8 @@ const contracts=[
   ['50','docs/conversion-spec/50-json-jq-mock.md',['converter/src/jq.mjs','converter/src/dependency.mjs','converter/src/dependency-materializer.mjs','converter/src/conversion-context.mjs','converter/src/qx-mock.mjs','converter/src/surge-mock.mjs','converter/tests/conversion-context-materializers.mjs']],
   ['60','docs/conversion-spec/60-script-argument.md',['converter/src/script.mjs','converter/src/script-legacy.mjs','converter/src/script-v2.mjs','converter/src/script-ir.mjs','converter/src/script-qx.mjs','converter/src/script-surge.mjs','converter/src/script-v2-target.mjs','converter/src/argument.mjs','converter/src/source-script-materializer.mjs','converter/src/conversion-context.mjs','converter/tests/conversion-context-materializers.mjs','converter/tests/script-ir-target-planners.mjs']],
   ['70','docs/conversion-spec/70-mitm-comments.md',['converter/src/mitm.mjs','converter/src/source-section.mjs','converter/src/source-metadata.mjs','converter/src/qx-comment.mjs','converter/src/metadata.mjs','converter/tests/source-section-comments.mjs']],
-  ['80','docs/conversion-spec/80-review-validation.md',['converter/src/dependency-materializer.mjs','converter/src/source-script-materializer.mjs','converter/src/conversion-context.mjs','converter/src/conversion-pipeline.mjs','converter/src/managed-artifacts.mjs','converter/src/qx-snippet-validator.mjs','converter/src/surge-module.mjs','converter/src/unknown-issue.mjs','converter/src/qx-official-capabilities.mjs','converter/src/surge-official-capabilities.mjs','converter/tools/conversion-reports.mjs','converter/tests/conversion-context-materializers.mjs','converter/tests/conversion-pipeline.mjs','converter/tests/managed-artifacts.mjs','converter/tests/unknown-issue-markers.mjs','converter/tests/qx-official-capabilities.mjs','converter/tests/surge-official-capabilities.mjs','converter/tests/genericity-audit.mjs','converter/tests/generated-helper-refs.mjs','converter/tests/end-to-end-golden.mjs']],
-  ['90','docs/conversion-spec/90-project-workflow.md',['.github/scripts/sync-convert.mjs','.github/scripts/propose-conversion-issues.mjs','converter/tools/regenerate-canonical.mjs','.github/workflows/converter-check.yml','.github/workflows/upstream-monitor.yml']],
+  ['80','docs/conversion-spec/80-review-validation.md',['converter/src/dependency-materializer.mjs','converter/src/source-script-materializer.mjs','converter/src/conversion-context.mjs','converter/src/conversion-pipeline.mjs','converter/src/managed-artifacts.mjs','converter/src/workflow-diagnostics.mjs','converter/src/qx-snippet-validator.mjs','converter/src/surge-module.mjs','converter/src/unknown-issue.mjs','converter/src/qx-official-capabilities.mjs','converter/src/surge-official-capabilities.mjs','converter/tools/conversion-reports.mjs','converter/tests/conversion-context-materializers.mjs','converter/tests/conversion-pipeline.mjs','converter/tests/managed-artifacts.mjs','converter/tests/workflow-diagnostics.mjs','converter/tests/unknown-issue-markers.mjs','converter/tests/qx-official-capabilities.mjs','converter/tests/surge-official-capabilities.mjs','converter/tests/genericity-audit.mjs','converter/tests/generated-helper-refs.mjs','converter/tests/end-to-end-golden.mjs']],
+  ['90','docs/conversion-spec/90-project-workflow.md',['converter/src/workflow-diagnostics.mjs','.github/scripts/sync-convert.mjs','.github/scripts/propose-conversion-issues.mjs','converter/tools/regenerate-canonical.mjs','.github/workflows/converter-check.yml','.github/workflows/upstream-monitor.yml']],
 ];
 
 for(const [block,doc,impls] of contracts){
@@ -39,6 +39,7 @@ const dependencyMaterializer=await fs.readFile(path.join(ROOT,'converter/src/dep
 const sourceScriptMaterializer=await fs.readFile(path.join(ROOT,'converter/src/source-script-materializer.mjs'),'utf8');
 const conversionContext=await fs.readFile(path.join(ROOT,'converter/src/conversion-context.mjs'),'utf8');
 const managedArtifacts=await fs.readFile(path.join(ROOT,'converter/src/managed-artifacts.mjs'),'utf8');
+const workflowDiagnostics=await fs.readFile(path.join(ROOT,'converter/src/workflow-diagnostics.mjs'),'utf8');
 const targetRegex=await fs.readFile(path.join(ROOT,'converter/src/target-regex.mjs'),'utf8');
 assert.equal(/"mirrors"\s*:/.test(sourceCatalog), false, 'Block 90: Source Catalog must not contain mirrors');
 assert.equal(/entry\.mirrors|fetchWithFallback|planScriptMirrorPaths/.test(syncConverter), false, 'Block 90: converter must not use source/script mirror fallback');
@@ -131,6 +132,22 @@ assert.match(syncConverter,/conversionStampFromText\(oldQx\)/, 'Block 80: online
 assert.match(canonicalRunner,/firstConversionStamp\(\[oldQx, oldSurge\], \{trim:true\}\)/, 'Block 80: canonical regeneration must preserve QX then Surge stamp precedence');
 assert.match(canonicalRunner,/generatedScriptDiffs\(ROOT, entry, out\.generatedScripts\)/, 'Block 80: canonical check must compare helpers without writing');
 assert.match(converterWorkflow,/managed-artifacts\.mjs/, 'Block 80: Converter Check must execute managed artifact behavior contract');
+assert.equal(/source-catalog|source-fetch|conversion-context|conversion-pipeline|rule-|rewrite-|script-|mitm\.mjs|qx-snippet-validator|surge-module|managed-artifacts|official-capabilities/.test(workflowDiagnostics), false, 'Block 80/90: workflow diagnostics must not import converter semantics, validators, catalog, fetch or managed artifact I/O');
+assert.equal(/process\.exitCode/.test(workflowDiagnostics), false, 'Block 80/90: workflow diagnostics must not own caller exit policy');
+assert.match(syncConverter,/workflow-diagnostics\.mjs/, 'Block 80/90: sync orchestration must use shared workflow diagnostics');
+assert.match(canonicalRunner,/workflow-diagnostics\.mjs/, 'Block 80/90: canonical runner must use shared workflow diagnostics');
+assert.equal(/::error title=/.test(syncConverter), false, 'Block 80/90: sync orchestration must not render GitHub error annotations directly');
+assert.equal(/::error title=/.test(canonicalRunner), false, 'Block 80/90: canonical runner must not render GitHub error annotations directly');
+assert.match(syncConverter,/createWorkflowFailureReporter\(\{summaryLabel:'Failures'\}\)/, 'Block 80/90: sync summary label must remain Failures');
+assert.match(syncConverter,/failures\.capture\(entry,e\)/, 'Block 80/90: sync catch must delegate failure capture');
+assert.match(syncConverter,/if \(failures\.report\(\)\) process\.exitCode = 1;/, 'Block 80/90: sync caller must retain failure exit policy');
+assert.match(canonicalRunner,/summaryLabel:'Canonical regeneration failures'/, 'Block 80/90: canonical summary label must remain stable');
+assert.match(canonicalRunner,/detailFallback:'error'/, 'Block 80/90: canonical failure detail fallback must remain raw error');
+assert.match(canonicalRunner,/annotationFallback:'error'/, 'Block 80/90: canonical annotation fallback must remain raw error');
+assert.match(canonicalRunner,/failures\.capture\(entry,error\)/, 'Block 80/90: canonical catch must delegate failure capture');
+assert.match(canonicalRunner,/formatWorkflowErrorAnnotation\(entry,new Error\('canonical outputs\/helpers are stale'\)/, 'Block 80/90: canonical stale annotation must use shared formatter');
+assert.match(canonicalRunner,/if \(failures\.report\(\)\) \{[\s\S]*process\.exitCode = 1;/, 'Block 80/90: canonical caller must retain failure exit policy');
+assert.match(converterWorkflow,/workflow-diagnostics\.mjs/, 'Block 80/90: Converter Check must execute workflow diagnostics behavior contract');
 assert.match(conversionPipeline,/isSupportedSourceSection\(/, 'Block 80: conversion pipeline must explicitly account for unsupported active sections through the shared source-section scope');
 assert.match(conversionPipeline,/ISSUE REQUIRED \[unknown-source-section\]/, 'Block 80: unknown active source sections must fail closed and request an issue');
 assert.equal(/inspectQxScriptCompatibility|qxManualPortComment/.test(syncConverter), false, 'Block 60: production converter must not gate Source Script execution on runtime compatibility scanning');

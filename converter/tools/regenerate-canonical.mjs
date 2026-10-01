@@ -7,6 +7,7 @@ import { convertPlugin } from '../src/conversion-pipeline.mjs';
 import { materializeConversionContext } from '../src/conversion-context.mjs';
 import { validateSurgeModule } from '../src/surge-module.mjs';
 import { loadLoonSourceCatalog } from '../src/source-catalog.mjs';
+import { createWorkflowFailureReporter, formatWorkflowErrorAnnotation } from '../src/workflow-diagnostics.mjs';
 import {
   firstConversionStamp,
   generatedScriptDiffs,
@@ -26,7 +27,11 @@ const mode = process.argv.includes('--write') ? 'write' : 'check';
 
 const manifest = await loadLoonSourceCatalog(MANIFEST);
 const changed = [];
-const failures = [];
+const failures = createWorkflowFailureReporter({
+  summaryLabel:'Canonical regeneration failures',
+  detailFallback:'error',
+  annotationFallback:'error',
+});
 
 for (const entry of manifest) {
   try {
@@ -56,7 +61,7 @@ for (const entry of manifest) {
 
     changed.push(entry.id);
     if (mode === 'check') {
-      console.error('::error title=' + entry.id + '::canonical outputs/helpers are stale');
+      console.error(formatWorkflowErrorAnnotation(entry,new Error('canonical outputs/helpers are stale'),{annotationFallback:'error'}));
       continue;
     }
 
@@ -76,13 +81,11 @@ for (const entry of manifest) {
       (out.generatedScripts.size ? ' + helpers=' + out.generatedScripts.size : '')
     );
   } catch (error) {
-    failures.push(entry.id + ': ' + (error?.stack || error));
-    console.error('::error title=' + entry.id + '::' + String(error?.message || error).replaceAll('\n', '%0A'));
+    failures.capture(entry,error);
   }
 }
 
-if (failures.length) {
-  console.error('\nCanonical regeneration failures:\n' + failures.join('\n\n'));
+if (failures.report()) {
   process.exitCode = 1;
 } else if (mode === 'check' && changed.length) {
   console.error('\nStale canonical entries: ' + changed.join(', '));
