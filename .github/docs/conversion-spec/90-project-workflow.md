@@ -173,3 +173,7 @@ Review/Issue marker 不阻止其它已验证插件的自动提交。它们是 fa
 - `.github/manual-assets.json` 登记手工资产；当前 QZXY 不参与自动 regeneration。
 - `.github/monitor/monitor_upstreams.py` 只记录监控源变化并维护 `.github/monitor/state.json` / `upstream/` mirror，不创建 review PR。
 - 两套 workflow 均保留 machine-readable reconciliation / inventory；scheduled flow 还上传 sync failure、issue summary、monitor change summary 与运行日志。
+
+## 仓库布局门禁
+
+`.github/converter/tests/repository-layout.mjs`（路径中的前导空格仅为排版错误）由 Converter Check 与 Upstream Monitor 同时执行，用于阻止 `converter/`、`docs/`、`monitor/`、`upstream/` 等工作流目录重新出现在仓库根目录。允许的根目录固定为 `.github / Resource / Adblock / boxjs / module / rule / script`。
