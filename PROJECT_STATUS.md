@@ -4,12 +4,12 @@
 > 维护原则：本文件描述“当前 main 的真实状态”，不能替代 `CONVERSION_SPEC.md`；规范冲突时以 `CONVERSION_SPEC.md` 为唯一权威。
 
 - 审计日期：2026-10-01
-- 审计基线：PR #93 generic Rule inventory v2 / Converter Check #682
+- 审计基线：PR #94 generic inventory + Complex Rewrite routing / Converter Check #689
 - Source Catalog：22 个 Loon 去广告插件
 - Catalog 管理目标：22 个 Quantumult X snippet + 22 个 Surge sgmodule
 - Adblock 目录实际目标：23 个 QX + 23 个 Surge（额外包含手工维护的 `QZXY`）
-- 最近完整 Converter Check：#682，通过
-- 当前实现 PR：#93
+- 最近完整 Converter Check：#689，通过
+- 当前实现 PR：#94
 
 ---
 
@@ -36,7 +36,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 - `CONVERSION_SPEC.md` + Block 00–95 已建立为唯一规范链。
 - Source Catalog 驱动 canonical regeneration。
 - 已建立 QX / Surge validator、repository audit、Golden、genericity、helper reference、Source Script URL preservation 等检查。
-- 未知 Loon section、Script parse failure、未知 MITM option、未知 Rewrite action 与未登记 complex signature 不再静默丢失：先注释并标记 `ISSUE REQUIRED`，再由自动化创建/复用议题。
+- 未知 Loon section、Script parse failure、未知 MITM option 与未知 Rewrite action 不再静默丢失：先注释并标记 `ISSUE REQUIRED`，再由自动化创建/复用议题。已知 action 的新组合不属于 unknown；renderer 无法等价处理时进入 Review。
 - 定时上游维护已切换为 GitHub Actions 全自动闭环：逐插件拉取/转换/验证、自动 Issue、全局审计后直提 main。
 
 ### 2.2 Regex
@@ -53,7 +53,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 ### 2.3 Rewrite / Complex helper
 
 - Complex renderer 按 source-authored multi-action AST + generic action family 准入；已支持 family 的新 cardinality/顺序/组合不再要求 observed signature 登记，renderer 无法保真时 Review。
-- 2026-09-30 扫描 20 个 Catalog Loon 插件，当前唯一活动 complex signature 为 `response.body.mock | response.header.set`（3 条），已登记为通用类型。
+- Catalog 中既有 `response.body.mock | response.header.set` 继续作为运行时回归样例，但不再作为 capability allowlist；Complex production 只按 action family + renderer capability 判断。
 - 相邻、同 condition 的独立 Rewrite 不再合并；Webpage 的独立 `response.header.add` / `response.header.set` 将分别转换。
 - condition named capture、`${name.n}`、action-local `$0...$n` 已分离处理。
 - Header 名称大小写不敏感语义已在 helper 中处理。
@@ -146,7 +146,7 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 
 #### P1-2：Source → Target reconciliation — 已完成
 
-新增 `converter/tools/conversion-reports.mjs`，CI 自动生成 JSON + Markdown reconciliation。20 个 Catalog 插件的每条非 `[Argument]` 活动源声明必须归入 converted / unsupported-commented / Review / Issue / disabled / intentional-drop 之一；出现未匹配 Source declaration 或无法闭合时 CI 失败。
+新增 `converter/tools/conversion-reports.mjs`，CI 自动生成 JSON + Markdown reconciliation。22 个 Catalog 插件的每条非 `[Argument]` 活动源声明必须归入 converted / unsupported-commented / Review / Issue / disabled / intentional-drop 之一；出现未匹配 Source declaration 或无法闭合时 CI 失败。
 
 报告同时统计目标活动行、WayX generated helper 引用和 Source Script 引用。
 
@@ -163,9 +163,10 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 
 ### P2 — 长期质量工作
 
-- [x] 已建立 Catalog-observed Legacy Rewrite / Legacy Script syntax inventory：`converter/tests/catalog-legacy-syntax-inventory.mjs` + `converter/fixtures/catalog-legacy-syntax-inventory.json`。当前 Catalog 为 116 条 Legacy Rewrite / 20 条 Legacy Script；无 unknown Legacy Rewrite、无无法解析 Legacy Script。该 gate 使用 production classifier/parser，只锁 action/option 语法形态，不锁具体 URL/pattern/value/数量。Converter Check #665 全绿，canonical/helper 0 diff。
+- [x] Legacy Rewrite / Legacy Script inventory 已升级为 semantic-token gate：Rewrite 只锁 action category 与 mock option name，Script 只锁 HTTP phase 与 option name；不锁 operation/variant/status 组合、mock option-set、option value/order/option-set。Production Legacy mock/Script parser 直接拒绝未知 option，避免再依赖 observed shape 间接校验。
 - [x] Rewrite v2 / Script v2 inventory 已升级为 semantic-token gate：只锁 phase、condition variable/operator、logical operator、Rewrite action name、Script option name；不锁 action 参数 shape/arity、完整 multi-action signature、grouping/regex flag 组合、Script path/argument kind、option value/order/option-set。组合合法性由 parser/registry/planner 负责。
 - [x] Catalog-observed Rule inventory 已升级为 v2 semantic-token gate：只锁递归 Rule Type、top-level Policy、parameter name、logical operator；不再锁 top/nested placement、RuleType:parameter 组合、字段数量、AND/OR 子项数量、operator placement 或已观察最大嵌套深度。Rule AST 对 AND/OR 任意合法子项数量递归处理，Loon `NOT` 单子项约束由 source parser 执行，Surge 最大 logical nesting depth 10 由 target planner 执行。PR #93 / Converter Check #682 全绿，canonical/helper 0 diff。
+- [x] 已完成其它通用转换器同类问题审计：Rewrite v2 / Script v2 / Legacy inventories 全部改为 semantic-token only；Complex Rewrite 删除 observed full-signature allowlist，改为 source-authored multi-action AST → generic action-family classifier → target renderer capability。已知 action 的新 cardinality/顺序/组合若 renderer 可保真则直接转换，不能保真则 Review，只有未知语法/action 才 Issue。PR #94 / Converter Check #689 全绿，current 22-plugin canonical/helper 0 diff。
 - [x] Rule production 已重构为 `rule-ast.mjs` → `rule-qx.mjs` / `rule-surge.mjs`：source parser 只构建 target-neutral AST，未知但可结构化 Rule 仍能进入 AST；QX/Surge planner 分别做目标能力与 logical semantics 校验。`rule.mjs` 仅保留兼容 facade，Catalog Rule inventory 也改为遍历同一 production AST。
 - [x] Rewrite production 已建立统一 Semantic IR 交接层：Legacy Rewrite 与 Rewrite v2 保留独立 source parser，但均归一为 `rewrite-ir.mjs` 的 target-neutral operation model；production Rewrite v2 路由改为读取 IR operation，Legacy planner 也先经 IR 分类。IR 明确保留 Legacy absolute redirect 与 Rewrite v2 matched-range redirect 等来源语义差异，不因统一类别而强制共用错误映射。
 - [x] Rewrite target 决策已集中到 `rewrite-qx.mjs::planQxRewrite()` / `rewrite-surge.mjs::planSurgeRewrite()`：`sync-convert.mjs` 只负责 parse、依赖物化、IR 构建和 planner 调用；QX header 特判、native/helper/complex fallback 与 complex-handler 注册均移入对应 target planner。旧未定义 `rewriteAction(...)` conservative fallback 已移除，未证明等价路径统一显式 Review/Issue。
