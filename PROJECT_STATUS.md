@@ -4,12 +4,12 @@
 > 维护原则：本文件描述“当前 main 的真实状态”，不能替代 `CONVERSION_SPEC.md`；规范冲突时以 `CONVERSION_SPEC.md` 为唯一权威。
 
 - 审计日期：2026-10-01
-- 审计基线：PR #84 managed artifact I/O consolidation / Converter Check #662
+- 审计基线：PR #85 workflow diagnostics consolidation / Converter Check #663
 - Source Catalog：20 个 Loon 去广告插件
 - Catalog 管理目标：20 个 Quantumult X snippet + 20 个 Surge sgmodule
 - Adblock 目录实际目标：21 个 QX + 21 个 Surge（额外包含手工维护的 `QZXY`）
-- 最近完整 Converter Check：#662，通过
-- 当前实现 PR：#84
+- 最近完整 Converter Check：#663，通过
+- 当前实现 PR：#85
 
 ---
 
@@ -85,7 +85,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 
 ## 3. Review 库存
 
-2026-10-01 规范 v1.24 已把 QX Source Script 的 `binary-body-mode` / `binary_body_mode` 纳入 KOP-XIAO `resource-parser.js` 兼容口径。目标 Review inventory 为：
+2026-10-01 规范 v1.25 已把 QX Source Script 的 `binary-body-mode` / `binary_body_mode` 纳入 KOP-XIAO `resource-parser.js` 兼容口径。目标 Review inventory 为：
 
 - **Quantumult X：0**
 - **Surge：0**
@@ -184,6 +184,7 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 - [x] Conversion context 已收口为 parse-once：`materializeConversionContext()` 返回的 `parsed` 会原样传入 `convertPlugin()`，在线 sync 与 canonical regeneration 不再对同一插件重复 whole-plugin parse；pipeline 仅为独立调用保留无 `parsed` 时的纯解析 fallback。该变更经 Converter Check #658 验证 canonical/helper 0 diff。
 - [x] QX snippet validator 已从 GitHub orchestration 抽离：`converter/src/qx-snippet-validator.mjs` 统一实现 `validateQX()` 并直接消费 `qx-official-capabilities.mjs`；sync、canonical runner、repository audit、Golden/genericity 均直接复用该 validator，不再从 `sync-convert.mjs` 借用校验逻辑。Converter Check #659 全绿且 canonical/helper 0 diff。
 - [x] Managed artifact I/O 已收口：`converter/src/managed-artifacts.mjs` 统一 source normalize/change-detect/write、conversion stamp、QX/Surge target snapshot、generated helper diff/write 与 conditional target write；`sync-convert.mjs` 和 canonical runner 不再分别维护 fs/crypto/target-path/normalization。源合法性仍先于 `Resource/Loon` 写入，online/canonical 时间戳策略、helper/validator/target write 顺序保持原样。Converter Check #662 全绿，canonical/helper 0 diff。
+- [x] Workflow diagnostics 已收口：`converter/src/workflow-diagnostics.mjs` 统一 GitHub Actions error annotation、failure detail 收集与 summary rendering；online sync 继续保持 `Failures:`、`stack || message` 与 `String(error.message)`，canonical runner 继续保持 `Canonical regeneration failures:`、`stack || error` 与 `String(error.message || error)`，调用方仍独占 exit policy/stale-check。Converter Check #663 全绿，canonical/helper 0 diff。
 - 每次新增 QX 官方 sample 证据时，复核现有 Rewrite Review 是否可以安全降级为 native/helper；Rule 只在官方明确支持对应 Rule Type 后才改为活动 filter。
 - [x] QX capability gate 已收窄为 Loon 去广告转换实际能力：仅核对 Rule 类型、WayX 实际使用的 Rewrite action 与 MITM `hostname` 是否仍有 Crossutility 官方依据；转换范围之外的能力不进入 registry。Surge 同样采用 Rule / Rewrite / hostname 边界。
 - [x] Surge official capability gate 已落地：production `rule.mjs` / `surge-module.mjs` 共用 `surge-official-capabilities.mjs`；CI 实时读取 Surge 官方 Manual，只验证 WayX 实际使用的 28 个 Rule Type、URL/Header/Body Rewrite、Map Local、HTTP request/response Script 与 MITM `hostname` 仍有官方依据。Surge 其它 Profile/Module 能力不进入本 gate。
