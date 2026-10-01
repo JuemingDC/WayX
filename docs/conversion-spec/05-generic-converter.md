@@ -396,8 +396,8 @@ GitHub Action 的职责：
 4. 对每个资源调用**同一个 generic converter**；
 5. 运行 QX / Surge validator；
 6. 运行 source/target 对账；
-7. Safe Tier 自动提交；
-8. Review Tier 开 PR 等待语义审查。
+7. conversion + target validator 成功的插件写入 managed Source/target/helper；
+8. Review / Issue / hard failure 由自动 Issue proposer 跟踪；全局 audit/reconciliation 通过后直接提交 main。
 
 Source Catalog 可以包含具体插件名和原作者 URL，因为它只是数据清单；converter source code 不得根据 Catalog 中的身份字段改变转换算法。
 
