@@ -379,3 +379,23 @@ CI 必须验证 source/target/helper 文件系统职责已经从 sync/canonical 
 - behavior contract：`converter/tests/managed-artifacts.mjs`
 - architecture contract：`converter/tests/spec-block-contract.mjs`
 
+## 80.21 Workflow diagnostics ownership gate
+
+CI 必须验证在线 sync 与 canonical regeneration 的失败诊断已收口，但控制流和转换语义不变：
+
+- `converter/src/workflow-diagnostics.mjs` 只负责 GitHub Actions error annotation、failure detail 收集和 summary rendering；
+- diagnostics 不得 import Source Catalog、source fetch、conversion context/pipeline、Rule/Rewrite/Script/MITM planner、QX/Surge validator、managed artifact I/O 或 capability registry；
+- `sync-convert.mjs` 与 `regenerate-canonical.mjs` 不得再自行拼接 `::error title=` annotation，也不得自行 join failure summary；
+- online sync 仍使用 `Failures:` summary，failure detail 保持 `stack || message`；
+- canonical runner 仍使用 `Canonical regeneration failures:` summary，failure detail 保持 `stack || error`；
+- annotation message 仍为 `error.message || error`，仅将换行替换成 `%0A`；
+- diagnostics 只返回是否存在 failures，不得直接决定 canonical stale-check、changed list 或 conversion exit policy；调用方仍负责设置 `process.exitCode = 1`；
+- entry loop、source fetch/validation、materialize、convert、helper write、target validation/write 的相对顺序不得变化；
+- behavior contract 必须覆盖 annotation escaping、stack precedence、sync/canonical fallback 差异、summary 文本及无 failure 时不输出；
+- 全 Catalog canonical 与 generated helper 必须 0 diff。
+
+实现：
+- diagnostics：`converter/src/workflow-diagnostics.mjs`
+- behavior contract：`converter/tests/workflow-diagnostics.mjs`
+- architecture contract：`converter/tests/spec-block-contract.mjs`
+
