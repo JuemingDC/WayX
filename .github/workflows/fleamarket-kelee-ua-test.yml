@@ -60,52 +60,67 @@ jobs:
           fs.writeFileSync(file,JSON.stringify([entry],null,2)+'\n');
           NODE
 
-      - name: Probe Kelee client User-Agent variants
+      - name: Probe Kelee client User-Agent variants with production Node fetch
         id: probe
         shell: bash
         run: |
           set -euo pipefail
-          URL="https://kelee.one/Tool/Loon/Lpx/FleaMarket_remove_ads.lpx"
-          OUT="monitor/.runtime/fleamarket-kelee-ua/upstream-probe.txt"
-          : > "$OUT"
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
 
-          probe() {
-            name="$1"
-            ua="$2"
-            body="/tmp/fleamarket-${name}.body"
-            headers="/tmp/fleamarket-${name}.headers"
-            code="$(curl -4 -sS -L --connect-timeout 10 --max-time 20 -A "$ua" -H "Accept: */*" -D "$headers" -o "$body" -w '%{http_code}' "$URL" || true)"
-            bytes="$(wc -c < "$body" 2>/dev/null || echo 0)"
-            {
-              echo "[$name] http=$code bytes=$bytes"
-              echo "ua=$ua"
-              grep -iE '^(server|content-type|location|cf-ray|x-|via):' "$headers" || true
-              echo
-            } | tee -a "$OUT" >&2
-            if [ "$code" = "200" ] && grep -q '#!name=' "$body"; then
-              printf '%s' "$ua"
-              return 0
-            fi
-            return 1
+          const url='https://kelee.one/Tool/Loon/Lpx/FleaMarket_remove_ads.lpx';
+          const out='monitor/.runtime/fleamarket-kelee-ua/upstream-probe.txt';
+          const candidates=[
+            ['active-fetcher','Loon/764 CFNetwork/1498.700.1 Darwin/23.6.0 iPhone/17.6.1'],
+            ['loon917','Loon/917 CFNetwork/1331.0.7 Darwin/21.4.0'],
+            ['surge9527','Surge iOS/9527'],
+            ['current-wayx','StashCore/2.7.1 Stash/2.7.1 Clash/1.11.0'],
+          ];
+
+          const lines=[];
+          let selected='';
+          for (const [name,ua] of candidates) {
+            try {
+              const controller=new AbortController();
+              const timer=setTimeout(()=>controller.abort(),20000);
+              const res=await fetch(url,{
+                headers:{'User-Agent':ua,'Accept':'*/*'},
+                redirect:'follow',
+                signal:controller.signal,
+              });
+              clearTimeout(timer);
+              const body=await res.text();
+              lines.push(
+                `[${name}] http=${res.status} bytes=${Buffer.byteLength(body)}`,
+                `ua=${ua}`,
+                `server=${res.headers.get('server') ?? ''}`,
+                `content-type=${res.headers.get('content-type') ?? ''}`,
+                `cf-ray=${res.headers.get('cf-ray') ?? ''}`,
+                `body-prefix=${body.slice(0,160).replace(/\s+/g,' ')}`,
+                ''
+              );
+              if (res.status===200 && body.includes('#!name=')) {
+                selected=ua;
+                break;
+              }
+            } catch (error) {
+              lines.push(`[${name}] error=${error?.stack || error}`,'');
+            }
           }
 
-          selected=""
-          if selected="$(probe loon917 'Loon/917 CFNetwork/1331.0.7 Darwin/21.4.0')"; then
-            :
-          elif selected="$(probe surge9527 'Surge iOS/9527')"; then
-            :
-          elif selected="$(probe current-wayx 'StashCore/2.7.1 Stash/2.7.1 Clash/1.11.0')"; then
-            :
-          fi
+          fs.writeFileSync(out,lines.join('\n')+'\n');
+          console.log(lines.join('\n'));
 
-          if [ -z "$selected" ]; then
-            echo "selected=" >> "$GITHUB_OUTPUT"
-            echo "::error title=Kelee upstream::No tested client User-Agent passed Cloudflare and returned the Loon plugin."
-            exit 1
-          fi
+          const output=process.env.GITHUB_OUTPUT;
+          if (!output) throw new Error('GITHUB_OUTPUT missing');
+          fs.appendFileSync(output,`selected=${selected}\n`);
 
-          echo "selected=$selected" >> "$GITHUB_OUTPUT"
-          echo "Selected Kelee-compatible User-Agent: $selected" | tee -a "$OUT"
+          if (!selected) {
+            console.error('::error title=Kelee upstream::No tested client User-Agent passed Cloudflare with the same Node fetch stack used by WayX.');
+            process.exit(1);
+          }
+          console.log('Selected Kelee-compatible User-Agent:',selected);
+          NODE
 
       - name: Delete all managed FleaMarket artifacts in runner workspace
         shell: bash
