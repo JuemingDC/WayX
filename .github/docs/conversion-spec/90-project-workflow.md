@@ -32,27 +32,27 @@ WayX 的上游维护与转换由 GitHub Actions 自动闭环执行；不再使�
 ## 自动化实现文件
 
 - Source Catalog：`.github/sources/loon.json`
-- Original-source fetch router：`converter/src/source-fetch.mjs`
-- Python raw upstream transport：`converter/tools/fetch-upstream.py`
+- Original-source fetch router：`.github/converter/src/source-fetch.mjs`
+- Python raw upstream transport：`.github/converter/tools/fetch-upstream.py`
 - Scheduled upstream workflow：`.github/workflows/upstream-monitor.yml`
 - Source fetch + per-plugin conversion orchestration：`.github/scripts/sync-convert.mjs`
 - Automated Issue proposer：`.github/scripts/propose-conversion-issues.mjs`
 - Target format validator：`.github/scripts/validate_conversion_policy.py`
-- Whole-plugin parser：`converter/src/plugin-parser.mjs`
-- Dependency materializer：`converter/src/dependency-materializer.mjs`
-- Source Script materializer：`converter/src/source-script-materializer.mjs`
-- Shared conversion context：`converter/src/conversion-context.mjs`
-- Pure generic conversion core：`converter/src/conversion-pipeline.mjs`
-- Shared validated conversion runner：`converter/src/conversion-runner.mjs`
-- Managed artifact I/O / pure target diff：`converter/src/managed-artifacts.mjs`
-- Workflow diagnostics：`converter/src/workflow-diagnostics.mjs`
-- Workflow lifecycle/result regression：`converter/tests/workflow-control.mjs`
-- Structured scheduled failure report：`converter/src/upstream-run-report.mjs`
-- QX validator：`converter/src/qx-snippet-validator.mjs`
-- Surge validator：`converter/src/surge-module.mjs`
-- Repository audit：`converter/tools/audit-repository.mjs`
-- Reconciliation / Review inventory：`converter/tools/conversion-reports.mjs`
-- Canonical deterministic regeneration：`converter/tools/regenerate-canonical.mjs`
+- Whole-plugin parser：`.github/converter/src/plugin-parser.mjs`
+- Dependency materializer：`.github/converter/src/dependency-materializer.mjs`
+- Source Script materializer：`.github/converter/src/source-script-materializer.mjs`
+- Shared conversion context：`.github/converter/src/conversion-context.mjs`
+- Pure generic conversion core：`.github/converter/src/conversion-pipeline.mjs`
+- Shared validated conversion runner：`.github/converter/src/conversion-runner.mjs`
+- Managed artifact I/O / pure target diff：`.github/converter/src/managed-artifacts.mjs`
+- Workflow diagnostics：`.github/converter/src/workflow-diagnostics.mjs`
+- Workflow lifecycle/result regression：`.github/converter/tests/workflow-control.mjs`
+- Structured scheduled failure report：`.github/converter/src/upstream-run-report.mjs`
+- QX validator：`.github/converter/src/qx-snippet-validator.mjs`
+- Surge validator：`.github/converter/src/surge-module.mjs`
+- Repository audit：`.github/converter/tools/audit-repository.mjs`
+- Reconciliation / Review inventory：`.github/converter/tools/conversion-reports.mjs`
+- Canonical deterministic regeneration：`.github/converter/tools/regenerate-canonical.mjs`
 - PR CI：`.github/workflows/converter-check.yml`
 
 自动化脚本不得维护第二份插件列表；所有 Loon source 必须遍历 Source Catalog。
@@ -91,7 +91,7 @@ Source Catalog entry.source
 - 该插件的新 managed Source / target 不得在验证前写入；
 - 保留上一版 checked-in 的已验证 Source/target；
 - 其它插件继续处理；
-- 失败写入 `monitor/.runtime/sync-failures.json`；
+- 失败写入 `.github/monitor/.runtime/sync-failures.json`；
 - Issue proposer 在本轮提交前创建或复用对应 Issue。
 
 ## 原作者源唯一链路
@@ -171,5 +171,5 @@ Review/Issue marker 不阻止其它已验证插件的自动提交。它们是 fa
 
 - `.github/sources/loon.json` 只管理自动拉取/转换的 Loon Catalog。
 - `.github/manual-assets.json` 登记手工资产；当前 QZXY 不参与自动 regeneration。
-- `monitor/monitor_upstreams.py` 只记录监控源变化并维护 `monitor/state.json` / `upstream/` mirror，不创建 review PR。
+- `.github/monitor/monitor_upstreams.py` 只记录监控源变化并维护 `.github/monitor/state.json` / `upstream/` mirror，不创建 review PR。
 - 两套 workflow 均保留 machine-readable reconciliation / inventory；scheduled flow 还上传 sync failure、issue summary、monitor change summary 与运行日志。

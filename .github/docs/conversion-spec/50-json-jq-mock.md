@@ -100,18 +100,18 @@ response.json.jq("jq-path=https://...")
 ## 50.6 原始依赖读取原则
 
 - `jq_file` / `mock_file` 只从源插件声明或相对源 URL 解析出的原始地址读取；legacy `jq-path=` 不进入依赖流程。
-- dependency 内容只在本次转换进程内由 `dependency-materializer.mjs` materialize；不写入 `converter/dependencies/` 作为权威副本或 fallback。
+- dependency 内容只在本次转换进程内由 `dependency-materializer.mjs` materialize；不写入 `.github/converter/dependencies/` 作为权威副本或 fallback。
 - `dependencySpecFromAction()` 必须保持 target-neutral：只描述原始依赖 URL、kind、phase、status、content-type、base64/binary 等 Loon 源语义；不得提前写入 `qxAction`、Surge section 或 target strategy。目标 action 只能在 `rewrite-qx.mjs` / `rewrite-surge.mjs` 中选择。
 - 原始依赖无法读取或无法安全嵌入目标语法时，进入 Review；不得使用仓库缓存替代。
 
 ## 50.7 自动转换实现
 
-- JQ normalize/minify：`converter/src/jq.mjs`
-- jq_file/mock_file dependency semantics：`converter/src/dependency.mjs`
-- jq_file/mock_file discovery + fetch/materialization：`converter/src/dependency-materializer.mjs`
-- shared conversion context：`converter/src/conversion-context.mjs`
-- QX mock_file helper：`converter/src/qx-mock.mjs`
-- Surge request mock helper：`converter/src/surge-mock.mjs`
-- QX inline mock/header helpers：`converter/src/qx-semantic-script.mjs`
-- Legacy JSON/JQ/mock：`converter/src/legacy-rewrite.mjs`
-- Rewrite v2 JSON/JQ/mock planner：`converter/src/rewrite-v2-semantic.mjs`
+- JQ normalize/minify：`.github/converter/src/jq.mjs`
+- jq_file/mock_file dependency semantics：`.github/converter/src/dependency.mjs`
+- jq_file/mock_file discovery + fetch/materialization：`.github/converter/src/dependency-materializer.mjs`
+- shared conversion context：`.github/converter/src/conversion-context.mjs`
+- QX mock_file helper：`.github/converter/src/qx-mock.mjs`
+- Surge request mock helper：`.github/converter/src/surge-mock.mjs`
+- QX inline mock/header helpers：`.github/converter/src/qx-semantic-script.mjs`
+- Legacy JSON/JQ/mock：`.github/converter/src/legacy-rewrite.mjs`
+- Rewrite v2 JSON/JQ/mock planner：`.github/converter/src/rewrite-v2-semantic.mjs`

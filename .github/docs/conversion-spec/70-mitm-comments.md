@@ -28,7 +28,7 @@ hostname = %APPEND% api.example.com, *.example.com
 
 ## 70.2 原注释
 
-原注释尽量原位保留。Source comment grouping 必须由 `converter/src/source-section.mjs` 统一完成；QX inline note 决策再由 `converter/src/qx-comment.mjs` 单独处理。不得删除：
+原注释尽量原位保留。Source comment grouping 必须由 `.github/converter/src/source-section.mjs` 统一完成；QX inline note 决策再由 `.github/converter/src/qx-comment.mjs` 单独处理。不得删除：
 - 开关说明
 - 行为说明
 - 分组说明
@@ -69,9 +69,9 @@ WayX 的 MITM capability model 只有 `hostname`。当前 Source Catalog 的活�
 
 ## 70.4 自动转换实现
 
-- MITM target planner：`converter/src/mitm.mjs`
-- Source header metadata IR：`converter/src/source-metadata.mjs`
-- Metadata/header rendering：`converter/src/metadata.mjs`
-- Source section/comment grouping：`converter/src/source-section.mjs`
-- QX inline note rendering：`converter/src/qx-comment.mjs`
-- Validation：`converter/src/surge-module.mjs` + `.github/scripts/sync-convert.mjs::validateQX`。
+- MITM target planner：`.github/converter/src/mitm.mjs`
+- Source header metadata IR：`.github/converter/src/source-metadata.mjs`
+- Metadata/header rendering：`.github/converter/src/metadata.mjs`
+- Source section/comment grouping：`.github/converter/src/source-section.mjs`
+- QX inline note rendering：`.github/converter/src/qx-comment.mjs`
+- Validation：`.github/converter/src/surge-module.mjs` + `.github/scripts/sync-convert.mjs::validateQX`。

@@ -58,7 +58,7 @@ Loon `[Argument]` **声明区块本身不构成 Review 条件**。QX 忽略参�
 
 ## 80.2 Source 对账
 
-CI 的对账实现由 `converter/tools/conversion-reports.mjs` 自动生成 JSON + Markdown。Catalog 中每个非 `[Argument]` 活动源声明必须在每个目标平台归入以下且仅以下一类：`converted`、`unsupported/commented`、`review`、`issue`、`disabled`、`intentionalDrop`。
+CI 的对账实现由 `.github/converter/tools/conversion-reports.mjs` 自动生成 JSON + Markdown。Catalog 中每个非 `[Argument]` 活动源声明必须在每个目标平台归入以下且仅以下一类：`converted`、`unsupported/commented`、`review`、`issue`、`disabled`、`intentionalDrop`。
 
 报告同时记录目标活动行、WayX generated helper 引用与 Source Script 引用。出现目标 `Source declaration` 无法匹配原源声明，或任一 Catalog 插件无法完成上述对账时，CI 必须失败。
 
@@ -131,13 +131,13 @@ CI 必须额外检查：
 ## 80.7 自动转换实现
 
 - QX validator：`.github/scripts/sync-convert.mjs::validateQX`
-- Surge validator：`converter/src/surge-module.mjs::validateSurgeModule`
-- Genericity audit：`converter/tests/genericity-audit.mjs`
-- Identity invariance：`converter/tests/generic-identity.mjs`
-- Repository-wide audit：`converter/tools/audit-repository.mjs`
-- Generated helper reference existence：`converter/tests/generated-helper-refs.mjs`
-- Original Source Script URL preservation：`converter/tests/source-script-url-preservation.mjs`
-- End-to-end Golden：`converter/tests/end-to-end-golden.mjs` + `converter/fixtures/end-to-end-golden.json`
+- Surge validator：`.github/converter/src/surge-module.mjs::validateSurgeModule`
+- Genericity audit：`.github/converter/tests/genericity-audit.mjs`
+- Identity invariance：`.github/converter/tests/generic-identity.mjs`
+- Repository-wide audit：`.github/converter/tools/audit-repository.mjs`
+- Generated helper reference existence：`.github/converter/tests/generated-helper-refs.mjs`
+- Original Source Script URL preservation：`.github/converter/tests/source-script-url-preservation.mjs`
+- End-to-end Golden：`.github/converter/tests/end-to-end-golden.mjs` + `.github/converter/fixtures/end-to-end-golden.json`
 
 
 ## 80.8 Generated helper runtime execution
@@ -145,14 +145,14 @@ CI 必须额外检查：
 Complex generated JavaScript must be executed in CI against synthetic request/response fixtures, not validated only by matching generated source text. Runtime fixtures must cover at least: request and response phases; method/status/header/URL conditions including grouped AND/OR logic; condition match/no-match; ordered Header/Body/JSON mutation; case-insensitive header lookup/mutation; named and optional captures; raw-string literal behavior; typed JSON replacement; JSON add no-overwrite and nested-path creation; invalid-JSON action failure with later actions continuing; and Surge duplicate-header preservation under full-header mode. Text assertions remain useful for target declaration shape but do not substitute for runtime execution.
 
 实现固定为：
-- `converter/tests/generated-helper-runtime.mjs` 使用 Node `vm` 直接执行 renderer 产出的 JavaScript，并注入目标运行时最小 `$request` / `$response` / `$argument` / `$done` fixture；
+- `.github/converter/tests/generated-helper-runtime.mjs` 使用 Node `vm` 直接执行 renderer 产出的 JavaScript，并注入目标运行时最小 `$request` / `$response` / `$argument` / `$done` fixture；
 - 测试必须断言 `$done()` 恰好调用一次，并检查实际返回对象/bytes，而不是只比较生成源码字符串；
 - `converter-check.yml` 将该 runtime fixture 作为独立 CI 步骤执行；
 - 当前 fixture 还额外覆盖 Catalog 已观察的 QX `response.body.mock | response.header.set` complex signature，包括 text body 与 Base64 `bodyBytes` 路径。
 
 ## 80.9 Catalog-observed v2 semantic-token inventory
 
-CI 必须扫描 Source Catalog 中当前实际存在的 Loon Rewrite v2 / Script v2，并与 `converter/fixtures/catalog-syntax-inventory.json` 的 semantic-token baseline 比较。
+CI 必须扫描 Source Catalog 中当前实际存在的 Loon Rewrite v2 / Script v2，并与 `.github/converter/fixtures/catalog-syntax-inventory.json` 的 semantic-token baseline 比较。
 
 Inventory 只记录真正会引入新语义类别的 identifier：
 
@@ -165,8 +165,8 @@ Inventory 只记录真正会引入新语义类别的 identifier：
 因此一个已支持 action 第一次采用另一个合法参数形式、已知 option 以新的顺序/子集出现、或 multi-action pipeline 出现新的已支持 family 组合，都不得仅因 Catalog 以前没见过而 fail。只有真正新的 phase / condition variable class / operator / action name / Script option name 才触发 semantic-token baseline 审查。
 
 实现：
-- baseline：`converter/fixtures/catalog-syntax-inventory.json`
-- validator：`converter/tests/catalog-syntax-inventory.mjs`
+- baseline：`.github/converter/fixtures/catalog-syntax-inventory.json`
+- validator：`.github/converter/tests/catalog-syntax-inventory.mjs`
 - CI：`.github/workflows/converter-check.yml`
 
 
@@ -188,9 +188,9 @@ WayX capability gate 只验证 **Loon 去广告插件转换实际会用到的能
 - registry 只维护 WayX 实际使用的 Rule/Rewrite/hostname，不维护转换范围之外的能力分类。
 
 实现：
-- registry：`converter/src/qx-official-capabilities.mjs`
-- reviewed baseline：`converter/fixtures/qx-official-capabilities.json`
-- evidence test：`converter/tests/qx-official-capabilities.mjs`
+- registry：`.github/converter/src/qx-official-capabilities.mjs`
+- reviewed baseline：`.github/converter/fixtures/qx-official-capabilities.json`
+- evidence test：`.github/converter/tests/qx-official-capabilities.mjs`
 - target validator：`.github/scripts/sync-convert.mjs::validateQX`
 
 ### Surge
@@ -205,15 +205,15 @@ Surge 的能力依据只从官方文档链核对 WayX 实际生成的 Rule / URL
 Surge production validator 与 official capability gate 必须共用同一 registry，禁止在 `rule.mjs` / `surge-module.mjs` 中另维护一份重复白名单。
 
 实现：
-- registry：`converter/src/surge-official-capabilities.mjs`
-- reviewed baseline：`converter/fixtures/surge-official-capabilities.json`
-- live evidence test：`converter/tests/surge-official-capabilities.mjs`
-- target validator：`converter/src/surge-module.mjs::validateSurgeModule`
-- Rule planner：`converter/src/rule.mjs`
+- registry：`.github/converter/src/surge-official-capabilities.mjs`
+- reviewed baseline：`.github/converter/fixtures/surge-official-capabilities.json`
+- live evidence test：`.github/converter/tests/surge-official-capabilities.mjs`
+- target validator：`.github/converter/src/surge-module.mjs::validateSurgeModule`
+- Rule planner：`.github/converter/src/rule.mjs`
 
 ## 80.11 Catalog-observed Rule inventory gate
 
-`converter/tests/catalog-rule-inventory.mjs` 必须作为 Converter Check checkpoint 执行，并与 `converter/fixtures/catalog-rule-inventory.json` 比较。
+`.github/converter/tests/catalog-rule-inventory.mjs` 必须作为 Converter Check checkpoint 执行，并与 `.github/converter/fixtures/catalog-rule-inventory.json` 比较。
 
 这个 gate 是 **source-change detector**，不是目标平台白名单：当前 Catalog 没出现某个 Rule Type，不代表通用 converter 永久不支持它；反之，parser 能解析某个新类型，也不代表无需审查即可自动更新 baseline。
 
@@ -228,7 +228,7 @@ Surge production validator 与 official capability gate 必须共用同一 regis
 MITM 不属于该 inventory。
 ## 80.12 Rewrite Semantic IR architecture gate
 
-`converter/tests/rewrite-ir.mjs` 必须作为 Converter Check checkpoint 执行。它验证 Legacy Rewrite 与 Rewrite v2 在进入目标规划前都能形成 target-neutral Semantic IR，并检查以下契约：
+`.github/converter/tests/rewrite-ir.mjs` 必须作为 Converter Check checkpoint 执行。它验证 Legacy Rewrite 与 Rewrite v2 在进入目标规划前都能形成 target-neutral Semantic IR，并检查以下契约：
 
 - IR 不 import Quantumult X / Surge capability registry；
 - Legacy 与 v2 的相同语义类别可归入统一 operation kind；
@@ -252,9 +252,9 @@ CI 必须验证 Rewrite target planning 已从 orchestration 中分离：
 - canonical 输出在纯架构迁移中必须保持不变。
 
 实现：
-- QX planner：`converter/src/rewrite-qx.mjs`
-- Surge planner：`converter/src/rewrite-surge.mjs`
-- architecture contract：`converter/tests/rewrite-target-planners.mjs`
+- QX planner：`.github/converter/src/rewrite-qx.mjs`
+- Surge planner：`.github/converter/src/rewrite-surge.mjs`
+- architecture contract：`.github/converter/tests/rewrite-target-planners.mjs`
 ## 80.14 Script IR / target-planner architecture gate
 
 CI 必须验证 Script target planning 已从 orchestration 中分离：
@@ -269,11 +269,11 @@ CI 必须验证 Script target planning 已从 orchestration 中分离：
 - 纯架构迁移必须保持 canonical 输出不变。
 
 实现：
-- Legacy parser：`converter/src/script-legacy.mjs`
-- IR：`converter/src/script-ir.mjs`
-- QX planner：`converter/src/script-qx.mjs`
-- Surge planner：`converter/src/script-surge.mjs`
-- architecture contract：`converter/tests/script-ir-target-planners.mjs`
+- Legacy parser：`.github/converter/src/script-legacy.mjs`
+- IR：`.github/converter/src/script-ir.mjs`
+- QX planner：`.github/converter/src/script-qx.mjs`
+- Surge planner：`.github/converter/src/script-surge.mjs`
+- architecture contract：`.github/converter/tests/script-ir-target-planners.mjs`
 ## 80.15 Source section / comment / metadata architecture gate
 
 CI 必须验证 source semantic orchestration 由 `conversion-pipeline.mjs` 消费共享 parser/comment helpers，且 `sync-convert.mjs` 不参与 comment/metadata semantic parsing：
@@ -288,11 +288,11 @@ CI 必须验证 source semantic orchestration 由 `conversion-pipeline.mjs` 消�
 - 本架构迁移不得修改 MITM 语义、目标 metadata 内容或 canonical 输出。
 
 实现：
-- source section/comment：`converter/src/source-section.mjs`
-- source metadata IR：`converter/src/source-metadata.mjs`
-- QX inline note：`converter/src/qx-comment.mjs`
-- target metadata renderer：`converter/src/metadata.mjs`
-- contract：`converter/tests/source-section-comments.mjs`
+- source section/comment：`.github/converter/src/source-section.mjs`
+- source metadata IR：`.github/converter/src/source-metadata.mjs`
+- QX inline note：`.github/converter/src/qx-comment.mjs`
+- target metadata renderer：`.github/converter/src/metadata.mjs`
+- contract：`.github/converter/tests/source-section-comments.mjs`
 ## 80.16 Target output-builder architecture gate
 
 CI 必须验证目标 section routing/final render 已从 orchestration 中分离：
@@ -307,10 +307,10 @@ CI 必须验证目标 section routing/final render 已从 orchestration 中分�
 - 纯架构迁移要求 Catalog canonical 与 generated helpers 0 diff。
 
 实现：
-- shared line compaction：`converter/src/output-lines.mjs`
-- QX builder：`converter/src/qx-output.mjs`
-- Surge builder：`converter/src/surge-output.mjs`
-- contract：`converter/tests/target-output-builders.mjs`
+- shared line compaction：`.github/converter/src/output-lines.mjs`
+- QX builder：`.github/converter/src/qx-output.mjs`
+- Surge builder：`.github/converter/src/surge-output.mjs`
+- contract：`.github/converter/tests/target-output-builders.mjs`
 ## 80.17 Plugin parser / conversion-pipeline architecture gate
 
 CI 必须验证纯转换核心已经脱离 GitHub/I/O orchestration：
@@ -325,9 +325,9 @@ CI 必须验证纯转换核心已经脱离 GitHub/I/O orchestration：
 - 纯架构迁移要求 Catalog canonical 与 generated helper 0 diff。
 
 实现：
-- whole-plugin parser：`converter/src/plugin-parser.mjs`
-- pure conversion core：`converter/src/conversion-pipeline.mjs`
-- contract：`converter/tests/conversion-pipeline.mjs`
+- whole-plugin parser：`.github/converter/src/plugin-parser.mjs`
+- pure conversion core：`.github/converter/src/conversion-pipeline.mjs`
+- contract：`.github/converter/tests/conversion-pipeline.mjs`
 ## 80.18 Conversion-context materializer architecture gate
 
 CI 必须验证外部依赖与 Source Script 物化已经从 `sync-convert.mjs` / canonical runner 中集中：
@@ -343,16 +343,16 @@ CI 必须验证外部依赖与 Source Script 物化已经从 `sync-convert.mjs` 
 - 纯架构迁移要求 canonical/helper 0 diff。
 
 实现：
-- dependency materializer：`converter/src/dependency-materializer.mjs`
-- Source Script materializer：`converter/src/source-script-materializer.mjs`
-- context aggregator：`converter/src/conversion-context.mjs`
-- contract：`converter/tests/conversion-context-materializers.mjs`
+- dependency materializer：`.github/converter/src/dependency-materializer.mjs`
+- Source Script materializer：`.github/converter/src/source-script-materializer.mjs`
+- context aggregator：`.github/converter/src/conversion-context.mjs`
+- contract：`.github/converter/tests/conversion-context-materializers.mjs`
 
 ## 80.19 Quantumult X snippet-validator ownership gate
 
 CI 必须验证 QX 成品校验已经从 GitHub sync orchestration 中分离：
 
-- `converter/src/qx-snippet-validator.mjs` 是唯一 QX snippet validator，实现并导出 `validateQX()`；
+- `.github/converter/src/qx-snippet-validator.mjs` 是唯一 QX snippet validator，实现并导出 `validateQX()`；
 - validator 必须直接消费 `qx-official-capabilities.mjs` 的 `QX_WAYX_FILTER_TYPES`、`QX_WAYX_SCRIPT_ACTIONS`、`QX_WAYX_SNIPPET_MITM_KEYS`，不得维护第二份能力白名单；
 - validator 继续检查活动 `#!` metadata、活动 `[filter_local]/[rewrite_local]/[mitm]`、filter/rewrite/MITM 活动行、QX note 位置、被丢弃 regex flags 的恢复、HTTP case-fold 伪装、`jq-path=` 泄漏与旧未转换 token；
 - workflow-facing `sync-convert.mjs` / `regenerate-canonical.mjs` 必须通过 `conversion-runner.mjs::validateConvertedPlugin()` 调用 QX/Surge validator，不得直接 import validator 或 capability registry；
@@ -361,16 +361,16 @@ CI 必须验证 QX 成品校验已经从 GitHub sync orchestration 中分离：
 - 纯架构迁移要求 canonical/helper 0 diff。
 
 实现：
-- QX validator：`converter/src/qx-snippet-validator.mjs`
-- QX capability registry：`converter/src/qx-official-capabilities.mjs`
-- behavior regression：`converter/tests/end-to-end-golden.mjs`
-- architecture contract：`converter/tests/spec-block-contract.mjs`
+- QX validator：`.github/converter/src/qx-snippet-validator.mjs`
+- QX capability registry：`.github/converter/src/qx-official-capabilities.mjs`
+- behavior regression：`.github/converter/tests/end-to-end-golden.mjs`
+- architecture contract：`.github/converter/tests/spec-block-contract.mjs`
 
 ## 80.20 Managed artifact I/O ownership gate
 
 CI 必须验证 source/target/helper 文件系统职责已经从 sync/canonical runner 中收口，但转换行为不变：
 
-- `converter/src/managed-artifacts.mjs` 只允许负责 managed text normalization、Source change detection/write、conversion timestamp、target snapshot、generated helper diff/write 与 conditional target write；
+- `.github/converter/src/managed-artifacts.mjs` 只允许负责 managed text normalization、Source change detection/write、conversion timestamp、target snapshot、generated helper diff/write 与 conditional target write；
 - 该模块不得 import `conversion-pipeline.mjs`、Rule/Rewrite/Script/MITM planner、QX/Surge validator、Source Catalog 或 `source-fetch.mjs`，因此不能解释任何转换语义；
 - `sync-convert.mjs` 不再直接 import `node:fs/promises`、`node:crypto`、`normalizePluginSource()` 或 `qxTargetPath()/surgeTargetPath()` 来维护 managed artifacts；它必须继续直接从 `entry.source` fetch 原作者 plugin，并在 conversion 前做 Loon source 结构合法性检查；
 - online sync 的顺序固定为 fetch → in-memory source normalize → source validity → managed source **只读比较** → materialize context → read old target/stamp → convert → 如需刷新 timestamp 则再次 convert → QX/Surge validate 最终 output → generated helper write/prune → conditional target write → managed Source 最后写入；无效 upstream source 或 conversion/validator failure 不得写入该插件任何新 managed artifact；
@@ -380,15 +380,15 @@ CI 必须验证 source/target/helper 文件系统职责已经从 sync/canonical 
 - 全 Catalog canonical 与 generated helper 必须 0 diff。
 
 实现：
-- managed artifact I/O：`converter/src/managed-artifacts.mjs`
-- behavior contract：`converter/tests/managed-artifacts.mjs`
-- architecture contract：`converter/tests/spec-block-contract.mjs`
+- managed artifact I/O：`.github/converter/src/managed-artifacts.mjs`
+- behavior contract：`.github/converter/tests/managed-artifacts.mjs`
+- architecture contract：`.github/converter/tests/spec-block-contract.mjs`
 
 ## 80.21 Workflow diagnostics ownership gate
 
 CI 必须验证在线 sync 与 canonical regeneration 的失败诊断已收口，但控制流和转换语义不变：
 
-- `converter/src/workflow-diagnostics.mjs` 只负责 GitHub Actions error annotation、failure detail 收集和 summary rendering；
+- `.github/converter/src/workflow-diagnostics.mjs` 只负责 GitHub Actions error annotation、failure detail 收集和 summary rendering；
 - diagnostics 不得 import Source Catalog、source fetch、conversion context/pipeline、Rule/Rewrite/Script/MITM planner、QX/Surge validator、managed artifact I/O 或 capability registry；
 - `sync-convert.mjs` 与 `regenerate-canonical.mjs` 不得再自行拼接 `::error title=` annotation，也不得自行 join failure summary；
 - online sync 仍使用 `Failures:` summary，failure detail 保持 `stack || message`；
@@ -400,9 +400,9 @@ CI 必须验证在线 sync 与 canonical regeneration 的失败诊断已收口�
 - 全 Catalog canonical 与 generated helper 必须 0 diff。
 
 实现：
-- diagnostics：`converter/src/workflow-diagnostics.mjs`
-- behavior contract：`converter/tests/workflow-diagnostics.mjs`
-- architecture contract：`converter/tests/spec-block-contract.mjs`
+- diagnostics：`.github/converter/src/workflow-diagnostics.mjs`
+- behavior contract：`.github/converter/tests/workflow-diagnostics.mjs`
+- architecture contract：`.github/converter/tests/spec-block-contract.mjs`
 
 ## 80.22 Catalog Legacy semantic-token inventory gate
 
@@ -419,27 +419,27 @@ CI 必须扫描全部 Source Catalog 的活动 Legacy Rewrite / Legacy Script，
 - 已知 action/option 的新合法组合不得触发 baseline failure。
 
 实现：
-- inventory test：`converter/tests/catalog-legacy-syntax-inventory.mjs`
-- baseline fixture：`converter/fixtures/catalog-legacy-syntax-inventory.json`
+- inventory test：`.github/converter/tests/catalog-legacy-syntax-inventory.mjs`
+- baseline fixture：`.github/converter/fixtures/catalog-legacy-syntax-inventory.json`
 
 
 ## 80.23 Actions-only upstream automation gate
 
 CI 必须验证 scheduled upstream flow 不再依赖任何 ChatGPT Work handoff：
 
-- 仓库不得存在 `.github/workflows/work-review-finalizer.yml`、`monitor/WORK_TASK_PROMPT.md` 或 `.github/scripts/conversion_gate.py`；
+- 仓库不得存在 `.github/workflows/work-review-finalizer.yml`、`.github/monitor/WORK_TASK_PROMPT.md` 或 `.github/scripts/conversion_gate.py`；
 - `upstream-monitor.yml` 不得出现 `work-review`、`work-complete`、`work-reject`、`work/upstream-`、`review-queue` 或 `ChatGPT Work`；
 - scheduled flow 必须直接调用 `sync-convert.mjs`、target validator、repository audit、reconciliation、helper/source-URL tests 与 issue proposer；
 - 单插件 sync 必须先完成 conversion + QX/Surge validation，再写 generated helper / targets / managed Source；
-- hard failure 必须输出 `monitor/.runtime/sync-failures.json`，包含插件、阶段、原因和对应源规则上下文；
+- hard failure 必须输出 `.github/monitor/.runtime/sync-failures.json`，包含插件、阶段、原因和对应源规则上下文；
 - issue proposer 必须同时覆盖 `REVIEW REQUIRED`、`ISSUE REQUIRED` 和 hard sync failure；
 - 每个 Issue body contract 必须包含插件 ID、Source 文件、上游 URL、对应规则内容与失败原因；hard failure 还必须包含阶段；
 - Issue fingerprint 必须包含插件身份，避免相同 source declaration 在不同插件之间错误去重；
 - target marker / hard failure 不得恢复 Work PR；其它插件仍可继续自动转换；
 - 自动提交前仍必须检查 `REMOTE_MAIN == GITHUB_SHA`，不得把旧生成结果 rebase 到已前进的 main；
 - global validator/audit/reconciliation/helper/source-URL/issue proposer 任一失败时，本轮不得提交 managed outputs；
-- behavior regression：`converter/tests/upstream-automation.mjs`；
-- architecture contract：`converter/tests/spec-block-contract.mjs`。
+- behavior regression：`.github/converter/tests/upstream-automation.mjs`；
+- architecture contract：`.github/converter/tests/spec-block-contract.mjs`。
 
 
 
@@ -447,7 +447,7 @@ CI 必须验证 scheduled upstream flow 不再依赖任何 ChatGPT Work handoff�
 
 CI 必须验证 online sync 与 canonical regeneration 不再各自拼装相同的 materialize/convert/target-validation 链：
 
-- `converter/src/conversion-runner.mjs` 是 workflow-facing 的 materialize/convert/target-validation 组合层；
+- `.github/converter/src/conversion-runner.mjs` 是 workflow-facing 的 materialize/convert/target-validation 组合层；
 - `materializeConversionRunContext()` 只委托 `materializeConversionContext()`；`convertPluginWithContext()` 只执行 context → `convertPlugin()` 映射；`validateConvertedPlugin()` 固定执行 `validateQX() → validateSurgeModule()`；
 - online sync 继续保持 materialize 在 old-target/stamp read 之前；canonical 继续保持 old-target/stamp read 在 materialize 之前，不得为统一函数改变现有顺序；
 - online sync 的第一次 convert 若只用于判断 converter output drift，必须保持**未校验**状态；只有最终选定 output 才进入 `validateConvertedPlugin()`；
@@ -461,15 +461,15 @@ CI 必须验证 online sync 与 canonical regeneration 不再各自拼装相同�
 - 全 Catalog canonical 与 generated helper 必须 0 diff。
 
 实现：
-- runner：`converter/src/conversion-runner.mjs`
-- behavior contract：`converter/tests/conversion-runner.mjs`
-- architecture contract：`converter/tests/spec-block-contract.mjs`
+- runner：`.github/converter/src/conversion-runner.mjs`
+- behavior contract：`.github/converter/tests/conversion-runner.mjs`
+- architecture contract：`.github/converter/tests/spec-block-contract.mjs`
 
 ## 80.25 Workflow lifecycle / result-boundary gate
 
 CI 必须验证 online sync 与 canonical regeneration 只共享语义完全相同的纯控制结构，不得把两条 Catalog lifecycle 强行合并：
 
-- `.github/scripts/sync-convert.mjs` 与 `converter/tools/regenerate-canonical.mjs` 必须继续各自遍历 Source Catalog；不得引入统一的 `runCatalogEntries/processCatalogEntries` 一类 loop wrapper 来隐藏不同的 per-entry state、error context 或 exit policy；
+- `.github/scripts/sync-convert.mjs` 与 `.github/converter/tools/regenerate-canonical.mjs` 必须继续各自遍历 Source Catalog；不得引入统一的 `runCatalogEntries/processCatalogEntries` 一类 loop wrapper 来隐藏不同的 per-entry state、error context 或 exit policy；
 - online sync 独占 upstream fetch、source change、failure stage/structured report、existing-target converter drift、helper/target/source write 顺序；
 - canonical 独占 checked-in source、check/write mode、pre-write stale set、stale annotation 与 stale exit policy；
 - `managed-artifacts.mjs::managedTargetDiffs(state,out)` 是唯一可共享的 QX/Surge target-diff 纯原语；`writeManagedTargets()` 必须复用同一判定；
@@ -481,6 +481,6 @@ CI 必须验证 online sync 与 canonical regeneration 只共享语义完全相�
 - current Catalog canonical/helper 必须保持 0 semantic diff。
 
 实现：
-- pure target diff：`converter/src/managed-artifacts.mjs::managedTargetDiffs()`
-- workflow regression：`converter/tests/workflow-control.mjs`
-- managed artifact behavior：`converter/tests/managed-artifacts.mjs`
+- pure target diff：`.github/converter/src/managed-artifacts.mjs::managedTargetDiffs()`
+- workflow regression：`.github/converter/tests/workflow-control.mjs`
+- managed artifact behavior：`.github/converter/tests/managed-artifacts.mjs`

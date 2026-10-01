@@ -213,17 +213,17 @@ Source Script 的跨平台运行时适配由原脚本自身负责，不属于 Wa
 
 ## 60.8 自动化实现索引
 
-- Script action behavior inspector：`converter/src/script.mjs`
-- Legacy Script parser：`converter/src/script-legacy.mjs`
-- Script v2 parser：`converter/src/script-v2.mjs`
-- Script Semantic IR：`converter/src/script-ir.mjs`
-- QX Script planner：`converter/src/script-qx.mjs`
-- Surge Script planner：`converter/src/script-surge.mjs`
-- Script v2 low-level target renderer：`converter/src/script-v2-target.mjs`
-- Surge Rewrite argument helper：`converter/src/complex-rewrite-script.mjs`
-- Loon Argument parser：`converter/src/argument.mjs`
-- Argument dependency analysis：`converter/src/argument-usage.mjs`
-- Source Script discovery/materialization：`converter/src/source-script-materializer.mjs`
-- Shared conversion context：`converter/src/conversion-context.mjs`
-- Original source fetch primitive：`converter/src/source-fetch.mjs`
-- Regression：`converter/tests/checkpoint.mjs`、`converter/tests/end-to-end-golden.mjs`
+- Script action behavior inspector：`.github/converter/src/script.mjs`
+- Legacy Script parser：`.github/converter/src/script-legacy.mjs`
+- Script v2 parser：`.github/converter/src/script-v2.mjs`
+- Script Semantic IR：`.github/converter/src/script-ir.mjs`
+- QX Script planner：`.github/converter/src/script-qx.mjs`
+- Surge Script planner：`.github/converter/src/script-surge.mjs`
+- Script v2 low-level target renderer：`.github/converter/src/script-v2-target.mjs`
+- Surge Rewrite argument helper：`.github/converter/src/complex-rewrite-script.mjs`
+- Loon Argument parser：`.github/converter/src/argument.mjs`
+- Argument dependency analysis：`.github/converter/src/argument-usage.mjs`
+- Source Script discovery/materialization：`.github/converter/src/source-script-materializer.mjs`
+- Shared conversion context：`.github/converter/src/conversion-context.mjs`
+- Original source fetch primitive：`.github/converter/src/source-fetch.mjs`
+- Regression：`.github/converter/tests/checkpoint.mjs`、`.github/converter/tests/end-to-end-golden.mjs`
