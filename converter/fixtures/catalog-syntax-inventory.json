@@ -1,23 +1,14 @@
 {
-  "version": 1,
-  "scope": "Catalog-observed Loon Rewrite v2 / Script v2 syntax shapes",
+  "version": 2,
+  "scope": "Catalog-observed Loon Rewrite v2 / Script v2 semantic identifiers only; valid structural combinations are grammar/planner concerns",
   "rewriteV2": {
     "phases": [
       "request",
       "response"
     ],
-    "conditionComparisons": [
-      "url ~= regex"
-    ],
-    "captureModes": [
-      "capture",
-      "none"
-    ],
+    "conditionVariables": [],
+    "conditionOperators": [],
     "logicalOperators": [],
-    "grouping": [],
-    "regexFlags": [
-      "i"
-    ],
     "actionNames": [
       "redirect",
       "reject",
@@ -31,28 +22,6 @@
       "response.json.delete",
       "response.json.jq",
       "response.json.replace"
-    ],
-    "actionShapes": [
-      "redirect(number,string)",
-      "reject(number)",
-      "reject_dict(number)",
-      "reject_img(number)",
-      "request.header.set(string,string)",
-      "response.body.mock(string,string)",
-      "response.body.mock(string,string,number)",
-      "response.body.mock(string,string,number,boolean)",
-      "response.body.replace(regex,string)",
-      "response.header.add(string,string)",
-      "response.header.set(string,string)",
-      "response.json.delete(array<string>)",
-      "response.json.delete(string)",
-      "response.json.jq(string)",
-      "response.json.replace(array<string>,array<number>)",
-      "response.json.replace(array<string>,array<raw-string>)",
-      "response.json.replace(string,raw-string)"
-    ],
-    "multiActionSignatures": [
-      "response.body.mock | response.header.set"
     ]
   },
   "scriptV2": {
@@ -60,41 +29,14 @@
       "request",
       "response"
     ],
-    "conditionComparisons": [
-      "url ~= regex"
-    ],
-    "captureModes": [
-      "none"
-    ],
+    "conditionVariables": [],
+    "conditionOperators": [],
     "logicalOperators": [],
-    "grouping": [],
-    "regexFlags": [
-      "i"
-    ],
-    "pathTypes": [
-      "string"
-    ],
-    "argumentKinds": [
-      "none",
-      "plugin-object"
-    ],
     "optionNames": [
       "binary_body_mode",
       "enable",
       "requires_body",
       "tag"
-    ],
-    "optionShapes": [
-      "binary_body_mode:boolean",
-      "enable:variable",
-      "requires_body:boolean",
-      "tag:string"
-    ],
-    "optionSets": [
-      "binary_body_mode|enable|requires_body|tag",
-      "binary_body_mode|requires_body|tag",
-      "requires_body|tag",
-      "tag"
     ]
   }
-}
+}\n
