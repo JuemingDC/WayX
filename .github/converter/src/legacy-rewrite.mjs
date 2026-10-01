@@ -96,7 +96,7 @@ function compileJsonMutation(phase, op, rest) {
     if (paths.some(path => path.parts.some(part => typeof part === 'number'))) {
       return {ok:true, jq:paths.map(path => `del(${path.access})`).join(' | ')};
     }
-    return {ok:true, jq:'delpaths([' + paths.map(path => JSON.stringify(path.parts)).join(', ') + '])'};
+    return {ok:true, jq:'del(' + paths.map(path => path.access).join(', ') + ')'};
   }
 
   if (op === 'add' || op === 'replace') {
