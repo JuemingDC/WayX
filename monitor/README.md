@@ -44,11 +44,9 @@ RuCu6 当前属于 Review Tier：Actions 负责同步原始 LPX/JS，Work 负责
 
 - `CONVERSION_SPEC.md`：唯一权威转换规范入口。
 - `docs/conversion-spec/`：分块转换规范。
-- `CONVERSION_POLICY.md`、`LOON_NEW_SYNTAX_CONVERSION.md`：deprecated index，仅用于指向当前规范。
 - `.github/scripts/sync-convert.mjs`：Loon → QX/Surge 通用转换与上游同步入口。
 - `.github/scripts/validate_conversion_policy.py`：目标格式硬校验。
 - `.github/scripts/conversion_gate.py`：Safe / Work 风险分级。
-- `converter/tools/scan-script-compat.mjs`：Source Script 一般运行时兼容性扫描，不负责 Loon Argument 参数转换。
 - `monitor/monitor_upstreams.py`：官方文档/仓库变化检查。
 - `monitor/WORK_TASK_PROMPT.md`：Work 审查与处理规范。
 - `.github/workflows/upstream-monitor.yml`：每天 01:00 唯一上游调度器。

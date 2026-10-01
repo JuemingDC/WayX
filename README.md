@@ -52,7 +52,7 @@ WayX/
 
 - jq / JSON 结构化处理 → 目标平台原生 jq；
 - Source JavaScript → 原文件原样保留并直接引用原 URL；QX/Surge 均不做 runtime compatibility gate，只转换声明，不修改、wrapper、fork 或自动替换运行时 API；
-- QX Source Script 声明按 KOP-XIAO resource-parser 的字段取舍处理：Script argument 不注入，动态 enable 默认开启，timeout 与 binary-body-mode 忽略；header/body 只由 requires-body 决定；固定 enable=false/0 仍禁用。debug/max-size 等其它字段仍按 WayX 自身规范判断；
+- QX Source Script 声明按当前 WayX 规范处理：Script argument 不注入，动态 enable 默认开启，timeout 与 binary-body-mode 按既定策略忽略；`debug` 与 Legacy `max-size` 直接丢弃；header/body 只由 requires-body 决定；固定 enable=false/0 仍禁用。
 - URL Rewrite → 对应目标平台 URL Rewrite；
 - Header Rewrite → 对应目标平台 Header Rewrite；
 - Rule / Filter → 对应目标平台 Rule / Filter；
