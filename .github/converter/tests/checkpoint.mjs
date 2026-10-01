@@ -981,7 +981,7 @@ const legacyJsonAddQx = planLegacyRewrite(
 assert.equal(legacyJsonAddQx.section, 'rewrite');
 assert.match(legacyJsonAddQx.line, /url jsonjq-response-body/);
 assert.match(legacyJsonAddQx.line, /getpath\(\["data","enabled"\]\)==null/);
-assert.match(legacyJsonAddQx.line, /setpath\(\["data","count"\];2\)/);
+assert.match(legacyJsonAddQx.line, /setpath\(\["data","count"\];\s*2\)/);
 
 const legacyJsonAddSurge = planLegacyRewrite(
   '^https:\\/\\/api\\.example\\.com',
