@@ -39,6 +39,37 @@ export function unquoteRewriteToken(token) {
   return t;
 }
 
+export const LOON_LEGACY_MOCK_OPTION_NAMES = new Set([
+  'data-type',
+  'data',
+  'status-code',
+  'data-path',
+  'mock-data-is-base64',
+]);
+
+function legacyMockOptionNames(rest) {
+  const source=String(rest ?? '');
+  const out=[];
+  let quote=null, esc=false;
+  for(let i=0;i<source.length;){
+    const ch=source[i];
+    if(quote){
+      if(esc){ esc=false; i++; continue; }
+      if(ch==='\\'){ esc=true; i++; continue; }
+      if(ch===quote) quote=null;
+      i++;
+      continue;
+    }
+    if(ch==='"' || ch==="'"){ quote=ch; i++; continue; }
+    if(i===0 || /\s/.test(source[i-1])){
+      const match=source.slice(i).match(/^([A-Za-z][A-Za-z0-9-]*)=/);
+      if(match){ out.push(match[1].toLowerCase()); i+=match[0].length; continue; }
+    }
+    i++;
+  }
+  return [...new Set(out)];
+}
+
 function parseLegacyMockData(rest) {
   const source=String(rest || '');
   const quotedStart=source.search(/\bdata="/i);
@@ -137,10 +168,20 @@ export function classifyLegacyRewriteAction(action) {
 
   match=raw.match(/^mock-(request|response)-body\s+(.+)$/i);
   if (match) {
+    const optionNames=legacyMockOptionNames(match[2]);
+    const unknownOptions=optionNames.filter(name=>!LOON_LEGACY_MOCK_OPTION_NAMES.has(name));
+    if(unknownOptions.length){
+      return {
+        kind:'unknown',
+        raw,
+        reason:'unknown legacy mock option(s): '+unknownOptions.join(','),
+      };
+    }
     return {
       kind:'mock',
       phase:match[1].toLowerCase(),
       operation:'inline',
+      optionNames,
       mock:parseLegacyMock(match[2]),
       raw,
     };
