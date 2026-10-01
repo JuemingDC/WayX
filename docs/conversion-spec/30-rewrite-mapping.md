@@ -285,7 +285,7 @@ Legacy Rewrite 同样遵守 native → helper → Review：request phase 的旧�
 - Target semantic planners：`converter/src/rewrite-v2-semantic.mjs`
 - QX helper renderer：`converter/src/qx-semantic-script.mjs`
 - Synthetic regression：`converter/tests/checkpoint.mjs`、`converter/tests/loon-new-syntax-cases.mjs`
-- Real syntax coverage：`converter/tests/rucu6-rewrite-v2-coverage.mjs`
+- Real syntax coverage：`converter/tests/catalog-syntax-inventory.mjs`、`converter/tests/rewrite-target-planners.mjs`、`converter/tests/end-to-end-golden.mjs`
 
 ## 30.6.1 注释禁用的 Rewrite v2
 
