@@ -3,7 +3,7 @@
 // Category: Converter / Rewrite v2 / Semantic Mapping
 import { compileRegexForTarget, normalizeRegexBodyForTarget } from './target-regex.mjs';
 import { qxPrimitiveForRewriteV2Action, validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
-import { quoteJq } from './jq.mjs';
+import { quoteJq, renderFixedPathDeleteJq } from './jq.mjs';
 import { dependencySpecFromAction } from './dependency.mjs';
 
 function unsupported(reason, extra = {}) {
@@ -105,17 +105,7 @@ export function jsonActionToJq(action) {
       const parts = parseKeyPath(value);
       return { parts, literal:JSON.stringify(parts), selector:pathSelector(value) };
     });
-    if (action.args[0]?.type === 'array') {
-      // jq del(path_expression) can consume a comma expression that yields
-      // multiple paths, so object-only batches stay compact as one del(...).
-      // Array indices remain order-sensitive because each deletion shifts later
-      // indices; preserve Loon's left-to-right batch order with chained del().
-      if (paths.some(item => item.parts.some(part => typeof part === 'number'))) {
-        return {ok:true, jq:paths.map(item => 'del(' + item.selector + ')').join(' | ')};
-      }
-      return {ok:true, jq:'del(' + paths.map(item => item.selector).join(', ') + ')'};
-    }
-    return {ok:true, jq:'del(' + paths[0].selector + ')'};
+    return {ok:true, jq:renderFixedPathDeleteJq(paths)};
   }
 
   const paths = scalarItems(action.args[0]);
