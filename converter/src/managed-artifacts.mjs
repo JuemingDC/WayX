@@ -152,17 +152,22 @@ export async function syncGeneratedScripts(root, entry, generatedScripts, {scrip
   return changed;
 }
 
-export async function writeManagedTargets(state, out) {
+export function managedTargetDiffs(state, out) {
   const changed=[];
-  if (state.qx !== out.qx) {
+  if (state.qx !== out.qx) changed.push('qx');
+  if (state.surge !== out.surge) changed.push('surge');
+  return changed;
+}
+
+export async function writeManagedTargets(state, out) {
+  const changed=managedTargetDiffs(state,out);
+  if (changed.includes('qx')) {
     await fs.mkdir(path.dirname(state.qxPath),{recursive:true});
     await fs.writeFile(state.qxPath,out.qx);
-    changed.push('qx');
   }
-  if (state.surge !== out.surge) {
+  if (changed.includes('surge')) {
     await fs.mkdir(path.dirname(state.surgePath),{recursive:true});
     await fs.writeFile(state.surgePath,out.surge);
-    changed.push('surge');
   }
   return changed;
 }
