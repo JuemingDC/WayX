@@ -66,6 +66,24 @@ assert.deepEqual(nestedFlag.ast.children[0].params,[{
   value:null,
 }]);
 
+const didiLogical=parseLoonRuleAst(
+  'AND, ((IP-ASN, 45090, no-resolve), (DEST-PORT, 25641), (PROTOCOL, TCP)), REJECT'
+);
+assert.equal(didiLogical.ok,true);
+assert.equal(didiLogical.ast.kind,'logical');
+assert.equal(didiLogical.ast.children.length,3);
+assert.equal(didiLogical.ast.children[0].type,'IP-ASN');
+assert.deepEqual(didiLogical.ast.children[0].params,[{
+  raw:'no-resolve',
+  name:'no-resolve',
+  value:null,
+}]);
+assert.equal(planQxRuleAst(didiLogical.ast).reason,'unsupported-qx-rule-comment');
+assert.equal(
+  planSurgeModuleRuleAst(didiLogical.ast).line,
+  'AND,((IP-ASN,45090,no-resolve),(DEST-PORT,25641),(PROTOCOL,TCP)),REJECT',
+);
+
 const unknown=parseLoonRuleAst('FUTURE-RULE, value, REJECT');
 assert.equal(unknown.ok,true);
 assert.equal(unknown.ast.type,'FUTURE-RULE');
