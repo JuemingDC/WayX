@@ -60,12 +60,13 @@ for (const entry of manifest) {
     const oldSurge = await readIfExists(surgePath);
     const stamp = existingStamp(oldQx, oldSurge) || nowCN();
     const {
+      parsed,
       scriptMap,
       mockFiles,
-      jqFiles,
+      jqFiles:
     } = await materializeConversionContext(entry, source);
 
-    let out = convertPlugin(entry, source, {scriptMap, stamp, mockFiles, jqFiles, rawBase:RAW_BASE});
+    let out = convertPlugin(entry, source, {parsed, scriptMap, stamp, mockFiles, jqFiles, rawBase:RAW_BASE});
     validateQX(out.qx, entry);
     validateSurgeModule(out.surge, entry, {adblockScope:true});
 
@@ -90,7 +91,7 @@ for (const entry of manifest) {
 
     // Refresh one shared conversion timestamp for targets and WayX-generated
     // helper scripts. Source Script URLs remain untouched and are never mirrored.
-    out = convertPlugin(entry, source, {scriptMap, stamp:nowCN(), mockFiles, jqFiles, rawBase:RAW_BASE});
+    out = convertPlugin(entry, source, {parsed, scriptMap, stamp:nowCN(), mockFiles, jqFiles, rawBase:RAW_BASE});
     validateQX(out.qx, entry);
     validateSurgeModule(out.surge, entry, {adblockScope:true});
 
