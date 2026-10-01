@@ -69,6 +69,15 @@ assert.equal(jqQx.ok, true);
 assert.match(jqQx.line, /jsonjq-response-body/);
 assert.equal(surgeDirectRewritePlan(jqAst).ok, true);
 
+const preserveJqSource = '.a |= (. + 1) | .b = [1, 2] | .c = {"x": true}';
+const preserveJqAst = parseRewriteV2(
+  'response if ${url} ~= /api/ then response.json.jq("' + preserveJqSource.replace(/"/g, '\\"') + '")'
+);
+const preserveJqQx = qxDirectRewritePlan(preserveJqAst);
+const preserveJqSurge = surgeDirectRewritePlan(preserveJqAst);
+assert.ok(preserveJqQx.line.endsWith("'" + preserveJqSource + "'"));
+assert.ok(preserveJqSurge.line.endsWith("'" + preserveJqSource + "'"));
+
 const mockAst = parseRewriteV2(
   'response if ${url} ~= /^https?:\\/\\/tieba\\.baidu\\.com\\/mo\\/q\\/search\\/startPage\\?/i then response.body.mock("json", "{\\"no\\":0,\\"error\\":\\"success\\"}", 200)'
 );
