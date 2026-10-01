@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/bilibili.png
 # Updated: 2026-09-22 22:55
 
-# Converted: 2026-10-01 14:35:51 +08:00
+# Converted: 2026-10-01 15:14:26 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/bilibili.lpx
@@ -44,7 +44,7 @@ host, app.biliapi.net, reject
 
 # [rewrite_local]
 # 播放页开通会员的横幅
-^https:\/\/api\.bilibili\.com\/pgc\/activity\/deliver\/material\/receive\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/mock_fac4d363ef.js
+^https:\/\/api\.bilibili\.com\/pgc\/activity\/deliver\/material\/receive\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/mock_fac4d363ef.js
 ^https:\/\/api\.bilibili\.com\/pgc\/page\/channel\? url jsonjq-response-body '.data.modules |= map(select(.type != "TIP") | if .type == "BANNER" then .module_data.items |= map(select(.url | startswith("https://www.bilibili.com/blackboard/era/") | not)) else . end)'
 ^https:\/\/api\.bilibili\.com\/pgc\/view\/v2\/app\/season\? url jsonjq-response-body 'del(.data.payment)'
 
@@ -74,23 +74,23 @@ host, app.biliapi.net, reject
 
 {# 移除皮肤推送 #} ^https:\/\/app\.bilibili\.com\/x\/resource\/show\/skin\? url jsonjq-response-body 'delpaths([["data","common_equip"]])'
 
-{# 移除右上角活动入口 #} ^https:\/\/app\.bilibili\.com\/x\/resource\/top\/activity\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/mock_32839594a9.js
+{# 移除右上角活动入口 #} ^https:\/\/app\.bilibili\.com\/x\/resource\/top\/activity\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/mock_32839594a9.js
 
-{# 搜索框填充词 #} ^https:\/\/app\.bilibili\.com\/x\/v2\/search\/square\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/mock_b40b3a44d3.js
+{# 搜索框填充词 #} ^https:\/\/app\.bilibili\.com\/x\/v2\/search\/square\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/mock_b40b3a44d3.js
 
-{# 屏蔽默认搜索框关键词 #} ^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.interface\.v1\.Search\/DefaultWords$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/mock_fbdd48ab53.js
+{# 屏蔽默认搜索框关键词 #} ^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.interface\.v1\.Search\/DefaultWords$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/mock_fbdd48ab53.js
 
-{# 青少年模式 #} ^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.interface\.v1\.Teenagers\/ModeStatus$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/mock_47c3f75a2a.js
+{# 青少年模式 #} ^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.interface\.v1\.Teenagers\/ModeStatus$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/mock_47c3f75a2a.js
 
-{# 视频暂停广告 #} ^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.(?:view\.v1\.View\/TFInfo|viewunite\.v1\.View\/(?:PlayPause|ViewEndPage))$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/mock_70cda67371.js
+{# 视频暂停广告 #} ^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.(?:view\.v1\.View\/TFInfo|viewunite\.v1\.View\/(?:PlayPause|ViewEndPage))$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/mock_70cda67371.js
 
-{# 移除直播间链接跟踪参数 #} (^https:\/\/live\.bilibili\.com\/\d+)(?:\/?\?.*) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/redirect_59da899133.js
+{# 移除直播间链接跟踪参数 #} (^https:\/\/live\.bilibili\.com\/\d+)(?:\/?\?.*) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/redirect_59da899133.js
 
 {# 移除直播间游戏推广 #} ^https:\/\/line3-h5-mobile-api\.biligame\.com\/game\/live\/large_card_material\? url reject-dict
 
-{# 移除视频链接跟踪参数 #} (^https:\/\/(?:www|m)\.bilibili\.com\/video\/(?:BV\w{10}|av\d{9}))(?:\/?\?.*) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/redirect_089914b029.js
+{# 移除视频链接跟踪参数 #} (^https:\/\/(?:www|m)\.bilibili\.com\/video\/(?:BV\w{10}|av\d{9}))(?:\/?\?.*) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/redirect_089914b029.js
 
-{# 哔哩哔哩漫画 开屏 && 底栏广告 #} ^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v1\.Comic\/(?:Flash|ListFlash|GetActivityTab|GetBubbles) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/script/Bilibili/mock_72464b6f06.js
+{# 哔哩哔哩漫画 开屏 && 底栏广告 #} ^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v1\.Comic\/(?:Flash|ListFlash|GetActivityTab|GetBubbles) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/mock_72464b6f06.js
 
 {# 哔哩哔哩漫画 广告 #} ^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v1\.(?:Comic\/AppInit|Home\/HomeFeed)\? url jsonjq-response-body '.data as $data | .data[("activity_tab", "flash", "operate") | select($data[.])]=null | if .data.feeds then .data.feeds |= map(select(.type | IN(15, 30) | not)) end'
 # 移除视频内插播广告
