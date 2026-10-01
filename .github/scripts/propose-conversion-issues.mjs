@@ -7,8 +7,8 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
-import { parseLoonPlugin } from '../../converter/src/plugin-parser.mjs';
+import { loadLoonSourceCatalog } from '../converter/src/source-catalog.mjs';
+import { parseLoonPlugin } from '../converter/src/plugin-parser.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT,'.github','sources','loon.json');

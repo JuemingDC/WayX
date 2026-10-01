@@ -21,8 +21,8 @@ from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path, PurePosixPath
 
-ROOT = Path(__file__).resolve().parents[1]
-CONFIG = ROOT / "monitor" / "sources.json"
+ROOT = Path(__file__).resolve().parents[2]
+CONFIG = ROOT / ".github" / "monitor" / "sources.json"
 
 
 class TextParser(HTMLParser):
