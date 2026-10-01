@@ -53,7 +53,7 @@ script-analyze-echo-response
 
 选择依据是源声明和脚本实际阶段/Body 行为，不按插件名或作者特判。
 
-`binary_body_mode=true` / legacy `binary-body-mode=true` 在 QX Source Script declaration 中按 KOP-XIAO `SCP2QX()` 的转换口径处理：**不作为 action 选择条件，也不单独阻断转换**。QX action 只由 request/response phase 与 `requires_body` / `requires-body` 决定；需要 body 时分别转换成 `script-request-body` / `script-response-body`。该规则是 WayX 对解析器作者行为的兼容策略，不表示 WayX 据此扩张其它 QX runtime API。
+`binary_body_mode=true` / legacy `binary-body-mode=true`、`debug` 与 Legacy `max-size` 在 QX Source Script declaration 中都**不作为 action 选择条件，也不单独阻断转换**。QX action 只由 request/response phase 与 `requires_body` / `requires-body` 决定；需要 body 时分别转换成 `script-request-body` / `script-response-body`。这些源字段不写入 QX declaration，因为用户提供的官方 sample 没有对应 HTTP Script rewrite 参数形式；WayX 仅用普通注释记录已忽略。
 
 | Source 行为 | QX declaration |
 |---|---|
@@ -85,11 +85,13 @@ QX snippet 不复制 Loon Plugin `[Argument]` 参数 UI，也不生成 BoxJs / `
 - 固定 `enable=false/0`：仍按源声明禁用；
 - `timeout`：**忽略，不因此 Review**；
 - `binary_body_mode` / `binary-body-mode`：**忽略，不因此 Review**；是否使用 body 只看 `requires_body` / `requires-body`；
+- `debug`：**忽略，不因此 Review**；固定 `true/false` 与动态参数引用都不写入 QX declaration；
+- Legacy `max-size`：**忽略，不因此 Review**；不影响 `requires-body` 对 header/body action 的选择；
 - `tag`、源注释、原始 Script URL 保留；
 - `requires_body` 继续决定 header/body Script action；
-- `debug`、`max-size` 及其它未明确纳入本兼容策略的字段继续按 WayX 自身 QX 规范独立判断；不得因为 KOP-XIAO 忽略某字段就自动扩张到其它字段。
+- 其它未明确纳入本兼容策略的字段仍按 WayX 自身 QX 规范独立判断。
 
-为便于审计，WayX 在生成的 QX snippet 中用普通注释记录被忽略的 Script argument / dynamic enable / timeout / binary body mode；这些说明不是 Review marker。
+为便于审计，WayX 在生成的 QX snippet 中用普通注释记录被忽略的 Script argument / dynamic enable / timeout / binary body mode / debug / Legacy max-size；这些说明不是 Review marker。
 
 参考实现：
 `https://github.com/KOP-XIAO/QuantumultX/blob/master/Scripts/resource-parser.js` → `SCP2QX()`。

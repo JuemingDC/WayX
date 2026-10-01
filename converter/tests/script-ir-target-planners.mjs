@@ -54,10 +54,13 @@ assert.equal(planQxScript(disabledIr,{sourceText:'$done({});'}).disabled,true);
 assert.equal(planSurgeScript(disabledIr,{name:'Off'}).disabled,true);
 
 const maxSizeIr=legacyScriptToSemanticIr(
-  parseLegacyScriptLine('http-response ^https://x\\.example script-path=https://example.com/a.js, max-size=2048')
+  parseLegacyScriptLine('http-response ^https://x\\.example script-path=https://example.com/a.js, max-size=2048, debug=true')
 );
-assert.equal(planQxScript(maxSizeIr,{sourceText:'$done({});'}).ok,false);
-assert.match(planQxScript(maxSizeIr,{sourceText:'$done({});'}).reason,/max-size/);
+const qxLegacyIgnoredOptions=planQxScript(maxSizeIr,{sourceText:'$done({});'});
+assert.equal(qxLegacyIgnoredOptions.ok,true);
+assert.match(qxLegacyIgnoredOptions.line,/ url script-response-header https:\/\/example\.com\/a\.js$/);
+assert.match(qxLegacyIgnoredOptions.notes.join('\n'),/max-size ignored/);
+assert.match(qxLegacyIgnoredOptions.notes.join('\n'),/debug ignored/);
 
 const v2Source='response if ${url} ~= /api/ then script("https://example.com/v2.js") with requires_body=true, binary_body_mode=true, tag="V2"';
 const v2Ast=parseScriptV2(v2Source);
@@ -74,6 +77,26 @@ const qxV2=planQxScript(v2Ir,{
 });
 assert.equal(qxV2.ok,true);
 assert.match(qxV2.line,/ url script-response-body https:\/\/example\.com\/v2\.js$/);
+
+const v2DebugSource='response if ${url} ~= /debug/ then script("https://example.com/debug.js") with debug=true, tag="Debug"';
+const v2DebugIr=scriptV2AstToSemanticIr(parseScriptV2(v2DebugSource),{source:v2DebugSource});
+const qxV2Debug=planQxScript(v2DebugIr,{
+  scriptUrl:'https://example.com/debug.js',
+  sourceText:'$done({});',
+  argumentIds:new Set(),
+});
+assert.equal(qxV2Debug.ok,true);
+assert.match(qxV2Debug.notes.join('\n'),/debug ignored/);
+
+const v2DynamicDebugSource='response if ${url} ~= /debug-dynamic/ then script("https://example.com/debug-dynamic.js") with debug=${debugSwitch}, tag="DebugDynamic"';
+const v2DynamicDebugIr=scriptV2AstToSemanticIr(parseScriptV2(v2DynamicDebugSource),{source:v2DynamicDebugSource});
+const qxV2DynamicDebug=planQxScript(v2DynamicDebugIr,{
+  scriptUrl:'https://example.com/debug-dynamic.js',
+  sourceText:'$done({});',
+  argumentIds:new Set(),
+});
+assert.equal(qxV2DynamicDebug.ok,true);
+assert.match(qxV2DynamicDebug.notes.join('\n'),/debug ignored/);
 
 const surgeV2=planSurgeScript(v2Ir,{
   scriptUrl:'https://example.com/v2.js',
