@@ -283,13 +283,13 @@ const identityActionB = selectQxScriptAction({
   sourceText:'$done({status:"HTTP/1.1 200 OK",body:$request.body});',
 });
 assert.equal(identityActionA.action, identityActionB.action);
-assert.equal(identityActionA.action, 'script-analyze-echo-response');
+assert.equal(identityActionA.action, 'script-request-body');
 const crossPlatformEcho = selectQxScriptAction({
   phase:'http-request',
   requiresBody:true,
   sourceText:'const b=$request.body; const q=typeof $task!=="undefined"; if(q)$done({body:b}); else $done({response:{body:b}});',
 });
-assert.equal(crossPlatformEcho.action, 'script-analyze-echo-response');
+assert.equal(crossPlatformEcho.action, 'script-request-body');
 
 const catalogFixture = validateLoonSourceCatalog([
   {
