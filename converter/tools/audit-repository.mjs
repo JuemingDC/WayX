@@ -3,7 +3,7 @@
 // Category: Converter / Repository Audit
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { validateQX } from '../../.github/scripts/sync-convert.mjs';
+import { validateQX } from '../src/qx-snippet-validator.mjs';
 import { parseLoonPlugin } from '../src/plugin-parser.mjs';
 import { validateSurgeModule } from '../src/surge-module.mjs';
 
