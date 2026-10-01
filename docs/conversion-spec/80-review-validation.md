@@ -313,9 +313,9 @@ CI 必须验证纯转换核心已经脱离 GitHub/I/O orchestration：
 - `plugin-parser.mjs` 是整体 Loon section parser；`sync-convert.mjs` 不得重新定义 `parseLoon()`；
 - `conversion-pipeline.mjs` 导出唯一 production `convertPlugin()`；`sync-convert.mjs` 不得重新定义 `convert()` 或直接 import Rule/Rewrite/Script/MITM planner；
 - `conversion-pipeline.mjs` 不得 import Node `fs/path`、Source Catalog、source-fetch 或任何网络/GitHub 工具；
-- pipeline 必须消费已物化的 `scriptMap/mockFiles/jqFiles` context，禁止自行 fetch；
+- pipeline 必须消费已物化的 `parsed/scriptMap/mockFiles/jqFiles` context，禁止自行 fetch；production/canonical 必须显式传入 materializer 返回的 `parsed`，不得重复整体解析；
 - unknown source section、Argument review、disabled Script/Rewrite comments、planner dispatch 与 target output builder 调用均由 pipeline 负责；
-- `regenerate-canonical.mjs` 必须直接 import `convertPlugin()` 与 plugin parser；
+- `regenerate-canonical.mjs` 必须直接 import `convertPlugin()`；整体 parser 由 `materializeConversionContext()` 统一调用，canonical runner 不得再单独 parse；
 - `sync-convert.mjs` 只保留 plugin fetch、调用 `materializeConversionContext()`、调用 `convertPlugin()`、validate/write orchestration；
 - 纯架构迁移要求 Catalog canonical 与 generated helper 0 diff。
 
@@ -329,12 +329,12 @@ CI 必须验证外部依赖与 Source Script 物化已经从 `sync-convert.mjs` 
 
 - `dependency-materializer.mjs` 负责 Rewrite v2 jq_file/mock_file discovery、原 URL fetch、Base64/JQ 处理；
 - `source-script-materializer.mjs` 负责 Legacy/Script v2 script URL discovery、相对 URL resolver、可选源码读取；
-- `conversion-context.mjs::materializeConversionContext()` 必须组合 parser + 两类 materializer，并返回 `parsed/scriptMap/mockFiles/jqFiles`；
+- `conversion-context.mjs::materializeConversionContext()` 必须组合 parser + 两类 materializer，并返回 `parsed/scriptMap/mockFiles/jqFiles`；该 `parsed` 必须被 sync/canonical 原样传入 `convertPlugin()`；
 - `sync-convert.mjs` 不得 import `rewrite-v2*`, `dependency.mjs`, `jq.mjs`, `script-v2.mjs`, `source-section.mjs` 或 `fetchOriginalBytes()` 来自行 materialize；
 - `regenerate-canonical.mjs` 不得从 `sync-convert.mjs` import materializer/Source Script inspector；
 - materializer 必须继续使用 `source-fetch.mjs` 的原作者直连 resolver/fetch，不得新增 mirror/cache fallback；
 - Source Script materializer 必须保持 QX/Surge URL 为解析后的原作者 URL，正文失败只记录 `sourceError`；
-- pure `conversion-pipeline.mjs` 继续禁止任何 fetch；
+- pure `conversion-pipeline.mjs` 继续禁止任何 fetch；仅允许在调用方未提供 `parsed` 时使用 `parseLoonPlugin(source)` 作为纯函数 fallback；
 - 纯架构迁移要求 canonical/helper 0 diff。
 
 实现：

@@ -4,12 +4,12 @@
 > 维护原则：本文件描述“当前 main 的真实状态”，不能替代 `CONVERSION_SPEC.md`；规范冲突时以 `CONVERSION_SPEC.md` 为唯一权威。
 
 - 审计日期：2026-10-01
-- 审计基线：PR #81 conversion context materializers / Converter Check #653
+- 审计基线：PR #82 parsed conversion context reuse / Converter Check #657
 - Source Catalog：20 个 Loon 去广告插件
 - Catalog 管理目标：20 个 Quantumult X snippet + 20 个 Surge sgmodule
 - Adblock 目录实际目标：21 个 QX + 21 个 Surge（额外包含手工维护的 `QZXY`）
-- 最近完整 Converter Check：#653，通过
-- 当前实现 PR：#81
+- 最近完整 Converter Check：#657，通过
+- 当前实现 PR：#82
 
 ---
 
@@ -85,7 +85,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 
 ## 3. Review 库存
 
-2026-10-01 规范 v1.21 已把 QX Source Script 的 `binary-body-mode` / `binary_body_mode` 纳入 KOP-XIAO `resource-parser.js` 兼容口径。目标 Review inventory 为：
+2026-10-01 规范 v1.22 已把 QX Source Script 的 `binary-body-mode` / `binary_body_mode` 纳入 KOP-XIAO `resource-parser.js` 兼容口径。目标 Review inventory 为：
 
 - **Quantumult X：0**
 - **Surge：0**
@@ -181,6 +181,7 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 - [x] Target output assembly 已拆分：`qx-output.mjs` 统一 QX notes/filter/rewrite/mitm state、固定注释 section 顺序与最终 snippet 拼装；`surge-output.mjs` 统一 Rule/URL/Header/Body/Map/Script/MITM destination、section 顺序、`needsCore20` 与 module 拼装；`sync-convert.mjs` 不再直接访问目标 section 数组或维护 section 标题/compact/join。
 - [x] Whole-plugin parser 与 pure conversion core 已拆分：`plugin-parser.mjs` 统一 Loon BOM/newline/section parsing；`conversion-pipeline.mjs::convertPlugin()` 统一 unknown-section、Argument、Rule/Rewrite/Script/MITM dispatch、planner context 与 output builders。`sync-convert.mjs` 不再承载 semantic dispatch；canonical runner 直接复用同一 parser/pipeline。
 - [x] External conversion context 已集中：`dependency-materializer.mjs` 统一 jq_file/mock_file discovery + fetch，`source-script-materializer.mjs` 统一 Legacy/Script v2 URL discovery、相对 URL 解析与可选源码读取，`conversion-context.mjs::materializeConversionContext()` 组合 parser + 两类 materializer。在线 sync 与 canonical regeneration 都先调用同一 context，再调用 `convertPlugin()`；`sync-convert.mjs` 不再解析 Rewrite/Script 来发现依赖。
+- [x] Conversion context 已收口为 parse-once：`materializeConversionContext()` 返回的 `parsed` 会原样传入 `convertPlugin()`，在线 sync 与 canonical regeneration 不再对同一插件重复 whole-plugin parse；pipeline 仅为独立调用保留无 `parsed` 时的纯解析 fallback。该变更经 Converter Check #657 验证 canonical/helper 0 diff。
 - 每次新增 QX 官方 sample 证据时，复核现有 Rewrite Review 是否可以安全降级为 native/helper；Rule 只在官方明确支持对应 Rule Type 后才改为活动 filter。
 - [x] QX capability gate 已收窄为 Loon 去广告转换实际能力：仅核对 Rule 类型、WayX 实际使用的 Rewrite action 与 MITM `hostname` 是否仍有 Crossutility 官方依据；转换范围之外的能力不进入 registry。Surge 同样采用 Rule / Rewrite / hostname 边界。
 - [x] Surge official capability gate 已落地：production `rule.mjs` / `surge-module.mjs` 共用 `surge-official-capabilities.mjs`；CI 实时读取 Surge 官方 Manual，只验证 WayX 实际使用的 28 个 Rule Type、URL/Header/Body Rewrite、Map Local、HTTP request/response Script 与 MITM `hostname` 仍有官方依据。Surge 其它 Profile/Module 能力不进入本 gate。

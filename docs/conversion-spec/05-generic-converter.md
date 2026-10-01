@@ -145,10 +145,10 @@ raw Loon source
 
 职责边界：
 - `plugin-parser.mjs` 是唯一整体 section parser，负责 BOM/newline normalization 与 `[Section]` 切分；
-- `conversion-pipeline.mjs` 只接受 entry/source/stamp 以及已经物化的 `scriptMap/mockFiles/jqFiles/rawBase` 等 context，不做文件或网络 I/O；
+- `conversion-pipeline.mjs` 接受 entry/source/stamp 以及已经物化的 `parsed/scriptMap/mockFiles/jqFiles/rawBase` 等 context，不做文件或网络 I/O；production/canonical 必须复用 materializer 返回的 `parsed`，不得重复整体解析；
 - pipeline 负责 unknown-section fail-closed、Argument analysis、Rule/Rewrite/Script/MITM dispatch、planner context 和 output builder 调用；
-- `.github/scripts/sync-convert.mjs` 只负责 source/dependency/Source Script 获取、调用 pipeline、validator 与写文件；
-- `regenerate-canonical.mjs` 必须直接复用同一个 parser/pipeline，而不是借道 sync 脚本取得转换核心；
+- `.github/scripts/sync-convert.mjs` 只负责原插件 source 获取、调用 `materializeConversionContext()` / pipeline、validator 与写文件；
+- `regenerate-canonical.mjs` 必须直接复用同一个 conversion context/pipeline，而不是借道 sync 脚本取得转换核心；
 - parser/pipeline 不得 import `fs`, `path`, HTTP fetch、Source Catalog 或 GitHub API；
 - 外部依赖缺失时继续由既有 Review/Issue 语义 fail closed，不能由 pipeline 自行联网补取。
 
@@ -165,16 +165,17 @@ entry + source
 → source-script-materializer.mjs
 → conversion-context.mjs::materializeConversionContext()
 → { parsed, scriptMap, mockFiles, jqFiles }
-→ convertPlugin()
+→ convertPlugin(..., { parsed, ... })
 ```
 
 约束：
-- `sync-convert.mjs` 与 `regenerate-canonical.mjs` 都必须调用同一个 `materializeConversionContext()`；
+- `sync-convert.mjs` 与 `regenerate-canonical.mjs` 都必须调用同一个 `materializeConversionContext()`，并把其返回的同一个 `parsed` 显式传给 `convertPlugin()`；
 - materializer 只从原插件 URL 或其相对解析出的原始 URL 读取，不使用 mirror/cache fallback；
 - `dependency-materializer.mjs` 只做依赖发现/读取/校验，不决定 QX/Surge target action；
 - `source-script-materializer.mjs` 只发现/解析/读取 Source Script，不做 runtime compatibility gate，不改写 URL；
 - Source Script 正文读取失败时返回 `sourceError`，不自动禁用声明；
-- context materialization 与 pure `convertPlugin()` 分层，后者继续保持零网络/零文件 I/O。
+- context materialization 与 pure `convertPlugin()` 分层，后者继续保持零网络/零文件 I/O；
+- `convertPlugin()` 仅为独立测试/调用方保留 `parsed` 缺省时的纯解析 fallback；production/canonical 路径不得依赖该 fallback。
 
 ## 5.4 Rule 转换器
 
