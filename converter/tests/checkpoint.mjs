@@ -155,6 +155,7 @@ assert.equal(
 const surgeHeader = renderSurgeModuleHeader([
   '#!name=Demo',
   '#!desc=Demo module',
+  '#!category=SourceCategory',
   '#!author=Source Author',
   '#!icon=https://example.com/icon.png',
   '#!date=2026-09-29',
@@ -167,12 +168,15 @@ const surgeHeader = renderSurgeModuleHeader([
 }, '2026-09-29 12:00:00 +08:00', {needsCore20:true});
 assert.equal(surgeHeader[0], '#!name=Demo');
 assert.equal(surgeHeader[1], '#!desc=Demo module');
-assert.equal(surgeHeader[2], '#!requirement=CORE_VERSION>=20');
+assert.equal(surgeHeader[2], '#!category=WayX');
+assert.equal(surgeHeader[3], '#!requirement=CORE_VERSION>=20');
 assert.ok(surgeHeader.includes('# Author: Source Author'));
 assert.ok(surgeHeader.includes('# Icon: https://example.com/icon.png'));
 assert.equal(surgeHeader.some(line => /loon_version/i.test(line)), false);
 assert.ok(surgeHeader.includes('# Converted by: chance'));
-assert.ok(surgeHeader.includes('# Category: 去广告 / 测试'));
+assert.equal(surgeHeader.includes('# Category: 去广告 / 测试'), false);
+assert.equal(surgeHeader.includes('# Category: SourceCategory'), false);
+assert.equal(surgeHeader.filter(line => line === '#!category=WayX').length, 1);
 assert.equal(surgeHeader.some(line => /^#!(?:author|icon|date|loon_version)=/i.test(line)), false);
 
 const qxHeader = renderQxSnippetHeader([
@@ -254,6 +258,14 @@ assert.throws(
 assert.throws(
   () => validateSurgeModule(validSurgeModule.replace('# Author: Source Author', '#!author=Source Author'), {id:'Demo'}),
   /unsupported Surge module directive/,
+);
+assert.throws(
+  () => validateSurgeModule(validSurgeModule.replace('#!category=WayX', '#!category=Other'), {id:'Demo'}),
+  /must declare #!category=WayX|unsupported Surge module directive/,
+);
+assert.throws(
+  () => validateSurgeModule(validSurgeModule.replace('#!category=WayX\n', ''), {id:'Demo'}),
+  /must declare #!category=WayX/,
 );
 assert.doesNotThrow(
   () => validateSurgeModule(validSurgeModule.replace('hostname = %APPEND% api.example.com', 'hostname = api.example.com'), {id:'Demo'}),
