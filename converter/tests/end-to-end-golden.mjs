@@ -90,7 +90,7 @@ const genericComplexFixture = {
 };
 const genericComplexSource = `#!name=GenericComplexFixture
 [Rewrite]
-response if ${url} ~= /api/ then response.header.set("X-Test", "ok") | response.json.replace("data.ads", false)
+response if \${url} ~= /api/ then response.header.set("X-Test", "ok") | response.json.replace("data.ads", false)
 `;
 const genericComplexOutput = convert(genericComplexFixture, genericComplexSource, new Map(), STAMP);
 assert.doesNotMatch(genericComplexOutput.qx, /ISSUE REQUIRED|REVIEW REQUIRED/);
