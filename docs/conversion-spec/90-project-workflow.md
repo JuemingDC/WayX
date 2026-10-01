@@ -32,6 +32,8 @@ WayX 的上游维护与转换由 GitHub Actions 自动闭环执行；不再使�
 ## 自动化实现文件
 
 - Source Catalog：`.github/sources/loon.json`
+- Original-source fetch router：`converter/src/source-fetch.mjs`
+- Python raw upstream transport：`converter/tools/fetch-upstream.py`
 - Scheduled upstream workflow：`.github/workflows/upstream-monitor.yml`
 - Source fetch + per-plugin conversion orchestration：`.github/scripts/sync-convert.mjs`
 - Automated Issue proposer：`.github/scripts/propose-conversion-issues.mjs`
@@ -63,7 +65,11 @@ Online sync 与 canonical regeneration 虽然都遍历同一 Source Catalog，�
 
 ```text
 Source Catalog entry.source
-→ 原作者直连 fetch
+→ source-fetch hostname profile
+   ├─ kelee.one / *.kelee.one → Python urllib + WAYX_LOON_FETCH_UA
+   ├─ rucu6.pages.dev → Python urllib + WAYX_LOON_FETCH_UA
+   └─ other hosts → default Node fetch
+→ 原作者同一 URL 直连 fetch
 → source normalize / validity
 → 只读比较 checked-in Source
 → conversion-runner: materialize dependencies + Source Script context
@@ -89,6 +95,13 @@ Source Catalog entry.source
 - Issue proposer 在本轮提交前创建或复用对应 Issue。
 
 ## 原作者源唯一链路
+
+网络 transport/header profile 与 source identity 分离：
+
+- Kelee 与 RuCu6 允许使用专用 Python `urllib.request` transport 和 Loon UA，以兼容其原作者站点的 HTTP 访问行为；
+- profile 只由解析后的 hostname 选择，不得由插件身份字段选择；
+- profile 不得修改 Catalog/source declaration 中的 URL，也不得引入备用 URL；
+- 专用 transport 失败即记录原作者 fetch failure，不做 Node fallback、mirror fallback 或第三方副本 fallback。
 
 禁止：
 
