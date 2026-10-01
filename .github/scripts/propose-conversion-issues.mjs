@@ -87,16 +87,25 @@ function targetMap(catalog) {
   return map;
 }
 
-async function sourceSectionFor(entry,declaration) {
-  if (!entry || !declaration) return null;
+async function sourceContextFor(entry,declaration,{limit=40}={}) {
+  if (!entry) return {section:null,declarations:[]};
   try {
     const text=await fs.readFile(path.join(ROOT,'Resource','Loon',entry.file),'utf8');
     const parsed=parseLoonPlugin(text);
+    const fallback=[];
     for (const [section,lines] of parsed.sections) {
-      if (lines.some(line=>String(line).trim()===declaration)) return section;
+      if (section === 'Argument') continue;
+      for (const raw of lines) {
+        const line=String(raw ?? '').trim();
+        if (!line || /^(?:#|;|\/\/)/.test(line)) continue;
+        if (declaration && line===declaration) return {section,declarations:[{section,line}]};
+        if (fallback.length<limit) fallback.push({section,line});
+      }
     }
-  } catch {}
-  return null;
+    return {section:null,declarations:fallback};
+  } catch {
+    return {section:null,declarations:[]};
+  }
 }
 
 async function groupedTargetProblems(catalog) {
@@ -129,10 +138,12 @@ async function groupedTargetProblems(catalog) {
   }
   const out=[];
   for (const group of groups.values()) {
+    const context=await sourceContextFor(group.plugin,group.source);
     out.push({
       ...group,
       reasons:[...group.reasons].sort(),
-      sourceSection:await sourceSectionFor(group.plugin,group.source),
+      sourceSection:context.section,
+      declarations:context.declarations,
     });
   }
   return out.sort((a,b)=>a.fingerprint.localeCompare(b.fingerprint));
@@ -166,7 +177,7 @@ export function targetProblemIssueBody(group) {
     '## Corresponding source rule',
     '',
     '~~~text',
-    (group.sourceSection ? '['+group.sourceSection+'] ' : '')+(group.source || '(source declaration unavailable)'),
+    ruleBlock(group.sourceSection,group.declarations),
     '~~~',
     '',
     '## Generated target locations',
