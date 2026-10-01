@@ -465,23 +465,24 @@ CI 必须审计生产 converter，禁止出现已登记插件身份驱动的语�
 - Identity invariance：`converter/tests/generic-identity.mjs`
 - Plugin-identity source audit：`converter/tests/genericity-audit.mjs`
 
-## 5.14 Legacy Rewrite / Script observed-syntax inventory
+## 5.14 Legacy Rewrite / Script semantic-token inventory
 
-除 Rewrite v2 / Script v2 inventory 外，CI 必须维护当前 Source Catalog 已实际出现的 Legacy Rewrite / Legacy Script 语法形态。
+除 Rewrite v2 / Script v2 semantic-token inventory 外，CI 继续扫描当前 Source Catalog 的 Legacy Rewrite / Legacy Script，但只记录真正的语义 identifier，不记录合法组合形状。
 
 固定原则：
 
 - Legacy Rewrite 使用 production `classifyLegacyRewriteAction()` 分类，不复制第二套 action grammar；
-- inventory 只记录 action kind、phase/operation、reject variant、redirect status 与 legacy mock 的 option-name shape；
-- 不记录 URL/pattern、header 名、JSON path/value、redirect target、mock data 等内容值，也不锁同类规则数量；
+- baseline 只记录 action category 与 legacy mock option name；
+- request/response placement、operation/reject variant/redirect status 组合、mock option-set 与具体参数值不进入 baseline；
+- Legacy mock production parser 必须显式拒绝未知 option name；
 - Legacy Script 使用 production `parseLegacyScriptLine()`；
-- Script inventory 只记录 phase、option name、option value shape 与 option-set；
-- Script path、URL pattern、tag、argument 内容与其它具体值不进入 baseline；
-- 当前未观察到的 legacy action/option 不得为了“将来可能出现”提前加入 fixture；
-- 新 shape 首次出现时 CI fail closed，必须先检查 Loon 源语义；只有实际影响 target mapping 时才进一步核对 QX/Surge 官方能力；
-- observed inventory 不能反向成为 production 支持白名单，production 仍以 parser/planner/target capability contract 为准。
+- Script baseline 只记录 HTTP phase 与 option name；
+- option value shape、option 顺序、option-set、Script path、URL pattern、tag、argument 内容不进入 baseline；
+- production Legacy Script parser 必须显式拒绝未知 option name、重复 option 与无值 option；
+- 同一已知 action/option 的新合法组合不得因为 Catalog 以前没见过而 fail；
+- 真正新的 action category / mock option / Script option 才进入语义审查；
+- inventory 不能反向成为 production 支持白名单，production 仍以 parser/planner/target capability contract 为准。
 
 自动实现：
-- Legacy syntax inventory：`converter/tests/catalog-legacy-syntax-inventory.mjs`
+- Legacy semantic inventory：`converter/tests/catalog-legacy-syntax-inventory.mjs`
 - Baseline：`converter/fixtures/catalog-legacy-syntax-inventory.json`
-
