@@ -21,7 +21,7 @@ WayX 的 Loon Plugin → Quantumult X / Surge 通用转换器。核心原则是*
 
 - Rewrite v2 使用 tokenizer/parser/AST 与 action registry。
 - 只有目标平台已确认能保持语义的 action 才自动转换。
-- JSON/JQ/body/header/mock/redirect 等按目标原生能力优先；Key Path JSON add/replace/delete 统一映射为语义等价 JQ，源 json.jq 表达式不重写；无等价能力时才生成最小 helper。
+- JSON/JQ/body/header/mock/redirect 等按目标原生能力优先；Key Path JSON add/replace/delete 统一映射为语义等价 JQ：普通批量 delete 使用一个 `del(PATH1, PATH2, ...)`，含数组索引时按源顺序串联多个 `del`；转换器不为这类 Key Path delete 合成 `delpaths`。源 `json.jq` / `jq_file` 若本身使用 `delpaths(PATHS)` 则保持其 Path Array 语义，不重写；无等价能力时才生成最小 helper。
 - QX 官方 sample 未确认的 Rule Type（逻辑规则、端口类等）直接注释保留，不扩大/删条件，也不使用 Script fallback。
 - 未知语法/action/section 或未登记 complex signature 固定先注释，再输出 `ISSUE REQUIRED` 供自动化创建议题；已知目标能力缺口继续使用普通 Review。QX `response.header.add` / legacy `response-header-add` 是项目已决策的明确注释项，不再持续占用 Review inventory。
 
