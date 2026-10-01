@@ -74,6 +74,16 @@ def metadata(text: str, path: str, errors: list[str]) -> None:
             errors.append(f"{path}: missing required metadata matching {pattern}")
 
 
+def strip_qx_leading_note(line: str, path: str, errors: list[str]) -> tuple[str, bool]:
+    if not line.startswith("{#"):
+        return line, False
+    match = re.match(r"^\{#\s*(.*?)\s*#\}\s+(.+)$", line)
+    if not match:
+        errors.append(f"{path}: malformed QX leading rule note: {line}")
+        return "", True
+    return match.group(2).strip(), True
+
+
 def validate_qx(path: str, text: str, errors: list[str]) -> None:
     metadata(text, path, errors)
     for title in ("# [filter_local]", "# [rewrite_local]", "# [mitm]"):
@@ -93,24 +103,32 @@ def validate_qx(path: str, text: str, errors: list[str]) -> None:
             section = "mitm"; continue
         if not line or line.startswith(("#", ";", "//")):
             continue
-        if " if ${url} " in line or " then " in line:
-            errors.append(f"{path}: Loon new syntax leaked into executable QX line: {line}")
+
+        executable, has_note = strip_qx_leading_note(line, path, errors)
+        if not executable:
+            continue
+        if has_note and section not in {"filter", "rewrite"}:
+            errors.append(f"{path}: QX leading notes are only valid on filter/rewrite rules: {line}")
+
         if section == "filter":
-            parts = [x.strip() for x in line.split(",")]
+            parts = [x.strip() for x in executable.split(",")]
             rule_type = parts[0].lower() if parts else ""
             if rule_type not in QX_FILTER_TYPES:
                 errors.append(f"{path}: QX filter type outside official sample allowlist: {rule_type}")
             if rule_type in QX_IP_TYPES and any(x.lower() == "no-resolve" for x in parts[3:]):
                 errors.append(f"{path}: QX IP-class rule must not contain no-resolve: {line}")
         elif section == "rewrite":
-            if " url " not in line:
-                errors.append(f"{path}: invalid QX rewrite line: {line}")
+            if " url " not in executable:
+                if " if ${url} " in executable or re.search(r"\bthen\b", executable):
+                    errors.append(f"{path}: Loon new syntax leaked into executable QX line: {line}")
+                else:
+                    errors.append(f"{path}: invalid QX rewrite line: {line}")
                 continue
-            action = line.split(" url ", 1)[1].strip().split()[0]
+            action = executable.split(" url ", 1)[1].strip().split()[0]
             if action not in QX_REWRITE_ACTIONS:
                 errors.append(f"{path}: QX rewrite action outside official sample allowlist: {action}")
         elif section == "mitm":
-            if not re.match(r"^hostname\s*=", line, re.I):
+            if not re.match(r"^hostname\s*=", executable, re.I):
                 errors.append(f"{path}: invalid QX MITM line: {line}")
 
 
