@@ -61,6 +61,33 @@ jobs:
           console.log('Isolated Catalog entry:',entry);
           NODE
 
+      - name: Probe original FleaMarket upstream from GitHub hosted runner
+        shell: bash
+        run: |
+          set -u
+          URL="https://kelee.one/Tool/Loon/Lpx/FleaMarket_remove_ads.lpx"
+          OUT="monitor/.runtime/fleamarket-self-heal/upstream-probe.txt"
+          : > "$OUT"
+
+          probe() {
+            name="$1"
+            shift
+            body="/tmp/fleamarket-${name}.body"
+            headers="/tmp/fleamarket-${name}.headers"
+            code="$(curl -4 -sS -L --connect-timeout 10 --max-time 20 -D "$headers" -o "$body" -w '%{http_code}' "$@" "$URL" || true)"
+            bytes="$(wc -c < "$body" 2>/dev/null || echo 0)"
+            {
+              echo "[$name] http=$code bytes=$bytes"
+              grep -iE '^(server|content-type|location|cf-ray|x-|via):' "$headers" || true
+              echo
+            } | tee -a "$OUT"
+          }
+
+          probe current-wayx-ua -A "StashCore/2.7.1 Stash/2.7.1 Clash/1.11.0" -H "Accept: */*"
+          probe loon-ua -A "Loon/3.2.4" -H "Accept: */*"
+          probe browser-ua -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/140.0 Safari/537.36" -H "Accept: text/plain,*/*;q=0.9"
+          probe browser-referer -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/140.0 Safari/537.36" -H "Accept: text/plain,*/*;q=0.9" -e "https://kelee.one/"
+
       - name: Delete all managed FleaMarket artifacts in runner workspace
         shell: bash
         run: |
@@ -78,17 +105,26 @@ jobs:
           echo "FleaMarket managed artifacts removed inside GitHub Actions runner."
 
       - name: Re-fetch and convert through production sync workflow
+        id: production_sync
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
           set -o pipefail
           node .github/scripts/sync-convert.mjs 2>&1 | tee monitor/.runtime/fleamarket-self-heal/sync.log
 
-      - name: Restore full Catalog and verify regenerated artifacts
+      - name: Restore full Catalog
+        if: always()
         shell: bash
         run: |
           set -euo pipefail
           cp /tmp/wayx-loon-catalog.json .github/sources/loon.json
+
+      - name: Verify regenerated artifacts
+        if: steps.production_sync.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
 
           test -s "Resource/Loon/FleaMarket_remove_ads.lpx"
           test -s "Adblock/Quantumult X/FleaMarket_remove_ads.snippet"
@@ -108,21 +144,27 @@ jobs:
           diff -u             monitor/.runtime/fleamarket-self-heal/before.sha256             monitor/.runtime/fleamarket-self-heal/after.sha256             > monitor/.runtime/fleamarket-self-heal/before-after.diff || true
 
       - name: Canonical consistency check
+        if: steps.production_sync.outcome == 'success'
         run: node converter/tools/regenerate-canonical.mjs
 
       - name: Audit regenerated repository
+        if: steps.production_sync.outcome == 'success'
         run: node converter/tools/audit-repository.mjs
 
       - name: Generate reconciliation and Review inventory
+        if: steps.production_sync.outcome == 'success'
         run: node converter/tools/conversion-reports.mjs
 
       - name: Verify generated helper references
+        if: steps.production_sync.outcome == 'success'
         run: node converter/tests/generated-helper-refs.mjs
 
       - name: Verify original Source Script URLs
+        if: steps.production_sync.outcome == 'success'
         run: node converter/tests/source-script-url-preservation.mjs
 
       - name: Record Git diff
+        if: always()
         shell: bash
         run: |
           set -euo pipefail
@@ -160,3 +202,10 @@ jobs:
             monitor/.runtime/conversion-reconciliation.md
             monitor/.runtime/review-inventory.json
             monitor/.runtime/review-inventory.md
+
+      - name: Fail test when production sync failed
+        if: always() && steps.production_sync.outcome != 'success'
+        shell: bash
+        run: |
+          echo "::error title=FleaMarket self-heal::Production sync failed after managed artifacts were deleted. Inspect upstream-probe.txt and sync.log."
+          exit 1
