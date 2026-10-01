@@ -3,7 +3,7 @@ name: Converter Check
 on:
   pull_request:
     paths:
-      - ".github/.github/converter/**"
+      - ".github/converter/**"
       - ".github/scripts/sync-convert.mjs"
       - ".github/scripts/propose-conversion-issues.mjs"
       - ".github/workflows/converter-check.yml"

@@ -26,28 +26,28 @@ WayX/
 ├── Adblock/
 │   ├── Quantumult X/
 │   └── Surge/
-├── boxjs/
-├── module/
-├── rule/
-└── script/
+├── Boxjs/
+├── Module/
+├── Rule/
+└── Script/
 ```
 
 - `.github/`：所有转换实现、规范、测试、监控与 Actions orchestration；根目录不再存放 workflow 实现或规范文件。
 - `Resource/`：Catalog 管理的 Loon 原始输入资源。
 - `Adblock/`：去广告、界面净化、HTTPDNS 屏蔽等广告/干扰项处理。这里保留对应的 `.snippet` / `.sgmodule`。
-- `module/`：非去广告类的功能模块，只放 `.snippet` / `.sgmodule`。
-- `script/`：JavaScript 脚本统一放这里；无论是模块配套脚本还是单脚本，都不放进 `module/`。
-- `rule/`：独立规则集。
-- `boxjs/`：BoxJs 配置。
+- `Module/`：非去广告类的功能模块，只放 `.snippet` / `.sgmodule`。
+- `Script/`：JavaScript 脚本统一放这里；无论是模块配套脚本还是单脚本，都不放进 `Module/`。
+- `Rule/`：独立规则集。
+- `Boxjs/`：BoxJs 配置。
 
 ## 当前分类原则
 
 - HTTPDNS → `Adblock/Quantumult X/HTTPDNS.snippet` / `Adblock/Surge/HTTPDNS.sgmodule`
 - 去广告模块 / snippet → `Adblock/Quantumult X/` 与 `Adblock/Surge/`
-- 功能性 module / snippet → `module/<App-or-Feature>/`
-- JavaScript → `script/<App-or-Feature>/`
-- 独立规则 → `rule/`
-- BoxJs JSON → `boxjs/`
+- 功能性 module / snippet → `Module/<App-or-Feature>/`
+- JavaScript → `Script/<App-or-Feature>/`
+- 独立规则 → `Rule/`
+- BoxJs JSON → `Boxjs/`
 
 ## 转换规范
 
