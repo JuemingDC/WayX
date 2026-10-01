@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/bilibili.png
 # Updated: 2026-09-22 22:55
 
-# Converted: 2026-10-01 13:58:14 +08:00
+# Converted: 2026-10-01 14:10:45 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/bilibili.lpx
@@ -96,12 +96,12 @@ host, app.biliapi.net, reject
 # 移除视频内插播广告
 # [WayX] Source dynamic enable=sponsorBlock ignored for Quantumult X; converted rule defaults to enabled.
 # [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
-^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.community\.service\.dm\.v1\.DM\/DmSegMobile$ url script-analyze-echo-response https://rucu6.pages.dev/Scripts/bilibili/request.js
+^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.community\.service\.dm\.v1\.DM\/DmSegMobile$ url script-request-body https://rucu6.pages.dev/Scripts/bilibili/request.js
 # 移除评论区广告
 # [WayX] Source dynamic enable=optimizeRequest ignored for Quantumult X; converted rule defaults to enabled.
 # [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
 # [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
-^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.main\.community\.reply\.v1\.Reply\/MainList$ url script-analyze-echo-response https://rucu6.pages.dev/Scripts/bilibili/request.js
+^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.main\.community\.reply\.v1\.Reply\/MainList$ url script-request-body https://rucu6.pages.dev/Scripts/bilibili/request.js
 # 移除动态页面广告
 # [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
 # [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
