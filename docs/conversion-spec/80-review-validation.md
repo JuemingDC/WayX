@@ -416,3 +416,21 @@ CI 必须扫描全部 Source Catalog 的活动 Legacy Rewrite / Legacy Script �
 - inventory test：`converter/tests/catalog-legacy-syntax-inventory.mjs`
 - baseline fixture：`converter/fixtures/catalog-legacy-syntax-inventory.json`
 
+## 80.23 Actions-only upstream automation gate
+
+CI 必须验证 scheduled upstream flow 不再依赖任何 ChatGPT Work handoff：
+
+- 仓库不得存在 `.github/workflows/work-review-finalizer.yml`、`monitor/WORK_TASK_PROMPT.md` 或 `.github/scripts/conversion_gate.py`；
+- `upstream-monitor.yml` 不得出现 `work-review`、`work-complete`、`work-reject`、`work/upstream-`、`review-queue` 或 `ChatGPT Work`；
+- scheduled flow 必须直接调用 `sync-convert.mjs`、target validator、repository audit、reconciliation、helper/source-URL tests 与 issue proposer；
+- 单插件 sync 必须先完成 conversion + QX/Surge validation，再写 generated helper / targets / managed Source；
+- hard failure 必须输出 `monitor/.runtime/sync-failures.json`，包含插件、阶段、原因和对应源规则上下文；
+- issue proposer 必须同时覆盖 `REVIEW REQUIRED`、`ISSUE REQUIRED` 和 hard sync failure；
+- 每个 Issue body contract 必须包含插件 ID、Source 文件、上游 URL、对应规则内容与失败原因；hard failure 还必须包含阶段；
+- Issue fingerprint 必须包含插件身份，避免相同 source declaration 在不同插件之间错误去重；
+- target marker / hard failure 不得恢复 Work PR；其它插件仍可继续自动转换；
+- 自动提交前仍必须检查 `REMOTE_MAIN == GITHUB_SHA`，不得把旧生成结果 rebase 到已前进的 main；
+- global validator/audit/reconciliation/helper/source-URL/issue proposer 任一失败时，本轮不得提交 managed outputs；
+- behavior regression：`converter/tests/upstream-automation.mjs`；
+- architecture contract：`converter/tests/spec-block-contract.mjs`。
+
