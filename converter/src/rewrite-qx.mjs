@@ -45,9 +45,37 @@ function ensureQxRewriteHandlers() {
     targets:['qx'],
     match:ast=>{
       const mockName=ast.phase+'.body.mock';
+      const headerNames=new Set([
+        ast.phase+'.header.add',
+        ast.phase+'.header.set',
+        ast.phase+'.header.del',
+        ast.phase+'.header.replace',
+      ]);
       const mocks=ast.actions.filter(action=>action.name===mockName);
       return mocks.length===1 && ast.actions.every(action=>
-        action.name===mockName || new RegExp('^'+ast.phase+'\\.header\\.(?:add|set|del|replace)
+        action.name===mockName || headerNames.has(action.name)
+      );
+    },
+    plan:(ast,_target,ctx)=>{
+      try {
+        const plan=renderQxInlineMockScript(ast,{
+          stamp:ctx.stamp,
+          category:ctx.category,
+          sourceLine:ctx.sourceLine,
+        });
+        const key=crypto.createHash('sha1').update('mock-inline\0'+ctx.sourceLine).digest('hex').slice(0,10);
+        const filename='mock_'+key+'.js';
+        ctx.generatedScripts.set(filename,plan.script);
+        return {
+          ok:true,
+          section:'rewrite',
+          line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/script/'+ctx.id+'/'+filename,
+        };
+      } catch(error){
+        return {ok:false,terminal:true,reason:String(error?.message||error)};
+      }
+    },
+  });
   
   registerComplexRewriteHandler({
     id:'qx-same-phase-header-script',
