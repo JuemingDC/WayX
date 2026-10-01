@@ -281,6 +281,7 @@ assert.throws(
 
 const outOfScopeSurgeScript = `#!name=ScopeFixture
 #!desc=Scope fixture
+#!category=WayX
 [Script]
 task = type=cron,script-path=https://example.com/task.js,cronexp="0 8 * * *"
 `;
