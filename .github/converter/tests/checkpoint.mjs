@@ -979,8 +979,9 @@ const legacyJsonAddQx = planLegacyRewrite(
   legacyCtx,
 );
 assert.equal(legacyJsonAddQx.section, 'rewrite');
-assert.match(legacyJsonAddQx.line, /url script-response-body .*legacy_json_add_qx_.*\.js$/);
-assert.ok([...legacyCtx.generatedScripts.values()].some(script => /__wayxJsonAdd/.test(script) && /"enabled"/.test(script)));
+assert.match(legacyJsonAddQx.line, /url jsonjq-response-body/);
+assert.match(legacyJsonAddQx.line, /getpath\(\["data","enabled"\]\)==null/);
+assert.match(legacyJsonAddQx.line, /setpath\(\["data","count"\];2\)/);
 
 const legacyJsonAddSurge = planLegacyRewrite(
   '^https:\\/\\/api\\.example\\.com',
@@ -988,8 +989,39 @@ const legacyJsonAddSurge = planLegacyRewrite(
   'surge',
   legacyCtx,
 );
-assert.equal(legacyJsonAddSurge.section, 'script');
-assert.match(legacyJsonAddSurge.line, /type=http-response,.*requires-body=true/);
+assert.equal(legacyJsonAddSurge.section, 'body');
+assert.match(legacyJsonAddSurge.line, /^http-response-jq /);
+assert.match(legacyJsonAddSurge.line, /getpath\(\["data","enabled"\]\)==null/);
+
+const legacyJsonReplaceQx = planLegacyRewrite(
+  '^https:\\/\\/api\\.example\\.com',
+  'response-body-json-replace data.enabled false data.count 0',
+  'qx',
+  legacyCtx,
+);
+assert.equal(legacyJsonReplaceQx.section, 'rewrite');
+assert.match(legacyJsonReplaceQx.line, /url jsonjq-response-body/);
+assert.match(legacyJsonReplaceQx.line, /if getpath\(\["data","enabled"\]\) then setpath/);
+assert.match(legacyJsonReplaceQx.line, /if getpath\(\["data","count"\]\) then setpath/);
+
+const legacyJsonReplaceSurge = planLegacyRewrite(
+  '^https:\\/\\/api\\.example\\.com',
+  'request-body-json-replace data.enabled true',
+  'surge',
+  legacyCtx,
+);
+assert.equal(legacyJsonReplaceSurge.section, 'body');
+assert.match(legacyJsonReplaceSurge.line, /^http-request-jq /);
+assert.match(legacyJsonReplaceSurge.line, /getpath\(\["data","enabled"\]\)/);
+
+const legacyJsonDelBatch = planLegacyRewrite(
+  '^https:\\/\\/api\\.example\\.com',
+  'response-body-json-del data.ads data.items[0]',
+  'qx',
+  legacyCtx,
+);
+assert.equal(legacyJsonDelBatch.section, 'rewrite');
+assert.match(legacyJsonDelBatch.line, /delpaths\(\[\["data","ads"\],\["data","items",0\]\]\)/);
 
 const jqFileAst = parseRewriteV2('response if ${url} ~= /api/ then response.json.jq_file("filters/remove-ads.jq")');
 const deps = listRewriteV2Dependencies(jqFileAst, {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
