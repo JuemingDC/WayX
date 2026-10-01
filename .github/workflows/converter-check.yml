@@ -57,6 +57,7 @@ jobs:
           node --check converter/tests/target-output-builders.mjs
           node --check converter/tests/conversion-pipeline.mjs
           node --check converter/tests/conversion-context-materializers.mjs
+          node --check converter/tests/managed-artifacts.mjs
           node --check converter/tests/qx-official-capabilities.mjs
           node --check converter/tests/surge-official-capabilities.mjs
           node --check converter/tests/unknown-issue-markers.mjs
@@ -91,6 +92,7 @@ jobs:
           node converter/tests/target-output-builders.mjs
           node converter/tests/conversion-pipeline.mjs
           node converter/tests/conversion-context-materializers.mjs
+          node converter/tests/managed-artifacts.mjs
           node converter/tests/unknown-issue-markers.mjs
           node converter/tests/manual-assets.mjs
           python converter/tests/test_conversion_gate.py
