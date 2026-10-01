@@ -1,6 +1,6 @@
-// Catalog-observed Loon Rule syntax inventory
+// Catalog-observed Loon Rule semantic-token inventory
 // Author: chance
-// Category: Converter / Validation / Observed Rule Syntax
+// Category: Converter / Validation / Observed Rule Semantics
 
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -18,47 +18,29 @@ const baseline=JSON.parse(await fs.readFile(
 ));
 
 const inventory={
-  topLevelTypes:new Set(),
-  nestedTypes:new Set(),
+  ruleTypes:new Set(),
   policies:new Set(),
   parameterNames:new Set(),
-  parameterShapes:new Set(),
   logicalOperators:new Set(),
-  logicalPlacements:new Set(),
-  topLevelFieldCounts:new Set(),
-  nestedFieldCounts:new Set(),
-  maxLogicalDepth:0,
 };
 
 let declarationCount=0;
 
-function collectNode(node,{logicalDepth=0,file='unknown'}={}) {
-  const nested=node.nested;
-  (nested ? inventory.nestedTypes : inventory.topLevelTypes).add(node.type);
-  (nested ? inventory.nestedFieldCounts : inventory.topLevelFieldCounts).add(node.fieldCount);
+function collectNode(node,{file='unknown'}={}) {
+  inventory.ruleTypes.add(node.type);
 
-  if (!nested) {
+  if (!node.nested) {
     assert.ok(node.policyRaw, `${file}: top-level Rule missing policy: ${node.source}`);
     inventory.policies.add(node.policy);
   }
 
   for (const param of node.params) {
-    if (!param.name) continue;
-    inventory.parameterNames.add(param.name);
-    inventory.parameterShapes.add(node.type+':'+param.name);
+    if (param.name) inventory.parameterNames.add(param.name);
   }
 
-  let nextLogicalDepth=logicalDepth;
-  if (node.kind==='logical') {
-    inventory.logicalOperators.add(node.type);
-    inventory.logicalPlacements.add(node.type+':' + (nested?'nested':'top'));
-    nextLogicalDepth=logicalDepth+1;
-    inventory.maxLogicalDepth=Math.max(inventory.maxLogicalDepth,nextLogicalDepth);
-  }
+  if (node.kind==='logical') inventory.logicalOperators.add(node.type);
 
-  for (const child of node.children) {
-    collectNode(child,{logicalDepth:nextLogicalDepth,file});
-  }
+  for (const child of node.children) collectNode(child,{file});
 }
 
 function activeRuleLines(text) {
@@ -92,33 +74,29 @@ const sorted=set=>[...set].sort();
 const actual={
   version:baseline.version,
   scope:baseline.scope,
-  topLevelTypes:sorted(inventory.topLevelTypes),
-  nestedTypes:sorted(inventory.nestedTypes),
+  ruleTypes:sorted(inventory.ruleTypes),
   policies:sorted(inventory.policies),
   parameterNames:sorted(inventory.parameterNames),
-  parameterShapes:sorted(inventory.parameterShapes),
   logicalOperators:sorted(inventory.logicalOperators),
-  logicalPlacements:sorted(inventory.logicalPlacements),
-  topLevelFieldCounts:[...inventory.topLevelFieldCounts].sort((a,b)=>a-b),
-  nestedFieldCounts:[...inventory.nestedFieldCounts].sort((a,b)=>a-b),
-  maxLogicalDepth:inventory.maxLogicalDepth,
 };
 
 assert.deepEqual(
   actual,
   baseline,
   [
-    'Catalog-observed Loon Rule syntax inventory changed.',
+    'Catalog-observed Loon Rule semantic-token inventory changed.',
     'Do not update the baseline mechanically.',
-    'First identify the new Rule type/policy/parameter/logical shape, then verify Loon semantics',
-    'and the Quantumult X official sample / Surge official Manual before changing generic conversion.',
+    'This gate intentionally ignores top/nested placement, RuleType:parameter combinations,',
+    'field counts, AND/OR child counts, logical placement and observed nesting depth.',
+    'Only a genuinely new Rule type, top-level policy, parameter name or logical operator',
+    'requires Loon semantics and target-capability review.',
   ].join(' ')
 );
 
 console.log(
   'Catalog Rule inventory passed: '+
   declarationCount+' declarations / '+
-  actual.topLevelTypes.length+' top-level types / '+
-  actual.policies.length+' policies / max logical depth '+
-  actual.maxLogicalDepth
+  actual.ruleTypes.length+' recursive rule types / '+
+  actual.policies.length+' policies / '+
+  actual.logicalOperators.length+' logical operators'
 );
