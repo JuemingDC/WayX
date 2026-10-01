@@ -12,6 +12,7 @@ import { createWorkflowFailureReporter, formatWorkflowErrorAnnotation } from '..
 import {
   firstConversionStamp,
   generatedScriptDiffs,
+  managedTargetDiffs,
   nowConversionStamp,
   readCatalogSource,
   readManagedTargetState,
@@ -27,7 +28,7 @@ const mode = process.argv.includes('--write') ? 'write' : 'check';
 
 
 const manifest = await loadLoonSourceCatalog(MANIFEST);
-const changed = [];
+const staleEntries = [];
 const failures = createWorkflowFailureReporter({
   summaryLabel:'Canonical regeneration failures',
   detailFallback:'error',
@@ -49,15 +50,16 @@ for (const entry of manifest) {
     });
     validateConvertedPlugin(entry,out,{surgeValidationOptions:{adblockScope:true}});
 
+    const targetDiffs = managedTargetDiffs(targetState,out);
     const helperDiffs = await generatedScriptDiffs(ROOT, entry, out.generatedScripts);
 
-    const differs = oldQx !== out.qx || oldSurge !== out.surge || helperDiffs.length > 0;
+    const differs = targetDiffs.length > 0 || helperDiffs.length > 0;
     if (!differs) {
       console.log(entry.id + ': canonical outputs current');
       continue;
     }
 
-    changed.push(entry.id);
+    staleEntries.push(entry.id);
     if (mode === 'check') {
       console.error(formatWorkflowErrorAnnotation(entry,new Error('canonical outputs/helpers are stale'),{annotationFallback:'error'}));
       continue;
@@ -87,9 +89,9 @@ for (const entry of manifest) {
 
 if (failures.report()) {
   process.exitCode = 1;
-} else if (mode === 'check' && changed.length) {
-  console.error('\nStale canonical entries: ' + changed.join(', '));
+} else if (mode === 'check' && staleEntries.length) {
+  console.error('\nStale canonical entries: ' + staleEntries.join(', '));
   process.exitCode = 1;
 } else {
-  console.log('\nCanonical ' + mode + ' complete; changed=' + changed.length + (changed.length ? ' [' + changed.join(', ') + ']' : ''));
+  console.log('\nCanonical ' + mode + ' complete; changed=' + staleEntries.length + (staleEntries.length ? ' [' + staleEntries.join(', ') + ']' : ''));
 }
