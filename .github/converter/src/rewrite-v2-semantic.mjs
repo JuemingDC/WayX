@@ -105,6 +105,12 @@ export function jsonActionToJq(action) {
       return { literal:pathLiteral(value), selector:pathSelector(value) };
     });
     if (action.args[0]?.type === 'array') {
+      // delpaths() is compact and equivalent for object-only Key Paths. Array
+      // indices are order-sensitive because each deletion shifts later indices,
+      // so preserve Loon's documented left-to-right batch order with del().
+      if (paths.some(item => JSON.parse(item.literal).some(part => typeof part === 'number'))) {
+        return {ok:true, jq:paths.map(item => 'del(' + item.selector + ')').join(' | ')};
+      }
       return { ok:true, jq:'delpaths([' + paths.map(item => item.literal).join(', ') + '])' };
     }
     return { ok:true, jq:'del(' + paths[0].selector + ')' };
