@@ -447,15 +447,16 @@ CI 必须验证 scheduled upstream flow 不再依赖任何 ChatGPT Work handoff�
 
 CI 必须验证 online sync 与 canonical regeneration 不再各自拼装相同的 materialize/convert/target-validation 链：
 
-- `converter/src/conversion-runner.mjs` 是该四步执行链的唯一 workflow-facing 入口；
-- 固定顺序为 `materializeConversionContext() → convertPlugin() → validateQX() → validateSurgeModule()`；
-- 调用方提供已有 context 时，runner 必须跳过 materialize，仅执行 convert + 两个 target validator，以便 conversion timestamp 刷新时复用同一 parsed/script/dependency context；
+- `converter/src/conversion-runner.mjs` 是 workflow-facing 的 materialize/convert/target-validation 组合层；
+- `materializeConversionRunContext()` 只委托 `materializeConversionContext()`；`convertAndValidatePlugin()` 固定执行 `convertPlugin() → validateQX() → validateSurgeModule()`；
+- online sync 继续保持 materialize 在 old-target/stamp read 之前；canonical 继续保持 old-target/stamp read 在 materialize 之前，不得为统一函数改变现有顺序；
+- timestamp 刷新重跑必须复用第一次 materialize 的 context，仅再次执行 convert + 两个 target validator；
 - runner 不得 import Source Catalog、source fetch、managed artifact I/O、workflow diagnostics、timestamp helper 或 GitHub/runtime I/O；
 - runner 不得判断 source change、converter output drift、canonical stale、check/write mode，也不得写 helper/target/source；
 - online sync 必须通过 stage callback 继续得到 `materialize-context / convert / validate-qx / validate-surge`，hard-failure report 的阶段语义不得退化；
 - canonical runner 继续保留其现有 Surge `adblockScope` validator options；online sync 继续保留默认 validator 调用语义；
 - `sync-convert.mjs` / `regenerate-canonical.mjs` 不得直接 import `conversion-context.mjs`、`conversion-pipeline.mjs`、`qx-snippet-validator.mjs` 或 `surge-module.mjs` 来重建该链；
-- behavior contract 必须覆盖首次 materialize、context reuse、固定 stage 顺序、timestamp-only re-render 与两目标 validator 成功；
+- behavior contract 必须覆盖 materialize delegation、context reuse、`convert → validate-qx → validate-surge` stage 顺序、timestamp-only re-render 与两目标 validator 成功；
 - 全 Catalog canonical 与 generated helper 必须 0 diff。
 
 实现：
