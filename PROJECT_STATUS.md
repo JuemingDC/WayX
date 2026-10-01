@@ -4,12 +4,13 @@
 > 维护原则：本文件描述“当前 main 的真实状态”，不能替代 `CONVERSION_SPEC.md`；规范冲突时以 `CONVERSION_SPEC.md` 为唯一权威。
 
 - 审计日期：2026-10-01
-- 审计基线：PR #95 validated conversion runner / Converter Check #690
+- 审计基线：PR #96 workflow lifecycle/result boundary audit / Converter Check #691
 - Source Catalog：22 个 Loon 去广告插件
 - Catalog 管理目标：22 个 Quantumult X snippet + 22 个 Surge sgmodule
 - Adblock 目录实际目标：23 个 QX + 23 个 Surge（额外包含手工维护的 `QZXY`）
-- 最近完整 Converter Check：#690，通过
-- 当前实现 PR：#95
+- 最近完整 Converter Check：#691，通过
+- 当前实现 PR：#96
+- 当前构建状态：**核心转换器、canonical、GitHub Actions 自动闭环与质量门已完成构建；后续工作属于持续维护、上游漂移处理或新增官方能力适配。**
 
 ---
 
@@ -168,6 +169,7 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 - [x] Catalog-observed Rule inventory 已升级为 v2 semantic-token gate：只锁递归 Rule Type、top-level Policy、parameter name、logical operator；不再锁 top/nested placement、RuleType:parameter 组合、字段数量、AND/OR 子项数量、operator placement 或已观察最大嵌套深度。Rule AST 对 AND/OR 任意合法子项数量递归处理，Loon `NOT` 单子项约束由 source parser 执行，Surge 最大 logical nesting depth 10 由 target planner 执行。PR #93 / Converter Check #682 全绿，canonical/helper 0 diff。
 - [x] 已完成其它通用转换器同类问题审计：Rewrite v2 / Script v2 / Legacy inventories 全部改为 semantic-token only；Complex Rewrite 删除 observed full-signature allowlist，改为 source-authored multi-action AST → generic action-family classifier → target renderer capability。已知 action 的新 cardinality/顺序/组合若 renderer 可保真则直接转换，不能保真则 Review，只有未知语法/action 才 Issue。PR #94 / Converter Check #689 全绿，current 22-plugin canonical/helper 0 diff。
 - [x] Workflow conversion execution 已收口到 `conversion-runner.mjs`：`materializeConversionRunContext()`、`convertPluginWithContext()`、`validateConvertedPlugin()` 分别封装 context / pure conversion / target validation，同时刻意保持 online 的 drift-before-validation 与 canonical 的 validate-before-diff/write 时序。sync/canonical 不再直接 import conversion-context/pipeline/QX/Surge validator。PR #95 / Converter Check #690 全绿，PR head 未被 CI 自动推进，确认 current 22-plugin canonical/helper 0 diff。
+- [x] Workflow 最后一轮控制层审计已完成：sync/canonical 保留各自 Catalog entry lifecycle，不为减行数强抽统一 loop/result abstraction；只共享 `managedTargetDiffs()` 这一语义完全一致的 QX/Surge target-delta 纯原语。Online converter drift 仍只比较已存在 target，canonical stale 继续包含 missing/changed target + helper diff；同时修正 helper-only repair 的 sync 状态误报。新增 `workflow-control.mjs` gate 并接入 Converter Check / Upstream Monitor。PR #96 / Converter Check #691 全绿，canonical/helper 未产生额外提交。
 - [x] Rule production 已重构为 `rule-ast.mjs` → `rule-qx.mjs` / `rule-surge.mjs`：source parser 只构建 target-neutral AST，未知但可结构化 Rule 仍能进入 AST；QX/Surge planner 分别做目标能力与 logical semantics 校验。`rule.mjs` 仅保留兼容 facade，Catalog Rule inventory 也改为遍历同一 production AST。
 - [x] Rewrite production 已建立统一 Semantic IR 交接层：Legacy Rewrite 与 Rewrite v2 保留独立 source parser，但均归一为 `rewrite-ir.mjs` 的 target-neutral operation model；production Rewrite v2 路由改为读取 IR operation，Legacy planner 也先经 IR 分类。IR 明确保留 Legacy absolute redirect 与 Rewrite v2 matched-range redirect 等来源语义差异，不因统一类别而强制共用错误映射。
 - [x] Rewrite target 决策已集中到 `rewrite-qx.mjs::planQxRewrite()` / `rewrite-surge.mjs::planSurgeRewrite()`：`sync-convert.mjs` 只负责 parse、依赖物化、IR 构建和 planner 调用；QX header 特判、native/helper/complex fallback 与 complex-handler 注册均移入对应 target planner。旧未定义 `rewriteAction(...)` conservative fallback 已移除，未证明等价路径统一显式 Review/Issue。

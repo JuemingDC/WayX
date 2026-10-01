@@ -61,6 +61,7 @@ jobs:
           node --check converter/tests/conversion-runner.mjs
           node --check converter/tests/managed-artifacts.mjs
           node --check converter/tests/workflow-diagnostics.mjs
+          node --check converter/tests/workflow-control.mjs
           node --check converter/tests/upstream-automation.mjs
           node --check converter/tests/qx-official-capabilities.mjs
           node --check converter/tests/surge-official-capabilities.mjs
@@ -96,6 +97,7 @@ jobs:
           node converter/tests/conversion-runner.mjs
           node converter/tests/managed-artifacts.mjs
           node converter/tests/workflow-diagnostics.mjs
+          node converter/tests/workflow-control.mjs
           node converter/tests/upstream-automation.mjs
           node converter/tests/manual-assets.mjs
 
