@@ -43,13 +43,19 @@ export function firstConversionStamp(texts, {trim=false}={}) {
   return null;
 }
 
-export async function readManagedTextIfExists(file) {
+async function managedFileExists(file) {
   try {
-    return normalizePluginSource(await fs.readFile(file,'utf8'));
-  } catch (error) {
-    if (error?.code === 'ENOENT') return null;
-    throw error;
+    await fs.access(file);
+    return true;
+  } catch {
+    return false;
   }
+}
+
+export async function readManagedTextIfExists(file) {
+  return await managedFileExists(file)
+    ? normalizePluginSource(await fs.readFile(file,'utf8'))
+    : null;
 }
 
 export async function syncManagedSource(root, entry, source, {resourceDir='Resource/Loon'}={}) {
