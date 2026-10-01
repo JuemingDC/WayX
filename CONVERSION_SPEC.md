@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.32  
+版本：1.33  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -45,6 +45,8 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 32. 上游维护固定为 **GitHub Actions 全自动闭环**，不得再创建或依赖 ChatGPT Work、`work-review` / `work-complete` / `work-reject` 标签、`work/upstream-*` PR、Work prompt 或 Work finalizer。定时 workflow 必须从同一 `main` 基线完成：Source Catalog 原作者拉取 → 每插件转换/验证 → 官方规范镜像检查 → repository validator/audit → reconciliation/Review inventory → failure/Review/Issue 提议 → 成功产物直接提交 `main`。未知语法或已知能力缺口仍按 fail-closed 生成注释目标，但**不阻止其它已验证插件自动提交**；对应 GitHub Issue 必须在提交前创建/复用。自动 Issue 无论来自 `ISSUE REQUIRED`、`REVIEW REQUIRED` 还是 hard sync failure，正文都必须包含：相关插件 ID/本地 Source 文件/上游 URL、对应 Source declaration（或下载失败时明确说明无法取得新规则并附当前本地规则上下文）、失败阶段/失败原因、目标文件或运行位置。Issue 标题/指纹必须稳定，重复定时运行复用既有 Issue，不得重复刷屏。
 
 33. 所有 Catalog-observed inventory gate 统一遵循 **semantic-token only** 原则：inventory 是上游漂移报警器，不是“见过的具体 AST/参数组合”能力矩阵。只要 source parser/registry 已把某项声明为合法语法类别，且 generic planner/renderer 按类别实现，其新的 cardinality、顺序、placement、嵌套位置、参数合法形态或 option 组合都不得因为“此前 Catalog 未出现”而失败。组合约束必须写在 source grammar/validator，目标限制必须写在 target planner/renderer；不得借 observed fixture 间接实现。Complex Rewrite 同样禁止 full-signature allowlist：source-authored multi-action pipeline 由 action-family classifier + renderer 能力决定，已知语义但当前无法等价处理时 Review，只有未知语法/action 才 Issue。
+
+34. Production/canonical 的**单插件转换与目标校验执行链**必须集中到 **`converter/src/conversion-runner.mjs`**：该 runner 只允许组合 `materializeConversionContext() → convertPlugin() → validateQX() → validateSurgeModule()`，并允许调用方复用第一次 materialize 得到的同一 context 进行第二次不同 timestamp 的 convert+validate。它不得 fetch plugin source、不得读取/写入 managed files、不得生成或选择 conversion timestamp、不得判断 upstream changed / canonical stale、不得决定 helper/target/source 写入顺序、不得维护 entry loop 或 exit policy。Online sync 必须继续保留精确 failure stage（`materialize-context / convert / validate-qx / validate-surge`），可由 runner 通过只读 stage callback 向调用方报告；canonical 可继续传入其现有 Surge validation options。在线与 canonical runner 不得再分别直接 import/拼装 conversion context + pure pipeline + QX/Surge validator 链。该架构收口不得改变任何 Rule/Rewrite/Script/MITM 语义，current Catalog canonical/helper 必须 0 diff。
 
 ## 规范块
 
