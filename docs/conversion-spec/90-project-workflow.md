@@ -42,8 +42,9 @@ WayX 的上游维护与转换由 GitHub Actions 自动闭环执行；不再使�
 - Shared conversion context：`converter/src/conversion-context.mjs`
 - Pure generic conversion core：`converter/src/conversion-pipeline.mjs`
 - Shared validated conversion runner：`converter/src/conversion-runner.mjs`
-- Managed artifact I/O：`converter/src/managed-artifacts.mjs`
+- Managed artifact I/O / pure target diff：`converter/src/managed-artifacts.mjs`
 - Workflow diagnostics：`converter/src/workflow-diagnostics.mjs`
+- Workflow lifecycle/result regression：`converter/tests/workflow-control.mjs`
 - Structured scheduled failure report：`converter/src/upstream-run-report.mjs`
 - QX validator：`converter/src/qx-snippet-validator.mjs`
 - Surge validator：`converter/src/surge-module.mjs`
@@ -53,6 +54,8 @@ WayX 的上游维护与转换由 GitHub Actions 自动闭环执行；不再使�
 - PR CI：`.github/workflows/converter-check.yml`
 
 自动化脚本不得维护第二份插件列表；所有 Loon source 必须遍历 Source Catalog。
+
+Online sync 与 canonical regeneration 虽然都遍历同一 Source Catalog，但 lifecycle 不同，必须保持分离：sync 负责 upstream fetch/source change/stage/failure context 与 source-last write；canonical 负责 checked-in source、check/write mode、pre-write stale set 与 stale exit policy。二者只共享语义完全相同的纯原语，例如 `managedTargetDiffs()`；不得为了减行数引入统一 Catalog loop 或共同 changed/stale result object。
 
 ## 定时自动链路
 
