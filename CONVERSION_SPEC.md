@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.35  
+版本：1.36  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -53,6 +53,8 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 36. 原作者拉取层必须集中在 **`converter/src/source-fetch.mjs`**，并严格区分“原作者 URL”与“HTTP transport/header profile”：Catalog、Source Script、JQ/mock dependency 的原始 URL 不得因访问兼容性而改写成镜像或备用源；`kelee.one` / `*.kelee.one` 与 `rucu6.pages.dev` 固定选择 **Python `urllib.request` transport**（`converter/tools/fetch-upstream.py`），统一使用 `WAYX_LOON_FETCH_UA` 当前值 `Loon/764 CFNetwork/1498.700.1 Darwin/23.6.0 iPhone/17.6.1` 与 `Accept: */*`；其它 host 继续使用默认 Node fetch profile。Host 匹配必须基于解析后的 hostname，禁止字符串包含判断。Python helper 只能接收 Node 选定的原始 URL/headers 并把原始 response bytes 写到 stdout，不得维护插件列表、不得解析/转换 Loon 内容、不得选择 mirror/fallback。专用 transport 失败时必须直接报告原作者 fetch failure，禁止回退到默认 transport 或第三方副本。该变更只影响网络获取方式，不改变 generic converter、Source URL、QX/Surge Source Script URL 或 canonical conversion semantics。
 
 37. QX Source Script action family 必须保持**源 declaration 优先**。依据用户提供的 Crossutility 官方 sample 与 KOP-XIAO `resource-parser.js::SCP2QX()`：`http-request/request + requires-body` → `script-request-body`，无 body → `script-request-header`；`http-response/response + requires-body` → `script-response-body`，无 body → `script-response-header`。Source JavaScript 全文件扫描只可补充“实际读取对应 body”的信号，不得把 request phase 改成 `script-echo-response` / `script-analyze-echo-response`。原因是多平台脚本常同时包含 QX、Loon、Surge 分支与共享 helper，静态扫描到其它平台的 `$done({response: ...})`、status/statusCode 不能证明 QX 执行路径构造 synthetic response。该规则禁止 HTTP transport/UA、脚本打包方式或无关 helper 代码改变同一 Loon declaration 的 QX action family。
+
+38. Surge Module 分类统一固定为 **`#!category=WayX`**。所有 WayX 生成的 Catalog `.sgmodule` 与手工维护 Surge Module 都必须在模块头部声明且只声明一次该字段；不得继续输出 WayX 生成的普通注释 `# Category: <entry.category>`。若来源 Loon header 自带 `#!category=...`，Surge 目标不得透传其值，也不得转换成普通 category 注释，而是统一替换为 `#!category=WayX`。QX 的 `# Category: <entry.category>` 与 generated helper 的分类注释不受本规则影响。Surge validator 必须拒绝缺失、非 WayX 值或 section 内出现的 category directive。
 
 ## 规范块
 

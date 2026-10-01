@@ -1,4 +1,4 @@
-// Converted: 2026-10-01 14:10:45 +08:00
+// Converted: 2026-10-01 14:35:51 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v1\.Comic\/(?:Flash|ListFlash|GetActivityTab|GetBubbles)/i then response.body.mock("text", "{\"code\":0,\"msg\":\"\",\"data\":null}")

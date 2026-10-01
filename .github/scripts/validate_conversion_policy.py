@@ -33,13 +33,13 @@ SURGE_SECTIONS = {
     "Rule", "URL Rewrite", "Header Rewrite", "Body Rewrite", "Map Local",
     "Script", "MITM",
 }
-META = (
+COMMON_META = (
     r"^# Converted:\s*.+$",
     r"^# Converted by:\s*chance\s*$",
-    r"^# Category:\s*.+$",
     r"^# Target:\s*(Quantumult X|Surge)\s*$",
     r"^# Source:\s*.+$",
 )
+QX_META = COMMON_META + (r"^# Category:\s*.+$",)
 
 
 def git_lines(*args: str) -> list[str]:
@@ -68,8 +68,8 @@ def mapped_targets() -> dict[str, str]:
     return out
 
 
-def metadata(text: str, path: str, errors: list[str]) -> None:
-    for pattern in META:
+def metadata(text: str, path: str, errors: list[str], patterns=COMMON_META) -> None:
+    for pattern in patterns:
         if not re.search(pattern, text, re.M):
             errors.append(f"{path}: missing required metadata matching {pattern}")
 
@@ -85,7 +85,7 @@ def strip_qx_leading_note(line: str, path: str, errors: list[str]) -> tuple[str,
 
 
 def validate_qx(path: str, text: str, errors: list[str]) -> None:
-    metadata(text, path, errors)
+    metadata(text, path, errors, QX_META)
     for title in ("# [filter_local]", "# [rewrite_local]", "# [mitm]"):
         if title not in text:
             errors.append(f"{path}: missing commented section {title}")
@@ -134,6 +134,10 @@ def validate_qx(path: str, text: str, errors: list[str]) -> None:
 
 def validate_surge(path: str, text: str, errors: list[str]) -> None:
     metadata(text, path, errors)
+    if len(re.findall(r"(?m)^#!category=WayX$", text)) != 1:
+        errors.append(f"{path}: Surge module must declare exactly one #!category=WayX")
+    if re.search(r"(?m)^# Category:\s*.+$", text):
+        errors.append(f"{path}: generated Surge module must not use legacy # Category comment")
     current = None
     for raw in text.splitlines():
         line = raw.strip()

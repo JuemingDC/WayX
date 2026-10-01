@@ -28,6 +28,7 @@ function metadataComments(directives, target) {
     if (!value) continue;
     if (key === 'name' || key === 'desc' || key === 'loon_version') continue;
     if (key === 'system' && /^(?:ios|mac)$/i.test(value) && target === 'Surge') continue;
+    if (key === 'category' && target === 'Surge') continue;
     const label = KNOWN_LABELS.get(key) || key.replace(/(^|[-_])(\w)/g, (_, __, c) => ' ' + c.toUpperCase()).trim();
     out.push(`# ${label}: ${value}`);
   }
@@ -80,6 +81,7 @@ export function renderSurgeModuleHeader(headerLines, entry, stamp, { needsCore20
   const out = [
     '#!name=' + name,
     '#!desc=' + desc,
+    '#!category=WayX',
   ];
 
   const system = directives.get('system');
@@ -98,7 +100,6 @@ export function renderSurgeModuleHeader(headerLines, entry, stamp, { needsCore20
     '',
     '# Converted: ' + stamp,
     '# Converted by: chance',
-    '# Category: ' + entry.category,
     '# Source: ' + entry.source,
     '# Target: Surge',
   );
