@@ -361,3 +361,21 @@ CI 必须验证 QX 成品校验已经从 GitHub sync orchestration 中分离：
 - behavior regression：`converter/tests/end-to-end-golden.mjs`
 - architecture contract：`converter/tests/spec-block-contract.mjs`
 
+## 80.20 Managed artifact I/O ownership gate
+
+CI 必须验证 source/target/helper 文件系统职责已经从 sync/canonical runner 中收口，但转换行为不变：
+
+- `converter/src/managed-artifacts.mjs` 只允许负责 managed text normalization、Source change detection/write、conversion timestamp、target snapshot、generated helper diff/write 与 conditional target write；
+- 该模块不得 import `conversion-pipeline.mjs`、Rule/Rewrite/Script/MITM planner、QX/Surge validator、Source Catalog 或 `source-fetch.mjs`，因此不能解释任何转换语义；
+- `sync-convert.mjs` 不再直接 import `node:fs/promises`、`node:crypto`、`normalizePluginSource()` 或 `qxTargetPath()/surgeTargetPath()` 来维护 managed artifacts；它必须继续直接从 `entry.source` fetch 原作者 plugin，并在 conversion 前做 Loon source 结构合法性检查；
+- online sync 的顺序固定为 fetch → managed source sync → source validity → materialize context → convert → generated helper write → QX/Surge validate → conditional target write；不得把 validator 移到 target write 之后；
+- online sync 的 conversion stamp 继续只读取既有 QX target 的 `# Converted:`；source 未变但 converter output 变化时继续刷新时间戳，判断条件保持原样；
+- canonical runner 的 existing stamp 继续按 QX target → Surge target 顺序获取；check 模式不得写 target/helper，write 模式在发现 diff 后继续用一个新的共享时间戳重生成 target/helper；
+- managed-artifact contract test 必须覆盖 BOM/CRLF/trailing newline、source unchanged/changed、target snapshot、stamp precedence、helper diff/write 与 target conditional write；
+- 全 Catalog canonical 与 generated helper 必须 0 diff。
+
+实现：
+- managed artifact I/O：`converter/src/managed-artifacts.mjs`
+- behavior contract：`converter/tests/managed-artifacts.mjs`
+- architecture contract：`converter/tests/spec-block-contract.mjs`
+
