@@ -27,6 +27,8 @@ import {
   minifyJqFile,
   quoteJq,
   classifyLegacyRewrite,
+  isDiscardedLegacyJqPathIr,
+  legacyRewriteToSemanticIr,
   planLegacyRewrite,
   validateLoonSourceCatalog,
   planMitmLine,
@@ -998,6 +1000,12 @@ const legacyJqPathAst = parseRewriteV2(
   'response if ${url} ~= /reddit/i then response.json.jq("jq-path=https://rucu6.pages.dev/JQLang/reddit.jq")'
 );
 assert.equal(isDiscardedLegacyJqPathAction(legacyJqPathAst.actions[0]), true);
+
+const legacyJqPathIr=legacyRewriteToSemanticIr(
+  '^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/adapter\\/',
+  'response-body-json-jq jq-path="https://kelee.one/Resource/JQLang/FleaMarket/adapter_FleaMarket_remove_ads.jq"'
+);
+assert.equal(isDiscardedLegacyJqPathIr(legacyJqPathIr),true);
 assert.equal(jqDependencySpecFromAction(legacyJqPathAst.actions[0], {
   pluginSourceUrl:'https://example.com/demo.lpx',
 }), null);
