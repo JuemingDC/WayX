@@ -32,11 +32,11 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
   if (argumentIds !== null) {
     const usage = scriptV2PluginArgumentUsage(ast, argumentIds);
     // QX follows the KOP-XIAO resource-parser behavior for Script declaration
-    // arguments/options: Script argument payloads and dynamic enable/timeout are
+    // arguments/options: Script argument payloads and dynamic enable/timeout/debug are
     // discarded at conversion time. Only Argument references that change the
     // match condition, or other still-significant dynamic options, remain blockers.
     const undeclared = usage.undeclaredOptionRefs
-      .filter(ref => !['enable','timeout'].includes(ref.option))
+      .filter(ref => !['enable','timeout','debug'].includes(ref.option))
       .map(ref => ref.id);
     if (undeclared.length) {
       return unsupported('undeclared plugin [Argument] reference(s): ' + [...new Set(undeclared)].sort().join(', '));
@@ -67,8 +67,8 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
     notes.push('Source Script timeout ignored for Quantumult X.');
   }
   const debug = scriptOption(ast, 'debug');
-  if (debug?.type === 'boolean' && debug.value) {
-    return unsupported('Loon Script v2 debug=true has no verified Quantumult X rewrite declaration or lossless helper bridge');
+  if (debug) {
+    notes.push('Source Script debug ignored for Quantumult X.');
   }
   const binaryBodyMode = scriptOptionBoolean(ast, 'binary_body_mode', false);
   if (binaryBodyMode) {
