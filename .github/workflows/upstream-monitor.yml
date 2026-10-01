@@ -42,31 +42,33 @@ jobs:
 
       - name: Validate converter core
         run: |
-          node converter/tests/checkpoint.mjs
-          node converter/tests/generic-identity.mjs
-          node converter/tests/genericity-audit.mjs
-          node converter/tests/spec-block-contract.mjs
-          node converter/tests/workflow-control.mjs
-          node converter/tests/complex-source-inventory.mjs
-          node converter/tests/catalog-syntax-inventory.mjs
-          node converter/tests/catalog-legacy-syntax-inventory.mjs
-          node converter/tests/catalog-rule-inventory.mjs
-          node converter/tests/manual-assets.mjs
-          node converter/tests/upstream-automation.mjs
-          node converter/tests/myblockads-golden.mjs
+          node .github/converter/tests/checkpoint.mjs
+          node .github/converter/tests/generic-identity.mjs
+          node .github/converter/tests/genericity-audit.mjs
+          node .github/converter/tests/spec-block-contract.mjs
+          node .github/converter/tests/workflow-control.mjs
+          node .github/converter/tests/repository-layout.mjs
+          node .github/converter/tests/complex-source-inventory.mjs
+          node .github/converter/tests/catalog-syntax-inventory.mjs
+          node .github/converter/tests/catalog-legacy-syntax-inventory.mjs
+          node .github/converter/tests/catalog-rule-inventory.mjs
+          node .github/converter/tests/manual-assets.mjs
+          node .github/converter/tests/upstream-automation.mjs
+          node .github/converter/tests/myblockads-golden.mjs
 
       - name: Syntax check automation
         run: |
           node --check .github/scripts/sync-convert.mjs
           node --check .github/scripts/propose-conversion-issues.mjs
-          node --check converter/tools/conversion-reports.mjs
-          node --check converter/tools/audit-repository.mjs
-          node --check converter/tests/upstream-automation.mjs
-          node --check converter/tests/workflow-control.mjs
-          python -m py_compile converter/tools/fetch-upstream.py .github/scripts/validate_conversion_policy.py monitor/monitor_upstreams.py
+          node --check .github/converter/tools/conversion-reports.mjs
+          node --check .github/converter/tools/audit-repository.mjs
+          node --check .github/converter/tests/upstream-automation.mjs
+          node --check .github/converter/tests/workflow-control.mjs
+          node --check .github/converter/tests/repository-layout.mjs
+          python -m py_compile .github/converter/tools/fetch-upstream.py .github/scripts/validate_conversion_policy.py .github/monitor/monitor_upstreams.py
 
       - name: Prepare runtime logs
-        run: mkdir -p monitor/.runtime
+        run: mkdir -p .github/monitor/.runtime
 
       - name: Pull all Catalog upstreams and convert
         id: loon_sync
@@ -74,14 +76,14 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          node .github/scripts/sync-convert.mjs 2>&1 | tee monitor/.runtime/loon-sync.log
+          node .github/scripts/sync-convert.mjs 2>&1 | tee .github/monitor/.runtime/loon-sync.log
 
       - name: Check monitored upstream specifications
         id: monitor
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: python monitor/monitor_upstreams.py
+        run: python .github/monitor/monitor_upstreams.py
 
       - name: Validate generated target formats
         id: validate
@@ -89,7 +91,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          python .github/scripts/validate_conversion_policy.py 2>&1 | tee monitor/.runtime/validator.log
+          python .github/scripts/validate_conversion_policy.py 2>&1 | tee .github/monitor/.runtime/validator.log
 
       - name: Audit repository
         id: audit
@@ -97,7 +99,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          node converter/tools/audit-repository.mjs 2>&1 | tee monitor/.runtime/audit.log
+          node .github/converter/tools/audit-repository.mjs 2>&1 | tee .github/monitor/.runtime/audit.log
 
       - name: Generate reconciliation and Review inventory
         id: reports
@@ -105,17 +107,17 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          node converter/tools/conversion-reports.mjs 2>&1 | tee monitor/.runtime/reports.log
+          node .github/converter/tools/conversion-reports.mjs 2>&1 | tee .github/monitor/.runtime/reports.log
 
       - name: Verify generated helper references
         id: helper_refs
         continue-on-error: true
-        run: node converter/tests/generated-helper-refs.mjs
+        run: node .github/converter/tests/generated-helper-refs.mjs
 
       - name: Verify original Source Script URLs
         id: source_urls
         continue-on-error: true
-        run: node converter/tests/source-script-url-preservation.mjs
+        run: node .github/converter/tests/source-script-url-preservation.mjs
 
       - name: Create or update conversion issues
         if: always()
@@ -140,8 +142,7 @@ jobs:
           git config user.name "chance-upstream-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add -A Resource/Loon Adblock script boxjs monitor/state.json
-          if [ -d upstream ]; then git add -A upstream; fi
+          git add -A Resource/Loon Adblock script boxjs .github/monitor/state.json .github/monitor/upstream
 
           if git diff --cached --quiet; then
             echo "No validated upstream/conversion changes to commit."
@@ -164,18 +165,18 @@ jobs:
           name: upstream-conversion-reports
           if-no-files-found: warn
           path: |
-            monitor/.runtime/loon-sync.log
-            monitor/.runtime/validator.log
-            monitor/.runtime/audit.log
-            monitor/.runtime/reports.log
-            monitor/.runtime/sync-failures.json
-            monitor/.runtime/sync-failures.md
-            monitor/.runtime/conversion-issues.md
-            monitor/.runtime/upstream_changes.md
-            monitor/.runtime/conversion-reconciliation.json
-            monitor/.runtime/conversion-reconciliation.md
-            monitor/.runtime/review-inventory.json
-            monitor/.runtime/review-inventory.md
+            .github/monitor/.runtime/loon-sync.log
+            .github/monitor/.runtime/validator.log
+            .github/monitor/.runtime/audit.log
+            .github/monitor/.runtime/reports.log
+            .github/monitor/.runtime/sync-failures.json
+            .github/monitor/.runtime/sync-failures.md
+            .github/monitor/.runtime/conversion-issues.md
+            .github/monitor/.runtime/upstream_changes.md
+            .github/monitor/.runtime/conversion-reconciliation.json
+            .github/monitor/.runtime/conversion-reconciliation.md
+            .github/monitor/.runtime/review-inventory.json
+            .github/monitor/.runtime/review-inventory.md
 
       - name: Surface unresolved automation failures
         if: always()

@@ -3,16 +3,16 @@ name: Converter Check
 on:
   pull_request:
     paths:
-      - "converter/**"
+      - ".github/.github/converter/**"
       - ".github/scripts/sync-convert.mjs"
       - ".github/scripts/propose-conversion-issues.mjs"
       - ".github/workflows/converter-check.yml"
       - ".github/workflows/upstream-monitor.yml"
-      - "monitor/**"
+      - ".github/monitor/**"
       - ".github/sources/loon.json"
       - ".github/manual-assets.json"
-      - "CONVERSION_SPEC.md"
-      - "docs/conversion-spec/**"
+      - ".github/CONVERSION_SPEC.md"
+      - ".github/docs/conversion-spec/**"
       - "Resource/Loon/**"
       - "script/**"
       - "Adblock/Quantumult X/**"
@@ -38,83 +38,85 @@ jobs:
           python-version: "3.13"
       - name: Syntax check converter
         run: |
-          for file in converter/src/*.mjs converter/tools/*.mjs; do
+          for file in .github/converter/src/*.mjs .github/converter/tools/*.mjs; do
             node --check "$file"
           done
           node --check .github/scripts/sync-convert.mjs
-          node --check converter/tests/checkpoint.mjs
-          node --check converter/tests/loon-new-syntax-cases.mjs
-          node --check converter/tests/surge-rule-coverage.mjs
-          node --check converter/tests/end-to-end-golden.mjs
-          node --check converter/tests/generic-identity.mjs
-          node --check converter/tests/genericity-audit.mjs
-          node --check converter/tests/spec-block-contract.mjs
-          node --check converter/tests/complex-source-inventory.mjs
-          node --check converter/tests/catalog-syntax-inventory.mjs
-          node --check converter/tests/catalog-legacy-syntax-inventory.mjs
-          node --check converter/tests/catalog-rule-inventory.mjs
-          node --check converter/tests/rule-ast.mjs
-          node --check converter/tests/rewrite-ir.mjs
-          node --check converter/tests/rewrite-target-planners.mjs
-          node --check converter/tests/script-ir-target-planners.mjs
-          node --check converter/tests/source-section-comments.mjs
-          node --check converter/tests/target-output-builders.mjs
-          node --check converter/tests/conversion-pipeline.mjs
-          node --check converter/tests/conversion-context-materializers.mjs
-          node --check converter/tests/conversion-runner.mjs
-          node --check converter/tests/managed-artifacts.mjs
-          node --check converter/tests/workflow-diagnostics.mjs
-          node --check converter/tests/workflow-control.mjs
-          node --check converter/tests/upstream-automation.mjs
-          node --check converter/tests/source-fetch.mjs
-          node --check converter/tests/qx-official-capabilities.mjs
-          node --check converter/tests/surge-official-capabilities.mjs
-          node --check converter/tests/manual-assets.mjs
+          node --check .github/converter/tests/checkpoint.mjs
+          node --check .github/converter/tests/loon-new-syntax-cases.mjs
+          node --check .github/converter/tests/surge-rule-coverage.mjs
+          node --check .github/converter/tests/end-to-end-golden.mjs
+          node --check .github/converter/tests/generic-identity.mjs
+          node --check .github/converter/tests/genericity-audit.mjs
+          node --check .github/converter/tests/spec-block-contract.mjs
+          node --check .github/converter/tests/complex-source-inventory.mjs
+          node --check .github/converter/tests/catalog-syntax-inventory.mjs
+          node --check .github/converter/tests/catalog-legacy-syntax-inventory.mjs
+          node --check .github/converter/tests/catalog-rule-inventory.mjs
+          node --check .github/converter/tests/rule-ast.mjs
+          node --check .github/converter/tests/rewrite-ir.mjs
+          node --check .github/converter/tests/rewrite-target-planners.mjs
+          node --check .github/converter/tests/script-ir-target-planners.mjs
+          node --check .github/converter/tests/source-section-comments.mjs
+          node --check .github/converter/tests/target-output-builders.mjs
+          node --check .github/converter/tests/conversion-pipeline.mjs
+          node --check .github/converter/tests/conversion-context-materializers.mjs
+          node --check .github/converter/tests/conversion-runner.mjs
+          node --check .github/converter/tests/managed-artifacts.mjs
+          node --check .github/converter/tests/workflow-diagnostics.mjs
+          node --check .github/converter/tests/workflow-control.mjs
+          node --check .github/converter/tests/upstream-automation.mjs
+          node --check .github/converter/tests/source-fetch.mjs
+          node --check .github/converter/tests/repository-layout.mjs
+          node --check .github/converter/tests/qx-official-capabilities.mjs
+          node --check .github/converter/tests/surge-official-capabilities.mjs
+          node --check .github/converter/tests/manual-assets.mjs
           node --check .github/scripts/propose-conversion-issues.mjs
-          node --check converter/tests/generated-helper-refs.mjs
-          node --check converter/tests/generated-helper-runtime.mjs
-          node --check converter/tests/source-script-url-preservation.mjs
-          node --check converter/tools/regenerate-canonical.mjs
-          node --check converter/tools/audit-repository.mjs
-          node --check converter/tools/conversion-reports.mjs
+          node --check .github/converter/tests/generated-helper-refs.mjs
+          node --check .github/converter/tests/generated-helper-runtime.mjs
+          node --check .github/converter/tests/source-script-url-preservation.mjs
+          node --check .github/converter/tools/regenerate-canonical.mjs
+          node --check .github/converter/tools/audit-repository.mjs
+          node --check .github/converter/tools/conversion-reports.mjs
       - name: Converter checkpoint
         run: |
-          node converter/tests/checkpoint.mjs
-          node converter/tests/loon-new-syntax-cases.mjs
-          node converter/tests/surge-rule-coverage.mjs
-          node converter/tests/end-to-end-golden.mjs
-          node converter/tests/generic-identity.mjs
-          node converter/tests/genericity-audit.mjs
-          node converter/tests/spec-block-contract.mjs
-          node converter/tests/complex-source-inventory.mjs
-          node converter/tests/catalog-syntax-inventory.mjs
-          node converter/tests/catalog-legacy-syntax-inventory.mjs
-          node converter/tests/catalog-rule-inventory.mjs
-          node converter/tests/rule-ast.mjs
-          node converter/tests/rewrite-ir.mjs
-          node converter/tests/rewrite-target-planners.mjs
-          node converter/tests/script-ir-target-planners.mjs
-          node converter/tests/source-section-comments.mjs
-          node converter/tests/target-output-builders.mjs
-          node converter/tests/conversion-pipeline.mjs
-          node converter/tests/conversion-context-materializers.mjs
-          node converter/tests/conversion-runner.mjs
-          node converter/tests/managed-artifacts.mjs
-          node converter/tests/workflow-diagnostics.mjs
-          node converter/tests/workflow-control.mjs
-          node converter/tests/upstream-automation.mjs
-          node converter/tests/source-fetch.mjs
-          python converter/tests/validate_conversion_policy.py
-          node converter/tests/manual-assets.mjs
+          node .github/converter/tests/checkpoint.mjs
+          node .github/converter/tests/loon-new-syntax-cases.mjs
+          node .github/converter/tests/surge-rule-coverage.mjs
+          node .github/converter/tests/end-to-end-golden.mjs
+          node .github/converter/tests/generic-identity.mjs
+          node .github/converter/tests/genericity-audit.mjs
+          node .github/converter/tests/spec-block-contract.mjs
+          node .github/converter/tests/complex-source-inventory.mjs
+          node .github/converter/tests/catalog-syntax-inventory.mjs
+          node .github/converter/tests/catalog-legacy-syntax-inventory.mjs
+          node .github/converter/tests/catalog-rule-inventory.mjs
+          node .github/converter/tests/rule-ast.mjs
+          node .github/converter/tests/rewrite-ir.mjs
+          node .github/converter/tests/rewrite-target-planners.mjs
+          node .github/converter/tests/script-ir-target-planners.mjs
+          node .github/converter/tests/source-section-comments.mjs
+          node .github/converter/tests/target-output-builders.mjs
+          node .github/converter/tests/conversion-pipeline.mjs
+          node .github/converter/tests/conversion-context-materializers.mjs
+          node .github/converter/tests/conversion-runner.mjs
+          node .github/converter/tests/managed-artifacts.mjs
+          node .github/converter/tests/workflow-diagnostics.mjs
+          node .github/converter/tests/workflow-control.mjs
+          node .github/converter/tests/upstream-automation.mjs
+          node .github/converter/tests/source-fetch.mjs
+          node .github/converter/tests/repository-layout.mjs
+          python .github/converter/tests/validate_conversion_policy.py
+          node .github/converter/tests/manual-assets.mjs
 
       - name: Quantumult X official capability drift gate
-        run: node converter/tests/qx-official-capabilities.mjs
+        run: node .github/converter/tests/qx-official-capabilities.mjs
 
       - name: Surge official capability drift gate
-        run: node converter/tests/surge-official-capabilities.mjs
+        run: node .github/converter/tests/surge-official-capabilities.mjs
 
       - name: Generated helper runtime fixtures
-        run: node converter/tests/generated-helper-runtime.mjs
+        run: node .github/converter/tests/generated-helper-runtime.mjs
 
       - name: Repository script syntax
         shell: bash
@@ -122,26 +124,26 @@ jobs:
           set -euo pipefail
           while IFS= read -r -d '' file; do
             node --check "$file"
-          done < <(find script converter .github/scripts -type f \( -name '*.js' -o -name '*.mjs' \) -print0)
-          python -m py_compile converter/tools/fetch-upstream.py converter/tests/validate_conversion_policy.py .github/scripts/*.py monitor/*.py
+          done < <(find script .github/converter .github/scripts -type f \( -name '*.js' -o -name '*.mjs' \) -print0)
+          python -m py_compile .github/converter/tools/fetch-upstream.py .github/converter/tests/validate_conversion_policy.py .github/scripts/*.py .github/monitor/*.py
 
       - name: Regenerate canonical outputs
-        run: node converter/tools/regenerate-canonical.mjs --write
+        run: node .github/converter/tools/regenerate-canonical.mjs --write
 
       - name: Audit regenerated repository
-        run: node converter/tools/audit-repository.mjs
+        run: node .github/converter/tools/audit-repository.mjs
 
       - name: Generate reconciliation and Review inventory
-        run: node converter/tools/conversion-reports.mjs
+        run: node .github/converter/tools/conversion-reports.mjs
 
       - name: Verify generated helper references
-        run: node converter/tests/generated-helper-refs.mjs
+        run: node .github/converter/tests/generated-helper-refs.mjs
 
       - name: Verify regenerated MyBlockAds golden
-        run: node converter/tests/myblockads-golden.mjs
+        run: node .github/converter/tests/myblockads-golden.mjs
 
       - name: Verify original Source Script URLs
-        run: node converter/tests/source-script-url-preservation.mjs
+        run: node .github/converter/tests/source-script-url-preservation.mjs
 
       - name: Upload regenerated canonical outputs
         if: always()
@@ -153,10 +155,10 @@ jobs:
             Adblock/Quantumult X/*.snippet
             Adblock/Surge/*.sgmodule
             script/**
-            monitor/.runtime/conversion-reconciliation.json
-            monitor/.runtime/conversion-reconciliation.md
-            monitor/.runtime/review-inventory.json
-            monitor/.runtime/review-inventory.md
+            .github/monitor/.runtime/conversion-reconciliation.json
+            .github/monitor/.runtime/conversion-reconciliation.md
+            .github/monitor/.runtime/review-inventory.json
+            .github/monitor/.runtime/review-inventory.md
 
       - name: Commit deterministic generated outputs to same-repo PR
         if: >-

@@ -1,13 +1,13 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
-import { fetchOriginalText } from '../../converter/src/source-fetch.mjs';
-import { createWorkflowFailureReporter } from '../../converter/src/workflow-diagnostics.mjs';
+import { loadLoonSourceCatalog } from '../converter/src/source-catalog.mjs';
+import { fetchOriginalText } from '../converter/src/source-fetch.mjs';
+import { createWorkflowFailureReporter } from '../converter/src/workflow-diagnostics.mjs';
 import {
   materializeConversionRunContext,
   convertPluginWithContext,
   validateConvertedPlugin,
-} from '../../converter/src/conversion-runner.mjs';
+} from '../converter/src/conversion-runner.mjs';
 import {
   conversionStampFromText,
   normalizeManagedSource,
@@ -19,11 +19,11 @@ import {
   syncGeneratedScripts,
   writeManagedSource,
   writeManagedTargets,
-} from '../../converter/src/managed-artifacts.mjs';
+} from '../converter/src/managed-artifacts.mjs';
 import {
   buildSyncFailure,
   writeSyncFailureReport,
-} from '../../converter/src/upstream-run-report.mjs';
+} from '../converter/src/upstream-run-report.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
