@@ -81,7 +81,7 @@ jobs:
               echo "ua=$ua"
               grep -iE '^(server|content-type|location|cf-ray|x-|via):' "$headers" || true
               echo
-            } | tee -a "$OUT"
+            } | tee -a "$OUT" >&2
             if [ "$code" = "200" ] && grep -q '#!name=' "$body"; then
               printf '%s' "$ua"
               return 0
