@@ -301,7 +301,7 @@ def build_review_summary(review_items: list[tuple], runtime: Path) -> Path:
         ])
     lines.extend([
         "## Work requirement\n\n",
-        "Read `CONVERSION_POLICY.md`, `LOON_NEW_SYNTAX_CONVERSION.md`, and "
+        "Read `CONVERSION_SPEC.md`, the relevant `docs/conversion-spec/` blocks, and "
         "`monitor/WORK_TASK_PROMPT.md` before changing any target file. "
         "Add `work-complete` only after all required changes and validation pass. "
         "If the upstream change should not be adopted, add `work-reject`. "
