@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.34  
+版本：1.35  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -8,7 +8,7 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 
 本规范采用“分块规范”结构。转换器、测试、canonical 输出、Golden 都必须服从本规范，不能反过来用现有代码定义规范。
 
-## 2026-09-30 规范更新
+## 2026-10-01 规范更新
 
 1. Quantumult X 对官方 sample 未确认的 Rule Type（包括逻辑规则、端口类等）只保留为注释，不生成活动规则，也不使用 Script 兜底。
 2. Script fallback 仅属于 Rewrite/Mock 语义：目标原生格式无法严格等价表达时，才考虑专用 helper；Rule 不进入 Script fallback。
@@ -49,6 +49,8 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 34. Production/canonical 的**单插件 materialize / convert / target-validation 执行原语**必须集中到 **`converter/src/conversion-runner.mjs`**。为保持两条 workflow 的既有时序，该模块固定暴露三个 workflow-facing 原语：`materializeConversionRunContext()` 只委托 `materializeConversionContext()`；`convertPluginWithContext()` 只把已物化 context 映射给 `convertPlugin()`；`validateConvertedPlugin()` 固定执行 `validateQX() → validateSurgeModule()`。Online sync 必须继续保持“materialize context → read old target/stamp → convert → 如 converter output drift 则刷新 timestamp 并再次 convert → 只校验最终 output → write helper/target/source”；不得提前校验第一次仅用于 drift 判断的临时 output。Canonical 必须继续保持“read old target/stamp → materialize → convert → validate → diff → write 模式下新 timestamp 再 convert → validate → write target/helper”。Timestamp 刷新重跑必须复用第一次 materialize 得到的同一 context。Runner 不得 fetch plugin source、不得读取/写入 managed files、不得生成或选择 conversion timestamp、不得判断 upstream changed / converter drift / canonical stale、不得决定 helper/target/source 写入顺序、不得维护 entry loop 或 exit policy。Online sync 的 failure stage `materialize-context / convert / validate-qx / validate-surge` 必须由 runner stage callback 保持不变。两条 workflow 不得再直接 import `conversion-context.mjs`、`conversion-pipeline.mjs`、`qx-snippet-validator.mjs` 或 `surge-module.mjs`。该架构收口不得改变任何 Rule/Rewrite/Script/MITM 语义，current Catalog canonical/helper 必须 0 diff。
 
 35. Workflow 层的 **Catalog entry lifecycle / changed-stale result** 只允许共享语义完全一致的纯控制原语，禁止为了减少行数强行统一 online sync 与 canonical regeneration。两条 workflow 必须继续各自拥有 `for (const entry of manifest)` 生命周期：online sync 独占原作者 fetch、source change、stage/structured failure、existing-target drift 与 source-last write；canonical 独占 checked-in source、check/write mode、pre-write stale set 与 stale exit policy。目标文件差异的纯判定统一由 `managed-artifacts.mjs::managedTargetDiffs(state,out)` 返回稳定的 `qx/surge` 差异集合，并由 conditional target write 复用；但 online sync 的 converter-drift 时间戳刷新仍只把**已存在且发生变化的 target**视为 drift，missing-target recovery 不得因此刷新旧 stamp。Canonical stale 则必须把 missing/changed QX、missing/changed Surge 与 generated helper diff 都计入 stale。Online sync 状态输出必须把 source、target、generated helper 任一实际写入视为“synced”，不得在 helper-only repair 时误报 `source and outputs unchanged`；canonical 的 stale list/check-mode error 与 write-mode changed summary 保持独立，不抽成共同 formatter/result object。该边界审计不得修改 conversion core、target semantics、validator 顺序或 canonical/helper 内容。
+
+36. 原作者拉取层必须集中在 **`converter/src/source-fetch.mjs`**，并严格区分“原作者 URL”与“HTTP transport/header profile”：Catalog、Source Script、JQ/mock dependency 的原始 URL 不得因访问兼容性而改写成镜像或备用源；`kelee.one` / `*.kelee.one` 与 `rucu6.pages.dev` 固定选择 **Python `urllib.request` transport**（`converter/tools/fetch-upstream.py`），统一使用 `WAYX_LOON_FETCH_UA` 当前值 `Loon/764 CFNetwork/1498.700.1 Darwin/23.6.0 iPhone/17.6.1` 与 `Accept: */*`；其它 host 继续使用默认 Node fetch profile。Host 匹配必须基于解析后的 hostname，禁止字符串包含判断。Python helper 只能接收 Node 选定的原始 URL/headers 并把原始 response bytes 写到 stdout，不得维护插件列表、不得解析/转换 Loon 内容、不得选择 mirror/fallback。专用 transport 失败时必须直接报告原作者 fetch failure，禁止回退到默认 transport 或第三方副本。该变更只影响网络获取方式，不改变 generic converter、Source URL、QX/Surge Source Script URL 或 canonical conversion semantics。
 
 ## 规范块
 
