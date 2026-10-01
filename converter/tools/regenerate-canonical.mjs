@@ -63,7 +63,7 @@ for (const entry of manifest) {
       parsed,
       scriptMap,
       mockFiles,
-      jqFiles:
+      jqFiles,
     } = await materializeConversionContext(entry, source);
 
     let out = convertPlugin(entry, source, {parsed, scriptMap, stamp, mockFiles, jqFiles, rawBase:RAW_BASE});
