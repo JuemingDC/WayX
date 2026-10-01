@@ -33,7 +33,7 @@ Rewrite Semantic IR 形成后，所有目标决策固定进入：
 ```text
 native target primitive
 → dedicated semantic helper
-→ observed source-authored complex helper
+→ source-authored generic complex helper
 → explicit comment Review / Issue
 ```
 
@@ -226,44 +226,39 @@ target native（仅当能整体严格等价）
 
 Complex Registry 只处理**源 Loon 同一条 Rewrite v2 声明中真实存在的多 action pipeline**。禁止从两条或多条独立源规则“推导”或“拼装” complex AST。
 
-既有通用 renderer、condition compiler、Header/Body/JSON runtime 能力继续保留，作为已验证实现资产；但 production 的自动准入改为 **observed signature allowlist**：只有当前 Source Catalog 中实际出现、经过审计并登记的 action signature 才允许进入 complex handler。登记粒度是 action signature，不是插件 id、作者、域名或 URL，因此仍保持通用性。
-
-截至 2026-09-30，扫描全部 20 个 Catalog Loon 插件的活动 `[Rewrite]` 后，唯一真实 multi-action signature 为：
+Production 准入按 **generic action family + renderer capability**，不再按完整 action signature 建 observed allowlist。流程固定为：
 
 ```text
-response.body.mock | response.header.set
+source-authored multi-action AST
+→ validateRewriteV2Ast()
+→ classifyComplexRewrite() 按 action family 分类
+→ target handler 按 family / phase / runtime requirement 匹配
+→ renderer 按源 action 顺序执行
+→ 无法等价则 REVIEW REQUIRED
 ```
 
-共 3 条活动源声明。Quantumult X 继续用一份 echo helper 完成 mock body + Header set；Surge 优先使用能整体保持行为的 Map Local。该类型登记后可服务任何未来出现相同 signature 的陌生插件。
+因此以下都不是新语法，也不需要登记新 signature：
 
-新增 complex signature 的固定流程：
+- 同一已支持 family 从 2 个 action 扩展为 3/N 个；
+- Header / Body / JSON 已支持 action 的新排列或交错；
+- 以前未在 Catalog 同时出现过、但 renderer 已能逐 action 保持语义的新组合；
+- QX inline `body.mock` 与同 phase `header.set/del/replace` 的新组合。
 
-```text
-真实 Source Catalog 源声明出现新 signature
-→ converter 先注释该声明并标记 ISSUE REQUIRED
-→ Issue 审查源语义和目标官方能力
-→ 先更新规范/observed signature registry
-→ 再复用或扩展既有 renderer/handler
-→ synthetic + real-source inventory regression
-→ 才允许活动转换
-```
+Renderer 的能力边界仍然严格保留。当前 mixed renderer 只执行已经实现的同 phase Header、Body Replace、JSON add/delete/replace；QX inline mock renderer 要求恰好一个 same-phase `body.mock`，其它 action 只能是同 phase Header，并继续拒绝无法保真表示的 `header.add` duplicate semantics。Surge 的 Map Local / HTTP Script 仍按官方能力决定。
 
-不得仅因为既有 `renderMixedRewriteScript()`“技术上能生成 JavaScript”，就自动放行从未在真实 Loon 源中观察过的组合。
+已知 action 若出现在当前 generic complex renderer 尚未实现的 family（例如 mixed pipeline 中的 JQ action），源语义是已知的，因此固定为普通 `REVIEW REQUIRED`，不得误标成 unknown syntax。只有 parser/action registry 本身不认识的 action/语法才使用 `ISSUE REQUIRED`。
 
 固定路由顺序：
 
 ```text
 target native planner
 → dedicated semantic helper
-→ （仅 source-authored、已登记 multi-action）Complex Rewrite Helper Registry
+→ source-authored generic Complex Rewrite Helper Registry
 → commented REVIEW REQUIRED / ISSUE REQUIRED
 ```
 
-未登记 signature 属于 unknown complex syntax：必须注释源声明并标记 `ISSUE REQUIRED`，不得生成活动 helper。已登记 signature 若因目标能力缺口不能等价转换，则使用普通 `REVIEW REQUIRED`。
+所有 action 必须严格按 Loon AST 从左到右执行，Body Replace 与 JSON Action 可以交错，禁止按 action family 重排。Complex helper 的 synthetic regression 必须至少覆盖 2-action、3-action、新排列以及已知但 renderer 不支持的组合，防止再次退化为 full-signature whitelist。
 
-当前 complex helper 底层 renderer 可处理同 phase 的 Header/Body/JSON pipeline，以及需要 Surge Module 参数运行时参与的 Rewrite。Header 支持已验证的 `set / del / replace`，Surge 在 `full-header-mode=true` 下额外支持保持重复字段的 `add`；JSON 支持已验证的 `add / delete / replace`。所有 Action 必须严格按 Loon AST 从左到右执行，Body Replace 与 JSON Action 可以交错，禁止把 JSON 操作整体提前或延后。
-
-条件编译当前只接受已验证的 `url`、`request.method`、`response.status`、固定 Header 读取，以及 `== / ~= / && / || / ()`。未知变量、未知运算符、无法证明等价的 capture 行为必须 fail closed。
 
 Loon regex literal 的 `i / m / s` flags 在所有 native/helper 路径中均只解析、不传播；flags 的存在本身不进入 Review。parser 去掉 literal delimiter 后，regex body 原样保留，不再全局执行 `\/ -> /` 或其他 canonicalization；目标 helper 不得通过 `new RegExp(pattern, flags)`、inline modifier 或 case-fold 恢复这些 flags。若目标软件确有语法差异，只能由对应 target planner 基于官方格式做局部适配。
 
