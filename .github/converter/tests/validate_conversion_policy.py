@@ -6,7 +6,7 @@ from __future__ import annotations
 import importlib.util
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 VALIDATOR = ROOT / ".github" / "scripts" / "validate_conversion_policy.py"
 
 spec = importlib.util.spec_from_file_location("wayx_validate_conversion_policy", VALIDATOR)

@@ -18,7 +18,7 @@ import {
 
 const ROOT=process.cwd();
 const fixture=JSON.parse(await fs.readFile(
-  path.join(ROOT,'converter/fixtures/surge-official-capabilities.json'),
+  path.join(ROOT,'.github/converter/fixtures/surge-official-capabilities.json'),
   'utf8',
 ));
 

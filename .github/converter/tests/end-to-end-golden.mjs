@@ -7,7 +7,7 @@ import { discoverSourceScriptUrls } from '../src/source-script-materializer.mjs'
 import { convertPlugin, validateSurgeModule } from '../src/index.mjs';
 
 const ROOT = process.cwd();
-const golden = JSON.parse(await fs.readFile(path.join(ROOT, 'converter/fixtures/end-to-end-golden.json'), 'utf8'));
+const golden = JSON.parse(await fs.readFile(path.join(ROOT, '.github/converter/fixtures/end-to-end-golden.json'), 'utf8'));
 const STAMP = golden.stamp;
 const RAW_BASE='https://raw.githubusercontent.com/JuemingDC/WayX/main';
 const convert=(entry,source,scriptMap,stamp,mockFiles=new Map(),jqFiles=new Map())=>convertPlugin(entry,source,{scriptMap,stamp,mockFiles,jqFiles,rawBase:RAW_BASE});

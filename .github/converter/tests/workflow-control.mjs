@@ -8,8 +8,8 @@ import path from 'node:path';
 
 const ROOT=process.cwd();
 const sync=await fs.readFile(path.join(ROOT,'.github/scripts/sync-convert.mjs'),'utf8');
-const canonical=await fs.readFile(path.join(ROOT,'converter/tools/regenerate-canonical.mjs'),'utf8');
-const managed=await fs.readFile(path.join(ROOT,'converter/src/managed-artifacts.mjs'),'utf8');
+const canonical=await fs.readFile(path.join(ROOT,'.github/converter/tools/regenerate-canonical.mjs'),'utf8');
+const managed=await fs.readFile(path.join(ROOT,'.github/converter/src/managed-artifacts.mjs'),'utf8');
 
 assert.match(sync,/for \(const entry of manifest\)/,'sync must retain its own Catalog entry lifecycle');
 assert.match(canonical,/for \(const entry of manifest\)/,'canonical must retain its own Catalog entry lifecycle');

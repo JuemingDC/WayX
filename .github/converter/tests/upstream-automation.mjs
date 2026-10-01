@@ -8,7 +8,7 @@ import {
   syncFailureTitle,
   targetProblemIssueBody,
   targetProblemTitle,
-} from '../../.github/scripts/propose-conversion-issues.mjs';
+} from '../../scripts/propose-conversion-issues.mjs';
 
 const previous=`#!name=Demo
 [Rule]

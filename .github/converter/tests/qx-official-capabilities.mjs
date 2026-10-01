@@ -14,7 +14,7 @@ import {
 
 const ROOT = process.cwd();
 const fixture = JSON.parse(await fs.readFile(
-  path.join(ROOT, 'converter/fixtures/qx-official-capabilities.json'),
+  path.join(ROOT, '.github/converter/fixtures/qx-official-capabilities.json'),
   'utf8',
 ));
 const RAW = 'https://raw.githubusercontent.com/crossutility/Quantumult-X/master/';
