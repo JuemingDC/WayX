@@ -21,10 +21,11 @@ const deleteQx = qxDirectRewritePlan(deleteAst);
 const deleteSurge = surgeDirectRewritePlan(deleteAst);
 assert.equal(deleteQx.ok, true);
 assert.match(deleteQx.line, /jsonjq-response-body/);
-assert.match(deleteQx.line, /delpaths/);
-assert.match(deleteQx.line, /wl_config/);
+assert.doesNotMatch(deleteQx.line, /delpaths/);
+assert.match(deleteQx.line, /del\(\.activity_switch, \.video_report_config, \.wl_config\.pb_banner_funad_cache_strategy, \.scheme_whitelist\)/);
 assert.equal(deleteSurge.ok, true);
 assert.match(deleteSurge.line, /^http-response-jq /);
+assert.match(deleteSurge.line, /del\(\.activity_switch, \.video_report_config, \.wl_config\.pb_banner_funad_cache_strategy, \.scheme_whitelist\)/);
 
 const replaceAst = parseRewriteV2(
   'response if ${url} ~= /^https?:\\/\\/tiebac\\.baidu\\.com\\/c\\/s\\/sync$/i then response.json.replace(["wl_config.home_ad_num", "wl_config.frs_ad_num", "wl_config.index_bear_first_floor_max"], [0, 0, 999999999])'
