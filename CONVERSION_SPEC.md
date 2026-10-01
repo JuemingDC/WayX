@@ -57,7 +57,7 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 | [50-json-jq-mock](docs/conversion-spec/50-json-jq-mock.md) | JSON/JQ、jq_file、mock/mock_file |
 | [60-script-argument](docs/conversion-spec/60-script-argument.md) | Script 声明、action 类型判定、Argument |
 | [70-mitm-comments](docs/conversion-spec/70-mitm-comments.md) | MITM、注释、metadata |
-| [80-review-validation](docs/conversion-spec/80-review-validation.md) | Review Tier、validator、Golden |
+| [80-review-validation](docs/conversion-spec/80-review-validation.md) | Review/Issue、validator、Golden |
 | [90-project-workflow](docs/conversion-spec/90-project-workflow.md) | 项目执行顺序和规范变更流程 |
 | [95-implementation-index](docs/conversion-spec/95-implementation-index.md) | **规范块 → production script → tests → 自动化入口总索引** |
 
