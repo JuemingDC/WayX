@@ -271,7 +271,7 @@ CI 必须验证 Script target planning 已从 orchestration 中分离：
 - architecture contract：`converter/tests/script-ir-target-planners.mjs`
 ## 80.15 Source section / comment / metadata architecture gate
 
-CI 必须验证 source orchestration 不再在 `sync-convert.mjs` 内重复实现 comment/metadata parsing：
+CI 必须验证 source semantic orchestration 由 `conversion-pipeline.mjs` 消费共享 parser/comment helpers，且 `sync-convert.mjs` 不参与 comment/metadata semantic parsing：
 
 - source item/comment grouping 固定由 `source-section.mjs` 提供；
 - supported source section scope 固定由同一模块导出，orchestration 不得本地维护第二份 Set；
@@ -292,9 +292,9 @@ CI 必须验证 source orchestration 不再在 `sync-convert.mjs` 内重复实�
 
 CI 必须验证目标 section routing/final render 已从 orchestration 中分离：
 
-- `sync-convert.mjs` 必须使用 `createQxOutputState()` / `createSurgeOutputState()`；
+- `conversion-pipeline.mjs` 必须使用 `createQxOutputState()` / `createSurgeOutputState()`；
 - QX target destination 必须通过 `qxOutputDestination()`，Surge target destination 必须通过 `surgeOutputDestination()`；
-- `sync-convert.mjs` 不得再维护 QX/Surge section-key→array object literal、Surge section title mapping、QX 固定 section 标题、局部 `compact()` 或最终 target `.join('\n')`；
+- `conversion-pipeline.mjs` 不得再维护 QX/Surge section-key→array object literal、Surge section title mapping、QX 固定 section 标题、局部 `compact()` 或最终 target `.join('\n')`；`sync-convert.mjs` 不得参与 target section routing；
 - QX builder 必须始终输出三个注释 section 标题并保持 `notes → filter → rewrite → mitm` 顺序；
 - Surge builder 必须只输出非空 section，固定顺序为 Rule → URL Rewrite → Header Rewrite → Body Rewrite → Map Local → Script → MITM；
 - Surge `needsCore20` 必须由 builder 根据 Body Rewrite / Map Local 活动行计算；
@@ -316,7 +316,7 @@ CI 必须验证纯转换核心已经脱离 GitHub/I/O orchestration：
 - pipeline 必须消费已物化的 `scriptMap/mockFiles/jqFiles` context，禁止自行 fetch；
 - unknown source section、Argument review、disabled Script/Rewrite comments、planner dispatch 与 target output builder 调用均由 pipeline 负责；
 - `regenerate-canonical.mjs` 必须直接 import `convertPlugin()` 与 plugin parser；
-- `sync-convert.mjs` 只保留 fetch/materialize/validate/write orchestration；
+- `sync-convert.mjs` 只保留 plugin fetch、调用 `materializeConversionContext()`、调用 `convertPlugin()`、validate/write orchestration；
 - 纯架构迁移要求 Catalog canonical 与 generated helper 0 diff。
 
 实现：
