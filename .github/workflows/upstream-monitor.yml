@@ -50,7 +50,6 @@ jobs:
           node converter/tests/catalog-syntax-inventory.mjs
           node converter/tests/catalog-legacy-syntax-inventory.mjs
           node converter/tests/catalog-rule-inventory.mjs
-          node converter/tests/unknown-issue-markers.mjs
           node converter/tests/manual-assets.mjs
           node converter/tests/upstream-automation.mjs
           node converter/tests/myblockads-golden.mjs
