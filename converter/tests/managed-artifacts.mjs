@@ -7,6 +7,7 @@ import {
   firstConversionStamp,
   generatedScriptDiffs,
   inspectManagedSource,
+  isWayxGeneratedHelperFilename,
   managedSourceDigest,
   normalizeManagedSource,
   readCatalogSource,
@@ -80,6 +81,25 @@ try {
   assert.deepEqual(await generatedScriptDiffs(root,entry,changedHelpers),['b.js']);
   assert.deepEqual(await syncGeneratedScripts(root,entry,changedHelpers),['b.js']);
   assert.deepEqual(await generatedScriptDiffs(root,entry,changedHelpers),[]);
+
+  assert.equal(isWayxGeneratedHelperFilename('mock_0123456789.js'),true);
+  assert.equal(isWayxGeneratedHelperFilename('legacy_json_add_qx_abcdef1234.js'),true);
+  assert.equal(isWayxGeneratedHelperFilename('manual.js'),false);
+  assert.equal(isWayxGeneratedHelperFilename('mock_not-a-hash.js'),false);
+
+  const helperDir=path.join(root,'script',entry.id);
+  await fs.writeFile(path.join(helperDir,'mock_0123456789.js'),'// stale generated helper\n');
+  await fs.writeFile(path.join(helperDir,'manual.js'),'// manual helper must survive\n');
+  assert.deepEqual(
+    await generatedScriptDiffs(root,entry,changedHelpers),
+    ['delete:mock_0123456789.js'],
+  );
+  assert.deepEqual(
+    await syncGeneratedScripts(root,entry,changedHelpers),
+    ['delete:mock_0123456789.js'],
+  );
+  await assert.rejects(fs.access(path.join(helperDir,'mock_0123456789.js')));
+  assert.equal(await fs.readFile(path.join(helperDir,'manual.js'),'utf8'),'// manual helper must survive\n');
 
   console.log('managed artifact I/O contract passed');
 } finally {

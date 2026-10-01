@@ -8,6 +8,24 @@ import crypto from 'node:crypto';
 import { normalizePluginSource } from './plugin-parser.mjs';
 import { qxTargetPath, surgeTargetPath } from './paths.mjs';
 
+const GENERATED_HELPER_FILENAME_RE=/^(?:mock|header|complex_qx|mock_file|json_add_qx|redirect|reject|complex_surge|request_mock|json_mutation_surge|legacy_header|legacy_json_add_(?:qx|surge)|legacy_mock|legacy_request_mock)_[0-9a-f]{10}\.js$/;
+
+export function isWayxGeneratedHelperFilename(name) {
+  return GENERATED_HELPER_FILENAME_RE.test(String(name ?? ''));
+}
+
+async function staleGeneratedHelpers(root, entry, generatedScripts, {scriptDir='script'}={}) {
+  const dir=path.join(root,scriptDir,entry.id);
+  let names=[];
+  try { names=await fs.readdir(dir); } catch (error) {
+    if (error?.code === 'ENOENT') return [];
+    throw error;
+  }
+  return names
+    .filter(name=>isWayxGeneratedHelperFilename(name) && !generatedScripts.has(name))
+    .sort();
+}
+
 export function normalizeManagedSource(text) {
   return normalizePluginSource(text).replace(/\n*$/, '\n');
 }
@@ -112,6 +130,9 @@ export async function generatedScriptDiffs(root, entry, generatedScripts, {scrip
     const file=path.join(root,scriptDir,entry.id,name);
     if (await readManagedTextIfExists(file) !== content) diffs.push(name);
   }
+  for (const name of await staleGeneratedHelpers(root,entry,generatedScripts,{scriptDir})) {
+    diffs.push('delete:'+name);
+  }
   return diffs;
 }
 
@@ -123,6 +144,10 @@ export async function syncGeneratedScripts(root, entry, generatedScripts, {scrip
     await fs.mkdir(path.dirname(file),{recursive:true});
     await fs.writeFile(file,content);
     changed.push(name);
+  }
+  for (const name of await staleGeneratedHelpers(root,entry,generatedScripts,{scriptDir})) {
+    await fs.unlink(path.join(root,scriptDir,entry.id,name));
+    changed.push('delete:'+name);
   }
   return changed;
 }

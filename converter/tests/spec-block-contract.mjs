@@ -139,6 +139,10 @@ assert.match(syncConverter,/conversionStampFromText\(oldQx\)/, 'Block 80: online
 assert.match(canonicalRunner,/firstConversionStamp\(\[oldQx, oldSurge\], \{trim:true\}\)/, 'Block 80: canonical regeneration must preserve QX then Surge stamp precedence');
 assert.match(canonicalRunner,/generatedScriptDiffs\(ROOT, entry, out\.generatedScripts\)/, 'Block 80: canonical check must compare helpers without writing');
 assert.match(converterWorkflow,/managed-artifacts\.mjs/, 'Block 80: Converter Check must execute managed artifact behavior contract');
+assert.match(managedArtifacts,/GENERATED_HELPER_FILENAME_RE/, 'Block 80/90: managed artifact layer must identify converter-generated helpers explicitly');
+assert.match(managedArtifacts,/delete:\+name|delete:'\+name/, 'Block 80/90: stale generated helpers must be visible in diff/write results');
+assert.match(managedArtifacts,/fs\.unlink\(/, 'Block 80/90: generated helper sync must prune stale converter-owned helpers');
+assert.match(managedArtifacts,/!generatedScripts\.has\(name\)/, 'Block 80/90: helper pruning must only target files absent from current generated output');
 assert.equal(/source-catalog|source-fetch|conversion-context|conversion-pipeline|rule-|rewrite-|script-|mitm\.mjs|qx-snippet-validator|surge-module|managed-artifacts|official-capabilities/.test(workflowDiagnostics), false, 'Block 80/90: workflow diagnostics must not import converter semantics, validators, catalog, fetch or managed artifact I/O');
 assert.equal(/process\.exitCode/.test(workflowDiagnostics), false, 'Block 80/90: workflow diagnostics must not own caller exit policy');
 assert.match(syncConverter,/workflow-diagnostics\.mjs/, 'Block 80/90: sync orchestration must use shared workflow diagnostics');
