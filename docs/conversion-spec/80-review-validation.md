@@ -388,7 +388,7 @@ CI 必须验证在线 sync 与 canonical regeneration 的失败诊断已收口�
 - `sync-convert.mjs` 与 `regenerate-canonical.mjs` 不得再自行拼接 `::error title=` annotation，也不得自行 join failure summary；
 - online sync 仍使用 `Failures:` summary，failure detail 保持 `stack || message`；
 - canonical runner 仍使用 `Canonical regeneration failures:` summary，failure detail 保持 `stack || error`；
-- annotation message 仍为 `error.message || error`，仅将换行替换成 `%0A`；
+- annotation message 保持现有差异：online sync 使用 `String(error.message)`，canonical runner 使用 `String(error.message || error)`，两者都只将换行替换成 `%0A`；
 - diagnostics 只返回是否存在 failures，不得直接决定 canonical stale-check、changed list 或 conversion exit policy；调用方仍负责设置 `process.exitCode = 1`；
 - entry loop、source fetch/validation、materialize、convert、helper write、target validation/write 的相对顺序不得变化；
 - behavior contract 必须覆盖 annotation escaping、stack precedence、sync/canonical fallback 差异、summary 文本及无 failure 时不输出；
