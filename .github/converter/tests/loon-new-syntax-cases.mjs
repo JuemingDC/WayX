@@ -79,6 +79,15 @@ const preserveJqSurge = surgeDirectRewritePlan(preserveJqAst);
 assert.ok(preserveJqQx.line.endsWith("'" + preserveJqSource + "'"));
 assert.ok(preserveJqSurge.line.endsWith("'" + preserveJqSource + "'"));
 
+const preserveDelpathsSource = 'delpaths([["ads"],["promo"]])';
+const preserveDelpathsAst = parseRewriteV2(
+  'response if ${url} ~= /api/ then response.json.jq("' + preserveDelpathsSource.replace(/"/g, '\\"') + '")'
+);
+const preserveDelpathsQx = qxDirectRewritePlan(preserveDelpathsAst);
+const preserveDelpathsSurge = surgeDirectRewritePlan(preserveDelpathsAst);
+assert.ok(preserveDelpathsQx.line.endsWith("'" + preserveDelpathsSource + "'"));
+assert.ok(preserveDelpathsSurge.line.endsWith("'" + preserveDelpathsSource + "'"));
+
 const mockAst = parseRewriteV2(
   'response if ${url} ~= /^https?:\\/\\/tieba\\.baidu\\.com\\/mo\\/q\\/search\\/startPage\\?/i then response.body.mock("json", "{\\"no\\":0,\\"error\\":\\"success\\"}", 200)'
 );
