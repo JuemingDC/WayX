@@ -57,13 +57,15 @@ if getpath(PATH) then setpath(PATH; VALUE) else . end
 del(.a.b)
 ```
 
-多个**不含数组索引**的固定 Key Path 可合并为：
+多个**不含数组索引**的固定 Key Path 直接合并到同一个 jq `del(path_expression)`，用 comma expression 产生多个路径：
 
 ```jq
-delpaths([["a","b"], ["c","d"]])
+del(.a.b, .c.d)
 ```
 
-只要批量路径中出现数组索引，就必须按源顺序串联 `del(...)`，因为删除数组元素会压缩数组，单个 `delpaths([...])` 的批处理结果可能与 Loon 左到右逐项删除不同。例如删除 `items[0]` 后再删除 `items[1]` 必须保留该顺序。
+不得为这类普通 Key Path 生成 `delpaths([...])`；`del(...)` 更贴近源 `json.delete([...])`，也避免不必要地把路径改写成 Path Array。
+
+只要批量路径中出现数组索引，就必须按源顺序串联多个 `del(...)`，因为删除数组元素会压缩数组；一次 `del(.[1], .[2])` 会基于同一原输入选择两个路径，而 `del(.[1]) | del(.[2])` 会让第二次删除作用于第一次删除后的数组。WayX 以 Loon 批量参数左到右执行语义为准，因此数组索引路径不得合并到一个 `del(...)`。
 
 Number/String/Boolean/null/Object/Array 类型不得互相转换。批量 action 不得排序、去重或重排。
 
