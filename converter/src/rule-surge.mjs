@@ -34,18 +34,21 @@ function surgeValueRenderer(node) {
 export function validateSurgeRuleAst(ast) {
   const types=[];
 
-  function visit(node) {
+  function visit(node,logicalDepth=0) {
     types.push(node.type);
     if (!SURGE_RULE_TYPES.has(node.type)) {
       return `unsupported-rule-type:${node.type}`;
     }
+    let nextLogicalDepth=logicalDepth;
     if (node.kind==='logical') {
+      nextLogicalDepth=logicalDepth+1;
+      if (nextLogicalDepth>10) return 'logical-nesting-depth-exceeds-10';
       if (node.type==='NOT' && node.children.length!==1) return 'NOT-requires-one-subrule';
       if ((node.type==='AND' || node.type==='OR') && node.children.length<1) {
         return `${node.type}-requires-subrules`;
       }
       for (const child of node.children) {
-        const reason=visit(child);
+        const reason=visit(child,nextLogicalDepth);
         if (reason) return reason;
       }
     }

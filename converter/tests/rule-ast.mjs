@@ -9,7 +9,7 @@ import {
   ruleTypesInAst,
 } from '../src/rule-ast.mjs';
 import { planQxRuleAst } from '../src/rule-qx.mjs';
-import { planSurgeModuleRuleAst, renderSurgeRuleAst } from '../src/rule-surge.mjs';
+import { planSurgeModuleRuleAst, renderSurgeRuleAst, validateSurgeRuleAst } from '../src/rule-surge.mjs';
 
 const simple=parseLoonRuleAst('DOMAIN, example.com, REJECT');
 assert.equal(simple.ok,true);
@@ -84,6 +84,38 @@ assert.equal(
   'AND,((IP-ASN,45090,no-resolve),(DEST-PORT,25641),(PROTOCOL,TCP)),REJECT',
 );
 
+const manyChildSource=[
+  'DOMAIN-SUFFIX,example.com',
+  'DEST-PORT,443',
+  'PROTOCOL,TCP',
+  'IP-ASN,13335,no-resolve',
+  'USER-AGENT,Example*',
+  'URL-REGEX,^https:\\/\\/example\\.com\\/',
+];
+const manyLogical=parseLoonRuleAst(
+  'AND,(' + manyChildSource.map(rule=>'('+rule+')').join(',') + '),REJECT'
+);
+assert.equal(manyLogical.ok,true);
+assert.equal(manyLogical.ast.children.length,6);
+assert.equal(planQxRuleAst(manyLogical.ast).reason,'unsupported-qx-rule-comment');
+assert.equal(planSurgeModuleRuleAst(manyLogical.ast).kind,'rule');
+assert.match(planSurgeModuleRuleAst(manyLogical.ast).line,/^AND,\(\(.+\),\(.+\),\(.+\),\(.+\),\(.+\),\(.+\)\),REJECT$/);
+
+function nestedNotRule(depth) {
+  let rule='DOMAIN,example.com';
+  for (let i=1;i<depth;i++) rule='NOT,(('+rule+'))';
+  return 'NOT,(('+rule+')),REJECT';
+}
+const depth10=parseLoonRuleAst(nestedNotRule(10));
+assert.equal(depth10.ok,true);
+assert.equal(validateSurgeRuleAst(depth10.ast).ok,true);
+assert.equal(planSurgeModuleRuleAst(depth10.ast).kind,'rule');
+
+const depth11=parseLoonRuleAst(nestedNotRule(11));
+assert.equal(depth11.ok,true);
+assert.equal(validateSurgeRuleAst(depth11.ast).reason,'logical-nesting-depth-exceeds-10');
+assert.equal(planSurgeModuleRuleAst(depth11.ast).reason,'unsupported-rule-type');
+
 const unknown=parseLoonRuleAst('FUTURE-RULE, value, REJECT');
 assert.equal(unknown.ok,true);
 assert.equal(unknown.ast.type,'FUTURE-RULE');
@@ -91,8 +123,8 @@ assert.equal(planQxRuleAst(unknown.ast).reason,'unsupported-qx-rule-comment');
 assert.equal(planSurgeModuleRuleAst(unknown.ast).reason,'unsupported-rule-type');
 
 const invalidNot=parseLoonRuleAst('NOT, ((DOMAIN, a.example), (DOMAIN, b.example)), REJECT');
-assert.equal(invalidNot.ok,true);
-assert.equal(planSurgeModuleRuleAst(invalidNot.ast).reason,'unsupported-rule-type');
+assert.equal(invalidNot.ok,false);
+assert.equal(invalidNot.reason,'invalid-NOT-cardinality');
 
 const malformed=parseLoonRuleAst('AND, DOMAIN, REJECT');
 assert.equal(malformed.ok,false);

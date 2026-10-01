@@ -131,29 +131,36 @@ Surge Module 不能定义 `[Proxy]` / `[Proxy Group]`，但官方 Parameter Tabl
 
 ## 20.7 Catalog-observed Rule syntax inventory
 
-CI 必须扫描 Source Catalog 中当前活动的 Loon `[Rule]` 声明，并维护独立的 observed-syntax baseline。该 baseline 只用于发现上游第一次出现的新 Rule 语法形态，**不得反向定义 production converter 的支持范围**。
+CI 必须扫描 Source Catalog 中当前活动的 Loon `[Rule]` 声明，并维护独立的 observed-syntax baseline。该 baseline 只用于发现**真正新的语义 token**，不得反向定义 production converter 的支持范围，也不得把某次扫描得到的 AST 具体形状当成语法白名单。
 
-Inventory 只锁以下会改变转换语义的维度：
-- top-level Rule Type；
-- logical sub-rule 中出现的 nested Rule Type；
-- top-level Policy；
-- Rule 参数名，以及 `RuleType:parameter` 组合；
-- logical operator 与其 top/nested placement；
-- top-level / nested 字段数量形态；
-- 最大 logical nesting depth。
+Inventory 只锁：
+- 递归遍历整棵 Rule AST 后出现的 Rule Type 集合，不区分 top-level / nested；
+- top-level Policy 集合；
+- Rule 参数名集合；
+- logical operator 集合。
 
 明确不锁：
+- Rule Type 的 top/nested placement；
+- `RuleType:parameter` 组合；
+- top-level / nested 字段数量；
+- AND/OR 子规则数量；
+- logical operator 的 nesting placement；
+- 已观察到的最大 logical nesting depth；
 - Rule 声明数量；
 - DOMAIN/IP/regex 等实际匹配值；
-- AND/OR 子规则数量；
 - 插件名、作者、URL；
 - MITM。
 
-出现 baseline 差异时不得机械接受。必须先判断新形态的 Loon 源语义，再分别按 Quantumult X 官方 sample 与 Surge 官方 Manual 判断目标表达能力，然后更新通用 parser/planner/spec/tests；不得为某个具体插件增加特判。
+因此一个已支持类型第一次进入 logical 子规则、AND/OR 从 2 个子项扩展为 3/N 个、或同一逻辑运算符换到更深层，都必须由同一递归 AST / planner 直接处理，不能要求更新 observed baseline。
+
+Loon source grammar 的明确结构约束属于 parser，例如官方文档规定 `NOT` 只能包含一个子规则。目标限制属于 target planner：QX 继续按官方 sample 能力边界；Surge 按官方 Manual 递归渲染 AND/OR/NOT，并独立执行目标最大 nesting depth 10 等限制。Surge 官方语法 `AND,((Rule1),(Rule2),...),Policy` / `OR,...` 本身不限定为当前已观察的固定子项数量。
+
+出现 baseline 差异时不得机械接受。只有真正新增 Rule Type / Policy / parameter name / logical operator 才进入“Loon 源语义 → QX 官方 sample / Surge 官方 Manual → generic parser/planner/spec/tests → baseline”的审查流程。
 
 实现：
 - baseline：`converter/fixtures/catalog-rule-inventory.json`
 - inventory test：`converter/tests/catalog-rule-inventory.mjs`
 - generic Rule parser / AST：`converter/src/rule-ast.mjs`
+- QX planner：`converter/src/rule-qx.mjs`
+- Surge planner：`converter/src/rule-surge.mjs`
 - CI：`.github/workflows/converter-check.yml`
-

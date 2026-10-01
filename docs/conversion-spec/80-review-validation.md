@@ -213,12 +213,13 @@ Surge production validator 与 official capability gate 必须共用同一 regis
 
 这个 gate 是 **source-change detector**，不是目标平台白名单：当前 Catalog 没出现某个 Rule Type，不代表通用 converter 永久不支持它；反之，parser 能解析某个新类型，也不代表无需审查即可自动更新 baseline。
 
-首次出现新的 Rule Type / Policy / parameter / logical placement / nesting shape 时 CI 失败。处理顺序固定为：
-1. 确认 Loon 源语义；
-2. QX：只使用用户提供的官方 sample 所支持格式判断；
-3. Surge：先查 `nssurge.com/llms.txt`，再按官方 Manual 判断；
-4. 更新通用 spec / parser / planner / synthetic regression；
-5. 确认转换语义后才更新 observed baseline。
+只有首次出现新的递归 Rule Type / top-level Policy / parameter name / logical operator 时 CI 才因 Rule inventory 变化失败。以下变化不得触发 observed-baseline failure：已知类型 top↔nested 位置变化、已知参数用于官方允许的另一个类型、字段数量变化、AND/OR 子项数量变化、logical placement 变化、嵌套深度变化。
+
+结构合法性必须由 grammar/planner 独立校验，而不是由 observed baseline 间接限制：
+1. Loon parser 递归接受任意合法 AND/OR 组合；`NOT` 只允许一个子规则；
+2. QX planner 按官方 sample 能力边界处理，不因 inventory shape 决定支持；
+3. Surge planner 按官方 Manual 递归渲染 logical rule，并独立限制最大 logical nesting depth 10；
+4. 真正新 Rule Type / Policy / parameter name / logical operator 才按“Loon 语义 → QX sample / Surge Manual → generic spec/parser/planner/tests → baseline”审查。
 
 MITM 不属于该 inventory。
 ## 80.12 Rewrite Semantic IR architecture gate

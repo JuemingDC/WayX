@@ -149,7 +149,7 @@ assert.equal(
 );
 assert.equal(
   surgeModuleRule('NOT,((DOMAIN,example.com),(DOMAIN,example.org)),REJECT').reason,
-  'unsupported-rule-type',
+  'invalid-rule',
 );
 
 
