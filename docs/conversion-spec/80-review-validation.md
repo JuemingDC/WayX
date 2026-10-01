@@ -464,3 +464,23 @@ CI 必须验证 online sync 与 canonical regeneration 不再各自拼装相同�
 - runner：`converter/src/conversion-runner.mjs`
 - behavior contract：`converter/tests/conversion-runner.mjs`
 - architecture contract：`converter/tests/spec-block-contract.mjs`
+
+## 80.25 Workflow lifecycle / result-boundary gate
+
+CI 必须验证 online sync 与 canonical regeneration 只共享语义完全相同的纯控制结构，不得把两条 Catalog lifecycle 强行合并：
+
+- `.github/scripts/sync-convert.mjs` 与 `converter/tools/regenerate-canonical.mjs` 必须继续各自遍历 Source Catalog；不得引入统一的 `runCatalogEntries/processCatalogEntries` 一类 loop wrapper 来隐藏不同的 per-entry state、error context 或 exit policy；
+- online sync 独占 upstream fetch、source change、failure stage/structured report、existing-target converter drift、helper/target/source write 顺序；
+- canonical 独占 checked-in source、check/write mode、pre-write stale set、stale annotation 与 stale exit policy；
+- `managed-artifacts.mjs::managedTargetDiffs(state,out)` 是唯一可共享的 QX/Surge target-diff 纯原语；`writeManagedTargets()` 必须复用同一判定；
+- online sync 的 converter-drift timestamp refresh 只能对“已有 target 且内容改变”生效；missing-target recovery 与 canonical stale detection 语义不同，不得因共享 diff helper 改变；
+- canonical stale 必须包含 QX/Surge target diff（含 missing target）与 generated helper diff；
+- online sync 必须保留 `syncGeneratedScripts()` 的 change result，并把 helper-only repair 视为一次同步变化；不得打印 `conversion verified: source and outputs unchanged`；
+- canonical 的 stale list / check-mode failure / write-mode changed summary 保持 workflow-specific，不抽为共同 result object/formatter；
+- conversion runner、conversion pipeline、Rule/Rewrite/Script/MITM planner 与 target validator 语义均不得改变；
+- current Catalog canonical/helper 必须保持 0 semantic diff。
+
+实现：
+- pure target diff：`converter/src/managed-artifacts.mjs::managedTargetDiffs()`
+- workflow regression：`converter/tests/workflow-control.mjs`
+- managed artifact behavior：`converter/tests/managed-artifacts.mjs`
