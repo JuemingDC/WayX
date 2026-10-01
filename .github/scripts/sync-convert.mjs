@@ -145,9 +145,10 @@ async function main() {
       console.log(`${changed ? 'updated' : 'unchanged'} source via ${fetchedFrom}; sha256=${sha256(source).slice(0, 12)}`);
 
       const {
+        parsed,
         scriptMap,
         mockFiles: qxMockFiles,
-        jqFiles,
+        jqFiles:
       } = await materializeConversionContext(entry, source);
 
       const qxPath = path.join(ROOT, qxTargetPath(entry));
@@ -162,13 +163,13 @@ async function main() {
       const oldSg = sgExists ? normalizePluginSource(await fs.readFile(sgPath, 'utf8')) : null;
       const oldStamp = (oldQx?.match(/^# Converted:\s*(.+)$/m) || [])[1] || null;
       let stamp = changed || !oldStamp ? nowCN() : oldStamp;
-      let out = convertPlugin(entry, source, {scriptMap, stamp, mockFiles:qxMockFiles, jqFiles, rawBase:RAW_BASE});
+      let out = convertPlugin(entry, source, {parsed, scriptMap, stamp, mockFiles:qxMockFiles, jqFiles, rawBase:RAW_BASE});
 
       // Converter changes must also refresh outputs even when upstream LPX is unchanged.
       // Preserve the old conversion timestamp only if the generated content is actually identical.
       if (!changed && oldStamp && ((oldQx && oldQx !== out.qx) || (oldSg && oldSg !== out.surge))) {
         stamp = nowCN();
-        out = convertPlugin(entry, source, {scriptMap, stamp, mockFiles:qxMockFiles, jqFiles, rawBase:RAW_BASE});
+        out = convertPlugin(entry, source, {parsed, scriptMap, stamp, mockFiles:qxMockFiles, jqFiles, rawBase:RAW_BASE});
       }
 
       for (const [file, content] of out.generatedScripts) {
