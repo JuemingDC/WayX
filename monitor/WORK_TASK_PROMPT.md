@@ -16,15 +16,11 @@
 3. 当前 PR 说明与 `Files changed`
 4. 涉及 QX 时核对 `crossutility/Quantumult-X` 当前官方 sample
 5. 涉及 Surge 时先读 `https://nssurge.com/llms.txt`，再按其指引核对当前 Manual
-6. 涉及 Egern 时核对 `https://egernapp.com/docs/` 当前官方文档
-
-`CONVERSION_POLICY.md` 与 `LOON_NEW_SYNTAX_CONVERSION.md` 仅为 deprecated index，不再作为独立行为规范。
-
 ## 分工
 
 GitHub Actions 已完成 Safe Tier：上游检查、确定性 Rule/Rewrite/JQ/MITM 转换、简单新增删除、目标文件重生成和 validator。不要无意义重做已验证的 Safe Tier。
 
-Work 只处理 Review Tier：QX Rewrite 中无法无损承载的 Loon `[Argument]`、Loon 新语法未覆盖 action、自定义 Body、binary/base64、pipeline、helper script、converter/validator 失败、官方语法变更或任何 Rewrite native + helper 均无法证明无损的变化。QX Source Script declaration 的 argument / dynamic enable / timeout / binary-body-mode 不属于 Review：按 KOP-XIAO parser 口径处理，argument 忽略，dynamic enable 默认开启，timeout 与 binary body mode 忽略，header/body 只看 requires-body。QX 不支持的 Rule Type（含逻辑规则、端口类等）按规范注释保留，不以 Script 方式补齐。Loon `[Argument]` 不转换为 QX 参数 UI/BoxJs；Surge 必须按官方 Module `#!arguments` / `{{{name}}}` 转换，Rewrite 必要时通过 `argument=` + `$argument` helper 承载。
+Work 只处理 Review Tier：QX Rewrite 中无法无损承载的 Loon `[Argument]`、Loon 新语法未覆盖 action、自定义 Body、binary/base64、pipeline、helper script、converter/validator 失败、官方语法变更或任何 Rewrite native + helper 均无法证明无损的变化。QX Source Script declaration 的 argument / dynamic enable / timeout / binary-body-mode 不属于 Review：按当前 Block 60 处理；`debug` 与 Legacy `max-size` 直接丢弃，不生成 QX 参数、注释、Review/Issue；header/body 只看 requires-body。QX 不支持的 Rule Type（含逻辑规则、端口类等）按规范注释保留，不以 Script 方式补齐。Loon `[Argument]` 不转换为 QX 参数 UI/BoxJs；Surge 必须按官方 Module `#!arguments` / `{{{name}}}` 转换，Rewrite 必要时通过 `argument=` + `$argument` helper 承载。
 
 ## 通用转换器约束
 
@@ -42,7 +38,7 @@ Work 只处理 Review Tier：QX Rewrite 中无法无损承载的 Loon `[Argument
 - QX 与 Surge 只有 source-authored 且 observed/registered 的多 action Rewrite 才进入 complex helper；既有 renderer 能力保留，但不能据此凭空放行未观察组合。脚本必须在一个文件内按源顺序完成全部 action。单 action 如需脚本只能走对应专用 semantic helper。
 - legacy `json.jq("jq-path=...")` 直接丢弃，不解析依赖、不生成目标规则。
 - QX `request.header.add` 仅使用已验证 whole-header 插入路径；QX `response.header.add` / legacy `response-header-add` 按项目决策直接注释保留，不用 set 冒充，也不再作为持续 Review 项。
-- QX Source Script：保留原 Script URL；argument 不注入，动态 enable 默认开启，timeout 与 binary-body-mode 忽略；固定 enable=false/0 仍禁用；header/body 只由 requires-body 决定。debug/max-size 等其它字段继续按 Block 60 的 WayX 自身规则单独判断。
+- QX Source Script：保留原 Script URL；argument 不注入，动态 enable 默认开启，timeout 与 binary-body-mode 按既定策略处理；固定 enable=false/0 仍禁用；header/body 只由 requires-body 决定；`debug` 与 Legacy `max-size` 直接丢弃。
 - QX 与 Surge Source Script 都不做 runtime compatibility scan；直接保留原脚本 URL。仅在 QX HTTP Script action 类型无法由 declaration 明确判断时读取正文辅助判定 header/body/echo，不据此启用或禁用脚本。
 - 语义一致性优先于状态码表面一致。
 - `reject_dict(200)` → QX `reject-dict`，不得因 200 变成 `reject-200`。
