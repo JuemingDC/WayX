@@ -317,7 +317,7 @@ IR 不得包含 QX Script action、Surge `type=http-*`、目标 section 或 capa
 
 ### Quantumult X
 
-Rewrite 顶层入口固定为 `converter/src/rewrite-qx.mjs::planQxRewrite(ir, ctx)`；Script 顶层入口固定为 `converter/src/script-qx.mjs::planQxScript(ir, ctx)`。两个 planner 的目标决策均不得由 orchestration 旁路。
+Rewrite 顶层入口固定为 `.github/converter/src/rewrite-qx.mjs::planQxRewrite(ir, ctx)`；Script 顶层入口固定为 `.github/converter/src/script-qx.mjs::planQxScript(ir, ctx)`。两个 planner 的目标决策均不得由 orchestration 旁路。
 
 目标 planner 只能输出 Crossutility 官方 sample 已确认的：
 - filter；
@@ -334,7 +334,7 @@ QX 的功能最终都落在：
 
 ### Surge
 
-Rewrite 顶层入口固定为 `converter/src/rewrite-surge.mjs::planSurgeRewrite(ir, ctx)`；Script 顶层入口固定为 `converter/src/script-surge.mjs::planSurgeScript(ir, ctx)`。两个 planner 的目标决策均不得由 orchestration 旁路。
+Rewrite 顶层入口固定为 `.github/converter/src/rewrite-surge.mjs::planSurgeRewrite(ir, ctx)`；Script 顶层入口固定为 `.github/converter/src/script-surge.mjs::planSurgeScript(ir, ctx)`。两个 planner 的目标决策均不得由 orchestration 旁路。
 
 目标 planner 必须按 Surge 官方能力分流：
 - `[Rule]`
@@ -409,7 +409,7 @@ Source Catalog 可以包含具体插件名和原作者 URL，因为它只是数�
 - Source Script：只请求插件声明中的 `script-path` / `script("...")` URL。
 - 相对 dependency：只按插件原始 URL 解析后直接请求。
 - 获取层允许按解析后的真实 hostname 选择 HTTP transport/header profile，但**不得改变请求的原作者 URL**。
-- 当前 `kelee.one` / `*.kelee.one` 与 `rucu6.pages.dev` 固定使用 `converter/tools/fetch-upstream.py` 的 Python `urllib.request` transport，并统一使用 `WAYX_LOON_FETCH_UA`（当前 `Loon/764 CFNetwork/1498.700.1 Darwin/23.6.0 iPhone/17.6.1`）与 `Accept: */*`；其它 host 使用默认 Node fetch profile。
+- 当前 `kelee.one` / `*.kelee.one` 与 `rucu6.pages.dev` 固定使用 `.github/converter/tools/fetch-upstream.py` 的 Python `urllib.request` transport，并统一使用 `WAYX_LOON_FETCH_UA`（当前 `Loon/764 CFNetwork/1498.700.1 Darwin/23.6.0 iPhone/17.6.1`）与 `Accept: */*`；其它 host 使用默认 Node fetch profile。
 - Host profile 只能依据 URL parser 得到的 hostname；禁止字符串包含匹配，禁止根据插件 id/name/file 选择 transport。
 - Python helper 只负责原始 HTTP bytes I/O，不维护插件列表、不做 Loon 解析/转换、不替换 URL；专用 transport 失败时不得回退到默认 transport、镜像或缓存。
 - 禁止第三方 GitHub 副本、第三方镜像、备用域名和 fallback 链；若原作者官方 `source` 本身就是 GitHub/GitHub Raw，则该 URL 属于原作者源，可直接使用。
@@ -460,17 +460,17 @@ CI 必须审计生产 converter，禁止出现已登记插件身份驱动的语�
 
 ## 5.13 自动转换实现
 
-- Source Catalog schema/validation：`converter/src/source-catalog.mjs`
+- Source Catalog schema/validation：`.github/converter/src/source-catalog.mjs`
 - Hand-maintained asset manifest：`.github/manual-assets.json`
-- Manual asset contract：`converter/tests/manual-assets.mjs`
-- Original-source fetch layer / host profile router：`converter/src/source-fetch.mjs`
-- Python raw transport adapter：`converter/tools/fetch-upstream.py`
-- Fetch profile contract：`converter/tests/source-fetch.mjs`
+- Manual asset contract：`.github/converter/tests/manual-assets.mjs`
+- Original-source fetch layer / host profile router：`.github/converter/src/source-fetch.mjs`
+- Python raw transport adapter：`.github/converter/tools/fetch-upstream.py`
+- Fetch profile contract：`.github/converter/tests/source-fetch.mjs`
 - Generic orchestration：`.github/scripts/sync-convert.mjs`
-- Shared validated conversion runner：`converter/src/conversion-runner.mjs`
-- Offline canonical regeneration：`converter/tools/regenerate-canonical.mjs`
-- Identity invariance：`converter/tests/generic-identity.mjs`
-- Plugin-identity source audit：`converter/tests/genericity-audit.mjs`
+- Shared validated conversion runner：`.github/converter/src/conversion-runner.mjs`
+- Offline canonical regeneration：`.github/converter/tools/regenerate-canonical.mjs`
+- Identity invariance：`.github/converter/tests/generic-identity.mjs`
+- Plugin-identity source audit：`.github/converter/tests/genericity-audit.mjs`
 
 ## 5.14 Legacy Rewrite / Script semantic-token inventory
 
@@ -491,5 +491,5 @@ CI 必须审计生产 converter，禁止出现已登记插件身份驱动的语�
 - inventory 不能反向成为 production 支持白名单，production 仍以 parser/planner/target capability contract 为准。
 
 自动实现：
-- Legacy semantic inventory：`converter/tests/catalog-legacy-syntax-inventory.mjs`
-- Baseline：`converter/fixtures/catalog-legacy-syntax-inventory.json`
+- Legacy semantic inventory：`.github/converter/tests/catalog-legacy-syntax-inventory.mjs`
+- Baseline：`.github/converter/fixtures/catalog-legacy-syntax-inventory.json`

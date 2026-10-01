@@ -3,7 +3,7 @@
 
 ## 30.0 统一 Semantic IR 契约
 
-Legacy Rewrite 与 Rewrite v2 的**源 grammar 不合并**；统一点位于 source parse 之后。Production 必须通过 `converter/src/rewrite-ir.mjs` 形成 target-neutral Semantic IR，再进入目标规划。
+Legacy Rewrite 与 Rewrite v2 的**源 grammar 不合并**；统一点位于 source parse 之后。Production 必须通过 `.github/converter/src/rewrite-ir.mjs` 形成 target-neutral Semantic IR，再进入目标规划。
 
 统一 operation kind 至少包括：
 - `reject`
@@ -25,8 +25,8 @@ IR 必须保留 source action/AST，不得为了统一分类丢弃 typed argumen
 
 Rewrite Semantic IR 形成后，所有目标决策固定进入：
 
-- Quantumult X：`converter/src/rewrite-qx.mjs::planQxRewrite(ir, ctx)`
-- Surge：`converter/src/rewrite-surge.mjs::planSurgeRewrite(ir, ctx)`
+- Quantumult X：`.github/converter/src/rewrite-qx.mjs::planQxRewrite(ir, ctx)`
+- Surge：`.github/converter/src/rewrite-surge.mjs::planSurgeRewrite(ir, ctx)`
 
 两个 planner 统一拥有目标 fallback 顺序：
 
@@ -274,13 +274,13 @@ Legacy Rewrite 同样遵守 native → helper → Review：request phase 的旧�
 
 ## 30.6 自动转换实现
 
-- Legacy classifier/planner：`converter/src/legacy-rewrite.mjs`
-- Rewrite v2 parser：`converter/src/rewrite-v2.mjs`
-- Rewrite v2 action validator：`converter/src/rewrite-v2-actions.mjs`
-- Target semantic planners：`converter/src/rewrite-v2-semantic.mjs`
-- QX helper renderer：`converter/src/qx-semantic-script.mjs`
-- Synthetic regression：`converter/tests/checkpoint.mjs`、`converter/tests/loon-new-syntax-cases.mjs`
-- Real syntax coverage：`converter/tests/catalog-syntax-inventory.mjs`、`converter/tests/rewrite-target-planners.mjs`、`converter/tests/end-to-end-golden.mjs`
+- Legacy classifier/planner：`.github/converter/src/legacy-rewrite.mjs`
+- Rewrite v2 parser：`.github/converter/src/rewrite-v2.mjs`
+- Rewrite v2 action validator：`.github/converter/src/rewrite-v2-actions.mjs`
+- Target semantic planners：`.github/converter/src/rewrite-v2-semantic.mjs`
+- QX helper renderer：`.github/converter/src/qx-semantic-script.mjs`
+- Synthetic regression：`.github/converter/tests/checkpoint.mjs`、`.github/converter/tests/loon-new-syntax-cases.mjs`
+- Real syntax coverage：`.github/converter/tests/catalog-syntax-inventory.mjs`、`.github/converter/tests/rewrite-target-planners.mjs`、`.github/converter/tests/end-to-end-golden.mjs`
 
 ## 30.6.1 注释禁用的 Rewrite v2
 

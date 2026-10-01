@@ -115,14 +115,14 @@ Surge Module 不能定义 `[Proxy]` / `[Proxy Group]`，但官方 Parameter Tabl
 
 ## 20.6 自动转换实现
 
-- Source parser / AST：`converter/src/rule-ast.mjs`
-- QX planner：`converter/src/rule-qx.mjs`
-- Surge planner：`converter/src/rule-surge.mjs`
-- Public compatibility facade：`converter/src/rule.mjs`
+- Source parser / AST：`.github/converter/src/rule-ast.mjs`
+- QX planner：`.github/converter/src/rule-qx.mjs`
+- Surge planner：`.github/converter/src/rule-surge.mjs`
+- Public compatibility facade：`.github/converter/src/rule.mjs`
 - Orchestration：`.github/scripts/sync-convert.mjs` 的 `[Rule]` 分发，只按 planner 返回的 section 写入 QX rewrite/filter 或 Surge Rule/Map Local。
-- Synthetic AST contract：`converter/tests/rule-ast.mjs`
-- Synthetic target regression：`converter/tests/checkpoint.mjs`，必须逐项覆盖 `REJECT / REJECT-200 / REJECT-IMG / REJECT-DICT / REJECT-ARRAY / REJECT-DROP`。
-- Repository coverage：`converter/tests/surge-rule-coverage.mjs`。
+- Synthetic AST contract：`.github/converter/tests/rule-ast.mjs`
+- Synthetic target regression：`.github/converter/tests/checkpoint.mjs`，必须逐项覆盖 `REJECT / REJECT-200 / REJECT-IMG / REJECT-DICT / REJECT-ARRAY / REJECT-DROP`。
+- Repository coverage：`.github/converter/tests/surge-rule-coverage.mjs`。
 
 固定约束：
 - `rule-ast.mjs` 不得 import QX/Surge capability registry，也不得用目标平台白名单拒绝未知但可结构化的 Rule；
@@ -158,9 +158,9 @@ Loon source grammar 的明确结构约束属于 parser，例如官方文档规�
 出现 baseline 差异时不得机械接受。只有真正新增 Rule Type / Policy / parameter name / logical operator 才进入“Loon 源语义 → QX 官方 sample / Surge 官方 Manual → generic parser/planner/spec/tests → baseline”的审查流程。
 
 实现：
-- baseline：`converter/fixtures/catalog-rule-inventory.json`
-- inventory test：`converter/tests/catalog-rule-inventory.mjs`
-- generic Rule parser / AST：`converter/src/rule-ast.mjs`
-- QX planner：`converter/src/rule-qx.mjs`
-- Surge planner：`converter/src/rule-surge.mjs`
+- baseline：`.github/converter/fixtures/catalog-rule-inventory.json`
+- inventory test：`.github/converter/tests/catalog-rule-inventory.mjs`
+- generic Rule parser / AST：`.github/converter/src/rule-ast.mjs`
+- QX planner：`.github/converter/src/rule-qx.mjs`
+- Surge planner：`.github/converter/src/rule-surge.mjs`
 - CI：`.github/workflows/converter-check.yml`

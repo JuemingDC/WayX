@@ -81,7 +81,7 @@
 ## 0.6 自动执行约束
 
 Block 00 不直接产生目标语法，但必须由自动检查约束后续实现：
-- `converter/tests/spec-block-contract.mjs`：确认每个规范块都有生产实现/校验脚本对应；
-- `converter/tests/genericity-audit.mjs`：禁止插件身份驱动转换；
-- `converter/tools/audit-repository.mjs`：审计已生成目标与陈旧/非法模式；
+- `.github/converter/tests/spec-block-contract.mjs`：确认每个规范块都有生产实现/校验脚本对应；
+- `.github/converter/tests/genericity-audit.mjs`：禁止插件身份驱动转换；
+- `.github/converter/tools/audit-repository.mjs`：审计已生成目标与陈旧/非法模式；
 - `.github/workflows/converter-check.yml`：只有规范、实现、测试、canonical consistency 全通过才放行。

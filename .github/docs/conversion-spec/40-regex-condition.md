@@ -128,12 +128,12 @@ WayX 对 Surge URL pattern 只做必要的目标格式处理：
 
 ## 40.9 自动转换实现
 
-- Rewrite v2 condition parser/AST：`converter/src/rewrite-v2.mjs`
-- AST action/condition validation：`converter/src/rewrite-v2-actions.mjs`
-- Target regex compilation：`converter/src/target-regex.mjs`
-- Static/simple-condition target planner：`converter/src/rewrite-v2-semantic.mjs`
-- Surge module validator：`converter/src/surge-module.mjs`
-- Regression：`converter/tests/checkpoint.mjs`、`converter/tests/catalog-syntax-inventory.mjs`、`converter/tests/rewrite-target-planners.mjs`
+- Rewrite v2 condition parser/AST：`.github/converter/src/rewrite-v2.mjs`
+- AST action/condition validation：`.github/converter/src/rewrite-v2-actions.mjs`
+- Target regex compilation：`.github/converter/src/target-regex.mjs`
+- Static/simple-condition target planner：`.github/converter/src/rewrite-v2-semantic.mjs`
+- Surge module validator：`.github/converter/src/surge-module.mjs`
+- Regression：`.github/converter/tests/checkpoint.mjs`、`.github/converter/tests/catalog-syntax-inventory.mjs`、`.github/converter/tests/rewrite-target-planners.mjs`
 
 
 ## 40.10 Complex helper typed equality

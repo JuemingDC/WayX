@@ -131,11 +131,11 @@ Surge builder 只输出有内容的 section，固定顺序为：
 
 ## 10.6 自动转换实现
 
-- QX/Surge output path：`converter/src/paths.mjs`
-- QX/Surge metadata/header：`converter/src/metadata.mjs`
-- QX output state/final render：`converter/src/qx-output.mjs`
-- Surge output state/final render：`converter/src/surge-output.mjs`
-- Shared line compaction：`converter/src/output-lines.mjs`
-- QX snippet validator：`converter/src/qx-snippet-validator.mjs`（直接消费 `qx-official-capabilities.mjs`）
-- Surge module section/header validator：`converter/src/surge-module.mjs`
+- QX/Surge output path：`.github/converter/src/paths.mjs`
+- QX/Surge metadata/header：`.github/converter/src/metadata.mjs`
+- QX output state/final render：`.github/converter/src/qx-output.mjs`
+- Surge output state/final render：`.github/converter/src/surge-output.mjs`
+- Shared line compaction：`.github/converter/src/output-lines.mjs`
+- QX snippet validator：`.github/converter/src/qx-snippet-validator.mjs`（直接消费 `qx-official-capabilities.mjs`）
+- Surge module section/header validator：`.github/converter/src/surge-module.mjs`
 - Orchestration：`.github/scripts/sync-convert.mjs`（只写 builder state，不负责 section title/final assembly）
