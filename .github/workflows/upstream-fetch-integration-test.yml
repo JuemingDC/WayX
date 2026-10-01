@@ -6,9 +6,9 @@
 name: Unified Upstream Fetch Full-Flow Test
 
 on:
-  push:
+  pull_request:
     branches:
-      - "work/unified-upstream-fetch-20261001"
+      - main
     paths:
       - "converter/src/source-fetch.mjs"
       - "converter/tools/fetch-upstream.py"
