@@ -152,6 +152,30 @@ raw Loon source
 - parser/pipeline 不得 import `fs`, `path`, HTTP fetch、Source Catalog 或 GitHub API；
 - 外部依赖缺失时继续由既有 Review/Issue 语义 fail closed，不能由 pipeline 自行联网补取。
 
+## 5.3.4 Conversion context materialization
+
+外部资源物化固定为一条共享链路：
+
+```text
+entry + source
+→ plugin-parser.mjs
+→ dependency-materializer.mjs
+   ├─ jq_file
+   └─ mock_file
+→ source-script-materializer.mjs
+→ conversion-context.mjs::materializeConversionContext()
+→ { parsed, scriptMap, mockFiles, jqFiles }
+→ convertPlugin()
+```
+
+约束：
+- `sync-convert.mjs` 与 `regenerate-canonical.mjs` 都必须调用同一个 `materializeConversionContext()`；
+- materializer 只从原插件 URL 或其相对解析出的原始 URL 读取，不使用 mirror/cache fallback；
+- `dependency-materializer.mjs` 只做依赖发现/读取/校验，不决定 QX/Surge target action；
+- `source-script-materializer.mjs` 只发现/解析/读取 Source Script，不做 runtime compatibility gate，不改写 URL；
+- Source Script 正文读取失败时返回 `sourceError`，不自动禁用声明；
+- context materialization 与 pure `convertPlugin()` 分层，后者继续保持零网络/零文件 I/O。
+
 ## 5.4 Rule 转换器
 
 `[Rule]` 固定分为三层：

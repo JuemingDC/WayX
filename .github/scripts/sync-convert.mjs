@@ -2,19 +2,13 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import { minifyJqFile } from '../../converter/src/jq.mjs';
 import { qxTargetPath, surgeTargetPath } from '../../converter/src/paths.mjs';
-import { isRewriteV2, parseRewriteV2 } from '../../converter/src/rewrite-v2.mjs';
-import { validateRewriteV2Ast } from '../../converter/src/rewrite-v2-actions.mjs';
-import { dependencySpecFromAction, jqDependencySpecFromAction } from '../../converter/src/dependency.mjs';
-import { simpleUrlRewriteCondition } from '../../converter/src/rewrite-v2-semantic.mjs';
-import { isScriptV2, parseScriptV2 } from '../../converter/src/script-v2.mjs';
 import { validateSurgeModule } from '../../converter/src/surge-module.mjs';
-import { groupSourceSectionItems } from '../../converter/src/source-section.mjs';
 import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
-import { normalizePluginSource, parseLoonPlugin } from '../../converter/src/plugin-parser.mjs';
+import { normalizePluginSource } from '../../converter/src/plugin-parser.mjs';
 import { convertPlugin } from '../../converter/src/conversion-pipeline.mjs';
-import { fetchOriginalText, fetchOriginalBytes, resolveOriginalUrl } from '../../converter/src/source-fetch.mjs';
+import { materializeConversionContext } from '../../converter/src/conversion-context.mjs';
+import { fetchOriginalText } from '../../converter/src/source-fetch.mjs';
 import { QX_WAYX_FILTER_TYPES, QX_WAYX_SCRIPT_ACTIONS, QX_WAYX_SNIPPET_MITM_KEYS } from '../../converter/src/qx-official-capabilities.mjs';
 
 const ROOT = process.cwd();
@@ -41,96 +35,6 @@ function cleanSource(text) {
 
 
 
-async function materializeMockFiles(entry, parsed) {
-  const out = new Map();
-  for (const item of groupSourceSectionItems(parsed.sections.get('Rewrite'))) {
-    if (!item.line || !isRewriteV2(item.line)) continue;
-    try {
-      const ast = parseRewriteV2(item.line);
-      validateRewriteV2Ast(ast);
-      const mockFileActions = ast.actions.filter(action => /^(?:request|response)\.body\.mock_file$/.test(action.name));
-      if (mockFileActions.length !== 1) continue;
-      const condition = simpleUrlRewriteCondition(ast);
-      if (!condition.ok) continue;
-
-      const plan = dependencySpecFromAction(mockFileActions[0], { pluginSourceUrl: entry.source });
-      if (plan.base64) {
-        const text = await fetchOriginalText(plan.url);
-        const compact = text.replace(/\s+/g, '');
-        if (!/^[A-Za-z0-9+/]*={0,2}$/.test(compact) || compact.length % 4 === 1) throw new Error('invalid Base64 mock_file content');
-        out.set(item.line, { bodyBase64: Buffer.from(compact, 'base64').toString('base64'), sourceFile: plan.url });
-      } else if (plan.binary) {
-        const bytes = await fetchOriginalBytes(plan.url);
-        out.set(item.line, { bodyBase64: bytes.toString('base64'), sourceFile: plan.url });
-      } else {
-        const text = await fetchOriginalText(plan.url);
-        out.set(item.line, { bodyText: text, sourceFile: plan.url });
-      }
-    } catch (error) {
-      out.set(item.line, { error: String(error?.message || error).split('\n')[0] });
-    }
-  }
-  return out;
-}
-
-async function materializeJqFiles(entry, parsed) {
-  const out = new Map();
-  for (const item of groupSourceSectionItems(parsed.sections.get('Rewrite'))) {
-    if (!item.line || !isRewriteV2(item.line)) continue;
-    try {
-      const ast = parseRewriteV2(item.line);
-      validateRewriteV2Ast(ast);
-      if (ast.actions.length !== 1) continue;
-      const spec = jqDependencySpecFromAction(ast.actions[0], { pluginSourceUrl: entry.source });
-      if (!spec) continue;
-      if (!spec.resolvable || !spec.url) throw new Error(spec.reason || 'JQ dependency is not resolvable');
-      const text = await fetchOriginalText(spec.url);
-      out.set(item.line, {
-        content: minifyJqFile(text),
-        sourceFile: spec.url,
-        legacyAlias: Boolean(spec.legacyAlias),
-      });
-    } catch (error) {
-      out.set(item.line, { error: String(error?.message || error).split('\n')[0] });
-    }
-  }
-  return out;
-}
-
-
-
-async function inspectSourceScript(reference, pluginSourceUrl) {
-  const originalUrl = resolveOriginalUrl(reference, pluginSourceUrl);
-  try {
-    const normalized = normalizePluginSource(await fetchOriginalText(originalUrl)).replace(/\n*$/, '\n');
-    return {
-      qx: originalUrl,
-      surge: originalUrl,
-      source: normalized,
-      sourceError: null,
-    };
-  } catch (error) {
-    // Source Script content is optional and is read only to refine the target
-    // rewrite action type. Runtime compatibility is not gated for QX or Surge;
-    // both targets keep the original Source Script URL unchanged.
-    return {
-      qx: originalUrl,
-      surge: originalUrl,
-      source: '',
-      sourceError: String(error?.message || error),
-    };
-  }
-}
-function scriptUrls(source) {
-  const urls = new Set([...source.matchAll(/script-path=([^,\s]+)/gi)].map(m => m[1].trim()));
-  const parsed = parseLoonPlugin(source);
-  for (const item of groupSourceSectionItems(parsed.sections.get('Script'))) {
-    if (!item.line || !isScriptV2(item.line)) continue;
-    try { urls.add(parseScriptV2(item.line).script.path); }
-    catch {}
-  }
-  return [...urls];
-}
 
 function stripQxLeadingNote(line, entry) {
   const text = String(line ?? '').trim();
@@ -240,14 +144,11 @@ async function main() {
       if (changed) await fs.writeFile(sourcePath, source);
       console.log(`${changed ? 'updated' : 'unchanged'} source via ${fetchedFrom}; sha256=${sha256(source).slice(0, 12)}`);
 
-      const scriptMap = new Map();
-      const parsedSource = parseLoonPlugin(source);
-      const qxMockFiles = await materializeMockFiles(entry, parsedSource);
-      const jqFiles = await materializeJqFiles(entry, parsedSource);
-      const discoveredScriptUrls = scriptUrls(source);
-      for (const reference of discoveredScriptUrls) {
-        scriptMap.set(reference, await inspectSourceScript(reference, entry.source));
-      }
+      const {
+        scriptMap,
+        mockFiles: qxMockFiles,
+        jqFiles,
+      } = await materializeConversionContext(entry, source);
 
       const qxPath = path.join(ROOT, qxTargetPath(entry));
       const sgPath = path.join(ROOT, surgeTargetPath(entry));
@@ -298,9 +199,5 @@ if (__wayxIsMain) await main();
 
 export {
   cleanSource,
-  materializeJqFiles,
-  materializeMockFiles,
-  inspectSourceScript,
-  scriptUrls,
   validateQX,
 };

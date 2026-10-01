@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { loadLoonSourceCatalog } from '../src/source-catalog.mjs';
 import { qxTargetPath, surgeTargetPath } from '../src/paths.mjs';
-import { scriptUrls } from '../../.github/scripts/sync-convert.mjs';
+import { discoverSourceScriptUrls } from '../src/source-script-materializer.mjs';
 
 const ROOT=process.cwd();
 const catalog=await loadLoonSourceCatalog(path.join(ROOT,'.github','sources','loon.json'));
@@ -14,7 +14,7 @@ for(const entry of catalog){
   const qx=await fs.readFile(path.join(ROOT,qxTargetPath(entry)),'utf8');
   const surge=await fs.readFile(path.join(ROOT,surgeTargetPath(entry)),'utf8');
 
-  for(const ref of scriptUrls(source)){
+  for(const ref of discoverSourceScriptUrls(source)){
     let url;
     try { url=new URL(ref); }
     catch { continue; } // relative refs are covered by resolveOriginalUrl unit tests.
