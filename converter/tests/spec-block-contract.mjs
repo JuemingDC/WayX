@@ -78,7 +78,8 @@ assert.match(conversionContext,/materializeRewriteDependencies\(entry,parsed/, '
 assert.match(conversionContext,/materializeSourceScripts\(source,entry\.source/, 'Block 05/60: conversion context must compose Source Script materialization');
 assert.match(conversionRunner,/materializeConversionContext\(entry,source\)/, 'Block 05/50/60/80: conversion runner must delegate context materialization');
 assert.match(conversionRunner,/convertPlugin\(entry,source/, 'Block 05/80: conversion runner must delegate pure conversion');
-assert.ok(conversionRunner.indexOf("notify(onStage,'convert')") < conversionRunner.indexOf("notify(onStage,'validate-qx')"), 'Block 80: conversion runner must preserve convert before QX validation');
+assert.match(conversionRunner,/export function convertPluginWithContext\(/, 'Block 05/80: conversion runner must expose context-backed pure conversion');
+assert.match(conversionRunner,/export function validateConvertedPlugin\(/, 'Block 80: conversion runner must expose target validation independently from conversion');
 assert.ok(conversionRunner.indexOf("notify(onStage,'validate-qx')") < conversionRunner.indexOf("notify(onStage,'validate-surge')"), 'Block 80: conversion runner must preserve QX then Surge validation order');
 assert.equal(/source-catalog|source-fetch|managed-artifacts|workflow-diagnostics|nowConversionStamp|readManaged|writeManaged|generatedScriptDiffs/.test(conversionRunner), false, 'Block 05/80/90: conversion runner must not own catalog/fetch/artifact/timestamp/workflow I/O');
 assert.equal(/conversion-context\.mjs|conversion-pipeline\.mjs|qx-snippet-validator\.mjs|surge-module\.mjs/.test(syncConverter), false, 'Block 05/80/90: sync must not rebuild conversion/validation internals outside the shared runner');
@@ -141,7 +142,9 @@ assert.match(canonicalRunner,/managed-artifacts\.mjs/, 'Block 80: canonical runn
 assert.equal(/node:fs\/promises|node:crypto|normalizePluginSource|qxTargetPath|surgeTargetPath/.test(syncConverter), false, 'Block 80: sync orchestration must not own managed artifact filesystem/normalization/path primitives');
 assert.equal(/node:fs\/promises|normalizePluginSource|qxTargetPath|surgeTargetPath/.test(canonicalRunner), false, 'Block 80: canonical runner must not duplicate managed artifact filesystem/normalization/path primitives');
 assert.ok(syncConverter.indexOf("downloaded content is not a valid Loon plugin") < syncConverter.indexOf('inspectManagedSource(ROOT, entry, source)'), 'Block 80: upstream source validity must be checked before managed source inspection');
-assert.ok(syncConverter.indexOf('convertAndValidatePlugin(entry,source,context') < syncConverter.indexOf('syncGeneratedScripts(ROOT, entry, out.generatedScripts)'), 'Block 80/90: shared conversion + both target validators must succeed before generated-helper write');
+assert.ok(syncConverter.indexOf('convertPluginWithContext(entry,source,context') < syncConverter.indexOf('if (!changed && oldStamp'), 'Block 80/90: online sync must convert before converter-drift check');
+assert.ok(syncConverter.indexOf('if (!changed && oldStamp') < syncConverter.indexOf('validateConvertedPlugin(entry,out'), 'Block 80/90: online sync must resolve timestamp refresh before validating the final output');
+assert.ok(syncConverter.indexOf('validateConvertedPlugin(entry,out') < syncConverter.indexOf('syncGeneratedScripts(ROOT, entry, out.generatedScripts)'), 'Block 80/90: final QX/Surge validation must succeed before generated-helper write');
 assert.ok(syncConverter.indexOf('syncGeneratedScripts(ROOT, entry, out.generatedScripts)') < syncConverter.indexOf('writeManagedTargets(targetState, out)'), 'Block 80/90: generated helpers must be written before targets');
 assert.ok(syncConverter.indexOf('writeManagedTargets(targetState, out)') < syncConverter.indexOf('writeManagedSource(sourceState, source)'), 'Block 80/90: managed Source write must be the last normal per-plugin write');
 assert.match(syncConverter,/conversionStampFromText\(oldQx\)/, 'Block 80: online sync must continue sourcing the old conversion stamp only from QX');
@@ -232,7 +235,7 @@ assert.equal(/from '.\/(?:rule|rewrite|script)-/.test(surgeOutput), false, 'Bloc
 assert.match(qxOutput,/# \[filter_local\][\s\S]*# \[rewrite_local\][\s\S]*# \[mitm\]/, 'Block 10: QX builder must own fixed commented section order');
 assert.match(surgeOutput,/\['rule','\[Rule\]'\][\s\S]*\['url','\[URL Rewrite\]'\][\s\S]*\['header','\[Header Rewrite\]'\][\s\S]*\['body','\[Body Rewrite\]'\][\s\S]*\['map','\[Map Local\]'\][\s\S]*\['script','\[Script\]'\][\s\S]*\['mitm','\[MITM\]'\]/, 'Block 10: Surge builder must own fixed section order');
 assert.match(converterWorkflow,/target-output-builders\.mjs/, 'Block 10/80: Converter Check must execute output builder contract');
-assert.match(syncConverter,/convertAndValidatePlugin\(entry,source,context/, 'Block 05/80/90: sync orchestration must invoke the shared validated conversion runner');
+assert.match(syncConverter,/convertPluginWithContext\(entry,source,context/, 'Block 05/80/90: sync orchestration must invoke the shared validated conversion runner');
 assert.equal(/function parseLoon\(|function convert\(|planQxRewrite|planSurgeRewrite|planQxScript|planSurgeScript|planMitmLine|canonicalQxRule|surgeModuleRule/.test(syncConverter), false, 'Block 05/80: sync orchestration must not own semantic conversion dispatch');
 assert.match(pluginParser,/export function parseLoonPlugin\(text\)/, 'Block 05: whole-plugin parser must be explicit and reusable');
 assert.match(conversionPipeline,/export function convertPlugin\(entry,source/, 'Block 05/80: pure conversion core must expose convertPlugin');
