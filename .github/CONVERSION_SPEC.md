@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.38  
+版本：1.39  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -59,6 +59,8 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 39. 仓库结构固定为**内容根目录 + `.github` 工作流域**：仓库根目录除 `.github` 外只允许 `Resource / Adblock / Boxjs / Module / Rule / Script` 六类转换内容目录。转换器实现、测试、fixture、工具统一放在 `.github/converter/`；分块规范统一放在 `.github/docs/conversion-spec/`；监控实现、state、runtime 与 upstream mirror 统一放在 `.github/monitor/`；权威规范、项目状态和维护说明放在 `.github/`。Actions 入口继续只放 `.github/workflows/`，自动化脚本继续放 `.github/scripts/`，Source Catalog 与手工资产清单继续分别放 `.github/sources/` 与 `.github/manual-assets.json`。任何实现不得在仓库根目录重新创建 `converter / docs / monitor / upstream` 或其它工作流目录；所有 workflow、test、validator、spec index 的资源路径必须引用迁移后的真实路径，不允许用 symlink/兼容副本维持旧路径。
 
 40. 根目录转换内容目录统一使用**首字母大写**命名：`Adblock / Resource / Boxjs / Module / Rule / Script`。`.github` 保持 GitHub 保留目录名不变。所有 converter path、generated helper 本地路径、Raw GitHub helper URL、workflow path filter、artifact/commit path、audit/reconciliation、测试与文档必须使用相同大小写；禁止重新创建 `boxjs / module / rule / script` 小写兼容目录，也禁止继续生成 `.../main/script/...` Raw URL。目录大小写变更不得改变转换语义，只允许改变仓库资源路径及由该路径决定的引用 URL。
+
+41. Loon JSON/JQ 转换固定遵守**源语义优先、原生 JQ 优先、最小改写**。WayX 对 `json.add / json.replace / json.delete` 采用项目选定的 Stash-compatible 行为基准：add 仅在路径不存在或当前值为 JSON `null` 时写入；replace 仅在 `getpath(PATH)` 为 jq truthy 时替换，因此缺失/`null`/`false` 保持不变；delete 不加 `getpath` guard，单路径优先 `del`，多个纯对象路径可用 `delpaths`，只要包含数组索引就必须按源顺序串联 `del` 以保持数组压缩后的索引语义。Legacy `*-body-json-add|replace|del` 与 Rewrite v2 使用同一映射。源作者直接提供的 `json.jq(...)` 不得重写表达式结构；官方 `json.jq_file(...)` 只允许为 QX/Surge 单行配置删除非字符串注释并压缩无语义空白后内联，不得做 AST/代数重写。QX 依据用户提供的官方 sample 使用 `jsonjq-request-body/jsonjq-response-body`；Surge 依据官方 Manual 使用 `http-request-jq/http-response-jq`。
 
 ## 规范块
 
