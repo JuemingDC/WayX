@@ -66,10 +66,6 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
   if (timeout) {
     notes.push('Source Script timeout ignored for Quantumult X.');
   }
-  const debug = scriptOption(ast, 'debug');
-  if (debug) {
-    notes.push('Source Script debug ignored for Quantumult X.');
-  }
   const binaryBodyMode = scriptOptionBoolean(ast, 'binary_body_mode', false);
   if (binaryBodyMode) {
     notes.push('Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.');
