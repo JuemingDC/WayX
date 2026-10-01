@@ -8,7 +8,7 @@ const contracts=[
   ['05','docs/conversion-spec/05-generic-converter.md',['converter/src/source-catalog.mjs','converter/src/plugin-parser.mjs','converter/src/dependency-materializer.mjs','converter/src/source-script-materializer.mjs','converter/src/conversion-context.mjs','converter/src/conversion-pipeline.mjs','converter/src/source-section.mjs','converter/src/source-metadata.mjs','converter/src/source-fetch.mjs','.github/scripts/sync-convert.mjs','.github/manual-assets.json','converter/tests/conversion-context-materializers.mjs','converter/tests/conversion-pipeline.mjs','converter/tests/source-section-comments.mjs','converter/tests/manual-assets.mjs']],
   ['10','docs/conversion-spec/10-target-format.md',['converter/src/paths.mjs','converter/src/metadata.mjs','converter/src/output-lines.mjs','converter/src/qx-output.mjs','converter/src/surge-output.mjs','converter/src/qx-snippet-validator.mjs','converter/src/surge-module.mjs','converter/src/qx-official-capabilities.mjs','converter/src/surge-official-capabilities.mjs','converter/tests/target-output-builders.mjs']],
   ['20','docs/conversion-spec/20-rule-mapping.md',['converter/src/rule-ast.mjs','converter/src/rule-qx.mjs','converter/src/rule-surge.mjs','converter/src/rule.mjs','converter/tests/rule-ast.mjs','converter/tests/catalog-rule-inventory.mjs','converter/fixtures/catalog-rule-inventory.json']],
-  ['30','docs/conversion-spec/30-rewrite-mapping.md',['converter/src/rewrite-ir.mjs','converter/src/rewrite-qx.mjs','converter/src/rewrite-surge.mjs','converter/src/rewrite-plan-result.mjs','converter/src/legacy-rewrite.mjs','converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-semantic.mjs','converter/src/complex-rewrite-types.mjs','converter/src/complex-rewrite-registry.mjs','converter/tests/rewrite-ir.mjs','converter/tests/rewrite-target-planners.mjs','converter/tests/complex-source-inventory.mjs']],
+  ['30','docs/conversion-spec/30-rewrite-mapping.md',['converter/src/rewrite-ir.mjs','converter/src/rewrite-qx.mjs','converter/src/rewrite-surge.mjs','converter/src/rewrite-plan-result.mjs','converter/src/legacy-rewrite.mjs','converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-semantic.mjs','converter/src/complex-rewrite-registry.mjs','converter/tests/rewrite-ir.mjs','converter/tests/rewrite-target-planners.mjs','converter/tests/complex-source-inventory.mjs']],
   ['40','docs/conversion-spec/40-regex-condition.md',['converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-actions.mjs','converter/src/target-regex.mjs']],
   ['50','docs/conversion-spec/50-json-jq-mock.md',['converter/src/jq.mjs','converter/src/dependency.mjs','converter/src/dependency-materializer.mjs','converter/src/conversion-context.mjs','converter/src/qx-mock.mjs','converter/src/surge-mock.mjs','converter/tests/conversion-context-materializers.mjs']],
   ['60','docs/conversion-spec/60-script-argument.md',['converter/src/script.mjs','converter/src/script-legacy.mjs','converter/src/script-v2.mjs','converter/src/script-ir.mjs','converter/src/script-qx.mjs','converter/src/script-surge.mjs','converter/src/script-v2-target.mjs','converter/src/argument.mjs','converter/src/source-script-materializer.mjs','converter/src/conversion-context.mjs','converter/tests/conversion-context-materializers.mjs','converter/tests/script-ir-target-planners.mjs']],
@@ -106,8 +106,9 @@ assert.match(rewriteSurge,/function ensureSurgeRewriteHandlers\(\)/, 'Block 30: 
 assert.ok(rewriteQx.indexOf('registerComplexRewriteHandler({') > rewriteQx.indexOf('function ensureQxRewriteHandlers()'), 'Block 30: QX planner import must not register handlers at top level');
 assert.ok(rewriteSurge.indexOf('registerComplexRewriteHandler({') > rewriteSurge.indexOf('function ensureSurgeRewriteHandlers()'), 'Block 30: Surge planner import must not register handlers at top level');
 assert.match(converterWorkflow,/rewrite-target-planners\.mjs/, 'Block 30/80: Converter Check must execute target planner contract');
-const complexTypes=await fs.readFile(path.join(ROOT,'converter/src/complex-rewrite-types.mjs'),'utf8');
-assert.match(complexTypes,/response\.body\.mock.*response\.header\.set/s, 'Block 30: observed Bilibili-source complex signature must be registered generically');
+const complexRegistry=await fs.readFile(path.join(ROOT,'converter/src/complex-rewrite-registry.mjs'),'utf8');
+assert.equal(/observedComplexRewriteType|OBSERVED_COMPLEX_REWRITE_TYPES|complexRewriteSignature/.test(complexRegistry), false, 'Block 30: production complex routing must not depend on observed full action signatures');
+assert.match(complexRegistry,/classifyComplexRewrite\(ast\)/, 'Block 30: complex routing must classify generic action families');
 assert.match(upstreamWorkflow,/propose-conversion-issues\.mjs/, 'Block 80/90: Review/Issue markers and hard failures must be proposed as GitHub issues');
 assert.match(upstreamWorkflow,/conversion-reports\.mjs/, 'Block 80/90: scheduled flow must generate reconciliation and Review inventory reports');
 assert.match(converterWorkflow,/conversion-reports\.mjs/, 'Block 80: Converter Check must generate reconciliation and Review inventory reports');
@@ -243,12 +244,16 @@ const surgeCapabilities=await fs.readFile(path.join(ROOT,'converter/src/surge-of
 assert.match(surgeCapabilities,/SURGE_WAYX_RULE_TYPES/, 'Block 80: Surge Rule registry must be explicit and official-backed');
 assert.match(converterWorkflow,/surge-official-capabilities\.mjs/, 'Block 80: Converter Check must execute the Surge official capability gate');
 assert.match(converterWorkflow,/catalog-rule-inventory\.mjs/, 'Block 20/80: Converter Check must execute the Catalog Rule inventory gate');
+assert.match(converterWorkflow,/catalog-syntax-inventory\.mjs/, 'Block 05/80: Converter Check must execute the Rewrite/Script v2 semantic inventory gate');
+const v2SyntaxInventory=await fs.readFile(path.join(ROOT,'converter/tests/catalog-syntax-inventory.mjs'),'utf8');
+assert.equal(/actionShapes|multiActionSignatures|optionShapes|optionSets|conditionComparisons|pathTypes|argumentKinds/.test(v2SyntaxInventory), false, 'Block 80: v2 inventory must not lock valid structural combinations');
 assert.match(converterWorkflow,/catalog-legacy-syntax-inventory\.mjs/, 'Block 05/80: Converter Check must execute the Legacy Rewrite/Script syntax inventory gate');
 const legacySyntaxInventory=await fs.readFile(path.join(ROOT,'converter/tests/catalog-legacy-syntax-inventory.mjs'),'utf8');
 assert.match(legacySyntaxInventory,/classifyLegacyRewriteAction\(/, 'Block 05/80: Legacy Rewrite inventory must use the production classifier');
 assert.match(legacySyntaxInventory,/parseLegacyScriptLine\(/, 'Block 05/80: Legacy Script inventory must use the production parser');
 assert.match(legacySyntaxInventory,/assert\.notEqual\([\s\S]*op\.kind,[\s\S]*'unknown'/, 'Block 80: unknown Legacy Rewrite action shapes must fail closed before baseline update');
 assert.equal(/redirect target|mock data|script URL|header value/i.test(legacySyntaxInventory), false, 'Block 05/80: Legacy syntax baseline must not lock concrete content values');
+assert.equal(/optionSets|optionShapes|mockOptionSets|actionShapes/.test(legacySyntaxInventory), false, 'Block 80: Legacy inventory must not lock valid option/value/order combinations');
 const ruleAst=await fs.readFile(path.join(ROOT,'converter/src/rule-ast.mjs'),'utf8');
 const ruleQx=await fs.readFile(path.join(ROOT,'converter/src/rule-qx.mjs'),'utf8');
 const ruleSurge=await fs.readFile(path.join(ROOT,'converter/src/rule-surge.mjs'),'utf8');
