@@ -47,6 +47,7 @@ jobs:
           node .github/converter/tests/genericity-audit.mjs
           node .github/converter/tests/spec-block-contract.mjs
           node .github/converter/tests/workflow-control.mjs
+          node .github/converter/tests/repository-layout.mjs
           node .github/converter/tests/complex-source-inventory.mjs
           node .github/converter/tests/catalog-syntax-inventory.mjs
           node .github/converter/tests/catalog-legacy-syntax-inventory.mjs
@@ -63,6 +64,7 @@ jobs:
           node --check .github/converter/tools/audit-repository.mjs
           node --check .github/converter/tests/upstream-automation.mjs
           node --check .github/converter/tests/workflow-control.mjs
+          node --check .github/converter/tests/repository-layout.mjs
           python -m py_compile .github/converter/tools/fetch-upstream.py .github/scripts/validate_conversion_policy.py monitor/monitor_upstreams.py
 
       - name: Prepare runtime logs

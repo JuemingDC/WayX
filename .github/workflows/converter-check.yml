@@ -67,6 +67,7 @@ jobs:
           node --check .github/converter/tests/workflow-control.mjs
           node --check .github/converter/tests/upstream-automation.mjs
           node --check .github/converter/tests/source-fetch.mjs
+          node --check .github/converter/tests/repository-layout.mjs
           node --check .github/converter/tests/qx-official-capabilities.mjs
           node --check .github/converter/tests/surge-official-capabilities.mjs
           node --check .github/converter/tests/manual-assets.mjs
@@ -104,6 +105,7 @@ jobs:
           node .github/converter/tests/workflow-control.mjs
           node .github/converter/tests/upstream-automation.mjs
           node .github/converter/tests/source-fetch.mjs
+          node .github/converter/tests/repository-layout.mjs
           python .github/converter/tests/validate_conversion_policy.py
           node .github/converter/tests/manual-assets.mjs
 

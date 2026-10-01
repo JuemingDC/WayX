@@ -66,9 +66,9 @@ for(const root of executableRoots){
   for(const rel of await walk(root)){
     const text=await fs.readFile(path.join(ROOT,rel),'utf8');
     const checks=[
-      {re:/(?<!\.github\/)converter\//g,label:'root converter/'},
-      {re:/(?<!\.github\/)monitor\//g,label:'root monitor/'},
-      {re:/(?<!\.github\/)docs\/conversion-spec\//g,label:'root docs/conversion-spec/'},
+      {re:/(^|[\\s'\"`(])converter\\//gm,label:'root converter/'},
+      {re:/(^|[\\s'\"`(])monitor\\//gm,label:'root monitor/'},
+      {re:/(^|[\\s'\"`(])docs\\/conversion-spec\\//gm,label:'root docs/conversion-spec/'},
     ];
     for(const {re,label} of checks){
       if(re.test(text)) stale.push(rel+': '+label);
