@@ -64,6 +64,7 @@ Surge 输出是 Surge Module，不照搬 Loon plugin header。
 ```text
 #!name=
 #!desc=
+#!category=WayX
 #!system=
 #!arguments=
 #!arguments-desc=
@@ -78,7 +79,9 @@ Quantumult X snippet：
 - 来源平台专属版本字段（例如 `loon_version`）不进入目标成品。
 
 Surge Module：
-- 仅 `#!name / #!desc / #!system / #!arguments / #!arguments-desc / #!requirement` 等当前合法 Module metadata 可保持活动；
+- 每个 WayX 生成或维护的 `.sgmodule` 必须声明且只声明一次 `#!category=WayX`，用于 Surge Module UI 归类；
+- 来源 Loon 的 `#!category=...` 不透传、不转成普通 `# Category:`；Surge 目标统一替换为 `#!category=WayX`；
+- 仅 `#!name / #!desc / #!category / #!system / #!arguments / #!arguments-desc / #!requirement` 等当前项目确认的 Module metadata 可保持活动；
 - author/icon/date/homepage/tag 等信息转为普通 `#` 注释；
 - 禁止生成 `# Original Loon metadata:`、`# Loon resource:` 等来源平台说明标签。
 
