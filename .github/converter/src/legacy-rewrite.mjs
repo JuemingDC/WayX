@@ -93,6 +93,9 @@ function compileJsonMutation(phase, op, rest) {
     const paths = tokens.map(unquote).map(path => ({parts:jqPath(path), access:jqAccess(path)}));
     if (paths.some(path => !path.parts || !path.access)) return { ok:false, reason:'unsupported JSON path syntax' };
     if (paths.length === 1) return {ok:true, jq:`del(${paths[0].access})`};
+    if (paths.some(path => path.parts.some(part => typeof part === 'number'))) {
+      return {ok:true, jq:paths.map(path => `del(${path.access})`).join(' | ')};
+    }
     return {ok:true, jq:'delpaths([' + paths.map(path => JSON.stringify(path.parts)).join(', ') + '])'};
   }
 
