@@ -17,10 +17,10 @@ Script v2 request/response ───────→ Script v2 parser ───�
 - Script v2 parser 继续由 `script-v2.mjs` 负责；
 - `script-ir.mjs` 统一保留 source syntax、source declaration、phase、pattern/condition、原始 script path、argument 与 options；
 - IR 不得写入 QX action、Surge `type=`、目标 section 或目标 capability；
-- QX planner 独占 `script-request-header/body`、`script-response-header/body`、`script-echo-response`、`script-analyze-echo-response` 的选择；
+- QX planner 独占 Source Script declaration 的 `script-request-header/body`、`script-response-header/body` 选择；QX 官方支持的 `script-echo-response` / `script-analyze-echo-response` 仍属于目标能力，但不得由 Source Script 全文件正文启发式把一个已声明的 Loon request Script 擅自改类；
 - Surge planner 独占 `type=http-request/http-response` 与 `requires-body/max-size/binary-body-mode/timeout/argument/debug` 等声明展开；
 - `conversion-pipeline.mjs` 不得重新解析 Legacy option 或自行决定任何 target Script action/parameter；`sync-convert.mjs` 不参与 Script semantic dispatch；
-- Source JavaScript 正文仍只允许为 QX action 类型判定提供行为信号，不做 runtime compatibility gate。
+- Source JavaScript 正文仍只允许补充 request/response body 依赖信号，不做 runtime compatibility gate，也不得覆盖源 declaration 的 request/response phase。
 
 本重构不改变现有 option policy，不扩大 Script scope，也不改写 Source Script URL。
 
@@ -34,7 +34,7 @@ Source JavaScript 不做正文改写。
 - 为了转换 Loon `[Argument]` 修改脚本；
 - 为了让参数可选而生成 QX BoxJs bridge。
 
-Quantumult X 与 Surge 均不做 Source Script runtime compatibility 审查。目标声明直接引用原脚本 URL；脚本正文仅在 QX 的 HTTP Script declaration 不能单凭源声明确定 header/body/echo action 时，作为辅助行为信息读取。该读取不承担兼容性判定，也不得用于把 Loon 插件参数转换成 QX 参数配置。
+Quantumult X 与 Surge 均不做 Source Script runtime compatibility 审查。目标声明直接引用原脚本 URL。QX 对 Source Script 以源 declaration 的 HTTP phase 与 `requires_body` / `requires-body` 为权威：request 只映射到 `script-request-header/body`，response 只映射到 `script-response-header/body`。脚本正文可作为“实际读取了 body”这一补充信号，但不得因为全文件中出现其它平台分支、公共 helper 或 `$done({response: ...})` / status 字样而把 request declaration 改成 echo-response family。该读取不承担兼容性判定，也不得用于把 Loon 插件参数转换成 QX 参数配置。
 
 WayX 去广告转换的 Script 范围只包含 HTTP request/response 声明。项目中不为非 HTTP 调度/事件类 Script 建立 parser、planner 或 target validator 兼容分支。
 
@@ -57,12 +57,11 @@ script-analyze-echo-response
 
 | Source 行为 | QX declaration |
 |---|---|
-| request，不需要 body | `script-request-header` |
-| request，读取/修改 body | `script-request-body` |
-| request 阶段直接生成 response | `script-echo-response` |
-| request 阶段生成 response 且需要 request body | `script-analyze-echo-response` |
-| response，只处理 header | `script-response-header` |
-| response，读取/修改 body | `script-response-body` |
+| Source Script request，不需要 body | `script-request-header` |
+| Source Script request，`requires_body=true` / `requires-body=true` 或正文明确读取 request body | `script-request-body` |
+| Source Script response，只处理 header | `script-response-header` |
+| Source Script response，`requires_body=true` / `requires-body=true` 或正文明确读取 response body | `script-response-body` |
+| QX `script-echo-response` / `script-analyze-echo-response` | 官方能力保留；不得仅凭共享 Source JavaScript 全文件中的 response/status helper 信号从 request declaration 自动升级为 echo family |
 | request/response，源声明同时带 binary body mode | 仍按 `requires_body` 选择 `script-request-body` / `script-response-body`；binary body mode 字段本身忽略 |
 
 ## 60.3 Loon [Argument] → Quantumult X
@@ -197,8 +196,8 @@ WayX 不判断 Source JavaScript 是否“兼容 Quantumult X / Surge”。
 - 不依据 `$utils`、`$httpClient`、`$task`、`$prefs`、`$loon` 等 runtime token 启用或禁用 Source Script；
 - 不依据插件名、作者、来源仓库或 Script URL 路径做判断；
 - 不修改、wrapper、fork、prepend Source JavaScript；
-- 仅在 QX action 类型不能由 declaration 明确决定时，允许读取脚本正文判断是否读取 request/response body、是否直接构造 response，从而选择 `script-*-header/body/echo`；
-- 源码正文读取失败时，不因“兼容性未知”禁用脚本；应先使用源 declaration 已明确的信息。若 QX request-phase declaration 仍无法区分“修改 request”与“直接构造 HTTP response”，则该 QX 声明进入 Review，不能猜成 `script-request-*` 或 `script-echo-response`。Surge 仍直接引用原脚本 URL。
+- 源 declaration 的 request/response phase 不得被正文启发式覆盖；正文只允许把“无 requires-body 声明但实际读取对应 body”的情况提升为同 phase 的 body action；
+- 源码正文读取失败时，不因“兼容性未知”禁用脚本；直接按 declaration 的 phase 与 `requires_body` / `requires-body` 映射。跨平台源码中其它平台的 synthetic response 分支、共享 helper、dead code 都不得改变 QX action family。Surge 仍直接引用原脚本 URL。
 
 Source Script 的跨平台运行时适配由原脚本自身负责，不属于 WayX converter 的兼容性门禁。
 
@@ -208,7 +207,7 @@ Source Script 的跨平台运行时适配由原脚本自身负责，不属于 Wa
 - 不复制为 WayX 镜像；
 - 不用第三方 mirror/fallback；
 - QX 与 Surge 均不做 Source Script runtime compatibility scan；
-- Source Script 正文读取只用于必要的 QX action 类型辅助判定；
+- Source Script 正文读取只用于同一 request/response phase 内补充 body 依赖信号，不用于切换 QX action family；
 - WayX 为 Rewrite/Mock 等目标能力生成的 helper script 不属于 Source Script 镜像；
 - helper script 只能补足 Rewrite/Mock 语义，不能用来模拟 QX 不支持的 Rule Type。
 
