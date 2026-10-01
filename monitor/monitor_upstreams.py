@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Chance upstream monitor.
 
-GitHub Actions performs cheap upstream checks. Real semantic changes are handed
-off to ChatGPT Work through a GitHub pull request. This file never calls the
-OpenAI API.
+GitHub Actions records monitored specification/repository changes and updates
+local state/mirrors. Conversion handling is performed by the scheduled WayX
+automation workflow; this monitor does not create review pull requests.
 """
 from __future__ import annotations
 
@@ -168,7 +168,7 @@ def check_http(src: dict, state: dict, settings: dict):
         mirror.write_bytes(data)
         state.clear()
         state.update(new_state)
-        return False, True, "baseline created; Work review skipped"
+        return False, True, "baseline created"
 
     if digest == old_digest:
         metadata_changed = any(
@@ -210,7 +210,7 @@ def check_repo(src: dict, state: dict, settings: dict):
                 "checked_at": now(),
             }
         )
-        return False, True, "baseline commit recorded; Work review skipped"
+        return False, True, "baseline commit recorded"
 
     if old == head:
         return False, False, "HEAD unchanged"
@@ -286,7 +286,7 @@ def build_change_summary(changed_items: list[tuple], runtime: Path) -> Path:
         "# WayX monitored upstream changes\n\n",
         f"- Checked at: `{now()}`\n\n",
         "These monitored specification/repository changes are recorded for history. "
-        "They do not create a ChatGPT Work handoff or block deterministic plugin sync.\n\n",
+        "They do not block deterministic plugin sync.\n\n",
         "## Changed sources\n\n",
     ]
     for src, message in changed_items:
