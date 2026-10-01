@@ -63,7 +63,7 @@ jobs:
           node --check converter/tools/audit-repository.mjs
           node --check converter/tests/upstream-automation.mjs
           node --check converter/tests/workflow-control.mjs
-          python -m py_compile .github/scripts/validate_conversion_policy.py monitor/monitor_upstreams.py
+          python -m py_compile converter/tools/fetch-upstream.py .github/scripts/validate_conversion_policy.py monitor/monitor_upstreams.py
 
       - name: Prepare runtime logs
         run: mkdir -p monitor/.runtime
