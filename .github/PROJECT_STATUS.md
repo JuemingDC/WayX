@@ -70,7 +70,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 - request mock 使用 request-body helper，不用 Map Local 冒充。
 - QX request/response mock 使用已验证 Script action/helper。
 - Legacy mock JSON 内部双引号截断问题已修复。
-- JSON add / replace / delete 已统一为 QX/Surge 原生 JQ 优先：add 仅在缺失或 null 时写入，replace 对缺失/null/false 不替换，delete 不加 getpath guard；单路径用 del，纯对象批量可用 delpaths，含数组索引的批量 delete 按源顺序串联 del。多 action JSON pipeline 仍使用 complex helper 并保持同一语义。
+- JSON add / replace / delete 已统一为 QX/Surge 原生 JQ 优先：add 仅在缺失或 null 时写入，replace 对缺失/null/false 不替换，delete 不加 getpath guard；单路径用 del，多个不含数组索引的固定路径合并为一个 del(PATH1, PATH2, ...)，含数组索引的批量 delete 按源顺序串联 del。多 action JSON pipeline 仍使用 complex helper 并保持同一语义。
 - legacy `jq-path=` 已按项目标准彻底丢弃，不解析、不下载、不生成 Review。
 
 ### 2.5 Rule / Script / 其他项目标准
@@ -194,7 +194,7 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 - [x] QX capability gate 已收窄为 Loon 去广告转换实际能力：仅核对 Rule 类型、WayX 实际使用的 Rewrite action 与 MITM `hostname` 是否仍有 Crossutility 官方依据；转换范围之外的能力不进入 registry。Surge 同样采用 Rule / Rewrite / hostname 边界。
 - [x] Surge official capability gate 已落地：production `rule.mjs` / `surge-module.mjs` 共用 `surge-official-capabilities.mjs`；CI 实时读取 Surge 官方 Manual，只验证 WayX 实际使用的 28 个 Rule Type、URL/Header/Body Rewrite、Map Local、HTTP request/response Script 与 MITM `hostname` 仍有官方依据。Surge 其它 Profile/Module 能力不进入本 gate。
 - [x] 对 generated helper 做行为级 runtime fixture，而不只做字符串/语法断言：`.github/converter/tests/generated-helper-runtime.mjs` 已接入 CI，覆盖 request/response、组合条件、命中/未命中、Header/Body/JSON 顺序、capture、raw string、typed JSON、invalid JSON 失败隔离、Surge duplicate header，以及通用 QX inline mock + Header pipeline。
-- [x] JSON/JQ 语义规范已收口：Rewrite v2 与 Legacy `*-body-json-add|replace|del` 共用同一 Stash-compatible Key Path 行为；源 `json.jq(...)` 不重写表达式结构，官方 `jq_file` 仅做单行配置所需的注释删除/空白压缩后内联；QX 继续使用官方 sample 的 `jsonjq-*-body`，Surge 使用官方 Manual 的 `http-*-jq`；数组索引批量 delete 按源顺序串联 `del`，避免 `delpaths` 与逐项删除的索引压缩差异。PR #111。
+- [x] JSON/JQ 语义规范已收口：Rewrite v2 与 Legacy `*-body-json-add|replace|del` 共用同一 Stash-compatible Key Path 行为；源 `json.jq(...)` 不重写表达式结构，官方 `jq_file` 仅做单行配置所需的注释删除/空白压缩后内联；QX 继续使用官方 sample 的 `jsonjq-*-body`，Surge 使用官方 Manual 的 `http-*-jq`；普通多路径 delete 使用一个 `del(PATH1, PATH2, ...)`，数组索引批量 delete 才按源顺序串联多个 `del`；转换器不为普通 Key Path delete 合成 `delpaths`，源 jq/jq_file 自带的 `delpaths(PATHS)` 保持不变；PR #112 完成全局 canonical 重生成并通过 Converter Check #775。
 - [x] 仓库工作流域重构完成：根目录只保留 `.github` 与六类转换内容目录；原 `converter / docs / monitor`、根级规范/状态/README/.gitignore 全部迁入 `.github`，monitor mirror/runtime 也不再污染根目录；Converter Check 与 Upstream Monitor 均执行 repository-layout gate。
 - 保持 `.github/PROJECT_STATUS.md` 与实际 Review inventory 同步。
 

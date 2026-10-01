@@ -2,6 +2,26 @@
 // Author: chance
 // Category: Converter / JQ
 
+// Render fixed Key Path deletion without synthesizing delpaths(PATHS).
+// delpaths is reserved for source-authored/path-array jq semantics. For fixed
+// Key Paths, jq del(path_expression) is the native form; array indices remain
+// sequential because each deletion shifts later indices.
+export function renderFixedPathDeleteJq(paths) {
+  if (!Array.isArray(paths) || paths.length === 0) {
+    throw new Error('delete path list must not be empty');
+  }
+  for (const item of paths) {
+    if (!item || !Array.isArray(item.parts) || typeof item.selector !== 'string' || !item.selector) {
+      throw new Error('delete path item must contain parts and selector');
+    }
+  }
+  if (paths.length === 1) return 'del(' + paths[0].selector + ')';
+  if (paths.some(item => item.parts.some(part => typeof part === 'number'))) {
+    return paths.map(item => 'del(' + item.selector + ')').join(' | ');
+  }
+  return 'del(' + paths.map(item => item.selector).join(', ') + ')';
+}
+
 export function stripJqComments(expr) {
   const input = String(expr);
   let out = '', quote = null, esc = false, comment = false;

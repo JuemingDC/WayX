@@ -57,13 +57,29 @@ if getpath(PATH) then setpath(PATH; VALUE) else . end
 del(.a.b)
 ```
 
-多个**不含数组索引**的固定 Key Path 可合并为：
+多个**不含数组索引**的固定 Key Path 直接合并到同一个 jq `del(path_expression)`，用 comma expression 产生多个路径：
 
 ```jq
-delpaths([["a","b"], ["c","d"]])
+del(.a.b, .c.d)
 ```
 
-只要批量路径中出现数组索引，就必须按源顺序串联 `del(...)`，因为删除数组元素会压缩数组，单个 `delpaths([...])` 的批处理结果可能与 Loon 左到右逐项删除不同。例如删除 `items[0]` 后再删除 `items[1]` 必须保留该顺序。
+不得为这类普通 Key Path 生成 `delpaths([...])`；`del(...)` 更贴近源 `json.delete([...])`，也避免不必要地把路径改写成 Path Array。
+
+只要批量路径中出现数组索引，就必须按源顺序串联多个 `del(...)`，因为删除数组元素会压缩数组；一次 `del(.[1], .[2])` 会基于同一原输入选择两个路径，而 `del(.[1]) | del(.[2])` 会让第二次删除作用于第一次删除后的数组。WayX 以 Loon 批量参数左到右执行语义为准，因此数组索引路径不得合并到一个 `del(...)`。
+
+### delpaths 使用边界
+
+jq 官方将 `delpaths(PATHS)` 定义为 Path Array API：`PATHS` 必须是“路径数组组成的数组”，每条路径由字符串键和/或数字索引组成。它不是 WayX 对普通 Loon Key Path 批量 delete 的默认生成形式。
+
+WayX 只允许在以下场景使用 `delpaths`：
+1. 源作者的 `request/response.json.jq(...)` 本身包含 `delpaths(...)`，目标原生 JQ 直接保留；
+2. 官方 `json.jq_file(...)` 的文件内容本身包含 `delpaths(...)`，转换期只做注释删除/空白压缩后原样内联；
+3. 未来若 target-neutral IR 明确承载“Path Array 集合”且源语义就是一次性 Path Array 删除，可由专门 renderer 使用 `delpaths`，但必须有单独规范与回归测试。
+
+WayX 禁止：
+- 把 Loon `json.delete("a.b")` 或 `json.delete(["a.b","c.d"])` 自动改写成 `delpaths([...])`；
+- 用 `delpaths` 代替包含数组索引且要求左到右执行的批量 delete；
+- 为代码风格统一而把源作者的 `del(...)` 改成 `delpaths(...)`，或反向改写源作者的 `delpaths(...)`。
 
 Number/String/Boolean/null/Object/Array 类型不得互相转换。批量 action 不得排序、去重或重排。
 

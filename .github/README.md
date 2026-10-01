@@ -55,7 +55,7 @@ WayX/
 
 转换以“原行为与目标平台官方格式”优先，不为了统一写法而改变实现机制：
 
-- jq / JSON 结构化处理 → 目标平台原生 jq；
+- jq / JSON 结构化处理 → 目标平台原生 jq；Key Path delete 使用 `del`（普通多路径合并到一个 `del`，数组索引按源顺序串联），`delpaths` 仅保留给源 jq 自带的 Path Array 语义或未来明确的 Path Array IR；
 - Source JavaScript → 原文件原样保留并直接引用原 URL；QX/Surge 均不做 runtime compatibility gate，只转换声明，不修改、wrapper、fork 或自动替换运行时 API；
 - QX Source Script 声明按当前 WayX 规范处理：Script argument 不注入，动态 enable 默认开启，timeout 与 binary-body-mode 按既定策略忽略；`debug` 与 Legacy `max-size` 直接丢弃；header/body 只由 requires-body 决定；固定 enable=false/0 仍禁用。
 - URL Rewrite → 对应目标平台 URL Rewrite；

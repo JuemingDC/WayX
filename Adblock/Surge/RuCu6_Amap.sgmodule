@@ -7,7 +7,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/amap.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-10-01 17:29:50 +08:00
+# Converted: 2026-10-01 18:28:13 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/amap.lpx
 # Target: Surge
@@ -17,7 +17,7 @@
 AND,((URL-REGEX,^http:\/\/.+\/amdc\/mobileDispatch),(USER-AGENT,"AMapiPhone*")),REJECT
 
 [Body Rewrite]
-http-response-jq ^https:\/\/m5\.amap\.com\/ws\/shield\/search_business\/process\/marketingOperationStructured\? 'delpaths([["data","commonMaterial"], ["data","tipsOperationLocation"], ["data","resourcePlacement"]])'
+http-response-jq ^https:\/\/m5\.amap\.com\/ws\/shield\/search_business\/process\/marketingOperationStructured\? 'del(.data.commonMaterial, .data.tipsOperationLocation, .data.resourcePlacement)'
 http-response-jq ^https:\/\/m5\.amap\.com\/ws\/shield\/search_poi\/homepage\? 'del(.history_tags)'
 http-response-jq ^https:\/\/m5-zb\.amap\.com\/ws\/sharedtrip\/taxi\/order_detail_car_tips\? 'del(.data.carTips.data.popupInfo)'
 

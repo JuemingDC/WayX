@@ -26,6 +26,7 @@ import {
   minifyJq,
   minifyJqFile,
   quoteJq,
+  renderFixedPathDeleteJq,
   classifyLegacyRewrite,
   isDiscardedLegacyJqPathIr,
   legacyRewriteToSemanticIr,
@@ -275,6 +276,20 @@ const compact = minifyJq('walk( if type == "object" then .a = [] | del(.b, .c) e
 assert.equal(compact.includes('"object"'), true);
 assert.equal(compact.includes('del(.b,.c)'), true);
 
+assert.equal(
+  renderFixedPathDeleteJq([
+    {parts:['a'], selector:'.a'},
+    {parts:['b','c'], selector:'.b.c'},
+  ]),
+  'del(.a, .b.c)',
+);
+assert.equal(
+  renderFixedPathDeleteJq([
+    {parts:['items',0], selector:'.items[0]'},
+    {parts:['items',1], selector:'.items[1]'},
+  ]),
+  'del(.items[0]) | del(.items[1])',
+);
 
 assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:true,scriptUrl:'https://example.com/request.js',sourceText:'$done({status:"HTTP/1.1 200 OK",body:$request.body});'}).action, 'script-request-body');
 assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:false,scriptUrl:'https://example.com/header.js',sourceText:'$done({headers:$request.headers});'}).action, 'script-request-header');
@@ -1031,6 +1046,13 @@ const inlinedJq = inlineResolvedDependency(jqFileAst.actions[0], 'del(.ads)', {p
 assert.equal(inlinedJq.action.name, 'response.json.jq');
 assert.equal(inlinedJq.action.args[0].value, 'del(.ads)');
 
+const inlinedDelpathsJq = inlineResolvedDependency(
+  jqFileAst.actions[0],
+  'delpaths([["ads"],["promo"]])',
+  {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'},
+);
+assert.equal(inlinedDelpathsJq.action.args[0].value, 'delpaths([["ads"],["promo"]])');
+
 const legacyJqPathAst = parseRewriteV2(
   'response if ${url} ~= /reddit/i then response.json.jq("jq-path=https://rucu6.pages.dev/JQLang/reddit.jq")'
 );
@@ -1125,7 +1147,7 @@ assert.match(qxDeleteV2.line, /del\(\.data\.ads\) \| del\(\.data\.apps\[0\]\.pro
 
 const qxDeleteObjectsV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /api/ then response.json.delete(["data.ads", "data.promo"])'));
 assert.equal(qxDeleteObjectsV2.ok, true);
-assert.match(qxDeleteObjectsV2.line, /delpaths\(\[\["data","ads"\], \["data","promo"\]\]\)/);
+assert.match(qxDeleteObjectsV2.line, /del\(\.data\.ads, \.data\.promo\)/);
 
 const qxReplaceV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /search/i then response.json.replace("data.items", `[]`)'));
 assert.equal(qxReplaceV2.ok, true);
