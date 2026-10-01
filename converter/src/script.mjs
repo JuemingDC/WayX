@@ -24,36 +24,20 @@ export function selectQxScriptAction({phase,requiresBody=false,sourceText=''}) {
 
   const signals=scriptBehaviorSignals(sourceText);
 
-  // A request-phase Loon script can either mutate the outgoing request or
-  // synthesize an immediate HTTP response. QX uses different rewrite actions
-  // for those behaviors, so do not guess when source inspection is unavailable.
-  if(p==='request' && !signals.sourceAvailable) {
-    return {
-      action:null,
-      reason:'request-phase source inspection is unavailable; cannot distinguish request mutation from synthetic response',
-      override:false,
-      signals,
-    };
-  }
-
+  // The Loon declaration phase is authoritative for native QX Script mapping.
+  // QX's official sample and KOP-XIAO's resource parser both map
+  // request/response + requires-body directly to the corresponding
+  // script-request/response-header/body action. Whole-file source inspection
+  // is only allowed to strengthen body-dependency detection; it must not
+  // switch a declared request script into the echo-response family because
+  // multi-platform helpers can contain inactive Surge/Loon response branches.
   if(p==='request') {
-    if(signals.returnsHttpResponse) {
-      const waitsForBody=Boolean(requiresBody || signals.readsRequestBody);
-      return {
-        action:waitsForBody ? 'script-analyze-echo-response' : 'script-echo-response',
-        reason:waitsForBody
-          ? 'request-phase source constructs an HTTP response and reads/requires request body'
-          : 'request-phase source constructs an HTTP response without request-body dependency',
-        override:false,
-        signals,
-      };
-    }
     const needsBody=Boolean(requiresBody || signals.readsRequestBody);
     return {
       action:needsBody ? 'script-request-body' : 'script-request-header',
       reason:needsBody
-        ? 'request-phase script reads/requires request body'
-        : 'request-phase script does not require request body',
+        ? 'request-phase declaration reads/requires request body'
+        : 'request-phase declaration does not require request body',
       override:false,
       signals,
     };
@@ -63,8 +47,8 @@ export function selectQxScriptAction({phase,requiresBody=false,sourceText=''}) {
   return {
     action:needsBody ? 'script-response-body' : 'script-response-header',
     reason:needsBody
-      ? 'response-phase script reads/requires response body'
-      : 'response-phase script does not require response body',
+      ? 'response-phase declaration reads/requires response body'
+      : 'response-phase declaration does not require response body',
     override:false,
     signals,
   };
