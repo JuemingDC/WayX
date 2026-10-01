@@ -149,6 +149,15 @@ export function classifyLegacyRewriteAction(action) {
   return {kind:'unknown',raw};
 }
 
+export function isDiscardedLegacyJqPathIr(ir) {
+  if (!ir || ir.type!=='rewrite-semantic-ir' || ir.sourceSyntax!=='legacy') return false;
+  if (!Array.isArray(ir.operations) || ir.operations.length!==1) return false;
+  const op=ir.operations[0];
+  return op?.kind==='json' &&
+    op?.operation==='jq' &&
+    /^jq-path\s*=/i.test(String(op?.rest || '').trim());
+}
+
 export function legacyRewriteToSemanticIr(pattern,action) {
   const sourcePattern=String(pattern ?? '').trim();
   const sourceAction=String(action ?? '').trim();
