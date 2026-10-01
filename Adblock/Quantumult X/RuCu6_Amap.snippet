@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/amap.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-10-01 17:29:50 +08:00
+# Converted: 2026-10-01 18:28:13 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/amap.lpx
@@ -24,7 +24,7 @@
 ^https:\/\/m5\.amap\.com\/ws\/faas\/amap-navigation\/card-service-(?:car-end|route-plan) url reject-dict
 ^https:\/\/m5\.amap\.com\/ws\/shield\/search_poi\/tips_adv\? url reject-dict
 ^https:\/\/oss\.amap\.com\/ws\/banner\/lists\/\? url reject-dict
-^https:\/\/m5\.amap\.com\/ws\/shield\/search_business\/process\/marketingOperationStructured\? url jsonjq-response-body 'delpaths([["data","commonMaterial"], ["data","tipsOperationLocation"], ["data","resourcePlacement"]])'
+^https:\/\/m5\.amap\.com\/ws\/shield\/search_business\/process\/marketingOperationStructured\? url jsonjq-response-body 'del(.data.commonMaterial, .data.tipsOperationLocation, .data.resourcePlacement)'
 ^https:\/\/m5\.amap\.com\/ws\/shield\/search_poi\/homepage\? url jsonjq-response-body 'del(.history_tags)'
 
 # 首页 - 推广卡片、红点角标、右上角动图、搜索框热词、左下角天气、消息横幅

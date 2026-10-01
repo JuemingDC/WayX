@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/myblockads.png
 # Updated: 2026-09-27 18:30
 
-# Converted: 2026-10-01 18:11:00 +08:00
+# Converted: 2026-10-01 18:28:20 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/myblockads.lpx
@@ -449,7 +449,7 @@ host, switch.cup.com.cn, reject
 ^https:\/\/shop-api\.retail\.mi\.com\/mtop\/(?:act\/mishopSearch\/searchInput|mf\/home\/v1\/feed) url reject-dict
 ^https:\/\/shop-api\.retail\.mi\.com\/mtop\/navi\/(?:rec\/merge\/|skywheel\/(?:homePage\/bottomFloatLayer|mishop\/splash|shop\/resourceAms|ucenter\/pendant|ucenter\/popup)) url reject-dict
 ^https:\/\/xiaomishop\.retail\.mi\.com\/mtop\/xiaomishop\/product\/compose url reject-dict
-^https:\/\/xiaomishop\.retail\.mi\.com\/mtop\/xiaomishop\/product\/info url jsonjq-response-body 'delpaths([["data","carouselAdInfo"], ["data","product","floatWindow"]])'
+^https:\/\/xiaomishop\.retail\.mi\.com\/mtop\/xiaomishop\/product\/info url jsonjq-response-body 'del(.data.carouselAdInfo, .data.product.floatWindow)'
 
 # 星星充电 //gateway.sccncdn.com, gateway.starcharge.com
 ^https:\/\/gateway\.sccncdn\.com\/app\/v2\/apiV2\/advertisement\/marke\/list\/ url reject-dict

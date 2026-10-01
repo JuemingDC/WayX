@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/5EPlay.png
 # Updated: 2026-08-24 18:59:19
 
-# Converted: 2026-10-01 17:29:49 +08:00
+# Converted: 2026-10-01 18:28:12 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/5EPlay_remove_ads.lpx
@@ -16,7 +16,7 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/app\.5eplay\.com\/api\/app\/dync_config\? url jsonjq-response-body 'delpaths([["data","function_configs","startup_ad_switch"],["data","function_configs","startup_ad_timeout"],["data","function_configs","startup_ad_day_max"],["data","function_configs","app_bar_guide_width"],["data","function_configs","app_bar_guide_height"],["data","function_configs","app_bar_guide_url"],["data","function_configs","app_bar_guide_time"],["data","function_configs","home_tab_event_tag"],["data","function_configs","home_tab_event_tag_ext"],["data","function_configs","home_tab_player_tag"],["data","function_configs","home_tab_player_tag_ext"],["data","function_configs","task_center_entrance"],["data","function_configs","store_go"],["data","function_configs","wall_closed"]])'
+^https:\/\/app\.5eplay\.com\/api\/app\/dync_config\? url jsonjq-response-body 'del(.data.function_configs.startup_ad_switch,.data.function_configs.startup_ad_timeout,.data.function_configs.startup_ad_day_max,.data.function_configs.app_bar_guide_width,.data.function_configs.app_bar_guide_height,.data.function_configs.app_bar_guide_url,.data.function_configs.app_bar_guide_time,.data.function_configs.home_tab_event_tag,.data.function_configs.home_tab_event_tag_ext,.data.function_configs.home_tab_player_tag,.data.function_configs.home_tab_player_tag_ext,.data.function_configs.task_center_entrance,.data.function_configs.store_go,.data.function_configs.wall_closed)'
 
 ^https:\/\/app\.5eplay\.com\/api\/index\/tab_v\d\?category_id=tab_1&page=\d$ url jsonjq-response-body 'del(.data.float_advertise)'
 
