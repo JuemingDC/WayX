@@ -1,5 +1,6 @@
 #!name=百度贴吧去广告
 #!desc=移除开屏广告、信息流广告和帖内广告，精简侧拉抽屉及我的页面。
+#!category=WayX
 #!requirement=CORE_VERSION>=20
 #!arguments=per_filter_video_thread:true
 #!arguments-desc=per_filter_video_thread: 拦截推荐页面视频帖 — options=true|false — 此项决定是否拦截首页推荐标签下的视频帖
@@ -12,9 +13,8 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Tieba.png
 # Updated: 2026-06-01 17:11:35
 
-# Converted: 2026-10-01 10:22:53 +08:00
+# Converted: 2026-10-01 14:35:50 +08:00
 # Converted by: chance
-# Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Tieba_remove_ads.lpx
 # Target: Surge
 
