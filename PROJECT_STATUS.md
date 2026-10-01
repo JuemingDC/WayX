@@ -4,12 +4,12 @@
 > 维护原则：本文件描述“当前 main 的真实状态”，不能替代 `CONVERSION_SPEC.md`；规范冲突时以 `CONVERSION_SPEC.md` 为唯一权威。
 
 - 审计日期：2026-10-01
-- 审计基线：PR #85 workflow diagnostics consolidation / Converter Check #663
+- 审计基线：PR #87 QX Script debug/max-size ignore policy / Converter Check #666
 - Source Catalog：20 个 Loon 去广告插件
 - Catalog 管理目标：20 个 Quantumult X snippet + 20 个 Surge sgmodule
 - Adblock 目录实际目标：21 个 QX + 21 个 Surge（额外包含手工维护的 `QZXY`）
-- 最近完整 Converter Check：#663，通过
-- 当前实现 PR：#85
+- 最近完整 Converter Check：#666，通过
+- 当前实现 PR：#87
 
 ---
 
@@ -85,15 +85,13 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 
 ## 3. Review 库存
 
-2026-10-01 规范 v1.25 已把 QX Source Script 的 `binary-body-mode` / `binary_body_mode` 纳入 KOP-XIAO `resource-parser.js` 兼容口径。目标 Review inventory 为：
+2026-10-01 规范 v1.27 已完成 QX Source Script option 策略：`argument`、动态 `enable`、`timeout`、`binary-body-mode` / `binary_body_mode`、`debug`、Legacy `max-size` 均不写入 QX declaration，也不因此 Review。目标 Review inventory 为：
 
 - **Quantumult X：0**
 - **Surge：0**
 - **Unknown Issue：0**
 
-QX Source Script declaration 的 `argument`、动态 `enable`、`timeout`、`binary-body-mode` / `binary_body_mode` 现在统一按 KOP-XIAO Script 转换取舍处理：argument 忽略，动态 enable 默认开启，timeout 与 binary body mode 忽略；header/body 只由 `requires-body` / `requires_body` 决定。固定 `enable=false/0` 仍保持禁用。
-
-这项兼容策略只覆盖上述 Script declaration 字段。`debug`、`max-size`、Rewrite 参数、未知语法等继续按 WayX 自身规范判断，不因为 KOP-XIAO 忽略其它字段而自动放行。
+QX Source Script declaration 当前固定策略：argument 忽略；动态 enable 默认开启；timeout、binary body mode、debug 与 Legacy max-size 忽略；header/body 只由 `requires-body` / `requires_body` 决定。固定 `enable=false/0` 仍保持禁用。被忽略字段只生成普通 WayX 审计注释，不生成 Review。Rewrite 参数与未知语法仍按各自语义独立判断。
 
 `response.header.add` 继续按项目决策明确注释保留，因此不占用 Review inventory。
 
@@ -120,15 +118,9 @@ v1.4 已重新生成全部 Catalog 管理的 QX snippet / Surge sgmodule，并�
 - helper 文件引用存在且 action 类型通过 validator/CI；
 - Review inventory 目标已调整为 QX 0 / Surge 0 / Issue 0，并由 CI 自动核验。
 
-#### P0-2：QX Script option 保真
+#### P0-2：QX Script option 保真 — 已完成
 
-Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binary body mode 已按 KOP-XIAO parser 口径确定：QX 忽略 argument，动态 enable 默认开启，timeout 与 binary body mode 忽略；header/body 只由 requires-body 决定。固定 enable=false/0 仍禁用。debug、max-size 等其它字段继续按 WayX 自身标准逐项判断。
-
-处理顺序：
-
-1. QX 原生 declaration；
-2. 若问题属于 Rewrite 语义而非 Source Script 本体，使用对应专用 helper；
-3. 仍无法保持则注释 Review。
+Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binary body mode、debug 与 Legacy max-size 已统一定案：QX 不写入这些源字段，也不因此 Review；dynamic enable 默认开启，固定 enable=false/0 仍禁用，header/body 只由 requires-body 决定。debug 无论固定值或动态引用均忽略；Legacy max-size 无论具体值均忽略。生成结果用普通 WayX 注释记录被忽略字段。Converter Check #666 全绿，当前 Catalog canonical/helper 0 diff。
 
 #### P0-3：QX `response.header.add` — 已完成（明确注释）
 
@@ -171,6 +163,7 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 
 ### P2 — 长期质量工作
 
+- [x] 已建立 Catalog-observed Legacy Rewrite / Legacy Script syntax inventory：`converter/tests/catalog-legacy-syntax-inventory.mjs` + `converter/fixtures/catalog-legacy-syntax-inventory.json`。当前 Catalog 为 116 条 Legacy Rewrite / 20 条 Legacy Script；无 unknown Legacy Rewrite、无无法解析 Legacy Script。该 gate 使用 production classifier/parser，只锁 action/option 语法形态，不锁具体 URL/pattern/value/数量。Converter Check #665 全绿，canonical/helper 0 diff。
 - [x] 已建立 Catalog-observed Rewrite v2 / Script v2 syntax inventory：`converter/tests/catalog-syntax-inventory.mjs` + `converter/fixtures/catalog-syntax-inventory.json`。当前基线为 175 条 Rewrite v2 / 110 条 Script v2；CI 只锁语法形态，不锁同类规则数量。新 action/参数形态/condition/capture/logical/regex flag/Script option/argument/option-set 或 multi-action signature 首次出现时 fail closed，必须先核对官方语义再更新基线；未观察到的 complex signature 仍不得预先放行。
 - [x] 已建立 Catalog-observed Rule inventory：只锁 top/nested Rule Type、Policy、Rule parameter、logical operator/placement、字段形态与最大嵌套层级；不锁规则数量、匹配值或 AND/OR 子项数量，MITM 不进入 inventory。该 gate 仅用于发现上游新语法，不能反向成为 production 支持白名单。
 - [x] Rule production 已重构为 `rule-ast.mjs` → `rule-qx.mjs` / `rule-surge.mjs`：source parser 只构建 target-neutral AST，未知但可结构化 Rule 仍能进入 AST；QX/Surge planner 分别做目标能力与 logical semantics 校验。`rule.mjs` 仅保留兼容 facade，Catalog Rule inventory 也改为遍历同一 production AST。
@@ -185,6 +178,7 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 - [x] QX snippet validator 已从 GitHub orchestration 抽离：`converter/src/qx-snippet-validator.mjs` 统一实现 `validateQX()` 并直接消费 `qx-official-capabilities.mjs`；sync、canonical runner、repository audit、Golden/genericity 均直接复用该 validator，不再从 `sync-convert.mjs` 借用校验逻辑。Converter Check #659 全绿且 canonical/helper 0 diff。
 - [x] Managed artifact I/O 已收口：`converter/src/managed-artifacts.mjs` 统一 source normalize/change-detect/write、conversion stamp、QX/Surge target snapshot、generated helper diff/write 与 conditional target write；`sync-convert.mjs` 和 canonical runner 不再分别维护 fs/crypto/target-path/normalization。源合法性仍先于 `Resource/Loon` 写入，online/canonical 时间戳策略、helper/validator/target write 顺序保持原样。Converter Check #662 全绿，canonical/helper 0 diff。
 - [x] Workflow diagnostics 已收口：`converter/src/workflow-diagnostics.mjs` 统一 GitHub Actions error annotation、failure detail 收集与 summary rendering；online sync 继续保持 `Failures:`、`stack || message` 与 `String(error.message)`，canonical runner 继续保持 `Canonical regeneration failures:`、`stack || error` 与 `String(error.message || error)`，调用方仍独占 exit policy/stale-check。Converter Check #663 全绿，canonical/helper 0 diff。
+- [x] QX Source Script `debug` / Legacy `max-size` 已按用户决策纳入忽略策略：QX planner 不再因这些字段阻断转换，Script v2 动态 `debug=${...}` 也不因未声明参数产生 Review；只输出普通审计注释，Surge 行为不变。Converter Check #666 全绿，canonical/helper 0 diff。
 - 每次新增 QX 官方 sample 证据时，复核现有 Rewrite Review 是否可以安全降级为 native/helper；Rule 只在官方明确支持对应 Rule Type 后才改为活动 filter。
 - [x] QX capability gate 已收窄为 Loon 去广告转换实际能力：仅核对 Rule 类型、WayX 实际使用的 Rewrite action 与 MITM `hostname` 是否仍有 Crossutility 官方依据；转换范围之外的能力不进入 registry。Surge 同样采用 Rule / Rewrite / hostname 边界。
 - [x] Surge official capability gate 已落地：production `rule.mjs` / `surge-module.mjs` 共用 `surge-official-capabilities.mjs`；CI 实时读取 Surge 官方 Manual，只验证 WayX 实际使用的 28 个 Rule Type、URL/Header/Body Rewrite、Map Local、HTTP request/response Script 与 MITM `hostname` 仍有官方依据。Surge 其它 Profile/Module 能力不进入本 gate。
