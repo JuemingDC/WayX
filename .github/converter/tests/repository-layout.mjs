@@ -76,6 +76,11 @@ for(const root of executableRoots){
       {re:/(^|[\s'"`(])converter\//gm,label:'root converter/'},
       {re:/(^|[\s'"`(])monitor\//gm,label:'root monitor/'},
       {re:/(^|[\s'"`(])docs\/conversion-spec\//gm,label:'root docs/conversion-spec/'},
+      {re:/(^|[\s'\"`(])boxjs\//gm,label:'lowercase boxjs/'},
+      {re:/(^|[\s'\"`(])module\//gm,label:'lowercase module/'},
+      {re:/(^|[\s'\"`(])rule\//gm,label:'lowercase rule/'},
+      {re:/(^|[\s'\"`(])script\//gm,label:'lowercase script/'},
+      {re:/\/main\/script\//gm,label:'lowercase Raw GitHub /script/'},
     ];
     for(const {re,label} of checks){
       if(re.test(text)) stale.push(rel+': '+label);
