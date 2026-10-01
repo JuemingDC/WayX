@@ -37,7 +37,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 - Source Catalog 驱动 canonical regeneration。
 - 已建立 QX / Surge validator、repository audit、Golden、genericity、helper reference、Source Script URL preservation 等检查。
 - 未知 Loon section、Script parse failure、未知 MITM option、未知 Rewrite action 与未登记 complex signature 不再静默丢失：先注释并标记 `ISSUE REQUIRED`，再由自动化创建/复用议题。
-- Work 审查规则已同步 native → helper → Review、regex body 保持等标准。
+- 定时上游维护已切换为 GitHub Actions 全自动闭环：逐插件拉取/转换/验证、自动 Issue、全局审计后直提 main。
 
 ### 2.2 Regex
 
