@@ -13,6 +13,7 @@ import {
   normalizeManagedSource,
   nowConversionStamp,
   inspectManagedSource,
+  managedTargetDiffs,
   readCatalogSource,
   readManagedTargetState,
   syncGeneratedScripts,
@@ -71,7 +72,12 @@ async function main() {
       });
 
       // Converter changes must also refresh outputs even when upstream LPX is unchanged.
-      if (!changed && oldStamp && ((oldQx && oldQx !== out.qx) || (oldSg && oldSg !== out.surge))) {
+      // Deliberately only count drift against targets that already exist. Missing-target
+      // recovery is not the same lifecycle as canonical stale detection.
+      const existingTargetDrift = managedTargetDiffs(targetState,out).some(target =>
+        target === 'qx' ? Boolean(oldQx) : Boolean(oldSg)
+      );
+      if (!changed && oldStamp && existingTargetDrift) {
         stamp = nowConversionStamp();
         out = convertPluginWithContext(entry,source,context,{
           stamp,
@@ -86,13 +92,13 @@ async function main() {
 
       // No managed files for this plugin are written before conversion + both target validators succeed.
       stage='write-generated-helpers';
-      await syncGeneratedScripts(ROOT, entry, out.generatedScripts);
+      const helperChanges = await syncGeneratedScripts(ROOT, entry, out.generatedScripts);
       stage='write-targets';
       const targetChanges = await writeManagedTargets(targetState, out);
       stage='write-source';
       await writeManagedSource(sourceState, source);
 
-      console.log(targetChanges.length || changed
+      console.log(targetChanges.length || helperChanges.length || changed
         ? `synced -> ${entry.file}; ${targetState.qxRelativePath}; ${targetState.surgeRelativePath}`
         : 'conversion verified: source and outputs unchanged');
     } catch (e) {
