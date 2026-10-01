@@ -1,4 +1,35 @@
 {
-  "version": 1,
-  "sources": {}
+  "sources": {
+    "loon-rewrite-v2": {
+      "checked_at": "2026-10-01T21:30:41.829743+00:00",
+      "etag": "\"6abbc537-20711\"",
+      "kind": "http",
+      "last_modified": "Tue, 29 Sep 2026 14:03:35 GMT",
+      "sha256": "d8c97ac157a379b9dcd5b33242ea790fb200f73f4ab40caeaad47f1ae0d0074e",
+      "url": "https://nsloon.app/docs/Rewrite/rewrite_v2/"
+    },
+    "quantumultx-official": {
+      "checked_at": "2026-10-01T21:30:42.191479+00:00",
+      "kind": "github_repo",
+      "ref": "master",
+      "remote_sha": "af6fb594233ec4a3ec6d4ccb3601e9c36b75ea2d",
+      "repo": "crossutility/Quantumult-X"
+    },
+    "quantumultx-parser": {
+      "checked_at": "2026-10-01T21:30:42.669990+00:00",
+      "kind": "github_repo",
+      "ref": "master",
+      "remote_sha": "38a6fe02eb7cc67efd26a8f3c618bd031f1885b4",
+      "repo": "KOP-XIAO/QuantumultX"
+    },
+    "surge-official-llms": {
+      "checked_at": "2026-10-01T21:30:41.492316+00:00",
+      "etag": "\"6aa7a554-c52\"",
+      "kind": "http",
+      "last_modified": "Mon, 14 Sep 2026 07:42:12 GMT",
+      "sha256": "50eb239a4861608ec6883874707698d3ab206b1a0202b6aca0997574f6f23f49",
+      "url": "https://nssurge.com/llms.txt"
+    }
+  },
+  "version": 1
 }

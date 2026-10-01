@@ -2,9 +2,9 @@
 # Description: 没有广告的哔哩哔哩更值得干杯。
 # Author: RuCu6[https://github.com/RuCu6], kokoryh[https://github.com/kokoryh], 可莉🅥[https://gitlab.com/lodepuly/vpn_tool]
 # Icon: https://rucu6.pages.dev/Icons/app/bilibili.png
-# Updated: 2026-09-22 22:55
+# Updated: 2026-09-27 19:00
 
-# Converted: 2026-10-01 17:29:51 +08:00
+# Converted: 2026-10-02 05:30:28 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/bilibili.lpx
@@ -28,15 +28,15 @@ host, api.biliapi.net, reject
 host, app.biliapi.com, reject
 host, app.biliapi.net, reject
 
-# p2p
-# [WayX] Quantumult X unsupported Rule type DEST-PORT commented out; Rule conversion does not use Script fallback
-# Source declaration: DEST-PORT, 4480, REJECT-NO-DROP
-# [WayX] Quantumult X unsupported Rule type DEST-PORT commented out; Rule conversion does not use Script fallback
-# Source declaration: DEST-PORT, 4483, REJECT-NO-DROP
-# [WayX] Quantumult X unsupported Rule type DEST-PORT commented out; Rule conversion does not use Script fallback
-# Source declaration: DEST-PORT, 8082, REJECT-NO-DROP
-# [WayX] Quantumult X unsupported Rule type DEST-PORT commented out; Rule conversion does not use Script fallback
-# Source declaration: DEST-PORT, 9102, REJECT-NO-DROP
+# P2P端口
+# [WayX] Quantumult X unsupported Rule type commented out; Rule conversion does not use Script fallback
+# Source declaration: AND, ((DOMAIN-KEYWORD, bilibili), (DEST-PORT, 4480)), REJECT-NO-DROP
+# [WayX] Quantumult X unsupported Rule type commented out; Rule conversion does not use Script fallback
+# Source declaration: AND, ((DOMAIN-KEYWORD, bilibili), (DEST-PORT, 4483)), REJECT-NO-DROP
+# [WayX] Quantumult X unsupported Rule type commented out; Rule conversion does not use Script fallback
+# Source declaration: AND, ((DOMAIN-KEYWORD, bilibili), (DEST-PORT, 8082)), REJECT-NO-DROP
+# [WayX] Quantumult X unsupported Rule type commented out; Rule conversion does not use Script fallback
+# Source declaration: AND, ((DOMAIN-KEYWORD, bilibili), (DEST-PORT, 9102)), REJECT-NO-DROP
 
 # 开屏广告
 #URL-REGEX, "^http:\/\/upos-sz-static\.bilivideo\.com\/ssaxcode\/\w{2}\/\w{2}\/\w{32}-1-SPLASH", REJECT-VIDEO-NO-DROP
