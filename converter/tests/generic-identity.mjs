@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { validateQX } from '../../.github/scripts/sync-convert.mjs';
+import { validateQX } from '../src/qx-snippet-validator.mjs';
 import { convertPlugin } from '../src/conversion-pipeline.mjs';
 import { validateSurgeModule } from '../src/surge-module.mjs';
 

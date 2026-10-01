@@ -133,5 +133,6 @@ Surge builder 只输出有内容的 section，固定顺序为：
 - QX output state/final render：`converter/src/qx-output.mjs`
 - Surge output state/final render：`converter/src/surge-output.mjs`
 - Shared line compaction：`converter/src/output-lines.mjs`
+- QX snippet validator：`converter/src/qx-snippet-validator.mjs`（直接消费 `qx-official-capabilities.mjs`）
 - Surge module section/header validator：`converter/src/surge-module.mjs`
 - Orchestration：`.github/scripts/sync-convert.mjs`（只写 builder state，不负责 section title/final assembly）

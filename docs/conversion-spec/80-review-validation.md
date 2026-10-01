@@ -343,3 +343,21 @@ CI 必须验证外部依赖与 Source Script 物化已经从 `sync-convert.mjs` 
 - context aggregator：`converter/src/conversion-context.mjs`
 - contract：`converter/tests/conversion-context-materializers.mjs`
 
+## 80.19 Quantumult X snippet-validator ownership gate
+
+CI 必须验证 QX 成品校验已经从 GitHub sync orchestration 中分离：
+
+- `converter/src/qx-snippet-validator.mjs` 是唯一 QX snippet validator，实现并导出 `validateQX()`；
+- validator 必须直接消费 `qx-official-capabilities.mjs` 的 `QX_WAYX_FILTER_TYPES`、`QX_WAYX_SCRIPT_ACTIONS`、`QX_WAYX_SNIPPET_MITM_KEYS`，不得维护第二份能力白名单；
+- validator 继续检查活动 `#!` metadata、活动 `[filter_local]/[rewrite_local]/[mitm]`、filter/rewrite/MITM 活动行、QX note 位置、被丢弃 regex flags 的恢复、HTTP case-fold 伪装、`jq-path=` 泄漏与旧未转换 token；
+- `sync-convert.mjs` 只能 import/call `validateQX()`，不得定义 `validateQX()`、`validateQxExecutableLine()` 或直接 import QX capability registry；
+- `regenerate-canonical.mjs`、`audit-repository.mjs`、Golden/genericity tests 必须直接 import converter-owned validator，不得从 `sync-convert.mjs` re-export/borrow；
+- validator extraction 不新增 QX action/Rule/MITM 能力；官方 sample/capability gate 仍是唯一目标能力依据；
+- 纯架构迁移要求 canonical/helper 0 diff。
+
+实现：
+- QX validator：`converter/src/qx-snippet-validator.mjs`
+- QX capability registry：`converter/src/qx-official-capabilities.mjs`
+- behavior regression：`converter/tests/end-to-end-golden.mjs`
+- architecture contract：`converter/tests/spec-block-contract.mjs`
+

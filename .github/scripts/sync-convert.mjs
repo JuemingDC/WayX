@@ -9,7 +9,7 @@ import { normalizePluginSource } from '../../converter/src/plugin-parser.mjs';
 import { convertPlugin } from '../../converter/src/conversion-pipeline.mjs';
 import { materializeConversionContext } from '../../converter/src/conversion-context.mjs';
 import { fetchOriginalText } from '../../converter/src/source-fetch.mjs';
-import { QX_WAYX_FILTER_TYPES, QX_WAYX_SCRIPT_ACTIONS, QX_WAYX_SNIPPET_MITM_KEYS } from '../../converter/src/qx-official-capabilities.mjs';
+import { validateQX } from '../../converter/src/qx-snippet-validator.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -34,97 +34,6 @@ function cleanSource(text) {
 }
 
 
-
-
-function stripQxLeadingNote(line, entry) {
-  const text = String(line ?? '').trim();
-  if (!text.startsWith('{#')) return {line:text, note:null};
-  const match = text.match(/^\{#\s*(.*?)\s*#\}\s+(.+)$/);
-  if (!match || !match[1].trim() || !match[2].trim()) {
-    throw new Error(`${entry.id}: malformed Quantumult X leading rule note: ${line}`);
-  }
-  return {line:match[2].trim(), note:match[1].trim()};
-}
-
-function validateQxExecutableLine(line, entry) {
-  const noted = stripQxLeadingNote(line, entry);
-  line = noted.line;
-  if (noted.note && /^([A-Za-z0-9_-]+)\s*=/.test(line)) {
-    throw new Error(`${entry.id}: Quantumult X leading notes are only valid on filter/rewrite rules: ${line}`);
-  }
-  const mitm = line.match(/^([A-Za-z0-9_-]+)\s*=/);
-  if (mitm) {
-    if (!QX_WAYX_SNIPPET_MITM_KEYS.has(mitm[1].toLowerCase())) {
-      throw new Error(`${entry.id}: unverified/unsupported Quantumult X snippet MITM key: ${mitm[1]}`);
-    }
-    return;
-  }
-
-  const urlMarker = line.indexOf(' url ');
-  if (urlMarker >= 0) {
-    const pattern = line.slice(0, urlMarker).trim();
-    const action = line.slice(urlMarker + 5).trim();
-    if (!pattern) throw new Error(`${entry.id}: Quantumult X rewrite line has an empty URL pattern: ${line}`);
-
-    if (/^(?:reject|reject-200|reject-img|reject-dict|reject-array)$/.test(action)) return;
-    if (/^(?:302|307)\s+\S+$/.test(action)) return;
-    if (/^jsonjq-(?:request|response)-body\s+'.+'$/.test(action)) return;
-    if (/^(?:request|response)-body\s+.+\s+(?:request|response)-body\s+.+$/.test(action)) return;
-    if (/^request-header\s+.+\s+request-header\s+.+$/.test(action)) return;
-
-    const script = action.match(/^(script-[a-z-]+)\s+(\S+)$/);
-    if (script && QX_WAYX_SCRIPT_ACTIONS.has(script[1])) return;
-
-    throw new Error(`${entry.id}: unverified/unsupported Quantumult X rewrite action: ${action}`);
-  }
-
-  const comma = line.indexOf(',');
-  if (comma > 0) {
-    const type = line.slice(0, comma).trim().toLowerCase();
-    if (!QX_WAYX_FILTER_TYPES.has(type)) {
-      throw new Error(`${entry.id}: unverified/unsupported Quantumult X filter type: ${type}`);
-    }
-    const fields = line.split(',').map(part => part.trim());
-    if (fields.length < 3 || !fields[1] || !fields[2]) {
-      throw new Error(`${entry.id}: malformed Quantumult X filter line: ${line}`);
-    }
-    if (['ip-cidr','ip6-cidr','geoip','ip-asn'].includes(type) && fields.slice(3).some(x => x.toLowerCase() === 'no-resolve')) {
-      throw new Error(`${entry.id}: Quantumult X IP-class rules must remove no-resolve`);
-    }
-    return;
-  }
-
-  throw new Error(`${entry.id}: unclassified active Quantumult X line: ${line}`);
-}
-
-function validateQX(text, entry) {
-  const activeMetadata = text.split('\n').filter(l => /^#!/.test(l.trim()));
-  if (activeMetadata.length) throw new Error(`${entry.id}: Quantumult X snippet metadata must be plain comments, not active #! directives`);
-  const activeSections = text.split('\n').filter(l => /^\[(filter_local|rewrite_local|mitm)\]$/i.test(l.trim()));
-  if (activeSections.length) throw new Error(`${entry.id}: Quantumult X section headings must be commented`);
-
-  for (const raw of text.split('\n')) {
-    const line = raw.trim();
-    if (!line || line.startsWith('#')) continue;
-    if (/\(\?[ims](?:[:)])?/i.test(line)) {
-      throw new Error(`${entry.id}: Quantumult X output must not restore discarded Loon regex flags with inline modifiers: ${line}`);
-    }
-    if (/\[hH\]\[tT\]\[tT\]\[pP\](?:\[sS\])?/.test(line)) {
-      throw new Error(`${entry.id}: Quantumult X output must not emulate case-insensitive flags with manual HTTP case-fold classes: ${line}`);
-    }
-    if (/jq-path=/i.test(line)) {
-      throw new Error(`${entry.id}: discarded legacy jq-path alias leaked into active Quantumult X output: ${line}`);
-    }
-    validateQxExecutableLine(line, entry);
-  }
-
-  for (const bad of ['response-body-json-del', 'response-body-json-replace', 'response-body-json-jq', 'mock-response-body']) {
-    const active = text.split('\n').find(l => l.trim() && !l.trim().startsWith('#') && l.includes(bad));
-    if (active) throw new Error(`${entry.id}: unconverted QX token ${bad}`);
-  }
-  const commentedSections = ['# [filter_local]', '# [rewrite_local]', '# [mitm]'].filter(section => text.includes(section));
-  if (!commentedSections.length) throw new Error(`${entry.id}: missing commented QX section heading`);
-}
 
 
 async function main() {
@@ -200,5 +109,4 @@ if (__wayxIsMain) await main();
 
 export {
   cleanSource,
-  validateQX,
 };

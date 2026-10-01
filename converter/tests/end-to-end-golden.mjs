@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { validateQX } from '../../.github/scripts/sync-convert.mjs';
+import { validateQX } from '../src/qx-snippet-validator.mjs';
 import { discoverSourceScriptUrls } from '../src/source-script-materializer.mjs';
 import { convertPlugin, validateSurgeModule } from '../src/index.mjs';
 
