@@ -3,9 +3,10 @@
 // Category: Converter / Canonical Output
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { inspectSourceScript, materializeJqFiles, materializeMockFiles, scriptUrls, validateQX } from '../../.github/scripts/sync-convert.mjs';
-import { normalizePluginSource, parseLoonPlugin } from '../src/plugin-parser.mjs';
+import { validateQX } from '../../.github/scripts/sync-convert.mjs';
+import { normalizePluginSource } from '../src/plugin-parser.mjs';
 import { convertPlugin } from '../src/conversion-pipeline.mjs';
+import { materializeConversionContext } from '../src/conversion-context.mjs';
 import { qxTargetPath, surgeTargetPath } from '../src/paths.mjs';
 import { validateSurgeModule } from '../src/surge-module.mjs';
 import { loadLoonSourceCatalog } from '../src/source-catalog.mjs';
@@ -32,13 +33,6 @@ async function exists(file) {
   catch { return false; }
 }
 
-async function originalScriptMap(source, pluginSourceUrl) {
-  const map = new Map();
-  for (const reference of scriptUrls(source)) {
-    map.set(reference, await inspectSourceScript(reference, pluginSourceUrl));
-  }
-  return map;
-}
 
 function existingStamp(...texts) {
   for (const text of texts) {
@@ -65,12 +59,13 @@ for (const entry of manifest) {
     const oldQx = await readIfExists(qxPath);
     const oldSurge = await readIfExists(surgePath);
     const stamp = existingStamp(oldQx, oldSurge) || nowCN();
-    const scripts = await originalScriptMap(source, entry.source);
-    const parsed = parseLoonPlugin(source);
-    const qxMockFiles = await materializeMockFiles(entry, parsed);
-    const jqFiles = await materializeJqFiles(entry, parsed);
+    const {
+      scriptMap,
+      mockFiles,
+      jqFiles,
+    } = await materializeConversionContext(entry, source);
 
-    let out = convertPlugin(entry, source, {scriptMap:scripts, stamp, mockFiles:qxMockFiles, jqFiles, rawBase:RAW_BASE});
+    let out = convertPlugin(entry, source, {scriptMap, stamp, mockFiles, jqFiles, rawBase:RAW_BASE});
     validateQX(out.qx, entry);
     validateSurgeModule(out.surge, entry, {adblockScope:true});
 
@@ -95,7 +90,7 @@ for (const entry of manifest) {
 
     // Refresh one shared conversion timestamp for targets and WayX-generated
     // helper scripts. Source Script URLs remain untouched and are never mirrored.
-    out = convertPlugin(entry, source, {scriptMap:scripts, stamp:nowCN(), mockFiles:qxMockFiles, jqFiles, rawBase:RAW_BASE});
+    out = convertPlugin(entry, source, {scriptMap, stamp:nowCN(), mockFiles, jqFiles, rawBase:RAW_BASE});
     validateQX(out.qx, entry);
     validateSurgeModule(out.surge, entry, {adblockScope:true});
 
