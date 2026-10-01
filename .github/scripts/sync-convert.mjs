@@ -6,6 +6,7 @@ import { convertPlugin } from '../../converter/src/conversion-pipeline.mjs';
 import { materializeConversionContext } from '../../converter/src/conversion-context.mjs';
 import { fetchOriginalText } from '../../converter/src/source-fetch.mjs';
 import { validateQX } from '../../converter/src/qx-snippet-validator.mjs';
+import { createWorkflowFailureReporter } from '../../converter/src/workflow-diagnostics.mjs';
 import {
   conversionStampFromText,
   normalizeManagedSource,
@@ -22,7 +23,7 @@ const RAW_BASE = 'https://raw.githubusercontent.com/JuemingDC/WayX/main';
 
 async function main() {
   const manifest = await loadLoonSourceCatalog(MANIFEST);
-  const failures = [];
+  const failures = createWorkflowFailureReporter({summaryLabel:'Failures'});
   for (const entry of manifest) {
     try {
       console.log(`\n== ${entry.id} ==`);
@@ -63,14 +64,10 @@ async function main() {
         ? `converted -> ${targetState.qxRelativePath}, ${targetState.surgeRelativePath}`
         : 'conversion verified: outputs unchanged');
     } catch (e) {
-      failures.push(`${entry.id}: ${e.stack || e.message}`);
-      console.error(`::error title=${entry.id}::${String(e.message).replaceAll('\n', '%0A')}`);
+      failures.capture(entry,e);
     }
   }
-  if (failures.length) {
-    console.error('\nFailures:\n' + failures.join('\n\n'));
-    process.exitCode = 1;
-  }
+  if (failures.report()) process.exitCode = 1;
 }
 
 const __wayxIsMain = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url));
