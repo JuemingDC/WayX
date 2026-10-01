@@ -1021,7 +1021,7 @@ const legacyJsonDelBatch = planLegacyRewrite(
   legacyCtx,
 );
 assert.equal(legacyJsonDelBatch.section, 'rewrite');
-assert.match(legacyJsonDelBatch.line, /delpaths\(\[\["data","ads"\],\["data","items",0\]\]\)/);
+assert.match(legacyJsonDelBatch.line, /del\(\.data\.ads\)\|del\(\.data\.items\[0\]\)/);
 
 const jqFileAst = parseRewriteV2('response if ${url} ~= /api/ then response.json.jq_file("filters/remove-ads.jq")');
 const deps = listRewriteV2Dependencies(jqFileAst, {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
@@ -1120,8 +1120,12 @@ assert.equal(compileRegexForTarget(parseRewriteV2('response if ${url} ~= /api/ t
 const qxDeleteV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /^https:\\/\\/api\\.example\\.com\\/feed/i then response.json.delete(["data.ads", "data.apps[0].promo"])'));
 assert.equal(qxDeleteV2.ok, true);
 assert.match(qxDeleteV2.line, /url jsonjq-response-body/);
-assert.match(qxDeleteV2.line, /delpaths/);
-assert.match(qxDeleteV2.line, /\["data","apps",0,"promo"\]/);
+assert.doesNotMatch(qxDeleteV2.line, /delpaths/);
+assert.match(qxDeleteV2.line, /del\(\.data\.ads\) \| del\(\.data\.apps\[0\]\.promo\)/);
+
+const qxDeleteObjectsV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /api/ then response.json.delete(["data.ads", "data.promo"])'));
+assert.equal(qxDeleteObjectsV2.ok, true);
+assert.match(qxDeleteObjectsV2.line, /delpaths\(\[\["data","ads"\], \["data","promo"\]\]\)/);
 
 const qxReplaceV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /search/i then response.json.replace("data.items", `[]`)'));
 assert.equal(qxReplaceV2.ok, true);
