@@ -4,12 +4,12 @@
 > 维护原则：本文件描述“当前 main 的真实状态”，不能替代 `CONVERSION_SPEC.md`；规范冲突时以 `CONVERSION_SPEC.md` 为唯一权威。
 
 - 审计日期：2026-10-01
-- 审计基线：PR #88 QX Script debug/max-size direct-drop policy / Converter Check #668
+- 审计基线：PR #89 repository cleanup / Converter Check #669
 - Source Catalog：20 个 Loon 去广告插件
 - Catalog 管理目标：20 个 Quantumult X snippet + 20 个 Surge sgmodule
 - Adblock 目录实际目标：21 个 QX + 21 个 Surge（额外包含手工维护的 `QZXY`）
-- 最近完整 Converter Check：#668，通过
-- 当前实现 PR：#88
+- 最近完整 Converter Check：#669，通过
+- 当前实现 PR：#89
 
 ---
 
@@ -179,6 +179,7 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 - [x] Managed artifact I/O 已收口：`converter/src/managed-artifacts.mjs` 统一 source normalize/change-detect/write、conversion stamp、QX/Surge target snapshot、generated helper diff/write 与 conditional target write；`sync-convert.mjs` 和 canonical runner 不再分别维护 fs/crypto/target-path/normalization。源合法性仍先于 `Resource/Loon` 写入，online/canonical 时间戳策略、helper/validator/target write 顺序保持原样。Converter Check #662 全绿，canonical/helper 0 diff。
 - [x] Workflow diagnostics 已收口：`converter/src/workflow-diagnostics.mjs` 统一 GitHub Actions error annotation、failure detail 收集与 summary rendering；online sync 继续保持 `Failures:`、`stack || message` 与 `String(error.message)`，canonical runner 继续保持 `Canonical regeneration failures:`、`stack || error` 与 `String(error.message || error)`，调用方仍独占 exit policy/stale-check。Converter Check #663 全绿，canonical/helper 0 diff。
 - [x] QX Source Script `debug` / Legacy `max-size` 已按用户决策改为直接丢弃：QX planner 不输出参数、不输出普通审计注释、不产生 Review/Issue；Script v2 动态 `debug=${...}` 也直接丢弃且不因未声明参数阻断。Surge 行为不变。Converter Check #668 全绿，canonical/helper 0 diff。
+- [x] 仓库清理已完成：删除 deprecated `CONVERSION_POLICY.md` / `LOON_NEW_SYNTAX_CONVERSION.md`、重复 `converter/STATUS.md`、冗余 `Resource/Loon/RuCu6/SOURCES.txt` 及两份已被通用 inventory/planner/Golden 覆盖的 RuCu6 专用 coverage 测试；同时移除 Egern 定时监控、失效 `scan-script-compat.mjs` 引用和相关旧文档引用。PR #89 / Converter Check #669 全绿，canonical/helper 0 diff。
 - 每次新增 QX 官方 sample 证据时，复核现有 Rewrite Review 是否可以安全降级为 native/helper；Rule 只在官方明确支持对应 Rule Type 后才改为活动 filter。
 - [x] QX capability gate 已收窄为 Loon 去广告转换实际能力：仅核对 Rule 类型、WayX 实际使用的 Rewrite action 与 MITM `hostname` 是否仍有 Crossutility 官方依据；转换范围之外的能力不进入 registry。Surge 同样采用 Rule / Rewrite / hostname 边界。
 - [x] Surge official capability gate 已落地：production `rule.mjs` / `surge-module.mjs` 共用 `surge-official-capabilities.mjs`；CI 实时读取 Surge 官方 Manual，只验证 WayX 实际使用的 28 个 Rule Type、URL/Header/Body Rewrite、Map Local、HTTP request/response Script 与 MITM `hostname` 仍有官方依据。Surge 其它 Profile/Module 能力不进入本 gate。
