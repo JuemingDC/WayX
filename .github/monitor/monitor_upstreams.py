@@ -308,10 +308,10 @@ def main() -> int:
 
     cfg = load_json(Path(args.config), {})
     settings = cfg.get("settings", {})
-    state_path = safe(ROOT, settings.get("state_file", "monitor/state.json"))
+    state_path = safe(ROOT, settings.get("state_file", ".github/monitor/state.json"))
     state = load_json(state_path, {"version": 1, "sources": {}})
     states = state.setdefault("sources", {})
-    runtime = safe(ROOT, settings.get("runtime_root", "monitor/.runtime"))
+    runtime = safe(ROOT, settings.get("runtime_root", ".github/monitor/.runtime"))
 
     results = []
     any_state = False

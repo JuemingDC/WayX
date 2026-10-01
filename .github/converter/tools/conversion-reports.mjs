@@ -16,7 +16,7 @@ function argValue(name, fallback) {
   const index = process.argv.indexOf(name);
   return index >= 0 && process.argv[index + 1] ? process.argv[index + 1] : fallback;
 }
-const OUT_DIR = path.resolve(ROOT, argValue('--out-dir', 'monitor/.runtime'));
+const OUT_DIR = path.resolve(ROOT, argValue('--out-dir', '.github/monitor/.runtime'));
 
 const normalize = text => String(text ?? '').replace(/\r\n?/g, '\n').replace(/^\uFEFF/, '');
 const read = async file => normalize(await fs.readFile(file, 'utf8'));

@@ -64,6 +64,7 @@ async function walk(rel){
 const stale=[];
 for(const root of executableRoots){
   for(const rel of await walk(root)){
+    if(rel === '.github/converter/tests/repository-layout.mjs') continue;
     const text=await fs.readFile(path.join(ROOT,rel),'utf8');
     const checks=[
       {re:/(^|[\s'"`(])converter\//gm,label:'root converter/'},

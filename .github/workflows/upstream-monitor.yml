@@ -65,10 +65,10 @@ jobs:
           node --check .github/converter/tests/upstream-automation.mjs
           node --check .github/converter/tests/workflow-control.mjs
           node --check .github/converter/tests/repository-layout.mjs
-          python -m py_compile .github/converter/tools/fetch-upstream.py .github/scripts/validate_conversion_policy.py monitor/monitor_upstreams.py
+          python -m py_compile .github/converter/tools/fetch-upstream.py .github/scripts/validate_conversion_policy.py .github/monitor/monitor_upstreams.py
 
       - name: Prepare runtime logs
-        run: mkdir -p monitor/.runtime
+        run: mkdir -p .github/monitor/.runtime
 
       - name: Pull all Catalog upstreams and convert
         id: loon_sync
