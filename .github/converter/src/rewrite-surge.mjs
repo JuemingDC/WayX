@@ -56,7 +56,7 @@ function ensureSurgeRewriteHandlers() {
         return {
           ok:true,
           section:'script',
-          line:'wayx_header_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+rawBase(ctx)+'/script/'+ctx.id+'/'+filename+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:''),
+          line:'wayx_header_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:''),
         };
       } catch (error) {
         return {ok:false,terminal:true,reason:String(error?.message||error)};
@@ -87,7 +87,7 @@ function ensureSurgeRewriteHandlers() {
         return {
           ok:true,
           section:'script',
-          line:'wayx_complex_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+rawBase(ctx)+'/script/'+ctx.id+'/'+filename+(plan.requiresBody?',requires-body=true':'')+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:''),
+          line:'wayx_complex_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename+(plan.requiresBody?',requires-body=true':'')+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:''),
         };
       } catch (error) {
         return {ok:false,terminal:true,reason:String(error?.message||error)};
@@ -137,7 +137,7 @@ export function planSurgeRewrite(ir,ctx={}) {
       ctx.generatedScripts.set(filename,plan.script);
       return {
         section:'script',
-        line:'wayx_request_mock_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+rawBase(ctx)+'/script/'+ctx.id+'/'+filename+',requires-body=true'+(plan.binaryBodyMode?',binary-body-mode=true':''),
+        line:'wayx_request_mock_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename+',requires-body=true'+(plan.binaryBodyMode?',binary-body-mode=true':''),
       };
     } catch (error) {
       return rewriteReview(source,String(error?.message||error).split('\n')[0]);
@@ -179,7 +179,7 @@ export function planSurgeRewrite(ir,ctx={}) {
       ctx.generatedScripts.set(filename,plan.script);
       return {
         section:'script',
-        line:'wayx_json_mutation_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+rawBase(ctx)+'/script/'+ctx.id+'/'+filename+',requires-body=true'+(payload.value?',argument='+payload.value:''),
+        line:'wayx_json_mutation_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename+',requires-body=true'+(payload.value?',argument='+payload.value:''),
       };
     } catch (error) {
       return rewriteReview(source,String(error?.message||error).split('\n')[0]);

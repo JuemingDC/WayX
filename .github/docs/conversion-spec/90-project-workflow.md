@@ -9,8 +9,8 @@ WayX 的上游维护与转换由 GitHub Actions 自动闭环执行；不再使�
 3. 审计 converter tests / real-plugin regression fixtures。
 4. 审计 canonical QX snippets。
 5. 审计 canonical Surge sgmodules。
-6. 审计 `module/` 人工模块。
-7. 审计 `script/` 路径与声明类型；不做 Source Script runtime compatibility 审查，不修改原脚本正文。
+6. 审计 `Module/` 人工模块。
+7. 审计 `Script/` 路径与声明类型；不做 Source Script runtime compatibility 审查，不修改原脚本正文。
 8. 审计 GitHub Actions / monitor，只允许遍历 Source Catalog 并调用同一个 generic converter。
 9. 重新生成 managed canonical。
 10. 全量 diff。
@@ -110,7 +110,7 @@ Source Catalog entry.source
 - 把原 `script-path` 改写成 WayX/GitHub URL；
 - 原源失败时自动切换第三方副本。
 
-WayX 生成的 target helper 不属于 Source Script 镜像，可以写入 `script/<id>/`。生成 helper 必须由 reference tests 验证真实存在。
+WayX 生成的 target helper 不属于 Source Script 镜像，可以写入 `Script/<id>/`。生成 helper 必须由 reference tests 验证真实存在。
 
 ## 目标 fallback
 
@@ -176,4 +176,4 @@ Review/Issue marker 不阻止其它已验证插件的自动提交。它们是 fa
 
 ## 仓库布局门禁
 
-`.github/converter/tests/repository-layout.mjs`（路径中的前导空格仅为排版错误）由 Converter Check 与 Upstream Monitor 同时执行，用于阻止 `converter/`、`docs/`、`monitor/`、`upstream/` 等工作流目录重新出现在仓库根目录。允许的根目录固定为 `.github / Resource / Adblock / boxjs / module / rule / script`。
+`.github/converter/tests/repository-layout.mjs`（路径中的前导空格仅为排版错误）由 Converter Check 与 Upstream Monitor 同时执行，用于阻止 `converter/`、`docs/`、`monitor/`、`upstream/` 等工作流目录重新出现在仓库根目录。允许的根目录固定为 `.github / Resource / Adblock / Boxjs / Module / Rule / Script`。

@@ -95,7 +95,7 @@ try {
   assert.equal(isWayxGeneratedHelperFilename('manual.js'),false);
   assert.equal(isWayxGeneratedHelperFilename('mock_not-a-hash.js'),false);
 
-  const helperDir=path.join(root,'script',entry.id);
+  const helperDir=path.join(root,'Script',entry.id);
   await fs.writeFile(path.join(helperDir,'mock_0123456789.js'),'// stale generated helper\n');
   await fs.writeFile(path.join(helperDir,'manual.js'),'// manual helper must survive\n');
   assert.deepEqual(

@@ -64,7 +64,7 @@ validateSurgeModule(outA.surge, entryA);
 validateSurgeModule(outB.surge, entryB);
 
 function normalizeGeneratedIdentityPath(line, entryId){
-  return line.replaceAll('/script/' + entryId + '/', '/script/<identity>/');
+  return line.replaceAll('/Script/' + entryId + '/', '/Script/<identity>/');
 }
 function qxSemantics(text, entryId){
   return text.split('\n')

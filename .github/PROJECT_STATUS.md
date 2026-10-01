@@ -35,7 +35,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 ### 2.1 项目治理与自动化
 
 - `.github/CONVERSION_SPEC.md` + `.github/docs/conversion-spec/` Block 00–95 已建立为唯一规范链。
-- 仓库根目录已收口为 `.github / Resource / Adblock / boxjs / module / rule / script`；转换器、规范、监控与工作流实现全部位于 `.github` 工作流域，并由 `repository-layout.mjs` 持续门禁。
+- 仓库根目录已收口为 `.github / Resource / Adblock / Boxjs / Module / Rule / Script`；转换器、规范、监控与工作流实现全部位于 `.github` 工作流域，并由 `repository-layout.mjs` 持续门禁。
 - Source Catalog 驱动 canonical regeneration。
 - 已建立 QX / Surge validator、repository audit、Golden、genericity、helper reference、Source Script URL preservation 等检查。
 - 未知 Loon section、Script parse failure、未知 MITM option 与未知 Rewrite action 不再静默丢失：先注释并标记 `ISSUE REQUIRED`，再由自动化创建/复用议题。已知 action 的新组合不属于 unknown；renderer 无法等价处理时进入 Review。

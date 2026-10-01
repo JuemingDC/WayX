@@ -112,7 +112,7 @@ function activeTargetStats(text) {
     const t = raw.trim();
     if (!t || isComment(t) || /^\[[^\]]+\]$/.test(t) || /^#!/.test(t)) continue;
     activeLines++;
-    if (/raw\.githubusercontent\.com\/JuemingDC\/WayX\/main\/script\//.test(t)) generatedHelperLines++;
+    if (/raw\.githubusercontent\.com\/JuemingDC\/WayX\/main\/Script\//.test(t)) generatedHelperLines++;
     else if (/\bscript-path=/.test(t) || / url script-[a-z-]+ https?:\/\//.test(t)) sourceScriptLines++;
   }
   return {activeLines,generatedHelperLines,sourceScriptLines,nativeOrOtherLines:activeLines-generatedHelperLines-sourceScriptLines};

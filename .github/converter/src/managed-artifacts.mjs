@@ -14,7 +14,7 @@ export function isWayxGeneratedHelperFilename(name) {
   return GENERATED_HELPER_FILENAME_RE.test(String(name ?? ''));
 }
 
-async function staleGeneratedHelpers(root, entry, generatedScripts, {scriptDir='script'}={}) {
+async function staleGeneratedHelpers(root, entry, generatedScripts, {scriptDir='Script'}={}) {
   const dir=path.join(root,scriptDir,entry.id);
   let names=[];
   try { names=await fs.readdir(dir); } catch (error) {
@@ -124,7 +124,7 @@ export async function readManagedTargetState(root, entry) {
   };
 }
 
-export async function generatedScriptDiffs(root, entry, generatedScripts, {scriptDir='script'}={}) {
+export async function generatedScriptDiffs(root, entry, generatedScripts, {scriptDir='Script'}={}) {
   const diffs=[];
   for (const [name,content] of generatedScripts) {
     const file=path.join(root,scriptDir,entry.id,name);
@@ -136,7 +136,7 @@ export async function generatedScriptDiffs(root, entry, generatedScripts, {scrip
   return diffs;
 }
 
-export async function syncGeneratedScripts(root, entry, generatedScripts, {scriptDir='script'}={}) {
+export async function syncGeneratedScripts(root, entry, generatedScripts, {scriptDir='Script'}={}) {
   const changed=[];
   for (const [name,content] of generatedScripts) {
     const file=path.join(root,scriptDir,entry.id,name);

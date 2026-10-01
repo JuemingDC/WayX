@@ -25,7 +25,7 @@ for(const entry of catalog){
 
     const basename=decodeURIComponent(url.pathname.split('/').filter(Boolean).at(-1)||'');
     if(basename){
-      const localMirror=`https://raw.githubusercontent.com/JuemingDC/WayX/main/script/${entry.id}/${basename}`;
+      const localMirror=`https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/${entry.id}/${basename}`;
       if(qx.includes(localMirror)) failures.push({plugin:entry.id,target:'qx',mirror:localMirror});
       if(surge.includes(localMirror)) failures.push({plugin:entry.id,target:'surge',mirror:localMirror});
     }

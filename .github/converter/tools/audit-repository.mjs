@@ -94,7 +94,7 @@ for (const file of files) {
     }
   }
 
-  if (/^(?:converter\/src\/|converter\/tools\/|\.github\/scripts\/)/.test(rp) && rp !== '.github/converter/tools/audit-repository.mjs') {
+  if (/^(?:\.github\/converter\/src\/|\.github\/converter\/tools\/|\.github\/scripts\/)/.test(rp) && rp !== '.github/converter/tools/audit-repository.mjs') {
     for (let i=0;i<lines.length;i++) {
       const t=lines[i];
       if (/\[hH\]\[tT\]\[tT\]\[pP\]/.test(t)) add(file,i+1,'converter-synthetic-casefold',t.trim());
@@ -103,7 +103,7 @@ for (const file of files) {
     }
   }
 
-  if (/^script\/.+\.js$/i.test(rp)) {
+  if (/^Script\/.+\.js$/.test(rp)) {
     for (let i=0;i<lines.length;i++) {
       if (/WayX.*(?:bridge|wrapper)|Script v2 ->|Converted Script/i.test(lines[i])) add(file,i+1,'script-body-adaptation-artifact',lines[i].trim());
     }

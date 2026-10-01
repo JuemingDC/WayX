@@ -7,7 +7,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 const ROOT=process.cwd();
-const allowedRoot=new Set(['.git','.github','Adblock','Resource','boxjs','module','rule','script']);
+const allowedRoot=new Set(['.git','.github','Adblock','Resource','Boxjs','Module','Rule','Script']);
 const rootEntries=await fs.readdir(ROOT);
 const unexpected=rootEntries.filter(name=>!allowedRoot.has(name)).sort();
 assert.deepEqual(
@@ -16,7 +16,7 @@ assert.deepEqual(
   'repository root must contain only .github and conversion-content directories: '+unexpected.join(', '),
 );
 
-for(const rel of ['converter','docs','monitor','upstream','CONVERSION_SPEC.md','PROJECT_STATUS.md','README.md','.gitignore']){
+for(const rel of ['converter','docs','monitor','upstream','boxjs','module','rule','script','CONVERSION_SPEC.md','PROJECT_STATUS.md','README.md','.gitignore']){
   await assert.rejects(
     fs.stat(path.join(ROOT,rel)),
     {code:'ENOENT'},
@@ -35,6 +35,12 @@ for(const rel of [
   '.github/sources/loon.json',
   '.github/manual-assets.json',
   '.github/workflows',
+  'Adblock',
+  'Resource',
+  'Boxjs',
+  'Module',
+  'Rule',
+  'Script',
 ]){
   const stat=await fs.stat(path.join(ROOT,rel));
   assert.ok(stat, 'required workflow-domain path missing: '+rel);
@@ -67,9 +73,15 @@ for(const root of executableRoots){
     if(rel === '.github/converter/tests/repository-layout.mjs') continue;
     const text=await fs.readFile(path.join(ROOT,rel),'utf8');
     const checks=[
-      {re:/(^|[\s'"`(])converter\//gm,label:'root converter/'},
-      {re:/(^|[\s'"`(])monitor\//gm,label:'root monitor/'},
-      {re:/(^|[\s'"`(])docs\/conversion-spec\//gm,label:'root docs/conversion-spec/'},
+      {re:/(^|[\s'"\`(])converter\//gm,label:'root converter/'},
+      {re:/(^|[\s'"\`(])monitor\//gm,label:'root monitor/'},
+      {re:/(^|[\s'"\`(])docs\/conversion-spec\//gm,label:'root docs/conversion-spec/'},
+      {re:/['"\`]boxjs\//g,label:'lowercase boxjs path'},
+      {re:/['"\`]module\//g,label:'lowercase module path'},
+      {re:/['"\`]rule\//g,label:'lowercase rule path'},
+      {re:/['"\`]script\//g,label:'lowercase script path'},
+      {re:/path\.join\([^\n)]*['"](?:boxjs|module|rule|script)['"]/g,label:'lowercase root directory in path.join'},
+      {re:/\/main\/script\//g,label:'lowercase Raw GitHub /script/'},
     ];
     for(const {re,label} of checks){
       if(re.test(text)) stale.push(rel+': '+label);
