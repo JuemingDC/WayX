@@ -43,4 +43,37 @@ errors = []
 module.validate_qx("Adblock/Quantumult X/Demo.snippet", bad, errors)
 assert any("Loon new syntax leaked" in item for item in errors), errors
 
-print("Conversion policy QX inline-note/JQ regression passed")
+surge = """#!name=Demo
+#!desc=Demo
+#!category=WayX
+
+# Converted: 2026-10-01 13:00:00
+# Converted by: chance
+# Target: Surge
+# Source: https://example.com/demo.lpx
+
+[Rule]
+DOMAIN,example.com,REJECT
+"""
+
+errors = []
+module.validate_surge("Adblock/Surge/Demo.sgmodule", surge, errors)
+assert errors == [], errors
+
+errors = []
+module.validate_surge(
+    "Adblock/Surge/Demo.sgmodule",
+    surge.replace("#!category=WayX", "#!category=Other"),
+    errors,
+)
+assert any("exactly one #!category=WayX" in item for item in errors), errors
+
+errors = []
+module.validate_surge(
+    "Adblock/Surge/Demo.sgmodule",
+    surge.replace("#!category=WayX", "#!category=WayX\n# Category: 去广告"),
+    errors,
+)
+assert any("must not use legacy # Category comment" in item for item in errors), errors
+
+print("Conversion policy QX/Surge metadata regression passed")
