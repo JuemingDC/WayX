@@ -7,7 +7,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 const ROOT=process.cwd();
-const allowedRoot=new Set(['.git','.github','Adblock','Resource','boxjs','module','rule','script']);
+const allowedRoot=new Set(['.git','.github','Adblock','Resource','Boxjs','Module','Rule','Script']);
 const rootEntries=await fs.readdir(ROOT);
 const unexpected=rootEntries.filter(name=>!allowedRoot.has(name)).sort();
 assert.deepEqual(
@@ -16,7 +16,7 @@ assert.deepEqual(
   'repository root must contain only .github and conversion-content directories: '+unexpected.join(', '),
 );
 
-for(const rel of ['converter','docs','monitor','upstream','CONVERSION_SPEC.md','PROJECT_STATUS.md','README.md','.gitignore']){
+for(const rel of ['converter','docs','monitor','upstream','boxjs','module','rule','script','CONVERSION_SPEC.md','PROJECT_STATUS.md','README.md','.gitignore']){
   await assert.rejects(
     fs.stat(path.join(ROOT,rel)),
     {code:'ENOENT'},

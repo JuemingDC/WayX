@@ -25,10 +25,10 @@ for(const root of TARGETS){
   for(const file of await walk(root)){
     if(!/\.(?:snippet|sgmodule)$/i.test(file)) continue;
     const text=await fs.readFile(file,'utf8');
-    const re=/https:\/\/raw\.githubusercontent\.com\/JuemingDC\/WayX\/main\/(script\/[A-Za-z0-9%._~!$&'()*+,;=:@\/-]+\.js)/g;
+    const re=/https:\/\/raw\.githubusercontent\.com\/JuemingDC\/WayX\/main\/(Script\/[A-Za-z0-9%._~!$&'()*+,;=:@\/-]+\.js)/g;
     for(const m of text.matchAll(re)){
       const rel=decodeURIComponent(m[1]);
-      assert.ok(rel.startsWith('script/') && !rel.split('/').includes('..'), 'unsafe generated helper path: '+rel);
+      assert.ok(rel.startsWith('Script/') && !rel.split('/').includes('..'), 'unsafe generated helper path: '+rel);
       refs.push({file:path.relative(ROOT,file),rel});
       try { await fs.access(path.join(ROOT,rel)); }
       catch { missing.push({file:path.relative(ROOT,file),rel}); }

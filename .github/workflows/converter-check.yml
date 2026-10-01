@@ -14,7 +14,7 @@ on:
       - ".github/CONVERSION_SPEC.md"
       - ".github/docs/conversion-spec/**"
       - "Resource/Loon/**"
-      - "script/**"
+      - "Script/**"
       - "Adblock/Quantumult X/**"
       - "Adblock/Surge/**"
   workflow_dispatch:
@@ -124,7 +124,7 @@ jobs:
           set -euo pipefail
           while IFS= read -r -d '' file; do
             node --check "$file"
-          done < <(find script .github/converter .github/scripts -type f \( -name '*.js' -o -name '*.mjs' \) -print0)
+          done < <(find Script .github/converter .github/scripts -type f \( -name '*.js' -o -name '*.mjs' \) -print0)
           python -m py_compile .github/converter/tools/fetch-upstream.py .github/converter/tests/validate_conversion_policy.py .github/scripts/*.py .github/monitor/*.py
 
       - name: Regenerate canonical outputs
@@ -154,7 +154,7 @@ jobs:
           path: |
             Adblock/Quantumult X/*.snippet
             Adblock/Surge/*.sgmodule
-            script/**
+            Script/**
             .github/monitor/.runtime/conversion-reconciliation.json
             .github/monitor/.runtime/conversion-reconciliation.md
             .github/monitor/.runtime/review-inventory.json
@@ -167,7 +167,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git add -A -- "Adblock/Quantumult X" "Adblock/Surge" script
+          git add -A -- "Adblock/Quantumult X" "Adblock/Surge" Script
           if git diff --cached --quiet; then
             exit 0
           fi
@@ -188,7 +188,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          status="$(git status --porcelain --untracked-files=all -- "Adblock/Quantumult X" "Adblock/Surge" script)"
+          status="$(git status --porcelain --untracked-files=all -- "Adblock/Quantumult X" "Adblock/Surge" Script)"
           if [[ -n "$status" ]]; then
             printf '%s\n' "$status"
             exit 1

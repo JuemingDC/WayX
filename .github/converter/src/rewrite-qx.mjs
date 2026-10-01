@@ -69,7 +69,7 @@ function ensureQxRewriteHandlers() {
         return {
           ok:true,
           section:'rewrite',
-          line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/script/'+ctx.id+'/'+filename,
+          line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename,
         };
       } catch(error){
         return {ok:false,terminal:true,reason:String(error?.message||error)};
@@ -94,7 +94,7 @@ function ensureQxRewriteHandlers() {
         return {
           ok:true,
           section:'rewrite',
-          line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/script/'+ctx.id+'/'+filename,
+          line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename,
         };
       } catch (error) {
         return {ok:false,terminal:true,reason:String(error?.message||error)};
@@ -120,7 +120,7 @@ function ensureQxRewriteHandlers() {
         return {
           ok:true,
           section:'rewrite',
-          line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/script/'+ctx.id+'/'+filename,
+          line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename,
         };
       } catch (error) {
         return {ok:false,terminal:true,reason:String(error?.message||error)};
@@ -195,7 +195,7 @@ export function planQxRewrite(ir, ctx={}) {
         sourceLine:source,
       });
       ctx.generatedScripts.set(filename,script);
-      return {section:'rewrite',line:condition.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/script/'+ctx.id+'/'+filename};
+      return {section:'rewrite',line:condition.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
     } catch (error) {
       return rewriteReview(source,String(error?.message||error).split('\n')[0]);
     }
@@ -207,7 +207,7 @@ export function planQxRewrite(ir, ctx={}) {
       const key=crypto.createHash('sha1').update('mock-inline\0'+source).digest('hex').slice(0,10);
       const filename='mock_'+key+'.js';
       ctx.generatedScripts.set(filename,plan.script);
-      return {section:'rewrite',line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/script/'+ctx.id+'/'+filename};
+      return {section:'rewrite',line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
     } catch (error) {
       return rewriteReview(source,String(error?.message||error).split('\n')[0]);
     }
@@ -237,7 +237,7 @@ export function planQxRewrite(ir, ctx={}) {
       const key=crypto.createHash('sha1').update('header-single\\0'+source).digest('hex').slice(0,10);
       const filename='header_'+key+'.js';
       ctx.generatedScripts.set(filename,plan.script);
-      return {section:'rewrite',line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/script/'+ctx.id+'/'+filename};
+      return {section:'rewrite',line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
     } catch (error) {
       return rewriteReview(source,String(error?.message||error).split('\n')[0]);
     }
@@ -249,7 +249,7 @@ export function planQxRewrite(ir, ctx={}) {
       const key=crypto.createHash('sha1').update('json-add-qx\\0'+source).digest('hex').slice(0,10);
       const filename='json_add_qx_'+key+'.js';
       ctx.generatedScripts.set(filename,plan.script);
-      return {section:'rewrite',line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/script/'+ctx.id+'/'+filename};
+      return {section:'rewrite',line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
     } catch (error) {
       return rewriteReview(source,String(error?.message||error).split('\n')[0]);
     }
@@ -261,7 +261,7 @@ export function planQxRewrite(ir, ctx={}) {
       const key=crypto.createHash('sha1').update('redirect\0'+source).digest('hex').slice(0,10);
       const filename='redirect_'+key+'.js';
       ctx.generatedScripts.set(filename,plan.script);
-      return {section:'rewrite',line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/script/'+ctx.id+'/'+filename};
+      return {section:'rewrite',line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
     } catch (error) {
       return rewriteReview(source,String(error?.message||error).split('\n')[0]);
     }
@@ -273,7 +273,7 @@ export function planQxRewrite(ir, ctx={}) {
       const key=crypto.createHash('sha1').update('reject\0'+source).digest('hex').slice(0,10);
       const filename='reject_'+key+'.js';
       ctx.generatedScripts.set(filename,plan.script);
-      return {section:'rewrite',line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/script/'+ctx.id+'/'+filename};
+      return {section:'rewrite',line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
     } catch (error) {
       return rewriteReview(source,String(error?.message||error).split('\n')[0]);
     }

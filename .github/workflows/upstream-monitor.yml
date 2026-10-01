@@ -142,7 +142,7 @@ jobs:
           git config user.name "chance-upstream-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add -A Resource/Loon Adblock script boxjs .github/monitor/state.json .github/monitor/upstream
+          git add -A Resource/Loon Adblock Script Boxjs .github/monitor/state.json .github/monitor/upstream
 
           if git diff --cached --quiet; then
             echo "No validated upstream/conversion changes to commit."

@@ -103,7 +103,7 @@ for (const file of files) {
     }
   }
 
-  if (/^script\/.+\.js$/i.test(rp)) {
+  if (/^Script\/.+\.js$/.test(rp)) {
     for (let i=0;i<lines.length;i++) {
       if (/WayX.*(?:bridge|wrapper)|Script v2 ->|Converted Script/i.test(lines[i])) add(file,i+1,'script-body-adaptation-artifact',lines[i].trim());
     }
