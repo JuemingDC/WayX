@@ -53,6 +53,14 @@ const scalarDeleteAst = parseRewriteV2(
 );
 assert.match(qxDirectRewritePlan(scalarDeleteAst).line, /'del\(\.data\.ad\)'$/);
 
+const indexedDeleteAst = parseRewriteV2(
+  'response if ${url} ~= /api/ then response.json.delete(["items[0]", "items[1]"])'
+);
+const indexedDeleteQx = qxDirectRewritePlan(indexedDeleteAst);
+const indexedDeleteSurge = surgeDirectRewritePlan(indexedDeleteAst);
+assert.match(indexedDeleteQx.line, /del\(\.items\[0\]\) \| del\(\.items\[1\]\)/);
+assert.match(indexedDeleteSurge.line, /del\(\.items\[0\]\) \| del\(\.items\[1\]\)/);
+
 const jqAst = parseRewriteV2(
   'response if ${url} ~= /^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idle\\.trade\\.full\\.info\\//i then response.json.jq(".data.components |= map(select(.render | . == \\"orderStatusVO\\" or . == \\"addressInfoVO\\" or . == \\"orderInfoVO\\"))")'
 );
