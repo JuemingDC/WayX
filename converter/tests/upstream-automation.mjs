@@ -5,7 +5,9 @@ import {
 } from '../src/upstream-run-report.mjs';
 import {
   syncFailureIssueBody,
+  syncFailureTitle,
   targetProblemIssueBody,
+  targetProblemTitle,
 } from '../../.github/scripts/propose-conversion-issues.mjs';
 
 const previous=`#!name=Demo
@@ -78,5 +80,21 @@ for(const required of [
 ]){
   assert.ok(targetBody.includes(required),required);
 }
+
+const titleGroup={
+  kind:'unknown',
+  code:'unknown-rewrite-action',
+  plugin:entry,
+  source:'response if ${url} ~= /api/ then response.future.action()',
+  reasons:['unsupported action'],
+  locations:[],
+};
+assert.equal(targetProblemTitle(titleGroup),targetProblemTitle(titleGroup));
+assert.notEqual(
+  targetProblemTitle(titleGroup),
+  targetProblemTitle({...titleGroup,plugin:{...entry,id:'OtherDemo'}}),
+  'target issue fingerprint must include plugin identity',
+);
+assert.equal(syncFailureTitle(failure),syncFailureTitle(failure));
 
 console.log('Automated upstream issue content contract passed');
