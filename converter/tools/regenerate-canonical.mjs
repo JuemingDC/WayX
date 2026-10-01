@@ -3,7 +3,7 @@
 // Category: Converter / Canonical Output
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { validateQX } from '../../.github/scripts/sync-convert.mjs';
+import { validateQX } from '../src/qx-snippet-validator.mjs';
 import { normalizePluginSource } from '../src/plugin-parser.mjs';
 import { convertPlugin } from '../src/conversion-pipeline.mjs';
 import { materializeConversionContext } from '../src/conversion-context.mjs';
