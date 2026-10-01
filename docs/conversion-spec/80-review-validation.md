@@ -399,3 +399,20 @@ CI 必须验证在线 sync 与 canonical regeneration 的失败诊断已收口�
 - behavior contract：`converter/tests/workflow-diagnostics.mjs`
 - architecture contract：`converter/tests/spec-block-contract.mjs`
 
+## 80.22 Catalog Legacy syntax inventory gate
+
+CI 必须扫描全部 Source Catalog 的活动 Legacy Rewrite / Legacy Script 声明，并与人工确认 baseline 对比：
+
+- Legacy Rewrite：跳过 Rewrite v2 后，按 production legacy declaration split + `classifyLegacyRewriteAction()` 记录 action kinds/shapes；
+- 当前 baseline 中不得存在 `unknown` legacy Rewrite；新 unknown action 必须立即失败，不允许仅因 production 最终会生成 Issue 就更新 baseline；
+- mock 只记录 option key 组合，不记录 data/status/path 的具体值；
+- Legacy Script：跳过 Script v2 后，所有活动 HTTP Script 声明必须由 `parseLegacyScriptLine()` 成功解析；
+- 记录 Script phase、option names、value shapes、option-set；不锁 script path/pattern/具体参数值或声明数量；
+- baseline 变更提示必须明确“禁止机械更新”，要求先审查 Loon source semantics，再判断是否需要 QX/Surge 官方能力核对和 converter/spec/tests 变更；
+- inventory 只用于发现新上游语法，不得成为 target capability whitelist；
+- 本 gate 不改 target 输出，canonical/helper 必须 0 diff。
+
+实现：
+- inventory test：`converter/tests/catalog-legacy-syntax-inventory.mjs`
+- baseline fixture：`converter/fixtures/catalog-legacy-syntax-inventory.json`
+

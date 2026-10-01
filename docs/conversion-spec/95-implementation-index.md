@@ -45,3 +45,9 @@
 ```
 
 任何第二份插件清单、按插件名分支、按当前工作分支名自动修 canonical 的逻辑都违反本索引和 Block 05/90。
+
+### Catalog Legacy syntax inventory
+
+- Test：`converter/tests/catalog-legacy-syntax-inventory.mjs`
+- Baseline：`converter/fixtures/catalog-legacy-syntax-inventory.json`
+- Scope：Legacy Rewrite / Legacy HTTP Script observed syntax only; no target capability expansion.
