@@ -8,11 +8,64 @@
     "user_agent": "chance-upstream-monitor/2.0"
   },
   "sources": [
-    {"id":"surge-official-llms","name":"Surge 官方 llms.txt","kind":"http","platform":"Surge","url":"https://nssurge.com/llms.txt","save_as":"Surge/llms.txt","normalize":"raw","analysis":"work","category":"官方文档"},
-    {"id":"egern-modules","name":"Egern Modules 官方文档","kind":"http","platform":"Egern","url":"https://egernapp.com/docs/configuration/modules/","save_as":"Egern/modules.txt","normalize":"html_text","analysis":"work","category":"官方文档"},
-    {"id":"egern-scriptings","name":"Egern Scriptings 官方文档","kind":"http","platform":"Egern","url":"https://egernapp.com/docs/configuration/scriptings/","save_as":"Egern/scriptings.txt","normalize":"html_text","analysis":"work","category":"官方文档"},
-    {"id":"loon-rewrite-v2","name":"Loon Rewrite 新语法官方文档","kind":"http","platform":"Loon","url":"https://nsloon.app/docs/Rewrite/rewrite_v2/","save_as":"Loon/rewrite_v2.txt","normalize":"html_text","analysis":"work","category":"官方文档"},
-    {"id":"quantumultx-official","name":"Quantumult X 官方仓库","kind":"github_repo","platform":"Quantumult X","repo":"crossutility/Quantumult-X","ref":"master","save_as":"QuantumultX/official","analysis":"work","sync_changed_files":true,"include_globs":["*.conf","*.snippet","*.js","*.md","*.json"],"category":"官方示例与语法"},
-    {"id":"quantumultx-parser","name":"Quantumult X 资源解析器仓库","kind":"github_repo","platform":"Quantumult X","repo":"KOP-XIAO/QuantumultX","ref":"master","save_as":"QuantumultX/parser","analysis":"work","sync_changed_files":true,"include_globs":["*.js","*.md","*.conf","*.snippet"],"category":"资源解析器"}
+    {
+      "id": "surge-official-llms",
+      "name": "Surge 官方 llms.txt",
+      "kind": "http",
+      "platform": "Surge",
+      "url": "https://nssurge.com/llms.txt",
+      "save_as": "Surge/llms.txt",
+      "normalize": "raw",
+      "analysis": "work",
+      "category": "官方文档"
+    },
+    {
+      "id": "loon-rewrite-v2",
+      "name": "Loon Rewrite 新语法官方文档",
+      "kind": "http",
+      "platform": "Loon",
+      "url": "https://nsloon.app/docs/Rewrite/rewrite_v2/",
+      "save_as": "Loon/rewrite_v2.txt",
+      "normalize": "html_text",
+      "analysis": "work",
+      "category": "官方文档"
+    },
+    {
+      "id": "quantumultx-official",
+      "name": "Quantumult X 官方仓库",
+      "kind": "github_repo",
+      "platform": "Quantumult X",
+      "repo": "crossutility/Quantumult-X",
+      "ref": "master",
+      "save_as": "QuantumultX/official",
+      "analysis": "work",
+      "sync_changed_files": true,
+      "include_globs": [
+        "*.conf",
+        "*.snippet",
+        "*.js",
+        "*.md",
+        "*.json"
+      ],
+      "category": "官方示例与语法"
+    },
+    {
+      "id": "quantumultx-parser",
+      "name": "Quantumult X 资源解析器仓库",
+      "kind": "github_repo",
+      "platform": "Quantumult X",
+      "repo": "KOP-XIAO/QuantumultX",
+      "ref": "master",
+      "save_as": "QuantumultX/parser",
+      "analysis": "work",
+      "sync_changed_files": true,
+      "include_globs": [
+        "*.js",
+        "*.md",
+        "*.conf",
+        "*.snippet"
+      ],
+      "category": "资源解析器"
+    }
   ]
 }
