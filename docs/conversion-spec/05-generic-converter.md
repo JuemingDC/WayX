@@ -408,6 +408,10 @@ Source Catalog 可以包含具体插件名和原作者 URL，因为它只是数�
 - 插件：只请求 `entry.source`。
 - Source Script：只请求插件声明中的 `script-path` / `script("...")` URL。
 - 相对 dependency：只按插件原始 URL 解析后直接请求。
+- 获取层允许按解析后的真实 hostname 选择 HTTP transport/header profile，但**不得改变请求的原作者 URL**。
+- 当前 `kelee.one` / `*.kelee.one` 与 `rucu6.pages.dev` 固定使用 `converter/tools/fetch-upstream.py` 的 Python `urllib.request` transport，并统一使用 `WAYX_LOON_FETCH_UA`（当前 `Loon/764 CFNetwork/1498.700.1 Darwin/23.6.0 iPhone/17.6.1`）与 `Accept: */*`；其它 host 使用默认 Node fetch profile。
+- Host profile 只能依据 URL parser 得到的 hostname；禁止字符串包含匹配，禁止根据插件 id/name/file 选择 transport。
+- Python helper 只负责原始 HTTP bytes I/O，不维护插件列表、不做 Loon 解析/转换、不替换 URL；专用 transport 失败时不得回退到默认 transport、镜像或缓存。
 - 禁止第三方 GitHub 副本、第三方镜像、备用域名和 fallback 链；若原作者官方 `source` 本身就是 GitHub/GitHub Raw，则该 URL 属于原作者源，可直接使用。
 - Plugin/JQ/mock 等转换必需源不可达：本轮失败并进入 Review，不切换副本。Source Script 正文读取失败不因“兼容性未知”禁用原始 URL；若 declaration 已足以确定 action 则继续转换，若 QX request-phase action 仍有歧义则仅该 QX 声明 Review。
 - QX/Surge 中的 Source Script URL 必须继续指向源插件声明的 URL。
@@ -459,7 +463,9 @@ CI 必须审计生产 converter，禁止出现已登记插件身份驱动的语�
 - Source Catalog schema/validation：`converter/src/source-catalog.mjs`
 - Hand-maintained asset manifest：`.github/manual-assets.json`
 - Manual asset contract：`converter/tests/manual-assets.mjs`
-- Original-source fetch layer：`converter/src/source-fetch.mjs`
+- Original-source fetch layer / host profile router：`converter/src/source-fetch.mjs`
+- Python raw transport adapter：`converter/tools/fetch-upstream.py`
+- Fetch profile contract：`converter/tests/source-fetch.mjs`
 - Generic orchestration：`.github/scripts/sync-convert.mjs`
 - Shared validated conversion runner：`converter/src/conversion-runner.mjs`
 - Offline canonical regeneration：`converter/tools/regenerate-canonical.mjs`
