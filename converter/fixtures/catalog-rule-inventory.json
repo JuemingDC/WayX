@@ -17,6 +17,7 @@
     "DOMAIN",
     "DOMAIN-KEYWORD",
     "DOMAIN-SUFFIX",
+    "IP-ASN",
     "OR",
     "PROTOCOL",
     "URL-REGEX",
@@ -32,6 +33,7 @@
     "no-resolve"
   ],
   "parameterShapes": [
+    "IP-ASN:no-resolve",
     "IP-CIDR6:no-resolve",
     "IP-CIDR:no-resolve"
   ],
@@ -48,7 +50,8 @@
     4
   ],
   "nestedFieldCounts": [
-    2
+    2,
+    3
   ],
   "maxLogicalDepth": 2
 }

@@ -12,7 +12,7 @@ import { surgeArgumentMetadata } from './argument.mjs';
 import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection } from './source-section.mjs';
 import { attachQxInlineNote } from './qx-comment.mjs';
 import { planMitmLine } from './mitm.mjs';
-import { legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from './rewrite-ir.mjs';
+import { isDiscardedLegacyJqPathIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from './rewrite-ir.mjs';
 import { planQxRewrite } from './rewrite-qx.mjs';
 import { planSurgeRewrite } from './rewrite-surge.mjs';
 import { rewriteReview, rewriteIssue } from './rewrite-plan-result.mjs';
@@ -242,8 +242,13 @@ export function convertPlugin(entry,source,{
     if (!qr || !sr) {
       const [pattern,action]=splitPatternAction(item.line);
       const ir=legacyRewriteToSemanticIr(pattern,action);
-      if (!qr) qr=planQxRewrite(ir,{...qctx,sourceLine:item.line});
-      if (!sr) sr=planSurgeRewrite(ir,{...sctx,sourceLine:item.line});
+      if (isDiscardedLegacyJqPathIr(ir)) {
+        if (!qr) qr={section:'drop',line:'',reason:'discard-legacy-jq-path'};
+        if (!sr) sr={section:'drop',line:'',reason:'discard-legacy-jq-path'};
+      } else {
+        if (!qr) qr=planQxRewrite(ir,{...qctx,sourceLine:item.line});
+        if (!sr) sr=planSurgeRewrite(ir,{...sctx,sourceLine:item.line});
+      }
     }
 
     const qdest=qxRewriteOutputDestination(qx,qr.section);
