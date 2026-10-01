@@ -48,6 +48,7 @@ jobs:
           node --check converter/tests/spec-block-contract.mjs
           node --check converter/tests/complex-source-inventory.mjs
           node --check converter/tests/catalog-syntax-inventory.mjs
+          node --check converter/tests/catalog-legacy-syntax-inventory.mjs
           node --check converter/tests/catalog-rule-inventory.mjs
           node --check converter/tests/rule-ast.mjs
           node --check converter/tests/rewrite-ir.mjs
@@ -84,6 +85,7 @@ jobs:
           node converter/tests/spec-block-contract.mjs
           node converter/tests/complex-source-inventory.mjs
           node converter/tests/catalog-syntax-inventory.mjs
+          node converter/tests/catalog-legacy-syntax-inventory.mjs
           node converter/tests/catalog-rule-inventory.mjs
           node converter/tests/rule-ast.mjs
           node converter/tests/rewrite-ir.mjs
