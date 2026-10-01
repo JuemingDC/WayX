@@ -313,7 +313,7 @@ CI 必须验证纯转换核心已经脱离 GitHub/I/O orchestration：
 - `plugin-parser.mjs` 是整体 Loon section parser；`sync-convert.mjs` 不得重新定义 `parseLoon()`；
 - `conversion-pipeline.mjs` 导出唯一 production `convertPlugin()`；`sync-convert.mjs` 不得重新定义 `convert()` 或直接 import Rule/Rewrite/Script/MITM planner；
 - `conversion-pipeline.mjs` 不得 import Node `fs/path`、Source Catalog、source-fetch 或任何网络/GitHub 工具；
-- pipeline 必须消费已物化的 `parsed/scriptMap/mockFiles/jqFiles` context；production/canonical 必须显式传入 materializer 返回的 `parsed`，不得重复整体解析，禁止自行 fetch；
+- pipeline 必须消费已物化的 `parsed/scriptMap/mockFiles/jqFiles` context，禁止自行 fetch；production/canonical 必须显式传入 materializer 返回的 `parsed`，不得重复整体解析；
 - unknown source section、Argument review、disabled Script/Rewrite comments、planner dispatch 与 target output builder 调用均由 pipeline 负责；
 - `regenerate-canonical.mjs` 必须直接 import `convertPlugin()`；整体 parser 由 `materializeConversionContext()` 统一调用，canonical runner 不得再单独 parse；
 - `sync-convert.mjs` 只保留 plugin fetch、调用 `materializeConversionContext()`、调用 `convertPlugin()`、validate/write orchestration；
