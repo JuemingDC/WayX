@@ -226,11 +226,11 @@ export function syncFailureIssueBody(failure) {
   ].join('\n');
 }
 
-function targetProblemTitle(group) {
+export function targetProblemTitle(group) {
   return '[conversion-'+group.kind+':'+group.fingerprint+'] '+group.plugin.id+' '+group.code;
 }
 
-function syncFailureTitle(failure) {
+export function syncFailureTitle(failure) {
   const fp=fingerprint([
     failure.plugin.id,
     failure.stage,
