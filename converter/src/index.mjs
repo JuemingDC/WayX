@@ -42,6 +42,5 @@ export * from './qx-comment.mjs';
 export * from './source-metadata.mjs';
 export * from './source-section.mjs';
 export * from './complex-rewrite.mjs';
-export * from './complex-rewrite-types.mjs';
 export * from './complex-rewrite-registry.mjs';
 export * from './complex-rewrite-script.mjs';
