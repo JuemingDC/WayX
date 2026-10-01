@@ -106,15 +106,16 @@ export function jsonActionToJq(action) {
       return { parts, literal:JSON.stringify(parts), selector:pathSelector(value) };
     });
     if (action.args[0]?.type === 'array') {
-      // delpaths() is compact and equivalent for object-only Key Paths. Array
-      // indices are order-sensitive because each deletion shifts later indices,
-      // so preserve Loon's documented left-to-right batch order with del().
+      // jq del(path_expression) can consume a comma expression that yields
+      // multiple paths, so object-only batches stay compact as one del(...).
+      // Array indices remain order-sensitive because each deletion shifts later
+      // indices; preserve Loon's left-to-right batch order with chained del().
       if (paths.some(item => item.parts.some(part => typeof part === 'number'))) {
         return {ok:true, jq:paths.map(item => 'del(' + item.selector + ')').join(' | ')};
       }
-      return { ok:true, jq:'delpaths([' + paths.map(item => item.literal).join(', ') + '])' };
+      return {ok:true, jq:'del(' + paths.map(item => item.selector).join(', ') + ')'};
     }
-    return { ok:true, jq:'del(' + paths[0].selector + ')' };
+    return {ok:true, jq:'del(' + paths[0].selector + ')'};
   }
 
   const paths = scalarItems(action.args[0]);
