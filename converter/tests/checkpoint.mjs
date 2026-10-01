@@ -65,7 +65,6 @@ import {
 import { classifyComplexRewrite, complexConditionKinds } from '../src/complex-rewrite.mjs';
 import { registerComplexRewriteHandler, planComplexRewrite, listComplexRewriteHandlers } from '../src/complex-rewrite-registry.mjs';
 import { renderMixedRewriteScript, renderSingleJsonMutationScript } from '../src/complex-rewrite-script.mjs';
-import { renderQxInlineMockScript } from '../src/qx-semantic-script.mjs';
 
 assert.equal(qxRule('URL-REGEX, "^https:\\/\\/ad\\.example\\.com", REJECT').line, '^https:\\/\\/ad\\.example\\.com url reject-200');
 assert.equal(
