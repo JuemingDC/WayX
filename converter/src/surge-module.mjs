@@ -18,6 +18,7 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
   const allowedTopDirectives = [
     /^#!name=.+$/i,
     /^#!desc=.+$/i,
+    /^#!category=WayX$/,
     /^#!system=mac$/i,
     /^#!requirement=.+$/i,
     /^#!arguments=.+$/i,
@@ -26,6 +27,7 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
 
   if (!/^#!name=.+$/m.test(text)) throw new Error(`${entry.id}: Surge module missing #!name`);
   if (!/^#!desc=.+$/m.test(text)) throw new Error(`${entry.id}: Surge module missing #!desc`);
+  if (!/^#!category=WayX$/m.test(text)) throw new Error(`${entry.id}: Surge module must declare #!category=WayX`);
 
   let current = null;
   let hasBodyRewrite = false;
