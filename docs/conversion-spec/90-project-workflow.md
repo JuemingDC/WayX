@@ -63,6 +63,8 @@ converter 先实现
 - Source Script materializer：`converter/src/source-script-materializer.mjs`
 - Shared conversion context：`converter/src/conversion-context.mjs`
 - Pure generic conversion core：`converter/src/conversion-pipeline.mjs`
+- Quantumult X snippet validator：`converter/src/qx-snippet-validator.mjs`
+- Surge module validator：`converter/src/surge-module.mjs`
 - Canonical deterministic regeneration：`converter/tools/regenerate-canonical.mjs`（直接复用 conversion context/pipeline）
 - CI gate：`.github/workflows/converter-check.yml`（同仓库 PR 可自动提交 deterministic canonical + WayX-generated helpers；外部 fork 只校验不写入）
 - Upstream scheduled flow：`.github/workflows/upstream-monitor.yml`
@@ -70,7 +72,7 @@ converter 先实现
 
 自动化脚本不得再维护第二份插件列表；所有 Loon source 必须从 Source Catalog 遍历。
 
-`sync-convert.mjs` 不得承载 Rule/Rewrite/Script/MITM semantic dispatch、依赖 discovery/materialization 或最终 target assembly。生产转换与 canonical regeneration 必须先调用同一个 `materializeConversionContext()`，并把其返回的同一个 `parsed` 传入 `convertPlugin()`，避免在线/离线两套解析、依赖与转换逻辑。
+`sync-convert.mjs` 不得承载 Rule/Rewrite/Script/MITM semantic dispatch、依赖 discovery/materialization、QX validator 语法实现或最终 target assembly。生产转换与 canonical regeneration 必须先调用同一个 `materializeConversionContext()`，并把其返回的同一个 `parsed` 传入 `convertPlugin()`；两条路径都必须直接调用 converter-owned QX/Surge validators，避免在线/离线两套解析、依赖、转换与校验逻辑。
 
 ## 原作者源唯一链路
 
