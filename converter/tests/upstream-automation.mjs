@@ -62,6 +62,7 @@ const targetBody=targetProblemIssueBody({
   plugin:entry,
   source:'response if ${url} ~= /api/ then response.future.action()',
   sourceSection:'Rewrite',
+  declarations:[{section:'Rewrite',line:'response if ${url} ~= /api/ then response.future.action()'}],
   reasons:['unsupported action response.future.action'],
   locations:[
     {file:'Adblock/Quantumult X/Demo.snippet',line:20},
