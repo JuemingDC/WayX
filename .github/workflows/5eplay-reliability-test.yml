@@ -118,7 +118,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git add -A --             Resource/Loon/5EPlay_remove_ads.lpx             "Adblock/Quantumult X/5EPlay_remove_ads.snippet"             Adblock/Surge/5EPlay_remove_ads.sgmodule             Script/5EPlay
+          git add -A -- Resource/Loon/5EPlay_remove_ads.lpx "Adblock/Quantumult X/5EPlay_remove_ads.snippet" Adblock/Surge/5EPlay_remove_ads.sgmodule
+          if [ -d Script/5EPlay ]; then
+            git add -A -- Script/5EPlay
+          fi
 
           if git diff --cached --quiet; then
             echo "5EPlay outputs already match production conversion."
