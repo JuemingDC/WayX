@@ -63,6 +63,7 @@ converter 先实现
 - Source Script materializer：`converter/src/source-script-materializer.mjs`
 - Shared conversion context：`converter/src/conversion-context.mjs`
 - Pure generic conversion core：`converter/src/conversion-pipeline.mjs`
+- Managed source/target/helper artifact I/O：`converter/src/managed-artifacts.mjs`
 - Quantumult X snippet validator：`converter/src/qx-snippet-validator.mjs`
 - Surge module validator：`converter/src/surge-module.mjs`
 - Canonical deterministic regeneration：`converter/tools/regenerate-canonical.mjs`（直接复用 conversion context/pipeline）
@@ -72,7 +73,7 @@ converter 先实现
 
 自动化脚本不得再维护第二份插件列表；所有 Loon source 必须从 Source Catalog 遍历。
 
-`sync-convert.mjs` 不得承载 Rule/Rewrite/Script/MITM semantic dispatch、依赖 discovery/materialization、QX validator 语法实现或最终 target assembly。生产转换与 canonical regeneration 必须先调用同一个 `materializeConversionContext()`，并把其返回的同一个 `parsed` 传入 `convertPlugin()`；两条路径都必须直接调用 converter-owned QX/Surge validators，避免在线/离线两套解析、依赖、转换与校验逻辑。
+`sync-convert.mjs` 不得承载 Rule/Rewrite/Script/MITM semantic dispatch、依赖 discovery/materialization、managed artifact 文件系统实现、QX validator 语法实现或最终 target assembly。生产转换与 canonical regeneration 必须先调用同一个 `materializeConversionContext()`，并把其返回的同一个 `parsed` 传入 `convertPlugin()`；两条路径直接复用 `managed-artifacts.mjs` 的非语义 I/O primitives，并直接调用 converter-owned QX/Surge validators，避免在线/离线重复维护文件 normalization、artifact diff/write、解析、依赖、转换与校验逻辑。
 
 ## 原作者源唯一链路
 
