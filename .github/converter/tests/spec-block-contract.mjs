@@ -54,7 +54,7 @@ assert.match(upstreamWorkflow,/REMOTE_MAIN/, 'Block 90: automated push must veri
 assert.equal(/git pull --rebase origin main/.test(upstreamWorkflow), false, 'Block 90: generated output must not be rebased onto a newer main without regeneration');
 assert.match(upstreamWorkflow,/node \.github\/scripts\/sync-convert\.mjs/, 'Block 90: scheduled workflow must call the unified converter');
 assert.match(upstreamWorkflow,/node \.github\/scripts\/propose-conversion-issues\.mjs/, 'Block 80/90: scheduled workflow must create/update conversion Issues');
-assert.match(upstreamWorkflow,/node converter\/tools\/audit-repository\.mjs/, 'Block 80/90: scheduled workflow must audit repository before commit');
+assert.match(upstreamWorkflow,/node \.github\/converter\/tools\/audit-repository\.mjs/, 'Block 80/90: scheduled workflow must audit repository before commit');
 assert.match(upstreamWorkflow,/git commit -m "chore: sync upstream and regenerate targets"/, 'Block 90: validated scheduled output must commit directly to main');
 assert.equal(/work\/catalog-unification|github\.head_ref\s*==/.test(converterWorkflow), false, 'Block 90: CI must not contain branch-specific canonical behavior');
 assert.equal(/EXTRA_LOCAL_ENTRIES|RuCu6\/youtube\.lpx|RuCu6\/myblockads\.lpx/.test(canonicalRunner), false, 'Block 90: canonical runner must only traverse Source Catalog');
