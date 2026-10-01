@@ -35,6 +35,12 @@ for(const rel of [
   '.github/sources/loon.json',
   '.github/manual-assets.json',
   '.github/workflows',
+  'Adblock',
+  'Resource',
+  'Boxjs',
+  'Module',
+  'Rule',
+  'Script',
 ]){
   const stat=await fs.stat(path.join(ROOT,rel));
   assert.ok(stat, 'required workflow-domain path missing: '+rel);
