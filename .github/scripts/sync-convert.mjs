@@ -148,7 +148,7 @@ async function main() {
         parsed,
         scriptMap,
         mockFiles: qxMockFiles,
-        jqFiles:
+        jqFiles,
       } = await materializeConversionContext(entry, source);
 
       const qxPath = path.join(ROOT, qxTargetPath(entry));
