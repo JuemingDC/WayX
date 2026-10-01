@@ -16,18 +16,17 @@ export async function materializeConversionRunContext(entry, source, {onStage=nu
   return await materializeConversionContext(entry,source);
 }
 
-export function convertAndValidatePlugin(entry, source, context, {
+export function convertPluginWithContext(entry, source, context, {
   stamp='',
   rawBase='',
-  surgeValidationOptions=undefined,
   onStage=null,
 }={}) {
   if (!context || typeof context !== 'object') {
-    throw new TypeError('convertAndValidatePlugin requires a materialized conversion context');
+    throw new TypeError('convertPluginWithContext requires a materialized conversion context');
   }
 
   notify(onStage,'convert');
-  const out=convertPlugin(entry,source,{
+  return convertPlugin(entry,source,{
     parsed:context.parsed,
     scriptMap:context.scriptMap,
     stamp,
@@ -35,6 +34,15 @@ export function convertAndValidatePlugin(entry, source, context, {
     jqFiles:context.jqFiles,
     rawBase,
   });
+}
+
+export function validateConvertedPlugin(entry, out, {
+  surgeValidationOptions=undefined,
+  onStage=null,
+}={}) {
+  if (!out || typeof out !== 'object') {
+    throw new TypeError('validateConvertedPlugin requires converted output');
+  }
 
   notify(onStage,'validate-qx');
   validateQX(out.qx,entry);
