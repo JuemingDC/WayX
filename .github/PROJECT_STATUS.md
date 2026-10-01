@@ -4,12 +4,12 @@
 > 维护原则：本文件描述“当前 main 的真实状态”，不能替代 `CONVERSION_SPEC.md`；规范冲突时以 `CONVERSION_SPEC.md` 为唯一权威。
 
 - 审计日期：2026-10-01
-- 审计基线：PR #96 workflow lifecycle/result boundary audit / Converter Check #691
+- 审计基线：PR #107 repository workflow-domain layout cleanup / Converter Check run 36827961744
 - Source Catalog：22 个 Loon 去广告插件
 - Catalog 管理目标：22 个 Quantumult X snippet + 22 个 Surge sgmodule
 - Adblock 目录实际目标：23 个 QX + 23 个 Surge（额外包含手工维护的 `QZXY`）
-- 最近完整 Converter Check：#691，通过
-- 当前实现 PR：#96
+- 最近完整 Converter Check：run 36827961744，通过
+- 当前实现 PR：#107
 - 当前构建状态：**核心转换器、canonical、GitHub Actions 自动闭环与质量门已完成构建；后续工作属于持续维护、上游漂移处理或新增官方能力适配。**
 
 ---
@@ -34,7 +34,8 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 
 ### 2.1 项目治理与自动化
 
-- `CONVERSION_SPEC.md` + Block 00–95 已建立为唯一规范链。
+- `.github/CONVERSION_SPEC.md` + `.github/docs/conversion-spec/` Block 00–95 已建立为唯一规范链。
+- 仓库根目录已收口为 `.github / Resource / Adblock / boxjs / module / rule / script`；转换器、规范、监控与工作流实现全部位于 `.github` 工作流域，并由 `repository-layout.mjs` 持续门禁。
 - Source Catalog 驱动 canonical regeneration。
 - 已建立 QX / Surge validator、repository audit、Golden、genericity、helper reference、Source Script URL preservation 等检查。
 - 未知 Loon section、Script parse failure、未知 MITM option 与未知 Rewrite action 不再静默丢失：先注释并标记 `ISSUE REQUIRED`，再由自动化创建/复用议题。已知 action 的新组合不属于 unknown；renderer 无法等价处理时进入 Review。
@@ -74,7 +75,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 
 ### 2.5 Rule / Script / 其他项目标准
 
-- QX / Surge Source Script 均不做 runtime compatibility scan，直接保留原始 Script URL；QX 仅在 declaration 不足以确定 header/body/echo action 时读取正文辅助分类。
+- QX / Surge Source Script 均不做 runtime compatibility scan，直接保留原始 Script URL；QX 以源 declaration 的 request/response phase 为权威，正文只允许补充同 phase 的 body 依赖信号。
 - QX 官方 sample 未确认的 Rule Type（逻辑规则、端口类等）只注释保留，不用 HTTP Rewrite Script 模拟。
 - Loon Plugin `PROXY` 保持用户策略绑定：QX 保留字面 `PROXY`；Surge Module 生成 `wayx_proxy_policy` 参数（默认 `DIRECT`）并把 Rule policy 写成 `{{{wayx_proxy_policy}}}`。
 - QX snippet 的 filter / rewrite / mitm section 标题保持注释形式。
@@ -191,7 +192,8 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 - [x] QX capability gate 已收窄为 Loon 去广告转换实际能力：仅核对 Rule 类型、WayX 实际使用的 Rewrite action 与 MITM `hostname` 是否仍有 Crossutility 官方依据；转换范围之外的能力不进入 registry。Surge 同样采用 Rule / Rewrite / hostname 边界。
 - [x] Surge official capability gate 已落地：production `rule.mjs` / `surge-module.mjs` 共用 `surge-official-capabilities.mjs`；CI 实时读取 Surge 官方 Manual，只验证 WayX 实际使用的 28 个 Rule Type、URL/Header/Body Rewrite、Map Local、HTTP request/response Script 与 MITM `hostname` 仍有官方依据。Surge 其它 Profile/Module 能力不进入本 gate。
 - [x] 对 generated helper 做行为级 runtime fixture，而不只做字符串/语法断言：`.github/converter/tests/generated-helper-runtime.mjs` 已接入 CI，覆盖 request/response、组合条件、命中/未命中、Header/Body/JSON 顺序、capture、raw string、typed JSON、invalid JSON 失败隔离、Surge duplicate header，以及通用 QX inline mock + Header pipeline。
-- 保持 `PROJECT_STATUS.md` 与实际 Review inventory 同步。
+- [x] 仓库工作流域重构完成：根目录只保留 `.github` 与六类转换内容目录；原 `converter / docs / monitor`、根级规范/状态/README/.gitignore 全部迁入 `.github`，monitor mirror/runtime 也不再污染根目录；Converter Check 与 Upstream Monitor 均执行 repository-layout gate。
+- 保持 `.github/PROJECT_STATUS.md` 与实际 Review inventory 同步。
 
 ---
 

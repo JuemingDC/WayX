@@ -12,23 +12,28 @@
 
 ```text
 WayX/
+├── .github/
+│   ├── converter/          # 转换器、tests、fixtures、tools
+│   ├── docs/               # 分块转换规范
+│   ├── monitor/            # 上游规范监控、state、runtime、mirror
+│   ├── scripts/            # Actions orchestration
+│   ├── sources/            # Loon Source Catalog
+│   ├── workflows/          # 正式 GitHub Actions
+│   ├── CONVERSION_SPEC.md
+│   ├── PROJECT_STATUS.md
+│   └── README.md
+├── Resource/               # 转换输入 / managed source
 ├── Adblock/
 │   ├── Quantumult X/
 │   └── Surge/
+├── boxjs/
 ├── module/
-│   └── <App-or-Feature>/
-│       ├── QuantumultX/
-│       └── Surge/
-├── script/
-│   └── <App-or-Feature>/
-│       ├── QuantumultX/
-│       └── Surge/
 ├── rule/
-│   └── QuantumultX/
-└── boxjs/
-    └── QuantumultX/
+└── script/
 ```
 
+- `.github/`：所有转换实现、规范、测试、监控与 Actions orchestration；根目录不再存放 workflow 实现或规范文件。
+- `Resource/`：Catalog 管理的 Loon 原始输入资源。
 - `Adblock/`：去广告、界面净化、HTTPDNS 屏蔽等广告/干扰项处理。这里保留对应的 `.snippet` / `.sgmodule`。
 - `module/`：非去广告类的功能模块，只放 `.snippet` / `.sgmodule`。
 - `script/`：JavaScript 脚本统一放这里；无论是模块配套脚本还是单脚本，都不放进 `module/`。
@@ -60,7 +65,7 @@ WayX/
 - 本地响应 / reject-dict → 使用目标平台语义等价的本地响应机制；
 - MITM → 仅保留实际需要的 hostname。
 
-只有 Rewrite/Mock 在目标平台确实缺少严格等价的原生表达时，才允许生成 helper script；Rule 不用 Script 补齐。Complex helper 只处理**源单条声明真实写出的**多 action pipeline，并且 production 只放行当前 Source Catalog 已观察、已登记的 action signature；禁止把相邻规则凭空组合。单 action 必须使用对应专用 helper。Source Script 本身不改写。
+只有 Rewrite/Mock 在目标平台确实缺少严格等价的原生表达时，才允许生成 helper script；Rule 不用 Script 补齐。Complex helper 只处理**源单条声明真实写出的**多 action pipeline，并由通用 action-family classifier + renderer capability 判定是否可保真转换；禁止把相邻规则凭空组合，也禁止按 Catalog 已观察完整 signature 建白名单。单 action 必须使用对应专用 helper。Source Script 本身不改写。
 
 转换时保留原注释，并追加转换时间、作者 chance、模块分类、目标平台与原始来源。
 
