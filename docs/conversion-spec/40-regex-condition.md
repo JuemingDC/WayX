@@ -133,7 +133,7 @@ WayX 对 Surge URL pattern 只做必要的目标格式处理：
 - Target regex compilation：`converter/src/target-regex.mjs`
 - Static/simple-condition target planner：`converter/src/rewrite-v2-semantic.mjs`
 - Surge module validator：`converter/src/surge-module.mjs`
-- Regression：`converter/tests/checkpoint.mjs`、`converter/tests/rucu6-rewrite-v2-coverage.mjs`
+- Regression：`converter/tests/checkpoint.mjs`、`converter/tests/catalog-syntax-inventory.mjs`、`converter/tests/rewrite-target-planners.mjs`
 
 
 ## 40.10 Complex helper typed equality
