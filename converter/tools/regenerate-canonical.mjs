@@ -7,7 +7,7 @@ import { convertPlugin } from '../src/conversion-pipeline.mjs';
 import { materializeConversionContext } from '../src/conversion-context.mjs';
 import { validateSurgeModule } from '../src/surge-module.mjs';
 import { loadLoonSourceCatalog } from '../src/source-catalog.mjs';
-import { createWorkflowFailureReporter } from '../src/workflow-diagnostics.mjs';
+import { createWorkflowFailureReporter, formatWorkflowErrorAnnotation } from '../src/workflow-diagnostics.mjs';
 import {
   firstConversionStamp,
   generatedScriptDiffs,
@@ -61,7 +61,7 @@ for (const entry of manifest) {
 
     changed.push(entry.id);
     if (mode === 'check') {
-      console.error('::error title=' + entry.id + '::canonical outputs/helpers are stale');
+      console.error(formatWorkflowErrorAnnotation(entry,new Error('canonical outputs/helpers are stale'),{annotationFallback:'error'}));
       continue;
     }
 
