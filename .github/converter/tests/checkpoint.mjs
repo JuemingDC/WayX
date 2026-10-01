@@ -1125,7 +1125,7 @@ assert.match(qxDeleteV2.line, /del\(\.data\.ads\) \| del\(\.data\.apps\[0\]\.pro
 
 const qxDeleteObjectsV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /api/ then response.json.delete(["data.ads", "data.promo"])'));
 assert.equal(qxDeleteObjectsV2.ok, true);
-assert.match(qxDeleteObjectsV2.line, /delpaths\(\[\["data","ads"\], \["data","promo"\]\]\)/);
+assert.match(qxDeleteObjectsV2.line, /del\(\.data\.ads, \.data\.promo\)/);
 
 const qxReplaceV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /search/i then response.json.replace("data.items", `[]`)'));
 assert.equal(qxReplaceV2.ok, true);
