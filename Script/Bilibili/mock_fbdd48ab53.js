@@ -1,4 +1,4 @@
-// Converted: 2026-10-01 15:14:26 +08:00
+// Converted: 2026-10-01 17:29:51 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.interface\.v1\.Search\/DefaultWords$/i then response.body.mock("text", "AAAAACEaHeaQnOe0ouinhumikeOAgeeVquWJp+aIlnVw5Li7KAE=", 200, true) | response.header.set("grpc-status", "0")

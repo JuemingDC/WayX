@@ -30,8 +30,36 @@ const replaceAst = parseRewriteV2(
   'response if ${url} ~= /^https?:\\/\\/tiebac\\.baidu\\.com\\/c\\/s\\/sync$/i then response.json.replace(["wl_config.home_ad_num", "wl_config.frs_ad_num", "wl_config.index_bear_first_floor_max"], [0, 0, 999999999])'
 );
 assert.equal(qxDirectRewritePlan(replaceAst).ok, true);
-assert.match(qxDirectRewritePlan(replaceAst).line, /setpath/);
-assert.equal(surgeDirectRewritePlan(replaceAst).ok, true);
+const replaceQx = qxDirectRewritePlan(replaceAst);
+const replaceSurge = surgeDirectRewritePlan(replaceAst);
+assert.match(replaceQx.line, /getpath/);
+assert.match(replaceQx.line, /setpath/);
+assert.equal(replaceSurge.ok, true);
+assert.match(replaceSurge.line, /getpath/);
+
+const addAst = parseRewriteV2(
+  'response if ${url} ~= /^https?:\\/\\/tiebac\\.baidu\\.com\\/c\\/s\\/sync$/i then response.json.add("wl_config.new_flag", true)'
+);
+const addQx = qxDirectRewritePlan(addAst);
+const addSurge = surgeDirectRewritePlan(addAst);
+assert.equal(addQx.ok, true);
+assert.match(addQx.line, /getpath/);
+assert.match(addQx.line, /== null/);
+assert.equal(addSurge.ok, true);
+assert.match(addSurge.line, /^http-response-jq /);
+
+const scalarDeleteAst = parseRewriteV2(
+  'response if ${url} ~= /api/ then response.json.delete("data.ad")'
+);
+assert.match(qxDirectRewritePlan(scalarDeleteAst).line, /'del\(\.data\.ad\)'$/);
+
+const indexedDeleteAst = parseRewriteV2(
+  'response if ${url} ~= /api/ then response.json.delete(["items[0]", "items[1]"])'
+);
+const indexedDeleteQx = qxDirectRewritePlan(indexedDeleteAst);
+const indexedDeleteSurge = surgeDirectRewritePlan(indexedDeleteAst);
+assert.match(indexedDeleteQx.line, /del\(\.items\[0\]\) \| del\(\.items\[1\]\)/);
+assert.match(indexedDeleteSurge.line, /del\(\.items\[0\]\) \| del\(\.items\[1\]\)/);
 
 const jqAst = parseRewriteV2(
   'response if ${url} ~= /^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idle\\.trade\\.full\\.info\\//i then response.json.jq(".data.components |= map(select(.render | . == \\"orderStatusVO\\" or . == \\"addressInfoVO\\" or . == \\"orderInfoVO\\"))")'
@@ -40,6 +68,15 @@ const jqQx = qxDirectRewritePlan(jqAst);
 assert.equal(jqQx.ok, true);
 assert.match(jqQx.line, /jsonjq-response-body/);
 assert.equal(surgeDirectRewritePlan(jqAst).ok, true);
+
+const preserveJqSource = '.a |= (. + 1) | .b = [1, 2] | .c = {"x": true}';
+const preserveJqAst = parseRewriteV2(
+  'response if ${url} ~= /api/ then response.json.jq("' + preserveJqSource.replace(/"/g, '\\"') + '")'
+);
+const preserveJqQx = qxDirectRewritePlan(preserveJqAst);
+const preserveJqSurge = surgeDirectRewritePlan(preserveJqAst);
+assert.ok(preserveJqQx.line.endsWith("'" + preserveJqSource + "'"));
+assert.ok(preserveJqSurge.line.endsWith("'" + preserveJqSource + "'"));
 
 const mockAst = parseRewriteV2(
   'response if ${url} ~= /^https?:\\/\\/tieba\\.baidu\\.com\\/mo\\/q\\/search\\/startPage\\?/i then response.body.mock("json", "{\\"no\\":0,\\"error\\":\\"success\\"}", 200)'

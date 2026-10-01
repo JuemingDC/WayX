@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Amap.png
 # Updated: 2026-06-01 17:11:35
 
-# Converted: 2026-10-01 14:35:50 +08:00
+# Converted: 2026-10-01 17:29:49 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Amap_remove_ads.lpx
@@ -22,7 +22,7 @@ host-suffix, v.smtcdns.com, reject
 
 ^https:\/\/m5\.amap\.com\/ws\/shield\/search\/new_hotword\? url reject-dict
 ^https:\/\/m5\.amap\.com\/ws\/faas\/amap-navigation\/card-service-(?:car-end|route-plan) url reject-dict
-^https:\/\/m5\.amap\.com\/ws\/shield\/search_business\/process\/marketingOperationStructured\? url jsonjq-response-body 'del(.data.commonMaterial,.data.tipsOperationLocation,.data.resourcePlacement)'
+^https:\/\/m5\.amap\.com\/ws\/shield\/search_business\/process\/marketingOperationStructured\? url jsonjq-response-body 'delpaths([["data","commonMaterial"],["data","tipsOperationLocation"],["data","resourcePlacement"]])'
 ^https:\/\/m5\.amap\.com\/ws\/shield\/search_poi\/homepage\? url jsonjq-response-body 'del(.history_tags)'
 ^https:\/\/m5\.amap\.com\/ws\/shield\/search_poi\/tips_adv\? url reject-dict
 ^https:\/\/oss\.amap\.com\/ws\/banner\/lists\/\? url reject-dict

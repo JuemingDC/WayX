@@ -9,7 +9,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/jingdong.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-10-01 14:35:52 +08:00
+# Converted: 2026-10-01 17:29:52 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/jingdong.lpx
 # Target: Surge
@@ -19,8 +19,8 @@
 # Source declaration: AND, ((DOMAIN, api.m.jd.com), (PROTOCOL, TCP)), REJECT-NO-DROP
 
 [Body Rewrite]
-http-response-jq ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=basicConfig 'setpath(["data","JDMessage","socketmonitor","isSocketEstablishedAhead"]; 0) | setpath(["data","JDMessage","socketmonitor","isSocketReport"]; 0) | setpath(["data","JDHttpToolKit","httpdns","httpdns"]; 0)'
-http-response-jq ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=cart 'delpaths([["cartLocationMap","loc_emptyCartFloor2"]]) | delpaths([["emptyCartRecommendFloor"]])'
+http-response-jq ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=basicConfig 'if getpath(["data","JDMessage","socketmonitor","isSocketEstablishedAhead"]) then setpath(["data","JDMessage","socketmonitor","isSocketEstablishedAhead"]; 0) else . end | if getpath(["data","JDMessage","socketmonitor","isSocketReport"]) then setpath(["data","JDMessage","socketmonitor","isSocketReport"]; 0) else . end | if getpath(["data","JDHttpToolKit","httpdns","httpdns"]) then setpath(["data","JDHttpToolKit","httpdns","httpdns"]; 0) else . end'
+http-response-jq ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=cart 'delpaths([["cartLocationMap","loc_emptyCartFloor2"], ["emptyCartRecommendFloor"]])'
 
 [Map Local]
 ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(?:cartCouponRecommendGoods|intelligentRecommendSku|obtainGrowingInfo|recommendShop|searchBoxWord|stationPullService|uniformRecommend) data-type=text data="{}" status-code=200 header="Content-Type:application/json"

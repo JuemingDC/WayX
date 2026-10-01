@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/zhihu.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-10-01 15:14:31 +08:00
+# Converted: 2026-10-01 17:29:58 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/zhihu.lpx
@@ -33,7 +33,7 @@ ip6-cidr, 2402:4e00:1200:ed00:0:9089:6dac:96b6/128, reject
 
 # 会员页面 - 弹窗、悬浮动图
 ^https:\/\/api\.zhihu\.com\/(?:bazaar\/float_window|market\/popovers_v2) url reject-dict
-^https:\/\/api\.zhihu\.com\/bazaar\/vip_tab\/header\? url jsonjq-response-body 'delpaths([["activity_banner"]]) | delpaths([["activity_window"]]) | delpaths([["vip_tip"]])'
+^https:\/\/api\.zhihu\.com\/bazaar\/vip_tab\/header\? url jsonjq-response-body 'delpaths([["activity_banner"], ["activity_window"], ["vip_tip"]])'
 
 # 我的页面 - 项目列表、会员卡片
 ^https:\/\/api\.zhihu\.com\/me\/guides url reject-dict
@@ -52,7 +52,7 @@ ip6-cidr, 2402:4e00:1200:ed00:0:9089:6dac:96b6/128, reject
 ^https:\/\/api\.zhihu\.com\/prague\/related_suggestion_native\/feed\? url reject-dict
 ^https:\/\/api\.zhihu\.com\/related_recommend\/feed\/waterfall\? url reject-dict
 ^https:\/\/api\.zhihu\.com\/v5\.1\/topics\/answer\/\d+\/relation url reject-dict
-^https:\/\/api\.zhihu\.com\/comment_v5\/(pins\/)?\d+\/root_comment\? url jsonjq-response-body 'delpaths([["atmosphere_voting_config"]])'
+^https:\/\/api\.zhihu\.com\/comment_v5\/(pins\/)?\d+\/root_comment\? url jsonjq-response-body 'del(.atmosphere_voting_config)'
 ^https:\/\/api\.zhihu\.com\/questions\/\d+(?:\/answers|\/feeds|\?include=) url jsonjq-response-body 'del(.ad_info, .data.ad_info?, .query_info) | if (.data | type) == "array" then .data |= map(select(.target?.answer_type? // "" | tostring | contains("paid") | not)) else . end'
 
 # 其他 - 服务器推送配置

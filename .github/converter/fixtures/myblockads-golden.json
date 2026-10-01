@@ -5,7 +5,7 @@
   "surge": "Adblock/Surge/MyBlockAds.sgmodule",
   "jqRuleCount": 10,
   "uniqueJqCount": 9,
-  "orderedPairsFnv1a64": "15b565d3b1b299e2",
+  "orderedPairsFnv1a64": "b03fe351ac62e263",
   "note": "Fingerprint covers the ordered target {pattern,jq} pairs shared by QX and Surge. Regex bodies are preserved from source after Loon literal parsing; i/m/s flags are discarded by project standard. Legacy json.jq(\"jq-path=...\") input is intentionally discarded and is not preserved as Review or dependency.",
   "jqDiscardCount": 1
 }

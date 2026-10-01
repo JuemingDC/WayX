@@ -7,7 +7,6 @@ import { normalizeRegexBodyForTarget } from './target-regex.mjs';
 import { renderQxHeaderScript, renderQxInlineMockScript } from './qx-semantic-script.mjs';
 import { surgeInlineMockPlan } from './rewrite-v2-semantic.mjs';
 import { renderSurgeRequestMockScript } from './surge-mock.mjs';
-import { renderMixedRewriteScript, renderSingleJsonAddScript } from './complex-rewrite-script.mjs';
 import { classifyLegacyRewriteAction, legacyRewriteToSemanticIr } from './rewrite-ir.mjs';
 
 function review(pattern, action, reason) {
@@ -88,22 +87,35 @@ function parseJsonValue(token) {
 function compileJsonMutation(phase, op, rest) {
   if (op === 'jq') return { ok:true, jq:unquote(String(rest).trim()), preserve:true };
   const tokens = shellTokens(rest);
+
   if (op === 'del') {
     if (!tokens.length) return { ok:false, reason:'missing JSON path' };
-    const paths = tokens.map(unquote).map(jqAccess);
-    if (paths.some(x => !x)) return { ok:false, reason:'unsupported JSON path syntax' };
-    return { ok:true, jq:`del(${paths.join(', ')})` };
+    const paths = tokens.map(unquote).map(path => ({parts:jqPath(path), access:jqAccess(path)}));
+    if (paths.some(path => !path.parts || !path.access)) return { ok:false, reason:'unsupported JSON path syntax' };
+    if (paths.length === 1) return {ok:true, jq:`del(${paths[0].access})`};
+    if (paths.some(path => path.parts.some(part => typeof part === 'number'))) {
+      return {ok:true, jq:paths.map(path => `del(${path.access})`).join(' | ')};
+    }
+    return {ok:true, jq:'delpaths([' + paths.map(path => JSON.stringify(path.parts)).join(', ') + '])'};
   }
-  if (op === 'replace') {
-    if (!tokens.length || tokens.length % 2) return { ok:false, reason:'json-replace requires path/value pairs' };
+
+  if (op === 'add' || op === 'replace') {
+    if (!tokens.length || tokens.length % 2) return { ok:false, reason:'json-' + op + ' requires path/value pairs' };
     const ops = [];
     for (let i=0;i<tokens.length;i+=2) {
-      const p=jqPath(unquote(tokens[i]));
-      if (!p) return { ok:false, reason:'unsupported JSON path syntax' };
-      ops.push(`setpath(${JSON.stringify(p)}; ${JSON.stringify(parseJsonValue(tokens[i+1]))})`);
+      const path=jqPath(unquote(tokens[i]));
+      if (!path) return { ok:false, reason:'unsupported JSON path syntax' };
+      const literal=JSON.stringify(path);
+      const value=JSON.stringify(parseJsonValue(tokens[i+1]));
+      if (op === 'add') {
+        ops.push(`if getpath(${literal}) == null then setpath(${literal}; ${value}) else . end`);
+      } else {
+        ops.push(`if getpath(${literal}) then setpath(${literal}; ${value}) else . end`);
+      }
     }
     return { ok:true, jq:ops.join(' | ') };
   }
+
   return { ok:false, reason:'unsupported JSON operation' };
 }
 
@@ -242,59 +254,7 @@ function planBodyRegex(pattern, action, parsed, target) {
   return {section:'body', line:`${direction} ${targetPattern} ${tokens.join(' ')}`};
 }
 
-function legacyValueNode(token) {
-  const value=parseJsonValue(token);
-  if(value === null) return {type:'null', value:null, raw:'null'};
-  if(typeof value === 'boolean') return {type:'boolean', value, raw:String(value)};
-  if(typeof value === 'number' && Number.isFinite(value)) return {type:'number', value, raw:String(value)};
-  if(typeof value === 'string') return legacyStringNode(value);
-  throw new Error('legacy JSON value object/array syntax is not yet proven equivalent');
-}
-
-function legacyJsonAddAst(pattern, parsed) {
-  const tokens=shellTokens(parsed.rest);
-  if (!tokens.length || tokens.length % 2) throw new Error('json-add requires path/value pairs');
-  const actions=[];
-  for(let i=0;i<tokens.length;i+=2){
-    const path=unquote(tokens[i]);
-    if(!jqPath(path)) throw new Error('unsupported JSON path syntax');
-    actions.push({
-      type:'action',
-      name:parsed.phase + '.json.add',
-      args:[legacyStringNode(path), legacyValueNode(tokens[i+1])],
-    });
-  }
-  return {
-    type:'rewrite',
-    phase:parsed.phase,
-    condition:{type:'comparison',operator:'~=',left:{type:'variable',name:'url'},right:legacyRegexNode(pattern),capture:null},
-    actions,
-  };
-}
-
 function planJson(pattern, action, parsed, target, ctx) {
-  if(parsed.op === 'add'){
-    try{
-      const ast=legacyJsonAddAst(pattern, parsed);
-      const renderer=ast.actions.length >= 2 ? renderMixedRewriteScript : renderSingleJsonAddScript;
-      const plan=renderer(ast, {
-        target,
-        stamp:ctx.stamp || '',
-        category:ctx.category || 'Rewrite / Legacy JSON',
-        sourceLine:pattern + ' ' + action,
-      });
-      const key=crypto.createHash('sha1').update('legacy-json-add\\0'+target+'\\0'+pattern+'\\0'+action).digest('hex').slice(0,10);
-      const filename='legacy_json_add_'+target+'_'+key+'.js';
-      ctx.generatedScripts.set(filename, plan.script);
-      if(target === 'qx'){
-        return {section:'rewrite', line:plan.pattern+' url '+plan.qxAction+' '+ctx.rawBase+'/script/'+ctx.id+'/'+filename};
-      }
-      return {section:'script', line:'wayx_legacy_json_add_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+ctx.rawBase+'/script/'+ctx.id+'/'+filename+',requires-body=true'};
-    }catch(error){
-      return review(pattern, action, String(error?.message || error));
-    }
-  }
-
   let compiled;
   try { compiled=compileJsonMutation(parsed.phase, parsed.op, parsed.rest); }
   catch (error) { return review(pattern, action, String(error?.message || error)); }

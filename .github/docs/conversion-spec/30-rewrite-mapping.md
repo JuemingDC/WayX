@@ -266,11 +266,15 @@ Surge 的 `header.add` 与普通对象 Header 修改语义不同。需要脚本�
 
 Legacy Rewrite 同样遵守 native → helper → Review：request phase 的旧版 `header-add` 在值不含未证明的 replacement `$` 语法时可复用官方 `request-header` 插入；`header-replace / header-del / header-replace-regex` 以及 response phase 的可脚本化操作使用最小 Header helper。旧版 `header-replace-regex` 的 `$n` 必须继续引用它自己的正则捕获，不能被 whole-header CRLF 捕获组改号。旧版 `response-header-add` 与新版 `response.header.add` 一样，在 QX 无重复字段等价表示时直接注释保留。
 
-旧版 `mock-request-body / mock-response-body` 先归一化到与 Rewrite v2 `request/response.body.mock` 相同的语义计划：QX 使用已验证的 request-body/echo helper，Surge response 优先 Map Local、request 使用 `http-request` helper。旧版 mock 的 `data="..."` 必须按属性边界取完整内容，不能因 JSON 内部双引号提前截断。旧版 `*-body-json-add` 对可证明的标量值复用 Complex JSON helper，保持“仅 key 不存在时新增”的语义；无法证明的 object/array legacy value 才进入 Review。
+旧版 `mock-request-body / mock-response-body` 先归一化到与 Rewrite v2 `request/response.body.mock` 相同的语义计划：QX 使用已验证的 request-body/echo helper，Surge response 优先 Map Local、request 使用 `http-request` helper。旧版 mock 的 `data="..."` 必须按属性边界取完整内容，不能因 JSON 内部双引号提前截断。旧版 `request/response-body-json-add|replace|del` 与 Rewrite v2 Key Path JSON Action 使用同一 native-JQ 语义；只有 legacy value 无法无损解析时才进入 Review。
 
-`json.add` 按 Loon JSON Key Path 语义处理：仅当目标 Key 不存在时新增；中间对象/数组路径按 Key Path 创建；批量参数按下标配对并从左到右执行。禁止把 `add` 退化成无条件覆盖。
+WayX 对 Key Path JSON Action 固定采用项目选定的 Stash-compatible 语义：`json.add` 在 `getpath(PATH) == null` 时写入，因此“路径不存在”与“当前值为 JSON null”都可新增，已有 `false/0/""/[]/{}` 均不得覆盖；`json.replace` 仅在 `getpath(PATH)` 为 jq truthy 时 `setpath`，因此路径不存在、`null`、`false` 不替换，而 `0/""/[]/{}` 可替换。禁止把 add/replace 统一退化成裸 `setpath`。
 
-`json.delete` 删除对象 Key；Key Path 最终指向数组索引（如 `items[0]`）时必须删除该元素并压缩数组，禁止使用 JavaScript `delete` 产生稀疏数组。`json.replace(..., null)` 保持 JSON `null` 类型，不得转换为字符串 `"null"`。
+`json.delete` 不增加 `getpath` guard。固定单路径优先 `del(...)`；多个不含数组索引的固定路径可用 `delpaths([...])`。批量路径只要包含数组索引，就必须按源顺序串联 `del(...)`，因为数组元素删除会压缩数组，`delpaths` 的批处理结果可能与 Loon 左到右逐项 delete 不同。Complex JS helper 同样必须用 `splice` 删除数组元素，禁止 JavaScript `delete` 产生稀疏数组。
+
+所有 JSON batch 参数必须按相同下标配对并从左到右执行，不得排序、去重或重排。`json.replace(..., null)` 等 value 必须保持原 JSON 类型，不得把 Number/String/Boolean/null/Object/Array 相互转换。
+
+`request/response.json.jq(...)` 属于源作者直接提供的 jq 表达式，目标支持原生 jq 时必须原样迁移表达式结构，不得为了统一代码改写成 `getpath/setpath/delpaths` 或 JavaScript。`jq_file` 仅允许为单行目标配置删除非字符串注释并压缩无语义空白，禁止对表达式做 AST/代数重写。
 
 ## 30.6 自动转换实现
 

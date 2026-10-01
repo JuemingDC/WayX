@@ -10,34 +10,66 @@ request.json.jq_file(...)
 response.json.jq_file(...)
 ```
 
-Quantumult X：
+Quantumult X 官方 sample 已确认：
 ```text
 REGEX url jsonjq-request-body 'JQ'
 REGEX url jsonjq-response-body 'JQ'
 ```
 
-Surge：
+Surge 官方 Manual 已确认：
 ```ini
 [Body Rewrite]
 http-request-jq REGEX 'JQ'
 http-response-jq REGEX 'JQ'
 ```
 
-不得把原生 JQ 无理由改写成 JavaScript。
+`request/response.json.jq(...)` 的 JQ 表达式必须按源内容直接迁移，不得为了“统一风格”改写成 `getpath/setpath/delpaths`、JavaScript 或其它等价形式。目标配置只允许执行**语法承载所必需**的处理：外层单引号安全转义、目标单行声明所需的空白处理；不得改变 JQ 的运算顺序、管道结构、赋值/update 形式或过滤逻辑。
 
-## 50.2 json.delete / json.replace
+`jq_file` 因目标 QX/Surge 都以内联单行 JQ 声明承载，允许在转换期删除 JQ 文件的非字符串 `#` 注释并压缩不影响语义的空白，再以内联 JQ 输出；这属于配置承载压缩，不属于表达式重写。
 
-允许编译为 JQ，但必须保持：
-- Key Path
-- 数组下标
-- JSON 类型
-- Action 顺序
+## 50.2 json.add / json.replace / json.delete
 
-不得把 Number/String/Boolean/null/Object/Array 互相改变类型。
+WayX 对 Loon Key Path JSON Action 采用项目选定的 Stash-compatible 行为基准，并统一映射到 QX/Surge 原生 JQ。必须保持 Key Path、数组下标、JSON 类型、批量参数配对和源执行顺序。
 
-## 50.2.1 Legacy JSON add
+### add
 
-旧版 `request/response-body-json-add` 不得按 replace 处理。对 String / Number / Boolean / null 等可证明类型，转换器生成与 Rewrite v2 `json.add` 相同的 JS helper：目标路径已存在时不覆盖，缺失的中间路径按已验证 Key Path 规则创建。旧版 object/array value 若无法无损解析为当前 AST 类型则注释 Review，不猜测类型。
+目标路径当前值为 `null` 或路径不存在（`getpath(PATH) == null`）时写入；其它已有值，包括 `false`、`0`、空字符串、空数组和空对象，都不得覆盖：
+
+```jq
+if getpath(PATH) == null then setpath(PATH; VALUE) else . end
+```
+
+### replace
+
+只有 `getpath(PATH)` 为 jq truthy 时才替换，因此路径不存在、`null`、`false` 均保持不变；`0`、空字符串、空数组和空对象仍可替换：
+
+```jq
+if getpath(PATH) then setpath(PATH; VALUE) else . end
+```
+
+不得退化成裸 `setpath(PATH; VALUE)`，否则会把不存在路径创建出来并扩大源语义。
+
+### delete
+
+`delete` 不增加 `getpath` guard。固定单路径优先直接：
+
+```jq
+del(.a.b)
+```
+
+多个**不含数组索引**的固定 Key Path 可合并为：
+
+```jq
+delpaths([["a","b"], ["c","d"]])
+```
+
+只要批量路径中出现数组索引，就必须按源顺序串联 `del(...)`，因为删除数组元素会压缩数组，单个 `delpaths([...])` 的批处理结果可能与 Loon 左到右逐项删除不同。例如删除 `items[0]` 后再删除 `items[1]` 必须保留该顺序。
+
+Number/String/Boolean/null/Object/Array 类型不得互相转换。批量 action 不得排序、去重或重排。
+
+## 50.2.1 Legacy JSON Action
+
+旧版 `request/response-body-json-add|replace|del` 与 Rewrite v2 使用同一组语义和同一 native-JQ 优先策略，不再为可直接表达的 legacy `json-add` 生成 JS helper。对可证明的标量值直接生成上述 JQ；无法无损解析的 legacy object/array value 进入 Review，不猜测类型。
 
 ## 50.3 jq_file
 
@@ -48,10 +80,11 @@ response.json.jq_file(path)
 ```
 
 转换规则：
-1. 转换期读取依赖；
-2. 校验依赖；
-3. 目标输出真实 JQ；
-4. 不把路径字符串当作 JQ 输出。
+1. 转换期只从源插件声明的绝对 URL 或相对源插件 URL 读取依赖；
+2. 校验依赖可读取且可安全压缩为单行 JQ；
+3. 只删除非字符串注释并压缩语法空白，不做 AST/代数重写；
+4. 以内联后的真实 JQ 输出到 QX `jsonjq-*-body` / Surge `http-*-jq`；
+5. 不把路径字符串本身当作 JQ 输出。
 
 历史源中若出现：
 ```text

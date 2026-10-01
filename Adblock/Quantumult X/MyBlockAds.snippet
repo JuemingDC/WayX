@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/myblockads.png
 # Updated: 2026-09-27 18:30
 
-# Converted: 2026-10-01 14:35:54 +08:00
+# Converted: 2026-10-01 18:11:00 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/myblockads.lpx
@@ -383,9 +383,9 @@ host, switch.cup.com.cn, reject
 {# 百度云 //pan.baidu.com #} ^https:\/\/pan\.baidu\.com\/(?:act\/|aipic\/|aisearch\/|api\/getsyscfg\?|buy\/adx?\/|rest\/) url reject-dict
 
 # 昌原云充 五代十路 //www.washpayer.com
-^http:\/\/ad\.5tao5ai\.com\/common\/getReceipt\? url jsonjq-response-body 'delpaths([["payload","adInfo"]])'
+^http:\/\/ad\.5tao5ai\.com\/common\/getReceipt\? url jsonjq-response-body 'del(.payload.adInfo)'
 ^https:\/\/www\.washpayer\.com\/(?:ad\/getBannerAd|ad\/user-adword|user\/getBannerList) url reject-dict
-^https:\/\/www\.washpayer\.com\/common\/getReceipt url jsonjq-response-body 'delpaths([["payload","adInfo"]])'
+^https:\/\/www\.washpayer\.com\/common\/getReceipt url jsonjq-response-body 'del(.payload.adInfo)'
 
 {# 东风日产 //oneapph5.dongfeng-nissan.com.cn #} ^https:\/\/oneapph5\.dongfeng-nissan\.com\.cn\/mb-gw\/(?:dndc-gateway\/nissan\/platform\/api\/advertisement\/app\/ad-content|ly-mp-iov-forwarding-service\/iov\/login\/advertapp\/listByCarSeries) url reject-dict
 
@@ -440,16 +440,16 @@ host, switch.cup.com.cn, reject
 {# 小米音箱 //marketing-aibox.v.mitvos.com #} ^https:\/\/marketing-aibox\.v\.mitvos\.com\/(?:advertise|payGuide\/halfScreenMulti)\/ url reject-dict
 
 # 小米商城 //api.m.mi.com, shop-api.retail.mi.com, xiaomishop.retail.mi.com
-^https:\/\/api\.m\.mi\.com\/v1\/order\/expressView url jsonjq-response-body 'delpaths([["data","bottom","ad_info"]])'
+^https:\/\/api\.m\.mi\.com\/v1\/order\/expressView url jsonjq-response-body 'del(.data.bottom.ad_info)'
 ^https:\/\/api\.m\.mi\.com\/(?:v1\/(?:app\/popup_info|home\/page_feed|home\/recommendBlank|misearch\/search_input|product\/recommendv2)|v2\/search\/search_default) url reject-dict
-^https:\/\/shop-api\.retail\.mi\.com\/mtop\/act\/mishopSearch\/mainSearch url jsonjq-response-body 'setpath(["data","recProductList"]; [])'
-^https:\/\/shop-api\.retail\.mi\.com\/mtop\/mf\/home\/v1\/index url jsonjq-response-body 'delpaths([["data","floors",0,"data","left_icon_config"]]) | delpaths([["data","floors",0,"data","right_icon_config"]])'
-^https:\/\/shop-api\.retail\.mi\.com\/mtop\/mf\/usercenter\/personalHome url jsonjq-response-body 'delpaths([["data","carouselAD"]])'
+^https:\/\/shop-api\.retail\.mi\.com\/mtop\/act\/mishopSearch\/mainSearch url jsonjq-response-body 'if getpath(["data","recProductList"]) then setpath(["data","recProductList"]; []) else . end'
+^https:\/\/shop-api\.retail\.mi\.com\/mtop\/mf\/home\/v1\/index url jsonjq-response-body 'del(.data.floors[0].data.left_icon_config) | del(.data.floors[0].data.right_icon_config)'
+^https:\/\/shop-api\.retail\.mi\.com\/mtop\/mf\/usercenter\/personalHome url jsonjq-response-body 'del(.data.carouselAD)'
 ^https:\/\/shop-api\.retail\.mi\.com\/mtop\/mf\/(?:cart|home|personal)\/recommend url reject-dict
 ^https:\/\/shop-api\.retail\.mi\.com\/mtop\/(?:act\/mishopSearch\/searchInput|mf\/home\/v1\/feed) url reject-dict
 ^https:\/\/shop-api\.retail\.mi\.com\/mtop\/navi\/(?:rec\/merge\/|skywheel\/(?:homePage\/bottomFloatLayer|mishop\/splash|shop\/resourceAms|ucenter\/pendant|ucenter\/popup)) url reject-dict
 ^https:\/\/xiaomishop\.retail\.mi\.com\/mtop\/xiaomishop\/product\/compose url reject-dict
-^https:\/\/xiaomishop\.retail\.mi\.com\/mtop\/xiaomishop\/product\/info url jsonjq-response-body 'delpaths([["data","carouselAdInfo"]]) | delpaths([["data","product","floatWindow"]])'
+^https:\/\/xiaomishop\.retail\.mi\.com\/mtop\/xiaomishop\/product\/info url jsonjq-response-body 'delpaths([["data","carouselAdInfo"], ["data","product","floatWindow"]])'
 
 # 星星充电 //gateway.sccncdn.com, gateway.starcharge.com
 ^https:\/\/gateway\.sccncdn\.com\/app\/v2\/apiV2\/advertisement\/marke\/list\/ url reject-dict
@@ -457,7 +457,7 @@ host, switch.cup.com.cn, reject
 
 # 迅雷 //api-shoulei-ssl.xunlei.com, conf-m-ssl.xunlei.com
 ^https:\/\/api-shoulei-ssl\.xunlei\.com\/flowhub\/v1\/slots:batchGet url reject-dict
-^https:\/\/conf-m-ssl\.xunlei\.com\/external\/[0-9-a-z]+\? url jsonjq-response-body 'delpaths([["values","me_config","common_service_list"]])'
+^https:\/\/conf-m-ssl\.xunlei\.com\/external\/[0-9-a-z]+\? url jsonjq-response-body 'del(.values.me_config.common_service_list)'
 
 {# 邮储银行 //login-service.mobile-bank.psbc.com #} ^https:\/\/login-service\.mobile-bank\.psbc\.com\/sn10\/api\/public\/v1\/(?:getStartUpAdvPicture|qryPopInfo)\/ url reject-dict
 
