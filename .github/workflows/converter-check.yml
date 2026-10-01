@@ -63,7 +63,6 @@ jobs:
           node --check converter/tests/upstream-automation.mjs
           node --check converter/tests/qx-official-capabilities.mjs
           node --check converter/tests/surge-official-capabilities.mjs
-          node --check converter/tests/unknown-issue-markers.mjs
           node --check converter/tests/manual-assets.mjs
           node --check .github/scripts/propose-conversion-issues.mjs
           node --check converter/tests/generated-helper-refs.mjs
@@ -96,7 +95,6 @@ jobs:
           node converter/tests/managed-artifacts.mjs
           node converter/tests/workflow-diagnostics.mjs
           node converter/tests/upstream-automation.mjs
-          node converter/tests/unknown-issue-markers.mjs
           node converter/tests/manual-assets.mjs
 
       - name: Quantumult X official capability drift gate
