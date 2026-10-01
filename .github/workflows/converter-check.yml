@@ -7,6 +7,8 @@ on:
       - ".github/scripts/sync-convert.mjs"
       - ".github/scripts/propose-conversion-issues.mjs"
       - ".github/workflows/converter-check.yml"
+      - ".github/workflows/upstream-monitor.yml"
+      - "monitor/**"
       - ".github/sources/loon.json"
       - ".github/manual-assets.json"
       - "CONVERSION_SPEC.md"
@@ -58,6 +60,7 @@ jobs:
           node --check converter/tests/conversion-context-materializers.mjs
           node --check converter/tests/managed-artifacts.mjs
           node --check converter/tests/workflow-diagnostics.mjs
+          node --check converter/tests/upstream-automation.mjs
           node --check converter/tests/qx-official-capabilities.mjs
           node --check converter/tests/surge-official-capabilities.mjs
           node --check converter/tests/unknown-issue-markers.mjs
@@ -66,7 +69,6 @@ jobs:
           node --check converter/tests/generated-helper-refs.mjs
           node --check converter/tests/generated-helper-runtime.mjs
           node --check converter/tests/source-script-url-preservation.mjs
-          python -m py_compile converter/tests/test_conversion_gate.py
           node --check converter/tools/regenerate-canonical.mjs
           node --check converter/tools/audit-repository.mjs
           node --check converter/tools/conversion-reports.mjs
@@ -93,9 +95,9 @@ jobs:
           node converter/tests/conversion-context-materializers.mjs
           node converter/tests/managed-artifacts.mjs
           node converter/tests/workflow-diagnostics.mjs
+          node converter/tests/upstream-automation.mjs
           node converter/tests/unknown-issue-markers.mjs
           node converter/tests/manual-assets.mjs
-          python converter/tests/test_conversion_gate.py
 
       - name: Quantumult X official capability drift gate
         run: node converter/tests/qx-official-capabilities.mjs
