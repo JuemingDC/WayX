@@ -70,15 +70,16 @@ function runGenerated(script, { request = {}, response = {}, argument = '' } = {
   assert.equal(urlBranch.body, 'bar');
 }
 
-// JSON semantics: add is no-overwrite, nested parents are created, replacement keeps JSON types.
+// JSON semantics follow the selected Stash-compatible add/replace rules:
+ // add writes missing/null paths; replace skips missing/null/false; delete removes directly.
 {
-  const ast = parseRewriteV2('response if ${url} ~= /json/ then response.json.add("meta.count", 1) | response.json.add("keep", 9) | response.json.replace("flag", true) | response.json.delete("remove")');
+  const ast = parseRewriteV2('response if ${url} ~= /json/ then response.json.add("meta.count", 1) | response.json.add("keep", 9) | response.json.add("nullable", 3) | response.json.replace("flag", true) | response.json.delete("remove")');
   const plan = renderMixedRewriteScript(ast, { target:'qx' });
   const result = normalize(runGenerated(plan.script, {
     request:{ url:'https://example.test/json' },
-    response:{ body:'{"keep":5,"flag":false,"remove":1}' },
+    response:{ body:'{"keep":5,"nullable":null,"flag":false,"remove":null}' },
   }));
-  assert.deepEqual(JSON.parse(result.body), { keep:5, flag:true, meta:{count:1} });
+  assert.deepEqual(JSON.parse(result.body), { keep:5, nullable:3, flag:false, meta:{count:1} });
 }
 
 // Invalid JSON must fail only that action; later actions still execute in source order.
