@@ -41,6 +41,7 @@ WayX 的上游维护与转换由 GitHub Actions 自动闭环执行；不再使�
 - Source Script materializer：`converter/src/source-script-materializer.mjs`
 - Shared conversion context：`converter/src/conversion-context.mjs`
 - Pure generic conversion core：`converter/src/conversion-pipeline.mjs`
+- Shared validated conversion runner：`converter/src/conversion-runner.mjs`
 - Managed artifact I/O：`converter/src/managed-artifacts.mjs`
 - Workflow diagnostics：`converter/src/workflow-diagnostics.mjs`
 - Structured scheduled failure report：`converter/src/upstream-run-report.mjs`
@@ -62,7 +63,7 @@ Source Catalog entry.source
 → 原作者直连 fetch
 → source normalize / validity
 → 只读比较 checked-in Source
-→ materialize dependencies + Source Script context
+→ conversion-runner: materialize dependencies + Source Script context
 → generic convertPlugin()
 → QX validator
 → Surge validator
@@ -102,7 +103,7 @@ Rewrite/Mock 固定优先级：
 ```text
 native target syntax
 → dedicated semantic helper
-→ observed source-authored multi-action complex helper
+→ source-authored generic multi-action complex helper
 → commented REVIEW REQUIRED / ISSUE REQUIRED
 ```
 

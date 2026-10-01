@@ -318,10 +318,10 @@ CI 必须验证纯转换核心已经脱离 GitHub/I/O orchestration：
 - `plugin-parser.mjs` 是整体 Loon section parser；`sync-convert.mjs` 不得重新定义 `parseLoon()`；
 - `conversion-pipeline.mjs` 导出唯一 production `convertPlugin()`；`sync-convert.mjs` 不得重新定义 `convert()` 或直接 import Rule/Rewrite/Script/MITM planner；
 - `conversion-pipeline.mjs` 不得 import Node `fs/path`、Source Catalog、source-fetch 或任何网络/GitHub 工具；
-- pipeline 必须消费已物化的 `parsed/scriptMap/mockFiles/jqFiles` context，禁止自行 fetch；production/canonical 必须显式传入 materializer 返回的 `parsed`，不得重复整体解析；
+- pipeline 必须消费已物化的 `parsed/scriptMap/mockFiles/jqFiles` context，禁止自行 fetch；workflow 通过 `conversion-runner.mjs::convertPluginWithContext()` 把同一 materialized context 传入 pipeline，不得重复整体解析；
 - unknown source section、Argument review、disabled Script/Rewrite comments、planner dispatch 与 target output builder 调用均由 pipeline 负责；
-- `regenerate-canonical.mjs` 必须直接 import `convertPlugin()`；整体 parser 由 `materializeConversionContext()` 统一调用，canonical runner 不得再单独 parse；
-- `sync-convert.mjs` 只保留 plugin fetch、调用 `materializeConversionContext()`、调用 `convertPlugin()`、validate/write orchestration；
+- `regenerate-canonical.mjs` / `sync-convert.mjs` 不得直接 import `conversion-context.mjs`、`conversion-pipeline.mjs` 或 target validator；只通过 `conversion-runner.mjs` 访问这些执行原语；
+- 两条 workflow 仍各自保留 fetch/target-state/timestamp/stale-change/write orchestration，不得把这些职责移入 runner；
 - 纯架构迁移要求 Catalog canonical 与 generated helper 0 diff。
 
 实现：
@@ -334,7 +334,7 @@ CI 必须验证外部依赖与 Source Script 物化已经从 `sync-convert.mjs` 
 
 - `dependency-materializer.mjs` 负责 Rewrite v2 jq_file/mock_file discovery、原 URL fetch、Base64/JQ 处理；
 - `source-script-materializer.mjs` 负责 Legacy/Script v2 script URL discovery、相对 URL resolver、可选源码读取；
-- `conversion-context.mjs::materializeConversionContext()` 必须组合 parser + 两类 materializer，并返回 `parsed/scriptMap/mockFiles/jqFiles`；该 `parsed` 必须被 sync/canonical 原样传入 `convertPlugin()`；
+- `conversion-context.mjs::materializeConversionContext()` 必须组合 parser + 两类 materializer，并返回 `parsed/scriptMap/mockFiles/jqFiles`；workflow 通过 `conversion-runner.mjs::materializeConversionRunContext()` 获取该 context，并由 `convertPluginWithContext()` 原样复用其中的 `parsed`；
 - `sync-convert.mjs` 不得 import `rewrite-v2*`, `dependency.mjs`, `jq.mjs`, `script-v2.mjs`, `source-section.mjs` 或 `fetchOriginalBytes()` 来自行 materialize；
 - `regenerate-canonical.mjs` 不得从 `sync-convert.mjs` import materializer/Source Script inspector；
 - materializer 必须继续使用 `source-fetch.mjs` 的原作者直连 resolver/fetch，不得新增 mirror/cache fallback；
@@ -355,8 +355,8 @@ CI 必须验证 QX 成品校验已经从 GitHub sync orchestration 中分离：
 - `converter/src/qx-snippet-validator.mjs` 是唯一 QX snippet validator，实现并导出 `validateQX()`；
 - validator 必须直接消费 `qx-official-capabilities.mjs` 的 `QX_WAYX_FILTER_TYPES`、`QX_WAYX_SCRIPT_ACTIONS`、`QX_WAYX_SNIPPET_MITM_KEYS`，不得维护第二份能力白名单；
 - validator 继续检查活动 `#!` metadata、活动 `[filter_local]/[rewrite_local]/[mitm]`、filter/rewrite/MITM 活动行、QX note 位置、被丢弃 regex flags 的恢复、HTTP case-fold 伪装、`jq-path=` 泄漏与旧未转换 token；
-- `sync-convert.mjs` 只能 import/call `validateQX()`，不得定义 `validateQX()`、`validateQxExecutableLine()` 或直接 import QX capability registry；
-- `regenerate-canonical.mjs`、`audit-repository.mjs`、Golden/genericity tests 必须直接 import converter-owned validator，不得从 `sync-convert.mjs` re-export/borrow；
+- workflow-facing `sync-convert.mjs` / `regenerate-canonical.mjs` 必须通过 `conversion-runner.mjs::validateConvertedPlugin()` 调用 QX/Surge validator，不得直接 import validator 或 capability registry；
+- `audit-repository.mjs`、Golden/genericity 等独立校验工具可直接 import converter-owned validator，不得从 workflow orchestration re-export/borrow；
 - validator extraction 不新增 QX action/Rule/MITM 能力；官方 sample/capability gate 仍是唯一目标能力依据；
 - 纯架构迁移要求 canonical/helper 0 diff。
 
@@ -373,7 +373,7 @@ CI 必须验证 source/target/helper 文件系统职责已经从 sync/canonical 
 - `converter/src/managed-artifacts.mjs` 只允许负责 managed text normalization、Source change detection/write、conversion timestamp、target snapshot、generated helper diff/write 与 conditional target write；
 - 该模块不得 import `conversion-pipeline.mjs`、Rule/Rewrite/Script/MITM planner、QX/Surge validator、Source Catalog 或 `source-fetch.mjs`，因此不能解释任何转换语义；
 - `sync-convert.mjs` 不再直接 import `node:fs/promises`、`node:crypto`、`normalizePluginSource()` 或 `qxTargetPath()/surgeTargetPath()` 来维护 managed artifacts；它必须继续直接从 `entry.source` fetch 原作者 plugin，并在 conversion 前做 Loon source 结构合法性检查；
-- online sync 的顺序固定为 fetch → in-memory source normalize → source validity → managed source compare/write → materialize context → convert → generated helper write → QX/Surge validate → conditional target write；无效 upstream source 不得先写入 `Resource/Loon`，且不得把 validator 移到 target write 之后；
+- online sync 的顺序固定为 fetch → in-memory source normalize → source validity → managed source **只读比较** → materialize context → read old target/stamp → convert → 如需刷新 timestamp 则再次 convert → QX/Surge validate 最终 output → generated helper write/prune → conditional target write → managed Source 最后写入；无效 upstream source 或 conversion/validator failure 不得写入该插件任何新 managed artifact；
 - online sync 的 conversion stamp 继续只读取既有 QX target 的 `# Converted:`；source 未变但 converter output 变化时继续刷新时间戳，判断条件保持原样；
 - canonical runner 的 existing stamp 继续按 QX target → Surge target 顺序获取；check 模式不得写 target/helper，write 模式在发现 diff 后继续用一个新的共享时间戳重生成 target/helper；
 - managed-artifact contract test 必须覆盖 BOM/CRLF/trailing newline、source unchanged/changed、target snapshot、stamp precedence、helper diff/write 与 target conditional write；
@@ -395,7 +395,7 @@ CI 必须验证在线 sync 与 canonical regeneration 的失败诊断已收口�
 - canonical runner 仍使用 `Canonical regeneration failures:` summary，failure detail 保持 `stack || error`；
 - annotation message 保持现有差异：online sync 使用 `String(error.message)`，canonical runner 使用 `String(error.message || error)`，两者都只将换行替换成 `%0A`；
 - diagnostics 只返回是否存在 failures，不得直接决定 canonical stale-check、changed list 或 conversion exit policy；调用方仍负责设置 `process.exitCode = 1`；
-- entry loop、source fetch/validation、materialize、convert、helper write、target validation/write 的相对顺序不得变化；
+- entry loop、source fetch/validation、materialize、old-target/stamp read、convert/drift-check、target validation、helper/target/source write 的相对顺序不得变化；
 - behavior contract 必须覆盖 annotation escaping、stack precedence、sync/canonical fallback 差异、summary 文本及无 failure 时不输出；
 - 全 Catalog canonical 与 generated helper 必须 0 diff。
 
@@ -441,3 +441,26 @@ CI 必须验证 scheduled upstream flow 不再依赖任何 ChatGPT Work handoff�
 - behavior regression：`converter/tests/upstream-automation.mjs`；
 - architecture contract：`converter/tests/spec-block-contract.mjs`。
 
+
+
+## 80.24 Validated conversion runner ownership gate
+
+CI 必须验证 online sync 与 canonical regeneration 不再各自拼装相同的 materialize/convert/target-validation 链：
+
+- `converter/src/conversion-runner.mjs` 是 workflow-facing 的 materialize/convert/target-validation 组合层；
+- `materializeConversionRunContext()` 只委托 `materializeConversionContext()`；`convertPluginWithContext()` 只执行 context → `convertPlugin()` 映射；`validateConvertedPlugin()` 固定执行 `validateQX() → validateSurgeModule()`；
+- online sync 继续保持 materialize 在 old-target/stamp read 之前；canonical 继续保持 old-target/stamp read 在 materialize 之前，不得为统一函数改变现有顺序；
+- online sync 的第一次 convert 若只用于判断 converter output drift，必须保持**未校验**状态；只有最终选定 output 才进入 `validateConvertedPlugin()`；
+- timestamp 刷新重跑必须复用第一次 materialize 的 context；canonical 的每个最终候选 output 仍按原顺序 validate；
+- runner 不得 import Source Catalog、source fetch、managed artifact I/O、workflow diagnostics、timestamp helper 或 GitHub/runtime I/O；
+- runner 不得判断 source change、converter output drift、canonical stale、check/write mode，也不得写 helper/target/source；
+- online sync 必须通过 stage callback 继续得到 `materialize-context / convert / validate-qx / validate-surge`，hard-failure report 的阶段语义不得退化；
+- canonical runner 继续保留其现有 Surge `adblockScope` validator options；online sync 继续保留默认 validator 调用语义；
+- `sync-convert.mjs` / `regenerate-canonical.mjs` 不得直接 import `conversion-context.mjs`、`conversion-pipeline.mjs`、`qx-snippet-validator.mjs` 或 `surge-module.mjs` 来重建该链；
+- behavior contract 必须覆盖 materialize delegation、context reuse、convert 与 validate 可独立调用、`validate-qx → validate-surge` stage 顺序、timestamp-only re-render 与两目标 validator 成功；
+- 全 Catalog canonical 与 generated helper 必须 0 diff。
+
+实现：
+- runner：`converter/src/conversion-runner.mjs`
+- behavior contract：`converter/tests/conversion-runner.mjs`
+- architecture contract：`converter/tests/spec-block-contract.mjs`

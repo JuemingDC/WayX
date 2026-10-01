@@ -461,6 +461,7 @@ CI 必须审计生产 converter，禁止出现已登记插件身份驱动的语�
 - Manual asset contract：`converter/tests/manual-assets.mjs`
 - Original-source fetch layer：`converter/src/source-fetch.mjs`
 - Generic orchestration：`.github/scripts/sync-convert.mjs`
+- Shared validated conversion runner：`converter/src/conversion-runner.mjs`
 - Offline canonical regeneration：`converter/tools/regenerate-canonical.mjs`
 - Identity invariance：`converter/tests/generic-identity.mjs`
 - Plugin-identity source audit：`converter/tests/genericity-audit.mjs`
