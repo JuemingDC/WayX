@@ -102,13 +102,14 @@ export function jsonActionToJq(action) {
     const paths = nodes.map(node => {
       const value = stringNode(node);
       if (value === null) throw new Error(name + ': key path must be a fixed string');
-      return { literal:pathLiteral(value), selector:pathSelector(value) };
+      const parts = parseKeyPath(value);
+      return { parts, literal:JSON.stringify(parts), selector:pathSelector(value) };
     });
     if (action.args[0]?.type === 'array') {
       // delpaths() is compact and equivalent for object-only Key Paths. Array
       // indices are order-sensitive because each deletion shifts later indices,
       // so preserve Loon's documented left-to-right batch order with del().
-      if (paths.some(item => JSON.parse(item.literal).some(part => typeof part === 'number'))) {
+      if (paths.some(item => item.parts.some(part => typeof part === 'number'))) {
         return {ok:true, jq:paths.map(item => 'del(' + item.selector + ')').join(' | ')};
       }
       return { ok:true, jq:'delpaths([' + paths.map(item => item.literal).join(', ') + '])' };
