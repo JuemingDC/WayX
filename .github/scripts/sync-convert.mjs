@@ -11,11 +11,17 @@ import {
   conversionStampFromText,
   normalizeManagedSource,
   nowConversionStamp,
+  inspectManagedSource,
+  readCatalogSource,
   readManagedTargetState,
   syncGeneratedScripts,
-  syncManagedSource,
+  writeManagedSource,
   writeManagedTargets,
 } from '../../converter/src/managed-artifacts.mjs';
+import {
+  buildSyncFailure,
+  writeSyncFailureReport,
+} from '../../converter/src/upstream-run-report.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
@@ -24,17 +30,29 @@ const RAW_BASE = 'https://raw.githubusercontent.com/JuemingDC/WayX/main';
 async function main() {
   const manifest = await loadLoonSourceCatalog(MANIFEST);
   const failures = createWorkflowFailureReporter({summaryLabel:'Failures'});
+  const structuredFailures = [];
   for (const entry of manifest) {
+    let stage='read-current-source';
+    let previousSource=null;
+    let source=null;
     try {
       console.log(`\n== ${entry.id} ==`);
+      try { previousSource=await readCatalogSource(ROOT,entry); } catch {}
+
+      stage='fetch-upstream';
       const text = await fetchOriginalText(entry.source);
       const fetchedFrom = entry.source;
-      const source = normalizeManagedSource(text);
-      if (!/^#!name=/m.test(source) || !/^\[[^\]]+\]/m.test(source)) throw new Error('downloaded content is not a valid Loon plugin');
-      const sourceState = await syncManagedSource(ROOT, entry, source);
-      const changed = sourceState.changed;
-      console.log(`${changed ? 'updated' : 'unchanged'} source via ${fetchedFrom}; sha256=${sourceState.digest}`);
+      source = normalizeManagedSource(text);
 
+      stage='validate-source';
+      if (!/^#!name=/m.test(source) || !/^\[[^\]]+\]/m.test(source)) throw new Error('downloaded content is not a valid Loon plugin');
+
+      stage='inspect-source-change';
+      const sourceState = await inspectManagedSource(ROOT, entry, source);
+      const changed = sourceState.changed;
+      console.log(`${changed ? 'changed' : 'unchanged'} upstream source via ${fetchedFrom}; sha256=${sourceState.digest}`);
+
+      stage='materialize-context';
       const {
         parsed,
         scriptMap,
@@ -42,31 +60,50 @@ async function main() {
         jqFiles,
       } = await materializeConversionContext(entry, source);
 
+      stage='read-target-state';
       const targetState = await readManagedTargetState(ROOT, entry);
       const oldQx = targetState.qx;
       const oldSg = targetState.surge;
       const oldStamp = conversionStampFromText(oldQx);
       let stamp = changed || !oldStamp ? nowConversionStamp() : oldStamp;
+
+      stage='convert';
       let out = convertPlugin(entry, source, {parsed, scriptMap, stamp, mockFiles:qxMockFiles, jqFiles, rawBase:RAW_BASE});
 
       // Converter changes must also refresh outputs even when upstream LPX is unchanged.
-      // Preserve the old conversion timestamp only if the generated content is actually identical.
       if (!changed && oldStamp && ((oldQx && oldQx !== out.qx) || (oldSg && oldSg !== out.surge))) {
         stamp = nowConversionStamp();
         out = convertPlugin(entry, source, {parsed, scriptMap, stamp, mockFiles:qxMockFiles, jqFiles, rawBase:RAW_BASE});
       }
 
-      await syncGeneratedScripts(ROOT, entry, out.generatedScripts);
+      stage='validate-qx';
       validateQX(out.qx, entry);
+      stage='validate-surge';
       validateSurgeModule(out.surge, entry);
+
+      // No managed files for this plugin are written before conversion + both target validators succeed.
+      stage='write-generated-helpers';
+      await syncGeneratedScripts(ROOT, entry, out.generatedScripts);
+      stage='write-targets';
       const targetChanges = await writeManagedTargets(targetState, out);
-      console.log(targetChanges.length
-        ? `converted -> ${targetState.qxRelativePath}, ${targetState.surgeRelativePath}`
-        : 'conversion verified: outputs unchanged');
+      stage='write-source';
+      await writeManagedSource(sourceState, source);
+
+      console.log(targetChanges.length || changed
+        ? `synced -> ${entry.file}; ${targetState.qxRelativePath}; ${targetState.surgeRelativePath}`
+        : 'conversion verified: source and outputs unchanged');
     } catch (e) {
       failures.capture(entry,e);
+      structuredFailures.push(buildSyncFailure({
+        entry,
+        stage,
+        error:e,
+        previousSource,
+        fetchedSource:source,
+      }));
     }
   }
+  await writeSyncFailureReport(ROOT,structuredFailures);
   if (failures.report()) process.exitCode = 1;
 }
 

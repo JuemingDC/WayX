@@ -6,12 +6,14 @@ import {
   conversionStampFromText,
   firstConversionStamp,
   generatedScriptDiffs,
+  inspectManagedSource,
   managedSourceDigest,
   normalizeManagedSource,
   readCatalogSource,
   readManagedTargetState,
   syncGeneratedScripts,
   syncManagedSource,
+  writeManagedSource,
   writeManagedTargets,
 } from '../src/managed-artifacts.mjs';
 
@@ -28,8 +30,14 @@ try {
   assert.equal(source,'#!name=Managed Artifact\n[Rule]\nDOMAIN,example.com,REJECT\n');
   assert.equal(managedSourceDigest(source).length,12);
 
+  const inspected=await inspectManagedSource(root,entry,source);
+  assert.equal(inspected.changed,true);
+  await assert.rejects(readCatalogSource(root,entry));
+  assert.equal(await writeManagedSource(inspected,source),true);
+  assert.equal(await readCatalogSource(root,entry),source);
+
   const firstSource=await syncManagedSource(root,entry,source);
-  assert.equal(firstSource.changed,true);
+  assert.equal(firstSource.changed,false);
   assert.equal(await readCatalogSource(root,entry),source);
 
   const secondSource=await syncManagedSource(root,entry,source);

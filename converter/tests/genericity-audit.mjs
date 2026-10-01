@@ -9,7 +9,6 @@ const files=[
     .filter(name=>name.endsWith('.mjs'))
     .map(name=>path.join(SRC,name)),
   path.join(ROOT,'.github','scripts','sync-convert.mjs'),
-  path.join(ROOT,'.github','scripts','conversion_gate.py'),
   path.join(ROOT,'converter','tools','regenerate-canonical.mjs'),
 ];
 

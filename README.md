@@ -87,6 +87,17 @@ Quantumult X snippet 按项目约定将分段标题保留为注释形式，例�
 # [mitm]
 ```
 
+## 自动上游同步
+
+`.github/workflows/upstream-monitor.yml` 每天自动完成 Source Catalog 原作者拉取、逐插件 QX/Surge 转换与校验、全仓 audit/reconciliation、Issue 跟踪和已验证产物提交。
+
+- 单个插件转换失败不会阻塞其它插件；
+- 失败插件保留上一版已验证 Source/target；
+- `REVIEW REQUIRED`、`ISSUE REQUIRED` 和 hard sync failure 都自动创建/复用 GitHub Issue；
+- 自动 Issue 必须包含插件、对应源规则与失败原因；
+- 全局 validator/audit/reconciliation 不通过时不会提交本轮自动产物；
+- 不使用 ChatGPT Work 或 work-review PR。
+
 ## Author
 
 chance

@@ -58,20 +58,28 @@ export async function readManagedTextIfExists(file) {
     : null;
 }
 
-export async function syncManagedSource(root, entry, source, {resourceDir='Resource/Loon'}={}) {
+export async function inspectManagedSource(root, entry, source, {resourceDir='Resource/Loon'}={}) {
   const sourcePath=path.join(root,resourceDir,entry.file);
   const previous=await readManagedTextIfExists(sourcePath);
-  const changed=previous !== source;
-  if (changed) {
-    await fs.mkdir(path.dirname(sourcePath),{recursive:true});
-    await fs.writeFile(sourcePath,source);
-  }
   return {
     sourcePath,
     previous,
-    changed,
+    changed:previous !== source,
     digest:managedSourceDigest(source),
   };
+}
+
+export async function writeManagedSource(state, source) {
+  if (!state.changed) return false;
+  await fs.mkdir(path.dirname(state.sourcePath),{recursive:true});
+  await fs.writeFile(state.sourcePath,source);
+  return true;
+}
+
+export async function syncManagedSource(root, entry, source, options={}) {
+  const state=await inspectManagedSource(root,entry,source,options);
+  await writeManagedSource(state,source);
+  return state;
 }
 
 export async function readCatalogSource(root, entry, {resourceDir='Resource/Loon'}={}) {

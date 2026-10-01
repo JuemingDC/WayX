@@ -1,53 +1,59 @@
-# Chance Upstream Monitor — Actions + Work 分层模式
+# Chance Upstream Monitor — GitHub Actions 全自动模式
 
-WayX 使用两级自动化：GitHub Actions 处理可以机械证明正确的 Safe Tier；只有脚本、复杂语义或官方规范变化才进入 ChatGPT Work。
+WayX 的上游维护由 GitHub Actions 定时闭环执行，不再使用 ChatGPT Work、work-review PR 或 Work finalizer。
 
 ## 每日流程
 
 ```text
 每天 01:00 Asia/Shanghai
-→ GitHub Actions 同步选定 Loon 源 / RuCu6 / 官方规范
-→ sync-convert 对 Safe Tier 做确定性 QX / Surge 转换
-→ validate_conversion_policy.py 校验目标格式
-→ conversion_gate.py 判断 Safe Tier / Review Tier
-→ 无变化：结束
-→ 仅 Safe Tier：直接提交 main
-→ Review Tier / converter失败 / validator失败：创建 work-review PR
-→ ChatGPT Work 按 monitor/WORK_TASK_PROMPT.md 审查与必要修改
-→ work-complete：自动 squash merge + 删除临时分支
-→ work-reject：自动关闭且不合并 + 删除临时分支
+→ 从 main checkout
+→ 校验 converter core / inventory / genericity
+→ 按 .github/sources/loon.json 逐插件拉取原作者 Loon
+→ 每插件 materialize → convert → QX/Surge validate
+→ 成功插件写入 Resource/Loon + Adblock + generated helper
+→ 失败插件保持旧的已验证 Source/target，不阻塞其它插件
+→ 检查监控中的官方规范/仓库并更新 upstream mirror/state
+→ 全仓 validator + repository audit + reconciliation
+→ 为 REVIEW REQUIRED / ISSUE REQUIRED / hard sync failure 创建或复用 GitHub Issue
+→ 所有全局校验通过后直接提交 main
+→ 上传运行日志、failure report、reconciliation 与 inventory artifact
 ```
 
-## Safe Tier
+## Issue 要求
 
-Actions 可直接新增、删除和同步基础 Rule、确定的 reject/redirect、转换器已覆盖的简单 JQ、纯 hostname MITM、注释与转换元数据。新增和删除都通过重新解析源文件并完整重生成目标文件完成，不猜测插入位置。
+自动提交的转换 Issue 必须包含：
 
-QX IP 类规则自动去掉 `no-resolve`；Surge 保留其官方支持的 `no-resolve`。Loon `[Rule] URL-REGEX,...,REJECT` 按 WayX 约定转成 QX `url reject-200`；普通 Rewrite 的 reject 不按状态码机械映射。
+- 相关插件 ID；
+- 本地 Source 文件；
+- 原作者上游 URL；
+- 对应 Source declaration / 规则内容；
+- hard failure 时的失败阶段；
+- 明确失败原因；
+- QX/Surge 目标位置或运行位置。
 
-## Review Tier
+同一问题使用稳定 fingerprint；重复定时运行复用/更新已有 Issue，closed issue 再次出现时自动 reopen。
 
-JavaScript 内容、[Script]、依赖 Loon `[Argument]` 且目标无法确定表达的执行声明、复杂 AND/OR/NOT、Loon 新 Rewrite 未覆盖 action、自定义 Body、binary/base64、pipeline、helper script、converter/validator 失败和官方规范变化都交给 Work。Loon `[Argument]` 不转换为 QX 参数 UI/BoxJs；Surge 使用官方 `#!arguments` 参数表和 `{{{name}}}` 占位符。不能证明安全就不直接写 main。
+## Fail-closed
 
-RuCu6 当前属于 Review Tier：Actions 负责同步原始 LPX/JS，Work 负责复杂新语法与脚本转换审查。
+未知语法、未知 action、未登记 complex signature 仍按 converter 规范 fail closed：目标侧注释保留源声明，不生成猜测性活动规则。已知但目标能力不足继续使用 REVIEW REQUIRED。两类情况均由 Actions 自动跟踪 Issue，不再转交 Work。
 
-## OpenAI API
+hard sync failure 采用单插件事务边界：conversion + QX/Surge validation 成功前不写该插件的新 managed Source/target/helper。其它插件继续独立同步。
 
-本流程不调用 OpenAI API，不使用 `OPENAI_API_KEY`，不会产生 API 独立账单。以前创建的仓库 Secret 可以手动删除。
+## 官方规范监控
 
-## 自动清理
-
-`monitor/.runtime/` 和 `.github/reports/` 不提交。Work 完成后临时 review 分支自动删除。GitHub 本身不支持真正删除 PR 历史，所以最终只保留 merged/closed PR 记录，不保留临时 diff/review 文件。
-
-一个 `work-review` PR 未处理完成时，下一次定时任务会跳过，避免重复 PR 和重复 Work 消耗。
+`monitor/monitor_upstreams.py` 只记录监控源变化、更新 `monitor/state.json` / `upstream/` mirror，并生成 `monitor/.runtime/upstream_changes.md`。官方规范变化本身不创建 Work PR，也不阻断已验证插件的自动同步。
 
 ## 核心文件
 
-- `CONVERSION_SPEC.md`：唯一权威转换规范入口。
-- `docs/conversion-spec/`：分块转换规范。
-- `.github/scripts/sync-convert.mjs`：Loon → QX/Surge 通用转换与上游同步入口。
+- `CONVERSION_SPEC.md`：唯一权威转换规范。
+- `docs/conversion-spec/`：分块规范。
+- `.github/sources/loon.json`：唯一 Loon Source Catalog。
+- `.github/scripts/sync-convert.mjs`：原作者拉取、转换、目标校验与成功插件落盘。
+- `.github/scripts/propose-conversion-issues.mjs`：Review/Issue/hard failure 自动 Issue。
 - `.github/scripts/validate_conversion_policy.py`：目标格式硬校验。
-- `.github/scripts/conversion_gate.py`：Safe / Work 风险分级。
-- `monitor/monitor_upstreams.py`：官方文档/仓库变化检查。
-- `monitor/WORK_TASK_PROMPT.md`：Work 审查与处理规范。
-- `.github/workflows/upstream-monitor.yml`：每天 01:00 唯一上游调度器。
-- `.github/workflows/work-review-finalizer.yml`：Work 完成/拒绝后的 merge、close 和 branch cleanup。
+- `converter/tools/audit-repository.mjs`：仓库级审计。
+- `converter/tools/conversion-reports.mjs`：reconciliation + Review/Issue inventory。
+- `monitor/monitor_upstreams.py`：官方规范/仓库变化记录。
+- `.github/workflows/upstream-monitor.yml`：每天 01:00 自动调度器。
+
+`monitor/.runtime/` 与 `.github/reports/` 不提交。

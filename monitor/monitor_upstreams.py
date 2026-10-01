@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Chance upstream monitor.
 
-GitHub Actions performs cheap upstream checks. Real semantic changes are handed
-off to ChatGPT Work through a GitHub pull request. This file never calls the
-OpenAI API.
+GitHub Actions records monitored specification/repository changes and updates
+local state/mirrors. Conversion handling is performed by the scheduled WayX
+automation workflow; this monitor does not create review pull requests.
 """
 from __future__ import annotations
 
@@ -168,7 +168,7 @@ def check_http(src: dict, state: dict, settings: dict):
         mirror.write_bytes(data)
         state.clear()
         state.update(new_state)
-        return False, True, "baseline created; Work review skipped"
+        return False, True, "baseline created"
 
     if digest == old_digest:
         metadata_changed = any(
@@ -210,7 +210,7 @@ def check_repo(src: dict, state: dict, settings: dict):
                 "checked_at": now(),
             }
         )
-        return False, True, "baseline commit recorded; Work review skipped"
+        return False, True, "baseline commit recorded"
 
     if old == head:
         return False, False, "HEAD unchanged"
@@ -279,18 +279,17 @@ def set_output(name: str, value: str) -> None:
             handle.write(f"{name}={value}\n")
 
 
-def build_review_summary(review_items: list[tuple], runtime: Path) -> Path:
+def build_change_summary(changed_items: list[tuple], runtime: Path) -> Path:
     runtime.mkdir(parents=True, exist_ok=True)
-    summary = runtime / "work_review.md"
+    summary = runtime / "upstream_changes.md"
     lines = [
-        "# WayX upstream semantic review\n\n",
-        f"- Checked at: `{now()}`\n",
-        "- Handoff: `ChatGPT Work`\n",
-        "- OpenAI API: `not used`\n\n",
-        "This PR was created by GitHub Actions. Use the PR Files changed view as the primary diff source.\n\n",
-        "## Sources requiring review\n\n",
+        "# WayX monitored upstream changes\n\n",
+        f"- Checked at: `{now()}`\n\n",
+        "These monitored specification/repository changes are recorded for history. "
+        "They do not block deterministic plugin sync.\n\n",
+        "## Changed sources\n\n",
     ]
-    for src, message in review_items:
+    for src, message in changed_items:
         lines.extend([
             f"### {src.get('name', src['id'])}\n\n",
             f"- Source ID: `{src['id']}`\n",
@@ -299,17 +298,8 @@ def build_review_summary(review_items: list[tuple], runtime: Path) -> Path:
             f"- Result: {message}\n",
             f"- Upstream: `{src.get('url') or src.get('repo')}`\n\n",
         ])
-    lines.extend([
-        "## Work requirement\n\n",
-        "Read `CONVERSION_SPEC.md`, the relevant `docs/conversion-spec/` blocks, and "
-        "`monitor/WORK_TASK_PROMPT.md` before changing any target file. "
-        "Add `work-complete` only after all required changes and validation pass. "
-        "If the upstream change should not be adopted, add `work-reject`. "
-        "If anything remains uncertain, add neither label.\n",
-    ])
     summary.write_text("".join(lines), "utf-8")
     return summary
-
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -348,19 +338,18 @@ def main() -> int:
     if any_state:
         save_json(state_path, state)
 
-    review_items = [
+    changed_items = [
         (src, message)
         for src, changed, _, message in results
-        if changed and src.get("analysis", "none") == "work"
+        if changed
     ]
 
-    summary = runtime / "work_review.md"
-    if review_items:
-        summary = build_review_summary(review_items, runtime)
+    summary = runtime / "upstream_changes.md"
+    if changed_items:
+        summary = build_change_summary(changed_items, runtime)
 
-    set_output("has_change", "true" if any(item[1] for item in results) else "false")
-    set_output("has_review", "true" if review_items else "false")
-    set_output("review_summary", summary.relative_to(ROOT).as_posix())
+    set_output("has_change", "true" if changed_items else "false")
+    set_output("change_summary", summary.relative_to(ROOT).as_posix())
     return 0
 
 

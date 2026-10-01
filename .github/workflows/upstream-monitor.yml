@@ -1,7 +1,7 @@
-# Chance Upstream Monitor
+# Chance Upstream Automation
 # Author: chance
-# Updated: 2026-09-29
-# Category: Automation / Sync / Conversion / Work Handoff
+# Updated: 2026-10-01
+# Category: Automation / Sync / Conversion / Issue Tracking
 
 name: Upstream Monitor
 
@@ -13,7 +13,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
   issues: write
 
 concurrency:
@@ -21,80 +20,53 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  monitor:
+  sync:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
     steps:
-      - name: Check for pending Work review
-        id: pending
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          OPEN_PR="$(gh pr list \
-            --repo "$GITHUB_REPOSITORY" \
-            --state open \
-            --label work-review \
-            --json number \
-            --jq '.[0].number // empty')"
-          if [ -n "$OPEN_PR" ]; then
-            echo "blocked=true" >> "$GITHUB_OUTPUT"
-            echo "Existing Work review PR #$OPEN_PR is still open; skip this cycle."
-          else
-            echo "blocked=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Checkout
-        if: steps.pending.outputs.blocked != 'true'
+      - name: Checkout main baseline
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Set up Node.js
-        if: steps.pending.outputs.blocked != 'true'
         uses: actions/setup-node@v6
         with:
           node-version: "24"
 
-      - name: Validate WayX converter core
-        if: steps.pending.outputs.blocked != 'true'
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Validate converter core
         run: |
           node converter/tests/checkpoint.mjs
           node converter/tests/generic-identity.mjs
           node converter/tests/genericity-audit.mjs
           node converter/tests/spec-block-contract.mjs
           node converter/tests/complex-source-inventory.mjs
-          node converter/tests/unknown-issue-markers.mjs
+          node converter/tests/catalog-syntax-inventory.mjs
+          node converter/tests/catalog-legacy-syntax-inventory.mjs
+          node converter/tests/catalog-rule-inventory.mjs
           node converter/tests/manual-assets.mjs
-          python converter/tests/test_conversion_gate.py
+          node converter/tests/upstream-automation.mjs
           node converter/tests/myblockads-golden.mjs
 
-      - name: Set up Python
-        if: steps.pending.outputs.blocked != 'true'
-        uses: actions/setup-python@v6
-        with:
-          python-version: "3.13"
-
-      - name: Syntax check conversion automation
-        if: steps.pending.outputs.blocked != 'true'
+      - name: Syntax check automation
         run: |
           node --check .github/scripts/sync-convert.mjs
           node --check .github/scripts/propose-conversion-issues.mjs
           node --check converter/tools/conversion-reports.mjs
-          python -m py_compile .github/scripts/conversion_gate.py .github/scripts/validate_conversion_policy.py converter/tests/test_conversion_gate.py
-
-      - name: Install sync dependency
-        if: steps.pending.outputs.blocked != 'true'
-        run: python -m pip install --disable-pip-version-check requests
+          node --check converter/tools/audit-repository.mjs
+          node --check converter/tests/upstream-automation.mjs
+          python -m py_compile .github/scripts/validate_conversion_policy.py monitor/monitor_upstreams.py
 
       - name: Prepare runtime logs
-        if: steps.pending.outputs.blocked != 'true'
         run: mkdir -p monitor/.runtime
 
-      - name: Sync all catalog Loon sources and convert deterministically
-        if: steps.pending.outputs.blocked != 'true'
+      - name: Pull all Catalog upstreams and convert
         id: loon_sync
         continue-on-error: true
         shell: bash
@@ -102,16 +74,14 @@ jobs:
           set -o pipefail
           node .github/scripts/sync-convert.mjs 2>&1 | tee monitor/.runtime/loon-sync.log
 
-
-      - name: Check official upstream specifications
-        if: steps.pending.outputs.blocked != 'true'
+      - name: Check monitored upstream specifications
         id: monitor
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python monitor/monitor_upstreams.py
 
-      - name: Validate deterministic generated outputs
-        if: steps.pending.outputs.blocked != 'true'
+      - name: Validate generated target formats
         id: validate
         continue-on-error: true
         shell: bash
@@ -119,164 +89,113 @@ jobs:
           set -o pipefail
           python .github/scripts/validate_conversion_policy.py 2>&1 | tee monitor/.runtime/validator.log
 
+      - name: Audit repository
+        id: audit
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          node converter/tools/audit-repository.mjs 2>&1 | tee monitor/.runtime/audit.log
+
       - name: Generate reconciliation and Review inventory
-        if: steps.pending.outputs.blocked != 'true'
         id: reports
         continue-on-error: true
-        run: node converter/tools/conversion-reports.mjs
+        shell: bash
+        run: |
+          set -o pipefail
+          node converter/tools/conversion-reports.mjs 2>&1 | tee monitor/.runtime/reports.log
 
-      - name: Propose issues for unknown conversions
-        if: steps.pending.outputs.blocked != 'true'
+      - name: Verify generated helper references
+        id: helper_refs
+        continue-on-error: true
+        run: node converter/tests/generated-helper-refs.mjs
+
+      - name: Verify original Source Script URLs
+        id: source_urls
+        continue-on-error: true
+        run: node converter/tests/source-script-url-preservation.mjs
+
+      - name: Create or update conversion issues
+        if: always()
         id: issues
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
         run: node .github/scripts/propose-conversion-issues.mjs
 
-      - name: Classify conversion changes
-        if: steps.pending.outputs.blocked != 'true'
-        id: gate
-        run: python .github/scripts/conversion_gate.py
-
-      - name: Build Work review body
-        if: >
-          steps.pending.outputs.blocked != 'true' &&
-          (steps.monitor.outputs.has_review == 'true' ||
-           steps.gate.outputs.requires_work == 'true' ||
-           steps.issues.outputs.has_unknown == 'true' ||
-           steps.issues.outcome != 'success' ||
-           steps.reports.outcome != 'success' ||
-           steps.loon_sync.outcome != 'success' ||
-           steps.validate.outcome != 'success')
-        id: review
-        shell: bash
-        run: |
-          set -euo pipefail
-          BODY="monitor/.runtime/work_review_body.md"
-          {
-            echo "# WayX automated upstream review"
-            echo
-            echo "GitHub Actions already applied deterministic Safe Tier conversions. ChatGPT Work must review the remaining semantic-risk changes."
-            echo
-            echo "## Actions status"
-            echo
-            echo "- Loon converter: ${{ steps.loon_sync.outcome }}"
-            echo "- Validator: ${{ steps.validate.outcome }}"
-            echo "- Unknown issue proposer: ${{ steps.issues.outcome }}"
-            echo "- Reconciliation/review reports: ${{ steps.reports.outcome }}"
-            echo
-            if [ -f "${{ steps.gate.outputs.summary }}" ]; then
-              cat "${{ steps.gate.outputs.summary }}"
-              echo
-            fi
-            if [ -f "${{ steps.monitor.outputs.review_summary }}" ]; then
-              cat "${{ steps.monitor.outputs.review_summary }}"
-              echo
-            fi
-            if [ -f "${{ steps.issues.outputs.summary }}" ]; then
-              cat "${{ steps.issues.outputs.summary }}"
-              echo
-            fi
-            for REPORT in monitor/.runtime/conversion-reconciliation.md monitor/.runtime/review-inventory.md; do
-              if [ -f "$REPORT" ]; then
-                cat "$REPORT"
-                echo
-              fi
-            done
-            for LOG in monitor/.runtime/loon-sync.log monitor/.runtime/validator.log; do
-              if [ -s "$LOG" ]; then
-                echo "## $(basename "$LOG")"
-                echo
-                echo '```text'
-                tail -n 80 "$LOG"
-                echo '```'
-                echo
-              fi
-            done
-            echo "## Work instruction"
-            echo
-            echo "Read and execute CONVERSION_SPEC.md, the relevant docs/conversion-spec blocks, and monitor/WORK_TASK_PROMPT.md strictly. A converter/validator failure is Review Tier and must never be committed directly to main."
-          } > "$BODY"
-          echo "body=$BODY" >> "$GITHUB_OUTPUT"
-
-      - name: Commit Safe Tier changes directly
-        if: >
-          steps.pending.outputs.blocked != 'true' &&
-          steps.monitor.outputs.has_review != 'true' &&
-          steps.gate.outputs.requires_work != 'true' &&
-          steps.issues.outputs.has_unknown != 'true' &&
-          steps.issues.outcome == 'success' &&
+      - name: Commit all validated automated outputs
+        if: >-
+          always() &&
+          steps.validate.outcome == 'success' &&
+          steps.audit.outcome == 'success' &&
           steps.reports.outcome == 'success' &&
-          steps.loon_sync.outcome == 'success' &&
-          steps.validate.outcome == 'success'
+          steps.helper_refs.outcome == 'success' &&
+          steps.source_urls.outcome == 'success' &&
+          steps.issues.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "chance-upstream-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
           git add -A Resource/Loon Adblock script boxjs monitor/state.json
           if [ -d upstream ]; then git add -A upstream; fi
+
           if git diff --cached --quiet; then
-            echo "No Safe Tier changes to commit."
+            echo "No validated upstream/conversion changes to commit."
             exit 0
           fi
+
           REMOTE_MAIN="$(git ls-remote origin refs/heads/main | awk '{print $1}')"
           if [ -z "$REMOTE_MAIN" ] || [ "$REMOTE_MAIN" != "$GITHUB_SHA" ]; then
-            echo "::notice::main advanced after this run started; skip Safe Tier push so a fresh run can regenerate from the new base."
+            echo "::notice::main advanced after generation; skip this push and regenerate from the new baseline on the next run."
             exit 0
           fi
-          git commit -m "chore: sync upstream and apply safe conversions"
+
+          git commit -m "chore: sync upstream and regenerate targets"
           git push origin HEAD:main
 
-      - name: Upload reconciliation and Review inventory
-        if: always() && steps.pending.outputs.blocked != 'true'
+      - name: Upload automation reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: conversion-reports
+          name: upstream-conversion-reports
           if-no-files-found: warn
           path: |
+            monitor/.runtime/loon-sync.log
+            monitor/.runtime/validator.log
+            monitor/.runtime/audit.log
+            monitor/.runtime/reports.log
+            monitor/.runtime/sync-failures.json
+            monitor/.runtime/sync-failures.md
+            monitor/.runtime/conversion-issues.md
+            monitor/.runtime/upstream_changes.md
             monitor/.runtime/conversion-reconciliation.json
             monitor/.runtime/conversion-reconciliation.md
             monitor/.runtime/review-inventory.json
             monitor/.runtime/review-inventory.md
 
-      - name: Open Work review PR
-        if: >
-          steps.pending.outputs.blocked != 'true' &&
-          (steps.monitor.outputs.has_review == 'true' ||
-           steps.gate.outputs.requires_work == 'true' ||
-           steps.issues.outputs.has_unknown == 'true' ||
-           steps.issues.outcome != 'success' ||
-           steps.reports.outcome != 'success' ||
-           steps.loon_sync.outcome != 'success' ||
-           steps.validate.outcome != 'success')
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REVIEW_BODY: ${{ steps.review.outputs.body }}
+      - name: Surface unresolved automation failures
+        if: always()
         shell: bash
+        env:
+          LOON_SYNC: ${{ steps.loon_sync.outcome }}
+          MONITOR: ${{ steps.monitor.outcome }}
+          VALIDATE: ${{ steps.validate.outcome }}
+          AUDIT: ${{ steps.audit.outcome }}
+          REPORTS: ${{ steps.reports.outcome }}
+          HELPER_REFS: ${{ steps.helper_refs.outcome }}
+          SOURCE_URLS: ${{ steps.source_urls.outcome }}
+          ISSUES: ${{ steps.issues.outcome }}
         run: |
           set -euo pipefail
-          git config user.name "chance-upstream-bot"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          BRANCH="work/upstream-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-          git switch -c "$BRANCH"
-          git add -A Resource/Loon Adblock script boxjs monitor/state.json
-          if [ -d upstream ]; then git add -A upstream; fi
-          if git diff --cached --quiet; then
-            MARKER="monitor/review-queue/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}.md"
-            mkdir -p "$(dirname "$MARKER")"
-            cp "$REVIEW_BODY" "$MARKER"
-            git add "$MARKER"
-            echo "Review requested without a normal repository diff; persisted $MARKER so the Work review PR cannot be lost."
-          fi
-          git commit -m "chore: prepare upstream Work review"
-          git push --set-upstream origin "$BRANCH"
-          gh label create work-review --description "Requires ChatGPT Work semantic review" --color "B8860B" --force >/dev/null 2>&1 || true
-          gh label create work-complete --description "Work review completed; safe to merge and clean up" --color "2EA44F" --force >/dev/null 2>&1 || true
-          gh label create work-reject --description "Upstream change rejected; close without merging" --color "B60205" --force >/dev/null 2>&1 || true
-          gh pr create \
-            --base main \
-            --head "$BRANCH" \
-            --title "Upstream semantic review: $(date -u +%Y-%m-%d)" \
-            --body-file "$REVIEW_BODY" \
-            --label work-review
+          failed=0
+          for item in             "loon_sync=$LOON_SYNC"             "monitor=$MONITOR"             "validate=$VALIDATE"             "audit=$AUDIT"             "reports=$REPORTS"             "helper_refs=$HELPER_REFS"             "source_urls=$SOURCE_URLS"             "issues=$ISSUES"; do
+            name="${item%%=*}"
+            value="${item#*=}"
+            if [ "$value" != "success" ]; then
+              echo "::error title=Upstream automation::${name} outcome=${value}"
+              failed=1
+            fi
+          done
+          exit "$failed"
