@@ -1,8 +1,8 @@
 # WayX — ChatGPT Work 上游语义审查任务
 
-版本：2.9  
+版本：3.0  
 作者：chance  
-更新时间：2026-09-30  
+更新时间：2026-10-01  
 类型：Automation / Upstream Semantic Review
 
 ## 触发条件
