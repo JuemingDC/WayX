@@ -2,10 +2,8 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {
-  scriptUrls,
-  validateQX,
-} from '../../.github/scripts/sync-convert.mjs';
+import { validateQX } from '../../.github/scripts/sync-convert.mjs';
+import { discoverSourceScriptUrls } from '../src/source-script-materializer.mjs';
 import { convertPlugin, validateSurgeModule } from '../src/index.mjs';
 
 const ROOT = process.cwd();
@@ -523,7 +521,7 @@ function regressionScriptSource(url) {
 }
 
 function passthroughScriptMap(source) {
-  return new Map(scriptUrls(source).map(url => [
+  return new Map(discoverSourceScriptUrls(source).map(url => [
     url,
     {qx:url, surge:url, source:regressionScriptSource(url)},
   ]));
@@ -564,7 +562,7 @@ for (const testCase of cases) {
 
   // Conversion may create target helper scripts for rewrite/mock semantics, but
   // original Script-section JavaScript is never rewritten or wrapped.
-  for (const url of scriptUrls(source)) {
+  for (const url of discoverSourceScriptUrls(source)) {
     assert.ok(![...out.generatedScripts.values()].some(body => body.includes('Source: ' + url) && body.includes('Script v2 ->')));
   }
 
