@@ -1,12 +1,12 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { validateSurgeModule } from '../../converter/src/surge-module.mjs';
 import { loadLoonSourceCatalog } from '../../converter/src/source-catalog.mjs';
-import { convertPlugin } from '../../converter/src/conversion-pipeline.mjs';
-import { materializeConversionContext } from '../../converter/src/conversion-context.mjs';
 import { fetchOriginalText } from '../../converter/src/source-fetch.mjs';
-import { validateQX } from '../../converter/src/qx-snippet-validator.mjs';
 import { createWorkflowFailureReporter } from '../../converter/src/workflow-diagnostics.mjs';
+import {
+  materializeConversionRunContext,
+  convertAndValidatePlugin,
+} from '../../converter/src/conversion-runner.mjs';
 import {
   conversionStampFromText,
   normalizeManagedSource,
@@ -52,13 +52,9 @@ async function main() {
       const changed = sourceState.changed;
       console.log(`${changed ? 'changed' : 'unchanged'} upstream source via ${fetchedFrom}; sha256=${sourceState.digest}`);
 
-      stage='materialize-context';
-      const {
-        parsed,
-        scriptMap,
-        mockFiles: qxMockFiles,
-        jqFiles,
-      } = await materializeConversionContext(entry, source);
+      const context = await materializeConversionRunContext(entry,source,{
+        onStage:value=>{ stage=value; },
+      });
 
       stage='read-target-state';
       const targetState = await readManagedTargetState(ROOT, entry);
@@ -67,19 +63,21 @@ async function main() {
       const oldStamp = conversionStampFromText(oldQx);
       let stamp = changed || !oldStamp ? nowConversionStamp() : oldStamp;
 
-      stage='convert';
-      let out = convertPlugin(entry, source, {parsed, scriptMap, stamp, mockFiles:qxMockFiles, jqFiles, rawBase:RAW_BASE});
+      let out = convertAndValidatePlugin(entry,source,context,{
+        stamp,
+        rawBase:RAW_BASE,
+        onStage:value=>{ stage=value; },
+      });
 
       // Converter changes must also refresh outputs even when upstream LPX is unchanged.
       if (!changed && oldStamp && ((oldQx && oldQx !== out.qx) || (oldSg && oldSg !== out.surge))) {
         stamp = nowConversionStamp();
-        out = convertPlugin(entry, source, {parsed, scriptMap, stamp, mockFiles:qxMockFiles, jqFiles, rawBase:RAW_BASE});
+        out = convertAndValidatePlugin(entry,source,context,{
+          stamp,
+          rawBase:RAW_BASE,
+          onStage:value=>{ stage=value; },
+        });
       }
-
-      stage='validate-qx';
-      validateQX(out.qx, entry);
-      stage='validate-surge';
-      validateSurgeModule(out.surge, entry);
 
       // No managed files for this plugin are written before conversion + both target validators succeed.
       stage='write-generated-helpers';
