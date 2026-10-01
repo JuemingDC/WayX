@@ -67,7 +67,7 @@ export function buildSyncFailure({entry,stage,error,previousSource=null,fetchedS
   };
 }
 
-export async function writeSyncFailureReport(root,failures,{runtimeDir='monitor/.runtime'}={}) {
+export async function writeSyncFailureReport(root,failures,{runtimeDir='.github/monitor/.runtime'}={}) {
   const dir=path.join(root,runtimeDir);
   await fs.mkdir(dir,{recursive:true});
   const jsonPath=path.join(dir,'sync-failures.json');

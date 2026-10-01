@@ -13,7 +13,7 @@ const manifest=JSON.parse(await fs.readFile(
   'utf8',
 ));
 const baseline=JSON.parse(await fs.readFile(
-  path.join(ROOT,'converter/fixtures/catalog-rule-inventory.json'),
+  path.join(ROOT,'.github/converter/fixtures/catalog-rule-inventory.json'),
   'utf8',
 ));
 

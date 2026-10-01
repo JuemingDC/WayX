@@ -18,7 +18,7 @@ import {
 
 const ROOT=process.cwd();
 const manifest=JSON.parse(await fs.readFile(path.join(ROOT,'.github/sources/loon.json'),'utf8'));
-const expected=JSON.parse(await fs.readFile(path.join(ROOT,'converter/fixtures/catalog-legacy-syntax-inventory.json'),'utf8'));
+const expected=JSON.parse(await fs.readFile(path.join(ROOT,'.github/converter/fixtures/catalog-legacy-syntax-inventory.json'),'utf8'));
 
 function activeSectionLines(text,wanted){
   const out=[];

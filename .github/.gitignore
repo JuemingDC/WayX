@@ -1,5 +1,5 @@
 monitor/.runtime/
-.github/reports/
-__pycache__/
-*.pyc
+reports/
+**/__pycache__/
+**/*.pyc
 .DS_Store
