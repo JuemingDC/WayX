@@ -129,6 +129,7 @@ function sanitizeName(value) {
 }
 
 export function convertPlugin(entry,source,{
+  parsed=null,
   scriptMap=new Map(),
   stamp,
   mockFiles=new Map(),
@@ -137,12 +138,12 @@ export function convertPlugin(entry,source,{
 }={}) {
   if (!stamp) throw new Error('convertPlugin requires a conversion stamp');
 
-  const parsed=parseLoonPlugin(source);
-  const sourceHeader=parsed.header;
+  const plugin=parsed ?? parseLoonPlugin(source);
+  const sourceHeader=plugin.header;
   const qx=createQxOutputState();
   const sg=createSurgeOutputState();
 
-  for (const [sectionName,sectionLines] of parsed.sections) {
+  for (const [sectionName,sectionLines] of plugin.sections) {
     if (isSupportedSourceSection(sectionName)) continue;
     const active=groupSourceSectionItems(sectionLines).filter(item=>item.line).map(item=>item.line);
     if (!active.length) continue;
@@ -154,13 +155,13 @@ export function convertPlugin(entry,source,{
   }
 
   const argumentAnalysis=analyzePluginArgumentUsage({
-    argumentLines:parsed.sections.get('Argument') || [],
-    rewriteLines:parsed.sections.get('Rewrite') || [],
-    scriptLines:parsed.sections.get('Script') || [],
-    ruleLines:parsed.sections.get('Rule') || [],
+    argumentLines:plugin.sections.get('Argument') || [],
+    rewriteLines:plugin.sections.get('Rewrite') || [],
+    scriptLines:plugin.sections.get('Script') || [],
+    ruleLines:plugin.sections.get('Rule') || [],
   });
   const argumentIds=new Set(argumentAnalysis.declaredIds);
-  const surgeArgumentPlan=surgeArgumentMetadata(parsed.sections.get('Argument') || [],{
+  const surgeArgumentPlan=surgeArgumentMetadata(plugin.sections.get('Argument') || [],{
     proxyPolicyBinding:argumentAnalysis.policyBindings.length>0,
   });
   const surgeArgumentTable=surgeArgumentPlan.table;
@@ -200,7 +201,7 @@ export function convertPlugin(entry,source,{
     appendQxOutput(qx,'notes','# [WayX] Policy binding: source PROXY is preserved as literal QX policy name PROXY; a matching target policy must exist.');
   }
 
-  const ruleSectionLines=parsed.sections.get('Rule') || [];
+  const ruleSectionLines=plugin.sections.get('Rule') || [];
   for (const item of groupSourceSectionItems(ruleSectionLines)) {
     const comments=cleanSourceComments(item.comments);
     if (!item.line) {
@@ -225,7 +226,7 @@ export function convertPlugin(entry,source,{
     surgeRuleOutputDestination(sg,sr.section).push(...comments,...sr.lines);
   }
 
-  const rewriteSectionLines=parsed.sections.get('Rewrite') || [];
+  const rewriteSectionLines=plugin.sections.get('Rewrite') || [];
   for (const item of groupSourceSectionItems(rewriteSectionLines)) {
     const comments=cleanSourceComments(item.comments);
     const surgeCommentPlan=planDisabledSurgeRewriteComments(item.comments,sctx);
@@ -266,7 +267,7 @@ export function convertPlugin(entry,source,{
     else sdest.push(...surgeComments,...(sr.lines || [sr.line]));
   }
 
-  const scriptSectionLines=parsed.sections.get('Script') || [];
+  const scriptSectionLines=plugin.sections.get('Script') || [];
   let scriptIndex=0;
   for (const item of groupSourceSectionItems(scriptSectionLines)) {
     const comments=cleanSourceComments(item.comments);
@@ -348,7 +349,7 @@ export function convertPlugin(entry,source,{
     }
   }
 
-  const mitmLines=parsed.sections.get('MitM') || parsed.sections.get('MITM') || [];
+  const mitmLines=plugin.sections.get('MitM') || plugin.sections.get('MITM') || [];
   for (const item of groupSourceSectionItems(mitmLines)) {
     const comments=cleanSourceComments(item.comments);
     if (!item.line) continue;
