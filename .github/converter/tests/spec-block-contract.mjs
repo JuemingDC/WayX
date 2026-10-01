@@ -4,17 +4,17 @@ import path from 'node:path';
 
 const ROOT=process.cwd();
 const contracts=[
-  ['00','docs/conversion-spec/00-authority.md',['converter/tests/genericity-audit.mjs','converter/tools/audit-repository.mjs']],
-  ['05','docs/conversion-spec/05-generic-converter.md',['converter/src/source-catalog.mjs','converter/src/plugin-parser.mjs','converter/src/dependency-materializer.mjs','converter/src/source-script-materializer.mjs','converter/src/conversion-context.mjs','converter/src/conversion-pipeline.mjs','converter/src/conversion-runner.mjs','converter/src/source-section.mjs','converter/src/source-metadata.mjs','converter/src/source-fetch.mjs','.github/scripts/sync-convert.mjs','.github/manual-assets.json','converter/tests/conversion-context-materializers.mjs','converter/tests/conversion-pipeline.mjs','converter/tests/conversion-runner.mjs','converter/tests/source-section-comments.mjs','converter/tests/manual-assets.mjs']],
-  ['10','docs/conversion-spec/10-target-format.md',['converter/src/paths.mjs','converter/src/metadata.mjs','converter/src/output-lines.mjs','converter/src/qx-output.mjs','converter/src/surge-output.mjs','converter/src/qx-snippet-validator.mjs','converter/src/surge-module.mjs','converter/src/qx-official-capabilities.mjs','converter/src/surge-official-capabilities.mjs','converter/tests/target-output-builders.mjs']],
-  ['20','docs/conversion-spec/20-rule-mapping.md',['converter/src/rule-ast.mjs','converter/src/rule-qx.mjs','converter/src/rule-surge.mjs','converter/src/rule.mjs','converter/tests/rule-ast.mjs','converter/tests/catalog-rule-inventory.mjs','converter/fixtures/catalog-rule-inventory.json']],
-  ['30','docs/conversion-spec/30-rewrite-mapping.md',['converter/src/rewrite-ir.mjs','converter/src/rewrite-qx.mjs','converter/src/rewrite-surge.mjs','converter/src/rewrite-plan-result.mjs','converter/src/legacy-rewrite.mjs','converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-semantic.mjs','converter/src/complex-rewrite-registry.mjs','converter/tests/rewrite-ir.mjs','converter/tests/rewrite-target-planners.mjs','converter/tests/complex-source-inventory.mjs']],
-  ['40','docs/conversion-spec/40-regex-condition.md',['converter/src/rewrite-v2.mjs','converter/src/rewrite-v2-actions.mjs','converter/src/target-regex.mjs']],
-  ['50','docs/conversion-spec/50-json-jq-mock.md',['converter/src/jq.mjs','converter/src/dependency.mjs','converter/src/dependency-materializer.mjs','converter/src/conversion-context.mjs','converter/src/qx-mock.mjs','converter/src/surge-mock.mjs','converter/tests/conversion-context-materializers.mjs']],
-  ['60','docs/conversion-spec/60-script-argument.md',['converter/src/script.mjs','converter/src/script-legacy.mjs','converter/src/script-v2.mjs','converter/src/script-ir.mjs','converter/src/script-qx.mjs','converter/src/script-surge.mjs','converter/src/script-v2-target.mjs','converter/src/argument.mjs','converter/src/source-script-materializer.mjs','converter/src/conversion-context.mjs','converter/tests/conversion-context-materializers.mjs','converter/tests/script-ir-target-planners.mjs']],
-  ['70','docs/conversion-spec/70-mitm-comments.md',['converter/src/mitm.mjs','converter/src/source-section.mjs','converter/src/source-metadata.mjs','converter/src/qx-comment.mjs','converter/src/metadata.mjs','converter/tests/source-section-comments.mjs']],
-  ['80','docs/conversion-spec/80-review-validation.md',['converter/src/dependency-materializer.mjs','converter/src/source-script-materializer.mjs','converter/src/conversion-context.mjs','converter/src/conversion-pipeline.mjs','converter/src/conversion-runner.mjs','converter/src/managed-artifacts.mjs','converter/src/workflow-diagnostics.mjs','converter/src/upstream-run-report.mjs','converter/src/qx-snippet-validator.mjs','converter/src/surge-module.mjs','converter/src/qx-official-capabilities.mjs','converter/src/surge-official-capabilities.mjs','converter/tools/conversion-reports.mjs','converter/tests/conversion-context-materializers.mjs','converter/tests/conversion-pipeline.mjs','converter/tests/conversion-runner.mjs','converter/tests/managed-artifacts.mjs','converter/tests/workflow-diagnostics.mjs','converter/tests/upstream-automation.mjs','converter/tests/qx-official-capabilities.mjs','converter/tests/surge-official-capabilities.mjs','converter/tests/genericity-audit.mjs','converter/tests/generated-helper-refs.mjs','converter/tests/catalog-legacy-syntax-inventory.mjs','converter/fixtures/catalog-legacy-syntax-inventory.json','converter/tests/end-to-end-golden.mjs']],
-  ['90','docs/conversion-spec/90-project-workflow.md',['converter/src/conversion-runner.mjs','converter/src/workflow-diagnostics.mjs','converter/src/upstream-run-report.mjs','.github/scripts/sync-convert.mjs','.github/scripts/propose-conversion-issues.mjs','converter/tools/regenerate-canonical.mjs','.github/workflows/converter-check.yml','.github/workflows/upstream-monitor.yml']],
+  ['00','.github/docs/conversion-spec/00-authority.md',['.github/converter/tests/genericity-audit.mjs','.github/converter/tools/audit-repository.mjs']],
+  ['05','.github/docs/conversion-spec/05-generic-converter.md',['.github/converter/src/source-catalog.mjs','.github/converter/src/plugin-parser.mjs','.github/converter/src/dependency-materializer.mjs','.github/converter/src/source-script-materializer.mjs','.github/converter/src/conversion-context.mjs','.github/converter/src/conversion-pipeline.mjs','.github/converter/src/conversion-runner.mjs','.github/converter/src/source-section.mjs','.github/converter/src/source-metadata.mjs','.github/converter/src/source-fetch.mjs','.github/scripts/sync-convert.mjs','.github/manual-assets.json','.github/converter/tests/conversion-context-materializers.mjs','.github/converter/tests/conversion-pipeline.mjs','.github/converter/tests/conversion-runner.mjs','.github/converter/tests/source-section-comments.mjs','.github/converter/tests/manual-assets.mjs']],
+  ['10','.github/docs/conversion-spec/10-target-format.md',['.github/converter/src/paths.mjs','.github/converter/src/metadata.mjs','.github/converter/src/output-lines.mjs','.github/converter/src/qx-output.mjs','.github/converter/src/surge-output.mjs','.github/converter/src/qx-snippet-validator.mjs','.github/converter/src/surge-module.mjs','.github/converter/src/qx-official-capabilities.mjs','.github/converter/src/surge-official-capabilities.mjs','.github/converter/tests/target-output-builders.mjs']],
+  ['20','.github/docs/conversion-spec/20-rule-mapping.md',['.github/converter/src/rule-ast.mjs','.github/converter/src/rule-qx.mjs','.github/converter/src/rule-surge.mjs','.github/converter/src/rule.mjs','.github/converter/tests/rule-ast.mjs','.github/converter/tests/catalog-rule-inventory.mjs','.github/converter/fixtures/catalog-rule-inventory.json']],
+  ['30','.github/docs/conversion-spec/30-rewrite-mapping.md',['.github/converter/src/rewrite-ir.mjs','.github/converter/src/rewrite-qx.mjs','.github/converter/src/rewrite-surge.mjs','.github/converter/src/rewrite-plan-result.mjs','.github/converter/src/legacy-rewrite.mjs','.github/converter/src/rewrite-v2.mjs','.github/converter/src/rewrite-v2-semantic.mjs','.github/converter/src/complex-rewrite-registry.mjs','.github/converter/tests/rewrite-ir.mjs','.github/converter/tests/rewrite-target-planners.mjs','.github/converter/tests/complex-source-inventory.mjs']],
+  ['40','.github/docs/conversion-spec/40-regex-condition.md',['.github/converter/src/rewrite-v2.mjs','.github/converter/src/rewrite-v2-actions.mjs','.github/converter/src/target-regex.mjs']],
+  ['50','.github/docs/conversion-spec/50-json-jq-mock.md',['.github/converter/src/jq.mjs','.github/converter/src/dependency.mjs','.github/converter/src/dependency-materializer.mjs','.github/converter/src/conversion-context.mjs','.github/converter/src/qx-mock.mjs','.github/converter/src/surge-mock.mjs','.github/converter/tests/conversion-context-materializers.mjs']],
+  ['60','.github/docs/conversion-spec/60-script-argument.md',['.github/converter/src/script.mjs','.github/converter/src/script-legacy.mjs','.github/converter/src/script-v2.mjs','.github/converter/src/script-ir.mjs','.github/converter/src/script-qx.mjs','.github/converter/src/script-surge.mjs','.github/converter/src/script-v2-target.mjs','.github/converter/src/argument.mjs','.github/converter/src/source-script-materializer.mjs','.github/converter/src/conversion-context.mjs','.github/converter/tests/conversion-context-materializers.mjs','.github/converter/tests/script-ir-target-planners.mjs']],
+  ['70','.github/docs/conversion-spec/70-mitm-comments.md',['.github/converter/src/mitm.mjs','.github/converter/src/source-section.mjs','.github/converter/src/source-metadata.mjs','.github/converter/src/qx-comment.mjs','.github/converter/src/metadata.mjs','.github/converter/tests/source-section-comments.mjs']],
+  ['80','.github/docs/conversion-spec/80-review-validation.md',['.github/converter/src/dependency-materializer.mjs','.github/converter/src/source-script-materializer.mjs','.github/converter/src/conversion-context.mjs','.github/converter/src/conversion-pipeline.mjs','.github/converter/src/conversion-runner.mjs','.github/converter/src/managed-artifacts.mjs','.github/converter/src/workflow-diagnostics.mjs','.github/converter/src/upstream-run-report.mjs','.github/converter/src/qx-snippet-validator.mjs','.github/converter/src/surge-module.mjs','.github/converter/src/qx-official-capabilities.mjs','.github/converter/src/surge-official-capabilities.mjs','.github/converter/tools/conversion-reports.mjs','.github/converter/tests/conversion-context-materializers.mjs','.github/converter/tests/conversion-pipeline.mjs','.github/converter/tests/conversion-runner.mjs','.github/converter/tests/managed-artifacts.mjs','.github/converter/tests/workflow-diagnostics.mjs','.github/converter/tests/upstream-automation.mjs','.github/converter/tests/qx-official-capabilities.mjs','.github/converter/tests/surge-official-capabilities.mjs','.github/converter/tests/genericity-audit.mjs','.github/converter/tests/generated-helper-refs.mjs','.github/converter/tests/catalog-legacy-syntax-inventory.mjs','.github/converter/fixtures/catalog-legacy-syntax-inventory.json','.github/converter/tests/end-to-end-golden.mjs']],
+  ['90','.github/docs/conversion-spec/90-project-workflow.md',['.github/converter/src/conversion-runner.mjs','.github/converter/src/workflow-diagnostics.mjs','.github/converter/src/upstream-run-report.mjs','.github/scripts/sync-convert.mjs','.github/scripts/propose-conversion-issues.mjs','.github/converter/tools/regenerate-canonical.mjs','.github/workflows/converter-check.yml','.github/workflows/upstream-monitor.yml']],
 ];
 
 for(const [block,doc,impls] of contracts){
@@ -28,22 +28,22 @@ for(const [block,doc,impls] of contracts){
 
 const upstreamWorkflow=await fs.readFile(path.join(ROOT,'.github/workflows/upstream-monitor.yml'),'utf8');
 const converterWorkflow=await fs.readFile(path.join(ROOT,'.github/workflows/converter-check.yml'),'utf8');
-const canonicalRunner=await fs.readFile(path.join(ROOT,'converter/tools/regenerate-canonical.mjs'),'utf8');
+const canonicalRunner=await fs.readFile(path.join(ROOT,'.github/converter/tools/regenerate-canonical.mjs'),'utf8');
 const sourceCatalog=await fs.readFile(path.join(ROOT,'.github/sources/loon.json'),'utf8');
 const syncConverter=await fs.readFile(path.join(ROOT,'.github/scripts/sync-convert.mjs'),'utf8');
-const qxValidator=await fs.readFile(path.join(ROOT,'converter/src/qx-snippet-validator.mjs'),'utf8');
-const repositoryAudit=await fs.readFile(path.join(ROOT,'converter/tools/audit-repository.mjs'),'utf8');
-const conversionPipeline=await fs.readFile(path.join(ROOT,'converter/src/conversion-pipeline.mjs'),'utf8');
-const pluginParser=await fs.readFile(path.join(ROOT,'converter/src/plugin-parser.mjs'),'utf8');
-const dependencyMaterializer=await fs.readFile(path.join(ROOT,'converter/src/dependency-materializer.mjs'),'utf8');
-const sourceScriptMaterializer=await fs.readFile(path.join(ROOT,'converter/src/source-script-materializer.mjs'),'utf8');
-const conversionContext=await fs.readFile(path.join(ROOT,'converter/src/conversion-context.mjs'),'utf8');
-const conversionRunner=await fs.readFile(path.join(ROOT,'converter/src/conversion-runner.mjs'),'utf8');
-const managedArtifacts=await fs.readFile(path.join(ROOT,'converter/src/managed-artifacts.mjs'),'utf8');
-const workflowDiagnostics=await fs.readFile(path.join(ROOT,'converter/src/workflow-diagnostics.mjs'),'utf8');
-const upstreamRunReport=await fs.readFile(path.join(ROOT,'converter/src/upstream-run-report.mjs'),'utf8');
+const qxValidator=await fs.readFile(path.join(ROOT,'.github/converter/src/qx-snippet-validator.mjs'),'utf8');
+const repositoryAudit=await fs.readFile(path.join(ROOT,'.github/converter/tools/audit-repository.mjs'),'utf8');
+const conversionPipeline=await fs.readFile(path.join(ROOT,'.github/converter/src/conversion-pipeline.mjs'),'utf8');
+const pluginParser=await fs.readFile(path.join(ROOT,'.github/converter/src/plugin-parser.mjs'),'utf8');
+const dependencyMaterializer=await fs.readFile(path.join(ROOT,'.github/converter/src/dependency-materializer.mjs'),'utf8');
+const sourceScriptMaterializer=await fs.readFile(path.join(ROOT,'.github/converter/src/source-script-materializer.mjs'),'utf8');
+const conversionContext=await fs.readFile(path.join(ROOT,'.github/converter/src/conversion-context.mjs'),'utf8');
+const conversionRunner=await fs.readFile(path.join(ROOT,'.github/converter/src/conversion-runner.mjs'),'utf8');
+const managedArtifacts=await fs.readFile(path.join(ROOT,'.github/converter/src/managed-artifacts.mjs'),'utf8');
+const workflowDiagnostics=await fs.readFile(path.join(ROOT,'.github/converter/src/workflow-diagnostics.mjs'),'utf8');
+const upstreamRunReport=await fs.readFile(path.join(ROOT,'.github/converter/src/upstream-run-report.mjs'),'utf8');
 const issueProposer=await fs.readFile(path.join(ROOT,'.github/scripts/propose-conversion-issues.mjs'),'utf8');
-const targetRegex=await fs.readFile(path.join(ROOT,'converter/src/target-regex.mjs'),'utf8');
+const targetRegex=await fs.readFile(path.join(ROOT,'.github/converter/src/target-regex.mjs'),'utf8');
 assert.equal(/"mirrors"\s*:/.test(sourceCatalog), false, 'Block 90: Source Catalog must not contain mirrors');
 assert.equal(/entry\.mirrors|fetchWithFallback|planScriptMirrorPaths/.test(syncConverter), false, 'Block 90: converter must not use source/script mirror fallback');
 assert.match(syncConverter,/fetchOriginalText\(entry\.source\)/, 'Block 90: plugin fetch must use original descriptor source');
@@ -64,7 +64,7 @@ assert.match(syncConverter,/materializeConversionRunContext\(entry,source/, 'Blo
 assert.equal(/materializeJqFiles|materializeMockFiles|inspectSourceScript|scriptUrls/.test(syncConverter), false, 'Block 50/60: sync orchestration must not own dependency or Source Script materialization');
 assert.equal(/rewrite-v2|dependency\.mjs|jq\.mjs|script-v2|source-section|fetchOriginalBytes/.test(syncConverter), false, 'Block 50/60: sync orchestration must not import materializer internals');
 assert.equal(/inspectSourceScript|materializeJqFiles|materializeMockFiles|scriptUrls/.test(canonicalRunner), false, 'Block 50/60: canonical runner must not borrow materializers from sync-convert');
-const dependencySource=await fs.readFile(path.join(ROOT,'converter/src/dependency.mjs'),'utf8');
+const dependencySource=await fs.readFile(path.join(ROOT,'.github/converter/src/dependency.mjs'),'utf8');
 const dependencySpecBody=(dependencySource.match(/export function dependencySpecFromAction[\s\S]*?\n\}/)||[''])[0];
 assert.equal(/qxAction|generated-qx-script|surge/i.test(dependencySpecBody), false, 'Block 50: dependencySpecFromAction must remain target-neutral');
 assert.match(dependencyMaterializer,/fetchOriginalText/, 'Block 50: dependency materializer must use original-source text fetch');
@@ -90,8 +90,8 @@ assert.equal(/replace\([^\n]*\\\\\\\//.test(targetRegex), false, 'Block 40: targ
 assert.match(targetRegex,/sourceFlags:\s*flags/, 'Block 40: discarded source flags must remain observable metadata without being propagated');
 assert.equal(/planComplexRewrite\(/.test(conversionPipeline), false, 'Block 30: conversion pipeline must not own the complex Rewrite fallback chain');
 assert.equal(/planAdjacentQxHeaderGroups/.test(conversionPipeline), false, 'Block 30: independent source Rewrite declarations must never be merged into synthetic pipelines');
-const rewriteIr=await fs.readFile(path.join(ROOT,'converter/src/rewrite-ir.mjs'),'utf8');
-const legacyRewrite=await fs.readFile(path.join(ROOT,'converter/src/legacy-rewrite.mjs'),'utf8');
+const rewriteIr=await fs.readFile(path.join(ROOT,'.github/converter/src/rewrite-ir.mjs'),'utf8');
+const legacyRewrite=await fs.readFile(path.join(ROOT,'.github/converter/src/legacy-rewrite.mjs'),'utf8');
 assert.equal(/qx-official-capabilities|surge-official-capabilities/.test(rewriteIr), false, 'Block 30: Rewrite Semantic IR must stay target-neutral');
 assert.match(legacyRewrite,/legacyRewriteToSemanticIr\(pattern, action\)/, 'Block 30: Legacy Rewrite planner must route through Semantic IR');
 assert.match(conversionPipeline,/rewriteV2AstToSemanticIr\(ast,\{source:line\}\)/, 'Block 30: Rewrite v2 pipeline must build Semantic IR after source normalization');
@@ -100,8 +100,8 @@ assert.equal(/ast\.actions\[0\]\.name === 'response\.header\.add'/.test(conversi
 assert.equal(/ast\.actions\[0\]\.name === 'redirect'/.test(conversionPipeline), false, 'Block 30: pipeline must not restore raw action-name routing for redirect');
 assert.equal(/action => action\.name === 'response\.body\.mock_file'/.test(conversionPipeline), false, 'Block 30: pipeline must not restore raw action-name routing for mock_file');
 assert.match(converterWorkflow,/rewrite-ir\.mjs/, 'Block 30/80: Converter Check must execute Rewrite Semantic IR contract');
-const rewriteQx=await fs.readFile(path.join(ROOT,'converter/src/rewrite-qx.mjs'),'utf8');
-const rewriteSurge=await fs.readFile(path.join(ROOT,'converter/src/rewrite-surge.mjs'),'utf8');
+const rewriteQx=await fs.readFile(path.join(ROOT,'.github/converter/src/rewrite-qx.mjs'),'utf8');
+const rewriteSurge=await fs.readFile(path.join(ROOT,'.github/converter/src/rewrite-surge.mjs'),'utf8');
 assert.match(conversionPipeline,/planQxRewrite\(ir/, 'Block 30: conversion pipeline must delegate QX Rewrite planning');
 assert.match(conversionPipeline,/planSurgeRewrite\(ir/, 'Block 30: conversion pipeline must delegate Surge Rewrite planning');
 assert.equal(/qx-semantic-script\.mjs|surge-mock\.mjs|complex-rewrite-registry\.mjs|rewrite-v2-semantic\.mjs.*(?:qxDirectRewritePlan|surgeDirectRewritePlan)/.test(conversionPipeline), false, 'Block 30: pipeline must not import target Rewrite renderers or complex registry');
@@ -116,7 +116,7 @@ assert.match(rewriteSurge,/function ensureSurgeRewriteHandlers\(\)/, 'Block 30: 
 assert.ok(rewriteQx.indexOf('registerComplexRewriteHandler({') > rewriteQx.indexOf('function ensureQxRewriteHandlers()'), 'Block 30: QX planner import must not register handlers at top level');
 assert.ok(rewriteSurge.indexOf('registerComplexRewriteHandler({') > rewriteSurge.indexOf('function ensureSurgeRewriteHandlers()'), 'Block 30: Surge planner import must not register handlers at top level');
 assert.match(converterWorkflow,/rewrite-target-planners\.mjs/, 'Block 30/80: Converter Check must execute target planner contract');
-const complexRegistry=await fs.readFile(path.join(ROOT,'converter/src/complex-rewrite-registry.mjs'),'utf8');
+const complexRegistry=await fs.readFile(path.join(ROOT,'.github/converter/src/complex-rewrite-registry.mjs'),'utf8');
 assert.equal(/observedComplexRewriteType|OBSERVED_COMPLEX_REWRITE_TYPES|complexRewriteSignature/.test(complexRegistry), false, 'Block 30: production complex routing must not depend on observed full action signatures');
 assert.match(complexRegistry,/classifyComplexRewrite\(ast\)/, 'Block 30: complex routing must classify generic action families');
 assert.match(upstreamWorkflow,/propose-conversion-issues\.mjs/, 'Block 80/90: Review/Issue markers and hard failures must be proposed as GitHub issues');
@@ -181,15 +181,15 @@ assert.match(issueProposer,/## Related plugin/, 'Block 80/90: issue body must co
 assert.match(issueProposer,/## Corresponding source rule/, 'Block 80/90: issue body must contain corresponding rule content');
 assert.match(issueProposer,/## Failure reason/, 'Block 80/90: issue body must contain failure reason');
 assert.match(converterWorkflow,/upstream-automation\.mjs/, 'Block 80/90: Converter Check must execute upstream automation issue-content contract');
-for (const obsolete of ['.github/workflows/work-review-finalizer.yml','monitor/WORK_TASK_PROMPT.md','.github/scripts/conversion_gate.py','converter/tests/test_conversion_gate.py']) {
+for (const obsolete of ['.github/workflows/work-review-finalizer.yml','.github/monitor/WORK_TASK_PROMPT.md','.github/scripts/conversion_gate.py','.github/converter/tests/test_conversion_gate.py']) {
   await assert.rejects(fs.stat(path.join(ROOT,obsolete)), {code:'ENOENT'}, 'Block 80/90: obsolete Work file must be removed: '+obsolete);
 }
 assert.match(conversionPipeline,/isSupportedSourceSection\(/, 'Block 80: conversion pipeline must explicitly account for unsupported active sections through the shared source-section scope');
 assert.match(conversionPipeline,/ISSUE REQUIRED \[unknown-source-section\]/, 'Block 80: unknown active source sections must fail closed and request an issue');
 assert.equal(/inspectQxScriptCompatibility|qxManualPortComment/.test(syncConverter), false, 'Block 60: production converter must not gate Source Script execution on runtime compatibility scanning');
-const scriptIr=await fs.readFile(path.join(ROOT,'converter/src/script-ir.mjs'),'utf8');
-const scriptQx=await fs.readFile(path.join(ROOT,'converter/src/script-qx.mjs'),'utf8');
-const scriptSurge=await fs.readFile(path.join(ROOT,'converter/src/script-surge.mjs'),'utf8');
+const scriptIr=await fs.readFile(path.join(ROOT,'.github/converter/src/script-ir.mjs'),'utf8');
+const scriptQx=await fs.readFile(path.join(ROOT,'.github/converter/src/script-qx.mjs'),'utf8');
+const scriptSurge=await fs.readFile(path.join(ROOT,'.github/converter/src/script-surge.mjs'),'utf8');
 assert.equal(/qx-official-capabilities|surge-official-capabilities/.test(scriptIr), false, 'Block 60: Script IR must remain target-neutral');
 assert.equal(/qxAction|surgeType|section:/.test(scriptIr), false, 'Block 60: Script IR must not encode target action or section');
 assert.match(conversionPipeline,/planQxScript\(ir/, 'Block 60: conversion pipeline must delegate QX Script planning');
@@ -200,10 +200,10 @@ assert.equal(/normalizeRegexBodyForTarget\(sc\.pattern\)|sc\.requiresBody|sc\.bi
 assert.match(scriptQx,/export function planQxScript\(ir/, 'Block 60: QX Script planner must consume Script IR');
 assert.match(scriptSurge,/export function planSurgeScript\(ir/, 'Block 60: Surge Script planner must consume Script IR');
 assert.match(converterWorkflow,/script-ir-target-planners\.mjs/, 'Block 60/80: Converter Check must execute Script IR target planner contract');
-const sourceSection=await fs.readFile(path.join(ROOT,'converter/src/source-section.mjs'),'utf8');
-const sourceMetadata=await fs.readFile(path.join(ROOT,'converter/src/source-metadata.mjs'),'utf8');
-const qxComment=await fs.readFile(path.join(ROOT,'converter/src/qx-comment.mjs'),'utf8');
-const metadataRenderer=await fs.readFile(path.join(ROOT,'converter/src/metadata.mjs'),'utf8');
+const sourceSection=await fs.readFile(path.join(ROOT,'.github/converter/src/source-section.mjs'),'utf8');
+const sourceMetadata=await fs.readFile(path.join(ROOT,'.github/converter/src/source-metadata.mjs'),'utf8');
+const qxComment=await fs.readFile(path.join(ROOT,'.github/converter/src/qx-comment.mjs'),'utf8');
+const metadataRenderer=await fs.readFile(path.join(ROOT,'.github/converter/src/metadata.mjs'),'utf8');
 assert.equal(/QX|Quantumult|Surge|target/i.test(sourceSection.replace(/Category:[^\n]*/g,'')), false, 'Block 05/70: source-section grouping must remain target-neutral');
 assert.equal(/QX|Quantumult|Surge|target/i.test(sourceMetadata.replace(/Category:[^\n]*/g,'')), false, 'Block 70: source metadata parser must remain target-neutral');
 assert.match(conversionPipeline,/groupSourceSectionItems\(/, 'Block 05/70: conversion pipeline must consume shared source section grouping');
@@ -215,8 +215,8 @@ assert.match(metadataRenderer,/parseSourceMetadataHeader\(headerLines\)/, 'Block
 assert.equal(/function parseHeader\(/.test(metadataRenderer), false, 'Block 70: metadata renderer must not reparse source header directives');
 assert.match(qxComment,/export function attachQxInlineNote/, 'Block 70: QX note logic must live in target-specific renderer');
 assert.match(converterWorkflow,/source-section-comments\.mjs/, 'Block 70/80: Converter Check must execute source section/comment contract');
-const qxOutput=await fs.readFile(path.join(ROOT,'converter/src/qx-output.mjs'),'utf8');
-const surgeOutput=await fs.readFile(path.join(ROOT,'converter/src/surge-output.mjs'),'utf8');
+const qxOutput=await fs.readFile(path.join(ROOT,'.github/converter/src/qx-output.mjs'),'utf8');
+const surgeOutput=await fs.readFile(path.join(ROOT,'.github/converter/src/surge-output.mjs'),'utf8');
 const convertBody=(conversionPipeline.match(/export function convertPlugin\([\s\S]*$/)||[''])[0];
 assert.match(conversionPipeline,/createQxOutputState\(\)/, 'Block 10/80: conversion pipeline must use QX output state');
 assert.match(conversionPipeline,/createSurgeOutputState\(\)/, 'Block 10/80: conversion pipeline must use Surge output state');
@@ -248,27 +248,27 @@ assert.match(converterWorkflow,/conversion-pipeline\.mjs/, 'Block 05/80: Convert
 assert.match(converterWorkflow,/conversion-context-materializers\.mjs/, 'Block 05/50/60/80: Converter Check must execute conversion-context materializer contract');
 assert.equal(/from '\.\.\/src\/conversion-context\.mjs'/.test(canonicalRunner), false, 'Block 05/50/60/90: canonical runner must not bypass the shared conversion runner materializer');
 assert.equal(/from '\.\.\.\/\.\.\/\.github\/scripts\/sync-convert\.mjs'.*(?:materialize|inspect|scriptUrls)/.test(canonicalRunner), false, 'Block 50/60/90: canonical runner must not import materialization APIs from sync-convert');
-const surgeValidator=await fs.readFile(path.join(ROOT,'converter/src/surge-module.mjs'),'utf8');
+const surgeValidator=await fs.readFile(path.join(ROOT,'.github/converter/src/surge-module.mjs'),'utf8');
 assert.match(surgeValidator,/WayX ad-block Surge \[Script\] only accepts HTTP rewrite types/, 'Block 80: Surge validator must be explicitly scoped to ad-block rewrite scripts');
 assert.match(surgeValidator,/SURGE_WAYX_REWRITE_SECTIONS/, 'Block 80: Surge validator must consume the official-backed rewrite registry');
-const surgeCapabilities=await fs.readFile(path.join(ROOT,'converter/src/surge-official-capabilities.mjs'),'utf8');
+const surgeCapabilities=await fs.readFile(path.join(ROOT,'.github/converter/src/surge-official-capabilities.mjs'),'utf8');
 assert.match(surgeCapabilities,/SURGE_WAYX_RULE_TYPES/, 'Block 80: Surge Rule registry must be explicit and official-backed');
 assert.match(converterWorkflow,/surge-official-capabilities\.mjs/, 'Block 80: Converter Check must execute the Surge official capability gate');
 assert.match(converterWorkflow,/catalog-rule-inventory\.mjs/, 'Block 20/80: Converter Check must execute the Catalog Rule inventory gate');
 assert.match(converterWorkflow,/catalog-syntax-inventory\.mjs/, 'Block 05/80: Converter Check must execute the Rewrite/Script v2 semantic inventory gate');
-const v2SyntaxInventory=await fs.readFile(path.join(ROOT,'converter/tests/catalog-syntax-inventory.mjs'),'utf8');
+const v2SyntaxInventory=await fs.readFile(path.join(ROOT,'.github/converter/tests/catalog-syntax-inventory.mjs'),'utf8');
 assert.equal(/actionShapes|multiActionSignatures|optionShapes|optionSets|conditionComparisons|pathTypes|argumentKinds/.test(v2SyntaxInventory), false, 'Block 80: v2 inventory must not lock valid structural combinations');
 assert.match(converterWorkflow,/catalog-legacy-syntax-inventory\.mjs/, 'Block 05/80: Converter Check must execute the Legacy Rewrite/Script syntax inventory gate');
-const legacySyntaxInventory=await fs.readFile(path.join(ROOT,'converter/tests/catalog-legacy-syntax-inventory.mjs'),'utf8');
+const legacySyntaxInventory=await fs.readFile(path.join(ROOT,'.github/converter/tests/catalog-legacy-syntax-inventory.mjs'),'utf8');
 assert.match(legacySyntaxInventory,/classifyLegacyRewriteAction\(/, 'Block 05/80: Legacy Rewrite inventory must use the production classifier');
 assert.match(legacySyntaxInventory,/parseLegacyScriptLine\(/, 'Block 05/80: Legacy Script inventory must use the production parser');
 assert.match(legacySyntaxInventory,/assert\.notEqual\([\s\S]*op\.kind,[\s\S]*'unknown'/, 'Block 80: unknown Legacy Rewrite action shapes must fail closed before baseline update');
 assert.equal(/redirect target|mock data|script URL|header value/i.test(legacySyntaxInventory), false, 'Block 05/80: Legacy syntax baseline must not lock concrete content values');
 assert.equal(/optionSets|optionShapes|mockOptionSets|actionShapes/.test(legacySyntaxInventory), false, 'Block 80: Legacy inventory must not lock valid option/value/order combinations');
-const ruleAst=await fs.readFile(path.join(ROOT,'converter/src/rule-ast.mjs'),'utf8');
-const ruleQx=await fs.readFile(path.join(ROOT,'converter/src/rule-qx.mjs'),'utf8');
-const ruleSurge=await fs.readFile(path.join(ROOT,'converter/src/rule-surge.mjs'),'utf8');
-const ruleFacade=await fs.readFile(path.join(ROOT,'converter/src/rule.mjs'),'utf8');
+const ruleAst=await fs.readFile(path.join(ROOT,'.github/converter/src/rule-ast.mjs'),'utf8');
+const ruleQx=await fs.readFile(path.join(ROOT,'.github/converter/src/rule-qx.mjs'),'utf8');
+const ruleSurge=await fs.readFile(path.join(ROOT,'.github/converter/src/rule-surge.mjs'),'utf8');
+const ruleFacade=await fs.readFile(path.join(ROOT,'.github/converter/src/rule.mjs'),'utf8');
 assert.equal(/qx-official-capabilities|surge-official-capabilities/.test(ruleAst), false, 'Block 20: target-neutral Rule AST parser must not import target capability registries');
 assert.match(ruleQx,/planQxRuleAst\(ast\)/, 'Block 20: QX Rule planner must consume AST');
 assert.match(ruleSurge,/planSurgeModuleRuleAst\(ast/, 'Block 20: Surge Rule planner must consume AST');
@@ -277,7 +277,7 @@ assert.equal(/splitTopLevelCsv|splitLogicalSubrules/.test(ruleSurge), false, 'Bl
 assert.match(ruleFacade,/parseLoonRuleAst\(source\)/, 'Block 20: public Rule facade must parse once before target planning');
 assert.match(converterWorkflow,/rule-ast\.mjs/, 'Block 20: Converter Check must execute Rule AST contract');
 
-const index=await fs.readFile(path.join(ROOT,'docs/conversion-spec/95-implementation-index.md'),'utf8');
+const index=await fs.readFile(path.join(ROOT,'.github/docs/conversion-spec/95-implementation-index.md'),'utf8');
 for(const [block] of contracts) assert.match(index,new RegExp('\\| '+block+' \\|'), `implementation index missing Block ${block}`);
 
 console.log('Spec block implementation contract passed');

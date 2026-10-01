@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import { compileRegexForTarget, minifyJq, parseRewriteV2 } from '../src/index.mjs';
 
 const fixture = JSON.parse(await fs.readFile(new URL('../fixtures/myblockads-golden.json', import.meta.url), 'utf8'));
-const root = new URL('../../', import.meta.url);
+const root = new URL('../../../', import.meta.url);
 const source = await fs.readFile(new URL(fixture.source, root), 'utf8');
 const qx = await fs.readFile(new URL(fixture.quantumultX, root), 'utf8');
 const surge = await fs.readFile(new URL(fixture.surge, root), 'utf8');

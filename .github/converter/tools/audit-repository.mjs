@@ -94,7 +94,7 @@ for (const file of files) {
     }
   }
 
-  if (/^(?:converter\/src\/|converter\/tools\/|\.github\/scripts\/)/.test(rp) && rp !== 'converter/tools/audit-repository.mjs') {
+  if (/^(?:converter\/src\/|converter\/tools\/|\.github\/scripts\/)/.test(rp) && rp !== '.github/converter/tools/audit-repository.mjs') {
     for (let i=0;i<lines.length;i++) {
       const t=lines[i];
       if (/\[hH\]\[tT\]\[tT\]\[pP\]/.test(t)) add(file,i+1,'converter-synthetic-casefold',t.trim());
