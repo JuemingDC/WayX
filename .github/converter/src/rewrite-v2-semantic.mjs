@@ -59,6 +59,21 @@ function pathLiteral(path) {
   return JSON.stringify(parseKeyPath(path));
 }
 
+function pathSelector(path) {
+  const parts = parseKeyPath(path);
+  let out = '';
+  for (const part of parts) {
+    if (typeof part === 'number') {
+      out += '[' + part + ']';
+    } else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(part)) {
+      out += '.' + part;
+    } else {
+      out += '[' + JSON.stringify(part) + ']';
+    }
+  }
+  return out || '.';
+}
+
 function anyToJq(node) {
   if (!node) throw new Error('missing JSON value');
   if (node.type === 'string') return JSON.stringify(node.value);
@@ -78,17 +93,21 @@ function qxQuote(value) {
 
 export function jsonActionToJq(action) {
   const name = action?.name || '';
-  if (!/^(?:request|response)\.json\.(?:delete|replace)$/.test(name)) {
-    return unsupported('JSON action is outside delete/replace direct subset');
+  if (!/^(?:request|response)\.json\.(?:add|delete|replace)$/.test(name)) {
+    return unsupported('JSON action is outside add/delete/replace direct subset');
   }
 
   if (name.endsWith('.delete')) {
-    const paths = scalarItems(action.args[0]).map(node => {
+    const nodes = scalarItems(action.args[0]);
+    const paths = nodes.map(node => {
       const value = stringNode(node);
       if (value === null) throw new Error(name + ': key path must be a fixed string');
-      return pathLiteral(value);
+      return { literal:pathLiteral(value), selector:pathSelector(value) };
     });
-    return { ok: true, jq: paths.map(path => 'delpaths([' + path + '])').join(' | ') };
+    if (action.args[0]?.type === 'array') {
+      return { ok:true, jq:'delpaths([' + paths.map(item => item.literal).join(', ') + '])' };
+    }
+    return { ok:true, jq:'del(' + paths[0].selector + ')' };
   }
 
   const paths = scalarItems(action.args[0]);
@@ -97,7 +116,12 @@ export function jsonActionToJq(action) {
   const ops = paths.map((node, index) => {
     const key = stringNode(node);
     if (key === null) throw new Error(name + ': key path must be a fixed string');
-    return 'setpath(' + pathLiteral(key) + '; ' + anyToJq(values[index]) + ')';
+    const path = pathLiteral(key);
+    const value = anyToJq(values[index]);
+    if (name.endsWith('.add')) {
+      return 'if getpath(' + path + ') == null then setpath(' + path + '; ' + value + ') else . end';
+    }
+    return 'if getpath(' + path + ') then setpath(' + path + '; ' + value + ') else . end';
   });
   return { ok: true, jq: ops.join(' | ') };
 }
@@ -127,7 +151,7 @@ export function qxDirectRewritePlan(ast) {
     };
   }
 
-  if (/^(?:request|response)\.json\.(?:delete|replace)$/.test(action.name)) {
+  if (/^(?:request|response)\.json\.(?:add|delete|replace)$/.test(action.name)) {
     const mapped = jsonActionToJq(action);
     if (!mapped.ok) return mapped;
     const token = action.name.startsWith('request.') ? 'jsonjq-request-body' : 'jsonjq-response-body';
@@ -177,7 +201,7 @@ export function surgeDirectRewritePlan(ast) {
     };
   }
 
-  if (/^(?:request|response)\.json\.(?:delete|replace)$/.test(action.name)) {
+  if (/^(?:request|response)\.json\.(?:add|delete|replace)$/.test(action.name)) {
     const mapped = jsonActionToJq(action);
     if (!mapped.ok) return mapped;
     const token = action.name.startsWith('request.') ? 'http-request-jq' : 'http-response-jq';
