@@ -4,12 +4,12 @@
 > 维护原则：本文件描述“当前 main 的真实状态”，不能替代 `CONVERSION_SPEC.md`；规范冲突时以 `CONVERSION_SPEC.md` 为唯一权威。
 
 - 审计日期：2026-10-01
-- 审计基线：PR #107 repository workflow-domain layout cleanup / Converter Check run 36827961744
+- 审计基线：PR #109 Kelee 5EPlay upstream reliability / Reliability Test run 36830235316 / Converter Check run 36830448792
 - Source Catalog：23 个 Loon 去广告插件
 - Catalog 管理目标：23 个 Quantumult X snippet + 23 个 Surge sgmodule
 - Adblock 目录实际目标：24 个 QX + 24 个 Surge（额外包含手工维护的 `QZXY`）
-- 最近完整 Converter Check：run 36827961744，通过
-- 当前实现 PR：#107
+- 最近完整 Converter Check：run 36830448792，通过
+- 当前实现 PR：#109
 - 当前构建状态：**核心转换器、canonical、GitHub Actions 自动闭环与质量门已完成构建；后续工作属于持续维护、上游漂移处理或新增官方能力适配。**
 
 ---
@@ -188,6 +188,8 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 - [x] GitHub Actions 全自动上游闭环已实现：scheduled workflow 逐插件执行原作者 fetch → materialize → convert → QX/Surge validate，成功后才写 managed Source/target/helper；单插件 hard failure 保留旧成品并写结构化 failure report，其他插件继续。`REVIEW REQUIRED` / `ISSUE REQUIRED` / hard failure 统一由 Issue proposer 创建或复用 Issue，Issue 必须包含插件、对应源规则和失败原因。旧 ChatGPT Work prompt/finalizer、work-review PR 路径与 conversion gate 已删除。 PR #90 / Converter Check #672 全绿。
 - [x] Generated helper 输出已闭环同步：`managed-artifacts.mjs` 只对严格匹配 converter-owned helper 命名模式的文件做 stale prune，手工/Source Script 不在删除范围。首次 canonical prune 识别并移除 4 个历史孤儿 helper（Tieba 1、Webpage 3）；其余成品仅刷新统一 conversion timestamp。 PR #91 / Converter Check #675 全绿。
 - [x] 可莉闲鱼 / 滴滴已加入 Source Catalog 作为自动链路测试：`FleaMarket_remove_ads.lpx` 与 `DiDi_remove_ads.lpx` 走原作者 `kelee.one` URL，生成对应 QX/Surge canonical。测试新增并确认 `AND` 三子项 + nested `IP-ASN,no-resolve` Rule shape；QX 逻辑 Rule 继续按官方 sample 边界注释保留，Surge 按官方 Manual 原生活动 Rule。测试同时发现并修复 Legacy `response-body-json-jq jq-path=...` 未按既定规范直接丢弃的问题。PR #92 / Converter Check #679 全绿。
+
+- [x] 可莉 5EPlay 已加入 Source Catalog，并通过 GitHub Actions 原作者直连可靠性测试：生产 `source-fetch.mjs` 选择 `kelee / python-urllib`，原始 `https://kelee.one/Tool/Loon/Lpx/5EPlay_remove_ads.lpx` 拉取 1446 bytes；生产 `sync-convert.mjs` 生成 QX/Surge 目标，repository audit / reconciliation / canonical 全通过，Review=0 / Issue=0。Reliability Test run 36830235316。
 - 每次新增 QX 官方 sample 证据时，复核现有 Rewrite Review 是否可以安全降级为 native/helper；Rule 只在官方明确支持对应 Rule Type 后才改为活动 filter。
 - [x] QX capability gate 已收窄为 Loon 去广告转换实际能力：仅核对 Rule 类型、WayX 实际使用的 Rewrite action 与 MITM `hostname` 是否仍有 Crossutility 官方依据；转换范围之外的能力不进入 registry。Surge 同样采用 Rule / Rewrite / hostname 边界。
 - [x] Surge official capability gate 已落地：production `rule.mjs` / `surge-module.mjs` 共用 `surge-official-capabilities.mjs`；CI 实时读取 Surge 官方 Manual，只验证 WayX 实际使用的 28 个 Rule Type、URL/Header/Body Rewrite、Map Local、HTTP request/response Script 与 MITM `hostname` 仍有官方依据。Surge 其它 Profile/Module 能力不进入本 gate。
