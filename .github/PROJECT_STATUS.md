@@ -5,9 +5,9 @@
 
 - 审计日期：2026-10-01
 - 审计基线：PR #107 repository workflow-domain layout cleanup / Converter Check run 36827961744
-- Source Catalog：22 个 Loon 去广告插件
-- Catalog 管理目标：22 个 Quantumult X snippet + 22 个 Surge sgmodule
-- Adblock 目录实际目标：23 个 QX + 23 个 Surge（额外包含手工维护的 `QZXY`）
+- Source Catalog：23 个 Loon 去广告插件
+- Catalog 管理目标：23 个 Quantumult X snippet + 23 个 Surge sgmodule
+- Adblock 目录实际目标：24 个 QX + 24 个 Surge（额外包含手工维护的 `QZXY`）
 - 最近完整 Converter Check：run 36827961744，通过
 - 当前实现 PR：#107
 - 当前构建状态：**核心转换器、canonical、GitHub Actions 自动闭环与质量门已完成构建；后续工作属于持续维护、上游漂移处理或新增官方能力适配。**
