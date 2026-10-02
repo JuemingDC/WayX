@@ -1,7 +1,7 @@
 # Name: 趣智校园去广告
-# Description: 隐藏首页提现/零花钱模块、任务广告横幅、下方广告卡片，并拦截相关广告 SDK
+# Description: 隐藏首页提现/零花钱模块、考研/任务广告横幅、下方广告卡片，并拦截相关广告 SDK
 # Author: chance
-# Updated: 2026-09-22
+# Updated: 2026-10-02 23:00 +08:00
 
 # ==================================================
 # Original Author: Magdalena
@@ -9,10 +9,15 @@
 # Author: chance
 # Category: 去广告 / 首页净化
 # Converted: 2026-09-22
+# Updated: 2026-10-02 23:00 +08:00
 # Target: Quantumult X
 # Source: https://raw.githubusercontent.com/JuemingDC/QuantumultX/refs/heads/main/Rewrite/qzxy.snippet
 # Script: https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/QZXY/QuantumultX/qzxy.js
 # Basis: quantumult-x-2026-09-15-160818.har
+# Current Repository: https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/QZXY.snippet
+# Recheck: 1.har (2026-10-02)
+# Active Script Dependency: none
+# 2026-10-02 起首页核心去广告改用 Quantumult X 原生 jsonjq-response-body，避免远程脚本失效。
 # ==================================================
 
 # [filter_local]
@@ -71,6 +76,8 @@ host, ujoy.anythinktech.com, reject
 host, sdk.xiaozhuanbang.cn, reject
 host, static.xiaozhuanbang.cn, reject
 host, x.xiaozhuanbang.cn, reject
+# 2026-10-02 HAR 新增 static-esa.xiaozhuanbang.cn；使用后缀兜底覆盖任务墙后续新增子域名。
+host-suffix, xiaozhuanbang.cn, reject
 
 # 圈中“点外卖返现金 / 霸王餐”相关服务
 host, wmmt-zfb-app.waimaimingtang.com, reject
@@ -79,22 +86,31 @@ host, open-gw.waimaimingtang.com, reject
 host, wmapp-api-v2.waimaimingtang.com, reject
 host, wmapp-api.waimaimingtang.com, reject
 host, cdn.waimaimingtang.com, reject
+# 2026-10-02 使用后缀兜底，防止霸王餐/外卖返现切换到新的子域名。
+host-suffix, waimaimingtang.com, reject
+
+# 2026-10-02 HAR 新增：“不拖研 / 考研自学神器”广告落地页及接口。
+host-suffix, zhixuexingtu.cn, reject
 
 
 # [rewrite_local]
 
 # 清空首页广告链
+# 2026-10-02 复核：该接口返回首页广告 advId 链，直接清空，避免顶部轮播和下方横幅继续渲染。
 ^https:\/\/v3-api\.china-qzxy\.cn\/project\/adv\/chain\/get(?:\?|$) url jsonjq-response-body '.data = []'
 
 # 清空广告 SDK 的全部广告位 ID
-^https:\/\/v3-api\.china-qzxy\.cn\/project\/advSpace\/app\/v2\/list(?:\?|$) url jsonjq-response-body '.data.openAdvId = "" | .data.cutAdvId = "" | .data.nativeAdvId = "" | .data.feedAdvId = "" | .data.feedGroupAdvId = "" | .data.jutuiIconAdvId = "" | .data.jutuiFloatAdvId = "" | .data.jutuiTextLinkAdvId = "" | .data.yifanTextLinkAdvId = "" | .data.commandAdvStr = ""'
+# 2026-10-02 同时关闭 jumpDDLWay，避免广告口令/深链继续触发跳转。
+^https:\/\/v3-api\.china-qzxy\.cn\/project\/advSpace\/app\/v2\/list(?:\?|$) url jsonjq-response-body '.data.openAdvId = "" | .data.cutAdvId = "" | .data.nativeAdvId = "" | .data.feedAdvId = "" | .data.feedGroupAdvId = "" | .data.jutuiIconAdvId = "" | .data.jutuiFloatAdvId = "" | .data.jutuiTextLinkAdvId = "" | .data.yifanTextLinkAdvId = "" | .data.commandAdvStr = "" | .data.jumpDDLWay = 0'
 
 # 将当前项目加入任务广告黑名单，并移除任务图
 # 改为脚本动态读取 projectId：保留原有黑名单，且只修改已存在的广告字段，避免误伤项目核心配置。
-^https:\/\/v3-api\.china-qzxy\.cn\/project\/info\/triple(?:\?|$) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/QZXY/QuantumultX/qzxy.js
+# 2026-10-02 复核：不再依赖黑名单和远程脚本，直接关闭客户端广告开关、广告等级并移除 taskImg。
+^https:\/\/v3-api\.china-qzxy\.cn\/project\/info\/triple(?:\?|$) url jsonjq-response-body '.data.clientProjectInfoSwitchDTO.screenAdvertisingSwitch = 0 | .data.clientProjectInfoSwitchDTO.appAdvertiseSwitch = 0 | .data.clientProjectInfoSwitchDTO.jobAdvertisingSwitch = 0 | .data.clientProjectInfoConfigDTO.appAdvertiseLevel = 0 | .data.clientProjectInfoConfigDTO.taskImg = null'
 # 整体隐藏“每天赚（省）点零花钱 / 可提现金”模块
 # 该接口同时包含 coinInfo 与 appAdvChannelList；脚本先校验当前 HAR 结构，确认匹配后才将 data 置空。
-^https:\/\/v3-api\.china-qzxy\.cn\/user\/coin\/info\/withAppAdvChannel(?:\?|$) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/QZXY/QuantumultX/qzxy.js
+# 2026-10-02 复核：当前响应下发 12 个广告入口；直接将 data 置空，避免黑色收益区、图标宫格和下方运营卡片继续渲染。
+^https:\/\/v3-api\.china-qzxy\.cn\/user\/coin\/info\/withAppAdvChannel(?:\?|$) url jsonjq-response-body '.data = null'
 
 # 清空霸王餐/免费餐推广数据
 ^https:\/\/v3-api\.china-qzxy\.cn\/settlement\/advertise\/freeMeal\/activity\/index(?:\?|$) url jsonjq-response-body '.data.amount = 0 | .data.activityList = []'
