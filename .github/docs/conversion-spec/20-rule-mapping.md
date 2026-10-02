@@ -60,7 +60,7 @@ Loon `[Rule]` 中的 `URL-REGEX` 不能作为 Quantumult X 普通 `filter_local`
 | `URL-REGEX,REGEX,REJECT-DICT` | `REGEX url reject-dict` | `[Map Local] REGEX data-type=text data="{}" status-code=200 header="Content-Type:application/json"` |
 | `URL-REGEX,REGEX,REJECT-ARRAY` | `REGEX url reject-array` | `[Map Local] REGEX data-type=text data="[]" status-code=200 header="Content-Type:application/json"` |
 | `URL-REGEX,REGEX,REJECT-DROP` | `REGEX url reject` | `[Rule] URL-REGEX,REGEX,REJECT-DROP` |
-| `URL-REGEX,REGEX,REJECT-NO-DROP` | `REGEX url reject` | `[Rule] URL-REGEX,REGEX,REJECT-NO-DROP` |
+| `URL-REGEX,REGEX,REJECT-NO-DROP` | 注释保留；QX 官方 sample 未确认该 Rule policy 映射 | `[Rule] URL-REGEX,REGEX,REJECT-NO-DROP` |
 
 关键约束：
 - `URL-REGEX + REJECT` 在 QX 固定为 `reject-200`，这是 WayX 对 Loon Rule 语义的项目映射。
@@ -98,7 +98,7 @@ NOT,((Rule1)),Policy
 | `PROXY` | `PROXY`（原样保留，不映射为内建 `proxy`） | 生成 Module policy 参数并写为 `{{{wayx_proxy_policy}}}`；默认 `DIRECT`，用户可改为目标 Surge 代理策略/策略组 |
 | `REJECT-IMG` | URL 场景 → `reject-img` | `REJECT-TINYGIF` |
 | `REJECT-DROP` | 项目约定 → `reject` | `REJECT-DROP` |
-| `REJECT-NO-DROP` | `reject`（QX 不存在 Surge 自动升级机制） | `REJECT-NO-DROP` |
+| `REJECT-NO-DROP` | URL-REGEX Rule 未确认 → 注释保留 | `REJECT-NO-DROP` |
 | `CELLULAR` | Review | `CELLULAR`（iOS only） |
 | `CELLULAR-ONLY` | Review | `CELLULAR-ONLY`（iOS only） |
 | `HYBRID` | Review | `HYBRID`（iOS only） |
@@ -122,7 +122,7 @@ Surge Module 不能定义 `[Proxy]` / `[Proxy Group]`，但官方 Parameter Tabl
 - Public compatibility facade：`.github/converter/src/rule.mjs`
 - Orchestration：`.github/scripts/sync-convert.mjs` 的 `[Rule]` 分发，只按 planner 返回的 section 写入 QX rewrite/filter 或 Surge Rule/Map Local。
 - Synthetic AST contract：`.github/converter/tests/rule-ast.mjs`
-- Synthetic target regression：`.github/converter/tests/checkpoint.mjs`，必须逐项覆盖 `REJECT / REJECT-200 / REJECT-IMG / REJECT-DICT / REJECT-ARRAY / REJECT-DROP / REJECT-NO-DROP`，并覆盖 logical Rule + `REJECT-NO-DROP` 组合。
+- Synthetic target regression：`.github/converter/tests/checkpoint.mjs`，必须逐项覆盖既有 QX reject 映射，并覆盖 Surge `REJECT-DROP / REJECT-NO-DROP` 原样输出及 logical Rule + `REJECT-NO-DROP` 组合；QX 对 `REJECT-NO-DROP` 保持官方 sample 未确认的注释路径。
 - Repository coverage：`.github/converter/tests/surge-rule-coverage.mjs`。
 
 固定约束：
