@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.40  
+版本：1.41  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -8,7 +8,9 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 
 本规范采用“分块规范”结构。转换器、测试、canonical 输出、Golden 都必须服从本规范，不能反过来用现有代码定义规范。
 
-## 2026-10-01 规范更新
+## 2026-10-02 规范更新
+
+**Surge Rule 强制覆盖（2026-10-02）**：Surge Module 中的 `[Rule]` 不再维护独立于 Surge Rule 的缩窄 policy 白名单。凡 source policy 属于 Surge Rule 已知内建 policy，转换器与成品 validator 都直接按 Rule 语义接受并原样输出；至少包括 `REJECT-DROP`、`REJECT-NO-DROP` 以及 `CELLULAR / CELLULAR-ONLY / HYBRID / NO-HYBRID`。其中 `REJECT-NO-DROP` 必须可与任意当前已支持的 Surge Rule Type / logical Rule 组合，不得因旧 Module 文档只列 `DIRECT / REJECT / REJECT-TINYGIF` 而降级为注释。未知外部 policy/group 仍需显式绑定或 Review，`PROXY` 继续使用现有 Module 参数绑定。当前在线 Module Manual 与本项目已确认实际运行语义存在冲突，因此该差异必须作为 WayX 显式兼容策略保留，不得再次由 capability gate 回退。
 
 1. Quantumult X 对官方 sample 未确认的 Rule Type（包括逻辑规则、端口类等）只保留为注释，不生成活动规则，也不使用 Script 兜底。
 2. Script fallback 仅属于 Rewrite/Mock 语义：目标原生格式无法严格等价表达时，才考虑专用 helper；Rule 不进入 Script fallback。
