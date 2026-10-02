@@ -14,7 +14,7 @@
 | 60 | Legacy/v2 Script parser → target-neutral Script IR → QX/Surge Script planner / Source Script materialization / Argument analysis | `script-legacy.mjs`, `script-v2.mjs`, `script-ir.mjs`, `script-qx.mjs`, `script-surge.mjs`, `script.mjs`, `script-v2-target.mjs`, `argument.mjs`, `argument-usage.mjs`, `source-script-materializer.mjs`, `conversion-context.mjs`, `source-fetch.mjs` | `conversion-context-materializers.mjs`, `script-ir-target-planners.mjs`, `catalog-syntax-inventory.mjs`, `source-script-url-preservation.mjs`, `checkpoint.mjs` |
 | 70 | MITM / source comments / metadata | `mitm.mjs`, `source-section.mjs`, `source-metadata.mjs`, `qx-comment.mjs`, `metadata.mjs` | `source-section-comments.mjs`, `checkpoint.mjs`, QX/Surge validators |
 | 80 | Review / Unknown Issue / validator / Golden / reconciliation / inventory | `conversion-runner.mjs`, `qx-snippet-validator.mjs::validateQX`, `surge-module.mjs::validateSurgeModule`, `conversion-reports.mjs`, `qx-official-capabilities.mjs`, `surge-official-capabilities.mjs`, repository audit | genericity, Golden, `conversion-runner.mjs`, `manual-assets.mjs`, `catalog-syntax-inventory.mjs`, `catalog-rule-inventory.mjs`, `rewrite-ir.mjs`, `qx-official-capabilities.mjs`, `surge-official-capabilities.mjs`, `generated-helper-refs.mjs`, `generated-helper-runtime.mjs`, `source-script-url-preservation.mjs`, canonical consistency |
-| 90 | 拉源→逐插件转换/验证→成功落盘→README/install 索引→全局审计→自动 Issue→直提 main；sync/canonical lifecycle、仓库布局与 changed/stale result 边界 | `.github/sources/loon.json`, `conversion-runner.mjs`, `managed-artifacts.mjs::managedTargetDiffs`, `readme-index.mjs`, `update-readme.mjs`, `workflow-diagnostics.mjs`, `upstream-run-report.mjs`, `sync-convert.mjs`, `regenerate-canonical.mjs`, `propose-conversion-issues.mjs`, `upstream-monitor.yml`, `converter-check.yml` | `conversion-runner.mjs`, `managed-artifacts.mjs`, `readme-index.mjs`, `workflow-diagnostics.mjs`, `workflow-control.mjs`, `upstream-automation.mjs`, `repository-layout.mjs`, full CI |
+| 90 | 拉源→逐插件转换/验证→成功落盘→README 索引→全局审计→自动 Issue→直提 main；sync/canonical lifecycle、仓库布局与 changed/stale result 边界 | `.github/sources/loon.json`, `conversion-runner.mjs`, `managed-artifacts.mjs::managedTargetDiffs`, `readme-index.mjs`, `update-readme.mjs`, `workflow-diagnostics.mjs`, `upstream-run-report.mjs`, `sync-convert.mjs`, `regenerate-canonical.mjs`, `propose-conversion-issues.mjs`, `upstream-monitor.yml`, `converter-check.yml` | `conversion-runner.mjs`, `managed-artifacts.mjs`, `readme-index.mjs`, `workflow-diagnostics.mjs`, `workflow-control.mjs`, `upstream-automation.mjs`, `repository-layout.mjs`, full CI |
     
 ## 固定端到端数据流
 
@@ -42,7 +42,7 @@
 → generated-helper managed write/diff primitives
 → `conversion-runner.mjs` invokes `qx-snippet-validator.mjs` + `surge-module.mjs` target validation
 → managed target conditional write
-→ README.md + Resource/Install/QuantumultX deterministic regeneration
+→ README.md deterministic regeneration
 → workflow diagnostics + structured sync-failure report
 → machine-readable source/target reconciliation + Review/Issue inventory + genericity/golden checks
 → canonical + generated-helper regeneration consistency

@@ -14,7 +14,6 @@ on:
       - ".github/CONVERSION_SPEC.md"
       - ".github/docs/conversion-spec/**"
       - "Resource/Loon/**"
-      - "Resource/Install/QuantumultX/**"
       - "Script/**"
       - "Boxjs/**"
       - "Module/**"
@@ -137,7 +136,7 @@ jobs:
       - name: Regenerate canonical outputs
         run: node .github/converter/tools/regenerate-canonical.mjs --write
 
-      - name: Regenerate README and install index
+      - name: Regenerate README index
         run: node .github/converter/tools/update-readme.mjs --write
 
       - name: Audit regenerated repository
@@ -165,7 +164,6 @@ jobs:
             Adblock/Quantumult X/*.snippet
             Adblock/Surge/*.sgmodule
             Script/**
-            Resource/Install/QuantumultX/**
             README.md
             .github/monitor/.runtime/conversion-reconciliation.json
             .github/monitor/.runtime/conversion-reconciliation.md
@@ -179,7 +177,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git add -A -- "Adblock/Quantumult X" "Adblock/Surge" Script Resource/Install/QuantumultX README.md
+          git add -A -- "Adblock/Quantumult X" "Adblock/Surge" Script README.md
           if git diff --cached --quiet; then
             exit 0
           fi
@@ -200,7 +198,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          status="$(git status --porcelain --untracked-files=all -- "Adblock/Quantumult X" "Adblock/Surge" Script Resource/Install/QuantumultX README.md)"
+          status="$(git status --porcelain --untracked-files=all -- "Adblock/Quantumult X" "Adblock/Surge" Script README.md)"
           if [[ -n "$status" ]]; then
             printf '%s\n' "$status"
             exit 1

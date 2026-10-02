@@ -81,7 +81,7 @@ Source Catalog entry.source
 → Surge validator
 → 成功插件同步 generated helper（含安全 prune）/ target / Source
 → 继续处理下一个插件
-→ 重建根目录 README + Quantumult X installer resources（24 h remote interval）
+→ 重建根目录 README（QX 原 snippet 直连，24 h remote interval）
 → 官方规范/仓库 monitor
 → repository validator + audit
 → reconciliation + Review/Issue inventory
@@ -185,14 +185,15 @@ Review/Issue marker 不阻止其它已验证插件的自动提交。它们是 fa
 自动索引必须满足：
 
 - Quantumult X 与 Surge 分列，不存在的平台显示 `—`；
-- QX Rule 使用官方 `filter_remote`；QX Module/Adblock 组合 snippet 先按注释掉的 `filter_local / rewrite_local / mitm` 段拆为 installer resource，再通过一次官方 `add-resource` Universal Link 导入；
+- QX Rule 使用官方 `filter_remote`；
+- QX Module/Adblock 的 `.snippet` 保持单文件，不拆 filter/rewrite。依据当前 KOP-XIAO 资源解析器兼容逻辑，Quantumult X build 844 起允许 rewrite resource 混合 filter 与 rewrite，因此 README 直接把原 `.snippet` 作为单个 `rewrite_remote` 导入；
 - 每条 QX remote descriptor 显式写 `update-interval=86400` 与 `enabled=true`；
-- installer resource 固定生成到 `Resource/Install/QuantumultX/`，源资源消失时同步 prune；
+- 不生成 `Resource/Install/QuantumultX/` 或任何 README 专用中间 snippet/list；
 - Surge 模块链接使用 `https://surge.app/install-module?url=...` 供用户现有 DivineEngine Redirect 转为官方 `surge:///install-module?url=...`；官方 install-module 不支持 update interval 参数，因此不得伪造；
 - BoxJs 订阅使用 BoxJs 的一键订阅入口；
-- 生成器发现 QX snippet 缺少项目要求的注释 section marker、或索引资源仍引用大小写错误的 WayX `/main/script/` Raw URL 时必须失败，不生成可能错误的安装链接。
+- 生成器发现索引资源仍引用大小写错误的 WayX `/main/script/` Raw URL 时必须失败，不生成可能错误的安装链接。
 
-新增/删除转换内容后不得要求人工补 README：scheduled sync、canonical PR CI 与 README checker 必须自动生成/校验并把 `README.md` 及 `Resource/Install/QuantumultX/` 与对应转换产物一起提交。
+新增/删除转换内容后不得要求人工补 README：scheduled sync、canonical PR CI 与 README checker 必须自动生成/校验并把 `README.md` 与对应转换产物一起提交。
 
 ## 仓库布局门禁
 
