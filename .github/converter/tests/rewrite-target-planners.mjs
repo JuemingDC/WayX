@@ -93,6 +93,27 @@ assert.equal(qxMockDel.section,'rewrite');
 assert.equal(qxMockDelCtx.generatedScripts.size,1);
 assert.equal(planSurgeRewrite(v2(mockDelSource),ctx()).section,'map');
 
+const mockFileHeaderSource='response if ${url} ~= /settings\\/Enhanced/ then response.body.mock_file("html","https://example.com/settings.html",200) | response.header.add("Cache-Control","no-store")';
+const mockFileHeaderMaterialized=new Map([[mockFileHeaderSource,{
+  bodyText:'<html><body>settings</body></html>',
+  sourceFile:'https://example.com/settings.html',
+}]]);
+const qxMockFileHeaderCtx=ctx({mockFiles:mockFileHeaderMaterialized});
+const qxMockFileHeader=planQxRewrite(v2(mockFileHeaderSource),qxMockFileHeaderCtx);
+assert.equal(qxMockFileHeader.section,'rewrite');
+assert.match(qxMockFileHeader.line,/script-echo-response/);
+assert.equal(qxMockFileHeaderCtx.generatedScripts.size,1);
+const qxMockFileHeaderScript=[...qxMockFileHeaderCtx.generatedScripts.values()][0];
+assert.match(qxMockFileHeaderScript,/Cache-Control/);
+assert.match(qxMockFileHeaderScript,/no-store/);
+const surgeMockFileHeader=planSurgeRewrite(
+  v2(mockFileHeaderSource),
+  ctx({mockFiles:mockFileHeaderMaterialized}),
+);
+assert.equal(surgeMockFileHeader.section,'map');
+assert.match(surgeMockFileHeader.line,/data-type=file/);
+assert.match(surgeMockFileHeader.line,/Cache-Control:no-store/);
+
 const mixedSource='response if ${url} ~= /api/ then response.header.del("Server") | response.body.replace(/x/,"y")';
 const mixedIr=v2(mixedSource);
 const qxMixedCtx=ctx();
