@@ -58,9 +58,10 @@ assert.deepEqual(sorted(SURGE_WAYX_SCRIPT_TYPES), fixture.rewrite.scriptTypes, '
 assert.deepEqual(sorted(SURGE_WAYX_MITM_KEYS), fixture.mitmKeys, 'Surge MITM hostname registry drifted');
 
 const docs=fixture.docs;
-const [rules,policyOverview,rejectPolicy,urlRewrite,headerRewrite,bodyRewrite,mapLocal,httpRequestScript,httpResponseScript,mitm]=await Promise.all([
+const [rules,policyOverview,builtInPolicies,rejectPolicy,urlRewrite,headerRewrite,bodyRewrite,mapLocal,httpRequestScript,httpResponseScript,mitm]=await Promise.all([
   fetchText(docs.ruleOverview),
   fetchText(docs.policyOverview),
+  fetchText(docs.builtInPolicies),
   fetchText(docs.rejectPolicy),
   fetchText(docs.urlRewrite),
   fetchText(docs.headerRewrite),
@@ -73,7 +74,7 @@ const [rules,policyOverview,rejectPolicy,urlRewrite,headerRewrite,bodyRewrite,ma
 
 for (const type of fixture.ruleTypes) assertEvidence(rules,type,'Surge Rule type');
 
-const policyEvidence=policyOverview+'\n'+rejectPolicy;
+const policyEvidence=policyOverview+'\n'+builtInPolicies+'\n'+rejectPolicy;
 for (const policy of fixture.ruleBuiltinPolicies) {
   assertEvidence(policyEvidence,policy,'Surge built-in Rule policy');
 }
