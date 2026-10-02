@@ -29,6 +29,11 @@ const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');
 const RAW_BASE = 'https://raw.githubusercontent.com/JuemingDC/WayX/main';
 
+export function isLoonPluginSource(text) {
+  const source=String(text ?? '');
+  return /^#!name\s*=\s*\S/m.test(source) && /^\[[^\]]+\]\s*$/m.test(source);
+}
+
 async function main() {
   const manifest = await loadLoonSourceCatalog(MANIFEST);
   const failures = createWorkflowFailureReporter({summaryLabel:'Failures'});
@@ -47,7 +52,7 @@ async function main() {
       source = normalizeManagedSource(text);
 
       stage='validate-source';
-      if (!/^#!name=/m.test(source) || !/^\[[^\]]+\]/m.test(source)) throw new Error('downloaded content is not a valid Loon plugin');
+      if (!isLoonPluginSource(source)) throw new Error('downloaded content is not a valid Loon plugin');
 
       stage='inspect-source-change';
       const sourceState = await inspectManagedSource(ROOT, entry, source);
