@@ -180,8 +180,33 @@ export function planQxRewrite(ir, ctx={}) {
 
   const fileMocks=ast.actions.filter(action=>action.name===ast.phase+'.body.mock_file');
   const fileMockPipeline=fileMocks.length===1 && ast.actions.every(action=>
-    action===fileMocks[0] || new RegExp('^'+ast.phase+'\\\\.header\\\\.(?:add|set|del|replace)
-
+    action===fileMocks[0] || new RegExp('^'+ast.phase+'\\.header\\.(?:add|set|del|replace)$').test(action.name)
+  );
+  if (fileMockPipeline) {
+    try {
+      const condition=simpleUrlRewriteCondition(ast);
+      if (!condition.ok) throw new Error(condition.reason);
+      const fileMock=fileMocks[0];
+      const plan=qxMockPlanFromAction(fileMock,{pluginSourceUrl:ctx.sourceUrl});
+      const materialized=ctx.mockFiles?.get(source);
+      if (!materialized) throw new Error('mock_file was not materialized during conversion');
+      if (materialized.error) throw new Error(materialized.error);
+      const headerOps=headerOpsForMock(ast,fileMock);
+      const key=crypto.createHash('sha1').update('mock-file\0'+source).digest('hex').slice(0,10);
+      const filename='mock_file_'+key+'.js';
+      const script=renderQxMockFileScript(plan,{
+        ...materialized,
+        headerOps,
+        stamp:ctx.stamp,
+        category:ctx.category,
+        sourceLine:source,
+      });
+      ctx.generatedScripts.set(filename,script);
+      return {section:'rewrite',line:condition.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
+    } catch (error) {
+      return rewriteReview(source,String(error?.message||error).split('\n')[0]);
+    }
+  }
   if (singleOp?.kind==='mock' && singleOp.operation==='inline') {
     try {
       const plan=renderQxInlineMockScript(ast,{stamp:ctx.stamp,category:ctx.category,sourceLine:source});
