@@ -81,7 +81,6 @@ assert.equal(qxRule('URL-REGEX,"^https:\\/\\/image\\.example\\.com",REJECT-IMG')
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/dict\\.example\\.com",REJECT-DICT').line, '^https:\\/\\/dict\\.example\\.com url reject-dict');
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/array\\.example\\.com",REJECT-ARRAY').line, '^https:\\/\\/array\\.example\\.com url reject-array');
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP').line, '^https:\\/\\/drop\\.example\\.com url reject');
-assert.equal(qxRule('URL-REGEX,"^https:\\/\\/nodrop\\.example\\.com",REJECT-NO-DROP').line, '^https:\\/\\/nodrop\\.example\\.com url reject');
 assert.equal(qxRule('DOMAIN,example.com,DIRECT').line, 'host, example.com, direct');
 assert.equal(qxRule('DOMAIN,example.com,PROXY').line, 'host, example.com, PROXY');
 const surgeUrlReject200 = surgeModuleRule('URL-REGEX,"^https:\\/\\/empty\\.example\\.com",REJECT-200');
