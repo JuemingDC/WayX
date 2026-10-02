@@ -14,7 +14,12 @@ on:
       - ".github/CONVERSION_SPEC.md"
       - ".github/docs/conversion-spec/**"
       - "Resource/Loon/**"
+      - "Resource/Install/QuantumultX/**"
       - "Script/**"
+      - "Boxjs/**"
+      - "Module/**"
+      - "Rule/**"
+      - "README.md"
       - "Adblock/Quantumult X/**"
       - "Adblock/Surge/**"
   workflow_dispatch:
@@ -68,6 +73,7 @@ jobs:
           node --check .github/converter/tests/upstream-automation.mjs
           node --check .github/converter/tests/source-fetch.mjs
           node --check .github/converter/tests/repository-layout.mjs
+          node --check .github/converter/tests/readme-index.mjs
           node --check .github/converter/tests/qx-official-capabilities.mjs
           node --check .github/converter/tests/surge-official-capabilities.mjs
           node --check .github/converter/tests/manual-assets.mjs
@@ -106,6 +112,7 @@ jobs:
           node .github/converter/tests/upstream-automation.mjs
           node .github/converter/tests/source-fetch.mjs
           node .github/converter/tests/repository-layout.mjs
+          node .github/converter/tests/readme-index.mjs
           python .github/converter/tests/validate_conversion_policy.py
           node .github/converter/tests/manual-assets.mjs
 
@@ -129,6 +136,9 @@ jobs:
 
       - name: Regenerate canonical outputs
         run: node .github/converter/tools/regenerate-canonical.mjs --write
+
+      - name: Regenerate README and install index
+        run: node .github/converter/tools/update-readme.mjs --write
 
       - name: Audit regenerated repository
         run: node .github/converter/tools/audit-repository.mjs
@@ -155,6 +165,8 @@ jobs:
             Adblock/Quantumult X/*.snippet
             Adblock/Surge/*.sgmodule
             Script/**
+            Resource/Install/QuantumultX/**
+            README.md
             .github/monitor/.runtime/conversion-reconciliation.json
             .github/monitor/.runtime/conversion-reconciliation.md
             .github/monitor/.runtime/review-inventory.json
@@ -167,7 +179,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git add -A -- "Adblock/Quantumult X" "Adblock/Surge" Script
+          git add -A -- "Adblock/Quantumult X" "Adblock/Surge" Script Resource/Install/QuantumultX README.md
           if git diff --cached --quiet; then
             exit 0
           fi
@@ -188,7 +200,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          status="$(git status --porcelain --untracked-files=all -- "Adblock/Quantumult X" "Adblock/Surge" Script)"
+          status="$(git status --porcelain --untracked-files=all -- "Adblock/Quantumult X" "Adblock/Surge" Script Resource/Install/QuantumultX README.md)"
           if [[ -n "$status" ]]; then
             printf '%s\n' "$status"
             exit 1

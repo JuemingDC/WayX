@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.41  
+版本：1.42  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -58,11 +58,13 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 
 38. Surge Module 分类统一固定为 **`#!category=WayX`**。所有 WayX 生成的 Catalog `.sgmodule` 与手工维护 Surge Module 都必须在模块头部声明且只声明一次该字段；不得继续输出 WayX 生成的普通注释 `# Category: <entry.category>`。若来源 Loon header 自带 `#!category=...`，Surge 目标不得透传其值，也不得转换成普通 category 注释，而是统一替换为 `#!category=WayX`。QX 的 `# Category: <entry.category>` 与 generated helper 的分类注释不受本规则影响。Surge validator 必须拒绝缺失、非 WayX 值或 section 内出现的 category directive。
 
-39. 仓库结构固定为**内容根目录 + `.github` 工作流域**：仓库根目录除 `.github` 外只允许 `Resource / Adblock / Boxjs / Module / Rule / Script` 六类转换内容目录。转换器实现、测试、fixture、工具统一放在 `.github/converter/`；分块规范统一放在 `.github/docs/conversion-spec/`；监控实现、state、runtime 与 upstream mirror 统一放在 `.github/monitor/`；权威规范、项目状态和维护说明放在 `.github/`。Actions 入口继续只放 `.github/workflows/`，自动化脚本继续放 `.github/scripts/`，Source Catalog 与手工资产清单继续分别放 `.github/sources/` 与 `.github/manual-assets.json`。任何实现不得在仓库根目录重新创建 `converter / docs / monitor / upstream` 或其它工作流目录；所有 workflow、test、validator、spec index 的资源路径必须引用迁移后的真实路径，不允许用 symlink/兼容副本维持旧路径。
+39. 仓库结构固定为**公开索引 + 内容根目录 + `.github` 工作流域**：仓库根目录除 `.github` 外只允许自动生成的 `README.md` 与 `Resource / Adblock / Boxjs / Module / Rule / Script` 六类转换内容目录。转换器实现、测试、fixture、工具统一放在 `.github/converter/`；分块规范统一放在 `.github/docs/conversion-spec/`；监控实现、state、runtime 与 upstream mirror 统一放在 `.github/monitor/`；权威规范、项目状态和维护说明放在 `.github/`。Actions 入口继续只放 `.github/workflows/`，自动化脚本继续放 `.github/scripts/`，Source Catalog 与手工资产清单继续分别放 `.github/sources/` 与 `.github/manual-assets.json`。任何实现不得在仓库根目录重新创建 `converter / docs / monitor / upstream` 或其它工作流目录；所有 workflow、test、validator、spec index 的资源路径必须引用迁移后的真实路径，不允许用 symlink/兼容副本维持旧路径。
 
 40. 根目录转换内容目录统一使用**首字母大写**命名：`Adblock / Resource / Boxjs / Module / Rule / Script`。`.github` 保持 GitHub 保留目录名不变。所有 converter path、generated helper 本地路径、Raw GitHub helper URL、workflow path filter、artifact/commit path、audit/reconciliation、测试与文档必须使用相同大小写；禁止重新创建 `boxjs / module / rule / script` 小写兼容目录，也禁止继续生成 `.../main/script/...` Raw URL。目录大小写变更不得改变转换语义，只允许改变仓库资源路径及由该路径决定的引用 URL。
 
 41. Loon JSON/JQ 转换固定遵守**源语义优先、原生 JQ 优先、最小改写**。WayX 对 `json.add / json.replace / json.delete` 采用项目选定的 Stash-compatible 行为基准：add 仅在路径不存在或当前值为 JSON `null` 时写入；replace 仅在 `getpath(PATH)` 为 jq truthy 时替换，因此缺失/`null`/`false` 保持不变；delete 不加 `getpath` guard，单路径使用 `del(PATH)`，多个不含数组索引的固定路径必须合并为一个 `del(PATH1, PATH2, ...)`；只要包含数组索引就必须按源顺序串联多个 `del(...)`，以保持删除后数组索引位移语义。普通 Loon Key Path delete **不得自动生成 `delpaths(PATHS)`**；`delpaths` 只保留给源 `json.jq/jq_file` 已经声明的 Path Array 语义，或未来由规范明确、测试覆盖的 Path Array IR。Legacy `*-body-json-add|replace|del` 与 Rewrite v2 使用同一映射。源作者直接提供的 `json.jq(...)` 不得重写表达式结构；官方 `json.jq_file(...)` 只允许为 QX/Surge 单行配置删除非字符串注释并压缩无语义空白后内联，不得做 AST/代数重写。QX 依据用户提供的官方 sample 使用 `jsonjq-request-body/jsonjq-response-body`；Surge 依据官方 Manual 使用 `http-request-jq/http-response-jq`。
+
+42. 根目录 `README.md` 固定为**自动生成的公开资源索引**，不得手工维护资源清单。生成器必须扫描实际 `Boxjs / Module / Adblock / Rule` 内容，按 `BoxJs → Module → Adblock → Rule` 固定顺序输出，并从资源正文的 `# Name:` / `#!name=` / BoxJs JSON `name` 提取显示名；Quantumult X 与 Surge 必须分列，缺失平台显示 `—`。Quantumult X 一键导入固定使用官方 `https://quantumult.app/x/open-app/add-resource?remote-resource=...`：Rule 使用 `filter_remote`；Module/Adblock 的组合 snippet 不得错误地整体塞入单一 remote 类型，必须依据项目约定的注释段标记把 `filter_local` 拆为 filter installer、把 `rewrite_local + mitm` 拆为 rewrite installer，生成到 `Resource/Install/QuantumultX/`，再由同一个 `add-resource` payload 同时添加；所有 QX remote descriptor 显式写 `update-interval=86400` 与 `enabled=true`。Surge 模块入口按用户已安装的 DivineEngine Redirect 使用 `https://surge.app/install-module?url=<percent-encoded raw URL>`，其目标仍是 Surge 官方 `surge:///install-module?url=`；官方 install-module Scheme 没有 update-interval 参数，禁止伪造。README/index 生成必须同时 prune 已失效 installer，并在新增/删除转换内容、canonical regeneration、定时 upstream sync 与相关 PR CI 中自动刷新；生成器遇到无法识别的 QX section marker、陈旧的 `.../main/script/...` WayX Raw URL 或其它无法安全生成安装入口的情况必须 fail closed，不得产出猜测链接。
 
 ## 规范块
 

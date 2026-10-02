@@ -7,16 +7,16 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 const ROOT=process.cwd();
-const allowedRoot=new Set(['.git','.github','Adblock','Resource','Boxjs','Module','Rule','Script']);
+const allowedRoot=new Set(['.git','.github','README.md','Adblock','Resource','Boxjs','Module','Rule','Script']);
 const rootEntries=await fs.readdir(ROOT);
 const unexpected=rootEntries.filter(name=>!allowedRoot.has(name)).sort();
 assert.deepEqual(
   unexpected,
   [],
-  'repository root must contain only .github and conversion-content directories: '+unexpected.join(', '),
+  'repository root must contain only README.md, .github and conversion-content directories: '+unexpected.join(', '),
 );
 
-for(const rel of ['converter','docs','monitor','upstream','boxjs','module','rule','script','CONVERSION_SPEC.md','PROJECT_STATUS.md','README.md','.gitignore']){
+for(const rel of ['converter','docs','monitor','upstream','boxjs','module','rule','script','CONVERSION_SPEC.md','PROJECT_STATUS.md','.gitignore']){
   await assert.rejects(
     fs.stat(path.join(ROOT,rel)),
     {code:'ENOENT'},
@@ -35,6 +35,7 @@ for(const rel of [
   '.github/sources/loon.json',
   '.github/manual-assets.json',
   '.github/workflows',
+  'README.md',
   'Adblock',
   'Resource',
   'Boxjs',

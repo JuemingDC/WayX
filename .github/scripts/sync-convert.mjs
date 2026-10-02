@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { loadLoonSourceCatalog } from '../converter/src/source-catalog.mjs';
 import { fetchOriginalText } from '../converter/src/source-fetch.mjs';
 import { createWorkflowFailureReporter } from '../converter/src/workflow-diagnostics.mjs';
+import { writeReadmePlan } from '../converter/src/readme-index.mjs';
 import {
   materializeConversionRunContext,
   convertPluginWithContext,
@@ -117,8 +118,15 @@ async function main() {
       }));
     }
   }
+  let readmeFailed = false;
+  try {
+    await writeReadmePlan(ROOT);
+  } catch (error) {
+    readmeFailed = true;
+    console.error('README/install index generation failed:', error?.stack || error);
+  }
   await writeSyncFailureReport(ROOT,structuredFailures);
-  if (failures.report()) process.exitCode = 1;
+  if (failures.report() || readmeFailed) process.exitCode = 1;
 }
 
 const __wayxIsMain = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url));

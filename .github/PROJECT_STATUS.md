@@ -35,7 +35,7 @@ WayX 当前只维护 **Loon → Quantumult X / Surge** 的去广告转换与相�
 ### 2.1 项目治理与自动化
 
 - `.github/CONVERSION_SPEC.md` + `.github/docs/conversion-spec/` Block 00–95 已建立为唯一规范链。
-- 仓库根目录已收口为 `.github / Resource / Adblock / Boxjs / Module / Rule / Script`；转换器、规范、监控与工作流实现全部位于 `.github` 工作流域，并由 `repository-layout.mjs` 持续门禁。
+- 仓库根目录已收口为自动生成的 `README.md`、`.github / Resource / Adblock / Boxjs / Module / Rule / Script`；转换器、规范、监控与工作流实现全部位于 `.github` 工作流域，并由 `repository-layout.mjs` 持续门禁。
 - Source Catalog 驱动 canonical regeneration。
 - 已建立 QX / Surge validator、repository audit、Golden、genericity、helper reference、Source Script URL preservation 等检查。
 - 未知 Loon section、Script parse failure、未知 MITM option 与未知 Rewrite action 不再静默丢失：先注释并标记 `ISSUE REQUIRED`，再由自动化创建/复用议题。已知 action 的新组合不属于 unknown；renderer 无法等价处理时进入 Review。
@@ -196,7 +196,8 @@ Loon Source Script declaration 的 `argument`、dynamic enable、timeout、binar
 - [x] Surge official capability gate 已落地：production `rule.mjs` / `surge-module.mjs` 共用 `surge-official-capabilities.mjs`；CI 实时读取 Surge 官方 Manual，只验证 WayX 实际使用的 28 个 Rule Type、URL/Header/Body Rewrite、Map Local、HTTP request/response Script 与 MITM `hostname` 仍有官方依据。Surge 其它 Profile/Module 能力不进入本 gate。
 - [x] 对 generated helper 做行为级 runtime fixture，而不只做字符串/语法断言：`.github/converter/tests/generated-helper-runtime.mjs` 已接入 CI，覆盖 request/response、组合条件、命中/未命中、Header/Body/JSON 顺序、capture、raw string、typed JSON、invalid JSON 失败隔离、Surge duplicate header，以及通用 QX inline mock + Header pipeline。
 - [x] JSON/JQ 语义规范已收口：Rewrite v2 与 Legacy `*-body-json-add|replace|del` 共用同一 Stash-compatible Key Path 行为；源 `json.jq(...)` 不重写表达式结构，官方 `jq_file` 仅做单行配置所需的注释删除/空白压缩后内联；QX 继续使用官方 sample 的 `jsonjq-*-body`，Surge 使用官方 Manual 的 `http-*-jq`；普通多路径 delete 使用一个 `del(PATH1, PATH2, ...)`，数组索引批量 delete 才按源顺序串联多个 `del`；转换器不为普通 Key Path delete 合成 `delpaths`，源 jq/jq_file 自带的 `delpaths(PATHS)` 保持不变；PR #112 完成全局 canonical 重生成并通过 Converter Check #775。
-- [x] 仓库工作流域重构完成：根目录只保留 `.github` 与六类转换内容目录；原 `converter / docs / monitor`、根级规范/状态/README/.gitignore 全部迁入 `.github`，monitor mirror/runtime 也不再污染根目录；Converter Check 与 Upstream Monitor 均执行 repository-layout gate。
+- [x] 仓库工作流域重构完成：内部规范/状态仍位于 `.github`，根目录仅额外保留自动生成的公开 `README.md` 与六类转换内容目录；`converter / docs / monitor / upstream` 等工作流目录不得回到根目录，Converter Check 与 Upstream Monitor 均执行 repository-layout gate。
+- [x] 根目录公开 README/install index 自动化已建立：扫描 `Boxjs / Module / Adblock / Rule`，固定 `BoxJs → Module → Adblock → Rule`，QX/Surge 分列并读取资源 `name`；QX Module/Adblock 组合 snippet 自动拆分 installer 到 `Resource/Install/QuantumultX/`，remote resource 固定 `update-interval=86400`。新增/删除转换内容由 sync/PR CI 自动刷新，旧 installer 自动 prune。Kelee Lpx Loon UA 模块已删除，不再作为公开 Module 维护。
 - 保持 `.github/PROJECT_STATUS.md` 与实际 Review inventory 同步。
 
 ---

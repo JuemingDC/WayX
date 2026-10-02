@@ -53,6 +53,9 @@ WayX 的上游维护与转换由 GitHub Actions 自动闭环执行；不再使�
 - Repository audit：`.github/converter/tools/audit-repository.mjs`
 - Reconciliation / Review inventory：`.github/converter/tools/conversion-reports.mjs`
 - Canonical deterministic regeneration：`.github/converter/tools/regenerate-canonical.mjs`
+- README/install index generator：`.github/converter/src/readme-index.mjs`
+- README/install index CLI：`.github/converter/tools/update-readme.mjs`
+- README/install index regression：`.github/converter/tests/readme-index.mjs`
 - PR CI：`.github/workflows/converter-check.yml`
 
 自动化脚本不得维护第二份插件列表；所有 Loon source 必须遍历 Source Catalog。
@@ -78,6 +81,7 @@ Source Catalog entry.source
 → Surge validator
 → 成功插件同步 generated helper（含安全 prune）/ target / Source
 → 继续处理下一个插件
+→ 重建根目录 README + Quantumult X installer resources（24 h remote interval）
 → 官方规范/仓库 monitor
 → repository validator + audit
 → reconciliation + Review/Issue inventory
@@ -174,6 +178,22 @@ Review/Issue marker 不阻止其它已验证插件的自动提交。它们是 fa
 - `.github/monitor/monitor_upstreams.py` 只记录监控源变化并维护 `.github/monitor/state.json` / `upstream/` mirror，不创建 review PR。
 - 两套 workflow 均保留 machine-readable reconciliation / inventory；scheduled flow 还上传 sync failure、issue summary、monitor change summary 与运行日志。
 
+## README 自动索引
+
+根目录 `README.md` 是面向使用者的公开安装索引，不属于手工维护文档。其唯一生成入口为 `.github/converter/src/readme-index.mjs` / `.github/converter/tools/update-readme.mjs`，资源顺序固定为 `BoxJs → Module → Adblock → Rule`，并从资源自身 metadata 提取名称。
+
+自动索引必须满足：
+
+- Quantumult X 与 Surge 分列，不存在的平台显示 `—`；
+- QX Rule 使用官方 `filter_remote`；QX Module/Adblock 组合 snippet 先按注释掉的 `filter_local / rewrite_local / mitm` 段拆为 installer resource，再通过一次官方 `add-resource` Universal Link 导入；
+- 每条 QX remote descriptor 显式写 `update-interval=86400` 与 `enabled=true`；
+- installer resource 固定生成到 `Resource/Install/QuantumultX/`，源资源消失时同步 prune；
+- Surge 模块链接使用 `https://surge.app/install-module?url=...` 供用户现有 DivineEngine Redirect 转为官方 `surge:///install-module?url=...`；官方 install-module 不支持 update interval 参数，因此不得伪造；
+- BoxJs 订阅使用 BoxJs 的一键订阅入口；
+- 生成器发现 QX snippet 缺少项目要求的注释 section marker、或索引资源仍引用大小写错误的 WayX `/main/script/` Raw URL 时必须失败，不生成可能错误的安装链接。
+
+新增/删除转换内容后不得要求人工补 README：scheduled sync、canonical PR CI 与 README checker 必须自动生成/校验并把 `README.md` 及 `Resource/Install/QuantumultX/` 与对应转换产物一起提交。
+
 ## 仓库布局门禁
 
-`.github/converter/tests/repository-layout.mjs`（路径中的前导空格仅为排版错误）由 Converter Check 与 Upstream Monitor 同时执行，用于阻止 `converter/`、`docs/`、`monitor/`、`upstream/` 等工作流目录重新出现在仓库根目录。允许的根目录固定为 `.github / Resource / Adblock / Boxjs / Module / Rule / Script`。
+`.github/converter/tests/repository-layout.mjs`（路径中的前导空格仅为排版错误）由 Converter Check 与 Upstream Monitor 同时执行，用于阻止 `converter/`、`docs/`、`monitor/`、`upstream/` 等工作流目录重新出现在仓库根目录。允许的根目录固定为 `README.md / .github / Resource / Adblock / Boxjs / Module / Rule / Script`。

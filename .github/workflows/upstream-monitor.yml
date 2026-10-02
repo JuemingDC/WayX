@@ -48,6 +48,7 @@ jobs:
           node .github/converter/tests/spec-block-contract.mjs
           node .github/converter/tests/workflow-control.mjs
           node .github/converter/tests/repository-layout.mjs
+          node .github/converter/tests/readme-index.mjs
           node .github/converter/tests/complex-source-inventory.mjs
           node .github/converter/tests/catalog-syntax-inventory.mjs
           node .github/converter/tests/catalog-legacy-syntax-inventory.mjs
@@ -65,6 +66,8 @@ jobs:
           node --check .github/converter/tests/upstream-automation.mjs
           node --check .github/converter/tests/workflow-control.mjs
           node --check .github/converter/tests/repository-layout.mjs
+          node --check .github/converter/tests/readme-index.mjs
+          node --check .github/converter/tools/update-readme.mjs
           python -m py_compile .github/converter/tools/fetch-upstream.py .github/scripts/validate_conversion_policy.py .github/monitor/monitor_upstreams.py
 
       - name: Prepare runtime logs
@@ -92,6 +95,11 @@ jobs:
         run: |
           set -o pipefail
           python .github/scripts/validate_conversion_policy.py 2>&1 | tee .github/monitor/.runtime/validator.log
+
+      - name: Verify README/install index
+        id: readme_index
+        continue-on-error: true
+        run: node .github/converter/tools/update-readme.mjs
 
       - name: Audit repository
         id: audit
@@ -131,6 +139,7 @@ jobs:
         if: >-
           always() &&
           steps.validate.outcome == 'success' &&
+          steps.readme_index.outcome == 'success' &&
           steps.audit.outcome == 'success' &&
           steps.reports.outcome == 'success' &&
           steps.helper_refs.outcome == 'success' &&
@@ -142,7 +151,7 @@ jobs:
           git config user.name "chance-upstream-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add -A Resource/Loon Adblock Script Boxjs .github/monitor/state.json .github/monitor/upstream
+          git add -A Resource/Loon Resource/Install/QuantumultX Adblock Script Boxjs README.md .github/monitor/state.json .github/monitor/upstream
 
           if git diff --cached --quiet; then
             echo "No validated upstream/conversion changes to commit."
@@ -185,6 +194,7 @@ jobs:
           LOON_SYNC: ${{ steps.loon_sync.outcome }}
           MONITOR: ${{ steps.monitor.outcome }}
           VALIDATE: ${{ steps.validate.outcome }}
+          README_INDEX: ${{ steps.readme_index.outcome }}
           AUDIT: ${{ steps.audit.outcome }}
           REPORTS: ${{ steps.reports.outcome }}
           HELPER_REFS: ${{ steps.helper_refs.outcome }}
@@ -193,7 +203,7 @@ jobs:
         run: |
           set -euo pipefail
           failed=0
-          for item in             "loon_sync=$LOON_SYNC"             "monitor=$MONITOR"             "validate=$VALIDATE"             "audit=$AUDIT"             "reports=$REPORTS"             "helper_refs=$HELPER_REFS"             "source_urls=$SOURCE_URLS"             "issues=$ISSUES"; do
+          for item in             "loon_sync=$LOON_SYNC"             "monitor=$MONITOR"             "validate=$VALIDATE"             "readme_index=$README_INDEX"             "audit=$AUDIT"             "reports=$REPORTS"             "helper_refs=$HELPER_REFS"             "source_urls=$SOURCE_URLS"             "issues=$ISSUES"; do
             name="${item%%=*}"
             value="${item#*=}"
             if [ "$value" != "success" ]; then

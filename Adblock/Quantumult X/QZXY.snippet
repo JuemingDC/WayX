@@ -11,7 +11,7 @@
 # Converted: 2026-09-22
 # Target: Quantumult X
 # Source: https://raw.githubusercontent.com/JuemingDC/QuantumultX/refs/heads/main/Rewrite/qzxy.snippet
-# Script: https://raw.githubusercontent.com/JuemingDC/WayX/main/script/QZXY/QuantumultX/qzxy.js
+# Script: https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/QZXY/QuantumultX/qzxy.js
 # Basis: quantumult-x-2026-09-15-160818.har
 # ==================================================
 
@@ -91,10 +91,10 @@ host, cdn.waimaimingtang.com, reject
 
 # 将当前项目加入任务广告黑名单，并移除任务图
 # 改为脚本动态读取 projectId：保留原有黑名单，且只修改已存在的广告字段，避免误伤项目核心配置。
-^https:\/\/v3-api\.china-qzxy\.cn\/project\/info\/triple(?:\?|$) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/script/QZXY/QuantumultX/qzxy.js
+^https:\/\/v3-api\.china-qzxy\.cn\/project\/info\/triple(?:\?|$) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/QZXY/QuantumultX/qzxy.js
 # 整体隐藏“每天赚（省）点零花钱 / 可提现金”模块
 # 该接口同时包含 coinInfo 与 appAdvChannelList；脚本先校验当前 HAR 结构，确认匹配后才将 data 置空。
-^https:\/\/v3-api\.china-qzxy\.cn\/user\/coin\/info\/withAppAdvChannel(?:\?|$) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/script/QZXY/QuantumultX/qzxy.js
+^https:\/\/v3-api\.china-qzxy\.cn\/user\/coin\/info\/withAppAdvChannel(?:\?|$) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/QZXY/QuantumultX/qzxy.js
 
 # 清空霸王餐/免费餐推广数据
 ^https:\/\/v3-api\.china-qzxy\.cn\/settlement\/advertise\/freeMeal\/activity\/index(?:\?|$) url jsonjq-response-body '.data.amount = 0 | .data.activityList = []'
