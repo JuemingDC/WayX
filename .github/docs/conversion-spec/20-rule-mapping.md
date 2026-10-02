@@ -59,12 +59,13 @@ Loon `[Rule]` 中的 `URL-REGEX` 不能作为 Quantumult X 普通 `filter_local`
 | `URL-REGEX,REGEX,REJECT-IMG` | `REGEX url reject-img` | `[Rule] URL-REGEX,REGEX,REJECT-TINYGIF` |
 | `URL-REGEX,REGEX,REJECT-DICT` | `REGEX url reject-dict` | `[Map Local] REGEX data-type=text data="{}" status-code=200 header="Content-Type:application/json"` |
 | `URL-REGEX,REGEX,REJECT-ARRAY` | `REGEX url reject-array` | `[Map Local] REGEX data-type=text data="[]" status-code=200 header="Content-Type:application/json"` |
-| `URL-REGEX,REGEX,REJECT-DROP` | `REGEX url reject` | 注释保留；Surge Module `[Rule]` 官方不允许 `REJECT-DROP` |
+| `URL-REGEX,REGEX,REJECT-DROP` | `REGEX url reject` | `[Rule] URL-REGEX,REGEX,REJECT-DROP` |
+| `URL-REGEX,REGEX,REJECT-NO-DROP` | 注释保留；QX 官方 sample 未确认该 Rule policy 映射 | `[Rule] URL-REGEX,REGEX,REJECT-NO-DROP` |
 
 关键约束：
 - `URL-REGEX + REJECT` 在 QX 固定为 `reject-200`，这是 WayX 对 Loon Rule 语义的项目映射。
 - `REJECT-IMG / REJECT-DICT / REJECT-ARRAY` 不得统一降级成普通 `reject`。
-- Surge Module 只有 `DIRECT / REJECT / REJECT-TINYGIF` 可作为 WayX 活动 `[Rule]` policy。需要具体 HTTP body 的 `REJECT-200/DICT/ARRAY` 降到官方 `[Map Local]`；其它无法按当前 ad-block Module Rule 语义等价表达的源 policy 只注释保留，不做近似替换。
+- WayX 不再为 Surge Module `[Rule]` 维护独立于 Surge Rule 的缩窄 built-in policy 白名单。凡 source policy 本身是 Surge Rule 已知内建 policy，直接按 Rule 语义输出；`REJECT-DROP` 与 `REJECT-NO-DROP` 必须原样保留。需要具体 HTTP body 的 `REJECT-200/DICT/ARRAY` 仍降到 `[Map Local]`，因为它们不是 Surge Rule 内建 policy。
 - 本节只处理 Loon `[Rule]`。Loon 旧 `[Rewrite]` 的 reject 映射见 Block 30。
 
 ## 20.3 QX IP 参数
@@ -96,16 +97,16 @@ NOT,((Rule1)),Policy
 | `REJECT` | `reject` | `REJECT` |
 | `PROXY` | `PROXY`（原样保留，不映射为内建 `proxy`） | 生成 Module policy 参数并写为 `{{{wayx_proxy_policy}}}`；默认 `DIRECT`，用户可改为目标 Surge 代理策略/策略组 |
 | `REJECT-IMG` | URL 场景 → `reject-img` | `REJECT-TINYGIF` |
-| `REJECT-DROP` | 项目约定 → `reject` | 注释保留；Module Rule 官方未允许 |
-| `REJECT-NO-DROP` | `reject`（QX 不存在 Surge 自动升级机制） | 注释保留；Module Rule 官方未允许 |
-| `CELLULAR` | Review | 注释保留；Module Rule 官方未允许 |
-| `CELLULAR-ONLY` | Review | 注释保留；Module Rule 官方未允许 |
-| `HYBRID` | Review | 注释保留；Module Rule 官方未允许 |
-| `NO-HYBRID` | Review | 注释保留；Module Rule 官方未允许 |
+| `REJECT-DROP` | 项目约定 → `reject` | `REJECT-DROP` |
+| `REJECT-NO-DROP` | URL-REGEX Rule 未确认 → 注释保留 | `REJECT-NO-DROP` |
+| `CELLULAR` | Review | `CELLULAR`（iOS only） |
+| `CELLULAR-ONLY` | Review | `CELLULAR-ONLY`（iOS only） |
+| `HYBRID` | Review | `HYBRID`（iOS only） |
+| `NO-HYBRID` | Review | `NO-HYBRID`（iOS only） |
 | `REJECT-TINYGIF` | URL 场景 → `reject-img` | `REJECT-TINYGIF` |
 | 用户策略组 | 只有明确存在对应 QX policy 时可执行 | Module 不允许假设 → Review |
 
-WayX 只按 Surge Module Manual 验证当前 ad-block `[Rule]` 输出；活动规则 policy 固定为 `DIRECT / REJECT / REJECT-TINYGIF` 或已声明的参数化 policy。其它源 policy 不进入目标能力扩展，只按现有注释/Review 路径处理。
+WayX 对 Surge Module `[Rule]` 的 policy 校验改为复用 Surge Rule 内建 policy 语义：`DIRECT / REJECT / REJECT-DROP / REJECT-NO-DROP / REJECT-TINYGIF / CELLULAR / CELLULAR-ONLY / HYBRID / NO-HYBRID` 直接允许，已声明的参数化 policy 继续允许；未知外部 policy/group 仍不得凭空假设存在。当前在线 Module Manual 仍列出旧的三项 module policy 限制，本项目按用户确认的实际运行语义将该条视为滞后文档，并在此处显式记录为 WayX 强制兼容策略；不得再据此把上述 Surge Rule 内建 policy 注释掉。
 
 Loon 插件 [Rule] 中的 `PROXY` 具有插件内部策略选择语义，不转换成其他 policy。Quantumult X 保留字面 `PROXY`，不得静默降为内建小写 `proxy`。
 
@@ -121,7 +122,7 @@ Surge Module 不能定义 `[Proxy]` / `[Proxy Group]`，但官方 Parameter Tabl
 - Public compatibility facade：`.github/converter/src/rule.mjs`
 - Orchestration：`.github/scripts/sync-convert.mjs` 的 `[Rule]` 分发，只按 planner 返回的 section 写入 QX rewrite/filter 或 Surge Rule/Map Local。
 - Synthetic AST contract：`.github/converter/tests/rule-ast.mjs`
-- Synthetic target regression：`.github/converter/tests/checkpoint.mjs`，必须逐项覆盖 `REJECT / REJECT-200 / REJECT-IMG / REJECT-DICT / REJECT-ARRAY / REJECT-DROP`。
+- Synthetic target regression：`.github/converter/tests/checkpoint.mjs`，必须逐项覆盖既有 QX reject 映射，并覆盖 Surge `REJECT-DROP / REJECT-NO-DROP` 原样输出及 logical Rule + `REJECT-NO-DROP` 组合；QX 对 `REJECT-NO-DROP` 保持官方 sample 未确认的注释路径。
 - Repository coverage：`.github/converter/tests/surge-rule-coverage.mjs`。
 
 固定约束：

@@ -15,6 +15,12 @@ export const SURGE_WAYX_RULE_TYPES = new Set([
   'SCRIPT','RULE-SET',
 ]);
 
+export const SURGE_WAYX_RULE_BUILTIN_POLICIES = new Set([
+  'DIRECT',
+  'REJECT','REJECT-DROP','REJECT-NO-DROP','REJECT-TINYGIF',
+  'CELLULAR','CELLULAR-ONLY','HYBRID','NO-HYBRID',
+]);
+
 export const SURGE_WAYX_REWRITE_SECTIONS = new Set([
   'URL Rewrite','Header Rewrite','Body Rewrite','Map Local','Script',
 ]);

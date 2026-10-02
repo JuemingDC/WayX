@@ -99,7 +99,7 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
       } else {
         const policy = policyRaw.toUpperCase();
         if (!SURGE_MODULE_POLICIES.has(policy)) {
-          throw new Error(`${entry.id}: Surge module [Rule] policy is outside the official Module set DIRECT/REJECT/REJECT-TINYGIF or a declared {{{argument}}}: ${line}`);
+          throw new Error(`${entry.id}: Surge module [Rule] policy is outside the WayX accepted Surge Rule built-in policy set or a declared {{{argument}}}: ${line}`);
         }
       }
       if (line !== parts.join(',')) {

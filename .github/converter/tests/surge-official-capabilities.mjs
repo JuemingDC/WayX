@@ -7,6 +7,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {
   SURGE_WAYX_RULE_TYPES,
+  SURGE_WAYX_RULE_BUILTIN_POLICIES,
   SURGE_WAYX_REWRITE_SECTIONS,
   SURGE_WAYX_URL_REWRITE_TYPES,
   SURGE_WAYX_HEADER_REWRITE_ACTIONS,
@@ -47,6 +48,7 @@ function assertEvidence(text, token, label) {
 }
 
 assert.deepEqual(sorted(SURGE_WAYX_RULE_TYPES), fixture.ruleTypes, 'Surge Rule registry drifted from reviewed WayX adblock baseline');
+assert.deepEqual(sorted(SURGE_WAYX_RULE_BUILTIN_POLICIES), fixture.ruleBuiltinPolicies, 'Surge built-in Rule policy registry drifted');
 assert.deepEqual(sorted(SURGE_WAYX_REWRITE_SECTIONS), fixture.rewrite.sections, 'Surge Rewrite section registry drifted');
 assert.deepEqual(sorted(SURGE_WAYX_URL_REWRITE_TYPES), fixture.rewrite.urlRewriteTypes, 'Surge URL Rewrite registry drifted');
 assert.deepEqual(sorted(SURGE_WAYX_HEADER_REWRITE_ACTIONS), fixture.rewrite.headerRewriteActions, 'Surge Header Rewrite registry drifted');
@@ -56,8 +58,11 @@ assert.deepEqual(sorted(SURGE_WAYX_SCRIPT_TYPES), fixture.rewrite.scriptTypes, '
 assert.deepEqual(sorted(SURGE_WAYX_MITM_KEYS), fixture.mitmKeys, 'Surge MITM hostname registry drifted');
 
 const docs=fixture.docs;
-const [rules,urlRewrite,headerRewrite,bodyRewrite,mapLocal,httpRequestScript,httpResponseScript,mitm]=await Promise.all([
+const [rules,policyOverview,builtInPolicies,rejectPolicy,urlRewrite,headerRewrite,bodyRewrite,mapLocal,httpRequestScript,httpResponseScript,mitm]=await Promise.all([
   fetchText(docs.ruleOverview),
+  fetchText(docs.policyOverview),
+  fetchText(docs.builtInPolicies),
+  fetchText(docs.rejectPolicy),
   fetchText(docs.urlRewrite),
   fetchText(docs.headerRewrite),
   fetchText(docs.bodyRewrite),
@@ -68,6 +73,11 @@ const [rules,urlRewrite,headerRewrite,bodyRewrite,mapLocal,httpRequestScript,htt
 ]);
 
 for (const type of fixture.ruleTypes) assertEvidence(rules,type,'Surge Rule type');
+
+const policyEvidence=policyOverview+'\n'+builtInPolicies+'\n'+rejectPolicy;
+for (const policy of fixture.ruleBuiltinPolicies) {
+  assertEvidence(policyEvidence,policy,'Surge built-in Rule policy');
+}
 
 for (const type of fixture.rewrite.urlRewriteTypes) {
   const token=type==='header' ? '>header<' : type;
@@ -85,5 +95,6 @@ assertEvidence(mitm,'hostname','Surge MITM key');
 console.log(
   'Surge scoped adblock capability gate passed: '+
   fixture.ruleTypes.length+' Rule types / '+
+  fixture.ruleBuiltinPolicies.length+' built-in Rule policies / '+
   fixture.rewrite.sections.length+' Rewrite sections / hostname'
 );
