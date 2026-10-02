@@ -81,6 +81,7 @@ assert.equal(qxRule('URL-REGEX,"^https:\\/\\/image\\.example\\.com",REJECT-IMG')
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/dict\\.example\\.com",REJECT-DICT').line, '^https:\\/\\/dict\\.example\\.com url reject-dict');
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/array\\.example\\.com",REJECT-ARRAY').line, '^https:\\/\\/array\\.example\\.com url reject-array');
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP').line, '^https:\\/\\/drop\\.example\\.com url reject');
+assert.equal(qxRule('URL-REGEX,"^https:\\/\\/nodrop\\.example\\.com",REJECT-NO-DROP').line, '^https:\\/\\/nodrop\\.example\\.com url reject');
 assert.equal(qxRule('DOMAIN,example.com,DIRECT').line, 'host, example.com, direct');
 assert.equal(qxRule('DOMAIN,example.com,PROXY').line, 'host, example.com, PROXY');
 const surgeUrlReject200 = surgeModuleRule('URL-REGEX,"^https:\\/\\/empty\\.example\\.com",REJECT-200');
@@ -96,15 +97,14 @@ assert.equal(qxRule('URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP').line, '^https:\\/\\/drop\\.example\\.com url reject');
 assert.equal(surgeRule('URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-IMG'), 'URL-REGEX,^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?,REJECT-TINYGIF');
 const surgeDropModule = surgeModuleRule('URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP');
-assert.equal(surgeDropModule.kind, 'comment');
-assert.equal(surgeDropModule.reason, 'unsupported-surge-module-policy');
-assert.match(surgeDropModule.lines.join('\n'), /REJECT-DROP commented out/);
+assert.equal(surgeDropModule.kind, 'rule');
+assert.equal(surgeDropModule.line, 'URL-REGEX,^https:\\/\\/drop\\.example\\.com,REJECT-DROP');
 const surgeNoDropModule = surgeModuleRule('DOMAIN,drop.example.com,REJECT-NO-DROP');
-assert.equal(surgeNoDropModule.reason, 'unsupported-surge-module-policy');
-assert.match(surgeNoDropModule.lines.join('\n'), /REJECT-NO-DROP commented out/);
+assert.equal(surgeNoDropModule.kind, 'rule');
+assert.equal(surgeNoDropModule.line, 'DOMAIN,drop.example.com,REJECT-NO-DROP');
 const surgeCellularModule = surgeModuleRule('DOMAIN,cell.example.com,CELLULAR');
-assert.equal(surgeCellularModule.reason, 'unsupported-surge-module-policy');
-assert.match(surgeCellularModule.lines.join('\n'), /CELLULAR commented out/);
+assert.equal(surgeCellularModule.kind, 'rule');
+assert.equal(surgeCellularModule.line, 'DOMAIN,cell.example.com,CELLULAR');
 assert.match(qxRule('AND, ((DOMAIN-SUFFIX, example.com), (PROTOCOL, TCP)), REJECT').line, /unsupported Rule type commented out/);
 assert.equal(qxRule('IP-CIDR, 1.1.1.1/32, REJECT, no-resolve').line, 'ip-cidr, 1.1.1.1/32, reject');
 assert.equal(surgeRule('IP-CIDR, 1.1.1.1/32, REJECT, no-resolve'), 'IP-CIDR,1.1.1.1/32,REJECT,no-resolve');
@@ -137,6 +137,10 @@ assert.equal(surgeModuleRule('SCRIPT,ssid-rule,DIRECT,requires-resolve').line, '
 assert.equal(
   surgeModuleRule('AND,((DOMAIN,api.pinduoduo.com),(PROTOCOL,QUIC)),REJECT').line,
   'AND,((DOMAIN,api.pinduoduo.com),(PROTOCOL,QUIC)),REJECT',
+);
+assert.equal(
+  surgeModuleRule('AND,((DOMAIN-SUFFIX,example.com),(PROTOCOL,TCP)),REJECT-NO-DROP').line,
+  'AND,((DOMAIN-SUFFIX,example.com),(PROTOCOL,TCP)),REJECT-NO-DROP',
 );
 assert.equal(
   surgeModuleRule('AND,((DOMAIN-KEYWORD,tnc),(OR,((DOMAIN-SUFFIX,capcutapi.com),(DOMAIN-SUFFIX,zijieapi.com)))),DIRECT').line,
@@ -237,9 +241,14 @@ assert.throws(
   () => validateSurgeModule(validSurgeModule.replace('#!requirement=CORE_VERSION>=20\n', ''), {id:'Demo'}),
   /CORE_VERSION>=20/,
 );
-assert.throws(
+assert.doesNotThrow(
   () => validateSurgeModule(validSurgeModule.replace('DOMAIN,ads.example.com,REJECT', 'DOMAIN,ads.example.com,REJECT-DROP'), {id:'Demo'}),
-  /official Module set DIRECT\/REJECT\/REJECT-TINYGIF/,
+);
+assert.doesNotThrow(
+  () => validateSurgeModule(validSurgeModule.replace('DOMAIN,ads.example.com,REJECT', 'DOMAIN,ads.example.com,REJECT-NO-DROP'), {id:'Demo'}),
+);
+assert.doesNotThrow(
+  () => validateSurgeModule(validSurgeModule.replace('DOMAIN,ads.example.com,REJECT', 'DOMAIN,ads.example.com,CELLULAR'), {id:'Demo'}),
 );
 const parameterizedPolicyModule = validSurgeModule
   .replace('#!desc=Demo module', '#!desc=Demo module\n#!arguments=wayx_proxy_policy:DIRECT')
