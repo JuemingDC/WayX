@@ -1240,9 +1240,17 @@ const requestInlineMock = renderQxInlineMockScript(
 assert.equal(requestInlineMock.qxAction, 'script-request-body');
 assert.match(requestInlineMock.script, /\$done\(\{headers, body: __wayxBody\}\)/);
 
+const safeMockHeaderAdd = renderQxInlineMockScript(
+  parseRewriteV2('response if ${url} ~= /api/i then response.body.mock("text", "x", 200) | response.header.add("X-Test", "a=1")'),
+  {category:'Rewrite'},
+);
+assert.equal(safeMockHeaderAdd.qxAction, 'script-echo-response');
+assert.match(safeMockHeaderAdd.script, /X-Test/);
+assert.match(safeMockHeaderAdd.script, /a=1/);
+
 assert.throws(
   () => renderQxInlineMockScript(
-    parseRewriteV2('response if ${url} ~= /api/i then response.body.mock("text", "x", 200) | response.header.add("X-Test", "a=1")'),
+    parseRewriteV2('response if ${url} ~= /api/i then response.body.mock("text", "x", 200) | response.header.add("Content-Type", "text/plain")'),
     {category:'Rewrite'},
   ),
   /header\.add cannot be represented losslessly/,
