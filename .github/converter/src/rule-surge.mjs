@@ -3,21 +3,15 @@
 // Category: Converter / Rule / Surge
 
 import { normalizeRegexBodyForTarget } from './target-regex.mjs';
-import { SURGE_WAYX_RULE_TYPES } from './surge-official-capabilities.mjs';
+import { SURGE_WAYX_RULE_TYPES, SURGE_WAYX_RULE_BUILTIN_POLICIES } from './surge-official-capabilities.mjs';
 import { parseLoonRuleAst, renderRuleAst } from './rule-ast.mjs';
 
 export const SURGE_RULE_TYPES=SURGE_WAYX_RULE_TYPES;
 
-// Module [Rule] lines are rendered with the same built-in policy semantics
-// as Surge Rule. Do not maintain a second, narrower module-only policy list.
-export const SURGE_RULE_BUILTIN_POLICIES=new Set([
-  'DIRECT',
-  'REJECT','REJECT-DROP','REJECT-NO-DROP','REJECT-TINYGIF',
-  'CELLULAR','CELLULAR-ONLY','HYBRID','NO-HYBRID',
-]);
-
-// Compatibility export used by the module validator.
-export const SURGE_MODULE_POLICIES=SURGE_RULE_BUILTIN_POLICIES;
+// Module [Rule] uses the same reviewed built-in policy registry as Surge Rule.
+// Compatibility export retained for the module validator.
+export const SURGE_RULE_BUILTIN_POLICIES=SURGE_WAYX_RULE_BUILTIN_POLICIES;
+export const SURGE_MODULE_POLICIES=SURGE_WAYX_RULE_BUILTIN_POLICIES;
 
 export function surgePolicyIndex(_parts) {
   return 2;
