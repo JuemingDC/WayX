@@ -1,11 +1,11 @@
 {
-  "version": 1,
-  "scope": "Loon ad-block conversion only: Rule types, Rewrite categories, MITM hostname",
+  "version": 2,
+  "scope": "Loon ad-block conversion only: Rule types, built-in Rule policies, Rewrite categories, MITM hostname",
   "authority": {
     "entrypoint": "https://nssurge.com/llms.txt",
     "releaseNotes": "https://nssurge.com/support/mac/release-notes",
     "manual": "https://manual.nssurge.com/",
-    "checkedAt": "2026-09-30"
+    "checkedAt": "2026-10-02"
   },
   "docs": {
     "ruleOverview": "https://manual.nssurge.com/rules/overview.html",
@@ -15,7 +15,9 @@
     "mapLocal": "https://manual.nssurge.com/http/map-local.html",
     "httpRequestScript": "https://manual.nssurge.com/scripting/http-request.html",
     "httpResponseScript": "https://manual.nssurge.com/scripting/http-response.html",
-    "mitm": "https://manual.nssurge.com/http/mitm.html"
+    "mitm": "https://manual.nssurge.com/http/mitm.html",
+    "policyOverview": "https://manual.nssurge.com/policies/overview.html",
+    "rejectPolicy": "https://manual.nssurge.com/policies/reject.html"
   },
   "ruleTypes": [
     "AND",
@@ -86,5 +88,16 @@
   },
   "mitmKeys": [
     "hostname"
+  ],
+  "ruleBuiltinPolicies": [
+    "CELLULAR",
+    "CELLULAR-ONLY",
+    "DIRECT",
+    "HYBRID",
+    "NO-HYBRID",
+    "REJECT",
+    "REJECT-DROP",
+    "REJECT-NO-DROP",
+    "REJECT-TINYGIF"
   ]
 }
