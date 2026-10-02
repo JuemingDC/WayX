@@ -9,14 +9,13 @@
 # Icon: https://rucu6.pages.dev/Icons/app/jingdong.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-10-01 18:28:16 +08:00
+# Converted: 2026-10-02 11:09:18 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/jingdong.lpx
 # Target: Surge
 
 [Rule]
-# [WayX] Surge Module unsupported Rule policy REJECT-NO-DROP commented out; Module Rule supports only DIRECT/REJECT/REJECT-TINYGIF.
-# Source declaration: AND, ((DOMAIN, api.m.jd.com), (PROTOCOL, TCP)), REJECT-NO-DROP
+AND,((DOMAIN,api.m.jd.com),(PROTOCOL,TCP)),REJECT-NO-DROP
 
 [Body Rewrite]
 http-response-jq ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=basicConfig 'if getpath(["data","JDMessage","socketmonitor","isSocketEstablishedAhead"]) then setpath(["data","JDMessage","socketmonitor","isSocketEstablishedAhead"]; 0) else . end | if getpath(["data","JDMessage","socketmonitor","isSocketReport"]) then setpath(["data","JDMessage","socketmonitor","isSocketReport"]; 0) else . end | if getpath(["data","JDHttpToolKit","httpdns","httpdns"]) then setpath(["data","JDHttpToolKit","httpdns","httpdns"]; 0) else . end'

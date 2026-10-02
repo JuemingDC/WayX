@@ -9,7 +9,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/bilibili.png
 # Updated: 2026-09-27 19:00
 
-# Converted: 2026-10-02 05:30:28 +08:00
+# Converted: 2026-10-02 11:09:17 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/bilibili.lpx
 # Target: Surge
@@ -31,14 +31,10 @@ DOMAIN,app.biliapi.com,REJECT
 DOMAIN,app.biliapi.net,REJECT
 
 # P2P端口
-# [WayX] Surge Module unsupported Rule policy REJECT-NO-DROP commented out; Module Rule supports only DIRECT/REJECT/REJECT-TINYGIF.
-# Source declaration: AND, ((DOMAIN-KEYWORD, bilibili), (DEST-PORT, 4480)), REJECT-NO-DROP
-# [WayX] Surge Module unsupported Rule policy REJECT-NO-DROP commented out; Module Rule supports only DIRECT/REJECT/REJECT-TINYGIF.
-# Source declaration: AND, ((DOMAIN-KEYWORD, bilibili), (DEST-PORT, 4483)), REJECT-NO-DROP
-# [WayX] Surge Module unsupported Rule policy REJECT-NO-DROP commented out; Module Rule supports only DIRECT/REJECT/REJECT-TINYGIF.
-# Source declaration: AND, ((DOMAIN-KEYWORD, bilibili), (DEST-PORT, 8082)), REJECT-NO-DROP
-# [WayX] Surge Module unsupported Rule policy REJECT-NO-DROP commented out; Module Rule supports only DIRECT/REJECT/REJECT-TINYGIF.
-# Source declaration: AND, ((DOMAIN-KEYWORD, bilibili), (DEST-PORT, 9102)), REJECT-NO-DROP
+AND,((DOMAIN-KEYWORD,bilibili),(DEST-PORT,4480)),REJECT-NO-DROP
+AND,((DOMAIN-KEYWORD,bilibili),(DEST-PORT,4483)),REJECT-NO-DROP
+AND,((DOMAIN-KEYWORD,bilibili),(DEST-PORT,8082)),REJECT-NO-DROP
+AND,((DOMAIN-KEYWORD,bilibili),(DEST-PORT,9102)),REJECT-NO-DROP
 
 # 开屏广告
 #URL-REGEX, "^http:\/\/upos-sz-static\.bilivideo\.com\/ssaxcode\/\w{2}\/\w{2}\/\w{32}-1-SPLASH", REJECT-VIDEO-NO-DROP
