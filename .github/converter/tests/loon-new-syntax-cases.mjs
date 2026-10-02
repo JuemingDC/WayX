@@ -149,7 +149,10 @@ assert.equal(surgeRule(loonIpRule), loonIpRule);
 const loonUrlDrop = 'URL-REGEX,"^https:\\/\\/drop\\.example\\.com",REJECT-DROP';
 assert.equal(qxRule(loonUrlDrop).line, '^https:\\/\\/drop\\.example\\.com url reject');
 const surgeUrlDrop = surgeRule(loonUrlDrop);
-assert.match(surgeUrlDrop, /Surge Module unsupported Rule policy REJECT-DROP commented out/);
-assert.match(surgeUrlDrop, /Source declaration: URL-REGEX/);
+assert.equal(surgeUrlDrop, 'URL-REGEX,^https:\\/\\/drop\\.example\\.com,REJECT-DROP');
+
+const loonUrlNoDrop = 'URL-REGEX,"^https:\\/\\/nodrop\\.example\\.com",REJECT-NO-DROP';
+const surgeUrlNoDrop = surgeRule(loonUrlNoDrop);
+assert.equal(surgeUrlNoDrop, 'URL-REGEX,^https:\\/\\/nodrop\\.example\\.com,REJECT-NO-DROP');
 
 console.log('Loon new-syntax reference cases passed');
