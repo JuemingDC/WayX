@@ -7,7 +7,7 @@ import { planLegacyRewriteIr } from './legacy-rewrite.mjs';
 import { qxMockPlanFromAction } from './dependency.mjs';
 import { qxDirectRewritePlan, simpleUrlRewriteCondition } from './rewrite-v2-semantic.mjs';
 import { renderQxMockFileScript } from './qx-mock.mjs';
-import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript } from './qx-semantic-script.mjs';
+import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript, headerOpsForMock } from './qx-semantic-script.mjs';
 import { registerComplexRewriteHandler, planComplexRewrite } from './complex-rewrite-registry.mjs';
 import { renderMixedRewriteScript, renderSingleJsonMutationScript } from './complex-rewrite-script.mjs';
 import { rewriteReview, rewriteIssue } from './rewrite-plan-result.mjs';
@@ -178,18 +178,25 @@ export function planQxRewrite(ir, ctx={}) {
     return rewriteReview(source,'Quantumult X cannot carry Loon plugin [Argument] references without changing the source script/runtime contract: '+argumentRefs.join(', '));
   }
 
-  if (singleOp?.kind==='mock' && singleOp.operation==='file') {
+  const fileMocks=ast.actions.filter(action=>action.name===ast.phase+'.body.mock_file');
+  const fileMockPipeline=fileMocks.length===1 && ast.actions.every(action=>
+    action===fileMocks[0] || new RegExp('^'+ast.phase+'\\.header\\.(?:add|set|del|replace)$').test(action.name)
+  );
+  if (fileMockPipeline) {
     try {
       const condition=simpleUrlRewriteCondition(ast);
       if (!condition.ok) throw new Error(condition.reason);
-      const plan=qxMockPlanFromAction(singleOp.sourceAction,{pluginSourceUrl:ctx.sourceUrl});
+      const fileMock=fileMocks[0];
+      const plan=qxMockPlanFromAction(fileMock,{pluginSourceUrl:ctx.sourceUrl});
       const materialized=ctx.mockFiles?.get(source);
       if (!materialized) throw new Error('mock_file was not materialized during conversion');
       if (materialized.error) throw new Error(materialized.error);
+      const headerOps=headerOpsForMock(ast,fileMock);
       const key=crypto.createHash('sha1').update('mock-file\0'+source).digest('hex').slice(0,10);
       const filename='mock_file_'+key+'.js';
       const script=renderQxMockFileScript(plan,{
         ...materialized,
+        headerOps,
         stamp:ctx.stamp,
         category:ctx.category,
         sourceLine:source,
@@ -200,7 +207,6 @@ export function planQxRewrite(ir, ctx={}) {
       return rewriteReview(source,String(error?.message||error).split('\n')[0]);
     }
   }
-
   if (singleOp?.kind==='mock' && singleOp.operation==='inline') {
     try {
       const plan=renderQxInlineMockScript(ast,{stamp:ctx.stamp,category:ctx.category,sourceLine:source});

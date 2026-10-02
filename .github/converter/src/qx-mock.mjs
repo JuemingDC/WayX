@@ -97,17 +97,33 @@ function headerHelpers(headerOps = []) {
   ];
 }
 
-function renderHeaderOps(lines, headerOps = []) {
+function renderHeaderOps(lines, headerOps = [], { knownHeaderNames = null } = {}) {
   if (!headerOps.length) return;
-  if (headerOps.some(op => op.type === 'add')) {
-    throw new Error('QX header.add cannot be represented losslessly with the official header object form');
-  }
+  const known = knownHeaderNames
+    ? new Set([...knownHeaderNames].map(name => String(name).toLowerCase()))
+    : null;
   lines.push(...headerHelpers(headerOps));
   for (const op of headerOps) {
-    if (op.type === 'set') lines.push(`__wayxHeaderSet(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(op.value)});`);
-    else if (op.type === 'del') lines.push(`__wayxHeaderDel(headers, ${JSON.stringify(op.name)});`);
-    else if (op.type === 'replace') lines.push(`__wayxHeaderReplace(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(normalizeRegexBodyForTarget(op.pattern))}, ${JSON.stringify(op.replacement)});`);
-    else throw new Error('unsupported QX mock header operation: ' + op.type);
+    const lowerName = String(op.name || '').toLowerCase();
+    if (op.type === 'add') {
+      // A response mock is created from a known header set, so adding a new
+      // absent header is lossless. Unknown/existing headers may require
+      // duplicate preservation, which the official QX header object form does
+      // not prove, so those cases remain fail-closed.
+      if (!known || known.has(lowerName)) {
+        throw new Error('QX header.add cannot be represented losslessly when the target header may already exist');
+      }
+      lines.push(`__wayxHeaderSet(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(op.value)});`);
+      known.add(lowerName);
+    } else if (op.type === 'set') {
+      lines.push(`__wayxHeaderSet(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(op.value)});`);
+      if (known) known.add(lowerName);
+    } else if (op.type === 'del') {
+      lines.push(`__wayxHeaderDel(headers, ${JSON.stringify(op.name)});`);
+      if (known) known.delete(lowerName);
+    } else if (op.type === 'replace') {
+      lines.push(`__wayxHeaderReplace(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(normalizeRegexBodyForTarget(op.pattern))}, ${JSON.stringify(op.replacement)});`);
+    } else throw new Error('unsupported QX mock header operation: ' + op.type);
   }
 }
 
@@ -140,7 +156,7 @@ export function renderQxMockScript(plan, options = {}) {
 
   if (plan.phase === 'response') {
     lines.push('const headers = {"Content-Type": __wayxContentType};');
-    renderHeaderOps(lines, options.headerOps);
+    renderHeaderOps(lines, options.headerOps, {knownHeaderNames:new Set(['Content-Type'])});
     lines.push(`const output = {status: ${JSON.stringify(statusLine(plan.status ?? 200))}, headers};`);
     if (plan.binary || plan.base64) lines.push('output.bodyBytes = __wayxBase64ToArrayBuffer(__wayxBodyBase64);');
     else lines.push('output.body = __wayxBody;');

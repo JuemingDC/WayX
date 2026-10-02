@@ -3,6 +3,7 @@ import {
   buildSyncFailure,
   failureDeclarationContext,
 } from '../src/upstream-run-report.mjs';
+import { isLoonPluginSource } from '../../scripts/sync-convert.mjs';
 import {
   syncFailureIssueBody,
   syncFailureTitle,
@@ -23,6 +24,9 @@ DOMAIN,new.example,REJECT
 ^https://old.example reject
 `;
 
+assert.equal(isLoonPluginSource('#!name=Demo\n[Rewrite]\n^https://example.com reject\n'),true);
+assert.equal(isLoonPluginSource('#!name = Demo\n[Rewrite]\n^https://example.com reject\n'),true);
+assert.equal(isLoonPluginSource('#!desc = Demo\n[Rewrite]\n^https://example.com reject\n'),false);
 const context=failureDeclarationContext(previous,current);
 assert.equal(context.kind,'changed-upstream-declarations');
 assert.deepEqual(context.items,[{section:'Rule',line:'DOMAIN,new.example,REJECT'}]);
