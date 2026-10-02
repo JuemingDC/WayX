@@ -153,7 +153,7 @@ function numberArg(node, fallback = 200) {
   return node.value;
 }
 
-function headerOpsForMock(ast, mockAction) {
+export function headerOpsForMock(ast, mockAction) {
   const ops = [];
   for (const action of ast.actions) {
     if (action === mockAction) continue;
