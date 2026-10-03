@@ -9,7 +9,7 @@ import path from 'node:path';
 const ROOT=process.cwd();
 const spec=await fs.readFile(path.join(ROOT,'.github/CONVERSION_SPEC.md'),'utf8');
 
-assert.match(spec,/版本：1\.58\b/,'Phase C requires spec v1.58+');
+assert.match(spec,/版本：1\.59\b/,'Phase C requires spec v1.59+');
 for (const evidence of [
   'crossutility/Quantumult-X',
   'sample.conf',
@@ -41,7 +41,7 @@ for (const invariant of [
 assert.doesNotMatch(
   spec,
   /Regex flags[^\n]*无条件丢弃|target 输出无条件丢弃/,
-  'v1.58 must not preserve the historical unconditional regex-flag drop rule',
+  'v1.59 must not preserve the historical unconditional regex-flag drop rule',
 );
 
 for (const rel of [
