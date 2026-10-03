@@ -817,24 +817,35 @@ const mixedJsonAdd = renderMixedRewriteScript(
 );
 assert.match(mixedJsonAdd.script, /__wayxJsonAdd\(j,\["data","new"\],true\)/);
 
-const flaggedHeaderHelper = renderQxHeaderScript(parseRewriteV2('request if ${url} ~= /api/i then request.header.replace("X-Test", /value/ms, "ok")'));
-assert.equal(flaggedHeaderHelper.pattern, 'api');
-assert.equal(flaggedHeaderHelper.script.includes('"i"'), false);
-assert.equal(flaggedHeaderHelper.script.includes('"ms"'), false);
-assert.match(flaggedHeaderHelper.script, /__wayxReplace\("X-Test", "value", "ok"\)/);
+const flaggedHeaderAst = parseRewriteV2('request if \${url} ~= /api/i then request.header.replace("X-Test", /value/ms, "ok")');
+assert.throws(
+  () => renderQxHeaderScript(flaggedHeaderAst),
+  /cannot preserve Loon regex flags: i/,
+);
 
-const flaggedRedirectSource = 'request if ${url} ~= /\\/old\\/(.*)/ims as hit then redirect(302, \"/new/${hit.1}\")';
-const flaggedRedirectHelper = renderQxRedirectScript(parseRewriteV2(flaggedRedirectSource));
+const flaggedRedirectSource = 'request if \${url} ~= /\\/old\\/(.*)/ims as hit then redirect(302, \"/new/\${hit.1}\")';
+const flaggedRedirectAst = parseRewriteV2(flaggedRedirectSource);
+assert.throws(
+  () => renderQxRedirectScript(flaggedRedirectAst),
+  /cannot preserve Loon regex flags: ims/,
+);
+const flaggedRedirectHelper = renderQxRedirectScript(flaggedRedirectAst,{conditionMode:'full'});
 assert.equal(flaggedRedirectHelper.pattern, '\\/old\\/(.*)');
-assert.equal(flaggedRedirectHelper.script.includes('"ims"'), false);
-assert.ok(flaggedRedirectHelper.script.includes('new RegExp(' + JSON.stringify(flaggedRedirectHelper.pattern) + ')'));
+assert.equal(flaggedRedirectHelper.script.includes('"ims"'), true);
+assert.ok(
+  flaggedRedirectHelper.script.includes(
+    'new RegExp(' + JSON.stringify(flaggedRedirectHelper.pattern) + ',' + JSON.stringify('ims') + ')'
+  )
+);
 
 const complexConditionFlags = renderMixedRewriteScript(
-  parseRewriteV2('response if (${url} ~= /API/i || ${response.status} == 204) && ${response.header["Content-Type"]} == "application/json" then response.header.del("Server") | response.body.replace(/ADS/ms, "ok")'),
+  parseRewriteV2('response if (\${url} ~= /API/i || \${response.status} == 204) && \${response.header["Content-Type"]} == "application/json" then response.header.del("Server") | response.body.replace(/ADS/ms, "ok")'),
   {target:'qx'},
 );
-assert.match(complexConditionFlags.script, /new RegExp\("API"\)/);
-assert.equal(complexConditionFlags.script.includes('"i")'), false);
+assert.match(complexConditionFlags.script, /new RegExp\\("API","i"\\)/);
+assert.equal(complexConditionFlags.script.includes('"i")'), true);
+// Action-local body.replace flags are a separate migration surface; this
+// Phase C gate only changes condition matching/prefilter semantics.
 assert.equal(complexConditionFlags.script.includes('"ms")'), false);
 assert.match(complexConditionFlags.script, /response\.statusCode/);
 assert.match(complexConditionFlags.script, /__wayxHeader\("response","Content-Type"\)/);
