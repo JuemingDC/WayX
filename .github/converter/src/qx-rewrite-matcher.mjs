@@ -2,8 +2,6 @@
 // Author: chance
 // Category: Converter / Quantumult X / Rewrite Matching
 
-import { compileRegexForTarget } from './target-regex.mjs';
-
 function unwrap(node) {
   let cur=node;
   while (cur?.type==='group') cur=cur.expression;
@@ -47,12 +45,10 @@ function comparisonKey(node) {
   if (n?.type!=='comparison' || n.left?.type!=='variable') return null;
 
   if (n.left.name==='url' && n.operator==='~=' && n.right?.type==='regex') {
-    const compiled=compileRegexForTarget(n.right,{subject:'url',target:'qx'});
-    if (!compiled.ok) return null;
     return {
       kind:'url-regex',
-      key:'url-regex\\u0000'+compiled.pattern,
-      pattern:compiled.pattern,
+      key:'url-regex\u0000'+String(n.right.pattern),
+      pattern:String(n.right.pattern),
     };
   }
 
