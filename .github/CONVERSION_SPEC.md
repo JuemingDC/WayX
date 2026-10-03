@@ -810,12 +810,12 @@ main 中现有 converter 在 Phase B–F 完成前继续承担生产转换。
 将 45 个生产实现 `.mjs`（含原公开入口）缩减为 10 个领域实现加 1 个公开入口；不保留旧路径转发文件。
 原 36 个测试文件缩减为 10 个领域套件；原测试逻辑与进程隔离均保留，可用 `--case=<原测试名.mjs>` 单独复查。同步迁移测试、生产 sync-convert、canonical/报告/校验 CLI 与 README 索引等调用；结构契约限定这 11 个实现文件与 10 个测试套件，禁止重新引入已删除碎片。
 
-验收必须覆盖：所有原公开导出存在、全套现有测试通过、固定输入 Catalog 转换和 generated helper 文本逐项无差异、原作者 Source Script/JQ/mock 上下文对比、目标 policy/audit/managed cleanliness、GitHub Converter Check。
+验收必须覆盖：公开导出列表与合并前完全一致、全套现有测试通过、固定输入 Catalog 转换和 generated helper 文本逐项无差异、原作者 Source Script/JQ/mock 上下文对比、目标 policy/audit/managed cleanliness、GitHub Converter Check。
 定时活动继续暂停。本次没有实现或宣称 §§19–22 中尚未完成的 phase dispatcher/action oracle/兼容路径替换。
 
 本地验证结果：
 
-- 合并前 221 个公开导出全部保留；10 个领域测试套件承载原 36 个独立案例，全部通过。
+- 统一入口的 221 个公开导出与合并前完全一致；10 个领域测试套件承载原 36 个独立案例，全部通过。
 - 固定输入 Catalog 287 项的 QX/Surge 与 generated helpers 文本逐项完全相同。
 - 使用当前原作者 Source Script/JQ/mock 依赖，分别执行合并前后 materialization 与 conversion：287 项通过，上下文差异 0、转换差异 0、canonical drift 0。
 - 574 个生成目标政策检查、repository audit、managed cleanliness 均通过；两条原有上游 Script 404 仍按 §21 记录，不伪称取得原脚本。

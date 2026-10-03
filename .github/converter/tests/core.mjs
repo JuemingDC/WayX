@@ -2,7 +2,8 @@
 // Author: chance
 // Category: Converter / core / Regression Suite
 
-import { parseRewriteV2, compileSourceRegex, execSourceRegex, evaluateCondition, EQUIVALENCE_KINDS, nativeEquivalent, guardedHelper, phaseDispatcher, unsupported, differentialConditionOracle, parseLoonRuleAst, renderRuleAst, ruleTypesInAst, planQxRuleAst, planSurgeModuleRuleAst, renderSurgeRuleAst, validateSurgeRuleAst, surgeRuleTypesInTree, surgeModuleRule, classifyLegacyRewriteAction } from "../src/index.mjs";
+import { parseRewriteV2, parseLoonRuleAst, renderRuleAst, ruleTypesInAst, planQxRuleAst, planSurgeModuleRuleAst, renderSurgeRuleAst, validateSurgeRuleAst, surgeRuleTypesInTree, surgeModuleRule, classifyLegacyRewriteAction } from "../src/index.mjs";
+import { compileSourceRegex, execSourceRegex, evaluateCondition, EQUIVALENCE_KINDS, nativeEquivalent, guardedHelper, phaseDispatcher, unsupported, differentialConditionOracle } from "../src/core.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import path from "node:path";
