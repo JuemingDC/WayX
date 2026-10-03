@@ -626,13 +626,13 @@ assert.ok(methodNativeJsonPipeline.line.indexOf('setpath(["two"]; 2)') < methodN
 assert.ok(methodNativeJsonPipeline.line.indexOf('del(.["old"])') < methodNativeJsonPipeline.line.indexOf('del(.["unused"])'));
 assert.equal(methodNativeJsonPipelineCtx.generatedScripts.size,0);
 
-const flagsNativeJsonPipelineSource='response if ${url} ~= /api/ims then response.json.add("a",1) | response.json.delete("b")';
-const flagsNativeJsonPipelineCtx=ctx();
-const flagsNativeJsonPipeline=planQxRewrite(v2(flagsNativeJsonPipelineSource),flagsNativeJsonPipelineCtx);
-assert.equal(flagsNativeJsonPipeline.section,'rewrite');
-assert.match(flagsNativeJsonPipeline.line,/^api url jsonjq-response-body '/);
-assert.doesNotMatch(flagsNativeJsonPipeline.line,/\(\?[ims]+\)|\/ims?\b/);
-assert.equal(flagsNativeJsonPipelineCtx.generatedScripts.size,0);
+const flagsGuardedJsonPipelineSource='response if ${url} ~= /api/ims then response.json.add("a",1) | response.json.delete("b")';
+const flagsGuardedJsonPipelineCtx=ctx();
+const flagsGuardedJsonPipeline=planQxRewrite(v2(flagsGuardedJsonPipelineSource),flagsGuardedJsonPipelineCtx);
+assert.equal(flagsGuardedJsonPipeline.section,'rewrite');
+assert.ok(flagsGuardedJsonPipeline.line.startsWith('^https?:// url script-response-body '));
+assert.equal(flagsGuardedJsonPipelineCtx.generatedScripts.size,1);
+assert.match([...flagsGuardedJsonPipelineCtx.generatedScripts.values()][0],/new RegExp\("api","ims"\)/);
 
 const nestedJsonPipelineSource='response if ${url} ~= /api/ then response.json.add("data.flag",true) | response.json.replace("data.count",2)';
 const nestedJsonPipelineCtx=ctx();
