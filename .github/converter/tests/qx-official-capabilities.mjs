@@ -11,6 +11,7 @@ import {
   QX_WAYX_NATIVE_REWRITE_ACTIONS,
   QX_WAYX_SNIPPET_MITM_KEYS,
 } from '../src/qx-official-capabilities.mjs';
+import { validateQX } from '../src/qx-snippet-validator.mjs';
 
 const ROOT = process.cwd();
 const fixture = JSON.parse(await fs.readFile(
@@ -132,6 +133,21 @@ for (const key of fixture.mitmKeys) {
 for (const action of QX_WAYX_SCRIPT_ACTIONS) {
   assert.ok(fixture.rewriteActions.includes(action), 'QX Script action must remain inside the scoped Rewrite capability set: ' + action);
 }
+
+validateQX([
+  '# [rewrite_local]',
+  '^https://api\\.example\\.com url response-header ^([^\\\\r\\\\n]+)(\\\\r\\\\n) response-header $1$2X-Test: 1$2',
+  '^https://page\\.example\\.com url echo-response text/html echo-response index.html',
+  '# [mitm]',
+].join('\n'),{id:'QxNativeRewriteFixture'});
+assert.throws(
+  () => validateQX([
+    '# [rewrite_local]',
+    '^https://page\\.example\\.com url echo-response text/html echo-response https://example.com/index.html',
+    '# [mitm]',
+  ].join('\n'),{id:'QxRemoteEchoFixture'}),
+  /local Data-relative path/,
+);
 
 // The official filter resource is used only as supporting evidence for the
 // Rule types that WayX actually emits from Loon ad-block plugins.
