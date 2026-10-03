@@ -35,20 +35,28 @@ hostname=api.example.com
 const headerGroupOutput = convert(headerGroupFixture, headerGroupSource, new Map(), STAMP);
 assert.match(
   headerGroupOutput.qx,
-  /url response-header \^\(\[\^\\r\\n\]\+\)\(\\r\\n\) response-header \$1\$2content-disposition: inline\$2/,
+  /Quantumult X response\.header\.add commented out/,
 );
-assert.doesNotMatch(headerGroupOutput.qx, /REVIEW REQUIRED: QX header\.add/);
+assert.match(
+  headerGroupOutput.qx,
+  /^\^https\?:\/\/ url script-response-header /m,
+);
 assert.equal(
   headerGroupOutput.qx.split(/\r?\n/).filter(line => !line.trim().startsWith('#') && /script-response-header/.test(line)).length,
   1,
-  'the independent response.header.set rule must remain active when the preceding independent response.header.add uses native response-header',
+  'the independent response.header.set rule must remain active through a guarded helper',
 );
 assert.doesNotMatch(
   headerGroupOutput.qx,
   /Source declaration: .*response\.header\.add.* \| response if .*response\.header\.set/,
   'converter must never invent a pipeline by joining adjacent source declarations',
 );
-assert.match(headerGroupOutput.surge, /header-add content-disposition inline/);
+assert.match(headerGroupOutput.surge, /REVIEW REQUIRED/);
+assert.equal(
+  headerGroupOutput.surge.split(/\r?\n/).filter(line => !line.trim().startsWith('#') && /header-add content-disposition inline/.test(line)).length,
+  0,
+  'flagged Surge header.add must not be emitted as a case-sensitive native rule',
+);
 
 const qxIgnoredOptionsFixture = {
   id:'IgnoredOptionsFixture',
