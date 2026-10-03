@@ -61,7 +61,8 @@ function validateQxRewriteAction(action,line,entry) {
   const script=action.match(/^(script-[a-z-]+)\s+(\S+)$/);
   if (script && QX_WAYX_SCRIPT_ACTIONS.has(script[1])) return;
 
-  throw new Error(`${entry.id}: unverified/unsupported Quantumult X rewrite action: ${action}; line: ${line}`);
+  const codepoints=[...String(action)].map(ch=>ch.codePointAt(0).toString(16)).join(',');
+  throw new Error(`${entry.id}: unverified/unsupported Quantumult X rewrite action: ${action}; codepoints=${codepoints}; line: ${line}`);
 }
 
 function validateQxExecutableLine(line, entry) {
