@@ -4,6 +4,7 @@
 
 import {
   QX_WAYX_FILTER_TYPES,
+  QX_WAYX_REWRITE_MATCHERS,
   QX_WAYX_SCRIPT_ACTIONS,
   QX_WAYX_SNIPPET_MITM_KEYS,
 } from './qx-official-capabilities.mjs';
@@ -16,6 +17,51 @@ function stripQxLeadingNote(line, entry) {
     throw new Error(`${entry.id}: malformed Quantumult X leading rule note: ${line}`);
   }
   return {line:match[2].trim(),note:match[1].trim()};
+}
+
+function splitQxRewriteLine(line) {
+  const withHeaders=String(line).match(/^(\S+)\s+(.+?)\s+url-and-header\s+(.+)$/);
+  if (withHeaders) {
+    return {
+      matcher:'url-and-header',
+      urlPattern:withHeaders[1].trim(),
+      headersPattern:withHeaders[2].trim(),
+      action:withHeaders[3].trim(),
+    };
+  }
+  const urlOnly=String(line).match(/^(\S+)\s+url\s+(.+)$/);
+  if (urlOnly) {
+    return {
+      matcher:'url',
+      urlPattern:urlOnly[1].trim(),
+      headersPattern:null,
+      action:urlOnly[2].trim(),
+    };
+  }
+  return null;
+}
+
+function validateQxRewriteAction(action,line,entry) {
+  if (/^(?:reject|reject-200|reject-img|reject-dict|reject-array)$/.test(action)) return;
+  if (/^(?:302|307)\s+\S+$/.test(action)) return;
+  if (/^jsonjq-(?:request|response)-body\s+'.+'$/.test(action)) return;
+  if (/^(?:request|response)-body\s+.+\s+(?:request|response)-body\s+.+$/.test(action)) return;
+  if (/^(request-header|response-header)\s+.+\s+\1\s+.+$/.test(action)) return;
+
+  const echo=action.match(/^echo-response\s+(.+)\s+echo-response\s+(\S+)$/);
+  if (echo) {
+    const resourcePath=echo[2];
+    if (/^[A-Za-z][A-Za-z0-9+.-]*:/.test(resourcePath) || resourcePath.startsWith('/') ||
+        resourcePath.split('/').includes('..')) {
+      throw new Error(`${entry.id}: Quantumult X echo-response resource must be a local Data-relative path: ${line}`);
+    }
+    return;
+  }
+
+  const script=action.match(/^(script-[a-z-]+)\s+(\S+)$/);
+  if (script && QX_WAYX_SCRIPT_ACTIONS.has(script[1])) return;
+
+  throw new Error(`${entry.id}: unverified/unsupported Quantumult X rewrite action: ${action}`);
 }
 
 function validateQxExecutableLine(line, entry) {
@@ -34,32 +80,19 @@ function validateQxExecutableLine(line, entry) {
     return;
   }
 
-  const urlMarker=line.indexOf(' url ');
-  if (urlMarker >= 0) {
-    const pattern=line.slice(0,urlMarker).trim();
-    const action=line.slice(urlMarker + 5).trim();
-    if (!pattern) throw new Error(`${entry.id}: Quantumult X rewrite line has an empty URL pattern: ${line}`);
-
-    if (/^(?:reject|reject-200|reject-img|reject-dict|reject-array)$/.test(action)) return;
-    if (/^(?:302|307)\s+\S+$/.test(action)) return;
-    if (/^jsonjq-(?:request|response)-body\s+'.+'$/.test(action)) return;
-    if (/^(?:request|response)-body\s+.+\s+(?:request|response)-body\s+.+$/.test(action)) return;
-    if (/^(request-header|response-header)\s+.+\s+\1\s+.+$/.test(action)) return;
-
-    const echo=action.match(/^echo-response\s+(.+)\s+echo-response\s+(\S+)$/);
-    if (echo) {
-      const resourcePath=echo[2];
-      if (/^[A-Za-z][A-Za-z0-9+.-]*:/.test(resourcePath) || resourcePath.startsWith('/') ||
-          resourcePath.split('/').includes('..')) {
-        throw new Error(`${entry.id}: Quantumult X echo-response resource must be a local Data-relative path: ${line}`);
-      }
-      return;
+  const rewrite=splitQxRewriteLine(line);
+  if (rewrite) {
+    if (!QX_WAYX_REWRITE_MATCHERS.has(rewrite.matcher)) {
+      throw new Error(`${entry.id}: unverified/unsupported Quantumult X rewrite matcher: ${rewrite.matcher}`);
     }
-
-    const script=action.match(/^(script-[a-z-]+)\s+(\S+)$/);
-    if (script && QX_WAYX_SCRIPT_ACTIONS.has(script[1])) return;
-
-    throw new Error(`${entry.id}: unverified/unsupported Quantumult X rewrite action: ${action}`);
+    if (!rewrite.urlPattern) {
+      throw new Error(`${entry.id}: Quantumult X rewrite line has an empty URL pattern: ${line}`);
+    }
+    if (rewrite.matcher==='url-and-header' && !rewrite.headersPattern) {
+      throw new Error(`${entry.id}: Quantumult X url-and-header rewrite has an empty Headers pattern: ${line}`);
+    }
+    validateQxRewriteAction(rewrite.action,line,entry);
+    return;
   }
 
   const comma=line.indexOf(',');

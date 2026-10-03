@@ -7,6 +7,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {
   QX_WAYX_FILTER_TYPES,
+  QX_WAYX_REWRITE_MATCHERS,
   QX_WAYX_SCRIPT_ACTIONS,
   QX_WAYX_NATIVE_REWRITE_ACTIONS,
   QX_WAYX_SNIPPET_MITM_KEYS,
@@ -65,14 +66,33 @@ function officialRuleTypes(sample) {
   return out;
 }
 
+function officialRewriteMatchers(sample) {
+  const out = new Set();
+  for (const raw of sectionLines(sample, 'rewrite_local')) {
+    const line = uncomment(raw);
+    if (!line || line.startsWith('#')) continue;
+    if (line.includes(' url ')) out.add('url');
+    if (line.includes(' url-and-header ')) out.add('url-and-header');
+  }
+  return out;
+}
+
 function officialRewriteActions(sample) {
   const out = new Set();
   for (const raw of sectionLines(sample, 'rewrite_local')) {
     const line = uncomment(raw);
     if (!line || line.startsWith('#')) continue;
-    const marker = line.indexOf(' url ');
-    if (marker < 0) continue; // url-and-header is outside WayX Loon-adblock scope
-    const tail = line.slice(marker + 5).trim();
+
+    let tail = null;
+    const urlMarker = line.indexOf(' url ');
+    if (urlMarker >= 0) {
+      tail = line.slice(urlMarker + 5).trim();
+    } else {
+      const match = line.match(/^\S+\s+.+?\s+url-and-header\s+(.+)$/);
+      if (match) tail = match[1].trim();
+    }
+    if (!tail) continue;
+
     const action = tail.split(/\s+/)[0];
     if (action) out.add(action);
   }
@@ -105,16 +125,21 @@ const [sample, rewriteSnippet, filterSnippet] = await Promise.all([
 ]);
 
 const officialRules = officialRuleTypes(sample);
+const officialRewriteMatchersSet = officialRewriteMatchers(sample);
 const officialRewrites = officialRewriteActions(sample);
 const officialMitm = snippetMitmKeys(rewriteSnippet);
 const reviewedUiRewrites = new Set(Object.keys(fixture.authority.manualRewriteEvidence || {}));
 
 assert.deepEqual(sorted(QX_WAYX_FILTER_TYPES), fixture.ruleTypes, 'QX Rule-type registry drifted from reviewed WayX adblock baseline');
+assert.deepEqual(sorted(QX_WAYX_REWRITE_MATCHERS), fixture.rewriteMatchers, 'QX Rewrite matcher registry drifted from reviewed WayX adblock baseline');
 assert.deepEqual(sorted(QX_WAYX_NATIVE_REWRITE_ACTIONS), fixture.rewriteActions, 'QX Rewrite registry drifted from reviewed WayX adblock baseline');
 assert.deepEqual(sorted(QX_WAYX_SNIPPET_MITM_KEYS), fixture.mitmKeys, 'QX hostname registry drifted from reviewed WayX adblock baseline');
 
 for (const type of fixture.ruleTypes) {
   assert.ok(officialRules.has(type), 'WayX QX Rule type lost official sample evidence: ' + type);
+}
+for (const matcher of fixture.rewriteMatchers) {
+  assert.ok(officialRewriteMatchersSet.has(matcher), 'WayX QX Rewrite matcher lost official sample evidence: ' + matcher);
 }
 for (const action of fixture.rewriteActions) {
   if (reviewedUiRewrites.has(action)) continue;
@@ -134,10 +159,34 @@ for (const action of QX_WAYX_SCRIPT_ACTIONS) {
   assert.ok(fixture.rewriteActions.includes(action), 'QX Script action must remain inside the scoped Rewrite capability set: ' + action);
 }
 
+const headerMatchedActionTails = [
+  'reject',
+  'reject-200',
+  'reject-img',
+  'reject-dict',
+  'reject-array',
+  '302 https://example.com/new',
+  '307 https://example.com/new',
+  "jsonjq-request-body '.'",
+  "jsonjq-response-body '.'",
+  'request-header ^GET(.*) request-header POST$1',
+  'response-header ^HTTP/(.*) response-header HTTP/$1',
+  'request-body x request-body y',
+  'response-body x response-body y',
+  'echo-response text/html echo-response index.html',
+  'script-request-header request-header.js',
+  'script-request-body request-body.js',
+  'script-response-header response-header.js',
+  'script-response-body response-body.js',
+  'script-echo-response echo.js',
+  'script-analyze-echo-response analyze.js',
+];
+
 validateQX([
   '# [rewrite_local]',
   '^https://api\\.example\\.com url response-header ^([^\\\\r\\\\n]+)(\\\\r\\\\n) response-header $1$2X-Test: 1$2',
   '^https://page\\.example\\.com url echo-response text/html echo-response index.html',
+  ...headerMatchedActionTails.map(action => '^https://header\\.example\\.com ^POST url-and-header ' + action),
   '# [mitm]',
 ].join('\n'),{id:'QxNativeRewriteFixture'});
 assert.throws(
@@ -163,6 +212,7 @@ for (const raw of String(filterSnippet).split(/\r?\n/)) {
 console.log(
   'Quantumult X scoped adblock capability gate passed: ' +
   fixture.ruleTypes.length + ' Rule types / ' +
+  fixture.rewriteMatchers.length + ' Rewrite matchers / ' +
   fixture.rewriteActions.length + ' Rewrite actions (' +
   reviewedUiRewrites.size + ' current-app UI reviewed) / hostname'
 );

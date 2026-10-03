@@ -10,6 +10,10 @@ export const QX_WAYX_FILTER_TYPES = new Set([
   'ip-cidr','ip6-cidr','geoip','ip-asn','user-agent',
 ]);
 
+export const QX_WAYX_REWRITE_MATCHERS = new Set([
+  'url','url-and-header',
+]);
+
 export const QX_WAYX_SCRIPT_ACTIONS = new Set([
   'script-request-header','script-request-body',
   'script-response-header','script-response-body',

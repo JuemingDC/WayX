@@ -22,6 +22,15 @@
 
 只允许 Crossutility 官方 sample 已确认的字段 / action、用户提供并人工确认的当前 QX App Rewrite 类型 UI 能力，以及当前 QX beta 已公开的 filter/rewrite 前置 note 语法。UI reviewed 能力必须在 capability fixture 中单独标记，不能伪称为 sample evidence。
 
+QX Rewrite 匹配器固定分为两种：
+
+```text
+<URL regex> url <action...>
+<URL regex> <Headers regex> url-and-header <action...>
+```
+
+`url-and-header` 不是某个 Action 的特殊语法，而是所有 Rewrite Action 共用的可选 Headers matcher。官方 sample 说明其执行顺序为 URL 先匹配、Headers 后匹配；Headers 比较字符串包含 request method、path 与 key-value request headers。
+
 ### 10.1.1 Filter / Rewrite 前置 Note
 
 QX 当前支持在 filter 或 rewrite 活动规则前增加：

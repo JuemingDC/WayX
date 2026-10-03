@@ -25,6 +25,16 @@
 
 只有所有条件都能表达时才可直接静态转换。
 
+Quantumult X 原生 Rewrite 不是只有 URL 条件。官方 sample 定义了第二种匹配器：
+
+```text
+<URL regex> <Headers regex> url-and-header <action...>
+```
+
+并明确规定 URL 先匹配，随后才匹配 Headers；Headers 比较字符串包含 request method、path 与 key-value request headers。当前 QX App UI 进一步确认所有 Rewrite 类型都提供可选 Headers 字段，因此 Headers matcher 应作为 Action 之外的正交能力处理。
+
+这只证明 **request-side** Headers 匹配。不能据此把 Loon `${response.header[...]}` 或 `${response.status}` 直接降级成 QX `url-and-header`。Loon `${request.method}` / `${request.header[...]}` 也只有在能保持原比较域、边界、大小写与 Regex 语义时才允许静态编译，否则仍走 helper/Review。
+
 源：
 ```text
 ${url} ~= /REGEX/ && ${request.method} == "POST"
