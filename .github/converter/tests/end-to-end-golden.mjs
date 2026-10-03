@@ -706,7 +706,7 @@ for (const testCase of cases) {
     assert.ok(qxActive.some(line => /Scripts\/manmanbuy_ck\.js$/.test(line)), 'JingDong dynamic-enable request script must default to active in QX');
     assert.ok(qxActive.some(line => /Scripts\/jd_price\.js$/.test(line)), 'JingDong argument-bearing response script must remain active in QX');
     assert.doesNotMatch(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
-    assert.match(out.qx, /Source dynamic enable=Capture ignored for Quantumult X; converted rule defaults to enabled/);
+    assert.match(out.qx, /Source dynamic enable=Capture is not a Quantumult X Rewrite Script field; converted rule defaults to enabled/);
     assert.match(out.qx, /Source Script argument ignored for Quantumult X/);
   }
 
