@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.44  
+版本：1.45  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -9,6 +9,13 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 本规范采用“分块规范”结构。转换器、测试、canonical 输出、Golden 都必须服从本规范，不能反过来用现有代码定义规范。
 
 ## 2026-10-03 规范更新
+
+**Quantumult X Rewrite Headers 匹配（2026-10-03）**：
+
+1. Quantumult X 的 Rewrite **匹配器与 Action 解耦**：每一种 Rewrite 类型都可选 Headers 匹配。无 Headers 条件时使用 `<URL regex> url <action...>`；存在 Headers 条件时使用 `<URL regex> <Headers regex> url-and-header <action...>`。该能力不得按 reject / body / header / jsonjq / echo / script 类型分别维护白名单。
+2. 用户上传的官方 `sample.txt` 与 Crossutility 当前 `sample.conf` 明确说明：`url-and-header` 先判断 URL，仅当 URL 命中后再判断 Headers；用于比较的 Headers 字符串包含 **request method、path 与 key-value request headers**。因此 `url-and-header` 是 request-side 匹配器，即使后续 Action 属于 response rewrite，也不得把它误解释为 response-header matcher。
+3. QX capability registry 必须把 `url` / `url-and-header` 作为独立 Rewrite matcher 能力维护，validator 对两种 matcher 复用同一 Rewrite Action registry。当前 App UI“所有 Rewrite 类型均有可选 Headers”作为 current-app reviewed evidence 保存；官方 sample 负责证明 `url-and-header` 语法和匹配顺序，不伪称 sample 为每个 Action 都逐一给出 Headers 示例。
+4. Loon Rewrite v2 的 `${request.method}` / `${request.header[...]}` 只有在能严格编译成上述 request-side Headers regex 时才可下推到 `url-and-header`；`${response.status}` / `${response.header[...]}` 不得因名称含 header 就错误映射到该 matcher。无法证明条件等价时继续使用 helper 或 fail closed，禁止只保留 URL 条件。
 
 **Quantumult X Rewrite 类型补全 / echo-response / JQ 依赖（2026-10-03）**：
 
