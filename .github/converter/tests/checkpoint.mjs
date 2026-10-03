@@ -906,6 +906,14 @@ assert.equal(
   '^https:\\/\\/api\\.example\\.com url jsonjq-response-body \'del(.data.ads)\'',
 );
 assert.equal(
+  planLegacyRewrite('^https:\\/\\/api\\.example\\.com', "response-body-json-jq ''", 'qx', legacyCtx).section,
+  'drop',
+);
+assert.equal(
+  planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-body-json-jq ""', 'surge', legacyCtx).section,
+  'drop',
+);
+assert.equal(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-del Server', 'surge', legacyCtx).lines[0],
   'http-response ^https:\\/\\/api\\.example\\.com header-del Server',
 );
