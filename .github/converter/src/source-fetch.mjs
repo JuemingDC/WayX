@@ -14,6 +14,8 @@ import { promisify } from 'node:util';
 const execFileAsync=promisify(execFile);
 const PYTHON_FETCHER=fileURLToPath(new URL('../tools/fetch-upstream.py',import.meta.url));
 const MAX_FETCH_BYTES=64*1024*1024;
+const TRANSIENT_FETCH_ATTEMPTS=3;
+const TRANSIENT_FETCH_BASE_DELAY_MS=250;
 
 export const WAYX_FETCH_UA='StashCore/2.7.1 Stash/2.7.1 Clash/1.11.0';
 export const WAYX_LOON_FETCH_UA='Loon/764 CFNetwork/1498.700.1 Darwin/23.6.0 iPhone/17.6.1';
@@ -123,14 +125,34 @@ async function fetchViaPython(sourceUrl, profile, timeoutMs) {
   }
 }
 
+function isTransientFetchError(error) {
+  const text=String(error?.message ?? error);
+  return /(?:ECONNRESET|ECONNREFUSED|EAI_AGAIN|ETIMEDOUT|Connection reset|Temporary failure|timed out|Timeout|HTTP (?:408|425|429|5\d\d)\b)/i.test(text);
+}
+
+function delay(ms) {
+  return new Promise(resolve=>setTimeout(resolve,ms));
+}
+
 async function fetchOriginalBuffer(url, timeoutMs) {
   const sourceUrl=assertHttpUrl(url);
   const profile=selectOriginalFetchProfile(sourceUrl);
-  const value=profile.transport==='python-urllib'
-    ? await fetchViaPython(sourceUrl,profile,timeoutMs)
-    : await fetchViaNode(sourceUrl,profile,timeoutMs);
-  if (!value.length) throw new Error('empty response from original source ' + sourceUrl);
-  return value;
+  const fetcher=profile.transport==='python-urllib' ? fetchViaPython : fetchViaNode;
+  let lastError=null;
+
+  for (let attempt=1; attempt<=TRANSIENT_FETCH_ATTEMPTS; attempt++) {
+    try {
+      const value=await fetcher(sourceUrl,profile,timeoutMs);
+      if (!value.length) throw new Error('empty response from original source ' + sourceUrl);
+      return value;
+    } catch (error) {
+      lastError=error;
+      if (attempt>=TRANSIENT_FETCH_ATTEMPTS || !isTransientFetchError(error)) throw error;
+      await delay(TRANSIENT_FETCH_BASE_DELAY_MS * (2 ** (attempt-1)));
+    }
+  }
+
+  throw lastError;
 }
 
 async function fetchOriginal(url, {timeoutMs=20000, bytes=false}={}) {

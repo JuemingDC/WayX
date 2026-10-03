@@ -1,0 +1,56 @@
+#!name=起点读书去广告
+#!desc=移除起点读书开屏广告、每日导读、各类弹窗、文末广告、搜索填充词，精简我的页面。
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id534174796
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/QiDian.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:04 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/QiDian_remove_ads.lpx
+# Target: Surge
+
+[Body Rewrite]
+http-response-jq ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/client\/getconf$ 'if getpath(["Data","WolfEye"]) then setpath(["Data","WolfEye"]; 0) else . end | if getpath(["Data","CloudSetting","TeenShowFreq"]) then setpath(["Data","CloudSetting","TeenShowFreq"]; 0) else . end'
+
+http-response-jq ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/client\/getconf$ 'del(.Data.ActivityPageBackPushNoticeFrequency, .Data.ActivityIcon, .Data.ActivityPopup, .Data.LuckBag)'
+
+http-response-jq ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v2\/dailyrecommend\/getdailyrecommend\? 'if getpath(["Data","Items"]) then setpath(["Data","Items"]; "[]") else . end'
+
+http-response-jq ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v3\/user\/getaccountpage\? 'del(.Data.BenefitButtonList)'
+
+[Map Local]
+
+^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v4\/client\/getsplashscreen\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/adv\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/ywab\.reader\.qq\.com\/user\/experiments\/v2\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/checkin\/simpleinfo\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/push\/getdialog\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/message\/getpushedmessagelist$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/maintain\/playstrip$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/dailyrecommend\/recommendBook\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/freshman\/bookshelfbtn$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/bookshelf\/getTopOperation$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/booksearch\/hotWords\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/followsubscribe\/showChapterEndModule\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/young\/getconf$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% magev6.if.qidian.com, ywab.reader.qq.com

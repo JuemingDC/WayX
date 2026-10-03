@@ -42,7 +42,7 @@ export const SURGE_WAYX_MAP_LOCAL_DATA_TYPES = new Set([
 ]);
 
 export const SURGE_WAYX_SCRIPT_TYPES = new Set([
-  'http-request','http-response',
+  'http-request','http-response','cron','event','generic',
 ]);
 
 export const SURGE_WAYX_MITM_KEYS = new Set(['hostname']);

@@ -1,0 +1,28 @@
+# Name: 彩云天气去广告
+# Description: 移除首页推广、弹窗、悬浮窗、底栏天气助手和工具箱入口，移除我的页面广告横幅。
+# Open URL: https://apps.apple.com/app/id847764912
+# Author: RuCu6[https://github.com/RuCu6]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ColorfulClouds.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:49 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/ColorfulClouds_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+host, abyss.cyapi.cn, reject
+host, ad.cyapi.cn, reject
+host, gather.colorfulclouds.net, reject
+
+# [rewrite_local]
+^https:\/\/biz\.cyapi\.cn\/(p\/v1\/entries|p\/v1\/trial_card\/info|v2\/product) url reject-dict
+^https:\/\/starplucker\.cyapi\.cn\/v3\/(config\/cypage\/\w+\/conditions|notification\/message_center|operation\/homefeatures) url reject-dict
+# 彩云天气去广告
+^https:\/\/(wrapper\.cyapi\.cn|api\.caiyunapp\.com|cdn-w\.caiyunapp\.com)\/v1\/activity\? url script-response-body https://kelee.one/Resource/JavaScript/ColorfulClouds/ColorfulClouds_remove_ads.js
+
+# [mitm]
+hostname = biz.cyapi.cn, starplucker.cyapi.cn, api.caiyunapp.com, cdn-w.caiyunapp.com

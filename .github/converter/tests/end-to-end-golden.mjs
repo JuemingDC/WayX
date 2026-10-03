@@ -292,15 +292,14 @@ assert.doesNotThrow(
   ),
 );
 
-const outOfScopeSurgeScript = `#!name=ScopeFixture
+const nativeSurgeTaskScript = `#!name=ScopeFixture
 #!desc=Scope fixture
 #!category=WayX
 [Script]
 task = type=cron,script-path=https://example.com/task.js,cronexp="0 8 * * *"
 `;
-assert.throws(
-  () => validateSurgeModule(outOfScopeSurgeScript, {id:'ScopeFixture'}),
-  /WayX ad-block Surge \[Script\] only accepts HTTP rewrite types/,
+assert.doesNotThrow(
+  () => validateSurgeModule(nativeSurgeTaskScript, {id:'ScopeFixture'}),
 );
 
 const qxLeadingNoteFixture = {

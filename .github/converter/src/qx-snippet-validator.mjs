@@ -61,15 +61,52 @@ function validateQxRewriteAction(action,line,entry) {
   const script=action.match(/^(script-[a-z-]+)\s+(\S+)$/);
   if (script && QX_WAYX_SCRIPT_ACTIONS.has(script[1])) return;
 
-  throw new Error(`${entry.id}: unverified/unsupported Quantumult X rewrite action: ${action}`);
+  const codepoints=[...String(action)].map(ch=>ch.codePointAt(0).toString(16)).join(',');
+  throw new Error(`${entry.id}: unverified/unsupported Quantumult X rewrite action: ${action}; codepoints=${codepoints}; line: ${line}`);
 }
 
-function validateQxExecutableLine(line, entry) {
+function validateQxTaskLine(line, entry) {
+  const source=String(line).trim();
+  const comma=source.indexOf(',');
+  const declaration=(comma>=0 ? source.slice(0,comma) : source).trim();
+  const optionText=comma>=0 ? source.slice(comma+1).trim() : '';
+
+  const event=declaration.match(/^(event-network|event-interaction)\s+(\S+)$/);
+  if (!event) {
+    const tokens=declaration.split(/\s+/);
+    if (tokens.length < 6) return false;
+    const scriptUrl=tokens.at(-1);
+    const cron=tokens.slice(0,-1);
+    if (![5,6].includes(cron.length) || !/^https?:\/\/\S+$/i.test(scriptUrl)) return false;
+  }
+
+  if (!optionText) return true;
+  for (const raw of optionText.split(/,\s*/)) {
+    const eq=raw.indexOf('=');
+    if (eq < 1) throw new Error(`${entry.id}: malformed Quantumult X task option: ${line}`);
+    const name=raw.slice(0,eq).trim().toLowerCase();
+    const value=raw.slice(eq+1).trim();
+    if (!['tag','img-url','enabled','require-devices'].includes(name) || !value) {
+      throw new Error(`${entry.id}: unverified/unsupported Quantumult X task option ${name}: ${line}`);
+    }
+    if (name==='enabled' && !/^(?:true|false)$/i.test(value)) {
+      throw new Error(`${entry.id}: Quantumult X task enabled must be true/false: ${line}`);
+    }
+  }
+  return true;
+}
+
+function validateQxExecutableLine(line, entry, section = null) {
   const noted=stripQxLeadingNote(line,entry);
   line=noted.line;
 
   if (noted.note && /^([A-Za-z0-9_-]+)\s*=/.test(line)) {
     throw new Error(`${entry.id}: Quantumult X leading notes are only valid on filter/rewrite rules: ${line}`);
+  }
+
+  if (section==='task_local') {
+    if (validateQxTaskLine(line,entry)) return;
+    throw new Error(`${entry.id}: malformed/unverified Quantumult X task line: ${line}`);
   }
 
   const mitm=line.match(/^([A-Za-z0-9_-]+)\s*=/);
@@ -120,13 +157,19 @@ export function validateQX(text, entry) {
     throw new Error(`${entry.id}: Quantumult X snippet metadata must be plain comments, not active #! directives`);
   }
 
-  const activeSections=text.split('\n').filter(line=>/^\[(filter_local|rewrite_local|mitm)\]$/i.test(line.trim()));
+  const activeSections=text.split('\n').filter(line=>/^\[(filter_local|rewrite_local|task_local|mitm)\]$/i.test(line.trim()));
   if (activeSections.length) {
     throw new Error(`${entry.id}: Quantumult X section headings must be commented`);
   }
 
+  let section=null;
   for (const raw of text.split('\n')) {
     const line=raw.trim();
+    const sectionMatch=line.match(/^#\s*\[(filter_local|rewrite_local|task_local|mitm)\]\s*$/i);
+    if (sectionMatch) {
+      section=sectionMatch[1].toLowerCase();
+      continue;
+    }
     if (!line || line.startsWith('#')) continue;
     if (/\(\?[ims](?:[:)])?/i.test(line)) {
       throw new Error(`${entry.id}: Quantumult X output must not restore discarded Loon regex flags with inline modifiers: ${line}`);
@@ -137,7 +180,7 @@ export function validateQX(text, entry) {
     if (/jq-path=/i.test(line)) {
       throw new Error(`${entry.id}: discarded legacy jq-path alias leaked into active Quantumult X output: ${line}`);
     }
-    validateQxExecutableLine(line,entry);
+    validateQxExecutableLine(line,entry,section);
   }
 
   for (const bad of ['response-body-json-del','response-body-json-replace','response-body-json-jq','mock-response-body']) {

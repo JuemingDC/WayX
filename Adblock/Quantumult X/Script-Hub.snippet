@@ -1,0 +1,41 @@
+# Name: Script-Hub
+# Description: 将其他工具的Rewrite、Rule和JavaScript资源转换为Quantumult X能识别的格式，使用前请在本插件的详情页面为[PROXY]项分配代理策略。在插件列表中点击此插件上的链接查看使用方法。
+# Open URL: https://script.hub/
+# Author: xream[https://github.com/xream], Keywos[https://github.com/Keywos], CKYB[https://github.com/CKYB], 小白脸
+# Tags: 资源转换
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/Other_icon/120px/Script-Hub.png
+# Updated: 2026-10-02 13:57:49
+# Select: ScriptHub通知,开启通知,关闭通知,跟随链接
+# Input: Parser_http_timeout
+
+# Converted: 2026-10-03 17:44:40 +08:00
+# Converted by: chance
+# Category: 增强
+# Source: https://kelee.one/Tool/Loon/Lpx/Script-Hub.lpx
+# Target: Quantumult X
+
+# [WayX] Policy binding: source PROXY is preserved as literal QX policy name PROXY; a matching target policy must exist.
+
+# [filter_local]
+host, scripthub.vercel.app, PROXY
+
+# [rewrite_local]
+# 前端界面
+# [WayX] Source Script timeout ignored for Quantumult X.
+^https?:\/\/script\.hub\/($|edit\/|reload) url script-request-header https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/script-hub.js
+
+# Rewrite转换
+# [WayX] Source Script timeout ignored for Quantumult X.
+^https?:\/\/script\.hub\/file\/_start_\/.+type=(?:qx-rewrite|surge-module|loon-plugin|all-module) url script-request-header https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/Rewrite-Parser.js
+
+# Rule转换
+# [WayX] Source Script timeout ignored for Quantumult X.
+^https?:\/\/script\.hub\/file\/_start_\/.+type=rule-set url script-request-header https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/rule-parser.js
+
+# JavaScript转换
+# [WayX] Source Script timeout ignored for Quantumult X.
+^https?:\/\/script\.hub\/convert\/ url script-request-header https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/script-converter.js
+
+# [mitm]
+hostname = script.hub, *.script.hub

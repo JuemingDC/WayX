@@ -1,0 +1,24 @@
+#!name=Pinterest去广告
+#!desc=移除瀑布流、更多探索内容中的广告
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id429047995
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Pinterest.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:39 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/Pinterest_remove_ads.lpx
+# Target: Surge
+
+[Body Rewrite]
+http-response-jq ^https:\/\/api\.pinterest\.com\/v\d\/feeds\/home\/\? '.data |= map(select(.is_promoted == false or .is_promoted == "false"))'
+
+http-response-jq ^https:\/\/api\.pinterest\.com\/v\d\/pins\/\d+\/related\/modules\/\? '.data |= map(select(.is_promoted == false or .is_promoted == "false"))'
+
+[MITM]
+hostname = %APPEND% api.pinterest.com

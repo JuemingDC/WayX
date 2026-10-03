@@ -1,0 +1,22 @@
+# Name: 百度网页去广告
+# Description: 移除百度搜索移动端网页的首页广告信息流
+# Author: Keywos[https://github.com/Keywos]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Baidu.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:46 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/BaiduSearchWebpage_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+# 移除百度搜索首页信息流广告
+^https?:\/\/(www|m)\.baidu\.com\/?($|\?from=\w{8,9}) url script-response-body https://kelee.one/Resource/JavaScript/BaiduSearch/BaiduSearchHomePage_remove_ads.js
+
+# [mitm]
+hostname = m.baidu.com, www.baidu.com

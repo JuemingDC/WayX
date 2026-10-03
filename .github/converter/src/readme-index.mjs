@@ -99,6 +99,28 @@ function rowKey(category, rel) {
   return stemOf(rel);
 }
 
+async function catalogRowOrder(root, category) {
+  if (category !== 'Adblock') return new Map();
+  let manifest;
+  try {
+    manifest=JSON.parse(await fs.readFile(path.join(root,'.github/sources/loon.json'),'utf8'));
+  } catch (error) {
+    if (error?.code === 'ENOENT') return new Map();
+    throw error;
+  }
+  if (!Array.isArray(manifest)) throw new Error('README catalog order source must be an array');
+  const order=new Map();
+  manifest.forEach((entry,index)=>{
+    for(const field of ['qx','surge']){
+      const value=entry?.[field];
+      if(typeof value!=='string' || !value.trim()) continue;
+      const key=stemOf(value.trim());
+      if(!order.has(key)) order.set(key,index);
+    }
+  });
+  return order;
+}
+
 async function scanCategory(root, category) {
   const dir = category === 'BoxJs' ? 'Boxjs' : category;
   const files = await walkFiles(root, dir);
@@ -129,7 +151,13 @@ async function scanCategory(root, category) {
     }
     rows.set(key, row);
   }
-  return [...rows.values()].sort((a,b)=>a.key.localeCompare(b.key,'en'));
+  const sourceOrder=await catalogRowOrder(root,category);
+  return [...rows.values()].sort((a,b)=>{
+    const ar=sourceOrder.has(a.key) ? sourceOrder.get(a.key) : Number.POSITIVE_INFINITY;
+    const br=sourceOrder.has(b.key) ? sourceOrder.get(b.key) : Number.POSITIVE_INFINITY;
+    if(ar!==br) return ar-br;
+    return a.key.localeCompare(b.key,'en');
+  });
 }
 
 export function qxSnippetInstallUrl(item) {

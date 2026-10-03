@@ -1,0 +1,37 @@
+# Name: 自动加入TestFlight
+# Description: 自动监控TestFlight名额，一旦有新的名额即刻加入。
+# Open URL: https://apps.apple.com/app/id899247664
+# Author: 奶思[https://github.com/fmz200], DecoAri[https://github.com/DecoAri], xream[https://github.com/xream]
+# Tags: 定时任务
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/TestFlight.png
+# Input: App_ID
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:18 +08:00
+# Converted by: chance
+# Category: 增强
+# Source: https://kelee.one/Tool/Loon/Lpx/Auto_Join_TF.lpx
+# Target: Quantumult X
+
+# [WayX] Policy binding: source PROXY is preserved as literal QX policy name PROXY; a matching target policy must exist.
+
+# [filter_local]
+host, testflight.apple.com, PROXY
+
+# [rewrite_local]
+# 获取账号令牌
+# [WayX] Source dynamic enable=CaptureAccountToken ignored for Quantumult X; converted rule defaults to enabled.
+^https?:\/\/testflight\.apple\.com\/v3\/accounts\/.*\/apps$ url script-request-header https://kelee.one/Resource/JavaScript/TestFlight/CaptureAccountToken.js
+
+# [task_local]
+# [WayX] Source Script timeout ignored for Quantumult X task syntax.
+# [WayX] Source dynamic Cron expression=TaskCron is fixed to its plugin default for Quantumult X.
+# [WayX] Source dynamic enable=RunTask is fixed to its plugin default for Quantumult X.
+0 0/2 * * * ? https://kelee.one/Resource/JavaScript/TestFlight/AutoJoinTF.js, tag=自动加入TF, enabled=false
+# [WayX] Source Script timeout ignored for Quantumult X task syntax.
+# [WayX] Source dynamic Cron expression=TaskMonitor is fixed to its plugin default for Quantumult X.
+# [WayX] Source dynamic enable=RunMonitor is fixed to its plugin default for Quantumult X.
+0 * * * * ? https://kelee.one/Resource/JavaScript/TestFlight/AutoMonitorTF.js, tag=监控TF位置, enabled=true
+
+# [mitm]

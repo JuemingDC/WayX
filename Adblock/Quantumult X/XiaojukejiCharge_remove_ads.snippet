@@ -1,0 +1,30 @@
+# Name: 小桔充电去广告
+# Description: 移除横幅广告、弹窗广告，精简我的页面。
+# Open URL: https://apps.apple.com/app/id1670782986
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/XiaojukejiCharge.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:14 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/XiaojukejiCharge_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/energy\.xiaojukeji\.com\/energy\/hummer\/api\/resource\/display($|\?) url reject-dict
+
+^https:\/\/energy\.xiaojukeji\.com\/am\/marketing\/api\/member\/facade\/charge\/personal\/center\? url jsonjq-response-body 'del(.data)'
+
+^https:\/\/energy\.xiaojukeji\.com\/lego\/api\/orderSprint\/stair\/info($|\?) url reject-dict
+
+^https:\/\/energy\.xiaojukeji\.com\/station-api\/search\/preWords$ url reject-dict
+
+^https:\/\/am\.didistatic\.com\/static\/am\/cf-terminal\/epower\/epower-thanos-app\/\d+\.\d+\.\d+\/pages\/people\/index\.js$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_XiaojukejiCharge_remove_ads/mock_file_de3f0192a7.js
+
+# [mitm]
+hostname = energy.xiaojukeji.com, am.didistatic.com

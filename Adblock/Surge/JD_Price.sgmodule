@@ -1,0 +1,23 @@
+#!name=京东比价
+#!desc=首次使用需安装慢慢买应用，之后点击进入[我的]页面以捕获Cookie，捕获成功后方可在商品详情页面查看比价内容。
+#!category=WayX
+
+# Open URL: https://apps.apple.com/app/id414245413
+# Author: wf021325[https://github.com/wf021325], githubdulong[https://github.com/githubdulong], mw418[https://github.com/mw418]
+# Tags: 功能增强
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/JD.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:56 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/JD_Price.lpx
+# Target: Surge
+
+[Script]
+捕获令牌 = type=http-request,pattern=^https?:\/\/apapia-sqk-weblogic\.manmanbuy\.com\/baoliao\/center\/menu$,script-path=https://kelee.one/Resource/JavaScript/JD/JD_Price.js,requires-body=true,max-size=-1,timeout=10
+
+京东比价 = type=http-response,pattern=^https?:\/\/in\.m\.jd\.com\/product\/graphext\/\d+\.html,script-path=https://kelee.one/Resource/JavaScript/JD/JD_Price.js,requires-body=true,max-size=-1,timeout=10
+
+[MITM]
+hostname = %APPEND% in.m.jd.com, apapia-sqk-weblogic.manmanbuy.com

@@ -1,0 +1,73 @@
+# Name: 汽车之家去广告
+# Description: 移除开屏广告、各类广告横幅、各类信息流广告、各类弹窗推广、各类浮窗、我的页面广告。
+# Open URL: https://apps.apple.com/app/id385919493
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/AutoHome.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:04 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/AutoHome_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/(a\.athm\.cn\/)?mobile\.app\.autohome\.com\.cn\/platform\/carserver\/carcard\/findEquitysV5 url reject-dict
+
+^https:\/\/(a\.athm\.cn\/)?mobile\.app\.autohome\.com\.cn\/platform\/carserver\/carcard\/mycardv6 url reject-dict
+
+^https:\/\/(a\.athm\.cn\/)?mobile\.app\.autohome\.com\.cn\/platform\/carserver\/usercenter\/chat\/gse\/recquery url reject-dict
+
+^https:\/\/autoapi\.autohome\.com\.cn\/ypttd\/yjc\/web\/mkgt\/act\/seckillInfo url reject-dict
+
+^https:\/\/(a\.athm\.cn\/)?mobile\.app\.autohome\.com\.cn\/platform\/carserver\/usercenter\/gethotactcards url reject-dict
+
+^https:\/\/(a\.athm\.cn\/)?mobile\.app\.autohome\.com\.cn\/platform\/carserver\/carcard\/extendedcards url reject-dict
+^https:\/\/(a\.athm\.cn\/)?mobile\.app\.autohome\.com\.cn\/platform\/carserver\/usercenter\/getwashcarlist url reject-dict
+^https:\/\/(a\.athm\.cn\/)?mobile\.app\.autohome\.com\.cn\/platform\/carserver\/usercenter\/getdealertab url reject-dict
+
+^https:\/\/(a\.athm\.cn\/)?mobile\.app\.autohome\.com\.cn\/platform\/carserver\/usercenter\/getoillist url reject-dict
+
+^https:\/\/pcmx\.autohome\.com\.cn\/queryCreativeList url reject-dict
+
+^https:\/\/maam\.pingan\.com\.cn\/maam\/buoy\/getBuoyList\.do url reject-dict
+
+^https:\/\/news\.app\.autohome\.com\.cn\/cont_v\d+(?:\.\d+){2}\/api\/article\/extenddata url reject-dict
+
+^https:\/\/adproxy\.autohome\.com\.cn\/AdvertiseService\/AppHandler\.ashx url reject-dict
+
+^https:\/\/club\.app\.autohome\.com\.cn\/club_v\d+(?:\.\d+){2}\/club\/channelqa\/header url reject-dict
+
+^https:\/\/dealer\.m\.autohome\.com\.cn\/handler\/other\/getdata\?__action=super\.list url reject-dict
+
+^https:\/\/autoapi\.autohome\.com\.cn\/arvr-dealercloud-api\/online\/aggregation\/exhibitionList url reject-dict
+
+^https:\/\/dealer\.m\.autohome\.com\.cn\/handler\/other\/getdata\?__action=vrcore\.list url reject-dict
+
+^https:\/\/dealer\.m\.autohome\.com\.cn\/handler\/other\/getdata\?__action=platform\.search url reject-dict
+
+^https:\/\/a\.athm\.cn\/clientlive\.api\.autohome\.com\.cn\/api\/live\/getserieswindowsinfo url reject-dict
+# 精简我的页面
+^https:\/\/news\.app\.autohome\.com\.cn\/news_v\d+(?:\.\d+){2}\/news\/homenavigation url script-response-body https://kelee.one/Resource/JavaScript/AutoHome/AutoHome_remove_ads.js
+
+# 精简我的页面
+^https:\/\/(a\.athm\.cn\/)?mobile\.app\.autohome\.com\.cn\/platform\/carserver\/((usercenter\/getservicecards)|(carcard\/allcard)|(carcard\/mycardv\d+)|(carcard\/cards)) url script-response-body https://kelee.one/Resource/JavaScript/AutoHome/AutoHome_remove_ads.js
+
+# 社区广场去广告
+^https:\/\/(a\.athm\.cn\/)?club\.app\.autohome\.com\.cn\/club_v\d+(?:\.\d+){2}\/club\/index\/businessv\d+ url script-response-body https://kelee.one/Resource/JavaScript/AutoHome/AutoHome_remove_ads.js
+
+# 移除直播浮窗
+^https:\/\/(a\.athm\.cn\/)?cars\.app\.autohome\.com\.cn\/carstreaming\/selectcarportal\/reclist url script-response-body https://kelee.one/Resource/JavaScript/AutoHome/AutoHome_remove_ads.js
+
+# 移除报价页面直播内容
+^https:\/\/(a\.athm\.cn\/)?cars\.app\.autohome\.com\.cn\/carstreaming\/selectcarportal\/seriestopwithtagscard url script-response-body https://kelee.one/Resource/JavaScript/AutoHome/AutoHome_remove_ads.js
+
+# 移除二手车竖版轮播图
+^https:\/\/(a\.athm\.cn\/)?apiautoappusc\.che168\.com\/apic\/v\d+\/gethomepagefeed url script-response-body https://kelee.one/Resource/JavaScript/AutoHome/AutoHome_remove_ads.js
+
+# [mitm]
+hostname = a.athm.cn, adproxy.autohome.com.cn, apiautoappusc.che168.com, autoapi.autohome.com.cn, cars.app.autohome.com.cn, clientlive.api.autohome.com.cn, club.app.autohome.com.cn, dealer.m.autohome.com.cn, maam.pingan.com.cn, mobile.app.autohome.com.cn, news.app.autohome.com.cn, pcmx.autohome.com.cn

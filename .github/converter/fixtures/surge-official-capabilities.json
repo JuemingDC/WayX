@@ -1,11 +1,11 @@
 {
-  "version": 2,
-  "scope": "Loon ad-block conversion only: Rule types, built-in Rule policies, Rewrite categories, MITM hostname",
+  "version": 3,
+  "scope": "Loon plugin conversion: Rule types, built-in Rule policies, Rewrite categories, Script triggers, MITM hostname",
   "authority": {
     "entrypoint": "https://nssurge.com/llms.txt",
     "releaseNotes": "https://nssurge.com/support/mac/release-notes",
     "manual": "https://manual.nssurge.com/",
-    "checkedAt": "2026-10-02"
+    "checkedAt": "2026-10-03"
   },
   "docs": {
     "ruleOverview": "https://manual.nssurge.com/rules/overview.html",
@@ -18,7 +18,11 @@
     "mitm": "https://manual.nssurge.com/http/mitm.html",
     "policyOverview": "https://manual.nssurge.com/policies/overview.html",
     "rejectPolicy": "https://manual.nssurge.com/policies/reject.html",
-    "builtInPolicies": "https://manual.nssurge.com/policies/built-in.html"
+    "builtInPolicies": "https://manual.nssurge.com/policies/built-in.html",
+    "scriptingOverview": "https://manual.nssurge.com/scripting/overview.html",
+    "cronScript": "https://manual.nssurge.com/scripting/cron.html",
+    "eventScript": "https://manual.nssurge.com/scripting/event.html",
+    "genericScript": "https://manual.nssurge.com/scripting/generic.html"
   },
   "ruleTypes": [
     "AND",
@@ -83,6 +87,9 @@
       "tiny-gif"
     ],
     "scriptTypes": [
+      "cron",
+      "event",
+      "generic",
       "http-request",
       "http-response"
     ]

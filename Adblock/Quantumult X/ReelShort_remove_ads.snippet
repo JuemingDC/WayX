@@ -1,0 +1,30 @@
+# Name: ReelShort去广告
+# Description: 移除开屏广告、为你推荐及各类弹窗，移除搜索栏填充词。
+# Open URL: https://apps.apple.com/app/id1636235979
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ReelShort.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:40 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/ReelShort_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/app\/getSplashScreenConfig$ url reject-dict
+
+^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/hall\/landingPage$ url reject-dict
+
+^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/book\/getBookDetailV2$ url jsonjq-response-body 'del(.data.ad_vip)'
+
+^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/book\/getPayModeV2$ url reject-dict
+
+^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/hall\/infoV3$ url jsonjq-response-body 'del(.data.search_keyword_list)'
+
+# [mitm]
+hostname = v-api.crazymaplestudios.com, d1k8g7qaebqd28.cloudfront.net

@@ -1,0 +1,33 @@
+#!name=Apple天气增强
+#!desc=解锁Apple天气的全部功能、替换空气质量数据源、添加下一小时降水数据、添加天气数据。
+#!category=WayX
+#!arguments=Weather_Provider:ColorfulClouds,NextHour_Provider:ColorfulClouds,AirQuality_Calculate_Algorithm:EU_EAQI,API_ColorfulClouds_Token:,API_QWeather_Host:devapi.qweather.com,API_QWeather_Token:,API_WAQI_Token:,Storage:Argument,LogLevel:WARN
+#!arguments-desc=Weather_Provider: [天气]数据源 — options=ColorfulClouds|WeatherKit|QWeather — 使用选定的数据源替换天气数据。\nNextHour_Provider: [未来一小时降水强度]数据源 — options=ColorfulClouds|WeatherKit|QWeather — 使用选定的数据源填充未来一小时降水强度的数据。\nAirQuality_Calculate_Algorithm: AQI算法 — options=EU_EAQI|None|UBA|WAQI_InstantCast_US|WAQI_InstantCast_CN|WAQI_InstantCast_CN_25_DRAFT — 使用内置算法，通过污染物数据本地计算空气指数。InstantCast源自于WAQI，美标版本使用了WAQI的臭氧标准。\nAPI_ColorfulClouds_Token: [API]彩云天气令牌 — 彩云天气API令牌\nAPI_QWeather_Host: [API]和风天气主机 — 和风天气API使用的主机名\nAPI_QWeather_Token: [API]和风天气令牌 — 和风天气API令牌\nAPI_WAQI_Token: [API]WAQI令牌 — WAQI API令牌，填写此字段将自动使用WAQI高级API\nStorage: [储存]配置类型 — options=Argument|PersistentStore|database — 选择要使用的配置类型。未设置此选项或不通过此选项的旧版本的配置顺序依旧是$persistentStore (BoxJs) > $argument > database。\nLogLevel: [调试]日志等级 — options=WARN|OFF|ERROR|INFO|DEBUG|ALL — 选择脚本日志的输出等级，低于所选等级的日志将全部输出。
+
+# Open URL: https://itunes.apple.com/app/id1069513131
+# Author: VirgilClyne[https://github.com/VirgilClyne], WordlessEcho[https://github.com/WordlessEcho], 001[https://github.com/001ProMax]
+# Tags: 功能增强
+# Platform: iOS, iPadOS, macOS, watchOS
+# System Version: 18
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/AppleWeather.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:35 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/AppleWeatherEnhancer.lpx
+# Target: Surge
+
+[Rule]
+DOMAIN,weather-analytics-events.apple.com,REJECT-DROP
+DOMAIN,tether.edge.apple,REJECT-DROP
+DOMAIN-SUFFIX,tthr.apple.com,REJECT-DROP
+AND,((OR,((IP-ASN,714,no-resolve),(IP-ASN,6185,no-resolve))),(PROTOCOL,QUIC)),REJECT-DROP
+
+[Script]
+天气可用性响应 = type=http-response,pattern=^https?:\/\/weatherkit\.apple\.com\/api\/v1\/availability\/,script-path=https://github.com/NSRingo/WeatherKit/releases/download/v3.1.0/response.bundle.js,requires-body=true,max-size=-1,argument="{\"Weather.Provider\":\"{{{Weather_Provider}}}\",\"NextHour.Provider\":\"{{{NextHour_Provider}}}\",\"AirQuality.Calculate.Algorithm\":\"{{{AirQuality_Calculate_Algorithm}}}\",\"API.ColorfulClouds.Token\":\"{{{API_ColorfulClouds_Token}}}\",\"API.QWeather.Host\":\"{{{API_QWeather_Host}}}\",\"API.QWeather.Token\":\"{{{API_QWeather_Token}}}\",\"API.WAQI.Token\":\"{{{API_WAQI_Token}}}\",\"Storage\":\"{{{Storage}}}\",\"LogLevel\":\"{{{LogLevel}}}\"}"
+
+天气响应 = type=http-response,pattern=^https?:\/\/weatherkit\.apple\.com\/api\/v2\/weather\/,script-path=https://github.com/NSRingo/WeatherKit/releases/download/v3.1.0/response.bundle.js,requires-body=true,max-size=-1,binary-body-mode=true,argument="{\"Weather.Provider\":\"{{{Weather_Provider}}}\",\"NextHour.Provider\":\"{{{NextHour_Provider}}}\",\"AirQuality.Calculate.Algorithm\":\"{{{AirQuality_Calculate_Algorithm}}}\",\"API.ColorfulClouds.Token\":\"{{{API_ColorfulClouds_Token}}}\",\"API.QWeather.Host\":\"{{{API_QWeather_Host}}}\",\"API.QWeather.Token\":\"{{{API_QWeather_Token}}}\",\"API.WAQI.Token\":\"{{{API_WAQI_Token}}}\",\"Storage\":\"{{{Storage}}}\",\"LogLevel\":\"{{{LogLevel}}}\"}"
+
+[MITM]
+hostname = %APPEND% weatherkit.apple.com

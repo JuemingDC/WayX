@@ -105,7 +105,14 @@ for (const file of files) {
 
   if (/^Script\/.+\.js$/.test(rp)) {
     for (let i=0;i<lines.length;i++) {
-      if (/WayX.*(?:bridge|wrapper)|Script v2 ->|Converted Script/i.test(lines[i])) add(file,i+1,'script-body-adaptation-artifact',lines[i].trim());
+      const t=lines[i].trim();
+      // Adaptation markers are generator metadata/comments. Generated mock
+      // helpers may legitimately embed arbitrary upstream JS/HTML text in
+      // string literals, so payload content must not be audited as helper code.
+      if (/^(?:\/\/|\/\*|\*)/.test(t) &&
+          /WayX.*(?:bridge|wrapper)|Script v2 ->|Converted Script/i.test(t)) {
+        add(file,i+1,'script-body-adaptation-artifact',t);
+      }
     }
   }
 }

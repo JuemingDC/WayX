@@ -1,0 +1,43 @@
+# Name: 闪动校园去广告
+# Description: 精简首页和底部导航
+# Open URL: https://apps.apple.com/app/id1540537249
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ShandongSchool.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:05 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/ShandongSchool_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/api\.huachenjie\.com\/run-front\/ad\/ url reject-dict
+^https:\/\/api\.huachenjie\.com\/run-front\/api\/union\/ad\/ url reject-dict
+^https:\/\/api\.huachenjie\.com\/run-front\/home\/getAdPopup$ url reject-dict
+^https:\/\/api\.huachenjie\.com\/run-front\/street\/listRecommendBanner$ url reject-dict
+^https:\/\/api\.huachenjie\.com\/run-front\/street\/listThemeBanner$ url reject-dict
+
+^https:\/\/api\.huachenjie\.com\/run-front\/home\/homePage\/config$ url jsonjq-response-body '.data.functionEntries |= map(select(.name == "运动" or .name == "空间")) | del(.data.seaview)'
+
+^https:\/\/api\.huachenjie\.com\/run-front\/api\/home\/activityEntry$ url reject-dict
+
+^https:\/\/api\.huachenjie\.com\/run-front\/home\/promoSlots\/config$ url reject-dict
+
+^https:\/\/api\.huachenjie\.com\/run-front\/api\/user\/cs\/index$ url jsonjq-response-body 'del(.data.bannerList)'
+
+^https:\/\/api\.huachenjie\.com\/run-front\/api\/channel\/subject\/hotspot\/rank$ url reject-dict
+
+^https:\/\/api\.huachenjie\.com\/run-front\/api\/jackpot\/award\/home$ url reject-dict
+^https:\/\/api\.huachenjie\.com\/run-front\/api\/jackpot\/award\/lotteryPage$ url reject-dict
+^https:\/\/api\.huachenjie\.com\/run-front\/api\/jackpot\/award\/list$ url reject-dict
+
+^https:\/\/api\.huachenjie\.com\/run-front\/api\/mall\/goods\/recommend\/pagePointsGoodsList$ url reject-dict
+^https:\/\/api\.huachenjie\.com\/run-front\/common\/bottom-bar\/redDot$ url jsonjq-response-body 'del(.data.inspiration)'
+
+# [mitm]
+hostname = api.huachenjie.com

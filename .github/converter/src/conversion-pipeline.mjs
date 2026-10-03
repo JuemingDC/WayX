@@ -17,7 +17,7 @@ import { surgeArgumentMetadata } from './argument.mjs';
 import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection } from './source-section.mjs';
 import { attachQxInlineNote } from './qx-comment.mjs';
 import { planMitmLine } from './mitm.mjs';
-import { legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from './rewrite-ir.mjs';
+import { classifyLegacyRewriteAction, isEmptyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from './rewrite-ir.mjs';
 import { planQxRewrite } from './rewrite-qx.mjs';
 import { planSurgeRewrite } from './rewrite-surge.mjs';
 import { rewriteReview, rewriteIssue } from './rewrite-plan-result.mjs';
@@ -47,6 +47,16 @@ function splitPatternAction(line) {
   const idx=line.search(/\s/);
   if (idx<0) return [line.trim(),''];
   return [line.slice(0,idx).trim(),line.slice(idx).trim().replace(/^\-\s+/,'')];
+}
+
+function splitRuleInlineComment(line) {
+  const source=String(line ?? '').trim();
+  const match=source.match(/^([\s\S]*?\S)\s+\/\/\s*(.+)$/);
+  if (!match) return {line:source,comment:null};
+  return {
+    line:match[1].trim(),
+    comment:'# '+match[2].trim(),
+  };
 }
 
 function rewriteErrorResult(line,error) {
@@ -91,6 +101,7 @@ function rewriteV2Action(line,target,ctx) {
   }
 
   const ir=rewriteV2AstToSemanticIr(ast,{source:line});
+  if (isEmptyJsonJqIr(ir)) return {section:'drop',reason:'empty-json-jq'};
   const planner=target==='qx' ? planQxRewrite : target==='surge' ? planSurgeRewrite : null;
   if (!planner) return rewriteIssue(line,'unknown-rewrite-target','unsupported Rewrite target planner: '+target);
   return planner(ir,{...ctx,sourceLine:line,argumentRefs:argumentRefs.all});
@@ -179,6 +190,7 @@ export function convertPlugin(entry,source,{
     mockFiles,
     jqFiles,
     argumentIds,
+    argumentTable:surgeArgumentTable,
     rawBase,
   };
   const sctx={
@@ -203,19 +215,74 @@ export function convertPlugin(entry,source,{
     appendQxOutput(qx,'notes','# [WayX] Policy binding: source PROXY is preserved as literal QX policy name PROXY; a matching target policy must exist.');
   }
 
-  const ruleSectionLines=plugin.sections.get('Rule') || [];
-  for (const item of groupSourceSectionItems(ruleSectionLines)) {
+  const generalSectionLines=plugin.sections.get('General') || [];
+  for (const item of groupSourceSectionItems(generalSectionLines)) {
     const comments=cleanSourceComments(item.comments);
     if (!item.line) {
+      qxOutputDestination(qx,'notes').push(...comments);
+      surgeOutputDestination(sg,'general').push(...comments);
+      continue;
+    }
+    const match=String(item.line).match(/^real-ip\s*=\s*(.+)$/i);
+    if (!match) {
+      appendQxOutput(qx,'notes',...comments,'# [WayX] ISSUE REQUIRED [unknown-general-option]: unsupported Loon [General] option',`# Source declaration: ${item.line}`);
+      appendSurgeOutput(sg,'notes',...comments,'# [WayX] ISSUE REQUIRED [unknown-general-option]: unsupported Loon [General] option',`# Source declaration: ${item.line}`);
+      continue;
+    }
+    const hosts=match[1].split(',').map(value=>value.trim()).filter(Boolean);
+    if (!hosts.length) continue;
+    appendQxOutput(
+      qx,
+      'notes',
+      ...comments,
+      '# [WayX] Known Quantumult X target limitation: Loon real-ip maps to Quantumult X [general] dns_exclusion_list, but rewrite/filter snippets cannot inject that global option.',
+      '# Source declaration: '+item.line,
+    );
+    appendSurgeOutput(
+      sg,
+      'general',
+      ...comments,
+      'always-real-ip = %APPEND% '+hosts.join(', '),
+    );
+  }
+
+  const ruleSectionLines=plugin.sections.get('Rule') || [];
+  for (const item of groupSourceSectionItems(ruleSectionLines)) {
+    if (!item.line) {
+      const comments=cleanSourceComments(item.comments);
       qxOutputDestination(qx,'filter').push(...comments);
       surgeOutputDestination(sg,'rule').push(...comments);
       continue;
     }
 
-    const qr=canonicalQxRule(item.line);
+    const inline=splitRuleInlineComment(item.line);
+    const effectiveItem=inline.comment
+      ? {...item,line:inline.line,comments:[...item.comments,inline.comment]}
+      : item;
+    const comments=cleanSourceComments(effectiveItem.comments);
+
+    const [misplacedPattern,misplacedAction]=splitPatternAction(inline.line);
+    const misplacedOperation=misplacedAction ? classifyLegacyRewriteAction(misplacedAction) : null;
+    if (misplacedOperation && misplacedOperation.kind!=='unknown') {
+      const misplacedIr=legacyRewriteToSemanticIr(misplacedPattern,misplacedAction);
+      const qr=planQxRewrite(misplacedIr,{...qctx,sourceLine:inline.line});
+      const sr=planSurgeRewrite(misplacedIr,{...sctx,sourceLine:inline.line});
+      qxRewriteOutputDestination(qx,qr.section).push(...comments,...(qr.lines || [qr.line]));
+      surgeRewriteOutputDestination(sg,sr.section).push(...comments,...(sr.lines || [sr.line]));
+      continue;
+    }
+
+    if (!inline.line.includes(',') && /^(?:\*\.)?(?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,}$/i.test(inline.line)) {
+      const note='# [WayX] Known source limitation: bare hostname is not a documented Loon Rule declaration, so no target policy is inferred.';
+      qxOutputDestination(qx,'filter').push(...comments,note,'# Source declaration: '+inline.line);
+      surgeOutputDestination(sg,'rule').push(...comments,note,'# Source declaration: '+inline.line);
+      continue;
+    }
+
+    const qr=canonicalQxRule(inline.line);
     const qxRendered=attachQxInlineNote({
       sectionLines:ruleSectionLines,
-      item,
+      item:effectiveItem,
       sectionKind:'rule',
       lines:[qr.line],
       eligible:qr.kind==='filter' || qr.kind==='rewrite',
@@ -224,7 +291,7 @@ export function convertPlugin(entry,source,{
     if (qr.kind==='filter' || qr.kind==='rewrite') qxRuleDest.push(...qxRendered.comments,...qxRendered.lines);
     else qxRuleDest.push(...comments,qr.line);
 
-    const sr=surgeModuleRule(item.line,{proxyPolicyPlaceholder:surgeProxyPolicyPlaceholder});
+    const sr=surgeModuleRule(inline.line,{proxyPolicyPlaceholder:surgeProxyPolicyPlaceholder});
     surgeRuleOutputDestination(sg,sr.section).push(...comments,...sr.lines);
   }
 
@@ -244,6 +311,10 @@ export function convertPlugin(entry,source,{
     if (!qr || !sr) {
       const [pattern,action]=splitPatternAction(item.line);
       let ir=legacyRewriteToSemanticIr(pattern,action);
+      if (isEmptyJsonJqIr(ir)) {
+        qr={section:'drop',reason:'empty-json-jq'};
+        sr={section:'drop',reason:'empty-json-jq'};
+      }
       const jqSpec=legacyJqPathDependencySpecFromIr(ir,{pluginSourceUrl:entry.source});
       if (jqSpec) {
         const materialized=jqFiles.get(item.line);
@@ -314,18 +385,32 @@ export function convertPlugin(entry,source,{
     const sourceText=mapped?.source || '';
     const qxUrl=mapped?.qx || ir.script.path;
     const surgeUrl=mapped?.surge || ir.script.path;
-    const qxPlan=planQxScript(ir,{scriptUrl:qxUrl,sourceText,argumentIds});
-    const qxScriptDest=qxOutputDestination(qx,'rewrite');
+    const qxPlan=planQxScript(ir,{
+      scriptUrl:qxUrl,
+      sourceText,
+      argumentIds,
+      argumentTable:surgeArgumentTable,
+    });
+    const qxScriptDest=qxOutputDestination(qx,qxPlan.ok && qxPlan.section ? qxPlan.section : 'rewrite');
 
     if (!qxPlan.ok) {
       qxScriptDest.push(...comments);
       if (sourceSyntax==='legacy' && ir.sourcePayload.tag) qxScriptDest.push(`# ${ir.sourcePayload.tag}`);
       qxScriptDest.push(`# [WayX] ${sourceSyntax==='v2' ? 'SCRIPT V2' : 'SCRIPT'} REVIEW REQUIRED: ${qxPlan.reason}`);
       qxScriptDest.push(`# Source declaration: ${item.line}`);
+    } else if (qxPlan.omitted) {
+      qxScriptDest.push(...comments);
+      for (const note of qxPlan.notes || []) qxScriptDest.push(`# [WayX] ${note}`);
+      qxScriptDest.push(`# [WayX] Known Quantumult X target limitation: ${qxPlan.reason}`);
+      qxScriptDest.push(`# Source declaration: ${item.line}`);
     } else if (qxPlan.disabled) {
       qxScriptDest.push(...comments);
       if (sourceSyntax==='legacy' && ir.sourcePayload.tag) qxScriptDest.push(`# ${ir.sourcePayload.tag}`);
       qxScriptDest.push(`# [WayX] Script disabled by source ${sourceSyntax==='v2' ? 'option' : 'declaration'}: ${item.line}`);
+    } else if (qxPlan.section==='task') {
+      qxScriptDest.push(...comments);
+      for (const note of qxPlan.notes || []) qxScriptDest.push(`# [WayX] ${note}`);
+      qxScriptDest.push(qxPlan.line);
     } else {
       const qxRendered=attachQxInlineNote({
         sectionLines:scriptSectionLines,

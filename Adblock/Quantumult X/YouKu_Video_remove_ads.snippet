@@ -1,0 +1,50 @@
+# Name: 优酷视频去广告
+# Description: 移除开屏广告、视频广告、信息流广告。其余广告由于请求已加密，故无法移除。
+# Open URL: https://apps.apple.com/app/id336141475
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md], RuCu6[https://github.com/RuCu6]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YouKu_Video.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:16 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/YouKu_Video_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+host, push.m.youku.com, direct
+host, un-acs.youku.com, direct
+host, dorangesource.alicdn.com, direct
+
+host, h-adashx.ut.taobao.com, reject
+host, adx-core.youku.com, reject
+host, adx-open-service.youku.com, reject
+host, yk-ssp.ad.youku.com, reject
+host, cad.youku.com, reject
+host, ykad-data.youku.com, reject
+host, yk-ssp.ad.youku.com, reject
+host, amdc.m.youku.com, reject
+host, cad.youku.com, reject
+host, nbsdk-baichuan.alicdn.com, reject
+host, youku-crm-product.youku.com, reject
+host, dr-danmu.youku.com, reject
+host, group-ssl-danmu-ori.youku.com, reject
+host, m.atm.youku.com, reject
+host, mc.atm.youku.com, reject
+host, vali-g1.cp31.ott.cibntv.net, reject
+host, vali-ugc.cp31.ott.cibntv.net, reject
+host-suffix, iyes.youku.com, reject
+
+host, adsmind.ugdtimg.com, reject
+host, pre-acs.youku.com, reject
+host, youku-acs.m.taobao.com, reject
+
+# [rewrite_local]
+^https:\/\/un-acs\.youku\.com\/gw\/mtop\.youku\.play\.ups\.appinfo\.get url jsonjq-response-body 'del(.data.data.ad, .data.data.watermark, .data.data.ykad)'
+
+^https:\/\/push\.m\.youku\.com\/collect-api\/get_push_interval_config_wx\? url jsonjq-response-body 'del(.data.tipContent, .data.tipContentNew)'
+
+# [mitm]
+hostname = push.m.youku.com, un-acs.youku.com

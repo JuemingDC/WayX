@@ -1,0 +1,24 @@
+# Name: 威锋去广告
+# Description: 移除开屏广告、信息流广告、文末广告、首页轮播图推广。
+# Open URL: https://apps.apple.com/app/id1411932809
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/WPForum.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:10 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/WPForum_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/api\.wfdata\.club\/v2\/yesfeng\/yesList\? url reject-dict
+
+^https:\/\/api\.wfdata\.club\/v2\/yesfeng\/slideshow\? url jsonjq-response-body '.data |= map(select(.protocolId == 1))'
+
+# [mitm]
+hostname = api.wfdata.club

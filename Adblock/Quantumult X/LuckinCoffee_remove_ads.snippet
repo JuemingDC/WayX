@@ -1,0 +1,35 @@
+# Name: 瑞幸咖啡去广告
+# Description: 移除开屏广告、弹窗和各类横幅推广。
+# Open URL: https://apps.apple.com/app/id1296749505
+# Author: Sliverkiss[https://github.com/Sliverkiss]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/LuckinCoffee.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:05 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/LuckinCoffee_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/capi\.lkcoffee\.com\/resource\/m\/growUp\/calendarList url reject
+
+^https:\/\/capi\.lkcoffee\.com\/resource\/m\/promotion\/giftCard\/topPage url reject
+
+^https:\/\/capi\.lkcoffee\.com\/resource\/m\/sys\/base\/myLittleLuck url reject
+
+^https:\/\/capi\.lkcoffee\.com\/resource\/core\/v2\/menu\/ordinaryUserLayeredArea url reject
+
+^https:\/\/capi\.lkcoffee\.com\/resource\/m\/sys\/common\/modules url reject
+
+^https:\/\/capi\.lkcoffee\.com\/resource\/core\/v2\/homepage\/homePageCoffeeList url reject
+^https:\/\/capi\.lkcoffee\.com\/resource\/m\/eorder\/product\/popAppTagProductList url reject
+
+^https:\/\/capi\.lkcoffee\.com\/resource\/m\/sys\/app\/adposNew url reject
+
+# [mitm]
+hostname = capi.lkcoffee.com

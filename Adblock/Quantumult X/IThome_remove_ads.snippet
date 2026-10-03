@@ -1,0 +1,25 @@
+# Name: IT之家去广告
+# Description: 过滤IT之家信息流广告和文末广告，自定义移除置顶和轮播图，自定义移除项需在插件配置。
+# Open URL: https://apps.apple.com/app/id570610859
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/IThome.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:38 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/IThome_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https?:\/\/dat\.ruanmei\.com\/ithome\/money\/acd\.json$ url reject
+# IT之家去广告
+# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
+^https:\/\/napi\.ithome\.com\/api\/(news\/indexv2\/iphone\/\d+|topmenu\/getfeeds\?) url script-response-body https://kelee.one/Resource/JavaScript/IThome/IThome_remove_ads.js
+
+# [mitm]
+hostname = napi.ithome.com, api.zuihuimai.com, dat.ruanmei.com

@@ -1,0 +1,27 @@
+# Name: 驾校一点通去广告
+# Description: 移除开屏广告、各页面广告横幅、弹窗广告，移除社区广告。
+# Open URL: https://apps.apple.com/app/id620262310
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/JiaXiaoDrive.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:56 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/JiaXiaoDrive_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/richmanrules\.ksedt\.com\/serverConfig\/3\/adConfig\.json url reject-dict
+^https:\/\/gouche\.ksedt\.com\/config\/popup\/info$ url reject-dict
+^https:\/\/richmanrules\.ksedt\.com\/intellectWaterfallBidding\/find$ url reject-dict
+^https:\/\/op\.ksedt\.com\/jxedtLive\/liveIntroduceResource url reject-dict
+^https:\/\/richmanrules\.ksedt\.com\/intellectWaterfall\/find$ url reject-dict
+http-response url jsonjq-response-body 'del(["^https:\\/\\/api\\"]["ksedt\\"]["com\\/api\\/config\\/"])'
+
+# [mitm]
+hostname = richmanrules.ksedt.com, gouche.ksedt.com, muses.ksedt.com, op.ksedt.com, api.ksedt.com

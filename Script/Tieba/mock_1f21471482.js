@@ -1,7 +1,7 @@
-// Converted: 2026-10-03 10:03:32 +08:00
+// Converted: 2026-10-03 17:44:46 +08:00
 // Converted by: chance
 // Category: 去广告
-// Source Loon: ^https?:\/\/tieba\.baidu\.com\/mo\/q\/search\/startPage\? mock-response-body data-type=json data="{"no":0,"error":"success"}" status-code=200
+// Source Loon: response if ${url} ~= /^https?:\/\/tieba\.baidu\.com\/mo\/q\/search\/startPage\?/i then response.body.mock("json", "{\"no\":0,\"error\":\"success\"}", 200)
 const __wayxContentType = "application/json";
 const __wayxBody = "{\"no\":0,\"error\":\"success\"}";
 const headers = {"Content-Type": __wayxContentType};

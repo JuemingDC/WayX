@@ -1,0 +1,22 @@
+# Name: RQrun去广告
+# Description: 移除开屏广告
+# Open URL: https://apps.apple.com/app/id1441094296
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/RQrun.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:40 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/RQrun_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/api\.rq\.run\/Api\/Spreadimg\/spreadimg_type_list$ url reject-dict
+
+# [mitm]
+hostname = api.rq.run

@@ -1,0 +1,33 @@
+# Name: Spotify去广告
+# Description: 移除播放广告，恢复歌手和专辑列表的正常展示。修改插件自定义配置项需要重新登陆方可生效。
+# Open URL: https://apps.apple.com/app/id324684580
+# Author: 001ProMax[https://github.com/001ProMax]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Spotify.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:40 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/Spotify_remove_ads.lpx
+# Target: Quantumult X
+
+
+# [WayX] Known Quantumult X target limitation: Loon url.replace transparently rewrites the request URL, but no equivalent behavior is documented in the official Quantumult X rewrite sample.
+# Source declaration: request if ${url} ~= /^https:\/\/(?:\w+-spclient|spclient\.wg)\.spotify\.com(?::443)?\/artistview\/v1\/artist\/(.*)&platform=iphone/i as urlMatch then url.replace("https://spclient.wg.spotify.com/artistview/v1/artist/${urlMatch.1}&platform=ipad")
+
+# [filter_local]
+# [WayX] Quantumult X unsupported Rule type commented out; Rule conversion does not use Script fallback
+# Source declaration: AND, ((DOMAIN-SUFFIX, spotify.com), (PROTOCOL, QUIC)), REJECT
+
+# [rewrite_local]
+^https:\/\/(?:\w+-spclient|spclient\.wg)\.spotify\.com(?::443)?\/pendragon\/ url reject-dict
+# Protobuf处理
+# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
+# [WayX] Source Script timeout ignored for Quantumult X.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
+^https:\/\/(?:\w+-spclient|spclient\.wg)\.spotify\.com(?::443)?\/(?:bootstrap|user-customization-service) url script-response-body https://kelee.one/Resource/JavaScript/Spotify/Spotify_remove_ads.js
+
+# [mitm]
+hostname = *-spclient.spotify.com, spclient.wg.spotify.com

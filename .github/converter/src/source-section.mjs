@@ -4,6 +4,7 @@
 
 export const WAYX_SUPPORTED_SOURCE_SECTIONS = new Set([
   'Argument',
+  'General',
   'Rule',
   'Rewrite',
   'Script',

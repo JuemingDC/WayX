@@ -1,0 +1,37 @@
+# Name: 摩托范去广告
+# Description: 移除开屏广告、弹窗广告、横幅广告、文末广告及相关文章推荐、广告下发，移除我的页面商品推荐，精简搜索页面。
+# Open URL: https://apps.apple.com/app/id1234889389
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MotorFans.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:02 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/MotorFans_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/api\.58moto\.com\/advert\/ url reject-dict
+
+^https:\/\/api\.58moto\.com\/mall\/goods\/self\/list\? url reject-dict
+^https:\/\/api\.58moto\.com\/mall\/goods\/self\/homeList\? url reject-dict
+
+^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do$ url reject-dict
+
+^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do\?action=22025 url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_MotorFans_remove_ads/mock_5d411eca9d.js
+
+^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do\?action=22038 url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_MotorFans_remove_ads/mock_5f0586b9b5.js
+
+^https:\/\/api\.58moto\.com\/forum\/public\/labelController\.do\?action=20112 url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_MotorFans_remove_ads/mock_d94eec5583.js
+
+^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do\?action=22004 url jsonjq-response-body 'del(.data.link)'
+# 修改配置
+^https:\/\/api\.58moto\.com\/expands\/config\/appWholeConfig\?key=app_whole_config$ url script-response-body https://kelee.one/Resource/JavaScript/MotorFans/MotorFans_remove_ads.js
+
+# [mitm]
+hostname = api.58moto.com

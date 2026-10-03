@@ -22,6 +22,17 @@ assert.equal(simple.ast.policy,'REJECT');
 assert.deepEqual(simple.ast.params,[]);
 assert.equal(renderRuleAst(simple.ast),'DOMAIN,example.com,REJECT');
 
+const inlineComment=parseLoonRuleAst('DOMAIN, mallapi2.qinlinkeji.com, REJECT // 商城页面');
+assert.equal(inlineComment.ok,true);
+assert.equal(inlineComment.ast.syntaxSource,'DOMAIN, mallapi2.qinlinkeji.com, REJECT');
+assert.equal(inlineComment.ast.inlineComment,'商城页面');
+assert.equal(inlineComment.ast.policy,'REJECT');
+
+const ipAsn=parseLoonRuleAst('IP-ASN, 6185, REJECT-DROP, no-resolve');
+assert.equal(ipAsn.ok,true);
+assert.equal(planQxRuleAst(ipAsn.ast).line,'ip-asn, 6185, reject');
+assert.equal(planSurgeModuleRuleAst(ipAsn.ast).line,'IP-ASN,6185,REJECT-DROP,no-resolve');
+
 const quoted=parseLoonRuleAst('USER-AGENT, "Example App*", REJECT');
 assert.equal(quoted.ok,true);
 assert.equal(quoted.ast.valueRaw,'"Example App*"');

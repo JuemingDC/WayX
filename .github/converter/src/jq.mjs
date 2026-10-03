@@ -2,6 +2,60 @@
 // Author: chance
 // Category: Converter / JQ
 
+export function parseJsonKeyPath(pathText) {
+  const text=String(pathText ?? '');
+  if (!text) throw new Error('JSON key path must not be empty');
+  const parts=[];
+  let i=0;
+
+  const decodeSingleQuoted=value=>{
+    let out='';
+    for(let j=1;j<value.length-1;j++){
+      const ch=value[j];
+      if(ch!=='\\'){ out+=ch; continue; }
+      if(j+1>=value.length-1){ out+='\\'; continue; }
+      const next=value[++j];
+      if(next==="'" || next==='\\') out+=next;
+      else if(next==='n') out+='\n';
+      else if(next==='r') out+='\r';
+      else if(next==='t') out+='\t';
+      else out+='\\'+next;
+    }
+    return out;
+  };
+
+  while(i<text.length){
+    if(text[i]==='.') { i++; continue; }
+    if(text[i]==='['){
+      const rest=text.slice(i);
+      const numeric=rest.match(/^\[(\d+)\]/);
+      if(numeric){
+        parts.push(Number(numeric[1]));
+        i+=numeric[0].length;
+        continue;
+      }
+      const quoted=rest.match(/^\[((?:"(?:\\.|[^"\\])*")|(?:'(?:\\.|[^'\\])*'))\]/);
+      if(!quoted) throw new Error('unsupported JSON key-path bracket syntax: '+text);
+      let value;
+      if(quoted[1].startsWith('"')){
+        try { value=JSON.parse(quoted[1]); }
+        catch { throw new Error('invalid quoted JSON key-path segment: '+text); }
+      }else{
+        value=decodeSingleQuoted(quoted[1]);
+      }
+      parts.push(value);
+      i+=quoted[0].length;
+      continue;
+    }
+    const bare=text.slice(i).match(/^[^.[\]]+/);
+    if(!bare) throw new Error('invalid JSON key path: '+text);
+    parts.push(bare[0]);
+    i+=bare[0].length;
+  }
+  if(!parts.length) throw new Error('JSON key path must not be empty');
+  return parts;
+}
+
 // Render fixed Key Path deletion without synthesizing delpaths(PATHS).
 // delpaths is reserved for source-authored/path-array jq semantics. For fixed
 // Key Paths, jq del(path_expression) is the native form; array indices remain

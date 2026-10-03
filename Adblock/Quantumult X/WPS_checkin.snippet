@@ -1,0 +1,29 @@
+# Name: WPS每日签到
+# Description: WPS每日签到并兑换会员，需要进入此插件的主页链接，阅读使用说明操作。
+# Open URL: https://apps.apple.com/app/id599852710
+# Author: 小白脸
+# Tags: 签到
+# Homepage: https://github.com/luestr/ProxyResource/blob/main/Resource/Markdown/WPS/README.md
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/WPS.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:43 +08:00
+# Converted by: chance
+# Category: 增强
+# Source: https://kelee.one/Tool/Loon/Lpx/WPS_checkin.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+# 捕获Cookie
+# [WayX] Source dynamic enable=CaptureCookie ignored for Quantumult X; converted rule defaults to enabled.
+^https:\/\/moapi\.wps\.cn\/app\/ios\/v1\/app$ url script-request-body https://kelee.one/Resource/JavaScript/WPS/WPS_checkin.js
+
+# [task_local]
+
+# [WayX] Known Quantumult X target limitation: Quantumult X task declarations have no official Loon PluginObject/String $argument equivalent; task omitted to avoid changing script input semantics.
+# Source declaration: cron ${CRONEXP} then script("https://kelee.one/Resource/JavaScript/WPS/WPS_checkin.js", {${AK}, ${SK}, ${MAX_RETRIES}}) with tag="WPS每日签到", timeout=120
+
+# [mitm]
+hostname = moapi.wps.cn

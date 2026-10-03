@@ -3,7 +3,7 @@
 // Category: Converter / Rewrite v2 / Semantic Mapping
 import { compileRegexForTarget, normalizeRegexBodyForTarget } from './target-regex.mjs';
 import { qxPrimitiveForRewriteV2Action, validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
-import { quoteJq, renderFixedPathDeleteJq } from './jq.mjs';
+import { parseJsonKeyPath, quoteJq, renderFixedPathDeleteJq } from './jq.mjs';
 import { dependencySpecFromAction } from './dependency.mjs';
 
 function unsupported(reason, extra = {}) {
@@ -33,26 +33,7 @@ export function simpleUrlRewriteCondition(ast, {target = 'generic'} = {}) {
 }
 
 function parseKeyPath(path) {
-  const text = String(path || '');
-  if (!text) throw new Error('JSON key path must not be empty');
-  const parts = [];
-  let i = 0;
-  while (i < text.length) {
-    if (text[i] === '.') { i++; continue; }
-    if (text[i] === '[') {
-      const m = text.slice(i).match(/^\[(\d+)\]/);
-      if (!m) throw new Error('unsupported JSON key-path bracket syntax: ' + text);
-      parts.push(Number(m[1]));
-      i += m[0].length;
-      continue;
-    }
-    const m = text.slice(i).match(/^[^.[\]]+/);
-    if (!m) throw new Error('invalid JSON key path: ' + text);
-    parts.push(m[0]);
-    i += m[0].length;
-  }
-  if (!parts.length) throw new Error('JSON key path must not be empty');
-  return parts;
+  return parseJsonKeyPath(path);
 }
 
 function pathLiteral(path) {
@@ -323,16 +304,21 @@ export function surgeDirectRewritePlan(ast) {
   return unsupported('action requires generated script or target-specific mapping');
 }
 
-function loonTemplateToSurge(template, capture) {
-  const converted = String(template).replace(/\$\{([A-Za-z_][A-Za-z0-9_-]*)\.(\d+)\}/g, (_, name, number) => {
+function loonTemplateToSurge(template, capture, argumentTable = null) {
+  let converted = String(template).replace(/\$\{([A-Za-z_][A-Za-z0-9_-]*)\.(\d+)\}/g, (_, name, number) => {
     if (!capture || name !== capture) throw new Error('URL replacement contains a non-URL capture');
     return '$' + number;
   });
-  if (converted.includes('$' + '{')) throw new Error('URL replacement contains a non-URL variable');
+  converted = converted.replace(/\$\{([A-Za-z_][A-Za-z0-9_-]*)\}/g, (_, name) => {
+    const entry=argumentTable?.byId?.get(String(name));
+    if (!entry) throw new Error('URL replacement contains an undeclared plugin argument: '+name);
+    return entry.placeholder;
+  });
+  if (converted.includes('$' + '{')) throw new Error('URL replacement contains an unsupported variable');
   return converted;
 }
 
-export function surgeRedirectRewritePlan(ast) {
+export function surgeRedirectRewritePlan(ast, {argumentTable = null} = {}) {
   validateRewriteV2Ast(ast);
   if (ast.actions.length !== 1 || !['redirect','url.replace'].includes(ast.actions[0].name)) {
     return unsupported('Surge URL Rewrite mapping requires one redirect/url.replace action');
@@ -347,7 +333,7 @@ export function surgeRedirectRewritePlan(ast) {
     if (status?.type !== 'number' || ![302,307].includes(status.value)) return unsupported('redirect status must be 302 or 307');
     if (target === null) return unsupported('redirect target must be a fixed string');
     try {
-      const replacement = loonTemplateToSurge(target, condition.capture);
+      const replacement = loonTemplateToSurge(target, condition.capture, argumentTable);
       return {
         ok:true, strategy:'direct', section:'url', pattern:condition.pattern,
         line:condition.pattern + ' ' + replacement + ' ' + status.value, notes:condition.notes,
@@ -360,7 +346,7 @@ export function surgeRedirectRewritePlan(ast) {
   const target = stringNode(action.args[0]);
   if (target === null) return unsupported('url.replace target must be a fixed string');
   try {
-    const replacement = loonTemplateToSurge(target, condition.capture);
+    const replacement = loonTemplateToSurge(target, condition.capture, argumentTable);
     return {
       ok:true, strategy:'direct', section:'url', pattern:condition.pattern,
       line:condition.pattern + ' ' + replacement + ' header', notes:condition.notes,

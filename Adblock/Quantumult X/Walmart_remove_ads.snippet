@@ -1,0 +1,28 @@
+# Name: 沃尔玛去广告
+# Description: 移除操作引导、商品详情页用户调研、搜索填充词和搜索发现，精简我的页面。
+# Open URL: https://apps.apple.com/app/id6737541723
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Walmart.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:12 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/Walmart_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/api-hyper\.walmartmobile\.cn\/search\/ad\/ url reject-dict
+
+^https:\/\/api-hyper\.walmartmobile\.cn\/cms-web\/frontapi\/shadedWords\/list\? url reject-dict
+
+^https:\/\/api-hyper\.walmartmobile\.cn\/search\/frontapi\/discovery-words\/list$ url reject-dict
+
+^https:\/\/api-hyper\.walmartmobile\.cn\/cms-web\/frontapi\/common\/page\/get\?.*&type=26$ url jsonjq-response-body '.data |= (.moduleList | map(select(.templateCode == "nav-bar-title" or .templateCode == "member-info" or .templateCode == "distribution-center" or .templateCode == "wallet" or .templateCode == "swiper" or .templateCode == "my-order")))'
+
+# [mitm]
+hostname = api-hyper.walmartmobile.cn

@@ -1,6 +1,7 @@
 // WayX Catalog-observed Loon v2 semantic-token inventory
 // Author: chance
 // Category: Converter / Validation / Observed Semantics
+// Baseline is evaluated against the refreshed full catalog in CI; do not run this inventory before source refresh.
 
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -90,9 +91,9 @@ for(const entry of manifest){
   }
 
   for(const line of activeSectionLines(source,'Script')){
-    const looksV2=/^(?:request|response)\b/.test(line);
+    const looksV2=/^(?:request|response|cron|network-changed|generic)\b/.test(line);
     if(!looksV2) continue;
-    assert.ok(isScriptV2(line),entry.file+': request/response Script line is outside Script v2 grammar:\n'+line);
+    assert.ok(isScriptV2(line),entry.file+': Script v2-looking line is outside Script v2 grammar:\n'+line);
     const ast=parseScriptV2(line);
     scriptCount++;
     observed.scriptV2.phases.add(ast.phase);

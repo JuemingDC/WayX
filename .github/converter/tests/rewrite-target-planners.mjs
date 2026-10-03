@@ -34,6 +34,18 @@ const legacyReject=legacyRewriteToSemanticIr('^https://ads\\.example\\.com','rej
 assert.equal(planQxRewrite(legacyReject,ctx()).line,'^https://ads\\.example\\.com url reject-dict');
 assert.equal(planSurgeRewrite(legacyReject,ctx()).section,'map');
 
+const legacyQuotedKey=legacyRewriteToSemanticIr(
+  '^https://api\\.example\\.com',
+  'response-body-json-replace data["3D_AVATAR_UPDATE"] false',
+);
+const qxLegacyQuotedKey=planQxRewrite(legacyQuotedKey,ctx());
+assert.equal(qxLegacyQuotedKey.section,'rewrite');
+assert.match(qxLegacyQuotedKey.line,/jsonjq-response-body/);
+assert.match(qxLegacyQuotedKey.line,/3D_AVATAR_UPDATE/);
+const surgeLegacyQuotedKey=planSurgeRewrite(legacyQuotedKey,ctx());
+assert.equal(surgeLegacyQuotedKey.section,'body');
+assert.match(surgeLegacyQuotedKey.line,/http-response-jq/);
+
 const rawUrlPattern='^https:\\/\\/api\\.example\\.com\\/v1\\/(?:a|b)\\?x=1$';
 const rawUrlMatcher=qxExactRewriteMatcherPlan(parseRewriteV2(
   'request if ${url} ~= /'+rawUrlPattern+'/ then request.header.add("X-Test","1")'
@@ -154,6 +166,13 @@ const redirectOr=planQxRewrite(v2(redirectOrSource),redirectOrCtx);
 assert.equal(redirectOr.section,'comment');
 assert.match(redirectOr.line,/REVIEW REQUIRED/);
 assert.equal(redirectOrCtx.generatedScripts.size,0);
+
+const quotedV2JsonSource='response if ${url} ~= /api/ then response.json.delete(["data.resp_map[\\"/apihub/api/getAppConfig\\"].enabled", "data[\\"3D_AVATAR_UPDATE\\"]"])';
+const quotedV2Json=planQxRewrite(v2(quotedV2JsonSource),ctx());
+assert.equal(quotedV2Json.section,'rewrite');
+assert.match(quotedV2Json.line,/jsonjq-response-body/);
+assert.ok(quotedV2Json.line.includes('/apihub/api/getAppConfig'));
+assert.match(quotedV2Json.line,/3D_AVATAR_UPDATE/);
 
 const jsonAddSource='response if ${url} ~= /api/ then response.json.add("data.new",true)';
 const jsonAddIr=v2(jsonAddSource);

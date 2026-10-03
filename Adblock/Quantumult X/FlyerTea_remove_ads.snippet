@@ -1,0 +1,29 @@
+# Name: 飞客去广告
+# Description: 移除开屏广告、首页广告、板块广告、帖内广告和我的页面广告。
+# Open URL: https://apps.apple.com/app/id547560608
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FlyerTea.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:52 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/FlyerTea_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=advis url reject
+^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=vip_coupon url reject-dict
+^https:\/\/ptf\.flyertrip\.com\/static\/img\/common\/ic_plate_mine_button\.png url reject-img
+^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=getdata url reject-dict
+# 移除板块广告
+^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?version=5 url script-response-body https://kelee.one/Resource/JavaScript/FlyerTea/FlyerTea_remove_ads.js
+# 移除签到弹窗广告
+^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=plugin&id=k_misign:sign url script-response-body https://kelee.one/Resource/JavaScript/FlyerTea/FlyerTea_remove_ads.js
+
+# [mitm]
+hostname = www.flyert.com.cn, ptf.flyertrip.com

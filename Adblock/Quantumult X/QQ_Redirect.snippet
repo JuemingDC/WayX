@@ -1,0 +1,29 @@
+# Name: QQ链接解锁
+# Description: 解除QQ内访问非白名单之外的地址提示停止访问该页面的限制，并移除跟踪参数，使用前需要清除QQ的缓存数据。
+# Open URL: https://apps.apple.com/app/id444934666
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/QQ.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:39 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/QQ_Redirect.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+(^https:\/\/c\.pc\.qq\.com\/middlem\.html\?pfurl=)(http.*)(&pfuin=.*) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_QQ_Redirect/redirect_ea0619174d.js
+(^https:\/\/c\.pc\.qq\.com\/middlect\.html\?pfuin=.*&pfurl=)(http.*)(&gjsublevel=.*) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_QQ_Redirect/redirect_e94a1e8044.js
+(^https:\/\/c\.pc\.qq\.com\/middlect\.html\?iscontinue=.*pfurl=)(http.*)(&pfuin=.*) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_QQ_Redirect/redirect_7137e6ba75.js
+(^https:\/\/pingtas\.qq\.com\/webview\/pingd\?dm=c\.pc\.qq\.com&pvi=\d+&si=s\d+&url=\/middlem\.html\?pfurl%3d)(http.*)(%26pfuin%3d.*%26pfuin%3d.*) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_QQ_Redirect/redirect_d113ec8349.js
+(^https:\/\/cgi\.connect\.qq\.com\/qqconnectopen\/get_urlinfoForQQV2\?url=)(http.*) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_QQ_Redirect/redirect_2dad6d1dff.js
+(^https:\/\/c\.pc\.qq\.com\/index\.html\?pfurl=)(http.*)(&pfuin=.*) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_QQ_Redirect/redirect_03b7f52f7b.js
+(^https:\/\/c\.pc\.qq\.com\/ios\.html\?url=)(http.*)(&level=.*) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_QQ_Redirect/redirect_b2dc9d2a16.js
+(^https:\/\/pingtas\.qq\.com\/webview\/pingd\?dm=c\.pc\.qq\.com&pvi=\d+&si=s\d+&url=\/ios\.html\?url%3d)(http.*)(%26level.*%26level.*) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_QQ_Redirect/redirect_273358c5af.js
+
+# [mitm]
+hostname = pingtas.qq.com, c.pc.qq.com, cgi.connect.qq.com

@@ -1,0 +1,32 @@
+# Name: 随手记去广告
+# Description: 移除开屏广告、神象云账本内部广告、我的页面广告，移除社区入口。
+# Open URL: https://apps.apple.com/app/id372353614
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KingdeeMyMoney.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:06 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/KingdeeMyMoney_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/tg\.feidee\.com\/online_ad\/api\/search\.do$ url reject-dict
+
+^https:\/\/yunmk\.feidee\.net\/cab-market-ws\/market\/v2\/contents$ url reject-dict
+
+^https:\/\/tg\.feidee\.com\/vis-ad-engine-ws\/api\/v2\/ads\/.+esultNum url reject-dict
+
+^https:\/\/api\.feidee\.net\/v1\/configs\/client\/configs url reject
+
+^https:\/\/tg\.feidee\.com\/vis-ad-engine-ws\/api\/show url reject-dict
+
+^https:\/\/yun\.feidee\.net\/cab-periodic-activity-ws\/terminal\/v1\/members\/status url reject-dict
+
+# [mitm]
+hostname = tg.feidee.com, yunmk.feidee.net, community.feidee.com, api.feidee.net, yun.feidee.net

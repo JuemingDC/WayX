@@ -1,0 +1,23 @@
+# Name: 每日赛车去广告
+# Description: 移除开屏广告、信息流广告。
+# Open URL: https://apps.apple.com/app/id1590997618
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MeiRiSaiChe.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:01 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/MeiRiSaiChe_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/api\.romielf\.com\/index\/indexv\d\? url jsonjq-response-body 'if getpath(["data","advertisement"]) then setpath(["data","advertisement"]; "[]") else . end | if getpath(["data","listadvertising"]) then setpath(["data","listadvertising"]; "[]") else . end'
+^https:\/\/api\.romielf\.com\/index\/indexv\d\? url jsonjq-response-body '.data.list |= map(select(.type == 1))'
+
+# [mitm]
+hostname = api.romielf.com

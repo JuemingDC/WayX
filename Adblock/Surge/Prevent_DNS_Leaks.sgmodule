@@ -1,0 +1,46 @@
+#!name=DNS防泄露
+#!desc=专为小白设计的DNS防泄露
+#!category=WayX
+#!arguments=wayx_proxy_policy:DIRECT
+#!arguments-desc=wayx_proxy_policy: Loon PROXY policy binding — default DIRECT; set to the desired Surge proxy policy or policy group
+
+# Author: 非正常人类研究中心
+# Tags: DNS
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/Other_icon/120px/Prevent_DNS_Leaks.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:36 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/Prevent_DNS_Leaks.lpx
+# Target: Surge
+
+[Rule]
+DOMAIN-SUFFIX,dnsleaktest.com,{{{wayx_proxy_policy}}}
+DOMAIN-SUFFIX,dnsleak.com,{{{wayx_proxy_policy}}}
+DOMAIN-SUFFIX,expressvpn.com,{{{wayx_proxy_policy}}}
+DOMAIN-SUFFIX,nordvpn.com,{{{wayx_proxy_policy}}}
+DOMAIN-SUFFIX,surfshark.com,{{{wayx_proxy_policy}}}
+DOMAIN-SUFFIX,ipleak.net,{{{wayx_proxy_policy}}}
+DOMAIN-SUFFIX,perfect-privacy.com,{{{wayx_proxy_policy}}}
+DOMAIN-SUFFIX,browserleaks.com,{{{wayx_proxy_policy}}}
+DOMAIN-SUFFIX,browserleaks.org,{{{wayx_proxy_policy}}}
+DOMAIN-SUFFIX,vpnunlimited.com,{{{wayx_proxy_policy}}}
+DOMAIN-SUFFIX,whoer.net,{{{wayx_proxy_policy}}}
+DOMAIN-SUFFIX,whrq.net,{{{wayx_proxy_policy}}}
+
+DOMAIN-SUFFIX,astrill.com,{{{wayx_proxy_policy}}}
+DOMAIN-SUFFIX,astrill.org,{{{wayx_proxy_policy}}}
+DOMAIN-SUFFIX,dnsleak.asn247.net,{{{wayx_proxy_policy}}}
+
+DOMAIN-SUFFIX,surfshark.com,{{{wayx_proxy_policy}}}
+DOMAIN-SUFFIX,surfsharkdns.com,{{{wayx_proxy_policy}}}
+
+DOMAIN-SUFFIX,pixelscan.net,{{{wayx_proxy_policy}}}
+
+DOMAIN,ipv4.ping0.cc,{{{wayx_proxy_policy}}}
+DOMAIN,ipv6.ping0.cc,{{{wayx_proxy_policy}}}
+
+DOMAIN-SUFFIX,ipapi.co,{{{wayx_proxy_policy}}}
+
+DOMAIN,ip-scan.adspower.net,{{{wayx_proxy_policy}}}

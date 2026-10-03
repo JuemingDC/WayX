@@ -1,0 +1,32 @@
+# Name: 快对去广告
+# Description: 移除开屏广告、横幅推广，精简我的页面。
+# Open URL: https://apps.apple.com/app/id1330927814
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KuaiDuiZuoYe.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:58 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/KuaiDuiZuoYe_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+host, adx.zuoyebang.com, reject
+
+# [rewrite_local]
+^https:\/\/www\.kuaiduizuoye\.com\/init\/ad\/ url reject-dict
+
+^https:\/\/www\.kuaiduizuoye\.com\/activity\/init\/checkappconfig$ url reject-dict
+
+^https:\/\/www\.kuaiduizuoye\.com\/kdapi\/conf\/appbannersv3$ url reject-dict
+^https:\/\/www\.kuaiduizuoye\.com\/kdapi\/conf\/initbanner$ url reject-dict
+
+^https:\/\/www\.kuaiduizuoye\.com\/codesearch\/aid\/home$ url jsonjq-response-body 'del(.data.homeBannerList)'
+
+^https:\/\/apivip\.kuaiduizuoye\.com\/viponline\/scancode\/mycard$ url reject-dict
+
+# [mitm]
+hostname = www.kuaiduizuoye.com, apivip.kuaiduizuoye.com

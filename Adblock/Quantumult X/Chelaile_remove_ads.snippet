@@ -1,0 +1,39 @@
+# Name: 车来了去广告
+# Description: 清洗配置，移除开屏广告、首页金刚位、文章推荐，精简我的页面。
+# Open URL: https://apps.apple.com/app/id667831823
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Chelaile.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:49 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/Chelaile_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+host, ad.chelaile.net.cn, reject
+
+# [rewrite_local]
+^https:\/\/api\.chelaile\.net\.cn\/goocity\/flowPos\/home\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Chelaile_remove_ads/mock_00801c9443.js
+
+^https:\/\/api\.chelaile\.net\.cn\/goocity\/flowPos\/listByPos\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Chelaile_remove_ads/mock_19c354797e.js
+
+^https:\/\/web\.chelaile\.net\.cn\/api\/operative_position\/infoflow\/getInfo\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Chelaile_remove_ads/mock_e210d03e3e.js
+
+^https:\/\/cdn\.web\.chelaile\.net\.cn\/info-flow\/index\.html\? url reject
+
+^https:\/\/image3\.chelaile\.net\.cn\/hw6u6LYY\.png$ url reject-img
+
+^https:\/\/api\.chelaile\.net\.cn\/led-weather\/v\d\/condition_brief\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Chelaile_remove_ads/mock_8e24696163.js
+
+^https:\/\/api\.chelaile\.net\.cn\/goocity\/config\/notices\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Chelaile_remove_ads/mock_5573f645a4.js
+
+^https:\/\/api\.chelaile\.net\.cn\/encourage\/activity\/control\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Chelaile_remove_ads/mock_64e5d6db03.js
+# 清洗配置
+^https:\/\/api\.chelaile\.net\.cn\/bus-side\/appToggle\/getStatus\? url script-response-body https://kelee.one/Resource/JavaScript/Chelaile/Chelaile_remove_ads.js
+
+# [mitm]
+hostname = api.chelaile.net.cn, web.chelaile.net.cn, cdn.web.chelaile.net.cn, image3.chelaile.net.cn

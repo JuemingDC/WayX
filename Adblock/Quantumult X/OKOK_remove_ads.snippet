@@ -1,0 +1,28 @@
+# Name: OKOK去广告
+# Description: 移除开屏广告、横幅广告，精简首页，拦截优惠购页面。
+# Open URL: https://apps.apple.com/app/id999308991
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/OKOK.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:39 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/OKOK_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/api\.chips-cloud\.com\/v\d\/home\/collection\/smartv\d\? url reject-dict
+
+^https:\/\/api\.chips-cloud\.com\/v\d\/communityManage\/list\? url reject-dict
+
+^https:\/\/api\.chips-cloud\.com\/v\d\/good\/list\? url reject-dict
+
+^https:\/\/shop171777386\.m\.youzan\.com\/v2\/showcase\/homepage\? url reject
+
+# [mitm]
+hostname = api.chips-cloud.com, shop171777386.m.youzan.com

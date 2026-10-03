@@ -1,0 +1,26 @@
+# Name: 一甜相机去广告
+# Description: 移除开屏广告、悬浮广告及图片选择器横幅广告。
+# Open URL: https://apps.apple.com/app/id1415653267
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Yitian.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:16 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/Yitian_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/(m2u-api\.getkwai|api-m2u\.kuaishou)\.com\/api-server\/api\/v1\/ad\/ url reject-dict
+
+^https:\/\/(m2u-api\.getkwai|api-m2u\.kuaishou)\.com\/api-server\/api\/v1\/system\/configs\? url jsonjq-response-body 'del(.data.shouldUseLMAdFirst, .data.incentiveCfgList)'
+
+^https:\/\/(m2u-api\.getkwai|api-m2u\.kuaishou)\.com\/api-server\/api\/v4\/op\/actPositions\? url reject-dict
+
+# [mitm]
+hostname = m2u-api.getkwai.com, api-m2u.kuaishou.com

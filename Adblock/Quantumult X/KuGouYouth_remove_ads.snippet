@@ -1,0 +1,40 @@
+# Name: 酷狗概念版去广告
+# Description: 移除广告服务模块、播放器广告，精简乐库及搜索页面。
+# Open URL: https://apps.apple.com/app/id1480205582
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KuGouYouth.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:59 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/KuGouYouth_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/gateway\.kugou\.com\/ads\.service\/ url reject-dict
+
+^https:\/\/gateway\.kugou\.com\/youth\/v1\/start_img\/last\? url reject-dict
+
+^https:\/\/gateway\.kugou\.com\/youth\/v1\/yueku\/tab\? url jsonjq-response-body '.data.responses |= map(select(.module == "new_song_publish" or .module == "song_rank"))'
+
+^https:\/\/gateway\.kugou\.com\/ads\.gateway\/ url reject-dict
+
+^http:\/\/mobilelog\.kugou\.com\/adtrackconfig\.json$ url reject-dict
+
+^https:\/\/gateway\.kugou\.com\/youth\/v1\/experiment\/get_params\? url reject-dict
+
+^https:\/\/gateway\.kugou\.com\/youth\/api\/user\/v1\/init\? url reject-dict
+
+^https:\/\/gateway\.kugou\.com\/youth\/v2\/activity\/task_list\? url reject-dict
+
+^https:\/\/gateway\.kugou\.com\/youth\/v1\/channel\/tab_list\? url reject-dict
+
+^https:\/\/gateway\.kugou\.com\/goddess\/v1\/content\/biz_list\? url reject-dict
+
+# [mitm]
+hostname = gateway.kugou.com

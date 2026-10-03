@@ -87,7 +87,10 @@ function parseParameter(raw) {
 
 export function parseLoonRuleAst(line,{nested=false}={}) {
   const source=String(line ?? '').trim();
-  const parts=splitTopLevelCsv(source);
+  const inline=source.match(/^(.*?)\s+\/\/\s*(.+)$/);
+  const syntaxSource=inline ? inline[1].trim() : source;
+  const inlineComment=inline ? inline[2].trim() : '';
+  const parts=splitTopLevelCsv(syntaxSource);
   const type=String(parts[0] ?? '').trim().toUpperCase();
   if (!type) return {ok:false,ast:null,reason:'missing-rule-type'};
 
@@ -98,6 +101,8 @@ export function parseLoonRuleAst(line,{nested=false}={}) {
 
   const ast={
     source,
+    syntaxSource,
+    inlineComment,
     nested:Boolean(nested),
     kind:logical ? 'logical' : 'rule',
     type,

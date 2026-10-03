@@ -10,6 +10,7 @@ const QX_DESTINATIONS=new Map([
   ['comment','notes'],
   ['filter','filter'],
   ['rewrite','rewrite'],
+  ['task','task'],
   ['mitm','mitm'],
 ]);
 
@@ -18,6 +19,7 @@ export function createQxOutputState() {
     notes:[],
     filter:[],
     rewrite:[],
+    task:[],
     mitm:[],
     generatedScripts:new Map(),
   };
@@ -56,6 +58,7 @@ export function renderQxOutput({state,headerLines,entry,stamp}) {
     '# [rewrite_local]',
     ...compactOutputLines(state.rewrite),
     '',
+    ...(state.task.length ? ['# [task_local]',...compactOutputLines(state.task),''] : []),
     '# [mitm]',
     ...compactOutputLines(state.mitm),
     '',

@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { parseLoonRuleAst } from '../src/rule-ast.mjs';
+import { classifyLegacyRewriteAction } from '../src/rewrite-ir.mjs';
 
 const ROOT=process.cwd();
 const manifest=JSON.parse(await fs.readFile(
@@ -43,6 +44,18 @@ function collectNode(node,{file='unknown'}={}) {
   for (const child of node.children) collectNode(child,{file});
 }
 
+function splitPatternAction(line) {
+  const idx=String(line).search(/\s/);
+  if (idx<0) return [String(line).trim(),''];
+  return [String(line).slice(0,idx).trim(),String(line).slice(idx).trim().replace(/^\-\s+/,'')];
+}
+
+function isKnownSourceNonRule(line) {
+  const [pattern,action]=splitPatternAction(line);
+  if (pattern && action && classifyLegacyRewriteAction(action).kind!=='unknown') return true;
+  return !String(line).includes(',') && /^(?:\*\.)?(?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,}$/i.test(String(line));
+}
+
 function activeRuleLines(text) {
   const out=[];
   let section=null;
@@ -63,6 +76,7 @@ for (const entry of manifest) {
   const file=path.join(ROOT,'Resource/Loon',entry.file);
   const text=await fs.readFile(file,'utf8');
   for (const line of activeRuleLines(text)) {
+    if (isKnownSourceNonRule(line)) continue;
     declarationCount++;
     const parsed=parseLoonRuleAst(line);
     assert.ok(parsed.ok, `${entry.file}: Rule AST parse failed (${parsed.reason}): ${line}`);
@@ -80,18 +94,28 @@ const actual={
   logicalOperators:sorted(inventory.logicalOperators),
 };
 
-assert.deepEqual(
-  actual,
-  baseline,
-  [
-    'Catalog-observed Loon Rule semantic-token inventory changed.',
-    'Do not update the baseline mechanically.',
-    'This gate intentionally ignores top/nested placement, RuleType:parameter combinations,',
-    'field counts, AND/OR child counts, logical placement and observed nesting depth.',
-    'Only a genuinely new Rule type, top-level policy, parameter name or logical operator',
-    'requires Loon semantics and target-capability review.',
-  ].join(' ')
-);
+assert.equal(actual.version,baseline.version,'Rule inventory fixture version drifted');
+assert.equal(actual.scope,baseline.scope,'Rule inventory fixture scope drifted');
+
+function assertNoNewObserved(actualValues, baselineValues, label) {
+  const expected=new Set(baselineValues || []);
+  const added=(actualValues || []).filter(value=>!expected.has(value));
+  assert.deepEqual(
+    added,
+    [],
+    [
+      'Catalog-observed Loon Rule inventory gained new '+label+'.',
+      'Do not update the baseline mechanically.',
+      'Disappearing historical tokens are allowed; only newly observed semantics require review.',
+      'Actual inventory: '+JSON.stringify(actual),
+    ].join(' ')
+  );
+}
+
+assertNoNewObserved(actual.ruleTypes,baseline.ruleTypes,'Rule type');
+assertNoNewObserved(actual.policies,baseline.policies,'top-level policy');
+assertNoNewObserved(actual.parameterNames,baseline.parameterNames,'parameter name');
+assertNoNewObserved(actual.logicalOperators,baseline.logicalOperators,'logical operator');
 
 console.log(
   'Catalog Rule inventory passed: '+

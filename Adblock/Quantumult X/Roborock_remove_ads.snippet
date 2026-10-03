@@ -1,0 +1,28 @@
+# Name: Roborock去广告
+# Description: 移除横幅、活动推广、机器人图标，精简服务中心。
+# Open URL: https://apps.apple.com/app/id1462875428
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Roborock.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:40 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/Roborock_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/cniot\.roborock\.com\/api\/v1\/activity\/banner\/list$ url reject-dict
+
+^https:\/\/cniot\.roborock\.com\/api\/v1\/activity\/latest$ url reject-dict
+
+^https:\/\/cniot\.roborock\.com\/api\/v1\/app\/theme\/device\/icon\? url reject
+
+^https:\/\/api\.roborock\.com\/v2\/h5\.page\.item\.info\?id=4115$ url jsonjq-response-body '.data |= map(select(.title == "常用功能"))'
+
+# [mitm]
+hostname = cniot.roborock.com, api.roborock.com

@@ -47,12 +47,11 @@ assert.equal(sourceCommentText('DOMAIN,example.com,REJECT'),null);
 
 assert.deepEqual(
   [...WAYX_SUPPORTED_SOURCE_SECTIONS],
-  ['Argument','Rule','Rewrite','Script','MITM','MitM'],
+  ['Argument','General','Rule','Rewrite','Script','MITM','MitM'],
 );
-for(const name of ['Argument','Rule','Rewrite','Script','MITM','MitM']) {
+for(const name of ['Argument','General','Rule','Rewrite','Script','MITM','MitM']) {
   assert.equal(isSupportedSourceSection(name),true);
 }
-assert.equal(isSupportedSourceSection('General'),false);
 assert.equal(isSupportedSourceSection('MITMExtra'),false);
 
 const metadata=parseSourceMetadataHeader([

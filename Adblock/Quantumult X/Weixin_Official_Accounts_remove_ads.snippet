@@ -1,0 +1,25 @@
+# Name: 微信公众号去广告
+# Description: 过滤微信公众号广告
+# Open URL: https://apps.apple.com/app/id414478124
+# Author: RuCu6[https://github.com/RuCu6]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Weixin.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:10 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/Weixin_Official_Accounts_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+host-suffix, wxs.qq.com, reject
+
+# [rewrite_local]
+^https:\/\/mp\.weixin\.qq\.com\/mp\/(cps_product_info|getappmsgad|jsmonitor|masonryfeed|relatedarticle)\? url reject-dict
+
+^https:\/\/mp\.weixin\.qq\.com\/mp\/relatedsearchword url reject-dict
+
+# [mitm]
+hostname = mp.weixin.qq.com

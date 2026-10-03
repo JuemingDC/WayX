@@ -1,0 +1,22 @@
+# Name: 中国天气去广告
+# Description: 移除开屏广告、弹窗广告、横幅广告，移除焦点视频、精简我的页面。
+# Open URL: https://apps.apple.com/app/id457959333
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/WeatherChina.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:18 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/WeatherChina_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/tqtdata\.weathercn\.com\/forestbox\/getVideoListApp\? url reject-dict
+
+# [mitm]
+hostname = tqtdata.weathercn.com

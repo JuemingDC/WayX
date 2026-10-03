@@ -1,0 +1,41 @@
+# Name: 腾讯视频去广告
+# Description: 过滤腾讯视频客户端广告，如遇失效，则需要重新安装腾讯视频客户端。由于此插件不再维护，客户端版本高于8.9.40可能会导致此插件失效，请勿升级客户端。
+# Open URL: https://apps.apple.com/app/id458318329
+# Author: RuCu6[https://github.com/RuCu6]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Tencent_Video.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:07 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/Tencent_Video_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+host, adsmind.gdtimg.com, reject
+host, info4.video.qq.com, reject
+host, info6.video.qq.com, reject
+host, ios.video.mpush.qq.com, reject
+host, otheve.beacon.qq.com, reject
+host, pgdt.gtimg.cn, reject
+host, tpns.qq.com, reject
+host, vv6.video.qq.com, reject
+host-suffix, gdt.qq.com, reject
+host-suffix, l.qq.com, reject
+host-keyword, trace.qq.com, reject
+host-keyword, trace.video.qq.com, reject
+ip-cidr, 47.110.187.87/32, reject
+
+# [rewrite_local]
+^http:\/\/[\d\.:]*\/?(defaultts\.tc|vmind\.qqvideo\.tc|finderpdd\.video)\.qq\.com\/\w+ url reject-200
+^http:\/\/apd-vlive\.apdcdn\.tc\.qq\.com\/vmind\.qqvideo\.tc\.qq\.com\/\w+ url reject-200
+^http:\/\/apd-\w+\.v\.smtcdns\.com\/(defaultts|omts|vmind\.qqvideo)\.tc\.qq\.com\/\w+ url reject-200
+^https?:\/\/vv\.video\.qq\.com\/(diff|get)vmind url reject-dict
+# 移除广告
+# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
+^https?:\/\/vv\.video\.qq\.com\/getvinfo url script-request-body https://kelee.one/Resource/JavaScript/CommonScript/replace-body.js
+
+# [mitm]
+hostname = vv.video.qq.com

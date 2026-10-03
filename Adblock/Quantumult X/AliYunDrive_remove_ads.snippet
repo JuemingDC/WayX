@@ -1,0 +1,28 @@
+# Name: 阿里云盘去广告
+# Description: 移除首页广告横幅、弹窗和顶部奖励。
+# Open URL: https://apps.apple.com/app/id1494661473
+# Author: RuCu6[https://github.com/RuCu6]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/AliYunDrive.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:45 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/AliYunDrive_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+ip-cidr, 203.107.1.1/24, reject
+
+# [rewrite_local]
+^https:\/\/member\.alipan\.com\/v2\/activity\/sign_in_luckyBottle url reject-dict
+^https:\/\/api\.alipan\.com\/adrive\/v1\/file\/getTopFolders url reject-dict
+# 移除阿里云盘广告
+^https:\/\/(biz)?api\.alipan\.com\/apps\/v\d\/users?\/home\/(news|widgets) url script-response-body https://kelee.one/Resource/JavaScript/AliYunDrive/AliYunDrive_remove_ads.js
+# 移除阿里云盘广告
+^https:\/\/member\.alipan\.com\/v1\/users\/onboard_list url script-response-body https://kelee.one/Resource/JavaScript/AliYunDrive/AliYunDrive_remove_ads.js
+
+# [mitm]
+hostname = api.alipan.com, member.alipan.com, bizapi.alipan.com

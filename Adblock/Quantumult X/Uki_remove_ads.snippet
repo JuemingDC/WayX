@@ -1,0 +1,38 @@
+# Name: Uki去广告
+# Description: 移除开屏广告、应用内悬浮窗，各类横幅、信息流广告、搜索填充词、我的页面广告。
+# Open URL: https://apps.apple.com/app/id1298912284
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Uki.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:43 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/Uki_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/api\.chenlongtech\.cn\/v\d\/friends\/startInfo$ url reject-dict
+^https:\/\/api\.chenlongtech\.cn\/v\d\/friends\/indexBanner$ url reject-dict
+^https:\/\/api\.chenlongtech\.cn\/v\d\/friends\/getPopup url reject-dict
+^https:\/\/api\.chenlongtech\.cn\/v\d\/friends\/allPopUpConfig$ url reject-dict
+^https:\/\/api\.chenlongtech\.cn\/v\d\/friends\/advConf$ url reject-dict
+^https:\/\/api\.chenlongtech\.cn\/v\d\/user\/checkQTSheInsurance$ url reject-dict
+# 移除匹配卡横幅
+^https:\/\/api\.chenlongtech\.cn\/v\d\/lover\/productList url script-response-body https://kelee.one/Resource/JavaScript/Uki/Uki_remove_ads.js
+
+# 移除密友横幅
+^https:\/\/api\.chenlongtech\.cn\/v\d\/friends\/closeFriend\/home url script-response-body https://kelee.one/Resource/JavaScript/Uki/Uki_remove_ads.js
+
+# 移除娱乐页面横幅和悬浮窗配置
+^https:\/\/api\.chenlongtech\.cn\/v\d\/party\/config$ url script-response-body https://kelee.one/Resource/JavaScript/Uki/Uki_remove_ads.js
+
+# 移除广场搜索填充词
+^https:\/\/api\.chenlongtech\.cn\/v1\/post\/fetchSearchRecommend$ url script-response-body https://kelee.one/Resource/JavaScript/Uki/Uki_remove_ads.js
+
+# [mitm]
+hostname = api.chenlongtech.cn

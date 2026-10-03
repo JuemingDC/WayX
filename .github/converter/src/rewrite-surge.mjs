@@ -144,6 +144,15 @@ export function planSurgeRewrite(ir,ctx={}) {
     }
   }
 
+  if (ast.actions?.length===1 && ['redirect','url.replace'].includes(ast.actions[0]?.name)) {
+    try {
+      const mapped=surgeRedirectRewritePlan(ast,{argumentTable:ctx.argumentTable});
+      if (mapped.ok) return {section:mapped.section,line:mapped.line,lines:mapped.lines};
+    } catch {
+      // Continue to generated-script/complex fallbacks.
+    }
+  }
+
   if (!argumentRefs.length) {
     try {
       for (const mapper of [

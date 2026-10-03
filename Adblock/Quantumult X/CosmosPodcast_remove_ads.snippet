@@ -1,0 +1,29 @@
+# Name: 小宇宙去广告
+# Description: 移除开屏广告、搜索框推荐词和AI总结。
+# Open URL: https://apps.apple.com/app/id1488894313
+# Author: wish
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/CosmosPodcast.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:14 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/CosmosPodcast_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/api\.xiaoyuzhoufm\.com\/v1\/discovery-feed\/list url jsonjq-response-body '.data |= map(select(.type != "DISCOVERY_HEADER" and .type != "DISCOVERY_BANNER"))'
+
+^https:\/\/api\.xiaoyuzhoufm\.com\/v\d\/flash url reject-dict
+
+^https:\/\/api\.xiaoyuzhoufm\.com\/v\d\/ai url reject-dict
+
+^https:\/\/api\.xiaoyuzhoufm\.com\/v\d\/search\/get url reject-dict
+^https?:\/\/api\.xiaoyuzhoufm\.com\/v\d\/category url reject-dict
+
+# [mitm]
+hostname = api.xiaoyuzhoufm.com

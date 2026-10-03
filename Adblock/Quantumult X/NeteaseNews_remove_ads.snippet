@@ -1,0 +1,38 @@
+# Name: 网易新闻去广告
+# Description: 移除开屏广告、置顶新闻、热搜列表和搜索栏填充词。
+# Open URL: https://apps.apple.com/app/id425349261
+# Author: RuCu6[https://github.com/RuCu6]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/NeteaseNews.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:09 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/NeteaseNews_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+host, nex.163.com, direct
+host, gw.m.163.com, direct
+
+# [rewrite_local]
+^https?:\/\/interface\.music\.163\.com\/eapi\/ad url reject
+^https?:\/\/c\.m\.163\.com\/nc\/gl\/ url reject
+^https?:\/\/client\.mail\.163\.com\/apptrack\/confinfo\/searchMultiAds url reject
+^https?:\/\/g1\.163\.com\/madfeedback url reject
+^https?:\/\/interface\.music\.163\.com\/eapi\/ad\/ url reject
+^https?:\/\/support\.you\.163\.com\/xhr\/boot\/getBootMedia\.json url reject
+^https?:\/\/interface3?\.music\.163\.com\/eapi\/(ad|abtest|sp|hot|store|search\/(specialkeyword|defaultkeyword|hot)) url reject
+# 移除网易新闻广告
+^https:\/\/nex\.163\.com\/q url script-response-body https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js
+
+# 移除网易新闻广告
+^https:\/\/gw\.m\.163\.com\/nc\/api\/v1\/feed\/dynamic\/headline-list\? url script-response-body https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js
+
+# 移除网易新闻广告
+^https:\/\/gw\.m\.163\.com\/nc\/api\/v1\/search\/hot-word url script-response-body https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js
+
+# [mitm]
+hostname = nex.163.com, interface.music.163.com, c.m.163.com, client.mail.163.com, g1.163.com, support.you.163.com, interface3?.music.163.com, gw.m.163.com

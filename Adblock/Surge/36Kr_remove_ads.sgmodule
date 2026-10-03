@@ -1,0 +1,51 @@
+#!name=36氪去广告
+#!desc=移除开屏广告、首页右上角运营位、信息流广告、文末广告，移除相关文章推荐、大家都在看及皮肤配置，精简搜索页面、我的页面及底栏。
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id593394038
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/36Kr.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:34 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/36Kr_remove_ads.lpx
+# Target: Surge
+
+[Rule]
+DOMAIN,adx.36kr.com,REJECT
+
+DOMAIN,ad.jiemian.com,REJECT
+
+[Body Rewrite]
+http-response-jq ^https:\/\/gateway\.36kr\.com\/api\/mis\/sys\/config\? 'del(.data.contentConfig, .data.positionConfigList, .data.switchConfig.ios.sunrise_sign, .data.switchConfig.ios.sunrise_sunit_task, .data.switchConfig.ios.sunrise_sunit_mall, .data.switchConfig.ios.sunrise_distribution_icon, .data.secondFloorConfig)'
+
+http-response-jq ^https:\/\/36kr\.com\/global\/sensors\/config\/iOS\.conf\? 'if getpath(["configs","disableSDK"]) then setpath(["configs","disableSDK"]; true) else . end'
+
+http-response-jq ^https:\/\/gateway\.36kr\.com\/api\/mis\/nav\? '.data.navList |= [ .[] | select(.navNick == "home" or .navNick == "newsflash" or .navNick == "me") ]'
+
+http-response-jq ^https:\/\/gateway\.36kr\.com\/api\/mis\/nav\/home\/subnav\/recom\? '.data.bannerList |= map(select(.itemType != 0))'
+
+http-response-jq ^https:\/\/gateway\.36kr\.com\/api\/mis\/nav\/home\/subnav\/flow\/ 'del(.data.adItemList)'
+
+[Map Local]
+
+^https:\/\/gateway\.36kr\.com\/api\/mis\/nav\/me\/recom\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/gateway\.36kr\.com\/api\/mis\/nav\/search\/hotword\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/gateway\.36kr\.com\/api\/mis\/nav\/search\/topicListV2\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/gateway\.36kr\.com\/api\/adx\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/gateway\.36kr\.com\/api\/mis\/page\/article\/recom\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/gateway\.36kr\.com\/api\/mis\/page\/newsflash\/recom\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/gateway\.36kr\.com\/api\/mis\/sys\/skin\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% gateway.36kr.com, 36kr.com

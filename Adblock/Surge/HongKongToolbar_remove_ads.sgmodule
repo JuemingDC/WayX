@@ -1,0 +1,22 @@
+#!name=Hong Kong Toolbar去广告
+#!desc=移除开屏互动广告、直播前贴片广告及视频广告
+#!category=WayX
+
+# Open URL: https://apps.apple.com/app/id735754930
+# Author: C.Hiang
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/HongKongToolbar.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:37 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/HongKongToolbar_remove_ads.lpx
+# Target: Surge
+
+[Rule]
+URL-REGEX,^https:\/\/a\.881903\.com\/live\/preroll\/.*\/.*,REJECT-DROP
+URL-REGEX,^https:\/\/a\.881903\.com\/v\d\/app\/game\/.*,REJECT-DROP
+
+[MITM]
+hostname = %APPEND% a.881903.com

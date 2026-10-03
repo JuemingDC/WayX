@@ -1,0 +1,29 @@
+# Name: 成分喵去广告
+# Description: 移除首页推广活动、广告组件请求、移除被查商品购买链接、搜索发现。
+# Open URL: https://apps.apple.com/app/id6444000785
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ChengFenMiao.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:50 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/ChengFenMiao_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/app\.chengfenmiao\.com\/Listing\/LiveHots\? url reject-dict
+
+^https:\/\/app\.chengfenmiao\.com\/helper\/VersionCheck\? url reject-dict
+
+^https:\/\/app\.chengfenmiao\.com\/item\/closet\? url reject-dict
+^https:\/\/app\.chengfenmiao\.com\/helper\/setting\? url jsonjq-response-body 'del(.detail_buy_sites, .bottom_sites)'
+
+^https:\/\/app\.chengfenmiao\.com\/Helper\/HotWords\? url reject-dict
+
+# [mitm]
+hostname = app.chengfenmiao.com

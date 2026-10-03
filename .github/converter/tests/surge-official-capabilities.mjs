@@ -54,11 +54,11 @@ assert.deepEqual(sorted(SURGE_WAYX_URL_REWRITE_TYPES), fixture.rewrite.urlRewrit
 assert.deepEqual(sorted(SURGE_WAYX_HEADER_REWRITE_ACTIONS), fixture.rewrite.headerRewriteActions, 'Surge Header Rewrite registry drifted');
 assert.deepEqual(sorted(SURGE_WAYX_BODY_REWRITE_TYPES), fixture.rewrite.bodyRewriteTypes, 'Surge Body Rewrite registry drifted');
 assert.deepEqual(sorted(SURGE_WAYX_MAP_LOCAL_DATA_TYPES), fixture.rewrite.mapLocalDataTypes, 'Surge Map Local registry drifted');
-assert.deepEqual(sorted(SURGE_WAYX_SCRIPT_TYPES), fixture.rewrite.scriptTypes, 'Surge HTTP Script registry drifted');
+assert.deepEqual(sorted(SURGE_WAYX_SCRIPT_TYPES), fixture.rewrite.scriptTypes, 'Surge Script registry drifted');
 assert.deepEqual(sorted(SURGE_WAYX_MITM_KEYS), fixture.mitmKeys, 'Surge MITM hostname registry drifted');
 
 const docs=fixture.docs;
-const [rules,policyOverview,builtInPolicies,rejectPolicy,urlRewrite,headerRewrite,bodyRewrite,mapLocal,httpRequestScript,httpResponseScript,mitm]=await Promise.all([
+const [rules,policyOverview,builtInPolicies,rejectPolicy,urlRewrite,headerRewrite,bodyRewrite,mapLocal,httpRequestScript,httpResponseScript,scriptingOverview,cronScript,eventScript,genericScript,mitm]=await Promise.all([
   fetchText(docs.ruleOverview),
   fetchText(docs.policyOverview),
   fetchText(docs.builtInPolicies),
@@ -69,6 +69,10 @@ const [rules,policyOverview,builtInPolicies,rejectPolicy,urlRewrite,headerRewrit
   fetchText(docs.mapLocal),
   fetchText(docs.httpRequestScript),
   fetchText(docs.httpResponseScript),
+  fetchText(docs.scriptingOverview),
+  fetchText(docs.cronScript),
+  fetchText(docs.eventScript),
+  fetchText(docs.genericScript),
   fetchText(docs.mitm),
 ]);
 
@@ -90,6 +94,10 @@ for (const type of fixture.rewrite.bodyRewriteTypes) assertEvidence(bodyRewrite,
 for (const type of fixture.rewrite.mapLocalDataTypes) assertEvidence(mapLocal,type,'Surge Map Local data-type');
 assertEvidence(httpRequestScript,'type=http-request','Surge HTTP request Script');
 assertEvidence(httpResponseScript,'type=http-response','Surge HTTP response Script');
+assertEvidence(scriptingOverview,'type=cron','Surge cron Script');
+assertEvidence(cronScript,'cronexp','Surge cron Script parameter');
+assertEvidence(eventScript,'type=event','Surge event Script');
+assertEvidence(genericScript,'type=generic','Surge generic Script');
 assertEvidence(mitm,'hostname','Surge MITM key');
 
 console.log(

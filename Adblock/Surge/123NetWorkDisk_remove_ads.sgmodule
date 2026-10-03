@@ -1,0 +1,22 @@
+#!name=123云盘去广告
+#!desc=移除开屏广告、应用内横幅广告。
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id1597682672
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/123NetWorkDisk.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:34 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/123NetWorkDisk_remove_ads.lpx
+# Target: Surge
+
+[Map Local]
+^https:\/\/www\.123pan\.com\/api\/config\/get data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% www.123pan.com

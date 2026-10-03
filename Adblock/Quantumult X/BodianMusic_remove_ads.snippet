@@ -1,0 +1,55 @@
+# Name: 波点音乐去广告
+# Description: 精简应用配置，禁用P2P传输。移除开屏广告、横幅推广、悬浮广告、歌曲广告、商城入口、搜索推广、评论区推广、试听语音提醒。
+# Open URL: https://apps.apple.com/app/id1541981555
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BodianMusic.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:48 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/BodianMusic_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/bd-api\.kuwo\.cn\/api\/(play|service|advert)\/advert\/ url reject-dict
+
+^https:\/\/bd-api\.kuwo\.cn\/api\/service\/conf\/all\? url jsonjq-response-body 'del(.data.groupSign.adStartAppDialog, .data.groupSign.adGuideTest, .data.groupSign.playTips, .data.groupSign.adExitChange, .data.conf.adGuidePopCount, .data.conf.adDownListOpen)'
+
+^https:\/\/bd-api\.kuwo\.cn\/api\/service\/conf\/all\? url jsonjq-response-body 'if getpath(["data","conf","flowControlConfig","uploadEnable"]) then setpath(["data","conf","flowControlConfig","uploadEnable"]; false) else . end | if getpath(["data","conf","flowControlConfig","p2pEnable"]) then setpath(["data","conf","flowControlConfig","p2pEnable"]; false) else . end'
+
+^https:\/\/ab-bodian\.kuwo\.cn\/abtest\/ui\/info\? url jsonjq-response-body 'del(.data.mapTestInfo.CommentADPosition, .data.mapTestInfo.DiscoverADPosition, .data.mapTestInfo.DownloadAd, .data.mapTestInfo.FreeModVoiceReminder, .data.mapTestInfo.GamesTrans, .data.mapTestInfo.bodianmvdialog, .data.mapTestInfo.MvTryShowAds, .data.mapTestInfo.insert)'
+
+^https:\/\/bd-api\.kuwo\.cn\/api\/service\/global\/config\/scene\? url jsonjq-response-body 'del(.data.iosP2PCacheEnable, .data.warmStartDialog, .data.adsNotFinishVipPop4DayInterval)'
+
+^https:\/\/bd-api\.kuwo\.cn\/api\/service\/global\/config\/scene\? url jsonjq-response-body 'if getpath(["data","showShopEntry"]) then setpath(["data","showShopEntry"]; false) else . end | if getpath(["data","iosP2pEnableSendDataLimit"]) then setpath(["data","iosP2pEnableSendDataLimit"]; 1) else . end'
+
+^https:\/\/bd-api\.kuwo\.cn\/api\/service\/banner\/ url reject-dict
+
+^https:\/\/bd-api\.kuwo\.cn\/api\/ucenter\/vip\/give\/config\? url reject-dict
+
+^https:\/\/bd-api\.kuwo\.cn\/api\/search\/topic\/word\/list\? url jsonjq-response-body 'del(.data.hotTopic, .data.searchFind, .data.globalJumpInfo, .data.hotWord)'
+
+^https:\/\/bd-api\.kuwo\.cn\/api\/service\/home\/index\? url jsonjq-response-body '.data.moduleList |= map(select(.type | tostring | (. != "8" and . != "1")))'
+
+^https:\/\/bd-api\.kuwo\.cn\/api\/service\/home\/module\?.*&moduleId=6 url reject-dict
+
+^https:\/\/bd-api\.kuwo\.cn\/api\/service\/music\/recommendList\? url jsonjq-response-body '.data.musicList[] |= del(.showAd)'
+
+^https:\/\/bd-api\.kuwo\.cn\/api\/comments\/v3\/topInfo\? url jsonjq-response-body 'del(.data.putao, .data.bannerVos)'
+
+^https:\/\/bd-api\.kuwo\.cn\/api\/pay\/vip\/lowPriceText\? url reject-dict
+^https:\/\/bd-api\.kuwo\.cn\/api\/service\/global\/config\/vipEnter\? url reject-dict
+
+^https:\/\/bd-api\.kuwo\.cn\/api\/popup\/ url reject-dict
+^https:\/\/bd-api\.kuwo\.cn\/api\/pay\/vip\/invitation\/swell\/popup\? url reject-dict
+^https:\/\/bd-api\.kuwo\.cn\/api\/service\/version\/popup\? url reject-dict
+^https:\/\/bd-api\.kuwo\.cn\/api\/pay\/vip\/invitation\/assist\/popup\? url reject-dict
+^https:\/\/bd-api\.kuwo\.cn\/api\/pay\/h5\/common\/popup\? url reject-dict
+
+# [mitm]
+hostname = bd-api.kuwo.cn

@@ -1,0 +1,23 @@
+# Name: Telegram重定向
+# Description: 适用于安装了多个不同Telegram客户端的用户，用于在指定客户端中打开公开或私有群组及频道的Telegram短链。
+# Open URL: https://apps.apple.com/app/id1127750481
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Telegram.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:42 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/TelegramRedirect.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/t\.me\/([A-Za-z][A-Za-z0-9_]{3,30}[A-Za-z0-9])\/?$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_TelegramRedirect/redirect_9af42dd0ad.js
+^https:\/\/t\.me\/\+([A-Za-z0-9_-]+)\/?$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_TelegramRedirect/redirect_7366812de2.js
+
+# [mitm]
+hostname = t.me

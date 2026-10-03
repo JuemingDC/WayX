@@ -291,10 +291,11 @@ assert.match(converterWorkflow,/conversion-context-materializers\.mjs/, 'Block 0
 assert.equal(/from '\.\.\/src\/conversion-context\.mjs'/.test(canonicalRunner), false, 'Block 05/50/60/90: canonical runner must not bypass the shared conversion runner materializer');
 assert.equal(/from '\.\.\.\/\.\.\/\.github\/scripts\/sync-convert\.mjs'.*(?:materialize|inspect|scriptUrls)/.test(canonicalRunner), false, 'Block 50/60/90: canonical runner must not import materialization APIs from sync-convert');
 const surgeValidator=await fs.readFile(path.join(ROOT,'.github/converter/src/surge-module.mjs'),'utf8');
-assert.match(surgeValidator,/WayX ad-block Surge \[Script\] only accepts HTTP rewrite types/, 'Block 80: Surge validator must be explicitly scoped to ad-block rewrite scripts');
+assert.match(surgeValidator,/SURGE_WAYX_SCRIPT_TYPES/, 'Block 80: Surge validator must validate Script types against the official-backed registry');
 assert.match(surgeValidator,/SURGE_WAYX_REWRITE_SECTIONS/, 'Block 80: Surge validator must consume the official-backed rewrite registry');
 const surgeCapabilities=await fs.readFile(path.join(ROOT,'.github/converter/src/surge-official-capabilities.mjs'),'utf8');
 assert.match(surgeCapabilities,/SURGE_WAYX_RULE_TYPES/, 'Block 80: Surge Rule registry must be explicit and official-backed');
+assert.match(surgeCapabilities,/SURGE_WAYX_SCRIPT_TYPES[\s\S]*'cron'[\s\S]*'event'[\s\S]*'generic'/, 'Block 80: Surge Script registry must retain official cron/event/generic support');
 assert.match(converterWorkflow,/surge-official-capabilities\.mjs/, 'Block 80: Converter Check must execute the Surge official capability gate');
 assert.match(converterWorkflow,/catalog-rule-inventory\.mjs/, 'Block 20/80: Converter Check must execute the Catalog Rule inventory gate');
 assert.match(converterWorkflow,/catalog-syntax-inventory\.mjs/, 'Block 05/80: Converter Check must execute the Rewrite/Script v2 semantic inventory gate');

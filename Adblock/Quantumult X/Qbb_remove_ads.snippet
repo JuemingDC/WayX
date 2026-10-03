@@ -1,0 +1,41 @@
+# Name: 亲宝宝去广告
+# Description: 移除开屏广告、弹窗广告、广告下发、用户行为上报，精简搜索页、育儿页和我的页面，拦截商城页面。
+# Open URL: https://apps.apple.com/app/id672984826
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Qbb.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:05 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/Qbb_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+host, apimall.qbb6.com, reject
+
+# [rewrite_local]
+^https:\/\/api\.qbb6\.com\/ad\/ url reject-dict
+
+^https:\/\/api\.qbb6\.com\/commons\/main\/tab\/info\/get\? url reject-dict
+
+^https:\/\/apicommunity\.qbb6\.com\/community\/recommend\/user\/get\? url reject-dict
+
+^https:\/\/apipt\.qbb6\.com\/parenting\/pt\/home\/post\/card\/get\? url reject-dict
+
+^https:\/\/apipt\.qbb6\.com\/lib\/search\/hot\/keys\/v\d\? url reject-dict
+
+^https:\/\/apiuser\.qbb6\.com\/user\/member\/info\/get\? url reject-dict
+
+^https:\/\/apimall\.qbb6\.com\/mall\/v\d\/goods\/count\? url reject-dict
+^https:\/\/apimall\.qbb6\.com\/mall\/homepage\/data\/get\/v\d$ url reject-dict
+# 精简我的页面
+^https:\/\/api\.qbb6\.com\/commons\/self\/button\/group\/get\/v\d\? url script-response-body https://kelee.one/Resource/JavaScript/Qbb/my.js
+
+# 精简育儿页面
+^https:\/\/apipt\.qbb6\.com\/parenting\/pt\/homepage\/get\/v\d\? url script-response-body https://kelee.one/Resource/JavaScript/Qbb/homepage.js
+
+# [mitm]
+hostname = api.qbb6.com, apicommunity.qbb6.com, apipt.qbb6.com, apiuser.qbb6.com, apimall.qbb6.com

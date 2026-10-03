@@ -1,0 +1,30 @@
+# Name: PICOOC去广告
+# Description: 移除开屏广告、悬浮广告，拦截发现页，精简我的页面。
+# Open URL: https://apps.apple.com/app/id729928969
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/PICOOC.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:39 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/PICOOC_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/api2\.picooc\.com\/v\d\/api\/focus\/strategy\/execute\? url reject-dict
+
+^https:\/\/api2\.picooc\.com\/v\d\/api\/dietGuide\/query\? url reject-dict
+
+^https:\/\/api2\.picooc\.com\/program\/listMainProgram\? url reject-dict
+
+^https:\/\/a\.picooc\.com\/v\d\/api\/camp\/sys\/config\/coupon\/pattern\? url reject-dict
+
+^https:\/\/api2\.picooc\.com\/v\d\/api\/account\/getTabsInfo\? url reject-dict
+
+# [mitm]
+hostname = api2.picooc.com, a.picooc.com

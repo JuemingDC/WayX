@@ -1,0 +1,31 @@
+# Name: ZAKER去广告
+# Description: 移除开屏广告、置顶轮播图广告和文末广告。
+# Open URL: https://apps.apple.com/app/id462149227
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ZAKER.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:45 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/ZAKER_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/iphone\.myzaker\.com\/zaker\/cover\.php\? url reject-dict
+
+^https:\/\/iphone\.myzaker\.com\/zaker\/article_mongo_sec\.php\? url jsonjq-response-body 'del(.data.ad_url)'
+^https:\/\/ggs\.myzaker\.com\/zk_article_ad\.php\? url jsonjq-response-body 'del(.data.article_bottom, .data.recommend_ad)'
+
+^https:\/\/iphone\.myzaker\.com\/zaker\/follow_promote\.php\? url jsonjq-response-body '.data.list |= map(select(.type != "web"))'
+
+^https:\/\/iphone\.myzaker\.com\/zaker\/car_tab\/index\.php\? url jsonjq-response-body '.data.gallery |= map(select(.type != "web"))'
+
+^https:\/\/iphone\.myzaker\.com\/zaker\/block_top_ad\.php\? url reject-dict
+
+# [mitm]
+hostname = iphone.myzaker.com, ggs.myzaker.com

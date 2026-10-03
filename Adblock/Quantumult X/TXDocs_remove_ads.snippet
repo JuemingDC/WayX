@@ -1,0 +1,24 @@
+# Name: 腾讯文档去广告
+# Description: 移除开屏广告、首页横幅推广。
+# Open URL: https://apps.apple.com/app/id1370780836
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/TXDocs.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:07 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/TXDocs_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/tianshu\.qq\.com\/open\/ts_access\/GetAds\? url reject-dict
+
+^https:\/\/h5\.qzone\.qq\.com\/p\/adboss\/api\/json\/ts_access\/GetAds$ url reject-dict
+
+# [mitm]
+hostname = tianshu.qq.com, h5.qzone.qq.com

@@ -1,0 +1,28 @@
+#!name=Sub-Store
+#!desc=高级订阅管理工具，定时任务默认为每天23点55分，可在插件设置中自定义。使用前请在本插件的详情页面为[PROXY]项分配代理策略。
+#!category=WayX
+#!arguments=cron:55 23 * * *,wayx_proxy_policy:DIRECT
+#!arguments-desc=cron: 定时参数 — 这里需要输入符合CRON表达式的参数\nwayx_proxy_policy: Loon PROXY policy binding — default DIRECT; set to the desired Surge proxy policy or policy group
+
+# Open URL: https://sub.store
+# Author: Peng-YM[https://github.com/Peng-YM]
+# Tags: 订阅管理
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/Other_icon/120px/Sub-Store.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:42 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/Sub-Store.lpx
+# Target: Surge
+
+[Rule]
+DOMAIN,sub-store.vercel.app,{{{wayx_proxy_policy}}}
+
+[Script]
+Sub-Store Core = type=http-request,pattern=^https?:\/\/sub\.store\/((download)|api\/(preview|sync|(utils\/node-info))),script-path=https://github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store-1.min.js,requires-body=true,max-size=-1,timeout=120
+Sub-Store Simple = type=http-request,pattern=^https?:\/\/sub\.store,script-path=https://github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store-0.min.js,requires-body=true,max-size=-1,timeout=120
+Sub-Store Sync = type=cron,cronexp="{{{cron}}}",script-path=https://github.com/sub-store-org/Sub-Store/releases/latest/download/cron-sync-artifacts.min.js,timeout=120
+
+[MITM]
+hostname = %APPEND% sub.store

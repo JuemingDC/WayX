@@ -73,6 +73,42 @@ assert.ok(out.generatedScripts instanceof Map);
 assert.equal(out.qx.endsWith('\n'),true);
 assert.equal(out.surge.endsWith('\n'),true);
 
+const emptyLegacyJqSource=[
+  '#!name=EmptyLegacyJq',
+  '[Rewrite]',
+  "^https:\\/\\/comment-card\\.iqiyi\\.com\/views_comment\/3\\.0\/long_video_comments\\? response-body-json-jq ''",
+  "^https:\\/\\/comment-card\\.iqiyi\\.com\/views_comment\/3\\.0\/long_video_comments\\? response-body-json-jq '.cards |= map(select(has(\"alias_name\")))'",
+].join('\n');
+const emptyLegacyJqOut=convertPlugin({...entry,id:'EmptyLegacyJq'},emptyLegacyJqSource,{
+  stamp:'2026-10-03 12:00:00 +08:00',
+  rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main',
+  scriptMap:new Map(),
+  mockFiles:new Map(),
+  jqFiles:new Map(),
+});
+assert.doesNotMatch(emptyLegacyJqOut.qx,/jsonjq-response-body\s+''/);
+assert.doesNotMatch(emptyLegacyJqOut.surge,/http-response-jq\s+\S+\s+''/);
+assert.match(emptyLegacyJqOut.qx,/jsonjq-response-body '.cards \|= map\(select\(has\("alias_name"\)\)\)'/);
+assert.match(emptyLegacyJqOut.surge,/http-response-jq .*'.cards \|= map\(select\(has\("alias_name"\)\)\)'/);
+
+const emptyV2JqSource=[
+  '#!name=EmptyV2Jq',
+  '[Rewrite]',
+  'response if ${url} ~= /^https:\\/\\/comment-card\\.iqiyi\\.com\\// then response.json.jq("")',
+  'response if ${url} ~= /^https:\\/\\/comment-card\\.iqiyi\\.com\\// then response.json.jq(".cards")',
+].join('\n');
+const emptyV2JqOut=convertPlugin({...entry,id:'EmptyV2Jq'},emptyV2JqSource,{
+  stamp:'2026-10-03 12:00:00 +08:00',
+  rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main',
+  scriptMap:new Map(),
+  mockFiles:new Map(),
+  jqFiles:new Map(),
+});
+assert.doesNotMatch(emptyV2JqOut.qx,/jsonjq-response-body\s+''/);
+assert.doesNotMatch(emptyV2JqOut.surge,/http-response-jq\s+\S+\s+''/);
+assert.match(emptyV2JqOut.qx,/jsonjq-response-body '.cards'/);
+assert.match(emptyV2JqOut.surge,/http-response-jq .*'.cards'/);
+
 const mixedScriptSource=[
   '#!name=MixedScriptOrder',
   '[Script]',

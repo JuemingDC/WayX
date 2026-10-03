@@ -1,0 +1,40 @@
+# Name: 华尔街见闻去广告
+# Description: 移除开屏广告、文末广告、信息流广告，精简底栏。
+# Open URL: https://apps.apple.com/app/id738227477
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FinanceNews.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:55 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/FinanceNews_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/advertising\/ url reject-dict
+
+^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/kvconfig\/items\/tabbarconfig1$ url jsonjq-response-body '.data.items |= [.[] | select(.key == "news" or .key == "live")]'
+
+^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/kvconfig\/items\/search_keywords_wscnvip$ url reject-dict
+^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/search\/hotsearch\? url reject-dict
+
+^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/content\/articles\/hot\? url reject-dict
+
+^https:\/\/wallstreetcn\.com\/app-faas\/coupon\/user\/search\/popup$ url reject-dict
+
+^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/content\/lives\/relateddata\/ url reject-dict
+^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/content\/articles\/relateddata\/ url reject-dict
+
+^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/content\/carousel\/information-flow\? url reject-dict
+
+^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/content\/articles\/ url jsonjq-response-body 'del(.data.recommend_vip_img_uri)'
+
+^https:\/\/api-one-wscn\.awtmt\.com\/\/apiv1\/kvconfig\/items\/membersrights$ url jsonjq-response-body 'del(.data.vip_article)'
+
+# [mitm]
+hostname = api-one-wscn.awtmt.com

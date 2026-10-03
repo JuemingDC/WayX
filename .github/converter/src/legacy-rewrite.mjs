@@ -2,12 +2,12 @@
 // Author: chance
 // Category: Converter / Legacy Rewrite
 import crypto from 'node:crypto';
-import { minifyJq, quoteJq, renderFixedPathDeleteJq } from './jq.mjs';
+import { minifyJq, parseJsonKeyPath, quoteJq, renderFixedPathDeleteJq } from './jq.mjs';
 import { normalizeRegexBodyForTarget } from './target-regex.mjs';
 import { renderQxHeaderScript, renderQxInlineMockScript } from './qx-semantic-script.mjs';
 import { surgeInlineMockPlan } from './rewrite-v2-semantic.mjs';
 import { renderSurgeRequestMockScript } from './surge-mock.mjs';
-import { classifyLegacyRewriteAction, legacyRewriteToSemanticIr } from './rewrite-ir.mjs';
+import { classifyLegacyRewriteAction, isEmptyLegacyJsonJqIr, legacyRewriteToSemanticIr } from './rewrite-ir.mjs';
 
 function review(pattern, action, reason) {
   return {
@@ -55,14 +55,8 @@ function unquote(token) {
 }
 
 function jqPath(pathText) {
-  const parts = [];
-  for (const raw of String(pathText).split('.')) {
-    const m = raw.match(/^([^[]+)((?:\[\d+\])*)$/);
-    if (!m) return null;
-    parts.push(m[1]);
-    for (const idx of m[2].matchAll(/\[(\d+)\]/g)) parts.push(Number(idx[1]));
-  }
-  return parts;
+  try { return parseJsonKeyPath(pathText); }
+  catch { return null; }
 }
 
 function jqAccess(pathText) {
@@ -260,6 +254,12 @@ function planJson(pattern, action, parsed, target, ctx) {
   catch (error) { return review(pattern, action, String(error?.message || error)); }
   if (!compiled.ok) return review(pattern, action, compiled.reason);
   const jq=compiled.preserve ? compiled.jq : minifyJq(compiled.jq);
+  if (parsed.op === 'jq' && !String(jq).trim()) {
+    // Source-authored empty JQ expressions have no executable target filter.
+    // Emitting jsonjq/http-*-jq with '' is invalid; treat the declaration as
+    // an intentional no-op/drop rather than inventing target semantics.
+    return {section:'drop', reason:'empty-legacy-json-jq'};
+  }
   let quoted;
   try { quoted=quoteJq(jq); }
   catch (error) { return review(pattern, action, String(error?.message || error)); }
@@ -346,6 +346,7 @@ export function planLegacyRewriteIr(ir, target, ctx={}) {
   }
   const pattern=ir.sourcePayload?.pattern ?? '';
   const action=ir.sourcePayload?.action ?? '';
+  if (isEmptyLegacyJsonJqIr(ir)) return {section:'drop', reason:'empty-legacy-json-jq'};
   const targetPattern=normalizeRegexBodyForTarget(pattern);
   const operation=ir.operations[0];
   const parsed=classifyLegacyRewrite(action);

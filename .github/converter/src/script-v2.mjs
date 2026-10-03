@@ -207,20 +207,45 @@ function validateOptions(options, phase) {
 }
 
 export function isScriptV2(source) {
-  return /^\s*(?:request|response)\s+if\b/.test(String(source ?? '')) && /\bthen\s+script\s*\(/.test(String(source ?? ''));
+  const raw = String(source ?? '').trim();
+  return /^(?:(?:request|response)\s+if\b|cron\s+|network-changed\b|generic\b)/.test(raw) &&
+    /\bthen\s+script\s*\(/.test(raw);
 }
 
 export function parseScriptV2(source) {
   const raw = String(source ?? '').trim();
-  const head = raw.match(/^(request|response)\s+if\s+/);
-  if (!head) fail(raw, 'Only HTTP request/response Script v2 is supported in this converter phase');
-  const phase = head[1];
   const found = findThenScript(raw);
   if (!found) fail(raw, 'Expected "then script(...)"');
 
-  const conditionText = raw.slice(head[0].length, found.index).trim();
-  if (!conditionText) fail(raw, 'Missing Script v2 condition');
-  const conditionAst = parseRewriteV2(phase + ' if ' + conditionText + ' then reject(200)').condition;
+  const triggerText = raw.slice(0, found.index).trim();
+  let phase;
+  let conditionAst = null;
+  let trigger = null;
+
+  const http = triggerText.match(/^(request|response)\s+if\s+([\s\S]+)$/);
+  if (http) {
+    phase = http[1];
+    const conditionText = http[2].trim();
+    if (!conditionText) fail(raw, 'Missing Script v2 condition');
+    conditionAst = parseRewriteV2(phase + ' if ' + conditionText + ' then reject(200)').condition;
+  } else if (/^cron\s+/.test(triggerText)) {
+    phase = 'cron';
+    let expression;
+    try { expression = parseValue(triggerText.replace(/^cron\s+/, '')); }
+    catch (error) { fail(raw, 'Invalid Cron Script expression: ' + error.message); }
+    if (!['string','raw-string','variable'].includes(expression.type)) {
+      fail(raw, 'Cron Script expression must be a String/raw String or plugin variable');
+    }
+    trigger = { type:'cron', expression, raw:triggerText };
+  } else if (triggerText === 'network-changed') {
+    phase = 'network-changed';
+    trigger = { type:'event', name:'network-changed', raw:triggerText };
+  } else if (triggerText === 'generic') {
+    phase = 'generic';
+    trigger = { type:'generic', raw:triggerText };
+  } else {
+    fail(raw, 'Unsupported Script v2 trigger');
+  }
 
   const close = findClosingParen(raw, found.callOpen);
   if (close < 0) fail(raw, 'Unterminated script(...) call');
@@ -255,6 +280,7 @@ export function parseScriptV2(source) {
     syntax:'loon-script-v2',
     phase,
     condition:conditionAst,
+    trigger,
     script:{ path:pathValue.value, pathNode:pathValue, argument },
     options,
     raw,
@@ -296,7 +322,19 @@ export function scriptV2ToSource(ast) {
   const withPart = ast.options.length
     ? ' with ' + ast.options.map(option => option.name + '=' + valueToSource(option.value)).join(', ')
     : '';
-  return ast.phase + ' if ' + conditionToSource(ast.condition) + ' then script(' + args.join(', ') + ')' + withPart;
+  let triggerSource;
+  if (ast.phase === 'request' || ast.phase === 'response') {
+    triggerSource = ast.phase + ' if ' + conditionToSource(ast.condition);
+  } else if (ast.phase === 'cron') {
+    triggerSource = 'cron ' + valueToSource(ast.trigger?.expression);
+  } else if (ast.phase === 'network-changed') {
+    triggerSource = 'network-changed';
+  } else if (ast.phase === 'generic') {
+    triggerSource = 'generic';
+  } else {
+    throw new Error('Unsupported Script v2 phase: ' + ast.phase);
+  }
+  return triggerSource + ' then script(' + args.join(', ') + ')' + withPart;
 }
 
 export { splitTopLevelCsv as splitScriptV2Csv, parseValue as parseScriptV2Value, OPTION_FIELDS as SCRIPT_V2_OPTION_FIELDS };
