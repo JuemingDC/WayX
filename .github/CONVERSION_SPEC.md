@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.58  
+版本：1.59  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**Semantic Compiler Phase C / equivalence planner + differential matcher oracle active**
@@ -211,6 +211,19 @@ Loon `i / m / s` 是源行为组成部分，必须进入 Semantic IR。
 3. 使用 helper 的实际 match object 处理 capture。
 
 禁止因为目标 matcher 默认 case-sensitive 就把 Loon `/i` 直接删除。
+
+### 5.2.1 Phase C native / prefilter flag gate
+
+当 source Regex 携带任何 `i / m / s` flag，而目标 native matcher 没有官方确认的等价 flag 表达时：
+
+- 该 Regex 不得参与 `native-equivalent` matcher proof；
+- 该 Regex 不得直接作为 helper/dispatcher 的 target prefilter；
+- 若同一 AND 条件存在其它已证明必要且 target-native 可表达的 predicate，可只下推这些 predicate；
+- 若没有其它安全必要条件，prefilter 必须退化到不会漏掉 HTTP(S) 请求的宽 matcher；
+- helper/dispatcher 内必须使用 source Regex body 与完整 flags 执行 `new RegExp(source, flags)`；
+- action-local Regex（例如 header/body replace）同样必须保留 source 与 flags，不能只修 condition Regex。
+
+Oracle 必须至少包含一个会因 flag 丢失产生 false negative 的反例，防止未来重新引入 silent flag drop。
 
 ### 5.3 Capture
 
@@ -749,7 +762,7 @@ Workflow 只调用稳定入口，不应枚举 converter 内部所有实现文件
 
 main 中现有 converter 在 Phase B–F 完成前继续承担生产转换。
 
-如果当前实现与本 v1.58 新规范冲突：
+如果当前实现与本 v1.59 新规范冲突：
 
 - 不立即在同一个结构 PR 中强行改动 canonical；
 - 在后续语义 PR 中按新顺序迁移；
