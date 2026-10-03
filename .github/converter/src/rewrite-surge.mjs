@@ -14,7 +14,7 @@ import {
 } from './rewrite-v2-semantic.mjs';
 import { renderSurgeRequestMockScript } from './surge-mock.mjs';
 import { registerComplexRewriteHandler, planComplexRewrite } from './complex-rewrite-registry.mjs';
-import { renderMixedRewriteScript, renderSingleRewriteMutationScript, renderSingleJsonMutationScript } from './complex-rewrite-script.mjs';
+import { renderMixedRewriteScript, renderSingleJsonMutationScript } from './complex-rewrite-script.mjs';
 import { surgeRewriteArgumentPayload } from './argument.mjs';
 import { rewriteReview, rewriteIssue } from './rewrite-plan-result.mjs';
 import { singleRewriteOperation } from './rewrite-ir.mjs';
@@ -167,31 +167,6 @@ export function planSurgeRewrite(ir,ctx={}) {
       }
     } catch {
       // Continue to dedicated helper/complex fallback.
-    }
-  }
-
-  if (singleOp?.kind==='header' && singleOp.phase===ir.phase) {
-    try {
-      const plan=renderSingleRewriteMutationScript(ast,{
-        target:'surge',
-        stamp:ctx.stamp,
-        category:ctx.category,
-        sourceLine:source,
-        argumentTable:ctx.argumentTable,
-      });
-      const payload=argumentRefs.length
-        ? surgeRewriteArgumentPayload(argumentRefs,ctx.argumentTable)
-        : {ok:true,value:null};
-      if (!payload.ok) throw new Error(payload.reason);
-      const key=crypto.createHash('sha1').update('header-single-surge\0'+source).digest('hex').slice(0,10);
-      const filename='header_'+key+'.js';
-      ctx.generatedScripts.set(filename,plan.script);
-      return {
-        section:'script',
-        line:'wayx_header_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:''),
-      };
-    } catch (error) {
-      return rewriteReview(source,String(error?.message||error).split('\n')[0]);
     }
   }
 
