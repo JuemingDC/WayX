@@ -103,6 +103,7 @@ function inventoryMarkers(text, file, platform, scope) {
 function intentionalDrop(item, target) {
   if (item.section === 'Rewrite' && /json\.jq\s*\(\s*["']jq-path=/i.test(item.line)) return 'legacy-jq-path';
   if (item.section === 'Rewrite' && /(?:request|response)-body-json-jq\b[^\n]*jq-path=/i.test(item.line)) return 'legacy-jq-path';
+  if (item.section === 'Rewrite' && /(?:request|response)-body-json-jq\s+(?:''|"")\s*$/i.test(item.line)) return 'empty-legacy-json-jq';
   return null;
 }
 
