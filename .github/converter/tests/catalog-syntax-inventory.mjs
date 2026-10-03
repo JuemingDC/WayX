@@ -1,6 +1,7 @@
 // WayX Catalog-observed Loon v2 semantic-token inventory
 // Author: chance
 // Category: Converter / Validation / Observed Semantics
+// Baseline is evaluated against the refreshed full catalog in CI; do not run this inventory before source refresh.
 
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
