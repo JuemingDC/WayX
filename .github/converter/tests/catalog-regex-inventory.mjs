@@ -94,6 +94,7 @@ for(const entry of manifest){
 const observedAdvanced=hits.map(hit=>({feature:hit.feature,pattern:hit.pattern,where:hit.where.replace(/: .*/, '')})).sort((a,b)=>
   (a.where+'\0'+a.feature+'\0'+a.pattern).localeCompare(b.where+'\0'+b.feature+'\0'+b.pattern)
 );
+// Reviewed 2026-10-03 baseline: seven source-authored special regex constructs.
 const expectedAdvanced=[
   {
     feature:'atomic-group',
