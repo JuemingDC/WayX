@@ -688,11 +688,12 @@ for (const testCase of cases) {
   if (testCase.name === 'YouTube') {
     assert.doesNotMatch(out.qx, /Source \[Argument\]|Argument usage:/, 'YouTube QX must not emit Loon plugin parameter UI/declarations');
     assert.match(out.surge, /^#!arguments=.*captionLang:zh-Hans/m);
-    assert.match(out.surge, /argument="\{\\\"captionLang\\\":\\\"\{\{\{captionLang\}\}\}\\\"\}"/);
-    assert.ok(qxActive.some(line => /youtube\/request\.js$/.test(line)), 'YouTube: request binary scripts must follow KOP-XIAO and remain active as script-request-body');
-    assert.match(out.qx, /binary_body_mode=true ignored for Quantumult X/);
-    assert.doesNotMatch(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
-    assert.doesNotMatch(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
+    assert.doesNotMatch(out.surge, /argument="\{\\\"captionLang\\\":\\\"\{\{\{captionLang\}\}\}\\\"\}"/);
+    assert.equal(qxActive.some(line => /youtube\/(?:request|response)\.js$/.test(line)), false, 'flagged YouTube scripts must not be activated with a case-sensitive QX matcher');
+    assert.match(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
+    assert.match(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
+    assert.match(out.qx, /Source declaration: .*youtube\/request\.js/);
+    assert.match(out.surge, /Source declaration: .*youtube\/response\.js/);
   }
 
   if (testCase.name === 'Bilibili') {
