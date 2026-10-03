@@ -97,12 +97,41 @@ function jsonValueSource(node, captures, guaranteed, argumentTable = null) {
   if (node.type === 'raw-string') return JSON.stringify(node.value);
   return JSON.stringify(node.value);
 }
+function decodeBracketKey(token) {
+  if (token.startsWith('"')) {
+    try { return JSON.parse(token); }
+    catch { throw new Error('invalid JSON key-path quoted key: '+token); }
+  }
+  if (token.startsWith("'")) {
+    let out='';
+    for(let i=1;i<token.length-1;i++){
+      const ch=token[i];
+      if(ch!=='\\'){out+=ch;continue;}
+      if(i+1>=token.length-1){out+='\\';continue;}
+      const next=token[++i];
+      if(next==="'" || next==='\\') out+=next;
+      else if(next==='n') out+='\n';
+      else if(next==='r') out+='\r';
+      else if(next==='t') out+='\t';
+      else out+='\\'+next;
+    }
+    return out;
+  }
+  throw new Error('invalid JSON key-path quoted key: '+token);
+}
 function jsonPath(text) {
   const path=String(text||''); if(!path) throw new Error('JSON key path must not be empty');
   const parts=[]; let i=0;
   while(i<path.length){
     if(path[i]==='.') { i++; continue; }
-    if(path[i]==='['){const m=path.slice(i).match(/^\[(\d+)\]/); if(!m) throw new Error('unsupported JSON key-path bracket syntax: '+path); parts.push(Number(m[1])); i+=m[0].length; continue;}
+    if(path[i]==='['){
+      const rest=path.slice(i);
+      const numeric=rest.match(/^\[(\d+)\]/);
+      if(numeric){parts.push(Number(numeric[1]));i+=numeric[0].length;continue;}
+      const quoted=rest.match(/^\[((?:"(?:\\.|[^"\\])*")|(?:'(?:\\.|[^'\\])*'))\]/);
+      if(quoted){parts.push(decodeBracketKey(quoted[1]));i+=quoted[0].length;continue;}
+      throw new Error('unsupported JSON key-path bracket syntax: '+path);
+    }
     const m=path.slice(i).match(/^[^.[\]]+/); if(!m) throw new Error('invalid JSON key path: '+path); parts.push(m[0]); i+=m[0].length;
   }
   return parts;
