@@ -51,7 +51,12 @@ function dependencyLocation(ref, actionName, pluginSourceUrl = '') {
 function legacyJqPathRef(value) {
   const text=String(value ?? '').trim();
   const match=text.match(/^jq-path\s*=\s*(.+)$/i);
-  return match ? match[1].trim() : null;
+  if (!match) return null;
+  let ref=match[1].trim();
+  if ((ref.startsWith('"') && ref.endsWith('"')) || (ref.startsWith("'") && ref.endsWith("'"))) {
+    ref=ref.slice(1,-1);
+  }
+  return ref.trim() || null;
 }
 
 export function dependencySpecFromAction(action, { pluginSourceUrl = '' } = {}) {
