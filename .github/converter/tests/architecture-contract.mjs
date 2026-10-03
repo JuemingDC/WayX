@@ -43,6 +43,16 @@ assert.doesNotMatch(
 );
 
 for (const rel of [
+  '.github/converter/src/core/regex.mjs',
+  '.github/converter/src/core/condition-evaluator.mjs',
+  '.github/converter/src/core/equivalence-plan.mjs',
+  '.github/converter/tests/core-semantics.mjs',
+]) {
+  const stat=await fs.stat(path.join(ROOT,rel));
+  assert.ok(stat.isFile() && stat.size>0,'semantic core path missing: '+rel);
+}
+
+for (const rel of [
   '.github/docs/conversion-spec',
   '.github/PROJECT_STATUS.md',
   '.github/converter/README.md',
