@@ -207,7 +207,7 @@ export function qxDirectRewritePlan(ast, {matcher = null} = {}) {
       notes:[],
     };
   } else {
-    condition = simpleUrlRewriteCondition(ast);
+    condition = simpleUrlRewriteCondition(ast,{target:'qx'});
     if (!condition.ok) return condition;
     condition={...condition,prefix:condition.pattern+' url '};
   }
