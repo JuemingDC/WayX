@@ -987,27 +987,9 @@ function argumentDefault(id, table) {
   return entry?.hasDefault ? entry.defaultValue : undefined;
 }
 
-function parseBooleanDefault(value) {
-  const text = String(value ?? '').trim().toLowerCase();
-  if (text === 'true' || text === '1') return true;
-  if (text === 'false' || text === '0') return false;
-  return null;
-}
-
 function qxTaskEnabled(ast, argumentTable, notes) {
-  const enable = scriptOption(ast, 'enable');
-  if (!enable) return true;
-  if (enable.type === 'boolean') return enable.value;
-  if (enable.type === 'variable') {
-    const raw = argumentDefault(enable.name, argumentTable);
-    const value = parseBooleanDefault(raw);
-    if (value === null) {
-      notes.push('Source dynamic enable=' + enable.name + ' has no usable Quantumult X default; converted task defaults to enabled.');
-      return true;
-    }
-    notes.push('Source dynamic enable=' + enable.name + ' is fixed to its plugin default for Quantumult X.');
-    return value;
-  }
+  const enable=scriptOption(ast,'enable');
+  if (enable?.type==='variable' || enable?.value===false) notes.push('Source enable forced to enabled for Quantumult X by user conversion policy; source default/off switch is not carried over.');
   return true;
 }
 
@@ -1103,9 +1085,6 @@ export function qxScriptV2Plan(ast, {
   // omits those fields instead of emitting invented QX syntax. Keep
   // requires_body separate: it alone selects the QX header/body action family.
   const enable = scriptOption(ast, 'enable');
-  if (enable?.type === 'boolean' && enable.value === false) {
-    return {ok:true, disabled:true, reason:'Loon Script v2 enable=false'};
-  }
 
   const timeout = scriptOption(ast, 'timeout');
   const debug = scriptOption(ast, 'debug');
@@ -1114,7 +1093,7 @@ export function qxScriptV2Plan(ast, {
   if (argumentIds !== null) {
     const usage = scriptV2PluginArgumentUsage(ast, argumentIds);
     const undeclared = usage.undeclaredOptionRefs
-      .filter(ref => !['enable','timeout','debug'].includes(ref.option))
+      .filter(ref=>ref.option!=='enable')
       .map(ref => ref.id);
     if (undeclared.length) {
       return unsupported('undeclared plugin [Argument] reference(s): ' + [...new Set(undeclared)].sort().join(', '));
@@ -1128,8 +1107,8 @@ export function qxScriptV2Plan(ast, {
   if (!condition.ok) return condition;
   const notes = [...(condition.notes || [])];
 
-  if (enable?.type === 'variable') {
-    notes.push('Source dynamic enable=' + enable.name + ' ignored for Quantumult X; converted rule defaults to enabled.');
+  if (enable?.type==='variable' || enable?.value===false) {
+    notes.push('Source enable forced to enabled for Quantumult X by user conversion policy; source default/off switch is not carried over.');
   }
   if (ast.script.argument) {
     notes.push('Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.');
@@ -1326,7 +1305,7 @@ export function planQxScript(ir,ctx={}) {
     notes.push('Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.');
   }
   if (enableDynamic) {
-    notes.push('Source dynamic enable ignored for Quantumult X; converted rule defaults to enabled.');
+    notes.push('Source enable forced to enabled for Quantumult X by user conversion policy; source default/off switch is not carried over.');
   }
   if (sc.timeout) {
     notes.push('Source Script timeout ignored for Quantumult X.');
@@ -1338,7 +1317,7 @@ export function planQxScript(ir,ctx={}) {
     notes.push('Source Script debug is not a Quantumult X Rewrite Script field and was omitted.');
   }
   if (enableFixed==='false' || enableFixed==='0') {
-    return {ok:true,disabled:true,reason:'Loon Legacy Script enable=false',tag:sc.tag,notes};
+    notes.push('Source enable forced to enabled for Quantumult X by user conversion policy; source default/off switch is not carried over.');
   }
 
   const action=selectQxScriptAction({

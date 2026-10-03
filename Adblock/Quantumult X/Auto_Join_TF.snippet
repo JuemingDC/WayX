@@ -8,7 +8,7 @@
 # Input: App_ID
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:18 +08:00
+# Converted: 2026-10-04 00:56:59 +08:00
 # Converted by: chance
 # Category: 增强
 # Source: https://kelee.one/Tool/Loon/Lpx/Auto_Join_TF.lpx
@@ -21,17 +21,17 @@ host, testflight.apple.com, PROXY
 
 # [rewrite_local]
 # 获取账号令牌
-# [WayX] Source dynamic enable=CaptureAccountToken ignored for Quantumult X; converted rule defaults to enabled.
+# [WayX] Source enable forced to enabled for Quantumult X by user conversion policy; source default/off switch is not carried over.
 ^https?:\/\/testflight\.apple\.com\/v3\/accounts\/.*\/apps$ url script-request-header https://kelee.one/Resource/JavaScript/TestFlight/CaptureAccountToken.js
 
 # [task_local]
 # [WayX] Source Script timeout ignored for Quantumult X task syntax.
 # [WayX] Source dynamic Cron expression=TaskCron is fixed to its plugin default for Quantumult X.
-# [WayX] Source dynamic enable=RunTask is fixed to its plugin default for Quantumult X.
-0 0/2 * * * ? https://kelee.one/Resource/JavaScript/TestFlight/AutoJoinTF.js, tag=自动加入TF, enabled=false
+# [WayX] Source enable forced to enabled for Quantumult X by user conversion policy; source default/off switch is not carried over.
+0 0/2 * * * ? https://kelee.one/Resource/JavaScript/TestFlight/AutoJoinTF.js, tag=自动加入TF, enabled=true
 # [WayX] Source Script timeout ignored for Quantumult X task syntax.
 # [WayX] Source dynamic Cron expression=TaskMonitor is fixed to its plugin default for Quantumult X.
-# [WayX] Source dynamic enable=RunMonitor is fixed to its plugin default for Quantumult X.
+# [WayX] Source enable forced to enabled for Quantumult X by user conversion policy; source default/off switch is not carried over.
 0 * * * * ? https://kelee.one/Resource/JavaScript/TestFlight/AutoMonitorTF.js, tag=监控TF位置, enabled=true
 
 # [mitm]

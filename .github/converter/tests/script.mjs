@@ -114,7 +114,10 @@ assert.equal(
 const disabledIr=legacyScriptToSemanticIr(
   parseLegacyScriptLine('http-request ^https://x\\.example script-path=https://example.com/a.js, enable=false, tag=Off')
 );
-assert.equal(planQxScript(disabledIr,{sourceText:'$done({});'}).disabled,true);
+const qxForcedLegacy=planQxScript(disabledIr,{sourceText:'$done({});'});
+assert.equal(qxForcedLegacy.ok,true);
+assert.equal(qxForcedLegacy.disabled,undefined);
+assert.match(qxForcedLegacy.notes.join('\n'),/forced to enabled/);
 assert.equal(planSurgeScript(disabledIr,{name:'Off'}).disabled,true);
 
 const maxSizeIr=legacyScriptToSemanticIr(
@@ -188,8 +191,7 @@ const qxEnableDynamic=planQxScript(
   {scriptUrl:'https://example.com/e.js',sourceText:'$done({});',argumentIds:new Set(['enabled'])}
 );
 assert.equal(qxEnableDynamic.ok,true);
-assert.match(qxEnableDynamic.line,/script-request-header/);
-assert.match(qxEnableDynamic.notes.join('\n'),/defaults to enabled/i);
+assert.match(qxEnableDynamic.notes.join('\n'),/forced to enabled/);
 
 const v2DebugSource='response if ${url} ~= /debug/ then script("https://example.com/debug.js") with debug=true, tag="Debug"';
 const v2DebugIr=scriptV2AstToSemanticIr(parseScriptV2(v2DebugSource),{source:v2DebugSource});
@@ -209,9 +211,8 @@ const qxV2DynamicDebug=planQxScript(v2DynamicDebugIr,{
   sourceText:'$done({});',
   argumentIds:new Set(),
 });
-assert.equal(qxV2DynamicDebug.ok,true);
-assert.doesNotMatch(qxV2DynamicDebug.line,/debug=/);
-assert.match(qxV2DynamicDebug.notes.join('\n'),/debug.*omitted/i);
+assert.equal(qxV2DynamicDebug.ok,false);
+assert.match(qxV2DynamicDebug.reason,/undeclared.*debugSwitch/);
 
 const surgeBinaryWithoutBody=planSurgeScript(
   scriptV2AstToSemanticIr(parseScriptV2('request if ${url} ~= /raw/ then script("raw.js") with binary_body_mode=true')),
@@ -240,4 +241,22 @@ assert.equal(surgeV2.ok,true);
 assert.match(surgeV2.line,/^V2 = type=http-response,pattern=api,script-path=https:\/\/example\.com\/v2\.js,requires-body=true,max-size=-1,binary-body-mode=true$/);
 
 console.log('Script IR target planner contract passed');
+}
+
+if (selectedCase==='script-ir-target-planners.mjs') {
+  for(const suffix of ['enable=false','enable=${off}']) {
+    const ir=scriptV2AstToSemanticIr(parseScriptV2('request if ${url} ~= /off/ then script("https://example.test/author.js") with '+suffix));
+    const qx=planQxScript(ir,{argumentIds:new Set(['off']),argumentTable:{byId:new Map([['off',{id:'off',hasDefault:true,defaultValue:false}]])}});
+    assert.equal(qx.ok,true);
+    assert.equal(qx.disabled,undefined);
+    assert.match(qx.line,/script-request-header https:\/\/example\.test\/author\.js$/);
+    assert.match(qx.notes.join('\n'),/forced to enabled/);
+  }
+  const cron=planQxScript(scriptV2AstToSemanticIr(parseScriptV2('cron "0 8 * * *" then script("https://example.test/task.js") with enable=false')));
+  assert.equal(cron.ok,true);
+  assert.equal(cron.disabled,undefined);
+  assert.equal(cron.section,'task');
+  assert.match(cron.line,/enabled=true/);
+  const surgeOff=planSurgeScript(scriptV2AstToSemanticIr(parseScriptV2('request if ${url} ~= /off/ then script("https://example.test/author.js") with enable=false')));
+  assert.equal(surgeOff.disabled,true);
 }

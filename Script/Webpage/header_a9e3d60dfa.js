@@ -1,16 +1,41 @@
-// Converted: 2026-10-04 01:04:04 +08:00
+// Converted: 2026-10-04 01:05:04 +08:00
 // Converted by: chance
 // Category: 去广告
-// Source Loon: request if ${url} ~= /(^https:\/\/(?:www|m)\.bilibili\.com\/video\/(?:BV\w{10}|av\d{9}))(?:\/?\?.*)/i as urlMatch then redirect(302, "${urlMatch.1}")
-const __wayxCaptures=Object.create(null);
-function __wayxHeader(phase,name){
-  const h=phase==="request"?$request.headers:$response.headers;
-  const wanted=String(name).toLowerCase();
-  if(Array.isArray(h)){const x=h.find(x=>String(x.field).toLowerCase()===wanted);return x?.value;}
-  const k=Object.keys(h||{}).find(x=>x.toLowerCase()===wanted);
-  return k===undefined?undefined:h[k];
+// Source Loon: response if ${url} ~= /https:\/\/(rule\.)?kelee\.one\//i then response.header.set("content-type", "text/plain; charset=utf-8")
+const __wayxRegexReplace=(()=>{const SUPPORTED_FLAGS=/^[ims]*$/;function assertRegexNode(node) {
+  if (!node || node.type!=='regex') throw new TypeError('Expected Loon semantic Regex node');
+  const flags=String(node.flags || '');
+  if (!SUPPORTED_FLAGS.test(flags)) throw new Error('Unsupported Loon regex flag(s): '+flags);
+  if (new Set(flags).size!==flags.length) throw new Error('Duplicate Loon regex flag(s): '+flags);
+  return {source:String(node.pattern ?? ''),flags};
 }
-const __wayxUrl=$request.url;
+function compileSourceRegex(node) {
+  const {source,flags}=assertRegexNode(node);
+  return new RegExp(source,flags);
+}
+function replaceSourceRegex(node,text,replacement) {
+  const match=compileSourceRegex(node).exec(text);
+  if (!match) return text;
+  const out=String(replacement).replace(/\$(\d+)/g,(_,index)=>match[Number(index)] ?? '');
+  return text.slice(0,match.index)+out+text.slice(match.index+match[0].length);
+};return (text,pattern,flags,replacement)=>replaceSourceRegex({type:"regex",pattern,flags},String(text),replacement);})();
+const __wayxCaptures=Object.create(null);
+let __wayxHeaders={...($response.headers||{})};
+let __wayxBody=$response.body;
+function __wayxTpl(parts){let out="";for(const p of parts){if(p[0]==="s"){out+=p[1];continue}if(p[0]==="a"){const v=__wayxArgs[p[1]];if(v===undefined)return undefined;out+=String(v);continue}const v=__wayxCaptures[p[1]]?.[p[2]];if(v===undefined)return undefined;out+=String(v)}return out}
+function __wayxWith(v,fn){if(v!==undefined)fn(v)}
+function __wayxJsonAction(fn){try{const j=JSON.parse(String(__wayxBody ?? ""));fn(j);__wayxBody=JSON.stringify(j)}catch{}}
+function __wayxJsonParent(root,path){let x=root;for(let i=0;i<path.length-1;i++){if(x==null||!(path[i] in Object(x)))return null;x=x[path[i]];}return x;}
+function __wayxJsonGet(root,path){let x=root;for(const k of path){if(x==null||typeof x!=="object"||!(k in x))return undefined;x=x[k]}return x;}
+function __wayxJsonSet(root,path,value){let x=root;for(let i=0;i<path.length-1;i++){const k=path[i],next=path[i+1];if(x==null||typeof x!=="object")return;const cur=x[k];if(cur==null)x[k]=typeof next==="number"?[]:{};else if(typeof cur!=="object")return;x=x[k]}if(x!=null&&typeof x==="object")x[path[path.length-1]]=value;}
+function __wayxJsonAdd(root,path,value){const cur=__wayxJsonGet(root,path);if(cur===undefined||cur===null)__wayxJsonSet(root,path,value);}
+function __wayxJsonDelete(root,path){const p=__wayxJsonParent(root,path);if(p==null)return;const k=path[path.length-1];if(Array.isArray(p)&&typeof k==="number"){if(k>=0&&k<p.length)p.splice(k,1);}else delete p[k];}
+function __wayxJsonReplace(root,path,value){const cur=__wayxJsonGet(root,path);if(cur!==undefined&&cur!==null&&cur!==false)__wayxJsonSet(root,path,value);}
+function __wayxHeader(phase,name){const h=phase==="request"?$request.headers:$response.headers;const w=String(name).toLowerCase();if(Array.isArray(h)){const x=h.find(x=>String(x.field).toLowerCase()===w);return x?.value;}const k=Object.keys(h||{}).find(x=>x.toLowerCase()===w);return k===undefined?undefined:h[k];}
+function __wayxSet(n,v){const k=__wayxKey(n);__wayxHeaders[k||n]=v;}
+function __wayxDel(n){const w=String(n).toLowerCase();for(const k of Object.keys(__wayxHeaders))if(k.toLowerCase()===w)delete __wayxHeaders[k];}
+function __wayxHeaderReplace(n,p,r,f=""){const k=__wayxKey(n);if(k!==undefined)__wayxHeaders[k]=__wayxRegexReplace(__wayxHeaders[k],p,f,r);}
+function __wayxKey(n){return Object.keys(__wayxHeaders).find(k=>k.toLowerCase()===String(n).toLowerCase());}
 if((()=>{const SUPPORTED_FLAGS=/^[ims]*$/;
 function assertRegexNode(node) {
   if (!node || node.type!=='regex') throw new TypeError('Expected Loon semantic Regex node');
@@ -169,12 +194,7 @@ function evaluateCondition(condition,context={},initialCaptures={}) {
     captures:Object.fromEntries(result.captures),
   };
 }
-const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"(^https:\\/\\/(?:www|m)\\.bilibili\\.com\\/video\\/(?:BV\\w{10}|av\\d{9}))(?:\\/?\\?.*)","flags":"i","raw":"/(^https:\\/\\/(?:www|m)\\.bilibili\\.com\\/video\\/(?:BV\\w{10}|av\\d{9}))(?:\\/?\\?.*)/i"},"capture":"urlMatch"},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
-  const __wayxMatch=__wayxCaptures["urlMatch"];
-  if(!__wayxMatch){$done({});}else{
-    const __wayxTemplate="${urlMatch.1}";
-    const __wayxReplacement=__wayxTemplate.replace(/\$\{urlMatch\.(\d+)\}/g,(_,n)=>__wayxMatch[Number(n)] ?? "");
-    const __wayxLocation=__wayxUrl.slice(0,__wayxMatch.index)+__wayxReplacement+__wayxUrl.slice(__wayxMatch.index+__wayxMatch[0].length);
-    $done({status:"HTTP/1.1 302 Found",headers:{Location:__wayxLocation},body:""});
-  }
+const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"https:\\/\\/(rule\\.)?kelee\\.one\\/","flags":"i","raw":"/https:\\/\\/(rule\\.)?kelee\\.one\\//i"},"capture":null},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
+  __wayxWith("text/plain; charset=utf-8",v=>__wayxSet("content-type",v));
+  $done({headers:__wayxHeaders});
 }else{$done({});}

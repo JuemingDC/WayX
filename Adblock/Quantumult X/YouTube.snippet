@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/youtube.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-10-03 11:34:05 +08:00
+# Converted: 2026-10-04 01:04:16 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/youtube.lpx
@@ -18,7 +18,7 @@
 # loon 专用写法
 #response if ${url} ~= /^https:\/\/rr[\w-]+\.googlevideo\.com\/initplayback\?/i then response.body.mock("text", "", 200)
 # youtube 短链移除追踪参数
-(^https:\/\/youtu\.be\/[\w-]+)(?:\?si=\w+) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/YouTube/redirect_26c750fd96.js
+^ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/YouTube/redirect_26c750fd96.js
 # youtube_request_init
 # [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
 # [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.

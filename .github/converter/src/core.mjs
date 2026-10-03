@@ -68,6 +68,10 @@ function headerVariable(name) {
 }
 
 function lookupHeader(headers,name) {
+  if (Array.isArray(headers)) {
+    const item=headers.find(x=>String(x.field).toLowerCase()===String(name).toLowerCase());
+    return item ? String(item.value ?? '') : null;
+  }
   if (headers instanceof Map) {
     for (const [key,value] of headers) {
       if (String(key).toLowerCase()===String(name).toLowerCase()) return value===undefined ? '' : String(value);
@@ -308,12 +312,8 @@ export function differentialConditionOracle({
 // Author: chance
 // Category: Converter / Regex / Cross-platform
 //
-// Loon Rewrite v2 uses JavaScript-style /.../ regex literals. Target
-// declarations use their own bare/string regex fields. WayX removes only the
-// Loon literal wrapper at parse time and intentionally discards source i/m/s
-// flags by project standard. The regex body itself is preserved byte-for-byte;
-// target-specific planners may adapt it only when an official target syntax
-// requires a local change.
+// Native target regex fields have no verified Loon flag equivalent.
+// Preserve bodies; route flagged regexes through the semantic runtime.
 
 export function normalizeRegexBodyForTarget(pattern) {
   // Historical name kept to avoid broad call-site churn. This is deliberately
@@ -321,15 +321,15 @@ export function normalizeRegexBodyForTarget(pattern) {
   return String(pattern ?? '');
 }
 
-export function compileRegexForTarget(regex, { subject = 'url', target = 'generic' } = {}) {
+export function compileRegexForTarget(regex, { subject = 'url', target = 'generic', requireEquivalent = false } = {}) {
   if (!regex || regex.type !== 'regex') throw new TypeError('Expected Rewrite v2 regex AST node');
 
   const pattern = normalizeRegexBodyForTarget(regex.pattern);
   const flags = String(regex.flags || '');
 
-  // i/m/s are intentionally source-only metadata. Never synthesize inline
-  // modifiers, case-fold expansions, or target helper flags.
-  return { ok: true, pattern, sourceFlags: flags, notes: [] };
+  assertRegexNode(regex);
+  if (flags && requireEquivalent) return {ok:false,reason:target+' native '+subject+' regex cannot preserve source flags '+flags,pattern,sourceFlags:flags};
+  return {ok:true,pattern,sourceFlags:flags,compatibilityUnverified:Boolean(flags),notes:[]};
 }
 
 // qx-official-capabilities.mjs
@@ -415,3 +415,85 @@ export const SURGE_WAYX_SCRIPT_TYPES = new Set([
 ]);
 
 export const SURGE_WAYX_MITM_KEYS = new Set(['hostname']);
+
+// Shared source evaluator embedded in generated target helpers.
+export function conditionRuntimeSource() {
+  return 'const SUPPORTED_FLAGS=/^[ims]*$/;\n'+[
+    assertRegexNode,compileSourceRegex,execSourceRegex,SemanticEvaluationError,
+    cloneCaptures,decodeHeaderName,headerVariable,lookupHeader,argumentValue,
+    captureValue,resolveSemanticVariable,literalValue,comparison,evaluateNode,evaluateCondition,
+  ].map(fn=>fn.toString()).join('\n');
+}
+
+// Source action oracle for the Header/Body/JSON dispatcher subset. Path parsing
+// is injected from the source grammar; target emitters use their own lowering.
+export function evaluateRewriteActions(ast,context,{parsePath}={}) {
+  const state=structuredClone(context);
+  const condition=evaluateCondition(ast.condition,state);
+  if (!condition.matched) return {matched:false,state,errors:[]};
+  const captures=new Map(Object.entries(condition.captures));
+  const value=node=>{
+    if (node.type==='variable') return resolveSemanticVariable(node.name,state,captures);
+    if (node.type!=='string') return node.value;
+    let missing=false;
+    const text=String(node.value).replace(/\$\{([^}]+)\}/g,(_,name)=>{
+      const v=resolveSemanticVariable(name,state,captures);
+      if (v===undefined) {missing=true;return '';}
+      return String(v);
+    });
+    if (missing) throw new SemanticEvaluationError('missing action capture/variable');
+    return text;
+  };
+  const errors=[];
+  for (const action of ast.actions) {
+    const groups=action.args[0]?.type==='array' ? action.args[0].items.map((_,i)=>action.args.map(a=>a.items[i])) : [action.args];
+    for (const args of groups) try {
+      const phase=state[ast.phase] ||= {};
+      const operation=action.name.split('.').at(-1);
+      if (action.name.includes('.header.')) {
+        const headers=phase.headers ||= {};
+        const name=value(args[0]);
+        const keys=Object.keys(headers).filter(k=>k.toLowerCase()===String(name).toLowerCase());
+        if (operation==='set') {for (const k of keys) delete headers[k];headers[keys[0] || name]=value(args[1]);}
+        else if (operation==='del') {for(const k of keys) delete headers[k];}
+        else if (operation==='replace') {const replacement=value(args[2]);for(const k of keys) headers[k]=replaceSourceRegex(args[1],String(headers[k]),replacement);}
+        else throw new SemanticEvaluationError('unsupported oracle header action: '+operation);
+      } else if (action.name.includes('.body.') && operation==='replace') {
+        phase.body=replaceSourceRegex(args[0],String(phase.body ?? ''),value(args[1]));
+      } else if (action.name.includes('.json.') && ['add','delete','replace'].includes(operation)) {
+        let json;try{json=JSON.parse(String(phase.body ?? ''));}catch{continue;}
+        const path=parsePath(value(args[0]));
+        let parent=json;
+        for(let i=0;i<path.length-1;i++) {
+          const key=path[i];
+          if (parent==null || typeof parent!=='object') {parent=null;break;}
+          if (!(key in parent)) {
+            if (operation!=='add') {parent=null;break;}
+            parent[key]=typeof path[i+1]==='number'?[]:{};
+          }
+          parent=parent[key];
+        }
+        if (parent!=null && typeof parent==='object') {
+          const key=path.at(-1),current=parent[key];
+          if(operation==='delete') {if(Array.isArray(parent) && typeof key==='number') {if(key<parent.length)parent.splice(key,1);}else delete parent[key];}
+          else if(operation==='add' ? current==null : current!==undefined && current!==null && current!==false) parent[key]=value(args[1]);
+        }
+        phase.body=JSON.stringify(json);
+      } else throw new SemanticEvaluationError('unsupported oracle action: '+action.name);
+    } catch(error) {errors.push({action:action.name,reason:error.message});}
+  }
+  return {matched:true,state,errors};
+}
+
+export function replaceSourceRegex(node,text,replacement) {
+  const match=compileSourceRegex(node).exec(text);
+  if (!match) return text;
+  const out=String(replacement).replace(/\$(\d+)/g,(_,index)=>match[Number(index)] ?? '');
+  return text.slice(0,match.index)+out+text.slice(match.index+match[0].length);
+}
+
+export function regexReplacementRuntimeSource() {
+  return 'const __wayxRegexReplace=(()=>{const SUPPORTED_FLAGS=/^[ims]*$/;'+
+    [assertRegexNode,compileSourceRegex,replaceSourceRegex].map(fn=>fn.toString()).join('\n')+
+    ';return (text,pattern,flags,replacement)=>replaceSourceRegex({type:"regex",pattern,flags},String(text),replacement);})();';
+}

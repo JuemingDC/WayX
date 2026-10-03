@@ -213,3 +213,67 @@ function runGenerated(script, { request = {}, response = {}, argument = '' } = {
 
 console.log('WayX generated helper runtime fixtures passed');
 }
+
+// Behavior oracle: source evaluator against both emitted target adapters,
+// including all flag combinations and capture-dependent substitutions.
+if (selectedCase==='generated-helper-runtime.mjs') {
+  const {evaluateRewriteActions}=await import('../src/core.mjs');
+  const {parseJsonKeyPath}=await import('../src/rule.mjs');
+  const {renderSingleRewriteMutationScript,renderRewritePhaseDispatcher}=await import('../src/runtime.mjs');
+  const {convertPlugin,validateConvertedPlugin}=await import('../src/conversion.mjs');
+  const run=(script,context)=>{
+    let calls=0,out;
+    vm.runInNewContext(script,{$request:structuredClone(context.request),$response:structuredClone(context.response),$done(value){calls++;out=value;}},{timeout:1000});
+    assert.equal(calls,1);
+    return JSON.parse(JSON.stringify(out));
+  };
+  let checked=0;
+  for (const target of ['qx','surge']) for (const flags of ['','i','m','s','im','is','ms','ims']) for(const body of ['a.b','A\nB','a\nb','prefix\na.b\nsuffix']) {
+    const ast=parseRewriteV2('response if ${url} ~= /api-(\\d+)/i as hit && ${response.header["X-Mode"]} ~= /^READY$/i then response.body.replace(/^a.b$/'+flags+', "$0:$0:${hit.1}") | response.header.replace("X-Mode", /ready/i, "$0-done") | response.json.add("meta.ok",true)');
+    const context={url:'https://example.test/API-42',request:{url:'https://example.test/API-42',headers:{},method:'GET'},response:{headers:{'x-mode':'READY'},body,status:200,statusCode:200}};
+    const oracle=evaluateRewriteActions(ast,context,{parsePath:parseJsonKeyPath});
+    const generated=run(renderMixedRewriteScript(ast,{target}).script,context);
+    assert.equal(generated.body,oracle.state.response.body);
+    assert.deepEqual(generated.headers,oracle.state.response.headers);
+    if (flags==='ims' && body==='A\nB') assert.equal(generated.body,'A\nB:A\nB:42','source $0 is the complete action match, with i/m/s preserved');
+    checked++;
+  }
+  for(const target of ['qx','surge']) {
+    // Missing and empty headers are distinct; /=^$/ must not match absence.
+    for(const headers of [{},{'X-Empty':''},{'x-empty':'present'}]) {
+      const ast=parseRewriteV2('request if ${request.header["X-Empty"]} == null || ${request.header["X-Empty"]} ~= /^$/ then request.header.set("X-Matched","yes")');
+      const context={url:'https://example.test/api',request:{url:'https://example.test/api',headers,method:'GET'},response:{}};
+      const oracle=evaluateRewriteActions(ast,context,{parsePath:parseJsonKeyPath});
+      const generated=run(renderSingleRewriteMutationScript(ast,{target}).script,context);
+      assert.deepEqual(generated.headers || headers,oracle.state.request.headers);
+      checked++;
+    }
+    // All declarations run, the next condition sees prior changes, each
+    // declaration owns its captures, and all-miss emits the official no-op.
+    const entries=[
+      'response if ${url} ~= /api-(\\d+)/i as hit then response.header.set("X-Step","${hit.1}")',
+      'response if ${response.header["X-Step"]} == "42" then response.body.replace(/old/is,"new") | response.header.set("X-Final","yes")',
+      'response if ${url} ~= /miss/ then response.body.replace(/new/,"wrong")',
+    ].map(parseRewriteV2);
+    for(const url of ['https://example.test/API-42','HTTPS://example.test/API-42','https://example.test/none']) {
+      const context={url,request:{url,headers:{},method:'GET'},response:{headers:{},body:'OLD',status:200,statusCode:200}};
+      let state=context;
+      for(const ast of entries)state=evaluateRewriteActions(ast,state,{parsePath:parseJsonKeyPath}).state;
+      const plan=renderRewritePhaseDispatcher(entries,{target});
+      assert.equal(new RegExp(plan.pattern).test(url),true,'phase prefilter must not exclude uppercase URL schemes');
+      const generated=run(plan.script,context);
+      assert.deepEqual(generated.headers || context.response.headers,state.response.headers);
+      assert.equal(generated.body ?? context.response.body,state.response.body);
+      checked++;
+    }
+  }
+  const entry={id:'PhaseOracle',source:'https://example.test/plugin.lpx',category:'Test'};
+  const source='[Rewrite]\nresponse if ${url} ~= /api/i then response.header.set("X-Step","42")\nresponse if ${response.header["X-Step"]} == "42" then response.body.replace(/old/i,"new")';
+  const output=convertPlugin(entry,source,{stamp:'2026-10-03',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+  validateConvertedPlugin(entry,output);
+  assert.equal(output.generatedScripts.size,2);
+  assert.match(output.qx,/phase_qx_response_/);
+  assert.match(output.surge,/phase_surge_response_/);
+  assert.doesNotMatch([...output.generatedScripts.keys()].join('\n'),/^(?:body|header|json_)/m);
+  console.log('New syntax behavior oracle passed: '+checked+' flag/capture/header/dispatcher cases across QX and Surge');
+}

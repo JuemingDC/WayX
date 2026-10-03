@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/bilibili.png
 # Updated: 2026-09-27 19:00
 
-# Converted: 2026-10-03 11:33:57 +08:00
+# Converted: 2026-10-04 01:04:04 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/bilibili.lpx
@@ -84,21 +84,21 @@ host, app.biliapi.net, reject
 
 {# 视频暂停广告 #} ^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.(?:view\.v1\.View\/TFInfo|viewunite\.v1\.View\/(?:PlayPause|ViewEndPage))$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/mock_70cda67371.js
 
-{# 移除直播间链接跟踪参数 #} (^https:\/\/live\.bilibili\.com\/\d+)(?:\/?\?.*) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/redirect_59da899133.js
+{# 移除直播间链接跟踪参数 #} ^ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/redirect_59da899133.js
 
 {# 移除直播间游戏推广 #} ^https:\/\/line3-h5-mobile-api\.biligame\.com\/game\/live\/large_card_material\? url reject-dict
 
-{# 移除视频链接跟踪参数 #} (^https:\/\/(?:www|m)\.bilibili\.com\/video\/(?:BV\w{10}|av\d{9}))(?:\/?\?.*) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/redirect_089914b029.js
+{# 移除视频链接跟踪参数 #} ^ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/redirect_089914b029.js
 
 {# 哔哩哔哩漫画 开屏 && 底栏广告 #} ^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v1\.Comic\/(?:Flash|ListFlash|GetActivityTab|GetBubbles) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/mock_72464b6f06.js
 
 {# 哔哩哔哩漫画 广告 #} ^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v1\.(?:Comic\/AppInit|Home\/HomeFeed)\? url jsonjq-response-body '.data as $data | .data[("activity_tab", "flash", "operate") | select($data[.])]=null | if .data.feeds then .data.feeds |= map(select(.type | IN(15, 30) | not)) end'
 # 移除视频内插播广告
-# [WayX] Source dynamic enable=sponsorBlock ignored for Quantumult X; converted rule defaults to enabled.
+# [WayX] Source enable forced to enabled for Quantumult X by user conversion policy; source default/off switch is not carried over.
 # [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.community\.service\.dm\.v1\.DM\/DmSegMobile$ url script-request-body https://rucu6.pages.dev/Scripts/bilibili/request.js
 # 移除评论区广告
-# [WayX] Source dynamic enable=optimizeRequest ignored for Quantumult X; converted rule defaults to enabled.
+# [WayX] Source enable forced to enabled for Quantumult X by user conversion policy; source default/off switch is not carried over.
 # [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
 # [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https:\/\/(?:app\.bilibili\.com|grpc\.biliapi\.net)\/bilibili\.main\.community\.reply\.v1\.Reply\/MainList$ url script-request-body https://rucu6.pages.dev/Scripts/bilibili/request.js
