@@ -117,6 +117,9 @@ assert.match(qxRewriteMatcher,/n\.operator==='\|\|'/, 'Block 40: QX matcher plan
 assert.match(qxRewriteMatcher,/export function qxExactRewriteMatcherPlan/, 'Block 40: QX matcher planner must expose an exact native-matcher path');
 assert.match(qxRewriteMatcher,/matchScope:hasUrl \? 'url-and-headers' : 'headers-only'/, 'Block 40: QX matcher planner must distinguish combined and Headers-only matching');
 assert.match(qxRewriteMatcher,/matchScope:hasUrl \? 'url-only' : 'unfiltered'/, 'Block 40: URL-only matching must remain on the url matcher without optional Headers');
+assert.match(qxRewriteMatcher,/request-header-eq/, 'Block 40: QX matcher planner must recognize fixed request.header equality as a prefilter');
+assert.match(qxRewriteMatcher,/request-header-present/, 'Block 40: QX matcher planner must reduce request.header regex conditions to presence-only prefilters');
+assert.match(qxRewriteMatcher,/item\.kind\.startsWith\('request-header-'\)/, 'Block 40: request.header predicates must stay out of the exact native matcher subset');
 assert.match(rewriteQx,/qxExactRewriteMatcherPlan\(ast\)/, 'Block 30/40: native QX Header coalescing must require exact condition coverage');
 assert.match(rewriteSurge,/planComplexRewrite\(ast,'surge'/, 'Block 30: Surge planner must own its complex fallback');
 assert.match(rewriteQx,/function ensureQxRewriteHandlers\(\)/, 'Block 30: QX complex handlers must register lazily');
