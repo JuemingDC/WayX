@@ -275,7 +275,7 @@ WayX 对 Key Path JSON Action 固定采用项目选定的 Stash-compatible 语�
 
 所有 JSON batch 参数必须按相同下标配对并从左到右执行，不得排序、去重或重排。`json.replace(..., null)` 等 value 必须保持原 JSON 类型，不得把 Number/String/Boolean/null/Object/Array 相互转换。
 
-`request/response.json.jq(...)` 属于源作者直接提供的 jq 表达式，目标支持原生 jq 时必须原样迁移表达式结构，不得为了统一代码改写成 `getpath/setpath/delpaths` 或 JavaScript。`jq_file` 仅允许为单行目标配置删除非字符串注释并压缩无语义空白，禁止对表达式做 AST/代数重写。
+`request/response.json.jq(...)` 属于源作者直接提供的 jq 表达式，目标支持原生 jq 时必须原样迁移表达式结构，不得为了统一代码改写成 `getpath/setpath/delpaths` 或 JavaScript。`jq_file` 与 historical `jq-path=` 只允许为单行目标配置读取原作者依赖、删除非字符串注释并压缩无语义空白后内联，禁止对表达式做 AST/代数重写。它们是 general Script fallback 的明确例外：不能原生内联时直接注释 Review，禁止生成 JQ Script/helper。
 
 ## 30.6 自动转换实现
 
