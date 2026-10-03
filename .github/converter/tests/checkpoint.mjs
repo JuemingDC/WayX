@@ -1393,7 +1393,7 @@ const qxResponseBinaryNative = qxScriptV2Plan(
 );
 assert.equal(qxResponseBinaryNative.ok, true);
 assert.match(qxResponseBinaryNative.line, /url script-response-body /);
-assert.ok(qxResponseBinaryNative.notes.some(note => /binary_body_mode=true.*omitted/i.test(note)));
+assert.ok(qxResponseBinaryNative.notes.some(note => /binary_body_mode=true ignored/i.test(note)));
 
 const qxRequestBinaryUnsupported = qxScriptV2Plan(
   parseScriptV2('request if ${url} ~= /upload/i then script("https://example.com/binary.js") with binary_body_mode=true'),
@@ -1402,7 +1402,7 @@ const qxRequestBinaryUnsupported = qxScriptV2Plan(
 assert.equal(qxRequestBinaryUnsupported.ok, true);
 assert.match(qxRequestBinaryUnsupported.line, /url script-request-header /);
 assert.doesNotMatch(qxRequestBinaryUnsupported.line, /script-request-body/);
-assert.ok(qxRequestBinaryUnsupported.notes.some(note => /binary_body_mode=true.*omitted/i.test(note)));
+assert.ok(qxRequestBinaryUnsupported.notes.some(note => /binary_body_mode=true ignored/i.test(note)));
 
 const surgeScriptV2Native = surgeScriptV2Plan(
   parseScriptV2('request if ${url} ~= /submit/i then script("https://example.com/request.js") with requires_body=true, binary_body_mode=true'),
@@ -1417,8 +1417,8 @@ const qxScriptV2NeedsReview = qxScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'requ
 assert.equal(qxScriptV2NeedsReview.ok, true);
 assert.match(qxScriptV2NeedsReview.line, /url script-request-body request\.js$/);
 assert.ok(qxScriptV2NeedsReview.notes.some(note => /defaults to enabled/i.test(note)));
-assert.ok(qxScriptV2NeedsReview.notes.some(note => /timeout.*omitted/i.test(note)));
-assert.ok(qxScriptV2NeedsReview.notes.some(note => /binary_body_mode=true.*omitted/i.test(note)));
+assert.ok(qxScriptV2NeedsReview.notes.some(note => /timeout ignored/i.test(note)));
+assert.ok(qxScriptV2NeedsReview.notes.some(note => /binary_body_mode=true ignored/i.test(note)));
 assert.ok(qxScriptV2NeedsReview.notes.some(note => /argument ignored/i.test(note)));
 
 const surgeScriptV2NeedsReview = surgeScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'request.js', name:'x'});
@@ -1446,7 +1446,7 @@ const qxUnsupportedDynamicOptions = qxScriptV2Plan(
 );
 assert.equal(qxUnsupportedDynamicOptions.ok, true);
 assert.ok(qxUnsupportedDynamicOptions.notes.some(note => /defaults to enabled/i.test(note)));
-assert.ok(qxUnsupportedDynamicOptions.notes.some(note => /timeout.*omitted/i.test(note)));
+assert.ok(qxUnsupportedDynamicOptions.notes.some(note => /timeout ignored/i.test(note)));
 
 const surgeBinaryOnly = surgeScriptV2Plan(
   parseScriptV2('request if ${url} ~= /raw/ then script("raw.js") with binary_body_mode=true'),
