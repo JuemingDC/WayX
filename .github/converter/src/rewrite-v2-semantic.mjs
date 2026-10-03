@@ -27,18 +27,9 @@ export function simpleUrlRewriteCondition(ast, {target = 'generic'} = {}) {
       c.right?.type !== 'regex') {
     return unsupported('condition is not a single URL regex');
   }
-  const compiled=target==='generic'
-    ? {ok:true,pattern:String(c.right.pattern),notes:[],sourceFlags:String(c.right.flags || '')}
-    : compileRegexForTarget(c.right,{subject:'url',target});
-  if (!compiled.ok) return unsupported(compiled.reason,{sourceFlags:compiled.sourceFlags || String(c.right.flags || '')});
-  return {
-    ok:true,
-    pattern:compiled.pattern,
-    regex:c.right,
-    capture:c.capture || null,
-    notes:compiled.notes || [],
-    sourceFlags:compiled.sourceFlags || '',
-  };
+  // URL matcher bodies are source regex bodies after the Loon literal wrapper
+  // has been removed by the parser. Do not compile/canonicalize them here.
+  return { ok: true, pattern: String(c.right.pattern), regex: c.right, capture: c.capture || null, notes: [] };
 }
 
 function parseKeyPath(path) {
@@ -209,7 +200,7 @@ export function qxDirectRewritePlan(ast, {matcher = null} = {}) {
       notes:[],
     };
   } else {
-    condition = simpleUrlRewriteCondition(ast,{target:'qx'});
+    condition = simpleUrlRewriteCondition(ast);
     if (!condition.ok) return condition;
     condition={...condition,prefix:condition.pattern+' url '};
   }
@@ -270,7 +261,7 @@ function surgeQuoteJq(jq) {
 export function surgeDirectRewritePlan(ast) {
   validateRewriteV2Ast(ast);
   if (ast.actions.length !== 1) return unsupported('Surge direct mapping requires exactly one action');
-  const condition = simpleUrlRewriteCondition(ast, {target:'surge'});
+  const condition = simpleUrlRewriteCondition(ast);
   if (!condition.ok) return condition;
   const action = ast.actions[0];
 
@@ -332,7 +323,7 @@ export function surgeRedirectRewritePlan(ast, {argumentTable = null} = {}) {
   if (ast.actions.length !== 1 || !['redirect','url.replace'].includes(ast.actions[0].name)) {
     return unsupported('Surge URL Rewrite mapping requires one redirect/url.replace action');
   }
-  const condition = simpleUrlRewriteCondition(ast, {target:'surge'});
+  const condition = simpleUrlRewriteCondition(ast);
   if (!condition.ok) return condition;
   const action = ast.actions[0];
 
@@ -372,7 +363,7 @@ function mapLocalData(value) {
 export function surgeRejectRewritePlan(ast) {
   validateRewriteV2Ast(ast);
   if (ast.actions.length !== 1) return unsupported('Surge reject mapping requires exactly one action');
-  const condition = simpleUrlRewriteCondition(ast, {target:'surge'});
+  const condition = simpleUrlRewriteCondition(ast);
   if (!condition.ok) return condition;
   const action = ast.actions[0];
   if (!['reject','reject_img','reject_dict','reject_array'].includes(action.name)) return unsupported('reject action has no direct Surge mapping');
@@ -474,7 +465,7 @@ export function surgeHeaderRewritePlan(ast) {
   if (!ast.actions.length || ast.actions.some(action => !allowed.has(action.name))) {
     return unsupported('Surge Header Rewrite requires same-phase header actions only');
   }
-  const condition = simpleUrlRewriteCondition(ast, {target:'surge'});
+  const condition = simpleUrlRewriteCondition(ast);
   if (!condition.ok) return condition;
   try {
     const lines = [];
@@ -549,7 +540,7 @@ function applyStaticHeaderAction(headers, action) {
 export function surgeInlineMockPlan(ast) {
   validateRewriteV2Ast(ast);
   if (ast.phase !== 'response') return unsupported('Surge Map Local maps response.body.mock only');
-  const condition = simpleUrlRewriteCondition(ast, {target:'surge'});
+  const condition = simpleUrlRewriteCondition(ast);
   if (!condition.ok) return condition;
   const mocks = ast.actions.filter(action => action.name === 'response.body.mock');
   if (mocks.length !== 1) return unsupported('Surge mock conversion requires exactly one response.body.mock');
