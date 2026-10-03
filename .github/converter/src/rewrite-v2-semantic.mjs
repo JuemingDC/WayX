@@ -3,7 +3,7 @@
 // Category: Converter / Rewrite v2 / Semantic Mapping
 import { compileRegexForTarget, normalizeRegexBodyForTarget } from './target-regex.mjs';
 import { qxPrimitiveForRewriteV2Action, validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
-import { quoteJq, renderFixedPathDeleteJq } from './jq.mjs';
+import { parseJsonKeyPath, quoteJq, renderFixedPathDeleteJq } from './jq.mjs';
 import { dependencySpecFromAction } from './dependency.mjs';
 
 function unsupported(reason, extra = {}) {
@@ -33,26 +33,7 @@ export function simpleUrlRewriteCondition(ast, {target = 'generic'} = {}) {
 }
 
 function parseKeyPath(path) {
-  const text = String(path || '');
-  if (!text) throw new Error('JSON key path must not be empty');
-  const parts = [];
-  let i = 0;
-  while (i < text.length) {
-    if (text[i] === '.') { i++; continue; }
-    if (text[i] === '[') {
-      const m = text.slice(i).match(/^\[(\d+)\]/);
-      if (!m) throw new Error('unsupported JSON key-path bracket syntax: ' + text);
-      parts.push(Number(m[1]));
-      i += m[0].length;
-      continue;
-    }
-    const m = text.slice(i).match(/^[^.[\]]+/);
-    if (!m) throw new Error('invalid JSON key path: ' + text);
-    parts.push(m[0]);
-    i += m[0].length;
-  }
-  if (!parts.length) throw new Error('JSON key path must not be empty');
-  return parts;
+  return parseJsonKeyPath(path);
 }
 
 function pathLiteral(path) {
