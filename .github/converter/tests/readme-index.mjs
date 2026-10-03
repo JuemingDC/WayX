@@ -36,12 +36,19 @@ await Promise.all([
   fs.mkdir(path.join(root,'Adblock/Quantumult X'),{recursive:true}),
   fs.mkdir(path.join(root,'Adblock/Surge'),{recursive:true}),
   fs.mkdir(path.join(root,'Rule/QuantumultX'),{recursive:true}),
+  fs.mkdir(path.join(root,'.github/sources'),{recursive:true}),
 ]);
 await fs.writeFile(path.join(root,'Boxjs/QuantumultX/Sub.json'),'{"name":"Chance Sub"}\n');
 await fs.writeFile(path.join(root,'Module/Demo/QuantumultX/Demo.snippet'),'# Name: Demo Module\n# [filter_local]\nhost,demo.example,reject\n# [rewrite_local]\n^https://demo url reject\n# [mitm]\nhostname = demo\n');
 await fs.writeFile(path.join(root,'Module/Demo/Surge/Demo.sgmodule'),'#!name=Demo Module\n[URL Rewrite]\n^https://demo - reject\n');
 await fs.writeFile(path.join(root,'Adblock/Quantumult X/Ads.snippet'),'# Name: Ads\n# [filter_local]\nhost,ads.example,reject\n# [rewrite_local]\n^https://ads.example url reject\n# [mitm]\nhostname = ads.example\n');
 await fs.writeFile(path.join(root,'Adblock/Surge/Ads.sgmodule'),'#!name=Ads\n[URL Rewrite]\n^https://ads.example - reject\n');
+await fs.writeFile(path.join(root,'Adblock/Quantumult X/First.snippet'),'# Name: First\n# [rewrite_local]\n^https://first.example url reject\n');
+await fs.writeFile(path.join(root,'Adblock/Surge/First.sgmodule'),'#!name=First\n[URL Rewrite]\n^https://first.example - reject\n');
+await fs.writeFile(path.join(root,'.github/sources/loon.json'),JSON.stringify([
+  {id:'First',file:'First.lpx',source:'https://kelee.one/Tool/Loon/Lpx/First.lpx',qx:'First.snippet',surge:'First.sgmodule',category:'去广告'},
+  {id:'Ads',file:'Ads.lpx',source:'https://kelee.one/Tool/Loon/Lpx/Ads.lpx',qx:'Ads.snippet',surge:'Ads.sgmodule',category:'去广告'},
+],null,2)+'\n');
 await fs.writeFile(path.join(root,'Rule/QuantumultX/Apple.list'),'# NAME: Apple APNs\nHOST-SUFFIX,push.apple.com,PROXY\n');
 
 const plan=await buildReadmePlan(root);
@@ -54,6 +61,7 @@ assert.ok(readme.indexOf('## Adblock') < readme.indexOf('## Rule'));
 assert.match(readme,/Chance Sub/);
 assert.match(readme,/Demo Module/);
 assert.match(readme,/Ads/);
+assert.ok(readme.indexOf('First') < readme.indexOf('**[Ads]'),'Adblock rows must follow source-catalog order rather than filename order');
 assert.match(readme,/Apple APNs/);
 assert.match(readme,/update-interval%3D86400/);
 assert.match(readme,/Adblock%2FQuantumult%2520X%2FAds\.snippet/);
