@@ -10,6 +10,7 @@ on:
       - ".github/workflows/upstream-monitor.yml"
       - ".github/monitor/**"
       - ".github/sources/loon.json"
+      - ".github/sources/loon-static.json"
       - ".github/manual-assets.json"
       - ".github/CONVERSION_SPEC.md"
       - ".github/docs/conversion-spec/**"
@@ -133,13 +134,33 @@ jobs:
           while IFS= read -r -d '' file; do
             node --check "$file"
           done < <(find Script .github/converter .github/scripts -type f \( -name '*.js' -o -name '*.mjs' \) -print0)
-          python -m py_compile .github/converter/tools/fetch-upstream.py .github/converter/tests/validate_conversion_policy.py .github/scripts/*.py .github/monitor/*.py
+          python -m py_compile .github/converter/tools/fetch-upstream.py .github/converter/tools/refresh-kelee-catalog.py .github/converter/tests/validate_conversion_policy.py .github/scripts/*.py .github/monitor/*.py
+
+      - name: Refresh full Kelee catalog
+        run: python .github/converter/tools/refresh-kelee-catalog.py
+
+      - name: Pull discovered upstreams and convert
+        shell: bash
+        run: |
+          set -o pipefail
+          node .github/scripts/sync-convert.mjs
 
       - name: Regenerate canonical outputs
         run: node .github/converter/tools/regenerate-canonical.mjs --write
 
       - name: Regenerate README index
         run: node .github/converter/tools/update-readme.mjs --write
+
+      - name: Validate refreshed catalog semantics
+        run: |
+          node .github/converter/tests/complex-source-inventory.mjs
+          node .github/converter/tests/catalog-syntax-inventory.mjs
+          node .github/converter/tests/catalog-regex-inventory.mjs
+          node .github/converter/tests/catalog-legacy-syntax-inventory.mjs
+          node .github/converter/tests/catalog-rule-inventory.mjs
+
+      - name: Verify managed conversion cleanliness
+        run: node .github/converter/tools/verify-managed-conversions.mjs
 
       - name: Audit regenerated repository
         run: node .github/converter/tools/audit-repository.mjs
@@ -171,6 +192,9 @@ jobs:
             .github/monitor/.runtime/conversion-reconciliation.md
             .github/monitor/.runtime/review-inventory.json
             .github/monitor/.runtime/review-inventory.md
+            .github/monitor/.runtime/kelee-catalog.json
+            .github/sources/loon.json
+            Resource/Loon/**
 
       - name: Commit deterministic generated outputs to same-repo PR
         if: >-
@@ -179,7 +203,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git add -A -- "Adblock/Quantumult X" "Adblock/Surge" Script README.md
+          git add -A -- ".github/sources/loon.json" "Resource/Loon" "Adblock/Quantumult X" "Adblock/Surge" Script README.md
           if git diff --cached --quiet; then
             exit 0
           fi
@@ -200,7 +224,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          status="$(git status --porcelain --untracked-files=all -- "Adblock/Quantumult X" "Adblock/Surge" Script README.md)"
+          status="$(git status --porcelain --untracked-files=all -- ".github/sources/loon.json" "Resource/Loon" "Adblock/Quantumult X" "Adblock/Surge" Script README.md)"
           if [[ -n "$status" ]]; then
             printf '%s\n' "$status"
             exit 1
