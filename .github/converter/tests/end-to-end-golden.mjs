@@ -727,13 +727,12 @@ for (const testCase of cases) {
 
   if (testCase.name === 'JingDong') {
     assert.match(out.surge, /^#!arguments=Capture:false,Cookies:/m);
-    assert.match(out.surge, /#!REQUIREMENT "'\{\{\{Capture\}\}\}'=='true'"/);
-    assert.ok(qxActive.some(line => /Scripts\/jingdong\.js$/.test(line)), 'JingDong native script declaration missing');
-    assert.ok(qxActive.some(line => /Scripts\/manmanbuy_ck\.js$/.test(line)), 'JingDong dynamic-enable request script must default to active in QX');
-    assert.ok(qxActive.some(line => /Scripts\/jd_price\.js$/.test(line)), 'JingDong argument-bearing response script must remain active in QX');
-    assert.doesNotMatch(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
-    assert.match(out.qx, /Source dynamic enable=Capture ignored for Quantumult X; converted rule defaults to enabled/);
-    assert.match(out.qx, /Source Script argument ignored for Quantumult X/);
+    assert.doesNotMatch(out.surge, /#!REQUIREMENT "'\{\{\{Capture\}\}\}'=='true'"/);
+    assert.equal(qxActive.some(line => /Scripts\/(?:jingdong|manmanbuy_ck|jd_price)\.js$/.test(line)), false, 'flagged JingDong scripts must not be activated with a case-sensitive QX matcher');
+    assert.match(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
+    assert.match(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
+    assert.match(out.qx, /Source declaration: .*Scripts\/jingdong\.js/);
+    assert.match(out.surge, /Source declaration: .*Scripts\/jd_price\.js/);
   }
 
   report.push(actual);
