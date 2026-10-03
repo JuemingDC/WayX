@@ -277,9 +277,14 @@ assert.throws(
   () => validateQX(validQxValidatorText.replace('^https://example\\.com url reject', '^https://example\\.com url loon-private-action'), qxValidatorEntry),
   /unsupported Quantumult X rewrite action/,
 );
-assert.throws(
-  () => validateQX(validQxValidatorText.replace('^https://example\\.com url reject', '^https://example\\.com url response-header x response-header y'), qxValidatorEntry),
-  /unsupported Quantumult X rewrite action/,
+assert.doesNotThrow(
+  () => validateQX(
+    validQxValidatorText.replace(
+      '^https://example\\.com url reject',
+      '^https://example\\.com url response-header ^([^\\r\\n]+)(\\r\\n) response-header $1$2X-Test: 1$2',
+    ),
+    qxValidatorEntry,
+  ),
 );
 
 const outOfScopeSurgeScript = `#!name=ScopeFixture
