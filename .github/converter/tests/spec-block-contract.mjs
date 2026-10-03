@@ -226,8 +226,8 @@ assert.equal(/surgeEnableRequirement\(|surgeDynamicOptionValue\(|surgePluginObje
 assert.equal(/normalizeRegexBodyForTarget\(sc\.pattern\)|sc\.requiresBody|sc\.binary|sc\.timeout|sc\.maxSize|sc\.argument|sc\.enable/.test(conversionPipeline), false, 'Block 60: conversion pipeline must not route Legacy Script options');
 assert.match(scriptQx,/export function planQxScript\(ir/, 'Block 60: QX Script planner must consume Script IR');
 assert.match(scriptSurge,/export function planSurgeScript\(ir/, 'Block 60: Surge Script planner must consume Script IR');
-assert.match(scriptQx,/no dynamic enable field[\s\S]*no timeout field[\s\S]*no binary-body-mode field[\s\S]*no debug field/, 'Block 60: Legacy QX Script planner must fail closed on unsupported execution options');
-assert.match(scriptV2Target,/no dynamic enable field[\s\S]*no timeout field[\s\S]*no debug field[\s\S]*no binary_body_mode field/, 'Block 60: Script v2 QX planner must own target option capability failures');
+assert.match(scriptQx,/dynamic enable[\s\S]*not a Quantumult X Rewrite Script field[\s\S]*timeout[\s\S]*omitted[\s\S]*binary-body-mode=true[\s\S]*omitted[\s\S]*debug[\s\S]*omitted/, 'Block 60: Legacy QX Script planner must explicitly own unsupported option omission');
+assert.match(scriptV2Target,/dynamic enable[\s\S]*not a Quantumult X Rewrite Script field[\s\S]*timeout[\s\S]*omitted[\s\S]*debug[\s\S]*omitted[\s\S]*binary_body_mode=true[\s\S]*omitted/, 'Block 60: Script v2 QX planner must explicitly own unsupported option omission');
 assert.match(scriptV2Target,/binary-body-mode=true/, 'Block 60: Surge Script v2 planner must preserve native binary body mode when supported');
 assert.match(scriptV2Target,/timeout=/, 'Block 60: Surge Script v2 planner must preserve native timeout when supported');
 assert.match(scriptV2Target,/debug=/, 'Block 60: Surge Script v2 planner must preserve native debug when supported');
