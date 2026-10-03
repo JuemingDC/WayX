@@ -7,7 +7,7 @@ import { normalizeRegexBodyForTarget } from './target-regex.mjs';
 import { renderQxHeaderScript, renderQxInlineMockScript } from './qx-semantic-script.mjs';
 import { surgeInlineMockPlan } from './rewrite-v2-semantic.mjs';
 import { renderSurgeRequestMockScript } from './surge-mock.mjs';
-import { classifyLegacyRewriteAction, legacyRewriteToSemanticIr } from './rewrite-ir.mjs';
+import { classifyLegacyRewriteAction, isEmptyLegacyJsonJqIr, legacyRewriteToSemanticIr } from './rewrite-ir.mjs';
 
 function review(pattern, action, reason) {
   return {
@@ -352,9 +352,7 @@ export function planLegacyRewriteIr(ir, target, ctx={}) {
   }
   const pattern=ir.sourcePayload?.pattern ?? '';
   const action=ir.sourcePayload?.action ?? '';
-  if (/^(?:request|response)-body-json-jq\s+(?:''|"")\s*$/i.test(String(action).trim())) {
-    return {section:'drop', reason:'empty-legacy-json-jq'};
-  }
+  if (isEmptyLegacyJsonJqIr(ir)) return {section:'drop', reason:'empty-legacy-json-jq'};
   const targetPattern=normalizeRegexBodyForTarget(pattern);
   const operation=ir.operations[0];
   const parsed=classifyLegacyRewrite(action);
