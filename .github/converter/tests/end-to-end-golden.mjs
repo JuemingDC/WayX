@@ -33,12 +33,15 @@ response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then response.head
 hostname=api.example.com
 `;
 const headerGroupOutput = convert(headerGroupFixture, headerGroupSource, new Map(), STAMP);
-assert.match(headerGroupOutput.qx, /Quantumult X unsupported response\.header\.add commented out/);
+assert.match(
+  headerGroupOutput.qx,
+  /url response-header \^\(\[\^\\r\\n\]\+\)\(\\r\\n\) response-header \$1\$2content-disposition: inline\$2/,
+);
 assert.doesNotMatch(headerGroupOutput.qx, /REVIEW REQUIRED: QX header\.add/);
 assert.equal(
   headerGroupOutput.qx.split(/\r?\n/).filter(line => !line.trim().startsWith('#') && /script-response-header/.test(line)).length,
   1,
-  'the independent response.header.set rule must remain active when the preceding independent response.header.add is explicitly commented out',
+  'the independent response.header.set rule must remain active when the preceding independent response.header.add uses native response-header',
 );
 assert.doesNotMatch(
   headerGroupOutput.qx,
