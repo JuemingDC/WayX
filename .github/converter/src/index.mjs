@@ -31,6 +31,7 @@ export * from './metadata.mjs';
 export * from './surge-output.mjs';
 export * from './qx-output.mjs';
 export * from './qx-snippet-validator.mjs';
+export * from './qx-rewrite-matcher.mjs';
 export * from './output-lines.mjs';
 export * from './legacy-rewrite.mjs';
 export * from './source-catalog.mjs';
