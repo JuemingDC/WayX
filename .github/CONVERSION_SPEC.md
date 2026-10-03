@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.47  
+版本：1.48  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -21,15 +21,15 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 
 1. Loon Rewrite v2 的同一条 `ACTION1 | ACTION2 | ...` 仍视为一个有序 pipeline。QX 官方资料只证明单条 Rewrite 的 URL / Headers 匹配与各 Action 语法，没有证明把一个 Loon pipeline 拆成多条独立 QX Rewrite 后仍具有相同的跨规则执行顺序、状态传递与失败语义。因此 **禁止为了减少脚本而拆分 multi-action 为多条 QX 规则**。
 2. 对必须由 QX helper 承载的 multi-action，允许把能证明为源条件**必要条件**的 request-side predicate 下推到 QX 原生 matcher，helper 内仍完整重算原 Loon condition。这样 QX 先做廉价原生筛选，脚本只处理真正候选请求，同时 condition capture、`&&/||`、response-side 条件及 action 顺序仍由 helper 保真。
-3. 当前第一阶段只下推两类可证明安全的 predicate：URL `~=` 固定 Regex，以及 `${request.method} == "METHOD"` 固定字符串。两者同时为必要条件时输出 `<URL regex> ^METHOD[ ] url-and-header <script-action>`；只有 URL 时继续使用 `url`。`${request.header[...]}`、`${response.header[...]}`、`${response.status}`、method Regex 与 Argument 条件暂不下推，继续由 helper 运行时判断。
+3. 当前第一阶段只下推两类可证明安全的 predicate：URL `~=` 固定 Regex，以及 `${request.method} == "METHOD"` 固定字符串。只有 URL 时输出 `<URL regex> url <script-action>`；URL 与 Method 同时存在时输出 `<URL regex> ^METHOD[ ] url-and-header <script-action>`；只有 Method/Headers 条件时输出 `^https?:// ^METHOD[ ] url-and-header <script-action>`。`${request.header[...]}`、`${response.header[...]}`、`${response.status}`、method Regex 与 Argument 条件暂不下推，继续由 helper 运行时判断。
 4. `||` 条件只允许下推**每个成功分支都共同具备**的 predicate；不得把仅属于某个 OR 分支的 URL/Method 条件拿来做原生 matcher，否则会产生 false negative。`&&` 可从任一子项提取必要条件。若无法找到安全 URL predicate，QX helper matcher 回退到 `^https?://`。
 5. 原生 matcher 下推只是 prefilter，不取代 helper 的完整 condition evaluator。特别是命名捕获 `as name` 与 `${name.n}` 模板必须继续由 helper 重新执行原条件产生捕获，不得依赖 QX matcher 暴露捕获组。
 
 **Quantumult X Rewrite Headers 匹配（2026-10-03）**：
 
-1. Quantumult X 的 Rewrite **匹配器与 Action 解耦**：每一种 Rewrite 类型都可选 Headers 匹配。无 Headers 条件时使用 `<URL regex> url <action...>`；存在 Headers 条件时使用 `<URL regex> <Headers regex> url-and-header <action...>`。该能力不得按 reject / body / header / jsonjq / echo / script 类型分别维护白名单。
+1. Quantumult X 的 Rewrite **匹配器与 Action 解耦**，且 Headers matcher 是**可选条件**，不能因为 Action 本身是 `request-header/response-header` 就自动启用。URL-only 条件使用 `<URL regex> url <action...>`；URL + Headers 条件使用 `<URL regex> <Headers regex> url-and-header <action...>`；若源条件只有可下推的 Headers 条件，则用项目约定的全 HTTP(S) URL guard `^https?:// <Headers regex> url-and-header <action...>` 实现“Headers-only”筛选。没有 Headers 条件时禁止生成 `url-and-header`。
 2. 用户上传的官方 `sample.txt` 与 Crossutility 当前 `sample.conf` 明确说明：`url-and-header` 先判断 URL，仅当 URL 命中后再判断 Headers；用于比较的 Headers 字符串包含 **request method、path 与 key-value request headers**。因此 `url-and-header` 是 request-side 匹配器，即使后续 Action 属于 response rewrite，也不得把它误解释为 response-header matcher。
-3. QX capability registry 必须把 `url` / `url-and-header` 作为独立 Rewrite matcher 能力维护，validator 对两种 matcher 复用同一 Rewrite Action registry。当前 App UI“所有 Rewrite 类型均有可选 Headers”作为 current-app reviewed evidence 保存；官方 sample 负责证明 `url-and-header` 语法和匹配顺序，不伪称 sample 为每个 Action 都逐一给出 Headers 示例。
+3. QX capability registry 必须把 `url` / `url-and-header` 作为独立 Rewrite matcher 能力维护，validator 对两种 matcher 复用同一 Rewrite Action registry。Planner 必须显式区分 `url-only`、`headers-only`、`url-and-headers` 与 helper 用的无筛选 fallback；只有后两种真正含 Headers 条件的模式才允许输出 `url-and-header`。当前 App UI“所有 Rewrite 类型均有可选 Headers”作为 current-app reviewed evidence 保存；官方 sample 负责证明 `url-and-header` 语法和匹配顺序，不伪称 sample 为每个 Action 都逐一给出 Headers 示例。
 4. Loon Rewrite v2 的 `${request.method}` / `${request.header[...]}` 只有在能严格编译成上述 request-side Headers regex 时才可下推到 `url-and-header`；`${response.status}` / `${response.header[...]}` 不得因名称含 header 就错误映射到该 matcher。无法证明条件等价时继续使用 helper 或 fail closed，禁止只保留 URL 条件。
 
 **Quantumult X Rewrite 类型补全 / echo-response / JQ 依赖（2026-10-03）**：
