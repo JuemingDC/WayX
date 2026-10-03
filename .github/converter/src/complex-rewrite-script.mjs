@@ -2,10 +2,8 @@
 // Author: chance
 // Category: Converter / Rewrite v2 / Complex Helper
 
-import { findRewriteComparisons } from './rewrite-v2.mjs';
 import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
 import { compileComplexCondition } from './complex-rewrite.mjs';
-import { normalizeRegexBodyForTarget } from './target-regex.mjs';
 import { qxMimeTypeForLoonMock, qxMockTypeIsBinary } from './qx-mock.mjs';
 
 function fixed(node, label) {
@@ -77,13 +75,26 @@ function expand(action) {
   if (!action.args.some(arg => arg.type === 'array')) return [action.args];
   return action.args[0].items.map((_, i) => action.args.map(arg => arg.items[i]));
 }
+function safeUrlPrefilter(node) {
+  if (!node) return null;
+  if (node.type==='group') return safeUrlPrefilter(node.expression);
+  if (node.type==='comparison') {
+    if (node.operator!=='~=' || node.left?.type!=='variable' || node.left.name!=='url' || node.right?.type!=='regex') return null;
+    if (String(node.right.flags || '')) return null;
+    return String(node.right.pattern ?? '');
+  }
+  if (node.type!=='logical') return null;
+  const left=safeUrlPrefilter(node.left);
+  const right=safeUrlPrefilter(node.right);
+  if (node.operator==='&&') return left || right;
+  if (node.operator==='||') {
+    if (!left || !right) return null;
+    return '(?:' + left + ')|(?:' + right + ')';
+  }
+  return null;
+}
 function coarsePattern(ast) {
-  const found = findRewriteComparisons(ast.condition, node =>
-    node.operator === '~=' && node.left?.type === 'variable' && node.left.name === 'url' && node.right?.type === 'regex'
-  );
-  if (!found.length) return '^https?://';
-  if (found.length === 1) return normalizeRegexBodyForTarget(found[0].right.pattern);
-  return '(?:' + found.map(node => '(?:' + normalizeRegexBodyForTarget(node.right.pattern) + ')').join('|') + ')';
+  return safeUrlPrefilter(ast.condition) || '^https?://';
 }
 function jsonValueSource(node, captures, guaranteed, argumentTable = null) {
   if (!node) throw new Error('JSON replacement value is missing');
@@ -156,7 +167,7 @@ function statements(ast, target, {argumentTable = null, mockMaterialized = null}
           out.push('__wayxDel(' + JSON.stringify(name) + ');');
         } else {
           if (args[1]?.type !== 'regex') throw new Error('header.replace regex must be fixed');
-          out.push('__wayxWith(' + capturedString(args[2], 'header replacement', captures, guaranteed, argumentTable) + ',v=>__wayxHeaderReplace(' + JSON.stringify(name) + ',' + JSON.stringify(normalizeRegexBodyForTarget(args[1].pattern)) + ',v));');
+          out.push('__wayxWith(' + capturedString(args[2], 'header replacement', captures, guaranteed, argumentTable) + ',v=>__wayxHeaderReplace(' + JSON.stringify(name) + ',' + JSON.stringify(String(args[1].pattern ?? '')) + ',' + JSON.stringify(String(args[1].flags || '')) + ',v));');
         }
       }
       continue;
@@ -211,8 +222,8 @@ function statements(ast, target, {argumentTable = null, mockMaterialized = null}
       for(const args of expand(action)){
         if (args[0]?.type !== 'regex') throw new Error('body.replace regex must be fixed');
         const replacement=capturedString(args[1], 'body replacement', captures, guaranteed, argumentTable);
-        if(args[1]?.type==='string' && String(args[1].value).includes('${')) out.push('__wayxWith('+replacement+',v=>{__wayxBody=String(__wayxBody ?? "").replace(new RegExp('+JSON.stringify(normalizeRegexBodyForTarget(args[0].pattern))+'),v);});');
-        else out.push('__wayxBody=String(__wayxBody ?? "").replace(new RegExp('+JSON.stringify(normalizeRegexBodyForTarget(args[0].pattern))+'),'+replacement+');');
+        if(args[1]?.type==='string' && String(args[1].value).includes('${')) out.push('__wayxWith('+replacement+',v=>{__wayxBody=String(__wayxBody ?? "").replace(new RegExp('+JSON.stringify(String(args[0].pattern ?? ''))+','+JSON.stringify(String(args[0].flags || ''))+'),v);});');
+        else out.push('__wayxBody=String(__wayxBody ?? "").replace(new RegExp('+JSON.stringify(String(args[0].pattern ?? ''))+','+JSON.stringify(String(args[0].flags || ''))+'),'+replacement+');');
       }
       continue;
     }
@@ -251,7 +262,7 @@ function renderRewriteScript(ast, {target, stamp='', category='', sourceLine='',
     plan.headerAdd ? 'function __wayxAdd(n,v){__wayxHeaders.push({field:n,value:v});}' : null,
     plan.headerAdd ? 'function __wayxSet(n,v){const w=String(n).toLowerCase();let seen=false;__wayxHeaders=__wayxHeaders.filter(x=>{if(String(x.field).toLowerCase()!==w)return true;if(!seen){x.value=v;seen=true;return true;}return false;});if(!seen)__wayxHeaders.push({field:n,value:v});}' : 'function __wayxSet(n,v){const k=__wayxKey(n);__wayxHeaders[k||n]=v;}',
     plan.headerAdd ? 'function __wayxDel(n){const w=String(n).toLowerCase();__wayxHeaders=__wayxHeaders.filter(x=>String(x.field).toLowerCase()!==w);}' : 'function __wayxDel(n){const w=String(n).toLowerCase();for(const k of Object.keys(__wayxHeaders))if(k.toLowerCase()===w)delete __wayxHeaders[k];}',
-    plan.headerAdd ? 'function __wayxHeaderReplace(n,p,r){const w=String(n).toLowerCase();for(const x of __wayxHeaders)if(String(x.field).toLowerCase()===w)x.value=String(x.value).replace(new RegExp(p),r);}' : 'function __wayxHeaderReplace(n,p,r){const k=__wayxKey(n);if(k!==undefined)__wayxHeaders[k]=String(__wayxHeaders[k]).replace(new RegExp(p),r);}',
+    plan.headerAdd ? 'function __wayxHeaderReplace(n,p,f,r){const w=String(n).toLowerCase();for(const x of __wayxHeaders)if(String(x.field).toLowerCase()===w)x.value=String(x.value).replace(new RegExp(p,f),r);}' : 'function __wayxHeaderReplace(n,p,f,r){const k=__wayxKey(n);if(k!==undefined)__wayxHeaders[k]=String(__wayxHeaders[k]).replace(new RegExp(p,f),r);}',
     plan.headerAdd ? null : 'function __wayxKey(n){return Object.keys(__wayxHeaders).find(k=>k.toLowerCase()===String(n).toLowerCase());}',
     'if(' + condition + '){',
     ...plan.out.map(line => '  ' + line),
