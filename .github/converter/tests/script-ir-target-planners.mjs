@@ -141,6 +141,26 @@ assert.equal(qxV2.ok,true);
 assert.match(qxV2.line,/ url script-response-body https:\/\/example\.com\/v2\.js$/);
 assert.match(qxV2.notes.join('\n'),/binary_body_mode=true ignored/i);
 
+const flaggedScriptIr=scriptV2AstToSemanticIr(
+  parseScriptV2('response if ${url} ~= /API/i then script("https://example.com/flagged.js") with requires_body=true')
+);
+const qxFlaggedScript=planQxScript(flaggedScriptIr,{
+  scriptUrl:'https://example.com/flagged.js',
+  sourceText:'$done({body:$response.body});',
+  argumentIds:new Set(),
+});
+assert.equal(qxFlaggedScript.ok,false);
+assert.match(qxFlaggedScript.reason,/cannot preserve Loon regex flags: i/);
+
+const surgeFlaggedScript=planSurgeScript(flaggedScriptIr,{
+  scriptUrl:'https://example.com/flagged.js',
+  name:'Flagged',
+  argumentIds:new Set(),
+  argumentTable:{byId:new Map()},
+});
+assert.equal(surgeFlaggedScript.ok,false);
+assert.match(surgeFlaggedScript.reason,/cannot preserve Loon regex flags: i/);
+
 const qxV2RequiresOnlyIr=scriptV2AstToSemanticIr(
   parseScriptV2('response if ${url} ~= /api/ then script("https://example.com/v2.js") with requires_body=true, binary_body_mode=false, tag="V2"')
 );
