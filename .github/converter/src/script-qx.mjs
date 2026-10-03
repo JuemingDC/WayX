@@ -36,21 +36,20 @@ export function planQxScript(ir,ctx={}) {
   const debugEnabled=Boolean(sc.debug) && !['false','0'].includes(debugFixed);
   const notes=[];
 
-  if (enableDynamic) {
-    return unsupported('Quantumult X official Rewrite Script syntax has no dynamic enable field');
-  }
-  if (sc.timeout) {
-    return unsupported('Quantumult X official Rewrite Script syntax has no timeout field');
-  }
-  if (sc.binaryBodyMode) {
-    return unsupported('Quantumult X official Rewrite Script syntax has no binary-body-mode field');
-  }
-  if (debugEnabled) {
-    return unsupported('Quantumult X official Rewrite Script syntax has no debug field');
-  }
-
   if (sc.argument) {
     notes.push('Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.');
+  }
+  if (enableDynamic) {
+    notes.push('Source dynamic enable is not a Quantumult X Rewrite Script field; converted rule defaults to enabled.');
+  }
+  if (sc.timeout) {
+    notes.push('Source Script timeout is not a Quantumult X Rewrite Script field and was omitted.');
+  }
+  if (sc.binaryBodyMode) {
+    notes.push('Source binary-body-mode=true is not a Quantumult X Rewrite Script field and was omitted; requires-body remains independent.');
+  }
+  if (debugEnabled) {
+    notes.push('Source Script debug is not a Quantumult X Rewrite Script field and was omitted.');
   }
   if (enableFixed==='false' || enableFixed==='0') {
     return {ok:true,disabled:true,reason:'Loon Legacy Script enable=false',tag:sc.tag,notes};
