@@ -35,35 +35,20 @@ hostname=api.example.com
 const headerGroupOutput = convert(headerGroupFixture, headerGroupSource, new Map(), STAMP);
 assert.match(
   headerGroupOutput.qx,
-  /Quantumult X response\.header\.add commented out/,
+  /url response-header \^\(\[\^\\r\\n\]\+\)\(\\r\\n\) response-header \$1\$2content-disposition: inline\$2/,
 );
-assert.match(
-  headerGroupOutput.qx,
-  /^\^https\?:\/\/ url script-response-header /m,
-);
+assert.doesNotMatch(headerGroupOutput.qx, /REVIEW REQUIRED: QX header\.add/);
 assert.equal(
   headerGroupOutput.qx.split(/\r?\n/).filter(line => !line.trim().startsWith('#') && /script-response-header/.test(line)).length,
   1,
-  'the independent response.header.set rule must remain active through a guarded helper',
+  'the independent response.header.set rule must remain active when the preceding independent response.header.add uses native response-header',
 );
 assert.doesNotMatch(
   headerGroupOutput.qx,
   /Source declaration: .*response\.header\.add.* \| response if .*response\.header\.set/,
   'converter must never invent a pipeline by joining adjacent source declarations',
 );
-assert.doesNotMatch(headerGroupOutput.surge, /REVIEW REQUIRED/);
-assert.match(headerGroupOutput.surge, /pattern=\^https\?:\/\//);
-assert.match(headerGroupOutput.surge, /full-header-mode=true/);
-assert.equal(
-  headerGroupOutput.surge.split(/\r?\n/).filter(line => !line.trim().startsWith('#') && /^wayx_header_/.test(line)).length,
-  2,
-  'the two independent flagged Surge header rules must remain independent guarded helpers',
-);
-assert.equal(
-  headerGroupOutput.surge.split(/\r?\n/).filter(line => !line.trim().startsWith('#') && /header-add content-disposition inline/.test(line)).length,
-  0,
-  'flagged Surge header.add must not be emitted as a case-sensitive native rule',
-);
+assert.match(headerGroupOutput.surge, /header-add content-disposition inline/);
 
 const qxIgnoredOptionsFixture = {
   id:'IgnoredOptionsFixture',
@@ -101,8 +86,8 @@ assert.match(qxIgnoredOptionsOutput.surge, /#!REQUIREMENT .*enabled.*Legacy = ty
 assert.match(qxIgnoredOptionsOutput.surge, /Legacy = type=http-response[^\n]*timeout=60/);
 assert.match(qxIgnoredOptionsOutput.surge, /#!REQUIREMENT .*enabled.*V2 = type=http-response/);
 assert.match(qxIgnoredOptionsOutput.surge, /V2 = type=http-response[^\n]*timeout=30/);
-assert.doesNotMatch(headerGroupOutput.surge, /header-del content-type/);
-assert.doesNotMatch(headerGroupOutput.surge, /header-add content-type text\/plain; charset=utf-8/);
+assert.match(headerGroupOutput.surge, /header-del content-type/);
+assert.match(headerGroupOutput.surge, /header-add content-type text\/plain; charset=utf-8/);
 
 const genericComplexFixture = {
   id:'GenericComplexFixture',
@@ -145,8 +130,8 @@ const requestAddFixture = {
 };
 const requestAddSource = `#!name=RequestHeaderAddFixture
 [Rewrite]
-request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\// then request.header.add("X-Test", "one")
-response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\// then response.header.replace("X-Test", /one/, "two")
+request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.add("X-Test", "one")
+response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then response.header.replace("X-Test", /one/, "two")
 `;
 const requestAddOutput = convert(requestAddFixture, requestAddSource, new Map(), STAMP);
 assert.ok(
@@ -171,7 +156,7 @@ const requestAddBulkFixture = {
 };
 const requestAddBulkSource = `#!name=RequestHeaderAddBulkFixture
 [Rewrite]
-request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\// then request.header.add(["X-A","X-B"], ["one","two"])
+request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.add(["X-A","X-B"], ["one","two"])
 `;
 const requestAddBulkOutput = convert(requestAddBulkFixture, requestAddBulkSource, new Map(), STAMP);
 assert.ok(
@@ -193,8 +178,8 @@ const requestAddSetFixture = {
 };
 const requestAddSetSource = `#!name=RequestHeaderAddSetFixture
 [Rewrite]
-request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\// then request.header.add("X-A", "one")
-request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\// then request.header.set("X-B", "two")
+request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.add("X-A", "one")
+request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.set("X-B", "two")
 `;
 const requestAddSetOutput = convert(requestAddSetFixture, requestAddSetSource, new Map(), STAMP);
 assert.doesNotMatch(requestAddSetOutput.qx, /REVIEW REQUIRED/);
@@ -218,7 +203,7 @@ const requestReplaceCaptureFixture = {
 };
 const requestReplaceCaptureSource = `#!name=RequestHeaderReplaceCaptureFixture
 [Rewrite]
-request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\// then request.header.replace("User-Agent", /iPhone OS (\\d+)/, "iPhone OS $1")
+request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.replace("User-Agent", /iPhone OS (\\d+)/, "iPhone OS $1")
 `;
 const requestReplaceCaptureOutput = convert(requestReplaceCaptureFixture, requestReplaceCaptureSource, new Map(), STAMP);
 assert.equal(
@@ -246,7 +231,7 @@ const requestAddDollarFixture = {
 };
 const requestAddDollarSource = `#!name=RequestHeaderAddDollarFixture
 [Rewrite]
-request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\// then request.header.add("X-Price", "price $1")
+request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.add("X-Price", "price $1")
 `;
 const requestAddDollarOutput = convert(requestAddDollarFixture, requestAddDollarSource, new Map(), STAMP);
 assert.equal(
@@ -287,7 +272,7 @@ assert.throws(
 );
 assert.throws(
   () => validateQX(validQxValidatorText.replace('^https://example\\.com url reject', '(?i)^https://example\\.com url reject'), qxValidatorEntry),
-  /must not invent undocumented inline regex modifiers for source flags/,
+  /must not restore discarded Loon regex flags/,
 );
 assert.throws(
   () => validateQX(validQxValidatorText.replace('^https://example\\.com url reject', '[hH][tT][tT][pP][sS]://example\\.com url reject'), qxValidatorEntry),
@@ -456,12 +441,12 @@ assert.match(unknownSectionOutput.surge, /ISSUE REQUIRED \[unknown-source-sectio
 assert.match(unknownSectionOutput.surge, /# Source declaration: foo = bar/);
 
 const disabledRewriteOutput = convert(disabledRewriteFixture, disabledRewriteSource, new Map(), STAMP);
-assert.doesNotMatch(disabledRewriteOutput.surge, /^\[Body Rewrite\]$/m);
-assert.doesNotMatch(disabledRewriteOutput.surge, /^\[Map Local\]$/m);
+assert.match(disabledRewriteOutput.surge, /^\[Body Rewrite\]$/m);
 assert.match(disabledRewriteOutput.surge, /#response if \$\{url\} ~= \/\^https:\\\/\\\/api\\\.example\\\.com\\\/json\\\?\/i then response\.json\.jq/);
+assert.ok(disabledRewriteOutput.surge.includes("# http-response-jq ^https:\\/\\/api\\.example\\.com\\/json\\? '.data.ads = []'"));
+assert.match(disabledRewriteOutput.surge, /^\[Map Local\]$/m);
 assert.match(disabledRewriteOutput.surge, /#response if \$\{url\} ~= \/\^https:\\\/\\\/api\\\.example\\\.com\\\/mock\\\?\/i then response\.body\.mock\("text", "OK", 200\)/);
-assert.match(disabledRewriteOutput.qx, /#response if \$\{url\} ~= \/\^https:\\\/\\\/api\\\.example\\\.com\\\/json\\\?\/i then response\.json\.jq/);
-assert.match(disabledRewriteOutput.qx, /#response if \$\{url\} ~= \/\^https:\\\/\\\/api\\\.example\\\.com\\\/mock\\\?\/i then response\.body\.mock\("text", "OK", 200\)/);
+assert.ok(disabledRewriteOutput.surge.includes('# ^https:\\/\\/api\\.example\\.com\\/mock\\? data-type=text data="OK" status-code=200 header="Content-Type:text/plain"'));
 assert.equal(
   disabledRewriteOutput.surge.split(/\r?\n/).some(line => !line.trim().startsWith('#') && /api\\\.example\\\.com\/(?:mock|json)/.test(line)),
   false,
@@ -650,8 +635,7 @@ for (const testCase of cases) {
   const surgeActive = activeLines(out.surge);
 
   if (testCase.name === 'HTTPDNS') {
-    assert.doesNotMatch(out.surge, /^#!requirement=CORE_VERSION>=20$/m);
-    assert.doesNotMatch(out.surge, /^\[Map Local\]$/m);
+    assert.match(out.surge, /^#!requirement=CORE_VERSION>=20$/m);
     assert.match(out.surge, /AND,\(\(URL-REGEX,/);
     assert.match(out.surge, /USER-AGENT,/);
     assert.equal(/^#!(?:author|icon|date|loon_version)=/mi.test(out.surge), false);
@@ -660,79 +644,69 @@ for (const testCase of cases) {
 
   if (testCase.name === 'PinDuoDuo') {
     assert.match(out.surge, /AND,\(\(DOMAIN,\s*api\.pinduoduo\.com\),\s*\(PROTOCOL,\s*QUIC\)\),REJECT/);
-    assert.doesNotMatch(out.surge, /^\[Body Rewrite\]$/m);
-    assert.doesNotMatch(out.surge, /^\[Map Local\]$/m);
+    assert.match(out.surge, /^\[Body Rewrite\]$/m);
+    assert.match(out.surge, /^\[Map Local\]$/m);
     assert.match(out.surge, /^\[Script\]$/m);
     assert.match(out.surge, /^hostname = %APPEND% api\.pinduoduo\.com, m\.pinduoduo\.net$/m);
-    assert.match(out.surge, /REVIEW REQUIRED: .*cannot preserve Loon regex flags: i/);
-    assert.match(out.surge, /Source declaration: response if \$\{url\} ~= .*PinDuoDuo_remove_ads\.js/);
-    assert.equal(
-      surgeActive.some(line => line.includes('script-path=https://kelee.one/Resource/JavaScript/PinDuoDuo/PinDuoDuo_remove_ads.js')),
-      false,
-      'flagged source Script must not be activated with a case-sensitive Surge matcher',
-    );
+    assert.ok(surgeActive.some(line => line.includes('script-path=https://kelee.one/Resource/JavaScript/PinDuoDuo/PinDuoDuo_remove_ads.js')));
   }
 
   if (testCase.name === 'MyBlockAds') {
-    assert.equal(qxActive.some(line => /jq-path=/.test(line)), false, 'MyBlockAds: QX must not emit active jq-path declarations');
-    assert.equal(surgeActive.some(line => /jq-path=/.test(line)), false, 'MyBlockAds: Surge must not emit active jq-path declarations');
-    assert.doesNotMatch(out.qx, /url jsonjq-response-body 'walk\(if type=="object" and \.__typename=="AdPost" then empty else \. end\)'/);
-    assert.doesNotMatch(out.surge, /http-response-jq .*'walk\(if type=="object" and \.__typename=="AdPost" then empty else \. end\)'/);
-    assert.match(out.qx, /Source declaration: response if .*gql.*jq-path=/);
-    assert.match(out.surge, /Source declaration: response if .*gql.*jq-path=/);
-    assert.doesNotMatch(out.surge, /^\[Body Rewrite\]$/m);
-    assert.doesNotMatch(out.surge, /^\[Map Local\]$/m);
-    assert.match(out.surge, /REVIEW REQUIRED: .*regex flags: i|REVIEW REQUIRED: complex Rewrite helper is reserved/);
+    assert.doesNotMatch(out.qx, /jq-path=/);
+    assert.doesNotMatch(out.surge, /jq-path=/);
+    assert.match(out.qx, /url jsonjq-response-body 'walk\(if type=="object" and \.__typename=="AdPost" then empty else \. end\)'/);
+    assert.match(out.surge, /http-response-jq .*'walk\(if type=="object" and \.__typename=="AdPost" then empty else \. end\)'/);
+    assert.match(out.surge, /^\[Body Rewrite\]$/m);
+    assert.match(out.surge, /^\[Map Local\]$/m);
   }
 
   if (testCase.name === 'YouTube') {
     assert.doesNotMatch(out.qx, /Source \[Argument\]|Argument usage:/, 'YouTube QX must not emit Loon plugin parameter UI/declarations');
     assert.match(out.surge, /^#!arguments=.*captionLang:zh-Hans/m);
-    assert.doesNotMatch(out.surge, /argument="\{\\\"captionLang\\\":\\\"\{\{\{captionLang\}\}\}\\\"\}"/);
-    assert.equal(qxActive.some(line => /youtube\/(?:request|response)\.js$/.test(line)), false, 'flagged YouTube scripts must not be activated with a case-sensitive QX matcher');
-    assert.match(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
-    assert.match(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
-    assert.match(out.qx, /Source declaration: .*youtube\/request\.js/);
-    assert.match(out.surge, /Source declaration: .*youtube\/response\.js/);
+    assert.match(out.surge, /argument="\{\\\"captionLang\\\":\\\"\{\{\{captionLang\}\}\}\\\"\}"/);
+    assert.ok(qxActive.some(line => /youtube\/request\.js$/.test(line)), 'YouTube: request binary scripts must follow KOP-XIAO and remain active as script-request-body');
+    assert.match(out.qx, /binary_body_mode=true ignored for Quantumult X/);
+    assert.doesNotMatch(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
+    assert.doesNotMatch(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
   }
 
   if (testCase.name === 'Bilibili') {
     assert.match(out.qx, /^\{# 空降助手 #\} host, bsbsb\.top, PROXY$/m, 'Bilibili: one-to-one source comment must become a QX leading note while PROXY remains literal');
     assert.doesNotMatch(out.qx, /Source \[Argument\]|Argument usage:/, 'Bilibili QX must not emit Loon plugin parameter UI/declarations');
     assert.doesNotMatch(out.qx, /QUANTUMULT X (?:UNSUPPORTED|REVIEW REQUIRED) - source script disabled/);
-    assert.equal(qxActive.some(line => /bilibili\/(?:request|response|json)\.js/.test(line)), false, 'flagged Bilibili scripts must not be activated with a case-sensitive QX matcher');
-    assert.match(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
+    assert.ok(qxActive.some(line => /bilibili\/(?:request|response|json)\.js/.test(line)), 'Bilibili Source Script declarations must keep original URLs without runtime compatibility gating');
+    assert.match(out.qx, /binary_body_mode=true ignored for Quantumult X/);
+    assert.doesNotMatch(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
     assert.doesNotMatch(out.surge, /Source Loon plugin policy PROXY requires a Surge module policy parameter binding/);
     assert.doesNotMatch(out.surge, /Source declaration:.*PROXY[\s\S]*REVIEW REQUIRED: Surge Module requires an external policy binding/);
     assert.match(out.surge, /^#!arguments=.*displayUpList:auto.*sponsorBlock:true.*wayx_proxy_policy:DIRECT/m);
     assert.match(out.surge, /^DOMAIN,bsbsb\.top,\{\{\{wayx_proxy_policy\}\}\}$/m);
-    assert.doesNotMatch(out.surge, /#!REQUIREMENT "'\{\{\{sponsorBlock\}\}\}'=='true'"/);
-    assert.match(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
+    assert.match(out.surge, /#!REQUIREMENT "'\{\{\{sponsorBlock\}\}\}'=='true'"/);
+    assert.doesNotMatch(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
     assert.match(
       out.surge,
       /#response if \$\{url\} ~= \/\^https:\\\/\\\/app\\\.bilibili\\\.com\\\/x\\\/v2\\\/splash\\\/list\\\?\/i then response\.body\.mock\("text", "OK", 200\)/,
       'Bilibili: disabled source mock line must be preserved as a comment',
     );
-    assert.equal(
+    assert.ok(
       out.surge.includes('# ^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/splash\\/list\\? data-type=text data="OK" status-code=200 header="Content-Type:text/plain"'),
-      false,
-      'Bilibili: flagged disabled response.body.mock must not be lowered to a case-sensitive Surge Map Local rule',
+      'Bilibili: disabled response.body.mock must have a disabled Surge Map Local equivalent',
     );
-    assert.equal(
+    assert.ok(
       out.surge.includes("# http-response-jq ^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/splash\\/(show|event\\/list2)\\? '.data |= with_entries("),
-      false,
-      'Bilibili: flagged disabled response.json.jq must not be lowered to a case-sensitive Surge Body Rewrite rule',
+      'Bilibili: disabled response.json.jq must have a disabled Surge Body Rewrite equivalent',
     );
   }
 
   if (testCase.name === 'JingDong') {
     assert.match(out.surge, /^#!arguments=Capture:false,Cookies:/m);
-    assert.doesNotMatch(out.surge, /#!REQUIREMENT "'\{\{\{Capture\}\}\}'=='true'"/);
-    assert.equal(qxActive.some(line => /Scripts\/(?:jingdong|manmanbuy_ck|jd_price)\.js$/.test(line)), false, 'flagged JingDong scripts must not be activated with a case-sensitive QX matcher');
-    assert.match(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
-    assert.match(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
-    assert.match(out.qx, /Source declaration: .*Scripts\/jingdong\.js/);
-    assert.match(out.surge, /Source declaration: .*Scripts\/jd_price\.js/);
+    assert.match(out.surge, /#!REQUIREMENT "'\{\{\{Capture\}\}\}'=='true'"/);
+    assert.ok(qxActive.some(line => /Scripts\/jingdong\.js$/.test(line)), 'JingDong native script declaration missing');
+    assert.ok(qxActive.some(line => /Scripts\/manmanbuy_ck\.js$/.test(line)), 'JingDong dynamic-enable request script must default to active in QX');
+    assert.ok(qxActive.some(line => /Scripts\/jd_price\.js$/.test(line)), 'JingDong argument-bearing response script must remain active in QX');
+    assert.doesNotMatch(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
+    assert.match(out.qx, /Source dynamic enable=Capture ignored for Quantumult X; converted rule defaults to enabled/);
+    assert.match(out.qx, /Source Script argument ignored for Quantumult X/);
   }
 
   report.push(actual);
