@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 01:54:25 +08:00
+// Converted: 2026-10-04 06:22:27 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/open\.xueqiu\.com\/mpaas\/config\/content\?.*timeline_tab_name/i then response.json.delete(["data.im_notice_show", "data.request_notice_show", "data.timeline_tab_name", "data.profileMenuConfig_anonymous_V12", "data.trade_open_account_promotion_url", "data.trade_unify_open_account_list", "data.community_ad_download_msg", "data.home_tab_dynamic", "data.home_tab_dynamic_before", "data.home_tab_dynamic_after", "data.isitor_page_login_config", "data.open_wechat_mini_app_config", "data.user_guide_contact_config", "data.brokers_router_config", "data.my_page_right_items"])
@@ -219,15 +219,16 @@ let __wayxBody=$response.body;
 function __wayxValue(name){return resolveSemanticVariable(name,{url:$request.url,request:$request,response:{...$response,headers:__wayxHeaders},arguments:__wayxArgs},new Map(Object.entries(__wayxCaptures)))}
 function __wayxTpl(parts){let out="";for(const [kind,name] of parts){const v=kind==="s"?name:__wayxValue(name);if(v===undefined)return undefined;out+=String(v)}return out}
 function __wayxWith(v,fn){if(v!==undefined)fn(v)}
-function __wayxJsonAction(fn){try{const j=JSON.parse(String(__wayxBody ?? ""));fn(j);__wayxBody=JSON.stringify(j)}catch{}}
-function __wayxJsonParent(root,path){let x=root;for(let i=0;i<path.length-1;i++){if(x==null||!(path[i] in Object(x)))return null;x=x[path[i]];}return x;}
-function __wayxJsonGet(root,path){let x=root;for(const k of path){if(x==null||typeof x!=="object"||!(k in x))return undefined;x=x[k]}return x;}
-function __wayxJsonSet(root,path,value){let x=root;for(let i=0;i<path.length-1;i++){const k=path[i],next=path[i+1];if(x==null||typeof x!=="object")return;const cur=x[k];if(cur==null)x[k]=typeof next==="number"?[]:{};else if(typeof cur!=="object")return;x=x[k]}if(x!=null&&typeof x==="object")x[path[path.length-1]]=value;}
+function __wayxStringValue(name){const v=__wayxValue(name);return typeof v==="string"?v:undefined}
+function __wayxWithArgs(values,fn){if(values.every(v=>v!==undefined))fn(...values)}
+function __wayxJsonAction(fn){try{const j=JSON.parse(String(__wayxBody ?? ""));if(j===null||typeof j!=="object")return;fn(j);__wayxBody=JSON.stringify(j)}catch{}}
+function __wayxJsonParent(root,path){let x=root;for(let i=0;i<path.length-1;i++){if(x==null||typeof x!=="object"||!Object.prototype.hasOwnProperty.call(x,path[i]))return null;x=x[path[i]];}return x;}
+function __wayxJsonGet(root,path){let x=root;for(const k of path){if(x==null||typeof x!=="object"||!Object.prototype.hasOwnProperty.call(x,k))return undefined;x=x[k]}return x;}
+function __wayxJsonSet(root,path,value){let x=root;for(let i=0;i<path.length-1;i++){const k=path[i],next=path[i+1];if(x==null||typeof x!=="object")return;const cur=Object.prototype.hasOwnProperty.call(x,k)?x[k]:undefined;if(cur==null)Object.defineProperty(x,k,{value:typeof next==="number"?[]:{},enumerable:true,writable:true,configurable:true});else if(typeof cur!=="object")return;x=x[k]}if(x!=null&&typeof x==="object")Object.defineProperty(x,path[path.length-1],{value,enumerable:true,writable:true,configurable:true});}
 function __wayxJsonAdd(root,path,value){const cur=__wayxJsonGet(root,path);if(cur===undefined||cur===null)__wayxJsonSet(root,path,value);}
 function __wayxJsonDelete(root,path){const p=__wayxJsonParent(root,path);if(p==null)return;const k=path[path.length-1];if(Array.isArray(p)&&typeof k==="number"){if(k>=0&&k<p.length)p.splice(k,1);}else delete p[k];}
 function __wayxJsonReplace(root,path,value){const cur=__wayxJsonGet(root,path);if(cur!==undefined&&cur!==null&&cur!==false)__wayxJsonSet(root,path,value);}
-function __wayxHeader(phase,name){const h=phase==="request"?$request.headers:$response.headers;const w=String(name).toLowerCase();if(Array.isArray(h)){const x=h.find(x=>String(x.field).toLowerCase()===w);return x?.value;}const k=Object.keys(h||{}).find(x=>x.toLowerCase()===w);return k===undefined?undefined:h[k];}
-function __wayxSet(n,v){const k=__wayxKey(n);__wayxDel(n);__wayxHeaders[k||n]=v;}
+function __wayxSet(n,v){const k=__wayxKey(n);__wayxDel(n);Object.defineProperty(__wayxHeaders,k||n,{value:v,enumerable:true,writable:true,configurable:true});}
 function __wayxDel(n){const w=String(n).toLowerCase();for(const k of Object.keys(__wayxHeaders))if(k.toLowerCase()===w)delete __wayxHeaders[k];}
 function __wayxHeaderReplace(n,p,r,f=""){const w=String(n).toLowerCase();for(const k of Object.keys(__wayxHeaders))if(k.toLowerCase()===w)__wayxHeaders[k]=__wayxRegexReplace(__wayxHeaders[k],p,f,r);}
 function __wayxKey(n){return Object.keys(__wayxHeaders).find(k=>k.toLowerCase()===String(n).toLowerCase());}

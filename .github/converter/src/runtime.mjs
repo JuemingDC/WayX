@@ -3,7 +3,7 @@
 // Category: Converter / runtime
 
 import { normalizeRegexBodyForTarget, compileRegexForTarget, regexReplacementRuntimeSource, stringTemplateParts, conditionRuntimeSource } from "./core.mjs";
-import { validateRewriteV2Ast, simpleUrlRewriteCondition, fixedStringValue, findRewriteComparisons, compileComplexCondition, qxRewriteMatcherPlan } from "./rewrite.mjs";
+import { validateRewriteV2Ast, simpleUrlRewriteCondition, fixedStringValue, findRewriteComparisons, compileComplexCondition, qxRewriteMatcherPlan, parseJsonKeyPath } from "./rewrite.mjs";
 
 
 
@@ -686,6 +686,7 @@ function guaranteedCaptures(node) {
   return new Set();
 }
 function capturedString(node, label, captures, guaranteed, argumentTable = null) {
+  if(node?.type==='variable'){validateTemplateVariable(node.name,captures,guaranteed,argumentTable);return '__wayxStringValue('+JSON.stringify(node.name)+')';}
   if (!node || !['string','raw-string'].includes(node.type)) throw new Error(label + ' must be a string');
   const parts=stringTemplateParts(node);
   for(const [kind,name] of parts) if(kind==='v') validateTemplateVariable(name,captures,guaranteed,argumentTable);
@@ -720,67 +721,33 @@ function jsonValueSource(node, captures, guaranteed, argumentTable = null) {
   if (node.type === 'raw-string') return JSON.stringify(node.value);
   return JSON.stringify(node.value);
 }
-function decodeBracketKey(token) {
-  if (token.startsWith('"')) {
-    try { return JSON.parse(token); }
-    catch { throw new Error('invalid JSON key-path quoted key: '+token); }
-  }
-  if (token.startsWith("'")) {
-    let out='';
-    for(let i=1;i<token.length-1;i++){
-      const ch=token[i];
-      if(ch!=='\\'){out+=ch;continue;}
-      if(i+1>=token.length-1){out+='\\';continue;}
-      const next=token[++i];
-      if(next==="'" || next==='\\') out+=next;
-      else if(next==='n') out+='\n';
-      else if(next==='r') out+='\r';
-      else if(next==='t') out+='\t';
-      else out+='\\'+next;
-    }
-    return out;
-  }
-  throw new Error('invalid JSON key-path quoted key: '+token);
-}
-function jsonPath(text) {
-  const path=String(text||''); if(!path) throw new Error('JSON key path must not be empty');
-  const parts=[]; let i=0;
-  while(i<path.length){
-    if(path[i]==='.') { i++; continue; }
-    if(path[i]==='['){
-      const rest=path.slice(i);
-      const numeric=rest.match(/^\[(\d+)\]/);
-      if(numeric){parts.push(Number(numeric[1]));i+=numeric[0].length;continue;}
-      const quoted=rest.match(/^\[((?:"(?:\\.|[^"\\])*")|(?:'(?:\\.|[^'\\])*'))\]/);
-      if(quoted){parts.push(decodeBracketKey(quoted[1]));i+=quoted[0].length;continue;}
-      throw new Error('unsupported JSON key-path bracket syntax: '+path);
-    }
-    const m=path.slice(i).match(/^[^.[\]]+/); if(!m) throw new Error('invalid JSON key path: '+path); parts.push(m[0]); i+=m[0].length;
-  }
-  return parts;
-}
 function statements(ast, target, {argumentTable = null, mockMaterialized = null} = {}) {
   const out = [];
   const captures = captureInfo(ast.condition);
   const guaranteed = guaranteedCaptures(ast.condition);
   for(const alias of captures.keys())if(argumentTable?.byId?.has(alias))throw new Error('capture alias duplicates plugin argument: '+alias);
-  let body = false, headers = false, json = false, headerAdd = false;
+  let body = false, headers = false, json = false, headerAdd = false, dynamicPath = false;
   for (const action of ast.actions) {
     if (new RegExp('^' + ast.phase + '\\x2eheader\\x2e(?:add|set|del|replace)$').test(action.name)) {
       headers = true;
       for (const args of expand(action)) {
-        const name = complexRewriteFixed(args[0], 'header name');
+        const name = capturedString(args[0], 'header name', captures, guaranteed, argumentTable);
+        const fixedName=args[0].type!=='variable' && stringTemplateParts(args[0]).every(p=>p[0]==='s');
         if (action.name.endsWith('.add')) {
           if (target !== 'surge') throw new Error('header.add duplicate semantics are not verified for ' + target);
           headerAdd = true;
-          out.push('__wayxWith(' + capturedString(args[1], 'header value', captures, guaranteed, argumentTable) + ',v=>__wayxAdd(' + JSON.stringify(name) + ',v));');
+          const value=capturedString(args[1], 'header value', captures, guaranteed, argumentTable);
+          out.push(fixedName?'__wayxWith('+value+',v=>__wayxAdd('+name+',v));':'__wayxWithArgs(['+name+','+value+'],(n,v)=>__wayxAdd(n,v));');
         } else if (action.name.endsWith('.set')) {
-          out.push('__wayxWith(' + capturedString(args[1], 'header value', captures, guaranteed, argumentTable) + ',v=>__wayxSet(' + JSON.stringify(name) + ',v));');
+          const value=capturedString(args[1], 'header value', captures, guaranteed, argumentTable);
+          out.push(fixedName?'__wayxWith('+value+',v=>__wayxSet('+name+',v));':'__wayxWithArgs(['+name+','+value+'],(n,v)=>__wayxSet(n,v));');
         } else if (action.name.endsWith('.del')) {
-          out.push('__wayxDel(' + JSON.stringify(name) + ');');
+          out.push(fixedName?'__wayxDel('+name+');':'__wayxWith('+name+',n=>__wayxDel(n));');
         } else {
           if (args[1]?.type !== 'regex') throw new Error('header.replace regex must be fixed');
-          out.push('__wayxWith(' + capturedString(args[2], 'header replacement', captures, guaranteed, argumentTable) + ',v=>__wayxHeaderReplace(' + JSON.stringify(name) + ',' + JSON.stringify(normalizeRegexBodyForTarget(args[1].pattern)) + ',v,'+JSON.stringify(args[1].flags || '')+'));');
+          const value=capturedString(args[2], 'header replacement', captures, guaranteed, argumentTable);
+          const tail=JSON.stringify(normalizeRegexBodyForTarget(args[1].pattern))+',v,'+JSON.stringify(args[1].flags || '')+'));';
+          out.push(fixedName?'__wayxWith('+value+',v=>__wayxHeaderReplace('+name+','+tail:'__wayxWithArgs(['+name+','+value+'],(n,v)=>__wayxHeaderReplace(n,'+tail);
         }
       }
       continue;
@@ -818,15 +785,15 @@ function statements(ast, target, {argumentTable = null, mockMaterialized = null}
     if (action.name === ast.phase + '.json.add' || action.name === ast.phase + '.json.delete' || action.name === ast.phase + '.json.replace') {
       body = true; json = true;
       for(const args of expand(action)){
-        const path=jsonPath(complexRewriteFixed(args[0], 'JSON key path'));
-        if(action.name.endsWith('.delete')) {
-          out.push('__wayxJsonAction(j=>__wayxJsonDelete(j,'+JSON.stringify(path)+'));');
-        } else {
-          const value=jsonValueSource(args[1], captures, guaranteed, argumentTable);
-          const helper=action.name.endsWith('.add')?'__wayxJsonAdd':'__wayxJsonReplace';
-          if(args[1]?.type==='variable' || (args[1]?.type==='string' && stringTemplateParts(args[1]).some(p=>p[0]==='v'))) out.push('__wayxWith('+value+',v=>__wayxJsonAction(j=>'+helper+'(j,'+JSON.stringify(path)+',v)));');
-          else out.push('__wayxJsonAction(j=>'+helper+'(j,'+JSON.stringify(path)+','+value+'));');
-        }
+        const address=capturedString(args[0], 'JSON key path', captures, guaranteed, argumentTable);
+        const fixed=args[0].type!=='variable' && stringTemplateParts(args[0]).every(p=>p[0]==='s');
+        const path=fixed ? JSON.stringify(parseJsonKeyPath(complexRewriteFixed(args[0], 'JSON key path'))) : null;
+        if(!fixed)dynamicPath=true;
+        const helper=action.name.endsWith('.delete')?'__wayxJsonDelete':action.name.endsWith('.add')?'__wayxJsonAdd':'__wayxJsonReplace';
+        const value=action.name.endsWith('.delete')?null:jsonValueSource(args[1], captures, guaranteed, argumentTable);
+        const fixedValue=value!==null && args[1].type!=='variable' && (args[1].type!=='string' || stringTemplateParts(args[1]).every(p=>p[0]==='s'));
+        if(fixed)out.push(value===null?'__wayxJsonAction(j=>'+helper+'(j,'+path+'));':fixedValue?'__wayxJsonAction(j=>'+helper+'(j,'+path+','+value+'));':'__wayxWith('+value+',v=>__wayxJsonAction(j=>'+helper+'(j,'+path+',v)));');
+        else out.push(value===null?'__wayxWithPath('+address+',p=>__wayxJsonAction(j=>'+helper+'(j,p)));':'__wayxWithArgs(['+address+','+value+'],(a,v)=>__wayxWithPath(a,p=>__wayxJsonAction(j=>'+helper+'(j,p,v))));');
       }
       continue;
     }
@@ -835,7 +802,7 @@ function statements(ast, target, {argumentTable = null, mockMaterialized = null}
       for(const args of expand(action)){
         if (args[0]?.type !== 'regex') throw new Error('body.replace regex must be fixed');
         const replacement=capturedString(args[1], 'body replacement', captures, guaranteed, argumentTable);
-        if(args[1]?.type==='string' && String(args[1].value).includes('${')) out.push('__wayxWith('+replacement+',v=>{__wayxBody=__wayxRegexReplace(String(__wayxBody ?? ""),'+JSON.stringify(normalizeRegexBodyForTarget(args[0].pattern))+','+JSON.stringify(args[0].flags || '')+',v);});');
+        if(args[1]?.type==='variable' || (args[1]?.type==='string' && String(args[1].value).includes('${'))) out.push('__wayxWith('+replacement+',v=>{__wayxBody=__wayxRegexReplace(String(__wayxBody ?? ""),'+JSON.stringify(normalizeRegexBodyForTarget(args[0].pattern))+','+JSON.stringify(args[0].flags || '')+',v);});');
         else out.push('__wayxBody=__wayxRegexReplace(String(__wayxBody ?? ""),'+JSON.stringify(normalizeRegexBodyForTarget(args[0].pattern))+','+JSON.stringify(args[0].flags || '')+','+replacement+');');
       }
       continue;
@@ -843,9 +810,17 @@ function statements(ast, target, {argumentTable = null, mockMaterialized = null}
     throw new Error('complex helper does not handle ' + action.name);
   }
   if (!body && !headers) throw new Error('complex helper requires at least one Header/Body/JSON action');
-  return {out, body, headers, json, headerAdd};
+  return {out, body, headers, json, headerAdd, dynamicPath};
 
 }
+const JSON_MUTATION_RUNTIME=[
+    'function __wayxJsonParent(root,path){let x=root;for(let i=0;i<path.length-1;i++){if(x==null||typeof x!=="object"||!Object.prototype.hasOwnProperty.call(x,path[i]))return null;x=x[path[i]];}return x;}',
+    'function __wayxJsonGet(root,path){let x=root;for(const k of path){if(x==null||typeof x!=="object"||!Object.prototype.hasOwnProperty.call(x,k))return undefined;x=x[k]}return x;}',
+    'function __wayxJsonSet(root,path,value){let x=root;for(let i=0;i<path.length-1;i++){const k=path[i],next=path[i+1];if(x==null||typeof x!=="object")return;const cur=Object.prototype.hasOwnProperty.call(x,k)?x[k]:undefined;if(cur==null)Object.defineProperty(x,k,{value:typeof next==="number"?[]:{},enumerable:true,writable:true,configurable:true});else if(typeof cur!=="object")return;x=x[k]}if(x!=null&&typeof x==="object")Object.defineProperty(x,path[path.length-1],{value,enumerable:true,writable:true,configurable:true});}',
+    'function __wayxJsonAdd(root,path,value){const cur=__wayxJsonGet(root,path);if(cur===undefined||cur===null)__wayxJsonSet(root,path,value);}',
+    'function __wayxJsonDelete(root,path){const p=__wayxJsonParent(root,path);if(p==null)return;const k=path[path.length-1];if(Array.isArray(p)&&typeof k==="number"){if(k>=0&&k<p.length)p.splice(k,1);}else delete p[k];}',
+    'function __wayxJsonReplace(root,path,value){const cur=__wayxJsonGet(root,path);if(cur!==undefined&&cur!==null&&cur!==false)__wayxJsonSet(root,path,value);}',
+];
 function renderRewriteScript(ast, {target, stamp='', category='', sourceLine='', argumentTable=null, mockMaterialized=null,fullHeaderMode=false,sharedRuntime=false}={}) {
   validateRewriteV2Ast(ast);
   if (!['qx','surge'].includes(target)) throw new Error('invalid rewrite helper target');
@@ -876,16 +851,14 @@ function renderRewriteScript(ast, {target, stamp='', category='', sourceLine='',
     'function __wayxValue(name){return resolveSemanticVariable(name,{url:$request.url,request:'+ (ast.phase==='request' ? '{...$request,headers:__wayxHeaders}' : '$request')+',response:'+(ast.phase==='response' ? '{...$response,headers:__wayxHeaders}' : '{}')+',arguments:__wayxArgs},new Map(Object.entries(__wayxCaptures)))}',
     'function __wayxTpl(parts){let out="";for(const [kind,name] of parts){const v=kind==="s"?name:__wayxValue(name);if(v===undefined)return undefined;out+=String(v)}return out}',
     'function __wayxWith(v,fn){if(v!==undefined)fn(v)}',
-    'function __wayxJsonAction(fn){try{const j=JSON.parse(String(__wayxBody ?? ""));fn(j);__wayxBody=JSON.stringify(j)}catch{}}',
-    'function __wayxJsonParent(root,path){let x=root;for(let i=0;i<path.length-1;i++){if(x==null||!(path[i] in Object(x)))return null;x=x[path[i]];}return x;}',
-    'function __wayxJsonGet(root,path){let x=root;for(const k of path){if(x==null||typeof x!=="object"||!(k in x))return undefined;x=x[k]}return x;}',
-    'function __wayxJsonSet(root,path,value){let x=root;for(let i=0;i<path.length-1;i++){const k=path[i],next=path[i+1];if(x==null||typeof x!=="object")return;const cur=x[k];if(cur==null)x[k]=typeof next==="number"?[]:{};else if(typeof cur!=="object")return;x=x[k]}if(x!=null&&typeof x==="object")x[path[path.length-1]]=value;}',
-    'function __wayxJsonAdd(root,path,value){const cur=__wayxJsonGet(root,path);if(cur===undefined||cur===null)__wayxJsonSet(root,path,value);}',
-    'function __wayxJsonDelete(root,path){const p=__wayxJsonParent(root,path);if(p==null)return;const k=path[path.length-1];if(Array.isArray(p)&&typeof k==="number"){if(k>=0&&k<p.length)p.splice(k,1);}else delete p[k];}',
-    'function __wayxJsonReplace(root,path,value){const cur=__wayxJsonGet(root,path);if(cur!==undefined&&cur!==null&&cur!==false)__wayxJsonSet(root,path,value);}',
-    'function __wayxHeader(phase,name){const h=phase==="request"?$request.headers:$response.headers;const w=String(name).toLowerCase();if(Array.isArray(h)){const x=h.find(x=>String(x.field).toLowerCase()===w);return x?.value;}const k=Object.keys(h||{}).find(x=>x.toLowerCase()===w);return k===undefined?undefined:h[k];}',
+    'function __wayxStringValue(name){const v=__wayxValue(name);return typeof v==="string"?v:undefined}',
+    'function __wayxWithArgs(values,fn){if(values.every(v=>v!==undefined))fn(...values)}',
+    plan.dynamicPath && !sharedRuntime ? parseJsonKeyPath.toString() : null,
+    plan.dynamicPath ? 'function __wayxWithPath(v,fn){if(v===undefined)return;let p;try{p=parseJsonKeyPath(v)}catch{return}fn(p)}' : null,
+    plan.json ? 'function __wayxJsonAction(fn){try{const j=JSON.parse(String(__wayxBody ?? ""));if(j===null||typeof j!=="object")return;fn(j);__wayxBody=JSON.stringify(j)}catch{}}' : null,
+    ...(plan.json && !sharedRuntime ? JSON_MUTATION_RUNTIME : []),
     plan.headerAdd ? 'function __wayxAdd(n,v){__wayxHeaders.push({field:n,value:v});}' : null,
-    plan.headerAdd ? 'function __wayxSet(n,v){const w=String(n).toLowerCase();let seen=false;__wayxHeaders=__wayxHeaders.filter(x=>{if(String(x.field).toLowerCase()!==w)return true;if(!seen){x.value=v;seen=true;return true;}return false;});if(!seen)__wayxHeaders.push({field:n,value:v});}' : 'function __wayxSet(n,v){const k=__wayxKey(n);__wayxDel(n);__wayxHeaders[k||n]=v;}',
+    plan.headerAdd ? 'function __wayxSet(n,v){const w=String(n).toLowerCase();let seen=false;__wayxHeaders=__wayxHeaders.filter(x=>{if(String(x.field).toLowerCase()!==w)return true;if(!seen){x.value=v;seen=true;return true;}return false;});if(!seen)__wayxHeaders.push({field:n,value:v});}' : 'function __wayxSet(n,v){const k=__wayxKey(n);__wayxDel(n);Object.defineProperty(__wayxHeaders,k||n,{value:v,enumerable:true,writable:true,configurable:true});}',
     plan.headerAdd ? 'function __wayxDel(n){const w=String(n).toLowerCase();__wayxHeaders=__wayxHeaders.filter(x=>String(x.field).toLowerCase()!==w);}' : 'function __wayxDel(n){const w=String(n).toLowerCase();for(const k of Object.keys(__wayxHeaders))if(k.toLowerCase()===w)delete __wayxHeaders[k];}',
     plan.headerAdd ? 'function __wayxHeaderReplace(n,p,r,f=""){const w=String(n).toLowerCase();for(const x of __wayxHeaders)if(String(x.field).toLowerCase()===w)x.value=__wayxRegexReplace(x.value,p,f,r);}' : 'function __wayxHeaderReplace(n,p,r,f=""){const w=String(n).toLowerCase();for(const k of Object.keys(__wayxHeaders))if(k.toLowerCase()===w)__wayxHeaders[k]=__wayxRegexReplace(__wayxHeaders[k],p,f,r);}',
     plan.headerAdd ? null : 'function __wayxKey(n){return Object.keys(__wayxHeaders).find(k=>k.toLowerCase()===String(n).toLowerCase());}',
@@ -898,7 +871,7 @@ function renderRewriteScript(ast, {target, stamp='', category='', sourceLine='',
   const qxAction = plan.body
     ? (ast.phase==='request'?'script-request-body':'script-response-body')
     : (ast.phase==='request'?'script-request-header':'script-response-header');
-  return {pattern:coarsePattern(ast),script:lines.join('\n'),qxAction,surgeType:ast.phase==='request'?'http-request':'http-response',requiresBody:plan.body,fullHeaderMode:plan.headerAdd};
+  return {pattern:coarsePattern(ast),script:lines.join('\n'),qxAction,surgeType:ast.phase==='request'?'http-request':'http-response',requiresBody:plan.body,fullHeaderMode:plan.headerAdd,dynamicPath:plan.dynamicPath,json:plan.json};
 }
 
 export function renderMixedRewriteScript(ast, options = {}) {
@@ -946,6 +919,8 @@ export function renderRewritePhaseDispatcher(declarations,options={}) {
   const lines=[...qxSemanticMetadata(options),
     regexReplacementRuntimeSource(),
     conditionRuntimeSource(),
+    ...(plans.some(p=>p.json) ? JSON_MUTATION_RUNTIME : []),
+    plans.some(p=>p.dynamicPath) ? parseJsonKeyPath.toString() : '',
     'function __wayxCloneHeaders(h){return Array.isArray(h)?h.map(x=>({...x})):{...(h||{})}}',
     'const __wayxRequest={...$request,headers:__wayxCloneHeaders($request.headers)};',
     'const __wayxResponse=typeof $response==="undefined"?{}:{...$response,headers:__wayxCloneHeaders($response.headers)};',
