@@ -45,10 +45,16 @@ function comparisonKey(node) {
   if (n?.type!=='comparison' || n.left?.type!=='variable') return null;
 
   if (n.left.name==='url' && n.operator==='~=' && n.right?.type==='regex') {
+    // QX official Rewrite syntax exposes a bare matcher regex but no Loon-style
+    // /pattern/ims flags field. Reusing the source body while dropping flags
+    // can create false negatives, so flagged URL predicates are not pushed
+    // into native matching. A helper may still use a broader safe prefilter.
+    if (String(n.right.flags || '')) return null;
     return {
       kind:'url-regex',
       key:'url-regex\u0000'+String(n.right.pattern),
       pattern:String(n.right.pattern),
+      capture:n.capture || null,
     };
   }
 
@@ -199,6 +205,7 @@ function matcherFromPredicates(predicates) {
       urlPattern,
       headersPattern,
       prefix:urlPattern+' '+headersPattern+' url-and-header ',
+      capture:url?.capture || null,
       pushedDown,
     };
   }
@@ -210,6 +217,7 @@ function matcherFromPredicates(predicates) {
     urlPattern,
     headersPattern:null,
     prefix:urlPattern+' url ',
+    capture:url?.capture || null,
     pushedDown:[],
   };
 }
@@ -225,4 +233,44 @@ export function qxRewriteMatcherPlan(ast) {
   // Prefilter mode may intentionally drop non-native predicates because the
   // generated helper re-evaluates the complete source condition.
   return {...matcherFromPredicates(predicates),exact:false};
+}
+
+
+function requestHeaderEntries(headers) {
+  if (headers instanceof Map) return [...headers.entries()];
+  if (headers && typeof headers==='object') return Object.entries(headers);
+  return [];
+}
+
+// Semantic model for the QX url-and-header comparison string. The official
+// sample documents that the string contains method, path and key-value headers;
+// its request-header examples use an HTTP/1.1 request line followed by CRLF.
+export function qxHeaderMatchString(context={}) {
+  let path='/';
+  try {
+    const url=new URL(String(context.url || ''));
+    path=url.pathname+url.search;
+  } catch {}
+  const method=String(context.request?.method ?? context.method ?? 'GET');
+  let out=method+' '+path+' HTTP/1.1';
+  for (const [name,value] of requestHeaderEntries(context.request?.headers)) {
+    out+='\\r\\n'+name+': '+String(value ?? '');
+  }
+  return out+'\\r\\n';
+}
+
+export function evaluateQxRewriteMatcherPlan(plan,context={}) {
+  if (!plan?.ok) return {matched:false,captures:{}};
+
+  const urlMatch=new RegExp(plan.urlPattern).exec(String(context.url ?? ''));
+  if (!urlMatch) return {matched:false,captures:{}};
+
+  if (plan.matcher==='url-and-header') {
+    const headerMatch=new RegExp(plan.headersPattern).exec(qxHeaderMatchString(context));
+    if (!headerMatch) return {matched:false,captures:{}};
+  }
+
+  const captures={};
+  if (plan.capture) captures[plan.capture]=Array.from(urlMatch);
+  return {matched:true,captures};
 }
