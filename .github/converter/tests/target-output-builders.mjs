@@ -7,7 +7,7 @@ import {
   compactOutputLines,
   finalizeOutputLines,
   hasActiveOutputLines,
-} from '../src/output-lines.mjs';
+} from '../src/output.mjs';
 import {
   appendQxOutput,
   createQxOutputState,
@@ -15,7 +15,7 @@ import {
   qxRuleOutputDestination,
   qxRewriteOutputDestination,
   renderQxOutput,
-} from '../src/qx-output.mjs';
+} from '../src/output.mjs';
 import {
   appendSurgeOutput,
   createSurgeOutputState,
@@ -23,7 +23,7 @@ import {
   surgeOutputDestination,
   surgeRuleOutputDestination,
   surgeRewriteOutputDestination,
-} from '../src/surge-output.mjs';
+} from '../src/output.mjs';
 
 assert.deepEqual(compactOutputLines(['a','','','b','','']),['a','','b']);
 assert.equal(hasActiveOutputLines(['# note','; note','// note','']),false);

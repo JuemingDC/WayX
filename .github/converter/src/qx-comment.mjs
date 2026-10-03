@@ -4,7 +4,7 @@
 
 import { isRewriteV2 } from './rewrite-v2.mjs';
 import { parseLegacyScriptLine } from './script-legacy.mjs';
-import { cleanSourceComments, sourceCommentText } from './source-section.mjs';
+import { cleanSourceComments, sourceCommentText } from './plugin-parser.mjs';
 
 export function looksLikeCommentedSourceDeclaration(text,sectionKind) {
   const value=String(text || '').trim();

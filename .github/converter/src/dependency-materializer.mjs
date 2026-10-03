@@ -11,7 +11,7 @@ import {
   legacyJqPathDependencySpecFromIr,
 } from './dependency.mjs';
 import { legacyRewriteToSemanticIr } from './rewrite-ir.mjs';
-import { groupSourceSectionItems } from './source-section.mjs';
+import { groupSourceSectionItems } from './plugin-parser.mjs';
 import { fetchOriginalText, fetchOriginalBytes } from './source-fetch.mjs';
 
 export async function materializeMockFiles(entry,parsed,{

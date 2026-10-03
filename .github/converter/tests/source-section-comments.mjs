@@ -9,7 +9,7 @@ import {
   groupSourceSectionItems,
   isSupportedSourceSection,
   sourceCommentText,
-} from '../src/source-section.mjs';
+} from '../src/plugin-parser.mjs';
 import { attachQxInlineNote, looksLikeCommentedSourceDeclaration } from '../src/qx-comment.mjs';
 import { parseSourceMetadataHeader, renderQxSnippetHeader, renderSurgeModuleHeader } from '../src/metadata.mjs';
 
