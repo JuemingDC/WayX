@@ -454,7 +454,7 @@ assert.equal(genericQxMockScript.qxAction, 'script-echo-response');
 assert.match(genericQxMockScript.script, /X-Test/);
 const singleComplexRejected = parseRewriteV2('response if ${url} ~= /api/ then response.header.del("Server")');
 assert.equal(planComplexRewrite(singleComplexRejected, 'qx').ok, false);
-assert.match(planComplexRewrite(singleComplexRejected, 'qx').reason, /multi-action/);
+assert.match(planComplexRewrite(singleComplexRejected, 'qx').reason, /generated-script context/);
 assert.throws(
   () => renderMixedRewriteScript(singleComplexRejected, {target:'qx'}),
   /multi-action/,
@@ -492,7 +492,7 @@ const mixedJsonCapture = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /\\/users\\/(\\d+)/ims as hit then response.header.set("X-User", "${hit.1}") | response.json.replace("data.user", "${hit.1}")'),
   {target:'qx'},
 );
-assert.ok(mixedJsonCapture.script.includes('__wayxTpl([["c","hit",1]])'));
+assert.ok(mixedJsonCapture.script.includes('__wayxTpl([["v","hit.1"]])'));
 assert.ok(mixedJsonCapture.script.includes('v=>__wayxJsonAction(j=>__wayxJsonReplace(j,["data","user"],v))'));
 assert.equal(mixedJsonCapture.script.includes('"ims"'), true);
 
@@ -553,7 +553,7 @@ assert.throws(
 );
 assert.throws(
   () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ as hit then response.header.set("X-Test", "${hit.name}") | response.body.replace(/x/, "y")'), {target:'qx'}),
-  /header value contains unsupported interpolation/,
+  /unknown plugin argument interpolation/,
 );
 const jsonAddDelete = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /api/ then response.json.add("data.new.enabled", true) | response.json.delete("items[0]") | response.body.replace(/done/, "ok")'),
@@ -579,7 +579,7 @@ assert.ok(
   'complex helper must preserve the regex body and source flags',
 );
 assert.equal(captureMixedQx.script.includes('"ims"'), true);
-assert.ok(captureMixedQx.script.includes('__wayxTpl([["c","hit",0],["s",":"],["c","hit",1],["s",":"],["c","hit",2]])'));
+assert.ok(captureMixedQx.script.includes('__wayxTpl([["v","hit.0"],["s",":"],["v","hit.1"],["s",":"],["v","hit.2"]])'));
 const surgeHeaderAddMixed = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /api/ then response.header.add("Set-Cookie", "b=2") | response.header.set("X-Test", "ok") | response.body.replace(/ads/, "clean")'),
   {target:'surge'},
@@ -1827,7 +1827,7 @@ for(const item of mixedScriptMatrix){
   const c=ctx();
   const planned=planQxRewrite(v2(item.source),c);
   assert.equal(planned.section,'rewrite');
-  assert.match(planned.line,new RegExp(' '+item.action+' https://raw\\.githubusercontent\\.com/JuemingDC/WayX/main/Script/Fixture/complex_qx_[0-9a-f]{10}\\.js$'));
+  assert.match(planned.line,new RegExp(' '+item.action+' https://raw\\.githubusercontent\\.com/JuemingDC/WayX/main/Script/Fixture/features_qx_[0-9a-f]{10}\\.js$'));
   assert.equal(c.generatedScripts.size,1);
 }
 
@@ -2126,9 +2126,9 @@ const flagsNativeJsonPipelineSource='response if ${url} ~= /api/ims then respons
 const flagsNativeJsonPipelineCtx=ctx();
 const flagsNativeJsonPipeline=planQxRewrite(v2(flagsNativeJsonPipelineSource),flagsNativeJsonPipelineCtx);
 assert.equal(flagsNativeJsonPipeline.section,'rewrite');
-assert.match(flagsNativeJsonPipeline.line,/^api url jsonjq-response-body '/);
+assert.match(flagsNativeJsonPipeline.line,/^\^ url script-response-body .*features_qx_/);
 assert.doesNotMatch(flagsNativeJsonPipeline.line,/\(\?[ims]+\)|\/ims?\b/);
-assert.equal(flagsNativeJsonPipelineCtx.generatedScripts.size,0);
+assert.equal(flagsNativeJsonPipelineCtx.generatedScripts.size,1);
 
 const nestedJsonPipelineSource='response if ${url} ~= /api/ then response.json.add("data.flag",true) | response.json.replace("data.count",2)';
 const nestedJsonPipelineCtx=ctx();

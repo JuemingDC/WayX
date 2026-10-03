@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduPhoto.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:15 +08:00
+# Converted: 2026-10-04 01:54:25 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduPhoto_remove_ads.lpx
@@ -20,7 +20,7 @@
 
 ^https:\/\/pan\.baidu\.com\/youai\/material\/v1\/getbynavid\?.*nav_id=1 url reject-dict
 
-^https:\/\/mbd\.baidu\.com\/ccs\/v1\/start\/confsync\? url jsonjq-response-body 'del(.data.service.config.advertisement, .data.service.config.youa.pm_config_ad)'
+^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_BaiduPhoto_remove_ads/features_qx_7d1b5b0867.js
 
 # [mitm]
 hostname = pan.baidu.com, mbd.baidu.com

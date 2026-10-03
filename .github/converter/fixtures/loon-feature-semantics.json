@@ -1,0 +1,328 @@
+{
+  "version": 1,
+  "authority": {
+    "loon": "https://nsloon.app/en/docs/Rewrite/rewrite_v2/",
+    "qx": "https://github.com/crossutility/Quantumult-X",
+    "surge": "https://manual.nssurge.com/scripting/http-request.html"
+  },
+  "cases": [
+    {
+      "id": "url-i-and-template",
+      "source": "request if ${url} ~= /API-(\\d+)/i as hit then request.header.set(\"X-ID\", \"${hit.1}:${request.method}:${url}\")",
+      "expected": {
+        "headers": {
+          "X-ID": "42:GET:HTTPS://example.test/API-42"
+        }
+      },
+      "request": {
+        "url": "HTTPS://example.test/API-42"
+      },
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "condition-template",
+      "source": "request if ${request.header['X-Method']} == \"${request.method}\" then request.header.set(\"X-OK\",\"yes\")",
+      "expected": {
+        "headers": {
+          "X-Method": "GET",
+          "X-OK": "yes"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Method": "GET"
+        }
+      },
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "condition-template-miss",
+      "source": "request if ${request.header['X-Method']} == \"${request.method}\" then request.header.set(\"X-OK\",\"yes\")",
+      "expected": {},
+      "request": {
+        "headers": {
+          "X-Method": "POST"
+        }
+      },
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "escape-literal-and-backslash",
+      "source": "request if ${url} ~= /example/i then request.header.set(\"X-Text\", \"quote=\\\"; literal=\\${request.method}; slash=\\\\${request.method}; tab=\\t; line=\\n\")",
+      "expected": {
+        "headers": {
+          "X-Text": "quote=\"; literal=${request.method}; slash=\\GET; tab=\t; line=\n"
+        }
+      },
+      "request": {},
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "raw-backtick-and-syntax",
+      "source": "request if ${url} ~= /example/i then request.header.set(\"X-Raw\", `a``b ${url} \\n ,=()[] \"汉字\"`)",
+      "expected": {
+        "headers": {
+          "X-Raw": "a`b ${url} \\n ,=()[] \"汉字\""
+        }
+      },
+      "request": {},
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "header-variable-case",
+      "source": "request if ${url} ~= /example/i then request.header.set(\"X-Copy\", \"${request.header['x-Origin']}\")",
+      "expected": {
+        "headers": {
+          "X-Origin": "original",
+          "X-Copy": "original"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Origin": "original"
+        }
+      },
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "action-header-order",
+      "source": "response if ${url} ~= /example/i then response.header.set(\"X-Step\",\"first\") | response.header.set(\"X-Copy\",\"${response.header['x-step']}\")",
+      "expected": {
+        "headers": {
+          "X-Step": "first",
+          "X-Copy": "first"
+        }
+      },
+      "request": {},
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "typed-json-builtin",
+      "source": "response if ${url} ~= /example/i then response.json.add(\"status\", ${response.status}) | response.json.add(\"method\", \"${request.method}\")",
+      "expected": {
+        "body": "{\"status\":201,\"method\":\"GET\"}"
+      },
+      "request": {},
+      "response": {
+        "status": 201,
+        "statusCode": 201,
+        "body": "{}"
+      },
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "raw-json-is-string",
+      "source": "response if ${url} ~= /example/ then response.json.add(\"raw\", `{\"literal\":\"${url}\"}`)",
+      "expected": {
+        "body": "{\"raw\":\"{\\\"literal\\\":\\\"${url}\\\"}\"}"
+      },
+      "request": {},
+      "response": {
+        "body": "{}"
+      },
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "action-and-condition-captures",
+      "source": "response if ${url} ~= /item-(\\d+)/i as hit then response.body.replace(/(汉字)\\/(\\d+)/i, \"$0:$1:$2:${hit.1}:$&:$$\")",
+      "expected": {
+        "body": "汉字/7:汉字:7:42:$&:$$"
+      },
+      "request": {
+        "url": "https://example.test/ITEM-42"
+      },
+      "response": {
+        "body": "汉字/7"
+      },
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "optional-capture-skips-action",
+      "source": "response if ${url} ~= /item-(\\d+)?/i as hit then response.header.set(\"X-Skip\",\"${hit.1}\") | response.header.set(\"X-Next\",\"yes\")",
+      "expected": {
+        "headers": {
+          "X-Next": "yes"
+        }
+      },
+      "request": {
+        "url": "https://example.test/ITEM-"
+      },
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "paired-body-batch",
+      "source": "response if ${url} ~= /example/i then response.body.replace([/a/i,/b/i],[\"B\",\"C\"]) | response.header.set([\"X-A\",\"X-B\"],[\"${request.method}\",\"ok\"])",
+      "expected": {
+        "body": "C",
+        "headers": {
+          "X-A": "GET",
+          "X-B": "ok"
+        }
+      },
+      "request": {},
+      "response": {
+        "body": "A"
+      },
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "quoted-json-key-and-array",
+      "source": "response if ${url} ~= /example/i then response.json.delete(\"items[0]\") | response.json.add(\"[\\\"a.b\\\"]\", \"${request.method}\")",
+      "expected": {
+        "body": "{\"items\":[2],\"a.b\":\"GET\"}"
+      },
+      "request": {},
+      "response": {
+        "body": "{\"items\":[1,2]}"
+      },
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "failed-json-continues",
+      "source": "response if ${url} ~= /example/i then response.json.add(\"x\",true) | response.header.set(\"X-Next\",\"yes\")",
+      "expected": {
+        "body": "not-json",
+        "headers": {
+          "X-Next": "yes"
+        }
+      },
+      "request": {},
+      "response": {
+        "body": "not-json"
+      },
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "escaped-unknown-template-is-literal",
+      "source": "request if ${url} ~= /example/i then request.header.set(\"X-Literal\", \"\\${notDeclared}\")",
+      "expected": {
+        "headers": {
+          "X-Literal": "${notDeclared}"
+        }
+      },
+      "request": {},
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "optional-capture-preserves-existing-values",
+      "source": "response if ${url} ~= /item-(\\d+)?/i as hit then response.header.set(\"X-Skip\",\"${hit.1}\") | response.json.add(\"new\",${hit.1}) | response.header.set(\"X-Next\",\"yes\")",
+      "expected": {
+        "headers": {
+          "X-Skip": "old",
+          "X-Next": "yes"
+        },
+        "body": " {\"keep\": 1} "
+      },
+      "request": {
+        "url": "https://example.test/ITEM-"
+      },
+      "response": {
+        "headers": {
+          "X-Skip": "old"
+        },
+        "body": " {\"keep\": 1} "
+      },
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "set-case-variant-keys",
+      "source": "request if ${url} ~= /example/i then request.header.set(\"x-key\",\"new\")",
+      "request": {
+        "headers": {
+          "X-Key": "old",
+          "x-key": "other",
+          "Keep": "yes"
+        }
+      },
+      "response": {},
+      "expected": {
+        "headers": {
+          "X-Key": "new",
+          "Keep": "yes"
+        }
+      },
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "replace-case-variant-keys",
+      "source": "request if ${url} ~= /example/i then request.header.replace(\"x-key\",/old/i,\"new\")",
+      "request": {
+        "headers": {
+          "X-Key": "OLD",
+          "x-key": "old"
+        }
+      },
+      "response": {},
+      "expected": {
+        "headers": {
+          "X-Key": "new",
+          "x-key": "new"
+        }
+      },
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    }
+  ]
+}

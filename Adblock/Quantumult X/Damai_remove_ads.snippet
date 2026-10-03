@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Damai.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:50 +08:00
+# Converted: 2026-10-04 01:54:00 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Damai_remove_ads.lpx
@@ -20,11 +20,7 @@
 
 ^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.damai\.mec\.popup\.get\/ url reject-dict
 
-^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.damai\.wireless\.user\.my\.content\.get\/ url jsonjq-response-body 'del(.data.banner, .data.performFilmVip.userProfitList)'
-
-^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.damai\.wireless\.mypage\.feed\/ url jsonjq-response-body 'del(.data.feedCard)'
-
-^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.damai\.mec\.aristotle\.get\/ url jsonjq-response-body 'del(.data.data.top.keywords)'
+^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Damai_remove_ads/phase_qx_response_2968aeb546.js
 
 # [mitm]
 hostname = acs.m.taobao.com

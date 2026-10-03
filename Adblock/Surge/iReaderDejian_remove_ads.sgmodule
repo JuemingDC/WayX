@@ -10,19 +10,16 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/iReaderDejian.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:51 +08:00
+# Converted: 2026-10-04 01:54:00 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/iReaderDejian_remove_ads.lpx
 # Target: Surge
 
+
+
 [Rule]
 DOMAIN,smad.ms.zhangyue.net,REJECT
 DOMAIN,saad.ms.zhangyue.net,REJECT
-
-[Body Rewrite]
-http-response-jq ^https:\/\/dj\.palmestore\.com\/zybk\/api\/powerup\/userGroup\? 'del(.body.sevenDaysAd, .body.shortPlayShow, .body.sdkShortPlayAB)'
-
-http-response-jq ^https:\/\/dj\.palmestore\.com\/zybk\/api\/search\/index\? 'del(.body.keywords)'
 
 [Map Local]
 
@@ -31,6 +28,9 @@ http-response-jq ^https:\/\/dj\.palmestore\.com\/zybk\/api\/search\/index\? 'del
 ^https:\/\/dj\.palmestore\.com\/zyapi\/bookstore\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 ^https:\/\/dj\.palmestore\.com\/zybk\/api\/bookshelf\/index\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Script]
+wayx_phase_response_55e1fcfd0d = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_iReaderDejian_remove_ads/phase_surge_response_55e1fcfd0d.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% dj.palmestore.com

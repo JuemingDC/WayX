@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YouKu_Video.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:16 +08:00
+# Converted: 2026-10-04 01:54:25 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/YouKu_Video_remove_ads.lpx
@@ -42,9 +42,7 @@ host, pre-acs.youku.com, reject
 host, youku-acs.m.taobao.com, reject
 
 # [rewrite_local]
-^https:\/\/un-acs\.youku\.com\/gw\/mtop\.youku\.play\.ups\.appinfo\.get url jsonjq-response-body 'del(.data.data.ad, .data.data.watermark, .data.data.ykad)'
-
-^https:\/\/push\.m\.youku\.com\/collect-api\/get_push_interval_config_wx\? url jsonjq-response-body 'del(.data.tipContent, .data.tipContentNew)'
+^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_YouKu_Video_remove_ads/phase_qx_response_01d5aba604.js
 
 # [mitm]
 hostname = push.m.youku.com, un-acs.youku.com

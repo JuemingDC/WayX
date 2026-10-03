@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 00:56:34 +08:00
+// Converted: 2026-10-04 01:54:25 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /^https:\/\/gw\.xiaocantech\.com\/rpc/i then request.header.replace("methodname", /.*(GetBannerList|IsShowOrderAwardPopup|UserLifeShopList|BrandBannerList|GetPromotionGlobalCfg)/, "null")
@@ -19,24 +19,7 @@ function replaceSourceRegex(node,text,replacement) {
   const out=String(replacement).replace(/\$(\d+)/g,(_,index)=>match[Number(index)] ?? '');
   return text.slice(0,match.index)+out+text.slice(match.index+match[0].length);
 };return (text,pattern,flags,replacement)=>replaceSourceRegex({type:"regex",pattern,flags},String(text),replacement);})();
-const __wayxCaptures=Object.create(null);
-let __wayxHeaders={...($request.headers||{})};
-let __wayxBody=$request.body;
-function __wayxTpl(parts){let out="";for(const p of parts){if(p[0]==="s"){out+=p[1];continue}if(p[0]==="a"){const v=__wayxArgs[p[1]];if(v===undefined)return undefined;out+=String(v);continue}const v=__wayxCaptures[p[1]]?.[p[2]];if(v===undefined)return undefined;out+=String(v)}return out}
-function __wayxWith(v,fn){if(v!==undefined)fn(v)}
-function __wayxJsonAction(fn){try{const j=JSON.parse(String(__wayxBody ?? ""));fn(j);__wayxBody=JSON.stringify(j)}catch{}}
-function __wayxJsonParent(root,path){let x=root;for(let i=0;i<path.length-1;i++){if(x==null||!(path[i] in Object(x)))return null;x=x[path[i]];}return x;}
-function __wayxJsonGet(root,path){let x=root;for(const k of path){if(x==null||typeof x!=="object"||!(k in x))return undefined;x=x[k]}return x;}
-function __wayxJsonSet(root,path,value){let x=root;for(let i=0;i<path.length-1;i++){const k=path[i],next=path[i+1];if(x==null||typeof x!=="object")return;const cur=x[k];if(cur==null)x[k]=typeof next==="number"?[]:{};else if(typeof cur!=="object")return;x=x[k]}if(x!=null&&typeof x==="object")x[path[path.length-1]]=value;}
-function __wayxJsonAdd(root,path,value){const cur=__wayxJsonGet(root,path);if(cur===undefined||cur===null)__wayxJsonSet(root,path,value);}
-function __wayxJsonDelete(root,path){const p=__wayxJsonParent(root,path);if(p==null)return;const k=path[path.length-1];if(Array.isArray(p)&&typeof k==="number"){if(k>=0&&k<p.length)p.splice(k,1);}else delete p[k];}
-function __wayxJsonReplace(root,path,value){const cur=__wayxJsonGet(root,path);if(cur!==undefined&&cur!==null&&cur!==false)__wayxJsonSet(root,path,value);}
-function __wayxHeader(phase,name){const h=phase==="request"?$request.headers:$response.headers;const w=String(name).toLowerCase();if(Array.isArray(h)){const x=h.find(x=>String(x.field).toLowerCase()===w);return x?.value;}const k=Object.keys(h||{}).find(x=>x.toLowerCase()===w);return k===undefined?undefined:h[k];}
-function __wayxSet(n,v){const k=__wayxKey(n);__wayxHeaders[k||n]=v;}
-function __wayxDel(n){const w=String(n).toLowerCase();for(const k of Object.keys(__wayxHeaders))if(k.toLowerCase()===w)delete __wayxHeaders[k];}
-function __wayxHeaderReplace(n,p,r,f=""){const k=__wayxKey(n);if(k!==undefined)__wayxHeaders[k]=__wayxRegexReplace(__wayxHeaders[k],p,f,r);}
-function __wayxKey(n){return Object.keys(__wayxHeaders).find(k=>k.toLowerCase()===String(n).toLowerCase());}
-if((()=>{const SUPPORTED_FLAGS=/^[ims]*$/;
+const SUPPORTED_FLAGS=/^[ims]*$/;
 function assertRegexNode(node) {
   if (!node || node.type!=='regex') throw new TypeError('Expected Loon semantic Regex node');
   const flags=String(node.flags || '');
@@ -121,11 +104,46 @@ function resolveSemanticVariable(name,context,captures=new Map()) {
 
   return argumentValue(context,key);
 }
+function stringTemplateParts(node) {
+  if (node?.type==='raw-string') return [['s',String(node.value)]];
+  if (node?.type!=='string') throw new TypeError('Expected a string template');
+  const raw=typeof node.raw==='string' && node.raw.startsWith('"');
+  const text=raw ? node.raw.slice(1,-1) : String(node.value);
+  const parts=[];let literal='';
+  const flush=()=>{if(literal){parts.push(['s',literal]);literal='';}};
+  for(let i=0;i<text.length;i++) {
+    if(text[i]==='\\' && i+1<text.length) {
+      if(text.slice(i+1,i+3)==='${'){literal+='${';i+=2;continue;}
+      if(raw){const n=text[++i];literal+=({n:'\n',r:'\r',t:'\t','"':'"','\\':'\\'})[n] ?? ('\\'+n);continue;}
+    }
+    if(text.slice(i,i+2)==='${') {
+      let j=i+2,quote=null,escaped=false;
+      for(;j<text.length;j++) {
+        const c=text[j];
+        if(quote){if(escaped)escaped=false;else if(c==='\\')escaped=true;else if(c===quote)quote=null;}
+        else if(c==="'")quote=c;
+        else if(c==='}')break;
+      }
+      if(j===text.length)throw new SemanticEvaluationError('Unterminated string template');
+      flush();parts.push(['v',text.slice(i+2,j)]);i=j;
+    } else literal+=text[i];
+  }
+  flush();return parts;
+}
+function expandSemanticString(node,context,captures) {
+  let text='';
+  for(const [kind,value] of stringTemplateParts(node)) {
+    const v=kind==='s' ? value : resolveSemanticVariable(value,context,captures);
+    if(v===undefined)return undefined;
+    text+=String(v);
+  }
+  return text;
+}
 function literalValue(node,context,captures) {
   if (!node) return undefined;
   switch (node.type) {
     case 'variable': return resolveSemanticVariable(node.name,context,captures);
-    case 'string':
+    case 'string': return expandSemanticString(node,context,captures);
     case 'raw-string':
     case 'number':
     case 'boolean':
@@ -194,6 +212,26 @@ function evaluateCondition(condition,context={},initialCaptures={}) {
     captures:Object.fromEntries(result.captures),
   };
 }
+const __wayxCaptures=Object.create(null);
+const __wayxArgs={};
+let __wayxHeaders={...($request.headers||{})};
+let __wayxBody=$request.body;
+function __wayxValue(name){return resolveSemanticVariable(name,{url:$request.url,request:{...$request,headers:__wayxHeaders},response:{},arguments:__wayxArgs},new Map(Object.entries(__wayxCaptures)))}
+function __wayxTpl(parts){let out="";for(const [kind,name] of parts){const v=kind==="s"?name:__wayxValue(name);if(v===undefined)return undefined;out+=String(v)}return out}
+function __wayxWith(v,fn){if(v!==undefined)fn(v)}
+function __wayxJsonAction(fn){try{const j=JSON.parse(String(__wayxBody ?? ""));fn(j);__wayxBody=JSON.stringify(j)}catch{}}
+function __wayxJsonParent(root,path){let x=root;for(let i=0;i<path.length-1;i++){if(x==null||!(path[i] in Object(x)))return null;x=x[path[i]];}return x;}
+function __wayxJsonGet(root,path){let x=root;for(const k of path){if(x==null||typeof x!=="object"||!(k in x))return undefined;x=x[k]}return x;}
+function __wayxJsonSet(root,path,value){let x=root;for(let i=0;i<path.length-1;i++){const k=path[i],next=path[i+1];if(x==null||typeof x!=="object")return;const cur=x[k];if(cur==null)x[k]=typeof next==="number"?[]:{};else if(typeof cur!=="object")return;x=x[k]}if(x!=null&&typeof x==="object")x[path[path.length-1]]=value;}
+function __wayxJsonAdd(root,path,value){const cur=__wayxJsonGet(root,path);if(cur===undefined||cur===null)__wayxJsonSet(root,path,value);}
+function __wayxJsonDelete(root,path){const p=__wayxJsonParent(root,path);if(p==null)return;const k=path[path.length-1];if(Array.isArray(p)&&typeof k==="number"){if(k>=0&&k<p.length)p.splice(k,1);}else delete p[k];}
+function __wayxJsonReplace(root,path,value){const cur=__wayxJsonGet(root,path);if(cur!==undefined&&cur!==null&&cur!==false)__wayxJsonSet(root,path,value);}
+function __wayxHeader(phase,name){const h=phase==="request"?$request.headers:$response.headers;const w=String(name).toLowerCase();if(Array.isArray(h)){const x=h.find(x=>String(x.field).toLowerCase()===w);return x?.value;}const k=Object.keys(h||{}).find(x=>x.toLowerCase()===w);return k===undefined?undefined:h[k];}
+function __wayxSet(n,v){const k=__wayxKey(n);__wayxDel(n);__wayxHeaders[k||n]=v;}
+function __wayxDel(n){const w=String(n).toLowerCase();for(const k of Object.keys(__wayxHeaders))if(k.toLowerCase()===w)delete __wayxHeaders[k];}
+function __wayxHeaderReplace(n,p,r,f=""){const w=String(n).toLowerCase();for(const k of Object.keys(__wayxHeaders))if(k.toLowerCase()===w)__wayxHeaders[k]=__wayxRegexReplace(__wayxHeaders[k],p,f,r);}
+function __wayxKey(n){return Object.keys(__wayxHeaders).find(k=>k.toLowerCase()===String(n).toLowerCase());}
+if((()=>{
 const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https:\\/\\/gw\\.xiaocantech\\.com\\/rpc","flags":"i","raw":"/^https:\\/\\/gw\\.xiaocantech\\.com\\/rpc/i"},"capture":null},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
   __wayxWith("null",v=>__wayxHeaderReplace("methodname",".*(GetBannerList|IsShowOrderAwardPopup|UserLifeShopList|BrandBannerList|GetPromotionGlobalCfg)",v,""));
   $done({headers:__wayxHeaders});

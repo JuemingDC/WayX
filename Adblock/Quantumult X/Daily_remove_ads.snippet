@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Daily.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:08 +08:00
+# Converted: 2026-10-04 01:54:21 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Daily_remove_ads.lpx
@@ -16,7 +16,7 @@
 # [filter_local]
 
 # [rewrite_local]
-^https?:\/\/m\.pvp\.xoyo\.com\/conf\/server-mapping$ url jsonjq-response-body 'del(.data.splashConf, .data.splashConfNew)'
+^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Daily_remove_ads/features_qx_59fad5d6ee.js
 
 # [mitm]
 hostname = m.pvp.xoyo.com

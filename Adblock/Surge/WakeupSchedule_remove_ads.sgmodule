@@ -10,17 +10,17 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/WakeupSchedule.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:43 +08:00
+# Converted: 2026-10-04 01:53:47 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/WakeupSchedule_remove_ads.lpx
 # Target: Surge
 
-[Body Rewrite]
-
-http-response-jq ^https:\/\/api\.wakeup\.fun\/wakeup\/user\/mine$ 'del(.data.bannerItems)'
-
 [Map Local]
 ^https:\/\/api\.wakeup\.fun\/wakeup\/app\/bannerconf$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Script]
+
+wayx_features_b2e3a49c86 = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_WakeupSchedule_remove_ads/features_surge_b2e3a49c86.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% api.wakeup.fun

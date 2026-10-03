@@ -119,11 +119,50 @@ export function resolveSemanticVariable(name,context,captures=new Map()) {
   return argumentValue(context,key);
 }
 
+// Preserve the distinction between an escaped template and a template after
+// an escaped backslash. The decoded value alone cannot represent both cases.
+export function stringTemplateParts(node) {
+  if (node?.type==='raw-string') return [['s',String(node.value)]];
+  if (node?.type!=='string') throw new TypeError('Expected a string template');
+  const raw=typeof node.raw==='string' && node.raw.startsWith('"');
+  const text=raw ? node.raw.slice(1,-1) : String(node.value);
+  const parts=[];let literal='';
+  const flush=()=>{if(literal){parts.push(['s',literal]);literal='';}};
+  for(let i=0;i<text.length;i++) {
+    if(text[i]==='\\' && i+1<text.length) {
+      if(text.slice(i+1,i+3)==='${'){literal+='${';i+=2;continue;}
+      if(raw){const n=text[++i];literal+=({n:'\n',r:'\r',t:'\t','"':'"','\\':'\\'})[n] ?? ('\\'+n);continue;}
+    }
+    if(text.slice(i,i+2)==='${') {
+      let j=i+2,quote=null,escaped=false;
+      for(;j<text.length;j++) {
+        const c=text[j];
+        if(quote){if(escaped)escaped=false;else if(c==='\\')escaped=true;else if(c===quote)quote=null;}
+        else if(c==="'")quote=c;
+        else if(c==='}')break;
+      }
+      if(j===text.length)throw new SemanticEvaluationError('Unterminated string template');
+      flush();parts.push(['v',text.slice(i+2,j)]);i=j;
+    } else literal+=text[i];
+  }
+  flush();return parts;
+}
+
+function expandSemanticString(node,context,captures) {
+  let text='';
+  for(const [kind,value] of stringTemplateParts(node)) {
+    const v=kind==='s' ? value : resolveSemanticVariable(value,context,captures);
+    if(v===undefined)return undefined;
+    text+=String(v);
+  }
+  return text;
+}
+
 function literalValue(node,context,captures) {
   if (!node) return undefined;
   switch (node.type) {
     case 'variable': return resolveSemanticVariable(node.name,context,captures);
-    case 'string':
+    case 'string': return expandSemanticString(node,context,captures);
     case 'raw-string':
     case 'number':
     case 'boolean':
@@ -421,7 +460,7 @@ export function conditionRuntimeSource() {
   return 'const SUPPORTED_FLAGS=/^[ims]*$/;\n'+[
     assertRegexNode,compileSourceRegex,execSourceRegex,SemanticEvaluationError,
     cloneCaptures,decodeHeaderName,headerVariable,lookupHeader,argumentValue,
-    captureValue,resolveSemanticVariable,literalValue,comparison,evaluateNode,evaluateCondition,
+    captureValue,resolveSemanticVariable,stringTemplateParts,expandSemanticString,literalValue,comparison,evaluateNode,evaluateCondition,
   ].map(fn=>fn.toString()).join('\n');
 }
 
@@ -435,13 +474,8 @@ export function evaluateRewriteActions(ast,context,{parsePath}={}) {
   const value=node=>{
     if (node.type==='variable') return resolveSemanticVariable(node.name,state,captures);
     if (node.type!=='string') return node.value;
-    let missing=false;
-    const text=String(node.value).replace(/\$\{([^}]+)\}/g,(_,name)=>{
-      const v=resolveSemanticVariable(name,state,captures);
-      if (v===undefined) {missing=true;return '';}
-      return String(v);
-    });
-    if (missing) throw new SemanticEvaluationError('missing action capture/variable');
+    const text=expandSemanticString(node,state,captures);
+    if (text===undefined) throw new SemanticEvaluationError('missing action capture/variable');
     return text;
   };
   const errors=[];
@@ -454,13 +488,14 @@ export function evaluateRewriteActions(ast,context,{parsePath}={}) {
         const headers=phase.headers ||= {};
         const name=value(args[0]);
         const keys=Object.keys(headers).filter(k=>k.toLowerCase()===String(name).toLowerCase());
-        if (operation==='set') {for (const k of keys) delete headers[k];headers[keys[0] || name]=value(args[1]);}
+        if (operation==='set') {const replacement=value(args[1]);for (const k of keys) delete headers[k];headers[keys[0] || name]=replacement;}
         else if (operation==='del') {for(const k of keys) delete headers[k];}
         else if (operation==='replace') {const replacement=value(args[2]);for(const k of keys) headers[k]=replaceSourceRegex(args[1],String(headers[k]),replacement);}
         else throw new SemanticEvaluationError('unsupported oracle header action: '+operation);
       } else if (action.name.includes('.body.') && operation==='replace') {
         phase.body=replaceSourceRegex(args[0],String(phase.body ?? ''),value(args[1]));
       } else if (action.name.includes('.json.') && ['add','delete','replace'].includes(operation)) {
+        const replacement=operation==='delete' ? undefined : value(args[1]);
         let json;try{json=JSON.parse(String(phase.body ?? ''));}catch{continue;}
         const path=parsePath(value(args[0]));
         let parent=json;
@@ -476,7 +511,7 @@ export function evaluateRewriteActions(ast,context,{parsePath}={}) {
         if (parent!=null && typeof parent==='object') {
           const key=path.at(-1),current=parent[key];
           if(operation==='delete') {if(Array.isArray(parent) && typeof key==='number') {if(key<parent.length)parent.splice(key,1);}else delete parent[key];}
-          else if(operation==='add' ? current==null : current!==undefined && current!==null && current!==false) parent[key]=value(args[1]);
+          else if(operation==='add' ? current==null : current!==undefined && current!==null && current!==false) parent[key]=replacement;
         }
         phase.body=JSON.stringify(json);
       } else throw new SemanticEvaluationError('unsupported oracle action: '+action.name);

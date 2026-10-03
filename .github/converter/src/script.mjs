@@ -4,7 +4,7 @@
 
 import { splitTopLevelCsv } from "./rule.mjs";
 import { parseRewriteV2, conditionToSource, valueToSource, isRewriteV2, simpleUrlRewriteCondition } from "./rewrite.mjs";
-import { normalizeRegexBodyForTarget } from "./core.mjs";
+import { normalizeRegexBodyForTarget, stringTemplateParts } from "./core.mjs";
 
 
 
@@ -742,6 +742,7 @@ function collectVariableNames(node, out = new Set()) {
     return out;
   }
   if (node.type === 'variable' && typeof node.name === 'string') out.add(node.name);
+  if (node.type === 'string') for(const [kind,name] of stringTemplateParts(node)) if(kind==='v')out.add(name);
   for (const [key, value] of Object.entries(node)) {
     if (key === 'raw') continue;
     collectVariableNames(value, out);

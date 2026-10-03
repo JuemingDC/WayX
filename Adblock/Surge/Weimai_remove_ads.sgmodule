@@ -1,7 +1,6 @@
 #!name=微脉圈去广告
 #!desc=移除开屏广告、聊天页横幅提示及发现页面的横幅广告。
 #!category=WayX
-#!requirement=CORE_VERSION>=20
 
 # Open URL: https://apps.apple.com/app/id1427096901
 # Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
@@ -11,14 +10,13 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Weimai.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:10 +08:00
+# Converted: 2026-10-04 01:54:21 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Weimai_remove_ads.lpx
 # Target: Surge
 
-[Body Rewrite]
-http-response-jq ^https:\/\/confssl\d?\.iweimai\.cn\/wm_ios_update\.json\? 'if getpath(["isShowCJAd"]) then setpath(["isShowCJAd"]; 0) else . end'
-http-response-jq ^https:\/\/confssl\d?\.iweimai\.cn\/wm_ios_update\.json\? 'del(.launchAd, .adBanners, .ad)'
+[Script]
+wayx_phase_response_4e95d152a5 = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Weimai_remove_ads/phase_surge_response_4e95d152a5.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% confssl*.iweimai.cn

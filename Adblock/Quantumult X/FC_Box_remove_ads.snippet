@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FC_Box.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:53 +08:00
+# Converted: 2026-10-04 01:54:05 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/FC_Box_remove_ads.lpx
@@ -27,7 +27,7 @@
 
 ^https:\/\/consumer\.fcbox\.com\/post\/suggestion\/query$ url reject-dict
 
-^https:\/\/consumer\.fcbox\.com\/v1\/dynamicConfig\/findTabbarConfig\/mainPage$ url jsonjq-response-body 'del(.data.lifeService, .data.mall, .data.wash)'
+^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_FC_Box_remove_ads/features_qx_0bf9c02d43.js
 
 ^https:\/\/consumer\.fcbox\.com\/fcboxactivityweb\/marketingEntrance\/retentionPopup$ url reject-dict
 ^https:\/\/consumer\.fcbox\.com\/fcboxactivityweb\/api\/clientPopup\/v\d\/queryPopupWithPriority$ url reject-dict

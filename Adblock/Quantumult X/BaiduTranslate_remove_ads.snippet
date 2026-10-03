@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduTranslate.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:45 +08:00
+# Converted: 2026-10-04 01:53:50 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduTranslate_remove_ads.lpx
@@ -18,9 +18,7 @@
 # [rewrite_local]
 ^https:\/\/fanyi-app\.baidu\.com\/transapp\/v2\/api\/launch\/config\? url reject-dict
 
-^https:\/\/fanyi-app\.baidu\.com\/transapp\/comment\/my\? url jsonjq-response-body 'del(.data.taskBanner, .data.act)'
-
-^https:\/\/fanyi-app\.baidu\.com\/transapp\/recitewd\/myplan\? url jsonjq-response-body 'del(.data.activityRec, .data.activityRecList)'
+^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_BaiduTranslate_remove_ads/phase_qx_response_0af15641a8.js
 
 ^https:\/\/fanyi-app\.baidu\.com\/static\/react-activity\/page\/courseBoutique\.html\? url reject
 

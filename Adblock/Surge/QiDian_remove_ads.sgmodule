@@ -10,19 +10,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/QiDian.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:04 +08:00
+# Converted: 2026-10-04 01:54:16 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/QiDian_remove_ads.lpx
 # Target: Surge
 
-[Body Rewrite]
-http-response-jq ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/client\/getconf$ 'if getpath(["Data","WolfEye"]) then setpath(["Data","WolfEye"]; 0) else . end | if getpath(["Data","CloudSetting","TeenShowFreq"]) then setpath(["Data","CloudSetting","TeenShowFreq"]; 0) else . end'
 
-http-response-jq ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/client\/getconf$ 'del(.Data.ActivityPageBackPushNoticeFrequency, .Data.ActivityIcon, .Data.ActivityPopup, .Data.LuckBag)'
 
-http-response-jq ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v2\/dailyrecommend\/getdailyrecommend\? 'if getpath(["Data","Items"]) then setpath(["Data","Items"]; "[]") else . end'
 
-http-response-jq ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v3\/user\/getaccountpage\? 'del(.Data.BenefitButtonList)'
 
 [Map Local]
 
@@ -51,6 +46,9 @@ http-response-jq ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v3\/user\/getac
 ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/followsubscribe\/showChapterEndModule\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/young\/getconf$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Script]
+wayx_phase_response_020bc106c8 = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_QiDian_remove_ads/phase_surge_response_020bc106c8.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% magev6.if.qidian.com, ywab.reader.qq.com

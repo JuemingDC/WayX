@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Yitian.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:16 +08:00
+# Converted: 2026-10-04 01:54:25 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Yitian_remove_ads.lpx
@@ -18,7 +18,7 @@
 # [rewrite_local]
 ^https:\/\/(m2u-api\.getkwai|api-m2u\.kuaishou)\.com\/api-server\/api\/v1\/ad\/ url reject-dict
 
-^https:\/\/(m2u-api\.getkwai|api-m2u\.kuaishou)\.com\/api-server\/api\/v1\/system\/configs\? url jsonjq-response-body 'del(.data.shouldUseLMAdFirst, .data.incentiveCfgList)'
+^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Yitian_remove_ads/features_qx_bc71074bc4.js
 
 ^https:\/\/(m2u-api\.getkwai|api-m2u\.kuaishou)\.com\/api-server\/api\/v4\/op\/actPositions\? url reject-dict
 

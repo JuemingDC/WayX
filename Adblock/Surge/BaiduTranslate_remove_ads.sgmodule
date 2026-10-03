@@ -10,23 +10,23 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduTranslate.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:45 +08:00
+# Converted: 2026-10-04 01:53:50 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduTranslate_remove_ads.lpx
 # Target: Surge
+
+
 
 [URL Rewrite]
 
 ^https:\/\/fanyi-app\.baidu\.com\/static\/react-activity\/page\/courseBoutique\.html\? _ reject
 
-[Body Rewrite]
-
-http-response-jq ^https:\/\/fanyi-app\.baidu\.com\/transapp\/comment\/my\? 'del(.data.taskBanner, .data.act)'
-
-http-response-jq ^https:\/\/fanyi-app\.baidu\.com\/transapp\/recitewd\/myplan\? 'del(.data.activityRec, .data.activityRecList)'
-
 [Map Local]
 ^https:\/\/fanyi-app\.baidu\.com\/transapp\/v2\/api\/launch\/config\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Script]
+
+wayx_phase_response_421190093d = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_BaiduTranslate_remove_ads/phase_surge_response_421190093d.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% fanyi-app.baidu.com

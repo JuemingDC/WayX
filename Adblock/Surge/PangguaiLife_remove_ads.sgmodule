@@ -10,15 +10,10 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/PangguaiLife.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:03 +08:00
+# Converted: 2026-10-04 01:54:12 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/PangguaiLife_remove_ads.lpx
 # Target: Surge
-
-[Body Rewrite]
-
-http-response-jq ^https:\/\/userapi\.qiekj\.com\/local-life\/tab-order$ 'if getpath(["data"]) then setpath(["data"]; "[]") else . end'
-http-response-jq ^https:\/\/userapi\.qiekj\.com\/integralGoods\/queryIntegralGoodsCategoryList$ 'if getpath(["data"]) then setpath(["data"]; "[]") else . end'
 
 [Map Local]
 ^https:\/\/userapi\.qiekj\.com\/slot\/get$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
@@ -32,6 +27,10 @@ http-response-jq ^https:\/\/userapi\.qiekj\.com\/integralGoods\/queryIntegralGoo
 ^https:\/\/userapi\.qiekj\.com\/integralGoods\/queryIntegralGoodsPage$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 ^https:\/\/userapi\.qiekj\.com\/task\/list$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Script]
+
+wayx_phase_response_c1ba15f460 = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_PangguaiLife_remove_ads/phase_surge_response_c1ba15f460.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% userapi.qiekj.com

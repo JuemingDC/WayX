@@ -10,24 +10,23 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/miHoYoBBS.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:02 +08:00
+# Converted: 2026-10-04 01:54:12 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/miHoYoBBS_remove_ads.lpx
 # Target: Surge
 
-[Body Rewrite]
 
-http-response-jq ^https:\/\/bbs-api(-ab)?\.miyoushe\.com\/apihub\/api\/getAppStartupData$ 'del(.data.resp_map["/teenager/api/info"], .data.resp_map["/apihub/api/getAppConfig"].data.get_app_config_response.config.is_show_teenager_mode_btn, .data.resp_map["/apihub/api/getAppConfig"].data.get_app_config_response.config.teenager_popup_freq_type)'
 
-http-response-jq ^https:\/\/bbs-api(-ab)?\.miyoushe\.com\/apihub\/api\/getAppConfig$ 'if getpath(["data","config","teenager_popup_freq_type"]) then setpath(["data","config","teenager_popup_freq_type"]; 0) else . end | if getpath(["data","config","is_show_teenager_mode_btn"]) then setpath(["data","config","is_show_teenager_mode_btn"]; 0) else . end'
-
-http-response-jq ^https:\/\/bbs-api-ab\.miyoushe\.com\/teenager\/api\/info$ 'if getpath(["data","is_enabled"]) then setpath(["data","is_enabled"]; false) else . end | if getpath(["data","is_teenager"]) then setpath(["data","is_teenager"]; false) else . end | if getpath(["data","is_force"]) then setpath(["data","is_force"]; false) else . end'
 
 [Map Local]
 ^https:\/\/bbs-api(-ab)?\.miyoushe\.com\/apihub\/api\/getAppSplash$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 ^https:\/\/bbs-api(-ab)?\.miyoushe\.com\/apihub\/api\/getHotKeywordAndEvent$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 ^https:\/\/bbs-api-static\.miyoushe\.com\/search\/api\/search\/pre_keyword\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Script]
+
+wayx_phase_response_ddac287c06 = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_miHoYoBBS_remove_ads/phase_surge_response_ddac287c06.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% bbs-api.miyoushe.com, bbs-api-ab.miyoushe.com

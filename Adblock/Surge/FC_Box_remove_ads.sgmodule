@@ -10,14 +10,10 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FC_Box.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:53 +08:00
+# Converted: 2026-10-04 01:54:05 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/FC_Box_remove_ads.lpx
 # Target: Surge
-
-[Body Rewrite]
-
-http-response-jq ^https:\/\/consumer\.fcbox\.com\/v1\/dynamicConfig\/findTabbarConfig\/mainPage$ 'del(.data.lifeService, .data.mall, .data.wash)'
 
 [Map Local]
 ^https:\/\/consumer\.fcbox\.com\/fcboxactivityweb\/api\/v\d\/clientPage\/modulesAggregated\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
@@ -34,6 +30,10 @@ http-response-jq ^https:\/\/consumer\.fcbox\.com\/v1\/dynamicConfig\/findTabbarC
 ^https:\/\/consumer\.fcbox\.com\/fcboxactivityweb\/marketingEntrance\/retentionPopup$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 ^https:\/\/consumer\.fcbox\.com\/fcboxactivityweb\/api\/clientPopup\/v\d\/queryPopupWithPriority$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 ^https:\/\/consumer\.fcbox\.com\/fcboxactivityweb\/api\/guidePopup\/popup$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Script]
+
+wayx_features_8f933f19b2 = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_FC_Box_remove_ads/features_surge_8f933f19b2.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% consumer.fcbox.com, dsp.fcbox.com

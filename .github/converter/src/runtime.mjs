@@ -2,7 +2,7 @@
 // Author: chance
 // Category: Converter / runtime
 
-import { normalizeRegexBodyForTarget, compileRegexForTarget, regexReplacementRuntimeSource } from "./core.mjs";
+import { normalizeRegexBodyForTarget, compileRegexForTarget, regexReplacementRuntimeSource, stringTemplateParts, conditionRuntimeSource } from "./core.mjs";
 import { validateRewriteV2Ast, simpleUrlRewriteCondition, fixedStringValue, findRewriteComparisons, compileComplexCondition, qxRewriteMatcherPlan } from "./rewrite.mjs";
 
 
@@ -643,10 +643,12 @@ export function renderQxHeaderScript(ast,options={}) {
 // Category: Converter / Rewrite v2 / Complex Helper
 
 function complexRewriteFixed(node, label) {
-  if (!node || !['string','raw-string'].includes(node.type) || (node.type === 'string' && String(node.value).includes('${'))) {
+  if (!node || !['string','raw-string'].includes(node.type)) {
     throw new Error(label + ' must be a fixed string');
   }
-  return String(node.value);
+  const parts=stringTemplateParts(node);
+  if(parts.some(p=>p[0]==='v'))throw new Error(label+' must be a fixed string');
+  return parts.map(p=>p[1]).join('');
 }
 function captureGroupCount(pattern) {
   let count=0, escaped=false, inClass=false;
@@ -685,27 +687,20 @@ function guaranteedCaptures(node) {
 }
 function capturedString(node, label, captures, guaranteed, argumentTable = null) {
   if (!node || !['string','raw-string'].includes(node.type)) throw new Error(label + ' must be a string');
-  const value=String(node.value);
-  if(node.type==='raw-string') return JSON.stringify(value);
-  const parts=[]; let last=0; const re=/\$\{([A-Za-z_][A-Za-z0-9_-]*)(?:\.(\d+))?\}/g; let m;
-  while((m=re.exec(value))){
-    if(m.index>last) parts.push(['s',value.slice(last,m.index)]);
-    if(m[2] !== undefined){
-      const max=captures.get(m[1]);
-      if(max===undefined) throw new Error('unknown capture alias: ' + m[1]);
-      if(!guaranteed.has(m[1])) throw new Error('capture alias is not guaranteed on every successful condition path: ' + m[1]);
-      if(Number(m[2])>max) throw new Error('capture index exceeds regex capture-group count: ' + m[1] + '.' + m[2]);
-      parts.push(['c',m[1],Number(m[2])]);
-    } else {
-      const entry=argumentTable?.byId?.get(m[1]);
-      if(!entry) throw new Error('unknown plugin argument interpolation: ' + m[1]);
-      parts.push(['a',entry.id]);
-    }
-    last=re.lastIndex;
-  }
-  if(last===0){ if(value.includes('${')) throw new Error(label + ' contains unsupported interpolation'); return JSON.stringify(value); }
-  if(last<value.length) parts.push(['s',value.slice(last)]);
+  const parts=stringTemplateParts(node);
+  for(const [kind,name] of parts) if(kind==='v') validateTemplateVariable(name,captures,guaranteed,argumentTable);
+  if(parts.every(p=>p[0]==='s'))return JSON.stringify(parts.map(p=>p[1]).join(''));
   return '__wayxTpl(' + JSON.stringify(parts) + ')';
+}
+function validateTemplateVariable(name,captures,guaranteed,argumentTable) {
+  if(['url','request.method','response.status'].includes(name) || /^(request|response)\.header\[(?:'[^']+'|"[^"]+")\]$/.test(name))return;
+  const match=name.match(/^([A-Za-z_][A-Za-z0-9_-]*)\.(\d+)$/);
+  if(match){
+    const max=captures.get(match[1]);
+    if(max===undefined)throw new Error('unknown capture alias: '+match[1]);
+    if(!guaranteed.has(match[1]))throw new Error('capture alias is not guaranteed on every successful condition path: '+match[1]);
+    if(Number(match[2])>max)throw new Error('capture index exceeds regex capture-group count: '+name);
+  }else if(!argumentTable?.byId?.has(name))throw new Error('unknown plugin argument interpolation: '+name);
 }
 function expand(action) {
   if (!action.args.some(arg => arg.type === 'array')) return [action.args];
@@ -717,9 +712,8 @@ function coarsePattern(ast) {
 function jsonValueSource(node, captures, guaranteed, argumentTable = null) {
   if (!node) throw new Error('JSON replacement value is missing');
   if (node.type === 'variable') {
-    const entry=argumentTable?.byId?.get(node.name);
-    if(!entry) throw new Error('undeclared JSON replacement argument: ' + node.name);
-    return '__wayxArgs[' + JSON.stringify(entry.id) + ']';
+    validateTemplateVariable(node.name,captures,guaranteed,argumentTable);
+    return '__wayxValue('+JSON.stringify(node.name)+')';
   }
   if (!['string','raw-string','number','boolean','null'].includes(node.type)) throw new Error('JSON replacement value must be fixed or a declared plugin argument');
   if (node.type === 'string') return capturedString(node, 'JSON replacement value', captures, guaranteed, argumentTable);
@@ -769,6 +763,7 @@ function statements(ast, target, {argumentTable = null, mockMaterialized = null}
   const out = [];
   const captures = captureInfo(ast.condition);
   const guaranteed = guaranteedCaptures(ast.condition);
+  for(const alias of captures.keys())if(argumentTable?.byId?.has(alias))throw new Error('capture alias duplicates plugin argument: '+alias);
   let body = false, headers = false, json = false, headerAdd = false;
   for (const action of ast.actions) {
     if (new RegExp('^' + ast.phase + '\\x2eheader\\x2e(?:add|set|del|replace)$').test(action.name)) {
@@ -829,7 +824,7 @@ function statements(ast, target, {argumentTable = null, mockMaterialized = null}
         } else {
           const value=jsonValueSource(args[1], captures, guaranteed, argumentTable);
           const helper=action.name.endsWith('.add')?'__wayxJsonAdd':'__wayxJsonReplace';
-          if(args[1]?.type==='string' && String(args[1].value).includes('${')) out.push('__wayxWith('+value+',v=>__wayxJsonAction(j=>'+helper+'(j,'+JSON.stringify(path)+',v)));');
+          if(args[1]?.type==='variable' || (args[1]?.type==='string' && stringTemplateParts(args[1]).some(p=>p[0]==='v'))) out.push('__wayxWith('+value+',v=>__wayxJsonAction(j=>'+helper+'(j,'+JSON.stringify(path)+',v)));');
           else out.push('__wayxJsonAction(j=>'+helper+'(j,'+JSON.stringify(path)+','+value+'));');
         }
       }
@@ -851,24 +846,35 @@ function statements(ast, target, {argumentTable = null, mockMaterialized = null}
   return {out, body, headers, json, headerAdd};
 
 }
-function renderRewriteScript(ast, {target, stamp='', category='', sourceLine='', argumentTable=null, mockMaterialized=null}={}) {
+function renderRewriteScript(ast, {target, stamp='', category='', sourceLine='', argumentTable=null, mockMaterialized=null,fullHeaderMode=false,sharedRuntime=false}={}) {
   validateRewriteV2Ast(ast);
   if (!['qx','surge'].includes(target)) throw new Error('invalid rewrite helper target');
   const plan = statements(ast, target, {argumentTable,mockMaterialized});
-  const condition = compileComplexCondition(ast.condition, target, {argumentTable});
+  if(target==='surge' && fullHeaderMode)plan.headerAdd=true;
+  if(plan.headerAdd) {
+    const readsHeader=node=>{
+      if(!node || typeof node!=='object')return false;
+      const names=node.type==='variable' ? [node.name] : node.type==='string' ? stringTemplateParts(node).filter(p=>p[0]==='v').map(p=>p[1]) : [];
+      return names.some(name=>/^(request|response)\.header\[/.test(name)) || Object.values(node).some(value=>Array.isArray(value)?value.some(readsHeader):value && typeof value==='object' && readsHeader(value));
+    };
+    if(readsHeader(ast))throw new Error('duplicate-header source lookup/template semantics are not verified');
+  }
+  const condition = compileComplexCondition(ast.condition, target, {argumentTable,sharedRuntime:true});
   const source = ast.phase === 'request' ? '$request' : '$response';
   const doneValue = plan.headers && plan.body ? '{headers:__wayxHeaders,body:__wayxBody}' : plan.headers ? '{headers:__wayxHeaders}' : '{body:__wayxBody}';
   const lines = [
     stamp ? '// Converted: ' + stamp : null,
     '// Converted by: chance',
-    '// Category: ' + (category || 'Rewrite / Complex Helper'),
+    '// Category: ' + (category || 'Rewrite / Loon Feature Collection'),
     sourceLine ? '// Source Loon: ' + sourceLine : null,
-    regexReplacementRuntimeSource(),
+    sharedRuntime ? null : regexReplacementRuntimeSource(),
+    sharedRuntime ? null : conditionRuntimeSource(),
     'const __wayxCaptures=Object.create(null);',
-    argumentTable ? 'let __wayxArgs={};try{__wayxArgs=JSON.parse(String($argument||"{}"))}catch{}' : null,
+    argumentTable ? 'let __wayxArgs={};try{__wayxArgs=JSON.parse(String($argument||"{}"))}catch{}' : 'const __wayxArgs={};',
     plan.headerAdd ? 'let __wayxHeaders=Array.isArray(' + source + '.headers)?' + source + '.headers.map(x=>({field:x.field,value:x.value})):Object.entries(' + source + '.headers||{}).map(([field,value])=>({field,value}));' : 'let __wayxHeaders={...(' + source + '.headers||{})};',
     'let __wayxBody=' + source + '.body;',
-    'function __wayxTpl(parts){let out="";for(const p of parts){if(p[0]==="s"){out+=p[1];continue}if(p[0]==="a"){const v=__wayxArgs[p[1]];if(v===undefined)return undefined;out+=String(v);continue}const v=__wayxCaptures[p[1]]?.[p[2]];if(v===undefined)return undefined;out+=String(v)}return out}',
+    'function __wayxValue(name){return resolveSemanticVariable(name,{url:$request.url,request:'+ (ast.phase==='request' ? '{...$request,headers:__wayxHeaders}' : '$request')+',response:'+(ast.phase==='response' ? '{...$response,headers:__wayxHeaders}' : '{}')+',arguments:__wayxArgs},new Map(Object.entries(__wayxCaptures)))}',
+    'function __wayxTpl(parts){let out="";for(const [kind,name] of parts){const v=kind==="s"?name:__wayxValue(name);if(v===undefined)return undefined;out+=String(v)}return out}',
     'function __wayxWith(v,fn){if(v!==undefined)fn(v)}',
     'function __wayxJsonAction(fn){try{const j=JSON.parse(String(__wayxBody ?? ""));fn(j);__wayxBody=JSON.stringify(j)}catch{}}',
     'function __wayxJsonParent(root,path){let x=root;for(let i=0;i<path.length-1;i++){if(x==null||!(path[i] in Object(x)))return null;x=x[path[i]];}return x;}',
@@ -879,9 +885,9 @@ function renderRewriteScript(ast, {target, stamp='', category='', sourceLine='',
     'function __wayxJsonReplace(root,path,value){const cur=__wayxJsonGet(root,path);if(cur!==undefined&&cur!==null&&cur!==false)__wayxJsonSet(root,path,value);}',
     'function __wayxHeader(phase,name){const h=phase==="request"?$request.headers:$response.headers;const w=String(name).toLowerCase();if(Array.isArray(h)){const x=h.find(x=>String(x.field).toLowerCase()===w);return x?.value;}const k=Object.keys(h||{}).find(x=>x.toLowerCase()===w);return k===undefined?undefined:h[k];}',
     plan.headerAdd ? 'function __wayxAdd(n,v){__wayxHeaders.push({field:n,value:v});}' : null,
-    plan.headerAdd ? 'function __wayxSet(n,v){const w=String(n).toLowerCase();let seen=false;__wayxHeaders=__wayxHeaders.filter(x=>{if(String(x.field).toLowerCase()!==w)return true;if(!seen){x.value=v;seen=true;return true;}return false;});if(!seen)__wayxHeaders.push({field:n,value:v});}' : 'function __wayxSet(n,v){const k=__wayxKey(n);__wayxHeaders[k||n]=v;}',
+    plan.headerAdd ? 'function __wayxSet(n,v){const w=String(n).toLowerCase();let seen=false;__wayxHeaders=__wayxHeaders.filter(x=>{if(String(x.field).toLowerCase()!==w)return true;if(!seen){x.value=v;seen=true;return true;}return false;});if(!seen)__wayxHeaders.push({field:n,value:v});}' : 'function __wayxSet(n,v){const k=__wayxKey(n);__wayxDel(n);__wayxHeaders[k||n]=v;}',
     plan.headerAdd ? 'function __wayxDel(n){const w=String(n).toLowerCase();__wayxHeaders=__wayxHeaders.filter(x=>String(x.field).toLowerCase()!==w);}' : 'function __wayxDel(n){const w=String(n).toLowerCase();for(const k of Object.keys(__wayxHeaders))if(k.toLowerCase()===w)delete __wayxHeaders[k];}',
-    plan.headerAdd ? 'function __wayxHeaderReplace(n,p,r,f=""){const w=String(n).toLowerCase();for(const x of __wayxHeaders)if(String(x.field).toLowerCase()===w)x.value=__wayxRegexReplace(x.value,p,f,r);}' : 'function __wayxHeaderReplace(n,p,r,f=""){const k=__wayxKey(n);if(k!==undefined)__wayxHeaders[k]=__wayxRegexReplace(__wayxHeaders[k],p,f,r);}',
+    plan.headerAdd ? 'function __wayxHeaderReplace(n,p,r,f=""){const w=String(n).toLowerCase();for(const x of __wayxHeaders)if(String(x.field).toLowerCase()===w)x.value=__wayxRegexReplace(x.value,p,f,r);}' : 'function __wayxHeaderReplace(n,p,r,f=""){const w=String(n).toLowerCase();for(const k of Object.keys(__wayxHeaders))if(k.toLowerCase()===w)__wayxHeaders[k]=__wayxRegexReplace(__wayxHeaders[k],p,f,r);}',
     plan.headerAdd ? null : 'function __wayxKey(n){return Object.keys(__wayxHeaders).find(k=>k.toLowerCase()===String(n).toLowerCase());}',
     'if(' + condition + '){',
     ...plan.out.map(line => '  ' + line),
@@ -909,7 +915,7 @@ export function renderSingleRewriteMutationScript(ast, options = {}) {
     throw new Error('single Rewrite mutation helper requires exactly one action');
   }
   const name=ast.actions[0]?.name || '';
-  const supported=new RegExp('^'+ast.phase+'\\.(?:header\\.(?:set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$');
+  const supported=new RegExp('^'+ast.phase+'\\.(?:header\\.(?:'+(options.target==='surge'?'add|':'')+'set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$');
   if (!supported.test(name)) {
     throw new Error('single Rewrite mutation helper does not support '+name);
   }
@@ -934,18 +940,21 @@ export function renderRewritePhaseDispatcher(declarations,options={}) {
   if (!declarations.length) throw new Error('empty Rewrite dispatcher');
   const phase=declarations[0].phase;
   if (declarations.some(ast=>ast.phase!==phase)) throw new Error('mixed dispatcher phases');
-  const plans=declarations.map(ast=>renderRewriteScript(ast,options));
+  const fullHeaderMode=options.target==='surge' && declarations.some(ast=>ast.actions.some(a=>a.name.endsWith('.header.add')));
+  const plans=declarations.map(ast=>renderRewriteScript(ast,{...options,fullHeaderMode,sharedRuntime:true}));
   const requiresBody=plans.some(p=>p.requiresBody);
-  const fullHeaderMode=plans.some(p=>p.fullHeaderMode);
-  if (fullHeaderMode) throw new Error('dispatcher duplicate-header adapter is not verified');
   const lines=[...qxSemanticMetadata(options),
-    'const __wayxRequest={...$request,headers:{...($request.headers||{})}};',
-    'const __wayxResponse=typeof $response==="undefined"?{}:{...$response,headers:{...($response.headers||{})}};',
+    regexReplacementRuntimeSource(),
+    conditionRuntimeSource(),
+    'function __wayxCloneHeaders(h){return Array.isArray(h)?h.map(x=>({...x})):{...(h||{})}}',
+    'const __wayxRequest={...$request,headers:__wayxCloneHeaders($request.headers)};',
+    'const __wayxResponse=typeof $response==="undefined"?{}:{...$response,headers:__wayxCloneHeaders($response.headers)};',
     'const __wayxResult={};',
     'function __wayxCommit(value){Object.assign(__wayxResult,value);Object.assign('+(phase==='request'?'__wayxRequest':'__wayxResponse')+',value);}',
   ];
   for (const plan of plans) lines.push('(($request,$response,$done)=>{\n'+plan.script+'\n})(__wayxRequest,__wayxResponse,__wayxCommit);');
+  if(options.target==='qx' && requiresBody)lines.push('if(Object.keys(__wayxResult).length && !("body" in __wayxResult))__wayxResult.body='+(phase==='request'?'__wayxRequest':'__wayxResponse')+'.body;');
   lines.push('$done(__wayxResult);','');
-  return {pattern:'^',script:lines.join('\n'),requiresBody,
+  return {pattern:'^',script:lines.join('\n'),requiresBody,fullHeaderMode,
     qxAction:'script-'+phase+'-'+(requiresBody?'body':'header'),surgeType:'http-'+phase};
 }

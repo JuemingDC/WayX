@@ -1,7 +1,6 @@
 #!name=知识星球去水印
 #!desc=移除内容的水印编号
 #!category=WayX
-#!requirement=CORE_VERSION>=20
 
 # Open URL: https://apps.apple.com/app/id1039749242
 # Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
@@ -9,15 +8,15 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/UnnooQuan.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:17 +08:00
+# Converted: 2026-10-04 01:54:25 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/UnnooQuan_remove_watermark.lpx
 # Target: Surge
 
-[Body Rewrite]
-http-response-jq ^https:\/\/api\.zsxq\.com\/v2\/groups\/\d+$ 'if getpath(["resp_data","group","policies","enable_watermark"]) then setpath(["resp_data","group","policies","enable_watermark"]; false) else . end'
 
-http-response ^https:\/\/articles\.zsxq\.com\/inline_form\/id_[a-z0-9]+\.html name="group_enable_watermark"\x20value="true" name="group_enable_watermark" value="false"
+
+[Script]
+wayx_phase_response_4177411fe2 = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_UnnooQuan_remove_watermark/phase_surge_response_4177411fe2.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% api.zsxq.com

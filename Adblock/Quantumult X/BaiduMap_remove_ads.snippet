@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduMap.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:45 +08:00
+# Converted: 2026-10-04 01:53:50 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduMap_remove_ads.lpx
@@ -18,13 +18,7 @@
 # [rewrite_local]
 ^https:\/\/afd\.baidu\.com\/afd\/entry\?action=(update|query) url reject-dict
 
-^https:\/\/newclient\.map\.baidu\.com\/feed\/govui\/rich_content url jsonjq-response-body 'del(.data)'
-
-^https:\/\/newclient\.map\.baidu\.com\/client\/noticebar\/get\? url jsonjq-response-body 'del(.content.multi_data)'
-
-^https:\/\/newclient\.map\.baidu\.com\/(client\/)?usersystem\/mine\/page\? url jsonjq-response-body 'if getpath(["data"]) then setpath(["data"]; "{}") else . end'
-
-^https:\/\/newclient\.map\.baidu\.com\/client\/phpui2\/\?qt=ads&type=user_home_new_service url jsonjq-response-body 'del(.ads)'
+^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_BaiduMap_remove_ads/phase_qx_response_c738344d99.js
 
 ^https:\/\/yongche\.baidu\.com\/gomarketing\/api\/popup\/getentrancecordovaurl$ url reject-dict
 
@@ -34,8 +28,6 @@
 
 ^https:\/\/ecom\.map\.baidu\.com\/ad-ops\/afd\/popup\? url reject-dict
 ^https:\/\/maphotel\.baidu\.com\/hotel\/goextranet\/activity\/detail\? url reject-dict
-
-^https:\/\/newclient\.map\.baidu\.com\/living\/nearby\/api\? url jsonjq-response-body 'del(.Result.cards[1]) | del(.Result.cards[4]) | del(.Result.cards[5]) | del(.Result.cards[9])'
 
 # [mitm]
 hostname = afd.baidu.com, newclient.map.baidu.com, yongche.baidu.com, ecom.map.baidu.com
