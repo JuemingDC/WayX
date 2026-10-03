@@ -59,10 +59,9 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
 
   if (argumentIds !== null) {
     const usage = scriptV2PluginArgumentUsage(ast, argumentIds);
-    // QX follows the KOP-XIAO resource-parser behavior for Script declaration
-    // arguments/options: Script argument payloads and dynamic enable/timeout/debug are
-    // discarded at conversion time. Only Argument references that change the
-    // match condition, or other still-significant dynamic options, remain blockers.
+    // QX only ignores the Script argument payload itself. Execution options
+    // such as enable/timeout/debug are handled above by QX target capability,
+    // never discarded generically before target planning.
     const undeclared = usage.undeclaredOptionRefs.map(ref => ref.id);
     if (undeclared.length) {
       return unsupported('undeclared plugin [Argument] reference(s): ' + [...new Set(undeclared)].sort().join(', '));
