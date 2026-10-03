@@ -69,7 +69,8 @@ const qxEmpty=renderQxOutput({
   entry:{...entry,id:'Empty'},
   stamp,
 });
-assert.match(qxEmpty,/# \[filter_local\]\n\n# \[rewrite_local\]\n\n# \[task_local\]\n\n# \[mitm\]\n$/);
+assert.match(qxEmpty,/# \[filter_local\]\n\n# \[rewrite_local\]\n\n# \[mitm\]\n$/);
+assert.doesNotMatch(qxEmpty,/# \[task_local\]/);
 
 const sg=createSurgeOutputState();
 assert.equal(surgeOutputDestination(sg,'comment'),sg.notes);
