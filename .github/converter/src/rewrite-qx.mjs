@@ -5,7 +5,7 @@
 import crypto from 'node:crypto';
 import { planLegacyRewriteIr } from './legacy-rewrite.mjs';
 import { qxMockPlanFromAction } from './dependency.mjs';
-import { qxDirectRewritePlan, simpleUrlRewriteCondition } from './rewrite-v2-semantic.mjs';
+import { jsonPipelineToSafeNativeJq, qxDirectRewritePlan, simpleUrlRewriteCondition } from './rewrite-v2-semantic.mjs';
 import { renderQxMockFileScript } from './qx-mock.mjs';
 import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript, headerOpsForMock } from './qx-semantic-script.mjs';
 import { registerComplexRewriteHandler, planComplexRewrite } from './complex-rewrite-registry.mjs';
@@ -13,6 +13,7 @@ import { renderMixedRewriteScript, renderSingleJsonMutationScript, renderSingleR
 import { qxExactRewriteMatcherPlan, qxRewriteMatcherPlan } from './qx-rewrite-matcher.mjs';
 import { rewriteReview, rewriteIssue } from './rewrite-plan-result.mjs';
 import { singleRewriteOperation } from './rewrite-ir.mjs';
+import { quoteJq } from './jq.mjs';
 
 function sourceLine(ir, ctx) {
   return String(ctx.sourceLine || ir?.source || '').trim();
@@ -173,6 +174,23 @@ function qxNativeHeaderPlan(ast) {
   };
 }
 
+
+function qxNativeJsonPipelinePlan(ast) {
+  if (!['request','response'].includes(ast?.phase) || (ast.actions?.length || 0)<2) return null;
+
+  const matcher=qxExactRewriteMatcherPlan(ast);
+  if (!matcher.ok) return null;
+
+  const mapped=jsonPipelineToSafeNativeJq(ast);
+  if (!mapped.ok) return null;
+
+  const token=ast.phase==='request' ? 'jsonjq-request-body' : 'jsonjq-response-body';
+  return {
+    section:'rewrite',
+    line:matcher.prefix+token+' '+quoteJq(mapped.jq),
+  };
+}
+
 export function planQxRewrite(ir, ctx={}) {
   if (!ir || ir.type!=='rewrite-semantic-ir') throw new TypeError('Expected Rewrite Semantic IR');
   if (ir.sourceSyntax==='legacy') return planLegacyRewriteIr(ir,'qx',ctx);
@@ -236,6 +254,9 @@ export function planQxRewrite(ir, ctx={}) {
 
   const nativeHeader=qxNativeHeaderPlan(ast);
   if (nativeHeader) return nativeHeader;
+
+  const nativeJsonPipeline=qxNativeJsonPipelinePlan(ast);
+  if (nativeJsonPipeline) return nativeJsonPipeline;
 
   try {
     const exactMatcher=qxExactRewriteMatcherPlan(ast);
