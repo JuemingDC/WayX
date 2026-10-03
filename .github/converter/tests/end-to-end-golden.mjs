@@ -51,7 +51,14 @@ assert.doesNotMatch(
   /Source declaration: .*response\.header\.add.* \| response if .*response\.header\.set/,
   'converter must never invent a pipeline by joining adjacent source declarations',
 );
-assert.match(headerGroupOutput.surge, /REVIEW REQUIRED/);
+assert.doesNotMatch(headerGroupOutput.surge, /REVIEW REQUIRED/);
+assert.match(headerGroupOutput.surge, /pattern=\^https\?:\/\//);
+assert.match(headerGroupOutput.surge, /full-header-mode=true/);
+assert.equal(
+  headerGroupOutput.surge.split(/\r?\n/).filter(line => !line.trim().startsWith('#') && /^wayx_header_/.test(line)).length,
+  2,
+  'the two independent flagged Surge header rules must remain independent guarded helpers',
+);
 assert.equal(
   headerGroupOutput.surge.split(/\r?\n/).filter(line => !line.trim().startsWith('#') && /header-add content-disposition inline/.test(line)).length,
   0,
