@@ -2,13 +2,13 @@
 // Author: chance
 // Category: Converter / Canonical Output
 import path from 'node:path';
-import { loadLoonSourceCatalog } from '../src/source-catalog.mjs';
+import { loadLoonSourceCatalog } from "../src/input.mjs";
 import {
   materializeConversionRunContext,
   convertPluginWithContext,
   validateConvertedPlugin,
-} from '../src/conversion-runner.mjs';
-import { createWorkflowFailureReporter, formatWorkflowErrorAnnotation } from '../src/workflow-diagnostics.mjs';
+} from "../src/conversion.mjs";
+import { createWorkflowFailureReporter, formatWorkflowErrorAnnotation } from "../src/workflow.mjs";
 import {
   firstConversionStamp,
   generatedScriptDiffs,
@@ -18,7 +18,7 @@ import {
   readManagedTargetState,
   syncGeneratedScripts,
   writeManagedTargets,
-} from '../src/managed-artifacts.mjs';
+} from "../src/workflow.mjs";
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT, '.github/sources/loon.json');

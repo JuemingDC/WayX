@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.59
+版本：1.60
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**Phase C active / Rewrite、Script、Configuration domain consolidation complete / Phase D–F pending**
@@ -611,26 +611,32 @@ Rule/
 Script/
 ```
 
-Converter 迁移目标：
+Converter 实现按十个领域收口，统一公开入口：
 
-```text
-.github/converter/
-  src/
-    core/       # parser + Semantic IR + evaluator + equivalence proof
-    targets/    # qx / surge
-    runtime/    # helper + dispatcher
-    workflow/   # fetch/materialization/artifact lifecycle
-  tests/
-  fixtures/
-  tools/
-```
+| 文件 | 职责 |
+|---|---|
+| `src/core.mjs` | 源 Regex、条件 evaluator、等价规划、当前官方目标能力集合 |
+| `src/rule.mjs` | Rule AST、QX/Surge 原生规则适配 |
+| `src/rewrite.mjs` | Rewrite 源 parser/IR、JQ/依赖描述、Legacy/V2 目标规划、复杂动作路由 |
+| `src/script.mjs` | Script 源 parser/IR、Argument、行为信号、QX/Surge 目标适配 |
+| `src/configuration.mjs` | General/MITM 配置 IR 与目标适配 |
+| `src/input.mjs` | 原作者源抓取、Catalog、插件/段落解析、依赖与脚本 materialization |
+| `src/output.mjs` | 元数据、注释、目标输出状态/序列化、QX/Surge target validators |
+| `src/runtime.mjs` | 通用 generated helper emitter；未来 dispatcher 在同域实现 |
+| `src/workflow.mjs` | 产物生命周期、README 索引、工作流诊断与上游报告 |
+| `src/conversion.mjs` | 纯转换 pipeline、共享 materialization/执行/验证入口 |
+| `src/index.mjs` | 统一公开 export 入口，不复制实现 |
 
-迁移规则：
+文件合并规则：
 
-- 不为“目录好看”一次性移动所有旧文件；
-- 新语义优先进入新域；
-- 旧模块只有在职责完整合并、import/test/workflow 已收口后删除；
-- CI 不再用大段硬编码文件列表锁死内部结构。
+- 不再为同一领域的 QX/Surge、Legacy/V2 或单个辅助函数新增平行碎片 `.mjs`；新实现进入现有对应领域。
+- 内部职责通过有名称的函数及原注释区分；保留原有注释并记录合并日期、作者与领域，不增加旧路径转发壳。
+- tests 将原 36 个独立测试合并到 10 个领域套件；每个测试案例仍由独立 Node 子进程执行，保留变量、模块缓存与注册表隔离。fixtures/tools 按数据与运维命令组织；生产入口、canonical、测试和 CLI 都引用当前领域文件。
+- 删除旧文件必须同时更新所有 import、工作流入口、结构约束和规范中的当前入口。
+- 保留公开函数名和已有转换行为；结构调整不改写原作者脚本 URL、不扩大 MITM 范围、不重新命名生成助手或改变一项插件一套转换产物的外部接口。
+- Generated helper 仍按语义需要生成；不能把不同插件/phase/动作的脚本机械拼接，导致首条匹配、顺序或 body 语义变化。
+- Phase D–F 的语义迁移仍需独立证明；领域收口不作为行为等价证明的替代。
+- 分支限定为 main，最多另有一个名为 test 的验证分支；不创建其他工作分支。Converter Check 在 checkout 后核对远端 heads 数量与名称，违反此预算即失败。
 
 ---
 
@@ -651,8 +657,7 @@ Canonical：
 Target validation：
 
 ```text
-.github/converter/src/qx-snippet-validator.mjs
-.github/converter/src/surge-module.mjs
+.github/converter/src/output.mjs  # validateQX / validateSurgeModule
 ```
 
 CI：
@@ -790,7 +795,7 @@ GitHub 落地检查点（2026-10-03）：
 
 main 中现有 converter 在 Phase B–F 完成前继续承担生产转换。
 
-如果当前实现与本 v1.59 新规范冲突：
+如果当前实现与本 v1.60 新规范冲突：
 
 - 不立即在同一个结构 PR 中强行改动 canonical；
 - 在后续语义 PR 中按新顺序迁移；
@@ -798,3 +803,19 @@ main 中现有 converter 在 Phase B–F 完成前继续承担生产转换。
 - 特别是 Regex `i/m/s` 的“无条件丢弃”已经被本规范废止，后续必须进入等价实现或 unsupported。
 
 这条兼容声明只用于控制迁移风险，不代表旧行为继续被认为正确。
+
+
+## 23. 领域文件合并检查点（v1.60，2026-10-03）
+
+将 45 个生产实现 `.mjs`（含原公开入口）缩减为 10 个领域实现加 1 个公开入口；不保留旧路径转发文件。
+原 36 个测试文件缩减为 10 个领域套件；原测试逻辑与进程隔离均保留，可用 `--case=<原测试名.mjs>` 单独复查。同步迁移测试、生产 sync-convert、canonical/报告/校验 CLI 与 README 索引等调用；结构契约限定这 11 个实现文件与 10 个测试套件，禁止重新引入已删除碎片。
+
+验收必须覆盖：公开导出列表与合并前完全一致、全套现有测试通过、固定输入 Catalog 转换和 generated helper 文本逐项无差异、原作者 Source Script/JQ/mock 上下文对比、目标 policy/audit/managed cleanliness、GitHub Converter Check。
+定时活动继续暂停。本次没有实现或宣称 §§19–22 中尚未完成的 phase dispatcher/action oracle/兼容路径替换。
+
+本地验证结果：
+
+- 统一入口的 221 个公开导出与合并前完全一致；10 个领域测试套件承载原 36 个独立案例，全部通过。
+- 固定输入 Catalog 287 项的 QX/Surge 与 generated helpers 文本逐项完全相同。
+- 使用当前原作者 Source Script/JQ/mock 依赖，分别执行合并前后 materialization 与 conversion：287 项通过，上下文差异 0、转换差异 0、canonical drift 0。
+- 574 个生成目标政策检查、repository audit、managed cleanliness 均通过；两条原有上游 Script 404 仍按 §21 记录，不伪称取得原脚本。

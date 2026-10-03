@@ -3,7 +3,7 @@
 // Category: Converter / Full Catalog Validation
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { loadLoonSourceCatalog } from '../src/source-catalog.mjs';
+import { loadLoonSourceCatalog } from "../src/input.mjs";
 
 const ROOT=process.cwd();
 const manifest=await loadLoonSourceCatalog(path.join(ROOT,'.github/sources/loon.json'));

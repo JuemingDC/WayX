@@ -1,36 +1,255 @@
+// Stable public converter API; implementations live in semantic domains.
+// Consolidated: 2026-10-03
+// Author: chance
+// Category: Converter / Public API
 
-export * from './rule.mjs';
-export * from './jq.mjs';
-export * from './script.mjs';
-export * from './script-target.mjs';
-export * from './managed-artifacts.mjs';
-export * from './argument.mjs';
-export * from './argument-usage.mjs';
-export * from './rewrite.mjs';
-export * from './rewrite-surge.mjs';
-export * from './rewrite-qx.mjs';
-export * from './rewrite-v2-semantic.mjs';
-export * from './rewrite-v2-safe.mjs';
-export * from './dependency.mjs';
-export * from './source-script-materializer.mjs';
-export * from './dependency-materializer.mjs';
-export * from './qx-mock.mjs';
-export * from './surge-mock.mjs';
-export * from './target-regex.mjs';
-export * from './qx-semantic-script.mjs';
-export * from './surge-module.mjs';
-export * from './metadata.mjs';
-export * from './output.mjs';
-export * from './qx-snippet-validator.mjs';
-export * from './qx-rewrite-matcher.mjs';
-export * from './legacy-rewrite.mjs';
-export * from './source-catalog.mjs';
-export * from './conversion-pipeline.mjs';
-export * from './plugin-parser.mjs';
-export * from './configuration.mjs';
-export * from './source-fetch.mjs';
-export * from './qx-comment.mjs';
-export * from './complex-rewrite.mjs';
-export * from './complex-rewrite-registry.mjs';
-export * from './complex-rewrite-script.mjs';
-export { materializeConversionContext } from './conversion-runner.mjs';
+export {
+  AD_BLOCK_ROOT,
+  BOXJS_SUBSCRIPTION,
+  QX_ADBLOCK_DIR,
+  SURGE_ADBLOCK_DIR,
+  conversionStampFromText,
+  firstConversionStamp,
+  generatedScriptDiffs,
+  inspectManagedSource,
+  isWayxGeneratedHelperFilename,
+  managedSourceDigest,
+  managedTargetDiffs,
+  normalizeManagedSource,
+  nowConversionStamp,
+  qxTargetPath,
+  readCatalogSource,
+  readManagedTargetState,
+  readManagedTextIfExists,
+  surgeTargetPath,
+  syncGeneratedScripts,
+  syncManagedSource,
+  writeManagedSource,
+  writeManagedTargets
+} from './workflow.mjs';
+
+export {
+  COMPLEX_REWRITE_FAMILIES,
+  FILE_ACTIONS,
+  LOON_LEGACY_MOCK_OPTION_NAMES,
+  LOON_REWRITE_V2_ACTIONS,
+  QX_REWRITE_PRIMITIVES,
+  TEXT_MOCK_TYPES,
+  actionToSource,
+  analyzeSafeRewriteV2,
+  analyzeSimpleUrlRegexCondition,
+  classifyComplexRewrite,
+  classifyLegacyRewrite,
+  classifyLegacyRewriteAction,
+  compileComplexCondition,
+  complexConditionKinds,
+  conditionToSource,
+  dependencySpecFromAction,
+  findRewriteComparisons,
+  fixedStringValue,
+  getRewriteV2ActionDefinition,
+  inlineResolvedDependency,
+  inlineResolvedLegacyJqPathIr,
+  isDiscardedLegacyJqPathIr,
+  isEmptyJsonJqIr,
+  isEmptyLegacyJsonJqIr,
+  isRewriteOperation,
+  isRewriteV2,
+  jqDependencySpecFromAction,
+  jsonActionToJq,
+  jsonPipelineToSafeNativeJq,
+  legacyJqPathDependencySpecFromIr,
+  legacyRewriteToSemanticIr,
+  legacyRewriteTokens,
+  listComplexRewriteHandlers,
+  listRewriteV2Dependencies,
+  minifyJq,
+  minifyJqFile,
+  normalizeJqForSingleQuotedConfig,
+  parseJsonKeyPath,
+  parseRewriteV2,
+  planComplexRewrite,
+  planLegacyRewrite,
+  planLegacyRewriteIr,
+  planQxRewrite,
+  planSurgeRewrite,
+  quoteJq,
+  qxDirectRewritePlan,
+  qxExactRewriteMatcherPlan,
+  qxMockPlanFromAction,
+  qxPrimitiveForRewriteV2Action,
+  qxRewriteMatcherPlan,
+  registerComplexRewriteHandler,
+  renderFixedPathDeleteJq,
+  rewriteIrDeclaration,
+  rewriteIssue,
+  rewriteOperationKinds,
+  rewriteReview,
+  rewriteV2AstToSemanticIr,
+  rewriteV2ToSource,
+  simpleUrlRewriteCondition,
+  singleRewriteOperation,
+  stripJqComments,
+  surgeDirectRewritePlan,
+  surgeHeaderRewritePlan,
+  surgeInlineMockPlan,
+  surgeMockFilePlan,
+  surgeRedirectRewritePlan,
+  surgeRejectRewritePlan,
+  tokenizeRewriteV2,
+  unquoteRewriteToken,
+  validateRewriteV2Action,
+  validateRewriteV2Ast,
+  valueToSource
+} from './rewrite.mjs';
+
+export {
+  LOON_LEGACY_SCRIPT_OPTION_NAMES,
+  SCRIPT_V2_OPTION_FIELDS,
+  analyzePluginArgumentUsage,
+  buildSurgeArgumentTable,
+  isScriptV2,
+  legacyScriptIrDeclaration,
+  legacyScriptToSemanticIr,
+  parseLegacyLoonPluginObjectRefs,
+  parseLegacyScriptLine,
+  parseLoonArguments,
+  parseScriptDeclaration,
+  parseScriptV2,
+  parseScriptV2Value,
+  planQxScript,
+  planSurgeScript,
+  qxScriptV2Plan,
+  rewriteV2PluginArgumentRefs,
+  scriptBehaviorSignals,
+  scriptIrSourcePath,
+  scriptIrTag,
+  scriptOption,
+  scriptOptionBoolean,
+  scriptV2ArgumentRefs,
+  scriptV2AstToSemanticIr,
+  scriptV2BridgeNeeds,
+  scriptV2DeclarationGaps,
+  scriptV2DynamicOptionRefs,
+  scriptV2PluginArgumentUsage,
+  scriptV2ToSource,
+  selectQxScriptAction,
+  splitScriptV2Csv,
+  surgeArgumentMetadata,
+  surgeArgumentPlaceholder,
+  surgeDynamicOptionValue,
+  surgeEnableRequirement,
+  surgePluginObjectArgument,
+  surgeRewriteArgumentPayload,
+  surgeScriptV2Plan
+} from './script.mjs';
+
+export {
+  LOON_LOGICAL_RULE_TYPES,
+  SURGE_MODULE_POLICIES,
+  SURGE_RULE_BUILTIN_POLICIES,
+  SURGE_RULE_TYPES,
+  parseLoonRuleAst,
+  planQxRuleAst,
+  planSurgeModuleRuleAst,
+  qxRule,
+  renderRuleAst,
+  renderSurgeRuleAst,
+  ruleTypesInAst,
+  splitLogicalSubrules,
+  splitTopLevelCsv,
+  surgeModuleRule,
+  surgePolicyIndex,
+  surgeRule,
+  surgeRuleTypesInTree,
+  unquoteRuleField,
+  validateSurgeRuleAst,
+  walkRuleAst
+} from './rule.mjs';
+
+export {
+  ORIGINAL_FETCH_PROFILES,
+  WAYX_FETCH_UA,
+  WAYX_LOON_FETCH_UA,
+  WAYX_SUPPORTED_SOURCE_SECTIONS,
+  cleanSourceComments,
+  discoverSourceScriptUrls,
+  fetchOriginalBytes,
+  fetchOriginalText,
+  groupSourceSectionItems,
+  inspectSourceScript,
+  isSupportedSourceSection,
+  loadLoonSourceCatalog,
+  materializeJqFiles,
+  materializeMockFiles,
+  materializeRewriteDependencies,
+  materializeSourceScripts,
+  normalizePluginSource,
+  parseLoonPlugin,
+  resolveOriginalUrl,
+  selectOriginalFetchProfile,
+  sourceCommentText,
+  validateLoonSourceCatalog,
+  validateLoonSourceEntry
+} from './input.mjs';
+
+export {
+  appendQxOutput,
+  appendSurgeOutput,
+  attachQxInlineNote,
+  compactOutputLines,
+  createQxOutputState,
+  createSurgeOutputState,
+  finalizeOutputLines,
+  hasActiveOutputLines,
+  hasActiveSurgeLines,
+  looksLikeCommentedSourceDeclaration,
+  parseSourceMetadataHeader,
+  qxInlineNoteCandidate,
+  qxOutputDestination,
+  qxRewriteOutputDestination,
+  qxRuleOutputDestination,
+  renderQxOutput,
+  renderQxSnippetHeader,
+  renderSurgeModuleHeader,
+  renderSurgeOutput,
+  surgeOutputDestination,
+  surgeRewriteOutputDestination,
+  surgeRuleOutputDestination,
+  validateConversionMetadata,
+  validateQX,
+  validateSurgeModule
+} from './output.mjs';
+
+export {
+  compileRegexForTarget,
+  normalizeRegexBodyForTarget
+} from './core.mjs';
+
+export {
+  convertPlugin,
+  materializeConversionContext
+} from './conversion.mjs';
+
+export {
+  headerOpsForMock,
+  qxMimeTypeForLoonMock,
+  qxMockTypeIsBinary,
+  renderMixedRewriteScript,
+  renderQxHeaderScript,
+  renderQxInlineMockScript,
+  renderQxMockFileScript,
+  renderQxMockScript,
+  renderQxRedirectScript,
+  renderQxRejectScript,
+  renderSingleJsonAddScript,
+  renderSingleJsonMutationScript,
+  renderSingleRewriteMutationScript,
+  renderSurgeRequestMockScript
+} from './runtime.mjs';
+
+export {
+  parseConfigurationDeclaration,
+  planConfiguration,
+  planMitmLine
+} from './configuration.mjs';

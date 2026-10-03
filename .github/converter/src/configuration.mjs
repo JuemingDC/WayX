@@ -1,3 +1,12 @@
+// Consolidated: 2026-10-03
+// Author: chance
+// Category: Converter / configuration
+
+
+
+
+
+// configuration.mjs
 // Source configuration IR and target adapters (General / MITM)
 // Converted: 2026-10-03
 // Author: chance

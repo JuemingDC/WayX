@@ -4,10 +4,10 @@
 // Category: Converter / Validation / CLI
 import fs from 'node:fs/promises';
 import {execFileSync} from 'node:child_process';
-import {validateQX} from '../src/qx-snippet-validator.mjs';
-import {validateSurgeModule} from '../src/surge-module.mjs';
-import {validateConversionMetadata} from '../src/metadata.mjs';
-import {loadLoonSourceCatalog} from '../src/source-catalog.mjs';
+import {validateQX} from "../src/output.mjs";
+import {validateSurgeModule} from "../src/output.mjs";
+import {validateConversionMetadata} from "../src/output.mjs";
+import {loadLoonSourceCatalog} from "../src/input.mjs";
 
 const manifest=await loadLoonSourceCatalog('.github/sources/loon.json');
 const targets=manifest.flatMap(entry=>[

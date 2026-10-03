@@ -1,5 +1,225 @@
-import { parseRewriteV2, conditionToSource, valueToSource } from './rewrite.mjs';
+// Consolidated: 2026-10-03
+// Author: chance
+// Category: Converter / script
 
+import { splitTopLevelCsv } from "./rule.mjs";
+import { parseRewriteV2, conditionToSource, valueToSource, isRewriteV2, simpleUrlRewriteCondition } from "./rewrite.mjs";
+import { normalizeRegexBodyForTarget } from "./core.mjs";
+
+
+
+// argument.mjs
+// Loon [Argument] parser and Surge module parameter conversion
+// Author: chance
+// Category: Converter / Argument / Surge Module
+
+
+function unquote(s) {
+  const v = String(s ?? '').trim();
+  if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) return v.slice(1, -1);
+  return v;
+}
+
+export function parseLoonArguments(lines = []) {
+  const args = [];
+  for (const raw of lines) {
+    const line = String(raw).trim();
+    if (!line || /^[#;\/]/.test(line)) continue;
+    const eq = line.indexOf('=');
+    if (eq < 1) continue;
+
+    const id = line.slice(0, eq).trim();
+    const tokens = splitTopLevelCsv(line.slice(eq + 1));
+    const kind = (tokens.shift() || '').trim().toLowerCase();
+    const values = [];
+    const options = {};
+
+    for (const token of tokens) {
+      const m = token.match(/^([A-Za-z_][\w-]*)\s*=\s*(.*)$/s);
+      if (m) options[m[1].toLowerCase()] = unquote(m[2]);
+      else values.push(unquote(token));
+    }
+
+    const valueType = kind === 'switch'
+      ? 'boolean'
+      : String(options.type || '').toLowerCase() === 'number' ? 'number' : 'string';
+
+    const hasDefault = values.length > 0 || kind === 'switch';
+    args.push({
+      id,
+      kind,
+      values,
+      hasDefault,
+      defaultValue: values[0] ?? (kind === 'switch' ? 'false' : undefined),
+      valueType,
+      tag: options.tag || id,
+      desc: options.desc || '',
+      options,
+      raw: line,
+    });
+  }
+  return args;
+}
+
+function surgeArgumentName(id) {
+  const raw = String(id || '');
+  const safe = raw.replace(/[^A-Za-z0-9_]/g, '_');
+  if (!safe || !/^[A-Za-z_]/.test(safe)) return '_' + safe;
+  return safe;
+}
+
+function metadataDefaultValue(value, id) {
+  const text = String(value ?? '');
+  if (/[\r\n,]/.test(text)) {
+    throw new Error(`Surge #!arguments default for ${id} contains an unsupported comma/newline delimiter`);
+  }
+  return text;
+}
+
+export function buildSurgeArgumentTable(argumentLines = []) {
+  const declarations = parseLoonArguments(argumentLines);
+  const usedNames = new Map();
+  const entries = [];
+
+  for (const declaration of declarations) {
+    const surgeName = surgeArgumentName(declaration.id);
+    const previous = usedNames.get(surgeName);
+    if (previous && previous !== declaration.id) {
+      throw new Error(`Surge argument name collision after normalization: ${previous}, ${declaration.id} -> ${surgeName}`);
+    }
+    usedNames.set(surgeName, declaration.id);
+    entries.push({
+      ...declaration,
+      surgeName,
+      placeholder:`{{{${surgeName}}}}`,
+    });
+  }
+
+  return {
+    entries,
+    byId:new Map(entries.map(entry => [entry.id, entry])),
+  };
+}
+
+export function surgeArgumentMetadata(argumentLines = [], { proxyPolicyBinding = false } = {}) {
+  const table = buildSurgeArgumentTable(argumentLines);
+
+  const args = table.entries.map(entry => {
+    if (!entry.hasDefault) return entry.surgeName;
+    return `${entry.surgeName}:${metadataDefaultValue(entry.defaultValue, entry.id)}`;
+  });
+
+  const descriptions = table.entries.map(entry => {
+    const pieces = [entry.tag || entry.id];
+    if (entry.kind === 'select' && entry.values.length) {
+      pieces.push('options=' + entry.values.join('|'));
+    } else if (entry.kind === 'switch') {
+      pieces.push('true/false');
+    }
+    if (entry.desc) pieces.push(entry.desc);
+    return `${entry.surgeName}: ${pieces.join(' — ')}`;
+  });
+
+  let policyBinding = null;
+  if (proxyPolicyBinding) {
+    const usedNames = new Set(table.entries.map(entry => entry.surgeName));
+    let surgeName = 'wayx_proxy_policy';
+    let suffix = 2;
+    while (usedNames.has(surgeName)) surgeName = `wayx_proxy_policy_${suffix++}`;
+
+    // Bind a Rule policy through the official Module parameter mechanism,
+    // default DIRECT, and let the user replace it with a proxy policy/group
+    // without defining [Proxy] or [Proxy Group] inside the module.
+    args.push(`${surgeName}:DIRECT`);
+    descriptions.push(`${surgeName}: Loon PROXY policy binding — default DIRECT; set to the desired Surge proxy policy or policy group`);
+    policyBinding = {
+      surgeName,
+      placeholder:`{{{${surgeName}}}}`,
+      defaultValue:'DIRECT',
+    };
+  }
+
+  if (!args.length) return { table, lines:[], policyBinding };
+
+  const lines = ['#!arguments=' + args.join(',')];
+  if (descriptions.length) lines.push('#!arguments-desc=' + descriptions.join('\\n'));
+  return { table, lines, policyBinding };
+}
+
+export function surgeArgumentPlaceholder(id, table) {
+  return table?.byId?.get(String(id))?.placeholder || null;
+}
+
+export function parseLegacyLoonPluginObjectRefs(source) {
+  const raw = String(source || '').trim();
+  if (!raw) return null;
+
+  const bracket = raw.match(/^\[([\s\S]*)\]$/);
+  if (bracket) {
+    const refs = [...bracket[1].matchAll(/\{([A-Za-z_][\w-]*)\}/g)].map(match => match[1]);
+    return refs.length ? refs : null;
+  }
+
+  const compact = raw.match(/^\{([A-Za-z_][\w-]*(?:\s*,\s*[A-Za-z_][\w-]*)*)\}$/);
+  if (compact) return compact[1].split(',').map(value => value.trim());
+
+  return null;
+}
+
+export function surgePluginObjectArgument(refs = [], table) {
+  const fields = [];
+  for (const id of refs) {
+    const entry = table?.byId?.get(String(id));
+    if (!entry) return {ok:false, reason:`undeclared Loon [Argument]: ${id}`};
+    if (!entry.hasDefault) {
+      return {ok:false, reason:`Loon [Argument] ${id} has no default; PluginObject missing-value null cannot be represented losslessly by Surge module substitution`};
+    }
+    const key = JSON.stringify(entry.id);
+    const placeholder = entry.placeholder;
+    if (entry.valueType === 'string') {
+      fields.push(`${key}:${JSON.stringify(placeholder)}`);
+    } else if (entry.valueType === 'number' || entry.valueType === 'boolean') {
+      fields.push(`${key}:${placeholder}`);
+    } else {
+      return {ok:false, reason:`unsupported Loon [Argument] value type for ${id}: ${entry.valueType}`};
+    }
+  }
+  const jsonTemplate = '{' + fields.join(',') + '}';
+  return {ok:true, value:JSON.stringify(jsonTemplate)};
+}
+
+export function surgeRewriteArgumentPayload(refs = [], table) {
+  const unique = [...new Set(refs.map(String))];
+  const fields = [];
+  for (const id of unique) {
+    const entry = table?.byId?.get(id);
+    if (!entry) return {ok:false, reason:`undeclared Loon [Argument]: ${id}`};
+    const key = JSON.stringify(entry.id);
+    if (entry.valueType === 'string') {
+      fields.push(`${key}:${JSON.stringify(entry.placeholder)}`);
+    } else if (entry.valueType === 'number' || entry.valueType === 'boolean') {
+      fields.push(`${key}:${entry.placeholder}`);
+    } else {
+      return {ok:false, reason:`unsupported Loon [Argument] value type for ${id}: ${entry.valueType}`};
+    }
+  }
+  const template = '{' + fields.join(',') + '}';
+  return {ok:true, value:JSON.stringify(template)};
+}
+
+export function surgeDynamicOptionValue(id, table) {
+  const entry = table?.byId?.get(String(id));
+  if (!entry || !entry.hasDefault) return null;
+  return entry.placeholder;
+}
+
+export function surgeEnableRequirement(id, table) {
+  const entry = table?.byId?.get(String(id));
+  if (!entry || entry.valueType !== 'boolean') return null;
+  return `#!REQUIREMENT "'${entry.placeholder}'=='true'"`;
+}
+
+// script.mjs
 // Consolidated: 2026-10-03
 // Author: chance
 // Category: Converter / Script / Domain
@@ -117,7 +337,7 @@ function findClosingParen(source, openIndex) {
   return -1;
 }
 
-function splitTopLevelCsv(source) {
+function scriptSplitTopLevelCsv(source) {
   const out = [];
   let start = 0, quote = null, raw = false, escape = false;
   let paren = 0, brace = 0, bracket = 0;
@@ -172,7 +392,7 @@ function parseValue(source) {
 
   if (raw.startsWith('{') && raw.endsWith('}')) {
     const inner = raw.slice(1, -1).trim();
-    const items = inner ? splitTopLevelCsv(inner).map(parseValue) : [];
+    const items = inner ? scriptSplitTopLevelCsv(inner).map(parseValue) : [];
     if (items.some(item => item.type !== 'variable')) {
       throw new Error('plugin object argument may only contain plugin parameter variables');
     }
@@ -253,7 +473,7 @@ export function parseScriptV2(source) {
 
   const close = findClosingParen(raw, found.callOpen);
   if (close < 0) fail(raw, 'Unterminated script(...) call');
-  const callArgs = splitTopLevelCsv(raw.slice(found.callOpen + 1, close));
+  const callArgs = scriptSplitTopLevelCsv(raw.slice(found.callOpen + 1, close));
   if (callArgs.length < 1 || callArgs.length > 2) fail(raw, 'script(...) expects path and optional argument');
 
   const pathValue = parseValue(callArgs[0]);
@@ -268,7 +488,7 @@ export function parseScriptV2(source) {
   if (tail) {
     if (!/^with\s+/.test(tail)) fail(raw, 'Unexpected content after script(...)');
     const optionText = tail.replace(/^with\s+/, '');
-    for (const token of splitTopLevelCsv(optionText)) {
+    for (const token of scriptSplitTopLevelCsv(optionText)) {
       const eq = token.indexOf('=');
       if (eq < 1) fail(raw, 'Invalid Script v2 option: ' + token);
       const name = token.slice(0, eq).trim();
@@ -341,7 +561,7 @@ export function scriptV2ToSource(ast) {
   return triggerSource + ' then script(' + args.join(', ') + ')' + withPart;
 }
 
-export { splitTopLevelCsv as splitScriptV2Csv, parseValue as parseScriptV2Value, OPTION_FIELDS as SCRIPT_V2_OPTION_FIELDS };
+export { scriptSplitTopLevelCsv as splitScriptV2Csv, parseValue as parseScriptV2Value, OPTION_FIELDS as SCRIPT_V2_OPTION_FIELDS };
 
 
 // Loon Legacy Script parser
@@ -374,7 +594,7 @@ export function parseLegacyScriptLine(source) {
   const options=new Map();
   const optionList=[];
 
-  for (const token of splitTopLevelCsv(rest)) {
+  for (const token of scriptSplitTopLevelCsv(rest)) {
     const eq=token.indexOf('=');
     if (eq<1) return null;
     const name=token.slice(0,eq).trim().toLowerCase();
@@ -502,5 +722,721 @@ export function legacyScriptIrDeclaration(ir) {
     enable:options.get('enable') ?? options.get('enabled') ?? null,
     debug:options.get('debug') ?? null,
     argument:ir.argument,
+  };
+}
+
+// argument-usage.mjs
+// WayX Loon plugin [Argument] usage analysis
+// Author: chance
+// Category: Converter / Argument / Semantic Analysis
+function activeLines(lines = []) {
+  return lines
+    .map(raw => String(raw ?? '').trim())
+    .filter(line => line && !line.startsWith('#') && !line.startsWith(';') && !line.startsWith('//'));
+}
+
+function collectVariableNames(node, out = new Set()) {
+  if (!node || typeof node !== 'object') return out;
+  if (Array.isArray(node)) {
+    for (const item of node) collectVariableNames(item, out);
+    return out;
+  }
+  if (node.type === 'variable' && typeof node.name === 'string') out.add(node.name);
+  for (const [key, value] of Object.entries(node)) {
+    if (key === 'raw') continue;
+    collectVariableNames(value, out);
+  }
+  return out;
+}
+
+function isBuiltInRuntimeVariable(name) {
+  const value = String(name || '');
+  return value === 'url' || value.startsWith('request.') || value.startsWith('response.');
+}
+
+function declaredRefs(node, declaredIds) {
+  const declared = declaredIds instanceof Set ? declaredIds : new Set(declaredIds || []);
+  return [...collectVariableNames(node)]
+    .filter(name => declared.has(name) && !isBuiltInRuntimeVariable(name))
+    .sort();
+}
+
+function pluginObjectRefs(ast) {
+  return scriptV2ArgumentRefs(ast);
+}
+
+function addUse(usage, id, use) {
+  if (!usage.has(id)) usage.set(id, []);
+  const list = usage.get(id);
+  const key = JSON.stringify([use.section, use.kind, use.option || '', use.line || '']);
+  if (!list.some(item => JSON.stringify([item.section, item.kind, item.option || '', item.line || '']) === key)) {
+    list.push(use);
+  }
+}
+
+function boundaryValue(line, key) {
+  const re = new RegExp('(?:^|,)\\s*' + key + '\\s*=\\s*([\\s\\S]*?)(?=,\\s*[A-Za-z][A-Za-z0-9_-]*\\s*=|$)', 'i');
+  return (String(line).match(re) || [])[1]?.trim() || '';
+}
+
+function legacyRefs(value) {
+  const refs = new Set();
+  const source = String(value || '');
+  for (const match of source.matchAll(/\$?\{([A-Za-z_][\w-]*)\}/g)) refs.add(match[1]);
+  return [...refs];
+}
+
+export function rewriteV2PluginArgumentRefs(ast, declaredIds = []) {
+  const declared = declaredIds instanceof Set ? declaredIds : new Set(declaredIds || []);
+  const conditionRefs = declaredRefs(ast?.condition, declared);
+  const actionRefs = declaredRefs(ast?.actions, declared);
+  return {
+    conditionRefs,
+    actionRefs,
+    all: [...new Set([...conditionRefs, ...actionRefs])].sort(),
+  };
+}
+
+export function scriptV2PluginArgumentUsage(ast, declaredIds = []) {
+  const declared = declaredIds instanceof Set ? declaredIds : new Set(declaredIds || []);
+  const conditionRefs = declaredRefs(ast?.condition, declared);
+  const triggerRefs = declaredRefs(ast?.trigger, declared);
+  const objectRefs = pluginObjectRefs(ast);
+  const dynamicOptions = scriptV2DynamicOptionRefs(ast);
+  const undeclaredObjectRefs = objectRefs.filter(id => !declared.has(id));
+  const undeclaredOptionRefs = dynamicOptions.filter(ref => !declared.has(ref.id));
+  const undeclaredTriggerRefs = [...collectVariableNames(ast?.trigger)]
+    .filter(id => !declared.has(id) && !isBuiltInRuntimeVariable(id))
+    .sort();
+  return {
+    conditionRefs,
+    triggerRefs,
+    objectRefs,
+    dynamicOptions,
+    undeclaredObjectRefs,
+    undeclaredOptionRefs,
+    undeclaredTriggerRefs,
+    all: [...new Set([
+      ...conditionRefs,
+      ...triggerRefs,
+      ...objectRefs.filter(id => declared.has(id)),
+      ...dynamicOptions.filter(ref => declared.has(ref.id)).map(ref => ref.id),
+    ])].sort(),
+  };
+}
+
+export function analyzePluginArgumentUsage({
+  argumentLines = [],
+  rewriteLines = [],
+  scriptLines = [],
+  ruleLines = [],
+} = {}) {
+  const declarations = parseLoonArguments(argumentLines);
+  const declaredIds = new Set(declarations.map(arg => arg.id));
+  const usage = new Map(declarations.map(arg => [arg.id, []]));
+  const undeclaredRefs = [];
+  const parseErrors = [];
+
+  for (const line of activeLines(rewriteLines)) {
+    if (!isRewriteV2(line)) continue;
+    try {
+      const ast = parseRewriteV2(line);
+      const refs = rewriteV2PluginArgumentRefs(ast, declaredIds);
+      for (const id of refs.conditionRefs) addUse(usage, id, {section:'Rewrite', kind:'condition', line});
+      for (const id of refs.actionRefs) addUse(usage, id, {section:'Rewrite', kind:'action', line});
+    } catch (error) {
+      parseErrors.push({section:'Rewrite', line, error:String(error?.message || error).split('\n')[0]});
+    }
+  }
+
+  for (const line of activeLines(scriptLines)) {
+    if (isScriptV2(line)) {
+      try {
+        const ast = parseScriptV2(line);
+        const refs = scriptV2PluginArgumentUsage(ast, declaredIds);
+        for (const id of refs.conditionRefs) addUse(usage, id, {section:'Script', kind:'condition', line});
+        for (const id of refs.triggerRefs) addUse(usage, id, {section:'Script', kind:'trigger', line});
+        for (const id of refs.undeclaredTriggerRefs) undeclaredRefs.push({section:'Script', kind:'trigger', id, line});
+        for (const id of refs.objectRefs) {
+          if (declaredIds.has(id)) addUse(usage, id, {section:'Script', kind:'argument-object', line});
+          else undeclaredRefs.push({section:'Script', kind:'argument-object', id, line});
+        }
+        for (const ref of refs.dynamicOptions) {
+          if (declaredIds.has(ref.id)) addUse(usage, ref.id, {section:'Script', kind:'dynamic-option', option:ref.option, line});
+          else undeclaredRefs.push({section:'Script', kind:'dynamic-option', option:ref.option, id:ref.id, line});
+        }
+      } catch (error) {
+        parseErrors.push({section:'Script', line, error:String(error?.message || error).split('\n')[0]});
+      }
+      continue;
+    }
+
+    const argument = boundaryValue(line, 'argument');
+    for (const id of legacyRefs(argument)) {
+      if (declaredIds.has(id)) addUse(usage, id, {section:'Script', kind:'argument-object', line});
+      else undeclaredRefs.push({section:'Script', kind:'argument-object', id, line});
+    }
+    const enable = boundaryValue(line, 'enable');
+    for (const id of legacyRefs(enable)) {
+      if (declaredIds.has(id)) addUse(usage, id, {section:'Script', kind:'dynamic-option', option:'enable', line});
+      else undeclaredRefs.push({section:'Script', kind:'dynamic-option', option:'enable', id, line});
+    }
+  }
+
+  const policyBindings = activeLines(ruleLines)
+    .filter(line => /(?:^|,)\s*PROXY\s*(?:,|$)/i.test(line))
+    .map(line => ({policy:'PROXY', line}));
+
+  return {
+    declarations,
+    arguments: declarations.map(arg => ({
+      ...arg,
+      uses: usage.get(arg.id) || [],
+      used: (usage.get(arg.id) || []).length > 0,
+    })),
+    declaredIds:[...declaredIds],
+    undeclaredRefs,
+    parseErrors,
+    policyBindings,
+  };
+}
+
+// script-target.mjs
+// Consolidated: 2026-10-03
+// Author: chance
+// Category: Converter / Script / Target Adapters
+
+// WayX generic remote-script declaration conversion
+// Author: chance
+// Category: Converter / Script
+//
+// Script action selection is based only on declaration semantics and inspected
+// source behavior. Script URL, plugin id, author and repository never select an
+// action.
+
+export function scriptBehaviorSignals(sourceText='') {
+  const source=String(sourceText || '');
+  return {
+    sourceAvailable:Boolean(source.trim()),
+    readsRequestBody:/\$request\.(?:body|bodyBytes)\b/.test(source),
+    readsResponseBody:/\$response\.(?:body|bodyBytes)\b/.test(source),
+    returnsHttpResponse:
+      /\$done\s*\(\s*\{[\s\S]{0,800}\b(?:status|statusCode)\s*:/.test(source) ||
+      /\$done\s*\(\s*\{[\s\S]{0,800}\bresponse\s*:\s*\{/.test(source),
+  };
+}
+
+export function selectQxScriptAction({phase,requiresBody=false,sourceText=''}) {
+  const p=String(phase).toLowerCase().replace(/^http-/,'');
+  if(!['request','response'].includes(p)) throw new Error(`Unsupported QX HTTP script phase: ${phase}`);
+
+  const signals=scriptBehaviorSignals(sourceText);
+
+  // The Loon declaration phase is authoritative for native QX Script mapping.
+  // QX's official sample and KOP-XIAO's resource parser both map
+  // request/response + requires-body directly to the corresponding
+  // script-request/response-header/body action. Whole-file source inspection
+  // is only allowed to strengthen body-dependency detection; it must not
+  // switch a declared request script into the echo-response family because
+  // multi-platform helpers can contain inactive Surge/Loon response branches.
+  if(p==='request') {
+    const needsBody=Boolean(requiresBody || signals.readsRequestBody);
+    return {
+      action:needsBody ? 'script-request-body' : 'script-request-header',
+      reason:needsBody
+        ? 'request-phase declaration reads/requires request body'
+        : 'request-phase declaration does not require request body',
+      override:false,
+      signals,
+    };
+  }
+
+  const needsBody=Boolean(requiresBody || signals.readsResponseBody);
+  return {
+    action:needsBody ? 'script-response-body' : 'script-response-header',
+    reason:needsBody
+      ? 'response-phase declaration reads/requires response body'
+      : 'response-phase declaration does not require response body',
+    override:false,
+    signals,
+  };
+}
+
+
+
+// WayX behavior-first Loon Script v2 target planning
+// Author: chance
+// Category: Converter / Script v2 / Target Mapping
+function unsupported(reason) {
+  return { ok:false, reason };
+}
+
+function scriptUrlCondition(ast, target = 'generic') {
+  return simpleUrlRewriteCondition({type:'rewrite', condition:ast.condition}, {target});
+}
+
+function fixedOption(ast, name) {
+  const value = scriptOption(ast, name);
+  if (!value) return null;
+  if (['string','raw-string','number','boolean'].includes(value.type)) return value.value;
+  return null;
+}
+
+function argumentDefault(id, table) {
+  const entry = table?.byId?.get(String(id));
+  return entry?.hasDefault ? entry.defaultValue : undefined;
+}
+
+function parseBooleanDefault(value) {
+  const text = String(value ?? '').trim().toLowerCase();
+  if (text === 'true' || text === '1') return true;
+  if (text === 'false' || text === '0') return false;
+  return null;
+}
+
+function qxTaskEnabled(ast, argumentTable, notes) {
+  const enable = scriptOption(ast, 'enable');
+  if (!enable) return true;
+  if (enable.type === 'boolean') return enable.value;
+  if (enable.type === 'variable') {
+    const raw = argumentDefault(enable.name, argumentTable);
+    const value = parseBooleanDefault(raw);
+    if (value === null) {
+      notes.push('Source dynamic enable=' + enable.name + ' has no usable Quantumult X default; converted task defaults to enabled.');
+      return true;
+    }
+    notes.push('Source dynamic enable=' + enable.name + ' is fixed to its plugin default for Quantumult X.');
+    return value;
+  }
+  return true;
+}
+
+function qxCronExpression(ast, argumentTable, notes) {
+  const node = ast.trigger?.expression;
+  if (!node) return unsupported('Cron Script is missing its expression');
+  if (node.type === 'string' || node.type === 'raw-string') return {ok:true,value:String(node.value)};
+  if (node.type === 'variable') {
+    const value = argumentDefault(node.name, argumentTable);
+    if (value === undefined || value === null || String(value).trim() === '') {
+      return unsupported('dynamic Cron expression has no plugin default for Quantumult X: ' + node.name);
+    }
+    notes.push('Source dynamic Cron expression=' + node.name + ' is fixed to its plugin default for Quantumult X.');
+    return {ok:true,value:String(value).trim()};
+  }
+  return unsupported('unsupported Cron expression type for Quantumult X');
+}
+
+function qxTaskOptions(ast, argumentTable, notes) {
+  const parts = [];
+  const tag = fixedOption(ast, 'tag');
+  const img = fixedOption(ast, 'img_url');
+  if (tag !== null && String(tag)) parts.push('tag=' + String(tag));
+  if (img !== null && String(img)) {
+    if (/^https?:\/\//i.test(String(img))) parts.push('img-url=' + String(img));
+    else notes.push('Source img_url=' + String(img) + ' omitted because Quantumult X task img-url is documented as an image URL, not an SF Symbol name.');
+  }
+  parts.push('enabled=' + (qxTaskEnabled(ast, argumentTable, notes) ? 'true' : 'false'));
+  return parts;
+}
+
+function qxNonHttpScriptV2Plan(ast, {scriptUrl, argumentTable = null} = {}) {
+  const notes = [];
+  if (ast.script.argument) {
+    return {
+      ok:true,
+      omitted:true,
+      section:'task',
+      reason:'Quantumult X task declarations have no official Loon PluginObject/String $argument equivalent; task omitted to avoid changing script input semantics.',
+      notes,
+    };
+  }
+
+  const timeout = scriptOption(ast, 'timeout');
+  if (timeout) notes.push('Source Script timeout ignored for Quantumult X task syntax.');
+  const debug = scriptOption(ast, 'debug');
+  if (debug?.type === 'variable' || (debug?.type === 'boolean' && debug.value === true)) {
+    notes.push('Source Script debug is not a Quantumult X task field and was omitted.');
+  }
+
+  let prefix;
+  if (ast.phase === 'cron') {
+    const cron = qxCronExpression(ast, argumentTable, notes);
+    if (!cron.ok) return cron;
+    const fields = cron.value.trim().split(/\s+/);
+    if (![5,6].includes(fields.length)) {
+      return unsupported('Quantumult X task cron requires a 5- or 6-field expression');
+    }
+    prefix = cron.value.trim();
+  } else if (ast.phase === 'network-changed') {
+    prefix = 'event-network';
+  } else if (ast.phase === 'generic') {
+    prefix = 'event-interaction';
+  } else {
+    return unsupported('unsupported non-HTTP Script v2 phase for Quantumult X: ' + ast.phase);
+  }
+
+  const options = qxTaskOptions(ast, argumentTable, notes);
+  return {
+    ok:true,
+    strategy:'native-task',
+    section:'task',
+    line:prefix + ' ' + scriptUrl + (options.length ? ', ' + options.join(', ') : ''),
+    tag:fixedOption(ast, 'tag'),
+    notes,
+  };
+}
+
+export function qxScriptV2Plan(ast, {
+  scriptUrl = ast?.script?.path,
+  sourceText = '',
+  argumentIds = null,
+  argumentTable = null,
+} = {}) {
+  if (!ast || !['script','script-semantic-ir'].includes(ast.type)) return unsupported('expected Script v2 AST');
+
+  if (!['request','response'].includes(ast.phase)) {
+    return qxNonHttpScriptV2Plan(ast,{scriptUrl,argumentTable});
+  }
+
+  // QX official Rewrite Script declarations do not expose Loon's enable,
+  // timeout, debug or binary_body_mode fields. Target planning therefore
+  // omits those fields instead of emitting invented QX syntax. Keep
+  // requires_body separate: it alone selects the QX header/body action family.
+  const enable = scriptOption(ast, 'enable');
+  if (enable?.type === 'boolean' && enable.value === false) {
+    return {ok:true, disabled:true, reason:'Loon Script v2 enable=false'};
+  }
+
+  const timeout = scriptOption(ast, 'timeout');
+  const debug = scriptOption(ast, 'debug');
+  const binaryBodyMode = scriptOptionBoolean(ast, 'binary_body_mode', false);
+
+  if (argumentIds !== null) {
+    const usage = scriptV2PluginArgumentUsage(ast, argumentIds);
+    const undeclared = usage.undeclaredOptionRefs
+      .filter(ref => !['enable','timeout','debug'].includes(ref.option))
+      .map(ref => ref.id);
+    if (undeclared.length) {
+      return unsupported('undeclared plugin [Argument] reference(s): ' + [...new Set(undeclared)].sort().join(', '));
+    }
+    if (usage.conditionRefs.length) {
+      return unsupported('plugin [Argument] condition cannot be represented by the Quantumult X rewrite declaration: ' + usage.conditionRefs.join(', '));
+    }
+  }
+
+  const condition = scriptUrlCondition(ast);
+  if (!condition.ok) return condition;
+  const notes = [...(condition.notes || [])];
+
+  if (enable?.type === 'variable') {
+    notes.push('Source dynamic enable=' + enable.name + ' ignored for Quantumult X; converted rule defaults to enabled.');
+  }
+  if (ast.script.argument) {
+    notes.push('Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.');
+  }
+  if (timeout) {
+    notes.push('Source Script timeout ignored for Quantumult X.');
+  }
+  if (debug?.type === 'variable' || (debug?.type === 'boolean' && debug.value === true)) {
+    notes.push('Source Script debug is not a Quantumult X Rewrite Script field and was omitted.');
+  }
+  if (binaryBodyMode) {
+    notes.push('Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.');
+  }
+
+  const action = selectQxScriptAction({
+    phase:ast.phase,
+    requiresBody:scriptOptionBoolean(ast, 'requires_body', false),
+    scriptUrl,
+    sourceText,
+  });
+  if (!action.action) {
+    return unsupported(action.reason);
+  }
+
+  return {
+    ok:true,
+    strategy:'native-declaration',
+    section:'rewrite',
+    pattern:condition.pattern,
+    action:action.action,
+    line:condition.pattern + ' url ' + action.action + ' ' + scriptUrl,
+    tag:fixedOption(ast, 'tag'),
+    binaryBodyMode,
+    notes,
+  };
+}
+
+function surgeTriggerParams(ast, argumentTable) {
+  if (ast.phase === 'request' || ast.phase === 'response') return null;
+  if (ast.phase === 'generic') return {ok:true,params:['type=generic']};
+  if (ast.phase === 'network-changed') return {ok:true,params:['type=event','event-name=network-changed']};
+  if (ast.phase === 'cron') {
+    const node = ast.trigger?.expression;
+    if (!node) return unsupported('Cron Script is missing its expression');
+    let expression;
+    if (node.type === 'string' || node.type === 'raw-string') {
+      expression = String(node.value);
+    } else if (node.type === 'variable') {
+      const placeholder = surgeDynamicOptionValue(node.name, argumentTable);
+      if (!placeholder) return unsupported('dynamic Cron expression references undeclared Surge module argument: ' + node.name);
+      expression = placeholder;
+    } else {
+      return unsupported('unsupported Cron expression type for Surge');
+    }
+    return {ok:true,params:['type=cron','cronexp=' + JSON.stringify(expression)]};
+  }
+  return unsupported('unsupported Script v2 phase for Surge: ' + ast.phase);
+}
+
+export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 'script', argumentIds = null, argumentTable = null} = {}) {
+  if (!ast || !['script','script-semantic-ir'].includes(ast.type)) return unsupported('expected Script v2 AST');
+  if (argumentIds !== null) {
+    const usage = scriptV2PluginArgumentUsage(ast, argumentIds);
+    const undeclared = [
+      ...usage.undeclaredObjectRefs,
+      ...usage.undeclaredOptionRefs.map(ref => ref.id),
+      ...usage.undeclaredTriggerRefs,
+    ];
+    if (undeclared.length) {
+      return unsupported('undeclared plugin [Argument] reference(s): ' + [...new Set(undeclared)].sort().join(', '));
+    }
+    if (usage.conditionRefs.length) {
+      return unsupported('plugin [Argument] condition has no verified Surge Script declaration equivalent: ' + usage.conditionRefs.join(', '));
+    }
+  }
+
+  const enable = scriptOption(ast, 'enable');
+  if (enable?.type === 'boolean' && enable.value === false) {
+    return {ok:true, disabled:true, reason:'Loon Script v2 enable=false'};
+  }
+  let requirementPrefix = null;
+  if (enable?.type === 'variable') {
+    requirementPrefix = surgeEnableRequirement(enable.name, argumentTable);
+    if (!requirementPrefix) {
+      return unsupported('dynamic enable references an undeclared or unsupported Surge module argument: ' + enable.name);
+    }
+  }
+
+  let params;
+  let notes = [];
+  if (ast.phase === 'request' || ast.phase === 'response') {
+    const condition = scriptUrlCondition(ast, 'surge');
+    if (!condition.ok) return condition;
+    notes = condition.notes || [];
+    params = [
+      'type=http-' + ast.phase,
+      'pattern=' + condition.pattern,
+    ];
+  } else {
+    const trigger = surgeTriggerParams(ast, argumentTable);
+    if (!trigger.ok) return trigger;
+    params = [...trigger.params];
+  }
+  params.push('script-path=' + scriptUrl);
+
+  if (scriptOptionBoolean(ast, 'requires_body', false)) {
+    params.push('requires-body=true');
+    params.push('max-size=-1');
+  }
+  if (scriptOptionBoolean(ast, 'binary_body_mode', false)) params.push('binary-body-mode=true');
+
+  const timeout = scriptOption(ast, 'timeout');
+  if (timeout?.type === 'number') params.push('timeout=' + timeout.value);
+  else if (timeout?.type === 'variable') {
+    const placeholder = surgeDynamicOptionValue(timeout.name, argumentTable);
+    if (!placeholder) return unsupported('dynamic timeout references undeclared Surge module argument: ' + timeout.name);
+    params.push('timeout=' + placeholder);
+  }
+
+  const argument = ast.script.argument;
+  if (argument?.type === 'string' || argument?.type === 'raw-string') {
+    params.push('argument=' + JSON.stringify(argument.value));
+  } else if (argument?.type === 'plugin-object') {
+    const encoded = surgePluginObjectArgument(argument.items.map(item => item.name), argumentTable);
+    if (!encoded.ok) return unsupported(encoded.reason);
+    params.push('argument=' + encoded.value);
+  } else if (argument) {
+    return unsupported('unsupported Loon Script v2 argument form');
+  }
+
+  const debug = scriptOption(ast, 'debug');
+  if (debug?.type === 'boolean' && debug.value) params.push('debug=true');
+  else if (debug?.type === 'variable') {
+    const placeholder = surgeDynamicOptionValue(debug.name, argumentTable);
+    if (!placeholder) return unsupported('dynamic debug references undeclared Surge module argument: ' + debug.name);
+    params.push('debug=' + placeholder);
+  }
+
+  return {
+    ok:true,
+    strategy:'native-declaration',
+    section:'script',
+    line:(requirementPrefix ? requirementPrefix + ' ' : '') + name + ' = ' + params.join(','),
+    tag:fixedOption(ast, 'tag'),
+    notes,
+    usesLineRequirement:Boolean(requirementPrefix),
+  };
+}
+
+export function scriptV2DeclarationGaps(ast) {
+  return {
+    argumentRefs:scriptV2ArgumentRefs(ast),
+    dynamicOptions:scriptV2DynamicOptionRefs(ast),
+    hasArgument:Boolean(ast?.script?.argument),
+  };
+}
+
+// Backward-compatible export name for callers that only inspect needs.
+export const scriptV2BridgeNeeds = scriptV2DeclarationGaps;
+
+
+// Quantumult X Source Script target planner
+// Author: chance
+// Category: Converter / Script / Quantumult X
+
+export function planQxScript(ir,ctx={}) {
+  if (!ir || ir.type!=='script-semantic-ir') throw new TypeError('Expected Script Semantic IR');
+
+  const scriptUrl=ctx.scriptUrl || ir.script.path;
+  if (ir.sourceSyntax==='v2') {
+    return qxScriptV2Plan(ir,{
+      scriptUrl,
+      sourceText:ctx.sourceText || '',
+      argumentIds:ctx.argumentIds ?? null,
+      argumentTable:ctx.argumentTable || null,
+    });
+  }
+
+  if (ir.sourceSyntax!=='legacy') {
+    return unsupported('unsupported Script source syntax: '+ir.sourceSyntax);
+  }
+
+  const sc=legacyScriptIrDeclaration(ir);
+  if (!sc?.script?.path) return unsupported('Legacy Script declaration is missing script-path');
+
+  const targetPattern=normalizeRegexBodyForTarget(sc.pattern);
+  const enableFixed=sc.enable ? String(sc.enable).trim().toLowerCase() : '';
+  const enableDynamic=Boolean(sc.enable) && !['true','false','1','0'].includes(enableFixed);
+  const debugFixed=sc.debug ? String(sc.debug).trim().toLowerCase() : '';
+  const debugEnabled=Boolean(sc.debug) && !['false','0'].includes(debugFixed);
+  const notes=[];
+
+  if (sc.argument) {
+    notes.push('Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.');
+  }
+  if (enableDynamic) {
+    notes.push('Source dynamic enable ignored for Quantumult X; converted rule defaults to enabled.');
+  }
+  if (sc.timeout) {
+    notes.push('Source Script timeout ignored for Quantumult X.');
+  }
+  if (sc.binaryBodyMode) {
+    notes.push('Source binary-body-mode=true ignored for Quantumult X; requires-body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.');
+  }
+  if (debugEnabled) {
+    notes.push('Source Script debug is not a Quantumult X Rewrite Script field and was omitted.');
+  }
+  if (enableFixed==='false' || enableFixed==='0') {
+    return {ok:true,disabled:true,reason:'Loon Legacy Script enable=false',tag:sc.tag,notes};
+  }
+
+  const action=selectQxScriptAction({
+    phase:sc.httpType,
+    requiresBody:sc.requiresBody,
+    sourceText:ctx.sourceText || '',
+  });
+  if (!action.action) return unsupported(action.reason);
+
+  return {
+    ok:true,
+    strategy:'native-declaration',
+    section:'rewrite',
+    pattern:targetPattern,
+    action:action.action,
+    line:targetPattern+' url '+action.action+' '+scriptUrl,
+    tag:sc.tag,
+    notes,
+  };
+}
+
+
+// Surge Source Script target planner
+// Author: chance
+// Category: Converter / Script / Surge
+
+export function planSurgeScript(ir,ctx={}) {
+  if (!ir || ir.type!=='script-semantic-ir') throw new TypeError('Expected Script Semantic IR');
+
+  const scriptUrl=ctx.scriptUrl || ir.script.path;
+  if (ir.sourceSyntax==='v2') {
+    return surgeScriptV2Plan(ir,{
+      scriptUrl,
+      name:ctx.name || 'script',
+      argumentIds:ctx.argumentIds ?? null,
+      argumentTable:ctx.argumentTable || null,
+    });
+  }
+
+  if (ir.sourceSyntax!=='legacy') {
+    return unsupported('unsupported Script source syntax: '+ir.sourceSyntax);
+  }
+
+  const sc=legacyScriptIrDeclaration(ir);
+  if (!sc?.script?.path) return unsupported('Legacy Script declaration is missing script-path');
+
+  const targetPattern=normalizeRegexBodyForTarget(sc.pattern);
+  const enableFixed=sc.enable ? String(sc.enable).trim().toLowerCase() : '';
+  const enableDynamic=Boolean(sc.enable) && !['true','false','1','0'].includes(enableFixed);
+
+  if (enableFixed==='false' || enableFixed==='0') {
+    return {ok:true,disabled:true,reason:'Loon Legacy Script enable=false'};
+  }
+
+  let requirementPrefix='';
+  if (enableDynamic) {
+    const ref=String(sc.enable).match(/^\$?\{([A-Za-z_][\w-]*)\}$/);
+    const requirement=ref ? surgeEnableRequirement(ref[1],ctx.argumentTable) : null;
+    if (!requirement) {
+      return unsupported('dynamic source enable cannot be mapped to a declared Surge module boolean argument.');
+    }
+    requirementPrefix=requirement+' ';
+  }
+
+  const params=['type='+sc.httpType,'pattern='+targetPattern,'script-path='+scriptUrl];
+  if (sc.requiresBody) {
+    params.push('requires-body=true');
+    params.push('max-size='+(sc.maxSize || '-1'));
+  }
+  if (sc.binaryBodyMode) params.push('binary-body-mode=true');
+
+  if (sc.timeout) {
+    const timeoutRef=String(sc.timeout).match(/^\$?\{([A-Za-z_][\w-]*)\}$/);
+    if (timeoutRef) {
+      const placeholder=surgeDynamicOptionValue(timeoutRef[1],ctx.argumentTable);
+      if (!placeholder) return unsupported('dynamic timeout references an undeclared Surge module argument.');
+      params.push('timeout='+placeholder);
+    } else {
+      params.push('timeout='+sc.timeout);
+    }
+  }
+
+  if (sc.argument) {
+    const refs=parseLegacyLoonPluginObjectRefs(sc.argument);
+    if (refs) {
+      const encoded=surgePluginObjectArgument(refs,ctx.argumentTable);
+      if (!encoded.ok) return unsupported(encoded.reason);
+      params.push('argument='+encoded.value);
+    } else {
+      params.push('argument='+sc.argument);
+    }
+  }
+
+  return {
+    ok:true,
+    strategy:'native-declaration',
+    section:'script',
+    line:requirementPrefix+(ctx.name || 'script')+' = '+params.join(','),
+    usesLineRequirement:Boolean(requirementPrefix),
   };
 }
