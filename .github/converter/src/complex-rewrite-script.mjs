@@ -291,19 +291,3 @@ export function renderSingleJsonMutationScript(ast, options = {}) {
 }
 
 export const renderSingleJsonAddScript = renderSingleJsonMutationScript;
-);
-  if (!supported.test(name)) {
-    throw new Error('single Rewrite mutation helper does not support '+name);
-  }
-  return renderRewriteScript(ast, options);
-}
-
-export function renderSingleJsonMutationScript(ast, options = {}) {
-  validateRewriteV2Ast(ast);
-  if (!Array.isArray(ast?.actions) || ast.actions.length !== 1 || !/^(?:request|response)\.json\.(?:add|delete|replace)$/.test(ast.actions[0]?.name || '')) {
-    throw new Error('single JSON mutation helper requires exactly one json.add/delete/replace action');
-  }
-  return renderRewriteScript(ast, options);
-}
-
-export const renderSingleJsonAddScript = renderSingleJsonMutationScript;
