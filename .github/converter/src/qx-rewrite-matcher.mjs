@@ -16,7 +16,37 @@ function fixedString(node) {
 }
 
 function regexEscape(value) {
+  return String(value).replace(/[.*+?^$\{\}()|[\]\\]/g,'\\function regexEscape(value) {
   return String(value).replace(/[.*+?^$\{\}()|[\]\\]/g,'\\$&');
+}
+
+function comparisonKey(node) {
+');
+}
+
+function requestHeaderName(variableName) {
+  const match=String(variableName || '').match(/^request\.header\[(['"])([^'"\\r\\n]+)\1\]$/);
+  if (!match) return null;
+  const name=match[2];
+  if (!/^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/.test(name)) return null;
+  return name;
+}
+
+function headerNameRegex(name) {
+  return [...String(name)].map(ch=>{
+    if (/[A-Za-z]/.test(ch)) {
+      const upper=ch.toUpperCase();
+      const lower=ch.toLowerCase();
+      return '['+upper+lower+']';
+    }
+    return regexEscape(ch);
+  }).join('');
+}
+
+function requestHeaderLinePattern(name, value = null) {
+  const field='\\r\\n'+headerNameRegex(name)+':[ \\t]*';
+  if (value===null) return field+'[^\\r\\n]*(?:\\r\\n|$)';
+  return field+regexEscape(value)+'[ \\t]*(?:\\r\\n|$)';
 }
 
 function comparisonKey(node) {
@@ -39,6 +69,36 @@ function comparisonKey(node) {
       key:'request-method-eq\u0000'+value,
       value,
     };
+  }
+
+  const headerName=requestHeaderName(n.left.name);
+  if (headerName) {
+    const normalizedName=headerName.toLowerCase();
+
+    if (n.operator==='==') {
+      const value=fixedString(n.right);
+      if (value===null || /[\r\n]/.test(value)) return null;
+      return {
+        kind:'request-header-eq',
+        key:'request-header-eq\u0000'+normalizedName+'\u0000'+value,
+        name:headerName,
+        value,
+        pattern:requestHeaderLinePattern(headerName,value),
+      };
+    }
+
+    if (n.operator==='~=' && n.right?.type==='regex') {
+      // A successful Loon header-regex condition guarantees only that the
+      // request header exists. Keep the original regex evaluation in the
+      // helper because embedding it in the serialized QX Headers string would
+      // change ^/$ and capture semantics.
+      return {
+        kind:'request-header-present',
+        key:'request-header-present\u0000'+normalizedName,
+        name:headerName,
+        pattern:requestHeaderLinePattern(headerName,null),
+      };
+    }
   }
 
   return null;
@@ -81,13 +141,22 @@ function selectMethodPredicate(predicates) {
   return null;
 }
 
+function selectHeaderPredicate(predicates) {
+  for (const item of predicates.values()) {
+    if (item.kind==='request-header-eq' || item.kind==='request-header-present') return item;
+  }
+  return null;
+}
+
 function exactPredicates(node) {
   const n=unwrap(node);
   if (!n) return {ok:false,reason:'missing Rewrite condition'};
 
   if (n.type==='comparison') {
     const item=comparisonKey(n);
-    if (!item) return {ok:false,reason:'condition comparison is outside the exact QX matcher subset'};
+    if (!item || item.kind.startsWith('request-header-')) {
+      return {ok:false,reason:'condition comparison is outside the exact QX matcher subset'};
+    }
     return {ok:true,predicates:new Map([[item.key,item]])};
   }
 
@@ -111,17 +180,27 @@ function exactPredicates(node) {
 function matcherFromPredicates(predicates) {
   const url=selectUrlPredicate(predicates);
   const method=selectMethodPredicate(predicates);
+  const header=selectHeaderPredicate(predicates);
   const hasUrl=Boolean(url);
-  const hasHeaders=Boolean(method);
+  const hasHeaders=Boolean(method || header);
   const urlPattern=hasUrl ? url.pattern : '^https?://';
 
   if (hasHeaders) {
-    // Quantumult X url-and-header always evaluates the URL first and then the
-    // request-side Headers comparison string. Therefore:
-    // - URL + Headers condition => preserve both.
-    // - Headers-only condition => use an all-HTTP(S) URL guard plus Headers.
-    // A URL-only source condition must never be upgraded to url-and-header.
-    const headersPattern='^'+regexEscape(method.value)+'[ ]';
+    // Quantumult X url-and-header evaluates URL first and then one regex over
+    // a serialized request-side string containing method, path and headers.
+    // Keep header-regex source conditions inside the helper; the native layer
+    // only proves request-header presence for those cases.
+    const methodPattern=method ? '^'+regexEscape(method.value)+'[ ]' : null;
+    let headersPattern=header?.pattern || methodPattern;
+
+    if (methodPattern && header) {
+      headersPattern=methodPattern+'[\\s\\S]*'+header.pattern;
+    }
+
+    const pushedDown=[];
+    if (method) pushedDown.push('request.method');
+    if (header) pushedDown.push('request.header['+JSON.stringify(header.name)+']');
+
     return {
       ok:true,
       matcher:'url-and-header',
@@ -129,7 +208,7 @@ function matcherFromPredicates(predicates) {
       urlPattern,
       headersPattern,
       prefix:urlPattern+' '+headersPattern+' url-and-header ',
-      pushedDown:['request.method'],
+      pushedDown,
     };
   }
 
