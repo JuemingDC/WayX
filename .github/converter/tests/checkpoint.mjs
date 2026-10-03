@@ -1206,7 +1206,7 @@ assert.equal(bareUrl.sourceFlags, 'i');
 assert.deepEqual(bareUrl.notes, []);
 assert.equal(compileRegexForTarget(parseRewriteV2('response if ${url} ~= /api/ then response.body.replace(/a.b/s, "x")').actions[0].args[0], {subject:'body'}).ok, true);
 
-const qxDeleteV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /^https:\\/\\/api\\.example\\.com\\/feed/i then response.json.delete(["data.ads", "data.apps[0].promo"])'));
+const qxDeleteV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /^https:\\/\\/api\\.example\\.com\\/feed/ then response.json.delete(["data.ads", "data.apps[0].promo"])'));
 assert.equal(qxDeleteV2.ok, true);
 assert.match(qxDeleteV2.line, /url jsonjq-response-body/);
 assert.doesNotMatch(qxDeleteV2.line, /delpaths/);
@@ -1216,26 +1216,26 @@ const qxDeleteObjectsV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url}
 assert.equal(qxDeleteObjectsV2.ok, true);
 assert.match(qxDeleteObjectsV2.line, /del\(\.data\.ads, \.data\.promo\)/);
 
-const qxReplaceV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /search/i then response.json.replace("data.items", `[]`)'));
+const qxReplaceV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /search/ then response.json.replace("data.items", `[]`)'));
 assert.equal(qxReplaceV2.ok, true);
 assert.match(qxReplaceV2.line, /setpath\(\["data","items"\]; \[\]\)/);
 
-const qxJqV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /profile/i then response.json.jq("del(.ads)")'));
+const qxJqV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /profile/ then response.json.jq("del(.ads)")'));
 assert.equal(qxJqV2.ok, true);
 assert.match(qxJqV2.line, /jsonjq-response-body 'del\(\.ads\)'/);
 
-const surgeJqV2 = surgeDirectRewritePlan(parseRewriteV2('response if ${url} ~= /profile/i then response.json.jq("del(.ads)")'));
+const surgeJqV2 = surgeDirectRewritePlan(parseRewriteV2('response if ${url} ~= /profile/ then response.json.jq("del(.ads)")'));
 assert.equal(surgeJqV2.ok, true);
 assert.match(surgeJqV2.line, /^http-response-jq /);
 
-const redirectV2 = parseRewriteV2('request if ${url} ~= /(^https:\\/\\/live\\.bilibili\\.com\\/\\d+)(?:\\/?\\?.*)/i as urlMatch then redirect(302, "${urlMatch.1}")');
+const redirectV2 = parseRewriteV2('request if ${url} ~= /(^https:\\/\\/live\\.bilibili\\.com\\/\\d+)(?:\\/?\\?.*)/ as urlMatch then redirect(302, "${urlMatch.1}")');
 const redirectScript = renderQxRedirectScript(redirectV2, {stamp:'2026-09-29 10:00:00 +08:00', category:'Adblock'});
 assert.equal(redirectScript.qxAction, 'script-echo-response');
 assert.equal(redirectScript.pattern, '(^https:\\/\\/live\\.bilibili\\.com\\/\\d+)(?:\\/?\\?.*)');
 assert.match(redirectScript.script, /__wayxLocation/);
 assert.match(redirectScript.script, /HTTP\/1\.1 302 Found/);
 
-const reject404V2 = parseRewriteV2('request if ${url} ~= /^https:\\/\\/ads\\.example\\.com/i then reject(404)');
+const reject404V2 = parseRewriteV2('request if ${url} ~= /^https:\\/\\/ads\\.example\\.com/ then reject(404)');
 const reject404Qx = qxDirectRewritePlan(reject404V2);
 assert.equal(reject404Qx.ok, true);
 assert.match(reject404Qx.line, / url reject$/);
@@ -1262,21 +1262,21 @@ const reject451Script = renderQxRejectScript(reject451V2, {category:'Adblock'});
 assert.equal(reject451Script.qxAction, 'script-echo-response');
 assert.match(reject451Script.script, /HTTP\/1\.1 451 Unavailable For Legal Reasons/);
 
-const qxHeaderV2 = parseRewriteV2('request if ${url} ~= /https:\\/\\/rule\\.example\\.com/i then request.header.set("user-agent", "Loon") | request.header.del("Cookie")');
+const qxHeaderV2 = parseRewriteV2('request if ${url} ~= /https:\\/\\/rule\\.example\\.com/ then request.header.set("user-agent", "Loon") | request.header.del("Cookie")');
 const qxHeaderScript = renderQxHeaderScript(qxHeaderV2, {category:'Rewrite'});
 assert.equal(qxHeaderScript.qxAction, 'script-request-header');
 assert.match(qxHeaderScript.script, /__wayxSet/);
 assert.match(qxHeaderScript.script, /__wayxDel/);
 assert.throws(
   () => renderQxHeaderScript(
-    parseRewriteV2('response if ${url} ~= /api/i then response.header.add("X-A", "1")'),
+    parseRewriteV2('response if ${url} ~= /api/ then response.header.add("X-A", "1")'),
     {category:'Rewrite'},
   ),
   /header\.add cannot be represented losslessly/,
 );
 
 const inlineTextMock = renderQxInlineMockScript(
-  parseRewriteV2('response if ${url} ~= /api/i then response.body.mock("text", "{\\\"ok\\\":true}", 200)'),
+  parseRewriteV2('response if ${url} ~= /api/ then response.body.mock("text", "{\\\"ok\\\":true}", 200)'),
   {category:'Adblock'},
 );
 assert.equal(inlineTextMock.qxAction, 'script-echo-response');
@@ -1284,7 +1284,7 @@ assert.doesNotMatch(inlineTextMock.script, /\$task\.fetch/);
 assert.match(inlineTextMock.script, /output\.body = __wayxBody/);
 
 const grpcMock = renderQxInlineMockScript(
-  parseRewriteV2('response if ${url} ~= /grpc/i then response.body.mock("text", "AAAAAAA=", 200, true) | response.header.set("grpc-status", "0")'),
+  parseRewriteV2('response if ${url} ~= /grpc/ then response.body.mock("text", "AAAAAAA=", 200, true) | response.header.set("grpc-status", "0")'),
   {category:'Adblock'},
 );
 assert.equal(grpcMock.qxAction, 'script-echo-response');
@@ -1293,14 +1293,14 @@ assert.match(grpcMock.script, /grpc-status/);
 assert.match(grpcMock.script, /__wayxHeaderSet/);
 
 const requestInlineMock = renderQxInlineMockScript(
-  parseRewriteV2('request if ${url} ~= /submit/i then request.body.mock("json", "{\\\"x\\\":1}")'),
+  parseRewriteV2('request if ${url} ~= /submit/ then request.body.mock("json", "{\\\"x\\\":1}")'),
   {category:'Rewrite'},
 );
 assert.equal(requestInlineMock.qxAction, 'script-request-body');
 assert.match(requestInlineMock.script, /\$done\(\{headers, body: __wayxBody\}\)/);
 
 const safeMockHeaderAdd = renderQxInlineMockScript(
-  parseRewriteV2('response if ${url} ~= /api/i then response.body.mock("text", "x", 200) | response.header.add("X-Test", "a=1")'),
+  parseRewriteV2('response if ${url} ~= /api/ then response.body.mock("text", "x", 200) | response.header.add("X-Test", "a=1")'),
   {category:'Rewrite'},
 );
 assert.equal(safeMockHeaderAdd.qxAction, 'script-echo-response');
@@ -1309,14 +1309,14 @@ assert.match(safeMockHeaderAdd.script, /a=1/);
 
 assert.throws(
   () => renderQxInlineMockScript(
-    parseRewriteV2('response if ${url} ~= /api/i then response.body.mock("text", "x", 200) | response.header.add("Content-Type", "text/plain")'),
+    parseRewriteV2('response if ${url} ~= /api/ then response.body.mock("text", "x", 200) | response.header.add("Content-Type", "text/plain")'),
     {category:'Rewrite'},
   ),
   /header\.add cannot be represented losslessly/,
 );
 
 const surgeHeaderSet = surgeHeaderRewritePlan(
-  parseRewriteV2('request if ${url} ~= /api/i then request.header.set("X-Test", "1") | request.header.del("Cookie")')
+  parseRewriteV2('request if ${url} ~= /api/ then request.header.set("X-Test", "1") | request.header.del("Cookie")')
 );
 assert.equal(surgeHeaderSet.ok, true);
 assert.equal(surgeHeaderSet.section, 'header');
@@ -1326,14 +1326,14 @@ assert.match(surgeHeaderSet.lines[1], /header-add X-Test 1$/);
 assert.match(surgeHeaderSet.lines[2], /header-del Cookie$/);
 
 const surgeHeaderAdd = surgeHeaderRewritePlan(
-  parseRewriteV2('response if ${url} ~= /api/i then response.header.add("Set-Cookie", "a=1")')
+  parseRewriteV2('response if ${url} ~= /api/ then response.header.add("Set-Cookie", "a=1")')
 );
 assert.equal(surgeHeaderAdd.ok, true);
 assert.equal(surgeHeaderAdd.lines.length, 1);
 assert.match(surgeHeaderAdd.lines[0], /header-add Set-Cookie a=1$/);
 
 const surgeMockFile = surgeMockFilePlan(
-  parseRewriteV2('response if ${url} ~= /file/i then response.body.mock_file("json", "mock.json", 201)'),
+  parseRewriteV2('response if ${url} ~= /file/ then response.body.mock_file("json", "mock.json", 201)'),
   {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'},
 );
 assert.equal(surgeMockFile.ok, true);
@@ -1343,14 +1343,14 @@ assert.match(surgeMockFile.line, /https:\/\/example\.com\/Plugins\/mock\.json/);
 assert.match(surgeMockFile.line, /status-code=201/);
 
 const surgeMockFileHeaders = surgeMockFilePlan(
-  parseRewriteV2('response if ${url} ~= /file/i then response.body.mock_file("json", "mock.json", 200) | response.header.set("X-Test", "1")'),
+  parseRewriteV2('response if ${url} ~= /file/ then response.body.mock_file("json", "mock.json", 200) | response.header.set("X-Test", "1")'),
   {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'},
 );
 assert.equal(surgeMockFileHeaders.ok, true);
 assert.match(surgeMockFileHeaders.line, /Content-Type:application\/json\|X-Test:1/);
 
 const surgeRequestMock = renderSurgeRequestMockScript(
-  parseRewriteV2('request if ${url} ~= /submit/i then request.body.mock("json", "{\\\"x\\\":1}")'),
+  parseRewriteV2('request if ${url} ~= /submit/ then request.body.mock("json", "{\\\"x\\\":1}")'),
   {category:'Rewrite'},
 );
 assert.equal(surgeRequestMock.surgeType, 'http-request');
@@ -1358,7 +1358,7 @@ assert.equal(surgeRequestMock.requiresBody, true);
 assert.match(surgeRequestMock.script, /\$done\(\{headers,body:__wayxBody\}\)/);
 
 const surgeGrpcMock = surgeInlineMockPlan(
-  parseRewriteV2('response if ${url} ~= /grpc/i then response.body.mock("text", "AAAAAAA=", 200, true) | response.header.set("grpc-status", "0")')
+  parseRewriteV2('response if ${url} ~= /grpc/ then response.body.mock("text", "AAAAAAA=", 200, true) | response.header.set("grpc-status", "0")')
 );
 assert.equal(surgeGrpcMock.ok, true);
 assert.equal(surgeGrpcMock.section, 'map');
@@ -1366,7 +1366,7 @@ assert.match(surgeGrpcMock.line, /data-type=base64/);
 assert.match(surgeGrpcMock.line, /status-code=200/);
 assert.match(surgeGrpcMock.line, /Content-Type:text\/plain\|grpc-status:0/);
 
-const scriptV2Basic = parseScriptV2('response if ${url} ~= /^https:\\/\\/api\\.example\\.com/i then script("https://example.com/a.js") with tag="API", requires_body=true, binary_body_mode=false');
+const scriptV2Basic = parseScriptV2('response if ${url} ~= /^https:\\/\\/api\\.example\\.com/ then script("https://example.com/a.js") with tag="API", requires_body=true, binary_body_mode=false');
 assert.equal(scriptV2Basic.phase, 'response');
 assert.equal(scriptV2Basic.script.path, 'https://example.com/a.js');
 assert.equal(scriptOptionBoolean(scriptV2Basic, 'requires_body'), true);
@@ -1403,14 +1403,14 @@ assert.equal(surgeScriptV2ArgumentCondition.ok, false);
 assert.match(surgeScriptV2ArgumentCondition.reason, /plugin \[Argument\] condition/);
 
 const qxScriptV2Native = qxScriptV2Plan(
-  parseScriptV2('response if ${url} ~= /^https:\\/\\/api\\.example\\.com/i then script("https://example.com/a.js") with tag="API", requires_body=true'),
+  parseScriptV2('response if ${url} ~= /^https:\\/\\/api\\.example\\.com/ then script("https://example.com/a.js") with tag="API", requires_body=true'),
   {scriptUrl:'https://example.com/a.js', sourceText:'$done({body:$response.body});'},
 );
 assert.equal(qxScriptV2Native.ok, true);
 assert.match(qxScriptV2Native.line, /url script-response-body https:\/\/example\.com\/a\.js$/);
 
 const qxResponseBinaryNative = qxScriptV2Plan(
-  parseScriptV2('response if ${url} ~= /image/i then script("https://example.com/binary.js") with requires_body=true, binary_body_mode=true'),
+  parseScriptV2('response if ${url} ~= /image/ then script("https://example.com/binary.js") with requires_body=true, binary_body_mode=true'),
   {scriptUrl:'https://example.com/binary.js', sourceText:'$done({bodyBytes:$response.bodyBytes});'},
 );
 assert.equal(qxResponseBinaryNative.ok, true);
@@ -1418,7 +1418,7 @@ assert.match(qxResponseBinaryNative.line, /url script-response-body /);
 assert.ok(qxResponseBinaryNative.notes.some(note => /binary_body_mode=true ignored/i.test(note)));
 
 const qxRequestBinaryUnsupported = qxScriptV2Plan(
-  parseScriptV2('request if ${url} ~= /upload/i then script("https://example.com/binary.js") with binary_body_mode=true'),
+  parseScriptV2('request if ${url} ~= /upload/ then script("https://example.com/binary.js") with binary_body_mode=true'),
   {scriptUrl:'https://example.com/binary.js', sourceText:'$done({});'},
 );
 assert.equal(qxRequestBinaryUnsupported.ok, true);
@@ -1427,7 +1427,7 @@ assert.doesNotMatch(qxRequestBinaryUnsupported.line, /script-request-body/);
 assert.ok(qxRequestBinaryUnsupported.notes.some(note => /binary_body_mode=true ignored/i.test(note)));
 
 const surgeScriptV2Native = surgeScriptV2Plan(
-  parseScriptV2('request if ${url} ~= /submit/i then script("https://example.com/request.js") with requires_body=true, binary_body_mode=true'),
+  parseScriptV2('request if ${url} ~= /submit/ then script("https://example.com/request.js") with requires_body=true, binary_body_mode=true'),
   {scriptUrl:'https://example.com/request.js', name:'request_script'},
 );
 assert.equal(surgeScriptV2Native.ok, true);
