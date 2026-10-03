@@ -68,6 +68,7 @@ assert.equal(singleRewriteOperation(legacyJson).operation,'jq');
 assert.equal(isEmptyLegacyJsonJqIr(legacyJson),false);
 assert.equal(isEmptyLegacyJsonJqIr(legacyRewriteToSemanticIr('^https://api\\.example\\.com',"response-body-json-jq ''")),true);
 assert.equal(isEmptyLegacyJsonJqIr(legacyRewriteToSemanticIr('^https://api\\.example\\.com','request-body-json-jq ""')),true);
+assert.equal(isEmptyLegacyJsonJqIr(legacyRewriteToSemanticIr('^https://api\\.example\\.com',"response-body-json-jq ''\u200b")),true);
 
 const v2JsonSource='response if ${url} ~= /api/ then response.json.jq("del(.ads)")';
 const v2Json=rewriteV2AstToSemanticIr(parseRewriteV2(v2JsonSource));
