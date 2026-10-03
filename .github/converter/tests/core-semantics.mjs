@@ -1,20 +1,13 @@
+import { parseRewriteV2 } from '../src/rewrite.mjs';
+import { compileSourceRegex, execSourceRegex } from '../src/core/regex.mjs';
+import { evaluateCondition } from '../src/core/condition-evaluator.mjs';
+import { EQUIVALENCE_KINDS, nativeEquivalent, guardedHelper, phaseDispatcher, unsupported, differentialConditionOracle } from '../src/core/equivalence-plan.mjs';
+
 // WayX semantic core Phase C contract
 // Author: chance
 // Category: Converter / Core / Reference Semantics
 
 import assert from 'node:assert/strict';
-import { parseRewriteV2 } from '../src/rewrite-v2.mjs';
-import { compileSourceRegex, execSourceRegex } from '../src/core/regex.mjs';
-import { evaluateCondition } from '../src/core/condition-evaluator.mjs';
-import {
-  EQUIVALENCE_KINDS,
-  nativeEquivalent,
-  guardedHelper,
-  phaseDispatcher,
-  unsupported,
-  differentialConditionOracle,
-} from '../src/core/equivalence-plan.mjs';
-
 function condition(source) {
   return parseRewriteV2(source).condition;
 }

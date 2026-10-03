@@ -1,13 +1,12 @@
-// WayX generated Quantumult X scripts for semantic Rewrite v2 actions
-// Author: chance
-// Category: Converter / Quantumult X / Rewrite v2
-
 import { simpleUrlRewriteCondition, fixedStringValue } from './rewrite-v2-semantic.mjs';
-import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
-import { findRewriteComparisons } from './rewrite-v2.mjs';
+import { validateRewriteV2Ast, findRewriteComparisons } from './rewrite.mjs';
 import { compileComplexCondition } from './complex-rewrite.mjs';
 import { qxMockTypeIsBinary, renderQxMockScript } from './qx-mock.mjs';
 import { normalizeRegexBodyForTarget } from './target-regex.mjs';
+
+// WayX generated Quantumult X scripts for semantic Rewrite v2 actions
+// Author: chance
+// Category: Converter / Quantumult X / Rewrite v2
 
 const STATUS_TEXT = Object.freeze({
   200:'OK', 201:'Created', 202:'Accepted', 204:'No Content',

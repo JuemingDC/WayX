@@ -1,15 +1,10 @@
+import { parseLoonArguments } from './argument.mjs';
+import { isRewriteV2, parseRewriteV2 } from './rewrite.mjs';
+import { isScriptV2, parseScriptV2, scriptV2ArgumentRefs, scriptV2DynamicOptionRefs } from './script.mjs';
+
 // WayX Loon plugin [Argument] usage analysis
 // Author: chance
 // Category: Converter / Argument / Semantic Analysis
-import { parseLoonArguments } from './argument.mjs';
-import { isRewriteV2, parseRewriteV2 } from './rewrite-v2.mjs';
-import {
-  isScriptV2,
-  parseScriptV2,
-  scriptV2ArgumentRefs,
-  scriptV2DynamicOptionRefs,
-} from './script-v2.mjs';
-
 function activeLines(lines = []) {
   return lines
     .map(raw => String(raw ?? '').trim())

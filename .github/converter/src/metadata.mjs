@@ -120,3 +120,33 @@ export function renderSurgeModuleHeader(headerLines, entry, stamp, { needsCore20
   );
   return out;
 }
+
+// Generated-file policy metadata; target syntax is validated by its sole adapter.
+export function validateConversionMetadata(text,entry,target) {
+  const common=[
+    /^# Converted:\s*.+$/m,
+    /^# Converted by:\s*chance\s*$/m,
+    /^# Source:\s*.+$/m,
+    target==='qx' ? /^# Target:\s*Quantumult X\s*$/m : /^# Target:\s*Surge\s*$/m,
+  ];
+  for(const pattern of common){
+    if(!pattern.test(text))throw new Error(`${entry.id}: missing conversion metadata ${pattern}`);
+  }
+  if(target==='qx'){
+    if(!/^# Category:\s*.+$/m.test(text))throw new Error(`${entry.id}: missing conversion Category`);
+    for(const title of ['# [filter_local]','# [rewrite_local]','# [mitm]']){
+      if(!text.includes(title))throw new Error(`${entry.id}: missing commented section ${title}`);
+    }
+  }else if(target==='surge'){
+    if((text.match(/^#!category=WayX$/gm)||[]).length!==1)throw new Error(`${entry.id}: module requires exactly one #!category=WayX`);
+    if(/^# Category:\s*.+$/m.test(text))throw new Error(`${entry.id}: legacy Surge Category comment`);
+    let mitm=false;
+    for(const raw of text.split('\n')){
+      const line=raw.trim(),section=line.match(/^\[([^\]]+)\]$/);
+      if(section){mitm=section[1]==='MITM';continue;}
+      if(mitm && /^hostname\s*=/i.test(line) && !/^hostname\s*=\s*%APPEND%\s+\S/i.test(line)){
+        throw new Error(`${entry.id}: Surge module MITM hostname must use %APPEND%`);
+      }
+    }
+  }else throw new TypeError('Unknown metadata target: '+target);
+}

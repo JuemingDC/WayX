@@ -1,10 +1,9 @@
+import { isRewriteV2, parseRewriteV2, validateRewriteV2Ast } from '../src/rewrite.mjs';
+import { classifyComplexRewrite } from '../src/complex-rewrite.mjs';
+
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { isRewriteV2, parseRewriteV2 } from '../src/rewrite-v2.mjs';
-import { validateRewriteV2Ast } from '../src/rewrite-v2-actions.mjs';
-import { classifyComplexRewrite } from '../src/complex-rewrite.mjs';
-
 const ROOT=process.cwd();
 const manifest=JSON.parse(await fs.readFile(path.join(ROOT,'.github/sources/loon.json'),'utf8'));
 const found=[];

@@ -1,14 +1,14 @@
-// Generic Loon legacy Rewrite classifier and target planner
-// Author: chance
-// Category: Converter / Legacy Rewrite
-import crypto from 'node:crypto';
 import { minifyJq, parseJsonKeyPath, quoteJq, renderFixedPathDeleteJq } from './jq.mjs';
 import { normalizeRegexBodyForTarget } from './target-regex.mjs';
 import { renderQxHeaderScript, renderQxInlineMockScript } from './qx-semantic-script.mjs';
 import { surgeInlineMockPlan } from './rewrite-v2-semantic.mjs';
 import { renderSurgeRequestMockScript } from './surge-mock.mjs';
-import { classifyLegacyRewriteAction, isEmptyLegacyJsonJqIr, legacyRewriteToSemanticIr } from './rewrite-ir.mjs';
+import { classifyLegacyRewriteAction, isEmptyLegacyJsonJqIr, legacyRewriteToSemanticIr } from './rewrite.mjs';
 
+// Generic Loon legacy Rewrite classifier and target planner
+// Author: chance
+// Category: Converter / Legacy Rewrite
+import crypto from 'node:crypto';
 function review(pattern, action, reason) {
   return {
     section:'comment',
@@ -344,8 +344,8 @@ export function planLegacyRewriteIr(ir, target, ctx={}) {
   if (!ir || ir.type !== 'rewrite-semantic-ir' || ir.sourceSyntax !== 'legacy') {
     throw new TypeError('Expected Legacy Rewrite Semantic IR');
   }
-  const pattern=ir.sourcePayload?.pattern ?? '';
-  const action=ir.sourcePayload?.action ?? '';
+  const pattern=ir.condition?.pattern ?? '';
+  const action=ir.operations[0]?.raw ?? '';
   if (isEmptyLegacyJsonJqIr(ir)) return {section:'drop', reason:'empty-legacy-json-jq'};
   const targetPattern=normalizeRegexBodyForTarget(pattern);
   const operation=ir.operations[0];

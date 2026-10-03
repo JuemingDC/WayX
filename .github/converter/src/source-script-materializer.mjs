@@ -2,10 +2,14 @@
 // Author: chance
 // Category: Converter / Script / Materialization
 
-import { isScriptV2, parseScriptV2 } from './script-v2.mjs';
+import { isScriptV2, parseScriptV2 } from './script.mjs';
 import { groupSourceSectionItems } from './plugin-parser.mjs';
 import { normalizePluginSource, parseLoonPlugin } from './plugin-parser.mjs';
 import { fetchOriginalText, resolveOriginalUrl } from './source-fetch.mjs';
+
+// Loon Source Script discovery and materialization
+// Author: chance
+// Category: Converter / Script / Materialization
 
 export function discoverSourceScriptUrls(source,{parsed=null}={}) {
   const text=String(source ?? '');

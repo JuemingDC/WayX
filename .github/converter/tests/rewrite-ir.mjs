@@ -1,18 +1,10 @@
+import { parseRewriteV2, isEmptyJsonJqIr, isEmptyLegacyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr, singleRewriteOperation, rewriteOperationKinds } from '../src/rewrite.mjs';
+
 // Target-neutral Rewrite Semantic IR contract
 // Author: chance
 // Category: Converter / Rewrite / Semantic IR Validation
 
 import assert from 'node:assert/strict';
-import { parseRewriteV2 } from '../src/rewrite-v2.mjs';
-import {
-  isEmptyJsonJqIr,
-  isEmptyLegacyJsonJqIr,
-  legacyRewriteToSemanticIr,
-  rewriteV2AstToSemanticIr,
-  singleRewriteOperation,
-  rewriteOperationKinds,
-} from '../src/rewrite-ir.mjs';
-
 const legacyReject=legacyRewriteToSemanticIr('^https://ad\\.example\\.com','reject-dict');
 assert.equal(legacyReject.sourceSyntax,'legacy');
 assert.equal(legacyReject.phase,'request');

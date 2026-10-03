@@ -1,10 +1,9 @@
+import { isRewriteV2, parseRewriteV2, validateRewriteV2Ast } from './rewrite.mjs';
+import { normalizeRegexBodyForTarget } from './target-regex.mjs';
+
 // WayX deterministic Safe Tier analyzer for Loon Rewrite v2
 // Author: chance
 // Category: Converter / Rewrite v2 / Safe Tier
-import { isRewriteV2, parseRewriteV2 } from './rewrite-v2.mjs';
-import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
-import { normalizeRegexBodyForTarget } from './target-regex.mjs';
-
 const SAFE_REJECT_ACTIONS = new Map([
   ['reject_dict', 'reject-dict'],
   ['reject_array', 'reject-array'],

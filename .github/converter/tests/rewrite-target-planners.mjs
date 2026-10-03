@@ -1,15 +1,14 @@
-// Rewrite target planner contract
-// Author: chance
-// Category: Converter / Rewrite / Target Planning Validation
-
-import assert from 'node:assert/strict';
-import { parseRewriteV2 } from '../src/rewrite-v2.mjs';
-import { legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from '../src/rewrite-ir.mjs';
+import { parseRewriteV2, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from '../src/rewrite.mjs';
 import { planQxRewrite } from '../src/rewrite-qx.mjs';
 import { jsonPipelineToSafeNativeJq, qxDirectRewritePlan } from '../src/rewrite-v2-semantic.mjs';
 import { qxExactRewriteMatcherPlan, qxRewriteMatcherPlan } from '../src/qx-rewrite-matcher.mjs';
 import { planSurgeRewrite } from '../src/rewrite-surge.mjs';
 
+// Rewrite target planner contract
+// Author: chance
+// Category: Converter / Rewrite / Target Planning Validation
+
+import assert from 'node:assert/strict';
 function ctx(extra={}) {
   return {
     id:'Fixture',

@@ -1,11 +1,11 @@
-// WayX behavior-first Rewrite v2 semantic mapper
-// Author: chance
-// Category: Converter / Rewrite v2 / Semantic Mapping
 import { compileRegexForTarget, normalizeRegexBodyForTarget } from './target-regex.mjs';
-import { qxPrimitiveForRewriteV2Action, validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
+import { validateRewriteV2Ast, validateRewriteV2Action } from './rewrite.mjs';
 import { parseJsonKeyPath, quoteJq, renderFixedPathDeleteJq } from './jq.mjs';
 import { dependencySpecFromAction } from './dependency.mjs';
 
+// WayX behavior-first Rewrite v2 semantic mapper
+// Author: chance
+// Category: Converter / Rewrite v2 / Semantic Mapping
 function unsupported(reason, extra = {}) {
   return { ok: false, reason, ...extra };
 }
@@ -644,4 +644,75 @@ export function surgeMockFilePlan(ast, {pluginSourceUrl = '', materialized = nul
 
 export function fixedStringValue(node) {
   return stringNode(node);
+}
+
+// QX primitives are selected by behavior. The official Quantumult X sample
+// defines `reject` as an empty HTTP 404 response and `reject-200` as empty 200.
+export const QX_REWRITE_PRIMITIVES = Object.freeze({
+  reject_404: 'reject',
+  reject_200: 'reject-200',
+  reject_img_200: 'reject-img',
+  reject_dict_200: 'reject-dict',
+  reject_array_200: 'reject-array',
+  redirect_302: '302',
+  redirect_307: '307',
+  request_json_jq: 'jsonjq-request-body',
+  response_json_jq: 'jsonjq-response-body',
+  request_body_replace: 'request-body',
+  response_body_replace: 'response-body',
+});
+
+function statusIs200(action) {
+  const status = action.args?.[0];
+  return status?.type === 'number' && status.value === 200;
+}
+
+export function qxPrimitiveForRewriteV2Action(action) {
+  validateRewriteV2Action(action);
+  if (action.name === 'reject' && action.args.length === 1) {
+    const status = action.args?.[0];
+    if (status?.type !== 'number') return null;
+    if (status.value === 404) return QX_REWRITE_PRIMITIVES.reject_404;
+    if (status.value === 200) return QX_REWRITE_PRIMITIVES.reject_200;
+    return null;
+  }
+  if (action.name === 'reject_img') return statusIs200(action) ? QX_REWRITE_PRIMITIVES.reject_img_200 : null;
+  if (action.name === 'reject_dict') return statusIs200(action) ? QX_REWRITE_PRIMITIVES.reject_dict_200 : null;
+  if (action.name === 'reject_array') return statusIs200(action) ? QX_REWRITE_PRIMITIVES.reject_array_200 : null;
+  if (action.name === 'redirect') {
+    const code = action.args[0];
+    if (code?.type === 'number' && code.value === 302) return QX_REWRITE_PRIMITIVES.redirect_302;
+    if (code?.type === 'number' && code.value === 307) return QX_REWRITE_PRIMITIVES.redirect_307;
+    return null;
+  }
+  if (action.name === 'request.json.jq') return QX_REWRITE_PRIMITIVES.request_json_jq;
+  if (action.name === 'response.json.jq') return QX_REWRITE_PRIMITIVES.response_json_jq;
+  if (action.name === 'request.body.replace') return QX_REWRITE_PRIMITIVES.request_body_replace;
+  if (action.name === 'response.body.replace') return QX_REWRITE_PRIMITIVES.response_body_replace;
+  return null;
+}
+
+
+// Consolidated: 2026-10-03
+// Author: chance
+// Category: Converter / Rewrite-Result / Domain
+
+// Rewrite planner result helpers
+// Author: chance
+// Category: Converter / Rewrite / Planning
+
+export function rewriteReview(source, reason) {
+  return {
+    section:'comment',
+    line:'# [WayX] REVIEW REQUIRED: ' + reason + '\n# Source declaration: ' + source,
+  };
+}
+
+export function rewriteIssue(source, code, reason) {
+  return {
+    section:'comment',
+    line:'# [WayX] ISSUE REQUIRED [' + code + ']: ' + reason + '\n# Source declaration: ' + source,
+    issue:true,
+    issueCode:code,
+  };
 }
