@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.52  
+版本：1.53  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -9,6 +9,13 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 本规范采用“分块规范”结构。转换器、测试、canonical 输出、Golden 都必须服从本规范，不能反过来用现有代码定义规范。
 
 ## 2026-10-03 规范更新
+
+**Quantumult X Direct Rewrite 使用 Exact Matcher（2026-10-03）**：
+
+1. QX 单 Action 的原生 direct mapping 不再限定为“只有 URL 条件”。只要完整 source condition 可由 `qxExactRewriteMatcherPlan()` 等价表达，就允许原生输出：当前 exact subset 为单 URL Regex、固定 `request.method == 字符串`，或两者通过 `&&` 组合。
+2. 适用 direct action 包括 QX 原生 reject primitive、`jsonjq-request/response-body`、Key Path JSON → native JQ，以及安全 scalar `request/response-body` replace。URL-only 仍输出 `<原 URL regex> url ...`；URL+Method 输出 `<原 URL regex> ^METHOD[ ] url-and-header ...`；Method-only 使用 `^https?://` guard + `url-and-header`。
+3. request Header、response status/header、OR、多个不同 URL Regex 等不属于 exact subset；这些条件不得直接挂在 native action 上，继续进入 full-condition helper / Review。
+4. Loon Regex flags `i/m/s` 决策再次锁定：parser 保留 flags 供语法校验/审计，但 QX/Surge target 输出无条件丢弃，不生成 `(?i)` / `(?m)` / `(?s)`，也不进入 Review。regex body 保持原样。Script Hub Beta 的 inline-modifier 策略明确不采用。
 
 **Loon Catalog Regex 审计与 QX Redirect Matcher/Capture 解耦（2026-10-03）**：
 
