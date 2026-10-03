@@ -20,7 +20,8 @@ export const QX_WAYX_NATIVE_REWRITE_ACTIONS = new Set([
   'reject','reject-200','reject-img','reject-dict','reject-array',
   '302','307',
   'jsonjq-request-body','jsonjq-response-body',
-  'request-header','request-body','response-body',
+  'request-header','response-header',
+  'request-body','response-body','echo-response',
   ...QX_WAYX_SCRIPT_ACTIONS,
 ]);
 
