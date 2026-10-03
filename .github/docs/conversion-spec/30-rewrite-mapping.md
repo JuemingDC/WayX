@@ -148,14 +148,14 @@ Loon 将 Header 操作细分为 `add / set / del / replace`。Quantumult X 官�
 
 Crossutility 官方 sample 明确给出完整 **request Header block** 的 `request-header` rewrite；用户 2026-10-03 提供的当前 Quantumult X Rewrite 类型选择器同时确认 `response-header` 为原生类型。WayX 将两者都登记为 QX 原生 Rewrite 能力，但仍按“能证明等价才原生”使用，不因为类型存在就把所有 Header Action 强行改写为整块 Header 正则。
 
-当前原生直转只保留单条、固定参数、单 URL 条件的 `*.header.add`：
+当前原生直转覆盖固定安全参数的 `*.header.add`。单 action 可直接转换；同一 source-authored pipeline 若**全部** action 都是同 phase `header.add`，也可合并为一条 whole-header rewrite，但不得把其它 Header 操作混入该 native path：
 
 ```text
 request.header.add(...)  -> request-header（在首个 CRLF 后插入新 Header 行）
 response.header.add(...) -> response-header（在状态行后的首个 CRLF 后插入新 Header 行）
 ```
 
-该原生转换不得先查找/覆盖同名字段；它通过整块 Header 字符串插入新行，保留已有同名 Header，因此保持 add 的重复字段语义。Header 值含 `$` 时不走该原生路径，因为 QX replacement string 的 literal-dollar 转义没有在当前证据中得到证明；request 进入既有 helper，response 仍 fail closed，避免用对象 set 冒充 add。
+该原生转换不得先查找/覆盖同名字段；它通过整块 Header 字符串插入新行，保留已有同名 Header，因此保持 add 的重复字段语义。对 multi-action `add | add | ...`，生成器按源 action 与 batch 元素从左到右拼接插入行，不排序、不去重。Header 值含 `$` 时不走该原生路径，因为 QX replacement string 的 literal-dollar 转义没有在当前证据中得到证明；不得为了局部成功只下沉其中一部分 add。
 
 `request.header.replace` **不再原生嵌入**到整块 Header 正则。Loon Header 名称匹配不区分大小写，且 replacement 的 `$0...$n` 属于 Action 自己的正则捕获；如果为了 QX whole-header rewrite 额外加入 CRLF 捕获组，会改变捕获编号，也可能改变 `^ / $` 等正则上下文。因此统一进入 helper。
 
@@ -260,7 +260,7 @@ target native planner
 
 所有 action 必须严格按 Loon AST 从左到右执行，Body Replace 与 JSON Action 可以交错，禁止按 action family 重排。Complex helper 的 synthetic regression 必须至少覆盖 2-action、3-action、新排列以及已知但 renderer 不支持的组合，防止再次退化为 full-signature whitelist。
 
-QX multi-action matcher 下推遵守“只下推必要条件”原则：`&&` 可提取任一确定必要子条件；`||` 只能提取所有成功分支共同具备的同一 predicate。当前只开放 URL Regex 与 `request.method == 固定字符串`。Method 下推使用 `url-and-header`，response-side 条件和 request Header value 条件继续留在 helper。即使 matcher 已经原生过滤，helper 也不得删除原 condition evaluator，因为 capture、OR 分支与未来扩展仍依赖完整运行时判断。
+QX multi-action matcher 下推分成两个等级：helper prefilter 只要求 predicate 是必要条件；native action 则要求 matcher 对完整 source condition 等价。Prefilter 的 `&&/||` 规则保持不变。当前 exact native matcher 只接受一个 URL Regex、一个固定 `request.method == 字符串`，或两者的 AND；不接受 OR、response-side 条件或多个不同 URL Regex 的交集。只有 exact matcher 成功时，`header.add | header.add | ...` 才可合并为单条原生 `request-header/response-header`。
 
 
 Loon regex literal 的 `i / m / s` flags 在所有 native/helper 路径中均只解析、不传播；flags 的存在本身不进入 Review。parser 去掉 literal delimiter 后，regex body 原样保留，不再全局执行 `\/ -> /` 或其他 canonicalization；目标 helper 不得通过 `new RegExp(pattern, flags)`、inline modifier 或 case-fold 恢复这些 flags。若目标软件确有语法差异，只能由对应 target planner 基于官方格式做局部适配。

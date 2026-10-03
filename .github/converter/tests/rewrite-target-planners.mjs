@@ -207,4 +207,34 @@ assert.match(responseHeaderCondition.line,/^api url script-response-body /);
 assert.doesNotMatch(responseHeaderCondition.line,/url-and-header/);
 assert.match([...responseHeaderConditionCtx.generatedScripts.values()][0],/__wayxHeader\("response","X-Test"\)/);
 
+const nativeRequestAddPipelineSource='request if ${url} ~= /api/ && ${request.method} == "POST" then request.header.add("X-One","1") | request.header.add("X-Two","2")';
+const nativeRequestAddPipelineCtx=ctx();
+const nativeRequestAddPipeline=planQxRewrite(v2(nativeRequestAddPipelineSource),nativeRequestAddPipelineCtx);
+assert.equal(nativeRequestAddPipeline.section,'rewrite');
+assert.match(nativeRequestAddPipeline.line,/^api \^POST\[ \] url-and-header request-header /);
+assert.ok(nativeRequestAddPipeline.line.indexOf('X-One: 1') < nativeRequestAddPipeline.line.indexOf('X-Two: 2'));
+assert.equal(nativeRequestAddPipelineCtx.generatedScripts.size,0);
+
+const nativeResponseAddPipelineSource='response if ${url} ~= /api/ then response.header.add("Set-Cookie","a=1") | response.header.add("Set-Cookie","b=2")';
+const nativeResponseAddPipelineCtx=ctx();
+const nativeResponseAddPipeline=planQxRewrite(v2(nativeResponseAddPipelineSource),nativeResponseAddPipelineCtx);
+assert.equal(nativeResponseAddPipeline.section,'rewrite');
+assert.match(nativeResponseAddPipeline.line,/^api url response-header /);
+assert.ok(nativeResponseAddPipeline.line.indexOf('Set-Cookie: a=1') < nativeResponseAddPipeline.line.indexOf('Set-Cookie: b=2'));
+assert.equal(nativeResponseAddPipelineCtx.generatedScripts.size,0);
+
+const unsafeNativeAddPipelineSource='response if ${url} ~= /api/ then response.header.add("Set-Cookie","a=1") | response.header.add("Set-Cookie","b=$1")';
+const unsafeNativeAddPipelineCtx=ctx();
+const unsafeNativeAddPipeline=planQxRewrite(v2(unsafeNativeAddPipelineSource),unsafeNativeAddPipelineCtx);
+assert.equal(unsafeNativeAddPipeline.section,'comment');
+assert.match(unsafeNativeAddPipeline.line,/REVIEW REQUIRED/);
+assert.equal(unsafeNativeAddPipelineCtx.generatedScripts.size,0);
+
+const nonExactNativeAddPipelineSource='request if (${url} ~= /api/ && ${request.method} == "POST") || ${url} ~= /fallback/ then request.header.add("X-One","1") | request.header.add("X-Two","2")';
+const nonExactNativeAddPipelineCtx=ctx();
+const nonExactNativeAddPipeline=planQxRewrite(v2(nonExactNativeAddPipelineSource),nonExactNativeAddPipelineCtx);
+assert.equal(nonExactNativeAddPipeline.section,'comment');
+assert.match(nonExactNativeAddPipeline.line,/REVIEW REQUIRED/);
+assert.equal(nonExactNativeAddPipelineCtx.generatedScripts.size,0);
+
 console.log('Rewrite target planner contract passed');

@@ -10,7 +10,7 @@ import { renderQxMockFileScript } from './qx-mock.mjs';
 import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript, headerOpsForMock } from './qx-semantic-script.mjs';
 import { registerComplexRewriteHandler, planComplexRewrite } from './complex-rewrite-registry.mjs';
 import { renderMixedRewriteScript, renderSingleJsonMutationScript } from './complex-rewrite-script.mjs';
-import { qxRewriteMatcherPlan } from './qx-rewrite-matcher.mjs';
+import { qxExactRewriteMatcherPlan, qxRewriteMatcherPlan } from './qx-rewrite-matcher.mjs';
 import { rewriteReview, rewriteIssue } from './rewrite-plan-result.mjs';
 import { singleRewriteOperation } from './rewrite-ir.mjs';
 
@@ -135,35 +135,38 @@ function ensureQxRewriteHandlers() {
 }
 
 function qxNativeHeaderPlan(ast) {
-  if (!['request','response'].includes(ast?.phase) || ast.actions?.length!==1) return null;
-  const condition=simpleUrlRewriteCondition(ast);
-  if (!condition.ok) return null;
-  const action=ast.actions[0];
-  if (action.name!==ast.phase+'.header.add') return null;
+  if (!['request','response'].includes(ast?.phase) || !ast.actions?.length) return null;
+  if (ast.actions.some(action=>action.name!==ast.phase+'.header.add')) return null;
 
-  const names=action.args[0]?.type==='array' ? action.args[0].items : [action.args[0]];
-  const values=action.args[1]?.type==='array' ? action.args[1].items : [action.args[1]];
-  if (!names.length || names.length!==values.length) return null;
+  const matcher=qxExactRewriteMatcherPlan(ast);
+  if (!matcher.ok) return null;
 
   const pairs=[];
-  for (let i=0;i<names.length;i++) {
-    const nameNode=names[i], valueNode=values[i];
-    if (!nameNode || !['string','raw-string'].includes(nameNode.type) ||
-        !valueNode || !['string','raw-string'].includes(valueNode.type)) return null;
-    const name=String(nameNode.value), value=String(valueNode.value);
-    if (!name || /[\s:\r\n]/.test(name) || /[\r\n$]/.test(value)) return null;
-    pairs.push([name,value]);
+  for (const action of ast.actions) {
+    const names=action.args[0]?.type==='array' ? action.args[0].items : [action.args[0]];
+    const values=action.args[1]?.type==='array' ? action.args[1].items : [action.args[1]];
+    if (!names.length || names.length!==values.length) return null;
+
+    for (let i=0;i<names.length;i++) {
+      const nameNode=names[i], valueNode=values[i];
+      if (!nameNode || !['string','raw-string'].includes(nameNode.type) ||
+          !valueNode || !['string','raw-string'].includes(valueNode.type)) return null;
+      const name=String(nameNode.value), value=String(valueNode.value);
+      if (!name || /[\s:\r\n]/.test(name) || /[\r\n$]/.test(value)) return null;
+      pairs.push([name,value]);
+    }
   }
 
   // QX request/response-header rewrites operate on the complete header block.
-  // Insert after the request/status line so an existing same-name field is
-  // preserved, matching Loon header.add duplicate-field semantics.
+  // A source-authored add|add pipeline can therefore be coalesced into one
+  // whole-header insertion without changing duplicate-header semantics or
+  // source action order.
   const token=ast.phase+'-header';
   const headerPattern='^([^\\r\\n]+)(\\r\\n)';
   const inserted=pairs.map(([name,value])=>name+': '+value+'$2').join('');
   return {
     section:'rewrite',
-    line:condition.pattern+' url '+token+' '+headerPattern+' '+token+' $1$2'+inserted,
+    line:matcher.prefix+token+' '+headerPattern+' '+token+' $1$2'+inserted,
   };
 }
 
