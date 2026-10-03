@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.55  
+版本：1.56  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -9,6 +9,17 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 本规范采用“分块规范”结构。转换器、测试、canonical 输出、Golden 都必须服从本规范，不能反过来用现有代码定义规范。
 
 ## 2026-10-03 规范更新
+
+**Kelee 全量 Catalog 自动发现与转换（2026-10-03）**：
+
+1. `.github/sources/loon-static.json` 只保存非 Kelee 的人工固定上游；Kelee 插件不得继续以人工白名单方式维护。
+2. Kelee Catalog 由 Python 从 `https://hub.kelee.one/list.json` 拉取；只接受其中实际指向 `https://kelee.one/Tool/Loon/Lpx/*.lpx` 的项目，按 list.json 原始出现顺序去重，随后与 static catalog 合并并写入生成态 `.github/sources/loon.json`。
+3. 已存在的同一 Kelee source URL 必须保留既有 WayX `id/qx/surge/category`，避免无意义改名与 helper 路径漂移；新发现项目从 LPX 文件名确定稳定 target 名，冲突时按通用确定性规则消歧，不建立插件名白名单。
+4. README 的 Adblock 行首先按生成态 source catalog 顺序排列；因此 Kelee 行必须与 plugin-center `list.json` 的出现顺序一致，非 catalog 的手工资源才在其后按稳定文件名排序。
+5. Converter Check 在原有代码/旧快照 preflight 通过后，必须执行 Kelee Catalog refresh、拉取全部 discovered upstream、转换、canonical regeneration、README regeneration，再重新执行 Catalog semantic inventory、格式 validator、helper 引用、repository audit 与 managed-conversion cleanliness gate。
+6. managed-conversion cleanliness gate 至少要求：Catalog 中每个 source/QX/Surge 文件存在；QX/Surge 无 `REVIEW REQUIRED` / `ISSUE REQUIRED`；无 `undefined` / `[object Object]` 等生成异常；转换文件 Source attribution 与 Catalog 一致；有 runtime discovery snapshot 时 manifest 数量/顺序一致；README Kelee 行顺序一致。
+7. Scheduled Upstream Monitor 同样先 refresh Catalog 再转换；只有 Kelee refresh、全量 sync、刷新后 semantic inventory、QX/Surge validator、README、cleanliness audit、repository audit、reconciliation、helper/source URL 校验全部成功时，才允许提交自动生成内容。
+8. Kelee `list.json` 只承担发现与顺序，不替代 LPX 原文。每个 LPX 仍由现有 original-source Python fetch profile 直接拉取并经过同一 Loon→QX/Surge converter；禁止因全量发现引入第三方转换器或绕过官方格式 validator。
 
 **Quantumult X 多类型 Rewrite Script Fallback Matrix（2026-10-03）**：
 
