@@ -32,21 +32,26 @@ export function planQxScript(ir,ctx={}) {
   const targetPattern=normalizeRegexBodyForTarget(sc.pattern);
   const enableFixed=sc.enable ? String(sc.enable).trim().toLowerCase() : '';
   const enableDynamic=Boolean(sc.enable) && !['true','false','1','0'].includes(enableFixed);
+  const debugFixed=sc.debug ? String(sc.debug).trim().toLowerCase() : '';
+  const debugEnabled=Boolean(sc.debug) && !['false','0'].includes(debugFixed);
   const notes=[];
+
+  if (enableDynamic) {
+    return unsupported('Quantumult X official Rewrite Script syntax has no dynamic enable field');
+  }
+  if (sc.timeout) {
+    return unsupported('Quantumult X official Rewrite Script syntax has no timeout field');
+  }
+  if (sc.binaryBodyMode) {
+    return unsupported('Quantumult X official Rewrite Script syntax has no binary-body-mode field');
+  }
+  if (debugEnabled) {
+    return unsupported('Quantumult X official Rewrite Script syntax has no debug field');
+  }
 
   if (sc.argument) {
     notes.push('Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.');
   }
-  if (enableDynamic) {
-    notes.push('Source dynamic enable ignored for Quantumult X; converted rule defaults to enabled.');
-  }
-  if (sc.timeout) {
-    notes.push('Source Script timeout ignored for Quantumult X.');
-  }
-  if (sc.binaryBodyMode) {
-    notes.push('Source binary-body-mode=true ignored for Quantumult X; requires-body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.');
-  }
-
   if (enableFixed==='false' || enableFixed==='0') {
     return {ok:true,disabled:true,reason:'Loon Legacy Script enable=false',tag:sc.tag,notes};
   }
