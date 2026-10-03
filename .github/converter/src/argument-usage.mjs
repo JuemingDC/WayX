@@ -81,18 +81,25 @@ export function rewriteV2PluginArgumentRefs(ast, declaredIds = []) {
 export function scriptV2PluginArgumentUsage(ast, declaredIds = []) {
   const declared = declaredIds instanceof Set ? declaredIds : new Set(declaredIds || []);
   const conditionRefs = declaredRefs(ast?.condition, declared);
+  const triggerRefs = declaredRefs(ast?.trigger, declared);
   const objectRefs = pluginObjectRefs(ast);
   const dynamicOptions = scriptV2DynamicOptionRefs(ast);
   const undeclaredObjectRefs = objectRefs.filter(id => !declared.has(id));
   const undeclaredOptionRefs = dynamicOptions.filter(ref => !declared.has(ref.id));
+  const undeclaredTriggerRefs = [...collectVariableNames(ast?.trigger)]
+    .filter(id => !declared.has(id) && !isBuiltInRuntimeVariable(id))
+    .sort();
   return {
     conditionRefs,
+    triggerRefs,
     objectRefs,
     dynamicOptions,
     undeclaredObjectRefs,
     undeclaredOptionRefs,
+    undeclaredTriggerRefs,
     all: [...new Set([
       ...conditionRefs,
+      ...triggerRefs,
       ...objectRefs.filter(id => declared.has(id)),
       ...dynamicOptions.filter(ref => declared.has(ref.id)).map(ref => ref.id),
     ])].sort(),
@@ -129,6 +136,8 @@ export function analyzePluginArgumentUsage({
         const ast = parseScriptV2(line);
         const refs = scriptV2PluginArgumentUsage(ast, declaredIds);
         for (const id of refs.conditionRefs) addUse(usage, id, {section:'Script', kind:'condition', line});
+        for (const id of refs.triggerRefs) addUse(usage, id, {section:'Script', kind:'trigger', line});
+        for (const id of refs.undeclaredTriggerRefs) undeclaredRefs.push({section:'Script', kind:'trigger', id, line});
         for (const id of refs.objectRefs) {
           if (declaredIds.has(id)) addUse(usage, id, {section:'Script', kind:'argument-object', line});
           else undeclaredRefs.push({section:'Script', kind:'argument-object', id, line});
