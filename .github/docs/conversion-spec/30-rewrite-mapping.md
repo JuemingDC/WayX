@@ -245,9 +245,9 @@ source-authored multi-action AST
 - 以前未在 Catalog 同时出现过、但 renderer 已能逐 action 保持语义的新组合；
 - QX inline `body.mock` 与同 phase `header.set/del/replace` 的新组合。
 
-Renderer 的能力边界仍然严格保留。当前 mixed renderer 只执行已经实现的同 phase Header、Body Replace、JSON add/delete/replace；QX inline mock renderer 要求恰好一个 same-phase `body.mock`，其它 action 只能是同 phase Header，并继续拒绝无法保真表示的 `header.add` duplicate semantics。Surge 的 Map Local / HTTP Script 仍按官方能力决定。
+Renderer 的能力边界仍然严格保留。QX mutation mixed renderer 支持同 phase `header.set/del/replace`、Body Replace、JSON add/delete/replace，并按是否需要 Body 自动选择 `script-*-header` 或 `script-*-body`。request `body.mock/body.mock_file` 现在可与上述 request mutation 组合并统一降为一条 `script-request-body <generated-url>`，保持源 action 顺序；response mock 仍遵守 Loon 官方限制，只允许一个 mock/mock_file + response Header action，并使用 `script-echo-response`。`header.add` 不纳入本阶段新的 mixed-script 研究范围。Surge 的 Map Local / HTTP Script 仍按官方能力决定。
 
-已知 action 若出现在当前 generic complex renderer 尚未实现的 family（例如 mixed pipeline 中的 JQ action），源语义是已知的，因此固定为普通 `REVIEW REQUIRED`，不得误标成 unknown syntax。只有 parser/action registry 本身不认识的 action/语法才使用 `ISSUE REQUIRED`。
+已知 action 若出现在当前 Script fallback 无法保持的 family，源语义仍是已知的，因此固定为普通 `REVIEW REQUIRED`，不得误标成 unknown syntax。当前明确包括：任意 `json.jq/jq_file` 与其它 action 混合、`url.replace` 与其它 action 混合、redirect/reject 与其它 mutation 混合，以及未验证的 request binary mock。它们不得为了消除 Review 而拆成多条 Rewrite。只有 parser/action registry 本身不认识的 action/语法才使用 `ISSUE REQUIRED`。
 
 固定路由顺序：
 
