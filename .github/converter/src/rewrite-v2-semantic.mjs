@@ -124,18 +124,34 @@ export function jsonActionToJq(action) {
   return { ok: true, jq: ops.join(' | ') };
 }
 
-export function qxDirectRewritePlan(ast) {
+export function qxDirectRewritePlan(ast, {matcher = null} = {}) {
   validateRewriteV2Ast(ast);
   if (ast.actions.length !== 1) return unsupported('QX direct mapping requires exactly one action');
-  const condition = simpleUrlRewriteCondition(ast);
-  if (!condition.ok) return condition;
+
+  let condition;
+  if (matcher) {
+    if (matcher.exact !== true || !matcher.prefix) {
+      return unsupported('QX direct native action requires an exact matcher plan');
+    }
+    condition={
+      ok:true,
+      pattern:matcher.urlPattern,
+      prefix:matcher.prefix,
+      notes:[],
+    };
+  } else {
+    condition = simpleUrlRewriteCondition(ast);
+    if (!condition.ok) return condition;
+    condition={...condition,prefix:condition.pattern+' url '};
+  }
+
   const action = ast.actions[0];
 
   const primitive = qxPrimitiveForRewriteV2Action(action);
   if (primitive && /^(?:reject-|reject$)/.test(primitive)) {
     return {
       ok:true, strategy:'direct', section:'rewrite', pattern:condition.pattern,
-      line:condition.pattern + ' url ' + primitive, notes:condition.notes,
+      line:condition.prefix + primitive, notes:condition.notes,
     };
   }
 
@@ -145,7 +161,7 @@ export function qxDirectRewritePlan(ast) {
     const token = action.name.startsWith('request.') ? 'jsonjq-request-body' : 'jsonjq-response-body';
     return {
       ok:true, strategy:'direct', section:'rewrite', pattern:condition.pattern,
-      line:condition.pattern + ' url ' + token + ' ' + qxQuote(jq), notes:condition.notes,
+      line:condition.prefix + token + ' ' + qxQuote(jq), notes:condition.notes,
     };
   }
 
@@ -155,7 +171,7 @@ export function qxDirectRewritePlan(ast) {
     const token = action.name.startsWith('request.') ? 'jsonjq-request-body' : 'jsonjq-response-body';
     return {
       ok:true, strategy:'direct', section:'rewrite', pattern:condition.pattern,
-      line:condition.pattern + ' url ' + token + ' ' + qxQuote(mapped.jq), notes:condition.notes,
+      line:condition.prefix + token + ' ' + qxQuote(mapped.jq), notes:condition.notes,
     };
   }
 
@@ -170,7 +186,7 @@ export function qxDirectRewritePlan(ast) {
     const token = action.name.startsWith('request.') ? 'request-body' : 'response-body';
     return {
       ok:true, strategy:'direct', section:'rewrite', pattern:condition.pattern,
-      line:condition.pattern + ' url ' + token + ' ' + bodyRegex.pattern + ' ' + token + ' ' + replacement,
+      line:condition.prefix + token + ' ' + bodyRegex.pattern + ' ' + token + ' ' + replacement,
       notes:[...condition.notes, ...bodyRegex.notes],
     };
   }
