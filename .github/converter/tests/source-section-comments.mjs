@@ -10,9 +10,8 @@ import {
   isSupportedSourceSection,
   sourceCommentText,
 } from '../src/source-section.mjs';
-import { parseSourceMetadataHeader } from '../src/source-metadata.mjs';
 import { attachQxInlineNote, looksLikeCommentedSourceDeclaration } from '../src/qx-comment.mjs';
-import { renderQxSnippetHeader, renderSurgeModuleHeader } from '../src/metadata.mjs';
+import { parseSourceMetadataHeader, renderQxSnippetHeader, renderSurgeModuleHeader } from '../src/metadata.mjs';
 
 const grouped=groupSourceSectionItems([
   '# group',

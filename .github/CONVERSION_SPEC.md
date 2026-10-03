@@ -1,197 +1,748 @@
 # WayX Conversion Specification
 
-版本：1.56  
+版本：1.57  
 作者：chance  
-状态：**唯一权威转换规范（Authoritative）**
+状态：**唯一权威转换规范（Authoritative）**  
+迁移状态：**Semantic Compiler migration / compatibility implementation active**
 
-WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入本仓库；需要时另立规范。
+WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入本仓库转换链。
 
-本规范采用“分块规范”结构。转换器、测试、canonical 输出、Golden 都必须服从本规范，不能反过来用现有代码定义规范。
+---
 
-## 2026-10-03 规范更新
+## 1. 权威来源与证据优先级
 
-**Kelee 全量 Catalog 自动发现与转换（2026-10-03）**：
+任何语法、API、行为或 target capability 必须先有官方依据，再进入实现。优先级固定为：
 
-1. `.github/sources/loon-static.json` 只保存非 Kelee 的人工固定上游；Kelee 插件不得继续以人工白名单方式维护。
-2. Kelee Catalog 由 Python 从 `https://hub.kelee.one/list.json` 拉取；只接受其中实际指向 `https://kelee.one/Tool/Loon/Lpx/*.lpx` 的项目，按 list.json 原始出现顺序去重，随后与 static catalog 合并并写入生成态 `.github/sources/loon.json`。
-3. 已存在的同一 Kelee source URL 必须保留既有 WayX `id/qx/surge/category`，避免无意义改名与 helper 路径漂移；新发现项目从 LPX 文件名确定稳定 target 名，冲突时按通用确定性规则消歧，不建立插件名白名单。
-4. README 的 Adblock 行首先按生成态 source catalog 顺序排列；因此 Kelee 行必须与 plugin-center `list.json` 的出现顺序一致，非 catalog 的手工资源才在其后按稳定文件名排序。
-5. Converter Check 在原有代码/旧快照 preflight 通过后，必须执行 Kelee Catalog refresh、拉取全部 discovered upstream、转换、canonical regeneration、README regeneration，再重新执行 Catalog semantic inventory、格式 validator、helper 引用、repository audit 与 managed-conversion cleanliness gate。
-6. managed-conversion cleanliness gate 至少要求：Catalog 中每个 source/QX/Surge 文件存在；QX/Surge 无 `REVIEW REQUIRED` / `ISSUE REQUIRED`；无 `undefined` / `[object Object]` 等生成异常；转换文件 Source attribution 与 Catalog 一致；有 runtime discovery snapshot 时 manifest 数量/顺序一致；README Kelee 行顺序一致。
-7. Scheduled Upstream Monitor 同样先 refresh Catalog 再转换；只有 Kelee refresh、全量 sync、刷新后 semantic inventory、QX/Surge validator、README、cleanliness audit、repository audit、reconciliation、helper/source URL 校验全部成功时，才允许提交自动生成内容。
-8. Kelee `list.json` 只承担发现与顺序，不替代 LPX 原文。每个 LPX 仍由现有 original-source Python fetch profile 直接拉取并经过同一 Loon→QX/Surge converter；禁止因全量发现引入第三方转换器或绕过官方格式 validator。
+1. **Loon**
+   - https://nsloon.app/docs/intro
+   - Loon 官方 Rewrite / Plugin / Script 文档
+2. **Quantumult X**
+   - 作者官方仓库：https://github.com/crossutility/Quantumult-X
+   - 当前重点依据：
+     - `sample.conf`
+     - `rewrite.md`
+     - `sample-rewrite-request-header.js`
+     - `sample-rewrite-response-header.js`
+     - `sample-rewrite-with-script.js`
+     - `sample-echo-response.js`
+     - 官方仓库中其它明确 sample
+   - 用户上传的官方 `sample.txt`
+3. **Surge**
+   - https://manual.nssurge.com/
+   - https://nssurge.com/
+4. 上游插件/脚本作者原始文件，只用于理解 source behavior，不得替代目标平台官方能力证明。
 
-**Quantumult X 多类型 Rewrite Script Fallback Matrix（2026-10-03）**：
+禁止用第三方教程、资源解析器或“常见写法”证明目标平台支持某语法。第三方实现只能作为兼容思路参考。
 
-1. 本阶段不继续研究 `header.add`。除现有已验证 native/add 路径外，新的多类型 Script fallback 只覆盖 `header.set / header.del / header.replace`、`body.replace`、`json.add / json.delete / json.replace` 与 request-side `body.mock / body.mock_file`。
-2. QX 多类型 source pipeline 不能由一条 native Rewrite 完整表达时，优先改写为**一条 Script Rewrite + 生成脚本链接**，不得拆成多条目标 Rewrite：
-   - 仅 Header mutation → `script-request-header` / `script-response-header`；
-   - 只要包含 Body Replace 或 Key Path JSON mutation → `script-request-body` / `script-response-body`；
-   - request `body.mock / body.mock_file` 与 request Header/Body/JSON mutation 混合 → `script-request-body`；
-   - response `body.mock / body.mock_file` + response Header mutation → `script-echo-response`（Loon 官方规定 response mock 只能再组合 response Header action）。
-3. 生成脚本必须完整重算 Loon condition，并按 source action 从左到右执行。QX matcher 只作为必要条件 prefilter；脚本链接使用 WayX `rawBase/Script/<plugin>/<generated>.js`。
-4. request mock 混合 pipeline 中，mock action在原位置写入 Body 并设置对应 Content-Type，前后 Header/Body/JSON mutation 继续按原顺序执行。`mock_file` 必须先在转换期物化；其物化不再要求 condition 是 simple URL-only。
-5. request mock 的 binary/Base64 body 继续 Review：当前 QX 官方 sample 确认 `script-request-body` action，但没有可据此启用 request `bodyBytes` 的官方示例；不得猜测。
-6. 下列 mixed family 仍不生成伪 Script：`json.jq / jq_file` + 其它 action（QX JS runtime 无官方 jq evaluator）、`url.replace` + 其它 action（官方 request Script 只证明 `path`/headers 修改，未证明完整 URL matched-range rewrite）、redirect/reject 与其它 mutation 的组合（尚无等价的 pipeline/terminal 行为证明）。这些保持 Review，且不得拆分执行。
+---
 
-**Quantumult X JSON Multi-action 原生 JQ 合并（2026-10-03）**：
+## 2. 总目标：行为语义等价，而不是文本相似
 
-1. 同一条 Loon Rewrite v2 pipeline 中，若全部 action 都是同 phase 的 `json.add / json.replace / json.delete`，且 source condition 可被 `qxExactRewriteMatcherPlan()` 完整等价表达，则 WayX 可把整个 pipeline 合成**一条** QX `jsonjq-request-body` / `jsonjq-response-body`；禁止拆成多条独立 Rewrite。
-2. 第一阶段 native subset 只接受固定的**顶层对象 Key Path**（单个字符串 key；不含 `.` 嵌套、不含 `[index]`）以及可静态编码的固定 JSON value。每个 action/batch 元素按源顺序展开并串成单一 JQ pipeline，不排序、不去重、不合并跨 action。
-3. 每个生成操作必须用 `if type == "object" ... else . end` 保护，使其对任意合法 JSON root 都是 no-op/正常输出，不依赖 `try/catch`。这样避免某个 action 因 root 类型不匹配导致整个 JQ pipeline 中断，从而尽量贴近 Loon“失败 action 跳过、后续 action 继续”的 pipeline 语义。
-4. add/replace 继续使用既有语义：add 仅 `getpath(PATH) == null` 时写入；replace 仅 `getpath(PATH)` 为 jq truthy 时写入；delete 使用 `del(...)`，不得生成 `delpaths(...)`。批量元素与多 action 必须严格左到右。
-5. 任何嵌套 Key Path、数组索引、动态/capture/Argument value、非 exact condition 或其它 JSON/JQ action 都关闭 native multi-action path，回到现有 full-condition helper / Review。不得为了追求 native 而扩大 JQ 语义假设。
+WayX 的目标是把 Loon 行为编译为目标平台能够表达的**同等行为**。
 
-**Quantumult X Direct Rewrite 使用 Exact Matcher（2026-10-03）**：
+固定原则：
 
-1. QX 单 Action 的原生 direct mapping 不再限定为“只有 URL 条件”。只要完整 source condition 可由 `qxExactRewriteMatcherPlan()` 等价表达，就允许原生输出：当前 exact subset 为单 URL Regex、固定 `request.method == 字符串`，或两者通过 `&&` 组合。
-2. 适用 direct action 包括 QX 原生 reject primitive、`jsonjq-request/response-body`、Key Path JSON → native JQ，以及安全 scalar `request/response-body` replace。URL-only 仍输出 `<原 URL regex> url ...`；URL+Method 输出 `<原 URL regex> ^METHOD[ ] url-and-header ...`；Method-only 使用 `^https?://` guard + `url-and-header`。
-3. request Header、response status/header、OR、多个不同 URL Regex 等不属于 exact subset；这些条件不得直接挂在 native action 上，继续进入 full-condition helper / Review。
-4. Loon Regex flags `i/m/s` 决策再次锁定：parser 保留 flags 供语法校验/审计，但 QX/Surge target 输出无条件丢弃，不生成 `(?i)` / `(?m)` / `(?s)`，也不进入 Review。regex body 保持原样。Script Hub Beta 的 inline-modifier 策略明确不采用。
+- 能证明 target native 完全等价 → native。
+- native 不能完全等价，但 target Script/runtime 能完全重现 → helper / dispatcher。
+- 两者都不能证明 → unsupported / fail closed。
+- 禁止“删掉目标不支持的部分，其余照常输出”。
+- 禁止以“生成结果看起来合法”替代语义等价证明。
+- 禁止按插件 id、插件名、作者、仓库、Catalog 当前完整 signature 做特判。
 
-**Loon Catalog Regex 审计与 QX Redirect Matcher/Capture 解耦（2026-10-03）**：
+---
 
-1. CI 必须扫描 Catalog 中活动 `[Rewrite]` 与 `[Script]` 的 Legacy pattern 以及 Rewrite/Script v2 全部 Regex AST 节点，单独报告高级/特殊 Regex 构造：lookaround、lookbehind、named capture/backreference、numeric backreference、Unicode property、inline modifier、atomic/conditional/branch-reset group、possessive quantifier。普通 `^/$`、character class、capture/non-capture group、alternation、quantifier、escaped slash/dot 不视为平台特殊语法。
-2. 当前 Catalog **并非没有特殊构造**：总 baseline 为 7 项。`DianPing.lpx` 有 3 个 Legacy atomic group `(?>...)`（2 条 Rewrite + 1 条 Script pattern）和 1 个 Legacy negative lookahead `(?!...)`；`RuCu6/webpage.lpx` 另有 3 个 Script v2 negative lookahead `(?!...)`。这些现有 pattern 一律按源文本原样透传并锁定 baseline；不得为了“统一语法”把 atomic group 改成普通 group、把 negative lookahead 展开或重写。未来 baseline 新增/删除/变化都必须触发 inventory fail closed 后重新审查。Catalog v2 Regex 中大量 `/i` flags 仍按项目既有规则只解析、不传播，不改变 regex body。
-3. QX Rewrite v2 redirect 的 URL matcher 与 capture evaluator 分离：外层使用统一 `qxRewriteMatcherPlan()` 做 URL/Method/request Header 必要条件预筛；helper 内完整重算源 Loon condition，并由源 URL Regex 自己产生 capture。外层 matcher 的 capture 不得被 action replacement 直接消费。
-4. Redirect full-condition helper 当前要求成功路径上存在且仅存在一个 URL Regex，并禁止 `||`，以保证 matched-range replacement 始终对应同一 URL match。允许在该 URL 条件上通过 `&&` 追加 request.method、request/response Header、response.status 等 helper 可表达条件。
-5. Redirect helper 的 URL Regex 继续逐字符使用 parser AST 原值；`${capture.n}` 只能引用该 URL comparison 的 `as capture`，replacement 仍以 URL match 的 `index` 与完整 match 长度执行 matched-range replacement。无法证明 capture 来源/成功路径唯一时 Review。
+## 3. 新架构：Semantic Compiler
 
-**Quantumult X URL Regex 原样保持与 Dedicated Helper Matcher 统一（2026-10-03）**：
+固定数据流：
 
-1. Loon Rewrite v2 的 `${url} ~= /.../` 在 parser 去掉最外层 Regex delimiter 后，**URL regex body 必须逐字符保持源值**。QX matcher planner 与 `simpleUrlRewriteCondition()` 不得对 URL pattern 调用 target regex compiler、normalizer、unescape、canonicalizer 或 case-fold。`\/`、`\.`, capture、lookaround、character class、anchor 等全部保持原样；仅既有项目规则继续丢弃 `i/m/s` flags。
-2. 上述规则只针对 URL matcher。Body/Header action 自身的 Regex 仍按各自 action 语义和目标格式处理，不得把“URL 不编译”扩大成取消其它字段已有的安全检查。
-3. QX dedicated helper 统一使用 matcher planner：若 helper 本身**不重算源 condition**，必须要求 `qxExactRewriteMatcherPlan()` 成功后才能执行；若 helper 内部完整重算源 condition，则使用 `qxRewriteMatcherPlan()` 只做必要条件 prefilter。禁止再由各 helper 自行拼 `pattern + ' url '`。
-4. 当前迁移范围包括 inline/file mock、single Header helper、single Body/JSON mutation helper 与 generated reject response。URL-only 继续使用 `url`；Method/Headers 条件只在 matcher planner 判定后使用 `url-and-header`。single Header/Body/JSON 在 exact matcher 不足时可使用 full-condition helper，因此 `${request.header[...]}` prefilter 现在也能用于这些 single-action 路径。
-5. Redirect helper 已完成 matcher/capture 解耦：matcher 只负责外层候选筛选，helper 内重算完整 condition 与 URL capture。对只有 URL 的源声明仍输出原 URL Regex + `url`；存在可下推 Method/request Header 时才使用 `url-and-header`。
+```text
+Loon source
+  → source parser
+  → Semantic IR
+  → reference evaluator
+  → equivalence planner
+      ├─ native-equivalent
+      ├─ guarded-helper
+      ├─ phase-dispatcher
+      └─ unsupported
+  → target adapter
+      ├─ Quantumult X
+      └─ Surge
+  → target validator
+  → oracle / canonical / audit
+```
 
-**Quantumult X request.header 条件预筛选（2026-10-03）**：
+### 3.1 Source parser
 
-1. Loon 官方 Rewrite v2 文档定义 `${request.header['name']}` 为 `String | null`，Header 名称查找大小写不敏感；`==` 比较完整值，`~=` 对 Header 值执行 Regex 搜索，`null` 表示 Header 缺失。QX 官方 sample 说明 `url-and-header` 的 Headers 比较字符串包含 method、path 与 key-value request headers，并给出 `\r\nUser-Agent: example-agent` 示例。
-2. WayX 允许把可证明为**必要条件**的 request Header 条件下推到 QX `url-and-header` 作为 helper prefilter：固定字符串 `==` 编译为大小写不敏感 Header 名 + 固定值的整行匹配；`~=` 暂时只下推“该 Header 必须存在”，源 Regex 继续由 helper 对真实 Header 值执行，避免把 `^/$`、capture 或 substring 语义错误迁移到 QX 的整块 Headers 字符串。
-3. `${request.header['name']} == null` 不生成正向 Headers matcher，因为成功条件是 Header 缺失；它继续由 helper 判断。插件变量、模板值与无法安全解析的 Header 名同样不下推。
-4. request Header 下推当前只属于 **prefilter**，不得进入 `qxExactRewriteMatcherPlan()`。QX sample 没有证明其序列化 Headers regex 与 Loon 单 Header value lookup 在 duplicate Header、值归一化等边界上完全等价，因此含 `${request.header[...]}` 的 native action 仍需 helper/Review，而不能因为能构造 `url-and-header` 就跳过源 condition evaluator。
-5. Header 名在 QX prefilter 中按 HTTP case-insensitive 语义编译为逐字母大小写字符类；固定值按 Regex literal 转义，并容忍 QX 序列化中的水平空白。URL-only 规则仍只使用 `url`；Headers-only 使用 `^https?://` guard；URL + Header 使用真实 URL pattern + `url-and-header`。
+Parser 只负责还原 Loon 源语义，不得提前做 QX/Surge 适配。
 
-**Quantumult X Multi-action Header 原生合并（2026-10-03）**：
+必须保留：
 
-1. 在 Loon 同一条 Rewrite v2 pipeline 中，若全部 action 都是同 phase 的 `header.add`，且字段名/值均为固定安全字符串，则允许合并成**一条** QX `request-header` / `response-header` whole-header rewrite。合并后的 replacement 按源 action 与 batch 元素的原始顺序插入全部 Header 行，因此保留 duplicate-header add 语义与顺序。
-2. 该 native coalescing 只在源 condition 能被 QX matcher **完整等价表达**时启用。当前 exact matcher 子集为：单个 URL Regex、单个固定 `${request.method} == "METHOD"`，以及二者通过 `&&` 组成的条件。Method 使用 `<URL> ^METHOD[ ] url-and-header ...`。
-3. `||`、response-side condition、request Header value condition、Argument condition、多个不同 URL Regex 的交集等暂不作为 exact native matcher。对这些条件不得只保留一部分后直接输出原生 Header rewrite；若只能得到必要条件，只能用于 helper prefilter。
-4. 任一 `header.add` 值含换行或未证明的 QX replacement `$` 语义时，整个 multi-action native path 关闭；不得把剩余安全 action 单独下沉，也不得把 duplicate add 退化为 Header object set。无法保真时进入现有 helper/Review 路由。
+- source declaration 原文；
+- section / phase；
+- condition AST；
+- Regex source；
+- Regex flags；
+- capture 名称及归属；
+- action-local capture；
+- Argument / PluginObject 引用；
+- Script option；
+- action 顺序；
+- declaration 顺序；
+- null / missing / empty string 的区别；
+- 原始注释与 metadata。
 
-**Quantumult X Multi-action 原生 Matcher 下推（2026-10-03）**：
+### 3.2 Semantic IR
 
-1. Loon Rewrite v2 的同一条 `ACTION1 | ACTION2 | ...` 仍视为一个有序 pipeline。QX 官方资料只证明单条 Rewrite 的 URL / Headers 匹配与各 Action 语法，没有证明把一个 Loon pipeline 拆成多条独立 QX Rewrite 后仍具有相同的跨规则执行顺序、状态传递与失败语义。因此 **禁止为了减少脚本而拆分 multi-action 为多条 QX 规则**。
-2. 对必须由 QX helper 承载的 multi-action，允许把能证明为源条件**必要条件**的 request-side predicate 下推到 QX 原生 matcher，helper 内仍完整重算原 Loon condition。这样 QX 先做廉价原生筛选，脚本只处理真正候选请求，同时 condition capture、`&&/||`、response-side 条件及 action 顺序仍由 helper 保真。
-3. 当前第一阶段只下推两类可证明安全的 predicate：URL `~=` 固定 Regex，以及 `${request.method} == "METHOD"` 固定字符串。只有 URL 时输出 `<URL regex> url <script-action>`；URL 与 Method 同时存在时输出 `<URL regex> ^METHOD[ ] url-and-header <script-action>`；只有 Method/Headers 条件时输出 `^https?:// ^METHOD[ ] url-and-header <script-action>`。`${request.header[...]}`、`${response.header[...]}`、`${response.status}`、method Regex 与 Argument 条件暂不下推，继续由 helper 运行时判断。
-4. `||` 条件只允许下推**每个成功分支都共同具备**的 predicate；不得把仅属于某个 OR 分支的 URL/Method 条件拿来做原生 matcher，否则会产生 false negative。`&&` 可从任一子项提取必要条件。若无法找到安全 URL predicate，QX helper matcher 回退到 `^https?://`。
-5. 原生 matcher 下推只是 prefilter，不取代 helper 的完整 condition evaluator。特别是命名捕获 `as name` 与 `${name.n}` 模板必须继续由 helper 重新执行原条件产生捕获，不得依赖 QX matcher 暴露捕获组。
+Rule、Rewrite、Script 均应先进入 target-neutral IR。
 
-**Quantumult X Rewrite Headers 匹配（2026-10-03）**：
+IR 不得出现：
 
-1. Quantumult X 的 Rewrite **匹配器与 Action 解耦**，且 Headers matcher 是**可选条件**，不能因为 Action 本身是 `request-header/response-header` 就自动启用。URL-only 条件使用 `<URL regex> url <action...>`；URL + Headers 条件使用 `<URL regex> <Headers regex> url-and-header <action...>`；若源条件只有可下推的 Headers 条件，则用项目约定的全 HTTP(S) URL guard `^https?:// <Headers regex> url-and-header <action...>` 实现“Headers-only”筛选。没有 Headers 条件时禁止生成 `url-and-header`。
-2. 用户上传的官方 `sample.txt` 与 Crossutility 当前 `sample.conf` 明确说明：`url-and-header` 先判断 URL，仅当 URL 命中后再判断 Headers；用于比较的 Headers 字符串包含 **request method、path 与 key-value request headers**。因此 `url-and-header` 是 request-side 匹配器，即使后续 Action 属于 response rewrite，也不得把它误解释为 response-header matcher。
-3. QX capability registry 必须把 `url` / `url-and-header` 作为独立 Rewrite matcher 能力维护，validator 对两种 matcher 复用同一 Rewrite Action registry。Planner 必须显式区分 `url-only`、`headers-only`、`url-and-headers` 与 helper 用的无筛选 fallback；只有后两种真正含 Headers 条件的模式才允许输出 `url-and-header`。当前 App UI“所有 Rewrite 类型均有可选 Headers”作为 current-app reviewed evidence 保存；官方 sample 负责证明 `url-and-header` 语法和匹配顺序，不伪称 sample 为每个 Action 都逐一给出 Headers 示例。
-4. Loon Rewrite v2 的 `${request.method}` / `${request.header[...]}` 只有在能严格编译成上述 request-side Headers regex 时才可下推到 `url-and-header`；`${response.status}` / `${response.header[...]}` 不得因名称含 header 就错误映射到该 matcher。无法证明条件等价时继续使用 helper 或 fail closed，禁止只保留 URL 条件。
+- QX action 名；
+- Surge section 名；
+- QX/Surge helper URL；
+- target capability 判断；
+- target-specific fallback。
 
-**Quantumult X Rewrite 类型补全 / echo-response / JQ 依赖（2026-10-03）**：
+Target planner 只能消费 IR，不允许直接从 Loon 源字符串猜输出。
 
-1. QX scoped Rewrite capability 增加 `echo-response` 与 `response-header`。其中 `echo-response` 有 Crossutility 官方 sample 依据；`response-header` 以用户提供的当前 Quantumult X App Rewrite 类型选择器为人工确认依据，CI 必须把这类 current-app UI reviewed capability 与在线 sample evidence 分开记录，不得伪称官方 sample 已出现该 token。
-2. `request.header.add` 与 `response.header.add` 在“单 URL 条件 + 固定安全字段名/值 + 不含未证明的 replacement `$`”时分别使用 QX 原生 `request-header` / `response-header` 整块 Header 插入，保留 duplicate-header add 语义。其它 set/del/replace 继续按语义等价性选择 helper；不能证明等价时 fail closed。
-3. QX 原生 `echo-response` 的 body resource 必须是本机 `Quantumult X/Data` 相对路径。WayX 不得把 HTTP(S) URL、Plugin 相对资源或转换期下载文件直接写成 native Resource Path。当前 Loon Catalog 没有可证明已经部署到 QX Data 的本机资产声明，因此 inline response mock 与 remote/plugin-relative `mock_file` 默认继续物化内容并使用最小 `script-echo-response`；需要 request body 才能决定响应时使用 `script-analyze-echo-response`。
-4. 官方 `request/response.json.jq_file(path)` 与历史 `request/response.json.jq("jq-path=...")` / Legacy `*-body-json-jq jq-path=...` 统一进入原作者依赖物化。绝对 HTTP(S) 原样读取，相对路径只相对源 Plugin URL 解析；读取后删除非字符串注释、压缩无语义空白并优先内联 QX/Surge 原生 JQ。目标不得残留 `jq-path=`，也不得再静默 drop。读取失败、空内容或无法证明安全承载时必须注释保留源声明并进入 Review。`jq_file` / `jq-path=` 仅允许“读取原作者依赖 → 压缩 → 目标原生 JQ 内联”；**禁止 Script fallback**，不得生成任何 JQ helper，也不得猜测性把 JQ 翻译成 JavaScript。
+### 3.3 Reference evaluator
 
-## 2026-10-02 规范更新
+新架构必须具备 target-neutral reference evaluator，用于执行 Loon IR 并得到预期结果。
 
-**Surge Rule 强制覆盖（2026-10-02）**：Surge Module 中的 `[Rule]` 不再维护独立于 Surge Rule 的缩窄 policy 白名单。凡 source policy 属于 Surge Rule 已知内建 policy，转换器与成品 validator 都直接按 Rule 语义接受并原样输出；至少包括 `REJECT-DROP`、`REJECT-NO-DROP` 以及 `CELLULAR / CELLULAR-ONLY / HYBRID / NO-HYBRID`。其中 `REJECT-NO-DROP` 必须可与任意当前已支持的 Surge Rule Type / logical Rule 组合，不得因旧 Module 文档只列 `DIRECT / REJECT / REJECT-TINYGIF` 而降级为注释。未知外部 policy/group 仍需显式绑定或 Review，`PROXY` 继续使用现有 Module 参数绑定。当前在线 Module Manual 与本项目已确认实际运行语义存在冲突，因此该差异必须作为 WayX 显式兼容策略保留，不得再次由 capability gate 回退。
+输入至少覆盖：
 
-1. Quantumult X 对官方 sample 未确认的 Rule Type（包括逻辑规则、端口类等）只保留为注释，不生成活动规则，也不使用 Script 兜底。
-2. Script fallback 仅属于 Rewrite/Mock 语义：目标原生格式无法严格等价表达时，才考虑专用 helper；Rule 不进入 Script fallback。
-3. Source JavaScript 在 Quantumult X 与 Surge 中均不做 runtime compatibility 审查。目标声明直接引用原脚本 URL。QX Source Script action family 以源 declaration 的 request/response phase 为权威；源码只允许补充对应 phase 的 body 读取信号，不得因跨平台分支/公共 helper 中出现 synthetic response 代码把 request declaration 改成 `script-echo-response` / `script-analyze-echo-response`。
-4. Loon Plugin 内部策略 `PROXY` 保持“用户选择策略”语义：QX 保留字面 `PROXY`；Surge Module 生成官方 `#!arguments` policy 参数并在 Rule 中使用 `{{{...}}}` 占位符，默认 `DIRECT`，用户可改为已有代理策略/策略组。
-5. 通用 Complex Rewrite helper 只处理多 action pipeline（`actions.length >= 2`），脚本负责按源顺序完成整条多 action 语义；单 action 如确需脚本，必须走对应的专用 semantic helper。
-6. QX filter/rewrite 支持 `{# note #} rule` 前置 note。源 `[Rule]` / `[Rewrite]` / `[Script]` 只要最终生成一条活动 QX filter/rewrite，都按同一规则处理：只有“单行源注释紧邻一条源声明，且该注释不覆盖后续连续多条声明、最终只生成一条活动 QX 规则”时才转换；分组注释、连续多行注释、被注释掉的源声明和 WayX 转换说明继续使用普通 `#` 注释。
-7. Complex Rewrite 只接受**源 Loon 本身使用 `|` 声明的多 action pipeline**；禁止把相邻、同条件或看似可合并的多条独立源声明拼成虚构 pipeline。Production 准入必须依据通用 action-family classifier 与目标 renderer 的实际语义能力，**不得按当前 Catalog 已观察到的完整 action signature、action 数量或具体排列建立白名单**。同一已支持 family 的 2/3/N action、不同顺序或新组合，只要 parser 合法且 renderer 能按源顺序保持语义，就直接转换。
-8. Complex Rewrite 的历史 Catalog 观测只可作为回归样例，不得成为 capability gate。当前 renderer 已实现的通用 family 包括同 phase Header、Body Replace、JSON add/delete/replace，以及 QX inline mock + same-phase Header 等；具体 action 组合必须由 renderer 自身校验固定值、capture、Argument、duplicate Header、mock/body 等语义。已知 action 的新组合若 renderer 能处理则直接转换；若 source 语义已知但当前 renderer/目标无法等价处理，则输出普通 `REVIEW REQUIRED`，不得误标为 unknown syntax。
-9. 遇到未知语法、未知 action 或其他无法确定源语义的活动内容时，固定 **fail closed**：目标侧先注释保留源声明，不生成猜测性活动规则；同时输出 `ISSUE REQUIRED` 标记，由自动化提议 GitHub Issue。**已知 action 的新组合、不同 cardinality/顺序/placement 不属于 unknown syntax**；若 generic renderer 无法保持已知语义，则使用普通 `REVIEW REQUIRED`。
-10. QX `response.header.add` / legacy `response-header-add` 在固定安全参数下使用当前 App 已确认的原生 `response-header` whole-header 插入，保留重复 Header add 语义；若 replacement 含未证明的字面 `$`、换行或字段名不安全，则继续注释保留且不使用 Header object set 冒充 add。request phase 对称使用官方 sample 已确认的 `request-header`。
-11. `QZXY.snippet` / `QZXY.sgmodule` 明确为 chance 手工维护资产，登记在 `.github/manual-assets.json`；不得加入 Loon Source Catalog，不参与 canonical regeneration，但仍接受 repository validator/audit。
-12. CI 必须自动生成 Source → Target reconciliation 与 Review/Issue inventory。Catalog 每个源有效语义项必须落入 converted / explicit-comment / Review / Issue / intentional-drop 之一；报告不对账时 fail closed。
-13. Source Script option 必须由**目标 planner 按官方能力逐项决定**，禁止在 target-neutral 层统一丢弃。QX 只使用用户提供的官方 sample 已确认的 Rewrite Script action/path 语法：`requires-body` / `requires_body` 只负责选择同 phase 的 header/body action；`binary-body-mode` / `binary_body_mode` 与 requires-body 永久正交，不能反向推断 body buffering。QX 对未确认的 `binary*`、动态 `enable`、`timeout`、`debug` **不写入目标声明**，由 QX planner 明确省略并输出审计注释；固定 `enable=false/0` 保持禁用，固定 `enable=true/1` 与 `debug=false/0` 可直接省略。不得因为目标缺少这些可选声明字段就把原本可执行的 Source Script 整体禁用。Legacy `max-size` 与 Source Script `argument` 继续按既有 QX declaration 策略处理。Surge 则按官方 Manual 原生输出 `requires-body`、`binary-body-mode`、`timeout`、`debug`；动态 `enable` 不伪造 `enable=` Script 参数，而用官方 Line Requirement + Module 参数表达。该规则只适用于 Source Script declaration；Rewrite 条件/action 中的 `[Argument]` 引用仍按其实际语义独立判断。
-14. CI 必须维护 Catalog-observed Loon Rewrite v2 / Script v2 **semantic-token inventory**。Inventory 只锁真正改变语义类别的标识：phase、condition variable class、condition operator、logical operator、Rewrite action name、Script option name；**不得锁** action 参数 arity/type 组合、multi-action 完整 signature、grouping、regex flag 组合、Script path/argument kind、option value shape、option 顺序或 option-set。上述结构合法性必须由 Rewrite/Script source parser、action/option registry 与 target planner 的通用规则负责。已知 action/option 的新合法组合不得仅因 Catalog 过去未出现而 fail。
-15. Quantumult X / Surge 的目标能力校验只覆盖 **Loon 去广告插件转换实际需要的 Rule 类型、Rewrite 类别与 MITM `hostname`**。其它目标软件 Profile 能力一律不进入 WayX capability model。QX 以用户提供的官方 `sample.txt`、Crossutility 当前官方样例以及用户提供并人工确认的当前 App Rewrite 类型 UI 为证据；CI 必须区分在线官方 sample evidence 与 current-app UI reviewed evidence，不能把后者伪装成 sample token。官方新增与本转换范围无关的能力不触发 WayX capability drift。Surge 同样只依据官方 Manual 核对本转换器实际使用的 Rule/Rewrite/hostname。
-16. Surge capability registry 必须由官方 Manual 证据约束，并与 production planner / validator 共用同一组常量。CI 同时验证 WayX 当前会生成的 Rule Type、Surge Rule 内建 Policy、URL/Header/Body Rewrite、Map Local、HTTP `http-request/http-response` Script 与 MITM `hostname`。Surge Module 的 `[Rule]` 不得再维护独立缩窄的 Rule Type 或 built-in Policy 白名单：进入配置 `[Rule]` 后按同一 Rule 能力模型处理，合法 logical Rule 组合继续递归保留；仅保留各 Rule Type 自身的官方结构/平台限制。未知外部 policy/group 仍不得假设存在。官方入口固定先查 `https://nssurge.com/llms.txt`，Rule Type / built-in Policy 的规范性语义以 Manual 为准；当前 Module Manual 的旧三-policy 描述按本规范首段的 2026-10-02 兼容覆盖处理，并在涉及近期变化时核对 release notes。
-17. CI 必须维护 Catalog-observed Loon `[Rule]` syntax inventory，但该 inventory **只做真正的新语义 token 报警，不得成为 production 支持白名单，也不得锁定某个已观察 AST 形状**。Inventory 只锁递归 Rule Type 集合、top-level Policy 集合、Rule 参数名集合与 logical operator 集合。明确**不得**锁 top/nested placement、`RuleType:parameter` 组合、字段数量、AND/OR 子项数量、已观察 logical nesting depth、声明数量或具体匹配值。一个已支持 Rule Type 第一次出现在 logical 子规则中、一个已知参数第一次用于另一个官方允许的 Rule Type、AND/OR 从 2 项变 3/N 项、或同一 operator 出现在不同 nesting 位置，都不属于新语法类别，不得触发 inventory fail。参数适用性、NOT 单子项约束和目标平台 nesting/能力限制必须由 source grammar / target planner 的通用语义校验负责。首次出现真正新的 Rule Type / Policy / parameter name / logical operator 才触发 fail closed，并按 Loon 源语义 → QX 官方 sample / Surge 官方 Manual → 通用 .github/converter/spec/tests 的顺序审查。MITM 不纳入该 inventory。
-18. Loon `[Rule]` production 转换必须采用 **source parser → target-neutral Rule AST → QX planner / Surge planner**。Parser 只负责 CSV/引号/逻辑子规则/Policy/参数结构与 Loon 自身语法约束，不得知道 QX/Surge 映射，也不得因目标平台不接受某个 Rule Type/逻辑组合而拒绝构建可结构化 AST。Logical AST 必须递归支持同一类别的任意合法组合与任意子项数量；不得按当前 Catalog 已观察到的 2/3 项、top/nested 位置或具体 nesting depth 写死。Loon 官方明确的 cardinality 约束只在 source grammar 层表达，例如 `NOT` 必须且只能包含一个子规则。Target planner 负责目标能力与目标自身限制，不得重新拆源字符串或按插件身份分支；Surge logical rule 必须按官方 `AND,((Rule1),(Rule2),...),Policy` / `OR,...` 递归渲染，并在超过官方最大 logical nesting depth 10 时 fail closed。AST 必须保留原始 source declaration、Rule Type、原始/解引号 value、Policy、参数及递归 logical children。QX planner 仅使用用户提供的官方 sample 已确认能力；Surge planner 按 `nssurge.com/llms.txt` → 官方 Manual。
-19. Loon `[Rewrite]` production 必须建立 **Legacy parser / Rewrite v2 parser → target-neutral Rewrite Semantic IR → QX / Surge planning** 的统一交接层。两套源 parser 必须保留，禁止为统一代码而把 Legacy Rewrite 强行改写成 Rewrite v2 源语法。IR 至少记录 source syntax、原声明、phase、condition、normalized semantic operation、pipeline 顺序及必要的 source-specific semantics（例如 Legacy 302/307 的完整 Location 与 Rewrite v2 redirect 的 matched-range template 必须区分）。Production 的 Rewrite 路由判断必须消费 IR，不得在 orchestration 中继续为同一 action 名称维护第二套分类正则。IR 本身不得 import QX/Surge capability registry。QX 按用户上传 official sample、Crossutility 当前 sample 与已人工确认的 current-app UI capability evidence；Surge 仍按 `nssurge.com/llms.txt` → Manual，并保留官方 URL/Header/Body Rewrite、Map Local 与 HTTP Script 的行为差异。
-20. Rewrite 目标决策必须集中到 **`rewrite-qx.mjs::planQxRewrite()` / `rewrite-surge.mjs::planSurgeRewrite()`**。`conversion-pipeline.mjs` 只负责 source parse 后的 Semantic IR 构建、调用 target planner 与结果落段，不得直接 import QX/Surge Rewrite renderer、complex registry 或自行维护 target fallback 顺序。两个 target planner 固定执行 `native → dedicated helper → source-authored generic complex helper → comment Review/Issue`，并且只消费 Rewrite Semantic IR / 其保留的 source AST payload。Complex fallback 必须按 action family 与 renderer 实际能力匹配，不得读取 observed full-signature allowlist。Planner 模块 import 本身不得向全局 complex registry 注入 handler；handler 只能在 planner 首次实际执行时惰性注册且同进程只注册一次。Legacy source-specific 低层 renderer 可以继续存在，但必须通过 target planner 入口调用；不得绕过 planner。若没有已证明等价路径，必须显式返回 Review/Issue。
-21. Loon `[Script]` production 必须采用 **Legacy Script parser / Script v2 parser → target-neutral Script IR → `script-qx.mjs::planQxScript()` / `script-surge.mjs::planSurgeScript()`**。Script IR 至少保留 source syntax、原声明、HTTP phase、URL condition/pattern、原始 Source Script URL、argument、enable/requires-body/binary-body-mode/timeout/max-size/debug/tag 及 v2 AST/source-specific payload，但不得包含 QX action、Surge `type=` 或 target capability registry。QX planner 对 Source Script 必须按 phase + `requires-body`/`requires_body` 映射 `script-request/response-header/body`；正文信号只能把同 phase 的 header 提升为 body，不能切换到 echo-response family。`conversion-pipeline.mjs` 只负责构建 IR、消费已物化的原脚本文本/Argument table 等上下文、调用 target planner 和渲染注释；不得再自行决定 QX `script-*-header/body/echo`、Surge `type=http-*` 参数或 Legacy Script option 取舍。QX planner 继续严格使用用户提供的 Crossutility 官方 sample 所确认 Script rewrite actions；Surge planner 继续按官方 Manual 使用 `http-request/http-response`、`pattern`、`requires-body`、`max-size`、`binary-body-mode`、`timeout`、`argument`、`debug` 等已确认参数。Legacy 与 Script v2 必须在同一个 source-order loop 中规划并追加到各目标对应 section，禁止按语法版本分批输出导致顺序变化。该变更不得修改 Source JavaScript、不得改变原始 Script URL、不得扩大当前 Script trigger scope；canonical 如因更严格 target capability fail-closed 发生变化，必须由 canonical regeneration + validator 明确落盘。
-22. Loon source section / comment / header metadata 必须与目标渲染分层。`source-section.mjs` 统一负责活动声明与前置注释分组、空行压缩、源注释文本提取以及当前去广告 converter 支持的 source section scope；`source-metadata.mjs` 只把源 header 解析为 target-neutral metadata IR；QX `{# note #}` 绑定规则只允许存在于 `qx-comment.mjs`。`conversion-pipeline.mjs` 不得维护第二份 `sectionItems/cleanComments/sourceCommentText` 或 supported-section 白名单，也不得自行实现 QX inline-note 判定；`sync-convert.mjs` 不得参与 source comment/section semantic orchestration。Surge 保留普通源注释，不得复用 QX note 语义。未知活动 source section 必须继续逐声明 fail closed 为 `ISSUE REQUIRED`。本轮不修改 MITM 转换语义、不扩大支持 section、不得改变 metadata/canonical 输出。
-23. 目标 section routing 与最终文件拼装必须集中到 **`qx-output.mjs` / `surge-output.mjs`**。QX builder 固定管理 `notes/filter/rewrite/mitm` state，始终按官方 sample/项目约定渲染注释标题 `# [filter_local]`、`# [rewrite_local]`、`# [mitm]`，并负责 target header、空行压缩与最终换行；Surge builder 固定管理 `notes/rule/url/header/body/map/script/mitm` state，只对非空目标 section 按官方 section 名与固定顺序渲染 `[Rule] / [URL Rewrite] / [Header Rewrite] / [Body Rewrite] / [Map Local] / [Script] / [MITM]`，并负责 `needsCore20` 计算、Module header 与最终换行。`conversion-pipeline.mjs` 只允许通过 builder 的 state/destination API 写入 planner 结果，不得再次维护 section-name mapping、section title 顺序、`compact()` 或最终 `join()`；`sync-convert.mjs` 不得参与 target section routing。Builder 只负责结构与渲染，不得重新解释 Rule/Rewrite/Script/MITM 语义。纯架构迁移要求 canonical 输出为 0 diff。
-24. Loon plugin 整体解析与纯转换调度必须从 GitHub/I/O orchestration 中分离。`plugin-parser.mjs` 是唯一整体 section parser；`conversion-pipeline.mjs::convertPlugin()` 是唯一纯转换入口，负责 unknown-section fail-closed、Argument analysis、Rule/Rewrite/Script/MITM 调度、planner context 构建与 QX/Surge output builder 调用。`.github/scripts/sync-convert.mjs` 与 `regenerate-canonical.mjs` 不得定义 `parseLoon()`、`convert()`、Rewrite/Script section dispatch 或 planner 调用链；两者只允许通过 `conversion-runner.mjs` 访问 context materialization / pure conversion / target validation 原语，并各自保留自己的 fetch、target-state、timestamp、stale/change 判断和 managed write orchestration。`conversion-pipeline.mjs` 不得 import `fs/path`、网络 fetch、Source Catalog 或 GitHub/runtime I/O。纯架构迁移要求 canonical/helper 0 diff。
-25. 外部转换输入物化必须集中到 **`dependency-materializer.mjs`、`source-script-materializer.mjs` 与 `conversion-context.mjs`**。`conversion-context.mjs::materializeConversionContext()` 固定组合 whole-plugin parser + jq/mock dependency materializer + Source Script materializer，并返回 `{parsed, scriptMap, mockFiles, jqFiles}`。Production/canonical workflow 不得直接 import materializer internals，也不得直接 import `conversion-context.mjs`；必须通过 `conversion-runner.mjs::materializeConversionRunContext()` 委托到同一 context 实现。Materializer 只能使用 `source-fetch.mjs` 的原作者直连 fetch/URL resolver，不得加入 mirror/cache fallback。纯架构迁移要求 canonical/helper 0 diff。
-26. `materializeConversionContext()` 返回的 `parsed` 必须作为同一次转换的权威 whole-plugin parse result，由 `conversion-runner.mjs::convertPluginWithContext()` 原样传入 `convertPlugin()`；online sync 与 canonical regeneration 禁止对同一 source 再做第二次整体解析。Timestamp-only rerender 必须复用同一个 materialized context。`convertPlugin()` 为独立测试/调用方保留未提供 `parsed` 时自行调用 `parseLoonPlugin(source)` 的纯函数 fallback。该收口只消除重复解析，不改变 Rule/Rewrite/Script/MITM 语义、目标格式、canonical 或 generated helper。
-27. Quantumult X 成品校验必须由 **`.github/converter/src/qx-snippet-validator.mjs`** 统一负责。该 validator 直接消费 `qx-official-capabilities.mjs` 的 WayX ad-block capability registry。Workflow-facing online sync / canonical regeneration 必须通过 `conversion-runner.mjs::validateConvertedPlugin()` 调用 QX/Surge validator，不得各自直接 import validator 或维护 capability whitelist；repository audit、Golden/genericity 等独立校验工具仍可直接 import converter-owned validator。Validator extraction / runner composition 都不得增加或删除任何 QX 可执行语法，官方依据仍以用户上传 sample + Crossutility 当前官方 sample/capability gate 为准，canonical/helper 必须 0 diff。
-28. Source/Catalog managed artifact 的**文件系统职责**必须集中到 **`.github/converter/src/managed-artifacts.mjs`**：仅负责文本 newline/BOM normalization、Source 文件 change detection/write、转换时间戳提取/生成、QX/Surge managed target snapshot、WayX generated helper diff/write/prune 与 target conditional write。该模块不得 import Rule/Rewrite/Script/MITM planner、conversion pipeline、validator、Source Catalog 或网络 fetch；不得决定 target 语义、Review/Issue 或 converter fallback。定时 online sync 必须按**单插件先验证后落盘**执行：原作者 fetch → source normalize/合法性检查 → 只读比较当前 checked-in source → materialize context → convert → QX/Surge validate → generated helper write → target write → source write。任何 fetch/materialize/convert/validator 失败都不得把该插件的新 Source/target/helper 部分状态写入仓库；其它插件继续独立处理。 成功转换后必须把该插件当前 `generatedScripts` 视为 WayX-generated helper 的期望集合，并删除同一 `Script/<entry.id>/` 下已不再生成、且文件名严格匹配 converter helper 命名模式的孤儿 helper；不得删除不匹配该模式的手工/Source Script 文件。Canonical regeneration 必须采用同一 prune 规则。Online sync 的旧时间戳仍只从既有 QX target 读取，source 内容变化或 converter output 变化时刷新时间戳。`regenerate-canonical.mjs` 继续执行“读取 checked-in source → snapshot → materialize/convert/validate → helper/target diff → check 或统一新时间戳重生成 → write”，existing stamp 继续按 QX→Surge 顺序查找。
-29. Catalog entry 执行失败的**诊断格式与失败汇总**必须集中到 **`.github/converter/src/workflow-diagnostics.mjs`**。该模块只负责把捕获到的 entry/error 记录为稳定的 GitHub Actions `::error title=...::...` annotation、保存完整 failure detail，并按调用方指定 summary label 输出汇总；不得 import Source Catalog、fetch、materializer、conversion pipeline、target planner、validator、managed artifact I/O 或 target capability registry，也不得决定 conversion 成败以外的语义。`sync-convert.mjs` 与 `regenerate-canonical.mjs` 仍各自拥有 entry loop、转换顺序、changed/stale 判断和最终 exit-code policy，只把 catch 中重复的 error annotation/failure-list/summary rendering 委托给 diagnostics。Online sync 的 summary 文本继续为 `Failures:`，canonical runner 继续为 `Canonical regeneration failures:`；单条 annotation 继续只把 message 中的换行编码为 `%0A`，其中 sync annotation 取 `String(error.message)`、canonical annotation 取 `String(error.message || error)`；failure detail 继续优先 stack，且 sync fallback 为 message、canonical fallback 为原 error。Online sync 还必须把每个失败 entry 结构化写入 `.github/monitor/.runtime/sync-failures.json`，至少包含插件 id、Catalog source/file、失败阶段、失败原因及对应源规则上下文；该结构化报告供自动 Issue proposer 使用，不改变 converter 语义。Canonical runner 诊断行为保持不变。
-30. CI 必须维护 **Catalog-observed Legacy Rewrite / Legacy Script semantic-token inventory**。Legacy Rewrite 使用 production `classifyLegacyRewriteAction()`，只锁 action category 与 mock option name；不得锁 request/response placement、operation/variant/status 组合、mock option-set、参数值或规则数量。Legacy Script 使用 production `parseLegacyScriptLine()`，只锁 HTTP phase 与 option name；不得锁 option value shape、option 顺序、option-set、script URL/pattern/tag/argument 内容。Production Legacy mock/parser 必须显式拒绝未知 option name，避免移除组合 baseline 后出现 silent ignore。已知 action/option 的新合法组合不得触发 observed-baseline failure；真正新 action category / option name 才进入语义审查。
+- request URL / path / method / headers / body；
+- response status / headers / body；
+- Argument；
+- capture state。
 
-31. Quantumult X Source Script declaration 对目标未支持 execution option 固定采用 **目标层显式省略，禁止伪造字段**。依据用户提供的 QX 官方 sample，HTTP Script rewrite declaration只确认 `script-request-header/body`、`script-response-header/body`、`script-echo-response`、`script-analyze-echo-response` 与 script path；未确认 `timeout`、动态 `enable`、`debug`、`binary-body-mode` 字段。故 QX：`timeout=*`、动态 `enable`、`debug=true/${id}`、`binary*=true` 不写入目标 declaration，并输出普通 WayX 审计注释；`enable=false/0` → disabled；`enable=true/1`、`debug=false/0` → 无需目标字段；`requires-body` / `requires_body` 仅决定 header/body action，绝不能由 binary mode 反推。此类 option 缺口本身不得把可执行 Source Script 整体转成 Review。Legacy `max-size` 保持既有直接丢弃策略，不参与 action 选择。Surge 目标按官方能力独立输出，不受 QX 缺口限制。
-32. 上游维护固定为 **GitHub Actions 全自动闭环**，不得再创建或依赖 ChatGPT Work、`work-review` / `work-complete` / `work-reject` 标签、`work/upstream-*` PR、Work prompt 或 Work finalizer。定时 workflow 必须从同一 `main` 基线完成：Source Catalog 原作者拉取 → 每插件转换/验证 → 官方规范镜像检查 → repository validator/audit → reconciliation/Review inventory → failure/Review/Issue 提议 → 成功产物直接提交 `main`。未知语法或已知能力缺口仍按 fail-closed 生成注释目标，但**不阻止其它已验证插件自动提交**；对应 GitHub Issue 必须在提交前创建/复用。自动 Issue 无论来自 `ISSUE REQUIRED`、`REVIEW REQUIRED` 还是 hard sync failure，正文都必须包含：相关插件 ID/本地 Source 文件/上游 URL、对应 Source declaration（或下载失败时明确说明无法取得新规则并附当前本地规则上下文）、失败阶段/失败原因、目标文件或运行位置。Issue 标题/指纹必须稳定，重复定时运行复用既有 Issue，不得重复刷屏。
+输出至少覆盖：
 
-33. 所有 Catalog-observed inventory gate 统一遵循 **semantic-token only** 原则：inventory 是上游漂移报警器，不是“见过的具体 AST/参数组合”能力矩阵。只要 source parser/registry 已把某项声明为合法语法类别，且 generic planner/renderer 按类别实现，其新的 cardinality、顺序、placement、嵌套位置、参数合法形态或 option 组合都不得因为“此前 Catalog 未出现”而失败。组合约束必须写在 source grammar/validator，目标限制必须写在 target planner/renderer；不得借 observed fixture 间接实现。Complex Rewrite 同样禁止 full-signature allowlist：source-authored multi-action pipeline 由 action-family classifier + renderer 能力决定，已知语义但当前无法等价处理时 Review，只有未知语法/action 才 Issue。
+- 是否命中；
+- URL；
+- request/response headers；
+- request/response body；
+- response status；
+- redirect / reject / mock / abort；
+- capture；
+- action execution order。
 
-34. Production/canonical 的**单插件 materialize / convert / target-validation 执行原语**必须集中到 **`.github/converter/src/conversion-runner.mjs`**。为保持两条 workflow 的既有时序，该模块固定暴露三个 workflow-facing 原语：`materializeConversionRunContext()` 只委托 `materializeConversionContext()`；`convertPluginWithContext()` 只把已物化 context 映射给 `convertPlugin()`；`validateConvertedPlugin()` 固定执行 `validateQX() → validateSurgeModule()`。Online sync 必须继续保持“materialize context → read old target/stamp → convert → 如 converter output drift 则刷新 timestamp 并再次 convert → 只校验最终 output → write helper/target/source”；不得提前校验第一次仅用于 drift 判断的临时 output。Canonical 必须继续保持“read old target/stamp → materialize → convert → validate → diff → write 模式下新 timestamp 再 convert → validate → write target/helper”。Timestamp 刷新重跑必须复用第一次 materialize 得到的同一 context。Runner 不得 fetch plugin source、不得读取/写入 managed files、不得生成或选择 conversion timestamp、不得判断 upstream changed / converter drift / canonical stale、不得决定 helper/target/source 写入顺序、不得维护 entry loop 或 exit policy。Online sync 的 failure stage `materialize-context / convert / validate-qx / validate-surge` 必须由 runner stage callback 保持不变。两条 workflow 不得再直接 import `conversion-context.mjs`、`conversion-pipeline.mjs`、`qx-snippet-validator.mjs` 或 `surge-module.mjs`。该架构收口不得改变任何 Rule/Rewrite/Script/MITM 语义，current Catalog canonical/helper 必须 0 diff。
+---
 
-35. Workflow 层的 **Catalog entry lifecycle / changed-stale result** 只允许共享语义完全一致的纯控制原语，禁止为了减少行数强行统一 online sync 与 canonical regeneration。两条 workflow 必须继续各自拥有 `for (const entry of manifest)` 生命周期：online sync 独占原作者 fetch、source change、stage/structured failure、existing-target drift 与 source-last write；canonical 独占 checked-in source、check/write mode、pre-write stale set 与 stale exit policy。目标文件差异的纯判定统一由 `managed-artifacts.mjs::managedTargetDiffs(state,out)` 返回稳定的 `qx/surge` 差异集合，并由 conditional target write 复用；但 online sync 的 converter-drift 时间戳刷新仍只把**已存在且发生变化的 target**视为 drift，missing-target recovery 不得因此刷新旧 stamp。Canonical stale 则必须把 missing/changed QX、missing/changed Surge 与 generated helper diff 都计入 stale。Online sync 状态输出必须把 source、target、generated helper 任一实际写入视为“synced”，不得在 helper-only repair 时误报 `source and outputs unchanged`；canonical 的 stale list/check-mode error 与 write-mode changed summary 保持独立，不抽成共同 formatter/result object。该边界审计不得修改 conversion core、target semantics、validator 顺序或 canonical/helper 内容。
+## 4. Equivalence Planner
 
-36. 原作者拉取层必须集中在 **`.github/converter/src/source-fetch.mjs`**，并严格区分“原作者 URL”与“HTTP transport/header profile”：Catalog、Source Script、JQ/mock dependency 的原始 URL 不得因访问兼容性而改写成镜像或备用源；`kelee.one` / `*.kelee.one` 与 `rucu6.pages.dev` 固定选择 **Python `urllib.request` transport**（`.github/converter/tools/fetch-upstream.py`），统一使用 `WAYX_LOON_FETCH_UA` 当前值 `Loon/764 CFNetwork/1498.700.1 Darwin/23.6.0 iPhone/17.6.1` 与 `Accept: */*`；其它 host 继续使用默认 Node fetch profile。Host 匹配必须基于解析后的 hostname，禁止字符串包含判断。Python helper 只能接收 Node 选定的原始 URL/headers 并把原始 response bytes 写到 stdout，不得维护插件列表、不得解析/转换 Loon 内容、不得选择 mirror/fallback。专用 transport 失败时必须直接报告原作者 fetch failure，禁止回退到默认 transport 或第三方副本。该变更只影响网络获取方式，不改变 generic converter、Source URL、QX/Surge Source Script URL 或 canonical conversion semantics。
+Planner 只能返回以下四类结果。
 
-37. QX Source Script action family 必须保持**源 declaration 优先**。依据用户提供的 Crossutility 官方 sample 与 KOP-XIAO `resource-parser.js::SCP2QX()`：`http-request/request + requires-body` → `script-request-body`，无 body → `script-request-header`；`http-response/response + requires-body` → `script-response-body`，无 body → `script-response-header`。Source JavaScript 全文件扫描只可补充“实际读取对应 body”的信号，不得把 request phase 改成 `script-echo-response` / `script-analyze-echo-response`。原因是多平台脚本常同时包含 QX、Loon、Surge 分支与共享 helper，静态扫描到其它平台的 `$done({response: ...})`、status/statusCode 不能证明 QX 执行路径构造 synthetic response。该规则禁止 HTTP transport/UA、脚本打包方式或无关 helper 代码改变同一 Loon declaration 的 QX action family。
+### 4.1 native-equivalent
 
-38. Surge Module 分类统一固定为 **`#!category=WayX`**。所有 WayX 生成的 Catalog `.sgmodule` 与手工维护 Surge Module 都必须在模块头部声明且只声明一次该字段；不得继续输出 WayX 生成的普通注释 `# Category: <entry.category>`。若来源 Loon header 自带 `#!category=...`，Surge 目标不得透传其值，也不得转换成普通 category 注释，而是统一替换为 `#!category=WayX`。QX 的 `# Category: <entry.category>` 与 generated helper 的分类注释不受本规则影响。Surge validator 必须拒绝缺失、非 WayX 值或 section 内出现的 category directive。
+只有目标平台官方语法能够完整表达源行为时使用。
 
-39. 仓库结构固定为**公开索引 + 内容根目录 + `.github` 工作流域**：仓库根目录除 `.github` 外只允许自动生成的 `README.md` 与 `Resource / Adblock / Boxjs / Module / Rule / Script` 六类转换内容目录。转换器实现、测试、fixture、工具统一放在 `.github/converter/`；分块规范统一放在 `.github/docs/conversion-spec/`；监控实现、state、runtime 与 upstream mirror 统一放在 `.github/monitor/`；权威规范、项目状态和维护说明放在 `.github/`。Actions 入口继续只放 `.github/workflows/`，自动化脚本继续放 `.github/scripts/`，Source Catalog 与手工资产清单继续分别放 `.github/sources/` 与 `.github/manual-assets.json`。任何实现不得在仓库根目录重新创建 `converter / docs / monitor / upstream` 或其它工作流目录；所有 workflow、test、validator、spec index 的资源路径必须引用迁移后的真实路径，不允许用 symlink/兼容副本维持旧路径。
+要求：
 
-40. 根目录转换内容目录统一使用**首字母大写**命名：`Adblock / Resource / Boxjs / Module / Rule / Script`。`.github` 保持 GitHub 保留目录名不变。所有 converter path、generated helper 本地路径、Raw GitHub helper URL、workflow path filter、artifact/commit path、audit/reconciliation、测试与文档必须使用相同大小写；禁止重新创建 `boxjs / module / rule / script` 小写兼容目录，也禁止继续生成 `.../main/script/...` Raw URL。目录大小写变更不得改变转换语义，只允许改变仓库资源路径及由该路径决定的引用 URL。
+- condition 等价；
+- action 等价；
+- capture 等价；
+- execution order 等价；
+- body/header lifecycle 等价。
 
-41. Loon JSON/JQ 转换固定遵守**源语义优先、原生 JQ 优先、最小改写**。WayX 对 `json.add / json.replace / json.delete` 采用项目选定的 Stash-compatible 行为基准：add 仅在路径不存在或当前值为 JSON `null` 时写入；replace 仅在 `getpath(PATH)` 为 jq truthy 时替换，因此缺失/`null`/`false` 保持不变；delete 不加 `getpath` guard，单路径使用 `del(PATH)`，多个不含数组索引的固定路径必须合并为一个 `del(PATH1, PATH2, ...)`；只要包含数组索引就必须按源顺序串联多个 `del(...)`，以保持删除后数组索引位移语义。普通 Loon Key Path delete **不得自动生成 `delpaths(PATHS)`**；`delpaths` 只保留给源 `json.jq/jq_file` 已经声明的 Path Array 语义，或未来由规范明确、测试覆盖的 Path Array IR。Legacy `*-body-json-add|replace|del` 与 Rewrite v2 使用同一映射。源作者直接提供的 `json.jq(...)` 不得重写表达式结构；官方 `json.jq_file(...)` 与 historical `jq-path=` alias 都必须读取原作者依赖，只允许为 QX/Surge 单行配置删除非字符串注释并压缩无语义空白后内联，不得做 AST/代数重写，也不得静默丢弃。依赖读取失败、内容为空或目标不能安全内联时必须注释保留源声明；这两类文件型 JQ **禁止转换为 Script/helper**。QX 依据用户提供的官方 sample 使用 `jsonjq-request-body/jsonjq-response-body`；Surge 依据官方 Manual 使用 `http-request-jq/http-response-jq`。
+### 4.2 guarded-helper
 
-42. 根目录 `README.md` 固定为**自动生成的公开资源索引**，不得手工维护资源清单。生成器必须扫描实际 `Boxjs / Module / Adblock / Rule` 内容，按 `BoxJs → Module → Adblock → Rule` 固定顺序输出，并从资源正文的 `# Name:` / `#!name=` / BoxJs JSON `name` 提取显示名；Quantumult X 与 Surge 必须分列，缺失平台显示 `—`。Quantumult X 一键导入固定使用官方 `https://quantumult.app/x/open-app/add-resource?remote-resource=...`。Rule 继续使用 `filter_remote`；Module/Adblock 的 QX `.snippet` **不得拆分 filter/rewrite**，直接把原 `.snippet` 作为单个 `rewrite_remote` 资源导入并显式写 `update-interval=86400, enabled=true`。依据当前 KOP-XIAO 资源解析器的兼容判断，Quantumult X build 844 起允许 rewrite resource 内混合 filter 与 rewrite；WayX 目标文件本身继续保持 `# [filter_local] / # [rewrite_local] / # [mitm]` 注释段格式，不为 README 安装额外生成中间文件。Surge 模块入口按用户已安装的 DivineEngine Redirect 使用 `https://surge.app/install-module?url=<percent-encoded raw URL>`，其目标仍是 Surge 官方 `surge:///install-module?url=`；官方 install-module Scheme 没有 update-interval 参数，禁止伪造。README 生成必须在新增/删除转换内容、canonical regeneration、定时 upstream sync 与相关 PR CI 中自动刷新；生成器遇到陈旧的 `.../main/script/...` WayX Raw URL 或其它无法安全生成安装入口的情况必须 fail closed，不得产出猜测链接。
+Native matcher 只负责候选流量预筛，helper 内重新执行完整 source condition 与 action。
 
-## 规范块
+关键约束：
 
-| Block | 内容 |
-|---|---|
-| [00-authority](docs/conversion-spec/00-authority.md) | 权威来源、优先级、通用原则 |
-| [05-generic-converter](docs/conversion-spec/05-generic-converter.md) | **通用转换器架构、分型、自动化契约、陌生插件验收** |
-| [10-target-format](docs/conversion-spec/10-target-format.md) | QX snippet / Surge sgmodule 固定格式 |
-| [20-rule-mapping](docs/conversion-spec/20-rule-mapping.md) | **Rule 类型与 Policy 对应表** |
-| [30-rewrite-mapping](docs/conversion-spec/30-rewrite-mapping.md) | Loon 旧 Rewrite / Rewrite v2 Action 映射 |
-| [40-regex-condition](docs/conversion-spec/40-regex-condition.md) | Regex、flags、条件 AST、逻辑条件 |
-| [50-json-jq-mock](docs/conversion-spec/50-json-jq-mock.md) | JSON/JQ、jq_file、mock/mock_file |
-| [60-script-argument](docs/conversion-spec/60-script-argument.md) | Script 声明、action 类型判定、Argument |
-| [70-mitm-comments](docs/conversion-spec/70-mitm-comments.md) | MITM、注释、metadata |
-| [80-review-validation](docs/conversion-spec/80-review-validation.md) | Review/Issue、validator、Golden |
-| [90-project-workflow](docs/conversion-spec/90-project-workflow.md) | 项目执行顺序和规范变更流程 |
-| [95-implementation-index](docs/conversion-spec/95-implementation-index.md) | **规范块 → production script → tests → 自动化入口总索引** |
+- prefilter 允许 **false positive**；
+- prefilter **禁止 false negative**；
+- helper 必须能安全 no-op；
+- helper 内必须使用原始 IR，而不是重新解析拼接后的 target 文本。
 
-## 固定顺序
+### 4.3 phase-dispatcher
+
+当多条 Loon declaration 的执行顺序会被目标平台 Script 触发模型破坏时，必须合并为 phase dispatcher。
+
+Dispatcher 必须：
+
+- 保持 source declaration 原顺序；
+- 顺序执行 source-authored pipeline；
+- 保持 request / response phase 分离；
+- 保持每条 declaration 自己的 condition、capture、action 顺序；
+- 不把不同 source rule 人工合成新语义。
+
+### 4.4 unsupported
+
+无法证明等价时：
+
+- 保留源声明；
+- 给出明确 target limitation；
+- 不输出假可用规则；
+- 不静默删除条件、flags、参数或 action。
+
+---
+
+## 5. Regex 与 Condition
+
+### 5.1 Regex source
+
+Parser 去除 Loon Regex literal 的最外层 delimiter 后，Regex body 必须逐字符保留。
+
+禁止全局：
+
+- `\/ -> /` canonicalization；
+- case folding；
+- 捕获组重写；
+- lookaround 展开；
+- atomic group 改写；
+- 自动插入 target inline modifier。
+
+### 5.2 Regex flags
+
+Loon `i / m / s` 是源行为组成部分，必须进入 Semantic IR。
+
+**从 v1.57 起，禁止无条件丢弃 flags。**
+
+当目标 native matcher 没有官方确认的等价 flag 表达：
+
+1. 生成不会漏掉源命中的安全 prefilter；
+2. helper / dispatcher 内执行：
+   ```js
+   new RegExp(source, flags)
+   ```
+3. 使用 helper 的实际 match object 处理 capture。
+
+禁止因为目标 matcher 默认 case-sensitive 就把 Loon `/i` 直接删除。
+
+### 5.3 Capture
+
+必须区分：
+
+- condition capture：例如 Loon `as name`；
+- action-local Regex capture：`$0 ... $n`。
+
+两者不得共用或互相替代。
+
+### 5.4 Condition pushdown
+
+只有能够证明为**必要条件**的 predicate 才能作为 helper prefilter。
+
+只有能够证明为**完整等价条件**的 matcher 才能用于 native-equivalent。
+
+---
+
+## 6. Quantumult X Target Contract
+
+### 6.1 官方 Rewrite 能力基线
+
+QX target 仅使用官方 sample 已证明的格式。
+
+当前官方 `sample.conf` 明确包含：
+
+- `url` Rewrite matcher；
+- `url-and-header`；
+- reject / reject-img / reject-200 / reject-dict / reject-array；
+- 302 / 307；
+- request-header；
+- request-body / response-body；
+- jsonjq-request-body / jsonjq-response-body；
+- echo-response；
+- script-request-header；
+- script-request-body；
+- script-response-header；
+- script-response-body；
+- script-echo-response；
+- script-analyze-echo-response。
+
+`url-and-header` 的 headers comparison string 包含 method、path 与 request header key-value；URL 先匹配，URL 不命中时不继续 headers matcher。
+
+### 6.2 官方 Script 行为基线
+
+根据 `crossutility/Quantumult-X` 官方样例：
+
+- Rewrite Script 可读取 `$request.url / path / method / headers`；
+- response Script 可读取 response status / headers / body（视 action 类型）；
+- `script-request-header`：
+  - 可返回 `path`；
+  - 可返回 `headers`；
+  - `$done({})` 表示不修改；
+- `script-response-header`：
+  - 可返回 `status`；
+  - 可返回 `headers`；
+  - `$done({})` 表示不修改；
+- `script-response-body`：
+  - 可返回修改后的 body；
+  - 可同时返回 headers / status；
+  - 不得用它冒充“只改 response header”的 action；
+- `script-echo-response` 可构造完整 response。
+
+未被官方样例证明的字段或 result shape 不得生成。
+
+### 6.3 QX Regex flags
+
+当前官方 matcher sample 不提供 Loon `/pattern/ims` 形式或独立 flags 字段。
+
+因此：
+
+- 不得把 Loon flag 字符直接拼入 QX matcher；
+- 不得未经官方依据生成 `(?i)` 等 inline modifier；
+- 需要 flags 语义时进入 helper/dispatcher；
+- 若对应 QX Script 类型无法安全 no-op，则不得使用过宽 prefilter，必须 unsupported。
+
+### 6.4 QX snippet 输出
+
+WayX QX snippet 固定：
+
+- 保留原注释；
+- 添加转换时间；
+- Converted by: chance；
+- 添加 Category / Source / Target；
+- `filter_local / rewrite_local / task_local / mitm` 段标题保持注释形式；
+- 只输出 QX 官方支持的活动语法。
+
+---
+
+## 7. Surge Target Contract
+
+Surge 所有能力判断必须来自官方 Manual。
+
+### 7.1 HTTP Script
+
+官方 http-request Script：
+
+- 读取 URL / method / headers / body；
+- 可返回 url / headers / body；
+- 可直接返回 response；
+- 可 abort；
+- `$done({})` 或 `$done()` = request 原样继续。
+
+官方 http-response Script：
+
+- 读取 request + response；
+- 可返回 status / headers / body；
+- 可 abort；
+- `$done({})` 或 `$done()` = response 原样继续。
+
+### 7.2 Script 单命中限制
+
+同一 request：
+
+- 最多执行第一个匹配的 http-request Script；
+- 最多执行第一个匹配的 http-response Script。
+
+因此多个需要 helper 的 Loon declaration 不能简单转成多个互相竞争的 Surge Script；需要保持顺序时必须 phase-dispatcher。
+
+### 7.3 Surge native
+
+Surge native Rewrite / Header Rewrite / Body Rewrite / Map Local 能完整等价时优先 native。
+
+若 native processing order 与 Loon source order 不等价，则不能仅因为单条 action 可映射就使用 native。
+
+---
+
+## 8. Rule
+
+Rule 使用独立 target-neutral Rule IR。
+
+要求：
+
+- 已确认目标平台支持的 Rule type 才能 native；
+- policy 语义必须保留；
+- `no-resolve` 等行为属性不得因格式转换丢失；
+- Surge 可使用官方 SCRIPT Rule；
+- QX 不得因为缺少某 Rule type 就用 HTTP Rewrite Script 假装网络层 Rule；
+- 无法等价则注释 source + unsupported。
+
+Catalog inventory 只锁“新 Rule type / policy class / parameter class”等 semantic token，不锁历史完整组合。
+
+---
+
+## 9. JSON / JQ / Mock
+
+### 9.1 Key Path
+
+Loon Key Path 必须解析成结构化 path segments，支持：
+
+- dot key；
+- array index；
+- quoted bracket key。
+
+不得用简单 `split('.')` 破坏包含点、斜杠或特殊字符的 key。
+
+### 9.2 JSON add / replace / delete
+
+以 source behavior 为准，统一进入 IR 后再由目标 planner 选择 native JQ 或 runtime。
+
+不得因为 QX/Surge 都“能写 JQ”就改变：
+
+- missing/null 判断；
+- false 值判断；
+- array index 删除后的位移顺序。
+
+### 9.3 jq / jq_file / historical jq-path
+
+源作者提供的 JQ 只允许最小格式化以适配单行 target syntax。
+
+禁止做代数重写。
+
+外部依赖必须从原作者 URL 获取；无法安全内联则 unsupported，不转成自创 Script 逻辑。
+
+### 9.4 mock / mock_file
+
+response mock 可优先使用目标原生 mock/Map Local。
+
+request mock 或 mixed pipeline 必须根据目标生命周期选择 helper。
+
+远程 mock_file 物化出的 WayX helper 必须可重建、内容哈希稳定、引用可审计。
+
+---
+
+## 10. Script Declaration
+
+Source Script URL 固定保持原作者 URL：
+
+- 不镜像；
+- 不 fork；
+- 不 wrapper；
+- 不改写源 JavaScript。
+
+Loon Script declaration 的：
+
+- phase；
+- requires-body；
+- binary-body-mode；
+- timeout；
+- enable；
+- debug；
+- argument / PluginObject；
+- cron / event / generic trigger
+
+都必须进入 IR。
+
+目标平台无法表达的 option 不得再默认“忽略即等价”；新架构必须显式证明该 option 对行为无影响，或 unsupported。
+
+兼容实现可暂时保留当前策略，但必须通过 migration inventory 明确标记，不得成为新架构默认规则。
+
+---
+
+## 11. Argument
+
+Loon `[Argument]` 先进入 target-neutral Argument IR。
+
+Surge：
+
+- 官方 Module argument 能力可等价表达时使用 `#!arguments` / placeholder。
+
+Quantumult X：
+
+- 不存在官方确认的通用 Loon Plugin Argument 等价机制时，不得伪造字段；
+- 只有当 Argument 不影响当前 declaration 行为，才能证明安全省略；
+- 否则 helper 若能把值固定为明确 source constant 才可继续；
+- 其余 unsupported。
+
+---
+
+## 12. MITM / Metadata / Comments
+
+MITM hostname 只做目标格式适配，不扩大匹配范围。
+
+必须保留原始有效注释，并增加：
+
+- Converted；
+- Converted by: chance；
+- Category；
+- Source；
+- Target。
+
+Header metadata parser 与 target renderer 属于同一 metadata domain，不再拆成多个只含少量函数的独立“架构层”。
+
+QX inline note 只在能确定一条注释唯一绑定一条活动目标声明时使用；否则保留普通注释。
+
+---
+
+## 13. Source Catalog 与网络获取
+
+### 13.1 Catalog
+
+`.github/sources/loon-static.json`：
+
+- 只保存人工固定的非 Kelee source。
+
+`.github/sources/loon.json`：
+
+- 为完整生成态 Catalog。
+
+Kelee：
+
+- 从 `https://hub.kelee.one/list.json` 自动发现；
+- 只接受指向官方 Kelee Lpx 路径的项目；
+- 保持 list 顺序；
+- 已存在同一 source URL 时保留稳定 id / target filename。
+
+### 13.2 Original source only
+
+Plugin、Source Script、JQ/mock dependency 只拉取原作者 URL。
+
+Transport profile 可以因 host 调整 User-Agent / Python urllib / Node fetch，但：
+
+- 原 URL 不得改变；
+- 不使用 mirror；
+- 不使用 fallback 副本。
+
+Transient network error 可以有限重试同一 URL。
+
+---
+
+## 14. Generated Helper / Dispatcher
+
+WayX-generated Script 只允许解决目标平台与 Loon 之间的语义缺口。
+
+必须：
+
+- 由 IR 生成；
+- deterministic；
+- 最小化；
+- 带 Source / Converted / Author / Category；
+- 不复制无关 runtime；
+- 不包含插件特判；
+- helper 文件名由内容/语义稳定派生；
+- 过期 helper 自动 prune。
+
+未来 dispatcher 应优先共享通用 runtime emitter，而不是每种 action 再新增一个独立 renderer 文件。
+
+---
+
+## 15. Oracle 与测试
+
+新架构必须新增 differential oracle。
+
+同一 fixture 同时执行：
+
+1. Loon Semantic IR reference evaluator；
+2. QX lowering semantic model；
+3. Surge lowering semantic model。
+
+比较：
+
+- match/no-match；
+- URL；
+- method；
+- headers；
+- body；
+- status；
+- response/reject/mock/abort；
+- capture；
+- declaration/action order。
+
+Regex 至少覆盖：
+
+- 无 flag；
+- `i`；
+- `m`；
+- `s`；
+- `im/is/ms/ims`；
+- optional capture；
+- lookaround；
+- escaped slash；
+- Unicode；
+- multiline body；
+- header case differences。
+
+---
+
+## 16. Validation Gates
+
+CI 固定分层：
+
+1. syntax；
+2. core unit；
+3. QX official capability；
+4. Surge official capability；
+5. oracle / synthetic semantics；
+6. full Catalog discovery；
+7. upstream fetch + conversion；
+8. canonical regeneration；
+9. semantic-token inventory；
+10. target validators；
+11. managed cleanliness；
+12. repository audit；
+13. generated helper reference/runtime；
+14. original Source Script URL preservation；
+15. deterministic checked-in output。
+
+Inventory 只用于发现新的 semantic token，不得作为完整 AST signature allowlist。
+
+Golden 只在语义测试已通过后用于发现 deterministic output drift；不得用更新 Golden 掩盖语义错误。
+
+---
+
+## 17. 仓库结构
+
+唯一规范源：
+
+```text
+.github/CONVERSION_SPEC.md
+```
+
+不再维护：
+
+- `.github/docs/conversion-spec/*`；
+- `.github/PROJECT_STATUS.md`；
+- `.github/converter/README.md` 的规范副本；
+- “Block → 固定实现文件名”契约。
+
+根目录只允许：
+
+```text
+.github/
+README.md
+Adblock/
+Resource/
+Boxjs/
+Module/
+Rule/
+Script/
+```
+
+Converter 迁移目标：
+
+```text
+.github/converter/
+  src/
+    core/       # parser + Semantic IR + evaluator + equivalence proof
+    targets/    # qx / surge
+    runtime/    # helper + dispatcher
+    workflow/   # fetch/materialization/artifact lifecycle
+  tests/
+  fixtures/
+  tools/
+```
+
+迁移规则：
+
+- 不为“目录好看”一次性移动所有旧文件；
+- 新语义优先进入新域；
+- 旧模块只有在职责完整合并、import/test/workflow 已收口后删除；
+- CI 不再用大段硬编码文件列表锁死内部结构。
+
+---
+
+## 18. 自动化入口
+
+Production：
+
+```text
+.github/scripts/sync-convert.mjs
+```
+
+Canonical：
+
+```text
+.github/converter/tools/regenerate-canonical.mjs
+```
+
+Target validation：
+
+```text
+.github/converter/src/qx-snippet-validator.mjs
+.github/converter/src/surge-module.mjs
+```
+
+CI：
+
+```text
+.github/workflows/converter-check.yml
+```
+
+Scheduled upstream：
+
+```text
+.github/workflows/upstream-monitor.yml
+```
+
+Workflow 只调用稳定入口，不应枚举 converter 内部所有实现文件。
+
+---
+
+## 19. 新架构迁移阶段
+
+### Phase A — Repository consolidation
+
+- 单一规范；
+- 删除重复文档/status；
+- 去掉 path-coupled spec contract；
+- workflow syntax 自动发现；
+- 合并明显的单函数/单职责碎片模块。
+
+### Phase B — Core Semantic IR
+
+- 统一 source Regex/condition/capture；
+- 建 reference evaluator；
+- 当前 target output 暂不改变。
+
+### Phase C — Equivalence Planner
+
+- native-equivalent proof；
+- guarded-helper proof；
+- prefilter soundness；
+- unsupported reason taxonomy。
+
+### Phase D — Runtime / Dispatcher
+
+- QX runtime adapter；
+- Surge runtime adapter；
+- phase dispatcher；
+- action ordering。
+
+### Phase E — Oracle migration
+
+- synthetic differential tests；
+- Catalog differential tests；
+- flag/capture fuzz；
+- canonical regeneration。
+
+### Phase F — Compatibility removal
+
+只有当新路径覆盖 Catalog 且 oracle/canonical/validator 全部通过时，才删除对应旧 planner/helper。
+
+禁止“大爆炸重写”。
+
+---
+
+## 20. 固定修改顺序
+
+任何新增能力或语义修复固定按：
 
 ```text
 官方依据
 → CONVERSION_SPEC
-→ converter
-→ tests
-→ canonical output
-→ golden
+→ Semantic IR / evaluator
+→ equivalence planner
+→ target adapter/runtime
+→ synthetic oracle
+→ real-plugin regression
+→ target validator
+→ canonical
+→ full Catalog audit
 ```
 
 禁止：
 
 ```text
-先改 converter
-→ 发现能跑
-→ 再补规范
+先改某个插件成品
+→ 为了让它通过写插件特判
+→ 再补测试/规范
 ```
+
+---
+
+## 21. 当前迁移期兼容声明
+
+main 中现有 converter 在 Phase B–F 完成前继续承担生产转换。
+
+如果当前实现与本 v1.57 新规范冲突：
+
+- 不立即在同一个结构 PR 中强行改动 canonical；
+- 在后续语义 PR 中按新顺序迁移；
+- 新代码不得继续复制旧的静默降级行为；
+- 特别是 Regex `i/m/s` 的“无条件丢弃”已经被本规范废止，后续必须进入等价实现或 unsupported。
+
+这条兼容声明只用于控制迁移风险，不代表旧行为继续被认为正确。
