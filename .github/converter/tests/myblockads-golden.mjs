@@ -8,11 +8,15 @@ const source = await fs.readFile(new URL(fixture.source, root), 'utf8');
 const qx = await fs.readFile(new URL(fixture.quantumultX, root), 'utf8');
 const surge = await fs.readFile(new URL(fixture.surge, root), 'utf8');
 
+function stripQxLeadingNote(value) {
+  return String(value).replace(/^\{#\s*.*?\s*#\}\s+/, '');
+}
+
 function extractQx(text) {
   return text.split('\n').map(x => x.trim()).filter(x => x.includes(' url jsonjq-response-body ')).map(line => {
     const match = line.match(/^(.*?) url jsonjq-response-body '(.*)'$/);
     assert.ok(match, 'Malformed QX JQ line: ' + line);
-    return { pattern: match[1], jq: match[2] };
+    return { pattern: stripQxLeadingNote(match[1]), jq: match[2] };
   });
 }
 
@@ -51,7 +55,7 @@ const sourceJq = source.split('\n').map(x => x.trim())
   .map(parseRewriteV2);
 assert.equal(sourceJq.length, 3, 'Unexpected current MyBlockAds Rewrite v2 JQ count');
 
-let discardedJq = 0;
+let dependencyJq = 0;
 for (const ast of sourceJq) {
   assert.equal(ast.condition.type, 'comparison');
   assert.equal(ast.condition.left.type, 'variable');
@@ -66,16 +70,19 @@ for (const ast of sourceJq) {
 
   const target = qxPairs.find(x => x.pattern === compiled.pattern);
   if (/^jq-path=/i.test(jq)) {
-    discardedJq += 1;
-    assert.equal(target, undefined, 'Legacy jq-path action must be discarded instead of converted');
-    assert.equal(qx.includes(jq), false, 'QX target must not preserve discarded jq-path text');
-    assert.equal(surge.includes(jq), false, 'Surge target must not preserve discarded jq-path text');
+    dependencyJq += 1;
+    assert.ok(target, 'Resolvable jq-path dependency must be materialized and emitted as native JQ: ' + compiled.pattern);
+    assert.equal(target.jq.includes('jq-path='), false, 'Materialized jq-path dependency must not leak its source marker');
+    assert.equal(qx.includes(jq), false, 'QX target must not preserve jq-path source text');
+    assert.equal(surge.includes(jq), false, 'Surge target must not preserve jq-path source text');
     continue;
   }
 
   assert.ok(target, 'Inline source JQ must remain converted: ' + compiled.pattern);
   assert.equal(minifyJq(target.jq), minifyJq(jq), 'Inline source JQ changed semantics/text beyond whitespace normalization');
 }
-assert.equal(discardedJq, fixture.jqDiscardCount, 'Unexpected current MyBlockAds discarded jq-path count');
+assert.equal(dependencyJq, fixture.jqDependencyCount, 'Unexpected current MyBlockAds jq-path dependency count');
+assert.doesNotMatch(qx, /jq-path=.*url script-/i, 'jq-path must never be converted through a QX script helper');
+assert.doesNotMatch(surge, /jq-path=.*script-path=/i, 'jq-path must never be converted through a Surge script helper');
 
 console.log('MyBlockAds JQ golden fixture passed');
