@@ -45,6 +45,12 @@ function comparisonKey(node) {
   if (n?.type!=='comparison' || n.left?.type!=='variable') return null;
 
   if (n.left.name==='url' && n.operator==='~=' && n.right?.type==='regex') {
+    const flags=String(n.right.flags || '');
+    // QX's documented Rewrite matcher examples do not provide a Loon-style
+    // i/m/s flag channel. A flagged source Regex therefore cannot be used as
+    // either an exact matcher or a helper prefilter without risking false
+    // negatives before the helper can re-evaluate source semantics.
+    if (flags) return null;
     return {
       kind:'url-regex',
       key:'url-regex\u0000'+String(n.right.pattern),
