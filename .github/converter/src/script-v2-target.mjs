@@ -83,7 +83,7 @@ function qxTaskOptions(ast, argumentTable, notes) {
 
 function qxNonHttpScriptV2Plan(ast, {scriptUrl, argumentTable = null} = {}) {
   const notes = [];
-  if (ast.argument) {
+  if (ast.script.argument) {
     return {
       ok:true,
       omitted:true,
@@ -154,7 +154,7 @@ export function qxScriptV2Plan(ast, {
   const binaryBodyMode = scriptOptionBoolean(ast, 'binary_body_mode', false);
 
   if (argumentIds !== null) {
-    const usage = scriptV2PluginArgumentUsage(ast.sourcePayload || ast, argumentIds);
+    const usage = scriptV2PluginArgumentUsage(ast, argumentIds);
     const undeclared = usage.undeclaredOptionRefs
       .filter(ref => !['enable','timeout','debug'].includes(ref.option))
       .map(ref => ref.id);
@@ -173,7 +173,7 @@ export function qxScriptV2Plan(ast, {
   if (enable?.type === 'variable') {
     notes.push('Source dynamic enable=' + enable.name + ' ignored for Quantumult X; converted rule defaults to enabled.');
   }
-  if (ast.argument) {
+  if (ast.script.argument) {
     notes.push('Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.');
   }
   if (timeout) {
@@ -234,7 +234,7 @@ function surgeTriggerParams(ast, argumentTable) {
 export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 'script', argumentIds = null, argumentTable = null} = {}) {
   if (!ast || ast.type !== 'script') return unsupported('expected Script v2 AST');
   if (argumentIds !== null) {
-    const usage = scriptV2PluginArgumentUsage(ast.sourcePayload || ast, argumentIds);
+    const usage = scriptV2PluginArgumentUsage(ast, argumentIds);
     const undeclared = [
       ...usage.undeclaredObjectRefs,
       ...usage.undeclaredOptionRefs.map(ref => ref.id),
@@ -291,7 +291,7 @@ export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 's
     params.push('timeout=' + placeholder);
   }
 
-  const argument = ast.argument;
+  const argument = ast.script.argument;
   if (argument?.type === 'string' || argument?.type === 'raw-string') {
     params.push('argument=' + JSON.stringify(argument.value));
   } else if (argument?.type === 'plugin-object') {
