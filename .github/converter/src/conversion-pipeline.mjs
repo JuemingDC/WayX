@@ -17,7 +17,7 @@ import { surgeArgumentMetadata } from './argument.mjs';
 import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection } from './source-section.mjs';
 import { attachQxInlineNote } from './qx-comment.mjs';
 import { planMitmLine } from './mitm.mjs';
-import { isEmptyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from './rewrite-ir.mjs';
+import { classifyLegacyRewriteAction, isEmptyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from './rewrite-ir.mjs';
 import { planQxRewrite } from './rewrite-qx.mjs';
 import { planSurgeRewrite } from './rewrite-surge.mjs';
 import { rewriteReview, rewriteIssue } from './rewrite-plan-result.mjs';
@@ -260,6 +260,24 @@ export function convertPlugin(entry,source,{
       ? {...item,line:inline.line,comments:[...item.comments,inline.comment]}
       : item;
     const comments=cleanSourceComments(effectiveItem.comments);
+
+    const [misplacedPattern,misplacedAction]=splitPatternAction(inline.line);
+    const misplacedOperation=misplacedAction ? classifyLegacyRewriteAction(misplacedAction) : null;
+    if (misplacedOperation && misplacedOperation.kind!=='unknown') {
+      const misplacedIr=legacyRewriteToSemanticIr(misplacedPattern,misplacedAction);
+      const qr=planQxRewrite(misplacedIr,{...qctx,sourceLine:inline.line});
+      const sr=planSurgeRewrite(misplacedIr,{...sctx,sourceLine:inline.line});
+      qxRewriteOutputDestination(qx,qr.section).push(...comments,...(qr.lines || [qr.line]));
+      surgeRewriteOutputDestination(sg,sr.section).push(...comments,...(sr.lines || [sr.line]));
+      continue;
+    }
+
+    if (!inline.line.includes(',') && /^(?:\*\.)?(?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,}$/i.test(inline.line)) {
+      const note='# [WayX] Known source limitation: bare hostname is not a documented Loon Rule declaration, so no target policy is inferred.';
+      qxOutputDestination(qx,'filter').push(...comments,note,'# Source declaration: '+inline.line);
+      surgeOutputDestination(sg,'rule').push(...comments,note,'# Source declaration: '+inline.line);
+      continue;
+    }
 
     const qr=canonicalQxRule(inline.line);
     const qxRendered=attachQxInlineNote({
