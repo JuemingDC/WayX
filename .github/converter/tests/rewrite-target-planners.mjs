@@ -86,14 +86,14 @@ const flaggedQxPipeline=planQxRewrite(v2(flaggedPipelineSource),flaggedQxPipelin
 assert.equal(flaggedQxPipeline.section,'rewrite');
 assert.ok(flaggedQxPipeline.line.startsWith('^https?:// url script-response-body '));
 const flaggedQxScript=[...flaggedQxPipelineCtx.generatedScripts.values()][0];
-assert.match(flaggedQxScript,/new RegExp\\("API","i"\\)/);
+assert.match(flaggedQxScript,/new RegExp\("API","i"\)/);
 
 const flaggedSurgePipelineCtx=ctx();
 const flaggedSurgePipeline=planSurgeRewrite(v2(flaggedPipelineSource),flaggedSurgePipelineCtx);
 assert.equal(flaggedSurgePipeline.section,'script');
 assert.ok(flaggedSurgePipeline.line.includes('pattern=^https?://'));
 const flaggedSurgeScript=[...flaggedSurgePipelineCtx.generatedScripts.values()][0];
-assert.match(flaggedSurgeScript,/new RegExp\\("API","i"\\)/);
+assert.match(flaggedSurgeScript,/new RegExp\("API","i"\)/);
 
 const methodRejectNativeAst=parseRewriteV2(
   'response if ${url} ~= /api/ && ${request.method} == "POST" then reject_dict(200)'
