@@ -167,6 +167,13 @@ assert.equal(redirectOr.section,'comment');
 assert.match(redirectOr.line,/REVIEW REQUIRED/);
 assert.equal(redirectOrCtx.generatedScripts.size,0);
 
+const quotedV2JsonSource='response if ${url} ~= /api/ then response.json.delete(["data.resp_map[\\"/apihub/api/getAppConfig\\"].enabled", "data[\\"3D_AVATAR_UPDATE\\"]"])';
+const quotedV2Json=planQxRewrite(v2(quotedV2JsonSource),ctx());
+assert.equal(quotedV2Json.section,'rewrite');
+assert.match(quotedV2Json.line,/jsonjq-response-body/);
+assert.match(quotedV2Json.line,/apihub\\/api\\/getAppConfig/);
+assert.match(quotedV2Json.line,/3D_AVATAR_UPDATE/);
+
 const jsonAddSource='response if ${url} ~= /api/ then response.json.add("data.new",true)';
 const jsonAddIr=v2(jsonAddSource);
 const qxJsonCtx=ctx();
