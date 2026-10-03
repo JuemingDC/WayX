@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MeiTu.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:01 +08:00
+# Converted: 2026-10-04 01:54:12 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/MeiTu_remove_ads.lpx
@@ -18,7 +18,7 @@ host, adui.tg.meitu.com, reject
 
 # [rewrite_local]
 
-^https:\/\/api\.posters\.meitu\.com\/common\/init\.json url jsonjq-response-body 'del(.data.vip)'
+^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_MeiTu_remove_ads/features_qx_7233708bea.js
 
 # [mitm]
 hostname = api.posters.meitu.com

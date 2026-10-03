@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MeetYou.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:01 +08:00
+# Converted: 2026-10-04 01:54:12 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/MeetYou_remove_ads.lpx
@@ -20,7 +20,7 @@ host, axxd.xmseeyouyima.com, reject
 # [rewrite_local]
 ^https:\/\/circle\.(xm)?seeyouyima\.com\/v\d\/article_recommend\? url reject
 
-^https:\/\/common\.seeyouyima\.com\/v2\/conf_list$ url jsonjq-response-body 'del(.data.confList.Minor_mode_card)'
+^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_MeetYou_remove_ads/features_qx_ab42aa9d3d.js
 
 # [mitm]
 hostname = circle.seeyouyima.com, circle.xmseeyouyima.com, common.seeyouyima.com

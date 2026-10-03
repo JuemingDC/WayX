@@ -7,17 +7,20 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Telegram.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 00:51:41 +08:00
+# Converted: 2026-10-04 01:51:32 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/TelegramRedirect.lpx
 # Target: Quantumult X
 
+# [WayX] Known Quantumult X target limitation: Loon redirect plugin [Argument] templates have no equivalent runtime transport; source parameter references are preserved as comments: app.
+# Source declaration: request if ${url} ~= /^https:\/\/t\.me\/([A-Za-z][A-Za-z0-9_]{3,30}[A-Za-z0-9])\/?$/ as item then redirect(307, "${app}://resolve?domain=${item.1}")
+# [WayX] Known Quantumult X target limitation: Loon redirect plugin [Argument] templates have no equivalent runtime transport; source parameter references are preserved as comments: app.
+# Source declaration: request if ${url} ~= /^https:\/\/t\.me\/\+([A-Za-z0-9_-]+)\/?$/ as item then redirect(307, "${app}://join?invite=${item.1}")
+
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/t\.me\/([A-Za-z][A-Za-z0-9_]{3,30}[A-Za-z0-9])\/?$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_TelegramRedirect/redirect_9af42dd0ad.js
-^https:\/\/t\.me\/\+([A-Za-z0-9_-]+)\/?$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_TelegramRedirect/redirect_7366812de2.js
 
 # [mitm]
 hostname = t.me

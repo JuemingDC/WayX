@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 01:03:11 +08:00
+// Converted: 2026-10-04 01:38:50 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /^https:\/\/duckduckgo\.com\/\?q=b\+([^&]+).+/i as urlMatch then redirect(307, "https://www.bing.com/search?q=${urlMatch.1}")
@@ -96,11 +96,46 @@ function resolveSemanticVariable(name,context,captures=new Map()) {
 
   return argumentValue(context,key);
 }
+function stringTemplateParts(node) {
+  if (node?.type==='raw-string') return [['s',String(node.value)]];
+  if (node?.type!=='string') throw new TypeError('Expected a string template');
+  const raw=typeof node.raw==='string' && node.raw.startsWith('"');
+  const text=raw ? node.raw.slice(1,-1) : String(node.value);
+  const parts=[];let literal='';
+  const flush=()=>{if(literal){parts.push(['s',literal]);literal='';}};
+  for(let i=0;i<text.length;i++) {
+    if(text[i]==='\\' && i+1<text.length) {
+      if(text.slice(i+1,i+3)==='${'){literal+='${';i+=2;continue;}
+      if(raw){const n=text[++i];literal+=({n:'\n',r:'\r',t:'\t','"':'"','\\':'\\'})[n] ?? ('\\'+n);continue;}
+    }
+    if(text.slice(i,i+2)==='${') {
+      let j=i+2,quote=null,escaped=false;
+      for(;j<text.length;j++) {
+        const c=text[j];
+        if(quote){if(escaped)escaped=false;else if(c==='\\')escaped=true;else if(c===quote)quote=null;}
+        else if(c==="'")quote=c;
+        else if(c==='}')break;
+      }
+      if(j===text.length)throw new SemanticEvaluationError('Unterminated string template');
+      flush();parts.push(['v',text.slice(i+2,j)]);i=j;
+    } else literal+=text[i];
+  }
+  flush();return parts;
+}
+function expandSemanticString(node,context,captures) {
+  let text='';
+  for(const [kind,value] of stringTemplateParts(node)) {
+    const v=kind==='s' ? value : resolveSemanticVariable(value,context,captures);
+    if(v===undefined)return undefined;
+    text+=String(v);
+  }
+  return text;
+}
 function literalValue(node,context,captures) {
   if (!node) return undefined;
   switch (node.type) {
     case 'variable': return resolveSemanticVariable(node.name,context,captures);
-    case 'string':
+    case 'string': return expandSemanticString(node,context,captures);
     case 'raw-string':
     case 'number':
     case 'boolean':

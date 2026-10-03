@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SevenCat.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:04 +08:00
+# Converted: 2026-10-04 01:54:16 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/SevenCat_remove_ads.lpx
 # Target: Surge
@@ -26,10 +26,6 @@ DOMAIN-SUFFIX,gdt.qq.com,REJECT
 ^https:\/\/api-cfg\.wtzw\.com\/v\d\/reward\/ _ reject
 ^https:\/\/api-cfg\.wtzw\.com\/v\d\/adv\/ _ reject
 
-[Body Rewrite]
-
-http-response-jq ^https:\/\/xiaoshuo\.wtzw\.com\/api\/v\d\/user\/my-center\? 'del(.data.func_area[1]) | del(.data.func_area[2])'
-
 [Map Local]
 ^https:\/\/api-cfg\.wtzw\.com\/v\d\/splash\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 ^https:\/\/api-bc\.wtzw\.com\/api\/v4\/search\/dispose data-type=text data="{}" status-code=200 header="Content-Type:application/json"
@@ -41,6 +37,10 @@ http-response-jq ^https:\/\/xiaoshuo\.wtzw\.com\/api\/v\d\/user\/my-center\? 'de
 ^https:\/\/api-cfg\.wtzw\.com\/v\d\/offline-adv\/index data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 ^https:\/\/api-cfg\.wtzw\.com\/v\d\/operation\/index\?ad_personal_switch data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 ^https:\/\/xiaoshuo\.wtzw\.com\/api\/v\d\/withdraw\/init data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Script]
+
+wayx_features_08ef57c04c = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_SevenCat_remove_ads/features_surge_08ef57c04c.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% api-cfg.wtzw.com, sf3-fe-tos.pglstatp-toutiao.com, api-bc.wtzw.com, api-gw.wtzw.com, cdn.wtzw.com

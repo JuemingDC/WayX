@@ -2,7 +2,7 @@
 // Author: chance
 // Category: Converter / rewrite
 
-import { normalizeRegexBodyForTarget, compileRegexForTarget, conditionRuntimeSource, compileSourceRegex } from "./core.mjs";
+import { normalizeRegexBodyForTarget, compileRegexForTarget, conditionRuntimeSource, compileSourceRegex, stringTemplateParts } from "./core.mjs";
 import { renderQxHeaderScript, renderQxInlineMockScript, renderSurgeRequestMockScript, renderQxMockFileScript, renderQxRedirectScript, renderQxRejectScript, headerOpsForMock, renderMixedRewriteScript, renderSingleJsonMutationScript, renderSingleRewriteMutationScript } from "./runtime.mjs";
 import crypto from "node:crypto";
 import { surgeRewriteArgumentPayload } from "./script.mjs";
@@ -522,6 +522,8 @@ export function validateRewriteV2Ast(ast) {
   const validateRegexes=node=>{
     if (!node || typeof node!=='object') return;
     if (node.type==='regex') compileSourceRegex(node);
+    const names=node.type==='variable' ? [node.name] : node.type==='string' ? stringTemplateParts(node).filter(p=>p[0]==='v').map(p=>p[1]) : [];
+    if(ast.phase==='request' && names.some(name=>name==='response.status'||name.startsWith('response.header[')))throw conditionError('request phase cannot reference response data');
     for (const value of Object.values(node)) {
       if (Array.isArray(value)) value.forEach(validateRegexes);
       else if (value && typeof value==='object') validateRegexes(value);
@@ -898,7 +900,7 @@ export function listRewriteV2Dependencies(ast, options = {}) {
 export { FILE_ACTIONS, TEXT_MOCK_TYPES };
 
 // complex-rewrite.mjs
-// WayX complex Rewrite v2 capability registry
+// WayX Loon feature collection / source capability registry
 // Author: chance
 // Category: Converter / Rewrite v2
 
@@ -916,7 +918,58 @@ export function classifyComplexRewrite(ast) {
   validateRewriteV2Ast(ast);
   const matched = ast.actions.map(action => families.find(f => f.test(action))?.id || null);
   if (matched.some(x => x === null)) return { ok:false, reason:'unregistered complex action family' };
-  return { ok:true, families:[...new Set(matched)], phase:ast.phase };
+  return { ok:true, families:[...new Set(matched)], phase:ast.phase,features:rewriteFeatureProfile(ast) };
+}
+
+// Features belong to the source expression, never to an upstream plugin ID.
+// Native adapters retain the fixed subset; semantic features share one helper
+// compiler for scalar, batch and multi-action declarations.
+function rewriteFeatureProfile(ast) {
+  const features=new Set();
+  const visit=node=>{
+    if(!node || typeof node!=='object')return;
+    if(node.type==='regex' && node.flags)features.add('regex-flags');
+    if(node.type==='comparison' && node.capture)features.add('condition-captures');
+    if(node.type==='logical')features.add('condition-'+node.operator);
+    if(node.type==='array')features.add('batch-arguments');
+    if(node.type==='variable')features.add('runtime-values');
+    if(node.type==='string') {
+      if(stringTemplateParts(node).some(p=>p[0]==='v'))features.add('string-templates');
+      if(/\\\$\{|\$0|\$&|\$\$/.test(node.raw || node.value))features.add('special-characters');
+    }
+    for(const [key,value] of Object.entries(node))if(key!=='raw') {
+      if(Array.isArray(value))value.forEach(visit);else if(value && typeof value==='object')visit(value);
+    }
+  };
+  visit(ast);
+  if(ast.actions.some(a=>/\.json\.(?:add|replace)$/.test(a.name) && scalarItems(a.args[1]).some(v=>v?.type==='raw-string')))features.add('raw-json-value');
+  if(ast.actions.length>1)features.add('action-order');
+  const mutations=ast.actions.every(a=>new RegExp('^'+ast.phase+'\\.(?:header\\.(?:add|set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$').test(a.name));
+  const needsHelper=['regex-flags','string-templates','special-characters','raw-json-value'].some(f=>features.has(f)) || ast.actions.some(a=>JSON.stringify(a.args).includes('"type":"variable"'));
+  return {kinds:[...features].sort(),mutations,needsHelper};
+}
+
+function planRewriteFeatureHelper(ast,target,ctx) {
+  if(!rewriteFeatureProfile(ast).mutations)return null;
+  // QX object headers cannot preserve duplicates. Its historical native add
+  // path remains governed by the existing compatibility/comment policy.
+  if(target==='qx' && ast.actions.some(a=>a.name.endsWith('.header.add')))return null;
+  if(!ctx.generatedScripts)return {ok:false,terminal:true,reason:'semantic feature helper requires a generated-script context'};
+  try {
+    const options={target,stamp:ctx.stamp,category:ctx.category,sourceLine:ctx.sourceLine,argumentTable:ctx.argumentTable};
+    const plan=ast.actions.length===1 ? renderSingleRewriteMutationScript(ast,options) : renderMixedRewriteScript(ast,options);
+    const refs=ctx.argumentRefs || [];
+    if(target==='qx' && refs.length)throw new Error('Quantumult X plugin argument transport is not verified');
+    const payload=target==='surge' && refs.length ? surgeRewriteArgumentPayload(refs,ctx.argumentTable) : {ok:true,value:null};
+    if(!payload.ok)throw new Error(payload.reason);
+    const key=crypto.createHash('sha1').update('features\0'+target+'\0'+(ctx.sourceLine || ast.raw)).digest('hex').slice(0,10);
+    const filename='features_'+target+'_'+key+'.js';
+    const url=(target==='qx'?qxRewriteRawBase(ctx):surgeRewriteRawBase(ctx))+'/Script/'+ctx.id+'/'+filename;
+    const line=target==='qx' ? qxRewriteMatcherPlan(ast).prefix+plan.qxAction+' '+url :
+      'wayx_features_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+url+(plan.requiresBody?',requires-body=true,max-size=-1':'')+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:'');
+    ctx.generatedScripts.set(filename,plan.script);
+    return {ok:true,handler:'source-feature-collection',section:target==='qx'?'rewrite':'script',line};
+  }catch(error){return {ok:false,terminal:true,reason:String(error.message || error)};}
 }
 
 export const COMPLEX_REWRITE_FAMILIES = families.map(x => x.id);
@@ -939,24 +992,25 @@ export function complexConditionKinds(node, out = []) {
   return out;
 }
 
-export function compileComplexCondition(node, target, {argumentTable = null} = {}) {
+export function compileComplexCondition(node, target, {argumentTable = null,sharedRuntime=false} = {}) {
   for (const c of findRewriteComparisons(node,()=>true)) {
     for (const value of [c.left,c.right]) {
-      if (value?.type!=='variable') continue;
-      const name=value.name;
-      if (['url','request.method','response.status'].includes(name) || /^(request|response)\.header\[/.test(name) || argumentTable?.byId?.has(name)) continue;
-      throw new Error('unsupported complex condition variable: '+name);
+      const names=value?.type==='variable' ? [value.name] : value?.type==='string' ? stringTemplateParts(value).filter(p=>p[0]==='v').map(p=>p[1]) : [];
+      for(const name of names) {
+        if (['url','request.method','response.status'].includes(name) || /^(request|response)\.header\[/.test(name) || argumentTable?.byId?.has(name)) continue;
+        throw new Error('unsupported complex condition variable: '+name);
+      }
     }
   }
   // The same evaluator serves the oracle and both runtime adapters. Captures
   // are committed only from the successful branch, including AND/OR rollback.
-  return '(()=>{'+conditionRuntimeSource()+'\nconst result=evaluateCondition('+JSON.stringify(node)+
+  return '(()=>{'+(sharedRuntime?'':conditionRuntimeSource())+'\nconst result=evaluateCondition('+JSON.stringify(node)+
     ',{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:'+
     (argumentTable?'__wayxArgs':'{}')+'});Object.assign(__wayxCaptures,result.captures);return result.matched;})()';
 }
 
 // complex-rewrite-registry.mjs
-// WayX complex Rewrite v2 handler registry
+// WayX Loon feature collection / compatibility handler registry
 // Author: chance
 // Category: Converter / Rewrite v2 / Complex Routing
 
@@ -973,8 +1027,8 @@ export function registerComplexRewriteHandler(definition){
 }
 
 export function planComplexRewrite(ast,target,context={}){
-  if(!Array.isArray(ast?.actions) || ast.actions.length<2){
-    return {ok:false,reason:'complex Rewrite helper is reserved for source-authored multi-action pipelines'};
+  if(!Array.isArray(ast?.actions) || !ast.actions.length){
+    return {ok:false,reason:'Rewrite feature helper requires source actions'};
   }
 
   const classified=classifyComplexRewrite(ast);
@@ -985,6 +1039,11 @@ export function planComplexRewrite(ast,target,context={}){
       reason:'known source actions are outside the currently implemented generic complex action families: '+classified.reason,
       classified,
     };
+  }
+
+  if(['qx','surge'].includes(target)) {
+    const featurePlan=planRewriteFeatureHelper(ast,target,context);
+    if(featurePlan)return featurePlan;
   }
 
   for(const handler of handlers){
@@ -1140,7 +1199,11 @@ function pathSelector(path) {
 
 function anyToJq(node) {
   if (!node) throw new Error('missing JSON value');
-  if (node.type === 'string') return JSON.stringify(node.value);
+  if (node.type === 'string') {
+    const parts=stringTemplateParts(node);
+    if(parts.some(p=>p[0]==='v'))throw new Error('JSON template requires a semantic feature helper');
+    return JSON.stringify(parts.map(p=>p[1]).join(''));
+  }
   if (node.type === 'raw-string') {
     try { return JSON.stringify(JSON.parse(node.value)); }
     catch { return JSON.stringify(node.value); }
@@ -1726,7 +1789,10 @@ export function surgeMockFilePlan(ast, {pluginSourceUrl = '', materialized = nul
 
 
 export function fixedStringValue(node) {
-  return stringNode(node);
+  // Legacy redirect/mock renderers validate and expand their own templates.
+  // Keep their public input contract; the feature planner selects the semantic
+  // string compiler for mutation actions before native lowering.
+  return node && ['string','raw-string'].includes(node.type) ? String(node.value) : null;
 }
 
 // QX primitives are selected by behavior. The official Quantumult X sample
@@ -2530,58 +2596,9 @@ function ensureQxRewriteHandlers() {
     },
   });
 
-  registerComplexRewriteHandler({
-    id:'qx-same-phase-header-script',
-    targets:['qx'],
-    match:ast=>ast.actions.length>0 && ast.actions.every(action=>action.name.startsWith(ast.phase+'.header.')),
-    plan:(ast,_target,ctx)=>{
-      try {
-        const plan=renderMinimalQxHeaderHelper(ast,{
-          stamp:ctx.stamp,
-          category:ctx.category,
-          sourceLine:ctx.sourceLine,
-        });
-        const key=crypto.createHash('sha1').update('header\0'+ctx.sourceLine).digest('hex').slice(0,10);
-        const filename='header_'+key+'.js';
-        ctx.generatedScripts.set(filename,plan.script);
-        const matcher=qxRewriteMatcherPlan(ast);
-        return {
-          ok:true,
-          section:'rewrite',
-          line:matcher.prefix+plan.qxAction+' '+qxRewriteRawBase(ctx)+'/Script/'+ctx.id+'/'+filename,
-        };
-      } catch (error) {
-        return {ok:false,terminal:true,reason:String(error?.message||error)};
-      }
-    },
-  });
 
-  registerComplexRewriteHandler({
-    id:'qx-complex-body-pipeline-script',
-    targets:['qx'],
-    match:(_ast,info)=>info.families.includes('body-pipeline') || info.families.includes('json-pipeline'),
-    plan:(ast,_target,ctx)=>{
-      try {
-        const plan=renderMixedRewriteScript(ast,{
-          target:'qx',
-          stamp:ctx.stamp,
-          category:ctx.category,
-          sourceLine:ctx.sourceLine,
-        });
-        const key=crypto.createHash('sha1').update('complex-mixed\0qx\0'+ctx.sourceLine).digest('hex').slice(0,10);
-        const filename='complex_qx_'+key+'.js';
-        ctx.generatedScripts.set(filename,plan.script);
-        const matcher=qxRewriteMatcherPlan(ast);
-        return {
-          ok:true,
-          section:'rewrite',
-          line:matcher.prefix+plan.qxAction+' '+qxRewriteRawBase(ctx)+'/Script/'+ctx.id+'/'+filename,
-        };
-      } catch (error) {
-        return {ok:false,terminal:true,reason:String(error?.message||error)};
-      }
-    },
-  });
+
+
 
 
 }
@@ -2654,7 +2671,16 @@ export function planQxRewrite(ir, ctx={}) {
   const argumentRefs=ctx.argumentRefs || [];
 
   if (argumentRefs.length) {
+    if(singleOp?.kind==='redirect')return {
+      section:'comment',reason:'unsupported-qx-redirect-argument-comment',
+      line:'# [WayX] Known Quantumult X target limitation: Loon redirect plugin [Argument] templates have no equivalent runtime transport; source parameter references are preserved as comments: '+argumentRefs.join(', ')+'.\n# Source declaration: '+source,
+    };
     return rewriteReview(source,'Quantumult X cannot carry Loon plugin [Argument] references without changing the source script/runtime contract: '+argumentRefs.join(', '));
+  }
+
+  if(rewriteFeatureProfile(ast).needsHelper && !ctx.featureCompatibilityPhases?.has(ast.phase)) {
+    const featurePlan=planRewriteFeatureHelper(ast,'qx',{...ctx,sourceLine:source,argumentRefs});
+    if(featurePlan)return featurePlan.ok ? {section:featurePlan.section,line:featurePlan.line} : rewriteReview(source,featurePlan.reason);
   }
 
   const fileMocks=ast.actions.filter(action=>action.name===ast.phase+'.body.mock_file');
@@ -2841,41 +2867,12 @@ let surgeRewriteHandlersRegistered=false;
 function ensureSurgeRewriteHandlers() {
   if (surgeRewriteHandlersRegistered) return;
   surgeRewriteHandlersRegistered=true;
-  registerComplexRewriteHandler({
-    id:'surge-same-phase-header-script',
-    targets:['surge'],
-    match:ast=>ast.actions.length>0 && ast.actions.every(action=>action.name.startsWith(ast.phase+'.header.')),
-    plan:(ast,_target,ctx)=>{
-      try {
-        const plan=renderMixedRewriteScript(ast,{
-          target:'surge',
-          stamp:ctx.stamp,
-          category:ctx.category,
-          sourceLine:ctx.sourceLine,
-          argumentTable:ctx.argumentTable,
-        });
-        const payload=ctx.argumentRefs?.length
-          ? surgeRewriteArgumentPayload(ctx.argumentRefs,ctx.argumentTable)
-          : {ok:true,value:null};
-        if (!payload.ok) throw new Error(payload.reason);
-        const key=crypto.createHash('sha1').update('header-surge\0'+ctx.sourceLine).digest('hex').slice(0,10);
-        const filename='header_'+key+'.js';
-        ctx.generatedScripts.set(filename,plan.script);
-        return {
-          ok:true,
-          section:'script',
-          line:'wayx_header_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+surgeRewriteRawBase(ctx)+'/Script/'+ctx.id+'/'+filename+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:''),
-        };
-      } catch (error) {
-        return {ok:false,terminal:true,reason:String(error?.message||error)};
-      }
-    },
-  });
+
 
   registerComplexRewriteHandler({
     id:'surge-complex-body-pipeline-script',
     targets:['surge'],
-    match:(_ast,info)=>info.families.includes('body-pipeline') || info.families.includes('json-pipeline'),
+    match:(_ast,info)=>info.families.includes('mock-pipeline') && (info.families.includes('body-pipeline') || info.families.includes('json-pipeline')),
     plan:(ast,_target,ctx)=>{
       try {
         const plan=renderMixedRewriteScript(ast,{
@@ -2919,6 +2916,11 @@ export function planSurgeRewrite(ir,ctx={}) {
   const ast=rewriteIrDeclaration(ir);
   const singleOp=singleRewriteOperation(ir);
   const argumentRefs=ctx.argumentRefs || [];
+
+  if(rewriteFeatureProfile(ast).needsHelper && !ctx.featureCompatibilityPhases?.has(ast.phase)) {
+    const featurePlan=planRewriteFeatureHelper(ast,'surge',{...ctx,sourceLine:source,argumentRefs});
+    if(featurePlan)return featurePlan.ok ? {section:featurePlan.section,line:featurePlan.line} : rewriteReview(source,featurePlan.reason);
+  }
 
   if (ir.operations.some(op=>op.kind==='mock' && op.phase==='response' && op.operation==='file')) {
     try {

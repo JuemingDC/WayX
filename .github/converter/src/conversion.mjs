@@ -4,7 +4,7 @@
 
 import crypto from "node:crypto";
 import { renderRewritePhaseDispatcher } from "./runtime.mjs";
-import { scriptIrTag, parseScriptDeclaration, isScriptV2, planQxScript, planSurgeScript, scriptOption, analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs, surgeArgumentMetadata } from "./script.mjs";
+import { scriptIrTag, parseScriptDeclaration, isScriptV2, planQxScript, planSurgeScript, scriptOption, analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs, surgeArgumentMetadata, surgeRewriteArgumentPayload } from "./script.mjs";
 import { qxRule as canonicalQxRule, surgeModuleRule } from "./rule.mjs";
 import { isRewriteV2, parseRewriteV2, validateRewriteV2Ast, classifyLegacyRewriteAction, isEmptyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr, inlineResolvedDependency, inlineResolvedLegacyJqPathIr, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr, planQxRewrite, planSurgeRewrite, rewriteReview, rewriteIssue } from "./rewrite.mjs";
 import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection, parseLoonPlugin, materializeRewriteDependencies, materializeSourceScripts, fetchOriginalText, fetchOriginalBytes } from "./input.mjs";
@@ -116,6 +116,17 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
   const result=new Map();
   const items=groupSourceSectionItems(plugin.sections.get('Rewrite') || []).filter(x=>x.line);
   const candidates=[];
+  const scripts=groupSourceSectionItems(plugin.sections.get('Script') || []).filter(x=>x.line);
+  const legacy=items.some(x=>!isRewriteV2(x.line));
+  // Native flag compatibility must not be migrated into an HTTP Script when
+  // that would take the phase away from an existing author Script/legacy rule.
+  const blockedV2=new Set();
+  for(const item of items)if(isRewriteV2(item.line))try {
+    const ast=parseRewriteV2(item.line);
+    const allowed=new RegExp('^'+ast.phase+'\\.(?:header\\.(?:'+(target==='surge'?'add|':'')+'set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$');
+    if(ast.actions.some(a=>!allowed.test(a.name)))blockedV2.add(ast.phase);
+  }catch { /* Invalid declarations keep the ordinary diagnostic. */ }
+  ctx.featureCompatibilityPhases=new Set(['request','response'].filter(phase=>legacy || blockedV2.has(phase) || scripts.some(x=>{try {const ir=parseScriptDeclaration(x.line);return ir?.phase===phase && (target==='qx' || !(scriptOption(ir,'enable')?.value===false));}catch{return false;}})));
   for (const item of items) {
     if (!isRewriteV2(item.line)) continue;
     try {
@@ -131,24 +142,24 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
     // source entry matches this phase. Include native mutations in its order.
     const helper=group.some(x=>/script-(?:request|response)-(?:header|body)|type=http-/.test(x.mapped.line || ''));
     if (!helper) continue;
-    const scripts=groupSourceSectionItems(plugin.sections.get('Script') || []).filter(x=>x.line);
-    const external=scripts.some(x=>{try {const ir=parseScriptDeclaration(x.line);return ir?.phase===phase && (target==='qx' || !(scriptOption(ir,'enable')?.value===false));}catch{return false;}});
-    const legacy=items.some(x=>!isRewriteV2(x.line));
+    const external=ctx.featureCompatibilityPhases.has(phase);
     try {
       if (external || legacy) throw new Error('phase dispatcher cannot compose original remote Script or legacy Rewrite contracts; original URLs are preserved');
       if (group.length===1) continue;
-      if (group.some(x=>x.ast.actions.some(a=>!new RegExp('^'+phase+'\\.(?:header\\.(?:set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$').test(a.name)))) {
+      if (group.some(x=>x.ast.actions.some(a=>!new RegExp('^'+phase+'\\.(?:header\\.(?:'+(target==='surge'?'add|':'')+'set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$').test(a.name)))) {
         throw new Error('phase dispatcher cannot compose native JQ/echo/URL/duplicate-header actions without a verified runtime adapter');
       }
       const refs=[...new Set(group.flatMap(x=>rewriteV2PluginArgumentRefs(x.ast,ctx.argumentIds || []).all))];
-      if (refs.length) throw new Error('phase dispatcher argument transport is not verified: '+refs.join(', '));
-      const plan=renderRewritePhaseDispatcher(group.map(x=>x.ast),{target,stamp:ctx.stamp,category:ctx.category});
+      if (target==='qx' && refs.length) throw new Error('phase dispatcher argument transport is not verified: '+refs.join(', '));
+      const payload=refs.length ? surgeRewriteArgumentPayload(refs,ctx.argumentTable) : {ok:true,value:null};
+      if(!payload.ok)throw new Error(payload.reason);
+      const plan=renderRewritePhaseDispatcher(group.map(x=>x.ast),{target,stamp:ctx.stamp,category:ctx.category,argumentTable:refs.length?ctx.argumentTable:null});
       const key=crypto.createHash('sha1').update(target+'\0'+group.map(x=>x.line).join('\n')).digest('hex').slice(0,10);
       const filename='phase_'+target+'_'+phase+'_'+key+'.js';
       ctx.generatedScripts.set(filename,plan.script);
       const url=ctx.rawBase+'/Script/'+ctx.id+'/'+filename;
       const mapped=target==='qx' ? {section:'rewrite',line:plan.pattern+' url '+plan.qxAction+' '+url} :
-        {section:'script',line:'wayx_phase_'+phase+'_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+url+(plan.requiresBody?',requires-body=true,max-size=-1':'')};
+        {section:'script',line:'wayx_phase_'+phase+'_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+url+(plan.requiresBody?',requires-body=true,max-size=-1':'')+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:'')};
       group.forEach((item,index)=>result.set(item.line,index===0?mapped:{section:'drop',reason:'phase-dispatcher-member'}));
     } catch (error) {
       for (const item of group) {
@@ -159,7 +170,7 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
           const c=ast.condition;
           if (c?.type==='comparison' && c.left?.name==='url' && c.right?.type==='regex') {
             const pattern=String(c.right.pattern);
-            const line=target==='qx' ? item.mapped.line.replace(/^(?:\^https\?:\/\/|\^) url /,pattern+' url ') : item.mapped.line.replace('pattern=^https?://,','pattern='+pattern+',');
+            const line=target==='qx' ? item.mapped.line.replace(/^(?:\^https\?:\/\/|\^) url /,pattern+' url ') : item.mapped.line.replace(/pattern=(?:\^https\?:\/\/|\^),/,'pattern='+pattern+',');
             result.set(item.line,{...item.mapped,line:'# [WayX] COMPATIBILITY LIMITATION: '+error.message+'; retained source URL prefilter is not a source-flag equivalence proof.\n'+line});
           } else result.set(item.line,rewriteReview(item.line,error.message));
         }

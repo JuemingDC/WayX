@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Yueyou.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:16 +08:00
+# Converted: 2026-10-04 01:54:25 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Yueyou_remove_ads.lpx
@@ -17,9 +17,7 @@
 host, ads.reader.yueyouxs.com, reject
 
 # [rewrite_local]
-^https:\/\/goway\.reader\.yueyouxs\.com\/assemble\/app\/basic\/getAppInfo\? url jsonjq-response-body 'del(.data.isShowDLPopup, .data.isShowGame, .data.touTiaoShowDlPopup, .data.offLineDownload.WatchVideoBtnDesc, .data.readVipFirstCfg, .data.readVipNormalCfg, .data.notifyAd, .data.hotStartSplashTime, .data.hotStartReqSwitch, .data.isShowBFTab, .data.popReqDelayTime, .data.benefitCfg, .data.chestTask, .data.hotStartAd, .data.activeTagList, .data.secondOrderCfg, .data.secondOrderList, .data.blockedWordsCfg, .data.aaReportListCfg, .data.pddAdSwitch, .data.isShowShelfAuthPopup, .data.firstPopUpAmount)'
-
-^https:\/\/goway\.reader\.yueyouxs\.com\/assemble\/app\/basic\/getAppInfo\? url jsonjq-response-body 'if getpath(["data","isAdClosed"]) then setpath(["data","isAdClosed"]; true) else . end'
+^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Yueyou_remove_ads/phase_qx_response_0262c2be5a.js
 
 # [mitm]
 hostname = goway.reader.yueyouxs.com

@@ -1,7 +1,6 @@
 #!name=阅友去广告
 #!desc=移除开屏广告、弹窗广告和阅读页面广告，移除底栏福利按钮。
 #!category=WayX
-#!requirement=CORE_VERSION>=20
 
 # Open URL: https://apps.apple.com/app/id1066723192
 # Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
@@ -10,18 +9,18 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Yueyou.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:16 +08:00
+# Converted: 2026-10-04 01:54:25 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Yueyou_remove_ads.lpx
 # Target: Surge
 
+
+
 [Rule]
 DOMAIN,ads.reader.yueyouxs.com,REJECT
 
-[Body Rewrite]
-http-response-jq ^https:\/\/goway\.reader\.yueyouxs\.com\/assemble\/app\/basic\/getAppInfo\? 'del(.data.isShowDLPopup, .data.isShowGame, .data.touTiaoShowDlPopup, .data.offLineDownload.WatchVideoBtnDesc, .data.readVipFirstCfg, .data.readVipNormalCfg, .data.notifyAd, .data.hotStartSplashTime, .data.hotStartReqSwitch, .data.isShowBFTab, .data.popReqDelayTime, .data.benefitCfg, .data.chestTask, .data.hotStartAd, .data.activeTagList, .data.secondOrderCfg, .data.secondOrderList, .data.blockedWordsCfg, .data.aaReportListCfg, .data.pddAdSwitch, .data.isShowShelfAuthPopup, .data.firstPopUpAmount)'
-
-http-response-jq ^https:\/\/goway\.reader\.yueyouxs\.com\/assemble\/app\/basic\/getAppInfo\? 'if getpath(["data","isAdClosed"]) then setpath(["data","isAdClosed"]; true) else . end'
+[Script]
+wayx_phase_response_492173a379 = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Yueyou_remove_ads/phase_surge_response_492173a379.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% goway.reader.yueyouxs.com

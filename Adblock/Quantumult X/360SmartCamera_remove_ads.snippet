@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/360SmartCamera.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:34 +08:00
+# Converted: 2026-10-04 01:53:31 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/360SmartCamera_remove_ads.lpx
@@ -18,7 +18,7 @@ host, ad.jia.360.cn, reject
 host, ad.iot.360.cn, reject
 
 # [rewrite_local]
-^https:\/\/jia\.360\.cn\/conf\/v1\.json url jsonjq-response-body 'del(.tab_conf, .ad_conf, .activity)'
+^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_360SmartCamera_remove_ads/features_qx_84d85cf661.js
 
 # [mitm]
 hostname = jia.360.cn

@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SmartLife.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:55 +08:00
+# Converted: 2026-10-04 01:54:05 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/SmartLife_remove_ads.lpx
@@ -16,7 +16,7 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/i\.ilife798\.com\/api\/v\d\/acc\/login$ url jsonjq-response-body 'del(.data.ar, .data.showAd)'
+^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_SmartLife_remove_ads/features_qx_a27c2e5dcd.js
 
 ^https:\/\/i\.ilife798\.com\/api\/v\d\/acc\/score\/mission-lst$ url reject-dict
 ^https:\/\/i\.ilife798\.com\/api\/v\d\/ep\/lst-simple\? url reject-dict

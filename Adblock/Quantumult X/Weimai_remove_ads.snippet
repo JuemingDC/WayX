@@ -8,7 +8,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Weimai.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:10 +08:00
+# Converted: 2026-10-04 01:54:21 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Weimai_remove_ads.lpx
@@ -17,8 +17,7 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/confssl\d?\.iweimai\.cn\/wm_ios_update\.json\? url jsonjq-response-body 'if getpath(["isShowCJAd"]) then setpath(["isShowCJAd"]; 0) else . end'
-^https:\/\/confssl\d?\.iweimai\.cn\/wm_ios_update\.json\? url jsonjq-response-body 'del(.launchAd, .adBanners, .ad)'
+^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Weimai_remove_ads/phase_qx_response_10cd4d4bca.js
 
 # [mitm]
 hostname = confssl*.iweimai.cn

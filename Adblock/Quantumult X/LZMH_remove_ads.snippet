@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/LZMH.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:00 +08:00
+# Converted: 2026-10-04 01:54:09 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/LZMH_remove_ads.lpx
@@ -35,7 +35,7 @@
 
 ^http:\/\/lzmh\.lz-qs\.com:5090\/resource\/download\/ url reject
 
-^https:\/\/lzmh\.lz-qs\.com:6025\/lzmh_app_api\/api\/v2\/user\/getUserBaseInfoAndConfig\? url jsonjq-response-body 'del(.value.config)'
+^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_LZMH_remove_ads/features_qx_ccf6708f34.js
 
 # [mitm]
 hostname = lzmh.lz-qs.com, yuudnn.lz-qs.com

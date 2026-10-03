@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Huxiu.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:55 +08:00
+# Converted: 2026-10-04 01:54:05 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Huxiu_remove_ads.lpx
@@ -21,7 +21,7 @@ host, api-ad-product.huxiu.com, reject
 
 ^https:\/\/api-web-feed\.huxiu\.com\/v1\/index\/recommendContentsNew$ url reject-dict
 
-^https:\/\/api-ms-feed\.huxiu\.com\/v1\/media\/recommend$ url jsonjq-response-body 'del(.data.live)'
+^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Huxiu_remove_ads/features_qx_54a4480b20.js
 
 ^https:\/\/api-search\.huxiu\.com\/api\/searchIndex$ url reject-dict
 

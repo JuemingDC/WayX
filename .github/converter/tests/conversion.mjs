@@ -462,7 +462,7 @@ assert.doesNotMatch(
   /Source declaration: .*response\.header\.add.* \| response if .*response\.header\.set/,
   'converter must never invent a pipeline by joining adjacent source declarations',
 );
-assert.match(headerGroupOutput.surge, /header-add content-disposition inline/);
+assert.match(headerGroupOutput.surge, /wayx_phase_response_.*full-header-mode=true/);
 
 const qxIgnoredOptionsFixture = {
   id:'IgnoredOptionsFixture',
@@ -500,8 +500,8 @@ assert.match(qxIgnoredOptionsOutput.surge, /#!REQUIREMENT .*enabled.*Legacy = ty
 assert.match(qxIgnoredOptionsOutput.surge, /Legacy = type=http-response[^\n]*timeout=60/);
 assert.match(qxIgnoredOptionsOutput.surge, /#!REQUIREMENT .*enabled.*V2 = type=http-response/);
 assert.match(qxIgnoredOptionsOutput.surge, /V2 = type=http-response[^\n]*timeout=30/);
-assert.match(headerGroupOutput.surge, /header-del content-type/);
-assert.match(headerGroupOutput.surge, /header-add content-type text\/plain; charset=utf-8/);
+assert.ok([...headerGroupOutput.generatedScripts.values()].some(script=>script.includes('__wayxSet("content-type",v)')));
+assert.ok([...headerGroupOutput.generatedScripts.values()].some(script=>script.includes('text/plain; charset=utf-8')));
 
 const genericComplexFixture = {
   id:'GenericComplexFixture',
@@ -517,8 +517,8 @@ response if \${url} ~= /api/ then response.header.set("X-Test", "ok") | response
 const genericComplexOutput = convert(genericComplexFixture, genericComplexSource, new Map(), STAMP);
 assert.doesNotMatch(genericComplexOutput.qx, /ISSUE REQUIRED|REVIEW REQUIRED/);
 assert.doesNotMatch(genericComplexOutput.surge, /ISSUE REQUIRED|REVIEW REQUIRED/);
-assert.match(genericComplexOutput.qx, /complex_qx_/);
-assert.match(genericComplexOutput.surge, /wayx_complex_/);
+assert.match(genericComplexOutput.qx, /features_qx_/);
+assert.match(genericComplexOutput.surge, /wayx_features_/);
 
 const unknownActionFixture = {
   id:'UnknownActionFixture',
@@ -557,9 +557,10 @@ assert.equal(
   false,
   'QX must never emit the undocumented response-header rewrite token',
 );
-assert.match(requestAddOutput.qx, /url script-response-header .*header_.*\.js/);
+assert.match(requestAddOutput.qx, /url script-response-header .*(?:header|features_qx)_.*\.js/);
 assert.doesNotMatch(requestAddOutput.qx, /REVIEW REQUIRED/);
-assert.match(requestAddOutput.surge, /header-add X-Test one/);
+assert.match(requestAddOutput.surge, /type=http-request.*full-header-mode=true/);
+assert.ok([...requestAddOutput.generatedScripts.values()].some(script=>script.includes('__wayxAdd("X-Test",v)')));
 
 const requestAddBulkFixture = {
   id:'RequestHeaderAddBulkFixture',
@@ -625,7 +626,7 @@ assert.equal(
   false,
   'QX header.replace must not embed action-local captures into whole-header capture numbering',
 );
-assert.match(requestReplaceCaptureOutput.qx, /url script-request-header .*header_.*\.js/);
+assert.match(requestReplaceCaptureOutput.qx, /url script-request-header .*(?:header|features_qx)_.*\.js/);
 assert.doesNotMatch(requestReplaceCaptureOutput.qx, /REVIEW REQUIRED/);
 const requestReplaceCaptureHelper = [...requestReplaceCaptureOutput.generatedScripts.values()].find(text => text.includes('User-Agent'));
 assert.ok(requestReplaceCaptureHelper, 'QX request.header.replace must generate a helper');
@@ -792,7 +793,7 @@ const argumentRewriteOutput = convert(argumentRewriteFixture, argumentRewriteSou
 assert.match(argumentRewriteOutput.qx, /REVIEW REQUIRED: Quantumult X cannot carry Loon plugin \[Argument\] references/);
 assert.doesNotMatch(argumentRewriteOutput.qx, /Source \[Argument\]|Argument usage:|enabled=switch|price=input/);
 assert.match(argumentRewriteOutput.surge, /^#!arguments=.*enabled:true.*price:9\.99/m);
-assert.match(argumentRewriteOutput.surge, /wayx_json_mutation_.*type=http-response,pattern=.*script-path=.*argument=/);
+assert.match(argumentRewriteOutput.surge, /wayx_features_.*type=http-response,pattern=.*script-path=.*argument=/);
 assert.doesNotMatch(argumentRewriteOutput.surge, /REVIEW REQUIRED/);
 assert.equal(
   argumentRewriteOutput.qx.split(/\r?\n/).some(line => !line.trim().startsWith('#') && /jsonjq-response-body/.test(line)),

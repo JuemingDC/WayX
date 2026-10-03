@@ -277,3 +277,65 @@ if (selectedCase==='generated-helper-runtime.mjs') {
   assert.doesNotMatch([...output.generatedScripts.keys()].join('\n'),/^(?:body|header|json_)/m);
   console.log('New syntax behavior oracle passed: '+checked+' flag/capture/header/dispatcher cases across QX and Surge');
 }
+
+if(selectedCase==='generated-helper-runtime.mjs') {
+  const {readFile}=await import('node:fs/promises');
+  const fixture=JSON.parse(await readFile(new URL('../fixtures/loon-feature-semantics.json',import.meta.url),'utf8'));
+  const {convertPlugin,validateConvertedPlugin}=await import('../src/conversion.mjs');
+  const {renderRewritePhaseDispatcher}=await import('../src/runtime.mjs');
+  const {classifyComplexRewrite}=await import('../src/rewrite.mjs');
+  const run=(script,{request={},response={},argument=''}={})=>{
+    let calls=0,result;
+    vm.runInNewContext(script,{$request:{url:'https://example.test/',method:'GET',headers:{},body:'',...structuredClone(request)},$response:{status:200,statusCode:200,headers:{},body:'',...structuredClone(response)},$argument:argument,$done(value){calls++;result=value;}},{timeout:1000});
+    assert.equal(calls,1);return JSON.parse(JSON.stringify(result));
+  };
+  let checked=0;
+  for(const item of fixture.cases) {
+    const output=convertPlugin({id:'FeatureCollection',source:'https://example.test/source.lpx',category:'Test'},'[Rewrite]\n'+item.source,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+    validateConvertedPlugin({id:'FeatureCollection'},output);
+    for(const target of item.targets) {
+      assert.doesNotMatch(target==='qx'?output.qx:output.surge,/REVIEW REQUIRED/,item.id+' '+target);
+      const scripts=[...output.generatedScripts].filter(([name])=>name.startsWith('features_'+target+'_'));
+      assert.equal(scripts.length,1,item.id+' must use a generic feature helper');
+      assert.deepEqual(run(scripts[0][1],item),item.expected,item.id+' '+target);
+      checked++;
+    }
+  }
+  const profile=classifyComplexRewrite(parseRewriteV2(fixture.cases.find(c=>c.id==='paired-body-batch').source));
+  assert.ok(profile.features.kinds.includes('regex-flags'));
+  assert.ok(profile.features.kinds.includes('batch-arguments'));
+  assert.ok(profile.features.kinds.includes('string-templates'));
+  // A body phase owner must return the unchanged body with a header-only hit.
+  const headersOnly=[parseRewriteV2('response if ${url} ~= /example/i then response.header.set("X-Only","yes")'),parseRewriteV2('response if ${url} ~= /miss/ then response.body.replace(/old/,"new")')];
+  assert.deepEqual(run(renderRewritePhaseDispatcher(headersOnly,{target:'qx'}).script,{response:{body:'old'}}),{headers:{'X-Only':'yes'},body:'old'});
+  assert.deepEqual(run(renderRewritePhaseDispatcher(headersOnly,{target:'qx'}).script,{request:{url:'https://none.test/'}}),{});
+  // Surge full-header-mode preserves duplicate entries and configuration order.
+  const duplicates=[parseRewriteV2('response if ${url} ~= /example/i then response.header.add("X-Dup","second")'),parseRewriteV2('response if ${url} ~= /example/i then response.header.replace("X-Dup",/s/i,"S")')];
+  const duplicatePlan=renderRewritePhaseDispatcher(duplicates,{target:'surge'});
+  assert.equal(duplicatePlan.fullHeaderMode,true);
+  assert.throws(()=>renderRewritePhaseDispatcher([...duplicates,parseRewriteV2('response if ${response.header["X-Dup"]} == "first" then response.header.set("X-Read","yes")')],{target:'surge'}),/source lookup\/template semantics are not verified/);
+  assert.deepEqual(run(duplicatePlan.script,{response:{headers:[{field:'X-Dup',value:'first'}]}}),{headers:[{field:'X-Dup',value:'firSt'},{field:'X-Dup',value:'Second'}]});
+  // Typed plugin arguments are transported once, then read by both entries.
+  const args={byId:new Map([['token',{id:'token'}],['count',{id:'count'}]])};
+  const argumentEntries=[parseRewriteV2('request if ${url} ~= /example/i then request.header.set("X-Token","${token}")'),parseRewriteV2('request if ${request.header["X-Token"]} == "${token}" then request.json.add("count",${count})')];
+  assert.deepEqual(run(renderRewritePhaseDispatcher(argumentEntries,{target:'surge',argumentTable:args}).script,{request:{body:'{}'},argument:'{"token":"a,b=汉字","count":3}'}),{headers:{'X-Token':'a,b=汉字'},body:'{"count":3}'});
+  assert.throws(()=>renderRewritePhaseDispatcher([parseRewriteV2('request if ${url} ~= /x/ as token then request.header.set("X","${token.0}")')],{target:'surge',argumentTable:args}),/duplicates plugin argument/);
+  assert.throws(()=>renderRewritePhaseDispatcher([parseRewriteV2('request if ${url} ~= /x/ then request.header.set("X","${response.status}")')],{target:'qx'}),/cannot reference response/);
+  // Introducing a helper must not shadow an original HTTP Script. Keep the
+  // historical native flag path when its phase cannot be wholly composed.
+  const entry={id:'CompatibilityOwner',source:'https://example.test/plugin.lpx',category:'Test'};
+  const source='[Rewrite]\nresponse if ${url} ~= /api/i then response.json.add("flag",true)\n[Script]\nhttp-response ^https://example.test/api script-path=https://example.test/original.js, requires-body=true';
+  const owner=convertPlugin(entry,source,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+  assert.match(owner.qx,/api url jsonjq-response-body/);
+  assert.match(owner.qx,/script-response-body https:\/\/example.test\/original.js/);
+  assert.match(owner.surge,/http-response-jq api /);
+  assert.match(owner.surge,/script-path=https:\/\/example.test\/original.js/);
+  assert.equal(owner.generatedScripts.size,0);
+  // Templates are argument references too; QX cannot invent their transport.
+  const parameterSource='[Argument]\napp=select,"tg","sg",tag=Client\n[Rewrite]\nrequest if ${url} ~= /example/ then redirect(307,"${app}://open")';
+  const parameter=convertPlugin(entry,parameterSource,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+  assert.match(parameter.qx,/Known Quantumult X target limitation.*plugin \[Argument\].*app/);
+  assert.doesNotMatch(parameter.qx,/^[^#\n]*script-echo-response/m);
+  assert.doesNotMatch(parameter.surge,/REVIEW REQUIRED/);
+  console.log('Loon feature collection passed: '+checked+' independent expected-output cases, plus phase/body/duplicate/argument contracts');
+}

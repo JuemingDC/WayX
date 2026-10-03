@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/GuideRank.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:53 +08:00
+# Converted: 2026-10-04 01:54:05 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/GuideRank_remove_ads.lpx
@@ -23,10 +23,8 @@
 ^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/common\/getWeworkPromotionInfoBySceneType url reject-dict
 ^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/common\/getWeworkCategoryPromotionInfo url reject-dict
 
-^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/home\/getHomePageV url jsonjq-response-body 'del(.data.countdownBanner, .data.newEvaluations, .data.freeToPayBannerPhotoUrl, .data.groupBuyingList, .data.multiCountdownBanner, .data.banners, .data.multiPlatformBanner, .data.specialSaleBannerPhotoUrl, .data.guide90Evaluation, .data.insurancePromotions)'
+^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_GuideRank_remove_ads/phase_qx_response_ca8f275780.js
 ^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/stockTaking\/pageStockTakingForHomePage url reject-dict
-
-^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/common\/getInitData\.do url jsonjq-response-body 'del(.data.SpecialSalePageMidTabConfig)'
 
 ^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/specialSale\/pageRecommendedItems url reject-dict
 

@@ -1,9 +1,9 @@
 # WayX Conversion Specification
 
-版本：1.61
+版本：1.62
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
-迁移状态：**领域合并完成；Header/Body/JSON runtime 与 phase dispatcher 子集已迁移并由 action oracle 验证；其它兼容路径保留**
+迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；未证明等价的组合继续保留兼容边界**
 
 WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入本仓库转换链。
 
@@ -854,3 +854,41 @@ GitHub 落地（2026-10-04，Asia/Shanghai）：PR #136 已合入 main，最终 
 
 
 本轮本地验收：10 个领域套件通过；新增 76 组跨 QX/Surge runtime 差分通过；287 项 Catalog materialization 上下文差异为 0，转换与 validator 全部通过，15 项因 helper/启用策略/兼容注释产生预期差异，新增 Review 为 0。当前 574 个受管目标、QX 289 / Surge 288 repository audit、managed cleanliness（Kelee 275 / 全部 287）、原作者 Script URL/ref/黄金断言通过。两条既有 Kelee 上游 Script 404 保留；Sub-Store 远程 release 的一次读取超时只记录 source fetch failure，不替换其原 URL。定时活动没有恢复。
+
+
+## 25. 通用 Loon 新特性合集（v1.62，2026-10-04）
+
+复杂语法不再以 action 数量或插件 ID 作为能力单位。`rewrite.mjs` 从原条件和 action AST 识别 Regex flags、条件分组、模板、捕获、特殊字符、批量参数、运行时值与顺序；原生可表达的固定子集继续使用 native lowering，需要语义运行时的 Header/Body/JSON 进入同一个特性编译器。生成规则直接引用 `features_<target>_<hash>.js`，同阶段需要顺序合并时引用 `phase_<target>_<phase>_<hash>.js`。删除被共同编译器覆盖的三个重复 Header/Body handler；阶段 dispatcher 只嵌入一份共同 condition/Regex runtime，各声明保持独立 captures 和可变上下文，避免按声明重复复制核心；公开入口、11 个生产领域文件和 10 个测试套件保持不变。
+
+### 特性及执行约束
+
+| 源特性 | 实现 | 边界 |
+| --- | --- | --- |
+| URL/条件/动作 Regex `i/m/s` | helper 使用原 pattern 和 flags；宽 matcher 只负责触发，条件重新求值 | 仅在能拥有整个阶段时迁移旧 native flag 路径 |
+| 双引号 `${...}` | 从原始 token 解析转义及变量；条件和 action 均支持内置 URL、method、status、header、已声明参数 | Header 名称与 JSON key path 暂限固定字符串；未知变量保留 Review |
+| `\${`、`\\`、引号、换行、Tab、Unicode、斜线与 `$` | 保留原始 token，使转义模板和转义反斜线后的模板不混淆；只展开一次 | 不把字符串中的输入当作可执行代码 |
+| raw string、双 backtick | 原样保留反斜线和 `${...}`；JSON Any 中仍为 String | 不将 raw JSON 文本偷偷改为 Object/Array |
+| condition captures / action `$0/$n` | 独立作用域；捕获 alias 校验唯一性、参数冲突、路径必达与下标 | 未匹配的可选 capture 只跳过当前 action；不清除已有 Header/JSON 值 |
+| 批量数组与多 actions | 参数逐项配对，按源配置顺序执行；失败的 action 不阻止后续 action | 混合 scalar/array、空数组、嵌套数组、不同长度仍非法 |
+| 多 Rewrite 与多类型组合 | 共同 Header set/del/replace、Body replace、JSON add/delete/replace runtime；前序结果提交后供下一条条件读取 | JQ/echo/URL、legacy Rewrite、原作者 HTTP Script 不能未经证明并入 dispatcher |
+| Surge 重复 Header | `full-header-mode=true`，完整数组保留重复项与顺序；同阶段成员统一使用数组适配器 | 重复 Header 的 source 字段查找/模板值未有明确文档，包含此读取的组合不启用；QX 继续旧 native add/注释边界 |
+| Surge 参数组合 | 阶段参数取并集，沿用类型化 JSON argument transport；每条声明独立 captures | QX 参数不能被冻结为默认值以假装等价 |
+| QX Body owner 的 Header-only 命中 | 同时返回当前未改动 body；所有条件未命中仍返回官方 no-op `{}` | 不输出只含 headers 的 response-body 修改结果 |
+
+内置 Header 模板读取当前 action 序列已经修改的 Header；条件读取该条声明开始时的上下文。String 模板与直接 Any variable 保持区别：`${response.status}` 直接作为 JSON value 保留 Number，双引号模板得到 String。
+
+### 等价边界与正常转换保护
+
+官方依据：Loon Rewrite v2 文档的 template、capture、batch、URL range 和配置顺序；Quantumult X 作者仓库 `crossutility/Quantumult-X` 的 `rewrite.md`、request/response Header 与 Body 样例；Surge HTTP Request/Response 文档的 `$done`、first-match、requires-body、full-header-mode。Node VM 和 source oracle 验证生成代码的声明内行为，并不证明客户端的全部网络、压缩、编码、缓冲和 engine 边界。Surge chunked/Expect 请求、body 上限及目标 body 编码限制继续适用。
+
+若同阶段存在原作者 HTTP Script、legacy Rewrite 或共同编译器不能承载的 JQ/echo/URL/重复 Header 组合，不能仅因新特性识别而把旧 native declaration 移到 HTTP Script，避免 first-match 改变已有功能。这类源保留旧 native 兼容路径及 §24 约束；旧 helper 的 URL prefilter 与兼容说明仍保留。新 template/type/capture 不得输出未展开的可执行值。无等价方案时按既有规范 Review、注释或忽略，不复制原作者脚本、不编造目标字段。单条 redirect 的已声明 plugin 参数属于已知 QX transport 限制，保留目标限制注释及原声明，不继续生成带字面 `${app}` 等未展开参数的跳转地址；非终结 mutation 的参数继续现有 Review 策略。
+
+动态 `~= ${pattern}` 的 flags/源 engine 契约、QX 任意 origin 的透明 URL 改写、Surge URL helper 的 Host 自动同步、完整 JQ 与异步作者 Script 的组合尚未证明，本轮不启用近似实现。URL 的原 matcher、capture 与 matched-range/unmatched-range 语义必须保留，不能以完整 URL 字符串替换冒充范围替换。
+
+QX 默认关闭及动态 enable 的 Script 继续按用户授权强制启用，原作者 URL 不变；Surge 的源 enable 不变。源注释不会复活。定时活动继续暂停，远端最多 main/test。
+
+### 验证
+
+`loon-feature-semantics.json` 是按独立预期结果编写的通用特性合集，不能加入插件名称专用分支。runtime suite 在完整 conversion 后运行实际被引用的 helper，覆盖 String/raw/type、转义与捕获、批量与顺序、JSON 失败继续、QX Header-only Body owner、Surge duplicate Header 与 typed argument phase。保留既有 76 组 source oracle 差分、全部领域套件和 Catalog/目标政策/原作者 URL/managed/audit/官方 drift/CI 验收。End-to-end golden 仅在独立行为断言全部通过后更新。
+
+本轮验收记录：18 个通用 source 案例在完整 conversion 后运行 QX/Surge 引用的 helper，共 36 个独立预期输出断言；原 76 组 source oracle 差分继续通过。补充大小写不同的 Header key 的 set/replace 行为、未匹配 capture 保留原值、参数/template transport、first-match 兼容保护及 duplicate Header 读取拒绝用例。287 项目录独立依赖 materialization 的上下文差异为 0，转换与 validator 全部通过，50 项 helper/目标存在预期变化，新增 Review/Issue 为 0；两个既有 Kelee 作者 Script 404 不改变原 URL；Sub-Store 三个 GitHub release Script URL 的读取超时同样只记录 fetch failure，输出地址不变。Telegram 的两条 QX 参数重定向改为已知目标限制注释，删除原先会输出未展开 `${app}` 的 helper；Surge 转换保留。没有放宽 managed Review/Issue 门禁，也没有恢复定时活动。
