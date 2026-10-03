@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.54  
+版本：1.55  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -9,6 +9,19 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 本规范采用“分块规范”结构。转换器、测试、canonical 输出、Golden 都必须服从本规范，不能反过来用现有代码定义规范。
 
 ## 2026-10-03 规范更新
+
+**Quantumult X 多类型 Rewrite Script Fallback Matrix（2026-10-03）**：
+
+1. 本阶段不继续研究 `header.add`。除现有已验证 native/add 路径外，新的多类型 Script fallback 只覆盖 `header.set / header.del / header.replace`、`body.replace`、`json.add / json.delete / json.replace` 与 request-side `body.mock / body.mock_file`。
+2. QX 多类型 source pipeline 不能由一条 native Rewrite 完整表达时，优先改写为**一条 Script Rewrite + 生成脚本链接**，不得拆成多条目标 Rewrite：
+   - 仅 Header mutation → `script-request-header` / `script-response-header`；
+   - 只要包含 Body Replace 或 Key Path JSON mutation → `script-request-body` / `script-response-body`；
+   - request `body.mock / body.mock_file` 与 request Header/Body/JSON mutation 混合 → `script-request-body`；
+   - response `body.mock / body.mock_file` + response Header mutation → `script-echo-response`（Loon 官方规定 response mock 只能再组合 response Header action）。
+3. 生成脚本必须完整重算 Loon condition，并按 source action 从左到右执行。QX matcher 只作为必要条件 prefilter；脚本链接使用 WayX `rawBase/Script/<plugin>/<generated>.js`。
+4. request mock 混合 pipeline 中，mock action在原位置写入 Body 并设置对应 Content-Type，前后 Header/Body/JSON mutation 继续按原顺序执行。`mock_file` 必须先在转换期物化；其物化不再要求 condition 是 simple URL-only。
+5. request mock 的 binary/Base64 body 继续 Review：当前 QX 官方 sample 确认 `script-request-body` action，但没有可据此启用 request `bodyBytes` 的官方示例；不得猜测。
+6. 下列 mixed family 仍不生成伪 Script：`json.jq / jq_file` + 其它 action（QX JS runtime 无官方 jq evaluator）、`url.replace` + 其它 action（官方 request Script 只证明 `path`/headers 修改，未证明完整 URL matched-range rewrite）、redirect/reject 与其它 mutation 的组合（尚无等价的 pipeline/terminal 行为证明）。这些保持 Review，且不得拆分执行。
 
 **Quantumult X JSON Multi-action 原生 JQ 合并（2026-10-03）**：
 
