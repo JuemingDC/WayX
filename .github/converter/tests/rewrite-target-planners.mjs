@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import { parseRewriteV2 } from '../src/rewrite-v2.mjs';
 import { legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from '../src/rewrite-ir.mjs';
 import { planQxRewrite } from '../src/rewrite-qx.mjs';
+import { qxExactRewriteMatcherPlan, qxRewriteMatcherPlan } from '../src/qx-rewrite-matcher.mjs';
 import { planSurgeRewrite } from '../src/rewrite-surge.mjs';
 
 function ctx(extra={}) {
@@ -207,6 +208,38 @@ assert.match(responseHeaderCondition.line,/^api url script-response-body /);
 assert.doesNotMatch(responseHeaderCondition.line,/url-and-header/);
 assert.match([...responseHeaderConditionCtx.generatedScripts.values()][0],/__wayxHeader\("response","X-Test"\)/);
 
+const urlOnlyMatcher=qxExactRewriteMatcherPlan(parseRewriteV2(
+  'request if ${url} ~= /api/ then request.header.add("X-One","1")'
+));
+assert.equal(urlOnlyMatcher.matcher,'url');
+assert.equal(urlOnlyMatcher.matchScope,'url-only');
+assert.equal(urlOnlyMatcher.headersPattern,null);
+assert.equal(urlOnlyMatcher.prefix,'api url ');
+
+const headersOnlyMatcher=qxExactRewriteMatcherPlan(parseRewriteV2(
+  'request if ${request.method} == "POST" then request.header.add("X-One","1")'
+));
+assert.equal(headersOnlyMatcher.matcher,'url-and-header');
+assert.equal(headersOnlyMatcher.matchScope,'headers-only');
+assert.equal(headersOnlyMatcher.urlPattern,'^https?://');
+assert.equal(headersOnlyMatcher.headersPattern,'^POST[ ]');
+assert.equal(headersOnlyMatcher.prefix,'^https?:// ^POST[ ] url-and-header ');
+
+const combinedMatcher=qxExactRewriteMatcherPlan(parseRewriteV2(
+  'request if ${url} ~= /api/ && ${request.method} == "POST" then request.header.add("X-One","1")'
+));
+assert.equal(combinedMatcher.matcher,'url-and-header');
+assert.equal(combinedMatcher.matchScope,'url-and-headers');
+assert.equal(combinedMatcher.urlPattern,'api');
+assert.equal(combinedMatcher.headersPattern,'^POST[ ]');
+
+const noNativeHeadersMatcher=qxRewriteMatcherPlan(parseRewriteV2(
+  'response if ${url} ~= /api/ && ${response.status} == 204 then response.header.del("Server") | response.body.replace(/x/,"y")'
+));
+assert.equal(noNativeHeadersMatcher.matcher,'url');
+assert.equal(noNativeHeadersMatcher.matchScope,'url-only');
+assert.equal(noNativeHeadersMatcher.headersPattern,null);
+
 const nativeRequestAddPipelineSource='request if ${url} ~= /api/ && ${request.method} == "POST" then request.header.add("X-One","1") | request.header.add("X-Two","2")';
 const nativeRequestAddPipelineCtx=ctx();
 const nativeRequestAddPipeline=planQxRewrite(v2(nativeRequestAddPipelineSource),nativeRequestAddPipelineCtx);
@@ -214,6 +247,21 @@ assert.equal(nativeRequestAddPipeline.section,'rewrite');
 assert.match(nativeRequestAddPipeline.line,/^api \^POST\[ \] url-and-header request-header /);
 assert.ok(nativeRequestAddPipeline.line.indexOf('X-One: 1') < nativeRequestAddPipeline.line.indexOf('X-Two: 2'));
 assert.equal(nativeRequestAddPipelineCtx.generatedScripts.size,0);
+
+const headersOnlyNativeAddPipelineSource='request if ${request.method} == "POST" then request.header.add("X-One","1") | request.header.add("X-Two","2")';
+const headersOnlyNativeAddPipelineCtx=ctx();
+const headersOnlyNativeAddPipeline=planQxRewrite(v2(headersOnlyNativeAddPipelineSource),headersOnlyNativeAddPipelineCtx);
+assert.equal(headersOnlyNativeAddPipeline.section,'rewrite');
+assert.match(headersOnlyNativeAddPipeline.line,/^\^https\?:\/\/ \^POST\[ \] url-and-header request-header /);
+assert.equal(headersOnlyNativeAddPipelineCtx.generatedScripts.size,0);
+
+const urlOnlyNativeAddPipelineSource='request if ${url} ~= /api/ then request.header.add("X-One","1") | request.header.add("X-Two","2")';
+const urlOnlyNativeAddPipelineCtx=ctx();
+const urlOnlyNativeAddPipeline=planQxRewrite(v2(urlOnlyNativeAddPipelineSource),urlOnlyNativeAddPipelineCtx);
+assert.equal(urlOnlyNativeAddPipeline.section,'rewrite');
+assert.match(urlOnlyNativeAddPipeline.line,/^api url request-header /);
+assert.doesNotMatch(urlOnlyNativeAddPipeline.line,/url-and-header/);
+assert.equal(urlOnlyNativeAddPipelineCtx.generatedScripts.size,0);
 
 const nativeResponseAddPipelineSource='response if ${url} ~= /api/ then response.header.add("Set-Cookie","a=1") | response.header.add("Set-Cookie","b=2")';
 const nativeResponseAddPipelineCtx=ctx();

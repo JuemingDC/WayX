@@ -111,13 +111,21 @@ function exactPredicates(node) {
 function matcherFromPredicates(predicates) {
   const url=selectUrlPredicate(predicates);
   const method=selectMethodPredicate(predicates);
-  const urlPattern=url?.pattern || '^https?://';
+  const hasUrl=Boolean(url);
+  const hasHeaders=Boolean(method);
+  const urlPattern=hasUrl ? url.pattern : '^https?://';
 
-  if (method) {
+  if (hasHeaders) {
+    // Quantumult X url-and-header always evaluates the URL first and then the
+    // request-side Headers comparison string. Therefore:
+    // - URL + Headers condition => preserve both.
+    // - Headers-only condition => use an all-HTTP(S) URL guard plus Headers.
+    // A URL-only source condition must never be upgraded to url-and-header.
     const headersPattern='^'+regexEscape(method.value)+'[ ]';
     return {
       ok:true,
       matcher:'url-and-header',
+      matchScope:hasUrl ? 'url-and-headers' : 'headers-only',
       urlPattern,
       headersPattern,
       prefix:urlPattern+' '+headersPattern+' url-and-header ',
@@ -128,6 +136,7 @@ function matcherFromPredicates(predicates) {
   return {
     ok:true,
     matcher:'url',
+    matchScope:hasUrl ? 'url-only' : 'unfiltered',
     urlPattern,
     headersPattern:null,
     prefix:urlPattern+' url ',
