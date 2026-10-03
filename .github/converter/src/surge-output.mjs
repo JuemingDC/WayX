@@ -8,6 +8,7 @@ import { compactOutputLines, finalizeOutputLines, hasActiveOutputLines } from '.
 const SURGE_DESTINATIONS=new Map([
   ['notes','notes'],
   ['comment','notes'],
+  ['general','general'],
   ['rule','rule'],
   ['url','url'],
   ['header','header'],
@@ -18,6 +19,7 @@ const SURGE_DESTINATIONS=new Map([
 ]);
 
 const SURGE_SECTION_ORDER=[
+  ['general','[General]'],
   ['rule','[Rule]'],
   ['url','[URL Rewrite]'],
   ['header','[Header Rewrite]'],
@@ -30,6 +32,7 @@ const SURGE_SECTION_ORDER=[
 export function createSurgeOutputState() {
   return {
     notes:[],
+    general:[],
     rule:[],
     url:[],
     header:[],
