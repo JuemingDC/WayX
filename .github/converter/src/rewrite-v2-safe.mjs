@@ -21,6 +21,8 @@ export function analyzeSimpleUrlRegexCondition(condition) {
   if (condition.left?.type !== 'variable' || condition.left.name !== 'url') return { ok: false, reason: 'left operand is not ${url}' };
   if (condition.right?.type !== 'regex') return { ok: false, reason: 'right operand is not a literal regex' };
   if (condition.capture) return { ok: false, reason: 'as capture requires semantic review' };
+  const flags=String(condition.right.flags || '');
+  if (flags) return { ok: false, reason: 'native target matcher cannot preserve Loon Regex flags: ' + flags };
   return { ok: true, pattern: normalizeRegexBodyForTarget(condition.right.pattern) };
 }
 
