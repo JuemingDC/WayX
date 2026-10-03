@@ -1,9 +1,9 @@
 # WayX Conversion Specification
 
-版本：1.58  
+版本：1.59  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
-迁移状态：**Semantic Compiler Phase C / equivalence planner + differential matcher oracle active**
+迁移状态：**Semantic Compiler Phase C / prefilter soundness + differential matcher oracle active**
 
 WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入本仓库转换链。
 
@@ -227,6 +227,15 @@ Loon `i / m / s` 是源行为组成部分，必须进入 Semantic IR。
 
 只有能够证明为**完整等价条件**的 matcher 才能用于 native-equivalent。
 
+Phase C 的 prefilter soundness 固定为：
+
+- target bare Regex 只有在 source Regex **没有 flags** 时，才允许直接复用 source body 作为限制性 matcher；
+- source Regex 带 `i / m / s` 时，若 target 没有官方确认的等价 flags 表达，不得把去掉 flags 的 body 用作 prefilter；
+- 这类条件应退化为 `^https?://`，或使用同一 `AND` 路径中其它已经独立证明为必要条件的 predicate；
+- `OR` 只有在每个分支都有 sound prefilter 时才允许做分支 union；任一分支只能安全退化为 broad matcher 时，整个 `OR` 也必须 broad；
+- helper / dispatcher 内重新执行 source condition 时，Regex 固定使用 `new RegExp(source, flags)`；
+- finite oracle 只能发现已观察到的 false negative，不能代替上述结构化 soundness proof。
+
 ---
 
 ## 6. Quantumult X Target Contract
@@ -333,6 +342,8 @@ Surge 所有能力判断必须来自官方 Manual。
 ### 7.3 Surge native
 
 Surge native Rewrite / Header Rewrite / Body Rewrite / Map Local 能完整等价时优先 native。
+
+Surge 官方 URL-REGEX / URL Rewrite 文档描述 bare Regex 为 case-sensitive，且没有 Loon `/pattern/ims` 的独立 flags 字段。因此 source Regex 带 flags 时不得直接降为 Surge native bare Regex；必须进入 sound helper/dispatcher，无法安全触发 helper 时则 unsupported。
 
 若 native processing order 与 Loon source order 不等价，则不能仅因为单条 action 可映射就使用 native。
 
@@ -692,6 +703,9 @@ Workflow 只调用稳定入口，不应枚举 converter 内部所有实现文件
 - native-equivalent proof；
 - guarded-helper proof；
 - prefilter soundness；
+- source Regex flags 不得在 target matcher 中静默丢失；
+- generated helper trigger 必须使用 sound prefilter；
+- helper 内按 source Regex body + flags 重放 condition；
 - differential condition matcher oracle；
 - false-positive / false-negative evidence；
 - unsupported reason taxonomy。
@@ -749,7 +763,7 @@ Workflow 只调用稳定入口，不应枚举 converter 内部所有实现文件
 
 main 中现有 converter 在 Phase B–F 完成前继续承担生产转换。
 
-如果当前实现与本 v1.58 新规范冲突：
+如果当前实现与本 v1.59 新规范冲突：
 
 - 不立即在同一个结构 PR 中强行改动 canonical；
 - 在后续语义 PR 中按新顺序迁移；
