@@ -1391,15 +1391,18 @@ const qxResponseBinaryNative = qxScriptV2Plan(
   parseScriptV2('response if ${url} ~= /image/i then script("https://example.com/binary.js") with requires_body=true, binary_body_mode=true'),
   {scriptUrl:'https://example.com/binary.js', sourceText:'$done({bodyBytes:$response.bodyBytes});'},
 );
-assert.equal(qxResponseBinaryNative.ok, false);
-assert.match(qxResponseBinaryNative.reason, /binary_body_mode field/);
+assert.equal(qxResponseBinaryNative.ok, true);
+assert.match(qxResponseBinaryNative.line, /url script-response-body /);
+assert.ok(qxResponseBinaryNative.notes.some(note => /binary_body_mode=true.*omitted/i.test(note)));
 
 const qxRequestBinaryUnsupported = qxScriptV2Plan(
   parseScriptV2('request if ${url} ~= /upload/i then script("https://example.com/binary.js") with binary_body_mode=true'),
   {scriptUrl:'https://example.com/binary.js', sourceText:'$done({});'},
 );
-assert.equal(qxRequestBinaryUnsupported.ok, false);
-assert.match(qxRequestBinaryUnsupported.reason, /binary_body_mode field/);
+assert.equal(qxRequestBinaryUnsupported.ok, true);
+assert.match(qxRequestBinaryUnsupported.line, /url script-request-header /);
+assert.doesNotMatch(qxRequestBinaryUnsupported.line, /script-request-body/);
+assert.ok(qxRequestBinaryUnsupported.notes.some(note => /binary_body_mode=true.*omitted/i.test(note)));
 
 const surgeScriptV2Native = surgeScriptV2Plan(
   parseScriptV2('request if ${url} ~= /submit/i then script("https://example.com/request.js") with requires_body=true, binary_body_mode=true'),
@@ -1411,8 +1414,12 @@ assert.match(surgeScriptV2Native.line, /requires-body=true/);
 assert.match(surgeScriptV2Native.line, /binary-body-mode=true/);
 
 const qxScriptV2NeedsReview = qxScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'request.js', sourceText:'$done({body:$request.body});'});
-assert.equal(qxScriptV2NeedsReview.ok, false);
-assert.match(qxScriptV2NeedsReview.reason, /dynamic enable field/);
+assert.equal(qxScriptV2NeedsReview.ok, true);
+assert.match(qxScriptV2NeedsReview.line, /url script-request-body request\.js$/);
+assert.ok(qxScriptV2NeedsReview.notes.some(note => /defaults to enabled/i.test(note)));
+assert.ok(qxScriptV2NeedsReview.notes.some(note => /timeout.*omitted/i.test(note)));
+assert.ok(qxScriptV2NeedsReview.notes.some(note => /binary_body_mode=true.*omitted/i.test(note)));
+assert.ok(qxScriptV2NeedsReview.notes.some(note => /argument ignored/i.test(note)));
 
 const surgeScriptV2NeedsReview = surgeScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'request.js', name:'x'});
 assert.equal(surgeScriptV2NeedsReview.ok, false);
@@ -1437,8 +1444,9 @@ const qxUnsupportedDynamicOptions = qxScriptV2Plan(
   parseScriptV2('response if ${url} ~= /api/ then script("a.js", {${enabled}}) with enable=${enabled}, timeout=60, requires_body=true'),
   {scriptUrl:'a.js', argumentIds:new Set(['enabled']), sourceText:'$done({body:$response.body});'},
 );
-assert.equal(qxUnsupportedDynamicOptions.ok, false);
-assert.match(qxUnsupportedDynamicOptions.reason, /dynamic enable field/);
+assert.equal(qxUnsupportedDynamicOptions.ok, true);
+assert.ok(qxUnsupportedDynamicOptions.notes.some(note => /defaults to enabled/i.test(note)));
+assert.ok(qxUnsupportedDynamicOptions.notes.some(note => /timeout.*omitted/i.test(note)));
 
 const surgeBinaryOnly = surgeScriptV2Plan(
   parseScriptV2('request if ${url} ~= /raw/ then script("raw.js") with binary_body_mode=true'),
