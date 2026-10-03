@@ -7,9 +7,11 @@ import {
   parseLoonRuleAst,
   renderRuleAst,
   ruleTypesInAst,
-} from '../src/rule-ast.mjs';
-import { planQxRuleAst } from '../src/rule-qx.mjs';
-import { planSurgeModuleRuleAst, renderSurgeRuleAst, validateSurgeRuleAst } from '../src/rule-surge.mjs';
+  planQxRuleAst,
+  planSurgeModuleRuleAst,
+  renderSurgeRuleAst,
+  validateSurgeRuleAst,
+} from '../src/rule.mjs';
 
 const simple=parseLoonRuleAst('DOMAIN, example.com, REJECT');
 assert.equal(simple.ok,true);
