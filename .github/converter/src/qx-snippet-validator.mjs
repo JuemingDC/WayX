@@ -172,7 +172,7 @@ export function validateQX(text, entry) {
     }
     if (!line || line.startsWith('#')) continue;
     if (/\(\?[ims](?:[:)])?/i.test(line)) {
-      throw new Error(`${entry.id}: Quantumult X output must not restore discarded Loon regex flags with inline modifiers: ${line}`);
+      throw new Error(`${entry.id}: Quantumult X output must not invent undocumented inline regex modifiers for source flags: ${line}`);
     }
     if (/\[hH\]\[tT\]\[tT\]\[pP\](?:\[sS\])?/.test(line)) {
       throw new Error(`${entry.id}: Quantumult X output must not emulate case-insensitive flags with manual HTTP case-fold classes: ${line}`);
