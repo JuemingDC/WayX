@@ -158,7 +158,7 @@ const qxTimeoutUnsupported=planQxScript(
 );
 assert.equal(qxTimeoutUnsupported.ok,true);
 assert.doesNotMatch(qxTimeoutUnsupported.line,/timeout=/);
-assert.match(qxTimeoutUnsupported.notes.join('\n'),/timeout.*omitted/i);
+assert.match(qxTimeoutUnsupported.notes.join('\n'),/timeout ignored/i);
 
 const qxEnableTrue=planQxScript(
   scriptV2AstToSemanticIr(parseScriptV2('request if ${url} ~= /enabled/ then script("https://example.com/e.js") with enable=true')),
@@ -212,7 +212,7 @@ const qxBinaryWithoutBody=planQxScript(
 assert.equal(qxBinaryWithoutBody.ok,true);
 assert.match(qxBinaryWithoutBody.line,/script-request-header/);
 assert.doesNotMatch(qxBinaryWithoutBody.line,/script-request-body/);
-assert.match(qxBinaryWithoutBody.notes.join('\n'),/binary_body_mode=true.*omitted/i);
+assert.match(qxBinaryWithoutBody.notes.join('\n'),/binary_body_mode=true ignored/i);
 
 const surgeV2=planSurgeScript(v2Ir,{
   scriptUrl:'https://example.com/v2.js',
