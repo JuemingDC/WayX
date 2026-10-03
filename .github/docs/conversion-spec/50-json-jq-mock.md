@@ -171,6 +171,30 @@ response.json.jq("jq-path=https://...")
 
 Validator 必须拒绝把 `http://`、`https://`、其它 URL scheme、绝对路径或 `..` 路径写进 native `echo-response` 的 Resource Path。
 
+## 50.4.1 QX request mock mixed Script
+
+Loon Rewrite v2 的多 Action 一般按 `|` 从左到右执行；官方仅对 **response mock** 额外限制为“一个 response mock/mock_file + response Header Action”。因此 request mock 可以进入 WayX 的 request-side mixed mutation Script fallback。
+
+当同一条 request pipeline 含一个 `request.body.mock` / `request.body.mock_file`，并同时包含以下任一 mutation：
+
+- `request.header.set / del / replace`
+- `request.body.replace`
+- `request.json.add / delete / replace`
+
+QX 固定生成一条：
+
+```text
+<matcher> script-request-body <WayX generated script URL>
+```
+
+生成 helper 完整重算 source condition，并严格按源 action 顺序执行。mock action 在其原位置替换 `__wayxBody` 并设置对应 Content-Type；它前后的 Header / Body / JSON mutation 都不得重排。
+
+`request.body.mock_file` 的文件先在转换期从原 source URL 解析并物化，再把实际内容嵌入生成 helper。物化不再要求 condition 是 URL-only，因为文件依赖解析与 Rewrite matcher 形状互不相关。
+
+当前只开放 text request mock。Base64/binary request mock 仍 Review：QX 官方 sample 确认 `script-request-body` action 存在，但没有足够官方示例证明 request-side `bodyBytes` 返回形式，不能类推 response bodyBytes。
+
+本阶段明确不扩大 `header.add` 的 mixed-script 语义。
+
 ## 50.5 request.body.mock / mock_file
 
 旧版 `mock-request-body` 同样先归一化为 request mock 语义；QX 使用 `script-request-body` helper，Surge 使用 `http-request` helper。不能用 Map Local 替代 request mock，因为 Map Local 生成的是响应而不是修改上游请求。
