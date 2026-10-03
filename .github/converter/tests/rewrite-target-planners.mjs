@@ -91,7 +91,7 @@ assert.match(flaggedQxScript,/new RegExp\\("API","i"\\)/);
 const flaggedSurgePipelineCtx=ctx();
 const flaggedSurgePipeline=planSurgeRewrite(v2(flaggedPipelineSource),flaggedSurgePipelineCtx);
 assert.equal(flaggedSurgePipeline.section,'script');
-assert.match(flaggedSurgePipeline.line,/pattern=\\^https\\?:\\/\\//);
+assert.ok(flaggedSurgePipeline.line.includes('pattern=^https?://'));
 const flaggedSurgeScript=[...flaggedSurgePipelineCtx.generatedScripts.values()][0];
 assert.match(flaggedSurgeScript,/new RegExp\\("API","i"\\)/);
 
