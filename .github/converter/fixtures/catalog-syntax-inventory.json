@@ -18,6 +18,8 @@
       "reject",
       "reject_dict",
       "reject_img",
+      "request.body.replace",
+      "request.header.replace",
       "request.header.set",
       "response.body.mock",
       "response.body.mock_file",
@@ -26,7 +28,9 @@
       "response.header.set",
       "response.json.delete",
       "response.json.jq",
-      "response.json.replace"
+      "response.json.jq_file",
+      "response.json.replace",
+      "url.replace"
     ]
   },
   "scriptV2": {
@@ -45,7 +49,8 @@
       "binary_body_mode",
       "enable",
       "requires_body",
-      "tag"
+      "tag",
+      "timeout"
     ]
   }
 }
