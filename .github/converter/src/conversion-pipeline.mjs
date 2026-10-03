@@ -17,7 +17,7 @@ import { surgeArgumentMetadata } from './argument.mjs';
 import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection } from './source-section.mjs';
 import { attachQxInlineNote } from './qx-comment.mjs';
 import { planMitmLine } from './mitm.mjs';
-import { isEmptyLegacyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from './rewrite-ir.mjs';
+import { isEmptyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from './rewrite-ir.mjs';
 import { planQxRewrite } from './rewrite-qx.mjs';
 import { planSurgeRewrite } from './rewrite-surge.mjs';
 import { rewriteReview, rewriteIssue } from './rewrite-plan-result.mjs';
@@ -91,6 +91,7 @@ function rewriteV2Action(line,target,ctx) {
   }
 
   const ir=rewriteV2AstToSemanticIr(ast,{source:line});
+  if (isEmptyJsonJqIr(ir)) return {section:'drop',reason:'empty-json-jq'};
   const planner=target==='qx' ? planQxRewrite : target==='surge' ? planSurgeRewrite : null;
   if (!planner) return rewriteIssue(line,'unknown-rewrite-target','unsupported Rewrite target planner: '+target);
   return planner(ir,{...ctx,sourceLine:line,argumentRefs:argumentRefs.all});
@@ -255,9 +256,9 @@ export function convertPlugin(entry,source,{
     if (!qr || !sr) {
       const [pattern,action]=splitPatternAction(item.line);
       let ir=legacyRewriteToSemanticIr(pattern,action);
-      if (isEmptyLegacyJsonJqIr(ir)) {
-        qr={section:'drop',reason:'empty-legacy-json-jq'};
-        sr={section:'drop',reason:'empty-legacy-json-jq'};
+      if (isEmptyJsonJqIr(ir)) {
+        qr={section:'drop',reason:'empty-json-jq'};
+        sr={section:'drop',reason:'empty-json-jq'};
       }
       const jqSpec=legacyJqPathDependencySpecFromIr(ir,{pluginSourceUrl:entry.source});
       if (jqSpec) {
