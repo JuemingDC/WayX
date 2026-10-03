@@ -146,15 +146,162 @@ Loon 将 Header 操作细分为 `add / set / del / replace`。Quantumult X 官�
 
 ### 原生直转子集
 
-Crossutility 官方 sample 只确认完整 **request Header block** 的 `request-header` rewrite，没有活动 `response-header` rewrite token。WayX 因此只在 request phase 使用该原生能力。
+Crossutility 官方 sample 明确给出完整 **request Header block** 的 `request-header` rewrite；用户 2026-10-03 提供的当前 Quantumult X Rewrite 类型选择器同时确认 `response-header` 为原生类型。WayX 将两者都登记为 QX 原生 Rewrite 能力，但仍按“能证明等价才原生”使用，不因为类型存在就把所有 Header Action 强行改写为整块 Header 正则。
 
-原生直转只保留单条、固定参数、单 URL 条件的 `request.header.add`：
+当前原生直转只保留单条、固定参数、单 URL 条件的 `*.header.add`：
 
 ```text
-request.header.add(...) -> request-header（在首个 CRLF 后插入新 Header 行）
+request.header.add(...)  -> request-header（在首个 CRLF 后插入新 Header 行）
+response.header.add(...) -> response-header（在状态行后的首个 CRLF 后插入新 Header 行）
 ```
 
-`request.header.add` 的原生转换不得先查找/覆盖同名字段；它通过整块 Header 字符串插入新行，保留已有同名 Header，因此是 add 而不是 set。Header 值含 `$` 时不走该原生路径，因为 QX replacement string 的 literal-dollar 转义没有在官方 sample 中得到证明。
+该原生转换不得先查找/覆盖同名字段；它通过整块 Header 字符串插入新行，保留已有同名 Header，因此保持 add 的重复字段语义。Header 值含 `# Block 30 — Rewrite 映射规范
+
+
+## 30.0 统一 Semantic IR 契约
+
+Legacy Rewrite 与 Rewrite v2 的**源 grammar 不合并**；统一点位于 source parse 之后。Production 必须通过 `.github/converter/src/rewrite-ir.mjs` 形成 target-neutral Semantic IR，再进入目标规划。
+
+统一 operation kind 至少包括：
+- `reject`
+- `redirect`
+- `url-rewrite`
+- `header`
+- `body-regex`
+- `json`
+- `mock`
+- `action`（已解析但尚未归入以上类别）
+- `unknown`
+
+IR 必须保留 source action/AST，不得为了统一分类丢弃 typed argument、capture/template、pipeline 顺序或 Legacy 特有参数。Source-authored 多 action 的 operation 顺序必须与源声明一致。
+
+目标 planner 仍遵守本块后续映射与 fallback 链；建立 IR **不等于**允许把相似但语义不同的 Legacy/v2 action 强行共用 native mapping。
+
+
+## 30.0.1 Target planner 边界
+
+Rewrite Semantic IR 形成后，所有目标决策固定进入：
+
+- Quantumult X：`.github/converter/src/rewrite-qx.mjs::planQxRewrite(ir, ctx)`
+- Surge：`.github/converter/src/rewrite-surge.mjs::planSurgeRewrite(ir, ctx)`
+
+两个 planner 统一拥有目标 fallback 顺序：
+
+```text
+native target primitive
+→ dedicated semantic helper
+→ source-authored generic complex helper
+→ explicit comment Review / Issue
+```
+
+`.github/scripts/sync-convert.mjs` 不得再：
+- 直接调用 QX/Surge Rewrite renderer；
+- 直接注册/调用 complex Rewrite handler；
+- 通过 raw action-name regex 判断 target 路径；
+- 保留未定义或隐式 fallback。
+- 在模块 import 阶段修改全局 complex registry；handler 必须由 target planner 首次执行时惰性、幂等注册。
+
+Legacy Rewrite 的 source-specific helper 可以继续存在于 `legacy-rewrite.mjs`，但必须由 QX/Surge target planner 调用；其存在不构成 orchestration 旁路。
+
+## 30.1 Loon 旧 Rewrite
+
+| Loon Action | Quantumult X | Surge |
+|---|---|---|
+| `reject` | `url reject` | `[URL Rewrite] REGEX _ reject` |
+| `reject-200` | `url reject-200` | Map Local：200 + empty body |
+| `reject-img` | `url reject-img` | Map Local：tiny-gif |
+| `reject-dict` | `url reject-dict` | Map Local：`{}` + JSON |
+| `reject-array` | `url reject-array` | Map Local：`[]` + JSON |
+| `302 TARGET` | `url 302 TARGET` | `[URL Rewrite] REGEX TARGET 302` |
+| `307 TARGET` | `url 307 TARGET` | `[URL Rewrite] REGEX TARGET 307` |
+| request header add | QX `request-header`（仅安全固定值） | `[Header Rewrite]` |
+| request header set/del/replace | QX `script-request-header` helper | `[Header Rewrite]` |
+| request body replace | QX `request-body` | `[Body Rewrite]` |
+| response body replace | QX `response-body` | `[Body Rewrite]` |
+| request/response JQ | QX `jsonjq-*-body` | `http-*-jq` |
+| Script | QX 官方 script action | Surge `[Script]` |
+
+### 30.1.1 旧 Rewrite reject 与 Rule URL-REGEX reject 必须分开
+
+Loon 旧 `[Rewrite]`：
+
+```text
+REGEX - reject
+```
+
+固定转换：
+
+```text
+Quantumult X: REGEX url reject
+Surge [URL Rewrite]: REGEX _ reject
+```
+
+这里 QX 使用的是官方 `reject`（404 空响应语义），**不能**因为 Block 20 的 `URL-REGEX,REGEX,REJECT -> reject-200` 而改成 `reject-200`。
+
+旧 Rewrite 的其他 reject action 逐项保持类型：
+
+| Loon 旧 `[Rewrite]` | Quantumult X | Surge |
+|---|---|---|
+| `REGEX - reject` | `REGEX url reject` | `[URL Rewrite] REGEX _ reject` |
+| `REGEX - reject-200` | `REGEX url reject-200` | `[Map Local]` 200 + empty body |
+| `REGEX - reject-img` | `REGEX url reject-img` | `[Map Local]` tiny-gif + 200 |
+| `REGEX - reject-dict` | `REGEX url reject-dict` | `[Map Local]` `{}` + JSON + 200 |
+| `REGEX - reject-array` | `REGEX url reject-array` | `[Map Local]` `[]` + JSON + 200 |
+
+## 30.2 Rewrite v2 普通 reject
+
+Loon v2：
+```text
+reject(404)
+reject(200)
+```
+
+QX：
+```text
+REGEX url reject
+```
+
+Surge：
+```ini
+[URL Rewrite]
+REGEX _ reject
+```
+
+普通 reject 不因为状态码自动改成 Map Local 或 echo script。
+
+## 30.3 Rewrite v2 Body 类型优先
+
+```text
+reject_dict(200)  -> QX reject-dict
+reject_array(200) -> QX reject-array
+reject_img(200)   -> QX reject-img
+```
+
+状态码不能覆盖 Action / Body 语义。
+
+## 30.4 Loon Rule：URL-REGEX + REJECT-X
+
+WayX 固定项目映射：
+```text
+URL-REGEX,REGEX,REJECT
+→
+REGEX url reject-200
+```
+
+这只用于 Loon Rule 的 `URL-REGEX + REJECT`，不能反推普通 Rewrite `reject(200)`。
+
+`URL-REGEX + REJECT-DROP`：
+```text
+QX -> REGEX url reject
+```
+
+完整 `URL-REGEX + REJECT-X` 表以 Block 20.2 为唯一 Rule 映射表；本节只强调它与旧 Rewrite reject 不同。
+
+## 30.4.1 Rewrite v2 Header → Quantumult X
+
+Loon 将 Header 操作细分为 `add / set / del / replace`。Quantumult X 官方 sample 同时提供原生 Header Rewrite 与 Header Script 机制。WayX 按“原生可严格等价则原生，否则 helper”选择，不因动作属于 Header 就一律生成脚本。
+
+ 时不走该原生路径，因为 QX replacement string 的 literal-dollar 转义没有在当前证据中得到证明；request 进入既有 helper，response 仍 fail closed，避免用对象 set 冒充 add。
 
 `request.header.replace` **不再原生嵌入**到整块 Header 正则。Loon Header 名称匹配不区分大小写，且 replacement 的 `$0...$n` 属于 Action 自己的正则捕获；如果为了 QX whole-header rewrite 额外加入 CRLF 捕获组，会改变捕获编号，也可能改变 `^ / $` 等正则上下文。因此统一进入 helper。
 
@@ -169,7 +316,325 @@ response -> script-response-header
 
 Helper 选择继续遵守最小实现原则：固定值、单 URL 条件的 Header-only 操作优先生成专用 Header helper；只有出现 condition capture、运行时模板或更复杂条件时才使用通用 Complex helper。Header-only helper 不应携带无关 JSON/Body mutation runtime。
 
-`response.header.add` 例外：QX 官方 sample 的 Header object 返回形式不能证明重复同名 Header 可保留，因此不得用对象 set 冒充 add；按当前项目决策直接注释保留源声明，不生成活动 helper，也不进入持续 Review inventory。
+`response.header.add` 在参数为固定安全字符串时优先使用原生 `response-header` 整块插入，因此可以保留重复同名字段。若字段名/值含换行、replacement `# Block 30 — Rewrite 映射规范
+
+
+## 30.0 统一 Semantic IR 契约
+
+Legacy Rewrite 与 Rewrite v2 的**源 grammar 不合并**；统一点位于 source parse 之后。Production 必须通过 `.github/converter/src/rewrite-ir.mjs` 形成 target-neutral Semantic IR，再进入目标规划。
+
+统一 operation kind 至少包括：
+- `reject`
+- `redirect`
+- `url-rewrite`
+- `header`
+- `body-regex`
+- `json`
+- `mock`
+- `action`（已解析但尚未归入以上类别）
+- `unknown`
+
+IR 必须保留 source action/AST，不得为了统一分类丢弃 typed argument、capture/template、pipeline 顺序或 Legacy 特有参数。Source-authored 多 action 的 operation 顺序必须与源声明一致。
+
+目标 planner 仍遵守本块后续映射与 fallback 链；建立 IR **不等于**允许把相似但语义不同的 Legacy/v2 action 强行共用 native mapping。
+
+
+## 30.0.1 Target planner 边界
+
+Rewrite Semantic IR 形成后，所有目标决策固定进入：
+
+- Quantumult X：`.github/converter/src/rewrite-qx.mjs::planQxRewrite(ir, ctx)`
+- Surge：`.github/converter/src/rewrite-surge.mjs::planSurgeRewrite(ir, ctx)`
+
+两个 planner 统一拥有目标 fallback 顺序：
+
+```text
+native target primitive
+→ dedicated semantic helper
+→ source-authored generic complex helper
+→ explicit comment Review / Issue
+```
+
+`.github/scripts/sync-convert.mjs` 不得再：
+- 直接调用 QX/Surge Rewrite renderer；
+- 直接注册/调用 complex Rewrite handler；
+- 通过 raw action-name regex 判断 target 路径；
+- 保留未定义或隐式 fallback。
+- 在模块 import 阶段修改全局 complex registry；handler 必须由 target planner 首次执行时惰性、幂等注册。
+
+Legacy Rewrite 的 source-specific helper 可以继续存在于 `legacy-rewrite.mjs`，但必须由 QX/Surge target planner 调用；其存在不构成 orchestration 旁路。
+
+## 30.1 Loon 旧 Rewrite
+
+| Loon Action | Quantumult X | Surge |
+|---|---|---|
+| `reject` | `url reject` | `[URL Rewrite] REGEX _ reject` |
+| `reject-200` | `url reject-200` | Map Local：200 + empty body |
+| `reject-img` | `url reject-img` | Map Local：tiny-gif |
+| `reject-dict` | `url reject-dict` | Map Local：`{}` + JSON |
+| `reject-array` | `url reject-array` | Map Local：`[]` + JSON |
+| `302 TARGET` | `url 302 TARGET` | `[URL Rewrite] REGEX TARGET 302` |
+| `307 TARGET` | `url 307 TARGET` | `[URL Rewrite] REGEX TARGET 307` |
+| request header add | QX `request-header`（仅安全固定值） | `[Header Rewrite]` |
+| request header set/del/replace | QX `script-request-header` helper | `[Header Rewrite]` |
+| request body replace | QX `request-body` | `[Body Rewrite]` |
+| response body replace | QX `response-body` | `[Body Rewrite]` |
+| request/response JQ | QX `jsonjq-*-body` | `http-*-jq` |
+| Script | QX 官方 script action | Surge `[Script]` |
+
+### 30.1.1 旧 Rewrite reject 与 Rule URL-REGEX reject 必须分开
+
+Loon 旧 `[Rewrite]`：
+
+```text
+REGEX - reject
+```
+
+固定转换：
+
+```text
+Quantumult X: REGEX url reject
+Surge [URL Rewrite]: REGEX _ reject
+```
+
+这里 QX 使用的是官方 `reject`（404 空响应语义），**不能**因为 Block 20 的 `URL-REGEX,REGEX,REJECT -> reject-200` 而改成 `reject-200`。
+
+旧 Rewrite 的其他 reject action 逐项保持类型：
+
+| Loon 旧 `[Rewrite]` | Quantumult X | Surge |
+|---|---|---|
+| `REGEX - reject` | `REGEX url reject` | `[URL Rewrite] REGEX _ reject` |
+| `REGEX - reject-200` | `REGEX url reject-200` | `[Map Local]` 200 + empty body |
+| `REGEX - reject-img` | `REGEX url reject-img` | `[Map Local]` tiny-gif + 200 |
+| `REGEX - reject-dict` | `REGEX url reject-dict` | `[Map Local]` `{}` + JSON + 200 |
+| `REGEX - reject-array` | `REGEX url reject-array` | `[Map Local]` `[]` + JSON + 200 |
+
+## 30.2 Rewrite v2 普通 reject
+
+Loon v2：
+```text
+reject(404)
+reject(200)
+```
+
+QX：
+```text
+REGEX url reject
+```
+
+Surge：
+```ini
+[URL Rewrite]
+REGEX _ reject
+```
+
+普通 reject 不因为状态码自动改成 Map Local 或 echo script。
+
+## 30.3 Rewrite v2 Body 类型优先
+
+```text
+reject_dict(200)  -> QX reject-dict
+reject_array(200) -> QX reject-array
+reject_img(200)   -> QX reject-img
+```
+
+状态码不能覆盖 Action / Body 语义。
+
+## 30.4 Loon Rule：URL-REGEX + REJECT-X
+
+WayX 固定项目映射：
+```text
+URL-REGEX,REGEX,REJECT
+→
+REGEX url reject-200
+```
+
+这只用于 Loon Rule 的 `URL-REGEX + REJECT`，不能反推普通 Rewrite `reject(200)`。
+
+`URL-REGEX + REJECT-DROP`：
+```text
+QX -> REGEX url reject
+```
+
+完整 `URL-REGEX + REJECT-X` 表以 Block 20.2 为唯一 Rule 映射表；本节只强调它与旧 Rewrite reject 不同。
+
+## 30.4.1 Rewrite v2 Header → Quantumult X
+
+Loon 将 Header 操作细分为 `add / set / del / replace`。Quantumult X 官方 sample 同时提供原生 Header Rewrite 与 Header Script 机制。WayX 按“原生可严格等价则原生，否则 helper”选择，不因动作属于 Header 就一律生成脚本。
+
+### 原生直转子集
+
+Crossutility 官方 sample 明确给出完整 **request Header block** 的 `request-header` rewrite；用户 2026-10-03 提供的当前 Quantumult X Rewrite 类型选择器同时确认 `response-header` 为原生类型。WayX 将两者都登记为 QX 原生 Rewrite 能力，但仍按“能证明等价才原生”使用，不因为类型存在就把所有 Header Action 强行改写为整块 Header 正则。
+
+当前原生直转只保留单条、固定参数、单 URL 条件的 `*.header.add`：
+
+```text
+request.header.add(...)  -> request-header（在首个 CRLF 后插入新 Header 行）
+response.header.add(...) -> response-header（在状态行后的首个 CRLF 后插入新 Header 行）
+```
+
+该原生转换不得先查找/覆盖同名字段；它通过整块 Header 字符串插入新行，保留已有同名 Header，因此保持 add 的重复字段语义。Header 值含 `# Block 30 — Rewrite 映射规范
+
+
+## 30.0 统一 Semantic IR 契约
+
+Legacy Rewrite 与 Rewrite v2 的**源 grammar 不合并**；统一点位于 source parse 之后。Production 必须通过 `.github/converter/src/rewrite-ir.mjs` 形成 target-neutral Semantic IR，再进入目标规划。
+
+统一 operation kind 至少包括：
+- `reject`
+- `redirect`
+- `url-rewrite`
+- `header`
+- `body-regex`
+- `json`
+- `mock`
+- `action`（已解析但尚未归入以上类别）
+- `unknown`
+
+IR 必须保留 source action/AST，不得为了统一分类丢弃 typed argument、capture/template、pipeline 顺序或 Legacy 特有参数。Source-authored 多 action 的 operation 顺序必须与源声明一致。
+
+目标 planner 仍遵守本块后续映射与 fallback 链；建立 IR **不等于**允许把相似但语义不同的 Legacy/v2 action 强行共用 native mapping。
+
+
+## 30.0.1 Target planner 边界
+
+Rewrite Semantic IR 形成后，所有目标决策固定进入：
+
+- Quantumult X：`.github/converter/src/rewrite-qx.mjs::planQxRewrite(ir, ctx)`
+- Surge：`.github/converter/src/rewrite-surge.mjs::planSurgeRewrite(ir, ctx)`
+
+两个 planner 统一拥有目标 fallback 顺序：
+
+```text
+native target primitive
+→ dedicated semantic helper
+→ source-authored generic complex helper
+→ explicit comment Review / Issue
+```
+
+`.github/scripts/sync-convert.mjs` 不得再：
+- 直接调用 QX/Surge Rewrite renderer；
+- 直接注册/调用 complex Rewrite handler；
+- 通过 raw action-name regex 判断 target 路径；
+- 保留未定义或隐式 fallback。
+- 在模块 import 阶段修改全局 complex registry；handler 必须由 target planner 首次执行时惰性、幂等注册。
+
+Legacy Rewrite 的 source-specific helper 可以继续存在于 `legacy-rewrite.mjs`，但必须由 QX/Surge target planner 调用；其存在不构成 orchestration 旁路。
+
+## 30.1 Loon 旧 Rewrite
+
+| Loon Action | Quantumult X | Surge |
+|---|---|---|
+| `reject` | `url reject` | `[URL Rewrite] REGEX _ reject` |
+| `reject-200` | `url reject-200` | Map Local：200 + empty body |
+| `reject-img` | `url reject-img` | Map Local：tiny-gif |
+| `reject-dict` | `url reject-dict` | Map Local：`{}` + JSON |
+| `reject-array` | `url reject-array` | Map Local：`[]` + JSON |
+| `302 TARGET` | `url 302 TARGET` | `[URL Rewrite] REGEX TARGET 302` |
+| `307 TARGET` | `url 307 TARGET` | `[URL Rewrite] REGEX TARGET 307` |
+| request header add | QX `request-header`（仅安全固定值） | `[Header Rewrite]` |
+| request header set/del/replace | QX `script-request-header` helper | `[Header Rewrite]` |
+| request body replace | QX `request-body` | `[Body Rewrite]` |
+| response body replace | QX `response-body` | `[Body Rewrite]` |
+| request/response JQ | QX `jsonjq-*-body` | `http-*-jq` |
+| Script | QX 官方 script action | Surge `[Script]` |
+
+### 30.1.1 旧 Rewrite reject 与 Rule URL-REGEX reject 必须分开
+
+Loon 旧 `[Rewrite]`：
+
+```text
+REGEX - reject
+```
+
+固定转换：
+
+```text
+Quantumult X: REGEX url reject
+Surge [URL Rewrite]: REGEX _ reject
+```
+
+这里 QX 使用的是官方 `reject`（404 空响应语义），**不能**因为 Block 20 的 `URL-REGEX,REGEX,REJECT -> reject-200` 而改成 `reject-200`。
+
+旧 Rewrite 的其他 reject action 逐项保持类型：
+
+| Loon 旧 `[Rewrite]` | Quantumult X | Surge |
+|---|---|---|
+| `REGEX - reject` | `REGEX url reject` | `[URL Rewrite] REGEX _ reject` |
+| `REGEX - reject-200` | `REGEX url reject-200` | `[Map Local]` 200 + empty body |
+| `REGEX - reject-img` | `REGEX url reject-img` | `[Map Local]` tiny-gif + 200 |
+| `REGEX - reject-dict` | `REGEX url reject-dict` | `[Map Local]` `{}` + JSON + 200 |
+| `REGEX - reject-array` | `REGEX url reject-array` | `[Map Local]` `[]` + JSON + 200 |
+
+## 30.2 Rewrite v2 普通 reject
+
+Loon v2：
+```text
+reject(404)
+reject(200)
+```
+
+QX：
+```text
+REGEX url reject
+```
+
+Surge：
+```ini
+[URL Rewrite]
+REGEX _ reject
+```
+
+普通 reject 不因为状态码自动改成 Map Local 或 echo script。
+
+## 30.3 Rewrite v2 Body 类型优先
+
+```text
+reject_dict(200)  -> QX reject-dict
+reject_array(200) -> QX reject-array
+reject_img(200)   -> QX reject-img
+```
+
+状态码不能覆盖 Action / Body 语义。
+
+## 30.4 Loon Rule：URL-REGEX + REJECT-X
+
+WayX 固定项目映射：
+```text
+URL-REGEX,REGEX,REJECT
+→
+REGEX url reject-200
+```
+
+这只用于 Loon Rule 的 `URL-REGEX + REJECT`，不能反推普通 Rewrite `reject(200)`。
+
+`URL-REGEX + REJECT-DROP`：
+```text
+QX -> REGEX url reject
+```
+
+完整 `URL-REGEX + REJECT-X` 表以 Block 20.2 为唯一 Rule 映射表；本节只强调它与旧 Rewrite reject 不同。
+
+## 30.4.1 Rewrite v2 Header → Quantumult X
+
+Loon 将 Header 操作细分为 `add / set / del / replace`。Quantumult X 官方 sample 同时提供原生 Header Rewrite 与 Header Script 机制。WayX 按“原生可严格等价则原生，否则 helper”选择，不因动作属于 Header 就一律生成脚本。
+
+ 时不走该原生路径，因为 QX replacement string 的 literal-dollar 转义没有在当前证据中得到证明；request 进入既有 helper，response 仍 fail closed，避免用对象 set 冒充 add。
+
+`request.header.replace` **不再原生嵌入**到整块 Header 正则。Loon Header 名称匹配不区分大小写，且 replacement 的 `$0...$n` 属于 Action 自己的正则捕获；如果为了 QX whole-header rewrite 额外加入 CRLF 捕获组，会改变捕获编号，也可能改变 `^ / $` 等正则上下文。因此统一进入 helper。
+
+### Script fallback
+
+```text
+request  -> script-request-header
+response -> script-response-header
+```
+
+`request.header.set / del / replace`、多动作 pipeline，以及 response phase 的 `set / del / replace` 等无法由官方静态 token 严格表达的行为使用 helper。helper 对 Header 名称执行大小写不敏感查找，并让 `header.replace` 的正则只作用于该 Header 值，因此保持 Action-local `$0...$n` 捕获语义。生成 helper 读取 `$request.headers` 或 `$response.headers` 后以 `$done({headers: ...})` 返回。
+
+Helper 选择继续遵守最小实现原则：固定值、单 URL 条件的 Header-only 操作优先生成专用 Header helper；只有出现 condition capture、运行时模板或更复杂条件时才使用通用 Complex helper。Header-only helper 不应携带无关 JSON/Body mutation runtime。
+
+ 等无法证明安全直转的内容，则仍不得用 Header object set 冒充 add；该分支注释保留源声明并 fail closed。
 
 对 Quantumult X 不发明数组 Header、重复 raw Header 行或其他未由官方 sample/已验证语法支持的返回格式。
 
@@ -262,7 +727,7 @@ target native planner
 
 Loon regex literal 的 `i / m / s` flags 在所有 native/helper 路径中均只解析、不传播；flags 的存在本身不进入 Review。parser 去掉 literal delimiter 后，regex body 原样保留，不再全局执行 `\/ -> /` 或其他 canonicalization；目标 helper 不得通过 `new RegExp(pattern, flags)`、inline modifier 或 case-fold 恢复这些 flags。若目标软件确有语法差异，只能由对应 target planner 基于官方格式做局部适配。
 
-Surge 的 `header.add` 与普通对象 Header 修改语义不同。需要脚本保持重复字段时必须使用 `full-header-mode=true` 的 `[{field,value}]` 形式，禁止退化为对象赋值。Quantumult X 同样不得用 set/对象赋值冒充 add：request phase 可用官方 `request-header` 整块字符串插入保留重复字段；response phase 没有已验证的重复 Header 表示，因此 `response.header.add` 明确注释保留，不进入持续 Review。
+Surge 的 `header.add` 与普通对象 Header 修改语义不同。需要脚本保持重复字段时必须使用 `full-header-mode=true` 的 `[{field,value}]` 形式，禁止退化为对象赋值。Quantumult X 同样不得用 set/对象赋值冒充 add：request phase 使用 `request-header`，response phase 使用当前 App 已确认的 `response-header`，二者都只在固定安全参数下通过整块 Header 字符串插入保留重复字段；不能安全形成 replacement string 的 response add 继续注释保留。
 
 Legacy Rewrite 同样遵守 native → helper → Review：request phase 的旧版 `header-add` 在值不含未证明的 replacement `$` 语法时可复用官方 `request-header` 插入；`header-replace / header-del / header-replace-regex` 以及 response phase 的可脚本化操作使用最小 Header helper。旧版 `header-replace-regex` 的 `$n` 必须继续引用它自己的正则捕获，不能被 whole-header CRLF 捕获组改号。旧版 `response-header-add` 与新版 `response.header.add` 一样，在 QX 无重复字段等价表示时直接注释保留。
 
