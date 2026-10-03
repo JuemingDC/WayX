@@ -326,7 +326,19 @@ export function surgeDirectRewritePlan(ast) {
 function loonTemplateToSurge(template, capture, argumentTable = null) {
   let converted = String(template).replace(/\$\{([A-Za-z_][A-Za-z0-9_-]*)\.(\d+)\}/g, (_, name, number) => {
     if (!capture || name !== capture) throw new Error('URL replacement contains a non-URL capture');
-    return '  validateRewriteV2Ast(ast);
+    return '$' + number;
+  });
+  converted = converted.replace(/\$\{([A-Za-z_][A-Za-z0-9_-]*)\}/g, (_, name) => {
+    const entry=argumentTable?.byId?.get(String(name));
+    if (!entry) throw new Error('URL replacement contains an undeclared plugin argument: '+name);
+    return entry.placeholder;
+  });
+  if (converted.includes('$' + '{')) throw new Error('URL replacement contains an unsupported variable');
+  return converted;
+}
+
+export function surgeRedirectRewritePlan(ast, {argumentTable = null} = {}) {
+  validateRewriteV2Ast(ast);
   if (ast.actions.length !== 1 || !['redirect','url.replace'].includes(ast.actions[0].name)) {
     return unsupported('Surge URL Rewrite mapping requires one redirect/url.replace action');
   }
