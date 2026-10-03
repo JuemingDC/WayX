@@ -132,12 +132,18 @@ response.json.jq("jq-path=https://...")
 - Map Local 仍无法保持的条件/动作先尝试 HTTP helper，再注释 Review。
 
 ### Quantumult X
-- 明确空对象/空数组/图片可使用官方 reject-*；
-- 任意 response mock/mock_file 使用 WayX helper；
-- 使用 QX 官方 `script-echo-response`；
-- 若必须等待 request body 才能决定响应，使用 `script-analyze-echo-response`；
-- binary 使用官方 `bodyBytes`；
-- helper 只实现当前 Mock Action，不修改 Source Script。
+
+按目标能力分层，原生优先但不伪造本地资源：
+
+1. 明确空对象/空数组/1px 图片等与官方 reject primitive 完全一致的响应，优先 `reject-dict / reject-array / reject-img`；
+2. `echo-response` 是 QX 原生静态响应类型，可处理简单 text/html 等 Content Type，并可在 Content Type 字段后附加静态 Header；**Resource Path 只能引用 “On My iPhone - Quantumult X - Data” 中已经存在的本机文件**；
+3. WayX 的远程 snippet 无法替用户把文件安装到 QX Data，因此远程 URL、Plugin 相对 `mock_file`、转换期下载的文件以及 inline body 都不得冒充本地 `echo-response`。这类内容先在转换期物化，再生成最小 `script-echo-response` helper，把真实 body/header/status 内联进脚本；
+4. 只有目标上下文明示“该 Resource Path 已在 QX Data 本机存在”时，才允许直接输出 `echo-response <content-type/headers> echo-response <local-path>`；当前 Catalog Loon source 不提供这种 QX 本机资产声明，因此生产转换默认不会从 `mock_file` 自动选择 native echo；
+5. 若必须等待 request body 才能决定 synthetic response，使用 `script-analyze-echo-response`；
+6. binary helper 使用官方 `bodyBytes`；
+7. helper 只实现当前 Mock Action，不修改 Source Script。
+
+Validator 必须拒绝把 `http://`、`https://`、其它 URL scheme、绝对路径或 `..` 路径写进 native `echo-response` 的 Resource Path。
 
 ## 50.5 request.body.mock / mock_file
 
