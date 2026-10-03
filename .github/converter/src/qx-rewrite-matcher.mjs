@@ -16,12 +16,7 @@ function fixedString(node) {
 }
 
 function regexEscape(value) {
-  return String(value).replace(/[.*+?^$\{\}()|[\]\\]/g,'\\function regexEscape(value) {
   return String(value).replace(/[.*+?^$\{\}()|[\]\\]/g,'\\$&');
-}
-
-function comparisonKey(node) {
-');
 }
 
 function requestHeaderName(variableName) {
@@ -35,9 +30,7 @@ function requestHeaderName(variableName) {
 function headerNameRegex(name) {
   return [...String(name)].map(ch=>{
     if (/[A-Za-z]/.test(ch)) {
-      const upper=ch.toUpperCase();
-      const lower=ch.toLowerCase();
-      return '['+upper+lower+']';
+      return '['+ch.toUpperCase()+ch.toLowerCase()+']';
     }
     return regexEscape(ch);
   }).join('');
@@ -88,10 +81,10 @@ function comparisonKey(node) {
     }
 
     if (n.operator==='~=' && n.right?.type==='regex') {
-      // A successful Loon header-regex condition guarantees only that the
-      // request header exists. Keep the original regex evaluation in the
-      // helper because embedding it in the serialized QX Headers string would
-      // change ^/$ and capture semantics.
+      // A successful Loon header-regex condition guarantees that the request
+      // header exists. Keep the source regex inside the helper because
+      // embedding it in QX's serialized Headers string changes ^/$ and capture
+      // semantics.
       return {
         kind:'request-header-present',
         key:'request-header-present\u0000'+normalizedName,
@@ -188,7 +181,7 @@ function matcherFromPredicates(predicates) {
   if (hasHeaders) {
     // Quantumult X url-and-header evaluates URL first and then one regex over
     // a serialized request-side string containing method, path and headers.
-    // Keep header-regex source conditions inside the helper; the native layer
+    // Header-regex source conditions remain in the helper; the native layer
     // only proves request-header presence for those cases.
     const methodPattern=method ? '^'+regexEscape(method.value)+'[ ]' : null;
     let headersPattern=header?.pattern || methodPattern;
