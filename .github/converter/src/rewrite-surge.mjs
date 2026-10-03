@@ -183,7 +183,7 @@ export function planSurgeRewrite(ir,ctx={}) {
         ? surgeRewriteArgumentPayload(argumentRefs,ctx.argumentTable)
         : {ok:true,value:null};
       if (!payload.ok) throw new Error(payload.reason);
-      const key=crypto.createHash('sha1').update('header-single-surge\\0'+source).digest('hex').slice(0,10);
+      const key=crypto.createHash('sha1').update('header-single-surge\0'+source).digest('hex').slice(0,10);
       const filename='header_'+key+'.js';
       ctx.generatedScripts.set(filename,plan.script);
       return {
@@ -191,7 +191,7 @@ export function planSurgeRewrite(ir,ctx={}) {
         line:'wayx_header_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:''),
       };
     } catch (error) {
-      return rewriteReview(source,String(error?.message||error).split('\\n')[0]);
+      return rewriteReview(source,String(error?.message||error).split('\n')[0]);
     }
   }
 
