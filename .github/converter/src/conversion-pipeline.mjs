@@ -5,14 +5,19 @@
 import { qxRule as canonicalQxRule, surgeModuleRule } from './rule.mjs';
 import { isRewriteV2, parseRewriteV2 } from './rewrite-v2.mjs';
 import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
-import { inlineResolvedDependency, jqDependencySpecFromAction, isDiscardedLegacyJqPathAction } from './dependency.mjs';
+import {
+  inlineResolvedDependency,
+  inlineResolvedLegacyJqPathIr,
+  jqDependencySpecFromAction,
+  legacyJqPathDependencySpecFromIr,
+} from './dependency.mjs';
 import { isScriptV2, parseScriptV2 } from './script-v2.mjs';
 import { analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs } from './argument-usage.mjs';
 import { surgeArgumentMetadata } from './argument.mjs';
 import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection } from './source-section.mjs';
 import { attachQxInlineNote } from './qx-comment.mjs';
 import { planMitmLine } from './mitm.mjs';
-import { isDiscardedLegacyJqPathIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from './rewrite-ir.mjs';
+import { legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from './rewrite-ir.mjs';
 import { planQxRewrite } from './rewrite-qx.mjs';
 import { planSurgeRewrite } from './rewrite-surge.mjs';
 import { rewriteReview, rewriteIssue } from './rewrite-plan-result.mjs';
@@ -65,9 +70,6 @@ function rewriteV2Action(line,target,ctx) {
     ast=parseRewriteV2(line);
     validateRewriteV2Ast(ast);
     argumentRefs=rewriteV2PluginArgumentRefs(ast,ctx.argumentIds || []);
-    if (ast.actions.length===1 && isDiscardedLegacyJqPathAction(ast.actions[0])) {
-      return {section:'drop',line:'',reason:'discard-legacy-jq-path'};
-    }
   } catch (error) {
     return rewriteErrorResult(line,error);
   }
@@ -241,14 +243,20 @@ export function convertPlugin(entry,source,{
     let sr=rewriteV2Action(item.line,'surge',sctx);
     if (!qr || !sr) {
       const [pattern,action]=splitPatternAction(item.line);
-      const ir=legacyRewriteToSemanticIr(pattern,action);
-      if (isDiscardedLegacyJqPathIr(ir)) {
-        if (!qr) qr={section:'drop',line:'',reason:'discard-legacy-jq-path'};
-        if (!sr) sr={section:'drop',line:'',reason:'discard-legacy-jq-path'};
-      } else {
-        if (!qr) qr=planQxRewrite(ir,{...qctx,sourceLine:item.line});
-        if (!sr) sr=planSurgeRewrite(ir,{...sctx,sourceLine:item.line});
+      let ir=legacyRewriteToSemanticIr(pattern,action);
+      const jqSpec=legacyJqPathDependencySpecFromIr(ir,{pluginSourceUrl:entry.source});
+      if (jqSpec) {
+        const materialized=jqFiles.get(item.line);
+        if (!materialized || materialized.error) {
+          const reason=materialized?.error || 'JQ dependency was not materialized during conversion';
+          if (!qr) qr=rewriteReview(item.line,reason);
+          if (!sr) sr=rewriteReview(item.line,reason);
+        } else {
+          ir=inlineResolvedLegacyJqPathIr(ir,materialized.content).ir;
+        }
       }
+      if (!qr) qr=planQxRewrite(ir,{...qctx,sourceLine:item.line});
+      if (!sr) sr=planSurgeRewrite(ir,{...sctx,sourceLine:item.line});
     }
 
     const qdest=qxRewriteOutputDestination(qx,qr.section);
