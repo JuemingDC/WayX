@@ -9,7 +9,7 @@ import { qxDirectRewritePlan, simpleUrlRewriteCondition } from './rewrite-v2-sem
 import { renderQxMockFileScript } from './qx-mock.mjs';
 import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript, headerOpsForMock } from './qx-semantic-script.mjs';
 import { registerComplexRewriteHandler, planComplexRewrite } from './complex-rewrite-registry.mjs';
-import { renderMixedRewriteScript, renderSingleJsonMutationScript } from './complex-rewrite-script.mjs';
+import { renderMixedRewriteScript, renderSingleJsonMutationScript, renderSingleRewriteMutationScript } from './complex-rewrite-script.mjs';
 import { qxExactRewriteMatcherPlan, qxRewriteMatcherPlan } from './qx-rewrite-matcher.mjs';
 import { rewriteReview, rewriteIssue } from './rewrite-plan-result.mjs';
 import { singleRewriteOperation } from './rewrite-ir.mjs';
@@ -59,7 +59,10 @@ function ensureQxRewriteHandlers() {
     },
     plan:(ast,_target,ctx)=>{
       try {
+        const matcher=qxExactRewriteMatcherPlan(ast);
+        if (!matcher.ok) throw new Error(matcher.reason);
         const plan=renderQxInlineMockScript(ast,{
+          conditionMode:'external-exact',
           stamp:ctx.stamp,
           category:ctx.category,
           sourceLine:ctx.sourceLine,
@@ -70,7 +73,7 @@ function ensureQxRewriteHandlers() {
         return {
           ok:true,
           section:'rewrite',
-          line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename,
+          line:matcher.prefix+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename,
         };
       } catch(error){
         return {ok:false,terminal:true,reason:String(error?.message||error)};
@@ -194,8 +197,8 @@ export function planQxRewrite(ir, ctx={}) {
   );
   if (fileMockPipeline) {
     try {
-      const condition=simpleUrlRewriteCondition(ast);
-      if (!condition.ok) throw new Error(condition.reason);
+      const matcher=qxExactRewriteMatcherPlan(ast);
+      if (!matcher.ok) throw new Error(matcher.reason);
       const fileMock=fileMocks[0];
       const plan=qxMockPlanFromAction(fileMock,{pluginSourceUrl:ctx.sourceUrl});
       const materialized=ctx.mockFiles?.get(source);
@@ -212,18 +215,20 @@ export function planQxRewrite(ir, ctx={}) {
         sourceLine:source,
       });
       ctx.generatedScripts.set(filename,script);
-      return {section:'rewrite',line:condition.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
+      return {section:'rewrite',line:matcher.prefix+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
     } catch (error) {
       return rewriteReview(source,String(error?.message||error).split('\n')[0]);
     }
   }
   if (singleOp?.kind==='mock' && singleOp.operation==='inline') {
     try {
-      const plan=renderQxInlineMockScript(ast,{stamp:ctx.stamp,category:ctx.category,sourceLine:source});
+      const matcher=qxExactRewriteMatcherPlan(ast);
+      if (!matcher.ok) throw new Error(matcher.reason);
+      const plan=renderQxInlineMockScript(ast,{conditionMode:'external-exact',stamp:ctx.stamp,category:ctx.category,sourceLine:source});
       const key=crypto.createHash('sha1').update('mock-inline\0'+source).digest('hex').slice(0,10);
       const filename='mock_'+key+'.js';
       ctx.generatedScripts.set(filename,plan.script);
-      return {section:'rewrite',line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
+      return {section:'rewrite',line:matcher.prefix+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
     } catch (error) {
       return rewriteReview(source,String(error?.message||error).split('\n')[0]);
     }
@@ -249,21 +254,44 @@ export function planQxRewrite(ir, ctx={}) {
 
   if (singleOp?.kind==='header' && singleOp.phase===ir.phase) {
     try {
-      const plan=renderQxHeaderScript(ast,{stamp:ctx.stamp,category:ctx.category,sourceLine:source});
-      const key=crypto.createHash('sha1').update('header-single\\0'+source).digest('hex').slice(0,10);
+      const exact=qxExactRewriteMatcherPlan(ast);
+      if (exact.ok) {
+        const plan=renderQxHeaderScript(ast,{conditionMode:'external-exact',stamp:ctx.stamp,category:ctx.category,sourceLine:source});
+        const key=crypto.createHash('sha1').update('header-single\\0'+source).digest('hex').slice(0,10);
+        const filename='header_'+key+'.js';
+        ctx.generatedScripts.set(filename,plan.script);
+        return {section:'rewrite',line:exact.prefix+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
+      }
+
+      const plan=renderSingleRewriteMutationScript(ast,{target:'qx',stamp:ctx.stamp,category:ctx.category,sourceLine:source});
+      const key=crypto.createHash('sha1').update('header-single-complex\\0'+source).digest('hex').slice(0,10);
       const filename='header_'+key+'.js';
       ctx.generatedScripts.set(filename,plan.script);
-      return {section:'rewrite',line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
+      const matcher=qxRewriteMatcherPlan(ast);
+      return {section:'rewrite',line:matcher.prefix+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
     } catch (error) {
       return rewriteReview(source,String(error?.message||error).split('\n')[0]);
     }
   }
 
-  if (singleOp?.kind==='json' && singleOp.operation==='add' && singleOp.phase===ir.phase) {
+  if (singleOp?.kind==='json' && ['add','delete','replace'].includes(singleOp.operation) && singleOp.phase===ir.phase) {
     try {
       const plan=renderSingleJsonMutationScript(ast,{target:'qx',stamp:ctx.stamp,category:ctx.category,sourceLine:source});
       const key=crypto.createHash('sha1').update('json-add-qx\\0'+source).digest('hex').slice(0,10);
       const filename='json_add_qx_'+key+'.js';
+      ctx.generatedScripts.set(filename,plan.script);
+      const matcher=qxRewriteMatcherPlan(ast);
+      return {section:'rewrite',line:matcher.prefix+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
+    } catch (error) {
+      return rewriteReview(source,String(error?.message||error).split('\n')[0]);
+    }
+  }
+
+  if (ast.actions?.length===1 && ast.actions[0]?.name===ast.phase+'.body.replace') {
+    try {
+      const plan=renderSingleRewriteMutationScript(ast,{target:'qx',stamp:ctx.stamp,category:ctx.category,sourceLine:source});
+      const key=crypto.createHash('sha1').update('body-single-complex\\0'+source).digest('hex').slice(0,10);
+      const filename='body_'+key+'.js';
       ctx.generatedScripts.set(filename,plan.script);
       const matcher=qxRewriteMatcherPlan(ast);
       return {section:'rewrite',line:matcher.prefix+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
@@ -286,11 +314,13 @@ export function planQxRewrite(ir, ctx={}) {
 
   if (singleOp?.kind==='reject' && ['reject','reject_dict','reject_array'].includes(singleOp.actionName)) {
     try {
-      const plan=renderQxRejectScript(ast,{stamp:ctx.stamp,category:ctx.category,sourceLine:source});
+      const matcher=qxExactRewriteMatcherPlan(ast);
+      if (!matcher.ok) throw new Error(matcher.reason);
+      const plan=renderQxRejectScript(ast,{conditionMode:'external-exact',stamp:ctx.stamp,category:ctx.category,sourceLine:source});
       const key=crypto.createHash('sha1').update('reject\0'+source).digest('hex').slice(0,10);
       const filename='reject_'+key+'.js';
       ctx.generatedScripts.set(filename,plan.script);
-      return {section:'rewrite',line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
+      return {section:'rewrite',line:matcher.prefix+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
     } catch (error) {
       return rewriteReview(source,String(error?.message||error).split('\n')[0]);
     }
