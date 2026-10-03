@@ -75,12 +75,18 @@ const ignoredScriptMap = new Map([
   ['https://example.com/v2.js',{qx:'https://example.com/v2.js',surge:'https://example.com/v2.js',source:'$done({body:$response.body});'}],
 ]);
 const qxIgnoredOptionsOutput = convert(qxIgnoredOptionsFixture, qxIgnoredOptionsSource, ignoredScriptMap, STAMP);
-assert.doesNotMatch(qxIgnoredOptionsOutput.qx, /SCRIPT(?: V2)? REVIEW REQUIRED/);
-assert.match(qxIgnoredOptionsOutput.qx, /Source dynamic enable ignored for Quantumult X; converted rule defaults to enabled/);
-assert.match(qxIgnoredOptionsOutput.qx, /Source Script timeout ignored for Quantumult X/);
-assert.match(qxIgnoredOptionsOutput.qx, /Source Script argument ignored for Quantumult X/);
-assert.match(qxIgnoredOptionsOutput.qx, /url script-response-body https:\/\/example\.com\/legacy\.js/);
-assert.match(qxIgnoredOptionsOutput.qx, /url script-response-body https:\/\/example\.com\/v2\.js/);
+assert.match(qxIgnoredOptionsOutput.qx, /SCRIPT REVIEW REQUIRED: Quantumult X official Rewrite Script syntax has no dynamic enable field/);
+assert.match(qxIgnoredOptionsOutput.qx, /SCRIPT V2 REVIEW REQUIRED: Quantumult X official Rewrite Script syntax has no dynamic enable field/);
+assert.equal(
+  qxIgnoredOptionsOutput.qx.split(/\r?\n/).some(line => !line.trim().startsWith('#') && /script-response-(?:header|body)/.test(line)),
+  false,
+  'QX must not silently enable a Source Script whose dynamic enable/timeout semantics cannot be represented',
+);
+assert.doesNotMatch(qxIgnoredOptionsOutput.surge, /SCRIPT(?: V2)? REVIEW REQUIRED/);
+assert.match(qxIgnoredOptionsOutput.surge, /#!REQUIREMENT .*enabled.*Legacy = type=http-response/);
+assert.match(qxIgnoredOptionsOutput.surge, /Legacy = type=http-response[^\n]*timeout=60/);
+assert.match(qxIgnoredOptionsOutput.surge, /#!REQUIREMENT .*enabled.*V2 = type=http-response/);
+assert.match(qxIgnoredOptionsOutput.surge, /V2 = type=http-response[^\n]*timeout=30/);
 assert.match(headerGroupOutput.surge, /header-del content-type/);
 assert.match(headerGroupOutput.surge, /header-add content-type text\/plain; charset=utf-8/);
 
