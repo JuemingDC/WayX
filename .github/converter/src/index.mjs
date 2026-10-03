@@ -5,7 +5,7 @@ export * from './script-surge.mjs';
 export * from './script-qx.mjs';
 export * from './script-ir.mjs';
 export * from './script-legacy.mjs';
-export * from './paths.mjs';
+export * from './managed-artifacts.mjs';
 export * from './argument.mjs';
 export * from './argument-usage.mjs';
 export * from './rewrite-v2.mjs';
