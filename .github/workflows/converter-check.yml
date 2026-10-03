@@ -13,7 +13,6 @@ on:
       - ".github/sources/loon-static.json"
       - ".github/manual-assets.json"
       - ".github/CONVERSION_SPEC.md"
-      - ".github/docs/conversion-spec/**"
       - "Resource/Loon/**"
       - "Script/**"
       - "Boxjs/**"
@@ -41,50 +40,15 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
-      - name: Syntax check converter
+      - name: Syntax check repository JavaScript and Python
+        shell: bash
         run: |
-          for file in .github/converter/src/*.mjs .github/converter/tools/*.mjs; do
+          set -euo pipefail
+          while IFS= read -r -d '' file; do
             node --check "$file"
-          done
-          node --check .github/scripts/sync-convert.mjs
-          node --check .github/converter/tests/checkpoint.mjs
-          node --check .github/converter/tests/loon-new-syntax-cases.mjs
-          node --check .github/converter/tests/surge-rule-coverage.mjs
-          node --check .github/converter/tests/end-to-end-golden.mjs
-          node --check .github/converter/tests/generic-identity.mjs
-          node --check .github/converter/tests/genericity-audit.mjs
-          node --check .github/converter/tests/spec-block-contract.mjs
-          node --check .github/converter/tests/complex-source-inventory.mjs
-          node --check .github/converter/tests/catalog-syntax-inventory.mjs
-          node --check .github/converter/tests/catalog-regex-inventory.mjs
-          node --check .github/converter/tests/catalog-legacy-syntax-inventory.mjs
-          node --check .github/converter/tests/catalog-rule-inventory.mjs
-          node --check .github/converter/tests/rule-ast.mjs
-          node --check .github/converter/tests/rewrite-ir.mjs
-          node --check .github/converter/tests/rewrite-target-planners.mjs
-          node --check .github/converter/tests/script-ir-target-planners.mjs
-          node --check .github/converter/tests/source-section-comments.mjs
-          node --check .github/converter/tests/target-output-builders.mjs
-          node --check .github/converter/tests/conversion-pipeline.mjs
-          node --check .github/converter/tests/conversion-context-materializers.mjs
-          node --check .github/converter/tests/conversion-runner.mjs
-          node --check .github/converter/tests/managed-artifacts.mjs
-          node --check .github/converter/tests/workflow-diagnostics.mjs
-          node --check .github/converter/tests/workflow-control.mjs
-          node --check .github/converter/tests/upstream-automation.mjs
-          node --check .github/converter/tests/source-fetch.mjs
-          node --check .github/converter/tests/repository-layout.mjs
-          node --check .github/converter/tests/readme-index.mjs
-          node --check .github/converter/tests/qx-official-capabilities.mjs
-          node --check .github/converter/tests/surge-official-capabilities.mjs
-          node --check .github/converter/tests/manual-assets.mjs
-          node --check .github/scripts/propose-conversion-issues.mjs
-          node --check .github/converter/tests/generated-helper-refs.mjs
-          node --check .github/converter/tests/generated-helper-runtime.mjs
-          node --check .github/converter/tests/source-script-url-preservation.mjs
-          node --check .github/converter/tools/regenerate-canonical.mjs
-          node --check .github/converter/tools/audit-repository.mjs
-          node --check .github/converter/tools/conversion-reports.mjs
+          done < <(find .github/converter .github/scripts Script -type f \( -name '*.js' -o -name '*.mjs' \) -print0)
+          python -m py_compile .github/converter/tools/*.py .github/converter/tests/*.py .github/scripts/*.py .github/monitor/*.py
+
       - name: Converter checkpoint
         run: |
           node .github/converter/tests/checkpoint.mjs
@@ -93,7 +57,7 @@ jobs:
           node .github/converter/tests/end-to-end-golden.mjs
           node .github/converter/tests/generic-identity.mjs
           node .github/converter/tests/genericity-audit.mjs
-          node .github/converter/tests/spec-block-contract.mjs
+          node .github/converter/tests/architecture-contract.mjs
           node .github/converter/tests/rule-ast.mjs
           node .github/converter/tests/rewrite-ir.mjs
           node .github/converter/tests/rewrite-target-planners.mjs
@@ -121,15 +85,6 @@ jobs:
 
       - name: Generated helper runtime fixtures
         run: node .github/converter/tests/generated-helper-runtime.mjs
-
-      - name: Repository script syntax
-        shell: bash
-        run: |
-          set -euo pipefail
-          while IFS= read -r -d '' file; do
-            node --check "$file"
-          done < <(find Script .github/converter .github/scripts -type f \( -name '*.js' -o -name '*.mjs' \) -print0)
-          python -m py_compile .github/converter/tools/fetch-upstream.py .github/converter/tools/refresh-kelee-catalog.py .github/converter/tests/validate_conversion_policy.py .github/scripts/*.py .github/monitor/*.py
 
       - name: Refresh full Kelee catalog
         run: python .github/converter/tools/refresh-kelee-catalog.py
