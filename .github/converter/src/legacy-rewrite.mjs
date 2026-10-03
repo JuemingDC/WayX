@@ -352,6 +352,9 @@ export function planLegacyRewriteIr(ir, target, ctx={}) {
   }
   const pattern=ir.sourcePayload?.pattern ?? '';
   const action=ir.sourcePayload?.action ?? '';
+  if (/^(?:request|response)-body-json-jq\s+(?:''|"")\s*$/i.test(String(action).trim())) {
+    return {section:'drop', reason:'empty-legacy-json-jq'};
+  }
   const targetPattern=normalizeRegexBodyForTarget(pattern);
   const operation=ir.operations[0];
   const parsed=classifyLegacyRewrite(action);
