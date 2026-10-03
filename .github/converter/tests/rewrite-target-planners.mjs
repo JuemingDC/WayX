@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { parseRewriteV2 } from '../src/rewrite-v2.mjs';
 import { legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from '../src/rewrite-ir.mjs';
 import { planQxRewrite } from '../src/rewrite-qx.mjs';
-import { qxDirectRewritePlan } from '../src/rewrite-v2-semantic.mjs';
+import { jsonPipelineToSafeNativeJq, qxDirectRewritePlan } from '../src/rewrite-v2-semantic.mjs';
 import { qxExactRewriteMatcherPlan, qxRewriteMatcherPlan } from '../src/qx-rewrite-matcher.mjs';
 import { planSurgeRewrite } from '../src/rewrite-surge.mjs';
 
@@ -448,6 +448,65 @@ const methodInlineMock=planQxRewrite(v2(methodInlineMockSource),methodInlineMock
 assert.equal(methodInlineMock.section,'rewrite');
 assert.match(methodInlineMock.line,/^\^https\?:\/\/ \^POST\[ \] url-and-header script-echo-response /);
 assert.equal(methodInlineMockCtx.generatedScripts.size,1);
+
+const safeJsonPipelineAst=parseRewriteV2(
+  'response if ${url} ~= /api/ then response.json.add("flag",true) | response.json.replace("count",2) | response.json.delete("old")'
+);
+const safeJsonPipelineJq=jsonPipelineToSafeNativeJq(safeJsonPipelineAst);
+assert.equal(safeJsonPipelineJq.ok,true);
+assert.match(safeJsonPipelineJq.jq,/^if type == "object" then if getpath\(\["flag"\]\) == null/);
+assert.ok(safeJsonPipelineJq.jq.indexOf('setpath(["flag"]; true)') < safeJsonPipelineJq.jq.indexOf('setpath(["count"]; 2)'));
+assert.ok(safeJsonPipelineJq.jq.indexOf('setpath(["count"]; 2)') < safeJsonPipelineJq.jq.indexOf('del(.["old"])'));
+assert.doesNotMatch(safeJsonPipelineJq.jq,/delpaths|\btry\b/);
+
+const nativeJsonPipelineSource='response if ${url} ~= /api/ then response.json.add("flag",true) | response.json.replace("count",2) | response.json.delete("old")';
+const nativeJsonPipelineCtx=ctx();
+const nativeJsonPipeline=planQxRewrite(v2(nativeJsonPipelineSource),nativeJsonPipelineCtx);
+assert.equal(nativeJsonPipeline.section,'rewrite');
+assert.match(nativeJsonPipeline.line,/^api url jsonjq-response-body '/);
+assert.match(nativeJsonPipeline.line,/type == "object"/);
+assert.ok(nativeJsonPipeline.line.indexOf('setpath(["flag"]; true)') < nativeJsonPipeline.line.indexOf('setpath(["count"]; 2)'));
+assert.ok(nativeJsonPipeline.line.indexOf('setpath(["count"]; 2)') < nativeJsonPipeline.line.indexOf('del(.["old"])'));
+assert.equal(nativeJsonPipelineCtx.generatedScripts.size,0);
+
+const methodNativeJsonPipelineSource='request if ${url} ~= /api/ && ${request.method} == "POST" then request.json.add(["one","two"],[1,2]) | request.json.delete(["old","unused"])';
+const methodNativeJsonPipelineCtx=ctx();
+const methodNativeJsonPipeline=planQxRewrite(v2(methodNativeJsonPipelineSource),methodNativeJsonPipelineCtx);
+assert.equal(methodNativeJsonPipeline.section,'rewrite');
+assert.match(methodNativeJsonPipeline.line,/^api \^POST\[ \] url-and-header jsonjq-request-body '/);
+assert.ok(methodNativeJsonPipeline.line.indexOf('setpath(["one"]; 1)') < methodNativeJsonPipeline.line.indexOf('setpath(["two"]; 2)'));
+assert.ok(methodNativeJsonPipeline.line.indexOf('setpath(["two"]; 2)') < methodNativeJsonPipeline.line.indexOf('del(.["old"])'));
+assert.ok(methodNativeJsonPipeline.line.indexOf('del(.["old"])') < methodNativeJsonPipeline.line.indexOf('del(.["unused"])'));
+assert.equal(methodNativeJsonPipelineCtx.generatedScripts.size,0);
+
+const flagsNativeJsonPipelineSource='response if ${url} ~= /api/ims then response.json.add("a",1) | response.json.delete("b")';
+const flagsNativeJsonPipelineCtx=ctx();
+const flagsNativeJsonPipeline=planQxRewrite(v2(flagsNativeJsonPipelineSource),flagsNativeJsonPipelineCtx);
+assert.equal(flagsNativeJsonPipeline.section,'rewrite');
+assert.match(flagsNativeJsonPipeline.line,/^api url jsonjq-response-body '/);
+assert.doesNotMatch(flagsNativeJsonPipeline.line,/\(\?[ims]+\)|\/ims?\b/);
+assert.equal(flagsNativeJsonPipelineCtx.generatedScripts.size,0);
+
+const nestedJsonPipelineSource='response if ${url} ~= /api/ then response.json.add("data.flag",true) | response.json.replace("data.count",2)';
+const nestedJsonPipelineCtx=ctx();
+const nestedJsonPipeline=planQxRewrite(v2(nestedJsonPipelineSource),nestedJsonPipelineCtx);
+assert.equal(nestedJsonPipeline.section,'rewrite');
+assert.match(nestedJsonPipeline.line,/^api url script-response-body /);
+assert.equal(nestedJsonPipelineCtx.generatedScripts.size,1);
+
+const indexedJsonPipelineSource='response if ${url} ~= /api/ then response.json.delete("items[0]") | response.json.add("flag",true)';
+const indexedJsonPipelineCtx=ctx();
+const indexedJsonPipeline=planQxRewrite(v2(indexedJsonPipelineSource),indexedJsonPipelineCtx);
+assert.equal(indexedJsonPipeline.section,'rewrite');
+assert.match(indexedJsonPipeline.line,/^api url script-response-body /);
+assert.equal(indexedJsonPipelineCtx.generatedScripts.size,1);
+
+const nonExactJsonPipelineSource='response if ${request.header[\'X-Region\']} == "CN" then response.json.add("flag",true) | response.json.delete("old")';
+const nonExactJsonPipelineCtx=ctx();
+const nonExactJsonPipeline=planQxRewrite(v2(nonExactJsonPipelineSource),nonExactJsonPipelineCtx);
+assert.equal(nonExactJsonPipeline.section,'rewrite');
+assert.match(nonExactJsonPipeline.line,/url-and-header script-response-body /);
+assert.equal(nonExactJsonPipelineCtx.generatedScripts.size,1);
 
 const nativeResponseAddPipelineSource='response if ${url} ~= /api/ then response.header.add("Set-Cookie","a=1") | response.header.add("Set-Cookie","b=2")';
 const nativeResponseAddPipelineCtx=ctx();
