@@ -72,9 +72,10 @@ for (const entry of manifest) {
       assert.match(mapped.line, /\{\{\{wayx_proxy_policy\}\}\}/);
       continue;
     }
-    if (mapped.kind === 'rule') {
+    if (mapped.kind === 'rule' || mapped.kind === 'map') {
       stats.native++;
       assert.equal(mapped.lines.at(-1), mapped.line);
+      if (mapped.kind === 'map') assert.equal(mapped.reason,'url-regex-local-response');
       continue;
     }
     stats.review++;
