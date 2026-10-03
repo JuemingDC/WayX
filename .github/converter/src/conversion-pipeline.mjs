@@ -304,11 +304,7 @@ export function convertPlugin(entry,source,{
     for (const routed of surgeCommentPlan.routed) {
       (surgeOutputDestination(sg,routed.section) || surgeOutputDestination(sg,'notes')).push(...routed.lines);
     }
-    if (!item.line) {
-      qxOutputDestination(qx,'notes').push(...comments);
-      surgeOutputDestination(sg,'notes').push(...surgeComments);
-      continue;
-    }
+    if (!item.line) continue;
 
     let qr=rewriteV2Action(item.line,'qx',qctx);
     let sr=rewriteV2Action(item.line,'surge',sctx);
