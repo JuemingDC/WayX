@@ -3,7 +3,6 @@
 // Category: Converter / Rewrite v2
 
 import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
-import { normalizeRegexBodyForTarget } from './target-regex.mjs';
 
 const families = Object.freeze([
   { id:'header-pipeline', test:a => /^(request|response)\.header\.(add|set|del|replace)$/.test(a.name) },
@@ -91,13 +90,11 @@ export function compileComplexCondition(node, target, {argumentTable = null} = {
   const left = runtimeConditionVariable(node.left.name, target, argumentTable);
   if (node.operator === '==') return conditionEquality(left, node.right, argumentTable);
   if (node.operator === '~=' && node.right?.type === 'regex') {
-    // Loon i/m/s flags are intentionally discarded. Generated target helpers
-    // use the target-format bare regex body only.
-    const pattern = node.left.name === 'url'
-      ? String(node.right.pattern)
-      : normalizeRegexBodyForTarget(node.right.pattern);
-    if (node.capture) return '((__wayxCaptures[' + JSON.stringify(node.capture) + ']=String(' + left + ' ?? "").match(new RegExp(' + JSON.stringify(pattern) + ')))!==null)';
-    return '(new RegExp(' + JSON.stringify(pattern) + ').test(String(' + left + ' ?? "")))';
+    const pattern=String(node.right.pattern ?? '');
+    const flags=String(node.right.flags || '');
+    const regex='new RegExp(' + JSON.stringify(pattern) + ',' + JSON.stringify(flags) + ')';
+    if (node.capture) return '((__wayxCaptures[' + JSON.stringify(node.capture) + ']=String(' + left + ' ?? "").match(' + regex + '))!==null)';
+    return '(' + regex + '.test(String(' + left + ' ?? "")))';
   }
   throw new Error('unsupported complex comparison');
 }
