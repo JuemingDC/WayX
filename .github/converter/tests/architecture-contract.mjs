@@ -9,7 +9,7 @@ import path from 'node:path';
 const ROOT=process.cwd();
 const spec=await fs.readFile(path.join(ROOT,'.github/CONVERSION_SPEC.md'),'utf8');
 
-assert.match(spec,/版本：1\.57\b/,'semantic compiler bootstrap requires spec v1.57+');
+assert.match(spec,/版本：1\.58\b/,'Phase C requires spec v1.58+');
 for (const evidence of [
   'crossutility/Quantumult-X',
   'sample.conf',
@@ -32,6 +32,8 @@ for (const invariant of [
   'false negative',
   'new RegExp(source, flags)',
   '唯一规范源',
+  'finite fixture',
+  'false-positive / false-negative evidence',
 ]) {
   assert.ok(spec.includes(invariant),'missing semantic-compiler invariant in CONVERSION_SPEC: '+invariant);
 }
@@ -39,7 +41,7 @@ for (const invariant of [
 assert.doesNotMatch(
   spec,
   /Regex flags[^\n]*无条件丢弃|target 输出无条件丢弃/,
-  'v1.57 must not preserve the historical unconditional regex-flag drop rule',
+  'v1.58 must not preserve the historical unconditional regex-flag drop rule',
 );
 
 for (const rel of [
@@ -47,6 +49,9 @@ for (const rel of [
   '.github/converter/src/core/condition-evaluator.mjs',
   '.github/converter/src/core/equivalence-plan.mjs',
   '.github/converter/tests/core-semantics.mjs',
+  '.github/converter/src/rule.mjs',
+  '.github/converter/src/rule-ast.mjs',
+  '.github/converter/tests/rule.mjs',
 ]) {
   const stat=await fs.stat(path.join(ROOT,rel));
   assert.ok(stat.isFile() && stat.size>0,'semantic core path missing: '+rel);
@@ -57,6 +62,11 @@ for (const rel of [
   '.github/PROJECT_STATUS.md',
   '.github/converter/README.md',
   '.github/converter/src/source-metadata.mjs',
+  '.github/converter/src/rule-qx.mjs',
+  '.github/converter/src/rule-surge.mjs',
+  '.github/converter/tests/rule-ast.mjs',
+  '.github/converter/tests/catalog-rule-inventory.mjs',
+  '.github/converter/tests/surge-rule-coverage.mjs',
 ]) {
   await assert.rejects(
     fs.stat(path.join(ROOT,rel)),
