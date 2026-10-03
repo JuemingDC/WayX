@@ -260,7 +260,7 @@ target native planner
 
 所有 action 必须严格按 Loon AST 从左到右执行，Body Replace 与 JSON Action 可以交错，禁止按 action family 重排。Complex helper 的 synthetic regression 必须至少覆盖 2-action、3-action、新排列以及已知但 renderer 不支持的组合，防止再次退化为 full-signature whitelist。
 
-QX multi-action matcher 下推分成两个等级：helper prefilter 只要求 predicate 是必要条件；native action 则要求 matcher 对完整 source condition 等价。Matcher 与 Action 类型无关：URL-only 必须使用 `url`；只有真正存在可下推 Headers 条件时才使用 `url-and-header`。Headers-only 条件使用 `^https?://` 作为不额外收窄的 URL guard。Prefilter 的 `&&/||` 规则保持不变。当前 exact native matcher 只接受一个 URL Regex、一个固定 `request.method == 字符串`，或两者的 AND；不接受 OR、response-side 条件或多个不同 URL Regex 的交集。只有 exact matcher 成功时，`header.add | header.add | ...` 才可合并为单条原生 `request-header/response-header`。
+QX multi-action matcher 下推分成两个等级：helper prefilter 只要求 predicate 是必要条件；native action 则要求 matcher 对完整 source condition 等价。Matcher 与 Action 类型无关：URL-only 必须使用 `url`；只有真正存在可下推 Headers 条件时才使用 `url-and-header`。Headers-only 条件使用 `^https?://` 作为不额外收窄的 URL guard。Prefilter 的 `&&/||` 规则保持不变。`${request.header[...]}` 的固定字符串 equality 可以下推为大小写不敏感 Header 行 prefilter，Regex 条件只下推 Header presence，null/动态值不下推；helper 必须继续完整判断原条件。当前 exact native matcher 只接受一个 URL Regex、一个固定 `request.method == 字符串`，或两者的 AND；request Header 条件仍不属于 exact subset。只有 exact matcher 成功时，`header.add | header.add | ...` 才可合并为单条原生 `request-header/response-header`。
 
 
 Loon regex literal 的 `i / m / s` flags 在所有 native/helper 路径中均只解析、不传播；flags 的存在本身不进入 Review。parser 去掉 literal delimiter 后，regex body 原样保留，不再全局执行 `\/ -> /` 或其他 canonicalization；目标 helper 不得通过 `new RegExp(pattern, flags)`、inline modifier 或 case-fold 恢复这些 flags。若目标软件确有语法差异，只能由对应 target planner 基于官方格式做局部适配。
