@@ -136,6 +136,12 @@ assert.match(converterWorkflow,/catalog-regex-inventory\.mjs/, 'Block 40/80: Con
 assert.match(rewriteQx,/qxExactRewriteMatcherPlan\(ast\)/, 'Block 30/40: native QX Header coalescing must require exact condition coverage');
 assert.match(rewriteQx,/qxDirectRewritePlan\(ast,\{matcher:exactMatcher\}\)/, 'Block 30/40: direct QX native actions must consume the exact matcher plan');
 assert.match(rewriteV2Semantic,/QX direct native action requires an exact matcher plan/, 'Block 30/40: QX direct planner must reject non-exact matcher injection');
+assert.match(rewriteV2Semantic,/export function jsonPipelineToSafeNativeJq/, 'Block 50: Rewrite semantic mapper must expose safe JSON pipeline JQ synthesis');
+assert.match(rewriteV2Semantic,/native multi-action JQ currently requires top-level object key paths/, 'Block 50: native JSON pipeline subset must remain top-level-object only');
+assert.match(rewriteV2Semantic,/if type == "object" then/, 'Block 50: native JSON pipeline operations must guard non-object JSON roots');
+assert.match(rewriteQx,/qxNativeJsonPipelinePlan\(ast\)/, 'Block 30/50: QX planner must own JSON pipeline native coalescing');
+assert.match(rewriteQx,/jsonPipelineToSafeNativeJq\(ast\)/, 'Block 50: QX native JSON pipeline must consume the shared safe JQ synthesis');
+assert.match(rewriteQx,/const matcher=qxExactRewriteMatcherPlan\(ast\)/, 'Block 30/50: native QX JSON pipeline must require exact condition coverage');
 assert.match(rewriteSurge,/planComplexRewrite\(ast,'surge'/, 'Block 30: Surge planner must own its complex fallback');
 assert.match(rewriteQx,/function ensureQxRewriteHandlers\(\)/, 'Block 30: QX complex handlers must register lazily');
 assert.match(rewriteSurge,/function ensureSurgeRewriteHandlers\(\)/, 'Block 30: Surge complex handlers must register lazily');
