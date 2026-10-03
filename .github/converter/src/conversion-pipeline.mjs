@@ -17,7 +17,7 @@ import { surgeArgumentMetadata } from './argument.mjs';
 import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection } from './source-section.mjs';
 import { attachQxInlineNote } from './qx-comment.mjs';
 import { planMitmLine } from './mitm.mjs';
-import { legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from './rewrite-ir.mjs';
+import { isEmptyLegacyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from './rewrite-ir.mjs';
 import { planQxRewrite } from './rewrite-qx.mjs';
 import { planSurgeRewrite } from './rewrite-surge.mjs';
 import { rewriteReview, rewriteIssue } from './rewrite-plan-result.mjs';
@@ -244,6 +244,10 @@ export function convertPlugin(entry,source,{
     if (!qr || !sr) {
       const [pattern,action]=splitPatternAction(item.line);
       let ir=legacyRewriteToSemanticIr(pattern,action);
+      if (isEmptyLegacyJsonJqIr(ir)) {
+        qr={section:'drop',reason:'empty-legacy-json-jq'};
+        sr={section:'drop',reason:'empty-legacy-json-jq'};
+      }
       const jqSpec=legacyJqPathDependencySpecFromIr(ir,{pluginSourceUrl:entry.source});
       if (jqSpec) {
         const materialized=jqFiles.get(item.line);
