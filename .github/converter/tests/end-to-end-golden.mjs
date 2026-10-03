@@ -650,7 +650,8 @@ for (const testCase of cases) {
   const surgeActive = activeLines(out.surge);
 
   if (testCase.name === 'HTTPDNS') {
-    assert.match(out.surge, /^#!requirement=CORE_VERSION>=20$/m);
+    assert.doesNotMatch(out.surge, /^#!requirement=CORE_VERSION>=20$/m);
+    assert.doesNotMatch(out.surge, /^\[Map Local\]$/m);
     assert.match(out.surge, /AND,\(\(URL-REGEX,/);
     assert.match(out.surge, /USER-AGENT,/);
     assert.equal(/^#!(?:author|icon|date|loon_version)=/mi.test(out.surge), false);
@@ -703,13 +704,15 @@ for (const testCase of cases) {
       /#response if \$\{url\} ~= \/\^https:\\\/\\\/app\\\.bilibili\\\.com\\\/x\\\/v2\\\/splash\\\/list\\\?\/i then response\.body\.mock\("text", "OK", 200\)/,
       'Bilibili: disabled source mock line must be preserved as a comment',
     );
-    assert.ok(
+    assert.equal(
       out.surge.includes('# ^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/splash\\/list\\? data-type=text data="OK" status-code=200 header="Content-Type:text/plain"'),
-      'Bilibili: disabled response.body.mock must have a disabled Surge Map Local equivalent',
+      false,
+      'Bilibili: flagged disabled response.body.mock must not be lowered to a case-sensitive Surge Map Local rule',
     );
-    assert.ok(
+    assert.equal(
       out.surge.includes("# http-response-jq ^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/splash\\/(show|event\\/list2)\\? '.data |= with_entries("),
-      'Bilibili: disabled response.json.jq must have a disabled Surge Body Rewrite equivalent',
+      false,
+      'Bilibili: flagged disabled response.json.jq must not be lowered to a case-sensitive Surge Body Rewrite rule',
     );
   }
 
