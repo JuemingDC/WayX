@@ -242,17 +242,6 @@ export function convertPlugin(entry,source,{
 
     let qr=rewriteV2Action(item.line,'qx',qctx);
     let sr=rewriteV2Action(item.line,'surge',sctx);
-    if (/body-json-jq\s+(?:''|"")\s*$/i.test(item.line)) {
-      const [debugPattern,debugAction]=splitPatternAction(item.line);
-      const debugIr=legacyRewriteToSemanticIr(debugPattern,debugAction);
-      console.error('[WayX debug empty-jq]',JSON.stringify({
-        source:item.line,
-        qxPreplanned:Boolean(qr),
-        surgePreplanned:Boolean(sr),
-        operation:debugIr.operations?.[0],
-        empty:isEmptyLegacyJsonJqIr(debugIr),
-      }));
-    }
     if (!qr || !sr) {
       const [pattern,action]=splitPatternAction(item.line);
       let ir=legacyRewriteToSemanticIr(pattern,action);
