@@ -134,6 +134,8 @@ assert.match(qxSemanticScript,/redirect helper requires exactly one URL regex co
 assert.match(qxSemanticScript,/redirect helper does not lower OR conditions/, 'Block 30/40: redirect helper must fail closed on ambiguous OR success paths');
 assert.match(converterWorkflow,/catalog-regex-inventory\.mjs/, 'Block 40/80: Converter Check must execute the Catalog regex feature inventory');
 assert.match(rewriteQx,/qxExactRewriteMatcherPlan\(ast\)/, 'Block 30/40: native QX Header coalescing must require exact condition coverage');
+assert.match(rewriteQx,/qxDirectRewritePlan\(ast,\{matcher:exactMatcher\}\)/, 'Block 30/40: direct QX native actions must consume the exact matcher plan');
+assert.match(rewriteV2Semantic,/QX direct native action requires an exact matcher plan/, 'Block 30/40: QX direct planner must reject non-exact matcher injection');
 assert.match(rewriteSurge,/planComplexRewrite\(ast,'surge'/, 'Block 30: Surge planner must own its complex fallback');
 assert.match(rewriteQx,/function ensureQxRewriteHandlers\(\)/, 'Block 30: QX complex handlers must register lazily');
 assert.match(rewriteSurge,/function ensureSurgeRewriteHandlers\(\)/, 'Block 30: Surge complex handlers must register lazily');

@@ -81,11 +81,11 @@ WayX 只处理 Loon regex literal 的**语法外壳**：parser 去掉最外层 `
 
 ## 40.4 Flags
 
-- Loon regex literal 的 `i/m/s` 在 WayX 转换中**无条件丢弃**；flags 的存在本身不构成 Review；
+- Loon regex literal 的 `i/m/s` 在 WayX 转换中**无条件丢弃**；flags 的存在本身不构成 Review。Script Hub Beta 将其转换成 `(?i)` / `(?m)` / `(?s)` inline modifier 的做法明确不用于 WayX QX/Surge target；
 - 不得把 flags 拼入 regex body，也不得通过 `(?i)`、人工 case-fold、`new RegExp(pattern, flags)` 或其他方式恢复；
 - 去掉 literal delimiter 后，regex body 原样保留；不得全局执行 `\/ -> /` 或其他字符级 canonicalization；
 - 除目标格式所需的上述处理外，regex 的捕获组、lookaround、character class、alternation、quantifier、anchor 等结构保持不变；
-- Golden 锁定“丢弃 `i/m/s` + regex body 保持”的结果。
+- Golden 与 target-planner regression 锁定“丢弃 `i/m/s` + regex body 保持”的结果，并覆盖 direct native matcher 与 full-condition helper 两条路径。
 
 Catalog 另设 Regex feature inventory：高级/特殊构造包括 lookaround/lookbehind、named/numeric backreference、named capture、Unicode property、inline modifier、atomic/conditional/branch-reset group、possessive quantifier。当前实测 baseline 为 7 项：`DianPing.lpx` 有 3 个 Legacy atomic group `(?>...)` 与 1 个 Legacy negative lookahead `(?!...)`，`RuCu6/webpage.lpx` 有 3 个 Script v2 negative lookahead `(?!...)`。这些构造继续作为**源 pattern 原样透传**的既有行为锁定。未来 special-feature baseline 任一变化都 fail closed；普通 capture/non-capture group、alternation、character class、anchor、quantifier、escaped slash/dot 仍按原 regex body 保留，不归类为平台特殊功能字符。
 

@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import { parseRewriteV2 } from '../src/rewrite-v2.mjs';
 import { legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from '../src/rewrite-ir.mjs';
 import { planQxRewrite } from '../src/rewrite-qx.mjs';
+import { qxDirectRewritePlan } from '../src/rewrite-v2-semantic.mjs';
 import { qxExactRewriteMatcherPlan, qxRewriteMatcherPlan } from '../src/qx-rewrite-matcher.mjs';
 import { planSurgeRewrite } from '../src/rewrite-surge.mjs';
 
@@ -39,6 +40,50 @@ const rawUrlMatcher=qxExactRewriteMatcherPlan(parseRewriteV2(
 ));
 assert.equal(rawUrlMatcher.urlPattern,rawUrlPattern);
 assert.equal(rawUrlMatcher.prefix,rawUrlPattern+' url ');
+
+const droppedFlagsAst=parseRewriteV2(
+  'response if ${url} ~= /^https:\\/\\/flags\\.example\\/api$/ims then reject_dict(200)'
+);
+const droppedFlagsMatcher=qxExactRewriteMatcherPlan(droppedFlagsAst);
+assert.equal(droppedFlagsMatcher.urlPattern,'^https:\\/\\/flags\\.example\\/api$');
+assert.equal(droppedFlagsMatcher.prefix,'^https:\\/\\/flags\\.example\\/api$ url ');
+const droppedFlagsDirect=qxDirectRewritePlan(droppedFlagsAst,{matcher:droppedFlagsMatcher});
+assert.equal(droppedFlagsDirect.ok,true);
+assert.equal(droppedFlagsDirect.line,'^https:\\/\\/flags\\.example\\/api$ url reject-dict');
+assert.doesNotMatch(droppedFlagsDirect.line,/\(\?[ims]+\)|\/ims?\b/);
+
+const methodRejectNativeAst=parseRewriteV2(
+  'response if ${url} ~= /api/ && ${request.method} == "POST" then reject_dict(200)'
+);
+const methodRejectNativeMatcher=qxExactRewriteMatcherPlan(methodRejectNativeAst);
+const methodRejectNative=qxDirectRewritePlan(methodRejectNativeAst,{matcher:methodRejectNativeMatcher});
+assert.equal(methodRejectNative.ok,true);
+assert.equal(methodRejectNative.line,'api ^POST[ ] url-and-header reject-dict');
+
+const methodJqNativeAst=parseRewriteV2(
+  'response if ${request.method} == "POST" then response.json.jq(".data")'
+);
+const methodJqNativeMatcher=qxExactRewriteMatcherPlan(methodJqNativeAst);
+const methodJqNative=qxDirectRewritePlan(methodJqNativeAst,{matcher:methodJqNativeMatcher});
+assert.equal(methodJqNative.ok,true);
+assert.equal(methodJqNative.line,"^https?:// ^POST[ ] url-and-header jsonjq-response-body '.data'");
+
+const methodBodyNativeAst=parseRewriteV2(
+  'request if ${url} ~= /upload/ && ${request.method} == "PUT" then request.body.replace(/foo/,"bar")'
+);
+const methodBodyNativeMatcher=qxExactRewriteMatcherPlan(methodBodyNativeAst);
+const methodBodyNative=qxDirectRewritePlan(methodBodyNativeAst,{matcher:methodBodyNativeMatcher});
+assert.equal(methodBodyNative.ok,true);
+assert.equal(methodBodyNative.line,'upload ^PUT[ ] url-and-header request-body foo request-body bar');
+
+const nonExactHeaderDirectAst=parseRewriteV2(
+  'response if ${request.header[\'X-Region\']} == "CN" then response.json.jq(".data")'
+);
+const nonExactHeaderDirectMatcher=qxExactRewriteMatcherPlan(nonExactHeaderDirectAst);
+assert.equal(nonExactHeaderDirectMatcher.ok,false);
+const nonExactHeaderDirect=qxDirectRewritePlan(nonExactHeaderDirectAst,{matcher:qxRewriteMatcherPlan(nonExactHeaderDirectAst)});
+assert.equal(nonExactHeaderDirect.ok,false);
+assert.match(nonExactHeaderDirect.reason,/requires an exact matcher plan/);
 
 const rejectSource='response if ${url} ~= /ads/ then reject_dict(200)';
 const rejectIr=v2(rejectSource);
@@ -317,6 +362,20 @@ const requestHeaderExact=qxExactRewriteMatcherPlan(parseRewriteV2(
   'response if ${request.header[\'X-Region\']} == "CN" then response.header.add("X-Test","1")'
 ));
 assert.equal(requestHeaderExact.ok,false);
+
+const directMethodPlanSource='response if ${url} ~= /api/ && ${request.method} == "POST" then response.json.jq(".data")';
+const directMethodPlanCtx=ctx();
+const directMethodPlan=planQxRewrite(v2(directMethodPlanSource),directMethodPlanCtx);
+assert.equal(directMethodPlan.section,'rewrite');
+assert.equal(directMethodPlan.line,"api ^POST[ ] url-and-header jsonjq-response-body '.data'");
+assert.equal(directMethodPlanCtx.generatedScripts.size,0);
+
+const directMethodRejectSource='response if ${request.method} == "POST" then reject_dict(200)';
+const directMethodRejectCtx=ctx();
+const directMethodReject=planQxRewrite(v2(directMethodRejectSource),directMethodRejectCtx);
+assert.equal(directMethodReject.section,'rewrite');
+assert.equal(directMethodReject.line,'^https?:// ^POST[ ] url-and-header reject-dict');
+assert.equal(directMethodRejectCtx.generatedScripts.size,0);
 
 const requestHeaderPrefilterSource='response if ${url} ~= /api/ && ${request.header[\'X-Region\']} == "CN" then response.header.del("Server") | response.body.replace(/x/,"y")';
 const requestHeaderPrefilterCtx=ctx();
