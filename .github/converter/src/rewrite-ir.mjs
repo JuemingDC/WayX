@@ -199,6 +199,16 @@ export function isDiscardedLegacyJqPathIr(ir) {
     /^jq-path\s*=/i.test(String(op?.rest || '').trim());
 }
 
+export function isEmptyLegacyJsonJqIr(ir) {
+  if (!ir || ir.type!=='rewrite-semantic-ir' || ir.sourceSyntax!=='legacy') return false;
+  if (!Array.isArray(ir.operations) || ir.operations.length!==1) return false;
+  const op=ir.operations[0];
+  if (op?.kind!=='json' || op?.operation!=='jq') return false;
+  const raw=String(op?.rest ?? '').trim();
+  if (!raw) return true;
+  return unquoteRewriteToken(raw).trim()==='';
+}
+
 export function legacyRewriteToSemanticIr(pattern,action) {
   const sourcePattern=String(pattern ?? '').trim();
   const sourceAction=String(action ?? '').trim();
