@@ -700,15 +700,14 @@ for (const testCase of cases) {
     assert.match(out.qx, /^\{# 空降助手 #\} host, bsbsb\.top, PROXY$/m, 'Bilibili: one-to-one source comment must become a QX leading note while PROXY remains literal');
     assert.doesNotMatch(out.qx, /Source \[Argument\]|Argument usage:/, 'Bilibili QX must not emit Loon plugin parameter UI/declarations');
     assert.doesNotMatch(out.qx, /QUANTUMULT X (?:UNSUPPORTED|REVIEW REQUIRED) - source script disabled/);
-    assert.ok(qxActive.some(line => /bilibili\/(?:request|response|json)\.js/.test(line)), 'Bilibili Source Script declarations must keep original URLs without runtime compatibility gating');
-    assert.match(out.qx, /binary_body_mode=true ignored for Quantumult X/);
-    assert.doesNotMatch(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
+    assert.equal(qxActive.some(line => /bilibili\/(?:request|response|json)\.js/.test(line)), false, 'flagged Bilibili scripts must not be activated with a case-sensitive QX matcher');
+    assert.match(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
     assert.doesNotMatch(out.surge, /Source Loon plugin policy PROXY requires a Surge module policy parameter binding/);
     assert.doesNotMatch(out.surge, /Source declaration:.*PROXY[\s\S]*REVIEW REQUIRED: Surge Module requires an external policy binding/);
     assert.match(out.surge, /^#!arguments=.*displayUpList:auto.*sponsorBlock:true.*wayx_proxy_policy:DIRECT/m);
     assert.match(out.surge, /^DOMAIN,bsbsb\.top,\{\{\{wayx_proxy_policy\}\}\}$/m);
-    assert.match(out.surge, /#!REQUIREMENT "'\{\{\{sponsorBlock\}\}\}'=='true'"/);
-    assert.doesNotMatch(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
+    assert.doesNotMatch(out.surge, /#!REQUIREMENT "'\{\{\{sponsorBlock\}\}\}'=='true'"/);
+    assert.match(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
     assert.match(
       out.surge,
       /#response if \$\{url\} ~= \/\^https:\\\/\\\/app\\\.bilibili\\\.com\\\/x\\\/v2\\\/splash\\\/list\\\?\/i then response\.body\.mock\("text", "OK", 200\)/,
