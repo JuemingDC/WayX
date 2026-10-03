@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import { parseRewriteV2 } from '../src/rewrite-v2.mjs';
 import { legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from '../src/rewrite-ir.mjs';
 import { planQxRewrite } from '../src/rewrite-qx.mjs';
+import { qxDirectRewritePlan } from '../src/rewrite-v2-semantic.mjs';
 import { qxExactRewriteMatcherPlan, qxRewriteMatcherPlan } from '../src/qx-rewrite-matcher.mjs';
 import { planSurgeRewrite } from '../src/rewrite-surge.mjs';
 
