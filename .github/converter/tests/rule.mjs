@@ -1,3 +1,6 @@
+import { parseLoonRuleAst, renderRuleAst, ruleTypesInAst, planQxRuleAst, planSurgeModuleRuleAst, renderSurgeRuleAst, validateSurgeRuleAst, surgeRuleTypesInTree, surgeModuleRule } from '../src/rule.mjs';
+import { classifyLegacyRewriteAction } from '../src/rewrite.mjs';
+
 // WayX target-neutral Rule + target planner contract
 // Author: chance
 // Category: Converter / Rule / Validation
@@ -5,19 +8,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {
-  parseLoonRuleAst,
-  renderRuleAst,
-  ruleTypesInAst,
-  planQxRuleAst,
-  planSurgeModuleRuleAst,
-  renderSurgeRuleAst,
-  validateSurgeRuleAst,
-  surgeRuleTypesInTree,
-  surgeModuleRule,
-} from '../src/rule.mjs';
-import { classifyLegacyRewriteAction } from '../src/rewrite-ir.mjs';
-
 const simple=parseLoonRuleAst('DOMAIN, example.com, REJECT');
 assert.equal(simple.ok,true);
 assert.equal(simple.ast.kind,'rule');

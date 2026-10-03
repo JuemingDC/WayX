@@ -128,8 +128,8 @@ export function inlineResolvedLegacyJqPathIr(ir,content) {
   if (!spec) return {ir,changed:false,dependency:null};
   const jq=String(content ?? '').trim();
   if (!jq) throw new Error('legacy jq-path dependency resolved to empty JQ');
-  const operation={...ir.operations[0],rest:jq};
-  const phase=operation.phase || ir.phase || 'response';
+  const phase=ir.operations[0].phase || ir.phase || 'response';
+  const operation={...ir.operations[0],rest:jq,raw:phase+'-body-json-jq '+jq};
   const sourcePayload={
     ...ir.sourcePayload,
     action:phase+'-body-json-jq '+jq,

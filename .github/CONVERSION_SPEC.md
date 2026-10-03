@@ -1,9 +1,9 @@
 # WayX Conversion Specification
 
-版本：1.58  
+版本：1.59
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
-迁移状态：**Semantic Compiler Phase C / equivalence planner + differential matcher oracle active**
+迁移状态：**Phase C active / Rewrite、Script、Configuration domain consolidation complete / Phase D–F pending**
 
 WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入本仓库转换链。
 
@@ -745,11 +745,44 @@ Workflow 只调用稳定入口，不应枚举 converter 内部所有实现文件
 
 ---
 
-## 21. 当前迁移期兼容声明
+## 21. 领域迁移检查点（2026-10-03）
+
+已完成：
+
+- `rewrite.mjs`：合并 Rewrite v2 parser、Legacy/V2 IR、源 action registry/validation；target-only QX primitives 与 planner result 留在 target mapping domain。
+- `rewrite-qx.mjs` / `rewrite-surge.mjs`：从 IR condition/operations 构造 lowering view，不读取 provenance AST；Legacy planner 从 condition/operation 取数据。
+- `script.mjs`：合并 Legacy/V2 source parser 与 Script IR，提供统一 `parseScriptDeclaration`。
+- `script-target.mjs`：合并 QX/Surge、Legacy/V2 target adapters 与 action selector，读取 Script IR；`sourcePayload` 仅作为 provenance。
+- `configuration.mjs`：General/MITM 进入 target-neutral IR，再执行目标适配；hostname 顺序、排除项、通配符、端口保持原样，MITM/MitM 两段及尾部注释均保留。
+- 删除旧的 `rewrite-v2` / `rewrite-ir` / `rewrite-v2-actions` / `rewrite-plan-result`、`script-v2` / `script-legacy` / `script-ir` / `script-qx` / `script-surge` / `script-v2-target` 与 `mitm` 碎片文件；公开函数通过 `index.mjs` 保留。
+- 修复 Upstream Monitor 对已删除 spec/rule 测试的引用；每日 schedule 已暂停，保留手动触发。
+- 删除漂移的 Python target validator/allowlist，政策 CLI 统一调用正式 QX/Surge validators，metadata 检查并入 metadata domain；CI 使用 `--all` 避免仅校验变更文件导致零目标通过。
+
+尚未完成，不能据此宣称全行为等价或删除生产兼容 planner/runtime：
+
+1. Phase D：将现有 runtime emitter 迁到共同语义 runtime；引入 request/response phase dispatcher，解决同 phase 首条 Script 命中限制。
+2. Phase E：扩展 reference evaluator 到 actions，加入完整行为 oracle、flag/capture fuzz、Catalog differential 与 canonical regeneration。
+3. Phase F：仅对已通过 oracle/canonical/validator 的能力删除旧 compatibility lowering；当前 `compileRegexForTarget` 与 Script option 省略策略仍属历史兼容路径，未被本次领域整理证明为等价。
+
+本检查点记录完成边界，不取代 §§19–20 的迁移阶段与验收顺序。恢复 schedule 必须单独明确执行，不能由迁移提交自动恢复。
+
+验证检查点：
+
+- 固定输入 Catalog 287 项的 QX/Surge 文本及 generated helpers 与迁移前相同。
+- 使用当前原作者 Source Script/JQ/mock 依赖再次对比：287 项 target validator 通过、迁移差异 0、canonical drift 0。
+- 以下原作者 Script URL 返回 HTTP 404，未取得源代码，未镜像或改写 URL；这两项原脚本审查仍未完成，不应标记全量上游依赖验证完成：
+  - `https://kelee.one/Resource/JavaScript/EasyBike/mobileconfig-gateway.js`
+  - `https://kelee.one/Resource/JavaScript/CommonScript/replace-body.js`
+- QX/Surge 官方 capability drift gates、generated helper runtime/ref、原作者 Script URL preservation、repository audit、managed cleanliness 均通过。
+- 政策 CLI 全量验证 574 个目标通过；daily schedule 保持暂停。
+
+续接顺序：先复查上述两个上游 404，再执行 §19 Phase D/E；完整语义证明通过后才执行 Phase F。当前领域整合检查点不会自动恢复定时任务。
+
+## 22. 当前迁移期兼容声明
 
 main 中现有 converter 在 Phase B–F 完成前继续承担生产转换。
 
-如果当前实现与本 v1.58 新规范冲突：
+如果当前实现与本 v1.59 新规范冲突：
 
 - 不立即在同一个结构 PR 中强行改动 canonical；
 - 在后续语义 PR 中按新顺序迁移；

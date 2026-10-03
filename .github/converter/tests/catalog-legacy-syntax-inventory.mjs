@@ -1,3 +1,6 @@
+import { isRewriteV2, classifyLegacyRewriteAction, LOON_LEGACY_MOCK_OPTION_NAMES } from '../src/rewrite.mjs';
+import { isScriptV2, LOON_LEGACY_SCRIPT_OPTION_NAMES, parseLegacyScriptLine } from '../src/script.mjs';
+
 // WayX Catalog-observed Loon Legacy Rewrite / Script semantic-token inventory
 // Author: chance
 // Category: Converter / Validation / Observed Legacy Semantics
@@ -5,17 +8,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { isRewriteV2 } from '../src/rewrite-v2.mjs';
-import {
-  classifyLegacyRewriteAction,
-  LOON_LEGACY_MOCK_OPTION_NAMES,
-} from '../src/rewrite-ir.mjs';
-import { isScriptV2 } from '../src/script-v2.mjs';
-import {
-  LOON_LEGACY_SCRIPT_OPTION_NAMES,
-  parseLegacyScriptLine,
-} from '../src/script-legacy.mjs';
-
 const ROOT=process.cwd();
 const manifest=JSON.parse(await fs.readFile(path.join(ROOT,'.github/sources/loon.json'),'utf8'));
 const expected=JSON.parse(await fs.readFile(path.join(ROOT,'.github/converter/fixtures/catalog-legacy-syntax-inventory.json'),'utf8'));

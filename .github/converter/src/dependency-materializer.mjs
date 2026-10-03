@@ -1,18 +1,12 @@
+import { minifyJqFile } from './jq.mjs';
+import { isRewriteV2, parseRewriteV2, validateRewriteV2Ast, legacyRewriteToSemanticIr } from './rewrite.mjs';
+import { dependencySpecFromAction, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr } from './dependency.mjs';
+import { groupSourceSectionItems } from './plugin-parser.mjs';
+import { fetchOriginalText, fetchOriginalBytes } from './source-fetch.mjs';
+
 // Loon Rewrite dependency discovery and materialization
 // Author: chance
 // Category: Converter / Dependency / Materialization
-
-import { minifyJqFile } from './jq.mjs';
-import { isRewriteV2, parseRewriteV2 } from './rewrite-v2.mjs';
-import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
-import {
-  dependencySpecFromAction,
-  jqDependencySpecFromAction,
-  legacyJqPathDependencySpecFromIr,
-} from './dependency.mjs';
-import { legacyRewriteToSemanticIr } from './rewrite-ir.mjs';
-import { groupSourceSectionItems } from './plugin-parser.mjs';
-import { fetchOriginalText, fetchOriginalBytes } from './source-fetch.mjs';
 
 export async function materializeMockFiles(entry,parsed,{
   fetchText=fetchOriginalText,

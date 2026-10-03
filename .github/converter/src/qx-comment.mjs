@@ -1,10 +1,10 @@
+import { isRewriteV2 } from './rewrite.mjs';
+import { parseLegacyScriptLine } from './script.mjs';
+import { cleanSourceComments, sourceCommentText } from './plugin-parser.mjs';
+
 // Quantumult X inline source-note rendering
 // Author: chance
 // Category: Converter / Comments / Quantumult X
-
-import { isRewriteV2 } from './rewrite-v2.mjs';
-import { parseLegacyScriptLine } from './script-legacy.mjs';
-import { cleanSourceComments, sourceCommentText } from './plugin-parser.mjs';
 
 export function looksLikeCommentedSourceDeclaration(text,sectionKind) {
   const value=String(text || '').trim();

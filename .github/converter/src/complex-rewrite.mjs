@@ -1,9 +1,9 @@
+import { validateRewriteV2Ast } from './rewrite.mjs';
+import { normalizeRegexBodyForTarget } from './target-regex.mjs';
+
 // WayX complex Rewrite v2 capability registry
 // Author: chance
 // Category: Converter / Rewrite v2
-
-import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
-import { normalizeRegexBodyForTarget } from './target-regex.mjs';
 
 const families = Object.freeze([
   { id:'header-pipeline', test:a => /^(request|response)\.header\.(add|set|del|replace)$/.test(a.name) },

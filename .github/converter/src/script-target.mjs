@@ -1,17 +1,74 @@
+import { legacyScriptIrDeclaration, scriptOption, scriptOptionBoolean, scriptV2ArgumentRefs, scriptV2DynamicOptionRefs } from './script.mjs';
+import { simpleUrlRewriteCondition } from './rewrite-v2-semantic.mjs';
+import { scriptV2PluginArgumentUsage } from './argument-usage.mjs';
+import { surgePluginObjectArgument, surgeDynamicOptionValue, surgeEnableRequirement, parseLegacyLoonPluginObjectRefs } from './argument.mjs';
+import { normalizeRegexBodyForTarget } from './target-regex.mjs';
+
+// Consolidated: 2026-10-03
+// Author: chance
+// Category: Converter / Script / Target Adapters
+
+// WayX generic remote-script declaration conversion
+// Author: chance
+// Category: Converter / Script
+//
+// Script action selection is based only on declaration semantics and inspected
+// source behavior. Script URL, plugin id, author and repository never select an
+// action.
+
+export function scriptBehaviorSignals(sourceText='') {
+  const source=String(sourceText || '');
+  return {
+    sourceAvailable:Boolean(source.trim()),
+    readsRequestBody:/\$request\.(?:body|bodyBytes)\b/.test(source),
+    readsResponseBody:/\$response\.(?:body|bodyBytes)\b/.test(source),
+    returnsHttpResponse:
+      /\$done\s*\(\s*\{[\s\S]{0,800}\b(?:status|statusCode)\s*:/.test(source) ||
+      /\$done\s*\(\s*\{[\s\S]{0,800}\bresponse\s*:\s*\{/.test(source),
+  };
+}
+
+export function selectQxScriptAction({phase,requiresBody=false,sourceText=''}) {
+  const p=String(phase).toLowerCase().replace(/^http-/,'');
+  if(!['request','response'].includes(p)) throw new Error(`Unsupported QX HTTP script phase: ${phase}`);
+
+  const signals=scriptBehaviorSignals(sourceText);
+
+  // The Loon declaration phase is authoritative for native QX Script mapping.
+  // QX's official sample and KOP-XIAO's resource parser both map
+  // request/response + requires-body directly to the corresponding
+  // script-request/response-header/body action. Whole-file source inspection
+  // is only allowed to strengthen body-dependency detection; it must not
+  // switch a declared request script into the echo-response family because
+  // multi-platform helpers can contain inactive Surge/Loon response branches.
+  if(p==='request') {
+    const needsBody=Boolean(requiresBody || signals.readsRequestBody);
+    return {
+      action:needsBody ? 'script-request-body' : 'script-request-header',
+      reason:needsBody
+        ? 'request-phase declaration reads/requires request body'
+        : 'request-phase declaration does not require request body',
+      override:false,
+      signals,
+    };
+  }
+
+  const needsBody=Boolean(requiresBody || signals.readsResponseBody);
+  return {
+    action:needsBody ? 'script-response-body' : 'script-response-header',
+    reason:needsBody
+      ? 'response-phase declaration reads/requires response body'
+      : 'response-phase declaration does not require response body',
+    override:false,
+    signals,
+  };
+}
+
+
+
 // WayX behavior-first Loon Script v2 target planning
 // Author: chance
 // Category: Converter / Script v2 / Target Mapping
-import { simpleUrlRewriteCondition } from './rewrite-v2-semantic.mjs';
-import { selectQxScriptAction } from './script.mjs';
-import {
-  scriptOption,
-  scriptOptionBoolean,
-  scriptV2ArgumentRefs,
-  scriptV2DynamicOptionRefs,
-} from './script-v2.mjs';
-import { scriptV2PluginArgumentUsage } from './argument-usage.mjs';
-import { surgePluginObjectArgument, surgeDynamicOptionValue, surgeEnableRequirement } from './argument.mjs';
-
 function unsupported(reason) {
   return { ok:false, reason };
 }
@@ -137,7 +194,7 @@ export function qxScriptV2Plan(ast, {
   argumentIds = null,
   argumentTable = null,
 } = {}) {
-  if (!ast || ast.type !== 'script') return unsupported('expected Script v2 AST');
+  if (!ast || !['script','script-semantic-ir'].includes(ast.type)) return unsupported('expected Script v2 AST');
 
   if (!['request','response'].includes(ast.phase)) {
     return qxNonHttpScriptV2Plan(ast,{scriptUrl,argumentTable});
@@ -235,7 +292,7 @@ function surgeTriggerParams(ast, argumentTable) {
 }
 
 export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 'script', argumentIds = null, argumentTable = null} = {}) {
-  if (!ast || ast.type !== 'script') return unsupported('expected Script v2 AST');
+  if (!ast || !['script','script-semantic-ir'].includes(ast.type)) return unsupported('expected Script v2 AST');
   if (argumentIds !== null) {
     const usage = scriptV2PluginArgumentUsage(ast, argumentIds);
     const undeclared = [
@@ -334,3 +391,154 @@ export function scriptV2DeclarationGaps(ast) {
 
 // Backward-compatible export name for callers that only inspect needs.
 export const scriptV2BridgeNeeds = scriptV2DeclarationGaps;
+
+
+// Quantumult X Source Script target planner
+// Author: chance
+// Category: Converter / Script / Quantumult X
+
+export function planQxScript(ir,ctx={}) {
+  if (!ir || ir.type!=='script-semantic-ir') throw new TypeError('Expected Script Semantic IR');
+
+  const scriptUrl=ctx.scriptUrl || ir.script.path;
+  if (ir.sourceSyntax==='v2') {
+    return qxScriptV2Plan(ir,{
+      scriptUrl,
+      sourceText:ctx.sourceText || '',
+      argumentIds:ctx.argumentIds ?? null,
+      argumentTable:ctx.argumentTable || null,
+    });
+  }
+
+  if (ir.sourceSyntax!=='legacy') {
+    return unsupported('unsupported Script source syntax: '+ir.sourceSyntax);
+  }
+
+  const sc=legacyScriptIrDeclaration(ir);
+  if (!sc?.script?.path) return unsupported('Legacy Script declaration is missing script-path');
+
+  const targetPattern=normalizeRegexBodyForTarget(sc.pattern);
+  const enableFixed=sc.enable ? String(sc.enable).trim().toLowerCase() : '';
+  const enableDynamic=Boolean(sc.enable) && !['true','false','1','0'].includes(enableFixed);
+  const debugFixed=sc.debug ? String(sc.debug).trim().toLowerCase() : '';
+  const debugEnabled=Boolean(sc.debug) && !['false','0'].includes(debugFixed);
+  const notes=[];
+
+  if (sc.argument) {
+    notes.push('Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.');
+  }
+  if (enableDynamic) {
+    notes.push('Source dynamic enable ignored for Quantumult X; converted rule defaults to enabled.');
+  }
+  if (sc.timeout) {
+    notes.push('Source Script timeout ignored for Quantumult X.');
+  }
+  if (sc.binaryBodyMode) {
+    notes.push('Source binary-body-mode=true ignored for Quantumult X; requires-body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.');
+  }
+  if (debugEnabled) {
+    notes.push('Source Script debug is not a Quantumult X Rewrite Script field and was omitted.');
+  }
+  if (enableFixed==='false' || enableFixed==='0') {
+    return {ok:true,disabled:true,reason:'Loon Legacy Script enable=false',tag:sc.tag,notes};
+  }
+
+  const action=selectQxScriptAction({
+    phase:sc.httpType,
+    requiresBody:sc.requiresBody,
+    sourceText:ctx.sourceText || '',
+  });
+  if (!action.action) return unsupported(action.reason);
+
+  return {
+    ok:true,
+    strategy:'native-declaration',
+    section:'rewrite',
+    pattern:targetPattern,
+    action:action.action,
+    line:targetPattern+' url '+action.action+' '+scriptUrl,
+    tag:sc.tag,
+    notes,
+  };
+}
+
+
+// Surge Source Script target planner
+// Author: chance
+// Category: Converter / Script / Surge
+
+export function planSurgeScript(ir,ctx={}) {
+  if (!ir || ir.type!=='script-semantic-ir') throw new TypeError('Expected Script Semantic IR');
+
+  const scriptUrl=ctx.scriptUrl || ir.script.path;
+  if (ir.sourceSyntax==='v2') {
+    return surgeScriptV2Plan(ir,{
+      scriptUrl,
+      name:ctx.name || 'script',
+      argumentIds:ctx.argumentIds ?? null,
+      argumentTable:ctx.argumentTable || null,
+    });
+  }
+
+  if (ir.sourceSyntax!=='legacy') {
+    return unsupported('unsupported Script source syntax: '+ir.sourceSyntax);
+  }
+
+  const sc=legacyScriptIrDeclaration(ir);
+  if (!sc?.script?.path) return unsupported('Legacy Script declaration is missing script-path');
+
+  const targetPattern=normalizeRegexBodyForTarget(sc.pattern);
+  const enableFixed=sc.enable ? String(sc.enable).trim().toLowerCase() : '';
+  const enableDynamic=Boolean(sc.enable) && !['true','false','1','0'].includes(enableFixed);
+
+  if (enableFixed==='false' || enableFixed==='0') {
+    return {ok:true,disabled:true,reason:'Loon Legacy Script enable=false'};
+  }
+
+  let requirementPrefix='';
+  if (enableDynamic) {
+    const ref=String(sc.enable).match(/^\$?\{([A-Za-z_][\w-]*)\}$/);
+    const requirement=ref ? surgeEnableRequirement(ref[1],ctx.argumentTable) : null;
+    if (!requirement) {
+      return unsupported('dynamic source enable cannot be mapped to a declared Surge module boolean argument.');
+    }
+    requirementPrefix=requirement+' ';
+  }
+
+  const params=['type='+sc.httpType,'pattern='+targetPattern,'script-path='+scriptUrl];
+  if (sc.requiresBody) {
+    params.push('requires-body=true');
+    params.push('max-size='+(sc.maxSize || '-1'));
+  }
+  if (sc.binaryBodyMode) params.push('binary-body-mode=true');
+
+  if (sc.timeout) {
+    const timeoutRef=String(sc.timeout).match(/^\$?\{([A-Za-z_][\w-]*)\}$/);
+    if (timeoutRef) {
+      const placeholder=surgeDynamicOptionValue(timeoutRef[1],ctx.argumentTable);
+      if (!placeholder) return unsupported('dynamic timeout references an undeclared Surge module argument.');
+      params.push('timeout='+placeholder);
+    } else {
+      params.push('timeout='+sc.timeout);
+    }
+  }
+
+  if (sc.argument) {
+    const refs=parseLegacyLoonPluginObjectRefs(sc.argument);
+    if (refs) {
+      const encoded=surgePluginObjectArgument(refs,ctx.argumentTable);
+      if (!encoded.ok) return unsupported(encoded.reason);
+      params.push('argument='+encoded.value);
+    } else {
+      params.push('argument='+sc.argument);
+    }
+  }
+
+  return {
+    ok:true,
+    strategy:'native-declaration',
+    section:'script',
+    line:requirementPrefix+(ctx.name || 'script')+' = '+params.join(','),
+    usesLineRequirement:Boolean(requirementPrefix),
+  };
+}

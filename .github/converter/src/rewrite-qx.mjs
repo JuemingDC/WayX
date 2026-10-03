@@ -1,8 +1,3 @@
-// Quantumult X Rewrite target planner
-// Author: chance
-// Category: Converter / Rewrite / Quantumult X
-
-import crypto from 'node:crypto';
 import { planLegacyRewriteIr } from './legacy-rewrite.mjs';
 import { qxMockPlanFromAction } from './dependency.mjs';
 import { jsonPipelineToSafeNativeJq, qxDirectRewritePlan, simpleUrlRewriteCondition } from './rewrite-v2-semantic.mjs';
@@ -11,10 +6,15 @@ import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, ren
 import { registerComplexRewriteHandler, planComplexRewrite } from './complex-rewrite-registry.mjs';
 import { renderMixedRewriteScript, renderSingleJsonMutationScript, renderSingleRewriteMutationScript } from './complex-rewrite-script.mjs';
 import { qxExactRewriteMatcherPlan, qxRewriteMatcherPlan } from './qx-rewrite-matcher.mjs';
-import { rewriteReview, rewriteIssue } from './rewrite-plan-result.mjs';
-import { singleRewriteOperation } from './rewrite-ir.mjs';
+import { rewriteReview, rewriteIssue } from './rewrite-v2-semantic.mjs';
+import { rewriteIrDeclaration, singleRewriteOperation } from './rewrite.mjs';
 import { quoteJq } from './jq.mjs';
 
+// Quantumult X Rewrite target planner
+// Author: chance
+// Category: Converter / Rewrite / Quantumult X
+
+import crypto from 'node:crypto';
 function sourceLine(ir, ctx) {
   return String(ctx.sourceLine || ir?.source || '').trim();
 }
@@ -244,7 +244,7 @@ export function planQxRewrite(ir, ctx={}) {
   ensureQxRewriteHandlers();
 
   const source=sourceLine(ir,ctx);
-  const ast=ir.ast;
+  const ast=rewriteIrDeclaration(ir);
   const singleOp=singleRewriteOperation(ir);
   const argumentRefs=ctx.argumentRefs || [];
 

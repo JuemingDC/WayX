@@ -1,14 +1,11 @@
+import { parseLegacyScriptLine, legacyScriptToSemanticIr, scriptV2AstToSemanticIr, parseScriptV2 } from '../src/script.mjs';
+import { planQxScript, planSurgeScript } from '../src/script-target.mjs';
+
 // Script IR / target planner contract
 // Author: chance
 // Category: Converter / Script / Architecture Validation
 
 import assert from 'node:assert/strict';
-import { parseLegacyScriptLine } from '../src/script-legacy.mjs';
-import { legacyScriptToSemanticIr, scriptV2AstToSemanticIr } from '../src/script-ir.mjs';
-import { parseScriptV2 } from '../src/script-v2.mjs';
-import { planQxScript } from '../src/script-qx.mjs';
-import { planSurgeScript } from '../src/script-surge.mjs';
-
 const legacySource='http-response ^https://api\\.example\\.com script-path=https://example.com/resp.js, requires-body=true, binary-body-mode=true, timeout=9, argument={"mode":"x"}, tag=Resp';
 const legacyParsed=parseLegacyScriptLine(legacySource);
 assert.equal(legacyParsed.syntax,'loon-script-legacy');

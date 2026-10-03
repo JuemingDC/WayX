@@ -1,47 +1,22 @@
-// Pure Loon → Quantumult X / Surge conversion pipeline
-// Author: chance
-// Category: Converter / Pipeline
-
+import { scriptIrTag, parseScriptDeclaration, isScriptV2 } from './script.mjs';
 import { qxRule as canonicalQxRule, surgeModuleRule } from './rule.mjs';
-import { isRewriteV2, parseRewriteV2 } from './rewrite-v2.mjs';
-import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
-import {
-  inlineResolvedDependency,
-  inlineResolvedLegacyJqPathIr,
-  jqDependencySpecFromAction,
-  legacyJqPathDependencySpecFromIr,
-} from './dependency.mjs';
-import { isScriptV2, parseScriptV2 } from './script-v2.mjs';
+import { isRewriteV2, parseRewriteV2, validateRewriteV2Ast, classifyLegacyRewriteAction, isEmptyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from './rewrite.mjs';
+import { inlineResolvedDependency, inlineResolvedLegacyJqPathIr, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr } from './dependency.mjs';
+import { planQxScript, planSurgeScript } from './script-target.mjs';
 import { analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs } from './argument-usage.mjs';
 import { surgeArgumentMetadata } from './argument.mjs';
 import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection } from './plugin-parser.mjs';
 import { attachQxInlineNote } from './qx-comment.mjs';
-import { planMitmLine } from './mitm.mjs';
-import { classifyLegacyRewriteAction, isEmptyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from './rewrite-ir.mjs';
+import { parseConfigurationDeclaration, planConfiguration } from './configuration.mjs';
 import { planQxRewrite } from './rewrite-qx.mjs';
 import { planSurgeRewrite } from './rewrite-surge.mjs';
-import { rewriteReview, rewriteIssue } from './rewrite-plan-result.mjs';
-import { parseLegacyScriptLine } from './script-legacy.mjs';
-import { legacyScriptToSemanticIr, scriptV2AstToSemanticIr } from './script-ir.mjs';
-import { planQxScript } from './script-qx.mjs';
-import { planSurgeScript } from './script-surge.mjs';
-import {
-  createQxOutputState,
-  appendQxOutput,
-  qxOutputDestination,
-  qxRuleOutputDestination,
-  qxRewriteOutputDestination,
-  renderQxOutput,
-} from './output.mjs';
-import {
-  createSurgeOutputState,
-  appendSurgeOutput,
-  surgeOutputDestination,
-  surgeRuleOutputDestination,
-  surgeRewriteOutputDestination,
-  renderSurgeOutput,
-} from './output.mjs';
+import { rewriteReview, rewriteIssue } from './rewrite-v2-semantic.mjs';
+import { createQxOutputState, appendQxOutput, qxOutputDestination, qxRuleOutputDestination, qxRewriteOutputDestination, renderQxOutput, createSurgeOutputState, appendSurgeOutput, surgeOutputDestination, surgeRuleOutputDestination, surgeRewriteOutputDestination, renderSurgeOutput } from './output.mjs';
 import { parseLoonPlugin } from './plugin-parser.mjs';
+
+// Pure Loon → Quantumult X / Surge conversion pipeline
+// Author: chance
+// Category: Converter / Pipeline
 
 function splitPatternAction(line) {
   const idx=line.search(/\s/);
@@ -223,27 +198,11 @@ export function convertPlugin(entry,source,{
       surgeOutputDestination(sg,'general').push(...comments);
       continue;
     }
-    const match=String(item.line).match(/^real-ip\s*=\s*(.+)$/i);
-    if (!match) {
-      appendQxOutput(qx,'notes',...comments,'# [WayX] ISSUE REQUIRED [unknown-general-option]: unsupported Loon [General] option',`# Source declaration: ${item.line}`);
-      appendSurgeOutput(sg,'notes',...comments,'# [WayX] ISSUE REQUIRED [unknown-general-option]: unsupported Loon [General] option',`# Source declaration: ${item.line}`);
-      continue;
-    }
-    const hosts=match[1].split(',').map(value=>value.trim()).filter(Boolean);
-    if (!hosts.length) continue;
-    appendQxOutput(
-      qx,
-      'notes',
-      ...comments,
-      '# [WayX] Known Quantumult X target limitation: Loon real-ip maps to Quantumult X [general] dns_exclusion_list, but rewrite/filter snippets cannot inject that global option.',
-      '# Source declaration: '+item.line,
-    );
-    appendSurgeOutput(
-      sg,
-      'general',
-      ...comments,
-      'always-real-ip = %APPEND% '+hosts.join(', '),
-    );
+    const ir=parseConfigurationDeclaration(item.line,{section:'General'});
+    const qr=planConfiguration(ir,'qx');
+    const sr=planConfiguration(ir,'surge');
+    appendQxOutput(qx,qr.section,...comments,qr.line);
+    appendSurgeOutput(sg,sr.section,...comments,sr.line);
   }
 
   const ruleSectionLines=plugin.sections.get('Rule') || [];
@@ -358,26 +317,21 @@ export function convertPlugin(entry,source,{
     if (!item.line) continue;
 
     let ir;
-    let sourceSyntax;
-    if (isScriptV2(item.line)) {
-      sourceSyntax='v2';
-      try {
-        ir=scriptV2AstToSemanticIr(parseScriptV2(item.line),{source:item.line});
-      } catch (error) {
-        const reason=String(error?.message || error).split('\n')[0];
-        appendQxOutput(qx,'notes',...comments,`# [WayX] ISSUE REQUIRED [unknown-script-v2-syntax]: source declaration parse failed: ${reason}`,`# Source declaration: ${item.line}`);
-        appendSurgeOutput(sg,'notes',...comments,`# [WayX] ISSUE REQUIRED [unknown-script-v2-syntax]: source declaration parse failed: ${reason}`,`# Source declaration: ${item.line}`);
+    const sourceSyntax=isScriptV2(item.line) ? 'v2' : 'legacy';
+    try {
+      ir=parseScriptDeclaration(item.line);
+      if (!ir) {
+        const note='# [WayX] ISSUE REQUIRED [unknown-script-declaration]: unsupported source Script declaration is outside the registered grammar';
+        appendQxOutput(qx,'notes',...comments,note,`# Source declaration: ${item.line}`);
+        appendSurgeOutput(sg,'notes',...comments,note,`# Source declaration: ${item.line}`);
         continue;
       }
-    } else {
-      sourceSyntax='legacy';
-      const parsedLegacy=parseLegacyScriptLine(item.line);
-      if (!parsedLegacy?.script?.path) {
-        appendQxOutput(qx,'notes',...comments,'# [WayX] ISSUE REQUIRED [unknown-script-declaration]: unsupported source Script declaration is outside the registered grammar',`# Source declaration: ${item.line}`);
-        appendSurgeOutput(sg,'notes',...comments,'# [WayX] ISSUE REQUIRED [unknown-script-declaration]: unsupported source Script declaration is outside the registered grammar',`# Source declaration: ${item.line}`);
-        continue;
-      }
-      ir=legacyScriptToSemanticIr(parsedLegacy,{source:item.line});
+    } catch (error) {
+      const reason=String(error?.message || error).split('\n')[0];
+      const note=`# [WayX] ISSUE REQUIRED [unknown-script-v2-syntax]: source declaration parse failed: ${reason}`;
+      appendQxOutput(qx,'notes',...comments,note,`# Source declaration: ${item.line}`);
+      appendSurgeOutput(sg,'notes',...comments,note,`# Source declaration: ${item.line}`);
+      continue;
     }
 
     scriptIndex++;
@@ -395,7 +349,7 @@ export function convertPlugin(entry,source,{
 
     if (!qxPlan.ok) {
       qxScriptDest.push(...comments);
-      if (sourceSyntax==='legacy' && ir.sourcePayload.tag) qxScriptDest.push(`# ${ir.sourcePayload.tag}`);
+      if (sourceSyntax==='legacy' && scriptIrTag(ir)) qxScriptDest.push(`# ${scriptIrTag(ir)}`);
       qxScriptDest.push(`# [WayX] ${sourceSyntax==='v2' ? 'SCRIPT V2' : 'SCRIPT'} REVIEW REQUIRED: ${qxPlan.reason}`);
       qxScriptDest.push(`# Source declaration: ${item.line}`);
     } else if (qxPlan.omitted) {
@@ -405,7 +359,7 @@ export function convertPlugin(entry,source,{
       qxScriptDest.push(`# Source declaration: ${item.line}`);
     } else if (qxPlan.disabled) {
       qxScriptDest.push(...comments);
-      if (sourceSyntax==='legacy' && ir.sourcePayload.tag) qxScriptDest.push(`# ${ir.sourcePayload.tag}`);
+      if (sourceSyntax==='legacy' && scriptIrTag(ir)) qxScriptDest.push(`# ${scriptIrTag(ir)}`);
       qxScriptDest.push(`# [WayX] Script disabled by source ${sourceSyntax==='v2' ? 'option' : 'declaration'}: ${item.line}`);
     } else if (qxPlan.section==='task') {
       qxScriptDest.push(...comments);
@@ -424,9 +378,7 @@ export function convertPlugin(entry,source,{
       qxScriptDest.push(...qxRendered.lines);
     }
 
-    const sourceTag=sourceSyntax==='v2'
-      ? ir.sourcePayload.options.find(item=>item.name==='tag')?.value?.value
-      : ir.sourcePayload.tag;
+    const sourceTag=scriptIrTag(ir);
     const name=sanitizeName(sourceTag || `${entry.id}_${String(scriptIndex).padStart(2,'0')}`);
     const surgePlan=planSurgeScript(ir,{
       scriptUrl:surgeUrl,
@@ -447,12 +399,17 @@ export function convertPlugin(entry,source,{
     }
   }
 
-  const mitmLines=plugin.sections.get('MitM') || plugin.sections.get('MITM') || [];
+  const mitmLines=[...plugin.sections].filter(([name])=>name==='MitM' || name==='MITM').flatMap(([,lines])=>lines);
   for (const item of groupSourceSectionItems(mitmLines)) {
     const comments=cleanSourceComments(item.comments);
-    if (!item.line) continue;
-    const qPlan=planMitmLine(item.line,'qx');
-    const sPlan=planMitmLine(item.line,'surge');
+    if (!item.line) {
+      qxOutputDestination(qx,'mitm').push(...comments);
+      surgeOutputDestination(sg,'mitm').push(...comments);
+      continue;
+    }
+    const ir=parseConfigurationDeclaration(item.line);
+    const qPlan=planConfiguration(ir,'qx');
+    const sPlan=planConfiguration(ir,'surge');
     qxOutputDestination(qx,'mitm').push(...comments,qPlan.line);
     surgeOutputDestination(sg,'mitm').push(...comments,sPlan.line);
   }

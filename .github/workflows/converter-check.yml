@@ -47,7 +47,7 @@ jobs:
           while IFS= read -r -d '' file; do
             node --check "$file"
           done < <(find .github/converter .github/scripts Script -type f \( -name '*.js' -o -name '*.mjs' \) -print0)
-          python -m py_compile .github/converter/tools/*.py .github/converter/tests/*.py .github/scripts/*.py .github/monitor/*.py
+          python -m compileall -q .github/converter .github/scripts .github/monitor
 
       - name: Converter checkpoint
         run: |
@@ -57,6 +57,7 @@ jobs:
           node .github/converter/tests/generic-identity.mjs
           node .github/converter/tests/genericity-audit.mjs
           node .github/converter/tests/architecture-contract.mjs
+          node .github/converter/tests/domain-migration.mjs
           node .github/converter/tests/core-semantics.mjs
           node .github/converter/tests/rule.mjs
           node .github/converter/tests/rewrite-ir.mjs
@@ -74,7 +75,7 @@ jobs:
           node .github/converter/tests/source-fetch.mjs
           node .github/converter/tests/repository-layout.mjs
           node .github/converter/tests/readme-index.mjs
-          python .github/converter/tests/validate_conversion_policy.py
+          node .github/converter/tests/conversion-policy.mjs
           node .github/converter/tests/manual-assets.mjs
 
       - name: Quantumult X official capability drift gate

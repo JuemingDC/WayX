@@ -1,13 +1,13 @@
+import { parseRewriteV2 } from '../src/rewrite.mjs';
+import { renderMixedRewriteScript } from '../src/complex-rewrite-script.mjs';
+import { renderQxInlineMockScript } from '../src/qx-semantic-script.mjs';
+
 // WayX generated helper runtime fixtures
 // Author: chance
 // Category: Converter / Runtime Validation
 
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
-import { parseRewriteV2 } from '../src/rewrite-v2.mjs';
-import { renderMixedRewriteScript } from '../src/complex-rewrite-script.mjs';
-import { renderQxInlineMockScript } from '../src/qx-semantic-script.mjs';
-
 function clone(value) {
   return value === undefined ? undefined : JSON.parse(JSON.stringify(value));
 }

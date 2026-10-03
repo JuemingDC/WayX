@@ -1,3 +1,6 @@
+import { isRewriteV2, parseRewriteV2, validateRewriteV2Ast } from '../src/rewrite.mjs';
+import { isScriptV2, parseScriptV2 } from '../src/script.mjs';
+
 // WayX Catalog-observed Loon v2 semantic-token inventory
 // Author: chance
 // Category: Converter / Validation / Observed Semantics
@@ -6,16 +9,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {
-  isRewriteV2,
-  parseRewriteV2,
-} from '../src/rewrite-v2.mjs';
-import { validateRewriteV2Ast } from '../src/rewrite-v2-actions.mjs';
-import {
-  isScriptV2,
-  parseScriptV2,
-} from '../src/script-v2.mjs';
-
 const ROOT=process.cwd();
 const manifest=JSON.parse(await fs.readFile(path.join(ROOT,'.github/sources/loon.json'),'utf8'));
 const expected=JSON.parse(await fs.readFile(path.join(ROOT,'.github/converter/fixtures/catalog-syntax-inventory.json'),'utf8'));

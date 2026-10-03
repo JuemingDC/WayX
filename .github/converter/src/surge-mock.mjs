@@ -1,9 +1,9 @@
+import { validateRewriteV2Ast } from './rewrite.mjs';
+import { compileRegexForTarget } from './target-regex.mjs';
+
 // WayX Surge request-body mock helper renderer
 // Author: chance
 // Category: Converter / Surge / Rewrite v2 / Mock
-
-import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
-import { compileRegexForTarget } from './target-regex.mjs';
 
 const MIME = Object.freeze({
   json:'application/json',

@@ -9,7 +9,7 @@ import path from 'node:path';
 const ROOT=process.cwd();
 const spec=await fs.readFile(path.join(ROOT,'.github/CONVERSION_SPEC.md'),'utf8');
 
-assert.match(spec,/版本：1\.58\b/,'Phase C requires spec v1.58+');
+assert.match(spec,/版本：1\.59\b/,'Domain migration requires spec v1.59+');
 for (const evidence of [
   'crossutility/Quantumult-X',
   'sample.conf',
@@ -49,6 +49,10 @@ for (const rel of [
   '.github/converter/src/core/condition-evaluator.mjs',
   '.github/converter/src/core/equivalence-plan.mjs',
   '.github/converter/tests/core-semantics.mjs',
+  '.github/converter/src/rewrite.mjs',
+  '.github/converter/src/script.mjs',
+  '.github/converter/src/script-target.mjs',
+  '.github/converter/src/configuration.mjs',
   '.github/converter/src/rule.mjs',
   '.github/converter/src/rule-ast.mjs',
   '.github/converter/tests/rule.mjs',
@@ -62,6 +66,17 @@ for (const rel of [
   '.github/PROJECT_STATUS.md',
   '.github/converter/README.md',
   '.github/converter/src/source-metadata.mjs',
+  '.github/converter/src/rewrite-v2.mjs',
+  '.github/converter/src/rewrite-ir.mjs',
+  '.github/converter/src/rewrite-v2-actions.mjs',
+  '.github/converter/src/rewrite-plan-result.mjs',
+  '.github/converter/src/script-v2.mjs',
+  '.github/converter/src/script-legacy.mjs',
+  '.github/converter/src/script-ir.mjs',
+  '.github/converter/src/script-qx.mjs',
+  '.github/converter/src/script-surge.mjs',
+  '.github/converter/src/script-v2-target.mjs',
+  '.github/converter/src/mitm.mjs',
   '.github/converter/src/rule-qx.mjs',
   '.github/converter/src/rule-surge.mjs',
   '.github/converter/tests/rule-ast.mjs',

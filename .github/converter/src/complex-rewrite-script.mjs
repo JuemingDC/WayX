@@ -1,12 +1,11 @@
-// WayX generated scripts for mixed same-phase Rewrite v2 pipelines
-// Author: chance
-// Category: Converter / Rewrite v2 / Complex Helper
-
-import { findRewriteComparisons } from './rewrite-v2.mjs';
-import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
+import { findRewriteComparisons, validateRewriteV2Ast } from './rewrite.mjs';
 import { compileComplexCondition } from './complex-rewrite.mjs';
 import { normalizeRegexBodyForTarget } from './target-regex.mjs';
 import { qxMimeTypeForLoonMock, qxMockTypeIsBinary } from './qx-mock.mjs';
+
+// WayX generated scripts for mixed same-phase Rewrite v2 pipelines
+// Author: chance
+// Category: Converter / Rewrite v2 / Complex Helper
 
 function fixed(node, label) {
   if (!node || !['string','raw-string'].includes(node.type) || (node.type === 'string' && String(node.value).includes('${'))) {

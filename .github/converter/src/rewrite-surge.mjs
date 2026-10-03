@@ -1,24 +1,17 @@
+import { planLegacyRewriteIr } from './legacy-rewrite.mjs';
+import { surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan, surgeHeaderRewritePlan, surgeInlineMockPlan, surgeMockFilePlan } from './rewrite-v2-semantic.mjs';
+import { renderSurgeRequestMockScript } from './surge-mock.mjs';
+import { registerComplexRewriteHandler, planComplexRewrite } from './complex-rewrite-registry.mjs';
+import { renderMixedRewriteScript, renderSingleJsonMutationScript } from './complex-rewrite-script.mjs';
+import { surgeRewriteArgumentPayload } from './argument.mjs';
+import { rewriteReview, rewriteIssue } from './rewrite-v2-semantic.mjs';
+import { rewriteIrDeclaration, singleRewriteOperation } from './rewrite.mjs';
+
 // Surge Rewrite target planner
 // Author: chance
 // Category: Converter / Rewrite / Surge
 
 import crypto from 'node:crypto';
-import { planLegacyRewriteIr } from './legacy-rewrite.mjs';
-import {
-  surgeDirectRewritePlan,
-  surgeRedirectRewritePlan,
-  surgeRejectRewritePlan,
-  surgeHeaderRewritePlan,
-  surgeInlineMockPlan,
-  surgeMockFilePlan,
-} from './rewrite-v2-semantic.mjs';
-import { renderSurgeRequestMockScript } from './surge-mock.mjs';
-import { registerComplexRewriteHandler, planComplexRewrite } from './complex-rewrite-registry.mjs';
-import { renderMixedRewriteScript, renderSingleJsonMutationScript } from './complex-rewrite-script.mjs';
-import { surgeRewriteArgumentPayload } from './argument.mjs';
-import { rewriteReview, rewriteIssue } from './rewrite-plan-result.mjs';
-import { singleRewriteOperation } from './rewrite-ir.mjs';
-
 function sourceLine(ir,ctx) {
   return String(ctx.sourceLine || ir?.source || '').trim();
 }
@@ -108,7 +101,7 @@ export function planSurgeRewrite(ir,ctx={}) {
   ensureSurgeRewriteHandlers();
 
   const source=sourceLine(ir,ctx);
-  const ast=ir.ast;
+  const ast=rewriteIrDeclaration(ir);
   const singleOp=singleRewriteOperation(ir);
   const argumentRefs=ctx.argumentRefs || [];
 

@@ -1,3 +1,6 @@
+import { isRewriteV2, parseRewriteV2 } from '../src/rewrite.mjs';
+import { isScriptV2, parseScriptV2 } from '../src/script.mjs';
+
 // Catalog-observed Loon Rewrite regex feature inventory
 // Author: chance
 // Category: Converter / Validation / Regex Inventory
@@ -5,9 +8,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { isRewriteV2, parseRewriteV2 } from '../src/rewrite-v2.mjs';
-import { isScriptV2, parseScriptV2 } from '../src/script-v2.mjs';
-
 const ROOT=process.cwd();
 const manifest=JSON.parse(await fs.readFile(path.join(ROOT,'.github/sources/loon.json'),'utf8'));
 
