@@ -680,8 +680,9 @@ for (const testCase of cases) {
     assert.doesNotMatch(out.surge, /http-response-jq .*'walk\(if type=="object" and \.__typename=="AdPost" then empty else \. end\)'/);
     assert.match(out.qx, /Source declaration: response if .*gql.*jq-path=/);
     assert.match(out.surge, /Source declaration: response if .*gql.*jq-path=/);
-    assert.match(out.surge, /^\[Body Rewrite\]$/m);
-    assert.match(out.surge, /^\[Map Local\]$/m);
+    assert.doesNotMatch(out.surge, /^\[Body Rewrite\]$/m);
+    assert.doesNotMatch(out.surge, /^\[Map Local\]$/m);
+    assert.match(out.surge, /REVIEW REQUIRED: .*regex flags: i|REVIEW REQUIRED: complex Rewrite helper is reserved/);
   }
 
   if (testCase.name === 'YouTube') {
