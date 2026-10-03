@@ -1,0 +1,34 @@
+# Name: 华住会去广告
+# Description: 移除弹窗、横幅，精简首页。
+# Open URL: https://apps.apple.com/app/id556808349
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/HantingHotels.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:55 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/HantingHotels_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/hweb-manager\.huazhu\.com\/notice\/getAppPopupNotifyAlert$ url reject-dict
+
+^https:\/\/hweb-hotel\.huazhu\.com\/home\/getHomeLoinBanner$ url reject-dict
+
+^https:\/\/hweb-hotel\.huazhu\.com\/\/home\/querySelectHotel$ url reject-dict
+
+^https:\/\/hweb-hotel\.huazhu\.com\/home\/queryHotelBrand$ url reject-dict
+
+^https:\/\/hweb-manager\.huazhu\.com\/hotels\/ad\/getHotelListNoticeMerge$ url reject-dict
+
+^https:\/\/res-pub\.huazhu\.com\/frontconf\/homeconfig_45\/\w+\.json$ url jsonjq-response-body 'if has("content") and (.content | type) == "object" then .content |= with_entries(select(.key == "topBanner" or .key == "topBannerImages")) else . end'
+
+^https:\/\/res-pub\.huazhu\.com\/frontconf\/tabbarconfig_45\/\w+\.json$ url jsonjq-response-body '.content.tabbar |= map(select(.attributes.tabName == "首页" or .attributes.tabName == "服务" or .attributes.tabName == "我的"))'
+
+# [mitm]
+hostname = hweb-manager.huazhu.com, hweb-hotel.huazhu.com, res-pub.huazhu.com

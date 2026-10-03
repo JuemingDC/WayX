@@ -1,0 +1,44 @@
+#!name=新浪财经去广告
+#!desc=移除开屏广告、弹窗广告、横幅广告、信息流广告，精简我的页面。
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id430165157
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SinaStock.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:15 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/SinaStock_remove_ads.lpx
+# Target: Surge
+
+[Body Rewrite]
+http-response-jq ^https:\/\/news\.cj\.sina\.cn\/app\/v1\/news724\/list\? 'del(.result.data.ad)'
+
+http-response-jq ^https:\/\/app\.cj\.sina\.com\.cn\/apps\/api\/user\/center\? '.result.data |= with_entries(select(.key == "button" or .key == "account" or .key == "balance"))'
+
+http-response-jq ^https:\/\/news\.cj\.sina\.cn\/toutiao\/content\? 'del(.result.data[]?.ad, .result.data[]?.report)'
+
+http-response-jq ^https:\/\/app\.cj\.sina\.com\.cn\/api\/deal\/index\? 'del(.data.banner)'
+
+http-response-jq ^https:\/\/app\.cj\.sina\.com\.cn\/clientSetting\/api\/start\/init\? 'del(.result.data.search_ad, .result.data.center_ads, .result.data.banner_new_tagid, .result.data.ad_hasAddScreenParam, .result.data.us_trade, .result.data.open_account, .result.data.us_hq_trade)'
+
+http-response-jq ^https:\/\/(newscj\.xincai\.com|news\.cj\.sina\.cn)\/app\/v1\/feed\? '.data.feed.data |= map(select((.author // "") != ""))'
+
+[Map Local]
+
+^https:\/\/news\.cj\.sina\.cn\/search\/tips\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/search\.cj\.sina\.cn\/stock\/get_index_new\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/news\.cj\.sina\.cn\/search\/tips\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/recommend\.cj\.sina\.cn\/app\/v2\/search\/discovery$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/quotes\.sina\.com\.cn\/cn\/api\/openapi\.php\/PriceChangeService\.getSearchList\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% app.cj.sina.com.cn, news.cj.sina.cn, search.cj.sina.cn, recommend.cj.sina.cn, quotes.sina.com.cn, newscj.xincai.com

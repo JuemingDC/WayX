@@ -1,0 +1,26 @@
+# Name: 12306去广告
+# Description: 过滤12306应用内广告及开屏广告
+# Open URL: https://apps.apple.com/app/id564818797
+# Author: RuCu6[https://github.com/RuCu6], 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/12306.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:35 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/12306_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+host, ad.12306.cn, direct
+
+# [rewrite_local]
+^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList$ url jsonjq-response-body 'del(.materialsList, .advertParam)'
+
+# 移除12306应用内广告
+^https:\/\/mobile\.12306\.cn\/otsmobile\/app\/mgs\/mgw\.htm$ url script-request-header https://kelee.one/Resource/JavaScript/12306/12306_remove_ads.js
+
+# [mitm]
+hostname = ad.12306.cn, mobile.12306.cn

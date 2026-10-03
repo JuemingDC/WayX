@@ -1,0 +1,32 @@
+#!name=海雀去广告
+#!desc=移除开屏广告、横幅广告、弹窗广告，拦截商城和资讯页面。
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id1310128663
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/AlcidaeVideo.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:54 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/AlcidaeVideo_remove_ads.lpx
+# Target: Surge
+
+[URL Rewrite]
+
+^https:\/\/g\.ihaique\.net\/alcidae\/info\/index\.html$ _ reject
+
+^https:\/\/shop151522958\.youzan\.com\/v\d\/showcase\/homepage\? _ reject
+
+[Map Local]
+^https:\/\/app-api-32\.ihaique\.net\/api\/app\/v\d\/appad\/cmd\/AppadGetSplashAds\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/app-api-32\.ihaique\.net\/api\/app\/v\d\/appad\/cmd\/AppGetAttentionInfos\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/app-api-32\.ihaique\.net\/api\/app\/v\d\/appad\/cmd\/AppadGetBannerAds\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% app-api-32.ihaique.net, g.ihaique.net, shop151522958.youzan.com

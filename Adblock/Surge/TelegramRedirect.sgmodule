@@ -1,0 +1,24 @@
+#!name=Telegram重定向
+#!desc=适用于安装了多个不同Telegram客户端的用户，用于在指定客户端中打开公开或私有群组及频道的Telegram短链。
+#!category=WayX
+#!arguments=app:tg
+#!arguments-desc=app: 客户端 — options=tg|sg|turrit|ime|ng|lingo — 指定跳转的客户端
+
+# Open URL: https://apps.apple.com/app/id1127750481
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Telegram.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:42 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/TelegramRedirect.lpx
+# Target: Surge
+
+[URL Rewrite]
+^https:\/\/t\.me\/([A-Za-z][A-Za-z0-9_]{3,30}[A-Za-z0-9])\/?$ {{{app}}}://resolve?domain=$1 307
+^https:\/\/t\.me\/\+([A-Za-z0-9_-]+)\/?$ {{{app}}}://join?invite=$1 307
+
+[MITM]
+hostname = %APPEND% t.me

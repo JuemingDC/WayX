@@ -1,0 +1,21 @@
+#!name=小喵看书去广告
+#!desc=移除小喵看书章末广告
+#!category=WayX
+
+# Open URL: https://apps.apple.com/app/id6445987673
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MiaoRead.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:14 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/MiaoRead_remove_ads.lpx
+# Target: Surge
+
+[URL Rewrite]
+^https:\/\/api\.miaomiaoyd\.com\/book\/config\/getAdsSettings$ _ reject
+
+[MITM]
+hostname = %APPEND% api.miaomiaoyd.com

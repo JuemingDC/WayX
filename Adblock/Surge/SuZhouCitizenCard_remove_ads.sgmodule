@@ -1,0 +1,24 @@
+#!name=智慧苏州去广告
+#!desc=移除开屏广告、横幅，移除信息流推广。
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id897076369
+# Author: xream[https://github.com/xream]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SuZhouCitizenCard.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:17 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/SuZhouCitizenCard_remove_ads.lpx
+# Target: Surge
+
+[Map Local]
+^https?:\/\/newapp2\.szsmk\.com\/app\/config\/queryMainAd data-type=text data="{\"message\":\"操作成功\",\"main_ad_list\":[],\"code\":\"000000\"}" status-code=200 header="Content-Type:application/json"
+
+^https?:\/\/newapp2\.szsmk\.com\/app\/config\/(queryCarousel|queryRecommendation)\/ data-type=text data="{\"code\":\"000000\",\"message\":\"操作成功\",\"list\":[]}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% newapp2.szsmk.com

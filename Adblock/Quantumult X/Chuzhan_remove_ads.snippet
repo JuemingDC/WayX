@@ -1,0 +1,35 @@
+# Name: 触站去广告
+# Description: 移除开屏广告、弹窗广告、各页面横幅推广，移除首页悬浮挂件。
+# Open URL: https://apps.apple.com/app/id1503129125
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Chuzhan.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:50 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/Chuzhan_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/app\.huashi6\.com\/app\/index\/ad\/ url reject-dict
+
+^https:\/\/app\.huashi6\.com\/app\/common\/config$ url jsonjq-response-body 'if getpath(["data","disableAd"]) then setpath(["data","disableAd"]; true) else . end | if getpath(["data","showTopFloatAdvanceTips"]) then setpath(["data","showTopFloatAdvanceTips"]; false) else . end'
+^https:\/\/app\.huashi6\.com\/app\/common\/config$ url jsonjq-response-body 'del(.data.adsConfigIOS, .data.adsConfigAndroid, .data.url.tabMarket)'
+
+^https:\/\/app\.huashi6\.com\/app\/common\/layouts$ url jsonjq-response-body '.data |= {CZ_MINE_MENUS: .CZ_MINE_MENUS}'
+
+^https:\/\/app\.huashi6\.com\/app\/common\/themeConfig$ url jsonjq-response-body '.data.tabbars |= map(select(.title != "商城"))'
+
+^https:\/\/app\.huashi6\.com\/app\/works\/relative$ url reject-dict
+
+^https:\/\/app\.huashi6\.com\/app\/index\/follow\/all_random\/list$ url reject-dict
+
+^https:\/\/app\.huashi6\.com\/app\/index\/csyxh\/icon$ url reject-dict
+
+# [mitm]
+hostname = app.huashi6.com

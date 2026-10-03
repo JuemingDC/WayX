@@ -1,0 +1,33 @@
+# Name: 虎嗅去广告
+# Description: 移除广告配置、信息流直播预约横幅、相关文章推荐、48小时热文推荐，精简搜索页面。
+# Open URL: https://apps.apple.com/app/id557509598
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Huxiu.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:55 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/Huxiu_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+host, api-ad-product.huxiu.com, reject
+
+# [rewrite_local]
+^https:\/\/api-ms-config\.huxiu\.com\/v1\/adConfig$ url reject-dict
+
+^https:\/\/api-web-feed\.huxiu\.com\/v1\/index\/recommendContentsNew$ url reject-dict
+
+^https:\/\/api-ms-feed\.huxiu\.com\/v1\/media\/recommend$ url jsonjq-response-body 'del(.data.live)'
+
+^https:\/\/api-search\.huxiu\.com\/api\/searchIndex$ url reject-dict
+
+^https:\/\/api-article\.huxiu\.com\/v2\/article\/getTextArticleRelated$ url reject-dict
+
+^https:\/\/api-web-moment\.huxiu\.com\/v3\/moment\/getDetailRecdArticle$ url reject-dict
+
+# [mitm]
+hostname = api-ms-config.huxiu.com, api-web-feed.huxiu.com, api-search.huxiu.com, api-article.huxiu.com, api-web-moment.huxiu.com, api-ms-feed.huxiu.com

@@ -1,0 +1,51 @@
+# Name: 转转去广告
+# Description: 移除开屏广告、应用内悬浮窗、信息流推广、商品推荐、首页弹窗，精简我的页面。
+# Open URL: https://apps.apple.com/app/id1002355194
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ZhuanZhuan.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:18 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/ZhuanZhuan_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzlogic\/getOpenScreen$ url reject-dict
+
+^https:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzlogic\/mycontinenthomepage\? url jsonjq-response-body 'del(.respData.topOpera.leftOpera, .respData.topOpera.rightOpera2, .respData.topActBanner, .respData.bmArea)'
+
+^https:\/\/app\.zhuanzhuan\.com\/zzx\/transfer\/getConfigInfo\? url jsonjq-response-body 'del(.respData.freeMarketTabLeadPop, .respData.topOperations)'
+
+^https:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzinfoshow\/getfeedflowinfo\? url jsonjq-response-body 'if .respData.userRed.campName == "OCD挂件" then del(.respData.userRed) else . end | .respData.infoData |= map(del(.rotateResource,.appRecommendResource,."cargoGroupCardV2"))'
+
+^https:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzinfoshow\/getwindvanecardv2$ url reject-dict
+
+^https:\/\/app\.zhuanzhuan\.com\/zzopen\/popwindow\/getallpopwin\? url reject-dict
+
+^https:\/\/app\.zhuanzhuan\.com\/zzopen\/zzbmlogic\/queryFrontPageWindowInfo\? url reject-dict
+
+^https:\/\/app\.zhuanzhuan\.com\/zzopen\/ptuserlogic\/subscribehotrecommend$ url reject-dict
+
+^https:\/\/app\.zhuanzhuan\.com\/zzopen\/ptsimpleshow\/recommendbymyloveinfo\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_ZhuanZhuan_remove_ads/mock_61da4e72cb.js
+
+^https:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzinfoshow\/footprintsamerecommend\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_ZhuanZhuan_remove_ads/mock_27ea66aeb9.js
+
+^https:\/\/app\.zhuanzhuan\.com\/zzopen\/ypmall\/listData$ url reject-dict
+
+^https:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzusercenter\/myprofilevariouscards$ url reject-dict
+
+^https:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzinfoshow\/getchoicegoodsinfos\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_ZhuanZhuan_remove_ads/mock_db4e89a402.js
+
+^https:\/\/app\.zhuanzhuan\.com\/zz\/transfer\/getmymoretools$ url jsonjq-response-body 'walk(if type == "object" and .name == "免流量特权" then empty else . end) | del(.respData.groupList[] | select(.groupName == "活动参与" or .groupName == "金融工具"))'
+
+^https:\/\/app\.zhuanzhuan\.com\/zz\/transfer\/getmyprofilev3$ url jsonjq-response-body 'del(.respData.bmNewInfo)'
+^https:\/\/app\.zhuanzhuan\.com\/zz\/transfer\/getmyprofilev3$ url jsonjq-response-body 'del(.respData.itemGroupList[].itemList[] | select(.name == "天天赚钱" or .name == "借钱")) | del(.respData.itemGroupList[] | select(.groupType == 15))'
+
+# [mitm]
+hostname = app.zhuanzhuan.com

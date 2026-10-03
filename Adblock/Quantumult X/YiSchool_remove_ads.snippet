@@ -1,0 +1,26 @@
+# Name: 易校园去广告
+# Description: 移除开屏广告、横幅广告、弹窗广告、悬浮广告、文末广告、消息广告、校园头条，精简首页金刚位和我的页面。
+# Open URL: https://apps.apple.com/app/id1383548052
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YiSchool.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:16 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/YiSchool_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/compus\.xiaofubao\.com\/compus\/advertising\/ url reject-dict
+
+^https:\/\/compus\.xiaofubao\.com\/compus\/user\/getUserExt$ url jsonjq-response-body 'del(.data.adPopSwitch, .data.adSplashSwitch)'
+
+^https:\/\/compus\.xiaofubao\.com\/compus\/application\/getHomeAppList$ url jsonjq-response-body '.rows|=map(select(.appCode=="kechengbiao_app1" or .appCode=="siliuji" or .appCode=="NEWJIAOFEIDATING"))'
+
+# [mitm]
+hostname = compus.xiaofubao.com

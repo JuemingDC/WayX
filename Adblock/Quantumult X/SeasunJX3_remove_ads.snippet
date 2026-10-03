@@ -1,0 +1,27 @@
+# Name: 剑网三无界去广告
+# Description: 移除热门推送活动，并解决无法在Quantumult X运行时更新和登录的问题。
+# Open URL: https://apps.apple.com/app/id1002355194
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Platform: iOS, iPadOS, macOS
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SeasunJX3.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:56 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/SeasunJX3_remove_ads.lpx
+# Target: Quantumult X
+
+# [WayX] Known Quantumult X target limitation: Loon real-ip maps to Quantumult X [general] dns_exclusion_list, but rewrite/filter snippets cannot inject that global option.
+# Source declaration: real-ip=*-update.xoyocdn.com, xg-flow.xoyo.com
+
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/jx3comm\.xoyocdn\.com\/jx3gc\/zhcn\/login_ad\/WebCareer\/WebCareerTab\.txt url reject
+
+# [mitm]
+hostname = jx3comm.xoyocdn.com

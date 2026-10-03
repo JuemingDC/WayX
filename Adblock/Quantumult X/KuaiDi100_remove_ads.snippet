@@ -1,0 +1,28 @@
+# Name: 快递100去广告
+# Description: 移除横幅广告、弹窗广告，精简首页。
+# Open URL: https://apps.apple.com/app/id458270120
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KuaiDi100.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:58 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/KuaiDi100_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https?:\/\/p\.kuaidi100\.com\/mobile\/mobileapi\.do$ url jsonjq-response-body 'del(.adsplash, .adIsConsumable, .adProductId, .nologin_tips, .index_banner, .me_banner, .index_banner_shadow, .adshongbao, .adsapp_homepage_ticket_pop, .adsoptimizationsend, .adsapp_activity_ad_array, .adbanner, .adposition, .adShowAgainTime)'
+
+^https?:\/\/p\.kuaidi100\.com\/apicenter\/xcx\.dox url jsonjq-response-body 'del(.data.secondMenuList)'
+
+^https?:\/\/p\.kuaidi100\.com\/advertisement\/ url reject-dict
+^https?:\/\/p\.kuaidi100\.com\/e-commerce\/act\/actInfo\? url reject-dict
+^https?:\/\/p\.kuaidi100\.com\/apicenter\/card\.dox url reject-dict
+
+# [mitm]
+hostname = p.kuaidi100.com

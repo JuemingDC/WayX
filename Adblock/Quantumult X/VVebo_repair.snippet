@@ -1,0 +1,35 @@
+# Name: VVebo时间线修复
+# Description: 修复失效的用户时间线和我的页面。使用此插件前需要禁用微博去广告插件，避免插件冲突导致失效。
+# Open URL: https://apps.apple.com/app/id670910957
+# Author: suiyuran[https://github.com/suiyuran], androidcn[https://github.com/androidcn]
+# Tags: 功能增强
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/VVebo.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:43 +08:00
+# Converted by: chance
+# Category: 增强
+# Source: https://kelee.one/Tool/Loon/Lpx/VVebo_repair.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+# 修复时间线
+^https:\/\/api\.weibo\.cn\/2\/users\/show\? url script-request-header https://kelee.one/Resource/JavaScript/VVebo/VVebo_repair.js
+
+# 修复时间线
+^https:\/\/api\.weibo\.cn\/2\/statuses\/user_timeline\? url script-request-header https://kelee.one/Resource/JavaScript/VVebo/VVebo_repair.js
+
+# 修复时间线
+^https:\/\/api\.weibo\.cn\/2\/remind\/unread_count\? url script-request-header https://kelee.one/Resource/JavaScript/VVebo/VVebo_repair.js
+
+# 修复时间线
+^https:\/\/api\.weibo\.cn\/2\/profile\/statuses\/tab\? url script-response-body https://kelee.one/Resource/JavaScript/VVebo/VVebo_repair.js
+
+# 修复我的页面
+^https:\/\/api\.weibo\.cn\/2\/cardlist\? url script-response-body https://kelee.one/Resource/JavaScript/VVebo/VVebo_repair.js
+
+# [mitm]
+hostname = api.weibo.cn

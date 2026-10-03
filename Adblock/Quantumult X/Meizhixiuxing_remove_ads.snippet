@@ -1,0 +1,35 @@
+# Name: 美丽修行去广告
+# Description: 移除开屏广告、首页广告、发现页广告、美修盒页面广告、下拉广告、弹窗广告、搜索推广、版本更新弹窗及我的页面广告。
+# Open URL: https://apps.apple.com/app/id1089854728
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Meizhixiuxing.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:01 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/Meizhixiuxing_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/api\.bevol\.com\/appmain\/app\/home\/launch$ url reject-dict
+
+^https:\/\/api\.bevol\.com\/appmain\/app\/home\/popup$ url reject-dict
+
+^https:\/\/api\.bevol\.com\/personal\/page$ url reject-dict
+
+^https:\/\/api\.bevol\.com\/appmain\/app\/home\/page$ url jsonjq-response-body 'del(.result.versionPopUp, .result.isShowSearchLabel, .result.isShowSearchFeedBack, .result.centerBannerAdvert, .result.programmaticAdvertising, .result.mattsData, .result.questionnaireMap, .result.appPullDownAdvert)'
+
+^https:\/\/api\.bevol\.com\/appmain\/app\/home\/feed$ url jsonjq-response-body 'del(.result.banners)'
+^https:\/\/api\.bevol\.com\/appmain\/app\/home\/feed$ url jsonjq-response-body '. | .result.returnList |= (map(select(.tname == "userPart"))) | .result.returnList |= map(select(. | has("adId") | not))'
+
+^https:\/\/api\.bevol\.com\/trialbox\/shop\/app\/homePage$ url jsonjq-response-body 'del(.result.firstPersonActivity, .result.mainActivity, .result.brandZone, .result.imageAD2, .result.couponPopupInfo)'
+
+^https:\/\/api\.bevol\.com\/seach\/foundAndTopSearch$ url reject-dict
+
+# [mitm]
+hostname = api.bevol.com

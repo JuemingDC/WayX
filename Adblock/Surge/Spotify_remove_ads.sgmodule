@@ -1,0 +1,34 @@
+#!name=Spotify去广告
+#!desc=移除播放广告，恢复歌手和专辑列表的正常展示。修改插件自定义配置项需要重新登陆方可生效。
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+#!arguments=tab:false,useractivity:true
+#!arguments-desc=tab: 移除底栏创建按钮 — true/false — 此开关控制是否移除底栏创建按钮\nuseractivity: 启用Apple设备接力 — true/false — 此开关控制是否使用Apple设备接力
+
+# Open URL: https://apps.apple.com/app/id324684580
+# Author: 001ProMax[https://github.com/001ProMax]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Spotify.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:40 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/Spotify_remove_ads.lpx
+# Target: Surge
+
+[Rule]
+AND,((DOMAIN-SUFFIX,spotify.com),(PROTOCOL,QUIC)),REJECT
+
+[URL Rewrite]
+
+^https:\/\/(?:\w+-spclient|spclient\.wg)\.spotify\.com(?::443)?\/artistview\/v1\/artist\/(.*)&platform=iphone https://spclient.wg.spotify.com/artistview/v1/artist/$1&platform=ipad header
+
+[Map Local]
+^https:\/\/(?:\w+-spclient|spclient\.wg)\.spotify\.com(?::443)?\/pendragon\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Script]
+Protobuf处理 = type=http-response,pattern=^https:\/\/(?:\w+-spclient|spclient\.wg)\.spotify\.com(?::443)?\/(?:bootstrap|user-customization-service),script-path=https://kelee.one/Resource/JavaScript/Spotify/Spotify_remove_ads.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=5,argument="{\"tab\":{{{tab}}},\"useractivity\":{{{useractivity}}}}"
+
+[MITM]
+hostname = %APPEND% *-spclient.spotify.com, spclient.wg.spotify.com

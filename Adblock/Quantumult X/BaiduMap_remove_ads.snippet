@@ -1,0 +1,41 @@
+# Name: 百度地图去广告
+# Description: 移除开屏广告、出行页面推广、周边页面推广、打车页面推广，精简我的页面。此插件需要IPA签名方可使用，App Store用户请勿使用此插件，务必点击下方主页链接查看详细教程。
+# Open URL: https://apps.apple.com/app/id452186370
+# Author: 可莉🅥[https://getupnote.com/share/notes/zSn1ShBmzNYISKcTgjXE5oHMrNf2/34bf3aad-7872-497d-b239-198e27e8c84c]
+# Tags: 去广告
+# Homepage: https://getupnote.com/share/notes/zSn1ShBmzNYISKcTgjXE5oHMrNf2/34bf3aad-7872-497d-b239-198e27e8c84c
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduMap.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:45 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/BaiduMap_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/afd\.baidu\.com\/afd\/entry\?action=(update|query) url reject-dict
+
+^https:\/\/newclient\.map\.baidu\.com\/feed\/govui\/rich_content url jsonjq-response-body 'del(.data)'
+
+^https:\/\/newclient\.map\.baidu\.com\/client\/noticebar\/get\? url jsonjq-response-body 'del(.content.multi_data)'
+
+^https:\/\/newclient\.map\.baidu\.com\/(client\/)?usersystem\/mine\/page\? url jsonjq-response-body 'if getpath(["data"]) then setpath(["data"]; "{}") else . end'
+
+^https:\/\/newclient\.map\.baidu\.com\/client\/phpui2\/\?qt=ads&type=user_home_new_service url jsonjq-response-body 'del(.ads)'
+
+^https:\/\/yongche\.baidu\.com\/gomarketing\/api\/popup\/getentrancecordovaurl$ url reject-dict
+
+^https:\/\/yongche\.baidu\.com\/goorder\/passenger\/cobuild\/pull\? url reject-dict
+^https:\/\/yongche\.baidu\.com\/goorder\/passenger\/operationgirdle$ url reject-dict
+^https:\/\/yongche\.baidu\.com\/goorder\/passenger\/baseinfo$ url reject-dict
+
+^https:\/\/ecom\.map\.baidu\.com\/ad-ops\/afd\/popup\? url reject-dict
+^https:\/\/maphotel\.baidu\.com\/hotel\/goextranet\/activity\/detail\? url reject-dict
+
+^https:\/\/newclient\.map\.baidu\.com\/living\/nearby\/api\? url jsonjq-response-body 'del(.Result.cards[1]) | del(.Result.cards[4]) | del(.Result.cards[5]) | del(.Result.cards[9])'
+
+# [mitm]
+hostname = afd.baidu.com, newclient.map.baidu.com, yongche.baidu.com, ecom.map.baidu.com

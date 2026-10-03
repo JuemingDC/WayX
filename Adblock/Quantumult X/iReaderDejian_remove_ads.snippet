@@ -1,0 +1,32 @@
+# Name: 得间小说去广告
+# Description: 移除开屏广告、章末广告，移除扉页广告提示、听书界面广告提示、搜索栏填充词。
+# Open URL: https://apps.apple.com/app/id1454487240
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/iReaderDejian.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:51 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/iReaderDejian_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+host, smad.ms.zhangyue.net, reject
+host, saad.ms.zhangyue.net, reject
+
+# [rewrite_local]
+^https:\/\/dj\.palmestore\.com\/zybk\/api\/powerup\/userGroup\? url jsonjq-response-body 'del(.body.sevenDaysAd, .body.shortPlayShow, .body.sdkShortPlayAB)'
+
+^https:\/\/dj\.palmestore\.com\/djad\/ url reject-dict
+^https:\/\/dj\.palmestore\.com\/zybk\/api\/ad\/ url reject-dict
+^https:\/\/dj\.palmestore\.com\/zyapi\/bookstore\/ad\/ url reject-dict
+
+^https:\/\/dj\.palmestore\.com\/zybk\/api\/search\/index\? url jsonjq-response-body 'del(.body.keywords)'
+
+^https:\/\/dj\.palmestore\.com\/zybk\/api\/bookshelf\/index\? url reject-dict
+
+# [mitm]
+hostname = dj.palmestore.com

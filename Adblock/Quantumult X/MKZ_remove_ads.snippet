@@ -1,0 +1,30 @@
+# Name: 漫客栈去广告
+# Description: 移除开屏广告、漫画广告、小说章末广告，精简我的页面。
+# Open URL: https://apps.apple.com/app/id1189885433
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MKZ.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:01 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/MKZ_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/base\.mkzcdn\.com\/advert\/app\/read\/v\d url reject-dict
+^https:\/\/base\.mkzcdn\.com\/advert\/app\/story\/read\/v\d url reject-dict
+
+^https:\/\/base\.mkzcdn\.com\/advert\/app\/task\/motivate\/v\d url reject-dict
+^https:\/\/base\.mkzcdn\.com\/advert\/app\/task\/motivate\/v\d url reject-dict
+
+^https:\/\/base\.mkzcdn\.com\/advert\/app\/user\/slide\d\/v\d\/ url reject-dict
+# 配置修改
+^https:\/\/base\.mkzcdn\.com\/app\/config\/ url script-response-body https://kelee.one/Resource/JavaScript/MKZ/MKZ_remove_ads.js
+
+# [mitm]
+hostname = base.mkzcdn.com

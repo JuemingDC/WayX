@@ -1,0 +1,25 @@
+# Name: 阅友去广告
+# Description: 移除开屏广告、弹窗广告和阅读页面广告，移除底栏福利按钮。
+# Open URL: https://apps.apple.com/app/id1066723192
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Yueyou.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:16 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/Yueyou_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+host, ads.reader.yueyouxs.com, reject
+
+# [rewrite_local]
+^https:\/\/goway\.reader\.yueyouxs\.com\/assemble\/app\/basic\/getAppInfo\? url jsonjq-response-body 'del(.data.isShowDLPopup, .data.isShowGame, .data.touTiaoShowDlPopup, .data.offLineDownload.WatchVideoBtnDesc, .data.readVipFirstCfg, .data.readVipNormalCfg, .data.notifyAd, .data.hotStartSplashTime, .data.hotStartReqSwitch, .data.isShowBFTab, .data.popReqDelayTime, .data.benefitCfg, .data.chestTask, .data.hotStartAd, .data.activeTagList, .data.secondOrderCfg, .data.secondOrderList, .data.blockedWordsCfg, .data.aaReportListCfg, .data.pddAdSwitch, .data.isShowShelfAuthPopup, .data.firstPopUpAmount)'
+
+^https:\/\/goway\.reader\.yueyouxs\.com\/assemble\/app\/basic\/getAppInfo\? url jsonjq-response-body 'if getpath(["data","isAdClosed"]) then setpath(["data","isAdClosed"]; true) else . end'
+
+# [mitm]
+hostname = goway.reader.yueyouxs.com

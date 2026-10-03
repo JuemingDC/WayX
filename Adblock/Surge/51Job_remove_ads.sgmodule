@@ -1,0 +1,43 @@
+#!name=前程无忧去广告
+#!desc=移除开屏广告、弹窗、信息流推广、职位页面推广和各类横幅推广。
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id415443644
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/51Job.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:04 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/51Job_remove_ads.lpx
+# Target: Surge
+
+[Body Rewrite]
+
+http-response-jq ^https:\/\/cupid\.51jobapp\.com\/open\/noauth\/recommend\/job-tab-dynamic\? 'del(.resultbody.adsTabFeeds)'
+
+http-response-jq ^https:\/\/cupid\.51jobapp\.com\/open\/user-task\/user\/task\/ 'del(.resultbody.availableTaskList)'
+
+http-response-jq ^https:\/\/cupid\.51jobapp\.com\/open\/tab\/good-job\/modules\? 'del(.resultbody.bannerList)'
+
+[Map Local]
+^https:\/\/appapi\.51jobapp\.com\/api\/market\/get_launch\.php\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/cupid\.51jobapp\.com\/open\/operation\/get\/latest\/banner-list\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/cupid\.51jobapp\.com\/open\/51job-activities\/secJob\/queryHomeSecondConfigV2\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/cupid\.51jobapp\.com\/open\/noauth\/jobs\/detail\/sesame-competitive\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/cupid\.51jobapp\.com\/open\/noauth\/jobs\/job-detail\/user-rights\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/cupid\.51jobapp\.com\/open\/resume\/strategy\/resume-build\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/cupid\.51jobapp\.com\/launch-hub\/open\/noauth\/popUp\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/cupid\.51jobapp\.com\/launch-hub\/open\/noauth\/popUp\/getHomePagePopUp\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% appapi.51jobapp.com, cupid.51jobapp.com

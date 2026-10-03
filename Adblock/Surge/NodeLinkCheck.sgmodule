@@ -1,0 +1,18 @@
+#!name=代理链路检测
+#!desc=查看目标节点的代理走向，在插件列表中点击此插件上的链接查看使用方法。
+#!category=WayX
+
+# Open URL: https://github.com/luestr/ProxyResource/blob/main/Resource/Markdown/NodeLinkCheck/README.md
+# Author: I-am-R-E[https://github.com/I-am-R-E]
+# Tags: 节点检测
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Stack.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:50 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/NodeLinkCheck.lpx
+# Target: Surge
+
+[Script]
+代理链路检测 = type=generic,script-path=https://kelee.one/Resource/JavaScript/NodeLinkCheck/NodeLinkCheck.js

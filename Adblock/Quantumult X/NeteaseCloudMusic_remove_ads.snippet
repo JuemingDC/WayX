@@ -1,0 +1,64 @@
+# Name: 网易云音乐去广告
+# Description: 过滤网易云音乐广告，并允许自定义界面。
+# Open URL: https://apps.apple.com/app/id590338362
+# Author: RuCu6[https://github.com/RuCu6], Keywos[https://github.com/Keywos]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/NeteaseCloudMusic.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:09 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/NeteaseCloudMusic_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+host, iadmat.nosdn.127.net, reject
+host, iadmatapk.nosdn.127.net, reject
+host, iadmusicmat.music.126.net, reject
+host, iadmusicmatvideo.music.126.net, reject
+host, ipv4.music.163.com, reject
+host, ipv6.music.163.com, reject
+
+# [rewrite_local]
+^https?:\/\/interface\d?\.music\.163\.com\/e?api\/(ocpc\/)?ad\/ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_NeteaseCloudMusic_remove_ads/mock_4196280ee8.js
+
+^https?:\/\/interface\d?\.music\.163\.com\/eapi\/(?:delivery\/(batch-)?deliver|moment\/tab\/info\/|side-bar\/mini-program\/music-service\/account|yunbei\/account\/entrance\/) url reject-dict
+
+^https?:\/\/interface\d?\.music\.163\.com\/eapi\/(?:community\/friends\/fans-group\/artist\/group\/|mine\/applet\/redpoint|music\/songshare\/text\/recommend\/|resniche\/position\/play\/new\/|resniche\/tspopup\/show|resource\/comments?\/musiciansaid\/|user\/sub\/artist) url reject-dict
+^https?:\/\/interface\d?\.music\.163\.com\/eapi\/(?:ios\/version|mlivestream\/entrance\/playpage\/|link\/position\/show\/strategy|link\/scene\/show\/resource|v1\/content\/exposure\/comment\/banner\/) url reject-dict
+
+^https?:\/\/interface\d?\.music\.163.com\/w?e?api\/search\/default url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_NeteaseCloudMusic_remove_ads/mock_6705698be0.js
+^https?:\/\/interface\d?\.music\.163\.com\/w?eapi\/(?:activity\/bonus\/playpage\/time\/query|resource-exposure\/|search\/(?:chart\/|rcmd\/keyword\/|specialkeyword\/)) url reject-dict
+
+^https:\/\/interface\d\.music\.163\.com\/eapi\/my\/podcast\/tab\/recommend url reject-dict
+# 评论区、热推、有话想说、分享一下、歌曲下的祝福等小提示
+# [WayX] Source Script timeout ignored for Quantumult X.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
+^https?:\/\/interface\d?\.music\.163\.com\/eapi\/(?:batch|v2\/resource\/comment\/floor\/get) url script-response-body https://kelee.one/Resource/JavaScript/NeteaseCloudMusic/NeteaseCloudMusic_remove_ads.js
+# 推荐、home、主页
+# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
+# [WayX] Source Script timeout ignored for Quantumult X.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
+^https?:\/\/interface\d?\.music\.163\.com\/eapi\/(?:homepage\/block\/page|link\/page\/rcmd\/(?:block\/resource\/multi\/refresh|resource\/show)) url script-response-body https://kelee.one/Resource/JavaScript/NeteaseCloudMusic/NeteaseCloudMusic_remove_ads.js
+# 底部选项卡
+# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
+# [WayX] Source Script timeout ignored for Quantumult X.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
+^https?:\/\/interface\d?\.music\.163\.com\/eapi\/link\/home\/framework\/tab url script-response-body https://kelee.one/Resource/JavaScript/NeteaseCloudMusic/NeteaseCloudMusic_remove_ads.js
+# 发现页
+# [WayX] Source Script timeout ignored for Quantumult X.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
+^https?:\/\/interface\d?\.music\.163\.com\/eapi\/link\/page\/discovery\/resource\/show url script-response-body https://kelee.one/Resource/JavaScript/NeteaseCloudMusic/NeteaseCloudMusic_remove_ads.js
+# 我的页面
+# [WayX] Source Script timeout ignored for Quantumult X.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
+^https?:\/\/interface\d?\.music\.163\.com\/eapi\/link\/position\/show\/resource url script-response-body https://kelee.one/Resource/JavaScript/NeteaseCloudMusic/NeteaseCloudMusic_remove_ads.js
+# 显示未关注你的人
+# [WayX] Source Script timeout ignored for Quantumult X.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
+^https?:\/\/interface\d?\.music\.163\.com\/eapi\/user\/follow\/users\/mixed\/get url script-response-body https://kelee.one/Resource/JavaScript/NeteaseCloudMusic/NeteaseCloudMusic_remove_ads.js
+
+# [mitm]
+hostname = interface*.music.163.com

@@ -1,0 +1,30 @@
+#!name=阿里云盘去广告
+#!desc=移除首页广告横幅、弹窗和顶部奖励。
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id1494661473
+# Author: RuCu6[https://github.com/RuCu6]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/AliYunDrive.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:45 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/AliYunDrive_remove_ads.lpx
+# Target: Surge
+
+[Rule]
+IP-CIDR,203.107.1.1/24,REJECT,no-resolve
+
+[Map Local]
+^https:\/\/member\.alipan\.com\/v2\/activity\/sign_in_luckyBottle data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.alipan\.com\/adrive\/v1\/file\/getTopFolders data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Script]
+移除阿里云盘广告 = type=http-response,pattern=^https:\/\/(biz)?api\.alipan\.com\/apps\/v\d\/users?\/home\/(news|widgets),script-path=https://kelee.one/Resource/JavaScript/AliYunDrive/AliYunDrive_remove_ads.js,requires-body=true,max-size=-1
+移除阿里云盘广告 = type=http-response,pattern=^https:\/\/member\.alipan\.com\/v1\/users\/onboard_list,script-path=https://kelee.one/Resource/JavaScript/AliYunDrive/AliYunDrive_remove_ads.js,requires-body=true,max-size=-1
+
+[MITM]
+hostname = %APPEND% api.alipan.com, member.alipan.com, bizapi.alipan.com

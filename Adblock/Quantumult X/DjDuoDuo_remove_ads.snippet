@@ -1,0 +1,23 @@
+# Name: DJ多多去广告
+# Description: 移除开屏广告及歌单广告
+# Open URL: https://apps.apple.com/app/id1039764887
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DjDuoDuo.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:36 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/DjDuoDuo_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+# 去广告
+^https:\/\/api\.dianyinduoduo\.com\/v4\/config\.php\? url script-response-body https://kelee.one/Resource/JavaScript/DjDuoDuo/DjDuoDuo_remove_ads.js
+
+# [mitm]
+hostname = api.dianyinduoduo.com

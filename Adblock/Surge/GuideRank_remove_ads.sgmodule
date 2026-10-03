@@ -1,0 +1,42 @@
+#!name=盖得排行去广告
+#!desc=精简首页、移除分类横幅推广、单单返猜你喜欢和编辑精选，移除我的页面推广。
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id1129695874
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/GuideRank.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:53 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/GuideRank_remove_ads.lpx
+# Target: Surge
+
+[Body Rewrite]
+
+http-response-jq ^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/home\/getHomePageV 'del(.data.countdownBanner, .data.newEvaluations, .data.freeToPayBannerPhotoUrl, .data.groupBuyingList, .data.multiCountdownBanner, .data.banners, .data.multiPlatformBanner, .data.specialSaleBannerPhotoUrl, .data.guide90Evaluation, .data.insurancePromotions)'
+
+http-response-jq ^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/common\/getInitData\.do 'del(.data.SpecialSalePageMidTabConfig)'
+
+[Map Local]
+^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/common\/getWeworkPromotionInfoBySceneType data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/popUpAdCollection\/getActiveCollection\.do data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/common\/getWeworkPromotionInfoBySceneType data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/common\/getWeworkCategoryPromotionInfo data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/stockTaking\/pageStockTakingForHomePage data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/specialSale\/pageRecommendedItems data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/manualOperationGoods\/pageManualOperationGoods data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/specialSale\/listSpecialSalePageBanner data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/personal\/getPersonPageInfo\.do data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% zone.guiderank-app.com

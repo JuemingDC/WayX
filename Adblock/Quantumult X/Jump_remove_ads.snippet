@@ -1,0 +1,30 @@
+# Name: Jump去广告
+# Description: 移除Jump开屏广告
+# Open URL: https://apps.apple.com/app/id1529434108
+# Author: MoonYuki[https://github.com/MoonYuki]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Jump.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:38 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/Jump_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+host, zlsdk.1rtb.net, reject
+host, jp.ad.gameley.com, reject
+host, toblog.ctobsnssdk.com, reject
+host, s3plus.meituan.net, reject
+host, images.pinduoduo.com, reject
+host, qh-material.taobao.com, reject
+host-suffix, admobile.top, reject
+
+# [rewrite_local]
+^https:?\/\/switch.jumpvg.com\/jump\/getlaunchad\/v2$ url jsonjq-response-body 'del(.data.adList)|.data.launchAd.showType=0'
+^https:?\/\/switch.jumpvg.com\/jump\/recommend\/ad_conf$ url jsonjq-response-body '.data=[]'
+
+# [mitm]
+hostname = switch.jumpvg.com

@@ -1,0 +1,29 @@
+#!name=慧生活798去广告
+#!desc=移除开屏广告、横幅广告，精简底栏。
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id1490809012
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SmartLife.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:55 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/SmartLife_remove_ads.lpx
+# Target: Surge
+
+[Body Rewrite]
+http-response-jq ^https:\/\/i\.ilife798\.com\/api\/v\d\/acc\/login$ 'del(.data.ar, .data.showAd)'
+
+[Map Local]
+
+^https:\/\/i\.ilife798\.com\/api\/v\d\/acc\/score\/mission-lst$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/i\.ilife798\.com\/api\/v\d\/ep\/lst-simple\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/i\.ilife798\.com\/api\/v\d\/ui\/app\/master$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% i.ilife798.com

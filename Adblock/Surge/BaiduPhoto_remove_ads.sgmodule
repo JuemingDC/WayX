@@ -1,0 +1,28 @@
+#!name=一刻相册去广告
+#!desc=移除开屏广告、横幅广告和弹窗推广。
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id1467852587
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduPhoto.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:15 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/BaiduPhoto_remove_ads.lpx
+# Target: Surge
+
+[Body Rewrite]
+
+http-response-jq ^https:\/\/mbd\.baidu\.com\/ccs\/v1\/start\/confsync\? 'del(.data.service.config.advertisement, .data.service.config.youa.pm_config_ad)'
+
+[Map Local]
+^https:\/\/pan\.baidu\.com\/act\/api\/conf\?.*conf_key=youa_core_config_ios data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/pan\.baidu\.com\/youai\/material\/v1\/getbynavid\?.*nav_id=1 data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% pan.baidu.com, mbd.baidu.com

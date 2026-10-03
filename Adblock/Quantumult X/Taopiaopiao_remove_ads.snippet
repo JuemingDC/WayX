@@ -1,0 +1,32 @@
+# Name: 淘票票去广告
+# Description: 移除开屏广告、悬浮广告、轮播图广告和弹窗广告，移除搜索填充词和为你推荐。
+# Open URL: https://apps.apple.com/app/id566813949
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Taopiaopiao.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:07 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/Taopiaopiao_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.life\.popup\.get\/ url reject-dict
+
+^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.mtopintegrationapi\.homeconfig\/ url jsonjq-response-body 'del(.data.returnValue.floatingBanner, .data.returnValue.searchShadeList)'
+
+^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.mtopintegrationapi\.homeconfig\/ url jsonjq-response-body '.data.returnValue.topTab |= map(select(.activeImage | not)) | .data.returnValue.topTab |= map(del(.backgroundColor))'
+
+^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.life\.aristotle\.get\/ url jsonjq-response-body 'def filter_nodes: map(if .data.componentId? and (.data.componentId | type == "string") and (.data.componentId | (contains("tpp_banner") or . == "tpp_guess_like")) then empty else .nodes |= (if . then filter_nodes else . end) end); .data.nodes |= (if . then filter_nodes else . end)'
+
+^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.mtopindependentadvertiseapi\.queryadvertise\/ url reject-dict
+
+^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.mtopitemadvertiseapi\.queryadvertise\/ url reject-dict
+
+# [mitm]
+hostname = acs.m.taobao.com

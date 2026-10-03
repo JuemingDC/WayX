@@ -1,0 +1,27 @@
+#!name=自动加入TestFlight
+#!desc=自动监控TestFlight名额，一旦有新的名额即刻加入。
+#!category=WayX
+#!requirement=CORE_VERSION>=22
+#!arguments=CaptureAccountToken:false,RunTask:false,RunMonitor:true,TaskCron:0 0/2 * * * ?,TaskMonitor:0 * * * * ?,wayx_proxy_policy:DIRECT
+#!arguments-desc=CaptureAccountToken: 捕获账号令牌 — true/false — 此开关控制插件是否捕获账户令牌\nRunTask: 自动加入TF — true/false — 此开关控制是否启动定时任务\nRunMonitor: 监控TF位置 — true/false — 此开关控制是否启动定时任务\nTaskCron: 加入TF定时参数 — 这里需要输入符合CRON表达式的参数\nTaskMonitor: 监控TF定时参数 — 这里需要输入符合CRON表达式的参数\nwayx_proxy_policy: Loon PROXY policy binding — default DIRECT; set to the desired Surge proxy policy or policy group
+
+# Open URL: https://apps.apple.com/app/id899247664
+# Author: 奶思[https://github.com/fmz200], DecoAri[https://github.com/DecoAri], xream[https://github.com/xream]
+# Tags: 定时任务
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/TestFlight.png
+# Input: App_ID
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:18 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/Auto_Join_TF.lpx
+# Target: Surge
+
+[Rule]
+DOMAIN,testflight.apple.com,{{{wayx_proxy_policy}}}
+
+[Script]
+#!REQUIREMENT "'{{{CaptureAccountToken}}}'=='true'" 获取账号令牌 = type=http-request,pattern=^https?:\/\/testflight\.apple\.com\/v3\/accounts\/.*\/apps$,script-path=https://kelee.one/Resource/JavaScript/TestFlight/CaptureAccountToken.js
+#!REQUIREMENT "'{{{RunTask}}}'=='true'" 自动加入TF = type=cron,cronexp="{{{TaskCron}}}",script-path=https://kelee.one/Resource/JavaScript/TestFlight/AutoJoinTF.js,timeout=600
+#!REQUIREMENT "'{{{RunMonitor}}}'=='true'" 监控TF位置 = type=cron,cronexp="{{{TaskMonitor}}}",script-path=https://kelee.one/Resource/JavaScript/TestFlight/AutoMonitorTF.js,timeout=30

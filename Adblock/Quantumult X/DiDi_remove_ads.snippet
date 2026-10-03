@@ -5,9 +5,9 @@
 # Tags: 去广告
 # Homepage: https://hub.kelee.one
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DiDi.png
-# Updated: 2026-09-11 00:35:13
+# Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-02 05:30:24 +08:00
+# Converted: 2026-10-03 17:44:51 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/DiDi_remove_ads.lpx
@@ -22,18 +22,18 @@ host, adtrack.xiaojukeji.com, reject
 # [rewrite_local]
 ^https:\/\/as\.xiaojukeji\.com\/ep\/as\/toggles\? url jsonjq-response-body '.data |= map(select(.name != "isUseNetConnectivity") | .assign.args.rootca_pin = 0 | .assign.args.sni_list = {})'
 
-^https:\/\/conf\.diditaxi\.com\.cn\/homepage\/v\d\/other\/slow\? url jsonjq-response-body 'del(.data.order_cards.new_loss_banner_card,.data.order_cards.call_car_card_80)'
+^https:\/\/conf\.diditaxi\.com\.cn\/homepage\/v\d\/other\/slow\? url jsonjq-response-body 'del(.data.order_cards.new_loss_banner_card, .data.order_cards.call_car_card_80)'
 
 ^https:\/\/conf\.diditaxi\.com\.cn\/homepage\/v\d\/core\? url jsonjq-response-body '.data.order_cards.nav_list_card.data |= map(select(.nav_id == "dache_anycar" or .nav_id == "carmate" or .nav_id == "driverservice" or .nav_id == "zhandianbashi" or .nav_id == "pincheche" or .nav_id == "bike" or .nav_id == "nav_more_v3")) | .data.disorder_cards.top_nav_list.data.top_nav_info |= map(select(.nav_id == "chu_xing" or .nav_id == "freight_cargo"))'
 
-^https:\/\/conf\.diditaxi\.com\.cn\/homepage\/v\d\/other\/fast\? url jsonjq-response-body 'del(.data.disorder_cards.communicate_card,.data.disorder_cards.not_login_bottom_bar,.data.disorder_cards.riding_code_card,.data.order_cards,.data.disorder_cards.car_icon.data.icon_info_new_agreement)'
+^https:\/\/conf\.diditaxi\.com\.cn\/homepage\/v\d\/other\/fast\? url jsonjq-response-body 'del(.data.disorder_cards.communicate_card, .data.disorder_cards.not_login_bottom_bar, .data.disorder_cards.riding_code_card, .data.order_cards, .data.disorder_cards.car_icon.data.icon_info_new_agreement)'
 
 ^https:\/\/common\.diditaxi\.com\.cn\/common\/v\d\/usercenter\/layout url jsonjq-response-body '.data |= (.instances |= (to_entries | map(select(.key as $k | ["center_base_info_card", "center_tool_card", "center_wallet_finance_card", "center_order_related_card"] | index($k))) | from_entries)) | .data.instances.center_wallet_finance_card.data.view_info |= map(select(.title == "优惠卡券"))'
 
 ^https:\/\/res\.xiaojukeji\.com\/resapi\/activity\/mget\? url reject-dict
 ^https:\/\/res\.xiaojukeji\.com\/resapi\/activity\/mget$ url reject-dict
 
-^https:\/\/conf\.diditaxi\.com\.cn\/homepage\/v\d\/other\/fast\? url jsonjq-response-body 'del(.data.disorder_cards.guess_card,.data.disorder_cards.scene_list_card)'
+^https:\/\/conf\.diditaxi\.com\.cn\/homepage\/v\d\/other\/fast\? url jsonjq-response-body 'del(.data.disorder_cards.guess_card, .data.disorder_cards.scene_list_card)'
 
 ^https:\/\/api\.udache\.com\/gulfstream\/porsche\/v\d\/dache_homepage_layout\? url jsonjq-response-body 'del(.data.instances.dache_main_core_icon)'
 
@@ -61,9 +61,9 @@ host, adtrack.xiaojukeji.com, reject
 
 ^https:\/\/htwkop-st\.xiaojukeji\.com\/gateway\?api=cms\.htw\.delivery\.batch url reject-dict
 
-^https:\/\/htwkop\.xiaojukeji\.com(:443)?\/gateway\?api=hm\.fa\.querySellCardSummary url jsonjq-response-body 'if getpath(["data"]) then setpath(["data"]; {}) else . end'
+^https:\/\/htwkop\.xiaojukeji\.com(:443)?\/gateway\?api=hm\.fa\.querySellCardSummary url jsonjq-response-body 'if getpath(["data"]) then setpath(["data"]; "{}") else . end'
 
-^https:\/\/htwkop\.xiaojukeji\.com(:443)?\/gateway\?api=hm\.fa\.queryWelfareCenter url jsonjq-response-body 'if getpath(["data"]) then setpath(["data"]; {}) else . end'
+^https:\/\/htwkop\.xiaojukeji\.com(:443)?\/gateway\?api=hm\.fa\.queryWelfareCenter url jsonjq-response-body 'if getpath(["data"]) then setpath(["data"]; "{}") else . end'
 
 ^https:\/\/freight\.xiaojukeji\.com\/gateway\?api=freight\.d\.core\.multiDisplayV\d url reject-dict
 

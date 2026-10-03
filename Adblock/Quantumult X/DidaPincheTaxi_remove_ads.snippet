@@ -1,0 +1,23 @@
+# Name: 滴答出行去广告
+# Description: 移除开屏广告、弹窗广告、横幅广告，精简底栏和我的页面。
+# Open URL: https://apps.apple.com/app/id921478733
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Platform: iOS, iPadOS
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DidaPincheTaxi.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:51 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/DidaPincheTaxi_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/capis\.didapinche\.com\/adbase\/ url reject-dict
+
+# [mitm]
+hostname = capis.didapinche.com

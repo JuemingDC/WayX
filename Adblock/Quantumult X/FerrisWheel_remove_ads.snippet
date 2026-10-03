@@ -1,0 +1,30 @@
+# Name: 摩天轮去广告
+# Description: 移除开屏广告、弹窗，精简底栏。
+# Open URL: https://apps.apple.com/app/id1054861613
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FerrisWheel.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:02 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/FerrisWheel_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/appapi\.motianlun\.cn\/showapi\/pub\/site\/\d+\/app\/loading\? url reject-dict
+
+^https:\/\/appapi\.motianlun\.cn\/showapi\/pub\/site\/\d+\/banner\/app\? url reject-dict
+
+^https:\/\/appapi\.motianlun\.cn\/userdataapi\/pub\/v\d\/top\/keywords\? url reject-dict
+
+^https:\/\/appapi\.motianlun\.cn\/buyerapi\/buyer\/v\d\/search\/index\? url reject-dict
+
+^https:\/\/appapi\.motianlun\.cn\/showapi\/site\/\d+\/transfer\/recentShows\? url reject-dict
+
+# [mitm]
+hostname = appapi.motianlun.cn

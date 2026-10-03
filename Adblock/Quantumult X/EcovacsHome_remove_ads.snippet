@@ -1,0 +1,26 @@
+# Name: ECOVACS HOME去广告
+# Description: 移除横幅推广，精简底栏。
+# Open URL: https://apps.apple.com/app/id1329458504
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/EcovacsHome.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:36 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/EcovacsHome_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/gl-cn-api\.ecovacs\.cn\/v3\/private\/ url jsonjq-response-body '.data.navigateInfoResponseList |= map(select(.positionType == "Robot" or .positionType == "Mine"))'
+
+^https:\/\/api-app\.dc-cn\.cn\.ecouser\.net\/api\/ecms\/app\/ad\/ url reject-dict
+
+^https:\/\/gl-cn-api\.ecovacs\.cn\/v1\/private\/ url reject-dict
+
+# [mitm]
+hostname = gl-cn-api.ecovacs.cn, api-app.dc-cn.cn.ecouser.net

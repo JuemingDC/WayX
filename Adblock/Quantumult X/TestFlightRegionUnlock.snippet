@@ -1,0 +1,25 @@
+# Name: TestFlight地区解锁
+# Description: 解除TestFlight的区域限制，支持tvOS。
+# Open URL: https://apps.apple.com/app/id899247664
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 功能增强
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/TestFlight.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:42 +08:00
+# Converted by: chance
+# Category: 增强
+# Source: https://kelee.one/Tool/Loon/Lpx/TestFlightRegionUnlock.lpx
+# Target: Quantumult X
+
+# [WayX] Policy binding: source PROXY is preserved as literal QX policy name PROXY; a matching target policy must exist.
+
+# [filter_local]
+host, testflight.apple.com, PROXY
+
+# [rewrite_local]
+^https?:\/\/testflight\.apple\.com\/v\d\/accounts\/.+?\/install$ url request-body "storefrontId"\x20:\x20"\d{6}-\d{2},\d{2}", request-body "storefrontId":"143441-19,29",
+
+# [mitm]
+hostname = testflight.apple.com

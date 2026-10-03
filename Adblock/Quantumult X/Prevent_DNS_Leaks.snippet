@@ -1,0 +1,49 @@
+# Name: DNS防泄露
+# Description: 专为小白设计的DNS防泄露
+# Author: 非正常人类研究中心
+# Tags: DNS
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/Other_icon/120px/Prevent_DNS_Leaks.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:36 +08:00
+# Converted by: chance
+# Category: 增强
+# Source: https://kelee.one/Tool/Loon/Lpx/Prevent_DNS_Leaks.lpx
+# Target: Quantumult X
+
+# [WayX] Policy binding: source PROXY is preserved as literal QX policy name PROXY; a matching target policy must exist.
+
+# [filter_local]
+host-suffix, dnsleaktest.com, PROXY
+host-suffix, dnsleak.com, PROXY
+host-suffix, expressvpn.com, PROXY
+host-suffix, nordvpn.com, PROXY
+host-suffix, surfshark.com, PROXY
+host-suffix, ipleak.net, PROXY
+host-suffix, perfect-privacy.com, PROXY
+host-suffix, browserleaks.com, PROXY
+host-suffix, browserleaks.org, PROXY
+host-suffix, vpnunlimited.com, PROXY
+host-suffix, whoer.net, PROXY
+host-suffix, whrq.net, PROXY
+
+host-suffix, astrill.com, PROXY
+host-suffix, astrill.org, PROXY
+host-suffix, dnsleak.asn247.net, PROXY
+
+host-suffix, surfshark.com, PROXY
+host-suffix, surfsharkdns.com, PROXY
+
+host-suffix, pixelscan.net, PROXY
+
+host, ipv4.ping0.cc, PROXY
+host, ipv6.ping0.cc, PROXY
+
+host-suffix, ipapi.co, PROXY
+
+host, ip-scan.adspower.net, PROXY
+
+# [rewrite_local]
+
+# [mitm]

@@ -1,0 +1,37 @@
+#!name=触站去广告
+#!desc=移除开屏广告、弹窗广告、各页面横幅推广，移除首页悬浮挂件。
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id1503129125
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Chuzhan.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:50 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/Chuzhan_remove_ads.lpx
+# Target: Surge
+
+[Body Rewrite]
+
+http-response-jq ^https:\/\/app\.huashi6\.com\/app\/common\/config$ 'if getpath(["data","disableAd"]) then setpath(["data","disableAd"]; true) else . end | if getpath(["data","showTopFloatAdvanceTips"]) then setpath(["data","showTopFloatAdvanceTips"]; false) else . end'
+http-response-jq ^https:\/\/app\.huashi6\.com\/app\/common\/config$ 'del(.data.adsConfigIOS, .data.adsConfigAndroid, .data.url.tabMarket)'
+
+http-response-jq ^https:\/\/app\.huashi6\.com\/app\/common\/layouts$ '.data |= {CZ_MINE_MENUS: .CZ_MINE_MENUS}'
+
+http-response-jq ^https:\/\/app\.huashi6\.com\/app\/common\/themeConfig$ '.data.tabbars |= map(select(.title != "商城"))'
+
+[Map Local]
+^https:\/\/app\.huashi6\.com\/app\/index\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/app\.huashi6\.com\/app\/works\/relative$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/app\.huashi6\.com\/app\/index\/follow\/all_random\/list$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/app\.huashi6\.com\/app\/index\/csyxh\/icon$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% app.huashi6.com

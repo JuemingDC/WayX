@@ -1,0 +1,32 @@
+#!name=百度翻译去广告
+#!desc=移除开屏广告、横幅广告，精简我的页面。
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id605670941
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduTranslate.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:45 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/BaiduTranslate_remove_ads.lpx
+# Target: Surge
+
+[URL Rewrite]
+
+^https:\/\/fanyi-app\.baidu\.com\/static\/react-activity\/page\/courseBoutique\.html\? _ reject
+
+[Body Rewrite]
+
+http-response-jq ^https:\/\/fanyi-app\.baidu\.com\/transapp\/comment\/my\? 'del(.data.taskBanner, .data.act)'
+
+http-response-jq ^https:\/\/fanyi-app\.baidu\.com\/transapp\/recitewd\/myplan\? 'del(.data.activityRec, .data.activityRecList)'
+
+[Map Local]
+^https:\/\/fanyi-app\.baidu\.com\/transapp\/v2\/api\/launch\/config\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% fanyi-app.baidu.com

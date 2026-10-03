@@ -1,0 +1,29 @@
+# Name: 中国人保去广告
+# Description: 移除中国人保开屏广告和应用内广告
+# Open URL: https://apps.apple.com/app/id710189980
+# Author: Sliverkiss[https://github.com/Sliverkiss]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/PICC_Insurance.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:17 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/PICC_Insurance_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/zgrb\.epicc\.com\.cn\/G-HAPP\/h\/headlines\/queryHeadlines url reject
+^https:\/\/zgrb\.epicc\.com\.cn\/G-HAPP\/a\/update\/startupPage\/v1 url reject-dict
+^https:\/\/zgrb\.epicc\.com\.cn\/G-HAPP\/a\/config\/guessYouLike\/v3 url reject-dict
+# 移除主页推广
+^https:\/\/zgrb\.epicc\.com\.cn\/G-HAPP\/a\/config\/homeInit\/v3 url script-response-body https://kelee.one/Resource/JavaScript/PICC_Insurance/PICC_Insurance_remove_ads.js
+
+# 移除我的页面推广
+^https:\/\/zgrb\.epicc\.com\.cn\/G-HAPP\/mpageconfig\/myPageConfigList\/v3 url script-response-body https://kelee.one/Resource/JavaScript/PICC_Insurance/PICC_Insurance_remove_ads.js
+
+# [mitm]
+hostname = zgrb.epicc.com.cn

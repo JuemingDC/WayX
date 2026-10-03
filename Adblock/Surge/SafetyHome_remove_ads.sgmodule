@@ -1,0 +1,25 @@
+#!name=360智慧生活去广告
+#!desc=移除开屏广告、首页推广横幅、商城入口及我的页面推广。
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id1488904375
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SafetyHome.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:34 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/SafetyHome_remove_ads.lpx
+# Target: Surge
+
+[Rule]
+DOMAIN,ad.iot.360.cn,REJECT
+
+[Map Local]
+^https:\/\/app\.home\.360\.cn\/v1\/config\/custom_config data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% app.home.360.cn

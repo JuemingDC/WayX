@@ -1,0 +1,31 @@
+# Name: 米游社去广告
+# Description: 移除开屏广告、搜索栏热搜及资讯、青少年模式弹窗。
+# Open URL: https://apps.apple.com/app/id1470182559
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/miHoYoBBS.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:02 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/miHoYoBBS_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/bbs-api(-ab)?\.miyoushe\.com\/apihub\/api\/getAppSplash$ url reject-dict
+
+^https:\/\/bbs-api(-ab)?\.miyoushe\.com\/apihub\/api\/getAppStartupData$ url jsonjq-response-body 'del(.data.resp_map["/teenager/api/info"], .data.resp_map["/apihub/api/getAppConfig"].data.get_app_config_response.config.is_show_teenager_mode_btn, .data.resp_map["/apihub/api/getAppConfig"].data.get_app_config_response.config.teenager_popup_freq_type)'
+
+^https:\/\/bbs-api(-ab)?\.miyoushe\.com\/apihub\/api\/getAppConfig$ url jsonjq-response-body 'if getpath(["data","config","teenager_popup_freq_type"]) then setpath(["data","config","teenager_popup_freq_type"]; 0) else . end | if getpath(["data","config","is_show_teenager_mode_btn"]) then setpath(["data","config","is_show_teenager_mode_btn"]; 0) else . end'
+
+^https:\/\/bbs-api-ab\.miyoushe\.com\/teenager\/api\/info$ url jsonjq-response-body 'if getpath(["data","is_enabled"]) then setpath(["data","is_enabled"]; false) else . end | if getpath(["data","is_teenager"]) then setpath(["data","is_teenager"]; false) else . end | if getpath(["data","is_force"]) then setpath(["data","is_force"]; false) else . end'
+
+^https:\/\/bbs-api(-ab)?\.miyoushe\.com\/apihub\/api\/getHotKeywordAndEvent$ url reject-dict
+^https:\/\/bbs-api-static\.miyoushe\.com\/search\/api\/search\/pre_keyword\? url reject-dict
+
+# [mitm]
+hostname = bbs-api.miyoushe.com, bbs-api-ab.miyoushe.com

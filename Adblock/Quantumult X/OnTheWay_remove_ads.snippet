@@ -1,0 +1,27 @@
+# Name: 行者户外去广告
+# Description: 移除弹窗广告、发现页面横幅推广的推广金刚位，移除我的页面横幅推广。
+# Open URL: https://apps.apple.com/app/id779325629
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/OnTheWay.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:15 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/OnTheWay_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/www\.imxingzhe\.com\/api\/v1\/pop\/window\/\? url reject-dict
+
+^https:\/\/www\.imxingzhe\.com\/api\/v4\/account\/get_user_info\? url jsonjq-response-body 'del(.banner)'
+
+^https:\/\/www\.imxingzhe\.com\/api\/v4\/discovery\/ios\/\? url jsonjq-response-body 'del(.banners, .ad)'
+^https:\/\/www\.imxingzhe\.com\/api\/v4\/discovery\/ios\/\? url jsonjq-response-body '.display_areas |= map(select(.name == "赛事" or .name == "行者帮" or .name == "头条" or .name == "排行榜" or .name == "约伴"))'
+
+# [mitm]
+hostname = www.imxingzhe.com

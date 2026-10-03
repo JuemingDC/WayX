@@ -1,0 +1,24 @@
+# Name: 360摄像机去广告
+# Description: 移除开屏广告、首页推广、底栏商城入口及我的页面推广。
+# Open URL: https://apps.apple.com/app/id958068931
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/360SmartCamera.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:34 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/360SmartCamera_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+host, ad.jia.360.cn, reject
+host, ad.iot.360.cn, reject
+
+# [rewrite_local]
+^https:\/\/jia\.360\.cn\/conf\/v1\.json url jsonjq-response-body 'del(.tab_conf, .ad_conf, .activity)'
+
+# [mitm]
+hostname = jia.360.cn

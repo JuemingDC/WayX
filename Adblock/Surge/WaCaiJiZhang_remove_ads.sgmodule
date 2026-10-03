@@ -1,0 +1,26 @@
+#!name=挖财记账去广告
+#!desc=移除弹窗广告、推广语横幅和右下角悬浮广告。
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id1544045905
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/WaCaiJiZhang.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:08 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/WaCaiJiZhang_remove_ads.lpx
+# Target: Surge
+
+[Map Local]
+^https:\/\/jz\.wacaijizhang\.com\/api\/banners\/ribbon\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/jz\.wacaijizhang\.com\/api\/banners\/list\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/jz\.wacaijizhang\.com\/api\/resource\/universal\/fetch$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% jz.wacaijizhang.com

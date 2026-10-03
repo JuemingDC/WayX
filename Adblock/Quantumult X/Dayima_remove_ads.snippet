@@ -1,0 +1,30 @@
+# Name: 大姨妈月经期助手去广告
+# Description: 移除信息流广告，精简首页金刚位及我的页面。
+# Open URL: https://apps.apple.com/app/id527809600
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Dayima.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:50 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/Dayima_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/forumapi\.yoloho\.com\/index\/recommend\/listV\d\? url jsonjq-response-body '.recommendList |= map(select(.voType == 0))'
+
+^https:\/\/dataapi\.yoloho\.com\/tool\/bubble\/event\/new\/iconList\? url jsonjq-response-body '.data |= map(select(.id == 21 or .id == 23 or .id == 24 or .id == 40))'
+
+^https:\/\/forumapi\.yoloho\.com\/topic\/relate\/recommend\/flow\/getList\? url reject-dict
+
+^https:\/\/dataapi\.yoloho\.com\/tool\/card\/mine\/app\? url jsonjq-response-body '.data |= map(select(.type == "1"))'
+
+^https:\/\/shop18476221\.m\.youzan\.com\/wscshop\/showcase\/feature\? url reject
+
+# [mitm]
+hostname = forumapi.yoloho.com, dataapi.yoloho.com, shop18476221.m.youzan.com

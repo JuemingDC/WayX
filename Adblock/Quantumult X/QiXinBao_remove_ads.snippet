@@ -1,0 +1,40 @@
+# Name: 启信宝去广告
+# Description: 移除开屏广告、应用内弹窗、首页轮播图、悬浮部件和个性化推荐信息流。
+# Open URL: https://apps.apple.com/app/id1030675668
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/QiXinBao.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:05 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/QiXinBao_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/appc\.qixin\.com\/v4\/general\/getSearchPlaceholderRedirect$ url reject-dict
+
+^https:\/\/appc-v6\.qixin\.com\/v4\/general\/getAppFloatAd$ url reject-dict
+
+^https:\/\/appc-v6\.qixin\.com\/v4\/general\/getAppBanners$ url reject-dict
+
+^https:\/\/appc-v6\.qixin\.com\/v4\/user\/getUserActivitys$ url reject-dict
+
+^https:\/\/appc-v6\.qixin\.com\/v4\/enterprise\/homePageRecommend\/recommendCard\d+ url reject-dict
+
+^https:\/\/appc-v6\.qixin\.com\/v4\/user\/getRecommendPersons$ url reject-dict
+
+^https:\/\/appc-v6\.qixin\.com\/v4\/enterprise\/getRecommendEnts$ url reject-dict
+
+^https:\/\/appc-v6\.qixin\.com\/v4\/enterprise\/getRecommendation$ url reject-dict
+
+^https:\/\/appc-v6\.qixin\.com\/v4\/general\/getAppBottomBanners$ url reject-dict
+
+^https:\/\/qxb-minicode-pic-osscache\.qixin\.com\/web\/ url reject
+
+# [mitm]
+hostname = appc.qixin.com, appc-v6.qixin.com, qxb-minicode-pic-osscache.qixin.com

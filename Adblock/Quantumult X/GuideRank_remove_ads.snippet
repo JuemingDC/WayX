@@ -1,0 +1,40 @@
+# Name: 盖得排行去广告
+# Description: 精简首页、移除分类横幅推广、单单返猜你喜欢和编辑精选，移除我的页面推广。
+# Open URL: https://apps.apple.com/app/id1129695874
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/GuideRank.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:53 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/GuideRank_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/common\/getWeworkPromotionInfoBySceneType url reject-dict
+
+^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/popUpAdCollection\/getActiveCollection\.do url reject-dict
+
+^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/common\/getWeworkPromotionInfoBySceneType url reject-dict
+^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/common\/getWeworkCategoryPromotionInfo url reject-dict
+
+^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/home\/getHomePageV url jsonjq-response-body 'del(.data.countdownBanner, .data.newEvaluations, .data.freeToPayBannerPhotoUrl, .data.groupBuyingList, .data.multiCountdownBanner, .data.banners, .data.multiPlatformBanner, .data.specialSaleBannerPhotoUrl, .data.guide90Evaluation, .data.insurancePromotions)'
+^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/stockTaking\/pageStockTakingForHomePage url reject-dict
+
+^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/common\/getInitData\.do url jsonjq-response-body 'del(.data.SpecialSalePageMidTabConfig)'
+
+^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/specialSale\/pageRecommendedItems url reject-dict
+
+^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/manualOperationGoods\/pageManualOperationGoods url reject-dict
+
+^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/specialSale\/listSpecialSalePageBanner url reject-dict
+
+^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/personal\/getPersonPageInfo\.do url reject-dict
+
+# [mitm]
+hostname = zone.guiderank-app.com

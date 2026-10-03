@@ -1,0 +1,27 @@
+#!name=口袋壁纸去广告
+#!desc=移除悬浮广告，精简我的页面。
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id1462738233
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ShoujiDesk.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:58 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/ShoujiDesk_remove_ads.lpx
+# Target: Surge
+
+[Map Local]
+^https:\/\/api\.tdz5\.com\/search\/hotword\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/api\.tdz5\.com\/ring\/hot\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Script]
+移除首页广告配置 = type=http-response,pattern=^https:\/\/api\.tdz5\.com\/base\/init\?,script-path=https://kelee.one/Resource/JavaScript/ShoujiDesk/base_init.js,requires-body=true,max-size=-1
+
+[MITM]
+hostname = %APPEND% api.tdz5.com

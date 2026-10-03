@@ -1,0 +1,31 @@
+# Name: 快影去广告
+# Description: 移除开屏广告、信息流推广、横幅推广，移除悬浮部件。
+# Open URL: https://apps.apple.com/app/id1195860596
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KwaiVideoeditor.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:58 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/KwaiVideoeditor_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/resource\/get\? url reject-dict
+
+^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/banner\/common\/getBannerByTypeV2\? url jsonjq-response-body 'del(.list[] | select(.bannerChannelName == "活动"))'
+^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/banner\/common\/getAllBannerPage\? url jsonjq-response-body 'del(.data[] | select(.bannerChannelName == "活动"))'
+
+^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/banner\/common\/getBannerByType\? url reject-dict
+
+^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/merchant\/ad\/ url reject-dict
+
+^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/resource\/activity\/pendant\? url reject-dict
+
+# [mitm]
+hostname = api.kmovie.gifshow.com

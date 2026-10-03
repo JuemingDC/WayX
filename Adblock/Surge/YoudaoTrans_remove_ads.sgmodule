@@ -1,0 +1,31 @@
+#!name=有道翻译官去广告
+#!desc=移除开屏广告、横幅推广，精简首页。
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id576337924
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YoudaoTrans.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:16 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/YoudaoTrans_remove_ads.lpx
+# Target: Surge
+
+[Map Local]
+^https:\/\/gorgon\.youdao\.com\/gorgon\/v2\/request\.s data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/gorgon\.youdao\.com\/gorgon\/brand\/prefetch\.s data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/gorgon\.youdao\.com\/gorgon\/request\.s data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/fanyiguan-server\.youdao\.com\/server\/banner\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/dict\.youdao\.com\/vip\/activity\/fanyiguan\/sevendayfree\/imei\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/dict\.youdao\.com\/wordbook\/recommend\?all=false data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/api-overmind\.youdao\.com\/openapi\/get\/luna\/dict\/trans_abtest\/online\/iOS\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% gorgon.youdao.com, fanyiguan-server.youdao.com, api-overmind.youdao.com, dict.youdao.com

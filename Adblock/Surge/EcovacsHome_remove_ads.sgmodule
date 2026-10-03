@@ -1,0 +1,28 @@
+#!name=ECOVACS HOME去广告
+#!desc=移除横幅推广，精简底栏。
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id1329458504
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/EcovacsHome.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:36 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/EcovacsHome_remove_ads.lpx
+# Target: Surge
+
+[Body Rewrite]
+http-response-jq ^https:\/\/gl-cn-api\.ecovacs\.cn\/v3\/private\/ '.data.navigateInfoResponseList |= map(select(.positionType == "Robot" or .positionType == "Mine"))'
+
+[Map Local]
+
+^https:\/\/api-app\.dc-cn\.cn\.ecouser\.net\/api\/ecms\/app\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/gl-cn-api\.ecovacs\.cn\/v1\/private\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% gl-cn-api.ecovacs.cn, api-app.dc-cn.cn.ecouser.net

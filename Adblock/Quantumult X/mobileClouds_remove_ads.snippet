@@ -1,0 +1,26 @@
+# Name: 中国移动云盘去广告
+# Description: 移除中国移动云盘开屏广告及应用内广告，首页的多余卡片可滑到最底部自定义隐藏掉，插件对此不做处理。
+# Open URL: https://apps.apple.com/app/id1618137934
+# Author: RuCu6[https://github.com/RuCu6]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/mobileClouds.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:18 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/mobileClouds_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+# 移除开屏广告
+^https:\/\/jzts\.cmpassport\.com\/personalized\/getPushContent url script-response-body https://kelee.one/Resource/JavaScript/mobileClouds/mobileClouds_remove_ads.js
+
+# 移除应用内广告
+^https:\/\/ad\.mcloud\.139\.com\/advertapi\/adv-filter\/ url script-response-body https://kelee.one/Resource/JavaScript/mobileClouds/mobileClouds_remove_ads.js
+
+# [mitm]
+hostname = jzts.cmpassport.com, ad.mcloud.139.com

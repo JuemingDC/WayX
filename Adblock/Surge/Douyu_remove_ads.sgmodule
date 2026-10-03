@@ -1,0 +1,42 @@
+#!name=斗鱼去广告
+#!desc=移除开屏、首页视频流、首页轮播图广告，移除直播间悬浮窗。
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id863882795
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Douyu.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:52 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/Douyu_remove_ads.lpx
+# Target: Surge
+
+[Rule]
+URL-REGEX,^http:\/\/linkmicschedule\.douyucdn\.cn\/im_schedule\/im_gate_list,REJECT
+
+AND,((DEST-PORT,18000),(PROTOCOL,STUN)),REJECT
+DOMAIN,stun1.douyucdn.cn,REJECT
+DOMAIN,stun1.qvb.qcloud.com,REJECT
+
+[URL Rewrite]
+
+^(http:\/\/)((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/(hlsh5p1\.douyucdn2\.cn)(.*) $1$5$6 307
+
+[Body Rewrite]
+
+http-response-jq ^https:\/\/apiv2\.douyucdn\.cn\/japi\/entrance\/roomRes\/nc\/m\/list 'del(.data.pendant_a, .data.entrance_d)'
+
+http-response-jq ^https:\/\/venus\.douyucdn\.cn\/venus\/config\/static\/update.+keyCodeSet=flow_config 'if getpath(["greatGodGameSitterSwitch"]) then setpath(["greatGodGameSitterSwitch"]; 0) else . end | if getpath(["followMoreAnchorEntrance"]) then setpath(["followMoreAnchorEntrance"]; 0) else . end | if getpath(["sdklivebanner"]) then setpath(["sdklivebanner"]; 0) else . end | if getpath(["homeActFloatSwitch"]) then setpath(["homeActFloatSwitch"]; 0) else . end | if getpath(["bringGoodsSwitch"]) then setpath(["bringGoodsSwitch"]; 0) else . end | if getpath(["qqGameSwitch"]) then setpath(["qqGameSwitch"]; 0) else . end'
+
+[Map Local]
+^https:\/\/rtbapi\.douyucdn\.cn\/japi\/sign\/app\/getinfo data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Script]
+移除首页轮播图和视频流广告 = type=http-response,pattern=^https:\/\/apiv2\.douyucdn\.cn\/mgapi\/livenc\/home\/getRecV3,script-path=https://kelee.one/Resource/JavaScript/Douyu/Douyu_remove_ads.js,requires-body=true,max-size=-1
+
+[MITM]
+hostname = %APPEND% rtbapi.douyucdn.cn, apiv2.douyucdn.cn, venus.douyucdn.cn

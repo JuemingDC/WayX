@@ -1,0 +1,21 @@
+#!name=Google搜索重定向
+#!desc=将Google搜索重定向至.com域名，如遇频繁跳转请禁用本插件。
+#!category=WayX
+
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Google.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:44:37 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/Google.lpx
+# Target: Surge
+
+[URL Rewrite]
+^https?:\/\/(www.)?(g|google)\.cn https://www.google.com 307
+^https?:\/\/(ditu|maps).google\.cn https://maps.google.com 307
+
+[MITM]
+hostname = %APPEND% www.google.cn

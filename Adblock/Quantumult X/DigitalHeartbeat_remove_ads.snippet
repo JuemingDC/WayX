@@ -1,0 +1,34 @@
+# Name: 数字心动去广告
+# Description: 移除开屏广告、首页顶部标签、轮播图、悬浮挂件、热门搜索、信息流广告。
+# Open URL: https://apps.apple.com/app/id1532385111
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DigitalHeartbeat.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:06 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://kelee.one/Tool/Loon/Lpx/DigitalHeartbeat_remove_ads.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/api-changzheng\.chinaath\.com\/changzheng-common-proxy-api\/api\/advertising\/proxy\/getOpenScreenAdvertising$ url jsonjq-response-body 'if getpath(["data","advertisingList"]) then setpath(["data","advertisingList"]; "[]") else . end'
+
+^https:\/\/api-changzheng\.chinaath\.com\/changzheng-race-proxy-api\/api\/home\/page\/getBrand$ url jsonjq-response-body '.data |= map(select(.advertisementName == "路跑赛事" or .advertisementName == "线上赛" or .advertisementName == "越野赛事"))'
+
+^https:\/\/api-changzheng\.chinaath\.com\/changzheng-race-proxy-api\/api\/home\/page\/get$ url jsonjq-response-body 'del(.data.topHotSearchList, .data.bannerListTwo, .data.textAdvertisementList)'
+
+^https:\/\/api-changzheng\.chinaath\.com\/changzheng-race-proxy-api\/api\/home\/page\/get$ url jsonjq-response-body '.data.recommendList |= map(select(.raceAdList | not or length == 0))'
+
+^https:\/\/api-changzheng\.chinaath\.com\/changzheng-basic-center-api\/api\/appConfigBanner\/listBannerRelease\? url reject-dict
+
+^https:\/\/api-changzheng\.chinaath\.com\/changzheng-content-center-api\/api\/global\/search\/hotSearch\/list$ url reject-dict
+
+^https:\/\/api-changzheng\.chinaath\.com\/changzheng-basic-center-api\/api\/advertisement\/ url reject-dict
+
+# [mitm]
+hostname = api-changzheng.chinaath.com

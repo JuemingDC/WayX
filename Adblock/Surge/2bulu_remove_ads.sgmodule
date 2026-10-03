@@ -1,0 +1,30 @@
+#!name=两步路户外助手去广告
+#!desc=移除开屏广告、弹窗广告，精简我的页面。
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id646277024
+# Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/2bulu.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:00 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/2bulu_remove_ads.lpx
+# Target: Surge
+
+[Body Rewrite]
+http-response-jq ^https:\/\/helper\.2bulu\.com\/getAppEntranceConfig\? '.configData=(.configData|fromjson|del(.adPlatform,.adIntertitialShowType,.adsConfig,.adIntertitialDisplayedLimit,.adSplashShowTypeWhenHotStart,.adIntertitialDayDisplayedMaxCount,.od_adsType,.showMeBaiHeAdView)|tojson)'
+
+[Map Local]
+
+^https:\/\/helper\.2bulu\.com\/search\/searchHotKeyList\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/helper\.2bulu\.com\/promote\/getAppUserModule\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/helper\.2bulu\.com\/proSpecial\/allData\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% helper.2bulu.com

@@ -1,0 +1,27 @@
+#!name=微信公众号去广告
+#!desc=过滤微信公众号广告
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+
+# Open URL: https://apps.apple.com/app/id414478124
+# Author: RuCu6[https://github.com/RuCu6]
+# Tags: 去广告
+# Homepage: https://hub.kelee.one
+# Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Weixin.png
+# Updated: 2026-10-02 13:57:49
+
+# Converted: 2026-10-03 17:45:10 +08:00
+# Converted by: chance
+# Source: https://kelee.one/Tool/Loon/Lpx/Weixin_Official_Accounts_remove_ads.lpx
+# Target: Surge
+
+[Rule]
+DOMAIN-SUFFIX,wxs.qq.com,REJECT
+
+[Map Local]
+^https:\/\/mp\.weixin\.qq\.com\/mp\/(cps_product_info|getappmsgad|jsmonitor|masonryfeed|relatedarticle)\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+^https:\/\/mp\.weixin\.qq\.com\/mp\/relatedsearchword data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% mp.weixin.qq.com
