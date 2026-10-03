@@ -274,7 +274,23 @@ export function renderSingleRewriteMutationScript(ast, options = {}) {
     throw new Error('single Rewrite mutation helper requires exactly one action');
   }
   const name=ast.actions[0]?.name || '';
-  const supported=new RegExp('^'+ast.phase+'\\.(?:header\\.(?:set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$');
+  const headerOps=options.target==='surge' ? 'add|set|del|replace' : 'set|del|replace';
+  const supported=new RegExp('^'+ast.phase+'\\.(?:header\\.(?:'+headerOps+')|body\\.replace|json\\.(?:add|delete|replace))
+    throw new Error('single Rewrite mutation helper does not support '+name);
+  }
+  return renderRewriteScript(ast, options);
+}
+
+export function renderSingleJsonMutationScript(ast, options = {}) {
+  validateRewriteV2Ast(ast);
+  if (!Array.isArray(ast?.actions) || ast.actions.length !== 1 || !/^(?:request|response)\.json\.(?:add|delete|replace)$/.test(ast.actions[0]?.name || '')) {
+    throw new Error('single JSON mutation helper requires exactly one json.add/delete/replace action');
+  }
+  return renderRewriteScript(ast, options);
+}
+
+export const renderSingleJsonAddScript = renderSingleJsonMutationScript;
+);
   if (!supported.test(name)) {
     throw new Error('single Rewrite mutation helper does not support '+name);
   }
