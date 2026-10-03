@@ -819,3 +819,5 @@ main 中现有 converter 在 Phase B–F 完成前继续承担生产转换。
 - 固定输入 Catalog 287 项的 QX/Surge 与 generated helpers 文本逐项完全相同。
 - 使用当前原作者 Source Script/JQ/mock 依赖，分别执行合并前后 materialization 与 conversion：287 项通过，上下文差异 0、转换差异 0、canonical drift 0。
 - 574 个生成目标政策检查、repository audit、managed cleanliness 均通过；两条原有上游 Script 404 仍按 §21 记录，不伪称取得原脚本。
+
+GitHub 落地（2026-10-04，Asia/Shanghai）：PR #136 已合入 main，最终 Converter Check #997 全部通过。全仓库 `.mjs` 从 89 个降为 29 个，净减少 60 个文件；既有转换内容目录与安装索引无变更。远端只保留 main 和 test，定时活动保持暂停。
