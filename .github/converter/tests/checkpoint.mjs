@@ -1113,7 +1113,7 @@ const legacyIrQx=planLegacyRewriteIr(legacyIrInlined,'qx',{
   id:'Fixture',
 });
 assert.equal(legacyIrQx.section,'rewrite');
-assert.match(legacyIrQx.line,/jsonjq-response-body 'del\\(\\.data\\.ad\\)'$/);
+assert.match(legacyIrQx.line,/jsonjq-response-body 'del\(\.data\.ad\)'$/);
 
 const jqFileWithComments = `# file comment
 walk(
