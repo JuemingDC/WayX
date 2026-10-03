@@ -15,17 +15,7 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 1. 在 Loon 同一条 Rewrite v2 pipeline 中，若全部 action 都是同 phase 的 `header.add`，且字段名/值均为固定安全字符串，则允许合并成**一条** QX `request-header` / `response-header` whole-header rewrite。合并后的 replacement 按源 action 与 batch 元素的原始顺序插入全部 Header 行，因此保留 duplicate-header add 语义与顺序。
 2. 该 native coalescing 只在源 condition 能被 QX matcher **完整等价表达**时启用。当前 exact matcher 子集为：单个 URL Regex、单个固定 `${request.method} == "METHOD"`，以及二者通过 `&&` 组成的条件。Method 使用 `<URL> ^METHOD[ ] url-and-header ...`。
 3. `||`、response-side condition、request Header value condition、Argument condition、多个不同 URL Regex 的交集等暂不作为 exact native matcher。对这些条件不得只保留一部分后直接输出原生 Header rewrite；若只能得到必要条件，只能用于 helper prefilter。
-4. 任一 `header.add` 值含换行或未证明的 QX replacement `# WayX Conversion Specification
-
-版本：1.47  
-作者：chance  
-状态：**唯一权威转换规范（Authoritative）**
-
-WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入本仓库；需要时另立规范。
-
-本规范采用“分块规范”结构。转换器、测试、canonical 输出、Golden 都必须服从本规范，不能反过来用现有代码定义规范。
-
- 语义时，整个 multi-action native path 关闭；不得把剩余安全 action 单独下沉，也不得把 duplicate add 退化为 Header object set。无法保真时进入现有 helper/Review 路由。
+4. 任一 `header.add` 值含换行或未证明的 QX replacement `$` 语义时，整个 multi-action native path 关闭；不得把剩余安全 action 单独下沉，也不得把 duplicate add 退化为 Header object set。无法保真时进入现有 helper/Review 路由。
 
 **Quantumult X Multi-action 原生 Matcher 下推（2026-10-03）**：
 
