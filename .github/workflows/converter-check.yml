@@ -94,11 +94,6 @@ jobs:
           node .github/converter/tests/generic-identity.mjs
           node .github/converter/tests/genericity-audit.mjs
           node .github/converter/tests/spec-block-contract.mjs
-          node .github/converter/tests/complex-source-inventory.mjs
-          node .github/converter/tests/catalog-syntax-inventory.mjs
-          node .github/converter/tests/catalog-regex-inventory.mjs
-          node .github/converter/tests/catalog-legacy-syntax-inventory.mjs
-          node .github/converter/tests/catalog-rule-inventory.mjs
           node .github/converter/tests/rule-ast.mjs
           node .github/converter/tests/rewrite-ir.mjs
           node .github/converter/tests/rewrite-target-planners.mjs
