@@ -107,7 +107,16 @@ response.json.jq_file(path)
 response.json.jq("jq-path=https://...")
 ```
 
-这不是 Loon 官方 `jq_file` 语法。WayX 将该 legacy `jq-path=` 写法列为**项目级丢弃项**：不解析、不下载、不缓存、不内联、不生成 helper、也不输出目标规则。只有官方 `request/response.json.jq_file(path)` 进入依赖解析。
+这不是 Loon 官方 `jq_file` 语法，但真实上游仍存在该 historical alias。WayX 从 2026-10-03 起**不再丢弃** `jq-path=`，而是把它作为兼容依赖引用处理：
+
+1. 同时识别 Rewrite v2 的 `request/response.json.jq("jq-path=...")` 与 Legacy `request/response-body-json-jq jq-path=...`；
+2. 绝对 HTTP(S) URL 原样读取；相对路径只相对于源 Plugin URL 解析，禁止镜像/fallback；
+3. 读取后按 `jq_file` 相同规则删除非字符串注释并压缩无语义空白；
+4. QX 使用 `jsonjq-request-body/jsonjq-response-body` 内联真实 JQ，Surge 使用 `http-request-jq/http-response-jq` 内联真实 JQ；
+5. 目标输出不得残留 `jq-path=` 字符串，也不得把路径本身误当成 JQ；
+6. 依赖无法获取、内容为空或不能证明安全承载时必须 Review，禁止静默删除规则。
+
+对任意 JQ 不允许为了“脚本兜底”而猜测性翻译成 JavaScript。QX/Surge 已有原生 JQ 时固定优先内联；只有未来存在已登记、经过语义回归的专用 JQ→Script renderer 时，才允许生成 `script-request/response-body` helper。没有可证明等价的 renderer 时 fail closed。
 
 ## 50.4 response.body.mock / mock_file
 
@@ -148,7 +157,7 @@ response.json.jq("jq-path=https://...")
 
 ## 50.6 原始依赖读取原则
 
-- `jq_file` / `mock_file` 只从源插件声明或相对源 URL 解析出的原始地址读取；legacy `jq-path=` 不进入依赖流程。
+- `jq_file` / `mock_file` / historical `jq-path=` 都只从源插件声明或相对源 URL 解析出的原始地址读取；不得因 legacy alias 使用镜像/fallback。
 - dependency 内容只在本次转换进程内由 `dependency-materializer.mjs` materialize；不写入 `.github/converter/dependencies/` 作为权威副本或 fallback。
 - `dependencySpecFromAction()` 必须保持 target-neutral：只描述原始依赖 URL、kind、phase、status、content-type、base64/binary 等 Loon 源语义；不得提前写入 `qxAction`、Surge section 或 target strategy。目标 action 只能在 `rewrite-qx.mjs` / `rewrite-surge.mjs` 中选择。
 - 原始依赖无法读取或无法安全嵌入目标语法时，进入 Review；不得使用仓库缓存替代。
@@ -156,8 +165,8 @@ response.json.jq("jq-path=https://...")
 ## 50.7 自动转换实现
 
 - JQ normalize/minify：`.github/converter/src/jq.mjs`
-- jq_file/mock_file dependency semantics：`.github/converter/src/dependency.mjs`
-- jq_file/mock_file discovery + fetch/materialization：`.github/converter/src/dependency-materializer.mjs`
+- jq_file/jq-path/mock_file dependency semantics：`.github/converter/src/dependency.mjs`
+- jq_file/jq-path/mock_file discovery + fetch/materialization：`.github/converter/src/dependency-materializer.mjs`
 - shared conversion context：`.github/converter/src/conversion-context.mjs`
 - QX mock_file helper：`.github/converter/src/qx-mock.mjs`
 - Surge request mock helper：`.github/converter/src/surge-mock.mjs`
