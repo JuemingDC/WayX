@@ -676,8 +676,10 @@ for (const testCase of cases) {
   if (testCase.name === 'MyBlockAds') {
     assert.equal(qxActive.some(line => /jq-path=/.test(line)), false, 'MyBlockAds: QX must not emit active jq-path declarations');
     assert.equal(surgeActive.some(line => /jq-path=/.test(line)), false, 'MyBlockAds: Surge must not emit active jq-path declarations');
-    assert.match(out.qx, /url jsonjq-response-body 'walk\(if type=="object" and \.__typename=="AdPost" then empty else \. end\)'/);
-    assert.match(out.surge, /http-response-jq .*'walk\(if type=="object" and \.__typename=="AdPost" then empty else \. end\)'/);
+    assert.doesNotMatch(out.qx, /url jsonjq-response-body 'walk\(if type=="object" and \.__typename=="AdPost" then empty else \. end\)'/);
+    assert.doesNotMatch(out.surge, /http-response-jq .*'walk\(if type=="object" and \.__typename=="AdPost" then empty else \. end\)'/);
+    assert.match(out.qx, /Source declaration: response if .*gql.*jq-path=/);
+    assert.match(out.surge, /Source declaration: response if .*gql.*jq-path=/);
     assert.match(out.surge, /^\[Body Rewrite\]$/m);
     assert.match(out.surge, /^\[Map Local\]$/m);
   }
