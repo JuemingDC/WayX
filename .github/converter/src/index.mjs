@@ -40,7 +40,6 @@ export * from './plugin-parser.mjs';
 export * from './mitm.mjs';
 export * from './source-fetch.mjs';
 export * from './qx-comment.mjs';
-export * from './source-metadata.mjs';
 export * from './source-section.mjs';
 export * from './complex-rewrite.mjs';
 export * from './complex-rewrite-registry.mjs';
