@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.57  
+版本：1.58  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**Semantic Compiler migration / compatibility implementation active**
@@ -602,26 +602,44 @@ Rule/
 Script/
 ```
 
-Converter 迁移目标：
+Converter 最终目标采用**少文件、按域收敛**，不再为每个 parser/planner/helper 单独建立文件：
 
 ```text
 .github/converter/
   src/
-    core/       # parser + Semantic IR + evaluator + equivalence proof
-    targets/    # qx / surge
-    runtime/    # helper + dispatcher
-    workflow/   # fetch/materialization/artifact lifecycle
+    core/
+      semantic.mjs   # Regex / condition / capture / equivalence / shared semantic primitives
+      rule.mjs       # Rule parser + IR + QX/Surge lowering
+      rewrite.mjs    # Rewrite parser + IR + planning facade
+      script.mjs     # Script parser + IR + planning facade
+    targets/
+      qx.mjs         # QX capability / renderer / validator
+      surge.mjs      # Surge capability / renderer / validator
+    runtime/
+      rewrite.mjs    # generated helper + phase dispatcher emitter
+    workflow/
+      converter.mjs  # parse/materialize/convert orchestration
+      repository.mjs # fetch/catalog/artifact/report lifecycle
+    index.mjs
   tests/
+    core.mjs
+    targets.mjs
+    catalog.mjs
+    integration.mjs
+    workflow.mjs
   fixtures/
   tools/
 ```
 
 迁移规则：
 
-- 不为“目录好看”一次性移动所有旧文件；
-- 新语义优先进入新域；
+- **迁移一个旧域时必须同步合并该域文件**，禁止为了新架构继续新增同级碎片模块；
+- 一个新能力优先加入现有 domain 文件和现有 domain test，不新建“能力名-test/check/syntax”文件；
 - 旧模块只有在职责完整合并、import/test/workflow 已收口后删除；
-- CI 不再用大段硬编码文件列表锁死内部结构。
+- 同类 Catalog inventory 必须逐步合并成单一 Catalog gate；
+- Syntax 只做目录自动扫描，不维护文件名清单；
+- CI 应保持少数稳定 stage，而不是每个内部模块一个 workflow step；
+- 本次迁移从 `core + Rule` 开始：`regex/condition/equivalence` 合并为 `core/semantic.mjs`，Rule parser/QX/Surge/facade 合并为 `core/rule.mjs`。
 
 ---
 
@@ -678,12 +696,15 @@ Workflow 只调用稳定入口，不应枚举 converter 内部所有实现文件
 - 建 reference evaluator；
 - 当前 target output 暂不改变。
 
-### Phase C — Equivalence Planner
+### Phase C — Equivalence Planner + domain compaction
 
 - native-equivalent proof；
 - guarded-helper proof；
 - prefilter soundness；
-- unsupported reason taxonomy。
+- unsupported reason taxonomy；
+- 在迁移语义的同时合并旧模块，禁止出现“新 core 一套 + 旧碎片继续永久保留”；
+- target-neutral prefilter analysis 只提取所有成功分支都必然成立的 predicate；AND 可累积必要条件，OR 只能保留分支交集；
+- 带 `i/m/s` 的 Regex 若 target native matcher 未证明 flags 等价，则该 Regex 本身不得作为会造成 false negative 的 prefilter。
 
 ### Phase D — Runtime / Dispatcher
 
