@@ -117,6 +117,38 @@ function runGenerated(script, { request = {}, response = {}, argument = '' } = {
   assert.equal(result.headers['X-Fixed'], 'yes');
 }
 
+// QX request mock mixed pipeline: mock occurs at its source position, then later Body/JSON/Header actions continue.
+{
+  const ast = parseRewriteV2('request if ${url} ~= /request-mock/ then request.header.set("X-Before", "1") | request.body.mock("json", `{"ok":false}`) | request.body.replace(/false/, "true") | request.json.add("flag", 1) | request.header.del("Cookie")');
+  const plan = renderMixedRewriteScript(ast, { target:'qx' });
+  assert.equal(plan.qxAction, 'script-request-body');
+  const result = normalize(runGenerated(plan.script, {
+    request:{
+      url:'https://example.test/request-mock',
+      headers:{Cookie:'a=1','Content-Type':'text/plain'},
+      body:'original',
+    },
+  }));
+  assert.equal(result.headers['X-Before'], '1');
+  assert.equal(result.headers.Cookie, undefined);
+  assert.equal(result.headers['Content-Type'], 'application/json');
+  assert.deepEqual(JSON.parse(result.body), {ok:true,flag:1});
+}
+
+// QX request mock_file mixed pipeline: materialized text is treated as file content, not template input.
+{
+  const ast = parseRewriteV2('request if ${url} ~= /request-file/ then request.body.mock_file("json", "request.json") | request.json.replace("ok", true)');
+  const plan = renderMixedRewriteScript(ast, {
+    target:'qx',
+    mockMaterialized:{bodyText:'{"ok":false,"literal":"${notExpanded}"}',sourceFile:'https://example.test/request.json'},
+  });
+  const result = normalize(runGenerated(plan.script, {
+    request:{url:'https://example.test/request-file',headers:{},body:'old'},
+  }));
+  assert.deepEqual(JSON.parse(result.body), {ok:true,literal:'${notExpanded}'});
+  assert.equal(result.headers['Content-Type'], 'application/json');
+}
+
 // Surge full-header-mode: duplicate fields must survive header.add and retain array order.
 {
   const ast = parseRewriteV2('response if ${url} ~= /dup/ then response.header.add("Set-Cookie", "b=2") | response.header.set("X-Test", "new")');
