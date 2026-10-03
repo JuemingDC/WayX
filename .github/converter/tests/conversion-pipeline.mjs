@@ -73,4 +73,32 @@ assert.ok(out.generatedScripts instanceof Map);
 assert.equal(out.qx.endsWith('\n'),true);
 assert.equal(out.surge.endsWith('\n'),true);
 
+const mixedScriptSource=[
+  '#!name=MixedScriptOrder',
+  '[Script]',
+  'http-request ^https://one\\.example script-path=https://example.com/legacy-one.js, tag=LegacyOne',
+  'request if ${url} ~= /^https:\\/\\/two\\.example/ then script("https://example.com/v2-two.js") with tag="V2Two"',
+  'http-response ^https://three\\.example script-path=https://example.com/legacy-three.js, tag=LegacyThree',
+].join('\n');
+const mixedMap=new Map([
+  ['https://example.com/legacy-one.js',{qx:'https://example.com/legacy-one.js',surge:'https://example.com/legacy-one.js',source:'$done({});'}],
+  ['https://example.com/v2-two.js',{qx:'https://example.com/v2-two.js',surge:'https://example.com/v2-two.js',source:'$done({});'}],
+  ['https://example.com/legacy-three.js',{qx:'https://example.com/legacy-three.js',surge:'https://example.com/legacy-three.js',source:'$done({});'}],
+]);
+const mixedOut=convertPlugin({...entry,id:'MixedScriptOrder'},mixedScriptSource,{
+  stamp:'2026-10-03 12:00:00 +08:00',
+  rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main',
+  scriptMap:mixedMap,
+  mockFiles:new Map(),
+  jqFiles:new Map(),
+});
+const qxOne=mixedOut.qx.indexOf('https://example.com/legacy-one.js');
+const qxTwo=mixedOut.qx.indexOf('https://example.com/v2-two.js');
+const qxThree=mixedOut.qx.indexOf('https://example.com/legacy-three.js');
+assert.ok(qxOne>=0 && qxOne<qxTwo && qxTwo<qxThree, 'QX must preserve mixed Legacy/Script v2 source order');
+const surgeOne=mixedOut.surge.indexOf('https://example.com/legacy-one.js');
+const surgeTwo=mixedOut.surge.indexOf('https://example.com/v2-two.js');
+const surgeThree=mixedOut.surge.indexOf('https://example.com/legacy-three.js');
+assert.ok(surgeOne>=0 && surgeOne<surgeTwo && surgeTwo<surgeThree, 'Surge must preserve mixed Legacy/Script v2 source order');
+
 console.log('Plugin parser / conversion pipeline contract passed');
