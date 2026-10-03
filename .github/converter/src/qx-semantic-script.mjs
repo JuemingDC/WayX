@@ -38,7 +38,7 @@ function oneAction(ast, name, {conditionMode='simple-url'}={}) {
   if (conditionMode === 'external-exact') {
     return { condition:null, action:ast.actions[0] };
   }
-  const condition = simpleUrlRewriteCondition(ast,{target:'qx'});
+  const condition = simpleUrlRewriteCondition(ast);
   if (!condition.ok) throw new Error(condition.reason);
   return { condition, action: ast.actions[0] };
 }
@@ -134,7 +134,6 @@ export function renderQxRedirectScript(ast, options = {}) {
 
   const urlCondition=redirectUrlComparison(ast);
   const urlPattern=String(urlCondition.right.pattern);
-  const urlFlags=String(urlCondition.right.flags || '');
   const refs=templateCaptureName(template);
   if (/\$\{/.test(template) && refs.length===0) throw new Error('redirect target contains an unsupported variable template');
   for (const ref of refs) {
@@ -144,7 +143,7 @@ export function renderQxRedirectScript(ast, options = {}) {
   const conditionExpr=compileComplexCondition(ast.condition,'qx');
   const matchExpr=urlCondition.capture
     ? '__wayxCaptures['+JSON.stringify(urlCondition.capture)+']'
-    : 'String(__wayxUrl ?? "").match(new RegExp('+JSON.stringify(urlPattern)+','+JSON.stringify(urlFlags)+'))';
+    : 'String(__wayxUrl ?? "").match(new RegExp('+JSON.stringify(urlPattern)+'))';
 
   const lines=[
     ...metadata(options),
@@ -181,7 +180,7 @@ export function renderQxRejectScript(ast, options = {}) {
   validateRewriteV2Ast(ast);
   if (ast.actions.length !== 1) throw new Error('reject script requires exactly one action');
   const externalExact=options.conditionMode === 'external-exact';
-  const condition=externalExact ? {pattern:null,notes:[]} : simpleUrlRewriteCondition(ast,{target:'qx'});
+  const condition=externalExact ? {pattern:null,notes:[]} : simpleUrlRewriteCondition(ast);
   if (!condition.ok && !externalExact) throw new Error(condition.reason);
   const action = ast.actions[0];
   if (!['reject','reject_dict','reject_array'].includes(action.name)) {
@@ -277,7 +276,7 @@ export function headerOpsForMock(ast, mockAction) {
 export function renderQxInlineMockScript(ast, options = {}) {
   validateRewriteV2Ast(ast);
   const externalExact=options.conditionMode === 'external-exact';
-  const condition=externalExact ? {pattern:null,notes:[]} : simpleUrlRewriteCondition(ast,{target:'qx'});
+  const condition=externalExact ? {pattern:null,notes:[]} : simpleUrlRewriteCondition(ast);
   if (!condition.ok && !externalExact) throw new Error(condition.reason);
   const mocks = ast.actions.filter(a => /^(?:request|response)\.body\.mock$/.test(a.name));
   if (mocks.length !== 1) throw new Error('QX inline mock conversion requires exactly one body.mock action');
@@ -316,7 +315,7 @@ export function renderQxInlineMockScript(ast, options = {}) {
 export function renderQxHeaderScript(ast, options = {}) {
   validateRewriteV2Ast(ast);
   const externalExact=options.conditionMode === 'external-exact';
-  const condition=externalExact ? {pattern:null,notes:[]} : simpleUrlRewriteCondition(ast,{target:'qx'});
+  const condition=externalExact ? {pattern:null,notes:[]} : simpleUrlRewriteCondition(ast);
   if (!condition.ok && !externalExact) throw new Error(condition.reason);
   if (!ast.actions.length || ast.actions.some(a =>
     !new RegExp('^' + ast.phase + '\\.header\\.(?:add|set|del|replace)$').test(a.name)
