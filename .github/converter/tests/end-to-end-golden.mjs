@@ -145,8 +145,8 @@ const requestAddFixture = {
 };
 const requestAddSource = `#!name=RequestHeaderAddFixture
 [Rewrite]
-request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.add("X-Test", "one")
-response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then response.header.replace("X-Test", /one/, "two")
+request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\// then request.header.add("X-Test", "one")
+response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\// then response.header.replace("X-Test", /one/, "two")
 `;
 const requestAddOutput = convert(requestAddFixture, requestAddSource, new Map(), STAMP);
 assert.ok(
@@ -171,7 +171,7 @@ const requestAddBulkFixture = {
 };
 const requestAddBulkSource = `#!name=RequestHeaderAddBulkFixture
 [Rewrite]
-request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.add(["X-A","X-B"], ["one","two"])
+request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\// then request.header.add(["X-A","X-B"], ["one","two"])
 `;
 const requestAddBulkOutput = convert(requestAddBulkFixture, requestAddBulkSource, new Map(), STAMP);
 assert.ok(
@@ -193,8 +193,8 @@ const requestAddSetFixture = {
 };
 const requestAddSetSource = `#!name=RequestHeaderAddSetFixture
 [Rewrite]
-request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.add("X-A", "one")
-request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.set("X-B", "two")
+request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\// then request.header.add("X-A", "one")
+request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\// then request.header.set("X-B", "two")
 `;
 const requestAddSetOutput = convert(requestAddSetFixture, requestAddSetSource, new Map(), STAMP);
 assert.doesNotMatch(requestAddSetOutput.qx, /REVIEW REQUIRED/);
@@ -218,7 +218,7 @@ const requestReplaceCaptureFixture = {
 };
 const requestReplaceCaptureSource = `#!name=RequestHeaderReplaceCaptureFixture
 [Rewrite]
-request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.replace("User-Agent", /iPhone OS (\\d+)/, "iPhone OS $1")
+request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\// then request.header.replace("User-Agent", /iPhone OS (\\d+)/, "iPhone OS $1")
 `;
 const requestReplaceCaptureOutput = convert(requestReplaceCaptureFixture, requestReplaceCaptureSource, new Map(), STAMP);
 assert.equal(
@@ -246,7 +246,7 @@ const requestAddDollarFixture = {
 };
 const requestAddDollarSource = `#!name=RequestHeaderAddDollarFixture
 [Rewrite]
-request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.add("X-Price", "price $1")
+request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\// then request.header.add("X-Price", "price $1")
 `;
 const requestAddDollarOutput = convert(requestAddDollarFixture, requestAddDollarSource, new Map(), STAMP);
 assert.equal(
