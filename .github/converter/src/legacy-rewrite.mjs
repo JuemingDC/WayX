@@ -260,6 +260,12 @@ function planJson(pattern, action, parsed, target, ctx) {
   catch (error) { return review(pattern, action, String(error?.message || error)); }
   if (!compiled.ok) return review(pattern, action, compiled.reason);
   const jq=compiled.preserve ? compiled.jq : minifyJq(compiled.jq);
+  if (parsed.op === 'jq' && !String(jq).trim()) {
+    // Source-authored empty JQ expressions have no executable target filter.
+    // Emitting jsonjq/http-*-jq with '' is invalid; treat the declaration as
+    // an intentional no-op/drop rather than inventing target semantics.
+    return {section:'drop', reason:'empty-legacy-json-jq'};
+  }
   let quoted;
   try { quoted=quoteJq(jq); }
   catch (error) { return review(pattern, action, String(error?.message || error)); }
