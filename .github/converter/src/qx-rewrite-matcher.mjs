@@ -81,17 +81,39 @@ function selectMethodPredicate(predicates) {
   return null;
 }
 
-export function qxRewriteMatcherPlan(ast) {
-  const predicates=guaranteedPredicates(ast?.condition);
+function exactPredicates(node) {
+  const n=unwrap(node);
+  if (!n) return {ok:false,reason:'missing Rewrite condition'};
+
+  if (n.type==='comparison') {
+    const item=comparisonKey(n);
+    if (!item) return {ok:false,reason:'condition comparison is outside the exact QX matcher subset'};
+    return {ok:true,predicates:new Map([[item.key,item]])};
+  }
+
+  if (n.type!=='logical' || n.operator!=='&&') {
+    return {ok:false,reason:'exact QX matcher currently requires a comparison or AND-only condition'};
+  }
+
+  const left=exactPredicates(n.left);
+  if (!left.ok) return left;
+  const right=exactPredicates(n.right);
+  if (!right.ok) return right;
+
+  const merged=new Map([...left.predicates,...right.predicates]);
+  const urls=[...merged.values()].filter(item=>item.kind==='url-regex');
+  const methods=[...merged.values()].filter(item=>item.kind==='request-method-eq');
+  if (urls.length>1) return {ok:false,reason:'exact QX matcher cannot intersect multiple distinct URL regex predicates'};
+  if (methods.length>1) return {ok:false,reason:'exact QX matcher cannot satisfy multiple distinct request.method equalities'};
+  return {ok:true,predicates:merged};
+}
+
+function matcherFromPredicates(predicates) {
   const url=selectUrlPredicate(predicates);
   const method=selectMethodPredicate(predicates);
-
   const urlPattern=url?.pattern || '^https?://';
 
   if (method) {
-    // QX official sample documents the Headers comparison string as beginning
-    // with the request method/path. Keep the method equality exact by requiring
-    // the request-line separator instead of using the broader official ^POST sample.
     const headersPattern='^'+regexEscape(method.value)+'[ ]';
     return {
       ok:true,
@@ -111,4 +133,17 @@ export function qxRewriteMatcherPlan(ast) {
     prefix:urlPattern+' url ',
     pushedDown:[],
   };
+}
+
+export function qxExactRewriteMatcherPlan(ast) {
+  const exact=exactPredicates(ast?.condition);
+  if (!exact.ok) return exact;
+  return {...matcherFromPredicates(exact.predicates),exact:true};
+}
+
+export function qxRewriteMatcherPlan(ast) {
+  const predicates=guaranteedPredicates(ast?.condition);
+  // Prefilter mode may intentionally drop non-native predicates because the
+  // generated helper re-evaluates the complete source condition.
+  return {...matcherFromPredicates(predicates),exact:false};
 }
