@@ -26,6 +26,39 @@ function numberValue(node, fallback) {
   return node.type === 'number' && Number.isFinite(node.value) ? node.value : fallback;
 }
 
+function dependencyLocation(ref, actionName, pluginSourceUrl = '') {
+  const value=String(ref ?? '').trim();
+  if (!value) throw new Error(`${actionName}: file dependency must be a fixed non-empty string`);
+
+  let url=null;
+  let scope='plugin-resource';
+  try {
+    const absolute=new URL(value);
+    if (!/^https?:$/.test(absolute.protocol)) throw new Error('unsupported protocol');
+    url=absolute.href;
+    scope='remote';
+  } catch {
+    if (!pluginSourceUrl) {
+      return {ref:value,scope,url:null,resolvable:false,reason:'relative plugin resource requires the plugin source URL'};
+    }
+    const base=new URL(pluginSourceUrl);
+    if (!/^https?:$/.test(base.protocol)) throw new Error(`${actionName}: plugin source URL must be HTTP(S)`);
+    url=new URL(value,base).href;
+  }
+  return {ref:value,scope,url,resolvable:true};
+}
+
+function legacyJqPathRef(value) {
+  const text=String(value ?? '').trim();
+  const match=text.match(/^jq-path\s*=\s*(.+)$/i);
+  if (!match) return null;
+  let ref=match[1].trim();
+  if ((ref.startsWith('"') && ref.endsWith('"')) || (ref.startsWith("'") && ref.endsWith("'"))) {
+    ref=ref.slice(1,-1);
+  }
+  return ref.trim() || null;
+}
+
 export function dependencySpecFromAction(action, { pluginSourceUrl = '' } = {}) {
   const def = FILE_ACTIONS[action?.name];
   if (!def) return null;
@@ -33,23 +66,12 @@ export function dependencySpecFromAction(action, { pluginSourceUrl = '' } = {}) 
   const ref = stringValue(action.args?.[def.pathIndex]);
   if (!ref) throw new Error(`${action.name}: file dependency must be a fixed non-empty string`);
 
-  let url = null;
-  let scope = 'plugin-resource';
-  try {
-    const absolute = new URL(ref);
-    if (!/^https?:$/.test(absolute.protocol)) throw new Error('unsupported protocol');
-    url = absolute.href;
-    scope = 'remote';
-  } catch {
-    if (!pluginSourceUrl) {
-      return { action: action.name, kind: def.kind, ref, scope, url: null, resolvable: false, reason: 'relative plugin resource requires the plugin source URL' };
-    }
-    const base = new URL(pluginSourceUrl);
-    if (!/^https?:$/.test(base.protocol)) throw new Error(`${action.name}: plugin source URL must be HTTP(S)`);
-    url = new URL(ref, base).href;
+  const location=dependencyLocation(ref,action.name,pluginSourceUrl);
+  if (!location.resolvable) {
+    return {action:action.name,kind:def.kind,...location};
   }
 
-  const spec = { action: action.name, kind: def.kind, ref, scope, url, resolvable: true };
+  const spec = { action: action.name, kind: def.kind, ...location };
   if (def.kind === 'jq') spec.inlineName = def.inlineName;
   if (def.kind === 'mock') {
     const contentType = stringValue(action.args?.[0])?.toLowerCase() || '';
@@ -67,13 +89,56 @@ export function dependencySpecFromAction(action, { pluginSourceUrl = '' } = {}) 
 export function jqDependencySpecFromAction(action, { pluginSourceUrl = '' } = {}) {
   const official = dependencySpecFromAction(action, { pluginSourceUrl });
   if (official?.kind === 'jq') return { ...official, pathIndex: FILE_ACTIONS[action.name].pathIndex };
-  return null;
+
+  if (!/^(?:request|response)\.json\.jq$/.test(action?.name || '')) return null;
+  const ref=legacyJqPathRef(stringValue(action.args?.[0]));
+  if (!ref) return null;
+  const location=dependencyLocation(ref,action.name,pluginSourceUrl);
+  return {
+    action:action.name,
+    kind:'jq',
+    inlineName:action.name,
+    pathIndex:0,
+    legacyAlias:true,
+    ...location,
+  };
 }
 
-export function isDiscardedLegacyJqPathAction(action) {
-  if (!/^(?:request|response)\.json\.jq$/.test(action?.name || '')) return false;
-  const value = stringValue(action.args?.[0]);
-  return /^jq-path=/i.test(String(value || '').trim());
+export function legacyJqPathDependencySpecFromIr(ir,{pluginSourceUrl=''}={}) {
+  if (!ir || ir.type!=='rewrite-semantic-ir' || ir.sourceSyntax!=='legacy') return null;
+  if (!Array.isArray(ir.operations) || ir.operations.length!==1) return null;
+  const op=ir.operations[0];
+  if (op?.kind!=='json' || op?.operation!=='jq') return null;
+  const ref=legacyJqPathRef(op.rest);
+  if (!ref) return null;
+  const actionName=(op.phase || ir.phase || 'response')+'.body.json.jq';
+  const location=dependencyLocation(ref,actionName,pluginSourceUrl);
+  return {
+    action:actionName,
+    kind:'jq',
+    inlineName:null,
+    pathIndex:null,
+    legacyAlias:true,
+    ...location,
+  };
+}
+
+export function inlineResolvedLegacyJqPathIr(ir,content) {
+  const spec=legacyJqPathDependencySpecFromIr(ir);
+  if (!spec) return {ir,changed:false,dependency:null};
+  const jq=String(content ?? '').trim();
+  if (!jq) throw new Error('legacy jq-path dependency resolved to empty JQ');
+  const operation={...ir.operations[0],rest:jq};
+  const phase=operation.phase || ir.phase || 'response';
+  const sourcePayload={
+    ...ir.sourcePayload,
+    action:phase+'-body-json-jq '+jq,
+  };
+  return {
+    ir:{...ir,operations:[operation],sourcePayload},
+    changed:true,
+    dependency:spec,
+  };
 }
 
 export function inlineResolvedDependency(action, content, { pluginSourceUrl = '' } = {}) {

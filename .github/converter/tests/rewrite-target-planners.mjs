@@ -47,8 +47,14 @@ assert.match(qxRequestHeader.line,/ url request-header /);
 
 const responseHeaderSource='response if ${url} ~= /api/ then response.header.add("Set-Cookie","a=1")';
 const qxResponseHeader=planQxRewrite(v2(responseHeaderSource),ctx());
-assert.equal(qxResponseHeader.section,'comment');
-assert.equal(qxResponseHeader.reason,'unsupported-qx-response-header-add-comment');
+assert.equal(qxResponseHeader.section,'rewrite');
+assert.match(qxResponseHeader.line,/ url response-header /);
+assert.match(qxResponseHeader.line,/Set-Cookie: a=1/);
+
+const unsafeResponseHeaderSource='response if ${url} ~= /api/ then response.header.add("Set-Cookie","a=$1")';
+const qxUnsafeResponseHeader=planQxRewrite(v2(unsafeResponseHeaderSource),ctx());
+assert.equal(qxUnsafeResponseHeader.section,'comment');
+assert.equal(qxUnsafeResponseHeader.reason,'unsupported-qx-response-header-add-comment');
 
 const redirectSource='request if ${url} ~= /(^https:\\/\\/old\\.example\\.com\\/)(.*)/ as hit then redirect(302, "${hit.1}new")';
 const redirectIr=v2(redirectSource);

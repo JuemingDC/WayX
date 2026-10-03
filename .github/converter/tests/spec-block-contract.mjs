@@ -163,7 +163,7 @@ assert.equal(/::error title=/.test(syncConverter), false, 'Block 80/90: sync orc
 assert.equal(/::error title=/.test(canonicalRunner), false, 'Block 80/90: canonical runner must not render GitHub error annotations directly');
 assert.match(syncConverter,/createWorkflowFailureReporter\(\{summaryLabel:'Failures'\}\)/, 'Block 80/90: sync summary label must remain Failures');
 assert.match(syncConverter,/failures\.capture\(entry,e\)/, 'Block 80/90: sync catch must delegate failure capture');
-assert.match(syncConverter,/if \(failures\.report\(\)\) process\.exitCode = 1;/, 'Block 80/90: sync caller must retain failure exit policy');
+assert.match(syncConverter,/if \(failures\.report\(\) \|\| readmeFailed\) process\.exitCode = 1;/, 'Block 80/90: sync caller must retain failure exit policy, including README regeneration failures');
 assert.match(canonicalRunner,/summaryLabel:'Canonical regeneration failures'/, 'Block 80/90: canonical summary label must remain stable');
 assert.match(canonicalRunner,/detailFallback:'error'/, 'Block 80/90: canonical failure detail fallback must remain raw error');
 assert.match(canonicalRunner,/annotationFallback:'error'/, 'Block 80/90: canonical annotation fallback must remain raw error');

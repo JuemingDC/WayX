@@ -180,28 +180,32 @@ function planHeader(pattern, action, parsed, target, ctx) {
   const width=parsed.op === 'del' ? 1 : parsed.op === 'replace-regex' ? 3 : 2;
   if (!tokens.length || tokens.length % width) return review(pattern, action, 'invalid legacy header argument grouping');
 
-  if (target === 'qx' && parsed.phase === 'request' && parsed.op === 'add') {
+  if (target === 'qx' && parsed.op === 'add' && ['request','response'].includes(parsed.phase)) {
     const targetPattern=normalizeRegexBodyForTarget(pattern);
     const pairs=[];
     for(let i=0;i<tokens.length;i+=width){
       const [name,value]=tokens.slice(i,i+width).map(unquote);
       if(!name || /[\s:\r\n]/.test(name) || /[\r\n$]/.test(value)) {
+        if (parsed.phase === 'response') break;
         return review(pattern, action, 'legacy request header-add contains an unsafe field name/value for QX whole-header rewrite');
       }
       pairs.push([name,value]);
     }
-    const inserted=pairs.map(([name,value]) => name + ': ' + value + '$2').join('');
-    return {
-      section:'rewrite',
-      line:targetPattern + ' url request-header ^([^\\r\\n]+)(\\r\\n) request-header $1$2' + inserted,
-    };
+    if (pairs.length === tokens.length / width) {
+      const token=parsed.phase + '-header';
+      const inserted=pairs.map(([name,value]) => name + ': ' + value + '$2').join('');
+      return {
+        section:'rewrite',
+        line:targetPattern + ' url ' + token + ' ^([^\\r\\n]+)(\\r\\n) ' + token + ' $1$2' + inserted,
+      };
+    }
   }
 
 
   if (target === 'qx' && parsed.phase === 'response' && parsed.op === 'add') {
     return {
       section:'comment',
-      line:'# [WayX] Quantumult X unsupported legacy response-header-add commented out; duplicate-header preservation is not verified by the official sample.\n# Source declaration: ' + pattern + ' ' + action,
+      line:'# [WayX] Quantumult X legacy response-header-add commented out; this field/value cannot be safely encoded by native response-header without changing duplicate-header semantics.\n# Source declaration: ' + pattern + ' ' + action,
       reason:'unsupported-qx-response-header-add-comment',
     };
   }
@@ -219,7 +223,7 @@ function planHeader(pattern, action, parsed, target, ctx) {
       ctx.generatedScripts.set(filename, plan.script);
       return {
         section:'rewrite',
-        line:plan.pattern + ' url ' + plan.qxAction + ' ' + ctx.rawBase + '/script/' + ctx.id + '/' + filename,
+        line:plan.pattern + ' url ' + plan.qxAction + ' ' + ctx.rawBase + '/Script/' + ctx.id + '/' + filename,
       };
     } catch (error) {
       return review(pattern, action, String(error?.message || error));
@@ -310,7 +314,7 @@ function planMock(pattern, action, parsed, target, ctx) {
       const key=crypto.createHash('sha1').update('legacy-mock\\0'+pattern+'\\0'+action).digest('hex').slice(0,10);
       const filename='legacy_mock_'+key+'.js';
       ctx.generatedScripts.set(filename, plan.script);
-      return {section:'rewrite', line:plan.pattern + ' url ' + plan.qxAction + ' ' + ctx.rawBase + '/script/' + ctx.id + '/' + filename};
+      return {section:'rewrite', line:plan.pattern + ' url ' + plan.qxAction + ' ' + ctx.rawBase + '/Script/' + ctx.id + '/' + filename};
     }
 
     if(parsed.phase === 'response'){
@@ -329,7 +333,7 @@ function planMock(pattern, action, parsed, target, ctx) {
     ctx.generatedScripts.set(filename, plan.script);
     return {
       section:'script',
-      line:'wayx_legacy_request_mock_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+ctx.rawBase+'/script/'+ctx.id+'/'+filename+',requires-body=true'+(plan.binaryBodyMode?',binary-body-mode=true':''),
+      line:'wayx_legacy_request_mock_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+ctx.rawBase+'/Script/'+ctx.id+'/'+filename+',requires-body=true'+(plan.binaryBodyMode?',binary-body-mode=true':''),
     };
   } catch (error) {
     return review(pattern, action, String(error?.message || error));

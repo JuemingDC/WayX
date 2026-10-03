@@ -132,11 +132,11 @@ function ensureQxRewriteHandlers() {
 }
 
 function qxNativeHeaderPlan(ast) {
-  if (ast?.phase!=='request' || ast.actions?.length!==1) return null;
+  if (!['request','response'].includes(ast?.phase) || ast.actions?.length!==1) return null;
   const condition=simpleUrlRewriteCondition(ast);
   if (!condition.ok) return null;
   const action=ast.actions[0];
-  if (action.name!=='request.header.add') return null;
+  if (action.name!==ast.phase+'.header.add') return null;
 
   const names=action.args[0]?.type==='array' ? action.args[0].items : [action.args[0]];
   const values=action.args[1]?.type==='array' ? action.args[1].items : [action.args[1]];
@@ -152,11 +152,15 @@ function qxNativeHeaderPlan(ast) {
     pairs.push([name,value]);
   }
 
+  // QX request/response-header rewrites operate on the complete header block.
+  // Insert after the request/status line so an existing same-name field is
+  // preserved, matching Loon header.add duplicate-field semantics.
+  const token=ast.phase+'-header';
   const headerPattern='^([^\\r\\n]+)(\\r\\n)';
   const inserted=pairs.map(([name,value])=>name+': '+value+'$2').join('');
   return {
     section:'rewrite',
-    line:condition.pattern+' url request-header '+headerPattern+' request-header $1$2'+inserted,
+    line:condition.pattern+' url '+token+' '+headerPattern+' '+token+' $1$2'+inserted,
   };
 }
 
@@ -232,7 +236,7 @@ export function planQxRewrite(ir, ctx={}) {
   if (singleOp?.kind==='header' && singleOp.phase==='response' && singleOp.operation==='add') {
     return {
       section:'comment',
-      line:'# [WayX] Quantumult X unsupported response.header.add commented out; duplicate-header preservation is not verified by the official sample.\n# Source declaration: '+source,
+      line:'# [WayX] Quantumult X response.header.add commented out; this field/value cannot be safely encoded by native response-header without changing duplicate-header semantics.\n# Source declaration: '+source,
       reason:'unsupported-qx-response-header-add-comment',
     };
   }

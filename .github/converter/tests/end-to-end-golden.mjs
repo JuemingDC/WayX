@@ -33,12 +33,15 @@ response if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then response.head
 hostname=api.example.com
 `;
 const headerGroupOutput = convert(headerGroupFixture, headerGroupSource, new Map(), STAMP);
-assert.match(headerGroupOutput.qx, /Quantumult X unsupported response\.header\.add commented out/);
+assert.match(
+  headerGroupOutput.qx,
+  /url response-header \^\(\[\^\\r\\n\]\+\)\(\\r\\n\) response-header \$1\$2content-disposition: inline\$2/,
+);
 assert.doesNotMatch(headerGroupOutput.qx, /REVIEW REQUIRED: QX header\.add/);
 assert.equal(
   headerGroupOutput.qx.split(/\r?\n/).filter(line => !line.trim().startsWith('#') && /script-response-header/.test(line)).length,
   1,
-  'the independent response.header.set rule must remain active when the preceding independent response.header.add is explicitly commented out',
+  'the independent response.header.set rule must remain active when the preceding independent response.header.add uses native response-header',
 );
 assert.doesNotMatch(
   headerGroupOutput.qx,
@@ -274,9 +277,14 @@ assert.throws(
   () => validateQX(validQxValidatorText.replace('^https://example\\.com url reject', '^https://example\\.com url loon-private-action'), qxValidatorEntry),
   /unsupported Quantumult X rewrite action/,
 );
-assert.throws(
-  () => validateQX(validQxValidatorText.replace('^https://example\\.com url reject', '^https://example\\.com url response-header x response-header y'), qxValidatorEntry),
-  /unsupported Quantumult X rewrite action/,
+assert.doesNotThrow(
+  () => validateQX(
+    validQxValidatorText.replace(
+      '^https://example\\.com url reject',
+      '^https://example\\.com url response-header ^([^\\r\\n]+)(\\r\\n) response-header $1$2X-Test: 1$2',
+    ),
+    qxValidatorEntry,
+  ),
 );
 
 const outOfScopeSurgeScript = `#!name=ScopeFixture
@@ -528,6 +536,23 @@ function passthroughScriptMap(source) {
   ]));
 }
 
+function regressionJqFiles(source) {
+  // Network/dependency fidelity is covered by conversion-context-materializers.
+  // The offline golden only needs a deterministic valid JQ payload so legacy
+  // jq-path declarations exercise the active native-JQ target path.
+  const out=new Map();
+  for (const raw of String(source).split(/\r?\n/)) {
+    const line=raw.trim();
+    if (!line || !/jq-path\s*=/.test(line)) continue;
+    out.set(line,{
+      content:'walk(if type=="object" and .__typename=="AdPost" then empty else . end)',
+      sourceFile:'fixture://legacy-jq-path',
+      legacyAlias:true,
+    });
+  }
+  return out;
+}
+
 function activeLines(text) {
   return text.split('\n').filter(raw => {
     const line = raw.trim();
@@ -545,7 +570,7 @@ for (const testCase of cases) {
   assert.ok(testCase.entry, `${testCase.name}: missing manifest entry`);
   const source = await fs.readFile(path.join(ROOT, testCase.file), 'utf8');
   const scripts = passthroughScriptMap(source);
-  const jqFiles = new Map();
+  const jqFiles = regressionJqFiles(source);
   const out = convert(testCase.entry, source, scripts, STAMP, new Map(), jqFiles);
 
   validateQX(out.qx, testCase.entry);
@@ -625,6 +650,8 @@ for (const testCase of cases) {
   if (testCase.name === 'MyBlockAds') {
     assert.doesNotMatch(out.qx, /jq-path=/);
     assert.doesNotMatch(out.surge, /jq-path=/);
+    assert.match(out.qx, /url jsonjq-response-body 'walk\(if type=="object" and \.__typename=="AdPost" then empty else \. end\)'/);
+    assert.match(out.surge, /http-response-jq .*'walk\(if type=="object" and \.__typename=="AdPost" then empty else \. end\)'/);
     assert.match(out.surge, /^\[Body Rewrite\]$/m);
     assert.match(out.surge, /^\[Map Local\]$/m);
   }

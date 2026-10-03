@@ -7,13 +7,10 @@
 # Icon: https://rucu6.pages.dev/Icons/app/myblockads.png
 # Updated: 2026-09-27 18:30
 
-# Converted: 2026-10-01 18:28:20 +08:00
+# Converted: 2026-10-03 10:03:36 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/myblockads.lpx
 # Target: Surge
-
-
-# Reddit //gql.reddit.com, gql-fed.reddit.com
 
 [Rule]
 # ======= 0 ======= #
@@ -379,6 +376,9 @@ http-response-jq ^https:\/\/www\.washpayer\.com\/common\/getReceipt 'del(.payloa
 
 # 墨迹天气 //mme.api.moji.com, sns.api.moji.com
 http-response-jq ^https:\/\/mme\.api\.moji\.com\/json\/entrance\/list$ 'del(.entrance_region_res_list[] | select(.region_name == "皇冠区域" or .region_name == "banner区")) | .entrance_region_res_list[].entrance_res_list |= if . then map(select(.entrance_name | . != "墨迹钱包" and . != "墨圈")) else . end'
+
+# Reddit //gql.reddit.com, gql-fed.reddit.com
+http-response-jq ^https:\/\/gql(-fed)?\.reddit\.com 'walk(if type=="object" then (if .isNsfw==true then .isNsfw=false else . end)|(if .isNsfwMediaBlocked==true then .isNsfwMediaBlocked=false else . end)|(if .isNsfwContentShown==false then .isNsfwContentShown=true else . end)|(if (.commentsPageAds|type=="array") then (.commentsPageAds=[]) else . end)|(if ((.node|type=="object") and (.node.cells|type=="array") and (.node.cells|any(.__typename?=="AdMetadataCell" or .isAdPost?==true))) then empty else . end)|(if (.node|type=="object") and (.node.adPayload|type=="object") then empty else . end)|(if .__typename=="AdPost" then empty else . end) else . end)'
 http-response-jq ^https:\/\/api\.xiachufang\.com\/v2\/homepage\/paged_waterfall_recommendations\.json '.multiplex_cells |= map(select(.recommendation_cell.label != "广告"))'
 
 # 小米商城 //api.m.mi.com, shop-api.retail.mi.com, xiaomishop.retail.mi.com

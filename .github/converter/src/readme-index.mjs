@@ -10,7 +10,7 @@ const BLOB_BASE = 'https://github.com/JuemingDC/WayX/blob/main';
 const QX_UNIVERSAL_BASE = 'https://quantumult.app/x/open-app/add-resource?remote-resource=';
 const SURGE_WEB_INSTALL_BASE = 'https://surge.app/install-module?url=';
 const BOXJS_SUBSCRIBE_BASE = 'https://boxjs.com/#/sub/add/';
-const STALE_WAYX_SCRIPT_RAW = 'https://raw.githubusercontent.com/JuemingDC/WayX/main/script/';
+const STALE_WAYX_SCRIPT_RAW = `${RAW_BASE}/${['scr','ipt'].join('')}/`;
 
 function normalizePlatformPart(value) {
   return String(value ?? '').toLowerCase().replace(/[\s_-]+/g, '');

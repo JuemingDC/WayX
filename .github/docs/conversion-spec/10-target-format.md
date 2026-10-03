@@ -20,7 +20,7 @@
 [mitm]
 ```
 
-只允许 Crossutility 官方 sample 已确认的字段 / action，以及当前 QX beta 已公开的 filter/rewrite 前置 note 语法。
+只允许 Crossutility 官方 sample 已确认的字段 / action、用户提供并人工确认的当前 QX App Rewrite 类型 UI 能力，以及当前 QX beta 已公开的 filter/rewrite 前置 note 语法。UI reviewed 能力必须在 capability fixture 中单独标记，不能伪称为 sample evidence。
 
 ### 10.1.1 Filter / Rewrite 前置 Note
 

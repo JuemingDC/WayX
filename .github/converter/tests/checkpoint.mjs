@@ -4,8 +4,9 @@ import {
   analyzeSafeRewriteV2,
   dependencySpecFromAction,
   jqDependencySpecFromAction,
-  isDiscardedLegacyJqPathAction,
   inlineResolvedDependency,
+  inlineResolvedLegacyJqPathIr,
+  legacyJqPathDependencySpecFromIr,
   listRewriteV2Dependencies,
   qxMockPlanFromAction,
   compileRegexForTarget,
@@ -28,9 +29,9 @@ import {
   quoteJq,
   renderFixedPathDeleteJq,
   classifyLegacyRewrite,
-  isDiscardedLegacyJqPathIr,
   legacyRewriteToSemanticIr,
   planLegacyRewrite,
+  planLegacyRewriteIr,
   validateLoonSourceCatalog,
   planMitmLine,
   resolveOriginalUrl,
@@ -948,10 +949,23 @@ const legacyQxHeaderAddBulk = planLegacyRewrite(
 assert.equal(legacyQxHeaderAddBulk.section, 'rewrite');
 assert.match(legacyQxHeaderAddBulk.line, /request-header \$1\$2X-A: one\$2X-B: two\$2$/);
 
-assert.match(
-  planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-add Set-Cookie a=1', 'qx', legacyCtx).line,
-  /Quantumult X unsupported legacy response-header-add commented out/,
+const legacyQxResponseHeaderAdd=planLegacyRewrite(
+  '^https:\\/\\/api\\.example\\.com',
+  'response-header-add Set-Cookie a=1',
+  'qx',
+  legacyCtx,
 );
+assert.equal(legacyQxResponseHeaderAdd.section,'rewrite');
+assert.match(legacyQxResponseHeaderAdd.line,/url response-header .*Set-Cookie: a=1/);
+
+const legacyQxUnsafeResponseHeaderAdd=planLegacyRewrite(
+  '^https:\\/\\/api\\.example\\.com',
+  'response-header-add Set-Cookie a=$1',
+  'qx',
+  legacyCtx,
+);
+assert.equal(legacyQxUnsafeResponseHeaderAdd.section,'comment');
+assert.match(legacyQxUnsafeResponseHeaderAdd.line,/cannot be safely encoded by native response-header/);
 
 const legacyNestedMock = classifyLegacyRewrite(
   'mock-response-body data-type=json data="{"no":0,"error":"success"}" status-code=200',
@@ -1064,19 +1078,42 @@ assert.equal(inlinedDelpathsJq.action.args[0].value, 'delpaths([["ads"],["promo"
 const legacyJqPathAst = parseRewriteV2(
   'response if ${url} ~= /reddit/i then response.json.jq("jq-path=https://rucu6.pages.dev/JQLang/reddit.jq")'
 );
-assert.equal(isDiscardedLegacyJqPathAction(legacyJqPathAst.actions[0]), true);
+const legacyV2JqSpec=jqDependencySpecFromAction(legacyJqPathAst.actions[0], {
+  pluginSourceUrl:'https://example.com/demo.lpx',
+});
+assert.equal(legacyV2JqSpec.url,'https://rucu6.pages.dev/JQLang/reddit.jq');
+assert.equal(legacyV2JqSpec.legacyAlias,true);
+assert.deepEqual(
+  listRewriteV2Dependencies(legacyJqPathAst, {pluginSourceUrl:'https://example.com/demo.lpx'}).map(x=>x.url),
+  ['https://rucu6.pages.dev/JQLang/reddit.jq'],
+);
+const legacyV2Inlined=inlineResolvedDependency(
+  legacyJqPathAst.actions[0],
+  'del(.subredditInfoByName)',
+  {pluginSourceUrl:'https://example.com/demo.lpx'},
+);
+assert.equal(legacyV2Inlined.action.name,'response.json.jq');
+assert.equal(legacyV2Inlined.action.args[0].value,'del(.subredditInfoByName)');
 
 const legacyJqPathIr=legacyRewriteToSemanticIr(
   '^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/adapter\\/',
   'response-body-json-jq jq-path="https://kelee.one/Resource/JQLang/FleaMarket/adapter_FleaMarket_remove_ads.jq"'
 );
-assert.equal(isDiscardedLegacyJqPathIr(legacyJqPathIr),true);
-assert.equal(jqDependencySpecFromAction(legacyJqPathAst.actions[0], {
+const legacyIrJqSpec=legacyJqPathDependencySpecFromIr(legacyJqPathIr,{
   pluginSourceUrl:'https://example.com/demo.lpx',
-}), null);
-assert.deepEqual(listRewriteV2Dependencies(legacyJqPathAst, {
-  pluginSourceUrl:'https://example.com/demo.lpx',
-}), []);
+});
+assert.equal(
+  legacyIrJqSpec.url,
+  'https://kelee.one/Resource/JQLang/FleaMarket/adapter_FleaMarket_remove_ads.jq',
+);
+const legacyIrInlined=inlineResolvedLegacyJqPathIr(legacyJqPathIr,'del(.data.ad)').ir;
+const legacyIrQx=planLegacyRewriteIr(legacyIrInlined,'qx',{
+  generatedScripts:new Map(),
+  rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main',
+  id:'Fixture',
+});
+assert.equal(legacyIrQx.section,'rewrite');
+assert.match(legacyIrQx.line,/jsonjq-response-body 'del\(\.data\.ad\)'$/);
 
 const jqFileWithComments = `# file comment
 walk(

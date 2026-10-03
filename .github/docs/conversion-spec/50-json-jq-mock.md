@@ -107,7 +107,16 @@ response.json.jq_file(path)
 response.json.jq("jq-path=https://...")
 ```
 
-这不是 Loon 官方 `jq_file` 语法。WayX 将该 legacy `jq-path=` 写法列为**项目级丢弃项**：不解析、不下载、不缓存、不内联、不生成 helper、也不输出目标规则。只有官方 `request/response.json.jq_file(path)` 进入依赖解析。
+这不是 Loon 官方 `jq_file` 语法，但真实上游仍存在该 historical alias。WayX 从 2026-10-03 起**不再丢弃** `jq-path=`，而是把它作为兼容依赖引用处理：
+
+1. 同时识别 Rewrite v2 的 `request/response.json.jq("jq-path=...")` 与 Legacy `request/response-body-json-jq jq-path=...`；
+2. 绝对 HTTP(S) URL 原样读取；相对路径只相对于源 Plugin URL 解析，禁止镜像/fallback；
+3. 读取后按 `jq_file` 相同规则删除非字符串注释并压缩无语义空白；
+4. QX 使用 `jsonjq-request-body/jsonjq-response-body` 内联真实 JQ，Surge 使用 `http-request-jq/http-response-jq` 内联真实 JQ；
+5. 目标输出不得残留 `jq-path=` 字符串，也不得把路径本身误当成 JQ；
+6. 依赖无法获取、内容为空或不能证明安全承载时必须 Review，禁止静默删除规则。
+
+`jq_file` 与 historical `jq-path=` 的目标策略固定为 **inline-only**：读取原作者依赖后，只允许写入 QX `jsonjq-request-body/jsonjq-response-body` 或 Surge `http-request-jq/http-response-jq`。禁止生成 `script-request/response-body`、`script-path=` 或任何 JQ helper；依赖无法读取、内容为空、目标引号/单行承载不安全或其它原因导致不能内联时，直接注释保留源声明并输出 Review。不得把 JQ 翻译成 JavaScript。
 
 ## 50.4 response.body.mock / mock_file
 
@@ -123,12 +132,18 @@ response.json.jq("jq-path=https://...")
 - Map Local 仍无法保持的条件/动作先尝试 HTTP helper，再注释 Review。
 
 ### Quantumult X
-- 明确空对象/空数组/图片可使用官方 reject-*；
-- 任意 response mock/mock_file 使用 WayX helper；
-- 使用 QX 官方 `script-echo-response`；
-- 若必须等待 request body 才能决定响应，使用 `script-analyze-echo-response`；
-- binary 使用官方 `bodyBytes`；
-- helper 只实现当前 Mock Action，不修改 Source Script。
+
+按目标能力分层，原生优先但不伪造本地资源：
+
+1. 明确空对象/空数组/1px 图片等与官方 reject primitive 完全一致的响应，优先 `reject-dict / reject-array / reject-img`；
+2. `echo-response` 是 QX 原生静态响应类型，可处理简单 text/html 等 Content Type，并可在 Content Type 字段后附加静态 Header；**Resource Path 只能引用 “On My iPhone - Quantumult X - Data” 中已经存在的本机文件**；
+3. WayX 的远程 snippet 无法替用户把文件安装到 QX Data，因此远程 URL、Plugin 相对 `mock_file`、转换期下载的文件以及 inline body 都不得冒充本地 `echo-response`。这类内容先在转换期物化，再生成最小 `script-echo-response` helper，把真实 body/header/status 内联进脚本；
+4. 只有目标上下文明示“该 Resource Path 已在 QX Data 本机存在”时，才允许直接输出 `echo-response <content-type/headers> echo-response <local-path>`；当前 Catalog Loon source 不提供这种 QX 本机资产声明，因此生产转换默认不会从 `mock_file` 自动选择 native echo；
+5. 若必须等待 request body 才能决定 synthetic response，使用 `script-analyze-echo-response`；
+6. binary helper 使用官方 `bodyBytes`；
+7. helper 只实现当前 Mock Action，不修改 Source Script。
+
+Validator 必须拒绝把 `http://`、`https://`、其它 URL scheme、绝对路径或 `..` 路径写进 native `echo-response` 的 Resource Path。
 
 ## 50.5 request.body.mock / mock_file
 
@@ -148,16 +163,16 @@ response.json.jq("jq-path=https://...")
 
 ## 50.6 原始依赖读取原则
 
-- `jq_file` / `mock_file` 只从源插件声明或相对源 URL 解析出的原始地址读取；legacy `jq-path=` 不进入依赖流程。
+- `jq_file` / `mock_file` / historical `jq-path=` 都只从源插件声明或相对源 URL 解析出的原始地址读取；不得因 legacy alias 使用镜像/fallback。
 - dependency 内容只在本次转换进程内由 `dependency-materializer.mjs` materialize；不写入 `.github/converter/dependencies/` 作为权威副本或 fallback。
 - `dependencySpecFromAction()` 必须保持 target-neutral：只描述原始依赖 URL、kind、phase、status、content-type、base64/binary 等 Loon 源语义；不得提前写入 `qxAction`、Surge section 或 target strategy。目标 action 只能在 `rewrite-qx.mjs` / `rewrite-surge.mjs` 中选择。
-- 原始依赖无法读取或无法安全嵌入目标语法时，进入 Review；不得使用仓库缓存替代。
+- 原始依赖无法读取或无法安全嵌入目标语法时，进入 Review 并注释保留源声明；其中 `jq_file` / `jq-path=` 不允许 Script fallback，不得使用仓库缓存替代。
 
 ## 50.7 自动转换实现
 
 - JQ normalize/minify：`.github/converter/src/jq.mjs`
-- jq_file/mock_file dependency semantics：`.github/converter/src/dependency.mjs`
-- jq_file/mock_file discovery + fetch/materialization：`.github/converter/src/dependency-materializer.mjs`
+- jq_file/jq-path/mock_file dependency semantics：`.github/converter/src/dependency.mjs`
+- jq_file/jq-path/mock_file discovery + fetch/materialization：`.github/converter/src/dependency-materializer.mjs`
 - shared conversion context：`.github/converter/src/conversion-context.mjs`
 - QX mock_file helper：`.github/converter/src/qx-mock.mjs`
 - Surge request mock helper：`.github/converter/src/surge-mock.mjs`

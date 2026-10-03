@@ -44,7 +44,17 @@ function validateQxExecutableLine(line, entry) {
     if (/^(?:302|307)\s+\S+$/.test(action)) return;
     if (/^jsonjq-(?:request|response)-body\s+'.+'$/.test(action)) return;
     if (/^(?:request|response)-body\s+.+\s+(?:request|response)-body\s+.+$/.test(action)) return;
-    if (/^request-header\s+.+\s+request-header\s+.+$/.test(action)) return;
+    if (/^(request-header|response-header)\s+.+\s+\1\s+.+$/.test(action)) return;
+
+    const echo=action.match(/^echo-response\s+(.+)\s+echo-response\s+(\S+)$/);
+    if (echo) {
+      const resourcePath=echo[2];
+      if (/^[A-Za-z][A-Za-z0-9+.-]*:/.test(resourcePath) || resourcePath.startsWith('/') ||
+          resourcePath.split('/').includes('..')) {
+        throw new Error(`${entry.id}: Quantumult X echo-response resource must be a local Data-relative path: ${line}`);
+      }
+      return;
+    }
 
     const script=action.match(/^(script-[a-z-]+)\s+(\S+)$/);
     if (script && QX_WAYX_SCRIPT_ACTIONS.has(script[1])) return;

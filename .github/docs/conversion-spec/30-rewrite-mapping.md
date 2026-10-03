@@ -146,15 +146,16 @@ Loon 将 Header 操作细分为 `add / set / del / replace`。Quantumult X 官�
 
 ### 原生直转子集
 
-Crossutility 官方 sample 只确认完整 **request Header block** 的 `request-header` rewrite，没有活动 `response-header` rewrite token。WayX 因此只在 request phase 使用该原生能力。
+Crossutility 官方 sample 明确给出完整 **request Header block** 的 `request-header` rewrite；用户 2026-10-03 提供的当前 Quantumult X Rewrite 类型选择器同时确认 `response-header` 为原生类型。WayX 将两者都登记为 QX 原生 Rewrite 能力，但仍按“能证明等价才原生”使用，不因为类型存在就把所有 Header Action 强行改写为整块 Header 正则。
 
-原生直转只保留单条、固定参数、单 URL 条件的 `request.header.add`：
+当前原生直转只保留单条、固定参数、单 URL 条件的 `*.header.add`：
 
 ```text
-request.header.add(...) -> request-header（在首个 CRLF 后插入新 Header 行）
+request.header.add(...)  -> request-header（在首个 CRLF 后插入新 Header 行）
+response.header.add(...) -> response-header（在状态行后的首个 CRLF 后插入新 Header 行）
 ```
 
-`request.header.add` 的原生转换不得先查找/覆盖同名字段；它通过整块 Header 字符串插入新行，保留已有同名 Header，因此是 add 而不是 set。Header 值含 `$` 时不走该原生路径，因为 QX replacement string 的 literal-dollar 转义没有在官方 sample 中得到证明。
+该原生转换不得先查找/覆盖同名字段；它通过整块 Header 字符串插入新行，保留已有同名 Header，因此保持 add 的重复字段语义。Header 值含 `$` 时不走该原生路径，因为 QX replacement string 的 literal-dollar 转义没有在当前证据中得到证明；request 进入既有 helper，response 仍 fail closed，避免用对象 set 冒充 add。
 
 `request.header.replace` **不再原生嵌入**到整块 Header 正则。Loon Header 名称匹配不区分大小写，且 replacement 的 `$0...$n` 属于 Action 自己的正则捕获；如果为了 QX whole-header rewrite 额外加入 CRLF 捕获组，会改变捕获编号，也可能改变 `^ / $` 等正则上下文。因此统一进入 helper。
 
@@ -169,7 +170,7 @@ response -> script-response-header
 
 Helper 选择继续遵守最小实现原则：固定值、单 URL 条件的 Header-only 操作优先生成专用 Header helper；只有出现 condition capture、运行时模板或更复杂条件时才使用通用 Complex helper。Header-only helper 不应携带无关 JSON/Body mutation runtime。
 
-`response.header.add` 例外：QX 官方 sample 的 Header object 返回形式不能证明重复同名 Header 可保留，因此不得用对象 set 冒充 add；按当前项目决策直接注释保留源声明，不生成活动 helper，也不进入持续 Review inventory。
+`response.header.add` 在参数为固定安全字符串时优先使用原生 `response-header` 整块插入，因此可以保留重复同名字段。若字段名/值含换行、replacement `$` 等无法证明安全直转的内容，则仍不得用 Header object set 冒充 add；该分支注释保留源声明并 fail closed。
 
 对 Quantumult X 不发明数组 Header、重复 raw Header 行或其他未由官方 sample/已验证语法支持的返回格式。
 
@@ -262,9 +263,9 @@ target native planner
 
 Loon regex literal 的 `i / m / s` flags 在所有 native/helper 路径中均只解析、不传播；flags 的存在本身不进入 Review。parser 去掉 literal delimiter 后，regex body 原样保留，不再全局执行 `\/ -> /` 或其他 canonicalization；目标 helper 不得通过 `new RegExp(pattern, flags)`、inline modifier 或 case-fold 恢复这些 flags。若目标软件确有语法差异，只能由对应 target planner 基于官方格式做局部适配。
 
-Surge 的 `header.add` 与普通对象 Header 修改语义不同。需要脚本保持重复字段时必须使用 `full-header-mode=true` 的 `[{field,value}]` 形式，禁止退化为对象赋值。Quantumult X 同样不得用 set/对象赋值冒充 add：request phase 可用官方 `request-header` 整块字符串插入保留重复字段；response phase 没有已验证的重复 Header 表示，因此 `response.header.add` 明确注释保留，不进入持续 Review。
+Surge 的 `header.add` 与普通对象 Header 修改语义不同。需要脚本保持重复字段时必须使用 `full-header-mode=true` 的 `[{field,value}]` 形式，禁止退化为对象赋值。Quantumult X 同样不得用 set/对象赋值冒充 add：request phase 使用 `request-header`，response phase 使用当前 App 已确认的 `response-header`，二者都只在固定安全参数下通过整块 Header 字符串插入保留重复字段；不能安全形成 replacement string 的 response add 继续注释保留。
 
-Legacy Rewrite 同样遵守 native → helper → Review：request phase 的旧版 `header-add` 在值不含未证明的 replacement `$` 语法时可复用官方 `request-header` 插入；`header-replace / header-del / header-replace-regex` 以及 response phase 的可脚本化操作使用最小 Header helper。旧版 `header-replace-regex` 的 `$n` 必须继续引用它自己的正则捕获，不能被 whole-header CRLF 捕获组改号。旧版 `response-header-add` 与新版 `response.header.add` 一样，在 QX 无重复字段等价表示时直接注释保留。
+Legacy Rewrite 同样遵守 native → helper → Review：request phase 的旧版 `header-add` 在值不含未证明的 replacement `$` 语法时复用 `request-header` 插入；固定安全的旧版 `response-header-add` 对称使用 `response-header` 插入；`header-replace / header-del / header-replace-regex` 以及其它 response phase Header 操作使用最小 Header helper。旧版 `header-replace-regex` 的 `$n` 必须继续引用它自己的正则捕获，不能被 whole-header CRLF 捕获组改号。旧版 `response-header-add` 若字段名/值不能安全形成 QX replacement string，则与新版 `response.header.add` 一样注释保留并 fail closed。
 
 旧版 `mock-request-body / mock-response-body` 先归一化到与 Rewrite v2 `request/response.body.mock` 相同的语义计划：QX 使用已验证的 request-body/echo helper，Surge response 优先 Map Local、request 使用 `http-request` helper。旧版 mock 的 `data="..."` 必须按属性边界取完整内容，不能因 JSON 内部双引号提前截断。旧版 `request/response-body-json-add|replace|del` 与 Rewrite v2 Key Path JSON Action 使用同一 native-JQ 语义；只有 legacy value 无法无损解析时才进入 Review。
 
@@ -274,7 +275,7 @@ WayX 对 Key Path JSON Action 固定采用项目选定的 Stash-compatible 语�
 
 所有 JSON batch 参数必须按相同下标配对并从左到右执行，不得排序、去重或重排。`json.replace(..., null)` 等 value 必须保持原 JSON 类型，不得把 Number/String/Boolean/null/Object/Array 相互转换。
 
-`request/response.json.jq(...)` 属于源作者直接提供的 jq 表达式，目标支持原生 jq 时必须原样迁移表达式结构，不得为了统一代码改写成 `getpath/setpath/delpaths` 或 JavaScript。`jq_file` 仅允许为单行目标配置删除非字符串注释并压缩无语义空白，禁止对表达式做 AST/代数重写。
+`request/response.json.jq(...)` 属于源作者直接提供的 jq 表达式，目标支持原生 jq 时必须原样迁移表达式结构，不得为了统一代码改写成 `getpath/setpath/delpaths` 或 JavaScript。`jq_file` 与 historical `jq-path=` 只允许为单行目标配置读取原作者依赖、删除非字符串注释并压缩无语义空白后内联，禁止对表达式做 AST/代数重写。它们是 general Script fallback 的明确例外：不能原生内联时直接注释 Review，禁止生成 JQ Script/helper。
 
 ## 30.6 自动转换实现
 
