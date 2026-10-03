@@ -129,9 +129,7 @@ function topLevelObjectKey(node, actionName) {
   const value=stringNode(node);
   if (value===null) throw new Error(actionName + ': key path must be a fixed string');
   const parts=parseKeyPath(value);
-  if (parts.length!==1 || typeof parts[0]!=='string') {
-    return null;
-  }
+  if (parts.length!==1 || typeof parts[0]!=='string') return null;
   return parts[0];
 }
 
@@ -163,9 +161,6 @@ function topLevelObjectJsonOps(action) {
     const selector='.[' + JSON.stringify(key) + ']';
 
     if (name.endsWith('.delete')) {
-      // Guard the root type so this operation is total for every valid JSON
-      // value. This preserves Loon's "failing action is skipped" behavior for
-      // non-object bodies without relying on jq try/catch support.
       ops.push('if type == "object" then del(' + selector + ') else . end');
       continue;
     }
