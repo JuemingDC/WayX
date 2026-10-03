@@ -76,7 +76,10 @@ function qxTaskOptions(ast, argumentTable, notes) {
   const tag = fixedOption(ast, 'tag');
   const img = fixedOption(ast, 'img_url');
   if (tag !== null && String(tag)) parts.push('tag=' + String(tag));
-  if (img !== null && String(img)) parts.push('img-url=' + String(img));
+  if (img !== null && String(img)) {
+    if (/^https?:\/\//i.test(String(img))) parts.push('img-url=' + String(img));
+    else notes.push('Source img_url=' + String(img) + ' omitted because Quantumult X task img-url is documented as an image URL, not an SF Symbol name.');
+  }
   parts.push('enabled=' + (qxTaskEnabled(ast, argumentTable, notes) ? 'true' : 'false'));
   return parts;
 }
