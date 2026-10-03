@@ -842,7 +842,7 @@ const complexConditionFlags = renderMixedRewriteScript(
   parseRewriteV2('response if (\${url} ~= /API/i || \${response.status} == 204) && \${response.header["Content-Type"]} == "application/json" then response.header.del("Server") | response.body.replace(/ADS/ms, "ok")'),
   {target:'qx'},
 );
-assert.match(complexConditionFlags.script, /new RegExp\\("API","i"\\)/);
+assert.match(complexConditionFlags.script, /new RegExp\("API","i"\)/);
 assert.equal(complexConditionFlags.script.includes('"i")'), true);
 // Action-local body.replace flags are a separate migration surface; this
 // Phase C gate only changes condition matching/prefilter semantics.
