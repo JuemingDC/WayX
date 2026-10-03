@@ -19,6 +19,7 @@ export function planQxScript(ir,ctx={}) {
       scriptUrl,
       sourceText:ctx.sourceText || '',
       argumentIds:ctx.argumentIds ?? null,
+      argumentTable:ctx.argumentTable || null,
     });
   }
 
