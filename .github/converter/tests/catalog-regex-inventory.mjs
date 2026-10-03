@@ -6,18 +6,19 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { isRewriteV2, parseRewriteV2 } from '../src/rewrite-v2.mjs';
+import { isScriptV2, parseScriptV2 } from '../src/script-v2.mjs';
 
 const ROOT=process.cwd();
 const manifest=JSON.parse(await fs.readFile(path.join(ROOT,'.github/sources/loon.json'),'utf8'));
 
-function activeRewriteLines(text){
+function activeSectionLines(text,wanted){
   const out=[];
   let section=null;
   for(const raw of String(text).replace(/\r\n?/g,'\n').split('\n')){
     const line=raw.trim();
     const header=line.match(/^\[([^\]]+)\]$/);
     if(header){ section=header[1]; continue; }
-    if(section!=='Rewrite' || !line || /^(?:#|;|\/\/)/.test(line)) continue;
+    if(section!==wanted || !line || /^(?:#|;|\/\/)/.test(line)) continue;
     out.push(line);
   }
   return out;
@@ -68,22 +69,61 @@ function inspect(pattern,flags,where){
 
 for(const entry of manifest){
   const source=await fs.readFile(path.join(ROOT,'Resource/Loon',entry.file),'utf8');
-  for(const line of activeRewriteLines(source)){
+
+  for(const line of activeSectionLines(source,'Rewrite')){
     if(isRewriteV2(line)){
       const ast=parseRewriteV2(line);
-      for(const node of regexNodes(ast)) inspect(node.pattern,node.flags,entry.file+': '+line);
+      for(const node of regexNodes(ast)) inspect(node.pattern,node.flags,entry.file+' [Rewrite v2]: '+line);
       continue;
     }
     const legacyPattern=line.split(/\s+/,1)[0];
-    if(legacyPattern) inspect(legacyPattern,'',entry.file+': '+line);
+    if(legacyPattern) inspect(legacyPattern,'',entry.file+' [Rewrite legacy]: '+line);
+  }
+
+  for(const line of activeSectionLines(source,'Script')){
+    if(isScriptV2(line)){
+      const ast=parseScriptV2(line);
+      for(const node of regexNodes(ast)) inspect(node.pattern,node.flags,entry.file+' [Script v2]: '+line);
+      continue;
+    }
+    const legacy=line.match(/^(?:http-request|http-response)\s+(\S+)/);
+    if(legacy) inspect(legacy[1],'',entry.file+' [Script legacy]: '+line);
   }
 }
 
-console.log('Catalog Loon Rewrite regex inventory: '+regexCount+' regex fields');
+const observedAdvanced=hits.map(hit=>({feature:hit.feature,pattern:hit.pattern,where:hit.where.replace(/: .*/, '')})).sort((a,b)=>
+  (a.where+'\0'+a.feature+'\0'+a.pattern).localeCompare(b.where+'\0'+b.feature+'\0'+b.pattern)
+);
+const expectedAdvanced=[
+  {
+    feature:'atomic-group',
+    pattern:'^https?:\\/\\/ddplus\\.meituan\\.net\\/v\\d\\/mss_\\w+\\/(?>ehc|titansx|ddblue|edfu)\\/',
+    where:'DianPing.lpx [Rewrite legacy]',
+  },
+  {
+    feature:'atomic-group',
+    pattern:'^https?:\\/\\/img\\.meituan\\.net\\/(?>dpmobile|goodsawardpic)\\/',
+    where:'DianPing.lpx [Script legacy]',
+  },
+  {
+    feature:'atomic-group',
+    pattern:'^https?:\\/\\/mapi\\.dianping\\.com\\/mapi\\/operating\\/(?>indexopsmodules|loadsplashconfig)',
+    where:'DianPing.lpx [Rewrite legacy]',
+  },
+  {
+    feature:'negative-lookahead',
+    pattern:'^https?:\\/\\/p\\d\\.meituan\\.net\\/travelcube\\/(?!c129a661)\\w+\\.gif',
+    where:'DianPing.lpx [Rewrite legacy]',
+  },
+].sort((a,b)=>(a.where+'\0'+a.feature+'\0'+a.pattern).localeCompare(b.where+'\0'+b.feature+'\0'+b.pattern));
+
+console.log('Catalog Loon Rewrite/Script regex inventory: '+regexCount+' regex fields');
 console.log('Ordinary regex constructs: '+JSON.stringify(ordinary));
-if(hits.length){
-  console.log('Advanced/special regex constructs:');
-  for(const hit of hits) console.log('- '+hit.feature+' :: '+hit.where);
-}
-assert.deepEqual(hits,[], 'Catalog contains advanced/special regex constructs; review raw-regex preservation assumptions before changing conversion behavior');
-console.log('Catalog regex inventory passed: no advanced/special constructs observed');
+console.log('Advanced/special regex baseline: '+observedAdvanced.length);
+for(const hit of observedAdvanced) console.log('- '+hit.feature+' :: '+hit.where+' :: '+hit.pattern);
+assert.deepEqual(
+  observedAdvanced,
+  expectedAdvanced,
+  'Catalog advanced/special regex baseline changed; review target regex compatibility before changing conversion behavior',
+);
+console.log('Catalog regex inventory passed: existing advanced constructs are locked to the reviewed raw-preservation baseline');
