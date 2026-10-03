@@ -13,7 +13,7 @@ import {
   inspectSourceScript,
   materializeSourceScripts,
 } from '../src/source-script-materializer.mjs';
-import { materializeConversionContext } from '../src/conversion-runner.mjs';
+import { materializeConversionContext } from '../src/index.mjs';
 import { convertPlugin } from '../src/conversion-pipeline.mjs';
 
 const entry={

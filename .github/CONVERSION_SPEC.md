@@ -776,6 +776,14 @@ Workflow 只调用稳定入口，不应枚举 converter 内部所有实现文件
 - QX/Surge 官方 capability drift gates、generated helper runtime/ref、原作者 Script URL preservation、repository audit、managed cleanliness 均通过。
 - 政策 CLI 全量验证 574 个目标通过；daily schedule 保持暂停。
 
+GitHub 落地检查点（2026-10-03）：
+
+- 迁移检查点通过 `work/upstream-domain-migration` 推送，并经 PR #135 合入 main；最终 Converter Check #995 全部通过。
+- 141 个非 main 分支的提交全部保存在标签 `archive/branches-2026-10-03-37132780544-1`；归档树内 `.github/branch-archive.json` 记录分支名与原提交 SHA，所有原提交均为标签的可达祖先。
+- 一次性清理任务成功删除这 141 个分支，仅保留 main；临时清理 workflow 在本次收尾中移除，不新增后续分支或定时任务。
+- 补回并测试架构整理遗漏的公开 `materializeConversionContext` 导出；198 个迁移前公开导出全部保留。
+- WayX 工作审查自动活动保持关闭；Upstream Monitor 的 schedule 继续暂停，仅保留 workflow_dispatch。
+
 续接顺序：先复查上述两个上游 404，再执行 §19 Phase D/E；完整语义证明通过后才执行 Phase F。当前领域整合检查点不会自动恢复定时任务。
 
 ## 22. 当前迁移期兼容声明

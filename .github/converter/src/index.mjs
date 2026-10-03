@@ -33,3 +33,4 @@ export * from './qx-comment.mjs';
 export * from './complex-rewrite.mjs';
 export * from './complex-rewrite-registry.mjs';
 export * from './complex-rewrite-script.mjs';
+export { materializeConversionContext } from './conversion-runner.mjs';
