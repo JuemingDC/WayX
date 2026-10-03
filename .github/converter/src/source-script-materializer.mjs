@@ -3,7 +3,7 @@
 // Category: Converter / Script / Materialization
 
 import { isScriptV2, parseScriptV2 } from './script-v2.mjs';
-import { groupSourceSectionItems } from './source-section.mjs';
+import { groupSourceSectionItems } from './plugin-parser.mjs';
 import { normalizePluginSource, parseLoonPlugin } from './plugin-parser.mjs';
 import { fetchOriginalText, resolveOriginalUrl } from './source-fetch.mjs';
 
