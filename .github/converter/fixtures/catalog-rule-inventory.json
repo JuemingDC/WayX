@@ -7,6 +7,7 @@
     "DOMAIN",
     "DOMAIN-KEYWORD",
     "DOMAIN-SUFFIX",
+    "IP-ASN",
     "IP-CIDR",
     "IP-CIDR6",
     "OR",
@@ -18,6 +19,9 @@
     "DIRECT",
     "PROXY",
     "REJECT",
+    "REJECT-DICT",
+    "REJECT-DROP",
+    "REJECT-IMG",
     "REJECT-NO-DROP"
   ],
   "parameterNames": [
