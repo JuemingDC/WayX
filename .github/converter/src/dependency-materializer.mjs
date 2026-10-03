@@ -11,7 +11,6 @@ import {
   legacyJqPathDependencySpecFromIr,
 } from './dependency.mjs';
 import { legacyRewriteToSemanticIr } from './rewrite-ir.mjs';
-import { simpleUrlRewriteCondition } from './rewrite-v2-semantic.mjs';
 import { groupSourceSectionItems } from './source-section.mjs';
 import { fetchOriginalText, fetchOriginalBytes } from './source-fetch.mjs';
 
@@ -27,9 +26,6 @@ export async function materializeMockFiles(entry,parsed,{
       validateRewriteV2Ast(ast);
       const mockFileActions=ast.actions.filter(action=>/^(?:request|response)\.body\.mock_file$/.test(action.name));
       if (mockFileActions.length!==1) continue;
-
-      const condition=simpleUrlRewriteCondition(ast);
-      if (!condition.ok) continue;
 
       const plan=dependencySpecFromAction(mockFileActions[0],{pluginSourceUrl:entry.source});
       if (plan.base64) {

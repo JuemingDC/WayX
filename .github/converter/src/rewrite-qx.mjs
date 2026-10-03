@@ -46,7 +46,8 @@ function ensureQxRewriteHandlers() {
     id:'qx-inline-mock-header-pipeline',
     targets:['qx'],
     match:ast=>{
-      const mockName=ast.phase+'.body.mock';
+      if (ast.phase!=='response') return false;
+      const mockName='response.body.mock';
       const headerNames=new Set([
         ast.phase+'.header.add',
         ast.phase+'.header.set',
@@ -82,6 +83,48 @@ function ensureQxRewriteHandlers() {
     },
   });
   
+  registerComplexRewriteHandler({
+    id:'qx-request-mock-mutation-script',
+    targets:['qx'],
+    match:ast=>{
+      if (ast.phase!=='request') return false;
+      const mocks=ast.actions.filter(action=>
+        action.name==='request.body.mock' || action.name==='request.body.mock_file'
+      );
+      if (mocks.length!==1) return false;
+      return ast.actions.every(action=>
+        action===mocks[0] ||
+        /^request\.header\.(?:set|del|replace)$/.test(action.name) ||
+        action.name==='request.body.replace' ||
+        /^request\.json\.(?:add|delete|replace)$/.test(action.name)
+      );
+    },
+    plan:(ast,_target,ctx)=>{
+      try {
+        const fileMock=ast.actions.find(action=>action.name==='request.body.mock_file');
+        const materialized=fileMock ? ctx.mockFiles?.get(ctx.sourceLine) : null;
+        const plan=renderMixedRewriteScript(ast,{
+          target:'qx',
+          stamp:ctx.stamp,
+          category:ctx.category,
+          sourceLine:ctx.sourceLine,
+          mockMaterialized:materialized,
+        });
+        const key=crypto.createHash('sha1').update('request-mixed\0'+ctx.sourceLine).digest('hex').slice(0,10);
+        const filename='request_mixed_'+key+'.js';
+        ctx.generatedScripts.set(filename,plan.script);
+        const matcher=qxRewriteMatcherPlan(ast);
+        return {
+          ok:true,
+          section:'rewrite',
+          line:matcher.prefix+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename,
+        };
+      } catch(error) {
+        return {ok:false,terminal:true,reason:String(error?.message||error)};
+      }
+    },
+  });
+
   registerComplexRewriteHandler({
     id:'qx-same-phase-header-script',
     targets:['qx'],
@@ -213,7 +256,7 @@ export function planQxRewrite(ir, ctx={}) {
   const fileMockPipeline=fileMocks.length===1 && ast.actions.every(action=>
     action===fileMocks[0] || new RegExp('^'+ast.phase+'\\.header\\.(?:add|set|del|replace)$').test(action.name)
   );
-  if (fileMockPipeline) {
+  if (fileMockPipeline && (ast.phase==='response' || ast.actions.length===1)) {
     try {
       const matcher=qxExactRewriteMatcherPlan(ast);
       if (!matcher.ok) throw new Error(matcher.reason);

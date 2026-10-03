@@ -6,6 +6,7 @@ import { findRewriteComparisons } from './rewrite-v2.mjs';
 import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
 import { compileComplexCondition } from './complex-rewrite.mjs';
 import { normalizeRegexBodyForTarget } from './target-regex.mjs';
+import { qxMimeTypeForLoonMock, qxMockTypeIsBinary } from './qx-mock.mjs';
 
 function fixed(node, label) {
   if (!node || !['string','raw-string'].includes(node.type) || (node.type === 'string' && String(node.value).includes('${'))) {
@@ -106,7 +107,7 @@ function jsonPath(text) {
   }
   return parts;
 }
-function statements(ast, target, {argumentTable = null} = {}) {
+function statements(ast, target, {argumentTable = null, mockMaterialized = null} = {}) {
   const out = [];
   const captures = captureInfo(ast.condition);
   const guaranteed = guaranteedCaptures(ast.condition);
@@ -129,6 +130,36 @@ function statements(ast, target, {argumentTable = null} = {}) {
           out.push('__wayxWith(' + capturedString(args[2], 'header replacement', captures, guaranteed, argumentTable) + ',v=>__wayxHeaderReplace(' + JSON.stringify(name) + ',' + JSON.stringify(normalizeRegexBodyForTarget(args[1].pattern)) + ',v));');
         }
       }
+      continue;
+    }
+    if (action.name === 'request.body.mock' || action.name === 'request.body.mock_file') {
+      if (target !== 'qx' || ast.phase !== 'request') {
+        throw new Error('request mock mixed pipeline is currently implemented only for Quantumult X request phase');
+      }
+      const type=fixed(action.args[0], 'request mock content type').toLowerCase();
+      const base64Node=action.args[2];
+      if (base64Node && base64Node.type!=='boolean') throw new Error('request mock Base64 flag must be Boolean');
+      const base64=base64Node?.value === true;
+      if (base64 || qxMockTypeIsBinary(type)) {
+        throw new Error('Quantumult X request mock binary/bodyBytes output is not enabled without an official request-body example');
+      }
+
+      let bodyValue;
+      if (action.name.endsWith('.mock_file')) {
+        if (!mockMaterialized) throw new Error('request mock_file was not materialized during conversion');
+        if (mockMaterialized.error) throw new Error(mockMaterialized.error);
+        if (typeof mockMaterialized.bodyText !== 'string') {
+          throw new Error('Quantumult X request mock_file binary content is not enabled without an official request-body example');
+        }
+        bodyValue=JSON.stringify(mockMaterialized.bodyText);
+      } else {
+        bodyValue=capturedString(action.args[1], 'request mock body', captures, guaranteed, argumentTable);
+      }
+
+      body = true;
+      headers = true;
+      const mime=qxMimeTypeForLoonMock(type);
+      out.push('__wayxWith('+bodyValue+',v=>{__wayxBody=v;__wayxSet("Content-Type",'+JSON.stringify(mime)+');});');
       continue;
     }
     if (action.name === ast.phase + '.json.add' || action.name === ast.phase + '.json.delete' || action.name === ast.phase + '.json.replace') {
@@ -162,10 +193,10 @@ function statements(ast, target, {argumentTable = null} = {}) {
   return {out, body, headers, json, headerAdd};
 
 }
-function renderRewriteScript(ast, {target, stamp='', category='', sourceLine='', argumentTable=null}={}) {
+function renderRewriteScript(ast, {target, stamp='', category='', sourceLine='', argumentTable=null, mockMaterialized=null}={}) {
   validateRewriteV2Ast(ast);
   if (!['qx','surge'].includes(target)) throw new Error('invalid rewrite helper target');
-  const plan = statements(ast, target, {argumentTable});
+  const plan = statements(ast, target, {argumentTable,mockMaterialized});
   const condition = compileComplexCondition(ast.condition, target, {argumentTable});
   const source = ast.phase === 'request' ? '$request' : '$response';
   const doneValue = plan.headers && plan.body ? '{headers:__wayxHeaders,body:__wayxBody}' : plan.headers ? '{headers:__wayxHeaders}' : '{body:__wayxBody}';

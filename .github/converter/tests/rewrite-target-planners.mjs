@@ -247,6 +247,103 @@ const surgeThree=planSurgeRewrite(v2(threeActionSource),surgeThreeCtx);
 assert.equal(surgeThree.section,'script');
 assert.equal(surgeThreeCtx.generatedScripts.size,1);
 
+const mixedScriptMatrix=[
+  {
+    source:'request if ${url} ~= /hb/ then request.header.set("X-Test","1") | request.body.replace(/a/,"b")',
+    action:'script-request-body',
+  },
+  {
+    source:'request if ${url} ~= /hj/ then request.header.del("Cookie") | request.json.replace("data.ok",true)',
+    action:'script-request-body',
+  },
+  {
+    source:'request if ${url} ~= /bj/ then request.body.replace(/false/,"true") | request.json.add("data.flag",1)',
+    action:'script-request-body',
+  },
+  {
+    source:'request if ${url} ~= /hjb/ then request.header.replace("User-Agent",/Old/,"New") | request.json.delete("data.ad") | request.body.replace(/x/,"y")',
+    action:'script-request-body',
+  },
+  {
+    source:'response if ${url} ~= /hb/ then response.header.set("X-Test","1") | response.body.replace(/a/,"b")',
+    action:'script-response-body',
+  },
+  {
+    source:'response if ${url} ~= /hj/ then response.header.del("Server") | response.json.replace("data.ok",true)',
+    action:'script-response-body',
+  },
+  {
+    source:'response if ${url} ~= /bj/ then response.body.replace(/false/,"true") | response.json.add("data.flag",1)',
+    action:'script-response-body',
+  },
+];
+for(const item of mixedScriptMatrix){
+  const c=ctx();
+  const planned=planQxRewrite(v2(item.source),c);
+  assert.equal(planned.section,'rewrite');
+  assert.match(planned.line,new RegExp(' '+item.action+' https://raw\\.githubusercontent\\.com/JuemingDC/WayX/main/Script/Fixture/complex_qx_[0-9a-f]{10}\\.js$'));
+  assert.equal(c.generatedScripts.size,1);
+}
+
+const nativeUnavailableMatrix=[
+  'request if ${url} ~= /url/ then url.replace("https://example.com") | request.header.set("X-Test","1")',
+  'request if ${url} ~= /redirect/ then redirect(302,"https://example.com") | request.header.set("X-Test","1")',
+  'request if ${url} ~= /reject/ then reject_dict(200) | request.header.set("X-Test","1")',
+  'response if ${url} ~= /jq/ then response.json.jq(".data") | response.body.replace(/x/,"y")',
+];
+for(const source of nativeUnavailableMatrix){
+  const c=ctx();
+  const planned=planQxRewrite(v2(source),c);
+  assert.equal(planned.section,'comment');
+  assert.match(planned.line,/REVIEW REQUIRED/);
+  assert.equal(c.generatedScripts.size,0);
+}
+
+const requestMockMixedSource='request if ${url} ~= /api/ then request.header.set("X-A","1") | request.body.mock("json", `{"ok":false}`) | request.body.replace(/false/,"true") | request.json.add("flag",1) | request.header.del("Cookie")';
+const requestMockMixedCtx=ctx();
+const requestMockMixed=planQxRewrite(v2(requestMockMixedSource),requestMockMixedCtx);
+assert.equal(requestMockMixed.section,'rewrite');
+assert.match(requestMockMixed.line,/^api url script-request-body https:\/\/raw\.githubusercontent\.com\/JuemingDC\/WayX\/main\/Script\/Fixture\/request_mixed_[0-9a-f]{10}\.js$/);
+assert.equal(requestMockMixedCtx.generatedScripts.size,1);
+const requestMockMixedScript=[...requestMockMixedCtx.generatedScripts.values()][0];
+const requestMockBody=requestMockMixedScript.slice(requestMockMixedScript.indexOf('if('));
+assert.ok(requestMockBody.indexOf('__wayxSet("X-A","1")') < requestMockBody.indexOf('__wayxSet("Content-Type","application/json")'));
+assert.ok(requestMockBody.indexOf('__wayxSet("Content-Type","application/json")') < requestMockBody.indexOf('__wayxBody=String'));
+assert.ok(requestMockBody.indexOf('__wayxBody=String') < requestMockBody.indexOf('__wayxJsonAction(j=>__wayxJsonAdd'));
+assert.ok(requestMockBody.indexOf('__wayxJsonAction(j=>__wayxJsonAdd') < requestMockBody.indexOf('__wayxDel("Cookie")'));
+
+const requestMockHeaderConditionSource='request if ${request.header[\'X-Region\']} == "CN" then request.body.mock("text","hello") | request.header.set("X-Test","ok")';
+const requestMockHeaderConditionCtx=ctx();
+const requestMockHeaderCondition=planQxRewrite(v2(requestMockHeaderConditionSource),requestMockHeaderConditionCtx);
+assert.equal(requestMockHeaderCondition.section,'rewrite');
+assert.match(requestMockHeaderCondition.line,/url-and-header script-request-body /);
+assert.match([...requestMockHeaderConditionCtx.generatedScripts.values()][0],/__wayxHeader\("request","X-Region"\)/);
+
+const requestMockFileMixedSource='request if ${request.header[\'X-Region\']} == "CN" then request.header.set("X-Before","1") | request.body.mock_file("json","request.json") | request.json.replace("ok",true) | request.header.del("Cookie")';
+const requestMockFileMixedCtx=ctx({
+  mockFiles:new Map([[requestMockFileMixedSource,{
+    bodyText:'{"ok":false}',
+    sourceFile:'https://example.com/request.json',
+  }]]),
+});
+const requestMockFileMixed=planQxRewrite(v2(requestMockFileMixedSource),requestMockFileMixedCtx);
+assert.equal(requestMockFileMixed.section,'rewrite');
+assert.match(requestMockFileMixed.line,/url-and-header script-request-body /);
+assert.equal(requestMockFileMixedCtx.generatedScripts.size,1);
+const requestMockFileMixedScript=[...requestMockFileMixedCtx.generatedScripts.values()][0];
+assert.ok(requestMockFileMixedScript.includes('__wayxWith("{\\\"ok\\\":false}"'));
+assert.ok(requestMockFileMixedScript.indexOf('__wayxSet("X-Before","1")') < requestMockFileMixedScript.indexOf('__wayxSet("Content-Type","application/json")'));
+assert.ok(requestMockFileMixedScript.indexOf('__wayxSet("Content-Type","application/json")') < requestMockFileMixedScript.indexOf('__wayxJsonAction(j=>__wayxJsonReplace'));
+assert.ok(requestMockFileMixedScript.indexOf('__wayxJsonAction(j=>__wayxJsonReplace') < requestMockFileMixedScript.indexOf('__wayxDel("Cookie")'));
+
+const requestBinaryMockMixedSource='request if ${url} ~= /upload/ then request.body.mock("png","AA==",true) | request.header.set("X-Test","1")';
+const requestBinaryMockMixedCtx=ctx();
+const requestBinaryMockMixed=planQxRewrite(v2(requestBinaryMockMixedSource),requestBinaryMockMixedCtx);
+assert.equal(requestBinaryMockMixed.section,'comment');
+assert.match(requestBinaryMockMixed.line,/REVIEW REQUIRED/);
+assert.match(requestBinaryMockMixed.line,/request mock binary\/bodyBytes output is not enabled/);
+assert.equal(requestBinaryMockMixedCtx.generatedScripts.size,0);
+
 const unsupportedKnownComplexSource='response if ${url} ~= /api/ then response.json.jq(".") | response.header.set("X-Test","ok")';
 const qxUnsupportedKnown=planQxRewrite(v2(unsupportedKnownComplexSource),ctx());
 assert.equal(qxUnsupportedKnown.section,'comment');

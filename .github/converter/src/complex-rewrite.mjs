@@ -9,7 +9,10 @@ const families = Object.freeze([
   { id:'header-pipeline', test:a => /^(request|response)\.header\.(add|set|del|replace)$/.test(a.name) },
   { id:'body-pipeline', test:a => /^(request|response)\.body\.replace$/.test(a.name) },
   { id:'json-pipeline', test:a => /^(request|response)\.json\.(add|delete|replace)$/.test(a.name) },
-  { id:'mock-pipeline', test:a => /^(request|response)\.body\.mock$/.test(a.name) },
+  { id:'jq-pipeline', test:a => /^(request|response)\.json\.(?:jq|jq_file)$/.test(a.name) },
+  { id:'mock-pipeline', test:a => /^(request|response)\.body\.(?:mock|mock_file)$/.test(a.name) },
+  { id:'url-control-pipeline', test:a => a.name==='url.replace' },
+  { id:'synthetic-response-pipeline', test:a => /^(?:redirect|reject|reject_img|reject_dict|reject_array|reject_video)$/.test(a.name) },
 ]);
 
 export function classifyComplexRewrite(ast) {
