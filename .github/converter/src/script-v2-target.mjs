@@ -31,38 +31,26 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
   if (!ast || ast.type !== 'script') return unsupported('expected Script v2 AST');
 
   // QX official Rewrite Script declarations do not expose Loon's enable,
-  // timeout, debug or binary_body_mode fields. Keep requires_body separate:
-  // it selects the QX header/body action family, while binary_body_mode never
-  // implies body buffering.
+  // timeout, debug or binary_body_mode fields. Target planning therefore
+  // omits those fields instead of emitting invented QX syntax. Keep
+  // requires_body separate: it alone selects the QX header/body action family.
   const enable = scriptOption(ast, 'enable');
   if (enable?.type === 'boolean' && enable.value === false) {
     return {ok:true, disabled:true, reason:'Loon Script v2 enable=false'};
   }
-  if (enable?.type === 'variable') {
-    return unsupported('Quantumult X official Rewrite Script syntax has no dynamic enable field');
-  }
 
   const timeout = scriptOption(ast, 'timeout');
-  if (timeout) {
-    return unsupported('Quantumult X official Rewrite Script syntax has no timeout field');
-  }
-
   const debug = scriptOption(ast, 'debug');
-  if (debug?.type === 'variable' || (debug?.type === 'boolean' && debug.value === true)) {
-    return unsupported('Quantumult X official Rewrite Script syntax has no debug field');
-  }
-
   const binaryBodyMode = scriptOptionBoolean(ast, 'binary_body_mode', false);
-  if (binaryBodyMode) {
-    return unsupported('Quantumult X official Rewrite Script syntax has no binary_body_mode field');
-  }
 
   if (argumentIds !== null) {
     const usage = scriptV2PluginArgumentUsage(ast, argumentIds);
-    // QX only ignores the Script argument payload itself. Execution options
-    // such as enable/timeout/debug are handled above by QX target capability,
-    // never discarded generically before target planning.
-    const undeclared = usage.undeclaredOptionRefs.map(ref => ref.id);
+    // QX target planner explicitly owns unsupported declaration options. Their
+    // dynamic argument references are not target requirements because the QX
+    // declaration cannot carry those fields.
+    const undeclared = usage.undeclaredOptionRefs
+      .filter(ref => !['enable','timeout','debug'].includes(ref.option))
+      .map(ref => ref.id);
     if (undeclared.length) {
       return unsupported('undeclared plugin [Argument] reference(s): ' + [...new Set(undeclared)].sort().join(', '));
     }
@@ -77,6 +65,18 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
 
   if (ast.script.argument) {
     notes.push('Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.');
+  }
+  if (enable?.type === 'variable') {
+    notes.push('Source dynamic enable=' + enable.name + ' is not a Quantumult X Rewrite Script field; converted rule defaults to enabled.');
+  }
+  if (timeout) {
+    notes.push('Source Script timeout is not a Quantumult X Rewrite Script field and was omitted.');
+  }
+  if (debug?.type === 'variable' || (debug?.type === 'boolean' && debug.value === true)) {
+    notes.push('Source Script debug is not a Quantumult X Rewrite Script field and was omitted.');
+  }
+  if (binaryBodyMode) {
+    notes.push('Source binary_body_mode=true is not a Quantumult X Rewrite Script field and was omitted; requires_body remains independent.');
   }
 
   const action = selectQxScriptAction({
@@ -97,7 +97,7 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
     action:action.action,
     line:condition.pattern + ' url ' + action.action + ' ' + scriptUrl,
     tag:fixedOption(ast, 'tag'),
-    binaryBodyMode:false,
+    binaryBodyMode,
     notes,
   };
 }
