@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.56  
+版本：1.57  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -9,6 +9,60 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 本规范采用“分块规范”结构。转换器、测试、canonical 输出、Golden 都必须服从本规范，不能反过来用现有代码定义规范。
 
 ## 2026-10-03 规范更新
+
+**语义编译器重构基线（v1.57，2026-10-03）**：
+
+1. WayX 的目标从“Loon 语法映射器”升级为“**Loon 行为语义编译器**”。任何转换必须先解析源声明，再形成目标无关 Semantic IR；QX/Surge planner 只消费 IR，不允许直接从源字符串猜目标语法。
+2. Semantic IR 必须保留所有会影响行为的源信息：phase、condition AST、Regex source、Regex flags、capture 归属、变量引用、action 顺序、null/空值差异、Script option、Argument 依赖以及 source declaration 顺序。任何字段在 target lowering 前不得静默丢弃。
+3. Regex flags `i/m/s` 不再允许“解析后无条件删除”。若目标 native matcher 没有已验证的等价 flag 表达，planner 必须选择可证明无漏匹配的 prefilter + runtime helper/dispatcher，在 JavaScript 中用源 `new RegExp(source, flags)` 重算；无法证明等价则 fail closed。历史“flags 只审计、不传播”的规则从 v1.57 起作废。
+4. Target lowering 固定为四级：`native-equivalent` → `guarded-helper` → `phase-dispatcher` → `unsupported`。只有存在等价证明时才进入前三级；`unsupported` 必须保留源声明并明确说明缺失能力，禁止输出功能缩水但看似有效的规则。
+5. Helper prefilter 只允许 **false positive，不允许 false negative**。prefilter 仅用于减少脚本触发量，最终 condition 必须在 helper/dispatcher 内按源 IR 重新求值。存在 `/i/m/s`、OR、response-side condition、capture 等无法原生完整表达的条件时，不得用更窄的目标 matcher 代替源条件。
+6. 同一 request/response phase 内，一旦源顺序或多规则组合会受目标“只执行第一个 Script”等限制影响，必须合并进入一个 phase dispatcher，按 Loon 原顺序解释执行；不得把多条需要顺序语义的 Loon 声明拆成彼此竞争的 target Script。
+7. 新架构必须建立 reference evaluator/oracle：给定相同 request/response/Argument 输入，比较 Loon IR reference result 与 QX/Surge lowering result；Regex flags、capture、Header case-insensitive、JSON path、mock/reject/redirect、action 顺序都必须有 differential regression。
+8. 在新 evaluator/planner 通过 synthetic regression + real-plugin regression + canonical diff gate 之前，现有 converter 作为 compatibility implementation 保留；禁止一次性推翻后直接替换 main。迁移按“规范 → IR → equivalence proof → target adapter → runtime → oracle → canonical”逐层进行。
+9. 新增语义不得通过插件名、作者名、仓库名或当前 Catalog 完整 signature 特判。Catalog inventory 只负责发现新语义 token；能力判断只能来自 parser/IR/planner/runtime 的通用规则。
+10. Source Script 仍保持原作者 URL，不因新 runtime 架构自动 wrapper/fork。WayX-generated helper 只用于实现 Loon Rewrite/condition 语义差异，并必须最小化、可重建、可审计。
+11. Quantumult X 官方能力证据优先使用作者 `crossutility/Quantumult-X` 当前仓库：`sample.conf`、`rewrite.md`、`sample-rewrite-request-header.js`、`sample-rewrite-response-header.js`、`sample-rewrite-with-script.js`、`sample-echo-response.js` 及同仓库其它明确样例。用户上传的官方 `sample.txt` 与该仓库样例共同构成 QX target contract；未在这些官方材料证明的字段/行为不得臆造。
+12. 当前 QX 官方样例已证明：Rewrite Script 可读取 `$request.url/method/path/headers` 与对应 response 字段；`script-request-header`、`script-response-header` 支持 `$done({})` no-op；request-header Script 可返回 `path/headers`；response-header Script 可返回 `status/headers`；response-body Script 可返回 body，并可同时返回 headers/status；`script-echo-response` 可构造完整 response。QX `url-and-header` 只作为 URL + request headers/method matcher，不等价于任意 Loon condition。
+13. Surge target contract 只使用 `https://manual.nssurge.com/` / `https://nssurge.com/` 官方文档。Surge http-request/http-response Script 的 `$done({})` no-op、request `url/headers/body/response/abort`、response `status/headers/body/abort` 以及“每个 request/response 最多执行一个匹配 Script”必须纳入 dispatcher 设计。
+14. **唯一规范源**固定为本文件 `.github/CONVERSION_SPEC.md`。不再维护第二套分块规范、PROJECT_STATUS 或 converter 内复制版规范；README 只能做非规范入口说明。实现路径变化时，不再要求同步多份文档映射表。
+15. 仓库重构优先消除“路径硬编码测试”和“重复职责模块”，再移动核心 planner。CI 只应校验行为契约、官方能力与产物，不应通过一份巨大“某 Block 必须对应哪些具体文件名”的清单锁死内部文件布局。
+
+**新架构目标边界（迁移态，不要求本次一次完成）**：
+
+```text
+Loon source
+  → source parser
+  → Semantic IR
+  → reference evaluator
+  → equivalence planner
+      ├─ native-equivalent
+      ├─ guarded-helper
+      ├─ phase-dispatcher
+      └─ unsupported
+  → target adapter
+      ├─ Quantumult X
+      └─ Surge
+  → target validator
+  → oracle / canonical / audit
+```
+
+代码职责最终收敛为四域，避免继续在 `src/` 根目录增加同级碎片模块：
+
+```text
+.github/converter/
+  src/
+    core/       # source parser + Semantic IR + evaluator + equivalence proof
+    targets/    # qx / surge native lowering + official capability adapters
+    runtime/    # generated helper / dispatcher runtime
+    workflow/   # catalog, fetch, materialization, managed artifact I/O
+  tests/        # unit / oracle / catalog / e2e
+  fixtures/
+  tools/
+```
+
+迁移期间允许旧文件继续存在，但任何新语义能力优先进入上述域；旧模块只有在职责明确合并后才删除，禁止为了目录整齐而做无语义收益的大规模搬家。
+
 
 **Kelee 全量 Catalog 自动发现与转换（2026-10-03）**：
 
@@ -47,7 +101,7 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 1. QX 单 Action 的原生 direct mapping 不再限定为“只有 URL 条件”。只要完整 source condition 可由 `qxExactRewriteMatcherPlan()` 等价表达，就允许原生输出：当前 exact subset 为单 URL Regex、固定 `request.method == 字符串`，或两者通过 `&&` 组合。
 2. 适用 direct action 包括 QX 原生 reject primitive、`jsonjq-request/response-body`、Key Path JSON → native JQ，以及安全 scalar `request/response-body` replace。URL-only 仍输出 `<原 URL regex> url ...`；URL+Method 输出 `<原 URL regex> ^METHOD[ ] url-and-header ...`；Method-only 使用 `^https?://` guard + `url-and-header`。
 3. request Header、response status/header、OR、多个不同 URL Regex 等不属于 exact subset；这些条件不得直接挂在 native action 上，继续进入 full-condition helper / Review。
-4. Loon Regex flags `i/m/s` 决策再次锁定：parser 保留 flags 供语法校验/审计，但 QX/Surge target 输出无条件丢弃，不生成 `(?i)` / `(?m)` / `(?s)`，也不进入 Review。regex body 保持原样。Script Hub Beta 的 inline-modifier 策略明确不采用。
+4. Loon Regex flags `i/m/s` 必须作为 Semantic IR 的行为组成部分保留。QX/Surge native matcher 只有在官方能力可证明等价时才可直接 lowering；否则使用无漏匹配 prefilter + helper/dispatcher 在 JavaScript 中按源 flags 重算。禁止无条件删除 flags，也禁止凭经验生成未经官方材料确认的 inline modifier。
 
 **Loon Catalog Regex 审计与 QX Redirect Matcher/Capture 解耦（2026-10-03）**：
 
@@ -152,7 +206,7 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 
 38. Surge Module 分类统一固定为 **`#!category=WayX`**。所有 WayX 生成的 Catalog `.sgmodule` 与手工维护 Surge Module 都必须在模块头部声明且只声明一次该字段；不得继续输出 WayX 生成的普通注释 `# Category: <entry.category>`。若来源 Loon header 自带 `#!category=...`，Surge 目标不得透传其值，也不得转换成普通 category 注释，而是统一替换为 `#!category=WayX`。QX 的 `# Category: <entry.category>` 与 generated helper 的分类注释不受本规则影响。Surge validator 必须拒绝缺失、非 WayX 值或 section 内出现的 category directive。
 
-39. 仓库结构固定为**公开索引 + 内容根目录 + `.github` 工作流域**：仓库根目录除 `.github` 外只允许自动生成的 `README.md` 与 `Resource / Adblock / Boxjs / Module / Rule / Script` 六类转换内容目录。转换器实现、测试、fixture、工具统一放在 `.github/converter/`；分块规范统一放在 `.github/docs/conversion-spec/`；监控实现、state、runtime 与 upstream mirror 统一放在 `.github/monitor/`；权威规范、项目状态和维护说明放在 `.github/`。Actions 入口继续只放 `.github/workflows/`，自动化脚本继续放 `.github/scripts/`，Source Catalog 与手工资产清单继续分别放 `.github/sources/` 与 `.github/manual-assets.json`。任何实现不得在仓库根目录重新创建 `converter / docs / monitor / upstream` 或其它工作流目录；所有 workflow、test、validator、spec index 的资源路径必须引用迁移后的真实路径，不允许用 symlink/兼容副本维持旧路径。
+39. 仓库结构固定为**公开索引 + 内容根目录 + `.github` 工作流域**：根目录除 `.github` 外只允许自动生成的 `README.md` 与 `Resource / Adblock / Boxjs / Module / Rule / Script` 六类内容目录。转换器实现、测试、fixture、工具统一位于 `.github/converter/`；唯一权威规范为 `.github/CONVERSION_SPEC.md`；监控、Actions、脚本、Source Catalog 各自保留在 `.github/monitor / workflows / scripts / sources`。禁止恢复第二套 `docs/conversion-spec`、`PROJECT_STATUS` 或其它需要与权威规范同步的镜像文档；内部模块路径不再由规范逐文件锁死。
 
 40. 根目录转换内容目录统一使用**首字母大写**命名：`Adblock / Resource / Boxjs / Module / Rule / Script`。`.github` 保持 GitHub 保留目录名不变。所有 converter path、generated helper 本地路径、Raw GitHub helper URL、workflow path filter、artifact/commit path、audit/reconciliation、测试与文档必须使用相同大小写；禁止重新创建 `boxjs / module / rule / script` 小写兼容目录，也禁止继续生成 `.../main/script/...` Raw URL。目录大小写变更不得改变转换语义，只允许改变仓库资源路径及由该路径决定的引用 URL。
 
@@ -160,22 +214,16 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 
 42. 根目录 `README.md` 固定为**自动生成的公开资源索引**，不得手工维护资源清单。生成器必须扫描实际 `Boxjs / Module / Adblock / Rule` 内容，按 `BoxJs → Module → Adblock → Rule` 固定顺序输出，并从资源正文的 `# Name:` / `#!name=` / BoxJs JSON `name` 提取显示名；Quantumult X 与 Surge 必须分列，缺失平台显示 `—`。Quantumult X 一键导入固定使用官方 `https://quantumult.app/x/open-app/add-resource?remote-resource=...`。Rule 继续使用 `filter_remote`；Module/Adblock 的 QX `.snippet` **不得拆分 filter/rewrite**，直接把原 `.snippet` 作为单个 `rewrite_remote` 资源导入并显式写 `update-interval=86400, enabled=true`。依据当前 KOP-XIAO 资源解析器的兼容判断，Quantumult X build 844 起允许 rewrite resource 内混合 filter 与 rewrite；WayX 目标文件本身继续保持 `# [filter_local] / # [rewrite_local] / # [mitm]` 注释段格式，不为 README 安装额外生成中间文件。Surge 模块入口按用户已安装的 DivineEngine Redirect 使用 `https://surge.app/install-module?url=<percent-encoded raw URL>`，其目标仍是 Surge 官方 `surge:///install-module?url=`；官方 install-module Scheme 没有 update-interval 参数，禁止伪造。README 生成必须在新增/删除转换内容、canonical regeneration、定时 upstream sync 与相关 PR CI 中自动刷新；生成器遇到陈旧的 `.../main/script/...` WayX Raw URL 或其它无法安全生成安装入口的情况必须 fail closed，不得产出猜测链接。
 
-## 规范块
+## 规范与实现结构
 
-| Block | 内容 |
-|---|---|
-| [00-authority](docs/conversion-spec/00-authority.md) | 权威来源、优先级、通用原则 |
-| [05-generic-converter](docs/conversion-spec/05-generic-converter.md) | **通用转换器架构、分型、自动化契约、陌生插件验收** |
-| [10-target-format](docs/conversion-spec/10-target-format.md) | QX snippet / Surge sgmodule 固定格式 |
-| [20-rule-mapping](docs/conversion-spec/20-rule-mapping.md) | **Rule 类型与 Policy 对应表** |
-| [30-rewrite-mapping](docs/conversion-spec/30-rewrite-mapping.md) | Loon 旧 Rewrite / Rewrite v2 Action 映射 |
-| [40-regex-condition](docs/conversion-spec/40-regex-condition.md) | Regex、flags、条件 AST、逻辑条件 |
-| [50-json-jq-mock](docs/conversion-spec/50-json-jq-mock.md) | JSON/JQ、jq_file、mock/mock_file |
-| [60-script-argument](docs/conversion-spec/60-script-argument.md) | Script 声明、action 类型判定、Argument |
-| [70-mitm-comments](docs/conversion-spec/70-mitm-comments.md) | MITM、注释、metadata |
-| [80-review-validation](docs/conversion-spec/80-review-validation.md) | Review/Issue、validator、Golden |
-| [90-project-workflow](docs/conversion-spec/90-project-workflow.md) | 项目执行顺序和规范变更流程 |
-| [95-implementation-index](docs/conversion-spec/95-implementation-index.md) | **规范块 → production script → tests → 自动化入口总索引** |
+- **唯一规范源**：`.github/CONVERSION_SPEC.md`
+- **官方能力证据**：
+  - Loon：官方 Rewrite/Plugin 文档；
+  - Quantumult X：`crossutility/Quantumult-X` 官方仓库 + 用户上传官方 sample；
+  - Surge：`manual.nssurge.com` / `nssurge.com`。
+- **实现说明**：代码注释和 README 可以解释入口，但不得复制一套会独立漂移的规范正文。
+- **状态信息**：由 GitHub Actions、fixtures、reconciliation/report 与当前 canonical 直接反映，不再维护手工 PROJECT_STATUS。
+- **内部文件布局**：只受职责边界和测试行为约束，不再由“Block → 固定文件清单”契约锁死。
 
 ## 固定顺序
 
