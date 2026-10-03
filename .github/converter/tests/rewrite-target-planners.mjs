@@ -95,6 +95,17 @@ assert.ok(flaggedSurgePipeline.line.includes('pattern=^https?://'));
 const flaggedSurgeScript=[...flaggedSurgePipelineCtx.generatedScripts.values()][0];
 assert.match(flaggedSurgeScript,/new RegExp\("API","i"\)/);
 
+const flaggedSurgeHeaderAddSource='response if \${url} ~= /API/i then response.header.add("Set-Cookie","a=1")';
+const flaggedSurgeHeaderAddCtx=ctx();
+const flaggedSurgeHeaderAdd=planSurgeRewrite(v2(flaggedSurgeHeaderAddSource),flaggedSurgeHeaderAddCtx);
+assert.equal(flaggedSurgeHeaderAdd.section,'script');
+assert.ok(flaggedSurgeHeaderAdd.line.includes('pattern=^https?://'));
+assert.ok(flaggedSurgeHeaderAdd.line.includes('full-header-mode=true'));
+assert.equal(flaggedSurgeHeaderAddCtx.generatedScripts.size,1);
+const flaggedSurgeHeaderAddScript=[...flaggedSurgeHeaderAddCtx.generatedScripts.values()][0];
+assert.match(flaggedSurgeHeaderAddScript,/new RegExp\("API","i"\)/);
+assert.match(flaggedSurgeHeaderAddScript,/__wayxAdd\("Set-Cookie",v\)/);
+
 const methodRejectNativeAst=parseRewriteV2(
   'response if ${url} ~= /api/ && ${request.method} == "POST" then reject_dict(200)'
 );
