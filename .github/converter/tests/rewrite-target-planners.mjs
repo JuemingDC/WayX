@@ -240,6 +240,49 @@ assert.equal(noNativeHeadersMatcher.matcher,'url');
 assert.equal(noNativeHeadersMatcher.matchScope,'url-only');
 assert.equal(noNativeHeadersMatcher.headersPattern,null);
 
+const requestHeaderEqMatcher=qxRewriteMatcherPlan(parseRewriteV2(
+  'response if ${url} ~= /api/ && ${request.header[\'X-Region\']} == "CN" then response.header.del("Server") | response.body.replace(/x/,"y")'
+));
+assert.equal(requestHeaderEqMatcher.matcher,'url-and-header');
+assert.equal(requestHeaderEqMatcher.matchScope,'url-and-headers');
+assert.equal(requestHeaderEqMatcher.headersPattern,'\\r\\n[Xx]-[Rr][Ee][Gg][Ii][Oo][Nn]:[ \\t]*CN[ \\t]*(?:\\r\\n|$)');
+
+const requestHeaderOnlyMatcher=qxRewriteMatcherPlan(parseRewriteV2(
+  'response if ${request.header[\'X-Region\']} == "CN" then response.header.del("Server") | response.body.replace(/x/,"y")'
+));
+assert.equal(requestHeaderOnlyMatcher.matcher,'url-and-header');
+assert.equal(requestHeaderOnlyMatcher.matchScope,'headers-only');
+assert.equal(requestHeaderOnlyMatcher.urlPattern,'^https?://');
+
+const methodAndHeaderMatcher=qxRewriteMatcherPlan(parseRewriteV2(
+  'response if ${url} ~= /api/ && ${request.method} == "POST" && ${request.header[\'X-Region\']} == "CN" then response.header.del("Server") | response.body.replace(/x/,"y")'
+));
+assert.equal(methodAndHeaderMatcher.headersPattern,'^POST[ ][\\s\\S]*\\r\\n[Xx]-[Rr][Ee][Gg][Ii][Oo][Nn]:[ \\t]*CN[ \\t]*(?:\\r\\n|$)');
+
+const requestHeaderRegexMatcher=qxRewriteMatcherPlan(parseRewriteV2(
+  'response if ${request.header[\'User-Agent\']} ~= /iPhone/ then response.header.del("Server") | response.body.replace(/x/,"y")'
+));
+assert.equal(requestHeaderRegexMatcher.headersPattern,'\\r\\n[Uu][Ss][Ee][Rr]-[Aa][Gg][Ee][Nn][Tt]:[ \\t]*[^\\r\\n]*(?:\\r\\n|$)');
+assert.doesNotMatch(requestHeaderRegexMatcher.headersPattern,/iPhone/);
+
+const requestHeaderNullMatcher=qxRewriteMatcherPlan(parseRewriteV2(
+  'response if ${request.header[\'X-Optional\']} == null then response.header.del("Server") | response.body.replace(/x/,"y")'
+));
+assert.equal(requestHeaderNullMatcher.matcher,'url');
+assert.equal(requestHeaderNullMatcher.matchScope,'unfiltered');
+
+const requestHeaderExact=qxExactRewriteMatcherPlan(parseRewriteV2(
+  'response if ${request.header[\'X-Region\']} == "CN" then response.header.add("X-Test","1")'
+));
+assert.equal(requestHeaderExact.ok,false);
+
+const requestHeaderPrefilterSource='response if ${url} ~= /api/ && ${request.header[\'X-Region\']} == "CN" then response.header.del("Server") | response.body.replace(/x/,"y")';
+const requestHeaderPrefilterCtx=ctx();
+const requestHeaderPrefilter=planQxRewrite(v2(requestHeaderPrefilterSource),requestHeaderPrefilterCtx);
+assert.equal(requestHeaderPrefilter.section,'rewrite');
+assert.match(requestHeaderPrefilter.line,/ url-and-header script-response-body /);
+assert.match([...requestHeaderPrefilterCtx.generatedScripts.values()][0],/__wayxHeader\("request","X-Region"\)/);
+
 const nativeRequestAddPipelineSource='request if ${url} ~= /api/ && ${request.method} == "POST" then request.header.add("X-One","1") | request.header.add("X-Two","2")';
 const nativeRequestAddPipelineCtx=ctx();
 const nativeRequestAddPipeline=planQxRewrite(v2(nativeRequestAddPipelineSource),nativeRequestAddPipelineCtx);
