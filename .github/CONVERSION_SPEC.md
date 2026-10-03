@@ -1,9 +1,9 @@
 # WayX Conversion Specification
 
-版本：1.57  
+版本：1.58  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
-迁移状态：**Semantic Compiler migration / compatibility implementation active**
+迁移状态：**Semantic Compiler Phase C / equivalence planner + differential matcher oracle active**
 
 WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入本仓库转换链。
 
@@ -532,6 +532,15 @@ WayX-generated Script 只允许解决目标平台与 Loon 之间的语义缺口�
 - capture；
 - declaration/action order。
 
+Phase C 的 matcher oracle 先固定 condition 层的差分判定：
+
+- 同一组 context 必须同时运行 Loon reference evaluator 与目标 matcher semantic model；
+- 结果必须分别统计 false positive 与 false negative，不能只给“通过/失败”；
+- finite fixture 只属于差分证据，不能单独把结果提升为 `native-equivalent`；
+- `native-equivalent` 仍要求独立的结构证明与目标平台官方能力证明，并要求 oracle 未观察到差异；
+- `guarded-helper` 的 prefilter 必须独立证明为 source condition 的必要条件；oracle 用于阻止已观察到的 false negative，不能替代 soundness proof；
+- helper/runtime 必须安全 no-op，Surge 仍受同 phase 只执行首个匹配 HTTP Script 的生命周期约束。
+
 Regex 至少覆盖：
 
 - 无 flag；
@@ -678,11 +687,13 @@ Workflow 只调用稳定入口，不应枚举 converter 内部所有实现文件
 - 建 reference evaluator；
 - 当前 target output 暂不改变。
 
-### Phase C — Equivalence Planner
+### Phase C — Equivalence Planner + matcher oracle
 
 - native-equivalent proof；
 - guarded-helper proof；
 - prefilter soundness；
+- differential condition matcher oracle；
+- false-positive / false-negative evidence；
 - unsupported reason taxonomy。
 
 ### Phase D — Runtime / Dispatcher
@@ -692,9 +703,9 @@ Workflow 只调用稳定入口，不应枚举 converter 内部所有实现文件
 - phase dispatcher；
 - action ordering。
 
-### Phase E — Oracle migration
+### Phase E — Full behavior oracle migration
 
-- synthetic differential tests；
+- action/runtime differential tests；
 - Catalog differential tests；
 - flag/capture fuzz；
 - canonical regeneration。
@@ -738,7 +749,7 @@ Workflow 只调用稳定入口，不应枚举 converter 内部所有实现文件
 
 main 中现有 converter 在 Phase B–F 完成前继续承担生产转换。
 
-如果当前实现与本 v1.57 新规范冲突：
+如果当前实现与本 v1.58 新规范冲突：
 
 - 不立即在同一个结构 PR 中强行改动 canonical；
 - 在后续语义 PR 中按新顺序迁移；
