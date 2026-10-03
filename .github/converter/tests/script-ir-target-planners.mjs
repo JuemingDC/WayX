@@ -47,8 +47,10 @@ const qxLegacy=planQxScript(legacyIr,{
   scriptUrl:'https://example.com/resp.js',
   sourceText:'const x=$response.body; $done({body:x});',
 });
-assert.equal(qxLegacy.ok,false);
-assert.match(qxLegacy.reason,/timeout field/);
+assert.equal(qxLegacy.ok,true);
+assert.match(qxLegacy.line,/ url script-response-body https:\/\/example\.com\/resp\.js$/);
+assert.match(qxLegacy.notes.join('\n'),/timeout.*omitted/i);
+assert.match(qxLegacy.notes.join('\n'),/binary-body-mode=true.*omitted/i);
 
 const qxLegacyCompatibleIr=legacyScriptToSemanticIr(
   parseLegacyScriptLine('http-response ^https://api\\.example\\.com script-path=https://example.com/resp.js, requires-body=true, argument={"mode":"x"}, tag=Resp')
@@ -111,8 +113,9 @@ const qxLegacyDebugUnsupported=planQxScript(
   legacyScriptToSemanticIr(parseLegacyScriptLine('http-response ^https://x\\.example script-path=https://example.com/a.js, debug=true')),
   {sourceText:'$done({});'}
 );
-assert.equal(qxLegacyDebugUnsupported.ok,false);
-assert.match(qxLegacyDebugUnsupported.reason,/no debug field/);
+assert.equal(qxLegacyDebugUnsupported.ok,true);
+assert.doesNotMatch(qxLegacyDebugUnsupported.line,/debug=/);
+assert.match(qxLegacyDebugUnsupported.notes.join('\n'),/debug.*omitted/i);
 
 const v2Source='response if ${url} ~= /api/ then script("https://example.com/v2.js") with requires_body=true, binary_body_mode=true, tag="V2"';
 const v2Ast=parseScriptV2(v2Source);
@@ -134,8 +137,9 @@ const qxV2=planQxScript(v2Ir,{
   sourceText:'const x=$response.body; $done({body:x});',
   argumentIds:new Set(),
 });
-assert.equal(qxV2.ok,false);
-assert.match(qxV2.reason,/binary_body_mode field/);
+assert.equal(qxV2.ok,true);
+assert.match(qxV2.line,/ url script-response-body https:\/\/example\.com\/v2\.js$/);
+assert.match(qxV2.notes.join('\n'),/binary_body_mode=true.*omitted/i);
 
 const qxV2RequiresOnlyIr=scriptV2AstToSemanticIr(
   parseScriptV2('response if ${url} ~= /api/ then script("https://example.com/v2.js") with requires_body=true, binary_body_mode=false, tag="V2"')
@@ -152,8 +156,9 @@ const qxTimeoutUnsupported=planQxScript(
   scriptV2AstToSemanticIr(parseScriptV2('response if ${url} ~= /timeout/ then script("https://example.com/t.js") with timeout=12')),
   {scriptUrl:'https://example.com/t.js',sourceText:'$done({});',argumentIds:new Set()}
 );
-assert.equal(qxTimeoutUnsupported.ok,false);
-assert.match(qxTimeoutUnsupported.reason,/no timeout field/);
+assert.equal(qxTimeoutUnsupported.ok,true);
+assert.doesNotMatch(qxTimeoutUnsupported.line,/timeout=/);
+assert.match(qxTimeoutUnsupported.notes.join('\n'),/timeout.*omitted/i);
 
 const qxEnableTrue=planQxScript(
   scriptV2AstToSemanticIr(parseScriptV2('request if ${url} ~= /enabled/ then script("https://example.com/e.js") with enable=true')),
@@ -166,8 +171,9 @@ const qxEnableDynamic=planQxScript(
   scriptV2AstToSemanticIr(parseScriptV2('request if ${url} ~= /enabled/ then script("https://example.com/e.js") with enable=${enabled}')),
   {scriptUrl:'https://example.com/e.js',sourceText:'$done({});',argumentIds:new Set(['enabled'])}
 );
-assert.equal(qxEnableDynamic.ok,false);
-assert.match(qxEnableDynamic.reason,/no dynamic enable field/);
+assert.equal(qxEnableDynamic.ok,true);
+assert.match(qxEnableDynamic.line,/script-request-header/);
+assert.match(qxEnableDynamic.notes.join('\n'),/defaults to enabled/i);
 
 const v2DebugSource='response if ${url} ~= /debug/ then script("https://example.com/debug.js") with debug=true, tag="Debug"';
 const v2DebugIr=scriptV2AstToSemanticIr(parseScriptV2(v2DebugSource),{source:v2DebugSource});
@@ -176,8 +182,9 @@ const qxV2Debug=planQxScript(v2DebugIr,{
   sourceText:'$done({});',
   argumentIds:new Set(),
 });
-assert.equal(qxV2Debug.ok,false);
-assert.match(qxV2Debug.reason,/no debug field/);
+assert.equal(qxV2Debug.ok,true);
+assert.doesNotMatch(qxV2Debug.line,/debug=/);
+assert.match(qxV2Debug.notes.join('\n'),/debug.*omitted/i);
 
 const v2DynamicDebugSource='response if ${url} ~= /debug-dynamic/ then script("https://example.com/debug-dynamic.js") with debug=${debugSwitch}, tag="DebugDynamic"';
 const v2DynamicDebugIr=scriptV2AstToSemanticIr(parseScriptV2(v2DynamicDebugSource),{source:v2DynamicDebugSource});
@@ -186,8 +193,9 @@ const qxV2DynamicDebug=planQxScript(v2DynamicDebugIr,{
   sourceText:'$done({});',
   argumentIds:new Set(),
 });
-assert.equal(qxV2DynamicDebug.ok,false);
-assert.match(qxV2DynamicDebug.reason,/no debug field/);
+assert.equal(qxV2DynamicDebug.ok,true);
+assert.doesNotMatch(qxV2DynamicDebug.line,/debug=/);
+assert.match(qxV2DynamicDebug.notes.join('\n'),/debug.*omitted/i);
 
 const surgeBinaryWithoutBody=planSurgeScript(
   scriptV2AstToSemanticIr(parseScriptV2('request if ${url} ~= /raw/ then script("raw.js") with binary_body_mode=true')),
@@ -201,8 +209,10 @@ const qxBinaryWithoutBody=planQxScript(
   scriptV2AstToSemanticIr(parseScriptV2('request if ${url} ~= /raw/ then script("raw.js") with binary_body_mode=true')),
   {scriptUrl:'raw.js',sourceText:'$done({});',argumentIds:new Set()}
 );
-assert.equal(qxBinaryWithoutBody.ok,false);
-assert.match(qxBinaryWithoutBody.reason,/binary_body_mode field/);
+assert.equal(qxBinaryWithoutBody.ok,true);
+assert.match(qxBinaryWithoutBody.line,/script-request-header/);
+assert.doesNotMatch(qxBinaryWithoutBody.line,/script-request-body/);
+assert.match(qxBinaryWithoutBody.notes.join('\n'),/binary_body_mode=true.*omitted/i);
 
 const surgeV2=planSurgeScript(v2Ir,{
   scriptUrl:'https://example.com/v2.js',
