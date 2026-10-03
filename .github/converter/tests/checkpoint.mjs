@@ -623,10 +623,12 @@ const captureMixedQx = renderMixedRewriteScript(
 assert.match(captureMixedQx.script, /const __wayxCaptures=Object\.create\(null\)/);
 const preservedCapturePattern='\\/api\\/(foo)-(bar)';
 assert.ok(
-  captureMixedQx.script.includes('new RegExp(' + JSON.stringify(preservedCapturePattern) + ')'),
-  'complex helper must preserve the regex body exactly while discarding source flags',
+  captureMixedQx.script.includes(
+    'new RegExp(' + JSON.stringify(preservedCapturePattern) + ',' + JSON.stringify('ims') + ')'
+  ),
+  'complex helper must preserve both the regex body and source flags',
 );
-assert.equal(captureMixedQx.script.includes('"ims"'), false);
+assert.equal(captureMixedQx.script.includes('"ims"'), true);
 assert.ok(captureMixedQx.script.includes('__wayxTpl([["c","hit",0],["s",":"],["c","hit",1],["s",":"],["c","hit",2]])'));
 const surgeHeaderAddMixed = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /api/ then response.header.add("Set-Cookie", "b=2") | response.header.set("X-Test", "ok") | response.body.replace(/ads/, "clean")'),
