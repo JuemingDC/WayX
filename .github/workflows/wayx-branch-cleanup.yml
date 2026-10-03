@@ -49,7 +49,7 @@ jobs:
              const {data:saved}=await github.rest.git.createCommit({...repo,message:'archive: preserve WayX branch tips before authorized cleanup',tree:tree.sha,parents:[archive,...tips.slice(i,i+30)]});
              archive=saved.sha;
             }
-            const tag='archive/branches-2026-10-03-'+context.runId;
+            const tag='archive/branches-2026-10-03-'+context.runId+'-'+context.runAttempt;
             await github.rest.git.createRef({...repo,ref:'refs/tags/'+tag,sha:archive});
             const deleted=[];
             for(const b of unique.filter(b=>!b.absent)){
@@ -57,6 +57,7 @@ jobs:
              if(current.object.sha!==b.sha)throw new Error('Branch advanced after archive: '+b.name);
              await github.rest.git.deleteRef({...repo,ref:'heads/'+b.name});
              deleted.push(b.name);
+            await new Promise(resolve=>setTimeout(resolve,1500));
             }
             const remaining=await github.paginate(github.rest.repos.listBranches,{...repo,per_page:100});
             await core.summary.addHeading('WayX branch cleanup').addRaw('Archive tag: '+tag+'\n\n').addRaw('Deleted branches: '+deleted.length+'\n\n').addRaw('Remaining: '+remaining.map(b=>b.name).join(', ')+'\n').write();
