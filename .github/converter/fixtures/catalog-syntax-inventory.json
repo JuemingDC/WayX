@@ -35,6 +35,8 @@
   },
   "scriptV2": {
     "phases": [
+      "cron",
+      "generic",
       "request",
       "response"
     ],
@@ -48,6 +50,7 @@
     "optionNames": [
       "binary_body_mode",
       "enable",
+      "img_url",
       "requires_body",
       "tag",
       "timeout"
