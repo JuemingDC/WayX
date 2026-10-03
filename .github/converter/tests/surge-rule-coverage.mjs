@@ -2,9 +2,22 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { surgeModuleRule, surgeRuleTypesInTree } from '../src/index.mjs';
+import { classifyLegacyRewriteAction } from '../src/rewrite-ir.mjs';
 
 const ROOT = process.cwd();
 const manifest = JSON.parse(await fs.readFile(path.join(ROOT, '.github/sources/loon.json'), 'utf8'));
+
+function splitPatternAction(line) {
+  const idx=String(line).search(/\s/);
+  if (idx<0) return [String(line).trim(),''];
+  return [String(line).slice(0,idx).trim(),String(line).slice(idx).trim().replace(/^\-\s+/,'')];
+}
+
+function isKnownSourceNonRule(line) {
+  const [pattern,action]=splitPatternAction(line);
+  if (pattern && action && classifyLegacyRewriteAction(action).kind!=='unknown') return true;
+  return !String(line).includes(',') && /^(?:\*\.)?(?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,}$/i.test(String(line));
+}
 
 function activeRuleLines(text) {
   const out = [];
@@ -45,6 +58,7 @@ for (const entry of manifest) {
 
   stats.files++;
   for (const line of activeRuleLines(text)) {
+    if (isKnownSourceNonRule(line)) continue;
     stats.rules++;
     const typeTree = surgeRuleTypesInTree(line);
     assert.equal(typeTree.ok, true, `unsupported Surge rule type tree: ${line} (${typeTree.reason})`);
@@ -58,9 +72,10 @@ for (const entry of manifest) {
       assert.match(mapped.line, /\{\{\{wayx_proxy_policy\}\}\}/);
       continue;
     }
-    if (mapped.kind === 'rule') {
+    if (mapped.kind === 'rule' || mapped.kind === 'map') {
       stats.native++;
       assert.equal(mapped.lines.at(-1), mapped.line);
+      if (mapped.kind === 'map') assert.equal(mapped.reason,'url-regex-local-response');
       continue;
     }
     stats.review++;
