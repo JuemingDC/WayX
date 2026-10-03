@@ -238,8 +238,11 @@ export function planQxRewrite(ir, ctx={}) {
   if (nativeHeader) return nativeHeader;
 
   try {
-    const direct=qxDirectRewritePlan(ast);
-    if (direct.ok) return {section:direct.section,line:direct.line,lines:direct.lines};
+    const exactMatcher=qxExactRewriteMatcherPlan(ast);
+    if (exactMatcher.ok) {
+      const direct=qxDirectRewritePlan(ast,{matcher:exactMatcher});
+      if (direct.ok) return {section:direct.section,line:direct.line,lines:direct.lines};
+    }
   } catch (error) {
     return rewriteReview(source,String(error?.message||error).split('\n')[0]);
   }
