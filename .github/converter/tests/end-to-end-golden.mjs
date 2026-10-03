@@ -531,6 +531,23 @@ function passthroughScriptMap(source) {
   ]));
 }
 
+function regressionJqFiles(source) {
+  // Network/dependency fidelity is covered by conversion-context-materializers.
+  // The offline golden only needs a deterministic valid JQ payload so legacy
+  // jq-path declarations exercise the active native-JQ target path.
+  const out=new Map();
+  for (const raw of String(source).split(/\r?\n/)) {
+    const line=raw.trim();
+    if (!line || !/jq-path\s*=/.test(line)) continue;
+    out.set(line,{
+      content:'walk(if type=="object" and .__typename=="AdPost" then empty else . end)',
+      sourceFile:'fixture://legacy-jq-path',
+      legacyAlias:true,
+    });
+  }
+  return out;
+}
+
 function activeLines(text) {
   return text.split('\n').filter(raw => {
     const line = raw.trim();
@@ -548,7 +565,7 @@ for (const testCase of cases) {
   assert.ok(testCase.entry, `${testCase.name}: missing manifest entry`);
   const source = await fs.readFile(path.join(ROOT, testCase.file), 'utf8');
   const scripts = passthroughScriptMap(source);
-  const jqFiles = new Map();
+  const jqFiles = regressionJqFiles(source);
   const out = convert(testCase.entry, source, scripts, STAMP, new Map(), jqFiles);
 
   validateQX(out.qx, testCase.entry);
@@ -628,6 +645,8 @@ for (const testCase of cases) {
   if (testCase.name === 'MyBlockAds') {
     assert.doesNotMatch(out.qx, /jq-path=/);
     assert.doesNotMatch(out.surge, /jq-path=/);
+    assert.match(out.qx, /url jsonjq-response-body 'walk\(if type=="object" and \.__typename=="AdPost" then empty else \. end\)'/);
+    assert.match(out.surge, /http-response-jq .*'walk\(if type=="object" and \.__typename=="AdPost" then empty else \. end\)'/);
     assert.match(out.surge, /^\[Body Rewrite\]$/m);
     assert.match(out.surge, /^\[Map Local\]$/m);
   }
