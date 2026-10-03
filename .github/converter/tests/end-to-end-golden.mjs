@@ -272,7 +272,7 @@ assert.throws(
 );
 assert.throws(
   () => validateQX(validQxValidatorText.replace('^https://example\\.com url reject', '(?i)^https://example\\.com url reject'), qxValidatorEntry),
-  /must not restore discarded Loon regex flags/,
+  /must not invent undocumented inline regex modifiers for source flags/,
 );
 assert.throws(
   () => validateQX(validQxValidatorText.replace('^https://example\\.com url reject', '[hH][tT][tT][pP][sS]://example\\.com url reject'), qxValidatorEntry),
