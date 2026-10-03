@@ -169,7 +169,7 @@ export function qxScriptV2Plan(ast, {
     }
   }
 
-  const condition = scriptUrlCondition(ast);
+  const condition = scriptUrlCondition(ast,'qx');
   if (!condition.ok) return condition;
   const notes = [...(condition.notes || [])];
 
