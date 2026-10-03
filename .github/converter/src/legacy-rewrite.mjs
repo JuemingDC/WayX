@@ -223,7 +223,7 @@ function planHeader(pattern, action, parsed, target, ctx) {
       ctx.generatedScripts.set(filename, plan.script);
       return {
         section:'rewrite',
-        line:plan.pattern + ' url ' + plan.qxAction + ' ' + ctx.rawBase + '/script/' + ctx.id + '/' + filename,
+        line:plan.pattern + ' url ' + plan.qxAction + ' ' + ctx.rawBase + '/Script/' + ctx.id + '/' + filename,
       };
     } catch (error) {
       return review(pattern, action, String(error?.message || error));
@@ -314,7 +314,7 @@ function planMock(pattern, action, parsed, target, ctx) {
       const key=crypto.createHash('sha1').update('legacy-mock\\0'+pattern+'\\0'+action).digest('hex').slice(0,10);
       const filename='legacy_mock_'+key+'.js';
       ctx.generatedScripts.set(filename, plan.script);
-      return {section:'rewrite', line:plan.pattern + ' url ' + plan.qxAction + ' ' + ctx.rawBase + '/script/' + ctx.id + '/' + filename};
+      return {section:'rewrite', line:plan.pattern + ' url ' + plan.qxAction + ' ' + ctx.rawBase + '/Script/' + ctx.id + '/' + filename};
     }
 
     if(parsed.phase === 'response'){
@@ -333,7 +333,7 @@ function planMock(pattern, action, parsed, target, ctx) {
     ctx.generatedScripts.set(filename, plan.script);
     return {
       section:'script',
-      line:'wayx_legacy_request_mock_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+ctx.rawBase+'/script/'+ctx.id+'/'+filename+',requires-body=true'+(plan.binaryBodyMode?',binary-body-mode=true':''),
+      line:'wayx_legacy_request_mock_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+ctx.rawBase+'/Script/'+ctx.id+'/'+filename+',requires-body=true'+(plan.binaryBodyMode?',binary-body-mode=true':''),
     };
   } catch (error) {
     return review(pattern, action, String(error?.message || error));
