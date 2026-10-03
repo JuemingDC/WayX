@@ -9,6 +9,7 @@ import { planQxRewrite } from '../src/rewrite-qx.mjs';
 import { jsonPipelineToSafeNativeJq, qxDirectRewritePlan } from '../src/rewrite-v2-semantic.mjs';
 import { qxExactRewriteMatcherPlan, qxRewriteMatcherPlan } from '../src/qx-rewrite-matcher.mjs';
 import { planSurgeRewrite } from '../src/rewrite-surge.mjs';
+import { differentialConditionOracle } from '../src/core/equivalence-plan.mjs';
 
 function ctx(extra={}) {
   return {
@@ -595,13 +596,60 @@ assert.ok(methodNativeJsonPipeline.line.indexOf('setpath(["two"]; 2)') < methodN
 assert.ok(methodNativeJsonPipeline.line.indexOf('del(.["old"])') < methodNativeJsonPipeline.line.indexOf('del(.["unused"])'));
 assert.equal(methodNativeJsonPipelineCtx.generatedScripts.size,0);
 
-const flagsNativeJsonPipelineSource='response if ${url} ~= /api/ims then response.json.add("a",1) | response.json.delete("b")';
+const flaggedMatcherAst=parseRewriteV2(
+  'response if \${url} ~= /API/i then response.json.add("a",1)'
+);
+const flaggedExactMatcher=qxExactRewriteMatcherPlan(flaggedMatcherAst);
+assert.equal(flaggedExactMatcher.ok,false);
+const flaggedPrefilter=qxRewriteMatcherPlan(flaggedMatcherAst);
+assert.equal(flaggedPrefilter.urlPattern,'^https?://');
+assert.equal(flaggedPrefilter.exact,false);
+
+const flaggedPrefilterOracle=differentialConditionOracle({
+  condition:flaggedMatcherAst.condition,
+  target:'qx-rewrite-prefilter',
+  targetModel:context=>new RegExp(flaggedPrefilter.urlPattern).test(String(context.url || '')),
+  contexts:[
+    {url:'https://example.com/api'},
+    {url:'https://example.com/API'},
+    {url:'https://example.com/other'},
+  ],
+});
+assert.equal(flaggedPrefilterOracle.noFalseNegatives,true);
+assert.equal(flaggedPrefilterOracle.observedExact,false);
+assert.ok(flaggedPrefilterOracle.falsePositives.length>0);
+
+const flaggedMethodPrefilter=qxRewriteMatcherPlan(parseRewriteV2(
+  'response if \${url} ~= /API/i && \${request.method} == "POST" then response.json.add("a",1)'
+));
+assert.equal(flaggedMethodPrefilter.urlPattern,'^https?://');
+assert.equal(flaggedMethodPrefilter.matcher,'url-and-header');
+assert.equal(flaggedMethodPrefilter.headersPattern,'^POST[ ]');
+
+const flagsNativeJsonPipelineSource='response if \${url} ~= /api/ims then response.json.add("a",1) | response.json.delete("b")';
 const flagsNativeJsonPipelineCtx=ctx();
 const flagsNativeJsonPipeline=planQxRewrite(v2(flagsNativeJsonPipelineSource),flagsNativeJsonPipelineCtx);
 assert.equal(flagsNativeJsonPipeline.section,'rewrite');
-assert.match(flagsNativeJsonPipeline.line,/^api url jsonjq-response-body '/);
-assert.doesNotMatch(flagsNativeJsonPipeline.line,/\(\?[ims]+\)|\/ims?\b/);
-assert.equal(flagsNativeJsonPipelineCtx.generatedScripts.size,0);
+assert.match(flagsNativeJsonPipeline.line,/^\^https\?:\/\/ url script-response-body /);
+assert.equal(flagsNativeJsonPipelineCtx.generatedScripts.size,1);
+const flagsNativeJsonPipelineScript=[...flagsNativeJsonPipelineCtx.generatedScripts.values()][0];
+assert.match(flagsNativeJsonPipelineScript,/new RegExp\("api","ims"\)/);
+
+const surgeFlaggedJsonSource='response if \${url} ~= /API/i then response.json.replace("data.ok",true)';
+const surgeFlaggedJsonCtx=ctx();
+const surgeFlaggedJson=planSurgeRewrite(v2(surgeFlaggedJsonSource),surgeFlaggedJsonCtx);
+assert.equal(surgeFlaggedJson.section,'script');
+assert.match(surgeFlaggedJson.line,/pattern=\^https\?:\/\//);
+assert.equal(surgeFlaggedJsonCtx.generatedScripts.size,1);
+assert.match([...surgeFlaggedJsonCtx.generatedScripts.values()][0],/new RegExp\("API","i"\)/);
+
+const flaggedActionRegexSource='response if \${url} ~= /api/ then response.body.replace(/A.B/is,"x")';
+const flaggedActionRegexCtx=ctx();
+const flaggedActionRegex=planQxRewrite(v2(flaggedActionRegexSource),flaggedActionRegexCtx);
+assert.equal(flaggedActionRegex.section,'rewrite');
+assert.match(flaggedActionRegex.line,/^api url script-response-body /);
+assert.equal(flaggedActionRegexCtx.generatedScripts.size,1);
+assert.match([...flaggedActionRegexCtx.generatedScripts.values()][0],/new RegExp\("A.B","is"\)/);
 
 const nestedJsonPipelineSource='response if ${url} ~= /api/ then response.json.add("data.flag",true) | response.json.replace("data.count",2)';
 const nestedJsonPipelineCtx=ctx();
