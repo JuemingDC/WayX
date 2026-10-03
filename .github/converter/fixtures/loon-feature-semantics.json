@@ -606,6 +606,256 @@
       "expected": {
         "body": "new old"
       }
+    },
+    {
+      "id": "request-mock-single-text",
+      "source": "request if ${url} ~= /example/ then request.body.mock(\"text\",\"hello\")",
+      "expected": {
+        "headers": {
+          "Content-Type": "text/plain; charset=utf-8"
+        },
+        "body": "hello"
+      },
+      "request": {},
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "request-mock-full-pipeline",
+      "source": "request if ${url} ~= /example/i then request.header.set(\"X-Before\",\"yes\") | request.body.mock(\"json\",`{\"value\":false}`) | request.body.replace(/false/,\"true\") | request.json.add(\"flag\",1) | request.header.del(\"Cookie\")",
+      "expected": {
+        "headers": {
+          "content-type": "application/json",
+          "X-Before": "yes"
+        },
+        "body": "{\"value\":true,\"flag\":1}"
+      },
+      "request": {
+        "headers": {
+          "content-type": "old",
+          "Cookie": "remove"
+        },
+        "body": "old"
+      },
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "request-mock-captured-template",
+      "source": "request if ${url} ~= /item-(\\d+)/i as item then request.body.mock(\"json\",\"{\\\"id\\\":\\\"${item.1}\\\",\\\"method\\\":\\\"${request.method}\\\"}\") | request.json.add(\"ready\",true)",
+      "expected": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": "{\"id\":\"42\",\"method\":\"POST\",\"ready\":true}"
+      },
+      "request": {
+        "url": "https://example.test/item-42",
+        "method": "POST"
+      },
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "request-mock-missing-capture-continues",
+      "source": "request if ${url} ~= /example(?:\\/(value))?/i as item then request.body.mock(\"text\",${item.1}) | request.header.set(\"X-Later\",\"yes\")",
+      "expected": {
+        "headers": {
+          "Content-Type": "old",
+          "X-Later": "yes"
+        },
+        "body": "original"
+      },
+      "request": {
+        "headers": {
+          "Content-Type": "old"
+        },
+        "body": "original"
+      },
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "request-mock-header-template-after-set",
+      "source": "request if ${request.method} == \"POST\" then request.header.set(\"X-Body\",\"new\") | request.body.mock(\"text\",${request.header[\"X-Body\"]})",
+      "expected": {
+        "headers": {
+          "X-Body": "new",
+          "Content-Type": "text/plain; charset=utf-8"
+        },
+        "body": "new"
+      },
+      "request": {
+        "method": "POST"
+      },
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "request-mock-header-missing-skips",
+      "source": "request if ${url} ~= /example/i then request.body.mock(\"text\",${request.header[\"Missing\"]}) | request.header.set(\"X-Later\",\"yes\")",
+      "expected": {
+        "headers": {
+          "X-Later": "yes"
+        },
+        "body": "old"
+      },
+      "request": {
+        "body": "old"
+      },
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "request-mock-raw-no-expansion",
+      "source": "request if ${url} ~= /example/i then request.body.mock(\"json\",`{\"literal\":\"${unknown}\"}`)",
+      "expected": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": "{\"literal\":\"${unknown}\"}"
+      },
+      "request": {},
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "request-mock-repeated-inline-order",
+      "source": "request if ${url} ~= /example/i then request.body.mock(\"json\",`{\"first\":1}`) | request.json.add(\"discard\",true) | request.body.mock(\"html\",\"<p>old</p>\") | request.body.replace(/old/i,\"new\")",
+      "expected": {
+        "headers": {
+          "Content-Type": "text/html; charset=utf-8"
+        },
+        "body": "<p>new</p>"
+      },
+      "request": {},
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "request-mock-empty-body",
+      "source": "request if ${url} ~= /example/i then request.body.mock(\"plain\",\"\")",
+      "expected": {
+        "headers": {
+          "Content-Type": "text/plain; charset=utf-8"
+        },
+        "body": ""
+      },
+      "request": {
+        "body": "old"
+      },
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "request-mock-file-literal-bytes",
+      "source": "request if ${url} ~= /example/i then request.body.mock_file(\"text\",\"body.txt\")",
+      "expected": {
+        "headers": {
+          "Content-Type": "text/plain; charset=utf-8"
+        },
+        "body": " ${unknown} 汉字\n"
+      },
+      "request": {},
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ],
+      "mockText": " ${unknown} 汉字\n"
+    },
+    {
+      "id": "request-mock-file-json-order",
+      "source": "request if ${url} ~= /example/i then request.header.set(\"Path\",\"data.flag\") | request.body.mock_file(\"json\",\"body.json\") | request.json.add(${request.header[\"Path\"]},true)",
+      "expected": {
+        "headers": {
+          "Path": "data.flag",
+          "Content-Type": "application/json"
+        },
+        "body": "{\"data\":{\"value\":1,\"flag\":true}}"
+      },
+      "request": {},
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ],
+      "mockText": "{\"data\":{\"value\":1}}"
+    },
+    {
+      "id": "request-mock-condition-miss-noop",
+      "source": "request if ${url} ~= /never/i then request.body.mock(\"text\",\"new\")",
+      "expected": {},
+      "request": {
+        "body": "old",
+        "headers": {
+          "Content-Type": "old"
+        }
+      },
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "request-mock-css-literal",
+      "source": "request if ${url} ~= /example/i then request.body.mock(\"css\",`$0 { color: red; }`)",
+      "request": {},
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ],
+      "expected": {
+        "headers": {
+          "Content-Type": "text/css; charset=utf-8"
+        },
+        "body": "$0 { color: red; }"
+      }
+    },
+    {
+      "id": "request-mock-javascript-not-executed",
+      "source": "request if ${url} ~= /example/i then request.body.mock(\"javascript\",`throw new Error(\"${literal}\");`)",
+      "request": {},
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ],
+      "expected": {
+        "headers": {
+          "Content-Type": "application/javascript; charset=utf-8"
+        },
+        "body": "throw new Error(\"${literal}\");"
+      }
     }
   ]
 }

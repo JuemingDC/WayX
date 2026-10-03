@@ -3,7 +3,7 @@
 // Category: Converter / runtime
 
 import { normalizeRegexBodyForTarget, compileRegexForTarget, regexReplacementRuntimeSource, stringTemplateParts, conditionRuntimeSource } from "./core.mjs";
-import { validateRewriteV2Ast, simpleUrlRewriteCondition, fixedStringValue, findRewriteComparisons, compileComplexCondition, qxRewriteMatcherPlan, parseJsonKeyPath } from "./rewrite.mjs";
+import { validateRewriteV2Ast, simpleUrlRewriteCondition, fixedStringValue, findRewriteComparisons, compileComplexCondition, qxRewriteMatcherPlan, parseJsonKeyPath, isTextRequestMockAction } from "./rewrite.mjs";
 
 
 
@@ -753,23 +753,18 @@ function statements(ast, target, {argumentTable = null, mockMaterialized = null}
       continue;
     }
     if (action.name === 'request.body.mock' || action.name === 'request.body.mock_file') {
-      if (target !== 'qx' || ast.phase !== 'request') {
-        throw new Error('request mock mixed pipeline is currently implemented only for Quantumult X request phase');
-      }
+      if(ast.phase!=='request')throw new Error('request mock action requires request phase');
+      if(!isTextRequestMockAction(action))throw new Error('text request mock requires a fixed text content type and Base64=false');
+      if(ast.actions.filter(a=>a.name==='request.body.mock_file').length>1)throw new Error('multiple request mock_file dependencies in one entry are not materialized');
       const type=complexRewriteFixed(action.args[0], 'request mock content type').toLowerCase();
-      const base64Node=action.args[2];
-      if (base64Node && base64Node.type!=='boolean') throw new Error('request mock Base64 flag must be Boolean');
-      const base64=base64Node?.value === true;
-      if (base64 || qxMockTypeIsBinary(type)) {
-        throw new Error('Quantumult X request mock binary/bodyBytes output is not enabled without an official request-body example');
-      }
+
 
       let bodyValue;
       if (action.name.endsWith('.mock_file')) {
         if (!mockMaterialized) throw new Error('request mock_file was not materialized during conversion');
         if (mockMaterialized.error) throw new Error(mockMaterialized.error);
         if (typeof mockMaterialized.bodyText !== 'string') {
-          throw new Error('Quantumult X request mock_file binary content is not enabled without an official request-body example');
+          throw new Error('request mock_file requires materialized text in the shared phase runtime');
         }
         bodyValue=JSON.stringify(mockMaterialized.bodyText);
       } else {
@@ -842,6 +837,8 @@ function renderRewriteScript(ast, {target, stamp='', category='', sourceLine='',
     '// Converted by: chance',
     '// Category: ' + (category || 'Rewrite / Loon Feature Collection'),
     sourceLine ? '// Source Loon: ' + sourceLine : null,
+    mockMaterialized?.sourceFile ? '// Source mock file: '+mockMaterialized.sourceFile : null,
+    target==='surge' && ast.actions.some(isTextRequestMockAction) ? '// Surge request-body API limits: chunked / Expect: 100-continue bodies are not overwritten; platform buffering limits still apply.' : null,
     sharedRuntime ? null : regexReplacementRuntimeSource(),
     sharedRuntime ? null : conditionRuntimeSource(),
     'const __wayxCaptures=Object.create(null);',
@@ -889,7 +886,7 @@ export function renderSingleRewriteMutationScript(ast, options = {}) {
   }
   const name=ast.actions[0]?.name || '';
   const supported=new RegExp('^'+ast.phase+'\\.(?:header\\.(?:'+(options.target==='surge'?'add|':'')+'set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$');
-  if (!supported.test(name)) {
+  if (!supported.test(name) && !isTextRequestMockAction(ast.actions[0])) {
     throw new Error('single Rewrite mutation helper does not support '+name);
   }
   return renderRewriteScript(ast, options);
@@ -914,7 +911,7 @@ export function renderRewritePhaseDispatcher(declarations,options={}) {
   const phase=declarations[0].phase;
   if (declarations.some(ast=>ast.phase!==phase)) throw new Error('mixed dispatcher phases');
   const fullHeaderMode=options.target==='surge' && declarations.some(ast=>ast.actions.some(a=>a.name.endsWith('.header.add')));
-  const plans=declarations.map(ast=>renderRewriteScript(ast,{...options,fullHeaderMode,sharedRuntime:true}));
+  const plans=declarations.map(ast=>renderRewriteScript(ast,{...options,mockMaterialized:options.mockFiles?.get(ast.raw) || options.mockMaterialized,fullHeaderMode,sharedRuntime:true}));
   const requiresBody=plans.some(p=>p.requiresBody);
   const lines=[...qxSemanticMetadata(options),
     regexReplacementRuntimeSource(),

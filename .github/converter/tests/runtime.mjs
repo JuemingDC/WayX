@@ -291,7 +291,8 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   };
   let checked=0;
   for(const item of fixture.cases) {
-    const output=convertPlugin({id:'FeatureCollection',source:'https://example.test/source.lpx',category:'Test'},'[Rewrite]\n'+item.source,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+    const mockFiles=Object.hasOwn(item,'mockText')?new Map([[item.source,{bodyText:item.mockText,sourceFile:'https://example.test/body.txt'}]]):new Map();
+    const output=convertPlugin({id:'FeatureCollection',source:'https://example.test/source.lpx',category:'Test'},'[Rewrite]\n'+item.source,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main',mockFiles});
     validateConvertedPlugin({id:'FeatureCollection'},output);
     for(const target of item.targets) {
       assert.doesNotMatch(target==='qx'?output.qx:output.surge,/REVIEW REQUIRED/,item.id+' '+target);
@@ -306,7 +307,7 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   for(const item of fixture.cases.slice(18)) {
     const ast=parseRewriteV2(item.source);
     const context={url:item.request?.url||'https://example.test/',request:{method:'GET',headers:{},body:'',...structuredClone(item.request)},response:{status:200,headers:{},body:'',...structuredClone(item.response)}};
-    const oracle=evaluateRewriteActions(ast,context,{parsePath:parseJsonKeyPath});
+    const oracle=evaluateRewriteActions(ast,context,{parsePath:parseJsonKeyPath,mockFiles:Object.hasOwn(item,'mockText')?new Map([[item.source,{bodyText:item.mockText}]]):new Map()});
     for(const [field,expected] of Object.entries(item.expected))assert.deepEqual(oracle.state[ast.phase][field],expected,item.id+' independent source oracle');
   }
   const profile=classifyComplexRewrite(parseRewriteV2(fixture.cases.find(c=>c.id==='paired-body-batch').source));
@@ -354,5 +355,61 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   assert.match(parameter.qx,/Known Quantumult X target limitation.*plugin \[Argument\].*app/);
   assert.doesNotMatch(parameter.qx,/^[^#\n]*script-echo-response/m);
   assert.doesNotMatch(parameter.surge,/REVIEW REQUIRED/);
+  // Entire request phase, including a native Header between two text files.
+  const mockEntry={id:'RequestMockPhase',source:'https://example.test/plugin/main.lpx',category:'Test'};
+  const mockLines=[
+    'request if ${url} ~= /example/i then request.body.mock_file("text","first.txt") | request.header.set("X-Step","one")',
+    'request if ${request.header["X-Step"]} == "one" then request.header.set("X-Native","yes")',
+    'request if ${request.header["X-Native"]} == "yes" then request.body.mock_file("text","second.txt") | request.body.replace(/old/i,"new") | request.header.set("X-Step","two")',
+  ];
+  const {materializeConversionContext}=await import('../src/conversion.mjs');
+  const fetched=[];
+  const mockSource='[Rewrite]\n'+mockLines.join('\n');
+  const mockContext=await materializeConversionContext(mockEntry,mockSource,{fetchText:async url=>{fetched.push(url);if(url.endsWith('/first.txt'))return 'first';if(url.endsWith('/second.txt'))return 'old ${literal} 汉字\n';throw Error('unexpected source dependency: '+url);}});
+  assert.deepEqual(fetched.sort(),['https://example.test/plugin/first.txt','https://example.test/plugin/second.txt']);
+  const mockOutput=convertPlugin(mockEntry,mockSource,{...mockContext,stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+  validateConvertedPlugin(mockEntry,mockOutput);
+  for(const target of ['qx','surge']) {
+    const phaseScripts=[...mockOutput.generatedScripts].filter(([name])=>name.startsWith('phase_'+target+'_request_'));
+    assert.equal(phaseScripts.length,1);
+    assert.doesNotMatch(target==='qx'?mockOutput.qx:mockOutput.surge,/REVIEW REQUIRED/);
+    assert.deepEqual(run(phaseScripts[0][1],{request:{body:'original'}}),{headers:{'Content-Type':'text/plain; charset=utf-8','X-Step':'two','X-Native':'yes'},body:'new ${literal} 汉字\n'});
+    assert.deepEqual(run(phaseScripts[0][1],{request:{url:'https://none.test/',body:'original'}}),{});
+    for(const url of fetched)assert.ok(phaseScripts[0][1].includes('// Source mock file: '+url));
+  }
+  assert.doesNotMatch([...mockOutput.generatedScripts.keys()].join('\n'),/^(?:mock_|request_mixed_|request_mock_)/m);
+  assert.equal(mockOutput.generatedScripts.size,2);
+  assert.doesNotMatch(mockOutput.qx,/script-echo-response/);
+  assert.doesNotMatch([...mockOutput.generatedScripts.values()].join('\n'),/\$done\(\{response:/);
+  const mockArgs={byId:new Map([['body',{id:'body'}]])};
+  const argumentMock=renderRewritePhaseDispatcher([parseRewriteV2('request if ${url} ~= /example/i then request.body.mock("text",${body}) | request.header.set("X-Later","yes")')],{target:'surge',argumentTable:mockArgs});
+  assert.deepEqual(run(argumentMock.script,{argument:'{"body":"${literal}:汉字"}'}),{headers:{'Content-Type':'text/plain; charset=utf-8','X-Later':'yes'},body:'${literal}:汉字'});
+  assert.deepEqual(run(argumentMock.script,{request:{body:'old'},argument:'{"body":3}'}),{headers:{'X-Later':'yes'},body:'old'});
+  const requestDuplicate=renderRewritePhaseDispatcher([parseRewriteV2('request if ${url} ~= /example/i then request.header.add("X-Dup","second") | request.body.mock("text","new")')],{target:'surge'});
+  assert.equal(requestDuplicate.fullHeaderMode,true);
+  assert.deepEqual(run(requestDuplicate.script,{request:{headers:[{field:'X-Dup',value:'first'},{field:'content-type',value:'old'}],body:'old'}}),{headers:[{field:'X-Dup',value:'first'},{field:'content-type',value:'text/plain; charset=utf-8'},{field:'X-Dup',value:'second'}],body:'new'});
+  for(const target of ['qx','surge']) {
+    const badFile=convertPlugin(mockEntry,'[Rewrite]\nrequest if ${url} ~= /example/i then request.body.mock_file("text","missing.txt")',{mockFiles:new Map(),stamp:'2026-10-04'});
+    assert.match(target==='qx'?badFile.qx:badFile.surge,/REVIEW REQUIRED/);
+    assert.equal([...badFile.generatedScripts].filter(([name])=>name.startsWith('features_'+target+'_')).length,0);
+    const binaryPipeline=convertPlugin(mockEntry,'[Rewrite]\nrequest if ${url} ~= /example/i then request.body.mock("png","AA==",true) | request.header.set("X","yes")',{stamp:'2026-10-04'});
+    assert.match(target==='qx'?binaryPipeline.qx:binaryPipeline.surge,/REVIEW REQUIRED/);
+  }
+  const parameterMockSource='[Argument]\nbody=input,"default",tag=Body\n[Rewrite]\nrequest if ${url} ~= /example/i then request.body.mock("text",${body})';
+  const parameterMockOutput=convertPlugin(mockEntry,parameterMockSource,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+  assert.match(parameterMockOutput.qx,/REVIEW REQUIRED/);
+  assert.doesNotMatch(parameterMockOutput.surge,/REVIEW REQUIRED/);
+  const parameterMockScripts=[...parameterMockOutput.generatedScripts].filter(([name])=>name.startsWith('features_surge_'));
+  assert.equal(parameterMockScripts.length,1);
+  assert.match(parameterMockOutput.surge,/argument=/);
+  assert.deepEqual(run(parameterMockScripts[0][1],{argument:'{"body":"a,b=汉字:${literal}"}'}),{headers:{'Content-Type':'text/plain; charset=utf-8'},body:'a,b=汉字:${literal}'});
+  const authorMockSource='[Rewrite]\nrequest if ${url} ~= /example/i then request.body.mock("text","new")\n[Script]\nhttp-request ^https://example.test/ script-path=https://example.test/original.js, requires-body=true';
+  const authorMockOutput=convertPlugin(mockEntry,authorMockSource,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+  for(const target of ['qx','surge']) {
+    const text=target==='qx'?authorMockOutput.qx:authorMockOutput.surge;
+    assert.match(text,/COMPATIBILITY LIMITATION/);
+    assert.ok(text.includes('https://example.test/original.js'));
+    assert.doesNotMatch([...authorMockOutput.generatedScripts.keys()].join('\n'),/phase_/);
+  }
   console.log('Loon feature collection passed: '+checked+' independent expected-output cases, plus phase/body/duplicate/argument contracts');
 }

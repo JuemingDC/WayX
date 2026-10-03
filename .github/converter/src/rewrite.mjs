@@ -942,11 +942,28 @@ function rewriteFeatureProfile(ast) {
     }
   };
   visit(ast);
+  if(ast.actions.some(isTextRequestMockAction))features.add('request-text-mock');
   if(ast.actions.some(a=>/\.json\.(?:add|replace)$/.test(a.name) && scalarItems(a.args[1]).some(v=>v?.type==='raw-string')))features.add('raw-json-value');
   if(ast.actions.length>1)features.add('action-order');
-  const mutations=ast.actions.every(a=>new RegExp('^'+ast.phase+'\\.(?:header\\.(?:add|set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$').test(a.name));
-  const needsHelper=['regex-flags','string-templates','special-characters','raw-json-value'].some(f=>features.has(f)) || ast.actions.some(a=>JSON.stringify(a.args).includes('"type":"variable"'));
+  const mutations=ast.actions.every(a=>new RegExp('^'+ast.phase+'\\.(?:header\\.(?:add|set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$').test(a.name) || (ast.phase==='request' && /^request\.body\.mock(?:_file)?$/.test(a.name)));
+  const needsHelper=ast.actions.some(isTextRequestMockAction) || ['regex-flags','string-templates','special-characters','raw-json-value'].some(f=>features.has(f)) || ast.actions.some(a=>JSON.stringify(a.args).includes('"type":"variable"'));
   return {kinds:[...features].sort(),mutations,needsHelper};
+}
+
+// Shared phase eligibility: only text request mocks enter the synchronous
+// mutation runtime. Binary/encoded bodies retain their existing adapters.
+export function isTextRequestMockAction(action) {
+  if(!/^request\.body\.mock(?:_file)?$/.test(action?.name||''))return false;
+  const type=action.args[0];
+  if(!['string','raw-string'].includes(type?.type))return false;
+  const parts=stringTemplateParts(type);
+  if(parts.some(p=>p[0]==='v'))return false;
+  if(!['json','text','css','html','javascript','plain'].includes(parts.map(p=>p[1]).join('').toLowerCase()))return false;
+  return !action.args[2] || (action.args[2].type==='boolean' && action.args[2].value===false);
+}
+export function supportsRewritePhaseActions(ast,target) {
+  const mutations=new RegExp('^'+ast.phase+'\\.(?:header\\.(?:'+(target==='surge'?'add|':'')+'set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$');
+  return ast.actions.every(action=>mutations.test(action.name) || (ast.phase==='request' && isTextRequestMockAction(action))) && ast.actions.filter(action=>action.name==='request.body.mock_file').length<=1;
 }
 
 function planRewriteFeatureHelper(ast,target,ctx) {
@@ -956,7 +973,7 @@ function planRewriteFeatureHelper(ast,target,ctx) {
   if(target==='qx' && ast.actions.some(a=>a.name.endsWith('.header.add')))return null;
   if(!ctx.generatedScripts)return {ok:false,terminal:true,reason:'semantic feature helper requires a generated-script context'};
   try {
-    const options={target,stamp:ctx.stamp,category:ctx.category,sourceLine:ctx.sourceLine,argumentTable:ctx.argumentTable};
+    const options={target,stamp:ctx.stamp,category:ctx.category,sourceLine:ctx.sourceLine,argumentTable:ctx.argumentTable,mockMaterialized:ctx.mockFiles?.get(ctx.sourceLine)};
     const plan=ast.actions.length===1 ? renderSingleRewriteMutationScript(ast,options) : renderMixedRewriteScript(ast,options);
     const refs=ctx.argumentRefs || [];
     if(target==='qx' && refs.length)throw new Error('Quantumult X plugin argument transport is not verified');
@@ -2554,47 +2571,7 @@ function ensureQxRewriteHandlers() {
     },
   });
 
-  registerComplexRewriteHandler({
-    id:'qx-request-mock-mutation-script',
-    targets:['qx'],
-    match:ast=>{
-      if (ast.phase!=='request') return false;
-      const mocks=ast.actions.filter(action=>
-        action.name==='request.body.mock' || action.name==='request.body.mock_file'
-      );
-      if (mocks.length!==1) return false;
-      return ast.actions.every(action=>
-        action===mocks[0] ||
-        /^request\.header\.(?:set|del|replace)$/.test(action.name) ||
-        action.name==='request.body.replace' ||
-        /^request\.json\.(?:add|delete|replace)$/.test(action.name)
-      );
-    },
-    plan:(ast,_target,ctx)=>{
-      try {
-        const fileMock=ast.actions.find(action=>action.name==='request.body.mock_file');
-        const materialized=fileMock ? ctx.mockFiles?.get(ctx.sourceLine) : null;
-        const plan=renderMixedRewriteScript(ast,{
-          target:'qx',
-          stamp:ctx.stamp,
-          category:ctx.category,
-          sourceLine:ctx.sourceLine,
-          mockMaterialized:materialized,
-        });
-        const key=crypto.createHash('sha1').update('request-mixed\0'+ctx.sourceLine).digest('hex').slice(0,10);
-        const filename='request_mixed_'+key+'.js';
-        ctx.generatedScripts.set(filename,plan.script);
-        const matcher=qxRewriteMatcherPlan(ast);
-        return {
-          ok:true,
-          section:'rewrite',
-          line:matcher.prefix+plan.qxAction+' '+qxRewriteRawBase(ctx)+'/Script/'+ctx.id+'/'+filename,
-        };
-      } catch(error) {
-        return {ok:false,terminal:true,reason:String(error?.message||error)};
-      }
-    },
-  });
+
 
 
 
@@ -2678,7 +2655,7 @@ export function planQxRewrite(ir, ctx={}) {
     return rewriteReview(source,'Quantumult X cannot carry Loon plugin [Argument] references without changing the source script/runtime contract: '+argumentRefs.join(', '));
   }
 
-  if(rewriteFeatureProfile(ast).needsHelper && !ctx.featureCompatibilityPhases?.has(ast.phase)) {
+  if((rewriteFeatureProfile(ast).needsHelper && !ctx.featureCompatibilityPhases?.has(ast.phase)) || ast.actions.some(isTextRequestMockAction)) {
     const featurePlan=planRewriteFeatureHelper(ast,'qx',{...ctx,sourceLine:source,argumentRefs});
     if(featurePlan)return featurePlan.ok ? {section:featurePlan.section,line:featurePlan.line} : rewriteReview(source,featurePlan.reason);
   }
@@ -2917,7 +2894,7 @@ export function planSurgeRewrite(ir,ctx={}) {
   const singleOp=singleRewriteOperation(ir);
   const argumentRefs=ctx.argumentRefs || [];
 
-  if(rewriteFeatureProfile(ast).needsHelper && !ctx.featureCompatibilityPhases?.has(ast.phase)) {
+  if((rewriteFeatureProfile(ast).needsHelper && !ctx.featureCompatibilityPhases?.has(ast.phase)) || ast.actions.some(isTextRequestMockAction)) {
     const featurePlan=planRewriteFeatureHelper(ast,'surge',{...ctx,sourceLine:source,argumentRefs});
     if(featurePlan)return featurePlan.ok ? {section:featurePlan.section,line:featurePlan.line} : rewriteReview(source,featurePlan.reason);
   }
