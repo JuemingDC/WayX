@@ -147,7 +147,7 @@ const broadGuardOracle=differentialConditionOracle({
     {url:'https://example.com/item/99',request:{method:'POST',headers:{}}},
     {url:'https://example.com/item/99',request:{method:'PUT',headers:{}}},
     {url:'https://example.com/other',request:{method:'GET',headers:{}}},
-    {url:'file:///tmp/item/99',request:{method:'POST',headers:{}}},
+    {url:'https://example.com/item/not-number',request:{method:'POST',headers:{}}},
   ],
 });
 assert.equal(broadGuardOracle.noFalseNegatives,true);
