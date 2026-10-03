@@ -118,10 +118,16 @@ function snippetMitmKeys(snippet) {
   return out;
 }
 
-const [sample, rewriteSnippet, filterSnippet] = await Promise.all([
+const scriptSamples=fixture.authority.officialScriptSamples;
+const [sample, rewriteSnippet, filterSnippet, rewriteDoc, requestHeaderSample, responseHeaderSample, responseBodySample, echoResponseSample] = await Promise.all([
   fetchText(fixture.authority.officialSamplePath),
   fetchText(fixture.authority.officialRewriteSnippetPath),
   fetchText(fixture.authority.officialFilterSnippetPath),
+  fetchText(fixture.authority.officialRewriteDocPath),
+  fetchText(scriptSamples.requestHeader),
+  fetchText(scriptSamples.responseHeader),
+  fetchText(scriptSamples.responseBody),
+  fetchText(scriptSamples.echoResponse),
 ]);
 
 const officialRules = officialRuleTypes(sample);
@@ -129,6 +135,24 @@ const officialRewriteMatchersSet = officialRewriteMatchers(sample);
 const officialRewrites = officialRewriteActions(sample);
 const officialMitm = snippetMitmKeys(rewriteSnippet);
 const reviewedUiRewrites = new Set(Object.keys(fixture.authority.manualRewriteEvidence || {}));
+
+function assertContains(text, pattern, label) {
+  assert.ok(pattern.test(String(text)), 'QX official Script evidence drifted: ' + label);
+}
+
+// Crossutility's own samples are the runtime contract for helper/dispatcher work.
+assertContains(rewriteDoc,/script-response-body/, 'rewrite.md documents script-response-body');
+assertContains(requestHeaderSample,/\$request\.(?:url|path|method|headers)/, 'request-header sample reads request context');
+assertContains(requestHeaderSample,/\$done\s*\(\s*\{\s*\}\s*\)/, 'request-header sample proves $done({}) no-op');
+assertContains(requestHeaderSample,/\$done\s*\(\s*\{[\s\S]*?path\s*:[\s\S]*?headers\s*:/, 'request-header sample returns path + headers');
+assertContains(responseHeaderSample,/\$response\.(?:statusCode|headers)/, 'response-header sample reads response context');
+assertContains(responseHeaderSample,/\$done\s*\(\s*\{\s*\}\s*\)/, 'response-header sample proves $done({}) no-op');
+assertContains(responseHeaderSample,/\$done\s*\(\s*\{[\s\S]*?status\s*:[\s\S]*?headers\s*:/, 'response-header sample returns status + headers');
+assertContains(responseBodySample,/\$response\.body/, 'response-body sample reads response body');
+assertContains(responseBodySample,/\$done\s*\(/, 'response-body sample completes through $done');
+assertContains(responseBodySample,/headers[\s\S]*status|status[\s\S]*headers/, 'response-body sample documents optional headers/status');
+assertContains(echoResponseSample,/status[\s\S]*headers[\s\S]*body/, 'echo-response sample constructs response status/headers/body');
+assertContains(echoResponseSample,/\$done\s*\(\s*myResponse\s*\)/, 'echo-response sample returns full response');
 
 assert.deepEqual(sorted(QX_WAYX_FILTER_TYPES), fixture.ruleTypes, 'QX Rule-type registry drifted from reviewed WayX adblock baseline');
 assert.deepEqual(sorted(QX_WAYX_REWRITE_MATCHERS), fixture.rewriteMatchers, 'QX Rewrite matcher registry drifted from reviewed WayX adblock baseline');
@@ -214,5 +238,5 @@ console.log(
   fixture.ruleTypes.length + ' Rule types / ' +
   fixture.rewriteMatchers.length + ' Rewrite matchers / ' +
   fixture.rewriteActions.length + ' Rewrite actions (' +
-  reviewedUiRewrites.size + ' current-app UI reviewed) / hostname'
+  reviewedUiRewrites.size + ' current-app UI reviewed) / hostname / official Script runtime samples'
 );
