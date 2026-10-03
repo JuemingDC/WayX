@@ -949,10 +949,23 @@ const legacyQxHeaderAddBulk = planLegacyRewrite(
 assert.equal(legacyQxHeaderAddBulk.section, 'rewrite');
 assert.match(legacyQxHeaderAddBulk.line, /request-header \$1\$2X-A: one\$2X-B: two\$2$/);
 
-assert.match(
-  planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-header-add Set-Cookie a=1', 'qx', legacyCtx).line,
-  /Quantumult X unsupported legacy response-header-add commented out/,
+const legacyQxResponseHeaderAdd=planLegacyRewrite(
+  '^https:\\/\\/api\\.example\\.com',
+  'response-header-add Set-Cookie a=1',
+  'qx',
+  legacyCtx,
 );
+assert.equal(legacyQxResponseHeaderAdd.section,'rewrite');
+assert.match(legacyQxResponseHeaderAdd.line,/url response-header .*Set-Cookie: a=1/);
+
+const legacyQxUnsafeResponseHeaderAdd=planLegacyRewrite(
+  '^https:\\/\\/api\\.example\\.com',
+  'response-header-add Set-Cookie a=$1',
+  'qx',
+  legacyCtx,
+);
+assert.equal(legacyQxUnsafeResponseHeaderAdd.section,'comment');
+assert.match(legacyQxUnsafeResponseHeaderAdd.line,/cannot be safely encoded by native response-header/);
 
 const legacyNestedMock = classifyLegacyRewrite(
   'mock-response-body data-type=json data="{"no":0,"error":"success"}" status-code=200',
