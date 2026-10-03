@@ -29,15 +29,41 @@ function fixedOption(ast, name) {
 
 export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText = '', argumentIds = null} = {}) {
   if (!ast || ast.type !== 'script') return unsupported('expected Script v2 AST');
+
+  // QX official Rewrite Script declarations do not expose Loon's enable,
+  // timeout, debug or binary_body_mode fields. Keep requires_body separate:
+  // it selects the QX header/body action family, while binary_body_mode never
+  // implies body buffering.
+  const enable = scriptOption(ast, 'enable');
+  if (enable?.type === 'boolean' && enable.value === false) {
+    return {ok:true, disabled:true, reason:'Loon Script v2 enable=false'};
+  }
+  if (enable?.type === 'variable') {
+    return unsupported('Quantumult X official Rewrite Script syntax has no dynamic enable field');
+  }
+
+  const timeout = scriptOption(ast, 'timeout');
+  if (timeout) {
+    return unsupported('Quantumult X official Rewrite Script syntax has no timeout field');
+  }
+
+  const debug = scriptOption(ast, 'debug');
+  if (debug?.type === 'variable' || (debug?.type === 'boolean' && debug.value === true)) {
+    return unsupported('Quantumult X official Rewrite Script syntax has no debug field');
+  }
+
+  const binaryBodyMode = scriptOptionBoolean(ast, 'binary_body_mode', false);
+  if (binaryBodyMode) {
+    return unsupported('Quantumult X official Rewrite Script syntax has no binary_body_mode field');
+  }
+
   if (argumentIds !== null) {
     const usage = scriptV2PluginArgumentUsage(ast, argumentIds);
     // QX follows the KOP-XIAO resource-parser behavior for Script declaration
     // arguments/options: Script argument payloads and dynamic enable/timeout/debug are
     // discarded at conversion time. Only Argument references that change the
     // match condition, or other still-significant dynamic options, remain blockers.
-    const undeclared = usage.undeclaredOptionRefs
-      .filter(ref => !['enable','timeout','debug'].includes(ref.option))
-      .map(ref => ref.id);
+    const undeclared = usage.undeclaredOptionRefs.map(ref => ref.id);
     if (undeclared.length) {
       return unsupported('undeclared plugin [Argument] reference(s): ' + [...new Set(undeclared)].sort().join(', '));
     }
@@ -50,25 +76,8 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
   if (!condition.ok) return condition;
   const notes = [...(condition.notes || [])];
 
-  const enable = scriptOption(ast, 'enable');
-  if (enable?.type === 'boolean' && enable.value === false) {
-    return {ok:true, disabled:true, reason:'Loon Script v2 enable=false'};
-  }
-  if (enable?.type === 'variable') {
-    notes.push('Source dynamic enable=' + enable.name + ' ignored for Quantumult X; converted rule defaults to enabled.');
-  }
-
   if (ast.script.argument) {
     notes.push('Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.');
-  }
-
-  const timeout = scriptOption(ast, 'timeout');
-  if (timeout) {
-    notes.push('Source Script timeout ignored for Quantumult X.');
-  }
-  const binaryBodyMode = scriptOptionBoolean(ast, 'binary_body_mode', false);
-  if (binaryBodyMode) {
-    notes.push('Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.');
   }
 
   const action = selectQxScriptAction({
@@ -89,7 +98,7 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
     action:action.action,
     line:condition.pattern + ' url ' + action.action + ' ' + scriptUrl,
     tag:fixedOption(ast, 'tag'),
-    binaryBodyMode,
+    binaryBodyMode:false,
     notes,
   };
 }
