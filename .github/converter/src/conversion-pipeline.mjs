@@ -2,7 +2,7 @@
 // Author: chance
 // Category: Converter / Pipeline
 
-import { qxRule as canonicalQxRule, surgeModuleRule } from './rule.mjs';
+import { qxRule as canonicalQxRule, surgeModuleRule } from './core/rule.mjs';
 import { isRewriteV2, parseRewriteV2 } from './rewrite-v2.mjs';
 import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
 import {
