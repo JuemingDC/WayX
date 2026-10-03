@@ -236,7 +236,7 @@ export function planQxRewrite(ir, ctx={}) {
   if (singleOp?.kind==='header' && singleOp.phase==='response' && singleOp.operation==='add') {
     return {
       section:'comment',
-      line:'# [WayX] Quantumult X unsupported response.header.add commented out; duplicate-header preservation is not verified by the official sample.\n# Source declaration: '+source,
+      line:'# [WayX] Quantumult X response.header.add commented out; this field/value cannot be safely encoded by native response-header without changing duplicate-header semantics.\n# Source declaration: '+source,
       reason:'unsupported-qx-response-header-add-comment',
     };
   }
