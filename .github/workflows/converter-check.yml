@@ -58,6 +58,7 @@ jobs:
           node .github/converter/tests/generic-identity.mjs
           node .github/converter/tests/genericity-audit.mjs
           node .github/converter/tests/architecture-contract.mjs
+          node .github/converter/tests/core-semantics.mjs
           node .github/converter/tests/rule-ast.mjs
           node .github/converter/tests/rewrite-ir.mjs
           node .github/converter/tests/rewrite-target-planners.mjs
