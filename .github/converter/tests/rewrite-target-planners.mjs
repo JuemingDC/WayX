@@ -34,6 +34,18 @@ const legacyReject=legacyRewriteToSemanticIr('^https://ads\\.example\\.com','rej
 assert.equal(planQxRewrite(legacyReject,ctx()).line,'^https://ads\\.example\\.com url reject-dict');
 assert.equal(planSurgeRewrite(legacyReject,ctx()).section,'map');
 
+const legacyQuotedKey=legacyRewriteToSemanticIr(
+  '^https://api\\.example\\.com',
+  'response-body-json-replace data["3D_AVATAR_UPDATE"] false',
+);
+const qxLegacyQuotedKey=planQxRewrite(legacyQuotedKey,ctx());
+assert.equal(qxLegacyQuotedKey.section,'rewrite');
+assert.match(qxLegacyQuotedKey.line,/jsonjq-response-body/);
+assert.match(qxLegacyQuotedKey.line,/3D_AVATAR_UPDATE/);
+const surgeLegacyQuotedKey=planSurgeRewrite(legacyQuotedKey,ctx());
+assert.equal(surgeLegacyQuotedKey.section,'body');
+assert.match(surgeLegacyQuotedKey.line,/http-response-jq/);
+
 const rawUrlPattern='^https:\\/\\/api\\.example\\.com\\/v1\\/(?:a|b)\\?x=1$';
 const rawUrlMatcher=qxExactRewriteMatcherPlan(parseRewriteV2(
   'request if ${url} ~= /'+rawUrlPattern+'/ then request.header.add("X-Test","1")'
