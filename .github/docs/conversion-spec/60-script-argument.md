@@ -70,14 +70,14 @@ QX snippet 不复制 Loon Plugin `[Argument]` 参数 UI，也不生成 BoxJs / `
 
 ### 60.3.1 Source Script declaration
 
-这里按 KOP-XIAO 当前 `Scripts/resource-parser.js` 的实际 Script 转换口径处理。其 `SCP2QX()` 对 Surge/HTTP Script 声明只提取：
+这里仍参考 KOP-XIAO 当前 `Scripts/resource-parser.js::SCP2QX()` 对 QX Script action family 的历史转换形式，但**不再把其“未读取某字段”当成可静默丢弃该源语义的依据**。`SCP2QX()` 对 Surge/HTTP Script 声明只提取：
 
 - `pattern`；
 - `script-path`；
 - `type=http-request/http-response`；
 - `requires-body`，据此选择 QX `script-*-header/body`。
 
-该实现没有读取或传递 `argument`、`enable`、`timeout`、`binary-body-mode`。WayX 对 Loon legacy Script / Script v2 采用同样的 QX 声明层策略：
+该实现没有读取或传递 `argument`、`enable`、`timeout`、`binary-body-mode`。WayX 只沿用其已证明的 request/response + requires-body → QX action family 映射；其它 option 必须回到 Crossutility 官方 sample 判断目标是否有等价字段：
 
 - Script `argument` / PluginObject：继续按既有策略忽略，不生成 QX 参数；
 - 动态 `enable=${id}` / `enable={id}`：QX 无已确认动态 enable 字段 → Review；
