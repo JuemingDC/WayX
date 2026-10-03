@@ -42,9 +42,11 @@ QX matcher planner 区分 **prefilter** 与 **exact** 两种模式，并先判�
 - Headers-only：QX 官方语法仍要求 URL 字段，因此 WayX 使用全 HTTP(S) guard `^https?:// <Headers regex> url-and-header <action...>`，把 URL 变成不额外收窄的前置条件；
 - 无可下推 URL/Headers predicate 的 helper prefilter：`^https?:// url <script-action>`。
 
-对 multi-action helper，可把必要但不一定充分的 request-side 条件作为 native prefilter 下推，因为 helper 会再次完整判断原 condition。当前 prefilter 安全子集为 URL Regex 与 `${request.method} == "固定方法"`。Method equality 生成 `^METHOD[ ]` Headers regex；该模式利用官方 sample 已确认的“Headers 比较字符串以 method/path/request headers 组成”语义，同时避免官方示例 `^POST` 对扩展方法名产生前缀误匹配。
+对 multi-action helper，可把必要但不一定充分的 request-side 条件作为 native prefilter 下推，因为 helper 会再次完整判断原 condition。当前 prefilter 安全子集包括 URL Regex、`${request.method} == "固定方法"`，以及可安全识别的 `${request.header['Name']}` 条件。Method equality 生成 `^METHOD[ ]` Headers regex；该模式利用官方 sample 已确认的“Headers 比较字符串以 method/path/request headers 组成”语义，同时避免官方示例 `^POST` 对扩展方法名产生前缀误匹配。
 
-若目标不再有 helper 复核、而是直接输出 QX native action，则必须使用 exact matcher。当前 exact 子集只接受 URL Regex、固定 Method equality 或二者通过 `&&` 组合；OR、response-side 条件、request Header value 条件、多个不同 URL Regex 的 AND 均不得只取部分条件生成 native action。
+Loon 官方文档规定 Header 名 lookup 大小写不敏感、`==` 比较完整 Header 值、`~=` 只对 Header value 做 Regex 搜索，缺失 Header 为 `null`。因此 QX request Header prefilter 固定采用保守策略：固定字符串 `==` 可下推为 `\r\n<case-insensitive-name>:[ \t]*<escaped-value>[ \t]*(?:\r\n|$)`；`~=` 只下推 Header presence，不把源 Regex 嵌进整块 QX Headers 字符串；`== null` 不下推正向 matcher。所有这些路径仍由 helper 重算完整 Loon condition。
+
+若目标不再有 helper 复核、而是直接输出 QX native action，则必须使用 exact matcher。当前 exact 子集只接受 URL Regex、固定 Method equality 或二者通过 `&&` 组合；OR、response-side 条件、**任何 request Header 条件**、多个不同 URL Regex 的 AND 均不得只取部分条件生成 native action。request Header 条件即使已生成 `url-and-header` prefilter，也不等于获得 exact 等价证明。
 
 源：
 ```text

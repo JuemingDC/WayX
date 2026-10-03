@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.48  
+版本：1.49  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -9,6 +9,14 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 本规范采用“分块规范”结构。转换器、测试、canonical 输出、Golden 都必须服从本规范，不能反过来用现有代码定义规范。
 
 ## 2026-10-03 规范更新
+
+**Quantumult X request.header 条件预筛选（2026-10-03）**：
+
+1. Loon 官方 Rewrite v2 文档定义 `${request.header['name']}` 为 `String | null`，Header 名称查找大小写不敏感；`==` 比较完整值，`~=` 对 Header 值执行 Regex 搜索，`null` 表示 Header 缺失。QX 官方 sample 说明 `url-and-header` 的 Headers 比较字符串包含 method、path 与 key-value request headers，并给出 `\r\nUser-Agent: example-agent` 示例。
+2. WayX 允许把可证明为**必要条件**的 request Header 条件下推到 QX `url-and-header` 作为 helper prefilter：固定字符串 `==` 编译为大小写不敏感 Header 名 + 固定值的整行匹配；`~=` 暂时只下推“该 Header 必须存在”，源 Regex 继续由 helper 对真实 Header 值执行，避免把 `^/$`、capture 或 substring 语义错误迁移到 QX 的整块 Headers 字符串。
+3. `${request.header['name']} == null` 不生成正向 Headers matcher，因为成功条件是 Header 缺失；它继续由 helper 判断。插件变量、模板值与无法安全解析的 Header 名同样不下推。
+4. request Header 下推当前只属于 **prefilter**，不得进入 `qxExactRewriteMatcherPlan()`。QX sample 没有证明其序列化 Headers regex 与 Loon 单 Header value lookup 在 duplicate Header、值归一化等边界上完全等价，因此含 `${request.header[...]}` 的 native action 仍需 helper/Review，而不能因为能构造 `url-and-header` 就跳过源 condition evaluator。
+5. Header 名在 QX prefilter 中按 HTTP case-insensitive 语义编译为逐字母大小写字符类；固定值按 Regex literal 转义，并容忍 QX 序列化中的水平空白。URL-only 规则仍只使用 `url`；Headers-only 使用 `^https?://` guard；URL + Header 使用真实 URL pattern + `url-and-header`。
 
 **Quantumult X Multi-action Header 原生合并（2026-10-03）**：
 
