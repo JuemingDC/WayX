@@ -76,11 +76,16 @@ const ignoredScriptMap = new Map([
 ]);
 const qxIgnoredOptionsOutput = convert(qxIgnoredOptionsFixture, qxIgnoredOptionsSource, ignoredScriptMap, STAMP);
 assert.doesNotMatch(qxIgnoredOptionsOutput.qx, /SCRIPT(?: V2)? REVIEW REQUIRED/);
-assert.match(qxIgnoredOptionsOutput.qx, /Source dynamic enable ignored for Quantumult X; converted rule defaults to enabled/);
+assert.match(qxIgnoredOptionsOutput.qx, /dynamic enable=.*ignored for Quantumult X; converted rule defaults to enabled/i);
 assert.match(qxIgnoredOptionsOutput.qx, /Source Script timeout ignored for Quantumult X/);
 assert.match(qxIgnoredOptionsOutput.qx, /Source Script argument ignored for Quantumult X/);
 assert.match(qxIgnoredOptionsOutput.qx, /url script-response-body https:\/\/example\.com\/legacy\.js/);
 assert.match(qxIgnoredOptionsOutput.qx, /url script-response-body https:\/\/example\.com\/v2\.js/);
+assert.doesNotMatch(qxIgnoredOptionsOutput.surge, /SCRIPT(?: V2)? REVIEW REQUIRED/);
+assert.match(qxIgnoredOptionsOutput.surge, /#!REQUIREMENT .*enabled.*Legacy = type=http-response/);
+assert.match(qxIgnoredOptionsOutput.surge, /Legacy = type=http-response[^\n]*timeout=60/);
+assert.match(qxIgnoredOptionsOutput.surge, /#!REQUIREMENT .*enabled.*V2 = type=http-response/);
+assert.match(qxIgnoredOptionsOutput.surge, /V2 = type=http-response[^\n]*timeout=30/);
 assert.match(headerGroupOutput.surge, /header-del content-type/);
 assert.match(headerGroupOutput.surge, /header-add content-type text\/plain; charset=utf-8/);
 

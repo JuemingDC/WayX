@@ -216,6 +216,7 @@ assert.equal(/inspectQxScriptCompatibility|qxManualPortComment/.test(syncConvert
 const scriptIr=await fs.readFile(path.join(ROOT,'.github/converter/src/script-ir.mjs'),'utf8');
 const scriptQx=await fs.readFile(path.join(ROOT,'.github/converter/src/script-qx.mjs'),'utf8');
 const scriptSurge=await fs.readFile(path.join(ROOT,'.github/converter/src/script-surge.mjs'),'utf8');
+const scriptV2Target=await fs.readFile(path.join(ROOT,'.github/converter/src/script-v2-target.mjs'),'utf8');
 assert.equal(/qx-official-capabilities|surge-official-capabilities/.test(scriptIr), false, 'Block 60: Script IR must remain target-neutral');
 assert.equal(/qxAction|surgeType|section:/.test(scriptIr), false, 'Block 60: Script IR must not encode target action or section');
 assert.match(conversionPipeline,/planQxScript\(ir/, 'Block 60: conversion pipeline must delegate QX Script planning');
@@ -225,6 +226,11 @@ assert.equal(/surgeEnableRequirement\(|surgeDynamicOptionValue\(|surgePluginObje
 assert.equal(/normalizeRegexBodyForTarget\(sc\.pattern\)|sc\.requiresBody|sc\.binary|sc\.timeout|sc\.maxSize|sc\.argument|sc\.enable/.test(conversionPipeline), false, 'Block 60: conversion pipeline must not route Legacy Script options');
 assert.match(scriptQx,/export function planQxScript\(ir/, 'Block 60: QX Script planner must consume Script IR');
 assert.match(scriptSurge,/export function planSurgeScript\(ir/, 'Block 60: Surge Script planner must consume Script IR');
+assert.match(scriptQx,/dynamic enable ignored for Quantumult X[\s\S]*timeout ignored for Quantumult X[\s\S]*binary-body-mode=true ignored for Quantumult X[\s\S]*debug[\s\S]*omitted/, 'Block 60: Legacy QX Script planner must explicitly own unsupported option omission');
+assert.match(scriptV2Target,/dynamic enable=[\s\S]*ignored for Quantumult X[\s\S]*timeout ignored for Quantumult X[\s\S]*debug[\s\S]*omitted[\s\S]*binary_body_mode=true ignored for Quantumult X/, 'Block 60: Script v2 QX planner must explicitly own unsupported option omission');
+assert.match(scriptV2Target,/binary-body-mode=true/, 'Block 60: Surge Script v2 planner must preserve native binary body mode when supported');
+assert.match(scriptV2Target,/timeout=/, 'Block 60: Surge Script v2 planner must preserve native timeout when supported');
+assert.match(scriptV2Target,/debug=/, 'Block 60: Surge Script v2 planner must preserve native debug when supported');
 assert.match(converterWorkflow,/script-ir-target-planners\.mjs/, 'Block 60/80: Converter Check must execute Script IR target planner contract');
 const sourceSection=await fs.readFile(path.join(ROOT,'.github/converter/src/source-section.mjs'),'utf8');
 const sourceMetadata=await fs.readFile(path.join(ROOT,'.github/converter/src/source-metadata.mjs'),'utf8');

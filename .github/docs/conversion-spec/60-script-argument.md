@@ -53,7 +53,7 @@ script-analyze-echo-response
 
 选择依据是源声明和脚本实际阶段/Body 行为，不按插件名或作者特判。
 
-`binary_body_mode=true` / legacy `binary-body-mode=true` 不作为 QX action 选择条件；QX action 只由 request/response phase 与 `requires_body` / `requires-body` 决定。`debug` 与 Legacy `max-size` 则采用**直接丢弃**：解析后不进入 QX declaration，不输出 WayX 注释，不产生 Review/Issue，也不影响 action 选择。用户提供的官方 sample 没有这两个 HTTP Script rewrite 参数形式，因此禁止为其发明 QX 参数。
+`binary_body_mode` / legacy `binary-body-mode` 与 `requires_body` / `requires-body` 永久正交：binary mode 绝不能让 QX 自动选择 body action；QX action 只由 request/response phase 与 requires-body 决定。用户提供的官方 sample 没有 `binary_body_mode`、`timeout`、动态 `enable`、`debug` 的 HTTP Script rewrite 参数形式，因此禁止发明 QX 字段。QX planner 对这些字段显式省略并输出审计注释，仍保留可执行 Source Script；enable=false/0 单独保持 disabled，enable=true/1 与 debug=false/0 可直接省略。Legacy `max-size` 继续按既有策略直接丢弃，不影响 action 选择。
 
 | Source 行为 | QX declaration |
 |---|---|
@@ -70,27 +70,27 @@ QX snippet 不复制 Loon Plugin `[Argument]` 参数 UI，也不生成 BoxJs / `
 
 ### 60.3.1 Source Script declaration
 
-这里按 KOP-XIAO 当前 `Scripts/resource-parser.js` 的实际 Script 转换口径处理。其 `SCP2QX()` 对 Surge/HTTP Script 声明只提取：
+这里仍参考 KOP-XIAO 当前 `Scripts/resource-parser.js::SCP2QX()` 对 QX Script action family 的历史转换形式，但**不再把其“未读取某字段”当成可静默丢弃该源语义的依据**。`SCP2QX()` 对 Surge/HTTP Script 声明只提取：
 
 - `pattern`；
 - `script-path`；
 - `type=http-request/http-response`；
 - `requires-body`，据此选择 QX `script-*-header/body`。
 
-该实现没有读取或传递 `argument`、`enable`、`timeout`、`binary-body-mode`。WayX 对 Loon legacy Script / Script v2 采用同样的 QX 声明层策略：
+该实现没有读取或传递 `argument`、`enable`、`timeout`、`binary-body-mode`。WayX 只沿用其已证明的 request/response + requires-body → QX action family 映射；其它 option 必须回到 Crossutility 官方 sample 判断目标是否有等价字段：
 
-- Script `argument` / PluginObject：**忽略，不生成 QX 参数，也不因此 Review**；
-- 动态 `enable=${id}` / `enable={id}`：**忽略动态开关，QX 规则默认开启**；
-- 固定 `enable=false/0`：仍按源声明禁用；
-- `timeout`：**忽略，不因此 Review**；
-- `binary_body_mode` / `binary-body-mode`：**忽略，不因此 Review**；是否使用 body 只看 `requires_body` / `requires-body`；
-- `debug`：**直接丢弃**；固定值与动态参数引用均不写入 QX declaration、不输出 WayX 注释、不产生 Review/Issue；
-- Legacy `max-size`：**直接丢弃**；不写入 QX declaration、不输出 WayX 注释、不产生 Review/Issue，也不影响 `requires-body` 对 header/body action 的选择；
+- Script `argument` / PluginObject：继续按既有策略忽略，不生成 QX 参数；
+- 动态 `enable=${id}` / `enable={id}`：QX 无已确认动态 enable 字段，目标声明不写该字段，规则默认启用并生成审计注释；
+- 固定 `enable=false/0`：按源声明禁用；固定 `enable=true/1`：无需额外目标字段；
+- `timeout`：QX 无已确认 Script declaration timeout 字段，目标声明省略并生成审计注释；
+- `binary_body_mode=true` / `binary-body-mode=true`：QX 无已确认对应字段，目标声明省略并生成审计注释；false 可省略，且 binary mode 永不反推 requires-body；
+- `debug=true` 或动态 `debug=${id}`：QX 无已确认字段，目标声明省略并生成审计注释；`debug=false/0` 可省略；
+- Legacy `max-size`：继续直接丢弃，不写入 QX declaration，也不影响 `requires-body` 对 header/body action 的选择；
 - `tag`、源注释、原始 Script URL 保留；
 - `requires_body` 继续决定 header/body Script action；
 - 其它未明确纳入本兼容策略的字段仍按 WayX 自身 QX 规范独立判断。
 
-为便于审计，WayX 仍可在生成的 QX snippet 中用普通注释记录被忽略的 Script argument / dynamic enable / timeout / binary body mode；`debug` 与 Legacy `max-size` 例外，按本规范直接丢弃，不生成任何对应注释。
+QX 不得把目标未支持的 option 写成猜测字段。对本节已明确列出的 Script declaration option，由 QX target planner 负责省略并生成普通审计注释；只有源 declaration 其它无法安全处理的语义才进入 Script Review。
 
 参考实现：
 `https://github.com/KOP-XIAO/QuantumultX/blob/master/Scripts/resource-parser.js` → `SCP2QX()`。
@@ -158,12 +158,14 @@ Surge 的 `$argument` 本身是 String，因此这里输出 JSON String，而不
 
 ### 60.4.2 动态 Script options
 
-- Loon `timeout=${id}` → Surge `timeout={{{id}}}`；
-- Loon `debug=${id}` → Surge `debug={{{id}}}`；
-- Loon `enable=${id}` → Surge 行级 `#!REQUIREMENT`，比较该 Boolean 参数是否为 `true`；
+目标 planner 必须先按目标软件官方能力决定字段，而不是因为 Loon 有字段就照抄：
+
+- Surge 官方 Script declaration 原生支持 `timeout` 与 `debug`：Loon `timeout=${id}` → `timeout={{{id}}}`；`debug=${id}` → `debug={{{id}}}`；
+- Surge 官方 Script declaration没有 `enable=` 参数；Loon `enable=${id}` → 官方行级 `#!REQUIREMENT`，比较该 Boolean Module 参数是否为 `true`；固定 false 直接 disabled，固定 true 不写额外字段；
+- Surge 官方同时支持 `requires-body` 与 `binary-body-mode`，二者独立输出：binary=true 不得自动补 requires-body=true，requires-body=true 也不得自动补 binary-body-mode=true；
 - 使用行级 Requirement 时模块必须声明 `#!requirement=CORE_VERSION>=22` 或更高。
 
-动态参数未声明、类型不符合或无法形成合法 Surge 声明时才进入 Review。
+动态参数未声明、类型不符合或目标官方能力无法形成合法声明时进入 Review。
 
 ### 60.4.3 Rewrite 参数
 
@@ -200,6 +202,10 @@ WayX 不判断 Source JavaScript 是否“兼容 Quantumult X / Surge”。
 - 源码正文读取失败时，不因“兼容性未知”禁用脚本；直接按 declaration 的 phase 与 `requires_body` / `requires-body` 映射。跨平台源码中其它平台的 synthetic response 分支、共享 helper、dead code 都不得改变 QX action family。Surge 仍直接引用原脚本 URL。
 
 Source Script 的跨平台运行时适配由原脚本自身负责，不属于 WayX converter 的兼容性门禁。
+
+## 60.6.1 Legacy / Script v2 混排顺序
+
+`[Script]` 中 Legacy 与 Script v2 必须按源文件出现顺序进入同一个 `groupSourceSectionItems()` 遍历。parser/IR/planner 可以不同，但不得先收集全部 Legacy 再输出 v2，或反之。QX `[rewrite_local]` 与 Surge `[Script]` 内对应 Source Script 声明的相对顺序必须与 Loon 源顺序一致；Review/disabled 项的源位置也不得导致后续活动脚本跨越前面的活动脚本重新排序。
 
 ## 60.7 Source Script URL
 

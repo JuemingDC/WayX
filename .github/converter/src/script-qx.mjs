@@ -32,6 +32,8 @@ export function planQxScript(ir,ctx={}) {
   const targetPattern=normalizeRegexBodyForTarget(sc.pattern);
   const enableFixed=sc.enable ? String(sc.enable).trim().toLowerCase() : '';
   const enableDynamic=Boolean(sc.enable) && !['true','false','1','0'].includes(enableFixed);
+  const debugFixed=sc.debug ? String(sc.debug).trim().toLowerCase() : '';
+  const debugEnabled=Boolean(sc.debug) && !['false','0'].includes(debugFixed);
   const notes=[];
 
   if (sc.argument) {
@@ -46,7 +48,9 @@ export function planQxScript(ir,ctx={}) {
   if (sc.binaryBodyMode) {
     notes.push('Source binary-body-mode=true ignored for Quantumult X; requires-body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.');
   }
-
+  if (debugEnabled) {
+    notes.push('Source Script debug is not a Quantumult X Rewrite Script field and was omitted.');
+  }
   if (enableFixed==='false' || enableFixed==='0') {
     return {ok:true,disabled:true,reason:'Loon Legacy Script enable=false',tag:sc.tag,notes};
   }
