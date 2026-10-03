@@ -72,7 +72,7 @@ Surge 官方 URL pattern 使用 bare regular expression，不使用 JavaScript �
 ^https://api\.example\.com
 ```
 
-WayX 只处理 Loon regex literal 的**语法外壳**：parser 去掉最外层 `/.../` delimiter，并按项目标准丢弃 `i/m/s`。regex body 本身保持原样，不做全局 canonicalization；包括 `\/`、`\.`、捕获组、非捕获组、lookaround、character class、quantifier、anchor 等均不因“目标格式更整洁”而改写。只有某个目标 planner 有官方依据证明必须做局部语法适配时，才允许在该 planner 内处理。
+WayX 只处理 Loon regex literal 的**语法外壳**：parser 去掉最外层 `/.../` delimiter，并按项目标准丢弃 `i/m/s`。regex body 本身保持原样，不做全局 canonicalization；包括 `\/`、`\.`、捕获组、非捕获组、lookaround、character class、quantifier、anchor 等均不因“目标格式更整洁”而改写。**URL matcher 进一步禁止进入 target regex compiler/normalizer**：QX matcher planner 与 `simpleUrlRewriteCondition()` 必须直接使用 parser AST 中的原 URL regex body。只有非 URL 的 action-local Regex 且官方目标格式确有需要时，才允许由对应 planner 做局部适配。
 
 禁止：
 - 把 regex flag 拼进正文；
@@ -153,7 +153,7 @@ WayX 对 Surge URL pattern 只做必要的目标格式处理：
 
 - Rewrite v2 condition parser/AST：`.github/converter/src/rewrite-v2.mjs`
 - AST action/condition validation：`.github/converter/src/rewrite-v2-actions.mjs`
-- Target regex compilation：`.github/converter/src/target-regex.mjs`
+- Target regex compilation（仅非 URL 或未来有明确目标语法适配依据的字段）：`.github/converter/src/target-regex.mjs`
 - Static/simple-condition target planner：`.github/converter/src/rewrite-v2-semantic.mjs`
 - QX native matcher / multi-action prefilter：`.github/converter/src/qx-rewrite-matcher.mjs`
 - Surge module validator：`.github/converter/src/surge-module.mjs`
