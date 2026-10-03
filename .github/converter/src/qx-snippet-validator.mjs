@@ -44,7 +44,7 @@ function validateQxExecutableLine(line, entry) {
     if (/^(?:302|307)\s+\S+$/.test(action)) return;
     if (/^jsonjq-(?:request|response)-body\s+'.+'$/.test(action)) return;
     if (/^(?:request|response)-body\s+.+\s+(?:request|response)-body\s+.+$/.test(action)) return;
-    if (/^(?:request|response)-header\s+.+\s+(?:request|response)-header\s+.+$/.test(action)) return;
+    if (/^(request-header|response-header)\s+.+\s+\1\s+.+$/.test(action)) return;
 
     const echo=action.match(/^echo-response\s+(.+)\s+echo-response\s+(\S+)$/);
     if (echo) {
