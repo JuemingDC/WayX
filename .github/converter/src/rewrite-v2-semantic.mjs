@@ -27,16 +27,18 @@ export function simpleUrlRewriteCondition(ast, {target = 'generic'} = {}) {
       c.right?.type !== 'regex') {
     return unsupported('condition is not a single URL regex');
   }
-  const flags=String(c.right.flags || '');
-  if (target!=='generic' && flags) {
-    return unsupported(
-      target+' bare URL matcher cannot preserve Loon regex flags: '+flags,
-      {sourceFlags:flags},
-    );
-  }
-  // URL matcher bodies are source regex bodies after the Loon literal wrapper
-  // has been removed by the parser. Do not compile/canonicalize them here.
-  return { ok: true, pattern: String(c.right.pattern), regex: c.right, capture: c.capture || null, notes: [] };
+  const compiled=target==='generic'
+    ? {ok:true,pattern:String(c.right.pattern),notes:[],sourceFlags:String(c.right.flags || '')}
+    : compileRegexForTarget(c.right,{subject:'url',target});
+  if (!compiled.ok) return unsupported(compiled.reason,{sourceFlags:compiled.sourceFlags || String(c.right.flags || '')});
+  return {
+    ok:true,
+    pattern:compiled.pattern,
+    regex:c.right,
+    capture:c.capture || null,
+    notes:compiled.notes || [],
+    sourceFlags:compiled.sourceFlags || '',
+  };
 }
 
 function parseKeyPath(path) {
