@@ -124,6 +124,85 @@ export function jsonActionToJq(action) {
   return { ok: true, jq: ops.join(' | ') };
 }
 
+
+function topLevelObjectKey(node, actionName) {
+  const value=stringNode(node);
+  if (value===null) throw new Error(actionName + ': key path must be a fixed string');
+  const parts=parseKeyPath(value);
+  if (parts.length!==1 || typeof parts[0]!=='string') return null;
+  return parts[0];
+}
+
+function topLevelObjectJsonOps(action) {
+  const name=action?.name || '';
+  if (!/^(?:request|response)\.json\.(?:add|delete|replace)$/.test(name)) {
+    return unsupported('JSON pipeline action is outside add/delete/replace subset');
+  }
+
+  const paths=scalarItems(action.args[0]);
+  const values=name.endsWith('.delete') ? null : scalarItems(action.args[1]);
+  if (values && paths.length!==values.length) {
+    return unsupported(name + ': batch argument lengths differ');
+  }
+
+  const ops=[];
+  for (let index=0; index<paths.length; index++) {
+    let key;
+    try {
+      key=topLevelObjectKey(paths[index],name);
+    } catch (error) {
+      return unsupported(String(error?.message || error));
+    }
+    if (key===null) {
+      return unsupported(name + ': native multi-action JQ currently requires top-level object key paths');
+    }
+
+    const path=JSON.stringify([key]);
+    const selector='.[' + JSON.stringify(key) + ']';
+
+    if (name.endsWith('.delete')) {
+      ops.push('if type == "object" then del(' + selector + ') else . end');
+      continue;
+    }
+
+    let value;
+    try {
+      value=anyToJq(values[index]);
+    } catch (error) {
+      return unsupported(String(error?.message || error));
+    }
+
+    if (name.endsWith('.add')) {
+      ops.push('if type == "object" then if getpath(' + path + ') == null then setpath(' + path + '; ' + value + ') else . end else . end');
+    } else {
+      ops.push('if type == "object" then if getpath(' + path + ') then setpath(' + path + '; ' + value + ') else . end else . end');
+    }
+  }
+
+  return {ok:true,ops};
+}
+
+export function jsonPipelineToSafeNativeJq(ast) {
+  validateRewriteV2Ast(ast);
+  if (!Array.isArray(ast?.actions) || ast.actions.length<2) {
+    return unsupported('native JSON pipeline requires at least two actions');
+  }
+  if (!['request','response'].includes(ast.phase)) {
+    return unsupported('native JSON pipeline requires request/response phase');
+  }
+  if (ast.actions.some(action=>!new RegExp('^'+ast.phase+'\\.json\\.(?:add|delete|replace)$').test(action.name))) {
+    return unsupported('native JSON pipeline requires same-phase add/delete/replace actions only');
+  }
+
+  const ops=[];
+  for (const action of ast.actions) {
+    const mapped=topLevelObjectJsonOps(action);
+    if (!mapped.ok) return mapped;
+    ops.push(...mapped.ops);
+  }
+  return {ok:true,jq:ops.join(' | ')};
+}
+
 export function qxDirectRewritePlan(ast, {matcher = null} = {}) {
   validateRewriteV2Ast(ast);
   if (ast.actions.length !== 1) return unsupported('QX direct mapping requires exactly one action');

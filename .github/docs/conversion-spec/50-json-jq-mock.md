@@ -83,7 +83,33 @@ WayX 禁止：
 
 Number/String/Boolean/null/Object/Array 类型不得互相转换。批量 action 不得排序、去重或重排。
 
-## 50.2.1 Legacy JSON Action
+## 50.2.1 Quantumult X 多 Action 原生 JQ 合并
+
+QX 官方 sample 已确认单条 Rewrite 可以使用 `jsonjq-request-body` / `jsonjq-response-body` 承载一个 JQ 表达式。WayX 因此允许把**同一条** Loon Rewrite v2 JSON pipeline 合成一条 native JQ，但当前只开放可证明等价的保守子集：
+
+- 至少两个 action，且全部为同 phase 的 `json.add / json.replace / json.delete`；
+- source condition 必须通过 QX exact matcher，不允许只取 prefilter；
+- Key Path 必须是固定的顶层对象 key，例如 `"flag"`；`"data.flag"`、`"items[0]"` 等嵌套/数组路径继续使用 helper；
+- value 必须能静态编码为 JSON；capture / Plugin Argument / runtime variable 不进入 native path；
+- batch 与 action 全部按源顺序逐项展开后串联，禁止排序、去重或跨 action 合并。
+
+为保留 Loon pipeline 的 action-level failure 边界，生成的每一个 top-level 操作都必须对非 object JSON root 安全 no-op，例如：
+
+```jq
+if type == "object" then
+  if getpath(["flag"]) == null then setpath(["flag"]; true) else . end
+else . end
+```
+
+delete 对称生成：
+
+```jq
+if type == "object" then del(.["old"]) else . end
+```
+
+该路径不得引入 `try/catch` 作为兼容假设，也不得生成 `delpaths`。任一 action 超出上述 subset 时，**整个** source pipeline 回退到现有 full-condition helper；禁止只 native 化其中一部分。
+
+## 50.2.2 Legacy JSON Action
 
 旧版 `request/response-body-json-add|replace|del` 与 Rewrite v2 使用同一组语义和同一 native-JQ 优先策略，不再为可直接表达的 legacy `json-add` 生成 JS helper。对可证明的标量值直接生成上述 JQ；无法无损解析的 legacy object/array value 进入 Review，不猜测类型。
 
