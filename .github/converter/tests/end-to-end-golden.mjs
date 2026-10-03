@@ -101,8 +101,8 @@ assert.match(qxIgnoredOptionsOutput.surge, /#!REQUIREMENT .*enabled.*Legacy = ty
 assert.match(qxIgnoredOptionsOutput.surge, /Legacy = type=http-response[^\n]*timeout=60/);
 assert.match(qxIgnoredOptionsOutput.surge, /#!REQUIREMENT .*enabled.*V2 = type=http-response/);
 assert.match(qxIgnoredOptionsOutput.surge, /V2 = type=http-response[^\n]*timeout=30/);
-assert.match(headerGroupOutput.surge, /header-del content-type/);
-assert.match(headerGroupOutput.surge, /header-add content-type text\/plain; charset=utf-8/);
+assert.doesNotMatch(headerGroupOutput.surge, /header-del content-type/);
+assert.doesNotMatch(headerGroupOutput.surge, /header-add content-type text\/plain; charset=utf-8/);
 
 const genericComplexFixture = {
   id:'GenericComplexFixture',
