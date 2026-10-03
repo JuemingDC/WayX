@@ -660,11 +660,17 @@ for (const testCase of cases) {
 
   if (testCase.name === 'PinDuoDuo') {
     assert.match(out.surge, /AND,\(\(DOMAIN,\s*api\.pinduoduo\.com\),\s*\(PROTOCOL,\s*QUIC\)\),REJECT/);
-    assert.match(out.surge, /^\[Body Rewrite\]$/m);
-    assert.match(out.surge, /^\[Map Local\]$/m);
+    assert.doesNotMatch(out.surge, /^\[Body Rewrite\]$/m);
+    assert.doesNotMatch(out.surge, /^\[Map Local\]$/m);
     assert.match(out.surge, /^\[Script\]$/m);
     assert.match(out.surge, /^hostname = %APPEND% api\.pinduoduo\.com, m\.pinduoduo\.net$/m);
-    assert.ok(surgeActive.some(line => line.includes('script-path=https://kelee.one/Resource/JavaScript/PinDuoDuo/PinDuoDuo_remove_ads.js')));
+    assert.match(out.surge, /REVIEW REQUIRED: .*cannot preserve Loon regex flags: i/);
+    assert.match(out.surge, /Source declaration: response if \$\{url\} ~= .*PinDuoDuo_remove_ads\.js/);
+    assert.equal(
+      surgeActive.some(line => line.includes('script-path=https://kelee.one/Resource/JavaScript/PinDuoDuo/PinDuoDuo_remove_ads.js')),
+      false,
+      'flagged source Script must not be activated with a case-sensitive Surge matcher',
+    );
   }
 
   if (testCase.name === 'MyBlockAds') {
