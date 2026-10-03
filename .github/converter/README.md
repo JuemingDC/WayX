@@ -31,7 +31,8 @@ WayX 的 Loon Plugin → Quantumult X / Surge 通用转换器。核心原则是*
 - Source Script 只转换声明层，QX/Surge 均直接引用原脚本 URL，不做 runtime compatibility gate。
 - 仅在 QX declaration 需要判定 header/body/echo action 类型时读取脚本正文辅助分类。
 - QX Script v2/legacy Script 的 argument 按当前策略忽略，动态 enable 默认开启，timeout 与 binary-body-mode 按既定策略处理；`debug` 与 Legacy `max-size` 直接丢弃；header/body 只由 requires-body 决定；固定 enable=false/0 仍禁用。Rewrite 参数仍按其实际语义独立判断。
-- 通用 complex renderer 只处理源单条 Rewrite v2 中真实存在的 multi-action pipeline，并按 action family + renderer 能力判断；禁止合并相邻独立规则，也禁止把一个 pipeline 拆成多个未证明顺序等价的 QX Rewrite。QX complex helper 可把安全的 URL / request.method / request.header 必要条件下推到 `url` / `url-and-header` 做 native prefilter，但脚本仍重算完整 condition。request.header 固定 equality 可匹配 Header 行，Regex 仅预筛 Header presence，null 不下推；这些 Header 条件不进入 exact native matcher。单 action 需要脚本时走专用 semantic helper。
+- URL regex body 由 Loon parser 去掉最外层 delimiter 后原样传给目标 matcher，不进入 target regex compiler/normalizer；合法转义、捕获组与 anchor 均不改写。
+- QX helper 统一使用 matcher planner：完整重算 condition 的 single/multi-action helper 使用 URL / request.method / request.header 必要条件做 prefilter；不重算 condition 的 dedicated helper 必须先通过 exact matcher。request.header 固定 equality 可匹配 Header 行，Regex 仅预筛 Header presence，null 不下推；这些 Header 条件不进入 exact native matcher。禁止合并相邻独立规则，也禁止把一个 source-authored pipeline 拆成多个未证明顺序等价的 QX Rewrite。
 
 ## 自动化
 
