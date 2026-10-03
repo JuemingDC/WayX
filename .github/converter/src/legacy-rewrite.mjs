@@ -180,21 +180,25 @@ function planHeader(pattern, action, parsed, target, ctx) {
   const width=parsed.op === 'del' ? 1 : parsed.op === 'replace-regex' ? 3 : 2;
   if (!tokens.length || tokens.length % width) return review(pattern, action, 'invalid legacy header argument grouping');
 
-  if (target === 'qx' && parsed.phase === 'request' && parsed.op === 'add') {
+  if (target === 'qx' && parsed.op === 'add' && ['request','response'].includes(parsed.phase)) {
     const targetPattern=normalizeRegexBodyForTarget(pattern);
     const pairs=[];
     for(let i=0;i<tokens.length;i+=width){
       const [name,value]=tokens.slice(i,i+width).map(unquote);
       if(!name || /[\s:\r\n]/.test(name) || /[\r\n$]/.test(value)) {
+        if (parsed.phase === 'response') break;
         return review(pattern, action, 'legacy request header-add contains an unsafe field name/value for QX whole-header rewrite');
       }
       pairs.push([name,value]);
     }
-    const inserted=pairs.map(([name,value]) => name + ': ' + value + '$2').join('');
-    return {
-      section:'rewrite',
-      line:targetPattern + ' url request-header ^([^\\r\\n]+)(\\r\\n) request-header $1$2' + inserted,
-    };
+    if (pairs.length === tokens.length / width) {
+      const token=parsed.phase + '-header';
+      const inserted=pairs.map(([name,value]) => name + ': ' + value + '$2').join('');
+      return {
+        section:'rewrite',
+        line:targetPattern + ' url ' + token + ' ^([^\\r\\n]+)(\\r\\n) ' + token + ' $1$2' + inserted,
+      };
+    }
   }
 
 
