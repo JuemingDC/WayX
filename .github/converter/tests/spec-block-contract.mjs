@@ -127,6 +127,12 @@ assert.match(simpleUrlBody,/pattern:\s*String\(c\.right\.pattern\)/, 'Block 40: 
 assert.equal(/compileRegexForTarget|normalizeRegexBodyForTarget/.test(simpleUrlBody), false, 'Block 40: simple URL condition must not compile or normalize URL regex');
 assert.match(rewriteQx,/conditionMode:'external-exact'/, 'Block 30/40: dedicated QX helpers that do not re-evaluate conditions must require external exact matching');
 assert.match(rewriteQx,/renderSingleRewriteMutationScript\(ast/, 'Block 30/40: single Header/Body mutations must have a full-condition helper path');
+assert.match(rewriteQx,/renderQxRedirectScript\(ast,\{conditionMode:'full'/, 'Block 30/40: QX redirect must use the full-condition helper');
+assert.match(rewriteQx,/const matcher=qxRewriteMatcherPlan\(ast\);[\s\S]*redirect_/, 'Block 30/40: QX redirect must use the shared matcher planner as a prefilter');
+const qxSemanticScript=await fs.readFile(path.join(ROOT,'.github/converter/src/qx-semantic-script.mjs'),'utf8');
+assert.match(qxSemanticScript,/redirect helper requires exactly one URL regex condition/, 'Block 30/40: redirect helper must require one URL match source');
+assert.match(qxSemanticScript,/redirect helper does not lower OR conditions/, 'Block 30/40: redirect helper must fail closed on ambiguous OR success paths');
+assert.match(converterWorkflow,/catalog-regex-inventory\.mjs/, 'Block 40/80: Converter Check must execute the Catalog regex feature inventory');
 assert.match(rewriteQx,/qxExactRewriteMatcherPlan\(ast\)/, 'Block 30/40: native QX Header coalescing must require exact condition coverage');
 assert.match(rewriteSurge,/planComplexRewrite\(ast,'surge'/, 'Block 30: Surge planner must own its complex fallback');
 assert.match(rewriteQx,/function ensureQxRewriteHandlers\(\)/, 'Block 30: QX complex handlers must register lazily');
