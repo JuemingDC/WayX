@@ -31,11 +31,18 @@ Quantumult X 原生 Rewrite 不是只有 URL 条件。官方 sample 定义了第
 <URL regex> <Headers regex> url-and-header <action...>
 ```
 
-并明确规定 URL 先匹配，随后才匹配 Headers；Headers 比较字符串包含 request method、path 与 key-value request headers。当前 QX App UI 进一步确认所有 Rewrite 类型都提供可选 Headers 字段，因此 Headers matcher 应作为 Action 之外的正交能力处理。
+并明确规定 URL 先匹配，随后才匹配 Headers；Headers 比较字符串包含 request method、path 与 key-value request headers。当前 QX App UI 进一步确认所有 Rewrite 类型都提供可选 Headers 字段，因此 Headers matcher 应作为 Action 之外的正交能力处理。**可选**意味着不能因为目标 Action 是 Header Rewrite 就默认使用 Headers matcher。
 
 这只证明 **request-side** Headers 匹配。不能据此把 Loon `${response.header[...]}` 或 `${response.status}` 直接降级成 QX `url-and-header`。Loon `${request.method}` / `${request.header[...]}` 也只有在能保持原比较域、边界、大小写与 Regex 语义时才允许静态编译，否则仍走 helper/Review。
 
-QX matcher planner 区分 **prefilter** 与 **exact** 两种模式。对 multi-action helper，可把必要但不一定充分的 request-side 条件作为 native prefilter 下推，因为 helper 会再次完整判断原 condition。当前 prefilter 安全子集为 URL Regex 与 `${request.method} == "固定方法"`。Method equality 生成 `^METHOD[ ]` Headers regex；该模式利用官方 sample 已确认的“Headers 比较字符串以 method/path/request headers 组成”语义，同时避免官方示例 `^POST` 对扩展方法名产生前缀误匹配。
+QX matcher planner 区分 **prefilter** 与 **exact** 两种模式，并先判断源条件到底需要哪一种匹配域：
+
+- URL-only：`<URL regex> url <action...>`，不得附加 Headers matcher；
+- URL + Headers：`<URL regex> <Headers regex> url-and-header <action...>`；
+- Headers-only：QX 官方语法仍要求 URL 字段，因此 WayX 使用全 HTTP(S) guard `^https?:// <Headers regex> url-and-header <action...>`，把 URL 变成不额外收窄的前置条件；
+- 无可下推 URL/Headers predicate 的 helper prefilter：`^https?:// url <script-action>`。
+
+对 multi-action helper，可把必要但不一定充分的 request-side 条件作为 native prefilter 下推，因为 helper 会再次完整判断原 condition。当前 prefilter 安全子集为 URL Regex 与 `${request.method} == "固定方法"`。Method equality 生成 `^METHOD[ ]` Headers regex；该模式利用官方 sample 已确认的“Headers 比较字符串以 method/path/request headers 组成”语义，同时避免官方示例 `^POST` 对扩展方法名产生前缀误匹配。
 
 若目标不再有 helper 复核、而是直接输出 QX native action，则必须使用 exact matcher。当前 exact 子集只接受 URL Regex、固定 Method equality 或二者通过 `&&` 组合；OR、response-side 条件、request Header value 条件、多个不同 URL Regex 的 AND 均不得只取部分条件生成 native action。
 
