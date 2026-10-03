@@ -275,7 +275,8 @@ export function renderSingleRewriteMutationScript(ast, options = {}) {
   }
   const name=ast.actions[0]?.name || '';
   const headerOps=options.target==='surge' ? 'add|set|del|replace' : 'set|del|replace';
-  const supported=new RegExp('^'+ast.phase+'\\.(?:header\\.(?:'+headerOps+')|body\\.replace|json\\.(?:add|delete|replace))
+  const supported=new RegExp('^'+ast.phase+'\\.(?:header\\.(?:'+headerOps+')|body\\.replace|json\\.(?:add|delete|replace))$');
+  if (!supported.test(name)) {
     throw new Error('single Rewrite mutation helper does not support '+name);
   }
   return renderRewriteScript(ast, options);
