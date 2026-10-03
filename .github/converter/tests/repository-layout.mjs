@@ -26,10 +26,8 @@ for(const rel of ['converter','docs','monitor','upstream','boxjs','module','rule
 
 for(const rel of [
   '.github/converter',
-  '.github/docs/conversion-spec',
   '.github/monitor',
   '.github/CONVERSION_SPEC.md',
-  '.github/PROJECT_STATUS.md',
   '.github/README.md',
   '.github/scripts',
   '.github/sources/loon.json',
@@ -45,6 +43,18 @@ for(const rel of [
 ]){
   const stat=await fs.stat(path.join(ROOT,rel));
   assert.ok(stat, 'required workflow-domain path missing: '+rel);
+}
+
+for(const rel of [
+  '.github/docs/conversion-spec',
+  '.github/PROJECT_STATUS.md',
+  '.github/converter/README.md',
+]){
+  await assert.rejects(
+    fs.stat(path.join(ROOT,rel)),
+    {code:'ENOENT'},
+    'duplicate/stale architecture authority must stay removed: '+rel,
+  );
 }
 
 const executableRoots=[
