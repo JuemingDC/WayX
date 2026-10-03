@@ -32,6 +32,7 @@ const source=[
   'response if ${url} ~= /jq-missing/ then response.json.jq_file("filters/missing.jq")',
   'response if ${url} ~= /mock/ then response.body.mock_file("json", "mock.json", 200)',
   'response if ${url} ~= /image/ then response.body.mock_file("png", "image.bin", 200)',
+  'request if ${request.header[\'X-Region\']} == "CN" then request.body.mock_file("json", "request-mixed.json") | request.header.set("X-Test","1")',
   '',
   '[Script]',
   'http-response ^https://api\\.example\\.com script-path=./legacy.js,tag=legacy',
@@ -45,6 +46,7 @@ const textByUrl=new Map([
   ['https://example.com/plugins/filters/legacy-alias.jq','del(.legacyAlias)\n'],
   ['https://example.com/plugins/filters/legacy-rewrite.jq','del(.legacyRewrite)\n'],
   ['https://example.com/plugins/mock.json','{"ok":true}'],
+  ['https://example.com/plugins/request-mixed.json','{"request":true}'],
   ['https://example.com/plugins/legacy.js','const legacy = true;\r\n$done({});\r\n'],
   ['https://example.com/plugins/scripts/v2.js','const v2 = true;\n$done({});\n'],
 ]);
@@ -96,6 +98,11 @@ assert.deepEqual(mockFiles.get(binaryMockLine),{
   bodyBase64:'AAEC/w==',
   sourceFile:'https://example.com/plugins/image.bin',
 });
+const mixedRequestMockLine='request if ${request.header[\'X-Region\']} == "CN" then request.body.mock_file("json", "request-mixed.json") | request.header.set("X-Test","1")';
+assert.deepEqual(mockFiles.get(mixedRequestMockLine),{
+  bodyText:'{"request":true}',
+  sourceFile:'https://example.com/plugins/request-mixed.json',
+});
 
 const refs=discoverSourceScriptUrls(source,{parsed});
 assert.deepEqual(refs,[
@@ -126,6 +133,7 @@ assert.equal(context.jqFiles.get(jqAliasLine).content,'del(.legacyAlias)');
 assert.equal(context.jqFiles.get(legacyJqLine).content,'del(.legacyRewrite)');
 assert.match(context.jqFiles.get(missingJqLine).error,/unexpected text URL/);
 assert.equal(context.mockFiles.get(binaryMockLine).bodyBase64,'AAEC/w==');
+assert.equal(context.mockFiles.get(mixedRequestMockLine).bodyText,'{"request":true}');
 assert.equal(context.scriptMap.get('./legacy.js').qx,'https://example.com/plugins/legacy.js');
 assert.equal(context.scriptMap.get('scripts/v2.js').qx,'https://example.com/plugins/scripts/v2.js');
 assert.match(context.scriptMap.get('https://bad.example/fail.js').sourceError,/fixture source unavailable/);
@@ -133,6 +141,7 @@ assert.ok(fetchedText.includes('https://example.com/plugins/filters/remove-ads.j
 assert.ok(fetchedText.includes('https://example.com/plugins/filters/legacy-alias.jq'));
 assert.ok(fetchedText.includes('https://example.com/plugins/filters/legacy-rewrite.jq'));
 assert.ok(fetchedText.includes('https://example.com/plugins/mock.json'));
+assert.ok(fetchedText.includes('https://example.com/plugins/request-mixed.json'));
 assert.ok(fetchedText.includes('https://example.com/plugins/legacy.js'));
 assert.ok(fetchedText.includes('https://example.com/plugins/scripts/v2.js'));
 assert.ok(fetchedBytes.includes('https://example.com/plugins/image.bin'));
