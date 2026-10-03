@@ -7,9 +7,8 @@ name: Upstream Monitor
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 1 * * *"
-      timezone: "Asia/Shanghai"
+  # Scheduled upstream updates paused for semantic compiler migration (2026-10-03).
+  # Resume only after migration validation; manual dispatch remains available.
 
 permissions:
   contents: write
