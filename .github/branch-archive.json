@@ -1,0 +1,570 @@
+{
+  "date": "2026-10-03",
+  "main": "d374c78077e4e2e6253745adc6cc0d505f731d1c",
+  "branches": [
+    {
+      "name": "feature/loon-regex-audit-qx-redirect-matcher-20261003",
+      "sha": "42382da9cc25a23e7597464c5061df74596c0031"
+    },
+    {
+      "name": "feature/qx-conditional-header-matcher-20261003",
+      "sha": "19d7060cf57420f8512662f14b27d169d8cdef58"
+    },
+    {
+      "name": "feature/qx-direct-exact-matcher-20261003",
+      "sha": "c7e7f70e32b9c7688bf2bfd64cec0056fe045201"
+    },
+    {
+      "name": "feature/qx-multiaction-header-native-20261003",
+      "sha": "3160e0d3116ad25afefe1a4e21af832e9f4d44df"
+    },
+    {
+      "name": "feature/qx-multiaction-native-matcher-20261003",
+      "sha": "c0283eacb805af79710863c886cf12a373d37c3e"
+    },
+    {
+      "name": "feature/qx-native-json-pipeline-20261003",
+      "sha": "738a58c11f621566b6783c875a5448e347232025"
+    },
+    {
+      "name": "feature/qx-raw-url-and-dedicated-matchers-20261003",
+      "sha": "1036176dd1296591404ce350b3af7c58ff5734a7"
+    },
+    {
+      "name": "feature/qx-request-header-matcher-20261003",
+      "sha": "23b7b3a1f7f4b73637c26d3ec89c213fbb2a5c17"
+    },
+    {
+      "name": "feature/qx-rewrite-completeness-20261003",
+      "sha": "0d05977e054a5de38fea95405b667ffd2f923aa9"
+    },
+    {
+      "name": "feature/qx-script-fallback-matrix-20261003",
+      "sha": "8487e60606af6c7c531c869338b8898f7cf0ca2f"
+    },
+    {
+      "name": "feature/qx-url-and-header-20261003",
+      "sha": "9c063a79cce94eb20e7941c498222dfc974537a0"
+    },
+    {
+      "name": "feature/script-v2-target-options-order-20261003",
+      "sha": "69bb2ad5ee7d453be16e50e43e205697f052cea8"
+    },
+    {
+      "name": "work/5eplay-upstream-reliability-20261001",
+      "sha": "55a87ad415f3b42af714f6fb76ce5c2df2d5ece6"
+    },
+    {
+      "name": "work/actions-full-automation-20261001",
+      "sha": "c65088848da26d77bc86b046d2d5a120f204e853"
+    },
+    {
+      "name": "work/adblock-conversion-policy-update",
+      "sha": "c73911f948659eb6d5e2e744ea9fd237a3415212"
+    },
+    {
+      "name": "work/add-fleamarket-didi-chain-test-20261001",
+      "sha": "94b56f4e1f3ac8279ce90b522807d087b08d043f"
+    },
+    {
+      "name": "work/add-project-status",
+      "sha": "04cd5cde6e7e707272b7595ec8dfa408ee524c83"
+    },
+    {
+      "name": "work/align-header-add-regression",
+      "sha": "db1f50f6001fb04b8269da151bfc0339d514159e"
+    },
+    {
+      "name": "work/automation-gate-hardening-20260929",
+      "sha": "86b4b1e64dab36373a2658bee99c203e75281ab0"
+    },
+    {
+      "name": "work/canonical-regeneration-20260929",
+      "sha": "b9eb4c8b25c02a764624188c1ead40ce1eba944b"
+    },
+    {
+      "name": "work/capitalize-root-directories-20261001",
+      "sha": "48c229d2d0fdbb3c203acb9c9c0fa6a89c4e124b"
+    },
+    {
+      "name": "work/capture-condition-helper",
+      "sha": "20bd1ef302c3d1cd33923671f5f4c3dd40a568f2"
+    },
+    {
+      "name": "work/catalog-rule-inventory-20260930",
+      "sha": "8b918e0083674499552d29edd1283ca02c0c1651"
+    },
+    {
+      "name": "work/catalog-syntax-inventory-20260930",
+      "sha": "06bf54d35b9a919da4c7eabb8a1e88af0b80a388"
+    },
+    {
+      "name": "work/catalog-unification-20260929",
+      "sha": "d216ca1aea8c923a37761aad0a3d97f93c2a9efc"
+    },
+    {
+      "name": "work/cleanup-loon-argument-stale-content",
+      "sha": "65a6ef9c15fd3a060e4f9a67f0c28a2e329090fc"
+    },
+    {
+      "name": "work/compact-core-rule-phase-c",
+      "sha": "634f85040f25ef91503cf04302184085627d4cde"
+    },
+    {
+      "name": "work/complete-complex-rewrite",
+      "sha": "a91b5807de55efffb501766b358e16afcbeb37d8"
+    },
+    {
+      "name": "work/complex-helper-condition-domain",
+      "sha": "3342b94057389fec0e073261ded6058f75f23f89"
+    },
+    {
+      "name": "work/complex-helper-condition-types",
+      "sha": "acd8d62a2922473f1a9d429b903df477fc25a6d8"
+    },
+    {
+      "name": "work/complex-helper-output-minimize",
+      "sha": "8be573c617e986a94620241429c4d8c1724f4238"
+    },
+    {
+      "name": "work/complex-helper-plugin-arguments",
+      "sha": "64d353e24ea7d6777413c09af424e1f4ec0e2957"
+    },
+    {
+      "name": "work/complex-helper-runtime-matrix",
+      "sha": "b5da0673ef0aa4cdf52be04d81bc39e7cbd7d2c7"
+    },
+    {
+      "name": "work/complex-helper-runtime-tests",
+      "sha": "30b6b8c2473adcf0e45453258534a9d8ffcfe0eb"
+    },
+    {
+      "name": "work/complex-json-pipeline",
+      "sha": "f2886615d17cc65be159cb11ab068885ae339722"
+    },
+    {
+      "name": "work/complex-json-value-capture",
+      "sha": "2ad130387b0ca62a1a48a42a37afcf29e35955aa"
+    },
+    {
+      "name": "work/complex-mixed-pipeline",
+      "sha": "b4ca8efb9b69cc2768d49c0c9255183ff5b79395"
+    },
+    {
+      "name": "work/complex-rewrite-helper",
+      "sha": "80cc0e6b337f5609b1229417f58f282d3be8d5f5"
+    },
+    {
+      "name": "work/complex-rewrite-remaining-semantics",
+      "sha": "b2dd872b8c572b29bd0ab407a9eec2135c33556d"
+    },
+    {
+      "name": "work/conversion-context-materializers-20261001",
+      "sha": "ea4cfa17110c37375c48b368c770e40d1ae5dde6"
+    },
+    {
+      "name": "work/conversion-pipeline-core-20261001",
+      "sha": "39bc85e9c47537096cd7eb299b062f1d0089a837"
+    },
+    {
+      "name": "work/conversion-spec-v1-20260929",
+      "sha": "e9d198baad8108e275da162b53330b33675e3d2e"
+    },
+    {
+      "name": "work/converter-checkpoint-20260928",
+      "sha": "9b9917995aebc569b622bcc003ac8032723bffe2"
+    },
+    {
+      "name": "work/converter-phase2-20260929",
+      "sha": "5faad9a0116d1a0e1ccc6c295f31bcf57ac1b24c"
+    },
+    {
+      "name": "work/declaration-only-loon-cases-20260929",
+      "sha": "db979ec310859ea1bfe5816853887977fa0fdc3b"
+    },
+    {
+      "name": "work/drop-regex-flags-generated-helpers",
+      "sha": "385ba0c778e2b6ebd75be768200cc9af49d4901d"
+    },
+    {
+      "name": "work/end-to-end-golden-20260929",
+      "sha": "8b13340a4d23f052884dc61d0d24cef680acd4e4"
+    },
+    {
+      "name": "work/finalize-rewrite-helper-baseline",
+      "sha": "35c22a63a319714664e9a82354fbf8e9bef0c099"
+    },
+    {
+      "name": "work/finish-alignment-validator-fallback",
+      "sha": "d639b1c75b0b21089ec9453998013601d2d11db9"
+    },
+    {
+      "name": "work/fix-complex-condition",
+      "sha": "66dc8691ced881f0baaf38bb3a3a794eb8b262dd"
+    },
+    {
+      "name": "work/fix-generic-identity-20260929",
+      "sha": "1a0b71b6ba7c6a8b3ddd8265cc4b679be1fd079d"
+    },
+    {
+      "name": "work/fix-mixed-checkpoint",
+      "sha": "b1d97edb8cc8295742dfa4e3821347ec2358dbf3"
+    },
+    {
+      "name": "work/fix-qx-header-capture-semantics",
+      "sha": "49edbc23343f725d6f51e85ec23d1f34f9872c63"
+    },
+    {
+      "name": "work/fleamarket-current-loon-ua-retest-20261001",
+      "sha": "6168983bfc8eeebe968e9492bcefcb6262050a06"
+    },
+    {
+      "name": "work/fleamarket-full-loon-ua-retest-20261001",
+      "sha": "63081ad1215ee6241df9f816b41c8a2c1dfcc538"
+    },
+    {
+      "name": "work/fleamarket-kelee-ua-retest-20261001",
+      "sha": "048acc2dffd181b5717a30414c785e7adc5c994d"
+    },
+    {
+      "name": "work/fleamarket-python-urllib-retest-20261001",
+      "sha": "2b82856b0431e646519664b916f387fca4472361"
+    },
+    {
+      "name": "work/full-converter-audit-20260929",
+      "sha": "41c260228294e8493e7f375953c37a030b34223e"
+    },
+    {
+      "name": "work/generated-helper-prune-20261001",
+      "sha": "359beb7b134d49cec844b59f8fcd80a13c3279ef"
+    },
+    {
+      "name": "work/generated-identity-fields-20261001",
+      "sha": "bc4ef099481d8218c851d355deb93a43e6b55470"
+    },
+    {
+      "name": "work/generic-converter-spec-20260929",
+      "sha": "80214052a600b5acaf460790b498dd82b3485f53"
+    },
+    {
+      "name": "work/generic-inventory-complex-v2-20261001",
+      "sha": "8d1af9a70a43b279d201aae82fa1935b42930513"
+    },
+    {
+      "name": "work/generic-rule-inventory-v2-20261001",
+      "sha": "47ea749aedb681bc9e26176adcceaf628ee187d6"
+    },
+    {
+      "name": "work/green-rewrite-helper-baseline",
+      "sha": "292aaddb213e1ee0990dfaf81df04195a577730b"
+    },
+    {
+      "name": "work/header-native-regex-flags",
+      "sha": "c0d5a6843c421dea80eeaeae25eceecd0ad69338"
+    },
+    {
+      "name": "work/helper-runtime-fixtures-20260930",
+      "sha": "68c73bcbeabd36cbdfe3f6558b2622211fc5f94a"
+    },
+    {
+      "name": "work/jq-del-multi-20261001",
+      "sha": "281b56a42f81f6fc6fb6d98f72af593ed80a62a2"
+    },
+    {
+      "name": "work/json-parse-guard",
+      "sha": "8deedec56ea26034a7578d48f2c51d53af098c05"
+    },
+    {
+      "name": "work/json-rewrite-semantics-20261001",
+      "sha": "fa18a27f9798ee53f6f41cbc7844a249432a34da"
+    },
+    {
+      "name": "work/json-semantic-guard",
+      "sha": "19c7765897d21cedf3dcd27e2ad6d07e78c30883"
+    },
+    {
+      "name": "work/kelee-full-sync",
+      "sha": "10259fd6a5986c397440973911069a130625f8eb"
+    },
+    {
+      "name": "work/kelee-full-sync-v2",
+      "sha": "d340b5616928ba1ac5f2d1e20297f2dd0c0d591a"
+    },
+    {
+      "name": "work/legacy-syntax-inventory-20261001",
+      "sha": "2cd78f66d483f89823ae6d0c8adf68a754405362"
+    },
+    {
+      "name": "work/lock-regex-body-governance",
+      "sha": "eb4ff21a5d714224a188439e33ac71ca4625c75d"
+    },
+    {
+      "name": "work/managed-artifact-io-20261001",
+      "sha": "0cb15c42325fcb7276006fe8891b7110057ca276"
+    },
+    {
+      "name": "work/manual-myblockads-20260928",
+      "sha": "92dda35efcf03d8e5899707a1855e9e505ac2e18"
+    },
+    {
+      "name": "work/narrow-adblock-capability-scope-20260930",
+      "sha": "f049ccc4386b0107961f84ceecc7f3026bbe2e2a"
+    },
+    {
+      "name": "work/observed-complex-failclosed-20260930",
+      "sha": "d2618d9ae56e9ee43ba57c08032c4cb5a5f8b0ed"
+    },
+    {
+      "name": "work/original-source-followup-20260929",
+      "sha": "1c411a0506cb08944488e5f5bfeebc2c22c64675"
+    },
+    {
+      "name": "work/pixiv-enhanced-upstream",
+      "sha": "e1eafd5af5b3e526cba5c6d18eddaad46aaa5d43"
+    },
+    {
+      "name": "work/postmerge-fix-qx-header-regression",
+      "sha": "0c7cba7d607ba6e9fba7990eff8e8ecedd393b55"
+    },
+    {
+      "name": "work/postmerge-regex-helper-repair",
+      "sha": "2819bc2a15d32830a674889be731af8166f26c4e"
+    },
+    {
+      "name": "work/probe-fleamarket-upstream-20261001",
+      "sha": "d5defb6efe1b7e79cadc70c25f5f5639a5a2e5fd"
+    },
+    {
+      "name": "work/qx-header-actions-20260929",
+      "sha": "d5222beeb8bc7cd06599360ebc168e02b996bf9d"
+    },
+    {
+      "name": "work/qx-official-capability-gate-20260930",
+      "sha": "449343d2f5cc091f16eb2bdfcc696c475d2ae9a9"
+    },
+    {
+      "name": "work/qx-proxy-binding",
+      "sha": "c84a88b97dd2c5101f0f3ef623bc6ba32ac880c6"
+    },
+    {
+      "name": "work/qx-script-direct-drop-debug-max-size-20261001",
+      "sha": "b161a7d60f6526ce6d7860ab5d90e1a89b0477e5"
+    },
+    {
+      "name": "work/qx-script-ignore-debug-max-size-20261001",
+      "sha": "3bdb6976d42932d047cb7e8e075c5f3f605508de"
+    },
+    {
+      "name": "work/qx-validator-extraction-20261001",
+      "sha": "3afd845b87b668bd5d863952cf020261ee5c0cb7"
+    },
+    {
+      "name": "work/reconciliation-review-inventory-20260930",
+      "sha": "084bfcdf3f2e9c722f59017d16a7723f85628eb3"
+    },
+    {
+      "name": "work/regex-target-format-standard",
+      "sha": "73dde55f634355873c645f06fc856ea6f5b23173"
+    },
+    {
+      "name": "work/reject-native-simplify-20260929",
+      "sha": "eb4e6b9176e1c06fe289c96ec80e997b0ddc8fa1"
+    },
+    {
+      "name": "work/remove-fleamarket-kelee-ua-test-20261001",
+      "sha": "4874bd7dd7fa092cf10fd84780286e5d1f8c87d1"
+    },
+    {
+      "name": "work/remove-fleamarket-self-heal-test-20261001",
+      "sha": "63d2df0df4de3b33413330769914bdb115e3364e"
+    },
+    {
+      "name": "work/repository-audit-v2-20260929",
+      "sha": "bcb4cb7124b25cdd941dcdce45526da11a749e0d"
+    },
+    {
+      "name": "work/repository-cleanup-20261001",
+      "sha": "607f663ed9542cfd43fb9516a5a4ea70795c93ce"
+    },
+    {
+      "name": "work/restore-converter-green-baseline",
+      "sha": "d03f798a714db18a9f059320d74ba0d8c9050e1e"
+    },
+    {
+      "name": "work/restructure-workflow-layout-20261001",
+      "sha": "5809fe48453a06d665f1b1c6c2d38bfe5a6bc6e9"
+    },
+    {
+      "name": "work/reuse-parsed-conversion-context-20261001",
+      "sha": "81ec8ed340dc2e70a4ed61be687f54a58e9b6ed7"
+    },
+    {
+      "name": "work/rewrite-helper-consolidation",
+      "sha": "051589b3c7f67fdb24893f15b914bf4c5517dfcb"
+    },
+    {
+      "name": "work/rewrite-helper-validation-pack",
+      "sha": "77a79e8b6605d722081ce948253008fab041667b"
+    },
+    {
+      "name": "work/rewrite-semantic-ir-20261001",
+      "sha": "842561122355c417e98544fc79c31e59f6acc62b"
+    },
+    {
+      "name": "work/rewrite-target-planners-20261001",
+      "sha": "d452ddcece3722bc9dc1ab002380146ff9891bef"
+    },
+    {
+      "name": "work/rewrite-v2-semantic-actions-20260929",
+      "sha": "97968364ffb7efde6150b472dbd348cbab777f14"
+    },
+    {
+      "name": "work/rewrite-validation-and-capture",
+      "sha": "0aee2de2fd3e2157c35ec539b413c1f314b00ee7"
+    },
+    {
+      "name": "work/rucu6-canonical-phase1-20260929",
+      "sha": "1dc126d3adf45b2791bf9272687f1a69929255a0"
+    },
+    {
+      "name": "work/rule-ast-planners-20260930",
+      "sha": "8ca25af5160ec053aa2818d03908c8af96391927"
+    },
+    {
+      "name": "work/script-ir-target-planners-20261001",
+      "sha": "067c5c330fc4eb4896ae779d2f857b0ca3073c95"
+    },
+    {
+      "name": "work/script-v2-parser-20260929",
+      "sha": "b24190ef6cf9b1a247dab434673083fc22c260a1"
+    },
+    {
+      "name": "work/semantic-compiler-bootstrap",
+      "sha": "3e060fe66ec3e2d1ebf528865457403fd96fd866"
+    },
+    {
+      "name": "work/semantic-core-phase-b",
+      "sha": "1d0c7c4cb75377f87ff00d37d14b40b1c475fca7"
+    },
+    {
+      "name": "work/semantic-rewrite-mock-20260929",
+      "sha": "5057bc5b39b3ea80a17666fb9bcf8a38bc30d354"
+    },
+    {
+      "name": "work/source-section-comment-architecture-20261001",
+      "sha": "6ea994faeabed8a7d830ad437ea38105327914cb"
+    },
+    {
+      "name": "work/spec-align-regex-header",
+      "sha": "93065d6c8c061158496e430a4ead97f7df7710de"
+    },
+    {
+      "name": "work/spec-sync-fallback-final-mock-jq",
+      "sha": "1bc2843e7145607baea8047d39ff38650319eeab"
+    },
+    {
+      "name": "work/spec-update-20260930",
+      "sha": "ab8ec5ab07267a9a0615743f2536c50adb46f838"
+    },
+    {
+      "name": "work/surge-category-wayx-20261001",
+      "sha": "fcd713bfa8803132a8f450b67a7ae72d2d54c535"
+    },
+    {
+      "name": "work/surge-complex-header-add",
+      "sha": "3176a93339bb7b1e79124b00006724a687854a7f"
+    },
+    {
+      "name": "work/surge-disabled-rewrite-conversion",
+      "sha": "b9e34837e4ad27302d7dcd3b79eb751a8a4df96a"
+    },
+    {
+      "name": "work/surge-module-format-audit-20260929",
+      "sha": "ef8c6f609d5d55a8f4dfbb36691319a171b08657"
+    },
+    {
+      "name": "work/surge-module-format-audit-v2-20260929",
+      "sha": "e6b006fb15e0aca1fbd17f2a11cb17adaa57ac9b"
+    },
+    {
+      "name": "work/surge-official-capability-gate-20260930",
+      "sha": "e8c1d5c62a3d73c33b04a436eac735b5c833035e"
+    },
+    {
+      "name": "work/surge-proxy-argument-20260930",
+      "sha": "379678455097239e4b9d6656f50112f2f87610dc"
+    },
+    {
+      "name": "work/surge-rule-policy-override-20261002",
+      "sha": "b540d867f35c9ab6a7db4811d980c8ab065fa980"
+    },
+    {
+      "name": "work/target-output-builders-20261001",
+      "sha": "61c8a6ab15a1a55199e4ed9b06d02a4797a2089f"
+    },
+    {
+      "name": "work/test-fleamarket-self-heal-20261001",
+      "sha": "0c9fccd640e938bd92aca3047ffbe66b3cc74d40"
+    },
+    {
+      "name": "work/unified-upstream-fetch-20261001",
+      "sha": "4aa115a1573f45cdc6ee18235a417ca0da8fd60e"
+    },
+    {
+      "name": "work/unknown-plugin-e2e-20260929",
+      "sha": "46152a08abe9be08f42dad6d7c60b6eec875127d"
+    },
+    {
+      "name": "work/upstream-36491808454-1",
+      "sha": "30179c84d9d085e4a31757a2c7599a290ee38ccc"
+    },
+    {
+      "name": "work/upstream-36631370059-1",
+      "sha": "aa4c8b709b8a2de49f462d8a2e8b38d3a2cbcf3d"
+    },
+    {
+      "name": "work/upstream-36777165178-1",
+      "sha": "3b886411f979bececa31cb81479788dd0babc26a"
+    },
+    {
+      "name": "work/upstream-architecture-consolidation",
+      "sha": "385f72e9747268b61a658ad7238e963996c008d5"
+    },
+    {
+      "name": "work/upstream-phase-c-core-rule",
+      "sha": "078b637c6e07e5012f67c1e344caf13908f6faf4"
+    },
+    {
+      "name": "work/upstream-phase-c-equivalence",
+      "sha": "5372f2576fc822be5da7eaa2a1abbe2781917d4e"
+    },
+    {
+      "name": "work/upstream-phase-c-rewrite-flags",
+      "sha": "cabc1f48e245db730ef1b06ce0c4913f23310a7c"
+    },
+    {
+      "name": "work/upstream-phase-c-soundness",
+      "sha": "7697c5a978f36aaa4bf3ef50ba7a2f616305e62a"
+    },
+    {
+      "name": "work/upstream-qqmusic-kelee-20261002",
+      "sha": "51d4db308443e2f71ad7abbc8c7ba5c448877970"
+    },
+    {
+      "name": "work/validated-conversion-runner-20261001",
+      "sha": "0a8d3448f57294af078c2c887def5026011626ee"
+    },
+    {
+      "name": "work/workflow-diagnostics-20261001",
+      "sha": "752ad4e8f03057539920ad35ca75d604fc98efc4"
+    },
+    {
+      "name": "work/workflow-lifecycle-audit-20261001",
+      "sha": "45026bee41b5003c982b23b8600a2b54f62d231c"
+    },
+    {
+      "name": "work/upstream-domain-migration",
+      "sha": "eb17b6b333338238f78ea3cba0e859b82a927e9f"
+    }
+  ]
+}
