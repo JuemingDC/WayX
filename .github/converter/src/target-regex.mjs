@@ -1,27 +1,32 @@
-// WayX target regex compiler
+// WayX target Regex compiler
 // Author: chance
 // Category: Converter / Regex / Cross-platform
 //
-// Loon Rewrite v2 uses JavaScript-style /.../ regex literals. Target
-// declarations use their own bare/string regex fields. WayX removes only the
-// Loon literal wrapper at parse time and intentionally discards source i/m/s
-// flags by project standard. The regex body itself is preserved byte-for-byte;
-// target-specific planners may adapt it only when an official target syntax
-// requires a local change.
+// Loon Rewrite v2 uses JavaScript-style /.../flags Regex literals. Target
+// declarations use target-specific matcher fields. The parser has already
+// removed the literal wrapper, so this module preserves the source body
+// byte-for-byte and refuses native lowering when source flags have no verified
+// target encoding.
 
 export function normalizeRegexBodyForTarget(pattern) {
   // Historical name kept to avoid broad call-site churn. This is deliberately
-  // an identity operation: no global \/ -> / or other regex-body rewriting.
+  // an identity operation: no global \/ -> / or other Regex-body rewriting.
   return String(pattern ?? '');
 }
 
-export function compileRegexForTarget(regex, { subject = 'url', target = 'generic' } = {}) {
-  if (!regex || regex.type !== 'regex') throw new TypeError('Expected Rewrite v2 regex AST node');
+export function compileRegexForTarget(regex, { subject = 'url', target = 'target' } = {}) {
+  if (!regex || regex.type !== 'regex') throw new TypeError('Expected Rewrite v2 Regex AST node');
 
-  const pattern = normalizeRegexBodyForTarget(regex.pattern);
-  const flags = String(regex.flags || '');
-
-  // i/m/s are intentionally source-only metadata. Never synthesize inline
-  // modifiers, case-fold expansions, or target helper flags.
-  return { ok: true, pattern, sourceFlags: flags, notes: [] };
+  const pattern=normalizeRegexBodyForTarget(regex.pattern);
+  const flags=String(regex.flags || '');
+  if (flags) {
+    return {
+      ok:false,
+      pattern,
+      sourceFlags:flags,
+      notes:[],
+      reason:String(target || 'target')+' native '+subject+' Regex has no verified Loon flag encoding: '+flags,
+    };
+  }
+  return {ok:true,pattern,sourceFlags:'',notes:[]};
 }
