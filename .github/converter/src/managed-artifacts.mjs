@@ -6,7 +6,21 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { normalizePluginSource } from './plugin-parser.mjs';
-import { qxTargetPath, surgeTargetPath } from './paths.mjs';
+
+export const AD_BLOCK_ROOT='Adblock';
+export const QX_ADBLOCK_DIR='Adblock/Quantumult X';
+export const SURGE_ADBLOCK_DIR='Adblock/Surge';
+export const BOXJS_SUBSCRIPTION='Boxjs/QuantumultX/Chanceの订阅.json';
+
+export function qxTargetPath(entry) {
+  if (!entry?.qx) throw new Error('manifest entry missing qx filename');
+  return `${QX_ADBLOCK_DIR}/${entry.qx}`;
+}
+
+export function surgeTargetPath(entry) {
+  if (!entry?.surge) throw new Error('manifest entry missing surge filename');
+  return `${SURGE_ADBLOCK_DIR}/${entry.surge}`;
+}
 
 const GENERATED_HELPER_FILENAME_RE=/^(?:mock|header|complex_qx|mock_file|json_add_qx|redirect|reject|complex_surge|request_mock|json_mutation_surge|legacy_header|legacy_json_add_(?:qx|surge)|legacy_mock|legacy_request_mock)_[0-9a-f]{10}\.js$/;
 
