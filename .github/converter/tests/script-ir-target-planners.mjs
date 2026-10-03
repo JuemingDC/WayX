@@ -47,12 +47,20 @@ const qxLegacy=planQxScript(legacyIr,{
   scriptUrl:'https://example.com/resp.js',
   sourceText:'const x=$response.body; $done({body:x});',
 });
-assert.equal(qxLegacy.ok,true);
-assert.equal(qxLegacy.section,'rewrite');
-assert.match(qxLegacy.line,/ url script-response-body https:\/\/example\.com\/resp\.js$/);
-assert.match(qxLegacy.notes.join('\n'),/argument ignored/);
-assert.match(qxLegacy.notes.join('\n'),/timeout ignored/);
-assert.match(qxLegacy.notes.join('\n'),/binary-body-mode=true ignored/);
+assert.equal(qxLegacy.ok,false);
+assert.match(qxLegacy.reason,/timeout field/);
+
+const qxLegacyCompatibleIr=legacyScriptToSemanticIr(
+  parseLegacyScriptLine('http-response ^https://api\\.example\\.com script-path=https://example.com/resp.js, requires-body=true, argument={"mode":"x"}, tag=Resp')
+);
+const qxLegacyCompatible=planQxScript(qxLegacyCompatibleIr,{
+  scriptUrl:'https://example.com/resp.js',
+  sourceText:'const x=$response.body; $done({body:x});',
+});
+assert.equal(qxLegacyCompatible.ok,true);
+assert.equal(qxLegacyCompatible.section,'rewrite');
+assert.match(qxLegacyCompatible.line,/ url script-response-body https:\/\/example\.com\/resp\.js$/);
+assert.match(qxLegacyCompatible.notes.join('\n'),/argument ignored/);
 
 const requestV2Source='request if ${url} ~= /request/ then script("https://example.com/request.js") with requires_body=true, tag="Req"';
 const requestV2Ir=scriptV2AstToSemanticIr(parseScriptV2(requestV2Source),{source:requestV2Source});
@@ -92,13 +100,19 @@ assert.equal(planQxScript(disabledIr,{sourceText:'$done({});'}).disabled,true);
 assert.equal(planSurgeScript(disabledIr,{name:'Off'}).disabled,true);
 
 const maxSizeIr=legacyScriptToSemanticIr(
-  parseLegacyScriptLine('http-response ^https://x\\.example script-path=https://example.com/a.js, max-size=2048, debug=true')
+  parseLegacyScriptLine('http-response ^https://x\\.example script-path=https://example.com/a.js, max-size=2048, debug=false')
 );
 const qxLegacyDroppedOptions=planQxScript(maxSizeIr,{sourceText:'$done({});'});
 assert.equal(qxLegacyDroppedOptions.ok,true);
 assert.match(qxLegacyDroppedOptions.line,/ url script-response-header https:\/\/example\.com\/a\.js$/);
 assert.equal(/debug|max-size/i.test(qxLegacyDroppedOptions.line),false);
-assert.equal(/debug|max-size/i.test(qxLegacyDroppedOptions.notes.join('\n')),false);
+
+const qxLegacyDebugUnsupported=planQxScript(
+  legacyScriptToSemanticIr(parseLegacyScriptLine('http-response ^https://x\\.example script-path=https://example.com/a.js, debug=true')),
+  {sourceText:'$done({});'}
+);
+assert.equal(qxLegacyDebugUnsupported.ok,false);
+assert.match(qxLegacyDebugUnsupported.reason,/no debug field/);
 
 const v2Source='response if ${url} ~= /api/ then script("https://example.com/v2.js") with requires_body=true, binary_body_mode=true, tag="V2"';
 const v2Ast=parseScriptV2(v2Source);
@@ -120,8 +134,19 @@ const qxV2=planQxScript(v2Ir,{
   sourceText:'const x=$response.body; $done({body:x});',
   argumentIds:new Set(),
 });
-assert.equal(qxV2.ok,true);
-assert.match(qxV2.line,/ url script-response-body https:\/\/example\.com\/v2\.js$/);
+assert.equal(qxV2.ok,false);
+assert.match(qxV2.reason,/binary_body_mode field/);
+
+const qxV2RequiresOnlyIr=scriptV2AstToSemanticIr(
+  parseScriptV2('response if ${url} ~= /api/ then script("https://example.com/v2.js") with requires_body=true, binary_body_mode=false, tag="V2"')
+);
+const qxV2RequiresOnly=planQxScript(qxV2RequiresOnlyIr,{
+  scriptUrl:'https://example.com/v2.js',
+  sourceText:'const x=$response.body; $done({body:x});',
+  argumentIds:new Set(),
+});
+assert.equal(qxV2RequiresOnly.ok,true);
+assert.match(qxV2RequiresOnly.line,/ url script-response-body https:\/\/example\.com\/v2\.js$/);
 
 const v2DebugSource='response if ${url} ~= /debug/ then script("https://example.com/debug.js") with debug=true, tag="Debug"';
 const v2DebugIr=scriptV2AstToSemanticIr(parseScriptV2(v2DebugSource),{source:v2DebugSource});
@@ -130,10 +155,8 @@ const qxV2Debug=planQxScript(v2DebugIr,{
   sourceText:'$done({});',
   argumentIds:new Set(),
 });
-assert.equal(qxV2Debug.ok,true);
-assert.match(qxV2Debug.line,/ url script-response-header https:\/\/example\.com\/debug\.js$/);
-assert.equal(/(?:^|[,\s])debug=/.test(qxV2Debug.line),false);
-assert.equal(/Source Script debug|debug ignored/i.test(qxV2Debug.notes.join('\n')),false);
+assert.equal(qxV2Debug.ok,false);
+assert.match(qxV2Debug.reason,/no debug field/);
 
 const v2DynamicDebugSource='response if ${url} ~= /debug-dynamic/ then script("https://example.com/debug-dynamic.js") with debug=${debugSwitch}, tag="DebugDynamic"';
 const v2DynamicDebugIr=scriptV2AstToSemanticIr(parseScriptV2(v2DynamicDebugSource),{source:v2DynamicDebugSource});
@@ -142,10 +165,23 @@ const qxV2DynamicDebug=planQxScript(v2DynamicDebugIr,{
   sourceText:'$done({});',
   argumentIds:new Set(),
 });
-assert.equal(qxV2DynamicDebug.ok,true);
-assert.match(qxV2DynamicDebug.line,/ url script-response-header https:\/\/example\.com\/debug-dynamic\.js$/);
-assert.equal(/debugSwitch|(?:^|[,\s])debug=/.test(qxV2DynamicDebug.line),false);
-assert.equal(/debugSwitch|Source Script debug|debug ignored/i.test(qxV2DynamicDebug.notes.join('\n')),false);
+assert.equal(qxV2DynamicDebug.ok,false);
+assert.match(qxV2DynamicDebug.reason,/no debug field/);
+
+const surgeBinaryWithoutBody=planSurgeScript(
+  scriptV2AstToSemanticIr(parseScriptV2('request if ${url} ~= /raw/ then script("raw.js") with binary_body_mode=true')),
+  {scriptUrl:'raw.js',name:'Raw',argumentIds:new Set(),argumentTable:{byId:new Map()}}
+);
+assert.equal(surgeBinaryWithoutBody.ok,true);
+assert.match(surgeBinaryWithoutBody.line,/binary-body-mode=true/);
+assert.doesNotMatch(surgeBinaryWithoutBody.line,/requires-body=true/);
+
+const qxBinaryWithoutBody=planQxScript(
+  scriptV2AstToSemanticIr(parseScriptV2('request if ${url} ~= /raw/ then script("raw.js") with binary_body_mode=true')),
+  {scriptUrl:'raw.js',sourceText:'$done({});',argumentIds:new Set()}
+);
+assert.equal(qxBinaryWithoutBody.ok,false);
+assert.match(qxBinaryWithoutBody.reason,/binary_body_mode field/);
 
 const surgeV2=planSurgeScript(v2Ir,{
   scriptUrl:'https://example.com/v2.js',
