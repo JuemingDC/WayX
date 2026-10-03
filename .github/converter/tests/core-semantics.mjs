@@ -6,12 +6,20 @@ import assert from 'node:assert/strict';
 import { parseRewriteV2 } from '../src/rewrite-v2.mjs';
 import { compileSourceRegex, execSourceRegex } from '../src/core/regex.mjs';
 import { evaluateCondition } from '../src/core/condition-evaluator.mjs';
+import { runConditionOracle } from '../src/core/equivalence-oracle.mjs';
+import {
+  qxExactRewriteMatcherPlan,
+  qxRewriteMatcherPlan,
+  evaluateQxRewriteMatcherPlan,
+} from '../src/qx-rewrite-matcher.mjs';
 import {
   EQUIVALENCE_KINDS,
   nativeEquivalent,
   guardedHelper,
   phaseDispatcher,
   unsupported,
+  ORACLE_FAILURES,
+  verifyPlanAgainstOracle,
 } from '../src/core/equivalence-plan.mjs';
 
 function condition(source) {
@@ -138,4 +146,94 @@ const dispatcher=phaseDispatcher({
 assert.equal(dispatcher.kind,EQUIVALENCE_KINDS.DISPATCHER);
 assert.equal(unsupported('target lifecycle cannot express source behavior').kind,EQUIVALENCE_KINDS.UNSUPPORTED);
 
-console.log('Semantic core Phase B contract passed');
+
+const flaggedAst=parseRewriteV2(
+  'request if ${url} ~= /^https:\\/\\/API\\.Example\\.com\\/item\\/(\\d+)$/i as item then reject(200)'
+);
+const flaggedExact=qxExactRewriteMatcherPlan(flaggedAst);
+assert.equal(flaggedExact.ok,false);
+
+const flaggedPrefilter=qxRewriteMatcherPlan(flaggedAst);
+assert.equal(flaggedPrefilter.ok,true);
+assert.equal(flaggedPrefilter.urlPattern,'^https?://');
+
+const flaggedCases=[
+  {
+    url:'https://api.example.com/item/42',
+    request:{method:'GET',headers:{}},
+  },
+  {
+    url:'https://else.example.com/other',
+    request:{method:'GET',headers:{}},
+  },
+];
+
+const flaggedOracle=runConditionOracle({
+  condition:flaggedAst.condition,
+  cases:flaggedCases,
+  candidate:context=>evaluateQxRewriteMatcherPlan(flaggedPrefilter,context),
+  compareCaptures:false,
+});
+assert.equal(flaggedOracle.falseNegatives,0);
+assert.equal(flaggedOracle.falsePositives,1);
+
+const verifiedGuard=verifyPlanAgainstOracle(
+  guardedHelper({
+    target:'qx',
+    prefilter:flaggedPrefilter,
+    runtime:'condition-helper.js',
+    proof:{noFalseNegatives:true,safeNoop:true},
+  }),
+  flaggedOracle,
+);
+assert.equal(verifiedGuard.kind,EQUIVALENCE_KINDS.GUARDED);
+
+const unsafeFlagDropOracle=runConditionOracle({
+  condition:flaggedAst.condition,
+  cases:flaggedCases,
+  candidate:context=>({
+    matched:new RegExp(flaggedAst.condition.right.pattern).test(context.url),
+    captures:{},
+  }),
+  compareCaptures:false,
+});
+assert.equal(unsafeFlagDropOracle.falseNegatives,1);
+assert.equal(
+  verifyPlanAgainstOracle(
+    guardedHelper({
+      target:'qx',
+      prefilter:'unsafe-source-body-without-flags',
+      runtime:'condition-helper.js',
+      proof:{noFalseNegatives:true,safeNoop:true},
+    }),
+    unsafeFlagDropOracle,
+  ).reason,
+  ORACLE_FAILURES.PREFILTER_FALSE_NEGATIVE,
+);
+
+const exactAst=parseRewriteV2(
+  'request if ${url} ~= /^https:\\/\\/api\\.example\\.com\\/item\\/(\\d+)$/ as item then reject(200)'
+);
+const exactMatcher=qxExactRewriteMatcherPlan(exactAst);
+assert.equal(exactMatcher.ok,true);
+
+const exactOracle=runConditionOracle({
+  condition:exactAst.condition,
+  cases:flaggedCases,
+  candidate:context=>evaluateQxRewriteMatcherPlan(exactMatcher,context),
+});
+assert.equal(exactOracle.matchExact,true);
+assert.equal(exactOracle.captureExact,true);
+
+const verifiedNative=verifyPlanAgainstOracle(
+  nativeEquivalent({
+    target:'qx',
+    output:exactMatcher,
+    proof:{exact:true,evidence:'QX official url matcher + structural subset proof'},
+  }),
+  exactOracle,
+  {requireCapture:true},
+);
+assert.equal(verifiedNative.kind,EQUIVALENCE_KINDS.NATIVE);
+
+console.log('Semantic core Phase C oracle contract passed');
