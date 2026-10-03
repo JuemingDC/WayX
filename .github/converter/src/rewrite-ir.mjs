@@ -199,16 +199,34 @@ export function isDiscardedLegacyJqPathIr(ir) {
     /^jq-path\s*=/i.test(String(op?.rest || '').trim());
 }
 
-export function isEmptyLegacyJsonJqIr(ir) {
-  if (!ir || ir.type!=='rewrite-semantic-ir' || ir.sourceSyntax!=='legacy') return false;
+export function isEmptyJsonJqIr(ir) {
+  if (!ir || ir.type!=='rewrite-semantic-ir') return false;
   if (!Array.isArray(ir.operations) || ir.operations.length!==1) return false;
   const op=ir.operations[0];
   if (op?.kind!=='json' || op?.operation!=='jq') return false;
-  const raw=String(op?.rest ?? '')
-    .replace(/[\u200B-\u200D\u2060\uFEFF]/gu,'')
-    .trim();
-  if (!raw) return true;
-  return unquoteRewriteToken(raw).trim()==='';
+
+  if (ir.sourceSyntax==='legacy') {
+    const raw=String(op?.rest ?? '')
+      .replace(/[\u200B-\u200D\u2060\uFEFF]/gu,'')
+      .trim();
+    if (!raw) return true;
+    return unquoteRewriteToken(raw).trim()==='';
+  }
+
+  if (ir.sourceSyntax==='v2') {
+    const node=op?.sourceAction?.args?.[0];
+    return Boolean(
+      node &&
+      ['string','raw-string'].includes(node.type) &&
+      String(node.value ?? '').trim()===''
+    );
+  }
+
+  return false;
+}
+
+export function isEmptyLegacyJsonJqIr(ir) {
+  return ir?.sourceSyntax==='legacy' && isEmptyJsonJqIr(ir);
 }
 
 export function legacyRewriteToSemanticIr(pattern,action) {
