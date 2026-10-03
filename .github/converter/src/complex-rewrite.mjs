@@ -9,7 +9,7 @@ const families = Object.freeze([
   { id:'header-pipeline', test:a => /^(request|response)\.header\.(add|set|del|replace)$/.test(a.name) },
   { id:'body-pipeline', test:a => /^(request|response)\.body\.replace$/.test(a.name) },
   { id:'json-pipeline', test:a => /^(request|response)\.json\.(add|delete|replace)$/.test(a.name) },
-  { id:'mock-pipeline', test:a => /^(request|response)\.body\.mock$/.test(a.name) },
+  { id:'mock-pipeline', test:a => /^(request|response)\.body\.(?:mock|mock_file)$/.test(a.name) },
 ]);
 
 export function classifyComplexRewrite(ast) {
