@@ -115,6 +115,21 @@ const expectedAdvanced=[
     pattern:'^https?:\\/\\/p\\d\\.meituan\\.net\\/travelcube\\/(?!c129a661)\\w+\\.gif',
     where:'DianPing.lpx [Rewrite legacy]',
   },
+  {
+    feature:'negative-lookahead',
+    pattern:'^https:\\/\\/hanime1\\.me\\/(?!(favicon|css|js|cdn-cgi|load))',
+    where:'RuCu6/webpage.lpx [Script v2]',
+  },
+  {
+    feature:'negative-lookahead',
+    pattern:'^https:\\/\\/javdb\\.com\\/(?!over18\\?)',
+    where:'RuCu6/webpage.lpx [Script v2]',
+  },
+  {
+    feature:'negative-lookahead',
+    pattern:'^https:\\/\\/missav\\.(?:ai|fans|ws)\\/(?!favicon)(?!(build|fonts|img|js|api|cdn-cgi)\\/).',
+    where:'RuCu6/webpage.lpx [Script v2]',
+  },
 ].sort((a,b)=>(a.where+'\0'+a.feature+'\0'+a.pattern).localeCompare(b.where+'\0'+b.feature+'\0'+b.pattern));
 
 console.log('Catalog Loon Rewrite/Script regex inventory: '+regexCount+' regex fields');
