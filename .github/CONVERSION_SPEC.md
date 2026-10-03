@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.45  
+版本：1.46  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -9,6 +9,14 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 本规范采用“分块规范”结构。转换器、测试、canonical 输出、Golden 都必须服从本规范，不能反过来用现有代码定义规范。
 
 ## 2026-10-03 规范更新
+
+**Quantumult X Multi-action 原生 Matcher 下推（2026-10-03）**：
+
+1. Loon Rewrite v2 的同一条 `ACTION1 | ACTION2 | ...` 仍视为一个有序 pipeline。QX 官方资料只证明单条 Rewrite 的 URL / Headers 匹配与各 Action 语法，没有证明把一个 Loon pipeline 拆成多条独立 QX Rewrite 后仍具有相同的跨规则执行顺序、状态传递与失败语义。因此 **禁止为了减少脚本而拆分 multi-action 为多条 QX 规则**。
+2. 对必须由 QX helper 承载的 multi-action，允许把能证明为源条件**必要条件**的 request-side predicate 下推到 QX 原生 matcher，helper 内仍完整重算原 Loon condition。这样 QX 先做廉价原生筛选，脚本只处理真正候选请求，同时 condition capture、`&&/||`、response-side 条件及 action 顺序仍由 helper 保真。
+3. 当前第一阶段只下推两类可证明安全的 predicate：URL `~=` 固定 Regex，以及 `${request.method} == "METHOD"` 固定字符串。两者同时为必要条件时输出 `<URL regex> ^METHOD[ ] url-and-header <script-action>`；只有 URL 时继续使用 `url`。`${request.header[...]}`、`${response.header[...]}`、`${response.status}`、method Regex 与 Argument 条件暂不下推，继续由 helper 运行时判断。
+4. `||` 条件只允许下推**每个成功分支都共同具备**的 predicate；不得把仅属于某个 OR 分支的 URL/Method 条件拿来做原生 matcher，否则会产生 false negative。`&&` 可从任一子项提取必要条件。若无法找到安全 URL predicate，QX helper matcher 回退到 `^https?://`。
+5. 原生 matcher 下推只是 prefilter，不取代 helper 的完整 condition evaluator。特别是命名捕获 `as name` 与 `${name.n}` 模板必须继续由 helper 重新执行原条件产生捕获，不得依赖 QX matcher 暴露捕获组。
 
 **Quantumult X Rewrite Headers 匹配（2026-10-03）**：
 
