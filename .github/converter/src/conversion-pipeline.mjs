@@ -180,6 +180,7 @@ export function convertPlugin(entry,source,{
     mockFiles,
     jqFiles,
     argumentIds,
+    argumentTable:surgeArgumentTable,
     rawBase,
   };
   const sctx={
@@ -319,18 +320,32 @@ export function convertPlugin(entry,source,{
     const sourceText=mapped?.source || '';
     const qxUrl=mapped?.qx || ir.script.path;
     const surgeUrl=mapped?.surge || ir.script.path;
-    const qxPlan=planQxScript(ir,{scriptUrl:qxUrl,sourceText,argumentIds});
-    const qxScriptDest=qxOutputDestination(qx,'rewrite');
+    const qxPlan=planQxScript(ir,{
+      scriptUrl:qxUrl,
+      sourceText,
+      argumentIds,
+      argumentTable:surgeArgumentTable,
+    });
+    const qxScriptDest=qxOutputDestination(qx,qxPlan.ok && qxPlan.section ? qxPlan.section : 'rewrite');
 
     if (!qxPlan.ok) {
       qxScriptDest.push(...comments);
       if (sourceSyntax==='legacy' && ir.sourcePayload.tag) qxScriptDest.push(`# ${ir.sourcePayload.tag}`);
       qxScriptDest.push(`# [WayX] ${sourceSyntax==='v2' ? 'SCRIPT V2' : 'SCRIPT'} REVIEW REQUIRED: ${qxPlan.reason}`);
       qxScriptDest.push(`# Source declaration: ${item.line}`);
+    } else if (qxPlan.omitted) {
+      qxScriptDest.push(...comments);
+      for (const note of qxPlan.notes || []) qxScriptDest.push(`# [WayX] ${note}`);
+      qxScriptDest.push(`# [WayX] Known Quantumult X target limitation: ${qxPlan.reason}`);
+      qxScriptDest.push(`# Source declaration: ${item.line}`);
     } else if (qxPlan.disabled) {
       qxScriptDest.push(...comments);
       if (sourceSyntax==='legacy' && ir.sourcePayload.tag) qxScriptDest.push(`# ${ir.sourcePayload.tag}`);
       qxScriptDest.push(`# [WayX] Script disabled by source ${sourceSyntax==='v2' ? 'option' : 'declaration'}: ${item.line}`);
+    } else if (qxPlan.section==='task') {
+      qxScriptDest.push(...comments);
+      for (const note of qxPlan.notes || []) qxScriptDest.push(`# [WayX] ${note}`);
+      qxScriptDest.push(qxPlan.line);
     } else {
       const qxRendered=attachQxInlineNote({
         sectionLines:scriptSectionLines,
