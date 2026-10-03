@@ -63,11 +63,11 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
   if (!condition.ok) return condition;
   const notes = [...(condition.notes || [])];
 
-  if (ast.script.argument) {
-    notes.push('Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.');
-  }
   if (enable?.type === 'variable') {
     notes.push('Source dynamic enable=' + enable.name + ' ignored for Quantumult X; converted rule defaults to enabled.');
+  }
+  if (ast.script.argument) {
+    notes.push('Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.');
   }
   if (timeout) {
     notes.push('Source Script timeout ignored for Quantumult X.');
