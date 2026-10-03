@@ -47,16 +47,19 @@ assert.equal(qxRewriteOutputDestination(qx,'comment'),qx.notes);
 assert.equal(appendQxOutput(qx,'notes','# global note'),true);
 assert.equal(appendQxOutput(qx,'filter','host-suffix, example.com, reject','',''),true);
 assert.equal(appendQxOutput(qx,'rewrite','^https://ads\\.example\\.com url reject-dict'),true);
+assert.equal(appendQxOutput(qx,'task','event-interaction https://example.com/tool.js, tag=Tool, enabled=true'),true);
 
 const qxText=renderQxOutput({state:qx,headerLines:header,entry,stamp});
 assert.match(qxText,/^# Name: Demo$/m);
 assert.match(qxText,/^# Description: Demo Quantumult X plugin$/m);
 assert.match(qxText,/^# \[filter_local\]$/m);
 assert.match(qxText,/^# \[rewrite_local\]$/m);
+assert.match(qxText,/^# \[task_local\]$/m);
 assert.match(qxText,/^# \[mitm\]$/m);
 assert.ok(qxText.indexOf('# global note') < qxText.indexOf('# [filter_local]'));
 assert.ok(qxText.indexOf('# [filter_local]') < qxText.indexOf('# [rewrite_local]'));
-assert.ok(qxText.indexOf('# [rewrite_local]') < qxText.indexOf('# [mitm]'));
+assert.ok(qxText.indexOf('# [rewrite_local]') < qxText.indexOf('# [task_local]'));
+assert.ok(qxText.indexOf('# [task_local]') < qxText.indexOf('# [mitm]'));
 assert.doesNotMatch(qxText,/\n\n\nhost-suffix/);
 assert.equal(qxText.endsWith('\n'),true);
 
@@ -66,7 +69,7 @@ const qxEmpty=renderQxOutput({
   entry:{...entry,id:'Empty'},
   stamp,
 });
-assert.match(qxEmpty,/# \[filter_local\]\n\n# \[rewrite_local\]\n\n# \[mitm\]\n$/);
+assert.match(qxEmpty,/# \[filter_local\]\n\n# \[rewrite_local\]\n\n# \[task_local\]\n\n# \[mitm\]\n$/);
 
 const sg=createSurgeOutputState();
 assert.equal(surgeOutputDestination(sg,'comment'),sg.notes);
