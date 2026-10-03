@@ -219,7 +219,7 @@ export function renderSingleRewriteMutationScript(ast, options = {}) {
     throw new Error('single Rewrite mutation helper requires exactly one action');
   }
   const name=ast.actions[0]?.name || '';
-  const supported=new RegExp('^'+ast.phase+'\\.(?:header\\.(?:set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))  if (!supported.test(name)) {
+  const supported=new RegExp('^'+ast.phase+'\\.(?:header\\.(?:set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$');
     throw new Error('single Rewrite mutation helper does not support '+name);
   }
   return renderRewriteScript(ast, options);
