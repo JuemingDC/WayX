@@ -1,6 +1,6 @@
 {
-  "version": 3,
-  "scope": "Loon ad-block conversion only: Rule types, Rewrite actions, MITM hostname",
+  "version": 4,
+  "scope": "Loon ad-block conversion only: Rule types, Rewrite matchers/actions, MITM hostname",
   "authority": {
     "uploadedSample": "sample.txt",
     "officialRepository": "crossutility/Quantumult-X",
@@ -11,6 +11,10 @@
     "checkedAt": "2026-10-03",
     "manualRewriteEvidence": {
       "response-header": "Quantumult X current in-app Rewrite type selector; user-supplied screenshot reviewed 2026-10-03"
+    },
+    "rewriteMatcherEvidence": {
+      "officialSample": "Crossutility sample.conf documents url-and-header: URL is evaluated first, then a Headers regex is matched against a string containing method, path and key-value request headers.",
+      "currentAppUi": "Quantumult X current in-app Rewrite editor exposes an optional Headers matcher for every Rewrite type; user confirmation reviewed 2026-10-03."
     }
   },
   "ruleTypes": [
@@ -48,5 +52,9 @@
   ],
   "mitmKeys": [
     "hostname"
+  ],
+  "rewriteMatchers": [
+    "url",
+    "url-and-header"
   ]
 }
