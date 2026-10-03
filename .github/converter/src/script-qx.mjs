@@ -40,13 +40,13 @@ export function planQxScript(ir,ctx={}) {
     notes.push('Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.');
   }
   if (enableDynamic) {
-    notes.push('Source dynamic enable is not a Quantumult X Rewrite Script field; converted rule defaults to enabled.');
+    notes.push('Source dynamic enable ignored for Quantumult X; converted rule defaults to enabled.');
   }
   if (sc.timeout) {
-    notes.push('Source Script timeout is not a Quantumult X Rewrite Script field and was omitted.');
+    notes.push('Source Script timeout ignored for Quantumult X.');
   }
   if (sc.binaryBodyMode) {
-    notes.push('Source binary-body-mode=true is not a Quantumult X Rewrite Script field and was omitted; requires-body remains independent.');
+    notes.push('Source binary-body-mode=true ignored for Quantumult X; requires-body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.');
   }
   if (debugEnabled) {
     notes.push('Source Script debug is not a Quantumult X Rewrite Script field and was omitted.');
