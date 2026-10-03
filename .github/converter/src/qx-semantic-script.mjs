@@ -4,6 +4,8 @@
 
 import { simpleUrlRewriteCondition, fixedStringValue } from './rewrite-v2-semantic.mjs';
 import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
+import { findRewriteComparisons } from './rewrite-v2.mjs';
+import { compileComplexCondition } from './complex-rewrite.mjs';
 import { qxMockTypeIsBinary, renderQxMockScript } from './qx-mock.mjs';
 import { normalizeRegexBodyForTarget } from './target-regex.mjs';
 
@@ -45,47 +47,132 @@ function templateCaptureName(template) {
   return [...String(template).matchAll(/\$\{([A-Za-z_][A-Za-z0-9_-]*)\.(\d+)\}/g)];
 }
 
+function redirectUrlComparison(ast) {
+  const found=findRewriteComparisons(ast?.condition,node=>
+    node?.type==='comparison' &&
+    node.operator==='~=' &&
+    node.left?.type==='variable' &&
+    node.left.name==='url' &&
+    node.right?.type==='regex'
+  );
+  if(found.length!==1) {
+    throw new Error('redirect helper requires exactly one URL regex condition');
+  }
+
+  function rejectOr(node) {
+    if(!node) return;
+    if(node.type==='group') return rejectOr(node.expression);
+    if(node.type==='logical') {
+      if(node.operator==='||') throw new Error('redirect helper does not lower OR conditions because the URL match is not guaranteed on every successful branch');
+      rejectOr(node.left);
+      rejectOr(node.right);
+    }
+  }
+  rejectOr(ast.condition);
+  return found[0];
+}
+
+function qxConditionHeaderHelper() {
+  return [
+    'function __wayxHeader(phase,name){',
+    '  const h=phase==="request"?$request.headers:$response.headers;',
+    '  const wanted=String(name).toLowerCase();',
+    '  if(Array.isArray(h)){const x=h.find(x=>String(x.field).toLowerCase()===wanted);return x?.value;}',
+    '  const k=Object.keys(h||{}).find(x=>x.toLowerCase()===wanted);',
+    '  return k===undefined?undefined:h[k];',
+    '}',
+  ];
+}
+
 export function renderQxRedirectScript(ast, options = {}) {
-  const pair = oneAction(ast, 'redirect');
-  const condition = pair.condition;
+  const fullCondition=options.conditionMode==='full';
+  const pair = fullCondition
+    ? (()=>{ validateRewriteV2Ast(ast); if(ast.actions.length!==1 || ast.actions[0].name!=='redirect') throw new Error('Expected one redirect action'); return {action:ast.actions[0]}; })()
+    : oneAction(ast, 'redirect');
   const action = pair.action;
   const status = action.args[0];
   const template = fixedStringValue(action.args[1]);
   if (status?.type !== 'number' || ![302,307].includes(status.value)) throw new Error('redirect status must be 302 or 307');
   if (template === null) throw new Error('redirect target must be a fixed string');
 
-  const refs = templateCaptureName(template);
-  if (/\$\{/.test(template) && refs.length === 0) throw new Error('redirect target contains an unsupported variable template');
-  for (const ref of refs) {
-    if (!condition.capture || ref[1] !== condition.capture) throw new Error('redirect target references a non-URL capture');
+  if (!fullCondition) {
+    const condition = pair.condition;
+    const refs = templateCaptureName(template);
+    if (/\$\{/.test(template) && refs.length === 0) throw new Error('redirect target contains an unsupported variable template');
+    for (const ref of refs) {
+      if (!condition.capture || ref[1] !== condition.capture) throw new Error('redirect target references a non-URL capture');
+    }
+
+    const lines = [
+      ...metadata(options),
+      'const __wayxRe = new RegExp(' + JSON.stringify(condition.pattern) + ');',
+      'const __wayxUrl = $request.url;',
+      'const __wayxMatch = __wayxRe.exec(__wayxUrl);',
+      'if (!__wayxMatch) {',
+      '  $done({});',
+      '} else {',
+      '  const __wayxTemplate = ' + JSON.stringify(template) + ';',
+    ];
+    if (refs.length) {
+      lines.push('  const __wayxReplacement = __wayxTemplate.replace(/\\$\\{' + condition.capture + '\\.(\\d+)\\}/g, (_, n) => __wayxMatch[Number(n)] ?? "");');
+    } else {
+      lines.push('  const __wayxReplacement = __wayxTemplate;');
+    }
+    lines.push(
+      '  const __wayxLocation = __wayxUrl.slice(0, __wayxMatch.index) + __wayxReplacement + __wayxUrl.slice(__wayxMatch.index + __wayxMatch[0].length);',
+      '  $done({status: ' + JSON.stringify(statusLine(status.value)) + ', headers: {Location: __wayxLocation}, body: ""});',
+      '}',
+      '',
+    );
+    return {
+      qxAction: 'script-echo-response',
+      pattern: condition.pattern,
+      script: lines.join('\n'),
+      notes: condition.notes,
+    };
   }
 
-  const lines = [
+  const urlCondition=redirectUrlComparison(ast);
+  const urlPattern=String(urlCondition.right.pattern);
+  const refs=templateCaptureName(template);
+  if (/\$\{/.test(template) && refs.length===0) throw new Error('redirect target contains an unsupported variable template');
+  for (const ref of refs) {
+    if (!urlCondition.capture || ref[1]!==urlCondition.capture) throw new Error('redirect target references a non-URL capture');
+  }
+
+  const conditionExpr=compileComplexCondition(ast.condition,'qx');
+  const matchExpr=urlCondition.capture
+    ? '__wayxCaptures['+JSON.stringify(urlCondition.capture)+']'
+    : 'String(__wayxUrl ?? "").match(new RegExp('+JSON.stringify(urlPattern)+'))';
+
+  const lines=[
     ...metadata(options),
-    'const __wayxRe = new RegExp(' + JSON.stringify(condition.pattern) + ');',
-    'const __wayxUrl = $request.url;',
-    'const __wayxMatch = __wayxRe.exec(__wayxUrl);',
-    'if (!__wayxMatch) {',
-    '  $done({});',
-    '} else {',
-    '  const __wayxTemplate = ' + JSON.stringify(template) + ';',
+    'const __wayxCaptures=Object.create(null);',
+    ...qxConditionHeaderHelper(),
+    'const __wayxUrl=$request.url;',
+    'if('+conditionExpr+'){',
+    '  const __wayxMatch='+matchExpr+';',
+    '  if(!__wayxMatch){$done({});}else{',
+    '    const __wayxTemplate='+JSON.stringify(template)+';',
   ];
-  if (refs.length) {
-    lines.push('  const __wayxReplacement = __wayxTemplate.replace(/\\$\\{' + condition.capture + '\\.(\\d+)\\}/g, (_, n) => __wayxMatch[Number(n)] ?? "");');
-  } else {
-    lines.push('  const __wayxReplacement = __wayxTemplate;');
+  if(refs.length){
+    lines.push('    const __wayxReplacement=__wayxTemplate.replace(/\\$\\{'+urlCondition.capture+'\\.(\\d+)\\}/g,(_,n)=>__wayxMatch[Number(n)] ?? "");');
+  }else{
+    lines.push('    const __wayxReplacement=__wayxTemplate;');
   }
   lines.push(
-    '  const __wayxLocation = __wayxUrl.slice(0, __wayxMatch.index) + __wayxReplacement + __wayxUrl.slice(__wayxMatch.index + __wayxMatch[0].length);',
-    '  $done({status: ' + JSON.stringify(statusLine(status.value)) + ', headers: {Location: __wayxLocation}, body: ""});',
-    '}',
+    '    const __wayxLocation=__wayxUrl.slice(0,__wayxMatch.index)+__wayxReplacement+__wayxUrl.slice(__wayxMatch.index+__wayxMatch[0].length);',
+    '    $done({status:'+JSON.stringify(statusLine(status.value))+',headers:{Location:__wayxLocation},body:""});',
+    '  }',
+    '}else{$done({});}',
     '',
   );
+
   return {
-    qxAction: 'script-echo-response',
-    pattern: condition.pattern,
-    script: lines.join('\n'),
-    notes: condition.notes,
+    qxAction:'script-echo-response',
+    pattern:urlPattern,
+    script:lines.join('\n'),
+    notes:[],
   };
 }
 

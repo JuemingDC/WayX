@@ -75,6 +75,41 @@ const surgeRedirect=planSurgeRewrite(redirectIr,ctx());
 assert.equal(surgeRedirect.section,'url');
 assert.match(surgeRedirect.line,/ 302$/);
 
+const redirectMethodSource='request if ${url} ~= /\\/old\\/(\\d+)/ as hit && ${request.method} == "POST" then redirect(302, "/new/${hit.1}")';
+const redirectMethodCtx=ctx();
+const redirectMethod=planQxRewrite(v2(redirectMethodSource),redirectMethodCtx);
+assert.equal(redirectMethod.section,'rewrite');
+assert.match(redirectMethod.line,/^\\\/old\\\/\(\\d\+\) \^POST\[ \] url-and-header script-echo-response /);
+const redirectMethodScript=[...redirectMethodCtx.generatedScripts.values()][0];
+assert.ok(redirectMethodScript.includes('new RegExp("\\\\/old\\\\/(\\\\d+)")'));
+assert.match(redirectMethodScript,/String\(\$request\.method \?\? ""\) === "POST"/);
+assert.match(redirectMethodScript,/__wayxCaptures\["hit"\]/);
+assert.match(redirectMethodScript,/__wayxMatch\[Number\(n\)\]/);
+
+const redirectHeaderSource='request if ${url} ~= /api\\/(\\d+)/ as hit && ${request.header[\'X-Region\']} == "CN" then redirect(307, "/v/${hit.1}")';
+const redirectHeaderCtx=ctx();
+const redirectHeader=planQxRewrite(v2(redirectHeaderSource),redirectHeaderCtx);
+assert.equal(redirectHeader.section,'rewrite');
+assert.match(redirectHeader.line,/url-and-header script-echo-response /);
+const redirectHeaderScript=[...redirectHeaderCtx.generatedScripts.values()][0];
+assert.match(redirectHeaderScript,/__wayxHeader\("request","X-Region"\)/);
+assert.ok(redirectHeaderScript.includes('new RegExp("api\\\\/(\\\\d+)")'));
+
+const redirectResponseStatusSource='response if ${url} ~= /api\\/(\\d+)/ as hit && ${response.status} == 201 then redirect(302, "/ok/${hit.1}")';
+const redirectResponseStatusCtx=ctx();
+const redirectResponseStatus=planQxRewrite(v2(redirectResponseStatusSource),redirectResponseStatusCtx);
+assert.equal(redirectResponseStatus.section,'rewrite');
+assert.match(redirectResponseStatus.line,/^api\\\/\(\\d\+\) url script-echo-response /);
+assert.doesNotMatch(redirectResponseStatus.line,/url-and-header/);
+assert.match([...redirectResponseStatusCtx.generatedScripts.values()][0],/\$response\.statusCode/);
+
+const redirectOrSource='request if (${url} ~= /a\\/(\\d+)/ as a && ${request.method} == "POST") || ${url} ~= /b\\/(\\d+)/ as b then redirect(302, "/x")';
+const redirectOrCtx=ctx();
+const redirectOr=planQxRewrite(v2(redirectOrSource),redirectOrCtx);
+assert.equal(redirectOr.section,'comment');
+assert.match(redirectOr.line,/REVIEW REQUIRED/);
+assert.equal(redirectOrCtx.generatedScripts.size,0);
+
 const jsonAddSource='response if ${url} ~= /api/ then response.json.add("data.new",true)';
 const jsonAddIr=v2(jsonAddSource);
 const qxJsonCtx=ctx();

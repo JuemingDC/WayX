@@ -90,7 +90,9 @@ export function compileComplexCondition(node, target, {argumentTable = null} = {
   if (node.operator === '~=' && node.right?.type === 'regex') {
     // Loon i/m/s flags are intentionally discarded. Generated target helpers
     // use the target-format bare regex body only.
-    const pattern = normalizeRegexBodyForTarget(node.right.pattern);
+    const pattern = node.left.name === 'url'
+      ? String(node.right.pattern)
+      : normalizeRegexBodyForTarget(node.right.pattern);
     if (node.capture) return '((__wayxCaptures[' + JSON.stringify(node.capture) + ']=String(' + left + ' ?? "").match(new RegExp(' + JSON.stringify(pattern) + ')))!==null)';
     return '(new RegExp(' + JSON.stringify(pattern) + ').test(String(' + left + ' ?? "")))';
   }

@@ -87,6 +87,8 @@ WayX 只处理 Loon regex literal 的**语法外壳**：parser 去掉最外层 `
 - 除目标格式所需的上述处理外，regex 的捕获组、lookaround、character class、alternation、quantifier、anchor 等结构保持不变；
 - Golden 锁定“丢弃 `i/m/s` + regex body 保持”的结果。
 
+Catalog 另设 Regex feature inventory：高级/特殊构造包括 lookaround/lookbehind、named/numeric backreference、named capture、Unicode property、inline modifier、atomic/conditional/branch-reset group、possessive quantifier。当前实测 baseline 为 7 项：`DianPing.lpx` 有 3 个 Legacy atomic group `(?>...)` 与 1 个 Legacy negative lookahead `(?!...)`，`RuCu6/webpage.lpx` 有 3 个 Script v2 negative lookahead `(?!...)`。这些构造继续作为**源 pattern 原样透传**的既有行为锁定。未来 special-feature baseline 任一变化都 fail closed；普通 capture/non-capture group、alternation、character class、anchor、quantifier、escaped slash/dot 仍按原 regex body 保留，不归类为平台特殊功能字符。
+
 ## 40.5 正则结构保持
 
 必须保持原始匹配结构，包括：
@@ -157,7 +159,7 @@ WayX 对 Surge URL pattern 只做必要的目标格式处理：
 - Static/simple-condition target planner：`.github/converter/src/rewrite-v2-semantic.mjs`
 - QX native matcher / multi-action prefilter：`.github/converter/src/qx-rewrite-matcher.mjs`
 - Surge module validator：`.github/converter/src/surge-module.mjs`
-- Regression：`.github/converter/tests/checkpoint.mjs`、`.github/converter/tests/catalog-syntax-inventory.mjs`、`.github/converter/tests/rewrite-target-planners.mjs`
+- Regression：`.github/converter/tests/checkpoint.mjs`、`.github/converter/tests/catalog-syntax-inventory.mjs`、`.github/converter/tests/catalog-regex-inventory.mjs`、`.github/converter/tests/rewrite-target-planners.mjs`
 
 
 ## 40.10 Complex helper typed equality

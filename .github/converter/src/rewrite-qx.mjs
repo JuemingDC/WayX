@@ -302,11 +302,12 @@ export function planQxRewrite(ir, ctx={}) {
 
   if (singleOp?.kind==='redirect') {
     try {
-      const plan=renderQxRedirectScript(ast,{stamp:ctx.stamp,category:ctx.category,sourceLine:source});
+      const plan=renderQxRedirectScript(ast,{conditionMode:'full',stamp:ctx.stamp,category:ctx.category,sourceLine:source});
       const key=crypto.createHash('sha1').update('redirect\0'+source).digest('hex').slice(0,10);
       const filename='redirect_'+key+'.js';
       ctx.generatedScripts.set(filename,plan.script);
-      return {section:'rewrite',line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
+      const matcher=qxRewriteMatcherPlan(ast);
+      return {section:'rewrite',line:matcher.prefix+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
     } catch (error) {
       return rewriteReview(source,String(error?.message||error).split('\n')[0]);
     }
