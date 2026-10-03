@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.53  
+版本：1.54  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -9,6 +9,14 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 本规范采用“分块规范”结构。转换器、测试、canonical 输出、Golden 都必须服从本规范，不能反过来用现有代码定义规范。
 
 ## 2026-10-03 规范更新
+
+**Quantumult X JSON Multi-action 原生 JQ 合并（2026-10-03）**：
+
+1. 同一条 Loon Rewrite v2 pipeline 中，若全部 action 都是同 phase 的 `json.add / json.replace / json.delete`，且 source condition 可被 `qxExactRewriteMatcherPlan()` 完整等价表达，则 WayX 可把整个 pipeline 合成**一条** QX `jsonjq-request-body` / `jsonjq-response-body`；禁止拆成多条独立 Rewrite。
+2. 第一阶段 native subset 只接受固定的**顶层对象 Key Path**（单个字符串 key；不含 `.` 嵌套、不含 `[index]`）以及可静态编码的固定 JSON value。每个 action/batch 元素按源顺序展开并串成单一 JQ pipeline，不排序、不去重、不合并跨 action。
+3. 每个生成操作必须用 `if type == "object" ... else . end` 保护，使其对任意合法 JSON root 都是 no-op/正常输出，不依赖 `try/catch`。这样避免某个 action 因 root 类型不匹配导致整个 JQ pipeline 中断，从而尽量贴近 Loon“失败 action 跳过、后续 action 继续”的 pipeline 语义。
+4. add/replace 继续使用既有语义：add 仅 `getpath(PATH) == null` 时写入；replace 仅 `getpath(PATH)` 为 jq truthy 时写入；delete 使用 `del(...)`，不得生成 `delpaths(...)`。批量元素与多 action 必须严格左到右。
+5. 任何嵌套 Key Path、数组索引、动态/capture/Argument value、非 exact condition 或其它 JSON/JQ action 都关闭 native multi-action path，回到现有 full-condition helper / Review。不得为了追求 native 而扩大 JQ 语义假设。
 
 **Quantumult X Direct Rewrite 使用 Exact Matcher（2026-10-03）**：
 
