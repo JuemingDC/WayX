@@ -53,7 +53,7 @@ script-analyze-echo-response
 
 选择依据是源声明和脚本实际阶段/Body 行为，不按插件名或作者特判。
 
-`binary_body_mode` / legacy `binary-body-mode` 与 `requires_body` / `requires-body` 永久正交：binary mode 绝不能让 QX 自动选择 body action；QX action 只由 request/response phase 与 requires-body 决定。用户提供的官方 sample 没有 `binary_body_mode`、`timeout`、动态 `enable`、`debug` 的 HTTP Script rewrite 参数形式，因此禁止发明 QX 字段。会改变执行行为且无法表达的值必须 fail closed：binary mode=true、任意 timeout、动态 enable、debug=true/动态 debug → Review；enable=false/0 → disabled；enable=true/1 与 debug=false/0 可省略。Legacy `max-size` 继续按既有策略直接丢弃，不影响 action 选择。
+`binary_body_mode` / legacy `binary-body-mode` 与 `requires_body` / `requires-body` 永久正交：binary mode 绝不能让 QX 自动选择 body action；QX action 只由 request/response phase 与 requires-body 决定。用户提供的官方 sample 没有 `binary_body_mode`、`timeout`、动态 `enable`、`debug` 的 HTTP Script rewrite 参数形式，因此禁止发明 QX 字段。QX planner 对这些字段显式省略并输出审计注释，仍保留可执行 Source Script；enable=false/0 单独保持 disabled，enable=true/1 与 debug=false/0 可直接省略。Legacy `max-size` 继续按既有策略直接丢弃，不影响 action 选择。
 
 | Source 行为 | QX declaration |
 |---|---|
@@ -80,17 +80,17 @@ QX snippet 不复制 Loon Plugin `[Argument]` 参数 UI，也不生成 BoxJs / `
 该实现没有读取或传递 `argument`、`enable`、`timeout`、`binary-body-mode`。WayX 只沿用其已证明的 request/response + requires-body → QX action family 映射；其它 option 必须回到 Crossutility 官方 sample 判断目标是否有等价字段：
 
 - Script `argument` / PluginObject：继续按既有策略忽略，不生成 QX 参数；
-- 动态 `enable=${id}` / `enable={id}`：QX 无已确认动态 enable 字段 → Review；
+- 动态 `enable=${id}` / `enable={id}`：QX 无已确认动态 enable 字段，目标声明不写该字段，规则默认启用并生成审计注释；
 - 固定 `enable=false/0`：按源声明禁用；固定 `enable=true/1`：无需额外目标字段；
-- `timeout`：QX 无已确认 Script declaration timeout 字段 → Review；
-- `binary_body_mode=true` / `binary-body-mode=true`：QX 无已确认对应字段 → Review；false 可省略，且 binary mode 永不反推 requires-body；
-- `debug=true` 或动态 `debug=${id}`：QX 无已确认字段 → Review；`debug=false/0` 可省略；
+- `timeout`：QX 无已确认 Script declaration timeout 字段，目标声明省略并生成审计注释；
+- `binary_body_mode=true` / `binary-body-mode=true`：QX 无已确认对应字段，目标声明省略并生成审计注释；false 可省略，且 binary mode 永不反推 requires-body；
+- `debug=true` 或动态 `debug=${id}`：QX 无已确认字段，目标声明省略并生成审计注释；`debug=false/0` 可省略；
 - Legacy `max-size`：继续直接丢弃，不写入 QX declaration，也不影响 `requires-body` 对 header/body action 的选择；
 - `tag`、源注释、原始 Script URL 保留；
 - `requires_body` 继续决定 header/body Script action；
 - 其它未明确纳入本兼容策略的字段仍按 WayX 自身 QX 规范独立判断。
 
-QX 只允许对真正无目标语义影响且规范明确允许省略的字段静默省略；会改变执行行为但目标没有官方字段的 option 必须转为 Script Review，不能用普通注释掩盖后继续启用规则。
+QX 不得把目标未支持的 option 写成猜测字段。对本节已明确列出的 Script declaration option，由 QX target planner 负责省略并生成普通审计注释；只有源 declaration 其它无法安全处理的语义才进入 Script Review。
 
 参考实现：
 `https://github.com/KOP-XIAO/QuantumultX/blob/master/Scripts/resource-parser.js` → `SCP2QX()`。
