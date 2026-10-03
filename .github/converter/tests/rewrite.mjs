@@ -1849,7 +1849,7 @@ const requestMockMixedSource='request if ${url} ~= /api/ then request.header.set
 const requestMockMixedCtx=ctx();
 const requestMockMixed=planQxRewrite(v2(requestMockMixedSource),requestMockMixedCtx);
 assert.equal(requestMockMixed.section,'rewrite');
-assert.match(requestMockMixed.line,/^api url script-request-body https:\/\/raw\.githubusercontent\.com\/JuemingDC\/WayX\/main\/Script\/Fixture\/request_mixed_[0-9a-f]{10}\.js$/);
+assert.match(requestMockMixed.line,/^api url script-request-body https:\/\/raw\.githubusercontent\.com\/JuemingDC\/WayX\/main\/Script\/Fixture\/features_qx_[0-9a-f]{10}\.js$/);
 assert.equal(requestMockMixedCtx.generatedScripts.size,1);
 const requestMockMixedScript=[...requestMockMixedCtx.generatedScripts.values()][0];
 const requestMockBody=requestMockMixedScript.slice(requestMockMixedScript.indexOf('if('));
@@ -1887,7 +1887,7 @@ const requestBinaryMockMixedCtx=ctx();
 const requestBinaryMockMixed=planQxRewrite(v2(requestBinaryMockMixedSource),requestBinaryMockMixedCtx);
 assert.equal(requestBinaryMockMixed.section,'comment');
 assert.match(requestBinaryMockMixed.line,/REVIEW REQUIRED/);
-assert.match(requestBinaryMockMixed.line,/request mock binary\/bodyBytes output is not enabled/);
+assert.match(requestBinaryMockMixed.line,/text request mock requires/);
 assert.equal(requestBinaryMockMixedCtx.generatedScripts.size,0);
 
 const unsupportedKnownComplexSource='response if ${url} ~= /api/ then response.json.jq(".") | response.header.set("X-Test","ok")';

@@ -6,7 +6,7 @@ import crypto from "node:crypto";
 import { renderRewritePhaseDispatcher } from "./runtime.mjs";
 import { scriptIrTag, parseScriptDeclaration, isScriptV2, planQxScript, planSurgeScript, scriptOption, analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs, surgeArgumentMetadata, surgeRewriteArgumentPayload } from "./script.mjs";
 import { qxRule as canonicalQxRule, surgeModuleRule } from "./rule.mjs";
-import { isRewriteV2, parseRewriteV2, validateRewriteV2Ast, classifyLegacyRewriteAction, isEmptyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr, inlineResolvedDependency, inlineResolvedLegacyJqPathIr, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr, planQxRewrite, planSurgeRewrite, rewriteReview, rewriteIssue } from "./rewrite.mjs";
+import { isRewriteV2, parseRewriteV2, validateRewriteV2Ast, classifyLegacyRewriteAction, isEmptyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr, inlineResolvedDependency, inlineResolvedLegacyJqPathIr, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr, planQxRewrite, planSurgeRewrite, rewriteReview, rewriteIssue, supportsRewritePhaseActions } from "./rewrite.mjs";
 import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection, parseLoonPlugin, materializeRewriteDependencies, materializeSourceScripts, fetchOriginalText, fetchOriginalBytes } from "./input.mjs";
 import { attachQxInlineNote, createQxOutputState, appendQxOutput, qxOutputDestination, qxRuleOutputDestination, qxRewriteOutputDestination, renderQxOutput, createSurgeOutputState, appendSurgeOutput, surgeOutputDestination, surgeRuleOutputDestination, surgeRewriteOutputDestination, renderSurgeOutput, validateQX, validateSurgeModule } from "./output.mjs";
 import { parseConfigurationDeclaration, planConfiguration } from "./configuration.mjs";
@@ -123,8 +123,7 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
   const blockedV2=new Set();
   for(const item of items)if(isRewriteV2(item.line))try {
     const ast=parseRewriteV2(item.line);
-    const allowed=new RegExp('^'+ast.phase+'\\.(?:header\\.(?:'+(target==='surge'?'add|':'')+'set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$');
-    if(ast.actions.some(a=>!allowed.test(a.name)))blockedV2.add(ast.phase);
+    if(!supportsRewritePhaseActions(ast,target))blockedV2.add(ast.phase);
   }catch { /* Invalid declarations keep the ordinary diagnostic. */ }
   ctx.featureCompatibilityPhases=new Set(['request','response'].filter(phase=>legacy || blockedV2.has(phase) || scripts.some(x=>{try {const ir=parseScriptDeclaration(x.line);return ir?.phase===phase && (target==='qx' || !(scriptOption(ir,'enable')?.value===false));}catch{return false;}})));
   for (const item of items) {
@@ -146,14 +145,12 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
     try {
       if (external || legacy) throw new Error('phase dispatcher cannot compose original remote Script or legacy Rewrite contracts; original URLs are preserved');
       if (group.length===1) continue;
-      if (group.some(x=>x.ast.actions.some(a=>!new RegExp('^'+phase+'\\.(?:header\\.(?:'+(target==='surge'?'add|':'')+'set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$').test(a.name)))) {
-        throw new Error('phase dispatcher cannot compose native JQ/echo/URL/duplicate-header actions without a verified runtime adapter');
-      }
+      if(group.some(x=>!supportsRewritePhaseActions(x.ast,target)))throw new Error('phase dispatcher cannot compose native JQ/echo/URL/binary actions without a verified runtime adapter');
       const refs=[...new Set(group.flatMap(x=>rewriteV2PluginArgumentRefs(x.ast,ctx.argumentIds || []).all))];
       if (target==='qx' && refs.length) throw new Error('phase dispatcher argument transport is not verified: '+refs.join(', '));
       const payload=refs.length ? surgeRewriteArgumentPayload(refs,ctx.argumentTable) : {ok:true,value:null};
       if(!payload.ok)throw new Error(payload.reason);
-      const plan=renderRewritePhaseDispatcher(group.map(x=>x.ast),{target,stamp:ctx.stamp,category:ctx.category,argumentTable:refs.length?ctx.argumentTable:null});
+      const plan=renderRewritePhaseDispatcher(group.map(x=>x.ast),{target,stamp:ctx.stamp,category:ctx.category,argumentTable:refs.length?ctx.argumentTable:null,mockFiles:ctx.mockFiles});
       const key=crypto.createHash('sha1').update(target+'\0'+group.map(x=>x.line).join('\n')).digest('hex').slice(0,10);
       const filename='phase_'+target+'_'+phase+'_'+key+'.js';
       ctx.generatedScripts.set(filename,plan.script);

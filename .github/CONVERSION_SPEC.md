@@ -1,9 +1,9 @@
 # WayX Conversion Specification
 
-版本：1.63
+版本：1.64
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
-迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；未证明等价的组合继续保留兼容边界**
+迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
 
 WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入本仓库转换链。
 
@@ -903,3 +903,16 @@ Header 名称和 JSON key path 使用共同 String lowering，支持条件捕获
 JSON 查询和遍历仅识别自有属性；`__proto__`、`constructor`、`toString` 均作为普通 JSON 键处理。创建属性使用安全的自有属性写入，禁止修改原型或读取 JavaScript 继承属性。Header 对象写入同样保持自有字段。JSON 根为 null 或标量时不修改原始 body；无法解析的动态路径也不重新序列化 body。数组删除仍按顺序移动下标；add 允许在缺失或 null 的父节点建立容器。
 
 验收新增独立预期结果涵盖动态地址、可选捕获、批量失败继续、数组删除、特殊键、类型失败和跨声明顺序；Surge 参数用例验证类型保留与单次展开。保持 11 个生产领域文件、10 个测试套件和 221 个公开导出，不新增零散生成类别。
+
+
+## 27. 文本请求 mock 的阶段组合（v1.64）
+
+`request.body.mock` 和 `request.body.mock_file` 的文本子集进入共同特性编译器；固定内容类型为 json/text/css/html/javascript/plain，Base64 必须省略或固定 false。QX 使用 script-request-body，Surge 使用 requires-body=true 的 http-request。这里只替换发往上游的请求体，不生成 response，也不终止后续请求规则。
+
+Mock 在源 action 位置执行，随后 Header/Body/JSON 操作继续读取已修改的状态；同一阶段的所有可组合声明共用一个 dispatcher。允许多次 inline mock 按顺序覆盖；每条声明最多一个 file mock，跨声明的文件分别按原 URL 在转换时获取。文件内容直接作为文本嵌入，不作模板展开、不执行 JavaScript；生成 helper 保留源文件 URL 注释。没有 materialized text 时保留 Review，不生成缺失文件的活动 helper。
+
+Inline body 使用共同 String lowering，支持捕获、内置变量和 Surge typed argument；缺失值或类型不符只跳过当前 mock，已有 body/Content-Type 不变，后续 action 继续。文本 mock 的 Content-Type 使用已有 MIME 映射和大小写不敏感 Header setter；Surge duplicate Header 遵循 full-header-mode 的已验证子集。
+
+删除 QX 专用 request-mixed handler，改为统一 features/phase 生成类别。保留公开旧 renderer 供 legacy、binary/Base64 兼容适配，不把它们混入文本阶段。响应 mock 的 request/response 时机及终结行为仍按原规范处理；动态内容类型、同声明多个 file 依赖、二进制/编码体和异步作者 Script 组合不在本次等价子集。
+
+目标的请求体 API 仍受原平台契约约束：Surge 的 chunked、Expect: 100-continue、大小上限及 framing 约束不由转换器改写或绕过。不会为这些限制增加虚构字段或宣称所有网络传输情况均可等价。本次仅扩大已验证的同步文本操作组合，保留原有兼容边界、QX 强制 enable 策略及暂停的定时活动。

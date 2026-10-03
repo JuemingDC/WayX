@@ -466,7 +466,7 @@ export function conditionRuntimeSource() {
 
 // Source action oracle for the Header/Body/JSON dispatcher subset. Path parsing
 // is injected from the source grammar; target emitters use their own lowering.
-export function evaluateRewriteActions(ast,context,{parsePath}={}) {
+export function evaluateRewriteActions(ast,context,{parsePath,mockFiles}={}) {
   const state=structuredClone(context);
   const condition=evaluateCondition(ast.condition,state);
   if (!condition.matched) return {matched:false,state,errors:[]};
@@ -494,6 +494,17 @@ export function evaluateRewriteActions(ast,context,{parsePath}={}) {
         else if (operation==='del') {for(const k of keys) delete headers[k];}
         else if (operation==='replace') {const replacement=stringValue(args[2]);for(const k of keys) headers[k]=replaceSourceRegex(args[1],String(headers[k]),replacement);}
         else throw new SemanticEvaluationError('unsupported oracle header action: '+operation);
+      } else if(ast.phase==='request' && ['request.body.mock','request.body.mock_file'].includes(action.name)) {
+        const mime={json:'application/json',text:'text/plain; charset=utf-8',css:'text/css; charset=utf-8',html:'text/html; charset=utf-8',javascript:'application/javascript; charset=utf-8',plain:'text/plain; charset=utf-8'};
+        const type=stringValue(args[0]).toLowerCase();
+        if(!Object.prototype.hasOwnProperty.call(mime,type) || (args[2] && value(args[2])!==false))throw new SemanticEvaluationError('oracle only supports text request mocks');
+        const body=operation==='mock_file' ? mockFiles?.get(ast.raw)?.bodyText : stringValue(args[1]);
+        if(typeof body!=='string')throw new SemanticEvaluationError('missing text mock dependency');
+        const headers=phase.headers ||= {};
+        const keys=Object.keys(headers).filter(k=>k.toLowerCase()==='content-type');
+        for(const key of keys)delete headers[key];
+        put(headers,keys[0] || 'Content-Type',mime[type]);
+        phase.body=body;
       } else if (action.name.includes('.body.') && operation==='replace') {
         phase.body=replaceSourceRegex(args[0],String(phase.body ?? ''),stringValue(args[1]));
       } else if (action.name.includes('.json.') && ['add','delete','replace'].includes(operation)) {
