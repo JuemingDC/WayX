@@ -53,58 +53,16 @@ const rawUrlMatcher=qxExactRewriteMatcherPlan(parseRewriteV2(
 assert.equal(rawUrlMatcher.urlPattern,rawUrlPattern);
 assert.equal(rawUrlMatcher.prefix,rawUrlPattern+' url ');
 
-const flaggedConditionAst=parseRewriteV2(
-  'response if \${url} ~= /^https:\\/\\/flags\\.example\\/api$/ims then reject_dict(200)'
+const droppedFlagsAst=parseRewriteV2(
+  'response if ${url} ~= /^https:\\/\\/flags\\.example\\/api$/ims then reject_dict(200)'
 );
-const flaggedExactMatcher=qxExactRewriteMatcherPlan(flaggedConditionAst);
-assert.equal(flaggedExactMatcher.ok,false);
-const flaggedGuardMatcher=qxRewriteMatcherPlan(flaggedConditionAst);
-assert.equal(flaggedGuardMatcher.urlPattern,'^https?://');
-assert.equal(flaggedGuardMatcher.exact,false);
-
-const flaggedQxRejectCtx=ctx();
-const flaggedQxReject=planQxRewrite(
-  rewriteV2AstToSemanticIr(flaggedConditionAst,{source:flaggedConditionAst.raw}),
-  flaggedQxRejectCtx,
-);
-assert.equal(flaggedQxReject.section,'comment');
-assert.match(flaggedQxReject.line,/REVIEW REQUIRED/);
-assert.equal(flaggedQxRejectCtx.generatedScripts.size,0);
-
-const flaggedSurgeRejectCtx=ctx();
-const flaggedSurgeReject=planSurgeRewrite(
-  rewriteV2AstToSemanticIr(flaggedConditionAst,{source:flaggedConditionAst.raw}),
-  flaggedSurgeRejectCtx,
-);
-assert.equal(flaggedSurgeReject.section,'comment');
-assert.match(flaggedSurgeReject.line,/REVIEW REQUIRED/);
-assert.equal(flaggedSurgeRejectCtx.generatedScripts.size,0);
-
-const flaggedPipelineSource='response if \${url} ~= /API/i then response.header.del("Server") | response.body.replace(/x/,"y")';
-const flaggedQxPipelineCtx=ctx();
-const flaggedQxPipeline=planQxRewrite(v2(flaggedPipelineSource),flaggedQxPipelineCtx);
-assert.equal(flaggedQxPipeline.section,'rewrite');
-assert.ok(flaggedQxPipeline.line.startsWith('^https?:// url script-response-body '));
-const flaggedQxScript=[...flaggedQxPipelineCtx.generatedScripts.values()][0];
-assert.match(flaggedQxScript,/new RegExp\("API","i"\)/);
-
-const flaggedSurgePipelineCtx=ctx();
-const flaggedSurgePipeline=planSurgeRewrite(v2(flaggedPipelineSource),flaggedSurgePipelineCtx);
-assert.equal(flaggedSurgePipeline.section,'script');
-assert.ok(flaggedSurgePipeline.line.includes('pattern=^https?://'));
-const flaggedSurgeScript=[...flaggedSurgePipelineCtx.generatedScripts.values()][0];
-assert.match(flaggedSurgeScript,/new RegExp\("API","i"\)/);
-
-const flaggedSurgeHeaderAddSource='response if \${url} ~= /API/i then response.header.add("Set-Cookie","a=1")';
-const flaggedSurgeHeaderAddCtx=ctx();
-const flaggedSurgeHeaderAdd=planSurgeRewrite(v2(flaggedSurgeHeaderAddSource),flaggedSurgeHeaderAddCtx);
-assert.equal(flaggedSurgeHeaderAdd.section,'script');
-assert.ok(flaggedSurgeHeaderAdd.line.includes('pattern=^https?://'));
-assert.ok(flaggedSurgeHeaderAdd.line.includes('full-header-mode=true'));
-assert.equal(flaggedSurgeHeaderAddCtx.generatedScripts.size,1);
-const flaggedSurgeHeaderAddScript=[...flaggedSurgeHeaderAddCtx.generatedScripts.values()][0];
-assert.match(flaggedSurgeHeaderAddScript,/new RegExp\("API","i"\)/);
-assert.match(flaggedSurgeHeaderAddScript,/__wayxAdd\("Set-Cookie",v\)/);
+const droppedFlagsMatcher=qxExactRewriteMatcherPlan(droppedFlagsAst);
+assert.equal(droppedFlagsMatcher.urlPattern,'^https:\\/\\/flags\\.example\\/api$');
+assert.equal(droppedFlagsMatcher.prefix,'^https:\\/\\/flags\\.example\\/api$ url ');
+const droppedFlagsDirect=qxDirectRewritePlan(droppedFlagsAst,{matcher:droppedFlagsMatcher});
+assert.equal(droppedFlagsDirect.ok,true);
+assert.equal(droppedFlagsDirect.line,'^https:\\/\\/flags\\.example\\/api$ url reject-dict');
+assert.doesNotMatch(droppedFlagsDirect.line,/\(\?[ims]+\)|\/ims?\b/);
 
 const methodRejectNativeAst=parseRewriteV2(
   'response if ${url} ~= /api/ && ${request.method} == "POST" then reject_dict(200)'
@@ -637,13 +595,13 @@ assert.ok(methodNativeJsonPipeline.line.indexOf('setpath(["two"]; 2)') < methodN
 assert.ok(methodNativeJsonPipeline.line.indexOf('del(.["old"])') < methodNativeJsonPipeline.line.indexOf('del(.["unused"])'));
 assert.equal(methodNativeJsonPipelineCtx.generatedScripts.size,0);
 
-const flagsGuardedJsonPipelineSource='response if ${url} ~= /api/ims then response.json.add("a",1) | response.json.delete("b")';
-const flagsGuardedJsonPipelineCtx=ctx();
-const flagsGuardedJsonPipeline=planQxRewrite(v2(flagsGuardedJsonPipelineSource),flagsGuardedJsonPipelineCtx);
-assert.equal(flagsGuardedJsonPipeline.section,'rewrite');
-assert.ok(flagsGuardedJsonPipeline.line.startsWith('^https?:// url script-response-body '));
-assert.equal(flagsGuardedJsonPipelineCtx.generatedScripts.size,1);
-assert.match([...flagsGuardedJsonPipelineCtx.generatedScripts.values()][0],/new RegExp\("api","ims"\)/);
+const flagsNativeJsonPipelineSource='response if ${url} ~= /api/ims then response.json.add("a",1) | response.json.delete("b")';
+const flagsNativeJsonPipelineCtx=ctx();
+const flagsNativeJsonPipeline=planQxRewrite(v2(flagsNativeJsonPipelineSource),flagsNativeJsonPipelineCtx);
+assert.equal(flagsNativeJsonPipeline.section,'rewrite');
+assert.match(flagsNativeJsonPipeline.line,/^api url jsonjq-response-body '/);
+assert.doesNotMatch(flagsNativeJsonPipeline.line,/\(\?[ims]+\)|\/ims?\b/);
+assert.equal(flagsNativeJsonPipelineCtx.generatedScripts.size,0);
 
 const nestedJsonPipelineSource='response if ${url} ~= /api/ then response.json.add("data.flag",true) | response.json.replace("data.count",2)';
 const nestedJsonPipelineCtx=ctx();
