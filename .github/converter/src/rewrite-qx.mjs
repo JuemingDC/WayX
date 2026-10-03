@@ -311,6 +311,14 @@ export function planQxRewrite(ir, ctx={}) {
     return rewriteReview(source,String(error?.message||error).split('\n')[0]);
   }
 
+  if (ast.actions?.length===1 && ast.actions[0]?.name==='url.replace') {
+    return {
+      section:'comment',
+      line:'# [WayX] Known Quantumult X target limitation: Loon url.replace transparently rewrites the request URL, but no equivalent behavior is documented in the official Quantumult X rewrite sample.\n# Source declaration: '+source,
+      reason:'unsupported-qx-url-replace-comment',
+    };
+  }
+
   if (singleOp?.kind==='header' && singleOp.phase==='response' && singleOp.operation==='add') {
     return {
       section:'comment',
