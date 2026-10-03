@@ -76,8 +76,8 @@ const ignoredScriptMap = new Map([
 ]);
 const qxIgnoredOptionsOutput = convert(qxIgnoredOptionsFixture, qxIgnoredOptionsSource, ignoredScriptMap, STAMP);
 assert.doesNotMatch(qxIgnoredOptionsOutput.qx, /SCRIPT(?: V2)? REVIEW REQUIRED/);
-assert.match(qxIgnoredOptionsOutput.qx, /dynamic enable.*not a Quantumult X Rewrite Script field; converted rule defaults to enabled/i);
-assert.match(qxIgnoredOptionsOutput.qx, /timeout.*not a Quantumult X Rewrite Script field and was omitted/i);
+assert.match(qxIgnoredOptionsOutput.qx, /dynamic enable=.*ignored for Quantumult X; converted rule defaults to enabled/i);
+assert.match(qxIgnoredOptionsOutput.qx, /Source Script timeout ignored for Quantumult X/);
 assert.match(qxIgnoredOptionsOutput.qx, /Source Script argument ignored for Quantumult X/);
 assert.match(qxIgnoredOptionsOutput.qx, /url script-response-body https:\/\/example\.com\/legacy\.js/);
 assert.match(qxIgnoredOptionsOutput.qx, /url script-response-body https:\/\/example\.com\/v2\.js/);
@@ -666,7 +666,7 @@ for (const testCase of cases) {
     assert.match(out.surge, /^#!arguments=.*captionLang:zh-Hans/m);
     assert.match(out.surge, /argument="\{\\\"captionLang\\\":\\\"\{\{\{captionLang\}\}\}\\\"\}"/);
     assert.ok(qxActive.some(line => /youtube\/request\.js$/.test(line)), 'YouTube: request binary scripts must follow KOP-XIAO and remain active as script-request-body');
-    assert.match(out.qx, /binary_body_mode=true.*Quantumult X Rewrite Script field.*omitted/i);
+    assert.match(out.qx, /binary_body_mode=true ignored for Quantumult X/);
     assert.doesNotMatch(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
     assert.doesNotMatch(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
   }
@@ -676,7 +676,7 @@ for (const testCase of cases) {
     assert.doesNotMatch(out.qx, /Source \[Argument\]|Argument usage:/, 'Bilibili QX must not emit Loon plugin parameter UI/declarations');
     assert.doesNotMatch(out.qx, /QUANTUMULT X (?:UNSUPPORTED|REVIEW REQUIRED) - source script disabled/);
     assert.ok(qxActive.some(line => /bilibili\/(?:request|response|json)\.js/.test(line)), 'Bilibili Source Script declarations must keep original URLs without runtime compatibility gating');
-    assert.match(out.qx, /binary_body_mode=true.*Quantumult X Rewrite Script field.*omitted/i);
+    assert.match(out.qx, /binary_body_mode=true ignored for Quantumult X/);
     assert.doesNotMatch(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
     assert.doesNotMatch(out.surge, /Source Loon plugin policy PROXY requires a Surge module policy parameter binding/);
     assert.doesNotMatch(out.surge, /Source declaration:.*PROXY[\s\S]*REVIEW REQUIRED: Surge Module requires an external policy binding/);
@@ -706,7 +706,7 @@ for (const testCase of cases) {
     assert.ok(qxActive.some(line => /Scripts\/manmanbuy_ck\.js$/.test(line)), 'JingDong dynamic-enable request script must default to active in QX');
     assert.ok(qxActive.some(line => /Scripts\/jd_price\.js$/.test(line)), 'JingDong argument-bearing response script must remain active in QX');
     assert.doesNotMatch(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
-    assert.match(out.qx, /Source dynamic enable=Capture is not a Quantumult X Rewrite Script field; converted rule defaults to enabled/);
+    assert.match(out.qx, /Source dynamic enable=Capture ignored for Quantumult X; converted rule defaults to enabled/);
     assert.match(out.qx, /Source Script argument ignored for Quantumult X/);
   }
 
