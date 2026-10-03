@@ -19,35 +19,30 @@ const deleteAst = parseRewriteV2(
 );
 const deleteQx = qxDirectRewritePlan(deleteAst);
 const deleteSurge = surgeDirectRewritePlan(deleteAst);
-assert.equal(deleteQx.ok, true);
-assert.match(deleteQx.line, /jsonjq-response-body/);
-assert.doesNotMatch(deleteQx.line, /delpaths/);
-assert.match(deleteQx.line, /del\(\.activity_switch, \.video_report_config, \.wl_config\.pb_banner_funad_cache_strategy, \.scheme_whitelist\)/);
-assert.equal(deleteSurge.ok, true);
-assert.match(deleteSurge.line, /^http-response-jq /);
-assert.match(deleteSurge.line, /del\(\.activity_switch, \.video_report_config, \.wl_config\.pb_banner_funad_cache_strategy, \.scheme_whitelist\)/);
+assert.equal(deleteQx.ok, false);
+assert.match(deleteQx.reason, /cannot preserve Loon regex flags: i/);
+assert.equal(deleteSurge.ok, false);
+assert.match(deleteSurge.reason, /cannot preserve Loon regex flags: i/);
 
 const replaceAst = parseRewriteV2(
   'response if ${url} ~= /^https?:\\/\\/tiebac\\.baidu\\.com\\/c\\/s\\/sync$/i then response.json.replace(["wl_config.home_ad_num", "wl_config.frs_ad_num", "wl_config.index_bear_first_floor_max"], [0, 0, 999999999])'
 );
-assert.equal(qxDirectRewritePlan(replaceAst).ok, true);
 const replaceQx = qxDirectRewritePlan(replaceAst);
 const replaceSurge = surgeDirectRewritePlan(replaceAst);
-assert.match(replaceQx.line, /getpath/);
-assert.match(replaceQx.line, /setpath/);
-assert.equal(replaceSurge.ok, true);
-assert.match(replaceSurge.line, /getpath/);
+assert.equal(replaceQx.ok, false);
+assert.match(replaceQx.reason, /cannot preserve Loon regex flags: i/);
+assert.equal(replaceSurge.ok, false);
+assert.match(replaceSurge.reason, /cannot preserve Loon regex flags: i/);
 
 const addAst = parseRewriteV2(
   'response if ${url} ~= /^https?:\\/\\/tiebac\\.baidu\\.com\\/c\\/s\\/sync$/i then response.json.add("wl_config.new_flag", true)'
 );
 const addQx = qxDirectRewritePlan(addAst);
 const addSurge = surgeDirectRewritePlan(addAst);
-assert.equal(addQx.ok, true);
-assert.match(addQx.line, /getpath/);
-assert.match(addQx.line, /== null/);
-assert.equal(addSurge.ok, true);
-assert.match(addSurge.line, /^http-response-jq /);
+assert.equal(addQx.ok, false);
+assert.match(addQx.reason, /cannot preserve Loon regex flags: i/);
+assert.equal(addSurge.ok, false);
+assert.match(addSurge.reason, /cannot preserve Loon regex flags: i/);
 
 const scalarDeleteAst = parseRewriteV2(
   'response if ${url} ~= /api/ then response.json.delete("data.ad")'
@@ -66,9 +61,11 @@ const jqAst = parseRewriteV2(
   'response if ${url} ~= /^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idle\\.trade\\.full\\.info\\//i then response.json.jq(".data.components |= map(select(.render | . == \\"orderStatusVO\\" or . == \\"addressInfoVO\\" or . == \\"orderInfoVO\\"))")'
 );
 const jqQx = qxDirectRewritePlan(jqAst);
-assert.equal(jqQx.ok, true);
-assert.match(jqQx.line, /jsonjq-response-body/);
-assert.equal(surgeDirectRewritePlan(jqAst).ok, true);
+const jqSurge = surgeDirectRewritePlan(jqAst);
+assert.equal(jqQx.ok, false);
+assert.match(jqQx.reason, /cannot preserve Loon regex flags: i/);
+assert.equal(jqSurge.ok, false);
+assert.match(jqSurge.reason, /cannot preserve Loon regex flags: i/);
 
 const preserveJqSource = '.a |= (. + 1) | .b = [1, 2] | .c = {"x": true}';
 const preserveJqAst = parseRewriteV2(
@@ -91,13 +88,13 @@ assert.ok(preserveDelpathsSurge.line.endsWith("'" + preserveDelpathsSource + "'"
 const mockAst = parseRewriteV2(
   'response if ${url} ~= /^https?:\\/\\/tieba\\.baidu\\.com\\/mo\\/q\\/search\\/startPage\\?/i then response.body.mock("json", "{\\"no\\":0,\\"error\\":\\"success\\"}", 200)'
 );
-const qxMock = renderQxInlineMockScript(mockAst, {category:'Adblock'});
-assert.equal(qxMock.qxAction, 'script-echo-response');
-assert.match(qxMock.script, /__wayxBody = /);
-assert.match(qxMock.script, /success/);
+assert.throws(
+  () => renderQxInlineMockScript(mockAst, {category:'Adblock'}),
+  /cannot preserve Loon regex flags: i/,
+);
 const surgeMock = surgeInlineMockPlan(mockAst);
-assert.equal(surgeMock.ok, true);
-assert.equal(surgeMock.section, 'map');
+assert.equal(surgeMock.ok, false);
+assert.match(surgeMock.reason, /cannot preserve Loon regex flags: i/);
 
 const rejectDictAst = parseRewriteV2(
   'request if ${url} ~= /^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idle\\.user\\.strategy\\.list\\//i then reject_dict(200)'
@@ -108,21 +105,19 @@ const reject404Ast = parseRewriteV2(
   'request if ${url} ~= /^https?:\\/\\/api-access\\.pangolin-sdk-toutiao\\.com\\/api\\/ad\\/union\\/sdk/i then reject(404)'
 );
 const reject404Qx = qxDirectRewritePlan(reject404Ast);
-assert.equal(reject404Qx.ok, true);
-assert.match(reject404Qx.line, / url reject$/);
+assert.equal(reject404Qx.ok, false);
+assert.match(reject404Qx.reason, /cannot preserve Loon regex flags: i/);
 const reject404Surge = surgeRejectRewritePlan(reject404Ast);
-assert.equal(reject404Surge.ok, true);
-assert.equal(reject404Surge.section, 'url');
-assert.match(reject404Surge.line, / _ reject$/);
+assert.equal(reject404Surge.ok, false);
+assert.match(reject404Surge.reason, /cannot preserve Loon regex flags: i/);
 
 const rejectImgAst = parseRewriteV2(
   'request if ${url} ~= /^https?:\\/\\/api-mifit\\.huami\\.com\\/discovery\\/mi\\/discovery\\/sport_summary_ad\\?/i then reject_img(200)'
 );
 assert.equal(qxPrimitiveForRewriteV2Action(rejectImgAst.actions[0]), 'reject-img');
 const rejectImgSurge = surgeRejectRewritePlan(rejectImgAst);
-assert.equal(rejectImgSurge.ok, true);
-assert.equal(rejectImgSurge.section, 'map');
-assert.match(rejectImgSurge.line, /data-type=tiny-gif status-code=200/);
+assert.equal(rejectImgSurge.ok, false);
+assert.match(rejectImgSurge.reason, /cannot preserve Loon regex flags: i/);
 
 const loonUrlImg = 'URL-REGEX,"^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\?",REJECT-IMG';
 assert.equal(qxRule(loonUrlImg).line, '^https:\\/\\/a\\.line\\.me\\/er\\/lads\\/v\\d\\/ei\\? url reject-img');
