@@ -215,6 +215,37 @@ export function convertPlugin(entry,source,{
     appendQxOutput(qx,'notes','# [WayX] Policy binding: source PROXY is preserved as literal QX policy name PROXY; a matching target policy must exist.');
   }
 
+  const generalSectionLines=plugin.sections.get('General') || [];
+  for (const item of groupSourceSectionItems(generalSectionLines)) {
+    const comments=cleanSourceComments(item.comments);
+    if (!item.line) {
+      qxOutputDestination(qx,'notes').push(...comments);
+      surgeOutputDestination(sg,'general').push(...comments);
+      continue;
+    }
+    const match=String(item.line).match(/^real-ip\s*=\s*(.+)$/i);
+    if (!match) {
+      appendQxOutput(qx,'notes',...comments,'# [WayX] ISSUE REQUIRED [unknown-general-option]: unsupported Loon [General] option',`# Source declaration: ${item.line}`);
+      appendSurgeOutput(sg,'notes',...comments,'# [WayX] ISSUE REQUIRED [unknown-general-option]: unsupported Loon [General] option',`# Source declaration: ${item.line}`);
+      continue;
+    }
+    const hosts=match[1].split(',').map(value=>value.trim()).filter(Boolean);
+    if (!hosts.length) continue;
+    appendQxOutput(
+      qx,
+      'notes',
+      ...comments,
+      '# [WayX] Known Quantumult X target limitation: Loon real-ip maps to Quantumult X [general] dns_exclusion_list, but rewrite/filter snippets cannot inject that global option.',
+      '# Source declaration: '+item.line,
+    );
+    appendSurgeOutput(
+      sg,
+      'general',
+      ...comments,
+      'always-real-ip = %APPEND% '+hosts.join(', '),
+    );
+  }
+
   const ruleSectionLines=plugin.sections.get('Rule') || [];
   for (const item of groupSourceSectionItems(ruleSectionLines)) {
     if (!item.line) {
