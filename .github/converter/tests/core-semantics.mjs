@@ -1,4 +1,4 @@
-// WayX semantic core Phase B contract
+// WayX semantic core Phase C contract
 // Author: chance
 // Category: Converter / Core / Reference Semantics
 
@@ -12,6 +12,7 @@ import {
   guardedHelper,
   phaseDispatcher,
   unsupported,
+  differentialConditionOracle,
 } from '../src/core/equivalence-plan.mjs';
 
 function condition(source) {
@@ -100,10 +101,63 @@ assert.equal(
   true,
 );
 
+
+const matcherContexts=[
+  {url:'https://api.example.com/item/42',request:{method:'GET',headers:{}}},
+  {url:'https://API.Example.com/item/42',request:{method:'GET',headers:{}}},
+  {url:'https://example.com/other',request:{method:'GET',headers:{}}},
+];
+const bareCaseSensitiveUrl=context=>
+  /^https:\/\/API\.Example\.com\/item\/(\d+)$/.test(String(context.url || ''));
+
+const qxFlagLoss=differentialConditionOracle({
+  condition:insensitive,
+  target:'qx',
+  targetModel:bareCaseSensitiveUrl,
+  contexts:matcherContexts,
+});
+assert.equal(qxFlagLoss.observedExact,false);
+assert.equal(qxFlagLoss.noFalseNegatives,false);
+assert.equal(qxFlagLoss.falseNegatives.length,1);
+
+const surgeFlagLoss=differentialConditionOracle({
+  condition:insensitive,
+  target:'surge',
+  targetModel:bareCaseSensitiveUrl,
+  contexts:matcherContexts,
+});
+assert.equal(surgeFlagLoss.observedExact,false);
+assert.equal(surgeFlagLoss.falseNegatives.length,1);
+
+const exactOracle=differentialConditionOracle({
+  condition:sensitive,
+  target:'bare-native-url',
+  targetModel:bareCaseSensitiveUrl,
+  contexts:matcherContexts,
+});
+assert.equal(exactOracle.observedExact,true);
+assert.equal(exactOracle.noFalseNegatives,true);
+assert.equal(exactOracle.noFalsePositives,true);
+
+const broadGuardOracle=differentialConditionOracle({
+  condition:combined,
+  target:'broad-prefilter',
+  targetModel:context=>/^https?:\/\//.test(String(context.url || '')),
+  contexts:[
+    {url:'https://example.com/item/99',request:{method:'POST',headers:{}}},
+    {url:'https://example.com/item/99',request:{method:'PUT',headers:{}}},
+    {url:'https://example.com/other',request:{method:'GET',headers:{}}},
+    {url:'https://example.com/item/not-number',request:{method:'POST',headers:{}}},
+  ],
+});
+assert.equal(broadGuardOracle.noFalseNegatives,true);
+assert.equal(broadGuardOracle.observedExact,false);
+assert.ok(broadGuardOracle.falsePositives.length>0);
+
 const native=nativeEquivalent({
   target:'qx',
   output:'native',
-  proof:{exact:true,evidence:'official sample'},
+  proof:{exact:true,evidence:'official sample',oracle:exactOracle},
 });
 assert.equal(native.kind,EQUIVALENCE_KINDS.NATIVE);
 assert.throws(
@@ -115,7 +169,7 @@ const guarded=guardedHelper({
   target:'surge',
   prefilter:'^https?://',
   runtime:'helper.js',
-  proof:{noFalseNegatives:true,safeNoop:true},
+  proof:{noFalseNegatives:true,safeNoop:true,oracle:broadGuardOracle},
 });
 assert.equal(guarded.kind,EQUIVALENCE_KINDS.GUARDED);
 assert.throws(
@@ -138,4 +192,4 @@ const dispatcher=phaseDispatcher({
 assert.equal(dispatcher.kind,EQUIVALENCE_KINDS.DISPATCHER);
 assert.equal(unsupported('target lifecycle cannot express source behavior').kind,EQUIVALENCE_KINDS.UNSUPPORTED);
 
-console.log('Semantic core Phase B contract passed');
+console.log('Semantic core Phase C contract passed');

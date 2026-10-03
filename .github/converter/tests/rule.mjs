@@ -1,15 +1,22 @@
-// Target-neutral Rule AST contract
+// WayX target-neutral Rule + target planner contract
 // Author: chance
-// Category: Converter / Rule / AST Validation
+// Category: Converter / Rule / Validation
 
 import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import {
   parseLoonRuleAst,
   renderRuleAst,
   ruleTypesInAst,
-} from '../src/rule-ast.mjs';
-import { planQxRuleAst } from '../src/rule-qx.mjs';
-import { planSurgeModuleRuleAst, renderSurgeRuleAst, validateSurgeRuleAst } from '../src/rule-surge.mjs';
+  planQxRuleAst,
+  planSurgeModuleRuleAst,
+  renderSurgeRuleAst,
+  validateSurgeRuleAst,
+  surgeRuleTypesInTree,
+  surgeModuleRule,
+} from '../src/rule.mjs';
+import { classifyLegacyRewriteAction } from '../src/rewrite-ir.mjs';
 
 const simple=parseLoonRuleAst('DOMAIN, example.com, REJECT');
 assert.equal(simple.ok,true);
@@ -151,4 +158,173 @@ assert.equal(
 assert.equal(planQxRuleAst(simple.ast).line,'host, example.com, reject');
 assert.equal(planSurgeModuleRuleAst(simple.ast).line,'DOMAIN,example.com,REJECT');
 
-console.log('Rule AST contract passed');
+
+const ROOT=process.cwd();
+const manifest=JSON.parse(await fs.readFile(path.join(ROOT,'.github/sources/loon.json'),'utf8'));
+const baseline=JSON.parse(await fs.readFile(
+  path.join(ROOT,'.github/converter/fixtures/catalog-rule-inventory.json'),
+  'utf8',
+));
+
+const inventory={
+  ruleTypes:new Set(),
+  policies:new Set(),
+  parameterNames:new Set(),
+  logicalOperators:new Set(),
+};
+const coverage={
+  files:0,
+  rules:0,
+  native:0,
+  boundProxy:0,
+  review:0,
+  types:new Map(),
+  reviewLines:[],
+};
+
+function collectObservedRule(node) {
+  inventory.ruleTypes.add(node.type);
+  if (!node.nested) {
+    assert.ok(node.policyRaw,'top-level Rule missing policy: '+node.source);
+    inventory.policies.add(node.policy);
+  }
+  for (const param of node.params) {
+    if (param.name) inventory.parameterNames.add(param.name);
+  }
+  if (node.kind==='logical') inventory.logicalOperators.add(node.type);
+  for (const child of node.children) collectObservedRule(child);
+}
+
+function splitPatternAction(line) {
+  const idx=String(line).search(/\s/);
+  if (idx<0) return [String(line).trim(),''];
+  return [
+    String(line).slice(0,idx).trim(),
+    String(line).slice(idx).trim().replace(/^\-\s+/,''),
+  ];
+}
+
+function isKnownSourceNonRule(line) {
+  const [pattern,action]=splitPatternAction(line);
+  if (pattern && action && classifyLegacyRewriteAction(action).kind!=='unknown') return true;
+  return !String(line).includes(',') &&
+    /^(?:\*\.)?(?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,}$/i.test(String(line));
+}
+
+function activeRuleLines(text) {
+  const out=[];
+  let section=null;
+  for (const raw of String(text).replace(/\r\n?/g,'\n').split('\n')) {
+    const header=raw.trim().match(/^\[([^\]]+)\]$/);
+    if (header) {
+      section=header[1];
+      continue;
+    }
+    const line=raw.trim();
+    if (section!=='Rule' || !line || /^(?:#|;|\/\/)/.test(line)) continue;
+    out.push(line);
+  }
+  return out;
+}
+
+for (const entry of manifest) {
+  const file=path.join(ROOT,'Resource/Loon',entry.file);
+  let text;
+  try {
+    text=await fs.readFile(file,'utf8');
+  } catch {
+    continue;
+  }
+  coverage.files++;
+
+  for (const line of activeRuleLines(text)) {
+    if (isKnownSourceNonRule(line)) continue;
+    coverage.rules++;
+
+    const parsed=parseLoonRuleAst(line);
+    assert.ok(parsed.ok,entry.file+': Rule AST parse failed ('+parsed.reason+'): '+line);
+    collectObservedRule(parsed.ast);
+
+    const typeTree=surgeRuleTypesInTree(line);
+    assert.equal(
+      typeTree.ok,
+      true,
+      'unsupported Surge rule type tree: '+line+' ('+typeTree.reason+')',
+    );
+    for (const type of typeTree.types) {
+      coverage.types.set(type,(coverage.types.get(type) || 0)+1);
+    }
+
+    const mapped=surgeModuleRule(line,{proxyPolicyPlaceholder:'{{{wayx_proxy_policy}}}'});
+    if (mapped.kind==='rule' && mapped.reason==='proxy-policy-argument') {
+      coverage.boundProxy++;
+      assert.match(mapped.line,/\{\{\{wayx_proxy_policy\}\}\}/);
+      continue;
+    }
+    if (mapped.kind==='rule' || mapped.kind==='map') {
+      coverage.native++;
+      assert.equal(mapped.lines.at(-1),mapped.line);
+      if (mapped.kind==='map') assert.equal(mapped.reason,'url-regex-local-response');
+      continue;
+    }
+
+    coverage.review++;
+    coverage.reviewLines.push({file:entry.file,reason:mapped.reason,line});
+  }
+}
+
+assert.ok(coverage.files>0,'no Loon source files were scanned');
+assert.ok(coverage.rules>0,'no Loon [Rule] entries were scanned');
+
+const sorted=set=>[...set].sort();
+const actual={
+  version:baseline.version,
+  scope:baseline.scope,
+  ruleTypes:sorted(inventory.ruleTypes),
+  policies:sorted(inventory.policies),
+  parameterNames:sorted(inventory.parameterNames),
+  logicalOperators:sorted(inventory.logicalOperators),
+};
+assert.equal(actual.version,baseline.version,'Rule inventory fixture version drifted');
+assert.equal(actual.scope,baseline.scope,'Rule inventory fixture scope drifted');
+
+function assertNoNewObserved(actualValues,baselineValues,label) {
+  const expected=new Set(baselineValues || []);
+  const added=(actualValues || []).filter(value=>!expected.has(value));
+  assert.deepEqual(
+    added,
+    [],
+    'Catalog-observed Loon Rule inventory gained new '+label+
+      '. Do not update the baseline mechanically. Actual inventory: '+JSON.stringify(actual),
+  );
+}
+
+assertNoNewObserved(actual.ruleTypes,baseline.ruleTypes,'Rule type');
+assertNoNewObserved(actual.policies,baseline.policies,'top-level policy');
+assertNoNewObserved(actual.parameterNames,baseline.parameterNames,'parameter name');
+assertNoNewObserved(actual.logicalOperators,baseline.logicalOperators,'logical operator');
+
+const unexpectedReview=coverage.reviewLines.filter(item=>item.reason!=='external-policy');
+assert.equal(
+  unexpectedReview.length,
+  0,
+  'unexpected Surge module rule reviews:\n'+
+    unexpectedReview.map(item=>item.file+': ['+item.reason+'] '+item.line).join('\n'),
+);
+for (const item of coverage.reviewLines.filter(item=>item.reason==='external-policy')) {
+  const mapped=surgeModuleRule(item.line,{proxyPolicyPlaceholder:'{{{wayx_proxy_policy}}}'});
+  assert.match(
+    mapped.lines.join('\n'),
+    /REVIEW REQUIRED: Surge Module requires an external policy binding/i,
+  );
+}
+
+console.log(
+  'Rule contract passed: files='+coverage.files+
+  ', rules='+coverage.rules+
+  ', native='+coverage.native+
+  ', boundProxy='+coverage.boundProxy+
+  ', review='+coverage.review+
+  ', observedTypes='+actual.ruleTypes.length,
+);
+
