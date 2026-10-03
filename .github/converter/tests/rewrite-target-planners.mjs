@@ -171,7 +171,7 @@ const quotedV2JsonSource='response if ${url} ~= /api/ then response.json.delete(
 const quotedV2Json=planQxRewrite(v2(quotedV2JsonSource),ctx());
 assert.equal(quotedV2Json.section,'rewrite');
 assert.match(quotedV2Json.line,/jsonjq-response-body/);
-assert.match(quotedV2Json.line,/apihub\\/api\\/getAppConfig/);
+assert.ok(quotedV2Json.line.includes('/apihub/api/getAppConfig'));
 assert.match(quotedV2Json.line,/3D_AVATAR_UPDATE/);
 
 const jsonAddSource='response if ${url} ~= /api/ then response.json.add("data.new",true)';
