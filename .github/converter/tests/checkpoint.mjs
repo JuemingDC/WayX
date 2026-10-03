@@ -541,7 +541,8 @@ const mixedJsonCapture = renderMixedRewriteScript(
 );
 assert.ok(mixedJsonCapture.script.includes('__wayxTpl([["c","hit",1]])'));
 assert.ok(mixedJsonCapture.script.includes('v=>__wayxJsonAction(j=>__wayxJsonReplace(j,["data","user"],v))'));
-assert.equal(mixedJsonCapture.script.includes('"ims"'), false);
+assert.equal(mixedJsonCapture.script.includes('"ims"'), true);
+assert.match(mixedJsonCapture.script,/new RegExp\([^\n]+,"ims"\)/);
 
 const mixedJsonTyped = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /api/ then response.header.set("X-Test", "ok") | response.json.replace("data.n", 7) | response.json.replace("data.ok", true) | response.json.replace("data.none", null)'),
