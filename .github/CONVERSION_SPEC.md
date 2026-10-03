@@ -1,9 +1,9 @@
 # WayX Conversion Specification
 
-版本：1.60
+版本：1.61
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
-迁移状态：**Phase C active / Rewrite、Script、Configuration domain consolidation complete / Phase D–F pending**
+迁移状态：**领域合并完成；Header/Body/JSON runtime 与 phase dispatcher 子集已迁移并由 action oracle 验证；其它兼容路径保留**
 
 WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入本仓库转换链。
 
@@ -417,6 +417,8 @@ Loon Script declaration 的：
 
 都必须进入 IR。
 
+QX 的 enable 例外：按用户明确要求，默认关闭、固定 false 和动态开关均强制生成活动 Script 声明，并注明用户策略覆盖。Surge 不采用此覆盖。注释掉的源行仍保留注释。
+
 目标平台无法表达的 option 不得再默认“忽略即等价”；新架构必须显式证明该 option 对行为无影响，或 unsupported。
 
 兼容实现可暂时保留当前策略，但必须通过 migration inventory 明确标记，不得成为新架构默认规则。
@@ -795,7 +797,7 @@ GitHub 落地检查点（2026-10-03）：
 
 main 中现有 converter 在 Phase B–F 完成前继续承担生产转换。
 
-如果当前实现与本 v1.60 新规范冲突：
+如果当前实现与本规范冲突：
 
 - 不立即在同一个结构 PR 中强行改动 canonical；
 - 在后续语义 PR 中按新顺序迁移；
@@ -821,3 +823,34 @@ main 中现有 converter 在 Phase B–F 完成前继续承担生产转换。
 - 574 个生成目标政策检查、repository audit、managed cleanliness 均通过；两条原有上游 Script 404 仍按 §21 记录，不伪称取得原脚本。
 
 GitHub 落地（2026-10-04，Asia/Shanghai）：PR #136 已合入 main，最终 Converter Check #997 全部通过。全仓库 `.mjs` 从 89 个降为 29 个，净减少 60 个文件；既有转换内容目录与安装索引无变更。远端只保留 main 和 test，定时活动保持暂停。
+
+
+## 24. 新语法运行时修复（v1.61，2026-10-04）
+
+### 已完成的能力边界
+
+- 条件 helper 使用 `core.mjs` 的共同 source evaluator，QX/Surge 不再各自丢弃 `i/m/s`、将缺失 header 当作空字符串或在失败 AND/OR 分支泄漏 captures。类型比较沿用源 IR；不得用 `Number(undefined)` / `String(null)` 模拟源类型。
+- Header/Body replacement helper 保留原 regex body 和 flags，使用源 `$0` / `$n` 替换契约。条件 captures 与 action-owned captures 独立。缺失的可选 condition capture 跳过当前 action，后续 action 继续。
+- QX Header helper 已合入共同 mutation renderer，删除重复 condition equality/variable lowering 与旧 Header emitter。原 221 个公开入口名称保持不变，不增加领域文件。
+- 同 phase 的新语法 Header set/del/replace、Body replace、JSON add/delete/replace：当需要 helper，且所有活动声明均能由共同 runtime 表达、没有原作者 HTTP Script/legacy Rewrite/argument transport 冲突时，生成一个 `phase-dispatcher`。按源声明及 action 顺序执行；后一条条件读取已提交的 header/body；每条声明重新建立 capture namespace；整个阶段只 `$done` 一次，全部未命中返回 `{}`。Guarded matcher 与阶段 dispatcher 的无 URL 约束 prefilter 使用 `^`，不得因大写 URL scheme 产生 false negative。
+- QX echo-response 不允许把未经证明为精确的 condition 降为宽 matcher 后安全 no-op；Header/status/OR 等无法精确匹配时保留源声明并 Review。
+- 用户明确要求 Quantumult X 强制启用默认关闭的 Script。QX Legacy / v2 HTTP Script 与可表示的 cron task 均忽略源 static/dynamic enable 的关闭值，保留原作者 URL，生成活动声明，并注明 `Source enable forced to enabled for Quantumult X by user conversion policy`。此为用户要求的策略覆盖，不宣称源开关行为等价；不存在 QX 原生 enable 字段。Surge 仍遵循源 static/dynamic enable。注释掉的源行不会被复活，无法表示的 trigger/condition 仍走既有目标限制。
+- enable 变量只控制被用户覆盖的开关，不因缺失该默认值而停用 QX Script；其它未声明的动态 option references 不再被忽略。
+
+### 正常转换保护与兼容边界
+
+用户要求既有正常转换不受影响。`compileRegexForTarget` 对历史 native lowering 显式返回 `compatibilityUnverified`；`requireEquivalent=true` 会拒绝目标无法表达的 source flags。新 guarded matcher 不把带 flags 的 URL condition 当作精确 matcher，也不改变 regex body。既有 native JQ、reject、Map Local、原作者 Script 的 flag lowering 暂时保留，不能标为 `native-equivalent`，不能以有限 oracle 代替官方目标能力证明。
+
+同 phase 包含 JQ/echo/URL/duplicate-header、legacy Rewrite 或原作者 Script 时，禁止复制原作者 JavaScript 到 dispatcher。现有单 URL matcher helper 保留原 URL prefilter 和活动转换，并注明 `COMPATIBILITY LIMITATION`；这条路径仍不能保证 source flag 等价或多条 HTTP Script 全部执行。无法保留单 URL prefilter 的新 compound condition 则 Review。上述限制是迁移边界，不是已完成语义能力；继续迁移时必须按 §20 验证，不得为消除 Review 而编造字段。
+
+### 验证要求
+
+- 现有全部 10 个领域测试套件继续通过；原公开 export 名称和领域布局不变。
+- runtime suite 必须运行 source action oracle 对两种 target adapter 的差分：全部 8 组 flags、大小写/换行/大写 URL scheme、condition captures、action `$0/$n`、缺失/空 headers、后续 condition 读取前序修改、全未命中、单次 `$done`、最终 helper 引用。
+- End-to-end golden 只能在独立行为断言通过后更新；QX enable=false / Boolean default=false / cron enable=false 必须生成活动声明，Surge 对应关闭逻辑必须保留。
+- Catalog 逐项独立 materialization、转换差分、canonical regeneration、574 目标校验、managed cleanliness、原作者 Script URL preservation、官方 capability drift gates、GitHub Converter Check 均需通过。
+
+定时活动继续暂停；远端只允许 main 与 test。
+
+
+本轮本地验收：10 个领域套件通过；新增 76 组跨 QX/Surge runtime 差分通过；287 项 Catalog materialization 上下文差异为 0，转换与 validator 全部通过，15 项因 helper/启用策略/兼容注释产生预期差异，新增 Review 为 0。当前 574 个受管目标、QX 289 / Surge 288 repository audit、managed cleanliness（Kelee 275 / 全部 287）、原作者 Script URL/ref/黄金断言通过。两条既有 Kelee 上游 Script 404 保留；Sub-Store 远程 release 的一次读取超时只记录 source fetch failure，不替换其原 URL。定时活动没有恢复。

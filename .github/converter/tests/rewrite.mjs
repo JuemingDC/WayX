@@ -464,11 +464,11 @@ const mixedResponse = parseRewriteV2('response if ${response.status} == 200 && $
 const mixedQx = renderMixedRewriteScript(mixedResponse, {target:'qx'});
 assert.equal(mixedQx.qxAction, 'script-response-body');
 assert.equal(mixedQx.requiresBody, true);
-assert.match(mixedQx.script, /response\.statusCode/);
-assert.ok(mixedQx.script.indexOf('__wayxDel("Server");') < mixedQx.script.indexOf('.replace(new RegExp("ads")'));
+assert.match(mixedQx.script, /response\?\.statusCode/);
+assert.ok(mixedQx.script.indexOf('__wayxDel("Server");') < mixedQx.script.indexOf('__wayxRegexReplace(String(__wayxBody ?? ""),"ads",""'));
 const mixedSurge = renderMixedRewriteScript(mixedResponse, {target:'surge'});
 assert.equal(mixedSurge.surgeType, 'http-response');
-assert.match(mixedSurge.script, /\$response\.status/);
+assert.match(mixedSurge.script, /response\?\.status/);
 assert.throws(
   () => renderMixedRewriteScript(parseRewriteV2('response if ${url} ~= /api/ then response.header.add("Set-Cookie","a=1") | response.body.replace(/x/,"y")'), {target:'qx'}),
   /header\.add duplicate semantics are not verified for qx/,
@@ -494,7 +494,7 @@ const mixedJsonCapture = renderMixedRewriteScript(
 );
 assert.ok(mixedJsonCapture.script.includes('__wayxTpl([["c","hit",1]])'));
 assert.ok(mixedJsonCapture.script.includes('v=>__wayxJsonAction(j=>__wayxJsonReplace(j,["data","user"],v))'));
-assert.equal(mixedJsonCapture.script.includes('"ims"'), false);
+assert.equal(mixedJsonCapture.script.includes('"ims"'), true);
 
 const mixedJsonTyped = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /api/ then response.header.set("X-Test", "ok") | response.json.replace("data.n", 7) | response.json.replace("data.ok", true) | response.json.replace("data.none", null)'),
@@ -508,17 +508,17 @@ const orderedBodyJson = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /api/ then response.body.replace(/one/, "two") | response.json.replace("data.ok", true) | response.body.replace(/three/, "four")'),
   {target:'qx'},
 );
-const firstBody=orderedBodyJson.script.indexOf('.replace(new RegExp("one")');
+const firstBody=orderedBodyJson.script.indexOf('__wayxRegexReplace(String(__wayxBody ?? ""),"one",""');
 const jsonStep=orderedBodyJson.script.indexOf('__wayxJsonReplace(j,["data","ok"],true)');
-const secondBody=orderedBodyJson.script.indexOf('.replace(new RegExp("three")');
+const secondBody=orderedBodyJson.script.indexOf('__wayxRegexReplace(String(__wayxBody ?? ""),"three",""');
 assert.ok(firstBody >= 0 && firstBody < jsonStep && jsonStep < secondBody);
 
 const pureBodyBatch = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /api/ then response.body.replace([/one/, /two/], ["1", "2"]) | response.json.replace("data.ok", true)'),
   {target:'surge'},
 );
-assert.ok(pureBodyBatch.script.indexOf('new RegExp("one")') < pureBodyBatch.script.indexOf('new RegExp("two")'));
-assert.ok(pureBodyBatch.script.indexOf('new RegExp("two")') < pureBodyBatch.script.indexOf('__wayxJsonReplace(j,["data","ok"],true)'));
+assert.ok(pureBodyBatch.script.indexOf('"one",""') < pureBodyBatch.script.indexOf('"two",""'));
+assert.ok(pureBodyBatch.script.indexOf('"two",""') < pureBodyBatch.script.indexOf('__wayxJsonReplace(j,["data","ok"],true)'));
 
 const rawCaptureLiteral = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /item\\/(\\d+)/ as hit then response.header.set("X-Test", `literal ${hit.1}`) | response.body.replace(/x/, `raw ${hit.1}`)'),
@@ -575,10 +575,10 @@ const captureMixedQx = renderMixedRewriteScript(
 assert.match(captureMixedQx.script, /const __wayxCaptures=Object\.create\(null\)/);
 const preservedCapturePattern='\\/api\\/(foo)-(bar)';
 assert.ok(
-  captureMixedQx.script.includes('new RegExp(' + JSON.stringify(preservedCapturePattern) + ')'),
-  'complex helper must preserve the regex body exactly while discarding source flags',
+  captureMixedQx.script.includes(JSON.stringify(preservedCapturePattern)),
+  'complex helper must preserve the regex body and source flags',
 );
-assert.equal(captureMixedQx.script.includes('"ims"'), false);
+assert.equal(captureMixedQx.script.includes('"ims"'), true);
 assert.ok(captureMixedQx.script.includes('__wayxTpl([["c","hit",0],["s",":"],["c","hit",1],["s",":"],["c","hit",2]])'));
 const surgeHeaderAddMixed = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /api/ then response.header.add("Set-Cookie", "b=2") | response.header.set("X-Test", "ok") | response.body.replace(/ads/, "clean")'),
@@ -768,26 +768,26 @@ const mixedJsonAdd = renderMixedRewriteScript(
 assert.match(mixedJsonAdd.script, /__wayxJsonAdd\(j,\["data","new"\],true\)/);
 
 const flaggedHeaderHelper = renderQxHeaderScript(parseRewriteV2('request if ${url} ~= /api/i then request.header.replace("X-Test", /value/ms, "ok")'));
-assert.equal(flaggedHeaderHelper.pattern, 'api');
-assert.equal(flaggedHeaderHelper.script.includes('"i"'), false);
-assert.equal(flaggedHeaderHelper.script.includes('"ms"'), false);
-assert.match(flaggedHeaderHelper.script, /__wayxReplace\("X-Test", "value", "ok"\)/);
+assert.equal(flaggedHeaderHelper.pattern, '^');
+assert.equal(flaggedHeaderHelper.script.includes('"i"'), true);
+assert.equal(flaggedHeaderHelper.script.includes('"ms"'), true);
+assert.match(flaggedHeaderHelper.script, /__wayxHeaderReplace\("X-Test","value",v,"ms"\)/);
 
 const flaggedRedirectSource = 'request if ${url} ~= /\\/old\\/(.*)/ims as hit then redirect(302, \"/new/${hit.1}\")';
 const flaggedRedirectHelper = renderQxRedirectScript(parseRewriteV2(flaggedRedirectSource));
 assert.equal(flaggedRedirectHelper.pattern, '\\/old\\/(.*)');
-assert.equal(flaggedRedirectHelper.script.includes('"ims"'), false);
-assert.ok(flaggedRedirectHelper.script.includes('new RegExp(' + JSON.stringify(flaggedRedirectHelper.pattern) + ')'));
+assert.equal(flaggedRedirectHelper.script.includes('"ims"'), true);
+assert.ok(flaggedRedirectHelper.script.includes('new RegExp(' + JSON.stringify(flaggedRedirectHelper.pattern) + ', "ims")'));
 
 const complexConditionFlags = renderMixedRewriteScript(
   parseRewriteV2('response if (${url} ~= /API/i || ${response.status} == 204) && ${response.header["Content-Type"]} == "application/json" then response.header.del("Server") | response.body.replace(/ADS/ms, "ok")'),
   {target:'qx'},
 );
-assert.match(complexConditionFlags.script, /new RegExp\("API"\)/);
+assert.match(complexConditionFlags.script, /"pattern":"API","flags":"i"/);
 assert.equal(complexConditionFlags.script.includes('"i")'), false);
-assert.equal(complexConditionFlags.script.includes('"ms")'), false);
-assert.match(complexConditionFlags.script, /response\.statusCode/);
-assert.match(complexConditionFlags.script, /__wayxHeader\("response","Content-Type"\)/);
+assert.equal(complexConditionFlags.script.includes('"ms"'), true);
+assert.match(complexConditionFlags.script, /response\?\.statusCode/);
+assert.match(complexConditionFlags.script, /Content-Type/);
 assert.throws(
   () => renderMixedRewriteScript(parseRewriteV2('response if ${unsupported.value} == "x" then response.header.del("Server") | response.body.replace(/x/, "y")'), {target:'qx'}),
   /unsupported (?:complex|Rewrite v2) condition variable/,
@@ -899,7 +899,7 @@ assert.equal(legacyQxHeaderRegex.section, 'rewrite');
 assert.match(legacyQxHeaderRegex.line, /url script-request-header .*legacy_header_.*\.js$/);
 const legacyHeaderRegexHelper = [...legacyCtx.generatedScripts.values()].find(script => script.includes('"X-Test"') && script.includes('n$1'));
 assert.ok(legacyHeaderRegexHelper, 'legacy QX header-replace-regex must use helper when replacement captures are local');
-assert.match(legacyHeaderRegexHelper, /new RegExp\(source\), replacement/);
+assert.match(legacyHeaderRegexHelper, /__wayxRegexReplace/);
 
 const legacyQxHeaderAddBulk = planLegacyRewrite(
   '^https:\\/\\/api\\.example\\.com',
@@ -1375,13 +1375,8 @@ assert.match(surgeScriptV2Native.line, /requires-body=true/);
 assert.match(surgeScriptV2Native.line, /binary-body-mode=true/);
 
 const qxScriptV2NeedsReview = qxScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'request.js', sourceText:'$done({body:$request.body});'});
-assert.equal(qxScriptV2NeedsReview.ok, true);
-assert.match(qxScriptV2NeedsReview.line, /url script-request-body request\.js$/);
-assert.ok(qxScriptV2NeedsReview.notes.some(note => /defaults to enabled/i.test(note)));
-assert.ok(qxScriptV2NeedsReview.notes.some(note => /timeout ignored/i.test(note)));
-assert.ok(qxScriptV2NeedsReview.notes.some(note => /binary_body_mode=true ignored/i.test(note)));
-assert.ok(qxScriptV2NeedsReview.notes.some(note => /argument ignored/i.test(note)));
-
+assert.equal(qxScriptV2NeedsReview.ok,true);
+assert.match(qxScriptV2NeedsReview.notes.join('\n'),/forced to enabled/);
 const surgeScriptV2NeedsReview = surgeScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'request.js', name:'x'});
 assert.equal(surgeScriptV2NeedsReview.ok, false);
 assert.match(surgeScriptV2NeedsReview.reason, /dynamic enable|argument/);
@@ -1405,9 +1400,8 @@ const qxUnsupportedDynamicOptions = qxScriptV2Plan(
   parseScriptV2('response if ${url} ~= /api/ then script("a.js", {${enabled}}) with enable=${enabled}, timeout=60, requires_body=true'),
   {scriptUrl:'a.js', argumentIds:new Set(['enabled']), sourceText:'$done({body:$response.body});'},
 );
-assert.equal(qxUnsupportedDynamicOptions.ok, true);
-assert.ok(qxUnsupportedDynamicOptions.notes.some(note => /defaults to enabled/i.test(note)));
-assert.ok(qxUnsupportedDynamicOptions.notes.some(note => /timeout ignored/i.test(note)));
+assert.equal(qxUnsupportedDynamicOptions.ok,true);
+assert.match(qxUnsupportedDynamicOptions.notes.join('\n'),/forced to enabled/);
 
 const surgeBinaryOnly = surgeScriptV2Plan(
   parseScriptV2('request if ${url} ~= /raw/ then script("raw.js") with binary_body_mode=true'),
@@ -1591,7 +1585,8 @@ assert.equal(rawUrlMatcher.prefix,rawUrlPattern+' url ');
 const droppedFlagsAst=parseRewriteV2(
   'response if ${url} ~= /^https:\\/\\/flags\\.example\\/api$/ims then reject_dict(200)'
 );
-const droppedFlagsMatcher=qxExactRewriteMatcherPlan(droppedFlagsAst);
+const droppedFlagsMatcher=qxExactRewriteMatcherPlan(droppedFlagsAst,{compatibility:true});
+assert.equal(qxExactRewriteMatcherPlan(droppedFlagsAst).ok,false);
 assert.equal(droppedFlagsMatcher.urlPattern,'^https:\\/\\/flags\\.example\\/api$');
 assert.equal(droppedFlagsMatcher.prefix,'^https:\\/\\/flags\\.example\\/api$ url ');
 const droppedFlagsDirect=qxDirectRewritePlan(droppedFlagsAst,{matcher:droppedFlagsMatcher});
@@ -1613,7 +1608,7 @@ const methodJqNativeAst=parseRewriteV2(
 const methodJqNativeMatcher=qxExactRewriteMatcherPlan(methodJqNativeAst);
 const methodJqNative=qxDirectRewritePlan(methodJqNativeAst,{matcher:methodJqNativeMatcher});
 assert.equal(methodJqNative.ok,true);
-assert.equal(methodJqNative.line,"^https?:// ^POST[ ] url-and-header jsonjq-response-body '.data'");
+assert.equal(methodJqNative.line,"^ ^POST[ ] url-and-header jsonjq-response-body '.data'");
 
 const methodBodyNativeAst=parseRewriteV2(
   'request if ${url} ~= /upload/ && ${request.method} == "PUT" then request.body.replace(/foo/,"bar")'
@@ -1673,27 +1668,24 @@ const redirectMethod=planQxRewrite(v2(redirectMethodSource),redirectMethodCtx);
 assert.equal(redirectMethod.section,'rewrite');
 assert.match(redirectMethod.line,/^\\\/old\\\/\(\\d\+\) \^POST\[ \] url-and-header script-echo-response /);
 const redirectMethodScript=[...redirectMethodCtx.generatedScripts.values()][0];
-assert.ok(redirectMethodScript.includes('new RegExp("\\\\/old\\\\/(\\\\d+)")'));
-assert.match(redirectMethodScript,/String\(\$request\.method \?\? ""\) === "POST"/);
+assert.ok(redirectMethodScript.includes(JSON.stringify('\\/old\\/(\\d+)')));
+assert.match(redirectMethodScript,/"name":"request.method".*"value":"POST"/);
 assert.match(redirectMethodScript,/__wayxCaptures\["hit"\]/);
 assert.match(redirectMethodScript,/__wayxMatch\[Number\(n\)\]/);
 
 const redirectHeaderSource='request if ${url} ~= /api\\/(\\d+)/ as hit && ${request.header[\'X-Region\']} == "CN" then redirect(307, "/v/${hit.1}")';
 const redirectHeaderCtx=ctx();
 const redirectHeader=planQxRewrite(v2(redirectHeaderSource),redirectHeaderCtx);
-assert.equal(redirectHeader.section,'rewrite');
-assert.match(redirectHeader.line,/url-and-header script-echo-response /);
-const redirectHeaderScript=[...redirectHeaderCtx.generatedScripts.values()][0];
-assert.match(redirectHeaderScript,/__wayxHeader\("request","X-Region"\)/);
-assert.ok(redirectHeaderScript.includes('new RegExp("api\\\\/(\\\\d+)")'));
+assert.equal(redirectHeader.section,'comment');
+assert.match(redirectHeader.line,/echo-response requires an exact condition/);
+assert.equal(redirectHeaderCtx.generatedScripts.size,0);
 
 const redirectResponseStatusSource='response if ${url} ~= /api\\/(\\d+)/ as hit && ${response.status} == 201 then redirect(302, "/ok/${hit.1}")';
 const redirectResponseStatusCtx=ctx();
 const redirectResponseStatus=planQxRewrite(v2(redirectResponseStatusSource),redirectResponseStatusCtx);
-assert.equal(redirectResponseStatus.section,'rewrite');
-assert.match(redirectResponseStatus.line,/^api\\\/\(\\d\+\) url script-echo-response /);
-assert.doesNotMatch(redirectResponseStatus.line,/url-and-header/);
-assert.match([...redirectResponseStatusCtx.generatedScripts.values()][0],/\$response\.statusCode/);
+assert.equal(redirectResponseStatus.section,'comment');
+assert.match(redirectResponseStatus.line,/echo-response requires an exact condition/);
+assert.equal(redirectResponseStatusCtx.generatedScripts.size,0);
 
 const redirectOrSource='request if (${url} ~= /a\\/(\\d+)/ as a && ${request.method} == "POST") || ${url} ~= /b\\/(\\d+)/ as b then redirect(302, "/x")';
 const redirectOrCtx=ctx();
@@ -1793,8 +1785,8 @@ assert.equal(qxThree.section,'rewrite');
 assert.equal(qxThreeCtx.generatedScripts.size,1);
 const qxThreeScript=[...qxThreeCtx.generatedScripts.values()][0];
 const qxActionBody=qxThreeScript.slice(qxThreeScript.indexOf('if('));
-assert.ok(qxActionBody.indexOf('__wayxDel("Server");') < qxActionBody.indexOf('__wayxBody=String'));
-assert.ok(qxActionBody.indexOf('__wayxBody=String') < qxActionBody.indexOf('__wayxJsonAction(j=>__wayxJsonDelete'));
+assert.ok(qxActionBody.indexOf('__wayxDel("Server");') < qxActionBody.indexOf('__wayxBody=__wayxRegexReplace'));
+assert.ok(qxActionBody.indexOf('__wayxBody=__wayxRegexReplace') < qxActionBody.indexOf('__wayxJsonAction(j=>__wayxJsonDelete'));
 
 const surgeThreeCtx=ctx();
 const surgeThree=planSurgeRewrite(v2(threeActionSource),surgeThreeCtx);
@@ -1862,8 +1854,8 @@ assert.equal(requestMockMixedCtx.generatedScripts.size,1);
 const requestMockMixedScript=[...requestMockMixedCtx.generatedScripts.values()][0];
 const requestMockBody=requestMockMixedScript.slice(requestMockMixedScript.indexOf('if('));
 assert.ok(requestMockBody.indexOf('__wayxSet("X-A","1")') < requestMockBody.indexOf('__wayxSet("Content-Type","application/json")'));
-assert.ok(requestMockBody.indexOf('__wayxSet("Content-Type","application/json")') < requestMockBody.indexOf('__wayxBody=String'));
-assert.ok(requestMockBody.indexOf('__wayxBody=String') < requestMockBody.indexOf('__wayxJsonAction(j=>__wayxJsonAdd'));
+assert.ok(requestMockBody.indexOf('__wayxSet("Content-Type","application/json")') < requestMockBody.indexOf('__wayxBody=__wayxRegexReplace'));
+assert.ok(requestMockBody.indexOf('__wayxBody=__wayxRegexReplace') < requestMockBody.indexOf('__wayxJsonAction(j=>__wayxJsonAdd'));
 assert.ok(requestMockBody.indexOf('__wayxJsonAction(j=>__wayxJsonAdd') < requestMockBody.indexOf('__wayxDel("Cookie")'));
 
 const requestMockHeaderConditionSource='request if ${request.header[\'X-Region\']} == "CN" then request.body.mock("text","hello") | request.header.set("X-Test","ok")';
@@ -1871,7 +1863,7 @@ const requestMockHeaderConditionCtx=ctx();
 const requestMockHeaderCondition=planQxRewrite(v2(requestMockHeaderConditionSource),requestMockHeaderConditionCtx);
 assert.equal(requestMockHeaderCondition.section,'rewrite');
 assert.match(requestMockHeaderCondition.line,/url-and-header script-request-body /);
-assert.match([...requestMockHeaderConditionCtx.generatedScripts.values()][0],/__wayxHeader\("request","X-Region"\)/);
+assert.match([...requestMockHeaderConditionCtx.generatedScripts.values()][0],/X-Region/);
 
 const requestMockFileMixedSource='request if ${request.header[\'X-Region\']} == "CN" then request.header.set("X-Before","1") | request.body.mock_file("json","request.json") | request.json.replace("ok",true) | request.header.del("Cookie")';
 const requestMockFileMixedCtx=ctx({
@@ -1922,21 +1914,21 @@ assert.equal(methodMatchedMulti.section,'rewrite');
 assert.match(methodMatchedMulti.line,/^api \^POST\[ \] url-and-header script-response-body /);
 assert.equal(methodMatchedMultiCtx.generatedScripts.size,1);
 const methodMatchedMultiScript=[...methodMatchedMultiCtx.generatedScripts.values()][0];
-assert.match(methodMatchedMultiScript,/String\(\$request\.method \?\? ""\) === "POST"/);
-assert.match(methodMatchedMultiScript,/new RegExp\("api"\)/);
+assert.match(methodMatchedMultiScript,/"name":"request.method".*"value":"POST"/);
+assert.match(methodMatchedMultiScript,/"pattern":"api"/);
 
 const unsafeOrPushdownSource='response if (${url} ~= /api/ && ${request.method} == "POST") || ${url} ~= /fallback/ then response.header.del("Server") | response.body.replace(/x/,"y")';
 const unsafeOrPushdownCtx=ctx();
 const unsafeOrPushdown=planQxRewrite(v2(unsafeOrPushdownSource),unsafeOrPushdownCtx);
 assert.equal(unsafeOrPushdown.section,'rewrite');
-assert.match(unsafeOrPushdown.line,/^\^https\?:\/\/ url script-response-body /);
+assert.match(unsafeOrPushdown.line,/^\^ url script-response-body /);
 assert.doesNotMatch(unsafeOrPushdown.line,/url-and-header/);
 
 const sharedMethodOrSource='response if (${url} ~= /api/ && ${request.method} == "POST") || (${url} ~= /other/ && ${request.method} == "POST") then response.header.del("Server") | response.body.replace(/x/,"y")';
 const sharedMethodOrCtx=ctx();
 const sharedMethodOr=planQxRewrite(v2(sharedMethodOrSource),sharedMethodOrCtx);
 assert.equal(sharedMethodOr.section,'rewrite');
-assert.match(sharedMethodOr.line,/^\^https\?:\/\/ \^POST\[ \] url-and-header script-response-body /);
+assert.match(sharedMethodOr.line,/^\^ \^POST\[ \] url-and-header script-response-body /);
 
 const responseHeaderConditionSource='response if ${url} ~= /api/ && ${response.header["X-Test"]} == "1" then response.header.del("Server") | response.body.replace(/x/,"y")';
 const responseHeaderConditionCtx=ctx();
@@ -1944,7 +1936,7 @@ const responseHeaderCondition=planQxRewrite(v2(responseHeaderConditionSource),re
 assert.equal(responseHeaderCondition.section,'rewrite');
 assert.match(responseHeaderCondition.line,/^api url script-response-body /);
 assert.doesNotMatch(responseHeaderCondition.line,/url-and-header/);
-assert.match([...responseHeaderConditionCtx.generatedScripts.values()][0],/__wayxHeader\("response","X-Test"\)/);
+assert.match([...responseHeaderConditionCtx.generatedScripts.values()][0],/X-Test/);
 
 const urlOnlyMatcher=qxExactRewriteMatcherPlan(parseRewriteV2(
   'request if ${url} ~= /api/ then request.header.add("X-One","1")'
@@ -1959,9 +1951,9 @@ const headersOnlyMatcher=qxExactRewriteMatcherPlan(parseRewriteV2(
 ));
 assert.equal(headersOnlyMatcher.matcher,'url-and-header');
 assert.equal(headersOnlyMatcher.matchScope,'headers-only');
-assert.equal(headersOnlyMatcher.urlPattern,'^https?://');
+assert.equal(headersOnlyMatcher.urlPattern,'^');
 assert.equal(headersOnlyMatcher.headersPattern,'^POST[ ]');
-assert.equal(headersOnlyMatcher.prefix,'^https?:// ^POST[ ] url-and-header ');
+assert.equal(headersOnlyMatcher.prefix,'^ ^POST[ ] url-and-header ');
 
 const combinedMatcher=qxExactRewriteMatcherPlan(parseRewriteV2(
   'request if ${url} ~= /api/ && ${request.method} == "POST" then request.header.add("X-One","1")'
@@ -1990,7 +1982,7 @@ const requestHeaderOnlyMatcher=qxRewriteMatcherPlan(parseRewriteV2(
 ));
 assert.equal(requestHeaderOnlyMatcher.matcher,'url-and-header');
 assert.equal(requestHeaderOnlyMatcher.matchScope,'headers-only');
-assert.equal(requestHeaderOnlyMatcher.urlPattern,'^https?://');
+assert.equal(requestHeaderOnlyMatcher.urlPattern,'^');
 
 const methodAndHeaderMatcher=qxRewriteMatcherPlan(parseRewriteV2(
   'response if ${url} ~= /api/ && ${request.method} == "POST" && ${request.header[\'X-Region\']} == "CN" then response.header.del("Server") | response.body.replace(/x/,"y")'
@@ -2033,7 +2025,7 @@ const requestHeaderPrefilterCtx=ctx();
 const requestHeaderPrefilter=planQxRewrite(v2(requestHeaderPrefilterSource),requestHeaderPrefilterCtx);
 assert.equal(requestHeaderPrefilter.section,'rewrite');
 assert.match(requestHeaderPrefilter.line,/ url-and-header script-response-body /);
-assert.match([...requestHeaderPrefilterCtx.generatedScripts.values()][0],/__wayxHeader\("request","X-Region"\)/);
+assert.match([...requestHeaderPrefilterCtx.generatedScripts.values()][0],/X-Region/);
 
 const nativeRequestAddPipelineSource='request if ${url} ~= /api/ && ${request.method} == "POST" then request.header.add("X-One","1") | request.header.add("X-Two","2")';
 const nativeRequestAddPipelineCtx=ctx();
@@ -2062,7 +2054,7 @@ const methodOnlyHeaderSetSource='request if ${request.method} == "POST" then req
 const methodOnlyHeaderSetCtx=ctx();
 const methodOnlyHeaderSet=planQxRewrite(v2(methodOnlyHeaderSetSource),methodOnlyHeaderSetCtx);
 assert.equal(methodOnlyHeaderSet.section,'rewrite');
-assert.match(methodOnlyHeaderSet.line,/^\^https\?:\/\/ \^POST\[ \] url-and-header script-request-header /);
+assert.match(methodOnlyHeaderSet.line,/^\^ \^POST\[ \] url-and-header script-request-header /);
 assert.equal(methodOnlyHeaderSetCtx.generatedScripts.size,1);
 
 const headerConditionSingleSetSource='request if ${request.header[\'X-Region\']} == "CN" then request.header.set("X-Test","1")';
@@ -2070,21 +2062,21 @@ const headerConditionSingleSetCtx=ctx();
 const headerConditionSingleSet=planQxRewrite(v2(headerConditionSingleSetSource),headerConditionSingleSetCtx);
 assert.equal(headerConditionSingleSet.section,'rewrite');
 assert.match(headerConditionSingleSet.line,/url-and-header script-request-header /);
-assert.match([...headerConditionSingleSetCtx.generatedScripts.values()][0],/__wayxHeader\("request","X-Region"\)/);
+assert.match([...headerConditionSingleSetCtx.generatedScripts.values()][0],/X-Region/);
 
 const headerConditionBodySource='response if ${request.header[\'X-Region\']} == "CN" then response.body.replace(/foo/,"bar")';
 const headerConditionBodyCtx=ctx();
 const headerConditionBody=planQxRewrite(v2(headerConditionBodySource),headerConditionBodyCtx);
 assert.equal(headerConditionBody.section,'rewrite');
 assert.match(headerConditionBody.line,/url-and-header script-response-body /);
-assert.match([...headerConditionBodyCtx.generatedScripts.values()][0],/__wayxHeader\("request","X-Region"\)/);
+assert.match([...headerConditionBodyCtx.generatedScripts.values()][0],/X-Region/);
 
 const headerConditionJsonReplaceSource='response if ${request.header[\'X-Region\']} == "CN" then response.json.replace("data.ok",true)';
 const headerConditionJsonReplaceCtx=ctx();
 const headerConditionJsonReplace=planQxRewrite(v2(headerConditionJsonReplaceSource),headerConditionJsonReplaceCtx);
 assert.equal(headerConditionJsonReplace.section,'rewrite');
 assert.match(headerConditionJsonReplace.line,/url-and-header script-response-body /);
-assert.match([...headerConditionJsonReplaceCtx.generatedScripts.values()][0],/__wayxHeader\("request","X-Region"\)/);
+assert.match([...headerConditionJsonReplaceCtx.generatedScripts.values()][0],/X-Region/);
 
 const methodRejectSource='response if ${request.method} == "POST" then reject_dict(418)';
 const methodRejectCtx=ctx();

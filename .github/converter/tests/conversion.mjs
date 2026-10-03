@@ -489,12 +489,12 @@ const ignoredScriptMap = new Map([
   ['https://example.com/v2.js',{qx:'https://example.com/v2.js',surge:'https://example.com/v2.js',source:'$done({body:$response.body});'}],
 ]);
 const qxIgnoredOptionsOutput = convert(qxIgnoredOptionsFixture, qxIgnoredOptionsSource, ignoredScriptMap, STAMP);
-assert.doesNotMatch(qxIgnoredOptionsOutput.qx, /SCRIPT(?: V2)? REVIEW REQUIRED/);
-assert.match(qxIgnoredOptionsOutput.qx, /dynamic enable=.*ignored for Quantumult X; converted rule defaults to enabled/i);
+assert.doesNotMatch(qxIgnoredOptionsOutput.qx,/SCRIPT V2 REVIEW REQUIRED|Script disabled by source option:/);
+assert.match(qxIgnoredOptionsOutput.qx, /Source enable forced to enabled for Quantumult X/i);
 assert.match(qxIgnoredOptionsOutput.qx, /Source Script timeout ignored for Quantumult X/);
 assert.match(qxIgnoredOptionsOutput.qx, /Source Script argument ignored for Quantumult X/);
 assert.match(qxIgnoredOptionsOutput.qx, /url script-response-body https:\/\/example\.com\/legacy\.js/);
-assert.match(qxIgnoredOptionsOutput.qx, /url script-response-body https:\/\/example\.com\/v2\.js/);
+assert.match(qxIgnoredOptionsOutput.qx,/^[^#\n]*url script-response-body https:\/\/example\.com\/v2\.js/m);
 assert.doesNotMatch(qxIgnoredOptionsOutput.surge, /SCRIPT(?: V2)? REVIEW REQUIRED/);
 assert.match(qxIgnoredOptionsOutput.surge, /#!REQUIREMENT .*enabled.*Legacy = type=http-response/);
 assert.match(qxIgnoredOptionsOutput.surge, /Legacy = type=http-response[^\n]*timeout=60/);
@@ -630,11 +630,11 @@ assert.doesNotMatch(requestReplaceCaptureOutput.qx, /REVIEW REQUIRED/);
 const requestReplaceCaptureHelper = [...requestReplaceCaptureOutput.generatedScripts.values()].find(text => text.includes('User-Agent'));
 assert.ok(requestReplaceCaptureHelper, 'QX request.header.replace must generate a helper');
 assert.ok(
-  requestReplaceCaptureHelper.includes('__wayxReplace("User-Agent", "iPhone OS (\\\\d+)", "iPhone OS $1");'),
+  requestReplaceCaptureHelper.includes(JSON.stringify('iPhone OS (\\d+)')) && requestReplaceCaptureHelper.includes('iPhone OS $1'),
   'QX header helper must preserve action-local $1 replacement and regex capture source',
 );
 assert.match(requestReplaceCaptureHelper, /toLowerCase\(\)/);
-assert.doesNotMatch(requestReplaceCaptureHelper, /__wayxJsonAdd|__wayxJsonDelete|__wayxBody=/);
+assert.match(requestReplaceCaptureHelper,/\$done\(\{headers:__wayxHeaders\}\)/);
 
 const requestAddDollarFixture = {
   id:'RequestHeaderAddDollarFixture',
@@ -1116,10 +1116,10 @@ for (const testCase of cases) {
     assert.match(out.surge, /^#!arguments=Capture:false,Cookies:/m);
     assert.match(out.surge, /#!REQUIREMENT "'\{\{\{Capture\}\}\}'=='true'"/);
     assert.ok(qxActive.some(line => /Scripts\/jingdong\.js$/.test(line)), 'JingDong native script declaration missing');
-    assert.ok(qxActive.some(line => /Scripts\/manmanbuy_ck\.js$/.test(line)), 'JingDong dynamic-enable request script must default to active in QX');
+    assert.ok(qxActive.some(line=>/Scripts\/manmanbuy_ck\.js$/.test(line)),'JingDong Capture=false must be forced active in QX by user policy');
     assert.ok(qxActive.some(line => /Scripts\/jd_price\.js$/.test(line)), 'JingDong argument-bearing response script must remain active in QX');
     assert.doesNotMatch(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
-    assert.match(out.qx, /Source dynamic enable=Capture ignored for Quantumult X; converted rule defaults to enabled/);
+    assert.match(out.qx,/Source enable forced to enabled for Quantumult X/);
     assert.match(out.qx, /Source Script argument ignored for Quantumult X/);
   }
 

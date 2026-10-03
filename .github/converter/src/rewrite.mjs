@@ -2,7 +2,7 @@
 // Author: chance
 // Category: Converter / rewrite
 
-import { normalizeRegexBodyForTarget, compileRegexForTarget } from "./core.mjs";
+import { normalizeRegexBodyForTarget, compileRegexForTarget, conditionRuntimeSource, compileSourceRegex } from "./core.mjs";
 import { renderQxHeaderScript, renderQxInlineMockScript, renderSurgeRequestMockScript, renderQxMockFileScript, renderQxRedirectScript, renderQxRejectScript, headerOpsForMock, renderMixedRewriteScript, renderSingleJsonMutationScript, renderSingleRewriteMutationScript } from "./runtime.mjs";
 import crypto from "node:crypto";
 import { surgeRewriteArgumentPayload } from "./script.mjs";
@@ -519,6 +519,15 @@ function validateCondition(node, phase) {
 }
 export function validateRewriteV2Ast(ast) {
   if (!ast || ast.type !== 'rewrite') throw new TypeError('Expected Rewrite v2 AST root');
+  const validateRegexes=node=>{
+    if (!node || typeof node!=='object') return;
+    if (node.type==='regex') compileSourceRegex(node);
+    for (const value of Object.values(node)) {
+      if (Array.isArray(value)) value.forEach(validateRegexes);
+      else if (value && typeof value==='object') validateRegexes(value);
+    }
+  };
+  validateRegexes(ast);
   validateCondition(ast.condition, ast.phase);
   return ast.actions.map(validateRewriteV2Action);
 }
@@ -930,64 +939,20 @@ export function complexConditionKinds(node, out = []) {
   return out;
 }
 
-function fixedConditionValue(node) {
-  if (!node || !['string','raw-string','number','boolean','null'].includes(node.type)) {
-    throw new Error('complex condition value must be fixed');
-  }
-  return JSON.stringify(node.value);
-}
-
-function argumentEntry(name, argumentTable) {
-  return argumentTable?.byId?.get(String(name)) || null;
-}
-
-function conditionEquality(left, node, argumentTable) {
-  if (node?.type === 'variable') {
-    const entry = argumentEntry(node.name, argumentTable);
-    if (!entry) throw new Error('undeclared complex condition argument: ' + node.name);
-    const right='__wayxArgs[' + JSON.stringify(entry.id) + ']';
-    if (entry.valueType === 'number') return '(Number(' + left + ') === Number(' + right + '))';
-    if (entry.valueType === 'boolean') return '((String(' + left + ').toLowerCase()==="true") === (String(' + right + ').toLowerCase()==="true"))';
-    return '(String(' + left + ' ?? "") === String(' + right + ' ?? ""))';
-  }
-
-  const value=fixedConditionValue(node);
-  if(node.type==='string'||node.type==='raw-string') return '(String(' + left + ' ?? "") === ' + value + ')';
-  if(node.type==='number') return '(Number(' + left + ') === ' + value + ')';
-  if(node.type==='boolean') return '((String(' + left + ').toLowerCase()==="true") === ' + value + ')';
-  return '(' + left + ' == null)';
-}
-
-function runtimeConditionVariable(name, target, argumentTable) {
-  if (name === 'url') return '$request.url';
-  if (name === 'request.method') return '$request.method';
-  if (name === 'response.status') return target === 'qx' ? '$response.statusCode' : '$response.status';
-  const header = String(name).match(/^(request|response)\.header\[['"](.+?)['"]\]$/);
-  if (header) return '__wayxHeader(' + JSON.stringify(header[1]) + ',' + JSON.stringify(header[2]) + ')';
-  const entry=argumentEntry(name, argumentTable);
-  if (entry) return '__wayxArgs[' + JSON.stringify(entry.id) + ']';
-  throw new Error('unsupported complex condition variable: ' + name);
-}
-
 export function compileComplexCondition(node, target, {argumentTable = null} = {}) {
-  if (node?.type === 'group') return '(' + compileComplexCondition(node.expression, target, {argumentTable}) + ')';
-  if (node?.type === 'logical') {
-    if (!['&&','||'].includes(node.operator)) throw new Error('unsupported complex logical operator: ' + node.operator);
-    return '(' + compileComplexCondition(node.left, target, {argumentTable}) + ' ' + node.operator + ' ' + compileComplexCondition(node.right, target, {argumentTable}) + ')';
+  for (const c of findRewriteComparisons(node,()=>true)) {
+    for (const value of [c.left,c.right]) {
+      if (value?.type!=='variable') continue;
+      const name=value.name;
+      if (['url','request.method','response.status'].includes(name) || /^(request|response)\.header\[/.test(name) || argumentTable?.byId?.has(name)) continue;
+      throw new Error('unsupported complex condition variable: '+name);
+    }
   }
-  if (node?.type !== 'comparison' || node.left?.type !== 'variable') throw new Error('unsupported complex condition shape');
-  const left = runtimeConditionVariable(node.left.name, target, argumentTable);
-  if (node.operator === '==') return conditionEquality(left, node.right, argumentTable);
-  if (node.operator === '~=' && node.right?.type === 'regex') {
-    // Loon i/m/s flags are intentionally discarded. Generated target helpers
-    // use the target-format bare regex body only.
-    const pattern = node.left.name === 'url'
-      ? String(node.right.pattern)
-      : normalizeRegexBodyForTarget(node.right.pattern);
-    if (node.capture) return '((__wayxCaptures[' + JSON.stringify(node.capture) + ']=String(' + left + ' ?? "").match(new RegExp(' + JSON.stringify(pattern) + ')))!==null)';
-    return '(new RegExp(' + JSON.stringify(pattern) + ').test(String(' + left + ' ?? "")))';
-  }
-  throw new Error('unsupported complex comparison');
+  // The same evaluator serves the oracle and both runtime adapters. Captures
+  // are committed only from the successful branch, including AND/OR rollback.
+  return '(()=>{'+conditionRuntimeSource()+'\nconst result=evaluateCondition('+JSON.stringify(node)+
+    ',{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:'+
+    (argumentTable?'__wayxArgs':'{}')+'});Object.assign(__wayxCaptures,result.captures);return result.matched;})()';
 }
 
 // complex-rewrite-registry.mjs
@@ -1062,7 +1027,7 @@ export function analyzeSimpleUrlRegexCondition(condition) {
   if (condition.left?.type !== 'variable' || condition.left.name !== 'url') return { ok: false, reason: 'left operand is not ${url}' };
   if (condition.right?.type !== 'regex') return { ok: false, reason: 'right operand is not a literal regex' };
   if (condition.capture) return { ok: false, reason: 'as capture requires semantic review' };
-  return { ok: true, pattern: normalizeRegexBodyForTarget(condition.right.pattern) };
+  return compileRegexForTarget(condition.right);
 }
 
 function safeRejectAction(action) {
@@ -1145,7 +1110,9 @@ export function simpleUrlRewriteCondition(ast, {target = 'generic'} = {}) {
   }
   // URL matcher bodies are source regex bodies after the Loon literal wrapper
   // has been removed by the parser. Do not compile/canonicalize them here.
-  return { ok: true, pattern: String(c.right.pattern), regex: c.right, capture: c.capture || null, notes: [] };
+  const compiled=compileRegexForTarget(c.right);
+  if (!compiled.ok) return compiled;
+  return {...compiled,regex:c.right,capture:c.capture || null};
 }
 
 function parseKeyPath(path) {
@@ -1356,7 +1323,7 @@ export function qxDirectRewritePlan(ast, {matcher = null} = {}) {
     const regex = action.args[0];
     const replacement = stringNode(action.args[1]);
     if (regex?.type !== 'regex' || replacement === null) return unsupported(action.name + ': invalid body replacement arguments');
-    const bodyRegex = compileRegexForTarget(regex, { subject: 'body' });
+    const bodyRegex = compileRegexForTarget(regex, { subject: 'body', requireEquivalent:true });
     if (!bodyRegex.ok) return unsupported(bodyRegex.reason);
     if (/\s/.test(bodyRegex.pattern) || /[\r\n]/.test(replacement)) return unsupported('QX direct body replacement with literal whitespace requires script fallback');
     const token = action.name.startsWith('request.') ? 'request-body' : 'response-body';
@@ -1406,7 +1373,7 @@ export function surgeDirectRewritePlan(ast) {
     const regex = action.args[0];
     const replacement = stringNode(action.args[1]);
     if (regex?.type !== 'regex' || replacement === null) return unsupported(action.name + ': invalid body replacement arguments');
-    const bodyRegex = compileRegexForTarget(regex, { subject: 'body' });
+    const bodyRegex = compileRegexForTarget(regex, { subject: 'body', requireEquivalent:true });
     if (!bodyRegex.ok) return unsupported(bodyRegex.reason);
     if (/\s/.test(bodyRegex.pattern) || /[\r\n]/.test(replacement)) return unsupported('Surge direct body replacement with literal whitespace requires script fallback');
     const token = action.name.startsWith('request.') ? 'http-request' : 'http-response';
@@ -1562,7 +1529,7 @@ function surgeHeaderLine(phase, pattern, action, args) {
   const regex = args[1];
   const replacement = fixedNoTemplate(args[2], 'header replacement');
   if (regex?.type !== 'regex') throw new Error('header.replace regex must be fixed');
-  const compiled = compileRegexForTarget(regex, {subject:'header'});
+  const compiled = compileRegexForTarget(regex, {subject:'header',requireEquivalent:true});
   if (!compiled.ok) throw new Error(compiled.reason);
   if (/\s/.test(compiled.pattern) || /[\r\n]/.test(replacement)) {
     throw new Error('Surge header-replace-regex with literal whitespace requires script fallback');
@@ -1876,14 +1843,15 @@ function requestHeaderLinePattern(name, value = null) {
   return field+regexEscape(value)+'[ \\t]*(?:\\r\\n|$)';
 }
 
-function comparisonKey(node) {
+function comparisonKey(node, {compatibility=false}={}) {
   const n=unwrap(node);
   if (n?.type!=='comparison' || n.left?.type!=='variable') return null;
 
-  if (n.left.name==='url' && n.operator==='~=' && n.right?.type==='regex') {
+  if (n.left.name==='url' && n.operator==='~=' && n.right?.type==='regex' && (compatibility || !n.right.flags)) {
     return {
       kind:'url-regex',
-      key:'url-regex\u0000'+String(n.right.pattern),
+      key:'url-regex\u0000'+String(n.right.pattern)+'\u0000'+String(n.right.flags || ''),
+      sourceFlags:String(n.right.flags || ''),
       pattern:String(n.right.pattern),
     };
   }
@@ -1975,12 +1943,12 @@ function selectHeaderPredicate(predicates) {
   return null;
 }
 
-function exactPredicates(node) {
+function exactPredicates(node, options={}) {
   const n=unwrap(node);
   if (!n) return {ok:false,reason:'missing Rewrite condition'};
 
   if (n.type==='comparison') {
-    const item=comparisonKey(n);
+    const item=comparisonKey(n,options);
     if (!item || item.kind.startsWith('request-header-')) {
       return {ok:false,reason:'condition comparison is outside the exact QX matcher subset'};
     }
@@ -1991,9 +1959,9 @@ function exactPredicates(node) {
     return {ok:false,reason:'exact QX matcher currently requires a comparison or AND-only condition'};
   }
 
-  const left=exactPredicates(n.left);
+  const left=exactPredicates(n.left,options);
   if (!left.ok) return left;
-  const right=exactPredicates(n.right);
+  const right=exactPredicates(n.right,options);
   if (!right.ok) return right;
 
   const merged=new Map([...left.predicates,...right.predicates]);
@@ -2050,17 +2018,24 @@ function matcherFromPredicates(predicates) {
   };
 }
 
-export function qxExactRewriteMatcherPlan(ast) {
-  const exact=exactPredicates(ast?.condition);
+export function qxExactRewriteMatcherPlan(ast, options={}) {
+  const exact=exactPredicates(ast?.condition,options);
   if (!exact.ok) return exact;
-  return {...matcherFromPredicates(exact.predicates),exact:true};
+  const plan=matcherFromPredicates(exact.predicates);
+  if (!options.compatibility && plan.urlPattern==='^https?://') {plan.urlPattern='^';plan.prefix=plan.prefix.replace('^https?:// ','^ ');}
+  return {...plan,exact:true,compatibilityUnverified:[...exact.predicates.values()].some(p=>Boolean(p.sourceFlags))};
 }
 
 export function qxRewriteMatcherPlan(ast) {
   const predicates=guaranteedPredicates(ast?.condition);
   // Prefilter mode may intentionally drop non-native predicates because the
   // generated helper re-evaluates the complete source condition.
-  return {...matcherFromPredicates(predicates),exact:false};
+  const plan=matcherFromPredicates(predicates);
+  if (plan.urlPattern==='^https?://') {
+    plan.urlPattern='^';
+    plan.prefix=plan.prefix.replace('^https?:// ','^ ');
+  }
+  return {...plan,exact:false};
 }
 
 // legacy-rewrite.mjs
@@ -2491,7 +2466,7 @@ function ensureQxRewriteHandlers() {
     },
     plan:(ast,_target,ctx)=>{
       try {
-        const matcher=qxExactRewriteMatcherPlan(ast);
+        const matcher=qxExactRewriteMatcherPlan(ast,{compatibility:true});
         if (!matcher.ok) throw new Error(matcher.reason);
         const plan=renderQxInlineMockScript(ast,{
           conditionMode:'external-exact',
@@ -2615,7 +2590,7 @@ function qxNativeHeaderPlan(ast) {
   if (!['request','response'].includes(ast?.phase) || !ast.actions?.length) return null;
   if (ast.actions.some(action=>action.name!==ast.phase+'.header.add')) return null;
 
-  const matcher=qxExactRewriteMatcherPlan(ast);
+  const matcher=qxExactRewriteMatcherPlan(ast,{compatibility:true});
   if (!matcher.ok) return null;
 
   const pairs=[];
@@ -2651,7 +2626,7 @@ function qxNativeHeaderPlan(ast) {
 function qxNativeJsonPipelinePlan(ast) {
   if (!['request','response'].includes(ast?.phase) || (ast.actions?.length || 0)<2) return null;
 
-  const matcher=qxExactRewriteMatcherPlan(ast);
+  const matcher=qxExactRewriteMatcherPlan(ast,{compatibility:true});
   if (!matcher.ok) return null;
 
   const mapped=jsonPipelineToSafeNativeJq(ast);
@@ -2688,7 +2663,7 @@ export function planQxRewrite(ir, ctx={}) {
   );
   if (fileMockPipeline && (ast.phase==='response' || ast.actions.length===1)) {
     try {
-      const matcher=qxExactRewriteMatcherPlan(ast);
+      const matcher=qxExactRewriteMatcherPlan(ast,{compatibility:true});
       if (!matcher.ok) throw new Error(matcher.reason);
       const fileMock=fileMocks[0];
       const plan=qxMockPlanFromAction(fileMock,{pluginSourceUrl:ctx.sourceUrl});
@@ -2713,7 +2688,7 @@ export function planQxRewrite(ir, ctx={}) {
   }
   if (singleOp?.kind==='mock' && singleOp.operation==='inline') {
     try {
-      const matcher=qxExactRewriteMatcherPlan(ast);
+      const matcher=qxExactRewriteMatcherPlan(ast,{compatibility:true});
       if (!matcher.ok) throw new Error(matcher.reason);
       const plan=renderQxInlineMockScript(ast,{conditionMode:'external-exact',stamp:ctx.stamp,category:ctx.category,sourceLine:source});
       const key=crypto.createHash('sha1').update('mock-inline\0'+source).digest('hex').slice(0,10);
@@ -2732,7 +2707,7 @@ export function planQxRewrite(ir, ctx={}) {
   if (nativeJsonPipeline) return nativeJsonPipeline;
 
   try {
-    const exactMatcher=qxExactRewriteMatcherPlan(ast);
+    const exactMatcher=qxExactRewriteMatcherPlan(ast,{compatibility:true});
     if (exactMatcher.ok) {
       const direct=qxDirectRewritePlan(ast,{matcher:exactMatcher});
       if (direct.ok) return {section:direct.section,line:direct.line,lines:direct.lines};
@@ -2759,6 +2734,7 @@ export function planQxRewrite(ir, ctx={}) {
 
   if (singleOp?.kind==='header' && singleOp.phase===ir.phase) {
     try {
+      if (singleOp.operation==='add') throw new Error('QX header.add cannot be represented losslessly: duplicate-header runtime semantics are not verified');
       const exact=qxExactRewriteMatcherPlan(ast);
       if (exact.ok) {
         const plan=renderQxHeaderScript(ast,{conditionMode:'external-exact',stamp:ctx.stamp,category:ctx.category,sourceLine:source});
@@ -2807,6 +2783,8 @@ export function planQxRewrite(ir, ctx={}) {
 
   if (singleOp?.kind==='redirect') {
     try {
+      const exact=qxExactRewriteMatcherPlan(ast,{compatibility:true});
+      if (!exact.ok) throw new Error('QX echo-response requires an exact condition; guarded pass-through is not documented: '+exact.reason);
       const plan=renderQxRedirectScript(ast,{conditionMode:'full',stamp:ctx.stamp,category:ctx.category,sourceLine:source});
       const key=crypto.createHash('sha1').update('redirect\0'+source).digest('hex').slice(0,10);
       const filename='redirect_'+key+'.js';
@@ -2820,7 +2798,7 @@ export function planQxRewrite(ir, ctx={}) {
 
   if (singleOp?.kind==='reject' && ['reject','reject_dict','reject_array'].includes(singleOp.actionName)) {
     try {
-      const matcher=qxExactRewriteMatcherPlan(ast);
+      const matcher=qxExactRewriteMatcherPlan(ast,{compatibility:true});
       if (!matcher.ok) throw new Error(matcher.reason);
       const plan=renderQxRejectScript(ast,{conditionMode:'external-exact',stamp:ctx.stamp,category:ctx.category,sourceLine:source});
       const key=crypto.createHash('sha1').update('reject\0'+source).digest('hex').slice(0,10);
@@ -3000,9 +2978,9 @@ export function planSurgeRewrite(ir,ctx={}) {
     }
   }
 
-  if (singleOp?.kind==='json' && ['add','delete','replace'].includes(singleOp.operation) && singleOp.phase===ir.phase) {
+  if (singleOp && ['header','body-regex','json'].includes(singleOp.kind) && singleOp.phase===ir.phase && /\.(?:set|del|replace|add|delete)$/.test(ast.actions[0]?.name || '') && !ast.actions[0].name.endsWith('header.add')) {
     try {
-      const plan=renderSingleJsonMutationScript(ast,{
+      const plan=renderSingleRewriteMutationScript(ast,{
         target:'surge',
         stamp:ctx.stamp,
         category:ctx.category,

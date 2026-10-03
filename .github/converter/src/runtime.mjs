@@ -2,8 +2,8 @@
 // Author: chance
 // Category: Converter / runtime
 
-import { normalizeRegexBodyForTarget, compileRegexForTarget } from "./core.mjs";
-import { validateRewriteV2Ast, simpleUrlRewriteCondition, fixedStringValue, findRewriteComparisons, compileComplexCondition } from "./rewrite.mjs";
+import { normalizeRegexBodyForTarget, compileRegexForTarget, regexReplacementRuntimeSource } from "./core.mjs";
+import { validateRewriteV2Ast, simpleUrlRewriteCondition, fixedStringValue, findRewriteComparisons, compileComplexCondition, qxRewriteMatcherPlan } from "./rewrite.mjs";
 
 
 
@@ -86,7 +86,7 @@ function qxMockBase64Decoder() {
 }
 
 function headerHelpers(headerOps = []) {
-  return [
+  return [regexReplacementRuntimeSource(),
     'function __wayxHeaderKey(headers, name) {',
     '  const wanted = String(name).toLowerCase();',
     '  return Object.keys(headers).find(key => key.toLowerCase() === wanted);',
@@ -100,9 +100,9 @@ function headerHelpers(headerOps = []) {
     '  const wanted = String(name).toLowerCase();',
     '  for (const key of Object.keys(headers)) if (key.toLowerCase() === wanted) delete headers[key];',
     '}',
-    'function __wayxHeaderReplace(headers, name, source, replacement) {',
+    'function __wayxHeaderReplace(headers, name, source, replacement, flags="") {',
     '  const key = __wayxHeaderKey(headers, name);',
-    '  if (key !== undefined) headers[key] = String(headers[key]).replace(new RegExp(source), replacement);',
+    '  if (key !== undefined) headers[key] = __wayxRegexReplace(headers[key],source,flags,replacement);',
     '}',
   ];
 }
@@ -132,7 +132,7 @@ function renderHeaderOps(lines, headerOps = [], { knownHeaderNames = null } = {}
       lines.push(`__wayxHeaderDel(headers, ${JSON.stringify(op.name)});`);
       if (known) known.delete(lowerName);
     } else if (op.type === 'replace') {
-      lines.push(`__wayxHeaderReplace(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(normalizeRegexBodyForTarget(op.pattern))}, ${JSON.stringify(op.replacement)});`);
+      lines.push(`__wayxHeaderReplace(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(normalizeRegexBodyForTarget(op.pattern))}, ${JSON.stringify(op.replacement)}, ${JSON.stringify(op.flags || "")});`);
     } else throw new Error('unsupported QX mock header operation: ' + op.type);
   }
 }
@@ -227,7 +227,9 @@ function simpleUrlCondition(ast) {
       c.right?.type !== 'regex') {
     throw new Error('Surge request mock helper requires one URL-regex condition');
   }
-  return compileRegexForTarget(c.right, {subject:'url', target:'surge'}).pattern;
+  const compiled=compileRegexForTarget(c.right,{subject:'url',target:'surge'});
+  if (!compiled.ok) throw new Error(compiled.reason);
+  return compiled.pattern;
 }
 
 function surgeMockMetadata({stamp='',category='',sourceLine='',sourceFile=''}={}) {
@@ -420,7 +422,7 @@ export function renderQxRedirectScript(ast, options = {}) {
 
     const lines = [
       ...qxSemanticMetadata(options),
-      'const __wayxRe = new RegExp(' + JSON.stringify(condition.pattern) + ');',
+      'const __wayxRe = new RegExp(' + JSON.stringify(condition.pattern) + ', ' + JSON.stringify(condition.regex?.flags || '') + ');',
       'const __wayxUrl = $request.url;',
       'const __wayxMatch = __wayxRe.exec(__wayxUrl);',
       'if (!__wayxMatch) {',
@@ -458,7 +460,7 @@ export function renderQxRedirectScript(ast, options = {}) {
   const conditionExpr=compileComplexCondition(ast.condition,'qx');
   const matchExpr=urlCondition.capture
     ? '__wayxCaptures['+JSON.stringify(urlCondition.capture)+']'
-    : 'String(__wayxUrl ?? "").match(new RegExp('+JSON.stringify(urlPattern)+'))';
+    : 'String(__wayxUrl ?? "").match(new RegExp('+JSON.stringify(urlPattern)+','+JSON.stringify(urlCondition.right.flags || '')+'))';
 
   const lines=[
     ...qxSemanticMetadata(options),
@@ -580,6 +582,7 @@ export function headerOpsForMock(ast, mockAction) {
           type:'replace',
           name:qxSemanticFixed(args[0], 'header name'),
           pattern:normalizeRegexBodyForTarget(regex.pattern),
+          flags:String(regex.flags || ''),
           replacement:qxSemanticFixed(args[2], 'header replacement'),
         });
       }
@@ -627,69 +630,11 @@ export function renderQxInlineMockScript(ast, options = {}) {
   };
 }
 
-export function renderQxHeaderScript(ast, options = {}) {
+export function renderQxHeaderScript(ast,options={}) {
   validateRewriteV2Ast(ast);
-  const externalExact=options.conditionMode === 'external-exact';
-  const condition=externalExact ? {pattern:null,notes:[]} : simpleUrlRewriteCondition(ast);
-  if (!condition.ok && !externalExact) throw new Error(condition.reason);
-  if (!ast.actions.length || ast.actions.some(a =>
-    !new RegExp('^' + ast.phase + '\\.header\\.(?:add|set|del|replace)$').test(a.name)
-  )) {
-    throw new Error('QX header script supports only same-phase add/set/del/replace actions');
-  }
-  if (ast.actions.some(action => action.name.endsWith('.add'))) {
-    throw new Error('QX header.add cannot be represented losslessly: the official header object form does not prove duplicate-header preservation');
-  }
-
-  const statements = [];
-  for (const action of ast.actions) {
-    for (const args of expandAction(action)) {
-      if (action.name.endsWith('.set')) {
-        statements.push('__wayxSet(' + JSON.stringify(qxSemanticFixed(args[0], 'header name')) + ', ' + JSON.stringify(qxSemanticFixed(args[1], 'header value')) + ');');
-      } else if (action.name.endsWith('.del')) {
-        statements.push('__wayxDel(' + JSON.stringify(qxSemanticFixed(args[0], 'header name')) + ');');
-      } else {
-        const name = qxSemanticFixed(args[0], 'header name');
-        const regex = args[1];
-        const replacement = qxSemanticFixed(args[2], 'header replacement');
-        if (regex?.type !== 'regex') throw new Error('header.replace regex is not fixed');
-        statements.push('__wayxReplace(' + JSON.stringify(name) + ', ' + JSON.stringify(normalizeRegexBodyForTarget(regex.pattern)) + ', ' + JSON.stringify(replacement) + ');');
-      }
-    }
-  }
-
-  const source = ast.phase === 'request' ? '$request.headers' : '$response.headers';
-  const lines = [
-    ...qxSemanticMetadata(options),
-    'const __wayxHeaders = {...' + source + '};',
-    'function __wayxKey(name) {',
-    '  const wanted = String(name).toLowerCase();',
-    '  return Object.keys(__wayxHeaders).find(key => key.toLowerCase() === wanted);',
-    '}',
-
-    'function __wayxSet(name, value) {',
-    '  const key = __wayxKey(name);',
-    '  __wayxHeaders[key || name] = value;',
-    '}',
-    'function __wayxDel(name) {',
-    '  const wanted = String(name).toLowerCase();',
-    '  for (const key of Object.keys(__wayxHeaders)) if (key.toLowerCase() === wanted) delete __wayxHeaders[key];',
-    '}',
-    'function __wayxReplace(name, source, replacement) {',
-    '  const key = __wayxKey(name);',
-    '  if (key !== undefined) __wayxHeaders[key] = String(__wayxHeaders[key]).replace(new RegExp(source), replacement);',
-    '}',
-    ...statements,
-    '$done({headers: __wayxHeaders});',
-    '',
-  ];
-
-  return {
-    qxAction: ast.phase === 'request' ? 'script-request-header' : 'script-response-header',
-    pattern: condition.pattern,
-    script: lines.join('\n'),
-    notes: condition.notes,
-  };
+  if (ast.actions.some(action=>action.name.endsWith('.add'))) throw new Error('QX header.add cannot be represented losslessly: the official header object form does not prove duplicate-header preservation');
+  if (ast.actions.some(action=>!new RegExp('^'+ast.phase+'\\.header\\.(?:set|del|replace)$').test(action.name))) throw new Error('QX header script supports only same-phase set/del/replace actions');
+  return renderRewriteScript(ast,{...options,target:'qx'});
 }
 
 // complex-rewrite-script.mjs
@@ -767,12 +712,7 @@ function expand(action) {
   return action.args[0].items.map((_, i) => action.args.map(arg => arg.items[i]));
 }
 function coarsePattern(ast) {
-  const found = findRewriteComparisons(ast.condition, node =>
-    node.operator === '~=' && node.left?.type === 'variable' && node.left.name === 'url' && node.right?.type === 'regex'
-  );
-  if (!found.length) return '^https?://';
-  if (found.length === 1) return normalizeRegexBodyForTarget(found[0].right.pattern);
-  return '(?:' + found.map(node => '(?:' + normalizeRegexBodyForTarget(node.right.pattern) + ')').join('|') + ')';
+  return qxRewriteMatcherPlan(ast).urlPattern;
 }
 function jsonValueSource(node, captures, guaranteed, argumentTable = null) {
   if (!node) throw new Error('JSON replacement value is missing');
@@ -845,7 +785,7 @@ function statements(ast, target, {argumentTable = null, mockMaterialized = null}
           out.push('__wayxDel(' + JSON.stringify(name) + ');');
         } else {
           if (args[1]?.type !== 'regex') throw new Error('header.replace regex must be fixed');
-          out.push('__wayxWith(' + capturedString(args[2], 'header replacement', captures, guaranteed, argumentTable) + ',v=>__wayxHeaderReplace(' + JSON.stringify(name) + ',' + JSON.stringify(normalizeRegexBodyForTarget(args[1].pattern)) + ',v));');
+          out.push('__wayxWith(' + capturedString(args[2], 'header replacement', captures, guaranteed, argumentTable) + ',v=>__wayxHeaderReplace(' + JSON.stringify(name) + ',' + JSON.stringify(normalizeRegexBodyForTarget(args[1].pattern)) + ',v,'+JSON.stringify(args[1].flags || '')+'));');
         }
       }
       continue;
@@ -900,8 +840,8 @@ function statements(ast, target, {argumentTable = null, mockMaterialized = null}
       for(const args of expand(action)){
         if (args[0]?.type !== 'regex') throw new Error('body.replace regex must be fixed');
         const replacement=capturedString(args[1], 'body replacement', captures, guaranteed, argumentTable);
-        if(args[1]?.type==='string' && String(args[1].value).includes('${')) out.push('__wayxWith('+replacement+',v=>{__wayxBody=String(__wayxBody ?? "").replace(new RegExp('+JSON.stringify(normalizeRegexBodyForTarget(args[0].pattern))+'),v);});');
-        else out.push('__wayxBody=String(__wayxBody ?? "").replace(new RegExp('+JSON.stringify(normalizeRegexBodyForTarget(args[0].pattern))+'),'+replacement+');');
+        if(args[1]?.type==='string' && String(args[1].value).includes('${')) out.push('__wayxWith('+replacement+',v=>{__wayxBody=__wayxRegexReplace(String(__wayxBody ?? ""),'+JSON.stringify(normalizeRegexBodyForTarget(args[0].pattern))+','+JSON.stringify(args[0].flags || '')+',v);});');
+        else out.push('__wayxBody=__wayxRegexReplace(String(__wayxBody ?? ""),'+JSON.stringify(normalizeRegexBodyForTarget(args[0].pattern))+','+JSON.stringify(args[0].flags || '')+','+replacement+');');
       }
       continue;
     }
@@ -923,6 +863,7 @@ function renderRewriteScript(ast, {target, stamp='', category='', sourceLine='',
     '// Converted by: chance',
     '// Category: ' + (category || 'Rewrite / Complex Helper'),
     sourceLine ? '// Source Loon: ' + sourceLine : null,
+    regexReplacementRuntimeSource(),
     'const __wayxCaptures=Object.create(null);',
     argumentTable ? 'let __wayxArgs={};try{__wayxArgs=JSON.parse(String($argument||"{}"))}catch{}' : null,
     plan.headerAdd ? 'let __wayxHeaders=Array.isArray(' + source + '.headers)?' + source + '.headers.map(x=>({field:x.field,value:x.value})):Object.entries(' + source + '.headers||{}).map(([field,value])=>({field,value}));' : 'let __wayxHeaders={...(' + source + '.headers||{})};',
@@ -940,7 +881,7 @@ function renderRewriteScript(ast, {target, stamp='', category='', sourceLine='',
     plan.headerAdd ? 'function __wayxAdd(n,v){__wayxHeaders.push({field:n,value:v});}' : null,
     plan.headerAdd ? 'function __wayxSet(n,v){const w=String(n).toLowerCase();let seen=false;__wayxHeaders=__wayxHeaders.filter(x=>{if(String(x.field).toLowerCase()!==w)return true;if(!seen){x.value=v;seen=true;return true;}return false;});if(!seen)__wayxHeaders.push({field:n,value:v});}' : 'function __wayxSet(n,v){const k=__wayxKey(n);__wayxHeaders[k||n]=v;}',
     plan.headerAdd ? 'function __wayxDel(n){const w=String(n).toLowerCase();__wayxHeaders=__wayxHeaders.filter(x=>String(x.field).toLowerCase()!==w);}' : 'function __wayxDel(n){const w=String(n).toLowerCase();for(const k of Object.keys(__wayxHeaders))if(k.toLowerCase()===w)delete __wayxHeaders[k];}',
-    plan.headerAdd ? 'function __wayxHeaderReplace(n,p,r){const w=String(n).toLowerCase();for(const x of __wayxHeaders)if(String(x.field).toLowerCase()===w)x.value=String(x.value).replace(new RegExp(p),r);}' : 'function __wayxHeaderReplace(n,p,r){const k=__wayxKey(n);if(k!==undefined)__wayxHeaders[k]=String(__wayxHeaders[k]).replace(new RegExp(p),r);}',
+    plan.headerAdd ? 'function __wayxHeaderReplace(n,p,r,f=""){const w=String(n).toLowerCase();for(const x of __wayxHeaders)if(String(x.field).toLowerCase()===w)x.value=__wayxRegexReplace(x.value,p,f,r);}' : 'function __wayxHeaderReplace(n,p,r,f=""){const k=__wayxKey(n);if(k!==undefined)__wayxHeaders[k]=__wayxRegexReplace(__wayxHeaders[k],p,f,r);}',
     plan.headerAdd ? null : 'function __wayxKey(n){return Object.keys(__wayxHeaders).find(k=>k.toLowerCase()===String(n).toLowerCase());}',
     'if(' + condition + '){',
     ...plan.out.map(line => '  ' + line),
@@ -984,3 +925,27 @@ export function renderSingleJsonMutationScript(ast, options = {}) {
 }
 
 export const renderSingleJsonAddScript = renderSingleJsonMutationScript;
+
+// All matching source entries run in source order. One target HTTP Script owns
+// the phase, re-evaluates each original condition, and commits each mutation
+// before the next entry reads headers/body. Only our synchronous helpers enter
+// this dispatcher; external author scripts are never copied or evaluated.
+export function renderRewritePhaseDispatcher(declarations,options={}) {
+  if (!declarations.length) throw new Error('empty Rewrite dispatcher');
+  const phase=declarations[0].phase;
+  if (declarations.some(ast=>ast.phase!==phase)) throw new Error('mixed dispatcher phases');
+  const plans=declarations.map(ast=>renderRewriteScript(ast,options));
+  const requiresBody=plans.some(p=>p.requiresBody);
+  const fullHeaderMode=plans.some(p=>p.fullHeaderMode);
+  if (fullHeaderMode) throw new Error('dispatcher duplicate-header adapter is not verified');
+  const lines=[...qxSemanticMetadata(options),
+    'const __wayxRequest={...$request,headers:{...($request.headers||{})}};',
+    'const __wayxResponse=typeof $response==="undefined"?{}:{...$response,headers:{...($response.headers||{})}};',
+    'const __wayxResult={};',
+    'function __wayxCommit(value){Object.assign(__wayxResult,value);Object.assign('+(phase==='request'?'__wayxRequest':'__wayxResponse')+',value);}',
+  ];
+  for (const plan of plans) lines.push('(($request,$response,$done)=>{\n'+plan.script+'\n})(__wayxRequest,__wayxResponse,__wayxCommit);');
+  lines.push('$done(__wayxResult);','');
+  return {pattern:'^',script:lines.join('\n'),requiresBody,
+    qxAction:'script-'+phase+'-'+(requiresBody?'body':'header'),surgeType:'http-'+phase};
+}

@@ -9,7 +9,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Bilibili.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:48 +08:00
+# Converted: 2026-10-04 00:56:06 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Bilibili_remove_ads.lpx
@@ -65,14 +65,14 @@ host, app.biliapi.net, reject
 ^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.(view\.v1\.View\/TFInfo|viewunite\.v1\.View\/(PlayPause|ViewEndPage))$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Bilibili_remove_ads/mock_3f832bf8f9.js
 ^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.(interface\.v1\.(Teenagers\/ModeStatus|Search\/DefaultWords)|view\.v1\.View\/TFInfo|viewunite\.v1\.View\/(PlayPause|ViewEndPage))$ url response-header ^([^\r\n]+)(\r\n) response-header $1$2grpc-status: 0$2
 # 空降助手
-# [WayX] Source dynamic enable=sponsorBlock ignored for Quantumult X; converted rule defaults to enabled.
+# [WayX] Source enable forced to enabled for Quantumult X by user conversion policy; source default/off switch is not carried over.
 # [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
 # [WayX] Source Script timeout ignored for Quantumult X.
 # [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https:\/\/(?:grpc\.biliapi\.net|app\.bilibili\.com)\/bilibili\.community\.service\.dm\.v1\.DM\/DmSegMobile$ url script-request-body https://kelee.one/Resource/JavaScript/Bilibili/Bilibili_proto_request_kokoryh.js
 
 # 请求处理
-# [WayX] Source dynamic enable=optimizeRequest ignored for Quantumult X; converted rule defaults to enabled.
+# [WayX] Source enable forced to enabled for Quantumult X by user conversion policy; source default/off switch is not carried over.
 # [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
 # [WayX] Source Script timeout ignored for Quantumult X.
 # [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.

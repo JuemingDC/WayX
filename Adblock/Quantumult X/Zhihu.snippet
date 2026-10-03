@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/zhihu.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-10-03 11:34:05 +08:00
+# Converted: 2026-10-04 01:04:04 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/zhihu.lpx
@@ -59,7 +59,7 @@ ip6-cidr, 2402:4e00:1200:ed00:0:9089:6dac:96b6/128, reject
 ^https:\/\/api\.zhihu\.com\/ab\/api\/v1\/products\/zhihu\/platforms\/ios\/config url reject-dict
 ^https:\/\/api\.zhihu\.com\/ad-style-service\/request url reject-dict
 ^https:\/\/appcloud2\.zhihu\.com\/v3\/resource\?group_name=mp url reject-dict
-^https:\/\/link\.zhihu\.com\/\?target=(?:https?)?(?:%3A|:)?(?:\/\/|%2F%2F)?(.*) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Zhihu/redirect_c09554f6b9.js
+^ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Zhihu/redirect_c09554f6b9.js
 
 # 网页版去广告
 ^https:\/\/api\.zhihu\.com\/distribute\/rhea\/qa_ad_card\/h5\/recommendation\? url reject-dict
