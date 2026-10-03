@@ -219,7 +219,7 @@ target native（仅当能整体严格等价）
 → REVIEW REQUIRED
 ```
 
-通用 Complex Rewrite helper 只接受 `actions.length >= 2`。它生成一份脚本文件，在脚本内部按 Loon 源顺序执行全部 action，并保持 condition、Body/Header/JSON 的先后关系。不得把一个多 action pipeline 拆成多个互不保证执行顺序的目标声明。
+通用 Complex Rewrite helper 只接受 `actions.length >= 2`。它生成一份脚本文件，在脚本内部按 Loon 源顺序执行全部 action，并保持 condition、Body/Header/JSON 的先后关系。不得把一个多 action pipeline 拆成多个互不保证执行顺序的目标声明。QX 可以把已证明为必要条件的 request-side predicate 下推到原生 `url` / `url-and-header` matcher 作为 prefilter，但 helper 内仍必须完整重算原 condition；matcher 下推不得改变 action pipeline 的单脚本、有序执行模型。
 
 单 action 即使需要 Script，也必须使用对应的专用 semantic helper（例如 Header、JSON add、Mock、Redirect 等），不能借用 Complex helper。
 
@@ -260,6 +260,8 @@ target native planner
 
 所有 action 必须严格按 Loon AST 从左到右执行，Body Replace 与 JSON Action 可以交错，禁止按 action family 重排。Complex helper 的 synthetic regression 必须至少覆盖 2-action、3-action、新排列以及已知但 renderer 不支持的组合，防止再次退化为 full-signature whitelist。
 
+QX multi-action matcher 下推遵守“只下推必要条件”原则：`&&` 可提取任一确定必要子条件；`||` 只能提取所有成功分支共同具备的同一 predicate。当前只开放 URL Regex 与 `request.method == 固定字符串`。Method 下推使用 `url-and-header`，response-side 条件和 request Header value 条件继续留在 helper。即使 matcher 已经原生过滤，helper 也不得删除原 condition evaluator，因为 capture、OR 分支与未来扩展仍依赖完整运行时判断。
+
 
 Loon regex literal 的 `i / m / s` flags 在所有 native/helper 路径中均只解析、不传播；flags 的存在本身不进入 Review。parser 去掉 literal delimiter 后，regex body 原样保留，不再全局执行 `\/ -> /` 或其他 canonicalization；目标 helper 不得通过 `new RegExp(pattern, flags)`、inline modifier 或 case-fold 恢复这些 flags。若目标软件确有语法差异，只能由对应 target planner 基于官方格式做局部适配。
 
@@ -283,6 +285,7 @@ WayX 对 Key Path JSON Action 固定采用项目选定的 Stash-compatible 语�
 - Rewrite v2 parser：`.github/converter/src/rewrite-v2.mjs`
 - Rewrite v2 action validator：`.github/converter/src/rewrite-v2-actions.mjs`
 - Target semantic planners：`.github/converter/src/rewrite-v2-semantic.mjs`
+- QX Rewrite native matcher planner：`.github/converter/src/qx-rewrite-matcher.mjs`
 - QX helper renderer：`.github/converter/src/qx-semantic-script.mjs`
 - Synthetic regression：`.github/converter/tests/checkpoint.mjs`、`.github/converter/tests/loon-new-syntax-cases.mjs`
 - Real syntax coverage：`.github/converter/tests/catalog-syntax-inventory.mjs`、`.github/converter/tests/rewrite-target-planners.mjs`、`.github/converter/tests/end-to-end-golden.mjs`
