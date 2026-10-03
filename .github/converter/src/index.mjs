@@ -16,7 +16,6 @@ export * from './rewrite-plan-result.mjs';
 export * from './rewrite-v2-actions.mjs';
 export * from './rewrite-v2-safe.mjs';
 export * from './dependency.mjs';
-export * from './conversion-context.mjs';
 export * from './source-script-materializer.mjs';
 export * from './dependency-materializer.mjs';
 export * from './qx-mock.mjs';
