@@ -104,20 +104,29 @@ const actual={
 assert.ok(rewriteCount>0,'expected Catalog Legacy Rewrite syntax');
 assert.ok(scriptCount>0,'expected Catalog Legacy Script syntax');
 
-assert.deepEqual(
-  actual,
-  expected,
-  [
-    'Catalog-observed Legacy semantic-token inventory changed.',
-    'Do not update the baseline mechanically.',
-    'This gate intentionally ignores operation combinations, reject variants, redirect status,',
-    'mock option-set combinations, Script option value shapes, option order and option-set combinations.',
-    'Those are source grammar/planner responsibilities.',
-    'Only a genuinely new Legacy Rewrite category, mock option name, Script phase or Script option name requires review.',
-    '',
-    'Actual inventory:',
-    JSON.stringify(actual,null,2),
-  ].join('\n')
-);
+assert.equal(actual.version,expected.version,'Legacy semantic inventory fixture version drifted');
+assert.equal(actual.scope,expected.scope,'Legacy semantic inventory fixture scope drifted');
+
+function assertNoNewObserved(actualValues, expectedValues, label) {
+  const baseline=new Set(expectedValues || []);
+  const added=(actualValues || []).filter(value=>!baseline.has(value));
+  assert.deepEqual(
+    added,
+    [],
+    [
+      'Catalog-observed Legacy semantic-token inventory gained new '+label+'.',
+      'Do not update the baseline mechanically.',
+      'Disappearing historical tokens are allowed; only newly observed semantics require review.',
+      '',
+      'Actual inventory:',
+      JSON.stringify(actual,null,2),
+    ].join('\n')
+  );
+}
+
+assertNoNewObserved(actual.legacyRewrite.actionKinds,expected.legacyRewrite.actionKinds,'Rewrite category');
+assertNoNewObserved(actual.legacyRewrite.mockOptionNames,expected.legacyRewrite.mockOptionNames,'mock option name');
+assertNoNewObserved(actual.legacyScript.phases,expected.legacyScript.phases,'Script phase');
+assertNoNewObserved(actual.legacyScript.optionNames,expected.legacyScript.optionNames,'Script option name');
 
 console.log('Catalog Legacy semantic inventory passed: '+rewriteCount+' Rewrite / '+scriptCount+' Script declarations');
