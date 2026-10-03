@@ -24,14 +24,14 @@ WayX 的 Loon Plugin → Quantumult X / Surge 通用转换器。核心原则是*
 - JSON/JQ/body/header/mock/redirect 等按目标原生能力优先；Key Path JSON add/replace/delete 统一映射为语义等价 JQ：普通批量 delete 使用一个 `del(PATH1, PATH2, ...)`，含数组索引时按源顺序串联多个 `del`；转换器不为这类 Key Path delete 合成 `delpaths`。源 `json.jq` / `jq_file` 若本身使用 `delpaths(PATHS)` 则保持其 Path Array 语义，不重写。historical `jq-path=` 不再丢弃，按原作者依赖读取、压缩并内联到 QX/Surge 原生 JQ；`jq_file` / `jq-path=` 均为 inline-only，不能内联就注释 Review，禁止生成 Script/helper。
 - QX scoped Rewrite 类型包含 `request-header/response-header`、`request-body/response-body`、`jsonjq-*`、`echo-response` 与六类 Script action。Rewrite matcher 与 Action 解耦：所有类型都可使用 URL-only `url`，也可使用可选 Headers 的 `url-and-header`；后者先匹配 URL，再匹配由 request method、path、key-value request headers 组成的 Headers 字符串。固定安全的 request/response `header.add` 优先用原生 whole-header 插入；native `echo-response` 只接受已经存在于 QX Data 的本机相对资源路径，远程/Plugin 资源和 inline mock 继续物化后使用最小 `script-echo-response`。
 - QX 官方 sample 未确认的 Rule Type（逻辑规则、端口类等）直接注释保留，不扩大/删条件，也不使用 Script fallback。
-- 未知语法/action/section 或未登记 complex signature 固定先注释，再输出 `ISSUE REQUIRED` 供自动化创建议题；已知目标能力缺口继续使用普通 Review。QX `response.header.add` / legacy `response-header-add` 是项目已决策的明确注释项，不再持续占用 Review inventory。
+- 未知语法/action/section 固定先注释，再输出 `ISSUE REQUIRED` 供自动化创建议题；已知 action 的新 multi-action 组合由 generic family + renderer 能力决定，当前 renderer 无法保真时使用普通 Review，不再按 observed complex signature 建白名单。QX `response.header.add` / legacy `response-header-add` 是项目已决策的明确注释项，不再持续占用 Review inventory。
 
 ## Script
 
 - Source Script 只转换声明层，QX/Surge 均直接引用原脚本 URL，不做 runtime compatibility gate。
 - 仅在 QX declaration 需要判定 header/body/echo action 类型时读取脚本正文辅助分类。
 - QX Script v2/legacy Script 的 argument 按当前策略忽略，动态 enable 默认开启，timeout 与 binary-body-mode 按既定策略处理；`debug` 与 Legacy `max-size` 直接丢弃；header/body 只由 requires-body 决定；固定 enable=false/0 仍禁用。Rewrite 参数仍按其实际语义独立判断。
-- 通用 complex renderer 代码继续保留，但 production 只处理源单条 Rewrite v2 中真实存在且已登记的 multi-action signature；禁止合并相邻独立规则。单 action 需要脚本时走专用 semantic helper。
+- 通用 complex renderer 只处理源单条 Rewrite v2 中真实存在的 multi-action pipeline，并按 action family + renderer 能力判断；禁止合并相邻独立规则，也禁止把一个 pipeline 拆成多个未证明顺序等价的 QX Rewrite。QX complex helper 可把安全的 URL / request.method 必要条件下推到 `url` / `url-and-header` 做 native prefilter，但脚本仍重算完整 condition。单 action 需要脚本时走专用 semantic helper。
 
 ## 自动化
 

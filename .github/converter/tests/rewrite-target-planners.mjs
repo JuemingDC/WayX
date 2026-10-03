@@ -176,4 +176,35 @@ const qxArgument=planQxRewrite(
 assert.equal(qxArgument.section,'comment');
 assert.match(qxArgument.line,/cannot carry Loon plugin \[Argument\]/);
 
+const methodMatchedMultiSource='response if ${url} ~= /api/ && ${request.method} == "POST" then response.header.del("Server") | response.body.replace(/x/,"y")';
+const methodMatchedMultiCtx=ctx();
+const methodMatchedMulti=planQxRewrite(v2(methodMatchedMultiSource),methodMatchedMultiCtx);
+assert.equal(methodMatchedMulti.section,'rewrite');
+assert.match(methodMatchedMulti.line,/^api \^POST\[ \] url-and-header script-response-body /);
+assert.equal(methodMatchedMultiCtx.generatedScripts.size,1);
+const methodMatchedMultiScript=[...methodMatchedMultiCtx.generatedScripts.values()][0];
+assert.match(methodMatchedMultiScript,/String\(\$request\.method \?\? ""\) === "POST"/);
+assert.match(methodMatchedMultiScript,/new RegExp\("api"\)/);
+
+const unsafeOrPushdownSource='response if (${url} ~= /api/ && ${request.method} == "POST") || ${url} ~= /fallback/ then response.header.del("Server") | response.body.replace(/x/,"y")';
+const unsafeOrPushdownCtx=ctx();
+const unsafeOrPushdown=planQxRewrite(v2(unsafeOrPushdownSource),unsafeOrPushdownCtx);
+assert.equal(unsafeOrPushdown.section,'rewrite');
+assert.match(unsafeOrPushdown.line,/^\^https\?:\/\/ url script-response-body /);
+assert.doesNotMatch(unsafeOrPushdown.line,/url-and-header/);
+
+const sharedMethodOrSource='response if (${url} ~= /api/ && ${request.method} == "POST") || (${url} ~= /other/ && ${request.method} == "POST") then response.header.del("Server") | response.body.replace(/x/,"y")';
+const sharedMethodOrCtx=ctx();
+const sharedMethodOr=planQxRewrite(v2(sharedMethodOrSource),sharedMethodOrCtx);
+assert.equal(sharedMethodOr.section,'rewrite');
+assert.match(sharedMethodOr.line,/^\^https\?:\/\/ \^POST\[ \] url-and-header script-response-body /);
+
+const responseHeaderConditionSource='response if ${url} ~= /api/ && ${response.header["X-Test"]} == "1" then response.header.del("Server") | response.body.replace(/x/,"y")';
+const responseHeaderConditionCtx=ctx();
+const responseHeaderCondition=planQxRewrite(v2(responseHeaderConditionSource),responseHeaderConditionCtx);
+assert.equal(responseHeaderCondition.section,'rewrite');
+assert.match(responseHeaderCondition.line,/^api url script-response-body /);
+assert.doesNotMatch(responseHeaderCondition.line,/url-and-header/);
+assert.match([...responseHeaderConditionCtx.generatedScripts.values()][0],/__wayxHeader\("response","X-Test"\)/);
+
 console.log('Rewrite target planner contract passed');

@@ -35,6 +35,8 @@ Quantumult X 原生 Rewrite 不是只有 URL 条件。官方 sample 定义了第
 
 这只证明 **request-side** Headers 匹配。不能据此把 Loon `${response.header[...]}` 或 `${response.status}` 直接降级成 QX `url-and-header`。Loon `${request.method}` / `${request.header[...]}` 也只有在能保持原比较域、边界、大小写与 Regex 语义时才允许静态编译，否则仍走 helper/Review。
 
+对 QX multi-action helper，可把**必要但不一定充分**的 request-side 条件作为 native prefilter 下推，因为 helper 会再次完整判断原 condition。当前安全子集为 URL Regex 与 `${request.method} == "固定方法"`。Method equality 生成 `^METHOD[ ]` Headers regex；该模式利用官方 sample 已确认的“Headers 比较字符串以 method/path/request headers 组成”语义，同时避免官方示例 `^POST` 对扩展方法名产生前缀误匹配。
+
 源：
 ```text
 ${url} ~= /REGEX/ && ${request.method} == "POST"
@@ -142,6 +144,7 @@ WayX 对 Surge URL pattern 只做必要的目标格式处理：
 - AST action/condition validation：`.github/converter/src/rewrite-v2-actions.mjs`
 - Target regex compilation：`.github/converter/src/target-regex.mjs`
 - Static/simple-condition target planner：`.github/converter/src/rewrite-v2-semantic.mjs`
+- QX native matcher / multi-action prefilter：`.github/converter/src/qx-rewrite-matcher.mjs`
 - Surge module validator：`.github/converter/src/surge-module.mjs`
 - Regression：`.github/converter/tests/checkpoint.mjs`、`.github/converter/tests/catalog-syntax-inventory.mjs`、`.github/converter/tests/rewrite-target-planners.mjs`
 

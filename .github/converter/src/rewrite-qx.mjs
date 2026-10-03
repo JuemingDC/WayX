@@ -10,6 +10,7 @@ import { renderQxMockFileScript } from './qx-mock.mjs';
 import { renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript, headerOpsForMock } from './qx-semantic-script.mjs';
 import { registerComplexRewriteHandler, planComplexRewrite } from './complex-rewrite-registry.mjs';
 import { renderMixedRewriteScript, renderSingleJsonMutationScript } from './complex-rewrite-script.mjs';
+import { qxRewriteMatcherPlan } from './qx-rewrite-matcher.mjs';
 import { rewriteReview, rewriteIssue } from './rewrite-plan-result.mjs';
 import { singleRewriteOperation } from './rewrite-ir.mjs';
 
@@ -91,10 +92,11 @@ function ensureQxRewriteHandlers() {
         const key=crypto.createHash('sha1').update('header\0'+ctx.sourceLine).digest('hex').slice(0,10);
         const filename='header_'+key+'.js';
         ctx.generatedScripts.set(filename,plan.script);
+        const matcher=qxRewriteMatcherPlan(ast);
         return {
           ok:true,
           section:'rewrite',
-          line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename,
+          line:matcher.prefix+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename,
         };
       } catch (error) {
         return {ok:false,terminal:true,reason:String(error?.message||error)};
@@ -117,10 +119,11 @@ function ensureQxRewriteHandlers() {
         const key=crypto.createHash('sha1').update('complex-mixed\0qx\0'+ctx.sourceLine).digest('hex').slice(0,10);
         const filename='complex_qx_'+key+'.js';
         ctx.generatedScripts.set(filename,plan.script);
+        const matcher=qxRewriteMatcherPlan(ast);
         return {
           ok:true,
           section:'rewrite',
-          line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename,
+          line:matcher.prefix+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename,
         };
       } catch (error) {
         return {ok:false,terminal:true,reason:String(error?.message||error)};
@@ -259,7 +262,8 @@ export function planQxRewrite(ir, ctx={}) {
       const key=crypto.createHash('sha1').update('json-add-qx\\0'+source).digest('hex').slice(0,10);
       const filename='json_add_qx_'+key+'.js';
       ctx.generatedScripts.set(filename,plan.script);
-      return {section:'rewrite',line:plan.pattern+' url '+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
+      const matcher=qxRewriteMatcherPlan(ast);
+      return {section:'rewrite',line:matcher.prefix+plan.qxAction+' '+rawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
     } catch (error) {
       return rewriteReview(source,String(error?.message||error).split('\n')[0]);
     }
