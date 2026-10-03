@@ -2,8 +2,6 @@
 // Author: chance
 // Category: Converter / Quantumult X / Rewrite Matching
 
-import { normalizeRegexBodyForTarget } from './target-regex.mjs';
-
 function unwrap(node) {
   let cur=node;
   while (cur?.type==='group') cur=cur.expression;
@@ -50,7 +48,7 @@ function comparisonKey(node) {
     return {
       kind:'url-regex',
       key:'url-regex\u0000'+String(n.right.pattern),
-      pattern:normalizeRegexBodyForTarget(n.right.pattern),
+      pattern:String(n.right.pattern),
     };
   }
 
