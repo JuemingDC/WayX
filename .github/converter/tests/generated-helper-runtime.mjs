@@ -140,7 +140,7 @@ function runGenerated(script, { request = {}, response = {}, argument = '' } = {
   const ast = parseRewriteV2('request if ${url} ~= /request-file/ then request.body.mock_file("json", "request.json") | request.json.replace("ok", true)');
   const plan = renderMixedRewriteScript(ast, {
     target:'qx',
-    mockMaterialized:{bodyText:'{"ok":false,"literal":"${notExpanded}"}',sourceFile:'https://example.test/request.json'},
+    mockMaterialized:{bodyText:'{"ok":1,"literal":"${notExpanded}"}',sourceFile:'https://example.test/request.json'},
   });
   const result = normalize(runGenerated(plan.script, {
     request:{url:'https://example.test/request-file',headers:{},body:'old'},
