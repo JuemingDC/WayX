@@ -223,7 +223,7 @@ if (selectedCase==='generated-helper-runtime.mjs') {
   const {convertPlugin,validateConvertedPlugin}=await import('../src/conversion.mjs');
   const run=(script,context)=>{
     let calls=0,out;
-    vm.runInNewContext(script,{$request:structuredClone(context.request),$response:structuredClone(context.response),$done(value){calls++;out=value;}},{timeout:1000});
+    vm.runInNewContext(script+'\nif(Object.prototype.hasOwnProperty.call(Object.prototype,"safe"))throw new Error("JSON prototype mutation");',{$request:structuredClone(context.request),$response:structuredClone(context.response),$done(value){calls++;out=value;}},{timeout:1000});
     assert.equal(calls,1);
     return JSON.parse(JSON.stringify(out));
   };
@@ -286,7 +286,7 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   const {classifyComplexRewrite}=await import('../src/rewrite.mjs');
   const run=(script,{request={},response={},argument=''}={})=>{
     let calls=0,result;
-    vm.runInNewContext(script,{$request:{url:'https://example.test/',method:'GET',headers:{},body:'',...structuredClone(request)},$response:{status:200,statusCode:200,headers:{},body:'',...structuredClone(response)},$argument:argument,$done(value){calls++;result=value;}},{timeout:1000});
+    vm.runInNewContext(script+'\nif(Object.prototype.hasOwnProperty.call(Object.prototype,"safe"))throw new Error("JSON prototype mutation");',{$request:{url:'https://example.test/',method:'GET',headers:{},body:'',...structuredClone(request)},$response:{status:200,statusCode:200,headers:{},body:'',...structuredClone(response)},$argument:argument,$done(value){calls++;result=value;}},{timeout:1000});
     assert.equal(calls,1);return JSON.parse(JSON.stringify(result));
   };
   let checked=0;
@@ -300,6 +300,14 @@ if(selectedCase==='generated-helper-runtime.mjs') {
       assert.deepEqual(run(scripts[0][1],item),item.expected,item.id+' '+target);
       checked++;
     }
+  }
+  const {evaluateRewriteActions}=await import('../src/core.mjs');
+  const {parseJsonKeyPath}=await import('../src/rewrite.mjs');
+  for(const item of fixture.cases.slice(18)) {
+    const ast=parseRewriteV2(item.source);
+    const context={url:item.request?.url||'https://example.test/',request:{method:'GET',headers:{},body:'',...structuredClone(item.request)},response:{status:200,headers:{},body:'',...structuredClone(item.response)}};
+    const oracle=evaluateRewriteActions(ast,context,{parsePath:parseJsonKeyPath});
+    for(const [field,expected] of Object.entries(item.expected))assert.deepEqual(oracle.state[ast.phase][field],expected,item.id+' independent source oracle');
   }
   const profile=classifyComplexRewrite(parseRewriteV2(fixture.cases.find(c=>c.id==='paired-body-batch').source));
   assert.ok(profile.features.kinds.includes('regex-flags'));
@@ -316,9 +324,18 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   assert.throws(()=>renderRewritePhaseDispatcher([...duplicates,parseRewriteV2('response if ${response.header["X-Dup"]} == "first" then response.header.set("X-Read","yes")')],{target:'surge'}),/source lookup\/template semantics are not verified/);
   assert.deepEqual(run(duplicatePlan.script,{response:{headers:[{field:'X-Dup',value:'first'}]}}),{headers:[{field:'X-Dup',value:'firSt'},{field:'X-Dup',value:'Second'}]});
   // Typed plugin arguments are transported once, then read by both entries.
+  const dynamicDuplicate=renderRewritePhaseDispatcher([parseRewriteV2('response if ${url} ~= /\\/(X-Dup)/i as name then response.header.add(${name.1},"third")')],{target:'surge'});
+  assert.equal(dynamicDuplicate.fullHeaderMode,true);
+  assert.deepEqual(run(dynamicDuplicate.script,{request:{url:'https://example.test/X-Dup'},response:{headers:[{field:'X-Dup',value:'first'}]}}),{headers:[{field:'X-Dup',value:'first'},{field:'X-Dup',value:'third'}]});
   const args={byId:new Map([['token',{id:'token'}],['count',{id:'count'}]])};
   const argumentEntries=[parseRewriteV2('request if ${url} ~= /example/i then request.header.set("X-Token","${token}")'),parseRewriteV2('request if ${request.header["X-Token"]} == "${token}" then request.json.add("count",${count})')];
   assert.deepEqual(run(renderRewritePhaseDispatcher(argumentEntries,{target:'surge',argumentTable:args}).script,{request:{body:'{}'},argument:'{"token":"a,b=汉字","count":3}'}),{headers:{'X-Token':'a,b=汉字'},body:'{"count":3}'});
+  const addressArgs={byId:new Map(['name','path','replacement'].map(id=>[id,{id}]))};
+  const addressEntries=[parseRewriteV2('request if ${url} ~= /example/i then request.header.set(${name},${replacement})'),parseRewriteV2('request if ${url} ~= /example/i then request.json.add(${path},true)')];
+  assert.deepEqual(run(renderRewritePhaseDispatcher(addressEntries,{target:'surge',argumentTable:addressArgs}).script,{request:{body:'{}'},argument:JSON.stringify({name:'X-Dynamic',path:'data[0].flag',replacement:'${literal}:汉字'})}),{headers:{'X-Dynamic':'${literal}:汉字'},body:'{"data":[{"flag":true}]}'});
+  assert.deepEqual(run(renderRewritePhaseDispatcher(addressEntries,{target:'surge',argumentTable:addressArgs}).script,{request:{body:'{}'},argument:JSON.stringify({name:3,path:false,replacement:'value'})}),{headers:{},body:'{}'});
+  const orderedAddresses=[parseRewriteV2('request if ${url} ~= /example/i then request.header.set("Path","data.flag")'),parseRewriteV2('request if ${url} ~= /example/i then request.json.add(${request.header["Path"]},true)')];
+  for(const target of ['qx','surge'])assert.deepEqual(run(renderRewritePhaseDispatcher(orderedAddresses,{target}).script,{request:{body:'{}'}}),{headers:{Path:'data.flag'},body:'{"data":{"flag":true}}'});
   assert.throws(()=>renderRewritePhaseDispatcher([parseRewriteV2('request if ${url} ~= /x/ as token then request.header.set("X","${token.0}")')],{target:'surge',argumentTable:args}),/duplicates plugin argument/);
   assert.throws(()=>renderRewritePhaseDispatcher([parseRewriteV2('request if ${url} ~= /x/ then request.header.set("X","${response.status}")')],{target:'qx'}),/cannot reference response/);
   // Introducing a helper must not shadow an original HTTP Script. Keep the

@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.62
+版本：1.63
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；未证明等价的组合继续保留兼容边界**
@@ -865,7 +865,7 @@ GitHub 落地（2026-10-04，Asia/Shanghai）：PR #136 已合入 main，最终 
 | 源特性 | 实现 | 边界 |
 | --- | --- | --- |
 | URL/条件/动作 Regex `i/m/s` | helper 使用原 pattern 和 flags；宽 matcher 只负责触发，条件重新求值 | 仅在能拥有整个阶段时迁移旧 native flag 路径 |
-| 双引号 `${...}` | 从原始 token 解析转义及变量；条件和 action 均支持内置 URL、method、status、header、已声明参数 | Header 名称与 JSON key path 暂限固定字符串；未知变量保留 Review |
+| 双引号 `${...}` | 从原始 token 解析转义及变量；条件和 action 均支持内置 URL、method、status、header、已声明参数 | Header 名称与 JSON key path 支持相同 String 模板及直接 String variable；未知变量保留 Review |
 | `\${`、`\\`、引号、换行、Tab、Unicode、斜线与 `$` | 保留原始 token，使转义模板和转义反斜线后的模板不混淆；只展开一次 | 不把字符串中的输入当作可执行代码 |
 | raw string、双 backtick | 原样保留反斜线和 `${...}`；JSON Any 中仍为 String | 不将 raw JSON 文本偷偷改为 Object/Array |
 | condition captures / action `$0/$n` | 独立作用域；捕获 alias 校验唯一性、参数冲突、路径必达与下标 | 未匹配的可选 capture 只跳过当前 action；不清除已有 Header/JSON 值 |
@@ -892,3 +892,14 @@ QX 默认关闭及动态 enable 的 Script 继续按用户授权强制启用，�
 `loon-feature-semantics.json` 是按独立预期结果编写的通用特性合集，不能加入插件名称专用分支。runtime suite 在完整 conversion 后运行实际被引用的 helper，覆盖 String/raw/type、转义与捕获、批量与顺序、JSON 失败继续、QX Header-only Body owner、Surge duplicate Header 与 typed argument phase。保留既有 76 组 source oracle 差分、全部领域套件和 Catalog/目标政策/原作者 URL/managed/audit/官方 drift/CI 验收。End-to-end golden 仅在独立行为断言全部通过后更新。
 
 本轮验收记录：18 个通用 source 案例在完整 conversion 后运行 QX/Surge 引用的 helper，共 36 个独立预期输出断言；原 76 组 source oracle 差分继续通过。补充大小写不同的 Header key 的 set/replace 行为、未匹配 capture 保留原值、参数/template transport、first-match 兼容保护及 duplicate Header 读取拒绝用例。287 项目录独立依赖 materialization 的上下文差异为 0，转换与 validator 全部通过，50 项 helper/目标存在预期变化，新增 Review/Issue 为 0；两个既有 Kelee 作者 Script 404 不改变原 URL；Sub-Store 三个 GitHub release Script URL 的读取超时同样只记录 fetch failure，输出地址不变。Telegram 的两条 QX 参数重定向改为已知目标限制注释，删除原先会输出未展开 `${app}` 的 helper；Surge 转换保留。没有放宽 managed Review/Issue 门禁，也没有恢复定时活动。
+
+
+## 26. 动态操作地址与 JSON 自有属性（v1.63）
+
+Header 名称和 JSON key path 使用共同 String lowering，支持条件捕获、内置变量及 Surge 已声明参数。模板只展开一次；直接 variable 必须在执行时得到 String，JSON Any variable 仍保留原类型。QX 参数 transport、阶段所有权、动态 Regex 及透明 URL 改写继续遵循既有边界。
+
+每组批量操作先求值全部参数，再进行修改。缺失 capture、运行时类型不符或动态路径无效只跳过该组，后续操作继续。固定路径在转换时验证；动态路径使用同一个 `parseJsonKeyPath` 在运行时解析，不另建目标专用语法。Header/JSON 地址读取当前操作或上一条同阶段规则已完成的修改。
+
+JSON 查询和遍历仅识别自有属性；`__proto__`、`constructor`、`toString` 均作为普通 JSON 键处理。创建属性使用安全的自有属性写入，禁止修改原型或读取 JavaScript 继承属性。Header 对象写入同样保持自有字段。JSON 根为 null 或标量时不修改原始 body；无法解析的动态路径也不重新序列化 body。数组删除仍按顺序移动下标；add 允许在缺失或 null 的父节点建立容器。
+
+验收新增独立预期结果涵盖动态地址、可选捕获、批量失败继续、数组删除、特殊键、类型失败和跨声明顺序；Surge 参数用例验证类型保留与单次展开。保持 11 个生产领域文件、10 个测试套件和 221 个公开导出，不新增零散生成类别。

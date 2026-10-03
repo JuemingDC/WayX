@@ -472,12 +472,14 @@ export function evaluateRewriteActions(ast,context,{parsePath}={}) {
   if (!condition.matched) return {matched:false,state,errors:[]};
   const captures=new Map(Object.entries(condition.captures));
   const value=node=>{
-    if (node.type==='variable') return resolveSemanticVariable(node.name,state,captures);
+    if (node.type==='variable') {const resolved=resolveSemanticVariable(node.name,state,captures);if(resolved===undefined)throw new SemanticEvaluationError('missing action capture/variable');return resolved;}
     if (node.type!=='string') return node.value;
     const text=expandSemanticString(node,state,captures);
     if (text===undefined) throw new SemanticEvaluationError('missing action capture/variable');
     return text;
   };
+  const stringValue=node=>{const v=value(node);if(typeof v!=='string')throw new SemanticEvaluationError('action operand must be String');return v;};
+  const put=(object,key,v)=>Object.defineProperty(object,key,{value:v,enumerable:true,writable:true,configurable:true});
   const errors=[];
   for (const action of ast.actions) {
     const groups=action.args[0]?.type==='array' ? action.args[0].items.map((_,i)=>action.args.map(a=>a.items[i])) : [action.args];
@@ -486,32 +488,33 @@ export function evaluateRewriteActions(ast,context,{parsePath}={}) {
       const operation=action.name.split('.').at(-1);
       if (action.name.includes('.header.')) {
         const headers=phase.headers ||= {};
-        const name=value(args[0]);
+        const name=stringValue(args[0]);
         const keys=Object.keys(headers).filter(k=>k.toLowerCase()===String(name).toLowerCase());
-        if (operation==='set') {const replacement=value(args[1]);for (const k of keys) delete headers[k];headers[keys[0] || name]=replacement;}
+        if (operation==='set') {const replacement=stringValue(args[1]);for (const k of keys) delete headers[k];put(headers,keys[0] || name,replacement);}
         else if (operation==='del') {for(const k of keys) delete headers[k];}
-        else if (operation==='replace') {const replacement=value(args[2]);for(const k of keys) headers[k]=replaceSourceRegex(args[1],String(headers[k]),replacement);}
+        else if (operation==='replace') {const replacement=stringValue(args[2]);for(const k of keys) headers[k]=replaceSourceRegex(args[1],String(headers[k]),replacement);}
         else throw new SemanticEvaluationError('unsupported oracle header action: '+operation);
       } else if (action.name.includes('.body.') && operation==='replace') {
-        phase.body=replaceSourceRegex(args[0],String(phase.body ?? ''),value(args[1]));
+        phase.body=replaceSourceRegex(args[0],String(phase.body ?? ''),stringValue(args[1]));
       } else if (action.name.includes('.json.') && ['add','delete','replace'].includes(operation)) {
         const replacement=operation==='delete' ? undefined : value(args[1]);
         let json;try{json=JSON.parse(String(phase.body ?? ''));}catch{continue;}
-        const path=parsePath(value(args[0]));
+        if(json===null||typeof json!=='object')continue;
+        const path=parsePath(stringValue(args[0]));
         let parent=json;
         for(let i=0;i<path.length-1;i++) {
           const key=path[i];
           if (parent==null || typeof parent!=='object') {parent=null;break;}
-          if (!(key in parent)) {
+          if (!Object.prototype.hasOwnProperty.call(parent,key) || (operation==='add' && parent[key]==null)) {
             if (operation!=='add') {parent=null;break;}
-            parent[key]=typeof path[i+1]==='number'?[]:{};
+            put(parent,key,typeof path[i+1]==='number'?[]:{});
           }
           parent=parent[key];
         }
         if (parent!=null && typeof parent==='object') {
-          const key=path.at(-1),current=parent[key];
+          const key=path.at(-1),current=Object.prototype.hasOwnProperty.call(parent,key)?parent[key]:undefined;
           if(operation==='delete') {if(Array.isArray(parent) && typeof key==='number') {if(key<parent.length)parent.splice(key,1);}else delete parent[key];}
-          else if(operation==='add' ? current==null : current!==undefined && current!==null && current!==false) parent[key]=replacement;
+          else if(operation==='add' ? current==null : current!==undefined && current!==null && current!==false) put(parent,key,replacement);
         }
         phase.body=JSON.stringify(json);
       } else throw new SemanticEvaluationError('unsupported oracle action: '+action.name);
