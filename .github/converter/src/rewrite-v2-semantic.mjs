@@ -244,7 +244,7 @@ export function qxDirectRewritePlan(ast, {matcher = null} = {}) {
     const regex = action.args[0];
     const replacement = stringNode(action.args[1]);
     if (regex?.type !== 'regex' || replacement === null) return unsupported(action.name + ': invalid body replacement arguments');
-    const bodyRegex = compileRegexForTarget(regex, { subject: 'body' });
+    const bodyRegex = compileRegexForTarget(regex, {subject:'body',target:'qx'});
     if (!bodyRegex.ok) return unsupported(bodyRegex.reason);
     if (/\s/.test(bodyRegex.pattern) || /[\r\n]/.test(replacement)) return unsupported('QX direct body replacement with literal whitespace requires script fallback');
     const token = action.name.startsWith('request.') ? 'request-body' : 'response-body';
@@ -294,7 +294,7 @@ export function surgeDirectRewritePlan(ast) {
     const regex = action.args[0];
     const replacement = stringNode(action.args[1]);
     if (regex?.type !== 'regex' || replacement === null) return unsupported(action.name + ': invalid body replacement arguments');
-    const bodyRegex = compileRegexForTarget(regex, { subject: 'body' });
+    const bodyRegex = compileRegexForTarget(regex, {subject:'body',target:'surge'});
     if (!bodyRegex.ok) return unsupported(bodyRegex.reason);
     if (/\s/.test(bodyRegex.pattern) || /[\r\n]/.test(replacement)) return unsupported('Surge direct body replacement with literal whitespace requires script fallback');
     const token = action.name.startsWith('request.') ? 'http-request' : 'http-response';
