@@ -49,8 +49,8 @@ const qxLegacy=planQxScript(legacyIr,{
 });
 assert.equal(qxLegacy.ok,true);
 assert.match(qxLegacy.line,/ url script-response-body https:\/\/example\.com\/resp\.js$/);
-assert.match(qxLegacy.notes.join('\n'),/timeout.*omitted/i);
-assert.match(qxLegacy.notes.join('\n'),/binary-body-mode=true.*omitted/i);
+assert.match(qxLegacy.notes.join('\n'),/timeout ignored/i);
+assert.match(qxLegacy.notes.join('\n'),/binary-body-mode=true ignored/i);
 
 const qxLegacyCompatibleIr=legacyScriptToSemanticIr(
   parseLegacyScriptLine('http-response ^https://api\\.example\\.com script-path=https://example.com/resp.js, requires-body=true, argument={"mode":"x"}, tag=Resp')
@@ -139,7 +139,7 @@ const qxV2=planQxScript(v2Ir,{
 });
 assert.equal(qxV2.ok,true);
 assert.match(qxV2.line,/ url script-response-body https:\/\/example\.com\/v2\.js$/);
-assert.match(qxV2.notes.join('\n'),/binary_body_mode=true.*omitted/i);
+assert.match(qxV2.notes.join('\n'),/binary_body_mode=true ignored/i);
 
 const qxV2RequiresOnlyIr=scriptV2AstToSemanticIr(
   parseScriptV2('response if ${url} ~= /api/ then script("https://example.com/v2.js") with requires_body=true, binary_body_mode=false, tag="V2"')
