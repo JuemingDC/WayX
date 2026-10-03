@@ -45,6 +45,10 @@ function comparisonKey(node) {
   if (n?.type!=='comparison' || n.left?.type!=='variable') return null;
 
   if (n.left.name==='url' && n.operator==='~=' && n.right?.type==='regex') {
+    // QX official Rewrite matcher syntax has no Loon /pattern/ims flags field.
+    // A flagged source regex cannot be pushed down by dropping its flags:
+    // that may create false negatives before a helper can re-evaluate it.
+    if (String(n.right.flags || '')) return null;
     return {
       kind:'url-regex',
       key:'url-regex\u0000'+String(n.right.pattern),
