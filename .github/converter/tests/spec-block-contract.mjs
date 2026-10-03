@@ -120,6 +120,13 @@ assert.match(qxRewriteMatcher,/matchScope:hasUrl \? 'url-only' : 'unfiltered'/, 
 assert.match(qxRewriteMatcher,/request-header-eq/, 'Block 40: QX matcher planner must recognize fixed request.header equality as a prefilter');
 assert.match(qxRewriteMatcher,/request-header-present/, 'Block 40: QX matcher planner must reduce request.header regex conditions to presence-only prefilters');
 assert.match(qxRewriteMatcher,/item\.kind\.startsWith\('request-header-'\)/, 'Block 40: request.header predicates must stay out of the exact native matcher subset');
+assert.equal(/target-regex|normalizeRegexBodyForTarget|compileRegexForTarget/.test(qxRewriteMatcher), false, 'Block 40: QX URL matcher planner must preserve source URL regex without compiler/normalizer');
+const rewriteV2Semantic=await fs.readFile(path.join(ROOT,'.github/converter/src/rewrite-v2-semantic.mjs'),'utf8');
+const simpleUrlBody=(rewriteV2Semantic.match(/export function simpleUrlRewriteCondition[\s\S]*?\n\}/)||[''])[0];
+assert.match(simpleUrlBody,/pattern:String\(c\.right\.pattern\)/, 'Block 40: simple URL condition must use the parser AST regex body verbatim');
+assert.equal(/compileRegexForTarget|normalizeRegexBodyForTarget/.test(simpleUrlBody), false, 'Block 40: simple URL condition must not compile or normalize URL regex');
+assert.match(rewriteQx,/conditionMode:'external-exact'/, 'Block 30/40: dedicated QX helpers that do not re-evaluate conditions must require external exact matching');
+assert.match(rewriteQx,/renderSingleRewriteMutationScript\(ast/, 'Block 30/40: single Header/Body mutations must have a full-condition helper path');
 assert.match(rewriteQx,/qxExactRewriteMatcherPlan\(ast\)/, 'Block 30/40: native QX Header coalescing must require exact condition coverage');
 assert.match(rewriteSurge,/planComplexRewrite\(ast,'surge'/, 'Block 30: Surge planner must own its complex fallback');
 assert.match(rewriteQx,/function ensureQxRewriteHandlers\(\)/, 'Block 30: QX complex handlers must register lazily');
