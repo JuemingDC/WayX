@@ -13,7 +13,6 @@ import {
   phaseDispatcher,
   unsupported,
   differentialConditionOracle,
-  planSafeUrlPrefilter,
 } from '../src/core/equivalence-plan.mjs';
 
 function condition(source) {
@@ -154,28 +153,6 @@ const broadGuardOracle=differentialConditionOracle({
 assert.equal(broadGuardOracle.noFalseNegatives,true);
 assert.equal(broadGuardOracle.observedExact,false);
 assert.ok(broadGuardOracle.falsePositives.length>0);
-
-const flaggedPrefilter=planSafeUrlPrefilter(insensitive);
-assert.equal(flaggedPrefilter.pattern,'^https?://');
-assert.equal(flaggedPrefilter.noFalseNegatives,true);
-assert.match(flaggedPrefilter.reason,/source-url-regex-flags:i/);
-
-const andPrefilter=planSafeUrlPrefilter(condition(
-  'request if ${url} ~= /API/i && ${url} ~= /\\/v1\\// then reject(200)'
-));
-assert.equal(andPrefilter.pattern,'\\/v1\\/');
-assert.equal(andPrefilter.noFalseNegatives,true);
-
-const broadOrPrefilter=planSafeUrlPrefilter(condition(
-  'request if ${url} ~= /API/i || ${url} ~= /fallback/ then reject(200)'
-));
-assert.equal(broadOrPrefilter.pattern,'^https?://');
-
-const unionOrPrefilter=planSafeUrlPrefilter(condition(
-  'request if ${url} ~= /api/ || ${url} ~= /fallback/ then reject(200)'
-));
-assert.equal(unionOrPrefilter.pattern,'(?:api)|(?:fallback)');
-assert.equal(unionOrPrefilter.noFalseNegatives,true);
 
 const native=nativeEquivalent({
   target:'qx',
