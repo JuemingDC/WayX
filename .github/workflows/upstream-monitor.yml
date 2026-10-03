@@ -41,22 +41,13 @@ jobs:
 
       - name: Validate converter core
         run: |
-          node .github/converter/tests/checkpoint.mjs
-          node .github/converter/tests/generic-identity.mjs
-          node .github/converter/tests/genericity-audit.mjs
-          node .github/converter/tests/architecture-contract.mjs
-          node .github/converter/tests/domain-migration.mjs
-          node .github/converter/tests/core-semantics.mjs
-          node .github/converter/tests/workflow-control.mjs
-          node .github/converter/tests/repository-layout.mjs
-          node .github/converter/tests/readme-index.mjs
-          node .github/converter/tests/complex-source-inventory.mjs
-          node .github/converter/tests/catalog-syntax-inventory.mjs
-          node .github/converter/tests/catalog-legacy-syntax-inventory.mjs
-          node .github/converter/tests/rule.mjs
-          node .github/converter/tests/manual-assets.mjs
-          node .github/converter/tests/upstream-automation.mjs
-          node .github/converter/tests/myblockads-golden.mjs
+          node .github/converter/tests/rewrite.mjs
+          node .github/converter/tests/conversion.mjs
+          node .github/converter/tests/architecture.mjs
+          node .github/converter/tests/core.mjs
+          node .github/converter/tests/workflow.mjs
+          node .github/converter/tests/catalog.mjs
+          node .github/converter/tests/artifacts.mjs
 
       - name: Syntax check automation
         run: |
@@ -64,10 +55,8 @@ jobs:
           node --check .github/scripts/propose-conversion-issues.mjs
           node --check .github/converter/tools/conversion-reports.mjs
           node --check .github/converter/tools/audit-repository.mjs
-          node --check .github/converter/tests/upstream-automation.mjs
-          node --check .github/converter/tests/workflow-control.mjs
-          node --check .github/converter/tests/repository-layout.mjs
-          node --check .github/converter/tests/readme-index.mjs
+          node --check .github/converter/tests/workflow.mjs
+          node --check .github/converter/tests/architecture.mjs
           node --check .github/converter/tools/update-readme.mjs
           python -m py_compile .github/converter/tools/fetch-upstream.py .github/converter/tools/refresh-kelee-catalog.py .github/monitor/monitor_upstreams.py
 
@@ -91,11 +80,8 @@ jobs:
         id: refreshed_catalog
         continue-on-error: true
         run: |
-          node .github/converter/tests/complex-source-inventory.mjs
-          node .github/converter/tests/catalog-syntax-inventory.mjs
-          node .github/converter/tests/catalog-regex-inventory.mjs
-          node .github/converter/tests/catalog-legacy-syntax-inventory.mjs
-          node .github/converter/tests/rule.mjs
+          node .github/converter/tests/catalog.mjs
+          node .github/converter/tests/core.mjs
 
       - name: Check monitored upstream specifications
         id: monitor
@@ -141,12 +127,12 @@ jobs:
       - name: Verify generated helper references
         id: helper_refs
         continue-on-error: true
-        run: node .github/converter/tests/generated-helper-refs.mjs
+        run: node .github/converter/tests/artifacts.mjs
 
       - name: Verify original Source Script URLs
         id: source_urls
         continue-on-error: true
-        run: node .github/converter/tests/source-script-url-preservation.mjs
+        run: node .github/converter/tests/artifacts.mjs
 
       - name: Create or update conversion issues
         if: always()

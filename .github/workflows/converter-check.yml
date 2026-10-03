@@ -34,6 +34,26 @@ jobs:
         with:
           ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
+      - name: Enforce main and test branch budget
+        shell: bash
+        run: |
+          set -euo pipefail
+          refs="$(git ls-remote --heads origin)"
+          mapfile -t branches < <(awk '{sub("refs/heads/", "", $2); print $2}' <<< "$refs")
+          if (( ${#branches[@]} < 1 || ${#branches[@]} > 2 )); then
+            echo "::error::WayX permits main and at most one test branch."
+            exit 1
+          fi
+          main_present=false
+          for branch in "${branches[@]}"; do
+            case "$branch" in
+              main) main_present=true ;;
+              test) ;;
+              *) echo "::error::Unexpected WayX branch: $branch"; exit 1 ;;
+            esac
+          done
+          "$main_present"
+
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
@@ -51,41 +71,18 @@ jobs:
 
       - name: Converter checkpoint
         run: |
-          node .github/converter/tests/checkpoint.mjs
-          node .github/converter/tests/loon-new-syntax-cases.mjs
-          node .github/converter/tests/end-to-end-golden.mjs
-          node .github/converter/tests/generic-identity.mjs
-          node .github/converter/tests/genericity-audit.mjs
-          node .github/converter/tests/architecture-contract.mjs
-          node .github/converter/tests/domain-migration.mjs
-          node .github/converter/tests/core-semantics.mjs
-          node .github/converter/tests/rule.mjs
-          node .github/converter/tests/rewrite-ir.mjs
-          node .github/converter/tests/rewrite-target-planners.mjs
-          node .github/converter/tests/script-ir-target-planners.mjs
-          node .github/converter/tests/source-section-comments.mjs
-          node .github/converter/tests/target-output-builders.mjs
-          node .github/converter/tests/conversion-pipeline.mjs
-          node .github/converter/tests/conversion-context-materializers.mjs
-          node .github/converter/tests/conversion-runner.mjs
-          node .github/converter/tests/managed-artifacts.mjs
-          node .github/converter/tests/workflow-diagnostics.mjs
-          node .github/converter/tests/workflow-control.mjs
-          node .github/converter/tests/upstream-automation.mjs
-          node .github/converter/tests/source-fetch.mjs
-          node .github/converter/tests/repository-layout.mjs
-          node .github/converter/tests/readme-index.mjs
-          node .github/converter/tests/conversion-policy.mjs
-          node .github/converter/tests/manual-assets.mjs
+          node .github/converter/tests/rewrite.mjs
+          node .github/converter/tests/conversion.mjs
+          node .github/converter/tests/architecture.mjs
+          node .github/converter/tests/core.mjs
+          node .github/converter/tests/script.mjs
+          node .github/converter/tests/workflow.mjs
 
-      - name: Quantumult X official capability drift gate
-        run: node .github/converter/tests/qx-official-capabilities.mjs
-
-      - name: Surge official capability drift gate
-        run: node .github/converter/tests/surge-official-capabilities.mjs
+      - name: Official QX and Surge capability drift gates
+        run: node .github/converter/tests/official-capabilities.mjs
 
       - name: Generated helper runtime fixtures
-        run: node .github/converter/tests/generated-helper-runtime.mjs
+        run: node .github/converter/tests/runtime.mjs
 
       - name: Refresh full Kelee catalog
         run: python .github/converter/tools/refresh-kelee-catalog.py
@@ -104,10 +101,7 @@ jobs:
 
       - name: Validate refreshed catalog semantics
         run: |
-          node .github/converter/tests/complex-source-inventory.mjs
-          node .github/converter/tests/catalog-syntax-inventory.mjs
-          node .github/converter/tests/catalog-regex-inventory.mjs
-          node .github/converter/tests/catalog-legacy-syntax-inventory.mjs
+          node .github/converter/tests/catalog.mjs
 
       - name: Verify managed conversion cleanliness
         run: node .github/converter/tools/verify-managed-conversions.mjs
@@ -118,14 +112,8 @@ jobs:
       - name: Generate reconciliation and Review inventory
         run: node .github/converter/tools/conversion-reports.mjs
 
-      - name: Verify generated helper references
-        run: node .github/converter/tests/generated-helper-refs.mjs
-
-      - name: Verify regenerated MyBlockAds golden
-        run: node .github/converter/tests/myblockads-golden.mjs
-
-      - name: Verify original Source Script URLs
-        run: node .github/converter/tests/source-script-url-preservation.mjs
+      - name: Verify generated helper references, golden and source URLs
+        run: node .github/converter/tests/artifacts.mjs
 
       - name: Upload regenerated canonical outputs
         if: always()

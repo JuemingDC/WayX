@@ -1,6 +1,6 @@
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {buildReadmePlan,readmePlanDiff,writeReadmePlan} from '../src/readme-index.mjs';
+import {buildReadmePlan,readmePlanDiff,writeReadmePlan} from "../src/workflow.mjs";
 
 const ROOT=process.cwd();
 const mode=process.argv.includes('--write') ? 'write' : 'check';

@@ -3,9 +3,9 @@
 // Category: Converter / Repository Audit
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { validateQX } from '../src/qx-snippet-validator.mjs';
-import { parseLoonPlugin } from '../src/plugin-parser.mjs';
-import { validateSurgeModule } from '../src/surge-module.mjs';
+import { validateQX } from "../src/output.mjs";
+import { parseLoonPlugin } from "../src/input.mjs";
+import { validateSurgeModule } from "../src/output.mjs";
 
 const ROOT = process.cwd();
 const findings = [];
