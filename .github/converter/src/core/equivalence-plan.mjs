@@ -50,3 +50,47 @@ export function unsupported(reason,details={}) {
   if (!message) throw new Error('unsupported requires a non-empty reason');
   return {kind:EQUIVALENCE_KINDS.UNSUPPORTED,reason:message,details};
 }
+
+
+export const ORACLE_FAILURES=Object.freeze({
+  NATIVE_MATCH:'oracle-refuted-native-match-equivalence',
+  NATIVE_CAPTURE:'oracle-refuted-native-capture-equivalence',
+  PREFILTER_FALSE_NEGATIVE:'oracle-refuted-prefilter-soundness',
+});
+
+export function verifyPlanAgainstOracle(plan,oracle,{requireCapture=false}={}) {
+  object(plan,'equivalence plan');
+  object(oracle,'oracle report');
+
+  if (plan.kind===EQUIVALENCE_KINDS.NATIVE) {
+    if (oracle.matchExact!==true) {
+      return unsupported(ORACLE_FAILURES.NATIVE_MATCH,{plan,oracle});
+    }
+    if (requireCapture && oracle.captureExact!==true) {
+      return unsupported(ORACLE_FAILURES.NATIVE_CAPTURE,{plan,oracle});
+    }
+  }
+
+  if (plan.kind===EQUIVALENCE_KINDS.GUARDED && oracle.falseNegatives!==0) {
+    return unsupported(ORACLE_FAILURES.PREFILTER_FALSE_NEGATIVE,{plan,oracle});
+  }
+
+  if (
+    plan.kind!==EQUIVALENCE_KINDS.NATIVE &&
+    plan.kind!==EQUIVALENCE_KINDS.GUARDED &&
+    plan.kind!==EQUIVALENCE_KINDS.DISPATCHER &&
+    plan.kind!==EQUIVALENCE_KINDS.UNSUPPORTED
+  ) {
+    throw new Error('unknown equivalence plan kind: '+String(plan.kind));
+  }
+
+  if (plan.kind===EQUIVALENCE_KINDS.UNSUPPORTED) return plan;
+
+  return {
+    ...plan,
+    proof:{
+      ...plan.proof,
+      oracle,
+    },
+  };
+}
