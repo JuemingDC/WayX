@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "scope": "Loon ad-block conversion only: Rule types, Rewrite actions, MITM hostname",
   "authority": {
     "uploadedSample": "sample.txt",
@@ -8,7 +8,10 @@
     "officialSampleShaChecked": "d01bade51dc0466d5f4f84714509f420a7f1b245",
     "officialRewriteSnippetPath": "sample-import-rewrite.snippet",
     "officialFilterSnippetPath": "filter.snippet",
-    "checkedAt": "2026-09-30"
+    "checkedAt": "2026-10-03",
+    "manualRewriteEvidence": {
+      "response-header": "Quantumult X current in-app Rewrite type selector; user-supplied screenshot reviewed 2026-10-03"
+    }
   },
   "ruleTypes": [
     "geoip",
@@ -24,6 +27,7 @@
   "rewriteActions": [
     "302",
     "307",
+    "echo-response",
     "jsonjq-request-body",
     "jsonjq-response-body",
     "reject",
@@ -34,6 +38,7 @@
     "request-body",
     "request-header",
     "response-body",
+    "response-header",
     "script-analyze-echo-response",
     "script-echo-response",
     "script-request-body",
