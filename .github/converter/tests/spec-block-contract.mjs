@@ -140,6 +140,8 @@ assert.match(rewriteV2Semantic,/export function jsonPipelineToSafeNativeJq/, 'Bl
 assert.match(rewriteV2Semantic,/native multi-action JQ currently requires top-level object key paths/, 'Block 50: native JSON pipeline subset must remain top-level-object only');
 assert.match(rewriteV2Semantic,/if type == "object" then/, 'Block 50: native JSON pipeline operations must guard non-object JSON roots');
 assert.match(rewriteQx,/qxNativeJsonPipelinePlan\(ast\)/, 'Block 30/50: QX planner must own JSON pipeline native coalescing');
+assert.match(rewriteQx,/id:'qx-request-mock-mutation-script'/, 'Block 30/50: QX planner must own request mock mixed-script fallback');
+assert.match(rewriteQx,/request_mixed_/, 'Block 30/50: QX request mock mixed fallback must reference a generated script');
 assert.match(rewriteQx,/jsonPipelineToSafeNativeJq\(ast\)/, 'Block 50: QX native JSON pipeline must consume the shared safe JQ synthesis');
 assert.match(rewriteQx,/const matcher=qxExactRewriteMatcherPlan\(ast\)/, 'Block 30/50: native QX JSON pipeline must require exact condition coverage');
 assert.match(rewriteSurge,/planComplexRewrite\(ast,'surge'/, 'Block 30: Surge planner must own its complex fallback');
