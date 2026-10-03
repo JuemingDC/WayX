@@ -148,6 +148,27 @@ const qxV2RequiresOnly=planQxScript(qxV2RequiresOnlyIr,{
 assert.equal(qxV2RequiresOnly.ok,true);
 assert.match(qxV2RequiresOnly.line,/ url script-response-body https:\/\/example\.com\/v2\.js$/);
 
+const qxTimeoutUnsupported=planQxScript(
+  scriptV2AstToSemanticIr(parseScriptV2('response if ${url} ~= /timeout/ then script("https://example.com/t.js") with timeout=12')),
+  {scriptUrl:'https://example.com/t.js',sourceText:'$done({});',argumentIds:new Set()}
+);
+assert.equal(qxTimeoutUnsupported.ok,false);
+assert.match(qxTimeoutUnsupported.reason,/no timeout field/);
+
+const qxEnableTrue=planQxScript(
+  scriptV2AstToSemanticIr(parseScriptV2('request if ${url} ~= /enabled/ then script("https://example.com/e.js") with enable=true')),
+  {scriptUrl:'https://example.com/e.js',sourceText:'$done({});',argumentIds:new Set()}
+);
+assert.equal(qxEnableTrue.ok,true);
+assert.match(qxEnableTrue.line,/script-request-header/);
+
+const qxEnableDynamic=planQxScript(
+  scriptV2AstToSemanticIr(parseScriptV2('request if ${url} ~= /enabled/ then script("https://example.com/e.js") with enable=${enabled}')),
+  {scriptUrl:'https://example.com/e.js',sourceText:'$done({});',argumentIds:new Set(['enabled'])}
+);
+assert.equal(qxEnableDynamic.ok,false);
+assert.match(qxEnableDynamic.reason,/no dynamic enable field/);
+
 const v2DebugSource='response if ${url} ~= /debug/ then script("https://example.com/debug.js") with debug=true, tag="Debug"';
 const v2DebugIr=scriptV2AstToSemanticIr(parseScriptV2(v2DebugSource),{source:v2DebugSource});
 const qxV2Debug=planQxScript(v2DebugIr,{
