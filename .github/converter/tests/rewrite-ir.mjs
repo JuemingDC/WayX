@@ -5,6 +5,7 @@
 import assert from 'node:assert/strict';
 import { parseRewriteV2 } from '../src/rewrite-v2.mjs';
 import {
+  isEmptyLegacyJsonJqIr,
   legacyRewriteToSemanticIr,
   rewriteV2AstToSemanticIr,
   singleRewriteOperation,
@@ -64,6 +65,9 @@ assert.equal(singleRewriteOperation(v2Body).phase,'response');
 const legacyJson=legacyRewriteToSemanticIr('^https://api\\.example\\.com','response-body-json-jq "del(.ads)"');
 assert.equal(singleRewriteOperation(legacyJson).kind,'json');
 assert.equal(singleRewriteOperation(legacyJson).operation,'jq');
+assert.equal(isEmptyLegacyJsonJqIr(legacyJson),false);
+assert.equal(isEmptyLegacyJsonJqIr(legacyRewriteToSemanticIr('^https://api\\.example\\.com',"response-body-json-jq ''")),true);
+assert.equal(isEmptyLegacyJsonJqIr(legacyRewriteToSemanticIr('^https://api\\.example\\.com','request-body-json-jq ""')),true);
 
 const v2JsonSource='response if ${url} ~= /api/ then response.json.jq("del(.ads)")';
 const v2Json=rewriteV2AstToSemanticIr(parseRewriteV2(v2JsonSource));
