@@ -2,7 +2,7 @@
 // Author: chance
 // Category: Converter / Legacy Rewrite
 import crypto from 'node:crypto';
-import { minifyJq, quoteJq, renderFixedPathDeleteJq } from './jq.mjs';
+import { minifyJq, parseJsonKeyPath, quoteJq, renderFixedPathDeleteJq } from './jq.mjs';
 import { normalizeRegexBodyForTarget } from './target-regex.mjs';
 import { renderQxHeaderScript, renderQxInlineMockScript } from './qx-semantic-script.mjs';
 import { surgeInlineMockPlan } from './rewrite-v2-semantic.mjs';
@@ -55,14 +55,8 @@ function unquote(token) {
 }
 
 function jqPath(pathText) {
-  const parts = [];
-  for (const raw of String(pathText).split('.')) {
-    const m = raw.match(/^([^[]+)((?:\[\d+\])*)$/);
-    if (!m) return null;
-    parts.push(m[1]);
-    for (const idx of m[2].matchAll(/\[(\d+)\]/g)) parts.push(Number(idx[1]));
-  }
-  return parts;
+  try { return parseJsonKeyPath(pathText); }
+  catch { return null; }
 }
 
 function jqAccess(pathText) {
