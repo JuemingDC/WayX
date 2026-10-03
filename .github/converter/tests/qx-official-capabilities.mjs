@@ -106,6 +106,7 @@ const [sample, rewriteSnippet, filterSnippet] = await Promise.all([
 const officialRules = officialRuleTypes(sample);
 const officialRewrites = officialRewriteActions(sample);
 const officialMitm = snippetMitmKeys(rewriteSnippet);
+const reviewedUiRewrites = new Set(Object.keys(fixture.authority.manualRewriteEvidence || {}));
 
 assert.deepEqual(sorted(QX_WAYX_FILTER_TYPES), fixture.ruleTypes, 'QX Rule-type registry drifted from reviewed WayX adblock baseline');
 assert.deepEqual(sorted(QX_WAYX_NATIVE_REWRITE_ACTIONS), fixture.rewriteActions, 'QX Rewrite registry drifted from reviewed WayX adblock baseline');
@@ -115,7 +116,14 @@ for (const type of fixture.ruleTypes) {
   assert.ok(officialRules.has(type), 'WayX QX Rule type lost official sample evidence: ' + type);
 }
 for (const action of fixture.rewriteActions) {
+  if (reviewedUiRewrites.has(action)) continue;
   assert.ok(officialRewrites.has(action), 'WayX QX Rewrite action lost official sample evidence: ' + action);
+}
+for (const action of reviewedUiRewrites) {
+  assert.ok(
+    fixture.rewriteActions.includes(action),
+    'QX manually reviewed UI Rewrite action must remain in the scoped capability set: ' + action,
+  );
 }
 for (const key of fixture.mitmKeys) {
   assert.ok(officialMitm.has(key), 'WayX QX MITM hostname key lost official rewrite-snippet evidence: ' + key);
@@ -139,5 +147,6 @@ for (const raw of String(filterSnippet).split(/\r?\n/)) {
 console.log(
   'Quantumult X scoped adblock capability gate passed: ' +
   fixture.ruleTypes.length + ' Rule types / ' +
-  fixture.rewriteActions.length + ' Rewrite actions / hostname'
+  fixture.rewriteActions.length + ' Rewrite actions (' +
+  reviewedUiRewrites.size + ' current-app UI reviewed) / hostname'
 );
