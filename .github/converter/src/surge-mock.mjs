@@ -41,6 +41,10 @@ function simpleUrlCondition(ast) {
       c.right?.type !== 'regex') {
     throw new Error('Surge request mock helper requires one URL-regex condition');
   }
+  const flags=String(c.right.flags || '');
+  if (flags) {
+    throw new Error('Surge request mock helper trigger cannot preserve Loon regex flags: '+flags);
+  }
   return compileRegexForTarget(c.right, {subject:'url', target:'surge'}).pattern;
 }
 
