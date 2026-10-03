@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { loadLoonSourceCatalog } from '../src/source-catalog.mjs';
-import { qxTargetPath, surgeTargetPath } from '../src/paths.mjs';
+import { qxTargetPath, surgeTargetPath } from '../src/managed-artifacts.mjs';
 import { discoverSourceScriptUrls } from '../src/source-script-materializer.mjs';
 
 const ROOT=process.cwd();

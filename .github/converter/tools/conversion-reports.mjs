@@ -5,7 +5,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { loadLoonSourceCatalog } from '../src/source-catalog.mjs';
-import { qxTargetPath, surgeTargetPath } from '../src/paths.mjs';
+import { qxTargetPath, surgeTargetPath } from '../src/managed-artifacts.mjs';
 
 const ROOT = process.cwd();
 const SOURCE_CATALOG = path.join(ROOT, '.github', 'sources', 'loon.json');

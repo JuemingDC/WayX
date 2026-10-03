@@ -2,13 +2,28 @@
 // Author: chance
 // Category: Converter / Execution / Validation
 
-import { materializeConversionContext } from './conversion-context.mjs';
+import { parseLoonPlugin } from './plugin-parser.mjs';
+import { materializeRewriteDependencies } from './dependency-materializer.mjs';
+import { materializeSourceScripts } from './source-script-materializer.mjs';
+import { fetchOriginalText, fetchOriginalBytes } from './source-fetch.mjs';
 import { convertPlugin } from './conversion-pipeline.mjs';
 import { validateQX } from './qx-snippet-validator.mjs';
 import { validateSurgeModule } from './surge-module.mjs';
 
 function notify(onStage, stage) {
   if (typeof onStage === 'function') onStage(stage);
+}
+
+export async function materializeConversionContext(entry,source,{
+  fetchText=fetchOriginalText,
+  fetchBytes=fetchOriginalBytes,
+}={}) {
+  const parsed=parseLoonPlugin(source);
+  const [{mockFiles,jqFiles},scriptMap]=await Promise.all([
+    materializeRewriteDependencies(entry,parsed,{fetchText,fetchBytes}),
+    materializeSourceScripts(source,entry.source,{parsed,fetchText}),
+  ]);
+  return {parsed,scriptMap,mockFiles,jqFiles};
 }
 
 export async function materializeConversionRunContext(entry, source, {onStage=null}={}) {

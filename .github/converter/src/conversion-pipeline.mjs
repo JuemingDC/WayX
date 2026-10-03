@@ -14,7 +14,7 @@ import {
 import { isScriptV2, parseScriptV2 } from './script-v2.mjs';
 import { analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs } from './argument-usage.mjs';
 import { surgeArgumentMetadata } from './argument.mjs';
-import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection } from './source-section.mjs';
+import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection } from './plugin-parser.mjs';
 import { attachQxInlineNote } from './qx-comment.mjs';
 import { planMitmLine } from './mitm.mjs';
 import { classifyLegacyRewriteAction, isEmptyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr } from './rewrite-ir.mjs';
@@ -32,7 +32,7 @@ import {
   qxRuleOutputDestination,
   qxRewriteOutputDestination,
   renderQxOutput,
-} from './qx-output.mjs';
+} from './output.mjs';
 import {
   createSurgeOutputState,
   appendSurgeOutput,
@@ -40,7 +40,7 @@ import {
   surgeRuleOutputDestination,
   surgeRewriteOutputDestination,
   renderSurgeOutput,
-} from './surge-output.mjs';
+} from './output.mjs';
 import { parseLoonPlugin } from './plugin-parser.mjs';
 
 function splitPatternAction(line) {
