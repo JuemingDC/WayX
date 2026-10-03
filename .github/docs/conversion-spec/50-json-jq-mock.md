@@ -116,7 +116,7 @@ response.json.jq("jq-path=https://...")
 5. 目标输出不得残留 `jq-path=` 字符串，也不得把路径本身误当成 JQ；
 6. 依赖无法获取、内容为空或不能证明安全承载时必须 Review，禁止静默删除规则。
 
-对任意 JQ 不允许为了“脚本兜底”而猜测性翻译成 JavaScript。QX/Surge 已有原生 JQ 时固定优先内联；只有未来存在已登记、经过语义回归的专用 JQ→Script renderer 时，才允许生成 `script-request/response-body` helper。没有可证明等价的 renderer 时 fail closed。
+`jq_file` 与 historical `jq-path=` 的目标策略固定为 **inline-only**：读取原作者依赖后，只允许写入 QX `jsonjq-request-body/jsonjq-response-body` 或 Surge `http-request-jq/http-response-jq`。禁止生成 `script-request/response-body`、`script-path=` 或任何 JQ helper；依赖无法读取、内容为空、目标引号/单行承载不安全或其它原因导致不能内联时，直接注释保留源声明并输出 Review。不得把 JQ 翻译成 JavaScript。
 
 ## 50.4 response.body.mock / mock_file
 
@@ -166,7 +166,7 @@ Validator 必须拒绝把 `http://`、`https://`、其它 URL scheme、绝对路
 - `jq_file` / `mock_file` / historical `jq-path=` 都只从源插件声明或相对源 URL 解析出的原始地址读取；不得因 legacy alias 使用镜像/fallback。
 - dependency 内容只在本次转换进程内由 `dependency-materializer.mjs` materialize；不写入 `.github/converter/dependencies/` 作为权威副本或 fallback。
 - `dependencySpecFromAction()` 必须保持 target-neutral：只描述原始依赖 URL、kind、phase、status、content-type、base64/binary 等 Loon 源语义；不得提前写入 `qxAction`、Surge section 或 target strategy。目标 action 只能在 `rewrite-qx.mjs` / `rewrite-surge.mjs` 中选择。
-- 原始依赖无法读取或无法安全嵌入目标语法时，进入 Review；不得使用仓库缓存替代。
+- 原始依赖无法读取或无法安全嵌入目标语法时，进入 Review 并注释保留源声明；其中 `jq_file` / `jq-path=` 不允许 Script fallback，不得使用仓库缓存替代。
 
 ## 50.7 自动转换实现
 
