@@ -1,12 +1,31 @@
 # WayX Conversion Specification
 
-版本：1.43  
+版本：1.44  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
 WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入本仓库；需要时另立规范。
 
 本规范采用“分块规范”结构。转换器、测试、canonical 输出、Golden 都必须服从本规范，不能反过来用现有代码定义规范。
+
+## 2026-10-03 规范更新
+
+**Quantumult X Rewrite 类型补全 / echo-response / JQ 依赖（2026-10-03）**：
+
+1. QX scoped Rewrite capability 增加 `echo-response` 与 `response-header`。其中 `echo-response` 有 Crossutility 官方 sample 依据；`response-header` 以用户提供的当前 Quantumult X App Rewrite 类型选择器为人工确认依据，CI 必须把这类 current-app UI reviewed capability 与在线 sample evidence 分开记录，不得伪称官方 sample 已出现该 token。
+2. `request.header.add` 与 `response.header.add` 在“单 URL 条件 + 固定安全字段名/值 + 不含未证明的 replacement `# WayX Conversion Specification
+
+版本：1.44  
+作者：chance  
+状态：**唯一权威转换规范（Authoritative）**
+
+WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入本仓库；需要时另立规范。
+
+本规范采用“分块规范”结构。转换器、测试、canonical 输出、Golden 都必须服从本规范，不能反过来用现有代码定义规范。
+
+”时分别使用 QX 原生 `request-header` / `response-header` 整块 Header 插入，保留 duplicate-header add 语义。其它 set/del/replace 继续按语义等价性选择 helper；不能证明等价时 fail closed。
+3. QX 原生 `echo-response` 的 body resource 必须是本机 `Quantumult X/Data` 相对路径。WayX 不得把 HTTP(S) URL、Plugin 相对资源或转换期下载文件直接写成 native Resource Path。当前 Loon Catalog 没有可证明已经部署到 QX Data 的本机资产声明，因此 inline response mock 与 remote/plugin-relative `mock_file` 默认继续物化内容并使用最小 `script-echo-response`；需要 request body 才能决定响应时使用 `script-analyze-echo-response`。
+4. 官方 `request/response.json.jq_file(path)` 与历史 `request/response.json.jq("jq-path=...")` / Legacy `*-body-json-jq jq-path=...` 统一进入原作者依赖物化。绝对 HTTP(S) 原样读取，相对路径只相对源 Plugin URL 解析；读取后删除非字符串注释、压缩无语义空白并优先内联 QX/Surge 原生 JQ。目标不得残留 `jq-path=`，也不得再静默 drop。读取失败、空内容或无法证明安全承载时 Review；不得猜测性把任意 JQ 翻译成 JavaScript。只有未来有登记并回归验证的专用 semantic renderer 时才允许 Script fallback。
 
 ## 2026-10-02 规范更新
 
@@ -26,7 +45,7 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 12. CI 必须自动生成 Source → Target reconciliation 与 Review/Issue inventory。Catalog 每个源有效语义项必须落入 converted / explicit-comment / Review / Issue / intentional-drop 之一；报告不对账时 fail closed。
 13. QX Source Script 声明的 `argument`、动态 `enable`、`timeout`、`binary-body-mode` / `binary_body_mode`、`debug`、Legacy `max-size` 按 WayX 的 QX declaration 兼容策略处理：QX 只保留官方 sample 已确认的 pattern / Script action / 原始 script URL，并由 `requires-body` / `requires_body` 单独决定 header/body 类型。`debug` 与 Legacy `max-size` 必须**直接丢弃**：不写入 QX declaration、不输出 WayX 注释、不产生 Review/Issue，也不影响 action 选择；动态 `debug=${...}` 同样直接丢弃且不得因参数未声明而阻断 QX 转换。源明确 `enable=false/0` 仍保持禁用。该规则只适用于 Source Script declaration；Rewrite 条件/action 中的 `[Argument]` 引用仍按其实际语义独立判断。
 14. CI 必须维护 Catalog-observed Loon Rewrite v2 / Script v2 **semantic-token inventory**。Inventory 只锁真正改变语义类别的标识：phase、condition variable class、condition operator、logical operator、Rewrite action name、Script option name；**不得锁** action 参数 arity/type 组合、multi-action 完整 signature、grouping、regex flag 组合、Script path/argument kind、option value shape、option 顺序或 option-set。上述结构合法性必须由 Rewrite/Script source parser、action/option registry 与 target planner 的通用规则负责。已知 action/option 的新合法组合不得仅因 Catalog 过去未出现而 fail。
-15. Quantumult X / Surge 的目标能力校验只覆盖 **Loon 去广告插件转换实际需要的 Rule 类型、Rewrite 类别与 MITM `hostname`**。其它目标软件 Profile 能力一律不进入 WayX capability model。QX 以用户提供的官方 `sample.txt` 为人工确认起点，并由 CI 读取 Crossutility 当前官方样例，验证 WayX 实际使用的 Rule/Rewrite/hostname 仍有官方依据；官方新增与本转换范围无关的能力不触发 WayX capability drift。Surge 同样只依据官方 Manual 核对本转换器实际使用的 Rule/Rewrite/hostname。
+15. Quantumult X / Surge 的目标能力校验只覆盖 **Loon 去广告插件转换实际需要的 Rule 类型、Rewrite 类别与 MITM `hostname`**。其它目标软件 Profile 能力一律不进入 WayX capability model。QX 以用户提供的官方 `sample.txt`、Crossutility 当前官方样例以及用户提供并人工确认的当前 App Rewrite 类型 UI 为证据；CI 必须区分在线官方 sample evidence 与 current-app UI reviewed evidence，不能把后者伪装成 sample token。官方新增与本转换范围无关的能力不触发 WayX capability drift。Surge 同样只依据官方 Manual 核对本转换器实际使用的 Rule/Rewrite/hostname。
 16. Surge capability registry 必须由官方 Manual 证据约束，并与 production planner / validator 共用同一组常量。CI 同时验证 WayX 当前会生成的 Rule Type、Surge Rule 内建 Policy、URL/Header/Body Rewrite、Map Local、HTTP `http-request/http-response` Script 与 MITM `hostname`。Surge Module 的 `[Rule]` 不得再维护独立缩窄的 Rule Type 或 built-in Policy 白名单：进入配置 `[Rule]` 后按同一 Rule 能力模型处理，合法 logical Rule 组合继续递归保留；仅保留各 Rule Type 自身的官方结构/平台限制。未知外部 policy/group 仍不得假设存在。官方入口固定先查 `https://nssurge.com/llms.txt`，Rule Type / built-in Policy 的规范性语义以 Manual 为准；当前 Module Manual 的旧三-policy 描述按本规范首段的 2026-10-02 兼容覆盖处理，并在涉及近期变化时核对 release notes。
 17. CI 必须维护 Catalog-observed Loon `[Rule]` syntax inventory，但该 inventory **只做真正的新语义 token 报警，不得成为 production 支持白名单，也不得锁定某个已观察 AST 形状**。Inventory 只锁递归 Rule Type 集合、top-level Policy 集合、Rule 参数名集合与 logical operator 集合。明确**不得**锁 top/nested placement、`RuleType:parameter` 组合、字段数量、AND/OR 子项数量、已观察 logical nesting depth、声明数量或具体匹配值。一个已支持 Rule Type 第一次出现在 logical 子规则中、一个已知参数第一次用于另一个官方允许的 Rule Type、AND/OR 从 2 项变 3/N 项、或同一 operator 出现在不同 nesting 位置，都不属于新语法类别，不得触发 inventory fail。参数适用性、NOT 单子项约束和目标平台 nesting/能力限制必须由 source grammar / target planner 的通用语义校验负责。首次出现真正新的 Rule Type / Policy / parameter name / logical operator 才触发 fail closed，并按 Loon 源语义 → QX 官方 sample / Surge 官方 Manual → 通用 .github/converter/spec/tests 的顺序审查。MITM 不纳入该 inventory。
 18. Loon `[Rule]` production 转换必须采用 **source parser → target-neutral Rule AST → QX planner / Surge planner**。Parser 只负责 CSV/引号/逻辑子规则/Policy/参数结构与 Loon 自身语法约束，不得知道 QX/Surge 映射，也不得因目标平台不接受某个 Rule Type/逻辑组合而拒绝构建可结构化 AST。Logical AST 必须递归支持同一类别的任意合法组合与任意子项数量；不得按当前 Catalog 已观察到的 2/3 项、top/nested 位置或具体 nesting depth 写死。Loon 官方明确的 cardinality 约束只在 source grammar 层表达，例如 `NOT` 必须且只能包含一个子规则。Target planner 负责目标能力与目标自身限制，不得重新拆源字符串或按插件身份分支；Surge logical rule 必须按官方 `AND,((Rule1),(Rule2),...),Policy` / `OR,...` 递归渲染，并在超过官方最大 logical nesting depth 10 时 fail closed。AST 必须保留原始 source declaration、Rule Type、原始/解引号 value、Policy、参数及递归 logical children。QX planner 仅使用用户提供的官方 sample 已确认能力；Surge planner 按 `nssurge.com/llms.txt` → 官方 Manual。
@@ -62,7 +81,7 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 
 40. 根目录转换内容目录统一使用**首字母大写**命名：`Adblock / Resource / Boxjs / Module / Rule / Script`。`.github` 保持 GitHub 保留目录名不变。所有 converter path、generated helper 本地路径、Raw GitHub helper URL、workflow path filter、artifact/commit path、audit/reconciliation、测试与文档必须使用相同大小写；禁止重新创建 `boxjs / module / rule / script` 小写兼容目录，也禁止继续生成 `.../main/script/...` Raw URL。目录大小写变更不得改变转换语义，只允许改变仓库资源路径及由该路径决定的引用 URL。
 
-41. Loon JSON/JQ 转换固定遵守**源语义优先、原生 JQ 优先、最小改写**。WayX 对 `json.add / json.replace / json.delete` 采用项目选定的 Stash-compatible 行为基准：add 仅在路径不存在或当前值为 JSON `null` 时写入；replace 仅在 `getpath(PATH)` 为 jq truthy 时替换，因此缺失/`null`/`false` 保持不变；delete 不加 `getpath` guard，单路径使用 `del(PATH)`，多个不含数组索引的固定路径必须合并为一个 `del(PATH1, PATH2, ...)`；只要包含数组索引就必须按源顺序串联多个 `del(...)`，以保持删除后数组索引位移语义。普通 Loon Key Path delete **不得自动生成 `delpaths(PATHS)`**；`delpaths` 只保留给源 `json.jq/jq_file` 已经声明的 Path Array 语义，或未来由规范明确、测试覆盖的 Path Array IR。Legacy `*-body-json-add|replace|del` 与 Rewrite v2 使用同一映射。源作者直接提供的 `json.jq(...)` 不得重写表达式结构；官方 `json.jq_file(...)` 只允许为 QX/Surge 单行配置删除非字符串注释并压缩无语义空白后内联，不得做 AST/代数重写。QX 依据用户提供的官方 sample 使用 `jsonjq-request-body/jsonjq-response-body`；Surge 依据官方 Manual 使用 `http-request-jq/http-response-jq`。
+41. Loon JSON/JQ 转换固定遵守**源语义优先、原生 JQ 优先、最小改写**。WayX 对 `json.add / json.replace / json.delete` 采用项目选定的 Stash-compatible 行为基准：add 仅在路径不存在或当前值为 JSON `null` 时写入；replace 仅在 `getpath(PATH)` 为 jq truthy 时替换，因此缺失/`null`/`false` 保持不变；delete 不加 `getpath` guard，单路径使用 `del(PATH)`，多个不含数组索引的固定路径必须合并为一个 `del(PATH1, PATH2, ...)`；只要包含数组索引就必须按源顺序串联多个 `del(...)`，以保持删除后数组索引位移语义。普通 Loon Key Path delete **不得自动生成 `delpaths(PATHS)`**；`delpaths` 只保留给源 `json.jq/jq_file` 已经声明的 Path Array 语义，或未来由规范明确、测试覆盖的 Path Array IR。Legacy `*-body-json-add|replace|del` 与 Rewrite v2 使用同一映射。源作者直接提供的 `json.jq(...)` 不得重写表达式结构；官方 `json.jq_file(...)` 与 historical `jq-path=` alias 都必须读取原作者依赖，只允许为 QX/Surge 单行配置删除非字符串注释并压缩无语义空白后内联，不得做 AST/代数重写，也不得静默丢弃。QX 依据用户提供的官方 sample 使用 `jsonjq-request-body/jsonjq-response-body`；Surge 依据官方 Manual 使用 `http-request-jq/http-response-jq`。
 
 42. 根目录 `README.md` 固定为**自动生成的公开资源索引**，不得手工维护资源清单。生成器必须扫描实际 `Boxjs / Module / Adblock / Rule` 内容，按 `BoxJs → Module → Adblock → Rule` 固定顺序输出，并从资源正文的 `# Name:` / `#!name=` / BoxJs JSON `name` 提取显示名；Quantumult X 与 Surge 必须分列，缺失平台显示 `—`。Quantumult X 一键导入固定使用官方 `https://quantumult.app/x/open-app/add-resource?remote-resource=...`。Rule 继续使用 `filter_remote`；Module/Adblock 的 QX `.snippet` **不得拆分 filter/rewrite**，直接把原 `.snippet` 作为单个 `rewrite_remote` 资源导入并显式写 `update-interval=86400, enabled=true`。依据当前 KOP-XIAO 资源解析器的兼容判断，Quantumult X build 844 起允许 rewrite resource 内混合 filter 与 rewrite；WayX 目标文件本身继续保持 `# [filter_local] / # [rewrite_local] / # [mitm]` 注释段格式，不为 README 安装额外生成中间文件。Surge 模块入口按用户已安装的 DivineEngine Redirect 使用 `https://surge.app/install-module?url=<percent-encoded raw URL>`，其目标仍是 Surge 官方 `surge:///install-module?url=`；官方 install-module Scheme 没有 update-interval 参数，禁止伪造。README 生成必须在新增/删除转换内容、canonical regeneration、定时 upstream sync 与相关 PR CI 中自动刷新；生成器遇到陈旧的 `.../main/script/...` WayX Raw URL 或其它无法安全生成安装入口的情况必须 fail closed，不得产出猜测链接。
 
