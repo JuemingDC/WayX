@@ -46,6 +46,7 @@ for (const rel of [
   '.github/docs/conversion-spec',
   '.github/PROJECT_STATUS.md',
   '.github/converter/README.md',
+  '.github/converter/src/source-metadata.mjs',
 ]) {
   await assert.rejects(
     fs.stat(path.join(ROOT,rel)),
