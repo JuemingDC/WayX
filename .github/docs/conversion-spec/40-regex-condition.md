@@ -35,7 +35,9 @@ Quantumult X 原生 Rewrite 不是只有 URL 条件。官方 sample 定义了第
 
 这只证明 **request-side** Headers 匹配。不能据此把 Loon `${response.header[...]}` 或 `${response.status}` 直接降级成 QX `url-and-header`。Loon `${request.method}` / `${request.header[...]}` 也只有在能保持原比较域、边界、大小写与 Regex 语义时才允许静态编译，否则仍走 helper/Review。
 
-对 QX multi-action helper，可把**必要但不一定充分**的 request-side 条件作为 native prefilter 下推，因为 helper 会再次完整判断原 condition。当前安全子集为 URL Regex 与 `${request.method} == "固定方法"`。Method equality 生成 `^METHOD[ ]` Headers regex；该模式利用官方 sample 已确认的“Headers 比较字符串以 method/path/request headers 组成”语义，同时避免官方示例 `^POST` 对扩展方法名产生前缀误匹配。
+QX matcher planner 区分 **prefilter** 与 **exact** 两种模式。对 multi-action helper，可把必要但不一定充分的 request-side 条件作为 native prefilter 下推，因为 helper 会再次完整判断原 condition。当前 prefilter 安全子集为 URL Regex 与 `${request.method} == "固定方法"`。Method equality 生成 `^METHOD[ ]` Headers regex；该模式利用官方 sample 已确认的“Headers 比较字符串以 method/path/request headers 组成”语义，同时避免官方示例 `^POST` 对扩展方法名产生前缀误匹配。
+
+若目标不再有 helper 复核、而是直接输出 QX native action，则必须使用 exact matcher。当前 exact 子集只接受 URL Regex、固定 Method equality 或二者通过 `&&` 组合；OR、response-side 条件、request Header value 条件、多个不同 URL Regex 的 AND 均不得只取部分条件生成 native action。
 
 源：
 ```text
