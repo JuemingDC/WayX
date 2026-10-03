@@ -331,7 +331,7 @@ assert.equal(requestMockFileMixed.section,'rewrite');
 assert.match(requestMockFileMixed.line,/url-and-header script-request-body /);
 assert.equal(requestMockFileMixedCtx.generatedScripts.size,1);
 const requestMockFileMixedScript=[...requestMockFileMixedCtx.generatedScripts.values()][0];
-assert.match(requestMockFileMixedScript,/\{"ok":false\}/);
+assert.ok(requestMockFileMixedScript.includes('__wayxWith("{\\\"ok\\\":false}"'));
 assert.ok(requestMockFileMixedScript.indexOf('__wayxSet("X-Before","1")') < requestMockFileMixedScript.indexOf('__wayxSet("Content-Type","application/json")'));
 assert.ok(requestMockFileMixedScript.indexOf('__wayxSet("Content-Type","application/json")') < requestMockFileMixedScript.indexOf('__wayxJsonAction(j=>__wayxJsonReplace'));
 assert.ok(requestMockFileMixedScript.indexOf('__wayxJsonAction(j=>__wayxJsonReplace') < requestMockFileMixedScript.indexOf('__wayxDel("Cookie")'));
