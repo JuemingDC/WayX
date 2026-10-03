@@ -32,7 +32,7 @@ import {
   qxRuleOutputDestination,
   qxRewriteOutputDestination,
   renderQxOutput,
-} from './qx-output.mjs';
+} from './output.mjs';
 import {
   createSurgeOutputState,
   appendSurgeOutput,
@@ -40,7 +40,7 @@ import {
   surgeRuleOutputDestination,
   surgeRewriteOutputDestination,
   renderSurgeOutput,
-} from './surge-output.mjs';
+} from './output.mjs';
 import { parseLoonPlugin } from './plugin-parser.mjs';
 
 function splitPatternAction(line) {
