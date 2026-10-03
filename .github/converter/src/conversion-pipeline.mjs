@@ -49,6 +49,16 @@ function splitPatternAction(line) {
   return [line.slice(0,idx).trim(),line.slice(idx).trim().replace(/^\-\s+/,'')];
 }
 
+function splitRuleInlineComment(line) {
+  const source=String(line ?? '').trim();
+  const match=source.match(/^([\s\S]*?\S)\s+\/\/\s*(.+)$/);
+  if (!match) return {line:source,comment:null};
+  return {
+    line:match[1].trim(),
+    comment:'# '+match[2].trim(),
+  };
+}
+
 function rewriteErrorResult(line,error) {
   const reason=String(error?.message || error).split('\n')[0];
   if (error instanceof SyntaxError) return rewriteIssue(line,'unknown-rewrite-v2-syntax',reason);
@@ -207,17 +217,23 @@ export function convertPlugin(entry,source,{
 
   const ruleSectionLines=plugin.sections.get('Rule') || [];
   for (const item of groupSourceSectionItems(ruleSectionLines)) {
-    const comments=cleanSourceComments(item.comments);
     if (!item.line) {
+      const comments=cleanSourceComments(item.comments);
       qxOutputDestination(qx,'filter').push(...comments);
       surgeOutputDestination(sg,'rule').push(...comments);
       continue;
     }
 
-    const qr=canonicalQxRule(item.line);
+    const inline=splitRuleInlineComment(item.line);
+    const effectiveItem=inline.comment
+      ? {...item,line:inline.line,comments:[...item.comments,inline.comment]}
+      : item;
+    const comments=cleanSourceComments(effectiveItem.comments);
+
+    const qr=canonicalQxRule(inline.line);
     const qxRendered=attachQxInlineNote({
       sectionLines:ruleSectionLines,
-      item,
+      item:effectiveItem,
       sectionKind:'rule',
       lines:[qr.line],
       eligible:qr.kind==='filter' || qr.kind==='rewrite',
@@ -226,7 +242,7 @@ export function convertPlugin(entry,source,{
     if (qr.kind==='filter' || qr.kind==='rewrite') qxRuleDest.push(...qxRendered.comments,...qxRendered.lines);
     else qxRuleDest.push(...comments,qr.line);
 
-    const sr=surgeModuleRule(item.line,{proxyPolicyPlaceholder:surgeProxyPolicyPlaceholder});
+    const sr=surgeModuleRule(inline.line,{proxyPolicyPlaceholder:surgeProxyPolicyPlaceholder});
     surgeRuleOutputDestination(sg,sr.section).push(...comments,...sr.lines);
   }
 
