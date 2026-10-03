@@ -1,4 +1,4 @@
-// WayX semantic core Phase B contract
+// WayX semantic core Phase C contract
 // Author: chance
 // Category: Converter / Core / Reference Semantics
 
