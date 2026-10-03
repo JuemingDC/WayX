@@ -6,13 +6,14 @@ function freezeOptions(options) {
   return Object.freeze((options || []).map(item=>Object.freeze({...item})));
 }
 
-function baseIr({sourceSyntax,source,phase,condition,pattern,scriptPath,argument,options,sourcePayload}) {
+function baseIr({sourceSyntax,source,phase,condition,trigger,pattern,scriptPath,argument,options,sourcePayload}) {
   return Object.freeze({
     type:'script-semantic-ir',
     sourceSyntax,
     source:String(source || sourcePayload?.raw || ''),
     phase,
     condition:condition || null,
+    trigger:trigger || null,
     pattern:pattern || null,
     script:Object.freeze({path:String(scriptPath || '')}),
     argument:argument ?? null,
@@ -42,6 +43,7 @@ export function scriptV2AstToSemanticIr(ast,{source=ast?.raw || ''}={}) {
     source,
     phase:ast.phase,
     condition:ast.condition,
+    trigger:ast.trigger || null,
     scriptPath:ast.script?.path,
     argument:ast.script?.argument || null,
     options:ast.options,
