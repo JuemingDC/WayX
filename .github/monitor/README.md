@@ -46,11 +46,10 @@ hard sync failure 采用单插件事务边界：conversion + QX/Surge validation
 ## 核心文件
 
 - `.github/CONVERSION_SPEC.md`：唯一权威转换规范。
-- `.github/docs/conversion-spec/`：分块规范。
 - `.github/sources/loon.json`：唯一 Loon Source Catalog。
 - `.github/scripts/sync-convert.mjs`：原作者拉取、转换、目标校验与成功插件落盘。
 - `.github/scripts/propose-conversion-issues.mjs`：Review/Issue/hard failure 自动 Issue。
-- `.github/scripts/validate_conversion_policy.py`：目标格式硬校验。
+- `.github/converter/tests/validate_conversion_policy.py`：转换策略硬校验。
 - `.github/converter/tools/audit-repository.mjs`：仓库级审计。
 - `.github/converter/tools/conversion-reports.mjs`：reconciliation + Review/Issue inventory。
 - `.github/monitor/monitor_upstreams.py`：官方规范/仓库变化记录。
