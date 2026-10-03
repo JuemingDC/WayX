@@ -67,16 +67,16 @@ export function qxScriptV2Plan(ast, {scriptUrl = ast?.script?.path, sourceText =
     notes.push('Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.');
   }
   if (enable?.type === 'variable') {
-    notes.push('Source dynamic enable=' + enable.name + ' is not a Quantumult X Rewrite Script field; converted rule defaults to enabled.');
+    notes.push('Source dynamic enable=' + enable.name + ' ignored for Quantumult X; converted rule defaults to enabled.');
   }
   if (timeout) {
-    notes.push('Source Script timeout is not a Quantumult X Rewrite Script field and was omitted.');
+    notes.push('Source Script timeout ignored for Quantumult X.');
   }
   if (debug?.type === 'variable' || (debug?.type === 'boolean' && debug.value === true)) {
     notes.push('Source Script debug is not a Quantumult X Rewrite Script field and was omitted.');
   }
   if (binaryBodyMode) {
-    notes.push('Source binary_body_mode=true is not a Quantumult X Rewrite Script field and was omitted; requires_body remains independent.');
+    notes.push('Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.');
   }
 
   const action = selectQxScriptAction({
