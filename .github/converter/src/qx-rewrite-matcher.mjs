@@ -20,7 +20,7 @@ function regexEscape(value) {
 }
 
 function requestHeaderName(variableName) {
-  const match=String(variableName || '').match(/^request\.header\[(['"])([^'"\\r\\n]+)\1\]$/);
+  const match=String(variableName || '').match(/^request\.header\[(['"])([^'"]+)\1\]$/);
   if (!match) return null;
   const name=match[2];
   if (!/^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/.test(name)) return null;
@@ -70,7 +70,7 @@ function comparisonKey(node) {
 
     if (n.operator==='==') {
       const value=fixedString(n.right);
-      if (value===null || /[\r\n]/.test(value)) return null;
+      if (value===null || /[\x00-\x1F\x7F]/.test(value)) return null;
       return {
         kind:'request-header-eq',
         key:'request-header-eq\u0000'+normalizedName+'\u0000'+value,
