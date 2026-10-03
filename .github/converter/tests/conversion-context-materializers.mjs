@@ -27,6 +27,8 @@ const source=[
   '',
   '[Rewrite]',
   'response if ${url} ~= /jq/ then response.json.jq_file("filters/remove-ads.jq")',
+  'response if ${url} ~= /jq-alias/ then response.json.jq("jq-path=filters/legacy-alias.jq")',
+  '^https://legacy\\.example\\.com - response-body-json-jq jq-path=filters/legacy-rewrite.jq',
   'response if ${url} ~= /mock/ then response.body.mock_file("json", "mock.json", 200)',
   'response if ${url} ~= /image/ then response.body.mock_file("png", "image.bin", 200)',
   '',
@@ -39,6 +41,8 @@ const source=[
 
 const textByUrl=new Map([
   ['https://example.com/plugins/filters/remove-ads.jq','.ads | del(.banner)\n'],
+  ['https://example.com/plugins/filters/legacy-alias.jq','del(.legacyAlias)\n'],
+  ['https://example.com/plugins/filters/legacy-rewrite.jq','del(.legacyRewrite)\n'],
   ['https://example.com/plugins/mock.json','{"ok":true}'],
   ['https://example.com/plugins/legacy.js','const legacy = true;\r\n$done({});\r\n'],
   ['https://example.com/plugins/scripts/v2.js','const v2 = true;\n$done({});\n'],
@@ -66,6 +70,16 @@ const jqFiles=await materializeJqFiles(entry,parsed,{fetchText});
 const jqLine='response if ${url} ~= /jq/ then response.json.jq_file("filters/remove-ads.jq")';
 assert.equal(jqFiles.get(jqLine).sourceFile,'https://example.com/plugins/filters/remove-ads.jq');
 assert.match(jqFiles.get(jqLine).content,/del\(\.banner\)/);
+
+const jqAliasLine='response if ${url} ~= /jq-alias/ then response.json.jq("jq-path=filters/legacy-alias.jq")';
+assert.equal(jqFiles.get(jqAliasLine).sourceFile,'https://example.com/plugins/filters/legacy-alias.jq');
+assert.equal(jqFiles.get(jqAliasLine).content,'del(.legacyAlias)');
+assert.equal(jqFiles.get(jqAliasLine).legacyAlias,true);
+
+const legacyJqLine='^https://legacy\\.example\\.com - response-body-json-jq jq-path=filters/legacy-rewrite.jq';
+assert.equal(jqFiles.get(legacyJqLine).sourceFile,'https://example.com/plugins/filters/legacy-rewrite.jq');
+assert.equal(jqFiles.get(legacyJqLine).content,'del(.legacyRewrite)');
+assert.equal(jqFiles.get(legacyJqLine).legacyAlias,true);
 
 const mockFiles=await materializeMockFiles(entry,parsed,{fetchText,fetchBytes});
 const textMockLine='response if ${url} ~= /mock/ then response.body.mock_file("json", "mock.json", 200)';
@@ -104,11 +118,15 @@ fetchedBytes.length=0;
 const context=await materializeConversionContext(entry,source,{fetchText,fetchBytes});
 assert.ok(context.parsed.sections instanceof Map);
 assert.equal(context.jqFiles.get(jqLine).sourceFile,'https://example.com/plugins/filters/remove-ads.jq');
+assert.equal(context.jqFiles.get(jqAliasLine).content,'del(.legacyAlias)');
+assert.equal(context.jqFiles.get(legacyJqLine).content,'del(.legacyRewrite)');
 assert.equal(context.mockFiles.get(binaryMockLine).bodyBase64,'AAEC/w==');
 assert.equal(context.scriptMap.get('./legacy.js').qx,'https://example.com/plugins/legacy.js');
 assert.equal(context.scriptMap.get('scripts/v2.js').qx,'https://example.com/plugins/scripts/v2.js');
 assert.match(context.scriptMap.get('https://bad.example/fail.js').sourceError,/fixture source unavailable/);
 assert.ok(fetchedText.includes('https://example.com/plugins/filters/remove-ads.jq'));
+assert.ok(fetchedText.includes('https://example.com/plugins/filters/legacy-alias.jq'));
+assert.ok(fetchedText.includes('https://example.com/plugins/filters/legacy-rewrite.jq'));
 assert.ok(fetchedText.includes('https://example.com/plugins/mock.json'));
 assert.ok(fetchedText.includes('https://example.com/plugins/legacy.js'));
 assert.ok(fetchedText.includes('https://example.com/plugins/scripts/v2.js'));
@@ -123,6 +141,12 @@ const conversionOptions={
   rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main',
 };
 const baseline=convertPlugin(entry,source,conversionOptions);
+assert.match(baseline.qx,/jsonjq-response-body 'del\\(\\.legacyAlias\\)'/);
+assert.match(baseline.qx,/jsonjq-response-body 'del\\(\\.legacyRewrite\\)'/);
+assert.match(baseline.surge,/http-response-jq .*'del\\(\\.legacyAlias\\)'/);
+assert.match(baseline.surge,/http-response-jq .*'del\\(\\.legacyRewrite\\)'/);
+assert.doesNotMatch(baseline.qx,/jq-path=/);
+assert.doesNotMatch(baseline.surge,/jq-path=/);
 const reused=convertPlugin(entry,'#!name=Different\\n[Rule]\\nDOMAIN,wrong.example,DIRECT\\n',conversionOptions);
 assert.equal(reused.qx,baseline.qx,'convertPlugin must consume the provided parsed plugin instead of reparsing source');
 assert.equal(reused.surge,baseline.surge,'Surge output must use the same materialized parsed plugin');
