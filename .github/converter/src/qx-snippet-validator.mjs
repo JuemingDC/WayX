@@ -66,34 +66,30 @@ function validateQxRewriteAction(action,line,entry) {
 }
 
 function validateQxTaskLine(line, entry) {
-  const event = String(line).match(/^(event-network|event-interaction)\s+(\S+)([\s\S]*)$/);
-  let tail = '';
-  if (event) {
-    tail = event[3] || '';
-  } else {
-    const tokens = String(line).trim().split(/\s+/);
+  const source=String(line).trim();
+  const comma=source.indexOf(',');
+  const declaration=(comma>=0 ? source.slice(0,comma) : source).trim();
+  const optionText=comma>=0 ? source.slice(comma+1).trim() : '';
+
+  const event=declaration.match(/^(event-network|event-interaction)\s+(\S+)$/);
+  if (!event) {
+    const tokens=declaration.split(/\s+/);
     if (tokens.length < 6) return false;
-    let cronFields = null;
-    if (tokens.length >= 7 && /^(?:https?:\/\/|[^\s]+\.js(?:[?#]|$))/.test(tokens[6])) cronFields = 6;
-    else if (/^(?:https?:\/\/|[^\s]+\.js(?:[?#]|$))/.test(tokens[5])) cronFields = 5;
-    if (!cronFields) return false;
-    tail = tokens.slice(cronFields + 1).join(' ');
+    const scriptUrl=tokens.at(-1);
+    const cron=tokens.slice(0,-1);
+    if (![5,6].includes(cron.length) || !/^https?:\/\/\S+$/i.test(scriptUrl)) return false;
   }
 
-  if (!tail.trim()) return true;
-  if (!/^,\s*/.test(tail)) {
-    throw new Error(`${entry.id}: malformed Quantumult X task options: ${line}`);
-  }
-  const optionText = tail.replace(/^,\s*/, '');
+  if (!optionText) return true;
   for (const raw of optionText.split(/,\s*/)) {
-    const eq = raw.indexOf('=');
+    const eq=raw.indexOf('=');
     if (eq < 1) throw new Error(`${entry.id}: malformed Quantumult X task option: ${line}`);
-    const name = raw.slice(0,eq).trim().toLowerCase();
-    const value = raw.slice(eq+1).trim();
+    const name=raw.slice(0,eq).trim().toLowerCase();
+    const value=raw.slice(eq+1).trim();
     if (!['tag','img-url','enabled','require-devices'].includes(name) || !value) {
       throw new Error(`${entry.id}: unverified/unsupported Quantumult X task option ${name}: ${line}`);
     }
-    if (name === 'enabled' && !/^(?:true|false)$/i.test(value)) {
+    if (name==='enabled' && !/^(?:true|false)$/i.test(value)) {
       throw new Error(`${entry.id}: Quantumult X task enabled must be true/false: ${line}`);
     }
   }
