@@ -107,3 +107,80 @@ export function differentialConditionOracle({
     cases,
   };
 }
+
+
+const BROAD_HTTP_URL='^https?://';
+
+function unwrapCondition(node) {
+  let current=node;
+  while (current?.type==='group') current=current.expression;
+  return current;
+}
+
+function safeUrlPrefilterNode(node) {
+  const current=unwrapCondition(node);
+  if (!current) return {pattern:BROAD_HTTP_URL,exact:false,reason:'missing-condition'};
+
+  if (current.type==='comparison') {
+    if (
+      current.operator==='~=' &&
+      current.left?.type==='variable' &&
+      current.left.name==='url' &&
+      current.right?.type==='regex'
+    ) {
+      const flags=String(current.right.flags || '');
+      if (flags) {
+        return {
+          pattern:BROAD_HTTP_URL,
+          exact:false,
+          reason:'source-url-regex-flags:'+flags,
+        };
+      }
+      return {
+        pattern:String(current.right.pattern ?? ''),
+        exact:true,
+        reason:'unflagged-url-regex',
+      };
+    }
+    return {pattern:BROAD_HTTP_URL,exact:false,reason:'non-url-comparison'};
+  }
+
+  if (current.type!=='logical') {
+    return {pattern:BROAD_HTTP_URL,exact:false,reason:'unsupported-condition-node'};
+  }
+
+  const left=safeUrlPrefilterNode(current.left);
+  const right=safeUrlPrefilterNode(current.right);
+
+  if (current.operator==='&&') {
+    if (left.pattern!==BROAD_HTTP_URL) {
+      return {pattern:left.pattern,exact:false,reason:'and-left-necessary-predicate'};
+    }
+    if (right.pattern!==BROAD_HTTP_URL) {
+      return {pattern:right.pattern,exact:false,reason:'and-right-necessary-predicate'};
+    }
+    return {pattern:BROAD_HTTP_URL,exact:false,reason:'and-broad'};
+  }
+
+  if (current.operator==='||') {
+    if (left.pattern===BROAD_HTTP_URL || right.pattern===BROAD_HTTP_URL) {
+      return {pattern:BROAD_HTTP_URL,exact:false,reason:'or-branch-requires-broad-prefilter'};
+    }
+    return {
+      pattern:'(?:'+left.pattern+')|(?:'+right.pattern+')',
+      exact:left.exact===true && right.exact===true,
+      reason:'or-union',
+    };
+  }
+
+  return {pattern:BROAD_HTTP_URL,exact:false,reason:'unsupported-logical-operator'};
+}
+
+export function planSafeUrlPrefilter(condition) {
+  const plan=safeUrlPrefilterNode(condition);
+  return {
+    ...plan,
+    noFalseNegatives:true,
+    proof:'structural-necessary-condition',
+  };
+}
