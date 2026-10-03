@@ -100,7 +100,7 @@ function validateQxTaskLine(line, entry) {
   return true;
 }
 
-function validateQxExecutableLine(line, entry) {
+function validateQxExecutableLine(line, entry, section = null) {
   const noted=stripQxLeadingNote(line,entry);
   line=noted.line;
 
@@ -108,7 +108,10 @@ function validateQxExecutableLine(line, entry) {
     throw new Error(`${entry.id}: Quantumult X leading notes are only valid on filter/rewrite rules: ${line}`);
   }
 
-  if (validateQxTaskLine(line,entry)) return;
+  if (section==='task_local') {
+    if (validateQxTaskLine(line,entry)) return;
+    throw new Error(`${entry.id}: malformed/unverified Quantumult X task line: ${line}`);
+  }
 
   const mitm=line.match(/^([A-Za-z0-9_-]+)\s*=/);
   if (mitm) {
@@ -163,8 +166,14 @@ export function validateQX(text, entry) {
     throw new Error(`${entry.id}: Quantumult X section headings must be commented`);
   }
 
+  let section=null;
   for (const raw of text.split('\n')) {
     const line=raw.trim();
+    const sectionMatch=line.match(/^#\s*\[(filter_local|rewrite_local|task_local|mitm)\]\s*$/i);
+    if (sectionMatch) {
+      section=sectionMatch[1].toLowerCase();
+      continue;
+    }
     if (!line || line.startsWith('#')) continue;
     if (/\(\?[ims](?:[:)])?/i.test(line)) {
       throw new Error(`${entry.id}: Quantumult X output must not restore discarded Loon regex flags with inline modifiers: ${line}`);
@@ -175,7 +184,7 @@ export function validateQX(text, entry) {
     if (/jq-path=/i.test(line)) {
       throw new Error(`${entry.id}: discarded legacy jq-path alias leaked into active Quantumult X output: ${line}`);
     }
-    validateQxExecutableLine(line,entry);
+    validateQxExecutableLine(line,entry,section);
   }
 
   for (const bad of ['response-body-json-del','response-body-json-replace','response-body-json-jq','mock-response-body']) {
