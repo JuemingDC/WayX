@@ -13,7 +13,7 @@ export function hasActiveSurgeLines(lines = []) {
 }
 
 export function validateSurgeModule(text, entry = {id:'module'}) {
-  const allowedSections = new Set(['Rule', ...SURGE_WAYX_REWRITE_SECTIONS, 'MITM']);
+  const allowedSections = new Set(['General','Rule', ...SURGE_WAYX_REWRITE_SECTIONS, 'MITM']);
 
   const allowedTopDirectives = [
     /^#!name=.+$/i,
@@ -81,6 +81,14 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
 
     if (current === null) {
       throw new Error(`${entry.id}: active Surge content outside a section: ${line}`);
+    }
+
+    if (current === 'General') {
+      const option=line.match(/^([^=]+?)\s*=\s*(.+)$/);
+      if (!option || option[1].trim()!=='always-real-ip') {
+        throw new Error(`${entry.id}: unsupported Surge module [General] option: ${line}`);
+      }
+      continue;
     }
 
     if (current === 'Rule') {
@@ -153,7 +161,7 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
       if (!typeMatch) throw new Error(`${entry.id}: Surge [Script] declaration must include an explicit type: ${line}`);
       const type = typeMatch[1];
       if (!SURGE_WAYX_SCRIPT_TYPES.has(type)) {
-        throw new Error(`${entry.id}: WayX ad-block Surge [Script] only accepts HTTP rewrite types: ${line}`);
+        throw new Error(`${entry.id}: unsupported Surge [Script] type for WayX conversion: ${line}`);
       }
       if (!/(?:^|,)\s*script-path=[^,\s]+/.test(body)) {
         throw new Error(`${entry.id}: Surge [Script] missing script-path: ${line}`);
@@ -162,6 +170,14 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
         const patternMatch = body.match(/(?:^|,)\s*pattern=([^,]+)/);
         if (!patternMatch) {
           throw new Error(`${entry.id}: Surge HTTP script missing pattern: ${line}`);
+        }
+      } else if (type === 'cron') {
+        if (!/(?:^|,)\s*cronexp=(?:"(?:[^"\\]|\\.)*"|[^,]+)/.test(body)) {
+          throw new Error(`${entry.id}: Surge cron script missing cronexp: ${line}`);
+        }
+      } else if (type === 'event') {
+        if (!/(?:^|,)\s*event-name=[^,\s]+/.test(body)) {
+          throw new Error(`${entry.id}: Surge event script missing event-name: ${line}`);
         }
       }
       continue;
