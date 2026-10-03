@@ -141,10 +141,10 @@ const conversionOptions={
   rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main',
 };
 const baseline=convertPlugin(entry,source,conversionOptions);
-assert.match(baseline.qx,/jsonjq-response-body 'del\\(\\.legacyAlias\\)'/);
-assert.match(baseline.qx,/jsonjq-response-body 'del\\(\\.legacyRewrite\\)'/);
-assert.match(baseline.surge,/http-response-jq .*'del\\(\\.legacyAlias\\)'/);
-assert.match(baseline.surge,/http-response-jq .*'del\\(\\.legacyRewrite\\)'/);
+assert.match(baseline.qx,/jsonjq-response-body 'del\(\.legacyAlias\)'/);
+assert.match(baseline.qx,/jsonjq-response-body 'del\(\.legacyRewrite\)'/);
+assert.match(baseline.surge,/http-response-jq .*'del\(\.legacyAlias\)'/);
+assert.match(baseline.surge,/http-response-jq .*'del\(\.legacyRewrite\)'/);
 assert.doesNotMatch(baseline.qx,/jq-path=/);
 assert.doesNotMatch(baseline.surge,/jq-path=/);
 const reused=convertPlugin(entry,'#!name=Different\\n[Rule]\\nDOMAIN,wrong.example,DIRECT\\n',conversionOptions);
