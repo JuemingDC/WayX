@@ -65,6 +65,41 @@ function validateQxRewriteAction(action,line,entry) {
   throw new Error(`${entry.id}: unverified/unsupported Quantumult X rewrite action: ${action}; codepoints=${codepoints}; line: ${line}`);
 }
 
+function validateQxTaskLine(line, entry) {
+  const event = String(line).match(/^(event-network|event-interaction)\s+(\S+)([\s\S]*)$/);
+  let tail = '';
+  if (event) {
+    tail = event[3] || '';
+  } else {
+    const tokens = String(line).trim().split(/\s+/);
+    if (tokens.length < 6) return false;
+    let cronFields = null;
+    if (tokens.length >= 7 && /^(?:https?:\/\/|[^\s]+\.js(?:[?#]|$))/.test(tokens[6])) cronFields = 6;
+    else if (/^(?:https?:\/\/|[^\s]+\.js(?:[?#]|$))/.test(tokens[5])) cronFields = 5;
+    if (!cronFields) return false;
+    tail = tokens.slice(cronFields + 1).join(' ');
+  }
+
+  if (!tail.trim()) return true;
+  if (!/^,\s*/.test(tail)) {
+    throw new Error(`${entry.id}: malformed Quantumult X task options: ${line}`);
+  }
+  const optionText = tail.replace(/^,\s*/, '');
+  for (const raw of optionText.split(/,\s*/)) {
+    const eq = raw.indexOf('=');
+    if (eq < 1) throw new Error(`${entry.id}: malformed Quantumult X task option: ${line}`);
+    const name = raw.slice(0,eq).trim().toLowerCase();
+    const value = raw.slice(eq+1).trim();
+    if (!['tag','img-url','enabled','require-devices'].includes(name) || !value) {
+      throw new Error(`${entry.id}: unverified/unsupported Quantumult X task option ${name}: ${line}`);
+    }
+    if (name === 'enabled' && !/^(?:true|false)$/i.test(value)) {
+      throw new Error(`${entry.id}: Quantumult X task enabled must be true/false: ${line}`);
+    }
+  }
+  return true;
+}
+
 function validateQxExecutableLine(line, entry) {
   const noted=stripQxLeadingNote(line,entry);
   line=noted.line;
@@ -72,6 +107,8 @@ function validateQxExecutableLine(line, entry) {
   if (noted.note && /^([A-Za-z0-9_-]+)\s*=/.test(line)) {
     throw new Error(`${entry.id}: Quantumult X leading notes are only valid on filter/rewrite rules: ${line}`);
   }
+
+  if (validateQxTaskLine(line,entry)) return;
 
   const mitm=line.match(/^([A-Za-z0-9_-]+)\s*=/);
   if (mitm) {
@@ -121,7 +158,7 @@ export function validateQX(text, entry) {
     throw new Error(`${entry.id}: Quantumult X snippet metadata must be plain comments, not active #! directives`);
   }
 
-  const activeSections=text.split('\n').filter(line=>/^\[(filter_local|rewrite_local|mitm)\]$/i.test(line.trim()));
+  const activeSections=text.split('\n').filter(line=>/^\[(filter_local|rewrite_local|task_local|mitm)\]$/i.test(line.trim()));
   if (activeSections.length) {
     throw new Error(`${entry.id}: Quantumult X section headings must be commented`);
   }
