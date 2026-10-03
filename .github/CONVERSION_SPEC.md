@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.50  
+版本：1.51  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -10,13 +10,21 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 
 ## 2026-10-03 规范更新
 
+**Loon Catalog Regex 审计与 QX Redirect Matcher/Capture 解耦（2026-10-03）**：
+
+1. CI 必须扫描 Catalog 中活动 `[Rewrite]` 的 Legacy URL pattern 与 Rewrite v2 全部 Regex AST 节点，单独报告高级/特殊 Regex 构造：lookaround、lookbehind、named capture/backreference、numeric backreference、Unicode property、inline modifier、atomic/conditional/branch-reset group、possessive quantifier。普通 `^/$`、character class、capture/non-capture group、alternation、quantifier、escaped slash/dot 不视为平台特殊语法。
+2. 若 Catalog 未观察到上述高级/特殊构造，不为“预防未来”改写现有 URL Regex；继续以 parser 去掉最外层 delimiter 后的原 regex body 为权威。若未来首次出现高级构造，inventory 必须 fail closed，先审查 Loon/QX/Surge 实际支持再决定目标映射，不得自动 canonicalize。
+3. QX Rewrite v2 redirect 的 URL matcher 与 capture evaluator 分离：外层使用统一 `qxRewriteMatcherPlan()` 做 URL/Method/request Header 必要条件预筛；helper 内完整重算源 Loon condition，并由源 URL Regex 自己产生 capture。外层 matcher 的 capture 不得被 action replacement 直接消费。
+4. Redirect full-condition helper 当前要求成功路径上存在且仅存在一个 URL Regex，并禁止 `||`，以保证 matched-range replacement 始终对应同一 URL match。允许在该 URL 条件上通过 `&&` 追加 request.method、request/response Header、response.status 等 helper 可表达条件。
+5. Redirect helper 的 URL Regex 继续逐字符使用 parser AST 原值；`${capture.n}` 只能引用该 URL comparison 的 `as capture`，replacement 仍以 URL match 的 `index` 与完整 match 长度执行 matched-range replacement。无法证明 capture 来源/成功路径唯一时 Review。
+
 **Quantumult X URL Regex 原样保持与 Dedicated Helper Matcher 统一（2026-10-03）**：
 
 1. Loon Rewrite v2 的 `${url} ~= /.../` 在 parser 去掉最外层 Regex delimiter 后，**URL regex body 必须逐字符保持源值**。QX matcher planner 与 `simpleUrlRewriteCondition()` 不得对 URL pattern 调用 target regex compiler、normalizer、unescape、canonicalizer 或 case-fold。`\/`、`\.`, capture、lookaround、character class、anchor 等全部保持原样；仅既有项目规则继续丢弃 `i/m/s` flags。
 2. 上述规则只针对 URL matcher。Body/Header action 自身的 Regex 仍按各自 action 语义和目标格式处理，不得把“URL 不编译”扩大成取消其它字段已有的安全检查。
 3. QX dedicated helper 统一使用 matcher planner：若 helper 本身**不重算源 condition**，必须要求 `qxExactRewriteMatcherPlan()` 成功后才能执行；若 helper 内部完整重算源 condition，则使用 `qxRewriteMatcherPlan()` 只做必要条件 prefilter。禁止再由各 helper 自行拼 `pattern + ' url '`。
 4. 当前迁移范围包括 inline/file mock、single Header helper、single Body/JSON mutation helper 与 generated reject response。URL-only 继续使用 `url`；Method/Headers 条件只在 matcher planner 判定后使用 `url-and-header`。single Header/Body/JSON 在 exact matcher 不足时可使用 full-condition helper，因此 `${request.header[...]}` prefilter 现在也能用于这些 single-action 路径。
-5. Redirect helper 暂保留现有 URL-capture 专用路径：其 replacement 依赖 URL match/capture 的精确位置与编号，在把 matcher 与 capture evaluator 完全解耦前不得为了统一形式而修改。
+5. Redirect helper 已完成 matcher/capture 解耦：matcher 只负责外层候选筛选，helper 内重算完整 condition 与 URL capture。对只有 URL 的源声明仍输出原 URL Regex + `url`；存在可下推 Method/request Header 时才使用 `url-and-header`。
 
 **Quantumult X request.header 条件预筛选（2026-10-03）**：
 
