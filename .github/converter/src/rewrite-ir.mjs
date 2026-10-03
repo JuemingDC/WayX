@@ -204,7 +204,9 @@ export function isEmptyLegacyJsonJqIr(ir) {
   if (!Array.isArray(ir.operations) || ir.operations.length!==1) return false;
   const op=ir.operations[0];
   if (op?.kind!=='json' || op?.operation!=='jq') return false;
-  const raw=String(op?.rest ?? '').trim();
+  const raw=String(op?.rest ?? '')
+    .replace(/[\u200B-\u200D\u2060\uFEFF]/gu,'')
+    .trim();
   if (!raw) return true;
   return unquoteRewriteToken(raw).trim()==='';
 }
