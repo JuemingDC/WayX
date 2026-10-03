@@ -2,11 +2,11 @@
 // Author: chance
 // Category: Converter / Rewrite v2 / Complex Helper
 
+import { findRewriteComparisons } from './rewrite-v2.mjs';
 import { validateRewriteV2Ast } from './rewrite-v2-actions.mjs';
 import { compileComplexCondition } from './complex-rewrite.mjs';
 import { normalizeRegexBodyForTarget } from './target-regex.mjs';
 import { qxMimeTypeForLoonMock, qxMockTypeIsBinary } from './qx-mock.mjs';
-import { planSafeUrlPrefilter } from './core/equivalence-plan.mjs';
 
 function fixed(node, label) {
   if (!node || !['string','raw-string'].includes(node.type) || (node.type === 'string' && String(node.value).includes('${'))) {
@@ -77,8 +77,13 @@ function expand(action) {
   if (!action.args.some(arg => arg.type === 'array')) return [action.args];
   return action.args[0].items.map((_, i) => action.args.map(arg => arg.items[i]));
 }
-function safeTriggerPattern(ast) {
-  return planSafeUrlPrefilter(ast.condition).pattern;
+function coarsePattern(ast) {
+  const found = findRewriteComparisons(ast.condition, node =>
+    node.operator === '~=' && node.left?.type === 'variable' && node.left.name === 'url' && node.right?.type === 'regex'
+  );
+  if (!found.length) return '^https?://';
+  if (found.length === 1) return normalizeRegexBodyForTarget(found[0].right.pattern);
+  return '(?:' + found.map(node => '(?:' + normalizeRegexBodyForTarget(node.right.pattern) + ')').join('|') + ')';
 }
 function jsonValueSource(node, captures, guaranteed, argumentTable = null) {
   if (!node) throw new Error('JSON replacement value is missing');
@@ -257,7 +262,7 @@ function renderRewriteScript(ast, {target, stamp='', category='', sourceLine='',
   const qxAction = plan.body
     ? (ast.phase==='request'?'script-request-body':'script-response-body')
     : (ast.phase==='request'?'script-request-header':'script-response-header');
-  return {pattern:safeTriggerPattern(ast),script:lines.join('\n'),qxAction,surgeType:ast.phase==='request'?'http-request':'http-response',requiresBody:plan.body,fullHeaderMode:plan.headerAdd};
+  return {pattern:coarsePattern(ast),script:lines.join('\n'),qxAction,surgeType:ast.phase==='request'?'http-request':'http-response',requiresBody:plan.body,fullHeaderMode:plan.headerAdd};
 }
 
 export function renderMixedRewriteScript(ast, options = {}) {
@@ -274,8 +279,7 @@ export function renderSingleRewriteMutationScript(ast, options = {}) {
     throw new Error('single Rewrite mutation helper requires exactly one action');
   }
   const name=ast.actions[0]?.name || '';
-  const headerOps=options.target==='surge' ? 'add|set|del|replace' : 'set|del|replace';
-  const supported=new RegExp('^'+ast.phase+'\\.(?:header\\.(?:'+headerOps+')|body\\.replace|json\\.(?:add|delete|replace))$');
+  const supported=new RegExp('^'+ast.phase+'\\.(?:header\\.(?:set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$');
   if (!supported.test(name)) {
     throw new Error('single Rewrite mutation helper does not support '+name);
   }
