@@ -49,7 +49,7 @@ jobs:
              const {data:saved}=await github.rest.git.createCommit({...repo,message:'archive: preserve WayX branch tips before authorized cleanup',tree:tree.sha,parents:[archive,...tips.slice(i,i+30)]});
              archive=saved.sha;
             }
-            const tag='archive/branches-2026-10-03-'+context.runId+'-'+context.runAttempt;
+            const tag='archive/branches-2026-10-03-'+context.runId+'-'+process.env.GITHUB_RUN_ATTEMPT;
             await github.rest.git.createRef({...repo,ref:'refs/tags/'+tag,sha:archive});
             const deleted=[];
             for(const b of unique.filter(b=>!b.absent)){
