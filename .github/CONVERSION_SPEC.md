@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.49  
+版本：1.50  
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**
 
@@ -9,6 +9,14 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 本规范采用“分块规范”结构。转换器、测试、canonical 输出、Golden 都必须服从本规范，不能反过来用现有代码定义规范。
 
 ## 2026-10-03 规范更新
+
+**Quantumult X URL Regex 原样保持与 Dedicated Helper Matcher 统一（2026-10-03）**：
+
+1. Loon Rewrite v2 的 `${url} ~= /.../` 在 parser 去掉最外层 Regex delimiter 后，**URL regex body 必须逐字符保持源值**。QX matcher planner 与 `simpleUrlRewriteCondition()` 不得对 URL pattern 调用 target regex compiler、normalizer、unescape、canonicalizer 或 case-fold。`\/`、`\.`, capture、lookaround、character class、anchor 等全部保持原样；仅既有项目规则继续丢弃 `i/m/s` flags。
+2. 上述规则只针对 URL matcher。Body/Header action 自身的 Regex 仍按各自 action 语义和目标格式处理，不得把“URL 不编译”扩大成取消其它字段已有的安全检查。
+3. QX dedicated helper 统一使用 matcher planner：若 helper 本身**不重算源 condition**，必须要求 `qxExactRewriteMatcherPlan()` 成功后才能执行；若 helper 内部完整重算源 condition，则使用 `qxRewriteMatcherPlan()` 只做必要条件 prefilter。禁止再由各 helper 自行拼 `pattern + ' url '`。
+4. 当前迁移范围包括 inline/file mock、single Header helper、single Body/JSON mutation helper 与 generated reject response。URL-only 继续使用 `url`；Method/Headers 条件只在 matcher planner 判定后使用 `url-and-header`。single Header/Body/JSON 在 exact matcher 不足时可使用 full-condition helper，因此 `${request.header[...]}` prefilter 现在也能用于这些 single-action 路径。
+5. Redirect helper 暂保留现有 URL-capture 专用路径：其 replacement 依赖 URL match/capture 的精确位置与编号，在把 matcher 与 capture evaluator 完全解耦前不得为了统一形式而修改。
 
 **Quantumult X request.header 条件预筛选（2026-10-03）**：
 

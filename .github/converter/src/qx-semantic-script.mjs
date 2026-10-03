@@ -28,10 +28,13 @@ function metadata({ stamp = '', category = '', sourceLine = '' } = {}) {
   ].filter(Boolean);
 }
 
-function oneAction(ast, name) {
+function oneAction(ast, name, {conditionMode='simple-url'}={}) {
   validateRewriteV2Ast(ast);
   if (ast.actions.length !== 1 || ast.actions[0].name !== name) {
     throw new Error('Expected one ' + name + ' action');
+  }
+  if (conditionMode === 'external-exact') {
+    return { condition:null, action:ast.actions[0] };
   }
   const condition = simpleUrlRewriteCondition(ast);
   if (!condition.ok) throw new Error(condition.reason);
@@ -89,8 +92,9 @@ export function renderQxRedirectScript(ast, options = {}) {
 export function renderQxRejectScript(ast, options = {}) {
   validateRewriteV2Ast(ast);
   if (ast.actions.length !== 1) throw new Error('reject script requires exactly one action');
-  const condition = simpleUrlRewriteCondition(ast);
-  if (!condition.ok) throw new Error(condition.reason);
+  const externalExact=options.conditionMode === 'external-exact';
+  const condition=externalExact ? {pattern:null,notes:[]} : simpleUrlRewriteCondition(ast);
+  if (!condition.ok && !externalExact) throw new Error(condition.reason);
   const action = ast.actions[0];
   if (!['reject','reject_dict','reject_array'].includes(action.name)) {
     throw new Error('reject action has no generated QX response implementation');
@@ -184,8 +188,9 @@ export function headerOpsForMock(ast, mockAction) {
 
 export function renderQxInlineMockScript(ast, options = {}) {
   validateRewriteV2Ast(ast);
-  const condition = simpleUrlRewriteCondition(ast);
-  if (!condition.ok) throw new Error(condition.reason);
+  const externalExact=options.conditionMode === 'external-exact';
+  const condition=externalExact ? {pattern:null,notes:[]} : simpleUrlRewriteCondition(ast);
+  if (!condition.ok && !externalExact) throw new Error(condition.reason);
   const mocks = ast.actions.filter(a => /^(?:request|response)\.body\.mock$/.test(a.name));
   if (mocks.length !== 1) throw new Error('QX inline mock conversion requires exactly one body.mock action');
   const mock = mocks[0];
@@ -222,8 +227,9 @@ export function renderQxInlineMockScript(ast, options = {}) {
 
 export function renderQxHeaderScript(ast, options = {}) {
   validateRewriteV2Ast(ast);
-  const condition = simpleUrlRewriteCondition(ast);
-  if (!condition.ok) throw new Error(condition.reason);
+  const externalExact=options.conditionMode === 'external-exact';
+  const condition=externalExact ? {pattern:null,notes:[]} : simpleUrlRewriteCondition(ast);
+  if (!condition.ok && !externalExact) throw new Error(condition.reason);
   if (!ast.actions.length || ast.actions.some(a =>
     !new RegExp('^' + ast.phase + '\\.header\\.(?:add|set|del|replace)$').test(a.name)
   )) {

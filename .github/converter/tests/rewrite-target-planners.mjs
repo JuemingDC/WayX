@@ -33,6 +33,13 @@ const legacyReject=legacyRewriteToSemanticIr('^https://ads\\.example\\.com','rej
 assert.equal(planQxRewrite(legacyReject,ctx()).line,'^https://ads\\.example\\.com url reject-dict');
 assert.equal(planSurgeRewrite(legacyReject,ctx()).section,'map');
 
+const rawUrlPattern='^https:\\/\\/api\\.example\\.com\\/v1\\/(?:a|b)\\?x=1$';
+const rawUrlMatcher=qxExactRewriteMatcherPlan(parseRewriteV2(
+  'request if ${url} ~= /'+rawUrlPattern+'/ then request.header.add("X-Test","1")'
+));
+assert.equal(rawUrlMatcher.urlPattern,rawUrlPattern);
+assert.equal(rawUrlMatcher.prefix,rawUrlPattern+' url ');
+
 const rejectSource='response if ${url} ~= /ads/ then reject_dict(200)';
 const rejectIr=v2(rejectSource);
 assert.match(planQxRewrite(rejectIr,ctx()).line,/ url reject-dict$/);
@@ -305,6 +312,48 @@ assert.equal(urlOnlyNativeAddPipeline.section,'rewrite');
 assert.match(urlOnlyNativeAddPipeline.line,/^api url request-header /);
 assert.doesNotMatch(urlOnlyNativeAddPipeline.line,/url-and-header/);
 assert.equal(urlOnlyNativeAddPipelineCtx.generatedScripts.size,0);
+
+const methodOnlyHeaderSetSource='request if ${request.method} == "POST" then request.header.set("X-Test","1")';
+const methodOnlyHeaderSetCtx=ctx();
+const methodOnlyHeaderSet=planQxRewrite(v2(methodOnlyHeaderSetSource),methodOnlyHeaderSetCtx);
+assert.equal(methodOnlyHeaderSet.section,'rewrite');
+assert.match(methodOnlyHeaderSet.line,/^\^https\?:\/\/ \^POST\[ \] url-and-header script-request-header /);
+assert.equal(methodOnlyHeaderSetCtx.generatedScripts.size,1);
+
+const headerConditionSingleSetSource='request if ${request.header[\'X-Region\']} == "CN" then request.header.set("X-Test","1")';
+const headerConditionSingleSetCtx=ctx();
+const headerConditionSingleSet=planQxRewrite(v2(headerConditionSingleSetSource),headerConditionSingleSetCtx);
+assert.equal(headerConditionSingleSet.section,'rewrite');
+assert.match(headerConditionSingleSet.line,/url-and-header script-request-header /);
+assert.match([...headerConditionSingleSetCtx.generatedScripts.values()][0],/__wayxHeader\("request","X-Region"\)/);
+
+const headerConditionBodySource='response if ${request.header[\'X-Region\']} == "CN" then response.body.replace(/foo/,"bar")';
+const headerConditionBodyCtx=ctx();
+const headerConditionBody=planQxRewrite(v2(headerConditionBodySource),headerConditionBodyCtx);
+assert.equal(headerConditionBody.section,'rewrite');
+assert.match(headerConditionBody.line,/url-and-header script-response-body /);
+assert.match([...headerConditionBodyCtx.generatedScripts.values()][0],/__wayxHeader\("request","X-Region"\)/);
+
+const headerConditionJsonReplaceSource='response if ${request.header[\'X-Region\']} == "CN" then response.json.replace("data.ok",true)';
+const headerConditionJsonReplaceCtx=ctx();
+const headerConditionJsonReplace=planQxRewrite(v2(headerConditionJsonReplaceSource),headerConditionJsonReplaceCtx);
+assert.equal(headerConditionJsonReplace.section,'rewrite');
+assert.match(headerConditionJsonReplace.line,/url-and-header script-response-body /);
+assert.match([...headerConditionJsonReplaceCtx.generatedScripts.values()][0],/__wayxHeader\("request","X-Region"\)/);
+
+const methodRejectSource='response if ${request.method} == "POST" then reject_dict(418)';
+const methodRejectCtx=ctx();
+const methodReject=planQxRewrite(v2(methodRejectSource),methodRejectCtx);
+assert.equal(methodReject.section,'rewrite');
+assert.match(methodReject.line,/^\^https\?:\/\/ \^POST\[ \] url-and-header script-echo-response /);
+assert.equal(methodRejectCtx.generatedScripts.size,1);
+
+const methodInlineMockSource='response if ${request.method} == "POST" then response.body.mock("text","{}",200,false)';
+const methodInlineMockCtx=ctx();
+const methodInlineMock=planQxRewrite(v2(methodInlineMockSource),methodInlineMockCtx);
+assert.equal(methodInlineMock.section,'rewrite');
+assert.match(methodInlineMock.line,/^\^https\?:\/\/ \^POST\[ \] url-and-header script-echo-response /);
+assert.equal(methodInlineMockCtx.generatedScripts.size,1);
 
 const nativeResponseAddPipelineSource='response if ${url} ~= /api/ then response.header.add("Set-Cookie","a=1") | response.header.add("Set-Cookie","b=2")';
 const nativeResponseAddPipelineCtx=ctx();

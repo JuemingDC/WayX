@@ -213,6 +213,19 @@ export function renderMixedRewriteScript(ast, options = {}) {
   return renderRewriteScript(ast, options);
 }
 
+export function renderSingleRewriteMutationScript(ast, options = {}) {
+  validateRewriteV2Ast(ast);
+  if (!Array.isArray(ast?.actions) || ast.actions.length !== 1) {
+    throw new Error('single Rewrite mutation helper requires exactly one action');
+  }
+  const name=ast.actions[0]?.name || '';
+  const supported=new RegExp('^'+ast.phase+'\\.(?:header\\.(?:set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$');
+  if (!supported.test(name)) {
+    throw new Error('single Rewrite mutation helper does not support '+name);
+  }
+  return renderRewriteScript(ast, options);
+}
+
 export function renderSingleJsonMutationScript(ast, options = {}) {
   validateRewriteV2Ast(ast);
   if (!Array.isArray(ast?.actions) || ast.actions.length !== 1 || !/^(?:request|response)\.json\.(?:add|delete|replace)$/.test(ast.actions[0]?.name || '')) {
