@@ -1890,7 +1890,7 @@ assert.match(requestBinaryMockMixed.line,/REVIEW REQUIRED/);
 assert.match(requestBinaryMockMixed.line,/text request mock requires/);
 assert.equal(requestBinaryMockMixedCtx.generatedScripts.size,0);
 
-const unsupportedKnownComplexSource='response if ${url} ~= /api/ then response.json.jq(".") | response.header.set("X-Test","ok")';
+const unsupportedKnownComplexSource='response if ${url} ~= /api/ then response.json.jq(".data") | response.header.set("X-Test","ok")';
 const qxUnsupportedKnown=planQxRewrite(v2(unsupportedKnownComplexSource),ctx());
 assert.equal(qxUnsupportedKnown.section,'comment');
 assert.notEqual(qxUnsupportedKnown.issue,true);

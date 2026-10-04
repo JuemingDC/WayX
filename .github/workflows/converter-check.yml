@@ -82,7 +82,9 @@ jobs:
         run: node .github/converter/tests/official-capabilities.mjs
 
       - name: Generated helper runtime fixtures
-        run: node .github/converter/tests/runtime.mjs
+        run: |
+          jq --version
+          node .github/converter/tests/runtime.mjs
 
       - name: Refresh full Kelee catalog
         run: python .github/converter/tools/refresh-kelee-catalog.py

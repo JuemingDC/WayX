@@ -1,9 +1,9 @@
 # WayX Conversion Specification
 
-版本：1.65
+版本：1.66
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
-迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
+迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 inline JQ 子集已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
 
 WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入本仓库转换链。
 
@@ -765,7 +765,7 @@ Workflow 只调用稳定入口，不应枚举 converter 内部所有实现文件
 - 修复 Upstream Monitor 对已删除 spec/rule 测试的引用；每日 schedule 已暂停，保留手动触发。
 - 删除漂移的 Python target validator/allowlist，政策 CLI 统一调用正式 QX/Surge validators，metadata 检查并入 metadata domain；CI 使用 `--all` 避免仅校验变更文件导致零目标通过。
 
-尚未完成，不能据此宣称全行为等价或删除生产兼容 planner/runtime：
+以下为 v1.60 领域迁移时的历史待办；§§24–29 已部分落实 Phase D/E，仍不能宣称全行为等价或删除所有生产兼容 planner/runtime：
 
 1. Phase D：将现有 runtime emitter 迁到共同语义 runtime；引入 request/response phase dispatcher，解决同 phase 首条 Script 命中限制。
 2. Phase E：扩展 reference evaluator 到 actions，加入完整行为 oracle、flag/capture fuzz、Catalog differential 与 canonical regeneration。
@@ -929,3 +929,14 @@ Inline body 使用共同 String lowering，支持捕获、内置变量和 Surge 
 V2 文件地址必须是固定 String/raw String；双引号内的动态模板明确拒绝 materialization，不尝试获取含未展开模板的 URL。escaped template 和 raw String 中的 `${...}` 是普通文件名内容，按共同字符串解析后解析 URL。动态文件地址不会被参数默认值冻结；JQ/mock 的文件地址使用同一个静态校验。其它动态 Regex、透明 URL 和作者异步 Script 的边界继续保留。
 
 §27 的每条声明单文件限制由本节的动作索引绑定替代。验收涵盖不同文件、重复相对地址、插入动作、重复 mock 恢复原内容、空文本、字面模板路径、失败去重与保守 Review；仍使用原 features/phase 类别，不增加生产领域文件或公开入口。
+
+
+## 29. 固定 inline JQ 的共同阶段适配（v1.66）
+
+新增严格解析的 JQ 子集：`.`、顶层字段常量赋值（`.name = JSON` 或 `.["name"] = JSON`）、单字段删除 `del(.name)` / `del(.["name"])`，以及这些操作以 `|` 组成的管道。标识符与双引号字段允许两种写法；JSON 常量可以包含对象、数组及普通标量。生成代码只执行编译后的操作数据，不执行源 JQ/JavaScript 文本。超出 JavaScript 安全整数范围的常量保留原生路径，不在转换时静默取整。
+
+这些 inline JQ actions 可进入 Header/Body/JSON/文本请求 mock 的共同 features/phase runtime。每个 JQ action 独立读取当前 body；无效 JSON 或对象字段类型错误只跳过该 action，body 保留 action 开始前的值，后续 action 继续。恒等表达式接受任意有效 JSON；null 的字段赋值创建对象，null 的删除保持 null；字符串、数字、Boolean 和数组的对象字段操作失败。字段写入使用 own property，包括 `__proto__` 等普通 JSON key，不修改原型。一个 JQ action 内的多个操作全部成功后才提交；不同 action 之间的已完成修改不会回滚。
+
+任意 JQ、动态 JQ、嵌套 selector、多输出、select/map/算术/条件及 jq_file 尚未纳入该适配器。它们仍阻止同阶段整体迁移，保留既有 native/compatibility/Review 策略；原作者 HTTP Script、Legacy、终结 Rewrite 的组合限制继续适用。该子集不能用于宣称全 JQ 解释器或真实客户端传输边界已实现。定时活动继续暂停，QX 强制 enable 政策不变。
+
+阶段收尾状态：Phase D 已覆盖共同同步 Header/Body/JSON、文本请求 mock 与本节固定 inline JQ；其余 action/作者 Script 的全阶段调度仍未完成。Phase E 已有条件/action oracle、独立预期输出和本节真实 jq 差分，尚缺完整语法组合随机验证及真实客户端边界验证。Phase F 仅删除已被这些检查替代的旧实现，历史 native flag/Script options 等兼容路径仍需逐项证明。§27 的单文件限制已由 §28 替代，动态及二进制限制继续保留。
