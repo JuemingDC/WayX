@@ -238,10 +238,16 @@ assert.match(sync,/targetChanges\.length \|\| helperChanges\.length \|\| changed
   'helper-only repair must not be reported as fully unchanged');
 
 assert.match(sync,/result\.publishable/,'CLI publication result must reflect rollback/quarantine integrity');
-const upstreamWorkflow=await fs.readFile('.github/workflows/upstream-monitor.yml','utf8');
-assert.match(upstreamWorkflow,/steps\.loon_sync\.outputs\.publishable == 'true'/,'publication must require the verified sync output, not merely a caught exit status');
 const checkWorkflow=await fs.readFile('.github/workflows/converter-check.yml','utf8');
-assert.match(checkWorkflow,/Verify isolated sync is publishable/,'PR CI must reject an unpublishable transaction');
+assert.match(checkWorkflow,/steps\.loon_sync\.outputs\.publishable == 'true'/,'canonical generation must require verified sync integrity');
+assert.match(checkWorkflow,/steps\.gate\.outputs\.publishable/,'publication must require all pipeline gates');
+assert.deepEqual((await fs.readdir('.github/workflows')).filter(name=>/\.ya?ml$/.test(name)),['converter-check.yml'],'only one automation workflow may remain');
+assert.match(checkWorkflow,/pull_request:/);assert.match(checkWorkflow,/workflow_dispatch:/);
+assert.doesNotMatch(checkWorkflow,/^\s+schedule:/m);
+assert.match(checkWorkflow,/cancel-in-progress: false/,'generation must not be cancelled halfway through publication');
+assert.match(checkWorkflow,/include-hidden-files: true/,'runtime and catalog reports must actually be uploaded');
+assert.match(checkWorkflow,/remote_sha.*EXPECTED_HEAD/s,'stale publication must be rejected');
+assert.match(checkWorkflow,/--dry-run/,'read-only PR runs must not attempt Issue writes');
 
 assert.match(canonical,/const staleEntries = \[\]/,
   'canonical result tracking must name pre-write differences as stale entries');
@@ -251,6 +257,75 @@ assert.match(canonical,/const differs = targetDiffs\.length > 0 \|\| helperDiffs
   'canonical stale result must include both targets and generated helpers');
 assert.match(canonical,/Stale canonical entries: ' \+ staleEntries\.join/,
   'canonical check-mode stale reporting must remain workflow-specific');
+
+// Execute the workflow's actual gate/publisher without fetching production upstreams.
+const stepProgram=name=>{
+  const block=checkWorkflow.split('      - name: '+name+'\n')[1]?.split('\n      - ')[0];
+  assert.ok(block,'missing workflow step '+name);
+  const code=block.split('        run: |\n')[1];assert.ok(code,'missing step program '+name);
+  return code.split('\n').map(line=>line.startsWith('          ')?line.slice(10):line).join('\n');
+};
+const gateProgram=stepProgram('Evaluate publication gates');
+const publishProgram=stepProgram('Publish validated outputs to the existing branch');
+const automationRoot=await fs.mkdtemp(path.join(os.tmpdir(),'wayx-pipeline-'));
+try {
+  await fs.mkdir(path.join(automationRoot,'.github/monitor/.runtime'),{recursive:true});
+  const output=path.join(automationRoot,'output');
+  const required=['syntax','catalog','checkpoint','loon_sync','canonical','verify','reports','issues'];
+  const outcomes=Object.fromEntries(required.map(name=>[name,{outcome:'success'}]));
+  const gate=async(stages,integrity='true',monitor='false')=>{
+    await fs.writeFile(output,'');
+    const result=runIsolatedCase('bash',['-e','-c',gateProgram],{cwd:automationRoot,encoding:'utf8',env:{...process.env,STAGES:JSON.stringify(stages),SYNC_PUBLISHABLE:integrity,MONITOR_ENABLED:monitor,GITHUB_OUTPUT:output}});
+    assert.equal(result.status,0,result.stderr);
+    return JSON.parse(await fs.readFile(path.join(automationRoot,'.github/monitor/.runtime/pipeline-result.json'),'utf8'));
+  };
+  assert.equal((await gate(outcomes)).publishable,true);
+  for(const name of required)for(const outcome of ['failure','skipped']) {
+    const result=await gate({...outcomes,[name]:{outcome}});
+    assert.equal(result.publishable,false);assert.ok(result.failedGates.includes(name));
+  }
+  assert.equal((await gate(outcomes,'false')).publishable,false);
+  assert.equal((await gate(outcomes,'','false')).publishable,false);
+  assert.equal((await gate(outcomes,'true','true')).publishable,false);
+  assert.equal((await gate({...outcomes,monitor:{outcome:'success'}},'true','true')).publishable,true);
+
+  const repo=path.join(automationRoot,'repo'),remote=path.join(automationRoot,'remote.git');
+  await fs.mkdir(repo);const git=(...args)=>{
+    const result=runIsolatedCase('git',args,{cwd:repo,encoding:'utf8'});
+    assert.equal(result.status,0,result.stderr);return result.stdout.trim();
+  };
+  git('init','-q','-b','main');git('config','user.name','fixture');git('config','user.email','fixture@example.test');
+  const files=['.github/sources/loon.json','Resource/Loon/test.lpx','Adblock/Quantumult X/test.snippet','Adblock/Surge/test.sgmodule','Script/Test/manual.js','README.md','.github/monitor/state.json','.github/monitor/upstream/spec.txt','Boxjs/manual.json'];
+  for(const file of files){await fs.mkdir(path.dirname(path.join(repo,file)),{recursive:true});await fs.writeFile(path.join(repo,file),'baseline\n');}
+  git('add','.');git('commit','-qm','fixture baseline');const baseline=git('rev-parse','HEAD');
+  git('init','-q','--bare',remote);git('remote','add','origin',remote);git('push','-q','origin','HEAD:main','HEAD:test');
+  const publish=async({branch='test',publishable='true',expected=baseline,monitor='false'}={})=>{
+    await fs.writeFile(output,'');
+    const result=runIsolatedCase('bash',['-e','-c',publishProgram],{cwd:repo,encoding:'utf8',env:{...process.env,PUBLISHABLE:publishable,PUBLISH_BRANCH:branch,EXPECTED_HEAD:expected,MONITOR_ENABLED:monitor,GITHUB_OUTPUT:output}});
+    return {...result,output:await fs.readFile(output,'utf8')};
+  };
+  await fs.writeFile(path.join(repo,'Adblock/Quantumult X/test.snippet'),'new output\n');
+  assert.notEqual((await publish({publishable:'false'})).status,0);
+  assert.equal(git('diff','--cached','--name-only'),'');
+  assert.equal((await publish({branch:''})).status,0);assert.equal(git('rev-parse','HEAD'),baseline);
+  assert.notEqual((await publish({branch:'other'})).status,0);
+  assert.notEqual((await publish({expected:'incorrect'})).status,0);
+  await fs.writeFile(path.join(repo,'Boxjs/manual.json'),'manual edit\n');
+  const pushed=await publish();assert.equal(pushed.status,0,pushed.stderr);assert.match(pushed.output,/publication=pushed/);
+  assert.equal(git('diff-tree','--no-commit-id','--name-only','-r','HEAD'),'Adblock/Quantumult X/test.snippet','publisher must exclude unrelated manual changes');
+  const testHead=git('rev-parse','HEAD');assert.equal(git('ls-remote','origin','refs/heads/main').split(/\s/)[0],baseline);
+  assert.match((await publish({expected:testHead})).output,/publication=unchanged/);
+  git('reset','--hard',baseline);
+  await fs.writeFile(path.join(repo,'Adblock/Quantumult X/test.snippet'),'race output\n');
+  const stale=await publish();assert.notEqual(stale.status,0);assert.match(stale.stdout,/Destination advanced/);
+  assert.equal(git('rev-parse','HEAD'),baseline,'stale publication must not create a commit');
+  git('reset','--hard',baseline);
+  await fs.writeFile(path.join(repo,'.github/monitor/state.json'),'updated monitor\n');
+  const main=await publish({branch:'main',monitor:'true'});assert.equal(main.status,0,main.stderr);
+  assert.equal(git('diff-tree','--no-commit-id','--name-only','-r','HEAD'),'.github/monitor/state.json');
+  assert.equal(git('ls-remote','--heads','origin').split('\n').length,2);
+} finally {await fs.rm(automationRoot,{recursive:true,force:true});}
+console.log('Actions gate and publication execution contracts passed');
 
 console.log('Workflow lifecycle/result boundary contract passed');
 }

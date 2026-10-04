@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.76
+版本：1.77
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -638,7 +638,7 @@ Converter 实现按十个领域收口，统一公开入口：
 - 保留公开函数名和已有转换行为；结构调整不改写原作者脚本 URL、不扩大 MITM 范围、不重新命名生成助手或改变一项插件一套转换产物的外部接口。
 - Generated helper 仍按语义需要生成；不能把不同插件/phase/动作的脚本机械拼接，导致首条匹配、顺序或 body 语义变化。
 - Phase D–F 的语义迁移仍需独立证明；领域收口不作为行为等价证明的替代。
-- 分支限定为 main，最多另有一个名为 test 的验证分支；不创建其他工作分支。Converter Check 在 checkout 后核对远端 heads 数量与名称，违反此预算即失败。
+- 分支限定为 main，最多另有一个名为 test 的验证分支；不创建其他工作分支。WayX Automation 在 checkout 后核对远端 heads 数量与名称，违反此预算即失败。
 
 ---
 
@@ -668,11 +668,7 @@ CI：
 .github/workflows/converter-check.yml
 ```
 
-Scheduled upstream：
-
-```text
-.github/workflows/upstream-monitor.yml
-```
+手动上游同步与 PR 校验复用上述唯一工作流；schedule 保持暂停。
 
 Workflow 只调用稳定入口，不应枚举 converter 内部所有实现文件。
 
@@ -1050,3 +1046,18 @@ Pre-matching 只用于顶层 REJECT/REJECT-DROP/REJECT-NO-DROP/REJECT-TINYGIF �
 PR CI 和 upstream-monitor 均以明确 publishable 输出为发布门禁；validator、inventory、managed cleanliness、audit、helper/source URL、Issue 创建等现有门禁仍必须通过。单项已隔离失败不再仅因 CLI exit status 阻断全部正常更新，日志/结构化报告/自动 Issue 继续显式记录，不把未解决问题伪称修复。原作者 URL、原生优先、QX enable 政策、去广告/依赖范围和定时暂停不变。
 
 故障注入验收使用真实文件写入，涵盖 helper 创建/删除后失败、首个目标写后失败、源文件部分写入、首次安装失败、原始 CRLF bytes 恢复、手写脚本保护、stale features/phase 清理、正常/旧版失败/首次失败混合目录、源 Issue 上下文、target Review 和 fetch failure 写前隔离；故意阻止 rollback 必须 publishable=false。转换成品行为仍由完整目录、差分及 CI 门禁验证；本次不据此宣称解决全部客户端脚本执行顺序或 flags 等价问题。远端仅 main/test。
+
+
+## 40. 单一 GitHub Actions 流程架构（v1.77）
+
+仅保留 `.github/workflows/converter-check.yml`（WayX Automation），不新增 composite Action、复用 workflow 或 Work 调度器。PR 与 workflow_dispatch 共享同一份发现、生成、验证、Issue、发布实现。上游拉取与批量转换由 Actions 执行，开发阶段只修改实现及运行必要的本地回归，不在 Work 另建生产拉取流程。旧 upstream-monitor workflow 删除，schedule 继续暂停。
+
+PR checkout 精确 head SHA；同仓 test PR 可向原 test 分支提交成品，外部/只读 PR 仅验证并输出 Issue 候选。手动触发仅允许 main/test：main 同步插件并记录官方规范 mirror/state，test 验证及生成 test 成品。两入口按目标分支共用 concurrency group，不取消执行中的任务。每次核对远端仅 main/test；任何发布须检验本地 HEAD 和远端目标仍等于 checkout 的 expected SHA，分支推进后必须重新运行，不静默伪称发布成功。
+
+共同顺序为：语法检查 → 去广告/依赖目录发现 → 八项核心/官方/runtime suite → 逐插件拉取和事务转换 → 明确 sync publishable 后 canonical + README 生成 → Catalog/目标政策/README/managed/audit/helper 与原作者 URL 校验 → reconciliation/Review inventory → 自动 Issue → 全局发布门禁 → 指定分支发布 → summary/artifact → 最终状态。Catalog 与 artifacts 两个 suite 在生成后验证，加上八项前置 suite 共十项。失败阶段与被跳过的必需阶段均阻止发布；continue-on-error 仅供后续报告/Issue收集，门禁读取真实 outcome，不把被容忍的失败当成成功。
+
+发布允许路径收缩为有效目录、Resource/Loon、QX/Surge 成品、Script、README；main 手动监控另允许 monitor state/mirror。Boxjs/Module/Rule 手工资源不通过无差别 git add 发布。隔离旧版/暂缓首次失败、未知类型自动 Issue、原生优先及所有转换契约沿用 §39 和先前规范。手动监控只记录已获取规范，不据文档变化自动改转换器。
+
+`.github/monitor/.runtime/pipeline-result.json` 记录每阶段 outcome、failedGates、publishable 和 publication；Actions summary 显示已验证/保留/暂缓数量与发布状态。失败也上传完整日志、sync failure、Issue、inventory/reconciliation、有效目录和生成成品，显式 include-hidden-files 保证 .github/.runtime 报告不被上传工具默认过滤；保留 14 天。发布失败或未满足门禁时工作流必须失败，避免只留错误日志却返回成功。
+
+旧章节中的分离 Upstream Monitor/Converter Check 名称为迁移历史，当前执行入口以本节和唯一 workflow 为准。运行说明只保留 monitor/README 的当前流程，不恢复已删除的分块规范或新增第二权威规范。

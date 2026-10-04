@@ -189,7 +189,7 @@ export function targetProblemIssueBody(group) {
     '',
     '## Automation behavior',
     '',
-    group.code==='new-catalog-semantic' ? 'This source declaration introduces syntax or semantic identifiers outside the reviewed catalog baseline. Review the conversion support before publishing the catalog update; automation preserves the declaration in this Issue.' : 'WayX failed closed for this declaration. No guessed active target rule is generated. The scheduled GitHub Actions workflow keeps processing other plugins and tracks this problem through this Issue.',
+    group.code==='new-catalog-semantic' ? 'This source declaration introduces syntax or semantic identifiers outside the reviewed catalog baseline. Review the conversion support before publishing the catalog update; automation preserves the declaration in this Issue.' : 'WayX failed closed for this declaration. No guessed active target rule is generated. The GitHub Actions workflow keeps processing other plugins and tracks this problem through this Issue.',
     '',
   ].join('\n');
 }
@@ -224,7 +224,7 @@ export function syncFailureIssueBody(failure) {
     '',
     '## Automation behavior',
     '',
-    'This plugin did not pass the scheduled conversion/validation transaction, so its new upstream Source/targets are not intentionally committed by the converter. Other plugins continue independently.',
+    'This plugin did not pass the Actions conversion/validation transaction, so its new upstream Source/targets are not intentionally committed by the converter. Other plugins continue independently.',
     '',
   ].join('\n');
 }

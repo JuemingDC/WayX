@@ -2,7 +2,7 @@
 """Chance upstream monitor.
 
 GitHub Actions records monitored specification/repository changes and updates
-local state/mirrors. Conversion handling is performed by the scheduled WayX
+local state/mirrors. Conversion handling is performed by the unified WayX
 automation workflow; this monitor does not create review pull requests.
 """
 from __future__ import annotations

@@ -584,7 +584,7 @@ export async function writeSyncFailureReport(root,failures,{runtimeDir='.github/
   const jsonPath=path.join(dir,'sync-failures.json');
   const markdownPath=path.join(dir,'sync-failures.md');
   await fs.writeFile(jsonPath,JSON.stringify(summary?{version:2,failures,...summary}:{version:1,failures},null,2)+'\n');
-  const lines=['# WayX scheduled sync failures','',`Total: ${failures.length}`,''];
+  const lines=['# WayX Actions sync failures','',`Total: ${failures.length}`,''];
   for (const failure of failures) {
     lines.push(
       '## '+failure.plugin.id,

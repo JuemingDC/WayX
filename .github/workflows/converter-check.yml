@@ -1,50 +1,50 @@
-name: Converter Check
+name: WayX Automation
 
 on:
   pull_request:
     paths:
-      - ".github/converter/**"
-      - ".github/scripts/sync-convert.mjs"
-      - ".github/scripts/propose-conversion-issues.mjs"
-      - ".github/workflows/converter-check.yml"
-      - ".github/workflows/upstream-monitor.yml"
-      - ".github/monitor/**"
-      - ".github/sources/loon.json"
-      - ".github/sources/loon-static.json"
-      - ".github/manual-assets.json"
-      - ".github/CONVERSION_SPEC.md"
-      - "Resource/Loon/**"
-      - "Script/**"
-      - "Boxjs/**"
-      - "Module/**"
-      - "Rule/**"
-      - "README.md"
-      - "Adblock/Quantumult X/**"
-      - "Adblock/Surge/**"
+      - '.github/**'
+      - 'Resource/Loon/**'
+      - 'Adblock/**'
+      - 'Script/**'
+      - 'Boxjs/**'
+      - 'Module/**'
+      - 'Rule/**'
+      - 'README.md'
   workflow_dispatch:
+  # Scheduled upstream updates remain paused; manual dispatch is available.
 
 permissions:
   contents: write
   issues: write
 
+concurrency:
+  group: wayx-${{ github.repository }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: false
+
 jobs:
-  check:
+  automation:
+    if: github.event_name == 'pull_request' || github.ref_name == 'main' || github.ref_name == 'test'
     runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      PUBLISH_BRANCH: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || (github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'test' && 'test' || '') }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+      MONITOR_ENABLED: ${{ github.event_name == 'workflow_dispatch' && github.ref_name == 'main' && 'true' || 'false' }}
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout requested baseline
+        uses: actions/checkout@v6
         with:
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
-      - name: Enforce main and test branch budget
+      - name: Prepare runtime logs and enforce branch budget
         shell: bash
         run: |
           set -euo pipefail
+          mkdir -p .github/monitor/.runtime
           refs="$(git ls-remote --heads origin)"
           mapfile -t branches < <(awk '{sub("refs/heads/", "", $2); print $2}' <<< "$refs")
-          if (( ${#branches[@]} < 1 || ${#branches[@]} > 2 )); then
-            echo "::error::WayX permits main and at most one test branch."
-            exit 1
-          fi
+          (( ${#branches[@]} >= 1 && ${#branches[@]} <= 2 ))
           main_present=false
           for branch in "${branches[@]}"; do
             case "$branch" in
@@ -57,129 +57,212 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: '24'
       - uses: actions/setup-python@v6
         with:
-          python-version: "3.13"
+          python-version: '3.13'
+
       - name: Syntax check repository JavaScript and Python
+        id: syntax
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
-          while IFS= read -r -d '' file; do
-            node --check "$file"
-          done < <(find .github/converter .github/scripts Script -type f \( -name '*.js' -o -name '*.mjs' \) -print0)
+          while IFS= read -r -d '' file; do node --check "$file"; done < <(find .github/converter .github/scripts Script -type f \( -name '*.js' -o -name '*.mjs' \) -print0)
           python -m compileall -q .github/converter .github/scripts .github/monitor
 
       - name: Refresh Kelee ad-block and dependency catalog
-        run: python .github/converter/tools/refresh-kelee-catalog.py
+        id: catalog
+        if: steps.syntax.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          python .github/converter/tools/refresh-kelee-catalog.py 2>&1 | tee .github/monitor/.runtime/catalog.log
 
       - name: Converter checkpoint
+        id: checkpoint
+        if: steps.catalog.outcome == 'success'
+        continue-on-error: true
+        shell: bash
         run: |
-          node .github/converter/tests/rewrite.mjs
-          node .github/converter/tests/conversion.mjs
-          node .github/converter/tests/architecture.mjs
-          node .github/converter/tests/core.mjs
-          node .github/converter/tests/script.mjs
-          node .github/converter/tests/workflow.mjs
-
-      - name: Official QX and Surge capability drift gates
-        run: node .github/converter/tests/official-capabilities.mjs
-
-      - name: Generated helper runtime fixtures
-        run: |
-          jq --version
-          node .github/converter/tests/runtime.mjs
+          set -euo pipefail
+          for suite in core rewrite script conversion architecture workflow official-capabilities runtime; do
+            node ".github/converter/tests/$suite.mjs"
+          done 2>&1 | tee .github/monitor/.runtime/checkpoint.log
 
       - name: Pull discovered upstreams and convert
         id: loon_sync
+        if: steps.checkpoint.outcome == 'success'
+        continue-on-error: true
         shell: bash
         run: |
-          set -o pipefail
-          node .github/scripts/sync-convert.mjs
-
-      - name: Verify isolated sync is publishable
-        run: test "${{ steps.loon_sync.outputs.publishable }}" = true
+          set -euo pipefail
+          node .github/scripts/sync-convert.mjs 2>&1 | tee .github/monitor/.runtime/loon-sync.log
 
       - name: Regenerate canonical outputs
-        run: node .github/converter/tools/regenerate-canonical.mjs --write
-
-      - name: Regenerate README index
-        run: node .github/converter/tools/update-readme.mjs --write
-
-      - name: Validate refreshed catalog semantics
+        id: canonical
+        if: steps.loon_sync.outputs.publishable == 'true'
+        continue-on-error: true
+        shell: bash
         run: |
-          node .github/converter/tests/catalog.mjs
+          set -euo pipefail
+          node .github/converter/tools/regenerate-canonical.mjs --write 2>&1 | tee .github/monitor/.runtime/canonical.log
+          node .github/converter/tools/update-readme.mjs --write
 
-      - name: Verify managed conversion cleanliness
-        run: node .github/converter/tools/verify-managed-conversions.mjs
+      - name: Verify complete generated repository
+        id: verify
+        if: steps.canonical.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            node .github/converter/tests/catalog.mjs
+            node .github/converter/tools/validate-conversion-policy.mjs --all
+            node .github/converter/tools/update-readme.mjs
+            node .github/converter/tools/verify-managed-conversions.mjs
+            node .github/converter/tools/audit-repository.mjs
+            node .github/converter/tests/artifacts.mjs
+          } 2>&1 | tee .github/monitor/.runtime/verification.log
 
-      - name: Audit regenerated repository
-        run: node .github/converter/tools/audit-repository.mjs
+      - name: Check monitored upstream specifications
+        id: monitor
+        if: env.MONITOR_ENABLED == 'true' && steps.checkpoint.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python .github/monitor/monitor_upstreams.py 2>&1 | tee .github/monitor/.runtime/monitor.log
 
       - name: Generate reconciliation and Review inventory
-        run: node .github/converter/tools/conversion-reports.mjs
-
-      - name: Verify generated helper references, golden and source URLs
-        run: node .github/converter/tests/artifacts.mjs
+        id: reports
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          node .github/converter/tools/conversion-reports.mjs 2>&1 | tee .github/monitor/.runtime/reports.log
 
       - name: Create or update conversion issues
-        if: >-
-          always() && github.event_name == 'pull_request' &&
-          github.event.pull_request.head.repo.full_name == github.repository
+        id: issues
+        if: always()
+        continue-on-error: true
+        shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-        run: node .github/scripts/propose-conversion-issues.mjs
+          PUBLISH_BRANCH: ${{ env.PUBLISH_BRANCH }}
+        run: |
+          set -euo pipefail
+          if [[ -n "$PUBLISH_BRANCH" ]]; then
+            node .github/scripts/propose-conversion-issues.mjs
+          else
+            node .github/scripts/propose-conversion-issues.mjs --dry-run
+          fi 2>&1 | tee .github/monitor/.runtime/issues.log
 
-      - name: Upload regenerated canonical outputs
+      - name: Evaluate publication gates
+        id: gate
+        if: always()
+        shell: bash
+        env:
+          STAGES: ${{ toJSON(steps) }}
+          SYNC_PUBLISHABLE: ${{ steps.loon_sync.outputs.publishable }}
+          MONITOR_ENABLED: ${{ env.MONITOR_ENABLED }}
+        run: |
+          python - <<'PY'
+          import json, os, pathlib
+          stages=json.loads(os.environ['STAGES'])
+          required=['syntax','catalog','checkpoint','loon_sync','canonical','verify','reports','issues']
+          if os.environ['MONITOR_ENABLED']=='true': required.append('monitor')
+          failed=[name for name in required if stages.get(name,{}).get('outcome')!='success']
+          if os.environ['SYNC_PUBLISHABLE']!='true': failed.append('sync integrity')
+          result={'publishable':not failed,'failedGates':failed,'stages':{k:v.get('outcome') for k,v in stages.items()}}
+          pathlib.Path('.github/monitor/.runtime/pipeline-result.json').write_text(json.dumps(result,indent=2)+'\n')
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out: out.write('publishable='+str(not failed).lower()+'\n')
+          for name in failed: print('::error::Publication blocked: '+name)
+          PY
+
+      - name: Publish validated outputs to the existing branch
+        id: publish
+        if: always()
+        continue-on-error: true
+        shell: bash
+        env:
+          PUBLISHABLE: ${{ steps.gate.outputs.publishable }}
+          PUBLISH_BRANCH: ${{ env.PUBLISH_BRANCH }}
+          EXPECTED_HEAD: ${{ env.EXPECTED_HEAD }}
+          MONITOR_ENABLED: ${{ env.MONITOR_ENABLED }}
+        run: |
+          set -euo pipefail
+          echo 'publication=blocked' >> "$GITHUB_OUTPUT"
+          [[ "$PUBLISHABLE" == true ]] || exit 1
+          if [[ -z "$PUBLISH_BRANCH" ]]; then
+            echo 'publication=read-only' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          case "$PUBLISH_BRANCH" in main|test) ;; *) exit 1 ;; esac
+          [[ "$(git rev-parse HEAD)" == "$EXPECTED_HEAD" ]]
+          git add -A -- .github/sources/loon.json Resource/Loon 'Adblock/Quantumult X' Adblock/Surge Script README.md
+          if [[ "$MONITOR_ENABLED" == true ]]; then git add -A -- .github/monitor/state.json .github/monitor/upstream; fi
+          remote_sha="$(git ls-remote origin "refs/heads/$PUBLISH_BRANCH" | awk '{print $1}')"
+          if [[ "$remote_sha" != "$EXPECTED_HEAD" ]]; then
+            echo '::error::Destination advanced; rerun from its new baseline before publishing.'
+            exit 1
+          fi
+          if git diff --cached --quiet; then
+            echo 'publication=unchanged' >> "$GITHUB_OUTPUT"
+          else
+            git config user.name 'chance-upstream-bot'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'chore: sync upstream and regenerate targets'
+            git push origin "HEAD:$PUBLISH_BRANCH"
+            echo 'publication=pushed' >> "$GITHUB_OUTPUT"
+          fi
+          test -z "$(git status --porcelain --untracked-files=all -- .github/sources/loon.json Resource/Loon 'Adblock/Quantumult X' Adblock/Surge Script README.md)"
+
+      - name: Record run summary
+        if: always()
+        shell: bash
+        env:
+          PUBLICATION: ${{ steps.publish.outputs.publication }}
+        run: |
+          python - <<'PY'
+          import json, os, pathlib
+          runtime=pathlib.Path('.github/monitor/.runtime')
+          result=json.loads((runtime/'pipeline-result.json').read_text()) if (runtime/'pipeline-result.json').exists() else {'publishable':False}
+          result['publication']=os.environ['PUBLICATION'] or 'blocked'
+          (runtime/'pipeline-result.json').write_text(json.dumps(result,indent=2)+'\n')
+          failure=runtime/'sync-failures.json'
+          sync=json.loads(failure.read_text()) if failure.exists() else {}
+          lines=['# WayX Actions result','',f"Publication: {result['publication']}",'']
+          for key in ['validatedPlugins','retainedPlugins','deferredPlugins']: lines.append(f"- {key}: {len(sync.get(key,[]))}")
+          lines += ['', 'Failed gates: '+', '.join(result.get('failedGates',[]))]
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as out: out.write('\n'.join(lines)+'\n')
+          PY
+
+      - name: Upload automation reports and generated outputs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: canonical-converter-output
-          if-no-files-found: error
+          name: wayx-conversion-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: warn
+          include-hidden-files: true
+          retention-days: 14
           path: |
-            Adblock/Quantumult X/*.snippet
-            Adblock/Surge/*.sgmodule
-            Script/**
-            README.md
-            .github/monitor/.runtime/conversion-reconciliation.json
-            .github/monitor/.runtime/conversion-reconciliation.md
-            .github/monitor/.runtime/review-inventory.json
-            .github/monitor/.runtime/review-inventory.md
-            .github/monitor/.runtime/conversion-issues.md
-            .github/monitor/.runtime/kelee-catalog.json
+            .github/monitor/.runtime/
             .github/sources/loon.json
-            Resource/Loon/**
+            Resource/Loon/
+            Adblock/Quantumult X/
+            Adblock/Surge/
+            Script/
+            README.md
 
-      - name: Commit deterministic generated outputs to same-repo PR
-        if: >-
-          github.event_name == 'pull_request' &&
-          github.event.pull_request.head.repo.full_name == github.repository
+      - name: Surface blocked or failed publication
+        if: always()
         shell: bash
-        run: |
-          set -euo pipefail
-          git add -A -- ".github/sources/loon.json" "Resource/Loon" "Adblock/Quantumult X" "Adblock/Surge" Script README.md
-          if git diff --cached --quiet; then
-            exit 0
-          fi
-
-          remote_sha="$(git ls-remote origin "refs/heads/${{ github.head_ref }}" | awk '{print $1}')"
-          expected_sha="${{ github.event.pull_request.head.sha }}"
-          if [[ -z "$remote_sha" || "$remote_sha" != "$expected_sha" ]]; then
-            echo "::notice::PR head advanced while this run was executing; skip generated-output commit and let the newer run regenerate."
-            exit 0
-          fi
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "canonical: regenerate converter outputs"
-          git push origin HEAD:"${{ github.head_ref }}"
-
-      - name: Verify canonical outputs are checked in
-        shell: bash
-        run: |
-          set -euo pipefail
-          status="$(git status --porcelain --untracked-files=all -- ".github/sources/loon.json" "Resource/Loon" "Adblock/Quantumult X" "Adblock/Surge" Script README.md)"
-          if [[ -n "$status" ]]; then
-            printf '%s\n' "$status"
-            exit 1
-          fi
+        env:
+          PUBLISHABLE: ${{ steps.gate.outputs.publishable }}
+          PUBLICATION_OUTCOME: ${{ steps.publish.outcome }}
+        run: test "$PUBLISHABLE" = true && test "$PUBLICATION_OUTCOME" = success

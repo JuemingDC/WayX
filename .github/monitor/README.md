@@ -1,59 +1,20 @@
-# Chance Upstream Monitor — GitHub Actions 全自动模式
+# WayX Actions 运行说明
 
-WayX 的上游维护由 GitHub Actions 定时闭环执行，不再使用 ChatGPT Work、work-review PR 或 Work finalizer。
+唯一入口是 `.github/workflows/converter-check.yml`，显示名称为 **WayX Automation**。上游拉取和批量转换均由 GitHub Actions 执行。定时触发已暂停，当前没有每日自动运行。
 
-## 每日流程
+| 触发 | 基线 | 发布位置 | 官方规范监控 |
+| --- | --- | --- | --- |
+| 同仓 test → main PR | PR 的精确 head SHA | 原 test 分支 | 不执行 |
+| 外部/只读 PR | PR 的精确 head SHA | 仅验证、上传成品与 Issue 候选 | 不执行 |
+| 手动选择 main | main 的触发 SHA | main | 记录规范 mirror/state |
+| 手动选择 test | test 的触发 SHA | test | 不执行 |
 
-```text
-每天 01:00 Asia/Shanghai
-→ 从 main checkout
-→ 校验 converter core / inventory / genericity
-→ 按 .github/sources/loon.json 逐插件拉取原作者 Loon
-→ 每插件 materialize → convert → QX/Surge validate
-→ 成功插件写入 Resource/Loon + Adblock + generated helper
-→ 失败插件保持旧的已验证 Source/target，不阻塞其它插件
-→ 检查监控中的官方规范/仓库并更新 upstream mirror/state
-→ 全仓 validator + repository audit + reconciliation
-→ 为 REVIEW REQUIRED / ISSUE REQUIRED / hard sync failure 创建或复用 GitHub Issue
-→ 所有全局校验通过后直接提交 main
-→ 上传运行日志、failure report、reconciliation 与 inventory artifact
-```
+手动同步：打开 GitHub Actions → WayX Automation → Run workflow，选择 main 或 test。失败修复后可重新运行；目标分支已推进时，从最新基线重新触发。工作流只使用现有 main/test，不创建分支或另建 PR。
 
-## Issue 要求
+共用流程：语法检查 → 可莉去广告/依赖目录发现 → 核心、官方能力和脚本运行测试 → 逐插件拉取、转换及事务写入 → canonical 和 README 生成 → 全目录格式、语义、引用、原作者 URL、仓库审计 → reconciliation/Review 报告 → Issue → 发布门禁 → 提交对应分支。
 
-自动提交的转换 Issue 必须包含：
+失败插件有完整旧版时保留旧版；首次失败暂缓进入有效目录，后续发现会重试。未知类型和转换失败保留源声明，自动创建或复用稳定指纹 Issue；closed Issue 再次出现会 reopen。Issue 包含插件、源文件、原作者 URL、规则、失败阶段和原因。只读运行使用 dry-run，保留候选报告。无法回退、任一必需校验失败、Issue 写入失败或发布目标推进，均阻止发布。
 
-- 相关插件 ID；
-- 本地 Source 文件；
-- 原作者上游 URL；
-- 对应 Source declaration / 规则内容；
-- hard failure 时的失败阶段；
-- 明确失败原因；
-- QX/Surge 目标位置或运行位置。
+每次运行的 Summary 显示发布状态和已验证/保留/暂缓数量。Artifacts 保留 14 天，包含有效目录、生成成品，以及 `.github/monitor/.runtime/` 的日志、pipeline-result.json、sync failures、Issue 候选、reconciliation 和 Review inventory；失败运行也上传报告。这些 runtime 文件不提交仓库。
 
-同一问题使用稳定 fingerprint；重复定时运行复用/更新已有 Issue，closed issue 再次出现时自动 reopen。
-
-## Fail-closed
-
-未知语法、未知 action、未登记 complex signature 仍按 converter 规范 fail closed：目标侧注释保留源声明，不生成猜测性活动规则。已知但目标能力不足继续使用 REVIEW REQUIRED。两类情况均由 Actions 自动跟踪 Issue，不再转交 Work。
-
-hard sync failure 采用单插件事务边界：conversion + QX/Surge validation 成功前不写该插件的新 managed Source/target/helper。其它插件继续独立同步。
-
-## 官方规范监控
-
-`.github/monitor/monitor_upstreams.py` 只记录监控源变化、更新 `.github/monitor/state.json` / `upstream/` mirror，并生成 `.github/monitor/.runtime/upstream_changes.md`。官方规范变化本身不创建 Work PR，也不阻断已验证插件的自动同步。
-
-## 核心文件
-
-- `.github/CONVERSION_SPEC.md`：唯一权威转换规范。
-- `.github/docs/conversion-spec/`：分块规范。
-- `.github/sources/loon.json`：唯一 Loon Source Catalog。
-- `.github/scripts/sync-convert.mjs`：原作者拉取、转换、目标校验与成功插件落盘。
-- `.github/scripts/propose-conversion-issues.mjs`：Review/Issue/hard failure 自动 Issue。
-- `.github/converter/tools/validate-conversion-policy.mjs`：目标格式硬校验。
-- `.github/converter/tools/audit-repository.mjs`：仓库级审计。
-- `.github/converter/tools/conversion-reports.mjs`：reconciliation + Review/Issue inventory。
-- `.github/monitor/monitor_upstreams.py`：官方规范/仓库变化记录。
-- `.github/workflows/upstream-monitor.yml`：每天 01:00 自动调度器。
-
-`.github/monitor/.runtime/` 与 `.github/reports/` 不提交。
+主分支手动运行还调用 monitor_upstreams.py 记录官方文档/仓库变化，不根据监控变化猜测转换能力。独立监控源获取问题可从 monitor.log 查阅；成功获取的规范保留在 `.github/monitor/upstream/`，元数据在 state.json。转换能力仍由官方能力测试及唯一权威规范 `.github/CONVERSION_SPEC.md` 约束。
