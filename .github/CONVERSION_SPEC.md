@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.69
+版本：1.70
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -969,3 +969,12 @@ JQ 赋值将缺失或 null 父字段创建为对象，并覆写最终字段；�
 纯多 JQ action 在已证明固定单输出子集内可合成原生 JQ：每个 action 使用独立输入变量及 try/catch，使该 action 失败时返回其动作开始前的输入，再执行后续 action；任意多输出 JQ 不猜测合成。独立原生 JQ 不得被其它 helper 的 phase dispatcher 吸收。只有原生无法承载的多类型动作组合（例如 json.jq 后 header.set/add、Body/mocks 等）才考虑共同 Script；此类 helper 保留原单 URL regex，阶段合并仅限所有成员具有相同 URL regex，不能将多个独立 URL 规则无条件扩为 `^`。其它组合仍保留原生/compatibility/Review 边界。
 
 Mock 同样原生优先：Surge 可原生表达的 Map Local、QX echo-response 的原生文件能力仅在本地资源契约可满足时适用，不把远程 URL 假装成本地文件。目标缺少相应原生能力的 inline/mock/组合允许必要的 Script fallback，不因原生优先而删除有效功能。原作者脚本、QX 强制 enable、关闭注释及暂停的定时活动不变。§31 中 Jump 的两条规则迁移为 dispatcher 的决策撤销：恢复原 native JQ 规则及对应 matcher/Surge requirement，并删除新增的两份阶段 helper；嵌套 JQ 编译器仅保留供真正必要的组合使用。此节优先于 §§24–31 中与该用户策略冲突的自动 phase 迁移选择。
+
+
+## 33. 可复现的语法组合验证（v1.70）
+
+Phase E 增加固定种子 `0x57415958` 的组合回归，仍归入 runtime suite，不增加生产模块、公开入口、生成类别或 golden 文件。128 个 request/response 案例将 URL flags、捕获模板、Header set/replace/del、Body replace、JSON add/delete 组合成 119 种操作顺序；Quantumult X 与 Surge 共验证 256 个目标输出。包含命中/未命中、大小写、Unicode、引号、反斜杠、换行、pipe、字面 `$&`/`$0`、无效 JSON、null/标量及 null 父字段。
+
+预期结果由独立命令式模型根据案例数据计算，不调用生产 mutation、AST evaluator 或生成脚本作为预期。先核对 source evaluator 的结果及空 errors，再执行完整 conversion、validator 和目标配置中实际活动引用的 helper；未命中必须返回官方 no-op，所有执行必须只调用一次 `$done`。失败报告包含 seed、阶段、案例编号及完整源声明，便于重现。原 oracle 的 JSON 路径解析器导入修正到实际导出模块，避免缺失依赖在 action 求值时被错误恢复掩盖。
+
+本节是固定同步子集的组合验证，不代表完整随机语法生成、真实客户端编码/压缩/缓冲验证或全 Loon 语义证明。§32 原生优先、必要 mock fallback、纯 JQ 阶段边界及原作者脚本政策不变；不据此删除未证明的兼容路径。生产转换结果无需更新；定时活动继续暂停，远端仅 main/test。
