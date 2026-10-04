@@ -18,6 +18,7 @@ import {
   readManagedTargetState,
   syncGeneratedScripts,
   writeManagedTargets,
+  commitManagedConversion,
 } from "../src/workflow.mjs";
 
 const ROOT = process.cwd();
@@ -73,8 +74,7 @@ for (const entry of manifest) {
     });
     validateConvertedPlugin(entry,out,{surgeValidationOptions:{adblockScope:true}});
 
-    await writeManagedTargets(targetState, out);
-    await syncGeneratedScripts(ROOT, entry, out.generatedScripts);
+    await commitManagedConversion(ROOT,entry,targetState,out);
 
     console.log(
       entry.id + ': regenerated ' +
