@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Taopiaopiao.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:51 +08:00
+# Converted: 2026-10-04 23:39:30 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Taopiaopiao_remove_ads.lpx
@@ -17,9 +17,6 @@
 
 # [rewrite_local]
 ^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.life\.popup\.get\/ url reject-dict
-
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.mtopintegrationapi\.homeconfig\/ url jsonjq-response-body 'delpaths([["data","returnValue","floatingBanner"],["data","returnValue","searchShadeList"]])'
 
 ^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.mtopintegrationapi\.homeconfig\/ url jsonjq-response-body '.data.returnValue.topTab |= map(select(.activeImage | not)) | .data.returnValue.topTab |= map(del(.backgroundColor))'
 

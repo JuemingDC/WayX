@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DiDi.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:36 +08:00
+# Converted: 2026-10-04 23:39:14 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/DiDi_remove_ads.lpx
@@ -37,8 +37,6 @@ host, adtrack.xiaojukeji.com, reject
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
 ^https:\/\/conf\.diditaxi\.com\.cn\/homepage\/v\d\/other\/fast\? url jsonjq-response-body 'delpaths([["data","disorder_cards","guess_card"],["data","disorder_cards","scene_list_card"]])'
-
-^https:\/\/api\.udache\.com\/gulfstream\/porsche\/v\d\/dache_homepage_layout\? url jsonjq-response-body 'delpaths([["data","instances","dache_main_core_icon"]])'
 
 ^https:\/\/api\.udache\.com\/gulfstream\/porsche\/v\d\/dache_homepage_layout\? url jsonjq-response-body '.data |= (.instances |= (to_entries | map(select(.key | test("feed_back_|dache_main_member|order_container_|dache_main_core_icon|dache_main_card_"))) | from_entries))'
 

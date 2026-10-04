@@ -10,14 +10,12 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/WutaCamera.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:57 +08:00
+# Converted: 2026-10-04 23:39:36 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/WutaCamera_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/api-release\.wuta-cam\.com\/ad_tree$ 'delpaths([["regular","splash"],["big_day"],["big_day_overrides"],["regular","home_bottom_right_entry_v2"],["regular","pic_upload_alert"],["regular","retouching_before_icon"]])'
 http-response-jq ^https:\/\/api-release\.wuta-cam\.com\/ad_tree$ '.regular.homepage_25_bottom_nav_bar|=map(.button_list|=map(select(.name|IN("home","me"))))'
 
 [MITM]

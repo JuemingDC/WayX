@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ChaoXingStudy.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:37:00 +08:00
+# Converted: 2026-10-04 23:39:38 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/ChaoXingStudy_remove_ads.lpx
@@ -22,8 +22,6 @@
 ^https:\/\/home-yd\.chaoxing\.com\/apis\/banner\/getConfigInfoForXsqy\? url reject-dict
 
 ^https:\/\/apps\.chaoxing\.com\/apis\/home\/getHpXsqy\.jspx\? url jsonjq-response-body '.data.list |= map(select(.pid == 4 or .pid == 44)) | .data.list_xsqy |= map(select(.pid == 4 or .pid == 44)) | .data.list_xysqbj |= map(select(.pid == 4 or .pid == 44)) | .data.lanmu |= map(select(.id == 4 or .id == 44))'
-
-^https:\/\/apps\.chaoxing\.com\/apis\/home\/getHpXsqy\.jspx\? url jsonjq-response-body 'delpaths([["data","list_timeapp"]])'
 
 ^https:\/\/groupyd2\.chaoxing\.com\/apis\/activity\/getActivitys_attention\? url reject-dict
 ^https:\/\/appswh\.chaoxing\.com\/apis\/activity\/getNoteTopicList\? url reject-dict

@@ -10,22 +10,20 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SodaMusic.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 19:29:10 +08:00
+# Converted: 2026-10-04 23:39:28 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/SodaMusic_remove_ads.lpx
 # Target: Surge
 
+
+
 [Body Rewrite]
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/tnc\d-(bjlgy|ali[a-z]{2})\d?\.zijieapi\.com\/get_domains\/v\d\/\? 'if (getpath(["data"]) | has("opaque_data_enabled")) then (setpath(["data","opaque_data_enabled"]; 0)) else . end | if (getpath(["data"]) | has("ttnet_http_dns_enabled")) then (setpath(["data","ttnet_http_dns_enabled"]; 0)) else . end | if (getpath(["data"]) | has("ttnet_quic_enabled")) then (setpath(["data","ttnet_quic_enabled"]; 0)) else . end | if (getpath(["data"]) | has("ttnet_tt_http_dns")) then (setpath(["data","ttnet_tt_http_dns"]; 0)) else . end'
 
 http-response-jq ^https:\/\/tnc\d-(bjlgy|ali[a-z]{2})\d?\.zijieapi\.com\/get_domains\/v\d\/\? '.data.ttnet_dispatch_actions |= map(select(.action != "dispatch" and .action != "tc"))'
 
 http-response-jq ^https:\/\/(beta-luna\.douyin|api5-lq\.qishui)\.com\/luna\/me\? 'delpaths([["reward_ad_banner"]])'
 
 http-response-jq ^https:\/\/(beta-luna\.douyin|api5-lq\.qishui)\.com\/luna\/feed\/song-tab\? 'del(.items[] | select(.type == "video_track_mix"))'
-
-http-response-jq ^https:\/\/(beta-luna\.douyin|api5-lq\.qishui)\.com\/luna\/card\? 'delpaths([["preview_guide"]])'
 
 http-response-jq ^https:\/\/(beta-luna\.douyin|api5-lq\.qishui)\.com\/luna\/card\? 'del(.card_items[] | select(has("priority_display")))'
 

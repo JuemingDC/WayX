@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Zhibo8.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:37:01 +08:00
+# Converted: 2026-10-04 23:39:40 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Zhibo8_remove_ads.lpx
@@ -19,9 +19,6 @@
 ^https:\/\/headline\.qiumibao\.com\/recommend\/list\? url jsonjq-response-body '.news|=map(select(.model=="news" or .model=="video"))'
 
 ^https:\/\/a\.qiumibao\.com\/found\/\? url jsonjq-response-body 'map(select(.is_game != true))'
-
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/a\.qiumibao\.com\/ios\/config\/\? url jsonjq-response-body 'delpaths([["skin"],["advert"],["advert_config"],["mall"],["httpdns"],["reward"],["pgame"],["corner_mark"],["liveshop"],["theme"],["pop"],["live_activity_push"]])'
 
 ^https:\/\/a\.qiumibao\.com\/ios\/config\/\? url jsonjq-response-body '.all_sections.match_sections.labels |= (if . then (.blacks_disable |= if . then map(select(. != "游戏")) else . end) | (.show |= if . then map(select(. != "游戏")) else . end) else . end)'
 
