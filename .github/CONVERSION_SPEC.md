@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.67
+版本：1.68
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -949,3 +949,14 @@ V2 文件地址必须是固定 String/raw String；双引号内的动态模板�
 获取的 JQ 内容以 raw String 数据进入语义 IR，不把文件文本中的 `${...}` 当作 Loon 模板进行二次展开。目标规划与 phase eligibility 使用同一套已解析依赖的 AST。§29 的固定 JQ 子集可进入共同 features/phase dispatcher，并在生成 helper 中保留原 JQ 文件 URL 注释；任意 JQ 仍遵循既有 native/compatibility/Review 边界，不假设所有文件表达式可在 JavaScript 中执行。参数/Regex、原作者 Script、Legacy 及终结动作的限制不变。
 
 仅保留被端到端 conversion suite 使用的 end-to-end-golden.json（固定日期下的输出摘要、大小、段落和 helper 数量），不将其作为语义等价证明。删除重复的 MyBlockAds 专用 golden 文件及专用测试：同插件已在端到端快照中覆盖，通用 JQ 文件 materialization、原文保留、原生目标及完整目录 canonical/audit 门禁继续覆盖对应转换链。行为验证继续由独立预期输出、source oracle 与真实 jq 对照承担。定时活动继续暂停，main/test 分支预算及 QX 强制启用政策不变。
+
+
+## 31. 固定 JQ 嵌套对象路径（v1.68）
+
+§29–30 的 JQ 常量赋值及单路径 del 扩展至固定嵌套对象字段，如 `.data.ads = []`、`.["data"]["a.b"].flag = true`、`del(.data.ads)`。只接受标识符字段和 JSON 双引号 bracket 字段组成的对象路径；数字索引、数组遍历、slice、可选 selector、动态路径、多输出及任意表达式仍不属于共同 runtime 子集。路径不是 Loon JSON key-path，不以其创建/replace 规则代替 JQ。
+
+JQ 赋值将缺失或 null 父字段创建为对象，并覆写最终字段；标量或数组父节点导致当前整个 JQ action 失败。删除缺失或 null 路径不创建对象；标量或数组父节点同样失败。每个 JQ action 在独立解析的当前 body 上执行，全部子操作成功后才提交，因此前面的 pipe 修改也会随本 action 的后续失败一起回滚；不同 action 已提交的修改保留，后续 action 继续。所有字段访问使用 own property，写入不触发 `__proto__` setter。Inline/file JQ 共用同一个解析器与适配器，不新增插件特判或生产文件类别。原顶层子集生成文本保持兼容。
+
+验证以独立 jq 程序为预期输出，覆盖对象/null/缺失/标量/数组、字段转义、quoted bracket、原型名称和动作内回滚；完整 conversion 检查 inline/file 与 Header/Body/JSON/请求 mock 的阶段顺序。已有完整目录、validator/canonical、source URL 和 CI 门禁继续执行。数字精度、压缩/编码/缓冲等既有客户端边界不因路径扩大而消失；定时活动继续暂停，QX 强制 enable 及 main/test 分支预算不变。
+
+注释掉的 Rewrite 不因新 JQ 子集而迁移为宽 matcher helper；其可表示的 native 注释仍走兼容规划，保持关闭并避免为注释新增无用的 JQ helper。完整目录验收允许仅已证明的新嵌套子集产生预期 helper 更新，逐项记录而不声称输出始终不变。

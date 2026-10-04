@@ -956,7 +956,7 @@ function rewriteFeatureProfile(ast) {
 }
 
 // Bounded inline JQ compiler. Never evaluate source text as JavaScript or
-// approximate arbitrary JQ streams, dynamic filters, or nested path semantics.
+// approximate arbitrary JQ streams, dynamic filters, or array selector semantics.
 // This internal API deliberately stays outside the public index facade.
 export function fixedJqOperations(action) {
   if(!/^(request|response)\.json\.jq$/.test(action?.name || ''))return null;
@@ -974,22 +974,29 @@ export function fixedJqOperations(action) {
   }
   if(quoted || depth!==0)return null;
   pieces.push(text.slice(start).trim());
-  const keyPattern=String.raw`\.(?:([A-Za-z_][A-Za-z_0-9]*)|\[\s*("(?:[^"\\]|\\.)*")\s*\])`;
+  const identifier='[A-Za-z_][A-Za-z_0-9]*';
+  const bracket=String.raw`\[\s*"(?:[^"\\]|\\.)*"\s*\]`;
+  const pathPattern='\\.(?:'+identifier+'|'+bracket+')(?:\\.'+identifier+'|'+bracket+')*';
+  const pathKeys=path=>{
+    const tokens=path.slice(1).match(new RegExp(identifier+'|'+bracket,'g'));
+    return tokens.map(token=>token.startsWith('[')?JSON.parse(token.slice(1,-1).trim()):token);
+  };
   const ops=[];
   for(const part of pieces) {
     if(part==='.') {ops.push({kind:'identity'});continue;}
-    const assignment=part.match(new RegExp('^'+keyPattern+'\\s*=\\s*([\\s\\S]+)$'));
-    const deletion=part.match(new RegExp('^del\\(\\s*'+keyPattern+'\\s*\\)$'));
+    const assignment=part.match(new RegExp('^('+pathPattern+')\\s*=\\s*([\\s\\S]+)$'));
+    const deletion=part.match(new RegExp('^del\\(\\s*('+pathPattern+')\\s*\\)$'));
     const m=assignment || deletion;if(!m)return null;
     try {
-      const key=m[1] ?? JSON.parse(m[2]);
-      if(deletion)ops.push({kind:'delete',key});
+      const path=pathKeys(m[1]);
+      const address=path.length===1?{key:path[0]}:{path};
+      if(deletion)ops.push({kind:'delete',...address});
       else {
-        const value=JSON.parse(m[3]);
+        const value=JSON.parse(m[2]);
         // JSON.parse silently rounds huge numeric literals. Keep them native.
         const safe=v=>typeof v==='number'?Number.isFinite(v)&&(!Number.isInteger(v)||Number.isSafeInteger(v)):v && typeof v==='object'?Object.values(v).every(safe):true;
         if(!safe(value))return null;
-        ops.push({kind:'set',key,value});
+        ops.push({kind:'set',...address,value});
       }
     }catch{return null;}
   }

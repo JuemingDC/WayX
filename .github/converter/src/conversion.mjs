@@ -103,7 +103,7 @@ function planDisabledSurgeRewriteComments(comments,ctx) {
     }
 
     const sourceLine=match[1].trim();
-    const mapped=rewriteV2Action(sourceLine,'surge',ctx);
+    const mapped=rewriteV2Action(sourceLine,'surge',{...ctx,featureCompatibilityPhases:new Set(['request','response'])});
     if (!mapped || mapped.section==='comment') {
       passthrough.push(raw);
       continue;
