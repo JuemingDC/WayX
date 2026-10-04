@@ -1936,6 +1936,9 @@ if(selectedCase==='conversion-policy.mjs') {
   for(const target of ['qx','surge']){assert.match(phaseBlocked[target],/OMITTED/);assert.doesNotMatch(phaseBlocked[target],/REVIEW REQUIRED/);assert.match(active(phaseBlocked[target]),/original\.js/);}
   const unsupported=convertPlugin(entry,'[Rewrite]\nrequest if ${url} ~= /api/ then url.replace("https://example.test/new") | request.header.set("X","yes")',options);
   for(const target of ['qx','surge']){assert.match(unsupported[target],/OMITTED/);assert.doesNotMatch(active(unsupported[target]),/url 302|url replace|script-path=|script-response/);assert.doesNotMatch(unsupported[target],/REVIEW REQUIRED/);}
+  const malformedJq=JSON.parse(await fs.readFile(new URL('../fixtures/upstream-jq-errors.json',import.meta.url),'utf8'))[0].original;
+  const repairedChain=convertPlugin(entry,'[Rewrite]\nresponse if ${url} ~= /api/ then response.header.set("X-Discarded","ignored") | response.json.jq(`'+malformedJq+'`)',options);
+  for(const target of ['qx','surge']){assert.match(repairedChain[target],/UPSTREAM ERROR CORRECTED/);assert.doesNotMatch(repairedChain[target],/X-Discarded/);assert.match(repairedChain[target],/# Source declaration: response if .* then response\.json\.jq/);}
   console.log('Single action-chain selection passed: '+checked+' target results, either-side Script/JQ priority, independent declarations, JSON-family splitting, indexed file inlining and per-action failure isolation');
 }
 

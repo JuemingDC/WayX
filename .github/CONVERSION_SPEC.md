@@ -1268,7 +1268,7 @@ JQ file/path 仅物化保留层，继续使用原声明 action 索引。被忽�
 
 修正正文与后续用户政策冲突的 flags、argument、pipeline 合成和 schedule 条款。§0 汇总当前生效边界，历史验收数量、实验能力与阶段迁移计划不改写为当前生产承诺。当前成品验证为 catalog 266 项；该数字是核查快照，未来由实际发现结果增减，不作为固定能力白名单。
 
-发现实现遗漏：`propose-conversion-issues.mjs` 的源语义预检原先按源 section 判定 family，把 `[Rewrite]` 中的 `XX | script(...)` 作为 Rewrite action/with token 检查；JSON/JQ 链也扫描已丢弃 action。生产转换支持选层，但同步前预检可能先隔离合法保留层。现修正为先识别 Script、否则共用 JSON/JQ selector，再检查保留层 semantic tokens；未识别的保留层照常进入 Issue，不自动扩大 baseline。目录的复杂组合、V2 token 和 Regex inventory 使用同一选层入口，避免预检通过却在完整目录校验失败。源文件与 Issue provenance 仍保留真实原文。
+发现实现遗漏：`propose-conversion-issues.mjs` 的源语义预检原先按源 section 判定 family，把 `[Rewrite]` 中的 `XX | script(...)` 作为 Rewrite action/with token 检查；JSON/JQ 链也扫描已丢弃 action。生产转换支持选层，但同步前预检可能先隔离合法保留层。现修正为先识别 Script、否则共用 JSON/JQ selector，再检查保留层 semantic tokens；未识别的保留层照常进入 Issue，不自动扩大 baseline。目录的复杂组合、V2 token 和 Regex inventory 使用同一选层入口，避免预检通过却在完整目录校验失败。源文件与 Issue provenance 仍保留真实原文。 同时修正上游 JQ 错误注释的作用域：选层链的 jq 修正诊断只引用当前保留 action，不将被忽略的 Header/Body 等重新带回配置注释；原 jq 内容与修正原因仍记录，源文件不改写。
 
 | 生效契约 | 共同实现入口 | 验证 |
 | --- | --- | --- |
