@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.92
+版本：1.93
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -1185,3 +1185,14 @@ Surge 的作者 Script 声明必须显式携带源有效 timeout。省略源 tim
 转换失败案例：动态选项共用只检查存在/default 的 placeholder 函数，源类型错误进入目标配置；QX 省略路径跳过源校验；旧版 Surge debug 未生成。修复共同绑定逻辑及旧版目标字段生成，回归覆盖两种源语法、两种目标、HTTP/非 HTTP、合法 numeric String、错误类型/默认值、无默认值边界、QX 强制启用和相邻有效声明隔离。
 
 官方依据：https://nsloon.app/en/docs/Script/script_v2/（Field rules、Missing dynamic option values），https://manual.nssurge.com/scripting/overview.html（timeout/debug）。
+
+
+## 48. Script 固定字符串字段与往返词法（v1.93）
+
+Script v2 的 script path、tag、img_url 使用共同固定字符串解析：String/Raw String 类型不是固定值证明，必须检查源词法模板片段。真实 `${...}` 模板或变量在这些字段中使当前声明无效；转义 `\${...}` 与 raw 字面量保持原文字义，去掉转义标记只发生一次。script path 必须非空；tag/img_url 保持 String 字段的既有空值处理。原 AST 的 raw 词法保留，语义 value 使用解码后的固定值。
+
+Script v2 往返序列化保留 pathNode 的原字符串形式，避免把 Raw String 字面量改为会插值的双引号字符串。没有原 pathNode 的手工 AST fallback 转义 `${`，保证固定路径不会被重新解释为模板。所有受支持的 HTTP/Cron/Network Changed/Generic 类型共用解析入口；源无效声明继续既有 Issue/Review 与相邻有效声明隔离，不能以目标不支持某字段为由绕过源校验。
+
+转换失败案例：旧解析器只检查 String 类型而放行动态路径/tag/img_url；转义字面量保留错误反斜杠；路径输出统一 JSON.stringify，raw `${...}` 在下一次解析时变成模板。修复共同固定字段解析及往返生成，不修改个别插件产物。参数绑定、默认超时、QX 强制 enable、正则仅保留正文的策略保持不变。
+
+官方依据：https://nsloon.app/en/docs/Script/script_v2/（Script path、Field rules），https://nsloon.app/en/docs/Rewrite/rewrite_v2/（Double-quoted strings、Raw strings）。

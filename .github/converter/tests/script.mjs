@@ -361,3 +361,32 @@ if(selectedCase==='script-ir-target-planners.mjs') {
   assert.match(legacyDebug.line,/,debug=true$/);
   console.log('Dynamic Script option bindings passed: types/defaults/missing values, both syntaxes/targets, all supported phases and QX force-enable');
 }
+
+if(selectedCase==='script-ir-target-planners.mjs') {
+  const {scriptV2ToSource,parseScriptDeclaration}=await import('../src/index.mjs');
+  const triggers=['request if ${url} ~= /api/','response if ${url} ~= /api/','cron "0 8 * * *"','network-changed','generic'];
+  for(const trigger of triggers) {
+    for(const field of ['path','tag','img_url']) {
+      const source=value=>trigger+' then script('+(field==='path'?value:'"a.js"')+')'+(field==='path'?'':' with '+field+'='+value);
+      for(const invalid of ['"${region}"',"\"\\\\${region}\"",'${region}'])assert.throws(()=>parseScriptV2(source(invalid)),/fixed|template|invalid value type/);
+      for(const [value,expected] of [[String.raw`"\${region}"`,'${region}'],['`${region}`','${region}'],['`a``b`','a`b'],['"plain"','plain']]) {
+        const ast=parseScriptV2(source(value));
+        const actual=field==='path'?ast.script.path:ast.options[0].value.value;
+        assert.equal(actual,expected,source(value));
+        const again=parseScriptV2(scriptV2ToSource(ast));
+        assert.equal(field==='path'?again.script.path:again.options[0].value.value,expected);
+        const ir=parseScriptDeclaration(source(value));
+        assert.equal(planQxScript(ir).ok,true);assert.equal(planSurgeScript(ir).ok,true);
+      }
+    }
+    assert.throws(()=>parseScriptV2(trigger+' then script("")'),/non-empty/);
+    assert.throws(()=>parseScriptV2(trigger+' then script(``)'),/non-empty/);
+  }
+  const manual=parseScriptV2('generic then script(`literal-${region}.js`)');
+  delete manual.script.pathNode;
+  assert.equal(parseScriptV2(scriptV2ToSource(manual)).script.path,'literal-${region}.js');
+  const escaped=parseScriptDeclaration("request if ${url} ~= /api/ then script(\"https://example.test/\\${region}.js\") with tag=\"\\${tag}\"");
+  assert.equal(escaped.script.path,'https://example.test/${region}.js');
+  assert.equal(planQxScript(escaped).tag,'${tag}');
+  console.log('Fixed Script fields passed: templates rejected, escaped/raw literals decoded once, all phases and lexical round trips retained');
+}
