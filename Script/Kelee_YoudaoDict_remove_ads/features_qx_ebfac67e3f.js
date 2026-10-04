@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 06:22:27 +08:00
+// Converted: 2026-10-04 17:00:38 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/dict\.youdao\.com\/homepage\/toolbar\/get\//i then response.json.delete("data.vipTag")

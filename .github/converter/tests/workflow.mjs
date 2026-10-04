@@ -901,6 +901,13 @@ if(selectedCase==='managed-artifacts.mjs') {
     await fs.rm(path.join(root,'.github/monitor/.runtime/sync-failures.json'));
     const missingReport=runIsolatedCase(process.execPath,[canonicalTool,'--synced-only'],{cwd:root,encoding:'utf8'});
     assert.notEqual(missingReport.status,0,'missing sync report must fail instead of falling back to full conversion');
+    await fs.writeFile(path.join(root,'.github/sources/reconvert.json'),JSON.stringify({all:true,ids:[]}));
+    const forced=await runCatalogSync({root,log:()=>{},writeError:()=>{},warn:()=>{},entryOptions:{fetchText:async url=>url===good.source?source('updated'):unknown}});
+    assert.deepEqual(forced.convertedPlugins,['Good']);assert.deepEqual(forced.skippedPlugins,[],'full request bypasses unchanged shortcut');
+    assert.deepEqual(JSON.parse(await fs.readFile(path.join(root,'.github/sources/reconvert.json'),'utf8')),{all:false,ids:['Bad']},'successful requests clear; failed requests persist');
+    await fs.writeFile(path.join(root,'.github/sources/reconvert.json'),JSON.stringify({all:false,ids:[]}));
+    const daily=await runCatalogSync({root,log:()=>{},writeError:()=>{},warn:()=>{},entryOptions:{fetchText:async url=>url===good.source?source('updated'):unknown,materialize:forbidden,convert:forbidden}});
+    assert.deepEqual(daily.convertedPlugins,[]);assert.deepEqual(daily.skippedPlugins,['Good'],'daily runs resume incremental conversion');
     const baseline=await inventory();
     await assert.rejects(syncCatalogEntry(bad,{root,log:()=>{},fetchText:async()=>source('changed'),convert:(...args)=>{const out=convertPluginWithContext(...args);out.qx+='\n# [WayX] TEST REVIEW REQUIRED: unsupported target\n# Source declaration: fixture\n';return out;}}),error=>error.syncFailure.stage==='review-target-mapping');
     assert.deepEqual(await inventory(),baseline,'known but unsupported mapping is quarantined before any write');

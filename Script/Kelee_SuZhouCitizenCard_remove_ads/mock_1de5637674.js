@@ -1,4 +1,4 @@
-// Converted: 2026-10-03 17:45:17 +08:00
+// Converted: 2026-10-04 17:00:45 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https?:\/\/newapp2\.szsmk\.com\/app\/config\/queryMainAd/i then response.body.mock("json", "{\"message\":\"操作成功\",\"main_ad_list\":[],\"code\":\"000000\"}")

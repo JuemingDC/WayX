@@ -1,4 +1,4 @@
-// Converted: 2026-10-03 17:45:02 +08:00
+// Converted: 2026-10-04 17:00:32 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/api\.58moto\.com\/forum\/public\/labelController\.do\?action=20112/i then response.body.mock("json", "{\"code\":0,\"msg\":\"success\"}", 200)

@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 06:22:27 +08:00
+// Converted: 2026-10-04 17:00:30 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/lzmh\.lz-qs\.com:6025\/lzmh_app_api\/api\/v2\/user\/getUserBaseInfoAndConfig\?/i then response.json.delete("value.config")

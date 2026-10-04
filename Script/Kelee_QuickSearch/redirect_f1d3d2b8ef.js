@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 01:38:50 +08:00
+// Converted: 2026-10-04 17:00:28 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /^https:\/\/duckduckgo\.com\/\?q=([^&]+).+/i as urlMatch then redirect(307, "https://www.google.com/search?q=${urlMatch.1}")
