@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.74
+版本：1.75
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -1030,3 +1030,10 @@ Pre-matching 只用于顶层 REJECT/REJECT-DROP/REJECT-NO-DROP/REJECT-TINYGIF �
 验收以真实 jq 的输出/错误作为独立参考，涵盖重复和重叠路径、正反顺序、null/缺失/标量/Array 父字段、特殊字符与原型同名字段、完整 action 回退及后续动作继续。完整 retained catalog、canonical/validator/CI 仍为合并门禁。可莉范围仍为去广告/依赖，定时活动暂停，分支仅 main/test。参考：[jq 1.6 del/path](https://jqlang.org/manual/v1.6/)。
 
 后续功能以当前去广告/依赖目录已有语义类型为设计范围；多路径 del 已见于 PinDuoDuo 的原生 JQ，不针对插件 id 定制脚本。新注册但未在已审查 V2 baseline 出现的 phase、action、option、条件变量/操作符会形成带完整源声明的 `conversion-unknown` Issue，未知语法/目标限制继续既有 Issue/Review/failure 流程，不自动扩大 baseline 或猜测转换。PR CI 与手动 upstream-monitor 自动创建/复用 Issue；定时活动仍暂停。修复 Issue proposer 的运行报告目录为 `.github/monitor/.runtime`，与 sync failure writer 对齐，保证转换失败可读。
+
+
+## 38. Legacy 类型的自动 Issue 收口（v1.75）
+
+以现有 Legacy semantic inventory 为已审查范围，复用生产 `classifyLegacyRewriteAction` 与 `parseLegacyScriptLine` 检测新增 Rewrite action kind、mock option、Script phase/option。未知、缺失或非法声明均保留完整源行并形成稳定 `conversion-unknown` Issue；comments/空行不识别为活动声明，既有 optional separator、参数值及顺序变化不当作新类型。与 V2 识别使用同一个候选集合及现有 Issue 创建/复用流程，源候选与同声明的目标 Review/Issue 去重。不会根据扫描结果猜测目标规则或自动扩大 baseline。
+
+纯 native/JQ 优先、现有脚本设计、QX 强制 enable 与原作者 URL 政策不变；本次不修改任何生产转换输出。PR CI 和手动 upstream-monitor 均执行自动 Issue 处理，定时活动保持暂停。验收覆盖已有类型不误报、新注册但未观察类型、未知 Legacy action/option、非法声明、注释不复活、源行保留、指纹稳定及当前去广告/依赖目录无误报。不增加生产领域文件或公开入口，远端仅 main/test。

@@ -260,10 +260,18 @@ if (selectedCase === "upstream-automation.mjs") {
     const plugin={id:'IssueFixture',file:'test.lpx',source:'https://example.test/test.lpx',qx:'test.snippet',surge:'test.sgmodule',category:'去广告'};
     await fs.writeFile(path.join(issueFixture,'.github/sources/loon.json'),JSON.stringify([plugin]));
     await fs.copyFile('.github/converter/fixtures/catalog-syntax-inventory.json',path.join(issueFixture,'.github/converter/fixtures/catalog-syntax-inventory.json'));
+    await fs.copyFile('.github/converter/fixtures/catalog-legacy-syntax-inventory.json',path.join(issueFixture,'.github/converter/fixtures/catalog-legacy-syntax-inventory.json'));
     const known='response if ${url} ~= /api/ then response.json.jq(`del(.a,.b)`)';
     const fresh='response if ${url} ~= /api/ then response.header.del("X")';
     const unknown='response if ${url} ~= /api/ then response.future.action()';
-    await fs.writeFile(path.join(issueFixture,'Resource/Loon/test.lpx'),'[Rewrite]\n'+[known,fresh,unknown].join('\n'));
+    const legacyKnown='^https://example.test - reject';
+    const legacyNew='^https://example.test header https://new.example.test';
+    const legacyUnknown='^https://example.test future-action';
+    const scriptKnown='http-response ^https://example.test script-path=https://example.test/main.js, enable=false';
+    const scriptNew='http-response ^https://example.test script-path=https://example.test/main.js, debug=true';
+    const scriptUnknown='http-response ^https://example.test script-path=https://example.test/main.js, future-option=true';
+    const declarationOnly='^https://malformed.test';
+    await fs.writeFile(path.join(issueFixture,'Resource/Loon/test.lpx'),'[Rewrite]\n'+[known,fresh,unknown,legacyKnown,'response reject','generic reject',legacyNew,legacyUnknown,declarationOnly,'# '+legacyUnknown,'; '+legacyUnknown,'// '+legacyUnknown].join('\n')+'\n[Script]\n'+[scriptKnown,scriptNew,scriptUnknown,'# '+scriptNew].join('\n'));
     await fs.writeFile(path.join(issueFixture,'.github/monitor/.runtime/sync-failures.json'),JSON.stringify({version:1,failures:[{plugin,stage:'convert',reason:'unknown syntax',declarations:[{section:'Rewrite',line:unknown}]}]}));
     const url=new URL('../../scripts/propose-conversion-issues.mjs',import.meta.url).href;
     const result=runIsolatedCase(process.execPath,['--input-type=module','-e',
@@ -271,11 +279,22 @@ if (selectedCase === "upstream-automation.mjs") {
     assert.equal(result.status,0,result.stderr);
     const {a,b,titles}=JSON.parse(result.stdout);assert.deepEqual(a,b,'fingerprints and candidates remain stable');
     assert.equal(a.syncFailures.length,1,'read the same .github runtime report written by sync');
-    assert.equal(a.targetProblems.length,2,'new identifiers and unsupported syntax are reported');
+    assert.equal(a.targetProblems.length,7,'new identifiers and unsupported V2/legacy syntax are reported');
     assert.ok(a.targetProblems.some(group=>group.source===fresh&&group.reasons.some(reason=>reason.includes('response.header.del'))));
     assert.ok(a.targetProblems.some(group=>group.source===unknown));
-    assert.ok(a.targetProblems.every(group=>group.source!==known&&group.declarations[0].line===group.source));
-    assert.equal(new Set(titles).size,2);
+    for(const source of [legacyNew,legacyUnknown,scriptNew,scriptUnknown,declarationOnly])assert.ok(a.targetProblems.some(group=>group.source===source),source);
+    assert.ok(a.targetProblems.some(group=>group.source===legacyNew&&group.reasons.some(reason=>reason.includes('legacyRewrite.actionKinds'))));
+    assert.ok(a.targetProblems.some(group=>group.source===scriptNew&&group.reasons.some(reason=>reason.includes('legacyScript.optionNames'))));
+    assert.ok(a.targetProblems.every(group=>![known,legacyKnown,scriptKnown,'response reject','generic reject'].includes(group.source)&&group.declarations[0].line===group.source));
+    assert.equal(new Set(titles).size,7);
+    await fs.mkdir(path.join(issueFixture,'Adblock/Quantumult X'),{recursive:true});
+    await fs.writeFile(path.join(issueFixture,'Adblock/Quantumult X/test.snippet'),'# [WayX] ISSUE REQUIRED [fixture-unknown]: unsupported\n# Source declaration: '+legacyUnknown+'\n');
+    const merged=runIsolatedCase(process.execPath,['--input-type=module','-e','import {collectIssueCandidates} from '+JSON.stringify(url)+'; console.log(JSON.stringify(await collectIssueCandidates()));'],{cwd:issueFixture,encoding:'utf8'});
+    assert.equal(merged.status,0,merged.stderr);
+    const mergedProblems=JSON.parse(merged.stdout).targetProblems;
+    assert.equal(mergedProblems.length,7,'source and target representations of the same declaration must deduplicate');
+    assert.equal(mergedProblems.filter(group=>group.source===legacyUnknown).length,1);
+    assert.ok(mergedProblems.find(group=>group.source===legacyUnknown).locations.length>0);
     const dry=runIsolatedCase(process.execPath,[new URL('../../scripts/propose-conversion-issues.mjs',import.meta.url).pathname,'--dry-run'],{cwd:issueFixture,encoding:'utf8'});assert.equal(dry.status,0,dry.stderr);
     assert.ok((await fs.readFile(path.join(issueFixture,'.github/monitor/.runtime/conversion-issues.md'),'utf8')).includes('Hard sync failures: 1'));
   } finally {await fs.rm(issueFixture,{recursive:true,force:true});}
