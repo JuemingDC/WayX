@@ -1805,3 +1805,22 @@ for(const [target,file] of [
 validateQX(qx+'\n# [task_local]\nevent-interaction https://example.com/tool.js, tag=Tool, enabled=true\n',entry);
 console.log('Conversion policy canonical validator regression passed');
 }
+
+if(selectedCase==='conversion-policy.mjs') {
+  const entry={id:'DynamicOptionBindings',source:'https://example.test/main.lpx',category:'Test'};
+  for(const legacy of [false,true]) {
+    const source='[Argument]\nvalue=switch,true\n[Script]\n'+(legacy
+      ? 'http-response api script-path=https://example.test/bad.js,timeout={value},tag=Bad\nhttp-response api script-path=https://example.test/good.js,debug={value},tag=Good'
+      : 'response if ${url} ~= /api/ then script("https://example.test/bad.js") with timeout=${value},tag="Bad"\nresponse if ${url} ~= /api/ then script("https://example.test/good.js") with debug=${value},tag="Good"');
+    const out=convertPlugin(entry,source,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+    assert.match(out.surge,/invalid plugin \[Argument\] type for timeout/);
+    assert.match(out.qx,/invalid plugin \[Argument\] type for timeout/);
+    assert.doesNotMatch(out.surge,/^[^#\n]*script-path=https:\/\/example\.test\/bad\.js/m);
+    assert.doesNotMatch(out.qx,/^[^#\n]*script-response-header https:\/\/example\.test\/bad\.js/m);
+    assert.match(out.surge,/^Good = type=http-response[^\n]*script-path=https:\/\/example\.test\/good\.js[^\n]*debug=\{\{\{value\}\}\}/m);
+    assert.match(out.qx,/^[^#\n]*script-response-header https:\/\/example\.test\/good\.js$/m);
+    assert.equal(out.generatedScripts.size,0);
+    validateQX(out.qx,entry);validateSurgeModule(out.surge,entry);
+  }
+  console.log('Dynamic option failure isolation passed: invalid timeout declaration rejected, adjacent valid debug Script retained in both targets');
+}

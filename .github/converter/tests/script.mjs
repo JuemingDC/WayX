@@ -301,3 +301,63 @@ if (selectedCase==='script-ir-target-planners.mjs') {
   }
   console.log('Source Script timeout defaults passed: legacy HTTP 10s, v2 HTTP 20s, v2 non-HTTP 300s; explicit/dynamic values retained');
 }
+
+if(selectedCase==='script-ir-target-planners.mjs') {
+  const {parseScriptDeclaration,buildSurgeArgumentTable}=await import('../src/index.mjs');
+  const sources=(name)=>[
+    'http-request api script-path=https://example.test/a.js,'+name+'={value}',
+    'http-response api script-path=https://example.test/a.js,'+name+'={value}',
+    'request if ${url} ~= /api/ then script("https://example.test/a.js") with '+name+'=${value}',
+    'response if ${url} ~= /api/ then script("https://example.test/a.js") with '+name+'=${value}',
+    'generic then script("https://example.test/a.js") with '+name+'=${value}',
+    'network-changed then script("https://example.test/a.js") with '+name+'=${value}',
+    'cron "0 8 * * *" then script("https://example.test/a.js") with '+name+'=${value}',
+  ];
+  const invalid=[
+    ['timeout','value=switch,true','type'],
+    ['debug','value=input,"false"','type'],
+    ['enable','value=input,"true"','type'],
+    ['timeout','value=input,"20ms"','default'],
+    ['timeout','value=input,"Infinity"','default'],
+    ['timeout','value=input,"0"','default'],
+    ['timeout','value=input,-1,type=number','default'],
+    ['timeout','value=input,""','default'],
+    ['debug','value=switch,yes','default'],
+  ];
+  for(const [name,declaration,reason] of invalid) {
+    const argumentTable=buildSurgeArgumentTable([declaration]);
+    for(const source of sources(name)) {
+      const ir=parseScriptDeclaration(source);
+      const opts={argumentTable,argumentIds:new Set(['value'])};
+      const surge=planSurgeScript(ir,opts);
+      assert.equal(surge.ok,false,source);assert.match(surge.reason,new RegExp('invalid.*'+reason+'.*'+name));
+      const qx=planQxScript(ir,opts);
+      assert.equal(qx.ok,name==='enable',source); // Explicit user policy wins.
+      if(!qx.ok)assert.match(qx.reason,new RegExp('invalid.*'+reason+'.*'+name));
+    }
+  }
+  for(const [name,declaration] of [['timeout','value=input,"20"'],['timeout','value=input,"+20"'],['timeout','value=input,".5"'],['timeout','value=input,"1e2"'],['timeout','value=input,2.5,type=number'],['debug','value=switch,true'],['enable','value=switch,false']]) {
+    const argumentTable=buildSurgeArgumentTable([declaration]);
+    for(const source of sources(name)) {
+      const ir=parseScriptDeclaration(source),opts={argumentTable,argumentIds:new Set(['value'])};
+      const surge=planSurgeScript(ir,opts),qx=planQxScript(ir,opts);
+      assert.equal(surge.ok,true,JSON.stringify(surge));assert.equal(qx.ok,true,JSON.stringify(qx));
+      assert.ok(surge.line.includes(argumentTable.byId.get('value').placeholder));
+      if(name==='debug')assert.match(surge.line,/,debug=\{\{\{value\}\}\}$/);
+      assert.doesNotMatch(qx.line,/timeout=|debug=/);
+      if(name==='timeout')assert.equal(argumentTable.byId.get('value').valueType,declaration.includes('type=number')?'number':'string');
+    }
+  }
+  const missingTable=buildSurgeArgumentTable(['value=input,type=number']);
+  for(const source of sources('timeout')) {
+    const ir=parseScriptDeclaration(source);
+    const missing=planSurgeScript(ir,{argumentTable:missingTable});
+    assert.equal(missing.ok,false);assert.match(missing.reason,/missing.*default.*timeout/);
+    assert.equal(planQxScript(ir,{argumentTable:missingTable}).ok,true);
+    const undeclared=planSurgeScript(ir,{argumentTable:buildSurgeArgumentTable([])});
+    assert.equal(undeclared.ok,false);assert.match(undeclared.reason,/undeclared.*timeout/);
+  }
+  const legacyDebug=planSurgeScript(parseScriptDeclaration('http-request api script-path=a.js,debug=true'));
+  assert.match(legacyDebug.line,/,debug=true$/);
+  console.log('Dynamic Script option bindings passed: types/defaults/missing values, both syntaxes/targets, all supported phases and QX force-enable');
+}
