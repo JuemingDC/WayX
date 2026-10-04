@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.77
+版本：1.78
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -1061,3 +1061,20 @@ PR checkout 精确 head SHA；同仓 test PR 可向原 test 分支提交成品�
 `.github/monitor/.runtime/pipeline-result.json` 记录每阶段 outcome、failedGates、publishable 和 publication；Actions summary 显示已验证/保留/暂缓数量与发布状态。失败也上传完整日志、sync failure、Issue、inventory/reconciliation、有效目录和生成成品，显式 include-hidden-files 保证 .github/.runtime 报告不被上传工具默认过滤；保留 14 天。发布失败或未满足门禁时工作流必须失败，避免只留错误日志却返回成功。
 
 旧章节中的分离 Upstream Monitor/Converter Check 名称为迁移历史，当前执行入口以本节和唯一 workflow 为准。运行说明只保留 monitor/README 的当前流程，不恢复已删除的分块规范或新增第二权威规范。
+
+
+## 41. 官方上游监控的镜像、状态和报告一致性（v1.78）
+
+集中修补监控整类假成功：下载失败不能推进 remote_sha，文件/状态部分写入不能留下混合镜像，当前无变化不能沿用旧 change summary。继续使用唯一 WayX Automation 和既有 monitor/Issue 入口，不增加工作流、生产转换领域或独立测试套件。
+
+HTTP 仅在 URL、存储的 digest 和实际镜像均匹配时发送条件请求；304 必须有有效镜像。缺失/损坏的镜像用无条件请求修复，响应失败保留实际旧 bytes；相同内容的修复不伪称上游内容变化。响应缓存头按大小写无关键读取。GitHub repo/ref 身份变化重新建立元数据基线，初次 repo 仍只记录提交基线，镜像沿用已监控变化的增量范围，不宣称完整仓库副本。
+
+GitHub compare 必须为 forward ahead；缺少 files、达到 API 300 文件上限或分叉/回退历史不尝试不完整同步，保留基线并跟踪 Issue。每个匹配文件要求 raw URL 和 HTTP 200；删除及重命名根据新旧路径分别匹配 scope，移动出 scope 删除原已监控路径，移动入 scope 获取新路径，不删未监控旧文件。任何获取失败不推进 commit baseline。参考：[GitHub compare commits 文件上限与 previous_filename](https://docs.github.com/en/rest/commits/commits#compare-two-commits)。
+
+每个来源备份实际镜像和 state 文件 bytes，再获取/写镜像/持久化 state；JSON 写入通过同目录临时文件和 replace 完成。获取、镜像或状态写入失败恢复该来源全部实际文件，删除本次引入的文件并恢复内存状态，其它来源继续检查。恢复失败显式记录 rollbackSucceeded=false；运行必须失败，禁止发布。该事务保护运行过程中的错误回退，不提供断电恢复日志。
+
+每次运行均重写 upstream_changes.md 和 monitor-result.json，覆盖成功、无变化及失败。结构化报告包含完整 source metadata、失败阶段、类型、原因、rollback 状态和 complete；任一来源失败返回 exit 1 / complete=false，不再吞异常返回成功。主分支手动监控的发布同时要求真实 outcome success 和明确 complete=true；即使 CLI 假返回 0 或 output 缺失也不可发布。PR/test 未启用监控时不要求该输出。
+
+失败通过既有 proposer 创建/复用 upstream-monitor-failure Issue，指纹按 source identity、stage、error type 稳定，瞬时原因或时间变化不另开重复问题；源前置 scanner 禁用 failure 输入时不混入监控错误。完整日志与结构化结果由已有 artifact 保存，Actions Summary 显示失败数量。全部转换器 native/script/JQ/URL 政策保持，不据监控失败猜测任何转换语义。
+
+验收使用临时真实文件、实际 monitor main 和可控原始网络响应：HTTP 304 与坏/缺镜像、报告覆盖、repo 部分下载失败、完整状态写后失败及 bytes 回退、rollback 被阻止、rename/delete、缺 raw URL、300 文件上限、非 forward history、多来源健康/失败隔离、Issue 去重和 main 发布输出门禁；完整生产拉取与转换仍只交 Actions 验证。main/test 和定时暂停不变。

@@ -9,7 +9,7 @@ import path from "node:path";
 import { conversionStampFromText, firstConversionStamp, generatedScriptDiffs, inspectManagedSource, isWayxGeneratedHelperFilename, managedSourceDigest, managedTargetDiffs, normalizeManagedSource, readCatalogSource, readManagedTargetState, syncGeneratedScripts, syncManagedSource, writeManagedSource, writeManagedTargets, ORIGINAL_FETCH_PROFILES, WAYX_FETCH_UA, WAYX_LOON_FETCH_UA, resolveOriginalUrl, selectOriginalFetchProfile, loadLoonSourceCatalog, qxTargetPath, surgeTargetPath } from "../src/index.mjs";
 import { createWorkflowFailureReporter, formatWorkflowErrorAnnotation, buildSyncFailure, failureDeclarationContext, README_AUTO_UPDATE_INTERVAL, QX_MIXED_REWRITE_MIN_BUILD, buildReadmePlan, qxAddResourceUrl, qxSnippetInstallUrl, surgeModuleInstallUrl } from "../src/workflow.mjs";
 import { isLoonPluginSource } from "../../scripts/sync-convert.mjs";
-import { syncFailureIssueBody, syncFailureTitle, targetProblemIssueBody, targetProblemTitle } from "../../scripts/propose-conversion-issues.mjs";
+import { syncFailureIssueBody, syncFailureTitle, targetProblemIssueBody, targetProblemTitle, monitorFailureTitle, monitorFailureIssueBody } from "../../scripts/propose-conversion-issues.mjs";
 
 import { spawnSync as runIsolatedCase } from 'node:child_process';
 import { fileURLToPath as isolatedSuitePath } from 'node:url';
@@ -273,9 +273,9 @@ try {
   const output=path.join(automationRoot,'output');
   const required=['syntax','catalog','checkpoint','loon_sync','canonical','verify','reports','issues'];
   const outcomes=Object.fromEntries(required.map(name=>[name,{outcome:'success'}]));
-  const gate=async(stages,integrity='true',monitor='false')=>{
+  const gate=async(stages,integrity='true',monitor='false',complete='true')=>{
     await fs.writeFile(output,'');
-    const result=runIsolatedCase('bash',['-e','-c',gateProgram],{cwd:automationRoot,encoding:'utf8',env:{...process.env,STAGES:JSON.stringify(stages),SYNC_PUBLISHABLE:integrity,MONITOR_ENABLED:monitor,GITHUB_OUTPUT:output}});
+    const result=runIsolatedCase('bash',['-e','-c',gateProgram],{cwd:automationRoot,encoding:'utf8',env:{...process.env,STAGES:JSON.stringify(stages),SYNC_PUBLISHABLE:integrity,MONITOR_ENABLED:monitor,MONITOR_COMPLETE:complete,GITHUB_OUTPUT:output}});
     assert.equal(result.status,0,result.stderr);
     return JSON.parse(await fs.readFile(path.join(automationRoot,'.github/monitor/.runtime/pipeline-result.json'),'utf8'));
   };
@@ -288,6 +288,7 @@ try {
   assert.equal((await gate(outcomes,'','false')).publishable,false);
   assert.equal((await gate(outcomes,'true','true')).publishable,false);
   assert.equal((await gate({...outcomes,monitor:{outcome:'success'}},'true','true')).publishable,true);
+  for(const complete of ['false',''])assert.equal((await gate({...outcomes,monitor:{outcome:'success'}},'true','true',complete)).publishable,false,'a zero exit code alone cannot prove monitor integrity');
 
   const repo=path.join(automationRoot,'repo'),remote=path.join(automationRoot,'remote.git');
   await fs.mkdir(repo);const git=(...args)=>{
@@ -377,8 +378,17 @@ if (selectedCase === "upstream-automation.mjs") {
     assert.equal(mergedProblems.length,7,'source and target representations of the same declaration must deduplicate');
     assert.equal(mergedProblems.filter(group=>group.source===legacyUnknown).length,1);
     assert.ok(mergedProblems.find(group=>group.source===legacyUnknown).locations.length>0);
+    const monitorFailure={source:{id:'official-fixture',repo:'example/docs',ref:'main'},stage:'fetch-and-mirror',errorType:'RuntimeError',reason:'HTTP 503 downloading docs.js',rollbackSucceeded:true};
+    await fs.writeFile(path.join(issueFixture,'.github/monitor/.runtime/monitor-result.json'),JSON.stringify({version:1,complete:false,failures:[monitorFailure]}));
+    const monitorCandidates=runIsolatedCase(process.execPath,['--input-type=module','-e','import {collectIssueCandidates} from '+JSON.stringify(url)+'; console.log(JSON.stringify(await collectIssueCandidates()));'],{cwd:issueFixture,encoding:'utf8'});
+    assert.equal(monitorCandidates.status,0,monitorCandidates.stderr);
+    assert.deepEqual(JSON.parse(monitorCandidates.stdout).monitorFailures,[monitorFailure]);
+    assert.equal(monitorFailureTitle(monitorFailure),monitorFailureTitle({...monitorFailure,reason:'HTTP 502 at a later timestamp'}),'monitor retries must reuse the same fingerprint');
+    assert.notEqual(monitorFailureTitle(monitorFailure),monitorFailureTitle({...monitorFailure,stage:'write-state'}));
+    for(const content of ['official-fixture','https://github.com/example/docs','fetch-and-mirror','HTTP 503','Rollback succeeded: true'])assert.ok(monitorFailureIssueBody(monitorFailure).includes(content));
     const dry=runIsolatedCase(process.execPath,[new URL('../../scripts/propose-conversion-issues.mjs',import.meta.url).pathname,'--dry-run'],{cwd:issueFixture,encoding:'utf8'});assert.equal(dry.status,0,dry.stderr);
     assert.ok((await fs.readFile(path.join(issueFixture,'.github/monitor/.runtime/conversion-issues.md'),'utf8')).includes('Hard sync failures: 1'));
+    assert.ok((await fs.readFile(path.join(issueFixture,'.github/monitor/.runtime/conversion-issues.md'),'utf8')).includes('Upstream monitor failures: 1'));
   } finally {await fs.rm(issueFixture,{recursive:true,force:true});}
 
   const categoryCheck=runIsolatedCase('python',['-c',String.raw`
@@ -398,6 +408,98 @@ assert m.category_for(item('fake',['非去广告']),'fake') is None
 assert m.category_for(item('single','依赖'),'single')=='依赖'
 `],{encoding:'utf8'});
   assert.equal(categoryCheck.status,0,categoryCheck.stderr||categoryCheck.stdout);
+
+  const monitorCheck=runIsolatedCase('python',['-c',String.raw`
+import importlib.util, tempfile, json, sys, io, copy, contextlib, os
+from pathlib import Path
+from unittest.mock import patch
+s=importlib.util.spec_from_file_location('monitor','.github/monitor/monitor_upstreams.py')
+m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
+with tempfile.TemporaryDirectory() as temp:
+ m.ROOT=Path(temp);config=m.ROOT/'config.json';state_path=m.ROOT/'state.json';runtime=m.ROOT/'runtime';mirror=m.ROOT/'mirror'
+ settings={'state_file':'state.json','mirror_root':'mirror','runtime_root':'runtime'}
+ http={'id':'http','kind':'http','url':'https://example.test/spec','save_as':'spec.txt'}
+ repo={'id':'repo','kind':'github_repo','repo':'example/docs','ref':'main','save_as':'repo','include_globs':['*.js']}
+ def run(sources):
+  config.write_text(json.dumps({'settings':settings,'sources':sources}))
+  with patch.object(sys,'argv',['monitor','--config',str(config)]),patch.dict(os.environ,{'GITHUB_OUTPUT':str(m.ROOT/'outputs')}),contextlib.redirect_stdout(io.StringIO()),contextlib.redirect_stderr(io.StringIO()): return m.main()
+ def report():return json.loads((runtime/'monitor-result.json').read_text())
+ calls=[]
+ def http_response(url,headers,timeout):
+  calls.append(headers);return 200,b'spec\r\n',{'etag':'v1'}
+ with patch.object(m,'request',side_effect=http_response): assert run([http])==0
+ old=state_path.read_bytes();assert (mirror/'spec.txt').read_bytes()==b'spec\r\n'
+ (runtime/'upstream_changes.md').write_text('stale historical result')
+ with patch.object(m,'request',return_value=(304,b'',{})):assert run([http])==0
+ assert state_path.read_bytes()==old
+ assert 'stale historical' not in (runtime/'upstream_changes.md').read_text()
+ assert report()['complete'] and not report()['results'][0]['changed']
+ for missing in [False,True]:
+  if missing:(mirror/'spec.txt').unlink()
+  else:(mirror/'spec.txt').write_bytes(b'corrupt')
+  calls.clear()
+  with patch.object(m,'request',side_effect=http_response):assert run([http])==0
+  assert not any(key.startswith('If-') for key in calls[-1])
+  assert (mirror/'spec.txt').read_bytes()==b'spec\r\n'
+ (mirror/'spec.txt').unlink();old=state_path.read_bytes()
+ with patch.object(m,'request',return_value=(304,b'',{})):assert run([http])==1
+ assert state_path.read_bytes()==old and not (mirror/'spec.txt').exists()
+ assert not report()['complete'] and report()['failures'][0]['rollbackSucceeded']
+
+ def seed_repo():
+  import shutil
+  shutil.rmtree(mirror/'repo',ignore_errors=True);(mirror/'repo').mkdir(parents=True)
+  for name in ['old.js','removed.js','outside.js']:(mirror/'repo'/name).write_bytes(b'original\r\n')
+  m.save_json(state_path,{'version':1,'sources':{'repo':{'kind':'github_repo','repo':'example/docs','ref':'main','remote_sha':'old'}}})
+  return {str(p.relative_to(m.ROOT)):p.read_bytes() for p in [state_path,*sorted((mirror/'repo').glob('*'))]}
+ def files():return {str(p.relative_to(m.ROOT)):p.read_bytes() for p in [state_path,*sorted((mirror/'repo').glob('*'))] if p.is_file()}
+ changes=[{'filename':'added.js','status':'added','raw_url':'https://example.test/added'},
+ {'filename':'new.js','previous_filename':'old.js','status':'renamed','raw_url':'https://example.test/new'},
+ {'filename':'removed.js','status':'removed'},
+ {'filename':'outside.txt','previous_filename':'outside.js','status':'renamed'}]
+ comparison={'status':'ahead','files':changes}
+ def api(url,ua,timeout):return {'sha':'new'} if '/commits/' in url else comparison
+ def fail_second(url,headers,timeout):return (503,b'',{}) if url.endswith('/new') else (200,b'new bytes',{})
+ before=seed_repo()
+ with patch.object(m,'github_json',side_effect=api),patch.object(m,'request',side_effect=fail_second):assert run([repo])==1
+ assert files()==before,'a partial download must restore every mirror and retain the old SHA'
+ assert report()['failures'][0]['stage']=='fetch-and-mirror'
+ before=seed_repo();original_save=m.save_json
+ def fail_state(path,data):
+  original_save(path,data)
+  if path==state_path:raise OSError('fault after state write')
+ with patch.object(m,'github_json',side_effect=api),patch.object(m,'request',return_value=(200,b'new bytes',{})),patch.object(m,'save_json',side_effect=fail_state):assert run([repo])==1
+ assert files()==before,'state-write failure must restore both the state bytes and mirrors'
+ assert report()['failures'][0]['stage']=='write-state'
+ before=seed_repo()
+ with patch.object(m,'github_json',side_effect=api),patch.object(m,'request',side_effect=fail_second),patch.object(m,'restore_source',side_effect=OSError('rollback blocked')):assert run([repo])==1
+ assert report()['failures'][0]['rollbackSucceeded'] is False
+ seed_repo()
+ with patch.object(m,'github_json',side_effect=api),patch.object(m,'request',return_value=(200,b'new bytes',{})):assert run([repo])==0
+ assert json.loads(state_path.read_text())['sources']['repo']['remote_sha']=='new'
+ assert (mirror/'repo/new.js').read_bytes()==b'new bytes'
+ for name in ['old.js','removed.js','outside.js']:assert not (mirror/'repo'/name).exists()
+ for value in [{'status':'ahead','files':[{'filename':str(i)+'.js'} for i in range(300)]},{'status':'diverged','files':[]},{'status':'ahead'}]:
+  before=seed_repo();comparison=value
+  with patch.object(m,'github_json',side_effect=api):assert run([repo])==1
+  assert files()==before
+ before=seed_repo();comparison={'status':'ahead','files':[{'filename':'new.js','status':'modified'}]}
+ with patch.object(m,'github_json',side_effect=api):assert run([repo])==1
+ assert files()==before,'missing raw URL must not advance the baseline'
+ comparison={'status':'ahead','files':changes};before=seed_repo()
+ with patch.object(m,'github_json',side_effect=api),patch.object(m,'request',side_effect=lambda url,headers,timeout:(200,b'http success',{}) if url==http['url'] else fail_second(url,headers,timeout)):
+  assert run([repo,http])==1
+ assert json.loads(state_path.read_text())['sources']['repo']['remote_sha']=='old'
+ assert (mirror/'spec.txt').read_bytes()==b'http success','healthy sources continue after isolated monitor failure'
+ assert len(report()['failures'])==1 and len(report()['results'])==2
+ for invalid in [[],[http,http],[{'id':''}]]:
+  before=state_path.read_bytes();assert run(invalid)==1
+  assert state_path.read_bytes()==before and report()['failures'][0]['stage']=='configuration'
+  assert not report()['complete']
+print('Monitor transaction/report contracts passed')
+`],{encoding:'utf8'});
+  assert.equal(monitorCheck.status,0,monitorCheck.stderr||monitorCheck.stdout);
+  console.log(monitorCheck.stdout.trim());
 
 // Suite case: upstream-automation.mjs
 const previous=`#!name=Demo
