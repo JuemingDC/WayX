@@ -3,7 +3,7 @@
 // Category: Converter / runtime
 
 import { normalizeRegexBodyForTarget, compileRegexForTarget, regexReplacementRuntimeSource, stringTemplateParts, conditionRuntimeSource } from "./core.mjs";
-import { validateRewriteV2Ast, simpleUrlRewriteCondition, fixedStringValue, findRewriteComparisons, compileComplexCondition, qxRewriteMatcherPlan, parseJsonKeyPath, isTextRequestMockAction } from "./rewrite.mjs";
+import { validateRewriteV2Ast, simpleUrlRewriteCondition, fixedStringValue, findRewriteComparisons, compileComplexCondition, qxRewriteMatcherPlan, parseJsonKeyPath, isTextRequestMockAction, fixedJqOperations } from "./rewrite.mjs";
 
 
 
@@ -784,6 +784,13 @@ function statements(ast, target, {argumentTable = null, mockMaterialized = null}
       out.push('__wayxWith('+bodyValue+',v=>{__wayxBody=v;__wayxSet("Content-Type",'+JSON.stringify(mime)+');});');
       continue;
     }
+    if(action.name===ast.phase+'.json.jq') {
+      const operations=fixedJqOperations(action);
+      if(operations===null)throw new Error('inline JQ is outside the fixed mutation subset');
+      body=true;
+      out.push('try{let j=JSON.parse(String(__wayxBody ?? ""));for(const op of JSON.parse('+JSON.stringify(JSON.stringify(operations))+')){if(op.kind==="identity")continue;if(j===null){if(op.kind==="delete")continue;j={}}if(typeof j!=="object"||Array.isArray(j))throw new Error("JQ object key requires object");if(op.kind==="delete")delete j[op.key];else Object.defineProperty(j,op.key,{value:op.value,enumerable:true,writable:true,configurable:true})}__wayxBody=JSON.stringify(j)}catch{}');
+      continue;
+    }
     if (action.name === ast.phase + '.json.add' || action.name === ast.phase + '.json.delete' || action.name === ast.phase + '.json.replace') {
       body = true; json = true;
       for(const args of expand(action)){
@@ -893,7 +900,7 @@ export function renderSingleRewriteMutationScript(ast, options = {}) {
   }
   const name=ast.actions[0]?.name || '';
   const supported=new RegExp('^'+ast.phase+'\\.(?:header\\.(?:'+(options.target==='surge'?'add|':'')+'set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$');
-  if (!supported.test(name) && !isTextRequestMockAction(ast.actions[0])) {
+  if (!supported.test(name) && fixedJqOperations(ast.actions[0])===null && !isTextRequestMockAction(ast.actions[0])) {
     throw new Error('single Rewrite mutation helper does not support '+name);
   }
   return renderRewriteScript(ast, options);

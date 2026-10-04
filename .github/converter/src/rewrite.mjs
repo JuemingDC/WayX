@@ -947,11 +947,53 @@ function rewriteFeatureProfile(ast) {
   };
   visit(ast);
   if(ast.actions.some(isTextRequestMockAction))features.add('request-text-mock');
+  if(ast.actions.some(a=>fixedJqOperations(a)!==null))features.add('fixed-jq-mutations');
   if(ast.actions.some(a=>/\.json\.(?:add|replace)$/.test(a.name) && scalarItems(a.args[1]).some(v=>v?.type==='raw-string')))features.add('raw-json-value');
   if(ast.actions.length>1)features.add('action-order');
-  const mutations=ast.actions.every(a=>new RegExp('^'+ast.phase+'\\.(?:header\\.(?:add|set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$').test(a.name) || (ast.phase==='request' && /^request\.body\.mock(?:_file)?$/.test(a.name)));
-  const needsHelper=ast.actions.some(isTextRequestMockAction) || ['regex-flags','string-templates','special-characters','raw-json-value'].some(f=>features.has(f)) || ast.actions.some(a=>JSON.stringify(a.args).includes('"type":"variable"'));
+  const mutations=ast.actions.every(a=>new RegExp('^'+ast.phase+'\\.(?:header\\.(?:add|set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$').test(a.name) || (ast.phase==='request' && /^request\.body\.mock(?:_file)?$/.test(a.name)) || fixedJqOperations(a)!==null);
+  const needsHelper=(ast.actions.some(a=>fixedJqOperations(a)!==null) && (ast.actions.length>1 || ast.condition?.type!=='comparison' || ast.condition.left?.name!=='url' || ast.condition.operator!=='~=')) || ast.actions.some(isTextRequestMockAction) || ['regex-flags','string-templates','special-characters','raw-json-value'].some(f=>features.has(f)) || ast.actions.some(a=>JSON.stringify(a.args).includes('"type":"variable"'));
   return {kinds:[...features].sort(),mutations,needsHelper};
+}
+
+// Bounded inline JQ compiler. Never evaluate source text as JavaScript or
+// approximate arbitrary JQ streams, dynamic filters, or nested path semantics.
+// This internal API deliberately stays outside the public index facade.
+export function fixedJqOperations(action) {
+  if(!/^(request|response)\.json\.jq$/.test(action?.name || ''))return null;
+  let text;try{const parts=stringTemplateParts(action.args[0]);if(parts.some(p=>p[0]!=='s'))return null;text=parts.map(p=>p[1]).join('');}catch{return null;}
+  if(typeof text!=='string' || !text.trim())return null;
+  const pieces=[];let start=0,quoted=false,escaped=false,depth=0;
+  for(let i=0;i<text.length;i++) {
+    const c=text[i];
+    if(quoted){if(escaped)escaped=false;else if(c==='\\')escaped=true;else if(c==='"')quoted=false;continue;}
+    if(c==='"')quoted=true;
+    else if('([{'.includes(c))depth++;
+    else if(')]}'.includes(c))depth--;
+    else if(c==='|' && depth===0){pieces.push(text.slice(start,i).trim());start=i+1;}
+    if(depth<0)return null;
+  }
+  if(quoted || depth!==0)return null;
+  pieces.push(text.slice(start).trim());
+  const keyPattern=String.raw`\.(?:([A-Za-z_][A-Za-z_0-9]*)|\[\s*("(?:[^"\\]|\\.)*")\s*\])`;
+  const ops=[];
+  for(const part of pieces) {
+    if(part==='.') {ops.push({kind:'identity'});continue;}
+    const assignment=part.match(new RegExp('^'+keyPattern+'\\s*=\\s*([\\s\\S]+)$'));
+    const deletion=part.match(new RegExp('^del\\(\\s*'+keyPattern+'\\s*\\)$'));
+    const m=assignment || deletion;if(!m)return null;
+    try {
+      const key=m[1] ?? JSON.parse(m[2]);
+      if(deletion)ops.push({kind:'delete',key});
+      else {
+        const value=JSON.parse(m[3]);
+        // JSON.parse silently rounds huge numeric literals. Keep them native.
+        const safe=v=>typeof v==='number'?Number.isFinite(v)&&(!Number.isInteger(v)||Number.isSafeInteger(v)):v && typeof v==='object'?Object.values(v).every(safe):true;
+        if(!safe(value))return null;
+        ops.push({kind:'set',key,value});
+      }
+    }catch{return null;}
+  }
+  return ops;
 }
 
 // Shared phase eligibility: only text request mocks enter the synchronous
@@ -967,7 +1009,7 @@ export function isTextRequestMockAction(action) {
 }
 export function supportsRewritePhaseActions(ast,target) {
   const mutations=new RegExp('^'+ast.phase+'\\.(?:header\\.(?:'+(target==='surge'?'add|':'')+'set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$');
-  return ast.actions.every(action=>mutations.test(action.name) || (ast.phase==='request' && isTextRequestMockAction(action)));
+  return ast.actions.every(action=>mutations.test(action.name) || fixedJqOperations(action)!==null || (ast.phase==='request' && isTextRequestMockAction(action)));
 }
 
 function planRewriteFeatureHelper(ast,target,ctx) {

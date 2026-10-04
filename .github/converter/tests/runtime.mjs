@@ -474,3 +474,62 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   assert.equal(unsupportedFetches,0);
   console.log('Loon feature collection passed: '+checked+' independent expected-output cases, plus phase/body/duplicate/argument contracts');
 }
+
+if(selectedCase==='generated-helper-runtime.mjs') {
+  const {fixedJqOperations,supportsRewritePhaseActions}=await import('../src/rewrite.mjs');
+  const {renderRewritePhaseDispatcher}=await import('../src/runtime.mjs');
+  const {convertPlugin,validateConvertedPlugin}=await import('../src/conversion.mjs');
+  const filters=['.','.a = false','.a = null','del(.ads)','.a = {"x":"a|b=汉字","v":[false,null,2]} | del(.ads)','.["__proto__"] = {"safe":true} | .["constructor"] = 2','.["a.b"] = "${literal}" | del(.["odd|key"])','.a = 1 | .b = 2','.["x"] = {"__proto__":{"safe":true},"constructor":false}'];
+  const inputs=['{"ads":1,"a":false,"odd|key":2}','null','[1,2]','false','3','"text"','broken'];
+  let cases=0;
+  function execute(script,phase,body) {
+    let result,calls=0;
+    const context={$request:{url:'HTTPS://example.test/API',headers:{},body},$response:{status:200,statusCode:200,headers:{},body},$done:r=>{result=r;calls++}};
+    vm.runInNewContext(script,context,{timeout:1000});assert.equal(calls,1);
+    return JSON.parse(JSON.stringify(result));
+  }
+  for(const phase of ['request','response'])for(const filter of filters)for(const input of inputs) {
+    // Raw Loon string keeps ${literal} literal; quotes/backticks remain data.
+    const source=phase+' if ${url} ~= /api/i then '+phase+'.json.jq(`'+filter+'`) | '+phase+'.header.set("X-After","yes")';
+    const ast=parseRewriteV2(source);assert.ok(fixedJqOperations(ast.actions[0]));
+    const reference=runIsolatedCase('jq',['-c',filter],{input,encoding:'utf8'});
+    if(reference.error)throw reference.error;
+    const expected=reference.status===0 ? reference.stdout.trim() : input;
+    for(const target of ['qx','surge']) {
+      const result=execute(renderRewritePhaseDispatcher([ast],{target}).script,phase,input);
+      assert.deepEqual(result.headers,{'X-After':'yes'});
+      if(reference.status===0)assert.deepEqual(JSON.parse(result.body),JSON.parse(expected));
+      else assert.equal(result.body,expected);
+      cases++;
+    }
+  }
+  for(const filter of ['.a.b = 1','.a |= 2','.[]','select(.a)','del(.a,.b)','.a = 9007199254740993','.a = 1 | error("x")','.a = 1 # comment','.[0] = 1','.a = 1 || .b = 2']) {
+    const ast=parseRewriteV2('response if ${url} ~= /api/ then response.json.jq(`'+filter+'`)');
+    assert.equal(fixedJqOperations(ast.actions[0]),null,filter);
+    assert.equal(supportsRewritePhaseActions(ast,'qx'),false,filter);
+  }
+  assert.equal(fixedJqOperations(parseRewriteV2('response if ${url} ~= /api/ then response.json.jq(".a = ${request.method}")').actions[0]),null);
+  const entry={id:'FixedJqPhase',source:'https://example.test/plugin.lpx',category:'Test'};
+  for(const phase of ['request','response']) {
+    const lines=[phase+' if ${url} ~= /api/i then '+phase+'.json.jq(`.a = false | del(.ads)`)',phase+' if ${url} ~= /api/i then '+phase+'.json.replace("a",true) | '+phase+'.body.replace(/false/,"true")',phase+' if ${url} ~= /api/i then '+phase+'.json.jq(`.b = 2`) | '+phase+'.header.set("X-End","yes")'];
+    const output=convertPlugin(entry,'[Rewrite]\n'+lines.join('\n'),{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});validateConvertedPlugin(entry,output);
+    assert.equal(output.generatedScripts.size,2);assert.doesNotMatch(output.qx+output.surge,/REVIEW REQUIRED|COMPATIBILITY LIMITATION/);
+    for(const target of ['qx','surge']) {
+      const script=[...output.generatedScripts].find(([name])=>name.startsWith('phase_'+target))[1];
+      assert.deepEqual(execute(script,phase,'{"ads":1}'),{headers:{'X-End':'yes'},body:'{"a":true,"b":2}'});
+      let miss,calls=0;vm.runInNewContext(script,{$request:{url:'https://none.test/',headers:{}},$response:{headers:{}},$done:r=>{miss=r;calls++}});assert.equal(calls,1);assert.equal(Object.keys(miss).length,0);
+    }
+  }
+  const rollback=parseRewriteV2('request if ${url} ~= /api/i then request.body.mock("json","[]") | request.json.jq(`.a = 1`) | request.body.replace(/\\[\\]/,"{}") | request.json.jq(`.b = 2`)');
+  for(const target of ['qx','surge'])assert.equal(execute(renderRewritePhaseDispatcher([rollback],{target}).script,'request','old').body,'{"b":2}');
+  const guarded=parseRewriteV2('response if ${response.status} == 200 && ${request.header["X-Run"]} == "yes" then response.json.jq(`.["汉字"] = "a|b"`)');
+  const guardedOutput=convertPlugin(entry,'[Rewrite]\n'+guarded.raw,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+  assert.equal(guardedOutput.generatedScripts.size,2);
+  for(const target of ['qx','surge']) {
+    const script=[...guardedOutput.generatedScripts].find(([name])=>name.startsWith('features_'+target))[1];
+    let done;vm.runInNewContext(script,{$request:{url:'https://example.test/',headers:{'X-Run':'yes'}},$response:{status:200,statusCode:200,body:'{}',headers:{}},$done:r=>done=r});assert.deepEqual(JSON.parse(done.body),{'汉字':'a|b'});
+  }
+  const protectedSource='[Rewrite]\nresponse if ${url} ~= /api/i then response.json.jq(`.a = 1`)\n[Script]\nhttp-response ^https://example.test/api script-path=https://example.test/original.js,requires-body=true';
+  const protectedOut=convertPlugin(entry,protectedSource,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});assert.equal(protectedOut.generatedScripts.size,0);assert.match(protectedOut.qx,/jsonjq-response-body/);assert.match(protectedOut.surge,/http-response-jq/);
+  console.log('Fixed JQ subset passed: '+cases+' target outputs against independent jq, plus dispatcher/failure/compatibility contracts');
+}
