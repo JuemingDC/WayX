@@ -1082,7 +1082,7 @@ GitHub compare 必须为 forward ahead；缺少 files、达到 API 300 文件上
 
 ## 42. 每日上游发现、监控与单次生成（v1.79）
 
-按 2026-10-04 最新授权恢复唯一 WayX Automation 的每日 schedule：UTC `17 17 * * *`，即 Asia/Shanghai 每日 01:17；GitHub 可延迟实际执行时间。旧章节的定时暂停为历史约束，本节覆盖当前调度政策。不恢复旧工作流、Work 自动活动或新增分支。schedule 与手动运行都明确选择 main/test 的实际触发基线，不能因非 workflow_dispatch 而落入只读路径。
+按 2026-10-04 最新授权恢复唯一 WayX Automation 的每日 schedule：UTC `30 17 * * *`，即 Asia/Shanghai 每日 01:30；GitHub 可延迟实际执行时间。旧章节的定时暂停为历史约束，本节覆盖当前调度政策。不恢复旧工作流、Work 自动活动或新增分支。schedule 与手动运行都明确选择 main/test 的实际触发基线，不能因非 workflow_dispatch 而落入只读路径。
 
 现有 `.github/sources/loon.json` 的所有已登记原作者链接每日由同步入口拉取检查；可莉官方目录每日发现去广告/依赖类别的新 LPX，同次运行自动进入待拉取名单。既有 id/输出名、去重、排除其它可莉类别、静态条目及首次失败暂缓/后续重试保持。官方文档/参考仓库属于监控材料，不当作 Loon 插件加入转换名单；新来源只来自明确已登记且支持的发现源，不以链接名猜测规则类别。
 
