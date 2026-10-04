@@ -667,6 +667,25 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   for(const phase of ['request','response'])for(const filter of ['.data.ads = []','del(.data.adList) | .data.launchAd.showType = 0','.data | map(select(.enabled))','.first = true']) {
     const source='[Rewrite]\n'+phase+' if ${url} ~= /^https:\\/\\/example\\.test\\/api$/i then '+phase+'.json.jq(`'+filter+'`)';const output=convertPlugin(entry,source,options);validateConvertedPlugin(entry,output);assert.equal(output.generatedScripts.size,0);assert.match(output.qx,/^\^https:.* url jsonjq-/m);assert.match(output.surge,/^http-.*-jq \^https:/m);assert.doesNotMatch(output.qx+output.surge,/script-.*body|pattern=\^,/);checked+=2;
   }
+  // Both file syntaxes must read content and emit real native jq; retain the
+  // author's Path Array syntax, hash inside strings and literal template text.
+  for(const phase of ['request','response'])for(const kind of ['file','path','legacy']) {
+    const action=kind==='file' ? phase+'.json.jq_file("one.jq")' : phase+'.json.jq("jq-path=one.jq")';
+    const line=kind==='legacy' ? '^https://example.test/api '+phase+'-body-json-jq jq-path=one.jq' : phase+' if ${url} ~= /api/ then '+action;
+    const fetched=[];
+    const files=await materializeJqFiles(entry,parseLoonPlugin('[Rewrite]\n'+line),{fetchText:async url=>{fetched.push(url);return 'delpaths([["data","ads"]]) # removed comment\n | .literal = "#keep ${request.method}"';}});
+    assert.deepEqual(fetched,['https://example.test/plugin/one.jq']);
+    const out=convertPlugin(entry,'[Rewrite]\n'+line,{...options,jqFiles:files});validateConvertedPlugin(entry,out);
+    assert.equal(out.generatedScripts.size,0);
+    for(const target of ['qx','surge']) {
+      const declaration=out[target].split('\n').find(text=>text.includes(target==='qx'?'jsonjq-'+phase+'-body':'http-'+phase+'-jq'));
+      const program=declaration.match(/'(.+)'$/)[1];
+      assert.match(program,/delpaths/);assert.doesNotMatch(program,/jq-path|one\.jq|removed comment/);
+      const result=runIsolatedCase('jq',['-c',program],{input:'{"data":{"ads":[1],"keep":2}}',encoding:'utf8'});
+      assert.equal(result.status,0,result.stderr);assert.deepEqual(JSON.parse(result.stdout),{data:{keep:2},literal:'#keep ${request.method}'});
+      checked++;
+    }
+  }
   const a='response if ${url} ~= /first/i then response.json.jq(`.data.ads = []`)';const b='response if ${url} ~= /second/i then response.json.jq(`.data = []`)';const separate=convertPlugin(entry,'[Rewrite]\n'+a+'\n'+b,options);assert.equal(separate.generatedScripts.size,0);assert.match(separate.qx,/^first url jsonjq-response-body/m);assert.match(separate.qx,/^second url jsonjq-response-body/m);
   // Keep an independently native JQ even when the phase contains a helper.
   const owner=convertPlugin(entry,'[Rewrite]\n'+a+'\nresponse if ${url} ~= /other/i then response.header.set("X","yes")',options);assert.match(owner.qx,/^first url jsonjq-response-body/m);assert.match(owner.surge,/^http-response-jq first /m);assert.doesNotMatch(owner.qx+owner.surge,/phase_.*\.js/);

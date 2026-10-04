@@ -11,7 +11,10 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 
 ## 0. 当前转换与同步边界
 
-- ScriptHub 仅作为 JSON replace → jq 的参考；不得将其写法扩展套用到 JSON add/delete、原生 jq、jq_file/jq-path 或其他规则。其他转换继续以源语义、官方能力与现有等价实现为准。
+- jq 表达式的语法和函数语义以 [jqlang 官方手册](https://jqlang.org/manual/) 为唯一标准；兼容基线沿用已验证的 jq 1.6 能力，不假定客户端支持新版本特性。QX/Surge 的外层声明分别遵循用户官方 sample 和 Surge Manual。
+- ScriptHub 仅作为 JSON replace → jq 的实现参考，最终仍须满足 jqlang 契约；不得将其写法扩展套用到 JSON add/delete、原生 jq、jq_file/jq-path 或其他规则。
+- `jq_file` 与 `jq-path` 均从源声明指定的原始地址读取实际文件内容，然后内联真实 jq。读取失败、空文件或无法安全嵌入目标语法时保留源声明并 Review，不把文件路径字符串当作 jq，不用仓库副本替代，不为文件本身创建脚本。作者 jq 保留原表达式结构，只做目标单行配置必需的转义、非字符串注释处理和空白压缩；已有跨类型组合的等价编译边界不扩大。
+- delete 按 jqlang 的输入类型选择：固定路径表达式采用 `del(PATH_EXPRESSION)`；作者提供路径数组时保留 `delpaths(PATHS)`，不强制互改。源操作要求依次删除数组下标时保留逐项管道，不能合并成针对原始数组的一次批量删除。对象路径的合法合并仍须保持源顺序、类型失败和错误恢复行为。add 保留 WayX 的 getpath/setpath 实现及既有缺失/null 规则；replace 保留存在性检查。
 - 每次 Actions 仍监控上游名单并获取插件内容，但先比较规范化后的源文本；只有新增或内容变化的插件进入语义分析、依赖解析与转换。源内容未变化且两个目标已存在时直接跳过，保留转换时间及产物。目标缺失时补建。
 - Actions 的 canonical 转换校验仅检查本次成功转换的条目；全库格式、引用、Review/Issue 与完整性检查保留。独立运行 canonical 工具仍可执行全量审计，不在日常拉取中自动全量重转。
 
