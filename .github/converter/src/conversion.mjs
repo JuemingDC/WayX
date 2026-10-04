@@ -151,9 +151,16 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
     const helper=group.some(x=>/script-(?:request|response)-(?:header|body)|type=http-/.test(x.mapped.line || ''));
     if (!helper) continue;
     const external=ctx.featureCompatibilityPhases.has(phase);
+    // Loon disables the same-phase author Script when a Body Rewrite matches.
+    // A narrow owner can preserve that relation without executing remote code.
+    const bodyMatchers=group.map(item=>simpleUrlRewriteCondition(item.ast));
+    const bodyOwner=external && !legacy && !blockedV2.has(phase) && group.length>0 &&
+      bodyMatchers.every((matcher,index)=>matcher.ok && !group[index].ast.condition.right.flags) &&
+      new Set(bodyMatchers.map(matcher=>matcher.pattern)).size===1 &&
+      group.some(item=>item.ast.actions.some(action=>new RegExp('^'+phase+'\\.(?:body\\.(?:replace|mock|mock_file)|json\\.)').test(action.name)));
     try {
-      if (external || legacy) throw new Error('phase dispatcher cannot compose original remote Script or legacy Rewrite contracts; original URLs are preserved');
-      if (group.length===1) continue;
+      if ((external && !bodyOwner) || legacy) throw new Error('phase dispatcher cannot compose original remote Script or legacy Rewrite contracts; original URLs are preserved');
+      if (group.length===1 && !bodyOwner) continue;
       if(group.some(x=>!supportsRewritePhaseActions(x.ast,target)))throw new Error('phase dispatcher cannot compose native JQ/echo/URL/binary actions without a verified runtime adapter');
       const jqGroup=group.some(x=>x.ast.actions.some(a=>a.name.endsWith('.json.jq')));
       const jqMatchers=jqGroup ? group.map(x=>simpleUrlRewriteCondition(x.ast)) : [];
@@ -164,6 +171,7 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
       if(!payload.ok)throw new Error(payload.reason);
       const plan=renderRewritePhaseDispatcher(group.map(x=>x.ast),{target,stamp:ctx.stamp,category:ctx.category,argumentTable:refs.length?ctx.argumentTable:null,mockFiles:ctx.mockFiles,jqFiles:ctx.jqFiles});
       if(jqGroup)plan.pattern=jqMatchers[0].pattern;
+      if(bodyOwner)plan.pattern=bodyMatchers[0].pattern;
       const key=crypto.createHash('sha1').update(target+'\0'+group.map(x=>x.line).join('\n')).digest('hex').slice(0,10);
       const filename='phase_'+target+'_'+phase+'_'+key+'.js';
       ctx.generatedScripts.set(filename,plan.script);
