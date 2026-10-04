@@ -360,8 +360,20 @@ function oneAction(ast, name, {conditionMode='simple-url'}={}) {
   return { condition, action: ast.actions[0] };
 }
 
-function templateCaptureName(template) {
-  return [...String(template).matchAll(/\$\{([A-Za-z_][A-Za-z0-9_-]*)\.(\d+)\}/g)];
+// 上游错误 / 转换失败案例：decoded strings lose raw/escaped template
+// identity; missing optional captures must skip the action, not become "".
+function redirectTemplatePlan(node, capture) {
+  const parts=stringTemplateParts(node);
+  const indices=[];
+  const expression=parts.map(([kind,value])=>{
+    if(kind==='s')return JSON.stringify(value);
+    const ref=value.match(/^([A-Za-z_][A-Za-z0-9_-]*)\.(\d+)$/);
+    if(!ref || !capture || ref[1]!==capture)throw new Error('redirect target references an unsupported variable or non-URL capture');
+    indices.push(Number(ref[2]));
+    return '__wayxMatch['+Number(ref[2])+']';
+  });
+  return {expression:'""'+(expression.length?' + '+expression.join(' + '):''),
+    missing:indices.length ? indices.map(n=>'__wayxMatch['+n+'] === undefined').join(' || ') : 'false'};
 }
 
 function redirectUrlComparison(ast) {
@@ -414,11 +426,7 @@ export function renderQxRedirectScript(ast, options = {}) {
 
   if (!fullCondition) {
     const condition = pair.condition;
-    const refs = templateCaptureName(template);
-    if (/\$\{/.test(template) && refs.length === 0) throw new Error('redirect target contains an unsupported variable template');
-    for (const ref of refs) {
-      if (!condition.capture || ref[1] !== condition.capture) throw new Error('redirect target references a non-URL capture');
-    }
+    const replacement=redirectTemplatePlan(action.args[1],condition.capture);
 
     const lines = [
       ...qxSemanticMetadata(options),
@@ -428,16 +436,13 @@ export function renderQxRedirectScript(ast, options = {}) {
       'if (!__wayxMatch) {',
       '  $done({});',
       '} else {',
-      '  const __wayxTemplate = ' + JSON.stringify(template) + ';',
+      '  if ('+replacement.missing+') {$done({});} else {',
+      '  const __wayxReplacement = '+replacement.expression+';',
     ];
-    if (refs.length) {
-      lines.push('  const __wayxReplacement = __wayxTemplate.replace(/\\$\\{' + condition.capture + '\\.(\\d+)\\}/g, (_, n) => __wayxMatch[Number(n)] ?? "");');
-    } else {
-      lines.push('  const __wayxReplacement = __wayxTemplate;');
-    }
     lines.push(
       '  const __wayxLocation = __wayxUrl.slice(0, __wayxMatch.index) + __wayxReplacement + __wayxUrl.slice(__wayxMatch.index + __wayxMatch[0].length);',
       '  $done({status: ' + JSON.stringify(qxSemanticStatusLine(status.value)) + ', headers: {Location: __wayxLocation}, body: ""});',
+      '  }',
       '}',
       '',
     );
@@ -451,16 +456,12 @@ export function renderQxRedirectScript(ast, options = {}) {
 
   const urlCondition=redirectUrlComparison(ast);
   const urlPattern=String(urlCondition.right.pattern);
-  const refs=templateCaptureName(template);
-  if (/\$\{/.test(template) && refs.length===0) throw new Error('redirect target contains an unsupported variable template');
-  for (const ref of refs) {
-    if (!urlCondition.capture || ref[1]!==urlCondition.capture) throw new Error('redirect target references a non-URL capture');
-  }
+  const replacement=redirectTemplatePlan(action.args[1],urlCondition.capture);
 
   const conditionExpr=compileComplexCondition(ast.condition,'qx');
-  const matchExpr=urlCondition.capture
-    ? '__wayxCaptures['+JSON.stringify(urlCondition.capture)+']'
-    : 'String(__wayxUrl ?? "").match(new RegExp('+JSON.stringify(urlPattern)+','+JSON.stringify('')+'))';
+  // Condition capture tables expose values, not match.index. Re-execute the
+  // same target regex against the same URL to obtain the replacement range.
+  const matchExpr='new RegExp('+JSON.stringify(urlPattern)+','+JSON.stringify('')+').exec(__wayxUrl)';
 
   const lines=[
     ...qxSemanticMetadata(options),
@@ -470,16 +471,13 @@ export function renderQxRedirectScript(ast, options = {}) {
     'if('+conditionExpr+'){',
     '  const __wayxMatch='+matchExpr+';',
     '  if(!__wayxMatch){$done({});}else{',
-    '    const __wayxTemplate='+JSON.stringify(template)+';',
+    '    if('+replacement.missing+'){$done({});}else{',
+    '    const __wayxReplacement='+replacement.expression+';',
   ];
-  if(refs.length){
-    lines.push('    const __wayxReplacement=__wayxTemplate.replace(/\\$\\{'+urlCondition.capture+'\\.(\\d+)\\}/g,(_,n)=>__wayxMatch[Number(n)] ?? "");');
-  }else{
-    lines.push('    const __wayxReplacement=__wayxTemplate;');
-  }
   lines.push(
     '    const __wayxLocation=__wayxUrl.slice(0,__wayxMatch.index)+__wayxReplacement+__wayxUrl.slice(__wayxMatch.index+__wayxMatch[0].length);',
     '    $done({status:'+JSON.stringify(qxSemanticStatusLine(status.value))+',headers:{Location:__wayxLocation},body:""});',
+    '    }',
     '  }',
     '}else{$done({});}',
     '',

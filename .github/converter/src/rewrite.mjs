@@ -1604,18 +1604,24 @@ export function surgeDirectRewritePlan(ast) {
   return unsupported('action requires generated script or target-specific mapping');
 }
 
-function loonTemplateToSurge(template, capture, argumentTable = null) {
-  let converted = String(template).replace(/\$\{([A-Za-z_][A-Za-z0-9_-]*)\.(\d+)\}/g, (_, name, number) => {
-    if (!capture || name !== capture) throw new Error('URL replacement contains a non-URL capture');
-    return '$' + number;
-  });
-  converted = converted.replace(/\$\{([A-Za-z_][A-Za-z0-9_-]*)\}/g, (_, name) => {
-    const entry=argumentTable?.byId?.get(String(name));
-    if (!entry) throw new Error('URL replacement contains an undeclared plugin argument: '+name);
+function loonTemplateToSurge(node, capture, argumentTable = null) {
+  return stringTemplateParts(node).map(([kind,value]) => {
+    if (kind==='s') {
+      // Native URL Rewrite has no documented literal-dollar escape. Never
+      // reinterpret raw/escaped Loon text as a target capture or placeholder.
+      if (/[$\\\s]/.test(value)) throw new Error('URL replacement literal cannot be represented safely in native Surge URL Rewrite');
+      return value;
+    }
+    const ref=value.match(/^([A-Za-z_][A-Za-z0-9_-]*)\.(\d+)$/);
+    if (ref) {
+      if (!capture || ref[1]!==capture) throw new Error('URL replacement contains a non-URL capture');
+      if (Number(ref[2])===0) throw new Error('Surge URL Rewrite does not document a complete-match $0 replacement');
+      return '$'+Number(ref[2]);
+    }
+    const entry=argumentTable?.byId?.get(value);
+    if (!entry) throw new Error('URL replacement contains an unsupported variable: '+value);
     return entry.placeholder;
-  });
-  if (converted.includes('$' + '{')) throw new Error('URL replacement contains an unsupported variable');
-  return converted;
+  }).join('');
 }
 
 export function surgeRedirectRewritePlan(ast, {argumentTable = null} = {}) {
@@ -1633,7 +1639,7 @@ export function surgeRedirectRewritePlan(ast, {argumentTable = null} = {}) {
     if (status?.type !== 'number' || ![302,307].includes(status.value)) return unsupported('redirect status must be 302 or 307');
     if (target === null) return unsupported('redirect target must be a fixed string');
     try {
-      const replacement = loonTemplateToSurge(target, condition.capture, argumentTable);
+      const replacement = loonTemplateToSurge(action.args[1], condition.capture, argumentTable);
       return {
         ok:true, strategy:'direct', section:'url', pattern:condition.pattern,
         line:condition.pattern + ' ' + replacement + ' ' + status.value, notes:condition.notes,
@@ -1646,7 +1652,7 @@ export function surgeRedirectRewritePlan(ast, {argumentTable = null} = {}) {
   const target = stringNode(action.args[0]);
   if (target === null) return unsupported('url.replace target must be a fixed string');
   try {
-    const replacement = loonTemplateToSurge(target, condition.capture, argumentTable);
+    const replacement = loonTemplateToSurge(action.args[0], condition.capture, argumentTable);
     return {
       ok:true, strategy:'direct', section:'url', pattern:condition.pattern,
       line:condition.pattern + ' ' + replacement + ' header', notes:condition.notes,

@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.89
+版本：1.90
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -1150,3 +1150,14 @@ flags 沿用现有原生 JQ 的 matcher 兼容契约：保留 source pattern，�
 按用户明确指定，生成的 native JSON 与多动作 jq 不再添加 `. as $__wayx_before | try (...) catch $__wayx_before`、`if type == "object" ... else . end` 等转换器统一保护包装。本节覆盖旧章节的 native 类型保护、逐操作回滚、类型失败恢复及其格式约定；native jq 使用 jqlang 原生类型、错误和管道语义。Add 保留操作本身的缺失/null 条件赋值，delete 直接 delpaths(PATHS)，replace 仅用 ScriptHub parent/getpath/has/setpath 字段存在性判断，不额外 catch false。作者原生 jq 自带 if/try/catch 保留；必要 JS helper 的行为不在此格式修订范围内。
 
 此前重构只改删除函数却保留外壳，记录为转换器失败案例：BaiduTranslate_remove_ads 两条 JSON delete 成品前缀仍含 __wayx_before。验收固定检查生成器与这两条成品不存在转换器保护包装，并使用真实 jq 对照直接表达式验证结果与错误传播；全量 Action 成功和时间戳变化不能代替这一检查。
+
+
+## 45. URL 替换值的词法与缺失捕获（v1.90）
+
+URL action 必须从 String/Raw String AST 的模板片段生成目标值，不能先解码再扫描 `${...}`。Raw String 和 `\${...}` 是字面量；真正的 `${name.n}` 才读取条件捕获。生成的 QX redirect helper 以片段拼接结果替换 URL regex 的匹配范围，前后未匹配部分保持原样；捕获值不二次展开，不应用 JS `$&` 等 replacement 语法。引用的可选捕获没有值时跳过动作，空串捕获仍是有效值；两条 helper 路径共用同一模板生成器。正则 flags 仍按 v1.88 策略丢弃。
+
+Surge native URL Rewrite 同样读取 AST 模板片段，仅把真正的 URL 捕获转换为官方支持的 `$1` 等引用、声明参数转换为既有 placeholder。字面量美元、反斜杠、空白及完整匹配 `$0` 的原生表示尚未得到官方契约证明，拒绝该原生映射并进入既有兼容/Review 边界，不把字面量误写成有效捕获。不扩大 QX 透明 URL 改写或作者 Script 组合能力。
+
+转换失败案例：旧 redirect helper 把 raw/escaped `${hit.1}` 当变量，且用 `?? ""` 掩盖缺失捕获；完整条件分支从仅保存捕获值的表读取 match.index，破坏 URL 前后拼接范围；旧 Surge URL 模板扫描 decoded text，存在同类词法信息丢失。修复共同生成代码，并执行两个 helper 模式的实际脚本回归，覆盖字面量、真实捕获、捕获缺失/空串、部分 URL 范围、插入值不再解析及 flags 丢弃。
+
+官方依据：https://nsloon.app/en/docs/Rewrite/rewrite_v2/（Raw strings、Condition regex captures、URL changes），https://manual.nssurge.com/http/url-rewrite.html（capture references）。
