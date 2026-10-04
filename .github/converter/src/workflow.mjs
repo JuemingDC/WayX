@@ -87,6 +87,13 @@ export function firstConversionStamp(texts, {trim=false}={}) {
   return null;
 }
 
+// Conversion timestamps describe a write, not a content change. Compare each
+// artifact independently so changing one rule/helper cannot rewrite its peers.
+function artifactContent(text) {
+  if(text===null || text===undefined)return text;
+  return String(text).replace(/^(#|\/\/) Converted:[^\n]*/gm,'$1 Converted:');
+}
+
 async function managedFileExists(file) {
   try {
     await fs.access(file);
@@ -154,7 +161,7 @@ export async function generatedScriptDiffs(root, entry, generatedScripts, {scrip
   const diffs=[];
   for (const [name,content] of generatedScripts) {
     const file=path.join(root,scriptDir,entry.id,name);
-    if (await readManagedTextIfExists(file) !== content) diffs.push(name);
+    if (artifactContent(await readManagedTextIfExists(file)) !== artifactContent(content)) diffs.push(name);
   }
   for (const name of await staleGeneratedHelpers(root,entry,generatedScripts,{scriptDir})) {
     diffs.push('delete:'+name);
@@ -166,7 +173,7 @@ export async function syncGeneratedScripts(root, entry, generatedScripts, {scrip
   const changed=[];
   for (const [name,content] of generatedScripts) {
     const file=path.join(root,scriptDir,entry.id,name);
-    if (await readManagedTextIfExists(file) === content) continue;
+    if (artifactContent(await readManagedTextIfExists(file)) === artifactContent(content)) continue;
     await fs.mkdir(path.dirname(file),{recursive:true});
     await fs.writeFile(file,content);
     changed.push(name);
@@ -203,7 +210,11 @@ export async function commitManagedConversion(root,entry,state,out,{
     const rollbackErrors=[];
     for(const [file,bytes] of snapshot)try {
       if(bytes===null)await fs.rm(file,{force:true});
-      else {await fs.mkdir(path.dirname(file),{recursive:true});await fs.writeFile(file,bytes);}
+      else {
+        const current=await fs.readFile(file).catch(failure=>{if(failure.code==='ENOENT')return null;throw failure;});
+        if(current?.equals(bytes))continue;
+        await fs.mkdir(path.dirname(file),{recursive:true});await fs.writeFile(file,bytes);
+      }
     }catch(failure){rollbackErrors.push(failure);}
     if(rollbackErrors.length) {
       const failure=new AggregateError([error,...rollbackErrors],'Managed conversion write and rollback failed',{cause:error});
@@ -215,8 +226,8 @@ export async function commitManagedConversion(root,entry,state,out,{
 
 export function managedTargetDiffs(state, out) {
   const changed=[];
-  if (state.qx !== out.qx) changed.push('qx');
-  if (state.surge !== out.surge) changed.push('surge');
+  if (artifactContent(state.qx) !== artifactContent(out.qx)) changed.push('qx');
+  if (artifactContent(state.surge) !== artifactContent(out.surge)) changed.push('surge');
   return changed;
 }
 

@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.88
+版本：1.89
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -18,9 +18,11 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 - `jq_file` 与 `jq-path` 均从源声明指定的原始地址读取实际文件内容，然后内联真实 jq。读取失败、空文件或无法安全嵌入目标语法时保留源声明并 Review，不把文件路径字符串当作 jq，不用仓库副本替代，不为文件本身创建脚本。作者 jq 保留原表达式结构，只做目标单行配置必需的转义、非字符串注释处理和空白压缩；已有跨类型组合的等价编译边界不扩大。
 - 上游错误分区记录失败案例及经过真实 jq 编译验证的修正：仅当原表达式因语法错误编译失败、补齐 `else .end` 中 identity 与 `end` 的分隔空白后编译成功时，内联修正为 `else . end`。字符串、注释、合法 `.end` 字段保持原样；其他错误不猜测修正。原始声明和错误 jq 写入输出注释，源文件保留。该规则同样适用于 jq_file / jq-path 读取后的内容。失败案例及回归输入位于 `fixtures/upstream-jq-errors.json`。
 - JSON delete 按用户指定使用 jqlang 的 `delpaths(PATHS)`，路径解析为 String/Number 数组；数字索引批量按源顺序逐项调用 delpaths，不能合并为针对原数组的一次删除。作者原生 jq 中的 del/delpaths 保留原表达式。add 使用 WayX 直接路径条件赋值 `if .data.flag == null then .data.flag = VALUE else . end`，保留既有缺失/null 规则；仅 replace 使用参考 ScriptHub 的 parent getpath + has + setpath 存在性检查。
-- 每次 Actions 仍监控上游名单并获取插件内容，但先比较规范化后的源文本；只有新增或内容变化的插件进入语义分析、依赖解析与转换。源内容未变化且两个目标已存在时直接跳过，保留转换时间及产物。目标缺失时补建。
-- 用户明确要求的单次重转由 `.github/sources/reconvert.json` 触发：`all: true` 表示本次全量，`ids` 表示指定条目；成功后自动清除请求，失败条目保留待重试。日常仍只转换新增或内容变化的源，维护请求不会自动恢复为全量。
-- Actions 的 canonical 转换校验仅检查本次成功转换的条目；全库格式、引用、Review/Issue 与完整性检查保留。独立运行 canonical 工具仍可执行全量审计，不在日常拉取中自动全量重转。
+- 每次 Actions 监控上游名单，并对全部 catalog entry 重新获取源内容、解析语义、读取依赖、转换和验证；不以 source unchanged、已有目标或上次转换结果跳过。规范/生成器变更及同 URL 依赖文件变更必须在上游声明不变时也能生效。
+- 转换完成后逐文件比较实际内容，仅忽略转换器生成的 `# Converted:` / `// Converted:` 时间，包括 phase dispatcher 内嵌的多条生成时间；内容一致时不写入、不刷新原时间或 mtime。QX、Surge、各 helper 独立判定，某一个文件改变不得刷新其它相同产物；缺失文件补建，废弃的转换器 helper 删除，手写脚本保留。源文件仍按实际源内容变化写入。
+- 不再需要一次性全量开关，删除 `.github/sources/reconvert.json` 与 forceConvert/source-unchanged shortcut。失败条目保留原有事务回滚和 Issue 隔离，每次全量运行均重新尝试。报告区分全部成功转换、实际更新产物和转换后产物相同，不将“不覆盖”称为“未转换”。
+- Actions 的 canonical 校验覆盖本次全部成功转换的条目；隔离失败沿用旧基线与诊断，完整仓库审计/引用/Review/Issue 门禁继续执行。规范格式变化只有实际发生内容变化的文件写入，其余产物保留原 bytes。
+
 
 ## 1. 权威来源与证据优先级
 
@@ -873,7 +875,7 @@ GitHub 落地（2026-10-04，Asia/Shanghai）：PR #136 已合入 main，最终 
 
 | 源特性 | 实现 | 边界 |
 | --- | --- | --- |
-| URL/条件/动作 Regex `i/m/s` | helper 使用原 pattern 和 flags；宽 matcher 只负责触发，条件重新求值 | 仅在能拥有整个阶段时迁移旧 native flag 路径 |
+| URL/条件/动作 Regex `i/m/s` | helper 使用原 pattern、丢弃 flags；宽 matcher 只负责触发，条件重新求值 | 仅在能拥有整个阶段时迁移旧 native flag 路径 |
 | 双引号 `${...}` | 从原始 token 解析转义及变量；条件和 action 均支持内置 URL、method、status、header、已声明参数 | Header 名称与 JSON key path 支持相同 String 模板及直接 String variable；未知变量保留 Review |
 | `\${`、`\\`、引号、换行、Tab、Unicode、斜线与 `$` | 保留原始 token，使转义模板和转义反斜线后的模板不混淆；只展开一次 | 不把字符串中的输入当作可执行代码 |
 | raw string、双 backtick | 原样保留反斜线和 `${...}`；JSON Any 中仍为 String | 不将 raw JSON 文本偷偷改为 Object/Array |
@@ -975,7 +977,7 @@ JQ 赋值将缺失或 null 父字段创建为对象，并覆写最终字段；�
 
 目标软件支持的原生表达优先于生成脚本。单条固定 inline/file JQ（包括表达式内部的 pipe）优先保留原 URL matcher，并映射到 QX jsonjq-request/response-body 或 Surge http-request/response-jq；不得因 JQ 可被 JavaScript 编译、嵌套字段、Regex flags 或同阶段其它规则而自动迁移为 Script。原生 matcher 无法表达的纯 JQ 声明按既有 Review/注释规范处理，不以宽 matcher 脚本绕过。原 flags 的 native 兼容限制仍须如实保留，不宣称本策略证明 flags 等价。
 
-纯多 JQ action 在已证明固定单输出子集内可合成原生 JQ：每个 action 使用独立输入变量及 try/catch，使该 action 失败时返回其动作开始前的输入，再执行后续 action；任意多输出 JQ 不猜测合成。独立原生 JQ 不得被其它 helper 的 phase dispatcher 吸收。只有原生无法承载的多类型动作组合（例如 json.jq 后 header.set/add、Body/mocks 等）才考虑共同 Script；此类 helper 保留原单 URL regex，阶段合并仅限所有成员具有相同 URL regex，不能将多个独立 URL 规则无条件扩为 `^`。其它组合仍保留原生/compatibility/Review 边界。
+纯多 JQ action 在已证明固定单输出子集内合成原生管道：每个表达式用括号分组，按源顺序连接 `|`。不生成独立输入变量、try/catch 或错误回滚；错误及多步执行采用 jqlang 原生管道行为。作者表达式自带的控制结构保持原样。
 
 Mock 同样原生优先：Surge 可原生表达的 Map Local、QX echo-response 的原生文件能力仅在本地资源契约可满足时适用，不把远程 URL 假装成本地文件。目标缺少相应原生能力的 inline/mock/组合允许必要的 Script fallback，不因原生优先而删除有效功能。原作者脚本、QX 强制 enable、关闭注释及暂停的定时活动不变。§31 中 Jump 的两条规则迁移为 dispatcher 的决策撤销：恢复原 native JQ 规则及对应 matcher/Surge requirement，并删除新增的两份阶段 helper；嵌套 JQ 编译器仅保留供真正必要的组合使用。此节优先于 §§24–31 中与该用户策略冲突的自动 phase 迁移选择。
 
@@ -995,7 +997,7 @@ Phase E 增加固定种子 `0x57415958` 的组合回归，仍归入 runtime suit
 
 路径使用 String/raw String 的共同解析，支持点分及 quoted bracket 字段，包括带点字段和原型同名 JSON 键。动态模板、数字数组索引、可经 JavaScript 属性访问改变数组的数字 String 字段及 length、动态值、非单 URL 条件继续现有 native/Script/Review 边界；本次不改 flags 的历史兼容策略。纯原生 JSON 多动作与纯 JQ 一样不得被其它声明的 HTTP Script dispatcher 吸收，避免把原生规则重新扩成宽匹配脚本。
 
-JQ getpath/setpath/del 使用已解析对象路径，保留 add 的缺失/null 检查及 replace 对 false/null/缺失的跳过行为。根 null/标量/数组保持值不变；对象字段父节点缺失/null 可在 add 时创建。每个嵌套操作独立保存操作前输入并 try/catch，类型失败只回退当前操作，后续操作继续；批量参数按配对顺序逐组执行，不把整条声明失败后回滚作为源语义。顶层表达保留既有 type guard。
+当前 native JSON 生成器使用已解析 String/Number 路径：add 为直接 selector 条件赋值，delete 为 delpaths，replace 为 parent getpath + has + setpath。按 §§43–44 去除转换器统一 type guard 与 try/catch 回滚；错误由 jqlang 原生传播。原生作者 JQ 仍保留自身 getpath/setpath/del/try 等表达式，必要 JS helper 的类型和事务行为不受本格式政策改写。
 
 验收使用独立对象操作模型、source evaluator 及实际目标配置中提取的原生 JQ filter：request/response、四组管道、十二种输入、两个目标共 192 个输出，包括批量失败继续、缺失/null/false/标量/数组父节点、特殊字段与 own property。既有原生 JQ、必要 mock fallback、256 个组合检查及全部 oracle 保留；完整目录 differential、canonical、validator 和 CI 是合并门禁。
 
@@ -1008,7 +1010,7 @@ JQ getpath/setpath/del 使用已解析对象路径，保留 add 的缺失/null �
 
 ## 35. replace 存在性与 Surge 匹配增强（v1.72）
 
-用户指定 JSON replace 改为字段存在性判断：已有 null、false、0、空 String、Array/Object 均可替换，缺失字段不创建。原生 V2 单动作、固定对象多动作及 legacy json-replace 共用 parent getpath + has(末级 key) + setpath 表达；无效父节点由 try/catch 作为不命中处理。嵌套多操作仍独立恢复失败输入，后续操作继续。脚本 runtime 和 source evaluator 同步使用 JSON 自有属性存在性，动态地址、批量和原型名称保持既有边界。该用户政策替代 §34 及旧规范中 replace 跳过 false/null 的兼容定义；它是显式选择，不冒充已完成 Loon 客户端边界实测。Add 行为不变，原作者任意 JQ 表达式不改写。
+用户指定 JSON replace 改为字段存在性判断：已有 null、false、0、空 String、Array/Object 均可替换，缺失字段不创建。原生 V2 单动作、固定对象多动作及 legacy json-replace 共用 parent getpath + has(末级 key) + setpath 表达；native 无效父节点及操作错误按 jqlang 直接传播，不添加转换器 catch 或恢复外壳；必要 JS helper 仍遵循其已验证运行边界。脚本 runtime 和 source evaluator 同步使用 JSON 自有属性存在性，动态地址、批量和原型名称保持既有边界。该用户政策替代 §34 及旧规范中 replace 跳过 false/null 的兼容定义；它是显式选择，不冒充已完成 Loon 客户端边界实测。Add 行为不变，原作者任意 JQ 表达式不改写。
 
 Surge Rule 转换默认对可表达的 REJECT 家族增加匹配增强。DOMAIN/DOMAIN-SUFFIX/DOMAIN-KEYWORD/DOMAIN-WILDCARD/DOMAIN-SET/RULE-SET/URL-REGEX 支持 extended-matching，额外检查 TLS SNI 与 HTTP Host/:authority；逻辑声明仅在支持该参数的子规则上添加，不把参数加到 AND/OR/NOT 本身。DIRECT、PROXY 和外部策略不自动增强，源显式参数保持、自动参数去重。URL-REGEX 的 Map Local 等其它 section 映射不承载 Rule 参数。
 
@@ -1139,7 +1141,7 @@ flags 沿用现有原生 JQ 的 matcher 兼容契约：保留 source pattern，�
 
 ## 43. jq 生成语法重构（v1.86）
 
-本节替代旧章节中 add 使用 getpath/setpath、生成 legacy jq 压缩空白、固定对象 delete 的 del 表达式格式约定。统一路径生成器：标识符使用 `.data.flag`，特殊键使用 `.["a.b"]`，数组索引使用 `.items[0]`；根 bracket 必须带 identity `.`。Add 生成直接 selector 条件赋值；Delete 按用户最新要求使用 delpaths(PATHS)，索引批量保持逐项管道；Replace 是唯一参考 ScriptHub getpath/has/setpath 模板的操作。Native JSON 单动作、批量、多动作、legacy 共用 WayX 格式；多动作已有类型保护、独立 try/catch 和顺序恢复继续保留。原生 jq 作者表达式、jq_file/jq-path 读取内联不套用这些生成模板。
+本节替代旧章节中 add 使用 getpath/setpath、生成 legacy jq 压缩空白、固定对象 delete 的 del 表达式格式约定。统一路径生成器：标识符使用 `.data.flag`，特殊键使用 `.["a.b"]`，数组索引使用 `.items[0]`；根 bracket 必须带 identity `.`。Add 生成直接 selector 条件赋值；Delete 按用户最新要求使用 delpaths(PATHS)，索引批量保持逐项管道；Replace 是唯一参考 ScriptHub getpath/has/setpath 模板的操作。Native JSON 单动作、批量、多动作、legacy 共用 WayX 格式；native 多动作使用直接表达式管道，不生成类型保护或 try/catch；作者自身的保护逻辑保留。原生 jq 作者表达式、jq_file/jq-path 读取内联不套用这些生成模板。
 
 上次全量转换只修正了已知上游错误，没有改变 add 生成格式，记录为本次失败案例。验收必须检查转换前后的实际 jq 文本差异，不能仅依据 Action 成功或时间戳变更判断完成。真实 jq 编译和输入输出回归同时验证格式重构没有改变操作语义。
 
