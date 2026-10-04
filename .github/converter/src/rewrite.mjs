@@ -1019,6 +1019,29 @@ export function supportsRewritePhaseActions(ast,target) {
   return ast.actions.every(action=>mutations.test(action.name) || fixedJqOperations(action)!==null || (ast.phase==='request' && isTextRequestMockAction(action)));
 }
 
+// Native JQ is a target capability, not a reason to introduce an HTTP Script.
+// Multiple known single-output JQ actions can also stay in one native rule;
+// each action catches its own failure using that action's original input.
+function nativeJqPriorityPlan(ast,target) {
+  if(!ast.actions.every(a=>a.name===ast.phase+'.json.jq'))return null;
+  try {
+    const filters=ast.actions.map(action=>{
+      const parts=stringTemplateParts(action.args[0]);
+      if(parts.some(p=>p[0]!=='s'))throw new Error('native JQ requires fixed source expression');
+      return parts.map(p=>p[1]).join('');
+    });
+    if(ast.actions.length>1 && ast.actions.some(a=>fixedJqOperations(a)===null))throw new Error('native multi-action JQ requires proven single-output filters');
+    const jq=filters.length===1?filters[0]:filters.map(filter=>'(. as $__wayx_before | try ('+filter+') catch $__wayx_before)').join(' | ');
+    const nativeAst={...ast,actions:[{...ast.actions[0],args:[{type:'raw-string',value:jq,raw:'`'+jq.replace(/`/g,'``')+'`'}]}]};
+    if(target==='qx') {
+      const matcher=qxExactRewriteMatcherPlan(ast,{compatibility:true});
+      if(!matcher.ok)return unsupported(matcher.reason);
+      return qxDirectRewritePlan(nativeAst,{matcher});
+    }
+    return surgeDirectRewritePlan(nativeAst);
+  }catch(error){return unsupported(String(error?.message || error));}
+}
+
 function planRewriteFeatureHelper(ast,target,ctx) {
   if(!rewriteFeatureProfile(ast).mutations)return null;
   // QX object headers cannot preserve duplicates. Its historical native add
@@ -1026,6 +1049,9 @@ function planRewriteFeatureHelper(ast,target,ctx) {
   if(target==='qx' && ast.actions.some(a=>a.name.endsWith('.header.add')))return null;
   if(!ctx.generatedScripts)return {ok:false,terminal:true,reason:'semantic feature helper requires a generated-script context'};
   try {
+    const jqCombination=ast.actions.some(a=>a.name.endsWith('.json.jq'));
+    const jqMatcher=jqCombination ? simpleUrlRewriteCondition(ast) : null;
+    if(jqCombination && !jqMatcher.ok)throw new Error('mixed JQ helper requires one source URL regex');
     const options={target,stamp:ctx.stamp,category:ctx.category,sourceLine:ctx.sourceLine,argumentTable:ctx.argumentTable,mockMaterialized:ctx.mockFiles?.get(ctx.sourceLine),jqMaterialized:ctx.jqFiles?.get(ctx.sourceLine)};
     const plan=ast.actions.length===1 ? renderSingleRewriteMutationScript(ast,options) : renderMixedRewriteScript(ast,options);
     const refs=ctx.argumentRefs || [];
@@ -1035,7 +1061,9 @@ function planRewriteFeatureHelper(ast,target,ctx) {
     const key=crypto.createHash('sha1').update('features\0'+target+'\0'+(ctx.sourceLine || ast.raw)).digest('hex').slice(0,10);
     const filename='features_'+target+'_'+key+'.js';
     const url=(target==='qx'?qxRewriteRawBase(ctx):surgeRewriteRawBase(ctx))+'/Script/'+ctx.id+'/'+filename;
-    const line=target==='qx' ? qxRewriteMatcherPlan(ast).prefix+plan.qxAction+' '+url :
+    if(jqCombination)plan.pattern=jqMatcher.pattern;
+    const prefix=jqCombination ? jqMatcher.pattern+' url ' : qxRewriteMatcherPlan(ast).prefix;
+    const line=target==='qx' ? prefix+plan.qxAction+' '+url :
       'wayx_features_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+url+(plan.requiresBody?',requires-body=true,max-size=-1':'')+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:'');
     ctx.generatedScripts.set(filename,plan.script);
     return {ok:true,handler:'source-feature-collection',section:target==='qx'?'rewrite':'script',line};
@@ -2708,6 +2736,9 @@ export function planQxRewrite(ir, ctx={}) {
     return rewriteReview(source,'Quantumult X cannot carry Loon plugin [Argument] references without changing the source script/runtime contract: '+argumentRefs.join(', '));
   }
 
+  const nativeJq=nativeJqPriorityPlan(ast,'qx');
+  if(nativeJq)return nativeJq.ok ? {section:nativeJq.section,line:nativeJq.line,lines:nativeJq.lines} : rewriteReview(source,nativeJq.reason);
+
   if((rewriteFeatureProfile(ast).needsHelper && !ctx.featureCompatibilityPhases?.has(ast.phase)) || ast.actions.some(isTextRequestMockAction)) {
     const featurePlan=planRewriteFeatureHelper(ast,'qx',{...ctx,sourceLine:source,argumentRefs});
     if(featurePlan)return featurePlan.ok ? {section:featurePlan.section,line:featurePlan.line} : rewriteReview(source,featurePlan.reason);
@@ -2946,6 +2977,9 @@ export function planSurgeRewrite(ir,ctx={}) {
   const ast=rewriteIrDeclaration(ir);
   const singleOp=singleRewriteOperation(ir);
   const argumentRefs=ctx.argumentRefs || [];
+
+  const nativeJq=nativeJqPriorityPlan(ast,'surge');
+  if(nativeJq)return nativeJq.ok ? {section:nativeJq.section,line:nativeJq.line,lines:nativeJq.lines} : rewriteReview(source,nativeJq.reason);
 
   if((rewriteFeatureProfile(ast).needsHelper && !ctx.featureCompatibilityPhases?.has(ast.phase)) || ast.actions.some(isTextRequestMockAction)) {
     const featurePlan=planRewriteFeatureHelper(ast,'surge',{...ctx,sourceLine:source,argumentRefs});
