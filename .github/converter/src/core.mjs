@@ -13,6 +13,39 @@
 
 const SUPPORTED_FLAGS=/^[ims]*$/;
 
+// Flags are suffix syntax, never characters inferred from the regex body.
+// Escapes and character classes own their slashes; grammar punctuation following
+// the closing delimiter belongs to the surrounding expression.
+export function scanSourceRegexLiteral(text, start=0) {
+  text=String(text);
+  if(text[start]!=='/')throw new SyntaxError('Expected regex opening delimiter');
+  let escaped=false,inClass=false,close=-1;
+  for(let i=start+1;i<text.length;i++) {
+    const c=text[i];
+    if(escaped){escaped=false;continue;}
+    if(c==='\\'){escaped=true;continue;}
+    if(c==='[' && !inClass){inClass=true;continue;}
+    if(c===']' && inClass){inClass=false;continue;}
+    if(c==='/' && !inClass){close=i;break;}
+  }
+  if(close<0)throw new SyntaxError('Unterminated regex');
+  let end=close+1;
+  while(end<text.length && /[A-Za-z]/.test(text[end]))end++;
+  if(end<text.length && !/[\s(),\[\].|&=~]/.test(text[end]))throw new SyntaxError('Invalid regex suffix boundary');
+  const node={type:'regex',pattern:text.slice(start+1,close),flags:text.slice(close+1,end)};
+  assertRegexNode(node);
+  return {...node,end};
+}
+
+function resolveConditionRegex(value) {
+  if(value && typeof value==='object' && value.type==='regex')return value;
+  if(typeof value!=='string' || !value.startsWith('/'))return null;
+  try {
+    const regex=scanSourceRegexLiteral(value);
+    return regex.end===value.length ? regex : null;
+  }catch{return null;}
+}
+
 function assertRegexNode(node) {
   if (!node || node.type!=='regex') throw new TypeError('Expected Loon semantic Regex node');
   const flags=String(node.flags || '');
@@ -184,11 +217,10 @@ function comparison(node,context,captures) {
   if (node.operator!=='~=') {
     throw new SemanticEvaluationError('Unsupported condition operator: '+node.operator);
   }
-  if (node.right?.type!=='regex') {
-    throw new SemanticEvaluationError('Dynamic ~= Regex evaluation is not implemented in Phase B core yet');
-  }
-
-  const match=execSourceRegex(node.right,left);
+  const regex=resolveConditionRegex(literalValue(node.right,context,next));
+  if(!regex)return {matched:false,captures:next};
+  let match;
+  try{match=execSourceRegex(regex,left);}catch{return {matched:false,captures:next};}
   if (!match) return {matched:false,captures:next};
 
   if (node.capture) {
@@ -346,13 +378,22 @@ export function differentialConditionOracle({
   };
 }
 
+// Lower regex nodes only; strings, escapes and source provenance stay intact.
+export function stripRegexFlags(node) {
+  if(Array.isArray(node))return node.map(stripRegexFlags);
+  if(!node || typeof node!=='object')return node;
+  const copy=Object.fromEntries(Object.entries(node).map(([key,value])=>[key,stripRegexFlags(value)]));
+  if(node.type==='regex'){copy.flags='';delete copy.raw;}
+  return copy;
+}
+
 // target-regex.mjs
 // WayX target regex compiler
 // Author: chance
 // Category: Converter / Regex / Cross-platform
 //
 // Native target regex fields have no verified Loon flag equivalent.
-// Preserve bodies; route flagged regexes through the semantic runtime.
+// Preserve bodies; target lowering discards source flags in native and script output.
 
 export function normalizeRegexBodyForTarget(pattern) {
   // Historical name kept to avoid broad call-site churn. This is deliberately
@@ -455,13 +496,20 @@ export const SURGE_WAYX_SCRIPT_TYPES = new Set([
 
 export const SURGE_WAYX_MITM_KEYS = new Set(['hostname']);
 
-// Shared source evaluator embedded in generated target helpers.
+function targetRegexCompilerSource() {
+  return 'function compileSourceRegex(node){const {source}=assertRegexNode(node);return new RegExp(source);}';
+}
+
+// 上游错误 / 转换失败案例：将 Loon 的 /pattern/flags 当作目标正则语法。
+// Target helpers retain the regex body and explicitly discard source flags,
+// as requested. The source evaluator above still describes original semantics.
+// One policy covers literal and dynamic condition regexes in both targets.
 export function conditionRuntimeSource() {
   return 'const SUPPORTED_FLAGS=/^[ims]*$/;\n'+[
-    assertRegexNode,compileSourceRegex,execSourceRegex,SemanticEvaluationError,
+    scanSourceRegexLiteral,resolveConditionRegex,assertRegexNode,execSourceRegex,SemanticEvaluationError,
     cloneCaptures,decodeHeaderName,headerVariable,lookupHeader,argumentValue,
     captureValue,resolveSemanticVariable,stringTemplateParts,expandSemanticString,literalValue,comparison,evaluateNode,evaluateCondition,
-  ].map(fn=>fn.toString()).join('\n');
+  ].map(fn=>fn.toString()).join('\n')+'\n'+targetRegexCompilerSource();
 }
 
 // Source action oracle for the Header/Body/JSON dispatcher subset. Path parsing
@@ -545,6 +593,6 @@ export function replaceSourceRegex(node,text,replacement) {
 
 export function regexReplacementRuntimeSource() {
   return 'const __wayxRegexReplace=(()=>{const SUPPORTED_FLAGS=/^[ims]*$/;'+
-    [assertRegexNode,compileSourceRegex,replaceSourceRegex].map(fn=>fn.toString()).join('\n')+
+    [assertRegexNode,replaceSourceRegex].map(fn=>fn.toString()).join('\n')+'\n'+targetRegexCompilerSource()+
     ';return (text,pattern,flags,replacement)=>replaceSourceRegex({type:"regex",pattern,flags},String(text),replacement);})();';
 }

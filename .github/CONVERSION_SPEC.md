@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.87
+版本：1.88
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -10,6 +10,8 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 ---
 
 ## 0. 当前转换与同步边界
+
+- 正则转换统一先解析 Loon 语法：仅结束分隔符之后的后缀识别为 flags，字符类中的斜杠、转义、分组、量词与逻辑条件边界不删改。按用户最新要求，QX / Surge 原生规则及生成脚本均丢弃源 i/m/s flags，仅使用正则主体；这是明确的语义降级，不声称保留 flags 的匹配行为。脚本继续解析变量、捕获、AND/OR 等表达式。动态 Regex 变量仅接受完整 `/pattern/flags` 或语义 Regex 节点，不执行表达式、不二次展开变量；缺失或无效值不匹配。失败案例：此前脚本保留 flags，误将用户要求与源语义等价混同；在共同 runtime 生成逻辑修复，不逐个修改产物。
 
 - jq 表达式的语法和函数语义以 [jqlang 官方手册](https://jqlang.org/manual/) 为唯一标准；兼容基线沿用已验证的 jq 1.6 能力，不假定客户端支持新版本特性。QX/Surge 的外层声明分别遵循用户官方 sample 和 Surge Manual。
 - ScriptHub 仅作为 JSON replace → jq 的实现参考，最终仍须满足 jqlang 契约；不得将其写法扩展套用到 JSON add/delete、原生 jq、jq_file/jq-path 或其他规则。
@@ -837,7 +839,7 @@ GitHub 落地（2026-10-04，Asia/Shanghai）：PR #136 已合入 main，最终 
 ### 已完成的能力边界
 
 - 条件 helper 使用 `core.mjs` 的共同 source evaluator，QX/Surge 不再各自丢弃 `i/m/s`、将缺失 header 当作空字符串或在失败 AND/OR 分支泄漏 captures。类型比较沿用源 IR；不得用 `Number(undefined)` / `String(null)` 模拟源类型。
-- Header/Body replacement helper 保留原 regex body 和 flags，使用源 `$0` / `$n` 替换契约。条件 captures 与 action-owned captures 独立。缺失的可选 condition capture 跳过当前 action，后续 action 继续。
+- Header/Body replacement helper 保留原 regex body，丢弃源 flags，使用源 `$0` / `$n` 替换契约。条件 captures 与 action-owned captures 独立。缺失的可选 condition capture 跳过当前 action，后续 action 继续。
 - QX Header helper 已合入共同 mutation renderer，删除重复 condition equality/variable lowering 与旧 Header emitter。原 221 个公开入口名称保持不变，不增加领域文件。
 - 同 phase 的新语法 Header set/del/replace、Body replace、JSON add/delete/replace：当需要 helper，且所有活动声明均能由共同 runtime 表达、没有原作者 HTTP Script/legacy Rewrite/argument transport 冲突时，生成一个 `phase-dispatcher`。按源声明及 action 顺序执行；后一条条件读取已提交的 header/body；每条声明重新建立 capture namespace；整个阶段只 `$done` 一次，全部未命中返回 `{}`。Guarded matcher 与阶段 dispatcher 的无 URL 约束 prefilter 使用 `^`，不得因大写 URL scheme 产生 false negative。
 - QX echo-response 不允许把未经证明为精确的 condition 降为宽 matcher 后安全 no-op；Header/status/OR 等无法精确匹配时保留源声明并 Review。

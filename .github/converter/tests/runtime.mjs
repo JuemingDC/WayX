@@ -3,6 +3,8 @@
 // Category: Converter / runtime / Regression Suite
 
 import { parseRewriteV2, renderMixedRewriteScript, renderQxInlineMockScript } from "../src/index.mjs";
+import {evaluateRewriteActions as sourceActionOracle,stripRegexFlags} from '../src/core.mjs';
+const evaluateTargetRewriteActions=(ast,...args)=>sourceActionOracle(stripRegexFlags(ast),...args);
 import assert from "node:assert/strict";
 import vm from "node:vm";
 
@@ -230,12 +232,13 @@ if (selectedCase==='generated-helper-runtime.mjs') {
   let checked=0;
   for (const target of ['qx','surge']) for (const flags of ['','i','m','s','im','is','ms','ims']) for(const body of ['a.b','A\nB','a\nb','prefix\na.b\nsuffix']) {
     const ast=parseRewriteV2('response if ${url} ~= /api-(\\d+)/i as hit && ${response.header["X-Mode"]} ~= /^READY$/i then response.body.replace(/^a.b$/'+flags+', "$0:$0:${hit.1}") | response.header.replace("X-Mode", /ready/i, "$0-done") | response.json.add("meta.ok",true)');
-    const context={url:'https://example.test/API-42',request:{url:'https://example.test/API-42',headers:{},method:'GET'},response:{headers:{'x-mode':'READY'},body,status:200,statusCode:200}};
-    const oracle=evaluateRewriteActions(ast,context,{parsePath:parseJsonKeyPath});
+    const context={url:'https://example.test/api-42',request:{url:'https://example.test/api-42',headers:{},method:'GET'},response:{headers:{'x-mode':'READY'},body,status:200,statusCode:200}};
+    const lowered=JSON.parse(JSON.stringify(ast), (key,value)=>key==='flags'?'':value);
+    const oracle=evaluateTargetRewriteActions(lowered,context,{parsePath:parseJsonKeyPath});
     const generated=run(renderMixedRewriteScript(ast,{target}).script,context);
     assert.equal(generated.body,oracle.state.response.body);
     assert.deepEqual(generated.headers,oracle.state.response.headers);
-    if (flags==='ims' && body==='A\nB') assert.equal(generated.body,'A\nB:A\nB:42','source $0 is the complete action match, with i/m/s preserved');
+    if (flags==='ims' && body==='A\nB') assert.equal(generated.body,body,'target policy removes i/m/s, preserving the body on a regex miss');
     checked++;
   }
   for(const target of ['qx','surge']) {
@@ -243,7 +246,7 @@ if (selectedCase==='generated-helper-runtime.mjs') {
     for(const headers of [{},{'X-Empty':''},{'x-empty':'present'}]) {
       const ast=parseRewriteV2('request if ${request.header["X-Empty"]} == null || ${request.header["X-Empty"]} ~= /^$/ then request.header.set("X-Matched","yes")');
       const context={url:'https://example.test/api',request:{url:'https://example.test/api',headers,method:'GET'},response:{}};
-      const oracle=evaluateRewriteActions(ast,context,{parsePath:parseJsonKeyPath});
+      const oracle=evaluateTargetRewriteActions(ast,context,{parsePath:parseJsonKeyPath});
       const generated=run(renderSingleRewriteMutationScript(ast,{target}).script,context);
       assert.deepEqual(generated.headers || headers,oracle.state.request.headers);
       checked++;
@@ -255,10 +258,10 @@ if (selectedCase==='generated-helper-runtime.mjs') {
       'response if ${response.header["X-Step"]} == "42" then response.body.replace(/old/is,"new") | response.header.set("X-Final","yes")',
       'response if ${url} ~= /miss/ then response.body.replace(/new/,"wrong")',
     ].map(parseRewriteV2);
-    for(const url of ['https://example.test/API-42','HTTPS://example.test/API-42','https://example.test/none']) {
+    for(const url of ['https://example.test/API-42','HTTPS://example.test/api-42','https://example.test/none']) {
       const context={url,request:{url,headers:{},method:'GET'},response:{headers:{},body:'OLD',status:200,statusCode:200}};
       let state=context;
-      for(const ast of entries)state=evaluateRewriteActions(ast,state,{parsePath:parseJsonKeyPath}).state;
+      for(const ast of entries)state=evaluateTargetRewriteActions(JSON.parse(JSON.stringify(ast),(key,value)=>key==='flags'?'':value),state,{parsePath:parseJsonKeyPath}).state;
       const plan=renderRewritePhaseDispatcher(entries,{target});
       assert.equal(new RegExp(plan.pattern).test(url),true,'phase prefilter must not exclude uppercase URL schemes');
       const generated=run(plan.script,context);
@@ -295,9 +298,9 @@ if (selectedCase==='generated-helper-runtime.mjs') {
       const lines=fixture.lines.flatMap((line,index)=>['# occurrence '+index,'',line]);
       const output=convertPlugin(entry,'[Rewrite]\n'+lines.join('\n'),{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
       validateConvertedPlugin(entry,output);
-      const context={url:'https://example.test/API',request:{url:'https://example.test/API',headers:{},body:'a',method:'GET'},response:{headers:{},body:'a',status:200,statusCode:200}};
+      const context={url:'https://example.test/api',request:{url:'https://example.test/api',headers:{},body:'a',method:'GET'},response:{headers:{},body:'a',status:200,statusCode:200}};
       let state=context;
-      for(const line of fixture.lines) {const oracle=evaluateRewriteActions(parseRewriteV2(line),state,{parsePath:parseJsonKeyPath});assert.deepEqual(oracle.errors,[]);state=oracle.state;}
+      for(const line of fixture.lines) {const oracle=evaluateTargetRewriteActions(parseRewriteV2(line),state,{parsePath:parseJsonKeyPath});assert.deepEqual(oracle.errors,[]);state=oracle.state;}
       assert.equal(state[phase].body,fixture.body,'independent expected source order');
       for(const target of ['qx','surge']) {
         const helpers=[...output.generatedScripts].filter(([name])=>name.startsWith('phase_'+target+'_'+phase+'_'));
@@ -361,7 +364,7 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   for(const item of fixture.cases.slice(18)) {
     const ast=parseRewriteV2(item.source);
     const context={url:item.request?.url||'https://example.test/',request:{method:'GET',headers:{},body:'',...structuredClone(item.request)},response:{status:200,headers:{},body:'',...structuredClone(item.response)}};
-    const oracle=evaluateRewriteActions(ast,context,{parsePath:parseJsonKeyPath,mockFiles:fixtureMockFiles(item)});
+    const oracle=evaluateTargetRewriteActions(ast,context,{parsePath:parseJsonKeyPath,mockFiles:fixtureMockFiles(item)});
     for(const [field,expected] of Object.entries(item.expected))assert.deepEqual(oracle.state[ast.phase][field],expected,item.id+' independent source oracle');
   }
   const profile=classifyComplexRewrite(parseRewriteV2(fixture.cases.find(c=>c.id==='paired-body-batch').source));
@@ -534,7 +537,7 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   let cases=0;
   function execute(script,phase,body) {
     let result,calls=0;
-    const context={$request:{url:'HTTPS://example.test/API',headers:{},body},$response:{status:200,statusCode:200,headers:{},body},$done:r=>{result=r;calls++}};
+    const context={$request:{url:'HTTPS://example.test/api',headers:{},body},$response:{status:200,statusCode:200,headers:{},body},$done:r=>{result=r;calls++}};
     vm.runInNewContext(script,context,{timeout:1000});assert.equal(calls,1);
     return JSON.parse(JSON.stringify(result));
   }
@@ -587,7 +590,7 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   const entry={id:'JqFileActions',source:'https://example.test/plugin/main.lpx',category:'Test'};
   const options={stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'};
   function execute(script,phase,body) {
-    let result,calls=0;vm.runInNewContext(script,{$request:{url:'HTTPS://example.test/API',body,headers:{}},$response:{status:200,statusCode:200,body,headers:{}},$done:r=>{result=r;calls++}},{timeout:1000});assert.equal(calls,1);return JSON.parse(JSON.stringify(result));
+    let result,calls=0;vm.runInNewContext(script,{$request:{url:'HTTPS://example.test/api',body,headers:{}},$response:{status:200,statusCode:200,body,headers:{}},$done:r=>{result=r;calls++}},{timeout:1000});assert.equal(calls,1);return JSON.parse(JSON.stringify(result));
   }
   let cases=0;
   for(const phase of ['request','response']) {
@@ -634,7 +637,7 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   const filters=['.data.ads = []','.data.deep.flag = true','del(.data.ads)','del(.data.deep.flag)','.first = 1 | del(.data.deep.flag)','.["a.b"]["odd|key"].value = {"__proto__":{"ok":true}}','.data.ads = [] | del(.data.deep.flag) | .end = true','.first = 1 | .data.ads = []','.data.ads = [] | .data = 0 | .data.deep.x = 1','.data = {"deep":null} | .data.deep.flag = false','.["__proto__"]["constructor"].safe = true','.data["quote\\\"key"]["x\\\\y"] = 2','del(.["__proto__"]["constructor"].safe)','.data.ads = null | .data.ads.next = true'];
   const inputs=['{}','null','{"data":null}','{"data":false}','{"data":[]}','{"data":{"ads":[1],"deep":{"flag":true}}}','{"data":{"deep":null}}','{"data":{"deep":false}}','{"data":{"deep":[]}}','{"__proto__":{"constructor":{"safe":false}}}','[]','false','"text"','broken'];
   function execute(script,phase,body) {
-    let output,calls=0;vm.runInNewContext(script,{$request:{url:'HTTPS://example.test/API',body,headers:{}},$response:{status:200,statusCode:200,body,headers:{}},$done:r=>{output=r;calls++}},{timeout:1000});assert.equal(calls,1);return JSON.parse(JSON.stringify(output));
+    let output,calls=0;vm.runInNewContext(script,{$request:{url:'HTTPS://example.test/api',body,headers:{}},$response:{status:200,statusCode:200,body,headers:{}},$done:r=>{output=r;calls++}},{timeout:1000});assert.equal(calls,1);return JSON.parse(JSON.stringify(output));
   }
   let checked=0;
   for(const phase of ['request','response'])for(const filter of filters)for(const input of inputs) {
@@ -756,15 +759,15 @@ if (selectedCase==='generated-helper-runtime.mjs') {
     const context={url,request:{url,method:'POST',headers:phase==='request'?headers:{},body:phase==='request'?body:''},response:{status:200,statusCode:200,headers:phase==='response'?headers:{},body:phase==='response'?body:''}};
     const expected={headers:structuredClone(headers),body};
     // This deliberately uses declarative case data, rather than action ASTs.
-    const match=new RegExp('api-(\\d+)',flags).exec(url);
+    const match=new RegExp('api-(\\d+)').exec(url);
     if(match) {
       matchedCount++;
       for(const name of order) {
         const key=headerKey(expected.headers,'X-Flow');
         if(name==='set')expected.headers[key??'X-Flow']='READY:'+match[1]+':'+marker;
-        if(name==='replace'&&key!==undefined)expected.headers[key]=firstReplace(expected.headers[key],new RegExp('ready',flags),'done:$&');
+        if(name==='replace'&&key!==undefined)expected.headers[key]=firstReplace(expected.headers[key],new RegExp('ready'),'done:$&');
         if(name==='del'){const remove=headerKey(expected.headers,'X-Remove');if(remove!==undefined)delete expected.headers[remove];}
-        if(name==='body')expected.body=firstReplace(expected.body,new RegExp('token',flags),'DONE-'+match[1]+'-$&');
+        if(name==='body')expected.body=firstReplace(expected.body,new RegExp('token'),'DONE-'+match[1]+'-$&');
         if(name==='add'||name==='delete') {
           let json;try{json=JSON.parse(expected.body);}catch{continue;}
           if(json===null||typeof json!=='object')continue;
@@ -777,7 +780,7 @@ if (selectedCase==='generated-helper-runtime.mjs') {
       }
     } else missCount++;
     const label='seed='+seed+' phase='+phase+' case='+index+' source='+source;
-    const oracle=evaluateRewriteActions(ast,context,{parsePath:parseJsonKeyPath});
+    const oracle=evaluateTargetRewriteActions(ast,context,{parsePath:parseJsonKeyPath});
     assert.deepEqual(oracle.errors,[],label+' source evaluator must not silently skip errors');
     assert.deepEqual({headers:oracle.state[phase].headers,body:oracle.state[phase].body},expected,label+' source evaluator');
     const entry={id:'SeededCombinations',source:'https://example.test/source.lpx',category:'Test'};
@@ -861,7 +864,7 @@ if(selectedCase==='generated-helper-runtime.mjs') {
       const reference=runIsolatedCase('jq',['-c',referenceProgram],{input:JSON.stringify(input),encoding:'utf8'});
       const expected=reference.status===0?JSON.parse(reference.stdout):undefined;
       const context={url:'https://example.test/api',request:{url:'https://example.test/api',headers:{},body:JSON.stringify(input)},response:{headers:{},body:JSON.stringify(input),status:200}};
-      const oracle=evaluateRewriteActions(parseRewriteV2(source),context,{parsePath:parseJsonKeyPath});
+      const oracle=evaluateTargetRewriteActions(parseRewriteV2(source),context,{parsePath:parseJsonKeyPath});
       assert.deepEqual(oracle.errors,[]);
       assert.deepEqual(JSON.parse(oracle.state[phase].body),model(input,ops),source+' helper source model');
       for(const target of ['qx','surge']) {
@@ -1032,10 +1035,10 @@ if(selectedCase==='generated-helper-runtime.mjs') {
         const bodyHit=url==='https://example.test/api';
         assert.equal(new RegExp(pattern).test(url),bodyHit,'target prefilter selects body owner exactly');
         if(bodyHit) {
-          const value=JSON.parse(JSON.stringify(runOwner(scripts[0][1],{request:{url,body:'OLD'},response:{body:'OLD'}})));
+          const value=JSON.parse(JSON.stringify(runOwner(scripts[0][1],{request:{url,body:'old'},response:{body:'old'}})));
           assert.deepEqual(value,{headers:{'X-Step':count===2?'last':'first'},body:count===2?'done':'new'});
         } else {
-          assert.deepEqual(JSON.parse(JSON.stringify(runOwner(scripts[0][1],{request:{url,body:'OLD'},response:{body:'OLD'}}))),{});
+          assert.deepEqual(JSON.parse(JSON.stringify(runOwner(scripts[0][1],{request:{url,body:'old'},response:{body:'old'}}))),{});
           // Original first-match author order survives when no Body Rewrite hits.
           const authors=output[target].split('\n').filter(line=>/author-(?:first|second)\.js/.test(line));
           const selected=authors.find(line=>new RegExp(target==='qx'?line.split(' url ')[0]:line.match(/pattern=(.*?),script-path=/)[1]).test(url));
@@ -1171,4 +1174,30 @@ if(selectedCase==='generated-helper-runtime.mjs') {
     assert.equal(result.status,0,result.stderr);assert.deepEqual(JSON.parse(result.stdout),{a:1,b:2});
   }
   console.log('Bare jq screenshot regression passed: exact Baidu Translate filters in both targets, author guards preserved, generated multi-jq guards absent');
+}
+
+if(selectedCase==='generated-helper-runtime.mjs') {
+  const {renderSingleRewriteMutationScript}=await import('../src/runtime.mjs');
+  const pattern=String.raw`^(?:item|other)[/](\d+)[im]{1,2}$`;
+  for(const target of ['qx','surge']) {
+    const ast=parseRewriteV2('request if ${url} ~= /'+pattern+'/ims as hit then request.header.set("X-ID","${hit.1}")');
+    const plan=renderSingleRewriteMutationScript(ast,{target});
+    assert.equal(ast.condition.right.flags,'ims','source AST must remain intact');
+    assert.ok(plan.script.includes(JSON.stringify(pattern)),'regex structure survives lowering');
+    assert.doesNotMatch(plan.script,/"flags":"ims"|new RegExp\([^\n]+,"ims"\)/);
+    for(const [url,expected] of [['item/42im',{'X-ID':'42'}],['ITEM/42im',null],['item/42IM',null]]) {
+      let calls=0,result;
+      vm.runInNewContext(plan.script,{$request:{url,headers:{}},$done(v){calls++;result=v;}});
+      assert.equal(calls,1);assert.deepEqual(JSON.parse(JSON.stringify(result)),expected?{headers:expected}:{});
+    }
+  }
+  const ast=parseRewriteV2('request if ${url} ~= ${pattern} as hit then request.header.set("X-ID","${hit.1}") | request.header.set("X-Next","yes")');
+  const argumentTable={byId:new Map([['pattern',{id:'pattern'}]])};
+  const plan=renderMixedRewriteScript(ast,{target:'surge',argumentTable});
+  for(const [url,pattern,expected] of [['item/42','/^item\\/(\\d+)$/ims',{'X-ID':'42','X-Next':'yes'}],['ITEM/42','/^item\\/(\\d+)$/ims',null],['item/42','/[abc/i',null]]) {
+    let calls=0,result;
+    vm.runInNewContext(plan.script,{$request:{url,headers:{}},$argument:JSON.stringify({pattern}),$done(v){calls++;result=v;}});
+    assert.equal(calls,1);assert.deepEqual(JSON.parse(JSON.stringify(result)),expected?{headers:expected}:{});
+  }
+  console.log('Literal/dynamic target regex policy: flags discarded, regex structure and capture/condition execution retained');
 }

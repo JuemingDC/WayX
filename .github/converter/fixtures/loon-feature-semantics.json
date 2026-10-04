@@ -163,7 +163,7 @@
         "body": "汉字/7:汉字:7:42:$&:$$"
       },
       "request": {
-        "url": "https://example.test/ITEM-42"
+        "url": "https://example.test/item-42"
       },
       "response": {
         "body": "汉字/7"
@@ -182,7 +182,7 @@
         }
       },
       "request": {
-        "url": "https://example.test/ITEM-"
+        "url": "https://example.test/item-"
       },
       "response": {},
       "targets": [
@@ -194,7 +194,7 @@
       "id": "paired-body-batch",
       "source": "response if ${url} ~= /example/i then response.body.replace([/a/i,/b/i],[\"B\",\"C\"]) | response.header.set([\"X-A\",\"X-B\"],[\"${request.method}\",\"ok\"])",
       "expected": {
-        "body": "C",
+        "body": "A",
         "headers": {
           "X-A": "GET",
           "X-B": "ok"
@@ -268,7 +268,7 @@
         "body": " {\"keep\": 1} "
       },
       "request": {
-        "url": "https://example.test/ITEM-"
+        "url": "https://example.test/item-"
       },
       "response": {
         "headers": {
@@ -315,7 +315,7 @@
       "response": {},
       "expected": {
         "headers": {
-          "X-Key": "new",
+          "X-Key": "OLD",
           "x-key": "new"
         }
       },

@@ -4,7 +4,7 @@
 
 import { splitTopLevelCsv } from "./rule.mjs";
 import { parseRewriteV2, conditionToSource, valueToSource, isRewriteV2, simpleUrlRewriteCondition } from "./rewrite.mjs";
-import { normalizeRegexBodyForTarget, stringTemplateParts } from "./core.mjs";
+import { scanSourceRegexLiteral, normalizeRegexBodyForTarget, stringTemplateParts } from "./core.mjs";
 
 
 
@@ -256,7 +256,7 @@ function decodeQuoted(raw) {
 }
 
 function scanState(source, callback) {
-  let quote = null, regex = false, regexClass = false, raw = false, escape = false, variableDepth = 0;
+  let quote = null, raw = false, escape = false, variableDepth = 0;
   for (let i = 0; i < source.length; i++) {
     const ch = source[i];
     if (raw) {
@@ -272,17 +272,6 @@ function scanState(source, callback) {
       if (ch === quote) quote = null;
       continue;
     }
-    if (regex) {
-      if (escape) { escape = false; continue; }
-      if (ch === '\\') { escape = true; continue; }
-      if (ch === '[') { regexClass = true; continue; }
-      if (ch === ']' && regexClass) { regexClass = false; continue; }
-      if (ch === '/' && !regexClass) {
-        regex = false;
-        while (/[A-Za-z]/.test(source[i + 1] || '')) i++;
-      }
-      continue;
-    }
     if (variableDepth) {
       if (ch === '{') variableDepth++;
       else if (ch === '}') variableDepth--;
@@ -291,7 +280,7 @@ function scanState(source, callback) {
     if (ch === '$' && source[i + 1] === '{') { variableDepth = 1; i++; continue; }
     if (ch === '"' || ch === "'") { quote = ch; continue; }
     if (ch === '`') { raw = true; continue; }
-    if (ch === '/') { regex = true; continue; }
+    if (ch === '/') { i=scanSourceRegexLiteral(source,i).end-1; continue; }
     const stop = callback(i);
     if (stop !== undefined) return stop;
   }
