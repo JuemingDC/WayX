@@ -91,10 +91,14 @@ jobs:
           node .github/converter/tests/runtime.mjs
 
       - name: Pull discovered upstreams and convert
+        id: loon_sync
         shell: bash
         run: |
           set -o pipefail
           node .github/scripts/sync-convert.mjs
+
+      - name: Verify isolated sync is publishable
+        run: test "${{ steps.loon_sync.outputs.publishable }}" = true
 
       - name: Regenerate canonical outputs
         run: node .github/converter/tools/regenerate-canonical.mjs --write

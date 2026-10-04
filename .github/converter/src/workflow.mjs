@@ -34,7 +34,7 @@ export function surgeTargetPath(entry) {
   return `${SURGE_ADBLOCK_DIR}/${entry.surge}`;
 }
 
-const GENERATED_HELPER_FILENAME_RE=/^(?:mock|header|complex_qx|mock_file|json_add_qx|redirect|reject|complex_surge|request_mock|json_mutation_surge|legacy_header|legacy_json_add_(?:qx|surge)|legacy_mock|legacy_request_mock)_[0-9a-f]{10}\.js$/;
+const GENERATED_HELPER_FILENAME_RE=/^(?:features_(?:qx|surge)|phase_(?:qx|surge)_(?:request|response)|mock|header|complex_qx|mock_file|json_add_qx|redirect|reject|complex_surge|request_mock|json_mutation_surge|legacy_header|legacy_json_add_(?:qx|surge)|legacy_mock|legacy_request_mock)_[0-9a-f]{10}\.js$/;
 
 export function isWayxGeneratedHelperFilename(name) {
   return GENERATED_HELPER_FILENAME_RE.test(String(name ?? ''));
@@ -176,6 +176,41 @@ export async function syncGeneratedScripts(root, entry, generatedScripts, {scrip
     changed.push('delete:'+name);
   }
   return changed;
+}
+
+// Internal workflow transaction; the public converter index remains unchanged.
+export async function commitManagedConversion(root,entry,state,out,{
+  sourceState=null,source=null,onStage=()=>{},
+  writeHelpers=syncGeneratedScripts,writeTargets=writeManagedTargets,writeSource=writeManagedSource,
+}={}) {
+  const stale=await staleGeneratedHelpers(root,entry,out.generatedScripts);
+  const files=[state.qxPath,state.surgePath,...(sourceState?[sourceState.sourcePath]:[])];
+  for(const name of new Set([...out.generatedScripts.keys(),...stale])) {
+    if(path.basename(name)!==name)throw new Error('Generated helper filename must be local to its plugin');
+    files.push(path.join(root,'Script',entry.id,name));
+  }
+  const snapshot=new Map(await Promise.all(files.map(async file=>{
+    try{return [file,await fs.readFile(file)];}catch(error){if(error.code==='ENOENT')return [file,null];throw error;}
+  })));
+  try {
+    onStage('write-generated-helpers');
+    const helperChanges=await writeHelpers(root,entry,out.generatedScripts);
+    onStage('write-targets');
+    const targetChanges=await writeTargets(state,out);
+    if(sourceState){onStage('write-source');await writeSource(sourceState,source);}
+    return {helperChanges,targetChanges};
+  } catch(error) {
+    const rollbackErrors=[];
+    for(const [file,bytes] of snapshot)try {
+      if(bytes===null)await fs.rm(file,{force:true});
+      else {await fs.mkdir(path.dirname(file),{recursive:true});await fs.writeFile(file,bytes);}
+    }catch(failure){rollbackErrors.push(failure);}
+    if(rollbackErrors.length) {
+      const failure=new AggregateError([error,...rollbackErrors],'Managed conversion write and rollback failed',{cause:error});
+      failure.rollbackSucceeded=false;throw failure;
+    }
+    error.rollbackSucceeded=true;throw error;
+  }
 }
 
 export function managedTargetDiffs(state, out) {
@@ -543,12 +578,12 @@ export function buildSyncFailure({entry,stage,error,previousSource=null,fetchedS
   };
 }
 
-export async function writeSyncFailureReport(root,failures,{runtimeDir='.github/monitor/.runtime'}={}) {
+export async function writeSyncFailureReport(root,failures,{runtimeDir='.github/monitor/.runtime',summary=null}={}) {
   const dir=path.join(root,runtimeDir);
   await fs.mkdir(dir,{recursive:true});
   const jsonPath=path.join(dir,'sync-failures.json');
   const markdownPath=path.join(dir,'sync-failures.md');
-  await fs.writeFile(jsonPath,JSON.stringify({version:1,failures},null,2)+'\n');
+  await fs.writeFile(jsonPath,JSON.stringify(summary?{version:2,failures,...summary}:{version:1,failures},null,2)+'\n');
   const lines=['# WayX scheduled sync failures','',`Total: ${failures.length}`,''];
   for (const failure of failures) {
     lines.push(

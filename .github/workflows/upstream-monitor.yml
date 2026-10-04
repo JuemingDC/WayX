@@ -146,7 +146,7 @@ jobs:
         if: >-
           always() &&
           steps.kelee_catalog.outcome == 'success' &&
-          steps.loon_sync.outcome == 'success' &&
+          steps.loon_sync.outputs.publishable == 'true' &&
           steps.refreshed_catalog.outcome == 'success' &&
           steps.validate.outcome == 'success' &&
           steps.readme_index.outcome == 'success' &&

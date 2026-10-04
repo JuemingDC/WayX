@@ -262,13 +262,13 @@ async function upsertIssue({title,body,label}) {
   return url;
 }
 
-async function newCatalogSemantics(catalog) {
-  const [v2,legacy]=await Promise.all(['catalog-syntax-inventory.json','catalog-legacy-syntax-inventory.json'].map(async name=>JSON.parse(await fs.readFile(path.join(ROOT,'.github/converter/fixtures',name),'utf8'))));
+async function newCatalogSemantics(catalog,{root=ROOT,sourceOverrides=null}={}) {
+  const [v2,legacy]=await Promise.all(['catalog-syntax-inventory.json','catalog-legacy-syntax-inventory.json'].map(async name=>JSON.parse(await fs.readFile(path.join(root,'.github/converter/fixtures',name),'utf8'))));
   const baseline={...v2,...legacy};
   const out=[];
   for(const entry of catalog) {
     let plugin;
-    try {plugin=parseLoonPlugin(await fs.readFile(path.join(ROOT,'Resource/Loon',entry.file),'utf8'));}
+    try {plugin=parseLoonPlugin(sourceOverrides?.has(entry.id)?sourceOverrides.get(entry.id):await fs.readFile(path.join(root,'Resource/Loon',entry.file),'utf8'));}
     catch {continue;} // A source read failure is reported by the sync transaction.
     for(const section of ['Rewrite','Script'])for(const raw of plugin.sections.get(section)||[]) {
       const line=raw.trim();if(!line || /^(?:#|;|\/\/)/.test(line))continue;
@@ -317,13 +317,13 @@ async function newCatalogSemantics(catalog) {
   return out;
 }
 
-export async function collectIssueCandidates() {
-  const catalog=await loadLoonSourceCatalog(MANIFEST);
-  const targetProblems=await groupedTargetProblems(catalog);
-  for(const problem of await newCatalogSemantics(catalog)){
+export async function collectIssueCandidates({root=ROOT,catalog=null,sourceOverrides=null,includeTargets=true,includeSyncFailures=true}={}) {
+  catalog=catalog||await loadLoonSourceCatalog(path.join(root,'.github/sources/loon.json'));
+  const targetProblems=includeTargets?await groupedTargetProblems(catalog):[];
+  for(const problem of await newCatalogSemantics(catalog,{root,sourceOverrides})){
     if(!targetProblems.some(group=>group.plugin.id===problem.plugin.id&&group.source===problem.source))targetProblems.push(problem);
   }
-  const syncReport=await readJson(syncFailurePath,{version:1,failures:[]});
+  const syncReport=includeSyncFailures?await readJson(path.join(root,'.github/monitor/.runtime/sync-failures.json'),{version:1,failures:[]}):{failures:[]};
   const syncFailures=Array.isArray(syncReport.failures) ? syncReport.failures : [];
   return {targetProblems,syncFailures};
 }

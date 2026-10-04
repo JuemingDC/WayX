@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.75
+版本：1.76
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -1037,3 +1037,16 @@ Pre-matching 只用于顶层 REJECT/REJECT-DROP/REJECT-NO-DROP/REJECT-TINYGIF �
 以现有 Legacy semantic inventory 为已审查范围，复用生产 `classifyLegacyRewriteAction` 与 `parseLegacyScriptLine` 检测新增 Rewrite action kind、mock option、Script phase/option。未知、缺失或非法声明均保留完整源行并形成稳定 `conversion-unknown` Issue；comments/空行不识别为活动声明，既有 optional separator、参数值及顺序变化不当作新类型。与 V2 识别使用同一个候选集合及现有 Issue 创建/复用流程，源候选与同声明的目标 Review/Issue 去重。不会根据扫描结果猜测目标规则或自动扩大 baseline。
 
 纯 native/JQ 优先、现有脚本设计、QX 强制 enable 与原作者 URL 政策不变；本次不修改任何生产转换输出。PR CI 和手动 upstream-monitor 均执行自动 Issue 处理，定时活动保持暂停。验收覆盖已有类型不误报、新注册但未观察类型、未知 Legacy action/option、非法声明、注释不复活、源行保留、指纹稳定及当前去广告/依赖目录无误报。不增加生产领域文件或公开入口，远端仅 main/test。
+
+
+## 39. 插件故障隔离、写盘事务及发布完整性（v1.76）
+
+本轮集中解决整类同步故障：一个上游/语法/目标转换失败不能阻止其它正常插件更新；通过 validator 后的 helper、QX、Surge、源文件写入也不能留下部分新旧版本。转换前用同一已审查语义 scanner 检查获取的新源；新增或未知类型保留完整声明进入结构化 failure/Issue，不把未审查源先写入目录。已知语义但目标输出包含 Review/Issue 同样在写入前隔离，既有 COMPATIBILITY LIMITATION 政策保持。
+
+逐插件 `syncCatalogEntry` 拥有生命周期，sync 与 canonical 保留各自目录 loop；共同内部 artifact transaction 备份实际文件 bytes，写入 helper（含 stale 删除）、两个目标及可选源文件。任何写入失败恢复全部旧 bytes，移除首次安装引入的文件；手写 Script 保留。features/phase 的既有生成文件名纳入 stale 检测，修复旧清理只识别历史类别造成的 helper 积累。索引公开导出保持，11 个生产领域及 10 个 suite 布局不增加。
+
+完整旧 source/QX/Surge 存在时，失败插件保留旧成品；首次同步且没有完整旧版的失败项暂缓进入有效生成目录和可莉 runtime snapshot，顺序/count 随之更新，但静态目录及上游 discovery source 不改，后续刷新会重新尝试。失败报告 version 2 保留 failures，并记录 validated/retained/deferred ids 与 publishable；自动 Issue 即使有效目录暂不含该插件仍能读取其完整 metadata 与声明。失败项隔离完成且 README/目录准备成功时，正常项可继续发布；无法恢复写盘、目录/README 准备失败或报告失败时禁止整批提交。
+
+PR CI 和 upstream-monitor 均以明确 publishable 输出为发布门禁；validator、inventory、managed cleanliness、audit、helper/source URL、Issue 创建等现有门禁仍必须通过。单项已隔离失败不再仅因 CLI exit status 阻断全部正常更新，日志/结构化报告/自动 Issue 继续显式记录，不把未解决问题伪称修复。原作者 URL、原生优先、QX enable 政策、去广告/依赖范围和定时暂停不变。
+
+故障注入验收使用真实文件写入，涵盖 helper 创建/删除后失败、首个目标写后失败、源文件部分写入、首次安装失败、原始 CRLF bytes 恢复、手写脚本保护、stale features/phase 清理、正常/旧版失败/首次失败混合目录、源 Issue 上下文、target Review 和 fetch failure 写前隔离；故意阻止 rollback 必须 publishable=false。转换成品行为仍由完整目录、差分及 CI 门禁验证；本次不据此宣称解决全部客户端脚本执行顺序或 flags 等价问题。远端仅 main/test。

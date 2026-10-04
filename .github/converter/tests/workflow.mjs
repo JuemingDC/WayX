@@ -231,10 +231,17 @@ assert.match(sync,/managedTargetDiffs\(targetState,out\)\.some\(target =>/,
   'sync must reuse target diffs only for its existing-target drift check');
 assert.match(sync,/target === 'qx' \? Boolean\(oldQx\) : Boolean\(oldSg\)/,
   'sync drift refresh must continue to ignore missing-target recovery');
-assert.match(sync,/const helperChanges = await syncGeneratedScripts\(/,
-  'sync must retain helper write results for status reporting');
+assert.match(sync,/await commit\(root,entry,targetState,out/,'sync must commit all plugin artifacts through the transaction');
+assert.match(managed,/const helperChanges=await writeHelpers/,'transaction retains helper write results');
+assert.match(canonical,/await commitManagedConversion\(ROOT,entry,targetState,out\)/,'canonical writer must use the same artifact transaction');
 assert.match(sync,/targetChanges\.length \|\| helperChanges\.length \|\| changed/,
   'helper-only repair must not be reported as fully unchanged');
+
+assert.match(sync,/result\.publishable/,'CLI publication result must reflect rollback/quarantine integrity');
+const upstreamWorkflow=await fs.readFile('.github/workflows/upstream-monitor.yml','utf8');
+assert.match(upstreamWorkflow,/steps\.loon_sync\.outputs\.publishable == 'true'/,'publication must require the verified sync output, not merely a caught exit status');
+const checkWorkflow=await fs.readFile('.github/workflows/converter-check.yml','utf8');
+assert.match(checkWorkflow,/Verify isolated sync is publishable/,'PR CI must reject an unpublishable transaction');
 
 assert.match(canonical,/const staleEntries = \[\]/,
   'canonical result tracking must name pre-write differences as stale entries');
@@ -559,4 +566,81 @@ assert.equal(qzxy.qx,'Adblock/Quantumult X/QZXY.snippet');
 assert.equal(qzxy.surge,'Adblock/Surge/QZXY.sgmodule');
 
 console.log('Manual asset contract passed: '+manual.assets.map(asset=>asset.id).join(', '));
+}
+
+if(selectedCase==='managed-artifacts.mjs') {
+  const {commitManagedConversion}=await import('../src/workflow.mjs');
+  const {materializeConversionRunContext,convertPluginWithContext,validateConvertedPlugin}=await import('../src/conversion.mjs');
+  const {syncCatalogEntry,runCatalogSync}=await import('../../scripts/sync-convert.mjs');
+  const {collectIssueCandidates}=await import('../../scripts/propose-conversion-issues.mjs');
+  const root=await fs.mkdtemp(path.join(os.tmpdir(),'wayx-transaction-'));
+  const entry=id=>({id,file:id+'.lpx',source:'https://example.test/'+id+'.lpx',qx:id+'.snippet',surge:id+'.sgmodule',category:'去广告'});
+  const source=value=>'#!name=Fixture\n[Rewrite]\nresponse if ${url} ~= /api/i then response.header.set("X",'+JSON.stringify(value)+')\n';
+  const rawBase='https://raw.githubusercontent.com/JuemingDC/WayX/main';
+  const encode=async(e,text)=>convertPluginWithContext(e,text,await materializeConversionRunContext(e,text),{stamp:'2026-10-04',rawBase});
+  const inventory=async()=>{
+    const rows=[];
+    const walk=async dir=>{for(const item of await fs.readdir(dir,{withFileTypes:true}).catch(error=>error.code==='ENOENT'?[]:Promise.reject(error))){const file=path.join(dir,item.name);if(item.isDirectory())await walk(file);else rows.push([path.relative(root,file),await fs.readFile(file)]);}};
+    for(const dir of ['Resource','Adblock','Script'])await walk(path.join(root,dir));
+    return rows.sort((a,b)=>a[0].localeCompare(b[0]));
+  };
+  const seed=async e=>{
+    const text=source('old'),out=await encode(e,text);
+    await fs.mkdir(path.join(root,'Resource/Loon'),{recursive:true});await fs.writeFile(path.join(root,'Resource/Loon',e.file),text.replace(/\n/g,'\r\n'));
+    await writeManagedTargets(await readManagedTargetState(root,e),out);await syncGeneratedScripts(root,e,out.generatedScripts);
+    await fs.writeFile(path.join(root,'Adblock/Quantumult X',e.qx),out.qx.replace(/\n/g,'\r\n'));
+    await fs.writeFile(path.join(root,'Script',e.id,'manual.js'),'// handwritten\n');
+    await fs.writeFile(path.join(root,'Script',e.id,'features_qx_0123456789.js'),'// stale feature\n');
+  };
+  try {
+    await fs.mkdir(path.join(root,'.github/converter/fixtures'),{recursive:true});
+    for(const name of ['catalog-syntax-inventory.json','catalog-legacy-syntax-inventory.json'])await fs.copyFile('.github/converter/fixtures/'+name,path.join(root,'.github/converter/fixtures',name));
+    const e=entry('Atomic');await seed(e);const original=await inventory();
+    const text=source('new'),out=await encode(e,text);validateConvertedPlugin(e,out);
+    for(const failureStage of ['helpers','first-target','source']) {
+      const state=await readManagedTargetState(root,e),sourceState=await inspectManagedSource(root,e,text);
+      const options={sourceState,source:text};
+      if(failureStage==='helpers')options.writeHelpers=async(...args)=>{await syncGeneratedScripts(...args);throw new Error('injected helper failure');};
+      if(failureStage==='first-target')options.writeTargets=async(state,out)=>{await fs.writeFile(state.qxPath,out.qx);throw new Error('injected first-target failure');};
+      if(failureStage==='source')options.writeSource=async state=>{await fs.writeFile(state.sourcePath,'partial');throw new Error('injected source failure');};
+      await assert.rejects(commitManagedConversion(root,e,state,out,options),error=>error.rollbackSucceeded===true);
+      assert.deepEqual(await inventory(),original,failureStage+' must restore every old byte and remove new helpers');
+    }
+    const absent=entry('Absent'),absentOut=await encode(absent,text);
+    await assert.rejects(commitManagedConversion(root,absent,await readManagedTargetState(root,absent),absentOut,{sourceState:await inspectManagedSource(root,absent,text),source:text,writeSource:async()=>{throw new Error('first install failure');}}),error=>error.rollbackSucceeded===true);
+    assert.deepEqual(await inventory(),original,'first-install rollback removes all introduced files');
+    const result=await commitManagedConversion(root,e,await readManagedTargetState(root,e),out,{sourceState:await inspectManagedSource(root,e,text),source:text});
+    assert.ok(result.helperChanges.some(name=>name.startsWith('delete:features_')));
+    assert.equal(await fs.readFile(path.join(root,'Script',e.id,'manual.js'),'utf8'),'// handwritten\n');
+    assert.deepEqual(await generatedScriptDiffs(root,e,out.generatedScripts),[]);
+    for(const name of ['features_qx_0123456789.js','phase_surge_response_0123456789.js'])assert.equal(isWayxGeneratedHelperFilename(name),true);
+
+    const good=entry('Good'),bad=entry('Bad'),fresh=entry('Fresh');await seed(good);await seed(bad);
+    const catalog=[good,bad,fresh];await fs.mkdir(path.join(root,'.github/sources'),{recursive:true});await fs.mkdir(path.join(root,'.github/monitor/.runtime'),{recursive:true});
+    await fs.writeFile(path.join(root,'.github/sources/loon.json'),JSON.stringify(catalog));await fs.writeFile(path.join(root,'.github/sources/loon-static.json'),JSON.stringify(catalog));
+    await fs.writeFile(path.join(root,'.github/monitor/.runtime/kelee-catalog.json'),JSON.stringify({count:3,plugins:catalog.map((e,order)=>({...e,order}))}));
+    const before=new Map(await inventory());
+    const unknown='#!name=Future\n[Rewrite]\nresponse if ${url} ~= /api/ then response.future.action()\n';
+    const run=await runCatalogSync({root,log:()=>{},writeError:()=>{},warn:()=>{},entryOptions:{fetchText:async url=>url===good.source?source('updated'):unknown}});
+    assert.equal(run.publishable,true);assert.deepEqual(run.validatedPlugins,['Good']);assert.deepEqual(run.retainedPlugins,['Bad']);assert.deepEqual(run.deferredPlugins,['Fresh']);
+    assert.equal(run.failures.length,2);assert.ok(run.failures.every(failure=>failure.declarations.some(d=>d.line.includes('future.action'))));
+    for(const [file,bytes] of await inventory())if(file.includes('/Bad/')||file.endsWith('/Bad.lpx')||file.endsWith('/Bad.snippet')||file.endsWith('/Bad.sgmodule'))assert.deepEqual(bytes,before.get(file),'failed plugin baseline preserved');
+    assert.match(await fs.readFile(path.join(root,'Resource/Loon/Good.lpx'),'utf8'),/updated/);
+    assert.deepEqual(JSON.parse(await fs.readFile(path.join(root,'.github/sources/loon.json'),'utf8')).map(e=>e.id),['Good','Bad']);
+    assert.equal(JSON.parse(await fs.readFile(path.join(root,'.github/sources/loon-static.json'),'utf8')).length,3,'discovery source remains intact for retries');
+    const snapshot=JSON.parse(await fs.readFile(path.join(root,'.github/monitor/.runtime/kelee-catalog.json'),'utf8'));assert.equal(snapshot.count,2);assert.deepEqual(snapshot.plugins.map(p=>p.order),[0,1]);
+    const issues=await collectIssueCandidates({root,includeTargets:false});assert.equal(issues.syncFailures.length,2,'deferred sources survive in the Issue report');
+    const baseline=await inventory();
+    await assert.rejects(syncCatalogEntry(bad,{root,log:()=>{},fetchText:async()=>source('changed'),convert:(...args)=>{const out=convertPluginWithContext(...args);out.qx+='\n# [WayX] TEST REVIEW REQUIRED: unsupported target\n# Source declaration: fixture\n';return out;}}),error=>error.syncFailure.stage==='review-target-mapping');
+    assert.deepEqual(await inventory(),baseline,'known but unsupported mapping is quarantined before any write');
+    await assert.rejects(syncCatalogEntry(bad,{root,log:()=>{},fetchText:async()=>{throw new Error('upstream 503');}}),error=>error.syncFailure.stage==='fetch-upstream'&&error.baselineAvailable);
+    assert.deepEqual(await inventory(),baseline,'fetch failures preserve the complete baseline');
+
+    const fatal=entry('Fatal');await seed(fatal);await fs.writeFile(path.join(root,'.github/sources/loon.json'),JSON.stringify([fatal]));
+    const failure=await runCatalogSync({root,log:()=>{},writeError:()=>{},warn:()=>{},entryOptions:{fetchText:async()=>source('fatal'),commit:(root,e,state,out,options)=>commitManagedConversion(root,e,state,out,{...options,writeTargets:async state=>{await fs.rm(state.qxPath);await fs.mkdir(state.qxPath);throw new Error('restore blocked');}})}});
+    assert.equal(failure.publishable,false,'a failed rollback blocks the entire publication');
+    assert.equal(failure.failures.length,1);
+    assert.equal(JSON.parse(await fs.readFile(path.join(root,'.github/monitor/.runtime/sync-failures.json'),'utf8')).publishable,false);
+    console.log('Plugin isolation/transactions passed: helper/target/source/first-install rollback, stale cleanup, mixed catalog publication, deferred retry, Issue context and fatal rollback gate');
+  }finally{await fs.rm(root,{recursive:true,force:true});}
 }
