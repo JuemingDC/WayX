@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 18:36:26 +08:00
+// Converted: 2026-10-04 19:18:00 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /(^https:\/\/pingtas\.qq\.com\/webview\/pingd\?dm=c\.pc\.qq\.com&pvi=\d+&si=s\d+&url=\/ios\.html\?url%3d)(http.*)(%26level.*%26level.*)/i as urlMatch then redirect(307, "${urlMatch.2}")
@@ -229,11 +229,12 @@ function evaluateCondition(condition,context={},initialCaptures={}) {
 }
 function compileSourceRegex(node){const {source}=assertRegexNode(node);return new RegExp(source);}
 const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"(^https:\\/\\/pingtas\\.qq\\.com\\/webview\\/pingd\\?dm=c\\.pc\\.qq\\.com&pvi=\\d+&si=s\\d+&url=\\/ios\\.html\\?url%3d)(http.*)(%26level.*%26level.*)","flags":""},"capture":"urlMatch"},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
-  const __wayxMatch=__wayxCaptures["urlMatch"];
+  const __wayxMatch=new RegExp("(^https:\\/\\/pingtas\\.qq\\.com\\/webview\\/pingd\\?dm=c\\.pc\\.qq\\.com&pvi=\\d+&si=s\\d+&url=\\/ios\\.html\\?url%3d)(http.*)(%26level.*%26level.*)","").exec(__wayxUrl);
   if(!__wayxMatch){$done({});}else{
-    const __wayxTemplate="${urlMatch.2}";
-    const __wayxReplacement=__wayxTemplate.replace(/\$\{urlMatch\.(\d+)\}/g,(_,n)=>__wayxMatch[Number(n)] ?? "");
+    if(__wayxMatch[2] === undefined){$done({});}else{
+    const __wayxReplacement="" + __wayxMatch[2];
     const __wayxLocation=__wayxUrl.slice(0,__wayxMatch.index)+__wayxReplacement+__wayxUrl.slice(__wayxMatch.index+__wayxMatch[0].length);
     $done({status:"HTTP/1.1 307 Temporary Redirect",headers:{Location:__wayxLocation},body:""});
+    }
   }
 }else{$done({});}

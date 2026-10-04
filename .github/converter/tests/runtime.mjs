@@ -1201,3 +1201,41 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   }
   console.log('Literal/dynamic target regex policy: flags discarded, regex structure and capture/condition execution retained');
 }
+
+if (selectedCase==='generated-helper-runtime.mjs') {
+  const {renderQxRedirectScript}=await import('../src/runtime.mjs');
+  const normalize=value=>JSON.parse(JSON.stringify(value));
+  function runGenerated(script,{request}) {
+    let output,calls=0;
+    vm.runInNewContext(script,{$request:{method:'GET',headers:{},...request},$done(value){calls++;output=value;}},{timeout:1000});
+    assert.equal(calls,1);
+    return output;
+  }
+
+  const request={url:'https://example.test/old?keep=1',headers:{}};
+  const cases=[
+    ['`${hit.1}`','https://example.test/${hit.1}?keep=1'],
+    [String.raw`"\${hit.1}"`,'https://example.test/${hit.1}?keep=1'],
+    ['"new-${hit.1}-${hit.0}"','https://example.test/new-old-old?keep=1'],
+    ['""','https://example.test/?keep=1'],
+  ];
+  for(const conditionMode of ['simple-url','full']) {
+    for(const [value,expected] of cases) {
+      const ast=parseRewriteV2('request if ${url} ~= /(old)/i as hit'+(conditionMode==='full'?' && ${request.method} == "GET"':'')+' then redirect(307, '+value+')');
+      const plan=renderQxRedirectScript(ast,{conditionMode});
+      const output=runGenerated(plan.script,{request});
+      assert.equal(output.headers.Location,expected,value);
+      assert.equal(output.status,'HTTP/1.1 307 Temporary Redirect');
+      if(conditionMode==='full')assert.deepEqual(normalize(runGenerated(plan.script,{request:{...request,method:'POST'}})),{});
+      assert.deepEqual(normalize(runGenerated(plan.script,{request:{...request,url:request.url.replace('old','OLD')}})),{});
+    }
+    const optional=parseRewriteV2('request if ${url} ~= /old(-new)?/ as hit then redirect(302,"${hit.1}")');
+    assert.deepEqual(normalize(runGenerated(renderQxRedirectScript(optional,{conditionMode}).script,{request})),{});
+    const empty=parseRewriteV2('request if ${url} ~= /old()/ as hit then redirect(302,"${hit.1}")');
+    assert.equal(runGenerated(renderQxRedirectScript(empty,{conditionMode}).script,{request}).headers.Location,'https://example.test/?keep=1');
+    // Inserted data is never reparsed as a template or JS replacement token.
+    const data=parseRewriteV2('request if ${url} ~= /old(.+)/ as hit then redirect(302,"${hit.1}")');
+    const url='https://example.test/old$&${hit.1}';
+    assert.equal(runGenerated(renderQxRedirectScript(data,{conditionMode}).script,{request:{url}}).headers.Location,'https://example.test/$&${hit.1}');
+  }
+}

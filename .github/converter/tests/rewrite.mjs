@@ -1220,6 +1220,17 @@ assert.match(surgeRedirectV2.line, /^\(\^/);
 assert.equal(surgeRedirectV2.line.includes('\\/'), true);
 assert.match(surgeRedirectV2.line, /\$1 302$/);
 
+// URL values retain their source lexical kind; native text cannot silently
+// reinterpret raw or escaped literals as capture/plugin substitutions.
+for (const action of ['redirect(302, VALUE)','url.replace(VALUE)']) {
+  for (const value of ['`${hit.1}`', String.raw`"\${hit.1}"`, '"a b"', '"${hit.0}"']) {
+    const ast=parseRewriteV2('request if ${url} ~= /(old)/ as hit then '+action.replace('VALUE',value));
+    assert.equal(surgeRedirectRewritePlan(ast).ok,false,value);
+  }
+  const ast=parseRewriteV2('request if ${url} ~= /(old)/ as hit then '+action.replace('VALUE','"new-${hit.1}"'));
+  assert.equal(surgeRedirectRewritePlan(ast).line,'(old) new-$1 '+(action.startsWith('redirect')?'302':'header'));
+}
+
 const surgeReject404 = surgeRejectRewritePlan(reject404V2);
 assert.equal(surgeReject404.ok, true);
 assert.equal(surgeReject404.section, 'url');
@@ -1699,8 +1710,8 @@ assert.match(redirectMethod.line,/^\\\/old\\\/\(\\d\+\) \^POST\[ \] url-and-head
 const redirectMethodScript=[...redirectMethodCtx.generatedScripts.values()][0];
 assert.ok(redirectMethodScript.includes(JSON.stringify('\\/old\\/(\\d+)')));
 assert.match(redirectMethodScript,/"name":"request.method".*"value":"POST"/);
-assert.match(redirectMethodScript,/__wayxCaptures\["hit"\]/);
-assert.match(redirectMethodScript,/__wayxMatch\[Number\(n\)\]/);
+assert.match(redirectMethodScript,/\.exec\(__wayxUrl\)/);
+assert.match(redirectMethodScript,/__wayxMatch\[1\] === undefined/);
 
 const redirectHeaderSource='request if ${url} ~= /api\\/(\\d+)/ as hit && ${request.header[\'X-Region\']} == "CN" then redirect(307, "/v/${hit.1}")';
 const redirectHeaderCtx=ctx();
