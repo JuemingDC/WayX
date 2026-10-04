@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Uki.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:28 +08:00
+# Converted: 2026-10-04 19:28:44 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Uki_remove_ads.lpx
 # Target: Surge
@@ -24,13 +24,13 @@
 ^https:\/\/api\.chenlongtech\.cn\/v\d\/user\/checkQTSheInsurance$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-移除匹配卡横幅 = type=http-response,pattern=^https:\/\/api\.chenlongtech\.cn\/v\d\/lover\/productList,script-path=https://kelee.one/Resource/JavaScript/Uki/Uki_remove_ads.js,requires-body=true,max-size=-1
+移除匹配卡横幅 = type=http-response,pattern=^https:\/\/api\.chenlongtech\.cn\/v\d\/lover\/productList,script-path=https://kelee.one/Resource/JavaScript/Uki/Uki_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
-移除密友横幅 = type=http-response,pattern=^https:\/\/api\.chenlongtech\.cn\/v\d\/friends\/closeFriend\/home,script-path=https://kelee.one/Resource/JavaScript/Uki/Uki_remove_ads.js,requires-body=true,max-size=-1
+移除密友横幅 = type=http-response,pattern=^https:\/\/api\.chenlongtech\.cn\/v\d\/friends\/closeFriend\/home,script-path=https://kelee.one/Resource/JavaScript/Uki/Uki_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
-移除娱乐页面横幅和悬浮窗配置 = type=http-response,pattern=^https:\/\/api\.chenlongtech\.cn\/v\d\/party\/config$,script-path=https://kelee.one/Resource/JavaScript/Uki/Uki_remove_ads.js,requires-body=true,max-size=-1
+移除娱乐页面横幅和悬浮窗配置 = type=http-response,pattern=^https:\/\/api\.chenlongtech\.cn\/v\d\/party\/config$,script-path=https://kelee.one/Resource/JavaScript/Uki/Uki_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
-移除广场搜索填充词 = type=http-response,pattern=^https:\/\/api\.chenlongtech\.cn\/v1\/post\/fetchSearchRecommend$,script-path=https://kelee.one/Resource/JavaScript/Uki/Uki_remove_ads.js,requires-body=true,max-size=-1
+移除广场搜索填充词 = type=http-response,pattern=^https:\/\/api\.chenlongtech\.cn\/v1\/post\/fetchSearchRecommend$,script-path=https://kelee.one/Resource/JavaScript/Uki/Uki_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% api.chenlongtech.cn

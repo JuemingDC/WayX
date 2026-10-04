@@ -9,13 +9,13 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DjDuoDuo.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:24 +08:00
+# Converted: 2026-10-04 19:28:38 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/DjDuoDuo_remove_ads.lpx
 # Target: Surge
 
 [Script]
-去广告 = type=http-response,pattern=^https:\/\/api\.dianyinduoduo\.com\/v4\/config\.php\?,script-path=https://kelee.one/Resource/JavaScript/DjDuoDuo/DjDuoDuo_remove_ads.js,requires-body=true,max-size=-1
+去广告 = type=http-response,pattern=^https:\/\/api\.dianyinduoduo\.com\/v4\/config\.php\?,script-path=https://kelee.one/Resource/JavaScript/DjDuoDuo/DjDuoDuo_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% api.dianyinduoduo.com

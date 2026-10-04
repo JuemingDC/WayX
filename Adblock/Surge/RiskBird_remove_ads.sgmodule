@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/RiskBird.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:38 +08:00
+# Converted: 2026-10-04 19:28:55 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/RiskBird_remove_ads.lpx
 # Target: Surge
@@ -21,7 +21,7 @@
 ^https:\/\/m\.riskbird\.com\/prod-qbb-api\/searchHotEnt data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-移除推荐老板 = type=http-response,pattern=^https:\/\/m\.riskbird\.com\/prod-qbb-api\/query\/person\/personRecommend,script-path=https://kelee.one/Resource/JavaScript/RiskBird/RiskBird_remove_ads.js,requires-body=true,max-size=-1
+移除推荐老板 = type=http-response,pattern=^https:\/\/m\.riskbird\.com\/prod-qbb-api\/query\/person\/personRecommend,script-path=https://kelee.one/Resource/JavaScript/RiskBird/RiskBird_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% m.riskbird.com

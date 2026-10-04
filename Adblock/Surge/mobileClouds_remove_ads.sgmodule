@@ -9,15 +9,15 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/mobileClouds.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:37:02 +08:00
+# Converted: 2026-10-04 19:29:26 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/mobileClouds_remove_ads.lpx
 # Target: Surge
 
 [Script]
-移除开屏广告 = type=http-response,pattern=^https:\/\/jzts\.cmpassport\.com\/personalized\/getPushContent,script-path=https://kelee.one/Resource/JavaScript/mobileClouds/mobileClouds_remove_ads.js,requires-body=true,max-size=-1
+移除开屏广告 = type=http-response,pattern=^https:\/\/jzts\.cmpassport\.com\/personalized\/getPushContent,script-path=https://kelee.one/Resource/JavaScript/mobileClouds/mobileClouds_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
-移除应用内广告 = type=http-response,pattern=^https:\/\/ad\.mcloud\.139\.com\/advertapi\/adv-filter\/,script-path=https://kelee.one/Resource/JavaScript/mobileClouds/mobileClouds_remove_ads.js,requires-body=true,max-size=-1
+移除应用内广告 = type=http-response,pattern=^https:\/\/ad\.mcloud\.139\.com\/advertapi\/adv-filter\/,script-path=https://kelee.one/Resource/JavaScript/mobileClouds/mobileClouds_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% jzts.cmpassport.com, ad.mcloud.139.com

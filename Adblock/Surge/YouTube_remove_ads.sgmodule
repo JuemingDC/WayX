@@ -13,17 +13,17 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YouTube.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:29 +08:00
+# Converted: 2026-10-04 19:28:45 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/YouTube_remove_ads.lpx
 # Target: Surge
 
 [Script]
-YouTube去广告 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/(youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch|log_event|config))(\?(.*))?$,script-path=https://kelee.one/Resource/JavaScript/YouTube/YouTube_remove_ads/YouTube_remove_ads_response.js,requires-body=true,max-size=-1,binary-body-mode=true,argument="{\"blockUpload\":{{{blockUpload}}},\"blockShorts\":{{{blockShorts}}},\"blockImmersive\":{{{blockImmersive}}},\"captionLang\":\"{{{captionLang}}}\",\"debug\":{{{debug}}}}"
+YouTube去广告 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/(youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch|log_event|config))(\?(.*))?$,script-path=https://kelee.one/Resource/JavaScript/YouTube/YouTube_remove_ads/YouTube_remove_ads_response.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20,argument="{\"blockUpload\":{{{blockUpload}}},\"blockShorts\":{{{blockShorts}}},\"blockImmersive\":{{{blockImmersive}}},\"captionLang\":\"{{{captionLang}}}\",\"debug\":{{{debug}}}}"
 
-请求初始化 = type=http-request,pattern=^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.*,script-path=https://kelee.one/Resource/JavaScript/YouTube/YouTube_remove_ads/YouTube_remove_ads_request.js,requires-body=true,max-size=-1,binary-body-mode=true,argument="{\"captionLang\":\"{{{captionLang}}}\"}"
+请求初始化 = type=http-request,pattern=^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.*,script-path=https://kelee.one/Resource/JavaScript/YouTube/YouTube_remove_ads/YouTube_remove_ads_request.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20,argument="{\"captionLang\":\"{{{captionLang}}}\"}"
 
-请求日志事件 = type=http-request,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event,script-path=https://kelee.one/Resource/JavaScript/YouTube/YouTube_remove_ads/YouTube_remove_ads_request.js,requires-body=true,max-size=-1,binary-body-mode=true,argument="{\"blockUpload\":{{{blockUpload}}},\"blockShorts\":{{{blockShorts}}},\"blockImmersive\":{{{blockImmersive}}},\"captionLang\":\"{{{captionLang}}}\",\"debug\":{{{debug}}}}"
+请求日志事件 = type=http-request,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event,script-path=https://kelee.one/Resource/JavaScript/YouTube/YouTube_remove_ads/YouTube_remove_ads_request.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20,argument="{\"blockUpload\":{{{blockUpload}}},\"blockShorts\":{{{blockShorts}}},\"blockImmersive\":{{{blockImmersive}}},\"captionLang\":\"{{{captionLang}}}\",\"debug\":{{{debug}}}}"
 
 [MITM]
 hostname = %APPEND% *.googlevideo.com, youtubei.googleapis.com

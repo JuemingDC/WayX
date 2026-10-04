@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/iWallBiZhi.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:37:03 +08:00
+# Converted: 2026-10-04 19:29:27 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/iWallBiZhi_remove_ads.lpx
 # Target: Surge
@@ -21,11 +21,11 @@
 ^https:\/\/api\.fzxhmy\.com\/tone\/trending\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-移除首页广告配置 = type=http-response,pattern=^https:\/\/api\.fzxhmy\.com\/core\/initialize\?,script-path=https://kelee.one/Resource/JavaScript/iWallBiZhi/core_initialize.js,requires-body=true,max-size=-1
+移除首页广告配置 = type=http-response,pattern=^https:\/\/api\.fzxhmy\.com\/core\/initialize\?,script-path=https://kelee.one/Resource/JavaScript/iWallBiZhi/core_initialize.js,requires-body=true,max-size=-1,timeout=20
 
-移除首页轮播图广告 = type=http-response,pattern=^https:\/\/api\.fzxhmy\.com\/landing\/initialize\?,script-path=https://kelee.one/Resource/JavaScript/iWallBiZhi/landing_initialize.js,requires-body=true,max-size=-1
+移除首页轮播图广告 = type=http-response,pattern=^https:\/\/api\.fzxhmy\.com\/landing\/initialize\?,script-path=https://kelee.one/Resource/JavaScript/iWallBiZhi/landing_initialize.js,requires-body=true,max-size=-1,timeout=20
 
-移除头像页横幅跳转 = type=http-response,pattern=^https:\/\/api\.fzxhmy\.com\/avatar\/landing\?,script-path=https://kelee.one/Resource/JavaScript/iWallBiZhi/landing.js,requires-body=true,max-size=-1
+移除头像页横幅跳转 = type=http-response,pattern=^https:\/\/api\.fzxhmy\.com\/avatar\/landing\?,script-path=https://kelee.one/Resource/JavaScript/iWallBiZhi/landing.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% api.fzxhmy.com

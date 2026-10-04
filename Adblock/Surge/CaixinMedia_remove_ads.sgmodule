@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/CaixinMedia.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:34 +08:00
+# Converted: 2026-10-04 19:28:50 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/CaixinMedia_remove_ads.lpx
 # Target: Surge
@@ -26,16 +26,16 @@
 ^https:\/\/msgapi\.caixin\.com\/msg_api\/annmsg\/annlist data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-移除财新数据通广告 = type=http-response,pattern=^https:\/\/entities\.caixin\.com\/api\/dataplus\/columns,script-path=https://kelee.one/Resource/JavaScript/CaixinMedia/CaixinMedia_remove_ads.js,requires-body=true,max-size=-1
+移除财新数据通广告 = type=http-response,pattern=^https:\/\/entities\.caixin\.com\/api\/dataplus\/columns,script-path=https://kelee.one/Resource/JavaScript/CaixinMedia/CaixinMedia_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
-移除文末广告 = type=http-response,pattern=^https:\/\/gateway\.caixin\.com\/api\/app-api\/(caixinapp\/appinfo|search\/getkeyword),script-path=https://kelee.one/Resource/JavaScript/CaixinMedia/CaixinMedia_remove_ads.js,requires-body=true,max-size=-1
+移除文末广告 = type=http-response,pattern=^https:\/\/gateway\.caixin\.com\/api\/app-api\/(caixinapp\/appinfo|search\/getkeyword),script-path=https://kelee.one/Resource/JavaScript/CaixinMedia/CaixinMedia_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
-移除财新FM广告 = type=http-response,pattern=^https:\/\/gateway\.caixin\.com\/api\/app-content\/fm\/index\/list\?,script-path=https://kelee.one/Resource/JavaScript/CaixinMedia/CaixinMedia_remove_ads.js,requires-body=true,max-size=-1
+移除财新FM广告 = type=http-response,pattern=^https:\/\/gateway\.caixin\.com\/api\/app-content\/fm\/index\/list\?,script-path=https://kelee.one/Resource/JavaScript/CaixinMedia/CaixinMedia_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
-移除开屏广告 = type=http-response,pattern=^https:\/\/gg\.caixin\.com\/s\?z=caixin&op=\d,script-path=https://kelee.one/Resource/JavaScript/CaixinMedia/CaixinMedia_remove_ads.js,requires-body=true,max-size=-1
+移除开屏广告 = type=http-response,pattern=^https:\/\/gg\.caixin\.com\/s\?z=caixin&op=\d,script-path=https://kelee.one/Resource/JavaScript/CaixinMedia/CaixinMedia_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
-移除正文广告 = type=http-response,pattern=^https:\/\/mappsv5\.caixin\.com\/articlev5\/\d+\/\d+\.json$,script-path=https://kelee.one/Resource/JavaScript/CaixinMedia/CaixinMedia_remove_ads.js,requires-body=true,max-size=-1
-移除正文广告 = type=http-response,pattern=^https:\/\/mapps?v5\.caixin\.com\/(channelv5\/list|\/?index_page_v5\/)\w+,script-path=https://kelee.one/Resource/JavaScript/CaixinMedia/CaixinMedia_remove_ads.js,requires-body=true,max-size=-1
+移除正文广告 = type=http-response,pattern=^https:\/\/mappsv5\.caixin\.com\/articlev5\/\d+\/\d+\.json$,script-path=https://kelee.one/Resource/JavaScript/CaixinMedia/CaixinMedia_remove_ads.js,requires-body=true,max-size=-1,timeout=20
+移除正文广告 = type=http-response,pattern=^https:\/\/mapps?v5\.caixin\.com\/(channelv5\/list|\/?index_page_v5\/)\w+,script-path=https://kelee.one/Resource/JavaScript/CaixinMedia/CaixinMedia_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% e*.caixin.com, g*.caixin.com, m*.caixin.com

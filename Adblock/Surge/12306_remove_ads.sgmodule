@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/12306.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:23 +08:00
+# Converted: 2026-10-04 19:28:37 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/12306_remove_ads.lpx
 # Target: Surge
@@ -24,7 +24,7 @@ http-response-jq ^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList$ 'delpaths([["mate
 
 [Script]
 
-移除12306应用内广告 = type=http-request,pattern=^https:\/\/mobile\.12306\.cn\/otsmobile\/app\/mgs\/mgw\.htm$,script-path=https://kelee.one/Resource/JavaScript/12306/12306_remove_ads.js
+移除12306应用内广告 = type=http-request,pattern=^https:\/\/mobile\.12306\.cn\/otsmobile\/app\/mgs\/mgw\.htm$,script-path=https://kelee.one/Resource/JavaScript/12306/12306_remove_ads.js,timeout=20
 
 [MITM]
 hostname = %APPEND% ad.12306.cn, mobile.12306.cn

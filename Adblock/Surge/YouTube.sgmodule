@@ -8,7 +8,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/youtube.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-10-04 18:37:13 +08:00
+# Converted: 2026-10-04 19:29:40 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/youtube.lpx
 # Target: Surge
@@ -27,9 +27,9 @@
 # ^https:\/\/rr[\w-]+\.googlevideo\.com\/initplayback\? data-type=text data="" status-code=200 header="Content-Type:text/plain"
 
 [Script]
-youtube_request_init = type=http-request,pattern=^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.*,script-path=https://rucu6.pages.dev/Scripts/youtube/request.js,requires-body=true,max-size=-1,binary-body-mode=true,argument="{\"captionLang\":\"{{{captionLang}}}\"}"
-youtube_request_log_event = type=http-request,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event,script-path=https://rucu6.pages.dev/Scripts/youtube/request.js,requires-body=true,max-size=-1,binary-body-mode=true
-youtube_response = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/(?:youtubei\/v1\/(?:browse|config|log_event|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch))(\?(.*))?$,script-path=https://rucu6.pages.dev/Scripts/youtube/response.js,requires-body=true,max-size=-1,binary-body-mode=true,argument="{\"blockImmersive\":{{{blockImmersive}}},\"blockShorts\":{{{blockShorts}}},\"blockUpload\":{{{blockUpload}}},\"debug\":{{{debug}}},\"captionLang\":\"{{{captionLang}}}\"}"
+youtube_request_init = type=http-request,pattern=^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.*,script-path=https://rucu6.pages.dev/Scripts/youtube/request.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20,argument="{\"captionLang\":\"{{{captionLang}}}\"}"
+youtube_request_log_event = type=http-request,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event,script-path=https://rucu6.pages.dev/Scripts/youtube/request.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20
+youtube_response = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/(?:youtubei\/v1\/(?:browse|config|log_event|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch))(\?(.*))?$,script-path=https://rucu6.pages.dev/Scripts/youtube/response.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20,argument="{\"blockImmersive\":{{{blockImmersive}}},\"blockShorts\":{{{blockShorts}}},\"blockUpload\":{{{blockUpload}}},\"debug\":{{{debug}}},\"captionLang\":\"{{{captionLang}}}\"}"
 
 [MITM]
 hostname = %APPEND% rr*.googlevideo.com, youtu.be, youtubei.googleapis.com

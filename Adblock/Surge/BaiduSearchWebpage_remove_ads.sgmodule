@@ -8,13 +8,13 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Baidu.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:31 +08:00
+# Converted: 2026-10-04 19:28:47 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduSearchWebpage_remove_ads.lpx
 # Target: Surge
 
 [Script]
-移除百度搜索首页信息流广告 = type=http-response,pattern=^https?:\/\/(www|m)\.baidu\.com\/?($|\?from=\w{8,9}),script-path=https://kelee.one/Resource/JavaScript/BaiduSearch/BaiduSearchHomePage_remove_ads.js,requires-body=true,max-size=-1
+移除百度搜索首页信息流广告 = type=http-response,pattern=^https?:\/\/(www|m)\.baidu\.com\/?($|\?from=\w{8,9}),script-path=https://kelee.one/Resource/JavaScript/BaiduSearch/BaiduSearchHomePage_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% m.baidu.com, www.baidu.com

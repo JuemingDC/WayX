@@ -9,7 +9,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/jingdong.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-10-04 18:37:06 +08:00
+# Converted: 2026-10-04 19:29:31 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/jingdong.lpx
 # Target: Surge
@@ -27,9 +27,9 @@ http-response-jq ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=cart 'de
 ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(?:cartCouponRecommendGoods|intelligentRecommendSku|obtainGrowingInfo|recommendShop|searchBoxWord|stationPullService|uniformRecommend) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-#!REQUIREMENT "'{{{Capture}}}'=='true'" manmanbuy_cookies = type=http-request,pattern=^https:\/\/apapia-sqk-weblogic\.manmanbuy\.com\/baoliao\/center\/menu$,script-path=https://rucu6.pages.dev/Scripts/manmanbuy_ck.js,requires-body=true,max-size=-1
-jingdong_noad = type=http-response,pattern=^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(?:deliverLayer|getTabHomeInfo|myOrderInfo|orderTrackBusiness|personinfoBusiness|start|welcomeHome),script-path=https://rucu6.pages.dev/Scripts/jingdong.js,requires-body=true,max-size=-1
-jd_price = type=http-response,pattern=^https:\/\/in\.m\.jd\.com\/product\/graphext\/\d+\.html\?,script-path=https://rucu6.pages.dev/Scripts/jd_price.js,requires-body=true,max-size=-1,argument="{\"Cookies\":\"{{{Cookies}}}\"}"
+#!REQUIREMENT "'{{{Capture}}}'=='true'" manmanbuy_cookies = type=http-request,pattern=^https:\/\/apapia-sqk-weblogic\.manmanbuy\.com\/baoliao\/center\/menu$,script-path=https://rucu6.pages.dev/Scripts/manmanbuy_ck.js,requires-body=true,max-size=-1,timeout=20
+jingdong_noad = type=http-response,pattern=^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(?:deliverLayer|getTabHomeInfo|myOrderInfo|orderTrackBusiness|personinfoBusiness|start|welcomeHome),script-path=https://rucu6.pages.dev/Scripts/jingdong.js,requires-body=true,max-size=-1,timeout=20
+jd_price = type=http-response,pattern=^https:\/\/in\.m\.jd\.com\/product\/graphext\/\d+\.html\?,script-path=https://rucu6.pages.dev/Scripts/jd_price.js,requires-body=true,max-size=-1,timeout=20,argument="{\"Cookies\":\"{{{Cookies}}}\"}"
 
 [MITM]
 hostname = %APPEND% apapia-sqk-weblogic.manmanbuy.com, api.m.jd.com, in.m.jd.com
