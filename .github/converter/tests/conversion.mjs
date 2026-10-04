@@ -1842,3 +1842,20 @@ if(selectedCase==='conversion-policy.mjs') {
   }
   console.log('Fixed-field isolation passed: invalid templates excluded from dependency discovery and live output; adjacent valid Script retained');
 }
+
+if(selectedCase==='conversion-policy.mjs') {
+  const entry={id:'ScriptObjectRefs',source:'https://example.test/main.lpx',category:'Test'};
+  for(const argument of ['{}','{${region},${region}}','{${url}}','{${missing}}']) {
+    const bad='response if ${url} ~= /api/ then script("https://example.test/bad.js",'+argument+')';
+    const good='response if ${url} ~= /api/ then script("https://example.test/good.js",{${region}}) with tag="Good"';
+    const source='[Argument]\nregion=input,"CN"\n[Script]\n'+bad+'\n'+good;
+    const out=convertPlugin(entry,source,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+    for(const text of [out.qx,out.surge])assert.match(text,/(?:ISSUE|REVIEW) REQUIRED/);
+    assert.match(out.qx,/^[^#\n]*script-response-header https:\/\/example\.test\/good\.js$/m);
+    assert.match(out.surge,/^Good = type=http-response[^\n]*script-path=https:\/\/example\.test\/good\.js/m);
+    assert.doesNotMatch(out.qx,/^[^#\n]*script-response-header https:\/\/example\.test\/bad\.js/m);
+    assert.doesNotMatch(out.surge,/^[^#\n]*script-path=https:\/\/example\.test\/bad\.js/m);
+    if(argument!=='{${missing}}')assert.deepEqual(discoverSourceScriptUrls(source),['https://example.test/good.js']);
+  }
+  console.log('PluginObject failure isolation passed: invalid argument structures/bindings do not replace adjacent valid Scripts');
+}

@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.93
+版本：1.94
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -1196,3 +1196,14 @@ Script v2 往返序列化保留 pathNode 的原字符串形式，避免把 Raw S
 转换失败案例：旧解析器只检查 String 类型而放行动态路径/tag/img_url；转义字面量保留错误反斜杠；路径输出统一 JSON.stringify，raw `${...}` 在下一次解析时变成模板。修复共同固定字段解析及往返生成，不修改个别插件产物。参数绑定、默认超时、QX 强制 enable、正则仅保留正文的策略保持不变。
 
 官方依据：https://nsloon.app/en/docs/Script/script_v2/（Script path、Field rules），https://nsloon.app/en/docs/Rewrite/rewrite_v2/（Double-quoted strings、Raw strings）。
+
+
+## 49. Script PluginObject 结构与声明绑定（v1.94）
+
+PluginObject 不是任意 JS 对象：共同校验要求非空、唯一的插件参数标识符列表。新版源解析拒绝空对象、重复引用、内置 URL/Request/Response 变量及捕获表达式；目标绑定在存在明确插件参数作用域时拒绝未声明引用。旧版已识别的对象引用与新版共用该校验；旧版 String/JSON 文本参数不因外观类似对象而重新解释。
+
+Surge 对象编码器同样使用共同检查，不能把重复引用编译为重复 JSON key；合法参数类型、源顺序、placeholder 及缺失值 null 的既有兼容边界保持不变。QX 在省略对象参数前校验已知插件作用域，HTTP 参数省略及非 HTTP 无等价 transport 时省略 task 的策略不扩大；没有作用域信息的直接规划 API 保留既有兼容契约，不猜测插件声明。
+
+转换失败案例：新版解析器接受 `{}`/重复参数，Surge 编码重复键，QX 参数省略跳过声明绑定。修复共同结构/绑定代码，不逐条修补输出；回归覆盖所有新版 trigger、两个目标、旧版已识别对象、合法 String/Number/Boolean 类型和顺序、相邻有效声明与依赖拉取隔离。
+
+官方依据：https://nsloon.app/en/docs/Script/script_v2/（Plugin object argument）。

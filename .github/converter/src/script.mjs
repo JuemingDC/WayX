@@ -166,7 +166,34 @@ export function parseLegacyLoonPluginObjectRefs(source) {
   return null;
 }
 
+// 上游错误 / 转换失败案例：PluginObject is a nonempty, unique list of
+// plugin identifiers, not arbitrary JS data or runtime/capture variables.
+function validatePluginObjectRefs(refs) {
+  if(!refs.length)throw new Error('plugin object argument cannot be empty');
+  const seen=new Set();
+  for(const id of refs) {
+    if(typeof id!=='string' || !/^[A-Za-z_][\w-]*$/.test(id) || isBuiltInRuntimeVariable(id))throw new Error('plugin object argument requires plugin parameter identifiers: '+id);
+    if(seen.has(id))throw new Error('duplicate plugin object parameter: '+id);
+    seen.add(id);
+  }
+}
+
+function scriptObjectBindings(ast,{argumentIds=null,argumentTable=null}={}) {
+  const refs=ast.sourceSyntax==='legacy' ? parseLegacyLoonPluginObjectRefs(ast.argument) :
+    ast.script?.argument?.type==='plugin-object' ? ast.script.argument.items.map(item=>item.name) : null;
+  if(refs===null)return {ok:true};
+  try {validatePluginObjectRefs(refs);}catch(error){return unsupported(error.message);}
+  const declared=argumentIds ?? (argumentTable ? new Set(argumentTable.byId.keys()) : null);
+  if(declared!==null) {
+    const ids=declared instanceof Set ? declared : new Set(declared);
+    const missing=refs.filter(id=>!ids.has(id));
+    if(missing.length)return unsupported('undeclared plugin [Argument] object reference(s): '+missing.join(', '));
+  }
+  return {ok:true};
+}
+
 export function surgePluginObjectArgument(refs = [], table) {
+  try {validatePluginObjectRefs(refs);}catch(error){return {ok:false,reason:error.message};}
   const fields = [];
   for (const id of refs) {
     const entry = table?.byId?.get(String(id));
@@ -385,6 +412,7 @@ function parseValue(source) {
     if (items.some(item => item.type !== 'variable')) {
       throw new Error('plugin object argument may only contain plugin parameter variables');
     }
+    validatePluginObjectRefs(items.map(item=>item.name));
     return { type:'plugin-object', items, raw };
   }
 
@@ -1078,6 +1106,8 @@ export function qxScriptV2Plan(ast, {
   argumentTable = null,
 } = {}) {
   if (!ast || !['script','script-semantic-ir'].includes(ast.type)) return unsupported('expected Script v2 AST');
+  const objects=scriptObjectBindings(ast,{argumentIds,argumentTable});
+  if(!objects.ok)return objects;
   const bindings=dynamicScriptOptionBindings(ast,{argumentTable,target:'qx'});
   if(!bindings.ok)return bindings;
 
@@ -1210,6 +1240,8 @@ function sourceScriptDefaultTimeout({sourceSyntax='v2',phase}) {
 
 export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 'script', argumentIds = null, argumentTable = null} = {}) {
   if (!ast || !['script','script-semantic-ir'].includes(ast.type)) return unsupported('expected Script v2 AST');
+  const objects=scriptObjectBindings(ast,{argumentIds,argumentTable});
+  if(!objects.ok)return objects;
   const bindings=dynamicScriptOptionBindings(ast,{argumentTable,target:'surge'});
   if(!bindings.ok)return bindings;
   if (argumentIds !== null) {
@@ -1333,6 +1365,8 @@ export function planQxScript(ir,ctx={}) {
     return unsupported('unsupported Script source syntax: '+ir.sourceSyntax);
   }
 
+  const objects=scriptObjectBindings(ir,ctx);
+  if(!objects.ok)return objects;
   const bindings=dynamicScriptOptionBindings(ir,{argumentTable:ctx.argumentTable,target:'qx'});
   if(!bindings.ok)return bindings;
 
@@ -1406,6 +1440,8 @@ export function planSurgeScript(ir,ctx={}) {
     return unsupported('unsupported Script source syntax: '+ir.sourceSyntax);
   }
 
+  const objects=scriptObjectBindings(ir,ctx);
+  if(!objects.ok)return objects;
   const bindings=dynamicScriptOptionBindings(ir,{argumentTable:ctx.argumentTable,target:'surge'});
   if(!bindings.ok)return bindings;
 

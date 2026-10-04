@@ -390,3 +390,32 @@ if(selectedCase==='script-ir-target-planners.mjs') {
   assert.equal(planQxScript(escaped).tag,'${tag}');
   console.log('Fixed Script fields passed: templates rejected, escaped/raw literals decoded once, all phases and lexical round trips retained');
 }
+
+if(selectedCase==='script-ir-target-planners.mjs') {
+  const {parseScriptDeclaration,buildSurgeArgumentTable,surgePluginObjectArgument,scriptV2ToSource}=await import('../src/index.mjs');
+  const table=buildSurgeArgumentTable(['region=input,"CN"','level=input,2,type=number','enabled=switch,true']);
+  const opts={argumentTable:table,argumentIds:new Set(['region','level','enabled'])};
+  for(const trigger of ['request if ${url} ~= /api/','response if ${url} ~= /api/','cron "0 8 * * *"','network-changed','generic']) {
+    for(const arg of ['{}','{${region},${region}}','{${url}}',"{${request.header['X-Region']}}",'{${hit.1}}','{"CN",2}'])assert.throws(()=>parseScriptV2(trigger+' then script("a.js",'+arg+')'),/plugin object|duplicate/);
+    const ast=parseScriptV2(trigger+' then script("a.js",{${region},${level},${enabled}})');
+    assert.deepEqual(parseScriptV2(scriptV2ToSource(ast)).script.argument.items.map(x=>x.name),['region','level','enabled']);
+    const ir=scriptV2AstToSemanticIr(ast);
+    assert.equal(planSurgeScript(ir,opts).ok,true);
+    assert.equal(planQxScript(ir,opts).ok,true);
+    const unknown=parseScriptDeclaration(trigger+' then script("a.js",{${missing}})');
+    for(const planner of [planSurgeScript,planQxScript]) {
+      const result=planner(unknown,opts);assert.equal(result.ok,false);assert.match(result.reason,/undeclared.*object.*missing/);
+    }
+  }
+  for(const argument of ['{region,region}','[{region},{region}]']) {
+    const ir=parseScriptDeclaration('http-response api script-path=a.js,argument='+argument);
+    for(const planner of [planSurgeScript,planQxScript])assert.match(planner(ir,opts).reason,/duplicate/);
+  }
+  assert.equal(surgePluginObjectArgument([],table).ok,false);
+  assert.equal(surgePluginObjectArgument(['region','region'],table).ok,false);
+  const encoded=JSON.parse(surgePluginObjectArgument(['region','level','enabled'],table).value);
+  assert.equal(encoded,'{"region":"{{{region}}}","level":{{{level}}},"enabled":{{{enabled}}}}');
+  const legacyText=parseScriptDeclaration('http-response api script-path=a.js,argument={"region":"CN"}');
+  assert.equal(planSurgeScript(legacyText,opts).ok,true,'legacy literal JSON text remains a String argument');
+  console.log('PluginObject validation passed: nonempty unique plugin refs, declared scope, type/order preservation and legacy String isolation');
+}
