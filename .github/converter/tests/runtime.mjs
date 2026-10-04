@@ -503,7 +503,7 @@ if(selectedCase==='generated-helper-runtime.mjs') {
       cases++;
     }
   }
-  for(const filter of ['.a[0].b = 1','.a |= 2','.[]','select(.a)','del(.a,.b)','.a = 9007199254740993','.a = 1 | error("x")','.a = 1 # comment','.[0] = 1','.a = 1 || .b = 2']) {
+  for(const filter of ['.a[0].b = 1','.a |= 2','.[]','select(.a)','.a = 9007199254740993','.a = 1 | error("x")','.a = 1 # comment','.[0] = 1','.a = 1 || .b = 2']) {
     const ast=parseRewriteV2('response if ${url} ~= /api/ then response.json.jq(`'+filter+'`)');
     assert.equal(fixedJqOperations(ast.actions[0]),null,filter);
     assert.equal(supportsRewritePhaseActions(ast,'qx'),false,filter);
@@ -852,4 +852,41 @@ if(selectedCase==='generated-helper-runtime.mjs') {
     }
   }
   console.log('Dynamic replace presence passed: '+checked+' real helper outputs, including invalid parents and later-action continuation');
+}
+
+if(selectedCase==='generated-helper-runtime.mjs') {
+  const {fixedJqOperations}=await import('../src/rewrite.mjs');
+  const {convertPlugin,validateConvertedPlugin}=await import('../src/conversion.mjs');
+  const filters=['del(.a,.a.b)','del(.a.b,.a)','del(.a.b,.a.c)','del(.[",|.key"],.["__proto__"].x,.constructor)','.before = true | del(.a,.a.b) | .after = true','del(.a,.a) | .z = 1','del(.a.missing,.ghost.child) | del(.a.c,.b)','del(.[""].x,.[""])'];
+  const inputs=['{}','null','false','3','[1,2]','broken','{"a":3,"b":2}','{"a":null,"b":1}','{"a":false}','{"a":[],"b":1}','{"a":{"b":1,"c":2},"ghost":null}','{"__proto__":{"x":1},"constructor":3,",|.key":4,"":{"x":2}}'];
+  const entry={id:'MultiPathJq',source:'https://example.test/multi.lpx',category:'Test'};
+  const options={stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'};
+  let checked=0;
+  for(const phase of ['request','response'])for(const filter of filters) {
+    const line=phase+' if ${url} ~= /^https:\\/\\/example\\.test\\/api$/ then '+phase+'.json.jq(`'+filter+'`) | '+phase+'.header.set("X-After","yes")';
+    assert.ok(fixedJqOperations(parseRewriteV2(line).actions[0]),filter);
+    const out=convertPlugin(entry,'[Rewrite]\n'+line,options);validateConvertedPlugin(entry,out);
+    assert.equal(out.generatedScripts.size,2,filter);
+    assert.doesNotMatch(out.qx+out.surge,/^\^ url script-/m,'retain URL prefilter');
+    for(const input of inputs) {
+      const reference=runIsolatedCase('jq',['-c',filter],{input,encoding:'utf8'});if(reference.error)throw reference.error;
+      for(const target of ['qx','surge']) {
+        const [name,script]=[...out.generatedScripts].find(([name])=>name.includes('_'+target+'_'));
+        assert.ok((target==='qx'?out.qx:out.surge).includes(name),'execute the active helper');
+        let result,calls=0;
+        const state={$request:{url:'https://example.test/api',headers:{},body:input},$response:{status:200,statusCode:200,headers:{},body:input},$done:value=>{result=value;calls++}};
+        vm.runInNewContext(script,state,{timeout:1000});assert.equal(calls,1);
+        result=JSON.parse(JSON.stringify(result));assert.deepEqual(result.headers,{'X-After':'yes'},filter+' continues');
+        if(reference.status===0)assert.deepEqual(JSON.parse(result.body),JSON.parse(reference.stdout),filter+' '+input);
+        else assert.equal(result.body,input,filter+' must roll back its whole action');
+        checked++;
+      }
+    }
+    const pure=line.slice(0,line.indexOf(' | '+phase+'.header.set'));
+    const native=convertPlugin(entry,'[Rewrite]\n'+pure,options);validateConvertedPlugin(entry,native);assert.equal(native.generatedScripts.size,0);assert.match(native.qx,/jsonjq-/);assert.match(native.surge,/http-.*-jq/);
+    const pipeline=pure+' | '+phase+'.json.jq(`.end = true`)';
+    const multi=convertPlugin(entry,'[Rewrite]\n'+pipeline,options);validateConvertedPlugin(entry,multi);assert.equal(multi.generatedScripts.size,0,'pure JQ pipeline stays native');
+  }
+  for(const filter of ['del()','del(.a,)','del(,.a)','del(.a,,.b)','del(.a,.data[0])','del(.a,.[])','del(.a; .b)','del((.a,.b))','del(.a,.b?)','del(.a,.b + .c)'])assert.equal(fixedJqOperations(parseRewriteV2('response if ${url} ~= /api/ then response.json.jq(`'+filter+'`)').actions[0]),null,filter);
+  console.log('Multi-path JQ del: '+checked+' real-jq helper comparisons; overlap, rollback, native priority and parser boundaries passed');
 }

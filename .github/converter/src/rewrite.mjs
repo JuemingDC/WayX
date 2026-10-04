@@ -985,9 +985,13 @@ export function fixedJqOperations(action) {
   for(const part of pieces) {
     if(part==='.') {ops.push({kind:'identity'});continue;}
     const assignment=part.match(new RegExp('^('+pathPattern+')\\s*=\\s*([\\s\\S]+)$'));
-    const deletion=part.match(new RegExp('^del\\(\\s*('+pathPattern+')\\s*\\)$'));
+    const deletion=part.match(new RegExp('^del\\(\\s*('+pathPattern+'(?:\\s*,\\s*'+pathPattern+')*)\\s*\\)$'));
     const m=assignment || deletion;if(!m)return null;
     try {
+      if(deletion){
+        const paths=m[1].match(new RegExp(pathPattern,'g')).map(pathKeys);
+        if(paths.length>1){ops.push({kind:'delete-many',paths});continue;}
+      }
       const path=pathKeys(m[1]);
       const address=path.length===1?{key:path[0]}:{path};
       if(deletion)ops.push({kind:'delete',...address});

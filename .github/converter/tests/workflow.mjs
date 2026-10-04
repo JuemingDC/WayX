@@ -251,6 +251,35 @@ console.log('Workflow lifecycle/result boundary contract passed');
 if (selectedCase === "upstream-automation.mjs") {
   const scopedWorkflow=await fs.readFile('.github/workflows/converter-check.yml','utf8');
   assert.ok(scopedWorkflow.indexOf('Refresh Kelee ad-block and dependency catalog')<scopedWorkflow.indexOf('Converter checkpoint'),'catalog refresh must precede category-sensitive golden checks');
+  const issueFixture=await fs.mkdtemp(path.join(os.tmpdir(),'wayx-issues-'));
+  try {
+    await fs.mkdir(path.join(issueFixture,'.github/sources'),{recursive:true});
+    await fs.mkdir(path.join(issueFixture,'.github/converter/fixtures'),{recursive:true});
+    await fs.mkdir(path.join(issueFixture,'.github/monitor/.runtime'),{recursive:true});
+    await fs.mkdir(path.join(issueFixture,'Resource/Loon'),{recursive:true});
+    const plugin={id:'IssueFixture',file:'test.lpx',source:'https://example.test/test.lpx',qx:'test.snippet',surge:'test.sgmodule',category:'去广告'};
+    await fs.writeFile(path.join(issueFixture,'.github/sources/loon.json'),JSON.stringify([plugin]));
+    await fs.copyFile('.github/converter/fixtures/catalog-syntax-inventory.json',path.join(issueFixture,'.github/converter/fixtures/catalog-syntax-inventory.json'));
+    const known='response if ${url} ~= /api/ then response.json.jq(`del(.a,.b)`)';
+    const fresh='response if ${url} ~= /api/ then response.header.del("X")';
+    const unknown='response if ${url} ~= /api/ then response.future.action()';
+    await fs.writeFile(path.join(issueFixture,'Resource/Loon/test.lpx'),'[Rewrite]\n'+[known,fresh,unknown].join('\n'));
+    await fs.writeFile(path.join(issueFixture,'.github/monitor/.runtime/sync-failures.json'),JSON.stringify({version:1,failures:[{plugin,stage:'convert',reason:'unknown syntax',declarations:[{section:'Rewrite',line:unknown}]}]}));
+    const url=new URL('../../scripts/propose-conversion-issues.mjs',import.meta.url).href;
+    const result=runIsolatedCase(process.execPath,['--input-type=module','-e',
+      'import {collectIssueCandidates,targetProblemTitle} from '+JSON.stringify(url)+'; const a=await collectIssueCandidates(); const b=await collectIssueCandidates(); console.log(JSON.stringify({a,b,titles:a.targetProblems.map(targetProblemTitle)}));'],{cwd:issueFixture,encoding:'utf8'});
+    assert.equal(result.status,0,result.stderr);
+    const {a,b,titles}=JSON.parse(result.stdout);assert.deepEqual(a,b,'fingerprints and candidates remain stable');
+    assert.equal(a.syncFailures.length,1,'read the same .github runtime report written by sync');
+    assert.equal(a.targetProblems.length,2,'new identifiers and unsupported syntax are reported');
+    assert.ok(a.targetProblems.some(group=>group.source===fresh&&group.reasons.some(reason=>reason.includes('response.header.del'))));
+    assert.ok(a.targetProblems.some(group=>group.source===unknown));
+    assert.ok(a.targetProblems.every(group=>group.source!==known&&group.declarations[0].line===group.source));
+    assert.equal(new Set(titles).size,2);
+    const dry=runIsolatedCase(process.execPath,[new URL('../../scripts/propose-conversion-issues.mjs',import.meta.url).pathname,'--dry-run'],{cwd:issueFixture,encoding:'utf8'});assert.equal(dry.status,0,dry.stderr);
+    assert.ok((await fs.readFile(path.join(issueFixture,'.github/monitor/.runtime/conversion-issues.md'),'utf8')).includes('Hard sync failures: 1'));
+  } finally {await fs.rm(issueFixture,{recursive:true,force:true});}
+
   const categoryCheck=runIsolatedCase('python',['-c',String.raw`
 import importlib.util
 s=importlib.util.spec_from_file_location('kelee','.github/converter/tools/refresh-kelee-catalog.py')
