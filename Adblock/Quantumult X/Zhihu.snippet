@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/zhihu.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-10-04 11:21:18 +08:00
+# Converted: 2026-10-04 15:09:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/zhihu.lpx
@@ -33,7 +33,8 @@ ip6-cidr, 2402:4e00:1200:ed00:0:9089:6dac:96b6/128, reject
 
 # 会员页面 - 弹窗、悬浮动图
 ^https:\/\/api\.zhihu\.com\/(?:bazaar\/float_window|market\/popovers_v2) url reject-dict
-^https:\/\/api\.zhihu\.com\/bazaar\/vip_tab\/header\? url jsonjq-response-body 'del(.activity_banner, .activity_window, .vip_tip)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+^https:\/\/api\.zhihu\.com\/bazaar\/vip_tab\/header\? url jsonjq-response-body 'if type == "object" then del(.["activity_banner"]) else . end | if type == "object" then del(.["activity_window"]) else . end | if type == "object" then del(.["vip_tip"]) else . end'
 
 # 我的页面 - 项目列表、会员卡片
 ^https:\/\/api\.zhihu\.com\/me\/guides url reject-dict

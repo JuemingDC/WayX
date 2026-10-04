@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Weibo_intl.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:09 +08:00
+# Converted: 2026-10-04 15:08:50 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Weibo_intl_remove_ads.lpx
@@ -18,16 +18,19 @@
 # [rewrite_local]
 ^https:\/\/bootpreload\.uve\.weibo\.com\/v1\/ad\/preload$ url reject-dict
 
-^https:\/\/weibointl\.api\.weibo\.cn\/portal\.php\?a=trends url jsonjq-response-body 'del(.data.banner, .data.user_footprint, .data.profile_accessrecord, .data.native_content)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+^https:\/\/weibointl\.api\.weibo\.cn\/portal\.php\?a=trends url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then del(.["data"]["banner"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["user_footprint"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["profile_accessrecord"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["native_content"]) else . end) catch $__wayx_before)'
 ^https:\/\/weibointl\.api\.weibo\.cn\/portal\.php\?a=trends url jsonjq-response-body '.data.discover |= map(select(.schema != "尊享会员"))'
 
 ^https:\/\/api\.weibo\.cn\/2\/cardlist\?v_f=2 url reject-dict
 
 ^https:\/\/api\.weibo\.cn\/2\/ad\/ url reject-dict
-^https:\/\/api\.weibo\.cn\/2\/statuses\/friends\/timeline$ url jsonjq-response-body 'del(.advertises, .ad, .ad_version_2_weibo)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+^https:\/\/api\.weibo\.cn\/2\/statuses\/friends\/timeline$ url jsonjq-response-body 'if type == "object" then del(.["advertises"]) else . end | if type == "object" then del(.["ad"]) else . end | if type == "object" then del(.["ad_version_2_weibo"]) else . end'
 ^https:\/\/api\.weibo\.cn\/2\/statuses\/friends\/timeline$ url jsonjq-response-body '.statuses|=map(select(.ad_marked!=true))'
 
-^https:\/\/api\.weibo\.cn\/2\/statuses\/unread_hot_timeline$ url jsonjq-response-body 'del(.ad, .ad_version_2_weibo)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+^https:\/\/api\.weibo\.cn\/2\/statuses\/unread_hot_timeline$ url jsonjq-response-body 'if type == "object" then del(.["ad"]) else . end | if type == "object" then del(.["ad_version_2_weibo"]) else . end'
 ^https:\/\/api\.weibo\.cn\/2\/statuses\/unread_hot_timeline$ url jsonjq-response-body '.statuses|=map(select(.ad_marked!=true))'
 
 ^https:\/\/api\.weibo\.cn\/2\/comments\/build_comments\? url jsonjq-response-body '.datas[].data.ad_from_comment? = true'

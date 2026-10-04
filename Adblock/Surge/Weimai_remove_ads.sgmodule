@@ -1,6 +1,7 @@
 #!name=微脉圈去广告
 #!desc=移除开屏广告、聊天页横幅提示及发现页面的横幅广告。
 #!category=WayX
+#!requirement=CORE_VERSION>=20
 
 # Open URL: https://apps.apple.com/app/id1427096901
 # Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
@@ -10,13 +11,15 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Weimai.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 06:22:27 +08:00
+# Converted: 2026-10-04 15:08:51 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Weimai_remove_ads.lpx
 # Target: Surge
 
-[Script]
-wayx_phase_response_4e95d152a5 = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Weimai_remove_ads/phase_surge_response_4e95d152a5.js,requires-body=true,max-size=-1
+[Body Rewrite]
+http-response-jq ^https:\/\/confssl\d?\.iweimai\.cn\/wm_ios_update\.json\? 'if (try (getpath([]) | has("isShowCJAd")) catch false) then setpath(["isShowCJAd"]; 0) else . end'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/confssl\d?\.iweimai\.cn\/wm_ios_update\.json\? 'if type == "object" then del(.["launchAd"]) else . end | if type == "object" then del(.["adBanners"]) else . end | if type == "object" then del(.["ad"]) else . end'
 
 [MITM]
 hostname = %APPEND% confssl*.iweimai.cn

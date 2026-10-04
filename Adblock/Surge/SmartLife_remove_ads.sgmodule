@@ -10,10 +10,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SmartLife.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 06:22:27 +08:00
+# Converted: 2026-10-04 15:08:32 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/SmartLife_remove_ads.lpx
 # Target: Surge
+
+[Body Rewrite]
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/i\.ilife798\.com\/api\/v\d\/acc\/login$ '(. as $__wayx_before | try (if type == "object" then del(.["data"]["ar"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["showAd"]) else . end) catch $__wayx_before)'
 
 [Map Local]
 
@@ -21,9 +25,6 @@
 ^https:\/\/i\.ilife798\.com\/api\/v\d\/ep\/lst-simple\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 ^https:\/\/i\.ilife798\.com\/api\/v\d\/ui\/app\/master$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-
-[Script]
-wayx_features_cf95cbca75 = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_SmartLife_remove_ads/features_surge_cf95cbca75.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% i.ilife798.com

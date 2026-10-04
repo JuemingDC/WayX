@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduWenku.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 06:22:27 +08:00
+# Converted: 2026-10-04 15:08:21 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduWenku_remove_ads.lpx
@@ -18,11 +18,18 @@
 # [rewrite_local]
 ^https:\/\/appwk\.baidu\.com\/xpage\/interface\/wknaad\? url reject-dict
 
-^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_BaiduWenku_remove_ads/phase_qx_response_ffac7251b4.js
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+^https:\/\/appwk\.baidu\.com\/appapi\/index\/home\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then del(.["data"]["bannerInfo"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["bannerList"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["bannerListV2"]) else . end) catch $__wayx_before)'
+
+^https:\/\/(appwk|tanbi)\.baidu\.com\/gsula\/sula\/syncmrecall$ url jsonjq-response-body 'del(.data.items)'
+
+^https:\/\/appwk\.baidu\.com\/appapi\/index\/tab\? url jsonjq-response-body 'del(.data)'
 
 ^https:\/\/appwk\.baidu\.com\/appapi\/search\/hot\? url reject-dict
 
 ^https:\/\/appwk\.baidu\.com\/naapi\/search\/wkhotwords\? url reject-dict
+
+^https:\/\/appwk\.baidu\.com\/appapi\/forum\/feed\?reqMode=wenkuapp_main_feed url jsonjq-response-body 'del(.data)'
 
 ^https:\/\/appwk\.baidu\.com\/appapi\/task\/viptasklist\? url reject-dict
 

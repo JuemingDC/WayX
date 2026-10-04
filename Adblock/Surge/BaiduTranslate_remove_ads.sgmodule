@@ -10,23 +10,25 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduTranslate.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 06:22:27 +08:00
+# Converted: 2026-10-04 15:08:20 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduTranslate_remove_ads.lpx
 # Target: Surge
-
-
 
 [URL Rewrite]
 
 ^https:\/\/fanyi-app\.baidu\.com\/static\/react-activity\/page\/courseBoutique\.html\? _ reject
 
+[Body Rewrite]
+
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/fanyi-app\.baidu\.com\/transapp\/comment\/my\? '(. as $__wayx_before | try (if type == "object" then del(.["data"]["taskBanner"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["act"]) else . end) catch $__wayx_before)'
+
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/fanyi-app\.baidu\.com\/transapp\/recitewd\/myplan\? '(. as $__wayx_before | try (if type == "object" then del(.["data"]["activityRec"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["activityRecList"]) else . end) catch $__wayx_before)'
+
 [Map Local]
 ^https:\/\/fanyi-app\.baidu\.com\/transapp\/v2\/api\/launch\/config\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-
-[Script]
-
-wayx_phase_response_421190093d = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_BaiduTranslate_remove_ads/phase_surge_response_421190093d.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% fanyi-app.baidu.com

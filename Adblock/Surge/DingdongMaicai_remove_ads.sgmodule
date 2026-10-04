@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DingdongMaicai.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 11:20:40 +08:00
+# Converted: 2026-10-04 15:08:27 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/DingdongMaicai_remove_ads.lpx
 # Target: Surge
@@ -32,7 +32,8 @@ http-response-jq ^https:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/categoriesNewDetai
 
 http-response-jq ^https:\/\/maicai\.api\.ddxq\.mobi\/tool\/getConfig\? 'del(.data.ai_enter_config)'
 
-http-response-jq ^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/newDetails\? 'del(.data.top_advert_data, .data.suspension)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/newDetails\? '(. as $__wayx_before | try (if type == "object" then del(.["data"]["top_advert_data"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["suspension"]) else . end) catch $__wayx_before)'
 
 http-response-jq ^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/newDetails\? '.data.list |= map(select(has("capsule_freedom_zone") | not))'
 

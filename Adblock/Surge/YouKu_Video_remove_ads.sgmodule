@@ -1,6 +1,7 @@
 #!name=优酷视频去广告
 #!desc=移除开屏广告、视频广告、信息流广告。其余广告由于请求已加密，故无法移除。
 #!category=WayX
+#!requirement=CORE_VERSION>=20
 
 # Open URL: https://apps.apple.com/app/id336141475
 # Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md], RuCu6[https://github.com/RuCu6]
@@ -9,12 +10,10 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YouKu_Video.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 11:38:15 +08:00
+# Converted: 2026-10-04 15:08:58 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/YouKu_Video_remove_ads.lpx
 # Target: Surge
-
-
 
 [Rule]
 DOMAIN,push.m.youku.com,DIRECT,extended-matching
@@ -44,8 +43,12 @@ DOMAIN,adsmind.ugdtimg.com,REJECT,extended-matching,pre-matching
 DOMAIN,pre-acs.youku.com,REJECT,extended-matching,pre-matching
 DOMAIN,youku-acs.m.taobao.com,REJECT,extended-matching,pre-matching
 
-[Script]
-wayx_phase_response_6ea0ce2fd0 = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_YouKu_Video_remove_ads/phase_surge_response_6ea0ce2fd0.js,requires-body=true,max-size=-1
+[Body Rewrite]
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/un-acs\.youku\.com\/gw\/mtop\.youku\.play\.ups\.appinfo\.get '(. as $__wayx_before | try (if type == "object" then del(.["data"]["data"]["ad"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["data"]["watermark"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["data"]["ykad"]) else . end) catch $__wayx_before)'
+
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/push\.m\.youku\.com\/collect-api\/get_push_interval_config_wx\? '(. as $__wayx_before | try (if type == "object" then del(.["data"]["tipContent"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["tipContentNew"]) else . end) catch $__wayx_before)'
 
 [MITM]
 hostname = %APPEND% push.m.youku.com, un-acs.youku.com

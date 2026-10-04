@@ -10,14 +10,15 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KOOK.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 11:20:27 +08:00
+# Converted: 2026-10-04 15:08:15 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/KOOK_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 
-http-response-jq ^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ 'del(.ad_banner, .advertise_on_off)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ 'if type == "object" then del(.["ad_banner"]) else . end | if type == "object" then del(.["advertise_on_off"]) else . end'
 
 http-response-jq ^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ 'if (try (getpath([]) | has("ios_mall_switch")) catch false) then setpath(["ios_mall_switch"]; false) else . end'
 

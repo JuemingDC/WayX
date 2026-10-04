@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Zhibo8.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:17 +08:00
+# Converted: 2026-10-04 15:08:59 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Zhibo8_remove_ads.lpx
 # Target: Surge
@@ -20,7 +20,8 @@ http-response-jq ^https:\/\/headline\.qiumibao\.com\/recommend\/list\? '.news|=m
 
 http-response-jq ^https:\/\/a\.qiumibao\.com\/found\/\? 'map(select(.is_game != true))'
 
-http-response-jq ^https:\/\/a\.qiumibao\.com\/ios\/config\/\? 'del(.skin, .advert, .advert_config, .mall, .httpdns, .reward, .pgame, .corner_mark, .liveshop, .theme, .pop, .live_activity_push)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/a\.qiumibao\.com\/ios\/config\/\? 'if type == "object" then del(.["skin"]) else . end | if type == "object" then del(.["advert"]) else . end | if type == "object" then del(.["advert_config"]) else . end | if type == "object" then del(.["mall"]) else . end | if type == "object" then del(.["httpdns"]) else . end | if type == "object" then del(.["reward"]) else . end | if type == "object" then del(.["pgame"]) else . end | if type == "object" then del(.["corner_mark"]) else . end | if type == "object" then del(.["liveshop"]) else . end | if type == "object" then del(.["theme"]) else . end | if type == "object" then del(.["pop"]) else . end | if type == "object" then del(.["live_activity_push"]) else . end'
 
 http-response-jq ^https:\/\/a\.qiumibao\.com\/ios\/config\/\? '.all_sections.match_sections.labels |= (if . then (.blacks_disable |= if . then map(select(. != "游戏")) else . end) | (.show |= if . then map(select(. != "游戏")) else . end) else . end)'
 http-response-jq ^https:\/\/guess\.qiumibao\.com\/api\/n\/rcd$ 'del(.data.banner)'
@@ -28,7 +29,8 @@ http-response-jq ^https:\/\/pre-match\.qiumibao\.com\/pre_match_data\/v\d\/\d+-\
 
 http-response-jq ^https:\/\/guess\.qiumibao\.com\/api\/c\/menu$ 'del(.data.banner)'
 
-http-response-jq ^https:\/\/s\.qiumibao\.com\/m\/ios\/json\/zhibo\/zuqiu\/\d+\/match\d+vl\.htm\? 'del(.ep_v2, .ep_live)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/s\.qiumibao\.com\/m\/ios\/json\/zhibo\/zuqiu\/\d+\/match\d+vl\.htm\? 'if type == "object" then del(.["ep_v2"]) else . end | if type == "object" then del(.["ep_live"]) else . end'
 
 [Map Local]
 

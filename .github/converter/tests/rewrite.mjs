@@ -2127,9 +2127,10 @@ const flagsNativeJsonPipelineSource='response if ${url} ~= /api/ims then respons
 const flagsNativeJsonPipelineCtx=ctx();
 const flagsNativeJsonPipeline=planQxRewrite(v2(flagsNativeJsonPipelineSource),flagsNativeJsonPipelineCtx);
 assert.equal(flagsNativeJsonPipeline.section,'rewrite');
-assert.match(flagsNativeJsonPipeline.line,/^\^ url script-response-body .*features_qx_/);
+assert.match(flagsNativeJsonPipeline.line,/^api url jsonjq-response-body '/);
+assert.match(flagsNativeJsonPipeline.lines[0],/COMPATIBILITY LIMITATION.*ims/);
 assert.doesNotMatch(flagsNativeJsonPipeline.line,/\(\?[ims]+\)|\/ims?\b/);
-assert.equal(flagsNativeJsonPipelineCtx.generatedScripts.size,1);
+assert.equal(flagsNativeJsonPipelineCtx.generatedScripts.size,0);
 
 const nestedJsonPipelineSource='response if ${url} ~= /api/ then response.json.add("data.flag",true) | response.json.replace("data.count",2)';
 const nestedJsonPipelineCtx=ctx();

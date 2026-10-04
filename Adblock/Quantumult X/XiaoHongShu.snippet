@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/xiaohongshu.png
 # Updated: 2026-09-14 11:00
 
-# Converted: 2026-10-04 11:21:17 +08:00
+# Converted: 2026-10-04 15:09:09 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/xiaohongshu.lpx
@@ -33,7 +33,8 @@ host, t-ads.xiaohongshu.com, reject
 ^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/search\/banner_list$ url jsonjq-response-body 'if (try (getpath([]) | has("data")) catch false) then setpath(["data"]; {}) else . end'
 ^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/search\/hot_list$ url jsonjq-response-body 'if (try (getpath(["data"]) | has("items")) catch false) then setpath(["data","items"]; []) else . end'
 ^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v4\/search\/hint url jsonjq-response-body 'if (try (getpath(["data"]) | has("hint_words")) catch false) then setpath(["data","hint_words"]; []) else . end'
-^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v4\/search\/trending\? url jsonjq-response-body 'if (try (getpath(["data"]) | has("queries")) catch false) then setpath(["data","queries"]; []) else . end | if (try (getpath(["data"]) | has("hint_word")) catch false) then setpath(["data","hint_word"]; {}) else . end'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v4\/search\/trending\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then if (try (getpath(["data"]) | has("queries")) catch false) then setpath(["data","queries"]; []) else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["data"]) | has("hint_word")) catch false) then setpath(["data","hint_word"]; {}) else . end else . end) catch $__wayx_before)'
 # 移除图片和实况照片水印
 ^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/note\/(?:imagefeed|live_photo\/save) url script-response-body https://rucu6.pages.dev/Scripts/xiaohongshu.js
 # 移除整体配置 ui

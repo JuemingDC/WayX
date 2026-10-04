@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/CatEarFM.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:01 +08:00
+# Converted: 2026-10-04 15:08:38 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/CatEarFM_remove_ads.lpx
@@ -16,13 +16,15 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/app\.missevan\.com\/site\/launch\? url jsonjq-response-body 'del(.info.splash, .info.splash_ready)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+^https:\/\/app\.missevan\.com\/site\/launch\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then del(.["info"]["splash"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["info"]["splash_ready"]) else . end) catch $__wayx_before)'
 
 ^https:\/\/data\.missevan\.com\/site\/ad-track$ url reject-dict
 
 ^https:\/\/app\.missevan\.com\/site\/config$ url jsonjq-response-body 'del(.info.tab_bar_live, ["0"], .info.enable_tab_bar_live_notice, .false, .info.teenager_popup_mode, ["0"])'
 
-^https:\/\/app\.missevan\.com\/site\/config$ url jsonjq-response-body 'del(.info.httpdns, .info.homepage_top_task_button)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+^https:\/\/app\.missevan\.com\/site\/config$ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then del(.["info"]["httpdns"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["info"]["homepage_top_task_button"]) else . end) catch $__wayx_before)'
 
 ^https:\/\/app\.missevan\.com\/site\/config$ url jsonjq-response-body '.info.cronet |= (fromjson | .quic=false | tojson)'
 

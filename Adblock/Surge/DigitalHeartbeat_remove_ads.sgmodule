@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DigitalHeartbeat.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 11:20:54 +08:00
+# Converted: 2026-10-04 15:08:46 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/DigitalHeartbeat_remove_ads.lpx
 # Target: Surge
@@ -20,7 +20,8 @@ http-response-jq ^https:\/\/api-changzheng\.chinaath\.com\/changzheng-common-pro
 
 http-response-jq ^https:\/\/api-changzheng\.chinaath\.com\/changzheng-race-proxy-api\/api\/home\/page\/getBrand$ '.data |= map(select(.advertisementName == "路跑赛事" or .advertisementName == "线上赛" or .advertisementName == "越野赛事"))'
 
-http-response-jq ^https:\/\/api-changzheng\.chinaath\.com\/changzheng-race-proxy-api\/api\/home\/page\/get$ 'del(.data.topHotSearchList, .data.bannerListTwo, .data.textAdvertisementList)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/api-changzheng\.chinaath\.com\/changzheng-race-proxy-api\/api\/home\/page\/get$ '(. as $__wayx_before | try (if type == "object" then del(.["data"]["topHotSearchList"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["bannerListTwo"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["textAdvertisementList"]) else . end) catch $__wayx_before)'
 
 http-response-jq ^https:\/\/api-changzheng\.chinaath\.com\/changzheng-race-proxy-api\/api\/home\/page\/get$ '.data.recommendList |= map(select(.raceAdList | not or length == 0))'
 

@@ -7,7 +7,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/myblockads.png
 # Updated: 2026-09-27 18:30
 
-# Converted: 2026-10-04 11:38:22 +08:00
+# Converted: 2026-10-04 15:09:05 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/myblockads.lpx
 # Target: Surge
@@ -386,7 +386,8 @@ http-response-jq ^https:\/\/api\.m\.mi\.com\/v1\/order\/expressView 'del(.data.b
 http-response-jq ^https:\/\/shop-api\.retail\.mi\.com\/mtop\/act\/mishopSearch\/mainSearch 'if (try (getpath(["data"]) | has("recProductList")) catch false) then setpath(["data","recProductList"]; []) else . end'
 http-response-jq ^https:\/\/shop-api\.retail\.mi\.com\/mtop\/mf\/home\/v1\/index 'del(.data.floors[0].data.left_icon_config) | del(.data.floors[0].data.right_icon_config)'
 http-response-jq ^https:\/\/shop-api\.retail\.mi\.com\/mtop\/mf\/usercenter\/personalHome 'del(.data.carouselAD)'
-http-response-jq ^https:\/\/xiaomishop\.retail\.mi\.com\/mtop\/xiaomishop\/product\/info 'del(.data.carouselAdInfo, .data.product.floatWindow)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/xiaomishop\.retail\.mi\.com\/mtop\/xiaomishop\/product\/info '(. as $__wayx_before | try (if type == "object" then del(.["data"]["carouselAdInfo"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["product"]["floatWindow"]) else . end) catch $__wayx_before)'
 http-response-jq ^https:\/\/conf-m-ssl\.xunlei\.com\/external\/[0-9-a-z]+\? 'del(.values.me_config.common_service_list)'
 
 [Map Local]

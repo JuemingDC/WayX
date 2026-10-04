@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ZAKER.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:45 +08:00
+# Converted: 2026-10-04 15:08:19 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/ZAKER_remove_ads.lpx
 # Target: Surge
@@ -18,7 +18,8 @@
 [Body Rewrite]
 
 http-response-jq ^https:\/\/iphone\.myzaker\.com\/zaker\/article_mongo_sec\.php\? 'del(.data.ad_url)'
-http-response-jq ^https:\/\/ggs\.myzaker\.com\/zk_article_ad\.php\? 'del(.data.article_bottom, .data.recommend_ad)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/ggs\.myzaker\.com\/zk_article_ad\.php\? '(. as $__wayx_before | try (if type == "object" then del(.["data"]["article_bottom"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["recommend_ad"]) else . end) catch $__wayx_before)'
 
 http-response-jq ^https:\/\/iphone\.myzaker\.com\/zaker\/follow_promote\.php\? '.data.list |= map(select(.type != "web"))'
 

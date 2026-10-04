@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KuaiDi100.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 06:22:27 +08:00
+# Converted: 2026-10-04 15:08:34 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/KuaiDi100_remove_ads.lpx
@@ -16,7 +16,10 @@
 # [filter_local]
 
 # [rewrite_local]
-^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_KuaiDi100_remove_ads/phase_qx_response_3d7495c41b.js
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+^https?:\/\/p\.kuaidi100\.com\/mobile\/mobileapi\.do$ url jsonjq-response-body 'if type == "object" then del(.["adsplash"]) else . end | if type == "object" then del(.["adIsConsumable"]) else . end | if type == "object" then del(.["adProductId"]) else . end | if type == "object" then del(.["nologin_tips"]) else . end | if type == "object" then del(.["index_banner"]) else . end | if type == "object" then del(.["me_banner"]) else . end | if type == "object" then del(.["index_banner_shadow"]) else . end | if type == "object" then del(.["adshongbao"]) else . end | if type == "object" then del(.["adsapp_homepage_ticket_pop"]) else . end | if type == "object" then del(.["adsoptimizationsend"]) else . end | if type == "object" then del(.["adsapp_activity_ad_array"]) else . end | if type == "object" then del(.["adbanner"]) else . end | if type == "object" then del(.["adposition"]) else . end | if type == "object" then del(.["adShowAgainTime"]) else . end'
+
+^https?:\/\/p\.kuaidi100\.com\/apicenter\/xcx\.dox url jsonjq-response-body 'del(.data.secondMenuList)'
 
 ^https?:\/\/p\.kuaidi100\.com\/advertisement\/ url reject-dict
 ^https?:\/\/p\.kuaidi100\.com\/e-commerce\/act\/actInfo\? url reject-dict

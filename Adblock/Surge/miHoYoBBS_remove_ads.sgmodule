@@ -10,23 +10,27 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/miHoYoBBS.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 06:22:27 +08:00
+# Converted: 2026-10-04 15:08:39 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/miHoYoBBS_remove_ads.lpx
 # Target: Surge
 
+[Body Rewrite]
 
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/bbs-api(-ab)?\.miyoushe\.com\/apihub\/api\/getAppStartupData$ '(. as $__wayx_before | try (if type == "object" then del(.["data"]["resp_map"]["/teenager/api/info"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["resp_map"]["/apihub/api/getAppConfig"]["data"]["get_app_config_response"]["config"]["is_show_teenager_mode_btn"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["resp_map"]["/apihub/api/getAppConfig"]["data"]["get_app_config_response"]["config"]["teenager_popup_freq_type"]) else . end) catch $__wayx_before)'
 
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/bbs-api(-ab)?\.miyoushe\.com\/apihub\/api\/getAppConfig$ '(. as $__wayx_before | try (if type == "object" then if (try (getpath(["data","config"]) | has("teenager_popup_freq_type")) catch false) then setpath(["data","config","teenager_popup_freq_type"]; 0) else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["data","config"]) | has("is_show_teenager_mode_btn")) catch false) then setpath(["data","config","is_show_teenager_mode_btn"]; 0) else . end else . end) catch $__wayx_before)'
+
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/bbs-api-ab\.miyoushe\.com\/teenager\/api\/info$ '(. as $__wayx_before | try (if type == "object" then if (try (getpath(["data"]) | has("is_enabled")) catch false) then setpath(["data","is_enabled"]; false) else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["data"]) | has("is_teenager")) catch false) then setpath(["data","is_teenager"]; false) else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["data"]) | has("is_force")) catch false) then setpath(["data","is_force"]; false) else . end else . end) catch $__wayx_before)'
 
 [Map Local]
 ^https:\/\/bbs-api(-ab)?\.miyoushe\.com\/apihub\/api\/getAppSplash$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 ^https:\/\/bbs-api(-ab)?\.miyoushe\.com\/apihub\/api\/getHotKeywordAndEvent$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 ^https:\/\/bbs-api-static\.miyoushe\.com\/search\/api\/search\/pre_keyword\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-
-[Script]
-
-wayx_phase_response_ddac287c06 = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_miHoYoBBS_remove_ads/phase_surge_response_ddac287c06.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% bbs-api.miyoushe.com, bbs-api-ab.miyoushe.com

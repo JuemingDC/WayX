@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FenBi.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:53 +08:00
+# Converted: 2026-10-04 15:08:29 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/FenBi_remove_ads.lpx
@@ -36,7 +36,8 @@
 
 ^https:\/\/hera-webapp\.fenbi\.com\/(iphone|ipad)\/announcement\/hotquery\/list\? url reject-dict
 
-^https:\/\/ke\.fenbi\.com\/(iphone|ipad)\/v3\/apps\/config\? url jsonjq-response-body 'del(.data.bottomIconInfos.position.iconDefaultUrl, .data.bottomIconInfos.position.iconSelectedUrl, .data.bottomIconInfos.position.nightModeIconDefaultUrl, .data.bottomIconInfos.position.nightModeIconSelectedUrl)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+^https:\/\/ke\.fenbi\.com\/(iphone|ipad)\/v3\/apps\/config\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then del(.["data"]["bottomIconInfos"]["position"]["iconDefaultUrl"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["bottomIconInfos"]["position"]["iconSelectedUrl"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["bottomIconInfos"]["position"]["nightModeIconDefaultUrl"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["bottomIconInfos"]["position"]["nightModeIconSelectedUrl"]) else . end) catch $__wayx_before)'
 
 ^https:\/\/ke\.fenbi\.com\/(iphone|ipad)\/v3\/user_member\/entry\? url reject-dict
 ^https:\/\/market-api\.fenbi\.com\/(iphone|ipad)\/v1\/assistant\/my\? url reject-dict

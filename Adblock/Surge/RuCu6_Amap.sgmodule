@@ -7,7 +7,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/amap.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-10-04 11:21:08 +08:00
+# Converted: 2026-10-04 15:09:02 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/amap.lpx
 # Target: Surge
@@ -17,7 +17,8 @@
 AND,((URL-REGEX,^http:\/\/.+\/amdc\/mobileDispatch,extended-matching),(USER-AGENT,"AMapiPhone*")),REJECT
 
 [Body Rewrite]
-http-response-jq ^https:\/\/m5\.amap\.com\/ws\/shield\/search_business\/process\/marketingOperationStructured\? 'del(.data.commonMaterial, .data.tipsOperationLocation, .data.resourcePlacement)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/m5\.amap\.com\/ws\/shield\/search_business\/process\/marketingOperationStructured\? '(. as $__wayx_before | try (if type == "object" then del(.["data"]["commonMaterial"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["tipsOperationLocation"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["resourcePlacement"]) else . end) catch $__wayx_before)'
 http-response-jq ^https:\/\/m5\.amap\.com\/ws\/shield\/search_poi\/homepage\? 'del(.history_tags)'
 http-response-jq ^https:\/\/m5-zb\.amap\.com\/ws\/sharedtrip\/taxi\/order_detail_car_tips\? 'del(.data.carTips.data.popupInfo)'
 

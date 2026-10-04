@@ -342,8 +342,17 @@ if(selectedCase==='generated-helper-runtime.mjs') {
     for(const target of item.targets) {
       assert.doesNotMatch(target==='qx'?output.qx:output.surge,/REVIEW REQUIRED/,item.id+' '+target);
       const scripts=[...output.generatedScripts].filter(([name])=>name.startsWith('features_'+target+'_'));
-      assert.equal(scripts.length,1,item.id+' must use a generic feature helper');
-      assert.deepEqual(run(scripts[0][1],item),item.expected,item.id+' '+target);
+      if(!scripts.length) {
+        const ast=parseRewriteV2(item.source);
+        assert.ok(ast.actions.every(a=>/^response\.json\.(?:add|delete|replace)$/.test(a.name)),item.id+' native fixed JSON only');
+        const line=output[target].split('\n').find(line=>line.includes(target==='qx'?'jsonjq-response-body':'http-response-jq'));
+        const filter=line?.match(/'(.+)'$/)?.[1];assert.ok(filter,item.id+' emitted native filter');
+        const jq=runIsolatedCase('jq',['-c',filter],{input:item.response?.body??'{}',encoding:'utf8'});assert.equal(jq.status,0,jq.stderr);
+        assert.deepEqual(JSON.parse(jq.stdout),JSON.parse(item.expected.body),item.id+' '+target+' actual native filter');
+      } else {
+        assert.equal(scripts.length,1,item.id+' must use a generic feature helper');
+        assert.deepEqual(run(scripts[0][1],item),item.expected,item.id+' '+target);
+      }
       checked++;
     }
   }
@@ -930,4 +939,27 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   }
   for(const filter of ['del()','del(.a,)','del(,.a)','del(.a,,.b)','del(.a,.data[0])','del(.a,.[])','del(.a; .b)','del((.a,.b))','del(.a,.b?)','del(.a,.b + .c)'])assert.equal(fixedJqOperations(parseRewriteV2('response if ${url} ~= /api/ then response.json.jq(`'+filter+'`)').actions[0]),null,filter);
   console.log('Multi-path JQ del: '+checked+' real-jq helper comparisons; overlap, rollback, native priority and parser boundaries passed');
+}
+
+if(selectedCase==='generated-helper-runtime.mjs') {
+  const {convertPlugin,validateConvertedPlugin}=await import('../src/conversion.mjs');
+  const entry={id:'NativeBatch',source:'https://example.test/batch.lpx',category:'Test'};
+  let checked=0;
+  for(const phase of ['request','response'])for(const flags of ['','i','ims'])for(const operation of ['add','delete','replace']) {
+    const args=operation==='delete'?'["data.ad","data.keep"]':'["data.ad","data.keep"],[false,2]';
+    const source=phase+' if ${url} ~= /^https:\\/\\/example\\.test\\/api$/'+flags+' then '+phase+'.json.'+operation+'('+args+')';
+    const output=convertPlugin(entry,'[Rewrite]\n'+source,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});validateConvertedPlugin(entry,output);
+    assert.equal(output.generatedScripts.size,0);
+    for(const target of ['qx','surge']) {
+      const line=output[target].split('\n').find(line=>line.includes(target==='qx'?'jsonjq-'+phase+'-body':'http-'+phase+'-jq'));
+      assert.ok(line?.includes('example'),source);assert.doesNotMatch(output[target],/\^ url script-|pattern=\^,/);
+      const filter=line.match(/'(.+)'$/)?.[1];assert.ok(filter);
+      const jq=runIsolatedCase('jq',['-c',filter],{input:'{"data":{"ad":true,"keep":1}}',encoding:'utf8'});assert.equal(jq.status,0,jq.stderr);
+      const expected=operation==='delete'?{data:{}}:operation==='replace'?{data:{ad:false,keep:2}}:{data:{ad:true,keep:1}};
+      assert.deepEqual(JSON.parse(jq.stdout),expected);
+      if(flags)assert.match(output[target],/COMPATIBILITY LIMITATION.*not a verified target-engine equivalence/);
+      checked++;
+    }
+  }
+  console.log('Native JSON batch priority passed: '+checked+' emitted filters');
 }
