@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.96
+版本：1.97
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -1229,3 +1229,16 @@ Script v2 动态 Cron 引用共用绑定校验：引用必须已声明、类型�
 第五项按用户要求使用既有 Python 原地址拉取流程检查源文件/依赖，不列为必须完成真实客户端验证的待办。Python 拉取成功仅记录可获取内容，不把它描述为 iOS/macOS 引擎、压缩或缓冲行为已经验证。其余处理参考旧规范，保持正则仅正文、QX 强制 enable、原注释、作者 chance、分类/转换时间，以及每次 Action 全量转换且内容一致不覆盖。
 
 核查来源：https://github.com/Script-Hub-Org/Script-Hub/blob/main/Rewrite-Parser.beta.js（parseLoonV2UrlCondition、normalizeLoonV2ScriptLine、normalizeLoonV2RewriteLine），https://github.com/Script-Hub-Org/Script-Hub/blob/main/script-converter.js（单脚本兼容层）；官方格式：https://manual.nssurge.com/scripting/overview.html，用户 sample.txt [task_local]。
+
+
+## 52. Rewrite/JQ 与作者 Script 的顺序组合实验（v1.97）
+
+用户明确要求第四项尝试在脚本内组合 Rewrite/JQ 与作者 Script，并按顺序表达；此要求允许实验入口将已拉取的作者正文放入独立函数作用域，覆盖旧规范在该实验中的绝对禁止内联规则。常规 canonical sync 仍保持旧转换路径，不自动将全目录作者脚本包装进 dispatcher。
+
+实验入口为 `.github/converter/tools/try-author-composition.mjs`：读取 LPX，通过既有 Python transport materialize 原地址 Script/依赖；每个 HTTP 阶段必须同时有新版 Rewrite 和作者 Script。先按 Rewrite 声明/action 顺序执行并提交数据；后在源 Script 顺序中选择首个 enabled 且完整条件匹配的作者，等待其 lexical `$done` 后由唯一外层 `$done` 结束。不是执行所有 HTTP Script。QX enable 强制开启和不支持参数直接丢弃仍按用户策略；Surge 可支持的 String 参数保留。作者正文及原注释不作字符串替换，原 URL 留在 provenance 注释。
+
+命中的 Body/JSON/JQ Rewrite 禁用同阶段作者，即使 body 动作因输入无效而未改动也不复活作者。仅 Header Rewrite 不禁用作者。Request Script 条件读提交后的 Request；Response Script 条件读原始 Response 快照，作者执行输入可读 Rewrite 提交后的值。作者调用 `$done` 是异步完成信号；重复完成只接收第一次，throw/返回的 Promise rejection 保留此前已提交的 Rewrite 结果且不运行后续备用作者。作者未调用 `$done` 不猜测为成功，仍受目标 Script timeout 限制。
+
+支持旧/新 HTTP 作者声明、新版 Header set/del/replace、Body replace、JSON mutation 及现有固定单输出 JQ 子集。二进制作者、重复 Header、terminal mock、任意完整 JQ、legacy Rewrite、动态作者选项、无法取得正文、反射式 globalThis/window/global/$done、eval/Function/module 写法不进入实验入口；源码 guard 是保守文本筛选，不是完整 JS 静态分析或跨应用 API 兼容证明。目标运行时/API、本地隔离、跨 Request/Response 禁用关系及跨插件阶段范围尚不作通用等价承诺。CLI 生成实验声明与脚本，要求提供实际输出 Script base URL，不发布或改写常规受管产物。
+
+验证运行 QX/Surge 两目标、Request/Response 两阶段的实际生成脚本，覆盖 Rewrite 数据流、异步与重复 done、首匹配、Body/JQ 命中禁用、Response 原始条件快照、同步/Promise 错误及无法拉取/反射源码拒绝。完整旧 suite 和全量 Action 保持门禁。官方依据：https://nsloon.app/en/docs/Script/script_v2/（Matching and execution、Rewrite and Script），https://manual.nssurge.com/scripting/overview.html（每阶段 first match、timeout）。

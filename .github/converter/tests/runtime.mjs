@@ -1062,6 +1062,66 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   console.log('Body Rewrite author ownership passed: '+checked+' target hit/miss decisions, with conservative guard exclusions');
 }
 
+if(selectedCase==='generated-helper-runtime.mjs') {
+  const {compileAuthorComposition}=await import('../tools/try-author-composition.mjs');
+  const {parseLoonPlugin}=await import('../src/input.mjs');
+  async function runComposition(plan,{phase,url='https://example.test/api',headers={},body='old'}={}) {
+    let calls=0,output;
+    const trace=[];
+    const completed=new Promise(resolve=>{
+      const context={$request:{url,method:'GET',headers:phase==='request'?headers:{},body},
+        ...(phase==='response'?{$response:{status:200,statusCode:200,headers,body}}:{}),
+        console,trace,$done(value){calls++;output=value;resolve();}};
+      vm.runInNewContext(plan.script,context,{timeout:1000});
+    });
+    let timeout;
+    try {await Promise.race([completed,new Promise((_,reject)=>{timeout=setTimeout(()=>reject(new Error('composition did not finish')),1000)})]);}
+    finally {clearTimeout(timeout);}
+    await Promise.resolve();await Promise.resolve();
+    assert.equal(calls,1,'outer done must run once');
+    return {output:JSON.parse(JSON.stringify(output)),trace};
+  }
+  const make=(source,sources,target)=>compileAuthorComposition({parsed:parseLoonPlugin(source),scriptMap:new Map(Object.entries(sources).map(([url,source])=>[url,{source,qx:url,surge:url}]))},{target}).plans;
+  let checked=0;
+  for(const target of ['qx','surge'])for(const phase of ['request','response']) {
+    const first=phase+' if ${url} ~= /api/ then '+phase+'.header.set("X-Step","1")';
+    const second=phase+' if ${url} ~= /api/ && ${'+phase+'.header["X-Step"]} == "1" then '+phase+'.header.set("X-Step","2")';
+    const condition=phase==='request'?'${request.header["X-Step"]} == "2"':'${response.header["X-State"]} == "original"';
+    const source='[Rewrite]\n'+first+'\n'+second+'\n'+phase+' if ${url} ~= /api/ then '+phase+'.header.set("X-State","changed")\n[Script]\n'+phase+' if ${url} ~= /api/ && '+condition+' then script("https://example.test/first.js") with requires_body=true\n'+phase+' if ${url} ~= /api/ then script("https://example.test/second.js") with requires_body=true';
+    const author='const value='+(phase==='request'?'$request':'$response')+';trace.push("start:"+value.headers["X-Step"]+":"+value.headers["X-State"]);Promise.resolve().then(()=>{trace.push("async");$done({body:value.body+"|author"});$done({body:"duplicate"})});';
+    const sources={'https://example.test/first.js':author,'https://example.test/second.js':'trace.push("fallback");$done({body:"fallback"});'};
+    const plan=make(source,sources,target).get(phase);
+    assert.ok(plan.script.includes(author),'original author text must be preserved');
+    const result=await runComposition(plan,{phase,headers:{'X-State':'original'}});
+    assert.deepEqual(result.trace,['start:2:changed','async']);
+    assert.deepEqual(result.output,{headers:{'X-State':'changed','X-Step':'2'},body:'old|author'});checked++;
+    const miss=await runComposition(plan,{phase,url:'https://example.test/miss'});assert.deepEqual(miss,{output:{},trace:[]});checked++;
+    for(const action of [phase+'.body.replace(/old/,"rewrite")',phase+'.json.jq(".a = 3")']) {
+      const withBody=source.replace(first,first+' | '+action);
+      const suppressed=await runComposition(make(withBody,sources,target).get(phase),{phase,headers:{'X-State':'original'},body:action.includes('.json.')?'{}':'old'});
+      assert.deepEqual(suppressed.trace,[],'matching body/JQ disables the author');
+      assert.equal(suppressed.output.body,action.includes('.json.')?'{"a":3}':'rewrite');checked++;
+    }
+    for(const author of ['throw new Error("sync failure")','return Promise.reject(new Error("async failure"))']) {
+      const failed=await runComposition(make(source,{...sources,'https://example.test/first.js':author},target).get(phase),{phase,headers:{'X-State':'original'}});
+      assert.deepEqual(failed.trace,[]);assert.equal(failed.output.headers['X-Step'],'2');assert.doesNotMatch(failed.output.body||'',/fallback/);checked++;
+    }
+    const fallbackSource=source.replace('&& '+condition+' then','&& ${request.method} == "POST" then');
+    const fallback=await runComposition(make(fallbackSource,sources,target).get(phase),{phase,headers:{'X-State':'original'}});
+    assert.deepEqual(fallback.trace,['fallback']);assert.equal(fallback.output.body,'fallback');checked++;
+    const headerOnly=source.replace('then script("https://example.test/first.js") with requires_body=true','then script("https://example.test/first.js")');
+    const headerAuthor='trace.push("body:"+("body" in '+(phase==='request'?'$request':'$response')+'));$done({});';
+    const hidden=await runComposition(make(headerOnly,{...sources,'https://example.test/first.js':headerAuthor},target).get(phase),{phase,headers:{'X-State':'original'}});
+    assert.deepEqual(hidden.trace,['body:false']);checked++;
+    const withArg=source.replace('then script("https://example.test/first.js")','then script("https://example.test/first.js","hello")');
+    const argument=await runComposition(make(withArg,{...sources,'https://example.test/first.js':'trace.push(String($argument));$done({});'},target).get(phase),{phase,headers:{'X-State':'original'}});
+    assert.deepEqual(argument.trace,[target==='surge'?'hello':'undefined']);checked++;
+    assert.throws(()=>make(source,{...sources,'https://example.test/first.js':'globalThis.$done({})'},target),/lexical globals/);
+    assert.throws(()=>make(source,{},target),/source unavailable/);
+  }
+  console.log('Experimental Rewrite/author composition passed: '+checked+' executions covering ordered state, async completion, first match, body/JQ disabling, response snapshots, failures and missing/reflective source guards');
+}
+
 // 上游错误：compile-gated whitespace repair and actual native jq execution.
 if(selectedCase==='generated-helper-runtime.mjs') {
   const fs=await import('node:fs/promises');
