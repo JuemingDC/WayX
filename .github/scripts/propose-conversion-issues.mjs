@@ -10,8 +10,8 @@ import { fileURLToPath } from 'node:url';
 import { loadLoonSourceCatalog } from "../converter/src/input.mjs";
 import { parseLoonPlugin } from "../converter/src/input.mjs";
 
-import { parseRewriteV2 } from '../converter/src/rewrite.mjs';
-import { parseScriptV2 } from '../converter/src/script.mjs';
+import { isRewriteV2, parseRewriteV2, classifyLegacyRewriteAction } from '../converter/src/rewrite.mjs';
+import { isScriptV2, parseScriptV2, parseLegacyScriptLine } from '../converter/src/script.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT,'.github','sources','loon.json');
@@ -263,22 +263,39 @@ async function upsertIssue({title,body,label}) {
 }
 
 async function newCatalogSemantics(catalog) {
-  const baseline=JSON.parse(await fs.readFile(path.join(ROOT,'.github/converter/fixtures/catalog-syntax-inventory.json'),'utf8'));
+  const [v2,legacy]=await Promise.all(['catalog-syntax-inventory.json','catalog-legacy-syntax-inventory.json'].map(async name=>JSON.parse(await fs.readFile(path.join(ROOT,'.github/converter/fixtures',name),'utf8'))));
+  const baseline={...v2,...legacy};
   const out=[];
   for(const entry of catalog) {
     let plugin;
     try {plugin=parseLoonPlugin(await fs.readFile(path.join(ROOT,'Resource/Loon',entry.file),'utf8'));}
     catch {continue;} // A source read failure is reported by the sync transaction.
     for(const section of ['Rewrite','Script'])for(const raw of plugin.sections.get(section)||[]) {
-      const line=raw.trim();if(!/^(?:request|response|cron|network-changed|generic)\b/.test(line))continue;
-      const family=section==='Rewrite'?'rewriteV2':'scriptV2';
+      const line=raw.trim();if(!line || /^(?:#|;|\/\/)/.test(line))continue;
+      const v2Syntax=section==='Rewrite'?isRewriteV2(line):isScriptV2(line);
+      const family=section==='Rewrite'?(v2Syntax?'rewriteV2':'legacyRewrite'):(v2Syntax?'scriptV2':'legacyScript');
       const reasons=new Set();
       const check=(key,value)=>{if(!baseline[family][key].includes(value))reasons.add('New '+family+'.'+key+': '+value);};
       try {
-        const ast=section==='Rewrite'?parseRewriteV2(line):parseScriptV2(line);
-        check('phases',ast.phase);
-        for(const action of ast.actions||[])check('actionNames',action.name);
-        for(const option of ast.options||[])check('optionNames',option.name);
+        let ast;
+        if(v2Syntax)ast=section==='Rewrite'?parseRewriteV2(line):parseScriptV2(line);
+        else if(section==='Rewrite') {
+          const separator=line.search(/\s/);
+          if(separator<1)throw new Error('Malformed Legacy Rewrite declaration');
+          const action=line.slice(separator).trim().replace(/^\-\s+/,'');
+          const operation=classifyLegacyRewriteAction(action);
+          if(operation.kind==='unknown')throw new Error(operation.reason||'Unknown Legacy Rewrite action');
+          check('actionKinds',operation.kind);
+          for(const option of operation.optionNames||[])check('mockOptionNames',option);
+        } else {
+          ast=parseLegacyScriptLine(line);
+          if(!ast)throw new Error('Unregistered Legacy Script declaration or option');
+        }
+        if(ast) {
+          check('phases',ast.phase);
+          for(const action of ast.actions||[])check('actionNames',action.name);
+          for(const option of ast.options||[])check('optionNames',option.name);
+        }
         const visit=node=>{
           if(!node)return;
           if(node.type==='group')return visit(node.expression);
@@ -289,7 +306,7 @@ async function newCatalogSemantics(catalog) {
             check('conditionVariables',variable);check('conditionOperators',node.operator);
           }
         };
-        visit(ast.condition);
+        if(ast)visit(ast.condition);
       }catch(error){reasons.add('Source syntax requires review: '+error.message);}
       if(!reasons.size)continue;
       const code='new-catalog-semantic';
@@ -317,7 +334,7 @@ async function main() {
   const lines=[
     '# WayX automated conversion issues',
     '',
-    '- Target Review/Issue markers: '+targetProblems.length,
+    '- Source/target semantic problems: '+targetProblems.length,
     '- Hard sync failures: '+syncFailures.length,
     '',
   ];
