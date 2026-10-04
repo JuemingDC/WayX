@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/GuideRank.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:15 +08:00
+# Converted: 2026-10-04 18:07:15 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/GuideRank_remove_ads.lpx
@@ -24,7 +24,7 @@
 ^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/common\/getWeworkCategoryPromotionInfo url reject-dict
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/home\/getHomePageV url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["data","countdownBanner"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","newEvaluations"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","freeToPayBannerPhotoUrl"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","groupBuyingList"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","multiCountdownBanner"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","banners"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","multiPlatformBanner"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","specialSaleBannerPhotoUrl"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","guide90Evaluation"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","insurancePromotions"]]) else . end) catch $__wayx_before)'
+^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/home\/getHomePageV url jsonjq-response-body 'delpaths([["data","countdownBanner"],["data","newEvaluations"],["data","freeToPayBannerPhotoUrl"],["data","groupBuyingList"],["data","multiCountdownBanner"],["data","banners"],["data","multiPlatformBanner"],["data","specialSaleBannerPhotoUrl"],["data","guide90Evaluation"],["data","insurancePromotions"]])'
 ^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/stockTaking\/pageStockTakingForHomePage url reject-dict
 
 ^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/common\/getInitData\.do url jsonjq-response-body 'delpaths([["data","SpecialSalePageMidTabConfig"]])'

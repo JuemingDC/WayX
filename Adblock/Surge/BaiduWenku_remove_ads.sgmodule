@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduWenku.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:08 +08:00
+# Converted: 2026-10-04 18:07:07 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduWenku_remove_ads.lpx
 # Target: Surge
@@ -18,7 +18,7 @@
 [Body Rewrite]
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/appwk\.baidu\.com\/appapi\/index\/home\? '(. as $__wayx_before | try (if type == "object" then delpaths([["data","bannerInfo"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","bannerList"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","bannerListV2"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/appwk\.baidu\.com\/appapi\/index\/home\? 'delpaths([["data","bannerInfo"],["data","bannerList"],["data","bannerListV2"]])'
 
 http-response-jq ^https:\/\/(appwk|tanbi)\.baidu\.com\/gsula\/sula\/syncmrecall$ 'delpaths([["data","items"]])'
 

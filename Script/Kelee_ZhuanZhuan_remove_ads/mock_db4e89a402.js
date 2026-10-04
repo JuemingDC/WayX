@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 17:52:39 +08:00
+// Converted: 2026-10-04 18:07:41 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzinfoshow\/getchoicegoodsinfos\?/i then response.body.mock("json", "{\"respCode\":0,\"respData\":{},\"errorMsg\":\"\",\"errMsg\":\"\"}", 200)

@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MeituMYXJ.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:22 +08:00
+# Converted: 2026-10-04 18:07:23 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/MeituMYXJ_remove_ads.lpx
 # Target: Surge
@@ -20,9 +20,9 @@ DOMAIN,adui.tg.meitu.com,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/api\.meiyan\.com\/operation\/get_config\.json\? '(. as $__wayx_before | try (if type == "object" then delpaths([["response","time_limit"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["response","bubble"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["response","person_center"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/api\.meiyan\.com\/operation\/get_config\.json\? 'delpaths([["response","time_limit"],["response","bubble"],["response","person_center"]])'
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/api\.meiyan\.com\/operation\/get_config\.json\? '(. as $__wayx_before | try (if type == "object" then if (try (getpath(["response","function_pop","meiyan_style"]) | has("is_pop")) catch false) then setpath(["response","function_pop","meiyan_style","is_pop"]; false) else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["response","onoff","vip_half_window_exit_remain_popup"]) | has("open")) catch false) then setpath(["response","onoff","vip_half_window_exit_remain_popup","open"]; 0) else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["response","onoff"]) | has("vip_home_exit_remain_popup")) catch false) then setpath(["response","onoff","vip_home_exit_remain_popup"]; 0) else . end else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/api\.meiyan\.com\/operation\/get_config\.json\? 'if (getpath(["response","function_pop","meiyan_style"]) | has("is_pop")) then (setpath(["response","function_pop","meiyan_style","is_pop"]; false)) else . end | if (getpath(["response","onoff","vip_half_window_exit_remain_popup"]) | has("open")) then (setpath(["response","onoff","vip_half_window_exit_remain_popup","open"]; 0)) else . end | if (getpath(["response","onoff"]) | has("vip_home_exit_remain_popup")) then (setpath(["response","onoff","vip_home_exit_remain_popup"]; 0)) else . end'
 
 [Map Local]
 ^https:\/\/api\.meiyan\.com\/operation\/home_banner\.json\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"

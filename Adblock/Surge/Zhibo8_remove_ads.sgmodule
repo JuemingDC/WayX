@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Zhibo8.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:38 +08:00
+# Converted: 2026-10-04 18:07:40 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Zhibo8_remove_ads.lpx
 # Target: Surge
@@ -21,7 +21,7 @@ http-response-jq ^https:\/\/headline\.qiumibao\.com\/recommend\/list\? '.news|=m
 http-response-jq ^https:\/\/a\.qiumibao\.com\/found\/\? 'map(select(.is_game != true))'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/a\.qiumibao\.com\/ios\/config\/\? 'if type == "object" then delpaths([["skin"]]) else . end | if type == "object" then delpaths([["advert"]]) else . end | if type == "object" then delpaths([["advert_config"]]) else . end | if type == "object" then delpaths([["mall"]]) else . end | if type == "object" then delpaths([["httpdns"]]) else . end | if type == "object" then delpaths([["reward"]]) else . end | if type == "object" then delpaths([["pgame"]]) else . end | if type == "object" then delpaths([["corner_mark"]]) else . end | if type == "object" then delpaths([["liveshop"]]) else . end | if type == "object" then delpaths([["theme"]]) else . end | if type == "object" then delpaths([["pop"]]) else . end | if type == "object" then delpaths([["live_activity_push"]]) else . end'
+http-response-jq ^https:\/\/a\.qiumibao\.com\/ios\/config\/\? 'delpaths([["skin"],["advert"],["advert_config"],["mall"],["httpdns"],["reward"],["pgame"],["corner_mark"],["liveshop"],["theme"],["pop"],["live_activity_push"]])'
 
 http-response-jq ^https:\/\/a\.qiumibao\.com\/ios\/config\/\? '.all_sections.match_sections.labels |= (if . then (.blacks_disable |= if . then map(select(. != "游戏")) else . end) | (.show |= if . then map(select(. != "游戏")) else . end) else . end)'
 http-response-jq ^https:\/\/guess\.qiumibao\.com\/api\/n\/rcd$ 'delpaths([["data","banner"]])'
@@ -30,7 +30,7 @@ http-response-jq ^https:\/\/pre-match\.qiumibao\.com\/pre_match_data\/v\d\/\d+-\
 http-response-jq ^https:\/\/guess\.qiumibao\.com\/api\/c\/menu$ 'delpaths([["data","banner"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/s\.qiumibao\.com\/m\/ios\/json\/zhibo\/zuqiu\/\d+\/match\d+vl\.htm\? 'if type == "object" then delpaths([["ep_v2"]]) else . end | if type == "object" then delpaths([["ep_live"]]) else . end'
+http-response-jq ^https:\/\/s\.qiumibao\.com\/m\/ios\/json\/zhibo\/zuqiu\/\d+\/match\d+vl\.htm\? 'delpaths([["ep_v2"],["ep_live"]])'
 
 [Map Local]
 

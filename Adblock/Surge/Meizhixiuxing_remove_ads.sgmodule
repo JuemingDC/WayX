@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Meizhixiuxing.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:22 +08:00
+# Converted: 2026-10-04 18:07:22 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Meizhixiuxing_remove_ads.lpx
 # Target: Surge
@@ -18,13 +18,13 @@
 [Body Rewrite]
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/api\.bevol\.com\/appmain\/app\/home\/page$ '(. as $__wayx_before | try (if type == "object" then delpaths([["result","versionPopUp"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","isShowSearchLabel"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","isShowSearchFeedBack"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","centerBannerAdvert"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","programmaticAdvertising"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","mattsData"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","questionnaireMap"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","appPullDownAdvert"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/api\.bevol\.com\/appmain\/app\/home\/page$ 'delpaths([["result","versionPopUp"],["result","isShowSearchLabel"],["result","isShowSearchFeedBack"],["result","centerBannerAdvert"],["result","programmaticAdvertising"],["result","mattsData"],["result","questionnaireMap"],["result","appPullDownAdvert"]])'
 
 http-response-jq ^https:\/\/api\.bevol\.com\/appmain\/app\/home\/feed$ 'delpaths([["result","banners"]])'
 http-response-jq ^https:\/\/api\.bevol\.com\/appmain\/app\/home\/feed$ '. | .result.returnList |= (map(select(.tname == "userPart"))) | .result.returnList |= map(select(. | has("adId") | not))'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/api\.bevol\.com\/trialbox\/shop\/app\/homePage$ '(. as $__wayx_before | try (if type == "object" then delpaths([["result","firstPersonActivity"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","mainActivity"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","brandZone"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","imageAD2"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","couponPopupInfo"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/api\.bevol\.com\/trialbox\/shop\/app\/homePage$ 'delpaths([["result","firstPersonActivity"],["result","mainActivity"],["result","brandZone"],["result","imageAD2"],["result","couponPopupInfo"]])'
 
 [Map Local]
 ^https:\/\/api\.bevol\.com\/appmain\/app\/home\/launch$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"

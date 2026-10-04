@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FenBi.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:14 +08:00
+# Converted: 2026-10-04 18:07:14 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/FenBi_remove_ads.lpx
 # Target: Surge
@@ -20,7 +20,7 @@
 http-response-jq ^https:\/\/hera-webapp\.fenbi\.com\/(iphone|ipad)\/recommend\/info\? 'delpaths([["data","rollingBanner"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/ke\.fenbi\.com\/(iphone|ipad)\/v3\/apps\/config\? '(. as $__wayx_before | try (if type == "object" then delpaths([["data","bottomIconInfos","position","iconDefaultUrl"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","bottomIconInfos","position","iconSelectedUrl"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","bottomIconInfos","position","nightModeIconDefaultUrl"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","bottomIconInfos","position","nightModeIconSelectedUrl"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/ke\.fenbi\.com\/(iphone|ipad)\/v3\/apps\/config\? 'delpaths([["data","bottomIconInfos","position","iconDefaultUrl"],["data","bottomIconInfos","position","iconSelectedUrl"],["data","bottomIconInfos","position","nightModeIconDefaultUrl"],["data","bottomIconInfos","position","nightModeIconSelectedUrl"]])'
 
 [Map Local]
 ^https:\/\/keapi\.fenbi\.com\/app\/(iphone|ipad)\/position_resource\/get_banners\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"

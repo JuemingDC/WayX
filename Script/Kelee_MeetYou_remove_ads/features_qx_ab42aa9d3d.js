@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 17:52:22 +08:00
+// Converted: 2026-10-04 18:07:23 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/common\.seeyouyima\.com\/v2\/conf_list$/i then response.json.delete("data.confList.Minor_mode_card")

@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 17:52:17 +08:00
+// Converted: 2026-10-04 18:07:17 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/api-ms-feed\.huxiu\.com\/v1\/media\/recommend$/i then response.json.delete("data.live")

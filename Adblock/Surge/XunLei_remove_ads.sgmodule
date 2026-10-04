@@ -10,14 +10,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/XunLei.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:36 +08:00
+# Converted: 2026-10-04 18:07:38 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/XunLei_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/conf-m-ssl\.xunlei\.com\/external\/ '(. as $__wayx_before | try (if type == "object" then delpaths([["values","me_config","entrance_list_vertical_enable"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["values","me_config","common_service_list"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["values","me_config","banner_service_list"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/conf-m-ssl\.xunlei\.com\/external\/ 'delpaths([["values","me_config","entrance_list_vertical_enable"],["values","me_config","common_service_list"],["values","me_config","banner_service_list"]])'
 
 http-response-jq ^https:\/\/api-shoulei-ssl\.xunlei\.com\/flowhub\/v1\/slots:batchGet$ '.slots |= map(select(.id == "xl_ios_mytab_vipicon" or (.native.assets.title.text.value? and (.native.assets.title.text.value | . == "清理助手" or . == "云盘容量" or . == "远程设备"))))'
 

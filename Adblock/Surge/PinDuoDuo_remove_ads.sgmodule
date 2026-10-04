@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/PinDuoDuo.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:24 +08:00
+# Converted: 2026-10-04 18:07:25 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/PinDuoDuo_remove_ads.lpx
 # Target: Surge
@@ -37,22 +37,22 @@ DOMAIN,apm-a.pinduoduo.com,REJECT,extended-matching,pre-matching
 [Body Rewrite]
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub\? '(. as $__wayx_before | try (if type == "object" then delpaths([["result","dy_module","irregular_banner_dy"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","icon_set"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","search_bar_hot_query"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","dy_module","irregular_banner_dy"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub\? 'delpaths([["result","dy_module","irregular_banner_dy"],["result","icon_set"],["result","search_bar_hot_query"],["result","dy_module","irregular_banner_dy"]])'
 
 http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub\? '.result.bottom_tabs? |= map(select(.link | IN("index.html", "chat_list.html", "personal.html"))) | .result.buffer_bottom_tabs? |= map(select(.link | IN("index.html", "chat_list.html", "personal.html"))) | .result.all_top_opts |= map(del(.selected_image, .image, .height, .width))'
 
 http-response-jq ^https:\/\/api\.pinduoduo\.com\/search\? 'delpaths([["expansion"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/philo\/personal\/hub\? 'if type == "object" then delpaths([["monthly_card_entrance"]]) else . end | if type == "object" then delpaths([["personal_center_style_v2_vo"]]) else . end | (. as $__wayx_before | try (if type == "object" then delpaths([["icon_set","icons"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["icon_set","top_personal_icons"]]) else . end) catch $__wayx_before) | if type == "object" then delpaths([["personal_banner"]]) else . end'
+http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/philo\/personal\/hub\? 'delpaths([["monthly_card_entrance"],["personal_center_style_v2_vo"],["icon_set","icons"],["icon_set","top_personal_icons"],["personal_banner"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/oak\/integration\/render\? 'if type == "object" then delpaths([["bottom_section_list"]]) else . end | (. as $__wayx_before | try (if type == "object" then delpaths([["ui","bottom_section"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["ui","live_section","float_info"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/oak\/integration\/render\? 'delpaths([["bottom_section_list"],["ui","bottom_section"],["ui","live_section","float_info"]])'
 
 http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/caterham\/v3\/query\/order_detail_group\? 'delpaths([["data","goods_list"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/api\.pinduoduo\.com\/order\/ 'if type == "object" then delpaths([["marketing_banner_vo"]]) else . end | (. as $__wayx_before | try (if type == "object" then delpaths([["shipping","banner_above_recommend"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/api\.pinduoduo\.com\/order\/ 'delpaths([["marketing_banner_vo"],["shipping","banner_above_recommend"]])'
 
 http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/aristotle\/order_list_v4\? '.orders |= map(.order_buttons |= map(del(.order_growth_tip)))'
 

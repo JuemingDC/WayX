@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 17:52:00 +08:00
+// Converted: 2026-10-04 18:06:58 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/cn\.iot\.dreame\.tech:\d+\/dreame-product\/public\/common-plugin$/i then response.body.mock("json", "{\"code\":0,\"success\":true,\"data\":{\"version\":1144,\"appVer\":20,\"url\":\"https://kelee.one/Resource/Zip/DREAME/d6996fee95380affdf740ee44a85fbe9___UNI__EDB922E.zip\",\"md5\":\"e0cc9cb77d9e0cf275e41e73dba3f988\",\"validDate\":\"\",\"changeLog\":\"\",\"status\":\"\"},\"msg\":\"操作成功\"}", 200)

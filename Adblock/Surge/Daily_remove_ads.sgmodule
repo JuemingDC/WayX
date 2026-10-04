@@ -10,14 +10,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Daily.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:29 +08:00
+# Converted: 2026-10-04 18:07:30 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Daily_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https?:\/\/m\.pvp\.xoyo\.com\/conf\/server-mapping$ '(. as $__wayx_before | try (if type == "object" then delpaths([["data","splashConf"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","splashConfNew"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https?:\/\/m\.pvp\.xoyo\.com\/conf\/server-mapping$ 'delpaths([["data","splashConf"],["data","splashConfNew"]])'
 
 [MITM]
 hostname = %APPEND% m.pvp.xoyo.com

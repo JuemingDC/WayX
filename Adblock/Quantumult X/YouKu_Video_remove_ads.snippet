@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YouKu_Video.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:37 +08:00
+# Converted: 2026-10-04 18:07:39 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/YouKu_Video_remove_ads.lpx
@@ -43,10 +43,10 @@ host, youku-acs.m.taobao.com, reject
 
 # [rewrite_local]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/un-acs\.youku\.com\/gw\/mtop\.youku\.play\.ups\.appinfo\.get url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["data","data","ad"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","data","watermark"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","data","ykad"]]) else . end) catch $__wayx_before)'
+^https:\/\/un-acs\.youku\.com\/gw\/mtop\.youku\.play\.ups\.appinfo\.get url jsonjq-response-body 'delpaths([["data","data","ad"],["data","data","watermark"],["data","data","ykad"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/push\.m\.youku\.com\/collect-api\/get_push_interval_config_wx\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["data","tipContent"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","tipContentNew"]]) else . end) catch $__wayx_before)'
+^https:\/\/push\.m\.youku\.com\/collect-api\/get_push_interval_config_wx\? url jsonjq-response-body 'delpaths([["data","tipContent"],["data","tipContentNew"]])'
 
 # [mitm]
 hostname = push.m.youku.com, un-acs.youku.com

@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ZhuanZhuan.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:39 +08:00
+# Converted: 2026-10-04 18:07:41 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/ZhuanZhuan_remove_ads.lpx
 # Target: Surge
@@ -18,10 +18,10 @@
 [Body Rewrite]
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzlogic\/mycontinenthomepage\? '(. as $__wayx_before | try (if type == "object" then delpaths([["respData","topOpera","leftOpera"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["respData","topOpera","rightOpera2"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["respData","topActBanner"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["respData","bmArea"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzlogic\/mycontinenthomepage\? 'delpaths([["respData","topOpera","leftOpera"],["respData","topOpera","rightOpera2"],["respData","topActBanner"],["respData","bmArea"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/app\.zhuanzhuan\.com\/zzx\/transfer\/getConfigInfo\? '(. as $__wayx_before | try (if type == "object" then delpaths([["respData","freeMarketTabLeadPop"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["respData","topOperations"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/app\.zhuanzhuan\.com\/zzx\/transfer\/getConfigInfo\? 'delpaths([["respData","freeMarketTabLeadPop"],["respData","topOperations"]])'
 
 http-response-jq ^https:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzinfoshow\/getfeedflowinfo\? 'if .respData.userRed.campName == "OCD挂件" then del(.respData.userRed) else . end | .respData.infoData |= map(del(.rotateResource,.appRecommendResource,."cargoGroupCardV2"))'
 

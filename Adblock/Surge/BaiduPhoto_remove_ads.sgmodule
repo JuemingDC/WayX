@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduPhoto.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:36 +08:00
+# Converted: 2026-10-04 18:07:39 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduPhoto_remove_ads.lpx
 # Target: Surge
@@ -18,7 +18,7 @@
 [Body Rewrite]
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/mbd\.baidu\.com\/ccs\/v1\/start\/confsync\? '(. as $__wayx_before | try (if type == "object" then delpaths([["data","service","config","advertisement"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","service","config","youa","pm_config_ad"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/mbd\.baidu\.com\/ccs\/v1\/start\/confsync\? 'delpaths([["data","service","config","advertisement"],["data","service","config","youa","pm_config_ad"]])'
 
 [Map Local]
 ^https:\/\/pan\.baidu\.com\/act\/api\/conf\?.*conf_key=youa_core_config_ios data-type=text data="{}" status-code=200 header="Content-Type:application/json"

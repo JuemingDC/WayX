@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FC_Box.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:14 +08:00
+# Converted: 2026-10-04 18:07:14 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/FC_Box_remove_ads.lpx
 # Target: Surge
@@ -18,7 +18,7 @@
 [Body Rewrite]
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/consumer\.fcbox\.com\/v1\/dynamicConfig\/findTabbarConfig\/mainPage$ '(. as $__wayx_before | try (if type == "object" then delpaths([["data","lifeService"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","mall"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","wash"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/consumer\.fcbox\.com\/v1\/dynamicConfig\/findTabbarConfig\/mainPage$ 'delpaths([["data","lifeService"],["data","mall"],["data","wash"]])'
 
 [Map Local]
 ^https:\/\/consumer\.fcbox\.com\/fcboxactivityweb\/api\/v\d\/clientPage\/modulesAggregated\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"

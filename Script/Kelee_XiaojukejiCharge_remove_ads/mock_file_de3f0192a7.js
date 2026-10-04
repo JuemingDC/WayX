@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 17:52:35 +08:00
+// Converted: 2026-10-04 18:07:37 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/am\.didistatic\.com\/static\/am\/cf-terminal\/epower\/epower-thanos-app\/\d+\.\d+\.\d+\/pages\/people\/index\.js$/i then response.body.mock_file("text", "https://kelee.one/Resource/JavaScript/XiaojukejiCharge/XiaojukejiCharge_remove_ads.js", 200)

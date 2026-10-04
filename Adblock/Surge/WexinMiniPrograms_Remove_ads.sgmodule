@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/WeixinMiniPrograms.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:33 +08:00
+# Converted: 2026-10-04 18:07:35 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/WexinMiniPrograms_Remove_ads.lpx
 # Target: Surge
@@ -74,7 +74,7 @@ http-response-jq ^https:\/\/rms\.meituan\.com\/api\/v1\/rmsmina\/c\/queryShopPor
 http-response-jq ^https:\/\/chong\.qq\.com\/tws\/wxmobile\/GetProduct4App\? 'del(.respInfo.reserveProductList) | .respInfo.shortcut |= map(select(.name != "充流量" and .name != "领话费券"))'
 http-response-jq ^https:\/\/chong\.qq\.com\/tws\/wxmobile4app\/GetSecondProduct\? 'del(.respInfo.productList) | .respInfo.shortcut |= map(select(.name != "充流量" and .name != "领话费券"))'
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/chong\.qq\.com\/tws\/usernumberinfo\/GetUserInfo\? '(. as $__wayx_before | try (if type == "object" then delpaths([["data","request","number","markSeat","servicehallOperList"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","request","number","servicehallOperList"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","request","number","markSeat","servicehallFuncList"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","request","number","servicehallFuncList"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/chong\.qq\.com\/tws\/usernumberinfo\/GetUserInfo\? 'delpaths([["data","request","number","markSeat","servicehallOperList"],["data","request","number","servicehallOperList"],["data","request","number","markSeat","servicehallFuncList"],["data","request","number","servicehallFuncList"]])'
 
 [Map Local]
 ^https:\/\/webapi\.qmai\.cn\/web\/catering\/advertising\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"

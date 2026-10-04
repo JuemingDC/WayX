@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 17:52:03 +08:00
+// Converted: 2026-10-04 18:07:01 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /(^https:\/\/pingtas\.qq\.com\/webview\/pingd\?dm=c\.pc\.qq\.com&pvi=\d+&si=s\d+&url=\/middlem\.html\?pfurl%3d)(http.*)(%26pfuin%3d.*%26pfuin%3d.*)/i as urlMatch then redirect(307, "${urlMatch.2}")

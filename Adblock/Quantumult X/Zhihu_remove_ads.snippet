@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Zhihu.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:38 +08:00
+# Converted: 2026-10-04 18:07:40 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Zhihu_remove_ads.lpx
@@ -35,13 +35,13 @@
 ^https:\/\/api\.zhihu\.com\/comment_v\d\/(answers|pins)\/\d+\/root_comment\? url jsonjq-response-body 'delpaths([["atmosphere_voting_config"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/(api|page-info)(?:\.zhihu)?\.com\/answers\/v\d\/\d+(?:\?.*)?$ url jsonjq-response-body 'if type == "object" then delpaths([["third_business"]]) else . end | if type == "object" then delpaths([["float_search_word"]]) else . end'
+^https:\/\/(api|page-info)(?:\.zhihu)?\.com\/answers\/v\d\/\d+(?:\?.*)?$ url jsonjq-response-body 'delpaths([["third_business"],["float_search_word"]])'
 
 ^https:\/\/(api|page-info)(?:\.zhihu)?\.com\/answers\/v\d\/\d+(?:\?.*)?$ url jsonjq-response-body '.structured_content.segments |= map(select(.type != "card"))'
 ^https:\/\/api\.zhihu\.com\/topstory\/recommend\? url jsonjq-response-body '.data[]?.children |= (if type == "array" then map(select(.id != "ring")) else . end)'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/api\.zhihu\.com\/(articles|answers|pins)\/v\d\/\d+\? url jsonjq-response-body 'if type == "object" then delpaths([["third_business"]]) else . end | if type == "object" then delpaths([["ring_info"]]) else . end | if type == "object" then delpaths([["interaction_bar_plugins"]]) else . end'
+^https:\/\/api\.zhihu\.com\/(articles|answers|pins)\/v\d\/\d+\? url jsonjq-response-body 'delpaths([["third_business"],["ring_info"],["interaction_bar_plugins"]])'
 
 ^https:\/\/api\.zhihu\.com\/comment_v\d\/answers\/\d+\/list-headers$ url jsonjq-response-body 'delpaths([["continuous_consumption_module"]])'
 
@@ -73,7 +73,7 @@
 ^https:\/\/api\.zhihu\.com\/kvip\/right\/my_card\? url reject-dict
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/api\.zhihu\.com\/people\/self$ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["vip_info","entrance_new","right_button"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["vip_info","entrance_v2"]]) else . end) catch $__wayx_before)'
+^https:\/\/api\.zhihu\.com\/people\/self$ url jsonjq-response-body 'delpaths([["vip_info","entrance_new","right_button"],["vip_info","entrance_v2"]])'
 ^https:\/\/api\.zhihu\.com\/unlimited\/go\/my_card\/v\d\? url reject-dict
 
 # [mitm]

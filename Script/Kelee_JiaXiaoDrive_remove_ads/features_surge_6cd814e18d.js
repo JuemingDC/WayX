@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 17:52:17 +08:00
+// Converted: 2026-10-04 18:07:17 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /http-response/i then response.json.delete("^https:\\/\\/api\\.ksedt\\.com\\/api\\/config\\/")

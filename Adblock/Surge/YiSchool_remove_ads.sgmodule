@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YiSchool.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:37 +08:00
+# Converted: 2026-10-04 18:07:39 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/YiSchool_remove_ads.lpx
 # Target: Surge
@@ -18,7 +18,7 @@
 [Body Rewrite]
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/compus\.xiaofubao\.com\/compus\/user\/getUserExt$ '(. as $__wayx_before | try (if type == "object" then delpaths([["data","adPopSwitch"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","adSplashSwitch"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/compus\.xiaofubao\.com\/compus\/user\/getUserExt$ 'delpaths([["data","adPopSwitch"],["data","adSplashSwitch"]])'
 
 http-response-jq ^https:\/\/compus\.xiaofubao\.com\/compus\/application\/getHomeAppList$ '.rows|=map(select(.appCode=="kechengbiao_app1" or .appCode=="siliuji" or .appCode=="NEWJIAOFEIDATING"))'
 
