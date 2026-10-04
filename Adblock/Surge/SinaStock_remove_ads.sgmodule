@@ -10,22 +10,22 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SinaStock.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:16:15 +08:00
+# Converted: 2026-10-04 17:52:36 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/SinaStock_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
-http-response-jq ^https:\/\/news\.cj\.sina\.cn\/app\/v1\/news724\/list\? 'del(.result.data.ad)'
+http-response-jq ^https:\/\/news\.cj\.sina\.cn\/app\/v1\/news724\/list\? 'delpaths([["result","data","ad"]])'
 
 http-response-jq ^https:\/\/app\.cj\.sina\.com\.cn\/apps\/api\/user\/center\? '.result.data |= with_entries(select(.key == "button" or .key == "account" or .key == "balance"))'
 
 http-response-jq ^https:\/\/news\.cj\.sina\.cn\/toutiao\/content\? 'del(.result.data[]?.ad, .result.data[]?.report)'
 
-http-response-jq ^https:\/\/app\.cj\.sina\.com\.cn\/api\/deal\/index\? 'del(.data.banner)'
+http-response-jq ^https:\/\/app\.cj\.sina\.com\.cn\/api\/deal\/index\? 'delpaths([["data","banner"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/app\.cj\.sina\.com\.cn\/clientSetting\/api\/start\/init\? '(. as $__wayx_before | try (if type == "object" then del(.["result"]["data"]["search_ad"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["data"]["center_ads"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["data"]["banner_new_tagid"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["data"]["ad_hasAddScreenParam"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["data"]["us_trade"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["data"]["open_account"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["data"]["us_hq_trade"]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/app\.cj\.sina\.com\.cn\/clientSetting\/api\/start\/init\? '(. as $__wayx_before | try (if type == "object" then delpaths([["result","data","search_ad"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","data","center_ads"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","data","banner_new_tagid"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","data","ad_hasAddScreenParam"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","data","us_trade"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","data","open_account"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","data","us_hq_trade"]]) else . end) catch $__wayx_before)'
 
 http-response-jq ^https:\/\/(newscj\.xincai\.com|news\.cj\.sina\.cn)\/app\/v1\/feed\? '.data.feed.data |= map(select((.author // "") != ""))'
 

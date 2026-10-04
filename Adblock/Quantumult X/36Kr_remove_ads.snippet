@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/36Kr.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:15:38 +08:00
+# Converted: 2026-10-04 17:51:59 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/36Kr_remove_ads.lpx
@@ -20,7 +20,7 @@ host, ad.jiemian.com, reject
 
 # [rewrite_local]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/gateway\.36kr\.com\/api\/mis\/sys\/config\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then del(.["data"]["contentConfig"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["positionConfigList"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["switchConfig"]["ios"]["sunrise_sign"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["switchConfig"]["ios"]["sunrise_sunit_task"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["switchConfig"]["ios"]["sunrise_sunit_mall"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["switchConfig"]["ios"]["sunrise_distribution_icon"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["secondFloorConfig"]) else . end) catch $__wayx_before)'
+^https:\/\/gateway\.36kr\.com\/api\/mis\/sys\/config\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["data","contentConfig"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","positionConfigList"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","switchConfig","ios","sunrise_sign"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","switchConfig","ios","sunrise_sunit_task"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","switchConfig","ios","sunrise_sunit_mall"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","switchConfig","ios","sunrise_distribution_icon"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","secondFloorConfig"]]) else . end) catch $__wayx_before)'
 
 ^https:\/\/36kr\.com\/global\/sensors\/config\/iOS\.conf\? url jsonjq-response-body 'if (try (getpath(["configs"]) | has("disableSDK")) catch false) then setpath(["configs","disableSDK"]; true) else . end'
 
@@ -34,7 +34,7 @@ host, ad.jiemian.com, reject
 
 ^https:\/\/gateway\.36kr\.com\/api\/mis\/nav\/home\/subnav\/recom\? url jsonjq-response-body '.data.bannerList |= map(select(.itemType != 0))'
 
-^https:\/\/gateway\.36kr\.com\/api\/mis\/nav\/home\/subnav\/flow\/ url jsonjq-response-body 'del(.data.adItemList)'
+^https:\/\/gateway\.36kr\.com\/api\/mis\/nav\/home\/subnav\/flow\/ url jsonjq-response-body 'delpaths([["data","adItemList"]])'
 
 ^https:\/\/gateway\.36kr\.com\/api\/adx\/ url reject-dict
 

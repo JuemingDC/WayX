@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 17:16:01 +08:00
+// Converted: 2026-10-04 17:52:22 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/api\.posters\.meitu\.com\/common\/init\.json/i then response.json.delete("data.vip")

@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/JDWaimai.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:15:56 +08:00
+# Converted: 2026-10-04 17:52:18 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/JDWaimai_remove_ads.lpx
 # Target: Surge
@@ -21,7 +21,7 @@ http-response-jq ^https:\/\/color\.jddj\.com\/client\.action\?functionId=hours_h
 http-response-jq ^https:\/\/color\.jddj\.com\/client\.action\?functionId=wmHome$ '(.floors |= map(del(.data.tnData.newsInfo?))) | .floors |= (map(select(.mId != "newWalletIdFloor" and .mId != "recommendfloor"))) | .floors |= (map(.data |= (if .tnData? then del(.tnData.cardList, .tnData.cardListStatic, .tnData.walletList) else . end)))'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/api\.m\.jd\.com\/client\.action$ '(. as $__wayx_before | try (if type == "object" then del(.["data"]["searchDTO"]["searchWords"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["wishlistDTO"]["bubbleTip"]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/api\.m\.jd\.com\/client\.action$ '(. as $__wayx_before | try (if type == "object" then delpaths([["data","searchDTO","searchWords"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","wishlistDTO","bubbleTip"]]) else . end) catch $__wayx_before)'
 
 http-response-jq ^https:\/\/api\.m\.jd\.com\/client\.action$ '.data.tabList |= (map(select(.code == "recommendation" or .code == "find_food")) | map(if .code == "recommendation" then .dpHomeFeedTabResultDTOList = .dpHomeFeedTabResultDTOList[0:2] else . end | .dpHomeBannerResultDTOList = []))'
 

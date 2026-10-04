@@ -9,7 +9,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/bilibili.png
 # Updated: 2026-09-27 19:00
 
-# Converted: 2026-10-04 17:16:21 +08:00
+# Converted: 2026-10-04 17:52:41 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/bilibili.lpx
 # Target: Surge
@@ -63,7 +63,7 @@ http-response-jq ^https:\/\/api\.bilibili\.com\/x\/pd-proxy\/tracker\? '.data[][
 http-response-jq ^https:\/\/api\.live\.bilibili\.com\/xlive\/open-interface\/v2\/tracker\/conf\? '.data.domains=["wss://tracker.chat.bilibili.com"]'
 
 # 移除皮肤推送
-http-response-jq ^https:\/\/app\.bilibili\.com\/x\/resource\/show\/skin\? 'del(.data.common_equip)'
+http-response-jq ^https:\/\/app\.bilibili\.com\/x\/resource\/show\/skin\? 'delpaths([["data","common_equip"]])'
 
 # 哔哩哔哩漫画 广告
 http-response-jq ^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v1\.(?:Comic\/AppInit|Home\/HomeFeed)\? '.data as $data | .data[("activity_tab", "flash", "operate") | select($data[.])]=null | if .data.feeds then .data.feeds |= map(select(.type | IN(15, 30) | not)) end'

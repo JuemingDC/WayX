@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MaiMai.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:16:02 +08:00
+# Converted: 2026-10-04 17:52:23 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/MaiMai_remove_ads.lpx
@@ -22,7 +22,7 @@
 
 ^https:\/\/(h3\.)?open\.taou\.com\/maimai\/go_gossip_darwin\/external\/v2\/query_flow_cards\? url reject-dict
 
-^https:\/\/(h3\.)?open\.taou\.com\/maimai\/feed\/v6\/detail_recommend_feeds\? url jsonjq-response-body 'del(.feeds)'
+^https:\/\/(h3\.)?open\.taou\.com\/maimai\/feed\/v6\/detail_recommend_feeds\? url jsonjq-response-body 'delpaths([["feeds"]])'
 # 移除信息流和评论区大块广告
 ^https:\/\/(h3\.)?open\.taou\.com\/maimai\/(feed|gossip)\/v\d\/(focus_feed|gossip_detail_comment|feed_detail_comment?)\? url script-response-body https://kelee.one/Resource/JavaScript/MaiMai/MaiMai_remove_ads.js
 

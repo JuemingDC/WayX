@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/iReader.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:16:17 +08:00
+# Converted: 2026-10-04 17:52:38 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/iReader_remove_ads.lpx
 # Target: Surge
@@ -20,7 +20,7 @@ DOMAIN,saad.ms.zhangyue.net,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 
-http-response-jq ^https:\/\/(webboot\.zhangyue\.com|ih2\.ireader\.com)\/zybook4\/iphone\/u\/p\/api\.php\? 'del(.Splash)'
+http-response-jq ^https:\/\/(webboot\.zhangyue\.com|ih2\.ireader\.com)\/zybook4\/iphone\/u\/p\/api\.php\? 'delpaths([["Splash"]])'
 
 http-response-jq ^https:\/\/(webboot\.zhangyue\.com|ih2\.ireader\.com)\/bookstore\/read\/visual\/channel\/list\? '.body.list |= map(select(.id | contains("ad_") | not))'
 

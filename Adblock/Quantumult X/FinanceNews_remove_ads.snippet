@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FinanceNews.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:15:55 +08:00
+# Converted: 2026-10-04 17:52:16 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/FinanceNews_remove_ads.lpx
@@ -32,9 +32,9 @@
 
 ^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/content\/carousel\/information-flow\? url reject-dict
 
-^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/content\/articles\/ url jsonjq-response-body 'del(.data.recommend_vip_img_uri)'
+^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/content\/articles\/ url jsonjq-response-body 'delpaths([["data","recommend_vip_img_uri"]])'
 
-^https:\/\/api-one-wscn\.awtmt\.com\/\/apiv1\/kvconfig\/items\/membersrights$ url jsonjq-response-body 'del(.data.vip_article)'
+^https:\/\/api-one-wscn\.awtmt\.com\/\/apiv1\/kvconfig\/items\/membersrights$ url jsonjq-response-body 'delpaths([["data","vip_article"]])'
 
 # [mitm]
 hostname = api-one-wscn.awtmt.com
