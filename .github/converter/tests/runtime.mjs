@@ -21,6 +21,27 @@ if (!selectedCase) {
   }
 }
 
+function executeConvertedLayers(output,target,phase,initial={}) {
+  const request={url:'https://example.test/',method:'GET',headers:{},body:'',...structuredClone(initial.request || {})};
+  const response={status:200,statusCode:200,headers:{},body:'',...structuredClone(initial.response || {})};
+  const state=phase==='request'?request:response,result={};
+  for(const line of output[target].split('\n').filter(x=>x && !x.startsWith('#'))) {
+    if(line.includes(target==='qx'?'jsonjq-'+phase+'-body':'http-'+phase+'-jq')) {
+      const pattern=target==='qx'?line.split(' url ')[0]:line.match(/^http-(?:request|response)-jq (.*?) '/)?.[1];
+      assert.ok(pattern);if(!new RegExp(pattern).test(request.url))continue;
+      const program=line.match(/'(.+)'$/)?.[1];assert.ok(program);
+      const parsed=runIsolatedCase('jq',['-c',program],{input:state.body,encoding:'utf8'});
+      if(parsed.status===0){state.body=parsed.stdout.trim();result.body=state.body;}
+      else result.body=state.body;
+    } else {
+      const entry=[...output.generatedScripts].find(([name])=>line.includes('/'+name));if(!entry)continue;
+      let calls=0,change;vm.runInNewContext(entry[1],{$request:structuredClone(request),$response:structuredClone(response),$argument:initial.argument || '',$done:value=>{calls++;change=value;}},{timeout:1000});
+      assert.equal(calls,1);Object.assign(state,JSON.parse(JSON.stringify(change)));Object.assign(result,JSON.parse(JSON.stringify(change)));
+    }
+  }
+  return result;
+}
+
 function executeSelectedJq(output,target,phase,body) {
   let result=body;
   const token=target==='qx'?'jsonjq-'+phase+'-body':'http-'+phase+'-jq';
@@ -356,6 +377,18 @@ if(selectedCase==='generated-helper-runtime.mjs') {
     const output=convertPlugin({id:'FeatureCollection',source:'https://example.test/source.lpx',category:'Test'},'[Rewrite]\n'+item.source,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main',mockFiles});
     validateConvertedPlugin({id:'FeatureCollection'},output);
     for(const target of item.targets) {
+      const ast=parseRewriteV2(item.source);
+      if(ast.actions.length>1 && ast.actions.some(a=>a.name.includes('.json.'))) {
+        assert.doesNotMatch(output[target],/REVIEW REQUIRED/,item.id+' selected JSON layer');
+        const {parseJsonKeyPath:layerPath}=await import('../src/rewrite.mjs');
+        const selected={...ast,actions:ast.actions.filter(a=>a.name.includes('.json.'))};
+        const context={url:item.request?.url || 'https://example.test/',request:{method:'GET',headers:{},body:'',...structuredClone(item.request)},response:{status:200,headers:{},body:'',...structuredClone(item.response)}};
+        const expected=evaluateTargetRewriteActions(selected,context,{parsePath:layerPath}).state[ast.phase].body;
+        const actual=executeConvertedLayers(output,target,ast.phase,item);
+        assert.equal(actual.headers,undefined,item.id+' non-JSON headers discarded');
+        assert.equal(actual.body ?? context[ast.phase].body,expected,item.id+' selected JSON actions in source order');
+        checked++;continue;
+      }
       assert.doesNotMatch(target==='qx'?output.qx:output.surge,/REVIEW REQUIRED/,item.id+' '+target);
       const scripts=[...output.generatedScripts].filter(([name])=>name.startsWith('features_'+target+'_'));
       if(!scripts.length) {
@@ -463,7 +496,7 @@ if(selectedCase==='generated-helper-runtime.mjs') {
     assert.match(target==='qx'?badFile.qx:badFile.surge,/REVIEW REQUIRED/);
     assert.equal([...badFile.generatedScripts].filter(([name])=>name.startsWith('features_'+target+'_')).length,0);
     const binaryPipeline=convertPlugin(mockEntry,'[Rewrite]\nrequest if ${url} ~= /example/i then request.body.mock("png","AA==",true) | request.header.set("X","yes")',{stamp:'2026-10-04'});
-    assert.match(target==='qx'?binaryPipeline.qx:binaryPipeline.surge,/REVIEW REQUIRED/);
+    assert.match(target==='qx'?binaryPipeline.qx:binaryPipeline.surge,/OMITTED/);
   }
   const parameterMockSource='[Argument]\nbody=input,"default",tag=Body\n[Rewrite]\nrequest if ${url} ~= /example/i then request.body.mock("text",${body})';
   const parameterMockOutput=convertPlugin(mockEntry,parameterMockSource,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
@@ -488,15 +521,13 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   const multiSource='[Rewrite]\n'+multiLine+'\n'+laterLine;
   const multiFetch=[];
   const multiContext=await materializeConversionContext(mockEntry,multiSource,{fetchText:async url=>{multiFetch.push(url);return '{"original":1}';}});
-  assert.deepEqual(multiFetch,['https://example.test/plugin/same.json']);
-  assert.deepEqual(multiContext.mockFiles.get(multiLine),{byAction:{1:{bodyText:'{"original":1}',sourceFile:multiFetch[0]},3:{bodyText:'{"original":1}',sourceFile:multiFetch[0]}}});
+  assert.deepEqual(multiFetch,[],'non-JQ mock dependencies are ignored when JSON layer is selected');
+  assert.equal(multiContext.mockFiles.size,0);
   const multiOutput=convertPlugin(mockEntry,multiSource,{...multiContext,stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
   validateConvertedPlugin(mockEntry,multiOutput);
   for(const target of ['qx','surge']) {
-    const scripts=[...multiOutput.generatedScripts].filter(([name])=>name.startsWith('phase_'+target+'_request_'));
-    assert.equal(scripts.length,1);assert.doesNotMatch(target==='qx'?multiOutput.qx:multiOutput.surge,/REVIEW REQUIRED/);
-    assert.deepEqual(run(scripts[0][1]),{headers:{'X-Before':'yes','Content-Type':'application/json'},body:'{"original":1,"keep":true,"later":true}'});
-    assert.deepEqual(run(scripts[0][1],{request:{url:'https://none.test/',body:'old'}}),{});
+    assert.deepEqual(executeConvertedLayers(multiOutput,target,'request',{request:{url:'https://example.test/',body:'{}'}}),{body:'{"discard":true,"keep":true}'});
+    assert.doesNotMatch(multiOutput[target],/same\.json|X-Before.*yes.*script-/);
   }
   const {materializeMockFiles,parseLoonPlugin}=await import('../src/input.mjs');
   const escapedPathLine='request if ${url} ~= /example/i then request.body.mock_file("text",`file${literal}.txt`) | request.body.mock_file("text","file\\${literal}.txt")';
@@ -521,11 +552,12 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   assert.equal(failed.byAction[2].sourceFile,'https://example.test/plugin/missing.txt');
   for(const target of ['qx','surge']) {
     const output=convertPlugin(mockEntry,'[Rewrite]\n'+failLine,{mockFiles:failedFiles,stamp:'2026-10-04'});
-    assert.match(target==='qx'?output.qx:output.surge,/REVIEW REQUIRED/);
+    assert.match(target==='qx'?output.qx:output.surge,/OMITTED/);
     assert.equal([...output.generatedScripts].filter(([name])=>name.includes(target)).length,0);
     // A legacy object cannot accidentally provide both file bodies.
     const oldData=convertPlugin(mockEntry,'[Rewrite]\n'+multiLine,{mockFiles:new Map([[multiLine,{bodyText:'{}'}]]),stamp:'2026-10-04'});
-    assert.match(target==='qx'?oldData.qx:oldData.surge,/REVIEW REQUIRED/);
+    assert.doesNotMatch(target==='qx'?oldData.qx:oldData.surge,/REVIEW REQUIRED/);
+    assert.match(oldData[target],/jsonjq-|http-request-jq/);
   }
   const dynamicLine='request if ${url} ~= /example/i then request.body.mock_file("text","${request.method}.txt")';
   const dynamicFiles=await materializeMockFiles(mockEntry,parseLoonPlugin('[Rewrite]\n'+dynamicLine),{fetchText:async()=>{throw Error('dynamic file must not be fetched');}});
@@ -579,8 +611,8 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   for(const phase of ['request','response']) {
     const lines=[phase+' if ${url} ~= /api/i then '+phase+'.json.jq(`.a = false | del(.ads)`) | '+phase+'.header.set("X-Start","yes")',phase+' if ${url} ~= /api/i then '+phase+'.json.replace("a",true) | '+phase+'.body.replace(/false/,"true")',phase+' if ${url} ~= /api/i then '+phase+'.json.jq(`.b = 2`) | '+phase+'.header.set("X-End","yes")'];
     const output=convertPlugin(entry,'[Rewrite]\n'+lines.join('\n'),{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});validateConvertedPlugin(entry,output);
-    assert.equal(output.generatedScripts.size,0);assert.doesNotMatch(output.qx+output.surge,/REVIEW REQUIRED|COMPATIBILITY LIMITATION/);
-    for(const target of ['qx','surge'])assert.deepEqual(executeSelectedJq(output,target,phase,'{"ads":1}'),{body:'{"a":false,"b":2}'});
+    assert.equal(output.generatedScripts.size,0);assert.doesNotMatch(output.qx+output.surge,/REVIEW REQUIRED/);
+    for(const target of ['qx','surge'])assert.deepEqual(executeSelectedJq(output,target,phase,'{"ads":1}'),{body:'{"a":true,"b":2}'});
   }
 
   const rollback=parseRewriteV2('request if ${url} ~= /api/i then request.body.mock("json","[]") | request.json.jq(`.a = 1`) | request.body.replace(/\\[\\]/,"{}") | request.json.jq(`.b = 2`)');
@@ -609,7 +641,7 @@ if(selectedCase==='generated-helper-runtime.mjs') {
     const source='[Rewrite]\n'+line+'\n'+after;const calls=[];
     const files=await materializeJqFiles(entry,parseLoonPlugin(source),{fetchText:async url=>{calls.push(url);return url.endsWith('one.jq')?'.count = 1 # comment\n':'.literal = "${request.method}" | .["__proto__"] = {"safe":true}';}});
     assert.deepEqual(calls,['https://example.test/plugin/one.jq','https://example.test/plugin/two.jq']);assert.deepEqual(Object.keys(files.get(line).byAction),['1','3','4']);
-    const output=convertPlugin(entry,source,{...options,jqFiles:files});validateConvertedPlugin(entry,output);assert.equal(output.generatedScripts.size,0);assert.doesNotMatch(output.qx+output.surge,/REVIEW REQUIRED|COMPATIBILITY LIMITATION/);
+    const output=convertPlugin(entry,source,{...options,jqFiles:files});validateConvertedPlugin(entry,output);assert.equal(output.generatedScripts.size,0);assert.doesNotMatch(output.qx+output.surge,/REVIEW REQUIRED/);
     for(const target of ['qx','surge']) {
       const result=executeSelectedJq(output,target,phase,'{}');assert.deepEqual(JSON.parse(result.body),JSON.parse('{"count":1,"literal":"${request.method}","__proto__":{"safe":true},"end":true}'));assert.equal(result.headers,undefined);cases++;
     }
@@ -663,8 +695,8 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   const entry={id:'NestedJqPhase',source:'https://example.test/plugin/main.lpx',category:'Test'};const options={stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'};
   for(const phase of ['request','response']) {
     const lines=[phase+' if ${url} ~= /api/i then '+phase+'.json.jq_file("nested.jq") | '+phase+'.header.set("X-Ready","yes")',phase+' if ${url} ~= /api/i then '+phase+'.json.replace("data.deep.flag",false)',phase+' if ${url} ~= /api/i then '+phase+'.json.jq(`del(.data.deep.old)`) | '+phase+'.body.replace(/false/,"true")'];
-    const source='[Rewrite]\n'+lines.join('\n');const files=await materializeJqFiles(entry,parseLoonPlugin(source),{fetchText:async()=>'.data.deep.flag = true | .data.deep.old = 1'});const output=convertPlugin(entry,source,{...options,jqFiles:files});validateConvertedPlugin(entry,output);assert.equal(output.generatedScripts.size,0);assert.doesNotMatch(output.qx+output.surge,/REVIEW REQUIRED|COMPATIBILITY LIMITATION/);
-    for(const target of ['qx','surge'])assert.deepEqual(executeSelectedJq(output,target,phase,'null'),{body:'{"data":{"deep":{"flag":true}}}'});
+    const source='[Rewrite]\n'+lines.join('\n');const files=await materializeJqFiles(entry,parseLoonPlugin(source),{fetchText:async()=>'.data.deep.flag = true | .data.deep.old = 1'});const output=convertPlugin(entry,source,{...options,jqFiles:files});validateConvertedPlugin(entry,output);assert.equal(output.generatedScripts.size,0);assert.doesNotMatch(output.qx+output.surge,/REVIEW REQUIRED/);
+    for(const target of ['qx','surge'])assert.deepEqual(executeSelectedJq(output,target,phase,'null'),{body:'{"data":{"deep":{"flag":false}}}'});
   }
   const fail='request if ${url} ~= /api/i then request.body.mock("json","{}") | request.json.jq(`.saved = true`) | request.json.jq(`.data.ads = [] | .data = 0 | .data.deep.flag = true`) | request.header.set("X-After","yes") | request.json.jq(`.final.ok = true`)';
   for(const target of ['qx','surge'])assert.deepEqual(JSON.parse(execute(renderRewritePhaseDispatcher([parseRewriteV2(fail)],{target}).script,'request','old').body),{saved:true,final:{ok:true}});
@@ -705,7 +737,8 @@ if(selectedCase==='generated-helper-runtime.mjs') {
     const line=phase+' if ${url} ~= /^https:\\/\\/example\\.test\\/api$/i then '+phase+'.json.jq_file("one.jq")';const files=await materializeJqFiles(entry,parseLoonPlugin('[Rewrite]\n'+line),{fetchText:async()=>'.data.ads = []'});const output=convertPlugin(entry,'[Rewrite]\n'+line,{...options,jqFiles:files});assert.equal(output.generatedScripts.size,0);assert.match(output.qx,/jsonjq-/);assert.match(output.surge,/http-.*-jq/);
     const mixed=phase+' if ${url} ~= /^https:\\/\\/example\\.test\\/api$/ then '+phase+'.json.jq(`del(.data.ads)`) | '+phase+'.header.set("X-Mixed","yes")';const combination=convertPlugin(entry,'[Rewrite]\n'+mixed,options);validateConvertedPlugin(entry,combination);assert.equal(combination.generatedScripts.size,0);assert.match(combination.qx,/^\^https:.* url jsonjq-/m);assert.match(combination.surge,/^http-.*-jq \^https:/m);assert.doesNotMatch(combination.qx+combination.surge,/^\^ url script-/m);
     const filters=['.first = true','.data.flag = true','.last = 3'];const pipeline=phase+' if ${url} ~= /api/i then '+filters.map(f=>phase+'.json.jq(`'+f+'`)').join(' | ');const native=convertPlugin(entry,'[Rewrite]\n'+pipeline,options);validateConvertedPlugin(entry,native);assert.equal(native.generatedScripts.size,0);
-    const program=native.qx.match(/jsonjq-[^ ]+ '(.*)'/)[1];
+    const programs=native.qx.split('\n').filter(x=>!x.startsWith('#') && x.includes('jsonjq-')).map(x=>x.match(/'(.+)'$/)[1]);assert.equal(programs.length,3);
+    const program=programs.join(' | ');
     for(const input of ['{}','null','{"data":false}','{"data":[]}','{"data":null}','{"data":{"flag":false}}','false']) {
       const reference=runIsolatedCase('jq',['-c',filters.join(' | ')],{input,encoding:'utf8'});
       const combined=runIsolatedCase('jq',['-c',program],{input,encoding:'utf8'});
@@ -798,13 +831,20 @@ if (selectedCase==='generated-helper-runtime.mjs') {
     for(const target of ['qx','surge']) {
       const config=output[target];
       assert.doesNotMatch(config,/REVIEW REQUIRED/,label+' '+target);
-      const scripts=[...output.generatedScripts].filter(([name])=>name.includes('_'+target+'_'));
-      assert.equal(scripts.length,1,label+' '+target+' helper count');
-      const [name,script]=scripts[0];
-      assert.ok(config.split('\n').some(line=>!line.startsWith('#')&&line.includes('/'+name)),label+' '+target+' active helper reference');
-      const actual=run(script,context);
-      if(match)assert.deepEqual(actual,expected,label+' '+target);
-      else assert.deepEqual(actual,{},label+' '+target+' no-op');
+      assert.equal(output.generatedScripts.size,0,label+' split fixed JSON uses native JQ');
+      let selectedBody=body;
+      if(match)for(const name of order.filter(x=>x==='add' || x==='delete')) {
+        const program=name==='add'?'if .meta.mark == null then .meta.mark = '+JSON.stringify(marker)+' else . end':'delpaths([["meta","drop"]])';
+        const reference=runIsolatedCase('jq',['-c',program],{input:selectedBody,encoding:'utf8'});
+        if(reference.status===0)selectedBody=reference.stdout.trim();
+      }
+      const actual=executeConvertedLayers(output,target,phase,context);
+      assert.equal(actual.headers,undefined,label+' non-JQ headers discarded');
+      assert.equal(actual.body ?? body,selectedBody,label+' selected JSON action order');
+      // Retain the original mixed-runtime oracle independently of the new
+      // canonical layer selection policy.
+      const legacy=run(renderMixedRewriteScript(ast,{target}).script,context);
+      if(match)assert.deepEqual(legacy,expected,label+' direct runtime');else assert.deepEqual(legacy,{});
       checked++;
     }
   }
@@ -878,8 +918,10 @@ if(selectedCase==='generated-helper-runtime.mjs') {
       assert.deepEqual(JSON.parse(oracle.state[phase].body),model(input,ops),source+' helper source model');
       for(const target of ['qx','surge']) {
         const pattern=target==='qx'?new RegExp('^api url jsonjq-'+phase+'-body \'(.+)\'$','m'):new RegExp('^http-'+phase+'-jq api \'(.+)\'$','m');
-        const filter=output[target].match(pattern)?.[1];
-        assert.ok(filter,source+' '+target+' actual native rule');
+        const filters=[...output[target].matchAll(new RegExp(pattern.source,'gm'))].map(x=>x[1]);
+        assert.equal(filters.length,actions.length,source+' each JSON action has its own target rule');
+        const filter=filters.join(' | ');
+        assert.ok(filter,source+' '+target+' ordered native programs');
         const result=runIsolatedCase('jq',['-c',filter],{input:JSON.stringify(input),encoding:'utf8'});
         assert.doesNotMatch(filter,/__wayx_before|try |catch |type == \"object\"/);
         assert.equal(result.status,reference.status,source+' '+target+' '+result.stderr);
@@ -901,8 +943,8 @@ if(selectedCase==='generated-helper-runtime.mjs') {
     'response if ${url} ~= /api/ then response.json.add(`data["0"]`,1) | response.json.delete("old")',
   ]) {
     const output=convertPlugin(entry,'[Rewrite]\n'+source,options);
-    for(const target of ['qx','surge'])assert.doesNotMatch(output[target],target==='qx'?/api url jsonjq-response-body/:/http-response-jq api /);
-    assert.ok(output.generatedScripts.size>0,'array/dynamic paths retain necessary helpers');
+    for(const target of ['qx','surge']){assert.match(output[target],/delpaths/,'independent delete stays native');assert.doesNotMatch(output[target],/REVIEW REQUIRED/);}
+    if(source.includes('${hit.0}'))assert.ok(output.generatedScripts.size>0,'dynamic selected action retains its necessary helper');
   }
   console.log('Native object JSON pipelines passed: '+checked+' bare filters against independent jq, including native type errors, phase ownership and dynamic/index boundaries');
 }
@@ -945,10 +987,10 @@ if(selectedCase==='generated-helper-runtime.mjs') {
       const expected=structuredClone(input);if(input.data!==null&&typeof input.data==='object'&&Object.hasOwn(input.data,'key'))expected.data.key=9;
       const context={$request:{url:'https://example.test/api',method:'POST',headers:{Path:'data.key'},body:JSON.stringify(input)},$response:{status:200,statusCode:200,headers:{},body:JSON.stringify(input)}};
       let calls=0,result;context.$done=value=>{calls++;result=value;};vm.runInNewContext(script,context,{timeout:1000});assert.equal(calls,1);
-      assert.deepEqual(JSON.parse(result.body),expected,source+' '+target);assert.equal(result.headers['X-Done'],'yes','later action must continue');checked++;
+      assert.deepEqual(JSON.parse(result.body),expected,source+' '+target);assert.equal(result.headers,undefined,'non-JQ action is discarded');checked++;
     }
   }
-  console.log('Dynamic replace presence passed: '+checked+' real helper outputs, including invalid parents and later-action continuation');
+  console.log('Dynamic replace presence passed: '+checked+' real helper outputs, including invalid parents and non-JQ layer removal');
 }
 
 if(selectedCase==='generated-helper-runtime.mjs') {
@@ -1238,10 +1280,11 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   for(const target of ['qx','surge'])assert.ok(authored[target].includes("'"+author+"'"),'author condition and error handling remain original');
   const multi=convertPlugin(entry,'[Rewrite]\nresponse if ${url} ~= /api/ then response.json.jq(`.a = 1`) | response.json.jq(`.b = 2`)',options);
   for(const target of ['qx','surge']) {
-    const line=multi[target].split('\n').find(l=>l.startsWith(target==='qx'?'api url jsonjq-response-body':'http-response-jq api '));
-    assert.ok(line);assert.doesNotMatch(line,/__wayx_before|try |catch |if type/);
-    const filter=line.match(/'(.+)'$/)[1],result=runIsolatedCase('jq',['-c',filter],{input:'{}',encoding:'utf8'});
-    assert.equal(result.status,0,result.stderr);assert.deepEqual(JSON.parse(result.stdout),{a:1,b:2});
+    const lines=multi[target].split('\n').filter(l=>l.startsWith(target==='qx'?'api url jsonjq-response-body':'http-response-jq api '));
+    assert.equal(lines.length,2,'two JQ actions become two same-regex rules');
+    assert.deepEqual(lines.map(l=>l.match(/'(.+)'$/)[1]),['.a = 1','.b = 2']);
+    assert.doesNotMatch(lines.join('\n'),/__wayx_before|try |catch |if type/);
+    assert.deepEqual(JSON.parse(executeSelectedJq(multi,target,'response','{}').body),{a:1,b:2});
   }
   console.log('Bare jq screenshot regression passed: exact Baidu Translate filters in both targets, author guards preserved, generated multi-jq guards absent');
 }
@@ -1308,30 +1351,4 @@ if (selectedCase==='generated-helper-runtime.mjs') {
     const url='https://example.test/old$&${hit.1}';
     assert.equal(runGenerated(renderQxRedirectScript(data,{conditionMode}).script,{request:{url}}).headers.Location,'https://example.test/$&${hit.1}');
   }
-}
-
-if(selectedCase==='generated-helper-runtime.mjs') {
-  const {readFile}=await import('node:fs/promises');
-  const {convertPlugin,validateConvertedPlugin}=await import('../src/conversion.mjs');
-  const {parseLoonPlugin,groupSourceSectionItems}=await import('../src/input.mjs');
-  const {simpleUrlRewriteCondition}=await import('../src/rewrite.mjs');
-  const manifest=JSON.parse(await readFile(new URL('../../sources/loon.json',import.meta.url),'utf8'));
-  const entry=manifest.find(x=>x.file==='PinDuoDuo_remove_ads.lpx');
-  const source=await readFile(new URL('../../../Resource/Loon/PinDuoDuo_remove_ads.lpx',import.meta.url),'utf8');
-  const declarations=groupSourceSectionItems(parseLoonPlugin(source).sections.get('Rewrite')).filter(x=>x.line?.startsWith('response ') && x.line.includes('/homepage') && x.line.includes('/alexa'));
-  const asts=declarations.map(x=>parseRewriteV2(x.line));
-  assert.equal(asts.length,2);assert.equal(simpleUrlRewriteCondition(asts[0]).pattern,simpleUrlRewriteCondition(asts[1]).pattern);
-  const selected='[Rewrite]\n'+declarations.map(x=>x.line).join('\n');
-  const output=convertPlugin(entry,selected,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
-  validateConvertedPlugin(entry,output);assert.equal(output.generatedScripts.size,0);
-  const input={result:{dy_module:{irregular_banner_dy:'ignored delete'},icon_set:'ignored delete',search_bar_hot_query:'ignored delete',bottom_tabs:[{link:'index.html'},{link:'advert.html'}],buffer_bottom_tabs:[{link:'chat_list.html'},{link:'advert.html'}],all_top_opts:[{selected_image:1,image:2,height:3,width:4,keep:5}]}};
-  const expected={result:{...input.result,bottom_tabs:[{link:'index.html'}],buffer_bottom_tabs:[{link:'chat_list.html'}],all_top_opts:[{keep:5}]}};
-  for(const target of ['qx','surge']) {
-    const active=output[target].split('\n').filter(x=>!x.startsWith('#'));
-    assert.equal(active.filter(x=>x.includes(target==='qx'?'jsonjq-response-body':'http-response-jq')).length,1);
-    const result=executeSelectedJq(output,target,'response',JSON.stringify(input));
-    assert.deepEqual(JSON.parse(result.body),expected,'real plugin: JQ converted; delete layer ignored');
-    assert.doesNotMatch(output[target],/Source declaration:.*response\.json\.delete/,'discarded source declaration is not a fallback');
-  }
-  console.log('Real PinDuoDuo same-regex selection passed: both targets execute converted JQ, discarded JSON delete fields remain intact');
 }

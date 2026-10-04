@@ -6,7 +6,7 @@ import crypto from "node:crypto";
 import { renderRewritePhaseDispatcher } from "./runtime.mjs";
 import { scriptIrTag, parseScriptDeclaration, isScriptV2, planQxScript, planSurgeScript, scriptOption, analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs, surgeArgumentMetadata, surgeRewriteArgumentPayload } from "./script.mjs";
 import { qxRule as canonicalQxRule, surgeModuleRule } from "./rule.mjs";
-import { repairUpstreamJq, unquoteRewriteToken, isRewriteV2, parseRewriteV2, validateRewriteV2Ast, classifyLegacyRewriteAction, isEmptyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr, inlineResolvedDependency, inlineResolvedLegacyJqPathIr, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr, planQxRewrite, planSurgeRewrite, rewriteReview, rewriteIssue, supportsRewritePhaseActions, simpleUrlRewriteCondition, jsonPipelineToSafeNativeJq } from "./rewrite.mjs";
+import { repairUpstreamJq, unquoteRewriteToken, isRewriteV2, parseRewriteV2, selectRewritePipelineLayer, rewriteV2ToSource, validateRewriteV2Ast, classifyLegacyRewriteAction, isEmptyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr, inlineResolvedDependency, inlineResolvedLegacyJqPathIr, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr, planQxRewrite, planSurgeRewrite, rewriteReview, rewriteIssue, supportsRewritePhaseActions, planRewriteFeatureHelper, simpleUrlRewriteCondition, jsonPipelineToSafeNativeJq } from "./rewrite.mjs";
 import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection, parseLoonPlugin, materializeRewriteDependencies, materializeSourceScripts, fetchOriginalText, fetchOriginalBytes } from "./input.mjs";
 import { attachQxInlineNote, createQxOutputState, appendQxOutput, qxOutputDestination, qxRuleOutputDestination, qxRewriteOutputDestination, renderQxOutput, createSurgeOutputState, appendSurgeOutput, surgeOutputDestination, surgeRuleOutputDestination, surgeRewriteOutputDestination, renderSurgeOutput, validateQX, validateSurgeModule } from "./output.mjs";
 import { parseConfigurationDeclaration, planConfiguration } from "./configuration.mjs";
@@ -55,58 +55,16 @@ function correctedUpstreamJq(jq,line,ctx) {
   return result;
 }
 
-// User policy: choose one source type for an exact URL regex in one HTTP
-// phase. Never infer overlap between different regex bodies or compound guards.
-function sameRegexRewriteSelection(plugin,target,ctx) {
-  const sourceUrl=ctx.sourceUrl;
-  const owners=new Map(),records=[];
-  const key=(phase,pattern)=>JSON.stringify([phase,pattern]);
-  for(const item of groupSourceSectionItems(plugin.sections.get('Script') || [])) {
-    if(!item.line)continue;
-    try {
-      const ir=parseScriptDeclaration(item.line);
-      if(!ir || !['request','response'].includes(ir.phase))continue;
-      const plan=(target==='qx'?planQxScript:planSurgeScript)(ir,{scriptUrl:ir.script.path,name:'selection',argumentIds:ctx.argumentIds,argumentTable:ctx.argumentTable});
-      if(!plan.ok || plan.disabled || plan.omitted)continue;
-      const c=ir.condition;
-      const pattern=ir.sourceSyntax==='legacy'?ir.pattern:
-        c?.type==='comparison' && c.operator==='~=' && c.left?.name==='url' && c.right?.type==='regex' && !c.capture?c.right.pattern:null;
-      if(pattern!==null && pattern!==undefined)owners.set(key(ir.phase,pattern),'script');
-    }catch { /* Keep the ordinary Script diagnostic. */ }
-  }
-  for(const item of groupSourceSectionItems(plugin.sections.get('Rewrite') || [])) {
-    if(!item.line)continue;
-    try {
-      let phase,pattern,jq;
-      if(isRewriteV2(item.line)) {
-        const ast=parseRewriteV2(item.line);validateRewriteV2Ast(ast);
-        const matcher=simpleUrlRewriteCondition(ast);if(!matcher.ok || matcher.capture)continue;
-        phase=ast.phase;pattern=matcher.pattern;
-        jq=ast.actions.some(a=>jqDependencySpecFromAction(a,{pluginSourceUrl:sourceUrl}) || a.name===phase+'.json.jq');
-      }else {
-        const [p,a]=splitPatternAction(item.line),ir=legacyRewriteToSemanticIr(p,a);
-        if(ir.operations[0]?.kind==='unknown' || !ir.phase)continue;
-        phase=ir.phase;pattern=p;
-        jq=!!legacyJqPathDependencySpecFromIr(ir,{pluginSourceUrl:sourceUrl}) || ir.operations.some(o=>o.kind==='json' && o.operation==='jq');
-      }
-      const id=key(phase,pattern);records.push({line:item.line,id,jq});
-      if(jq && owners.get(id)!=='script')owners.set(id,'jq');
-    }catch { /* Invalid inputs retain the existing diagnostic. */ }
-  }
-  return new Map(records.flatMap(record=>{
-    const owner=owners.get(record.id);
-    return owner==='script'?[[record.line,'drop-script']]:owner==='jq'?[[record.line,record.jq?'jq-only':'drop-jq']]:[];
-  }));
-}
-
 function resolveRewriteJqDependencies(ast,line,ctx) {
-  const actions=ast.actions.map((action,index)=>{
+  ast=selectRewritePipelineLayer(ast);
+  const actions=ast.actions.map((action,selectedIndex)=>{
+    const index=ast.sourceActionIndices?.[selectedIndex] ?? selectedIndex;
     const spec=jqDependencySpecFromAction(action,{pluginSourceUrl:ctx.sourceUrl});
     let resolved=action;
     if(spec) {
       const files=ctx.jqFiles?.get(line);
-      if(files?.error)throw new Error(files.error);
-      const materialized=files?.byAction ? (Object.prototype.hasOwnProperty.call(files.byAction,index)?files.byAction[index]:null) : ast.actions.length===1 ? files : null;
+      if(files?.error && !files.byAction)throw new Error(files.error);
+      const materialized=files?.byAction ? (Object.prototype.hasOwnProperty.call(files.byAction,index)?files.byAction[index]:null) : (ast.sourceActionCount || ast.actions.length)===1 ? files : null;
       if(!materialized)throw new Error('JQ dependency action '+index+' was not materialized during conversion');
       if(materialized.error)throw new Error(materialized.error);
       if(typeof materialized.content!=='string' || !materialized.content.trim())throw new Error('JQ dependency resolved to empty content');
@@ -119,35 +77,50 @@ function resolveRewriteJqDependencies(ast,line,ctx) {
     }
     return resolved;
   });
-  const result={...ast,actions};validateRewriteV2Ast(result);
-  return ctx.rewriteSelection?.get(line)==='jq-only'?
-    {...result,actions:actions.filter(a=>a.name===ast.phase+'.json.jq')}:result;
+  const result={...ast,actions};validateRewriteV2Ast(result);return result;
 }
 
 function rewriteV2Action(line,target,ctx) {
   if (!isRewriteV2(line)) return null;
+  if(isScriptV2(line)) {
+    try {
+      const ir=parseScriptDeclaration(line),record=ctx.scriptMap?.get(ir.script.path);
+      const plan=(target==='qx'?planQxScript:planSurgeScript)(ir,{scriptUrl:record?.[target] || ir.script.path,sourceText:record?.source || '',name:sanitizeName(scriptIrTag(ir) || 'wayx_script_'+crypto.createHash('sha1').update(ir.source).digest('hex').slice(0,10)),argumentIds:ctx.argumentIds,argumentTable:ctx.argumentTable});
+      if(!plan.ok)return rewriteReview(ir.source,plan.reason);
+      if(plan.disabled || plan.omitted)return {section:'drop',reason:'script-disabled-or-omitted'};
+      const notes=(plan.notes || []).map(n=>'# [WayX] '+n);
+      return {section:target==='qx'?plan.section || 'rewrite':'script',lines:[...notes,plan.line],line:plan.line};
+    }catch(error){return rewriteErrorResult(line,error);}
+  }
 
   let ast;
-  let argumentRefs={conditionRefs:[],actionRefs:[],all:[]};
   try {
-    ast=parseRewriteV2(line);
+    ast=selectRewritePipelineLayer(parseRewriteV2(line));
     validateRewriteV2Ast(ast);
-    argumentRefs=rewriteV2PluginArgumentRefs(ast,ctx.argumentIds || []);
   } catch (error) {
     return rewriteErrorResult(line,error);
   }
 
-  try {
-    ast=resolveRewriteJqDependencies(ast,line,ctx);
-  } catch (error) {
-    return rewriteReview(line,String(error?.message || error).split('\n')[0]);
-  }
-
-  const ir=rewriteV2AstToSemanticIr(ast,{source:line});
-  if (isEmptyJsonJqIr(ir)) return {section:'drop',reason:'empty-json-jq'};
   const planner=target==='qx' ? planQxRewrite : target==='surge' ? planSurgeRewrite : null;
   if (!planner) return rewriteIssue(line,'unknown-rewrite-target','unsupported Rewrite target planner: '+target);
-  return planner(ir,{...ctx,sourceLine:line,argumentRefs:argumentRefs.all});
+  const plan=member=>{
+    const selectedLine=ast.sourceActionCount?rewriteV2ToSource(member):line;
+    try {
+      const resolved=resolveRewriteJqDependencies(member,line,ctx);
+      const sourceLine=ast.sourceActionCount?rewriteV2ToSource(resolved):line;
+      const ir=rewriteV2AstToSemanticIr(resolved,{source:sourceLine});
+      if (isEmptyJsonJqIr(ir)) return {section:'drop',reason:'empty-json-jq'};
+      const refs=rewriteV2PluginArgumentRefs(resolved,ctx.argumentIds || []).all;
+      if(!ast.sourceActionCount && resolved.actions.length>1) {
+        const helper=planRewriteFeatureHelper(resolved,target,{...ctx,sourceLine,argumentRefs:refs});
+        if(helper?.ok)return helper;
+        return {section:'comment',line:'# [WayX] OMITTED: action pipeline cannot be converted to a complex syntax script: '+(helper?.reason || 'unsupported action combination')+'\n# Source declaration: '+sourceLine};
+      }
+      const native= simpleUrlRewriteCondition(resolved).ok && jsonPipelineToSafeNativeJq(resolved).ok;
+      return planner(ir,{...ctx,sourceLine,argumentRefs:refs,...(ast.sourceActionCount?{featureCompatibilityPhases:new Set(native?[ast.phase]:[])}: {})});
+    }catch(error){return rewriteReview(selectedLine,String(error?.message || error).split('\n')[0]);}
+  };
+  return ast.sourceActionCount?{section:'split',members:ast.actions.map((action,index)=>plan({...ast,actions:[action],sourceActionIndices:[ast.sourceActionIndices[index]]}))}:plan(ast);
 }
 
 function planDisabledSurgeRewriteComments(comments,ctx) {
@@ -170,11 +143,11 @@ function planDisabledSurgeRewriteComments(comments,ctx) {
     }
     if (mapped.section==='drop') continue;
 
-    const lines=mapped.lines || [mapped.line];
-    routed.push({
-      section:mapped.section,
-      lines:[raw,...lines.map(line=>'# '+line)],
-    });
+    for(const member of mapped.members || [mapped]) {
+      if(member.section==='drop')continue;
+      const lines=member.lines || [member.line];
+      routed.push({section:member.section,lines:[raw,...lines.map(line=>'# '+line)]});
+    }
   }
 
   return {passthrough,routed};
@@ -182,25 +155,26 @@ function planDisabledSurgeRewriteComments(comments,ctx) {
 
 function prepareRewriteDispatchers(plugin,target,ctx) {
   const result=new Map();
-  const items=groupSourceSectionItems(plugin.sections.get('Rewrite') || []).filter(x=>x.line && !ctx.rewriteSelection?.get(x.line)?.startsWith('drop-'));
+  const items=groupSourceSectionItems(plugin.sections.get('Rewrite') || []).filter(x=>x.line);
   const candidates=[];
-  const scripts=groupSourceSectionItems(plugin.sections.get('Script') || []).filter(x=>x.line);
+  const scripts=[...groupSourceSectionItems(plugin.sections.get('Script') || []),...items.filter(x=>isScriptV2(x.line))].filter(x=>x.line);
   const legacy=items.some(x=>!isRewriteV2(x.line));
   // Keep native JSON/JQ declarations outside helper dispatchers. Original
   // Script/legacy owners also retain their existing phase contracts.
   const blockedV2=new Set();
-  for(const item of items)if(isRewriteV2(item.line))try {
+  for(const item of items)if(isRewriteV2(item.line) && !isScriptV2(item.line))try {
     const ast=resolveRewriteJqDependencies(parseRewriteV2(item.line),item.line,ctx);
     const nativeJson=(ast.actions.length>1 || ast.actions[0]?.args.some(arg=>arg.type==='array')) && simpleUrlRewriteCondition(ast).ok && jsonPipelineToSafeNativeJq(ast).ok;
-    if(nativeJson || ast.actions.every(a=>a.name===ast.phase+'.json.jq') || !supportsRewritePhaseActions(ast,target))blockedV2.add(ast.phase);
+    if(ast.sourceActionCount || nativeJson || ast.actions.every(a=>a.name===ast.phase+'.json.jq') || !supportsRewritePhaseActions(ast,target))blockedV2.add(ast.phase);
   }catch { /* Invalid declarations keep the ordinary diagnostic. */ }
   ctx.featureCompatibilityPhases=new Set(['request','response'].filter(phase=>legacy || blockedV2.has(phase) || scripts.some(x=>{try {const ir=parseScriptDeclaration(x.line);return ir?.phase===phase && (target==='qx' || !(scriptOption(ir,'enable')?.value===false));}catch{return false;}})));
   for (const item of items) {
-    if (!isRewriteV2(item.line)) continue;
+    if (!isRewriteV2(item.line) || isScriptV2(item.line)) continue;
     try {
       const ast=resolveRewriteJqDependencies(parseRewriteV2(item.line),item.line,ctx);
       validateRewriteV2Ast(ast);
       const mapped=rewriteV2Action(item.line,target,ctx);
+      if(mapped.section==='split')continue;
       if (mapped.section!=='comment' && mapped.section!=='drop') candidates.push({line:item.line,sourceIndex:item.sourceIndex,ast,mapped});
     } catch { /* The ordinary planner preserves the parse diagnostic. */ }
   }
@@ -310,6 +284,7 @@ export function convertPlugin(entry,source,{
   const upstreamRepairs=new Map();
   const qctx={
     upstreamRepairs,
+    scriptMap,
     id:entry.id,
     generatedScripts:qx.generatedScripts,
     sourceUrl:entry.source,
@@ -323,6 +298,7 @@ export function convertPlugin(entry,source,{
   };
   const sctx={
     upstreamRepairs,
+    scriptMap,
     id:entry.id,
     generatedScripts:sg.generatedScripts,
     sourceUrl:entry.source,
@@ -334,8 +310,6 @@ export function convertPlugin(entry,source,{
     argumentTable:surgeArgumentTable,
     rawBase,
   };
-  qctx.rewriteSelection=sameRegexRewriteSelection(plugin,'qx',qctx);
-  sctx.rewriteSelection=sameRegexRewriteSelection(plugin,'surge',sctx);
 
   if (argumentAnalysis.undeclaredRefs.length) {
     const refs=[...new Set(argumentAnalysis.undeclaredRefs.map(ref=>ref.id))].sort().join(', ');
@@ -423,10 +397,8 @@ export function convertPlugin(entry,source,{
     }
     if (!item.line) continue;
 
-    const selectedDrop=ctx=>ctx.rewriteSelection.get(item.line)?.startsWith('drop-')?
-      {section:'drop',reason:ctx.rewriteSelection.get(item.line)}:null;
-    let qr=selectedDrop(qctx) || qxDispatchers.get(item.sourceIndex) || rewriteV2Action(item.line,'qx',qctx);
-    let sr=selectedDrop(sctx) || surgeDispatchers.get(item.sourceIndex) || rewriteV2Action(item.line,'surge',sctx);
+    let qr=qxDispatchers.get(item.sourceIndex) || rewriteV2Action(item.line,'qx',qctx);
+    let sr=surgeDispatchers.get(item.sourceIndex) || rewriteV2Action(item.line,'surge',sctx);
     if (!qr || !sr) {
       const [pattern,action]=splitPatternAction(item.line);
       let ir=legacyRewriteToSemanticIr(pattern,action);
@@ -454,25 +426,29 @@ export function convertPlugin(entry,source,{
       if (!sr) sr=planSurgeRewrite(ir,{...sctx,sourceLine:item.line});
     }
 
-    const qdest=qxRewriteOutputDestination(qx,qr.section);
-    if (qr.section==='drop') {
-      qdest.push(...comments);
-    } else if (qr.section==='rewrite') {
-      const qxRendered=attachQxInlineNote({
-        sectionLines:rewriteSectionLines,
-        item,
-        sectionKind:'rewrite',
-        lines:qr.lines || [qr.line],
-        eligible:qr.qxInlineNoteEligible!==false,
-      });
-      qdest.push(...qxRendered.comments,...qxRendered.lines);
-    } else {
-      qdest.push(...comments,...(qr.lines || [qr.line]));
+    const qmembers=qr.members || [qr],smembers=sr.members || [sr];
+    for(const [index,qr] of qmembers.entries()) {
+      const qdest=qxRewriteOutputDestination(qx,qr.section);
+      if (qr.section==='drop') {
+        qdest.push(...(index===0?comments:[]));
+      } else if (qr.section==='rewrite') {
+        const qxRendered=attachQxInlineNote({
+          sectionLines:rewriteSectionLines,
+          item:index===0?item:{...item,comments:[]},
+          sectionKind:'rewrite',
+          lines:qr.lines || [qr.line],
+          eligible:qr.qxInlineNoteEligible!==false,
+        });
+        qdest.push(...qxRendered.comments,...qxRendered.lines);
+      } else {
+        qdest.push(...(index===0?comments:[]),...(qr.lines || [qr.line]));
+      }
     }
-
-    const sdest=surgeRewriteOutputDestination(sg,sr.section);
-    if (sr.section==='drop') sdest.push(...surgeComments);
-    else sdest.push(...surgeComments,...(sr.lines || [sr.line]));
+    for(const [index,sr] of smembers.entries()) {
+      const sdest=surgeRewriteOutputDestination(sg,sr.section);
+      if (sr.section==='drop') sdest.push(...(index===0?surgeComments:[]));
+      else sdest.push(...(index===0?surgeComments:[]),...(sr.lines || [sr.line]));
+    }
   }
 
   const scriptSectionLines=plugin.sections.get('Script') || [];

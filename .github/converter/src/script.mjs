@@ -3,7 +3,7 @@
 // Category: Converter / script
 
 import { splitTopLevelCsv } from "./rule.mjs";
-import { parseRewriteV2, conditionToSource, valueToSource, isRewriteV2, simpleUrlRewriteCondition } from "./rewrite.mjs";
+import { parseRewriteV2, selectRewritePipelineLayer, conditionToSource, valueToSource, isRewriteV2, simpleUrlRewriteCondition } from "./rewrite.mjs";
 import { scanSourceRegexLiteral, normalizeRegexBodyForTarget, stringTemplateParts } from "./core.mjs";
 
 
@@ -459,14 +459,33 @@ function validateOptions(options, phase) {
   }
 }
 
+// User policy for a single action chain: Script wins on either side of |.
+// This scanner never splits a JQ/string/regex literal or a logical ||.
+export function selectScriptPipelineSource(source) {
+  const text=String(source ?? '').trim();
+  const found=scanState(text,i=>/^\s+then\s+/.test(text.slice(i))?{index:i,length:text.slice(i).match(/^\s+then\s+/)[0].length}:undefined);
+  if(!found)return text;
+  const tail=text.slice(found.index+found.length),segments=[];
+  let depth=0,start=0;
+  scanState(tail,i=>{
+    if(tail[i]==='(' || tail[i]==='[')depth++;
+    else if(tail[i]===')' || tail[i]===']')depth--;
+    else if(tail[i]==='|' && tail[i+1]!=='|' && tail[i-1]!=='|' && depth===0){segments.push(tail.slice(start,i).trim());start=i+1;}
+  });
+  segments.push(tail.slice(start).trim());
+  const script=segments.find(x=>/^script\s*\(/.test(x));
+  return script?text.slice(0,found.index)+' then '+script:text;
+}
+
 export function isScriptV2(source) {
-  const raw = String(source ?? '').trim();
-  return /^(?:(?:request|response)\s+if\b|cron\s+|network-changed\b|generic\b)/.test(raw) &&
-    /\bthen\s+script\s*\(/.test(raw);
+  const text=String(source ?? '').trim();
+  if(!/^(?:(?:request|response)\s+if\b|cron\s+|network-changed\b|generic\b)/.test(text) || !/\bscript\s*\(/.test(text))return false;
+  try { return Boolean(findThenScript(selectScriptPipelineSource(text))); }
+  catch { return /\bthen\s+script\s*\(/.test(text); }
 }
 
 export function parseScriptV2(source) {
-  const raw = String(source ?? '').trim();
+  const raw = selectScriptPipelineSource(source);
   const found = findThenScript(raw);
   if (!found) fail(raw, 'Expected "then script(...)"');
 
@@ -869,9 +888,9 @@ export function analyzePluginArgumentUsage({
   const parseErrors = [];
 
   for (const line of activeLines(rewriteLines)) {
-    if (!isRewriteV2(line)) continue;
+    if (!isRewriteV2(line) || isScriptV2(line)) continue;
     try {
-      const ast = parseRewriteV2(line);
+      const ast = selectRewritePipelineLayer(parseRewriteV2(line));
       const refs = rewriteV2PluginArgumentRefs(ast, declaredIds);
       for (const id of refs.conditionRefs) addUse(usage, id, {section:'Rewrite', kind:'condition', line});
       for (const id of refs.actionRefs) addUse(usage, id, {section:'Rewrite', kind:'action', line});
@@ -880,7 +899,7 @@ export function analyzePluginArgumentUsage({
     }
   }
 
-  for (const line of activeLines(scriptLines)) {
+  for (const line of [...activeLines(scriptLines),...activeLines(rewriteLines).filter(isScriptV2)]) {
     if (isScriptV2(line)) {
       try {
         const ast = parseScriptV2(line);

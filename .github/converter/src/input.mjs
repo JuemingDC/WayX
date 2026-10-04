@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 import fs from "node:fs/promises";
 import { isScriptV2, parseScriptV2 } from "./script.mjs";
-import { minifyJqFile, isRewriteV2, parseRewriteV2, validateRewriteV2Ast, legacyRewriteToSemanticIr, dependencySpecFromAction, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr, isTextRequestMockAction } from "./rewrite.mjs";
+import { minifyJqFile, isRewriteV2, parseRewriteV2, selectRewritePipelineLayer, validateRewriteV2Ast, legacyRewriteToSemanticIr, dependencySpecFromAction, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr, isTextRequestMockAction } from "./rewrite.mjs";
 
 
 
@@ -366,7 +366,7 @@ export function discoverSourceScriptUrls(source,{parsed=null}={}) {
   );
 
   const plugin=parsed || parseLoonPlugin(text);
-  for (const item of groupSourceSectionItems(plugin.sections.get('Script'))) {
+  for (const item of [...groupSourceSectionItems(plugin.sections.get('Script')),...groupSourceSectionItems(plugin.sections.get('Rewrite'))]) {
     if (!item.line || !isScriptV2(item.line)) continue;
     try {
       urls.add(parseScriptV2(item.line).script.path);
@@ -424,11 +424,11 @@ export async function materializeMockFiles(entry,parsed,{
 }={}) {
   const out=new Map();
   for (const item of groupSourceSectionItems(parsed?.sections?.get('Rewrite'))) {
-    if (!item.line || !isRewriteV2(item.line)) continue;
+    if (!item.line || !isRewriteV2(item.line) || isScriptV2(item.line)) continue;
     try {
-      const ast=parseRewriteV2(item.line);
+      const ast=selectRewritePipelineLayer(parseRewriteV2(item.line));
       validateRewriteV2Ast(ast);
-      const files=ast.actions.map((action,index)=>({action,index})).filter(({action})=>/^(?:request|response)\.body\.mock_file$/.test(action.name));
+      const files=ast.actions.map((action,index)=>({action,index:ast.sourceActionIndices?.[index] ?? index})).filter(({action})=>/^(?:request|response)\.body\.mock_file$/.test(action.name));
       if(!files.length)continue;
       // Keep the historical single-file shape; only verified text request
       // pipelines gain an action-indexed dependency collection.
@@ -484,10 +484,11 @@ export async function materializeJqFiles(entry,parsed,{
     if (!item.line) continue;
     try {
       let spec=null;
+      if (isScriptV2(item.line))continue;
       if (isRewriteV2(item.line)) {
-        const ast=parseRewriteV2(item.line);
+        const ast=selectRewritePipelineLayer(parseRewriteV2(item.line));
         validateRewriteV2Ast(ast);
-        const files=ast.actions.map((action,index)=>({action,index})).filter(({action})=>/^(request|response)\.json\.(jq|jq_file)$/.test(action.name) && (action.name.endsWith('.jq_file') || /^jq-path\s*=/i.test(String(action.args[0]?.value || '').trim())));
+        const files=ast.actions.map((action,index)=>({action,index:ast.sourceActionIndices?.[index] ?? index})).filter(({action})=>/^(request|response)\.json\.(jq|jq_file)$/.test(action.name) && (action.name.endsWith('.jq_file') || /^jq-path\s*=/i.test(String(action.args[0]?.value || '').trim())));
         if(!files.length)continue;
         const cache=new Map();
         const read=async action=>{
@@ -498,7 +499,7 @@ export async function materializeJqFiles(entry,parsed,{
           if(!content)throw new Error('JQ dependency resolved to empty content');
           return {content,sourceFile:dependency.url,legacyAlias:Boolean(dependency.legacyAlias)};
         };
-        if(ast.actions.length===1){out.set(item.line,await read(files[0].action));continue;}
+        if((ast.sourceActionCount || ast.actions.length)===1){out.set(item.line,await read(files[0].action));continue;}
         const byAction={},failures=[];
         for(const {action,index} of files)try{byAction[index]=await read(action);}catch(error){
           const reason=String(error?.message || error).split('\n')[0];

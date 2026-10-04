@@ -517,8 +517,10 @@ response if \${url} ~= /api/ then response.header.set("X-Test", "ok") | response
 const genericComplexOutput = convert(genericComplexFixture, genericComplexSource, new Map(), STAMP);
 assert.doesNotMatch(genericComplexOutput.qx, /ISSUE REQUIRED|REVIEW REQUIRED/);
 assert.doesNotMatch(genericComplexOutput.surge, /ISSUE REQUIRED|REVIEW REQUIRED/);
-assert.match(genericComplexOutput.qx, /features_qx_/);
-assert.match(genericComplexOutput.surge, /wayx_features_/);
+assert.match(genericComplexOutput.qx, /jsonjq-response-body/);
+assert.equal(genericComplexOutput.generatedScripts.size,0);
+assert.match(genericComplexOutput.surge, /http-response-jq/);
+assert.doesNotMatch(genericComplexOutput.qx+genericComplexOutput.surge,/X-Test/);
 
 const unknownActionFixture = {
   id:'UnknownActionFixture',
@@ -1228,8 +1230,8 @@ assert.deepEqual(generatedScriptSemantics(outA.generatedScripts), generatedScrip
 
 assert.ok(qxSemantics(outA.qx, entryA.id).includes('^https:\\/\\/ads\\.example\\.com url reject-dict'));
 assert.ok(surgeSemantics(outA.surge, entryA.id).includes('^https:\\/\\/ads\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"'));
-assert.equal(surgeSemantics(outA.surge, entryA.id).some(x=>x.includes('enabled:true enabled:false')),false);
-assert.equal(qxSemantics(outA.qx, entryA.id).some(x=>x.includes('jsonjq-response-body')),false);
+assert.ok(surgeSemantics(outA.surge, entryA.id).some(x=>x.startsWith('http-response ^https:\\/\\/api\\.example\\.com enabled:true enabled:false')));
+assert.ok(qxSemantics(outA.qx, entryA.id).some(x=>x.includes(`jsonjq-response-body 'delpaths([["data","ads"]])'`)));
 assert.ok(qxSemantics(outA.qx, entryA.id).some(x=>x.includes('script-response-body https://scripts.example.com/generic.js')));
 
 console.log('Generic identity-invariance conversion test passed');
@@ -1884,42 +1886,77 @@ if(selectedCase==='conversion-policy.mjs') {
 }
 
 if(selectedCase==='conversion-policy.mjs') {
-  const entry={id:'SameRegexSelection',source:'https://example.test/main.lpx',category:'Test'};
+  const entry={id:'PipelineLayers',source:'https://example.test/main.lpx',category:'Test'};
   const options={stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'};
   const active=text=>text.split('\n').filter(x=>x && !x.startsWith('#')).join('\n');
   let checked=0;
-  for(const phase of ['request','response'])for(const legacy of [false,true]) {
-    const header=legacy?'api '+(phase==='response'?'response-':'')+'header-replace X old new':phase+' if ${url} ~= /api/i then '+phase+'.header.set("X","discard")';
-    const jq=legacy?'api '+phase+'-body-json-jq .kept = true':phase+' if ${url} ~= /api/ then '+phase+'.json.jq(`.kept = true`)';
-    const script=legacy?'http-'+phase+' api script-path=https://example.test/original.js,requires-body=true':phase+' if ${url} ~= /api/s then script("https://example.test/original.js") with requires_body=true';
-    const out=convertPlugin(entry,'[Rewrite]\n'+header+'\n'+jq+'\n[Script]\n'+script,options);
-    assert.equal(out.generatedScripts.size,0);
-    for(const target of ['qx','surge']) {
-      const text=active(out[target]);assert.match(text,/https:\/\/example\.test\/original\.js/);assert.doesNotMatch(text,/jsonjq-|http-.*-jq|discard|header-replace/);checked++;
+  for(const phase of ['request','response']) {
+    const jq=phase+'.json.jq(`.kept = true`)';
+    const other=phase+'.header.set("X-Ignored","yes")';
+    const script='script("https://example.test/original.js","a|b") with requires_body=true,tag="A|B"';
+    for(const sequence of [script+' | '+other,other+' | '+script,jq+' | '+script,script+' | '+jq]) {
+      const line=phase+' if ${url} ~= /api|other/i then '+sequence;
+      const source='[Rewrite]\n'+line;
+      assert.deepEqual(discoverSourceScriptUrls(source),['https://example.test/original.js']);
+      const fetches=[];
+      const ctx=await materializeConversionContext(entry,source,{fetchText:async url=>{fetches.push(url);return '$done({});';}});
+      assert.deepEqual(fetches,['https://example.test/original.js']);
+      const out=convertPlugin(entry,source,{...options,...ctx});assert.equal(out.generatedScripts.size,0);
+      for(const target of ['qx','surge']){assert.match(active(out[target]),/api\|other/);assert.match(active(out[target]),/original\.js/);assert.doesNotMatch(active(out[target]),/jsonjq-|http-.*-jq|X-Ignored/);checked++;}
+      validateQX(out.qx,entry);validateSurgeModule(out.surge,entry);
     }
-    const jqOut=convertPlugin(entry,'[Rewrite]\n'+header+'\n'+jq,options);
-    assert.equal(jqOut.generatedScripts.size,0);
-    for(const target of ['qx','surge']){assert.match(active(jqOut[target]),/\.kept/);assert.doesNotMatch(active(jqOut[target]),/discard|header-replace|script-path=/);checked++;}
-    validateQX(out.qx,entry);validateSurgeModule(out.surge,entry);
+    for(const sequence of [jq+' | '+other,other+' | '+jq]) {
+      const out=convertPlugin(entry,'[Rewrite]\n'+phase+' if ${url} ~= /api/ then '+sequence,options);
+      for(const target of ['qx','surge']){assert.match(active(out[target]),/\.kept/);assert.doesNotMatch(active(out[target]),/X-Ignored|script-path=/);checked++;}
+    }
+    // Separate declarations are all preserved, even with the exact same regex.
+    const separate='[Rewrite]\n'+phase+' if ${url} ~= /api/ then '+phase+'.json.delete("ads")\n'+phase+' if ${url} ~= /api/ then '+jq+'\n[Script]\n'+phase+' if ${url} ~= /api/ then '+script;
+    const preserved=convertPlugin(entry,separate,options);
+    for(const target of ['qx','surge']){assert.match(active(preserved[target]),/delpaths/);assert.match(active(preserved[target]),/\.kept/);assert.match(active(preserved[target]),/original\.js/);checked++;}
+    const multi=phase+' if ${url} ~= /api/ then '+other+' | '+phase+'.json.delete("ads") | '+phase+'.json.replace("value",2) | '+phase+'.json.add("new",3) | '+phase+'.json.jq_file("one.jq") | '+other;
+    const files=await materializeJqFiles(entry,parseLoonPlugin('[Rewrite]\n'+multi),{fetchText:async()=>'.literal = "a|b" | .last = true'});
+    assert.deepEqual(Object.keys(files.get(multi).byAction),['4']);
+    const split=convertPlugin(entry,'[Rewrite]\n'+multi,{...options,jqFiles:files});assert.equal(split.generatedScripts.size,0);
+    for(const target of ['qx','surge']) {
+      const lines=active(split[target]).split('\n').filter(x=>x.includes(target==='qx'?'jsonjq-'+phase+'-body':'http-'+phase+'-jq'));
+      assert.equal(lines.length,4);assert.match(lines[0],/delpaths/);assert.match(lines[1],/getpath/);assert.match(lines[2],/\.new/);assert.match(lines[3],/a\|b.*\.last/);assert.doesNotMatch(active(split[target]),/X-Ignored|one\.jq/);checked++;
+    }
   }
-  const mixed='response if ${url} ~= /api/ then response.header.set("X","discard") | response.json.jq_file("one.jq") | response.body.replace(/old/,"discard") | response.json.jq(`.last = true`)';
-  const files=await materializeJqFiles(entry,parseLoonPlugin('[Rewrite]\n'+mixed),{fetchText:async()=>'.first = true'});
-  assert.deepEqual(Object.keys(files.get(mixed).byAction),['1']);
-  const out=convertPlugin(entry,'[Rewrite]\n'+mixed,{...options,jqFiles:files});
-  assert.equal(out.generatedScripts.size,0);
-  for(const target of ['qx','surge']){assert.match(active(out[target]),/\.first.*\.last/);assert.doesNotMatch(active(out[target]),/discard|one\.jq|script-path=/);checked++;}
-  // Different regex bodies, phases and compound conditions remain independent.
-  for(const script of [
-    'response if ${url} ~= /other/ then script("https://example.test/original.js")',
-    'request if ${url} ~= /api/ then script("https://example.test/original.js")',
-    'response if ${url} ~= /api/ && ${response.status} == 200 then script("https://example.test/original.js")',
-  ]) {
-    const result=convertPlugin(entry,'[Rewrite]\nresponse if ${url} ~= /api/ then response.json.jq(`.kept = true`)\n[Script]\n'+script,options);
-    for(const target of ['qx','surge']){assert.match(active(result[target]),/\.kept/);checked++;}
+  const scriptOnly='[Script]\nresponse if ${url} ~= /api/ then response.json.delete("ads") | script("https://example.test/only.js") | response.header.set("X","ignored")';
+  const out=convertPlugin(entry,scriptOnly,options);
+  for(const target of ['qx','surge']){assert.match(active(out[target]),/only\.js/);assert.doesNotMatch(out[target],/REVIEW REQUIRED|delpaths|ignored/);}
+  const failed='response if ${url} ~= /api/ then response.json.jq_file("ok.jq") | response.json.jq_file("missing.jq") | response.json.add("after",true)';
+  const deps=await materializeJqFiles(entry,parseLoonPlugin('[Rewrite]\n'+failed),{fetchText:async url=>{if(url.endsWith('missing.jq'))throw Error('missing file');return '.before = true';}});
+  const isolated=convertPlugin(entry,'[Rewrite]\n'+failed,{...options,jqFiles:deps});
+  for(const target of ['qx','surge']){assert.match(isolated[target],/REVIEW REQUIRED.*missing file/);assert.match(active(isolated[target]),/\.before/);assert.match(active(isolated[target]),/\.after/);}
+  const complex=convertPlugin(entry,'[Rewrite]\nresponse if ${url} ~= /api/ then response.body.replace(/old/,"new") | response.header.set("X-Kept","yes")',options);
+  for(const target of ['qx','surge'])assert.match(active(complex[target]),target==='qx'?/script-response-body/:/type=http-response/);
+  assert.ok([...complex.generatedScripts.values()].every(code=>code.includes('X-Kept')));
+  const unsupported=convertPlugin(entry,'[Rewrite]\nrequest if ${url} ~= /api/ then url.replace("https://example.test/new") | request.header.set("X","yes")',options);
+  for(const target of ['qx','surge']){assert.match(unsupported[target],/OMITTED/);assert.doesNotMatch(active(unsupported[target]),/url 302|url replace|script-path=|script-response/);assert.doesNotMatch(unsupported[target],/REVIEW REQUIRED/);}
+  console.log('Single action-chain selection passed: '+checked+' target results, either-side Script/JQ priority, independent declarations, JSON-family splitting, indexed file inlining and per-action failure isolation');
+}
+
+if(selectedCase==='conversion-policy.mjs') {
+  const manifest=JSON.parse(await fs.readFile(new URL('../../sources/loon.json',import.meta.url),'utf8'));
+  for(const name of ['Taqu','XiaobaiPrint','Zhihu']) {
+    const entry=manifest.find(x=>x.file===name+'_remove_ads.lpx');
+    const source=await fs.readFile(new URL('../../../Resource/Loon/'+entry.file,import.meta.url),'utf8');
+    const groups=new Map();
+    for(const {line} of groupSourceSectionItems(parseLoonPlugin(source).sections.get('Rewrite'))) {
+      if(!line?.startsWith('response '))continue;
+      const ast=parseRewriteV2(line),c=ast.condition;
+      if(c.type!=='comparison'||c.right.type!=='regex'||!ast.actions[0].name.includes('.json.'))continue;
+      const pattern=c.right.pattern;if(!groups.has(pattern))groups.set(pattern,[]);groups.get(pattern).push(ast);
+    }
+    const [pattern,asts]=[...groups].find(([,xs])=>xs.filter(x=>x.actions.some(a=>a.name==='response.json.jq')).length>1);
+    assert.ok(pattern);
+    const out=convertPlugin(entry,source,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+    for(const target of ['qx','surge']) {
+      const prefix=target==='qx'?pattern+' url jsonjq-response-body ': 'http-response-jq '+pattern+' ';
+      const active=out[target].split('\n').filter(x=>x.startsWith(prefix));
+      assert.equal(active.length,asts.length,name+' retains every independent same-regex JSON/JQ declaration');
+    }
   }
-  const disabled=convertPlugin(entry,'[Rewrite]\nresponse if ${url} ~= /api/ then response.json.jq(`.kept = true`)\n[Script]\nresponse if ${url} ~= /api/ then script("https://example.test/original.js") with enable=false',options);
-  assert.doesNotMatch(active(disabled.qx),/jsonjq-/);assert.match(active(disabled.surge),/http-response-jq/);
-  const invalid=convertPlugin(entry,'[Rewrite]\nresponse if ${url} ~= /api/ then response.json.jq(`.kept = true`)\n[Script]\nresponse if ${url} ~= /api/ then script("https://example.test/original.js") with timeout=${missing}',options);
-  for(const target of ['qx','surge']){assert.match(invalid[target],/REVIEW REQUIRED/);assert.match(active(invalid[target]),/\.kept/);}
-  console.log('Same regex source selection passed: '+checked+' target outputs, original Script precedence, JQ action/file indexing, independent matchers/phases, disabled and invalid Script isolation');
+  console.log('Real same-regex declaration retention passed: Taqu, XiaobaiPrint and Zhihu retain all independent JSON/JQ rules in both targets');
 }
