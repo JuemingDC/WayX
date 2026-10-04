@@ -131,7 +131,7 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
   const blockedV2=new Set();
   for(const item of items)if(isRewriteV2(item.line))try {
     const ast=resolveRewriteJqDependencies(parseRewriteV2(item.line),item.line,ctx);
-    const nativeJson=ast.actions.length>1 && !ast.condition?.right?.flags && simpleUrlRewriteCondition(ast).ok && jsonPipelineToSafeNativeJq(ast).ok;
+    const nativeJson=(ast.actions.length>1 || ast.actions[0]?.args.some(arg=>arg.type==='array')) && simpleUrlRewriteCondition(ast).ok && jsonPipelineToSafeNativeJq(ast).ok;
     if(nativeJson || ast.actions.every(a=>a.name===ast.phase+'.json.jq') || !supportsRewritePhaseActions(ast,target))blockedV2.add(ast.phase);
   }catch { /* Invalid declarations keep the ordinary diagnostic. */ }
   ctx.featureCompatibilityPhases=new Set(['request','response'].filter(phase=>legacy || blockedV2.has(phase) || scripts.some(x=>{try {const ir=parseScriptDeclaration(x.line);return ir?.phase===phase && (target==='qx' || !(scriptOption(ir,'enable')?.value===false));}catch{return false;}})));

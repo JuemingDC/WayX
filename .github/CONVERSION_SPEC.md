@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.81
+版本：1.82
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -1105,3 +1105,11 @@ Rewrite 阶段规划以源声明在 `[Rewrite]` 中的位置（sourceIndex）为
 验证覆盖 request/response、QX/Surge、相邻重复、首成员重复、非首成员重复、中间穿插修改、重复条件读取前序 Header、未命中 no-op 及两阶段独立所有权。期望值由固定输入的独立结果和 source evaluator 交叉验证，并执行目标配置实际引用的脚本；每个目标阶段只能有一个活动 dispatcher 引用，每次执行只能调用一次 `$done`。原生优先、纯 JSON/JQ 不进入宽匹配 dispatcher、默认关闭 QX Script 强制启用及原作者 URL 保护保持原策略。
 
 官方依据：Loon Rewrite v2 的同阶段配置顺序与 action 失败后继续契约（https://nsloon.app/en/docs/Rewrite/rewrite_v2/），Loon Script v2 的 first-match、原始响应条件及 Rewrite/Script 禁用关系（https://nsloon.app/en/docs/Script/script_v2/），Surge HTTP Response 的每阶段至多一个匹配 Script（https://manual.nssurge.com/scripting/http-response.html），QX 作者 rewrite 文档（https://github.com/crossutility/Quantumult-X/blob/master/rewrite.md）。此次仅修复已支持同步 action 的阶段所有权；不将作者异步 Script 串联进 dispatcher，不启用尚未证明的动态 Regex、透明 URL 或 Script options 转换。真实客户端验证仍为独立后续工作。定时更新沿用每天北京时间 01:30，远端仅 main/test。
+
+## 固定 JSON 批量动作原生优先（v1.82）
+
+固定对象路径的 JSON add/delete/replace 数组参数视为有序原生操作序列，不能因为语法上只有一个 action 而绕过原生 JQ 优先。纯 JSON 多动作及批量动作使用原始 URL regex body 输出 QX jsonjq 或 Surge Body Rewrite，不因 URL literal flags 单独生成宽匹配 features/phase Script。它们与纯 JQ 一样阻止被其它 HTTP Script dispatcher 吸收。动态路径/值、数组索引、复杂条件和混合 Header/Body 等必要脚本边界保持不变。
+
+flags 沿用现有原生 JQ 的 matcher 兼容契约：保留 source pattern，但不声称目标 engine 与源 flags 完全等价；有 flags 时逐行输出 COMPATIBILITY LIMITATION。不能据此添加未经官方证明的 inline modifier。Surge 兼容注释与活动 Body Rewrite 分开保存，避免隐藏 CORE_VERSION>=20 requirement。规范中原生 flags 的旧边界不被本节当作语义证明。
+
+全量上游拉取转换由唯一 Actions 任务执行；sync-convert 每次都拉取所有 catalog entry、materialize 并重新转换，不以 source unchanged 跳过转换。原作者 URL 保留、QX Script 强制 enable、每天北京时间 01:30 与 main/test 分支预算保持不变。

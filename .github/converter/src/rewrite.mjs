@@ -1047,15 +1047,16 @@ function nativeJqPriorityPlan(ast,target) {
 }
 
 function nativeJsonPriorityPlan(ast,target) {
-  if(ast.actions.length<2 || !ast.actions.every(action=>new RegExp('^'+ast.phase+'\\.json\\.(?:add|delete|replace)$').test(action.name)))return null;
-  // New priority is restricted to the existing plain URL matcher contract.
-  if(ast.condition?.right?.flags)return null;
+  if(ast.actions.length===1 && !ast.actions[0].args.some(arg=>arg.type==='array'))return null;
+  if(!ast.actions.every(action=>new RegExp('^'+ast.phase+'\\.json\\.(?:add|delete|replace)$').test(action.name)))return null;
+  // Fixed JSON batches use the same native matcher compatibility contract as JQ.
   const matcher=simpleUrlRewriteCondition(ast);
   if(!matcher.ok)return null;
   const mapped=jsonPipelineToSafeNativeJq(ast);
   if(!mapped.ok)return null;
-  return target==='qx' ? {section:'rewrite',line:matcher.pattern+' url jsonjq-'+ast.phase+'-body '+quoteJq(mapped.jq)} :
-    {section:'body',line:'http-'+ast.phase+'-jq '+matcher.pattern+' '+quoteJq(mapped.jq)};
+  const note=ast.condition?.right?.flags ? '# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags '+ast.condition.right.flags+' are not a verified target-engine equivalence.\n' : '';
+  const line=target==='qx' ? matcher.pattern+' url jsonjq-'+ast.phase+'-body '+quoteJq(mapped.jq) : 'http-'+ast.phase+'-jq '+matcher.pattern+' '+quoteJq(mapped.jq);
+  return {section:target==='qx'?'rewrite':'body',line,...(note?{lines:[note.trim(),line]}:{})};
 }
 
 function planRewriteFeatureHelper(ast,target,ctx) {
@@ -1435,8 +1436,8 @@ function fixedObjectJsonOps(action) {
 
 export function jsonPipelineToSafeNativeJq(ast) {
   validateRewriteV2Ast(ast);
-  if (!Array.isArray(ast?.actions) || ast.actions.length<2) {
-    return unsupported('native JSON pipeline requires at least two actions');
+  if (!Array.isArray(ast?.actions) || ast.actions.length<1) {
+    return unsupported('native JSON pipeline requires at least one action');
   }
   if (!['request','response'].includes(ast.phase)) {
     return unsupported('native JSON pipeline requires request/response phase');
