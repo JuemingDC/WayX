@@ -47,7 +47,7 @@ export async function syncCatalogEntry(entry,{
     const context=await materialize(entry,source,{onStage});
     const oldQx=targetState.qx,oldSg=targetState.surge;
     const oldStamp=conversionStampFromText(oldQx);
-    let stamp=changed||!oldStamp?nowConversionStamp():oldStamp;
+    let stamp=forceConvert||changed||!oldStamp?nowConversionStamp():oldStamp;
     let out=convert(entry,source,context,{stamp,rawBase:RAW_BASE,onStage});
     const existingTargetDrift=managedTargetDiffs(targetState,out).some(target =>
       target === 'qx' ? Boolean(oldQx) : Boolean(oldSg)
