@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MailMaster.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:30 +08:00
+# Converted: 2026-10-04 18:07:31 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/MailMaster_remove_ads.lpx
@@ -19,7 +19,7 @@
 ^https:\/\/appconf\.mail\.163\.com\/mailmaster\/api\/http\/urlConfig\.do$ url reject-dict
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/appconf\.mail\.163\.com\/mailmaster\/api\/page\/v2\/conf\.do$ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["data","functionOperatorInfoList"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","memberOperator"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","activityTabInfoList"]]) else . end) catch $__wayx_before)'
+^https:\/\/appconf\.mail\.163\.com\/mailmaster\/api\/page\/v2\/conf\.do$ url jsonjq-response-body 'delpaths([["data","functionOperatorInfoList"],["data","memberOperator"],["data","activityTabInfoList"]])'
 
 ^https:\/\/appconf\.mail\.163\.com\/mailmaster\/api\/config\/function\.do$ url jsonjq-response-body '.data.config[] |= if .result.tools then .result.tools |= map(select(.name == "邮件追踪" or .name == "替身邮箱")) else . end | del(.data.config[] | select(.functionName == "Function-AD"))'
 

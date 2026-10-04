@@ -10,19 +10,19 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/CatEarFM.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:22 +08:00
+# Converted: 2026-10-04 18:07:22 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/CatEarFM_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/app\.missevan\.com\/site\/launch\? '(. as $__wayx_before | try (if type == "object" then delpaths([["info","splash"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["info","splash_ready"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/app\.missevan\.com\/site\/launch\? 'delpaths([["info","splash"],["info","splash_ready"]])'
 
 http-response-jq ^https:\/\/app\.missevan\.com\/site\/config$ 'delpaths([["info","tab_bar_live"],["0"],["info","enable_tab_bar_live_notice"],["false"],["info","teenager_popup_mode"],["0"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/app\.missevan\.com\/site\/config$ '(. as $__wayx_before | try (if type == "object" then delpaths([["info","httpdns"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["info","homepage_top_task_button"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/app\.missevan\.com\/site\/config$ 'delpaths([["info","httpdns"],["info","homepage_top_task_button"]])'
 
 http-response-jq ^https:\/\/app\.missevan\.com\/site\/config$ '.info.cronet |= (fromjson | .quic=false | tojson)'
 

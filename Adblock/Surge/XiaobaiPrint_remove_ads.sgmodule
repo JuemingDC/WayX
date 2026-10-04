@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/XiaobaiPrint.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:34 +08:00
+# Converted: 2026-10-04 18:07:36 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/XiaobaiPrint_remove_ads.lpx
 # Target: Surge
@@ -21,7 +21,7 @@ DOMAIN-SUFFIX,adwanji.com,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/epbox\.gongfudou\.com\/graphql$ '(. as $__wayx_before | try (if type == "object" then delpaths([["data","mallConsumables"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","currentUser","goodsCoupons"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/epbox\.gongfudou\.com\/graphql$ 'delpaths([["data","mallConsumables"],["data","currentUser","goodsCoupons"]])'
 
 http-response-jq ^https:\/\/epbox\.gongfudou\.com\/graphql$ 'if .data.systemConfig.searchHotTags? then del(.data.systemConfig) else . end'
 

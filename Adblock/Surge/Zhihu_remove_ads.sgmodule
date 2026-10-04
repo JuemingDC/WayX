@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Zhihu.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:38 +08:00
+# Converted: 2026-10-04 18:07:40 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Zhihu_remove_ads.lpx
 # Target: Surge
@@ -27,13 +27,13 @@ http-response-jq ^https:\/\/api\.zhihu\.com\/questions\/\d+\/feeds\? 'delpaths([
 http-response-jq ^https:\/\/api\.zhihu\.com\/comment_v\d\/(answers|pins)\/\d+\/root_comment\? 'delpaths([["atmosphere_voting_config"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/(api|page-info)(?:\.zhihu)?\.com\/answers\/v\d\/\d+(?:\?.*)?$ 'if type == "object" then delpaths([["third_business"]]) else . end | if type == "object" then delpaths([["float_search_word"]]) else . end'
+http-response-jq ^https:\/\/(api|page-info)(?:\.zhihu)?\.com\/answers\/v\d\/\d+(?:\?.*)?$ 'delpaths([["third_business"],["float_search_word"]])'
 
 http-response-jq ^https:\/\/(api|page-info)(?:\.zhihu)?\.com\/answers\/v\d\/\d+(?:\?.*)?$ '.structured_content.segments |= map(select(.type != "card"))'
 http-response-jq ^https:\/\/api\.zhihu\.com\/topstory\/recommend\? '.data[]?.children |= (if type == "array" then map(select(.id != "ring")) else . end)'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/api\.zhihu\.com\/(articles|answers|pins)\/v\d\/\d+\? 'if type == "object" then delpaths([["third_business"]]) else . end | if type == "object" then delpaths([["ring_info"]]) else . end | if type == "object" then delpaths([["interaction_bar_plugins"]]) else . end'
+http-response-jq ^https:\/\/api\.zhihu\.com\/(articles|answers|pins)\/v\d\/\d+\? 'delpaths([["third_business"],["ring_info"],["interaction_bar_plugins"]])'
 
 http-response-jq ^https:\/\/api\.zhihu\.com\/comment_v\d\/answers\/\d+\/list-headers$ 'delpaths([["continuous_consumption_module"]])'
 
@@ -46,7 +46,7 @@ http-response-jq ^https:\/\/api\.zhihu\.com\/search_v\d\? 'delpaths([["pendant"]
 http-response-jq ^https:\/\/api\.zhihu\.com\/search\/tabs\? '.data |= map(select(.t | IN("general", "ai_zhida", "recent", "people", "zvideo", "ring", "topic", "podcast", "column", "pin", "favlist")))'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/api\.zhihu\.com\/people\/self$ '(. as $__wayx_before | try (if type == "object" then delpaths([["vip_info","entrance_new","right_button"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["vip_info","entrance_v2"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/api\.zhihu\.com\/people\/self$ 'delpaths([["vip_info","entrance_new","right_button"],["vip_info","entrance_v2"]])'
 
 [Map Local]
 

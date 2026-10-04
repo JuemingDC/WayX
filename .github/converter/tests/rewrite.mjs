@@ -2126,7 +2126,7 @@ const safeJsonPipelineAst=parseRewriteV2(
 );
 const safeJsonPipelineJq=jsonPipelineToSafeNativeJq(safeJsonPipelineAst);
 assert.equal(safeJsonPipelineJq.ok,true);
-assert.match(safeJsonPipelineJq.jq,/^if type == "object" then if \.flag == null/);
+assert.match(safeJsonPipelineJq.jq,/^if \.flag == null/);
 assert.ok(safeJsonPipelineJq.jq.indexOf('.flag = true') < safeJsonPipelineJq.jq.indexOf('setpath(["count"]; 2)'));
 assert.ok(safeJsonPipelineJq.jq.indexOf('setpath(["count"]; 2)') < safeJsonPipelineJq.jq.indexOf('delpaths([["old"]])'));
 assert.match(safeJsonPipelineJq.jq,/delpaths/);
@@ -2137,7 +2137,7 @@ const nativeJsonPipelineCtx=ctx();
 const nativeJsonPipeline=planQxRewrite(v2(nativeJsonPipelineSource),nativeJsonPipelineCtx);
 assert.equal(nativeJsonPipeline.section,'rewrite');
 assert.match(nativeJsonPipeline.line,/^api url jsonjq-response-body '/);
-assert.match(nativeJsonPipeline.line,/type == "object"/);
+assert.doesNotMatch(nativeJsonPipeline.line,/__wayx_before|try |catch |type == "object"/);
 assert.ok(nativeJsonPipeline.line.indexOf('.flag = true') < nativeJsonPipeline.line.indexOf('setpath(["count"]; 2)'));
 assert.ok(nativeJsonPipeline.line.indexOf('setpath(["count"]; 2)') < nativeJsonPipeline.line.indexOf('delpaths([["old"]])'));
 assert.equal(nativeJsonPipelineCtx.generatedScripts.size,0);
@@ -2148,8 +2148,8 @@ const methodNativeJsonPipeline=planQxRewrite(v2(methodNativeJsonPipelineSource),
 assert.equal(methodNativeJsonPipeline.section,'rewrite');
 assert.match(methodNativeJsonPipeline.line,/^api \^POST\[ \] url-and-header jsonjq-request-body '/);
 assert.ok(methodNativeJsonPipeline.line.indexOf('.one = 1') < methodNativeJsonPipeline.line.indexOf('.two = 2'));
-assert.ok(methodNativeJsonPipeline.line.indexOf('.two = 2') < methodNativeJsonPipeline.line.indexOf('delpaths([["old"]])'));
-assert.ok(methodNativeJsonPipeline.line.indexOf('delpaths([["old"]])') < methodNativeJsonPipeline.line.indexOf('delpaths([["unused"]])'));
+assert.ok(methodNativeJsonPipeline.line.indexOf('.two = 2') < methodNativeJsonPipeline.line.indexOf('delpaths([["old"],["unused"]])'));
+assert.ok(methodNativeJsonPipeline.line.includes('delpaths([["old"],["unused"]])'));
 assert.equal(methodNativeJsonPipelineCtx.generatedScripts.size,0);
 
 const flagsNativeJsonPipelineSource='response if ${url} ~= /api/ims then response.json.add("a",1) | response.json.delete("b")';

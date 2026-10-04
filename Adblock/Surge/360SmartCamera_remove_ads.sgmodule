@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/360SmartCamera.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:51:59 +08:00
+# Converted: 2026-10-04 18:06:57 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/360SmartCamera_remove_ads.lpx
 # Target: Surge
@@ -21,7 +21,7 @@ DOMAIN,ad.iot.360.cn,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/jia\.360\.cn\/conf\/v1\.json 'if type == "object" then delpaths([["tab_conf"]]) else . end | if type == "object" then delpaths([["ad_conf"]]) else . end | if type == "object" then delpaths([["activity"]]) else . end'
+http-response-jq ^https:\/\/jia\.360\.cn\/conf\/v1\.json 'delpaths([["tab_conf"],["ad_conf"],["activity"]])'
 
 [MITM]
 hostname = %APPEND% jia.360.cn

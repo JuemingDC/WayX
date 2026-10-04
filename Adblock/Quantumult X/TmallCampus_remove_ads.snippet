@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/TmallCampus.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:28 +08:00
+# Converted: 2026-10-04 18:07:30 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/TmallCampus_remove_ads.lpx
@@ -24,7 +24,7 @@
 ^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.tmall\.campus\.guide\.app\.home\.pop\.get\/ url reject-dict
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.tmall\.kangaroo\.core\.service\.route\.fixrespagerecommend\/ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["data","resultValue","data","normal-banner-resource-code"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","resultValue","data","feeds-channel-code"]]) else . end) catch $__wayx_before)'
+^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.tmall\.kangaroo\.core\.service\.route\.fixrespagerecommend\/ url jsonjq-response-body 'delpaths([["data","resultValue","data","normal-banner-resource-code"],["data","resultValue","data","feeds-channel-code"]])'
 
 ^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.tmall\.campus\.guide\.app\.userprofile\.framework\.v\d\/ url jsonjq-response-body 'del(.data.memberBenefit, .data.memberBenefitNew) | .data.moduleSorts |= map(select(. != "memberBenefit" and . != "memberBenefitNew"))'
 

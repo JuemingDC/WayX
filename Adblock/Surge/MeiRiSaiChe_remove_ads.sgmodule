@@ -10,14 +10,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MeiRiSaiChe.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:22 +08:00
+# Converted: 2026-10-04 18:07:22 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/MeiRiSaiChe_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/api\.romielf\.com\/index\/indexv\d\? '(. as $__wayx_before | try (if type == "object" then if (try (getpath(["data"]) | has("advertisement")) catch false) then setpath(["data","advertisement"]; "[]") else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["data"]) | has("listadvertising")) catch false) then setpath(["data","listadvertising"]; "[]") else . end else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/api\.romielf\.com\/index\/indexv\d\? 'if (getpath(["data"]) | has("advertisement")) then (setpath(["data","advertisement"]; "[]")) else . end | if (getpath(["data"]) | has("listadvertising")) then (setpath(["data","listadvertising"]; "[]")) else . end'
 http-response-jq ^https:\/\/api\.romielf\.com\/index\/indexv\d\? '.data.list |= map(select(.type == 1))'
 
 [MITM]

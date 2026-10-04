@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DingdongMaicai.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:12 +08:00
+# Converted: 2026-10-04 18:07:12 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/DingdongMaicai_remove_ads.lpx
@@ -48,7 +48,7 @@ host, rttrack.ddxq.mobi, reject
 ^https:\/\/maicai\.api\.ddxq\.mobi\/guide-service\/userLike\/flowData$ url reject-dict
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/newDetails\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["data","top_advert_data"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","suspension"]]) else . end) catch $__wayx_before)'
+^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/newDetails\? url jsonjq-response-body 'delpaths([["data","top_advert_data"],["data","suspension"]])'
 
 ^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/newDetails\? url jsonjq-response-body '.data.list |= map(select(has("capsule_freedom_zone") | not))'
 

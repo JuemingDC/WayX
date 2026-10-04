@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/RedPaper.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:34 +08:00
+# Converted: 2026-10-04 18:07:36 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/RedPaper_remove_ads.lpx
@@ -26,11 +26,11 @@
 ^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/(?:v2\/guide\/user_banner|v3\/note\/guide) url reject-dict
 ^https:\/\/www\.xiaohongshu\.com\/api\/sns\/(?:v1\/ads\/resource|v2\/hey\/\w+\/hey_gallery) url reject-dict
 
-^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/search\/banner_list$ url jsonjq-response-body 'if (try (getpath([]) | has("data")) catch false) then setpath(["data"]; "{}") else . end'
-^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/search\/hot_list$ url jsonjq-response-body 'if (try (getpath(["data"]) | has("items")) catch false) then setpath(["data","items"]; "[]") else . end'
-^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v4\/search\/hint url jsonjq-response-body 'if (try (getpath(["data"]) | has("hint_words")) catch false) then setpath(["data","hint_words"]; "[]") else . end'
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/search\/banner_list$ url jsonjq-response-body 'if (getpath([]) | has("data")) then (setpath(["data"]; "{}")) else . end'
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/search\/hot_list$ url jsonjq-response-body 'if (getpath(["data"]) | has("items")) then (setpath(["data","items"]; "[]")) else . end'
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v4\/search\/hint url jsonjq-response-body 'if (getpath(["data"]) | has("hint_words")) then (setpath(["data","hint_words"]; "[]")) else . end'
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v4\/search\/trending\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then if (try (getpath(["data"]) | has("queries")) catch false) then setpath(["data","queries"]; "[]") else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["data"]) | has("hint_word")) catch false) then setpath(["data","hint_word"]; "{}") else . end else . end) catch $__wayx_before)'
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v4\/search\/trending\? url jsonjq-response-body 'if (getpath(["data"]) | has("queries")) then (setpath(["data","queries"]; "[]")) else . end | if (getpath(["data"]) | has("hint_word")) then (setpath(["data","hint_word"]; "{}")) else . end'
 # 移除图片和实况照片水印
 ^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/note\/(?:imagefeed|live_photo\/save) url script-response-body https://kelee.one/Resource/JavaScript/RedPaper/RedPaper_remove_ads.js
 

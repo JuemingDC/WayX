@@ -10,14 +10,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KuaiShou.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:19 +08:00
+# Converted: 2026-10-04 18:07:19 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/KuaiShou_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/(apissl|az\d-api(-js|-idc)?)\.(gifshow|ksapisrv)\.com\/rest\/system\/startup\? 'if type == "object" then delpaths([["reskinConfig"]]) else . end | (. as $__wayx_before | try (if type == "object" then delpaths([["sidebarExSquareStyle","moreList"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["sidebarExSquareStyle","topList"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/(apissl|az\d-api(-js|-idc)?)\.(gifshow|ksapisrv)\.com\/rest\/system\/startup\? 'delpaths([["reskinConfig"],["sidebarExSquareStyle","moreList"],["sidebarExSquareStyle","topList"]])'
 
 http-response-jq ^https:\/\/(apissl|az\d-api(-js|-idc)?)\.(gifshow|ksapisrv)\.com\/rest\/system\/startup\? '.sidebarExSquareStyle.commonlyUsedList |= map(select(.title == "设置" or .title == "历史记录" or .title == "草稿箱" or .title == "我的钱包" or .title == "小程序" or .title == "未成年人模式" or .title == "官方客服" or .title == "内容偏好" or .title == "离线模式" or .title == "稍后再看" or .title == "举报中心" or .title == "挂件"))'
 

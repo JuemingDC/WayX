@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KOOK.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:02 +08:00
+# Converted: 2026-10-04 18:07:00 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/KOOK_remove_ads.lpx
 # Target: Surge
@@ -18,9 +18,9 @@
 [Body Rewrite]
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ 'if type == "object" then delpaths([["ad_banner"]]) else . end | if type == "object" then delpaths([["advertise_on_off"]]) else . end'
+http-response-jq ^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ 'delpaths([["ad_banner"],["advertise_on_off"]])'
 
-http-response-jq ^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ 'if (try (getpath([]) | has("ios_mall_switch")) catch false) then setpath(["ios_mall_switch"]; false) else . end'
+http-response-jq ^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ 'if (getpath([]) | has("ios_mall_switch")) then (setpath(["ios_mall_switch"]; false)) else . end'
 
 http-response-jq ^https:\/\/www\.kookapp\.cn\/api\/v3\/discover\/tab-list\? '.data.items |= map(select(.id == 472 or .id == 473 or .id == 475))'
 

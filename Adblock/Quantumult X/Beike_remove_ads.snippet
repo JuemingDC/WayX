@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Beike.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:08 +08:00
+# Converted: 2026-10-04 18:07:07 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Beike_remove_ads.lpx
@@ -17,7 +17,7 @@
 
 # [rewrite_local]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/homepage\/initData\/mini\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["data","bootpage"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","bottom_bar_activity"]]) else . end) catch $__wayx_before)'
+^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/homepage\/initData\/mini\? url jsonjq-response-body 'delpaths([["data","bootpage"],["data","bottom_bar_activity"]])'
 ^https:\/\/apps\.api\.ke\.com\/config\/config\/bootpage\? url reject-dict
 
 ^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/userCenter\/feed\? url reject-dict

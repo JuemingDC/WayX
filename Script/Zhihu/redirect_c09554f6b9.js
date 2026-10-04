@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 17:52:48 +08:00
+// Converted: 2026-10-04 18:07:53 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /^https:\/\/link\.zhihu\.com\/\?target=(?:https?)?(?:%3A|:)?(?:\/\/|%2F%2F)?(.*)/i as urlMatch then redirect(302, "http://${urlMatch.1}")

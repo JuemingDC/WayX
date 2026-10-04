@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SodaMusic.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:26 +08:00
+# Converted: 2026-10-04 18:07:27 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/SodaMusic_remove_ads.lpx
@@ -17,7 +17,7 @@
 
 # [rewrite_local]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/tnc\d-(bjlgy|ali[a-z]{2})\d?\.zijieapi\.com\/get_domains\/v\d\/\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then if (try (getpath(["data"]) | has("opaque_data_enabled")) catch false) then setpath(["data","opaque_data_enabled"]; 0) else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["data"]) | has("ttnet_http_dns_enabled")) catch false) then setpath(["data","ttnet_http_dns_enabled"]; 0) else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["data"]) | has("ttnet_quic_enabled")) catch false) then setpath(["data","ttnet_quic_enabled"]; 0) else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["data"]) | has("ttnet_tt_http_dns")) catch false) then setpath(["data","ttnet_tt_http_dns"]; 0) else . end else . end) catch $__wayx_before)'
+^https:\/\/tnc\d-(bjlgy|ali[a-z]{2})\d?\.zijieapi\.com\/get_domains\/v\d\/\? url jsonjq-response-body 'if (getpath(["data"]) | has("opaque_data_enabled")) then (setpath(["data","opaque_data_enabled"]; 0)) else . end | if (getpath(["data"]) | has("ttnet_http_dns_enabled")) then (setpath(["data","ttnet_http_dns_enabled"]; 0)) else . end | if (getpath(["data"]) | has("ttnet_quic_enabled")) then (setpath(["data","ttnet_quic_enabled"]; 0)) else . end | if (getpath(["data"]) | has("ttnet_tt_http_dns")) then (setpath(["data","ttnet_tt_http_dns"]; 0)) else . end'
 
 ^https:\/\/tnc\d-(bjlgy|ali[a-z]{2})\d?\.zijieapi\.com\/get_domains\/v\d\/\? url jsonjq-response-body '.data.ttnet_dispatch_actions |= map(select(.action != "dispatch" and .action != "tc"))'
 

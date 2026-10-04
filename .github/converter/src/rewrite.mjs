@@ -548,6 +548,8 @@ export function rewriteIrDeclaration(ir) {
 
 // jq.mjs
 // JQ syntax and lowering helpers (integrated domain section)
+// 转换器失败案例：BaiduTranslate delete retained __wayx_before/try/type guards.
+// Generated native jq now uses bare expressions; author guards remain source text.
 // jqlang is authoritative; ONLY replace references ScriptHub.
 // Author: chance
 // Category: Converter / JQ
@@ -1076,7 +1078,7 @@ export function supportsRewritePhaseActions(ast,target) {
 
 // Native JQ is a target capability, not a reason to introduce an HTTP Script.
 // Multiple known single-output JQ actions can also stay in one native rule;
-// each action catches its own failure using that action's original input.
+// filters run in source order using native jq error propagation.
 function nativeJqPriorityPlan(ast,target) {
   if(!ast.actions.every(a=>a.name===ast.phase+'.json.jq'))return null;
   try {
@@ -1086,7 +1088,7 @@ function nativeJqPriorityPlan(ast,target) {
       return parts.map(p=>p[1]).join('');
     });
     if(ast.actions.length>1 && ast.actions.some(a=>fixedJqOperations(a)===null))throw new Error('native multi-action JQ requires proven single-output filters');
-    const jq=filters.length===1?filters[0]:filters.map(filter=>'(. as $__wayx_before | try ('+filter+') catch $__wayx_before)').join(' | ');
+    const jq=filters.length===1?filters[0]:filters.map(filter=>'('+filter+')').join(' | ');
     const nativeAst={...ast,actions:[{...ast.actions[0],args:[{type:'raw-string',value:jq,raw:'`'+jq.replace(/`/g,'``')+'`'}]}]};
     if(target==='qx') {
       const matcher=qxExactRewriteMatcherPlan(ast,{compatibility:true});
@@ -1386,7 +1388,7 @@ function qxQuote(value) {
 export function renderFixedPathReplaceJq(parts,value) {
   validateParts(parts);
   const parent=JSON.stringify(parts.slice(0,-1)),key=JSON.stringify(parts.at(-1));
-  return 'if (try (getpath('+parent+') | has('+key+')) catch false) then setpath('+JSON.stringify(parts)+'; '+value+') else . end';
+  return 'if (getpath('+parent+') | has('+key+')) then (setpath('+JSON.stringify(parts)+'; '+value+')) else . end';
 }
 
 export function jsonActionToJq(action) {
@@ -1445,40 +1447,18 @@ function fixedObjectJsonOps(action) {
     return unsupported(name + ': batch argument lengths differ');
   }
 
-  const ops=[];
+  const operation=name.split('.').at(-1);
+  const entries=[];
   for (let index=0; index<paths.length; index++) {
     let key;
-    try {
-      key=fixedObjectKeyPath(paths[index],name);
-    } catch (error) {
-      return unsupported(String(error?.message || error));
-    }
-    if (key===null) {
-      return unsupported(name + ': native multi-action JQ currently requires fixed object key paths');
-    }
-
-    if (name.endsWith('.delete')) {
-      const op='if type == "object" then '+renderFixedPathDeleteJq([{parts:key}])+' else . end';
-      ops.push(key.length===1?op:'(. as $__wayx_before | try ('+op+') catch $__wayx_before)');
-      continue;
-    }
-
-    let value;
-    try {
-      value=anyToJq(values[index]);
-    } catch (error) {
-      return unsupported(String(error?.message || error));
-    }
-
-    if (name.endsWith('.add')) {
-      const op='if type == "object" then '+renderFixedPathAddJq(key,value)+' else . end';
-      ops.push(key.length===1?op:'(. as $__wayx_before | try ('+op+') catch $__wayx_before)');
-    } else {
-      const op='if type == "object" then '+renderFixedPathReplaceJq(key,value)+' else . end';
-      ops.push(key.length===1?op:'(. as $__wayx_before | try ('+op+') catch $__wayx_before)');
-    }
+    try { key=fixedObjectKeyPath(paths[index],name); }
+    catch(error) { return unsupported(String(error?.message || error)); }
+    if(key===null)return unsupported(name + ': native multi-action JQ currently requires fixed object key paths');
+    if(operation==='delete') { entries.push({parts:key}); continue; }
+    try { entries.push({parts:key,value:anyToJq(values[index])}); }
+    catch(error) { return unsupported(String(error?.message || error)); }
   }
-
+  const ops=[renderFixedJsonMutationJq(operation,entries)];
   return {ok:true,ops};
 }
 

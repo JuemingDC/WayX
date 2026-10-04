@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SinaStock.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:36 +08:00
+# Converted: 2026-10-04 18:07:38 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/SinaStock_remove_ads.lpx
@@ -35,7 +35,7 @@
 ^https:\/\/quotes\.sina\.com\.cn\/cn\/api\/openapi\.php\/PriceChangeService\.getSearchList\? url reject-dict
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/app\.cj\.sina\.com\.cn\/clientSetting\/api\/start\/init\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["result","data","search_ad"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","data","center_ads"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","data","banner_new_tagid"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","data","ad_hasAddScreenParam"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","data","us_trade"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","data","open_account"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","data","us_hq_trade"]]) else . end) catch $__wayx_before)'
+^https:\/\/app\.cj\.sina\.com\.cn\/clientSetting\/api\/start\/init\? url jsonjq-response-body 'delpaths([["result","data","search_ad"],["result","data","center_ads"],["result","data","banner_new_tagid"],["result","data","ad_hasAddScreenParam"],["result","data","us_trade"],["result","data","open_account"],["result","data","us_hq_trade"]])'
 
 ^https:\/\/(newscj\.xincai\.com|news\.cj\.sina\.cn)\/app\/v1\/feed\? url jsonjq-response-body '.data.feed.data |= map(select((.author // "") != ""))'
 

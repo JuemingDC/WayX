@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/QtingFM.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:26 +08:00
+# Converted: 2026-10-04 18:07:27 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/QtingFM_remove_ads.lpx
 # Target: Surge
@@ -27,19 +27,19 @@ DOMAIN,adlaunch.qtfm.cn,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 
-http-response-jq ^https:\/\/app\.qtfm\.cn\/m-bff\/v\d\/signin\/show_homepage_icon$ 'if (try (getpath(["data"]) | has("display_icon")) catch false) then setpath(["data","display_icon"]; false) else . end'
+http-response-jq ^https:\/\/app\.qtfm\.cn\/m-bff\/v\d\/signin\/show_homepage_icon$ 'if (getpath(["data"]) | has("display_icon")) then (setpath(["data","display_icon"]; false)) else . end'
 
 http-response-jq ^https:\/\/app\.qtfm\.cn\/recommendapi\/v\d\/hotpage\? '.data.head |= map(select(.type == "IconGrid")) | .data.feeds |= map(select(.type == "Channel" or .type == "Radio" or .type == "ListenListChannel"))'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/app\.qtfm\.cn\/m-bff\/v\d\/channel\/\d{6}\/playpage\/\d{8} '(. as $__wayx_before | try (if type == "object" then delpaths([["data","related_recommend"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","recommend_bar"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/app\.qtfm\.cn\/m-bff\/v\d\/channel\/\d{6}\/playpage\/\d{8} 'delpaths([["data","related_recommend"],["data","recommend_bar"]])'
 
 http-response-jq ^https:\/\/app\.qtfm\.cn\/m-bff\/v\d\/mylistenpage 'delpaths([["data","banner"]])'
 
 http-response-jq ^https:\/\/app\.qtfm\.cn\/m-bff\/v\d\/subscribed_channels\? 'delpaths([["data","recommends"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/app\.qtfm\.cn\/m-bff\/v1\/channelpage\/\d+$ '(. as $__wayx_before | try (if type == "object" then delpaths([["data","vip_recommend"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","recommend_delivery"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/app\.qtfm\.cn\/m-bff\/v1\/channelpage\/\d+$ 'delpaths([["data","vip_recommend"],["data","recommend_delivery"]])'
 
 [Map Local]
 ^https:\/\/app\.qtfm\.cn\/recommendapi\/v8\/ai_assistant_point$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"

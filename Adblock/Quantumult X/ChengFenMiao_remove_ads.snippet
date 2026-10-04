@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ChengFenMiao.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:11 +08:00
+# Converted: 2026-10-04 18:07:10 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/ChengFenMiao_remove_ads.lpx
@@ -22,7 +22,7 @@
 
 ^https:\/\/app\.chengfenmiao\.com\/item\/closet\? url reject-dict
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/app\.chengfenmiao\.com\/helper\/setting\? url jsonjq-response-body 'if type == "object" then delpaths([["detail_buy_sites"]]) else . end | if type == "object" then delpaths([["bottom_sites"]]) else . end'
+^https:\/\/app\.chengfenmiao\.com\/helper\/setting\? url jsonjq-response-body 'delpaths([["detail_buy_sites"],["bottom_sites"]])'
 
 ^https:\/\/app\.chengfenmiao\.com\/Helper\/HotWords\? url reject-dict
 

@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ZAKER.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:06 +08:00
+# Converted: 2026-10-04 18:07:04 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/ZAKER_remove_ads.lpx
@@ -20,7 +20,7 @@
 
 ^https:\/\/iphone\.myzaker\.com\/zaker\/article_mongo_sec\.php\? url jsonjq-response-body 'delpaths([["data","ad_url"]])'
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/ggs\.myzaker\.com\/zk_article_ad\.php\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["data","article_bottom"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","recommend_ad"]]) else . end) catch $__wayx_before)'
+^https:\/\/ggs\.myzaker\.com\/zk_article_ad\.php\? url jsonjq-response-body 'delpaths([["data","article_bottom"],["data","recommend_ad"]])'
 
 ^https:\/\/iphone\.myzaker\.com\/zaker\/follow_promote\.php\? url jsonjq-response-body '.data.list |= map(select(.type != "web"))'
 

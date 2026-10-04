@@ -695,8 +695,13 @@ if(selectedCase==='generated-helper-runtime.mjs') {
     const filters=['.first = true','.data.flag = true','.last = 3'];const pipeline=phase+' if ${url} ~= /api/i then '+filters.map(f=>phase+'.json.jq(`'+f+'`)').join(' | ');const native=convertPlugin(entry,'[Rewrite]\n'+pipeline,options);validateConvertedPlugin(entry,native);assert.equal(native.generatedScripts.size,0);
     const program=native.qx.match(/jsonjq-[^ ]+ '(.*)'/)[1];
     for(const input of ['{}','null','{"data":false}','{"data":[]}','{"data":null}','{"data":{"flag":false}}','false']) {
-      let body=input;for(const filter of filters){const result=runIsolatedCase('jq',['-c',filter],{input:body,encoding:'utf8'});if(result.error)throw result.error;if(result.status===0)body=result.stdout.trim();}
-      const combined=runIsolatedCase('jq',['-c',program],{input,encoding:'utf8'});assert.equal(combined.status,0,combined.stderr);assert.deepEqual(JSON.parse(combined.stdout),JSON.parse(body));checked++;
+      const reference=runIsolatedCase('jq',['-c',filters.join(' | ')],{input,encoding:'utf8'});
+      const combined=runIsolatedCase('jq',['-c',program],{input,encoding:'utf8'});
+      assert.doesNotMatch(program,/__wayx_before|try |catch |if type/);
+      assert.equal(combined.status,reference.status,combined.stderr);
+      if(reference.status===0)assert.deepEqual(JSON.parse(combined.stdout),JSON.parse(reference.stdout));
+      else assert.equal(combined.stdout,reference.stdout);
+      checked++;
     }
   }
   // Native Surge mock remains Map Local; QX inline response has no native
@@ -841,24 +846,35 @@ if(selectedCase==='generated-helper-runtime.mjs') {
     // Pair the first two add operations to exercise per-group failure recovery.
     if(caseIndex===3)actions.splice(0,2,phase+'.json.add('+JSON.stringify(ops.slice(0,2).map(item=>keyPath(item.path)))+','+JSON.stringify(ops.slice(0,2).map(item=>item.value))+')');
     const source=phase+' if ${url} ~= /api/ then '+actions.join(' | ');
+    const referenceProgram=ops.map(item=>{
+      const selector='.'+keyPath(item.path);
+      if(item.op==='delete')return 'delpaths('+JSON.stringify([item.path])+')';
+      if(item.op==='add')return 'if '+selector+' == null then '+selector+' = '+JSON.stringify(item.value)+' else . end';
+      const parent=item.path.length===1?'.':'.'+keyPath(item.path.slice(0,-1));
+      return 'if ('+parent+' | has('+JSON.stringify(item.path.at(-1))+')) then '+selector+' = '+JSON.stringify(item.value)+' else . end';
+    }).join(' | ');
     const output=convertPlugin(entry,'[Rewrite]\n'+source,options);
     validateConvertedPlugin(entry,output);
     assert.equal(output.generatedScripts.size,0,'pure fixed object JSON must stay native');
     assert.match(output.surge,/#!requirement=CORE_VERSION>=20/,'native Surge JQ must retain its core requirement');
     for(const input of inputs) {
-      const expected=model(input,ops);
+      const reference=runIsolatedCase('jq',['-c',referenceProgram],{input:JSON.stringify(input),encoding:'utf8'});
+      const expected=reference.status===0?JSON.parse(reference.stdout):undefined;
       const context={url:'https://example.test/api',request:{url:'https://example.test/api',headers:{},body:JSON.stringify(input)},response:{headers:{},body:JSON.stringify(input),status:200}};
       const oracle=evaluateRewriteActions(parseRewriteV2(source),context,{parsePath:parseJsonKeyPath});
       assert.deepEqual(oracle.errors,[]);
-      assert.deepEqual(JSON.parse(oracle.state[phase].body),expected,source+' independent model');
+      assert.deepEqual(JSON.parse(oracle.state[phase].body),model(input,ops),source+' helper source model');
       for(const target of ['qx','surge']) {
         const pattern=target==='qx'?new RegExp('^api url jsonjq-'+phase+'-body \'(.+)\'$','m'):new RegExp('^http-'+phase+'-jq api \'(.+)\'$','m');
         const filter=output[target].match(pattern)?.[1];
         assert.ok(filter,source+' '+target+' actual native rule');
         const result=runIsolatedCase('jq',['-c',filter],{input:JSON.stringify(input),encoding:'utf8'});
-        assert.equal(result.status,0,source+' '+target+' '+result.stderr);
-        const lines=result.stdout.trim().split('\n');assert.equal(lines.length,1,'native mutation must produce one body');
-        assert.deepEqual(JSON.parse(lines[0]),expected,source+' '+target+' input='+JSON.stringify(input));
+        assert.doesNotMatch(filter,/__wayx_before|try |catch |type == \"object\"/);
+        assert.equal(result.status,reference.status,source+' '+target+' '+result.stderr);
+        if(reference.status===0) {
+          const lines=result.stdout.trim().split('\n');assert.equal(lines.length,1,'native mutation must produce one body');
+          assert.deepEqual(JSON.parse(lines[0]),expected,source+' '+target+' input='+JSON.stringify(input));
+        } else assert.equal(result.stdout,reference.stdout,'native error propagation must not fabricate fallback body');
         checked++;
       }
     }
@@ -876,7 +892,7 @@ if(selectedCase==='generated-helper-runtime.mjs') {
     for(const target of ['qx','surge'])assert.doesNotMatch(output[target],target==='qx'?/api url jsonjq-response-body/:/http-response-jq api /);
     assert.ok(output.generatedScripts.size>0,'array/dynamic paths retain necessary helpers');
   }
-  console.log('Native object JSON pipelines passed: '+checked+' actual emitted filters against independent model, plus batch recovery, phase ownership and dynamic/index guards');
+  console.log('Native object JSON pipelines passed: '+checked+' bare filters against independent jq, including native type errors, phase ownership and dynamic/index boundaries');
 }
 
 if(selectedCase==='generated-helper-runtime.mjs') {
@@ -1127,4 +1143,32 @@ if(selectedCase==='generated-helper-runtime.mjs') {
     }
   }
   console.log('WayX jq grammar passed: '+checked+' emitted v2/legacy/request/response filters with special root keys, Unicode and array paths');
+}
+
+// Failure case: user screenshot showed generated guards on Baidu Translate.
+if(selectedCase==='generated-helper-runtime.mjs') {
+  const fs=await import('node:fs/promises');
+  const {convertPlugin,validateConvertedPlugin}=await import('../src/conversion.mjs');
+  const entry={id:'BareJqRegression',source:'https://example.test/source.lpx',category:'Test'};
+  const options={stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'};
+  const source=await fs.readFile('Resource/Loon/BaiduTranslate_remove_ads.lpx','utf8');
+  const out=convertPlugin(entry,source,options);validateConvertedPlugin(entry,out);
+  const expected=['delpaths([["data","taskBanner"],["data","act"]])','delpaths([["data","activityRec"],["data","activityRecList"]])'];
+  for(const target of ['qx','surge']) {
+    const programs=out[target].split('\n').filter(l=>!l.startsWith('#') && /(?: url jsonjq-response-body |^http-response-jq )/.test(l)).map(l=>l.match(/'(.+)'$/)[1]);
+    assert.deepEqual(programs,expected,'screenshot regression: exact bare native delete expressions');
+    assert.doesNotMatch(programs.join('\n'),/__wayx_before|try |catch |if type/);
+    for(const program of programs)assert.equal(runIsolatedCase('jq',[program],{input:'',encoding:'utf8'}).status,0);
+  }
+  const author='if type == "object" then try .data catch . else . end';
+  const authored=convertPlugin(entry,'[Rewrite]\nresponse if ${url} ~= /api/ then response.json.jq(`'+author+'`)',options);
+  for(const target of ['qx','surge'])assert.ok(authored[target].includes("'"+author+"'"),'author condition and error handling remain original');
+  const multi=convertPlugin(entry,'[Rewrite]\nresponse if ${url} ~= /api/ then response.json.jq(`.a = 1`) | response.json.jq(`.b = 2`)',options);
+  for(const target of ['qx','surge']) {
+    const line=multi[target].split('\n').find(l=>l.startsWith(target==='qx'?'api url jsonjq-response-body':'http-response-jq api '));
+    assert.ok(line);assert.doesNotMatch(line,/__wayx_before|try |catch |if type/);
+    const filter=line.match(/'(.+)'$/)[1],result=runIsolatedCase('jq',['-c',filter],{input:'{}',encoding:'utf8'});
+    assert.equal(result.status,0,result.stderr);assert.deepEqual(JSON.parse(result.stdout),{a:1,b:2});
+  }
+  console.log('Bare jq screenshot regression passed: exact Baidu Translate filters in both targets, author guards preserved, generated multi-jq guards absent');
 }

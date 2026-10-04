@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 17:52:19 +08:00
+// Converted: 2026-10-04 18:07:19 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /^https:\/\/duckduckgo\.com\/\?q=qm\+([^&]+).+/i as urlMatch then redirect(307, "https://www.qimai.cn/search/index/country/cn/search/${urlMatch.1}")

@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 17:52:29 +08:00
+// Converted: 2026-10-04 18:07:31 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/jz\.wacaijizhang\.com\/sensor\/config\/iOS\.conf\?/i then response.body.mock("json", "{\"v\":\"v2\",\"configs\":{\"disableSDK\":true,\"disableDebugMode\":true,\"supportTransportEncrypt\":false}}", 200)

@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Chuzhan.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:11 +08:00
+# Converted: 2026-10-04 18:07:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Chuzhan_remove_ads.lpx
 # Target: Surge
@@ -18,9 +18,9 @@
 [Body Rewrite]
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/app\.huashi6\.com\/app\/common\/config$ '(. as $__wayx_before | try (if type == "object" then if (try (getpath(["data"]) | has("disableAd")) catch false) then setpath(["data","disableAd"]; true) else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["data"]) | has("showTopFloatAdvanceTips")) catch false) then setpath(["data","showTopFloatAdvanceTips"]; false) else . end else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/app\.huashi6\.com\/app\/common\/config$ 'if (getpath(["data"]) | has("disableAd")) then (setpath(["data","disableAd"]; true)) else . end | if (getpath(["data"]) | has("showTopFloatAdvanceTips")) then (setpath(["data","showTopFloatAdvanceTips"]; false)) else . end'
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/app\.huashi6\.com\/app\/common\/config$ '(. as $__wayx_before | try (if type == "object" then delpaths([["data","adsConfigIOS"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","adsConfigAndroid"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","url","tabMarket"]]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/app\.huashi6\.com\/app\/common\/config$ 'delpaths([["data","adsConfigIOS"],["data","adsConfigAndroid"],["data","url","tabMarket"]])'
 
 http-response-jq ^https:\/\/app\.huashi6\.com\/app\/common\/layouts$ '.data |= {CZ_MINE_MENUS: .CZ_MINE_MENUS}'
 

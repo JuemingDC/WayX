@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Douyu.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:13 +08:00
+# Converted: 2026-10-04 18:07:12 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Douyu_remove_ads.lpx
@@ -27,10 +27,10 @@ host, stun1.qvb.qcloud.com, reject
 ^https:\/\/rtbapi\.douyucdn\.cn\/japi\/sign\/app\/getinfo url reject-dict
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/apiv2\.douyucdn\.cn\/japi\/entrance\/roomRes\/nc\/m\/list url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["data","pendant_a"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","entrance_d"]]) else . end) catch $__wayx_before)'
+^https:\/\/apiv2\.douyucdn\.cn\/japi\/entrance\/roomRes\/nc\/m\/list url jsonjq-response-body 'delpaths([["data","pendant_a"],["data","entrance_d"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/venus\.douyucdn\.cn\/venus\/config\/static\/update.+keyCodeSet=flow_config url jsonjq-response-body 'if type == "object" then if (try (getpath([]) | has("greatGodGameSitterSwitch")) catch false) then setpath(["greatGodGameSitterSwitch"]; 0) else . end else . end | if type == "object" then if (try (getpath([]) | has("followMoreAnchorEntrance")) catch false) then setpath(["followMoreAnchorEntrance"]; 0) else . end else . end | if type == "object" then if (try (getpath([]) | has("sdklivebanner")) catch false) then setpath(["sdklivebanner"]; 0) else . end else . end | if type == "object" then if (try (getpath([]) | has("homeActFloatSwitch")) catch false) then setpath(["homeActFloatSwitch"]; 0) else . end else . end | if type == "object" then if (try (getpath([]) | has("bringGoodsSwitch")) catch false) then setpath(["bringGoodsSwitch"]; 0) else . end else . end | if type == "object" then if (try (getpath([]) | has("qqGameSwitch")) catch false) then setpath(["qqGameSwitch"]; 0) else . end else . end'
+^https:\/\/venus\.douyucdn\.cn\/venus\/config\/static\/update.+keyCodeSet=flow_config url jsonjq-response-body 'if (getpath([]) | has("greatGodGameSitterSwitch")) then (setpath(["greatGodGameSitterSwitch"]; 0)) else . end | if (getpath([]) | has("followMoreAnchorEntrance")) then (setpath(["followMoreAnchorEntrance"]; 0)) else . end | if (getpath([]) | has("sdklivebanner")) then (setpath(["sdklivebanner"]; 0)) else . end | if (getpath([]) | has("homeActFloatSwitch")) then (setpath(["homeActFloatSwitch"]; 0)) else . end | if (getpath([]) | has("bringGoodsSwitch")) then (setpath(["bringGoodsSwitch"]; 0)) else . end | if (getpath([]) | has("qqGameSwitch")) then (setpath(["qqGameSwitch"]; 0)) else . end'
 # 移除首页轮播图和视频流广告
 ^https:\/\/apiv2\.douyucdn\.cn\/mgapi\/livenc\/home\/getRecV3 url script-response-body https://kelee.one/Resource/JavaScript/Douyu/Douyu_remove_ads.js
 

@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/JDWaimai.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:18 +08:00
+# Converted: 2026-10-04 18:07:18 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/JDWaimai_remove_ads.lpx
@@ -23,7 +23,7 @@
 ^https:\/\/color\.jddj\.com\/client\.action\?functionId=wmHome$ url jsonjq-response-body '(.floors |= map(del(.data.tnData.newsInfo?))) | .floors |= (map(select(.mId != "newWalletIdFloor" and .mId != "recommendfloor"))) | .floors |= (map(.data |= (if .tnData? then del(.tnData.cardList, .tnData.cardListStatic, .tnData.walletList) else . end)))'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/api\.m\.jd\.com\/client\.action$ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["data","searchDTO","searchWords"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","wishlistDTO","bubbleTip"]]) else . end) catch $__wayx_before)'
+^https:\/\/api\.m\.jd\.com\/client\.action$ url jsonjq-response-body 'delpaths([["data","searchDTO","searchWords"],["data","wishlistDTO","bubbleTip"]])'
 
 ^https:\/\/api\.m\.jd\.com\/client\.action$ url jsonjq-response-body '.data.tabList |= (map(select(.code == "recommendation" or .code == "find_food")) | map(if .code == "recommendation" then .dpHomeFeedTabResultDTOList = .dpHomeFeedTabResultDTOList[0:2] else . end | .dpHomeBannerResultDTOList = []))'
 

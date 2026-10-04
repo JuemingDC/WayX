@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/iReaderDejian.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:12 +08:00
+# Converted: 2026-10-04 18:07:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/iReaderDejian_remove_ads.lpx
@@ -19,7 +19,7 @@ host, saad.ms.zhangyue.net, reject
 
 # [rewrite_local]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/dj\.palmestore\.com\/zybk\/api\/powerup\/userGroup\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["body","sevenDaysAd"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["body","shortPlayShow"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["body","sdkShortPlayAB"]]) else . end) catch $__wayx_before)'
+^https:\/\/dj\.palmestore\.com\/zybk\/api\/powerup\/userGroup\? url jsonjq-response-body 'delpaths([["body","sevenDaysAd"],["body","shortPlayShow"],["body","sdkShortPlayAB"]])'
 
 ^https:\/\/dj\.palmestore\.com\/djad\/ url reject-dict
 ^https:\/\/dj\.palmestore\.com\/zybk\/api\/ad\/ url reject-dict

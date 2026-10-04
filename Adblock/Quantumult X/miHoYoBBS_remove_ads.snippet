@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/miHoYoBBS.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:52:23 +08:00
+# Converted: 2026-10-04 18:07:23 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/miHoYoBBS_remove_ads.lpx
@@ -19,13 +19,13 @@
 ^https:\/\/bbs-api(-ab)?\.miyoushe\.com\/apihub\/api\/getAppSplash$ url reject-dict
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/bbs-api(-ab)?\.miyoushe\.com\/apihub\/api\/getAppStartupData$ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["data","resp_map","/teenager/api/info"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","resp_map","/apihub/api/getAppConfig","data","get_app_config_response","config","is_show_teenager_mode_btn"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","resp_map","/apihub/api/getAppConfig","data","get_app_config_response","config","teenager_popup_freq_type"]]) else . end) catch $__wayx_before)'
+^https:\/\/bbs-api(-ab)?\.miyoushe\.com\/apihub\/api\/getAppStartupData$ url jsonjq-response-body 'delpaths([["data","resp_map","/teenager/api/info"],["data","resp_map","/apihub/api/getAppConfig","data","get_app_config_response","config","is_show_teenager_mode_btn"],["data","resp_map","/apihub/api/getAppConfig","data","get_app_config_response","config","teenager_popup_freq_type"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/bbs-api(-ab)?\.miyoushe\.com\/apihub\/api\/getAppConfig$ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then if (try (getpath(["data","config"]) | has("teenager_popup_freq_type")) catch false) then setpath(["data","config","teenager_popup_freq_type"]; 0) else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["data","config"]) | has("is_show_teenager_mode_btn")) catch false) then setpath(["data","config","is_show_teenager_mode_btn"]; 0) else . end else . end) catch $__wayx_before)'
+^https:\/\/bbs-api(-ab)?\.miyoushe\.com\/apihub\/api\/getAppConfig$ url jsonjq-response-body 'if (getpath(["data","config"]) | has("teenager_popup_freq_type")) then (setpath(["data","config","teenager_popup_freq_type"]; 0)) else . end | if (getpath(["data","config"]) | has("is_show_teenager_mode_btn")) then (setpath(["data","config","is_show_teenager_mode_btn"]; 0)) else . end'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/bbs-api-ab\.miyoushe\.com\/teenager\/api\/info$ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then if (try (getpath(["data"]) | has("is_enabled")) catch false) then setpath(["data","is_enabled"]; false) else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["data"]) | has("is_teenager")) catch false) then setpath(["data","is_teenager"]; false) else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["data"]) | has("is_force")) catch false) then setpath(["data","is_force"]; false) else . end else . end) catch $__wayx_before)'
+^https:\/\/bbs-api-ab\.miyoushe\.com\/teenager\/api\/info$ url jsonjq-response-body 'if (getpath(["data"]) | has("is_enabled")) then (setpath(["data","is_enabled"]; false)) else . end | if (getpath(["data"]) | has("is_teenager")) then (setpath(["data","is_teenager"]; false)) else . end | if (getpath(["data"]) | has("is_force")) then (setpath(["data","is_force"]; false)) else . end'
 
 ^https:\/\/bbs-api(-ab)?\.miyoushe\.com\/apihub\/api\/getHotKeywordAndEvent$ url reject-dict
 ^https:\/\/bbs-api-static\.miyoushe\.com\/search\/api\/search\/pre_keyword\? url reject-dict
