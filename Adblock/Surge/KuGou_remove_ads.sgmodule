@@ -10,22 +10,22 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KuGou.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:59 +08:00
+# Converted: 2026-10-04 11:20:48 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/KuGou_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,ads.service.kugou.com,REJECT
-DOMAIN,adstats.tencentmusic.com,REJECT
-DOMAIN,adsmind.gdtimg.com,REJECT
-DOMAIN,adserviceretry.kugou.com,REJECT
-DOMAIN,adserviceretry.kglink.cn,REJECT
-DOMAIN,ad.tencentmusic.com,REJECT
-DOMAIN,adservice.kugou.com,REJECT
-DOMAIN,splashimgretrybssdl.cloud.kugou.com,REJECT
+DOMAIN,ads.service.kugou.com,REJECT,extended-matching,pre-matching
+DOMAIN,adstats.tencentmusic.com,REJECT,extended-matching,pre-matching
+DOMAIN,adsmind.gdtimg.com,REJECT,extended-matching,pre-matching
+DOMAIN,adserviceretry.kugou.com,REJECT,extended-matching,pre-matching
+DOMAIN,adserviceretry.kglink.cn,REJECT,extended-matching,pre-matching
+DOMAIN,ad.tencentmusic.com,REJECT,extended-matching,pre-matching
+DOMAIN,adservice.kugou.com,REJECT,extended-matching,pre-matching
+DOMAIN,splashimgretrybssdl.cloud.kugou.com,REJECT,extended-matching,pre-matching
 
-URL-REGEX,^http:\/\/log\.stat\.kugou\.com\/mobile\/ad\.html,REJECT
+URL-REGEX,^http:\/\/log\.stat\.kugou\.com\/mobile\/ad\.html,REJECT,extended-matching
 
 [Body Rewrite]
 

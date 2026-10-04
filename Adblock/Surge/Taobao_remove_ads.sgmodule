@@ -10,18 +10,18 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Taobao.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:07 +08:00
+# Converted: 2026-10-04 11:20:55 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Taobao_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,adashx.m.taobao.com,REJECT
-DOMAIN,ossgw.alicdn.com,REJECT
-DOMAIN,ems.youku.com,REJECT
-DOMAIN,hudong.alicdn.com,REJECT
-DOMAIN,h-adashx.ut.taobao.com,REJECT
-DOMAIN,ut.taobao.com,REJECT
+DOMAIN,adashx.m.taobao.com,REJECT,extended-matching,pre-matching
+DOMAIN,ossgw.alicdn.com,REJECT,extended-matching,pre-matching
+DOMAIN,ems.youku.com,REJECT,extended-matching,pre-matching
+DOMAIN,hudong.alicdn.com,REJECT,extended-matching,pre-matching
+DOMAIN,h-adashx.ut.taobao.com,REJECT,extended-matching,pre-matching
+DOMAIN,ut.taobao.com,REJECT,extended-matching,pre-matching
 
 [Map Local]
 ^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.fliggy\.crm\.screen\.(allresource|predict) data-type=text data="{}" status-code=200 header="Content-Type:application/json"

@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/36Kr.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:34 +08:00
+# Converted: 2026-10-04 11:20:22 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/36Kr_remove_ads.lpx
@@ -21,7 +21,7 @@ host, ad.jiemian.com, reject
 # [rewrite_local]
 ^https:\/\/gateway\.36kr\.com\/api\/mis\/sys\/config\? url jsonjq-response-body 'del(.data.contentConfig, .data.positionConfigList, .data.switchConfig.ios.sunrise_sign, .data.switchConfig.ios.sunrise_sunit_task, .data.switchConfig.ios.sunrise_sunit_mall, .data.switchConfig.ios.sunrise_distribution_icon, .data.secondFloorConfig)'
 
-^https:\/\/36kr\.com\/global\/sensors\/config\/iOS\.conf\? url jsonjq-response-body 'if getpath(["configs","disableSDK"]) then setpath(["configs","disableSDK"]; true) else . end'
+^https:\/\/36kr\.com\/global\/sensors\/config\/iOS\.conf\? url jsonjq-response-body 'if (try (getpath(["configs"]) | has("disableSDK")) catch false) then setpath(["configs","disableSDK"]; true) else . end'
 
 ^https:\/\/gateway\.36kr\.com\/api\/mis\/nav\? url jsonjq-response-body '.data.navList |= [ .[] | select(.navNick == "home" or .navNick == "newsflash" or .navNick == "me") ]'
 

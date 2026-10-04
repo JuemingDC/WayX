@@ -10,15 +10,15 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KuaiKanComic.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:58 +08:00
+# Converted: 2026-10-04 11:20:47 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/KuaiKanComic_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,ad.v3mh.com,REJECT
-DOMAIN,ipv6.kkmh.com,REJECT
-DOMAIN,ipv4.kkmh.com,REJECT
+DOMAIN,ad.v3mh.com,REJECT,extended-matching,pre-matching
+DOMAIN,ipv6.kkmh.com,REJECT,extended-matching,pre-matching
+DOMAIN,ipv4.kkmh.com,REJECT,extended-matching,pre-matching
 
 [Map Local]
 ^https:\/\/(cdn-)?api\.kkmh\.com\/v\d\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"

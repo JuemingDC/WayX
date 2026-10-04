@@ -10,13 +10,13 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/AliYunDrive.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:45 +08:00
+# Converted: 2026-10-04 11:20:34 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/AliYunDrive_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-IP-CIDR,203.107.1.1/24,REJECT,no-resolve
+IP-CIDR,203.107.1.1/24,REJECT,no-resolve,pre-matching
 
 [Map Local]
 ^https:\/\/member\.alipan\.com\/v2\/activity\/sign_in_luckyBottle data-type=text data="{}" status-code=200 header="Content-Type:application/json"

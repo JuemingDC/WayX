@@ -10,16 +10,16 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DiDi.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:51 +08:00
+# Converted: 2026-10-04 11:20:40 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/DiDi_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,gwp.xiaojukeji.com,REJECT
-DOMAIN,gwpgz.diditaxi.com.cn,REJECT
+DOMAIN,gwp.xiaojukeji.com,REJECT,extended-matching,pre-matching
+DOMAIN,gwpgz.diditaxi.com.cn,REJECT,extended-matching,pre-matching
 
-DOMAIN,adtrack.xiaojukeji.com,REJECT
+DOMAIN,adtrack.xiaojukeji.com,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 http-response-jq ^https:\/\/as\.xiaojukeji\.com\/ep\/as\/toggles\? '.data |= map(select(.name != "isUseNetConnectivity") | .assign.args.rootca_pin = 0 | .assign.args.sni_list = {})'
@@ -48,9 +48,9 @@ http-response-jq ^https:\/\/api\.udache\.com\/gulfstream\/porsche\/v\d\/bronze\/
 
 http-response-jq ^https:\/\/api\.udache\.com\/gulfstream\/porsche\/v\d\/SFCHomeTab\? '.data.tab_list |= map(select(.tab_id == "passenger" or .tab_id == "driver"))'
 
-http-response-jq ^https:\/\/htwkop\.xiaojukeji\.com(:443)?\/gateway\?api=hm\.fa\.querySellCardSummary 'if getpath(["data"]) then setpath(["data"]; "{}") else . end'
+http-response-jq ^https:\/\/htwkop\.xiaojukeji\.com(:443)?\/gateway\?api=hm\.fa\.querySellCardSummary 'if (try (getpath([]) | has("data")) catch false) then setpath(["data"]; "{}") else . end'
 
-http-response-jq ^https:\/\/htwkop\.xiaojukeji\.com(:443)?\/gateway\?api=hm\.fa\.queryWelfareCenter 'if getpath(["data"]) then setpath(["data"]; "{}") else . end'
+http-response-jq ^https:\/\/htwkop\.xiaojukeji\.com(:443)?\/gateway\?api=hm\.fa\.queryWelfareCenter 'if (try (getpath([]) | has("data")) catch false) then setpath(["data"]; "{}") else . end'
 
 http-response-jq ^https:\/\/poi\.map\.xiaojukeji\.com\/mapapi\/startinfo\?api_version 'del(.rec_destination)'
 http-response-jq ^https:\/\/poi\.map\.xiaojukeji\.com\/mapapi\/poiinfo\?product_id 'del(.rec_destination)'

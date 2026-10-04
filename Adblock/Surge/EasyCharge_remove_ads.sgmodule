@@ -10,13 +10,13 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/EasyCharge.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:36 +08:00
+# Converted: 2026-10-04 11:20:24 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/EasyCharge_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,adash-evone.echargenet.com,REJECT
+DOMAIN,adash-evone.echargenet.com,REJECT,extended-matching,pre-matching
 
 [Map Local]
 ^https:\/\/aserver-evone\.echargenet\.com\/orange\/datacenter\/snapshot-meta\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"

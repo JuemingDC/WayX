@@ -10,16 +10,16 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YY_Voice.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:44 +08:00
+# Converted: 2026-10-04 11:20:34 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/YY_Voice_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,splash.yy.com,REJECT
+DOMAIN,splash.yy.com,REJECT,extended-matching,pre-matching
 
-DOMAIN,dsp-ad.yy.com,REJECT
-DOMAIN,ysad.yy.com,REJECT
+DOMAIN,dsp-ad.yy.com,REJECT,extended-matching,pre-matching
+DOMAIN,ysad.yy.com,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 

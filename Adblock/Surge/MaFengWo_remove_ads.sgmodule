@@ -10,13 +10,13 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MaFengWo.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:00 +08:00
+# Converted: 2026-10-04 11:20:48 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/MaFengWo_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,advert.mafengwo.cn,REJECT
+DOMAIN,advert.mafengwo.cn,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 http-response-jq ^https:\/\/mapi\.mafengwo\.cn\/discovery\/get_index\/v7\? '.data.list |= map(select(.data.business_type != "gdcpm"))'

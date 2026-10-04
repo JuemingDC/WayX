@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Chuzhan.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:50 +08:00
+# Converted: 2026-10-04 11:20:39 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Chuzhan_remove_ads.lpx
@@ -18,7 +18,7 @@
 # [rewrite_local]
 ^https:\/\/app\.huashi6\.com\/app\/index\/ad\/ url reject-dict
 
-^https:\/\/app\.huashi6\.com\/app\/common\/config$ url jsonjq-response-body 'if getpath(["data","disableAd"]) then setpath(["data","disableAd"]; true) else . end | if getpath(["data","showTopFloatAdvanceTips"]) then setpath(["data","showTopFloatAdvanceTips"]; false) else . end'
+^https:\/\/app\.huashi6\.com\/app\/common\/config$ url jsonjq-response-body 'if (try (getpath(["data"]) | has("disableAd")) catch false) then setpath(["data","disableAd"]; true) else . end | if (try (getpath(["data"]) | has("showTopFloatAdvanceTips")) catch false) then setpath(["data","showTopFloatAdvanceTips"]; false) else . end'
 ^https:\/\/app\.huashi6\.com\/app\/common\/config$ url jsonjq-response-body 'del(.data.adsConfigIOS, .data.adsConfigAndroid, .data.url.tabMarket)'
 
 ^https:\/\/app\.huashi6\.com\/app\/common\/layouts$ url jsonjq-response-body '.data |= {CZ_MINE_MENUS: .CZ_MINE_MENUS}'

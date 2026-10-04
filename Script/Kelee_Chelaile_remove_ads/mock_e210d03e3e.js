@@ -1,4 +1,4 @@
-// Converted: 2026-10-03 17:44:49 +08:00
+// Converted: 2026-10-04 11:20:38 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/web\.chelaile\.net\.cn\/api\/operative_position\/infoflow\/getInfo\?/i then response.body.mock("json", "**YGKJ{}YGKJ##", 200)

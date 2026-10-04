@@ -9,44 +9,44 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/Other_icon/120px/KeLee.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:57 +08:00
+# Converted: 2026-10-04 11:20:46 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Remove_ads_by_keli.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,acdn.adnxs.com,REJECT
-DOMAIN,mediation.adnxs.com,REJECT
-DOMAIN,sin3-ib.adnxs.com,REJECT
+DOMAIN,acdn.adnxs.com,REJECT,extended-matching
+DOMAIN,mediation.adnxs.com,REJECT,extended-matching
+DOMAIN,sin3-ib.adnxs.com,REJECT,extended-matching
 
-DOMAIN,sdkconfig.ad.xiaomi.com,REJECT
-DOMAIN,data.mistat.xiaomi.com,REJECT
-DOMAIN,tracking.intl.miui.com,REJECT
+DOMAIN,sdkconfig.ad.xiaomi.com,REJECT,extended-matching
+DOMAIN,data.mistat.xiaomi.com,REJECT,extended-matching
+DOMAIN,tracking.intl.miui.com,REJECT,extended-matching
 
-DOMAIN,sdkconfig.ad.xiaomi.com,REJECT
+DOMAIN,sdkconfig.ad.xiaomi.com,REJECT,extended-matching
 
-DOMAIN-SUFFIX,doubleclick-cn.net,REJECT
-DOMAIN-SUFFIX,doubleclick.net,REJECT
+DOMAIN-SUFFIX,doubleclick-cn.net,REJECT,extended-matching
+DOMAIN-SUFFIX,doubleclick.net,REJECT,extended-matching
 
-DOMAIN,business.msstatic.com,REJECT
-DOMAIN-SUFFIX,v1d.szbdyd.com,REJECT
-URL-REGEX,^http:\/\/cdn\.wup\.huya\.com\/launch\/queryHttpDns$,REJECT
+DOMAIN,business.msstatic.com,REJECT,extended-matching
+DOMAIN-SUFFIX,v1d.szbdyd.com,REJECT,extended-matching
+URL-REGEX,^http:\/\/cdn\.wup\.huya\.com\/launch\/queryHttpDns$,REJECT,extended-matching
 
-DOMAIN-SUFFIX,m1.ad.10010.com,REJECT
+DOMAIN-SUFFIX,m1.ad.10010.com,REJECT,extended-matching
 
-DOMAIN,ad.21cn.com,REJECT
-DOMAIN,ad.k.21cn.com,REJECT
-DOMAIN,admarket.21cn.com,REJECT
-DOMAIN,adshows.21cn.com,REJECT
+DOMAIN,ad.21cn.com,REJECT,extended-matching
+DOMAIN,ad.k.21cn.com,REJECT,extended-matching
+DOMAIN,admarket.21cn.com,REJECT,extended-matching
+DOMAIN,adshows.21cn.com,REJECT,extended-matching
 IP-CIDR,122.229.8.47/32,REJECT,no-resolve
 IP-CIDR,122.229.29.89/32,REJECT,no-resolve
 
 # 首页商品信息流
-DOMAIN,mall-dsp2.qinlinkeji.com,REJECT
+DOMAIN,mall-dsp2.qinlinkeji.com,REJECT,extended-matching
 # 商城页面
-DOMAIN,mallapi2.qinlinkeji.com,REJECT
+DOMAIN,mallapi2.qinlinkeji.com,REJECT,extended-matching
 
-DOMAIN,open-pixon.ads-pixiv.net,REJECT
+DOMAIN,open-pixon.ads-pixiv.net,REJECT,extended-matching
 
 [URL Rewrite]
 ^https?:\/\/api-access\.pangolin-sdk-toutiao\.com\/api\/ad\/union\/sdk _ reject

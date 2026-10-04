@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 00:56:06 +08:00
+// Converted: 2026-10-04 11:20:36 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.(view\.v1\.View\/TFInfo|viewunite\.v1\.View\/(PlayPause|ViewEndPage))$/i then response.body.mock("text", "AAAAAAA=", 200, true)

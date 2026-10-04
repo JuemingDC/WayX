@@ -10,21 +10,21 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/WeixinMiniPrograms.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:12 +08:00
+# Converted: 2026-10-04 11:21:00 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/WexinMiniPrograms_Remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,wxsnsdy.wxs.qq.com,REJECT
-DOMAIN,wxsmsdy.video.qq.com,REJECT
-DOMAIN,wxsnsdythumb.wxs.qq.com,REJECT
+DOMAIN,wxsnsdy.wxs.qq.com,REJECT,extended-matching,pre-matching
+DOMAIN,wxsmsdy.video.qq.com,REJECT,extended-matching,pre-matching
+DOMAIN,wxsnsdythumb.wxs.qq.com,REJECT,extended-matching,pre-matching
 
-DOMAIN,ads-shopping.shouqianba.com,REJECT
+DOMAIN,ads-shopping.shouqianba.com,REJECT,extended-matching,pre-matching
 
-DOMAIN,ad.maoyan.com,REJECT
+DOMAIN,ad.maoyan.com,REJECT,extended-matching,pre-matching
 
-DOMAIN,e.jparking.cn,REJECT
+DOMAIN,e.jparking.cn,REJECT,extended-matching,pre-matching
 
 [URL Rewrite]
 ^https:\/\/webapi\.qmai\.cn\/web\/cmk-center\/marketing\/canvas\/advert-reach _ reject
