@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.86
+版本：1.87
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -1140,3 +1140,9 @@ flags 沿用现有原生 JQ 的 matcher 兼容契约：保留 source pattern，�
 本节替代旧章节中 add 使用 getpath/setpath、生成 legacy jq 压缩空白、固定对象 delete 的 del 表达式格式约定。统一路径生成器：标识符使用 `.data.flag`，特殊键使用 `.["a.b"]`，数组索引使用 `.items[0]`；根 bracket 必须带 identity `.`。Add 生成直接 selector 条件赋值；Delete 按用户最新要求使用 delpaths(PATHS)，索引批量保持逐项管道；Replace 是唯一参考 ScriptHub getpath/has/setpath 模板的操作。Native JSON 单动作、批量、多动作、legacy 共用 WayX 格式；多动作已有类型保护、独立 try/catch 和顺序恢复继续保留。原生 jq 作者表达式、jq_file/jq-path 读取内联不套用这些生成模板。
 
 上次全量转换只修正了已知上游错误，没有改变 add 生成格式，记录为本次失败案例。验收必须检查转换前后的实际 jq 文本差异，不能仅依据 Action 成功或时间戳变更判断完成。真实 jq 编译和输入输出回归同时验证格式重构没有改变操作语义。
+
+## 44. 删除转换器 jq 保护包装（v1.87）
+
+按用户明确指定，生成的 native JSON 与多动作 jq 不再添加 `. as $__wayx_before | try (...) catch $__wayx_before`、`if type == "object" ... else . end` 等转换器统一保护包装。本节覆盖旧章节的 native 类型保护、逐操作回滚、类型失败恢复及其格式约定；native jq 使用 jqlang 原生类型、错误和管道语义。Add 保留操作本身的缺失/null 条件赋值，delete 直接 delpaths(PATHS)，replace 仅用 ScriptHub parent/getpath/has/setpath 字段存在性判断，不额外 catch false。作者原生 jq 自带 if/try/catch 保留；必要 JS helper 的行为不在此格式修订范围内。
+
+此前重构只改删除函数却保留外壳，记录为转换器失败案例：BaiduTranslate_remove_ads 两条 JSON delete 成品前缀仍含 __wayx_before。验收固定检查生成器与这两条成品不存在转换器保护包装，并使用真实 jq 对照直接表达式验证结果与错误传播；全量 Action 成功和时间戳变化不能代替这一检查。
