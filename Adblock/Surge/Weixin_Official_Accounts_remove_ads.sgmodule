@@ -10,13 +10,13 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Weixin.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:10 +08:00
+# Converted: 2026-10-04 11:20:58 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Weixin_Official_Accounts_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN-SUFFIX,wxs.qq.com,REJECT
+DOMAIN-SUFFIX,wxs.qq.com,REJECT,extended-matching,pre-matching
 
 [Map Local]
 ^https:\/\/mp\.weixin\.qq\.com\/mp\/(cps_product_info|getappmsgad|jsmonitor|masonryfeed|relatedarticle)\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"

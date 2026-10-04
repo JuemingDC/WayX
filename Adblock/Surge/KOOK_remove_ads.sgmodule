@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KOOK.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:38 +08:00
+# Converted: 2026-10-04 11:20:27 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/KOOK_remove_ads.lpx
 # Target: Surge
@@ -19,7 +19,7 @@
 
 http-response-jq ^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ 'del(.ad_banner, .advertise_on_off)'
 
-http-response-jq ^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ 'if getpath(["ios_mall_switch"]) then setpath(["ios_mall_switch"]; false) else . end'
+http-response-jq ^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ 'if (try (getpath([]) | has("ios_mall_switch")) catch false) then setpath(["ios_mall_switch"]; false) else . end'
 
 http-response-jq ^https:\/\/www\.kookapp\.cn\/api\/v3\/discover\/tab-list\? '.data.items |= map(select(.id == 472 or .id == 473 or .id == 475))'
 

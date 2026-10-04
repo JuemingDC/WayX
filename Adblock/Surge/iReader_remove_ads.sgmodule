@@ -10,13 +10,13 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/iReader.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:17 +08:00
+# Converted: 2026-10-04 11:21:05 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/iReader_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,saad.ms.zhangyue.net,REJECT
+DOMAIN,saad.ms.zhangyue.net,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 

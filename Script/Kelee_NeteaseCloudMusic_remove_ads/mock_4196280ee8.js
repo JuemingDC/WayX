@@ -1,4 +1,4 @@
-// Converted: 2026-10-03 17:45:09 +08:00
+// Converted: 2026-10-04 11:20:57 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https?:\/\/interface\d?\.music\.163\.com\/e?api\/(ocpc\/)?ad\//i then response.body.mock("text", "")

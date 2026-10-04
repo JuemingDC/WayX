@@ -9,7 +9,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/bilibili.png
 # Updated: 2026-09-27 19:00
 
-# Converted: 2026-10-04 01:39:25 +08:00
+# Converted: 2026-10-04 11:21:09 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/bilibili.lpx
 # Target: Surge
@@ -19,22 +19,22 @@
 DOMAIN,bsbsb.top,{{{wayx_proxy_policy}}}
 
 # 禁用STUN & P2P
-AND,((DOMAIN-SUFFIX,chat.bilibili.com),(OR,((DOMAIN-KEYWORD,stun),(DOMAIN-KEYWORD,tracker),(DOMAIN-KEYWORD,p2p)))),REJECT
+AND,((DOMAIN-SUFFIX,chat.bilibili.com,extended-matching),(OR,((DOMAIN-KEYWORD,stun,extended-matching),(DOMAIN-KEYWORD,tracker,extended-matching),(DOMAIN-KEYWORD,p2p,extended-matching)))),REJECT
 
 # 垃圾CDN
 #AND, ((NOT, ((DEST-PORT, 8000))), (USER-AGENT, "Bilibili Freedoooooom/MarkII")), REJECT-NO-DROP
 
 # 备用域名
-DOMAIN,api.biliapi.com,REJECT
-DOMAIN,api.biliapi.net,REJECT
-DOMAIN,app.biliapi.com,REJECT
-DOMAIN,app.biliapi.net,REJECT
+DOMAIN,api.biliapi.com,REJECT,extended-matching
+DOMAIN,api.biliapi.net,REJECT,extended-matching
+DOMAIN,app.biliapi.com,REJECT,extended-matching
+DOMAIN,app.biliapi.net,REJECT,extended-matching
 
 # P2P端口
-AND,((DOMAIN-KEYWORD,bilibili),(DEST-PORT,4480)),REJECT-NO-DROP
-AND,((DOMAIN-KEYWORD,bilibili),(DEST-PORT,4483)),REJECT-NO-DROP
-AND,((DOMAIN-KEYWORD,bilibili),(DEST-PORT,8082)),REJECT-NO-DROP
-AND,((DOMAIN-KEYWORD,bilibili),(DEST-PORT,9102)),REJECT-NO-DROP
+AND,((DOMAIN-KEYWORD,bilibili,extended-matching),(DEST-PORT,4480)),REJECT-NO-DROP
+AND,((DOMAIN-KEYWORD,bilibili,extended-matching),(DEST-PORT,4483)),REJECT-NO-DROP
+AND,((DOMAIN-KEYWORD,bilibili,extended-matching),(DEST-PORT,8082)),REJECT-NO-DROP
+AND,((DOMAIN-KEYWORD,bilibili,extended-matching),(DEST-PORT,9102)),REJECT-NO-DROP
 
 # 开屏广告
 #URL-REGEX, "^http:\/\/upos-sz-static\.bilivideo\.com\/ssaxcode\/\w{2}\/\w{2}\/\w{32}-1-SPLASH", REJECT-VIDEO-NO-DROP

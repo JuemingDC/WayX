@@ -10,17 +10,17 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Douyu.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:52 +08:00
+# Converted: 2026-10-04 11:20:40 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Douyu_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-URL-REGEX,^http:\/\/linkmicschedule\.douyucdn\.cn\/im_schedule\/im_gate_list,REJECT
+URL-REGEX,^http:\/\/linkmicschedule\.douyucdn\.cn\/im_schedule\/im_gate_list,REJECT,extended-matching
 
 AND,((DEST-PORT,18000),(PROTOCOL,STUN)),REJECT
-DOMAIN,stun1.douyucdn.cn,REJECT
-DOMAIN,stun1.qvb.qcloud.com,REJECT
+DOMAIN,stun1.douyucdn.cn,REJECT,extended-matching
+DOMAIN,stun1.qvb.qcloud.com,REJECT,extended-matching
 
 [URL Rewrite]
 
@@ -30,7 +30,7 @@ DOMAIN,stun1.qvb.qcloud.com,REJECT
 
 http-response-jq ^https:\/\/apiv2\.douyucdn\.cn\/japi\/entrance\/roomRes\/nc\/m\/list 'del(.data.pendant_a, .data.entrance_d)'
 
-http-response-jq ^https:\/\/venus\.douyucdn\.cn\/venus\/config\/static\/update.+keyCodeSet=flow_config 'if getpath(["greatGodGameSitterSwitch"]) then setpath(["greatGodGameSitterSwitch"]; 0) else . end | if getpath(["followMoreAnchorEntrance"]) then setpath(["followMoreAnchorEntrance"]; 0) else . end | if getpath(["sdklivebanner"]) then setpath(["sdklivebanner"]; 0) else . end | if getpath(["homeActFloatSwitch"]) then setpath(["homeActFloatSwitch"]; 0) else . end | if getpath(["bringGoodsSwitch"]) then setpath(["bringGoodsSwitch"]; 0) else . end | if getpath(["qqGameSwitch"]) then setpath(["qqGameSwitch"]; 0) else . end'
+http-response-jq ^https:\/\/venus\.douyucdn\.cn\/venus\/config\/static\/update.+keyCodeSet=flow_config 'if (try (getpath([]) | has("greatGodGameSitterSwitch")) catch false) then setpath(["greatGodGameSitterSwitch"]; 0) else . end | if (try (getpath([]) | has("followMoreAnchorEntrance")) catch false) then setpath(["followMoreAnchorEntrance"]; 0) else . end | if (try (getpath([]) | has("sdklivebanner")) catch false) then setpath(["sdklivebanner"]; 0) else . end | if (try (getpath([]) | has("homeActFloatSwitch")) catch false) then setpath(["homeActFloatSwitch"]; 0) else . end | if (try (getpath([]) | has("bringGoodsSwitch")) catch false) then setpath(["bringGoodsSwitch"]; 0) else . end | if (try (getpath([]) | has("qqGameSwitch")) catch false) then setpath(["qqGameSwitch"]; 0) else . end'
 
 [Map Local]
 ^https:\/\/rtbapi\.douyucdn\.cn\/japi\/sign\/app\/getinfo data-type=text data="{}" status-code=200 header="Content-Type:application/json"

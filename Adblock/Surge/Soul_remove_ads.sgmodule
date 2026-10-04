@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Soul.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:40 +08:00
+# Converted: 2026-10-04 11:20:29 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Soul_remove_ads.lpx
 # Target: Surge
@@ -20,10 +20,10 @@ DOMAIN-SUFFIX,soulapp.cn,DIRECT
 IP-CIDR,8.210.3.170/32,DIRECT,no-resolve
 IP-CIDR,47.75.72.47/32,DIRECT,no-resolve
 
-DOMAIN,ad-h5-cdn.soulapp.cn,REJECT
-DOMAIN,ad-h5-station-cdn.soulapp.cn,REJECT
-DOMAIN,ad-r.soulapp.cn,REJECT
-DOMAIN,soul-ad.soulapp.cn,REJECT
+DOMAIN,ad-h5-cdn.soulapp.cn,REJECT,extended-matching
+DOMAIN,ad-h5-station-cdn.soulapp.cn,REJECT,extended-matching
+DOMAIN,ad-r.soulapp.cn,REJECT,extended-matching
+DOMAIN,soul-ad.soulapp.cn,REJECT,extended-matching
 
 IP-CIDR,47.56.131.76/32,REJECT,no-resolve
 IP-CIDR,47.97.215.55/32,REJECT,no-resolve

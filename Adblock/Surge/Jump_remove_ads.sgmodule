@@ -10,19 +10,19 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Jump.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:38 +08:00
+# Converted: 2026-10-04 11:20:26 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Jump_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,zlsdk.1rtb.net,REJECT
-DOMAIN,jp.ad.gameley.com,REJECT
-DOMAIN,toblog.ctobsnssdk.com,REJECT
-DOMAIN,s3plus.meituan.net,REJECT
-DOMAIN,images.pinduoduo.com,REJECT
-DOMAIN,qh-material.taobao.com,REJECT
-DOMAIN-SUFFIX,admobile.top,REJECT
+DOMAIN,zlsdk.1rtb.net,REJECT,extended-matching,pre-matching
+DOMAIN,jp.ad.gameley.com,REJECT,extended-matching,pre-matching
+DOMAIN,toblog.ctobsnssdk.com,REJECT,extended-matching,pre-matching
+DOMAIN,s3plus.meituan.net,REJECT,extended-matching,pre-matching
+DOMAIN,images.pinduoduo.com,REJECT,extended-matching,pre-matching
+DOMAIN,qh-material.taobao.com,REJECT,extended-matching,pre-matching
+DOMAIN-SUFFIX,admobile.top,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 http-response-jq ^https:?\/\/switch.jumpvg.com\/jump\/getlaunchad\/v2$ 'del(.data.adList)|.data.launchAd.showType=0'

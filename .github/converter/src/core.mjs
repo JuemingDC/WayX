@@ -527,7 +527,7 @@ export function evaluateRewriteActions(ast,context,{parsePath,mockFiles}={}) {
         if (parent!=null && typeof parent==='object') {
           const key=path.at(-1),current=Object.prototype.hasOwnProperty.call(parent,key)?parent[key]:undefined;
           if(operation==='delete') {if(Array.isArray(parent) && typeof key==='number') {if(key<parent.length)parent.splice(key,1);}else delete parent[key];}
-          else if(operation==='add' ? current==null : current!==undefined && current!==null && current!==false) put(parent,key,replacement);
+          else if(operation==='add' ? current==null : Object.prototype.hasOwnProperty.call(parent,key)) put(parent,key,replacement);
         }
         phase.body=JSON.stringify(json);
       } else throw new SemanticEvaluationError('unsupported oracle action: '+action.name);

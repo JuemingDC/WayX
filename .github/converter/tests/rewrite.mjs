@@ -999,8 +999,8 @@ const legacyJsonReplaceQx = planLegacyRewrite(
 );
 assert.equal(legacyJsonReplaceQx.section, 'rewrite');
 assert.match(legacyJsonReplaceQx.line, /url jsonjq-response-body/);
-assert.match(legacyJsonReplaceQx.line, /if getpath\(\["data","enabled"\]\) then setpath/);
-assert.match(legacyJsonReplaceQx.line, /if getpath\(\["data","count"\]\) then setpath/);
+assert.match(legacyJsonReplaceQx.line, /getpath\(\["data"\]\)\|has\("enabled"\)/);
+assert.match(legacyJsonReplaceQx.line, /getpath\(\["data"\]\)\|has\("count"\)/);
 
 const legacyJsonReplaceSurge = planLegacyRewrite(
   '^https:\\/\\/api\\.example\\.com',
@@ -1010,7 +1010,7 @@ const legacyJsonReplaceSurge = planLegacyRewrite(
 );
 assert.equal(legacyJsonReplaceSurge.section, 'body');
 assert.match(legacyJsonReplaceSurge.line, /^http-request-jq /);
-assert.match(legacyJsonReplaceSurge.line, /getpath\(\["data","enabled"\]\)/);
+assert.match(legacyJsonReplaceSurge.line, /has\("enabled"\)/);
 
 const legacyJsonDelBatch = planLegacyRewrite(
   '^https:\\/\\/api\\.example\\.com',
@@ -2100,7 +2100,8 @@ assert.equal(safeJsonPipelineJq.ok,true);
 assert.match(safeJsonPipelineJq.jq,/^if type == "object" then if getpath\(\["flag"\]\) == null/);
 assert.ok(safeJsonPipelineJq.jq.indexOf('setpath(["flag"]; true)') < safeJsonPipelineJq.jq.indexOf('setpath(["count"]; 2)'));
 assert.ok(safeJsonPipelineJq.jq.indexOf('setpath(["count"]; 2)') < safeJsonPipelineJq.jq.indexOf('del(.["old"])'));
-assert.doesNotMatch(safeJsonPipelineJq.jq,/delpaths|\btry\b/);
+assert.doesNotMatch(safeJsonPipelineJq.jq,/delpaths/);
+assert.match(safeJsonPipelineJq.jq,/has\("count"\)/);
 
 const nativeJsonPipelineSource='response if ${url} ~= /api/ then response.json.add("flag",true) | response.json.replace("count",2) | response.json.delete("old")';
 const nativeJsonPipelineCtx=ctx();

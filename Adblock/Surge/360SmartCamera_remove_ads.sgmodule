@@ -9,14 +9,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/360SmartCamera.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 06:22:27 +08:00
+# Converted: 2026-10-04 11:20:22 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/360SmartCamera_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,ad.jia.360.cn,REJECT
-DOMAIN,ad.iot.360.cn,REJECT
+DOMAIN,ad.jia.360.cn,REJECT,extended-matching,pre-matching
+DOMAIN,ad.iot.360.cn,REJECT,extended-matching,pre-matching
 
 [Script]
 wayx_features_c50d8e4705 = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_360SmartCamera_remove_ads/features_surge_c50d8e4705.js,requires-body=true,max-size=-1

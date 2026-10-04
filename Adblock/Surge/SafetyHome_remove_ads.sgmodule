@@ -10,13 +10,13 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SafetyHome.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:34 +08:00
+# Converted: 2026-10-04 11:20:22 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/SafetyHome_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,ad.iot.360.cn,REJECT
+DOMAIN,ad.iot.360.cn,REJECT,extended-matching,pre-matching
 
 [Map Local]
 ^https:\/\/app\.home\.360\.cn\/v1\/config\/custom_config data-type=text data="{}" status-code=200 header="Content-Type:application/json"

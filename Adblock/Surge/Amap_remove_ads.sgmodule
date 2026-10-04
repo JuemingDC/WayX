@@ -10,15 +10,15 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Amap.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:54 +08:00
+# Converted: 2026-10-04 11:20:42 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Amap_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,amap-aos-info-nogw.amap.com,REJECT
-DOMAIN,free-aos-cdn-image.amap.com,REJECT
-DOMAIN-SUFFIX,v.smtcdns.com,REJECT
+DOMAIN,amap-aos-info-nogw.amap.com,REJECT,extended-matching,pre-matching
+DOMAIN,free-aos-cdn-image.amap.com,REJECT,extended-matching,pre-matching
+DOMAIN-SUFFIX,v.smtcdns.com,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 http-response-jq ^https:\/\/m5\.amap\.com\/ws\/shield\/search_business\/process\/marketingOperationStructured\? 'del(.data.commonMaterial, .data.tipsOperationLocation, .data.resourcePlacement)'

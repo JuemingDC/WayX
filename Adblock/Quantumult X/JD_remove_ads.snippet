@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/JD.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:57 +08:00
+# Converted: 2026-10-04 11:20:45 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/JD_remove_ads.lpx
@@ -19,7 +19,7 @@
 ^http:\/\/\w{32}\.jddebug\.com\/diagnose\? url reject-200
 ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(searchBoxWord|stationPullService|uniformRecommend[06]) url reject-dict
 
-^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=basicConfig url jsonjq-response-body 'if getpath(["data","JDMessage","socketmonitor","isSocketEstablishedAhead"]) then setpath(["data","JDMessage","socketmonitor","isSocketEstablishedAhead"]; 0) else . end | if getpath(["data","JDMessage","socketmonitor","isSocketReport"]) then setpath(["data","JDMessage","socketmonitor","isSocketReport"]; 0) else . end | if getpath(["data","JDHttpToolKit","httpdns","httpdns"]) then setpath(["data","JDHttpToolKit","httpdns","httpdns"]; 0) else . end'
+^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=basicConfig url jsonjq-response-body 'if (try (getpath(["data","JDMessage","socketmonitor"]) | has("isSocketEstablishedAhead")) catch false) then setpath(["data","JDMessage","socketmonitor","isSocketEstablishedAhead"]; 0) else . end | if (try (getpath(["data","JDMessage","socketmonitor"]) | has("isSocketReport")) catch false) then setpath(["data","JDMessage","socketmonitor","isSocketReport"]; 0) else . end | if (try (getpath(["data","JDHttpToolKit","httpdns"]) | has("httpdns")) catch false) then setpath(["data","JDHttpToolKit","httpdns","httpdns"]; 0) else . end'
 # 移除京东广告
 ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(deliverLayer|getTabHomeInfo|myOrderInfo|orderTrackBusiness|personinfoBusiness|start|welcomeHome) url script-response-body https://kelee.one/Resource/JavaScript/JD/JD_remove_ads.js
 

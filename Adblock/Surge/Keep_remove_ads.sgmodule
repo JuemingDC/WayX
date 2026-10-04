@@ -10,20 +10,20 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Keep.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:38 +08:00
+# Converted: 2026-10-04 11:20:26 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Keep_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,kad.gotokeep.com,REJECT
+DOMAIN,kad.gotokeep.com,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 http-response-jq ^https:\/\/api\.gotokeep\.com\/op-engine-webapp\/v1\/configs$ 'del(.data.adTimeoutReport, .data.spotShowReport, .data.adSupplementIntervalMinutes, .data.adSupplementSwitch, .data.hotFeedSpotAdRequestMoment, .data.activityBrandFeedSpotAdRequestMoment, .data.searchFeedSpotAdRequestMoment, .data.feedDetailSpotAdRequestMoment, .data.homePageFeedSpotAdRequestMoment, .data.followFeedSpotAdRequestMoment, .data.hotFeedRecommendSpotAdRequestMoment, .data.activityFeedSpotAdRequestMoment, .data.hotFeedFindSpotAdRequestMoment, .data.hotFeedSpotFixedPositionSecond, .data.searchFeedSpotFixedPositionSecond, .data.followFeedSpotFixedPositionSecond, .data.activityFeedSpotFixedPositionSecond, .data.searchFeedSpotFixedPositionThird, .data.hotFeedFindSpotFixedPositionSecond, .data.hotFeedFindSpotFixedPositionThird, .data.activityFeedSpotFixedPositionInitial, .data.activityFeedSpotFixedPositionThird, .data.hotFeedDynamicSpotPosition, .data.feedDetailDynamicSpotPosition, .data.hotFeedRecommendDynamicSpotPosition, .data.hotFeedFindDynamicSpotPosition, .data.homePageFeedDynamicSpotPosition, .data.followFeedDynamicSpotPosition, .data.searchFeedSpotPositionDynamic, .data.activityFeedSpotPositionDynamic, .data.activityBrandFeedSpotPositionDynamic, .data.splashAdLoadTimeLimit, .data.courseAdLoadTimeLimit, .data.feedAdLoadTimeLimit, .data.aliHCSpotConfig, .data.gdtSpotConfig, .data.pugcThresholdPercent, .data.pugcStepMinSeconds, .data.pugcStepMaxSeconds, .data.pugcPreLoadEarlySeconds, .data.pugcLoadPostPreRolls, .data.closeConfirmButtonText)'
 
 http-response-jq ^https:\/\/api\.gotokeep\.com\/twins\/union\/feed\/union_feed_all$ '.data.modules |= map(select(.code == "unionFeedEntry"))'
 
-http-response-jq ^https:\/\/api\.gotokeep\.com\/twins\/v4\/feed\/entryDetail\? 'if getpath(["data"]) then setpath(["data"]; "{}") else . end'
+http-response-jq ^https:\/\/api\.gotokeep\.com\/twins\/v4\/feed\/entryDetail\? 'if (try (getpath([]) | has("data")) catch false) then setpath(["data"]; "{}") else . end'
 
 http-response-jq ^https:\/\/api\.gotokeep\.com\/config\/v3\/basic\? '.data.bottomBarControl.tabs |= map(select(.tabType | . == "home" or . == "schedule" or . == "dynamic_sports" or . == "personal")) | .data.homeTabs |= map(select(.type | . == "socialTab" or . == "union_feed_all" or . == "homeRecommend" or . == "suitTab" or . == "union_feed_route"))'
 

@@ -10,13 +10,13 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BabyTree.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:47 +08:00
+# Converted: 2026-10-04 11:20:36 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/BabyTree_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-URL-REGEX,^http:\/\/pic08\.babytreeimg\.com\/knowledge\/2022\/0923\/\w+,REJECT
+URL-REGEX,^http:\/\/pic08\.babytreeimg\.com\/knowledge\/2022\/0923\/\w+,REJECT,extended-matching
 
 [Map Local]
 ^http:\/\/go\.babytree\.com\/go_pregnancy\/api\/(index_activity\/get_app_index_activity|sign\/sign_h_5)\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"

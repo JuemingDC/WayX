@@ -4,17 +4,17 @@
 #!requirement=SYSTEM=='iOS'
 # author: chance
 # converted: 2026-09-27
-# updated: 2026-09-27
+# updated: 2026-10-04
 # source: 趣智校园冷启动 HAR（2026-09-27）
 #
 # 稳定性原则：不将客户端预期的对象字段改为 null。
 # 不修改正常支付、登录、钱包、退款、报修、扫码用水接口。
 
 [Rule]
-DOMAIN-SUFFIX,waimaimingtang.com,REJECT,pre-matching
-DOMAIN-SUFFIX,xiaozhuanbang.cn,REJECT,pre-matching
-DOMAIN,ad.lovefree.cc,REJECT,pre-matching
-DOMAIN-SUFFIX,zhixuexingtu.cn,REJECT,pre-matching
+DOMAIN-SUFFIX,waimaimingtang.com,REJECT,pre-matching,extended-matching
+DOMAIN-SUFFIX,xiaozhuanbang.cn,REJECT,pre-matching,extended-matching
+DOMAIN,ad.lovefree.cc,REJECT,pre-matching,extended-matching
+DOMAIN-SUFFIX,zhixuexingtu.cn,REJECT,pre-matching,extended-matching
 
 [Script]
 趣智校园净化 = type=http-response,pattern=^https:\/\/v3-api\.china-qzxy\.cn\/(?:user\/coin\/info\/withAppAdvChannel|project\/adv\/chain\/get|project\/advSpace\/app\/v2\/list|settlement\/advertise\/freeMeal\/activity\/index|project\/info\/triple)(?:\?|$),requires-body=true,max-size=262144,script-update-interval=60,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/QZXY/Surge/QZXYCleaner.js

@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Weibo.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:10 +08:00
+# Converted: 2026-10-04 11:20:57 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Weibo_remove_ads.lpx
 # Target: Surge
@@ -18,8 +18,8 @@
 [Rule]
 DOMAIN-SUFFIX,uve.weibo.com,DIRECT
 
-DOMAIN,huodong.weibo.cn,REJECT
-DOMAIN-SUFFIX,biz.weibo.com,REJECT
+DOMAIN,huodong.weibo.cn,REJECT,extended-matching
+DOMAIN-SUFFIX,biz.weibo.com,REJECT,extended-matching
 
 [Map Local]
 ^https:\/\/api\.weibo\.cn\/2\/(?:ug\/checkin\/list|push\/daily|push\/info) data-type=text data="{}" status-code=200 header="Content-Type:application/json"

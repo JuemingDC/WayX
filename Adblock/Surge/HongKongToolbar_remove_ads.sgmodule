@@ -9,14 +9,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/HongKongToolbar.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:37 +08:00
+# Converted: 2026-10-04 11:20:25 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/HongKongToolbar_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-URL-REGEX,^https:\/\/a\.881903\.com\/live\/preroll\/.*\/.*,REJECT-DROP
-URL-REGEX,^https:\/\/a\.881903\.com\/v\d\/app\/game\/.*,REJECT-DROP
+URL-REGEX,^https:\/\/a\.881903\.com\/live\/preroll\/.*\/.*,REJECT-DROP,extended-matching
+URL-REGEX,^https:\/\/a\.881903\.com\/v\d\/app\/game\/.*,REJECT-DROP,extended-matching
 
 [MITM]
 hostname = %APPEND% a.881903.com

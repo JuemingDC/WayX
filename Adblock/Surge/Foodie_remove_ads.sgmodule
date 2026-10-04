@@ -9,12 +9,12 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Foodie.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:37 +08:00
+# Converted: 2026-10-04 11:20:25 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Foodie_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,api-ad.kajicam.com,REJECT
-DOMAIN,zjres-ad.kajicam.com,REJECT
-DOMAIN,popup-api.b612kaji.com,REJECT
+DOMAIN,api-ad.kajicam.com,REJECT,extended-matching,pre-matching
+DOMAIN,zjres-ad.kajicam.com,REJECT,extended-matching,pre-matching
+DOMAIN,popup-api.b612kaji.com,REJECT,extended-matching,pre-matching

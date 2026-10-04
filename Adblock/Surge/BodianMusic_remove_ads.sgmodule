@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BodianMusic.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:48 +08:00
+# Converted: 2026-10-04 11:20:37 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/BodianMusic_remove_ads.lpx
 # Target: Surge
@@ -19,13 +19,13 @@
 
 http-response-jq ^https:\/\/bd-api\.kuwo\.cn\/api\/service\/conf\/all\? 'del(.data.groupSign.adStartAppDialog, .data.groupSign.adGuideTest, .data.groupSign.playTips, .data.groupSign.adExitChange, .data.conf.adGuidePopCount, .data.conf.adDownListOpen)'
 
-http-response-jq ^https:\/\/bd-api\.kuwo\.cn\/api\/service\/conf\/all\? 'if getpath(["data","conf","flowControlConfig","uploadEnable"]) then setpath(["data","conf","flowControlConfig","uploadEnable"]; false) else . end | if getpath(["data","conf","flowControlConfig","p2pEnable"]) then setpath(["data","conf","flowControlConfig","p2pEnable"]; false) else . end'
+http-response-jq ^https:\/\/bd-api\.kuwo\.cn\/api\/service\/conf\/all\? 'if (try (getpath(["data","conf","flowControlConfig"]) | has("uploadEnable")) catch false) then setpath(["data","conf","flowControlConfig","uploadEnable"]; false) else . end | if (try (getpath(["data","conf","flowControlConfig"]) | has("p2pEnable")) catch false) then setpath(["data","conf","flowControlConfig","p2pEnable"]; false) else . end'
 
 http-response-jq ^https:\/\/ab-bodian\.kuwo\.cn\/abtest\/ui\/info\? 'del(.data.mapTestInfo.CommentADPosition, .data.mapTestInfo.DiscoverADPosition, .data.mapTestInfo.DownloadAd, .data.mapTestInfo.FreeModVoiceReminder, .data.mapTestInfo.GamesTrans, .data.mapTestInfo.bodianmvdialog, .data.mapTestInfo.MvTryShowAds, .data.mapTestInfo.insert)'
 
 http-response-jq ^https:\/\/bd-api\.kuwo\.cn\/api\/service\/global\/config\/scene\? 'del(.data.iosP2PCacheEnable, .data.warmStartDialog, .data.adsNotFinishVipPop4DayInterval)'
 
-http-response-jq ^https:\/\/bd-api\.kuwo\.cn\/api\/service\/global\/config\/scene\? 'if getpath(["data","showShopEntry"]) then setpath(["data","showShopEntry"]; false) else . end | if getpath(["data","iosP2pEnableSendDataLimit"]) then setpath(["data","iosP2pEnableSendDataLimit"]; 1) else . end'
+http-response-jq ^https:\/\/bd-api\.kuwo\.cn\/api\/service\/global\/config\/scene\? 'if (try (getpath(["data"]) | has("showShopEntry")) catch false) then setpath(["data","showShopEntry"]; false) else . end | if (try (getpath(["data"]) | has("iosP2pEnableSendDataLimit")) catch false) then setpath(["data","iosP2pEnableSendDataLimit"]; 1) else . end'
 
 http-response-jq ^https:\/\/bd-api\.kuwo\.cn\/api\/search\/topic\/word\/list\? 'del(.data.hotTopic, .data.searchFind, .data.globalJumpInfo, .data.hotWord)'
 

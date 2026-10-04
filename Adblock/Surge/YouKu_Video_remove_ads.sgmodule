@@ -9,7 +9,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YouKu_Video.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 06:22:27 +08:00
+# Converted: 2026-10-04 11:21:04 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/YouKu_Video_remove_ads.lpx
 # Target: Surge
@@ -21,28 +21,28 @@ DOMAIN,push.m.youku.com,DIRECT
 DOMAIN,un-acs.youku.com,DIRECT
 DOMAIN,dorangesource.alicdn.com,DIRECT
 
-DOMAIN,h-adashx.ut.taobao.com,REJECT
-DOMAIN,adx-core.youku.com,REJECT
-DOMAIN,adx-open-service.youku.com,REJECT
-DOMAIN,yk-ssp.ad.youku.com,REJECT
-DOMAIN,cad.youku.com,REJECT
-DOMAIN,ykad-data.youku.com,REJECT
-DOMAIN,yk-ssp.ad.youku.com,REJECT
-DOMAIN,amdc.m.youku.com,REJECT
-DOMAIN,cad.youku.com,REJECT
-DOMAIN,nbsdk-baichuan.alicdn.com,REJECT
-DOMAIN,youku-crm-product.youku.com,REJECT
-DOMAIN,dr-danmu.youku.com,REJECT
-DOMAIN,group-ssl-danmu-ori.youku.com,REJECT
-DOMAIN,m.atm.youku.com,REJECT
-DOMAIN,mc.atm.youku.com,REJECT
-DOMAIN,vali-g1.cp31.ott.cibntv.net,REJECT
-DOMAIN,vali-ugc.cp31.ott.cibntv.net,REJECT
-DOMAIN-SUFFIX,iyes.youku.com,REJECT
+DOMAIN,h-adashx.ut.taobao.com,REJECT,extended-matching
+DOMAIN,adx-core.youku.com,REJECT,extended-matching
+DOMAIN,adx-open-service.youku.com,REJECT,extended-matching
+DOMAIN,yk-ssp.ad.youku.com,REJECT,extended-matching
+DOMAIN,cad.youku.com,REJECT,extended-matching
+DOMAIN,ykad-data.youku.com,REJECT,extended-matching
+DOMAIN,yk-ssp.ad.youku.com,REJECT,extended-matching
+DOMAIN,amdc.m.youku.com,REJECT,extended-matching
+DOMAIN,cad.youku.com,REJECT,extended-matching
+DOMAIN,nbsdk-baichuan.alicdn.com,REJECT,extended-matching
+DOMAIN,youku-crm-product.youku.com,REJECT,extended-matching
+DOMAIN,dr-danmu.youku.com,REJECT,extended-matching
+DOMAIN,group-ssl-danmu-ori.youku.com,REJECT,extended-matching
+DOMAIN,m.atm.youku.com,REJECT,extended-matching
+DOMAIN,mc.atm.youku.com,REJECT,extended-matching
+DOMAIN,vali-g1.cp31.ott.cibntv.net,REJECT,extended-matching
+DOMAIN,vali-ugc.cp31.ott.cibntv.net,REJECT,extended-matching
+DOMAIN-SUFFIX,iyes.youku.com,REJECT,extended-matching
 
-DOMAIN,adsmind.ugdtimg.com,REJECT
-DOMAIN,pre-acs.youku.com,REJECT
-DOMAIN,youku-acs.m.taobao.com,REJECT
+DOMAIN,adsmind.ugdtimg.com,REJECT,extended-matching
+DOMAIN,pre-acs.youku.com,REJECT,extended-matching
+DOMAIN,youku-acs.m.taobao.com,REJECT,extended-matching
 
 [Script]
 wayx_phase_response_6ea0ce2fd0 = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_YouKu_Video_remove_ads/phase_surge_response_6ea0ce2fd0.js,requires-body=true,max-size=-1

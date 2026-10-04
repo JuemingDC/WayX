@@ -527,3 +527,32 @@ console.log(
   ', observedTypes='+actual.ruleTypes.length,
 );
 }
+
+if(selectedCase==='rule.mjs') {
+  const enhanced=line=>surgeModuleRule(line,{matchingEnhancements:true});
+  assert.equal(enhanced('DOMAIN,ads.test,REJECT').line,'DOMAIN,ads.test,REJECT,extended-matching,pre-matching');
+  assert.equal(enhanced('DEST-PORT,4480,REJECT-NO-DROP').line,'DEST-PORT,4480,REJECT-NO-DROP,pre-matching');
+  assert.equal(enhanced('DOMAIN,allow.test,DIRECT').line,'DOMAIN,allow.test,DIRECT');
+  assert.equal(enhanced('URL-REGEX,^https://ads.test/,REJECT').line,'URL-REGEX,^https://ads.test/,REJECT,extended-matching');
+  assert.equal(enhanced('RULE-SET,https://example.test/list,REJECT').line,'RULE-SET,https://example.test/list,REJECT,extended-matching');
+  assert.equal(enhanced('DOMAIN-SET,https://example.test/domains,REJECT').line,'DOMAIN-SET,https://example.test/domains,REJECT,extended-matching,pre-matching');
+  const logical=enhanced('AND,((DOMAIN-SUFFIX,chat.bilibili.com),(OR,((DOMAIN-KEYWORD,stun),(DOMAIN-KEYWORD,tracker),(DOMAIN-KEYWORD,p2p)))),REJECT');
+  assert.equal(logical.line,'AND,((DOMAIN-SUFFIX,chat.bilibili.com,extended-matching),(OR,((DOMAIN-KEYWORD,stun,extended-matching),(DOMAIN-KEYWORD,tracker,extended-matching),(DOMAIN-KEYWORD,p2p,extended-matching)))),REJECT,pre-matching');
+  assert.equal((logical.line.match(/pre-matching/g)||[]).length,1,'pre-matching must occur only at top level');
+  assert.doesNotMatch(enhanced('AND,((DOMAIN,ads.test),(PROTOCOL,UDP)),REJECT').line,/pre-matching/);
+  assert.equal(enhanced('DOMAIN,ads.test,REJECT,pre-matching,extended-matching').line,'DOMAIN,ads.test,REJECT,pre-matching,extended-matching');
+  for(const source of ['DOMAIN,ads.test,DIRECT,pre-matching','DEST-PORT,443,REJECT,extended-matching','AND,((DOMAIN,ads.test,pre-matching)),REJECT','URL-REGEX,ads,REJECT,pre-matching'])assert.equal(enhanced(source).kind,'comment',source);
+  const {convertPlugin,validateConvertedPlugin}=await import('../src/conversion.mjs');
+  const entry={id:'MatchingFlags',source:'https://example.test/source.lpx',category:'Test'};
+  const options={stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'};
+  const rejectOnly=convertPlugin(entry,'[Rule]\nDOMAIN,ads.test,REJECT\nDEST-PORT,4480,REJECT-NO-DROP',options);
+  validateConvertedPlugin(entry,rejectOnly);
+  assert.doesNotMatch(rejectOnly.surge,/#!requirement=CORE_VERSION/,'do not invent an unverified core number for pre-matching');
+  assert.match(rejectOnly.surge,/DOMAIN,ads.test,REJECT,extended-matching,pre-matching/);
+  assert.doesNotMatch(rejectOnly.qx,/pre-matching|extended-matching/);
+  const allow=convertPlugin(entry,'[Rule]\nDOMAIN,allow.test,DIRECT\nDOMAIN-SUFFIX,test,REJECT',options);
+  validateConvertedPlugin(entry,allow);
+  assert.doesNotMatch(allow.surge,/pre-matching/,'earlier allow must not be bypassed by automatic pre-matching');
+  assert.match(allow.surge,/DOMAIN,allow.test,DIRECT\nDOMAIN-SUFFIX,test,REJECT,extended-matching/);
+  console.log('Surge matching flags passed: type/scope/policy, nested flags, dedup, external-set guard, allow order, QX isolation and existing requirement preservation');
+}

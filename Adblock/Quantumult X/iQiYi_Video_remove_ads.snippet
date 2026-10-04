@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/iQiYi_Video.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:45 +08:00
+# Converted: 2026-10-04 11:20:34 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/iQiYi_Video_remove_ads.lpx
@@ -56,7 +56,7 @@ host, access.if.iqiyi.com, reject
 ^https?:\/\/iface2\.iqiyi\.com\/views_menus\/3\.0\/home_top_menu\? url jsonjq-response-body '.nav_group_data[].nav_list |= map(select(. == "0" or . == "2" or . == "1007" or . == "1" or . == "6" or . == "3"))'
 
 ^https?:\/\/iface2\.iqiyi\.com\/fusion\/3\.0\/common_switch\? url jsonjq-response-body 'del(.content.resource.cast_device_ad)'
-^https?:\/\/iface2\.iqiyi\.com\/fusion\/3\.0\/common_switch\? url jsonjq-response-body 'if getpath(["content","switchs","app_ad","app_ad_enable"]) then setpath(["content","switchs","app_ad","app_ad_enable"]; 0) else . end | if getpath(["content","switchs","app_ad","app_ad_duration"]) then setpath(["content","switchs","app_ad","app_ad_duration"]; 0) else . end | if getpath(["content","switchs","ios_tech","kPreadAdHintSwitch"]) then setpath(["content","switchs","ios_tech","kPreadAdHintSwitch"]; 0) else . end | if getpath(["content","switchs","ios_tech","ad_download"]) then setpath(["content","switchs","ios_tech","ad_download"]; 0) else . end | if getpath(["content","switchs","m_qiyi_ios_tech","KFocusAdVideoPlayTimesIn4G"]) then setpath(["content","switchs","m_qiyi_ios_tech","KFocusAdVideoPlayTimesIn4G"]; 0) else . end'
+^https?:\/\/iface2\.iqiyi\.com\/fusion\/3\.0\/common_switch\? url jsonjq-response-body 'if (try (getpath(["content","switchs","app_ad"]) | has("app_ad_enable")) catch false) then setpath(["content","switchs","app_ad","app_ad_enable"]; 0) else . end | if (try (getpath(["content","switchs","app_ad"]) | has("app_ad_duration")) catch false) then setpath(["content","switchs","app_ad","app_ad_duration"]; 0) else . end | if (try (getpath(["content","switchs","ios_tech"]) | has("kPreadAdHintSwitch")) catch false) then setpath(["content","switchs","ios_tech","kPreadAdHintSwitch"]; 0) else . end | if (try (getpath(["content","switchs","ios_tech"]) | has("ad_download")) catch false) then setpath(["content","switchs","ios_tech","ad_download"]; 0) else . end | if (try (getpath(["content","switchs","m_qiyi_ios_tech"]) | has("KFocusAdVideoPlayTimesIn4G")) catch false) then setpath(["content","switchs","m_qiyi_ios_tech","KFocusAdVideoPlayTimesIn4G"]; 0) else . end'
 
 ^https?:\/\/(kjp|t7z)\.cupid\.iqiyi\.com\/mixer\? url jsonjq-response-body 'del(.adSlots)'
 

@@ -1,4 +1,4 @@
-// Converted: 2026-10-03 17:44:46 +08:00
+// Converted: 2026-10-04 11:20:35 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https?:\/\/tieba\.baidu\.com\/mo\/q\/search\/startPage\?/i then response.body.mock("json", "{\"no\":0,\"error\":\"success\"}", 200)

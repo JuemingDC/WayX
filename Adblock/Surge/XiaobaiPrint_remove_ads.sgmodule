@@ -10,14 +10,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/XiaobaiPrint.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:13 +08:00
+# Converted: 2026-10-04 11:21:01 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/XiaobaiPrint_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,ad.lovefree.cc,REJECT
-DOMAIN-SUFFIX,adwanji.com,REJECT
+DOMAIN,ad.lovefree.cc,REJECT,extended-matching,pre-matching
+DOMAIN-SUFFIX,adwanji.com,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 http-response-jq ^https:\/\/epbox\.gongfudou\.com\/graphql$ 'del(.data.mallConsumables, .data.currentUser.goodsCoupons)'

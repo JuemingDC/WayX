@@ -272,11 +272,29 @@ function surgeValueRenderer(node) {
   return surgeCsvRegexField(normalizeRegexBodyForTarget(node.value));
 }
 
+const SURGE_REJECT_MATCH_POLICIES=new Set(['REJECT','REJECT-DROP','REJECT-NO-DROP','REJECT-TINYGIF']);
+const SURGE_EXTENDED_TYPES=new Set(['DOMAIN','DOMAIN-SUFFIX','DOMAIN-KEYWORD','DOMAIN-WILDCARD','DOMAIN-SET','RULE-SET','URL-REGEX']);
+const SURGE_PRE_TYPES=new Set(['DOMAIN','DOMAIN-SUFFIX','DOMAIN-KEYWORD','DOMAIN-WILDCARD','DOMAIN-SET','IP-CIDR','IP-CIDR6','GEOIP','IP-ASN','SRC-IP','DEST-PORT','SRC-PORT','SUBNET','CELLULAR-CARRIER','CELLULAR-RADIO']);
+function surgePreEligible(node,{allowRuleSet=false}={}) {
+  if(node.kind==='logical')return node.children.every(child=>surgePreEligible(child,{allowRuleSet}));
+  return SURGE_PRE_TYPES.has(node.type)||(allowRuleSet&&node.type==='RULE-SET');
+}
+function enhancedSurgeRuleAst(ast,policy,{preMatching=true}={}) {
+  const result=structuredClone(ast);
+  if(!SURGE_REJECT_MATCH_POLICIES.has(policy))return result;
+  const add=(node,name)=>{if(!node.params.some(p=>p.name===name))node.params.push({name,raw:name,value:null});};
+  walkRuleAst(result,node=>{if(SURGE_EXTENDED_TYPES.has(node.type))add(node,'extended-matching');});
+  if(preMatching&&!result.nested&&surgePreEligible(result))add(result,'pre-matching');
+  return result;
+}
+
 export function validateSurgeRuleAst(ast) {
   const types=[];
 
   function visit(node,logicalDepth=0) {
     types.push(node.type);
+    if(node.params.some(p=>p.name==='extended-matching')&&!SURGE_EXTENDED_TYPES.has(node.type))return 'extended-matching-unsupported-type:'+node.type;
+    if(node.params.some(p=>p.name==='pre-matching')&&(node.nested||!SURGE_REJECT_MATCH_POLICIES.has(node.policy)||!surgePreEligible(node,{allowRuleSet:true})))return 'invalid-pre-matching-scope-policy-or-type';
     if (!SURGE_RULE_TYPES.has(node.type)) {
       return `unsupported-rule-type:${node.type}`;
     }
@@ -313,7 +331,7 @@ export function surgeRuleTypesInTree(line,{subrule=false}={}) {
   return validateSurgeRuleAst(parsed.ast);
 }
 
-export function planSurgeModuleRuleAst(ast,{proxyPolicyPlaceholder=null}={}) {
+export function planSurgeModuleRuleAst(ast,{proxyPolicyPlaceholder=null,matchingEnhancements=false,preMatching=true}={}) {
   const source=ast.source;
   const type=ast.type;
 
@@ -395,7 +413,7 @@ export function planSurgeModuleRuleAst(ast,{proxyPolicyPlaceholder=null}={}) {
     };
   }
 
-  const lineOut=renderSurgeRuleAst(ast,{policyOverride:policy});
+  const lineOut=renderSurgeRuleAst(matchingEnhancements?enhancedSurgeRuleAst(ast,policy,{preMatching}):ast,{policyOverride:policy});
   return {
     kind:'rule',
     section:'rule',
@@ -432,11 +450,11 @@ export function qxRule(line) {
   return planQxRuleAst(parsed.ast);
 }
 
-export function surgeModuleRule(line,{proxyPolicyPlaceholder=null}={}) {
+export function surgeModuleRule(line,{proxyPolicyPlaceholder=null,matchingEnhancements=false,preMatching=true}={}) {
   const source=String(line ?? '').trim();
   const parsed=parseLoonRuleAst(source);
   if (!parsed.ok) return invalidRulePlan(source,parsed.reason,'surge');
-  return planSurgeModuleRuleAst(parsed.ast,{proxyPolicyPlaceholder});
+  return planSurgeModuleRuleAst(parsed.ast,{proxyPolicyPlaceholder,matchingEnhancements,preMatching});
 }
 
 export function surgeRule(line) {

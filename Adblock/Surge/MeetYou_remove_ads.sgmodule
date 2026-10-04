@@ -9,14 +9,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MeetYou.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 06:22:27 +08:00
+# Converted: 2026-10-04 11:20:50 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/MeetYou_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,ad.seeyouyima.com,REJECT
-DOMAIN,axxd.xmseeyouyima.com,REJECT
+DOMAIN,ad.seeyouyima.com,REJECT,extended-matching,pre-matching
+DOMAIN,axxd.xmseeyouyima.com,REJECT,extended-matching,pre-matching
 
 [URL Rewrite]
 ^https:\/\/circle\.(xm)?seeyouyima\.com\/v\d\/article_recommend\? _ reject

@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KOOK.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:38 +08:00
+# Converted: 2026-10-04 11:20:27 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/KOOK_remove_ads.lpx
@@ -20,7 +20,7 @@
 
 ^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ url jsonjq-response-body 'del(.ad_banner, .advertise_on_off)'
 
-^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ url jsonjq-response-body 'if getpath(["ios_mall_switch"]) then setpath(["ios_mall_switch"]; false) else . end'
+^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ url jsonjq-response-body 'if (try (getpath([]) | has("ios_mall_switch")) catch false) then setpath(["ios_mall_switch"]; false) else . end'
 
 ^https:\/\/www\.kookapp\.cn\/api\/v3\/promotion\/ongoing$ url reject-dict
 

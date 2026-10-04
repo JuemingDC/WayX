@@ -9,10 +9,10 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SnailSleep.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:12 +08:00
+# Converted: 2026-10-04 11:21:00 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/SnailSleep_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,ad.snailsleep.net,REJECT
+DOMAIN,ad.snailsleep.net,REJECT,extended-matching,pre-matching

@@ -10,14 +10,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/QtingFM.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:05 +08:00
+# Converted: 2026-10-04 11:20:53 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/QtingFM_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,ad.qtfm.cn,REJECT
-DOMAIN,adlaunch.qtfm.cn,REJECT
+DOMAIN,ad.qtfm.cn,REJECT,extended-matching,pre-matching
+DOMAIN,adlaunch.qtfm.cn,REJECT,extended-matching,pre-matching
 
 [URL Rewrite]
 
@@ -27,7 +27,7 @@ DOMAIN,adlaunch.qtfm.cn,REJECT
 
 [Body Rewrite]
 
-http-response-jq ^https:\/\/app\.qtfm\.cn\/m-bff\/v\d\/signin\/show_homepage_icon$ 'if getpath(["data","display_icon"]) then setpath(["data","display_icon"]; false) else . end'
+http-response-jq ^https:\/\/app\.qtfm\.cn\/m-bff\/v\d\/signin\/show_homepage_icon$ 'if (try (getpath(["data"]) | has("display_icon")) catch false) then setpath(["data","display_icon"]; false) else . end'
 
 http-response-jq ^https:\/\/app\.qtfm\.cn\/recommendapi\/v\d\/hotpage\? '.data.head |= map(select(.type == "IconGrid")) | .data.feeds |= map(select(.type == "Channel" or .type == "Radio" or .type == "ListenListChannel"))'
 
