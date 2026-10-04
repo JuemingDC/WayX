@@ -244,7 +244,7 @@ assert.match(checkWorkflow,/steps\.gate\.outputs\.publishable/,'publication must
 assert.deepEqual((await fs.readdir('.github/workflows')).filter(name=>/\.ya?ml$/.test(name)),['converter-check.yml'],'only one automation workflow may remain');
 assert.match(checkWorkflow,/pull_request:/);assert.match(checkWorkflow,/workflow_dispatch:/);
 assert.match(checkWorkflow,/schedule:/);
-assert.match(checkWorkflow,/cron: '17 17 \* \* \*'/,'daily monitoring runs at 01:17 Asia/Shanghai');
+assert.match(checkWorkflow,/cron: '30 17 \* \* \*'/,'daily monitoring runs at 01:30 Asia/Shanghai');
 assert.doesNotMatch(checkWorkflow,/regenerate-canonical\.mjs --write|update-readme\.mjs --write/,'sync is the only workflow writer; canonical and README remain verification gates');
 assert.match(checkWorkflow,/github\.event_name != 'pull_request'/,'scheduled runs must select the main destination rather than become read-only');
 assert.match(checkWorkflow,/cancel-in-progress: false/,'generation must not be cancelled halfway through publication');

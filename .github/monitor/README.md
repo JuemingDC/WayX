@@ -1,6 +1,6 @@
 # WayX Actions 运行说明
 
-唯一入口是 `.github/workflows/converter-check.yml`，显示名称为 **WayX Automation**。上游拉取和批量转换均由 GitHub Actions 执行。每日北京时间 01:17（UTC 17:17）自动运行；GitHub 调度可能延迟。
+唯一入口是 `.github/workflows/converter-check.yml`，显示名称为 **WayX Automation**。上游拉取和批量转换均由 GitHub Actions 执行。每日北京时间 01:30（UTC 17:30）自动运行；GitHub 调度可能延迟。
 
 | 触发 | 基线 | 发布位置 | 官方规范监控 |
 | --- | --- | --- | --- |
