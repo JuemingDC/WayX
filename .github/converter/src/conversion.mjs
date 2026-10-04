@@ -46,6 +46,24 @@ function rewriteErrorResult(line,error) {
   return rewriteReview(line,reason);
 }
 
+// Normalize file actions before both target planning and phase eligibility.
+// A dependency is tied to its absolute source action index, never shared as
+// the old single-action object across a multi-action declaration.
+function resolveRewriteJqDependencies(ast,line,ctx) {
+  const actions=ast.actions.map((action,index)=>{
+    const spec=jqDependencySpecFromAction(action,{pluginSourceUrl:ctx.sourceUrl});
+    if(!spec)return action;
+    const files=ctx.jqFiles?.get(line);
+    if(files?.error)throw new Error(files.error);
+    const materialized=files?.byAction ? (Object.prototype.hasOwnProperty.call(files.byAction,index)?files.byAction[index]:null) : ast.actions.length===1 ? files : null;
+    if(!materialized)throw new Error('JQ dependency action '+index+' was not materialized during conversion');
+    if(materialized.error)throw new Error(materialized.error);
+    if(typeof materialized.content!=='string' || !materialized.content.trim())throw new Error('JQ dependency resolved to empty content');
+    return inlineResolvedDependency(action,materialized.content,{pluginSourceUrl:ctx.sourceUrl}).action;
+  });
+  const result={...ast,actions};validateRewriteV2Ast(result);return result;
+}
+
 function rewriteV2Action(line,target,ctx) {
   if (!isRewriteV2(line)) return null;
 
@@ -60,17 +78,7 @@ function rewriteV2Action(line,target,ctx) {
   }
 
   try {
-    if (ast.actions.length===1) {
-      const jqSpec=jqDependencySpecFromAction(ast.actions[0],{pluginSourceUrl:ctx.sourceUrl});
-      if (jqSpec) {
-        const materialized=ctx.jqFiles?.get(line);
-        if (!materialized) throw new Error('JQ dependency was not materialized during conversion');
-        if (materialized.error) throw new Error(materialized.error);
-        const inlined=inlineResolvedDependency(ast.actions[0],materialized.content,{pluginSourceUrl:ctx.sourceUrl});
-        ast={...ast,actions:[inlined.action]};
-        validateRewriteV2Ast(ast);
-      }
-    }
+    ast=resolveRewriteJqDependencies(ast,line,ctx);
   } catch (error) {
     return rewriteReview(line,String(error?.message || error).split('\n')[0]);
   }
@@ -122,14 +130,14 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
   // that would take the phase away from an existing author Script/legacy rule.
   const blockedV2=new Set();
   for(const item of items)if(isRewriteV2(item.line))try {
-    const ast=parseRewriteV2(item.line);
+    const ast=resolveRewriteJqDependencies(parseRewriteV2(item.line),item.line,ctx);
     if(!supportsRewritePhaseActions(ast,target))blockedV2.add(ast.phase);
   }catch { /* Invalid declarations keep the ordinary diagnostic. */ }
   ctx.featureCompatibilityPhases=new Set(['request','response'].filter(phase=>legacy || blockedV2.has(phase) || scripts.some(x=>{try {const ir=parseScriptDeclaration(x.line);return ir?.phase===phase && (target==='qx' || !(scriptOption(ir,'enable')?.value===false));}catch{return false;}})));
   for (const item of items) {
     if (!isRewriteV2(item.line)) continue;
     try {
-      const ast=parseRewriteV2(item.line);
+      const ast=resolveRewriteJqDependencies(parseRewriteV2(item.line),item.line,ctx);
       validateRewriteV2Ast(ast);
       const mapped=rewriteV2Action(item.line,target,ctx);
       if (mapped.section!=='comment' && mapped.section!=='drop') candidates.push({line:item.line,ast,mapped});
@@ -150,7 +158,7 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
       if (target==='qx' && refs.length) throw new Error('phase dispatcher argument transport is not verified: '+refs.join(', '));
       const payload=refs.length ? surgeRewriteArgumentPayload(refs,ctx.argumentTable) : {ok:true,value:null};
       if(!payload.ok)throw new Error(payload.reason);
-      const plan=renderRewritePhaseDispatcher(group.map(x=>x.ast),{target,stamp:ctx.stamp,category:ctx.category,argumentTable:refs.length?ctx.argumentTable:null,mockFiles:ctx.mockFiles});
+      const plan=renderRewritePhaseDispatcher(group.map(x=>x.ast),{target,stamp:ctx.stamp,category:ctx.category,argumentTable:refs.length?ctx.argumentTable:null,mockFiles:ctx.mockFiles,jqFiles:ctx.jqFiles});
       const key=crypto.createHash('sha1').update(target+'\0'+group.map(x=>x.line).join('\n')).digest('hex').slice(0,10);
       const filename='phase_'+target+'_'+phase+'_'+key+'.js';
       ctx.generatedScripts.set(filename,plan.script);
