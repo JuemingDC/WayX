@@ -5,7 +5,7 @@
 import crypto from "node:crypto";
 import { renderRewritePhaseDispatcher } from "./runtime.mjs";
 import { scriptIrTag, parseScriptDeclaration, isScriptV2, planQxScript, planSurgeScript, scriptOption, analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs, surgeArgumentMetadata, surgeRewriteArgumentPayload } from "./script.mjs";
-import { qxRule as canonicalQxRule, surgeModuleRule, parseLoonRuleAst } from "./rule.mjs";
+import { qxRule as canonicalQxRule, surgeModuleRule } from "./rule.mjs";
 import { isRewriteV2, parseRewriteV2, validateRewriteV2Ast, classifyLegacyRewriteAction, isEmptyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr, inlineResolvedDependency, inlineResolvedLegacyJqPathIr, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr, planQxRewrite, planSurgeRewrite, rewriteReview, rewriteIssue, supportsRewritePhaseActions, simpleUrlRewriteCondition, jsonPipelineToSafeNativeJq } from "./rewrite.mjs";
 import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection, parseLoonPlugin, materializeRewriteDependencies, materializeSourceScripts, fetchOriginalText, fetchOriginalBytes } from "./input.mjs";
 import { attachQxInlineNote, createQxOutputState, appendQxOutput, qxOutputDestination, qxRuleOutputDestination, qxRewriteOutputDestination, renderQxOutput, createSurgeOutputState, appendSurgeOutput, surgeOutputDestination, surgeRuleOutputDestination, surgeRewriteOutputDestination, renderSurgeOutput, validateQX, validateSurgeModule } from "./output.mjs";
@@ -289,12 +289,6 @@ export function convertPlugin(entry,source,{
   }
 
   const ruleSectionLines=plugin.sections.get('Rule') || [];
-  // Pre-matching outranks ordinary rules. Preserve modules with allow/proxy
-  // policies rather than silently bypassing their source ordering.
-  const preMatching=groupSourceSectionItems(ruleSectionLines).filter(item=>item.line).every(item=>{
-    const parsed=parseLoonRuleAst(splitRuleInlineComment(item.line).line);
-    return parsed.ok && ['REJECT','REJECT-IMG','REJECT-TINYGIF','REJECT-DROP','REJECT-NO-DROP'].includes(parsed.ast.policy);
-  });
   for (const item of groupSourceSectionItems(ruleSectionLines)) {
     if (!item.line) {
       const comments=cleanSourceComments(item.comments);
@@ -339,7 +333,7 @@ export function convertPlugin(entry,source,{
     if (qr.kind==='filter' || qr.kind==='rewrite') qxRuleDest.push(...qxRendered.comments,...qxRendered.lines);
     else qxRuleDest.push(...comments,qr.line);
 
-    const sr=surgeModuleRule(inline.line,{proxyPolicyPlaceholder:surgeProxyPolicyPlaceholder,matchingEnhancements:true,preMatching});
+    const sr=surgeModuleRule(inline.line,{proxyPolicyPlaceholder:surgeProxyPolicyPlaceholder,matchingEnhancements:true});
     surgeRuleOutputDestination(sg,sr.section).push(...comments,...sr.lines);
   }
 

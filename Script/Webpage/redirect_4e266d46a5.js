@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 06:23:13 +08:00
+// Converted: 2026-10-04 11:38:24 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /^https:\/\/www\.pornhub\.com\//i then redirect(302, "https://cn.pornhub.com/")

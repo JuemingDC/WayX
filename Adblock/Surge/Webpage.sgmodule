@@ -9,16 +9,16 @@
 # Icon: https://rucu6.pages.dev/Icons/app/webpage.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-10-04 06:23:13 +08:00
+# Converted: 2026-10-04 11:38:24 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/webpage.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN-SUFFIX,mypikpak.com,{{{wayx_proxy_policy}}}
-DOMAIN,18hlw.com,{{{wayx_proxy_policy}}}
-DOMAIN,8olbt.imsatcmn.cc,{{{wayx_proxy_policy}}}
-DOMAIN,yhg007.com,{{{wayx_proxy_policy}}}
+DOMAIN-SUFFIX,mypikpak.com,{{{wayx_proxy_policy}}},extended-matching
+DOMAIN,18hlw.com,{{{wayx_proxy_policy}}},extended-matching
+DOMAIN,8olbt.imsatcmn.cc,{{{wayx_proxy_policy}}},extended-matching
+DOMAIN,yhg007.com,{{{wayx_proxy_policy}}},extended-matching
 
 [URL Rewrite]
 # 解决 GitHub 速率限制返回429问题

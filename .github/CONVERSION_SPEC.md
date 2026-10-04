@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.72
+版本：1.73
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -1010,3 +1010,12 @@ Pre-matching 只用于顶层 REJECT/REJECT-DROP/REJECT-NO-DROP/REJECT-TINYGIF �
 官方依据：[Surge Rule Overview](https://manual.nssurge.com/rules/overview.html)、[REJECT Policy](https://manual.nssurge.com/policies/reject.html)、[Domain Rules](https://manual.nssurge.com/rules/domain.html)、[Logical Rules](https://manual.nssurge.com/rules/logical.html)；JSON 存在性依据 [jq 1.6 has](https://jqlang.org/manual/v1.6/) 与已核对的 Script-Hub Rewrite-Parser.beta.js parent/has 实现。验收须覆盖 null/false/缺失、native/helper/oracle、批量失败继续、规则类型/策略/嵌套层级/去重、放行顺序、QX 隔离、requirement 和全目录差分。定时活动保持暂停，远端仅 main/test。
 
 本轮验收：10 个回归 suite 通过，新增 128 个实际原生 JQ 输出与 48 个动态路径 helper 输出检查通过。完整目录 287 项通过，114 项转换差异符合 replace/匹配增强更新，依赖上下文差异 0；成品同步后 managed/audit/artifacts 门禁通过，无新增 Review/Issue。两个既有作者 Script URL 返回 404，仍保留原 URL。
+
+
+## 36. 逐规则匹配增强与可莉目录收敛（v1.73）
+
+按用户新指令替代 §35 的整模块预匹配门禁：混合模块也逐规则增强。Surge 可支持 extended-matching 的原生活动 Rule（包括 DIRECT、PROXY 占位策略）均添加该参数；pre-matching 仍仅添加到官方允许的顶层 REJECT 家族类型及全部子类型合格的逻辑规则。未知内容 RULE-SET 不自动预匹配，逻辑子规则位置、参数去重及显式参数验证不变。保留其它规则的声明、策略和文本顺序；预匹配本身按官方定义具有更高优先级，不能宣称与此前普通匹配的相对优先级完全相同。QX 不输出 Surge 匹配参数，无法转换的规则沿用注释/忽略规范。
+
+可莉 list.json 仅选择 tag 包含“去广告”或“依赖”的插件；以精确类别标签筛选，不用文件名或描述猜测，不沿用历史 category 扩大范围。含依赖标签优先记作依赖。稳定 id、输出名称、列表相对顺序和非可莉静态目录保留；移除范围外的受管源文件、QX/Surge 成品及具备生成签名的 helper；保留其它手写 Script。README 随目录更新。源作者 Script 依赖仍保持原 URL。拉取、规范化生成、验证和自动工作流统一使用收敛后的目录。定时活动继续暂停，远端仅 main/test。
+
+目录收敛允许既有语义标识从目录消失，但不删除历史能力测试：V2 与 legacy inventory 均继续禁止未审查的新语义；高级 regex 仍锁定范围内原始声明。移除的任务类插件不再作为磁盘成品测试依赖，合法任务语法由独立声明及既有 Script/runtime suite 保持验证。

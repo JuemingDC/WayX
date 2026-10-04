@@ -768,7 +768,7 @@ assert.doesNotMatch(qxLeadingNoteOutput.qx, /^# Script note$/m);
 assert.doesNotMatch(qxLeadingNoteOutput.qx, /\{# (?:Converted|Converted by|Category|Target|Source)/);
 assert.match(qxLeadingNoteOutput.surge, /^# Work VPN$/m);
 assert.match(qxLeadingNoteOutput.surge, /^#!arguments=wayx_proxy_policy:DIRECT$/m);
-assert.match(qxLeadingNoteOutput.surge, /^DOMAIN-SUFFIX,example\.com,\{\{\{wayx_proxy_policy\}\}\}$/m);
+assert.match(qxLeadingNoteOutput.surge, /^DOMAIN-SUFFIX,example\.com,\{\{\{wayx_proxy_policy\}\}\},extended-matching$/m);
 assert.match(qxLeadingNoteOutput.surge, /^# Block ads$/m);
 assert.match(qxLeadingNoteOutput.surge, /^# Script note$/m);
 assert.match(qxLeadingNoteOutput.surge, /^# Script group$/m);
@@ -1095,7 +1095,7 @@ for (const testCase of cases) {
     assert.doesNotMatch(out.surge, /Source Loon plugin policy PROXY requires a Surge module policy parameter binding/);
     assert.doesNotMatch(out.surge, /Source declaration:.*PROXY[\s\S]*REVIEW REQUIRED: Surge Module requires an external policy binding/);
     assert.match(out.surge, /^#!arguments=.*displayUpList:auto.*sponsorBlock:true.*wayx_proxy_policy:DIRECT/m);
-    assert.match(out.surge, /^DOMAIN,bsbsb\.top,\{\{\{wayx_proxy_policy\}\}\}$/m);
+    assert.match(out.surge, /^DOMAIN,bsbsb\.top,\{\{\{wayx_proxy_policy\}\}\},extended-matching$/m);
     assert.match(out.surge, /#!REQUIREMENT "'\{\{\{sponsorBlock\}\}\}'=='true'"/);
     assert.doesNotMatch(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
     assert.match(
@@ -1795,13 +1795,12 @@ assert.throws(()=>validateConversionMetadata(surge.replace('hostname = %APPEND%'
 // Previously rejected legal task/header/General declarations use the same
 // validators as converter execution; no second capability allowlist is copied.
 for(const [target,file] of [
- ['qx','Adblock/Quantumult X/Auto_Join_TF.snippet'],
- ['qx','Adblock/Quantumult X/NodeLinkCheck.snippet'],
  ['qx','Adblock/Quantumult X/Bilibili_remove_ads.snippet'],
  ['surge','Adblock/Surge/SeasunJX3_remove_ads.sgmodule'],
 ]){
  const text=await fs.readFile(file,'utf8');validateConversionMetadata(text,entry,target);
  if(target==='qx')validateQX(text,entry);else validateSurgeModule(text,entry);
 }
+validateQX(qx+'\n# [task_local]\nevent-interaction https://example.com/tool.js, tag=Tool, enabled=true\n',entry);
 console.log('Conversion policy canonical validator regression passed');
 }

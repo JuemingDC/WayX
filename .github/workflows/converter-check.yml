@@ -69,6 +69,9 @@ jobs:
           done < <(find .github/converter .github/scripts Script -type f \( -name '*.js' -o -name '*.mjs' \) -print0)
           python -m compileall -q .github/converter .github/scripts .github/monitor
 
+      - name: Refresh Kelee ad-block and dependency catalog
+        run: python .github/converter/tools/refresh-kelee-catalog.py
+
       - name: Converter checkpoint
         run: |
           node .github/converter/tests/rewrite.mjs
@@ -85,9 +88,6 @@ jobs:
         run: |
           jq --version
           node .github/converter/tests/runtime.mjs
-
-      - name: Refresh full Kelee catalog
-        run: python .github/converter/tools/refresh-kelee-catalog.py
 
       - name: Pull discovered upstreams and convert
         shell: bash

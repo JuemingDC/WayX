@@ -63,7 +63,7 @@ jobs:
       - name: Prepare runtime logs
         run: mkdir -p .github/monitor/.runtime
 
-      - name: Refresh full Kelee catalog
+      - name: Refresh Kelee ad-block and dependency catalog
         id: kelee_catalog
         continue-on-error: true
         run: python .github/converter/tools/refresh-kelee-catalog.py

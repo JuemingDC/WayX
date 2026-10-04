@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/iQiYi_Video.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 11:20:34 +08:00
+# Converted: 2026-10-04 11:37:44 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/iQiYi_Video_remove_ads.lpx
 # Target: Surge
@@ -18,14 +18,14 @@
 
 
 [Rule]
-IP-CIDR,103.44.59.54/32,REJECT,no-resolve
-IP-CIDR,111.63.147.158/32,REJECT,no-resolve
-IP-CIDR,116.211.198.237/32,REJECT,no-resolve
+IP-CIDR,103.44.59.54/32,REJECT,no-resolve,pre-matching
+IP-CIDR,111.63.147.158/32,REJECT,no-resolve,pre-matching
+IP-CIDR,116.211.198.237/32,REJECT,no-resolve,pre-matching
 
-DOMAIN-SUFFIX,cupid.iqiyi.com,DIRECT
+DOMAIN-SUFFIX,cupid.iqiyi.com,DIRECT,extended-matching
 
-DOMAIN,api.iqiyi.com,REJECT,extended-matching
-DOMAIN,access.if.iqiyi.com,REJECT,extended-matching
+DOMAIN,api.iqiyi.com,REJECT,extended-matching,pre-matching
+DOMAIN,access.if.iqiyi.com,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 http-response-jq ^https:\/\/cards\.iqiyi\.com\/views_home\/3\.0\/qy_home\? 'del(.base.statistics)'
