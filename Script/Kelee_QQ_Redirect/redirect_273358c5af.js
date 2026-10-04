@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 18:07:01 +08:00
+// Converted: 2026-10-04 18:36:26 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /(^https:\/\/pingtas\.qq\.com\/webview\/pingd\?dm=c\.pc\.qq\.com&pvi=\d+&si=s\d+&url=\/ios\.html\?url%3d)(http.*)(%26level.*%26level.*)/i as urlMatch then redirect(307, "${urlMatch.2}")
@@ -12,16 +12,40 @@ function __wayxHeader(phase,name){
 }
 const __wayxUrl=$request.url;
 if((()=>{const SUPPORTED_FLAGS=/^[ims]*$/;
+function scanSourceRegexLiteral(text, start=0) {
+  text=String(text);
+  if(text[start]!=='/')throw new SyntaxError('Expected regex opening delimiter');
+  let escaped=false,inClass=false,close=-1;
+  for(let i=start+1;i<text.length;i++) {
+    const c=text[i];
+    if(escaped){escaped=false;continue;}
+    if(c==='\\'){escaped=true;continue;}
+    if(c==='[' && !inClass){inClass=true;continue;}
+    if(c===']' && inClass){inClass=false;continue;}
+    if(c==='/' && !inClass){close=i;break;}
+  }
+  if(close<0)throw new SyntaxError('Unterminated regex');
+  let end=close+1;
+  while(end<text.length && /[A-Za-z]/.test(text[end]))end++;
+  if(end<text.length && !/[\s(),\[\].|&=~]/.test(text[end]))throw new SyntaxError('Invalid regex suffix boundary');
+  const node={type:'regex',pattern:text.slice(start+1,close),flags:text.slice(close+1,end)};
+  assertRegexNode(node);
+  return {...node,end};
+}
+function resolveConditionRegex(value) {
+  if(value && typeof value==='object' && value.type==='regex')return value;
+  if(typeof value!=='string' || !value.startsWith('/'))return null;
+  try {
+    const regex=scanSourceRegexLiteral(value);
+    return regex.end===value.length ? regex : null;
+  }catch{return null;}
+}
 function assertRegexNode(node) {
   if (!node || node.type!=='regex') throw new TypeError('Expected Loon semantic Regex node');
   const flags=String(node.flags || '');
   if (!SUPPORTED_FLAGS.test(flags)) throw new Error('Unsupported Loon regex flag(s): '+flags);
   if (new Set(flags).size!==flags.length) throw new Error('Duplicate Loon regex flag(s): '+flags);
   return {source:String(node.pattern ?? ''),flags};
-}
-function compileSourceRegex(node) {
-  const {source,flags}=assertRegexNode(node);
-  return new RegExp(source,flags);
 }
 function execSourceRegex(node,value) {
   if (value===null || value===undefined) return null;
@@ -156,11 +180,10 @@ function comparison(node,context,captures) {
   if (node.operator!=='~=') {
     throw new SemanticEvaluationError('Unsupported condition operator: '+node.operator);
   }
-  if (node.right?.type!=='regex') {
-    throw new SemanticEvaluationError('Dynamic ~= Regex evaluation is not implemented in Phase B core yet');
-  }
-
-  const match=execSourceRegex(node.right,left);
+  const regex=resolveConditionRegex(literalValue(node.right,context,next));
+  if(!regex)return {matched:false,captures:next};
+  let match;
+  try{match=execSourceRegex(regex,left);}catch{return {matched:false,captures:next};}
   if (!match) return {matched:false,captures:next};
 
   if (node.capture) {
@@ -204,7 +227,8 @@ function evaluateCondition(condition,context={},initialCaptures={}) {
     captures:Object.fromEntries(result.captures),
   };
 }
-const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"(^https:\\/\\/pingtas\\.qq\\.com\\/webview\\/pingd\\?dm=c\\.pc\\.qq\\.com&pvi=\\d+&si=s\\d+&url=\\/ios\\.html\\?url%3d)(http.*)(%26level.*%26level.*)","flags":"i","raw":"/(^https:\\/\\/pingtas\\.qq\\.com\\/webview\\/pingd\\?dm=c\\.pc\\.qq\\.com&pvi=\\d+&si=s\\d+&url=\\/ios\\.html\\?url%3d)(http.*)(%26level.*%26level.*)/i"},"capture":"urlMatch"},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
+function compileSourceRegex(node){const {source}=assertRegexNode(node);return new RegExp(source);}
+const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"(^https:\\/\\/pingtas\\.qq\\.com\\/webview\\/pingd\\?dm=c\\.pc\\.qq\\.com&pvi=\\d+&si=s\\d+&url=\\/ios\\.html\\?url%3d)(http.*)(%26level.*%26level.*)","flags":""},"capture":"urlMatch"},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
   const __wayxMatch=__wayxCaptures["urlMatch"];
   if(!__wayxMatch){$done({});}else{
     const __wayxTemplate="${urlMatch.2}";
