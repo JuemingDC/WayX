@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DubbingShow.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:47 +08:00
+# Converted: 2026-10-04 19:29:07 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/DubbingShow_remove_ads.lpx
 # Target: Surge
@@ -25,7 +25,7 @@ http-response-jq ^https:\/\/iosapi\.peiyinxiu\.com\/Api\/Friend\/GetRecommendUse
 http-response-jq ^https:\/\/iosapi\.peiyinxiu\.com\/api\/Union\/HomeData 'delpaths([["obj","data"]])'
 
 [Script]
-移除首页底部弹窗 = type=http-response,pattern=^https:\/\/iosapi\.peiyinxiu\.com\/Api\/Film\/GetConfigValue,script-path=https://kelee.one/Resource/JavaScript/DubbingShow/DubbingShow_remove_ads.js,requires-body=true,max-size=-1
+移除首页底部弹窗 = type=http-response,pattern=^https:\/\/iosapi\.peiyinxiu\.com\/Api\/Film\/GetConfigValue,script-path=https://kelee.one/Resource/JavaScript/DubbingShow/DubbingShow_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% iosapi.peiyinxiu.com

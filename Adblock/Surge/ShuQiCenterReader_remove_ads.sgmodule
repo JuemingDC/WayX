@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ShuQiCenterReader.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:51 +08:00
+# Converted: 2026-10-04 19:29:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/ShuQiCenterReader_remove_ads.lpx
 # Target: Surge
@@ -28,7 +28,7 @@ DOMAIN,render-web.11222.cn,REJECT,extended-matching,pre-matching
 ^https:\/\/ocean\.shuqireader\.com\/api\/route\/ios\/readPage$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-移除书城横幅和阅读广告 = type=http-response,pattern=^https:\/\/ocean\.shuqireader\.com\/sqios\/render\/render\/page\/bookstore$,script-path=https://kelee.one/Resource/JavaScript/ShuQiCenterReader/ShuQiCenterReader_remove_ads.js,requires-body=true,max-size=-1
+移除书城横幅和阅读广告 = type=http-response,pattern=^https:\/\/ocean\.shuqireader\.com\/sqios\/render\/render\/page\/bookstore$,script-path=https://kelee.one/Resource/JavaScript/ShuQiCenterReader/ShuQiCenterReader_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% ocean.shuqireader.com, huichuan.sm.cn

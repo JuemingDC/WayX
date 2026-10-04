@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.90
+版本：1.91
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -1161,3 +1161,14 @@ Surge native URL Rewrite 同样读取 AST 模板片段，仅把真正的 URL 捕
 转换失败案例：旧 redirect helper 把 raw/escaped `${hit.1}` 当变量，且用 `?? ""` 掩盖缺失捕获；完整条件分支从仅保存捕获值的表读取 match.index，破坏 URL 前后拼接范围；旧 Surge URL 模板扫描 decoded text，存在同类词法信息丢失。修复共同生成代码，并执行两个 helper 模式的实际脚本回归，覆盖字面量、真实捕获、捕获缺失/空串、部分 URL 范围、插入值不再解析及 flags 丢弃。
 
 官方依据：https://nsloon.app/en/docs/Rewrite/rewrite_v2/（Raw strings、Condition regex captures、URL changes），https://manual.nssurge.com/http/url-rewrite.html（capture references）。
+
+
+## 46. 作者 Script 的源默认超时（v1.91）
+
+Surge 的作者 Script 声明必须显式携带源有效 timeout。省略源 timeout 时，按源语法分别生成：legacy HTTP 为 `timeout=10`；Script v2 Request/Response 为 `timeout=20`；Script v2 Cron/Network Changed/Generic 为 `timeout=300`。不把旧版与新版 HTTP 混成同一个默认值，也不让目标省略字段落入 Surge 的默认 5 秒。共同默认值策略供两条源语法生成路径使用；源 AST/IR 的省略状态保留，默认值仅在目标生成时补齐。
+
+源显式 timeout 数值和既有动态参数 placeholder 保持原转换策略，不附加第二个 timeout；disabled 声明继续原禁用策略。默认超时不启用 requires_body、不改变 binary_body_mode、匹配范围、作者 Script URL、顺序或 enable。转换器自己生成的同步 helper 不属于作者 Script 默认值迁移。QX 不编造 timeout 字段，继续已有兼容说明和省略策略。
+
+转换失败案例：作者 Script 缺省 timeout 被直接省略，生成规则在 Surge 提前使用 5 秒截止，违反源语法的执行时限。根因位于共同 Script 目标规划器，修复 legacy/v2 两条路径；回归覆盖全部受支持源类型、显式小数/动态参数、独立 body/binary 选项和 QX 隔离。现有全量 Action + 逐文件内容比较策略保持不变。
+
+官方依据：https://nsloon.app/en/docs/Script/（legacy HTTP timeout defaults to 10），https://nsloon.app/en/docs/Script/script_v2/（with 字段默认值），https://manual.nssurge.com/scripting/overview.html（Surge timeout defaults to 5）。

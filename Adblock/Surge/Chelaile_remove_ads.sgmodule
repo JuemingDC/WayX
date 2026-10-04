@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Chelaile.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:35 +08:00
+# Converted: 2026-10-04 19:28:51 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Chelaile_remove_ads.lpx
 # Target: Surge
@@ -38,7 +38,7 @@ DOMAIN,ad.chelaile.net.cn,REJECT,extended-matching,pre-matching
 ^https:\/\/api\.chelaile\.net\.cn\/encourage\/activity\/control\? data-type=text data="**YGKJ{}YGKJ##" status-code=200 header="Content-Type:application/json"
 
 [Script]
-清洗配置 = type=http-response,pattern=^https:\/\/api\.chelaile\.net\.cn\/bus-side\/appToggle\/getStatus\?,script-path=https://kelee.one/Resource/JavaScript/Chelaile/Chelaile_remove_ads.js,requires-body=true,max-size=-1
+清洗配置 = type=http-response,pattern=^https:\/\/api\.chelaile\.net\.cn\/bus-side\/appToggle\/getStatus\?,script-path=https://kelee.one/Resource/JavaScript/Chelaile/Chelaile_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% api.chelaile.net.cn, web.chelaile.net.cn, cdn.web.chelaile.net.cn, image3.chelaile.net.cn

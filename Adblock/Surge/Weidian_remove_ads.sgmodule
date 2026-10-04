@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Weidian.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:55 +08:00
+# Converted: 2026-10-04 19:29:16 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Weidian_remove_ads.lpx
 # Target: Surge
@@ -41,9 +41,9 @@
 ^https:\/\/thor\.weidian\.com\/ares\/collect\.recommendShop\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-配置修改 = type=http-response,pattern=^https:\/\/thor\.weidian\.com\/appconf\/getAppConfig\/,script-path=https://kelee.one/Resource/JavaScript/Weidian/getAppConfig.js,requires-body=true,max-size=-1,binary-body-mode=true
+配置修改 = type=http-response,pattern=^https:\/\/thor\.weidian\.com\/appconf\/getAppConfig\/,script-path=https://kelee.one/Resource/JavaScript/Weidian/getAppConfig.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20
 
-精简钱包区 = type=http-response,pattern=^https:\/\/thor\.weidian\.com\/wgs\/wallet\.query\.order\.entrance\/,script-path=https://kelee.one/Resource/JavaScript/Weidian/wallet.js,requires-body=true,max-size=-1,binary-body-mode=true
+精简钱包区 = type=http-response,pattern=^https:\/\/thor\.weidian\.com\/wgs\/wallet\.query\.order\.entrance\/,script-path=https://kelee.one/Resource/JavaScript/Weidian/wallet.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20
 
 [MITM]
 hostname = %APPEND% thor.weidian.com

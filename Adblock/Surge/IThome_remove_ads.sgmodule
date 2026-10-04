@@ -11,7 +11,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/IThome.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:25 +08:00
+# Converted: 2026-10-04 19:28:40 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/IThome_remove_ads.lpx
 # Target: Surge
@@ -20,7 +20,7 @@
 ^https?:\/\/dat\.ruanmei\.com\/ithome\/money\/acd\.json$ _ reject
 
 [Script]
-IT之家去广告 = type=http-response,pattern=^https:\/\/napi\.ithome\.com\/api\/(news\/indexv2\/iphone\/\d+|topmenu\/getfeeds\?),script-path=https://kelee.one/Resource/JavaScript/IThome/IThome_remove_ads.js,requires-body=true,max-size=-1,argument="{\"removeAllBanners\":{{{removeAllBanners}}},\"removePinnedArticles\":{{{removePinnedArticles}}}}"
+IT之家去广告 = type=http-response,pattern=^https:\/\/napi\.ithome\.com\/api\/(news\/indexv2\/iphone\/\d+|topmenu\/getfeeds\?),script-path=https://kelee.one/Resource/JavaScript/IThome/IThome_remove_ads.js,requires-body=true,max-size=-1,timeout=20,argument="{\"removeAllBanners\":{{{removeAllBanners}}},\"removePinnedArticles\":{{{removePinnedArticles}}}}"
 
 [MITM]
 hostname = %APPEND% napi.ithome.com, api.zuihuimai.com, dat.ruanmei.com

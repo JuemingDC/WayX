@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Bixin.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:33 +08:00
+# Converted: 2026-10-04 19:28:49 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Bixin_remove_ads.lpx
 # Target: Surge
@@ -52,9 +52,9 @@ http-response-jq ^https:\/\/api\.hibixin\.com\/resource\/v\d\/common\/tab$ '.res
 ^https:\/\/api\.hibixin\.com\/biggie\/query\/skill\/detail\/relateRecommendBiggieV\d$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-精简首页标签 = type=http-response,pattern=^https:\/\/gateway\.hibixin\.com\/resource\/v\d\/common\/tab\/query$,script-path=https://kelee.one/Resource/JavaScript/Bixin/common_tab.js,requires-body=true,max-size=-1
+精简首页标签 = type=http-response,pattern=^https:\/\/gateway\.hibixin\.com\/resource\/v\d\/common\/tab\/query$,script-path=https://kelee.one/Resource/JavaScript/Bixin/common_tab.js,requires-body=true,max-size=-1,timeout=20
 
-精简我的页面 = type=http-response,pattern=^https:\/\/gateway\.hibixin\.com\/resource\/v\d\/my\/page$,script-path=https://kelee.one/Resource/JavaScript/Bixin/my_page.js,requires-body=true,max-size=-1
+精简我的页面 = type=http-response,pattern=^https:\/\/gateway\.hibixin\.com\/resource\/v\d\/my\/page$,script-path=https://kelee.one/Resource/JavaScript/Bixin/my_page.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% web.hibixin.com, api.hibixin.com, gateway.hibixin.com, gateway.xxqapp.cn, api.xxqapp.cn, web-bxyuer.bixin.cn, gateway.bxyuer.com

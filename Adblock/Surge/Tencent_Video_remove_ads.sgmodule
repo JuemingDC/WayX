@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Tencent_Video.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:52 +08:00
+# Converted: 2026-10-04 19:29:13 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Tencent_Video_remove_ads.lpx
 # Target: Surge
@@ -37,7 +37,7 @@ URL-REGEX,^http:\/\/apd-\w+\.v\.smtcdns\.com\/(defaultts|omts|vmind\.qqvideo)\.t
 ^https?:\/\/vv\.video\.qq\.com\/(diff|get)vmind data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-移除广告 = type=http-request,pattern=^https?:\/\/vv\.video\.qq\.com\/getvinfo,script-path=https://kelee.one/Resource/JavaScript/CommonScript/replace-body.js,requires-body=true,max-size=-1,argument="&sppreviewtype=\\d(.*)&spsrt=\\d->&sppreviewtype=0$1&spsrt=0"
+移除广告 = type=http-request,pattern=^https?:\/\/vv\.video\.qq\.com\/getvinfo,script-path=https://kelee.one/Resource/JavaScript/CommonScript/replace-body.js,requires-body=true,max-size=-1,timeout=20,argument="&sppreviewtype=\\d(.*)&spsrt=\\d->&sppreviewtype=0$1&spsrt=0"
 
 [MITM]
 hostname = %APPEND% vv.video.qq.com

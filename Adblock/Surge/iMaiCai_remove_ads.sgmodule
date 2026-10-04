@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/iMaiCai.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:59 +08:00
+# Converted: 2026-10-04 19:29:22 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/iMaiCai_remove_ads.lpx
 # Target: Surge
@@ -25,7 +25,7 @@
 ^https:\/\/businessapi\.ksedt\.com\/signupindex\/jxlist data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-移除下发广告 = type=http-response,pattern=^https:\/\/portal-portm\.meituan\.com\/horn_ios\/mergeRequest,script-path=https://kelee.one/Resource/JavaScript/iMaiCai/iMaiCai_remove_ads.js,requires-body=true,max-size=-1
+移除下发广告 = type=http-response,pattern=^https:\/\/portal-portm\.meituan\.com\/horn_ios\/mergeRequest,script-path=https://kelee.one/Resource/JavaScript/iMaiCai/iMaiCai_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% portal-portm.meituan.com, mall.meituan.com, businessapi.ksedt.com

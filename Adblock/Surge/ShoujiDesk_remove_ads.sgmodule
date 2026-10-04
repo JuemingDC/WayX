@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ShoujiDesk.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:42 +08:00
+# Converted: 2026-10-04 19:29:00 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/ShoujiDesk_remove_ads.lpx
 # Target: Surge
@@ -21,7 +21,7 @@
 ^https:\/\/api\.tdz5\.com\/ring\/hot\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-移除首页广告配置 = type=http-response,pattern=^https:\/\/api\.tdz5\.com\/base\/init\?,script-path=https://kelee.one/Resource/JavaScript/ShoujiDesk/base_init.js,requires-body=true,max-size=-1
+移除首页广告配置 = type=http-response,pattern=^https:\/\/api\.tdz5\.com\/base\/init\?,script-path=https://kelee.one/Resource/JavaScript/ShoujiDesk/base_init.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% api.tdz5.com
