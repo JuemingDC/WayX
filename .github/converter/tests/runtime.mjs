@@ -275,6 +275,47 @@ if (selectedCase==='generated-helper-runtime.mjs') {
   assert.match(output.qx,/phase_qx_response_/);
   assert.match(output.surge,/phase_surge_response_/);
   assert.doesNotMatch([...output.generatedScripts.keys()].join('\n'),/^(?:body|header|json_)/m);
+  // Source identity is its position: identical declarations still run twice.
+  let repeatedChecks=0;
+  for(const phase of ['request','response']) {
+    const repeated=phase+' if ${url} ~= /api/i then '+phase+'.body.replace(/a/, "aa")';
+    const middle=phase+' if ${url} ~= /api/i then '+phase+'.body.replace(/aa/, "b")';
+    const after=phase+' if ${url} ~= /api/i then '+phase+'.body.replace(/aaa/, "done")';
+    const observed=phase+' if ${url} ~= /api/i then '+phase+'.header.set("X-Observed", ${'+phase+'.header["X-Step"]})';
+    const header=phase+' if ${url} ~= /api/i then '+phase+'.header.set("X-Step", "first")';
+    const overwrite=phase+' if ${url} ~= /api/i then '+phase+'.header.set("X-Step", "second")';
+    const cases=[
+      {lines:[repeated,repeated],body:'aaa'},
+      {lines:[repeated,repeated,after],body:'done'},
+      {lines:[middle,repeated,repeated],body:'aaa'},
+      {lines:[repeated,middle,repeated],body:'b'},
+      {lines:[header,observed,overwrite,observed],body:'a',headers:{'X-Step':'second','X-Observed':'second'}},
+    ];
+    for(const fixture of cases) {
+      const lines=fixture.lines.flatMap((line,index)=>['# occurrence '+index,'',line]);
+      const output=convertPlugin(entry,'[Rewrite]\n'+lines.join('\n'),{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+      validateConvertedPlugin(entry,output);
+      const context={url:'https://example.test/API',request:{url:'https://example.test/API',headers:{},body:'a',method:'GET'},response:{headers:{},body:'a',status:200,statusCode:200}};
+      let state=context;
+      for(const line of fixture.lines) {const oracle=evaluateRewriteActions(parseRewriteV2(line),state,{parsePath:parseJsonKeyPath});assert.deepEqual(oracle.errors,[]);state=oracle.state;}
+      assert.equal(state[phase].body,fixture.body,'independent expected source order');
+      for(const target of ['qx','surge']) {
+        const helpers=[...output.generatedScripts].filter(([name])=>name.startsWith('phase_'+target+'_'+phase+'_'));
+        assert.equal(helpers.length,1);
+        assert.equal(output[target].split(helpers[0][0]).length-1,1,'one active dispatcher reference, even with repeated owner text');
+        const generated=run(helpers[0][1],context);
+        assert.equal(generated.body??context[phase].body,fixture.body);
+        assert.deepEqual(generated.headers??context[phase].headers,fixture.headers??state[phase].headers);
+        assert.deepEqual(run(helpers[0][1],{...context,request:{...context.request,url:'https://example.test/miss'}}),{});
+        repeatedChecks++;
+      }
+    }
+  }
+  // Opposite phases may contain identical operations, but keep separate owners.
+  const both=convertPlugin(entry,'[Rewrite]\n'+['request','response'].flatMap(phase=>Array(2).fill(phase+' if ${url} ~= /api/i then '+phase+'.body.replace(/a/, "aa")')).join('\n'),{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+  validateConvertedPlugin(entry,both);assert.equal(both.generatedScripts.size,4);
+  for(const target of ['qx','surge'])for(const phase of ['request','response'])assert.equal([...both.generatedScripts.keys()].filter(name=>name.startsWith('phase_'+target+'_'+phase+'_')).length,1);
+  console.log('Repeated phase declaration ordering passed: '+repeatedChecks+' target executions');
   console.log('New syntax behavior oracle passed: '+checked+' flag/capture/header/dispatcher cases across QX and Surge');
 }
 

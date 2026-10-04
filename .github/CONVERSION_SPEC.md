@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.80
+版本：1.81
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -1097,3 +1097,11 @@ GitHub compare 必须为 forward ahead；缺少 files、达到 API 300 文件上
 ### 报告读取与发布门禁
 
 Review 清单必须读取 `.github/converter/fixtures/review-inventory-baseline.json`；基线缺失、JSON 损坏或平台计数无效时必须失败，不能跳过比较。同步与监控失败报告仅允许尚未生成（ENOENT）时使用空列表；已存在报告的读取错误、JSON 或结构错误必须使 Issue 步骤失败，并由唯一 workflow 的门禁阻止发布。同步报告兼容版本 1/2，监控报告兼容版本 1；源语义预检不读取运行报告。
+
+## 同阶段重复声明的顺序与所有权（v1.81）
+
+Rewrite 阶段规划以源声明在 `[Rewrite]` 中的位置（sourceIndex）为身份，不以原文文本去重。完全相同的声明仍逐次进入阶段 runtime，前一次已提交的 body/header 供后续声明读取；仅第一处成员输出一个活动 dispatcher 引用，其余成员保留各自注释并由该 dispatcher 执行。失败回退、候选 helper 清理及最终目标输出均使用同一位置身份，避免重复 owner 被后续 drop 覆盖、重复中间声明覆盖 native 成员或留下无活动引用的 phase helper。
+
+验证覆盖 request/response、QX/Surge、相邻重复、首成员重复、非首成员重复、中间穿插修改、重复条件读取前序 Header、未命中 no-op 及两阶段独立所有权。期望值由固定输入的独立结果和 source evaluator 交叉验证，并执行目标配置实际引用的脚本；每个目标阶段只能有一个活动 dispatcher 引用，每次执行只能调用一次 `$done`。原生优先、纯 JSON/JQ 不进入宽匹配 dispatcher、默认关闭 QX Script 强制启用及原作者 URL 保护保持原策略。
+
+官方依据：Loon Rewrite v2 的同阶段配置顺序与 action 失败后继续契约（https://nsloon.app/en/docs/Rewrite/rewrite_v2/），Loon Script v2 的 first-match、原始响应条件及 Rewrite/Script 禁用关系（https://nsloon.app/en/docs/Script/script_v2/），Surge HTTP Response 的每阶段至多一个匹配 Script（https://manual.nssurge.com/scripting/http-response.html），QX 作者 rewrite 文档（https://github.com/crossutility/Quantumult-X/blob/master/rewrite.md）。此次仅修复已支持同步 action 的阶段所有权；不将作者异步 Script 串联进 dispatcher，不启用尚未证明的动态 Regex、透明 URL 或 Script options 转换。真实客户端验证仍为独立后续工作。定时更新沿用每天北京时间 01:30，远端仅 main/test。
