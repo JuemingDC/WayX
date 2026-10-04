@@ -55,6 +55,50 @@ function correctedUpstreamJq(jq,line,ctx) {
   return result;
 }
 
+// User policy: choose one source type for an exact URL regex in one HTTP
+// phase. Never infer overlap between different regex bodies or compound guards.
+function sameRegexRewriteSelection(plugin,target,ctx) {
+  const sourceUrl=ctx.sourceUrl;
+  const owners=new Map(),records=[];
+  const key=(phase,pattern)=>JSON.stringify([phase,pattern]);
+  for(const item of groupSourceSectionItems(plugin.sections.get('Script') || [])) {
+    if(!item.line)continue;
+    try {
+      const ir=parseScriptDeclaration(item.line);
+      if(!ir || !['request','response'].includes(ir.phase))continue;
+      const plan=(target==='qx'?planQxScript:planSurgeScript)(ir,{scriptUrl:ir.script.path,name:'selection',argumentIds:ctx.argumentIds,argumentTable:ctx.argumentTable});
+      if(!plan.ok || plan.disabled || plan.omitted)continue;
+      const c=ir.condition;
+      const pattern=ir.sourceSyntax==='legacy'?ir.pattern:
+        c?.type==='comparison' && c.operator==='~=' && c.left?.name==='url' && c.right?.type==='regex' && !c.capture?c.right.pattern:null;
+      if(pattern!==null && pattern!==undefined)owners.set(key(ir.phase,pattern),'script');
+    }catch { /* Keep the ordinary Script diagnostic. */ }
+  }
+  for(const item of groupSourceSectionItems(plugin.sections.get('Rewrite') || [])) {
+    if(!item.line)continue;
+    try {
+      let phase,pattern,jq;
+      if(isRewriteV2(item.line)) {
+        const ast=parseRewriteV2(item.line);validateRewriteV2Ast(ast);
+        const matcher=simpleUrlRewriteCondition(ast);if(!matcher.ok || matcher.capture)continue;
+        phase=ast.phase;pattern=matcher.pattern;
+        jq=ast.actions.some(a=>jqDependencySpecFromAction(a,{pluginSourceUrl:sourceUrl}) || a.name===phase+'.json.jq');
+      }else {
+        const [p,a]=splitPatternAction(item.line),ir=legacyRewriteToSemanticIr(p,a);
+        if(ir.operations[0]?.kind==='unknown' || !ir.phase)continue;
+        phase=ir.phase;pattern=p;
+        jq=!!legacyJqPathDependencySpecFromIr(ir,{pluginSourceUrl:sourceUrl}) || ir.operations.some(o=>o.kind==='json' && o.operation==='jq');
+      }
+      const id=key(phase,pattern);records.push({line:item.line,id,jq});
+      if(jq && owners.get(id)!=='script')owners.set(id,'jq');
+    }catch { /* Invalid inputs retain the existing diagnostic. */ }
+  }
+  return new Map(records.flatMap(record=>{
+    const owner=owners.get(record.id);
+    return owner==='script'?[[record.line,'drop-script']]:owner==='jq'?[[record.line,record.jq?'jq-only':'drop-jq']]:[];
+  }));
+}
+
 function resolveRewriteJqDependencies(ast,line,ctx) {
   const actions=ast.actions.map((action,index)=>{
     const spec=jqDependencySpecFromAction(action,{pluginSourceUrl:ctx.sourceUrl});
@@ -75,7 +119,9 @@ function resolveRewriteJqDependencies(ast,line,ctx) {
     }
     return resolved;
   });
-  const result={...ast,actions};validateRewriteV2Ast(result);return result;
+  const result={...ast,actions};validateRewriteV2Ast(result);
+  return ctx.rewriteSelection?.get(line)==='jq-only'?
+    {...result,actions:actions.filter(a=>a.name===ast.phase+'.json.jq')}:result;
 }
 
 function rewriteV2Action(line,target,ctx) {
@@ -136,7 +182,7 @@ function planDisabledSurgeRewriteComments(comments,ctx) {
 
 function prepareRewriteDispatchers(plugin,target,ctx) {
   const result=new Map();
-  const items=groupSourceSectionItems(plugin.sections.get('Rewrite') || []).filter(x=>x.line);
+  const items=groupSourceSectionItems(plugin.sections.get('Rewrite') || []).filter(x=>x.line && !ctx.rewriteSelection?.get(x.line)?.startsWith('drop-'));
   const candidates=[];
   const scripts=groupSourceSectionItems(plugin.sections.get('Script') || []).filter(x=>x.line);
   const legacy=items.some(x=>!isRewriteV2(x.line));
@@ -288,6 +334,8 @@ export function convertPlugin(entry,source,{
     argumentTable:surgeArgumentTable,
     rawBase,
   };
+  qctx.rewriteSelection=sameRegexRewriteSelection(plugin,'qx',qctx);
+  sctx.rewriteSelection=sameRegexRewriteSelection(plugin,'surge',sctx);
 
   if (argumentAnalysis.undeclaredRefs.length) {
     const refs=[...new Set(argumentAnalysis.undeclaredRefs.map(ref=>ref.id))].sort().join(', ');
@@ -375,8 +423,10 @@ export function convertPlugin(entry,source,{
     }
     if (!item.line) continue;
 
-    let qr=qxDispatchers.get(item.sourceIndex) || rewriteV2Action(item.line,'qx',qctx);
-    let sr=surgeDispatchers.get(item.sourceIndex) || rewriteV2Action(item.line,'surge',sctx);
+    const selectedDrop=ctx=>ctx.rewriteSelection.get(item.line)?.startsWith('drop-')?
+      {section:'drop',reason:ctx.rewriteSelection.get(item.line)}:null;
+    let qr=selectedDrop(qctx) || qxDispatchers.get(item.sourceIndex) || rewriteV2Action(item.line,'qx',qctx);
+    let sr=selectedDrop(sctx) || surgeDispatchers.get(item.sourceIndex) || rewriteV2Action(item.line,'surge',sctx);
     if (!qr || !sr) {
       const [pattern,action]=splitPatternAction(item.line);
       let ir=legacyRewriteToSemanticIr(pattern,action);

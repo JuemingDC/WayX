@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Zhihu.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:37:02 +08:00
+# Converted: 2026-10-04 23:39:40 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Zhihu_remove_ads.lpx
@@ -33,9 +33,6 @@
 ^https:\/\/api\.zhihu\.com\/next-render\?id=\d+&type=answer url reject-dict
 
 ^https:\/\/api\.zhihu\.com\/comment_v\d\/(answers|pins)\/\d+\/root_comment\? url jsonjq-response-body 'delpaths([["atmosphere_voting_config"]])'
-
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/(api|page-info)(?:\.zhihu)?\.com\/answers\/v\d\/\d+(?:\?.*)?$ url jsonjq-response-body 'delpaths([["third_business"],["float_search_word"]])'
 
 ^https:\/\/(api|page-info)(?:\.zhihu)?\.com\/answers\/v\d\/\d+(?:\?.*)?$ url jsonjq-response-body '.structured_content.segments |= map(select(.type != "card"))'
 ^https:\/\/api\.zhihu\.com\/topstory\/recommend\? url jsonjq-response-body '.data[]?.children |= (if type == "array" then map(select(.id != "ring")) else . end)'

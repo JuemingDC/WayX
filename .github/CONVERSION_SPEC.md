@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.97
+版本：1.98
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -1242,3 +1242,12 @@ Script v2 动态 Cron 引用共用绑定校验：引用必须已声明、类型�
 支持旧/新 HTTP 作者声明、新版 Header set/del/replace、Body replace、JSON mutation 及现有固定单输出 JQ 子集。二进制作者、重复 Header、terminal mock、任意完整 JQ、legacy Rewrite、动态作者选项、无法取得正文、反射式 globalThis/window/global/$done、eval/Function/module 写法不进入实验入口；源码 guard 是保守文本筛选，不是完整 JS 静态分析或跨应用 API 兼容证明。目标运行时/API、本地隔离、跨 Request/Response 禁用关系及跨插件阶段范围尚不作通用等价承诺。CLI 生成实验声明与脚本，要求提供实际输出 Script base URL，不发布或改写常规受管产物。
 
 验证运行 QX/Surge 两目标、Request/Response 两阶段的实际生成脚本，覆盖 Rewrite 数据流、异步与重复 done、首匹配、Body/JQ 命中禁用、Response 原始条件快照、同步/Promise 错误及无法拉取/反射源码拒绝。完整旧 suite 和全量 Action 保持门禁。官方依据：https://nsloon.app/en/docs/Script/script_v2/（Matching and execution、Rewrite and Script），https://manual.nssurge.com/scripting/overview.html（每阶段 first match、timeout）。
+
+
+## 53. 同正则跨类型取舍（v1.98）
+
+按用户最新要求，同一插件、同一 HTTP 阶段、完全相同的 URL 正则主体适用 Script > JQ > 其它 Rewrite 的取舍。仅比较解析后的 regex body；flags 已按现有政策丢弃，不能重新添加。不同正则不推断覆盖关系，不同阶段及含额外条件/捕获的声明不合并。不同 URL 的真实样本只能验证各自转换，不能作为同正则组合证据。
+
+存在作者 Script 时保留原作者地址、声明顺序及受支持选项，丢弃同组其它 Rewrite；不存在 Script 但存在原生 JQ/jq_file/jq-path 时保留 JQ，丢弃其它动作。同条 v2 多 action 只保留 JQ action，JQ 文件仍按原 action 索引 materialize 后内联；多条 JQ 的顺序和既有输出形式不改。JSON add/delete/replace 转译为 JQ 不算源 JQ，不据目标输出形式触发优先级。QX 继续强制 enable；Surge disabled Script 不成为活动 owner。无效源声明保留原诊断，不以优先级掩盖。
+
+此为用户明确指定的语义降级，不宣称保持被丢弃动作的行为，不做异步作者正文组合。只输出选中层的目标格式转换结果，被忽略层直接丢弃，不输出原规则或源声明作为回退。§52 的组合实验不再作为当前实现方向，工具只留作历史实验；canonical sync 在共同规划入口实施此政策。旧阶段所有权规则仅适用于本节未取舍的声明。全量转换、内容一致不覆盖、作者 URL 保护及其余旧规范保持。

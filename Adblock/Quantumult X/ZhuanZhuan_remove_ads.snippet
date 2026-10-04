@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ZhuanZhuan.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:37:03 +08:00
+# Converted: 2026-10-04 23:39:41 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/ZhuanZhuan_remove_ads.lpx
@@ -46,7 +46,6 @@
 
 ^https:\/\/app\.zhuanzhuan\.com\/zz\/transfer\/getmymoretools$ url jsonjq-response-body 'walk(if type == "object" and .name == "免流量特权" then empty else . end) | del(.respData.groupList[] | select(.groupName == "活动参与" or .groupName == "金融工具"))'
 
-^https:\/\/app\.zhuanzhuan\.com\/zz\/transfer\/getmyprofilev3$ url jsonjq-response-body 'delpaths([["respData","bmNewInfo"]])'
 ^https:\/\/app\.zhuanzhuan\.com\/zz\/transfer\/getmyprofilev3$ url jsonjq-response-body 'del(.respData.itemGroupList[].itemList[] | select(.name == "天天赚钱" or .name == "借钱")) | del(.respData.itemGroupList[] | select(.groupType == 15))'
 
 # [mitm]

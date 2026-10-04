@@ -10,17 +10,17 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Meizhixiuxing.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:45 +08:00
+# Converted: 2026-10-04 23:39:24 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Meizhixiuxing_remove_ads.lpx
 # Target: Surge
+
+
 
 [Body Rewrite]
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
 http-response-jq ^https:\/\/api\.bevol\.com\/appmain\/app\/home\/page$ 'delpaths([["result","versionPopUp"],["result","isShowSearchLabel"],["result","isShowSearchFeedBack"],["result","centerBannerAdvert"],["result","programmaticAdvertising"],["result","mattsData"],["result","questionnaireMap"],["result","appPullDownAdvert"]])'
-
-http-response-jq ^https:\/\/api\.bevol\.com\/appmain\/app\/home\/feed$ 'delpaths([["result","banners"]])'
 http-response-jq ^https:\/\/api\.bevol\.com\/appmain\/app\/home\/feed$ '. | .result.returnList |= (map(select(.tname == "userPart"))) | .result.returnList |= map(select(. | has("adId") | not))'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.

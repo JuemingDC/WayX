@@ -21,6 +21,19 @@ if (!selectedCase) {
   }
 }
 
+function executeSelectedJq(output,target,phase,body) {
+  let result=body;
+  const token=target==='qx'?'jsonjq-'+phase+'-body':'http-'+phase+'-jq';
+  const lines=output[target].split('\n').filter(line=>!line.startsWith('#') && line.includes(token));
+  assert.ok(lines.length,'selected native JQ must be active');
+  for(const line of lines) {
+    const program=line.match(/'(.+)'$/)?.[1];assert.ok(program);
+    const run=runIsolatedCase('jq',['-c',program],{input:result,encoding:'utf8'});
+    assert.equal(run.status,0,run.stderr);result=run.stdout.trim();
+  }
+  return {body:result};
+}
+
 if (selectedCase === "generated-helper-runtime.mjs") {
 // Suite case: generated-helper-runtime.mjs
 // WayX generated helper runtime fixtures
@@ -566,13 +579,10 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   for(const phase of ['request','response']) {
     const lines=[phase+' if ${url} ~= /api/i then '+phase+'.json.jq(`.a = false | del(.ads)`) | '+phase+'.header.set("X-Start","yes")',phase+' if ${url} ~= /api/i then '+phase+'.json.replace("a",true) | '+phase+'.body.replace(/false/,"true")',phase+' if ${url} ~= /api/i then '+phase+'.json.jq(`.b = 2`) | '+phase+'.header.set("X-End","yes")'];
     const output=convertPlugin(entry,'[Rewrite]\n'+lines.join('\n'),{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});validateConvertedPlugin(entry,output);
-    assert.equal(output.generatedScripts.size,2);assert.doesNotMatch(output.qx+output.surge,/REVIEW REQUIRED|COMPATIBILITY LIMITATION/);
-    for(const target of ['qx','surge']) {
-      const script=[...output.generatedScripts].find(([name])=>name.startsWith('phase_'+target))[1];
-      assert.deepEqual(execute(script,phase,'{"ads":1}'),{headers:{'X-Start':'yes','X-End':'yes'},body:'{"a":true,"b":2}'});
-      let miss,calls=0;vm.runInNewContext(script,{$request:{url:'https://none.test/',headers:{}},$response:{headers:{}},$done:r=>{miss=r;calls++}});assert.equal(calls,1);assert.equal(Object.keys(miss).length,0);
-    }
+    assert.equal(output.generatedScripts.size,0);assert.doesNotMatch(output.qx+output.surge,/REVIEW REQUIRED|COMPATIBILITY LIMITATION/);
+    for(const target of ['qx','surge'])assert.deepEqual(executeSelectedJq(output,target,phase,'{"ads":1}'),{body:'{"a":false,"b":2}'});
   }
+
   const rollback=parseRewriteV2('request if ${url} ~= /api/i then request.body.mock("json","[]") | request.json.jq(`.a = 1`) | request.body.replace(/\\[\\]/,"{}") | request.json.jq(`.b = 2`)');
   for(const target of ['qx','surge'])assert.equal(execute(renderRewritePhaseDispatcher([rollback],{target}).script,'request','old').body,'{"b":2}');
   const guarded=parseRewriteV2('response if ${response.status} == 200 && ${request.header["X-Run"]} == "yes" then response.json.jq(`.["汉字"] = "a|b"`)');
@@ -599,15 +609,14 @@ if(selectedCase==='generated-helper-runtime.mjs') {
     const source='[Rewrite]\n'+line+'\n'+after;const calls=[];
     const files=await materializeJqFiles(entry,parseLoonPlugin(source),{fetchText:async url=>{calls.push(url);return url.endsWith('one.jq')?'.count = 1 # comment\n':'.literal = "${request.method}" | .["__proto__"] = {"safe":true}';}});
     assert.deepEqual(calls,['https://example.test/plugin/one.jq','https://example.test/plugin/two.jq']);assert.deepEqual(Object.keys(files.get(line).byAction),['1','3','4']);
-    const output=convertPlugin(entry,source,{...options,jqFiles:files});validateConvertedPlugin(entry,output);assert.equal(output.generatedScripts.size,2);assert.doesNotMatch(output.qx+output.surge,/REVIEW REQUIRED|COMPATIBILITY LIMITATION/);
+    const output=convertPlugin(entry,source,{...options,jqFiles:files});validateConvertedPlugin(entry,output);assert.equal(output.generatedScripts.size,0);assert.doesNotMatch(output.qx+output.surge,/REVIEW REQUIRED|COMPATIBILITY LIMITATION/);
     for(const target of ['qx','surge']) {
-      const script=[...output.generatedScripts].find(([name])=>name.startsWith('phase_'+target))[1];assert.match(script,/Source JQ file: https:\/\/example.test\/plugin\/one.jq/);assert.match(script,/Source JQ file: https:\/\/example.test\/plugin\/two.jq/);
-      const result=execute(script,phase,'{}');assert.deepEqual(JSON.parse(result.body),JSON.parse('{"count":1,"literal":"${request.method}","__proto__":{"safe":true},"end":true}'));assert.deepEqual(result.headers,{'X-Before':'yes'});cases++;
+      const result=executeSelectedJq(output,target,phase,'{}');assert.deepEqual(JSON.parse(result.body),JSON.parse('{"count":1,"literal":"${request.method}","__proto__":{"safe":true},"end":true}'));assert.equal(result.headers,undefined);cases++;
     }
     // Only one dependency in a mixed declaration still needs an indexed map.
     const one=phase+' if ${url} ~= /api/i then '+phase+'.json.jq_file("one.jq") | '+phase+'.header.set("X-After","yes")';
     const indexed=await materializeJqFiles(entry,parseLoonPlugin('[Rewrite]\n'+one),{fetchText:async()=>'.flag = true'});assert.deepEqual(Object.keys(indexed.get(one).byAction),['0']);
-    const valid=convertPlugin(entry,'[Rewrite]\n'+one,{...options,jqFiles:indexed});assert.equal(valid.generatedScripts.size,2);
+    const valid=convertPlugin(entry,'[Rewrite]\n'+one,{...options,jqFiles:indexed});assert.equal(valid.generatedScripts.size,0);
     const stale=convertPlugin(entry,'[Rewrite]\n'+one,{...options,jqFiles:new Map([[one,{content:'.flag = true'}]])});assert.match(stale.qx+stale.surge,/REVIEW REQUIRED/);assert.equal(stale.generatedScripts.size,0);
     const missing=convertPlugin(entry,'[Rewrite]\n'+one,{...options,jqFiles:new Map([[one,{byAction:{1:{content:'.flag = true'}}}]])});assert.equal(missing.generatedScripts.size,0);assert.match(missing.qx+missing.surge,/JQ dependency action 0/);
     const single=phase+' if ${url} ~= /api/ then '+phase+'.json.jq_file("single.jq")';
@@ -618,13 +627,13 @@ if(selectedCase==='generated-helper-runtime.mjs') {
     const review=convertPlugin(entry,'[Rewrite]\n'+failure,{...options,jqFiles:failed});assert.equal(review.generatedScripts.size,0);assert.match(review.qx+review.surge,/REVIEW REQUIRED/);
     const arbitrary=phase+' if ${url} ~= /api/i then '+phase+'.json.jq_file("complex.jq") | '+phase+'.header.set("X","yes")';
     const arbitraryFiles=await materializeJqFiles(entry,parseLoonPlugin('[Rewrite]\n'+arbitrary),{fetchText:async()=>'.data | map(select(.active))'});
-    const arbitraryOut=convertPlugin(entry,'[Rewrite]\n'+arbitrary,{...options,jqFiles:arbitraryFiles});assert.equal(arbitraryOut.generatedScripts.size,0);assert.match(arbitraryOut.qx+arbitraryOut.surge,/REVIEW REQUIRED/);
+    const arbitraryOut=convertPlugin(entry,'[Rewrite]\n'+arbitrary,{...options,jqFiles:arbitraryFiles});assert.equal(arbitraryOut.generatedScripts.size,0);assert.doesNotMatch(arbitraryOut.qx+arbitraryOut.surge,/REVIEW REQUIRED/);assert.match(arbitraryOut.qx,/jsonjq-/);
     const dynamic=phase+' if ${url} ~= /api/ then '+phase+'.json.jq_file("${request.method}.jq") | '+phase+'.json.jq_file("ok.jq")';let fetchCount=0;
     const dynamicFiles=await materializeJqFiles(entry,parseLoonPlugin('[Rewrite]\n'+dynamic),{fetchText:async()=>{fetchCount++;return '.';}});assert.equal(fetchCount,1);assert.match(dynamicFiles.get(dynamic).error,/dynamic file dependency/);
     const empty=await materializeJqFiles(entry,parseLoonPlugin('[Rewrite]\n'+single),{fetchText:async()=> '# nothing\n'});assert.match(empty.get(single).error,/empty content/);
-    const alias=phase+' if ${url} ~= /api/i then '+phase+'.json.jq("jq-path=one.jq") | '+phase+'.header.set("X","yes")';const aliasFiles=await materializeJqFiles(entry,parseLoonPlugin('[Rewrite]\n'+alias),{fetchText:async()=>'.flag = true'});assert.equal(aliasFiles.get(alias).byAction[0].legacyAlias,true);const aliasOut=convertPlugin(entry,'[Rewrite]\n'+alias,{...options,jqFiles:aliasFiles});assert.equal(aliasOut.generatedScripts.size,2);
+    const alias=phase+' if ${url} ~= /api/i then '+phase+'.json.jq("jq-path=one.jq") | '+phase+'.header.set("X","yes")';const aliasFiles=await materializeJqFiles(entry,parseLoonPlugin('[Rewrite]\n'+alias),{fetchText:async()=>'.flag = true'});assert.equal(aliasFiles.get(alias).byAction[0].legacyAlias,true);const aliasOut=convertPlugin(entry,'[Rewrite]\n'+alias,{...options,jqFiles:aliasFiles});assert.equal(aliasOut.generatedScripts.size,0);
   }
-  const mock='request if ${url} ~= /api/i then request.body.mock("json","null") | request.json.jq_file("make.jq") | request.body.replace(/true/,"false")';const files=await materializeJqFiles(entry,parseLoonPlugin('[Rewrite]\n'+mock),{fetchText:async()=>'.flag = true'});const output=convertPlugin(entry,'[Rewrite]\n'+mock,{...options,jqFiles:files});for(const [name,script] of output.generatedScripts){assert.equal(execute(script,'request','old').body,'{"flag":false}');cases++;}
+  const mock='request if ${url} ~= /api/i then request.body.mock("json","null") | request.json.jq_file("make.jq") | request.body.replace(/true/,"false")';const files=await materializeJqFiles(entry,parseLoonPlugin('[Rewrite]\n'+mock),{fetchText:async()=>'.flag = true'});const output=convertPlugin(entry,'[Rewrite]\n'+mock,{...options,jqFiles:files});assert.equal(output.generatedScripts.size,0);for(const target of ['qx','surge']){assert.equal(executeSelectedJq(output,target,'request','null').body,'{"flag":true}');cases++;}
   const original='response if ${url} ~= /api/i then response.json.jq_file("one.jq")';const originalSource='[Rewrite]\n'+original+'\n[Script]\nhttp-response ^https://example.test/api script-path=https://example.test/original.js,requires-body=true';const protectedFiles=await materializeJqFiles(entry,parseLoonPlugin(originalSource),{fetchText:async()=>'.flag = true'});const protectedOut=convertPlugin(entry,originalSource,{...options,jqFiles:protectedFiles});assert.equal(protectedOut.generatedScripts.size,0);assert.match(protectedOut.qx,/jsonjq-response-body/);assert.match(protectedOut.surge,/http-response-jq/);
   console.log('JQ file dependency contracts passed: '+cases+' independent ordered target outputs, plus indexes/dedup/failure/literal/alias/native/author-script preservation');
 }
@@ -654,11 +663,11 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   const entry={id:'NestedJqPhase',source:'https://example.test/plugin/main.lpx',category:'Test'};const options={stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'};
   for(const phase of ['request','response']) {
     const lines=[phase+' if ${url} ~= /api/i then '+phase+'.json.jq_file("nested.jq") | '+phase+'.header.set("X-Ready","yes")',phase+' if ${url} ~= /api/i then '+phase+'.json.replace("data.deep.flag",false)',phase+' if ${url} ~= /api/i then '+phase+'.json.jq(`del(.data.deep.old)`) | '+phase+'.body.replace(/false/,"true")'];
-    const source='[Rewrite]\n'+lines.join('\n');const files=await materializeJqFiles(entry,parseLoonPlugin(source),{fetchText:async()=>'.data.deep.flag = true | .data.deep.old = 1'});const output=convertPlugin(entry,source,{...options,jqFiles:files});validateConvertedPlugin(entry,output);assert.equal(output.generatedScripts.size,2);assert.doesNotMatch(output.qx+output.surge,/REVIEW REQUIRED|COMPATIBILITY LIMITATION/);
-    for(const target of ['qx','surge'])assert.deepEqual(execute([...output.generatedScripts].find(([name])=>name.startsWith('phase_'+target))[1],phase,'null'),{headers:{'X-Ready':'yes'},body:'{"data":{"deep":{"flag":true}}}'});
+    const source='[Rewrite]\n'+lines.join('\n');const files=await materializeJqFiles(entry,parseLoonPlugin(source),{fetchText:async()=>'.data.deep.flag = true | .data.deep.old = 1'});const output=convertPlugin(entry,source,{...options,jqFiles:files});validateConvertedPlugin(entry,output);assert.equal(output.generatedScripts.size,0);assert.doesNotMatch(output.qx+output.surge,/REVIEW REQUIRED|COMPATIBILITY LIMITATION/);
+    for(const target of ['qx','surge'])assert.deepEqual(executeSelectedJq(output,target,phase,'null'),{body:'{"data":{"deep":{"flag":true}}}'});
   }
   const fail='request if ${url} ~= /api/i then request.body.mock("json","{}") | request.json.jq(`.saved = true`) | request.json.jq(`.data.ads = [] | .data = 0 | .data.deep.flag = true`) | request.header.set("X-After","yes") | request.json.jq(`.final.ok = true`)';
-  const failed=convertPlugin(entry,'[Rewrite]\n'+fail,options);for(const [,script] of failed.generatedScripts)assert.deepEqual(JSON.parse(execute(script,'request','old').body),{saved:true,final:{ok:true}});
+  for(const target of ['qx','surge'])assert.deepEqual(JSON.parse(execute(renderRewritePhaseDispatcher([parseRewriteV2(fail)],{target}).script,'request','old').body),{saved:true,final:{ok:true}});
   console.log('Nested object JQ passed: '+checked+' target outputs against independent jq, plus inline/file phase order, action rollback and unsupported selector guards');
 }
 
@@ -694,7 +703,7 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   const owner=convertPlugin(entry,'[Rewrite]\n'+a+'\nresponse if ${url} ~= /other/i then response.header.set("X","yes")',options);assert.match(owner.qx,/^first url jsonjq-response-body/m);assert.match(owner.surge,/^http-response-jq first /m);assert.doesNotMatch(owner.qx+owner.surge,/phase_.*\.js/);
   for(const phase of ['request','response']) {
     const line=phase+' if ${url} ~= /^https:\\/\\/example\\.test\\/api$/i then '+phase+'.json.jq_file("one.jq")';const files=await materializeJqFiles(entry,parseLoonPlugin('[Rewrite]\n'+line),{fetchText:async()=>'.data.ads = []'});const output=convertPlugin(entry,'[Rewrite]\n'+line,{...options,jqFiles:files});assert.equal(output.generatedScripts.size,0);assert.match(output.qx,/jsonjq-/);assert.match(output.surge,/http-.*-jq/);
-    const mixed=phase+' if ${url} ~= /^https:\\/\\/example\\.test\\/api$/ then '+phase+'.json.jq(`del(.data.ads)`) | '+phase+'.header.set("X-Mixed","yes")';const combination=convertPlugin(entry,'[Rewrite]\n'+mixed,options);validateConvertedPlugin(entry,combination);assert.equal(combination.generatedScripts.size,2);assert.match(combination.qx,/^\^https:.* url script-/m);assert.match(combination.surge,/pattern=\^https:/);assert.doesNotMatch(combination.qx+combination.surge,/^\^ url script-/m);
+    const mixed=phase+' if ${url} ~= /^https:\\/\\/example\\.test\\/api$/ then '+phase+'.json.jq(`del(.data.ads)`) | '+phase+'.header.set("X-Mixed","yes")';const combination=convertPlugin(entry,'[Rewrite]\n'+mixed,options);validateConvertedPlugin(entry,combination);assert.equal(combination.generatedScripts.size,0);assert.match(combination.qx,/^\^https:.* url jsonjq-/m);assert.match(combination.surge,/^http-.*-jq \^https:/m);assert.doesNotMatch(combination.qx+combination.surge,/^\^ url script-/m);
     const filters=['.first = true','.data.flag = true','.last = 3'];const pipeline=phase+' if ${url} ~= /api/i then '+filters.map(f=>phase+'.json.jq(`'+f+'`)').join(' | ');const native=convertPlugin(entry,'[Rewrite]\n'+pipeline,options);validateConvertedPlugin(entry,native);assert.equal(native.generatedScripts.size,0);
     const program=native.qx.match(/jsonjq-[^ ]+ '(.*)'/)[1];
     for(const input of ['{}','null','{"data":false}','{"data":[]}','{"data":null}','{"data":{"flag":false}}','false']) {
@@ -711,7 +720,7 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   // inline-body representation, so its required script fallback stays active.
   const mock='response if ${url} ~= /api/ then response.body.mock("text","OK",200,false)';const mockOutput=convertPlugin(entry,'[Rewrite]\n'+mock,options);validateConvertedPlugin(entry,mockOutput);assert.match(mockOutput.surge,/\[Map Local\]/);assert.doesNotMatch(mockOutput.surge,/script-path=/);assert.match(mockOutput.qx,/script-echo-response/);
   const file='response if ${url} ~= /api/ then response.body.mock_file("text","body.txt",200,false)';const mockFiles=await materializeMockFiles(entry,parseLoonPlugin('[Rewrite]\n'+file),{fetchText:async()=>'OK'});const fileOutput=convertPlugin(entry,'[Rewrite]\n'+file,{...options,mockFiles});validateConvertedPlugin(entry,fileOutput);assert.match(fileOutput.surge,/\[Map Local\]/);assert.doesNotMatch(fileOutput.surge,/script-path=/);assert.match(fileOutput.qx,/script-echo-response/);
-  const add=convertPlugin(entry,'[Rewrite]\nresponse if ${url} ~= /api/ then response.json.jq(`del(.data.ads)`) | response.header.add("X","yes")',options);assert.match(add.surge,/pattern=api,script-path=/);assert.match(add.qx,/REVIEW REQUIRED/);
+  const add=convertPlugin(entry,'[Rewrite]\nresponse if ${url} ~= /api/ then response.json.jq(`del(.data.ads)`) | response.header.add("X","yes")',options);assert.match(add.surge,/http-response-jq api/);assert.match(add.qx,/jsonjq-response-body/);assert.doesNotMatch(add.qx+add.surge,/REVIEW REQUIRED/);
   console.log('Native priority passed: '+checked+' native mappings/JQ pipeline outputs, plus matcher retention, pure JQ phase ownership and native/mock fallback contracts');
 }
 
@@ -954,13 +963,14 @@ if(selectedCase==='generated-helper-runtime.mjs') {
     const line=phase+' if ${url} ~= /^https:\\/\\/example\\.test\\/api$/ then '+phase+'.json.jq(`'+filter+'`) | '+phase+'.header.set("X-After","yes")';
     assert.ok(fixedJqOperations(parseRewriteV2(line).actions[0]),filter);
     const out=convertPlugin(entry,'[Rewrite]\n'+line,options);validateConvertedPlugin(entry,out);
-    assert.equal(out.generatedScripts.size,2,filter);
+    assert.equal(out.generatedScripts.size,0,filter);
     assert.doesNotMatch(out.qx+out.surge,/^\^ url script-/m,'retain URL prefilter');
     for(const input of inputs) {
       const reference=runIsolatedCase('jq',['-c',filter],{input,encoding:'utf8'});if(reference.error)throw reference.error;
       for(const target of ['qx','surge']) {
-        const [name,script]=[...out.generatedScripts].find(([name])=>name.includes('_'+target+'_'));
-        assert.ok((target==='qx'?out.qx:out.surge).includes(name),'execute the active helper');
+        const {renderRewritePhaseDispatcher}=await import('../src/runtime.mjs');
+        const script=renderRewritePhaseDispatcher([parseRewriteV2(line)],{target}).script;
+        assert.match(out[target],target==='qx'?/jsonjq-/:/http-.*-jq/,'canonical output selects native JQ');
         let result,calls=0;
         const state={$request:{url:'https://example.test/api',headers:{},body:input},$response:{status:200,statusCode:200,headers:{},body:input},$done:value=>{result=value;calls++}};
         vm.runInNewContext(script,state,{timeout:1000});assert.equal(calls,1);
@@ -1298,4 +1308,30 @@ if (selectedCase==='generated-helper-runtime.mjs') {
     const url='https://example.test/old$&${hit.1}';
     assert.equal(runGenerated(renderQxRedirectScript(data,{conditionMode}).script,{request:{url}}).headers.Location,'https://example.test/$&${hit.1}');
   }
+}
+
+if(selectedCase==='generated-helper-runtime.mjs') {
+  const {readFile}=await import('node:fs/promises');
+  const {convertPlugin,validateConvertedPlugin}=await import('../src/conversion.mjs');
+  const {parseLoonPlugin,groupSourceSectionItems}=await import('../src/input.mjs');
+  const {simpleUrlRewriteCondition}=await import('../src/rewrite.mjs');
+  const manifest=JSON.parse(await readFile(new URL('../../sources/loon.json',import.meta.url),'utf8'));
+  const entry=manifest.find(x=>x.file==='PinDuoDuo_remove_ads.lpx');
+  const source=await readFile(new URL('../../../Resource/Loon/PinDuoDuo_remove_ads.lpx',import.meta.url),'utf8');
+  const declarations=groupSourceSectionItems(parseLoonPlugin(source).sections.get('Rewrite')).filter(x=>x.line?.startsWith('response ') && x.line.includes('/homepage') && x.line.includes('/alexa'));
+  const asts=declarations.map(x=>parseRewriteV2(x.line));
+  assert.equal(asts.length,2);assert.equal(simpleUrlRewriteCondition(asts[0]).pattern,simpleUrlRewriteCondition(asts[1]).pattern);
+  const selected='[Rewrite]\n'+declarations.map(x=>x.line).join('\n');
+  const output=convertPlugin(entry,selected,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+  validateConvertedPlugin(entry,output);assert.equal(output.generatedScripts.size,0);
+  const input={result:{dy_module:{irregular_banner_dy:'ignored delete'},icon_set:'ignored delete',search_bar_hot_query:'ignored delete',bottom_tabs:[{link:'index.html'},{link:'advert.html'}],buffer_bottom_tabs:[{link:'chat_list.html'},{link:'advert.html'}],all_top_opts:[{selected_image:1,image:2,height:3,width:4,keep:5}]}};
+  const expected={result:{...input.result,bottom_tabs:[{link:'index.html'}],buffer_bottom_tabs:[{link:'chat_list.html'}],all_top_opts:[{keep:5}]}};
+  for(const target of ['qx','surge']) {
+    const active=output[target].split('\n').filter(x=>!x.startsWith('#'));
+    assert.equal(active.filter(x=>x.includes(target==='qx'?'jsonjq-response-body':'http-response-jq')).length,1);
+    const result=executeSelectedJq(output,target,'response',JSON.stringify(input));
+    assert.deepEqual(JSON.parse(result.body),expected,'real plugin: JQ converted; delete layer ignored');
+    assert.doesNotMatch(output[target],/Source declaration:.*response\.json\.delete/,'discarded source declaration is not a fallback');
+  }
+  console.log('Real PinDuoDuo same-regex selection passed: both targets execute converted JQ, discarded JSON delete fields remain intact');
 }

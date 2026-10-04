@@ -10,10 +10,12 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YY_Voice.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:29 +08:00
+# Converted: 2026-10-04 23:39:08 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/YY_Voice_remove_ads.lpx
 # Target: Surge
+
+
 
 [Rule]
 DOMAIN,splash.yy.com,REJECT,extended-matching,pre-matching
@@ -24,8 +26,6 @@ DOMAIN,ysad.yy.com,REJECT,extended-matching,pre-matching
 [Body Rewrite]
 
 http-response-jq ^https:\/\/yyapp-idx\.yy\.com\/mobyy\/nav\/index\/idx\? '.data[].modules |= map(select(.name != "新版本滚动条" and .name != "通栏轮播" and .name != "新静默位"))'
-
-http-response-jq ^https:\/\/tab\.yy\.com\/tabs\? 'delpaths([["data","tabsForSelect"]])'
 http-response-jq ^https:\/\/tab\.yy\.com\/tabs\? '.data.tabs |= map(select(.alias == "follow" or .alias == "im" or .alias == "me"))'
 
 http-response-jq ^https:\/\/personal-center\.yy\.com\/personalCenter\/list\? '.data.modules |= map(select(.moduleName != "Banner轮播")) | .data.modules |= map(if has("entrances") then .entrances |= map(select(.bizCode|IN("jishijiedaikuan","duxiaoman2","chongzhi","freeData")|not)) else . end)'

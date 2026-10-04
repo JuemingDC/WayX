@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/OnTheWay.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:59 +08:00
+# Converted: 2026-10-04 23:39:38 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/OnTheWay_remove_ads.lpx
@@ -20,8 +20,6 @@
 
 ^https:\/\/www\.imxingzhe\.com\/api\/v4\/account\/get_user_info\? url jsonjq-response-body 'delpaths([["banner"]])'
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/www\.imxingzhe\.com\/api\/v4\/discovery\/ios\/\? url jsonjq-response-body 'delpaths([["banners"],["ad"]])'
 ^https:\/\/www\.imxingzhe\.com\/api\/v4\/discovery\/ios\/\? url jsonjq-response-body '.display_areas |= map(select(.name == "赛事" or .name == "行者帮" or .name == "头条" or .name == "排行榜" or .name == "约伴"))'
 
 # [mitm]

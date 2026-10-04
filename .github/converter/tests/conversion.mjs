@@ -1228,8 +1228,8 @@ assert.deepEqual(generatedScriptSemantics(outA.generatedScripts), generatedScrip
 
 assert.ok(qxSemantics(outA.qx, entryA.id).includes('^https:\\/\\/ads\\.example\\.com url reject-dict'));
 assert.ok(surgeSemantics(outA.surge, entryA.id).includes('^https:\\/\\/ads\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"'));
-assert.ok(surgeSemantics(outA.surge, entryA.id).some(x=>x.startsWith('http-response ^https:\\/\\/api\\.example\\.com enabled:true enabled:false')));
-assert.ok(qxSemantics(outA.qx, entryA.id).some(x=>x.includes(`jsonjq-response-body 'delpaths([["data","ads"]])'`)));
+assert.equal(surgeSemantics(outA.surge, entryA.id).some(x=>x.includes('enabled:true enabled:false')),false);
+assert.equal(qxSemantics(outA.qx, entryA.id).some(x=>x.includes('jsonjq-response-body')),false);
 assert.ok(qxSemantics(outA.qx, entryA.id).some(x=>x.includes('script-response-body https://scripts.example.com/generic.js')));
 
 console.log('Generic identity-invariance conversion test passed');
@@ -1881,4 +1881,45 @@ if(selectedCase==='conversion-policy.mjs') {
   assert.match(out.surge,/^Original = type=cron[^\n]*script-path=https:\/\/example\.test\/original\.js/m);
   for(const text of [out.qx,out.surge]) {assert.doesNotMatch(text,/(?:ISSUE|REVIEW) REQUIRED/);assert.doesNotMatch(text,/^[^#\n]*argument=/m);}
   console.log('Script argument dropping conversion passed: unsupported input omitted without losing original task or adding Review');
+}
+
+if(selectedCase==='conversion-policy.mjs') {
+  const entry={id:'SameRegexSelection',source:'https://example.test/main.lpx',category:'Test'};
+  const options={stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'};
+  const active=text=>text.split('\n').filter(x=>x && !x.startsWith('#')).join('\n');
+  let checked=0;
+  for(const phase of ['request','response'])for(const legacy of [false,true]) {
+    const header=legacy?'api '+(phase==='response'?'response-':'')+'header-replace X old new':phase+' if ${url} ~= /api/i then '+phase+'.header.set("X","discard")';
+    const jq=legacy?'api '+phase+'-body-json-jq .kept = true':phase+' if ${url} ~= /api/ then '+phase+'.json.jq(`.kept = true`)';
+    const script=legacy?'http-'+phase+' api script-path=https://example.test/original.js,requires-body=true':phase+' if ${url} ~= /api/s then script("https://example.test/original.js") with requires_body=true';
+    const out=convertPlugin(entry,'[Rewrite]\n'+header+'\n'+jq+'\n[Script]\n'+script,options);
+    assert.equal(out.generatedScripts.size,0);
+    for(const target of ['qx','surge']) {
+      const text=active(out[target]);assert.match(text,/https:\/\/example\.test\/original\.js/);assert.doesNotMatch(text,/jsonjq-|http-.*-jq|discard|header-replace/);checked++;
+    }
+    const jqOut=convertPlugin(entry,'[Rewrite]\n'+header+'\n'+jq,options);
+    assert.equal(jqOut.generatedScripts.size,0);
+    for(const target of ['qx','surge']){assert.match(active(jqOut[target]),/\.kept/);assert.doesNotMatch(active(jqOut[target]),/discard|header-replace|script-path=/);checked++;}
+    validateQX(out.qx,entry);validateSurgeModule(out.surge,entry);
+  }
+  const mixed='response if ${url} ~= /api/ then response.header.set("X","discard") | response.json.jq_file("one.jq") | response.body.replace(/old/,"discard") | response.json.jq(`.last = true`)';
+  const files=await materializeJqFiles(entry,parseLoonPlugin('[Rewrite]\n'+mixed),{fetchText:async()=>'.first = true'});
+  assert.deepEqual(Object.keys(files.get(mixed).byAction),['1']);
+  const out=convertPlugin(entry,'[Rewrite]\n'+mixed,{...options,jqFiles:files});
+  assert.equal(out.generatedScripts.size,0);
+  for(const target of ['qx','surge']){assert.match(active(out[target]),/\.first.*\.last/);assert.doesNotMatch(active(out[target]),/discard|one\.jq|script-path=/);checked++;}
+  // Different regex bodies, phases and compound conditions remain independent.
+  for(const script of [
+    'response if ${url} ~= /other/ then script("https://example.test/original.js")',
+    'request if ${url} ~= /api/ then script("https://example.test/original.js")',
+    'response if ${url} ~= /api/ && ${response.status} == 200 then script("https://example.test/original.js")',
+  ]) {
+    const result=convertPlugin(entry,'[Rewrite]\nresponse if ${url} ~= /api/ then response.json.jq(`.kept = true`)\n[Script]\n'+script,options);
+    for(const target of ['qx','surge']){assert.match(active(result[target]),/\.kept/);checked++;}
+  }
+  const disabled=convertPlugin(entry,'[Rewrite]\nresponse if ${url} ~= /api/ then response.json.jq(`.kept = true`)\n[Script]\nresponse if ${url} ~= /api/ then script("https://example.test/original.js") with enable=false',options);
+  assert.doesNotMatch(active(disabled.qx),/jsonjq-/);assert.match(active(disabled.surge),/http-response-jq/);
+  const invalid=convertPlugin(entry,'[Rewrite]\nresponse if ${url} ~= /api/ then response.json.jq(`.kept = true`)\n[Script]\nresponse if ${url} ~= /api/ then script("https://example.test/original.js") with timeout=${missing}',options);
+  for(const target of ['qx','surge']){assert.match(invalid[target],/REVIEW REQUIRED/);assert.match(active(invalid[target]),/\.kept/);}
+  console.log('Same regex source selection passed: '+checked+' target outputs, original Script precedence, JQ action/file indexing, independent matchers/phases, disabled and invalid Script isolation');
 }
