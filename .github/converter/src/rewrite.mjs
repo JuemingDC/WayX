@@ -5,6 +5,7 @@
 import { normalizeRegexBodyForTarget, compileRegexForTarget, conditionRuntimeSource, compileSourceRegex, stringTemplateParts } from "./core.mjs";
 import { renderQxHeaderScript, renderQxInlineMockScript, renderSurgeRequestMockScript, renderQxMockFileScript, renderQxRedirectScript, renderQxRejectScript, headerOpsForMock, renderMixedRewriteScript, renderSingleJsonMutationScript, renderSingleRewriteMutationScript } from "./runtime.mjs";
 import crypto from "node:crypto";
+import { spawnSync } from "node:child_process";
 import { surgeRewriteArgumentPayload } from "./script.mjs";
 
 
@@ -654,6 +655,46 @@ export function stripJqComments(expr) {
     out += ch;
   }
   return out;
+}
+
+// 上游错误：jq keyword whitespace lost after an identity selector.
+// Failed case: KuGou / Issue #162 / `else .end;` -> `else . end;`.
+// Valid field `.end` and quoted/comment text are never rewritten. Empty stdin
+// compiles the program without evaluating the author's filter on any JSON.
+const upstreamJqRepairCache=new Map();
+export function repairUpstreamJq(expr) {
+  const original=String(expr);
+  if(upstreamJqRepairCache.has(original))return upstreamJqRepairCache.get(original);
+  let masked='',quoted=false,escaped=false,comment=false;
+  for(let i=0;i<original.length;i++) {
+    const ch=original[i];
+    if(comment){masked+=ch==='\n'?'\n':' ';if(ch==='\n')comment=false;continue;}
+    if(quoted){masked+=' ';if(escaped)escaped=false;else if(ch==='\\')escaped=true;else if(ch==='"')quoted=false;continue;}
+    if(ch==='"'){quoted=true;masked+=' ';continue;}
+    if(ch==='#'){comment=true;masked+=' ';continue;}
+    masked+=ch;
+  }
+  const matches=[...masked.matchAll(/\belse\s*\.end\b(?=\s*(?:[;|)\],}]|$))/g)];
+  let result={jq:original,changed:false};
+  if(matches.length) {
+    const compile=program=>{
+      const checked=spawnSync('jq',[program],{input:'',encoding:'utf8',timeout:5000,maxBuffer:1024*1024});
+      if(checked.error || checked.signal || ![0,3].includes(checked.status))throw new Error('jq compiler unavailable or failed: '+String(checked.error?.message||checked.stderr||checked.signal));
+      return checked;
+    };
+    const before=compile(original);
+    if(before.status===3 && /syntax error|unterminated/i.test(before.stderr)) {
+      let candidate=original;
+      for(const match of matches.reverse()) {
+        const offset=match.index+match[0].lastIndexOf('.end')+1;
+        candidate=candidate.slice(0,offset)+' '+candidate.slice(offset);
+      }
+      const after=compile(candidate);
+      if(after.status===0)result={jq:candidate,changed:true,kind:'jq-identity-end-whitespace',original,diagnostic:before.stderr.split('\n').find(line=>line.startsWith('jq: error:'))||'jq compile error'};
+    }
+  }
+  if(upstreamJqRepairCache.size>=512)upstreamJqRepairCache.clear();
+  upstreamJqRepairCache.set(original,result);return result;
 }
 
 export function minifyJq(expr){

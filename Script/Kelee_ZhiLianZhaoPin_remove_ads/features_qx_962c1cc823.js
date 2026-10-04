@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 17:00:46 +08:00
+// Converted: 2026-10-04 17:16:17 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/ask\.zhaopin\.com\/plat-zqa-server\/home\/\d\.\d\.\d\/getHomeContents\?/i then response.json.delete("data.templates[0].data.banner")

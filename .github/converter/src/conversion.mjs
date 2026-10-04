@@ -6,7 +6,7 @@ import crypto from "node:crypto";
 import { renderRewritePhaseDispatcher } from "./runtime.mjs";
 import { scriptIrTag, parseScriptDeclaration, isScriptV2, planQxScript, planSurgeScript, scriptOption, analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs, surgeArgumentMetadata, surgeRewriteArgumentPayload } from "./script.mjs";
 import { qxRule as canonicalQxRule, surgeModuleRule } from "./rule.mjs";
-import { isRewriteV2, parseRewriteV2, validateRewriteV2Ast, classifyLegacyRewriteAction, isEmptyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr, inlineResolvedDependency, inlineResolvedLegacyJqPathIr, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr, planQxRewrite, planSurgeRewrite, rewriteReview, rewriteIssue, supportsRewritePhaseActions, simpleUrlRewriteCondition, jsonPipelineToSafeNativeJq } from "./rewrite.mjs";
+import { repairUpstreamJq, unquoteRewriteToken, isRewriteV2, parseRewriteV2, validateRewriteV2Ast, classifyLegacyRewriteAction, isEmptyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr, inlineResolvedDependency, inlineResolvedLegacyJqPathIr, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr, planQxRewrite, planSurgeRewrite, rewriteReview, rewriteIssue, supportsRewritePhaseActions, simpleUrlRewriteCondition, jsonPipelineToSafeNativeJq } from "./rewrite.mjs";
 import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection, parseLoonPlugin, materializeRewriteDependencies, materializeSourceScripts, fetchOriginalText, fetchOriginalBytes } from "./input.mjs";
 import { attachQxInlineNote, createQxOutputState, appendQxOutput, qxOutputDestination, qxRuleOutputDestination, qxRewriteOutputDestination, renderQxOutput, createSurgeOutputState, appendSurgeOutput, surgeOutputDestination, surgeRuleOutputDestination, surgeRewriteOutputDestination, renderSurgeOutput, validateQX, validateSurgeModule } from "./output.mjs";
 import { parseConfigurationDeclaration, planConfiguration } from "./configuration.mjs";
@@ -49,17 +49,31 @@ function rewriteErrorResult(line,error) {
 // Normalize file actions before both target planning and phase eligibility.
 // A dependency is tied to its absolute source action index, never shared as
 // the old single-action object across a multi-action declaration.
+function correctedUpstreamJq(jq,line,ctx) {
+  const result=repairUpstreamJq(jq);
+  if(result.changed)ctx.upstreamRepairs?.set(line+'\0'+result.original,{...result,sourceLine:line});
+  return result;
+}
+
 function resolveRewriteJqDependencies(ast,line,ctx) {
   const actions=ast.actions.map((action,index)=>{
     const spec=jqDependencySpecFromAction(action,{pluginSourceUrl:ctx.sourceUrl});
-    if(!spec)return action;
-    const files=ctx.jqFiles?.get(line);
-    if(files?.error)throw new Error(files.error);
-    const materialized=files?.byAction ? (Object.prototype.hasOwnProperty.call(files.byAction,index)?files.byAction[index]:null) : ast.actions.length===1 ? files : null;
-    if(!materialized)throw new Error('JQ dependency action '+index+' was not materialized during conversion');
-    if(materialized.error)throw new Error(materialized.error);
-    if(typeof materialized.content!=='string' || !materialized.content.trim())throw new Error('JQ dependency resolved to empty content');
-    return inlineResolvedDependency(action,materialized.content,{pluginSourceUrl:ctx.sourceUrl}).action;
+    let resolved=action;
+    if(spec) {
+      const files=ctx.jqFiles?.get(line);
+      if(files?.error)throw new Error(files.error);
+      const materialized=files?.byAction ? (Object.prototype.hasOwnProperty.call(files.byAction,index)?files.byAction[index]:null) : ast.actions.length===1 ? files : null;
+      if(!materialized)throw new Error('JQ dependency action '+index+' was not materialized during conversion');
+      if(materialized.error)throw new Error(materialized.error);
+      if(typeof materialized.content!=='string' || !materialized.content.trim())throw new Error('JQ dependency resolved to empty content');
+      resolved=inlineResolvedDependency(action,materialized.content,{pluginSourceUrl:ctx.sourceUrl}).action;
+    }
+    const node=resolved.args?.[0];
+    if(/^(?:request|response)\.json\.jq$/.test(resolved.name) && ['string','raw-string'].includes(node?.type)) {
+      const repaired=correctedUpstreamJq(node.value,line,ctx);
+      if(repaired.changed)resolved={...resolved,args:[{type:'raw-string',value:repaired.jq,raw:'`'+repaired.jq.replace(/`/g,'``')+'`'},...resolved.args.slice(1)]};
+    }
+    return resolved;
   });
   const result={...ast,actions};validateRewriteV2Ast(result);return result;
 }
@@ -247,7 +261,9 @@ export function convertPlugin(entry,source,{
   const surgeProxyPolicyPlaceholder=surgeArgumentPlan.policyBinding?.placeholder || null;
   let surgeNeedsLineRequirement=false;
 
+  const upstreamRepairs=new Map();
   const qctx={
+    upstreamRepairs,
     id:entry.id,
     generatedScripts:qx.generatedScripts,
     sourceUrl:entry.source,
@@ -260,6 +276,7 @@ export function convertPlugin(entry,source,{
     rawBase,
   };
   const sctx={
+    upstreamRepairs,
     id:entry.id,
     generatedScripts:sg.generatedScripts,
     sourceUrl:entry.source,
@@ -377,6 +394,11 @@ export function convertPlugin(entry,source,{
         } else {
           ir=inlineResolvedLegacyJqPathIr(ir,materialized.content).ir;
         }
+      }
+      const operation=ir.operations?.[0];
+      if(ir.operations?.length===1 && operation.kind==='json' && operation.operation==='jq' && !qr && !sr) {
+        const repaired=correctedUpstreamJq(unquoteRewriteToken(operation.rest),item.line,qctx);
+        if(repaired.changed)ir={...ir,operations:[{...operation,rest:repaired.jq,raw:(operation.phase||ir.phase)+'-body-json-jq '+repaired.jq}],sourcePayload:{...ir.sourcePayload,action:(operation.phase||ir.phase)+'-body-json-jq '+repaired.jq}};
       }
       if (!qr) qr=planQxRewrite(ir,{...qctx,sourceLine:item.line});
       if (!sr) sr=planSurgeRewrite(ir,{...sctx,sourceLine:item.line});
@@ -507,6 +529,12 @@ export function convertPlugin(entry,source,{
     surgeOutputDestination(sg,'mitm').push(...comments,sPlan.line);
   }
 
+  for(const repair of upstreamRepairs.values()) {
+    const notes=['# [WayX] 上游错误 / UPSTREAM ERROR CORRECTED ['+repair.kind+']: inserted missing whitespace; original failed jq compilation, corrected program compiled successfully.',
+      '# Original upstream jq: '+repair.original.replace(/\r?\n/g,' '),
+      '# Source declaration: '+repair.sourceLine];
+    appendQxOutput(qx,'notes',...notes);appendSurgeOutput(sg,'notes',...notes);
+  }
   return {
     qx:renderQxOutput({state:qx,headerLines:sourceHeader,entry,stamp}),
     surge:renderSurgeOutput({

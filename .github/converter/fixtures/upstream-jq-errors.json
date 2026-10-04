@@ -1,0 +1,28 @@
+[
+  {
+    "id": "kugou-identity-end-whitespace",
+    "issue": 162,
+    "source": "https://kelee.one/Tool/Loon/Lpx/KuGou_remove_ads.lpx",
+    "original": "def namesToRemove:[\"AI帮唱\",\"长相思2\",\"K歌\",\"小说\",\"游戏\"];def removeParentIfNameMatches:if type==\"object\"then with_entries(select(.value|(type==\"object\"and .name as $name|$name|IN(namesToRemove[])|not)))|map_values(removeParentIfNameMatches)else .end;removeParentIfNameMatches",
+    "corrected": "def namesToRemove:[\"AI帮唱\",\"长相思2\",\"K歌\",\"小说\",\"游戏\"];def removeParentIfNameMatches:if type==\"object\"then with_entries(select(.value|(type==\"object\"and .name as $name|$name|IN(namesToRemove[])|not)))|map_values(removeParentIfNameMatches)else . end;removeParentIfNameMatches",
+    "cases": [
+      {
+        "input": 7,
+        "expected": 7
+      },
+      {
+        "input": {
+          "a": {
+            "name": "AI帮唱"
+          },
+          "b": {
+            "name": "保留"
+          }
+        },
+        "expected": {
+          "b": {}
+        }
+      }
+    ]
+  }
+]

@@ -10,10 +10,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KuGou.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:00:29 +08:00
+# Converted: 2026-10-04 17:15:59 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/KuGou_remove_ads.lpx
 # Target: Surge
+
+# [WayX] 上游错误 / UPSTREAM ERROR CORRECTED [jq-identity-end-whitespace]: inserted missing whitespace; original failed jq compilation, corrected program compiled successfully.
+# Original upstream jq: def namesToRemove:["AI帮唱","长相思2","K歌","小说","游戏"];def removeParentIfNameMatches:if type=="object"then with_entries(select(.value|(type=="object"and .name as $name|$name|IN(namesToRemove[])|not)))|map_values(removeParentIfNameMatches)else .end;removeParentIfNameMatches
+# Source declaration: response if ${url} ~= /^https:\/\/gateway(retry)?\.kugou\.com\/ocean\/v\d\/tab\/list_v\d/i then response.json.jq("def namesToRemove:[\"AI帮唱\",\"长相思2\",\"K歌\",\"小说\",\"游戏\"];def removeParentIfNameMatches:if type==\"object\"then with_entries(select(.value|(type==\"object\"and .name as $name|$name|IN(namesToRemove[])|not)))|map_values(removeParentIfNameMatches)else .end;removeParentIfNameMatches")
 
 [Rule]
 DOMAIN,ads.service.kugou.com,REJECT,extended-matching,pre-matching
@@ -29,7 +33,7 @@ URL-REGEX,^http:\/\/log\.stat\.kugou\.com\/mobile\/ad\.html,REJECT,extended-matc
 
 [Body Rewrite]
 
-http-response-jq ^https:\/\/gateway(retry)?\.kugou\.com\/ocean\/v\d\/tab\/list_v\d 'def namesToRemove:["AI帮唱","长相思2","K歌","小说","游戏"];def removeParentIfNameMatches:if type=="object"then with_entries(select(.value|(type=="object"and .name as $name|$name|IN(namesToRemove[])|not)))|map_values(removeParentIfNameMatches)else .end;removeParentIfNameMatches'
+http-response-jq ^https:\/\/gateway(retry)?\.kugou\.com\/ocean\/v\d\/tab\/list_v\d 'def namesToRemove:["AI帮唱","长相思2","K歌","小说","游戏"];def removeParentIfNameMatches:if type=="object"then with_entries(select(.value|(type=="object"and .name as $name|$name|IN(namesToRemove[])|not)))|map_values(removeParentIfNameMatches)else . end;removeParentIfNameMatches'
 
 [Map Local]
 ^https:\/\/fx\.service\.kugou\.com\/mfx-kugoulive\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"

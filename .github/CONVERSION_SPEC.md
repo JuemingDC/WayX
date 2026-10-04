@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.84
+版本：1.85
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -14,6 +14,7 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 - jq 表达式的语法和函数语义以 [jqlang 官方手册](https://jqlang.org/manual/) 为唯一标准；兼容基线沿用已验证的 jq 1.6 能力，不假定客户端支持新版本特性。QX/Surge 的外层声明分别遵循用户官方 sample 和 Surge Manual。
 - ScriptHub 仅作为 JSON replace → jq 的实现参考，最终仍须满足 jqlang 契约；不得将其写法扩展套用到 JSON add/delete、原生 jq、jq_file/jq-path 或其他规则。
 - `jq_file` 与 `jq-path` 均从源声明指定的原始地址读取实际文件内容，然后内联真实 jq。读取失败、空文件或无法安全嵌入目标语法时保留源声明并 Review，不把文件路径字符串当作 jq，不用仓库副本替代，不为文件本身创建脚本。作者 jq 保留原表达式结构，只做目标单行配置必需的转义、非字符串注释处理和空白压缩；已有跨类型组合的等价编译边界不扩大。
+- 上游错误分区记录失败案例及经过真实 jq 编译验证的修正：仅当原表达式因语法错误编译失败、补齐 `else .end` 中 identity 与 `end` 的分隔空白后编译成功时，内联修正为 `else . end`。字符串、注释、合法 `.end` 字段保持原样；其他错误不猜测修正。原始声明和错误 jq 写入输出注释，源文件保留。该规则同样适用于 jq_file / jq-path 读取后的内容。失败案例及回归输入位于 `fixtures/upstream-jq-errors.json`。
 - delete 按 jqlang 的输入类型选择：固定路径表达式采用 `del(PATH_EXPRESSION)`；作者提供路径数组时保留 `delpaths(PATHS)`，不强制互改。源操作要求依次删除数组下标时保留逐项管道，不能合并成针对原始数组的一次批量删除。对象路径的合法合并仍须保持源顺序、类型失败和错误恢复行为。add 保留 WayX 的 getpath/setpath 实现及既有缺失/null 规则；replace 保留存在性检查。
 - 每次 Actions 仍监控上游名单并获取插件内容，但先比较规范化后的源文本；只有新增或内容变化的插件进入语义分析、依赖解析与转换。源内容未变化且两个目标已存在时直接跳过，保留转换时间及产物。目标缺失时补建。
 - 用户明确要求的单次重转由 `.github/sources/reconvert.json` 触发：`all: true` 表示本次全量，`ids` 表示指定条目；成功后自动清除请求，失败条目保留待重试。日常仍只转换新增或内容变化的源，维护请求不会自动恢复为全量。
