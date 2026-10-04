@@ -218,7 +218,7 @@ console.log('WayX generated helper runtime fixtures passed');
 // including all flag combinations and capture-dependent substitutions.
 if (selectedCase==='generated-helper-runtime.mjs') {
   const {evaluateRewriteActions}=await import('../src/core.mjs');
-  const {parseJsonKeyPath}=await import('../src/rule.mjs');
+  const {parseJsonKeyPath}=await import('../src/rewrite.mjs');
   const {renderSingleRewriteMutationScript,renderRewritePhaseDispatcher}=await import('../src/runtime.mjs');
   const {convertPlugin,validateConvertedPlugin}=await import('../src/conversion.mjs');
   const run=(script,context)=>{
@@ -636,4 +636,94 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   const file='response if ${url} ~= /api/ then response.body.mock_file("text","body.txt",200,false)';const mockFiles=await materializeMockFiles(entry,parseLoonPlugin('[Rewrite]\n'+file),{fetchText:async()=>'OK'});const fileOutput=convertPlugin(entry,'[Rewrite]\n'+file,{...options,mockFiles});validateConvertedPlugin(entry,fileOutput);assert.match(fileOutput.surge,/\[Map Local\]/);assert.doesNotMatch(fileOutput.surge,/script-path=/);assert.match(fileOutput.qx,/script-echo-response/);
   const add=convertPlugin(entry,'[Rewrite]\nresponse if ${url} ~= /api/ then response.json.jq(`del(.data.ads)`) | response.header.add("X","yes")',options);assert.match(add.surge,/pattern=api,script-path=/);assert.match(add.qx,/REVIEW REQUIRED/);
   console.log('Native priority passed: '+checked+' native mappings/JQ pipeline outputs, plus matcher retention, pure JQ phase ownership and native/mock fallback contracts');
+}
+
+
+// Reproducible composition checks use a small independent imperative model.
+// The model neither imports production mutation functions nor evaluates the AST.
+if (selectedCase==='generated-helper-runtime.mjs') {
+  const {convertPlugin,validateConvertedPlugin}=await import('../src/conversion.mjs');
+  const {evaluateRewriteActions}=await import('../src/core.mjs');
+  const {parseJsonKeyPath}=await import('../src/rewrite.mjs');
+  const run=(script,context)=>{
+    let calls=0,result;
+    vm.runInNewContext(script,{$request:structuredClone(context.request),$response:structuredClone(context.response),$done(value={}){calls++;result=value;}},{timeout:1000});
+    assert.equal(calls,1,'seeded helper must finish exactly once');
+    return JSON.parse(JSON.stringify(result));
+  };
+  const seed=0x57415958;
+  let randomState=seed;
+  const next=()=>{randomState^=randomState<<13;randomState^=randomState>>>17;randomState^=randomState<<5;return randomState>>>0;};
+  const pick=values=>values[next()%values.length];
+  const shuffle=values=>{const result=[...values];for(let i=result.length-1;i>0;i--){const j=next()%(i+1);[result[i],result[j]]=[result[j],result[i]];}return result;};
+  const firstReplace=(text,regex,replacement)=>{const match=regex.exec(text);return match?text.slice(0,match.index)+replacement+text.slice(match.index+match[0].length):text;};
+  const headerKey=(headers,name)=>Object.keys(headers).find(key=>key.toLowerCase()===name.toLowerCase());
+  let checked=0,matchedCount=0,missCount=0;
+  const operations=['set','replace','del','body','add','delete'];
+  const seenOrders=new Set(),seenFlags=new Set();
+  for(const phase of ['request','response']) for(let index=0;index<64;index++) {
+    const flags=['','i','m','s','im','is','ms','ims'][index%8];
+    const token=String(next()%10000),upper=(next()%2)===0;
+    const url='https://example.test/'+(index%7===0?'other-':upper?'API-':'api-')+token;
+    const marker=pick(['雪｜a,b=1','$&:$0', 'quote"slash\\line\n', '🙂[]{}']);
+    const headers={[pick(['X-Flow','x-flow'])]:pick(['READY','ready','prefix READY READY']), 'X-Remove':'old','Keep':'yes'};
+    const body=pick([JSON.stringify({text:'TOKEN token',meta:{drop:true}}),JSON.stringify({text:'token TOKEN',meta:null}),'invalid TOKEN TOKEN','null','42']);
+    const order=shuffle(operations);seenOrders.add(order.join(','));seenFlags.add(flags);
+    const actionText={
+      set:phase+'.header.set("X-Flow",'+JSON.stringify('READY:${hit.1}:'+marker)+')',
+      replace:phase+'.header.replace("x-flow",/ready/'+flags+','+JSON.stringify('done:$&')+')',
+      del:phase+'.header.del("x-remove")',
+      body:phase+'.body.replace(/token/'+flags+','+JSON.stringify('DONE-${hit.1}-$&')+')',
+      add:phase+'.json.add("meta.mark",'+JSON.stringify(marker)+')',
+      delete:phase+'.json.delete("meta.drop")',
+    };
+    const source=phase+' if ${url} ~= /api-(\\d+)/'+flags+' as hit then '+order.map(name=>actionText[name]).join(' | ');
+    const ast=parseRewriteV2(source);
+    const context={url,request:{url,method:'POST',headers:phase==='request'?headers:{},body:phase==='request'?body:''},response:{status:200,statusCode:200,headers:phase==='response'?headers:{},body:phase==='response'?body:''}};
+    const expected={headers:structuredClone(headers),body};
+    // This deliberately uses declarative case data, rather than action ASTs.
+    const match=new RegExp('api-(\\d+)',flags).exec(url);
+    if(match) {
+      matchedCount++;
+      for(const name of order) {
+        const key=headerKey(expected.headers,'X-Flow');
+        if(name==='set')expected.headers[key??'X-Flow']='READY:'+match[1]+':'+marker;
+        if(name==='replace'&&key!==undefined)expected.headers[key]=firstReplace(expected.headers[key],new RegExp('ready',flags),'done:$&');
+        if(name==='del'){const remove=headerKey(expected.headers,'X-Remove');if(remove!==undefined)delete expected.headers[remove];}
+        if(name==='body')expected.body=firstReplace(expected.body,new RegExp('token',flags),'DONE-'+match[1]+'-$&');
+        if(name==='add'||name==='delete') {
+          let json;try{json=JSON.parse(expected.body);}catch{continue;}
+          if(json===null||typeof json!=='object')continue;
+          if(name==='add') {
+            if(json.meta==null)json.meta={};
+            if(typeof json.meta==='object'&&json.meta.mark==null)json.meta.mark=marker;
+          } else if(json.meta!==null&&typeof json.meta==='object')delete json.meta.drop;
+          expected.body=JSON.stringify(json);
+        }
+      }
+    } else missCount++;
+    const label='seed='+seed+' phase='+phase+' case='+index+' source='+source;
+    const oracle=evaluateRewriteActions(ast,context,{parsePath:parseJsonKeyPath});
+    assert.deepEqual(oracle.errors,[],label+' source evaluator must not silently skip errors');
+    assert.deepEqual({headers:oracle.state[phase].headers,body:oracle.state[phase].body},expected,label+' source evaluator');
+    const entry={id:'SeededCombinations',source:'https://example.test/source.lpx',category:'Test'};
+    const output=convertPlugin(entry,'[Rewrite]\n'+source,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+    validateConvertedPlugin(entry,output);
+    for(const target of ['qx','surge']) {
+      const config=output[target];
+      assert.doesNotMatch(config,/REVIEW REQUIRED/,label+' '+target);
+      const scripts=[...output.generatedScripts].filter(([name])=>name.includes('_'+target+'_'));
+      assert.equal(scripts.length,1,label+' '+target+' helper count');
+      const [name,script]=scripts[0];
+      assert.ok(config.split('\n').some(line=>!line.startsWith('#')&&line.includes('/'+name)),label+' '+target+' active helper reference');
+      const actual=run(script,context);
+      if(match)assert.deepEqual(actual,expected,label+' '+target);
+      else assert.deepEqual(actual,{},label+' '+target+' no-op');
+      checked++;
+    }
+  }
+  assert.equal(seenFlags.size,8);
+  assert.ok(seenOrders.size>=80,'seed must exercise varied action ordering');
+  assert.ok(matchedCount>0&&missCount>0,'seed must cover hits and misses');
+  console.log('Seeded composition model passed: '+checked+' target outputs, '+seenOrders.size+' action orders, 8 flags; seed='+seed);
 }
