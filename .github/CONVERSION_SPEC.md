@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.79
+版本：1.80
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -1093,3 +1093,7 @@ GitHub compare 必须为 forward ahead；缺少 files、达到 API 300 文件上
 监控启用政策统一由可写目标决定：同仓 test PR、main/test 手动及每日 main 均执行同一完整监控，且发布要求 complete=true；只读 PR 不写 Issue 或监控 mirror/state。监控与发现/转换失败可独立记录，syntax 成功即可尝试监控，不因某个转换阶段失败省略所有已登记规范检查。所有成功的可写目标允许提交验证后的 mirror/state，使 test CI 能测试每日 main 的实际监控路径。目标推进、错误恢复失败或任一全局校验失败仍阻止发布。
 
 验收覆盖 schedule/分支与监控政策、发现新源直接入名单及过滤/重复发现、feed 单次获取与监控复用/来源不符、实际发布门禁、完整 Actions 上游拉取/转换/监控与确定性 check。后续新增语义继续自动 Issue，既有 golden/能力 baseline 不自动扩张。远端仅 main/test；当前只有 GitHub schedule 恢复为每日运行。
+
+### 报告读取与发布门禁
+
+Review 清单必须读取 `.github/converter/fixtures/review-inventory-baseline.json`；基线缺失、JSON 损坏或平台计数无效时必须失败，不能跳过比较。同步与监控失败报告仅允许尚未生成（ENOENT）时使用空列表；已存在报告的读取错误、JSON 或结构错误必须使 Issue 步骤失败，并由唯一 workflow 的门禁阻止发布。同步报告兼容版本 1/2，监控报告兼容版本 1；源语义预检不读取运行报告。
