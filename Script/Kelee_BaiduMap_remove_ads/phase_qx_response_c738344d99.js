@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 18:07:05 +08:00
+// Converted: 2026-10-04 18:36:30 +08:00
 // Converted by: chance
 // Category: 去广告
 const __wayxRegexReplace=(()=>{const SUPPORTED_FLAGS=/^[ims]*$/;function assertRegexNode(node) {
@@ -8,27 +8,48 @@ const __wayxRegexReplace=(()=>{const SUPPORTED_FLAGS=/^[ims]*$/;function assertR
   if (new Set(flags).size!==flags.length) throw new Error('Duplicate Loon regex flag(s): '+flags);
   return {source:String(node.pattern ?? ''),flags};
 }
-function compileSourceRegex(node) {
-  const {source,flags}=assertRegexNode(node);
-  return new RegExp(source,flags);
-}
 function replaceSourceRegex(node,text,replacement) {
   const match=compileSourceRegex(node).exec(text);
   if (!match) return text;
   const out=String(replacement).replace(/\$(\d+)/g,(_,index)=>match[Number(index)] ?? '');
   return text.slice(0,match.index)+out+text.slice(match.index+match[0].length);
-};return (text,pattern,flags,replacement)=>replaceSourceRegex({type:"regex",pattern,flags},String(text),replacement);})();
+}
+function compileSourceRegex(node){const {source}=assertRegexNode(node);return new RegExp(source);};return (text,pattern,flags,replacement)=>replaceSourceRegex({type:"regex",pattern,flags},String(text),replacement);})();
 const SUPPORTED_FLAGS=/^[ims]*$/;
+function scanSourceRegexLiteral(text, start=0) {
+  text=String(text);
+  if(text[start]!=='/')throw new SyntaxError('Expected regex opening delimiter');
+  let escaped=false,inClass=false,close=-1;
+  for(let i=start+1;i<text.length;i++) {
+    const c=text[i];
+    if(escaped){escaped=false;continue;}
+    if(c==='\\'){escaped=true;continue;}
+    if(c==='[' && !inClass){inClass=true;continue;}
+    if(c===']' && inClass){inClass=false;continue;}
+    if(c==='/' && !inClass){close=i;break;}
+  }
+  if(close<0)throw new SyntaxError('Unterminated regex');
+  let end=close+1;
+  while(end<text.length && /[A-Za-z]/.test(text[end]))end++;
+  if(end<text.length && !/[\s(),\[\].|&=~]/.test(text[end]))throw new SyntaxError('Invalid regex suffix boundary');
+  const node={type:'regex',pattern:text.slice(start+1,close),flags:text.slice(close+1,end)};
+  assertRegexNode(node);
+  return {...node,end};
+}
+function resolveConditionRegex(value) {
+  if(value && typeof value==='object' && value.type==='regex')return value;
+  if(typeof value!=='string' || !value.startsWith('/'))return null;
+  try {
+    const regex=scanSourceRegexLiteral(value);
+    return regex.end===value.length ? regex : null;
+  }catch{return null;}
+}
 function assertRegexNode(node) {
   if (!node || node.type!=='regex') throw new TypeError('Expected Loon semantic Regex node');
   const flags=String(node.flags || '');
   if (!SUPPORTED_FLAGS.test(flags)) throw new Error('Unsupported Loon regex flag(s): '+flags);
   if (new Set(flags).size!==flags.length) throw new Error('Duplicate Loon regex flag(s): '+flags);
   return {source:String(node.pattern ?? ''),flags};
-}
-function compileSourceRegex(node) {
-  const {source,flags}=assertRegexNode(node);
-  return new RegExp(source,flags);
 }
 function execSourceRegex(node,value) {
   if (value===null || value===undefined) return null;
@@ -163,11 +184,10 @@ function comparison(node,context,captures) {
   if (node.operator!=='~=') {
     throw new SemanticEvaluationError('Unsupported condition operator: '+node.operator);
   }
-  if (node.right?.type!=='regex') {
-    throw new SemanticEvaluationError('Dynamic ~= Regex evaluation is not implemented in Phase B core yet');
-  }
-
-  const match=execSourceRegex(node.right,left);
+  const regex=resolveConditionRegex(literalValue(node.right,context,next));
+  if(!regex)return {matched:false,captures:next};
+  let match;
+  try{match=execSourceRegex(regex,left);}catch{return {matched:false,captures:next};}
   if (!match) return {matched:false,captures:next};
 
   if (node.capture) {
@@ -211,6 +231,7 @@ function evaluateCondition(condition,context={},initialCaptures={}) {
     captures:Object.fromEntries(result.captures),
   };
 }
+function compileSourceRegex(node){const {source}=assertRegexNode(node);return new RegExp(source);}
 function __wayxJsonParent(root,path){let x=root;for(let i=0;i<path.length-1;i++){if(x==null||typeof x!=="object"||!Object.prototype.hasOwnProperty.call(x,path[i]))return null;x=x[path[i]];}return x;}
 function __wayxJsonGet(root,path){let x=root;for(const k of path){if(x==null||typeof x!=="object"||!Object.prototype.hasOwnProperty.call(x,k))return undefined;x=x[k]}return x;}
 function __wayxJsonSet(root,path,value){let x=root;for(let i=0;i<path.length-1;i++){const k=path[i],next=path[i+1];if(x==null||typeof x!=="object")return;const cur=Object.prototype.hasOwnProperty.call(x,k)?x[k]:undefined;if(cur==null)Object.defineProperty(x,k,{value:typeof next==="number"?[]:{},enumerable:true,writable:true,configurable:true});else if(typeof cur!=="object")return;x=x[k]}if(x!=null&&typeof x==="object")Object.defineProperty(x,path[path.length-1],{value,enumerable:true,writable:true,configurable:true});}
@@ -224,7 +245,7 @@ const __wayxResponse=typeof $response==="undefined"?{}:{...$response,headers:__w
 const __wayxResult={};
 function __wayxCommit(value){Object.assign(__wayxResult,value);Object.assign(__wayxResponse,value);}
 (($request,$response,$done)=>{
-// Converted: 2026-10-04 18:07:05 +08:00
+// Converted: 2026-10-04 18:36:30 +08:00
 // Converted by: chance
 // Category: 去广告
 const __wayxCaptures=Object.create(null);
@@ -242,14 +263,14 @@ function __wayxDel(n){const w=String(n).toLowerCase();for(const k of Object.keys
 function __wayxHeaderReplace(n,p,r,f=""){const w=String(n).toLowerCase();for(const k of Object.keys(__wayxHeaders))if(k.toLowerCase()===w)__wayxHeaders[k]=__wayxRegexReplace(__wayxHeaders[k],p,f,r);}
 function __wayxKey(n){return Object.keys(__wayxHeaders).find(k=>k.toLowerCase()===String(n).toLowerCase());}
 if((()=>{
-const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https:\\/\\/newclient\\.map\\.baidu\\.com\\/feed\\/govui\\/rich_content","flags":"i","raw":"/^https:\\/\\/newclient\\.map\\.baidu\\.com\\/feed\\/govui\\/rich_content/i"},"capture":null},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
+const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https:\\/\\/newclient\\.map\\.baidu\\.com\\/feed\\/govui\\/rich_content","flags":""},"capture":null},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
   __wayxJsonAction(j=>__wayxJsonDelete(j,["data"]));
   $done({body:__wayxBody});
 }else{$done({});}
 
 })(__wayxRequest,__wayxResponse,__wayxCommit);
 (($request,$response,$done)=>{
-// Converted: 2026-10-04 18:07:05 +08:00
+// Converted: 2026-10-04 18:36:30 +08:00
 // Converted by: chance
 // Category: 去广告
 const __wayxCaptures=Object.create(null);
@@ -267,14 +288,14 @@ function __wayxDel(n){const w=String(n).toLowerCase();for(const k of Object.keys
 function __wayxHeaderReplace(n,p,r,f=""){const w=String(n).toLowerCase();for(const k of Object.keys(__wayxHeaders))if(k.toLowerCase()===w)__wayxHeaders[k]=__wayxRegexReplace(__wayxHeaders[k],p,f,r);}
 function __wayxKey(n){return Object.keys(__wayxHeaders).find(k=>k.toLowerCase()===String(n).toLowerCase());}
 if((()=>{
-const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https:\\/\\/newclient\\.map\\.baidu\\.com\\/client\\/noticebar\\/get\\?","flags":"i","raw":"/^https:\\/\\/newclient\\.map\\.baidu\\.com\\/client\\/noticebar\\/get\\?/i"},"capture":null},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
+const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https:\\/\\/newclient\\.map\\.baidu\\.com\\/client\\/noticebar\\/get\\?","flags":""},"capture":null},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
   __wayxJsonAction(j=>__wayxJsonDelete(j,["content","multi_data"]));
   $done({body:__wayxBody});
 }else{$done({});}
 
 })(__wayxRequest,__wayxResponse,__wayxCommit);
 (($request,$response,$done)=>{
-// Converted: 2026-10-04 18:07:05 +08:00
+// Converted: 2026-10-04 18:36:30 +08:00
 // Converted by: chance
 // Category: 去广告
 const __wayxCaptures=Object.create(null);
@@ -292,14 +313,14 @@ function __wayxDel(n){const w=String(n).toLowerCase();for(const k of Object.keys
 function __wayxHeaderReplace(n,p,r,f=""){const w=String(n).toLowerCase();for(const k of Object.keys(__wayxHeaders))if(k.toLowerCase()===w)__wayxHeaders[k]=__wayxRegexReplace(__wayxHeaders[k],p,f,r);}
 function __wayxKey(n){return Object.keys(__wayxHeaders).find(k=>k.toLowerCase()===String(n).toLowerCase());}
 if((()=>{
-const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https:\\/\\/newclient\\.map\\.baidu\\.com\\/(client\\/)?usersystem\\/mine\\/page\\?","flags":"i","raw":"/^https:\\/\\/newclient\\.map\\.baidu\\.com\\/(client\\/)?usersystem\\/mine\\/page\\?/i"},"capture":null},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
+const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https:\\/\\/newclient\\.map\\.baidu\\.com\\/(client\\/)?usersystem\\/mine\\/page\\?","flags":""},"capture":null},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
   __wayxJsonAction(j=>__wayxJsonReplace(j,["data"],"{}"));
   $done({body:__wayxBody});
 }else{$done({});}
 
 })(__wayxRequest,__wayxResponse,__wayxCommit);
 (($request,$response,$done)=>{
-// Converted: 2026-10-04 18:07:05 +08:00
+// Converted: 2026-10-04 18:36:30 +08:00
 // Converted by: chance
 // Category: 去广告
 const __wayxCaptures=Object.create(null);
@@ -317,14 +338,14 @@ function __wayxDel(n){const w=String(n).toLowerCase();for(const k of Object.keys
 function __wayxHeaderReplace(n,p,r,f=""){const w=String(n).toLowerCase();for(const k of Object.keys(__wayxHeaders))if(k.toLowerCase()===w)__wayxHeaders[k]=__wayxRegexReplace(__wayxHeaders[k],p,f,r);}
 function __wayxKey(n){return Object.keys(__wayxHeaders).find(k=>k.toLowerCase()===String(n).toLowerCase());}
 if((()=>{
-const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https:\\/\\/newclient\\.map\\.baidu\\.com\\/client\\/phpui2\\/\\?qt=ads&type=user_home_new_service","flags":"i","raw":"/^https:\\/\\/newclient\\.map\\.baidu\\.com\\/client\\/phpui2\\/\\?qt=ads&type=user_home_new_service/i"},"capture":null},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
+const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https:\\/\\/newclient\\.map\\.baidu\\.com\\/client\\/phpui2\\/\\?qt=ads&type=user_home_new_service","flags":""},"capture":null},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
   __wayxJsonAction(j=>__wayxJsonDelete(j,["ads"]));
   $done({body:__wayxBody});
 }else{$done({});}
 
 })(__wayxRequest,__wayxResponse,__wayxCommit);
 (($request,$response,$done)=>{
-// Converted: 2026-10-04 18:07:05 +08:00
+// Converted: 2026-10-04 18:36:30 +08:00
 // Converted by: chance
 // Category: 去广告
 const __wayxCaptures=Object.create(null);
@@ -342,7 +363,7 @@ function __wayxDel(n){const w=String(n).toLowerCase();for(const k of Object.keys
 function __wayxHeaderReplace(n,p,r,f=""){const w=String(n).toLowerCase();for(const k of Object.keys(__wayxHeaders))if(k.toLowerCase()===w)__wayxHeaders[k]=__wayxRegexReplace(__wayxHeaders[k],p,f,r);}
 function __wayxKey(n){return Object.keys(__wayxHeaders).find(k=>k.toLowerCase()===String(n).toLowerCase());}
 if((()=>{
-const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https:\\/\\/newclient\\.map\\.baidu\\.com\\/living\\/nearby\\/api\\?","flags":"i","raw":"/^https:\\/\\/newclient\\.map\\.baidu\\.com\\/living\\/nearby\\/api\\?/i"},"capture":null},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
+const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https:\\/\\/newclient\\.map\\.baidu\\.com\\/living\\/nearby\\/api\\?","flags":""},"capture":null},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
   __wayxJsonAction(j=>__wayxJsonDelete(j,["Result","cards",1]));
   __wayxJsonAction(j=>__wayxJsonDelete(j,["Result","cards",4]));
   __wayxJsonAction(j=>__wayxJsonDelete(j,["Result","cards",5]));

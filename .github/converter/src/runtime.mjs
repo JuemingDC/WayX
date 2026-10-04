@@ -132,7 +132,7 @@ function renderHeaderOps(lines, headerOps = [], { knownHeaderNames = null } = {}
       lines.push(`__wayxHeaderDel(headers, ${JSON.stringify(op.name)});`);
       if (known) known.delete(lowerName);
     } else if (op.type === 'replace') {
-      lines.push(`__wayxHeaderReplace(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(normalizeRegexBodyForTarget(op.pattern))}, ${JSON.stringify(op.replacement)}, ${JSON.stringify(op.flags || "")});`);
+      lines.push(`__wayxHeaderReplace(headers, ${JSON.stringify(op.name)}, ${JSON.stringify(normalizeRegexBodyForTarget(op.pattern))}, ${JSON.stringify(op.replacement)}, ${JSON.stringify('')});`);
     } else throw new Error('unsupported QX mock header operation: ' + op.type);
   }
 }
@@ -422,7 +422,7 @@ export function renderQxRedirectScript(ast, options = {}) {
 
     const lines = [
       ...qxSemanticMetadata(options),
-      'const __wayxRe = new RegExp(' + JSON.stringify(condition.pattern) + ', ' + JSON.stringify(condition.regex?.flags || '') + ');',
+      'const __wayxRe = new RegExp(' + JSON.stringify(condition.pattern) + ', ' + JSON.stringify('') + ');',
       'const __wayxUrl = $request.url;',
       'const __wayxMatch = __wayxRe.exec(__wayxUrl);',
       'if (!__wayxMatch) {',
@@ -460,7 +460,7 @@ export function renderQxRedirectScript(ast, options = {}) {
   const conditionExpr=compileComplexCondition(ast.condition,'qx');
   const matchExpr=urlCondition.capture
     ? '__wayxCaptures['+JSON.stringify(urlCondition.capture)+']'
-    : 'String(__wayxUrl ?? "").match(new RegExp('+JSON.stringify(urlPattern)+','+JSON.stringify(urlCondition.right.flags || '')+'))';
+    : 'String(__wayxUrl ?? "").match(new RegExp('+JSON.stringify(urlPattern)+','+JSON.stringify('')+'))';
 
   const lines=[
     ...qxSemanticMetadata(options),
@@ -582,7 +582,7 @@ export function headerOpsForMock(ast, mockAction) {
           type:'replace',
           name:qxSemanticFixed(args[0], 'header name'),
           pattern:normalizeRegexBodyForTarget(regex.pattern),
-          flags:String(regex.flags || ''),
+          flags:'',
           replacement:qxSemanticFixed(args[2], 'header replacement'),
         });
       }
@@ -668,7 +668,7 @@ function captureInfo(node, map = new Map()) {
   if (!node) return map;
   if (node.type === 'comparison' && node.capture) {
     if (map.has(node.capture)) throw new Error('duplicate capture alias: ' + node.capture);
-    map.set(node.capture, captureGroupCount(node.right?.pattern || ''));
+    map.set(node.capture, node.right?.type==='variable' ? Infinity : captureGroupCount(node.right?.pattern || ''));
   }
   if (node.type === 'group') captureInfo(node.expression, map);
   if (node.type === 'logical') { captureInfo(node.left, map); captureInfo(node.right, map); }
@@ -752,7 +752,7 @@ function statements(ast, target, {argumentTable = null, mockMaterialized = null}
         } else {
           if (args[1]?.type !== 'regex') throw new Error('header.replace regex must be fixed');
           const value=capturedString(args[2], 'header replacement', captures, guaranteed, argumentTable);
-          const tail=JSON.stringify(normalizeRegexBodyForTarget(args[1].pattern))+',v,'+JSON.stringify(args[1].flags || '')+'));';
+          const tail=JSON.stringify(normalizeRegexBodyForTarget(args[1].pattern))+',v,'+JSON.stringify('')+'));';
           out.push(fixedName?'__wayxWith('+value+',v=>__wayxHeaderReplace('+name+','+tail:'__wayxWithArgs(['+name+','+value+'],(n,v)=>__wayxHeaderReplace(n,'+tail);
         }
       }
@@ -822,8 +822,8 @@ function statements(ast, target, {argumentTable = null, mockMaterialized = null}
       for(const args of expand(action)){
         if (args[0]?.type !== 'regex') throw new Error('body.replace regex must be fixed');
         const replacement=capturedString(args[1], 'body replacement', captures, guaranteed, argumentTable);
-        if(args[1]?.type==='variable' || (args[1]?.type==='string' && String(args[1].value).includes('${'))) out.push('__wayxWith('+replacement+',v=>{__wayxBody=__wayxRegexReplace(String(__wayxBody ?? ""),'+JSON.stringify(normalizeRegexBodyForTarget(args[0].pattern))+','+JSON.stringify(args[0].flags || '')+',v);});');
-        else out.push('__wayxBody=__wayxRegexReplace(String(__wayxBody ?? ""),'+JSON.stringify(normalizeRegexBodyForTarget(args[0].pattern))+','+JSON.stringify(args[0].flags || '')+','+replacement+');');
+        if(args[1]?.type==='variable' || (args[1]?.type==='string' && String(args[1].value).includes('${'))) out.push('__wayxWith('+replacement+',v=>{__wayxBody=__wayxRegexReplace(String(__wayxBody ?? ""),'+JSON.stringify(normalizeRegexBodyForTarget(args[0].pattern))+','+JSON.stringify('')+',v);});');
+        else out.push('__wayxBody=__wayxRegexReplace(String(__wayxBody ?? ""),'+JSON.stringify(normalizeRegexBodyForTarget(args[0].pattern))+','+JSON.stringify('')+','+replacement+');');
       }
       continue;
     }

@@ -558,3 +558,18 @@ if(selectedCase==='rule.mjs') {
   assert.doesNotMatch(surgeModuleRule('DOMAIN,proxy.test,PROXY',{matchingEnhancements:true,proxyPolicyPlaceholder:'WayXProxyPolicy'}).line,/pre-matching/);
   console.log('Surge matching flags passed: type/scope/policy, nested flags, dedup, external-set guard, allow order, QX isolation and existing requirement preservation');
 }
+
+if(selectedCase==='core-semantics.mjs') {
+  const {scanSourceRegexLiteral}=await import('../src/core.mjs');
+  const source=String.raw`/^(?:im|s)[/\]a-z]{1,3}\/(\d+)$/ims&&`;
+  const regex=scanSourceRegexLiteral(source);
+  assert.equal(regex.pattern,String.raw`^(?:im|s)[/\]a-z]{1,3}\/(\d+)$`);
+  assert.equal(regex.flags,'ims');
+  assert.equal(source.slice(regex.end),'&&');
+  assert.throws(()=>scanSourceRegexLiteral('/x/i42'),/suffix boundary/);
+  assert.throws(()=>scanSourceRegexLiteral('/[abc/'),/Unterminated/);
+  const ast=parseRewriteV2('request if ${url} ~= ${pattern} as hit then request.header.set("X-ID","${hit.1}")');
+  const context={url:'ITEM/42',arguments:{pattern:String.raw`/^item\/(\d+)$/i`}};
+  assert.deepEqual(evaluateCondition(ast.condition,context),{matched:true,captures:{hit:['ITEM/42','42']}});
+  for(const pattern of [undefined,'item/(.*)','/item/i trailing','/[abc/i'])assert.equal(evaluateCondition(ast.condition,{...context,arguments:{pattern}}).matched,false);
+}

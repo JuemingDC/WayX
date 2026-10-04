@@ -2,7 +2,7 @@
 // Author: chance
 // Category: Converter / rewrite
 
-import { normalizeRegexBodyForTarget, compileRegexForTarget, conditionRuntimeSource, compileSourceRegex, stringTemplateParts } from "./core.mjs";
+import { stripRegexFlags, scanSourceRegexLiteral, normalizeRegexBodyForTarget, compileRegexForTarget, conditionRuntimeSource, compileSourceRegex, stringTemplateParts } from "./core.mjs";
 import { renderQxHeaderScript, renderQxInlineMockScript, renderSurgeRequestMockScript, renderQxMockFileScript, renderQxRedirectScript, renderQxRejectScript, headerOpsForMock, renderMixedRewriteScript, renderSingleJsonMutationScript, renderSingleRewriteMutationScript } from "./runtime.mjs";
 import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
@@ -21,7 +21,7 @@ import { surgeRewriteArgumentPayload } from "./script.mjs";
 const BT=String.fromCharCode(96),PUN='(),[].|';
 function fail(s,i,m){throw new SyntaxError(m+' at column '+(i+1)+'\n'+s+'\n'+' '.repeat(Math.max(0,i))+'^')}
 function dq(r){let o='';for(let i=1;i<r.length-1;i++){let c=r[i];if(c!=='\\'){o+=c;continue}let n=r[++i];o+=n==='n'?'\n':n==='r'?'\r':n==='t'?'\t':n==='"'?'"':n==='\\'?'\\':'\\'+n}return o}
-export function tokenizeRewriteV2(source){const s=String(source??''),a=[];let i=0;const add=(type,raw,value=raw,start=i,end=i+raw.length)=>a.push({type,raw,value,start,end});while(i<s.length){let c=s[i];if(/\s/.test(c)){i++;continue}let st=i,t=s.slice(i,i+2);if(['&&','||','==','~='].includes(t)){add('operator',t,t,st,i+2);i+=2;continue}if(PUN.includes(c)){add('punct',c,c,st,++i);continue}if(c==='$'&&s[i+1]==='{'){i+=2;let d=1,q=null,e=false;while(i<s.length&&d){c=s[i];if(q){if(e)e=false;else if(c==='\\')e=true;else if(c===q)q=null;i++;continue}if(c==="'"){q=c;i++;continue}if(c==='{')d++;else if(c==='}')d--;i++}if(d)fail(s,st,'Unterminated variable');let r=s.slice(st,i);add('variable',r,r.slice(2,-1),st,i);continue}if(c==='"'){i++;let e=false,ok=false;while(i<s.length){c=s[i++];if(e){e=false;continue}if(c==='\\'){e=true;continue}if(c==='"'){ok=true;break}}if(!ok)fail(s,st,'Unterminated string');let r=s.slice(st,i);add('string',r,dq(r),st,i);continue}if(c===BT){i++;let ok=false;while(i<s.length){if(s[i]!==BT){i++;continue}if(s[i+1]===BT){i+=2;continue}i++;ok=true;break}if(!ok)fail(s,st,'Unterminated raw string');let r=s.slice(st,i);add('raw-string',r,r.slice(1,-1).split(BT+BT).join(BT),st,i);continue}if(c==='/'){i++;let e=false,cl=false,ok=false;while(i<s.length){c=s[i++];if(e){e=false;continue}if(c==='\\'){e=true;continue}if(c==='['){cl=true;continue}if(c===']'&&cl){cl=false;continue}if(c==='/'&&!cl){ok=true;break}}if(!ok)fail(s,st,'Unterminated regex');while(i<s.length&&/[A-Za-z]/.test(s[i]))i++;let r=s.slice(st,i),k=r.lastIndexOf('/'),flags=r.slice(k+1);if(/[^ims]/.test(flags))fail(s,st,'Unsupported Loon regex flag(s): '+flags);if(new Set(flags).size!==flags.length)fail(s,st,'Duplicate Loon regex flag(s): '+flags);add('regex',r,{pattern:r.slice(1,k),flags},st,i);continue}let n=s.slice(i).match(/^-?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?/);if(n){let r=n[0];i+=r.length;add('number',r,Number(r),st,i);continue}if(/[A-Za-z_]/.test(c)){i++;while(i<s.length&&/[A-Za-z0-9_-]/.test(s[i]))i++;let r=s.slice(st,i);add('identifier',r,r,st,i);continue}fail(s,i,'Unexpected character '+JSON.stringify(c))}a.push({type:'eof',raw:'',value:null,start:s.length,end:s.length});return a}
+export function tokenizeRewriteV2(source){const s=String(source??''),a=[];let i=0;const add=(type,raw,value=raw,start=i,end=i+raw.length)=>a.push({type,raw,value,start,end});while(i<s.length){let c=s[i];if(/\s/.test(c)){i++;continue}let st=i,t=s.slice(i,i+2);if(['&&','||','==','~='].includes(t)){add('operator',t,t,st,i+2);i+=2;continue}if(PUN.includes(c)){add('punct',c,c,st,++i);continue}if(c==='$'&&s[i+1]==='{'){i+=2;let d=1,q=null,e=false;while(i<s.length&&d){c=s[i];if(q){if(e)e=false;else if(c==='\\')e=true;else if(c===q)q=null;i++;continue}if(c==="'"){q=c;i++;continue}if(c==='{')d++;else if(c==='}')d--;i++}if(d)fail(s,st,'Unterminated variable');let r=s.slice(st,i);add('variable',r,r.slice(2,-1),st,i);continue}if(c==='"'){i++;let e=false,ok=false;while(i<s.length){c=s[i++];if(e){e=false;continue}if(c==='\\'){e=true;continue}if(c==='"'){ok=true;break}}if(!ok)fail(s,st,'Unterminated string');let r=s.slice(st,i);add('string',r,dq(r),st,i);continue}if(c===BT){i++;let ok=false;while(i<s.length){if(s[i]!==BT){i++;continue}if(s[i+1]===BT){i+=2;continue}i++;ok=true;break}if(!ok)fail(s,st,'Unterminated raw string');let r=s.slice(st,i);add('raw-string',r,r.slice(1,-1).split(BT+BT).join(BT),st,i);continue}if(c==='/'){let regex;try{regex=scanSourceRegexLiteral(s,st)}catch(error){fail(s,st,error.message)}i=regex.end;add('regex',s.slice(st,i),{pattern:regex.pattern,flags:regex.flags},st,i);continue}let n=s.slice(i).match(/^-?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?/);if(n){let r=n[0];i+=r.length;add('number',r,Number(r),st,i);continue}if(/[A-Za-z_]/.test(c)){i++;while(i<s.length&&/[A-Za-z0-9_-]/.test(s[i]))i++;let r=s.slice(st,i);add('identifier',r,r,st,i);continue}fail(s,i,'Unexpected character '+JSON.stringify(c))}a.push({type:'eof',raw:'',value:null,start:s.length,end:s.length});return a}
 class Parser{constructor(s){this.s=String(s??'');this.t=tokenizeRewriteV2(this.s);this.i=0}p(n=0){return this.t[Math.min(this.i+n,this.t.length-1)]}is(t,v,n=0){let x=this.p(n);return x.type===t&&(v===undefined||x.value===v)}kw(v){return this.is('identifier',v)}next(){return this.t[this.i++]}need(t,v,m){let x=this.p();if(!this.is(t,v))fail(this.s,x.start,m||'Expected '+(v??t)+', got '+(x.raw||x.type));return this.next()}parse(){let q=this.need('identifier',undefined,'Expected request or response'),phase=q.value.toLowerCase();if(!['request','response'].includes(phase))fail(this.s,q.start,'Unsupported rewrite phase '+q.raw);this.need('identifier','if');let condition=this.or();this.need('identifier','then');let actions=this.pipe();this.need('eof',undefined,'Unexpected trailing token');return{type:'rewrite',syntax:'loon-rewrite-v2',phase,condition,actions,raw:this.s}}or(){let l=this.and();while(this.is('operator','||')){this.next();l={type:'logical',operator:'||',left:l,right:this.and()}}return l}and(){let l=this.primary();while(this.is('operator','&&')){this.next();l={type:'logical',operator:'&&',left:l,right:this.primary()}}return l}primary(){if(this.is('punct','(')){this.next();let e=this.or();this.need('punct',')','Expected closing condition parenthesis');return{type:'group',expression:e}}return this.cmp()}cmp(){let left=this.val(false),o=this.need('operator',undefined,'Expected == or ~='),right=this.val(false),capture=null;if(!['==','~='].includes(o.value))fail(this.s,o.start,'Unsupported comparison '+o.raw);if(this.kw('as')){if(o.value!=='~=')fail(this.s,this.p().start,'as capture is only valid after ~=');this.next();capture=this.need('identifier',undefined,'Expected capture name').value}return{type:'comparison',operator:o.value,left,right,capture}}pipe(){let a=[this.action()];while(this.is('punct','|')){this.next();a.push(this.action())}return a}action(){let n=[this.need('identifier',undefined,'Expected action name').value];while(this.is('punct','.')){this.next();n.push(this.need('identifier',undefined,'Expected action name after dot').value)}let args=[];if(this.is('punct','(')){this.next();if(!this.is('punct',')'))for(;;){args.push(this.val(true));if(!this.is('punct',','))break;this.next()}this.need('punct',')','Expected closing action parenthesis')}return{type:'action',name:n.join('.'),args}}val(arr){let x=this.p();if(arr&&this.is('punct','['))return this.array();if(x.type==='variable'){this.next();return{type:'variable',name:x.value,raw:x.raw}}if(['string','raw-string'].includes(x.type)){this.next();return{type:x.type,value:x.value,raw:x.raw}}if(x.type==='regex'){this.next();return{type:'regex',pattern:x.value.pattern,flags:x.value.flags,raw:x.raw}}if(x.type==='number'){this.next();return{type:'number',value:x.value,raw:x.raw}}if(x.type==='identifier'&&['true','false'].includes(x.value)){this.next();return{type:'boolean',value:x.value==='true',raw:x.raw}}if(x.type==='identifier'&&x.value==='null'){this.next();return{type:'null',value:null,raw:x.raw}}fail(this.s,x.start,'Expected value, got '+(x.raw||x.type))}array(){this.need('punct','[');let items=[];if(!this.is('punct',']'))for(;;){if(this.is('punct','['))fail(this.s,this.p().start,'Nested arrays are not supported');items.push(this.val(false));if(!this.is('punct',','))break;this.next()}this.need('punct',']','Expected closing array bracket');return{type:'array',items}}}
 export function parseRewriteV2(s){return new Parser(s).parse()}
 export function isRewriteV2(s){return /^\s*(?:request|response)\s+if\b/.test(String(s??''))}
@@ -509,7 +509,7 @@ function validateCondition(node, phase) {
   if(!known) return;
   if(phase==='request' && (name==='response.status'||name.startsWith('response.header['))) throw conditionError('request phase cannot reference response data: '+name);
   if(node.operator==='~=') {
-    if(node.right?.type!=='regex') throw conditionError('~= requires a Regex right-hand value');
+    if(!['regex','variable'].includes(node.right?.type)) throw conditionError('~= requires a Regex right-hand value');
     return;
   }
   if(node.operator!=='==') throw conditionError('unsupported condition operator: '+node.operator);
@@ -986,6 +986,7 @@ function rewriteFeatureProfile(ast) {
   const visit=node=>{
     if(!node || typeof node!=='object')return;
     if(node.type==='regex' && node.flags)features.add('regex-flags');
+    if(node.type==='comparison' && node.operator==='~=' && node.right?.type==='variable')features.add('dynamic-regex');
     if(node.type==='comparison' && node.capture)features.add('condition-captures');
     if(node.type==='logical')features.add('condition-'+node.operator);
     if(node.type==='array')features.add('batch-arguments');
@@ -1004,7 +1005,7 @@ function rewriteFeatureProfile(ast) {
   if(ast.actions.some(a=>/\.json\.(?:add|replace)$/.test(a.name) && scalarItems(a.args[1]).some(v=>v?.type==='raw-string')))features.add('raw-json-value');
   if(ast.actions.length>1)features.add('action-order');
   const mutations=ast.actions.every(a=>new RegExp('^'+ast.phase+'\\.(?:header\\.(?:add|set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$').test(a.name) || (ast.phase==='request' && /^request\.body\.mock(?:_file)?$/.test(a.name)) || fixedJqOperations(a)!==null);
-  const needsHelper=(ast.actions.some(a=>fixedJqOperations(a)!==null) && (ast.actions.length>1 || ast.condition?.type!=='comparison' || ast.condition.left?.name!=='url' || ast.condition.operator!=='~=')) || ast.actions.some(isTextRequestMockAction) || ['regex-flags','string-templates','special-characters','raw-json-value'].some(f=>features.has(f)) || ast.actions.some(a=>JSON.stringify(a.args).includes('"type":"variable"'));
+  const needsHelper=(ast.actions.some(a=>fixedJqOperations(a)!==null) && (ast.actions.length>1 || ast.condition?.type!=='comparison' || ast.condition.left?.name!=='url' || ast.condition.operator!=='~=')) || ast.actions.some(isTextRequestMockAction) || ['regex-flags','dynamic-regex','string-templates','special-characters','raw-json-value'].some(f=>features.has(f)) || ast.actions.some(a=>JSON.stringify(a.args).includes('"type":"variable"'));
   return {kinds:[...features].sort(),mutations,needsHelper};
 }
 
@@ -1121,7 +1122,7 @@ function planRewriteFeatureHelper(ast,target,ctx) {
   try {
     const jqCombination=ast.actions.some(a=>a.name.endsWith('.json.jq'));
     const jqMatcher=jqCombination ? simpleUrlRewriteCondition(ast) : null;
-    if(jqCombination && !jqMatcher.ok)throw new Error('mixed JQ helper requires one source URL regex');
+    const narrowJq=jqCombination && jqMatcher.ok && !rewriteFeatureProfile(ast).kinds.some(k=>['regex-flags','dynamic-regex'].includes(k));
     const options={target,stamp:ctx.stamp,category:ctx.category,sourceLine:ctx.sourceLine,argumentTable:ctx.argumentTable,mockMaterialized:ctx.mockFiles?.get(ctx.sourceLine),jqMaterialized:ctx.jqFiles?.get(ctx.sourceLine)};
     const plan=ast.actions.length===1 ? renderSingleRewriteMutationScript(ast,options) : renderMixedRewriteScript(ast,options);
     const refs=ctx.argumentRefs || [];
@@ -1131,8 +1132,8 @@ function planRewriteFeatureHelper(ast,target,ctx) {
     const key=crypto.createHash('sha1').update('features\0'+target+'\0'+(ctx.sourceLine || ast.raw)).digest('hex').slice(0,10);
     const filename='features_'+target+'_'+key+'.js';
     const url=(target==='qx'?qxRewriteRawBase(ctx):surgeRewriteRawBase(ctx))+'/Script/'+ctx.id+'/'+filename;
-    if(jqCombination)plan.pattern=jqMatcher.pattern;
-    const prefix=jqCombination ? jqMatcher.pattern+' url ' : qxRewriteMatcherPlan(ast).prefix;
+    if(narrowJq)plan.pattern=jqMatcher.pattern;
+    const prefix=narrowJq ? jqMatcher.pattern+' url ' : qxRewriteMatcherPlan(ast).prefix;
     const line=target==='qx' ? prefix+plan.qxAction+' '+url :
       'wayx_features_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+url+(plan.requiresBody?',requires-body=true,max-size=-1':'')+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:'');
     ctx.generatedScripts.set(filename,plan.script);
@@ -1172,7 +1173,7 @@ export function compileComplexCondition(node, target, {argumentTable = null,shar
   }
   // The same evaluator serves the oracle and both runtime adapters. Captures
   // are committed only from the successful branch, including AND/OR rollback.
-  return '(()=>{'+(sharedRuntime?'':conditionRuntimeSource())+'\nconst result=evaluateCondition('+JSON.stringify(node)+
+  return '(()=>{'+(sharedRuntime?'':conditionRuntimeSource())+'\nconst result=evaluateCondition('+JSON.stringify(stripRegexFlags(node))+
     ',{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:'+
     (argumentTable?'__wayxArgs':'{}')+'});Object.assign(__wayxCaptures,result.captures);return result.matched;})()';
 }

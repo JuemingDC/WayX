@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 18:07:44 +08:00
+// Converted: 2026-10-04 18:37:05 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.interface\.v1\.Search\/DefaultWords$/i then response.body.mock("text", "AAAAACEaHeaQnOe0ouinhumikeOAgeeVquWJp+aIlnVw5Li7KAE=", 200, true) | response.header.set("grpc-status", "0")
@@ -29,16 +29,13 @@ const __wayxRegexReplace=(()=>{const SUPPORTED_FLAGS=/^[ims]*$/;function assertR
   if (new Set(flags).size!==flags.length) throw new Error('Duplicate Loon regex flag(s): '+flags);
   return {source:String(node.pattern ?? ''),flags};
 }
-function compileSourceRegex(node) {
-  const {source,flags}=assertRegexNode(node);
-  return new RegExp(source,flags);
-}
 function replaceSourceRegex(node,text,replacement) {
   const match=compileSourceRegex(node).exec(text);
   if (!match) return text;
   const out=String(replacement).replace(/\$(\d+)/g,(_,index)=>match[Number(index)] ?? '');
   return text.slice(0,match.index)+out+text.slice(match.index+match[0].length);
-};return (text,pattern,flags,replacement)=>replaceSourceRegex({type:"regex",pattern,flags},String(text),replacement);})();
+}
+function compileSourceRegex(node){const {source}=assertRegexNode(node);return new RegExp(source);};return (text,pattern,flags,replacement)=>replaceSourceRegex({type:"regex",pattern,flags},String(text),replacement);})();
 function __wayxHeaderKey(headers, name) {
   const wanted = String(name).toLowerCase();
   return Object.keys(headers).find(key => key.toLowerCase() === wanted);

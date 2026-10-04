@@ -523,7 +523,7 @@ const mixedJsonCapture = renderMixedRewriteScript(
 );
 assert.ok(mixedJsonCapture.script.includes('__wayxTpl([["v","hit.1"]])'));
 assert.ok(mixedJsonCapture.script.includes('v=>__wayxJsonAction(j=>__wayxJsonReplace(j,["data","user"],v))'));
-assert.equal(mixedJsonCapture.script.includes('"ims"'), true);
+assert.equal(mixedJsonCapture.script.includes('"ims"'), false);
 
 const mixedJsonTyped = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /api/ then response.header.set("X-Test", "ok") | response.json.replace("data.n", 7) | response.json.replace("data.ok", true) | response.json.replace("data.none", null)'),
@@ -605,9 +605,9 @@ assert.match(captureMixedQx.script, /const __wayxCaptures=Object\.create\(null\)
 const preservedCapturePattern='\\/api\\/(foo)-(bar)';
 assert.ok(
   captureMixedQx.script.includes(JSON.stringify(preservedCapturePattern)),
-  'complex helper must preserve the regex body and source flags',
+  'complex helper must preserve the regex body while dropping source flags',
 );
-assert.equal(captureMixedQx.script.includes('"ims"'), true);
+assert.equal(captureMixedQx.script.includes('"ims"'), false);
 assert.ok(captureMixedQx.script.includes('__wayxTpl([["v","hit.0"],["s",":"],["v","hit.1"],["s",":"],["v","hit.2"]])'));
 const surgeHeaderAddMixed = renderMixedRewriteScript(
   parseRewriteV2('response if ${url} ~= /api/ then response.header.add("Set-Cookie", "b=2") | response.header.set("X-Test", "ok") | response.body.replace(/ads/, "clean")'),
@@ -798,23 +798,23 @@ assert.match(mixedJsonAdd.script, /__wayxJsonAdd\(j,\["data","new"\],true\)/);
 
 const flaggedHeaderHelper = renderQxHeaderScript(parseRewriteV2('request if ${url} ~= /api/i then request.header.replace("X-Test", /value/ms, "ok")'));
 assert.equal(flaggedHeaderHelper.pattern, '^');
-assert.equal(flaggedHeaderHelper.script.includes('"i"'), true);
-assert.equal(flaggedHeaderHelper.script.includes('"ms"'), true);
-assert.match(flaggedHeaderHelper.script, /__wayxHeaderReplace\("X-Test","value",v,"ms"\)/);
+assert.equal(flaggedHeaderHelper.script.includes('"flags":"i"'), false);
+assert.equal(flaggedHeaderHelper.script.includes('"ms"'), false);
+assert.match(flaggedHeaderHelper.script, /__wayxHeaderReplace\("X-Test","value",v,""\)/);
 
 const flaggedRedirectSource = 'request if ${url} ~= /\\/old\\/(.*)/ims as hit then redirect(302, \"/new/${hit.1}\")';
 const flaggedRedirectHelper = renderQxRedirectScript(parseRewriteV2(flaggedRedirectSource));
 assert.equal(flaggedRedirectHelper.pattern, '\\/old\\/(.*)');
-assert.equal(flaggedRedirectHelper.script.includes('"ims"'), true);
-assert.ok(flaggedRedirectHelper.script.includes('new RegExp(' + JSON.stringify(flaggedRedirectHelper.pattern) + ', "ims")'));
+assert.equal(flaggedRedirectHelper.script.includes('"ims"'), false);
+assert.ok(flaggedRedirectHelper.script.includes('new RegExp(' + JSON.stringify(flaggedRedirectHelper.pattern) + ', "")'));
 
 const complexConditionFlags = renderMixedRewriteScript(
   parseRewriteV2('response if (${url} ~= /API/i || ${response.status} == 204) && ${response.header["Content-Type"]} == "application/json" then response.header.del("Server") | response.body.replace(/ADS/ms, "ok")'),
   {target:'qx'},
 );
-assert.match(complexConditionFlags.script, /"pattern":"API","flags":"i"/);
+assert.match(complexConditionFlags.script, /"pattern":"API","flags":""/);
 assert.equal(complexConditionFlags.script.includes('"i")'), false);
-assert.equal(complexConditionFlags.script.includes('"ms"'), true);
+assert.equal(complexConditionFlags.script.includes('"ms"'), false);
 assert.match(complexConditionFlags.script, /response\?\.statusCode/);
 assert.match(complexConditionFlags.script, /Content-Type/);
 assert.throws(
