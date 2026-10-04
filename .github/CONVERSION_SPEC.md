@@ -838,7 +838,7 @@ GitHub 落地（2026-10-04，Asia/Shanghai）：PR #136 已合入 main，最终 
 
 ### 已完成的能力边界
 
-- 条件 helper 使用 `core.mjs` 的共同 source evaluator，QX/Surge 不再各自丢弃 `i/m/s`、将缺失 header 当作空字符串或在失败 AND/OR 分支泄漏 captures。类型比较沿用源 IR；不得用 `Number(undefined)` / `String(null)` 模拟源类型。
+- 条件 helper 使用 `core.mjs` 的共同 evaluator；目标统一丢弃 `i/m/s`，保留 header 缺失值与空字符串的区分，失败 AND/OR 分支不泄漏 captures。类型比较沿用源 IR；不得用 `Number(undefined)` / `String(null)` 模拟源类型。
 - Header/Body replacement helper 保留原 regex body，丢弃源 flags，使用源 `$0` / `$n` 替换契约。条件 captures 与 action-owned captures 独立。缺失的可选 condition capture 跳过当前 action，后续 action 继续。
 - QX Header helper 已合入共同 mutation renderer，删除重复 condition equality/variable lowering 与旧 Header emitter。原 221 个公开入口名称保持不变，不增加领域文件。
 - 同 phase 的新语法 Header set/del/replace、Body replace、JSON add/delete/replace：当需要 helper，且所有活动声明均能由共同 runtime 表达、没有原作者 HTTP Script/legacy Rewrite/argument transport 冲突时，生成一个 `phase-dispatcher`。按源声明及 action 顺序执行；后一条条件读取已提交的 header/body；每条声明重新建立 capture namespace；整个阶段只 `$done` 一次，全部未命中返回 `{}`。Guarded matcher 与阶段 dispatcher 的无 URL 约束 prefilter 使用 `^`，不得因大写 URL scheme 产生 false negative。
