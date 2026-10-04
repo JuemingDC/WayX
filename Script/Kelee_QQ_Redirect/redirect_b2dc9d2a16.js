@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 01:38:23 +08:00
+// Converted: 2026-10-04 17:00:14 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /(^https:\/\/c\.pc\.qq\.com\/ios\.html\?url=)(http.*)(&level=.*)/i as urlMatch then redirect(307, "${urlMatch.2}")

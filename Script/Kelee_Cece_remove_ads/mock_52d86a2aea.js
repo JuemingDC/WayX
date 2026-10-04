@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 15:08:25 +08:00
+// Converted: 2026-10-04 17:00:21 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/api\.cece\.com\/live\/user\/coupon_tab\?/i then response.body.mock("json", "{\"code\":0,\"msg\":\"\"}", 200)
