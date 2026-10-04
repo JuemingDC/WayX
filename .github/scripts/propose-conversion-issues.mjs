@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { loadLoonSourceCatalog } from "../converter/src/input.mjs";
 import { parseLoonPlugin } from "../converter/src/input.mjs";
 
-import { isRewriteV2, parseRewriteV2, classifyLegacyRewriteAction } from '../converter/src/rewrite.mjs';
+import { isRewriteV2, parseRewriteV2, selectRewritePipelineLayer, classifyLegacyRewriteAction } from '../converter/src/rewrite.mjs';
 import { isScriptV2, parseScriptV2, parseLegacyScriptLine } from '../converter/src/script.mjs';
 
 const ROOT = process.cwd();
@@ -289,13 +289,14 @@ async function newCatalogSemantics(catalog,{root=ROOT,sourceOverrides=null}={}) 
     catch {continue;} // A source read failure is reported by the sync transaction.
     for(const section of ['Rewrite','Script'])for(const raw of plugin.sections.get(section)||[]) {
       const line=raw.trim();if(!line || /^(?:#|;|\/\/)/.test(line))continue;
-      const v2Syntax=section==='Rewrite'?isRewriteV2(line):isScriptV2(line);
-      const family=section==='Rewrite'?(v2Syntax?'rewriteV2':'legacyRewrite'):(v2Syntax?'scriptV2':'legacyScript');
+      const scriptSyntax=isScriptV2(line);
+      const v2Syntax=scriptSyntax || (section==='Rewrite' && isRewriteV2(line));
+      const family=scriptSyntax?'scriptV2':section==='Rewrite'?(v2Syntax?'rewriteV2':'legacyRewrite'):'legacyScript';
       const reasons=new Set();
       const check=(key,value)=>{if(!baseline[family][key].includes(value))reasons.add('New '+family+'.'+key+': '+value);};
       try {
         let ast;
-        if(v2Syntax)ast=section==='Rewrite'?parseRewriteV2(line):parseScriptV2(line);
+        if(v2Syntax)ast=scriptSyntax?parseScriptV2(line):selectRewritePipelineLayer(parseRewriteV2(line));
         else if(section==='Rewrite') {
           const separator=line.search(/\s/);
           if(separator<1)throw new Error('Malformed Legacy Rewrite declaration');

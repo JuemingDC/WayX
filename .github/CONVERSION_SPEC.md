@@ -1,15 +1,22 @@
 # WayX Conversion Specification
 
-版本：1.99
+版本：1.100
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
-迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
+迁移状态：**领域合并完成；已证明的同步动作保留共同 helper/phase dispatcher；当前生产入口先执行单条 pipeline 的 Script/JSON/JQ 选层与拆分；其它组合尝试复杂脚本，不能安全转换则注释停用**
 
 WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入本仓库转换链。
 
 ---
 
 ## 0. 当前转换与同步边界
+
+本节及 §§51、54–55 是当前生效策略；§§1–18 的通用架构约束须结合这些明确例外使用。§§19–53 保留迁移计划、版本决策及当时验收记录；冲突条款以当前策略和后续明确覆盖为准，不把历史能力扩展或实验入口视为当前 canonical 行为。
+
+- 单条 action pipeline 先按 Script > JSON/JQ 家族选层，不分竖线前后。Script 仅保留源顺序中的第一条；否则 JSON add/delete/replace/jq/jq_file/path 全部按源顺序分别转换同条件规则。没有这两类时尝试既有复杂语法脚本，无法安全生成/使用则输出 OMITTED 注释、无活动回退。独立同正则声明全部保留，不做跨声明取舍。源语义预检、依赖 materialization、转换和目录校验使用相同选层政策；未知保留层仍进入 Issue，不因被忽略层阻断。
+- 目标不支持的作者 Script argument 直接丢弃，保留原作者 URL、task 及可支持选项，并说明参数省略；源语法/结构/声明绑定错误仍诊断。QX HTTP/非 HTTP 均省略 argument；Surge 支持的 String/PluginObject 参数按既有编码保留，无法编码则省略。此为用户指定降级，不声称参数输入等价。
+- 唯一 WayX Automation 每日 UTC `30 17 * * *`（北京时间 01:30）及手动/PR 执行完整流程；旧“schedule 暂停”记录属于历史。Work 自动活动不因此恢复，远端仅 main/test。
+- 根 README 保持现有标题、导航、BoxJs/Module/Adblock/Rule 顺序及 Name/Quantumult X/Surge 三列；由 sync 在产物事务后按实际文件生成。新增/删除产物对应条目增减，单目标缺失为 —，内容一致不写入；验证入口只检查，不再次生成写盘。
 
 - 正则转换统一先解析 Loon 语法：仅结束分隔符之后的后缀识别为 flags，字符类中的斜杠、转义、分组、量词与逻辑条件边界不删改。按用户最新要求，QX / Surge 原生规则及生成脚本均丢弃源 i/m/s flags，仅使用正则主体；这是明确的语义降级，不声称保留 flags 的匹配行为。脚本继续解析变量、捕获、AND/OR 等表达式。动态 Regex 变量仅接受完整 `/pattern/flags` 或语义 Regex 节点，不执行表达式、不二次展开变量；缺失或无效值不匹配。失败案例：此前脚本保留 flags，误将用户要求与源语义等价混同；在共同 runtime 生成逻辑修复，不逐个修改产物。
 
@@ -60,7 +67,7 @@ WayX 的目标是把 Loon 行为编译为目标平台能够表达的**同等行�
 - 能证明 target native 完全等价 → native。
 - native 不能完全等价，但 target Script/runtime 能完全重现 → helper / dispatcher。
 - 两者都不能证明 → unsupported / fail closed。
-- 禁止“删掉目标不支持的部分，其余照常输出”。
+- 一般等价路径禁止“删掉目标不支持的部分，其余照常输出”；§0 的 flags/enable/argument/pipeline 用户策略为明确降级例外，不据此宣称完全等价。
 - 禁止以“生成结果看起来合法”替代语义等价证明。
 - 禁止按插件 id、插件名、作者、仓库、Catalog 当前完整 signature 做特判。
 
@@ -89,7 +96,7 @@ Loon source
 
 ### 3.1 Source parser
 
-Parser 只负责还原 Loon 源语义，不得提前做 QX/Surge 适配。
+通用 Rewrite parser 负责还原 Loon 源 AST，不提前做目标适配。生产 pipeline 在共同选层入口执行用户降级策略；含 Script 的混合声明由共同 Script scanner 提取被选中的调用，再交 Script parser/planner。官方 Rewrite registry 不新增 Script action。
 
 必须保留：
 
@@ -191,7 +198,7 @@ Dispatcher 必须：
 - 保留源声明；
 - 给出明确 target limitation；
 - 不输出假可用规则；
-- 不静默删除条件、flags、参数或 action。
+- 一般 unsupported 不静默删除条件或 action；§0 明确授权的 flags/参数/选层省略按用户策略执行。其它组合失败使用 OMITTED 注释，保留源声明供核查，不能生成活动回退。
 
 ---
 
@@ -214,18 +221,9 @@ Parser 去除 Loon Regex literal 的最外层 delimiter 后，Regex body 必须�
 
 Loon `i / m / s` 是源行为组成部分，必须进入 Semantic IR。
 
-**从 v1.57 起，禁止无条件丢弃 flags。**
+当前生产转换按 §0 丢弃源 `i/m/s`：原生 matcher 和 generated helper 均只使用 pattern body，不生成 inline modifier，不将 flags 字符拼入目标正则。条件/capture 的源 AST 仍保留 flags 作为来源信息；独立 Loon reference evaluator 可用 `new RegExp(source, flags)` 执行源模型，不能把该源模型要求套用于已降级的目标 runtime。
 
-当目标 native matcher 没有官方确认的等价 flag 表达：
-
-1. 生成不会漏掉源命中的安全 prefilter；
-2. helper / dispatcher 内执行：
-   ```js
-   new RegExp(source, flags)
-   ```
-3. 使用 helper 的实际 match object 处理 capture。
-
-禁止因为目标 matcher 默认 case-sensitive 就把 Loon `/i` 直接删除。
+这是用户指定的语义降级，不能标为 flags 等价。原生 matcher 的 COMPATIBILITY LIMITATION 注释及 `requireEquivalent=true` 的保守拒绝契约保留；宽 matcher、captures 与动态 Regex 继续原有能力边界。
 
 ### 5.3 Capture
 
@@ -299,7 +297,7 @@ QX target 仅使用官方 sample 已证明的格式。
 
 - 不得把 Loon flag 字符直接拼入 QX matcher；
 - 不得未经官方依据生成 `(?i)` 等 inline modifier；
-- 需要 flags 语义时进入 helper/dispatcher；
+- 生产转换按 §0 丢弃 flags，不因 flags 单独改写为 helper/dispatcher；
 - 若对应 QX Script 类型无法安全 no-op，则不得使用过宽 prefilter，必须 unsupported。
 
 ### 6.4 QX snippet 输出
@@ -404,7 +402,7 @@ Loon Key Path 必须解析成结构化 path segments，支持：
 
 response mock 可优先使用目标原生 mock/Map Local。
 
-request mock 或 mixed pipeline 必须根据目标生命周期选择 helper。
+单条 request mock 根据目标生命周期选择 helper；mixed pipeline 先按 §54 选层，未含 Script/JSON/JQ 的链才尝试复杂语法 helper，失败则注释停用，不回退为原生 mock/Map Local。
 
 远程 mock_file 物化出的 WayX helper 必须可重建、内容哈希稳定、引用可审计。
 
@@ -434,7 +432,7 @@ Loon Script declaration 的：
 
 QX 的 enable 例外：按用户明确要求，默认关闭、固定 false 和动态开关均强制生成活动 Script 声明，并注明用户策略覆盖。Surge 不采用此覆盖。注释掉的源行仍保留注释。
 
-目标平台无法表达的 option 不得再默认“忽略即等价”；新架构必须显式证明该 option 对行为无影响，或 unsupported。
+目标无法表达的 option 不把“忽略”称为等价；argument、QX enable/binary_body_mode/timeout 等当前明确策略按 §§24、46、51 和共同 Script planner 处理，其它 option 继续目标能力边界与诊断。
 
 兼容实现可暂时保留当前策略，但必须通过 migration inventory 明确标记，不得成为新架构默认规则。
 
@@ -446,14 +444,14 @@ Loon `[Argument]` 先进入 target-neutral Argument IR。
 
 Surge：
 
-- 官方 Module argument 能力可等价表达时使用 `#!arguments` / placeholder。
+- 官方 Module argument 能力可表达时使用 `#!arguments` / placeholder；作者 Script 无法编码的合法 argument 按 §51 省略，不能因此丢弃整个 task。
 
 Quantumult X：
 
 - 不存在官方确认的通用 Loon Plugin Argument 等价机制时，不得伪造字段；
-- 只有当 Argument 不影响当前 declaration 行为，才能证明安全省略；
-- 否则 helper 若能把值固定为明确 source constant 才可继续；
-- 其余 unsupported。
+- 作者 Script argument 按 §51 直接省略，保留原 task 和作者 URL，不生成参数包装；
+- Rewrite 参数 transport 与动态 option 绑定继续旧边界，不能把作者 argument 省略策略扩展为任意参数默认值冻结；
+- 源语法/结构与声明绑定校验先于目标省略策略。
 
 ---
 
@@ -576,7 +574,7 @@ Regex 至少覆盖：
 
 ## 16. Validation Gates
 
-CI 固定分层：
+CI 的以下检查均保留，实际执行次序由唯一 workflow 约束（syntax → catalog refresh → checkpoint → sync → 成品验证/报告/发布门禁）：
 
 1. syntax；
 2. core unit；
@@ -683,7 +681,7 @@ CI：
 .github/workflows/converter-check.yml
 ```
 
-手动上游同步与 PR 校验复用上述唯一工作流；schedule 保持暂停。
+手动上游同步、PR 校验及每日北京时间 01:30 的 schedule 复用上述唯一工作流；调度以 §42 为准。
 
 Workflow 只调用稳定入口，不应枚举 converter 内部所有实现文件。
 
@@ -804,7 +802,7 @@ GitHub 落地检查点（2026-10-03）：
 
 续接顺序：先复查上述两个上游 404，再执行 §19 Phase D/E；完整语义证明通过后才执行 Phase F。当前领域整合检查点不会自动恢复定时任务。
 
-## 22. 当前迁移期兼容声明
+## 22. 历史迁移期兼容声明（已由 §0 当前策略覆盖）
 
 main 中现有 converter 在 Phase B–F 完成前继续承担生产转换。
 
@@ -813,7 +811,7 @@ main 中现有 converter 在 Phase B–F 完成前继续承担生产转换。
 - 不立即在同一个结构 PR 中强行改动 canonical；
 - 在后续语义 PR 中按新顺序迁移；
 - 新代码不得继续复制旧的静默降级行为；
-- 特别是 Regex `i/m/s` 的“无条件丢弃”已经被本规范废止，后续必须进入等价实现或 unsupported。
+- 当时的 Regex flags 等价迁移要求已被 §0 的用户降级策略覆盖；不得据此恢复目标 flags。
 
 这条兼容声明只用于控制迁移风险，不代表旧行为继续被认为正确。
 
@@ -977,7 +975,7 @@ JQ 赋值将缺失或 null 父字段创建为对象，并覆写最终字段；�
 
 目标软件支持的原生表达优先于生成脚本。单条固定 inline/file JQ（包括表达式内部的 pipe）优先保留原 URL matcher，并映射到 QX jsonjq-request/response-body 或 Surge http-request/response-jq；不得因 JQ 可被 JavaScript 编译、嵌套字段、Regex flags 或同阶段其它规则而自动迁移为 Script。原生 matcher 无法表达的纯 JQ 声明按既有 Review/注释规范处理，不以宽 matcher 脚本绕过。原 flags 的 native 兼容限制仍须如实保留，不宣称本策略证明 flags 等价。
 
-纯多 JQ action 在已证明固定单输出子集内合成原生管道：每个表达式用括号分组，按源顺序连接 `|`。不生成独立输入变量、try/catch 或错误回滚；错误及多步执行采用 jqlang 原生管道行为。作者表达式自带的控制结构保持原样。
+该版本曾将多 JQ actions 合成一个原生管道；§54 已覆盖此选择。当前多个 JSON/JQ actions 分别输出同条件规则，作者单个 JQ 表达式内部的 `|`、控制结构和错误语义仍原样保留，不拆表达式、不添加转换器保护包装。
 
 Mock 同样原生优先：Surge 可原生表达的 Map Local、QX echo-response 的原生文件能力仅在本地资源契约可满足时适用，不把远程 URL 假装成本地文件。目标缺少相应原生能力的 inline/mock/组合允许必要的 Script fallback，不因原生优先而删除有效功能。原作者脚本、QX 强制 enable、关闭注释及暂停的定时活动不变。§31 中 Jump 的两条规则迁移为 dispatcher 的决策撤销：恢复原 native JQ 规则及对应 matcher/Surge requirement，并删除新增的两份阶段 helper；嵌套 JQ 编译器仅保留供真正必要的组合使用。此节优先于 §§24–31 中与该用户策略冲突的自动 phase 迁移选择。
 
@@ -993,7 +991,7 @@ Phase E 增加固定种子 `0x57415958` 的组合回归，仍归入 runtime suit
 
 ## 34. 固定对象路径 JSON 多动作的原生优先（v1.71）
 
-纯 request/response JSON add/delete/replace 多动作声明，在单个无 flags 的 URL regex、固定对象字段路径及固定值范围内，优先合成为 QX jsonjq-request/response-body 或 Surge http-request/response-jq。同类 JSON 多动作不因为嵌套对象字段自动生成 Script；不增加公开导出、生产模块或 helper 类别。既有顶层 QX 原生表达文本保持兼容。
+该版本的多 action 合成选择已由 §54 覆盖：当前 request/response JSON add/delete/replace 多动作分别规划同条件的 QX jsonjq-request/response-body 或 Surge http-request/response-jq；固定参数数组仍属于一个 action，保留其内部顺序。同类 JSON 多动作不因为嵌套对象字段自动生成 Script；不增加公开导出、生产模块或 helper 类别。既有顶层 QX 原生表达文本保持兼容。
 
 路径使用 String/raw String 的共同解析，支持点分及 quoted bracket 字段，包括带点字段和原型同名 JSON 键。动态模板、数字数组索引、可经 JavaScript 属性访问改变数组的数字 String 字段及 length、动态值、非单 URL 条件继续现有 native/Script/Review 边界；本次不改 flags 的历史兼容策略。纯原生 JSON 多动作与纯 JQ 一样不得被其它声明的 HTTP Script dispatcher 吸收，避免把原生规则重新扩成宽匹配脚本。
 
@@ -1131,7 +1129,7 @@ flags 沿用现有原生 JQ 的 matcher 兼容契约：保留 source pattern，�
 
 ## Body Rewrite 命中时的作者 Script 所有权（v1.83）
 
-作者 HTTP Script 不被下载、内联、包装或串联执行。依据 Loon Script v2 的禁用关系：匹配的 Request Body Rewrite/Mock 禁用 Request Script；匹配的 Response Body Rewrite 禁用 Response Script。阶段规划可在下列严格子集使用一个窄 dispatcher：全部参与声明均为同阶段、同一个无 flags 的单 URL regex；至少一条匹配声明包含受支持 Body/JSON mutation 或文本 Request Body Mock；无 Legacy、纯原生 JSON/JQ owner、未支持 action 或未证明的参数 transport。
+常规 canonical 会从原作者 URL 拉取 HTTP Script 供审查/行为信号分析，但不内联、包装、镜像或串联执行；下载失败保留原 URL。§52 实验入口不属于 canonical。依据 Loon Script v2 的禁用关系：匹配的 Request Body Rewrite/Mock 禁用 Request Script；匹配的 Response Body Rewrite 禁用 Response Script。阶段规划可在下列严格子集使用一个窄 dispatcher：全部参与声明均为同阶段、同一个无 flags 的单 URL regex；至少一条匹配声明包含受支持 Body/JSON mutation 或文本 Request Body Mock；无 Legacy、纯原生 JSON/JQ owner、未支持 action 或未证明的参数 transport。
 
 该 dispatcher 的活动 matcher 必须等于共同源 URL regex body，并排在同阶段原作者 Script 之前。URL 命中必然触发源 Body Rewrite，因此目标 helper 拥有该阶段而作者 Script 不运行；URL 未命中时 helper 不占用作者 Script 的 first-match 位置。源 Rewrite 顺序仍由 dispatcher 执行；作者 Script 的 URL、顺序、启用与原生选项继续保留既有转换策略。request/response 分别证明，不以某阶段的 body 覆盖另一个阶段。
 
@@ -1264,3 +1262,24 @@ Script v2 动态 Cron 引用共用绑定校验：引用必须已声明、类型�
 JQ file/path 仅物化保留层，继续使用原声明 action 索引。被忽略后缀不拉取依赖、不规划目标 action、不输出原规则或源声明回退。保留层若需要诊断，仅引用该层的声明。§52 顺序组合实验保持历史用途，不进入 canonical sync。全量 266 项重转换，内容一致不覆盖；撤销错误筛选所涉及的目标产物恢复正确规则。
 
 根目录 README 保持现有标题、导航、BoxJs/Module/Adblock/Rule 顺序及三列表格结构。每次全量转换后按实际目标产物重建索引；新增产物加条目，删除产物删条目，单目标缺失显示 —；内容一致时不覆盖。
+
+
+## 55. 实现与规范对应核查（v1.100）
+
+修正正文与后续用户政策冲突的 flags、argument、pipeline 合成和 schedule 条款。§0 汇总当前生效边界，历史验收数量、实验能力与阶段迁移计划不改写为当前生产承诺。当前成品验证为 catalog 266 项；该数字是核查快照，未来由实际发现结果增减，不作为固定能力白名单。
+
+发现实现遗漏：`propose-conversion-issues.mjs` 的源语义预检原先按源 section 判定 family，把 `[Rewrite]` 中的 `XX | script(...)` 作为 Rewrite action/with token 检查；JSON/JQ 链也扫描已丢弃 action。生产转换支持选层，但同步前预检可能先隔离合法保留层。现修正为先识别 Script、否则共用 JSON/JQ selector，再检查保留层 semantic tokens；未识别的保留层照常进入 Issue，不自动扩大 baseline。目录的复杂组合、V2 token 和 Regex inventory 使用同一选层入口，避免预检通过却在完整目录校验失败。源文件与 Issue provenance 仍保留真实原文。 同时修正上游 JQ 错误注释的作用域：选层链的 jq 修正诊断只引用当前保留 action，不将被忽略的 Header/Body 等重新带回配置注释；原 jq 内容与修正原因仍记录，源文件不改写。
+
+| 生效契约 | 共同实现入口 | 验证 |
+| --- | --- | --- |
+| 正则仅主体，源 AST/reference 可保留 flags | core/runtime 的 target regex normalization；rewrite/script planner | core、runtime flags/capture 差分 |
+| 单声明 Script > JSON/JQ；独立声明全保留 | script.selectScriptPipelineSource、rewrite.selectRewritePipelineLayer、conversion.rewriteV2Action | conversion-policy 的两侧优先、同正则独立规则、分条 JQ |
+| 预检/目录与转换使用相同选层 | propose-conversion-issues.newCatalogSemantics、catalog inventory | upstream-automation 的 Script/JQ 保留层与未知保留层；目录 suite |
+| 仅保留层拉依赖，原 action 索引绑定 | input materializeSourceScripts/materializeJqFiles/materializeMockFiles | conversion-context、per-action file 失败隔离 |
+| 无 Script/JQ 链尝试复杂脚本，失败 OMITTED | conversion.rewriteV2Action、prepareRewriteDispatchers、rewrite.planRewriteFeatureHelper | conversion/runtime 的成功脚本、无法转换和阶段冲突 |
+| 不支持作者 argument 省略而保留 task | script.planQxScript/planSurgeScript | script、conversion-policy |
+| 原地址 Python transport；失败不替换作者 URL | input fetchOriginalText/fetchOriginalBytes、tools/fetch-upstream.py | source-fetch、作者 URL/ref 检查 |
+| README 保持结构，随真实产物增减；相同不覆盖 | workflow.buildReadmePlan、sync-convert 的 README transaction | readme-index 的新增/删除/单目标缺失；managed cleanliness |
+| 每日完整发现/转换/校验，main/test 预算 | converter-check.yml、sync-convert.mjs | workflow-control、upstream-automation、全量 Action |
+
+该对应表用于定位实际契约，不新增分散规范副本，也不把目录零 Review 当作完整客户端语义等价证明。每次 Action 全量拉取并转换，内容一致不覆盖的要求保持。

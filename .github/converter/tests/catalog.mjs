@@ -3,6 +3,7 @@
 // Category: Converter / catalog / Regression Suite
 
 import { isRewriteV2, parseRewriteV2, validateRewriteV2Ast, classifyComplexRewrite, isScriptV2, parseScriptV2, classifyLegacyRewriteAction, LOON_LEGACY_MOCK_OPTION_NAMES, LOON_LEGACY_SCRIPT_OPTION_NAMES, parseLegacyScriptLine } from "../src/index.mjs";
+import { selectRewritePipelineLayer } from "../src/rewrite.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -42,8 +43,8 @@ function activeRewriteLines(text){
 for(const entry of manifest){
   const source=await fs.readFile(path.join(ROOT,'Resource/Loon',entry.file),'utf8');
   for(const line of activeRewriteLines(source)){
-    if(!isRewriteV2(line)) continue;
-    const ast=parseRewriteV2(line);
+    if(!isRewriteV2(line) || isScriptV2(line)) continue;
+    const ast=selectRewritePipelineLayer(parseRewriteV2(line));
     validateRewriteV2Ast(ast);
     if(ast.actions.length<2) continue;
     const classified=classifyComplexRewrite(ast);
@@ -140,7 +141,14 @@ for(const entry of manifest){
     const looksV2=/^(?:request|response)\b/.test(line);
     if(!looksV2) continue;
     assert.ok(isRewriteV2(line),entry.file+': request/response Rewrite line is outside Rewrite v2 grammar:\n'+line);
-    const ast=parseRewriteV2(line);
+    if(isScriptV2(line)) {
+      const ast=parseScriptV2(line);scriptCount++;
+      observed.scriptV2.phases.add(ast.phase);
+      collectCondition(ast.condition,observed.scriptV2);
+      for(const option of ast.options)observed.scriptV2.optionNames.add(option.name);
+      continue;
+    }
+    const ast=selectRewritePipelineLayer(parseRewriteV2(line));
     validateRewriteV2Ast(ast);
     rewriteCount++;
     observed.rewriteV2.phases.add(ast.phase);
@@ -258,7 +266,7 @@ for(const entry of manifest){
 
   for(const line of activeSectionLines(source,'Rewrite')){
     if(isRewriteV2(line)){
-      const ast=parseRewriteV2(line);
+      const ast=isScriptV2(line)?parseScriptV2(line):selectRewritePipelineLayer(parseRewriteV2(line));
       for(const node of regexNodes(ast)) inspect(node.pattern,node.flags,entry.file+' [Rewrite v2]: '+line);
       continue;
     }

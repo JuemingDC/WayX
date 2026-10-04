@@ -72,7 +72,8 @@ function resolveRewriteJqDependencies(ast,line,ctx) {
     }
     const node=resolved.args?.[0];
     if(/^(?:request|response)\.json\.jq$/.test(resolved.name) && ['string','raw-string'].includes(node?.type)) {
-      const repaired=correctedUpstreamJq(node.value,line,ctx);
+      const repairLine=ast.sourceActionCount?rewriteV2ToSource({...ast,actions:[action]}):line;
+      const repaired=correctedUpstreamJq(node.value,repairLine,ctx);
       if(repaired.changed)resolved={...resolved,args:[{type:'raw-string',value:repaired.jq,raw:'`'+repaired.jq.replace(/`/g,'``')+'`'},...resolved.args.slice(1)]};
     }
     return resolved;
