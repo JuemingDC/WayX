@@ -224,7 +224,7 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
             const pattern=String(c.right.pattern);
             const line=target==='qx' ? item.mapped.line.replace(/^(?:\^https\?:\/\/|\^) url /,pattern+' url ') : item.mapped.line.replace(/pattern=(?:\^https\?:\/\/|\^),/,'pattern='+pattern+',');
             result.set(item.sourceIndex,{...item.mapped,line:'# [WayX] COMPATIBILITY LIMITATION: '+error.message+'; retained source URL prefilter is not a source-flag equivalence proof.\n'+line});
-          } else result.set(item.sourceIndex,rewriteReview(item.line,error.message));
+          } else result.set(item.sourceIndex,ast.actions.length>1 && !ast.sourceActionCount?{section:'comment',line:'# [WayX] OMITTED: action pipeline cannot use a safe phase script: '+error.message+'\n# Source declaration: '+item.line}:rewriteReview(item.line,error.message));
         }
       }
     }

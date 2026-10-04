@@ -1932,6 +1932,8 @@ if(selectedCase==='conversion-policy.mjs') {
   const complex=convertPlugin(entry,'[Rewrite]\nresponse if ${url} ~= /api/ then response.body.replace(/old/,"new") | response.header.set("X-Kept","yes")',options);
   for(const target of ['qx','surge'])assert.match(active(complex[target]),target==='qx'?/script-response-body/:/type=http-response/);
   assert.ok([...complex.generatedScripts.values()].every(code=>code.includes('X-Kept')));
+  const phaseBlocked=convertPlugin(entry,'[Rewrite]\nresponse if ${url} ~= /api/ && ${status} == 200 then response.body.replace(/old/,"new") | response.header.set("X","yes")\n[Script]\nresponse if ${url} ~= /api/ then script("https://example.test/original.js")',options);
+  for(const target of ['qx','surge']){assert.match(phaseBlocked[target],/OMITTED/);assert.doesNotMatch(phaseBlocked[target],/REVIEW REQUIRED/);assert.match(active(phaseBlocked[target]),/original\.js/);}
   const unsupported=convertPlugin(entry,'[Rewrite]\nrequest if ${url} ~= /api/ then url.replace("https://example.test/new") | request.header.set("X","yes")',options);
   for(const target of ['qx','surge']){assert.match(unsupported[target],/OMITTED/);assert.doesNotMatch(active(unsupported[target]),/url 302|url replace|script-path=|script-response/);assert.doesNotMatch(unsupported[target],/REVIEW REQUIRED/);}
   console.log('Single action-chain selection passed: '+checked+' target results, either-side Script/JQ priority, independent declarations, JSON-family splitting, indexed file inlining and per-action failure isolation');
