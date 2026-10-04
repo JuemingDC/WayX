@@ -10,10 +10,15 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Snowball.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 06:22:27 +08:00
+# Converted: 2026-10-04 15:08:56 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Snowball_remove_ads.lpx
 # Target: Surge
+
+[Body Rewrite]
+
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/open\.xueqiu\.com\/mpaas\/config\/content\?.*timeline_tab_name '(. as $__wayx_before | try (if type == "object" then del(.["data"]["im_notice_show"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["request_notice_show"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["timeline_tab_name"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["profileMenuConfig_anonymous_V12"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["trade_open_account_promotion_url"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["trade_unify_open_account_list"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["community_ad_download_msg"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["home_tab_dynamic"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["home_tab_dynamic_before"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["home_tab_dynamic_after"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["isitor_page_login_config"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["open_wechat_mini_app_config"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["user_guide_contact_config"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["brokers_router_config"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["my_page_right_items"]) else . end) catch $__wayx_before)'
 
 [Map Local]
 ^https:\/\/api\.xueqiu\.com\/snowpard\/launch_strategy\/query\.json\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
@@ -45,10 +50,6 @@
 ^https:\/\/api\.xueqiu\.com\/analysis\/status\/v4\/underlying_product\.json\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 ^https:\/\/api\.xueqiu\.com\/rainbow\/ai\/question\/generate\/status_question\.json\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-
-[Script]
-
-wayx_features_e029ad277f = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Snowball_remove_ads/features_surge_e029ad277f.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% api.xueqiu.com, open.xueqiu.com, stock.xueqiu.com, fund.xueqiu.com, 39.103.79.14, 39.106.97.84, 47.95.49.75, 101.201.62.20, 101.201.62.26, 101.201.175.228, 124.250.48.3, 182.92.145.50, 182.92.251.113

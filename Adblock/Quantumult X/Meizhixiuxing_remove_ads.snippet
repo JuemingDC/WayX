@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Meizhixiuxing.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:01 +08:00
+# Converted: 2026-10-04 15:08:38 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Meizhixiuxing_remove_ads.lpx
@@ -22,12 +22,14 @@
 
 ^https:\/\/api\.bevol\.com\/personal\/page$ url reject-dict
 
-^https:\/\/api\.bevol\.com\/appmain\/app\/home\/page$ url jsonjq-response-body 'del(.result.versionPopUp, .result.isShowSearchLabel, .result.isShowSearchFeedBack, .result.centerBannerAdvert, .result.programmaticAdvertising, .result.mattsData, .result.questionnaireMap, .result.appPullDownAdvert)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+^https:\/\/api\.bevol\.com\/appmain\/app\/home\/page$ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then del(.["result"]["versionPopUp"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["isShowSearchLabel"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["isShowSearchFeedBack"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["centerBannerAdvert"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["programmaticAdvertising"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["mattsData"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["questionnaireMap"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["appPullDownAdvert"]) else . end) catch $__wayx_before)'
 
 ^https:\/\/api\.bevol\.com\/appmain\/app\/home\/feed$ url jsonjq-response-body 'del(.result.banners)'
 ^https:\/\/api\.bevol\.com\/appmain\/app\/home\/feed$ url jsonjq-response-body '. | .result.returnList |= (map(select(.tname == "userPart"))) | .result.returnList |= map(select(. | has("adId") | not))'
 
-^https:\/\/api\.bevol\.com\/trialbox\/shop\/app\/homePage$ url jsonjq-response-body 'del(.result.firstPersonActivity, .result.mainActivity, .result.brandZone, .result.imageAD2, .result.couponPopupInfo)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+^https:\/\/api\.bevol\.com\/trialbox\/shop\/app\/homePage$ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then del(.["result"]["firstPersonActivity"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["mainActivity"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["brandZone"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["imageAD2"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["couponPopupInfo"]) else . end) catch $__wayx_before)'
 
 ^https:\/\/api\.bevol\.com\/seach\/foundAndTopSearch$ url reject-dict
 

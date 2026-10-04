@@ -10,16 +10,20 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/iReaderDejian.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 11:20:39 +08:00
+# Converted: 2026-10-04 15:08:26 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/iReaderDejian_remove_ads.lpx
 # Target: Surge
 
-
-
 [Rule]
 DOMAIN,smad.ms.zhangyue.net,REJECT,extended-matching,pre-matching
 DOMAIN,saad.ms.zhangyue.net,REJECT,extended-matching,pre-matching
+
+[Body Rewrite]
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/dj\.palmestore\.com\/zybk\/api\/powerup\/userGroup\? '(. as $__wayx_before | try (if type == "object" then del(.["body"]["sevenDaysAd"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["body"]["shortPlayShow"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["body"]["sdkShortPlayAB"]) else . end) catch $__wayx_before)'
+
+http-response-jq ^https:\/\/dj\.palmestore\.com\/zybk\/api\/search\/index\? 'del(.body.keywords)'
 
 [Map Local]
 
@@ -28,9 +32,6 @@ DOMAIN,saad.ms.zhangyue.net,REJECT,extended-matching,pre-matching
 ^https:\/\/dj\.palmestore\.com\/zyapi\/bookstore\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 ^https:\/\/dj\.palmestore\.com\/zybk\/api\/bookshelf\/index\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-
-[Script]
-wayx_phase_response_55e1fcfd0d = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_iReaderDejian_remove_ads/phase_surge_response_55e1fcfd0d.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% dj.palmestore.com

@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Chuzhan.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 11:20:39 +08:00
+# Converted: 2026-10-04 15:08:26 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Chuzhan_remove_ads.lpx
@@ -18,8 +18,10 @@
 # [rewrite_local]
 ^https:\/\/app\.huashi6\.com\/app\/index\/ad\/ url reject-dict
 
-^https:\/\/app\.huashi6\.com\/app\/common\/config$ url jsonjq-response-body 'if (try (getpath(["data"]) | has("disableAd")) catch false) then setpath(["data","disableAd"]; true) else . end | if (try (getpath(["data"]) | has("showTopFloatAdvanceTips")) catch false) then setpath(["data","showTopFloatAdvanceTips"]; false) else . end'
-^https:\/\/app\.huashi6\.com\/app\/common\/config$ url jsonjq-response-body 'del(.data.adsConfigIOS, .data.adsConfigAndroid, .data.url.tabMarket)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+^https:\/\/app\.huashi6\.com\/app\/common\/config$ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then if (try (getpath(["data"]) | has("disableAd")) catch false) then setpath(["data","disableAd"]; true) else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["data"]) | has("showTopFloatAdvanceTips")) catch false) then setpath(["data","showTopFloatAdvanceTips"]; false) else . end else . end) catch $__wayx_before)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+^https:\/\/app\.huashi6\.com\/app\/common\/config$ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then del(.["data"]["adsConfigIOS"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["adsConfigAndroid"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["url"]["tabMarket"]) else . end) catch $__wayx_before)'
 
 ^https:\/\/app\.huashi6\.com\/app\/common\/layouts$ url jsonjq-response-body '.data |= {CZ_MINE_MENUS: .CZ_MINE_MENUS}'
 

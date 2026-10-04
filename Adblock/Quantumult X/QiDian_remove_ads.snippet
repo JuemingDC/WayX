@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/QiDian.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 06:22:27 +08:00
+# Converted: 2026-10-04 15:08:42 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/QiDian_remove_ads.lpx
@@ -16,7 +16,11 @@
 # [filter_local]
 
 # [rewrite_local]
-^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_QiDian_remove_ads/phase_qx_response_ffea6e024f.js
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/client\/getconf$ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then if (try (getpath(["Data"]) | has("WolfEye")) catch false) then setpath(["Data","WolfEye"]; 0) else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["Data","CloudSetting"]) | has("TeenShowFreq")) catch false) then setpath(["Data","CloudSetting","TeenShowFreq"]; 0) else . end else . end) catch $__wayx_before)'
+
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/client\/getconf$ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then del(.["Data"]["ActivityPageBackPushNoticeFrequency"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["Data"]["ActivityIcon"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["Data"]["ActivityPopup"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["Data"]["LuckBag"]) else . end) catch $__wayx_before)'
 
 ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v4\/client\/getsplashscreen\? url reject-dict
 
@@ -28,6 +32,8 @@
 
 ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/push\/getdialog\? url reject-dict
 
+^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v2\/dailyrecommend\/getdailyrecommend\? url jsonjq-response-body 'if (try (getpath(["Data"]) | has("Items")) catch false) then setpath(["Data","Items"]; "[]") else . end'
+
 ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/message\/getpushedmessagelist$ url reject-dict
 
 ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/maintain\/playstrip$ url reject-dict
@@ -37,6 +43,8 @@
 ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/freshman\/bookshelfbtn$ url reject-dict
 
 ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/bookshelf\/getTopOperation$ url reject-dict
+
+^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v3\/user\/getaccountpage\? url jsonjq-response-body 'del(.Data.BenefitButtonList)'
 
 ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/booksearch\/hotWords\? url reject-dict
 

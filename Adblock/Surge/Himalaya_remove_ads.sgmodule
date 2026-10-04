@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Himalaya.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 11:21:03 +08:00
+# Converted: 2026-10-04 15:08:56 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Himalaya_remove_ads.lpx
 # Target: Surge
@@ -28,11 +28,13 @@ http-response-jq ^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/discovery
 
 http-response-jq ^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/discovery-category\/customCategories\/ '.categoryList |= map(.itemList |= map(select(.title | test("直播|123狂欢节|SVIP"; "i") | not))) | .customCategoryList |= map(select(.title | test("直播|123狂欢节|SVIP"; "i") | not))'
 
-http-response-jq ^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/football-portal\/diff2\/batch\? 'del(.json.ad, .json.toc)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/football-portal\/diff2\/batch\? '(. as $__wayx_before | try (if type == "object" then del(.["json"]["ad"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["json"]["toc"]) else . end) catch $__wayx_before)'
 
 http-response-jq ^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/nexus-web\/v\d\/tabs\/customTabs\? '.data.feedTabs |= map(select(.name != "大赛"))'
 
-http-response-jq ^https:\/\/mobwsa\.ximalaya\.com\/mobile-playpage\/playpage\/tabs\/v2\/ 'del(.data.playpage.resourceMap.defaultResource, .data.playpage.resourceMap.playPageTip)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/mobwsa\.ximalaya\.com\/mobile-playpage\/playpage\/tabs\/v2\/ '(. as $__wayx_before | try (if type == "object" then del(.["data"]["playpage"]["resourceMap"]["defaultResource"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["playpage"]["resourceMap"]["playPageTip"]) else . end) catch $__wayx_before)'
 
 http-response-jq ^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-user\/v\d\/homePage\/ 'del(.data.freeListenV2)'
 

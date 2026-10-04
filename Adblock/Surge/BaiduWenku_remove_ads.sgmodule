@@ -10,14 +10,21 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduWenku.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 06:22:27 +08:00
+# Converted: 2026-10-04 15:08:21 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduWenku_remove_ads.lpx
 # Target: Surge
 
+[Body Rewrite]
 
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/appwk\.baidu\.com\/appapi\/index\/home\? '(. as $__wayx_before | try (if type == "object" then del(.["data"]["bannerInfo"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["bannerList"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["bannerListV2"]) else . end) catch $__wayx_before)'
 
+http-response-jq ^https:\/\/(appwk|tanbi)\.baidu\.com\/gsula\/sula\/syncmrecall$ 'del(.data.items)'
 
+http-response-jq ^https:\/\/appwk\.baidu\.com\/appapi\/index\/tab\? 'del(.data)'
+
+http-response-jq ^https:\/\/appwk\.baidu\.com\/appapi\/forum\/feed\?reqMode=wenkuapp_main_feed 'del(.data)'
 
 [Map Local]
 ^https:\/\/appwk\.baidu\.com\/xpage\/interface\/wknaad\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
@@ -35,10 +42,6 @@
 ^https:\/\/appwk\.baidu\.com\/naapi\/recommend\/recommenddoc\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 ^https:\/\/appwk\.baidu\.com\/naapi\/recommend\/vipdoccard\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-
-[Script]
-
-wayx_phase_response_38a8c1908c = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_BaiduWenku_remove_ads/phase_surge_response_38a8c1908c.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% appwk.baidu.com, tanbi.baidu.com

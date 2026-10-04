@@ -1,6 +1,7 @@
 #!name=推栏去广告
 #!desc=过滤推栏广告
 #!category=WayX
+#!requirement=CORE_VERSION>=20
 
 # Open URL: https://apps.apple.com/app/id1352849256
 # Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
@@ -9,13 +10,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Daily.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 06:22:27 +08:00
+# Converted: 2026-10-04 15:08:48 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Daily_remove_ads.lpx
 # Target: Surge
 
-[Script]
-wayx_features_59975bef1e = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Daily_remove_ads/features_surge_59975bef1e.js,requires-body=true,max-size=-1
+[Body Rewrite]
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https?:\/\/m\.pvp\.xoyo\.com\/conf\/server-mapping$ '(. as $__wayx_before | try (if type == "object" then del(.["data"]["splashConf"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["splashConfNew"]) else . end) catch $__wayx_before)'
 
 [MITM]
 hostname = %APPEND% m.pvp.xoyo.com

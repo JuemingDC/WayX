@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ifengNews.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:53 +08:00
+# Converted: 2026-10-04 15:08:29 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/ifengNews_remove_ads.lpx
 # Target: Surge
@@ -26,11 +26,13 @@ http-response-jq ^https:\/\/config\.nine\.ifeng\.com\/news\/cow\? '.bottomNav|=m
 http-response-jq ^https:\/\/config\.nine\.ifeng\.com\/news\/cow\? 'del(.zip_url)'
 
 http-response-jq ^https:\/\/config\.nine\.ifeng\.com\/news\/channel\? '.defaultChannel |= map(select(.id == "commenterch" or .id == "sy" or .id == "vipchannel" or .id == "rank_hot_merge" or .id == "rtnews" or .id == "sp" or .id == "mil" or .id == "finance" or .id == "history" or .id == "momentsnew" or .id == "taihai" or .id == "focusnews" or .id == "rcmd" or .id == "tw" or .id == "HK" or .id == "dawanqu1"))'
-http-response-jq ^https:\/\/config\.nine\.ifeng\.com\/news\/channel\? 'del(.more, .youngChannel)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/config\.nine\.ifeng\.com\/news\/channel\? 'if type == "object" then del(.["more"]) else . end | if type == "object" then del(.["youngChannel"]) else . end'
 
 http-response-jq ^https:\/\/nine\.ifeng\.com\/headline\? 'walk(if type == "object" and has("item") and (.item | type == "array") then .item |= map(select(.type == "phvideo" or .type == "doc" or .type == "phreclist")) else . end)'
 
-http-response-jq ^https:\/\/nine\.ifeng\.com\/getNewsDocs\? 'del(.body.showAdvert, .body.adData)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/nine\.ifeng\.com\/getNewsDocs\? '(. as $__wayx_before | try (if type == "object" then del(.["body"]["showAdvert"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["body"]["adData"]) else . end) catch $__wayx_before)'
 
 http-response-jq ^https:\/\/nine\.ifeng\.com\/phoenixTvChannel\? 'map(if has("item") then .item|=map(select(.type=="columnfastmessagescroll" or .type=="phvideo" or .type=="videoseriesrecommendmarquee" or .type=="short")) else . end)'
 

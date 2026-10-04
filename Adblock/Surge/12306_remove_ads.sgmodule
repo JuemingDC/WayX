@@ -1,6 +1,7 @@
 #!name=12306去广告
 #!desc=过滤12306应用内广告及开屏广告
 #!category=WayX
+#!requirement=CORE_VERSION>=20
 
 # Open URL: https://apps.apple.com/app/id564818797
 # Author: RuCu6[https://github.com/RuCu6], 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
@@ -9,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/12306.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 11:37:38 +08:00
+# Converted: 2026-10-04 15:08:12 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/12306_remove_ads.lpx
 # Target: Surge
@@ -17,8 +18,11 @@
 [Rule]
 DOMAIN,ad.12306.cn,DIRECT,extended-matching
 
+[Body Rewrite]
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList$ 'if type == "object" then del(.["materialsList"]) else . end | if type == "object" then del(.["advertParam"]) else . end'
+
 [Script]
-wayx_features_ed820aa93b = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_12306_remove_ads/features_surge_ed820aa93b.js,requires-body=true,max-size=-1
 
 移除12306应用内广告 = type=http-request,pattern=^https:\/\/mobile\.12306\.cn\/otsmobile\/app\/mgs\/mgw\.htm$,script-path=https://kelee.one/Resource/JavaScript/12306/12306_remove_ads.js
 

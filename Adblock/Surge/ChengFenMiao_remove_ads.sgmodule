@@ -10,10 +10,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ChengFenMiao.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 06:22:27 +08:00
+# Converted: 2026-10-04 15:08:25 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/ChengFenMiao_remove_ads.lpx
 # Target: Surge
+
+[Body Rewrite]
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/app\.chengfenmiao\.com\/helper\/setting\? 'if type == "object" then del(.["detail_buy_sites"]) else . end | if type == "object" then del(.["bottom_sites"]) else . end'
 
 [Map Local]
 ^https:\/\/app\.chengfenmiao\.com\/Listing\/LiveHots\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
@@ -23,9 +27,6 @@
 ^https:\/\/app\.chengfenmiao\.com\/item\/closet\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 ^https:\/\/app\.chengfenmiao\.com\/Helper\/HotWords\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-
-[Script]
-wayx_features_85aa00bdd6 = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_ChengFenMiao_remove_ads/features_surge_85aa00bdd6.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% app.chengfenmiao.com

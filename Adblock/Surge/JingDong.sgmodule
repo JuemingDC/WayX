@@ -9,7 +9,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/jingdong.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-10-04 11:21:10 +08:00
+# Converted: 2026-10-04 15:09:04 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/jingdong.lpx
 # Target: Surge
@@ -18,8 +18,10 @@
 AND,((DOMAIN,api.m.jd.com,extended-matching),(PROTOCOL,TCP)),REJECT-NO-DROP
 
 [Body Rewrite]
-http-response-jq ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=basicConfig 'if (try (getpath(["data","JDMessage","socketmonitor"]) | has("isSocketEstablishedAhead")) catch false) then setpath(["data","JDMessage","socketmonitor","isSocketEstablishedAhead"]; 0) else . end | if (try (getpath(["data","JDMessage","socketmonitor"]) | has("isSocketReport")) catch false) then setpath(["data","JDMessage","socketmonitor","isSocketReport"]; 0) else . end | if (try (getpath(["data","JDHttpToolKit","httpdns"]) | has("httpdns")) catch false) then setpath(["data","JDHttpToolKit","httpdns","httpdns"]; 0) else . end'
-http-response-jq ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=cart 'del(.cartLocationMap.loc_emptyCartFloor2, .emptyCartRecommendFloor)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=basicConfig '(. as $__wayx_before | try (if type == "object" then if (try (getpath(["data","JDMessage","socketmonitor"]) | has("isSocketEstablishedAhead")) catch false) then setpath(["data","JDMessage","socketmonitor","isSocketEstablishedAhead"]; 0) else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["data","JDMessage","socketmonitor"]) | has("isSocketReport")) catch false) then setpath(["data","JDMessage","socketmonitor","isSocketReport"]; 0) else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["data","JDHttpToolKit","httpdns"]) | has("httpdns")) catch false) then setpath(["data","JDHttpToolKit","httpdns","httpdns"]; 0) else . end else . end) catch $__wayx_before)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=cart '(. as $__wayx_before | try (if type == "object" then del(.["cartLocationMap"]["loc_emptyCartFloor2"]) else . end) catch $__wayx_before) | if type == "object" then del(.["emptyCartRecommendFloor"]) else . end'
 
 [Map Local]
 ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(?:cartCouponRecommendGoods|intelligentRecommendSku|obtainGrowingInfo|recommendShop|searchBoxWord|stationPullService|uniformRecommend) data-type=text data="{}" status-code=200 header="Content-Type:application/json"

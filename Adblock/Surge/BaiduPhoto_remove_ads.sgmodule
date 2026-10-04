@@ -10,19 +10,20 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduPhoto.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 06:22:27 +08:00
+# Converted: 2026-10-04 15:08:57 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduPhoto_remove_ads.lpx
 # Target: Surge
+
+[Body Rewrite]
+
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/mbd\.baidu\.com\/ccs\/v1\/start\/confsync\? '(. as $__wayx_before | try (if type == "object" then del(.["data"]["service"]["config"]["advertisement"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["service"]["config"]["youa"]["pm_config_ad"]) else . end) catch $__wayx_before)'
 
 [Map Local]
 ^https:\/\/pan\.baidu\.com\/act\/api\/conf\?.*conf_key=youa_core_config_ios data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 ^https:\/\/pan\.baidu\.com\/youai\/material\/v1\/getbynavid\?.*nav_id=1 data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-
-[Script]
-
-wayx_features_ef1650466d = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_BaiduPhoto_remove_ads/features_surge_ef1650466d.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% pan.baidu.com, mbd.baidu.com

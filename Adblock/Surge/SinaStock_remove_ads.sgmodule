@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SinaStock.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:15 +08:00
+# Converted: 2026-10-04 15:08:56 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/SinaStock_remove_ads.lpx
 # Target: Surge
@@ -24,7 +24,8 @@ http-response-jq ^https:\/\/news\.cj\.sina\.cn\/toutiao\/content\? 'del(.result.
 
 http-response-jq ^https:\/\/app\.cj\.sina\.com\.cn\/api\/deal\/index\? 'del(.data.banner)'
 
-http-response-jq ^https:\/\/app\.cj\.sina\.com\.cn\/clientSetting\/api\/start\/init\? 'del(.result.data.search_ad, .result.data.center_ads, .result.data.banner_new_tagid, .result.data.ad_hasAddScreenParam, .result.data.us_trade, .result.data.open_account, .result.data.us_hq_trade)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/app\.cj\.sina\.com\.cn\/clientSetting\/api\/start\/init\? '(. as $__wayx_before | try (if type == "object" then del(.["result"]["data"]["search_ad"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["data"]["center_ads"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["data"]["banner_new_tagid"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["data"]["ad_hasAddScreenParam"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["data"]["us_trade"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["data"]["open_account"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["data"]["us_hq_trade"]) else . end) catch $__wayx_before)'
 
 http-response-jq ^https:\/\/(newscj\.xincai\.com|news\.cj\.sina\.cn)\/app\/v1\/feed\? '.data.feed.data |= map(select((.author // "") != ""))'
 

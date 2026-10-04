@@ -10,14 +10,21 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/QiDian.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 06:22:27 +08:00
+# Converted: 2026-10-04 15:08:42 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/QiDian_remove_ads.lpx
 # Target: Surge
 
+[Body Rewrite]
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/client\/getconf$ '(. as $__wayx_before | try (if type == "object" then if (try (getpath(["Data"]) | has("WolfEye")) catch false) then setpath(["Data","WolfEye"]; 0) else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["Data","CloudSetting"]) | has("TeenShowFreq")) catch false) then setpath(["Data","CloudSetting","TeenShowFreq"]; 0) else . end else . end) catch $__wayx_before)'
 
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/client\/getconf$ '(. as $__wayx_before | try (if type == "object" then del(.["Data"]["ActivityPageBackPushNoticeFrequency"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["Data"]["ActivityIcon"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["Data"]["ActivityPopup"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["Data"]["LuckBag"]) else . end) catch $__wayx_before)'
 
+http-response-jq ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v2\/dailyrecommend\/getdailyrecommend\? 'if (try (getpath(["Data"]) | has("Items")) catch false) then setpath(["Data","Items"]; "[]") else . end'
 
+http-response-jq ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v3\/user\/getaccountpage\? 'del(.Data.BenefitButtonList)'
 
 [Map Local]
 
@@ -46,9 +53,6 @@
 ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/followsubscribe\/showChapterEndModule\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/young\/getconf$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-
-[Script]
-wayx_phase_response_020bc106c8 = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_QiDian_remove_ads/phase_surge_response_020bc106c8.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% magev6.if.qidian.com, ywab.reader.qq.com

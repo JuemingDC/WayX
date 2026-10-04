@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Amap.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 11:20:42 +08:00
+# Converted: 2026-10-04 15:08:30 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Amap_remove_ads.lpx
@@ -22,7 +22,8 @@ host-suffix, v.smtcdns.com, reject
 
 ^https:\/\/m5\.amap\.com\/ws\/shield\/search\/new_hotword\? url reject-dict
 ^https:\/\/m5\.amap\.com\/ws\/faas\/amap-navigation\/card-service-(?:car-end|route-plan) url reject-dict
-^https:\/\/m5\.amap\.com\/ws\/shield\/search_business\/process\/marketingOperationStructured\? url jsonjq-response-body 'del(.data.commonMaterial, .data.tipsOperationLocation, .data.resourcePlacement)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+^https:\/\/m5\.amap\.com\/ws\/shield\/search_business\/process\/marketingOperationStructured\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then del(.["data"]["commonMaterial"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["tipsOperationLocation"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["resourcePlacement"]) else . end) catch $__wayx_before)'
 ^https:\/\/m5\.amap\.com\/ws\/shield\/search_poi\/homepage\? url jsonjq-response-body 'del(.history_tags)'
 ^https:\/\/m5\.amap\.com\/ws\/shield\/search_poi\/tips_adv\? url reject-dict
 ^https:\/\/oss\.amap\.com\/ws\/banner\/lists\/\? url reject-dict
