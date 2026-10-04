@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/iQiYi_Video.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 23:39:08 +08:00
+# Converted: 2026-10-05 00:27:41 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/iQiYi_Video_remove_ads.lpx
@@ -24,12 +24,15 @@ host, api.iqiyi.com, reject
 host, access.if.iqiyi.com, reject
 
 # [rewrite_local]
+^https:\/\/cards\.iqiyi\.com\/views_home\/3\.0\/qy_home\? url jsonjq-response-body 'delpaths([["base","statistics"]])'
 
 ^https:\/\/cards\.iqiyi\.com\/views_home\/3\.0\/qy_home\? url jsonjq-response-body 'del(.cards[] | select(.alias_name == "focus" or .alias_name == "ad_mobile_flow" or .alias_name == "ad_trueview"))'
 
 ^https:\/\/cards\.iqiyi\.com\/views_category\/3\.0\/category_home\? url jsonjq-response-body 'del(.base.statistics | select(.ad_str)) | del(.cards[] | select(.alias_name == "entrence_focus" or .alias_name == "ad_trueview"))'
 
 ^https:\/\/cards\.iqiyi\.com\/waterfall(-plt)?\/3\.0\/feed\? url jsonjq-response-body 'del(.base.statistics | select(.ad_str)) | del(.. | select(.block_class?))'
+
+^https:\/\/cards\.iqiyi\.com\/views_plt\/3\.0\/player_tabs_v2\? url jsonjq-response-body 'delpaths([["kv_pair","activity_tab"]])'
 
 ^https:\/\/cards\.iqiyi\.com\/views_plt\/3\.0\/player_tabs_v2\? url jsonjq-response-body 'del(.cards[] | select(.alias_name == "play_vip_promotion" or .alias_name == "play_detail_tag" or .alias_name == "play_chat_entrance" or .alias_name == "play_ad_no_vip" or .alias_name == "play_vertical_short_video" or .alias_name == "play_rap_custom" or .alias_name == "play_topical_tab" or .alias_name == "play_vertical" or .alias_name == "play_water_fall_like")) | del(.. | select(.block_class?))'
 
@@ -47,6 +50,7 @@ host, access.if.iqiyi.com, reject
 
 ^https?:\/\/comment-card\.iqiyi\.com\/views_comment\/3\.0\/long_video_comments\? url jsonjq-response-body '.cards |= map(select(has("alias_name")))'
 
+^https?:\/\/iface2\.iqiyi\.com\/views_menus\/3\.0\/bottom_theme\? url jsonjq-response-body 'delpaths([["theme_list"]])'
 ^https?:\/\/iface2\.iqiyi\.com\/views_menus\/3\.0\/bottom_theme\? url jsonjq-response-body '.cards |= map(.items |= map(select(.other.bottom_tab_type == "rec" or .other.bottom_tab_type == "my")))'
 
 ^https?:\/\/iface2\.iqiyi\.com\/views_menus\/3\.0\/home_top_menu\? url jsonjq-response-body '.nav_group_data[].nav_list |= map(select(. == "0" or . == "2" or . == "1007" or . == "1" or . == "6" or . == "3"))'

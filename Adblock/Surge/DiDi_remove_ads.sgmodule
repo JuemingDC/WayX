@@ -10,12 +10,10 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DiDi.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 23:39:14 +08:00
+# Converted: 2026-10-05 00:27:47 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/DiDi_remove_ads.lpx
 # Target: Surge
-
-
 
 [Rule]
 DOMAIN,gwp.xiaojukeji.com,REJECT,extended-matching,pre-matching
@@ -38,6 +36,8 @@ http-response-jq ^https:\/\/common\.diditaxi\.com\.cn\/common\/v\d\/usercenter\/
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
 http-response-jq ^https:\/\/conf\.diditaxi\.com\.cn\/homepage\/v\d\/other\/fast\? 'delpaths([["data","disorder_cards","guess_card"],["data","disorder_cards","scene_list_card"]])'
+
+http-response-jq ^https:\/\/api\.udache\.com\/gulfstream\/porsche\/v\d\/dache_homepage_layout\? 'delpaths([["data","instances","dache_main_core_icon"]])'
 
 http-response-jq ^https:\/\/api\.udache\.com\/gulfstream\/porsche\/v\d\/dache_homepage_layout\? '.data |= (.instances |= (to_entries | map(select(.key | test("feed_back_|dache_main_member|order_container_|dache_main_core_icon|dache_main_card_"))) | from_entries))'
 

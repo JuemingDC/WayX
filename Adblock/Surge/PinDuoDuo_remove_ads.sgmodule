@@ -10,12 +10,10 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/PinDuoDuo.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 23:39:26 +08:00
+# Converted: 2026-10-05 00:28:00 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/PinDuoDuo_remove_ads.lpx
 # Target: Surge
-
-
 
 [Rule]
 AND,((URL-REGEX,^http:\/\/((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/d(\d)?,extended-matching),(USER-AGENT,"*com.xunmeng.pinduoduo*")),REJECT
@@ -37,6 +35,9 @@ DOMAIN,meta.pinduoduo.com,REJECT,extended-matching,pre-matching
 DOMAIN,apm-a.pinduoduo.com,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
+
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub\? 'delpaths([["result","dy_module","irregular_banner_dy"],["result","icon_set"],["result","search_bar_hot_query"],["result","dy_module","irregular_banner_dy"]])'
 
 http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub\? '.result.bottom_tabs? |= map(select(.link | IN("index.html", "chat_list.html", "personal.html"))) | .result.buffer_bottom_tabs? |= map(select(.link | IN("index.html", "chat_list.html", "personal.html"))) | .result.all_top_opts |= map(del(.selected_image, .image, .height, .width))'
 

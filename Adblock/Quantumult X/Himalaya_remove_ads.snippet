@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Himalaya.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 23:39:38 +08:00
+# Converted: 2026-10-05 00:28:12 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Himalaya_remove_ads.lpx
@@ -54,6 +54,8 @@ host, adbehavior.wsa.ximalaya.com, reject
 ^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/business-sale-promotion-guide-mobile-web\/popup\/ url reject-dict
 
 ^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/app-skin-service\/skin\/setting\/info\/ url reject-dict
+
+^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-user\/v\d\/homePage\/ url jsonjq-response-body 'delpaths([["data","freeListenV2"]])'
 
 ^https:\/\/(live|livewsa)\.ximalaya\.com\/lamia\/v1\/subscribe\/status$ url reject-dict
 

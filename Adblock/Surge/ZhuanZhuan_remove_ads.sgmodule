@@ -10,12 +10,10 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ZhuanZhuan.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 23:39:41 +08:00
+# Converted: 2026-10-05 00:28:15 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/ZhuanZhuan_remove_ads.lpx
 # Target: Surge
-
-
 
 [Body Rewrite]
 
@@ -28,6 +26,8 @@ http-response-jq ^https:\/\/app\.zhuanzhuan\.com\/zzx\/transfer\/getConfigInfo\?
 http-response-jq ^https:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzinfoshow\/getfeedflowinfo\? 'if .respData.userRed.campName == "OCD挂件" then del(.respData.userRed) else . end | .respData.infoData |= map(del(.rotateResource,.appRecommendResource,."cargoGroupCardV2"))'
 
 http-response-jq ^https:\/\/app\.zhuanzhuan\.com\/zz\/transfer\/getmymoretools$ 'walk(if type == "object" and .name == "免流量特权" then empty else . end) | del(.respData.groupList[] | select(.groupName == "活动参与" or .groupName == "金融工具"))'
+
+http-response-jq ^https:\/\/app\.zhuanzhuan\.com\/zz\/transfer\/getmyprofilev3$ 'delpaths([["respData","bmNewInfo"]])'
 http-response-jq ^https:\/\/app\.zhuanzhuan\.com\/zz\/transfer\/getmyprofilev3$ 'del(.respData.itemGroupList[].itemList[] | select(.name == "天天赚钱" or .name == "借钱")) | del(.respData.itemGroupList[] | select(.groupType == 15))'
 
 [Map Local]
