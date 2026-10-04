@@ -9,6 +9,17 @@
   },
   "sources": [
     {
+      "id": "kelee-plugin-directory",
+      "name": "可莉去广告与依赖插件目录",
+      "kind": "http",
+      "platform": "Loon",
+      "url": "https://hub.kelee.one/list.json",
+      "save_as": "Kelee/list.json",
+      "normalize": "raw",
+      "category": "插件发现",
+      "cached_feed": ".github/monitor/.runtime/kelee-feed.json"
+    },
+    {
       "id": "surge-official-llms",
       "name": "Surge 官方 llms.txt",
       "kind": "http",

@@ -146,11 +146,15 @@ def check_http(src: dict, state: dict, settings: dict):
     if mirror_valid and state.get("last_modified"):
         headers["If-Modified-Since"] = state["last_modified"]
 
-    code, raw, response_headers = request(
-        src["url"],
-        headers,
-        int(settings.get("timeout_seconds", 25)),
-    )
+    if src.get("cached_feed"):
+        feed = load_json(safe(ROOT, src["cached_feed"]), {})
+        if feed.get("source") != src["url"] or not isinstance(feed.get("text"), str) or not feed["text"]:
+            raise ValueError("Current discovery feed unavailable or URL does not match: " + src["id"])
+        code, raw, response_headers = 200, feed["text"].encode("utf-8"), {}
+    else:
+        code, raw, response_headers = request(
+            src["url"], headers, int(settings.get("timeout_seconds", 25)),
+        )
     if code == 304:
         if mirror_valid:
             return False, False, "304 Not Modified"
