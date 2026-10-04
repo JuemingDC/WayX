@@ -963,3 +963,63 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   }
   console.log('Native JSON batch priority passed: '+checked+' emitted filters');
 }
+
+// A proven Body Rewrite hit owns only its URL range and disables the author
+// Script; misses still reach the unchanged original Script URL.
+if(selectedCase==='generated-helper-runtime.mjs') {
+  const {convertPlugin,validateConvertedPlugin}=await import('../src/conversion.mjs');
+  const runOwner=(script,{request={},response={}}={})=>{
+    let calls=0,result;
+    vm.runInNewContext(script,{$request:{method:'GET',headers:{},...request},$response:{status:200,statusCode:200,headers:{},...response},$done(value){calls++;result=value;}},{timeout:1000});
+    assert.equal(calls,1);return result;
+  };
+  const entry={id:'BodyOwnerProof',source:'https://example.test/plugin.lpx',category:'Test'};
+  const options={stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'};
+  const regex='^https:\\/\\/example\\.test\\/api$';
+  let checked=0;
+  for(const phase of ['request','response'])for(const count of [1,2]) {
+    const first=phase+' if ${url} ~= /'+regex+'/ then '+phase+'.body.replace(/old/i,"new") | '+phase+'.header.set("X-Step","first")';
+    const last=phase+' if ${url} ~= /'+regex+'/ then '+phase+'.body.replace(/new/,"done") | '+phase+'.header.set("X-Step","last")';
+    const author='http-'+phase+' ^https://example.test/ script-path=https://example.test/author-first.js,requires-body=true';
+    const fallback='http-'+phase+' ^https://example.test/ script-path=https://example.test/author-second.js,requires-body=true';
+    const source='[Rewrite]\n'+[first,...(count===2?[last]:[])].join('\n')+'\n[Script]\n'+author+'\n'+fallback;
+    const output=convertPlugin(entry,source,options);validateConvertedPlugin(entry,output);
+    for(const target of ['qx','surge']) {
+      const scripts=[...output.generatedScripts].filter(([name])=>name.startsWith('phase_'+target+'_'+phase+'_'));
+      assert.equal(scripts.length,1);
+      assert.ok(output[target].indexOf(scripts[0][0])<output[target].indexOf('https://example.test/author-first.js'));
+      for(const name of ['author-first','author-second'])assert.equal(output[target].split('https://example.test/'+name+'.js').length-1,1);
+      assert.doesNotMatch(scripts[0][1],/author-first|author-second|fetch\(/,'author code must never be copied or fetched by the dispatcher');
+      const line=output[target].split('\n').find(line=>line.includes(scripts[0][0]));
+      const pattern=target==='qx'?line.split(' url ')[0]:line.match(/pattern=(.*?),script-path=/)?.[1];
+      assert.equal(pattern,regex,'body owner must keep the proven source URL range');
+      for(const url of ['https://example.test/api','https://example.test/other','https://unrelated.test/api']) {
+        const bodyHit=url==='https://example.test/api';
+        assert.equal(new RegExp(pattern).test(url),bodyHit,'target prefilter selects body owner exactly');
+        if(bodyHit) {
+          const value=JSON.parse(JSON.stringify(runOwner(scripts[0][1],{request:{url,body:'OLD'},response:{body:'OLD'}})));
+          assert.deepEqual(value,{headers:{'X-Step':count===2?'last':'first'},body:count===2?'done':'new'});
+        } else {
+          assert.deepEqual(JSON.parse(JSON.stringify(runOwner(scripts[0][1],{request:{url,body:'OLD'},response:{body:'OLD'}}))),{});
+          // Original first-match author order survives when no Body Rewrite hits.
+          const authors=output[target].split('\n').filter(line=>/author-(?:first|second)\.js/.test(line));
+          const selected=authors.find(line=>new RegExp(target==='qx'?line.split(' url ')[0]:line.match(/pattern=(.*?),script-path=/)[1]).test(url));
+          assert.equal(Boolean(selected),url==='https://example.test/other');
+          if(selected)assert.ok(selected.includes('author-first.js'));
+        }
+        checked++;
+      }
+    }
+    for(const bad of [
+      [first.replace('/ then','/i then'),last],
+      [first,last.replace(regex,'^https:\\/\\/other\\.test\\/api$')],
+      [first.replace(' then',' && ${request.method} == "POST" then'),last],
+      [phase+' if ${url} ~= /'+regex+'/ then '+phase+'.header.replace("X",/old/i,"new")',phase+' if ${url} ~= /'+regex+'/ then '+phase+'.header.set("Y","yes")'],
+    ]) {
+      const guarded=convertPlugin(entry,'[Rewrite]\n'+bad.join('\n')+'\n[Script]\n'+author,options);validateConvertedPlugin(entry,guarded);
+      assert.doesNotMatch([...guarded.generatedScripts.keys()].join('\n'),/phase_/,'unproved author ownership stays outside dispatcher');
+      for(const target of ['qx','surge'])assert.ok(guarded[target].includes('https://example.test/author-first.js'));
+    }
+  }
+  console.log('Body Rewrite author ownership passed: '+checked+' target hit/miss decisions, with conservative guard exclusions');
+}

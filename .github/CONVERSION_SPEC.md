@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.82
+版本：1.83
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -1113,3 +1113,13 @@ Rewrite 阶段规划以源声明在 `[Rewrite]` 中的位置（sourceIndex）为
 flags 沿用现有原生 JQ 的 matcher 兼容契约：保留 source pattern，但不声称目标 engine 与源 flags 完全等价；有 flags 时逐行输出 COMPATIBILITY LIMITATION。不能据此添加未经官方证明的 inline modifier。Surge 兼容注释与活动 Body Rewrite 分开保存，避免隐藏 CORE_VERSION>=20 requirement。规范中原生 flags 的旧边界不被本节当作语义证明。
 
 全量上游拉取转换由唯一 Actions 任务执行；sync-convert 每次都拉取所有 catalog entry、materialize 并重新转换，不以 source unchanged 跳过转换。原作者 URL 保留、QX Script 强制 enable、每天北京时间 01:30 与 main/test 分支预算保持不变。
+
+## Body Rewrite 命中时的作者 Script 所有权（v1.83）
+
+作者 HTTP Script 不被下载、内联、包装或串联执行。依据 Loon Script v2 的禁用关系：匹配的 Request Body Rewrite/Mock 禁用 Request Script；匹配的 Response Body Rewrite 禁用 Response Script。阶段规划可在下列严格子集使用一个窄 dispatcher：全部参与声明均为同阶段、同一个无 flags 的单 URL regex；至少一条匹配声明包含受支持 Body/JSON mutation 或文本 Request Body Mock；无 Legacy、纯原生 JSON/JQ owner、未支持 action 或未证明的参数 transport。
+
+该 dispatcher 的活动 matcher 必须等于共同源 URL regex body，并排在同阶段原作者 Script 之前。URL 命中必然触发源 Body Rewrite，因此目标 helper 拥有该阶段而作者 Script 不运行；URL 未命中时 helper 不占用作者 Script 的 first-match 位置。源 Rewrite 顺序仍由 dispatcher 执行；作者 Script 的 URL、顺序、启用与原生选项继续保留既有转换策略。request/response 分别证明，不以某阶段的 body 覆盖另一个阶段。
+
+同 URL 的一个或多个 Rewrite 均适用；只修改 Header、URL flags、额外条件、多个 URL matcher、Legacy 或原生 JSON/JQ 成员继续旧 native/compatibility/Review 边界，不推断可与远程异步代码组合。验证执行实际目标 helper 的命中/未命中行为、下一作者 matcher 可达性、两条作者规则 first-match 顺序及排除案例；Node/正则模型不代替真实客户端验证。
+
+官方依据：https://nsloon.app/en/docs/Script/script_v2/（Rewrite and Script、First HTTP match），https://manual.nssurge.com/scripting/http-request.html 和 https://manual.nssurge.com/scripting/http-response.html（每阶段最多一个 Script）。此节解决的是可证明的阶段所有权，不是通用作者异步脚本调度器；动态 Regex、透明 URL 与尚未证明的 Script options 继续保留限制。
