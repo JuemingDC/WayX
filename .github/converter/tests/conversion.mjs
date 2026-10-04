@@ -1451,7 +1451,7 @@ for(const name of await fs.readdir('.github/workflows')){
   assert.ok((await fs.stat(file)).isFile(),'missing workflow executable: '+file);
  }
 }
-const scheduled=await fs.readFile('.github/workflows/upstream-monitor.yml','utf8');
+const scheduled=await fs.readFile('.github/workflows/converter-check.yml','utf8');
 assert.doesNotMatch(scheduled,/^\s+schedule:/m);
 assert.match(scheduled,/workflow_dispatch:/);
 console.log('Semantic domain migration passed: IR provenance independence, MITM order/comments, workflow paths/pause');
