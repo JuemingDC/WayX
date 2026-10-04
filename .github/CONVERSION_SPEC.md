@@ -1,9 +1,9 @@
 # WayX Conversion Specification
 
-版本：1.66
+版本：1.67
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
-迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 inline JQ 子集已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
+迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
 
 WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入本仓库转换链。
 
@@ -940,3 +940,12 @@ V2 文件地址必须是固定 String/raw String；双引号内的动态模板�
 任意 JQ、动态 JQ、嵌套 selector、多输出、select/map/算术/条件及 jq_file 尚未纳入该适配器。它们仍阻止同阶段整体迁移，保留既有 native/compatibility/Review 策略；原作者 HTTP Script、Legacy、终结 Rewrite 的组合限制继续适用。该子集不能用于宣称全 JQ 解释器或真实客户端传输边界已实现。定时活动继续暂停，QX 强制 enable 政策不变。
 
 阶段收尾状态：Phase D 已覆盖共同同步 Header/Body/JSON、文本请求 mock 与本节固定 inline JQ；其余 action/作者 Script 的全阶段调度仍未完成。Phase E 已有条件/action oracle、独立预期输出和本节真实 jq 差分，尚缺完整语法组合随机验证及真实客户端边界验证。Phase F 仅删除已被这些检查替代的旧实现，历史 native flag/Script options 等兼容路径仍需逐项证明。§27 的单文件限制已由 §28 替代，动态及二进制限制继续保留。
+
+
+## 30. JQ 文件动作绑定与 golden 精简（v1.67）
+
+`jq_file` 和已接受的历史 `json.jq("jq-path=...")` 依赖现在可与其它同阶段动作组合。单动作依赖仍保留 content/sourceFile/legacyAlias 格式；多动作声明使用按绝对 action index 绑定的 byAction，不允许旧单动作对象被复用为多个文件。声明内相同规范化 URL 的获取结果（包括失败）只获取一次，跨声明仍遵循原有获取契约。失败项保留索引及可解析的 URL，汇总错误；任意缺失、空内容或获取失败使整条声明进入 Review，不输出部分文件动作的 helper。
+
+获取的 JQ 内容以 raw String 数据进入语义 IR，不把文件文本中的 `${...}` 当作 Loon 模板进行二次展开。目标规划与 phase eligibility 使用同一套已解析依赖的 AST。§29 的固定 JQ 子集可进入共同 features/phase dispatcher，并在生成 helper 中保留原 JQ 文件 URL 注释；任意 JQ 仍遵循既有 native/compatibility/Review 边界，不假设所有文件表达式可在 JavaScript 中执行。参数/Regex、原作者 Script、Legacy 及终结动作的限制不变。
+
+仅保留被端到端 conversion suite 使用的 end-to-end-golden.json（固定日期下的输出摘要、大小、段落和 helper 数量），不将其作为语义等价证明。删除重复的 MyBlockAds 专用 golden 文件及专用测试：同插件已在端到端快照中覆盖，通用 JQ 文件 materialization、原文保留、原生目标及完整目录 canonical/audit 门禁继续覆盖对应转换链。行为验证继续由独立预期输出、source oracle 与真实 jq 对照承担。定时活动继续暂停，main/test 分支预算及 QX 强制启用政策不变。

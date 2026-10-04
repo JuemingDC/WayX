@@ -487,8 +487,26 @@ export async function materializeJqFiles(entry,parsed,{
       if (isRewriteV2(item.line)) {
         const ast=parseRewriteV2(item.line);
         validateRewriteV2Ast(ast);
-        if (ast.actions.length!==1) continue;
-        spec=jqDependencySpecFromAction(ast.actions[0],{pluginSourceUrl:entry.source});
+        const files=ast.actions.map((action,index)=>({action,index})).filter(({action})=>/^(request|response)\.json\.(jq|jq_file)$/.test(action.name) && (action.name.endsWith('.jq_file') || /^jq-path\s*=/i.test(String(action.args[0]?.value || '').trim())));
+        if(!files.length)continue;
+        const cache=new Map();
+        const read=async action=>{
+          const dependency=jqDependencySpecFromAction(action,{pluginSourceUrl:entry.source});
+          if(!dependency?.resolvable || !dependency.url)throw new Error(dependency?.reason || 'JQ dependency is not resolvable');
+          if(!cache.has(dependency.url))cache.set(dependency.url,Promise.resolve().then(()=>fetchText(dependency.url)));
+          const content=minifyJqFile(await cache.get(dependency.url));
+          if(!content)throw new Error('JQ dependency resolved to empty content');
+          return {content,sourceFile:dependency.url,legacyAlias:Boolean(dependency.legacyAlias)};
+        };
+        if(ast.actions.length===1){out.set(item.line,await read(files[0].action));continue;}
+        const byAction={},failures=[];
+        for(const {action,index} of files)try{byAction[index]=await read(action);}catch(error){
+          const reason=String(error?.message || error).split('\n')[0];
+          let sourceFile;try{sourceFile=jqDependencySpecFromAction(action,{pluginSourceUrl:entry.source})?.url;}catch{}
+          byAction[index]={error:reason,...(sourceFile?{sourceFile}:{})};failures.push('action '+index+': '+reason);
+        }
+        out.set(item.line,{byAction,...(failures.length?{error:'JQ dependency failure: '+failures.join('; ')}:{})});
+        continue;
       } else {
         const legacy=splitLegacyRewriteLine(item.line);
         if (!legacy) continue;

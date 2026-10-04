@@ -830,7 +830,7 @@ const JSON_MUTATION_RUNTIME=[
     'function __wayxJsonDelete(root,path){const p=__wayxJsonParent(root,path);if(p==null)return;const k=path[path.length-1];if(Array.isArray(p)&&typeof k==="number"){if(k>=0&&k<p.length)p.splice(k,1);}else delete p[k];}',
     'function __wayxJsonReplace(root,path,value){const cur=__wayxJsonGet(root,path);if(cur!==undefined&&cur!==null&&cur!==false)__wayxJsonSet(root,path,value);}',
 ];
-function renderRewriteScript(ast, {target, stamp='', category='', sourceLine='', argumentTable=null, mockMaterialized=null,fullHeaderMode=false,sharedRuntime=false}={}) {
+function renderRewriteScript(ast, {target, stamp='', category='', sourceLine='', argumentTable=null, mockMaterialized=null,jqMaterialized=null,fullHeaderMode=false,sharedRuntime=false}={}) {
   validateRewriteV2Ast(ast);
   if (!['qx','surge'].includes(target)) throw new Error('invalid rewrite helper target');
   const plan = statements(ast, target, {argumentTable,mockMaterialized});
@@ -853,6 +853,7 @@ function renderRewriteScript(ast, {target, stamp='', category='', sourceLine='',
     sourceLine ? '// Source Loon: ' + sourceLine : null,
     ...(mockMaterialized?.byAction ? Object.values(mockMaterialized.byAction).filter(x=>x.sourceFile).map(x=>'// Source mock file: '+x.sourceFile) : mockMaterialized?.sourceFile ? ['// Source mock file: '+mockMaterialized.sourceFile] : []),
     target==='surge' && ast.actions.some(isTextRequestMockAction) ? '// Surge request-body API limits: chunked / Expect: 100-continue bodies are not overwritten; platform buffering limits still apply.' : null,
+    ...(jqMaterialized?.byAction ? Object.values(jqMaterialized.byAction).filter(x=>x.sourceFile).map(x=>'// Source JQ file: '+x.sourceFile) : jqMaterialized?.sourceFile ? ['// Source JQ file: '+jqMaterialized.sourceFile] : []),
     sharedRuntime ? null : regexReplacementRuntimeSource(),
     sharedRuntime ? null : conditionRuntimeSource(),
     'const __wayxCaptures=Object.create(null);',
@@ -925,7 +926,7 @@ export function renderRewritePhaseDispatcher(declarations,options={}) {
   const phase=declarations[0].phase;
   if (declarations.some(ast=>ast.phase!==phase)) throw new Error('mixed dispatcher phases');
   const fullHeaderMode=options.target==='surge' && declarations.some(ast=>ast.actions.some(a=>a.name.endsWith('.header.add')));
-  const plans=declarations.map(ast=>renderRewriteScript(ast,{...options,mockMaterialized:options.mockFiles?.get(ast.raw) || options.mockMaterialized,fullHeaderMode,sharedRuntime:true}));
+  const plans=declarations.map(ast=>renderRewriteScript(ast,{...options,mockMaterialized:options.mockFiles?.get(ast.raw) || options.mockMaterialized,jqMaterialized:options.jqFiles?.get(ast.raw) || options.jqMaterialized,fullHeaderMode,sharedRuntime:true}));
   const requiresBody=plans.some(p=>p.requiresBody);
   const lines=[...qxSemanticMetadata(options),
     regexReplacementRuntimeSource(),

@@ -876,7 +876,7 @@ export function inlineResolvedDependency(action, content, { pluginSourceUrl = ''
     args: action.args.map(arg => ({ ...arg })),
   };
   const pathIndex = spec.pathIndex ?? FILE_ACTIONS[action.name].pathIndex;
-  next.args[pathIndex] = { type: 'string', value: String(content), raw: JSON.stringify(String(content)) };
+  next.args[pathIndex] = { type: 'raw-string', value: String(content), raw: '`'+String(content).replace(/`/g,'``')+'`' };
   return { action: next, changed: true, dependency: spec };
 }
 
@@ -1019,7 +1019,7 @@ function planRewriteFeatureHelper(ast,target,ctx) {
   if(target==='qx' && ast.actions.some(a=>a.name.endsWith('.header.add')))return null;
   if(!ctx.generatedScripts)return {ok:false,terminal:true,reason:'semantic feature helper requires a generated-script context'};
   try {
-    const options={target,stamp:ctx.stamp,category:ctx.category,sourceLine:ctx.sourceLine,argumentTable:ctx.argumentTable,mockMaterialized:ctx.mockFiles?.get(ctx.sourceLine)};
+    const options={target,stamp:ctx.stamp,category:ctx.category,sourceLine:ctx.sourceLine,argumentTable:ctx.argumentTable,mockMaterialized:ctx.mockFiles?.get(ctx.sourceLine),jqMaterialized:ctx.jqFiles?.get(ctx.sourceLine)};
     const plan=ast.actions.length===1 ? renderSingleRewriteMutationScript(ast,options) : renderMixedRewriteScript(ast,options);
     const refs=ctx.argumentRefs || [];
     if(target==='qx' && refs.length)throw new Error('Quantumult X plugin argument transport is not verified');
