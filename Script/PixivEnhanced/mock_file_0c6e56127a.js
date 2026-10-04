@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 17:00:57 +08:00
+// Converted: 2026-10-04 17:16:30 +08:00
 // Converted by: chance
 // Category: 增强
 // Source Loon: response if ${url} ~= /^https:\/\/app-api\.pixiv\.net\/settings\/Enhanced(?:\?[^#]*)?$/i then response.body.mock_file("html", "https://raw.githubusercontent.com/TomCatXue/MyCookieCenter/main/scripts/tools/pixiv/settings.html?v=202610031600", 200) | response.header.add("Cache-Control", "no-store")

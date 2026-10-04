@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 17:00:16 +08:00
+// Converted: 2026-10-04 17:15:44 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/api\.wakeup\.fun\/wakeup\/user\/mine$/i then response.json.delete("data.bannerItems")

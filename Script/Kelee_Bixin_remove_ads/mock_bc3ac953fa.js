@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 17:00:20 +08:00
+// Converted: 2026-10-04 17:15:48 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/api\.hibixin\.com\/content\/v\d\/home\/page\/list$/i then response.body.mock("json", "{\"code\":\"8000\",\"msg\":\"SUCCESS\",\"success\":true}", 200)

@@ -7,11 +7,15 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KuGou.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:00:29 +08:00
+# Converted: 2026-10-04 17:15:59 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/KuGou_remove_ads.lpx
 # Target: Quantumult X
+
+# [WayX] 上游错误 / UPSTREAM ERROR CORRECTED [jq-identity-end-whitespace]: inserted missing whitespace; original failed jq compilation, corrected program compiled successfully.
+# Original upstream jq: def namesToRemove:["AI帮唱","长相思2","K歌","小说","游戏"];def removeParentIfNameMatches:if type=="object"then with_entries(select(.value|(type=="object"and .name as $name|$name|IN(namesToRemove[])|not)))|map_values(removeParentIfNameMatches)else .end;removeParentIfNameMatches
+# Source declaration: response if ${url} ~= /^https:\/\/gateway(retry)?\.kugou\.com\/ocean\/v\d\/tab\/list_v\d/i then response.json.jq("def namesToRemove:[\"AI帮唱\",\"长相思2\",\"K歌\",\"小说\",\"游戏\"];def removeParentIfNameMatches:if type==\"object\"then with_entries(select(.value|(type==\"object\"and .name as $name|$name|IN(namesToRemove[])|not)))|map_values(removeParentIfNameMatches)else .end;removeParentIfNameMatches")
 
 # [filter_local]
 host, ads.service.kugou.com, reject
@@ -52,7 +56,7 @@ host, splashimgretrybssdl.cloud.kugou.com, reject
 ^https:\/\/hwstore\.kugou\.com\/v\d\/get_store_data url reject-dict
 ^https:\/\/ep\.kugou\.com\/v\d\/album_shop\/get_entrance_info url reject-dict
 
-^https:\/\/gateway(retry)?\.kugou\.com\/ocean\/v\d\/tab\/list_v\d url jsonjq-response-body 'def namesToRemove:["AI帮唱","长相思2","K歌","小说","游戏"];def removeParentIfNameMatches:if type=="object"then with_entries(select(.value|(type=="object"and .name as $name|$name|IN(namesToRemove[])|not)))|map_values(removeParentIfNameMatches)else .end;removeParentIfNameMatches'
+^https:\/\/gateway(retry)?\.kugou\.com\/ocean\/v\d\/tab\/list_v\d url jsonjq-response-body 'def namesToRemove:["AI帮唱","长相思2","K歌","小说","游戏"];def removeParentIfNameMatches:if type=="object"then with_entries(select(.value|(type=="object"and .name as $name|$name|IN(namesToRemove[])|not)))|map_values(removeParentIfNameMatches)else . end;removeParentIfNameMatches'
 
 # [mitm]
 hostname = gateway.kugou.com, fx.service.kugou.com, hwstore.kugou.com, ep.kugou.com, gatewayretry.kugou.com, gzacshow.kugou.com, m1fxgroup.kugou.com

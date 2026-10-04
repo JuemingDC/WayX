@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 17:00:28 +08:00
+// Converted: 2026-10-04 17:15:57 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /^https:\/\/duckduckgo\.com\/\?q=bdimg\+([^&]+).+/i as urlMatch then redirect(307, "https://image.baidu.com/search/index?tn=baiduimage&word=${urlMatch.1}")
