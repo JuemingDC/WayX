@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 06:22:30 +08:00
+// Converted: 2026-10-04 11:37:38 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList$/i then response.json.delete(["materialsList", "advertParam"])

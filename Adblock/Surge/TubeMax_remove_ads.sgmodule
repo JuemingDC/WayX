@@ -11,21 +11,21 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/TubeMax.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 11:20:31 +08:00
+# Converted: 2026-10-04 11:37:43 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/TubeMax_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,app.tubemaxapp.com,{{{wayx_proxy_policy}}}
-DOMAIN-SUFFIX,adjust.com,REJECT,extended-matching
-DOMAIN-SUFFIX,applvn.com,REJECT,extended-matching
-DOMAIN-SUFFIX,app-measurement.com,REJECT,extended-matching
-DOMAIN-SUFFIX,pangle.io,REJECT,extended-matching
-DOMAIN-SUFFIX,applovin.com,REJECT,extended-matching
-DOMAIN-SUFFIX,appier.net,REJECT,extended-matching
-DOMAIN-SUFFIX,adsmoloco.com,REJECT,extended-matching
-DOMAIN-SUFFIX,adcanvas.com,REJECT,extended-matching
+DOMAIN,app.tubemaxapp.com,{{{wayx_proxy_policy}}},extended-matching
+DOMAIN-SUFFIX,adjust.com,REJECT,extended-matching,pre-matching
+DOMAIN-SUFFIX,applvn.com,REJECT,extended-matching,pre-matching
+DOMAIN-SUFFIX,app-measurement.com,REJECT,extended-matching,pre-matching
+DOMAIN-SUFFIX,pangle.io,REJECT,extended-matching,pre-matching
+DOMAIN-SUFFIX,applovin.com,REJECT,extended-matching,pre-matching
+DOMAIN-SUFFIX,appier.net,REJECT,extended-matching,pre-matching
+DOMAIN-SUFFIX,adsmoloco.com,REJECT,extended-matching,pre-matching
+DOMAIN-SUFFIX,adcanvas.com,REJECT,extended-matching,pre-matching
 
 [URL Rewrite]
 ^https:\/\/.*\.i18n-pglstatp\.com\/obj\/ad-pattern-sg _ reject

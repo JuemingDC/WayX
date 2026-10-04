@@ -9,44 +9,44 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/Other_icon/120px/KeLee.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 11:20:46 +08:00
+# Converted: 2026-10-04 11:37:56 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Remove_ads_by_keli.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,acdn.adnxs.com,REJECT,extended-matching
-DOMAIN,mediation.adnxs.com,REJECT,extended-matching
-DOMAIN,sin3-ib.adnxs.com,REJECT,extended-matching
+DOMAIN,acdn.adnxs.com,REJECT,extended-matching,pre-matching
+DOMAIN,mediation.adnxs.com,REJECT,extended-matching,pre-matching
+DOMAIN,sin3-ib.adnxs.com,REJECT,extended-matching,pre-matching
 
-DOMAIN,sdkconfig.ad.xiaomi.com,REJECT,extended-matching
-DOMAIN,data.mistat.xiaomi.com,REJECT,extended-matching
-DOMAIN,tracking.intl.miui.com,REJECT,extended-matching
+DOMAIN,sdkconfig.ad.xiaomi.com,REJECT,extended-matching,pre-matching
+DOMAIN,data.mistat.xiaomi.com,REJECT,extended-matching,pre-matching
+DOMAIN,tracking.intl.miui.com,REJECT,extended-matching,pre-matching
 
-DOMAIN,sdkconfig.ad.xiaomi.com,REJECT,extended-matching
+DOMAIN,sdkconfig.ad.xiaomi.com,REJECT,extended-matching,pre-matching
 
-DOMAIN-SUFFIX,doubleclick-cn.net,REJECT,extended-matching
-DOMAIN-SUFFIX,doubleclick.net,REJECT,extended-matching
+DOMAIN-SUFFIX,doubleclick-cn.net,REJECT,extended-matching,pre-matching
+DOMAIN-SUFFIX,doubleclick.net,REJECT,extended-matching,pre-matching
 
-DOMAIN,business.msstatic.com,REJECT,extended-matching
-DOMAIN-SUFFIX,v1d.szbdyd.com,REJECT,extended-matching
+DOMAIN,business.msstatic.com,REJECT,extended-matching,pre-matching
+DOMAIN-SUFFIX,v1d.szbdyd.com,REJECT,extended-matching,pre-matching
 URL-REGEX,^http:\/\/cdn\.wup\.huya\.com\/launch\/queryHttpDns$,REJECT,extended-matching
 
-DOMAIN-SUFFIX,m1.ad.10010.com,REJECT,extended-matching
+DOMAIN-SUFFIX,m1.ad.10010.com,REJECT,extended-matching,pre-matching
 
-DOMAIN,ad.21cn.com,REJECT,extended-matching
-DOMAIN,ad.k.21cn.com,REJECT,extended-matching
-DOMAIN,admarket.21cn.com,REJECT,extended-matching
-DOMAIN,adshows.21cn.com,REJECT,extended-matching
-IP-CIDR,122.229.8.47/32,REJECT,no-resolve
-IP-CIDR,122.229.29.89/32,REJECT,no-resolve
+DOMAIN,ad.21cn.com,REJECT,extended-matching,pre-matching
+DOMAIN,ad.k.21cn.com,REJECT,extended-matching,pre-matching
+DOMAIN,admarket.21cn.com,REJECT,extended-matching,pre-matching
+DOMAIN,adshows.21cn.com,REJECT,extended-matching,pre-matching
+IP-CIDR,122.229.8.47/32,REJECT,no-resolve,pre-matching
+IP-CIDR,122.229.29.89/32,REJECT,no-resolve,pre-matching
 
 # 首页商品信息流
-DOMAIN,mall-dsp2.qinlinkeji.com,REJECT,extended-matching
+DOMAIN,mall-dsp2.qinlinkeji.com,REJECT,extended-matching,pre-matching
 # 商城页面
-DOMAIN,mallapi2.qinlinkeji.com,REJECT,extended-matching
+DOMAIN,mallapi2.qinlinkeji.com,REJECT,extended-matching,pre-matching
 
-DOMAIN,open-pixon.ads-pixiv.net,REJECT,extended-matching
+DOMAIN,open-pixon.ads-pixiv.net,REJECT,extended-matching,pre-matching
 
 [URL Rewrite]
 ^https?:\/\/api-access\.pangolin-sdk-toutiao\.com\/api\/ad\/union\/sdk _ reject

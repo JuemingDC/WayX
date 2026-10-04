@@ -10,13 +10,13 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Kuwo.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:44:59 +08:00
+# Converted: 2026-10-04 11:37:58 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Kuwo_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-IP-CIDR,111.206.98.63/32,REJECT,no-resolve
+IP-CIDR,111.206.98.63/32,REJECT,no-resolve,pre-matching
 
 [Body Rewrite]
 

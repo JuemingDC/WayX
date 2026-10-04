@@ -9,14 +9,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/NeteaseNews.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-03 17:45:09 +08:00
+# Converted: 2026-10-04 11:38:07 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/NeteaseNews_remove_ads.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN,nex.163.com,DIRECT
-DOMAIN,gw.m.163.com,DIRECT
+DOMAIN,nex.163.com,DIRECT,extended-matching
+DOMAIN,gw.m.163.com,DIRECT,extended-matching
 
 [URL Rewrite]
 ^https?:\/\/interface\.music\.163\.com\/eapi\/ad _ reject

@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 11:21:04 +08:00
+// Converted: 2026-10-04 11:38:15 +08:00
 // Converted by: chance
 // Category: 去广告
 const __wayxRegexReplace=(()=>{const SUPPORTED_FLAGS=/^[ims]*$/;function assertRegexNode(node) {
@@ -224,7 +224,7 @@ const __wayxResponse=typeof $response==="undefined"?{}:{...$response,headers:__w
 const __wayxResult={};
 function __wayxCommit(value){Object.assign(__wayxResult,value);Object.assign(__wayxResponse,value);}
 (($request,$response,$done)=>{
-// Converted: 2026-10-04 11:21:04 +08:00
+// Converted: 2026-10-04 11:38:15 +08:00
 // Converted by: chance
 // Category: 去广告
 const __wayxCaptures=Object.create(null);
@@ -251,7 +251,7 @@ const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"typ
 
 })(__wayxRequest,__wayxResponse,__wayxCommit);
 (($request,$response,$done)=>{
-// Converted: 2026-10-04 11:21:04 +08:00
+// Converted: 2026-10-04 11:38:15 +08:00
 // Converted by: chance
 // Category: 去广告
 const __wayxCaptures=Object.create(null);
