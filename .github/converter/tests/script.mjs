@@ -419,3 +419,32 @@ if(selectedCase==='script-ir-target-planners.mjs') {
   assert.equal(planSurgeScript(legacyText,opts).ok,true,'legacy literal JSON text remains a String argument');
   console.log('PluginObject validation passed: nonempty unique plugin refs, declared scope, type/order preservation and legacy String isolation');
 }
+
+if(selectedCase==='script-ir-target-planners.mjs') {
+  const {buildSurgeArgumentTable,qxScriptV2Plan,surgeScriptV2Plan}=await import('../src/index.mjs');
+  const invalid=[
+    [[],/undeclared.*Cron/],
+    [['schedule=input,2,type=number'],/invalid.*type.*Cron/],
+    [['schedule=switch,true'],/invalid.*type.*Cron/],
+    [['schedule=input'],/missing.*default.*Cron/],
+    [['schedule=input,""'],/missing.*default.*Cron/],
+    [['schedule=input,"2"'],/invalid.*default.*Cron/],
+  ];
+  for(const [lines,reason] of invalid)for(const tail of ['', ' with enable=false'])for(const arg of ['', ', "x"']) {
+    const ast=parseScriptV2('cron ${schedule} then script("a.js"'+arg+')'+tail);
+    const ir=scriptV2AstToSemanticIr(ast);
+    const ctx={argumentTable:buildSurgeArgumentTable(lines)};
+    for(const [planner,source] of [[planQxScript,ir],[planSurgeScript,ir],[qxScriptV2Plan,ast],[surgeScriptV2Plan,ast]]) {
+      const result=planner(source,ctx);assert.equal(result.ok,false);assert.match(result.reason,reason);
+    }
+  }
+  for(const expression of ['0 8 * * *','0 0 8 * * *']) {
+    const ctx={argumentTable:buildSurgeArgumentTable(['schedule=input,"'+expression+'"'])};
+    const ir=scriptV2AstToSemanticIr(parseScriptV2('cron ${schedule} then script("a.js") with enable=false'));
+    const qx=planQxScript(ir,ctx);assert.equal(qx.ok,true);assert.match(qx.line,/enabled=true/);assert.ok(qx.line.startsWith(expression+' '));
+    assert.equal(planSurgeScript(ir,ctx).disabled,true);
+    const enabled=scriptV2AstToSemanticIr(parseScriptV2('cron ${schedule} then script("a.js")'));
+    assert.match(planSurgeScript(enabled,ctx).line,/cronexp="\{\{\{schedule\}\}\}"/);
+  }
+  console.log('Dynamic Cron binding passed: declared String/effective default validation before disabled or omitted tasks; valid five/six-field policy retained');
+}

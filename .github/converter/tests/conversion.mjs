@@ -1859,3 +1859,16 @@ if(selectedCase==='conversion-policy.mjs') {
   }
   console.log('PluginObject failure isolation passed: invalid argument structures/bindings do not replace adjacent valid Scripts');
 }
+
+if(selectedCase==='conversion-policy.mjs') {
+  const entry={id:'ScriptCronBinding',source:'https://example.test/main.lpx',category:'Test'};
+  for(const declaration of ['schedule=input,2,type=number','schedule=switch,true','schedule=input','schedule=input,""','schedule=input,"2"']) {
+    const source='[Argument]\n'+declaration+'\n[Script]\ncron ${schedule} then script("https://example.test/bad.js")\ncron "0 8 * * *" then script("https://example.test/good.js") with tag="Good"';
+    const out=convertPlugin(entry,source,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+    for(const text of [out.qx,out.surge])assert.match(text,/SCRIPT V2 REVIEW REQUIRED/);
+    assert.match(out.qx,/^0 8 \* \* \* https:\/\/example\.test\/good\.js/m);
+    assert.match(out.surge,/^Good = type=cron[^\n]*script-path=https:\/\/example\.test\/good\.js/m);
+    for(const text of [out.qx,out.surge])assert.doesNotMatch(text,/^[^#\n]*https:\/\/example\.test\/bad\.js/m);
+  }
+  console.log('Dynamic Cron failure isolation passed: invalid bindings require review; adjacent valid tasks survive');
+}
