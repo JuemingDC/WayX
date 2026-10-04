@@ -1068,13 +1068,7 @@ function qxTaskOptions(ast, argumentTable, notes) {
 function qxNonHttpScriptV2Plan(ast, {scriptUrl, argumentTable = null} = {}) {
   const notes = [];
   if (ast.script.argument) {
-    return {
-      ok:true,
-      omitted:true,
-      section:'task',
-      reason:'Quantumult X task declarations have no official Loon PluginObject/String $argument equivalent; task omitted to avoid changing script input semantics.',
-      notes,
-    };
+    notes.push('Source Script argument ignored for Quantumult X task by user conversion policy; task and original script URL retained.');
   }
 
   const timeout = scriptOption(ast, 'timeout');
@@ -1324,8 +1318,8 @@ export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 's
     params.push('argument=' + JSON.stringify(argument.value));
   } else if (argument?.type === 'plugin-object') {
     const encoded = surgePluginObjectArgument(argument.items.map(item => item.name), argumentTable);
-    if (!encoded.ok) return unsupported(encoded.reason);
-    params.push('argument=' + encoded.value);
+    if (encoded.ok) params.push('argument=' + encoded.value);
+    else notes.push('Source Script argument omitted for Surge by user conversion policy: '+encoded.reason);
   } else if (argument) {
     return unsupported('unsupported Loon Script v2 argument form');
   }
@@ -1483,6 +1477,7 @@ export function planSurgeScript(ir,ctx={}) {
     requirementPrefix=requirement+' ';
   }
 
+  const notes=[];
   const params=['type='+sc.httpType,'pattern='+targetPattern,'script-path='+scriptUrl];
   if (sc.requiresBody) {
     params.push('requires-body=true');
@@ -1505,8 +1500,8 @@ export function planSurgeScript(ir,ctx={}) {
     const refs=parseLegacyLoonPluginObjectRefs(sc.argument);
     if (refs) {
       const encoded=surgePluginObjectArgument(refs,ctx.argumentTable);
-      if (!encoded.ok) return unsupported(encoded.reason);
-      params.push('argument='+encoded.value);
+      if (encoded.ok) params.push('argument='+encoded.value);
+      else notes.push('Source Script argument omitted for Surge by user conversion policy: '+encoded.reason);
     } else {
       params.push('argument='+sc.argument);
     }
@@ -1523,6 +1518,7 @@ export function planSurgeScript(ir,ctx={}) {
     strategy:'native-declaration',
     section:'script',
     line:requirementPrefix+(ctx.name || 'script')+' = '+params.join(','),
+    notes,
     usesLineRequirement:Boolean(requirementPrefix),
   };
 }

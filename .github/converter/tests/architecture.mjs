@@ -32,7 +32,7 @@ if (selectedCase === "architecture-contract.mjs") {
 const ROOT=process.cwd();
 const spec=await fs.readFile(path.join(ROOT,'.github/CONVERSION_SPEC.md'),'utf8');
 
-assert.match(spec,/版本：1\.95\b/,'Semantic runtime migration requires spec v1.95');
+assert.match(spec,/版本：1\.96\b/,'Semantic runtime migration requires spec v1.96');
 for (const evidence of [
   'crossutility/Quantumult-X',
   'sample.conf',

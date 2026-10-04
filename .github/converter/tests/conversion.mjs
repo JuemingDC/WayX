@@ -1872,3 +1872,13 @@ if(selectedCase==='conversion-policy.mjs') {
   }
   console.log('Dynamic Cron failure isolation passed: invalid bindings require review; adjacent valid tasks survive');
 }
+
+if(selectedCase==='conversion-policy.mjs') {
+  const entry={id:'ScriptArgumentDrop',source:'https://example.test/main.lpx',category:'Test'};
+  const source='[Argument]\nregion=input\n[Script]\ncron "0 8 * * *" then script("https://example.test/original.js",{${region}}) with tag="Original"';
+  const out=convertPlugin(entry,source,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+  assert.match(out.qx,/^0 8 \* \* \* https:\/\/example\.test\/original\.js/m);
+  assert.match(out.surge,/^Original = type=cron[^\n]*script-path=https:\/\/example\.test\/original\.js/m);
+  for(const text of [out.qx,out.surge]) {assert.doesNotMatch(text,/(?:ISSUE|REVIEW) REQUIRED/);assert.doesNotMatch(text,/^[^#\n]*argument=/m);}
+  console.log('Script argument dropping conversion passed: unsupported input omitted without losing original task or adding Review');
+}
