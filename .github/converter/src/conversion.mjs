@@ -141,7 +141,7 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
       const ast=resolveRewriteJqDependencies(parseRewriteV2(item.line),item.line,ctx);
       validateRewriteV2Ast(ast);
       const mapped=rewriteV2Action(item.line,target,ctx);
-      if (mapped.section!=='comment' && mapped.section!=='drop') candidates.push({line:item.line,ast,mapped});
+      if (mapped.section!=='comment' && mapped.section!=='drop') candidates.push({line:item.line,sourceIndex:item.sourceIndex,ast,mapped});
     } catch { /* The ordinary planner preserves the parse diagnostic. */ }
   }
   for (const phase of ['request','response']) {
@@ -170,7 +170,7 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
       const url=ctx.rawBase+'/Script/'+ctx.id+'/'+filename;
       const mapped=target==='qx' ? {section:'rewrite',line:plan.pattern+' url '+plan.qxAction+' '+url} :
         {section:'script',line:'wayx_phase_'+phase+'_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+url+(plan.requiresBody?',requires-body=true,max-size=-1':'')+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:'')};
-      group.forEach((item,index)=>result.set(item.line,index===0?mapped:{section:'drop',reason:'phase-dispatcher-member'}));
+      group.forEach((item,index)=>result.set(item.sourceIndex,index===0?mapped:{section:'drop',reason:'phase-dispatcher-member'}));
     } catch (error) {
       for (const item of group) {
         // Preserve historical native contracts. A simple source URL prefilter
@@ -181,14 +181,14 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
           if (c?.type==='comparison' && c.left?.name==='url' && c.right?.type==='regex') {
             const pattern=String(c.right.pattern);
             const line=target==='qx' ? item.mapped.line.replace(/^(?:\^https\?:\/\/|\^) url /,pattern+' url ') : item.mapped.line.replace(/pattern=(?:\^https\?:\/\/|\^),/,'pattern='+pattern+',');
-            result.set(item.line,{...item.mapped,line:'# [WayX] COMPATIBILITY LIMITATION: '+error.message+'; retained source URL prefilter is not a source-flag equivalence proof.\n'+line});
-          } else result.set(item.line,rewriteReview(item.line,error.message));
+            result.set(item.sourceIndex,{...item.mapped,line:'# [WayX] COMPATIBILITY LIMITATION: '+error.message+'; retained source URL prefilter is not a source-flag equivalence proof.\n'+line});
+          } else result.set(item.sourceIndex,rewriteReview(item.line,error.message));
         }
       }
     }
     // Discard replaced candidate helpers, keeping only artifacts referenced by
     // the final plan. The normal output builder handles other declarations.
-    for (const item of group) if (result.has(item.line) && !(result.get(item.line).line || '').includes(item.mapped.line?.split('/').pop())) {
+    for (const item of group) if (result.has(item.sourceIndex) && !(result.get(item.sourceIndex).line || '').includes(item.mapped.line?.split('/').pop())) {
       for (const [filename] of ctx.generatedScripts) if ((item.mapped.line || '').includes('/'+filename)) ctx.generatedScripts.delete(filename);
     }
   }
@@ -350,8 +350,8 @@ export function convertPlugin(entry,source,{
     }
     if (!item.line) continue;
 
-    let qr=qxDispatchers.get(item.line) || rewriteV2Action(item.line,'qx',qctx);
-    let sr=surgeDispatchers.get(item.line) || rewriteV2Action(item.line,'surge',sctx);
+    let qr=qxDispatchers.get(item.sourceIndex) || rewriteV2Action(item.line,'qx',qctx);
+    let sr=surgeDispatchers.get(item.sourceIndex) || rewriteV2Action(item.line,'surge',sctx);
     if (!qr || !sr) {
       const [pattern,action]=splitPatternAction(item.line);
       let ir=legacyRewriteToSemanticIr(pattern,action);
