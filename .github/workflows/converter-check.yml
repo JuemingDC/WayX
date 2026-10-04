@@ -170,6 +170,7 @@ jobs:
           STAGES: ${{ toJSON(steps) }}
           SYNC_PUBLISHABLE: ${{ steps.loon_sync.outputs.publishable }}
           MONITOR_ENABLED: ${{ env.MONITOR_ENABLED }}
+          MONITOR_COMPLETE: ${{ steps.monitor.outputs.complete }}
         run: |
           python - <<'PY'
           import json, os, pathlib
@@ -178,6 +179,7 @@ jobs:
           if os.environ['MONITOR_ENABLED']=='true': required.append('monitor')
           failed=[name for name in required if stages.get(name,{}).get('outcome')!='success']
           if os.environ['SYNC_PUBLISHABLE']!='true': failed.append('sync integrity')
+          if os.environ['MONITOR_ENABLED']=='true' and os.environ['MONITOR_COMPLETE']!='true': failed.append('monitor integrity')
           result={'publishable':not failed,'failedGates':failed,'stages':{k:v.get('outcome') for k,v in stages.items()}}
           pathlib.Path('.github/monitor/.runtime/pipeline-result.json').write_text(json.dumps(result,indent=2)+'\n')
           with open(os.environ['GITHUB_OUTPUT'],'a') as out: out.write('publishable='+str(not failed).lower()+'\n')
@@ -236,8 +238,11 @@ jobs:
           (runtime/'pipeline-result.json').write_text(json.dumps(result,indent=2)+'\n')
           failure=runtime/'sync-failures.json'
           sync=json.loads(failure.read_text()) if failure.exists() else {}
+          monitor_file=runtime/'monitor-result.json'
+          monitor=json.loads(monitor_file.read_text()) if monitor_file.exists() else {}
           lines=['# WayX Actions result','',f"Publication: {result['publication']}",'']
           for key in ['validatedPlugins','retainedPlugins','deferredPlugins']: lines.append(f"- {key}: {len(sync.get(key,[]))}")
+          lines.append(f"- Monitor failures: {len(monitor.get('failures',[]))}")
           lines += ['', 'Failed gates: '+', '.join(result.get('failedGates',[]))]
           with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as out: out.write('\n'.join(lines)+'\n')
           PY

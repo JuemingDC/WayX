@@ -325,17 +325,35 @@ export async function collectIssueCandidates({root=ROOT,catalog=null,sourceOverr
   }
   const syncReport=includeSyncFailures?await readJson(path.join(root,'.github/monitor/.runtime/sync-failures.json'),{version:1,failures:[]}):{failures:[]};
   const syncFailures=Array.isArray(syncReport.failures) ? syncReport.failures : [];
-  return {targetProblems,syncFailures};
+  const monitorReport=includeSyncFailures?await readJson(path.join(root,'.github/monitor/.runtime/monitor-result.json'),{failures:[]}):{failures:[]};
+  const monitorFailures=Array.isArray(monitorReport.failures)?monitorReport.failures:[];
+  return {targetProblems,syncFailures,monitorFailures};
+}
+
+export function monitorFailureTitle(failure) {
+  const source=failure.source;
+  return '[WayX monitor] '+source.id+' ['+fingerprint([source.id,source.url||source.repo,source.ref,failure.stage,failure.errorType])+']';
+}
+
+export function monitorFailureIssueBody(failure) {
+  const source=failure.source;
+  return ['Upstream monitoring failed; publication remains blocked until a complete run succeeds.','',
+    '- Source: '+source.id,'- Upstream: '+(source.url||'https://github.com/'+source.repo),
+    '- Ref: '+(source.ref||'not applicable'),'- Stage: '+failure.stage,
+    '- Reason: '+failure.reason,'- Rollback succeeded: '+failure.rollbackSucceeded,
+    '- Configuration: .github/monitor/sources.json','- Report: .github/monitor/.runtime/monitor-result.json',
+    '', 'No conversion semantics are inferred from this monitoring failure.'].join('\n');
 }
 
 async function main() {
-  const {targetProblems,syncFailures}=await collectIssueCandidates();
+  const {targetProblems,syncFailures,monitorFailures}=await collectIssueCandidates();
   await fs.mkdir(runtimeDir,{recursive:true});
   const lines=[
     '# WayX automated conversion issues',
     '',
     '- Source/target semantic problems: '+targetProblems.length,
     '- Hard sync failures: '+syncFailures.length,
+    '- Upstream monitor failures: '+monitorFailures.length,
     '',
   ];
   for (const group of targetProblems) {
@@ -343,20 +361,21 @@ async function main() {
     for (const location of group.locations) lines.push('  - '+location.file+':'+location.line);
   }
   for (const failure of syncFailures) lines.push('- '+syncFailureTitle(failure));
+  for (const failure of monitorFailures) lines.push('- '+monitorFailureTitle(failure));
   await fs.writeFile(summaryPath,lines.join('\n')+'\n');
 
   const output=process.env.GITHUB_OUTPUT;
   if (output) {
-    await fs.appendFile(output,'has_issues='+(targetProblems.length || syncFailures.length ? 'true' : 'false')+'\n');
+    await fs.appendFile(output,'has_issues='+(targetProblems.length || syncFailures.length || monitorFailures.length ? 'true' : 'false')+'\n');
     await fs.appendFile(output,'summary='+path.relative(ROOT,summaryPath).replaceAll(path.sep,'/')+'\n');
   }
 
-  if (!targetProblems.length && !syncFailures.length) {
+  if (!targetProblems.length && !syncFailures.length && !monitorFailures.length) {
     console.log('No conversion issue candidates found.');
     return;
   }
   if (dryRun) {
-    console.log(JSON.stringify({targetProblems,syncFailures},null,2));
+    console.log(JSON.stringify({targetProblems,syncFailures,monitorFailures},null,2));
     return;
   }
   if (!repo) throw new Error('GITHUB_REPOSITORY is required to create conversion issues');
@@ -364,6 +383,7 @@ async function main() {
   await ensureLabel('conversion-unknown','Unknown converter syntax or unregistered semantic type','D93F0B');
   await ensureLabel('conversion-review','Known source semantics not losslessly expressible by the current target mapping','FBCA04');
   await ensureLabel('conversion-failure','Scheduled upstream conversion or validation failed for a plugin','B60205');
+  if(monitorFailures.length)await ensureLabel('upstream-monitor-failure','Upstream specification monitoring failed; publication blocked','B60205');
 
   for (const group of targetProblems) {
     await upsertIssue({
@@ -379,6 +399,7 @@ async function main() {
       label:'conversion-failure',
     });
   }
+  for(const failure of monitorFailures)await upsertIssue({title:monitorFailureTitle(failure),body:monitorFailureIssueBody(failure),label:'upstream-monitor-failure'});
 }
 
 const isMain=process.argv[1] && path.resolve(process.argv[1])===path.resolve(fileURLToPath(import.meta.url));

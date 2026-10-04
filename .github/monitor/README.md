@@ -17,4 +17,6 @@
 
 每次运行的 Summary 显示发布状态和已验证/保留/暂缓数量。Artifacts 保留 14 天，包含有效目录、生成成品，以及 `.github/monitor/.runtime/` 的日志、pipeline-result.json、sync failures、Issue 候选、reconciliation 和 Review inventory；失败运行也上传报告。这些 runtime 文件不提交仓库。
 
-主分支手动运行还调用 monitor_upstreams.py 记录官方文档/仓库变化，不根据监控变化猜测转换能力。独立监控源获取问题可从 monitor.log 查阅；成功获取的规范保留在 `.github/monitor/upstream/`，元数据在 state.json。转换能力仍由官方能力测试及唯一权威规范 `.github/CONVERSION_SPEC.md` 约束。
+主分支手动运行还调用 monitor_upstreams.py 记录官方文档/仓库变化，不根据监控变化猜测转换能力。任一监控源失败会阻止本次发布并自动创建/复用 upstream-monitor-failure Issue；完整原因与回退状态见 monitor.log、monitor-result.json。每次无变化也刷新报告，发布同时要求 complete=true；成功获取的规范保留在 `.github/monitor/upstream/`，元数据在 state.json。转换能力仍由官方能力测试及唯一权威规范 `.github/CONVERSION_SPEC.md` 约束。
+
+来源镜像及状态写入有错误回退；GitHub 文件下载失败、缺 raw URL、compare 文件列表可能被截断或历史不是前向更新时，保留旧基线等待处理。HTTP 缓存必须有对应的有效镜像，缺失或损坏时重新获取。repo 初次运行只建立提交元数据基线，镜像是已监控变化的增量记录。
