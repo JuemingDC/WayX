@@ -198,7 +198,7 @@ jobs:
           fi
           case "$PUBLISH_BRANCH" in main|test) ;; *) exit 1 ;; esac
           [[ "$(git rev-parse HEAD)" == "$EXPECTED_HEAD" ]]
-          git add -A -- .github/sources/loon.json Resource/Loon 'Adblock/Quantumult X' Adblock/Surge Script README.md
+          git add -A -- .github/sources/ Resource/Loon 'Adblock/Quantumult X' Adblock/Surge Script README.md
           if [[ "$MONITOR_ENABLED" == true ]]; then git add -A -- .github/monitor/state.json .github/monitor/upstream; fi
           remote_sha="$(git ls-remote origin "refs/heads/$PUBLISH_BRANCH" | awk '{print $1}')"
           if [[ "$remote_sha" != "$EXPECTED_HEAD" ]]; then

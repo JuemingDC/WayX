@@ -19,7 +19,7 @@ export function isLoonPluginSource(text) {
 export async function syncCatalogEntry(entry,{
   root=ROOT,fetchText=fetchOriginalText,materialize=materializeConversionRunContext,
   convert=convertPluginWithContext,validate=validateConvertedPlugin,commit=commitManagedConversion,
-  log=console.log,
+  log=console.log,forceConvert=false,
 }={}) {
   let stage='read-current-source',previousSource=null,source=null,targetState=null;
   const onStage=value=>{stage=value;};
@@ -34,7 +34,7 @@ export async function syncCatalogEntry(entry,{
     log(`${changed?'changed':'unchanged'} upstream source via ${entry.source}; sha256=${sourceState.digest}`);
     // Compare before semantic analysis or dependency materialization. An unchanged
     // plugin with published targets needs no conversion or timestamp update.
-    if(!changed && targetState.qx && targetState.surge) {
+    if(!forceConvert && !changed && targetState.qx && targetState.surge) {
       log('skipped: upstream content unchanged');
       return {id:entry.id,changed:false,skipped:true,helperChanges:[],targetChanges:[]};
     }
@@ -97,13 +97,19 @@ async function deferCatalogEntries(root,manifest,deferredPlugins) {
 
 export async function runCatalogSync({root=ROOT,entryOptions={},log=console.log,writeError=console.error,warn=console.warn}={}) {
   const manifest=await loadLoonSourceCatalog(path.join(root,'.github/sources/loon.json'));
+  // Explicit maintenance requests override the daily content-change shortcut.
+  const requestPath=path.join(root,'.github/sources/reconvert.json');
+  let request={all:false,ids:[]};
+  try {request=JSON.parse(await fs.readFile(requestPath,'utf8'));}catch(error){if(error.code!=='ENOENT')throw error;}
+  if(typeof request.all!=='boolean' || !Array.isArray(request.ids) || request.ids.some(id=>typeof id!=='string'))throw new Error('Invalid reconversion request');
+  const requested=new Set(request.all?manifest.map(e=>e.id):request.ids);
   const failures=createWorkflowFailureReporter({summaryLabel:'Isolated sync failures',writeError});
   const structuredFailures=[],validatedPlugins=[],convertedPlugins=[],skippedPlugins=[],retainedPlugins=[],deferredPlugins=[];
   let publishable=true;
   for (const entry of manifest) {
     log(`\n== ${entry.id} ==`);
     try {
-      const result=await syncCatalogEntry(entry,{...entryOptions,root,log});
+      const result=await syncCatalogEntry(entry,{...entryOptions,root,log,forceConvert:entryOptions.forceConvert||requested.has(entry.id)});
       validatedPlugins.push(entry.id);
       (result.skipped?skippedPlugins:convertedPlugins).push(entry.id);
     }
@@ -115,7 +121,10 @@ export async function runCatalogSync({root=ROOT,entryOptions={},log=console.log,
     }
   }
   try {
-    if(publishable)await deferCatalogEntries(root,manifest,deferredPlugins);
+    if(publishable) {
+      await deferCatalogEntries(root,manifest,deferredPlugins);
+      if(request.all || request.ids.length)await fs.writeFile(requestPath,JSON.stringify({...request,all:false,ids:[...requested].filter(id=>!convertedPlugins.includes(id))},null,2)+'\n');
+    }
     await writeReadmePlan(root);
   }catch(error){publishable=false;writeError('Catalog/README publication preparation failed: '+String(error.stack||error));}
   const summary={publishable,validatedPlugins,convertedPlugins,skippedPlugins,retainedPlugins,deferredPlugins};
