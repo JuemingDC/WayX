@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.85
+版本：1.86
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -15,7 +15,7 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 - ScriptHub 仅作为 JSON replace → jq 的实现参考，最终仍须满足 jqlang 契约；不得将其写法扩展套用到 JSON add/delete、原生 jq、jq_file/jq-path 或其他规则。
 - `jq_file` 与 `jq-path` 均从源声明指定的原始地址读取实际文件内容，然后内联真实 jq。读取失败、空文件或无法安全嵌入目标语法时保留源声明并 Review，不把文件路径字符串当作 jq，不用仓库副本替代，不为文件本身创建脚本。作者 jq 保留原表达式结构，只做目标单行配置必需的转义、非字符串注释处理和空白压缩；已有跨类型组合的等价编译边界不扩大。
 - 上游错误分区记录失败案例及经过真实 jq 编译验证的修正：仅当原表达式因语法错误编译失败、补齐 `else .end` 中 identity 与 `end` 的分隔空白后编译成功时，内联修正为 `else . end`。字符串、注释、合法 `.end` 字段保持原样；其他错误不猜测修正。原始声明和错误 jq 写入输出注释，源文件保留。该规则同样适用于 jq_file / jq-path 读取后的内容。失败案例及回归输入位于 `fixtures/upstream-jq-errors.json`。
-- delete 按 jqlang 的输入类型选择：固定路径表达式采用 `del(PATH_EXPRESSION)`；作者提供路径数组时保留 `delpaths(PATHS)`，不强制互改。源操作要求依次删除数组下标时保留逐项管道，不能合并成针对原始数组的一次批量删除。对象路径的合法合并仍须保持源顺序、类型失败和错误恢复行为。add 保留 WayX 的 getpath/setpath 实现及既有缺失/null 规则；replace 保留存在性检查。
+- JSON delete 按用户指定使用 jqlang 的 `delpaths(PATHS)`，路径解析为 String/Number 数组；数字索引批量按源顺序逐项调用 delpaths，不能合并为针对原数组的一次删除。作者原生 jq 中的 del/delpaths 保留原表达式。add 使用 WayX 直接路径条件赋值 `if .data.flag == null then .data.flag = VALUE else . end`，保留既有缺失/null 规则；仅 replace 使用参考 ScriptHub 的 parent getpath + has + setpath 存在性检查。
 - 每次 Actions 仍监控上游名单并获取插件内容，但先比较规范化后的源文本；只有新增或内容变化的插件进入语义分析、依赖解析与转换。源内容未变化且两个目标已存在时直接跳过，保留转换时间及产物。目标缺失时补建。
 - 用户明确要求的单次重转由 `.github/sources/reconvert.json` 触发：`all: true` 表示本次全量，`ids` 表示指定条目；成功后自动清除请求，失败条目保留待重试。日常仍只转换新增或内容变化的源，维护请求不会自动恢复为全量。
 - Actions 的 canonical 转换校验仅检查本次成功转换的条目；全库格式、引用、Review/Issue 与完整性检查保留。独立运行 canonical 工具仍可执行全量审计，不在日常拉取中自动全量重转。
@@ -1134,3 +1134,9 @@ flags 沿用现有原生 JQ 的 matcher 兼容契约：保留 source pattern，�
 同 URL 的一个或多个 Rewrite 均适用；只修改 Header、URL flags、额外条件、多个 URL matcher、Legacy 或原生 JSON/JQ 成员继续旧 native/compatibility/Review 边界，不推断可与远程异步代码组合。验证执行实际目标 helper 的命中/未命中行为、下一作者 matcher 可达性、两条作者规则 first-match 顺序及排除案例；Node/正则模型不代替真实客户端验证。
 
 官方依据：https://nsloon.app/en/docs/Script/script_v2/（Rewrite and Script、First HTTP match），https://manual.nssurge.com/scripting/http-request.html 和 https://manual.nssurge.com/scripting/http-response.html（每阶段最多一个 Script）。此节解决的是可证明的阶段所有权，不是通用作者异步脚本调度器；动态 Regex、透明 URL 与尚未证明的 Script options 继续保留限制。
+
+## 43. jq 生成语法重构（v1.86）
+
+本节替代旧章节中 add 使用 getpath/setpath、生成 legacy jq 压缩空白、固定对象 delete 的 del 表达式格式约定。统一路径生成器：标识符使用 `.data.flag`，特殊键使用 `.["a.b"]`，数组索引使用 `.items[0]`；根 bracket 必须带 identity `.`。Add 生成直接 selector 条件赋值；Delete 按用户最新要求使用 delpaths(PATHS)，索引批量保持逐项管道；Replace 是唯一参考 ScriptHub getpath/has/setpath 模板的操作。Native JSON 单动作、批量、多动作、legacy 共用 WayX 格式；多动作已有类型保护、独立 try/catch 和顺序恢复继续保留。原生 jq 作者表达式、jq_file/jq-path 读取内联不套用这些生成模板。
+
+上次全量转换只修正了已知上游错误，没有改变 add 生成格式，记录为本次失败案例。验收必须检查转换前后的实际 jq 文本差异，不能仅依据 Action 成功或时间戳变更判断完成。真实 jq 编译和输入输出回归同时验证格式重构没有改变操作语义。

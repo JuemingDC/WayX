@@ -546,16 +546,11 @@ export function rewriteIrDeclaration(ir) {
   };
 }
 
+// jq.mjs
 // JQ syntax and lowering helpers (integrated domain section)
+// jqlang is authoritative; ONLY replace references ScriptHub.
 // Author: chance
 // Category: Converter / JQ
-//
-// Policy:
-// 1. jqlang is the syntax/semantic authority for JQ.
-// 2. ONLY JSON replace intentionally follows ScriptHub's parent/getpath/has + setpath shape.
-// 3. JSON add/delete and source-authored jq keep WayX's own lowering policy.
-// 4. jq_file / jq-path content is fetched by input.mjs and inlined as JQ; this module never
-//    turns those dependencies into JavaScript helpers or ScriptHub-style rewrites.
 
 export function parseJsonKeyPath(pathText) {
   const text=String(pathText ?? '');
@@ -618,60 +613,25 @@ function validateParts(parts) {
   return parts;
 }
 
-export function jqPathSelector(parts) {
-  validateParts(parts);
-  let out='';
-  for (const part of parts) {
-    if (typeof part === 'number') out += '[' + part + ']';
-    else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(part)) out += '.' + part;
-    else out += '[' + JSON.stringify(part) + ']';
-  }
-  return out || '.';
-}
-
-// WayX delete policy: use jq's native del(path_expression). Multiple fixed object
-// paths are combined into one del(...). Array-index deletes stay sequential,
-// because earlier deletions shift subsequent indexes.
+// WayX delete uses jqlang delpaths(PATHS). Numeric indices are lowered
+// sequentially because each source deletion shifts the next array index.
 export function renderFixedPathDeleteJq(paths) {
-  if (!Array.isArray(paths) || paths.length === 0) {
-    throw new Error('delete path list must not be empty');
+  if (!Array.isArray(paths) || !paths.length) {
+    throw new Error('delete path list must contain nonempty parsed paths');
   }
-  const normalized=paths.map(item=>{
-    const parts=validateParts(Array.isArray(item)?item:item?.parts);
-    const selector=typeof item?.selector==='string' && item.selector ? item.selector : jqPathSelector(parts);
-    return {parts,selector};
-  });
-  if (normalized.length === 1) return 'del(' + normalized[0].selector + ')';
-  if (normalized.some(item => item.parts.some(part => typeof part === 'number'))) {
-    return normalized.map(item => 'del(' + item.selector + ')').join(' | ');
+  paths=paths.map(item=>({parts:validateParts(Array.isArray(item)?item:item?.parts)}));
+  if(paths.some(item=>item.parts.some(part=>typeof part==='number'))) {
+    return paths.map(item=>'delpaths('+JSON.stringify([item.parts])+')').join(' | ');
   }
-  return 'del(' + normalized.map(item => item.selector).join(', ') + ')';
+  return 'delpaths('+JSON.stringify(paths.map(item=>item.parts))+')';
 }
 
-// WayX add policy: add only when the addressed value is null/missing. This is
-// deliberately not copied from ScriptHub.
-export function renderFixedPathAddJq(parts,value) {
-  validateParts(parts);
-  const path=JSON.stringify(parts);
-  return 'if getpath(' + path + ') == null then setpath(' + path + '; ' + value + ') else . end';
-}
-
-// ScriptHub is referenced ONLY here. Its json-replace lowering checks the
-// parent with getpath(... ) | has(last), then setpath(...) only when that key
-// exists. Other WayX JQ renderers must not inherit ScriptHub formatting.
-export function renderFixedPathReplaceJq(parts,value) {
-  validateParts(parts);
-  const parent=JSON.stringify(parts.slice(0,-1));
-  const last=JSON.stringify(parts.at(-1));
-  const path=JSON.stringify(parts);
-  return 'if (getpath(' + parent + ') | has(' + last + ')) then (setpath(' + path + '; ' + value + ')) else . end';
-}
-
-export function renderFixedJsonMutationJq(operation, entries) {
-  if (!Array.isArray(entries) || !entries.length) throw new Error(operation + ' entries must not be empty');
-  if (operation === 'delete') return renderFixedPathDeleteJq(entries);
-  if (operation === 'add') return entries.map(entry=>renderFixedPathAddJq(entry.parts,entry.value)).join(' | ');
-  if (operation === 'replace') return entries.map(entry=>renderFixedPathReplaceJq(entry.parts,entry.value)).join(' | ');
+// Integrated policy entry point retained from concurrent test-branch refactor.
+export function renderFixedJsonMutationJq(operation,entries) {
+  if(!Array.isArray(entries) || !entries.length)throw new Error(operation+' entries must not be empty');
+  if(operation==='delete')return renderFixedPathDeleteJq(entries);
+  if(operation==='add')return entries.map(entry=>renderFixedPathAddJq(entry.parts,entry.value)).join(' | ');
+  if(operation==='replace')return entries.map(entry=>renderFixedPathReplaceJq(entry.parts,entry.value)).join(' | ');
   throw new Error('unsupported fixed JSON mutation: '+operation);
 }
 
@@ -705,6 +665,46 @@ export function stripJqComments(expr) {
     out += ch;
   }
   return out;
+}
+
+// 上游错误：jq keyword whitespace lost after an identity selector.
+// Failed case: KuGou / Issue #162 / `else .end;` -> `else . end;`.
+// Valid field `.end` and quoted/comment text are never rewritten. Empty stdin
+// compiles the program without evaluating the author's filter on any JSON.
+const upstreamJqRepairCache=new Map();
+export function repairUpstreamJq(expr) {
+  const original=String(expr);
+  if(upstreamJqRepairCache.has(original))return upstreamJqRepairCache.get(original);
+  let masked='',quoted=false,escaped=false,comment=false;
+  for(let i=0;i<original.length;i++) {
+    const ch=original[i];
+    if(comment){masked+=ch==='\n'?'\n':' ';if(ch==='\n')comment=false;continue;}
+    if(quoted){masked+=' ';if(escaped)escaped=false;else if(ch==='\\')escaped=true;else if(ch==='"')quoted=false;continue;}
+    if(ch==='"'){quoted=true;masked+=' ';continue;}
+    if(ch==='#'){comment=true;masked+=' ';continue;}
+    masked+=ch;
+  }
+  const matches=[...masked.matchAll(/\belse\s*\.end\b(?=\s*(?:[;|)\],}]|$))/g)];
+  let result={jq:original,changed:false};
+  if(matches.length) {
+    const compile=program=>{
+      const checked=spawnSync('jq',[program],{input:'',encoding:'utf8',timeout:5000,maxBuffer:1024*1024});
+      if(checked.error || checked.signal || ![0,3].includes(checked.status))throw new Error('jq compiler unavailable or failed: '+String(checked.error?.message||checked.stderr||checked.signal));
+      return checked;
+    };
+    const before=compile(original);
+    if(before.status===3 && /syntax error|unterminated/i.test(before.stderr)) {
+      let candidate=original;
+      for(const match of matches.reverse()) {
+        const offset=match.index+match[0].lastIndexOf('.end')+1;
+        candidate=candidate.slice(0,offset)+' '+candidate.slice(offset);
+      }
+      const after=compile(candidate);
+      if(after.status===0)result={jq:candidate,changed:true,kind:'jq-identity-end-whitespace',original,diagnostic:before.stderr.split('\n').find(line=>line.startsWith('jq: error:'))||'jq compile error'};
+    }
+  }
+  if(upstreamJqRepairCache.size>=512)upstreamJqRepairCache.clear();
+  upstreamJqRepairCache.set(original,result);return result;
 }
 
 export function minifyJq(expr){
@@ -762,47 +762,7 @@ export function normalizeJqForSingleQuotedConfig(expr){
 }
 
 export function quoteJq(expr){
-  return "'" + normalizeJqForSingleQuotedConfig(expr) + "'";
-}
-
-// 上游错误：jq keyword whitespace lost after an identity selector.
-// Failed case: KuGou / Issue #162 / `else .end;` -> `else . end;`.
-// Valid field `.end` and quoted/comment text are never rewritten. Empty stdin
-// compiles the program without evaluating the author's filter on any JSON.
-const upstreamJqRepairCache=new Map();
-export function repairUpstreamJq(expr) {
-  const original=String(expr);
-  if(upstreamJqRepairCache.has(original))return upstreamJqRepairCache.get(original);
-  let masked='',quoted=false,escaped=false,comment=false;
-  for(let i=0;i<original.length;i++) {
-    const ch=original[i];
-    if(comment){masked+=ch==='\n'?'\n':' ';if(ch==='\n')comment=false;continue;}
-    if(quoted){masked+=' ';if(escaped)escaped=false;else if(ch==='\\')escaped=true;else if(ch==='"')quoted=false;continue;}
-    if(ch==='"'){quoted=true;masked+=' ';continue;}
-    if(ch==='#'){comment=true;masked+=' ';continue;}
-    masked+=ch;
-  }
-  const matches=[...masked.matchAll(/\belse\s*\.end\b(?=\s*(?:[;|)\],}]|$))/g)];
-  let result={jq:original,changed:false};
-  if(matches.length) {
-    const compile=program=>{
-      const checked=spawnSync('jq',[program],{input:'',encoding:'utf8',timeout:5000,maxBuffer:1024*1024});
-      if(checked.error || checked.signal || ![0,3].includes(checked.status))throw new Error('jq compiler unavailable or failed: '+String(checked.error?.message||checked.stderr||checked.signal));
-      return checked;
-    };
-    const before=compile(original);
-    if(before.status===3 && /syntax error|unterminated/i.test(before.stderr)) {
-      let candidate=original;
-      for(const match of matches.reverse()) {
-        const offset=match.index+match[0].lastIndexOf('.end')+1;
-        candidate=candidate.slice(0,offset)+' '+candidate.slice(offset);
-      }
-      const after=compile(candidate);
-      if(after.status===0)result={jq:candidate,changed:true,kind:'jq-identity-end-whitespace',original,diagnostic:before.stderr.split('\n').find(line=>line.startsWith('jq: error:'))||'jq compile error'};
-    }
-  }
-  if(upstreamJqRepairCache.size>=512)upstreamJqRepairCache.clear();
-  upstreamJqRepairCache.set(original,result);return result;
+  return `'${normalizeJqForSingleQuotedConfig(expr)}'`;
 }
 
 // dependency.mjs
@@ -1384,23 +1344,22 @@ function parseKeyPath(path) {
   return parseJsonKeyPath(path);
 }
 
-function pathLiteral(path) {
-  return JSON.stringify(parseKeyPath(path));
+// WayX jq path grammar: direct selectors for add; never a shared
+// ScriptHub getpath/setpath template. Bracket keys always retain root identity.
+export function jqPathSelector(parts) {
+  validateParts(parts);
+  return parts.reduce((out,part)=>typeof part==='number' ? out+'['+part+']' :
+    /^[A-Za-z_][A-Za-z0-9_]*$/.test(part) ? out+(out==='.'?'':'.')+part :
+    out+'['+JSON.stringify(part)+']','.');
 }
 
 function pathSelector(path) {
-  const parts = parseKeyPath(path);
-  let out = '';
-  for (const part of parts) {
-    if (typeof part === 'number') {
-      out += '[' + part + ']';
-    } else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(part)) {
-      out += '.' + part;
-    } else {
-      out += '[' + JSON.stringify(part) + ']';
-    }
-  }
-  return out || '.';
+  return jqPathSelector(parseKeyPath(path));
+}
+
+export function renderFixedPathAddJq(parts,value) {
+  const selector=jqPathSelector(parts);
+  return 'if '+selector+' == null then '+selector+' = '+value+' else . end';
 }
 
 function anyToJq(node) {
@@ -1422,6 +1381,12 @@ function anyToJq(node) {
 
 function qxQuote(value) {
   return quoteJq(value);
+}
+
+export function renderFixedPathReplaceJq(parts,value) {
+  validateParts(parts);
+  const parent=JSON.stringify(parts.slice(0,-1)),key=JSON.stringify(parts.at(-1));
+  return 'if (try (getpath('+parent+') | has('+key+')) catch false) then setpath('+JSON.stringify(parts)+'; '+value+') else . end';
 }
 
 export function jsonActionToJq(action) {
@@ -1447,10 +1412,10 @@ export function jsonActionToJq(action) {
   const ops = paths.map((node, index) => {
     const key = stringNode(node);
     if (key === null) throw new Error(name + ': key path must be a fixed string');
-    const path = pathLiteral(key);
+    const parts = parseKeyPath(key);
     const value = anyToJq(values[index]);
     if (name.endsWith('.add')) {
-      return renderFixedPathAddJq(parseKeyPath(key),value);
+      return renderFixedPathAddJq(parts,value);
     }
     return renderFixedPathReplaceJq(parseKeyPath(key),value);
   });
@@ -1480,8 +1445,7 @@ function fixedObjectJsonOps(action) {
     return unsupported(name + ': batch argument lengths differ');
   }
 
-  const operation=name.endsWith('.delete') ? 'delete' : name.endsWith('.add') ? 'add' : 'replace';
-  const entries=[];
+  const ops=[];
   for (let index=0; index<paths.length; index++) {
     let key;
     try {
@@ -1493,8 +1457,9 @@ function fixedObjectJsonOps(action) {
       return unsupported(name + ': native multi-action JQ currently requires fixed object key paths');
     }
 
-    if (operation==='delete') {
-      entries.push({parts:key});
+    if (name.endsWith('.delete')) {
+      const op='if type == "object" then '+renderFixedPathDeleteJq([{parts:key}])+' else . end';
+      ops.push(key.length===1?op:'(. as $__wayx_before | try ('+op+') catch $__wayx_before)');
       continue;
     }
 
@@ -1504,14 +1469,17 @@ function fixedObjectJsonOps(action) {
     } catch (error) {
       return unsupported(String(error?.message || error));
     }
-    entries.push({parts:key,value});
+
+    if (name.endsWith('.add')) {
+      const op='if type == "object" then '+renderFixedPathAddJq(key,value)+' else . end';
+      ops.push(key.length===1?op:'(. as $__wayx_before | try ('+op+') catch $__wayx_before)');
+    } else {
+      const op='if type == "object" then '+renderFixedPathReplaceJq(key,value)+' else . end';
+      ops.push(key.length===1?op:'(. as $__wayx_before | try ('+op+') catch $__wayx_before)');
+    }
   }
 
-  try {
-    return {ok:true,ops:[renderFixedJsonMutationJq(operation,entries)]};
-  } catch (error) {
-    return unsupported(String(error?.message || error));
-  }
+  return {ok:true,ops};
 }
 
 export function jsonPipelineToSafeNativeJq(ast) {
@@ -2366,14 +2334,7 @@ function jqPath(pathText) {
 
 function jqAccess(pathText) {
   const parts=jqPath(pathText);
-  if (!parts) return null;
-  let out='';
-  for (const part of parts) {
-    if (typeof part === 'number') out += `[${part}]`;
-    else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(part)) out += '.' + part;
-    else out += '[' + JSON.stringify(part) + ']';
-  }
-  return out;
+  return parts ? jqPathSelector(parts) : null;
 }
 
 function parseJsonValue(token) {
@@ -2400,7 +2361,6 @@ function compileJsonMutation(phase, op, rest) {
     for (let i=0;i<tokens.length;i+=2) {
       const path=jqPath(unquote(tokens[i]));
       if (!path) return { ok:false, reason:'unsupported JSON path syntax' };
-      const literal=JSON.stringify(path);
       const value=JSON.stringify(parseJsonValue(tokens[i+1]));
       if (op === 'add') {
         ops.push(renderFixedPathAddJq(path,value));
@@ -2558,7 +2518,7 @@ function planJson(pattern, action, parsed, target, ctx) {
   try { compiled=compileJsonMutation(parsed.phase, parsed.op, parsed.rest); }
   catch (error) { return legacyRewriteReview(pattern, action, String(error?.message || error)); }
   if (!compiled.ok) return legacyRewriteReview(pattern, action, compiled.reason);
-  const jq=compiled.preserve ? compiled.jq : minifyJq(compiled.jq);
+  const jq=compiled.jq;
   if (parsed.op === 'jq' && !String(jq).trim()) {
     // Source-authored empty JQ expressions have no executable target filter.
     // Emitting jsonjq/http-*-jq with '' is invalid; treat the declaration as

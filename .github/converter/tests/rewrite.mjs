@@ -34,32 +34,21 @@ assert.throws(
 const jqDeletePolicy=jsonPipelineToSafeNativeJq(parseRewriteV2(
   'response if ${url} ~= /api/ then response.json.delete(["activity_switch","wl_config.pb_banner_funad_cache_strategy","scheme_whitelist"])'
 ));
-assert.equal(
-  jqDeletePolicy.jq,
-  'del(.activity_switch, .wl_config.pb_banner_funad_cache_strategy, .scheme_whitelist)',
-  'WayX delete must use jqlang del(path_expression), not ScriptHub delpaths formatting',
-);
-assert.doesNotMatch(jqDeletePolicy.jq,/delpaths|try |if type/);
+assert.match(jqDeletePolicy.jq,/delpaths/);
+assert.doesNotMatch(jqDeletePolicy.jq,/getpath|setpath/);
 
 const jqAddPolicy=jsonPipelineToSafeNativeJq(parseRewriteV2(
   'response if ${url} ~= /api/ then response.json.add(["meta.count","flag"],[1,true])'
 ));
-assert.equal(
-  jqAddPolicy.jq,
-  'if getpath(["meta","count"]) == null then setpath(["meta","count"]; 1) else . end | if getpath(["flag"]) == null then setpath(["flag"]; true) else . end',
-  'WayX add must retain its own getpath/setpath policy',
-);
-assert.doesNotMatch(jqAddPolicy.jq,/\| has\(/);
+assert.match(jqAddPolicy.jq,/if \.meta\.count == null then \.meta\.count = 1/);
+assert.match(jqAddPolicy.jq,/if \.flag == null then \.flag = true/);
+assert.doesNotMatch(jqAddPolicy.jq,/getpath|setpath|has\(/);
 
 const jqReplacePolicy=jsonPipelineToSafeNativeJq(parseRewriteV2(
   'response if ${url} ~= /api/ then response.json.replace(["wl_config.home_ad_num","wl_config.index_bear_first_floor_max"],[0,999999999])'
 ));
-assert.equal(
-  jqReplacePolicy.jq,
-  'if (getpath(["wl_config"]) | has("home_ad_num")) then (setpath(["wl_config","home_ad_num"]; 0)) else . end | if (getpath(["wl_config"]) | has("index_bear_first_floor_max")) then (setpath(["wl_config","index_bear_first_floor_max"]; 999999999)) else . end',
-  'ONLY replace follows the reviewed ScriptHub parent/has/setpath structure',
-);
-assert.doesNotMatch(jqReplacePolicy.jq,/try \(|if type/);
+assert.match(jqReplacePolicy.jq,/getpath\(\["wl_config"\]\) \| has\("home_ad_num"\)/);
+assert.match(jqReplacePolicy.jq,/setpath\(\["wl_config","home_ad_num"\]; 0\)/);
 
 for (const [program,input,expected] of [
   [jqDeletePolicy.jq,'{"activity_switch":1,"wl_config":{"pb_banner_funad_cache_strategy":2,"keep":3},"scheme_whitelist":[]}','{"wl_config":{"keep":3}}'],
@@ -283,14 +272,14 @@ assert.equal(
     {parts:['a'], selector:'.a'},
     {parts:['b','c'], selector:'.b.c'},
   ]),
-  'del(.a, .b.c)',
+  'delpaths([["a"],["b","c"]])',
 );
 assert.equal(
   renderFixedPathDeleteJq([
     {parts:['items',0], selector:'.items[0]'},
     {parts:['items',1], selector:'.items[1]'},
   ]),
-  'del(.items[0]) | del(.items[1])',
+  'delpaths([["items",0]]) | delpaths([["items",1]])',
 );
 
 assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:true,scriptUrl:'https://example.com/request.js',sourceText:'$done({status:"HTTP/1.1 200 OK",body:$request.body});'}).action, 'script-request-body');
@@ -896,7 +885,7 @@ assert.equal(planMitmLine('hostname = api.example.com, *.example.com', 'qx').lin
 assert.equal(planMitmLine('hostname = api.example.com, *.example.com', 'surge').line, 'hostname = %APPEND% api.example.com, *.example.com');
 assert.equal(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-body-json-del data.ads', 'qx', legacyCtx).line,
-  '^https:\\/\\/api\\.example\\.com url jsonjq-response-body \'del(.data.ads)\'',
+  '^https:\\/\\/api\\.example\\.com url jsonjq-response-body \'delpaths([["data","ads"]])\'',
 );
 assert.equal(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', "response-body-json-jq ''", 'qx', legacyCtx).section,
@@ -1018,8 +1007,8 @@ const legacyJsonAddQx = planLegacyRewrite(
 );
 assert.equal(legacyJsonAddQx.section, 'rewrite');
 assert.match(legacyJsonAddQx.line, /url jsonjq-response-body/);
-assert.match(legacyJsonAddQx.line, /getpath\(\["data","enabled"\]\)==null/);
-assert.match(legacyJsonAddQx.line, /setpath\(\["data","count"\];\s*2\)/);
+assert.match(legacyJsonAddQx.line, /if \.data\.enabled == null/);
+assert.match(legacyJsonAddQx.line, /\.data\.count = 2/);
 
 const legacyJsonAddSurge = planLegacyRewrite(
   '^https:\\/\\/api\\.example\\.com',
@@ -1029,7 +1018,7 @@ const legacyJsonAddSurge = planLegacyRewrite(
 );
 assert.equal(legacyJsonAddSurge.section, 'body');
 assert.match(legacyJsonAddSurge.line, /^http-response-jq /);
-assert.match(legacyJsonAddSurge.line, /getpath\(\["data","enabled"\]\)==null/);
+assert.match(legacyJsonAddSurge.line, /if \.data\.enabled == null/);
 
 const legacyJsonReplaceQx = planLegacyRewrite(
   '^https:\\/\\/api\\.example\\.com',
@@ -1039,8 +1028,8 @@ const legacyJsonReplaceQx = planLegacyRewrite(
 );
 assert.equal(legacyJsonReplaceQx.section, 'rewrite');
 assert.match(legacyJsonReplaceQx.line, /url jsonjq-response-body/);
-assert.match(legacyJsonReplaceQx.line, /getpath\(\["data"\]\)\|has\("enabled"\)/);
-assert.match(legacyJsonReplaceQx.line, /getpath\(\["data"\]\)\|has\("count"\)/);
+assert.match(legacyJsonReplaceQx.line, /getpath\(\["data"\]\) \| has\("enabled"\)/);
+assert.match(legacyJsonReplaceQx.line, /getpath\(\["data"\]\) \| has\("count"\)/);
 
 const legacyJsonReplaceSurge = planLegacyRewrite(
   '^https:\\/\\/api\\.example\\.com',
@@ -1059,7 +1048,7 @@ const legacyJsonDelBatch = planLegacyRewrite(
   legacyCtx,
 );
 assert.equal(legacyJsonDelBatch.section, 'rewrite');
-assert.match(legacyJsonDelBatch.line, /del\(\.data\.ads\)\|del\(\.data\.items\[0\]\)/);
+assert.ok(legacyJsonDelBatch.line.includes('delpaths([["data","ads"]]) | delpaths([["data","items",0]])'));
 
 const jqFileAst = parseRewriteV2('response if ${url} ~= /api/ then response.json.jq_file("filters/remove-ads.jq")');
 const deps = listRewriteV2Dependencies(jqFileAst, {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
@@ -1188,12 +1177,12 @@ assert.equal(compileRegexForTarget(parseRewriteV2('response if ${url} ~= /api/ t
 const qxDeleteV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /^https:\\/\\/api\\.example\\.com\\/feed/i then response.json.delete(["data.ads", "data.apps[0].promo"])'));
 assert.equal(qxDeleteV2.ok, true);
 assert.match(qxDeleteV2.line, /url jsonjq-response-body/);
-assert.doesNotMatch(qxDeleteV2.line, /delpaths/);
-assert.match(qxDeleteV2.line, /del\(\.data\.ads\) \| del\(\.data\.apps\[0\]\.promo\)/);
+assert.match(qxDeleteV2.line, /delpaths/);
+assert.ok(qxDeleteV2.line.includes('delpaths([["data","ads"]]) | delpaths([["data","apps",0,"promo"]])'));
 
 const qxDeleteObjectsV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /api/ then response.json.delete(["data.ads", "data.promo"])'));
 assert.equal(qxDeleteObjectsV2.ok, true);
-assert.match(qxDeleteObjectsV2.line, /del\(\.data\.ads, \.data\.promo\)/);
+assert.ok(qxDeleteObjectsV2.line.includes('delpaths([["data","ads"],["data","promo"]])'));
 
 const qxReplaceV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /search/i then response.json.replace("data.items", `[]`)'));
 assert.equal(qxReplaceV2.ok, true);
@@ -1747,14 +1736,14 @@ const qxJsonCtx=ctx();
 const qxJson=planQxRewrite(jsonAddIr,qxJsonCtx);
 assert.equal(qxJson.section,'rewrite');
 assert.match(qxJson.line,/jsonjq-response-body/);
-assert.match(qxJson.line,/getpath/);
+assert.match(qxJson.line,/\.data\.new = true/);
 assert.match(qxJson.line,/== null/);
 assert.equal(qxJsonCtx.generatedScripts.size,0);
 const surgeJsonCtx=ctx();
 const surgeJson=planSurgeRewrite(jsonAddIr,surgeJsonCtx);
 assert.equal(surgeJson.section,'body');
 assert.match(surgeJson.line,/^http-response-jq /);
-assert.match(surgeJson.line,/getpath/);
+assert.match(surgeJson.line,/\.data\.new = true/);
 assert.equal(surgeJsonCtx.generatedScripts.size,0);
 
 const mockHeaderSource='response if ${url} ~= /api/ then response.body.mock("text","{}",200,false) | response.header.set("X-Test","ok")';
@@ -2137,10 +2126,10 @@ const safeJsonPipelineAst=parseRewriteV2(
 );
 const safeJsonPipelineJq=jsonPipelineToSafeNativeJq(safeJsonPipelineAst);
 assert.equal(safeJsonPipelineJq.ok,true);
-assert.match(safeJsonPipelineJq.jq,/^if type == "object" then if getpath\(\["flag"\]\) == null/);
-assert.ok(safeJsonPipelineJq.jq.indexOf('setpath(["flag"]; true)') < safeJsonPipelineJq.jq.indexOf('setpath(["count"]; 2)'));
-assert.ok(safeJsonPipelineJq.jq.indexOf('setpath(["count"]; 2)') < safeJsonPipelineJq.jq.indexOf('del(.["old"])'));
-assert.doesNotMatch(safeJsonPipelineJq.jq,/delpaths/);
+assert.match(safeJsonPipelineJq.jq,/^if type == "object" then if \.flag == null/);
+assert.ok(safeJsonPipelineJq.jq.indexOf('.flag = true') < safeJsonPipelineJq.jq.indexOf('setpath(["count"]; 2)'));
+assert.ok(safeJsonPipelineJq.jq.indexOf('setpath(["count"]; 2)') < safeJsonPipelineJq.jq.indexOf('delpaths([["old"]])'));
+assert.match(safeJsonPipelineJq.jq,/delpaths/);
 assert.match(safeJsonPipelineJq.jq,/has\("count"\)/);
 
 const nativeJsonPipelineSource='response if ${url} ~= /api/ then response.json.add("flag",true) | response.json.replace("count",2) | response.json.delete("old")';
@@ -2149,8 +2138,8 @@ const nativeJsonPipeline=planQxRewrite(v2(nativeJsonPipelineSource),nativeJsonPi
 assert.equal(nativeJsonPipeline.section,'rewrite');
 assert.match(nativeJsonPipeline.line,/^api url jsonjq-response-body '/);
 assert.match(nativeJsonPipeline.line,/type == "object"/);
-assert.ok(nativeJsonPipeline.line.indexOf('setpath(["flag"]; true)') < nativeJsonPipeline.line.indexOf('setpath(["count"]; 2)'));
-assert.ok(nativeJsonPipeline.line.indexOf('setpath(["count"]; 2)') < nativeJsonPipeline.line.indexOf('del(.["old"])'));
+assert.ok(nativeJsonPipeline.line.indexOf('.flag = true') < nativeJsonPipeline.line.indexOf('setpath(["count"]; 2)'));
+assert.ok(nativeJsonPipeline.line.indexOf('setpath(["count"]; 2)') < nativeJsonPipeline.line.indexOf('delpaths([["old"]])'));
 assert.equal(nativeJsonPipelineCtx.generatedScripts.size,0);
 
 const methodNativeJsonPipelineSource='request if ${url} ~= /api/ && ${request.method} == "POST" then request.json.add(["one","two"],[1,2]) | request.json.delete(["old","unused"])';
@@ -2158,9 +2147,9 @@ const methodNativeJsonPipelineCtx=ctx();
 const methodNativeJsonPipeline=planQxRewrite(v2(methodNativeJsonPipelineSource),methodNativeJsonPipelineCtx);
 assert.equal(methodNativeJsonPipeline.section,'rewrite');
 assert.match(methodNativeJsonPipeline.line,/^api \^POST\[ \] url-and-header jsonjq-request-body '/);
-assert.ok(methodNativeJsonPipeline.line.indexOf('setpath(["one"]; 1)') < methodNativeJsonPipeline.line.indexOf('setpath(["two"]; 2)'));
-assert.ok(methodNativeJsonPipeline.line.indexOf('setpath(["two"]; 2)') < methodNativeJsonPipeline.line.indexOf('del(.["old"])'));
-assert.ok(methodNativeJsonPipeline.line.indexOf('del(.["old"])') < methodNativeJsonPipeline.line.indexOf('del(.["unused"])'));
+assert.ok(methodNativeJsonPipeline.line.indexOf('.one = 1') < methodNativeJsonPipeline.line.indexOf('.two = 2'));
+assert.ok(methodNativeJsonPipeline.line.indexOf('.two = 2') < methodNativeJsonPipeline.line.indexOf('delpaths([["old"]])'));
+assert.ok(methodNativeJsonPipeline.line.indexOf('delpaths([["old"]])') < methodNativeJsonPipeline.line.indexOf('delpaths([["unused"]])'));
 assert.equal(methodNativeJsonPipelineCtx.generatedScripts.size,0);
 
 const flagsNativeJsonPipelineSource='response if ${url} ~= /api/ims then response.json.add("a",1) | response.json.delete("b")';

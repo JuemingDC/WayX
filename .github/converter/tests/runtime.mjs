@@ -1099,3 +1099,32 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   assert.equal(await fs.readFile('Resource/Loon/KuGou_remove_ads.lpx','utf8'),raw,'original source remains recorded');
   console.log('Upstream jq errors passed: '+checked+' actual native executions across five source forms and both targets, plus non-repair guards and real KuGou');
 }
+
+// WayX jq grammar: add selectors, delete delpaths, replace-only reference style.
+if(selectedCase==='generated-helper-runtime.mjs') {
+  const {convertPlugin,validateConvertedPlugin}=await import('../src/conversion.mjs');
+  const entry={id:'JqGrammar',source:'https://example.test/source.lpx',category:'Test'};
+  const options={stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'};
+  const cases=[
+    {path:'data.flag',input:{data:{flag:null,keep:1}},add:{data:{flag:true,keep:1}},delete:{data:{keep:1}}},
+    {path:'["a.b"]',input:{'a.b':null,keep:1},add:{'a.b':true,keep:1},delete:{keep:1}},
+    {path:'["中文😀"]',input:{'中文😀':null,keep:1},add:{'中文😀':true,keep:1},delete:{keep:1}},
+    {path:'items[0].flag',input:{items:[{flag:null,keep:1}]},add:{items:[{flag:true,keep:1}]},delete:{items:[{keep:1}]}},
+    {path:'[0].flag',input:[{flag:null,keep:1}],add:[{flag:true,keep:1}],delete:[{keep:1}]},
+  ];
+  let checked=0;
+  for(const phase of ['request','response'])for(const syntax of ['v2','legacy'])for(const op of ['add','delete'])for(const test of cases) {
+    const line=syntax==='v2'?phase+' if ${url} ~= /api/ then '+phase+'.json.'+op+'('+JSON.stringify(test.path)+(op==='add'?',true':'')+')':
+      'api '+phase+'-body-json-'+(op==='delete'?'del':op)+" '"+test.path+"'"+(op==='add'?' true':'');
+    const out=convertPlugin(entry,'[Rewrite]\n'+line,options);validateConvertedPlugin(entry,out);
+    for(const target of ['qx','surge']) {
+      const declaration=out[target].split('\n').find(l=>l.startsWith(target==='qx'?'api url jsonjq-'+phase+'-body ':'http-'+phase+'-jq api '));assert.ok(declaration,line);
+      const program=declaration.match(/'(.+)'$/)[1];
+      assert.doesNotMatch(program,/getpath|setpath/,'only replace may use generated reference template');
+      if(op==='delete')assert.match(program,/^delpaths\(/);else assert.match(program,/^if \.\S+ == null then \.\S+ = true else \. end$/);
+      const result=runIsolatedCase('jq',['-c',program],{input:JSON.stringify(test.input),encoding:'utf8'});
+      assert.equal(result.status,0,result.stderr);assert.deepEqual(JSON.parse(result.stdout),test[op]);checked++;
+    }
+  }
+  console.log('WayX jq grammar passed: '+checked+' emitted v2/legacy/request/response filters with special root keys, Unicode and array paths');
+}
