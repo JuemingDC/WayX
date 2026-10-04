@@ -32,7 +32,7 @@ if (selectedCase === "architecture-contract.mjs") {
 const ROOT=process.cwd();
 const spec=await fs.readFile(path.join(ROOT,'.github/CONVERSION_SPEC.md'),'utf8');
 
-assert.match(spec,/版本：1\.99\b/,'Semantic runtime migration requires spec v1.97');
+assert.match(spec,/版本：1\.100\b/,'Implementation/spec audit requires spec v1.100');
 for (const evidence of [
   'crossutility/Quantumult-X',
   'sample.conf',
@@ -61,11 +61,7 @@ for (const invariant of [
   assert.ok(spec.includes(invariant),'missing semantic-compiler invariant in CONVERSION_SPEC: '+invariant);
 }
 
-assert.doesNotMatch(
-  spec,
-  /Regex flags[^\n]*无条件丢弃|target 输出无条件丢弃/,
-  'v1.58 must not preserve the historical unconditional regex-flag drop rule',
-);
+assert.match(spec,/当前生产转换按 §0 丢弃源 `i\/m\/s`/,'effective specification must match the target flag policy');
 
 for (const rel of [
   '.github/converter/src/core.mjs',

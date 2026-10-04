@@ -360,6 +360,8 @@ if (selectedCase === "upstream-automation.mjs") {
     const known='response if ${url} ~= /api/ then response.json.jq(`del(.a,.b)`)';
     const fresh='response if ${url} ~= /api/ then response.header.del("X")';
     const unknown='response if ${url} ~= /api/ then response.future.action()';
+    const selectedScript='response if ${url} ~= /api/ then response.future.action() | script("https://example.test/main.js") with requires_body=true';
+    const selectedJq='response if ${url} ~= /api/ then response.future.action() | response.json.jq(`.a = "x|y" | .b = true`)';
     const legacyKnown='^https://example.test - reject';
     const legacyNew='^https://example.test header https://new.example.test';
     const legacyUnknown='^https://example.test future-action';
@@ -367,7 +369,7 @@ if (selectedCase === "upstream-automation.mjs") {
     const scriptNew='http-response ^https://example.test script-path=https://example.test/main.js, debug=true';
     const scriptUnknown='http-response ^https://example.test script-path=https://example.test/main.js, future-option=true';
     const declarationOnly='^https://malformed.test';
-    await fs.writeFile(path.join(issueFixture,'Resource/Loon/test.lpx'),'[Rewrite]\n'+[known,fresh,unknown,legacyKnown,'response reject','generic reject',legacyNew,legacyUnknown,declarationOnly,'# '+legacyUnknown,'; '+legacyUnknown,'// '+legacyUnknown].join('\n')+'\n[Script]\n'+[scriptKnown,scriptNew,scriptUnknown,'# '+scriptNew].join('\n'));
+    await fs.writeFile(path.join(issueFixture,'Resource/Loon/test.lpx'),'[Rewrite]\n'+[known,fresh,unknown,selectedScript,selectedJq,legacyKnown,'response reject','generic reject',legacyNew,legacyUnknown,declarationOnly,'# '+legacyUnknown,'; '+legacyUnknown,'// '+legacyUnknown].join('\n')+'\n[Script]\n'+[scriptKnown,scriptNew,scriptUnknown,'# '+scriptNew].join('\n'));
     await fs.writeFile(path.join(issueFixture,'.github/monitor/.runtime/sync-failures.json'),JSON.stringify({version:1,failures:[{plugin,stage:'convert',reason:'unknown syntax',declarations:[{section:'Rewrite',line:unknown}]}]}));
     const url=new URL('../../scripts/propose-conversion-issues.mjs',import.meta.url).href;
     const result=runIsolatedCase(process.execPath,['--input-type=module','-e',
@@ -381,8 +383,15 @@ if (selectedCase === "upstream-automation.mjs") {
     for(const source of [legacyNew,legacyUnknown,scriptNew,scriptUnknown,declarationOnly])assert.ok(a.targetProblems.some(group=>group.source===source),source);
     assert.ok(a.targetProblems.some(group=>group.source===legacyNew&&group.reasons.some(reason=>reason.includes('legacyRewrite.actionKinds'))));
     assert.ok(a.targetProblems.some(group=>group.source===scriptNew&&group.reasons.some(reason=>reason.includes('legacyScript.optionNames'))));
-    assert.ok(a.targetProblems.every(group=>![known,legacyKnown,scriptKnown,'response reject','generic reject'].includes(group.source)&&group.declarations[0].line===group.source));
+    assert.ok(a.targetProblems.every(group=>![known,selectedScript,selectedJq,legacyKnown,scriptKnown,'response reject','generic reject'].includes(group.source)&&group.declarations[0].line===group.source));
     assert.equal(new Set(titles).size,7);
+    assert.ok(!a.targetProblems.some(group=>[selectedScript,selectedJq].includes(group.source)),'source preflight must apply Script/JQ priority before semantic token review');
+    const sourcePath=path.join(issueFixture,'Resource/Loon/test.lpx');
+    const originalSource=await fs.readFile(sourcePath,'utf8');
+    await fs.writeFile(sourcePath,'[Rewrite]\n'+selectedScript+'\n'+selectedJq+'\n');
+    const catalogGate=runIsolatedCase(process.execPath,[new URL('catalog.mjs',import.meta.url).pathname,'--case=catalog-syntax-inventory.mjs'],{cwd:issueFixture,encoding:'utf8'});
+    assert.equal(catalogGate.status,0,'selected layers must also pass the complete catalog gate: '+catalogGate.stderr);
+    await fs.writeFile(sourcePath,originalSource);
     await fs.mkdir(path.join(issueFixture,'Adblock/Quantumult X'),{recursive:true});
     await fs.writeFile(path.join(issueFixture,'Adblock/Quantumult X/test.snippet'),'# [WayX] ISSUE REQUIRED [fixture-unknown]: unsupported\n# Source declaration: '+legacyUnknown+'\n');
     const merged=runIsolatedCase(process.execPath,['--input-type=module','-e','import {collectIssueCandidates} from '+JSON.stringify(url)+'; console.log(JSON.stringify(await collectIssueCandidates()));'],{cwd:issueFixture,encoding:'utf8'});
