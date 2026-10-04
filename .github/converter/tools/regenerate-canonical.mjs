@@ -16,8 +16,6 @@ import {
   nowConversionStamp,
   readCatalogSource,
   readManagedTargetState,
-  syncGeneratedScripts,
-  writeManagedTargets,
   commitManagedConversion,
 } from "../src/workflow.mjs";
 

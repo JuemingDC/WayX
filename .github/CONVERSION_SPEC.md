@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.78
+版本：1.79
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -1078,3 +1078,18 @@ GitHub compare 必须为 forward ahead；缺少 files、达到 API 300 文件上
 失败通过既有 proposer 创建/复用 upstream-monitor-failure Issue，指纹按 source identity、stage、error type 稳定，瞬时原因或时间变化不另开重复问题；源前置 scanner 禁用 failure 输入时不混入监控错误。完整日志与结构化结果由已有 artifact 保存，Actions Summary 显示失败数量。全部转换器 native/script/JQ/URL 政策保持，不据监控失败猜测任何转换语义。
 
 验收使用临时真实文件、实际 monitor main 和可控原始网络响应：HTTP 304 与坏/缺镜像、报告覆盖、repo 部分下载失败、完整状态写后失败及 bytes 回退、rollback 被阻止、rename/delete、缺 raw URL、300 文件上限、非 forward history、多来源健康/失败隔离、Issue 去重和 main 发布输出门禁；完整生产拉取与转换仍只交 Actions 验证。main/test 和定时暂停不变。
+
+
+## 42. 每日上游发现、监控与单次生成（v1.79）
+
+按 2026-10-04 最新授权恢复唯一 WayX Automation 的每日 schedule：UTC `17 17 * * *`，即 Asia/Shanghai 每日 01:17；GitHub 可延迟实际执行时间。旧章节的定时暂停为历史约束，本节覆盖当前调度政策。不恢复旧工作流、Work 自动活动或新增分支。schedule 与手动运行都明确选择 main/test 的实际触发基线，不能因非 workflow_dispatch 而落入只读路径。
+
+现有 `.github/sources/loon.json` 的所有已登记原作者链接每日由同步入口拉取检查；可莉官方目录每日发现去广告/依赖类别的新 LPX，同次运行自动进入待拉取名单。既有 id/输出名、去重、排除其它可莉类别、静态条目及首次失败暂缓/后续重试保持。官方文档/参考仓库属于监控材料，不当作 Loon 插件加入转换名单；新来源只来自明确已登记且支持的发现源，不以链接名猜测规则类别。
+
+可莉目录登记为 monitor/sources.json 的监控源。发现入口一次拉取后保存来源 URL 和已验证的原始响应供 monitor 复用；监控缓存 URL 不一致、缺失或空内容即失败，不退回重复获取另一个目录版本。配置变更不放大去广告/依赖范围。catalog-discovery.json 记录完整 added/updated/removed 条目，Summary 显示数量；kelee-feed.json、目录 snapshot、监控结果及所有日志随已有 artifact 保存。
+
+简化共同生成流程：sync 负责逐插件源/目标/helper 事务和 README 生成；移除 Actions 内再次 --write canonical 和 --write README 的写入步骤，将 canonical 的独立 check 与 README check 并入完整成品验证。required gates 随之收拢，保留十个 suite、目标政策、catalog、audit、managed、helper/原作者 URL 和 Issue 门禁，删除未使用的旧路径常量和 import。不会用删除校验来代替简化，也不改任何 native/script 转换语义。
+
+监控启用政策统一由可写目标决定：同仓 test PR、main/test 手动及每日 main 均执行同一完整监控，且发布要求 complete=true；只读 PR 不写 Issue 或监控 mirror/state。监控与发现/转换失败可独立记录，syntax 成功即可尝试监控，不因某个转换阶段失败省略所有已登记规范检查。所有成功的可写目标允许提交验证后的 mirror/state，使 test CI 能测试每日 main 的实际监控路径。目标推进、错误恢复失败或任一全局校验失败仍阻止发布。
+
+验收覆盖 schedule/分支与监控政策、发现新源直接入名单及过滤/重复发现、feed 单次获取与监控复用/来源不符、实际发布门禁、完整 Actions 上游拉取/转换/监控与确定性 check。后续新增语义继续自动 Issue，既有 golden/能力 baseline 不自动扩张。远端仅 main/test；当前只有 GitHub schedule 恢复为每日运行。

@@ -243,7 +243,10 @@ assert.match(checkWorkflow,/steps\.loon_sync\.outputs\.publishable == 'true'/,'c
 assert.match(checkWorkflow,/steps\.gate\.outputs\.publishable/,'publication must require all pipeline gates');
 assert.deepEqual((await fs.readdir('.github/workflows')).filter(name=>/\.ya?ml$/.test(name)),['converter-check.yml'],'only one automation workflow may remain');
 assert.match(checkWorkflow,/pull_request:/);assert.match(checkWorkflow,/workflow_dispatch:/);
-assert.doesNotMatch(checkWorkflow,/^\s+schedule:/m);
+assert.match(checkWorkflow,/schedule:/);
+assert.match(checkWorkflow,/cron: '17 17 \* \* \*'/,'daily monitoring runs at 01:17 Asia/Shanghai');
+assert.doesNotMatch(checkWorkflow,/regenerate-canonical\.mjs --write|update-readme\.mjs --write/,'sync is the only workflow writer; canonical and README remain verification gates');
+assert.match(checkWorkflow,/github\.event_name != 'pull_request'/,'scheduled runs must select the main destination rather than become read-only');
 assert.match(checkWorkflow,/cancel-in-progress: false/,'generation must not be cancelled halfway through publication');
 assert.match(checkWorkflow,/include-hidden-files: true/,'runtime and catalog reports must actually be uploaded');
 assert.match(checkWorkflow,/remote_sha.*EXPECTED_HEAD/s,'stale publication must be rejected');
@@ -271,7 +274,7 @@ const automationRoot=await fs.mkdtemp(path.join(os.tmpdir(),'wayx-pipeline-'));
 try {
   await fs.mkdir(path.join(automationRoot,'.github/monitor/.runtime'),{recursive:true});
   const output=path.join(automationRoot,'output');
-  const required=['syntax','catalog','checkpoint','loon_sync','canonical','verify','reports','issues'];
+  const required=['syntax','catalog','checkpoint','loon_sync','verify','reports','issues'];
   const outcomes=Object.fromEntries(required.map(name=>[name,{outcome:'success'}]));
   const gate=async(stages,integrity='true',monitor='false',complete='true')=>{
     await fs.writeFile(output,'');
@@ -392,7 +395,9 @@ if (selectedCase === "upstream-automation.mjs") {
   } finally {await fs.rm(issueFixture,{recursive:true,force:true});}
 
   const categoryCheck=runIsolatedCase('python',['-c',String.raw`
-import importlib.util
+import importlib.util, tempfile, json, sys, io, contextlib
+from pathlib import Path
+from unittest.mock import patch
 s=importlib.util.spec_from_file_location('kelee','.github/converter/tools/refresh-kelee-catalog.py')
 m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
 def item(stem,tags):return {'url':'https://kelee.one/Tool/Loon/Lpx/'+stem+'.lpx','tag':tags}
@@ -406,6 +411,20 @@ assert [e['source'] for e in metadata]==[a['url'],b['url']]
 assert m.category_for(item('both',['去广告','依赖']),'both')=='依赖'
 assert m.category_for(item('fake',['非去广告']),'fake') is None
 assert m.category_for(item('single','依赖'),'single')=='依赖'
+with tempfile.TemporaryDirectory() as temp:
+ m.ROOT=Path(temp);m.CATALOG=m.ROOT/'.github/sources/loon.json';m.STATIC_CATALOG=m.ROOT/'.github/sources/loon-static.json'
+ m.RUNTIME_DIR=m.ROOT/'.github/monitor/.runtime';m.RUNTIME_SNAPSHOT=m.RUNTIME_DIR/'kelee-catalog.json'
+ m.CATALOG.parent.mkdir(parents=True);m.CATALOG.write_text(json.dumps(old));m.STATIC_CATALOG.write_text(json.dumps(static))
+ payload={'lists':[a,b,c]};response=json.dumps(payload).encode()
+ with patch.object(sys,'argv',['refresh']),patch.object(m,'fetch_bytes',return_value=response) as fetch,contextlib.redirect_stdout(io.StringIO()):assert m.main()==0
+ assert fetch.call_count==1
+ catalog=json.loads(m.CATALOG.read_text());assert [entry['source'] for entry in catalog]==[a['url'],b['url'],static[0]['source']]
+ discovery=json.loads((m.RUNTIME_DIR/'catalog-discovery.json').read_text())
+ assert [entry['source'] for entry in discovery['added']]==[b['url'],static[0]['source']]
+ feed=json.loads((m.RUNTIME_DIR/'kelee-feed.json').read_text());assert feed['source']==m.DEFAULT_LIST_URL and json.loads(feed['text'])==payload
+ with patch.object(sys,'argv',['refresh']),patch.object(m,'fetch_bytes',return_value=response),contextlib.redirect_stdout(io.StringIO()):assert m.main()==0
+ discovery=json.loads((m.RUNTIME_DIR/'catalog-discovery.json').read_text());assert discovery['added']==[] and discovery['updated']==[] and discovery['removed']==[]
+
 `],{encoding:'utf8'});
   assert.equal(categoryCheck.status,0,categoryCheck.stderr||categoryCheck.stdout);
 
@@ -492,6 +511,13 @@ with tempfile.TemporaryDirectory() as temp:
  assert json.loads(state_path.read_text())['sources']['repo']['remote_sha']=='old'
  assert (mirror/'spec.txt').read_bytes()==b'http success','healthy sources continue after isolated monitor failure'
  assert len(report()['failures'])==1 and len(report()['results'])==2
+ feed_source={'id':'feed','kind':'http','url':'https://example.test/list.json','save_as':'feed.json','cached_feed':'feed.json'}
+ (m.ROOT/'feed.json').write_text(json.dumps({'source':feed_source['url'],'text':'{"lists":[]}'}))
+ with patch.object(m,'request',side_effect=AssertionError('discovery feed must not be fetched twice')):assert run([feed_source])==0
+ before=state_path.read_bytes();old_mirror=(mirror/'feed.json').read_bytes()
+ (m.ROOT/'feed.json').write_text(json.dumps({'source':'https://wrong.test','text':'{}'}))
+ with patch.object(m,'request',side_effect=AssertionError('mismatched feed must not fall back to a second fetch')):assert run([feed_source])==1
+ assert state_path.read_bytes()==before and (mirror/'feed.json').read_bytes()==old_mirror
  for invalid in [[],[http,http],[{'id':''}]]:
   before=state_path.read_bytes();assert run(invalid)==1
   assert state_path.read_bytes()==before and report()['failures'][0]['stage']=='configuration'

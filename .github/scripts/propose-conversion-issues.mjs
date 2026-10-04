@@ -14,13 +14,11 @@ import { isRewriteV2, parseRewriteV2, classifyLegacyRewriteAction } from '../con
 import { isScriptV2, parseScriptV2, parseLegacyScriptLine } from '../converter/src/script.mjs';
 
 const ROOT = process.cwd();
-const MANIFEST = path.join(ROOT,'.github','sources','loon.json');
 const TARGET_DIRS = [
   path.join(ROOT,'Adblock','Quantumult X'),
   path.join(ROOT,'Adblock','Surge'),
 ];
 const runtimeDir = path.join(ROOT,'.github','monitor','.runtime');
-const syncFailurePath = path.join(runtimeDir,'sync-failures.json');
 const summaryPath = path.join(runtimeDir,'conversion-issues.md');
 const dryRun = process.argv.includes('--dry-run');
 const repo = process.env.GITHUB_REPOSITORY || '';

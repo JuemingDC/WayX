@@ -309,7 +309,8 @@ def main() -> int:
     if not isinstance(previous, list) or not isinstance(static, list):
         raise ValueError("WayX source catalogs must be JSON arrays")
 
-    payload = json.loads(fetch_bytes(args.list_url).decode("utf-8-sig"))
+    feed_text = fetch_bytes(args.list_url).decode("utf-8-sig")
+    payload = json.loads(feed_text)
     combined, metadata = build_catalog(payload, previous, static)
     validate_combined(combined)
 
@@ -328,6 +329,18 @@ def main() -> int:
     CATALOG.parent.mkdir(parents=True, exist_ok=True)
     CATALOG.write_text(desired, encoding="utf-8")
     RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
+    # Discovery and monitoring share the same validated upstream response.
+    (RUNTIME_DIR / "kelee-feed.json").write_text(
+        json.dumps({"source": args.list_url, "text": feed_text}, ensure_ascii=False) + "\n", encoding="utf-8",
+    )
+    old_sources = {entry["source"]: entry for entry in previous}
+    new_sources = {entry["source"]: entry for entry in combined}
+    (RUNTIME_DIR / "catalog-discovery.json").write_text(json.dumps({
+        "version": 1, "source": args.list_url,
+        "added": [entry for entry in combined if entry["source"] not in old_sources],
+        "removed": [entry for entry in previous if entry["source"] not in new_sources],
+        "updated": [entry for entry in combined if entry["source"] in old_sources and entry != old_sources[entry["source"]]],
+    }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     RUNTIME_SNAPSHOT.write_text(
         json.dumps(
             {

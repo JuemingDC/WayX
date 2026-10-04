@@ -12,7 +12,9 @@ on:
       - 'Rule/**'
       - 'README.md'
   workflow_dispatch:
-  # Scheduled upstream updates remain paused; manual dispatch is available.
+  schedule:
+    # 01:17 Asia/Shanghai; the schedule uses UTC.
+    - cron: '17 17 * * *'
 
 permissions:
   contents: write
@@ -28,9 +30,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
-      PUBLISH_BRANCH: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || (github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'test' && 'test' || '') }}
+      PUBLISH_BRANCH: ${{ github.event_name != 'pull_request' && github.ref_name || (github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'test' && 'test' || '') }}
       EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
-      MONITOR_ENABLED: ${{ github.event_name == 'workflow_dispatch' && github.ref_name == 'main' && 'true' || 'false' }}
     steps:
       - name: Checkout requested baseline
         uses: actions/checkout@v6
@@ -100,24 +101,15 @@ jobs:
           set -euo pipefail
           node .github/scripts/sync-convert.mjs 2>&1 | tee .github/monitor/.runtime/loon-sync.log
 
-      - name: Regenerate canonical outputs
-        id: canonical
+      - name: Verify complete generated repository
+        id: verify
         if: steps.loon_sync.outputs.publishable == 'true'
         continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
-          node .github/converter/tools/regenerate-canonical.mjs --write 2>&1 | tee .github/monitor/.runtime/canonical.log
-          node .github/converter/tools/update-readme.mjs --write
-
-      - name: Verify complete generated repository
-        id: verify
-        if: steps.canonical.outcome == 'success'
-        continue-on-error: true
-        shell: bash
-        run: |
-          set -euo pipefail
           {
+            node .github/converter/tools/regenerate-canonical.mjs
             node .github/converter/tests/catalog.mjs
             node .github/converter/tools/validate-conversion-policy.mjs --all
             node .github/converter/tools/update-readme.mjs
@@ -128,7 +120,7 @@ jobs:
 
       - name: Check monitored upstream specifications
         id: monitor
-        if: env.MONITOR_ENABLED == 'true' && steps.checkpoint.outcome == 'success'
+        if: env.PUBLISH_BRANCH != '' && steps.syntax.outcome == 'success'
         continue-on-error: true
         shell: bash
         env:
@@ -169,13 +161,13 @@ jobs:
         env:
           STAGES: ${{ toJSON(steps) }}
           SYNC_PUBLISHABLE: ${{ steps.loon_sync.outputs.publishable }}
-          MONITOR_ENABLED: ${{ env.MONITOR_ENABLED }}
+          MONITOR_ENABLED: ${{ env.PUBLISH_BRANCH != '' && 'true' || 'false' }}
           MONITOR_COMPLETE: ${{ steps.monitor.outputs.complete }}
         run: |
           python - <<'PY'
           import json, os, pathlib
           stages=json.loads(os.environ['STAGES'])
-          required=['syntax','catalog','checkpoint','loon_sync','canonical','verify','reports','issues']
+          required=['syntax','catalog','checkpoint','loon_sync','verify','reports','issues']
           if os.environ['MONITOR_ENABLED']=='true': required.append('monitor')
           failed=[name for name in required if stages.get(name,{}).get('outcome')!='success']
           if os.environ['SYNC_PUBLISHABLE']!='true': failed.append('sync integrity')
@@ -195,7 +187,7 @@ jobs:
           PUBLISHABLE: ${{ steps.gate.outputs.publishable }}
           PUBLISH_BRANCH: ${{ env.PUBLISH_BRANCH }}
           EXPECTED_HEAD: ${{ env.EXPECTED_HEAD }}
-          MONITOR_ENABLED: ${{ env.MONITOR_ENABLED }}
+          MONITOR_ENABLED: ${{ env.PUBLISH_BRANCH != '' && 'true' || 'false' }}
         run: |
           set -euo pipefail
           echo 'publication=blocked' >> "$GITHUB_OUTPUT"
@@ -240,9 +232,12 @@ jobs:
           sync=json.loads(failure.read_text()) if failure.exists() else {}
           monitor_file=runtime/'monitor-result.json'
           monitor=json.loads(monitor_file.read_text()) if monitor_file.exists() else {}
+          discovery_file=runtime/'catalog-discovery.json'
+          discovery=json.loads(discovery_file.read_text()) if discovery_file.exists() else {}
           lines=['# WayX Actions result','',f"Publication: {result['publication']}",'']
           for key in ['validatedPlugins','retainedPlugins','deferredPlugins']: lines.append(f"- {key}: {len(sync.get(key,[]))}")
           lines.append(f"- Monitor failures: {len(monitor.get('failures',[]))}")
+          for key in ['added','updated','removed']: lines.append(f"- Discovery {key}: {len(discovery.get(key,[]))}")
           lines += ['', 'Failed gates: '+', '.join(result.get('failedGates',[]))]
           with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as out: out.write('\n'.join(lines)+'\n')
           PY
