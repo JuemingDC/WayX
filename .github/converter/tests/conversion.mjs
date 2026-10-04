@@ -1824,3 +1824,21 @@ if(selectedCase==='conversion-policy.mjs') {
   }
   console.log('Dynamic option failure isolation passed: invalid timeout declaration rejected, adjacent valid debug Script retained in both targets');
 }
+
+if(selectedCase==='conversion-policy.mjs') {
+  const entry={id:'FixedScriptFields',source:'https://example.test/main.lpx',category:'Test'};
+  for(const field of ['path','tag','img_url']) {
+    const bad='response if ${url} ~= /api/ then script('+(field==='path'?'"https://example.test/${region}.js"':'"https://example.test/bad.js"')+')'+(field==='path'?'':' with '+field+'="${region}"');
+    const good='response if ${url} ~= /api/ then script("https://example.test/good.js") with tag="Good"';
+    const source='[Argument]\nregion=input,"CN"\n[Script]\n'+bad+'\n'+good;
+    assert.deepEqual(discoverSourceScriptUrls(source),['https://example.test/good.js']);
+    const out=convertPlugin(entry,source,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+    assert.match(out.qx,/(?:ISSUE|REVIEW) REQUIRED/);assert.match(out.surge,/(?:ISSUE|REVIEW) REQUIRED/);
+    assert.match(out.qx,/^[^#\n]*script-response-header https:\/\/example\.test\/good\.js$/m);
+    assert.match(out.surge,/^Good = type=http-response[^\n]*script-path=https:\/\/example\.test\/good\.js/m);
+    assert.doesNotMatch(out.qx,/^[^#\n]*script-response-header[^\n]*(?:bad\.js|\$\{region\})/m);
+    assert.equal(out.generatedScripts.size,0);
+    validateQX(out.qx,entry);validateSurgeModule(out.surge,entry);
+  }
+  console.log('Fixed-field isolation passed: invalid templates excluded from dependency discovery and live output; adjacent valid Script retained');
+}

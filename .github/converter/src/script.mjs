@@ -401,6 +401,17 @@ const OPTION_FIELDS = Object.freeze({
   binary_body_mode: ['boolean'],
 });
 
+// 上游错误 / 转换失败案例：String type alone does not prove a fixed
+// field. Preserve lexical template identity and decode escaped literals once.
+function fixedScriptString(node,label,{nonempty=false}={}) {
+  if(!node || !['string','raw-string'].includes(node.type))throw new Error(label+' must be a fixed string');
+  const parts=stringTemplateParts(node);
+  if(parts.some(([kind])=>kind==='v'))throw new Error(label+' does not accept variables or string templates');
+  const value=parts.map(([,text])=>text).join('');
+  if(nonempty && !value)throw new Error(label+' must be a fixed non-empty string');
+  return value;
+}
+
 function validateOptions(options, phase) {
   const seen = new Set();
   for (const option of options) {
@@ -409,6 +420,7 @@ function validateOptions(options, phase) {
     const allowed = OPTION_FIELDS[option.name];
     if (!allowed) throw new Error('unknown Script v2 option: ' + option.name);
     if (!allowed.includes(option.value.type)) throw new Error(option.name + ': invalid value type ' + option.value.type);
+    if (['tag','img_url'].includes(option.name)) option.value.value=fixedScriptString(option.value,option.name);
     if (option.name === 'timeout' && option.value.type === 'number' && (!Number.isFinite(option.value.value) || option.value.value <= 0)) {
       throw new Error('timeout must be a finite positive number');
     }
@@ -466,7 +478,8 @@ export function parseScriptV2(source) {
   if (callArgs.length < 1 || callArgs.length > 2) fail(raw, 'script(...) expects path and optional argument');
 
   const pathValue = parseValue(callArgs[0]);
-  if (!['string','raw-string'].includes(pathValue.type) || !pathValue.value) fail(raw, 'script path must be a fixed non-empty string');
+  try { pathValue.value=fixedScriptString(pathValue,'script path',{nonempty:true}); }
+  catch(error) { fail(raw,error.message); }
   const argument = callArgs[1] ? parseValue(callArgs[1]) : null;
   if (argument && !['string','raw-string','plugin-object'].includes(argument.type)) {
     fail(raw, 'script argument must be a String/raw String or plugin object');
@@ -526,7 +539,7 @@ export function scriptV2DynamicOptionRefs(ast) {
 
 export function scriptV2ToSource(ast) {
   if (!ast || ast.type !== 'script') throw new TypeError('Expected Script v2 AST');
-  const args = [JSON.stringify(ast.script.path)];
+  const args = [ast.script.pathNode ? valueToSource(ast.script.pathNode) : JSON.stringify(ast.script.path).replace(/\$\{/g,'\\${')];
   const argument = ast.script.argument;
   if (argument) {
     if (argument.type === 'plugin-object') args.push('{' + argument.items.map(valueToSource).join(', ') + '}');
