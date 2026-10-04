@@ -1419,7 +1419,7 @@ assert.equal(qxScriptV2NeedsReview.ok,true);
 assert.match(qxScriptV2NeedsReview.notes.join('\n'),/forced to enabled/);
 const surgeScriptV2NeedsReview = surgeScriptV2Plan(scriptV2ObjectArg, {scriptUrl:'request.js', name:'x'});
 assert.equal(surgeScriptV2NeedsReview.ok, false);
-assert.match(surgeScriptV2NeedsReview.reason, /dynamic enable|argument/);
+assert.match(surgeScriptV2NeedsReview.reason, /dynamic enable|argument/i);
 
 const fixedSurgeArgument = surgeScriptV2Plan(
   parseScriptV2('response if ${url} ~= /api/ then script("a.js", "plain-string") with requires_body=true'),

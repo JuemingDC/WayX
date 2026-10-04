@@ -1065,6 +1065,8 @@ export function qxScriptV2Plan(ast, {
   argumentTable = null,
 } = {}) {
   if (!ast || !['script','script-semantic-ir'].includes(ast.type)) return unsupported('expected Script v2 AST');
+  const bindings=dynamicScriptOptionBindings(ast,{argumentTable,target:'qx'});
+  if(!bindings.ok)return bindings;
 
   if (!['request','response'].includes(ast.phase)) {
     return qxNonHttpScriptV2Plan(ast,{scriptUrl,argumentTable});
@@ -1158,6 +1160,35 @@ function surgeTriggerParams(ast, argumentTable) {
   return unsupported('unsupported Script v2 phase for Surge: ' + ast.phase);
 }
 
+// 上游错误 / 转换失败案例：a declared parameter is not necessarily
+// valid for every Script option. Validate source bindings before lowering or
+// omitting a target field; never coerce the parameter's $argument type.
+function dynamicScriptOptionBindings(ast,{argumentTable,target}) {
+  for(const option of ast.options || []) {
+    const name=option.name==='enabled' ? 'enable' : option.name;
+    if(!['enable','debug','timeout'].includes(name))continue;
+    if(target==='qx' && name==='enable')continue; // Explicit user force-enable policy.
+    const value=option.value;
+    const id=value?.type==='variable' ? value.name :
+      typeof value==='string' ? value.match(/^\$?\{([A-Za-z_][\w-]*)\}$/)?.[1] : null;
+    if(!id)continue;
+    const entry=argumentTable?.byId?.get(id);
+    if(!entry)return unsupported('undeclared plugin [Argument] reference for '+name+': '+id);
+    const allowed=name==='timeout' ? ['number','string'] : ['boolean'];
+    if(!allowed.includes(entry.valueType))return unsupported('invalid plugin [Argument] type for '+name+': '+id+' ('+entry.valueType+')');
+    if(entry.hasDefault) {
+      const text=String(entry.defaultValue);
+      const valid=name==='timeout'
+        ? /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(text) && Number.isFinite(Number(text)) && Number(text)>0
+        : ['true','false'].includes(text);
+      if(!valid)return unsupported('invalid plugin [Argument] default for '+name+': '+id);
+    } else if(target==='surge') {
+      return unsupported('missing plugin [Argument] default for '+name+': '+id+'; dynamic option fallback has no verified Surge parameter transport');
+    }
+  }
+  return {ok:true};
+}
+
 // 上游错误 / 转换失败案例：omitting a source default used Surge's 5s
 // timeout. Source syntax matters: legacy HTTP=10s, v2 HTTP=20s, v2 tasks=300s.
 function sourceScriptDefaultTimeout({sourceSyntax='v2',phase}) {
@@ -1166,6 +1197,8 @@ function sourceScriptDefaultTimeout({sourceSyntax='v2',phase}) {
 
 export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 'script', argumentIds = null, argumentTable = null} = {}) {
   if (!ast || !['script','script-semantic-ir'].includes(ast.type)) return unsupported('expected Script v2 AST');
+  const bindings=dynamicScriptOptionBindings(ast,{argumentTable,target:'surge'});
+  if(!bindings.ok)return bindings;
   if (argumentIds !== null) {
     const usage = scriptV2PluginArgumentUsage(ast, argumentIds);
     const undeclared = [
@@ -1287,6 +1320,9 @@ export function planQxScript(ir,ctx={}) {
     return unsupported('unsupported Script source syntax: '+ir.sourceSyntax);
   }
 
+  const bindings=dynamicScriptOptionBindings(ir,{argumentTable:ctx.argumentTable,target:'qx'});
+  if(!bindings.ok)return bindings;
+
   const sc=legacyScriptIrDeclaration(ir);
   if (!sc?.script?.path) return unsupported('Legacy Script declaration is missing script-path');
 
@@ -1357,6 +1393,9 @@ export function planSurgeScript(ir,ctx={}) {
     return unsupported('unsupported Script source syntax: '+ir.sourceSyntax);
   }
 
+  const bindings=dynamicScriptOptionBindings(ir,{argumentTable:ctx.argumentTable,target:'surge'});
+  if(!bindings.ok)return bindings;
+
   const sc=legacyScriptIrDeclaration(ir);
   if (!sc?.script?.path) return unsupported('Legacy Script declaration is missing script-path');
 
@@ -1405,6 +1444,12 @@ export function planSurgeScript(ir,ctx={}) {
     } else {
       params.push('argument='+sc.argument);
     }
+  }
+
+  if(sc.debug) {
+    const ref=String(sc.debug).match(/^\$?\{([A-Za-z_][\w-]*)\}$/);
+    if(ref)params.push('debug='+surgeDynamicOptionValue(ref[1],ctx.argumentTable));
+    else if(/^(true|1)$/i.test(String(sc.debug)))params.push('debug=true');
   }
 
   return {

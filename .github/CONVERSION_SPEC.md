@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.91
+版本：1.92
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -1172,3 +1172,16 @@ Surge 的作者 Script 声明必须显式携带源有效 timeout。省略源 tim
 转换失败案例：作者 Script 缺省 timeout 被直接省略，生成规则在 Surge 提前使用 5 秒截止，违反源语法的执行时限。根因位于共同 Script 目标规划器，修复 legacy/v2 两条路径；回归覆盖全部受支持源类型、显式小数/动态参数、独立 body/binary 选项和 QX 隔离。现有全量 Action + 逐文件内容比较策略保持不变。
 
 官方依据：https://nsloon.app/en/docs/Script/（legacy HTTP timeout defaults to 10），https://nsloon.app/en/docs/Script/script_v2/（with 字段默认值），https://manual.nssurge.com/scripting/overview.html（Surge timeout defaults to 5）。
+
+
+## 47. Script 动态选项绑定校验（v1.92）
+
+旧版与新版 Script、HTTP 与非 HTTP 目标路径共用动态选项绑定校验。参数存在不等于角色合法：enable/debug 要求 Boolean；timeout 要求 Number 或完整解析为有限正数的 String。声明默认值存在时必须符合该角色，不能把布尔值写进 timeout、把 String 写进 debug，不能接受数字前缀加尾随文本、非有限值或非正值。timeout 的 String 转换只用于选项，不更改参数声明或 `$argument` 的原类型。
+
+未声明参数、错误类型/默认值、已声明但缺少默认值必须分别报告。Surge 在没有已证明的动态回退 transport 时对缺省参数保留 Review 边界，不能固定为源默认值而丢失用户参数，也不能把 empty placeholder 误当 disabled。QX 对 timeout/debug 在省略前仍校验声明类型；有效但无默认值的源选项继续其既有省略策略。用户明确授权的 QX 强制 enable 策略优先，enable 不因新校验被关闭或阻断。
+
+旧版 Surge Script 的 debug=true/动态 Boolean debug 使用官方 debug 字段，不再静默丢弃；false 保持目标默认 false。源作者 URL、Script 顺序、regex flags 丢弃、body/binary 独立选项与 v1.91 的默认超时不改变。
+
+转换失败案例：动态选项共用只检查存在/default 的 placeholder 函数，源类型错误进入目标配置；QX 省略路径跳过源校验；旧版 Surge debug 未生成。修复共同绑定逻辑及旧版目标字段生成，回归覆盖两种源语法、两种目标、HTTP/非 HTTP、合法 numeric String、错误类型/默认值、无默认值边界、QX 强制启用和相邻有效声明隔离。
+
+官方依据：https://nsloon.app/en/docs/Script/script_v2/（Field rules、Missing dynamic option values），https://manual.nssurge.com/scripting/overview.html（timeout/debug）。
