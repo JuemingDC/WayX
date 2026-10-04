@@ -35,8 +35,27 @@ function fingerprint(parts) {
   return crypto.createHash('sha256').update(parts.map(x=>String(x ?? '')).join('\0')).digest('hex').slice(0,16);
 }
 
-async function readJson(file,fallback) {
-  try { return JSON.parse(await fs.readFile(file,'utf8')); } catch { return fallback; }
+async function readFailureReport(file,kind) {
+  let report;
+  try { report=JSON.parse(await fs.readFile(file,'utf8')); }
+  catch (error) {
+    if(error?.code==='ENOENT') return {version:1,failures:[]};
+    throw new Error('Cannot read failure report '+file+': '+error.message,{cause:error});
+  }
+  const invalid=reason=>{throw new Error('Invalid failure report '+file+': '+reason);};
+  const object=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
+  const text=value=>typeof value==='string'&&value.trim().length>0;
+  if(!object(report)||!(kind==='sync'?[1,2]:[1]).includes(report.version)||!Array.isArray(report.failures)) invalid('expected supported version and failures array');
+  for(const [index,failure] of report.failures.entries()) {
+    const owner=failure?.[kind==='sync'?'plugin':'source'];
+    if(!object(failure)||!object(owner)||!text(owner.id)||!text(failure.stage)||!text(failure.reason)) invalid('invalid failures['+index+']');
+    if(kind==='monitor'&&(!text(failure.errorType)||typeof failure.rollbackSucceeded!=='boolean')) invalid('invalid monitor failure details at '+index);
+  }
+  for(const key of kind==='sync'?['publishable']:['complete']) {
+    if(key in report&&typeof report[key]!=='boolean') invalid(key+' must be boolean');
+  }
+  if(kind==='monitor'&&report.complete===true&&report.failures.length) invalid('complete report contains failures');
+  return report;
 }
 
 async function targetFiles() {
@@ -321,10 +340,10 @@ export async function collectIssueCandidates({root=ROOT,catalog=null,sourceOverr
   for(const problem of await newCatalogSemantics(catalog,{root,sourceOverrides})){
     if(!targetProblems.some(group=>group.plugin.id===problem.plugin.id&&group.source===problem.source))targetProblems.push(problem);
   }
-  const syncReport=includeSyncFailures?await readJson(path.join(root,'.github/monitor/.runtime/sync-failures.json'),{version:1,failures:[]}):{failures:[]};
-  const syncFailures=Array.isArray(syncReport.failures) ? syncReport.failures : [];
-  const monitorReport=includeSyncFailures?await readJson(path.join(root,'.github/monitor/.runtime/monitor-result.json'),{failures:[]}):{failures:[]};
-  const monitorFailures=Array.isArray(monitorReport.failures)?monitorReport.failures:[];
+  const syncReport=includeSyncFailures?await readFailureReport(path.join(root,'.github/monitor/.runtime/sync-failures.json'),'sync'):{failures:[]};
+  const syncFailures=syncReport.failures;
+  const monitorReport=includeSyncFailures?await readFailureReport(path.join(root,'.github/monitor/.runtime/monitor-result.json'),'monitor'):{failures:[]};
+  const monitorFailures=monitorReport.failures;
   return {targetProblems,syncFailures,monitorFailures};
 }
 

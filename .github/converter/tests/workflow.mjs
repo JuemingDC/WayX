@@ -392,6 +392,56 @@ if (selectedCase === "upstream-automation.mjs") {
     const dry=runIsolatedCase(process.execPath,[new URL('../../scripts/propose-conversion-issues.mjs',import.meta.url).pathname,'--dry-run'],{cwd:issueFixture,encoding:'utf8'});assert.equal(dry.status,0,dry.stderr);
     assert.ok((await fs.readFile(path.join(issueFixture,'.github/monitor/.runtime/conversion-issues.md'),'utf8')).includes('Hard sync failures: 1'));
     assert.ok((await fs.readFile(path.join(issueFixture,'.github/monitor/.runtime/conversion-issues.md'),'utf8')).includes('Upstream monitor failures: 1'));
+
+    const runtime=path.join(issueFixture,'.github/monitor/.runtime');
+    const summary=await fs.readFile(path.join(runtime,'conversion-issues.md'),'utf8');
+    const runIssues=()=>runIsolatedCase(process.execPath,[new URL('../../scripts/propose-conversion-issues.mjs',import.meta.url).pathname,'--dry-run'],{cwd:issueFixture,encoding:'utf8'});
+    for(const filename of ['sync-failures.json','monitor-result.json']) {
+      const file=path.join(runtime,filename), original=await fs.readFile(file,'utf8');
+      for(const bad of ['{invalid JSON','null','[]','{}',JSON.stringify({version:99,failures:[]}),JSON.stringify({version:1,failures:null}),JSON.stringify({version:1,failures:[{}]}),JSON.stringify({version:1,failures:[],complete:'true',publishable:'true'})]) {
+        await fs.writeFile(file,bad);
+        const failed=runIssues();
+        assert.notEqual(failed.status,0,'corrupt report must fail: '+filename+' '+bad);
+        assert.ok(failed.stderr.includes(filename),failed.stderr);
+        assert.equal(await fs.readFile(path.join(runtime,'conversion-issues.md'),'utf8'),summary,'failed collection must preserve the last valid summary');
+      }
+      await fs.rm(file);await fs.mkdir(file);
+      assert.notEqual(runIssues().status,0,'IO errors cannot become empty reports');
+      await fs.rm(file,{recursive:true});await fs.writeFile(file,original);
+    }
+    await fs.writeFile(path.join(runtime,'monitor-result.json'),JSON.stringify({version:1,complete:true,failures:[monitorFailure]}));
+    assert.notEqual(runIssues().status,0,'complete monitor cannot contain failures');
+    const preflight=runIsolatedCase(process.execPath,['--input-type=module','-e','import {collectIssueCandidates} from '+JSON.stringify(url)+'; await collectIssueCandidates({includeSyncFailures:false});'],{cwd:issueFixture,encoding:'utf8'});
+    assert.equal(preflight.status,0,preflight.stderr);
+    for(const version of [1,2]) {
+      await fs.writeFile(path.join(runtime,'sync-failures.json'),JSON.stringify({version,failures:[],publishable:true}));
+      await fs.writeFile(path.join(runtime,'monitor-result.json'),JSON.stringify({version:1,complete:true,failures:[]}));
+      assert.equal(runIssues().status,0,'valid report versions remain supported');
+    }
+    for(const file of ['sync-failures.json','monitor-result.json'])await fs.rm(path.join(runtime,file));
+    assert.equal(runIssues().status,0,'optional reports may be absent');
+
+    // Run the real report CLI in an isolated repository, with a decoy old path.
+    const baseline=path.join(issueFixture,'.github/converter/fixtures/review-inventory-baseline.json');
+    const validBaseline={version:1,review:{byPlatform:{qx:0,surge:0}}};
+    await fs.mkdir(path.join(issueFixture,'converter','fixtures'),{recursive:true});
+    await fs.writeFile(path.join(issueFixture,'converter','fixtures','review-inventory-baseline.json'),JSON.stringify({version:1,review:{byPlatform:{qx:99,surge:99}}}));
+    await fs.writeFile(path.join(issueFixture,'Resource/Loon/test.lpx'),'[Rule]\nDOMAIN,example.test,REJECT\n');
+    await fs.writeFile(path.join(issueFixture,'Adblock/Quantumult X/test.snippet'),'# [WayX] REVIEW REQUIRED: fixture\n');
+    await fs.mkdir(path.join(issueFixture,'Adblock/Surge'),{recursive:true});
+    await fs.writeFile(path.join(issueFixture,'Adblock/Surge/test.sgmodule'),'[Rule]\nDOMAIN,example.test,REJECT\n');
+    await fs.writeFile(baseline,JSON.stringify(validBaseline));
+    const runReports=()=>runIsolatedCase(process.execPath,[new URL('../tools/conversion-reports.mjs',import.meta.url).pathname],{cwd:issueFixture,encoding:'utf8'});
+    const reported=runReports();assert.equal(reported.status,0,reported.stderr);
+    assert.ok(reported.stdout.includes('qx Review count increased from 0 to 1'),'use migrated baseline, not decoy old path');
+    const reportFile=path.join(runtime,'review-inventory.json'), savedReport=await fs.readFile(reportFile,'utf8');
+    for(const bad of [null,'{invalid JSON','null','{}',JSON.stringify({version:1,review:{byPlatform:{qx:-1,surge:0}}}),JSON.stringify({version:1,review:{byPlatform:{qx:0}}})]) {
+      if(bad===null)await fs.rm(baseline);else await fs.writeFile(baseline,bad);
+      const failed=runReports();assert.notEqual(failed.status,0,'missing/invalid baseline must fail');
+      assert.ok(failed.stderr.includes('review-inventory-baseline.json'));
+      assert.equal(await fs.readFile(reportFile,'utf8'),savedReport,'invalid baseline must not replace reports');
+    }
+    console.log('Report reliability regressions passed');
   } finally {await fs.rm(issueFixture,{recursive:true,force:true});}
 
   const categoryCheck=runIsolatedCase('python',['-c',String.raw`

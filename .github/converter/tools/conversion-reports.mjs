@@ -10,7 +10,7 @@ import { qxTargetPath, surgeTargetPath } from "../src/workflow.mjs";
 const ROOT = process.cwd();
 const SOURCE_CATALOG = path.join(ROOT, '.github', 'sources', 'loon.json');
 const MANUAL_ASSETS = path.join(ROOT, '.github', 'manual-assets.json');
-const BASELINE = path.join(ROOT, 'converter', 'fixtures', 'review-inventory-baseline.json');
+const BASELINE = path.join(ROOT, '.github', 'converter', 'fixtures', 'review-inventory-baseline.json');
 
 function argValue(name, fallback) {
   const index = process.argv.indexOf(name);
@@ -210,6 +210,12 @@ function markdownReconciliation(report) {
   return lines.join('\n');
 }
 
+let baseline;
+try { baseline=JSON.parse(await fs.readFile(BASELINE,'utf8')); }
+catch(error) { throw new Error('Cannot read Review baseline '+BASELINE+': '+error.message,{cause:error}); }
+if(baseline?.version!==1||!['qx','surge'].every(platform=>Number.isSafeInteger(baseline?.review?.byPlatform?.[platform])&&baseline.review.byPlatform[platform]>=0)) {
+  throw new Error('Invalid Review baseline '+BASELINE+': expected version 1 and nonnegative integer platform counts');
+}
 await fs.mkdir(OUT_DIR,{recursive:true});
 const catalog=await loadLoonSourceCatalog(SOURCE_CATALOG);
 const manualConfig=await readJson(MANUAL_ASSETS,{version:1,assets:[]});
@@ -256,13 +262,10 @@ const reviewInventory={
   manualAssets:(manualConfig.assets||[]).map(asset=>({id:asset.id,qx:asset.qx,surge:asset.surge,mode:asset.mode})),
 };
 
-const baseline=await readJson(BASELINE,null);
-if(baseline?.review?.byPlatform){
-  for(const platform of ['qx','surge']){
-    const current=reviewInventory.review.byPlatform[platform]||0;
-    const prior=baseline.review.byPlatform[platform]||0;
-    if(current>prior) console.log('::warning title=Review inventory increased::'+platform+' Review count increased from '+prior+' to '+current);
-  }
+for(const platform of ['qx','surge']){
+  const current=reviewInventory.review.byPlatform[platform]||0;
+  const prior=baseline.review.byPlatform[platform];
+  if(current>prior) console.log('::warning title=Review inventory increased::'+platform+' Review count increased from '+prior+' to '+current);
 }
 
 const reconciliationJson=path.join(OUT_DIR,'conversion-reconciliation.json');
