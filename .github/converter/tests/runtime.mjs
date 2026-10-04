@@ -1042,3 +1042,60 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   }
   console.log('Body Rewrite author ownership passed: '+checked+' target hit/miss decisions, with conservative guard exclusions');
 }
+
+// 上游错误：compile-gated whitespace repair and actual native jq execution.
+if(selectedCase==='generated-helper-runtime.mjs') {
+  const fs=await import('node:fs/promises');
+  const {repairUpstreamJq}=await import('../src/rewrite.mjs');
+  const {convertPlugin,validateConvertedPlugin}=await import('../src/conversion.mjs');
+  const {materializeJqFiles,parseLoonPlugin}=await import('../src/input.mjs');
+  const fixtures=JSON.parse(await fs.readFile('.github/converter/fixtures/upstream-jq-errors.json','utf8'));
+  const entry={id:'UpstreamWhitespace',source:'https://example.test/source.lpx',category:'Test'};
+  const options={stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'};
+  let checked=0;
+  for(const fixture of fixtures) {
+    assert.equal(runIsolatedCase('jq',[fixture.original],{input:'',encoding:'utf8'}).status,3);
+    const repair=repairUpstreamJq(fixture.original);
+    assert.equal(repair.changed,true);assert.equal(repair.jq,fixture.corrected);
+    assert.equal(repairUpstreamJq(repair.jq).changed,false,'repair is idempotent');
+    for(const phase of ['request','response'])for(const syntax of ['v2','legacy','file','v2-path','legacy-path']) {
+      const line=syntax==='v2'?phase+' if ${url} ~= /api/ then '+phase+'.json.jq(`'+fixture.original+'`)':
+        syntax==='legacy'?'api '+phase+'-body-json-jq '+fixture.original:
+        syntax==='file'?phase+' if ${url} ~= /api/ then '+phase+'.json.jq_file("filter.jq")':
+        syntax==='v2-path'?phase+' if ${url} ~= /api/ then '+phase+'.json.jq("jq-path=filter.jq")':
+        'api '+phase+'-body-json-jq jq-path=filter.jq';
+      const source='[Rewrite]\n'+line;
+      const jqFiles=await materializeJqFiles(entry,parseLoonPlugin(source),{fetchText:async()=>fixture.original});
+      const out=convertPlugin(entry,source,{...options,jqFiles});validateConvertedPlugin(entry,out);
+      assert.equal(out.generatedScripts.size,0);
+      for(const target of ['qx','surge']) {
+        assert.match(out[target],/UPSTREAM ERROR CORRECTED/);
+        assert.ok(out[target].includes('# Original upstream jq: '+fixture.original));
+        const declaration=out[target].split('\n').find(text=>text.startsWith(target==='qx'?'api url jsonjq-'+phase+'-body':'http-'+phase+'-jq api '));
+        assert.ok(declaration,syntax+' '+target);
+        const program=declaration.match(/'(.+)'$/)[1];
+        assert.equal(runIsolatedCase('jq',[program],{input:'',encoding:'utf8'}).status,0);
+        for(const test of fixture.cases) {
+          const result=runIsolatedCase('jq',['-c',program],{input:JSON.stringify(test.input),encoding:'utf8'});
+          assert.equal(result.status,0,result.stderr);assert.deepEqual(JSON.parse(result.stdout),test.expected);checked++;
+        }
+      }
+    }
+  }
+  for(const program of ['.end','if . then 1 else .end end','"else .end;"','# else .end;\n.','if . then 1 else .end; broken','"if . then 1 else .end;" | .']) {
+    const result=repairUpstreamJq(program);assert.equal(result.changed,false,program);assert.equal(result.jq,program);
+  }
+  const unicode='"😀\\\"# else .end;" as $text | if . then $text else .end';
+  const repaired=repairUpstreamJq(unicode);assert.equal(repaired.changed,true);assert.equal(repaired.jq,unicode.replace(/else \.end$/,'else . end'));
+  const raw=await fs.readFile('Resource/Loon/KuGou_remove_ads.lpx','utf8');
+  const actual=convertPlugin({...entry,id:'Kelee_KuGou_remove_ads'},raw,options);validateConvertedPlugin(entry,actual);
+  for(const target of ['qx','surge']) {
+    assert.match(actual[target],/UPSTREAM ERROR CORRECTED/);
+    for(const line of actual[target].split('\n').filter(l=>!l.startsWith('#') && /(?:jsonjq-|^http-(?:request|response)-jq )/.test(l))) {
+      const program=line.match(/'(.+)'$/)?.[1];assert.ok(program,line);
+      const result=runIsolatedCase('jq',[program],{input:'',encoding:'utf8'});assert.equal(result.status,0,result.stderr);
+    }
+  }
+  assert.equal(await fs.readFile('Resource/Loon/KuGou_remove_ads.lpx','utf8'),raw,'original source remains recorded');
+  console.log('Upstream jq errors passed: '+checked+' actual native executions across five source forms and both targets, plus non-repair guards and real KuGou');
+}
