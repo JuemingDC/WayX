@@ -249,6 +249,8 @@ console.log('Workflow lifecycle/result boundary contract passed');
 }
 
 if (selectedCase === "upstream-automation.mjs") {
+  const scopedWorkflow=await fs.readFile('.github/workflows/converter-check.yml','utf8');
+  assert.ok(scopedWorkflow.indexOf('Refresh Kelee ad-block and dependency catalog')<scopedWorkflow.indexOf('Converter checkpoint'),'catalog refresh must precede category-sensitive golden checks');
   const categoryCheck=runIsolatedCase('python',['-c',String.raw`
 import importlib.util
 s=importlib.util.spec_from_file_location('kelee','.github/converter/tools/refresh-kelee-catalog.py')
