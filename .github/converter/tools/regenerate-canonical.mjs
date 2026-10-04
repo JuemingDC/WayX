@@ -28,14 +28,14 @@ const mode = process.argv.includes('--write') ? 'write' : 'check';
 
 
 const manifest = await loadLoonSourceCatalog(MANIFEST);
-// Actions has already converted only changed/new entries. Restrict the canonical
-// check to that run's successful conversions; standalone use keeps the full audit.
+// Every Action converts the complete catalog. Recheck all successful entries;
+// isolated failures retain their prior baselines and Issue diagnostics.
 let selectedIds=null;
-if(process.argv.includes('--synced-only')) {
+if(process.argv.includes('--successful-only')) {
   const report=JSON.parse(await fs.readFile(path.join(ROOT,'.github/monitor/.runtime/sync-failures.json'),'utf8'));
-  if(report.publishable!==true || !Array.isArray(report.convertedPlugins))throw new Error('Missing successful incremental sync report');
+  if(report.publishable!==true || !Array.isArray(report.convertedPlugins))throw new Error('Missing successful full conversion report');
   selectedIds=new Set(report.convertedPlugins);
-  if([...selectedIds].some(id=>!manifest.some(entry=>entry.id===id)))throw new Error('Unknown plugin in incremental sync report');
+  if([...selectedIds].some(id=>!manifest.some(entry=>entry.id===id)))throw new Error('Unknown plugin in full conversion report');
 }
 const staleEntries = [];
 const failures = createWorkflowFailureReporter({

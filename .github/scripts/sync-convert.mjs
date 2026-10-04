@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadLoonSourceCatalog, fetchOriginalText } from '../converter/src/input.mjs';
 import { materializeConversionRunContext, convertPluginWithContext, validateConvertedPlugin } from '../converter/src/conversion.mjs';
-import { createWorkflowFailureReporter, writeReadmePlan, conversionStampFromText, normalizeManagedSource, nowConversionStamp, inspectManagedSource, managedTargetDiffs, readCatalogSource, readManagedTargetState, commitManagedConversion, buildSyncFailure, writeSyncFailureReport } from '../converter/src/workflow.mjs';
+import { createWorkflowFailureReporter, writeReadmePlan, normalizeManagedSource, nowConversionStamp, inspectManagedSource, readCatalogSource, readManagedTargetState, commitManagedConversion, buildSyncFailure, writeSyncFailureReport } from '../converter/src/workflow.mjs';
 import { collectIssueCandidates } from './propose-conversion-issues.mjs';
 
 const ROOT=process.cwd();
@@ -19,7 +19,7 @@ export function isLoonPluginSource(text) {
 export async function syncCatalogEntry(entry,{
   root=ROOT,fetchText=fetchOriginalText,materialize=materializeConversionRunContext,
   convert=convertPluginWithContext,validate=validateConvertedPlugin,commit=commitManagedConversion,
-  log=console.log,forceConvert=false,
+  log=console.log,
 }={}) {
   let stage='read-current-source',previousSource=null,source=null,targetState=null;
   const onStage=value=>{stage=value;};
@@ -32,12 +32,8 @@ export async function syncCatalogEntry(entry,{
     stage='inspect-source-change';const sourceState=await inspectManagedSource(root,entry,source);
     const changed=sourceState.changed;
     log(`${changed?'changed':'unchanged'} upstream source via ${entry.source}; sha256=${sourceState.digest}`);
-    // Compare before semantic analysis or dependency materialization. An unchanged
-    // plugin with published targets needs no conversion or timestamp update.
-    if(!forceConvert && !changed && targetState.qx && targetState.surge) {
-      log('skipped: upstream content unchanged');
-      return {id:entry.id,changed:false,skipped:true,helperChanges:[],targetChanges:[]};
-    }
+    // Every Action compiles every entry, including unchanged upstream text:
+    // Generator, specification and remote dependency changes affect output too.
     stage='review-source-semantics';
     const semantic=await collectIssueCandidates({root,catalog:[entry],sourceOverrides:new Map([[entry.id,source]]),includeTargets:false,includeSyncFailures:false});
     if(semantic.targetProblems.length) {
@@ -45,16 +41,7 @@ export async function syncCatalogEntry(entry,{
       throw new Error('Unreviewed source semantics: '+semantic.targetProblems.flatMap(problem=>problem.reasons).join('; '));
     }
     const context=await materialize(entry,source,{onStage});
-    const oldQx=targetState.qx,oldSg=targetState.surge;
-    const oldStamp=conversionStampFromText(oldQx);
-    let stamp=forceConvert||changed||!oldStamp?nowConversionStamp():oldStamp;
-    let out=convert(entry,source,context,{stamp,rawBase:RAW_BASE,onStage});
-    const existingTargetDrift=managedTargetDiffs(targetState,out).some(target =>
-      target === 'qx' ? Boolean(oldQx) : Boolean(oldSg)
-    );
-    if(!changed&&oldStamp&&existingTargetDrift) {
-      stamp=nowConversionStamp();out=convert(entry,source,context,{stamp,rawBase:RAW_BASE,onStage});
-    }
+    const out=convert(entry,source,context,{stamp:nowConversionStamp(),rawBase:RAW_BASE,onStage});
     validate(entry,out,{onStage});
     stage='review-target-mapping';
     if(/^# \[WayX\].*(?:REVIEW REQUIRED|ISSUE REQUIRED)/m.test(out.qx+'\n'+out.surge)) {
@@ -65,7 +52,7 @@ export async function syncCatalogEntry(entry,{
     log(targetChanges.length || helperChanges.length || changed
       ?`synced -> ${entry.file}; ${targetState.qxRelativePath}; ${targetState.surgeRelativePath}`
       :'conversion verified: source and outputs unchanged');
-    return {id:entry.id,changed,skipped:false,helperChanges,targetChanges};
+    return {id:entry.id,changed,helperChanges,targetChanges};
   }catch(error) {
     error.syncFailure=buildSyncFailure({entry,stage,error,previousSource,fetchedSource:source});
     if(declarations?.length)error.syncFailure.declarations=declarations;
@@ -97,21 +84,16 @@ async function deferCatalogEntries(root,manifest,deferredPlugins) {
 
 export async function runCatalogSync({root=ROOT,entryOptions={},log=console.log,writeError=console.error,warn=console.warn}={}) {
   const manifest=await loadLoonSourceCatalog(path.join(root,'.github/sources/loon.json'));
-  // Explicit maintenance requests override the daily content-change shortcut.
-  const requestPath=path.join(root,'.github/sources/reconvert.json');
-  let request={all:false,ids:[]};
-  try {request=JSON.parse(await fs.readFile(requestPath,'utf8'));}catch(error){if(error.code!=='ENOENT')throw error;}
-  if(typeof request.all!=='boolean' || !Array.isArray(request.ids) || request.ids.some(id=>typeof id!=='string'))throw new Error('Invalid reconversion request');
-  const requested=new Set(request.all?manifest.map(e=>e.id):request.ids);
   const failures=createWorkflowFailureReporter({summaryLabel:'Isolated sync failures',writeError});
-  const structuredFailures=[],validatedPlugins=[],convertedPlugins=[],skippedPlugins=[],retainedPlugins=[],deferredPlugins=[];
+  const structuredFailures=[],validatedPlugins=[],convertedPlugins=[],updatedPlugins=[],unchangedPlugins=[],retainedPlugins=[],deferredPlugins=[];
   let publishable=true;
   for (const entry of manifest) {
     log(`\n== ${entry.id} ==`);
     try {
-      const result=await syncCatalogEntry(entry,{...entryOptions,root,log,forceConvert:entryOptions.forceConvert||requested.has(entry.id)});
+      const result=await syncCatalogEntry(entry,{...entryOptions,root,log});
       validatedPlugins.push(entry.id);
-      (result.skipped?skippedPlugins:convertedPlugins).push(entry.id);
+      convertedPlugins.push(entry.id);
+      (result.targetChanges.length || result.helperChanges.length ? updatedPlugins : unchangedPlugins).push(entry.id);
     }
     catch(error) {
       failures.capture(entry,error);structuredFailures.push(error.syncFailure||buildSyncFailure({entry,stage:'sync',error}));
@@ -123,11 +105,10 @@ export async function runCatalogSync({root=ROOT,entryOptions={},log=console.log,
   try {
     if(publishable) {
       await deferCatalogEntries(root,manifest,deferredPlugins);
-      if(request.all || request.ids.length)await fs.writeFile(requestPath,JSON.stringify({...request,all:false,ids:[...requested].filter(id=>!convertedPlugins.includes(id))},null,2)+'\n');
     }
     await writeReadmePlan(root);
   }catch(error){publishable=false;writeError('Catalog/README publication preparation failed: '+String(error.stack||error));}
-  const summary={publishable,validatedPlugins,convertedPlugins,skippedPlugins,retainedPlugins,deferredPlugins};
+  const summary={publishable,validatedPlugins,convertedPlugins,updatedPlugins,unchangedPlugins,retainedPlugins,deferredPlugins};
   await writeSyncFailureReport(root,structuredFailures,{summary});
   failures.report();
   if(structuredFailures.length)warn(`::warning::${structuredFailures.length} plugin(s) failed; structured failures are available for automatic Issues.`);
