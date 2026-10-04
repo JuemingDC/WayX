@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 import fs from "node:fs/promises";
 import { isScriptV2, parseScriptV2 } from "./script.mjs";
-import { minifyJqFile, isRewriteV2, parseRewriteV2, validateRewriteV2Ast, legacyRewriteToSemanticIr, dependencySpecFromAction, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr } from "./rewrite.mjs";
+import { minifyJqFile, isRewriteV2, parseRewriteV2, validateRewriteV2Ast, legacyRewriteToSemanticIr, dependencySpecFromAction, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr, isTextRequestMockAction } from "./rewrite.mjs";
 
 
 
@@ -428,33 +428,37 @@ export async function materializeMockFiles(entry,parsed,{
     try {
       const ast=parseRewriteV2(item.line);
       validateRewriteV2Ast(ast);
-      const mockFileActions=ast.actions.filter(action=>/^(?:request|response)\.body\.mock_file$/.test(action.name));
-      if (mockFileActions.length!==1) continue;
-
-      const plan=dependencySpecFromAction(mockFileActions[0],{pluginSourceUrl:entry.source});
-      if (plan.base64) {
-        const text=await fetchText(plan.url);
-        const compact=String(text).replace(/\s+/g,'');
-        if (!/^[A-Za-z0-9+/]*={0,2}$/.test(compact) || compact.length%4===1) {
-          throw new Error('invalid Base64 mock_file content');
+      const files=ast.actions.map((action,index)=>({action,index})).filter(({action})=>/^(?:request|response)\.body\.mock_file$/.test(action.name));
+      if(!files.length)continue;
+      // Keep the historical single-file shape; only verified text request
+      // pipelines gain an action-indexed dependency collection.
+      if(files.length>1 && (ast.phase!=='request' || !files.every(({action})=>isTextRequestMockAction(action))))continue;
+      const cache=new Map();
+      const text=url=>{
+        if(files.length===1)return fetchText(url);
+        if(!cache.has(url))cache.set(url,Promise.resolve().then(()=>fetchText(url)));
+        return cache.get(url);
+      };
+      const read=async action=>{
+        const plan=dependencySpecFromAction(action,{pluginSourceUrl:entry.source});
+        if(plan.base64){
+          const body=await text(plan.url);
+          const compact=String(body).replace(/\s+/g,'');
+          if(!/^[A-Za-z0-9+/]*={0,2}$/.test(compact) || compact.length%4===1)throw new Error('invalid Base64 mock_file content');
+          return {bodyBase64:Buffer.from(compact,'base64').toString('base64'),sourceFile:plan.url};
         }
-        out.set(item.line,{
-          bodyBase64:Buffer.from(compact,'base64').toString('base64'),
-          sourceFile:plan.url,
-        });
-      } else if (plan.binary) {
-        const bytes=await fetchBytes(plan.url);
-        out.set(item.line,{
-          bodyBase64:Buffer.from(bytes).toString('base64'),
-          sourceFile:plan.url,
-        });
-      } else {
-        const text=await fetchText(plan.url);
-        out.set(item.line,{
-          bodyText:text,
-          sourceFile:plan.url,
-        });
+        if(plan.binary)return {bodyBase64:Buffer.from(await fetchBytes(plan.url)).toString('base64'),sourceFile:plan.url};
+        return {bodyText:await text(plan.url),sourceFile:plan.url};
+      };
+      if(files.length===1){out.set(item.line,await read(files[0].action));continue;}
+      const byAction={};
+      const failures=[];
+      for(const {action,index} of files)try{byAction[index]=await read(action);}catch(error){
+        const reason=String(error?.message || error).split('\n')[0];
+        let sourceFile;try{sourceFile=dependencySpecFromAction(action,{pluginSourceUrl:entry.source})?.url;}catch{}
+        byAction[index]={error:reason,...(sourceFile?{sourceFile}:{})};failures.push('action '+index+': '+reason);
       }
+      out.set(item.line,{byAction,...(failures.length?{error:'mock_file dependency failure: '+failures.join('; ')}:{})});
     } catch (error) {
       out.set(item.line,{error:String(error?.message || error).split('\n')[0]});
     }

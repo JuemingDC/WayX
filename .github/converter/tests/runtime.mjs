@@ -289,9 +289,13 @@ if(selectedCase==='generated-helper-runtime.mjs') {
     vm.runInNewContext(script+'\nif(Object.prototype.hasOwnProperty.call(Object.prototype,"safe"))throw new Error("JSON prototype mutation");',{$request:{url:'https://example.test/',method:'GET',headers:{},body:'',...structuredClone(request)},$response:{status:200,statusCode:200,headers:{},body:'',...structuredClone(response)},$argument:argument,$done(value){calls++;result=value;}},{timeout:1000});
     assert.equal(calls,1);return JSON.parse(JSON.stringify(result));
   };
+  const fixtureMockFiles=item=>{
+    const data=Object.hasOwn(item,'mockByAction')?{byAction:structuredClone(item.mockByAction)}:Object.hasOwn(item,'mockText')?{bodyText:item.mockText,sourceFile:'https://example.test/body.txt'}:null;
+    return data?new Map([[item.source,data]]):new Map();
+  };
   let checked=0;
   for(const item of fixture.cases) {
-    const mockFiles=Object.hasOwn(item,'mockText')?new Map([[item.source,{bodyText:item.mockText,sourceFile:'https://example.test/body.txt'}]]):new Map();
+    const mockFiles=fixtureMockFiles(item);
     const output=convertPlugin({id:'FeatureCollection',source:'https://example.test/source.lpx',category:'Test'},'[Rewrite]\n'+item.source,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main',mockFiles});
     validateConvertedPlugin({id:'FeatureCollection'},output);
     for(const target of item.targets) {
@@ -307,7 +311,7 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   for(const item of fixture.cases.slice(18)) {
     const ast=parseRewriteV2(item.source);
     const context={url:item.request?.url||'https://example.test/',request:{method:'GET',headers:{},body:'',...structuredClone(item.request)},response:{status:200,headers:{},body:'',...structuredClone(item.response)}};
-    const oracle=evaluateRewriteActions(ast,context,{parsePath:parseJsonKeyPath,mockFiles:Object.hasOwn(item,'mockText')?new Map([[item.source,{bodyText:item.mockText}]]):new Map()});
+    const oracle=evaluateRewriteActions(ast,context,{parsePath:parseJsonKeyPath,mockFiles:fixtureMockFiles(item)});
     for(const [field,expected] of Object.entries(item.expected))assert.deepEqual(oracle.state[ast.phase][field],expected,item.id+' independent source oracle');
   }
   const profile=classifyComplexRewrite(parseRewriteV2(fixture.cases.find(c=>c.id==='paired-body-batch').source));
@@ -411,5 +415,62 @@ if(selectedCase==='generated-helper-runtime.mjs') {
     assert.ok(text.includes('https://example.test/original.js'));
     assert.doesNotMatch([...authorMockOutput.generatedScripts.keys()].join('\n'),/phase_/);
   }
+  // Multiple files in one declaration use absolute action indexes, while
+  // repeated relative URLs resolve to one fetch and immutable body snapshots.
+  const multiLine='request if ${url} ~= /example/i then request.header.set("X-Before","yes") | request.body.mock_file("json","same.json") | request.json.add("discard",true) | request.body.mock_file("json","./same.json") | request.json.add("keep",true)';
+  const laterLine='request if ${request.header["X-Before"]} == "yes" then request.json.add("later",true)';
+  const multiSource='[Rewrite]\n'+multiLine+'\n'+laterLine;
+  const multiFetch=[];
+  const multiContext=await materializeConversionContext(mockEntry,multiSource,{fetchText:async url=>{multiFetch.push(url);return '{"original":1}';}});
+  assert.deepEqual(multiFetch,['https://example.test/plugin/same.json']);
+  assert.deepEqual(multiContext.mockFiles.get(multiLine),{byAction:{1:{bodyText:'{"original":1}',sourceFile:multiFetch[0]},3:{bodyText:'{"original":1}',sourceFile:multiFetch[0]}}});
+  const multiOutput=convertPlugin(mockEntry,multiSource,{...multiContext,stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+  validateConvertedPlugin(mockEntry,multiOutput);
+  for(const target of ['qx','surge']) {
+    const scripts=[...multiOutput.generatedScripts].filter(([name])=>name.startsWith('phase_'+target+'_request_'));
+    assert.equal(scripts.length,1);assert.doesNotMatch(target==='qx'?multiOutput.qx:multiOutput.surge,/REVIEW REQUIRED/);
+    assert.deepEqual(run(scripts[0][1]),{headers:{'X-Before':'yes','Content-Type':'application/json'},body:'{"original":1,"keep":true,"later":true}'});
+    assert.deepEqual(run(scripts[0][1],{request:{url:'https://none.test/',body:'old'}}),{});
+  }
+  const {materializeMockFiles,parseLoonPlugin}=await import('../src/input.mjs');
+  const escapedPathLine='request if ${url} ~= /example/i then request.body.mock_file("text",`file${literal}.txt`) | request.body.mock_file("text","file\\${literal}.txt")';
+  const literalFetch=[];
+  const literalFiles=await materializeMockFiles(mockEntry,parseLoonPlugin('[Rewrite]\n'+escapedPathLine),{fetchText:async url=>{literalFetch.push(url);return 'literal';}});
+  assert.deepEqual(literalFetch,['https://example.test/plugin/file$%7Bliteral%7D.txt']);
+  assert.equal(literalFiles.get(escapedPathLine).byAction[1].bodyText,'literal');
+  for(const target of ['qx','surge']) {
+    const converted=convertPlugin(mockEntry,'[Rewrite]\n'+escapedPathLine,{mockFiles:literalFiles,stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+    assert.doesNotMatch(target==='qx'?converted.qx:converted.surge,/REVIEW REQUIRED/);
+    const script=[...converted.generatedScripts].find(([name])=>name.startsWith('features_'+target+'_'))[1];
+    assert.deepEqual(run(script),{headers:{'Content-Type':'text/plain; charset=utf-8'},body:'literal'});
+  }
+  const failLine='request if ${url} ~= /example/i then request.body.mock_file("text","missing.txt") | request.header.set("X-Mid","yes") | request.body.mock_file("text","./missing.txt") | request.body.mock_file("text","last.txt")';
+  const failureFetch=[];
+  const failedFiles=await materializeMockFiles(mockEntry,parseLoonPlugin('[Rewrite]\n'+failLine),{fetchText:async url=>{failureFetch.push(url);if(url.endsWith('/missing.txt'))throw Error('source unavailable');return 'last';}});
+  assert.deepEqual(failureFetch,['https://example.test/plugin/missing.txt','https://example.test/plugin/last.txt']);
+  const failed=failedFiles.get(failLine);
+  assert.match(failed.error,/action 0: source unavailable; action 2: source unavailable/);
+  assert.equal(failed.byAction[3].bodyText,'last');
+  assert.equal(failed.byAction[0].sourceFile,'https://example.test/plugin/missing.txt');
+  assert.equal(failed.byAction[2].sourceFile,'https://example.test/plugin/missing.txt');
+  for(const target of ['qx','surge']) {
+    const output=convertPlugin(mockEntry,'[Rewrite]\n'+failLine,{mockFiles:failedFiles,stamp:'2026-10-04'});
+    assert.match(target==='qx'?output.qx:output.surge,/REVIEW REQUIRED/);
+    assert.equal([...output.generatedScripts].filter(([name])=>name.includes(target)).length,0);
+    // A legacy object cannot accidentally provide both file bodies.
+    const oldData=convertPlugin(mockEntry,'[Rewrite]\n'+multiLine,{mockFiles:new Map([[multiLine,{bodyText:'{}'}]]),stamp:'2026-10-04'});
+    assert.match(target==='qx'?oldData.qx:oldData.surge,/REVIEW REQUIRED/);
+  }
+  const dynamicLine='request if ${url} ~= /example/i then request.body.mock_file("text","${request.method}.txt")';
+  const dynamicFiles=await materializeMockFiles(mockEntry,parseLoonPlugin('[Rewrite]\n'+dynamicLine),{fetchText:async()=>{throw Error('dynamic file must not be fetched');}});
+  assert.match(dynamicFiles.get(dynamicLine).error,/dynamic file dependency paths are not materialized/);
+  const {dependencySpecFromAction}=await import('../src/rewrite.mjs');
+  assert.throws(()=>dependencySpecFromAction(parseRewriteV2('response if ${url} ~= /x/ then response.json.jq_file("${request.method}.jq")').actions[0],{pluginSourceUrl:mockEntry.source}),/dynamic file dependency/);
+  let unsupportedFetches=0;
+  for(const line of ['response if ${url} ~= /example/ then response.body.mock_file("text","one",200) | response.body.mock_file("text","two",200)','request if ${url} ~= /example/ then request.body.mock_file("png","one",true) | request.body.mock_file("png","two",true)']) {
+    const files=await materializeMockFiles(mockEntry,parseLoonPlugin('[Rewrite]\n'+line),{fetchText:async()=>{unsupportedFetches++;return '';},fetchBytes:async()=>{unsupportedFetches++;return new Uint8Array();}});
+    assert.equal(files.size,0);
+  }
+  assert.equal(unsupportedFetches,0);
   console.log('Loon feature collection passed: '+checked+' independent expected-output cases, plus phase/body/duplicate/argument contracts');
 }
