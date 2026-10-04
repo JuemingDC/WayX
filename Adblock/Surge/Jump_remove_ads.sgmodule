@@ -1,6 +1,7 @@
 #!name=Jump去广告
 #!desc=移除Jump开屏广告
 #!category=WayX
+#!requirement=CORE_VERSION>=20
 
 # Open URL: https://apps.apple.com/app/id1529434108
 # Author: MoonYuki[https://github.com/MoonYuki]
@@ -9,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Jump.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 09:34:14 +08:00
+# Converted: 2026-10-03 17:44:38 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Jump_remove_ads.lpx
 # Target: Surge
@@ -23,8 +24,9 @@ DOMAIN,images.pinduoduo.com,REJECT
 DOMAIN,qh-material.taobao.com,REJECT
 DOMAIN-SUFFIX,admobile.top,REJECT
 
-[Script]
-wayx_phase_response_ccaaeecd19 = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Jump_remove_ads/phase_surge_response_ccaaeecd19.js,requires-body=true,max-size=-1
+[Body Rewrite]
+http-response-jq ^https:?\/\/switch.jumpvg.com\/jump\/getlaunchad\/v2$ 'del(.data.adList)|.data.launchAd.showType=0'
+http-response-jq ^https:?\/\/switch.jumpvg.com\/jump\/recommend\/ad_conf$ '.data=[]'
 
 [MITM]
 hostname = %APPEND% switch.jumpvg.com

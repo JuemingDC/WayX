@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.68
+版本：1.69
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -960,3 +960,12 @@ JQ 赋值将缺失或 null 父字段创建为对象，并覆写最终字段；�
 验证以独立 jq 程序为预期输出，覆盖对象/null/缺失/标量/数组、字段转义、quoted bracket、原型名称和动作内回滚；完整 conversion 检查 inline/file 与 Header/Body/JSON/请求 mock 的阶段顺序。已有完整目录、validator/canonical、source URL 和 CI 门禁继续执行。数字精度、压缩/编码/缓冲等既有客户端边界不因路径扩大而消失；定时活动继续暂停，QX 强制 enable 及 main/test 分支预算不变。
 
 注释掉的 Rewrite 不因新 JQ 子集而迁移为宽 matcher helper；其可表示的 native 注释仍走兼容规划，保持关闭并避免为注释新增无用的 JQ helper。完整目录验收允许仅已证明的新嵌套子集产生预期 helper 更新，逐项记录而不声称输出始终不变。
+
+
+## 32. 用户指定的原生优先策略（v1.69）
+
+目标软件支持的原生表达优先于生成脚本。单条固定 inline/file JQ（包括表达式内部的 pipe）优先保留原 URL matcher，并映射到 QX jsonjq-request/response-body 或 Surge http-request/response-jq；不得因 JQ 可被 JavaScript 编译、嵌套字段、Regex flags 或同阶段其它规则而自动迁移为 Script。原生 matcher 无法表达的纯 JQ 声明按既有 Review/注释规范处理，不以宽 matcher 脚本绕过。原 flags 的 native 兼容限制仍须如实保留，不宣称本策略证明 flags 等价。
+
+纯多 JQ action 在已证明固定单输出子集内可合成原生 JQ：每个 action 使用独立输入变量及 try/catch，使该 action 失败时返回其动作开始前的输入，再执行后续 action；任意多输出 JQ 不猜测合成。独立原生 JQ 不得被其它 helper 的 phase dispatcher 吸收。只有原生无法承载的多类型动作组合（例如 json.jq 后 header.set/add、Body/mocks 等）才考虑共同 Script；此类 helper 保留原单 URL regex，阶段合并仅限所有成员具有相同 URL regex，不能将多个独立 URL 规则无条件扩为 `^`。其它组合仍保留原生/compatibility/Review 边界。
+
+Mock 同样原生优先：Surge 可原生表达的 Map Local、QX echo-response 的原生文件能力仅在本地资源契约可满足时适用，不把远程 URL 假装成本地文件。目标缺少相应原生能力的 inline/mock/组合允许必要的 Script fallback，不因原生优先而删除有效功能。原作者脚本、QX 强制 enable、关闭注释及暂停的定时活动不变。§31 中 Jump 的两条规则迁移为 dispatcher 的决策撤销：恢复原 native JQ 规则及对应 matcher/Surge requirement，并删除新增的两份阶段 helper；嵌套 JQ 编译器仅保留供真正必要的组合使用。此节优先于 §§24–31 中与该用户策略冲突的自动 phase 迁移选择。
