@@ -1042,6 +1042,18 @@ function nativeJqPriorityPlan(ast,target) {
   }catch(error){return unsupported(String(error?.message || error));}
 }
 
+function nativeJsonPriorityPlan(ast,target) {
+  if(ast.actions.length<2 || !ast.actions.every(action=>new RegExp('^'+ast.phase+'\\.json\\.(?:add|delete|replace)$').test(action.name)))return null;
+  // New priority is restricted to the existing plain URL matcher contract.
+  if(ast.condition?.right?.flags)return null;
+  const matcher=simpleUrlRewriteCondition(ast);
+  if(!matcher.ok)return null;
+  const mapped=jsonPipelineToSafeNativeJq(ast);
+  if(!mapped.ok)return null;
+  return target==='qx' ? {section:'rewrite',line:matcher.pattern+' url jsonjq-'+ast.phase+'-body '+quoteJq(mapped.jq)} :
+    {section:'body',line:'http-'+ast.phase+'-jq '+matcher.pattern+' '+quoteJq(mapped.jq)};
+}
+
 function planRewriteFeatureHelper(ast,target,ctx) {
   if(!rewriteFeatureProfile(ast).mutations)return null;
   // QX object headers cannot preserve duplicates. Its historical native add
@@ -1350,15 +1362,17 @@ export function jsonActionToJq(action) {
 }
 
 
-function topLevelObjectKey(node, actionName) {
-  const value=stringNode(node);
-  if (value===null) throw new Error(actionName + ': key path must be a fixed string');
-  const parts=parseKeyPath(value);
-  if (parts.length!==1 || typeof parts[0]!=='string') return null;
-  return parts[0];
+function fixedObjectKeyPath(node, actionName) {
+  if (!['string','raw-string'].includes(node?.type)) throw new Error(actionName + ': key path must be a fixed string');
+  const pieces=stringTemplateParts(node);
+  if(pieces.some(piece=>piece[0]!=='s'))throw new Error(actionName + ': dynamic key path requires runtime transport');
+  const parts=parseKeyPath(pieces.map(piece=>piece[1]).join(''));
+  // Numeric String keys and length can mutate arrays through JS properties.
+  // Their source behavior needs an array-aware lowering, even without [n].
+  return parts.every(part=>typeof part==='string' && part!=='length' && !/^(?:0|[1-9]\d*)$/.test(part)) ? parts : null;
 }
 
-function topLevelObjectJsonOps(action) {
+function fixedObjectJsonOps(action) {
   const name=action?.name || '';
   if (!/^(?:request|response)\.json\.(?:add|delete|replace)$/.test(name)) {
     return unsupported('JSON pipeline action is outside add/delete/replace subset');
@@ -1374,19 +1388,20 @@ function topLevelObjectJsonOps(action) {
   for (let index=0; index<paths.length; index++) {
     let key;
     try {
-      key=topLevelObjectKey(paths[index],name);
+      key=fixedObjectKeyPath(paths[index],name);
     } catch (error) {
       return unsupported(String(error?.message || error));
     }
     if (key===null) {
-      return unsupported(name + ': native multi-action JQ currently requires top-level object key paths');
+      return unsupported(name + ': native multi-action JQ currently requires fixed object key paths');
     }
 
-    const path=JSON.stringify([key]);
-    const selector='.[' + JSON.stringify(key) + ']';
+    const path=JSON.stringify(key);
+    const selector='.'+key.map(part=>'['+JSON.stringify(part)+']').join('');
 
     if (name.endsWith('.delete')) {
-      ops.push('if type == "object" then del(' + selector + ') else . end');
+      const op='if type == "object" then del(' + selector + ') else . end';
+      ops.push(key.length===1?op:'(. as $__wayx_before | try ('+op+') catch $__wayx_before)');
       continue;
     }
 
@@ -1398,9 +1413,11 @@ function topLevelObjectJsonOps(action) {
     }
 
     if (name.endsWith('.add')) {
-      ops.push('if type == "object" then if getpath(' + path + ') == null then setpath(' + path + '; ' + value + ') else . end else . end');
+      const op='if type == "object" then if getpath(' + path + ') == null then setpath(' + path + '; ' + value + ') else . end else . end';
+      ops.push(key.length===1?op:'(. as $__wayx_before | try ('+op+') catch $__wayx_before)');
     } else {
-      ops.push('if type == "object" then if getpath(' + path + ') then setpath(' + path + '; ' + value + ') else . end else . end');
+      const op='if type == "object" then if getpath(' + path + ') then setpath(' + path + '; ' + value + ') else . end else . end';
+      ops.push(key.length===1?op:'(. as $__wayx_before | try ('+op+') catch $__wayx_before)');
     }
   }
 
@@ -1421,7 +1438,7 @@ export function jsonPipelineToSafeNativeJq(ast) {
 
   const ops=[];
   for (const action of ast.actions) {
-    const mapped=topLevelObjectJsonOps(action);
+    const mapped=fixedObjectJsonOps(action);
     if (!mapped.ok) return mapped;
     ops.push(...mapped.ops);
   }
@@ -2736,6 +2753,9 @@ export function planQxRewrite(ir, ctx={}) {
     return rewriteReview(source,'Quantumult X cannot carry Loon plugin [Argument] references without changing the source script/runtime contract: '+argumentRefs.join(', '));
   }
 
+  const nativeJson=nativeJsonPriorityPlan(ast,'qx');
+  if(nativeJson)return nativeJson;
+
   const nativeJq=nativeJqPriorityPlan(ast,'qx');
   if(nativeJq)return nativeJq.ok ? {section:nativeJq.section,line:nativeJq.line,lines:nativeJq.lines} : rewriteReview(source,nativeJq.reason);
 
@@ -2977,6 +2997,9 @@ export function planSurgeRewrite(ir,ctx={}) {
   const ast=rewriteIrDeclaration(ir);
   const singleOp=singleRewriteOperation(ir);
   const argumentRefs=ctx.argumentRefs || [];
+
+  const nativeJson=nativeJsonPriorityPlan(ast,'surge');
+  if(nativeJson)return nativeJson;
 
   const nativeJq=nativeJqPriorityPlan(ast,'surge');
   if(nativeJq)return nativeJq.ok ? {section:nativeJq.section,line:nativeJq.line,lines:nativeJq.lines} : rewriteReview(source,nativeJq.reason);
