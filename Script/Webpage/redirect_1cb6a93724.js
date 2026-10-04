@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 18:37:11 +08:00
+// Converted: 2026-10-04 19:18:45 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /^https:\/\/exhentai\.org/i then redirect(307, "https://e-hentai.org")
@@ -229,11 +229,12 @@ function evaluateCondition(condition,context={},initialCaptures={}) {
 }
 function compileSourceRegex(node){const {source}=assertRegexNode(node);return new RegExp(source);}
 const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https:\\/\\/exhentai\\.org","flags":""},"capture":null},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
-  const __wayxMatch=String(__wayxUrl ?? "").match(new RegExp("^https:\\/\\/exhentai\\.org",""));
+  const __wayxMatch=new RegExp("^https:\\/\\/exhentai\\.org","").exec(__wayxUrl);
   if(!__wayxMatch){$done({});}else{
-    const __wayxTemplate="https://e-hentai.org";
-    const __wayxReplacement=__wayxTemplate;
+    if(false){$done({});}else{
+    const __wayxReplacement="" + "https://e-hentai.org";
     const __wayxLocation=__wayxUrl.slice(0,__wayxMatch.index)+__wayxReplacement+__wayxUrl.slice(__wayxMatch.index+__wayxMatch[0].length);
     $done({status:"HTTP/1.1 307 Temporary Redirect",headers:{Location:__wayxLocation},body:""});
+    }
   }
 }else{$done({});}
