@@ -5,7 +5,7 @@
     "entrypoint": "https://nssurge.com/llms.txt",
     "releaseNotes": "https://nssurge.com/support/mac/release-notes",
     "manual": "https://manual.nssurge.com/",
-    "checkedAt": "2026-10-03"
+    "checkedAt": "2026-10-04"
   },
   "docs": {
     "ruleOverview": "https://manual.nssurge.com/rules/overview.html",
@@ -22,7 +22,9 @@
     "scriptingOverview": "https://manual.nssurge.com/scripting/overview.html",
     "cronScript": "https://manual.nssurge.com/scripting/cron.html",
     "eventScript": "https://manual.nssurge.com/scripting/event.html",
-    "genericScript": "https://manual.nssurge.com/scripting/generic.html"
+    "genericScript": "https://manual.nssurge.com/scripting/generic.html",
+    "domainRules": "https://manual.nssurge.com/rules/domain.html",
+    "logicalRules": "https://manual.nssurge.com/rules/logical.html"
   },
   "ruleTypes": [
     "AND",
@@ -107,5 +109,57 @@
     "REJECT-DROP",
     "REJECT-NO-DROP",
     "REJECT-TINYGIF"
-  ]
+  ],
+  "ruleMatchingFlags": {
+    "preMatching": {
+      "policyFamily": [
+        "REJECT",
+        "REJECT-DROP",
+        "REJECT-NO-DROP",
+        "REJECT-TINYGIF"
+      ],
+      "topLevelOnly": true,
+      "types": [
+        "DOMAIN",
+        "DOMAIN-SUFFIX",
+        "DOMAIN-KEYWORD",
+        "DOMAIN-WILDCARD",
+        "DOMAIN-SET",
+        "RULE-SET",
+        "IP-CIDR",
+        "IP-CIDR6",
+        "GEOIP",
+        "IP-ASN",
+        "SRC-IP",
+        "DEST-PORT",
+        "SRC-PORT",
+        "SUBNET",
+        "CELLULAR-CARRIER",
+        "CELLULAR-RADIO",
+        "AND",
+        "OR",
+        "NOT"
+      ],
+      "minimumVersion": {
+        "iOS": "5.14.0",
+        "Mac": "5.9.0"
+      }
+    },
+    "extendedMatching": {
+      "types": [
+        "DOMAIN",
+        "DOMAIN-SUFFIX",
+        "DOMAIN-KEYWORD",
+        "DOMAIN-WILDCARD",
+        "DOMAIN-SET",
+        "RULE-SET",
+        "URL-REGEX"
+      ],
+      "logicalPlacement": "supported subrules",
+      "minimumVersion": {
+        "iOS": "5.8.0",
+        "Mac": "5.4.0"
+      }
+    }
+  }
 }

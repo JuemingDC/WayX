@@ -1058,7 +1058,7 @@ for (const testCase of cases) {
   }
 
   if (testCase.name === 'PinDuoDuo') {
-    assert.match(out.surge, /AND,\(\(DOMAIN,\s*api\.pinduoduo\.com\),\s*\(PROTOCOL,\s*QUIC\)\),REJECT/);
+    assert.match(out.surge, /AND,\(\(DOMAIN,\s*api\.pinduoduo\.com,extended-matching\),\s*\(PROTOCOL,\s*QUIC\)\),REJECT/);
     assert.match(out.surge, /^\[Body Rewrite\]$/m);
     assert.match(out.surge, /^\[Map Local\]$/m);
     assert.match(out.surge, /^\[Script\]$/m);

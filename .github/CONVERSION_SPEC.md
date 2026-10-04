@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.71
+版本：1.72
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -995,3 +995,18 @@ JQ getpath/setpath/del 使用已解析对象路径，保留 add 的缺失/null �
 本轮完整目录验收：287 项全部通过，转换成品差异 0、依赖上下文差异 0、canonical drift 0。两个既有作者 Script 404 仅记录获取失败，原 URL 保留；未新增 Review/Issue。该能力扩展当前通用语法覆盖，不要求改写已有订阅。
 
 本节参考：[QX 官方 sample.conf](https://raw.githubusercontent.com/crossutility/Quantumult-X/master/sample.conf)、[Surge 官方 Body Rewrite](https://manual.nssurge.com/http/body-rewrite.html)、[jq 1.6 Manual](https://jqlang.org/manual/v1.6/)。Surge 原生 JQ 成品继续由现有 requirement 推导标记 CORE_VERSION>=20。
+
+
+## 35. replace 存在性与 Surge 匹配增强（v1.72）
+
+用户指定 JSON replace 改为字段存在性判断：已有 null、false、0、空 String、Array/Object 均可替换，缺失字段不创建。原生 V2 单动作、固定对象多动作及 legacy json-replace 共用 parent getpath + has(末级 key) + setpath 表达；无效父节点由 try/catch 作为不命中处理。嵌套多操作仍独立恢复失败输入，后续操作继续。脚本 runtime 和 source evaluator 同步使用 JSON 自有属性存在性，动态地址、批量和原型名称保持既有边界。该用户政策替代 §34 及旧规范中 replace 跳过 false/null 的兼容定义；它是显式选择，不冒充已完成 Loon 客户端边界实测。Add 行为不变，原作者任意 JQ 表达式不改写。
+
+Surge Rule 转换默认对可表达的 REJECT 家族增加匹配增强。DOMAIN/DOMAIN-SUFFIX/DOMAIN-KEYWORD/DOMAIN-WILDCARD/DOMAIN-SET/RULE-SET/URL-REGEX 支持 extended-matching，额外检查 TLS SNI 与 HTTP Host/:authority；逻辑声明仅在支持该参数的子规则上添加，不把参数加到 AND/OR/NOT 本身。DIRECT、PROXY 和外部策略不自动增强，源显式参数保持、自动参数去重。URL-REGEX 的 Map Local 等其它 section 映射不承载 Rule 参数。
+
+Pre-matching 只用于顶层 REJECT/REJECT-DROP/REJECT-NO-DROP/REJECT-TINYGIF 与官方支持类型：Domain、IP、SRC-IP、DEST-PORT、SRC-PORT、SUBNET、CELLULAR-CARRIER/CELLULAR-RADIO；AND/OR/NOT 的全部子类型必须同样支持，子规则不能附 pre-matching。未知内容 RULE-SET 不自动预匹配；DOMAIN-SET 有全域名文件契约可用。含放行、代理、无法解析或其它非拒绝策略的源模块不自动 pre-matching，以免提高拒绝优先级后越过原有例外。源显式 pre-matching 仍按官方类型/策略/层级验证。
+
+匹配增强是用户授权的目标功能，不作为 Loon 与 Surge 完全语义等价的证明：pre-matching 会改变 DNS/TCP 拒绝时机与优先级，extended-matching 扩大检查的信息来源。QX 不输出 Surge 参数。pre-matching 最低应用版本为 Surge iOS 5.14.0 / Mac 5.9.0，extended-matching 为 iOS 5.8.0 / Mac 5.4.0；不能用仅对应 Body Rewrite 的 CORE_VERSION>=20 推断这些功能可用，不添加未经官方证明的 core 数字。既有模块、Body Rewrite 与参数 requirement 门禁保持。统一 Rule AST、planner、output validator 承载实现，不增加生产文件或公开导出。
+
+官方依据：[Surge Rule Overview](https://manual.nssurge.com/rules/overview.html)、[REJECT Policy](https://manual.nssurge.com/policies/reject.html)、[Domain Rules](https://manual.nssurge.com/rules/domain.html)、[Logical Rules](https://manual.nssurge.com/rules/logical.html)；JSON 存在性依据 [jq 1.6 has](https://jqlang.org/manual/v1.6/) 与已核对的 Script-Hub Rewrite-Parser.beta.js parent/has 实现。验收须覆盖 null/false/缺失、native/helper/oracle、批量失败继续、规则类型/策略/嵌套层级/去重、放行顺序、QX 隔离、requirement 和全目录差分。定时活动保持暂停，远端仅 main/test。
+
+本轮验收：10 个回归 suite 通过，新增 128 个实际原生 JQ 输出与 48 个动态路径 helper 输出检查通过。完整目录 287 项通过，114 项转换差异符合 replace/匹配增强更新，依赖上下文差异 0；成品同步后 managed/audit/artifacts 门禁通过，无新增 Review/Issue。两个既有作者 Script URL 返回 404，仍保留原 URL。

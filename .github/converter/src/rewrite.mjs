@@ -1328,6 +1328,11 @@ function qxQuote(value) {
   return quoteJq(value);
 }
 
+function fixedPathReplaceJq(parts,value) {
+  const parent=JSON.stringify(parts.slice(0,-1)),key=JSON.stringify(parts.at(-1));
+  return 'if (try (getpath('+parent+') | has('+key+')) catch false) then setpath('+JSON.stringify(parts)+'; '+value+') else . end';
+}
+
 export function jsonActionToJq(action) {
   const name = action?.name || '';
   if (!/^(?:request|response)\.json\.(?:add|delete|replace)$/.test(name)) {
@@ -1356,7 +1361,7 @@ export function jsonActionToJq(action) {
     if (name.endsWith('.add')) {
       return 'if getpath(' + path + ') == null then setpath(' + path + '; ' + value + ') else . end';
     }
-    return 'if getpath(' + path + ') then setpath(' + path + '; ' + value + ') else . end';
+    return fixedPathReplaceJq(parseKeyPath(key),value);
   });
   return { ok: true, jq: ops.join(' | ') };
 }
@@ -1416,7 +1421,7 @@ function fixedObjectJsonOps(action) {
       const op='if type == "object" then if getpath(' + path + ') == null then setpath(' + path + '; ' + value + ') else . end else . end';
       ops.push(key.length===1?op:'(. as $__wayx_before | try ('+op+') catch $__wayx_before)');
     } else {
-      const op='if type == "object" then if getpath(' + path + ') then setpath(' + path + '; ' + value + ') else . end else . end';
+      const op='if type == "object" then '+fixedPathReplaceJq(key,value)+' else . end';
       ops.push(key.length===1?op:'(. as $__wayx_before | try ('+op+') catch $__wayx_before)');
     }
   }
@@ -2315,7 +2320,7 @@ function compileJsonMutation(phase, op, rest) {
       if (op === 'add') {
         ops.push(`if getpath(${literal}) == null then setpath(${literal}; ${value}) else . end`);
       } else {
-        ops.push(`if getpath(${literal}) then setpath(${literal}; ${value}) else . end`);
+        ops.push(fixedPathReplaceJq(path,value));
       }
     }
     return { ok:true, jq:ops.join(' | ') };
