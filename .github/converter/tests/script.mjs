@@ -238,7 +238,7 @@ const surgeV2=planSurgeScript(v2Ir,{
   argumentTable:{byId:new Map()},
 });
 assert.equal(surgeV2.ok,true);
-assert.match(surgeV2.line,/^V2 = type=http-response,pattern=api,script-path=https:\/\/example\.com\/v2\.js,requires-body=true,max-size=-1,binary-body-mode=true$/);
+assert.match(surgeV2.line,/^V2 = type=http-response,pattern=api,script-path=https:\/\/example\.com\/v2\.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20$/);
 
 console.log('Script IR target planner contract passed');
 }
@@ -259,4 +259,45 @@ if (selectedCase==='script-ir-target-planners.mjs') {
   assert.match(cron.line,/enabled=true/);
   const surgeOff=planSurgeScript(scriptV2AstToSemanticIr(parseScriptV2('request if ${url} ~= /off/ then script("https://example.test/author.js") with enable=false')));
   assert.equal(surgeOff.disabled,true);
+}
+
+if (selectedCase==='script-ir-target-planners.mjs') {
+  const cases=[
+    ['http-request api script-path=https://example.test/a.js',10],
+    ['http-response api script-path=https://example.test/a.js',10],
+    ['request if ${url} ~= /api/ then script("https://example.test/a.js")',20],
+    ['response if ${url} ~= /api/ then script("https://example.test/a.js")',20],
+    ['cron "0 8 * * *" then script("https://example.test/a.js")',300],
+    ['network-changed then script("https://example.test/a.js")',300],
+    ['generic then script("https://example.test/a.js")',300],
+  ];
+  const {parseScriptDeclaration,buildSurgeArgumentTable}=await import('../src/index.mjs');
+  for(const [source,seconds] of cases) {
+    const ir=parseScriptDeclaration(source);
+    const out=planSurgeScript(ir);
+    assert.equal(out.ok,true,source);
+    assert.deepEqual(out.line.match(/timeout=[^,]+/g),['timeout='+seconds]);
+    assert.equal(ir.options.some(o=>o.name==='timeout'),false,'the source IR keeps an omitted timeout omitted');
+    const qx=planQxScript(ir);
+    assert.equal(qx.ok,true);
+    assert.doesNotMatch(qx.line,/timeout=/);
+    const explicit=parseScriptDeclaration(source+(ir.sourceSyntax==='legacy'?', timeout=1.5':' with timeout=1.5'));
+    assert.deepEqual(planSurgeScript(explicit).line.match(/timeout=[^,]+/g),['timeout=1.5']);
+  }
+  const argumentTable=buildSurgeArgumentTable(['limit = input,30,type=number,tag=Timeout']);
+  for(const source of [
+    'http-response api script-path=https://example.test/a.js,timeout={limit}',
+    'response if ${url} ~= /api/ then script("https://example.test/a.js") with timeout=${limit}',
+    'generic then script("https://example.test/a.js") with timeout=${limit}',
+  ]) {
+    const out=planSurgeScript(parseScriptDeclaration(source),{argumentTable,argumentIds:new Set(['limit'])});
+    assert.equal(out.ok,true,JSON.stringify(out));
+    assert.deepEqual(out.line.match(/timeout=[^,]+/g),['timeout='+argumentTable.byId.get('limit').placeholder]);
+  }
+  for(const option of ['requires_body=true','binary_body_mode=true','requires_body=false, binary_body_mode=true']) {
+    const out=planSurgeScript(parseScriptDeclaration('request if ${url} ~= /api/ then script("a.js") with '+option));
+    assert.match(out.line,/,timeout=20$/);
+    assert.equal(out.line.includes('requires-body=true'),option.startsWith('requires_body=true'));
+  }
+  console.log('Source Script timeout defaults passed: legacy HTTP 10s, v2 HTTP 20s, v2 non-HTTP 300s; explicit/dynamic values retained');
 }

@@ -1158,6 +1158,12 @@ function surgeTriggerParams(ast, argumentTable) {
   return unsupported('unsupported Script v2 phase for Surge: ' + ast.phase);
 }
 
+// 上游错误 / 转换失败案例：omitting a source default used Surge's 5s
+// timeout. Source syntax matters: legacy HTTP=10s, v2 HTTP=20s, v2 tasks=300s.
+function sourceScriptDefaultTimeout({sourceSyntax='v2',phase}) {
+  return ['request','response'].includes(phase) ? (sourceSyntax==='legacy' ? 10 : 20) : 300;
+}
+
 export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 'script', argumentIds = null, argumentTable = null} = {}) {
   if (!ast || !['script','script-semantic-ir'].includes(ast.type)) return unsupported('expected Script v2 AST');
   if (argumentIds !== null) {
@@ -1216,7 +1222,7 @@ export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 's
     const placeholder = surgeDynamicOptionValue(timeout.name, argumentTable);
     if (!placeholder) return unsupported('dynamic timeout references undeclared Surge module argument: ' + timeout.name);
     params.push('timeout=' + placeholder);
-  }
+  } else params.push('timeout='+sourceScriptDefaultTimeout(ast));
 
   const argument = ast.script.argument;
   if (argument?.type === 'string' || argument?.type === 'raw-string') {
@@ -1388,7 +1394,7 @@ export function planSurgeScript(ir,ctx={}) {
     } else {
       params.push('timeout='+sc.timeout);
     }
-  }
+  } else params.push('timeout='+sourceScriptDefaultTimeout(ir));
 
   if (sc.argument) {
     const refs=parseLegacyLoonPluginObjectRefs(sc.argument);
