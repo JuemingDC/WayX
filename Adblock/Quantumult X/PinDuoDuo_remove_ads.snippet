@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/PinDuoDuo.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:16:03 +08:00
+# Converted: 2026-10-04 17:52:24 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/PinDuoDuo_remove_ads.lpx
@@ -59,22 +59,22 @@ host, apm-a.pinduoduo.com, reject
 ^https:\/\/api\.pinduoduo\.com\/api\/caterham\/v2\/query\/goods_detail_with_tags\? url reject-dict
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then del(.["result"]["dy_module"]["irregular_banner_dy"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["icon_set"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["search_bar_hot_query"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["result"]["dy_module"]["irregular_banner_dy"]) else . end) catch $__wayx_before)'
+^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["result","dy_module","irregular_banner_dy"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","icon_set"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","search_bar_hot_query"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["result","dy_module","irregular_banner_dy"]]) else . end) catch $__wayx_before)'
 
 ^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub\? url jsonjq-response-body '.result.bottom_tabs? |= map(select(.link | IN("index.html", "chat_list.html", "personal.html"))) | .result.buffer_bottom_tabs? |= map(select(.link | IN("index.html", "chat_list.html", "personal.html"))) | .result.all_top_opts |= map(del(.selected_image, .image, .height, .width))'
 
-^https:\/\/api\.pinduoduo\.com\/search\? url jsonjq-response-body 'del(.expansion)'
+^https:\/\/api\.pinduoduo\.com\/search\? url jsonjq-response-body 'delpaths([["expansion"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/api\.pinduoduo\.com\/api\/philo\/personal\/hub\? url jsonjq-response-body 'if type == "object" then del(.["monthly_card_entrance"]) else . end | if type == "object" then del(.["personal_center_style_v2_vo"]) else . end | (. as $__wayx_before | try (if type == "object" then del(.["icon_set"]["icons"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["icon_set"]["top_personal_icons"]) else . end) catch $__wayx_before) | if type == "object" then del(.["personal_banner"]) else . end'
+^https:\/\/api\.pinduoduo\.com\/api\/philo\/personal\/hub\? url jsonjq-response-body 'if type == "object" then delpaths([["monthly_card_entrance"]]) else . end | if type == "object" then delpaths([["personal_center_style_v2_vo"]]) else . end | (. as $__wayx_before | try (if type == "object" then delpaths([["icon_set","icons"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["icon_set","top_personal_icons"]]) else . end) catch $__wayx_before) | if type == "object" then delpaths([["personal_banner"]]) else . end'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/api\.pinduoduo\.com\/api\/oak\/integration\/render\? url jsonjq-response-body 'if type == "object" then del(.["bottom_section_list"]) else . end | (. as $__wayx_before | try (if type == "object" then del(.["ui"]["bottom_section"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["ui"]["live_section"]["float_info"]) else . end) catch $__wayx_before)'
+^https:\/\/api\.pinduoduo\.com\/api\/oak\/integration\/render\? url jsonjq-response-body 'if type == "object" then delpaths([["bottom_section_list"]]) else . end | (. as $__wayx_before | try (if type == "object" then delpaths([["ui","bottom_section"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["ui","live_section","float_info"]]) else . end) catch $__wayx_before)'
 
-^https:\/\/api\.pinduoduo\.com\/api\/caterham\/v3\/query\/order_detail_group\? url jsonjq-response-body 'del(.data.goods_list)'
+^https:\/\/api\.pinduoduo\.com\/api\/caterham\/v3\/query\/order_detail_group\? url jsonjq-response-body 'delpaths([["data","goods_list"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/api\.pinduoduo\.com\/order\/ url jsonjq-response-body 'if type == "object" then del(.["marketing_banner_vo"]) else . end | (. as $__wayx_before | try (if type == "object" then del(.["shipping"]["banner_above_recommend"]) else . end) catch $__wayx_before)'
+^https:\/\/api\.pinduoduo\.com\/order\/ url jsonjq-response-body 'if type == "object" then delpaths([["marketing_banner_vo"]]) else . end | (. as $__wayx_before | try (if type == "object" then delpaths([["shipping","banner_above_recommend"]]) else . end) catch $__wayx_before)'
 
 ^https:\/\/api\.pinduoduo\.com\/api\/aristotle\/order_list_v4\? url jsonjq-response-body '.orders |= map(.order_buttons |= map(del(.order_growth_tip)))'
 # 移除扫码取件页面商品推荐及弹窗

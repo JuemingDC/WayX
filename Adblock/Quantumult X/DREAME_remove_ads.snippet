@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DREAME.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:15:40 +08:00
+# Converted: 2026-10-04 17:52:00 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/DREAME_remove_ads.lpx
@@ -24,7 +24,7 @@
 
 ^https:\/\/cn\.iot\.dreame\.tech:\d+\/dreame-product\/public\/common-plugin$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_DREAME_remove_ads/mock_a7216a4af7.js
 
-^https:\/\/cn\.iot\.dreame\.tech:13267\/dreame-system\/dreame-app\/setting\/query$ url jsonjq-response-body 'del(.data.appIconConfig)'
+^https:\/\/cn\.iot\.dreame\.tech:13267\/dreame-system\/dreame-app\/setting\/query$ url jsonjq-response-body 'delpaths([["data","appIconConfig"]])'
 
 # [mitm]
 hostname = cn-mall.dreame.tech, cn-wxmall.dreame.tech, cn.iot.dreame.tech

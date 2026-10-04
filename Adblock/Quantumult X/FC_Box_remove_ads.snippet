@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FC_Box.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:15:53 +08:00
+# Converted: 2026-10-04 17:52:14 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/FC_Box_remove_ads.lpx
@@ -28,7 +28,7 @@
 ^https:\/\/consumer\.fcbox\.com\/post\/suggestion\/query$ url reject-dict
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/consumer\.fcbox\.com\/v1\/dynamicConfig\/findTabbarConfig\/mainPage$ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then del(.["data"]["lifeService"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["mall"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["wash"]) else . end) catch $__wayx_before)'
+^https:\/\/consumer\.fcbox\.com\/v1\/dynamicConfig\/findTabbarConfig\/mainPage$ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["data","lifeService"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","mall"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","wash"]]) else . end) catch $__wayx_before)'
 
 ^https:\/\/consumer\.fcbox\.com\/fcboxactivityweb\/marketingEntrance\/retentionPopup$ url reject-dict
 ^https:\/\/consumer\.fcbox\.com\/fcboxactivityweb\/api\/clientPopup\/v\d\/queryPopupWithPriority$ url reject-dict

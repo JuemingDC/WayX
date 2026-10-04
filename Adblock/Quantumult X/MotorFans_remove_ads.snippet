@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MotorFans.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:16:02 +08:00
+# Converted: 2026-10-04 17:52:23 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/MotorFans_remove_ads.lpx
@@ -29,7 +29,7 @@
 
 ^https:\/\/api\.58moto\.com\/forum\/public\/labelController\.do\?action=20112 url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_MotorFans_remove_ads/mock_d94eec5583.js
 
-^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do\?action=22004 url jsonjq-response-body 'del(.data.link)'
+^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do\?action=22004 url jsonjq-response-body 'delpaths([["data","link"]])'
 # 修改配置
 ^https:\/\/api\.58moto\.com\/expands\/config\/appWholeConfig\?key=app_whole_config$ url script-response-body https://kelee.one/Resource/JavaScript/MotorFans/MotorFans_remove_ads.js
 

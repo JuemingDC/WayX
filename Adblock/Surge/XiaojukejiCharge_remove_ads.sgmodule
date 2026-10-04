@@ -10,14 +10,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/XiaojukejiCharge.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:16:14 +08:00
+# Converted: 2026-10-04 17:52:35 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/XiaojukejiCharge_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 
-http-response-jq ^https:\/\/energy\.xiaojukeji\.com\/am\/marketing\/api\/member\/facade\/charge\/personal\/center\? 'del(.data)'
+http-response-jq ^https:\/\/energy\.xiaojukeji\.com\/am\/marketing\/api\/member\/facade\/charge\/personal\/center\? 'delpaths([["data"]])'
 
 [Map Local]
 ^https:\/\/energy\.xiaojukeji\.com\/energy\/hummer\/api\/resource\/display($|\?) data-type=text data="{}" status-code=200 header="Content-Type:application/json"

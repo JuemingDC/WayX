@@ -10,19 +10,19 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/CatEarFM.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:16:00 +08:00
+# Converted: 2026-10-04 17:52:22 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/CatEarFM_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/app\.missevan\.com\/site\/launch\? '(. as $__wayx_before | try (if type == "object" then del(.["info"]["splash"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["info"]["splash_ready"]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/app\.missevan\.com\/site\/launch\? '(. as $__wayx_before | try (if type == "object" then delpaths([["info","splash"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["info","splash_ready"]]) else . end) catch $__wayx_before)'
 
-http-response-jq ^https:\/\/app\.missevan\.com\/site\/config$ 'del(.info.tab_bar_live, ["0"], .info.enable_tab_bar_live_notice, .false, .info.teenager_popup_mode, ["0"])'
+http-response-jq ^https:\/\/app\.missevan\.com\/site\/config$ 'delpaths([["info","tab_bar_live"],["0"],["info","enable_tab_bar_live_notice"],["false"],["info","teenager_popup_mode"],["0"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/app\.missevan\.com\/site\/config$ '(. as $__wayx_before | try (if type == "object" then del(.["info"]["httpdns"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["info"]["homepage_top_task_button"]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/app\.missevan\.com\/site\/config$ '(. as $__wayx_before | try (if type == "object" then delpaths([["info","httpdns"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["info","homepage_top_task_button"]]) else . end) catch $__wayx_before)'
 
 http-response-jq ^https:\/\/app\.missevan\.com\/site\/config$ '.info.cronet |= (fromjson | .quic=false | tojson)'
 
@@ -32,7 +32,7 @@ http-response-jq ^https:\/\/app\.missevan\.com\/site\/icons\? '.info.icons |= ma
 
 http-response-jq ^https:\/\/app\.missevan\.com\/discovery\/list$ '.info |= map(map(select(.title != "免流服务")))'
 
-http-response-jq ^https:\/\/app\.missevan\.com\/site\/get-top$ 'del(.info.search_words)'
+http-response-jq ^https:\/\/app\.missevan\.com\/site\/get-top$ 'delpaths([["info","search_words"]])'
 
 [Map Local]
 

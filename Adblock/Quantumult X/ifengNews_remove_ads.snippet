@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ifengNews.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:15:53 +08:00
+# Converted: 2026-10-04 17:52:14 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/ifengNews_remove_ads.lpx
@@ -23,7 +23,7 @@
 
 ^https:\/\/config\.nine\.ifeng\.com\/news\/cow\? url jsonjq-response-body '.bottomNav|=map(select(.NavId=="bottomNavNews" or .NavId=="bottomNavMine"))'
 
-^https:\/\/config\.nine\.ifeng\.com\/news\/cow\? url jsonjq-response-body 'del(.zip_url)'
+^https:\/\/config\.nine\.ifeng\.com\/news\/cow\? url jsonjq-response-body 'delpaths([["zip_url"]])'
 
 ^https:\/\/config\.nine\.ifeng\.com\/news\/h5prepublish\? url reject
 
@@ -36,12 +36,12 @@
 
 ^https:\/\/config\.nine\.ifeng\.com\/news\/channel\? url jsonjq-response-body '.defaultChannel |= map(select(.id == "commenterch" or .id == "sy" or .id == "vipchannel" or .id == "rank_hot_merge" or .id == "rtnews" or .id == "sp" or .id == "mil" or .id == "finance" or .id == "history" or .id == "momentsnew" or .id == "taihai" or .id == "focusnews" or .id == "rcmd" or .id == "tw" or .id == "HK" or .id == "dawanqu1"))'
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/config\.nine\.ifeng\.com\/news\/channel\? url jsonjq-response-body 'if type == "object" then del(.["more"]) else . end | if type == "object" then del(.["youngChannel"]) else . end'
+^https:\/\/config\.nine\.ifeng\.com\/news\/channel\? url jsonjq-response-body 'if type == "object" then delpaths([["more"]]) else . end | if type == "object" then delpaths([["youngChannel"]]) else . end'
 
 ^https:\/\/nine\.ifeng\.com\/headline\? url jsonjq-response-body 'walk(if type == "object" and has("item") and (.item | type == "array") then .item |= map(select(.type == "phvideo" or .type == "doc" or .type == "phreclist")) else . end)'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/nine\.ifeng\.com\/getNewsDocs\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then del(.["body"]["showAdvert"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["body"]["adData"]) else . end) catch $__wayx_before)'
+^https:\/\/nine\.ifeng\.com\/getNewsDocs\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["body","showAdvert"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["body","adData"]]) else . end) catch $__wayx_before)'
 
 ^https:\/\/nine\.ifeng\.com\/newRelatedDocs\? url reject-dict
 

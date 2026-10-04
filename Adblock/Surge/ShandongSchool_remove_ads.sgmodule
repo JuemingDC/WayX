@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ShandongSchool.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:16:05 +08:00
+# Converted: 2026-10-04 17:52:26 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/ShandongSchool_remove_ads.lpx
 # Target: Surge
@@ -19,8 +19,8 @@
 
 http-response-jq ^https:\/\/api\.huachenjie\.com\/run-front\/home\/homePage\/config$ '.data.functionEntries |= map(select(.name == "运动" or .name == "空间")) | del(.data.seaview)'
 
-http-response-jq ^https:\/\/api\.huachenjie\.com\/run-front\/api\/user\/cs\/index$ 'del(.data.bannerList)'
-http-response-jq ^https:\/\/api\.huachenjie\.com\/run-front\/common\/bottom-bar\/redDot$ 'del(.data.inspiration)'
+http-response-jq ^https:\/\/api\.huachenjie\.com\/run-front\/api\/user\/cs\/index$ 'delpaths([["data","bannerList"]])'
+http-response-jq ^https:\/\/api\.huachenjie\.com\/run-front\/common\/bottom-bar\/redDot$ 'delpaths([["data","inspiration"]])'
 
 [Map Local]
 ^https:\/\/api\.huachenjie\.com\/run-front\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"

@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/91160.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:15:56 +08:00
+# Converted: 2026-10-04 17:52:17 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/91160_remove_ads.lpx
 # Target: Surge
@@ -21,7 +21,7 @@
 
 [Body Rewrite]
 
-http-response-jq ^https:\/\/soapi\.91160\.com\/homepage-recommendation\/recommendation\/medical\/complex\? 'del(.data.checkupList)'
+http-response-jq ^https:\/\/soapi\.91160\.com\/homepage-recommendation\/recommendation\/medical\/complex\? 'delpaths([["data","checkupList"]])'
 
 http-response-jq ^https:\/\/soapi\.91160\.com\/homepage-recommendation\/homepage\/flow\? '.data.rows |= map(select(.type as $type | ["GOOD", "ARTICLE"] | index($type) | not))'
 

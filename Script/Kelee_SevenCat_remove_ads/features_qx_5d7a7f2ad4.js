@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 17:16:04 +08:00
+// Converted: 2026-10-04 17:52:25 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https:\/\/xiaoshuo\.wtzw\.com\/api\/v\d\/user\/my-center\?/i then response.json.delete(["data.func_area[1]", "data.func_area[2]"])

@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/bilibili.png
 # Updated: 2026-09-27 19:00
 
-# Converted: 2026-10-04 17:16:21 +08:00
+# Converted: 2026-10-04 17:52:41 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/bilibili.lpx
@@ -72,7 +72,7 @@ host, app.biliapi.net, reject
 
 {# 首页标签栏热更新 #} ^https:\/\/app\.bilibili\.com\/x\/resource\/patch\/tab(\/v2)?\? url reject-dict
 
-{# 移除皮肤推送 #} ^https:\/\/app\.bilibili\.com\/x\/resource\/show\/skin\? url jsonjq-response-body 'del(.data.common_equip)'
+{# 移除皮肤推送 #} ^https:\/\/app\.bilibili\.com\/x\/resource\/show\/skin\? url jsonjq-response-body 'delpaths([["data","common_equip"]])'
 
 {# 移除右上角活动入口 #} ^https:\/\/app\.bilibili\.com\/x\/resource\/top\/activity\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/mock_32839594a9.js
 

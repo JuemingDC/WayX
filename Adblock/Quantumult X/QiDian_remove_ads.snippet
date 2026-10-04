@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/QiDian.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:16:04 +08:00
+# Converted: 2026-10-04 17:52:25 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/QiDian_remove_ads.lpx
@@ -20,7 +20,7 @@
 ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/client\/getconf$ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then if (try (getpath(["Data"]) | has("WolfEye")) catch false) then setpath(["Data","WolfEye"]; 0) else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["Data","CloudSetting"]) | has("TeenShowFreq")) catch false) then setpath(["Data","CloudSetting","TeenShowFreq"]; 0) else . end else . end) catch $__wayx_before)'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/client\/getconf$ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then del(.["Data"]["ActivityPageBackPushNoticeFrequency"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["Data"]["ActivityIcon"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["Data"]["ActivityPopup"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["Data"]["LuckBag"]) else . end) catch $__wayx_before)'
+^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/client\/getconf$ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["Data","ActivityPageBackPushNoticeFrequency"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["Data","ActivityIcon"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["Data","ActivityPopup"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["Data","LuckBag"]]) else . end) catch $__wayx_before)'
 
 ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v4\/client\/getsplashscreen\? url reject-dict
 
@@ -44,7 +44,7 @@
 
 ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/bookshelf\/getTopOperation$ url reject-dict
 
-^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v3\/user\/getaccountpage\? url jsonjq-response-body 'del(.Data.BenefitButtonList)'
+^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v3\/user\/getaccountpage\? url jsonjq-response-body 'delpaths([["Data","BenefitButtonList"]])'
 
 ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/booksearch\/hotWords\? url reject-dict
 

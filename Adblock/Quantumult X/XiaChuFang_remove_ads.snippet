@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/XiaChuFang.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:16:12 +08:00
+# Converted: 2026-10-04 17:52:33 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/XiaChuFang_remove_ads.lpx
@@ -21,7 +21,7 @@
 ^https:\/\/api\.xiachufang\.com\/v2\/homepage\/paged_waterfall_recommendations\.json$ url jsonjq-response-body 'del(.multiplex_cells[] | select(.recommendation_cell.impression_sensor_events[]?.properties.target_type? == "ad"))'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/api\.xiachufang\.com\/v2\/config\/get\.json$ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then del(.["content"]["recipe_ad"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["content"]["splash_ad_req_time"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["content"]["splash_sdk_ad_req_time"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["content"]["splash_ad_lifecycle_interval"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["content"]["waterfall_ad_feedback"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["content"]["homepage_waterfall_test_ad_pos"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["content"]["ad_app_look_around"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["content"]["ad_sdk_text_removal_keywords"]) else . end) catch $__wayx_before)'
+^https:\/\/api\.xiachufang\.com\/v2\/config\/get\.json$ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["content","recipe_ad"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["content","splash_ad_req_time"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["content","splash_sdk_ad_req_time"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["content","splash_ad_lifecycle_interval"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["content","waterfall_ad_feedback"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["content","homepage_waterfall_test_ad_pos"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["content","ad_app_look_around"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["content","ad_sdk_text_removal_keywords"]]) else . end) catch $__wayx_before)'
 
 ^https:\/\/api\.xiachufang\.com\/v2\/account\/feeds_v7\.json url reject-dict
 

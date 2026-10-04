@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FleaMarket.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:16:12 +08:00
+# Converted: 2026-10-04 17:52:34 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/FleaMarket_remove_ads.lpx
@@ -50,11 +50,11 @@
 
 ^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idlehome\.home\.circle\.list\/ url jsonjq-response-body '.data.circleList[]?.showInfo |= del(.titleImage, .atmosphereImageUrl) | .data.next.headList |= map(select(.bizCode == "main" or .bizCode == "market" or .bizCode == "IDLE_CIRCLE")) | del(.data.next.headList[]?.showInfo.rightTagImage)'
 
-^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idlehome\.magic\.home\.page\.list\/ url jsonjq-response-body 'del(.data.topList)'
+^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idlehome\.magic\.home\.page\.list\/ url jsonjq-response-body 'delpaths([["data","topList"]])'
 
 ^https:\/\/g-acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idlemtopsearch\.search\/ url jsonjq-response-body '.data.resultList |= map(if .data.item.main.exContent.dislikeFeedback.clickParam.args.bizType == "ad" then empty else . end)'
 
-^https:\/\/g-acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idlemtopsearch\.search\/ url jsonjq-response-body 'del(.data.resultPrefixBar)'
+^https:\/\/g-acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idlemtopsearch\.search\/ url jsonjq-response-body 'delpaths([["data","resultPrefixBar"]])'
 
 ^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idlemtopsearch\.search\.discover\/ url jsonjq-response-body '.data.resultList |= map(select(.type != "MarketHotSpot"))'
 

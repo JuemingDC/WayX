@@ -547,7 +547,8 @@ export function rewriteIrDeclaration(ir) {
 }
 
 // jq.mjs
-// WayX JQ handling
+// JQ syntax and lowering helpers (integrated domain section)
+// jqlang is authoritative; ONLY replace references ScriptHub.
 // Author: chance
 // Category: Converter / JQ
 
@@ -605,24 +606,33 @@ export function parseJsonKeyPath(pathText) {
   return parts;
 }
 
-// Render fixed Key Path deletion without synthesizing delpaths(PATHS).
-// delpaths is reserved for source-authored/path-array jq semantics. For fixed
-// Key Paths, jq del(path_expression) is the native form; array indices remain
-// sequential because each deletion shifts later indices.
+function validateParts(parts) {
+  if (!Array.isArray(parts) || !parts.length || parts.some(part=>typeof part!=='string' && !Number.isInteger(part))) {
+    throw new Error('JQ path must be a non-empty array of string/integer segments');
+  }
+  return parts;
+}
+
+// WayX delete uses jqlang delpaths(PATHS). Numeric indices are lowered
+// sequentially because each source deletion shifts the next array index.
 export function renderFixedPathDeleteJq(paths) {
-  if (!Array.isArray(paths) || paths.length === 0) {
-    throw new Error('delete path list must not be empty');
+  if (!Array.isArray(paths) || !paths.length) {
+    throw new Error('delete path list must contain nonempty parsed paths');
   }
-  for (const item of paths) {
-    if (!item || !Array.isArray(item.parts) || typeof item.selector !== 'string' || !item.selector) {
-      throw new Error('delete path item must contain parts and selector');
-    }
+  paths=paths.map(item=>({parts:validateParts(Array.isArray(item)?item:item?.parts)}));
+  if(paths.some(item=>item.parts.some(part=>typeof part==='number'))) {
+    return paths.map(item=>'delpaths('+JSON.stringify([item.parts])+')').join(' | ');
   }
-  if (paths.length === 1) return 'del(' + paths[0].selector + ')';
-  if (paths.some(item => item.parts.some(part => typeof part === 'number'))) {
-    return paths.map(item => 'del(' + item.selector + ')').join(' | ');
-  }
-  return 'del(' + paths.map(item => item.selector).join(', ') + ')';
+  return 'delpaths('+JSON.stringify(paths.map(item=>item.parts))+')';
+}
+
+// Integrated policy entry point retained from concurrent test-branch refactor.
+export function renderFixedJsonMutationJq(operation,entries) {
+  if(!Array.isArray(entries) || !entries.length)throw new Error(operation+' entries must not be empty');
+  if(operation==='delete')return renderFixedPathDeleteJq(entries);
+  if(operation==='add')return entries.map(entry=>renderFixedPathAddJq(entry.parts,entry.value)).join(' | ');
+  if(operation==='replace')return entries.map(entry=>renderFixedPathReplaceJq(entry.parts,entry.value)).join(' | ');
+  throw new Error('unsupported fixed JSON mutation: '+operation);
 }
 
 export function stripJqComments(expr) {
@@ -1334,23 +1344,22 @@ function parseKeyPath(path) {
   return parseJsonKeyPath(path);
 }
 
-function pathLiteral(path) {
-  return JSON.stringify(parseKeyPath(path));
+// WayX jq path grammar: direct selectors for add; never a shared
+// ScriptHub getpath/setpath template. Bracket keys always retain root identity.
+export function jqPathSelector(parts) {
+  validateParts(parts);
+  return parts.reduce((out,part)=>typeof part==='number' ? out+'['+part+']' :
+    /^[A-Za-z_][A-Za-z0-9_]*$/.test(part) ? out+(out==='.'?'':'.')+part :
+    out+'['+JSON.stringify(part)+']','.');
 }
 
 function pathSelector(path) {
-  const parts = parseKeyPath(path);
-  let out = '';
-  for (const part of parts) {
-    if (typeof part === 'number') {
-      out += '[' + part + ']';
-    } else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(part)) {
-      out += '.' + part;
-    } else {
-      out += '[' + JSON.stringify(part) + ']';
-    }
-  }
-  return out || '.';
+  return jqPathSelector(parseKeyPath(path));
+}
+
+export function renderFixedPathAddJq(parts,value) {
+  const selector=jqPathSelector(parts);
+  return 'if '+selector+' == null then '+selector+' = '+value+' else . end';
 }
 
 function anyToJq(node) {
@@ -1374,7 +1383,8 @@ function qxQuote(value) {
   return quoteJq(value);
 }
 
-function fixedPathReplaceJq(parts,value) {
+export function renderFixedPathReplaceJq(parts,value) {
+  validateParts(parts);
   const parent=JSON.stringify(parts.slice(0,-1)),key=JSON.stringify(parts.at(-1));
   return 'if (try (getpath('+parent+') | has('+key+')) catch false) then setpath('+JSON.stringify(parts)+'; '+value+') else . end';
 }
@@ -1402,12 +1412,12 @@ export function jsonActionToJq(action) {
   const ops = paths.map((node, index) => {
     const key = stringNode(node);
     if (key === null) throw new Error(name + ': key path must be a fixed string');
-    const path = pathLiteral(key);
+    const parts = parseKeyPath(key);
     const value = anyToJq(values[index]);
     if (name.endsWith('.add')) {
-      return 'if getpath(' + path + ') == null then setpath(' + path + '; ' + value + ') else . end';
+      return renderFixedPathAddJq(parts,value);
     }
-    return fixedPathReplaceJq(parseKeyPath(key),value);
+    return renderFixedPathReplaceJq(parseKeyPath(key),value);
   });
   return { ok: true, jq: ops.join(' | ') };
 }
@@ -1447,11 +1457,8 @@ function fixedObjectJsonOps(action) {
       return unsupported(name + ': native multi-action JQ currently requires fixed object key paths');
     }
 
-    const path=JSON.stringify(key);
-    const selector='.'+key.map(part=>'['+JSON.stringify(part)+']').join('');
-
     if (name.endsWith('.delete')) {
-      const op='if type == "object" then del(' + selector + ') else . end';
+      const op='if type == "object" then '+renderFixedPathDeleteJq([{parts:key}])+' else . end';
       ops.push(key.length===1?op:'(. as $__wayx_before | try ('+op+') catch $__wayx_before)');
       continue;
     }
@@ -1464,10 +1471,10 @@ function fixedObjectJsonOps(action) {
     }
 
     if (name.endsWith('.add')) {
-      const op='if type == "object" then if getpath(' + path + ') == null then setpath(' + path + '; ' + value + ') else . end else . end';
+      const op='if type == "object" then '+renderFixedPathAddJq(key,value)+' else . end';
       ops.push(key.length===1?op:'(. as $__wayx_before | try ('+op+') catch $__wayx_before)');
     } else {
-      const op='if type == "object" then '+fixedPathReplaceJq(key,value)+' else . end';
+      const op='if type == "object" then '+renderFixedPathReplaceJq(key,value)+' else . end';
       ops.push(key.length===1?op:'(. as $__wayx_before | try ('+op+') catch $__wayx_before)');
     }
   }
@@ -2327,14 +2334,7 @@ function jqPath(pathText) {
 
 function jqAccess(pathText) {
   const parts=jqPath(pathText);
-  if (!parts) return null;
-  let out='';
-  for (const part of parts) {
-    if (typeof part === 'number') out += `[${part}]`;
-    else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(part)) out += '.' + part;
-    else out += '[' + JSON.stringify(part) + ']';
-  }
-  return out;
+  return parts ? jqPathSelector(parts) : null;
 }
 
 function parseJsonValue(token) {
@@ -2361,12 +2361,11 @@ function compileJsonMutation(phase, op, rest) {
     for (let i=0;i<tokens.length;i+=2) {
       const path=jqPath(unquote(tokens[i]));
       if (!path) return { ok:false, reason:'unsupported JSON path syntax' };
-      const literal=JSON.stringify(path);
       const value=JSON.stringify(parseJsonValue(tokens[i+1]));
       if (op === 'add') {
-        ops.push(`if getpath(${literal}) == null then setpath(${literal}; ${value}) else . end`);
+        ops.push(renderFixedPathAddJq(path,value));
       } else {
-        ops.push(fixedPathReplaceJq(path,value));
+        ops.push(renderFixedPathReplaceJq(path,value));
       }
     }
     return { ok:true, jq:ops.join(' | ') };
@@ -2519,7 +2518,7 @@ function planJson(pattern, action, parsed, target, ctx) {
   try { compiled=compileJsonMutation(parsed.phase, parsed.op, parsed.rest); }
   catch (error) { return legacyRewriteReview(pattern, action, String(error?.message || error)); }
   if (!compiled.ok) return legacyRewriteReview(pattern, action, compiled.reason);
-  const jq=compiled.preserve ? compiled.jq : minifyJq(compiled.jq);
+  const jq=compiled.jq;
   if (parsed.op === 'jq' && !String(jq).trim()) {
     // Source-authored empty JQ expressions have no executable target filter.
     // Emitting jsonjq/http-*-jq with '' is invalid; treat the declaration as

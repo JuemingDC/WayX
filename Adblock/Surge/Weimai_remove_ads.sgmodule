@@ -11,7 +11,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Weimai.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:16:10 +08:00
+# Converted: 2026-10-04 17:52:31 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Weimai_remove_ads.lpx
 # Target: Surge
@@ -19,7 +19,7 @@
 [Body Rewrite]
 http-response-jq ^https:\/\/confssl\d?\.iweimai\.cn\/wm_ios_update\.json\? 'if (try (getpath([]) | has("isShowCJAd")) catch false) then setpath(["isShowCJAd"]; 0) else . end'
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/confssl\d?\.iweimai\.cn\/wm_ios_update\.json\? 'if type == "object" then del(.["launchAd"]) else . end | if type == "object" then del(.["adBanners"]) else . end | if type == "object" then del(.["ad"]) else . end'
+http-response-jq ^https:\/\/confssl\d?\.iweimai\.cn\/wm_ios_update\.json\? 'if type == "object" then delpaths([["launchAd"]]) else . end | if type == "object" then delpaths([["adBanners"]]) else . end | if type == "object" then delpaths([["ad"]]) else . end'
 
 [MITM]
 hostname = %APPEND% confssl*.iweimai.cn

@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Soul.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:15:43 +08:00
+# Converted: 2026-10-04 17:52:04 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Soul_remove_ads.lpx
 # Target: Surge
@@ -35,7 +35,7 @@ IP-CIDR,121.196.197.147/32,REJECT,no-resolve,pre-matching
 
 [Body Rewrite]
 
-http-response-jq ^https:\/\/(?:api-\w+|gateway-mobile-gray|post)\.soulapp\.cn\/(?:furion\/position\/content|hot\/soul\/rank|mobile\/app\/version\/queryIos|official\/scene\/module|teenager\/config|v2\/post\/gift\/list|v\d\/post\/homepage\/guide\/card) 'del(.data)'
+http-response-jq ^https:\/\/(?:api-\w+|gateway-mobile-gray|post)\.soulapp\.cn\/(?:furion\/position\/content|hot\/soul\/rank|mobile\/app\/version\/queryIos|official\/scene\/module|teenager\/config|v2\/post\/gift\/list|v\d\/post\/homepage\/guide\/card) 'delpaths([["data"]])'
 
 [Map Local]
 ^https:\/\/ssp\.soulapp\.cn\/api\/q data-type=text data="{}" status-code=200 header="Content-Type:application/json"

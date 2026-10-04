@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/91160.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:15:56 +08:00
+# Converted: 2026-10-04 17:52:17 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/91160_remove_ads.lpx
@@ -20,7 +20,7 @@
 
 ^https:\/\/patientgate\.91160\.com\/advert-api\/ url reject-dict
 
-^https:\/\/soapi\.91160\.com\/homepage-recommendation\/recommendation\/medical\/complex\? url jsonjq-response-body 'del(.data.checkupList)'
+^https:\/\/soapi\.91160\.com\/homepage-recommendation\/recommendation\/medical\/complex\? url jsonjq-response-body 'delpaths([["data","checkupList"]])'
 
 ^https:\/\/soapi\.91160\.com\/homepage-recommendation\/homepage\/flow\? url jsonjq-response-body '.data.rows |= map(select(.type as $type | ["GOOD", "ARTICLE"] | index($type) | not))'
 

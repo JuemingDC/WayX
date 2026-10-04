@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduTranslate.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:15:46 +08:00
+# Converted: 2026-10-04 17:52:07 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduTranslate_remove_ads.lpx
@@ -19,10 +19,10 @@
 ^https:\/\/fanyi-app\.baidu\.com\/transapp\/v2\/api\/launch\/config\? url reject-dict
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/fanyi-app\.baidu\.com\/transapp\/comment\/my\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then del(.["data"]["taskBanner"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["act"]) else . end) catch $__wayx_before)'
+^https:\/\/fanyi-app\.baidu\.com\/transapp\/comment\/my\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["data","taskBanner"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","act"]]) else . end) catch $__wayx_before)'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/fanyi-app\.baidu\.com\/transapp\/recitewd\/myplan\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then del(.["data"]["activityRec"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["activityRecList"]) else . end) catch $__wayx_before)'
+^https:\/\/fanyi-app\.baidu\.com\/transapp\/recitewd\/myplan\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["data","activityRec"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","activityRecList"]]) else . end) catch $__wayx_before)'
 
 ^https:\/\/fanyi-app\.baidu\.com\/static\/react-activity\/page\/courseBoutique\.html\? url reject
 

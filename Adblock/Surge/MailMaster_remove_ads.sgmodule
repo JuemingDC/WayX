@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MailMaster.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:16:09 +08:00
+# Converted: 2026-10-04 17:52:30 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/MailMaster_remove_ads.lpx
 # Target: Surge
@@ -18,7 +18,7 @@
 [Body Rewrite]
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/appconf\.mail\.163\.com\/mailmaster\/api\/page\/v2\/conf\.do$ '(. as $__wayx_before | try (if type == "object" then del(.["data"]["functionOperatorInfoList"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["memberOperator"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["activityTabInfoList"]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/appconf\.mail\.163\.com\/mailmaster\/api\/page\/v2\/conf\.do$ '(. as $__wayx_before | try (if type == "object" then delpaths([["data","functionOperatorInfoList"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","memberOperator"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","activityTabInfoList"]]) else . end) catch $__wayx_before)'
 
 http-response-jq ^https:\/\/appconf\.mail\.163\.com\/mailmaster\/api\/config\/function\.do$ '.data.config[] |= if .result.tools then .result.tools |= map(select(.name == "邮件追踪" or .name == "替身邮箱")) else . end | del(.data.config[] | select(.functionName == "Function-AD"))'
 

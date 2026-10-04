@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/jingdong.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-10-04 17:16:22 +08:00
+# Converted: 2026-10-04 17:52:42 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/jingdong.lpx
@@ -19,7 +19,7 @@
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
 ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=basicConfig url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then if (try (getpath(["data","JDMessage","socketmonitor"]) | has("isSocketEstablishedAhead")) catch false) then setpath(["data","JDMessage","socketmonitor","isSocketEstablishedAhead"]; 0) else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["data","JDMessage","socketmonitor"]) | has("isSocketReport")) catch false) then setpath(["data","JDMessage","socketmonitor","isSocketReport"]; 0) else . end else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then if (try (getpath(["data","JDHttpToolKit","httpdns"]) | has("httpdns")) catch false) then setpath(["data","JDHttpToolKit","httpdns","httpdns"]; 0) else . end else . end) catch $__wayx_before)'
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=cart url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then del(.["cartLocationMap"]["loc_emptyCartFloor2"]) else . end) catch $__wayx_before) | if type == "object" then del(.["emptyCartRecommendFloor"]) else . end'
+^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=cart url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["cartLocationMap","loc_emptyCartFloor2"]]) else . end) catch $__wayx_before) | if type == "object" then delpaths([["emptyCartRecommendFloor"]]) else . end'
 # manmanbuy_cookies
 # [WayX] Source enable forced to enabled for Quantumult X by user conversion policy; source default/off switch is not carried over.
 ^https:\/\/apapia-sqk-weblogic\.manmanbuy\.com\/baoliao\/center\/menu$ url script-request-body https://rucu6.pages.dev/Scripts/manmanbuy_ck.js

@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YY_Voice.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:15:45 +08:00
+# Converted: 2026-10-04 17:52:06 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/YY_Voice_remove_ads.lpx
@@ -27,7 +27,7 @@ host, ysad.yy.com, reject
 
 ^https:\/\/yyapp-idx\.yy\.com\/mobyy\/nav\/index\/idx\? url jsonjq-response-body '.data[].modules |= map(select(.name != "新版本滚动条" and .name != "通栏轮播" and .name != "新静默位"))'
 
-^https:\/\/tab\.yy\.com\/tabs\? url jsonjq-response-body 'del(.data.tabsForSelect)'
+^https:\/\/tab\.yy\.com\/tabs\? url jsonjq-response-body 'delpaths([["data","tabsForSelect"]])'
 ^https:\/\/tab\.yy\.com\/tabs\? url jsonjq-response-body '.data.tabs |= map(select(.alias == "follow" or .alias == "im" or .alias == "me"))'
 
 ^https:\/\/personal-center\.yy\.com\/personalCenter\/list\? url jsonjq-response-body '.data.modules |= map(select(.moduleName != "Banner轮播")) | .data.modules |= map(if has("entrances") then .entrances |= map(select(.bizCode|IN("jishijiedaikuan","duxiaoman2","chongzhi","freeData")|not)) else . end)'

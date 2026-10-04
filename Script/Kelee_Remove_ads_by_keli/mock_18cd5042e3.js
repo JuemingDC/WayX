@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 17:15:57 +08:00
+// Converted: 2026-10-04 17:52:18 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: response if ${url} ~= /^https?:\/\/m\.client\.10010\.com\/mobileService\/customer\/accountListData\.htm/i then response.body.mock("json", "{\"imgIndex\":\"0\",\"adv\":{\"startup_adv\":{\"advCntList\":[],\"buttonList\":[]}},\"respCode\":\"0000\"}")

@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Himalaya.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:16:14 +08:00
+# Converted: 2026-10-04 17:52:35 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Himalaya_remove_ads.lpx
@@ -31,7 +31,7 @@ host, adbehavior.wsa.ximalaya.com, reject
 ^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/discovery-category\/customCategories\/ url jsonjq-response-body '.categoryList |= map(.itemList |= map(select(.title | test("直播|123狂欢节|SVIP"; "i") | not))) | .customCategoryList |= map(select(.title | test("直播|123狂欢节|SVIP"; "i") | not))'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/football-portal\/diff2\/batch\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then del(.["json"]["ad"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["json"]["toc"]) else . end) catch $__wayx_before)'
+^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/football-portal\/diff2\/batch\? url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["json","ad"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["json","toc"]]) else . end) catch $__wayx_before)'
 
 ^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/nexus-web\/v\d\/tabs\/customTabs\? url jsonjq-response-body '.data.feedTabs |= map(select(.name != "大赛"))'
 
@@ -44,7 +44,7 @@ host, adbehavior.wsa.ximalaya.com, reject
 ^https:\/\/(m|mwsa)\.ximalaya\.com\/community\/square\/v\d\/stream\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Himalaya_remove_ads/mock_48cbd2c8d3.js
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/mobwsa\.ximalaya\.com\/mobile-playpage\/playpage\/tabs\/v2\/ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then del(.["data"]["playpage"]["resourceMap"]["defaultResource"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["playpage"]["resourceMap"]["playPageTip"]) else . end) catch $__wayx_before)'
+^https:\/\/mobwsa\.ximalaya\.com\/mobile-playpage\/playpage\/tabs\/v2\/ url jsonjq-response-body '(. as $__wayx_before | try (if type == "object" then delpaths([["data","playpage","resourceMap","defaultResource"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","playpage","resourceMap","playPageTip"]]) else . end) catch $__wayx_before)'
 
 ^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-playpage\/playpage\/recommendContentV\d\/ url reject-dict
 
@@ -55,7 +55,7 @@ host, adbehavior.wsa.ximalaya.com, reject
 
 ^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/app-skin-service\/skin\/setting\/info\/ url reject-dict
 
-^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-user\/v\d\/homePage\/ url jsonjq-response-body 'del(.data.freeListenV2)'
+^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-user\/v\d\/homePage\/ url jsonjq-response-body 'delpaths([["data","freeListenV2"]])'
 
 ^https:\/\/(live|livewsa)\.ximalaya\.com\/lamia\/v1\/subscribe\/status$ url reject-dict
 

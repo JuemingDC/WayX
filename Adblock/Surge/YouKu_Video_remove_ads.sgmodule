@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YouKu_Video.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:16:16 +08:00
+# Converted: 2026-10-04 17:52:37 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/YouKu_Video_remove_ads.lpx
 # Target: Surge
@@ -45,10 +45,10 @@ DOMAIN,youku-acs.m.taobao.com,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/un-acs\.youku\.com\/gw\/mtop\.youku\.play\.ups\.appinfo\.get '(. as $__wayx_before | try (if type == "object" then del(.["data"]["data"]["ad"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["data"]["watermark"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["data"]["ykad"]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/un-acs\.youku\.com\/gw\/mtop\.youku\.play\.ups\.appinfo\.get '(. as $__wayx_before | try (if type == "object" then delpaths([["data","data","ad"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","data","watermark"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","data","ykad"]]) else . end) catch $__wayx_before)'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/push\.m\.youku\.com\/collect-api\/get_push_interval_config_wx\? '(. as $__wayx_before | try (if type == "object" then del(.["data"]["tipContent"]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then del(.["data"]["tipContentNew"]) else . end) catch $__wayx_before)'
+http-response-jq ^https:\/\/push\.m\.youku\.com\/collect-api\/get_push_interval_config_wx\? '(. as $__wayx_before | try (if type == "object" then delpaths([["data","tipContent"]]) else . end) catch $__wayx_before) | (. as $__wayx_before | try (if type == "object" then delpaths([["data","tipContentNew"]]) else . end) catch $__wayx_before)'
 
 [MITM]
 hostname = %APPEND% push.m.youku.com, un-acs.youku.com

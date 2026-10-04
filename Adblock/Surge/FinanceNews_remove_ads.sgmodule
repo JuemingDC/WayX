@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FinanceNews.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 17:15:55 +08:00
+# Converted: 2026-10-04 17:52:16 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/FinanceNews_remove_ads.lpx
 # Target: Surge
@@ -19,9 +19,9 @@
 
 http-response-jq ^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/kvconfig\/items\/tabbarconfig1$ '.data.items |= [.[] | select(.key == "news" or .key == "live")]'
 
-http-response-jq ^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/content\/articles\/ 'del(.data.recommend_vip_img_uri)'
+http-response-jq ^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/content\/articles\/ 'delpaths([["data","recommend_vip_img_uri"]])'
 
-http-response-jq ^https:\/\/api-one-wscn\.awtmt\.com\/\/apiv1\/kvconfig\/items\/membersrights$ 'del(.data.vip_article)'
+http-response-jq ^https:\/\/api-one-wscn\.awtmt\.com\/\/apiv1\/kvconfig\/items\/membersrights$ 'delpaths([["data","vip_article"]])'
 
 [Map Local]
 ^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/advertising\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
