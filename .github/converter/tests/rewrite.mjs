@@ -30,6 +30,46 @@ assert.throws(
   () => quoteJq(".foo'bar"),
   /single quote outside a JSON string/,
 );
+
+const jqDeletePolicy=jsonPipelineToSafeNativeJq(parseRewriteV2(
+  'response if ${url} ~= /api/ then response.json.delete(["activity_switch","wl_config.pb_banner_funad_cache_strategy","scheme_whitelist"])'
+));
+assert.equal(
+  jqDeletePolicy.jq,
+  'del(.activity_switch, .wl_config.pb_banner_funad_cache_strategy, .scheme_whitelist)',
+  'WayX delete must use jqlang del(path_expression), not ScriptHub delpaths formatting',
+);
+assert.doesNotMatch(jqDeletePolicy.jq,/delpaths|try |if type/);
+
+const jqAddPolicy=jsonPipelineToSafeNativeJq(parseRewriteV2(
+  'response if ${url} ~= /api/ then response.json.add(["meta.count","flag"],[1,true])'
+));
+assert.equal(
+  jqAddPolicy.jq,
+  'if getpath(["meta","count"]) == null then setpath(["meta","count"]; 1) else . end | if getpath(["flag"]) == null then setpath(["flag"]; true) else . end',
+  'WayX add must retain its own getpath/setpath policy',
+);
+assert.doesNotMatch(jqAddPolicy.jq,/\| has\(/);
+
+const jqReplacePolicy=jsonPipelineToSafeNativeJq(parseRewriteV2(
+  'response if ${url} ~= /api/ then response.json.replace(["wl_config.home_ad_num","wl_config.index_bear_first_floor_max"],[0,999999999])'
+));
+assert.equal(
+  jqReplacePolicy.jq,
+  'if (getpath(["wl_config"]) | has("home_ad_num")) then (setpath(["wl_config","home_ad_num"]; 0)) else . end | if (getpath(["wl_config"]) | has("index_bear_first_floor_max")) then (setpath(["wl_config","index_bear_first_floor_max"]; 999999999)) else . end',
+  'ONLY replace follows the reviewed ScriptHub parent/has/setpath structure',
+);
+assert.doesNotMatch(jqReplacePolicy.jq,/try \(|if type/);
+
+for (const [program,input,expected] of [
+  [jqDeletePolicy.jq,'{"activity_switch":1,"wl_config":{"pb_banner_funad_cache_strategy":2,"keep":3},"scheme_whitelist":[]}','{"wl_config":{"keep":3}}'],
+  [jqAddPolicy.jq,'{"meta":{},"flag":false}','{"meta":{"count":1},"flag":false}'],
+  [jqReplacePolicy.jq,'{"wl_config":{"home_ad_num":5,"index_bear_first_floor_max":1,"keep":2}}','{"wl_config":{"home_ad_num":0,"index_bear_first_floor_max":999999999,"keep":2}}'],
+]) {
+  const checked=runIsolatedCase('jq',['-c',program],{input,encoding:'utf8'});
+  assert.equal(checked.status,0,checked.stderr);
+  assert.deepEqual(JSON.parse(checked.stdout),JSON.parse(expected));
+}
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/empty\\.example\\.com",REJECT-200').line, '^https:\\/\\/empty\\.example\\.com url reject-200');
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/image\\.example\\.com",REJECT-IMG').line, '^https:\\/\\/image\\.example\\.com url reject-img');
 assert.equal(qxRule('URL-REGEX,"^https:\\/\\/dict\\.example\\.com",REJECT-DICT').line, '^https:\\/\\/dict\\.example\\.com url reject-dict');
