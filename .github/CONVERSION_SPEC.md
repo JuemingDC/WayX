@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.70
+版本：1.71
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -978,3 +978,20 @@ Phase E 增加固定种子 `0x57415958` 的组合回归，仍归入 runtime suit
 预期结果由独立命令式模型根据案例数据计算，不调用生产 mutation、AST evaluator 或生成脚本作为预期。先核对 source evaluator 的结果及空 errors，再执行完整 conversion、validator 和目标配置中实际活动引用的 helper；未命中必须返回官方 no-op，所有执行必须只调用一次 `$done`。失败报告包含 seed、阶段、案例编号及完整源声明，便于重现。原 oracle 的 JSON 路径解析器导入修正到实际导出模块，避免缺失依赖在 action 求值时被错误恢复掩盖。
 
 本节是固定同步子集的组合验证，不代表完整随机语法生成、真实客户端编码/压缩/缓冲验证或全 Loon 语义证明。§32 原生优先、必要 mock fallback、纯 JQ 阶段边界及原作者脚本政策不变；不据此删除未证明的兼容路径。生产转换结果无需更新；定时活动继续暂停，远端仅 main/test。
+
+
+## 34. 固定对象路径 JSON 多动作的原生优先（v1.71）
+
+纯 request/response JSON add/delete/replace 多动作声明，在单个无 flags 的 URL regex、固定对象字段路径及固定值范围内，优先合成为 QX jsonjq-request/response-body 或 Surge http-request/response-jq。同类 JSON 多动作不因为嵌套对象字段自动生成 Script；不增加公开导出、生产模块或 helper 类别。既有顶层 QX 原生表达文本保持兼容。
+
+路径使用 String/raw String 的共同解析，支持点分及 quoted bracket 字段，包括带点字段和原型同名 JSON 键。动态模板、数字数组索引、可经 JavaScript 属性访问改变数组的数字 String 字段及 length、动态值、非单 URL 条件继续现有 native/Script/Review 边界；本次不改 flags 的历史兼容策略。纯原生 JSON 多动作与纯 JQ 一样不得被其它声明的 HTTP Script dispatcher 吸收，避免把原生规则重新扩成宽匹配脚本。
+
+JQ getpath/setpath/del 使用已解析对象路径，保留 add 的缺失/null 检查及 replace 对 false/null/缺失的跳过行为。根 null/标量/数组保持值不变；对象字段父节点缺失/null 可在 add 时创建。每个嵌套操作独立保存操作前输入并 try/catch，类型失败只回退当前操作，后续操作继续；批量参数按配对顺序逐组执行，不把整条声明失败后回滚作为源语义。顶层表达保留既有 type guard。
+
+验收使用独立对象操作模型、source evaluator 及实际目标配置中提取的原生 JQ filter：request/response、四组管道、十二种输入、两个目标共 192 个输出，包括批量失败继续、缺失/null/false/标量/数组父节点、特殊字段与 own property。既有原生 JQ、必要 mock fallback、256 个组合检查及全部 oracle 保留；完整目录 differential、canonical、validator 和 CI 是合并门禁。
+
+官方依据沿用 QX 作者 sample.conf 的 jsonjq 声明、Surge 官方 JQ Body Rewrite 与 jq 1.6 manual 的 getpath/setpath/del/try-catch 契约。独立 jq 对照不代表 iOS 客户端全部编码、精度、压缩和缓冲边界验证；动态/索引等未证明范围仍不迁移。原作者 Script URL、QX 强制 enable、暂停定时活动及 main/test 分支预算不变。
+
+本轮完整目录验收：287 项全部通过，转换成品差异 0、依赖上下文差异 0、canonical drift 0。两个既有作者 Script 404 仅记录获取失败，原 URL 保留；未新增 Review/Issue。该能力扩展当前通用语法覆盖，不要求改写已有订阅。
+
+本节参考：[QX 官方 sample.conf](https://raw.githubusercontent.com/crossutility/Quantumult-X/master/sample.conf)、[Surge 官方 Body Rewrite](https://manual.nssurge.com/http/body-rewrite.html)、[jq 1.6 Manual](https://jqlang.org/manual/v1.6/)。Surge 原生 JQ 成品继续由现有 requirement 推导标记 CORE_VERSION>=20。

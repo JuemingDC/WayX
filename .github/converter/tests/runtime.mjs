@@ -727,3 +727,85 @@ if (selectedCase==='generated-helper-runtime.mjs') {
   assert.ok(matchedCount>0&&missCount>0,'seed must cover hits and misses');
   console.log('Seeded composition model passed: '+checked+' target outputs, '+seenOrders.size+' action orders, 8 flags; seed='+seed);
 }
+
+// Execute the native filter actually emitted into each target configuration.
+// Expected results come from object-only operations, independent of AST lowering.
+if(selectedCase==='generated-helper-runtime.mjs') {
+  const {convertPlugin,validateConvertedPlugin}=await import('../src/conversion.mjs');
+  const {evaluateRewriteActions}=await import('../src/core.mjs');
+  const {parseJsonKeyPath}=await import('../src/rewrite.mjs');
+  const cases=[
+    [{op:'add',path:['data','flag'],value:true},{op:'replace',path:['data','count'],value:2},{op:'delete',path:['data','old']}],
+    [{op:'delete',path:['data','missing','leaf']},{op:'add',path:['later'],value:'雪|quote"\\'},{op:'replace',path:['data','flag'],value:3}],
+    [{op:'add',path:['__proto__','safe'],value:1},{op:'replace',path:['constructor','value'],value:4},{op:'delete',path:['toString','old']}],
+    [{op:'add',path:['data','a.b'],value:'$&:$0'},{op:'add',path:['later'],value:false},{op:'delete',path:['data','old']},{op:'delete',path:['later']}],
+  ];
+  const inputs=[{},null,[],42,false,'scalar',{data:null},{data:4},{data:[]},{data:{flag:false,count:0,old:true}},{data:{flag:null,count:false,old:null}},{data:{flag:'',count:'',old:1},constructor:{value:0},toString:{old:2},__proto__:null}];
+  const put=(parent,key,value)=>Object.defineProperty(parent,key,{value,enumerable:true,configurable:true,writable:true});
+  const object=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
+  const model=(input,ops)=>{
+    const value=structuredClone(input);
+    if(!object(value))return value;
+    for(const item of ops) {
+      let parent=value;
+      for(const key of item.path.slice(0,-1)) {
+        if(!object(parent)){parent=null;break;}
+        if(!Object.hasOwn(parent,key)||parent[key]===null) {
+          if(item.op!=='add'){parent=null;break;}
+          put(parent,key,{});
+        }
+        parent=parent[key];
+      }
+      if(!object(parent))continue;
+      const key=item.path.at(-1),current=Object.hasOwn(parent,key)?parent[key]:undefined;
+      if(item.op==='delete')delete parent[key];
+      else if(item.op==='add'?current==null:current!==undefined&&current!==null&&current!==false)put(parent,key,item.value);
+    }
+    return value;
+  };
+  const keyPath=parts=>parts.map(key=>'['+JSON.stringify(key)+']').join('');
+  const entry={id:'NativeObjectJson',source:'https://example.test/source.lpx',category:'Test'};
+  const options={stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'};
+  let checked=0;
+  for(const phase of ['request','response'])for(const [caseIndex,ops] of cases.entries()) {
+    const actions=ops.map(item=>phase+'.json.'+item.op+'('+JSON.stringify(keyPath(item.path))+(item.op==='delete'?'':','+JSON.stringify(item.value))+')');
+    // Pair the first two add operations to exercise per-group failure recovery.
+    if(caseIndex===3)actions.splice(0,2,phase+'.json.add('+JSON.stringify(ops.slice(0,2).map(item=>keyPath(item.path)))+','+JSON.stringify(ops.slice(0,2).map(item=>item.value))+')');
+    const source=phase+' if ${url} ~= /api/ then '+actions.join(' | ');
+    const output=convertPlugin(entry,'[Rewrite]\n'+source,options);
+    validateConvertedPlugin(entry,output);
+    assert.equal(output.generatedScripts.size,0,'pure fixed object JSON must stay native');
+    assert.match(output.surge,/#!requirement=CORE_VERSION>=20/,'native Surge JQ must retain its core requirement');
+    for(const input of inputs) {
+      const expected=model(input,ops);
+      const context={url:'https://example.test/api',request:{url:'https://example.test/api',headers:{},body:JSON.stringify(input)},response:{headers:{},body:JSON.stringify(input),status:200}};
+      const oracle=evaluateRewriteActions(parseRewriteV2(source),context,{parsePath:parseJsonKeyPath});
+      assert.deepEqual(oracle.errors,[]);
+      assert.deepEqual(JSON.parse(oracle.state[phase].body),expected,source+' independent model');
+      for(const target of ['qx','surge']) {
+        const pattern=target==='qx'?new RegExp('^api url jsonjq-'+phase+'-body \'(.+)\'$','m'):new RegExp('^http-'+phase+'-jq api \'(.+)\'$','m');
+        const filter=output[target].match(pattern)?.[1];
+        assert.ok(filter,source+' '+target+' actual native rule');
+        const result=runIsolatedCase('jq',['-c',filter],{input:JSON.stringify(input),encoding:'utf8'});
+        assert.equal(result.status,0,source+' '+target+' '+result.stderr);
+        const lines=result.stdout.trim().split('\n');assert.equal(lines.length,1,'native mutation must produce one body');
+        assert.deepEqual(JSON.parse(lines[0]),expected,source+' '+target+' input='+JSON.stringify(input));
+        checked++;
+      }
+    }
+    const mixed=convertPlugin(entry,'[Rewrite]\n'+source+'\n'+phase+' if ${url} ~= /other/ then '+phase+'.header.set("X","yes") | '+phase+'.body.replace(/old/,"new")',options);
+    for(const target of ['qx','surge'])assert.match(mixed[target],target==='qx'?new RegExp('api url jsonjq-'+phase+'-body'):new RegExp('http-'+phase+'-jq api'),'native declaration must not be absorbed by helper');
+    assert.doesNotMatch([...mixed.generatedScripts.keys()].join('\n'),/phase_/);
+  }
+  for(const source of [
+    'response if ${url} ~= /api/ then response.json.add("data[0].x",1) | response.json.delete("old")',
+    'response if ${url} ~= /api/ as hit then response.json.add("data.${hit.0}",1) | response.json.delete("old")',
+    'response if ${url} ~= /api/ then response.json.replace("data.length",2) | response.json.delete("old")',
+    'response if ${url} ~= /api/ then response.json.add(`data["0"]`,1) | response.json.delete("old")',
+  ]) {
+    const output=convertPlugin(entry,'[Rewrite]\n'+source,options);
+    for(const target of ['qx','surge'])assert.doesNotMatch(output[target],target==='qx'?/api url jsonjq-response-body/:/http-response-jq api /);
+    assert.ok(output.generatedScripts.size>0,'array/dynamic paths retain necessary helpers');
+  }
+  console.log('Native object JSON pipelines passed: '+checked+' actual emitted filters against independent model, plus batch recovery, phase ownership and dynamic/index guards');
+}

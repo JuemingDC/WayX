@@ -2134,8 +2134,8 @@ const nestedJsonPipelineSource='response if ${url} ~= /api/ then response.json.a
 const nestedJsonPipelineCtx=ctx();
 const nestedJsonPipeline=planQxRewrite(v2(nestedJsonPipelineSource),nestedJsonPipelineCtx);
 assert.equal(nestedJsonPipeline.section,'rewrite');
-assert.match(nestedJsonPipeline.line,/^api url script-response-body /);
-assert.equal(nestedJsonPipelineCtx.generatedScripts.size,1);
+assert.match(nestedJsonPipeline.line,/^api url jsonjq-response-body /);
+assert.equal(nestedJsonPipelineCtx.generatedScripts.size,0);
 
 const indexedJsonPipelineSource='response if ${url} ~= /api/ then response.json.delete("items[0]") | response.json.add("flag",true)';
 const indexedJsonPipelineCtx=ctx();

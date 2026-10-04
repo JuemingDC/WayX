@@ -6,7 +6,7 @@ import crypto from "node:crypto";
 import { renderRewritePhaseDispatcher } from "./runtime.mjs";
 import { scriptIrTag, parseScriptDeclaration, isScriptV2, planQxScript, planSurgeScript, scriptOption, analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs, surgeArgumentMetadata, surgeRewriteArgumentPayload } from "./script.mjs";
 import { qxRule as canonicalQxRule, surgeModuleRule } from "./rule.mjs";
-import { isRewriteV2, parseRewriteV2, validateRewriteV2Ast, classifyLegacyRewriteAction, isEmptyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr, inlineResolvedDependency, inlineResolvedLegacyJqPathIr, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr, planQxRewrite, planSurgeRewrite, rewriteReview, rewriteIssue, supportsRewritePhaseActions, simpleUrlRewriteCondition } from "./rewrite.mjs";
+import { isRewriteV2, parseRewriteV2, validateRewriteV2Ast, classifyLegacyRewriteAction, isEmptyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr, inlineResolvedDependency, inlineResolvedLegacyJqPathIr, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr, planQxRewrite, planSurgeRewrite, rewriteReview, rewriteIssue, supportsRewritePhaseActions, simpleUrlRewriteCondition, jsonPipelineToSafeNativeJq } from "./rewrite.mjs";
 import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection, parseLoonPlugin, materializeRewriteDependencies, materializeSourceScripts, fetchOriginalText, fetchOriginalBytes } from "./input.mjs";
 import { attachQxInlineNote, createQxOutputState, appendQxOutput, qxOutputDestination, qxRuleOutputDestination, qxRewriteOutputDestination, renderQxOutput, createSurgeOutputState, appendSurgeOutput, surgeOutputDestination, surgeRuleOutputDestination, surgeRewriteOutputDestination, renderSurgeOutput, validateQX, validateSurgeModule } from "./output.mjs";
 import { parseConfigurationDeclaration, planConfiguration } from "./configuration.mjs";
@@ -126,12 +126,13 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
   const candidates=[];
   const scripts=groupSourceSectionItems(plugin.sections.get('Script') || []).filter(x=>x.line);
   const legacy=items.some(x=>!isRewriteV2(x.line));
-  // Native flag compatibility must not be migrated into an HTTP Script when
-  // that would take the phase away from an existing author Script/legacy rule.
+  // Keep native JSON/JQ declarations outside helper dispatchers. Original
+  // Script/legacy owners also retain their existing phase contracts.
   const blockedV2=new Set();
   for(const item of items)if(isRewriteV2(item.line))try {
     const ast=resolveRewriteJqDependencies(parseRewriteV2(item.line),item.line,ctx);
-    if(ast.actions.every(a=>a.name===ast.phase+'.json.jq') || !supportsRewritePhaseActions(ast,target))blockedV2.add(ast.phase);
+    const nativeJson=ast.actions.length>1 && !ast.condition?.right?.flags && simpleUrlRewriteCondition(ast).ok && jsonPipelineToSafeNativeJq(ast).ok;
+    if(nativeJson || ast.actions.every(a=>a.name===ast.phase+'.json.jq') || !supportsRewritePhaseActions(ast,target))blockedV2.add(ast.phase);
   }catch { /* Invalid declarations keep the ordinary diagnostic. */ }
   ctx.featureCompatibilityPhases=new Set(['request','response'].filter(phase=>legacy || blockedV2.has(phase) || scripts.some(x=>{try {const ir=parseScriptDeclaration(x.line);return ir?.phase===phase && (target==='qx' || !(scriptOption(ir,'enable')?.value===false));}catch{return false;}})));
   for (const item of items) {
