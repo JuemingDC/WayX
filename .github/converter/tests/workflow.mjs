@@ -868,6 +868,16 @@ if(selectedCase==='managed-artifacts.mjs') {
     assert.deepEqual(await generatedScriptDiffs(root,e,out.generatedScripts),[]);
     for(const name of ['features_qx_0123456789.js','phase_surge_response_0123456789.js'])assert.equal(isWayxGeneratedHelperFilename(name),true);
 
+    const baselineUnchanged=await inventory();
+    const forbidden=()=>{throw new Error('unchanged content must not enter conversion');};
+    const skipped=await syncCatalogEntry(e,{root,log:()=>{},fetchText:async()=>text.replace(/\n/g,'\r\n'),materialize:forbidden,convert:forbidden,validate:forbidden,commit:forbidden});
+    assert.equal(skipped.skipped,true);assert.equal(skipped.changed,false);
+    assert.deepEqual(await inventory(),baselineUnchanged,'unchanged input preserves every artifact byte');
+    await fs.rm(path.join(root,'Adblock/Surge',e.surge));
+    const repaired=await syncCatalogEntry(e,{root,log:()=>{},fetchText:async()=>text});
+    assert.equal(repaired.skipped,false);assert.equal(repaired.changed,false);
+    assert.ok((await readManagedTargetState(root,e)).surge,'missing target is rebuilt');
+
     const good=entry('Good'),bad=entry('Bad'),fresh=entry('Fresh');await seed(good);await seed(bad);
     const catalog=[good,bad,fresh];await fs.mkdir(path.join(root,'.github/sources'),{recursive:true});await fs.mkdir(path.join(root,'.github/monitor/.runtime'),{recursive:true});
     await fs.writeFile(path.join(root,'.github/sources/loon.json'),JSON.stringify(catalog));await fs.writeFile(path.join(root,'.github/sources/loon-static.json'),JSON.stringify(catalog));
@@ -875,7 +885,7 @@ if(selectedCase==='managed-artifacts.mjs') {
     const before=new Map(await inventory());
     const unknown='#!name=Future\n[Rewrite]\nresponse if ${url} ~= /api/ then response.future.action()\n';
     const run=await runCatalogSync({root,log:()=>{},writeError:()=>{},warn:()=>{},entryOptions:{fetchText:async url=>url===good.source?source('updated'):unknown}});
-    assert.equal(run.publishable,true);assert.deepEqual(run.validatedPlugins,['Good']);assert.deepEqual(run.retainedPlugins,['Bad']);assert.deepEqual(run.deferredPlugins,['Fresh']);
+    assert.equal(run.publishable,true);assert.deepEqual(run.convertedPlugins,['Good']);assert.deepEqual(run.skippedPlugins,[]);assert.deepEqual(run.validatedPlugins,['Good']);assert.deepEqual(run.retainedPlugins,['Bad']);assert.deepEqual(run.deferredPlugins,['Fresh']);
     assert.equal(run.failures.length,2);assert.ok(run.failures.every(failure=>failure.declarations.some(d=>d.line.includes('future.action'))));
     for(const [file,bytes] of await inventory())if(file.includes('/Bad/')||file.endsWith('/Bad.lpx')||file.endsWith('/Bad.snippet')||file.endsWith('/Bad.sgmodule'))assert.deepEqual(bytes,before.get(file),'failed plugin baseline preserved');
     assert.match(await fs.readFile(path.join(root,'Resource/Loon/Good.lpx'),'utf8'),/updated/);
@@ -883,6 +893,14 @@ if(selectedCase==='managed-artifacts.mjs') {
     assert.equal(JSON.parse(await fs.readFile(path.join(root,'.github/sources/loon-static.json'),'utf8')).length,3,'discovery source remains intact for retries');
     const snapshot=JSON.parse(await fs.readFile(path.join(root,'.github/monitor/.runtime/kelee-catalog.json'),'utf8'));assert.equal(snapshot.count,2);assert.deepEqual(snapshot.plugins.map(p=>p.order),[0,1]);
     const issues=await collectIssueCandidates({root,includeTargets:false});assert.equal(issues.syncFailures.length,2,'deferred sources survive in the Issue report');
+    const repeated=await runCatalogSync({root,log:()=>{},writeError:()=>{},warn:()=>{},entryOptions:{fetchText:async url=>url===good.source?source('updated'):unknown,materialize:forbidden,convert:forbidden}});
+    assert.deepEqual(repeated.convertedPlugins,[]);assert.deepEqual(repeated.skippedPlugins,['Good']);
+    const canonicalTool=path.join(process.cwd(),'.github/converter/tools/regenerate-canonical.mjs');
+    const selective=runIsolatedCase(process.execPath,[canonicalTool,'--synced-only'],{cwd:root,encoding:'utf8'});
+    assert.equal(selective.status,0,selective.stderr);assert.match(selective.stdout,/changed=0/);
+    await fs.rm(path.join(root,'.github/monitor/.runtime/sync-failures.json'));
+    const missingReport=runIsolatedCase(process.execPath,[canonicalTool,'--synced-only'],{cwd:root,encoding:'utf8'});
+    assert.notEqual(missingReport.status,0,'missing sync report must fail instead of falling back to full conversion');
     const baseline=await inventory();
     await assert.rejects(syncCatalogEntry(bad,{root,log:()=>{},fetchText:async()=>source('changed'),convert:(...args)=>{const out=convertPluginWithContext(...args);out.qx+='\n# [WayX] TEST REVIEW REQUIRED: unsupported target\n# Source declaration: fixture\n';return out;}}),error=>error.syncFailure.stage==='review-target-mapping');
     assert.deepEqual(await inventory(),baseline,'known but unsupported mapping is quarantined before any write');

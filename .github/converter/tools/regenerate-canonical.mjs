@@ -2,6 +2,7 @@
 // Author: chance
 // Category: Converter / Canonical Output
 import path from 'node:path';
+import fs from 'node:fs/promises';
 import { loadLoonSourceCatalog } from "../src/input.mjs";
 import {
   materializeConversionRunContext,
@@ -27,6 +28,15 @@ const mode = process.argv.includes('--write') ? 'write' : 'check';
 
 
 const manifest = await loadLoonSourceCatalog(MANIFEST);
+// Actions has already converted only changed/new entries. Restrict the canonical
+// check to that run's successful conversions; standalone use keeps the full audit.
+let selectedIds=null;
+if(process.argv.includes('--synced-only')) {
+  const report=JSON.parse(await fs.readFile(path.join(ROOT,'.github/monitor/.runtime/sync-failures.json'),'utf8'));
+  if(report.publishable!==true || !Array.isArray(report.convertedPlugins))throw new Error('Missing successful incremental sync report');
+  selectedIds=new Set(report.convertedPlugins);
+  if([...selectedIds].some(id=>!manifest.some(entry=>entry.id===id)))throw new Error('Unknown plugin in incremental sync report');
+}
 const staleEntries = [];
 const failures = createWorkflowFailureReporter({
   summaryLabel:'Canonical regeneration failures',
@@ -35,6 +45,7 @@ const failures = createWorkflowFailureReporter({
 });
 
 for (const entry of manifest) {
+  if(selectedIds && !selectedIds.has(entry.id))continue;
   try {
     const source = await readCatalogSource(ROOT, entry);
     const targetState = await readManagedTargetState(ROOT, entry);

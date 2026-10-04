@@ -109,7 +109,7 @@ jobs:
         run: |
           set -euo pipefail
           {
-            node .github/converter/tools/regenerate-canonical.mjs
+            node .github/converter/tools/regenerate-canonical.mjs --synced-only
             node .github/converter/tests/catalog.mjs
             node .github/converter/tools/validate-conversion-policy.mjs --all
             node .github/converter/tools/update-readme.mjs
@@ -235,7 +235,7 @@ jobs:
           discovery_file=runtime/'catalog-discovery.json'
           discovery=json.loads(discovery_file.read_text()) if discovery_file.exists() else {}
           lines=['# WayX Actions result','',f"Publication: {result['publication']}",'']
-          for key in ['validatedPlugins','retainedPlugins','deferredPlugins']: lines.append(f"- {key}: {len(sync.get(key,[]))}")
+          for key in ['validatedPlugins','convertedPlugins','skippedPlugins','retainedPlugins','deferredPlugins']: lines.append(f"- {key}: {len(sync.get(key,[]))}")
           lines.append(f"- Monitor failures: {len(monitor.get('failures',[]))}")
           for key in ['added','updated','removed']: lines.append(f"- Discovery {key}: {len(discovery.get(key,[]))}")
           lines += ['', 'Failed gates: '+', '.join(result.get('failedGates',[]))]

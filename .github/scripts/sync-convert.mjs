@@ -29,15 +29,21 @@ export async function syncCatalogEntry(entry,{
     stage='read-target-state';targetState=await readManagedTargetState(root,entry);
     stage='fetch-upstream';source=normalizeManagedSource(await fetchText(entry.source));
     stage='validate-source';if(!isLoonPluginSource(source))throw new Error('downloaded content is not a valid Loon plugin');
+    stage='inspect-source-change';const sourceState=await inspectManagedSource(root,entry,source);
+    const changed=sourceState.changed;
+    log(`${changed?'changed':'unchanged'} upstream source via ${entry.source}; sha256=${sourceState.digest}`);
+    // Compare before semantic analysis or dependency materialization. An unchanged
+    // plugin with published targets needs no conversion or timestamp update.
+    if(!changed && targetState.qx && targetState.surge) {
+      log('skipped: upstream content unchanged');
+      return {id:entry.id,changed:false,skipped:true,helperChanges:[],targetChanges:[]};
+    }
     stage='review-source-semantics';
     const semantic=await collectIssueCandidates({root,catalog:[entry],sourceOverrides:new Map([[entry.id,source]]),includeTargets:false,includeSyncFailures:false});
     if(semantic.targetProblems.length) {
       declarations=semantic.targetProblems.flatMap(problem=>problem.declarations);
       throw new Error('Unreviewed source semantics: '+semantic.targetProblems.flatMap(problem=>problem.reasons).join('; '));
     }
-    stage='inspect-source-change';const sourceState=await inspectManagedSource(root,entry,source);
-    const changed=sourceState.changed;
-    log(`${changed?'changed':'unchanged'} upstream source via ${entry.source}; sha256=${sourceState.digest}`);
     const context=await materialize(entry,source,{onStage});
     const oldQx=targetState.qx,oldSg=targetState.surge;
     const oldStamp=conversionStampFromText(oldQx);
@@ -59,7 +65,7 @@ export async function syncCatalogEntry(entry,{
     log(targetChanges.length || helperChanges.length || changed
       ?`synced -> ${entry.file}; ${targetState.qxRelativePath}; ${targetState.surgeRelativePath}`
       :'conversion verified: source and outputs unchanged');
-    return {id:entry.id,changed,helperChanges,targetChanges};
+    return {id:entry.id,changed,skipped:false,helperChanges,targetChanges};
   }catch(error) {
     error.syncFailure=buildSyncFailure({entry,stage,error,previousSource,fetchedSource:source});
     if(declarations?.length)error.syncFailure.declarations=declarations;
@@ -92,11 +98,15 @@ async function deferCatalogEntries(root,manifest,deferredPlugins) {
 export async function runCatalogSync({root=ROOT,entryOptions={},log=console.log,writeError=console.error,warn=console.warn}={}) {
   const manifest=await loadLoonSourceCatalog(path.join(root,'.github/sources/loon.json'));
   const failures=createWorkflowFailureReporter({summaryLabel:'Isolated sync failures',writeError});
-  const structuredFailures=[],validatedPlugins=[],retainedPlugins=[],deferredPlugins=[];
+  const structuredFailures=[],validatedPlugins=[],convertedPlugins=[],skippedPlugins=[],retainedPlugins=[],deferredPlugins=[];
   let publishable=true;
   for (const entry of manifest) {
     log(`\n== ${entry.id} ==`);
-    try {await syncCatalogEntry(entry,{...entryOptions,root,log});validatedPlugins.push(entry.id);}
+    try {
+      const result=await syncCatalogEntry(entry,{...entryOptions,root,log});
+      validatedPlugins.push(entry.id);
+      (result.skipped?skippedPlugins:convertedPlugins).push(entry.id);
+    }
     catch(error) {
       failures.capture(entry,error);structuredFailures.push(error.syncFailure||buildSyncFailure({entry,stage:'sync',error}));
       if(!error.rollbackSucceeded)publishable=false;
@@ -108,7 +118,7 @@ export async function runCatalogSync({root=ROOT,entryOptions={},log=console.log,
     if(publishable)await deferCatalogEntries(root,manifest,deferredPlugins);
     await writeReadmePlan(root);
   }catch(error){publishable=false;writeError('Catalog/README publication preparation failed: '+String(error.stack||error));}
-  const summary={publishable,validatedPlugins,retainedPlugins,deferredPlugins};
+  const summary={publishable,validatedPlugins,convertedPlugins,skippedPlugins,retainedPlugins,deferredPlugins};
   await writeSyncFailureReport(root,structuredFailures,{summary});
   failures.report();
   if(structuredFailures.length)warn(`::warning::${structuredFailures.length} plugin(s) failed; structured failures are available for automatic Issues.`);

@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.83
+版本：1.84
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -8,6 +8,12 @@
 WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入本仓库转换链。
 
 ---
+
+## 0. 当前转换与同步边界
+
+- ScriptHub 仅作为 JSON replace → jq 的参考；不得将其写法扩展套用到 JSON add/delete、原生 jq、jq_file/jq-path 或其他规则。其他转换继续以源语义、官方能力与现有等价实现为准。
+- 每次 Actions 仍监控上游名单并获取插件内容，但先比较规范化后的源文本；只有新增或内容变化的插件进入语义分析、依赖解析与转换。源内容未变化且两个目标已存在时直接跳过，保留转换时间及产物。目标缺失时补建。
+- Actions 的 canonical 转换校验仅检查本次成功转换的条目；全库格式、引用、Review/Issue 与完整性检查保留。独立运行 canonical 工具仍可执行全量审计，不在日常拉取中自动全量重转。
 
 ## 1. 权威来源与证据优先级
 
