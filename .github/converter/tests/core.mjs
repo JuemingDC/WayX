@@ -532,7 +532,7 @@ if(selectedCase==='rule.mjs') {
   const enhanced=line=>surgeModuleRule(line,{matchingEnhancements:true});
   assert.equal(enhanced('DOMAIN,ads.test,REJECT').line,'DOMAIN,ads.test,REJECT,extended-matching,pre-matching');
   assert.equal(enhanced('DEST-PORT,4480,REJECT-NO-DROP').line,'DEST-PORT,4480,REJECT-NO-DROP,pre-matching');
-  assert.equal(enhanced('DOMAIN,allow.test,DIRECT').line,'DOMAIN,allow.test,DIRECT');
+  assert.equal(enhanced('DOMAIN,allow.test,DIRECT').line,'DOMAIN,allow.test,DIRECT,extended-matching');
   assert.equal(enhanced('URL-REGEX,^https://ads.test/,REJECT').line,'URL-REGEX,^https://ads.test/,REJECT,extended-matching');
   assert.equal(enhanced('RULE-SET,https://example.test/list,REJECT').line,'RULE-SET,https://example.test/list,REJECT,extended-matching');
   assert.equal(enhanced('DOMAIN-SET,https://example.test/domains,REJECT').line,'DOMAIN-SET,https://example.test/domains,REJECT,extended-matching,pre-matching');
@@ -552,7 +552,9 @@ if(selectedCase==='rule.mjs') {
   assert.doesNotMatch(rejectOnly.qx,/pre-matching|extended-matching/);
   const allow=convertPlugin(entry,'[Rule]\nDOMAIN,allow.test,DIRECT\nDOMAIN-SUFFIX,test,REJECT',options);
   validateConvertedPlugin(entry,allow);
-  assert.doesNotMatch(allow.surge,/pre-matching/,'earlier allow must not be bypassed by automatic pre-matching');
-  assert.match(allow.surge,/DOMAIN,allow.test,DIRECT\nDOMAIN-SUFFIX,test,REJECT,extended-matching/);
+  assert.match(allow.surge,/DOMAIN-SUFFIX,test,REJECT,extended-matching,pre-matching/,'mixed modules enhance each eligible rule');
+  assert.match(allow.surge,/DOMAIN,allow.test,DIRECT,extended-matching\nDOMAIN-SUFFIX,test,REJECT,extended-matching,pre-matching/);
+  assert.match(surgeModuleRule('DOMAIN,proxy.test,PROXY',{matchingEnhancements:true,proxyPolicyPlaceholder:'WayXProxyPolicy'}).line,/DOMAIN,proxy.test,WayXProxyPolicy,extended-matching/);
+  assert.doesNotMatch(surgeModuleRule('DOMAIN,proxy.test,PROXY',{matchingEnhancements:true,proxyPolicyPlaceholder:'WayXProxyPolicy'}).line,/pre-matching/);
   console.log('Surge matching flags passed: type/scope/policy, nested flags, dedup, external-set guard, allow order, QX isolation and existing requirement preservation');
 }

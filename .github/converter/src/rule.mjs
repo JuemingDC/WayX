@@ -281,10 +281,9 @@ function surgePreEligible(node,{allowRuleSet=false}={}) {
 }
 function enhancedSurgeRuleAst(ast,policy,{preMatching=true}={}) {
   const result=structuredClone(ast);
-  if(!SURGE_REJECT_MATCH_POLICIES.has(policy))return result;
   const add=(node,name)=>{if(!node.params.some(p=>p.name===name))node.params.push({name,raw:name,value:null});};
   walkRuleAst(result,node=>{if(SURGE_EXTENDED_TYPES.has(node.type))add(node,'extended-matching');});
-  if(preMatching&&!result.nested&&surgePreEligible(result))add(result,'pre-matching');
+  if(preMatching&&SURGE_REJECT_MATCH_POLICIES.has(policy)&&!result.nested&&surgePreEligible(result))add(result,'pre-matching');
   return result;
 }
 
@@ -392,7 +391,7 @@ export function planSurgeModuleRuleAst(ast,{proxyPolicyPlaceholder=null,matching
         reason:'source-proxy-policy-needs-argument',
       };
     }
-    const lineOut=renderSurgeRuleAst(ast,{policyOverride:proxyPolicyPlaceholder});
+    const lineOut=renderSurgeRuleAst(matchingEnhancements?enhancedSurgeRuleAst(ast,policy,{preMatching}):ast,{policyOverride:proxyPolicyPlaceholder});
     return {
       kind:'rule',
       section:'rule',

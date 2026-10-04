@@ -86,7 +86,7 @@ jobs:
           jq --version
           node .github/converter/tests/runtime.mjs
 
-      - name: Refresh full Kelee catalog
+      - name: Refresh Kelee ad-block and dependency catalog
         run: python .github/converter/tools/refresh-kelee-catalog.py
 
       - name: Pull discovered upstreams and convert

@@ -4,7 +4,8 @@
 Author: chance
 Category: Automation / Source Discovery / Kelee
 
-The plugin center list is treated as an ordered discovery feed. Existing Kelee
+Only the ad-block and dependency category tags enter the ordered discovery feed.
+Existing Kelee
 entries keep their stable WayX ids/output filenames when the same source URL is
 still present; newly discovered plugins derive deterministic names from the LPX
 filename. Non-Kelee entries live in loon-static.json and are appended unchanged.
@@ -115,14 +116,16 @@ def stable_id(stem: str, source: str, used: set[str]) -> str:
     return candidate
 
 
-def category_for(item: Any, stem: str) -> str:
-    name = str(item.get("name", "")) if isinstance(item, dict) else ""
+def category_for(item: Any, stem: str) -> str | None:
+    # The discovery feed's exact category tags are authoritative; names and
+    # filenames must not pull enhancement/check-in plugins into the scope.
     tags = item.get("tag", []) if isinstance(item, dict) else []
-    tag_text = " ".join(map(str, tags if isinstance(tags, list) else [tags]))
-    haystack = f"{name} {tag_text} {stem}".lower()
-    if "去广告" in haystack or "remove_ads" in haystack or stem.lower().startswith("block"):
+    tags = tags if isinstance(tags, list) else [tags]
+    if "依赖" in tags:
+        return "依赖"
+    if "去广告" in tags:
         return "去广告"
-    return "增强"
+    return None
 
 
 def is_kelee_entry(entry: Any) -> bool:
@@ -174,6 +177,9 @@ def build_catalog(list_payload: Any, previous: list[dict[str, Any]], static: lis
 
         file_name = safe_filename_from_url(source)
         stem = file_name[:-4]
+        category = category_for(item, stem)
+        if category is None:
+            continue
         old = previous_kelee.get(source)
 
         if old:
@@ -183,7 +189,7 @@ def build_catalog(list_payload: Any, previous: list[dict[str, Any]], static: lis
                 "source": source,
                 "qx": str(old["qx"]),
                 "surge": str(old["surge"]),
-                "category": str(old.get("category") or category_for(item, stem)),
+                "category": category,
             }
             collisions = [
                 ("id", entry["id"], used_ids),
@@ -213,7 +219,7 @@ def build_catalog(list_payload: Any, previous: list[dict[str, Any]], static: lis
                 "source": source,
                 "qx": qx,
                 "surge": surge,
-                "category": category_for(item, stem),
+                "category": category,
             }
 
         discovered.append(entry)
@@ -255,8 +261,18 @@ def prune_removed(previous: list[dict[str, Any]], current: list[dict[str, Any]])
             if resolved.is_file():
                 resolved.unlink()
                 changed.append(str(resolved.relative_to(ROOT)))
-        # Empty source subdirectories are safe to remove; Script directories are
-        # deliberately not pruned because they may contain user-maintained files.
+        script_dir = ROOT / "Script" / str(entry.get("id", ""))
+        script_dir.resolve().relative_to((ROOT / "Script").resolve())
+        if script_dir.is_dir():
+            for helper in script_dir.glob("*.js"):
+                if re.fullmatch(r"[a-z_]+_[0-9a-f]{10}\.js", helper.name) and "// Converted by: chance" in helper.read_text(encoding="utf-8"):
+                    helper.unlink()
+                    changed.append(str(helper.relative_to(ROOT)))
+            try:
+                script_dir.rmdir()
+            except OSError:
+                pass
+        # Preserve files outside the managed source/target/helper contract.
         source_parent = (ROOT / "Resource" / "Loon" / str(entry.get("file", ""))).parent
         if source_parent != ROOT / "Resource" / "Loon":
             try:

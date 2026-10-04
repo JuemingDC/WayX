@@ -249,6 +249,24 @@ console.log('Workflow lifecycle/result boundary contract passed');
 }
 
 if (selectedCase === "upstream-automation.mjs") {
+  const categoryCheck=runIsolatedCase('python',['-c',String.raw`
+import importlib.util
+s=importlib.util.spec_from_file_location('kelee','.github/converter/tools/refresh-kelee-catalog.py')
+m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
+def item(stem,tags):return {'url':'https://kelee.one/Tool/Loon/Lpx/'+stem+'.lpx','tag':tags}
+a=item('ads',['去广告']);b=item('dependency',['依赖']);c=item('remove_ads',['功能增强']);d=item('Block_other',[])
+old=[{'id':'stable','file':'ads.lpx','source':a['url'],'qx':'ads.snippet','surge':'ads.sgmodule','category':'增强'}]
+static=[{'id':'manual','file':'manual.lpx','source':'https://example.test/manual.lpx','qx':'manual.snippet','surge':'manual.sgmodule','category':'增强'}]
+entries,metadata=m.build_catalog({'lists':[c,a,b,d,a]},old,static)
+assert [e['id'] for e in entries]==['stable','Kelee_dependency','manual']
+assert [e['category'] for e in entries]==['去广告','依赖','增强']
+assert [e['source'] for e in metadata]==[a['url'],b['url']]
+assert m.category_for(item('both',['去广告','依赖']),'both')=='依赖'
+assert m.category_for(item('fake',['非去广告']),'fake') is None
+assert m.category_for(item('single','依赖'),'single')=='依赖'
+`],{encoding:'utf8'});
+  assert.equal(categoryCheck.status,0,categoryCheck.stderr||categoryCheck.stdout);
+
 // Suite case: upstream-automation.mjs
 const previous=`#!name=Demo
 [Rule]

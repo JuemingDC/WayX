@@ -176,22 +176,11 @@ const actual={
 assert.ok(rewriteCount>0,'expected Catalog Rewrite v2 syntax');
 assert.ok(scriptCount>0,'expected Catalog Script v2 syntax');
 
-assert.deepEqual(
-  actual,
-  expected,
-  [
-    'Catalog-observed Loon v2 semantic-token inventory changed.',
-    'Do not update the baseline mechanically.',
-    'This gate intentionally ignores action argument shape/arity, multi-action signature, grouping,',
-    'regex flag combinations, Script path/argument kinds, option value shapes, option order and option-set combinations.',
-    'Those are source grammar or planner responsibilities, not observed-capability shapes.',
-    'Only genuinely new phase / condition-variable class / condition operator / logical operator / action name / Script option name',
-    'requires semantic review.',
-    '',
-    'Actual inventory:',
-    JSON.stringify(actual,null,2),
-  ].join('\n')
-);
+for(const family of ['rewriteV2','scriptV2'])for(const [key,values] of Object.entries(actual[family])) {
+  assert.deepEqual(values.filter(value=>!expected[family][key].includes(value)),[],
+    'New catalog semantic identifier requires review: '+family+'.'+key);
+}
+// Catalog scope can shrink without deleting the historical capability baseline.
 
 console.log('Catalog v2 semantic inventory passed: '+rewriteCount+' Rewrite / '+scriptCount+' Script declarations');
 }
@@ -336,7 +325,7 @@ console.log('Advanced/special regex baseline: '+observedAdvanced.length);
 for(const hit of observedAdvanced) console.log('- '+hit.feature+' :: '+hit.where+' :: '+hit.pattern);
 assert.deepEqual(
   observedAdvanced,
-  expectedAdvanced,
+  expectedAdvanced.filter(hit=>manifest.some(entry=>hit.where.startsWith(entry.file+' ['))),
   'Catalog advanced/special regex baseline changed; review target regex compatibility before changing conversion behavior',
 );
 console.log('Catalog regex inventory passed: existing advanced constructs are locked to the reviewed raw-preservation baseline');
