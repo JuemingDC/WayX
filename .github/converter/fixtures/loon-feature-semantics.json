@@ -856,6 +856,169 @@
         },
         "body": "throw new Error(\"${literal}\");"
       }
+    },
+    {
+      "id": "multi-file-absolute-action-positions",
+      "source": "request if ${url} ~= /example/i then request.header.set(\"X-Before\",\"yes\") | request.body.mock_file(\"json\",\"first.json\") | request.header.set(\"X-First-Type\",${request.header[\"Content-Type\"]}) | request.body.mock_file(\"text\",\"second.txt\") | request.body.replace(/second/i,\"final\")",
+      "expected": {
+        "headers": {
+          "X-Before": "yes",
+          "Content-Type": "text/plain; charset=utf-8",
+          "X-First-Type": "application/json"
+        },
+        "body": "final"
+      },
+      "mockByAction": {
+        "1": {
+          "bodyText": "{\"first\":1}",
+          "sourceFile": "https://example.test/file-1.txt"
+        },
+        "3": {
+          "bodyText": "second",
+          "sourceFile": "https://example.test/file-3.txt"
+        }
+      },
+      "request": {},
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "multi-file-repeat-resets-body",
+      "source": "request if ${url} ~= /example/i then request.body.mock_file(\"json\",\"same.json\") | request.json.add(\"discard\",true) | request.body.mock_file(\"json\",\"./same.json\") | request.json.add(\"keep\",true)",
+      "expected": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": "{\"original\":1,\"keep\":true}"
+      },
+      "mockByAction": {
+        "0": {
+          "bodyText": "{\"original\":1}",
+          "sourceFile": "https://example.test/file-0.txt"
+        },
+        "2": {
+          "bodyText": "{\"original\":1}",
+          "sourceFile": "https://example.test/file-2.txt"
+        }
+      },
+      "request": {},
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "multi-file-inline-and-json-order",
+      "source": "request if ${url} ~= /example/i then request.body.mock_file(\"text\",\"one.txt\") | request.body.mock(\"json\",`{\"discard\":1}`) | request.body.mock_file(\"json\",\"last.json\") | request.json.replace(\"value\",true)",
+      "expected": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": "{\"value\":true}"
+      },
+      "mockByAction": {
+        "0": {
+          "bodyText": "one",
+          "sourceFile": "https://example.test/file-0.txt"
+        },
+        "2": {
+          "bodyText": "{\"value\":1}",
+          "sourceFile": "https://example.test/file-2.txt"
+        }
+      },
+      "request": {},
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "multi-file-empty-final-body",
+      "source": "request if ${url} ~= /example/i then request.body.mock_file(\"html\",\"one.html\") | request.body.mock_file(\"plain\",\"empty.txt\")",
+      "expected": {
+        "headers": {
+          "Content-Type": "text/plain; charset=utf-8"
+        },
+        "body": ""
+      },
+      "mockByAction": {
+        "0": {
+          "bodyText": "<p>one</p>",
+          "sourceFile": "https://example.test/file-0.txt"
+        },
+        "1": {
+          "bodyText": "",
+          "sourceFile": "https://example.test/file-1.txt"
+        }
+      },
+      "request": {},
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "multi-file-content-not-evaluated",
+      "source": "request if ${url} ~= /example/i then request.body.mock_file(\"json\",\"one.json\") | request.body.mock_file(\"javascript\",\"code.js\")",
+      "expected": {
+        "headers": {
+          "Content-Type": "application/javascript; charset=utf-8"
+        },
+        "body": "throw new Error(\"${literal}:汉字\");\n"
+      },
+      "mockByAction": {
+        "0": {
+          "bodyText": "{}",
+          "sourceFile": "https://example.test/file-0.txt"
+        },
+        "1": {
+          "bodyText": "throw new Error(\"${literal}:汉字\");\n",
+          "sourceFile": "https://example.test/file-1.txt"
+        }
+      },
+      "request": {},
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
+    },
+    {
+      "id": "multi-file-three-replacements",
+      "source": "request if ${url} ~= /example/i then request.body.mock_file(\"text\",\"first.txt\") | request.header.set(\"X-Mid\",\"yes\") | request.body.mock_file(\"html\",\"second.html\") | request.body.replace(/old/,\"discard\") | request.body.mock_file(\"css\",\"last.css\") | request.body.replace(/red/,\"blue\")",
+      "expected": {
+        "headers": {
+          "Content-Type": "text/css; charset=utf-8",
+          "X-Mid": "yes"
+        },
+        "body": "a { color: blue; }"
+      },
+      "mockByAction": {
+        "0": {
+          "bodyText": "first",
+          "sourceFile": "https://example.test/file-0.txt"
+        },
+        "2": {
+          "bodyText": "<p>old</p>",
+          "sourceFile": "https://example.test/file-2.txt"
+        },
+        "4": {
+          "bodyText": "a { color: red; }",
+          "sourceFile": "https://example.test/file-4.txt"
+        }
+      },
+      "request": {},
+      "response": {},
+      "targets": [
+        "qx",
+        "surge"
+      ]
     }
   ]
 }

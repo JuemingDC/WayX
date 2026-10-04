@@ -481,7 +481,7 @@ export function evaluateRewriteActions(ast,context,{parsePath,mockFiles}={}) {
   const stringValue=node=>{const v=value(node);if(typeof v!=='string')throw new SemanticEvaluationError('action operand must be String');return v;};
   const put=(object,key,v)=>Object.defineProperty(object,key,{value:v,enumerable:true,writable:true,configurable:true});
   const errors=[];
-  for (const action of ast.actions) {
+  for (const [actionIndex,action] of ast.actions.entries()) {
     const groups=action.args[0]?.type==='array' ? action.args[0].items.map((_,i)=>action.args.map(a=>a.items[i])) : [action.args];
     for (const args of groups) try {
       const phase=state[ast.phase] ||= {};
@@ -498,7 +498,9 @@ export function evaluateRewriteActions(ast,context,{parsePath,mockFiles}={}) {
         const mime={json:'application/json',text:'text/plain; charset=utf-8',css:'text/css; charset=utf-8',html:'text/html; charset=utf-8',javascript:'application/javascript; charset=utf-8',plain:'text/plain; charset=utf-8'};
         const type=stringValue(args[0]).toLowerCase();
         if(!Object.prototype.hasOwnProperty.call(mime,type) || (args[2] && value(args[2])!==false))throw new SemanticEvaluationError('oracle only supports text request mocks');
-        const body=operation==='mock_file' ? mockFiles?.get(ast.raw)?.bodyText : stringValue(args[1]);
+        const files=mockFiles?.get(ast.raw);
+        const dependency=files?.byAction ? (Object.prototype.hasOwnProperty.call(files.byAction,actionIndex)?files.byAction[actionIndex]:null) : ast.actions.filter(a=>a.name==='request.body.mock_file').length===1 ? files : null;
+        const body=operation==='mock_file' ? dependency?.bodyText : stringValue(args[1]);
         if(typeof body!=='string')throw new SemanticEvaluationError('missing text mock dependency');
         const headers=phase.headers ||= {};
         const keys=Object.keys(headers).filter(k=>k.toLowerCase()==='content-type');

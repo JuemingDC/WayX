@@ -721,13 +721,19 @@ function jsonValueSource(node, captures, guaranteed, argumentTable = null) {
   if (node.type === 'raw-string') return JSON.stringify(node.value);
   return JSON.stringify(node.value);
 }
+function mockFileDependency(ast,materialized,index) {
+  if(materialized?.error)throw new Error(materialized.error);
+  if(materialized?.byAction)return Object.prototype.hasOwnProperty.call(materialized.byAction,index)?materialized.byAction[index]:null;
+  // An old single-file object must never be reused for another file action.
+  return ast.actions.filter(a=>a.name==='request.body.mock_file').length===1?materialized:null;
+}
 function statements(ast, target, {argumentTable = null, mockMaterialized = null} = {}) {
   const out = [];
   const captures = captureInfo(ast.condition);
   const guaranteed = guaranteedCaptures(ast.condition);
   for(const alias of captures.keys())if(argumentTable?.byId?.has(alias))throw new Error('capture alias duplicates plugin argument: '+alias);
   let body = false, headers = false, json = false, headerAdd = false, dynamicPath = false;
-  for (const action of ast.actions) {
+  for (const [actionIndex,action] of ast.actions.entries()) {
     if (new RegExp('^' + ast.phase + '\\x2eheader\\x2e(?:add|set|del|replace)$').test(action.name)) {
       headers = true;
       for (const args of expand(action)) {
@@ -755,18 +761,19 @@ function statements(ast, target, {argumentTable = null, mockMaterialized = null}
     if (action.name === 'request.body.mock' || action.name === 'request.body.mock_file') {
       if(ast.phase!=='request')throw new Error('request mock action requires request phase');
       if(!isTextRequestMockAction(action))throw new Error('text request mock requires a fixed text content type and Base64=false');
-      if(ast.actions.filter(a=>a.name==='request.body.mock_file').length>1)throw new Error('multiple request mock_file dependencies in one entry are not materialized');
       const type=complexRewriteFixed(action.args[0], 'request mock content type').toLowerCase();
 
 
       let bodyValue;
       if (action.name.endsWith('.mock_file')) {
-        if (!mockMaterialized) throw new Error('request mock_file was not materialized during conversion');
-        if (mockMaterialized.error) throw new Error(mockMaterialized.error);
-        if (typeof mockMaterialized.bodyText !== 'string') {
+        complexRewriteFixed(action.args[1],'mock file path');
+        const dependency=mockFileDependency(ast,mockMaterialized,actionIndex);
+        if(!dependency)throw new Error('request mock_file action '+actionIndex+' was not materialized during conversion');
+        if(dependency.error)throw new Error(dependency.error);
+        if (typeof dependency.bodyText !== 'string') {
           throw new Error('request mock_file requires materialized text in the shared phase runtime');
         }
-        bodyValue=JSON.stringify(mockMaterialized.bodyText);
+        bodyValue=JSON.stringify(dependency.bodyText);
       } else {
         bodyValue=capturedString(action.args[1], 'request mock body', captures, guaranteed, argumentTable);
       }
@@ -837,7 +844,7 @@ function renderRewriteScript(ast, {target, stamp='', category='', sourceLine='',
     '// Converted by: chance',
     '// Category: ' + (category || 'Rewrite / Loon Feature Collection'),
     sourceLine ? '// Source Loon: ' + sourceLine : null,
-    mockMaterialized?.sourceFile ? '// Source mock file: '+mockMaterialized.sourceFile : null,
+    ...(mockMaterialized?.byAction ? Object.values(mockMaterialized.byAction).filter(x=>x.sourceFile).map(x=>'// Source mock file: '+x.sourceFile) : mockMaterialized?.sourceFile ? ['// Source mock file: '+mockMaterialized.sourceFile] : []),
     target==='surge' && ast.actions.some(isTextRequestMockAction) ? '// Surge request-body API limits: chunked / Expect: 100-continue bodies are not overwritten; platform buffering limits still apply.' : null,
     sharedRuntime ? null : regexReplacementRuntimeSource(),
     sharedRuntime ? null : conditionRuntimeSource(),

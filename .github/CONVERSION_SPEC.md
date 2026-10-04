@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.64
+版本：1.65
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -916,3 +916,16 @@ Inline body 使用共同 String lowering，支持捕获、内置变量和 Surge 
 删除 QX 专用 request-mixed handler，改为统一 features/phase 生成类别。保留公开旧 renderer 供 legacy、binary/Base64 兼容适配，不把它们混入文本阶段。响应 mock 的 request/response 时机及终结行为仍按原规范处理；动态内容类型、同声明多个 file 依赖、二进制/编码体和异步作者 Script 组合不在本次等价子集。
 
 目标的请求体 API 仍受原平台契约约束：Surge 的 chunked、Expect: 100-continue、大小上限及 framing 约束不由转换器改写或绕过。不会为这些限制增加虚构字段或宣称所有网络传输情况均可等价。本次仅扩大已验证的同步文本操作组合，保留原有兼容边界、QX 强制 enable 策略及暂停的定时活动。
+
+
+## 28. 同声明多文件依赖（v1.65）
+
+共同文本请求阶段现在支持一条 Rewrite 中的多个 `request.body.mock_file`。多文件 materialization 使用 `byAction` 对象，键为原 AST 的绝对 action index；Header/Body/JSON 或 inline mock 插入在文件动作之间不会改变绑定关系。单文件仍返回旧的 bodyText/bodyBase64/sourceFile 格式，旧调用方及公开导出保持兼容。多文件声明不得重复使用一个旧单文件对象作为所有文件的内容。
+
+每条多文件声明内，规范化后相同的原 URL 只获取一次，包括失败结果；各 action 保存独立依赖记录。请求体修改不改变缓存中的原文本，再次 mock 同一文件会恢复原内容。跨声明及跨阶段仍保留原有获取契约，不扩大 snapshot 范围。原 URL 保留在依赖数据与生成 helper 注释中，文件文本不展开变量、不作为代码执行。
+
+每个失败依赖记录自己的 action index、错误及可解析的 URL，声明顶层汇总 error。任何依赖缺失或获取失败时，按原 fail-closed 规范保留整条源声明及 Review，不生成猜测内容或仅执行部分 file actions 的 helper。响应多 mock、二进制/Base64 多文件组合仍不属于该阶段的可表达子集。
+
+V2 文件地址必须是固定 String/raw String；双引号内的动态模板明确拒绝 materialization，不尝试获取含未展开模板的 URL。escaped template 和 raw String 中的 `${...}` 是普通文件名内容，按共同字符串解析后解析 URL。动态文件地址不会被参数默认值冻结；JQ/mock 的文件地址使用同一个静态校验。其它动态 Regex、透明 URL 和作者异步 Script 的边界继续保留。
+
+§27 的每条声明单文件限制由本节的动作索引绑定替代。验收涵盖不同文件、重复相对地址、插入动作、重复 mock 恢复原内容、空文本、字面模板路径、失败去重与保守 Review；仍使用原 features/phase 类别，不增加生产领域文件或公开入口。

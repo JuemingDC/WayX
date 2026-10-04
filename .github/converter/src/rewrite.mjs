@@ -780,8 +780,12 @@ export function dependencySpecFromAction(action, { pluginSourceUrl = '' } = {}) 
   const def = FILE_ACTIONS[action?.name];
   if (!def) return null;
 
-  const ref = stringValue(action.args?.[def.pathIndex]);
-  if (!ref) throw new Error(`${action.name}: file dependency must be a fixed non-empty string`);
+  const path=action.args?.[def.pathIndex];
+  if(!['string','raw-string'].includes(path?.type))throw new Error(`${action.name}: file dependency must be a fixed non-empty string`);
+  const parts=stringTemplateParts(path);
+  if(parts.some(p=>p[0]==='v'))throw new Error(`${action.name}: dynamic file dependency paths are not materialized`);
+  const ref=parts.map(p=>p[1]).join('');
+  if(!ref)throw new Error(`${action.name}: file dependency must be a fixed non-empty string`);
 
   const location=dependencyLocation(ref,action.name,pluginSourceUrl);
   if (!location.resolvable) {
@@ -963,7 +967,7 @@ export function isTextRequestMockAction(action) {
 }
 export function supportsRewritePhaseActions(ast,target) {
   const mutations=new RegExp('^'+ast.phase+'\\.(?:header\\.(?:'+(target==='surge'?'add|':'')+'set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$');
-  return ast.actions.every(action=>mutations.test(action.name) || (ast.phase==='request' && isTextRequestMockAction(action))) && ast.actions.filter(action=>action.name==='request.body.mock_file').length<=1;
+  return ast.actions.every(action=>mutations.test(action.name) || (ast.phase==='request' && isTextRequestMockAction(action)));
 }
 
 function planRewriteFeatureHelper(ast,target,ctx) {
