@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.94
+版本：1.95
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -1207,3 +1207,14 @@ Surge 对象编码器同样使用共同检查，不能把重复引用编译为�
 转换失败案例：新版解析器接受 `{}`/重复参数，Surge 编码重复键，QX 参数省略跳过声明绑定。修复共同结构/绑定代码，不逐条修补输出；回归覆盖所有新版 trigger、两个目标、旧版已识别对象、合法 String/Number/Boolean 类型和顺序、相邻有效声明与依赖拉取隔离。
 
 官方依据：https://nsloon.app/en/docs/Script/script_v2/（Plugin object argument）。
+
+
+## 50. 动态 Cron 的 String 类型与有效值绑定（v1.95）
+
+Script v2 动态 Cron 引用共用绑定校验：引用必须已声明、类型必须为 String；转换基线必须有非空默认值，且具有五或六个字段。Number/Boolean 不可字符串化为 Cron；未声明引用、错误类型、缺少默认值、空默认值与字段数错误分别报告。Cron 必须有有效值，不得套用动态 enable/timeout/debug 的缺省回退。
+
+共同校验先于 Surge 的 enable=false 提前返回及 QX 的 argument task 省略，目标不支持某字段不能掩盖无效源绑定。合法动态 Cron 保留原策略：Surge 使用声明参数 placeholder；QX 固定为插件默认值并保留说明、强制 enabled=true。不引入完整 Cron 语法解析，不宣称字段数检查等同客户端调度校验；未验证的用户值 transport 仍保留既有边界。
+
+转换失败案例：Surge 把 Number/Boolean 参数输出为 cronexp placeholder；无默认值被误报未声明参数；QX 可在省略参数 task 时跳过错误 Cron 绑定。修复共同规划入口，回归覆盖两目标、AST/IR、关闭与省略路径、五/六字段合法值及相邻有效脚本隔离。每次 Action 全量转换、内容一致不覆盖的策略保持不变。
+
+官方依据：https://nsloon.app/en/docs/Script/script_v2/（Cron Script、Missing dynamic option values），https://manual.nssurge.com/scripting/overview.html（cronexp），用户 sample.txt [task_local]（五/六字段）。

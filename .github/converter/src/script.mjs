@@ -1024,6 +1024,19 @@ function qxTaskEnabled(ast, argumentTable, notes) {
   return true;
 }
 
+// 上游错误 / 转换失败案例：Cron bindings must be effective String
+// parameters before a target emits, disables or omits the task.
+function dynamicScriptCronBinding(ast,argumentTable) {
+  const node=ast.phase==='cron' ? ast.trigger?.expression : null;
+  if(node?.type!=='variable')return {ok:true};
+  const entry=argumentTable?.byId?.get(node.name);
+  if(!entry)return unsupported('undeclared plugin [Argument] reference for Cron: '+node.name);
+  if(entry.valueType!=='string')return unsupported('invalid plugin [Argument] type for Cron: '+node.name+' ('+entry.valueType+')');
+  if(!entry.hasDefault || entry.defaultValue==null || String(entry.defaultValue).trim()==='')return unsupported('missing plugin [Argument] default for Cron: '+node.name+'; Cron requires an effective value and has no option fallback');
+  if(![5,6].includes(String(entry.defaultValue).trim().split(/\s+/).length))return unsupported('invalid plugin [Argument] default for Cron: '+node.name+'; expected a 5- or 6-field expression');
+  return {ok:true};
+}
+
 function qxCronExpression(ast, argumentTable, notes) {
   const node = ast.trigger?.expression;
   if (!node) return unsupported('Cron Script is missing its expression');
@@ -1106,6 +1119,8 @@ export function qxScriptV2Plan(ast, {
   argumentTable = null,
 } = {}) {
   if (!ast || !['script','script-semantic-ir'].includes(ast.type)) return unsupported('expected Script v2 AST');
+  const cronBinding=dynamicScriptCronBinding(ast,argumentTable);
+  if(!cronBinding.ok)return cronBinding;
   const objects=scriptObjectBindings(ast,{argumentIds,argumentTable});
   if(!objects.ok)return objects;
   const bindings=dynamicScriptOptionBindings(ast,{argumentTable,target:'qx'});
@@ -1240,6 +1255,8 @@ function sourceScriptDefaultTimeout({sourceSyntax='v2',phase}) {
 
 export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 'script', argumentIds = null, argumentTable = null} = {}) {
   if (!ast || !['script','script-semantic-ir'].includes(ast.type)) return unsupported('expected Script v2 AST');
+  const cronBinding=dynamicScriptCronBinding(ast,argumentTable);
+  if(!cronBinding.ok)return cronBinding;
   const objects=scriptObjectBindings(ast,{argumentIds,argumentTable});
   if(!objects.ok)return objects;
   const bindings=dynamicScriptOptionBindings(ast,{argumentTable,target:'surge'});
