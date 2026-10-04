@@ -448,3 +448,18 @@ if(selectedCase==='script-ir-target-planners.mjs') {
   }
   console.log('Dynamic Cron binding passed: declared String/effective default validation before disabled or omitted tasks; valid five/six-field policy retained');
 }
+
+if(selectedCase==='script-ir-target-planners.mjs') {
+  const {parseScriptDeclaration,buildSurgeArgumentTable}=await import('../src/index.mjs');
+  const ctx={argumentTable:buildSurgeArgumentTable(['region=input']),argumentIds:new Set(['region'])};
+  for(const trigger of ['cron "0 8 * * *"','network-changed','generic'])for(const argument of ['"region=CN"','{${region}}']) {
+    const ir=parseScriptDeclaration(trigger+' then script("https://example.test/original.js",'+argument+')');
+    const qx=planQxScript(ir,ctx);assert.equal(qx.ok,true);assert.equal(qx.omitted,undefined);assert.match(qx.line,/original\.js/);assert.doesNotMatch(qx.line,/argument=/);assert.match(qx.notes.join('\n'),/argument ignored/);
+    const surge=planSurgeScript(ir,ctx);assert.equal(surge.ok,true);
+    if(argument.startsWith('{')) {assert.doesNotMatch(surge.line,/argument=/);assert.match(surge.notes.join('\n'),/argument omitted/);}else assert.match(surge.line,/argument=/);
+  }
+  for(const source of ['response if ${url} ~= /api/ then script("a.js",{${region}})','http-response api script-path=a.js,argument={region}']) {
+    const surge=planSurgeScript(parseScriptDeclaration(source),ctx);assert.equal(surge.ok,true);assert.doesNotMatch(surge.line,/argument=/);assert.match(surge.notes.join('\n'),/argument omitted/);
+  }
+  console.log('Unsupported Script argument policy passed: drop only unsupported argument, preserve tasks/URLs and supported Surge String arguments');
+}

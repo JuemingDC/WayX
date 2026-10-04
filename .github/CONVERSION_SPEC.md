@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.95
+版本：1.96
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -1218,3 +1218,14 @@ Script v2 动态 Cron 引用共用绑定校验：引用必须已声明、类型�
 转换失败案例：Surge 把 Number/Boolean 参数输出为 cronexp placeholder；无默认值被误报未声明参数；QX 可在省略参数 task 时跳过错误 Cron 绑定。修复共同规划入口，回归覆盖两目标、AST/IR、关闭与省略路径、五/六字段合法值及相邻有效脚本隔离。每次 Action 全量转换、内容一致不覆盖的策略保持不变。
 
 官方依据：https://nsloon.app/en/docs/Script/script_v2/（Cron Script、Missing dynamic option values），https://manual.nssurge.com/scripting/overview.html（cronexp），用户 sample.txt [task_local]（五/六字段）。
+
+
+## 51. 当前审查范围、参数丢弃及 ScriptHub 混合执行核查（v1.96）
+
+按用户最新要求，固定 Cron 校验、完整 Cron 字段语法及参数等价传递/缺省回退不再作为下一轮待修复项；已合并的校验保留，不新增这三类检查。目标不支持的作者 Script `$argument` 直接丢弃，保留原作者 URL、脚本声明及受支持选项，不因参数缺失省略整个 task。QX HTTP/非 HTTP 统一省略参数；Surge 已支持的 String/对象参数保持，无法编码的合法对象参数（例如缺失默认值无法无损表示 null）省略并记录说明。源语法错误、未声明引用与错误绑定仍按既有校验处理，不以目标参数丢弃掩盖源错误。此为用户策略覆盖，不宣称丢弃参数后输入语义等价；不修改原作者正文或生成参数注入包装。
+
+第四项已检查 ScriptHub commit `496d76bc99c9af667f15ad60f90fa1d1a4b87d52` 的 Rewrite-Parser.beta.js、Rewrite-Parser.js、script-converter.js 和 beta：新版 Script 先归一化为旧声明输出；URL 条件转换只覆盖单一 URL regex/等值，复杂条件标为 unsupported；新版 Rewrite 中含 script Action 时交回旧解析器，避免半条写入。script-converter 的 header/API/$done 兼容层针对单脚本，不是把多条作者异步 Script 与 Rewrite/JQ 串联的通用阶段调度器。未找到可直接解决任意混合执行场景的方法，继续采用旧 §§24、32、43 的已证明子集、原生优先和阶段所有权限制，不复制作者脚本进 dispatcher，不照搬其其它 JSON/JQ 模板。ScriptHub 仅 jq replace 的既有参考范围不变，本次额外查看仅用于用户指定的第四项核查。
+
+第五项按用户要求使用既有 Python 原地址拉取流程检查源文件/依赖，不列为必须完成真实客户端验证的待办。Python 拉取成功仅记录可获取内容，不把它描述为 iOS/macOS 引擎、压缩或缓冲行为已经验证。其余处理参考旧规范，保持正则仅正文、QX 强制 enable、原注释、作者 chance、分类/转换时间，以及每次 Action 全量转换且内容一致不覆盖。
+
+核查来源：https://github.com/Script-Hub-Org/Script-Hub/blob/main/Rewrite-Parser.beta.js（parseLoonV2UrlCondition、normalizeLoonV2ScriptLine、normalizeLoonV2RewriteLine），https://github.com/Script-Hub-Org/Script-Hub/blob/main/script-converter.js（单脚本兼容层）；官方格式：https://manual.nssurge.com/scripting/overview.html，用户 sample.txt [task_local]。
