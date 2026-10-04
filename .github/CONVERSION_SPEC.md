@@ -19,7 +19,7 @@ WayX 当前只执行 **Loon → Quantumult X / Surge** 转换。Egern 不纳入�
 - 上游错误分区记录失败案例及经过真实 jq 编译验证的修正：仅当原表达式因语法错误编译失败、补齐 `else .end` 中 identity 与 `end` 的分隔空白后编译成功时，内联修正为 `else . end`。字符串、注释、合法 `.end` 字段保持原样；其他错误不猜测修正。原始声明和错误 jq 写入输出注释，源文件保留。该规则同样适用于 jq_file / jq-path 读取后的内容。失败案例及回归输入位于 `fixtures/upstream-jq-errors.json`。
 - JSON delete 按用户指定使用 jqlang 的 `delpaths(PATHS)`，路径解析为 String/Number 数组；数字索引批量按源顺序逐项调用 delpaths，不能合并为针对原数组的一次删除。作者原生 jq 中的 del/delpaths 保留原表达式。add 使用 WayX 直接路径条件赋值 `if .data.flag == null then .data.flag = VALUE else . end`，保留既有缺失/null 规则；仅 replace 使用参考 ScriptHub 的 parent getpath + has + setpath 存在性检查。
 - 每次 Actions 监控上游名单，并对全部 catalog entry 重新获取源内容、解析语义、读取依赖、转换和验证；不以 source unchanged、已有目标或上次转换结果跳过。规范/生成器变更及同 URL 依赖文件变更必须在上游声明不变时也能生效。
-- 转换完成后逐文件比较实际内容，仅忽略转换器生成的 `# Converted:` / `// Converted:` 时间；内容一致时不写入、不刷新原时间或 mtime。QX、Surge、各 helper 独立判定，某一个文件改变不得刷新其它相同产物；缺失文件补建，废弃的转换器 helper 删除，手写脚本保留。源文件仍按实际源内容变化写入。
+- 转换完成后逐文件比较实际内容，仅忽略转换器生成的 `# Converted:` / `// Converted:` 时间，包括 phase dispatcher 内嵌的多条生成时间；内容一致时不写入、不刷新原时间或 mtime。QX、Surge、各 helper 独立判定，某一个文件改变不得刷新其它相同产物；缺失文件补建，废弃的转换器 helper 删除，手写脚本保留。源文件仍按实际源内容变化写入。
 - 不再需要一次性全量开关，删除 `.github/sources/reconvert.json` 与 forceConvert/source-unchanged shortcut。失败条目保留原有事务回滚和 Issue 隔离，每次全量运行均重新尝试。报告区分全部成功转换、实际更新产物和转换后产物相同，不将“不覆盖”称为“未转换”。
 - Actions 的 canonical 校验覆盖本次全部成功转换的条目；隔离失败沿用旧基线与诊断，完整仓库审计/引用/Review/Issue 门禁继续执行。规范格式变化只有实际发生内容变化的文件写入，其余产物保留原 bytes。
 

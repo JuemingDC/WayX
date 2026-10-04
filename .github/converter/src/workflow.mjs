@@ -91,7 +91,7 @@ export function firstConversionStamp(texts, {trim=false}={}) {
 // artifact independently so changing one rule/helper cannot rewrite its peers.
 function artifactContent(text) {
   if(text===null || text===undefined)return text;
-  return String(text).replace(/^(#|\/\/) Converted:[^\n]*/m,'$1 Converted:');
+  return String(text).replace(/^(#|\/\/) Converted:[^\n]*/gm,'$1 Converted:');
 }
 
 async function managedFileExists(file) {

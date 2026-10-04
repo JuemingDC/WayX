@@ -89,6 +89,19 @@ try {
   assert.deepEqual(await generatedScriptDiffs(root,entry,helpers),[]);
     assert.deepEqual(await syncGeneratedScripts(root,entry,helpers),[]);
 
+  const phaseName='phase_qx_response_aaaaaaaaaa.js';
+  const phaseHelpers=new Map([...helpers,[phaseName,'// Converted: old-owner\n// owner\n// Converted: old-first\nconst first=1;\n// Converted: old-second\nconst literal="// Converted: user data";\n']]);
+  await syncGeneratedScripts(root,entry,phaseHelpers);
+  const phasePath=path.join(root,'Script',entry.id,phaseName);
+  const phaseBefore=await fs.readFile(phasePath,'utf8'),phaseTime=(await fs.stat(phasePath)).mtimeMs;
+  const refreshedPhase=new Map(phaseHelpers);refreshedPhase.set(phaseName,phaseBefore.replace(/^(\/\/ Converted:).*/gm,'$1 fresh-run'));
+  assert.deepEqual(await generatedScriptDiffs(root,entry,refreshedPhase),[],'all embedded conversion timestamps are metadata');
+  assert.deepEqual(await syncGeneratedScripts(root,entry,refreshedPhase),[]);
+  assert.equal(await fs.readFile(phasePath,'utf8'),phaseBefore);assert.equal((await fs.stat(phasePath)).mtimeMs,phaseTime);
+  const changedLiteral=new Map(refreshedPhase);changedLiteral.set(phaseName,refreshedPhase.get(phaseName).replace('user data','real content change'));
+  assert.deepEqual(await generatedScriptDiffs(root,entry,changedLiteral),[phaseName],'timestamp-looking data inside code is meaningful content');
+  await fs.rm(phasePath);
+
   const changedHelpers=new Map([
     ['a.js','// a\n'],
     ['b.js','// b changed\n'],
