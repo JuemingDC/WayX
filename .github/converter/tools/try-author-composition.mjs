@@ -3,8 +3,10 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {execFile} from 'node:child_process';
+import {promisify} from 'node:util';
 import {materializeConversionContext} from '../src/conversion.mjs';
-import {groupSourceSectionItems,cleanSourceComments} from '../src/input.mjs';
+import {groupSourceSectionItems,cleanSourceComments,selectOriginalFetchProfile} from '../src/input.mjs';
 import {parseScriptDeclaration,scriptOption,scriptIrTag,rewriteV2PluginArgumentRefs} from '../src/script.mjs';
 import {parseRewriteV2,isRewriteV2,supportsRewritePhaseActions} from '../src/rewrite.mjs';
 import {renderRewriteAuthorComposition} from '../src/runtime.mjs';
@@ -67,7 +69,12 @@ if(process.argv[1] && path.resolve(process.argv[1])===fileURLToPath(import.meta.
   const [sourcePath,sourceUrl,outDir,scriptBaseUrl]=process.argv.slice(2);
   if(!sourcePath||!sourceUrl||!outDir||!/^https?:\/\//.test(scriptBaseUrl||''))throw new Error('usage: node try-author-composition.mjs SOURCE.lpx ORIGINAL_URL OUTPUT_DIR OUTPUT_SCRIPT_BASE_URL');
   const source=await fs.readFile(sourcePath,'utf8');
-  const context=await materializeConversionContext({source:sourceUrl},source);
+  const fetchBytes=async url=>{
+    const profile=selectOriginalFetchProfile(url);
+    const {stdout}=await promisify(execFile)('python3',[fileURLToPath(new URL('./fetch-upstream.py',import.meta.url)),'--url',url,'--user-agent',profile.userAgent,'--accept',profile.accept,'--timeout-seconds','20'],{encoding:'buffer',maxBuffer:64*1024*1024});
+    return stdout;
+  };
+  const context=await materializeConversionContext({source:sourceUrl},source,{fetchBytes,fetchText:async url=>(await fetchBytes(url)).toString('utf8')});
   await fs.mkdir(outDir,{recursive:true});
   const stamp=new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Shanghai'});
   for(const target of ['qx','surge']) {
