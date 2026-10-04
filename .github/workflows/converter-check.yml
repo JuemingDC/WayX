@@ -25,6 +25,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
   check:
@@ -117,6 +118,14 @@ jobs:
       - name: Verify generated helper references, golden and source URLs
         run: node .github/converter/tests/artifacts.mjs
 
+      - name: Create or update conversion issues
+        if: >-
+          always() && github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node .github/scripts/propose-conversion-issues.mjs
+
       - name: Upload regenerated canonical outputs
         if: always()
         uses: actions/upload-artifact@v4
@@ -132,6 +141,7 @@ jobs:
             .github/monitor/.runtime/conversion-reconciliation.md
             .github/monitor/.runtime/review-inventory.json
             .github/monitor/.runtime/review-inventory.md
+            .github/monitor/.runtime/conversion-issues.md
             .github/monitor/.runtime/kelee-catalog.json
             .github/sources/loon.json
             Resource/Loon/**

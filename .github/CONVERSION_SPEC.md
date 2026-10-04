@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.73
+版本：1.74
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -1019,3 +1019,14 @@ Pre-matching 只用于顶层 REJECT/REJECT-DROP/REJECT-NO-DROP/REJECT-TINYGIF �
 可莉 list.json 仅选择 tag 包含“去广告”或“依赖”的插件；以精确类别标签筛选，不用文件名或描述猜测，不沿用历史 category 扩大范围。含依赖标签优先记作依赖。稳定 id、输出名称、列表相对顺序和非可莉静态目录保留；移除范围外的受管源文件、QX/Surge 成品及具备生成签名的 helper；保留其它手写 Script。README 随目录更新。源作者 Script 依赖仍保持原 URL。拉取、规范化生成、验证和自动工作流统一使用收敛后的目录。定时活动继续暂停，远端仅 main/test。
 
 目录收敛允许既有语义标识从目录消失，但不删除历史能力测试：V2 与 legacy inventory 均继续禁止未审查的新语义；高级 regex 仍锁定范围内原始声明。移除的任务类插件不再作为磁盘成品测试依赖，合法任务语法由独立声明及既有 Script/runtime suite 保持验证。
+
+
+## 37. 固定 JQ 多路径 del 的组合支持（v1.74）
+
+固定对象字段路径的 `del(.a, .data.banner, .["特殊,字段"])` 支持与 Header/Body/JSON 同阶段组合。使用既有严格固定 selector 解析，路径组作为同一操作保留，不支持数字索引、遍历、动态 selector、注释或任意 JQ 解释。JQ 先在该组输入上解析所有路径，再执行删除；父子路径重叠不能用提前删除父字段掩盖 scalar/Array 路径错误。缺失/null 父字段不创建，own property 与特殊键沿用既有安全访问契约。
+
+同一 JQ action 全部成功才提交 body；任一路径或后续 JQ 操作类型失败恢复 action 前 body，后续 Header 等 action 继续。纯 JQ 单动作及已证明单输出的纯 JQ 多动作优先目标原生表达，不因新增子集而转成 Script；仅实际跨类型组合使用 features/phase runtime。单路径 del、既有 helper 输出及原作者 URL 保持，不增加生产领域文件、公开导出或 helper 类别。
+
+验收以真实 jq 的输出/错误作为独立参考，涵盖重复和重叠路径、正反顺序、null/缺失/标量/Array 父字段、特殊字符与原型同名字段、完整 action 回退及后续动作继续。完整 retained catalog、canonical/validator/CI 仍为合并门禁。可莉范围仍为去广告/依赖，定时活动暂停，分支仅 main/test。参考：[jq 1.6 del/path](https://jqlang.org/manual/v1.6/)。
+
+后续功能以当前去广告/依赖目录已有语义类型为设计范围；多路径 del 已见于 PinDuoDuo 的原生 JQ，不针对插件 id 定制脚本。新注册但未在已审查 V2 baseline 出现的 phase、action、option、条件变量/操作符会形成带完整源声明的 `conversion-unknown` Issue，未知语法/目标限制继续既有 Issue/Review/failure 流程，不自动扩大 baseline 或猜测转换。PR CI 与手动 upstream-monitor 自动创建/复用 Issue；定时活动仍暂停。修复 Issue proposer 的运行报告目录为 `.github/monitor/.runtime`，与 sync failure writer 对齐，保证转换失败可读。

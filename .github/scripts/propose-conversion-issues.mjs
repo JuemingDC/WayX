@@ -10,13 +10,16 @@ import { fileURLToPath } from 'node:url';
 import { loadLoonSourceCatalog } from "../converter/src/input.mjs";
 import { parseLoonPlugin } from "../converter/src/input.mjs";
 
+import { parseRewriteV2 } from '../converter/src/rewrite.mjs';
+import { parseScriptV2 } from '../converter/src/script.mjs';
+
 const ROOT = process.cwd();
 const MANIFEST = path.join(ROOT,'.github','sources','loon.json');
 const TARGET_DIRS = [
   path.join(ROOT,'Adblock','Quantumult X'),
   path.join(ROOT,'Adblock','Surge'),
 ];
-const runtimeDir = path.join(ROOT,'monitor','.runtime');
+const runtimeDir = path.join(ROOT,'.github','monitor','.runtime');
 const syncFailurePath = path.join(runtimeDir,'sync-failures.json');
 const summaryPath = path.join(runtimeDir,'conversion-issues.md');
 const dryRun = process.argv.includes('--dry-run');
@@ -186,7 +189,7 @@ export function targetProblemIssueBody(group) {
     '',
     '## Automation behavior',
     '',
-    'WayX failed closed for this declaration. No guessed active target rule is generated. The scheduled GitHub Actions workflow keeps processing other plugins and tracks this problem through this Issue.',
+    group.code==='new-catalog-semantic' ? 'This source declaration introduces syntax or semantic identifiers outside the reviewed catalog baseline. Review the conversion support before publishing the catalog update; automation preserves the declaration in this Issue.' : 'WayX failed closed for this declaration. No guessed active target rule is generated. The scheduled GitHub Actions workflow keeps processing other plugins and tracks this problem through this Issue.',
     '',
   ].join('\n');
 }
@@ -259,9 +262,50 @@ async function upsertIssue({title,body,label}) {
   return url;
 }
 
+async function newCatalogSemantics(catalog) {
+  const baseline=JSON.parse(await fs.readFile(path.join(ROOT,'.github/converter/fixtures/catalog-syntax-inventory.json'),'utf8'));
+  const out=[];
+  for(const entry of catalog) {
+    let plugin;
+    try {plugin=parseLoonPlugin(await fs.readFile(path.join(ROOT,'Resource/Loon',entry.file),'utf8'));}
+    catch {continue;} // A source read failure is reported by the sync transaction.
+    for(const section of ['Rewrite','Script'])for(const raw of plugin.sections.get(section)||[]) {
+      const line=raw.trim();if(!/^(?:request|response|cron|network-changed|generic)\b/.test(line))continue;
+      const family=section==='Rewrite'?'rewriteV2':'scriptV2';
+      const reasons=new Set();
+      const check=(key,value)=>{if(!baseline[family][key].includes(value))reasons.add('New '+family+'.'+key+': '+value);};
+      try {
+        const ast=section==='Rewrite'?parseRewriteV2(line):parseScriptV2(line);
+        check('phases',ast.phase);
+        for(const action of ast.actions||[])check('actionNames',action.name);
+        for(const option of ast.options||[])check('optionNames',option.name);
+        const visit=node=>{
+          if(!node)return;
+          if(node.type==='group')return visit(node.expression);
+          if(node.type==='logical'){check('logicalOperators',node.operator);visit(node.left);visit(node.right);return;}
+          if(node.type==='comparison'){
+            const name=node.left.name;
+            const variable=/^(?:request|response)\.header\[['"].+['"]\]$/.test(name)?name.split('.')[0]+'.header[*]':['url','request.method','response.status'].includes(name)?name:'argument';
+            check('conditionVariables',variable);check('conditionOperators',node.operator);
+          }
+        };
+        visit(ast.condition);
+      }catch(error){reasons.add('Source syntax requires review: '+error.message);}
+      if(!reasons.size)continue;
+      const code='new-catalog-semantic';
+      out.push({fingerprint:fingerprint([entry.id,'unknown',code,line]),kind:'unknown',code,plugin:entry,source:line,
+        reasons:[...reasons].sort(),locations:[],sourceSection:section,declarations:[{section,line}]});
+    }
+  }
+  return out;
+}
+
 export async function collectIssueCandidates() {
   const catalog=await loadLoonSourceCatalog(MANIFEST);
   const targetProblems=await groupedTargetProblems(catalog);
+  for(const problem of await newCatalogSemantics(catalog)){
+    if(!targetProblems.some(group=>group.plugin.id===problem.plugin.id&&group.source===problem.source))targetProblems.push(problem);
+  }
   const syncReport=await readJson(syncFailurePath,{version:1,failures:[]});
   const syncFailures=Array.isArray(syncReport.failures) ? syncReport.failures : [];
   return {targetProblems,syncFailures};

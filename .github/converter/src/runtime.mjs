@@ -794,7 +794,12 @@ function statements(ast, target, {argumentTable = null, mockMaterialized = null}
       const apply=operations.some(op=>op.path) ?
         'if(j===null){if(op.kind==="delete")continue;j={}}let parent=j;const path=op.path||[op.key];for(let i=0;i<path.length;i++){if(parent===null){break}if(typeof parent!=="object"||Array.isArray(parent))throw new Error("JQ object path requires object");const key=path[i];if(i===path.length-1){if(op.kind==="delete")delete parent[key];else Object.defineProperty(parent,key,{value:op.value,enumerable:true,writable:true,configurable:true});break}let child=Object.prototype.hasOwnProperty.call(parent,key)?parent[key]:undefined;if(child==null){if(op.kind==="delete"){break}child={};Object.defineProperty(parent,key,{value:child,enumerable:true,writable:true,configurable:true})}parent=child}' :
         'if(j===null){if(op.kind==="delete")continue;j={}}if(typeof j!=="object"||Array.isArray(j))throw new Error("JQ object key requires object");if(op.kind==="delete")delete j[op.key];else Object.defineProperty(j,op.key,{value:op.value,enumerable:true,writable:true,configurable:true})';
-      out.push('try{let j=JSON.parse(String(__wayxBody ?? ""));for(const op of JSON.parse('+operationsData+')){if(op.kind==="identity")continue;'+apply+'}__wayxBody=JSON.stringify(j)}catch{}');
+      // jq collects every del path before deleting any of them. Validate the
+      // complete group against its input so an overlapping parent cannot hide
+      // a scalar/array path error; commit only after the whole action succeeds.
+      const deleteMany=operations.some(op=>op.kind==='delete-many') ?
+        'if(op.kind==="delete-many"){for(const path of op.paths){let parent=j;for(const key of path){if(parent==null)break;if(typeof parent!=="object"||Array.isArray(parent))throw new Error("JQ object path requires object");parent=Object.prototype.hasOwnProperty.call(parent,key)?parent[key]:undefined}}for(const path of op.paths){let parent=j;for(let i=0;i<path.length;i++){if(parent==null)break;const key=path[i];if(i===path.length-1){delete parent[key];break}parent=Object.prototype.hasOwnProperty.call(parent,key)?parent[key]:undefined}}continue;}' : '';
+      out.push('try{let j=JSON.parse(String(__wayxBody ?? ""));for(const op of JSON.parse('+operationsData+')){if(op.kind==="identity")continue;'+deleteMany+apply+'}__wayxBody=JSON.stringify(j)}catch{}');
       continue;
     }
     if (action.name === ast.phase + '.json.add' || action.name === ast.phase + '.json.delete' || action.name === ast.phase + '.json.replace') {
