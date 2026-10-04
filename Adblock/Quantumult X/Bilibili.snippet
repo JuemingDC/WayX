@@ -4,13 +4,25 @@
 # Icon: https://rucu6.pages.dev/Icons/app/bilibili.png
 # Updated: 2026-09-27 19:00
 
-# Converted: 2026-10-04 18:37:05 +08:00
+# Converted: 2026-10-05 00:28:18 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/bilibili.lpx
 # Target: Quantumult X
 
 # [WayX] Policy binding: source PROXY is preserved as literal QX policy name PROXY; a matching target policy must exist.
+
+# 屏蔽默认搜索框关键词
+# [WayX] OMITTED: action pipeline cannot be converted to a complex syntax script: unsupported action combination
+# Source declaration: response if ${url} ~= /^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.interface\.v1\.Search\/DefaultWords$/i then response.body.mock("text", "AAAAACEaHeaQnOe0ouinhumikeOAgeeVquWJp+aIlnVw5Li7KAE=", 200, true) | response.header.set("grpc-status", "0")
+
+# 青少年模式
+# [WayX] OMITTED: action pipeline cannot be converted to a complex syntax script: unsupported action combination
+# Source declaration: response if ${url} ~= /^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.interface\.v1\.Teenagers\/ModeStatus$/i then response.body.mock("text", "AAAAABMKEQgCEgl0ZWVuYWdlcnMgAioA", 200, true) | response.header.set("grpc-status", "0")
+
+# 视频暂停广告
+# [WayX] OMITTED: action pipeline cannot be converted to a complex syntax script: unsupported action combination
+# Source declaration: response if ${url} ~= /^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.(?:view\.v1\.View\/TFInfo|viewunite\.v1\.View\/(?:PlayPause|ViewEndPage))$/i then response.body.mock("text", "AAAAAAA=", 200, true) | response.header.set("grpc-status", "0")
 
 # [filter_local]
 {# 空降助手 #} host, bsbsb.top, PROXY
@@ -77,12 +89,6 @@ host, app.biliapi.net, reject
 {# 移除右上角活动入口 #} ^https:\/\/app\.bilibili\.com\/x\/resource\/top\/activity\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/mock_32839594a9.js
 
 {# 搜索框填充词 #} ^https:\/\/app\.bilibili\.com\/x\/v2\/search\/square\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/mock_b40b3a44d3.js
-
-{# 屏蔽默认搜索框关键词 #} ^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.interface\.v1\.Search\/DefaultWords$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/mock_fbdd48ab53.js
-
-{# 青少年模式 #} ^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.interface\.v1\.Teenagers\/ModeStatus$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/mock_47c3f75a2a.js
-
-{# 视频暂停广告 #} ^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.(?:view\.v1\.View\/TFInfo|viewunite\.v1\.View\/(?:PlayPause|ViewEndPage))$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/mock_70cda67371.js
 
 {# 移除直播间链接跟踪参数 #} ^ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Bilibili/redirect_59da899133.js
 

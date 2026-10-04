@@ -10,12 +10,10 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/TikTok.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 23:39:36 +08:00
+# Converted: 2026-10-05 00:28:09 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/HKDouYin_remove_ads.lpx
 # Target: Surge
-
-
 
 [Rule]
 AND,((IP-CIDR,101.126.58.201/32,no-resolve),(DEST-PORT,6443)),REJECT,pre-matching
@@ -35,6 +33,8 @@ AND,((OR,((DOMAIN-SUFFIX,bytegecko.com,extended-matching),(DOMAIN-SUFFIX,byteeff
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
 http-response-jq ^https:\/\/((aweme\.snssdk\.com|api5-normal-m\.amemv\.com)|api5-normal-m\.amemv\.com)\/aweme\/homepage\/sidebar_data\/\? 'delpaths([["data_map","recently_apps"],["data_map","recently_users"]])'
+
+http-response-jq ^https:\/\/(aweme\.snssdk\.com|api5-normal-m\.amemv\.com)\/aweme\/homepage\/render\/\? 'delpaths([["data","tab_config"]])'
 
 http-response-jq ^https:\/\/(aweme\.snssdk\.com|api5-normal-m\.amemv\.com)\/aweme\/homepage\/render\/\? '.data.tab_list[]? |= (if .extra.side_bar.modules != null then .extra.side_bar.modules[]?.items[]? |= (if .data.first_page_module?.module_title == "常用功能" then .data={} else . end) else . end) | .data.tab_list |= map(if .extra.tab_list != null then .extra.tab_list |= map(select(.tab_id | IN("homepage_tablive", "homepage_follow", "homepage_hot_container"))) else . end) | .data.tab_list |= map(select(.extra.tab_list != null and (.extra.tab_list | length > 0)))'
 

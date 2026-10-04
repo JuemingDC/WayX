@@ -10,16 +10,16 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Beike.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 23:39:10 +08:00
+# Converted: 2026-10-05 00:27:43 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Beike_remove_ads.lpx
 # Target: Surge
 
-
-
 [Body Rewrite]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
 http-response-jq ^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/homepage\/initData\/mini\? 'delpaths([["data","bootpage"],["data","bottom_bar_activity"]])'
+
+http-response-jq ^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/userCenter\/info\? 'delpaths([["data","islandModule"]])'
 
 http-response-jq ^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/userCenter\/info\? 'del(.data.mainIcons.list[] | select(.indexKey == "coupon"))'
 

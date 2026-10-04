@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：1.98
+版本：1.99
 作者：chance  
 状态：**唯一权威转换规范（Authoritative）**  
 迁移状态：**领域合并完成；通用 Loon 特性合集及 Header/Body/JSON phase dispatcher 已迁移；文本请求 mock 与固定 JQ 子集（含文件依赖）已纳入共同阶段编译；未证明等价的组合继续保留兼容边界**
@@ -1244,10 +1244,23 @@ Script v2 动态 Cron 引用共用绑定校验：引用必须已声明、类型�
 验证运行 QX/Surge 两目标、Request/Response 两阶段的实际生成脚本，覆盖 Rewrite 数据流、异步与重复 done、首匹配、Body/JQ 命中禁用、Response 原始条件快照、同步/Promise 错误及无法拉取/反射源码拒绝。完整旧 suite 和全量 Action 保持门禁。官方依据：https://nsloon.app/en/docs/Script/script_v2/（Matching and execution、Rewrite and Script），https://manual.nssurge.com/scripting/overview.html（每阶段 first match、timeout）。
 
 
-## 53. 同正则跨类型取舍（v1.98）
+## 53. 同正则跨类型取舍（v1.98，解释错误，已由 §54 撤销）
 
 按用户最新要求，同一插件、同一 HTTP 阶段、完全相同的 URL 正则主体适用 Script > JQ > 其它 Rewrite 的取舍。仅比较解析后的 regex body；flags 已按现有政策丢弃，不能重新添加。不同正则不推断覆盖关系，不同阶段及含额外条件/捕获的声明不合并。不同 URL 的真实样本只能验证各自转换，不能作为同正则组合证据。
 
 存在作者 Script 时保留原作者地址、声明顺序及受支持选项，丢弃同组其它 Rewrite；不存在 Script 但存在原生 JQ/jq_file/jq-path 时保留 JQ，丢弃其它动作。同条 v2 多 action 只保留 JQ action，JQ 文件仍按原 action 索引 materialize 后内联；多条 JQ 的顺序和既有输出形式不改。JSON add/delete/replace 转译为 JQ 不算源 JQ，不据目标输出形式触发优先级。QX 继续强制 enable；Surge disabled Script 不成为活动 owner。无效源声明保留原诊断，不以优先级掩盖。
 
 此为用户明确指定的语义降级，不宣称保持被丢弃动作的行为，不做异步作者正文组合。只输出选中层的目标格式转换结果，被忽略层直接丢弃，不输出原规则或源声明作为回退。§52 的组合实验不再作为当前实现方向，工具只留作历史实验；canonical sync 在共同规划入口实施此政策。旧阶段所有权规则仅适用于本节未取舍的声明。全量转换、内容一致不覆盖、作者 URL 保护及其余旧规范保持。
+
+
+## 54. 仅单条 action pipeline 选层；JQ 家族拆分（v1.99）
+
+用户澄清组合指同一条声明的 `script | XX`、`jq/delete/replace/add/file | XX`，不指分开的同正则规则。§53 跨声明 Script > JQ 优先级全部撤销；独立 Rewrite/Script 声明按原顺序和旧规范转换，不因正则相同或类型不同丢弃任一声明。前三个真实多 JQ 示例（知乎、小白打印、他趣）均保留所有独立 JQ。
+
+单条 action pipeline 不分竖线前后，按 Script > JSON/JQ 家族 > 其它动作选择一层。存在 Script 时只转换源顺序中的第一条 Script；否则存在 request/response.json 的 add/delete/replace/jq/jq_file 时保留该家族全部 actions，丢弃其它家族。保留 actions 按原顺序逐项转换，分别输出同一源条件/正则的目标规则，不合并成一个 JQ 或吸入阶段 dispatcher。数组批量参数仍作为同一 action，按原数组语义生成；复杂条件、动态值或目标能力边界仍遵循旧规范。没有 Script 或 JSON/JQ 家族的链必须尝试既有复杂语法脚本，按源动作顺序执行；不能安全生成目标 Script 时只输出 OMITTED 注释及源声明，不保留活动原生规则，不新增待人工 Review。无效源语法仍保留既有诊断。
+
+同条 `script(...) [with ...] | XX` 或 `XX | script(...) [with ...]` 按用户转换策略仅解析和转换选中的 Script 调用及选项，丢弃其它层。此为用户指定的输入降级处理，不把该 pipeline 声称为官方 Script v2 语法，也不把 script action 加入官方 Rewrite registry；含 Script 的降级输入通过共同 Script parser/target planner 转换。词法扫描必须保护 URL 正则里的 alternation、`||`、字符串/Raw String/变量中的竖线；JQ 字符串内部的 `|` 始终属于一个 JQ 程序，不能按文本 split。
+
+JQ file/path 仅物化保留层，继续使用原声明 action 索引。被忽略后缀不拉取依赖、不规划目标 action、不输出原规则或源声明回退。保留层若需要诊断，仅引用该层的声明。§52 顺序组合实验保持历史用途，不进入 canonical sync。全量 266 项重转换，内容一致不覆盖；撤销错误筛选所涉及的目标产物恢复正确规则。
+
+根目录 README 保持现有标题、导航、BoxJs/Module/Adblock/Rule 顺序及三列表格结构。每次全量转换后按实际目标产物重建索引；新增产物加条目，删除产物删条目，单目标缺失显示 —；内容一致时不覆盖。

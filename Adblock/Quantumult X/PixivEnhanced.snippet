@@ -8,11 +8,16 @@
 # Updated: 2026-10-03 16:00
 # Version: 4.5.2
 
-# Converted: 2026-10-04 18:37:14 +08:00
+# Converted: 2026-10-05 00:28:27 +08:00
 # Converted by: chance
 # Category: 增强
 # Source: https://raw.githubusercontent.com/TomCatXue/MyCookieCenter/main/loon/PixivEnhanced.plugin
 # Target: Quantumult X
+
+
+# 2. 原生级增强设置中心 (0ms 离线瞬时秒开，对标 Pix-Scripting 与 iOS 原生视觉规范)
+# [WayX] OMITTED: action pipeline cannot be converted to a complex syntax script: unsupported action combination
+# Source declaration: response if ${url} ~= /^https:\/\/app-api\.pixiv\.net\/settings\/Enhanced(?:\?[^#]*)?$/i then response.body.mock_file("html", "https://raw.githubusercontent.com/TomCatXue/MyCookieCenter/main/scripts/tools/pixiv/settings.html?v=202610031600", 200) | response.header.add("Cache-Control", "no-store")
 
 # [filter_local]
 
@@ -20,8 +25,6 @@
 # 1. 劫持 Pixiv App 内「帮助中心」与「服务条款」，一键直达增强设置中心
 ^https?:\/\/app\.pixiv\.help(?:\/.*)?$ url 302 https://app-api.pixiv.net/settings/Enhanced
 ^https?:\/\/policies\.pixiv\.net(?:\/.*)?$ url 302 https://app-api.pixiv.net/settings/Enhanced
-
-{# 2. 原生级增强设置中心 (0ms 离线瞬时秒开，对标 Pix-Scripting 与 iOS 原生视觉规范) #} ^https:\/\/app-api\.pixiv\.net\/settings\/Enhanced(?:\?[^#]*)?$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/PixivEnhanced/mock_file_0c6e56127a.js
 # Pixiv.Enhanced.SettingsAPI
 {# 设置中心与 API 交互及漫画查看器 (配置读取、保存、实时测速、清空缓存，支持 www.pixiv.net 原生点击弹窗) #} ^https:\/\/(app-api|www)\.pixiv\.net\/(settings\/Enhanced|manga\/viewer|api\/) url script-request-body https://raw.githubusercontent.com/TomCatXue/MyCookieCenter/main/scripts/tools/pixiv/pixiv_enhanced.js?v=202610031600
 

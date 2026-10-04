@@ -10,17 +10,17 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ChaoXingStudy.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 23:39:38 +08:00
+# Converted: 2026-10-05 00:28:12 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/ChaoXingStudy_remove_ads.lpx
 # Target: Surge
-
-
 
 [Body Rewrite]
 http-response-jq ^https:\/\/learn\.chaoxing\.com\/apis\/service\/appConfig\? 'delpaths([["data","ad"]])'
 
 http-response-jq ^https:\/\/apps\.chaoxing\.com\/apis\/home\/getHpXsqy\.jspx\? '.data.list |= map(select(.pid == 4 or .pid == 44)) | .data.list_xsqy |= map(select(.pid == 4 or .pid == 44)) | .data.list_xysqbj |= map(select(.pid == 4 or .pid == 44)) | .data.lanmu |= map(select(.id == 4 or .id == 44))'
+
+http-response-jq ^https:\/\/apps\.chaoxing\.com\/apis\/home\/getHpXsqy\.jspx\? 'delpaths([["data","list_timeapp"]])'
 
 [Map Local]
 

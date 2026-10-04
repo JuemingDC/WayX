@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Mango_TV.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 23:39:23 +08:00
+# Converted: 2026-10-05 00:27:56 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/MangoTV_remove_ads.lpx
@@ -48,7 +48,11 @@ host-suffix, da.mgtv.com, reject
 
 ^https:\/\/me\.bz\.mgtv\.com\/v4\/module\/list\? url jsonjq-response-body '.data.list |= (map(select(.id != 3 and .id != 7))|map(if .id==2 then .data|=map(select(.id!=65))elif .id==4 then .data|=map(select(.title!="追更banner" and .id!=57))elif .id==5 then .data|=(map(select(.id==9 or .id==13))|map(if .id==9 then .list|=map(select(.id==20 or .id==60 or .id==18)) else . end))elif .id==6 then .data|=map(select(.id==15)) else . end))'
 
+^https?:\/\/dc\d?\.bz\.mgtv\.com\/dynamic\/v\d\/channel\/index\/\w url jsonjq-response-body 'delpaths([["adInfo"]])'
 ^https?:\/\/dc\d?\.bz\.mgtv\.com\/dynamic\/v\d\/channel\/index\/\w url jsonjq-response-body '.data |= map(select(.moduleEntityId != "10579" and .moduleEntityId != "9686")) | .moduleIDS |= map(select(.moduleEntityId != "10579" and .moduleEntityId != "9686"))'
+
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+^https:\/\/mobile-thor\.api\.mgtv\.com\/v\d+\/vod\/info\? url jsonjq-response-body 'delpaths([["data","config","ad"],["data","config","vipNav"],["data","template","skinList"],["data","template","theme"]])'
 
 ^https:\/\/mobile-thor\.api\.mgtv\.com\/v\d+\/vod\/info\? url jsonjq-response-body '.data.tabs |= map(select(.name == "视频" or .name == "讨论")) | .data.template.modules |= map(if .clipInfo.ext?.ipPublishEntrance then .clipInfo |= del(.ext) else . end) | .data.template.modules |= map(select(.dataType == 101 or .dataType == 201)) | .data.template.modules |= map(.media.list |= (if type == "array" then map(select(.type != 0)) else . end))'
 

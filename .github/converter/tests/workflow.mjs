@@ -795,8 +795,18 @@ assert.match(readme,/Adblock%2FQuantumult%2520X%2FAds\.snippet/);
 assert.doesNotMatch(readme,/Resource%252FInstall%252FQuantumultX/);
 assert.equal(/Kelee Lpx Loon UA/i.test(readme),false);
 
+await fs.unlink(path.join(root,'Adblock/Quantumult X/Ads.snippet'));
+let refreshed=(await buildReadmePlan(root)).get('README.md');
+assert.match(refreshed,/\| \*\*\[Ads\].*\| — \| \[一键安装\]/);
+await fs.unlink(path.join(root,'Adblock/Surge/Ads.sgmodule'));
+await fs.writeFile(path.join(root,'Adblock/Quantumult X/New.snippet'),'# Name: New\n# [rewrite_local]\n^https://new.example url reject\n');
+refreshed=(await buildReadmePlan(root)).get('README.md');
+assert.doesNotMatch(refreshed,/\*\*\[Ads\]/);
+assert.match(refreshed,/\*\*\[New\]/);
+assert.deepEqual(refreshed.match(/^## .+$/gm),readme.match(/^## .+$/gm));
+assert.equal((refreshed.match(/\| Name \| Quantumult X \| Surge \|/g)||[]).length,4);
 await fs.rm(root,{recursive:true,force:true});
-console.log('README index contract passed');
+console.log('README index contract passed: existing structure, additions, removals and single-target absence');
 }
 
 if (selectedCase === "manual-assets.mjs") {

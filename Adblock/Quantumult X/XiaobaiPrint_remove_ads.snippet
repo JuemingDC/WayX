@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/XiaobaiPrint.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 23:39:36 +08:00
+# Converted: 2026-10-05 00:28:10 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/XiaobaiPrint_remove_ads.lpx
@@ -18,6 +18,8 @@ host, ad.lovefree.cc, reject
 host-suffix, adwanji.com, reject
 
 # [rewrite_local]
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+^https:\/\/epbox\.gongfudou\.com\/graphql$ url jsonjq-response-body 'delpaths([["data","mallConsumables"],["data","currentUser","goodsCoupons"]])'
 
 ^https:\/\/epbox\.gongfudou\.com\/graphql$ url jsonjq-response-body 'if .data.systemConfig.searchHotTags? then del(.data.systemConfig) else . end'
 

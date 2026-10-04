@@ -10,17 +10,19 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/CatEarFM.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 23:39:24 +08:00
+# Converted: 2026-10-05 00:27:57 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/CatEarFM_remove_ads.lpx
 # Target: Surge
 
-
-
-
 [Body Rewrite]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
 http-response-jq ^https:\/\/app\.missevan\.com\/site\/launch\? 'delpaths([["info","splash"],["info","splash_ready"]])'
+
+http-response-jq ^https:\/\/app\.missevan\.com\/site\/config$ 'delpaths([["info","tab_bar_live"],["0"],["info","enable_tab_bar_live_notice"],["false"],["info","teenager_popup_mode"],["0"]])'
+
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/app\.missevan\.com\/site\/config$ 'delpaths([["info","httpdns"],["info","homepage_top_task_button"]])'
 
 http-response-jq ^https:\/\/app\.missevan\.com\/site\/config$ '.info.cronet |= (fromjson | .quic=false | tojson)'
 

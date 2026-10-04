@@ -10,17 +10,18 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Zhibo8.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 23:39:40 +08:00
+# Converted: 2026-10-05 00:28:14 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Zhibo8_remove_ads.lpx
 # Target: Surge
-
-
 
 [Body Rewrite]
 http-response-jq ^https:\/\/headline\.qiumibao\.com\/recommend\/list\? '.news|=map(select(.model=="news" or .model=="video"))'
 
 http-response-jq ^https:\/\/a\.qiumibao\.com\/found\/\? 'map(select(.is_game != true))'
+
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/a\.qiumibao\.com\/ios\/config\/\? 'delpaths([["skin"],["advert"],["advert_config"],["mall"],["httpdns"],["reward"],["pgame"],["corner_mark"],["liveshop"],["theme"],["pop"],["live_activity_push"]])'
 
 http-response-jq ^https:\/\/a\.qiumibao\.com\/ios\/config\/\? '.all_sections.match_sections.labels |= (if . then (.blacks_disable |= if . then map(select(. != "游戏")) else . end) | (.show |= if . then map(select(. != "游戏")) else . end) else . end)'
 http-response-jq ^https:\/\/guess\.qiumibao\.com\/api\/n\/rcd$ 'delpaths([["data","banner"]])'

@@ -10,17 +10,22 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Weibo_intl.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 23:39:33 +08:00
+# Converted: 2026-10-05 00:28:06 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Weibo_intl_remove_ads.lpx
 # Target: Surge
 
-
-
-
 [Body Rewrite]
+
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/weibointl\.api\.weibo\.cn\/portal\.php\?a=trends 'delpaths([["data","banner"],["data","user_footprint"],["data","profile_accessrecord"],["data","native_content"]])'
 http-response-jq ^https:\/\/weibointl\.api\.weibo\.cn\/portal\.php\?a=trends '.data.discover |= map(select(.schema != "尊享会员"))'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/api\.weibo\.cn\/2\/statuses\/friends\/timeline$ 'delpaths([["advertises"],["ad"],["ad_version_2_weibo"]])'
 http-response-jq ^https:\/\/api\.weibo\.cn\/2\/statuses\/friends\/timeline$ '.statuses|=map(select(.ad_marked!=true))'
+
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
+http-response-jq ^https:\/\/api\.weibo\.cn\/2\/statuses\/unread_hot_timeline$ 'delpaths([["ad"],["ad_version_2_weibo"]])'
 http-response-jq ^https:\/\/api\.weibo\.cn\/2\/statuses\/unread_hot_timeline$ '.statuses|=map(select(.ad_marked!=true))'
 
 http-response-jq ^https:\/\/api\.weibo\.cn\/2\/comments\/build_comments\? '.datas[].data.ad_from_comment? = true'
