@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：2.1
+版本：2.2
 作者：chance  
 状态：唯一权威转换规范（Authoritative）
 
@@ -161,11 +161,11 @@ sync 是产物与 README 的写入入口；canonical/README 验证只检查，�
 
 ## 2.15 README 索引
 
-根 README 保持标题、导航、BoxJs/Module/Adblock/Rule 顺序及 Name/Quantumult X/Surge 三列。Adblock 按原资源 `Author` 署名的第一位作者分组，作者链接不进入组名；共同作者留在原资源。QX 缺少署名时读取 Surge，均缺失归“佚名”，不使用 Converted by 作为作者。
+根 README 保持标题、导航、BoxJs/Module/Adblock/Rule 顺序及 Name/Quantumult X/Surge 三列。Adblock 按实际拉取来源分组，不按插件内 `Author` 或 Converted by 署名分组。已登记资源使用 Catalog 的 source；未登记资源从 QX、Surge 的 Source 注释依次取得原地址。kelee.one 及其子域归“可莉”，rucu6.pages.dev 归“RuCu6”，GitHub/raw.githubusercontent.com 地址归仓库 owner；其它有效来源使用域名，缺失或无效来源归“本地资源”。资源署名与原作者 URL 保留在资源文件中。
 
-作者组按条目在 Catalog 中首次出现的顺序排列，组内保留 Catalog 顺序；未登记资源随后按文件名稳定排序。每个资源只出现一次，作者名中的 Markdown 控制字符转义。
+来源组按条目在 Catalog 中首次出现的顺序排列，组内保留 Catalog 顺序；未登记资源随后按文件名稳定排序。每个资源只出现一次。每组使用 GitHub 支持的 details/summary 默认折叠，summary 显示来源名称与资源数量，名称作 HTML 转义；summary 后及表格结束处保留空行，使三列表格正确显示。README 提示点击展开后使用页面查找定位资源，不添加脚本或无效搜索框。
 
-按实际目标文件生成索引：新增加条目，删除删条目，单目标缺失显示 —，空作者组不保留；文件仍存在时不因 Catalog 删除而隐藏。安装 URL 与每日 update-interval=86400 保持。相同 README 不写入，校验须核对作者分组、组内顺序、链接与实际产物一致。
+按实际目标文件生成索引：新增加条目，删除删条目，单目标缺失显示 —，空来源组不保留；文件仍存在时不因 Catalog 删除而隐藏。安装 URL 与每日 update-interval=86400 保持。相同 README 不写入，校验须核对来源分组、折叠结构、资源数量、组内顺序、链接与实际产物一致。
 
 ## 2.16 自动化与报告
 
@@ -185,7 +185,7 @@ Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生�
 
 用户降级策略的目标预期与源全行为 oracle 分开，不据 flags 丢弃或 JQ 分条宣称源行为完全等价。Golden 在独立语义检查通过后仅用于发现输出漂移，不用更新 Golden 掩盖错误。真实 jq 编译和结果/错误传播同时验证。
 
-验收包括上游预检/目录/转换一致选层、真实同正则独立规则保留、分条 JSON/JQ、错误 JQ 诊断作用域、README 分组及增减、完整 Action 和逐文件内容比较。零 Review/Issue 不等于全 Loon 语法或真实客户端行为已证明。
+验收包括上游预检/目录/转换一致选层、真实同正则独立规则保留、分条 JSON/JQ、错误 JQ 诊断作用域、README 来源分组/折叠及增减、完整 Action 和逐文件内容比较。零 Review/Issue 不等于全 Loon 语法或真实客户端行为已证明。
 
 ## 2.18 实现组织与契约对应
 
@@ -213,7 +213,7 @@ Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生�
 | 原 action 索引与依赖隔离 | input materializers、resolveRewriteJqDependencies | conversion-context、runtime/file isolation |
 | 复杂脚本及阶段 owner | planRewriteFeatureHelper、prepareRewriteDispatchers | runtime/oracle、phase/author ownership |
 | 作者选项与参数 | Script planners、共同绑定校验 | script、conversion-policy |
-| README 作者组及动态索引 | buildReadmePlan、sync transaction | readme-index、managed cleanliness |
+| README 来源折叠组及动态索引 | buildReadmePlan、sync transaction | readme-index、managed cleanliness |
 | 原地址、全量转换与不覆盖 | input transport、sync-convert、workflow lifecycle | source-fetch、事务/发布测试、完整 Action |
 
 能力扩展必须先有源/目标官方依据及独立语义证据，再经过完整目录、canonical、validator 和 Action。不能仅为减少诊断而扩大未证明的转换范围。

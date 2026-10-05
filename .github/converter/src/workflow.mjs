@@ -343,26 +343,29 @@ function rowKey(category, rel) {
   return stemOf(rel);
 }
 
-async function catalogRowOrder(root, category) {
-  if (category !== 'Adblock') return new Map();
+async function catalogRowMetadata(root, category) {
+  const empty=()=>({order:new Map(),sources:new Map()});
+  if (category !== 'Adblock') return empty();
   let manifest;
   try {
     manifest=JSON.parse(await fs.readFile(path.join(root,'.github/sources/loon.json'),'utf8'));
   } catch (error) {
-    if (error?.code === 'ENOENT') return new Map();
+    if (error?.code === 'ENOENT') return empty();
     throw error;
   }
   if (!Array.isArray(manifest)) throw new Error('README catalog order source must be an array');
   const order=new Map();
+  const sources=new Map();
   manifest.forEach((entry,index)=>{
     for(const field of ['qx','surge']){
       const value=entry?.[field];
       if(typeof value!=='string' || !value.trim()) continue;
       const key=stemOf(value.trim());
       if(!order.has(key)) order.set(key,index);
+      if(!sources.has(key) && typeof entry.source==='string')sources.set(key,entry.source);
     }
   });
-  return order;
+  return {order,sources};
 }
 
 async function scanCategory(root, category) {
@@ -395,7 +398,8 @@ async function scanCategory(root, category) {
     }
     rows.set(key, row);
   }
-  const sourceOrder=await catalogRowOrder(root,category);
+  const {order:sourceOrder,sources}=await catalogRowMetadata(root,category);
+  for(const row of rows.values())row.catalogSource=sources.get(row.key);
   return [...rows.values()].sort((a,b)=>{
     const ar=sourceOrder.has(a.key) ? sourceOrder.get(a.key) : Number.POSITIVE_INFINITY;
     const br=sourceOrder.has(b.key) ? sourceOrder.get(b.key) : Number.POSITIVE_INFINITY;
@@ -445,20 +449,25 @@ function rowInstallCells(category, row) {
   return {qx, surge};
 }
 
-function adblockAuthor(row) {
-  for(const item of [row.qx,row.surge]) {
-    const match=item?.text.match(/^#\s*Author:\s*(.+)$/mi);
-    if(!match)continue;
-    const name=match[1].replace(/\[https?:\/\/[^\]]*\]/g,'').split(/[,，、]/)[0].trim();
-    if(name)return name;
-  }
-  return '佚名';
+function adblockSource(row) {
+  const source=row.catalogSource || [row.qx,row.surge].map(item=>item?.text.match(/^#\s*Source:\s*(https?:\/\/\S+)\s*$/mi)?.[1]).find(Boolean);
+  if(!source)return '本地资源';
+  try {
+    const url=new URL(source),host=url.hostname.toLowerCase();
+    if(host==='kelee.one' || host.endsWith('.kelee.one'))return '可莉';
+    if(host==='rucu6.pages.dev')return 'RuCu6';
+    if(host==='raw.githubusercontent.com' || host==='github.com')return url.pathname.split('/').filter(Boolean)[0] || host;
+    return host;
+  }catch{return '本地资源';}
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 }
 
 function renderTable(category, rows, heading=category, level=2) {
   const lines = [
-    `${'#'.repeat(level)} ${heading}`,
-    '',
+    ...(heading===null?[]:[`${'#'.repeat(level)} ${heading}`,'']),
     '| Name | Quantumult X | Surge |',
     '| :--- | :---: | :---: |',
   ];
@@ -477,11 +486,11 @@ export async function buildReadmePlan(root=process.cwd()) {
     if(category==='Adblock' && rows.length) {
       const groups=new Map();
       for(const row of rows) {
-        const author=adblockAuthor(row);
+        const author=adblockSource(row);
         if(!groups.has(author))groups.set(author,[]);
         groups.get(author).push(row);
       }
-      sections.push('## Adblock\n\n'+[...groups].map(([author,items])=>renderTable(category,items,author.replace(/[\r\n]/g,' ').replace(/([\\`*_\[\]<>])/g,'\\$1'),3)).join('\n\n'));
+      sections.push('## Adblock\n\n按拉取来源分组，点击展开。展开后可用 Ctrl+F / ⌘F 查找资源名称。\n\n'+[...groups].map(([author,items])=>'<details>\n<summary><strong>'+escapeHtml(author)+'</strong> · '+items.length+' 项</summary>\n\n'+renderTable(category,items,null)+'\n\n</details>').join('\n\n'));
     } else sections.push(renderTable(category, rows));
   }
 
