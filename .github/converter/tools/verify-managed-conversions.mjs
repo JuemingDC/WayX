@@ -58,7 +58,7 @@ if(snapshot){
 const readme=await readRequired('README.md','README');
 if(readme){
   const expected=(await buildReadmePlan(ROOT)).get('README.md');
-  if(readme!==expected)findings.push('README author groups or within-author catalog order differ from generated index');
+  if(readme!==expected)findings.push('README source groups, collapsed sections or within-source catalog order differ from generated index');
   for(const entry of kelee){
     const marker='Adblock/Quantumult%20X/'+encodeURIComponent(entry.qx).replace(/%2F/g,'/');
     let index=readme.indexOf(marker);
