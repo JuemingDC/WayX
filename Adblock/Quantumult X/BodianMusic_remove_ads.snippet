@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BodianMusic.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:33 +08:00
+# Converted: 2026-10-05 19:06:08 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/BodianMusic_remove_ads.lpx
@@ -22,7 +22,7 @@
 ^https:\/\/bd-api\.kuwo\.cn\/api\/service\/conf\/all\? url jsonjq-response-body 'delpaths([["data","groupSign","adStartAppDialog"],["data","groupSign","adGuideTest"],["data","groupSign","playTips"],["data","groupSign","adExitChange"],["data","conf","adGuidePopCount"],["data","conf","adDownListOpen"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/bd-api\.kuwo\.cn\/api\/service\/conf\/all\? url jsonjq-response-body 'if (getpath(["data","conf","flowControlConfig"]) | has("uploadEnable")) then (setpath(["data","conf","flowControlConfig","uploadEnable"]; false)) else . end | if (getpath(["data","conf","flowControlConfig"]) | has("p2pEnable")) then (setpath(["data","conf","flowControlConfig","p2pEnable"]; false)) else . end'
+^https:\/\/bd-api\.kuwo\.cn\/api\/service\/conf\/all\? url jsonjq-response-body 'setpath(["data","conf","flowControlConfig","uploadEnable"]; false) | setpath(["data","conf","flowControlConfig","p2pEnable"]; false)'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
 ^https:\/\/ab-bodian\.kuwo\.cn\/abtest\/ui\/info\? url jsonjq-response-body 'delpaths([["data","mapTestInfo","CommentADPosition"],["data","mapTestInfo","DiscoverADPosition"],["data","mapTestInfo","DownloadAd"],["data","mapTestInfo","FreeModVoiceReminder"],["data","mapTestInfo","GamesTrans"],["data","mapTestInfo","bodianmvdialog"],["data","mapTestInfo","MvTryShowAds"],["data","mapTestInfo","insert"]])'
@@ -31,7 +31,7 @@
 ^https:\/\/bd-api\.kuwo\.cn\/api\/service\/global\/config\/scene\? url jsonjq-response-body 'delpaths([["data","iosP2PCacheEnable"],["data","warmStartDialog"],["data","adsNotFinishVipPop4DayInterval"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/bd-api\.kuwo\.cn\/api\/service\/global\/config\/scene\? url jsonjq-response-body 'if (getpath(["data"]) | has("showShopEntry")) then (setpath(["data","showShopEntry"]; false)) else . end | if (getpath(["data"]) | has("iosP2pEnableSendDataLimit")) then (setpath(["data","iosP2pEnableSendDataLimit"]; 1)) else . end'
+^https:\/\/bd-api\.kuwo\.cn\/api\/service\/global\/config\/scene\? url jsonjq-response-body 'setpath(["data","showShopEntry"]; false) | setpath(["data","iosP2pEnableSendDataLimit"]; 1)'
 
 ^https:\/\/bd-api\.kuwo\.cn\/api\/service\/banner\/ url reject-dict
 

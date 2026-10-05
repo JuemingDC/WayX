@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DiDi.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-05 00:27:47 +08:00
+# Converted: 2026-10-05 19:06:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/DiDi_remove_ads.lpx
@@ -64,9 +64,9 @@ host, adtrack.xiaojukeji.com, reject
 
 ^https:\/\/htwkop-st\.xiaojukeji\.com\/gateway\?api=cms\.htw\.delivery\.batch url reject-dict
 
-^https:\/\/htwkop\.xiaojukeji\.com(:443)?\/gateway\?api=hm\.fa\.querySellCardSummary url jsonjq-response-body 'if (getpath([]) | has("data")) then (setpath(["data"]; "{}")) else . end'
+^https:\/\/htwkop\.xiaojukeji\.com(:443)?\/gateway\?api=hm\.fa\.querySellCardSummary url jsonjq-response-body 'setpath(["data"]; "{}")'
 
-^https:\/\/htwkop\.xiaojukeji\.com(:443)?\/gateway\?api=hm\.fa\.queryWelfareCenter url jsonjq-response-body 'if (getpath([]) | has("data")) then (setpath(["data"]; "{}")) else . end'
+^https:\/\/htwkop\.xiaojukeji\.com(:443)?\/gateway\?api=hm\.fa\.queryWelfareCenter url jsonjq-response-body 'setpath(["data"]; "{}")'
 
 ^https:\/\/freight\.xiaojukeji\.com\/gateway\?api=freight\.d\.core\.multiDisplayV\d url reject-dict
 

@@ -474,7 +474,7 @@
       "id": "special-json-replace-does-not-see-prototype",
       "source": "response if ${url} ~= /example/i then response.json.replace([\"__proto__\",\"constructor\",\"toString\"],[1,2,3])",
       "expected": {
-        "body": "{}"
+        "body": "{\"__proto__\":1,\"constructor\":2,\"toString\":3}"
       },
       "request": {},
       "response": {

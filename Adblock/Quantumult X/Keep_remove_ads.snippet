@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Keep.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:25 +08:00
+# Converted: 2026-10-05 19:06:00 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Keep_remove_ads.lpx
@@ -30,7 +30,7 @@ host, kad.gotokeep.com, reject
 
 ^https:\/\/api\.gotokeep\.com\/twins\/union\/feed\/function\? url reject-dict
 
-^https:\/\/api\.gotokeep\.com\/twins\/v4\/feed\/entryDetail\? url jsonjq-response-body 'if (getpath([]) | has("data")) then (setpath(["data"]; "{}")) else . end'
+^https:\/\/api\.gotokeep\.com\/twins\/v4\/feed\/entryDetail\? url jsonjq-response-body 'setpath(["data"]; "{}")'
 
 ^https:\/\/api\.gotokeep\.com\/guide-webapp\/v1\/popup\/getPopUp\? url reject-dict
 

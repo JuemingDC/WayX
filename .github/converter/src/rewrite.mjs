@@ -558,7 +558,7 @@ export function rewriteIrDeclaration(ir) {
 // JQ syntax and lowering helpers (integrated domain section)
 // 转换器失败案例：BaiduTranslate delete retained __wayx_before/try/type guards.
 // Generated native jq now uses bare expressions; author guards remain source text.
-// jqlang is authoritative; ONLY replace references ScriptHub.
+// jqlang is authoritative for all generated JSON/JQ expressions.
 // Author: chance
 // Category: Converter / JQ
 
@@ -1356,7 +1356,7 @@ function parseKeyPath(path) {
 }
 
 // WayX jq path grammar: direct selectors for add; never a shared
-// ScriptHub getpath/setpath template. Bracket keys always retain root identity.
+// Shared path segments retain key types; bracket keys retain root identity.
 export function jqPathSelector(parts) {
   validateParts(parts);
   return parts.reduce((out,part)=>typeof part==='number' ? out+'['+part+']' :
@@ -1396,8 +1396,7 @@ function qxQuote(value) {
 
 export function renderFixedPathReplaceJq(parts,value) {
   validateParts(parts);
-  const parent=JSON.stringify(parts.slice(0,-1)),key=JSON.stringify(parts.at(-1));
-  return 'if (getpath('+parent+') | has('+key+')) then (setpath('+JSON.stringify(parts)+'; '+value+')) else . end';
+  return 'setpath('+JSON.stringify(parts)+'; '+value+')';
 }
 
 export function jsonActionToJq(action) {

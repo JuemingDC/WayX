@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/TikTok.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-05 00:28:09 +08:00
+# Converted: 2026-10-05 19:06:34 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/HKDouYin_remove_ads.lpx
 # Target: Surge
@@ -39,7 +39,7 @@ http-response-jq ^https:\/\/(aweme\.snssdk\.com|api5-normal-m\.amemv\.com)\/awem
 http-response-jq ^https:\/\/(aweme\.snssdk\.com|api5-normal-m\.amemv\.com)\/aweme\/homepage\/render\/\? '.data.tab_list[]? |= (if .extra.side_bar.modules != null then .extra.side_bar.modules[]?.items[]? |= (if .data.first_page_module?.module_title == "常用功能" then .data={} else . end) else . end) | .data.tab_list |= map(if .extra.tab_list != null then .extra.tab_list |= map(select(.tab_id | IN("homepage_tablive", "homepage_follow", "homepage_hot_container"))) else . end) | .data.tab_list |= map(select(.extra.tab_list != null and (.extra.tab_list | length > 0)))'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/(aweme\.snssdk\.com|api5-normal-m\.amemv\.com)\/tfe\/api\/request_combine\/v1\/\?need_personal_recommend 'if (getpath(["data","/service/settings/v3/","body","data","settings"]) | has("homepage_two_session_tab_skin_2025")) then (setpath(["data","/service/settings/v3/","body","data","settings","homepage_two_session_tab_skin_2025"]; false)) else . end | if (getpath(["data","/service/settings/v3/","body","data","settings"]) | has("homepage_tab_skin_enable")) then (setpath(["data","/service/settings/v3/","body","data","settings","homepage_tab_skin_enable"]; false)) else . end'
+http-response-jq ^https:\/\/(aweme\.snssdk\.com|api5-normal-m\.amemv\.com)\/tfe\/api\/request_combine\/v1\/\?need_personal_recommend 'setpath(["data","/service/settings/v3/","body","data","settings","homepage_two_session_tab_skin_2025"]; false) | setpath(["data","/service/settings/v3/","body","data","settings","homepage_tab_skin_enable"]; false)'
 
 [MITM]
 hostname = %APPEND% aweme.snssdk.com, api5-normal-m.amemv.com

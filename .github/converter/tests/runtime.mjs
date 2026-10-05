@@ -4,7 +4,7 @@
 
 import { parseRewriteV2, renderMixedRewriteScript, renderQxInlineMockScript } from "../src/index.mjs";
 import {evaluateRewriteActions as sourceActionOracle,stripRegexFlags} from '../src/core.mjs';
-const evaluateTargetRewriteActions=(ast,...args)=>sourceActionOracle(stripRegexFlags(ast),...args);
+const evaluateTargetRewriteActions=(ast,context,options={})=>sourceActionOracle(stripRegexFlags(ast),context,{...options,jsonReplaceSetsPath:true});
 import assert from "node:assert/strict";
 import vm from "node:vm";
 
@@ -125,8 +125,7 @@ function runGenerated(script, { request = {}, response = {}, argument = '' } = {
   assert.equal(urlBranch.body, 'bar');
 }
 
-// JSON add writes missing/null paths; replace checks key existence, including
-// existing null/false values; delete removes directly.
+// JSON add writes missing/null paths; replace sets paths directly; delete removes directly.
 {
   const ast = parseRewriteV2('response if ${url} ~= /json/ then response.json.add("meta.count", 1) | response.json.add("keep", 9) | response.json.add("nullable", 3) | response.json.replace("flag", true) | response.json.delete("remove")');
   const plan = renderMixedRewriteScript(ast, { target:'qx' });
@@ -135,6 +134,16 @@ function runGenerated(script, { request = {}, response = {}, argument = '' } = {
     response:{ body:'{"keep":5,"nullable":null,"flag":false,"remove":null}' },
   }));
   assert.deepEqual(JSON.parse(result.body), { keep:5, nullable:3, flag:true, meta:{count:1} });
+}
+
+// Replace helper follows the direct setpath policy for missing paths and value types.
+{
+  const ast=parseRewriteV2('response if ${url} ~= /json/ then response.json.replace("data.flag", true) | response.json.replace("data.text", "[]")');
+  for(const target of ['qx','surge']) {
+    const plan=renderMixedRewriteScript(ast,{target});
+    const result=normalize(runGenerated(plan.script,{request:{url:'https://example.test/json'},response:{body:'{}'}}));
+    assert.deepEqual(JSON.parse(result.body),{data:{flag:true,text:"[]"}});
+  }
 }
 
 // Invalid JSON must fail only that action; later actions still execute in source order.
@@ -877,7 +886,7 @@ if(selectedCase==='generated-helper-runtime.mjs') {
       for(const key of item.path.slice(0,-1)) {
         if(!object(parent)){parent=null;break;}
         if(!Object.hasOwn(parent,key)||parent[key]===null) {
-          if(item.op!=='add'){parent=null;break;}
+          if(item.op==='delete'){parent=null;break;}
           put(parent,key,{});
         }
         parent=parent[key];
@@ -885,7 +894,7 @@ if(selectedCase==='generated-helper-runtime.mjs') {
       if(!object(parent))continue;
       const key=item.path.at(-1),current=Object.hasOwn(parent,key)?parent[key]:undefined;
       if(item.op==='delete')delete parent[key];
-      else if(item.op==='add'?current==null:Object.hasOwn(parent,key))put(parent,key,item.value);
+      else if(item.op==='add'?current==null:true)put(parent,key,item.value);
     }
     return value;
   };
@@ -902,8 +911,7 @@ if(selectedCase==='generated-helper-runtime.mjs') {
       const selector='.'+keyPath(item.path);
       if(item.op==='delete')return 'delpaths('+JSON.stringify([item.path])+')';
       if(item.op==='add')return 'if '+selector+' == null then '+selector+' = '+JSON.stringify(item.value)+' else . end';
-      const parent=item.path.length===1?'.':'.'+keyPath(item.path.slice(0,-1));
-      return 'if ('+parent+' | has('+JSON.stringify(item.path.at(-1))+')) then '+selector+' = '+JSON.stringify(item.value)+' else . end';
+      return 'setpath('+JSON.stringify(item.path)+'; '+JSON.stringify(item.value)+')';
     }).join(' | ');
     const output=convertPlugin(entry,'[Rewrite]\n'+source,options);
     validateConvertedPlugin(entry,output);
@@ -959,12 +967,12 @@ if(selectedCase==='generated-helper-runtime.mjs') {
     const path=nested?'data.key':'key';
     const line=syntax==='v2'?phase+' if ${url} ~= /api/ then '+phase+'.json.replace('+JSON.stringify(path)+',9)':'api '+phase+'-body-json-replace '+path+' 9';
     const output=convertPlugin(entry,'[Rewrite]\n'+line,options);validateConvertedPlugin(entry,output);
-    assert.equal(output.generatedScripts.size,0,'presence-aware replace retains native capability');
+    assert.equal(output.generatedScripts.size,0,'direct setpath replace retains native capability');
     for(const input of inputs)for(const target of ['qx','surge']) {
       const body=nested?{data:structuredClone(input)}:structuredClone(input);
-      const expected=structuredClone(body);if(Object.hasOwn(input,'key'))(nested?expected.data:expected).key=9;
+      const expected=structuredClone(body);(nested?expected.data:expected).key=9;
       const filter=output[target].split('\n').find(text=>text.includes(target==='qx'?'jsonjq-'+phase+'-body':'http-'+phase+'-jq'))?.match(/'(.+)'$/)?.[1];
-      assert.ok(filter);assert.match(filter,/has\("key"\)/);
+      assert.ok(filter);assert.match(filter,/setpath/);assert.doesNotMatch(filter,/getpath|has\(/);
       const result=runIsolatedCase('jq',['-c',filter],{input:JSON.stringify(body),encoding:'utf8'});
       assert.equal(result.status,0,result.stderr);assert.deepEqual(JSON.parse(result.stdout),expected,line+' '+target);
       checked++;
@@ -984,13 +992,13 @@ if(selectedCase==='generated-helper-runtime.mjs') {
     const output=convertPlugin(entry,'[Rewrite]\n'+source,options);validateConvertedPlugin(entry,output);
     for(const input of inputs)for(const target of ['qx','surge']) {
       const script=[...output.generatedScripts].find(([name])=>name.includes('_'+target+'_'))?.[1];assert.ok(script);
-      const expected=structuredClone(input);if(input.data!==null&&typeof input.data==='object'&&Object.hasOwn(input.data,'key'))expected.data.key=9;
+      const expected=structuredClone(input);if(input.data===null)expected.data={key:9};else if(typeof input.data==='object'&&!Array.isArray(input.data))expected.data.key=9;
       const context={$request:{url:'https://example.test/api',method:'POST',headers:{Path:'data.key'},body:JSON.stringify(input)},$response:{status:200,statusCode:200,headers:{},body:JSON.stringify(input)}};
       let calls=0,result;context.$done=value=>{calls++;result=value;};vm.runInNewContext(script,context,{timeout:1000});assert.equal(calls,1);
       assert.deepEqual(JSON.parse(result.body),expected,source+' '+target);assert.equal(result.headers,undefined,'non-JQ action is discarded');checked++;
     }
   }
-  console.log('Dynamic replace presence passed: '+checked+' real helper outputs, including invalid parents and non-JQ layer removal');
+  console.log('Dynamic replace path setting passed: '+checked+' real helper outputs, including invalid parents and non-JQ layer removal');
 }
 
 if(selectedCase==='generated-helper-runtime.mjs') {
@@ -1251,7 +1259,7 @@ if(selectedCase==='generated-helper-runtime.mjs') {
     for(const target of ['qx','surge']) {
       const declaration=out[target].split('\n').find(l=>l.startsWith(target==='qx'?'api url jsonjq-'+phase+'-body ':'http-'+phase+'-jq api '));assert.ok(declaration,line);
       const program=declaration.match(/'(.+)'$/)[1];
-      assert.doesNotMatch(program,/getpath|setpath/,'only replace may use generated reference template');
+      assert.doesNotMatch(program,/getpath|setpath/,'only replace uses generated setpath');
       if(op==='delete')assert.match(program,/^delpaths\(/);else assert.match(program,/^if \.\S+ == null then \.\S+ = true else \. end$/);
       const result=runIsolatedCase('jq',['-c',program],{input:JSON.stringify(test.input),encoding:'utf8'});
       assert.equal(result.status,0,result.stderr);assert.deepEqual(JSON.parse(result.stdout),test[op]);checked++;

@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/smzdm.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-05 00:28:02 +08:00
+# Converted: 2026-10-05 19:06:26 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/smzdm_remove_ads.lpx
 # Target: Surge
@@ -25,7 +25,7 @@ DOMAIN,adx-api.zdmimg.com,REJECT,extended-matching,pre-matching
 [Body Rewrite]
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/app-api\.smzdm\.com\/util\/update$ 'if (getpath(["data"]) | has("silence_local_push")) then (setpath(["data","silence_local_push"]; 0)) else . end | if (getpath(["data"]) | has("baichuan_redirect_switch")) then (setpath(["data","baichuan_redirect_switch"]; 0)) else . end'
+http-response-jq ^https:\/\/app-api\.smzdm\.com\/util\/update$ 'setpath(["data","silence_local_push"]; 0) | setpath(["data","baichuan_redirect_switch"]; 0)'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
 http-response-jq ^https:\/\/app-api\.smzdm\.com\/util\/update$ 'delpaths([["data","silence_local_push_msg"],["data","video_cache_num_configs"],["data","haojia_widget"],["data","widget"],["data","operation_float"]])'
