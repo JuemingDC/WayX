@@ -115,7 +115,7 @@ Body Rewrite 与原作者 Script 的窄 owner 仅用于同阶段、同一个无 
 
 QX 强制启用可表示的作者 Script：固定 false、默认关闭及动态 enable 均输出活动声明并说明用户策略；注释源行仍关闭。QX 不输出未证明的 enable/timeout/debug/argument Rewrite 字段；binary_body_mode 按既有说明省略。Cron task 只输出官方 sample 证明的字段。Surge 遵循源 enable，使用已支持 timeout/debug/body/binary 字段。
 
-Surge 没有显式 timeout 时：legacy HTTP 及旧版支持类型取源默认 10 秒；Script v2 的 Request/Response/Cron/Network Changed/Generic 取源默认 20 秒。显式合法静态/动态 timeout 保留；QX 的省略策略不因 Surge 默认值变化而改变。
+Surge 没有显式 timeout 时：legacy HTTP 取源默认 10 秒；Script v2 的 Request/Response 取源默认 20 秒，Cron/Network Changed/Generic 取源默认 300 秒；旧版非 HTTP 类型取源默认 300 秒。显式合法静态/动态 timeout 保留；QX 的省略策略不因 Surge 默认值变化而改变。
 
 目标不支持的合法作者 argument 直接省略，保留原 task、作者 URL 和受支持选项，并说明省略，不以参数无法编码丢弃整条 task。QX HTTP/非 HTTP 均省略 argument；Surge 支持的 String/PluginObject 参数按既有编码保留，合法但无法编码则省略。无效源结构/绑定仍诊断，不以目标省略掩盖错误。
 
