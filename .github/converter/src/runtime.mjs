@@ -837,7 +837,7 @@ const JSON_MUTATION_RUNTIME=[
     'function __wayxJsonSet(root,path,value){let x=root;for(let i=0;i<path.length-1;i++){const k=path[i],next=path[i+1];if(x==null||typeof x!=="object")return;const cur=Object.prototype.hasOwnProperty.call(x,k)?x[k]:undefined;if(cur==null)Object.defineProperty(x,k,{value:typeof next==="number"?[]:{},enumerable:true,writable:true,configurable:true});else if(typeof cur!=="object")return;x=x[k]}if(x!=null&&typeof x==="object")Object.defineProperty(x,path[path.length-1],{value,enumerable:true,writable:true,configurable:true});}',
     'function __wayxJsonAdd(root,path,value){const cur=__wayxJsonGet(root,path);if(cur===undefined||cur===null)__wayxJsonSet(root,path,value);}',
     'function __wayxJsonDelete(root,path){const p=__wayxJsonParent(root,path);if(p==null)return;const k=path[path.length-1];if(Array.isArray(p)&&typeof k==="number"){if(k>=0&&k<p.length)p.splice(k,1);}else delete p[k];}',
-    'function __wayxJsonReplace(root,path,value){const cur=__wayxJsonGet(root,path);if(cur!==undefined)__wayxJsonSet(root,path,value);}',
+    'function __wayxJsonReplace(root,path,value){__wayxJsonSet(root,path,value);}',
 ];
 function renderRewriteScript(ast, {target, stamp='', category='', sourceLine='', argumentTable=null, mockMaterialized=null,jqMaterialized=null,fullHeaderMode=false,sharedRuntime=false}={}) {
   validateRewriteV2Ast(ast);

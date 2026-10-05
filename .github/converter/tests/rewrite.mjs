@@ -2,7 +2,7 @@
 // Author: chance
 // Category: Converter / rewrite / Regression Suite
 
-import { analyzeSafeRewriteV2, dependencySpecFromAction, jqDependencySpecFromAction, inlineResolvedDependency, inlineResolvedLegacyJqPathIr, legacyJqPathDependencySpecFromIr, listRewriteV2Dependencies, qxMockPlanFromAction, compileRegexForTarget, qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan, surgeHeaderRewritePlan, surgeInlineMockPlan, surgeMockFilePlan, renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript, renderQxMockFileScript, renderSurgeRequestMockScript, LOON_REWRITE_V2_ACTIONS, minifyJq, minifyJqFile, quoteJq, renderFixedPathDeleteJq, classifyLegacyRewrite, legacyRewriteToSemanticIr, planLegacyRewrite, planLegacyRewriteIr, validateLoonSourceCatalog, planMitmLine, resolveOriginalUrl, parseLoonArguments, surgeArgumentMetadata, surgePluginObjectArgument, surgeRewriteArgumentPayload, surgeEnableRequirement, parseLegacyLoonPluginObjectRefs, analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs, parseRewriteV2, qxPrimitiveForRewriteV2Action, qxRule, qxTargetPath, rewriteV2ToSource, selectQxScriptAction, parseScriptV2, scriptV2ToSource, scriptV2ArgumentRefs, scriptV2DynamicOptionRefs, scriptOptionBoolean, qxScriptV2Plan, surgeScriptV2Plan, surgeRule, surgeModuleRule, renderSurgeModuleHeader, renderQxSnippetHeader, validateSurgeModule, surgeTargetPath, validateRewriteV2Ast, classifyComplexRewrite, complexConditionKinds, registerComplexRewriteHandler, planComplexRewrite, listComplexRewriteHandlers, renderMixedRewriteScript, renderSingleJsonMutationScript, isEmptyJsonJqIr, isEmptyLegacyJsonJqIr, rewriteV2AstToSemanticIr, singleRewriteOperation, rewriteOperationKinds, planQxRewrite, jsonPipelineToSafeNativeJq, qxExactRewriteMatcherPlan, qxRewriteMatcherPlan, planSurgeRewrite } from "../src/index.mjs";
+import { jsonActionToJq, analyzeSafeRewriteV2, dependencySpecFromAction, jqDependencySpecFromAction, inlineResolvedDependency, inlineResolvedLegacyJqPathIr, legacyJqPathDependencySpecFromIr, listRewriteV2Dependencies, qxMockPlanFromAction, compileRegexForTarget, qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan, surgeHeaderRewritePlan, surgeInlineMockPlan, surgeMockFilePlan, renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript, renderQxMockFileScript, renderSurgeRequestMockScript, LOON_REWRITE_V2_ACTIONS, minifyJq, minifyJqFile, quoteJq, renderFixedPathDeleteJq, classifyLegacyRewrite, legacyRewriteToSemanticIr, planLegacyRewrite, planLegacyRewriteIr, validateLoonSourceCatalog, planMitmLine, resolveOriginalUrl, parseLoonArguments, surgeArgumentMetadata, surgePluginObjectArgument, surgeRewriteArgumentPayload, surgeEnableRequirement, parseLegacyLoonPluginObjectRefs, analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs, parseRewriteV2, qxPrimitiveForRewriteV2Action, qxRule, qxTargetPath, rewriteV2ToSource, selectQxScriptAction, parseScriptV2, scriptV2ToSource, scriptV2ArgumentRefs, scriptV2DynamicOptionRefs, scriptOptionBoolean, qxScriptV2Plan, surgeScriptV2Plan, surgeRule, surgeModuleRule, renderSurgeModuleHeader, renderQxSnippetHeader, validateSurgeModule, surgeTargetPath, validateRewriteV2Ast, classifyComplexRewrite, complexConditionKinds, registerComplexRewriteHandler, planComplexRewrite, listComplexRewriteHandlers, renderMixedRewriteScript, renderSingleJsonMutationScript, isEmptyJsonJqIr, isEmptyLegacyJsonJqIr, rewriteV2AstToSemanticIr, singleRewriteOperation, rewriteOperationKinds, planQxRewrite, jsonPipelineToSafeNativeJq, qxExactRewriteMatcherPlan, qxRewriteMatcherPlan, planSurgeRewrite } from "../src/index.mjs";
 import assert from "node:assert/strict";
 import vm from "node:vm";
 
@@ -47,8 +47,23 @@ assert.doesNotMatch(jqAddPolicy.jq,/getpath|setpath|has\(/);
 const jqReplacePolicy=jsonPipelineToSafeNativeJq(parseRewriteV2(
   'response if ${url} ~= /api/ then response.json.replace(["wl_config.home_ad_num","wl_config.index_bear_first_floor_max"],[0,999999999])'
 ));
-assert.match(jqReplacePolicy.jq,/getpath\(\["wl_config"\]\) \| has\("home_ad_num"\)/);
+assert.doesNotMatch(jqReplacePolicy.jq,/getpath|has\(|if /);
 assert.match(jqReplacePolicy.jq,/setpath\(\["wl_config","home_ad_num"\]; 0\)/);
+
+for (const [source,input,expected] of [
+  ['response.json.replace("data.recProductList", `[]`)', '{}', {data:{recProductList:[]}}],
+  ['response.json.replace("data.recProductList", "[]")', '{}', {data:{recProductList:"[]"}}],
+  ['response.json.replace("data.vip", true)', '{"data":{"vip":null}}', {data:{vip:true}}],
+  ['response.json.replace("items[2]", 9)', '{"items":[0]}', {items:[0,null,9]}],
+  ['response.json.replace(`data["a.b"]`, false)', '{}', {data:{"a.b":false}}],
+]) {
+  const plan=jsonActionToJq(parseRewriteV2('response if ${url} ~= /api/ then '+source).actions[0]);
+  assert.equal(plan.ok,true);
+  assert.doesNotMatch(plan.jq,/getpath|has\(|if /);
+  const checked=runIsolatedCase('jq',['-c',plan.jq],{input,encoding:'utf8'});
+  assert.equal(checked.status,0,checked.stderr);
+  assert.deepEqual(JSON.parse(checked.stdout),expected);
+}
 
 for (const [program,input,expected] of [
   [jqDeletePolicy.jq,'{"activity_switch":1,"wl_config":{"pb_banner_funad_cache_strategy":2,"keep":3},"scheme_whitelist":[]}','{"wl_config":{"keep":3}}'],
@@ -1028,8 +1043,8 @@ const legacyJsonReplaceQx = planLegacyRewrite(
 );
 assert.equal(legacyJsonReplaceQx.section, 'rewrite');
 assert.match(legacyJsonReplaceQx.line, /url jsonjq-response-body/);
-assert.match(legacyJsonReplaceQx.line, /getpath\(\["data"\]\) \| has\("enabled"\)/);
-assert.match(legacyJsonReplaceQx.line, /getpath\(\["data"\]\) \| has\("count"\)/);
+assert.match(legacyJsonReplaceQx.line, /setpath\(\["data","enabled"\]; false\)/);
+assert.match(legacyJsonReplaceQx.line, /setpath\(\["data","count"\]; 0\)/);
 
 const legacyJsonReplaceSurge = planLegacyRewrite(
   '^https:\\/\\/api\\.example\\.com',
@@ -1039,7 +1054,7 @@ const legacyJsonReplaceSurge = planLegacyRewrite(
 );
 assert.equal(legacyJsonReplaceSurge.section, 'body');
 assert.match(legacyJsonReplaceSurge.line, /^http-request-jq /);
-assert.match(legacyJsonReplaceSurge.line, /has\("enabled"\)/);
+assert.match(legacyJsonReplaceSurge.line, /setpath\(\["data","enabled"\]; true\)/);
 
 const legacyJsonDelBatch = planLegacyRewrite(
   '^https:\\/\\/api\\.example\\.com',
@@ -2141,7 +2156,7 @@ assert.match(safeJsonPipelineJq.jq,/^if \.flag == null/);
 assert.ok(safeJsonPipelineJq.jq.indexOf('.flag = true') < safeJsonPipelineJq.jq.indexOf('setpath(["count"]; 2)'));
 assert.ok(safeJsonPipelineJq.jq.indexOf('setpath(["count"]; 2)') < safeJsonPipelineJq.jq.indexOf('delpaths([["old"]])'));
 assert.match(safeJsonPipelineJq.jq,/delpaths/);
-assert.match(safeJsonPipelineJq.jq,/has\("count"\)/);
+assert.doesNotMatch(safeJsonPipelineJq.jq,/getpath|has\(/);
 
 const nativeJsonPipelineSource='response if ${url} ~= /api/ then response.json.add("flag",true) | response.json.replace("count",2) | response.json.delete("old")';
 const nativeJsonPipelineCtx=ctx();

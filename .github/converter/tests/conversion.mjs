@@ -1261,10 +1261,10 @@ const replaceAst = parseRewriteV2(
 assert.equal(qxDirectRewritePlan(replaceAst).ok, true);
 const replaceQx = qxDirectRewritePlan(replaceAst);
 const replaceSurge = surgeDirectRewritePlan(replaceAst);
-assert.match(replaceQx.line, /getpath/);
+assert.doesNotMatch(replaceQx.line, /getpath|has\(/);
 assert.match(replaceQx.line, /setpath/);
 assert.equal(replaceSurge.ok, true);
-assert.match(replaceSurge.line, /getpath/);
+assert.match(replaceSurge.line, /setpath/);
 
 const addAst = parseRewriteV2(
   'response if ${url} ~= /^https?:\\/\\/tiebac\\.baidu\\.com\\/c\\/s\\/sync$/i then response.json.add("wl_config.new_flag", true)'
@@ -1919,7 +1919,7 @@ if(selectedCase==='conversion-policy.mjs') {
     const split=convertPlugin(entry,'[Rewrite]\n'+multi,{...options,jqFiles:files});assert.equal(split.generatedScripts.size,0);
     for(const target of ['qx','surge']) {
       const lines=active(split[target]).split('\n').filter(x=>x.includes(target==='qx'?'jsonjq-'+phase+'-body':'http-'+phase+'-jq'));
-      assert.equal(lines.length,4);assert.match(lines[0],/delpaths/);assert.match(lines[1],/getpath/);assert.match(lines[2],/\.new/);assert.match(lines[3],/a\|b.*\.last/);assert.doesNotMatch(active(split[target]),/X-Ignored|one\.jq/);checked++;
+      assert.equal(lines.length,4);assert.match(lines[0],/delpaths/);assert.match(lines[1],/setpath/);assert.match(lines[2],/\.new/);assert.match(lines[3],/a\|b.*\.last/);assert.doesNotMatch(active(split[target]),/X-Ignored|one\.jq/);checked++;
     }
   }
   const scriptOnly='[Script]\nresponse if ${url} ~= /api/ then response.json.delete("ads") | script("https://example.test/only.js") | response.header.set("X","ignored")';

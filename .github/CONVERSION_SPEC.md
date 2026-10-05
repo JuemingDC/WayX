@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：2.2
+版本：2.3
 作者：chance  
 状态：唯一权威转换规范（Authoritative）
 
@@ -15,7 +15,7 @@ WayX 仅执行 Loon → Quantumult X / Surge 转换，Egern 不纳入转换链�
 - Surge：https://manual.nssurge.com/，包括 URL/Header/Body Rewrite、Script、Module 与 Rule 文档。
 - JQ：https://jqlang.org/manual/v1.6/。兼容基线为已验证的 jq 1.6，不假定客户端支持更新特性。
 
-ScriptHub 仅作为 JSON replace → jq 的实现参考，不把其模板扩展套用于 add/delete、作者 jq、文件 JQ 或其它规则。作者异步脚本组合工具属于实验入口，不进入常规同步或 canonical 产物。
+JSON/JQ 表达式以 jqlang 官方标准为依据，不采用第三方转换器模板。作者异步脚本组合工具属于实验入口，不进入常规同步或 canonical 产物。
 
 ## 2.2 编译与目标规划
 
@@ -25,7 +25,7 @@ IR 不包含目标 action 名、section 名、helper URL 或目标 fallback。�
 
 能够证明完整等价时优先 native；必要且已支持的语义缺口由共同 helper/dispatcher 承担；不能安全表示则注释源声明并诊断，不生成假可用规则。不得按插件 id、名称、作者或完整 catalog signature 特判。
 
-用户指定的正则 flags 丢弃、QX 强制 enable、作者 argument 省略和单条 pipeline 选层是明确的降级策略，不能称为完整源语义等价。除此之外，不静默删除条件或动作。
+用户指定的正则 flags 丢弃、QX 强制 enable、作者 argument 省略、单条 pipeline 选层和 JSON replace 直接 setpath 是明确的转换策略，不能称为完整源语义等价。除此之外，不静默删除条件或动作。
 
 ## 2.3 单条组合与声明顺序
 
@@ -71,7 +71,7 @@ Key Path 解析为 String/Number segments，支持 dot key、数字索引及 quo
 
 - add：直接 selector 条件赋值，缺失/null 时赋值，如 `if .data.flag == null then .data.flag = VALUE else . end`。
 - delete：`delpaths(PATHS)`。数字索引批量按源顺序逐项调用，保留位移语义，不能合并成针对原数组的一次删除。
-- replace：parent getpath + has + setpath 的字段存在性检查，只替换存在的字段。
+- replace：直接 `setpath(PATH; VALUE)`，不添加 getpath/has 或字段存在性检查。PATH 为保留 String/Number 类型的路径数组；批量替换按源顺序用 ` | ` 连接。遵循 jq 原生设置语义，包括缺失路径创建及类型错误。VALUE 保留源声明类型：字符串 `"[]"` 不等于数组 `[]`，不得统一字符串化。必要 JSON replace helper 同样执行路径设置，不检查末端字段是否存在。
 
 标识符路径用 `.data.flag`，特殊键用 `.["a.b"]`，索引用 `.items[0]`；根 bracket 带 identity `.`。生成的原生表达式不添加统一 type guard、`$__wayx_before` 或 try/catch 回滚，使用 jqlang 原生类型、错误和管道语义；作者自带 if/try/catch 保留。批量动作内部可形成有序原生操作，多个源 actions 仍按 2.3 分条。
 

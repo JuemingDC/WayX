@@ -514,7 +514,7 @@ export function conditionRuntimeSource() {
 
 // Source action oracle for the Header/Body/JSON dispatcher subset. Path parsing
 // is injected from the source grammar; target emitters use their own lowering.
-export function evaluateRewriteActions(ast,context,{parsePath,mockFiles}={}) {
+export function evaluateRewriteActions(ast,context,{parsePath,mockFiles,jsonReplaceSetsPath=false}={}) {
   const state=structuredClone(context);
   const condition=evaluateCondition(ast.condition,state);
   if (!condition.matched) return {matched:false,state,errors:[]};
@@ -566,8 +566,8 @@ export function evaluateRewriteActions(ast,context,{parsePath,mockFiles}={}) {
         for(let i=0;i<path.length-1;i++) {
           const key=path[i];
           if (parent==null || typeof parent!=='object') {parent=null;break;}
-          if (!Object.prototype.hasOwnProperty.call(parent,key) || (operation==='add' && parent[key]==null)) {
-            if (operation!=='add') {parent=null;break;}
+          if (!Object.prototype.hasOwnProperty.call(parent,key) || ((operation==='add' || (operation==='replace' && jsonReplaceSetsPath)) && parent[key]==null)) {
+            if (operation!=='add' && !(operation==='replace' && jsonReplaceSetsPath)) {parent=null;break;}
             put(parent,key,typeof path[i+1]==='number'?[]:{});
           }
           parent=parent[key];
@@ -575,7 +575,7 @@ export function evaluateRewriteActions(ast,context,{parsePath,mockFiles}={}) {
         if (parent!=null && typeof parent==='object') {
           const key=path.at(-1),current=Object.prototype.hasOwnProperty.call(parent,key)?parent[key]:undefined;
           if(operation==='delete') {if(Array.isArray(parent) && typeof key==='number') {if(key<parent.length)parent.splice(key,1);}else delete parent[key];}
-          else if(operation==='add' ? current==null : Object.prototype.hasOwnProperty.call(parent,key)) put(parent,key,replacement);
+          else if(operation==='add' ? current==null : jsonReplaceSetsPath || Object.prototype.hasOwnProperty.call(parent,key)) put(parent,key,replacement);
         }
         phase.body=JSON.stringify(json);
       } else throw new SemanticEvaluationError('unsupported oracle action: '+action.name);
