@@ -38,6 +38,22 @@ for(const entry of manifest){
   }
 }
 
+// Discovery prunes retired managed artifacts before conversion; enforce that
+// historical leftovers cannot silently remain in the published repository.
+for(const [base,field,suffix] of [['Resource/Loon','file','.lpx'],['Adblock/Quantumult X','qx','.snippet'],['Adblock/Surge','surge','.sgmodule']]){
+  const expected=new Set(manifest.map(entry=>entry[field]));
+  for(const rel of await fs.readdir(path.join(ROOT,base),{recursive:true})){
+    if(!rel.endsWith(suffix)||expected.has(rel))continue;
+    const text=await fs.readFile(path.join(ROOT,base,rel),'utf8');
+    if(field==='file'||/^# Converted by:\s*chance\s*$/m.test(text)) findings.push('Retired managed artifact remains: '+base+'/'+rel);
+  }
+}
+const activeIds=new Set(manifest.map(entry=>entry.id));
+for(const rel of await fs.readdir(path.join(ROOT,'Script'),{recursive:true})){
+  if(activeIds.has(rel.split(path.sep)[0])||!/[a-z_]+_[0-9a-f]{10}\.js$/.test(rel))continue;
+  if((await fs.readFile(path.join(ROOT,'Script',rel),'utf8')).includes('// Converted by: chance')) findings.push('Retired generated helper remains: Script/'+rel);
+}
+
 let snapshot=null;
 try {
   snapshot=JSON.parse(await fs.readFile(path.join(ROOT,'.github/monitor/.runtime/kelee-catalog.json'),'utf8'));

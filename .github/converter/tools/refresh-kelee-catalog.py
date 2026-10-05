@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
-"""Refresh the generated Kelee portion of the WayX Loon source catalog.
+"""Refresh dynamic Kelee and RuCu6 catalogs and prune retired managed artifacts.
 
 Author: chance
-Category: Automation / Source Discovery / Kelee
+Category: Automation / Source Discovery
 
-Only the ad-block and dependency category tags enter the ordered discovery feed.
-Existing Kelee
-entries keep their stable WayX ids/output filenames when the same source URL is
-still present; newly discovered plugins derive deterministic names from the LPX
-filename. Non-Kelee entries live in loon-static.json and are appended unchanged.
+Kelee selects only ad-block and dependency tags. RuCu6 includes every plugin in
+its author-published directory; plugin bodies come from rucu6.pages.dev.
+Existing sources retain stable ids and output filenames. Other authors use
+loon-static.json. All validated catalogs are combined before stale cleanup.
 """
 
 from __future__ import annotations
 
 import argparse
 import hashlib
+import html
 import json
 import os
 import re
@@ -34,6 +34,7 @@ RUNTIME_DIR = ROOT / ".github" / "monitor" / ".runtime"
 RUNTIME_SNAPSHOT = RUNTIME_DIR / "kelee-catalog.json"
 
 DEFAULT_LIST_URL = "https://hub.kelee.one/list.json"
+DEFAULT_RUCU6_LIST_URL = "https://t.me/GitCube/327"
 LOON_UA = "Loon/764 CFNetwork/1498.700.1 Darwin/23.6.0 iPhone/17.6.1"
 LPX_URL_RE = re.compile(
     r"https://kelee\.one/Tool/Loon/Lpx/[^\s\"'<>]+?\.lpx(?:\?[^\s\"'<>]*)?",
@@ -243,27 +244,29 @@ def build_catalog(list_payload: Any, previous: list[dict[str, Any]], static: lis
 
 
 def prune_removed(previous: list[dict[str, Any]], current: list[dict[str, Any]]) -> list[str]:
-    current_sources = {str(e.get("source")) for e in current if is_kelee_entry(e)}
-    removed = [e for e in previous if is_kelee_entry(e) and str(e.get("source")) not in current_sources]
+    current_sources = {str(e.get("source")) for e in current}
+    removed = [e for e in previous if str(e.get("source")) not in current_sources]
     changed: list[str] = []
+    protected = {
+        (ROOT / base / str(entry[field])).resolve()
+        for entry in current
+        for base, field in [("Resource/Loon", "file"), ("Adblock/Quantumult X", "qx"), ("Adblock/Surge", "surge")]
+    }
+    active_ids = {entry["id"] for entry in current}
     for entry in removed:
-        candidates = [
-            ROOT / "Resource" / "Loon" / str(entry.get("file", "")),
-            ROOT / "Adblock" / "Quantumult X" / str(entry.get("qx", "")),
-            ROOT / "Adblock" / "Surge" / str(entry.get("surge", "")),
-        ]
-        for path in candidates:
+        for base, field in [("Resource/Loon", "file"), ("Adblock/Quantumult X", "qx"), ("Adblock/Surge", "surge")]:
+            path = ROOT / base / str(entry.get(field, ""))
             try:
                 resolved = path.resolve()
-                resolved.relative_to(ROOT.resolve())
+                resolved.relative_to((ROOT / base).resolve())
             except Exception as exc:
                 raise ValueError(f"refusing unsafe prune path {path}") from exc
-            if resolved.is_file():
+            if resolved not in protected and resolved.is_file():
                 resolved.unlink()
                 changed.append(str(resolved.relative_to(ROOT)))
         script_dir = ROOT / "Script" / str(entry.get("id", ""))
         script_dir.resolve().relative_to((ROOT / "Script").resolve())
-        if script_dir.is_dir():
+        if entry.get("id") not in active_ids and script_dir.is_dir():
             for helper in script_dir.glob("*.js"):
                 if re.fullmatch(r"[a-z_]+_[0-9a-f]{10}\.js", helper.name) and "// Converted by: chance" in helper.read_text(encoding="utf-8"):
                     helper.unlink()
@@ -282,6 +285,84 @@ def prune_removed(previous: list[dict[str, Any]], current: list[dict[str, Any]])
     return changed
 
 
+
+def prune_orphans(current: list[dict[str, Any]]) -> list[str]:
+    """Remove abandoned converter-owned artifacts, including pre-policy leftovers."""
+    changed = []
+    expected_sources = {str(entry["file"]) for entry in current}
+    expected_targets = {field: {str(entry[field]) for entry in current} for field in ("qx", "surge")}
+    for source in (ROOT / "Resource/Loon").rglob("*.lpx"):
+        if str(source.relative_to(ROOT / "Resource/Loon")) not in expected_sources:
+            source.unlink(); changed.append(str(source.relative_to(ROOT)))
+    for base, field, extension in [("Adblock/Quantumult X", "qx", "*.snippet"), ("Adblock/Surge", "surge", "*.sgmodule")]:
+        for target in (ROOT / base).rglob(extension):
+            if str(target.relative_to(ROOT / base)) in expected_targets[field]:
+                continue
+            if re.search(r"^# Converted by:\s*chance\s*$", target.read_text(encoding="utf-8"), re.M):
+                target.unlink(); changed.append(str(target.relative_to(ROOT)))
+    active_ids = {entry["id"] for entry in current}
+    for directory in (ROOT / "Script").iterdir() if (ROOT / "Script").exists() else []:
+        if not directory.is_dir() or directory.name in active_ids:
+            continue
+        for helper in directory.glob("*.js"):
+            if re.fullmatch(r"[a-z_]+_[0-9a-f]{10}\.js", helper.name) and "// Converted by: chance" in helper.read_text(encoding="utf-8"):
+                helper.unlink(); changed.append(str(helper.relative_to(ROOT)))
+        try: directory.rmdir()
+        except OSError: pass
+    return changed
+
+
+def build_rucu6_catalog(payload: Any, previous: list[dict[str, Any]], static: list[dict[str, Any]]) -> list[dict[str, str]]:
+    """Enumerate all plugin URLs from a supplied author-published index."""
+    urls = []
+    def collect(value):
+        if isinstance(value, dict):
+            for child in value.values(): collect(child)
+        elif isinstance(value, list):
+            for child in value: collect(child)
+        elif isinstance(value, str):
+            for match in re.finditer(r"https://rucu6\.pages\.dev/Plugins/[^\s\"'<>]+?\.lpx", value):
+                if match.group(0) not in urls: urls.append(match.group(0))
+    collect(payload)
+    if isinstance(payload, str) and "tgme_widget_message_text" in payload:
+        message = re.search(r'<div class="tgme_widget_message_text[^"\n]*"[^>]*>(.*?)</div>', payload, re.S)
+        if not message: raise ValueError("RuCu6 author message body is unavailable")
+        for link in re.findall(r'href="([^"]+)"', message.group(1)):
+            link = html.unescape(link)
+            parsed = urllib.parse.urlsplit(link)
+            if parsed.scheme != "https": continue
+            if parsed.hostname == "pse.is":
+                request = urllib.request.Request(link, headers={"User-Agent": LOON_UA})
+                with urllib.request.urlopen(request, timeout=20) as response:
+                    final_url = response.geturl()
+                if urllib.parse.urlsplit(final_url).hostname not in {"www.nsloon.com", "nsloon.com", "rucu6.pages.dev"}:
+                    raise ValueError("Unexpected RuCu6 import redirect host")
+                decoded = urllib.parse.unquote(html.unescape(final_url))
+                if not re.search(r"https://rucu6\.pages\.dev/Plugins/[^\s\"'<>]+?\.lpx", decoded):
+                    raise ValueError("RuCu6 short link did not resolve to a plugin URL")
+                collect(decoded)
+            else:
+                collect(urllib.parse.unquote(link))
+    if not urls: raise ValueError("RuCu6 index produced zero plugin URLs; refusing catalog deletion")
+    prior = {entry["source"]: entry for entry in previous + static}
+    other = [entry for entry in previous + static if urllib.parse.urlsplit(entry["source"]).hostname != "rucu6.pages.dev"]
+    ids = {entry["id"] for entry in other}; files = {entry["file"] for entry in other}
+    qx = {entry["qx"] for entry in other}; surge = {entry["surge"] for entry in other}
+    entries = []
+    for url in urls:
+        if url in prior:
+            entry = dict(prior[url])
+        else:
+            name = safe_filename_from_url(url); stem = name[:-4]
+            entry = dict(id="RuCu6_" + ID_SAFE_RE.sub("_", stem), file="RuCu6/" + name, source=url,
+                         qx="RuCu6_" + stem + ".snippet", surge="RuCu6_" + stem + ".sgmodule", category="插件")
+        for field, used in [("id", ids), ("file", files), ("qx", qx), ("surge", surge)]:
+            if entry[field] in used: raise ValueError("RuCu6 index collision: " + field + "=" + entry[field])
+            used.add(entry[field])
+        entries.append(entry)
+    return entries
+
+
 def validate_combined(entries: list[dict[str, Any]]) -> None:
     required = ("id", "file", "source", "qx", "surge", "category")
     seen = {key: set() for key in ("id", "file", "qx", "surge")}
@@ -291,6 +372,10 @@ def validate_combined(entries: list[dict[str, Any]]) -> None:
                 raise ValueError(f"catalog[{index}] missing {field}")
         if not re.fullmatch(r"[A-Za-z0-9._-]+", entry["id"]):
             raise ValueError(f"catalog[{index}] invalid id: {entry['id']}")
+        for field, suffix in [("file", ".lpx"), ("qx", ".snippet"), ("surge", ".sgmodule")]:
+            value = entry[field]
+            if value.startswith("/") or "\\" in value or ".." in Path(value).parts or not value.endswith(suffix):
+                raise ValueError(f"catalog[{index}] unsafe {field}: {value}")
         for field in seen:
             value = entry[field]
             if value in seen[field]:
@@ -301,6 +386,7 @@ def validate_combined(entries: list[dict[str, Any]]) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--list-url", default=os.environ.get("KELEE_LIST_URL", DEFAULT_LIST_URL))
+    parser.add_argument("--rucu6-list-url", default=os.environ.get("RUCU6_LIST_URL") or DEFAULT_RUCU6_LIST_URL)
     parser.add_argument("--check", action="store_true", help="fail if the generated catalog differs; do not write")
     args = parser.parse_args()
 
@@ -311,6 +397,19 @@ def main() -> int:
 
     feed_text = fetch_bytes(args.list_url).decode("utf-8-sig")
     payload = json.loads(feed_text)
+    rucu6_feed = None
+    if args.rucu6_list_url:
+        index_url = args.rucu6_list_url
+        if index_url == DEFAULT_RUCU6_LIST_URL:
+            # telegram.me is Telegram's official alias for the same public post.
+            index_url = "https://telegram.me/GitCube/327?embed=1"
+        elif urllib.parse.urlsplit(index_url).hostname != "rucu6.pages.dev":
+            raise ValueError("RuCu6 index must be the authorized GitCube post or rucu6.pages.dev")
+        rucu6_feed = fetch_bytes(index_url).decode("utf-8-sig")
+        try: rucu6_payload = json.loads(rucu6_feed)
+        except json.JSONDecodeError: rucu6_payload = rucu6_feed
+        rucu6 = build_rucu6_catalog(rucu6_payload, previous, static)
+        static = [entry for entry in static if urllib.parse.urlsplit(entry["source"]).hostname != "rucu6.pages.dev"] + rucu6
     combined, metadata = build_catalog(payload, previous, static)
     validate_combined(combined)
 
@@ -325,7 +424,7 @@ def main() -> int:
         print(f"Kelee catalog current: discovered={len(metadata)} static={len(static)}")
         return 0
 
-    pruned = prune_removed(previous, combined)
+    pruned = prune_removed(previous, combined) + prune_orphans(combined)
     CATALOG.parent.mkdir(parents=True, exist_ok=True)
     CATALOG.write_text(desired, encoding="utf-8")
     RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
@@ -333,6 +432,14 @@ def main() -> int:
     (RUNTIME_DIR / "kelee-feed.json").write_text(
         json.dumps({"source": args.list_url, "text": feed_text}, ensure_ascii=False) + "\n", encoding="utf-8",
     )
+    (RUNTIME_DIR / "rucu6-discovery.json").write_text(json.dumps({
+        "complete": rucu6_feed is not None, "source": args.rucu6_list_url or None,
+        "reason": None if rucu6_feed is not None else "Author-published complete index URL is required; static sources only",
+    }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    if rucu6_feed is not None:
+        (RUNTIME_DIR / "rucu6-feed.json").write_text(json.dumps({"source": args.rucu6_list_url, "text": rucu6_feed}, ensure_ascii=False) + "\n", encoding="utf-8")
+    else:
+        print("RuCu6 discovery incomplete: no author-published complete index URL; validating static sources only")
     old_sources = {entry["source"]: entry for entry in previous}
     new_sources = {entry["source"]: entry for entry in combined}
     (RUNTIME_DIR / "catalog-discovery.json").write_text(json.dumps({

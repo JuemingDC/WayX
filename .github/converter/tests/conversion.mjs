@@ -893,17 +893,6 @@ const cases = [
     file:'Resource/Loon/RuCu6/myblockads.lpx',
   },
   {
-    name:'YouTube',
-    entry:{
-      id:'YouTube',
-      source:'https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Loon/RuCu6/youtube.lpx',
-      qx:'YouTube.snippet',
-      surge:'YouTube.sgmodule',
-      category:'去广告',
-    },
-    file:'Resource/Loon/RuCu6/youtube.lpx',
-  },
-  {
     name:'Bilibili',
     entry:{
       id:'Bilibili',
@@ -1075,16 +1064,6 @@ for (const testCase of cases) {
     assert.match(out.surge, /http-response-jq .*'walk\(if type=="object" and \.__typename=="AdPost" then empty else \. end\)'/);
     assert.match(out.surge, /^\[Body Rewrite\]$/m);
     assert.match(out.surge, /^\[Map Local\]$/m);
-  }
-
-  if (testCase.name === 'YouTube') {
-    assert.doesNotMatch(out.qx, /Source \[Argument\]|Argument usage:/, 'YouTube QX must not emit Loon plugin parameter UI/declarations');
-    assert.match(out.surge, /^#!arguments=.*captionLang:zh-Hans/m);
-    assert.match(out.surge, /argument="\{\\\"captionLang\\\":\\\"\{\{\{captionLang\}\}\}\\\"\}"/);
-    assert.ok(qxActive.some(line => /youtube\/request\.js$/.test(line)), 'YouTube: request binary scripts must follow KOP-XIAO and remain active as script-request-body');
-    assert.match(out.qx, /binary_body_mode=true ignored for Quantumult X/);
-    assert.doesNotMatch(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
-    assert.doesNotMatch(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
   }
 
   if (testCase.name === 'Bilibili') {

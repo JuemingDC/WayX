@@ -2048,12 +2048,12 @@
     "category": "去广告"
   },
   {
-    "id": "RuCu6Amap",
-    "file": "RuCu6/amap.lpx",
-    "source": "https://rucu6.pages.dev/Plugins/amap.lpx",
-    "qx": "RuCu6_Amap.snippet",
-    "surge": "RuCu6_Amap.sgmodule",
-    "category": "去广告"
+    "id": "PixivEnhanced",
+    "file": "PixivEnhanced.lpx",
+    "source": "https://raw.githubusercontent.com/TomCatXue/MyCookieCenter/main/loon/PixivEnhanced.plugin",
+    "qx": "PixivEnhanced.snippet",
+    "surge": "PixivEnhanced.sgmodule",
+    "category": "增强"
   },
   {
     "id": "Bilibili",
@@ -2064,6 +2064,22 @@
     "category": "去广告"
   },
   {
+    "id": "RuCu6Amap",
+    "file": "RuCu6/amap.lpx",
+    "source": "https://rucu6.pages.dev/Plugins/amap.lpx",
+    "qx": "RuCu6_Amap.snippet",
+    "surge": "RuCu6_Amap.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "RuCu6_nodecheck",
+    "file": "RuCu6/nodecheck.lpx",
+    "source": "https://rucu6.pages.dev/Plugins/nodecheck.lpx",
+    "qx": "RuCu6_nodecheck.snippet",
+    "surge": "RuCu6_nodecheck.sgmodule",
+    "category": "插件"
+  },
+  {
     "id": "JingDong",
     "file": "RuCu6/jingdong.lpx",
     "source": "https://rucu6.pages.dev/Plugins/jingdong.lpx",
@@ -2072,20 +2088,12 @@
     "category": "去广告"
   },
   {
-    "id": "MyBlockAds",
-    "file": "RuCu6/myblockads.lpx",
-    "source": "https://rucu6.pages.dev/Plugins/myblockads.lpx",
-    "qx": "MyBlockAds.snippet",
-    "surge": "MyBlockAds.sgmodule",
-    "category": "去广告"
-  },
-  {
-    "id": "Webpage",
-    "file": "RuCu6/webpage.lpx",
-    "source": "https://rucu6.pages.dev/Plugins/webpage.lpx",
-    "qx": "Webpage.snippet",
-    "surge": "Webpage.sgmodule",
-    "category": "去广告"
+    "id": "RuCu6_pinduoduo",
+    "file": "RuCu6/pinduoduo.lpx",
+    "source": "https://rucu6.pages.dev/Plugins/pinduoduo.lpx",
+    "qx": "RuCu6_pinduoduo.snippet",
+    "surge": "RuCu6_pinduoduo.sgmodule",
+    "category": "插件"
   },
   {
     "id": "Weibo",
@@ -2112,11 +2120,35 @@
     "category": "去广告"
   },
   {
-    "id": "PixivEnhanced",
-    "file": "PixivEnhanced.lpx",
-    "source": "https://raw.githubusercontent.com/TomCatXue/MyCookieCenter/main/loon/PixivEnhanced.plugin",
-    "qx": "PixivEnhanced.snippet",
-    "surge": "PixivEnhanced.sgmodule",
-    "category": "增强"
+    "id": "MyBlockAds",
+    "file": "RuCu6/myblockads.lpx",
+    "source": "https://rucu6.pages.dev/Plugins/myblockads.lpx",
+    "qx": "MyBlockAds.snippet",
+    "surge": "MyBlockAds.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "Webpage",
+    "file": "RuCu6/webpage.lpx",
+    "source": "https://rucu6.pages.dev/Plugins/webpage.lpx",
+    "qx": "Webpage.snippet",
+    "surge": "Webpage.sgmodule",
+    "category": "去广告"
+  },
+  {
+    "id": "RuCu6_youtube_maasea",
+    "file": "RuCu6/youtube_maasea.lpx",
+    "source": "https://rucu6.pages.dev/Plugins/youtube_maasea.lpx",
+    "qx": "RuCu6_youtube_maasea.snippet",
+    "surge": "RuCu6_youtube_maasea.sgmodule",
+    "category": "插件"
+  },
+  {
+    "id": "RuCu6_youtube_gholts",
+    "file": "RuCu6/youtube_gholts.lpx",
+    "source": "https://rucu6.pages.dev/Plugins/youtube_gholts.lpx",
+    "qx": "RuCu6_youtube_gholts.snippet",
+    "surge": "RuCu6_youtube_gholts.sgmodule",
+    "category": "插件"
   }
 ]

@@ -1,0 +1,27 @@
+# Name: 节点检测工具
+# Description: 进行节点阻断、地理位置、节点解锁、入口落地查询。
+# Author: xream[https://github.com/xream], Keywos[https://github.com/Keywos], KOP-XIAO[https://github.com/KOP-XIAO], dcpengx[https://github.com/dcpengx], RavelloH[https://github.com/RavelloH], RuCu6[https://github.com/RuCu6]
+# Icon: https://rucu6.pages.dev/Icons/common/nodecheck.png
+# Updated: 2026-10-05 12:30
+
+# Converted: 2026-10-05 19:28:09 +08:00
+# Converted by: chance
+# Category: 插件
+# Source: https://rucu6.pages.dev/Plugins/nodecheck.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+
+# [task_local]
+# [WayX] Source img_url=waveform.path.ecg omitted because Quantumult X task img-url is documented as an image URL, not an SF Symbol name.
+event-interaction https://rucu6.pages.dev/Scripts/general/node-check.js, tag=节点阻断查询, enabled=true
+# [WayX] Source img_url=globe.asia.australia.system omitted because Quantumult X task img-url is documented as an image URL, not an SF Symbol name.
+event-interaction https://rucu6.pages.dev/Scripts/general/network-in-out-query.js, tag=入口落地查询, enabled=true
+# [WayX] Source img_url=location.circle.system omitted because Quantumult X task img-url is documented as an image URL, not an SF Symbol name.
+event-interaction https://rucu6.pages.dev/Scripts/general/location-detection.js, tag=地理位置查询, enabled=true
+# [WayX] Source img_url=play.circle.system omitted because Quantumult X task img-url is documented as an image URL, not an SF Symbol name.
+event-interaction https://rucu6.pages.dev/Scripts/general/node-unlock-detection.js, tag=节点解锁查询, enabled=true
+
+# [mitm]

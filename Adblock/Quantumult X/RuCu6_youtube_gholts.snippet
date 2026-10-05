@@ -1,0 +1,44 @@
+# Name: YouTube
+# Description: 移除广告, 移除上传&短片按钮, 解锁播放速度&精彩跳转。
+# Author: Maasea[https://github.com/Maasea/sgmodule], gholts[https://github.com/gholts/surge], RuCu6[https://github.com/RuCu6]
+# Icon: https://rucu6.pages.dev/Icons/app/youtube.png
+# Updated: 2026-10-05 11:40
+
+# Converted: 2026-10-05 19:29:04 +08:00
+# Converted by: chance
+# Category: 插件
+# Source: https://rucu6.pages.dev/Plugins/youtube_gholts.lpx
+# Target: Quantumult X
+
+# [filter_local]
+
+# [rewrite_local]
+^https:\/\/s\.youtube\.com\/api\/stats\/ads url reject
+^https:\/\/www\.youtube\.com\/(pagead|pcs)\/ url reject
+# youtube_ad-break
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
+^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/player\/ad_break(?:\?.*)?$ url script-request-body https://rucu6.pages.dev/Scripts/youtube/request_gholts.js
+# youtube_init
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
+^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback(?:\?.*)?$ url script-request-body https://rucu6.pages.dev/Scripts/youtube/request_gholts.js
+# youtube_auto-hd
+# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
+^https?:\/\/[\w-]+\.googlevideo\.com\/videoplayback(?:\?.*)?$ url script-request-body https://rucu6.pages.dev/Scripts/youtube/request_gholts.js
+# youtube_log-event
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
+^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event(?:\?.*)?$ url script-request-body https://rucu6.pages.dev/Scripts/youtube/request_gholts.js
+# youtube_response
+# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
+^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(?:navigation\/resolve_url|browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch)(?:\?.*)?$ url script-response-body https://rucu6.pages.dev/Scripts/youtube/response_gholts.js
+# youtube_key
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
+^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(?:config|log_event)(?:\?.*)?$ url script-response-body https://rucu6.pages.dev/Scripts/youtube/key_gholts.js
+# youtube_ump
+# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
+# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
+^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback(?:\?.*)?$ url script-response-body https://rucu6.pages.dev/Scripts/youtube/ump_gholts.js
+
+# [mitm]
+hostname = rr*.googlevideo.com, s.youtube.com, www.youtube.com, youtubei.googleapis.com
