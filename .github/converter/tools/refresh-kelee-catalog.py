@@ -312,6 +312,71 @@ def prune_orphans(current: list[dict[str, Any]]) -> list[str]:
     return changed
 
 
+def rucu6_plugin_url(link: str) -> str | None:
+    """Read the import parameter, never scrape an incidental URL from a page."""
+    parsed = urllib.parse.urlsplit(html.unescape(link))
+    if parsed.scheme != "https":
+        return None
+    if parsed.hostname in {"nsloon.com", "www.nsloon.com"}:
+        if parsed.path != "/openloon/import":
+            return None
+        values = urllib.parse.parse_qs(parsed.query).get("plugin", [])
+        if len(values) != 1:
+            return None
+        value = values[0]
+        for _ in range(3):
+            if value.startswith("https://"):
+                break
+            value = urllib.parse.unquote(value)
+        parsed = urllib.parse.urlsplit(value)
+    if parsed.scheme != "https" or parsed.hostname != "rucu6.pages.dev" or parsed.port not in {None, 443} or parsed.username or parsed.password:
+        return None
+    if not parsed.path.startswith("/Plugins/") or not parsed.path.endswith(".lpx"):
+        return None
+    url = urllib.parse.urlunsplit(("https", "rucu6.pages.dev", parsed.path, "", ""))
+    safe_filename_from_url(url)
+    return url
+
+
+class ResolvedRuCu6Link(Exception):
+    def __init__(self, url: str):
+        self.url = url
+
+
+class RuCu6RedirectHandler(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, request, response, code, message, headers, newurl):
+        url = rucu6_plugin_url(newurl)
+        if url:
+            # Location already identifies the plugin. Do not fetch the import
+            # landing page (or plugin body) during directory discovery.
+            raise ResolvedRuCu6Link(url)
+        parsed = urllib.parse.urlsplit(newurl)
+        if parsed.scheme != "https" or parsed.hostname != "pse.is":
+            raise ValueError(f"Unexpected RuCu6 short-link redirect: {newurl}")
+        return super().redirect_request(request, response, code, message, headers, newurl)
+
+
+def resolve_rucu6_short_link(link: str) -> str:
+    opener = urllib.request.build_opener(RuCu6RedirectHandler())
+    request = urllib.request.Request(link, headers={"User-Agent": LOON_UA, "Cache-Control": "no-cache"})
+    for attempt in range(3):
+        try:
+            with opener.open(request, timeout=20) as response:
+                url = rucu6_plugin_url(response.geturl())
+                if url:
+                    return url
+                raise ValueError(f"RuCu6 short link has no plugin redirect: {link}")
+        except ResolvedRuCu6Link as resolved:
+            return resolved.url
+        except (urllib.error.URLError, TimeoutError, OSError) as exc:
+            if isinstance(exc, urllib.error.HTTPError) and exc.code not in {408, 429, 500, 502, 503, 504}:
+                raise RuntimeError(f"RuCu6 short link failed: {link}: {exc}") from exc
+            if attempt == 2:
+                raise RuntimeError(f"RuCu6 short link failed after 3 attempts: {link}: {exc}") from exc
+            time.sleep(1.0 + attempt)
+    raise RuntimeError(f"RuCu6 short link unresolved: {link}")
+
+
 def build_rucu6_catalog(payload: Any, previous: list[dict[str, Any]], static: list[dict[str, Any]]) -> list[dict[str, str]]:
     """Enumerate all plugin URLs from a supplied author-published index."""
     urls = []
@@ -334,17 +399,13 @@ def build_rucu6_catalog(payload: Any, previous: list[dict[str, Any]], static: li
             parsed = urllib.parse.urlsplit(link)
             if parsed.scheme != "https": continue
             if parsed.hostname == "pse.is":
-                request = urllib.request.Request(link, headers={"User-Agent": LOON_UA})
-                with urllib.request.urlopen(request, timeout=20) as response:
-                    final_url = response.geturl()
-                if urllib.parse.urlsplit(final_url).hostname not in {"www.nsloon.com", "nsloon.com", "rucu6.pages.dev"}:
-                    raise ValueError("Unexpected RuCu6 import redirect host")
-                decoded = urllib.parse.unquote(html.unescape(final_url))
-                if not re.search(r"https://rucu6\.pages\.dev/Plugins/[^\s\"'<>]+?\.lpx", decoded):
-                    raise ValueError("RuCu6 short link did not resolve to a plugin URL")
-                collect(decoded)
+                url = resolve_rucu6_short_link(link)
             else:
-                collect(urllib.parse.unquote(link))
+                url = rucu6_plugin_url(link)
+                if url is None and parsed.hostname in {"nsloon.com", "www.nsloon.com", "rucu6.pages.dev"}:
+                    raise ValueError(f"Invalid RuCu6 plugin/import link: {link}")
+            if url and url not in urls:
+                urls.append(url)
     if not urls: raise ValueError("RuCu6 index produced zero plugin URLs; refusing catalog deletion")
     prior = {entry["source"]: entry for entry in previous + static}
     other = [entry for entry in previous + static if urllib.parse.urlsplit(entry["source"]).hostname != "rucu6.pages.dev"]

@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：2.4
+版本：2.5
 作者：chance  
 状态：唯一权威转换规范（Authoritative）
 
@@ -143,7 +143,7 @@ QX inline note 仅在一条注释唯一对应一条活动声明时使用，否�
 
 ## 2.13 Catalog 与原地址获取
 
-loon-static.json 保存人工固定来源；RuCu6 插件正文只从 rucu6.pages.dev 拉取，不按类别筛选。目录每次读取作者消息 https://t.me/GitCube/327（可通过 Telegram 官方 telegram.me 别名读取同一消息），只解析消息正文中的插件链接及短链接跳转后的导入地址；短链接仅用于发现，最终插件 URL 必须属于 rucu6.pages.dev/Plugins/*.lpx。也支持 RUCU6_LIST_URL 或 --rucu6-list-url 指定该域名的 JSON/列表目录；每次刷新读取目录，新增自动登记，同 URL 保持稳定 id/路径。缺失完整目录或目录无法枚举时明确报告发现不完整，不把固定名单验证称为发现全部新插件；不得猜测文件名冒充完整目录。
+loon-static.json 保存人工固定来源；RuCu6 插件正文只从 rucu6.pages.dev 拉取，不按类别筛选。目录每次读取作者消息 https://t.me/GitCube/327（可通过 Telegram 官方 telegram.me 别名读取同一消息），只解析消息正文中的插件链接及短链接跳转后的导入地址；短链接仅用于发现，跟随 HTTPS 短链跳转，在 Location 已包含直接插件地址或 Loon 导入页 plugin 参数时立即提取并停止网络访问，不读取导入页；按查询参数解析并处理 HTML 实体及百分号编码，保留目录顺序并按规范化地址去重。瞬时失败最多重试 3 次；任一插件短链失败使刷新失败并保留当前清单及产物。最终插件 URL 必须属于 rucu6.pages.dev/Plugins/*.lpx。也支持 RUCU6_LIST_URL 或 --rucu6-list-url 指定该域名的 JSON/列表目录；每次刷新读取目录，新增自动登记，同 URL 保持稳定 id/路径。缺失完整目录或目录无法枚举时明确报告发现不完整，不把固定名单验证称为发现全部新插件；不得猜测文件名冒充完整目录。
 
 loon.json 为完整生成态 Catalog。可莉目录从 https://hub.kelee.one/list.json 发现去广告/依赖的官方 Lpx 项目，保留 feed 顺序，同 source URL 复用稳定 id/目标文件名；其它类别不自动扩大范围。
 

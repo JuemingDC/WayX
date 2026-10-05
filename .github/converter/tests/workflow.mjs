@@ -485,14 +485,32 @@ index={'plugins':[{'url':ru['source'],'tag':['增强']},{'url':'https://rucu6.pa
 new=m.build_rucu6_catalog(index,[ru],static)
 assert new[0]==ru and len(new)==2 and new[1]['file']=='RuCu6/new.lpx'
 assert all(e['source'].startswith('https://rucu6.pages.dev/Plugins/') for e in new)
-class Redirect:
- def __enter__(self):return self
- def __exit__(self,*args):pass
- def geturl(self):return 'https://www.nsloon.com/openloon/import?plugin=https%3A%2F%2Frucu6.pages.dev%2FPlugins%2Fone.lpx'
-widget='<a href="https://rucu6.pages.dev/Plugins/outside.lpx">unrelated</a><div class="tgme_widget_message_text js-message_text"><a href="https://pse.is/example">plugin</a></div>'
-with patch.object(m.urllib.request,'urlopen',return_value=Redirect()) as resolve:
+widget='<a href="https://rucu6.pages.dev/Plugins/outside.lpx">unrelated</a><div class="tgme_widget_message_text js-message_text"><a href="https://pse.is/example">plugin</a><a href="https://www.nsloon.com/openloon/import?plugin=https%3A%2F%2Frucu6.pages.dev%2FPlugins%2Fone.lpx&amp;tag=test">duplicate</a></div>'
+with patch.object(m.urllib.request,'build_opener') as make:
+ make.return_value.open.side_effect=m.ResolvedRuCu6Link(ru['source'])
  assert m.build_rucu6_catalog(widget,[ru],static)==[ru]
- assert resolve.call_args.args[0].get_header('User-agent')==m.LOON_UA
+ assert make.return_value.open.call_args.args[0].get_header('User-agent')==m.LOON_UA
+ assert make.return_value.open.call_count==1
+assert m.rucu6_plugin_url('https://www.nsloon.com/openloon/import?plugin=https%253A%252F%252Frucu6.pages.dev%252FPlugins%252Fone.lpx')==ru['source']
+assert m.rucu6_plugin_url(ru['source']+'?cache=1#test')==ru['source']
+for invalid in ['https://www.nsloon.com/openloon/import?other='+ru['source'], 'https://www.nsloon.com/openloon/import?plugin='+ru['source']+'&plugin='+ru['source'], 'https://rucu6.pages.dev.evil.test/Plugins/one.lpx', 'http://rucu6.pages.dev/Plugins/one.lpx']:
+ assert m.rucu6_plugin_url(invalid) is None
+handler=m.RuCu6RedirectHandler()
+try:handler.redirect_request(None,None,302,'',{},'https://www.nsloon.com/openloon/import?plugin='+ru['source'])
+except m.ResolvedRuCu6Link as resolved:assert resolved.url==ru['source']
+else:raise AssertionError('import landing page must never be fetched')
+try:handler.redirect_request(None,None,302,'',{},'https://evil.test/?plugin='+ru['source'])
+except ValueError:pass
+else:raise AssertionError('unexpected redirect host must fail')
+with patch.object(m.urllib.request,'build_opener') as make,patch.object(m.time,'sleep'):
+ make.return_value.open.side_effect=[m.urllib.error.URLError('timeout'),m.ResolvedRuCu6Link(ru['source'])]
+ assert m.resolve_rucu6_short_link('https://pse.is/example')==ru['source'] and make.return_value.open.call_count==2
+with patch.object(m.urllib.request,'build_opener') as make,patch.object(m.time,'sleep'):
+ make.return_value.open.side_effect=m.urllib.error.URLError('timeout')
+ try:m.resolve_rucu6_short_link('https://pse.is/example')
+ except RuntimeError as error:assert 'after 3 attempts' in str(error)
+ else:raise AssertionError('failed redirect must not silently omit a plugin')
+ assert make.return_value.open.call_count==3
 try:m.build_rucu6_catalog('<html>Site Unavailable</html>',[ru],static)
 except ValueError:pass
 else:raise AssertionError('empty/unavailable index must fail before deletion')
@@ -529,6 +547,13 @@ with tempfile.TemporaryDirectory() as temp:
  feed=json.loads((m.RUNTIME_DIR/'kelee-feed.json').read_text());assert feed['source']==m.DEFAULT_LIST_URL and json.loads(feed['text'])==payload
  with patch.object(sys,'argv',['refresh','--rucu6-list-url','']),patch.object(m,'fetch_bytes',return_value=response),contextlib.redirect_stdout(io.StringIO()):assert m.main()==0
  discovery=json.loads((m.RUNTIME_DIR/'catalog-discovery.json').read_text());assert discovery['added']==[] and discovery['updated']==[] and discovery['removed']==[]
+ before=m.CATALOG.read_bytes()
+ marker=m.ROOT/'Resource/Loon/orphan.lpx';marker.parent.mkdir(parents=True,exist_ok=True);marker.write_text('keep on incomplete discovery')
+ with patch.object(sys,'argv',['refresh']),patch.object(m,'fetch_bytes',side_effect=[response,widget.encode()]),patch.object(m,'resolve_rucu6_short_link',side_effect=RuntimeError('failed redirect')):
+  try:m.main()
+  except RuntimeError:pass
+  else:raise AssertionError('incomplete short-link discovery must block writes and cleanup')
+ assert m.CATALOG.read_bytes()==before and marker.exists()
 
 `],{encoding:'utf8'});
   assert.equal(categoryCheck.status,0,categoryCheck.stderr||categoryCheck.stdout);
