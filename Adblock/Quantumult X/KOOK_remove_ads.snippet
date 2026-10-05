@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KOOK.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:25 +08:00
+# Converted: 2026-10-05 19:06:00 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/KOOK_remove_ads.lpx
@@ -21,7 +21,7 @@
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
 ^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ url jsonjq-response-body 'delpaths([["ad_banner"],["advertise_on_off"]])'
 
-^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ url jsonjq-response-body 'if (getpath([]) | has("ios_mall_switch")) then (setpath(["ios_mall_switch"]; false)) else . end'
+^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ url jsonjq-response-body 'setpath(["ios_mall_switch"]; false)'
 
 ^https:\/\/www\.kookapp\.cn\/api\/v3\/promotion\/ongoing$ url reject-dict
 

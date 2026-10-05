@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Douyu.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 19:28:53 +08:00
+# Converted: 2026-10-05 19:06:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Douyu_remove_ads.lpx
 # Target: Surge
@@ -32,7 +32,7 @@ DOMAIN,stun1.qvb.qcloud.com,REJECT,extended-matching,pre-matching
 http-response-jq ^https:\/\/apiv2\.douyucdn\.cn\/japi\/entrance\/roomRes\/nc\/m\/list 'delpaths([["data","pendant_a"],["data","entrance_d"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/venus\.douyucdn\.cn\/venus\/config\/static\/update.+keyCodeSet=flow_config 'if (getpath([]) | has("greatGodGameSitterSwitch")) then (setpath(["greatGodGameSitterSwitch"]; 0)) else . end | if (getpath([]) | has("followMoreAnchorEntrance")) then (setpath(["followMoreAnchorEntrance"]; 0)) else . end | if (getpath([]) | has("sdklivebanner")) then (setpath(["sdklivebanner"]; 0)) else . end | if (getpath([]) | has("homeActFloatSwitch")) then (setpath(["homeActFloatSwitch"]; 0)) else . end | if (getpath([]) | has("bringGoodsSwitch")) then (setpath(["bringGoodsSwitch"]; 0)) else . end | if (getpath([]) | has("qqGameSwitch")) then (setpath(["qqGameSwitch"]; 0)) else . end'
+http-response-jq ^https:\/\/venus\.douyucdn\.cn\/venus\/config\/static\/update.+keyCodeSet=flow_config 'setpath(["greatGodGameSitterSwitch"]; 0) | setpath(["followMoreAnchorEntrance"]; 0) | setpath(["sdklivebanner"]; 0) | setpath(["homeActFloatSwitch"]; 0) | setpath(["bringGoodsSwitch"]; 0) | setpath(["qqGameSwitch"]; 0)'
 
 [Map Local]
 ^https:\/\/rtbapi\.douyucdn\.cn\/japi\/sign\/app\/getinfo data-type=text data="{}" status-code=200 header="Content-Type:application/json"

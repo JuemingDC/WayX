@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Mango_TV.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-05 00:27:56 +08:00
+# Converted: 2026-10-05 19:06:20 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/MangoTV_remove_ads.lpx
@@ -42,7 +42,7 @@ host-suffix, da.mgtv.com, reject
 ^https:\/\/mobile\.api\.mgtv\.com\/v\d\/mobile\/checkUpdate\? url reject-dict
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https?:\/\/mobile\.api\.(mgtv|hunantv)\.com\/mobile\/config\? url jsonjq-response-body 'if (getpath(["data"]) | has("dc_adConfig")) then (setpath(["data","dc_adConfig"]; 0)) else . end | if (getpath(["data"]) | has("XmsellSwitch")) then (setpath(["data","XmsellSwitch"]; 0)) else . end | if (getpath(["data"]) | has("screenshot_share_switch")) then (setpath(["data","screenshot_share_switch"]; 0)) else . end | if (getpath(["data"]) | has("playerUseHttpDNS")) then (setpath(["data","playerUseHttpDNS"]; 0)) else . end | if (getpath(["data"]) | has("damang_tab")) then (setpath(["data","damang_tab"]; 0)) else . end | if (getpath(["data"]) | has("relative_ads")) then (setpath(["data","relative_ads"]; 0)) else . end | if (getpath(["data"]) | has("second_floor_guide_switch")) then (setpath(["data","second_floor_guide_switch"]; 0)) else . end | if (getpath(["data"]) | has("progress_bar_ad_switch")) then (setpath(["data","progress_bar_ad_switch"]; 0)) else . end | if (getpath(["data"]) | has("XmVideoB")) then (setpath(["data","XmVideoB"]; 0)) else . end | if (getpath(["data"]) | has("damang_duanju_tab")) then (setpath(["data","damang_duanju_tab"]; 0)) else . end | if (getpath(["data"]) | has("playview_box_ad_switch")) then (setpath(["data","playview_box_ad_switch"]; 0)) else . end | if (getpath(["data"]) | has("topBarSwitch")) then (setpath(["data","topBarSwitch"]; 0)) else . end | if (getpath(["data"]) | has("VIPSDKB2")) then (setpath(["data","VIPSDKB2"]; 0)) else . end'
+^https?:\/\/mobile\.api\.(mgtv|hunantv)\.com\/mobile\/config\? url jsonjq-response-body 'setpath(["data","dc_adConfig"]; 0) | setpath(["data","XmsellSwitch"]; 0) | setpath(["data","screenshot_share_switch"]; 0) | setpath(["data","playerUseHttpDNS"]; 0) | setpath(["data","damang_tab"]; 0) | setpath(["data","relative_ads"]; 0) | setpath(["data","second_floor_guide_switch"]; 0) | setpath(["data","progress_bar_ad_switch"]; 0) | setpath(["data","XmVideoB"]; 0) | setpath(["data","damang_duanju_tab"]; 0) | setpath(["data","playview_box_ad_switch"]; 0) | setpath(["data","topBarSwitch"]; 0) | setpath(["data","VIPSDKB2"]; 0)'
 
 ^https:\/\/me\.bz\.mgtv\.com\/v3\/module\/list\? url jsonjq-response-body '.data.list |= map(select(.id | IN(1, 2, 4, 7))) | .data.list |= map(if .moduleType == 2 then .data |= map(select(.moduleType == 11)) elif .moduleType == 4 then .data |= map(select(.moduleType == 14 or .moduleType == 23)) elif .moduleType == 7 then .data |= map(select(.moduleType == 16 and .title != "音乐广场")) else . end)'
 

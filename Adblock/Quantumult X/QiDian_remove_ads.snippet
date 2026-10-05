@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/QiDian.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:49 +08:00
+# Converted: 2026-10-05 19:06:24 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/QiDian_remove_ads.lpx
@@ -17,7 +17,7 @@
 
 # [rewrite_local]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/client\/getconf$ url jsonjq-response-body 'if (getpath(["Data"]) | has("WolfEye")) then (setpath(["Data","WolfEye"]; 0)) else . end | if (getpath(["Data","CloudSetting"]) | has("TeenShowFreq")) then (setpath(["Data","CloudSetting","TeenShowFreq"]; 0)) else . end'
+^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/client\/getconf$ url jsonjq-response-body 'setpath(["Data","WolfEye"]; 0) | setpath(["Data","CloudSetting","TeenShowFreq"]; 0)'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
 ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/client\/getconf$ url jsonjq-response-body 'delpaths([["Data","ActivityPageBackPushNoticeFrequency"],["Data","ActivityIcon"],["Data","ActivityPopup"],["Data","LuckBag"]])'
@@ -32,7 +32,7 @@
 
 ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/push\/getdialog\? url reject-dict
 
-^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v2\/dailyrecommend\/getdailyrecommend\? url jsonjq-response-body 'if (getpath(["Data"]) | has("Items")) then (setpath(["Data","Items"]; "[]")) else . end'
+^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v2\/dailyrecommend\/getdailyrecommend\? url jsonjq-response-body 'setpath(["Data","Items"]; "[]")'
 
 ^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/message\/getpushedmessagelist$ url reject-dict
 

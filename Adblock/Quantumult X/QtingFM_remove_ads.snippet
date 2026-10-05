@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/QtingFM.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:49 +08:00
+# Converted: 2026-10-05 19:06:25 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/QtingFM_remove_ads.lpx
@@ -26,7 +26,7 @@ host, adlaunch.qtfm.cn, reject
 
 ^https:\/\/search\.qtfm\.cn\/v\d\/keyword\/default$ url reject
 
-^https:\/\/app\.qtfm\.cn\/m-bff\/v\d\/signin\/show_homepage_icon$ url jsonjq-response-body 'if (getpath(["data"]) | has("display_icon")) then (setpath(["data","display_icon"]; false)) else . end'
+^https:\/\/app\.qtfm\.cn\/m-bff\/v\d\/signin\/show_homepage_icon$ url jsonjq-response-body 'setpath(["data","display_icon"]; false)'
 
 ^https:\/\/app\.qtfm\.cn\/recommendapi\/v\d\/hotpage\? url jsonjq-response-body '.data.head |= map(select(.type == "IconGrid")) | .data.feeds |= map(select(.type == "Channel" or .type == "Radio" or .type == "ListenListChannel"))'
 
