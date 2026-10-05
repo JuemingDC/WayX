@@ -32,7 +32,9 @@ if (selectedCase === "architecture-contract.mjs") {
 const ROOT=process.cwd();
 const spec=await fs.readFile(path.join(ROOT,'.github/CONVERSION_SPEC.md'),'utf8');
 
-assert.match(spec,/版本：1\.100\b/,'Implementation/spec audit requires spec v1.100');
+assert.match(spec,/版本：2\.1\b/,'Authoritative specification starts at version 2.1');
+assert.match(spec,/^## 2\.1 /m);
+assert.doesNotMatch(spec,/迁移状态|历史记录|失败案例|PR #|（v1\.\d+|版本：1\.|已由 §|本轮验收/,'specification contains only current normative content');
 for (const evidence of [
   'crossutility/Quantumult-X',
   'sample.conf',
@@ -61,7 +63,7 @@ for (const invariant of [
   assert.ok(spec.includes(invariant),'missing semantic-compiler invariant in CONVERSION_SPEC: '+invariant);
 }
 
-assert.match(spec,/当前生产转换按 §0 丢弃源 `i\/m\/s`/,'effective specification must match the target flag policy');
+assert.match(spec,/当前生产转换丢弃源 `i\/m\/s`/,'effective specification must match the target flag policy');
 
 for (const rel of [
   '.github/converter/src/core.mjs',

@@ -781,6 +781,12 @@ await fs.writeFile(path.join(root,'Adblock/Quantumult X/Ads.snippet'),'# Name: A
 await fs.writeFile(path.join(root,'Adblock/Surge/Ads.sgmodule'),'#!name=Ads\n[URL Rewrite]\n^https://ads.example - reject\n');
 await fs.writeFile(path.join(root,'Adblock/Quantumult X/First.snippet'),'# Name: First\n# [rewrite_local]\n^https://first.example url reject\n');
 await fs.writeFile(path.join(root,'Adblock/Surge/First.sgmodule'),'#!name=First\n[URL Rewrite]\n^https://first.example - reject\n');
+for(const rel of ['Adblock/Quantumult X/Ads.snippet','Adblock/Surge/Ads.sgmodule']) {
+  const file=path.join(root,rel);
+  await fs.writeFile(file,'# Author: Alice[https://example.test/alice], CoAuthor[https://example.test/co]\n'+await fs.readFile(file,'utf8'));
+}
+await fs.writeFile(path.join(root,'Adblock/Quantumult X/First.snippet'),'# Author: Alice[https://example.test/other-profile]\n'+await fs.readFile(path.join(root,'Adblock/Quantumult X/First.snippet'),'utf8'));
+await fs.writeFile(path.join(root,'Adblock/Quantumult X/Bob.snippet'),'# Name: Bob Resource\n# Author: Bob\n# [rewrite_local]\n^https://bob.example url reject\n');
 await fs.writeFile(path.join(root,'.github/sources/loon.json'),JSON.stringify([
   {id:'First',file:'First.lpx',source:'https://kelee.one/Tool/Loon/Lpx/First.lpx',qx:'First.snippet',surge:'First.sgmodule',category:'去广告'},
   {id:'Ads',file:'Ads.lpx',source:'https://kelee.one/Tool/Loon/Lpx/Ads.lpx',qx:'Ads.snippet',surge:'Ads.sgmodule',category:'去广告'},
@@ -803,19 +809,27 @@ assert.match(readme,/update-interval%3D86400/);
 assert.match(readme,/Adblock%2FQuantumult%2520X%2FAds\.snippet/);
 assert.doesNotMatch(readme,/Resource%252FInstall%252FQuantumultX/);
 assert.equal(/Kelee Lpx Loon UA/i.test(readme),false);
+assert.equal((readme.match(/^### Alice$/gm)||[]).length,1,'author links and coauthors do not create duplicate primary-author groups');
+assert.match(readme,/^### Bob$/m);
+assert.ok(readme.indexOf('### Alice')<readme.indexOf('### Bob'),'groups follow first catalog occurrence');
+assert.ok(readme.indexOf('**[Ads]')<readme.indexOf('### Bob'),'each resource stays within its author group');
 
 await fs.unlink(path.join(root,'Adblock/Quantumult X/Ads.snippet'));
 let refreshed=(await buildReadmePlan(root)).get('README.md');
 assert.match(refreshed,/\| \*\*\[Ads\].*\| — \| \[一键安装\]/);
+assert.match(refreshed,/### Alice[\s\S]*\*\*\[Ads\]/,'Surge attribution is used when QX is absent');
 await fs.unlink(path.join(root,'Adblock/Surge/Ads.sgmodule'));
 await fs.writeFile(path.join(root,'Adblock/Quantumult X/New.snippet'),'# Name: New\n# [rewrite_local]\n^https://new.example url reject\n');
 refreshed=(await buildReadmePlan(root)).get('README.md');
 assert.doesNotMatch(refreshed,/\*\*\[Ads\]/);
 assert.match(refreshed,/\*\*\[New\]/);
 assert.deepEqual(refreshed.match(/^## .+$/gm),readme.match(/^## .+$/gm));
-assert.equal((refreshed.match(/\| Name \| Quantumult X \| Surge \|/g)||[]).length,4);
+assert.match(refreshed,/^### 佚名$/m);
+assert.equal((refreshed.match(/\| Name \| Quantumult X \| Surge \|/g)||[]).length,6);
+await fs.unlink(path.join(root,'Adblock/Quantumult X/Bob.snippet'));
+assert.doesNotMatch((await buildReadmePlan(root)).get('README.md'),/^### Bob$/m,'empty author groups are removed');
 await fs.rm(root,{recursive:true,force:true});
-console.log('README index contract passed: existing structure, additions, removals and single-target absence');
+console.log('README index contract passed: author grouping, within-author catalog order, additions/removals and single-target attribution');
 }
 
 if (selectedCase === "manual-assets.mjs") {

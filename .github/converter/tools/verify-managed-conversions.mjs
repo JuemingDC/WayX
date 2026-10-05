@@ -4,6 +4,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { loadLoonSourceCatalog } from "../src/input.mjs";
+import { buildReadmePlan } from "../src/workflow.mjs";
 
 const ROOT=process.cwd();
 const manifest=await loadLoonSourceCatalog(path.join(ROOT,'.github/sources/loon.json'));
@@ -56,7 +57,8 @@ if(snapshot){
 
 const readme=await readRequired('README.md','README');
 if(readme){
-  let previous=-1;
+  const expected=(await buildReadmePlan(ROOT)).get('README.md');
+  if(readme!==expected)findings.push('README author groups or within-author catalog order differ from generated index');
   for(const entry of kelee){
     const marker='Adblock/Quantumult%20X/'+encodeURIComponent(entry.qx).replace(/%2F/g,'/');
     let index=readme.indexOf(marker);
@@ -69,10 +71,6 @@ if(readme){
       findings.push(entry.id+': README missing QX Adblock row for '+entry.qx);
       continue;
     }
-    if(index<=previous){
-      findings.push(entry.id+': README Kelee row order diverges from plugin-center order');
-    }
-    previous=index;
   }
 }
 

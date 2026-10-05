@@ -445,9 +445,19 @@ function rowInstallCells(category, row) {
   return {qx, surge};
 }
 
-function renderTable(category, rows) {
+function adblockAuthor(row) {
+  for(const item of [row.qx,row.surge]) {
+    const match=item?.text.match(/^#\s*Author:\s*(.+)$/mi);
+    if(!match)continue;
+    const name=match[1].replace(/\[https?:\/\/[^\]]*\]/g,'').split(/[,，、]/)[0].trim();
+    if(name)return name;
+  }
+  return '佚名';
+}
+
+function renderTable(category, rows, heading=category, level=2) {
   const lines = [
-    `## ${category}`,
+    `${'#'.repeat(level)} ${heading}`,
     '',
     '| Name | Quantumult X | Surge |',
     '| :--- | :---: | :---: |',
@@ -464,7 +474,15 @@ export async function buildReadmePlan(root=process.cwd()) {
   const sections = [];
   for (const category of README_CATEGORY_ORDER) {
     const rows = await scanCategory(root, category);
-    sections.push(renderTable(category, rows));
+    if(category==='Adblock' && rows.length) {
+      const groups=new Map();
+      for(const row of rows) {
+        const author=adblockAuthor(row);
+        if(!groups.has(author))groups.set(author,[]);
+        groups.get(author).push(row);
+      }
+      sections.push('## Adblock\n\n'+[...groups].map(([author,items])=>renderTable(category,items,author.replace(/[\r\n]/g,' ').replace(/([\\`*_\[\]<>])/g,'\\$1'),3)).join('\n\n'));
+    } else sections.push(renderTable(category, rows));
   }
 
   const readme = [
