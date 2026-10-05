@@ -489,7 +489,7 @@ class Redirect:
  def __enter__(self):return self
  def __exit__(self,*args):pass
  def geturl(self):return 'https://www.nsloon.com/openloon/import?plugin=https%3A%2F%2Frucu6.pages.dev%2FPlugins%2Fone.lpx'
-widget='<div class="tgme_widget_message_text js-message_text"><a href="https://pse.is/example">plugin</a></div>'
+widget='<a href="https://rucu6.pages.dev/Plugins/outside.lpx">unrelated</a><div class="tgme_widget_message_text js-message_text"><a href="https://pse.is/example">plugin</a></div>'
 with patch.object(m.urllib.request,'urlopen',return_value=Redirect()) as resolve:
  assert m.build_rucu6_catalog(widget,[ru],static)==[ru]
  assert resolve.call_args.args[0].get_header('User-agent')==m.LOON_UA

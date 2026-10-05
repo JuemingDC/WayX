@@ -323,8 +323,10 @@ def build_rucu6_catalog(payload: Any, previous: list[dict[str, Any]], static: li
         elif isinstance(value, str):
             for match in re.finditer(r"https://rucu6\.pages\.dev/Plugins/[^\s\"'<>]+?\.lpx", value):
                 if match.group(0) not in urls: urls.append(match.group(0))
-    collect(payload)
-    if isinstance(payload, str) and "tgme_widget_message_text" in payload:
+    widget = isinstance(payload, str) and "tgme_widget_message_text" in payload
+    if not widget:
+        collect(payload)
+    if widget:
         message = re.search(r'<div class="tgme_widget_message_text[^"\n]*"[^>]*>(.*?)</div>', payload, re.S)
         if not message: raise ValueError("RuCu6 author message body is unavailable")
         for link in re.findall(r'href="([^"]+)"', message.group(1)):
@@ -421,7 +423,7 @@ def main() -> int:
         if changed:
             print("Kelee catalog is stale", file=sys.stderr)
             return 1
-        print(f"Kelee catalog current: discovered={len(metadata)} static={len(static)}")
+        print(f"Plugin catalog current: Kelee={len(metadata)} RuCu6={sum(urllib.parse.urlsplit(e['source']).hostname == 'rucu6.pages.dev' for e in static)} total={len(combined)}")
         return 0
 
     pruned = prune_removed(previous, combined) + prune_orphans(combined)
@@ -462,7 +464,7 @@ def main() -> int:
         encoding="utf-8",
     )
     print(
-        f"Kelee catalog refreshed: discovered={len(metadata)} static={len(static)} "
+        f"Plugin catalog refreshed: Kelee={len(metadata)} RuCu6={sum(urllib.parse.urlsplit(e['source']).hostname == 'rucu6.pages.dev' for e in static)} total={len(combined)} "
         f"catalog_changed={str(changed).lower()} pruned={len(pruned)}"
     )
     for path in pruned:
