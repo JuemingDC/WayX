@@ -480,18 +480,54 @@ assert [e['source'] for e in metadata]==[a['url'],b['url']]
 assert m.category_for(item('both',['去广告','依赖']),'both')=='依赖'
 assert m.category_for(item('fake',['非去广告']),'fake') is None
 assert m.category_for(item('single','依赖'),'single')=='依赖'
+ru={'id':'stable_ru','file':'RuCu6/one.lpx','source':'https://rucu6.pages.dev/Plugins/one.lpx','qx':'RuOne.snippet','surge':'RuOne.sgmodule','category':'去广告'}
+index={'plugins':[{'url':ru['source'],'tag':['增强']},{'url':'https://rucu6.pages.dev/Plugins/new.lpx','tag':['签到']}]}
+new=m.build_rucu6_catalog(index,[ru],static)
+assert new[0]==ru and len(new)==2 and new[1]['file']=='RuCu6/new.lpx'
+assert all(e['source'].startswith('https://rucu6.pages.dev/Plugins/') for e in new)
+class Redirect:
+ def __enter__(self):return self
+ def __exit__(self,*args):pass
+ def geturl(self):return 'https://www.nsloon.com/openloon/import?plugin=https%3A%2F%2Frucu6.pages.dev%2FPlugins%2Fone.lpx'
+widget='<a href="https://rucu6.pages.dev/Plugins/outside.lpx">unrelated</a><div class="tgme_widget_message_text js-message_text"><a href="https://pse.is/example">plugin</a></div>'
+with patch.object(m.urllib.request,'urlopen',return_value=Redirect()) as resolve:
+ assert m.build_rucu6_catalog(widget,[ru],static)==[ru]
+ assert resolve.call_args.args[0].get_header('User-agent')==m.LOON_UA
+try:m.build_rucu6_catalog('<html>Site Unavailable</html>',[ru],static)
+except ValueError:pass
+else:raise AssertionError('empty/unavailable index must fail before deletion')
+with tempfile.TemporaryDirectory() as tmp:
+ saved_root=m.ROOT;m.ROOT=Path(tmp)
+ try:
+  for base,field in [('Resource/Loon','file'),('Adblock/Quantumult X','qx'),('Adblock/Surge','surge')]:
+   path=m.ROOT/base/ru[field];path.parent.mkdir(parents=True,exist_ok=True);path.write_text('# Converted by: chance\n')
+  directory=m.ROOT/'Script'/ru['id'];directory.mkdir(parents=True)
+  generated=directory/'features_qx_0123456789.js';generated.write_text('// Converted by: chance\n')
+  manual=directory/'manual.js';manual.write_text('// handwritten\n')
+  assert len(m.prune_removed([ru],[]))==4
+  assert manual.exists() and not generated.exists()
+  orphan=m.ROOT/'Resource/Loon/orphan.lpx';orphan.write_text('#!name=old')
+  standalone=m.ROOT/'Adblock/Quantumult X/manual.snippet';standalone.write_text('# Author: chance\n')
+  assert m.prune_orphans([])==['Resource/Loon/orphan.lpx'] and standalone.exists()
+  # A replacement source reusing current target paths must not lose those files.
+  current=dict(ru,source='https://rucu6.pages.dev/Plugins/replacement.lpx')
+  for base,field in [('Resource/Loon','file'),('Adblock/Quantumult X','qx'),('Adblock/Surge','surge')]:
+   path=m.ROOT/base/current[field];path.parent.mkdir(parents=True,exist_ok=True);path.write_text('current')
+  assert m.prune_removed([ru],[current])==[]
+ finally:m.ROOT=saved_root
+
 with tempfile.TemporaryDirectory() as temp:
  m.ROOT=Path(temp);m.CATALOG=m.ROOT/'.github/sources/loon.json';m.STATIC_CATALOG=m.ROOT/'.github/sources/loon-static.json'
  m.RUNTIME_DIR=m.ROOT/'.github/monitor/.runtime';m.RUNTIME_SNAPSHOT=m.RUNTIME_DIR/'kelee-catalog.json'
  m.CATALOG.parent.mkdir(parents=True);m.CATALOG.write_text(json.dumps(old));m.STATIC_CATALOG.write_text(json.dumps(static))
  payload={'lists':[a,b,c]};response=json.dumps(payload).encode()
- with patch.object(sys,'argv',['refresh']),patch.object(m,'fetch_bytes',return_value=response) as fetch,contextlib.redirect_stdout(io.StringIO()):assert m.main()==0
+ with patch.object(sys,'argv',['refresh','--rucu6-list-url','']),patch.object(m,'fetch_bytes',return_value=response) as fetch,contextlib.redirect_stdout(io.StringIO()):assert m.main()==0
  assert fetch.call_count==1
  catalog=json.loads(m.CATALOG.read_text());assert [entry['source'] for entry in catalog]==[a['url'],b['url'],static[0]['source']]
  discovery=json.loads((m.RUNTIME_DIR/'catalog-discovery.json').read_text())
  assert [entry['source'] for entry in discovery['added']]==[b['url'],static[0]['source']]
  feed=json.loads((m.RUNTIME_DIR/'kelee-feed.json').read_text());assert feed['source']==m.DEFAULT_LIST_URL and json.loads(feed['text'])==payload
- with patch.object(sys,'argv',['refresh']),patch.object(m,'fetch_bytes',return_value=response),contextlib.redirect_stdout(io.StringIO()):assert m.main()==0
+ with patch.object(sys,'argv',['refresh','--rucu6-list-url','']),patch.object(m,'fetch_bytes',return_value=response),contextlib.redirect_stdout(io.StringIO()):assert m.main()==0
  discovery=json.loads((m.RUNTIME_DIR/'catalog-discovery.json').read_text());assert discovery['added']==[] and discovery['updated']==[] and discovery['removed']==[]
 
 `],{encoding:'utf8'});
