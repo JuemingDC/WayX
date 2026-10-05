@@ -32,7 +32,7 @@ if (selectedCase === "architecture-contract.mjs") {
 const ROOT=process.cwd();
 const spec=await fs.readFile(path.join(ROOT,'.github/CONVERSION_SPEC.md'),'utf8');
 
-assert.match(spec,/版本：2\.4\b/,'Authoritative specification uses version 2.4');
+assert.match(spec,/版本：2\.5\b/,'Authoritative specification uses version 2.5');
 assert.match(spec,/^## 2\.1 /m);
 assert.doesNotMatch(spec,/迁移状态|历史记录|失败案例|PR #|（v1\.\d+|版本：1\.|已由 §|本轮验收/,'specification contains only current normative content');
 for (const evidence of [
