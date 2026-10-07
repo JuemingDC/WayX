@@ -133,6 +133,8 @@ Surge 逐条 Rule 使用已支持的 pre-matching/extended-matching 增强，保
 
 QX 仅输出官方证明的 url/url-and-header、reject 系列、302/307、header/body/jsonjq/echo 及各 Script action。url-and-header 的 URL 先匹配，再检查 method/path/request headers。response-body Script 可同时返回 body/headers/status，但不能冒充只改 Header 的 action；echo-response 的宽 matcher 必须满足安全边界。
 
+QX 原生 request-header 与 response-header 使用同构语法：`URL正则 url request-header 匹配正则 request-header 替换文本`，响应阶段将两个 action token 均改为 response-header。匹配对象是完整 Header 文本，可跨 `\r\n` 匹配多个字段；request-header 的完整文本还包含请求行。request-header 的整体匹配语义依据官方 sample.conf，response-header 的同构语法依据用户于 2026-10-07 的确认，不能因官方示例未列出响应阶段就判为不支持。原生 lowering 仍须保持字段边界、捕获组编号、重复字段与动作顺序；已有 set/del/字段内 replace 的 Script 路径不因语法同构而自动改写。
+
 Surge native URL/Header/Body Rewrite/Map Local 能安全表示时优先；原生处理次序不等价时由已支持 runtime 或诊断承担。Body Rewrite 等 requirement 由实际活动目标字段推导，不因注释行或移除的字段保留无用 requirement。
 
 ## 2.12 Metadata、MITM 与注释

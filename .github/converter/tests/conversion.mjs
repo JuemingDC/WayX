@@ -557,7 +557,7 @@ assert.ok(
 assert.equal(
   requestAddOutput.qx.split(/\r?\n/).some(line => !line.trim().startsWith('#') && / url response-header /.test(line)),
   false,
-  'QX must never emit the undocumented response-header rewrite token',
+  'this field-value replacement must use a script to preserve action-local captures rather than a native whole-header rewrite',
 );
 assert.match(requestAddOutput.qx, /url script-response-header .*(?:header|features_qx)_.*\.js/);
 assert.doesNotMatch(requestAddOutput.qx, /REVIEW REQUIRED/);
