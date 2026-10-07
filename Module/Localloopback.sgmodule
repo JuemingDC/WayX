@@ -1,0 +1,20 @@
+#!name=SideStore Local Loopback
+#!desc=Reflect 10.7.0.1 back to this device for on-device developer tools. 使用 Surge IP Rewrite 为 SideStore 提供本机回环；需支持此功能的 Surge 版本。
+#!author=chance
+# 模块分类：工具 / 本机回环 / SideStore
+# 转换时间：2026-10-06（Asia/Shanghai）
+# 更新时间：2026-10-06 11:34（Asia/Shanghai）
+# 来源：Surge TestFlight 更新说明中的 Local Device Loopback 示例。
+# 截图核对：LocalDevVPN Tunnel IP 为 10.7.1.1/32，Device IP 为 10.7.0.1/32。
+# 反射目标使用 Device IP；Surge 自行管理 VIF 地址，不在此设置 LocalDevVPN 的 Tunnel IP。
+# 首次安装请按照 SideStore 官方指南使用 iloader；本模块不负责签名或安装。
+# 免费账号需在 7 天有效期到期前刷新；本模块不提供自动续签或永久签名。
+
+[General]
+ipv6-vif = disabled // Some tools only recognize utun interfaces without an IPv6 address.
+tun-included-routes = %INSERT% 10.7.0.1/32
+# Surge iOS：让此目标的连接进入 VIF，供 IP Rewrite 处理。
+skip-proxy = %INSERT% 10.7.0.1
+
+[IP Rewrite]
+10.7.0.1 = reflect
