@@ -10,7 +10,7 @@
     "officialFilterSnippetPath": "filter.snippet",
     "checkedAt": "2026-10-03",
     "manualRewriteEvidence": {
-      "response-header": "Quantumult X current in-app Rewrite type selector; user-supplied screenshot reviewed 2026-10-03"
+      "response-header": "Quantumult X current in-app Rewrite type selector; user-supplied screenshot reviewed 2026-10-03. User confirmed on 2026-10-07 that response-header uses the same match/replace syntax as request-header; both operate on the complete header text, including CRLF."
     },
     "rewriteMatcherEvidence": {
       "officialSample": "Crossutility sample.conf documents url-and-header: URL is evaluated first, then a Headers regex is matched against a string containing method, path and key-value request headers.",
