@@ -185,6 +185,8 @@ Review inventory baseline 必须可读且结构有效，不能跳过比较。同
 
 发布只允许通过全部 required gates 的产物，提交前核对请求 head 未推进，提交后确认受管工作区无未保存变化。日志、发现结果、监控缓存、失败报告和生成产物随已有 artifact 保存。
 
+流程控制由 `.github/scripts/automation.py` 承担：分支预算、语法/checkpoint/成品验证编排、Issue 写入或只读选择、发布门禁、受管 Git 提交与 run summary。YAML 保留事件和阶段条件；Bash 仅调用程序并转存日志，不嵌入业务分支或 Python heredoc。发布程序继续核对 expected head、限制 main/test 与受管提交范围，并检查产物工作区。Node.js 26、Python 3.14 及转换核心语言不因该迁移改变。
+
 ## 2.17 验证要求
 
 保留 syntax、core/rewrite/script/conversion/architecture/workflow/official-capabilities/runtime、catalog、target policy、canonical、managed cleanliness、repository audit、helper/ref、作者 URL 与确定性检查。Inventory 只锁 semantic token，不使用完整 AST signature 白名单。

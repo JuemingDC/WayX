@@ -38,24 +38,6 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
-      - name: Prepare runtime logs and enforce branch budget
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p .github/monitor/.runtime
-          refs="$(git ls-remote --heads origin)"
-          mapfile -t branches < <(awk '{sub("refs/heads/", "", $2); print $2}' <<< "$refs")
-          (( ${#branches[@]} >= 1 && ${#branches[@]} <= 2 ))
-          main_present=false
-          for branch in "${branches[@]}"; do
-            case "$branch" in
-              main) main_present=true ;;
-              test) ;;
-              *) echo "::error::Unexpected WayX branch: $branch"; exit 1 ;;
-            esac
-          done
-          "$main_present"
-
       - uses: actions/setup-node@v7
         with:
           node-version: '26'
@@ -65,14 +47,19 @@ jobs:
           python-version: '3.14'
           check-latest: true
 
+      - name: Prepare runtime logs and enforce branch budget
+        shell: bash
+        run: |
+          set -euo pipefail
+          python .github/scripts/automation.py prepare
+
       - name: Syntax check repository JavaScript and Python
         id: syntax
         continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
-          while IFS= read -r -d '' file; do node --check "$file"; done < <(find .github/converter .github/scripts Script -type f \( -name '*.js' -o -name '*.mjs' \) -print0)
-          python -m compileall -q .github/converter .github/scripts .github/monitor
+          python .github/scripts/automation.py syntax
 
       - name: Refresh plugin catalogs and prune retired artifacts
         id: catalog
@@ -92,9 +79,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for suite in core rewrite script conversion architecture workflow official-capabilities runtime; do
-            node ".github/converter/tests/$suite.mjs"
-          done 2>&1 | tee .github/monitor/.runtime/checkpoint.log
+          python .github/scripts/automation.py checkpoint 2>&1 | tee .github/monitor/.runtime/checkpoint.log
 
       - name: Pull discovered upstreams and convert
         id: loon_sync
@@ -112,15 +97,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          {
-            node .github/converter/tools/regenerate-canonical.mjs --successful-only
-            node .github/converter/tests/catalog.mjs
-            node .github/converter/tools/validate-conversion-policy.mjs --all
-            node .github/converter/tools/update-readme.mjs
-            node .github/converter/tools/verify-managed-conversions.mjs
-            node .github/converter/tools/audit-repository.mjs
-            node .github/converter/tests/artifacts.mjs
-          } 2>&1 | tee .github/monitor/.runtime/verification.log
+          python .github/scripts/automation.py verify 2>&1 | tee .github/monitor/.runtime/verification.log
 
       - name: Check monitored upstream specifications
         id: monitor
@@ -152,11 +129,7 @@ jobs:
           PUBLISH_BRANCH: ${{ env.PUBLISH_BRANCH }}
         run: |
           set -euo pipefail
-          if [[ -n "$PUBLISH_BRANCH" ]]; then
-            node .github/scripts/propose-conversion-issues.mjs
-          else
-            node .github/scripts/propose-conversion-issues.mjs --dry-run
-          fi 2>&1 | tee .github/monitor/.runtime/issues.log
+          python .github/scripts/automation.py issues 2>&1 | tee .github/monitor/.runtime/issues.log
 
       - name: Evaluate publication gates
         id: gate
@@ -168,19 +141,8 @@ jobs:
           MONITOR_ENABLED: ${{ env.PUBLISH_BRANCH != '' && 'true' || 'false' }}
           MONITOR_COMPLETE: ${{ steps.monitor.outputs.complete }}
         run: |
-          python - <<'PY'
-          import json, os, pathlib
-          stages=json.loads(os.environ['STAGES'])
-          required=['syntax','catalog','checkpoint','loon_sync','verify','reports','issues']
-          if os.environ['MONITOR_ENABLED']=='true': required.append('monitor')
-          failed=[name for name in required if stages.get(name,{}).get('outcome')!='success']
-          if os.environ['SYNC_PUBLISHABLE']!='true': failed.append('sync integrity')
-          if os.environ['MONITOR_ENABLED']=='true' and os.environ['MONITOR_COMPLETE']!='true': failed.append('monitor integrity')
-          result={'publishable':not failed,'failedGates':failed,'stages':{k:v.get('outcome') for k,v in stages.items()}}
-          pathlib.Path('.github/monitor/.runtime/pipeline-result.json').write_text(json.dumps(result,indent=2)+'\n')
-          with open(os.environ['GITHUB_OUTPUT'],'a') as out: out.write('publishable='+str(not failed).lower()+'\n')
-          for name in failed: print('::error::Publication blocked: '+name)
-          PY
+          set -euo pipefail
+          python .github/scripts/automation.py gate
 
       - name: Publish validated outputs to the existing branch
         id: publish
@@ -194,31 +156,7 @@ jobs:
           MONITOR_ENABLED: ${{ env.PUBLISH_BRANCH != '' && 'true' || 'false' }}
         run: |
           set -euo pipefail
-          echo 'publication=blocked' >> "$GITHUB_OUTPUT"
-          [[ "$PUBLISHABLE" == true ]] || exit 1
-          if [[ -z "$PUBLISH_BRANCH" ]]; then
-            echo 'publication=read-only' >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          case "$PUBLISH_BRANCH" in main|test) ;; *) exit 1 ;; esac
-          [[ "$(git rev-parse HEAD)" == "$EXPECTED_HEAD" ]]
-          git add -A -- .github/sources/ Resource/Loon 'Adblock/Quantumult X' Adblock/Surge Script README.md
-          if [[ "$MONITOR_ENABLED" == true ]]; then git add -A -- .github/monitor/state.json .github/monitor/upstream; fi
-          remote_sha="$(git ls-remote origin "refs/heads/$PUBLISH_BRANCH" | awk '{print $1}')"
-          if [[ "$remote_sha" != "$EXPECTED_HEAD" ]]; then
-            echo '::error::Destination advanced; rerun from its new baseline before publishing.'
-            exit 1
-          fi
-          if git diff --cached --quiet; then
-            echo 'publication=unchanged' >> "$GITHUB_OUTPUT"
-          else
-            git config user.name 'chance-upstream-bot'
-            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git commit -m 'chore: sync upstream and regenerate targets'
-            git push origin "HEAD:$PUBLISH_BRANCH"
-            echo 'publication=pushed' >> "$GITHUB_OUTPUT"
-          fi
-          test -z "$(git status --porcelain --untracked-files=all -- .github/sources/loon.json Resource/Loon 'Adblock/Quantumult X' Adblock/Surge Script README.md)"
+          python .github/scripts/automation.py publish
 
       - name: Record run summary
         if: always()
@@ -226,25 +164,8 @@ jobs:
         env:
           PUBLICATION: ${{ steps.publish.outputs.publication }}
         run: |
-          python - <<'PY'
-          import json, os, pathlib
-          runtime=pathlib.Path('.github/monitor/.runtime')
-          result=json.loads((runtime/'pipeline-result.json').read_text()) if (runtime/'pipeline-result.json').exists() else {'publishable':False}
-          result['publication']=os.environ['PUBLICATION'] or 'blocked'
-          (runtime/'pipeline-result.json').write_text(json.dumps(result,indent=2)+'\n')
-          failure=runtime/'sync-failures.json'
-          sync=json.loads(failure.read_text()) if failure.exists() else {}
-          monitor_file=runtime/'monitor-result.json'
-          monitor=json.loads(monitor_file.read_text()) if monitor_file.exists() else {}
-          discovery_file=runtime/'catalog-discovery.json'
-          discovery=json.loads(discovery_file.read_text()) if discovery_file.exists() else {}
-          lines=['# WayX Actions result','',f"Publication: {result['publication']}",'']
-          for key in ['validatedPlugins','convertedPlugins','updatedPlugins','unchangedPlugins','retainedPlugins','deferredPlugins']: lines.append(f"- {key}: {len(sync.get(key,[]))}")
-          lines.append(f"- Monitor failures: {len(monitor.get('failures',[]))}")
-          for key in ['added','updated','removed']: lines.append(f"- Discovery {key}: {len(discovery.get(key,[]))}")
-          lines += ['', 'Failed gates: '+', '.join(result.get('failedGates',[]))]
-          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as out: out.write('\n'.join(lines)+'\n')
-          PY
+          set -euo pipefail
+          python .github/scripts/automation.py summary
 
       - name: Upload automation reports and generated outputs
         if: always()
@@ -269,4 +190,7 @@ jobs:
         env:
           PUBLISHABLE: ${{ steps.gate.outputs.publishable }}
           PUBLICATION_OUTCOME: ${{ steps.publish.outcome }}
-        run: test "$PUBLISHABLE" = true && test "$PUBLICATION_OUTCOME" = success
+        run: |
+          set -euo pipefail
+          python .github/scripts/automation.py final
+

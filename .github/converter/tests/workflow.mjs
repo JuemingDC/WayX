@@ -259,8 +259,9 @@ assert.doesNotMatch(checkWorkflow,/regenerate-canonical\.mjs --write|update-read
 assert.match(checkWorkflow,/github\.event_name != 'pull_request'/,'scheduled runs must select the main destination rather than become read-only');
 assert.match(checkWorkflow,/cancel-in-progress: false/,'generation must not be cancelled halfway through publication');
 assert.match(checkWorkflow,/include-hidden-files: true/,'runtime and catalog reports must actually be uploaded');
-assert.match(checkWorkflow,/remote_sha.*EXPECTED_HEAD/s,'stale publication must be rejected');
-assert.match(checkWorkflow,/--dry-run/,'read-only PR runs must not attempt Issue writes');
+const automationSource=await fs.readFile('.github/scripts/automation.py','utf8');
+assert.match(automationSource,/remote_sha != expected/,'stale publication must be rejected');
+assert.match(automationSource,/args.append\('--dry-run'\)/,'read-only PR runs must not attempt Issue writes');
 
 assert.match(canonical,/const staleEntries = \[\]/,
   'canonical result tracking must name pre-write differences as stale entries');
@@ -276,7 +277,8 @@ const stepProgram=name=>{
   const block=checkWorkflow.split('      - name: '+name+'\n')[1]?.split('\n      - ')[0];
   assert.ok(block,'missing workflow step '+name);
   const code=block.split('        run: |\n')[1];assert.ok(code,'missing step program '+name);
-  return code.split('\n').map(line=>line.startsWith('          ')?line.slice(10):line).join('\n');
+  return code.split('\n').map(line=>line.startsWith('          ')?line.slice(10):line).join('\n')
+    .replace('.github/scripts/automation.py',JSON.stringify(path.join(ROOT,'.github/scripts/automation.py')));
 };
 const gateProgram=stepProgram('Evaluate publication gates');
 const publishProgram=stepProgram('Publish validated outputs to the existing branch');
@@ -303,6 +305,19 @@ try {
   assert.equal((await gate({...outcomes,monitor:{outcome:'success'}},'true','true')).publishable,true);
   for(const complete of ['false',''])assert.equal((await gate({...outcomes,monitor:{outcome:'success'}},'true','true',complete)).publishable,false,'a zero exit code alone cannot prove monitor integrity');
 
+  const summaryFile=path.join(automationRoot,'summary');
+  const summarize=publication=>runIsolatedCase('bash',['-e','-c',stepProgram('Record run summary')],{cwd:automationRoot,encoding:'utf8',env:{...process.env,PUBLICATION:publication,GITHUB_STEP_SUMMARY:summaryFile}});
+  assert.equal(summarize('').status,0,'missing publication is recorded as blocked');
+  assert.match(await fs.readFile(summaryFile,'utf8'),/Publication: blocked/);
+  const syncReport={validatedPlugins:['one','two'],convertedPlugins:['one'],retainedPlugins:['two']};
+  await fs.writeFile(path.join(automationRoot,'.github/monitor/.runtime/sync-failures.json'),JSON.stringify(syncReport));
+  assert.equal(summarize('unchanged').status,0);
+  const summary=await fs.readFile(summaryFile,'utf8');
+  assert.match(summary,/validatedPlugins: 2/);assert.match(summary,/retainedPlugins: 1/);
+  const finalize=(publishable,outcome)=>runIsolatedCase('bash',['-e','-c',stepProgram('Surface blocked or failed publication')],{cwd:automationRoot,encoding:'utf8',env:{...process.env,PUBLISHABLE:publishable,PUBLICATION_OUTCOME:outcome}});
+  assert.equal(finalize('true','success').status,0);
+  assert.notEqual(finalize('false','success').status,0);
+  assert.notEqual(finalize('true','failure').status,0);
   const repo=path.join(automationRoot,'repo'),remote=path.join(automationRoot,'remote.git');
   await fs.mkdir(repo);const git=(...args)=>{
     const result=runIsolatedCase('git',args,{cwd:repo,encoding:'utf8'});
@@ -313,6 +328,12 @@ try {
   for(const file of files){await fs.mkdir(path.dirname(path.join(repo,file)),{recursive:true});await fs.writeFile(path.join(repo,file),'baseline\n');}
   git('add','.');git('commit','-qm','fixture baseline');const baseline=git('rev-parse','HEAD');
   git('init','-q','--bare',remote);git('remote','add','origin',remote);git('push','-q','origin','HEAD:main','HEAD:test');
+  const prepare=()=>runIsolatedCase('bash',['-e','-c',stepProgram('Prepare runtime logs and enforce branch budget')],{cwd:repo,encoding:'utf8'});
+  assert.equal(prepare().status,0,'existing main/test branch budget passes');
+  git('push','-q','origin','HEAD:other');
+  assert.notEqual(prepare().status,0,'unexpected third branch blocks automation');
+  git('push','-q','origin',':other');
+  assert.equal(prepare().status,0);
   const publish=async({branch='test',publishable='true',expected=baseline,monitor='false'}={})=>{
     await fs.writeFile(output,'');
     const result=runIsolatedCase('bash',['-e','-c',publishProgram],{cwd:repo,encoding:'utf8',env:{...process.env,PUBLISHABLE:publishable,PUBLISH_BRANCH:branch,EXPECTED_HEAD:expected,MONITOR_ENABLED:monitor,GITHUB_OUTPUT:output}});
