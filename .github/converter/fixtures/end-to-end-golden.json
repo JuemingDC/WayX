@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "stamp": "2026-09-29 12:00:00 +08:00",
   "cases": {
     "HTTPDNS": {
@@ -36,30 +36,12 @@
       ]
     },
     "MyBlockAds": {
-      "qxSha256": "25a45b961fecae93b4e3ae2d0c76bab23a10f9ce4025b81c5fbe1467f9e796fe",
-      "surgeSha256": "c73080da6b42bb6704faf507c382d59152d7d94e3ac5508dd2a1bae429b8d181",
-      "qxBytes": 24363,
-      "surgeBytes": 34202,
+      "qxSha256": "387b439cb8182ffef59c2243fa01249af11e11abfe4aac04e75f7b42ba878dc8",
+      "surgeSha256": "93c2e370b3891e62c893db0472c8ea06183ac87d3cb8a7edd345b92ddde5ea76",
+      "qxBytes": 24361,
+      "surgeBytes": 34200,
       "sourceScriptCount": 9,
       "generatedScriptCount": 0,
-      "qxReview": 0,
-      "surgeReview": 0,
-      "sections": [
-        "Rule",
-        "URL Rewrite",
-        "Body Rewrite",
-        "Map Local",
-        "Script",
-        "MITM"
-      ]
-    },
-    "Bilibili": {
-      "qxSha256": "fb000bcca6caa4abdbdecd5ff88bde6187fd13ec0a1da94d8e47a7231b0ced29",
-      "surgeSha256": "4008f6aded2f247838efa973d7bdf763c537acfa7fae2a44dcad637ec3333d3a",
-      "qxBytes": 14125,
-      "surgeBytes": 14129,
-      "sourceScriptCount": 3,
-      "generatedScriptCount": 6,
       "qxReview": 0,
       "surgeReview": 0,
       "sections": [

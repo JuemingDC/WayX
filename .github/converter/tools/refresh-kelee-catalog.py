@@ -35,6 +35,11 @@ RUNTIME_SNAPSHOT = RUNTIME_DIR / "kelee-catalog.json"
 
 DEFAULT_LIST_URL = "https://hub.kelee.one/list.json"
 DEFAULT_RUCU6_LIST_URL = "https://t.me/GitCube/327"
+# Explicit user retirements override future author-directory rediscovery.
+RETIRED_SOURCES = frozenset({
+    "https://kelee.one/Tool/Loon/Lpx/Bilibili_remove_ads.lpx",
+    "https://rucu6.pages.dev/Plugins/bilibili.lpx",
+})
 LOON_UA = "Loon/764 CFNetwork/1498.700.1 Darwin/23.6.0 iPhone/17.6.1"
 LPX_URL_RE = re.compile(
     r"https://kelee\.one/Tool/Loon/Lpx/[^\s\"'<>]+?\.lpx(?:\?[^\s\"'<>]*)?",
@@ -48,6 +53,12 @@ def load_json(path: Path, default: Any) -> Any:
         return json.loads(path.read_text(encoding="utf-8"))
     except FileNotFoundError:
         return default
+
+
+def is_retired_source(source: str) -> bool:
+    parsed = urllib.parse.urlsplit(source)
+    canonical = urllib.parse.urlunsplit((parsed.scheme.lower(), parsed.netloc.lower(), parsed.path, "", ""))
+    return canonical in RETIRED_SOURCES
 
 
 def fetch_bytes(url: str, timeout: float = 30.0) -> bytes:
@@ -151,6 +162,7 @@ def target_name(stem: str, extension: str, used: set[str]) -> str:
 
 
 def build_catalog(list_payload: Any, previous: list[dict[str, Any]], static: list[dict[str, Any]]) -> tuple[list[dict[str, str]], list[dict[str, Any]]]:
+    static = [entry for entry in static if not is_retired_source(str(entry.get("source", "")))]
     lists = list_payload.get("lists") if isinstance(list_payload, dict) else list_payload
     if not isinstance(lists, list):
         raise ValueError("Kelee list.json must be an array or an object with a 'lists' array")
@@ -172,7 +184,7 @@ def build_catalog(list_payload: Any, previous: list[dict[str, Any]], static: lis
 
     for order, item in enumerate(lists):
         source = extract_lpx_url(item)
-        if not source or source in seen_sources:
+        if not source or is_retired_source(source) or source in seen_sources:
             continue
         seen_sources.add(source)
 
@@ -413,6 +425,8 @@ def build_rucu6_catalog(payload: Any, previous: list[dict[str, Any]], static: li
     qx = {entry["qx"] for entry in other}; surge = {entry["surge"] for entry in other}
     entries = []
     for url in urls:
+        if is_retired_source(url):
+            continue
         if url in prior:
             entry = dict(prior[url])
         else:

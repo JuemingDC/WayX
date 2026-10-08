@@ -58,7 +58,13 @@ for(const entry of manifest){
   }
 }
 
-assert.ok(found.length>0,'expected at least one source-authored multi-action Rewrite pipeline');
+// The live catalog may legitimately contain no multi-action declarations after
+// a retirement. Keep parser/classifier coverage independent of author content.
+assert.ok(manifest.length>0,'expected a non-empty validated source catalog');
+const synthetic=selectRewritePipelineLayer(parseRewriteV2('response if ${url} ~= /api/ then response.header.set("X-One","1") | response.header.set("X-Two","2")'));
+validateRewriteV2Ast(synthetic);
+assert.equal(synthetic.actions.length,2);
+assert.ok(classifyComplexRewrite(synthetic).ok,'generic multi-action classifier regression');
 console.log('Generic complex Rewrite source coverage:');
 for(const item of found) console.log(
   '- '+item.file+': '+item.actions.join(' | ')+' ['+(item.rendererClassified ? item.families.join(',') : 'planner-review: '+item.reason)+']'

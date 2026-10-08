@@ -149,9 +149,13 @@ loon-static.json 保存人工固定来源；RuCu6 插件正文只从 rucu6.pages
 
 loon.json 为完整生成态 Catalog。可莉目录从 https://hub.kelee.one/list.json 发现去广告/依赖的官方 Lpx 项目，保留 feed 顺序，同 source URL 复用稳定 id/目标文件名；其它类别不自动扩大范围。
 
+用户明确停拉的来源优先于目录发现。自 2026-10-08 起，排除可莉的 `Bilibili_remove_ads.lpx` 与 RuCu6 的 `bilibili.lpx`；查询参数或 fragment 不改变排除身份。动态目录与旧静态清单均不得重新引入这两个源，按现有受管理产物清理契约删除其源文件、目标与生成 helper，不影响其他作者来源。
+
 Plugin、作者 Script、JQ/mock 依赖均读取原作者 URL。host profile 可选择 User-Agent、Python urllib 或 Node fetch，原 URL 不变，不用镜像/仓库 fallback；瞬时网络错误只有限重试同一 URL。Python 抓取成功只证明可取得内容，不证明真实客户端执行、编码、压缩或缓冲等价。
 
 发现入口将原始响应及来源 URL 交监控复用，缺失/空内容/来源不符失败，不重复获取另一份目录。报告记录新增、修改、删除的实际条目，新语义必须先审查，不自动修改 capability/golden baseline。
+
+端到端黄金测试使用 `fixtures/end-to-end-sources/` 中的固定离线输入，不读取每天同步更新的 Resource 源文件；输入快照及预期摘要仅在审查后共同更新。实际 Catalog 与最新源的校验仍由目录 inventory、全量转换、canonical 和成品验证承担，不能以固定黄金样本替代。
 
 ## 2.14 全量转换、事务与发布
 
