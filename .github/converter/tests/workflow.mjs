@@ -480,9 +480,20 @@ assert [e['source'] for e in metadata]==[a['url'],b['url']]
 assert m.category_for(item('both',['去广告','依赖']),'both')=='依赖'
 assert m.category_for(item('fake',['非去广告']),'fake') is None
 assert m.category_for(item('single','依赖'),'single')=='依赖'
+retired_kelee=item('Bilibili_remove_ads',['去广告'])
+retired_ru='https://rucu6.pages.dev/Plugins/bilibili.lpx'
+retired_entry={'id':'retired','file':'retired.lpx','source':retired_ru,'qx':'retired.snippet','surge':'retired.sgmodule','category':'去广告'}
+entries,metadata=m.build_catalog({'lists':[a,retired_kelee]},old,static+[retired_entry])
+assert [e['source'] for e in entries]==[a['url'],static[0]['source']]
+assert [e['source'] for e in metadata]==[a['url']]
+assert m.is_retired_source(retired_kelee['url']+'?cache=1#test')
+assert m.is_retired_source(retired_ru+'?cache=1#test')
+assert not m.is_retired_source('https://other.example/Plugins/bilibili.lpx')
 ru={'id':'stable_ru','file':'RuCu6/one.lpx','source':'https://rucu6.pages.dev/Plugins/one.lpx','qx':'RuOne.snippet','surge':'RuOne.sgmodule','category':'去广告'}
 index={'plugins':[{'url':ru['source'],'tag':['增强']},{'url':'https://rucu6.pages.dev/Plugins/new.lpx','tag':['签到']}]}
 new=m.build_rucu6_catalog(index,[ru],static)
+assert m.build_rucu6_catalog({'plugins':[retired_ru,ru['source']]},[ru],static)==[ru]
+assert m.build_rucu6_catalog({'plugins':[retired_ru]},[],static)==[]
 assert new[0]==ru and len(new)==2 and new[1]['file']=='RuCu6/new.lpx'
 assert all(e['source'].startswith('https://rucu6.pages.dev/Plugins/') for e in new)
 widget='<a href="https://rucu6.pages.dev/Plugins/outside.lpx">unrelated</a><div class="tgme_widget_message_text js-message_text"><a href="https://pse.is/example">plugin</a><a href="https://www.nsloon.com/openloon/import?plugin=https%3A%2F%2Frucu6.pages.dev%2FPlugins%2Fone.lpx&amp;tag=test">duplicate</a></div>'

@@ -893,17 +893,6 @@ const cases = [
     file:'Resource/Loon/RuCu6/myblockads.lpx',
   },
   {
-    name:'Bilibili',
-    entry:{
-      id:'Bilibili',
-      source:'https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Loon/RuCu6/bilibili.lpx',
-      qx:'Bilibili.snippet',
-      surge:'Bilibili.sgmodule',
-      category:'去广告',
-    },
-    file:'Resource/Loon/RuCu6/bilibili.lpx',
-  },
-  {
     name:'JingDong',
     entry:{
       id:'JingDong',
@@ -924,9 +913,6 @@ function regressionScriptSource(url) {
   // Real-plugin regression fixtures may encode known source behavior, but the
   // production converter never sees these identities. Genericity is enforced
   // separately by generic-identity.mjs and genericity-audit.mjs.
-  if (/\/bilibili\/(?:request|response)\.js(?:\?|$)/i.test(url)) {
-    return 'throw new Error("Quantumult X is not supported"); const body=$utils.ungzip($response.bodyBytes);';
-  }
   if (/\/youtube\/(?:request|response)\.js(?:\?|$)/i.test(url)) {
     return 'const isQX=typeof $task!=="undefined"; const pref=$prefs.valueForKey("x"); $done({body:$response&&$response.body});';
   }
@@ -978,7 +964,8 @@ const report = [];
 const goldenMismatches = [];
 for (const testCase of cases) {
   assert.ok(testCase.entry, `${testCase.name}: missing manifest entry`);
-  const source = await fs.readFile(path.join(ROOT, testCase.file), 'utf8');
+  // Golden input snapshots are independent of daily upstream refreshes.
+  const source = await fs.readFile(path.join(ROOT, '.github/converter/fixtures/end-to-end-sources', testCase.name + '.lpx'), 'utf8');
   const scripts = passthroughScriptMap(source);
   const jqFiles = regressionJqFiles(source);
   const out = convert(testCase.entry, source, scripts, STAMP, new Map(), jqFiles);
@@ -1064,34 +1051,6 @@ for (const testCase of cases) {
     assert.match(out.surge, /http-response-jq .*'walk\(if type=="object" and \.__typename=="AdPost" then empty else \. end\)'/);
     assert.match(out.surge, /^\[Body Rewrite\]$/m);
     assert.match(out.surge, /^\[Map Local\]$/m);
-  }
-
-  if (testCase.name === 'Bilibili') {
-    assert.match(out.qx, /^\{# 空降助手 #\} host, bsbsb\.top, PROXY$/m, 'Bilibili: one-to-one source comment must become a QX leading note while PROXY remains literal');
-    assert.doesNotMatch(out.qx, /Source \[Argument\]|Argument usage:/, 'Bilibili QX must not emit Loon plugin parameter UI/declarations');
-    assert.doesNotMatch(out.qx, /QUANTUMULT X (?:UNSUPPORTED|REVIEW REQUIRED) - source script disabled/);
-    assert.ok(qxActive.some(line => /bilibili\/(?:request|response|json)\.js/.test(line)), 'Bilibili Source Script declarations must keep original URLs without runtime compatibility gating');
-    assert.match(out.qx, /binary_body_mode=true ignored for Quantumult X/);
-    assert.doesNotMatch(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
-    assert.doesNotMatch(out.surge, /Source Loon plugin policy PROXY requires a Surge module policy parameter binding/);
-    assert.doesNotMatch(out.surge, /Source declaration:.*PROXY[\s\S]*REVIEW REQUIRED: Surge Module requires an external policy binding/);
-    assert.match(out.surge, /^#!arguments=.*displayUpList:auto.*sponsorBlock:true.*wayx_proxy_policy:DIRECT/m);
-    assert.match(out.surge, /^DOMAIN,bsbsb\.top,\{\{\{wayx_proxy_policy\}\}\},extended-matching$/m);
-    assert.match(out.surge, /#!REQUIREMENT "'\{\{\{sponsorBlock\}\}\}'=='true'"/);
-    assert.doesNotMatch(out.surge, /SCRIPT V2 REVIEW REQUIRED/);
-    assert.match(
-      out.surge,
-      /#response if \$\{url\} ~= \/\^https:\\\/\\\/app\\\.bilibili\\\.com\\\/x\\\/v2\\\/splash\\\/list\\\?\/i then response\.body\.mock\("text", "OK", 200\)/,
-      'Bilibili: disabled source mock line must be preserved as a comment',
-    );
-    assert.ok(
-      out.surge.includes('# ^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/splash\\/list\\? data-type=text data="OK" status-code=200 header="Content-Type:text/plain"'),
-      'Bilibili: disabled response.body.mock must have a disabled Surge Map Local equivalent',
-    );
-    assert.ok(
-      out.surge.includes("# http-response-jq ^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/splash\\/(show|event\\/list2)\\? '.data |= with_entries("),
-      'Bilibili: disabled response.json.jq must have a disabled Surge Body Rewrite equivalent',
-    );
   }
 
   if (testCase.name === 'JingDong') {
@@ -1777,7 +1736,7 @@ assert.throws(()=>validateConversionMetadata(surge.replace('hostname = %APPEND%'
 // Previously rejected legal task/header/General declarations use the same
 // validators as converter execution; no second capability allowlist is copied.
 for(const [target,file] of [
- ['qx','Adblock/Quantumult X/Bilibili_remove_ads.snippet'],
+ ['qx','Adblock/Quantumult X/YouTube_remove_ads.snippet'],
  ['surge','Adblock/Surge/SeasunJX3_remove_ads.sgmodule'],
 ]){
  const text=await fs.readFile(file,'utf8');validateConversionMetadata(text,entry,target);
