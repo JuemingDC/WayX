@@ -27,14 +27,14 @@ concurrency:
 jobs:
   automation:
     if: github.event_name == 'pull_request' || github.ref_name == 'main' || github.ref_name == 'test'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 90
     env:
       PUBLISH_BRANCH: ${{ github.event_name != 'pull_request' && github.ref_name || (github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'test' && 'test' || '') }}
       EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - name: Checkout requested baseline
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
@@ -56,12 +56,14 @@ jobs:
           done
           "$main_present"
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
-          node-version: '24'
-      - uses: actions/setup-python@v6
+          node-version: '26'
+          check-latest: true
+      - uses: actions/setup-python@v7
         with:
-          python-version: '3.13'
+          python-version: '3.14'
+          check-latest: true
 
       - name: Syntax check repository JavaScript and Python
         id: syntax
@@ -246,7 +248,7 @@ jobs:
 
       - name: Upload automation reports and generated outputs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wayx-conversion-${{ github.run_id }}-${{ github.run_attempt }}
           if-no-files-found: warn
