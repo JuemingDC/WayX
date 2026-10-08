@@ -21,7 +21,16 @@
         },
         "expected": {
           "b": {}
-        }
+        },
+        "expectedSince": [
+          {
+            "version": "1.8.0",
+            "value": {
+              "a": { "name": "AI帮唱" },
+              "b": { "name": "保留" }
+            }
+          }
+        ]
       }
     ]
   }

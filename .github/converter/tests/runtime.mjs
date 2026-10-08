@@ -1189,6 +1189,21 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   const {convertPlugin,validateConvertedPlugin}=await import('../src/conversion.mjs');
   const {materializeJqFiles,parseLoonPlugin}=await import('../src/input.mjs');
   const fixtures=JSON.parse(await fs.readFile('.github/converter/fixtures/upstream-jq-errors.json','utf8'));
+  const jqVersionResult=runIsolatedCase('jq',['--version'],{encoding:'utf8'});
+  assert.equal(jqVersionResult.status,0,jqVersionResult.stderr);
+  const jqVersion=jqVersionResult.stdout.trim().match(/^jq-(\d+)\.(\d+)(?:\.(\d+))?/);
+  assert.ok(jqVersion,'native jq version must be identifiable');
+  const versionNumber=parts=>parts.reduce((n,part)=>n*1000+Number(part||0),0);
+  const installedJqVersion=versionNumber(jqVersion.slice(1));
+  // jq 1.8 changed binding/operator precedence (jqlang/jq #3053).
+  // Keep explicit expectations for both versions; do not rewrite the author's filter.
+  const expectedForJq=test=>{
+    let expected=test.expected;
+    for(const change of test.expectedSince||[]) {
+      if(installedJqVersion>=versionNumber(change.version.split('.')))expected=change.value;
+    }
+    return expected;
+  };
   const entry={id:'UpstreamWhitespace',source:'https://example.test/source.lpx',category:'Test'};
   const options={stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'};
   let checked=0;
@@ -1216,7 +1231,7 @@ if(selectedCase==='generated-helper-runtime.mjs') {
         assert.equal(runIsolatedCase('jq',[program],{input:'',encoding:'utf8'}).status,0);
         for(const test of fixture.cases) {
           const result=runIsolatedCase('jq',['-c',program],{input:JSON.stringify(test.input),encoding:'utf8'});
-          assert.equal(result.status,0,result.stderr);assert.deepEqual(JSON.parse(result.stdout),test.expected);checked++;
+          assert.equal(result.status,0,result.stderr);assert.deepEqual(JSON.parse(result.stdout),expectedForJq(test));checked++;
         }
       }
     }
