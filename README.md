@@ -24,6 +24,7 @@
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
+| **[SideStore Local Loopback](https://github.com/JuemingDC/WayX/blob/main/Module/Localloopback.sgmodule)** | — | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FLocalloopback.sgmodule) |
 | **[PingMe 签到](https://github.com/JuemingDC/WayX/blob/main/Module/PingMe/Surge/PingMe.sgmodule)** | — | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FPingMe%2FSurge%2FPingMe.sgmodule) |
 | **[可莉插件中心转 Surge](https://github.com/JuemingDC/WayX/blob/main/Module/PluginHub/Surge/Plugin2Surge.sgmodule)** | — | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FPluginHub%2FSurge%2FPlugin2Surge.sgmodule) |
 | **[Telegram 第三方客户端重定向](https://github.com/JuemingDC/WayX/blob/main/Module/Telegram/QuantumultX/TelegramRedirect.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FTelegram%2FQuantumultX%2FTelegramRedirect.snippet%2C%20tag%3DTelegram%20%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%87%8D%E5%AE%9A%E5%90%91%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FTelegram%2FSurge%2FTelegramRedirect.sgmodule) |

@@ -339,7 +339,7 @@ function stemOf(rel) {
 
 function rowKey(category, rel) {
   const parts = rel.split('/');
-  if (category === 'Module') return parts[1] || stemOf(rel);
+  if (category === 'Module') return parts.length === 2 ? stemOf(rel) : (parts[1] || stemOf(rel));
   return stemOf(rel);
 }
 
@@ -378,7 +378,11 @@ async function scanCategory(root, category) {
     if (category === 'Module' && !['.snippet', '.sgmodule'].includes(ext)) continue;
     if (category === 'Adblock' && !['.snippet', '.sgmodule'].includes(ext)) continue;
     if (category === 'Rule' && !['.list', '.snippet', '.sgmodule'].includes(ext)) continue;
-    const platform = detectPlatform(rel);
+    // Root-level Module files do not include a platform directory.
+    // Infer the platform only there, from the unambiguous module extension.
+    const platform = detectPlatform(rel) ?? (category === 'Module' && rel.split('/').length === 2
+      ? (ext === '.sgmodule' ? 'surge' : ext === '.snippet' ? 'qx' : null)
+      : null);
     if (!platform && category !== 'BoxJs') continue;
     const text = await fs.readFile(path.join(root, rel), 'utf8');
     if (text.includes(STALE_WAYX_SCRIPT_RAW)) {
