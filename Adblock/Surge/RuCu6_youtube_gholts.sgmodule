@@ -1,14 +1,15 @@
 #!name=YouTube
 #!desc=移除广告, 移除上传&短片按钮, 解锁播放速度&精彩跳转。
 #!category=WayX
+#!requirement=CORE_VERSION>=22
 #!arguments=autoHd:false,blockGames:false,blockShorts:false,blockStore:false,blockUpload:false,blockVerticalLive:false,jumpAhead:false
 #!arguments-desc=autoHd: 自动最高画质 — true/false — 自动选择 YouTube 最高画质\nblockGames: 隐藏内置游戏 — true/false — 用于隐藏 YouTube 游戏服务\nblockShorts: 隐藏短片按钮 — true/false — 用于隐藏 YouTube 短片按钮\nblockStore: 隐藏商品橱窗 — true/false — 用于隐藏视频下方以及 YouTuber 主页中的商品推广\nblockUpload: 隐藏上传按钮 — true/false — 用于隐藏 YouTube 上传按钮\nblockVerticalLive: 隐藏竖屏直播 — true/false — 用于隐藏 YouTube 主页中的竖屏直播\njumpAhead: 开启精彩跳转 — true/false — 解锁 YouTube Jump Ahead 按钮
 
 # Author: Maasea[https://github.com/Maasea/sgmodule], gholts[https://github.com/gholts/surge], RuCu6[https://github.com/RuCu6]
 # Icon: https://rucu6.pages.dev/Icons/app/youtube.png
-# Updated: 2026-10-05 11:40
+# Updated: 2026-10-10 20:05
 
-# Converted: 2026-10-05 19:29:04 +08:00
+# Converted: 2026-10-11 04:40:50 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/youtube_gholts.lpx
 # Target: Surge
@@ -20,7 +21,7 @@
 [Script]
 youtube_ad-break = type=http-request,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/player\/ad_break(?:\?.*)?$,script-path=https://rucu6.pages.dev/Scripts/youtube/request_gholts.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20
 youtube_init = type=http-request,pattern=^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback(?:\?.*)?$,script-path=https://rucu6.pages.dev/Scripts/youtube/request_gholts.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20
-youtube_auto-hd = type=http-request,pattern=^https?:\/\/[\w-]+\.googlevideo\.com\/videoplayback(?:\?.*)?$,script-path=https://rucu6.pages.dev/Scripts/youtube/request_gholts.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20,argument="{\"autoHd\":{{{autoHd}}}}"
+#!REQUIREMENT "'{{{autoHd}}}'=='true'" youtube_auto-hd = type=http-request,pattern=^https?:\/\/[\w-]+\.googlevideo\.com\/videoplayback(?:\?.*)?$,script-path=https://rucu6.pages.dev/Scripts/youtube/request_gholts.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20,argument="{\"autoHd\":{{{autoHd}}}}"
 youtube_log-event = type=http-request,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event(?:\?.*)?$,script-path=https://rucu6.pages.dev/Scripts/youtube/request_gholts.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20
 youtube_response = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(?:navigation\/resolve_url|browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch)(?:\?.*)?$,script-path=https://rucu6.pages.dev/Scripts/youtube/response_gholts.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20,argument="{\"autoHd\":{{{autoHd}}},\"blockGames\":{{{blockGames}}},\"blockShorts\":{{{blockShorts}}},\"blockStore\":{{{blockStore}}},\"blockUpload\":{{{blockUpload}}},\"blockVerticalLive\":{{{blockVerticalLive}}},\"jumpAhead\":{{{jumpAhead}}}}"
 youtube_key = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(?:config|log_event)(?:\?.*)?$,script-path=https://rucu6.pages.dev/Scripts/youtube/key_gholts.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20
