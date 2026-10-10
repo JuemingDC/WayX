@@ -870,6 +870,8 @@ await Promise.all([
 await fs.writeFile(path.join(root,'Boxjs/QuantumultX/Sub.json'),'{"name":"Chance Sub"}\n');
 await fs.writeFile(path.join(root,'Module/Demo/QuantumultX/Demo.snippet'),'# Name: Demo Module\n# [filter_local]\nhost,demo.example,reject\n# [rewrite_local]\n^https://demo url reject\n# [mitm]\nhostname = demo\n');
 await fs.writeFile(path.join(root,'Module/Demo/Surge/Demo.sgmodule'),'#!name=Demo Module\n[URL Rewrite]\n^https://demo - reject\n');
+await fs.writeFile(path.join(root,'Module/Localloopback.sgmodule'),'#!name=SideStore Local Loopback\n[IP Rewrite]\n10.7.0.1 = reflect\n');
+await fs.writeFile(path.join(root,'Module/Standalone.snippet'),'# Name: Standalone QX Module\n# [filter_local]\nhost,standalone.example,reject\n');
 await fs.writeFile(path.join(root,'Adblock/Quantumult X/Ads.snippet'),'# Name: Ads\n# [filter_local]\nhost,ads.example,reject\n# [rewrite_local]\n^https://ads.example url reject\n# [mitm]\nhostname = ads.example\n');
 await fs.writeFile(path.join(root,'Adblock/Surge/Ads.sgmodule'),'#!name=Ads\n[URL Rewrite]\n^https://ads.example - reject\n');
 await fs.writeFile(path.join(root,'Adblock/Quantumult X/First.snippet'),'# Name: First\n# [rewrite_local]\n^https://first.example url reject\n');
@@ -896,6 +898,9 @@ assert.ok(readme.indexOf('## Module') < readme.indexOf('## Adblock'));
 assert.ok(readme.indexOf('## Adblock') < readme.indexOf('## Rule'));
 assert.match(readme,/Chance Sub/);
 assert.match(readme,/Demo Module/);
+assert.match(readme,/\| \*\*\[SideStore Local Loopback\]\([^\n]+\/Module\/Localloopback\.sgmodule\)\*\* \| — \| \[一键安装\]\(https:\/\/surge\.app\/install-module\?url=/,'flat Surge-only module must be indexed and installable');
+assert.match(readme,/Module%2FLocalloopback\.sgmodule/);
+assert.match(readme,/\| \*\*\[Standalone QX Module\]\([^\n]+\/Module\/Standalone\.snippet\)\*\* \| \[一键导入\]/,'flat QX-only module must be indexed');
 assert.match(readme,/Ads/);
 assert.ok(readme.indexOf('First') < readme.indexOf('**[Ads]'),'Adblock rows must follow source-catalog order rather than filename order');
 assert.match(readme,/Apple APNs/);
