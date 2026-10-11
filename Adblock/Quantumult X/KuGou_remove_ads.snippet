@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KuGou.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:43 +08:00
+# Converted: 2026-10-11 11:10:01 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/KuGou_remove_ads.lpx
@@ -29,7 +29,7 @@ host, splashimgretrybssdl.cloud.kugou.com, reject
 
 # [rewrite_local]
 
-^http:\/\/log\.stat\.kugou\.com\/mobile\/ad\.html url reject-200
+^http:\/\/log\.stat\.kugou\.com\/mobile\/ad\.html url reject
 ^https:\/\/fx\.service\.kugou\.com\/mfx-kugoulive\/ad\/ url reject-dict
 ^https:\/\/gateway(retry)?\.kugou\.com\/adp\/ad\/ url reject-dict
 ^https:\/\/gateway(retry)?\.kugou\.com\/ads\.gateway\/ url reject-dict
