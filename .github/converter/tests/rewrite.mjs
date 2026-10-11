@@ -21,7 +21,15 @@ if (!selectedCase) {
 
 if (selectedCase === "checkpoint.mjs") {
 // Suite case: checkpoint.mjs
-assert.equal(qxRule('URL-REGEX, "^https:\\/\\/ad\\.example\\.com", REJECT').line, '^https:\\/\\/ad\\.example\\.com url reject-200');
+assert.equal(qxRule('URL-REGEX, "^https:\\/\\/ad\\.example\\.com", REJECT').line, '^https:\\/\\/ad\\.example\\.com url reject');
+for (const policy of ['REJECT', 'reject', 'Reject']) {
+  assert.equal(qxRule('URL-REGEX,"^https://reject-200.example/(a,b)",'+policy).line,
+    '^https://reject-200.example/(a,b) url reject', 'only the policy selects reject-200, not URL text');
+}
+for (const policy of ['REJECT-200', 'reject-200', 'Reject-200']) {
+  assert.equal(qxRule('URL-REGEX,"^https://ads.example/(a,b)",'+policy).line,
+    '^https://ads.example/(a,b) url reject-200', 'explicit reject-200 policy remains recognized');
+}
 assert.equal(
   quoteJq('select(.title == "I\'m here")'),
   '\'select(.title == "I\\u0027m here")\'',
