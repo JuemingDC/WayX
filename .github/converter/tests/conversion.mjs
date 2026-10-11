@@ -1032,7 +1032,7 @@ for (const testCase of cases) {
     assert.match(out.surge, /AND,\(\(URL-REGEX,/);
     assert.match(out.surge, /USER-AGENT,/);
     assert.equal(/^#!(?:author|icon|date|loon_version)=/mi.test(out.surge), false);
-    assert.ok(qxActive.some(line => /url reject-200$/.test(line)), 'HTTPDNS: QX URL-REGEX reject mapping missing');
+    assert.ok(qxActive.some(line => /url reject$/.test(line)), 'HTTPDNS: QX URL-REGEX reject mapping missing');
   }
 
   if (testCase.name === 'PinDuoDuo') {

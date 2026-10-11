@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Umetrip.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:39 +08:00
+# Converted: 2026-10-11 11:09:56 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Umetrip_remove_ads.lpx
@@ -16,7 +16,7 @@
 # [filter_local]
 
 # [rewrite_local]
-^http?:\/\/(discardrp|startup)\.umetrip\.com\/gateway\/api\/umetrip\/native url reject-200
+^http?:\/\/(discardrp|startup)\.umetrip\.com\/gateway\/api\/umetrip\/native url reject
 # 移除首页广告
 ^http?:\/\/(114\.115\.217\.129)|(home\.umetrip\.com)\/gateway\/api\/umetrip\/native$ url script-response-header https://kelee.one/Resource/JavaScript/Umetrip/Umetrip_remove_ads.js
 
