@@ -193,7 +193,7 @@ const QX_RULE_TYPES=new Map([
 ]);
 
 const QX_URL_REJECT_ACTIONS=new Map([
-  ['REJECT','reject-200'],
+  ['REJECT','reject'],
   ['REJECT-200','reject-200'],
   ['REJECT-IMG','reject-img'],
   ['REJECT-DICT','reject-dict'],
