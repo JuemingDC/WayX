@@ -24,12 +24,11 @@ function dq(r){let o='';for(let i=1;i<r.length-1;i++){let c=r[i];if(c!=='\\'){o+
 export function tokenizeRewriteV2(source){const s=String(source??''),a=[];let i=0;const add=(type,raw,value=raw,start=i,end=i+raw.length)=>a.push({type,raw,value,start,end});while(i<s.length){let c=s[i];if(/\s/.test(c)){i++;continue}let st=i,t=s.slice(i,i+2);if(['&&','||','==','~='].includes(t)){add('operator',t,t,st,i+2);i+=2;continue}if(PUN.includes(c)){add('punct',c,c,st,++i);continue}if(c==='$'&&s[i+1]==='{'){i+=2;let d=1,q=null,e=false;while(i<s.length&&d){c=s[i];if(q){if(e)e=false;else if(c==='\\')e=true;else if(c===q)q=null;i++;continue}if(c==="'"){q=c;i++;continue}if(c==='{')d++;else if(c==='}')d--;i++}if(d)fail(s,st,'Unterminated variable');let r=s.slice(st,i);add('variable',r,r.slice(2,-1),st,i);continue}if(c==='"'){i++;let e=false,ok=false;while(i<s.length){c=s[i++];if(e){e=false;continue}if(c==='\\'){e=true;continue}if(c==='"'){ok=true;break}}if(!ok)fail(s,st,'Unterminated string');let r=s.slice(st,i);add('string',r,dq(r),st,i);continue}if(c===BT){i++;let ok=false;while(i<s.length){if(s[i]!==BT){i++;continue}if(s[i+1]===BT){i+=2;continue}i++;ok=true;break}if(!ok)fail(s,st,'Unterminated raw string');let r=s.slice(st,i);add('raw-string',r,r.slice(1,-1).split(BT+BT).join(BT),st,i);continue}if(c==='/'){let regex;try{regex=scanSourceRegexLiteral(s,st)}catch(error){fail(s,st,error.message)}i=regex.end;add('regex',s.slice(st,i),{pattern:regex.pattern,flags:regex.flags},st,i);continue}let n=s.slice(i).match(/^-?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?/);if(n){let r=n[0];i+=r.length;add('number',r,Number(r),st,i);continue}if(/[A-Za-z_]/.test(c)){i++;while(i<s.length&&/[A-Za-z0-9_-]/.test(s[i]))i++;let r=s.slice(st,i);add('identifier',r,r,st,i);continue}fail(s,i,'Unexpected character '+JSON.stringify(c))}a.push({type:'eof',raw:'',value:null,start:s.length,end:s.length});return a}
 class Parser{constructor(s){this.s=String(s??'');this.t=tokenizeRewriteV2(this.s);this.i=0}p(n=0){return this.t[Math.min(this.i+n,this.t.length-1)]}is(t,v,n=0){let x=this.p(n);return x.type===t&&(v===undefined||x.value===v)}kw(v){return this.is('identifier',v)}next(){return this.t[this.i++]}need(t,v,m){let x=this.p();if(!this.is(t,v))fail(this.s,x.start,m||'Expected '+(v??t)+', got '+(x.raw||x.type));return this.next()}parse(){let q=this.need('identifier',undefined,'Expected request or response'),phase=q.value.toLowerCase();if(!['request','response'].includes(phase))fail(this.s,q.start,'Unsupported rewrite phase '+q.raw);this.need('identifier','if');let condition=this.or();this.need('identifier','then');let actions=this.pipe();this.need('eof',undefined,'Unexpected trailing token');return{type:'rewrite',syntax:'loon-rewrite-v2',phase,condition,actions,raw:this.s}}or(){let l=this.and();while(this.is('operator','||')){this.next();l={type:'logical',operator:'||',left:l,right:this.and()}}return l}and(){let l=this.primary();while(this.is('operator','&&')){this.next();l={type:'logical',operator:'&&',left:l,right:this.primary()}}return l}primary(){if(this.is('punct','(')){this.next();let e=this.or();this.need('punct',')','Expected closing condition parenthesis');return{type:'group',expression:e}}return this.cmp()}cmp(){let left=this.val(false),o=this.need('operator',undefined,'Expected == or ~='),right=this.val(false),capture=null;if(!['==','~='].includes(o.value))fail(this.s,o.start,'Unsupported comparison '+o.raw);if(this.kw('as')){if(o.value!=='~=')fail(this.s,this.p().start,'as capture is only valid after ~=');this.next();capture=this.need('identifier',undefined,'Expected capture name').value}return{type:'comparison',operator:o.value,left,right,capture}}pipe(){let a=[this.action()];while(this.is('punct','|')){this.next();a.push(this.action())}return a}action(){let n=[this.need('identifier',undefined,'Expected action name').value];while(this.is('punct','.')){this.next();n.push(this.need('identifier',undefined,'Expected action name after dot').value)}let args=[];if(this.is('punct','(')){this.next();if(!this.is('punct',')'))for(;;){args.push(this.val(true));if(!this.is('punct',','))break;this.next()}this.need('punct',')','Expected closing action parenthesis')}return{type:'action',name:n.join('.'),args}}val(arr){let x=this.p();if(arr&&this.is('punct','['))return this.array();if(x.type==='variable'){this.next();return{type:'variable',name:x.value,raw:x.raw}}if(['string','raw-string'].includes(x.type)){this.next();return{type:x.type,value:x.value,raw:x.raw}}if(x.type==='regex'){this.next();return{type:'regex',pattern:x.value.pattern,flags:x.value.flags,raw:x.raw}}if(x.type==='number'){this.next();return{type:'number',value:x.value,raw:x.raw}}if(x.type==='identifier'&&['true','false'].includes(x.value)){this.next();return{type:'boolean',value:x.value==='true',raw:x.raw}}if(x.type==='identifier'&&x.value==='null'){this.next();return{type:'null',value:null,raw:x.raw}}fail(this.s,x.start,'Expected value, got '+(x.raw||x.type))}array(){this.need('punct','[');let items=[];if(!this.is('punct',']'))for(;;){if(this.is('punct','['))fail(this.s,this.p().start,'Nested arrays are not supported');items.push(this.val(false));if(!this.is('punct',','))break;this.next()}this.need('punct',']','Expected closing array bracket');return{type:'array',items}}}
 export function parseRewriteV2(s){return new Parser(s).parse()}
-// Selection applies within one source action chain, never across declarations.
+// Preserve every action with its original dependency index for separate output.
 export function selectRewritePipelineLayer(ast) {
   if(ast.sourceActionIndices)return ast;
-  const selected=ast.actions.map((action,index)=>({action,index})).filter(x=>/^(request|response)\.json\.(add|delete|replace|jq|jq_file)$/.test(x.action.name));
-  if(!selected.length || ast.actions.length<2)return ast;
-  return {...ast,actions:selected.map(x=>x.action),sourceActionIndices:selected.map(x=>x.index),sourceActionCount:ast.actions.length};
+  if(ast.actions.length<2)return ast;
+  return {...ast,sourceActionIndices:ast.actions.map((_,index)=>index),sourceActionCount:ast.actions.length};
 }
 
 export function isRewriteV2(s){return /^\s*(?:request|response)\s+if\b/.test(String(s??''))}
@@ -1013,7 +1012,7 @@ function rewriteFeatureProfile(ast) {
   if(ast.actions.some(a=>/\.json\.(?:add|replace)$/.test(a.name) && scalarItems(a.args[1]).some(v=>v?.type==='raw-string')))features.add('raw-json-value');
   if(ast.actions.length>1)features.add('action-order');
   const mutations=ast.actions.every(a=>new RegExp('^'+ast.phase+'\\.(?:header\\.(?:add|set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$').test(a.name) || (ast.phase==='request' && /^request\.body\.mock(?:_file)?$/.test(a.name)) || fixedJqOperations(a)!==null);
-  const needsHelper=(ast.actions.some(a=>fixedJqOperations(a)!==null) && (ast.actions.length>1 || ast.condition?.type!=='comparison' || ast.condition.left?.name!=='url' || ast.condition.operator!=='~=')) || ast.actions.some(isTextRequestMockAction) || ['regex-flags','dynamic-regex','string-templates','special-characters','raw-json-value'].some(f=>features.has(f)) || ast.actions.some(a=>JSON.stringify(a.args).includes('"type":"variable"'));
+  const needsHelper=(ast.actions.some(a=>fixedJqOperations(a)!==null) && (ast.actions.length>1 || ast.condition?.type!=='comparison' || ast.condition.left?.name!=='url' || ast.condition.operator!=='~=')) || ast.actions.some(isTextRequestMockAction) || ['dynamic-regex','string-templates','special-characters','raw-json-value'].some(f=>features.has(f)) || ast.actions.some(a=>JSON.stringify(a.args).includes('"type":"variable"'));
   return {kinds:[...features].sort(),mutations,needsHelper};
 }
 
@@ -1369,8 +1368,8 @@ function pathSelector(path) {
 }
 
 export function renderFixedPathAddJq(parts,value) {
-  const selector=jqPathSelector(parts);
-  return 'if '+selector+' == null then '+selector+' = '+value+' else . end';
+  validateParts(parts);
+  return 'setpath('+JSON.stringify(parts)+'; '+value+')';
 }
 
 function anyToJq(node) {
@@ -1543,11 +1542,16 @@ export function qxDirectRewritePlan(ast, {matcher = null} = {}) {
   }
 
   if (action.name === 'request.body.replace' || action.name === 'response.body.replace') {
-    if (action.args.some(node => node.type === 'array')) return unsupported('QX direct body replacement currently requires scalar arguments');
+    if (action.args.some(node => node.type === 'array')) {
+      const members=expandBulkAction(action).map(args=>qxDirectRewritePlan({...ast,actions:[{...action,args}]},{matcher}));
+      if(members.some(plan=>!plan.ok))return members.find(plan=>!plan.ok);
+      const lines=members.flatMap(plan=>plan.lines || [plan.line]);
+      return {...members[0],line:lines[0],lines};
+    }
     const regex = action.args[0];
     const replacement = stringNode(action.args[1]);
     if (regex?.type !== 'regex' || replacement === null) return unsupported(action.name + ': invalid body replacement arguments');
-    const bodyRegex = compileRegexForTarget(regex, { subject: 'body', requireEquivalent:true });
+    const bodyRegex = compileRegexForTarget(regex, { subject: 'body' });
     if (!bodyRegex.ok) return unsupported(bodyRegex.reason);
     if (/\s/.test(bodyRegex.pattern) || /[\r\n]/.test(replacement)) return unsupported('QX direct body replacement with literal whitespace requires script fallback');
     const token = action.name.startsWith('request.') ? 'request-body' : 'response-body';
@@ -1593,11 +1597,16 @@ export function surgeDirectRewritePlan(ast) {
   }
 
   if (action.name === 'request.body.replace' || action.name === 'response.body.replace') {
-    if (action.args.some(node => node.type === 'array')) return unsupported('Surge direct body replacement currently requires scalar arguments');
+    if (action.args.some(node => node.type === 'array')) {
+      const members=expandBulkAction(action).map(args=>surgeDirectRewritePlan({...ast,actions:[{...action,args}]}));
+      if(members.some(plan=>!plan.ok))return members.find(plan=>!plan.ok);
+      const lines=members.flatMap(plan=>plan.lines || [plan.line]);
+      return {...members[0],line:lines[0],lines};
+    }
     const regex = action.args[0];
     const replacement = stringNode(action.args[1]);
     if (regex?.type !== 'regex' || replacement === null) return unsupported(action.name + ': invalid body replacement arguments');
-    const bodyRegex = compileRegexForTarget(regex, { subject: 'body', requireEquivalent:true });
+    const bodyRegex = compileRegexForTarget(regex, { subject: 'body' });
     if (!bodyRegex.ok) return unsupported(bodyRegex.reason);
     if (/\s/.test(bodyRegex.pattern) || /[\r\n]/.test(replacement)) return unsupported('Surge direct body replacement with literal whitespace requires script fallback');
     const token = action.name.startsWith('request.') ? 'http-request' : 'http-response';
@@ -1759,7 +1768,7 @@ function surgeHeaderLine(phase, pattern, action, args) {
   const regex = args[1];
   const replacement = fixedNoTemplate(args[2], 'header replacement');
   if (regex?.type !== 'regex') throw new Error('header.replace regex must be fixed');
-  const compiled = compileRegexForTarget(regex, {subject:'header',requireEquivalent:true});
+  const compiled = compileRegexForTarget(regex, {subject:'header'});
   if (!compiled.ok) throw new Error(compiled.reason);
   if (/\s/.test(compiled.pattern) || /[\r\n]/.test(replacement)) {
     throw new Error('Surge header-replace-regex with literal whitespace requires script fallback');
@@ -2724,6 +2733,50 @@ function ensureQxRewriteHandlers() {
 
 function qxNativeHeaderPlan(ast) {
   if (!['request','response'].includes(ast?.phase) || !ast.actions?.length) return null;
+  if(ast.actions.length===1 && simpleUrlRewriteCondition(ast).ok && !ast.condition.capture && [ast.phase+'.header.set',ast.phase+'.header.del'].includes(ast.actions[0].name)) {
+    try {
+      const matcher=qxExactRewriteMatcherPlan(ast,{compatibility:true});
+      if(!matcher.ok)return null;
+      const token=ast.phase+'-header',lines=[];
+      for(const args of expandBulkAction(ast.actions[0])) {
+        const name=fixedNoTemplate(args[0],'header name');
+        if(!name || /[\s:\r\n]/.test(name))return null;
+        const field=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+        lines.push(matcher.prefix+token+' (?m)^()(?i:'+field+'):[^\\r\\n]*(?:\\r?\\n|$) '+token+' $1');
+        if(ast.actions[0].name.endsWith('.set')) {
+          const value=fixedNoTemplate(args[1],'header value');
+          if(/[\r\n$]/.test(value))return null;
+          lines.push(matcher.prefix+token+' ^([^\\r\\n]+)(\\r\\n) '+token+' $1$2'+name+': '+value+'$2');
+        }
+      }
+      return {section:'rewrite',line:lines[0],lines};
+    }catch{return null;}
+  }
+  if(ast.actions.length===1 && simpleUrlRewriteCondition(ast).ok && !ast.condition.capture && ast.actions[0].name===ast.phase+'.header.replace') {
+    try {
+    const matcher=qxExactRewriteMatcherPlan(ast,{compatibility:true});
+    if(!matcher.ok)return null;
+    const lines=[];
+    for(const args of expandBulkAction(ast.actions[0])) {
+      const name=fixedNoTemplate(args[0],'header name');
+      const replacement=fixedNoTemplate(args[2],'header replacement');
+      const regex=args[1];
+      if(!name || /[\s:\r\n]/.test(name) || /[\r\n]/.test(replacement) || regex?.type!=='regex')return null;
+      // Whole-header matching must stay inside one value. Boundary-sensitive,
+      // newline-capable, lookaround and backreference patterns keep a helper.
+      const pattern=String(regex.pattern);
+      if(/[\^$]|\\[sSDWnr1-9]|\(\?[^:]|\[\^/.test(pattern) || (regex.flags?.includes('s') && pattern.includes('.')))return null;
+      const field=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+      const body=regex.flags?'(?'+regex.flags+':'+pattern+')':'(?:'+pattern+')';
+      const token=ast.phase+'-header';
+      const search='(?m)^((?i:'+field+'):[\\t\\x20]*[^\\r\\n]*?)('+body+')';
+      const value='$1'+replacement.replace(/\$(\d+)/g,(_,number)=>'$'+(Number(number)+2));
+      if(/\$(?!\d)/.test(replacement))return null;
+      lines.push(matcher.prefix+token+' '+search+' '+token+' '+value);
+    }
+    return {section:'rewrite',line:lines[0],lines};
+    }catch{return null;}
+  }
   if (ast.actions.some(action=>action.name!==ast.phase+'.header.add')) return null;
 
   const matcher=qxExactRewriteMatcherPlan(ast,{compatibility:true});
@@ -2802,6 +2855,9 @@ export function planQxRewrite(ir, ctx={}) {
 
   const nativeJq=nativeJqPriorityPlan(ast,'qx');
   if(nativeJq)return nativeJq.ok ? {section:nativeJq.section,line:nativeJq.line,lines:nativeJq.lines} : rewriteReview(source,nativeJq.reason);
+
+  const nativeHeaderFirst=qxNativeHeaderPlan(ast);
+  if(nativeHeaderFirst)return nativeHeaderFirst;
 
   if((rewriteFeatureProfile(ast).needsHelper && !ctx.featureCompatibilityPhases?.has(ast.phase)) || ast.actions.some(isTextRequestMockAction)) {
     const featurePlan=planRewriteFeatureHelper(ast,'qx',{...ctx,sourceLine:source,argumentRefs});

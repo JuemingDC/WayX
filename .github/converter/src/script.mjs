@@ -459,12 +459,11 @@ function validateOptions(options, phase) {
   }
 }
 
-// User policy for a single action chain: Script wins on either side of |.
-// This scanner never splits a JQ/string/regex literal or a logical ||.
-export function selectScriptPipelineSource(source) {
+// Shared lexical splitting preserves regex alternation, raw/JQ strings and options.
+export function splitScriptPipelineSources(source) {
   const text=String(source ?? '').trim();
   const found=scanState(text,i=>/^\s+then\s+/.test(text.slice(i))?{index:i,length:text.slice(i).match(/^\s+then\s+/)[0].length}:undefined);
-  if(!found)return text;
+  if(!found)return [text];
   const tail=text.slice(found.index+found.length),segments=[];
   let depth=0,start=0;
   scanState(tail,i=>{
@@ -473,8 +472,12 @@ export function selectScriptPipelineSource(source) {
     else if(tail[i]==='|' && tail[i+1]!=='|' && tail[i-1]!=='|' && depth===0){segments.push(tail.slice(start,i).trim());start=i+1;}
   });
   segments.push(tail.slice(start).trim());
-  const script=segments.find(x=>/^script\s*\(/.test(x));
-  return script?text.slice(0,found.index)+' then '+script:text;
+  if(segments.some(part=>!part))throw new Error('Empty action in source pipeline');
+  return segments.map(part=>text.slice(0,found.index)+' then '+part);
+}
+export function selectScriptPipelineSource(source) {
+  const members=splitScriptPipelineSources(source);
+  return members.find(member=>/\bthen\s+script\s*\(/.test(member)) || String(source ?? '').trim();
 }
 
 export function isScriptV2(source) {

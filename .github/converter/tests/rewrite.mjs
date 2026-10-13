@@ -48,9 +48,9 @@ assert.doesNotMatch(jqDeletePolicy.jq,/getpath|setpath/);
 const jqAddPolicy=jsonPipelineToSafeNativeJq(parseRewriteV2(
   'response if ${url} ~= /api/ then response.json.add(["meta.count","flag"],[1,true])'
 ));
-assert.match(jqAddPolicy.jq,/if \.meta\.count == null then \.meta\.count = 1/);
-assert.match(jqAddPolicy.jq,/if \.flag == null then \.flag = true/);
-assert.doesNotMatch(jqAddPolicy.jq,/getpath|setpath|has\(/);
+assert.match(jqAddPolicy.jq,/setpath\(\["meta","count"\]; 1\)/);
+assert.match(jqAddPolicy.jq,/setpath\(\["flag"\]; true\)/);
+assert.doesNotMatch(jqAddPolicy.jq,/getpath|has\(|if /);
 
 const jqReplacePolicy=jsonPipelineToSafeNativeJq(parseRewriteV2(
   'response if ${url} ~= /api/ then response.json.replace(["wl_config.home_ad_num","wl_config.index_bear_first_floor_max"],[0,999999999])'
@@ -75,7 +75,7 @@ for (const [source,input,expected] of [
 
 for (const [program,input,expected] of [
   [jqDeletePolicy.jq,'{"activity_switch":1,"wl_config":{"pb_banner_funad_cache_strategy":2,"keep":3},"scheme_whitelist":[]}','{"wl_config":{"keep":3}}'],
-  [jqAddPolicy.jq,'{"meta":{},"flag":false}','{"meta":{"count":1},"flag":false}'],
+  [jqAddPolicy.jq,'{"meta":{},"flag":false}','{"meta":{"count":1},"flag":true}'],
   [jqReplacePolicy.jq,'{"wl_config":{"home_ad_num":5,"index_bear_first_floor_max":1,"keep":2}}','{"wl_config":{"home_ad_num":0,"index_bear_first_floor_max":999999999,"keep":2}}'],
 ]) {
   const checked=runIsolatedCase('jq',['-c',program],{input,encoding:'utf8'});
@@ -730,7 +730,7 @@ const runtimeJsonAddExisting = renderMixedRewriteScript(
 );
 assert.deepEqual(
   runComplexScript(runtimeJsonAddExisting.script, {response:{body:'{"data":{"keep":1}}'}}),
-  {body:'{"data":{"keep":1,"new":{"deep":true}}}'},
+  {body:'{"data":{"keep":2,"new":{"deep":true}}}'},
 );
 
 const runtimeJsonTyped = renderMixedRewriteScript(
@@ -1030,8 +1030,8 @@ const legacyJsonAddQx = planLegacyRewrite(
 );
 assert.equal(legacyJsonAddQx.section, 'rewrite');
 assert.match(legacyJsonAddQx.line, /url jsonjq-response-body/);
-assert.match(legacyJsonAddQx.line, /if \.data\.enabled == null/);
-assert.match(legacyJsonAddQx.line, /\.data\.count = 2/);
+assert.match(legacyJsonAddQx.line, /setpath\(\["data","enabled"\]/);
+assert.match(legacyJsonAddQx.line, /setpath\(\["data","count"\]; 2\)/);
 
 const legacyJsonAddSurge = planLegacyRewrite(
   '^https:\\/\\/api\\.example\\.com',
@@ -1041,7 +1041,7 @@ const legacyJsonAddSurge = planLegacyRewrite(
 );
 assert.equal(legacyJsonAddSurge.section, 'body');
 assert.match(legacyJsonAddSurge.line, /^http-response-jq /);
-assert.match(legacyJsonAddSurge.line, /if \.data\.enabled == null/);
+assert.match(legacyJsonAddSurge.line, /setpath\(\["data","enabled"\]/);
 
 const legacyJsonReplaceQx = planLegacyRewrite(
   '^https:\\/\\/api\\.example\\.com',
@@ -1777,14 +1777,14 @@ const qxJsonCtx=ctx();
 const qxJson=planQxRewrite(jsonAddIr,qxJsonCtx);
 assert.equal(qxJson.section,'rewrite');
 assert.match(qxJson.line,/jsonjq-response-body/);
-assert.match(qxJson.line,/\.data\.new = true/);
-assert.match(qxJson.line,/== null/);
+assert.match(qxJson.line,/setpath\(\["data","new"\]; true\)/);
+assert.doesNotMatch(qxJson.line,/== null/);
 assert.equal(qxJsonCtx.generatedScripts.size,0);
 const surgeJsonCtx=ctx();
 const surgeJson=planSurgeRewrite(jsonAddIr,surgeJsonCtx);
 assert.equal(surgeJson.section,'body');
 assert.match(surgeJson.line,/^http-response-jq /);
-assert.match(surgeJson.line,/\.data\.new = true/);
+assert.match(surgeJson.line,/setpath\(\["data","new"\]; true\)/);
 assert.equal(surgeJsonCtx.generatedScripts.size,0);
 
 const mockHeaderSource='response if ${url} ~= /api/ then response.body.mock("text","{}",200,false) | response.header.set("X-Test","ok")';
@@ -2167,8 +2167,8 @@ const safeJsonPipelineAst=parseRewriteV2(
 );
 const safeJsonPipelineJq=jsonPipelineToSafeNativeJq(safeJsonPipelineAst);
 assert.equal(safeJsonPipelineJq.ok,true);
-assert.match(safeJsonPipelineJq.jq,/^if \.flag == null/);
-assert.ok(safeJsonPipelineJq.jq.indexOf('.flag = true') < safeJsonPipelineJq.jq.indexOf('setpath(["count"]; 2)'));
+assert.match(safeJsonPipelineJq.jq,/^setpath\(\["flag"\]/);
+assert.ok(safeJsonPipelineJq.jq.indexOf('setpath(["flag"]; true)') < safeJsonPipelineJq.jq.indexOf('setpath(["count"]; 2)'));
 assert.ok(safeJsonPipelineJq.jq.indexOf('setpath(["count"]; 2)') < safeJsonPipelineJq.jq.indexOf('delpaths([["old"]])'));
 assert.match(safeJsonPipelineJq.jq,/delpaths/);
 assert.doesNotMatch(safeJsonPipelineJq.jq,/getpath|has\(/);
@@ -2179,7 +2179,7 @@ const nativeJsonPipeline=planQxRewrite(v2(nativeJsonPipelineSource),nativeJsonPi
 assert.equal(nativeJsonPipeline.section,'rewrite');
 assert.match(nativeJsonPipeline.line,/^api url jsonjq-response-body '/);
 assert.doesNotMatch(nativeJsonPipeline.line,/__wayx_before|try |catch |type == "object"/);
-assert.ok(nativeJsonPipeline.line.indexOf('.flag = true') < nativeJsonPipeline.line.indexOf('setpath(["count"]; 2)'));
+assert.ok(nativeJsonPipeline.line.indexOf('setpath(["flag"]; true)') < nativeJsonPipeline.line.indexOf('setpath(["count"]; 2)'));
 assert.ok(nativeJsonPipeline.line.indexOf('setpath(["count"]; 2)') < nativeJsonPipeline.line.indexOf('delpaths([["old"]])'));
 assert.equal(nativeJsonPipelineCtx.generatedScripts.size,0);
 
@@ -2188,8 +2188,8 @@ const methodNativeJsonPipelineCtx=ctx();
 const methodNativeJsonPipeline=planQxRewrite(v2(methodNativeJsonPipelineSource),methodNativeJsonPipelineCtx);
 assert.equal(methodNativeJsonPipeline.section,'rewrite');
 assert.match(methodNativeJsonPipeline.line,/^api \^POST\[ \] url-and-header jsonjq-request-body '/);
-assert.ok(methodNativeJsonPipeline.line.indexOf('.one = 1') < methodNativeJsonPipeline.line.indexOf('.two = 2'));
-assert.ok(methodNativeJsonPipeline.line.indexOf('.two = 2') < methodNativeJsonPipeline.line.indexOf('delpaths([["old"],["unused"]])'));
+assert.ok(methodNativeJsonPipeline.line.indexOf('setpath(["one"]; 1)') < methodNativeJsonPipeline.line.indexOf('setpath(["two"]; 2)'));
+assert.ok(methodNativeJsonPipeline.line.indexOf('setpath(["two"]; 2)') < methodNativeJsonPipeline.line.indexOf('delpaths([["old"],["unused"]])'));
 assert.ok(methodNativeJsonPipeline.line.includes('delpaths([["old"],["unused"]])'));
 assert.equal(methodNativeJsonPipelineCtx.generatedScripts.size,0);
 

@@ -1,6 +1,8 @@
 # WayX Conversion Specification
 
-版本：2.6
+版本：2.7
+
+更新：2026-10-13
 作者：chance  
 状态：唯一权威转换规范（Authoritative）
 
@@ -19,33 +21,29 @@ JSON/JQ 表达式以 jqlang 官方标准为依据，不采用第三方转换器�
 
 ## 2.2 编译与目标规划
 
-数据流为源解析 → target-neutral Semantic IR → 选层及目标规划 → 目标输出 → validator → oracle/canonical/audit。通用 parser 保留源声明、section/phase、条件、Regex body/flags、captures、变量、选项及动作和声明顺序，不提前套用目标语法。含 Script 的混合声明使用共同词法 scanner 提取调用，不把 Script 加入官方 Rewrite action registry。
+数据流为源解析 → target-neutral Semantic IR → 分条及目标规划 → 目标输出 → validator → oracle/canonical/audit。通用 parser 保留源声明、section/phase、条件、Regex body/flags、captures、变量、选项及动作和声明顺序，不提前套用目标语法。含 Script 的混合声明使用共同词法 scanner 保留并拆分各 action，不把 Script 加入官方 Rewrite action registry。
 
 IR 不包含目标 action 名、section 名、helper URL 或目标 fallback。共享 planner 的结果分为 native-equivalent、guarded-helper、phase-dispatcher、unsupported；转换结果可同时带兼容限制或明确的用户策略说明。
 
 能够证明完整等价时优先 native；必要且已支持的语义缺口由共同 helper/dispatcher 承担；不能安全表示则注释源声明并诊断，不生成假可用规则。不得按插件 id、名称、作者或完整 catalog signature 特判。
 
-用户指定的正则 flags 内联映射、QX 强制 enable、作者 argument 省略、单条 pipeline 选层和 JSON replace 直接 setpath 是明确的转换策略，不能称为完整源语义等价。除此之外，不静默删除条件或动作。
+用户指定的正则 flags 内联映射、QX 强制 enable、作者 argument 省略、单条 pipeline 分条输出和 JSON replace 直接 setpath 是明确的转换策略，不能称为完整源语义等价。除此之外，不静默删除条件或动作。
 
 ## 2.3 单条组合与声明顺序
 
 组合指一条声明 action 区域中的 `|`，不指分开的同正则声明。独立声明按源顺序转换，不能因正则相同而跨声明择一或去重。
 
-单条链不分竖线前后，按以下规则处理：
+单条声明中的各 action 按源顺序分别规划和输出，保留 Script、Header、Body、JSON/JQ、Mock 和 URL 动作，不再按家族择一。Script 使用原作者 URL 及受支持选项；不能原生表达的独立 action 使用既有 helper 或明确诊断，失败 action 不删除其余成功 action。
 
-1. 存在 Script：只转换源顺序中的第一条 Script 调用及受支持选项，忽略其它动作。
-2. 没有 Script，存在 request/response.json 的 add/delete/replace/jq/jq_file 或 jq-path：只保留 JSON/JQ 家族。各 action 按源顺序分别输出同一条件/正则的目标规则，不合成一条 JQ，不吸入阶段 dispatcher。
-3. 两类均不存在：尝试既有复杂语法脚本，按动作顺序执行；无法安全生成或使用时输出 OMITTED 注释及源声明，不保留活动原生回退。源语法错误仍按既有 Issue/Review 处理。
+动作分隔使用共同词法扫描器，保护 Regex alternation、逻辑 `||`、String/Raw String 内部 JQ 管道、变量、括号与 Script with 选项。数组批量参数仍属于一个 action，按数组顺序输出其目标操作。各文件依赖按原 action 索引绑定，Script 混合声明的分条在依赖发现、源审查和转换中使用同一入口。
 
-数组批量参数属于一个 action，保持该 action 内部顺序。单个作者 JQ 字符串内部的 `|` 属于其程序，不能拆成多个 actions。词法扫描保护 Regex alternation、逻辑 `||`、字符串、Raw String、变量与括号。
-
-源语义预检、依赖扫描、转换和目录 inventory 使用相同选层入口。忽略层不拉依赖、不规划目标 action、不作为输出回退。配置中保留层的诊断只引用该层；源文件与审查报告保留真实原文。未知保留层继续生成 Issue，不自动扩张 semantic baseline。
+不同目标可能跨 Header/Body/Script 分段执行，Surge/QX HTTP Script 仍有 first-match 行为。分条输出保留声明与动作，不据输出顺序宣称原 pipeline 的跨动作状态、条件快照或 first-match 行为完全等价；不串改原作者 Script 正文。源文件和原注释保留，QX 分段标题继续使用注释格式。
 
 ## 2.4 Regex、条件与捕获
 
 源 Regex literal 只去除最外层 delimiter；仅结束分隔符后的后缀识别为 flags。逐字符保留主体中的转义、斜线、字符类、分组、量词和 lookaround，不作 case folding、全局 `\\/ → /`、捕获组重写；flag 内联前缀在目标输出阶段添加。
 
-当前生产转换保留源 `i/m/s`：Surge 与 Quantumult X 原生正则字段将 `/pattern/i`、`/pattern/m`、`/pattern/s` 及组合 flags 转为 `(?i)pattern`、`(?m)pattern`、`(?s)pattern`、`(?ims)pattern` 等内联形式；无 flags 时不添加前缀。仅添加前缀，主体与源 AST/IR 保持不变。生成的 JavaScript helper 使用 `new RegExp(source, flags)`，不把内联修饰符放进 JavaScript 正则。内联映射是用户指定策略，尚不构成客户端引擎完整等价证明；原生 COMPATIBILITY LIMITATION 注释和 `requireEquivalent=true` 的保守拒绝契约保留。
+当前生产转换保留源 `i/m/s`：Surge 与 Quantumult X 原生正则字段将 `/pattern/i`、`/pattern/m`、`/pattern/s` 及组合 flags 转为 `(?i)pattern`、`(?m)pattern`、`(?s)pattern`、`(?ims)pattern` 等内联形式；无 flags 时不添加前缀。仅添加前缀，主体与源 AST/IR 保持不变。生成的 JavaScript helper 使用 `new RegExp(source, flags)`，不把内联修饰符放进 JavaScript 正则。内联映射是用户指定策略，尚不构成客户端引擎完整等价证明；原生 COMPATIBILITY LIMITATION 注释保留。生产原生 Header/Body 正则按同一内联策略规划，不因 `i/m/s` 单独生成 helper；严格等价检查接口仍独立保留。QX Header Rewrite 操作完整 Header 文本，只将可以安全限制到字段值并映射捕获编号的替换转为原生，其余保留 helper。Surge 使用 Header Rewrite / Body Rewrite；QX 使用 request/response-header、request/response-body。不支持的 `as` 捕获、动态值及条件继续使用 helper 或既有诊断。
 
 动态 Regex 只接受完整 `/pattern/flags` 或语义 Regex 节点，不执行表达式、不二次展开变量，缺失或无效值不匹配；生成 helper 保留解析出的 `i/m/s`。
 
@@ -69,11 +67,11 @@ Key Path 解析为 String/Number segments，支持 dot key、数字索引及 quo
 
 原生 JSON 使用共同 WayX JQ 生成器：
 
-- add：直接 selector 条件赋值，缺失/null 时赋值，如 `if .data.flag == null then .data.flag = VALUE else . end`。
+- add：采用 ScriptHub 的设置策略，直接 `setpath(PATH; VALUE)`，覆盖已有值并创建缺失路径；必要 helper 同样设置路径。
 - delete：`delpaths(PATHS)`。数字索引批量按源顺序逐项调用，保留位移语义，不能合并成针对原数组的一次删除。
 - replace：直接 `setpath(PATH; VALUE)`，不添加 getpath/has 或字段存在性检查。PATH 为保留 String/Number 类型的路径数组；批量替换按源顺序用 ` | ` 连接。遵循 jq 原生设置语义，包括缺失路径创建及类型错误。VALUE 保留源声明类型：字符串 `"[]"` 不等于数组 `[]`，不得统一字符串化。必要 JSON replace helper 同样执行路径设置，不检查末端字段是否存在。
 
-标识符路径用 `.data.flag`，特殊键用 `.["a.b"]`，索引用 `.items[0]`；根 bracket 带 identity `.`。生成的原生表达式不添加统一 type guard、`$__wayx_before` 或 try/catch 回滚，使用 jqlang 原生类型、错误和管道语义；作者自带 if/try/catch 保留。批量动作内部可形成有序原生操作，多个源 actions 仍按 2.3 分条。
+add/replace 的 PATH 使用保留 String/Number 类型的路径数组，特殊键和数组索引不改变含义。生成的原生表达式不添加统一 type guard、`$__wayx_before` 或 try/catch 回滚，使用 jqlang 原生类型、错误和管道语义；作者自带 if/try/catch 保留。批量动作内部可形成有序原生操作，多个源 actions 仍按 2.3 分条。
 
 单条固定作者 jq 或文件 jq 优先使用原 URL matcher 和 QX jsonjq-request/response-body、Surge http-request/response-jq；不因可编译为 JavaScript、嵌套路径、flags 或同阶段其它声明自动迁为 Script。原生 matcher 无法表示的纯 jq 声明保持既有 Review/注释边界。
 
@@ -85,7 +83,7 @@ Key Path 解析为 String/Number segments，支持 dot key、数字索引及 quo
 
 jq_file、jq-path 和 mock_file 只读取源声明指定的原地址。JQ 文件内联实际程序，不把路径当 JQ、不用仓库副本替代、不为 JQ 文件本身创建脚本。作者表达式只做单行配置必需的转义、非字符串注释处理与空白压缩，不作代数改写。
 
-文件动作按原声明 action 索引绑定，不能把单文件对象复用于整条多文件链。同 URL 可在一次 materialization 中复用读取；保留 actions 的成功/失败分别记录，文件 JQ 失败不丢弃相邻成功 action。读取失败、空文件或不能安全内联时引用保留层并 Review。
+文件动作按原声明 action 索引绑定，不能把单文件对象复用于整条多文件链。同 URL 可在一次 materialization 中复用读取；保留 actions 的成功/失败分别记录，文件 JQ 失败不丢弃相邻成功 action。读取失败、空文件或不能安全内联时保留文件引用并 Review。
 
 仅修正经过真实 jq 编译验证的 `else .end` 分隔错误：原表达式编译失败且补成 `else . end` 后编译成功才内联修正；字符串、注释、合法 `.end` 字段不改，其它错误不猜测。输出保留原 jq、修正原因和保留 action 的声明；源文件不改写。inline/file/path 使用同一修正入口。
 
@@ -101,7 +99,7 @@ Surge duplicate headers 用 full-header-mode=true 的数组模式保留项及顺
 
 阶段规划用 sourceIndex 区分声明，不按原文文本去重。能安全组合的同步声明按顺序进入一个 phase-dispatcher，前序提交供后续声明读取；各声明独立 captures，Request/Response 分离，每次阶段执行只调用一次 `$done`。只有首成员输出 dispatcher 引用，其余保留各自注释。
 
-Surge 每阶段至多执行第一条匹配 HTTP Script。不得把多个需要顺序的 helper 简单输出为竞争脚本；纯原生 JSON/JQ 及 2.3 拆分 actions 不被宽 dispatcher 吸收。
+Surge 每阶段至多执行第一条匹配 HTTP Script。需要保证顺序的既有 helper owner 不简单输出为竞争脚本；用户指定的 2.3 分条 actions 独立输出，保留 first-match 限制，不宣称完整 pipeline 顺序语义。原生及 2.3 分条 actions 不被宽 dispatcher 吸收。
 
 原作者 HTTP Script、legacy Rewrite、未适配的 JQ/echo/URL/二进制动作和未证明参数 transport 不能自动串入 dispatcher。单 URL helper 可按现有 COMPATIBILITY LIMITATION 保留窄 prefilter；复杂条件无法取得安全阶段 owner 时诊断，无 Script/JQ 的组合使用 OMITTED。
 
@@ -135,7 +133,7 @@ Surge 逐条 Rule 使用已支持的 pre-matching/extended-matching 增强，保
 
 QX 仅输出官方证明的 url/url-and-header、reject 系列、302/307、header/body/jsonjq/echo 及各 Script action。url-and-header 的 URL 先匹配，再检查 method/path/request headers。response-body Script 可同时返回 body/headers/status，但不能冒充只改 Header 的 action；echo-response 的宽 matcher 必须满足安全边界。
 
-QX 原生 request-header 与 response-header 使用同构语法：`URL正则 url request-header 匹配正则 request-header 替换文本`，响应阶段将两个 action token 均改为 response-header。匹配对象是完整 Header 文本，可跨 `\r\n` 匹配多个字段；request-header 的完整文本还包含请求行。request-header 的整体匹配语义依据官方 sample.conf，response-header 的同构语法依据用户于 2026-10-07 的确认，不能因官方示例未列出响应阶段就判为不支持。原生 lowering 仍须保持字段边界、捕获组编号、重复字段与动作顺序；已有 set/del/字段内 replace 的 Script 路径不因语法同构而自动改写。
+QX 原生 request-header 与 response-header 使用同构语法：`URL正则 url request-header 匹配正则 request-header 替换文本`，响应阶段将两个 action token 均改为 response-header。匹配对象是完整 Header 文本，可跨 `\r\n` 匹配多个字段；request-header 的完整文本还包含请求行。request-header 的整体匹配语义依据官方 sample.conf，response-header 的同构语法依据用户于 2026-10-07 的确认，不能因官方示例未列出响应阶段就判为不支持。原生 lowering 仍须保持字段边界、捕获组编号、重复字段与动作顺序；固定 set 映射为删除已有同名字段后插入，固定 del 映射为字段行删除；字段内 replace 保留字段前缀并偏移源捕获编号。复杂条件、动态值、跨行或边界敏感的字段替换继续使用 helper。
 
 Surge native URL/Header/Body Rewrite/Map Local 能安全表示时优先；原生处理次序不等价时由已支持 runtime 或诊断承担。Body Rewrite 等 requirement 由实际活动目标字段推导，不因注释行或移除的字段保留无用 requirement。
 
@@ -221,7 +219,7 @@ Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生�
 
 | 契约 | 实现入口 | 验证 |
 | --- | --- | --- |
-| Script/JSON/JQ 选层与分条 | selectScriptPipelineSource、selectRewritePipelineLayer、rewriteV2Action | conversion-policy、upstream-automation、catalog |
+| Script/JSON/JQ 全动作分条 | splitScriptPipelineSources、selectRewritePipelineLayer、rewriteV2Action | conversion-policy、upstream-automation、catalog |
 | 原 action 索引与依赖隔离 | input materializers、resolveRewriteJqDependencies | conversion-context、runtime/file isolation |
 | 复杂脚本及阶段 owner | planRewriteFeatureHelper、prepareRewriteDispatchers | runtime/oracle、phase/author ownership |
 | 作者选项与参数 | Script planners、共同绑定校验 | script、conversion-policy |

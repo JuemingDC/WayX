@@ -453,16 +453,18 @@ assert.match(
 );
 assert.doesNotMatch(headerGroupOutput.qx, /REVIEW REQUIRED: QX header\.add/);
 assert.equal(
-  headerGroupOutput.qx.split(/\r?\n/).filter(line => !line.trim().startsWith('#') && /script-response-header/.test(line)).length,
-  1,
-  'the independent response.header.set rule must remain active when the preceding independent response.header.add uses native response-header',
+  headerGroupOutput.qx.split(/\r?\n/).filter(line => !line.trim().startsWith('#') && / url response-header /.test(line)).length,
+  3,
+  'independent native add and set must retain insertion, deletion and reinsertion',
 );
 assert.doesNotMatch(
   headerGroupOutput.qx,
   /Source declaration: .*response\.header\.add.* \| response if .*response\.header\.set/,
   'converter must never invent a pipeline by joining adjacent source declarations',
 );
-assert.match(headerGroupOutput.surge, /wayx_phase_response_.*full-header-mode=true/);
+assert.match(headerGroupOutput.surge, /\[Header Rewrite\]/);
+assert.match(headerGroupOutput.surge,/header-add content-disposition inline/);
+assert.match(headerGroupOutput.surge,/header-del content-type/);
 
 const qxIgnoredOptionsFixture = {
   id:'IgnoredOptionsFixture',
@@ -500,8 +502,8 @@ assert.match(qxIgnoredOptionsOutput.surge, /#!REQUIREMENT .*enabled.*Legacy = ty
 assert.match(qxIgnoredOptionsOutput.surge, /Legacy = type=http-response[^\n]*timeout=60/);
 assert.match(qxIgnoredOptionsOutput.surge, /#!REQUIREMENT .*enabled.*V2 = type=http-response/);
 assert.match(qxIgnoredOptionsOutput.surge, /V2 = type=http-response[^\n]*timeout=30/);
-assert.ok([...headerGroupOutput.generatedScripts.values()].some(script=>script.includes('__wayxSet("content-type",v)')));
-assert.ok([...headerGroupOutput.generatedScripts.values()].some(script=>script.includes('text/plain; charset=utf-8')));
+assert.equal(headerGroupOutput.generatedScripts.size,0);
+assert.match(headerGroupOutput.qx,/content-type: text\/plain; charset=utf-8/);
 
 const genericComplexFixture = {
   id:'GenericComplexFixture',
@@ -520,7 +522,7 @@ assert.doesNotMatch(genericComplexOutput.surge, /ISSUE REQUIRED|REVIEW REQUIRED/
 assert.match(genericComplexOutput.qx, /jsonjq-response-body/);
 assert.equal(genericComplexOutput.generatedScripts.size,0);
 assert.match(genericComplexOutput.surge, /http-response-jq/);
-assert.doesNotMatch(genericComplexOutput.qx+genericComplexOutput.surge,/X-Test/);
+assert.match(genericComplexOutput.surge,/header-add X-Test ok/);
 
 const unknownActionFixture = {
   id:'UnknownActionFixture',
@@ -554,15 +556,10 @@ assert.ok(
   requestAddOutput.qx.includes('url request-header ^([^\\r\\n]+)(\\r\\n) request-header $1$2X-Test: one$2'),
   'QX request.header.add must use whole request-header insertion rather than object set\n' + requestAddOutput.qx,
 );
-assert.equal(
-  requestAddOutput.qx.split(/\r?\n/).some(line => !line.trim().startsWith('#') && / url response-header /.test(line)),
-  false,
-  'this field-value replacement must use a script to preserve action-local captures rather than a native whole-header rewrite',
-);
-assert.match(requestAddOutput.qx, /url script-response-header .*(?:header|features_qx)_.*\.js/);
-assert.doesNotMatch(requestAddOutput.qx, /REVIEW REQUIRED/);
-assert.match(requestAddOutput.surge, /type=http-request.*full-header-mode=true/);
-assert.ok([...requestAddOutput.generatedScripts.values()].some(script=>script.includes('__wayxAdd("X-Test",v)')));
+assert.match(requestAddOutput.qx,/url response-header \(\?m\)/);
+assert.doesNotMatch(requestAddOutput.qx,/REVIEW REQUIRED/);
+assert.match(requestAddOutput.surge,/header-add X-Test one/);
+assert.match(requestAddOutput.surge,/header-replace-regex X-Test one two/);
 
 const requestAddBulkFixture = {
   id:'RequestHeaderAddBulkFixture',
@@ -602,7 +599,7 @@ const requestAddSetOutput = convert(requestAddSetFixture, requestAddSetSource, n
 assert.doesNotMatch(requestAddSetOutput.qx, /REVIEW REQUIRED/);
 assert.equal(
   requestAddSetOutput.qx.split(/\r?\n/).filter(line => !line.trim().startsWith('#') && / url (?:request-header|script-request-header) /.test(line)).length,
-  2,
+  3,
   'independent request add+set declarations must remain two independent target rewrites',
 );
 assert.doesNotMatch(
@@ -623,21 +620,9 @@ const requestReplaceCaptureSource = `#!name=RequestHeaderReplaceCaptureFixture
 request if \${url} ~= /^https:\\/\\/api\\.example\\.com\\//i then request.header.replace("User-Agent", /iPhone OS (\\d+)/, "iPhone OS $1")
 `;
 const requestReplaceCaptureOutput = convert(requestReplaceCaptureFixture, requestReplaceCaptureSource, new Map(), STAMP);
-assert.equal(
-  requestReplaceCaptureOutput.qx.split(/\r?\n/).some(line => !line.trim().startsWith('#') && / url request-header /.test(line)),
-  false,
-  'QX header.replace must not embed action-local captures into whole-header capture numbering',
-);
-assert.match(requestReplaceCaptureOutput.qx, /url script-request-header .*(?:header|features_qx)_.*\.js/);
-assert.doesNotMatch(requestReplaceCaptureOutput.qx, /REVIEW REQUIRED/);
-const requestReplaceCaptureHelper = [...requestReplaceCaptureOutput.generatedScripts.values()].find(text => text.includes('User-Agent'));
-assert.ok(requestReplaceCaptureHelper, 'QX request.header.replace must generate a helper');
-assert.ok(
-  requestReplaceCaptureHelper.includes(JSON.stringify('iPhone OS (\\d+)')) && requestReplaceCaptureHelper.includes('iPhone OS $1'),
-  'QX header helper must preserve action-local $1 replacement and regex capture source',
-);
-assert.match(requestReplaceCaptureHelper, /toLowerCase\(\)/);
-assert.match(requestReplaceCaptureHelper,/\$done\(\{headers:__wayxHeaders\}\)/);
+assert.match(requestReplaceCaptureOutput.qx,/url request-header \(\?m\)/);
+assert.match(requestReplaceCaptureOutput.qx,/request-header \$1iPhone OS \$3/);
+assert.doesNotMatch(requestReplaceCaptureOutput.qx,/script-request-header|REVIEW REQUIRED/);
 
 const requestAddDollarFixture = {
   id:'RequestHeaderAddDollarFixture',
@@ -1209,9 +1194,9 @@ const addAst = parseRewriteV2(
 const addQx = qxDirectRewritePlan(addAst);
 const addSurge = surgeDirectRewritePlan(addAst);
 assert.equal(addQx.ok, true);
-assert.match(addQx.line, /if \.wl_config\.new_flag == null then \.wl_config\.new_flag = true/);
-assert.doesNotMatch(addQx.line+addSurge.line, /getpath|setpath/);
-assert.match(addQx.line, /== null/);
+assert.match(addQx.line, /setpath\(\["wl_config","new_flag"\]; true\)/);
+assert.doesNotMatch(addQx.line+addSurge.line, /getpath|has\(/);
+assert.doesNotMatch(addQx.line, /== null/);
 assert.equal(addSurge.ok, true);
 assert.match(addSurge.line, /^http-response-jq /);
 
@@ -1824,59 +1809,34 @@ if(selectedCase==='conversion-policy.mjs') {
 
 if(selectedCase==='conversion-policy.mjs') {
   const entry={id:'PipelineLayers',source:'https://example.test/main.lpx',category:'Test'};
-  const options={stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'};
-  const active=text=>text.split('\n').filter(x=>x && !x.startsWith('#')).join('\n');
-  let checked=0;
-  for(const phase of ['request','response']) {
-    const jq=phase+'.json.jq(`.kept = true`)';
-    const other=phase+'.header.set("X-Ignored","yes")';
-    const script='script("https://example.test/original.js","a|b") with requires_body=true,tag="A|B"';
-    for(const sequence of [script+' | '+other,other+' | '+script,jq+' | '+script,script+' | '+jq]) {
-      const line=phase+' if ${url} ~= /api|other/i then '+sequence;
-      const source='[Rewrite]\n'+line;
+  const options={stamp:'2026-10-13',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'};
+  const active=text=>text.split('\n').filter(line=>line && !line.startsWith('#')).join('\n');
+  for(const phase of ['request','response']) for(const section of ['Rewrite','Script']) {
+    const actions=[phase+'.header.set("X-Kept","yes")',phase+'.json.add("value",3)','script("https://example.test/original.js","a|b") with requires_body=true,tag="A|B"'];
+    for(const parts of [actions,[...actions].reverse()]) {
+      const source='['+section+']\n'+phase+' if ${url} ~= /api|other/i then '+parts.join(' | ');
       assert.deepEqual(discoverSourceScriptUrls(source),['https://example.test/original.js']);
-      const fetches=[];
-      const ctx=await materializeConversionContext(entry,source,{fetchText:async url=>{fetches.push(url);return '$done({});';}});
-      assert.deepEqual(fetches,['https://example.test/original.js']);
-      const out=convertPlugin(entry,source,{...options,...ctx});assert.equal(out.generatedScripts.size,0);
-      for(const target of ['qx','surge']){assert.match(active(out[target]),/api\|other/);assert.match(active(out[target]),/original\.js/);assert.doesNotMatch(active(out[target]),/jsonjq-|http-.*-jq|X-Ignored/);checked++;}
+      const out=convertPlugin(entry,source,options);
+      for(const target of ['qx','surge']) {
+        assert.doesNotMatch(out[target],/ISSUE REQUIRED|REVIEW REQUIRED/);
+        assert.match(active(out[target]),/original\.js/);
+        assert.match(active(out[target]),/setpath\(\["value"\]; 3\)/);
+        if(target==='surge')assert.match(out[target],/header-add X-Kept yes/);
+        else assert.match(out.qx,/X-Kept: yes/);
+      }
       validateQX(out.qx,entry);validateSurgeModule(out.surge,entry);
     }
-    for(const sequence of [jq+' | '+other,other+' | '+jq]) {
-      const out=convertPlugin(entry,'[Rewrite]\n'+phase+' if ${url} ~= /api/ then '+sequence,options);
-      for(const target of ['qx','surge']){assert.match(active(out[target]),/\.kept/);assert.doesNotMatch(active(out[target]),/X-Ignored|script-path=/);checked++;}
-    }
-    // Separate declarations are all preserved, even with the exact same regex.
-    const separate='[Rewrite]\n'+phase+' if ${url} ~= /api/ then '+phase+'.json.delete("ads")\n'+phase+' if ${url} ~= /api/ then '+jq+'\n[Script]\n'+phase+' if ${url} ~= /api/ then '+script;
-    const preserved=convertPlugin(entry,separate,options);
-    for(const target of ['qx','surge']){assert.match(active(preserved[target]),/delpaths/);assert.match(active(preserved[target]),/\.kept/);assert.match(active(preserved[target]),/original\.js/);checked++;}
-    const multi=phase+' if ${url} ~= /api/ then '+other+' | '+phase+'.json.delete("ads") | '+phase+'.json.replace("value",2) | '+phase+'.json.add("new",3) | '+phase+'.json.jq_file("one.jq") | '+other;
-    const files=await materializeJqFiles(entry,parseLoonPlugin('[Rewrite]\n'+multi),{fetchText:async()=>'.literal = "a|b" | .last = true'});
-    assert.deepEqual(Object.keys(files.get(multi).byAction),['4']);
-    const split=convertPlugin(entry,'[Rewrite]\n'+multi,{...options,jqFiles:files});assert.equal(split.generatedScripts.size,0);
-    for(const target of ['qx','surge']) {
-      const lines=active(split[target]).split('\n').filter(x=>x.includes(target==='qx'?'jsonjq-'+phase+'-body':'http-'+phase+'-jq'));
-      assert.equal(lines.length,4);assert.match(lines[0],/delpaths/);assert.match(lines[1],/setpath/);assert.match(lines[2],/\.new/);assert.match(lines[3],/a\|b.*\.last/);assert.doesNotMatch(active(split[target]),/X-Ignored|one\.jq/);checked++;
-    }
   }
-  const scriptOnly='[Script]\nresponse if ${url} ~= /api/ then response.json.delete("ads") | script("https://example.test/only.js") | response.header.set("X","ignored")';
-  const out=convertPlugin(entry,scriptOnly,options);
-  for(const target of ['qx','surge']){assert.match(active(out[target]),/only\.js/);assert.doesNotMatch(out[target],/REVIEW REQUIRED|delpaths|ignored/);}
-  const failed='response if ${url} ~= /api/ then response.json.jq_file("ok.jq") | response.json.jq_file("missing.jq") | response.json.add("after",true)';
-  const deps=await materializeJqFiles(entry,parseLoonPlugin('[Rewrite]\n'+failed),{fetchText:async url=>{if(url.endsWith('missing.jq'))throw Error('missing file');return '.before = true';}});
-  const isolated=convertPlugin(entry,'[Rewrite]\n'+failed,{...options,jqFiles:deps});
-  for(const target of ['qx','surge']){assert.match(isolated[target],/REVIEW REQUIRED.*missing file/);assert.match(active(isolated[target]),/\.before/);assert.match(active(isolated[target]),/\.after/);}
-  const complex=convertPlugin(entry,'[Rewrite]\nresponse if ${url} ~= /api/ then response.body.replace(/old/,"new") | response.header.set("X-Kept","yes")',options);
-  for(const target of ['qx','surge'])assert.match(active(complex[target]),target==='qx'?/script-response-body/:/type=http-response/);
-  assert.ok([...complex.generatedScripts.values()].every(code=>code.includes('X-Kept')));
-  const phaseBlocked=convertPlugin(entry,'[Rewrite]\nresponse if ${url} ~= /api/ && ${status} == 200 then response.body.replace(/old/,"new") | response.header.set("X","yes")\n[Script]\nresponse if ${url} ~= /api/ then script("https://example.test/original.js")',options);
-  for(const target of ['qx','surge']){assert.match(phaseBlocked[target],/OMITTED/);assert.doesNotMatch(phaseBlocked[target],/REVIEW REQUIRED/);assert.match(active(phaseBlocked[target]),/original\.js/);}
-  const unsupported=convertPlugin(entry,'[Rewrite]\nrequest if ${url} ~= /api/ then url.replace("https://example.test/new") | request.header.set("X","yes")',options);
-  for(const target of ['qx','surge']){assert.match(unsupported[target],/OMITTED/);assert.doesNotMatch(active(unsupported[target]),/url 302|url replace|script-path=|script-response/);assert.doesNotMatch(unsupported[target],/REVIEW REQUIRED/);}
-  const malformedJq=JSON.parse(await fs.readFile(new URL('../fixtures/upstream-jq-errors.json',import.meta.url),'utf8'))[0].original;
-  const repairedChain=convertPlugin(entry,'[Rewrite]\nresponse if ${url} ~= /api/ then response.header.set("X-Discarded","ignored") | response.json.jq(`'+malformedJq+'`)',options);
-  for(const target of ['qx','surge']){assert.match(repairedChain[target],/UPSTREAM ERROR CORRECTED/);assert.doesNotMatch(repairedChain[target],/X-Discarded/);assert.match(repairedChain[target],/# Source declaration: response if .* then response\.json\.jq/);}
-  console.log('Single action-chain selection passed: '+checked+' target results, either-side Script/JQ priority, independent declarations, JSON-family splitting, indexed file inlining and per-action failure isolation');
+  const line='response if ${url} ~= /api/ then response.header.set("X-Before","yes") | response.json.jq_file("ok.jq") | response.json.jq_file("missing.jq") | response.json.add("after",true)';
+  const files=await materializeJqFiles(entry,parseLoonPlugin('[Rewrite]\n'+line),{fetchText:async url=>{if(url.endsWith('missing.jq'))throw Error('missing file');return '.before = true';}});
+  const out=convertPlugin(entry,'[Rewrite]\n'+line,{...options,jqFiles:files});
+  for(const target of ['qx','surge']) {
+    assert.match(out[target],/REVIEW REQUIRED.*missing file/);
+    assert.match(active(out[target]),/\.before/);
+    assert.match(active(out[target]),/setpath\(\["after"\]; true\)/);
+  }
+  assert.match(out.surge,/header-add X-Before yes/);
+  console.log('Independent action output passed: both phases/sections/orders, original Script URL, JSON and Header retention, and per-file failure isolation');
 }
 
 if(selectedCase==='conversion-policy.mjs') {
