@@ -93,7 +93,7 @@ for(const phase of ['request','response'])for(const [regex,replacement,input,exp
   assert.equal(result.status,0,result.stderr);assert.equal(JSON.parse(result.stdout),expected);checked++;
 }
 // Unsafe value boundaries and capture-dependent replacements keep helpers.
-for(const regex of ['/^old$/i','/.*old/s','/old\\s+/i','/old(?=next)/i']) {
+for(const regex of ['/^old$/i','/.*old/s','/old\\s+/i','/old(?=next)/i','/OLD[\\x00-\\xff]+OTHER/i','/old\\u000aother/i','/old\\cJother/i']) {
   const output=convertPlugin(entry,'[Rewrite]\nresponse if ${url} ~= /api/ then response.header.replace("X-Test",'+regex+',"new")',options);
   assert.match(output.qx,/script-response-header/);validateConvertedPlugin(entry,output);checked++;
 }

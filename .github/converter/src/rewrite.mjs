@@ -2765,7 +2765,7 @@ function qxNativeHeaderPlan(ast) {
       // Whole-header matching must stay inside one value. Boundary-sensitive,
       // newline-capable, lookaround and backreference patterns keep a helper.
       const pattern=String(regex.pattern);
-      if(/[\^$]|\\[sSDWnr1-9]|\(\?[^:]|\[\^/.test(pattern) || (regex.flags?.includes('s') && pattern.includes('.')))return null;
+      if(/[\^$]|\\[sSDWnr1-9xucpP0]|\(\?[^:]|\[\^|\[\[:/.test(pattern) || (regex.flags?.includes('s') && pattern.includes('.')))return null;
       const field=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
       const body=regex.flags?'(?'+regex.flags+':'+pattern+')':'(?:'+pattern+')';
       const token=ast.phase+'-header';
