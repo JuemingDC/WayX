@@ -294,7 +294,8 @@ for(const entry of manifest){
 const observedAdvanced=hits.map(hit=>({feature:hit.feature,pattern:hit.pattern,where:hit.where.replace(/: .*/, '')})).sort((a,b)=>
   (a.where+'\0'+a.feature+'\0'+a.pattern).localeCompare(b.where+'\0'+b.feature+'\0'+b.pattern)
 );
-// Reviewed 2026-10-03 baseline: seven source-authored special regex constructs.
+// Reviewed 2026-10-13 baseline: eight source-authored special regex constructs.
+// QuickSearch adds only an existing negative-lookahead feature; body/capture layout stays unchanged.
 const expectedAdvanced=[
   {
     feature:'atomic-group',
@@ -315,6 +316,11 @@ const expectedAdvanced=[
     feature:'negative-lookahead',
     pattern:'^https?:\\/\\/p\\d\\.meituan\\.net\\/travelcube\\/(?!c129a661)\\w+\\.gif',
     where:'DianPing.lpx [Rewrite legacy]',
+  },
+  {
+    feature:'negative-lookahead',
+    pattern:String.raw`^https:\/\/duckduckgo\.com\/\?q=(?!(?:bd|bdimg|gimg|b|wk|qm|gh)\+)([^&]+).+`,
+    where:'QuickSearch.lpx [Rewrite v2]',
   },
   {
     feature:'negative-lookahead',
