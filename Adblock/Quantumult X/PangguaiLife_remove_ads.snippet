@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/PangguaiLife.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:47 +08:00
+# Converted: 2026-10-13 10:18:31 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/PangguaiLife_remove_ads.lpx
@@ -16,19 +16,19 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/userapi\.qiekj\.com\/slot\/get$ url reject-dict
+(?i)^https:\/\/userapi\.qiekj\.com\/slot\/get$ url reject-dict
 
-^https:\/\/userapi\.qiekj\.com\/appTitle\/get$ url reject-dict
+(?i)^https:\/\/userapi\.qiekj\.com\/appTitle\/get$ url reject-dict
 
 ^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_PangguaiLife_remove_ads/phase_qx_response_c7a7753a39.js
 
-^https:\/\/userapi\.qiekj\.com\/integralRecord\/integralDailStatistics$ url reject-dict
+(?i)^https:\/\/userapi\.qiekj\.com\/integralRecord\/integralDailStatistics$ url reject-dict
 
-^https:\/\/userapi\.qiekj\.com\/local-life\/category$ url reject-dict
+(?i)^https:\/\/userapi\.qiekj\.com\/local-life\/category$ url reject-dict
 
-^https:\/\/userapi\.qiekj\.com\/integralGoods\/queryIntegralGoodsPage$ url reject-dict
+(?i)^https:\/\/userapi\.qiekj\.com\/integralGoods\/queryIntegralGoodsPage$ url reject-dict
 
-^https:\/\/userapi\.qiekj\.com\/task\/list$ url reject-dict
+(?i)^https:\/\/userapi\.qiekj\.com\/task\/list$ url reject-dict
 
 # [mitm]
 hostname = userapi.qiekj.com

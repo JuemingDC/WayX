@@ -10,13 +10,13 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ShopKeeperAdmin.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:58 +08:00
+# Converted: 2026-10-13 10:18:46 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/ShopKeeperAdmin_remove_ads.lpx
 # Target: Surge
 
 [Map Local]
-^https:\/\/mch\.juhesaas\.com\/api\/advertisement\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/mch\.juhesaas\.com\/api\/advertisement\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% mch.juhesaas.com

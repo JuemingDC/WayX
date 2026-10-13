@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YoudaoDict.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:53 +08:00
+# Converted: 2026-10-13 10:18:40 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/YoudaoDict_remove_ads.lpx
 # Target: Surge
@@ -21,11 +21,11 @@
 
 [Map Local]
 
-^https:\/\/dict\.youdao\.com\/vip\/activity\/startup\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/dict\.youdao\.com\/vip\/activity\/startup\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/dict\.youdao\.com\/vip\/activity\/retention\/configs\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/dict\.youdao\.com\/vip\/activity\/retention\/match\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/dict\.youdao\.com\/vip\/user\/paid\/guide\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/dict\.youdao\.com\/vip\/activity\/retention\/configs\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/dict\.youdao\.com\/vip\/activity\/retention\/match\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/dict\.youdao\.com\/vip\/user\/paid\/guide\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
 wayx_features_9444636b81 = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_YoudaoDict_remove_ads/features_surge_9444636b81.js,requires-body=true,max-size=-1

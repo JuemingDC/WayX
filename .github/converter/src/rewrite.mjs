@@ -2,7 +2,7 @@
 // Author: chance
 // Category: Converter / rewrite
 
-import { stripRegexFlags, scanSourceRegexLiteral, normalizeRegexBodyForTarget, compileRegexForTarget, conditionRuntimeSource, compileSourceRegex, stringTemplateParts } from "./core.mjs";
+import { scanSourceRegexLiteral, normalizeRegexBodyForTarget, compileRegexForTarget, conditionRuntimeSource, compileSourceRegex, stringTemplateParts } from "./core.mjs";
 import { renderQxHeaderScript, renderQxInlineMockScript, renderSurgeRequestMockScript, renderQxMockFileScript, renderQxRedirectScript, renderQxRejectScript, headerOpsForMock, renderMixedRewriteScript, renderSingleJsonMutationScript, renderSingleRewriteMutationScript } from "./runtime.mjs";
 import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
@@ -1116,7 +1116,7 @@ function nativeJsonPriorityPlan(ast,target) {
   if(!matcher.ok)return null;
   const mapped=jsonPipelineToSafeNativeJq(ast);
   if(!mapped.ok)return null;
-  const note=ast.condition?.right?.flags ? '# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags '+ast.condition.right.flags+' are not a verified target-engine equivalence.\n' : '';
+  const note=ast.condition?.right?.flags ? '# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags '+ast.condition.right.flags+'; this mapping is not a verified target-engine equivalence.\n' : '';
   const line=target==='qx' ? matcher.pattern+' url jsonjq-'+ast.phase+'-body '+quoteJq(mapped.jq) : 'http-'+ast.phase+'-jq '+matcher.pattern+' '+quoteJq(mapped.jq);
   return {section:target==='qx'?'rewrite':'body',line,...(note?{lines:[note.trim(),line]}:{})};
 }
@@ -1181,7 +1181,7 @@ export function compileComplexCondition(node, target, {argumentTable = null,shar
   }
   // The same evaluator serves the oracle and both runtime adapters. Captures
   // are committed only from the successful branch, including AND/OR rollback.
-  return '(()=>{'+(sharedRuntime?'':conditionRuntimeSource())+'\nconst result=evaluateCondition('+JSON.stringify(stripRegexFlags(node))+
+  return '(()=>{'+(sharedRuntime?'':conditionRuntimeSource())+'\nconst result=evaluateCondition('+JSON.stringify(node)+
     ',{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:'+
     (argumentTable?'__wayxArgs':'{}')+'});Object.assign(__wayxCaptures,result.captures);return result.matched;})()';
 }
@@ -1841,7 +1841,7 @@ function applyStaticHeaderAction(headers, action) {
       const regex = args[1];
       const replacement = fixedNoTemplate(args[2], 'header replacement');
       if (regex?.type !== 'regex') throw new Error('header.replace regex must be fixed');
-      const re = new RegExp(normalizeRegexBodyForTarget(regex.pattern));
+      const re = new RegExp(normalizeRegexBodyForTarget(regex.pattern),regex.flags || '');
       const wanted = name.toLowerCase();
       for (const pair of headers) {
         if (pair[0].toLowerCase() === wanted) pair[1] = String(pair[1]).replace(re, replacement);
@@ -2085,7 +2085,7 @@ function comparisonKey(node, {compatibility=false}={}) {
       kind:'url-regex',
       key:'url-regex\u0000'+String(n.right.pattern)+'\u0000'+String(n.right.flags || ''),
       sourceFlags:String(n.right.flags || ''),
-      pattern:String(n.right.pattern),
+      pattern:compileRegexForTarget(n.right).pattern,
     };
   }
 

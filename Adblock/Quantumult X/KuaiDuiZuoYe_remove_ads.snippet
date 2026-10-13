@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KuaiDuiZuoYe.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:42 +08:00
+# Converted: 2026-10-13 10:18:23 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/KuaiDuiZuoYe_remove_ads.lpx
@@ -17,16 +17,16 @@
 host, adx.zuoyebang.com, reject
 
 # [rewrite_local]
-^https:\/\/www\.kuaiduizuoye\.com\/init\/ad\/ url reject-dict
+(?i)^https:\/\/www\.kuaiduizuoye\.com\/init\/ad\/ url reject-dict
 
-^https:\/\/www\.kuaiduizuoye\.com\/activity\/init\/checkappconfig$ url reject-dict
+(?i)^https:\/\/www\.kuaiduizuoye\.com\/activity\/init\/checkappconfig$ url reject-dict
 
-^https:\/\/www\.kuaiduizuoye\.com\/kdapi\/conf\/appbannersv3$ url reject-dict
-^https:\/\/www\.kuaiduizuoye\.com\/kdapi\/conf\/initbanner$ url reject-dict
+(?i)^https:\/\/www\.kuaiduizuoye\.com\/kdapi\/conf\/appbannersv3$ url reject-dict
+(?i)^https:\/\/www\.kuaiduizuoye\.com\/kdapi\/conf\/initbanner$ url reject-dict
 
 ^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_KuaiDuiZuoYe_remove_ads/features_qx_a25bfc5897.js
 
-^https:\/\/apivip\.kuaiduizuoye\.com\/viponline\/scancode\/mycard$ url reject-dict
+(?i)^https:\/\/apivip\.kuaiduizuoye\.com\/viponline\/scancode\/mycard$ url reject-dict
 
 # [mitm]
 hostname = www.kuaiduizuoye.com, apivip.kuaiduizuoye.com

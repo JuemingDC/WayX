@@ -10,21 +10,21 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Wacai.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:53 +08:00
+# Converted: 2026-10-13 10:18:39 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Wacai_remove_ads.lpx
 # Target: Surge
 
 [URL Rewrite]
 
-^https:\/\/jz\.wacaijizhang\.com\/activity\/ _ reject
+(?i)^https:\/\/jz\.wacaijizhang\.com\/activity\/ _ reject
 
 [Map Local]
-^https:\/\/jz\.wacaijizhang\.com\/sensor\/config\/iOS\.conf\? data-type=text data="{\"v\":\"v2\",\"configs\":{\"disableSDK\":true,\"disableDebugMode\":true,\"supportTransportEncrypt\":false}}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/jz\.wacaijizhang\.com\/sensor\/config\/iOS\.conf\? data-type=text data="{\"v\":\"v2\",\"configs\":{\"disableSDK\":true,\"disableDebugMode\":true,\"supportTransportEncrypt\":false}}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/jz\.wacaijizhang\.com\/api\/banners\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/jz\.wacaijizhang\.com\/api\/banners\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/jz\.wacaijizhang\.com\/api\/resource\/universal\/fetch$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/jz\.wacaijizhang\.com\/api\/resource\/universal\/fetch$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% jz.wacaijizhang.com

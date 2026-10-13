@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/PICOOC.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:26 +08:00
+# Converted: 2026-10-13 10:18:01 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/PICOOC_remove_ads.lpx
@@ -16,15 +16,15 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api2\.picooc\.com\/v\d\/api\/focus\/strategy\/execute\? url reject-dict
+(?i)^https:\/\/api2\.picooc\.com\/v\d\/api\/focus\/strategy\/execute\? url reject-dict
 
-^https:\/\/api2\.picooc\.com\/v\d\/api\/dietGuide\/query\? url reject-dict
+(?i)^https:\/\/api2\.picooc\.com\/v\d\/api\/dietGuide\/query\? url reject-dict
 
-^https:\/\/api2\.picooc\.com\/program\/listMainProgram\? url reject-dict
+(?i)^https:\/\/api2\.picooc\.com\/program\/listMainProgram\? url reject-dict
 
-^https:\/\/a\.picooc\.com\/v\d\/api\/camp\/sys\/config\/coupon\/pattern\? url reject-dict
+(?i)^https:\/\/a\.picooc\.com\/v\d\/api\/camp\/sys\/config\/coupon\/pattern\? url reject-dict
 
-^https:\/\/api2\.picooc\.com\/v\d\/api\/account\/getTabsInfo\? url reject-dict
+(?i)^https:\/\/api2\.picooc\.com\/v\d\/api\/account\/getTabsInfo\? url reject-dict
 
 # [mitm]
 hostname = api2.picooc.com, a.picooc.com

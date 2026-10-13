@@ -392,8 +392,9 @@ export function stripRegexFlags(node) {
 // Author: chance
 // Category: Converter / Regex / Cross-platform
 //
-// Native target regex fields have no verified Loon flag equivalent.
-// Preserve bodies; target lowering discards source flags in native and script output.
+// Native target fields encode Loon i/m/s as leading inline modifiers.
+// Client-engine equivalence remains unverified; JavaScript helpers use RegExp flags.
+// Updated: 2026-10-13
 
 export function normalizeRegexBodyForTarget(pattern) {
   // Historical name kept to avoid broad call-site churn. This is deliberately
@@ -408,8 +409,8 @@ export function compileRegexForTarget(regex, { subject = 'url', target = 'generi
   const flags = String(regex.flags || '');
 
   assertRegexNode(regex);
-  if (flags && requireEquivalent) return {ok:false,reason:target+' native '+subject+' regex cannot preserve source flags '+flags,pattern,sourceFlags:flags};
-  return {ok:true,pattern,sourceFlags:flags,compatibilityUnverified:Boolean(flags),notes:[]};
+  if (flags && requireEquivalent) return {ok:false,reason:target+' native '+subject+' regex has no verified engine-equivalence proof for flags '+flags,pattern,sourceFlags:flags};
+  return {ok:true,pattern:flags ? '(?'+flags+')'+pattern : pattern,sourceFlags:flags,compatibilityUnverified:Boolean(flags),notes:[]};
 }
 
 // qx-official-capabilities.mjs
@@ -497,12 +498,11 @@ export const SURGE_WAYX_SCRIPT_TYPES = new Set([
 export const SURGE_WAYX_MITM_KEYS = new Set(['hostname']);
 
 function targetRegexCompilerSource() {
-  return 'function compileSourceRegex(node){const {source}=assertRegexNode(node);return new RegExp(source);}';
+  return compileSourceRegex.toString();
 }
 
 // 上游错误 / 转换失败案例：将 Loon 的 /pattern/flags 当作目标正则语法。
-// Target helpers retain the regex body and explicitly discard source flags,
-// as requested. The source evaluator above still describes original semantics.
+// JavaScript helpers preserve regex bodies and i/m/s via RegExp(source, flags).
 // One policy covers literal and dynamic condition regexes in both targets.
 export function conditionRuntimeSource() {
   return 'const SUPPORTED_FLAGS=/^[ims]*$/;\n'+[

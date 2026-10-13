@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YoudaoDict.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:53 +08:00
+# Converted: 2026-10-13 10:18:40 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/YoudaoDict_remove_ads.lpx
@@ -20,11 +20,11 @@
 # [rewrite_local]
 ^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_YoudaoDict_remove_ads/features_qx_ebfac67e3f.js
 
-^https:\/\/dict\.youdao\.com\/vip\/activity\/startup\/ url reject-dict
+(?i)^https:\/\/dict\.youdao\.com\/vip\/activity\/startup\/ url reject-dict
 
-^https:\/\/dict\.youdao\.com\/vip\/activity\/retention\/configs\? url reject-dict
-^https:\/\/dict\.youdao\.com\/vip\/activity\/retention\/match\? url reject-dict
-^https:\/\/dict\.youdao\.com\/vip\/user\/paid\/guide\? url reject-dict
+(?i)^https:\/\/dict\.youdao\.com\/vip\/activity\/retention\/configs\? url reject-dict
+(?i)^https:\/\/dict\.youdao\.com\/vip\/activity\/retention\/match\? url reject-dict
+(?i)^https:\/\/dict\.youdao\.com\/vip\/user\/paid\/guide\? url reject-dict
 
 # [mitm]
 hostname = dict.youdao.com

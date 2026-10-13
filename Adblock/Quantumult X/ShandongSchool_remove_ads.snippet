@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ShandongSchool.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:50 +08:00
+# Converted: 2026-10-13 10:18:35 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/ShandongSchool_remove_ads.lpx
@@ -16,28 +16,28 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api\.huachenjie\.com\/run-front\/ad\/ url reject-dict
-^https:\/\/api\.huachenjie\.com\/run-front\/api\/union\/ad\/ url reject-dict
-^https:\/\/api\.huachenjie\.com\/run-front\/home\/getAdPopup$ url reject-dict
-^https:\/\/api\.huachenjie\.com\/run-front\/street\/listRecommendBanner$ url reject-dict
-^https:\/\/api\.huachenjie\.com\/run-front\/street\/listThemeBanner$ url reject-dict
+(?i)^https:\/\/api\.huachenjie\.com\/run-front\/ad\/ url reject-dict
+(?i)^https:\/\/api\.huachenjie\.com\/run-front\/api\/union\/ad\/ url reject-dict
+(?i)^https:\/\/api\.huachenjie\.com\/run-front\/home\/getAdPopup$ url reject-dict
+(?i)^https:\/\/api\.huachenjie\.com\/run-front\/street\/listRecommendBanner$ url reject-dict
+(?i)^https:\/\/api\.huachenjie\.com\/run-front\/street\/listThemeBanner$ url reject-dict
 
-^https:\/\/api\.huachenjie\.com\/run-front\/home\/homePage\/config$ url jsonjq-response-body '.data.functionEntries |= map(select(.name == "运动" or .name == "空间")) | del(.data.seaview)'
+(?i)^https:\/\/api\.huachenjie\.com\/run-front\/home\/homePage\/config$ url jsonjq-response-body '.data.functionEntries |= map(select(.name == "运动" or .name == "空间")) | del(.data.seaview)'
 
-^https:\/\/api\.huachenjie\.com\/run-front\/api\/home\/activityEntry$ url reject-dict
+(?i)^https:\/\/api\.huachenjie\.com\/run-front\/api\/home\/activityEntry$ url reject-dict
 
-^https:\/\/api\.huachenjie\.com\/run-front\/home\/promoSlots\/config$ url reject-dict
+(?i)^https:\/\/api\.huachenjie\.com\/run-front\/home\/promoSlots\/config$ url reject-dict
 
-^https:\/\/api\.huachenjie\.com\/run-front\/api\/user\/cs\/index$ url jsonjq-response-body 'delpaths([["data","bannerList"]])'
+(?i)^https:\/\/api\.huachenjie\.com\/run-front\/api\/user\/cs\/index$ url jsonjq-response-body 'delpaths([["data","bannerList"]])'
 
-^https:\/\/api\.huachenjie\.com\/run-front\/api\/channel\/subject\/hotspot\/rank$ url reject-dict
+(?i)^https:\/\/api\.huachenjie\.com\/run-front\/api\/channel\/subject\/hotspot\/rank$ url reject-dict
 
-^https:\/\/api\.huachenjie\.com\/run-front\/api\/jackpot\/award\/home$ url reject-dict
-^https:\/\/api\.huachenjie\.com\/run-front\/api\/jackpot\/award\/lotteryPage$ url reject-dict
-^https:\/\/api\.huachenjie\.com\/run-front\/api\/jackpot\/award\/list$ url reject-dict
+(?i)^https:\/\/api\.huachenjie\.com\/run-front\/api\/jackpot\/award\/home$ url reject-dict
+(?i)^https:\/\/api\.huachenjie\.com\/run-front\/api\/jackpot\/award\/lotteryPage$ url reject-dict
+(?i)^https:\/\/api\.huachenjie\.com\/run-front\/api\/jackpot\/award\/list$ url reject-dict
 
-^https:\/\/api\.huachenjie\.com\/run-front\/api\/mall\/goods\/recommend\/pagePointsGoodsList$ url reject-dict
-^https:\/\/api\.huachenjie\.com\/run-front\/common\/bottom-bar\/redDot$ url jsonjq-response-body 'delpaths([["data","inspiration"]])'
+(?i)^https:\/\/api\.huachenjie\.com\/run-front\/api\/mall\/goods\/recommend\/pagePointsGoodsList$ url reject-dict
+(?i)^https:\/\/api\.huachenjie\.com\/run-front\/common\/bottom-bar\/redDot$ url jsonjq-response-body 'delpaths([["data","inspiration"]])'
 
 # [mitm]
 hostname = api.huachenjie.com

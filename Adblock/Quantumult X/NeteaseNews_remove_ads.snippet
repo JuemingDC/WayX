@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/NeteaseNews.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:53 +08:00
+# Converted: 2026-10-13 10:18:40 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/NeteaseNews_remove_ads.lpx
@@ -18,21 +18,21 @@ host, nex.163.com, direct
 host, gw.m.163.com, direct
 
 # [rewrite_local]
-^https?:\/\/interface\.music\.163\.com\/eapi\/ad url reject
-^https?:\/\/c\.m\.163\.com\/nc\/gl\/ url reject
-^https?:\/\/client\.mail\.163\.com\/apptrack\/confinfo\/searchMultiAds url reject
-^https?:\/\/g1\.163\.com\/madfeedback url reject
-^https?:\/\/interface\.music\.163\.com\/eapi\/ad\/ url reject
-^https?:\/\/support\.you\.163\.com\/xhr\/boot\/getBootMedia\.json url reject
-^https?:\/\/interface3?\.music\.163\.com\/eapi\/(ad|abtest|sp|hot|store|search\/(specialkeyword|defaultkeyword|hot)) url reject
+(?i)^https?:\/\/interface\.music\.163\.com\/eapi\/ad url reject
+(?i)^https?:\/\/c\.m\.163\.com\/nc\/gl\/ url reject
+(?i)^https?:\/\/client\.mail\.163\.com\/apptrack\/confinfo\/searchMultiAds url reject
+(?i)^https?:\/\/g1\.163\.com\/madfeedback url reject
+(?i)^https?:\/\/interface\.music\.163\.com\/eapi\/ad\/ url reject
+(?i)^https?:\/\/support\.you\.163\.com\/xhr\/boot\/getBootMedia\.json url reject
+(?i)^https?:\/\/interface3?\.music\.163\.com\/eapi\/(ad|abtest|sp|hot|store|search\/(specialkeyword|defaultkeyword|hot)) url reject
 # 移除网易新闻广告
-^https:\/\/nex\.163\.com\/q url script-response-body https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js
+(?i)^https:\/\/nex\.163\.com\/q url script-response-body https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js
 
 # 移除网易新闻广告
-^https:\/\/gw\.m\.163\.com\/nc\/api\/v1\/feed\/dynamic\/headline-list\? url script-response-body https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js
+(?i)^https:\/\/gw\.m\.163\.com\/nc\/api\/v1\/feed\/dynamic\/headline-list\? url script-response-body https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js
 
 # 移除网易新闻广告
-^https:\/\/gw\.m\.163\.com\/nc\/api\/v1\/search\/hot-word url script-response-body https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js
+(?i)^https:\/\/gw\.m\.163\.com\/nc\/api\/v1\/search\/hot-word url script-response-body https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js
 
 # [mitm]
 hostname = nex.163.com, interface.music.163.com, c.m.163.com, client.mail.163.com, g1.163.com, support.you.163.com, interface3?.music.163.com, gw.m.163.com

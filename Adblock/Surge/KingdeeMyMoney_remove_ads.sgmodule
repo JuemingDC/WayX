@@ -10,25 +10,25 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KingdeeMyMoney.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:51 +08:00
+# Converted: 2026-10-13 10:18:36 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/KingdeeMyMoney_remove_ads.lpx
 # Target: Surge
 
 [URL Rewrite]
 
-^https:\/\/api\.feidee\.net\/v1\/configs\/client\/configs _ reject
+(?i)^https:\/\/api\.feidee\.net\/v1\/configs\/client\/configs _ reject
 
 [Map Local]
-^https:\/\/tg\.feidee\.com\/online_ad\/api\/search\.do$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/tg\.feidee\.com\/online_ad\/api\/search\.do$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/yunmk\.feidee\.net\/cab-market-ws\/market\/v2\/contents$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/yunmk\.feidee\.net\/cab-market-ws\/market\/v2\/contents$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/tg\.feidee\.com\/vis-ad-engine-ws\/api\/v2\/ads\/.+esultNum data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/tg\.feidee\.com\/vis-ad-engine-ws\/api\/v2\/ads\/.+esultNum data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/tg\.feidee\.com\/vis-ad-engine-ws\/api\/show data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/tg\.feidee\.com\/vis-ad-engine-ws\/api\/show data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/yun\.feidee\.net\/cab-periodic-activity-ws\/terminal\/v1\/members\/status data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/yun\.feidee\.net\/cab-periodic-activity-ws\/terminal\/v1\/members\/status data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% tg.feidee.com, yunmk.feidee.net, community.feidee.com, api.feidee.net, yun.feidee.net

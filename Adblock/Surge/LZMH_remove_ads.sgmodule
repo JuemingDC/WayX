@@ -10,32 +10,32 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/LZMH.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:44 +08:00
+# Converted: 2026-10-13 10:18:27 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/LZMH_remove_ads.lpx
 # Target: Surge
 
 [URL Rewrite]
 
-^http:\/\/lzmh\.lz-qs\.com:5090\/resource\/download\/ _ reject
+(?i)^http:\/\/lzmh\.lz-qs\.com:5090\/resource\/download\/ _ reject
 
 [Map Local]
-^https:\/\/lzmh\.lz-qs\.com:6025\/lzmh_app_api\/api\/v1\/app3rd\/getApp3rdGenreList\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/lzmh\.lz-qs\.com:6025\/lzmh_app_api\/api\/v1\/app3rd\/getApp3rdGenreList\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/lzmh\.lz-qs\.com:6025\/lzmh_app_api\/api\/v1\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/lzmh\.lz-qs\.com:6025\/lzmh_app_api\/api\/v1\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/yuudnn\.lz-qs\.com:9220\/mssp-api\/api\/v1\/mrtb\/getAdSlotList$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/yuudnn\.lz-qs\.com:9220\/mssp-api\/api\/v1\/mrtb\/requestAd$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/yuudnn\.lz-qs\.com:9220\/mssp-api\/api\/v1\/mrtb\/getAdSlotList$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/yuudnn\.lz-qs\.com:9220\/mssp-api\/api\/v1\/mrtb\/requestAd$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/yuudnn\.lz-qs\.com:9220\/mssp-api\/api\/v1\/mrtb\/getSdkStartConfigList$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/yuudnn\.lz-qs\.com:9220\/mssp-api\/api\/v1\/mrtb\/getSdkStartConfigList$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/lzmh\.lz-qs\.com:6025\/lzmh_app_api\/api\/v1\/index\/getRecommendList\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/lzmh\.lz-qs\.com:6025\/lzmh_app_api\/api\/v1\/index\/getRecommendList\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/yuudnn\.lz-qs\.com\/lzmh_app_api\/o2o\/api\/v2\/o2o\/homeInfo$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/yuudnn\.lz-qs\.com\/lzmh_app_api\/o2o\/api\/v2\/o2o\/homeInfo$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/yuudnn\.lz-qs\.com\/lzmh_app_api\/o2o\/api\/v2\/o2o\/homeShopList$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/yuudnn\.lz-qs\.com\/lzmh_app_api\/o2o\/api\/v2\/o2o\/homeShopList$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/yuudnn\.lz-qs\.com:9220\/mssp-api\/api\/v1\/mrtb\/getSdkAdSlotList$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/yuudnn\.lz-qs\.com:9220\/mssp-api\/api\/v1\/mrtb\/getSdkAdSlotList$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
 

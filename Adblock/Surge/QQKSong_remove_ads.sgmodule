@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/QQKSong.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:50 +08:00
+# Converted: 2026-10-13 10:18:35 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/QQKSong_remove_ads.lpx
 # Target: Surge
@@ -52,13 +52,13 @@ IP-CIDR,47.110.187.87/32,REJECT,no-resolve,pre-matching
 URL-REGEX,^http:\/\/y\.gtimg\.cn\/music\/common\/upload\/t_k_main_page_banner\/,REJECT,extended-matching
 
 [URL Rewrite]
-^https:\/\/tmeadkg\.y\.qq\.com\/maproxy\/getAd$ _ reject
+(?i)^https:\/\/tmeadkg\.y\.qq\.com\/maproxy\/getAd$ _ reject
 
 [Map Local]
-^https:\/\/wallpaper-\d+\.file\.myqcloud\.com\/dsl\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https?:\/\/wallpaper-\d+\.file\.myqcloud\.com\/hikari\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/amsweb-cdn-\S+-\d+\.file\.myqcloud\.com\/video\/ad_profile\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/wnsaviator\.kg\.qq\.com\/wnsaviator\/api\/v1\/transMerge\?_webcgikey=get_activity_entry$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/wallpaper-\d+\.file\.myqcloud\.com\/dsl\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https?:\/\/wallpaper-\d+\.file\.myqcloud\.com\/hikari\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/amsweb-cdn-\S+-\d+\.file\.myqcloud\.com\/video\/ad_profile\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/wnsaviator\.kg\.qq\.com\/wnsaviator\/api\/v1\/transMerge\?_webcgikey=get_activity_entry$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% wallpaper-1258344696.file.myqcloud.com, amsweb-cdn-*-1258344696.file.myqcloud.com, wnsaviator.kg.qq.com, tmeadkg.y.qq.com

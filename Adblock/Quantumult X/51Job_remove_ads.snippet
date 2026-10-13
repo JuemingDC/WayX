@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/51Job.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:48 +08:00
+# Converted: 2026-10-13 10:18:32 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/51Job_remove_ads.lpx
@@ -16,22 +16,22 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/appapi\.51jobapp\.com\/api\/market\/get_launch\.php\? url reject-dict
+(?i)^https:\/\/appapi\.51jobapp\.com\/api\/market\/get_launch\.php\? url reject-dict
 
-^https:\/\/cupid\.51jobapp\.com\/open\/operation\/get\/latest\/banner-list\? url reject-dict
+(?i)^https:\/\/cupid\.51jobapp\.com\/open\/operation\/get\/latest\/banner-list\? url reject-dict
 
 ^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_51Job_remove_ads/phase_qx_response_54b61467ac.js
 
-^https:\/\/cupid\.51jobapp\.com\/open\/51job-activities\/secJob\/queryHomeSecondConfigV2\? url reject-dict
+(?i)^https:\/\/cupid\.51jobapp\.com\/open\/51job-activities\/secJob\/queryHomeSecondConfigV2\? url reject-dict
 
-^https:\/\/cupid\.51jobapp\.com\/open\/noauth\/jobs\/detail\/sesame-competitive\/ url reject-dict
+(?i)^https:\/\/cupid\.51jobapp\.com\/open\/noauth\/jobs\/detail\/sesame-competitive\/ url reject-dict
 
-^https:\/\/cupid\.51jobapp\.com\/open\/noauth\/jobs\/job-detail\/user-rights\? url reject-dict
+(?i)^https:\/\/cupid\.51jobapp\.com\/open\/noauth\/jobs\/job-detail\/user-rights\? url reject-dict
 
-^https:\/\/cupid\.51jobapp\.com\/open\/resume\/strategy\/resume-build\? url reject-dict
+(?i)^https:\/\/cupid\.51jobapp\.com\/open\/resume\/strategy\/resume-build\? url reject-dict
 
-^https:\/\/cupid\.51jobapp\.com\/launch-hub\/open\/noauth\/popUp\/ url reject-dict
-^https:\/\/cupid\.51jobapp\.com\/launch-hub\/open\/noauth\/popUp\/getHomePagePopUp\? url reject-dict
+(?i)^https:\/\/cupid\.51jobapp\.com\/launch-hub\/open\/noauth\/popUp\/ url reject-dict
+(?i)^https:\/\/cupid\.51jobapp\.com\/launch-hub\/open\/noauth\/popUp\/getHomePagePopUp\? url reject-dict
 
 # [mitm]
 hostname = appapi.51jobapp.com, cupid.51jobapp.com

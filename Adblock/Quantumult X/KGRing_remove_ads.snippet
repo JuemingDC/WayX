@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KGRing.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:43 +08:00
+# Converted: 2026-10-13 10:18:25 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/KGRing_remove_ads.lpx
@@ -16,7 +16,7 @@
 # [filter_local]
 
 # [rewrite_local]
-^http:\/\/api\.ring\.kugou\.com\/user\/notice\/recommend$ url reject-dict
+(?i)^http:\/\/api\.ring\.kugou\.com\/user\/notice\/recommend$ url reject-dict
 
 # [mitm]
 hostname = api.ring.kugou.com

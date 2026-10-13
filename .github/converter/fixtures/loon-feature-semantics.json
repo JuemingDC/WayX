@@ -194,7 +194,7 @@
       "id": "paired-body-batch",
       "source": "response if ${url} ~= /example/i then response.body.replace([/a/i,/b/i],[\"B\",\"C\"]) | response.header.set([\"X-A\",\"X-B\"],[\"${request.method}\",\"ok\"])",
       "expected": {
-        "body": "A",
+        "body": "C",
         "headers": {
           "X-A": "GET",
           "X-B": "ok"
@@ -315,7 +315,7 @@
       "response": {},
       "expected": {
         "headers": {
-          "X-Key": "OLD",
+          "X-Key": "new",
           "x-key": "new"
         }
       },

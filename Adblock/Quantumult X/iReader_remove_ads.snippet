@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/iReader.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:37:01 +08:00
+# Converted: 2026-10-13 10:18:51 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/iReader_remove_ads.lpx
@@ -17,19 +17,19 @@
 host, saad.ms.zhangyue.net, reject
 
 # [rewrite_local]
-^https:\/\/(webboot\.zhangyue\.com|ih2\.ireader\.com)\/zyapi\/bookstore\/ad\/ url reject-dict
-^https:\/\/(webboot\.zhangyue\.com|ih2\.ireader\.com)\/bookstore\/ad\/ url reject-dict
+(?i)^https:\/\/(webboot\.zhangyue\.com|ih2\.ireader\.com)\/zyapi\/bookstore\/ad\/ url reject-dict
+(?i)^https:\/\/(webboot\.zhangyue\.com|ih2\.ireader\.com)\/bookstore\/ad\/ url reject-dict
 
-^https:\/\/(webboot\.zhangyue\.com|ih2\.ireader\.com)\/zybook4\/iphone\/u\/p\/api\.php\? url jsonjq-response-body 'delpaths([["Splash"]])'
+(?i)^https:\/\/(webboot\.zhangyue\.com|ih2\.ireader\.com)\/zybook4\/iphone\/u\/p\/api\.php\? url jsonjq-response-body 'delpaths([["Splash"]])'
 
-^https:\/\/(webboot\.zhangyue\.com|ih2\.ireader\.com)\/zybk\/api\/pop\/index\? url reject-dict
+(?i)^https:\/\/(webboot\.zhangyue\.com|ih2\.ireader\.com)\/zybk\/api\/pop\/index\? url reject-dict
 
-^https:\/\/(webboot\.zhangyue\.com|ih2\.ireader\.com)\/bookstore\/read\/visual\/channel\/list\? url jsonjq-response-body '.body.list |= map(select(.id | contains("ad_") | not))'
+(?i)^https:\/\/(webboot\.zhangyue\.com|ih2\.ireader\.com)\/bookstore\/read\/visual\/channel\/list\? url jsonjq-response-body '.body.list |= map(select(.id | contains("ad_") | not))'
 
-^https:\/\/(webboot\.zhangyue\.com|ih2\.ireader\.com)\/zyapi\/bookstore\/user\/mytab\? url reject-dict
-^https:\/\/(webboot\.zhangyue\.com|ih2\.ireader\.com)\/zyboot\/activity\/mytab\? url reject-dict
+(?i)^https:\/\/(webboot\.zhangyue\.com|ih2\.ireader\.com)\/zyapi\/bookstore\/user\/mytab\? url reject-dict
+(?i)^https:\/\/(webboot\.zhangyue\.com|ih2\.ireader\.com)\/zyboot\/activity\/mytab\? url reject-dict
 
-https:\/\/(webboot\.zhangyue\.com|ih2\.ireader\.com)\/zyam\/app\/app\.php\? url reject-dict
+(?i)https:\/\/(webboot\.zhangyue\.com|ih2\.ireader\.com)\/zyam\/app\/app\.php\? url reject-dict
 
 # [mitm]
 hostname = webboot.zhangyue.com, ih2.ireader.com

@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Himalaya.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-05 00:28:12 +08:00
+# Converted: 2026-10-13 10:18:48 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Himalaya_remove_ads.lpx
@@ -21,49 +21,49 @@ host, adbehavior.ximalaya.com, reject
 host, adbehavior.wsa.ximalaya.com, reject
 
 # [rewrite_local]
-^https:\/\/(search|searchwsa)\.ximalaya\.com\/hub\/(guideWord|hotWord)V\d\/ url reject-dict
+(?i)^https:\/\/(search|searchwsa)\.ximalaya\.com\/hub\/(guideWord|hotWord)V\d\/ url reject-dict
 
-^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/discovery-feed\/v\d\/mix\/ url jsonjq-response-body '.heData |= map(select(.item.list[].bizType != "SceneListenCard"))'
-^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/discovery-feed\/v\d\/scene\/listen\/refresh\? url reject-dict
+(?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/discovery-feed\/v\d\/mix\/ url jsonjq-response-body '.heData |= map(select(.item.list[].bizType != "SceneListenCard"))'
+(?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/discovery-feed\/v\d\/scene\/listen\/refresh\? url reject-dict
 
-^https:\/\/(m|mwsa)\.ximalaya\.com\/x-web-activity\/signIn\/getHomePageSignInInfo\/ url reject-dict
+(?i)^https:\/\/(m|mwsa)\.ximalaya\.com\/x-web-activity\/signIn\/getHomePageSignInInfo\/ url reject-dict
 
-^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/discovery-category\/customCategories\/ url jsonjq-response-body '.categoryList |= map(.itemList |= map(select(.title | test("直播|123狂欢节|SVIP"; "i") | not))) | .customCategoryList |= map(select(.title | test("直播|123狂欢节|SVIP"; "i") | not))'
+(?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/discovery-category\/customCategories\/ url jsonjq-response-body '.categoryList |= map(.itemList |= map(select(.title | test("直播|123狂欢节|SVIP"; "i") | not))) | .customCategoryList |= map(select(.title | test("直播|123狂欢节|SVIP"; "i") | not))'
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/football-portal\/diff2\/batch\? url jsonjq-response-body 'delpaths([["json","ad"],["json","toc"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
+(?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/football-portal\/diff2\/batch\? url jsonjq-response-body 'delpaths([["json","ad"],["json","toc"]])'
 
-^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/nexus-web\/v\d\/tabs\/customTabs\? url jsonjq-response-body '.data.feedTabs |= map(select(.name != "大赛"))'
+(?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/nexus-web\/v\d\/tabs\/customTabs\? url jsonjq-response-body '.data.feedTabs |= map(select(.name != "大赛"))'
 
-^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/subscribe\/v\d\/subscribe\/tagAlbumList$ url reject-dict
+(?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/subscribe\/v\d\/subscribe\/tagAlbumList$ url reject-dict
 
-^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/track-feed\/v\d\/chase\/recommend\/ url reject-dict
+(?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/track-feed\/v\d\/chase\/recommend\/ url reject-dict
 
-^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/social-web\/follow-stream\/category\/\d+$ url reject-dict
+(?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/social-web\/follow-stream\/category\/\d+$ url reject-dict
 
-^https:\/\/(m|mwsa)\.ximalaya\.com\/community\/square\/v\d\/stream\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Himalaya_remove_ads/mock_48cbd2c8d3.js
+(?i)^https:\/\/(m|mwsa)\.ximalaya\.com\/community\/square\/v\d\/stream\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Himalaya_remove_ads/mock_48cbd2c8d3.js
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/mobwsa\.ximalaya\.com\/mobile-playpage\/playpage\/tabs\/v2\/ url jsonjq-response-body 'delpaths([["data","playpage","resourceMap","defaultResource"],["data","playpage","resourceMap","playPageTip"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
+(?i)^https:\/\/mobwsa\.ximalaya\.com\/mobile-playpage\/playpage\/tabs\/v2\/ url jsonjq-response-body 'delpaths([["data","playpage","resourceMap","defaultResource"],["data","playpage","resourceMap","playPageTip"]])'
 
-^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-playpage\/playpage\/recommendContentV\d\/ url reject-dict
+(?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-playpage\/playpage\/recommendContentV\d\/ url reject-dict
 
-^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-playpage\/playpage\/recommend\/resource\/allocation\/ url reject-dict
+(?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-playpage\/playpage\/recommend\/resource\/allocation\/ url reject-dict
 
-^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/firework-portal\/v\d+\/sync\? url reject-dict
-^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/business-sale-promotion-guide-mobile-web\/popup\/ url reject-dict
+(?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/firework-portal\/v\d+\/sync\? url reject-dict
+(?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/business-sale-promotion-guide-mobile-web\/popup\/ url reject-dict
 
-^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/app-skin-service\/skin\/setting\/info\/ url reject-dict
+(?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/app-skin-service\/skin\/setting\/info\/ url reject-dict
 
-^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-user\/v\d\/homePage\/ url jsonjq-response-body 'delpaths([["data","freeListenV2"]])'
+(?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-user\/v\d\/homePage\/ url jsonjq-response-body 'delpaths([["data","freeListenV2"]])'
 
-^https:\/\/(live|livewsa)\.ximalaya\.com\/lamia\/v1\/subscribe\/status$ url reject-dict
+(?i)^https:\/\/(live|livewsa)\.ximalaya\.com\/lamia\/v1\/subscribe\/status$ url reject-dict
 
-^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-user\/v\d\/homePage\/ url jsonjq-response-body '.data.serviceModule.entrances |= map(select(.name == "全部服务"))'
+(?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-user\/v\d\/homePage\/ url jsonjq-response-body '.data.serviceModule.entrances |= map(select(.name == "全部服务"))'
 
-^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/subscribe\/v\d\/subscribe\/recommend\? url reject-dict
+(?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/subscribe\/v\d\/subscribe\/recommend\? url reject-dict
 
-^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-user\/v\d\/purchased\/recommend\/ url reject-dict
+(?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-user\/v\d\/purchased\/recommend\/ url reject-dict
 
 # [mitm]
 hostname = gslbali.ximalaya.com, search.ximalaya.com, searchwsa.ximalaya.com, mobile.ximalaya.com, mobilehera.ximalaya.com, mobwsa.ximalaya.com, m.ximalaya.com, mwsa.ximalaya.com

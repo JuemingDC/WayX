@@ -3,8 +3,8 @@
 // Category: Converter / runtime / Regression Suite
 
 import { parseRewriteV2, renderMixedRewriteScript, renderQxInlineMockScript } from "../src/index.mjs";
-import {evaluateRewriteActions as sourceActionOracle,stripRegexFlags} from '../src/core.mjs';
-const evaluateTargetRewriteActions=(ast,context,options={})=>sourceActionOracle(stripRegexFlags(ast),context,{...options,jsonReplaceSetsPath:true});
+import {evaluateRewriteActions as sourceActionOracle} from '../src/core.mjs';
+const evaluateTargetRewriteActions=(ast,context,options={})=>sourceActionOracle(ast,context,{...options,jsonReplaceSetsPath:true});
 import assert from "node:assert/strict";
 import vm from "node:vm";
 
@@ -28,7 +28,7 @@ function executeConvertedLayers(output,target,phase,initial={}) {
   for(const line of output[target].split('\n').filter(x=>x && !x.startsWith('#'))) {
     if(line.includes(target==='qx'?'jsonjq-'+phase+'-body':'http-'+phase+'-jq')) {
       const pattern=target==='qx'?line.split(' url ')[0]:line.match(/^http-(?:request|response)-jq (.*?) '/)?.[1];
-      assert.ok(pattern);if(!new RegExp(pattern).test(request.url))continue;
+      assert.ok(pattern);if(!(()=>{const prefix=pattern.match(/^\(\?([ims]+)\)/);return new RegExp(prefix?pattern.slice(prefix[0].length):pattern,prefix?.[1] || '').test(request.url);})())continue;
       const program=line.match(/'(.+)'$/)?.[1];assert.ok(program);
       const parsed=runIsolatedCase('jq',['-c',program],{input:state.body,encoding:'utf8'});
       if(parsed.status===0){state.body=parsed.stdout.trim();result.body=state.body;}
@@ -276,12 +276,12 @@ if (selectedCase==='generated-helper-runtime.mjs') {
   for (const target of ['qx','surge']) for (const flags of ['','i','m','s','im','is','ms','ims']) for(const body of ['a.b','A\nB','a\nb','prefix\na.b\nsuffix']) {
     const ast=parseRewriteV2('response if ${url} ~= /api-(\\d+)/i as hit && ${response.header["X-Mode"]} ~= /^READY$/i then response.body.replace(/^a.b$/'+flags+', "$0:$0:${hit.1}") | response.header.replace("X-Mode", /ready/i, "$0-done") | response.json.add("meta.ok",true)');
     const context={url:'https://example.test/api-42',request:{url:'https://example.test/api-42',headers:{},method:'GET'},response:{headers:{'x-mode':'READY'},body,status:200,statusCode:200}};
-    const lowered=JSON.parse(JSON.stringify(ast), (key,value)=>key==='flags'?'':value);
+    const lowered=ast;
     const oracle=evaluateTargetRewriteActions(lowered,context,{parsePath:parseJsonKeyPath});
     const generated=run(renderMixedRewriteScript(ast,{target}).script,context);
     assert.equal(generated.body,oracle.state.response.body);
     assert.deepEqual(generated.headers,oracle.state.response.headers);
-    if (flags==='ims' && body==='A\nB') assert.equal(generated.body,body,'target policy removes i/m/s, preserving the body on a regex miss');
+    if (flags==='ims' && body==='A\nB') assert.equal(generated.body,'A\nB:A\nB:42','i/s preserves uppercase multiline matching and action captures');
     checked++;
   }
   for(const target of ['qx','surge']) {
@@ -304,7 +304,7 @@ if (selectedCase==='generated-helper-runtime.mjs') {
     for(const url of ['https://example.test/API-42','HTTPS://example.test/api-42','https://example.test/none']) {
       const context={url,request:{url,headers:{},method:'GET'},response:{headers:{},body:'OLD',status:200,statusCode:200}};
       let state=context;
-      for(const ast of entries)state=evaluateTargetRewriteActions(JSON.parse(JSON.stringify(ast),(key,value)=>key==='flags'?'':value),state,{parsePath:parseJsonKeyPath}).state;
+      for(const ast of entries)state=evaluateTargetRewriteActions(ast,state,{parsePath:parseJsonKeyPath}).state;
       const plan=renderRewritePhaseDispatcher(entries,{target});
       assert.equal(new RegExp(plan.pattern).test(url),true,'phase prefilter must not exclude uppercase URL schemes');
       const generated=run(plan.script,context);
@@ -458,7 +458,7 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   const owner=convertPlugin(entry,source,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
   assert.match(owner.qx,/api url jsonjq-response-body/);
   assert.match(owner.qx,/script-response-body https:\/\/example.test\/original.js/);
-  assert.match(owner.surge,/http-response-jq api /);
+  assert.match(owner.surge,/http-response-jq \(\?i\)api /);
   assert.match(owner.surge,/script-path=https:\/\/example.test\/original.js/);
   assert.equal(owner.generatedScripts.size,0);
   // Templates are argument references too; QX cannot invent their transport.
@@ -718,7 +718,7 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   const entry={id:'NativePriority',source:'https://example.test/plugin/main.lpx',category:'Test'};const options={stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'};
   let checked=0;
   for(const phase of ['request','response'])for(const filter of ['.data.ads = []','del(.data.adList) | .data.launchAd.showType = 0','.data | map(select(.enabled))','.first = true']) {
-    const source='[Rewrite]\n'+phase+' if ${url} ~= /^https:\\/\\/example\\.test\\/api$/i then '+phase+'.json.jq(`'+filter+'`)';const output=convertPlugin(entry,source,options);validateConvertedPlugin(entry,output);assert.equal(output.generatedScripts.size,0);assert.match(output.qx,/^\^https:.* url jsonjq-/m);assert.match(output.surge,/^http-.*-jq \^https:/m);assert.doesNotMatch(output.qx+output.surge,/script-.*body|pattern=\^,/);checked+=2;
+    const source='[Rewrite]\n'+phase+' if ${url} ~= /^https:\\/\\/example\\.test\\/api$/i then '+phase+'.json.jq(`'+filter+'`)';const output=convertPlugin(entry,source,options);validateConvertedPlugin(entry,output);assert.equal(output.generatedScripts.size,0);assert.match(output.qx,/^(?:\(\?[ims]+\))?\^https:.* url jsonjq-/m);assert.match(output.surge,/^http-.*-jq (?:\(\?[ims]+\))?\^https:/m);assert.doesNotMatch(output.qx+output.surge,/script-.*body|pattern=\^,/);checked+=2;
   }
   // Both file syntaxes must read content and emit real native jq; retain the
   // author's Path Array syntax, hash inside strings and literal template text.
@@ -739,12 +739,12 @@ if(selectedCase==='generated-helper-runtime.mjs') {
       checked++;
     }
   }
-  const a='response if ${url} ~= /first/i then response.json.jq(`.data.ads = []`)';const b='response if ${url} ~= /second/i then response.json.jq(`.data = []`)';const separate=convertPlugin(entry,'[Rewrite]\n'+a+'\n'+b,options);assert.equal(separate.generatedScripts.size,0);assert.match(separate.qx,/^first url jsonjq-response-body/m);assert.match(separate.qx,/^second url jsonjq-response-body/m);
+  const a='response if ${url} ~= /first/i then response.json.jq(`.data.ads = []`)';const b='response if ${url} ~= /second/i then response.json.jq(`.data = []`)';const separate=convertPlugin(entry,'[Rewrite]\n'+a+'\n'+b,options);assert.equal(separate.generatedScripts.size,0);assert.match(separate.qx,/^\(\?i\)first url jsonjq-response-body/m);assert.match(separate.qx,/^\(\?i\)second url jsonjq-response-body/m);
   // Keep an independently native JQ even when the phase contains a helper.
-  const owner=convertPlugin(entry,'[Rewrite]\n'+a+'\nresponse if ${url} ~= /other/i then response.header.set("X","yes")',options);assert.match(owner.qx,/^first url jsonjq-response-body/m);assert.match(owner.surge,/^http-response-jq first /m);assert.doesNotMatch(owner.qx+owner.surge,/phase_.*\.js/);
+  const owner=convertPlugin(entry,'[Rewrite]\n'+a+'\nresponse if ${url} ~= /other/i then response.header.set("X","yes")',options);assert.match(owner.qx,/^\(\?i\)first url jsonjq-response-body/m);assert.match(owner.surge,/^http-response-jq \(\?i\)first /m);assert.doesNotMatch(owner.qx+owner.surge,/phase_.*\.js/);
   for(const phase of ['request','response']) {
     const line=phase+' if ${url} ~= /^https:\\/\\/example\\.test\\/api$/i then '+phase+'.json.jq_file("one.jq")';const files=await materializeJqFiles(entry,parseLoonPlugin('[Rewrite]\n'+line),{fetchText:async()=>'.data.ads = []'});const output=convertPlugin(entry,'[Rewrite]\n'+line,{...options,jqFiles:files});assert.equal(output.generatedScripts.size,0);assert.match(output.qx,/jsonjq-/);assert.match(output.surge,/http-.*-jq/);
-    const mixed=phase+' if ${url} ~= /^https:\\/\\/example\\.test\\/api$/ then '+phase+'.json.jq(`del(.data.ads)`) | '+phase+'.header.set("X-Mixed","yes")';const combination=convertPlugin(entry,'[Rewrite]\n'+mixed,options);validateConvertedPlugin(entry,combination);assert.equal(combination.generatedScripts.size,0);assert.match(combination.qx,/^\^https:.* url jsonjq-/m);assert.match(combination.surge,/^http-.*-jq \^https:/m);assert.doesNotMatch(combination.qx+combination.surge,/^\^ url script-/m);
+    const mixed=phase+' if ${url} ~= /^https:\\/\\/example\\.test\\/api$/ then '+phase+'.json.jq(`del(.data.ads)`) | '+phase+'.header.set("X-Mixed","yes")';const combination=convertPlugin(entry,'[Rewrite]\n'+mixed,options);validateConvertedPlugin(entry,combination);assert.equal(combination.generatedScripts.size,0);assert.match(combination.qx,/^(?:\(\?[ims]+\))?\^https:.* url jsonjq-/m);assert.match(combination.surge,/^http-.*-jq (?:\(\?[ims]+\))?\^https:/m);assert.doesNotMatch(combination.qx+combination.surge,/^\^ url script-/m);
     const filters=['.first = true','.data.flag = true','.last = 3'];const pipeline=phase+' if ${url} ~= /api/i then '+filters.map(f=>phase+'.json.jq(`'+f+'`)').join(' | ');const native=convertPlugin(entry,'[Rewrite]\n'+pipeline,options);validateConvertedPlugin(entry,native);assert.equal(native.generatedScripts.size,0);
     const programs=native.qx.split('\n').filter(x=>!x.startsWith('#') && x.includes('jsonjq-')).map(x=>x.match(/'(.+)'$/)[1]);assert.equal(programs.length,3);
     const program=programs.join(' | ');
@@ -810,15 +810,15 @@ if (selectedCase==='generated-helper-runtime.mjs') {
     const context={url,request:{url,method:'POST',headers:phase==='request'?headers:{},body:phase==='request'?body:''},response:{status:200,statusCode:200,headers:phase==='response'?headers:{},body:phase==='response'?body:''}};
     const expected={headers:structuredClone(headers),body};
     // This deliberately uses declarative case data, rather than action ASTs.
-    const match=new RegExp('api-(\\d+)').exec(url);
+    const match=new RegExp('api-(\\d+)',flags).exec(url);
     if(match) {
       matchedCount++;
       for(const name of order) {
         const key=headerKey(expected.headers,'X-Flow');
         if(name==='set')expected.headers[key??'X-Flow']='READY:'+match[1]+':'+marker;
-        if(name==='replace'&&key!==undefined)expected.headers[key]=firstReplace(expected.headers[key],new RegExp('ready'),'done:$&');
+        if(name==='replace'&&key!==undefined)expected.headers[key]=firstReplace(expected.headers[key],new RegExp('ready',flags),'done:$&');
         if(name==='del'){const remove=headerKey(expected.headers,'X-Remove');if(remove!==undefined)delete expected.headers[remove];}
-        if(name==='body')expected.body=firstReplace(expected.body,new RegExp('token'),'DONE-'+match[1]+'-$&');
+        if(name==='body')expected.body=firstReplace(expected.body,new RegExp('token',flags),'DONE-'+match[1]+'-$&');
         if(name==='add'||name==='delete') {
           let json;try{json=JSON.parse(expected.body);}catch{continue;}
           if(json===null||typeof json!=='object')continue;
@@ -1320,8 +1320,8 @@ if(selectedCase==='generated-helper-runtime.mjs') {
     const plan=renderSingleRewriteMutationScript(ast,{target});
     assert.equal(ast.condition.right.flags,'ims','source AST must remain intact');
     assert.ok(plan.script.includes(JSON.stringify(pattern)),'regex structure survives lowering');
-    assert.doesNotMatch(plan.script,/"flags":"ims"|new RegExp\([^\n]+,"ims"\)/);
-    for(const [url,expected] of [['item/42im',{'X-ID':'42'}],['ITEM/42im',null],['item/42IM',null]]) {
+    assert.match(plan.script,/"flags":"ims"/);
+    for(const [url,expected] of [['item/42im',{'X-ID':'42'}],['ITEM/42im',{'X-ID':'42'}],['item/42IM',{'X-ID':'42'}]]) {
       let calls=0,result;
       vm.runInNewContext(plan.script,{$request:{url,headers:{}},$done(v){calls++;result=v;}});
       assert.equal(calls,1);assert.deepEqual(JSON.parse(JSON.stringify(result)),expected?{headers:expected}:{});
@@ -1330,12 +1330,12 @@ if(selectedCase==='generated-helper-runtime.mjs') {
   const ast=parseRewriteV2('request if ${url} ~= ${pattern} as hit then request.header.set("X-ID","${hit.1}") | request.header.set("X-Next","yes")');
   const argumentTable={byId:new Map([['pattern',{id:'pattern'}]])};
   const plan=renderMixedRewriteScript(ast,{target:'surge',argumentTable});
-  for(const [url,pattern,expected] of [['item/42','/^item\\/(\\d+)$/ims',{'X-ID':'42','X-Next':'yes'}],['ITEM/42','/^item\\/(\\d+)$/ims',null],['item/42','/[abc/i',null]]) {
+  for(const [url,pattern,expected] of [['item/42','/^item\\/(\\d+)$/ims',{'X-ID':'42','X-Next':'yes'}],['ITEM/42','/^item\\/(\\d+)$/ims',{'X-ID':'42','X-Next':'yes'}],['item/42','/[abc/i',null]]) {
     let calls=0,result;
     vm.runInNewContext(plan.script,{$request:{url,headers:{}},$argument:JSON.stringify({pattern}),$done(v){calls++;result=v;}});
     assert.equal(calls,1);assert.deepEqual(JSON.parse(JSON.stringify(result)),expected?{headers:expected}:{});
   }
-  console.log('Literal/dynamic target regex policy: flags discarded, regex structure and capture/condition execution retained');
+  console.log('Literal/dynamic target regex policy: flags preserved, regex structure and capture/condition execution retained');
 }
 
 if (selectedCase==='generated-helper-runtime.mjs') {
@@ -1363,7 +1363,7 @@ if (selectedCase==='generated-helper-runtime.mjs') {
       assert.equal(output.headers.Location,expected,value);
       assert.equal(output.status,'HTTP/1.1 307 Temporary Redirect');
       if(conditionMode==='full')assert.deepEqual(normalize(runGenerated(plan.script,{request:{...request,method:'POST'}})),{});
-      assert.deepEqual(normalize(runGenerated(plan.script,{request:{...request,url:request.url.replace('old','OLD')}})),{});
+      assert.equal(runGenerated(plan.script,{request:{...request,url:request.url.replace('old','OLD')}}).headers.Location,expected.replaceAll('old','OLD'),'redirect re-execution preserves case-insensitive match and original captures');
     }
     const optional=parseRewriteV2('request if ${url} ~= /old(-new)?/ as hit then redirect(302,"${hit.1}")');
     assert.deepEqual(normalize(runGenerated(renderQxRedirectScript(optional,{conditionMode}).script,{request})),{});

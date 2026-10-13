@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/TXDocs.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:52 +08:00
+# Converted: 2026-10-13 10:18:38 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/TXDocs_remove_ads.lpx
@@ -16,9 +16,9 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/tianshu\.qq\.com\/open\/ts_access\/GetAds\? url reject-dict
+(?i)^https:\/\/tianshu\.qq\.com\/open\/ts_access\/GetAds\? url reject-dict
 
-^https:\/\/h5\.qzone\.qq\.com\/p\/adboss\/api\/json\/ts_access\/GetAds$ url reject-dict
+(?i)^https:\/\/h5\.qzone\.qq\.com\/p\/adboss\/api\/json\/ts_access\/GetAds$ url reject-dict
 
 # [mitm]
 hostname = tianshu.qq.com, h5.qzone.qq.com

@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 19:18:15 +08:00
+// Converted: 2026-10-13 10:18:24 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /^https:\/\/duckduckgo\.com\/\?q=gimg\+([^&]+).+/i as urlMatch then redirect(307, "https://www.google.com/search?&tbm=isch&q=${urlMatch.1}")
@@ -227,9 +227,12 @@ function evaluateCondition(condition,context={},initialCaptures={}) {
     captures:Object.fromEntries(result.captures),
   };
 }
-function compileSourceRegex(node){const {source}=assertRegexNode(node);return new RegExp(source);}
-const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https:\\/\\/duckduckgo\\.com\\/\\?q=gimg\\+([^&]+).+","flags":""},"capture":"urlMatch"},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
-  const __wayxMatch=new RegExp("^https:\\/\\/duckduckgo\\.com\\/\\?q=gimg\\+([^&]+).+","").exec(__wayxUrl);
+function compileSourceRegex(node) {
+  const {source,flags}=assertRegexNode(node);
+  return new RegExp(source,flags);
+}
+const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https:\\/\\/duckduckgo\\.com\\/\\?q=gimg\\+([^&]+).+","flags":"i","raw":"/^https:\\/\\/duckduckgo\\.com\\/\\?q=gimg\\+([^&]+).+/i"},"capture":"urlMatch"},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
+  const __wayxMatch=new RegExp("^https:\\/\\/duckduckgo\\.com\\/\\?q=gimg\\+([^&]+).+","i").exec(__wayxUrl);
   if(!__wayxMatch){$done({});}else{
     if(__wayxMatch[1] === undefined){$done({});}else{
     const __wayxReplacement="" + "https://www.google.com/search?&tbm=isch&q=" + __wayxMatch[1];

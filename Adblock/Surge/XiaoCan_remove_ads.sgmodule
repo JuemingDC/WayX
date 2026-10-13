@@ -10,21 +10,21 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/XiaoCan.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:58 +08:00
+# Converted: 2026-10-13 10:18:46 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/XiaoCan_remove_ads.lpx
 # Target: Surge
 
 [Header Rewrite]
-http-request ^https:\/\/gw\.xiaocantech\.com\/rpc header-replace-regex methodname .*(GetBannerList|IsShowOrderAwardPopup|UserLifeShopList|BrandBannerList|GetPromotionGlobalCfg) null
+http-request (?i)^https:\/\/gw\.xiaocantech\.com\/rpc header-replace-regex methodname .*(GetBannerList|IsShowOrderAwardPopup|UserLifeShopList|BrandBannerList|GetPromotionGlobalCfg) null
 
 [Map Local]
 
-^https:\/\/web2\.realtech-inc\.com\/oss\/xc-app-assets\/configs\/common\/theme\.json data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/web2\.realtech-inc\.com\/oss\/xc-app-assets\/configs\/common\/theme\.json data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/sdk\.1rtb\.net\/sdk\/req_ad\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/sdk\.1rtb\.net\/sdk\/req_ad\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/gw\.xiaocantech\.com\/g\/pa data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/gw\.xiaocantech\.com\/g\/pa data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% gw.xiaocantech.com, web2.realtech-inc.com, sdk.1rtb.net

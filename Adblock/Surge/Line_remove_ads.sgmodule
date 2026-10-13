@@ -9,7 +9,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Line.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:26 +08:00
+# Converted: 2026-10-13 10:18:01 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Line_remove_ads.lpx
 # Target: Surge
@@ -41,24 +41,24 @@ URL-REGEX,^https:\/\/scdn\.line-apps\.com\/lan\/image\/line\/bannerImageEvent\/,
 URL-REGEX,^https:\/\/scdn\.line-apps\.com\/lan\/document\/pageEvent\/line\/ios\/,REJECT-DROP,extended-matching
 
 [URL Rewrite]
-^https:\/\/gw\.line\.naver\.jp\/ext\/lgfp\/lad\/v\d$ _ reject
-^https:\/\/gw\.line\.naver\.jp\/lass\/api\/v\d\/ads$ _ reject
-^https:\/\/gw\.line\.naver\.jp\/tr\/event$ _ reject
+(?i)^https:\/\/gw\.line\.naver\.jp\/ext\/lgfp\/lad\/v\d$ _ reject
+(?i)^https:\/\/gw\.line\.naver\.jp\/lass\/api\/v\d\/ads$ _ reject
+(?i)^https:\/\/gw\.line\.naver\.jp\/tr\/event$ _ reject
 
-^https:\/\/legy\.line-apps\.com:443\/ext\/lgfp\/lad\/v\d$ _ reject
-^https:\/\/legy\.line-apps\.com:443\/ext\/smartch\/banner\/sch\/v\d$ _ reject
-^https:\/\/legy\.line-apps\.com\/line\.gcs\.GcsModuleService\/GetModulesByModuleIds$ _ reject
-^https:\/\/legy\.line-apps\.com:443\/tr\/event$ _ reject
+(?i)^https:\/\/legy\.line-apps\.com:443\/ext\/lgfp\/lad\/v\d$ _ reject
+(?i)^https:\/\/legy\.line-apps\.com:443\/ext\/smartch\/banner\/sch\/v\d$ _ reject
+(?i)^https:\/\/legy\.line-apps\.com\/line\.gcs\.GcsModuleService\/GetModulesByModuleIds$ _ reject
+(?i)^https:\/\/legy\.line-apps\.com:443\/tr\/event$ _ reject
 
-^https:\/\/lan\.line\.me\/v\d\/line\/ios _ reject
-^https:\/\/buy\.line\.me\/api\/graphql\?variables _ reject
-^https:\/\/nelo2-col\.linecorp\.com\/_store$ _ reject
-^https:\/\/cix\.line-apps\.com\/R\d\? _ reject
+(?i)^https:\/\/lan\.line\.me\/v\d\/line\/ios _ reject
+(?i)^https:\/\/buy\.line\.me\/api\/graphql\?variables _ reject
+(?i)^https:\/\/nelo2-col\.linecorp\.com\/_store$ _ reject
+(?i)^https:\/\/cix\.line-apps\.com\/R\d\? _ reject
 
-^https:\/\/ad\.line-scdn\.net\/0h _ reject
-^https:\/\/static\.line-scdn\.net\/ad-sdk\/ _ reject
+(?i)^https:\/\/ad\.line-scdn\.net\/0h _ reject
+(?i)^https:\/\/static\.line-scdn\.net\/ad-sdk\/ _ reject
 
-^https:\/\/scdn\.line-apps\.com\/appresources\/moretab\/list\.json _ reject
+(?i)^https:\/\/scdn\.line-apps\.com\/appresources\/moretab\/list\.json _ reject
 
 [MITM]
 hostname = %APPEND% a.line.me, ad.line-scdn.net, w.line.me, gw.line.naver.jp, lan.line.me, buy.line.me, crs-event.line.me, obs.line-scdn.net, d.line-scdn.net, scdn.line-apps.com, sch.line.me, static.line-scdn.net, nelo2-col.linecorp.com, uts-front.line-apps.com, cix.line-apps.com, legy.line-apps.com, ec-bot-obs.line-scdn.net

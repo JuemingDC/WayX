@@ -10,17 +10,17 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BitqiuPan.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:33 +08:00
+# Converted: 2026-10-13 10:18:10 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/BitqiuPan_remove_ads.lpx
 # Target: Surge
 
 [Map Local]
-^https:\/\/pan-api\.bitqiu\.com\/activity\/getPromoteGuide$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/pan-api\.bitqiu\.com\/activity\/getPromoteGuide$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^http:\/\/pan-api\.bitqiu\.com\/activity\/getUrlList$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^http:\/\/pan-api\.bitqiu\.com\/activity\/getUrlList$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/pan-api\.bitqiu\.com\/activity\/guides$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/pan-api\.bitqiu\.com\/activity\/guides$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% pan-api.bitqiu.com

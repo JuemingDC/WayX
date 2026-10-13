@@ -10,16 +10,16 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/RoboTaxi.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:44 +08:00
+# Converted: 2026-10-13 10:18:27 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/RoboTaxi_remove_ads.lpx
 # Target: Surge
 
 [Map Local]
-^https:\/\/idgdata\.baidu\.com\/mc\/app\/api\/listterminal\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/idgdata\.baidu\.com\/operation\/api\/announce\/screen\/image_manage\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/idgdata\.baidu\.com\/mc\/app\/api\/listterminal\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/idgdata\.baidu\.com\/operation\/api\/announce\/screen\/image_manage\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/idgdata\.baidu\.com\/idgactivity\/api\/newuser\/info\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/idgdata\.baidu\.com\/idgactivity\/api\/newuser\/info\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% idgdata.baidu.com

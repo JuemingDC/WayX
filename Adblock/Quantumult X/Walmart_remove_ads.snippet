@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Walmart.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:57 +08:00
+# Converted: 2026-10-13 10:18:45 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Walmart_remove_ads.lpx
@@ -16,13 +16,13 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api-hyper\.walmartmobile\.cn\/search\/ad\/ url reject-dict
+(?i)^https:\/\/api-hyper\.walmartmobile\.cn\/search\/ad\/ url reject-dict
 
-^https:\/\/api-hyper\.walmartmobile\.cn\/cms-web\/frontapi\/shadedWords\/list\? url reject-dict
+(?i)^https:\/\/api-hyper\.walmartmobile\.cn\/cms-web\/frontapi\/shadedWords\/list\? url reject-dict
 
-^https:\/\/api-hyper\.walmartmobile\.cn\/search\/frontapi\/discovery-words\/list$ url reject-dict
+(?i)^https:\/\/api-hyper\.walmartmobile\.cn\/search\/frontapi\/discovery-words\/list$ url reject-dict
 
-^https:\/\/api-hyper\.walmartmobile\.cn\/cms-web\/frontapi\/common\/page\/get\?.*&type=26$ url jsonjq-response-body '.data |= (.moduleList | map(select(.templateCode == "nav-bar-title" or .templateCode == "member-info" or .templateCode == "distribution-center" or .templateCode == "wallet" or .templateCode == "swiper" or .templateCode == "my-order")))'
+(?i)^https:\/\/api-hyper\.walmartmobile\.cn\/cms-web\/frontapi\/common\/page\/get\?.*&type=26$ url jsonjq-response-body '.data |= (.moduleList | map(select(.templateCode == "nav-bar-title" or .templateCode == "member-info" or .templateCode == "distribution-center" or .templateCode == "wallet" or .templateCode == "swiper" or .templateCode == "my-order")))'
 
 # [mitm]
 hostname = api-hyper.walmartmobile.cn

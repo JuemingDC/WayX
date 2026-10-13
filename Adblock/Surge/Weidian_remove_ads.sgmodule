@@ -10,40 +10,40 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Weidian.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 19:29:16 +08:00
+# Converted: 2026-10-13 10:18:42 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Weidian_remove_ads.lpx
 # Target: Surge
 
 [Map Local]
-^https:\/\/thor\.weidian\.com\/ares\/home\.splash\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/thor\.weidian\.com\/ares\/home\.splash\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/thor\.weidian\.com\/warlock\/recommend\.guessULike\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/thor\.weidian\.com\/warlock\/recommend\.guessULike\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/thor\.weidian\.com\/poseidon\/exhibit\.spaceJson\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/thor\.weidian\.com\/poseidon\/exhibit\.spaceJson\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/thor\.weidian\.com\/ares\/app\.dialog\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/thor\.weidian\.com\/ares\/app\.dialog\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/thor\.weidian\.com\/warlock\/recommend\.guessULike\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/thor\.weidian\.com\/warlock\/recommend\.guessULike\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/thor\.weidian\.com\/feedserver\/feed\.similarRecFeeds\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/thor\.weidian\.com\/feedserver\/feed\.similarRecFeeds\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/thor\.weidian\.com\/faith\/search\.hotRecShadowWord\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/thor\.weidian\.com\/faith\/search\.hotRecShadowWord\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/thor\.weidian\.com\/faith\/search\.getProcessTopics\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/thor\.weidian\.com\/faith\/search\.getProcessTopics\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/thor\.weidian\.com\/feedserver\/feed\.listGoodUsers\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/thor\.weidian\.com\/feedserver\/feed\.listGoodUsers\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/thor\.weidian\.com\/feedserver\/feed\.myFollow\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/thor\.weidian\.com\/feedserver\/feed\.myFollow\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/thor\.weidian\.com\/ares\/recommend\.getSpecialFocusList\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/thor\.weidian\.com\/ares\/recommend\.getSpecialFocusList\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/thor\.weidian\.com\/ares\/collect\.recommendShop\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/thor\.weidian\.com\/ares\/collect\.recommendShop\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-配置修改 = type=http-response,pattern=^https:\/\/thor\.weidian\.com\/appconf\/getAppConfig\/,script-path=https://kelee.one/Resource/JavaScript/Weidian/getAppConfig.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20
+配置修改 = type=http-response,pattern=(?i)^https:\/\/thor\.weidian\.com\/appconf\/getAppConfig\/,script-path=https://kelee.one/Resource/JavaScript/Weidian/getAppConfig.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20
 
-精简钱包区 = type=http-response,pattern=^https:\/\/thor\.weidian\.com\/wgs\/wallet\.query\.order\.entrance\/,script-path=https://kelee.one/Resource/JavaScript/Weidian/wallet.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20
+精简钱包区 = type=http-response,pattern=(?i)^https:\/\/thor\.weidian\.com\/wgs\/wallet\.query\.order\.entrance\/,script-path=https://kelee.one/Resource/JavaScript/Weidian/wallet.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20
 
 [MITM]
 hostname = %APPEND% thor.weidian.com

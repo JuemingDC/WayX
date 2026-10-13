@@ -9,7 +9,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YouTube.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:29 +08:00
+# Converted: 2026-10-13 10:18:06 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/YouTube_remove_ads.lpx
@@ -21,17 +21,17 @@
 # YouTube去广告
 # [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
 # [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
-^https:\/\/youtubei\.googleapis\.com\/(youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch|log_event|config))(\?(.*))?$ url script-response-body https://kelee.one/Resource/JavaScript/YouTube/YouTube_remove_ads/YouTube_remove_ads_response.js
+(?i)^https:\/\/youtubei\.googleapis\.com\/(youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch|log_event|config))(\?(.*))?$ url script-response-body https://kelee.one/Resource/JavaScript/YouTube/YouTube_remove_ads/YouTube_remove_ads_response.js
 
 # 请求初始化
 # [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
 # [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
-^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.* url script-request-body https://kelee.one/Resource/JavaScript/YouTube/YouTube_remove_ads/YouTube_remove_ads_request.js
+(?i)^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.* url script-request-body https://kelee.one/Resource/JavaScript/YouTube/YouTube_remove_ads/YouTube_remove_ads_request.js
 
 # 请求日志事件
 # [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
 # [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
-^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event url script-request-body https://kelee.one/Resource/JavaScript/YouTube/YouTube_remove_ads/YouTube_remove_ads_request.js
+(?i)^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event url script-request-body https://kelee.one/Resource/JavaScript/YouTube/YouTube_remove_ads/YouTube_remove_ads_request.js
 
 # [mitm]
 hostname = *.googlevideo.com, youtubei.googleapis.com

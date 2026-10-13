@@ -10,23 +10,23 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ChengFenMiao.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:35 +08:00
+# Converted: 2026-10-13 10:18:13 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/ChengFenMiao_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/app\.chengfenmiao\.com\/helper\/setting\? 'delpaths([["detail_buy_sites"],["bottom_sites"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
+http-response-jq (?i)^https:\/\/app\.chengfenmiao\.com\/helper\/setting\? 'delpaths([["detail_buy_sites"],["bottom_sites"]])'
 
 [Map Local]
-^https:\/\/app\.chengfenmiao\.com\/Listing\/LiveHots\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/app\.chengfenmiao\.com\/Listing\/LiveHots\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/app\.chengfenmiao\.com\/helper\/VersionCheck\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/app\.chengfenmiao\.com\/helper\/VersionCheck\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/app\.chengfenmiao\.com\/item\/closet\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/app\.chengfenmiao\.com\/item\/closet\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/app\.chengfenmiao\.com\/Helper\/HotWords\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/app\.chengfenmiao\.com\/Helper\/HotWords\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% app.chengfenmiao.com

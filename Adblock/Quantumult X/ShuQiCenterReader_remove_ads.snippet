@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ShuQiCenterReader.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:51 +08:00
+# Converted: 2026-10-13 10:18:36 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/ShuQiCenterReader_remove_ads.lpx
@@ -17,13 +17,13 @@
 host, render-web.11222.cn, reject
 
 # [rewrite_local]
-^https:\/\/huichuan\.sm\.cn\/nativead url reject-dict
+(?i)^https:\/\/huichuan\.sm\.cn\/nativead url reject-dict
 
-^https:\/\/ocean\.shuqireader\.com\/api\/route\/iosReadPage\/adV2 url reject-dict
-^https:\/\/ocean\.shuqireader\.com\/api\/route\/ios\/readPage$ url reject-dict
-^https:\/\/ocean\.shuqireader\.com\/api\/render\/load\/resource url reject
+(?i)^https:\/\/ocean\.shuqireader\.com\/api\/route\/iosReadPage\/adV2 url reject-dict
+(?i)^https:\/\/ocean\.shuqireader\.com\/api\/route\/ios\/readPage$ url reject-dict
+(?i)^https:\/\/ocean\.shuqireader\.com\/api\/render\/load\/resource url reject
 # 移除书城横幅和阅读广告
-^https:\/\/ocean\.shuqireader\.com\/sqios\/render\/render\/page\/bookstore$ url script-response-body https://kelee.one/Resource/JavaScript/ShuQiCenterReader/ShuQiCenterReader_remove_ads.js
+(?i)^https:\/\/ocean\.shuqireader\.com\/sqios\/render\/render\/page\/bookstore$ url script-response-body https://kelee.one/Resource/JavaScript/ShuQiCenterReader/ShuQiCenterReader_remove_ads.js
 
 # [mitm]
 hostname = ocean.shuqireader.com, huichuan.sm.cn

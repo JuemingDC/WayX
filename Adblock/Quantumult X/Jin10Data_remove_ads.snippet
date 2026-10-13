@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Jin10Data.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:41 +08:00
+# Converted: 2026-10-13 10:18:22 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Jin10Data_remove_ads.lpx
@@ -16,16 +16,16 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/jad-api\.jin10\.com\/ad\d\/ url reject-dict
+(?i)^https:\/\/jad-api\.jin10\.com\/ad\d\/ url reject-dict
 
-^https:\/\/common-open-api\.jin10\.com\/configuration\/getById\?id=1493$ url reject-dict
-^https:\/\/search-open-api\.jin10\.com\/search\/getHotWords$ url reject-dict
+(?i)^https:\/\/common-open-api\.jin10\.com\/configuration\/getById\?id=1493$ url reject-dict
+(?i)^https:\/\/search-open-api\.jin10\.com\/search\/getHotWords$ url reject-dict
 
-^https:\/\/cdn\.jin10\.com\/json\/index\/hits_rank\.json\? url reject-dict
+(?i)^https:\/\/cdn\.jin10\.com\/json\/index\/hits_rank\.json\? url reject-dict
 
-^https:\/\/[0-9a-z]+\.z3c\.jin10\.com\/api\/home\/search\/hot$ url reject-dict
+(?i)^https:\/\/[0-9a-z]+\.z3c\.jin10\.com\/api\/home\/search\/hot$ url reject-dict
 
-^https:\/\/jad-api\.jin10\.com\/mult\/list_unread\? url reject-dict
+(?i)^https:\/\/jad-api\.jin10\.com\/mult\/list_unread\? url reject-dict
 
 # [mitm]
 hostname = jad-api.jin10.com, common-open-api.jin10.com, search-open-api.jin10.com, cdn.jin10.com, *.z3c.jin10.com

@@ -10,25 +10,25 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/GaoDing.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:39 +08:00
+# Converted: 2026-10-13 10:18:18 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/GaoDing_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 
-http-response-jq ^https:\/\/www\.gaoding\.com\/api\/v\d\/oc\/exhibitions\/template\/resources$ '.pits |= map(select(.module_type != "BANNER"))'
+http-response-jq (?i)^https:\/\/www\.gaoding\.com\/api\/v\d\/oc\/exhibitions\/template\/resources$ '.pits |= map(select(.module_type != "BANNER"))'
 
-http-response-jq ^https:\/\/www\.gaoding\.com\/api\/v\d\/oc\/exhibitions\/app_mine\/resources$ '.pits |= map(select(.module_type != "BANNER"))'
+http-response-jq (?i)^https:\/\/www\.gaoding\.com\/api\/v\d\/oc\/exhibitions\/app_mine\/resources$ '.pits |= map(select(.module_type != "BANNER"))'
 
-http-response-jq ^https:\/\/www\.gaoding\.com\/api\/v\d\/oc\/exhibitions\/(templates|all_editor_tools)\/resources$ 'walk(if type == "object" and .badge_img_url? then .badge_img_url="" else . end)'
+http-response-jq (?i)^https:\/\/www\.gaoding\.com\/api\/v\d\/oc\/exhibitions\/(templates|all_editor_tools)\/resources$ 'walk(if type == "object" and .badge_img_url? then .badge_img_url="" else . end)'
 
 [Map Local]
-^https:\/\/www\.gaoding\.com\/api\/v\d\/oc\/v\d\/delivery-pits\/ios-splash\/modules$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/www\.gaoding\.com\/api\/v\d\/oc\/v\d\/delivery-pits\/ios-splash\/modules$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/www\.gaoding\.com\/api\/v\d\/oc\/delivery-pits\/(template|mine|home)-page-dialog\/modules$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/www\.gaoding\.com\/api\/v\d\/oc\/delivery-pits\/(template|mine|home)-page-dialog\/modules$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/www\.gaoding\.com\/api\/v\d\/cp\/search-words\/v2\/placeholder data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/www\.gaoding\.com\/api\/v\d\/cp\/search-words\/v2\/placeholder data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% www.gaoding.com

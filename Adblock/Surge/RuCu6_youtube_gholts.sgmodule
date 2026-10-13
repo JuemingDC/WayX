@@ -9,23 +9,23 @@
 # Icon: https://rucu6.pages.dev/Icons/app/youtube.png
 # Updated: 2026-10-11 15:20
 
-# Converted: 2026-10-12 05:04:10 +08:00
+# Converted: 2026-10-13 10:19:06 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/youtube_gholts.lpx
 # Target: Surge
 
 [URL Rewrite]
-^https:\/\/s\.youtube\.com\/api\/stats\/ads _ reject
-^https:\/\/www\.youtube\.com\/(pagead|pcs)\/ _ reject
+(?i)^https:\/\/s\.youtube\.com\/api\/stats\/ads _ reject
+(?i)^https:\/\/www\.youtube\.com\/(pagead|pcs)\/ _ reject
 
 [Script]
-youtube_ad-break = type=http-request,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/player\/ad_break(?:\?.*)?$,script-path=https://rucu6.pages.dev/Scripts/youtube/request_gholts.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20
-youtube_init = type=http-request,pattern=^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback(?:\?.*)?$,script-path=https://rucu6.pages.dev/Scripts/youtube/request_gholts.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20
-#!REQUIREMENT "'{{{autoHd}}}'=='true'" youtube_auto-hd = type=http-request,pattern=^https?:\/\/[\w-]+\.googlevideo\.com\/videoplayback(?:\?.*)?$,script-path=https://rucu6.pages.dev/Scripts/youtube/request_gholts.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20,argument="{\"autoHd\":{{{autoHd}}}}"
-youtube_log-event = type=http-request,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event(?:\?.*)?$,script-path=https://rucu6.pages.dev/Scripts/youtube/request_gholts.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20
-youtube_response = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(?:navigation\/resolve_url|browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch)(?:\?.*)?$,script-path=https://rucu6.pages.dev/Scripts/youtube/response_gholts.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20,argument="{\"autoHd\":{{{autoHd}}},\"blockAi\":{{{blockAi}}},\"blockGames\":{{{blockGames}}},\"blockShorts\":{{{blockShorts}}},\"blockStore\":{{{blockStore}}},\"blockUpload\":{{{blockUpload}}},\"blockVerticalLive\":{{{blockVerticalLive}}},\"jumpAhead\":{{{jumpAhead}}}}"
-youtube_key = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(?:config|log_event)(?:\?.*)?$,script-path=https://rucu6.pages.dev/Scripts/youtube/key_gholts.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20
-youtube_ump = type=http-response,pattern=^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback(?:\?.*)?$,script-path=https://rucu6.pages.dev/Scripts/youtube/ump_gholts.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20,argument="{\"autoHd\":{{{autoHd}}},\"blockAi\":{{{blockAi}}},\"blockGames\":{{{blockGames}}},\"blockStore\":{{{blockStore}}},\"blockVerticalLive\":{{{blockVerticalLive}}},\"jumpAhead\":{{{jumpAhead}}}}"
+youtube_ad-break = type=http-request,pattern=(?i)^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/player\/ad_break(?:\?.*)?$,script-path=https://rucu6.pages.dev/Scripts/youtube/request_gholts.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20
+youtube_init = type=http-request,pattern=(?i)^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback(?:\?.*)?$,script-path=https://rucu6.pages.dev/Scripts/youtube/request_gholts.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20
+#!REQUIREMENT "'{{{autoHd}}}'=='true'" youtube_auto-hd = type=http-request,pattern=(?i)^https?:\/\/[\w-]+\.googlevideo\.com\/videoplayback(?:\?.*)?$,script-path=https://rucu6.pages.dev/Scripts/youtube/request_gholts.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20,argument="{\"autoHd\":{{{autoHd}}}}"
+youtube_log-event = type=http-request,pattern=(?i)^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event(?:\?.*)?$,script-path=https://rucu6.pages.dev/Scripts/youtube/request_gholts.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20
+youtube_response = type=http-response,pattern=(?i)^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(?:navigation\/resolve_url|browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch)(?:\?.*)?$,script-path=https://rucu6.pages.dev/Scripts/youtube/response_gholts.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20,argument="{\"autoHd\":{{{autoHd}}},\"blockAi\":{{{blockAi}}},\"blockGames\":{{{blockGames}}},\"blockShorts\":{{{blockShorts}}},\"blockStore\":{{{blockStore}}},\"blockUpload\":{{{blockUpload}}},\"blockVerticalLive\":{{{blockVerticalLive}}},\"jumpAhead\":{{{jumpAhead}}}}"
+youtube_key = type=http-response,pattern=(?i)^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(?:config|log_event)(?:\?.*)?$,script-path=https://rucu6.pages.dev/Scripts/youtube/key_gholts.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20
+youtube_ump = type=http-response,pattern=(?i)^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback(?:\?.*)?$,script-path=https://rucu6.pages.dev/Scripts/youtube/ump_gholts.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20,argument="{\"autoHd\":{{{autoHd}}},\"blockAi\":{{{blockAi}}},\"blockGames\":{{{blockGames}}},\"blockStore\":{{{blockStore}}},\"blockVerticalLive\":{{{blockVerticalLive}}},\"jumpAhead\":{{{jumpAhead}}}}"
 
 [MITM]
 hostname = %APPEND% rr*.googlevideo.com, s.youtube.com, www.youtube.com, youtubei.googleapis.com

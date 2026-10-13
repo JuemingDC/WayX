@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduMap.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:30 +08:00
+# Converted: 2026-10-13 10:18:07 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduMap_remove_ads.lpx
 # Target: Surge
@@ -21,16 +21,16 @@
 
 
 [Map Local]
-^https:\/\/afd\.baidu\.com\/afd\/entry\?action=(update|query) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/afd\.baidu\.com\/afd\/entry\?action=(update|query) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/yongche\.baidu\.com\/gomarketing\/api\/popup\/getentrancecordovaurl$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/yongche\.baidu\.com\/gomarketing\/api\/popup\/getentrancecordovaurl$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/yongche\.baidu\.com\/goorder\/passenger\/cobuild\/pull\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/yongche\.baidu\.com\/goorder\/passenger\/operationgirdle$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/yongche\.baidu\.com\/goorder\/passenger\/baseinfo$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/yongche\.baidu\.com\/goorder\/passenger\/cobuild\/pull\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/yongche\.baidu\.com\/goorder\/passenger\/operationgirdle$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/yongche\.baidu\.com\/goorder\/passenger\/baseinfo$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/ecom\.map\.baidu\.com\/ad-ops\/afd\/popup\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/maphotel\.baidu\.com\/hotel\/goextranet\/activity\/detail\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/ecom\.map\.baidu\.com\/ad-ops\/afd\/popup\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/maphotel\.baidu\.com\/hotel\/goextranet\/activity\/detail\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
 

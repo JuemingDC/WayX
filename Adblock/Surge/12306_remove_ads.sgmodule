@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/12306.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 19:28:37 +08:00
+# Converted: 2026-10-13 10:17:58 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/12306_remove_ads.lpx
 # Target: Surge
@@ -19,12 +19,12 @@
 DOMAIN,ad.12306.cn,DIRECT,extended-matching
 
 [Body Rewrite]
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList$ 'delpaths([["materialsList"],["advertParam"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
+http-response-jq (?i)^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList$ 'delpaths([["materialsList"],["advertParam"]])'
 
 [Script]
 
-移除12306应用内广告 = type=http-request,pattern=^https:\/\/mobile\.12306\.cn\/otsmobile\/app\/mgs\/mgw\.htm$,script-path=https://kelee.one/Resource/JavaScript/12306/12306_remove_ads.js,timeout=20
+移除12306应用内广告 = type=http-request,pattern=(?i)^https:\/\/mobile\.12306\.cn\/otsmobile\/app\/mgs\/mgw\.htm$,script-path=https://kelee.one/Resource/JavaScript/12306/12306_remove_ads.js,timeout=20
 
 [MITM]
 hostname = %APPEND% ad.12306.cn, mobile.12306.cn

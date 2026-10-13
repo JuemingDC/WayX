@@ -11,7 +11,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/TubeMax.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:28 +08:00
+# Converted: 2026-10-13 10:18:04 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/TubeMax_remove_ads.lpx
 # Target: Surge
@@ -28,7 +28,7 @@ DOMAIN-SUFFIX,adsmoloco.com,REJECT,extended-matching,pre-matching
 DOMAIN-SUFFIX,adcanvas.com,REJECT,extended-matching,pre-matching
 
 [URL Rewrite]
-^https:\/\/.*\.i18n-pglstatp\.com\/obj\/ad-pattern-sg _ reject
+(?i)^https:\/\/.*\.i18n-pglstatp\.com\/obj\/ad-pattern-sg _ reject
 
 [MITM]
 hostname = %APPEND% *.i18n-pglstatp.com

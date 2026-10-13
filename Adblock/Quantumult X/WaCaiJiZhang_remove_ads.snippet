@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/WaCaiJiZhang.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:53 +08:00
+# Converted: 2026-10-13 10:18:39 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/WaCaiJiZhang_remove_ads.lpx
@@ -16,11 +16,11 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/jz\.wacaijizhang\.com\/api\/banners\/ribbon\? url reject-dict
+(?i)^https:\/\/jz\.wacaijizhang\.com\/api\/banners\/ribbon\? url reject-dict
 
-^https:\/\/jz\.wacaijizhang\.com\/api\/banners\/list\? url reject-dict
+(?i)^https:\/\/jz\.wacaijizhang\.com\/api\/banners\/list\? url reject-dict
 
-^https:\/\/jz\.wacaijizhang\.com\/api\/resource\/universal\/fetch$ url reject-dict
+(?i)^https:\/\/jz\.wacaijizhang\.com\/api\/resource\/universal\/fetch$ url reject-dict
 
 # [mitm]
 hostname = jz.wacaijizhang.com

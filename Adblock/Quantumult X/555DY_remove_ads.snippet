@@ -8,7 +8,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/555DY.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:23 +08:00
+# Converted: 2026-10-13 10:17:57 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/555DY_remove_ads.lpx
@@ -18,7 +18,7 @@
 
 # [rewrite_local]
 
-^https:\/\/(app-v1\.ecoliving168\.com|852b95d36\.xwlpk\.cn)\/api\/v1\/movie\/index_recommend\? url jsonjq-response-body '.data[].list |= map(select(.type != 3)) | .data |= map(select(.layout != "advert_self"))'
+(?i)^https:\/\/(app-v1\.ecoliving168\.com|852b95d36\.xwlpk\.cn)\/api\/v1\/movie\/index_recommend\? url jsonjq-response-body '.data[].list |= map(select(.type != 3)) | .data |= map(select(.layout != "advert_self"))'
 
 # [mitm]
 hostname = app-v1.ecoliving168.com, 852b95d36.xwlpk.cn

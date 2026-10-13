@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Kuwo.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:44 +08:00
+# Converted: 2026-10-13 10:18:26 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Kuwo_remove_ads.lpx
@@ -30,12 +30,12 @@ ip-cidr, 111.206.98.63/32, reject
 ^http:\/\/vip\d\.kuwo\.cn\/vip\/v\d\/sysinfo\?op=getRePayAndDoPayBox url reject-dict
 
 ^http:\/\/wapi\.kuwo\.cn\/openapi\/v\d\/album\/adBar\/ url reject-dict
-^https:\/\/vip\d\.kuwo\.cn\/commercia\/vipconf\/projectPage\/getPageContent url reject-dict
-^https:\/\/tingshu\.kuwo\.cn\/v2\/api\/pay\/user\/info url reject-dict
+(?i)^https:\/\/vip\d\.kuwo\.cn\/commercia\/vipconf\/projectPage\/getPageContent url reject-dict
+(?i)^https:\/\/tingshu\.kuwo\.cn\/v2\/api\/pay\/user\/info url reject-dict
 
-^https:\/\/appi\.kuwo\.cn\/kuwopay\/personal\/cells url reject-dict
+(?i)^https:\/\/appi\.kuwo\.cn\/kuwopay\/personal\/cells url reject-dict
 
-^http:\/\/wapi\.kuwo\.cn\/openapi\/v\d\/tingshu\/index\/radio url jsonjq-response-body 'walk(if type == "object" and .type == "stripAdvert" then del(.child) else . end)'
+(?i)^http:\/\/wapi\.kuwo\.cn\/openapi\/v\d\/tingshu\/index\/radio url jsonjq-response-body 'walk(if type == "object" and .type == "stripAdvert" then del(.child) else . end)'
 
 # [mitm]
 hostname = appi.kuwo.cn, mc.tencentmusic.com, vip*.kuwo.cn, tingshu.kuwo.cn

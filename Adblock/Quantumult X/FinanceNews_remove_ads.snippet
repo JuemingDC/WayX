@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FinanceNews.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:40 +08:00
+# Converted: 2026-10-13 10:18:20 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/FinanceNews_remove_ads.lpx
@@ -16,25 +16,25 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/advertising\/ url reject-dict
+(?i)^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/advertising\/ url reject-dict
 
-^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/kvconfig\/items\/tabbarconfig1$ url jsonjq-response-body '.data.items |= [.[] | select(.key == "news" or .key == "live")]'
+(?i)^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/kvconfig\/items\/tabbarconfig1$ url jsonjq-response-body '.data.items |= [.[] | select(.key == "news" or .key == "live")]'
 
-^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/kvconfig\/items\/search_keywords_wscnvip$ url reject-dict
-^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/search\/hotsearch\? url reject-dict
+(?i)^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/kvconfig\/items\/search_keywords_wscnvip$ url reject-dict
+(?i)^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/search\/hotsearch\? url reject-dict
 
-^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/content\/articles\/hot\? url reject-dict
+(?i)^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/content\/articles\/hot\? url reject-dict
 
-^https:\/\/wallstreetcn\.com\/app-faas\/coupon\/user\/search\/popup$ url reject-dict
+(?i)^https:\/\/wallstreetcn\.com\/app-faas\/coupon\/user\/search\/popup$ url reject-dict
 
-^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/content\/lives\/relateddata\/ url reject-dict
-^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/content\/articles\/relateddata\/ url reject-dict
+(?i)^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/content\/lives\/relateddata\/ url reject-dict
+(?i)^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/content\/articles\/relateddata\/ url reject-dict
 
-^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/content\/carousel\/information-flow\? url reject-dict
+(?i)^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/content\/carousel\/information-flow\? url reject-dict
 
-^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/content\/articles\/ url jsonjq-response-body 'delpaths([["data","recommend_vip_img_uri"]])'
+(?i)^https:\/\/api-one-wscn\.awtmt\.com\/apiv1\/content\/articles\/ url jsonjq-response-body 'delpaths([["data","recommend_vip_img_uri"]])'
 
-^https:\/\/api-one-wscn\.awtmt\.com\/\/apiv1\/kvconfig\/items\/membersrights$ url jsonjq-response-body 'delpaths([["data","vip_article"]])'
+(?i)^https:\/\/api-one-wscn\.awtmt\.com\/\/apiv1\/kvconfig\/items\/membersrights$ url jsonjq-response-body 'delpaths([["data","vip_article"]])'
 
 # [mitm]
 hostname = api-one-wscn.awtmt.com

@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 19:18:47 +08:00
+// Converted: 2026-10-13 10:18:59 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /^https:\/\/link\.zhihu\.com\/\?target=(?:https?)?(?:%3A|:)?(?:\/\/|%2F%2F)?(.*)/i as urlMatch then redirect(302, "http://${urlMatch.1}")
@@ -227,9 +227,12 @@ function evaluateCondition(condition,context={},initialCaptures={}) {
     captures:Object.fromEntries(result.captures),
   };
 }
-function compileSourceRegex(node){const {source}=assertRegexNode(node);return new RegExp(source);}
-const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https:\\/\\/link\\.zhihu\\.com\\/\\?target=(?:https?)?(?:%3A|:)?(?:\\/\\/|%2F%2F)?(.*)","flags":""},"capture":"urlMatch"},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
-  const __wayxMatch=new RegExp("^https:\\/\\/link\\.zhihu\\.com\\/\\?target=(?:https?)?(?:%3A|:)?(?:\\/\\/|%2F%2F)?(.*)","").exec(__wayxUrl);
+function compileSourceRegex(node) {
+  const {source,flags}=assertRegexNode(node);
+  return new RegExp(source,flags);
+}
+const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https:\\/\\/link\\.zhihu\\.com\\/\\?target=(?:https?)?(?:%3A|:)?(?:\\/\\/|%2F%2F)?(.*)","flags":"i","raw":"/^https:\\/\\/link\\.zhihu\\.com\\/\\?target=(?:https?)?(?:%3A|:)?(?:\\/\\/|%2F%2F)?(.*)/i"},"capture":"urlMatch"},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
+  const __wayxMatch=new RegExp("^https:\\/\\/link\\.zhihu\\.com\\/\\?target=(?:https?)?(?:%3A|:)?(?:\\/\\/|%2F%2F)?(.*)","i").exec(__wayxUrl);
   if(!__wayxMatch){$done({});}else{
     if(__wayxMatch[1] === undefined){$done({});}else{
     const __wayxReplacement="" + "http://" + __wayxMatch[1];

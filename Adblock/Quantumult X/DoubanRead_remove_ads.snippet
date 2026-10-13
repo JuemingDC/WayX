@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DoubanRead.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:36 +08:00
+# Converted: 2026-10-13 10:18:15 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/DoubanRead_remove_ads.lpx
@@ -16,15 +16,15 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/read\.douban\.com\/api\/v2\/ads\/ url reject-dict
+(?i)^https:\/\/read\.douban\.com\/api\/v2\/ads\/ url reject-dict
 
-^https:\/\/read\.douban\.com\/api\/v2\/popup$ url reject-dict
+(?i)^https:\/\/read\.douban\.com\/api\/v2\/popup$ url reject-dict
 
-^https:\/\/read\.douban\.com\/api\/v2\/search\/hot_words$ url reject-dict
+(?i)^https:\/\/read\.douban\.com\/api\/v2\/search\/hot_words$ url reject-dict
 
-^https:\/\/read\.douban\.com\/api\/v2\/search\/hot_charts$ url reject-dict
+(?i)^https:\/\/read\.douban\.com\/api\/v2\/search\/hot_charts$ url reject-dict
 
-^https:\/\/read\.douban\.com\/api\/v2\/search\/rec_urls$ url reject-dict
+(?i)^https:\/\/read\.douban\.com\/api\/v2\/search\/rec_urls$ url reject-dict
 
 # [mitm]
 hostname = read.douban.com

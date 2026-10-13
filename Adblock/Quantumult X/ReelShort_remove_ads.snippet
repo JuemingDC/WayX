@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ReelShort.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:27 +08:00
+# Converted: 2026-10-13 10:18:02 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/ReelShort_remove_ads.lpx
@@ -16,13 +16,13 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/app\/getSplashScreenConfig$ url reject-dict
+(?i)^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/app\/getSplashScreenConfig$ url reject-dict
 
-^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/hall\/landingPage$ url reject-dict
+(?i)^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/hall\/landingPage$ url reject-dict
 
 ^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_ReelShort_remove_ads/phase_qx_response_faf7e5acf1.js
 
-^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/book\/getPayModeV2$ url reject-dict
+(?i)^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/book\/getPayModeV2$ url reject-dict
 
 # [mitm]
 hostname = v-api.crazymaplestudios.com, d1k8g7qaebqd28.cloudfront.net

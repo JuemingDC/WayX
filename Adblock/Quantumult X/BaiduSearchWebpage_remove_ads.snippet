@@ -6,7 +6,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Baidu.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:31 +08:00
+# Converted: 2026-10-13 10:18:09 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduSearchWebpage_remove_ads.lpx
@@ -16,7 +16,7 @@
 
 # [rewrite_local]
 # 移除百度搜索首页信息流广告
-^https?:\/\/(www|m)\.baidu\.com\/?($|\?from=\w{8,9}) url script-response-body https://kelee.one/Resource/JavaScript/BaiduSearch/BaiduSearchHomePage_remove_ads.js
+(?i)^https?:\/\/(www|m)\.baidu\.com\/?($|\?from=\w{8,9}) url script-response-body https://kelee.one/Resource/JavaScript/BaiduSearch/BaiduSearchHomePage_remove_ads.js
 
 # [mitm]
 hostname = m.baidu.com, www.baidu.com

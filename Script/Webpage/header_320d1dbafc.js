@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 18:37:11 +08:00
+// Converted: 2026-10-13 10:19:04 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /https:\/\/(rule\.)?kelee\.one\//i then request.header.set("user-agent", "Loon/786 CFNetwork/1568.200.51 Darwin/24.1.0")
@@ -15,7 +15,10 @@ function replaceSourceRegex(node,text,replacement) {
   const out=String(replacement).replace(/\$(\d+)/g,(_,index)=>match[Number(index)] ?? '');
   return text.slice(0,match.index)+out+text.slice(match.index+match[0].length);
 }
-function compileSourceRegex(node){const {source}=assertRegexNode(node);return new RegExp(source);};return (text,pattern,flags,replacement)=>replaceSourceRegex({type:"regex",pattern,flags},String(text),replacement);})();
+function compileSourceRegex(node) {
+  const {source,flags}=assertRegexNode(node);
+  return new RegExp(source,flags);
+};return (text,pattern,flags,replacement)=>replaceSourceRegex({type:"regex",pattern,flags},String(text),replacement);})();
 const SUPPORTED_FLAGS=/^[ims]*$/;
 function scanSourceRegexLiteral(text, start=0) {
   text=String(text);
@@ -232,7 +235,10 @@ function evaluateCondition(condition,context={},initialCaptures={}) {
     captures:Object.fromEntries(result.captures),
   };
 }
-function compileSourceRegex(node){const {source}=assertRegexNode(node);return new RegExp(source);}
+function compileSourceRegex(node) {
+  const {source,flags}=assertRegexNode(node);
+  return new RegExp(source,flags);
+}
 const __wayxCaptures=Object.create(null);
 const __wayxArgs={};
 let __wayxHeaders={...($request.headers||{})};
@@ -247,7 +253,7 @@ function __wayxDel(n){const w=String(n).toLowerCase();for(const k of Object.keys
 function __wayxHeaderReplace(n,p,r,f=""){const w=String(n).toLowerCase();for(const k of Object.keys(__wayxHeaders))if(k.toLowerCase()===w)__wayxHeaders[k]=__wayxRegexReplace(__wayxHeaders[k],p,f,r);}
 function __wayxKey(n){return Object.keys(__wayxHeaders).find(k=>k.toLowerCase()===String(n).toLowerCase());}
 if((()=>{
-const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"https:\\/\\/(rule\\.)?kelee\\.one\\/","flags":""},"capture":null},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
+const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"https:\\/\\/(rule\\.)?kelee\\.one\\/","flags":"i","raw":"/https:\\/\\/(rule\\.)?kelee\\.one\\//i"},"capture":null},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
   __wayxWith("Loon/786 CFNetwork/1568.200.51 Darwin/24.1.0",v=>__wayxSet("user-agent",v));
   $done({headers:__wayxHeaders});
 }else{$done({});}

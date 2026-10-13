@@ -10,25 +10,25 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YYVoiceTool.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:29 +08:00
+# Converted: 2026-10-13 10:18:06 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/YYVoiceTool_remove_ads.lpx
 # Target: Surge
 
 [URL Rewrite]
 
-^https:\/\/web\.yy\.com\/yyvoice_task_sys\/bar\.html\? _ reject
+(?i)^https:\/\/web\.yy\.com\/yyvoice_task_sys\/bar\.html\? _ reject
 
 [Body Rewrite]
 
-http-response-jq ^https:\/\/yuyin-api\.baizhanlive\.com\/postsquare\/college\/page\/tabsV3\? '.data.tabList |= map(select(.code == "post" or .code == "teamup" or .code == "college" or .code == "aiSecretRoom"))'
+http-response-jq (?i)^https:\/\/yuyin-api\.baizhanlive\.com\/postsquare\/college\/page\/tabsV3\? '.data.tabList |= map(select(.code == "post" or .code == "teamup" or .code == "college" or .code == "aiSecretRoom"))'
 
 [Map Local]
-^https:\/\/yuyin-api\.baizhanlive\.com\/homepage\/flashscreen\/get\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/yuyin-api\.baizhanlive\.com\/homepage\/flashscreen\/get\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/yuyin-api\.baizhanlive\.com\/homepage\/homepage\/banner\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/yuyin-api\.baizhanlive\.com\/homepage\/homepage\/banner\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/yuyin-api\.baizhanlive\.com\/search\/search\/hotword\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/yuyin-api\.baizhanlive\.com\/search\/search\/hotword\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% yuyin-api.baizhanlive.com, web.yy.com

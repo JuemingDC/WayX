@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Huxiu.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:40 +08:00
+# Converted: 2026-10-13 10:18:21 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Huxiu_remove_ads.lpx
@@ -17,17 +17,17 @@
 host, api-ad-product.huxiu.com, reject
 
 # [rewrite_local]
-^https:\/\/api-ms-config\.huxiu\.com\/v1\/adConfig$ url reject-dict
+(?i)^https:\/\/api-ms-config\.huxiu\.com\/v1\/adConfig$ url reject-dict
 
-^https:\/\/api-web-feed\.huxiu\.com\/v1\/index\/recommendContentsNew$ url reject-dict
+(?i)^https:\/\/api-web-feed\.huxiu\.com\/v1\/index\/recommendContentsNew$ url reject-dict
 
 ^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Huxiu_remove_ads/features_qx_54a4480b20.js
 
-^https:\/\/api-search\.huxiu\.com\/api\/searchIndex$ url reject-dict
+(?i)^https:\/\/api-search\.huxiu\.com\/api\/searchIndex$ url reject-dict
 
-^https:\/\/api-article\.huxiu\.com\/v2\/article\/getTextArticleRelated$ url reject-dict
+(?i)^https:\/\/api-article\.huxiu\.com\/v2\/article\/getTextArticleRelated$ url reject-dict
 
-^https:\/\/api-web-moment\.huxiu\.com\/v3\/moment\/getDetailRecdArticle$ url reject-dict
+(?i)^https:\/\/api-web-moment\.huxiu\.com\/v3\/moment\/getDetailRecdArticle$ url reject-dict
 
 # [mitm]
 hostname = api-ms-config.huxiu.com, api-web-feed.huxiu.com, api-search.huxiu.com, api-article.huxiu.com, api-web-moment.huxiu.com, api-ms-feed.huxiu.com

@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YoudaoTrans.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:37:00 +08:00
+# Converted: 2026-10-13 10:18:50 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/YoudaoTrans_remove_ads.lpx
@@ -16,16 +16,16 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/gorgon\.youdao\.com\/gorgon\/v2\/request\.s url reject-dict
-^https:\/\/gorgon\.youdao\.com\/gorgon\/brand\/prefetch\.s url reject-dict
+(?i)^https:\/\/gorgon\.youdao\.com\/gorgon\/v2\/request\.s url reject-dict
+(?i)^https:\/\/gorgon\.youdao\.com\/gorgon\/brand\/prefetch\.s url reject-dict
 
-^https:\/\/gorgon\.youdao\.com\/gorgon\/request\.s url reject-dict
-^https:\/\/fanyiguan-server\.youdao\.com\/server\/banner\? url reject-dict
-^https:\/\/dict\.youdao\.com\/vip\/activity\/fanyiguan\/sevendayfree\/imei\? url reject-dict
+(?i)^https:\/\/gorgon\.youdao\.com\/gorgon\/request\.s url reject-dict
+(?i)^https:\/\/fanyiguan-server\.youdao\.com\/server\/banner\? url reject-dict
+(?i)^https:\/\/dict\.youdao\.com\/vip\/activity\/fanyiguan\/sevendayfree\/imei\? url reject-dict
 
-^https:\/\/dict\.youdao\.com\/wordbook\/recommend\?all=false url reject-dict
+(?i)^https:\/\/dict\.youdao\.com\/wordbook\/recommend\?all=false url reject-dict
 
-^https:\/\/api-overmind\.youdao\.com\/openapi\/get\/luna\/dict\/trans_abtest\/online\/iOS\? url reject-dict
+(?i)^https:\/\/api-overmind\.youdao\.com\/openapi\/get\/luna\/dict\/trans_abtest\/online\/iOS\? url reject-dict
 
 # [mitm]
 hostname = gorgon.youdao.com, fanyiguan-server.youdao.com, api-overmind.youdao.com, dict.youdao.com

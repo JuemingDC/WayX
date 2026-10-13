@@ -10,15 +10,15 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/TXDocs.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:52 +08:00
+# Converted: 2026-10-13 10:18:38 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/TXDocs_remove_ads.lpx
 # Target: Surge
 
 [Map Local]
-^https:\/\/tianshu\.qq\.com\/open\/ts_access\/GetAds\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/tianshu\.qq\.com\/open\/ts_access\/GetAds\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/h5\.qzone\.qq\.com\/p\/adboss\/api\/json\/ts_access\/GetAds$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/h5\.qzone\.qq\.com\/p\/adboss\/api\/json\/ts_access\/GetAds$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% tianshu.qq.com, h5.qzone.qq.com

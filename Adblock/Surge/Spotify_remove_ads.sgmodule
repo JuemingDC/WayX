@@ -12,7 +12,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Spotify.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:28 +08:00
+# Converted: 2026-10-13 10:18:04 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Spotify_remove_ads.lpx
 # Target: Surge
@@ -22,13 +22,13 @@ AND,((DOMAIN-SUFFIX,spotify.com,extended-matching),(PROTOCOL,QUIC)),REJECT
 
 [URL Rewrite]
 
-^https:\/\/(?:\w+-spclient|spclient\.wg)\.spotify\.com(?::443)?\/artistview\/v1\/artist\/(.*)&platform=iphone https://spclient.wg.spotify.com/artistview/v1/artist/$1&platform=ipad header
+(?i)^https:\/\/(?:\w+-spclient|spclient\.wg)\.spotify\.com(?::443)?\/artistview\/v1\/artist\/(.*)&platform=iphone https://spclient.wg.spotify.com/artistview/v1/artist/$1&platform=ipad header
 
 [Map Local]
-^https:\/\/(?:\w+-spclient|spclient\.wg)\.spotify\.com(?::443)?\/pendragon\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/(?:\w+-spclient|spclient\.wg)\.spotify\.com(?::443)?\/pendragon\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-Protobuf处理 = type=http-response,pattern=^https:\/\/(?:\w+-spclient|spclient\.wg)\.spotify\.com(?::443)?\/(?:bootstrap|user-customization-service),script-path=https://kelee.one/Resource/JavaScript/Spotify/Spotify_remove_ads.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=5,argument="{\"tab\":{{{tab}}},\"useractivity\":{{{useractivity}}}}"
+Protobuf处理 = type=http-response,pattern=(?i)^https:\/\/(?:\w+-spclient|spclient\.wg)\.spotify\.com(?::443)?\/(?:bootstrap|user-customization-service),script-path=https://kelee.one/Resource/JavaScript/Spotify/Spotify_remove_ads.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=5,argument="{\"tab\":{{{tab}}},\"useractivity\":{{{useractivity}}}}"
 
 [MITM]
 hostname = %APPEND% *-spclient.spotify.com, spclient.wg.spotify.com

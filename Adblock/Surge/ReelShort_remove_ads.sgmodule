@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ReelShort.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:27 +08:00
+# Converted: 2026-10-13 10:18:02 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/ReelShort_remove_ads.lpx
 # Target: Surge
@@ -18,11 +18,11 @@
 
 
 [Map Local]
-^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/app\/getSplashScreenConfig$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/app\/getSplashScreenConfig$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/hall\/landingPage$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/hall\/landingPage$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/book\/getPayModeV2$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/book\/getPayModeV2$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
 

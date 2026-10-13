@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/CrazyRope.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:52 +08:00
+# Converted: 2026-10-13 10:18:39 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/CrazyRope_remove_ads.lpx
@@ -16,22 +16,22 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api\.tiantiantiaosheng\.com\/api\d\/abtest\/ads_v\d\? url reject-dict
-^https:\/\/cdn\.tiantiantiaosheng\.com\/props_config_prod\/ad_position_config\/ url reject-dict
-^https:\/\/api\.tiantiantiaosheng\.com\/api\d\/adolescent_mode\/ url reject-dict
-^https:\/\/api\.tiantiantiaosheng\.com\/api\d\/ad_sys\/ url reject-dict
+(?i)^https:\/\/api\.tiantiantiaosheng\.com\/api\d\/abtest\/ads_v\d\? url reject-dict
+(?i)^https:\/\/cdn\.tiantiantiaosheng\.com\/props_config_prod\/ad_position_config\/ url reject-dict
+(?i)^https:\/\/api\.tiantiantiaosheng\.com\/api\d\/adolescent_mode\/ url reject-dict
+(?i)^https:\/\/api\.tiantiantiaosheng\.com\/api\d\/ad_sys\/ url reject-dict
 
-^https:\/\/api\.tiantiantiaosheng\.com\/api\/user\/home_page\/activities$ url reject-dict
+(?i)^https:\/\/api\.tiantiantiaosheng\.com\/api\/user\/home_page\/activities$ url reject-dict
 
-^https:\/\/api\.tiantiantiaosheng\.com\/api\d\/search\/base_info$ url reject-dict
+(?i)^https:\/\/api\.tiantiantiaosheng\.com\/api\d\/search\/base_info$ url reject-dict
 
-^https:\/\/api\.tiantiantiaosheng\.com\/api2\/medal_challenge_activity\/page_switch\? url reject-dict
+(?i)^https:\/\/api\.tiantiantiaosheng\.com\/api2\/medal_challenge_activity\/page_switch\? url reject-dict
 
-^https:\/\/api\.tiantiantiaosheng\.com\/api2\/training_plan\/recommended_list$ url reject-dict
+(?i)^https:\/\/api\.tiantiantiaosheng\.com\/api2\/training_plan\/recommended_list$ url reject-dict
 
-^https:\/\/api\.tiantiantiaosheng\.com\/api2\/user\/new_register_info$ url reject-dict
+(?i)^https:\/\/api\.tiantiantiaosheng\.com\/api2\/user\/new_register_info$ url reject-dict
 
-^https:\/\/api\.tiantiantiaosheng\.com\/api2\/popup\/list\? url reject-dict
+(?i)^https:\/\/api\.tiantiantiaosheng\.com\/api2\/popup\/list\? url reject-dict
 
 # [mitm]
 hostname = api.tiantiantiaosheng.com, cdn.tiantiantiaosheng.com

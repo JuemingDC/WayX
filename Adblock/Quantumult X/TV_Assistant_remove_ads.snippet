@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/TV_Assistant.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:44 +08:00
+# Converted: 2026-10-13 10:18:26 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/TV_Assistant_remove_ads.lpx
@@ -16,13 +16,13 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/saas\.hpplay\.cn\/api\/lebo-desk\/endpoint\/app-resource\/app_home_pop_up url reject-dict
-^https:\/\/saas\.hpplay\.cn\/api\/lebo-desk\/endpoint\/app-resource\/app_home_tips url reject-dict
-^https:\/\/saas\.hpplay\.cn\/api\/lebo-desk\/endpoint\/app-resource\/app_index_operate2 url reject-dict
-^https:\/\/saas\.hpplay\.cn\/api\/lebo-rabbit\/app-card\/list url reject-dict
-^https:\/\/saas\.hpplay\.cn\/api\/lebo-desk\/endpoint\/app-resource\/app-user-banner url reject-dict
+(?i)^https:\/\/saas\.hpplay\.cn\/api\/lebo-desk\/endpoint\/app-resource\/app_home_pop_up url reject-dict
+(?i)^https:\/\/saas\.hpplay\.cn\/api\/lebo-desk\/endpoint\/app-resource\/app_home_tips url reject-dict
+(?i)^https:\/\/saas\.hpplay\.cn\/api\/lebo-desk\/endpoint\/app-resource\/app_index_operate2 url reject-dict
+(?i)^https:\/\/saas\.hpplay\.cn\/api\/lebo-rabbit\/app-card\/list url reject-dict
+(?i)^https:\/\/saas\.hpplay\.cn\/api\/lebo-desk\/endpoint\/app-resource\/app-user-banner url reject-dict
 # 移除底栏视频标签
-^https:\/\/saas\.hpplay\.cn\/api\/lebo-desk\/endpoint\/app-resource\/app_tab_red_dot\?user-tag=1$ url script-response-body https://kelee.one/Resource/JavaScript/TV_Assistant/TV_Assistant_remove_ads.js
+(?i)^https:\/\/saas\.hpplay\.cn\/api\/lebo-desk\/endpoint\/app-resource\/app_tab_red_dot\?user-tag=1$ url script-response-body https://kelee.one/Resource/JavaScript/TV_Assistant/TV_Assistant_remove_ads.js
 
 # [mitm]
 hostname = saas.hpplay.cn
