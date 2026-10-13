@@ -32,7 +32,7 @@ if (selectedCase === "architecture-contract.mjs") {
 const ROOT=process.cwd();
 const spec=await fs.readFile(path.join(ROOT,'.github/CONVERSION_SPEC.md'),'utf8');
 
-assert.match(spec,/版本：2\.5\b/,'Authoritative specification uses version 2.5');
+assert.match(spec,/版本：2\.6\b/,'Authoritative specification uses version 2.6');
 assert.match(spec,/^## 2\.1 /m);
 assert.doesNotMatch(spec,/迁移状态|历史记录|失败案例|PR #|（v1\.\d+|版本：1\.|已由 §|本轮验收/,'specification contains only current normative content');
 for (const evidence of [
@@ -63,7 +63,7 @@ for (const invariant of [
   assert.ok(spec.includes(invariant),'missing semantic-compiler invariant in CONVERSION_SPEC: '+invariant);
 }
 
-assert.match(spec,/当前生产转换丢弃源 `i\/m\/s`/,'effective specification must match the target flag policy');
+assert.match(spec,/当前生产转换保留源 `i\/m\/s`/,'effective specification must match the target flag policy');
 
 for (const rel of [
   '.github/converter/src/core.mjs',
