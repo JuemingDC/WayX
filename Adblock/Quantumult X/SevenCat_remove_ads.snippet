@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SevenCat.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:33 +08:00
+# Converted: 2026-10-13 12:34:00 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/SevenCat_remove_ads.lpx
@@ -34,7 +34,7 @@ host-suffix, gdt.qq.com, reject
 (?i)^https:\/\/api-cfg\.wtzw\.com\/v\d\/operation\/index\?ad_personal_switch url reject-dict
 (?i)^https:\/\/xiaoshuo\.wtzw\.com\/api\/v\d\/withdraw\/init url reject-dict
 
-^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_SevenCat_remove_ads/features_qx_5d7a7f2ad4.js
+(?i)^https:\/\/xiaoshuo\.wtzw\.com\/api\/v\d\/user\/my-center\? url jsonjq-response-body 'delpaths([["data","func_area",1]]) | delpaths([["data","func_area",2]])'
 
 # [mitm]
 hostname = api-cfg.wtzw.com, sf3-fe-tos.pglstatp-toutiao.com, api-bc.wtzw.com, api-gw.wtzw.com, cdn.wtzw.com

@@ -4,7 +4,7 @@
 
 import crypto from "node:crypto";
 import { renderRewritePhaseDispatcher } from "./runtime.mjs";
-import { scriptIrTag, parseScriptDeclaration, isScriptV2, planQxScript, planSurgeScript, scriptOption, analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs, surgeArgumentMetadata, surgeRewriteArgumentPayload } from "./script.mjs";
+import { splitScriptPipelineSources, scriptIrTag, parseScriptDeclaration, isScriptV2, planQxScript, planSurgeScript, scriptOption, analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs, surgeArgumentMetadata, surgeRewriteArgumentPayload } from "./script.mjs";
 import { qxRule as canonicalQxRule, surgeModuleRule } from "./rule.mjs";
 import { repairUpstreamJq, unquoteRewriteToken, isRewriteV2, parseRewriteV2, selectRewritePipelineLayer, rewriteV2ToSource, validateRewriteV2Ast, classifyLegacyRewriteAction, isEmptyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr, inlineResolvedDependency, inlineResolvedLegacyJqPathIr, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr, planQxRewrite, planSurgeRewrite, rewriteReview, rewriteIssue, supportsRewritePhaseActions, planRewriteFeatureHelper, simpleUrlRewriteCondition, jsonPipelineToSafeNativeJq } from "./rewrite.mjs";
 import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection, parseLoonPlugin, materializeRewriteDependencies, materializeSourceScripts, fetchOriginalText, fetchOriginalBytes } from "./input.mjs";
@@ -84,6 +84,8 @@ function resolveRewriteJqDependencies(ast,line,ctx) {
 function rewriteV2Action(line,target,ctx) {
   if (!isRewriteV2(line)) return null;
   if(isScriptV2(line)) {
+    const members=splitScriptPipelineSources(line);
+    if(members.length>1)return {section:'split',members:members.map(member=>rewriteV2Action(member,target,{...ctx,splitPipelineAction:true}))};
     try {
       const ir=parseScriptDeclaration(line),record=ctx.scriptMap?.get(ir.script.path);
       const plan=(target==='qx'?planQxScript:planSurgeScript)(ir,{scriptUrl:record?.[target] || ir.script.path,sourceText:record?.source || '',name:sanitizeName(scriptIrTag(ir) || 'wayx_script_'+crypto.createHash('sha1').update(ir.source).digest('hex').slice(0,10)),argumentIds:ctx.argumentIds,argumentTable:ctx.argumentTable});
@@ -97,6 +99,7 @@ function rewriteV2Action(line,target,ctx) {
   let ast;
   try {
     ast=selectRewritePipelineLayer(parseRewriteV2(line));
+    if(ctx.splitPipelineAction && !ast.sourceActionCount)ast={...ast,sourceActionCount:1,sourceActionIndices:[0]};
     validateRewriteV2Ast(ast);
   } catch (error) {
     return rewriteErrorResult(line,error);
@@ -118,7 +121,11 @@ function rewriteV2Action(line,target,ctx) {
         return {section:'comment',line:'# [WayX] OMITTED: action pipeline cannot be converted to a complex syntax script: '+(helper?.reason || 'unsupported action combination')+'\n# Source declaration: '+sourceLine};
       }
       const native= simpleUrlRewriteCondition(resolved).ok && jsonPipelineToSafeNativeJq(resolved).ok;
-      return planner(ir,{...ctx,sourceLine,argumentRefs:refs,...(ast.sourceActionCount?{featureCompatibilityPhases:new Set(native?[ast.phase]:[])}: {})});
+      const mock=ctx.mockFiles?.get(line);
+      const projectedMock=mock?.byAction ? mock.byAction[member.sourceActionIndices?.[0] ?? 0] : mock;
+      const mockFiles=new Map(ctx.mockFiles || []);
+      if(projectedMock)mockFiles.set(sourceLine,projectedMock);
+      return planner(ir,{...ctx,mockFiles,sourceLine,argumentRefs:refs,...(ast.sourceActionCount?{featureCompatibilityPhases:new Set(native?[ast.phase]:[])}: {})});
     }catch(error){return rewriteReview(selectedLine,String(error?.message || error).split('\n')[0]);}
   };
   return ast.sourceActionCount?{section:'split',members:ast.actions.map((action,index)=>plan({...ast,actions:[action],sourceActionIndices:[ast.sourceActionIndices[index]]}))}:plan(ast);
@@ -170,7 +177,7 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
   }catch { /* Invalid declarations keep the ordinary diagnostic. */ }
   ctx.featureCompatibilityPhases=new Set(['request','response'].filter(phase=>legacy || blockedV2.has(phase) || scripts.some(x=>{try {const ir=parseScriptDeclaration(x.line);return ir?.phase===phase && (target==='qx' || !(scriptOption(ir,'enable')?.value===false));}catch{return false;}})));
   for (const item of items) {
-    if (!isRewriteV2(item.line) || isScriptV2(item.line)) continue;
+    if (!isRewriteV2(item.line) || isScriptV2(item.line) || item.pipelineMember) continue;
     try {
       const ast=resolveRewriteJqDependencies(parseRewriteV2(item.line),item.line,ctx);
       validateRewriteV2Ast(ast);
@@ -398,8 +405,8 @@ export function convertPlugin(entry,source,{
     }
     if (!item.line) continue;
 
-    let qr=qxDispatchers.get(item.sourceIndex) || rewriteV2Action(item.line,'qx',qctx);
-    let sr=surgeDispatchers.get(item.sourceIndex) || rewriteV2Action(item.line,'surge',sctx);
+    let qr=qxDispatchers.get(item.sourceIndex) || rewriteV2Action(item.line,'qx',item.pipelineMember?{...qctx,splitPipelineAction:true}:qctx);
+    let sr=surgeDispatchers.get(item.sourceIndex) || rewriteV2Action(item.line,'surge',item.pipelineMember?{...sctx,splitPipelineAction:true}:sctx);
     if (!qr || !sr) {
       const [pattern,action]=splitPatternAction(item.line);
       let ir=legacyRewriteToSemanticIr(pattern,action);
@@ -458,6 +465,18 @@ export function convertPlugin(entry,source,{
     const comments=cleanSourceComments(item.comments);
     if (!item.line) continue;
 
+    if(isRewriteV2(item.line) && !isScriptV2(item.line)) {
+      for(const target of ['qx','surge']) {
+        const ctx=target==='qx'?qctx:sctx;
+        const result=rewriteV2Action(item.line,target,item.pipelineMember?{...ctx,splitPipelineAction:true}:ctx);
+        for(const member of result?.members || [result]) {
+          if(!member)continue;
+          const dest=target==='qx'?qxRewriteOutputDestination(qx,member.section):surgeRewriteOutputDestination(sg,member.section);
+          dest.push(...comments,...(member.lines || [member.line]).filter(Boolean));
+        }
+      }
+      continue;
+    }
     let ir;
     const sourceSyntax=isScriptV2(item.line) ? 'v2' : 'legacy';
     try {

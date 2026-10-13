@@ -10,15 +10,22 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduMap.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:07 +08:00
+# Converted: 2026-10-13 12:33:04 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduMap_remove_ads.lpx
 # Target: Surge
 
+[Body Rewrite]
 
+http-response-jq (?i)^https:\/\/newclient\.map\.baidu\.com\/feed\/govui\/rich_content 'delpaths([["data"]])'
 
+http-response-jq (?i)^https:\/\/newclient\.map\.baidu\.com\/client\/noticebar\/get\? 'delpaths([["content","multi_data"]])'
 
+http-response-jq (?i)^https:\/\/newclient\.map\.baidu\.com\/(client\/)?usersystem\/mine\/page\? 'setpath(["data"]; "{}")'
 
+http-response-jq (?i)^https:\/\/newclient\.map\.baidu\.com\/client\/phpui2\/\?qt=ads&type=user_home_new_service 'delpaths([["ads"]])'
+
+http-response-jq (?i)^https:\/\/newclient\.map\.baidu\.com\/living\/nearby\/api\? 'delpaths([["Result","cards",1]]) | delpaths([["Result","cards",4]]) | delpaths([["Result","cards",5]]) | delpaths([["Result","cards",9]])'
 
 [Map Local]
 (?i)^https:\/\/afd\.baidu\.com\/afd\/entry\?action=(update|query) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
@@ -31,10 +38,6 @@
 
 (?i)^https:\/\/ecom\.map\.baidu\.com\/ad-ops\/afd\/popup\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 (?i)^https:\/\/maphotel\.baidu\.com\/hotel\/goextranet\/activity\/detail\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-
-[Script]
-
-wayx_phase_response_d010d3933d = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_BaiduMap_remove_ads/phase_surge_response_d010d3933d.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% afd.baidu.com, newclient.map.baidu.com, yongche.baidu.com, ecom.map.baidu.com

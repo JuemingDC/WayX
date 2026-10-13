@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/LZMH.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:27 +08:00
+# Converted: 2026-10-13 12:33:45 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/LZMH_remove_ads.lpx
 # Target: Surge
@@ -18,6 +18,10 @@
 [URL Rewrite]
 
 (?i)^http:\/\/lzmh\.lz-qs\.com:5090\/resource\/download\/ _ reject
+
+[Body Rewrite]
+
+http-response-jq (?i)^https:\/\/lzmh\.lz-qs\.com:6025\/lzmh_app_api\/api\/v2\/user\/getUserBaseInfoAndConfig\? 'delpaths([["value","config"]])'
 
 [Map Local]
 (?i)^https:\/\/lzmh\.lz-qs\.com:6025\/lzmh_app_api\/api\/v1\/app3rd\/getApp3rdGenreList\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
@@ -36,10 +40,6 @@
 (?i)^https:\/\/yuudnn\.lz-qs\.com\/lzmh_app_api\/o2o\/api\/v2\/o2o\/homeShopList$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 (?i)^https:\/\/yuudnn\.lz-qs\.com:9220\/mssp-api\/api\/v1\/mrtb\/getSdkAdSlotList$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-
-[Script]
-
-wayx_features_e8d1caff9f = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_LZMH_remove_ads/features_surge_e8d1caff9f.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% lzmh.lz-qs.com, yuudnn.lz-qs.com

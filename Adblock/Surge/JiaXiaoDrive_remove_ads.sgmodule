@@ -10,10 +10,13 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/JiaXiaoDrive.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:21 +08:00
+# Converted: 2026-10-13 12:33:35 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/JiaXiaoDrive_remove_ads.lpx
 # Target: Surge
+
+[Body Rewrite]
+http-response-jq (?i)http-response 'delpaths([["^https:\\/\\/api\\","ksedt\\","com\\/api\\/config\\/"]])'
 
 [Map Local]
 (?i)^https:\/\/richmanrules\.ksedt\.com\/serverConfig\/3\/adConfig\.json data-type=text data="{}" status-code=200 header="Content-Type:application/json"
@@ -21,9 +24,6 @@
 (?i)^https:\/\/richmanrules\.ksedt\.com\/intellectWaterfallBidding\/find$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 (?i)^https:\/\/op\.ksedt\.com\/jxedtLive\/liveIntroduceResource data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 (?i)^https:\/\/richmanrules\.ksedt\.com\/intellectWaterfall\/find$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-
-[Script]
-wayx_features_6cd814e18d = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_JiaXiaoDrive_remove_ads/features_surge_6cd814e18d.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% richmanrules.ksedt.com, gouche.ksedt.com, muses.ksedt.com, op.ksedt.com, api.ksedt.com

@@ -1,6 +1,7 @@
 #!name=美图秀秀去广告
 #!desc=移除开屏广告、横幅推广，精简我的页面。
 #!category=WayX
+#!requirement=CORE_VERSION>=20
 
 # Open URL: https://apps.apple.com/app/id416048305
 # Author: 可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
@@ -9,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MeiTu.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:46 +08:00
+# Converted: 2026-10-13 12:33:50 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/MeiTu_remove_ads.lpx
 # Target: Surge
@@ -17,9 +18,9 @@
 [Rule]
 DOMAIN,adui.tg.meitu.com,REJECT,extended-matching,pre-matching
 
-[Script]
+[Body Rewrite]
 
-wayx_features_a0e05a8e43 = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_MeiTu_remove_ads/features_surge_a0e05a8e43.js,requires-body=true,max-size=-1
+http-response-jq (?i)^https:\/\/api\.posters\.meitu\.com\/common\/init\.json 'delpaths([["data","vip"]])'
 
 [MITM]
 hostname = %APPEND% api.posters.meitu.com

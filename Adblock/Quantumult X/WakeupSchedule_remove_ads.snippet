@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/WakeupSchedule.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:05 +08:00
+# Converted: 2026-10-13 12:33:00 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/WakeupSchedule_remove_ads.lpx
@@ -18,7 +18,7 @@
 # [rewrite_local]
 (?i)^https:\/\/api\.wakeup\.fun\/wakeup\/app\/bannerconf$ url reject-dict
 
-^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_WakeupSchedule_remove_ads/features_qx_4596af300d.js
+(?i)^https:\/\/api\.wakeup\.fun\/wakeup\/user\/mine$ url jsonjq-response-body 'delpaths([["data","bannerItems"]])'
 
 # [mitm]
 hostname = api.wakeup.fun

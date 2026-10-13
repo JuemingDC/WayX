@@ -6,7 +6,7 @@ import { execFile } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 import fs from "node:fs/promises";
-import { isScriptV2, parseScriptV2 } from "./script.mjs";
+import { splitScriptPipelineSources, isScriptV2, parseScriptV2 } from "./script.mjs";
 import { minifyJqFile, isRewriteV2, parseRewriteV2, selectRewritePipelineLayer, validateRewriteV2Ast, legacyRewriteToSemanticIr, dependencySpecFromAction, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr, isTextRequestMockAction } from "./rewrite.mjs";
 
 
@@ -325,7 +325,8 @@ export function groupSourceSectionItems(lines = []) {
       pending.push(lines[sourceIndex]);
       continue;
     }
-    items.push({comments:pending,line:trimmed,sourceIndex});
+    const members=isScriptV2(trimmed) ? splitScriptPipelineSources(trimmed) : [trimmed];
+    members.forEach((line,index)=>items.push({comments:index===0?pending:[],line,sourceIndex,...(members.length>1?{pipelineMember:true}:{})}));
     pending=[];
   }
   if (pending.length) items.push({comments:pending,line:null,sourceIndex:lines.length});
@@ -423,16 +424,15 @@ export async function materializeMockFiles(entry,parsed,{
   fetchBytes=fetchOriginalBytes,
 }={}) {
   const out=new Map();
-  for (const item of groupSourceSectionItems(parsed?.sections?.get('Rewrite'))) {
+  for (const item of [...groupSourceSectionItems(parsed?.sections?.get('Rewrite')), ...groupSourceSectionItems(parsed?.sections?.get('Script')).filter(item=>item.line && isRewriteV2(item.line) && !isScriptV2(item.line))]) {
     if (!item.line || !isRewriteV2(item.line) || isScriptV2(item.line)) continue;
     try {
       const ast=selectRewritePipelineLayer(parseRewriteV2(item.line));
       validateRewriteV2Ast(ast);
       const files=ast.actions.map((action,index)=>({action,index:ast.sourceActionIndices?.[index] ?? index})).filter(({action})=>/^(?:request|response)\.body\.mock_file$/.test(action.name));
       if(!files.length)continue;
-      // Keep the historical single-file shape; only verified text request
-      // pipelines gain an action-indexed dependency collection.
-      if(files.length>1 && (ast.phase!=='request' || !files.every(({action})=>isTextRequestMockAction(action))))continue;
+      // Separate output retains every file action and its original index.
+      // Keep the historical single-file shape for independent declarations.
       const cache=new Map();
       const text=url=>{
         if(files.length===1)return fetchText(url);
@@ -480,7 +480,7 @@ export async function materializeJqFiles(entry,parsed,{
   fetchText=fetchOriginalText,
 }={}) {
   const out=new Map();
-  for (const item of groupSourceSectionItems(parsed?.sections?.get('Rewrite'))) {
+  for (const item of [...groupSourceSectionItems(parsed?.sections?.get('Rewrite')), ...groupSourceSectionItems(parsed?.sections?.get('Script')).filter(item=>item.line && isRewriteV2(item.line) && !isScriptV2(item.line))]) {
     if (!item.line) continue;
     try {
       let spec=null;
