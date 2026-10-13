@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/PangguaiLife.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:31 +08:00
+# Converted: 2026-10-13 12:33:55 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/PangguaiLife_remove_ads.lpx
@@ -20,7 +20,8 @@
 
 (?i)^https:\/\/userapi\.qiekj\.com\/appTitle\/get$ url reject-dict
 
-^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_PangguaiLife_remove_ads/phase_qx_response_c7a7753a39.js
+(?i)^https:\/\/userapi\.qiekj\.com\/local-life\/tab-order$ url jsonjq-response-body 'setpath(["data"]; "[]")'
+(?i)^https:\/\/userapi\.qiekj\.com\/integralGoods\/queryIntegralGoodsCategoryList$ url jsonjq-response-body 'setpath(["data"]; "[]")'
 
 (?i)^https:\/\/userapi\.qiekj\.com\/integralRecord\/integralDailStatistics$ url reject-dict
 

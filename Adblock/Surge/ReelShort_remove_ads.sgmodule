@@ -10,12 +10,16 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ReelShort.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:02 +08:00
+# Converted: 2026-10-13 12:32:54 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/ReelShort_remove_ads.lpx
 # Target: Surge
 
+[Body Rewrite]
 
+http-response-jq (?i)^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/book\/getBookDetailV2$ 'delpaths([["data","ad_vip"]])'
+
+http-response-jq (?i)^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/hall\/infoV3$ 'delpaths([["data","search_keyword_list"]])'
 
 [Map Local]
 (?i)^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/app\/getSplashScreenConfig$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
@@ -23,10 +27,6 @@
 (?i)^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/hall\/landingPage$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 (?i)^https:\/\/(v-api\.crazymaplestudios\.com|d1k8g7qaebqd28\.cloudfront\.net)\/api\/video\/book\/getPayModeV2$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-
-[Script]
-
-wayx_phase_response_41c44e86c1 = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_ReelShort_remove_ads/phase_surge_response_41c44e86c1.js,requires-body=true,max-size=-1
 
 [MITM]
 hostname = %APPEND% v-api.crazymaplestudios.com, d1k8g7qaebqd28.cloudfront.net
