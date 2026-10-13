@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BiliComic.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:32 +08:00
+# Converted: 2026-10-13 10:18:10 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/BiliComic_remove_ads.lpx
@@ -16,21 +16,21 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v\d\.Comic\/GetActivityTab url reject-dict
-^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v\d\.Comic\/GetBubbles url reject-dict
-^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v\d\.Comic\/GetCommonBanner url reject-dict
-^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v\d\.Comic\/SearchBanner url reject-dict
-^https:\/\/manga\.bilibili\.com\/twirp\/user\.v\d\.SeasonV\d\/GetSeasonInfo url reject-dict
-^https:\/\/manga\.bilibili\.com\/twirp\/bookshelf\.v\d\.Bookshelf\/ListEmptyRecommend url reject-dict
-^https:\/\/manga\.bilibili\.com\/twirp\/bookshelf\.v\d\.Bookshelf\/NovelRecommend url reject-dict
-^https:\/\/manga\.bilibili\.com\/twirp\/novel\.v\d\.Novel\/MoreRecommend url reject-dict
-^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v\d\.Comic\/GetBubbles url reject-dict
-^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v\d\.Comic\/AppInit url reject-dict
-^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v\d\.Comic\/ListFlash url reject-dict
+(?i)^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v\d\.Comic\/GetActivityTab url reject-dict
+(?i)^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v\d\.Comic\/GetBubbles url reject-dict
+(?i)^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v\d\.Comic\/GetCommonBanner url reject-dict
+(?i)^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v\d\.Comic\/SearchBanner url reject-dict
+(?i)^https:\/\/manga\.bilibili\.com\/twirp\/user\.v\d\.SeasonV\d\/GetSeasonInfo url reject-dict
+(?i)^https:\/\/manga\.bilibili\.com\/twirp\/bookshelf\.v\d\.Bookshelf\/ListEmptyRecommend url reject-dict
+(?i)^https:\/\/manga\.bilibili\.com\/twirp\/bookshelf\.v\d\.Bookshelf\/NovelRecommend url reject-dict
+(?i)^https:\/\/manga\.bilibili\.com\/twirp\/novel\.v\d\.Novel\/MoreRecommend url reject-dict
+(?i)^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v\d\.Comic\/GetBubbles url reject-dict
+(?i)^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v\d\.Comic\/AppInit url reject-dict
+(?i)^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v\d\.Comic\/ListFlash url reject-dict
 # 移除顶部标签
-^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v\d\.Comic\/GetClassPageAllTabs url script-response-body https://kelee.one/Resource/JavaScript/BiliComic/BiliComic_remove_ads.js
+(?i)^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v\d\.Comic\/GetClassPageAllTabs url script-response-body https://kelee.one/Resource/JavaScript/BiliComic/BiliComic_remove_ads.js
 # 精简我的页面
-^https:\/\/manga\.bilibili\.com\/twirp\/user\.v\d\.User\/UCenterConf url script-response-body https://kelee.one/Resource/JavaScript/BiliComic/BiliComic_remove_ads.js
+(?i)^https:\/\/manga\.bilibili\.com\/twirp\/user\.v\d\.User\/UCenterConf url script-response-body https://kelee.one/Resource/JavaScript/BiliComic/BiliComic_remove_ads.js
 
 # [mitm]
 hostname = manga.bilibili.com

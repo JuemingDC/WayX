@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/youtube.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-10-05 19:28:37 +08:00
+# Converted: 2026-10-13 10:19:05 +08:00
 # Converted by: chance
 # Category: 插件
 # Source: https://rucu6.pages.dev/Plugins/youtube_maasea.lpx
@@ -22,14 +22,14 @@
 # youtube_request_init
 # [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
 # [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
-^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.* url script-request-body https://rucu6.pages.dev/Scripts/youtube/request.js
+(?i)^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.* url script-request-body https://rucu6.pages.dev/Scripts/youtube/request.js
 # youtube_request_log_event
 # [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
-^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event url script-request-body https://rucu6.pages.dev/Scripts/youtube/request.js
+(?i)^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event url script-request-body https://rucu6.pages.dev/Scripts/youtube/request.js
 # youtube_response
 # [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
 # [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
-^https:\/\/youtubei\.googleapis\.com\/(?:youtubei\/v1\/(?:browse|config|log_event|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch))(\?(.*))?$ url script-response-body https://rucu6.pages.dev/Scripts/youtube/response.js
+(?i)^https:\/\/youtubei\.googleapis\.com\/(?:youtubei\/v1\/(?:browse|config|log_event|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch))(\?(.*))?$ url script-response-body https://rucu6.pages.dev/Scripts/youtube/response.js
 
 # [mitm]
 hostname = rr*.googlevideo.com, youtu.be, youtubei.googleapis.com

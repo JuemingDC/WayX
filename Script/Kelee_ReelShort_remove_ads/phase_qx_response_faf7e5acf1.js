@@ -1,4 +1,4 @@
-// Converted: 2026-10-05 19:06:01 +08:00
+// Converted: 2026-10-13 10:18:02 +08:00
 // Converted by: chance
 // Category: 去广告
 const __wayxRegexReplace=(()=>{const SUPPORTED_FLAGS=/^[ims]*$/;function assertRegexNode(node) {
@@ -14,7 +14,10 @@ function replaceSourceRegex(node,text,replacement) {
   const out=String(replacement).replace(/\$(\d+)/g,(_,index)=>match[Number(index)] ?? '');
   return text.slice(0,match.index)+out+text.slice(match.index+match[0].length);
 }
-function compileSourceRegex(node){const {source}=assertRegexNode(node);return new RegExp(source);};return (text,pattern,flags,replacement)=>replaceSourceRegex({type:"regex",pattern,flags},String(text),replacement);})();
+function compileSourceRegex(node) {
+  const {source,flags}=assertRegexNode(node);
+  return new RegExp(source,flags);
+};return (text,pattern,flags,replacement)=>replaceSourceRegex({type:"regex",pattern,flags},String(text),replacement);})();
 const SUPPORTED_FLAGS=/^[ims]*$/;
 function scanSourceRegexLiteral(text, start=0) {
   text=String(text);
@@ -231,7 +234,10 @@ function evaluateCondition(condition,context={},initialCaptures={}) {
     captures:Object.fromEntries(result.captures),
   };
 }
-function compileSourceRegex(node){const {source}=assertRegexNode(node);return new RegExp(source);}
+function compileSourceRegex(node) {
+  const {source,flags}=assertRegexNode(node);
+  return new RegExp(source,flags);
+}
 function __wayxJsonParent(root,path){let x=root;for(let i=0;i<path.length-1;i++){if(x==null||typeof x!=="object"||!Object.prototype.hasOwnProperty.call(x,path[i]))return null;x=x[path[i]];}return x;}
 function __wayxJsonGet(root,path){let x=root;for(const k of path){if(x==null||typeof x!=="object"||!Object.prototype.hasOwnProperty.call(x,k))return undefined;x=x[k]}return x;}
 function __wayxJsonSet(root,path,value){let x=root;for(let i=0;i<path.length-1;i++){const k=path[i],next=path[i+1];if(x==null||typeof x!=="object")return;const cur=Object.prototype.hasOwnProperty.call(x,k)?x[k]:undefined;if(cur==null)Object.defineProperty(x,k,{value:typeof next==="number"?[]:{},enumerable:true,writable:true,configurable:true});else if(typeof cur!=="object")return;x=x[k]}if(x!=null&&typeof x==="object")Object.defineProperty(x,path[path.length-1],{value,enumerable:true,writable:true,configurable:true});}
@@ -245,7 +251,7 @@ const __wayxResponse=typeof $response==="undefined"?{}:{...$response,headers:__w
 const __wayxResult={};
 function __wayxCommit(value){Object.assign(__wayxResult,value);Object.assign(__wayxResponse,value);}
 (($request,$response,$done)=>{
-// Converted: 2026-10-05 19:06:01 +08:00
+// Converted: 2026-10-13 10:18:02 +08:00
 // Converted by: chance
 // Category: 去广告
 const __wayxCaptures=Object.create(null);
@@ -263,14 +269,14 @@ function __wayxDel(n){const w=String(n).toLowerCase();for(const k of Object.keys
 function __wayxHeaderReplace(n,p,r,f=""){const w=String(n).toLowerCase();for(const k of Object.keys(__wayxHeaders))if(k.toLowerCase()===w)__wayxHeaders[k]=__wayxRegexReplace(__wayxHeaders[k],p,f,r);}
 function __wayxKey(n){return Object.keys(__wayxHeaders).find(k=>k.toLowerCase()===String(n).toLowerCase());}
 if((()=>{
-const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https:\\/\\/(v-api\\.crazymaplestudios\\.com|d1k8g7qaebqd28\\.cloudfront\\.net)\\/api\\/video\\/book\\/getBookDetailV2$","flags":""},"capture":null},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
+const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https:\\/\\/(v-api\\.crazymaplestudios\\.com|d1k8g7qaebqd28\\.cloudfront\\.net)\\/api\\/video\\/book\\/getBookDetailV2$","flags":"i","raw":"/^https:\\/\\/(v-api\\.crazymaplestudios\\.com|d1k8g7qaebqd28\\.cloudfront\\.net)\\/api\\/video\\/book\\/getBookDetailV2$/i"},"capture":null},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
   __wayxJsonAction(j=>__wayxJsonDelete(j,["data","ad_vip"]));
   $done({body:__wayxBody});
 }else{$done({});}
 
 })(__wayxRequest,__wayxResponse,__wayxCommit);
 (($request,$response,$done)=>{
-// Converted: 2026-10-05 19:06:01 +08:00
+// Converted: 2026-10-13 10:18:02 +08:00
 // Converted by: chance
 // Category: 去广告
 const __wayxCaptures=Object.create(null);
@@ -288,7 +294,7 @@ function __wayxDel(n){const w=String(n).toLowerCase();for(const k of Object.keys
 function __wayxHeaderReplace(n,p,r,f=""){const w=String(n).toLowerCase();for(const k of Object.keys(__wayxHeaders))if(k.toLowerCase()===w)__wayxHeaders[k]=__wayxRegexReplace(__wayxHeaders[k],p,f,r);}
 function __wayxKey(n){return Object.keys(__wayxHeaders).find(k=>k.toLowerCase()===String(n).toLowerCase());}
 if((()=>{
-const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https:\\/\\/(v-api\\.crazymaplestudios\\.com|d1k8g7qaebqd28\\.cloudfront\\.net)\\/api\\/video\\/hall\\/infoV3$","flags":""},"capture":null},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
+const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https:\\/\\/(v-api\\.crazymaplestudios\\.com|d1k8g7qaebqd28\\.cloudfront\\.net)\\/api\\/video\\/hall\\/infoV3$","flags":"i","raw":"/^https:\\/\\/(v-api\\.crazymaplestudios\\.com|d1k8g7qaebqd28\\.cloudfront\\.net)\\/api\\/video\\/hall\\/infoV3$/i"},"capture":null},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
   __wayxJsonAction(j=>__wayxJsonDelete(j,["data","search_keyword_list"]));
   $done({body:__wayxBody});
 }else{$done({});}

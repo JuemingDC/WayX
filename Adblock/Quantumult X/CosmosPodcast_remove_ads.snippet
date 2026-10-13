@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/CosmosPodcast.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:59 +08:00
+# Converted: 2026-10-13 10:18:48 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/CosmosPodcast_remove_ads.lpx
@@ -16,14 +16,14 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api\.xiaoyuzhoufm\.com\/v1\/discovery-feed\/list url jsonjq-response-body '.data |= map(select(.type != "DISCOVERY_HEADER" and .type != "DISCOVERY_BANNER"))'
+(?i)^https:\/\/api\.xiaoyuzhoufm\.com\/v1\/discovery-feed\/list url jsonjq-response-body '.data |= map(select(.type != "DISCOVERY_HEADER" and .type != "DISCOVERY_BANNER"))'
 
-^https:\/\/api\.xiaoyuzhoufm\.com\/v\d\/flash url reject-dict
+(?i)^https:\/\/api\.xiaoyuzhoufm\.com\/v\d\/flash url reject-dict
 
-^https:\/\/api\.xiaoyuzhoufm\.com\/v\d\/ai url reject-dict
+(?i)^https:\/\/api\.xiaoyuzhoufm\.com\/v\d\/ai url reject-dict
 
-^https:\/\/api\.xiaoyuzhoufm\.com\/v\d\/search\/get url reject-dict
-^https?:\/\/api\.xiaoyuzhoufm\.com\/v\d\/category url reject-dict
+(?i)^https:\/\/api\.xiaoyuzhoufm\.com\/v\d\/search\/get url reject-dict
+(?i)^https?:\/\/api\.xiaoyuzhoufm\.com\/v\d\/category url reject-dict
 
 # [mitm]
 hostname = api.xiaoyuzhoufm.com

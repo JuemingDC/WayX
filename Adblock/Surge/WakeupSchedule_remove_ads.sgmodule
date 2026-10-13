@@ -10,13 +10,13 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/WakeupSchedule.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:29 +08:00
+# Converted: 2026-10-13 10:18:05 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/WakeupSchedule_remove_ads.lpx
 # Target: Surge
 
 [Map Local]
-^https:\/\/api\.wakeup\.fun\/wakeup\/app\/bannerconf$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/api\.wakeup\.fun\/wakeup\/app\/bannerconf$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
 

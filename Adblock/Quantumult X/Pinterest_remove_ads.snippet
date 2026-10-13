@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Pinterest.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:26 +08:00
+# Converted: 2026-10-13 10:18:01 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Pinterest_remove_ads.lpx
@@ -16,9 +16,9 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api\.pinterest\.com\/v\d\/feeds\/home\/\? url jsonjq-response-body '.data |= map(select(.is_promoted == false or .is_promoted == "false"))'
+(?i)^https:\/\/api\.pinterest\.com\/v\d\/feeds\/home\/\? url jsonjq-response-body '.data |= map(select(.is_promoted == false or .is_promoted == "false"))'
 
-^https:\/\/api\.pinterest\.com\/v\d\/pins\/\d+\/related\/modules\/\? url jsonjq-response-body '.data |= map(select(.is_promoted == false or .is_promoted == "false"))'
+(?i)^https:\/\/api\.pinterest\.com\/v\d\/pins\/\d+\/related\/modules\/\? url jsonjq-response-body '.data |= map(select(.is_promoted == false or .is_promoted == "false"))'
 
 # [mitm]
 hostname = api.pinterest.com

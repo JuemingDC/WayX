@@ -10,22 +10,22 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Jin10Data.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:41 +08:00
+# Converted: 2026-10-13 10:18:22 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Jin10Data_remove_ads.lpx
 # Target: Surge
 
 [Map Local]
-^https:\/\/jad-api\.jin10\.com\/ad\d\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/jad-api\.jin10\.com\/ad\d\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/common-open-api\.jin10\.com\/configuration\/getById\?id=1493$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/search-open-api\.jin10\.com\/search\/getHotWords$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/common-open-api\.jin10\.com\/configuration\/getById\?id=1493$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/search-open-api\.jin10\.com\/search\/getHotWords$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/cdn\.jin10\.com\/json\/index\/hits_rank\.json\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/cdn\.jin10\.com\/json\/index\/hits_rank\.json\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/[0-9a-z]+\.z3c\.jin10\.com\/api\/home\/search\/hot$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/[0-9a-z]+\.z3c\.jin10\.com\/api\/home\/search\/hot$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/jad-api\.jin10\.com\/mult\/list_unread\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/jad-api\.jin10\.com\/mult\/list_unread\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% jad-api.jin10.com, common-open-api.jin10.com, search-open-api.jin10.com, cdn.jin10.com, *.z3c.jin10.com

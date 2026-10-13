@@ -9,7 +9,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/Other_icon/120px/HTTPDNS.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:22 +08:00
+# Converted: 2026-10-13 10:17:55 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Block_HTTPDNS.lpx
 # Target: Surge
@@ -223,18 +223,18 @@ DOMAIN,httpdns.zybang.com,REJECT,extended-matching,pre-matching
 
 [URL Rewrite]
 
-^https?:\/\/cdn\.wup\.huya\.com\/monitor\/monitor\.jsp _ reject
+(?i)^https?:\/\/cdn\.wup\.huya\.com\/monitor\/monitor\.jsp _ reject
 
-^https:\/\/gslbali\.ximalaya\.com\/linkeye-cloud\/httpdns\/ _ reject
+(?i)^https:\/\/gslbali\.ximalaya\.com\/linkeye-cloud\/httpdns\/ _ reject
 
 [Map Local]
-^https?:\/\/appconf\.mail\.163\.com\/mailmaster\/api\/http\/urlConfig\.do$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https?:\/\/appconf\.mail\.163\.com\/mailmaster\/api\/http\/urlConfig\.do$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/msglb\.91160\.com\/msg\/outer\/broker\/get$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/msglb\.91160\.com\/msg\/outer\/broker\/get$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/ucdc\d?-upaas\.uc\.cn\/api\/v\d\/dns_query\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/ucdc\d?-upaas\.uc\.cn\/api\/v\d\/dns_query\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/gw-cn\.jiaoliuqu\.com\/taqu-im-broadcast-srv\/v\d\/Comet\/get\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/gw-cn\.jiaoliuqu\.com\/taqu-im-broadcast-srv\/v\d\/Comet\/get\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% appconf.mail.163.com, msglb.91160.com, ucdc2-upaas.uc.cn, gw-cn.jiaoliuqu.com

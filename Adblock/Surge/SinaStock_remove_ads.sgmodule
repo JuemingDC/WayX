@@ -10,36 +10,36 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SinaStock.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:59 +08:00
+# Converted: 2026-10-13 10:18:49 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/SinaStock_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
-http-response-jq ^https:\/\/news\.cj\.sina\.cn\/app\/v1\/news724\/list\? 'delpaths([["result","data","ad"]])'
+http-response-jq (?i)^https:\/\/news\.cj\.sina\.cn\/app\/v1\/news724\/list\? 'delpaths([["result","data","ad"]])'
 
-http-response-jq ^https:\/\/app\.cj\.sina\.com\.cn\/apps\/api\/user\/center\? '.result.data |= with_entries(select(.key == "button" or .key == "account" or .key == "balance"))'
+http-response-jq (?i)^https:\/\/app\.cj\.sina\.com\.cn\/apps\/api\/user\/center\? '.result.data |= with_entries(select(.key == "button" or .key == "account" or .key == "balance"))'
 
-http-response-jq ^https:\/\/news\.cj\.sina\.cn\/toutiao\/content\? 'del(.result.data[]?.ad, .result.data[]?.report)'
+http-response-jq (?i)^https:\/\/news\.cj\.sina\.cn\/toutiao\/content\? 'del(.result.data[]?.ad, .result.data[]?.report)'
 
-http-response-jq ^https:\/\/app\.cj\.sina\.com\.cn\/api\/deal\/index\? 'delpaths([["data","banner"]])'
+http-response-jq (?i)^https:\/\/app\.cj\.sina\.com\.cn\/api\/deal\/index\? 'delpaths([["data","banner"]])'
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/app\.cj\.sina\.com\.cn\/clientSetting\/api\/start\/init\? 'delpaths([["result","data","search_ad"],["result","data","center_ads"],["result","data","banner_new_tagid"],["result","data","ad_hasAddScreenParam"],["result","data","us_trade"],["result","data","open_account"],["result","data","us_hq_trade"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
+http-response-jq (?i)^https:\/\/app\.cj\.sina\.com\.cn\/clientSetting\/api\/start\/init\? 'delpaths([["result","data","search_ad"],["result","data","center_ads"],["result","data","banner_new_tagid"],["result","data","ad_hasAddScreenParam"],["result","data","us_trade"],["result","data","open_account"],["result","data","us_hq_trade"]])'
 
-http-response-jq ^https:\/\/(newscj\.xincai\.com|news\.cj\.sina\.cn)\/app\/v1\/feed\? '.data.feed.data |= map(select((.author // "") != ""))'
+http-response-jq (?i)^https:\/\/(newscj\.xincai\.com|news\.cj\.sina\.cn)\/app\/v1\/feed\? '.data.feed.data |= map(select((.author // "") != ""))'
 
 [Map Local]
 
-^https:\/\/news\.cj\.sina\.cn\/search\/tips\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/news\.cj\.sina\.cn\/search\/tips\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/search\.cj\.sina\.cn\/stock\/get_index_new\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/search\.cj\.sina\.cn\/stock\/get_index_new\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/news\.cj\.sina\.cn\/search\/tips\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/news\.cj\.sina\.cn\/search\/tips\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/recommend\.cj\.sina\.cn\/app\/v2\/search\/discovery$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/recommend\.cj\.sina\.cn\/app\/v2\/search\/discovery$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/quotes\.sina\.com\.cn\/cn\/api\/openapi\.php\/PriceChangeService\.getSearchList\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/quotes\.sina\.com\.cn\/cn\/api\/openapi\.php\/PriceChangeService\.getSearchList\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% app.cj.sina.com.cn, news.cj.sina.cn, search.cj.sina.cn, recommend.cj.sina.cn, quotes.sina.com.cn, newscj.xincai.com

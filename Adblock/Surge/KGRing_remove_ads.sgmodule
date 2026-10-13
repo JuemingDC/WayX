@@ -10,13 +10,13 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KGRing.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:43 +08:00
+# Converted: 2026-10-13 10:18:25 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/KGRing_remove_ads.lpx
 # Target: Surge
 
 [Map Local]
-^http:\/\/api\.ring\.kugou\.com\/user\/notice\/recommend$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^http:\/\/api\.ring\.kugou\.com\/user\/notice\/recommend$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% api.ring.kugou.com

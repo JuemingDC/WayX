@@ -10,19 +10,19 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/TaobaoTravel.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:37 +08:00
+# Converted: 2026-10-13 10:18:17 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/TaobaoTravel_remove_ads.lpx
 # Target: Surge
 
 [Map Local]
-^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.fliggy\.crm\.screen\.allresource\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.fliggy\.crm\.screen\.predict\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.fliggy\.crm\.screen\.allresource\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.fliggy\.crm\.screen\.predict\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.fliggy\.tripzoo\.new\.couponlist\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.fliggy\.tripzoo\.new\.couponlist\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.trip\.my\.recommendcard\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.fliggy\.recommend\.common\.guess\.tab\.feeds\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.trip\.my\.recommendcard\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.fliggy\.recommend\.common\.guess\.tab\.feeds\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% acs.m.taobao.com

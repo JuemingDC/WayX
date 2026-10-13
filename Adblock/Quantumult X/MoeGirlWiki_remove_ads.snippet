@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MoeGirlWiki.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:46 +08:00
+# Converted: 2026-10-13 10:18:30 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/MoeGirlWiki_remove_ads.lpx
@@ -16,11 +16,11 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/grpc\.moegirl\.org\.cn\/moegirl\.moepad\.MoepadAppMetaService\/GetAppInitialInfo$ url reject
+(?i)^https:\/\/grpc\.moegirl\.org\.cn\/moegirl\.moepad\.MoepadAppMetaService\/GetAppInitialInfo$ url reject
 
-^https:\/\/grpc\.moegirl\.org\.cn\/moegirl\.moepad\.MoepadService\/GetLaunchAdPage$ url reject
+(?i)^https:\/\/grpc\.moegirl\.org\.cn\/moegirl\.moepad\.MoepadService\/GetLaunchAdPage$ url reject
 
-^https:\/\/grpc\.moegirl\.org\.cn\/moegirl\.moepad\.MoepadService\/GetFeedAdProbability$ url reject
+(?i)^https:\/\/grpc\.moegirl\.org\.cn\/moegirl\.moepad\.MoepadService\/GetFeedAdProbability$ url reject
 
 # [mitm]
 hostname = grpc.moegirl.org.cn

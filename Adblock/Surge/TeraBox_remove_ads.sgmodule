@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/TeraBox.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:28 +08:00
+# Converted: 2026-10-13 10:18:04 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/TeraBox_remove_ads.lpx
 # Target: Surge
@@ -19,12 +19,12 @@
 DOMAIN,ymg-api.terabox.com,REJECT,extended-matching,pre-matching
 
 [Map Local]
-^https:\/\/www\.terabox\.com\/adx\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/www\.terabox\.com\/api\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/www\.terabox\.com\/adx\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/www\.terabox\.com\/api\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/www\.terabox\.com\/api\/page\/tips\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/www\.terabox\.com\/api\/page\/tips\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/www\.terabox\.com\/rest\/1\.0\/task\/common\/inttips\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/www\.terabox\.com\/rest\/1\.0\/task\/common\/inttips\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% www.terabox.com

@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MeiRiSaiChe.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-05 19:06:21 +08:00
+# Converted: 2026-10-13 10:18:28 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/MeiRiSaiChe_remove_ads.lpx
@@ -16,9 +16,9 @@
 # [filter_local]
 
 # [rewrite_local]
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/api\.romielf\.com\/index\/indexv\d\? url jsonjq-response-body 'setpath(["data","advertisement"]; "[]") | setpath(["data","listadvertising"]; "[]")'
-^https:\/\/api\.romielf\.com\/index\/indexv\d\? url jsonjq-response-body '.data.list |= map(select(.type == 1))'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
+(?i)^https:\/\/api\.romielf\.com\/index\/indexv\d\? url jsonjq-response-body 'setpath(["data","advertisement"]; "[]") | setpath(["data","listadvertising"]; "[]")'
+(?i)^https:\/\/api\.romielf\.com\/index\/indexv\d\? url jsonjq-response-body '.data.list |= map(select(.type == 1))'
 
 # [mitm]
 hostname = api.romielf.com

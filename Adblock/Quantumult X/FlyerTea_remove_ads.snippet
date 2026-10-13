@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FlyerTea.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:37 +08:00
+# Converted: 2026-10-13 10:18:16 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/FlyerTea_remove_ads.lpx
@@ -16,14 +16,14 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=advis url reject
-^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=vip_coupon url reject-dict
-^https:\/\/ptf\.flyertrip\.com\/static\/img\/common\/ic_plate_mine_button\.png url reject-img
-^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=getdata url reject-dict
+(?i)^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=advis url reject
+(?i)^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=vip_coupon url reject-dict
+(?i)^https:\/\/ptf\.flyertrip\.com\/static\/img\/common\/ic_plate_mine_button\.png url reject-img
+(?i)^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=getdata url reject-dict
 # 移除板块广告
-^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?version=5 url script-response-body https://kelee.one/Resource/JavaScript/FlyerTea/FlyerTea_remove_ads.js
+(?i)^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?version=5 url script-response-body https://kelee.one/Resource/JavaScript/FlyerTea/FlyerTea_remove_ads.js
 # 移除签到弹窗广告
-^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=plugin&id=k_misign:sign url script-response-body https://kelee.one/Resource/JavaScript/FlyerTea/FlyerTea_remove_ads.js
+(?i)^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=plugin&id=k_misign:sign url script-response-body https://kelee.one/Resource/JavaScript/FlyerTea/FlyerTea_remove_ads.js
 
 # [mitm]
 hostname = www.flyert.com.cn, ptf.flyertrip.com

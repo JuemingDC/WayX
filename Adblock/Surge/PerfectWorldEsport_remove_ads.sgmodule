@@ -10,14 +10,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/PerfectWorldEsport.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:54 +08:00
+# Converted: 2026-10-13 10:18:41 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/PerfectWorldEsport_remove_ads.lpx
 # Target: Surge
 
 [Map Local]
 
-^https:\/\/appactivity\.wmpvp\.com\/hotsearch\/all\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/appactivity\.wmpvp\.com\/hotsearch\/all\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
 wayx_features_1132e5f6ac = type=http-response,pattern=^,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_PerfectWorldEsport_remove_ads/features_surge_1132e5f6ac.js,requires-body=true,max-size=-1

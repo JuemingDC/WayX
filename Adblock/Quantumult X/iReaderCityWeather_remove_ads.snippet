@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/iReaderCityWeather.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:52 +08:00
+# Converted: 2026-10-13 10:18:38 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/iReaderCityWeather_remove_ads.lpx
@@ -18,6 +18,6 @@ host, adsys.nineton.cn, reject
 host, adcdn.ccqyj.com, reject
 
 # [rewrite_local]
-^http:\/\/weatherapi\.ccqyj\.com\/server\/listsv\d$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_iReaderCityWeather_remove_ads/mock_0b0889689d.js
+(?i)^http:\/\/weatherapi\.ccqyj\.com\/server\/listsv\d$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_iReaderCityWeather_remove_ads/mock_0b0889689d.js
 
 # [mitm]

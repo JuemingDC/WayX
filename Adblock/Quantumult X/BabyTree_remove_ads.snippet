@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BabyTree.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-11 11:09:47 +08:00
+# Converted: 2026-10-13 10:18:09 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/BabyTree_remove_ads.lpx
@@ -22,11 +22,11 @@
 ^http:\/\/pic08\.babytreeimg\.com\/knowledge\/2022\/0923\/\w+ url reject
 ^http:\/\/plough\.babytree\.com\/plough\.do url reject-dict
 # 调整整体配置
-^http:\/\/api\.babytree\.com\/bafconfigcenter_intf\/config\/get\? url script-response-body https://kelee.one/Resource/JavaScript/BabyTree/BabyTree_remove_ads.js
+(?i)^http:\/\/api\.babytree\.com\/bafconfigcenter_intf\/config\/get\? url script-response-body https://kelee.one/Resource/JavaScript/BabyTree/BabyTree_remove_ads.js
 # 移除各页面推广
-^http:\/\/go\.babytree\.com\/go_pregnancy\/api\/(app_index\/get_app_tab|cms_column\/get_column_list|feeds\/get_index_feeds_list|user\/get_user_info)\? url script-response-body https://kelee.one/Resource/JavaScript/BabyTree/BabyTree_remove_ads.js
+(?i)^http:\/\/go\.babytree\.com\/go_pregnancy\/api\/(app_index\/get_app_tab|cms_column\/get_column_list|feeds\/get_index_feeds_list|user\/get_user_info)\? url script-response-body https://kelee.one/Resource/JavaScript/BabyTree/BabyTree_remove_ads.js
 # 移除搜索列表推广
-^http:\/\/go\.babytree\.com\/go_search\/api\/mobile_search_new\/search_index url script-response-body https://kelee.one/Resource/JavaScript/BabyTree/BabyTree_remove_ads.js
+(?i)^http:\/\/go\.babytree\.com\/go_search\/api\/mobile_search_new\/search_index url script-response-body https://kelee.one/Resource/JavaScript/BabyTree/BabyTree_remove_ads.js
 
 # [mitm]
 hostname = api.babytree.com, go.babytree.com

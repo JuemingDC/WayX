@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Aiinquiry.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:30 +08:00
+# Converted: 2026-10-13 10:18:06 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Aiinquiry_remove_ads.lpx
@@ -16,26 +16,26 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/aiqicha\.baidu\.com\/app\/bannerPicAjax url reject-dict
+(?i)^https:\/\/aiqicha\.baidu\.com\/app\/bannerPicAjax url reject-dict
 
-^https:\/\/aiqicha\.baidu\.com\/app\/getPopConfigAjax url reject-dict
+(?i)^https:\/\/aiqicha\.baidu\.com\/app\/getPopConfigAjax url reject-dict
 
-^https:\/\/aiqicha\.baidu\.com\/app\/getHotTopicAjax url reject-dict
+(?i)^https:\/\/aiqicha\.baidu\.com\/app\/getHotTopicAjax url reject-dict
 
-^https:\/\/aiqicha\.baidu\.com\/app\/getNewsReportAjax url reject-dict
+(?i)^https:\/\/aiqicha\.baidu\.com\/app\/getNewsReportAjax url reject-dict
 
-^https:\/\/aiqicha\.baidu\.com\/app\/getExpertVideoAjax url reject-dict
+(?i)^https:\/\/aiqicha\.baidu\.com\/app\/getExpertVideoAjax url reject-dict
 
-^https:\/\/aiqicha\.baidu\.com\/apps\/getHotRecommendV2Ajax url reject-dict
+(?i)^https:\/\/aiqicha\.baidu\.com\/apps\/getHotRecommendV2Ajax url reject-dict
 
-^https:\/\/aiqicha\.baidu\.com\/m\/getLoginWordsAjax url reject-dict
+(?i)^https:\/\/aiqicha\.baidu\.com\/m\/getLoginWordsAjax url reject-dict
 
-^https:\/\/aiqicha\.baidu\.com\/app\/getAppPopSettingAjax url reject-dict
-^https:\/\/aiqicha\.baidu\.com\/app\/commonstatusAjax url reject
+(?i)^https:\/\/aiqicha\.baidu\.com\/app\/getAppPopSettingAjax url reject-dict
+(?i)^https:\/\/aiqicha\.baidu\.com\/app\/commonstatusAjax url reject
 
-^https:\/\/aiqicha\.baidu\.com\/apps\/getHomeMonitorDataAjax url reject-dict
+(?i)^https:\/\/aiqicha\.baidu\.com\/apps\/getHomeMonitorDataAjax url reject-dict
 
-^https:\/\/aiqicha\.baidu\.com\/apps\/searchRecommendAjax url reject-dict
+(?i)^https:\/\/aiqicha\.baidu\.com\/apps\/searchRecommendAjax url reject-dict
 
 # [mitm]
 hostname = aiqicha.baidu.com

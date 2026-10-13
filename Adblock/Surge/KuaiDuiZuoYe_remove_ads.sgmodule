@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KuaiDuiZuoYe.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:42 +08:00
+# Converted: 2026-10-13 10:18:23 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/KuaiDuiZuoYe_remove_ads.lpx
 # Target: Surge
@@ -19,14 +19,14 @@
 DOMAIN,adx.zuoyebang.com,REJECT,extended-matching,pre-matching
 
 [Map Local]
-^https:\/\/www\.kuaiduizuoye\.com\/init\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/www\.kuaiduizuoye\.com\/init\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/www\.kuaiduizuoye\.com\/activity\/init\/checkappconfig$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/www\.kuaiduizuoye\.com\/activity\/init\/checkappconfig$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/www\.kuaiduizuoye\.com\/kdapi\/conf\/appbannersv3$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/www\.kuaiduizuoye\.com\/kdapi\/conf\/initbanner$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/www\.kuaiduizuoye\.com\/kdapi\/conf\/appbannersv3$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/www\.kuaiduizuoye\.com\/kdapi\/conf\/initbanner$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/apivip\.kuaiduizuoye\.com\/viponline\/scancode\/mycard$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/apivip\.kuaiduizuoye\.com\/viponline\/scancode\/mycard$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
 

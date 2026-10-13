@@ -10,13 +10,13 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Reddit.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:26 +08:00
+# Converted: 2026-10-13 10:18:02 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Reddit_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
-http-response-jq ^https?:\/\/gql(-fed)?\.reddit\.com 'walk(if type=="object" then (if .isNsfw==true then .isNsfw=false else . end)|(if .isNsfwMediaBlocked==true then .isNsfwMediaBlocked=false else . end)|(if .isNsfwContentShown==false then .isNsfwContentShown=true else . end)|(if (.commentsPageAds|type=="array") then (.commentsPageAds=[]) else . end)|(if ((.node|type=="object") and (.node.cells|type=="array") and (.node.cells|any(.__typename?=="AdMetadataCell" or .isAdPost?==true))) then empty else . end)|(if (.node|type=="object") and (.node.adPayload|type=="object") then empty else . end)|(if .__typename=="AdPost" then empty else . end) else . end)'
+http-response-jq (?i)^https?:\/\/gql(-fed)?\.reddit\.com 'walk(if type=="object" then (if .isNsfw==true then .isNsfw=false else . end)|(if .isNsfwMediaBlocked==true then .isNsfwMediaBlocked=false else . end)|(if .isNsfwContentShown==false then .isNsfwContentShown=true else . end)|(if (.commentsPageAds|type=="array") then (.commentsPageAds=[]) else . end)|(if ((.node|type=="object") and (.node.cells|type=="array") and (.node.cells|any(.__typename?=="AdMetadataCell" or .isAdPost?==true))) then empty else . end)|(if (.node|type=="object") and (.node.adPayload|type=="object") then empty else . end)|(if .__typename=="AdPost" then empty else . end) else . end)'
 
 [MITM]
 hostname = %APPEND% gql.reddit.com, gql-fed.reddit.com

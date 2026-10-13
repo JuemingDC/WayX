@@ -1,4 +1,4 @@
-// Converted: 2026-10-05 19:28:37 +08:00
+// Converted: 2026-10-13 10:19:05 +08:00
 // Converted by: chance
 // Category: 插件
 // Source Loon: request if ${url} ~= /(^https:\/\/youtu\.be\/[\w-]+)(?:\?si=\w+)/i as urlMatch then redirect(302, "${urlMatch.1}")
@@ -227,9 +227,12 @@ function evaluateCondition(condition,context={},initialCaptures={}) {
     captures:Object.fromEntries(result.captures),
   };
 }
-function compileSourceRegex(node){const {source}=assertRegexNode(node);return new RegExp(source);}
-const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"(^https:\\/\\/youtu\\.be\\/[\\w-]+)(?:\\?si=\\w+)","flags":""},"capture":"urlMatch"},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
-  const __wayxMatch=new RegExp("(^https:\\/\\/youtu\\.be\\/[\\w-]+)(?:\\?si=\\w+)","").exec(__wayxUrl);
+function compileSourceRegex(node) {
+  const {source,flags}=assertRegexNode(node);
+  return new RegExp(source,flags);
+}
+const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"(^https:\\/\\/youtu\\.be\\/[\\w-]+)(?:\\?si=\\w+)","flags":"i","raw":"/(^https:\\/\\/youtu\\.be\\/[\\w-]+)(?:\\?si=\\w+)/i"},"capture":"urlMatch"},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
+  const __wayxMatch=new RegExp("(^https:\\/\\/youtu\\.be\\/[\\w-]+)(?:\\?si=\\w+)","i").exec(__wayxUrl);
   if(!__wayxMatch){$done({});}else{
     if(__wayxMatch[1] === undefined){$done({});}else{
     const __wayxReplacement="" + __wayxMatch[1];

@@ -10,24 +10,24 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KwaiVideoeditor.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:43 +08:00
+# Converted: 2026-10-13 10:18:24 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/KwaiVideoeditor_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 
-http-response-jq ^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/banner\/common\/getBannerByTypeV2\? 'del(.list[] | select(.bannerChannelName == "活动"))'
-http-response-jq ^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/banner\/common\/getAllBannerPage\? 'del(.data[] | select(.bannerChannelName == "活动"))'
+http-response-jq (?i)^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/banner\/common\/getBannerByTypeV2\? 'del(.list[] | select(.bannerChannelName == "活动"))'
+http-response-jq (?i)^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/banner\/common\/getAllBannerPage\? 'del(.data[] | select(.bannerChannelName == "活动"))'
 
 [Map Local]
-^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/resource\/get\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/resource\/get\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/banner\/common\/getBannerByType\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/banner\/common\/getBannerByType\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/merchant\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/merchant\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/resource\/activity\/pendant\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/resource\/activity\/pendant\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% api.kmovie.gifshow.com

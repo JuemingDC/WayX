@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Cece.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-05 19:06:09 +08:00
+# Converted: 2026-10-13 10:18:12 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Cece_remove_ads.lpx
@@ -16,45 +16,45 @@
 # [filter_local]
 
 # [rewrite_local]
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/api\.cece\.com\/user\/init\? url jsonjq-response-body 'delpaths([["data","launch_img_url"],["data","launch_goto_url"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
+(?i)^https:\/\/api\.cece\.com\/user\/init\? url jsonjq-response-body 'delpaths([["data","launch_img_url"],["data","launch_goto_url"]])'
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/api\.cece\.com\/common\/app\/app_config\? url jsonjq-response-body 'setpath(["data","is_new_year"]; false) | setpath(["data","spring_festival"]; false) | setpath(["data","show_feedback_entry"]; false) | setpath(["data","show_course_entry"]; false) | setpath(["data","show_store_entry"]; false) | setpath(["data","show_luna"]; false) | setpath(["data","show_ead"]; false) | setpath(["data","show_ad"]; false) | setpath(["data","show_live_filter_tarot"]; false) | setpath(["data","community_feed_adswitch"]; false) | setpath(["data","open_screen_ad_times"]; 0) | setpath(["data","open_screen_ad_duration"]; 0) | setpath(["data","isShowThumbsGif"]; false) | setpath(["data","teenager_mode_open"]; false) | setpath(["data","flu_log"]; false)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
+(?i)^https:\/\/api\.cece\.com\/common\/app\/app_config\? url jsonjq-response-body 'setpath(["data","is_new_year"]; false) | setpath(["data","spring_festival"]; false) | setpath(["data","show_feedback_entry"]; false) | setpath(["data","show_course_entry"]; false) | setpath(["data","show_store_entry"]; false) | setpath(["data","show_luna"]; false) | setpath(["data","show_ead"]; false) | setpath(["data","show_ad"]; false) | setpath(["data","show_live_filter_tarot"]; false) | setpath(["data","community_feed_adswitch"]; false) | setpath(["data","open_screen_ad_times"]; 0) | setpath(["data","open_screen_ad_duration"]; 0) | setpath(["data","isShowThumbsGif"]; false) | setpath(["data","teenager_mode_open"]; false) | setpath(["data","flu_log"]; false)'
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/api\.cece\.com\/common\/app\/app_config\? url jsonjq-response-body 'delpaths([["data","activity_list"],["data","fortune_ab_config"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
+(?i)^https:\/\/api\.cece\.com\/common\/app\/app_config\? url jsonjq-response-body 'delpaths([["data","activity_list"],["data","fortune_ab_config"]])'
 
-^https:\/\/api\.cece\.com\/user\/index\/banners\? url reject-dict
+(?i)^https:\/\/api\.cece\.com\/user\/index\/banners\? url reject-dict
 
-^https:\/\/api\.cece\.com\/chart\/tools\/home_10_tools\? url jsonjq-response-body '.data.tools |= map(del(.icon_tip_image))'
+(?i)^https:\/\/api\.cece\.com\/chart\/tools\/home_10_tools\? url jsonjq-response-body '.data.tools |= map(del(.icon_tip_image))'
 
-^https:\/\/api\.cece\.com\/user\/index\/tab_list\? url jsonjq-response-body '.data.tabs |= map(select(.type != "shop"))'
+(?i)^https:\/\/api\.cece\.com\/user\/index\/tab_list\? url jsonjq-response-body '.data.tabs |= map(select(.type != "shop"))'
 
-^https:\/\/api\.cece\.com\/ask\/ai_chat\/popup\? url reject-dict
-^https:\/\/api\.cece\.com\/user\/popup\/ url reject-dict
-^https:\/\/api\.cece\.com\/chart\/easter_egg\/popup\? url reject-dict
+(?i)^https:\/\/api\.cece\.com\/ask\/ai_chat\/popup\? url reject-dict
+(?i)^https:\/\/api\.cece\.com\/user\/popup\/ url reject-dict
+(?i)^https:\/\/api\.cece\.com\/chart\/easter_egg\/popup\? url reject-dict
 
-^https:\/\/api\.cece\.com\/user\/register_task\/notice_task\? url reject-dict
+(?i)^https:\/\/api\.cece\.com\/user\/register_task\/notice_task\? url reject-dict
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-^https:\/\/api\.cece\.com\/common\/app\/risk_entrance\? url jsonjq-response-body 'setpath(["data","ai_fortune_show_ask_tool"]; false) | setpath(["data","ai_sign_show_ask_tool"]; false) | setpath(["data","single_tool_show_dice_card"]; false) | setpath(["data","single_tool_show_tarot_card"]; false) | setpath(["data","single_tool_show_bazi_card"]; false) | setpath(["data","single_tool_show_hepan_card"]; false) | setpath(["data","single_tool_show_ziwei_card"]; false) | setpath(["data","single_tool_show_xingpan_card"]; false) | setpath(["data","multi_tool_show_card"]; false) | setpath(["data","ai_ccai_show_multi_tool"]; false)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
+(?i)^https:\/\/api\.cece\.com\/common\/app\/risk_entrance\? url jsonjq-response-body 'setpath(["data","ai_fortune_show_ask_tool"]; false) | setpath(["data","ai_sign_show_ask_tool"]; false) | setpath(["data","single_tool_show_dice_card"]; false) | setpath(["data","single_tool_show_tarot_card"]; false) | setpath(["data","single_tool_show_bazi_card"]; false) | setpath(["data","single_tool_show_hepan_card"]; false) | setpath(["data","single_tool_show_ziwei_card"]; false) | setpath(["data","single_tool_show_xingpan_card"]; false) | setpath(["data","multi_tool_show_card"]; false) | setpath(["data","ai_ccai_show_multi_tool"]; false)'
 
-^https:\/\/api\.cece\.com\/ask\/ask\/alert_minus\? url reject-dict
+(?i)^https:\/\/api\.cece\.com\/ask\/ask\/alert_minus\? url reject-dict
 
-^https:\/\/api\.cece\.com\/msgAsk\/question\/new_coupon_status\? url reject-dict
+(?i)^https:\/\/api\.cece\.com\/msgAsk\/question\/new_coupon_status\? url reject-dict
 
-^https:\/\/api\.cece\.com\/user\/user\/myPageBanner\? url reject-dict
+(?i)^https:\/\/api\.cece\.com\/user\/user\/myPageBanner\? url reject-dict
 
-^https:\/\/api\.cece\.com\/live\/user\/coupon_tab\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Cece_remove_ads/mock_52d86a2aea.js
+(?i)^https:\/\/api\.cece\.com\/live\/user\/coupon_tab\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Cece_remove_ads/mock_52d86a2aea.js
 
-^https:\/\/api\.cece\.com\/live\/recommend\/new_user\? url reject-dict
+(?i)^https:\/\/api\.cece\.com\/live\/recommend\/new_user\? url reject-dict
 
-^https:\/\/api\.cece\.com\/chart\/tools\/get_search_recommend\? url reject-dict
+(?i)^https:\/\/api\.cece\.com\/chart\/tools\/get_search_recommend\? url reject-dict
 
-^https:\/\/api\.cece\.com\/user\/rank\/list\? url reject-dict
+(?i)^https:\/\/api\.cece\.com\/user\/rank\/list\? url reject-dict
 
-^https:\/\/api\.cece\.com\/chart\/config\/chart_activity\? url reject-dict
+(?i)^https:\/\/api\.cece\.com\/chart\/config\/chart_activity\? url reject-dict
 
 # [mitm]
 hostname = api.cece.com

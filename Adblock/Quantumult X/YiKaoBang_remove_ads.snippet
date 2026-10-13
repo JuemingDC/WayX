@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YiKaoBang.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:37:00 +08:00
+# Converted: 2026-10-13 10:18:49 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/YiKaoBang_remove_ads.lpx
@@ -16,9 +16,9 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api\.yikaobang\.com\.cn\/index\.php\/client\/main\/ads\? url reject-dict
+(?i)^https:\/\/api\.yikaobang\.com\.cn\/index\.php\/client\/main\/ads\? url reject-dict
 
-^https:\/\/api\.yikaobang\.com\.cn\/index\.php\/client\/Main\/startPage\? url reject-dict
+(?i)^https:\/\/api\.yikaobang\.com\.cn\/index\.php\/client\/Main\/startPage\? url reject-dict
 
 # [mitm]
 hostname = api.yikaobang.com.cn

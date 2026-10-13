@@ -10,20 +10,20 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YiSchool.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:37:00 +08:00
+# Converted: 2026-10-13 10:18:50 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/YiSchool_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher retains source regex body; Loon flags i are not a verified target-engine equivalence.
-http-response-jq ^https:\/\/compus\.xiaofubao\.com\/compus\/user\/getUserExt$ 'delpaths([["data","adPopSwitch"],["data","adSplashSwitch"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
+http-response-jq (?i)^https:\/\/compus\.xiaofubao\.com\/compus\/user\/getUserExt$ 'delpaths([["data","adPopSwitch"],["data","adSplashSwitch"]])'
 
-http-response-jq ^https:\/\/compus\.xiaofubao\.com\/compus\/application\/getHomeAppList$ '.rows|=map(select(.appCode=="kechengbiao_app1" or .appCode=="siliuji" or .appCode=="NEWJIAOFEIDATING"))'
+http-response-jq (?i)^https:\/\/compus\.xiaofubao\.com\/compus\/application\/getHomeAppList$ '.rows|=map(select(.appCode=="kechengbiao_app1" or .appCode=="siliuji" or .appCode=="NEWJIAOFEIDATING"))'
 
 [Map Local]
-^https:\/\/compus\.xiaofubao\.com\/compus\/advertising\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/compus\.xiaofubao\.com\/compus\/advertising\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% compus.xiaofubao.com

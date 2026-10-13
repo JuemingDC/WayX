@@ -1,4 +1,4 @@
-// Converted: 2026-10-04 19:17:58 +08:00
+// Converted: 2026-10-13 10:17:59 +08:00
 // Converted by: chance
 // Category: 去广告
 // Source Loon: request if ${url} ~= /^https?:\/\/(ditu|maps).google\.cn/i then redirect(307, "https://maps.google.com")
@@ -227,9 +227,12 @@ function evaluateCondition(condition,context={},initialCaptures={}) {
     captures:Object.fromEntries(result.captures),
   };
 }
-function compileSourceRegex(node){const {source}=assertRegexNode(node);return new RegExp(source);}
-const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https?:\\/\\/(ditu|maps).google\\.cn","flags":""},"capture":null},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
-  const __wayxMatch=new RegExp("^https?:\\/\\/(ditu|maps).google\\.cn","").exec(__wayxUrl);
+function compileSourceRegex(node) {
+  const {source,flags}=assertRegexNode(node);
+  return new RegExp(source,flags);
+}
+const result=evaluateCondition({"type":"comparison","operator":"~=","left":{"type":"variable","name":"url","raw":"${url}"},"right":{"type":"regex","pattern":"^https?:\\/\\/(ditu|maps).google\\.cn","flags":"i","raw":"/^https?:\\/\\/(ditu|maps).google\\.cn/i"},"capture":null},{url:$request.url,request:$request,response:typeof $response!=="undefined"?$response:{},arguments:{}});Object.assign(__wayxCaptures,result.captures);return result.matched;})()){
+  const __wayxMatch=new RegExp("^https?:\\/\\/(ditu|maps).google\\.cn","i").exec(__wayxUrl);
   if(!__wayxMatch){$done({});}else{
     if(false){$done({});}else{
     const __wayxReplacement="" + "https://maps.google.com";

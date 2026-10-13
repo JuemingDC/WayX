@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YY_Voice.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-05 00:27:40 +08:00
+# Converted: 2026-10-13 10:18:06 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/YY_Voice_remove_ads.lpx
@@ -20,17 +20,17 @@ host, dsp-ad.yy.com, reject
 host, ysad.yy.com, reject
 
 # [rewrite_local]
-^https:\/\/yyapp-fastnet\.yy\.com\/dispatch\? url reject-dict
+(?i)^https:\/\/yyapp-fastnet\.yy\.com\/dispatch\? url reject-dict
 
-^https:\/\/data\.3g\.yy\.com\/popup\/topLiveCardPopup\? url reject-dict
-^https:\/\/yyapp-act-entrance\.yy\.com\/entrance\/list\? url reject-dict
+(?i)^https:\/\/data\.3g\.yy\.com\/popup\/topLiveCardPopup\? url reject-dict
+(?i)^https:\/\/yyapp-act-entrance\.yy\.com\/entrance\/list\? url reject-dict
 
-^https:\/\/yyapp-idx\.yy\.com\/mobyy\/nav\/index\/idx\? url jsonjq-response-body '.data[].modules |= map(select(.name != "新版本滚动条" and .name != "通栏轮播" and .name != "新静默位"))'
+(?i)^https:\/\/yyapp-idx\.yy\.com\/mobyy\/nav\/index\/idx\? url jsonjq-response-body '.data[].modules |= map(select(.name != "新版本滚动条" and .name != "通栏轮播" and .name != "新静默位"))'
 
-^https:\/\/tab\.yy\.com\/tabs\? url jsonjq-response-body 'delpaths([["data","tabsForSelect"]])'
-^https:\/\/tab\.yy\.com\/tabs\? url jsonjq-response-body '.data.tabs |= map(select(.alias == "follow" or .alias == "im" or .alias == "me"))'
+(?i)^https:\/\/tab\.yy\.com\/tabs\? url jsonjq-response-body 'delpaths([["data","tabsForSelect"]])'
+(?i)^https:\/\/tab\.yy\.com\/tabs\? url jsonjq-response-body '.data.tabs |= map(select(.alias == "follow" or .alias == "im" or .alias == "me"))'
 
-^https:\/\/personal-center\.yy\.com\/personalCenter\/list\? url jsonjq-response-body '.data.modules |= map(select(.moduleName != "Banner轮播")) | .data.modules |= map(if has("entrances") then .entrances |= map(select(.bizCode|IN("jishijiedaikuan","duxiaoman2","chongzhi","freeData")|not)) else . end)'
+(?i)^https:\/\/personal-center\.yy\.com\/personalCenter\/list\? url jsonjq-response-body '.data.modules |= map(select(.moduleName != "Banner轮播")) | .data.modules |= map(if has("entrances") then .entrances |= map(select(.bizCode|IN("jishijiedaikuan","duxiaoman2","chongzhi","freeData")|not)) else . end)'
 
 # [mitm]
 hostname = yyapp-act-entrance.yy.com, yyapp-fastnet.yy.com, personal-center.yy.com, tab.yy.com, data.3g.yy.com, yyapp-idx.yy.com

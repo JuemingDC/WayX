@@ -10,23 +10,23 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/XiaojukejiCharge.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:58 +08:00
+# Converted: 2026-10-13 10:18:47 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/XiaojukejiCharge_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 
-http-response-jq ^https:\/\/energy\.xiaojukeji\.com\/am\/marketing\/api\/member\/facade\/charge\/personal\/center\? 'delpaths([["data"]])'
+http-response-jq (?i)^https:\/\/energy\.xiaojukeji\.com\/am\/marketing\/api\/member\/facade\/charge\/personal\/center\? 'delpaths([["data"]])'
 
 [Map Local]
-^https:\/\/energy\.xiaojukeji\.com\/energy\/hummer\/api\/resource\/display($|\?) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/energy\.xiaojukeji\.com\/energy\/hummer\/api\/resource\/display($|\?) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/energy\.xiaojukeji\.com\/lego\/api\/orderSprint\/stair\/info($|\?) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/energy\.xiaojukeji\.com\/lego\/api\/orderSprint\/stair\/info($|\?) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/energy\.xiaojukeji\.com\/station-api\/search\/preWords$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/energy\.xiaojukeji\.com\/station-api\/search\/preWords$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/am\.didistatic\.com\/static\/am\/cf-terminal\/epower\/epower-thanos-app\/\d+\.\d+\.\d+\/pages\/people\/index\.js$ data-type=file data="https://kelee.one/Resource/JavaScript/XiaojukejiCharge/XiaojukejiCharge_remove_ads.js" status-code=200 header="Content-Type:text/plain"
+(?i)^https:\/\/am\.didistatic\.com\/static\/am\/cf-terminal\/epower\/epower-thanos-app\/\d+\.\d+\.\d+\/pages\/people\/index\.js$ data-type=file data="https://kelee.one/Resource/JavaScript/XiaojukejiCharge/XiaojukejiCharge_remove_ads.js" status-code=200 header="Content-Type:text/plain"
 
 [MITM]
 hostname = %APPEND% energy.xiaojukeji.com, am.didistatic.com

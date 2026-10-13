@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/HeartideBrainWave.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:59 +08:00
+# Converted: 2026-10-13 10:18:48 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/HeartideBrainWave_remove_ads.lpx
@@ -16,26 +16,26 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api\.psy-1\.com\/cosleep\/startup\? url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/startup\? url reject-dict
 
-^https:\/\/api\.psy-1\.com\/cosleep\/ad\/ url reject-dict
-^https:\/\/api\.psy-1\.com\/cosleep\/user\/identity\/ad\? url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/ad\/ url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/user\/identity\/ad\? url reject-dict
 
-^https:\/\/api\.psy-1\.com\/cosleep\/discover\/ad$ url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/discover\/ad$ url reject-dict
 
-^https:\/\/api\.psy-1\.com\/cosleep\/home\/activity\? url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/home\/activity\? url reject-dict
 
-^https:\/\/api\.psy-1\.com\/cosleep\/newborn\/ad\/ url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/newborn\/ad\/ url reject-dict
 
-^https:\/\/api\.psy-1\.com\/cosleep\/my\/ad\? url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/my\/ad\? url reject-dict
 
-^https:\/\/api\.psy-1\.com\/cosleep\/search\/config\? url reject-dict
-^https:\/\/api\.psy-1\.com\/cosleep\/newborn\/search\/ranks\? url reject-dict
-^https:\/\/api\.psy-1\.com\/cosleep\/search\/inputs\? url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/search\/config\? url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/newborn\/search\/ranks\? url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/search\/inputs\? url reject-dict
 
-^https:\/\/api\.psy-1\.com\/cosleep\/newborn\/sleeps\/guides\/banner\? url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/newborn\/sleeps\/guides\/banner\? url reject-dict
 
-^https:\/\/api\.psy-1\.com\/cosleep\/newborn\/search\/ranks\/items\? url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/newborn\/search\/ranks\/items\? url reject-dict
 
 # [mitm]
 hostname = api.psy-1.com

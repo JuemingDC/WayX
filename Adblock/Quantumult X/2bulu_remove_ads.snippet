@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/2bulu.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:44 +08:00
+# Converted: 2026-10-13 10:18:26 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/2bulu_remove_ads.lpx
@@ -16,13 +16,13 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/helper\.2bulu\.com\/getAppEntranceConfig\? url jsonjq-response-body '.configData=(.configData|fromjson|del(.adPlatform,.adIntertitialShowType,.adsConfig,.adIntertitialDisplayedLimit,.adSplashShowTypeWhenHotStart,.adIntertitialDayDisplayedMaxCount,.od_adsType,.showMeBaiHeAdView)|tojson)'
+(?i)^https:\/\/helper\.2bulu\.com\/getAppEntranceConfig\? url jsonjq-response-body '.configData=(.configData|fromjson|del(.adPlatform,.adIntertitialShowType,.adsConfig,.adIntertitialDisplayedLimit,.adSplashShowTypeWhenHotStart,.adIntertitialDayDisplayedMaxCount,.od_adsType,.showMeBaiHeAdView)|tojson)'
 
-^https:\/\/helper\.2bulu\.com\/search\/searchHotKeyList\? url reject-dict
+(?i)^https:\/\/helper\.2bulu\.com\/search\/searchHotKeyList\? url reject-dict
 
-^https:\/\/helper\.2bulu\.com\/promote\/getAppUserModule\? url reject-dict
+(?i)^https:\/\/helper\.2bulu\.com\/promote\/getAppUserModule\? url reject-dict
 
-^https:\/\/helper\.2bulu\.com\/proSpecial\/allData\? url reject-dict
+(?i)^https:\/\/helper\.2bulu\.com\/proSpecial\/allData\? url reject-dict
 
 # [mitm]
 hostname = helper.2bulu.com

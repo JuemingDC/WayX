@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/RiskBird.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:38 +08:00
+# Converted: 2026-10-13 10:18:18 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/RiskBird_remove_ads.lpx
@@ -16,11 +16,11 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/m\.riskbird\.com\/prod-qbb-api\/user\/getBannerList url reject-dict
+(?i)^https:\/\/m\.riskbird\.com\/prod-qbb-api\/user\/getBannerList url reject-dict
 
-^https:\/\/m\.riskbird\.com\/prod-qbb-api\/searchHotEnt url reject-dict
+(?i)^https:\/\/m\.riskbird\.com\/prod-qbb-api\/searchHotEnt url reject-dict
 # 移除推荐老板
-^https:\/\/m\.riskbird\.com\/prod-qbb-api\/query\/person\/personRecommend url script-response-body https://kelee.one/Resource/JavaScript/RiskBird/RiskBird_remove_ads.js
+(?i)^https:\/\/m\.riskbird\.com\/prod-qbb-api\/query\/person\/personRecommend url script-response-body https://kelee.one/Resource/JavaScript/RiskBird/RiskBird_remove_ads.js
 
 # [mitm]
 hostname = m.riskbird.com

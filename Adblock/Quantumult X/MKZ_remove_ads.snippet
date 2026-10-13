@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MKZ.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:45 +08:00
+# Converted: 2026-10-13 10:18:28 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/MKZ_remove_ads.lpx
@@ -16,15 +16,15 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/base\.mkzcdn\.com\/advert\/app\/read\/v\d url reject-dict
-^https:\/\/base\.mkzcdn\.com\/advert\/app\/story\/read\/v\d url reject-dict
+(?i)^https:\/\/base\.mkzcdn\.com\/advert\/app\/read\/v\d url reject-dict
+(?i)^https:\/\/base\.mkzcdn\.com\/advert\/app\/story\/read\/v\d url reject-dict
 
-^https:\/\/base\.mkzcdn\.com\/advert\/app\/task\/motivate\/v\d url reject-dict
-^https:\/\/base\.mkzcdn\.com\/advert\/app\/task\/motivate\/v\d url reject-dict
+(?i)^https:\/\/base\.mkzcdn\.com\/advert\/app\/task\/motivate\/v\d url reject-dict
+(?i)^https:\/\/base\.mkzcdn\.com\/advert\/app\/task\/motivate\/v\d url reject-dict
 
-^https:\/\/base\.mkzcdn\.com\/advert\/app\/user\/slide\d\/v\d\/ url reject-dict
+(?i)^https:\/\/base\.mkzcdn\.com\/advert\/app\/user\/slide\d\/v\d\/ url reject-dict
 # 配置修改
-^https:\/\/base\.mkzcdn\.com\/app\/config\/ url script-response-body https://kelee.one/Resource/JavaScript/MKZ/MKZ_remove_ads.js
+(?i)^https:\/\/base\.mkzcdn\.com\/app\/config\/ url script-response-body https://kelee.one/Resource/JavaScript/MKZ/MKZ_remove_ads.js
 
 # [mitm]
 hostname = base.mkzcdn.com

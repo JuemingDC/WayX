@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduMap.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:30 +08:00
+# Converted: 2026-10-13 10:18:07 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduMap_remove_ads.lpx
@@ -16,18 +16,18 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/afd\.baidu\.com\/afd\/entry\?action=(update|query) url reject-dict
+(?i)^https:\/\/afd\.baidu\.com\/afd\/entry\?action=(update|query) url reject-dict
 
 ^ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_BaiduMap_remove_ads/phase_qx_response_c738344d99.js
 
-^https:\/\/yongche\.baidu\.com\/gomarketing\/api\/popup\/getentrancecordovaurl$ url reject-dict
+(?i)^https:\/\/yongche\.baidu\.com\/gomarketing\/api\/popup\/getentrancecordovaurl$ url reject-dict
 
-^https:\/\/yongche\.baidu\.com\/goorder\/passenger\/cobuild\/pull\? url reject-dict
-^https:\/\/yongche\.baidu\.com\/goorder\/passenger\/operationgirdle$ url reject-dict
-^https:\/\/yongche\.baidu\.com\/goorder\/passenger\/baseinfo$ url reject-dict
+(?i)^https:\/\/yongche\.baidu\.com\/goorder\/passenger\/cobuild\/pull\? url reject-dict
+(?i)^https:\/\/yongche\.baidu\.com\/goorder\/passenger\/operationgirdle$ url reject-dict
+(?i)^https:\/\/yongche\.baidu\.com\/goorder\/passenger\/baseinfo$ url reject-dict
 
-^https:\/\/ecom\.map\.baidu\.com\/ad-ops\/afd\/popup\? url reject-dict
-^https:\/\/maphotel\.baidu\.com\/hotel\/goextranet\/activity\/detail\? url reject-dict
+(?i)^https:\/\/ecom\.map\.baidu\.com\/ad-ops\/afd\/popup\? url reject-dict
+(?i)^https:\/\/maphotel\.baidu\.com\/hotel\/goextranet\/activity\/detail\? url reject-dict
 
 # [mitm]
 hostname = afd.baidu.com, newclient.map.baidu.com, yongche.baidu.com, ecom.map.baidu.com

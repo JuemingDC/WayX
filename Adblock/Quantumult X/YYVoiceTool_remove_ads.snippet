@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YYVoiceTool.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:29 +08:00
+# Converted: 2026-10-13 10:18:06 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/YYVoiceTool_remove_ads.lpx
@@ -16,15 +16,15 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/yuyin-api\.baizhanlive\.com\/homepage\/flashscreen\/get\? url reject-dict
+(?i)^https:\/\/yuyin-api\.baizhanlive\.com\/homepage\/flashscreen\/get\? url reject-dict
 
-^https:\/\/yuyin-api\.baizhanlive\.com\/homepage\/homepage\/banner\? url reject-dict
+(?i)^https:\/\/yuyin-api\.baizhanlive\.com\/homepage\/homepage\/banner\? url reject-dict
 
-^https:\/\/web\.yy\.com\/yyvoice_task_sys\/bar\.html\? url reject
+(?i)^https:\/\/web\.yy\.com\/yyvoice_task_sys\/bar\.html\? url reject
 
-^https:\/\/yuyin-api\.baizhanlive\.com\/postsquare\/college\/page\/tabsV3\? url jsonjq-response-body '.data.tabList |= map(select(.code == "post" or .code == "teamup" or .code == "college" or .code == "aiSecretRoom"))'
+(?i)^https:\/\/yuyin-api\.baizhanlive\.com\/postsquare\/college\/page\/tabsV3\? url jsonjq-response-body '.data.tabList |= map(select(.code == "post" or .code == "teamup" or .code == "college" or .code == "aiSecretRoom"))'
 
-^https:\/\/yuyin-api\.baizhanlive\.com\/search\/search\/hotword\? url reject-dict
+(?i)^https:\/\/yuyin-api\.baizhanlive\.com\/search\/search\/hotword\? url reject-dict
 
 # [mitm]
 hostname = yuyin-api.baizhanlive.com, web.yy.com
