@@ -27,7 +27,7 @@ IR 不包含目标 action 名、section 名、helper URL 或目标 fallback。�
 
 能够证明完整等价时优先 native；必要且已支持的语义缺口由共同 helper/dispatcher 承担；不能安全表示则注释源声明并诊断，不生成假可用规则。不得按插件 id、名称、作者或完整 catalog signature 特判。
 
-用户指定的正则 flags 内联映射、QX 强制 enable、作者 argument 省略、单条 pipeline 分条输出和 JSON replace 直接 setpath 是明确的转换策略，不能称为完整源语义等价。除此之外，不静默删除条件或动作。
+用户指定的正则 flags 内联映射、QX 强制 enable、作者 argument 省略、单条 pipeline 分条输出和 JSON add/replace 直接 setpath 是明确的转换策略，不能称为完整源语义等价。除此之外，不静默删除条件或动作。
 
 ## 2.3 单条组合与声明顺序
 
@@ -101,7 +101,7 @@ Surge duplicate headers 用 full-header-mode=true 的数组模式保留项及顺
 
 Surge 每阶段至多执行第一条匹配 HTTP Script。需要保证顺序的既有 helper owner 不简单输出为竞争脚本；用户指定的 2.3 分条 actions 独立输出，保留 first-match 限制，不宣称完整 pipeline 顺序语义。原生及 2.3 分条 actions 不被宽 dispatcher 吸收。
 
-原作者 HTTP Script、legacy Rewrite、未适配的 JQ/echo/URL/二进制动作和未证明参数 transport 不能自动串入 dispatcher。单 URL helper 可按现有 COMPATIBILITY LIMITATION 保留窄 prefilter；复杂条件无法取得安全阶段 owner 时诊断，无 Script/JQ 的组合使用 OMITTED。
+原作者 HTTP Script、legacy Rewrite、未适配的 JQ/echo/URL/二进制动作和未证明参数 transport 不能自动串入 dispatcher。单 URL helper 可按现有 COMPATIBILITY LIMITATION 保留窄 prefilter；既有独立声明的复杂条件无法取得安全阶段 owner 时诊断；2.3 拆出的 action 独立规划必要 helper，不重新进入 dispatcher。
 
 Body Rewrite 与原作者 Script 的窄 owner 仅用于同阶段、同一个无 flags 的单 URL regex、至少一条已支持 Body/JSON/文本 Request mock、无 legacy/纯原生 JSON/JQ owner/未支持 action/参数冲突的声明组。dispatcher 在原作者 Script 前，匹配 Body Rewrite 时拥有该阶段，未匹配时不占作者 first-match 位置。不得推断仅 Header、多个 matcher 或额外条件可以与作者异步代码组合。
 

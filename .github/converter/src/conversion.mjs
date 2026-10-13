@@ -85,7 +85,7 @@ function rewriteV2Action(line,target,ctx) {
   if (!isRewriteV2(line)) return null;
   if(isScriptV2(line)) {
     const members=splitScriptPipelineSources(line);
-    if(members.length>1)return {section:'split',members:members.map(member=>rewriteV2Action(member,target,ctx))};
+    if(members.length>1)return {section:'split',members:members.map(member=>rewriteV2Action(member,target,{...ctx,splitPipelineAction:true}))};
     try {
       const ir=parseScriptDeclaration(line),record=ctx.scriptMap?.get(ir.script.path);
       const plan=(target==='qx'?planQxScript:planSurgeScript)(ir,{scriptUrl:record?.[target] || ir.script.path,sourceText:record?.source || '',name:sanitizeName(scriptIrTag(ir) || 'wayx_script_'+crypto.createHash('sha1').update(ir.source).digest('hex').slice(0,10)),argumentIds:ctx.argumentIds,argumentTable:ctx.argumentTable});
@@ -99,6 +99,7 @@ function rewriteV2Action(line,target,ctx) {
   let ast;
   try {
     ast=selectRewritePipelineLayer(parseRewriteV2(line));
+    if(ctx.splitPipelineAction && !ast.sourceActionCount)ast={...ast,sourceActionCount:1,sourceActionIndices:[0]};
     validateRewriteV2Ast(ast);
   } catch (error) {
     return rewriteErrorResult(line,error);
@@ -176,7 +177,7 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
   }catch { /* Invalid declarations keep the ordinary diagnostic. */ }
   ctx.featureCompatibilityPhases=new Set(['request','response'].filter(phase=>legacy || blockedV2.has(phase) || scripts.some(x=>{try {const ir=parseScriptDeclaration(x.line);return ir?.phase===phase && (target==='qx' || !(scriptOption(ir,'enable')?.value===false));}catch{return false;}})));
   for (const item of items) {
-    if (!isRewriteV2(item.line) || isScriptV2(item.line)) continue;
+    if (!isRewriteV2(item.line) || isScriptV2(item.line) || item.pipelineMember) continue;
     try {
       const ast=resolveRewriteJqDependencies(parseRewriteV2(item.line),item.line,ctx);
       validateRewriteV2Ast(ast);
@@ -404,8 +405,8 @@ export function convertPlugin(entry,source,{
     }
     if (!item.line) continue;
 
-    let qr=qxDispatchers.get(item.sourceIndex) || rewriteV2Action(item.line,'qx',qctx);
-    let sr=surgeDispatchers.get(item.sourceIndex) || rewriteV2Action(item.line,'surge',sctx);
+    let qr=qxDispatchers.get(item.sourceIndex) || rewriteV2Action(item.line,'qx',item.pipelineMember?{...qctx,splitPipelineAction:true}:qctx);
+    let sr=surgeDispatchers.get(item.sourceIndex) || rewriteV2Action(item.line,'surge',item.pipelineMember?{...sctx,splitPipelineAction:true}:sctx);
     if (!qr || !sr) {
       const [pattern,action]=splitPatternAction(item.line);
       let ir=legacyRewriteToSemanticIr(pattern,action);
@@ -466,7 +467,8 @@ export function convertPlugin(entry,source,{
 
     if(isRewriteV2(item.line) && !isScriptV2(item.line)) {
       for(const target of ['qx','surge']) {
-        const result=rewriteV2Action(item.line,target,target==='qx'?qctx:sctx);
+        const ctx=target==='qx'?qctx:sctx;
+        const result=rewriteV2Action(item.line,target,item.pipelineMember?{...ctx,splitPipelineAction:true}:ctx);
         for(const member of result?.members || [result]) {
           if(!member)continue;
           const dest=target==='qx'?qxRewriteOutputDestination(qx,member.section):surgeRewriteOutputDestination(sg,member.section);

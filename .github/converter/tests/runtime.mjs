@@ -565,3 +565,25 @@ function executeSelectedJq(output,target,phase,body) {
   assert.equal(await fs.readFile('Resource/Loon/KuGou_remove_ads.lpx','utf8'),raw,'original source remains recorded');
   console.log('Upstream jq errors passed: '+checked+' actual native executions across five source forms and both targets, plus non-repair guards and real KuGou');
 }
+
+// Script-containing chains retain independent guarded helpers without dispatcher collisions.
+for(const section of ['Rewrite','Script']) {
+ const source='['+section+']'+'\nresponse if ${url} ~= /api-(\\d+)/i as item then response.header.set("X-ID","${item.1}") | response.body.replace(/old/i,"new-${item.1}") | script("https://example.test/guarded.js")';
+ const out=convertPlugin(entry,source,options);validateConvertedPlugin(entry,out);
+ assert.doesNotMatch(out.qx+out.surge,/REVIEW REQUIRED|OMITTED/);
+ for(const target of ['qx','surge']) {
+  assert.match(out[target],/guarded\.js/);
+  const helpers=[...out.generatedScripts].filter(([name])=>name.includes('_'+target+'_'));
+  assert.equal(helpers.length,2);assert.ok(helpers.every(([name])=>!name.startsWith('phase_')));
+  const results=helpers.map(([,script])=>run(script,{request:{url:'https://example.test/API-42'},response:{body:'OLD',status:200}}));
+  assert.ok(results.some(result=>result.headers?.['X-ID']==='42'));
+  assert.ok(results.some(result=>result.body==='new-42'));
+ }
+}
+const mockChain='response if ${url} ~= /api/i then response.body.mock_file("text","one.txt") | response.body.mock_file("text","two.txt")';
+const mockContext=await materializeConversionContext(entry,'[Rewrite]\n'+mockChain,{fetchText:async url=>url.endsWith('one.txt')?'ONE':'TWO'});
+assert.deepEqual(Object.keys(mockContext.mockFiles.get(mockChain).byAction),['0','1']);
+const mockOutput=convertPlugin(entry,'[Rewrite]\n'+mockChain,{...options,...mockContext});validateConvertedPlugin(entry,mockOutput);
+assert.doesNotMatch(mockOutput.qx+mockOutput.surge,/REVIEW REQUIRED/);
+for(const body of ['ONE','TWO'])assert.ok([...mockOutput.generatedScripts.values()].some(script=>script.includes(body)));
+console.log('Script/Mock pipeline isolation passed: guarded helpers in both sections/targets and indexed response mock dependencies');
