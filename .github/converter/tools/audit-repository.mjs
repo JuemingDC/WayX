@@ -54,7 +54,6 @@ for (const file of files) {
       if (/^#\s*Category:.*\bLoon\b/i.test(t)) add(file,i+1,'source-platform-category',t);
       if (/^\[(?:filter_local|rewrite_local|mitm)\]$/i.test(t)) add(file,i+1,'qx-active-section',t);
       if (/\[hH\]\[tT\]\[tT\]\[pP\]/.test(lines[i])) add(file,i+1,'synthetic-casefold',t);
-      if (/\(\?i[:)]/.test(lines[i])) add(file,i+1,'undocumented-inline-i',t);
       if (active(lines[i]) && /jq-path=https?:\/\//.test(lines[i])) add(file,i+1,'unresolved-jq-path',t);
       if (active(lines[i]) && /\b(?:response-body-json-(?:del|replace|jq)|mock-response-body)\b/.test(lines[i])) add(file,i+1,'loon-rewrite-token-in-qx',t);
       if (active(lines[i]) && /^(?:request|response)\s+if\b/i.test(t)) add(file,i+1,'loon-rewrite-v2-in-qx',t);
@@ -78,7 +77,6 @@ for (const file of files) {
       if (/^#\s*Category:.*\bLoon\b/i.test(t)) add(file,i+1,'source-platform-category',t);
       if (/Original Loon(?: metadata)?/i.test(lines[i])) add(file,i+1,'source-platform-label',t);
       if (/\[hH\]\[tT\]\[tT\]\[pP\]/.test(lines[i])) add(file,i+1,'synthetic-casefold',t);
-      if (/\(\?i[:)]/.test(lines[i])) add(file,i+1,'undocumented-inline-i',t);
       if (active(lines[i]) && /jq-path=https?:\/\//.test(lines[i])) add(file,i+1,'unresolved-jq-path',t);
       if (/^\[(?:Rewrite|Argument)\]$/i.test(t)) add(file,i+1,'source-section-in-surge',t);
       if (active(lines[i]) && /^(?:request|response)\s+if\b/i.test(t)) add(file,i+1,'loon-rewrite-v2-in-surge',t);
