@@ -200,7 +200,16 @@ const QX_URL_REJECT_ACTIONS=new Map([
   ['REJECT-ARRAY','reject-array'],
 ]);
 
+// User policy: exact WeChat DNS hosts use DIRECT in every converted target.
+// Apply at target planning so upstream source snapshots remain unchanged.
+const WAYX_DIRECT_DOMAINS = new Set(['dns.weixin.qq.com','dns.weixin.qq.com.cn']);
+function applyWayxDomainPolicy(ast) {
+  if(ast.nested || ast.type!=='DOMAIN' || !WAYX_DIRECT_DOMAINS.has(String(ast.value).toLowerCase()))return ast;
+  return {...ast,policy:'DIRECT',policyRaw:'DIRECT',params:ast.params.filter(param=>param.name!=='pre-matching')};
+}
+
 export function planQxRuleAst(ast) {
+  ast=applyWayxDomainPolicy(ast);
   const source=ast.source;
 
   if (ast.kind==='logical') {
@@ -331,6 +340,7 @@ export function surgeRuleTypesInTree(line,{subrule=false}={}) {
 }
 
 export function planSurgeModuleRuleAst(ast,{proxyPolicyPlaceholder=null,matchingEnhancements=false,preMatching=true}={}) {
+  ast=applyWayxDomainPolicy(ast);
   const source=ast.source;
   const type=ast.type;
 
