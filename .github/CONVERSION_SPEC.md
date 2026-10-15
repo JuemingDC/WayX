@@ -129,7 +129,7 @@ Rule 使用独立 target-neutral IR，仅输出官方已确认的 type/policy/�
 
 用户指定的精确域名例外：所有转换产物中的 `DOMAIN,dns.weixin.qq.com` 和 `DOMAIN,dns.weixin.qq.com.cn` 使用 DIRECT（QX 为 `host, ..., direct`），在目标 planner 统一执行，不依赖插件 id。源 Loon 快照保留原文；不扩展到 DOMAIN-SUFFIX、DOMAIN-KEYWORD、逻辑子条件或其它子域名。Surge DIRECT 不携带仅适用于拒绝策略的 pre-matching；extended-matching 沿用既有目标规则。
 
-Loon `[Rule]` 的 `URL-REGEX,<regex>,REJECT` 转为 Quantumult X 重写 `<regex> url reject`，不再默认使用 `reject-200`。仅当源 policy 明确为 `REJECT-200`（识别不区分大小写）时输出 `<regex> url reject-200`；不得根据 URL 文本、响应猜测或普通 REJECT 推断 HTTP 200。原有 `REJECT-IMG/DICT/ARRAY` 专用映射、`REJECT-DROP` 映射以及 Surge 输出不变；DIRECT/PROXY 等非拒绝策略不得强制改写为 reject。此规则只约束 Rule 中 URL-REGEX 的目标适配，不改变 `[Rewrite]` 里显式 action 的映射。
+Loon `[Rule]` 的 `URL-REGEX,<regex>,REJECT` 转为 Quantumult X 重写 `<regex> url reject`，不再默认使用 `reject-200`。仅当源 policy 明确为 `REJECT-200`（识别不区分大小写）时输出 `<regex> url reject-200`；不得根据 URL 文本、响应猜测或普通 REJECT 推断 HTTP 200。原有 `REJECT-IMG/DICT/ARRAY` 专用映射、`REJECT-DROP` 映射以及 Surge 输出不变；DIRECT/PROXY 等非拒绝策略不得强制改写为 reject。此规则只约束 Rule 中 URL-REGEX 的目标适配，不改变 `[Rewrite]` 里显式 action 的映射。 Rule 策略及 Rewrite v2 的动作/状态码均从各自基础映射表直接查找；Safe Tier 复用同一 Rewrite 原语查询，不再维护独立拒绝映射或追加特例分支。
 
 Surge 逐条 Rule 使用已支持的 pre-matching/extended-matching 增强，保持类型与官方最低应用版本边界，不根据 Body Rewrite 的 CORE_VERSION 推断这些能力。QX 不输出 Surge 参数或 no-resolve 字段；目标不支持的属性按明确目标策略处理。
 

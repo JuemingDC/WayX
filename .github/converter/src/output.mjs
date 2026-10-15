@@ -6,7 +6,7 @@ import { isRewriteV2 } from "./rewrite.mjs";
 import { parseLegacyScriptLine } from "./script.mjs";
 import { cleanSourceComments, sourceCommentText } from "./input.mjs";
 import { QX_WAYX_FILTER_TYPES, QX_WAYX_REWRITE_MATCHERS, QX_WAYX_SCRIPT_ACTIONS, QX_WAYX_SNIPPET_MITM_KEYS, SURGE_WAYX_REWRITE_SECTIONS, SURGE_WAYX_URL_REWRITE_TYPES, SURGE_WAYX_HEADER_REWRITE_ACTIONS, SURGE_WAYX_BODY_REWRITE_TYPES, SURGE_WAYX_MAP_LOCAL_DATA_TYPES, SURGE_WAYX_SCRIPT_TYPES, SURGE_WAYX_MITM_KEYS } from "./core.mjs";
-import { splitTopLevelCsv, surgePolicyIndex, surgeRuleTypesInTree, SURGE_MODULE_POLICIES } from "./rule.mjs";
+import { splitTopLevelCsv, surgeRuleTypesInTree, SURGE_MODULE_POLICIES } from "./rule.mjs";
 
 
 
@@ -702,8 +702,7 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
       if (!typeTree.ok) {
         throw new Error(`${entry.id}: unsupported Surge rule type/combination in module (${typeTree.reason}): ${line}`);
       }
-      const policyIndex = surgePolicyIndex(parts);
-      const policyRaw = String(parts[policyIndex] || '');
+      const policyRaw = String(parts[2] || '');
       const argumentPolicy = policyRaw.match(/^\{\{\{([A-Za-z0-9_]+)\}\}\}$/);
       if (argumentPolicy) {
         if (!declaredArguments.has(argumentPolicy[1])) {

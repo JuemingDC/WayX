@@ -1246,12 +1246,6 @@ export function listComplexRewriteHandlers(){
 // WayX deterministic Safe Tier analyzer for Loon Rewrite v2
 // Author: chance
 // Category: Converter / Rewrite v2 / Safe Tier
-const SAFE_REJECT_ACTIONS = new Map([
-  ['reject_dict', 'reject-dict'],
-  ['reject_array', 'reject-array'],
-  ['reject_img', 'reject-img'],
-]);
-
 function safeRewriteReview(reason, ast = null) {
   return { matched: true, safe: false, reason, ast };
 }
@@ -1266,25 +1260,18 @@ export function analyzeSimpleUrlRegexCondition(condition) {
 }
 
 function safeRejectAction(action) {
-  if (action?.name === 'reject') {
-    if (action.args.length !== 1) return { ok: false, reason: 'reject with custom body requires semantic review' };
-    const status = action.args[0];
-    if (status?.type !== 'number' || !Number.isInteger(status.value) || status.value < 100 || status.value > 599) {
-      return { ok: false, reason: 'reject status must be an integer in Loon 100...599' };
-    }
-    if (status.value === 404) return { ok: true, action: 'reject', sourceAction: 'reject', status: 404 };
-    if (status.value === 200) return { ok: true, action: 'reject-200', sourceAction: 'reject', status: 200 };
-    return { ok: false, reason: 'reject status has no direct QX primitive' };
+  if (!['reject','reject_img','reject_dict','reject_array'].includes(action?.name)) {
+    return { ok: false, reason: 'action is outside the deterministic reject subset' };
   }
-
-  const mapped = SAFE_REJECT_ACTIONS.get(action?.name);
-  if (!mapped) return { ok: false, reason: 'action is outside the deterministic reject subset' };
+  if (action.args.length !== 1) return { ok: false, reason: 'reject with custom body requires semantic review' };
   const status = action.args[0];
   if (status?.type !== 'number' || !Number.isInteger(status.value) || status.value < 100 || status.value > 599) {
     return { ok: false, reason: 'reject status must be an integer in Loon 100...599' };
   }
-  // QX reject-dict/reject-array/reject-img are documented 200-response primitives.
-  if (status.value !== 200) return { ok: false, reason: 'structured/image reject status has no direct QX primitive' };
+  const mapped = qxPrimitiveForRewriteV2Action(action);
+  if (!mapped) return { ok: false, reason: action.name === 'reject'
+    ? 'reject status has no direct QX primitive'
+    : 'structured/image reject status has no direct QX primitive' };
   return { ok: true, action: mapped, sourceAction: action.name, status: status.value };
 }
 
@@ -1974,47 +1961,26 @@ export function fixedStringValue(node) {
 // QX primitives are selected by behavior. The official Quantumult X sample
 // defines `reject` as an empty HTTP 404 response and `reject-200` as empty 200.
 export const QX_REWRITE_PRIMITIVES = Object.freeze({
-  reject_404: 'reject',
-  reject_200: 'reject-200',
-  reject_img_200: 'reject-img',
-  reject_dict_200: 'reject-dict',
-  reject_array_200: 'reject-array',
-  redirect_302: '302',
-  redirect_307: '307',
-  request_json_jq: 'jsonjq-request-body',
-  response_json_jq: 'jsonjq-response-body',
-  request_body_replace: 'request-body',
-  response_body_replace: 'response-body',
+  reject: Object.freeze({200: 'reject-200', 404: 'reject'}),
+  reject_img: Object.freeze({200: 'reject-img'}),
+  reject_dict: Object.freeze({200: 'reject-dict'}),
+  reject_array: Object.freeze({200: 'reject-array'}),
+  redirect: Object.freeze({302: '302', 307: '307'}),
+  'request.json.jq': 'jsonjq-request-body',
+  'response.json.jq': 'jsonjq-response-body',
+  'request.body.replace': 'request-body',
+  'response.body.replace': 'response-body',
 });
-
-function statusIs200(action) {
-  const status = action.args?.[0];
-  return status?.type === 'number' && status.value === 200;
-}
 
 export function qxPrimitiveForRewriteV2Action(action) {
   validateRewriteV2Action(action);
-  if (action.name === 'reject' && action.args.length === 1) {
-    const status = action.args?.[0];
-    if (status?.type !== 'number') return null;
-    if (status.value === 404) return QX_REWRITE_PRIMITIVES.reject_404;
-    if (status.value === 200) return QX_REWRITE_PRIMITIVES.reject_200;
-    return null;
-  }
-  if (action.name === 'reject_img') return statusIs200(action) ? QX_REWRITE_PRIMITIVES.reject_img_200 : null;
-  if (action.name === 'reject_dict') return statusIs200(action) ? QX_REWRITE_PRIMITIVES.reject_dict_200 : null;
-  if (action.name === 'reject_array') return statusIs200(action) ? QX_REWRITE_PRIMITIVES.reject_array_200 : null;
-  if (action.name === 'redirect') {
-    const code = action.args[0];
-    if (code?.type === 'number' && code.value === 302) return QX_REWRITE_PRIMITIVES.redirect_302;
-    if (code?.type === 'number' && code.value === 307) return QX_REWRITE_PRIMITIVES.redirect_307;
-    return null;
-  }
-  if (action.name === 'request.json.jq') return QX_REWRITE_PRIMITIVES.request_json_jq;
-  if (action.name === 'response.json.jq') return QX_REWRITE_PRIMITIVES.response_json_jq;
-  if (action.name === 'request.body.replace') return QX_REWRITE_PRIMITIVES.request_body_replace;
-  if (action.name === 'response.body.replace') return QX_REWRITE_PRIMITIVES.response_body_replace;
-  return null;
+  const mapping = QX_REWRITE_PRIMITIVES[action.name];
+  if (!mapping) return null;
+  if (typeof mapping === 'string') return mapping;
+  // A custom reject body needs the existing semantic/script planner.
+  if (action.name === 'reject' && action.args.length !== 1) return null;
+  const status = action.args[0];
+  return status?.type === 'number' ? mapping[status.value] ?? null : null;
 }
 
 
@@ -2662,19 +2628,6 @@ function qxRewriteRawBase(ctx) {
   const base=String(ctx.rawBase || '').replace(/\/$/,'');
   if (!base) throw new Error('Rewrite planner requires rawBase for generated helper URLs');
   return base;
-}
-
-function renderMinimalQxHeaderHelper(ast, options) {
-  try {
-    return renderQxHeaderScript(ast, options);
-  } catch (compactError) {
-    if ((ast?.actions?.length || 0) < 2) throw compactError;
-    try {
-      return renderMixedRewriteScript(ast, {target:'qx', ...options});
-    } catch (mixedError) {
-      throw mixedError;
-    }
-  }
 }
 
 let qxRewriteHandlersRegistered=false;

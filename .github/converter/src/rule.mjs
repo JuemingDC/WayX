@@ -198,6 +198,12 @@ const QX_URL_REJECT_ACTIONS=new Map([
   ['REJECT-IMG','reject-img'],
   ['REJECT-DICT','reject-dict'],
   ['REJECT-ARRAY','reject-array'],
+  ['REJECT-DROP','reject'],
+]);
+
+const QX_RULE_POLICIES=new Map([
+  ['DIRECT','direct'], ['PROXY','PROXY'],
+  ['REJECT','reject'], ['REJECT-DROP','reject'], ['REJECT-NO-DROP','reject'],
 ]);
 
 // User policy: exact WeChat DNS hosts use DIRECT in every converted target.
@@ -227,7 +233,6 @@ export function planQxRuleAst(ast) {
   if (type==='URL-REGEX') {
     const action=QX_URL_REJECT_ACTIONS.get(policyRaw);
     if (action) return {kind:'rewrite',line:`${value} url ${action}`,reason:'wayx-url-regex-reject'};
-    if (policyRaw==='REJECT-DROP') return {kind:'rewrite',line:`${value} url reject`,reason:'wayx-url-regex-reject-drop'};
   }
 
   const qxType=QX_RULE_TYPES.get(type);
@@ -239,17 +244,14 @@ export function planQxRuleAst(ast) {
     };
   }
 
-  let policy;
-  if (policyRaw==='DIRECT') policy='direct';
-  else if (policyRaw==='REJECT' || policyRaw==='REJECT-DROP' || policyRaw==='REJECT-NO-DROP') policy='reject';
-  else if (policyRaw==='PROXY') policy='PROXY';
-  else if (/^REJECT/.test(policyRaw)) {
+  const policy=QX_RULE_POLICIES.get(policyRaw);
+  if (!policy && /^REJECT/.test(policyRaw)) {
     return {
       kind:'comment',
       line:`# [WayX] REVIEW REQUIRED: Quantumult X cannot preserve source reject policy ${policyRaw} in filter syntax or a lossless script equivalent\n# Source declaration: ${source}`,
       reason:'unsupported-reject-policy',
     };
-  } else {
+  } else if (!policy) {
     return {
       kind:'comment',
       line:`# [WayX] REVIEW REQUIRED: Quantumult X Rule policy ${policyRaw} is not verified and has no lossless script equivalent\n# Source declaration: ${source}`,
@@ -263,13 +265,8 @@ export function planQxRuleAst(ast) {
 export const SURGE_RULE_TYPES=SURGE_WAYX_RULE_TYPES;
 
 // Module [Rule] uses the same reviewed built-in policy registry as Surge Rule.
-// Compatibility export retained for the module validator.
-export const SURGE_RULE_BUILTIN_POLICIES=SURGE_WAYX_RULE_BUILTIN_POLICIES;
 export const SURGE_MODULE_POLICIES=SURGE_WAYX_RULE_BUILTIN_POLICIES;
 
-export function surgePolicyIndex(_parts) {
-  return 2;
-}
 
 function surgeCsvRegexField(value) {
   const text=String(value ?? '');

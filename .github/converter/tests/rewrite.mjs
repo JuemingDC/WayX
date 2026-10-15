@@ -854,6 +854,30 @@ assert.throws(() => validateRewriteV2Ast(invalidBulk), /equal lengths/);
 const unknownAction = parseRewriteV2('request if ${url} ~= /api/ then request.unknown("x")');
 assert.throws(() => validateRewriteV2Ast(unknownAction), /not present in the current official Loon Rewrite v2 registry/);
 
+// Shared primitive lookup must preserve status and custom-body boundaries in
+// both the native planner and Safe Tier, including valid unsupported statuses.
+for (const [name, args, expected] of [
+  ['reject', '200', 'reject-200'], ['reject', '404', 'reject'],
+  ['reject', '451', null], ['reject', '200, "custom"', null],
+  ['reject', '${status}', null],
+  ['reject_img', '200', 'reject-img'], ['reject_img', '404', null],
+  ['reject_dict', '200', 'reject-dict'], ['reject_dict', '451', null],
+  ['reject_array', '200', 'reject-array'], ['reject_array', '404', null],
+  ['reject_video', '200', null],
+  ['redirect', '302, "https://example.com"', '302'],
+  ['redirect', '307, "https://example.com"', '307'],
+  ['redirect', '301, "https://example.com"', null],
+]) {
+  const source = 'request if ${url} ~= /ads/ then ' + name + '(' + args + ')';
+  const ast = parseRewriteV2(source);
+  assert.equal(qxPrimitiveForRewriteV2Action(ast.actions[0]), expected, source);
+  if (name.startsWith('reject')) {
+    const safe = analyzeSafeRewriteV2(source);
+    assert.equal(safe.safe, expected !== null, source);
+    if (safe.safe) assert.equal(safe.action, expected, source);
+  }
+}
+
 const safeReject = analyzeSafeRewriteV2('request if ${url} ~= /^https:\\/\\/ad\\.example\\.com/ then reject(200)');
 assert.equal(safeReject.safe, true);
 assert.equal(safeReject.action, 'reject-200');

@@ -65,10 +65,6 @@ export function execSourceRegex(node,value) {
   return compileSourceRegex(node).exec(value);
 }
 
-export function testSourceRegex(node,value) {
-  return execSourceRegex(node,value)!==null;
-}
-
 // core/condition-evaluator.mjs
 // WayX target-neutral Loon Rewrite condition reference evaluator
 // Author: chance

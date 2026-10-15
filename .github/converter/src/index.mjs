@@ -147,7 +147,6 @@ export {
 export {
   LOON_LOGICAL_RULE_TYPES,
   SURGE_MODULE_POLICIES,
-  SURGE_RULE_BUILTIN_POLICIES,
   SURGE_RULE_TYPES,
   parseLoonRuleAst,
   planQxRuleAst,
@@ -159,7 +158,6 @@ export {
   splitLogicalSubrules,
   splitTopLevelCsv,
   surgeModuleRule,
-  surgePolicyIndex,
   surgeRule,
   surgeRuleTypesInTree,
   unquoteRuleField,
