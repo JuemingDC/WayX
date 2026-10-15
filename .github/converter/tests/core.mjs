@@ -2,7 +2,7 @@
 // Author: chance
 // Category: Converter / core / Regression Suite
 
-import { parseRewriteV2, parseLoonRuleAst, renderRuleAst, ruleTypesInAst, planQxRuleAst, planSurgeModuleRuleAst, renderSurgeRuleAst, validateSurgeRuleAst, surgeRuleTypesInTree, surgeModuleRule, classifyLegacyRewriteAction } from "../src/index.mjs";
+import { QX_RULE_TYPES, RULE_POLICY_MAPPINGS, SURGE_RULE_TYPES, SURGE_MODULE_POLICIES, parseRewriteV2, parseLoonRuleAst, renderRuleAst, ruleTypesInAst, planQxRuleAst, planSurgeModuleRuleAst, renderSurgeRuleAst, validateSurgeRuleAst, surgeRuleTypesInTree, surgeModuleRule, classifyLegacyRewriteAction } from "../src/index.mjs";
 import { compileSourceRegex, execSourceRegex, evaluateCondition, EQUIVALENCE_KINDS, nativeEquivalent, guardedHelper, phaseDispatcher, unsupported, differentialConditionOracle } from "../src/core.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -217,6 +217,60 @@ if (selectedCase === "rule.mjs") {
 
 
 
+// Completeness is checked against target capabilities and the independently
+// reviewed source fixtures, including known unsupported types/policy contexts.
+assert.deepEqual([...QX_RULE_TYPES.keys()].sort(), [...SURGE_RULE_TYPES, 'FINAL'].sort());
+for (const name of SURGE_MODULE_POLICIES) {
+  assert.ok(RULE_POLICY_MAPPINGS.has(name), 'missing built-in policy: ' + name);
+}
+const filterCases = [
+  ['DOMAIN','example.com','host'], ['DOMAIN-SUFFIX','example.com','host-suffix'],
+  ['DOMAIN-KEYWORD','ads','host-keyword'], ['DOMAIN-WILDCARD','*.example.com','host-wildcard'],
+  ['IP-CIDR','1.1.1.0/24','ip-cidr'], ['IP-CIDR6','2001:db8::/32','ip6-cidr'],
+  ['GEOIP','CN','geoip'], ['IP-ASN','6185','ip-asn'], ['USER-AGENT','App*','user-agent'],
+];
+const filterPolicies = new Map([
+  ['DIRECT','direct'], ['PROXY','PROXY'], ['REJECT','reject'],
+  ['REJECT-DROP','reject'], ['REJECT-NO-DROP','reject'],
+]);
+for (const [type,value,qxType] of filterCases) {
+  for (const policy of RULE_POLICY_MAPPINGS.keys()) {
+    const ast = parseLoonRuleAst(type + ',' + value + ',' + policy).ast;
+    const qx = planQxRuleAst(ast);
+    if (filterPolicies.has(policy)) assert.equal(qx.line, `${qxType}, ${value}, ${filterPolicies.get(policy)}`);
+    else assert.equal(qx.kind, 'comment', type + '/' + policy);
+    const surge = planSurgeModuleRuleAst(ast, {proxyPolicyPlaceholder:'{{{policy}}}'});
+    const expected = policy === 'PROXY' ? '{{{policy}}}' : policy === 'REJECT-IMG' ? 'REJECT-TINYGIF' : policy;
+    if (policy === 'PROXY' || SURGE_MODULE_POLICIES.has(expected)) assert.equal(surge.line, `${type},${value},${expected}`);
+    else assert.equal(surge.kind, 'comment', type + '/' + policy);
+  }
+}
+const urlPolicies = new Map([
+  ['REJECT','reject'], ['REJECT-200','reject-200'], ['REJECT-IMG','reject-img'],
+  ['REJECT-DICT','reject-dict'], ['REJECT-ARRAY','reject-array'],
+  ['REJECT-DROP','reject'], ['REJECT-NO-DROP','reject'],
+]);
+for (const policy of RULE_POLICY_MAPPINGS.keys()) {
+  for (const token of [policy,policy.toLowerCase()]) {
+    const ast = parseLoonRuleAst('URL-REGEX,"^https://example.com/(a,b)",' + token).ast;
+    const qx = planQxRuleAst(ast);
+    if (urlPolicies.has(policy)) assert.equal(qx.line, '^https://example.com/(a,b) url ' + urlPolicies.get(policy));
+    else assert.equal(qx.kind, 'comment', 'URL-REGEX/' + policy);
+    const surge = planSurgeModuleRuleAst(ast, {proxyPolicyPlaceholder:'{{{policy}}}'});
+    if (['REJECT-200','REJECT-DICT','REJECT-ARRAY'].includes(policy)) {
+      assert.equal(surge.kind, 'map');
+      assert.match(surge.line, /status-code=200/);
+    } else if (SURGE_MODULE_POLICIES.has(policy) || ['REJECT-IMG','PROXY'].includes(policy)) {
+      assert.equal(surge.kind, 'rule', policy);
+    } else assert.equal(surge.kind, 'comment', policy);
+  }
+}
+for (const type of ['DEST-PORT','SRC-PORT','PROTOCOL','PROCESS-NAME','DOMAIN-SET','RULE-SET','SCRIPT','FINAL','UNKNOWN']) {
+  assert.equal(planQxRuleAst(parseLoonRuleAst(type + ',443,REJECT').ast).kind, 'comment', type);
+}
+assert.equal(planQxRuleAst(parseLoonRuleAst('DOMAIN,example.com,UNKNOWN').ast).kind, 'comment');
+console.log('Complete Rule mapping matrix passed: 9 filter types × 15 policies × 2 targets; URL variants/case and unsupported boundaries');
+
 const simple=parseLoonRuleAst('DOMAIN, example.com, REJECT');
 assert.equal(simple.ok,true);
 assert.equal(simple.ast.kind,'rule');
@@ -364,6 +418,9 @@ const baseline=JSON.parse(await fs.readFile(
   path.join(ROOT,'.github/converter/fixtures/catalog-rule-inventory.json'),
   'utf8',
 ));
+
+for (const type of baseline.ruleTypes) assert.ok(QX_RULE_TYPES.has(type), 'catalog Rule type missing from mapping table: ' + type);
+for (const policy of baseline.policies) assert.ok(RULE_POLICY_MAPPINGS.has(policy), 'catalog policy missing from mapping table: ' + policy);
 
 const inventory={
   ruleTypes:new Set(),

@@ -45,12 +45,12 @@ export function findRewriteComparisons(n,p=()=>true,o=[]){if(!n)return o;if(n.ty
 // Category: Converter / Rewrite / Semantic IR
 
 const LEGACY_REJECT_VARIANTS = new Map([
-  ['reject', {variant:'generic', status:null}],
-  ['reject-200', {variant:'empty', status:200}],
-  ['reject-img', {variant:'image', status:200}],
-  ['reject-dict', {variant:'dict', status:200}],
-  ['reject-array', {variant:'array', status:200}],
-  ['reject-video', {variant:'video', status:null}],
+  ['reject', {variant:'generic', status:null, surgeSection:'url', surgeArguments:'_ reject'}],
+  ['reject-200', {variant:'empty', status:200, surgeSection:'map', surgeArguments:'data-type=text data="" status-code=200'}],
+  ['reject-img', {variant:'image', status:200, surgeSection:'map', surgeArguments:'data-type=tiny-gif status-code=200'}],
+  ['reject-dict', {variant:'dict', status:200, surgeSection:'map', surgeArguments:'data-type=text data="{}" status-code=200 header="Content-Type:application/json"'}],
+  ['reject-array', {variant:'array', status:200, surgeSection:'map', surgeArguments:'data-type=text data="[]" status-code=200 header="Content-Type:application/json"'}],
+  ['reject-video', {variant:'video', status:null, surgeSection:null, surgeArguments:null}],
 ]);
 
 function rewriteSourceTokens(input) {
@@ -1958,18 +1958,42 @@ export function fixedStringValue(node) {
   return node && ['string','raw-string'].includes(node.type) ? String(node.value) : null;
 }
 
+// Every registered Loon v2 action has an entry; null requires the existing
+// semantic planner to lower arguments/conditions or report its boundary.
 // QX primitives are selected by behavior. The official Quantumult X sample
 // defines `reject` as an empty HTTP 404 response and `reject-200` as empty 200.
 export const QX_REWRITE_PRIMITIVES = Object.freeze({
+  'url.replace': null,
+  redirect: Object.freeze({302: '302', 307: '307'}),
   reject: Object.freeze({200: 'reject-200', 404: 'reject'}),
   reject_img: Object.freeze({200: 'reject-img'}),
   reject_dict: Object.freeze({200: 'reject-dict'}),
   reject_array: Object.freeze({200: 'reject-array'}),
-  redirect: Object.freeze({302: '302', 307: '307'}),
-  'request.json.jq': 'jsonjq-request-body',
-  'response.json.jq': 'jsonjq-response-body',
+  reject_video: null,
+  'request.header.add': null,
+  'request.header.set': null,
+  'request.header.del': null,
+  'request.header.replace': null,
+  'response.header.add': null,
+  'response.header.set': null,
+  'response.header.del': null,
+  'response.header.replace': null,
   'request.body.replace': 'request-body',
   'response.body.replace': 'response-body',
+  'request.json.add': null,
+  'request.json.delete': null,
+  'request.json.replace': null,
+  'request.json.jq': 'jsonjq-request-body',
+  'request.json.jq_file': null,
+  'response.json.add': null,
+  'response.json.delete': null,
+  'response.json.replace': null,
+  'response.json.jq': 'jsonjq-response-body',
+  'response.json.jq_file': null,
+  'request.body.mock': null,
+  'request.body.mock_file': null,
+  'response.body.mock': null,
+  'response.body.mock_file': null,
 });
 
 export function qxPrimitiveForRewriteV2Action(action) {
@@ -2586,11 +2610,8 @@ export function planLegacyRewriteIr(ir, target, ctx={}) {
   const parsed=classifyLegacyRewrite(action);
   if (operation.kind === 'reject' && operation.variant !== 'video') {
     if (target === 'qx') return {section:'rewrite', line:`${targetPattern} url ${parsed.action}`};
-    if (parsed.action === 'reject') return {section:'url', line:`${targetPattern} _ reject`};
-    if (parsed.action === 'reject-img') return {section:'map', line:`${targetPattern} data-type=tiny-gif status-code=200`};
-    if (parsed.action === 'reject-dict') return {section:'map', line:`${targetPattern} data-type=text data="{}" status-code=200 header="Content-Type:application/json"`};
-    if (parsed.action === 'reject-array') return {section:'map', line:`${targetPattern} data-type=text data="[]" status-code=200 header="Content-Type:application/json"`};
-    return {section:'map', line:`${targetPattern} data-type=text data="" status-code=200`};
+    const mapping=LEGACY_REJECT_VARIANTS.get(parsed.action);
+    return {section:mapping.surgeSection, line:`${targetPattern} ${mapping.surgeArguments}`};
   }
   if (operation.kind === 'reject' && operation.variant === 'video') return legacyRewriteReview(pattern, action, 'target mapping for Loon reject-video is not yet proven by official target documentation');
   if (operation.kind === 'redirect') {

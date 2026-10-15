@@ -2,7 +2,7 @@
 // Author: chance
 // Category: Converter / rewrite / Regression Suite
 
-import { jsonActionToJq, analyzeSafeRewriteV2, dependencySpecFromAction, jqDependencySpecFromAction, inlineResolvedDependency, inlineResolvedLegacyJqPathIr, legacyJqPathDependencySpecFromIr, listRewriteV2Dependencies, qxMockPlanFromAction, compileRegexForTarget, qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan, surgeHeaderRewritePlan, surgeInlineMockPlan, surgeMockFilePlan, renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript, renderQxMockFileScript, renderSurgeRequestMockScript, LOON_REWRITE_V2_ACTIONS, minifyJq, minifyJqFile, quoteJq, renderFixedPathDeleteJq, classifyLegacyRewrite, legacyRewriteToSemanticIr, planLegacyRewrite, planLegacyRewriteIr, validateLoonSourceCatalog, planMitmLine, resolveOriginalUrl, parseLoonArguments, surgeArgumentMetadata, surgePluginObjectArgument, surgeRewriteArgumentPayload, surgeEnableRequirement, parseLegacyLoonPluginObjectRefs, analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs, parseRewriteV2, qxPrimitiveForRewriteV2Action, qxRule, qxTargetPath, rewriteV2ToSource, selectQxScriptAction, parseScriptV2, scriptV2ToSource, scriptV2ArgumentRefs, scriptV2DynamicOptionRefs, scriptOptionBoolean, qxScriptV2Plan, surgeScriptV2Plan, surgeRule, surgeModuleRule, renderSurgeModuleHeader, renderQxSnippetHeader, validateSurgeModule, surgeTargetPath, validateRewriteV2Ast, classifyComplexRewrite, complexConditionKinds, registerComplexRewriteHandler, planComplexRewrite, listComplexRewriteHandlers, renderMixedRewriteScript, renderSingleJsonMutationScript, isEmptyJsonJqIr, isEmptyLegacyJsonJqIr, rewriteV2AstToSemanticIr, singleRewriteOperation, rewriteOperationKinds, planQxRewrite, jsonPipelineToSafeNativeJq, qxExactRewriteMatcherPlan, qxRewriteMatcherPlan, planSurgeRewrite } from "../src/index.mjs";
+import { QX_REWRITE_PRIMITIVES, jsonActionToJq, analyzeSafeRewriteV2, dependencySpecFromAction, jqDependencySpecFromAction, inlineResolvedDependency, inlineResolvedLegacyJqPathIr, legacyJqPathDependencySpecFromIr, listRewriteV2Dependencies, qxMockPlanFromAction, compileRegexForTarget, qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan, surgeHeaderRewritePlan, surgeInlineMockPlan, surgeMockFilePlan, renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript, renderQxMockFileScript, renderSurgeRequestMockScript, LOON_REWRITE_V2_ACTIONS, minifyJq, minifyJqFile, quoteJq, renderFixedPathDeleteJq, classifyLegacyRewrite, legacyRewriteToSemanticIr, planLegacyRewrite, planLegacyRewriteIr, validateLoonSourceCatalog, planMitmLine, resolveOriginalUrl, parseLoonArguments, surgeArgumentMetadata, surgePluginObjectArgument, surgeRewriteArgumentPayload, surgeEnableRequirement, parseLegacyLoonPluginObjectRefs, analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs, parseRewriteV2, qxPrimitiveForRewriteV2Action, qxRule, qxTargetPath, rewriteV2ToSource, selectQxScriptAction, parseScriptV2, scriptV2ToSource, scriptV2ArgumentRefs, scriptV2DynamicOptionRefs, scriptOptionBoolean, qxScriptV2Plan, surgeScriptV2Plan, surgeRule, surgeModuleRule, renderSurgeModuleHeader, renderQxSnippetHeader, validateSurgeModule, surgeTargetPath, validateRewriteV2Ast, classifyComplexRewrite, complexConditionKinds, registerComplexRewriteHandler, planComplexRewrite, listComplexRewriteHandlers, renderMixedRewriteScript, renderSingleJsonMutationScript, isEmptyJsonJqIr, isEmptyLegacyJsonJqIr, rewriteV2AstToSemanticIr, singleRewriteOperation, rewriteOperationKinds, planQxRewrite, jsonPipelineToSafeNativeJq, qxExactRewriteMatcherPlan, qxRewriteMatcherPlan, planSurgeRewrite } from "../src/index.mjs";
 import assert from "node:assert/strict";
 import vm from "node:vm";
 
@@ -853,6 +853,21 @@ const invalidBulk = parseRewriteV2('request if ${url} ~= /api/ then request.head
 assert.throws(() => validateRewriteV2Ast(invalidBulk), /equal lengths/);
 const unknownAction = parseRewriteV2('request if ${url} ~= /api/ then request.unknown("x")');
 assert.throws(() => validateRewriteV2Ast(unknownAction), /not present in the current official Loon Rewrite v2 registry/);
+
+assert.deepEqual(Object.keys(QX_REWRITE_PRIMITIVES).sort(), [...LOON_REWRITE_V2_ACTIONS.keys()].sort(),
+  'every registered v2 action must declare its direct primitive or explicit semantic-planner boundary');
+for (const [source, expected] of [
+  ['request.json.jq(".a")','jsonjq-request-body'],
+  ['response.json.jq(".a")','jsonjq-response-body'],
+  ['request.body.replace(/ads/, "")','request-body'],
+  ['response.body.replace(/ads/, "")','response-body'],
+  ['request.header.set("X", "a")',null],
+  ['response.json.delete("a")',null],
+  ['url.replace("https://example.com")',null],
+]) {
+  const action = parseRewriteV2('response if ${url} ~= /ads/ then ' + source).actions[0];
+  assert.equal(qxPrimitiveForRewriteV2Action(action), expected, source);
+}
 
 // Shared primitive lookup must preserve status and custom-body boundaries in
 // both the native planner and Safe Tier, including valid unsupported statuses.

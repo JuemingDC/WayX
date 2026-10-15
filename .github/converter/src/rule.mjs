@@ -186,25 +186,42 @@ export function renderRuleAst(ast,{valueRenderer=null,policyOverride=null}={}) {
 
 
 
-const QX_RULE_TYPES=new Map([
+// Explicit null entries are known network-layer types without a QX filter
+// equivalent. URL-REGEX is handled through the same policy table's rewrite column.
+export const QX_RULE_TYPES=new Map([
   ['DOMAIN','host'], ['DOMAIN-SUFFIX','host-suffix'], ['DOMAIN-KEYWORD','host-keyword'],
   ['DOMAIN-WILDCARD','host-wildcard'], ['IP-CIDR','ip-cidr'], ['IP-CIDR6','ip6-cidr'],
   ['GEOIP','geoip'], ['IP-ASN','ip-asn'], ['USER-AGENT','user-agent'],
+  ['URL-REGEX',null], ['DOMAIN-SET',null], ['RULE-SET',null],
+  ['PROCESS-NAME',null], ['DEST-PORT',null], ['SRC-PORT',null], ['IN-PORT',null],
+  ['SRC-IP',null], ['DEVICE-NAME',null], ['MAC-ADDRESS',null], ['PROTOCOL',null],
+  ['HOSTNAME-TYPE',null], ['SUBNET',null], ['CELLULAR-RADIO',null], ['CELLULAR-CARRIER',null],
+  ['AND',null], ['OR',null], ['NOT',null], ['SCRIPT',null], ['FINAL',null],
 ]);
 
-const QX_URL_REJECT_ACTIONS=new Map([
-  ['REJECT','reject'],
-  ['REJECT-200','reject-200'],
-  ['REJECT-IMG','reject-img'],
-  ['REJECT-DICT','reject-dict'],
-  ['REJECT-ARRAY','reject-array'],
-  ['REJECT-DROP','reject'],
-]);
-
-const QX_RULE_POLICIES=new Map([
-  ['DIRECT','direct'], ['PROXY','PROXY'],
-  ['REJECT','reject'], ['REJECT-DROP','reject'], ['REJECT-NO-DROP','reject'],
-]);
+// Columns: QX filter policy, QX URL rewrite action, Surge Rule policy,
+// Surge URL-REGEX Map Local arguments. Null means no verified direct mapping.
+// DROP/NO-DROP use the existing WayX QX reject adaptation; QX cannot express
+// their connection discard / retry behavior as distinct rewrite actions.
+export const RULE_POLICY_MAPPINGS=new Map([
+  ['DIRECT', ['direct', null, 'DIRECT', null]],
+  ['PROXY', ['PROXY', null, 'PROXY', null]],
+  ['REJECT', ['reject', 'reject', 'REJECT', null]],
+  ['REJECT-DROP', ['reject', 'reject', 'REJECT-DROP', null]],
+  ['REJECT-NO-DROP', ['reject', 'reject', 'REJECT-NO-DROP', null]],
+  ['REJECT-200', [null, 'reject-200', null, 'data-type=text data="" status-code=200']],
+  ['REJECT-IMG', [null, 'reject-img', 'REJECT-TINYGIF', null]],
+  ['REJECT-DICT', [null, 'reject-dict', null, 'data-type=text data="{}" status-code=200 header="Content-Type:application/json"']],
+  ['REJECT-ARRAY', [null, 'reject-array', null, 'data-type=text data="[]" status-code=200 header="Content-Type:application/json"']],
+  ['REJECT-TINYGIF', [null, null, 'REJECT-TINYGIF', null]],
+  ['CELLULAR', [null, null, 'CELLULAR', null]],
+  ['CELLULAR-ONLY', [null, null, 'CELLULAR-ONLY', null]],
+  ['HYBRID', [null, null, 'HYBRID', null]],
+  ['NO-HYBRID', [null, null, 'NO-HYBRID', null]],
+  ['REJECT-VIDEO', [null, null, null, null]],
+].map(([name,[qxFilter,qxRewrite,surgePolicy,surgeMap]])=>[
+  name,Object.freeze({qxFilter,qxRewrite,surgePolicy,surgeMap}),
+]));
 
 // User policy: exact WeChat DNS hosts use DIRECT in every converted target.
 // Apply at target planning so upstream source snapshots remain unchanged.
@@ -229,9 +246,10 @@ export function planQxRuleAst(ast) {
   const type=ast.type;
   const value=type==='URL-REGEX' ? normalizeRegexBodyForTarget(ast.value) : ast.value;
   const policyRaw=ast.policy;
+  const mapping=RULE_POLICY_MAPPINGS.get(policyRaw);
 
   if (type==='URL-REGEX') {
-    const action=QX_URL_REJECT_ACTIONS.get(policyRaw);
+    const action=mapping?.qxRewrite;
     if (action) return {kind:'rewrite',line:`${value} url ${action}`,reason:'wayx-url-regex-reject'};
   }
 
@@ -244,7 +262,7 @@ export function planQxRuleAst(ast) {
     };
   }
 
-  const policy=QX_RULE_POLICIES.get(policyRaw);
+  const policy=mapping?.qxFilter;
   if (!policy && /^REJECT/.test(policyRaw)) {
     return {
       kind:'comment',
@@ -343,11 +361,8 @@ export function planSurgeModuleRuleAst(ast,{proxyPolicyPlaceholder=null,matching
 
   if (type==='URL-REGEX') {
     const pattern=normalizeRegexBodyForTarget(ast.value);
-    const mapLocal={
-      'REJECT-200':`${pattern} data-type=text data="" status-code=200`,
-      'REJECT-DICT':`${pattern} data-type=text data="{}" status-code=200 header="Content-Type:application/json"`,
-      'REJECT-ARRAY':`${pattern} data-type=text data="[]" status-code=200 header="Content-Type:application/json"`,
-    }[ast.policy];
+    const argumentsOut=RULE_POLICY_MAPPINGS.get(ast.policy)?.surgeMap;
+    const mapLocal=argumentsOut ? `${pattern} ${argumentsOut}` : null;
     if (mapLocal) {
       return {
         kind:'map',
@@ -382,8 +397,7 @@ export function planSurgeModuleRuleAst(ast,{proxyPolicyPlaceholder=null,matching
     };
   }
 
-  let policy=ast.policy;
-  if (policy==='REJECT-IMG') policy='REJECT-TINYGIF';
+  const policy=RULE_POLICY_MAPPINGS.get(ast.policy)?.surgePolicy;
 
   if (policy==='PROXY') {
     if (!proxyPolicyPlaceholder) {
