@@ -2,7 +2,7 @@
 // Author: chance
 // Category: Converter / script / Regression Suite
 
-import { parseLegacyScriptLine, legacyScriptToSemanticIr, scriptV2AstToSemanticIr, parseScriptV2, planQxScript, planSurgeScript } from "../src/index.mjs";
+import { selectQxScriptAction, parseLegacyScriptLine, legacyScriptToSemanticIr, scriptV2AstToSemanticIr, parseScriptV2, planQxScript, planSurgeScript } from "../src/index.mjs";
 import assert from "node:assert/strict";
 
 import { spawnSync as runIsolatedCase } from 'node:child_process';
@@ -24,6 +24,18 @@ if (selectedCase === "script-ir-target-planners.mjs") {
 // Author: chance
 // Category: Converter / Script / Architecture Validation
 
+
+// Opposite-phase reads must not upgrade the declared phase's body dependency.
+for(const [sourceText,requestBody,responseBody] of [
+  ['',false,false], ['$request.body',true,false], ['$response.body',false,true],
+  ['$request.bodyBytes; $response.bodyBytes',true,true],
+]) for(const [phase,readsBody] of [['request',requestBody],['response',responseBody]]) {
+  for(const requiresBody of [false,true]) for(const prefix of ['', 'http-']) {
+    const selected=selectQxScriptAction({phase:prefix+phase,requiresBody,sourceText});
+    assert.equal(selected.action,'script-'+phase+((requiresBody || readsBody)?'-body':'-header'));
+    assert.equal(selected.override,false);
+  }
+}
 
 const legacySource='http-response ^https://api\\.example\\.com script-path=https://example.com/resp.js, requires-body=true, binary-body-mode=true, timeout=9, argument={"mode":"x"}, tag=Resp';
 const legacyParsed=parseLegacyScriptLine(legacySource);
