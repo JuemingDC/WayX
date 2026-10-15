@@ -1116,7 +1116,8 @@ function nativeJsonPriorityPlan(ast,target) {
   const mapped=jsonPipelineToSafeNativeJq(ast);
   if(!mapped.ok)return null;
   const note=ast.condition?.right?.flags ? '# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags '+ast.condition.right.flags+'; this mapping is not a verified target-engine equivalence.\n' : '';
-  const line=target==='qx' ? matcher.pattern+' url jsonjq-'+ast.phase+'-body '+quoteJq(mapped.jq) : 'http-'+ast.phase+'-jq '+matcher.pattern+' '+quoteJq(mapped.jq);
+  const mapping=REWRITE_MUTATION_MAPPINGS[ast.actions[0].name];
+  const line=target==='qx' ? matcher.pattern+' url '+mapping.qx+' '+quoteJq(mapped.jq) : mapping.surge+' '+matcher.pattern+' '+quoteJq(mapped.jq);
   return {section:target==='qx'?'rewrite':'body',line,...(note?{lines:[note.trim(),line]}:{})};
 }
 
@@ -1511,7 +1512,7 @@ export function qxDirectRewritePlan(ast, {matcher = null} = {}) {
   if (action.name === 'request.json.jq' || action.name === 'response.json.jq') {
     const jq = stringNode(action.args[0]);
     if (jq === null) return unsupported(action.name + ': inline JQ must be a fixed string');
-    const token = action.name.startsWith('request.') ? 'jsonjq-request-body' : 'jsonjq-response-body';
+    const token = primitive;
     return {
       ok:true, strategy:'direct', section:'rewrite', pattern:condition.pattern,
       line:condition.prefix + token + ' ' + qxQuote(jq), notes:condition.notes,
@@ -1521,7 +1522,7 @@ export function qxDirectRewritePlan(ast, {matcher = null} = {}) {
   if (/^(?:request|response)\.json\.(?:add|delete|replace)$/.test(action.name)) {
     const mapped = jsonActionToJq(action);
     if (!mapped.ok) return mapped;
-    const token = action.name.startsWith('request.') ? 'jsonjq-request-body' : 'jsonjq-response-body';
+    const token = primitive;
     return {
       ok:true, strategy:'direct', section:'rewrite', pattern:condition.pattern,
       line:condition.prefix + token + ' ' + qxQuote(mapped.jq), notes:condition.notes,
@@ -1541,7 +1542,7 @@ export function qxDirectRewritePlan(ast, {matcher = null} = {}) {
     const bodyRegex = compileRegexForTarget(regex, { subject: 'body' });
     if (!bodyRegex.ok) return unsupported(bodyRegex.reason);
     if (/\s/.test(bodyRegex.pattern) || /[\r\n]/.test(replacement)) return unsupported('QX direct body replacement with literal whitespace requires script fallback');
-    const token = action.name.startsWith('request.') ? 'request-body' : 'response-body';
+    const token = primitive;
     return {
       ok:true, strategy:'direct', section:'rewrite', pattern:condition.pattern,
       line:condition.prefix + token + ' ' + bodyRegex.pattern + ' ' + token + ' ' + replacement,
@@ -1566,7 +1567,7 @@ export function surgeDirectRewritePlan(ast) {
   if (action.name === 'request.json.jq' || action.name === 'response.json.jq') {
     const jq = stringNode(action.args[0]);
     if (jq === null) return unsupported(action.name + ': inline JQ must be a fixed string');
-    const token = action.name.startsWith('request.') ? 'http-request-jq' : 'http-response-jq';
+    const token = REWRITE_MUTATION_MAPPINGS[action.name].surge;
     return {
       ok:true, strategy:'direct', section:'body', pattern:condition.pattern,
       line:token + ' ' + condition.pattern + ' ' + surgeQuoteJq(jq), notes:condition.notes,
@@ -1576,7 +1577,7 @@ export function surgeDirectRewritePlan(ast) {
   if (/^(?:request|response)\.json\.(?:add|delete|replace)$/.test(action.name)) {
     const mapped = jsonActionToJq(action);
     if (!mapped.ok) return mapped;
-    const token = action.name.startsWith('request.') ? 'http-request-jq' : 'http-response-jq';
+    const token = REWRITE_MUTATION_MAPPINGS[action.name].surge;
     return {
       ok:true, strategy:'direct', section:'body', pattern:condition.pattern,
       line:token + ' ' + condition.pattern + ' ' + surgeQuoteJq(mapped.jq), notes:condition.notes,
@@ -1596,7 +1597,7 @@ export function surgeDirectRewritePlan(ast) {
     const bodyRegex = compileRegexForTarget(regex, { subject: 'body' });
     if (!bodyRegex.ok) return unsupported(bodyRegex.reason);
     if (/\s/.test(bodyRegex.pattern) || /[\r\n]/.test(replacement)) return unsupported('Surge direct body replacement with literal whitespace requires script fallback');
-    const token = action.name.startsWith('request.') ? 'http-request' : 'http-response';
+    const token = REWRITE_MUTATION_MAPPINGS[action.name].surge;
     return {
       ok:true, strategy:'direct', section:'body', pattern:condition.pattern,
       line:token + ' ' + condition.pattern + ' ' + bodyRegex.pattern + ' ' + replacement,
@@ -1730,37 +1731,29 @@ function expandBulkAction(action) {
   return arrays[0].map((_, index) => arrays.map(items => items[index]));
 }
 
-function surgeHeaderLine(phase, pattern, action, args) {
-  const direction = phase === 'request' ? 'http-request' : 'http-response';
+function surgeHeaderLine(pattern, action, args) {
+  const mapping = REWRITE_MUTATION_MAPPINGS[action.name];
+  const direction = mapping.surge;
   const name = fixedNoTemplate(args[0], 'header name');
   if (/\s/.test(name)) throw new Error('header name contains whitespace');
 
-  if (action.name.endsWith('.add')) {
-    const value = fixedNoTemplate(args[1], 'header value');
-    if (/[\r\n]/.test(value)) throw new Error('header value contains a line break');
-    return [direction + ' ' + pattern + ' header-add ' + name + ' ' + value];
-  }
-  if (action.name.endsWith('.set')) {
-    const value = fixedNoTemplate(args[1], 'header value');
-    if (/[\r\n]/.test(value)) throw new Error('header value contains a line break');
-    return [
-      direction + ' ' + pattern + ' header-del ' + name,
-      direction + ' ' + pattern + ' header-add ' + name + ' ' + value,
-    ];
-  }
-  if (action.name.endsWith('.del')) {
-    return [direction + ' ' + pattern + ' header-del ' + name];
-  }
-
-  const regex = args[1];
-  const replacement = fixedNoTemplate(args[2], 'header replacement');
-  if (regex?.type !== 'regex') throw new Error('header.replace regex must be fixed');
-  const compiled = compileRegexForTarget(regex, {subject:'header'});
-  if (!compiled.ok) throw new Error(compiled.reason);
-  if (/\s/.test(compiled.pattern) || /[\r\n]/.test(replacement)) {
-    throw new Error('Surge header-replace-regex with literal whitespace requires script fallback');
-  }
-  return [direction + ' ' + pattern + ' header-replace-regex ' + name + ' ' + compiled.pattern + ' ' + replacement];
+  return mapping.surgeActions.map(type=>{
+    if (type === 'header-del') return direction + ' ' + pattern + ' ' + type + ' ' + name;
+    if (type === 'header-add') {
+      const value = fixedNoTemplate(args[1], 'header value');
+      if (/[\r\n]/.test(value)) throw new Error('header value contains a line break');
+      return direction + ' ' + pattern + ' ' + type + ' ' + name + ' ' + value;
+    }
+    const regex = args[1];
+    const replacement = fixedNoTemplate(args[2], 'header replacement');
+    if (regex?.type !== 'regex') throw new Error('header.replace regex must be fixed');
+    const compiled = compileRegexForTarget(regex, {subject:'header'});
+    if (!compiled.ok) throw new Error(compiled.reason);
+    if (/\s/.test(compiled.pattern) || /[\r\n]/.test(replacement)) {
+      throw new Error('Surge header-replace-regex with literal whitespace requires script fallback');
+    }
+    return direction + ' ' + pattern + ' ' + type + ' ' + name + ' ' + compiled.pattern + ' ' + replacement;
+  });
 }
 
 export function surgeHeaderRewritePlan(ast) {
@@ -1779,7 +1772,7 @@ export function surgeHeaderRewritePlan(ast) {
   try {
     const lines = [];
     for (const action of ast.actions) {
-      for (const args of expandBulkAction(action)) lines.push(...surgeHeaderLine(ast.phase, condition.pattern, action, args));
+      for (const args of expandBulkAction(action)) lines.push(...surgeHeaderLine(condition.pattern, action, args));
     }
     return {ok:true, strategy:'direct', section:'header', pattern:condition.pattern, lines, notes:condition.notes};
   } catch (error) {
@@ -1958,10 +1951,28 @@ export function fixedStringValue(node) {
   return node && ['string','raw-string'].includes(node.type) ? String(node.value) : null;
 }
 
-// Every registered Loon v2 action has an entry; null requires the existing
-// semantic planner to lower arguments/conditions or report its boundary.
-// QX primitives are selected by behavior. The official Quantumult X sample
-// defines `reject` as an empty HTTP 404 response and `reject-200` as empty 200.
+// Loon splits mutations by operation; targets group them by phase and family.
+// This table names supported target types. Argument/condition lowering remains
+// responsible for translating JSON paths, file JQ and whole-header patterns.
+export const REWRITE_MUTATION_MAPPINGS = Object.freeze(Object.fromEntries(
+  ['request','response'].flatMap(phase=>[
+    ...[
+      ['add',['header-add']], ['set',['header-del','header-add']],
+      ['del',['header-del']], ['replace',['header-replace-regex']],
+    ].map(([operation,surgeActions])=>[
+      phase+'.header.'+operation,
+      Object.freeze({qx:phase+'-header',surge:'http-'+phase,section:'header',surgeActions:Object.freeze(surgeActions)}),
+    ]),
+    ...['add','delete','replace','jq','jq_file'].map(operation=>[
+      phase+'.json.'+operation,
+      Object.freeze({qx:'jsonjq-'+phase+'-body',surge:'http-'+phase+'-jq',section:'body'}),
+    ]),
+    [phase+'.body.replace',Object.freeze({qx:phase+'-body',surge:'http-'+phase,section:'body'})],
+  ])
+));
+
+// QX types are selected by behavior; lookup does not bypass argument validation.
+// Only actions without a verified target type retain null here.
 export const QX_REWRITE_PRIMITIVES = Object.freeze({
   'url.replace': null,
   redirect: Object.freeze({302: '302', 307: '307'}),
@@ -1970,26 +1981,7 @@ export const QX_REWRITE_PRIMITIVES = Object.freeze({
   reject_dict: Object.freeze({200: 'reject-dict'}),
   reject_array: Object.freeze({200: 'reject-array'}),
   reject_video: null,
-  'request.header.add': null,
-  'request.header.set': null,
-  'request.header.del': null,
-  'request.header.replace': null,
-  'response.header.add': null,
-  'response.header.set': null,
-  'response.header.del': null,
-  'response.header.replace': null,
-  'request.body.replace': 'request-body',
-  'response.body.replace': 'response-body',
-  'request.json.add': null,
-  'request.json.delete': null,
-  'request.json.replace': null,
-  'request.json.jq': 'jsonjq-request-body',
-  'request.json.jq_file': null,
-  'response.json.add': null,
-  'response.json.delete': null,
-  'response.json.replace': null,
-  'response.json.jq': 'jsonjq-response-body',
-  'response.json.jq_file': null,
+  ...Object.fromEntries(Object.entries(REWRITE_MUTATION_MAPPINGS).map(([name,mapping])=>[name,mapping.qx])),
   'request.body.mock': null,
   'request.body.mock_file': null,
   'response.body.mock': null,
@@ -2523,10 +2515,10 @@ function planJson(pattern, action, parsed, target, ctx) {
   catch (error) { return legacyRewriteReview(pattern, action, String(error?.message || error)); }
   const targetPattern=normalizeRegexBodyForTarget(pattern);
   if (target === 'qx') {
-    const verb=parsed.phase === 'request' ? 'jsonjq-request-body' : 'jsonjq-response-body';
+    const verb=REWRITE_MUTATION_MAPPINGS[parsed.phase+'.json.jq'].qx;
     return {section:'rewrite', line:`${targetPattern} url ${verb} ${quoted}`};
   }
-  const verb=parsed.phase === 'request' ? 'http-request-jq' : 'http-response-jq';
+  const verb=REWRITE_MUTATION_MAPPINGS[parsed.phase+'.json.jq'].surge;
   return {section:'body', line:`${verb} ${targetPattern} ${quoted}`};
 }
 
@@ -2711,7 +2703,7 @@ function qxNativeHeaderPlan(ast) {
     try {
       const matcher=qxExactRewriteMatcherPlan(ast,{compatibility:true});
       if(!matcher.ok)return null;
-      const token=ast.phase+'-header',lines=[];
+      const token=REWRITE_MUTATION_MAPPINGS[ast.actions[0].name].qx,lines=[];
       for(const args of expandBulkAction(ast.actions[0])) {
         const name=fixedNoTemplate(args[0],'header name');
         if(!name || /[\s:\r\n]/.test(name))return null;
@@ -2742,7 +2734,7 @@ function qxNativeHeaderPlan(ast) {
       if(/[\^$]|\\[sSDWnr1-9xucpP0]|\(\?[^:]|\[\^|\[\[:/.test(pattern) || (regex.flags?.includes('s') && pattern.includes('.')))return null;
       const field=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
       const body=regex.flags?'(?'+regex.flags+':'+pattern+')':'(?:'+pattern+')';
-      const token=ast.phase+'-header';
+      const token=REWRITE_MUTATION_MAPPINGS[ast.actions[0].name].qx;
       const search='(?m)^((?i:'+field+'):[\\t\\x20]*[^\\r\\n]*?)('+body+')';
       const value='$1'+replacement.replace(/\$(\d+)/g,(_,number)=>'$'+(Number(number)+2));
       if(/\$(?!\d)/.test(replacement))return null;
@@ -2776,7 +2768,7 @@ function qxNativeHeaderPlan(ast) {
   // A source-authored add|add pipeline can therefore be coalesced into one
   // whole-header insertion without changing duplicate-header semantics or
   // source action order.
-  const token=ast.phase+'-header';
+  const token=REWRITE_MUTATION_MAPPINGS[ast.actions[0].name].qx;
   const headerPattern='^([^\\r\\n]+)(\\r\\n)';
   const inserted=pairs.map(([name,value])=>name+': '+value+'$2').join('');
   return {
@@ -2795,7 +2787,7 @@ function qxNativeJsonPipelinePlan(ast) {
   const mapped=jsonPipelineToSafeNativeJq(ast);
   if (!mapped.ok) return null;
 
-  const token=ast.phase==='request' ? 'jsonjq-request-body' : 'jsonjq-response-body';
+  const token=REWRITE_MUTATION_MAPPINGS[ast.actions[0].name].qx;
   return {
     section:'rewrite',
     line:matcher.prefix+token+' '+quoteJq(mapped.jq),
