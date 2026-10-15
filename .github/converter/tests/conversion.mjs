@@ -1893,3 +1893,25 @@ if(selectedCase==='conversion-policy.mjs') {
   }
   console.log('Real same-regex declaration retention passed: Taqu, XiaobaiPrint and Zhihu retain all independent JSON/JQ rules in both targets');
 }
+
+if(selectedCase==='conversion-policy.mjs') {
+  const entry={id:'DependencyShapes',source:'https://example.test/main.lpx',category:'Test'};
+  for(const section of ['Rewrite','Script']) for(const [kind,action,materialize,payload] of [
+    ['mock','response.body.mock_file("text","one.txt",200)',materializeMockFiles,{bodyText:'.a = 1',sourceFile:'https://example.test/one.txt'}],
+    ['jq','response.json.jq_file("one.txt")',materializeJqFiles,{content:'.a=1',sourceFile:'https://example.test/one.txt',legacyAlias:false}],
+  ]) {
+    const line='response if ${url} ~= /api/ then response.header.del("X") | '+action;
+    let calls=0;
+    const result=await materialize(entry,parseLoonPlugin('['+section+']\n'+line),{fetchText:async()=>{calls++;return '.a = 1';}});
+    assert.deepEqual(result.get(line),kind==='mock'?payload:{byAction:{1:payload}});
+    assert.equal(calls,1);
+    const failed='response if ${url} ~= /api/ then response.header.del("X") | '+action+' | '+action;
+    calls=0;
+    const errors=await materialize(entry,parseLoonPlugin('['+section+']\n'+failed),{fetchText:async()=>{calls++;throw Error('offline\ndetail');}});
+    assert.equal(calls,1,'duplicate dependencies reuse the original in-declaration failure');
+    assert.deepEqual(Object.keys(errors.get(failed).byAction),['1','2']);
+    for(const value of Object.values(errors.get(failed).byAction))assert.deepEqual(value,{error:'offline',sourceFile:'https://example.test/one.txt'});
+    assert.equal(errors.get(failed).error,(kind==='mock'?'mock_file':'JQ')+' dependency failure: action 1: offline; action 2: offline');
+  }
+  console.log('Shared dependency collection/assembly passed: Rewrite/Script, Mock/JQ shape differences, original indices, cached rejection and exact diagnostics');
+}

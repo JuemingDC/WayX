@@ -419,12 +419,33 @@ export async function materializeSourceScripts(source,pluginSourceUrl,{
 // Author: chance
 // Category: Converter / Dependency / Materialization
 
+function rewriteDependencyItems(parsed) {
+  return [
+    ...groupSourceSectionItems(parsed?.sections?.get('Rewrite')),
+    ...groupSourceSectionItems(parsed?.sections?.get('Script')).filter(item=>item.line && isRewriteV2(item.line) && !isScriptV2(item.line)),
+  ];
+}
+
+// One action-indexed result contract for Mock/JQ dependencies. Payload reading
+// stays with each format; one failure must not remove adjacent successful actions.
+async function readActionDependencies(files,{single,read,spec,label}) {
+  if(single)return read(files[0].action);
+  const byAction={},failures=[];
+  for(const {action,index} of files)try{byAction[index]=await read(action);}catch(error){
+    const reason=String(error?.message || error).split('\n')[0];
+    let sourceFile;try{sourceFile=spec(action)?.url;}catch{}
+    byAction[index]={error:reason,...(sourceFile?{sourceFile}:{})};
+    failures.push('action '+index+': '+reason);
+  }
+  return {byAction,...(failures.length?{error:label+' dependency failure: '+failures.join('; ')}:{})};
+}
+
 export async function materializeMockFiles(entry,parsed,{
   fetchText=fetchOriginalText,
   fetchBytes=fetchOriginalBytes,
 }={}) {
   const out=new Map();
-  for (const item of [...groupSourceSectionItems(parsed?.sections?.get('Rewrite')), ...groupSourceSectionItems(parsed?.sections?.get('Script')).filter(item=>item.line && isRewriteV2(item.line) && !isScriptV2(item.line))]) {
+  for (const item of rewriteDependencyItems(parsed)) {
     if (!item.line || !isRewriteV2(item.line) || isScriptV2(item.line)) continue;
     try {
       const ast=selectRewritePipelineLayer(parseRewriteV2(item.line));
@@ -450,15 +471,10 @@ export async function materializeMockFiles(entry,parsed,{
         if(plan.binary)return {bodyBase64:Buffer.from(await fetchBytes(plan.url)).toString('base64'),sourceFile:plan.url};
         return {bodyText:await text(plan.url),sourceFile:plan.url};
       };
-      if(files.length===1){out.set(item.line,await read(files[0].action));continue;}
-      const byAction={};
-      const failures=[];
-      for(const {action,index} of files)try{byAction[index]=await read(action);}catch(error){
-        const reason=String(error?.message || error).split('\n')[0];
-        let sourceFile;try{sourceFile=dependencySpecFromAction(action,{pluginSourceUrl:entry.source})?.url;}catch{}
-        byAction[index]={error:reason,...(sourceFile?{sourceFile}:{})};failures.push('action '+index+': '+reason);
-      }
-      out.set(item.line,{byAction,...(failures.length?{error:'mock_file dependency failure: '+failures.join('; ')}:{})});
+      out.set(item.line,await readActionDependencies(files,{
+        single:files.length===1,read,label:'mock_file',
+        spec:action=>dependencySpecFromAction(action,{pluginSourceUrl:entry.source}),
+      }));
     } catch (error) {
       out.set(item.line,{error:String(error?.message || error).split('\n')[0]});
     }
@@ -480,7 +496,7 @@ export async function materializeJqFiles(entry,parsed,{
   fetchText=fetchOriginalText,
 }={}) {
   const out=new Map();
-  for (const item of [...groupSourceSectionItems(parsed?.sections?.get('Rewrite')), ...groupSourceSectionItems(parsed?.sections?.get('Script')).filter(item=>item.line && isRewriteV2(item.line) && !isScriptV2(item.line))]) {
+  for (const item of rewriteDependencyItems(parsed)) {
     if (!item.line) continue;
     try {
       let spec=null;
@@ -499,14 +515,10 @@ export async function materializeJqFiles(entry,parsed,{
           if(!content)throw new Error('JQ dependency resolved to empty content');
           return {content,sourceFile:dependency.url,legacyAlias:Boolean(dependency.legacyAlias)};
         };
-        if((ast.sourceActionCount || ast.actions.length)===1){out.set(item.line,await read(files[0].action));continue;}
-        const byAction={},failures=[];
-        for(const {action,index} of files)try{byAction[index]=await read(action);}catch(error){
-          const reason=String(error?.message || error).split('\n')[0];
-          let sourceFile;try{sourceFile=jqDependencySpecFromAction(action,{pluginSourceUrl:entry.source})?.url;}catch{}
-          byAction[index]={error:reason,...(sourceFile?{sourceFile}:{})};failures.push('action '+index+': '+reason);
-        }
-        out.set(item.line,{byAction,...(failures.length?{error:'JQ dependency failure: '+failures.join('; ')}:{})});
+        out.set(item.line,await readActionDependencies(files,{
+          single:(ast.sourceActionCount || ast.actions.length)===1,read,label:'JQ',
+          spec:action=>jqDependencySpecFromAction(action,{pluginSourceUrl:entry.source}),
+        }));
         continue;
       } else {
         const legacy=splitLegacyRewriteLine(item.line);

@@ -149,6 +149,10 @@ MITM hostname 只作目标格式适配，不扩大范围。保留有效源注释
 
 QX inline note 仅在一条注释唯一对应一条活动声明时使用，否则普通注释保留。拆分输出的源注释只绑定首条，不复制成多个伪一对一注释。注释源 Rewrite 只输出关闭的已支持形式，不复活活动规则，不生成无用 helper。
 
+Script v2 双目标共用绑定检查入口，顺序固定为 AST 类型、动态 Cron、PluginObject、动态选项；保留原来的首个错误与目标特定的 QX force-enable 规则。QX HTTP action 按声明 phase 与对应 body 依赖直接选择 script-request/response-header/body；任务和 HTTP 的 force-enable 说明共用同一逻辑。
+
+Mock/JQ 依赖共用 Rewrite/Script 声明收集与 action 索引结果装配；格式解析、读取方式和单文件结果形状仍按各自契约执行。Mock 的单文件形状按文件 action 数量，JQ 按原声明 action 总数判定，不能合并成同一个条件。多 action 按原索引记录成功值及错误，失败不删除相邻成功结果；只在原有声明范围内复用读取，保持原错误文字、源 URL、输出内容与事务边界。
+
 ## 2.13 Catalog 与原地址获取
 
 loon-static.json 保存人工固定来源；RuCu6 插件正文只从 rucu6.pages.dev 拉取，不按类别筛选。目录每次读取作者消息 https://t.me/GitCube/327（可通过 Telegram 官方 telegram.me 别名读取同一消息），只解析消息正文中的插件链接及短链接跳转后的导入地址；短链接仅用于发现，跟随 HTTPS 短链跳转，在 Location 已包含直接插件地址或 Loon 导入页 plugin 参数时立即提取并停止网络访问，不读取导入页；按查询参数解析并处理 HTML 实体及百分号编码，保留目录顺序并按规范化地址去重。瞬时失败最多重试 3 次；任一插件短链失败使刷新失败并保留当前清单及产物。最终插件 URL 必须属于 rucu6.pages.dev/Plugins/*.lpx。也支持 RUCU6_LIST_URL 或 --rucu6-list-url 指定该域名的 JSON/列表目录；每次刷新读取目录，新增自动登记，同 URL 保持稳定 id/路径。缺失完整目录或目录无法枚举时明确报告发现不完整，不把固定名单验证称为发现全部新插件；不得猜测文件名冒充完整目录。

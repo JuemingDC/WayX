@@ -992,24 +992,10 @@ export function selectQxScriptAction({phase,requiresBody=false,sourceText=''}) {
   // is only allowed to strengthen body-dependency detection; it must not
   // switch a declared request script into the echo-response family because
   // multi-platform helpers can contain inactive Surge/Loon response branches.
-  if(p==='request') {
-    const needsBody=Boolean(requiresBody || signals.readsRequestBody);
-    return {
-      action:needsBody ? 'script-request-body' : 'script-request-header',
-      reason:needsBody
-        ? 'request-phase declaration reads/requires request body'
-        : 'request-phase declaration does not require request body',
-      override:false,
-      signals,
-    };
-  }
-
-  const needsBody=Boolean(requiresBody || signals.readsResponseBody);
+  const needsBody=Boolean(requiresBody || (p==='request' ? signals.readsRequestBody : signals.readsResponseBody));
   return {
-    action:needsBody ? 'script-response-body' : 'script-response-header',
-    reason:needsBody
-      ? 'response-phase declaration reads/requires response body'
-      : 'response-phase declaration does not require response body',
+    action:'script-'+p+(needsBody ? '-body' : '-header'),
+    reason:p+'-phase declaration '+(needsBody ? 'reads/requires '+p+' body' : 'does not require '+p+' body'),
     override:false,
     signals,
   };
@@ -1040,10 +1026,9 @@ function argumentDefault(id, table) {
   return entry?.hasDefault ? entry.defaultValue : undefined;
 }
 
-function qxTaskEnabled(ast, argumentTable, notes) {
+function noteQxForcedEnable(ast, notes) {
   const enable=scriptOption(ast,'enable');
   if (enable?.type==='variable' || enable?.value===false) notes.push('Source enable forced to enabled for Quantumult X by user conversion policy; source default/off switch is not carried over.');
-  return true;
 }
 
 // 上游错误 / 转换失败案例：Cron bindings must be effective String
@@ -1074,7 +1059,7 @@ function qxCronExpression(ast, argumentTable, notes) {
   return unsupported('unsupported Cron expression type for Quantumult X');
 }
 
-function qxTaskOptions(ast, argumentTable, notes) {
+function qxTaskOptions(ast, notes) {
   const parts = [];
   const tag = fixedOption(ast, 'tag');
   const img = fixedOption(ast, 'img_url');
@@ -1083,7 +1068,8 @@ function qxTaskOptions(ast, argumentTable, notes) {
     if (/^https?:\/\//i.test(String(img))) parts.push('img-url=' + String(img));
     else notes.push('Source img_url=' + String(img) + ' omitted because Quantumult X task img-url is documented as an image URL, not an SF Symbol name.');
   }
-  parts.push('enabled=' + (qxTaskEnabled(ast, argumentTable, notes) ? 'true' : 'false'));
+  noteQxForcedEnable(ast, notes);
+  parts.push('enabled=true');
   return parts;
 }
 
@@ -1117,7 +1103,7 @@ function qxNonHttpScriptV2Plan(ast, {scriptUrl, argumentTable = null} = {}) {
     return unsupported('unsupported non-HTTP Script v2 phase for Quantumult X: ' + ast.phase);
   }
 
-  const options = qxTaskOptions(ast, argumentTable, notes);
+  const options = qxTaskOptions(ast, notes);
   return {
     ok:true,
     strategy:'native-task',
@@ -1128,18 +1114,22 @@ function qxNonHttpScriptV2Plan(ast, {scriptUrl, argumentTable = null} = {}) {
   };
 }
 
+function validateScriptV2Bindings(ast,{argumentIds,argumentTable,target}) {
+  if (!ast || !['script','script-semantic-ir'].includes(ast.type)) return unsupported('expected Script v2 AST');
+  const cron=dynamicScriptCronBinding(ast,argumentTable);
+  if(!cron.ok)return cron;
+  const objects=scriptObjectBindings(ast,{argumentIds,argumentTable});
+  if(!objects.ok)return objects;
+  return dynamicScriptOptionBindings(ast,{argumentTable,target});
+}
+
 export function qxScriptV2Plan(ast, {
   scriptUrl = ast?.script?.path,
   sourceText = '',
   argumentIds = null,
   argumentTable = null,
 } = {}) {
-  if (!ast || !['script','script-semantic-ir'].includes(ast.type)) return unsupported('expected Script v2 AST');
-  const cronBinding=dynamicScriptCronBinding(ast,argumentTable);
-  if(!cronBinding.ok)return cronBinding;
-  const objects=scriptObjectBindings(ast,{argumentIds,argumentTable});
-  if(!objects.ok)return objects;
-  const bindings=dynamicScriptOptionBindings(ast,{argumentTable,target:'qx'});
+  const bindings=validateScriptV2Bindings(ast,{argumentIds,argumentTable,target:'qx'});
   if(!bindings.ok)return bindings;
 
   if (!['request','response'].includes(ast.phase)) {
@@ -1150,8 +1140,6 @@ export function qxScriptV2Plan(ast, {
   // timeout, debug or binary_body_mode fields. Target planning therefore
   // omits those fields instead of emitting invented QX syntax. Keep
   // requires_body separate: it alone selects the QX header/body action family.
-  const enable = scriptOption(ast, 'enable');
-
   const timeout = scriptOption(ast, 'timeout');
   const debug = scriptOption(ast, 'debug');
   const binaryBodyMode = scriptOptionBoolean(ast, 'binary_body_mode', false);
@@ -1173,9 +1161,7 @@ export function qxScriptV2Plan(ast, {
   if (!condition.ok) return condition;
   const notes = [...(condition.notes || [])];
 
-  if (enable?.type==='variable' || enable?.value===false) {
-    notes.push('Source enable forced to enabled for Quantumult X by user conversion policy; source default/off switch is not carried over.');
-  }
+  noteQxForcedEnable(ast, notes);
   if (ast.script.argument) {
     notes.push('Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.');
   }
@@ -1270,12 +1256,7 @@ function sourceScriptDefaultTimeout({sourceSyntax='v2',phase}) {
 }
 
 export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 'script', argumentIds = null, argumentTable = null} = {}) {
-  if (!ast || !['script','script-semantic-ir'].includes(ast.type)) return unsupported('expected Script v2 AST');
-  const cronBinding=dynamicScriptCronBinding(ast,argumentTable);
-  if(!cronBinding.ok)return cronBinding;
-  const objects=scriptObjectBindings(ast,{argumentIds,argumentTable});
-  if(!objects.ok)return objects;
-  const bindings=dynamicScriptOptionBindings(ast,{argumentTable,target:'surge'});
+  const bindings=validateScriptV2Bindings(ast,{argumentIds,argumentTable,target:'surge'});
   if(!bindings.ok)return bindings;
   if (argumentIds !== null) {
     const usage = scriptV2PluginArgumentUsage(ast, argumentIds);
