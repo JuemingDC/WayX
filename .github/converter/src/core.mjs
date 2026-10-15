@@ -65,10 +65,6 @@ export function execSourceRegex(node,value) {
   return compileSourceRegex(node).exec(value);
 }
 
-export function testSourceRegex(node,value) {
-  return execSourceRegex(node,value)!==null;
-}
-
 // core/condition-evaluator.mjs
 // WayX target-neutral Loon Rewrite condition reference evaluator
 // Author: chance
@@ -436,8 +432,14 @@ export const QX_WAYX_SCRIPT_ACTIONS = new Set([
   'script-echo-response','script-analyze-echo-response',
 ]);
 
-export const QX_WAYX_NATIVE_REWRITE_ACTIONS = new Set([
+// QX owns repeat-request backoff for native URL reject (0–5 s response delay).
+// Conversion and validation share these actions; do not emulate delay in JS.
+export const QX_WAYX_REJECT_ACTIONS = new Set([
   'reject','reject-200','reject-img','reject-dict','reject-array',
+]);
+
+export const QX_WAYX_NATIVE_REWRITE_ACTIONS = new Set([
+  ...QX_WAYX_REJECT_ACTIONS,
   '302','307',
   'jsonjq-request-body','jsonjq-response-body',
   'request-header','response-header',

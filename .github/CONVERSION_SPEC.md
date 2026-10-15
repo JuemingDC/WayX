@@ -129,9 +129,13 @@ Rule 使用独立 target-neutral IR，仅输出官方已确认的 type/policy/�
 
 用户指定的精确域名例外：所有转换产物中的 `DOMAIN,dns.weixin.qq.com` 和 `DOMAIN,dns.weixin.qq.com.cn` 使用 DIRECT（QX 为 `host, ..., direct`），在目标 planner 统一执行，不依赖插件 id。源 Loon 快照保留原文；不扩展到 DOMAIN-SUFFIX、DOMAIN-KEYWORD、逻辑子条件或其它子域名。Surge DIRECT 不携带仅适用于拒绝策略的 pre-matching；extended-matching 沿用既有目标规则。
 
-Loon `[Rule]` 的 `URL-REGEX,<regex>,REJECT` 转为 Quantumult X 重写 `<regex> url reject`，不再默认使用 `reject-200`。仅当源 policy 明确为 `REJECT-200`（识别不区分大小写）时输出 `<regex> url reject-200`；不得根据 URL 文本、响应猜测或普通 REJECT 推断 HTTP 200。原有 `REJECT-IMG/DICT/ARRAY` 专用映射、`REJECT-DROP` 映射以及 Surge 输出不变；DIRECT/PROXY 等非拒绝策略不得强制改写为 reject。此规则只约束 Rule 中 URL-REGEX 的目标适配，不改变 `[Rewrite]` 里显式 action 的映射。
+Loon `[Rule]` 的 `URL-REGEX,<regex>,REJECT` 转为 Quantumult X 重写 `<regex> url reject`，不再默认使用 `reject-200`。仅当源 policy 明确为 `REJECT-200`（识别不区分大小写）时输出 `<regex> url reject-200`；不得根据 URL 文本、响应猜测或普通 REJECT 推断 HTTP 200。原有 `REJECT-IMG/DICT/ARRAY` 专用映射、`REJECT-DROP` 映射以及 Surge 输出不变；DIRECT/PROXY 等非拒绝策略不得强制改写为 reject。此规则只约束 Rule 中 URL-REGEX 的目标适配，不改变 `[Rewrite]` 里显式 action 的映射。 Rule 策略及 Rewrite v2 的动作/状态码均从各自基础映射表直接查找；Safe Tier 复用同一 Rewrite 原语查询，不再维护独立拒绝映射或追加特例分支。
+
+基础映射表显式登记全部 29 个已知 Rule 类型（含插件范围外的 FINAL 边界）、15 个策略及 31 个 Rewrite v2 action。Rule 策略共用 `qxFilter/qxRewrite/surgePolicy/surgeMap` 四列，不再在调用方额外改写 REJECT-IMG 或拼装拒绝响应。`URL-REGEX` 的 REJECT-NO-DROP 与现有 REJECT-DROP 一样适配为 QX `reject`；这不宣称保留连接丢弃、重试或自动升级行为。QX 网络层无对应类型及超出插件范围的条目显式记为 null。Header/JSON/JQ 目标类型由共同 `REWRITE_MUTATION_MAPPINGS` 表登记，不因需要参数转换而记 null：request/response 的 header.add/set/del/replace 均映射到 QX request-header/response-header；json.add/delete/replace/jq/jq_file 均映射到 jsonjq-request-body/jsonjq-response-body。Surge Header 使用 http-request/http-response 与 header-add/header-del/header-replace-regex，set 依次执行 header-del 与 header-add；JSON/JQ 使用 http-request-jq/http-response-jq。文件 JQ 先解析并内联原表达式，JSON 路径转为 JQ，Header 字段操作转为目标参数。表中类型存在不跳过参数、重复字段、动态值、捕获和 matcher 的语义校验；复杂情形继续由现有 planner 选择 helper 或诊断。新增源 action 或目标能力必须同步补表并通过完整性及交叉矩阵测试。
 
 Surge 逐条 Rule 使用已支持的 pre-matching/extended-matching 增强，保持类型与官方最低应用版本边界，不根据 Body Rewrite 的 CORE_VERSION 推断这些能力。QX 不输出 Surge 参数或 no-resolve 字段；目标不支持的属性按明确目标策略处理。
+
+QX 原生 URL Rewrite `reject` 按上传官方 sample.conf 返回空体 404；短时间内重复请求越多，软件响应延迟由 0 秒增至最多约 5 秒。这是响应延迟，不是规则开始生效的时间或规则寿命；官方示例没有证明按源 App 独立计数。Rule 的 URL-REGEX → reject、legacy reject、v2 reject(404) 均保留原生目标动作，由 QX 自行计数和延迟，不添加计数器、定时器、脚本响应或改为 reject-200。显式 200/图片/对象/数组变体保留各自类型，不推断它们有相同延迟机制。filter 的 reject（含 DNS 行为）、URL rewrite 的 reject 与 Surge 自动 REJECT-DROP 升级机制分别处理；复杂条件或自定义响应本来需要 helper 时，不宣称 helper 复现原生 backoff。输出校验器与能力清单共用原生 reject 动作集合，Body/Header 的匹配与替换 action token 必须同阶段。
 
 QX 仅输出官方证明的 url/url-and-header、reject 系列、302/307、header/body/jsonjq/echo 及各 Script action。url-and-header 的 URL 先匹配，再检查 method/path/request headers。response-body Script 可同时返回 body/headers/status，但不能冒充只改 Header 的 action；echo-response 的宽 matcher 必须满足安全边界。
 

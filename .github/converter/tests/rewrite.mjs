@@ -2,7 +2,7 @@
 // Author: chance
 // Category: Converter / rewrite / Regression Suite
 
-import { jsonActionToJq, analyzeSafeRewriteV2, dependencySpecFromAction, jqDependencySpecFromAction, inlineResolvedDependency, inlineResolvedLegacyJqPathIr, legacyJqPathDependencySpecFromIr, listRewriteV2Dependencies, qxMockPlanFromAction, compileRegexForTarget, qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan, surgeHeaderRewritePlan, surgeInlineMockPlan, surgeMockFilePlan, renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript, renderQxMockFileScript, renderSurgeRequestMockScript, LOON_REWRITE_V2_ACTIONS, minifyJq, minifyJqFile, quoteJq, renderFixedPathDeleteJq, classifyLegacyRewrite, legacyRewriteToSemanticIr, planLegacyRewrite, planLegacyRewriteIr, validateLoonSourceCatalog, planMitmLine, resolveOriginalUrl, parseLoonArguments, surgeArgumentMetadata, surgePluginObjectArgument, surgeRewriteArgumentPayload, surgeEnableRequirement, parseLegacyLoonPluginObjectRefs, analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs, parseRewriteV2, qxPrimitiveForRewriteV2Action, qxRule, qxTargetPath, rewriteV2ToSource, selectQxScriptAction, parseScriptV2, scriptV2ToSource, scriptV2ArgumentRefs, scriptV2DynamicOptionRefs, scriptOptionBoolean, qxScriptV2Plan, surgeScriptV2Plan, surgeRule, surgeModuleRule, renderSurgeModuleHeader, renderQxSnippetHeader, validateSurgeModule, surgeTargetPath, validateRewriteV2Ast, classifyComplexRewrite, complexConditionKinds, registerComplexRewriteHandler, planComplexRewrite, listComplexRewriteHandlers, renderMixedRewriteScript, renderSingleJsonMutationScript, isEmptyJsonJqIr, isEmptyLegacyJsonJqIr, rewriteV2AstToSemanticIr, singleRewriteOperation, rewriteOperationKinds, planQxRewrite, jsonPipelineToSafeNativeJq, qxExactRewriteMatcherPlan, qxRewriteMatcherPlan, planSurgeRewrite } from "../src/index.mjs";
+import { REWRITE_MUTATION_MAPPINGS, QX_REWRITE_PRIMITIVES, jsonActionToJq, analyzeSafeRewriteV2, dependencySpecFromAction, jqDependencySpecFromAction, inlineResolvedDependency, inlineResolvedLegacyJqPathIr, legacyJqPathDependencySpecFromIr, listRewriteV2Dependencies, qxMockPlanFromAction, compileRegexForTarget, qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan, surgeHeaderRewritePlan, surgeInlineMockPlan, surgeMockFilePlan, renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript, renderQxMockFileScript, renderSurgeRequestMockScript, LOON_REWRITE_V2_ACTIONS, minifyJq, minifyJqFile, quoteJq, renderFixedPathDeleteJq, classifyLegacyRewrite, legacyRewriteToSemanticIr, planLegacyRewrite, planLegacyRewriteIr, validateLoonSourceCatalog, planMitmLine, resolveOriginalUrl, parseLoonArguments, surgeArgumentMetadata, surgePluginObjectArgument, surgeRewriteArgumentPayload, surgeEnableRequirement, parseLegacyLoonPluginObjectRefs, analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs, parseRewriteV2, qxPrimitiveForRewriteV2Action, qxRule, qxTargetPath, rewriteV2ToSource, selectQxScriptAction, parseScriptV2, scriptV2ToSource, scriptV2ArgumentRefs, scriptV2DynamicOptionRefs, scriptOptionBoolean, qxScriptV2Plan, surgeScriptV2Plan, surgeRule, surgeModuleRule, renderSurgeModuleHeader, renderQxSnippetHeader, validateSurgeModule, surgeTargetPath, validateRewriteV2Ast, classifyComplexRewrite, complexConditionKinds, registerComplexRewriteHandler, planComplexRewrite, listComplexRewriteHandlers, renderMixedRewriteScript, renderSingleJsonMutationScript, isEmptyJsonJqIr, isEmptyLegacyJsonJqIr, rewriteV2AstToSemanticIr, singleRewriteOperation, rewriteOperationKinds, planQxRewrite, jsonPipelineToSafeNativeJq, qxExactRewriteMatcherPlan, qxRewriteMatcherPlan, planSurgeRewrite } from "../src/index.mjs";
 import assert from "node:assert/strict";
 import vm from "node:vm";
 
@@ -848,11 +848,88 @@ assert.throws(
 const bulkV2 = parseRewriteV2('request if ${url} ~= /api/ then request.header.set(["X-A","X-B"],["1","2"])');
 validateRewriteV2Ast(bulkV2);
 assert.equal(LOON_REWRITE_V2_ACTIONS.size, 31);
+assert.equal(singleRewriteOperation(rewriteV2AstToSemanticIr(parseRewriteV2('response if ${url} ~= /ads/ then reject_video(200)'))).variant,'video');
+assert.throws(()=>validateRewriteV2Ast(parseRewriteV2('response if ${url} ~= /ads/ then reject_200(200)')),/not present/);
 
 const invalidBulk = parseRewriteV2('request if ${url} ~= /api/ then request.header.set(["X-A"],["1","2"])');
 assert.throws(() => validateRewriteV2Ast(invalidBulk), /equal lengths/);
 const unknownAction = parseRewriteV2('request if ${url} ~= /api/ then request.unknown("x")');
 assert.throws(() => validateRewriteV2Ast(unknownAction), /not present in the current official Loon Rewrite v2 registry/);
+
+assert.deepEqual(Object.keys(QX_REWRITE_PRIMITIVES).sort(), [...LOON_REWRITE_V2_ACTIONS.keys()].sort(),
+  'every registered v2 action must declare its direct primitive or explicit semantic-planner boundary');
+for (const [source, expected] of [
+  ['request.json.jq(".a")','jsonjq-request-body'],
+  ['response.json.jq(".a")','jsonjq-response-body'],
+  ['request.body.replace(/ads/, "")','request-body'],
+  ['response.body.replace(/ads/, "")','response-body'],
+  ['request.header.set("X", "a")','request-header'],
+  ['response.json.delete("a")','jsonjq-response-body'],
+  ['url.replace("https://example.com")',null],
+]) {
+  const action = parseRewriteV2('response if ${url} ~= /ads/ then ' + source).actions[0];
+  assert.equal(qxPrimitiveForRewriteV2Action(action), expected, source);
+}
+
+// All twenty mutation actions share supported target types; operation-specific
+// parameters are lowered separately, including resolved jq_file dependencies.
+for (const phase of ['request','response']) {
+  for (const [operation,args,surgeActions] of [
+    ['add','"X-Test", "value"',['header-add']],
+    ['set','"X-Test", "value"',['header-del','header-add']],
+    ['del','"X-Test"',['header-del']],
+    ['replace','"X-Test", /old/, "new"',['header-replace-regex']],
+  ]) {
+    const name=phase+'.header.'+operation;
+    const ast=parseRewriteV2(phase+' if ${url} ~= /api/ then '+name+'('+args+')');
+    assert.equal(qxPrimitiveForRewriteV2Action(ast.actions[0]), phase+'-header');
+    const plan=surgeHeaderRewritePlan(ast);
+    assert.equal(plan.ok,true,name);
+    assert.deepEqual(plan.lines.map(line=>line.split(' ')[2]),surgeActions,name);
+    assert.ok(plan.lines.every(line=>line.startsWith('http-'+phase+' api ')),name);
+    const qx=planQxRewrite(rewriteV2AstToSemanticIr(ast),{id:'mutation-mapping',rawBase:'https://example.com',generatedScripts:new Map()});
+    assert.ok((qx.lines || [qx.line]).some(line=>line.includes(' url '+phase+'-header ')),name);
+  }
+  for (const [operation,args] of [
+    ['add','"a", 1'], ['delete','"a"'], ['replace','"a", 2'],
+    ['jq','"del(.a)"'], ['jq_file','"https://example.com/filter.jq"'],
+  ]) {
+    const name=phase+'.json.'+operation;
+    let ast=parseRewriteV2(phase+' if ${url} ~= /api/ then '+name+'('+args+')');
+    assert.equal(qxPrimitiveForRewriteV2Action(ast.actions[0]),'jsonjq-'+phase+'-body',name);
+    assert.equal(REWRITE_MUTATION_MAPPINGS[name].surge,'http-'+phase+'-jq',name);
+    if(operation==='jq_file') ast={...ast,actions:[inlineResolvedDependency(ast.actions[0],'del(.a)').action]};
+    const qx=qxDirectRewritePlan(ast),surge=surgeDirectRewritePlan(ast);
+    assert.equal(qx.ok,true,name); assert.equal(surge.ok,true,name);
+    assert.ok(qx.line.includes(' url jsonjq-'+phase+'-body '),name);
+    assert.ok(surge.line.startsWith('http-'+phase+'-jq api '),name);
+  }
+}
+assert.equal(Object.keys(REWRITE_MUTATION_MAPPINGS).length,20);
+
+// Shared primitive lookup must preserve status and custom-body boundaries in
+// both the native planner and Safe Tier, including valid unsupported statuses.
+for (const [name, args, expected] of [
+  ['reject', '200', 'reject-200'], ['reject', '404', 'reject'],
+  ['reject', '451', null], ['reject', '200, "custom"', null],
+  ['reject', '${status}', null],
+  ['reject_img', '200', 'reject-img'], ['reject_img', '404', null],
+  ['reject_dict', '200', 'reject-dict'], ['reject_dict', '451', null],
+  ['reject_array', '200', 'reject-array'], ['reject_array', '404', null],
+  ['reject_video', '200', null],
+  ['redirect', '302, "https://example.com"', '302'],
+  ['redirect', '307, "https://example.com"', '307'],
+  ['redirect', '301, "https://example.com"', null],
+]) {
+  const source = 'request if ${url} ~= /ads/ then ' + name + '(' + args + ')';
+  const ast = parseRewriteV2(source);
+  assert.equal(qxPrimitiveForRewriteV2Action(ast.actions[0]), expected, source);
+  if (name.startsWith('reject')) {
+    const safe = analyzeSafeRewriteV2(source);
+    assert.equal(safe.safe, expected !== null, source);
+    if (safe.safe) assert.equal(safe.action, expected, source);
+  }
+}
 
 const safeReject = analyzeSafeRewriteV2('request if ${url} ~= /^https:\\/\\/ad\\.example\\.com/ then reject(200)');
 assert.equal(safeReject.safe, true);

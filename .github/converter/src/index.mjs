@@ -34,6 +34,7 @@ export {
   LOON_LEGACY_MOCK_OPTION_NAMES,
   LOON_REWRITE_V2_ACTIONS,
   QX_REWRITE_PRIMITIVES,
+  REWRITE_MUTATION_MAPPINGS,
   TEXT_MOCK_TYPES,
   actionToSource,
   analyzeSafeRewriteV2,
@@ -146,8 +147,9 @@ export {
 
 export {
   LOON_LOGICAL_RULE_TYPES,
+  QX_RULE_TYPES,
+  RULE_POLICY_MAPPINGS,
   SURGE_MODULE_POLICIES,
-  SURGE_RULE_BUILTIN_POLICIES,
   SURGE_RULE_TYPES,
   parseLoonRuleAst,
   planQxRuleAst,
@@ -159,7 +161,6 @@ export {
   splitLogicalSubrules,
   splitTopLevelCsv,
   surgeModuleRule,
-  surgePolicyIndex,
   surgeRule,
   surgeRuleTypesInTree,
   unquoteRuleField,

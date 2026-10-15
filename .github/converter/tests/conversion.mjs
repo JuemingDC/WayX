@@ -44,6 +44,36 @@ const entry={
   category:'去广告',
   source:'https://example.com/Demo.lpx',
 };
+// Rule, legacy Rewrite and v2 declarations must retain native QX reject
+// behavior together. Backoff belongs to QX, not generated helpers or timers.
+{
+  const policies=[['REJECT','reject'],['REJECT-200','reject-200'],['REJECT-IMG','reject-img'],
+    ['REJECT-DICT','reject-dict'],['REJECT-ARRAY','reject-array'],['REJECT-DROP','reject'],['REJECT-NO-DROP','reject']];
+  const nativeActions=[['reject(404)','reject'],['reject(200)','reject-200'],
+    ['reject_img(200)','reject-img'],['reject_dict(200)','reject-dict'],['reject_array(200)','reject-array']];
+  const mixedSource=[
+    '#!name=NativeRejectAudit', '#!desc=Native reject cross-file audit',
+    '[Rule]', 'DOMAIN,ads.example,REJECT',
+    ...policies.map(([policy],i)=>'URL-REGEX,^https://rule.example/p'+i+'$,'+policy),
+    '[Rewrite]',
+    ...nativeActions.map(([,action],i)=>'^https://legacy.example/p'+i+'$ '+action),
+    ...nativeActions.map(([action],i)=>'request if ${url} ~= /^https:\\/\\/v2\\.example\\/p'+i+'$/ then '+action),
+    'request if ${url} ~= /headers/ then request.header.set("X-Test", "a")',
+    'response if ${url} ~= /json/ then response.json.delete("ads")',
+  ].join('\n');
+  const converted=convertPlugin(entry,mixedSource,{stamp:'2026-10-15 11:00:00 +08:00',rawBase:'https://example.com'});
+  validateQX(converted.qx,entry);
+  validateSurgeModule(converted.surge,entry);
+  for(const [i,[,action]] of policies.entries()) assert.ok(converted.qx.includes('^https://rule.example/p'+i+'$ url '+action));
+  for(const [i,[,action]] of nativeActions.entries()) {
+    assert.ok(converted.qx.includes('^https://legacy.example/p'+i+'$ url '+action));
+    assert.ok(converted.qx.includes('^https:\\/\\/v2\\.example\\/p'+i+'$ url '+action));
+  }
+  assert.match(converted.qx,/host, ads\.example, reject/);
+  assert.equal(converted.generatedScripts.size,0,'native reject and simple mutations must not acquire helpers');
+  assert.doesNotMatch(converted.qx,/script-(?:echo-response|request|response)|setTimeout|setInterval/);
+}
+
 const source=[
   '#!name=Demo',
   '#!desc=Demo Loon plugin',
