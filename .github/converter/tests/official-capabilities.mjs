@@ -5,8 +5,8 @@
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { QX_WAYX_FILTER_TYPES, QX_WAYX_REWRITE_MATCHERS, QX_WAYX_SCRIPT_ACTIONS, QX_WAYX_NATIVE_REWRITE_ACTIONS, QX_WAYX_SNIPPET_MITM_KEYS, SURGE_WAYX_RULE_TYPES, SURGE_WAYX_RULE_BUILTIN_POLICIES, SURGE_WAYX_REWRITE_SECTIONS, SURGE_WAYX_URL_REWRITE_TYPES, SURGE_WAYX_HEADER_REWRITE_ACTIONS, SURGE_WAYX_BODY_REWRITE_TYPES, SURGE_WAYX_MAP_LOCAL_DATA_TYPES, SURGE_WAYX_SCRIPT_TYPES, SURGE_WAYX_MITM_KEYS } from "../src/core.mjs";
-import { validateQX } from "../src/index.mjs";
+import { QX_WAYX_REJECT_ACTIONS, QX_WAYX_FILTER_TYPES, QX_WAYX_REWRITE_MATCHERS, QX_WAYX_SCRIPT_ACTIONS, QX_WAYX_NATIVE_REWRITE_ACTIONS, QX_WAYX_SNIPPET_MITM_KEYS, SURGE_WAYX_RULE_TYPES, SURGE_WAYX_RULE_BUILTIN_POLICIES, SURGE_WAYX_REWRITE_SECTIONS, SURGE_WAYX_URL_REWRITE_TYPES, SURGE_WAYX_HEADER_REWRITE_ACTIONS, SURGE_WAYX_BODY_REWRITE_TYPES, SURGE_WAYX_MAP_LOCAL_DATA_TYPES, SURGE_WAYX_SCRIPT_TYPES, SURGE_WAYX_MITM_KEYS } from "../src/core.mjs";
+import { RULE_POLICY_MAPPINGS, REWRITE_MUTATION_MAPPINGS, QX_REWRITE_PRIMITIVES, validateQX } from "../src/index.mjs";
 
 import { spawnSync as runIsolatedCase } from 'node:child_process';
 import { fileURLToPath as isolatedSuitePath } from 'node:url';
@@ -240,6 +240,27 @@ assert.throws(
   ].join('\n'),{id:'QxRemoteEchoFixture'}),
   /local Data-relative path/,
 );
+
+// Every mapped type must also be accepted by the independent output gate.
+for (const mapping of RULE_POLICY_MAPPINGS.values()) {
+  if (mapping.qxRewrite) assert.ok(QX_WAYX_REJECT_ACTIONS.has(mapping.qxRewrite));
+  if (mapping.surgePolicy && mapping.surgePolicy !== 'PROXY') assert.ok(SURGE_WAYX_RULE_BUILTIN_POLICIES.has(mapping.surgePolicy));
+}
+for (const [name,mapping] of Object.entries(REWRITE_MUTATION_MAPPINGS)) {
+  assert.ok(QX_WAYX_NATIVE_REWRITE_ACTIONS.has(mapping.qx),name);
+  assert.ok(SURGE_WAYX_BODY_REWRITE_TYPES.has(mapping.surge),name);
+  for (const type of mapping.surgeActions || []) assert.ok(SURGE_WAYX_HEADER_REWRITE_ACTIONS.has(type),name);
+  assert.equal(QX_REWRITE_PRIMITIVES[name],mapping.qx,name);
+}
+for (const action of QX_WAYX_REJECT_ACTIONS) {
+  validateQX('# [rewrite_local]\n^https://example.com url '+action,{id:'native-reject'});
+  validateQX('# [rewrite_local]\n^https://example.com ^POST url-and-header '+action,{id:'native-reject-header'});
+}
+for (const action of [
+  'request-body x response-body y', 'response-body x request-body y',
+  'request-header x response-header y', 'response-header x request-header y',
+  'reject 5', 'reject-200 5', 'reject-drop',
+]) assert.throws(()=>validateQX('# [rewrite_local]\n^https://example.com url '+action,{id:'cross-file-boundary'}), /unverified\/unsupported/);
 
 // The official filter resource is used only as supporting evidence for the
 // Rule types that WayX actually emits from Loon ad-block plugins.

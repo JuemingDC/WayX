@@ -302,11 +302,7 @@ function scalarValue(node) {
 function classifyRewriteV2Action(action,phase) {
   const name=String(action?.name || '');
   if (/^reject(?:_|$)/.test(name)) {
-    const variant = name==='reject_dict' ? 'dict'
-      : name==='reject_array' ? 'array'
-      : name==='reject_img' ? 'image'
-      : name==='reject_200' ? 'empty'
-      : 'generic';
+    const variant = LEGACY_REJECT_VARIANTS.get(name.replace('_','-'))?.variant ?? 'generic';
     return {
       kind:'reject',
       actionName:name,

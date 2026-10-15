@@ -5,7 +5,7 @@
 import { isRewriteV2 } from "./rewrite.mjs";
 import { parseLegacyScriptLine } from "./script.mjs";
 import { cleanSourceComments, sourceCommentText } from "./input.mjs";
-import { QX_WAYX_FILTER_TYPES, QX_WAYX_REWRITE_MATCHERS, QX_WAYX_SCRIPT_ACTIONS, QX_WAYX_SNIPPET_MITM_KEYS, SURGE_WAYX_REWRITE_SECTIONS, SURGE_WAYX_URL_REWRITE_TYPES, SURGE_WAYX_HEADER_REWRITE_ACTIONS, SURGE_WAYX_BODY_REWRITE_TYPES, SURGE_WAYX_MAP_LOCAL_DATA_TYPES, SURGE_WAYX_SCRIPT_TYPES, SURGE_WAYX_MITM_KEYS } from "./core.mjs";
+import { QX_WAYX_REJECT_ACTIONS, QX_WAYX_FILTER_TYPES, QX_WAYX_REWRITE_MATCHERS, QX_WAYX_SCRIPT_ACTIONS, QX_WAYX_SNIPPET_MITM_KEYS, SURGE_WAYX_REWRITE_SECTIONS, SURGE_WAYX_URL_REWRITE_TYPES, SURGE_WAYX_HEADER_REWRITE_ACTIONS, SURGE_WAYX_BODY_REWRITE_TYPES, SURGE_WAYX_MAP_LOCAL_DATA_TYPES, SURGE_WAYX_SCRIPT_TYPES, SURGE_WAYX_MITM_KEYS } from "./core.mjs";
 import { splitTopLevelCsv, surgeRuleTypesInTree, SURGE_MODULE_POLICIES } from "./rule.mjs";
 
 
@@ -453,10 +453,10 @@ function splitQxRewriteLine(line) {
 }
 
 function validateQxRewriteAction(action,line,entry) {
-  if (/^(?:reject|reject-200|reject-img|reject-dict|reject-array)$/.test(action)) return;
+  if (QX_WAYX_REJECT_ACTIONS.has(action)) return;
   if (/^(?:302|307)\s+\S+$/.test(action)) return;
   if (/^jsonjq-(?:request|response)-body\s+'.+'$/.test(action)) return;
-  if (/^(?:request|response)-body\s+.+\s+(?:request|response)-body\s+.+$/.test(action)) return;
+  if (/^(request-body|response-body)\s+.+\s+\1\s+.+$/.test(action)) return;
   if (/^(request-header|response-header)\s+.+\s+\1\s+.+$/.test(action)) return;
 
   const echo=action.match(/^echo-response\s+(.+)\s+echo-response\s+(\S+)$/);

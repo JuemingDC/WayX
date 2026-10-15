@@ -848,6 +848,8 @@ assert.throws(
 const bulkV2 = parseRewriteV2('request if ${url} ~= /api/ then request.header.set(["X-A","X-B"],["1","2"])');
 validateRewriteV2Ast(bulkV2);
 assert.equal(LOON_REWRITE_V2_ACTIONS.size, 31);
+assert.equal(singleRewriteOperation(rewriteV2AstToSemanticIr(parseRewriteV2('response if ${url} ~= /ads/ then reject_video(200)'))).variant,'video');
+assert.throws(()=>validateRewriteV2Ast(parseRewriteV2('response if ${url} ~= /ads/ then reject_200(200)')),/not present/);
 
 const invalidBulk = parseRewriteV2('request if ${url} ~= /api/ then request.header.set(["X-A"],["1","2"])');
 assert.throws(() => validateRewriteV2Ast(invalidBulk), /equal lengths/);
