@@ -7,9 +7,9 @@
 # Tags: 去广告
 # Homepage: https://hub.kelee.one
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Safari.png
-# Updated: 2026-10-12 15:50:18
+# Updated: 2026-10-16 11:03:37
 
-# Converted: 2026-10-13 10:18:24 +08:00
+# Converted: 2026-10-16 13:34:21 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/QuickSearch.lpx
 # Target: Surge
@@ -23,7 +23,6 @@
 (?i)^https:\/\/duckduckgo\.com\/\?q=wk\+([^&]+).+ https://zh.wikipedia.org/wiki/$1 307
 (?i)^https:\/\/duckduckgo\.com\/\?q=qm\+([^&]+).+ https://www.qimai.cn/search/index/country/cn/search/$1 307
 (?i)^https:\/\/duckduckgo\.com\/\?q=gh\+([^&]+).+ https://github.com/search?q=$1 307
-(?i)^https:\/\/duckduckgo\.com\/\?q=([^&]+).+ https://www.google.com/search?q=$1 307
 (?i)^https:\/\/duckduckgo\.com\/\?q=(?!(?:bd|bdimg|gimg|b|wk|qm|gh)\+)([^&]+).+ https://www.google.com/search?q=$1 307
 
 [MITM]
