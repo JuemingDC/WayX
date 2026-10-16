@@ -479,6 +479,9 @@ def build(config, inputs):
     anomalies = []; buckets = {}; authors = {}; urls = {}
     sites = geosites(inputs['geosite'], anomalies)
     app_names = {app['name'] for app in config['applications']}
+    priority = config.get('category_priority', [])
+    if len(set(priority)) != len(priority) or set(priority) - app_names:
+        raise ValueError('Invalid application category priority')
     scope_exclusions = {}
     def excluded(name, rule):
         rules = scope_exclusions.get(name, set())
@@ -487,14 +490,17 @@ def build(config, inputs):
             Rule('DOMAIN-SUFFIX', '.'.join(rule.value.split('.')[i:])) in rules
             for i in range(len(rule.value.split('.')))))
     owned_exact = {}; owned_suffix = {}
+    def index_owner(name, rules):
+        if name in app_names:
+            for rule in rules:
+                if excluded(name, rule): continue
+                owned_exact.setdefault(rule, set()).add(name)
+                if rule.kind == 'DOMAIN-SUFFIX': owned_suffix.setdefault(rule.value, set()).add(name)
     def add(name, policy, rules, author, source):
         key = (name, policy)
         rules = {rule for rule in rules if not excluded(name, rule)}
         buckets.setdefault(key, set()).update(rules)
-        if name in app_names:
-            for rule in rules:
-                owned_exact.setdefault(rule, set()).add(name)
-                if rule.kind == 'DOMAIN-SUFFIX': owned_suffix.setdefault(rule.value, set()).add(name)
+        index_owner(name, rules)
         authors.setdefault(key, set()).add(author)
         urls.setdefault(key, set()).add(source)
     def select(tags, group):
@@ -546,8 +552,13 @@ def build(config, inputs):
     add('media', 'Media', overseas_apps - domestic_apps - cn - named, 'V2Fly', origin)
     add('cn', 'DIRECT', cn - named - domestic_apps, 'V2Fly', origin)
     add('proxy', 'PROXY', foreign - named - overseas_apps - domestic_apps - cn, 'V2Fly', origin)
-    for source in config['sources']:
-        rows = native_rules(inputs[source['id']].decode('utf-8-sig'), source, anomalies)
+    parsed_sources = [(source, native_rules(inputs[source['id']].decode('utf-8-sig'), source, anomalies))
+                      for source in config['sources']]
+    # Index all explicitly classified supplements before resolving shared rules.
+    # Ownership must not depend on source order.
+    for source, rows in parsed_sources:
+        index_owner(source['category'], (rule for rule, _ in rows))
+    for source, rows in parsed_sources:
         for rule, policy in rows:
             destination = source['category']
             # Supplemental known app domains inherit that app's user-visible
@@ -561,11 +572,14 @@ def build(config, inputs):
                 for app in config['applications']:
                     if candidates.intersection(app.get('children', [])):
                         candidates.discard(app['name'])
+                preferred = next((name for name in priority if name in candidates), None)
+                if preferred:
+                    candidates = {preferred}
                 if len(candidates) > 1:
                     anomalies.append({'source': source['id'], 'category': destination, 'declaration': rule.kind + ',' + rule.value, 'code': 'ambiguous-app-ownership', 'reason': 'Multiple named applications: ' + ', '.join(sorted(candidates))})
                 elif candidates:
                     destination = next(iter(candidates))
-                    policy = 'DIRECT' if policy == 'DIRECT' else destination
+                    policy = policy if policy == 'DIRECT' or policy.startswith('REJECT') else destination
             if destination == 'media' and policy == 'PROXY':
                 policy = 'Media'
             add(destination, policy, [rule], source['author'], source['url'])
@@ -575,6 +589,16 @@ def build(config, inputs):
             for key in list(buckets):
                 if key[0] == app['name']:
                     buckets[key].difference_update(child_rules)
+    # Remove identical routing declarations from lower-priority collections.
+    # Advertising and explicit rejection remain independent of app ownership.
+    remaining = app_names | {'media', 'media_cn', 'cn', 'proxy'}
+    for preferred in priority:
+        remaining.discard(preferred)
+        claimed = set().union(*(rules for (name, policy), rules in buckets.items()
+                                if name == preferred and not policy.startswith('REJECT')))
+        for (name, policy), rules in buckets.items():
+            if name in remaining and not policy.startswith('REJECT'):
+                rules.difference_update(claimed)
     # Extra remains optional and contains only new matching coverage.
     baseline = buckets.get(('adblock', 'REJECT'), set())
     suffixes = {rule.value for rule in baseline if rule.kind == 'DOMAIN-SUFFIX'}

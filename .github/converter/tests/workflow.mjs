@@ -463,6 +463,33 @@ scoped,_,_=m.build(config,{'geosite':encoded,'supplement':b'DOMAIN,domestic.exam
 assert all('domestic.example.com' not in text for name,text in scoped.items() if '/brand' in name)
 assert 'host-suffix,elsewhere.test,proxy' in scoped['Rule/QuantumultX/brand.list']
 
+# A service shared with any brand uses configured category priority, regardless of source order.
+priority_site=field(1,field(1,b'priority-ai')+field(2,b'\x08\x02'+field(2,b'meta.ai')))
+brand_site=field(1,field(1,b'priority-brand')+field(2,b'\x08\x02'+field(2,b'meta.ai'))+field(2,b'\x08\x02'+field(2,b'mail.example')))
+shared={'id':'shared','format':'ruleset','author':'Fixture','url':'https://example.test/shared','category':'media','policy':'PROXY'}
+ai_source={**shared,'id':'ai-source','category':'ai','policy':'ai'}
+brand_source={**shared,'id':'brand-source','category':'brand','policy':'brand'}
+pc={**config,'applications':[{'name':'brand','tags':['priority-brand']},{'name':'ai','tags':['priority-ai']}],
+    'split_names':[],'category_priority':['ai'],'sources':[shared,brand_source,ai_source]}
+pi={'geosite':encoded+priority_site+brand_site,'shared':b'DOMAIN-SUFFIX,meta.ai\nDOMAIN-SUFFIX,new-ai.test',
+    'brand-source':b'DOMAIN-SUFFIX,new-ai.test','ai-source':b'DOMAIN-SUFFIX,new-ai.test'}
+first,_,problems=m.build(pc,pi)
+assert not any(item['code']=='ambiguous-app-ownership' for item in problems)
+assert 'host-suffix,meta.ai,proxy' in first['Rule/QuantumultX/ai.list']
+assert 'host-suffix,new-ai.test,proxy' in first['Rule/QuantumultX/ai.list']
+assert 'DOMAIN-SUFFIX,meta.ai' in first['Rule/Surge/ai.list']
+assert 'host-suffix,mail.example,proxy' in first['Rule/QuantumultX/brand.list']
+assert 'mail.example' not in first['Rule/QuantumultX/ai.list']
+assert all('meta.ai' not in text and 'new-ai.test' not in text for name,text in first.items() if '/ai.' not in name)
+pc['sources']=list(reversed(pc['sources']))
+second,_,problems=m.build(pc,pi)
+assert first==second and not any(item['code']=='ambiguous-app-ownership' for item in problems)
+pc['sources'].append({**shared,'id':'ads','category':'adblock','policy':'REJECT'})
+pi['ads']=b'DOMAIN-SUFFIX,meta.ai'
+guarded,_,_=m.build(pc,pi)
+assert 'host-suffix,meta.ai,reject' in guarded['Rule/QuantumultX/adblock.list']
+assert 'host-suffix,meta.ai,proxy' in guarded['Rule/QuantumultX/ai.list']
+
 with tempfile.TemporaryDirectory() as temp:
  os.chdir(temp)
  changed,_=m.apply_outputs(outputs,metadata,{'outputs':{}});assert changed==len(outputs)
