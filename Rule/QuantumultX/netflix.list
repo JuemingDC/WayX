@@ -1,5 +1,5 @@
 # Name: netflix
-# Updated: 2026-10-16 11:11:32 UTC
+# Updated: 2026-10-16 12:08:00 UTC
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/netflix.json ; https://ruleset.skk.moe/List/non_ip/stream.conf
@@ -7,35 +7,35 @@
 # Rules: 32
 # Managed by: WayX Rule Aggregator
 
-host,netflix.com.edgesuite.net,netflix
-host-suffix,fast.com,netflix
-host-suffix,netflix.ca,netflix
-host-suffix,netflix.com,netflix
-host-suffix,netflix.net,netflix
-host-suffix,netflixdnstest0.com,netflix
-host-suffix,netflixdnstest1.com,netflix
-host-suffix,netflixdnstest10.com,netflix
-host-suffix,netflixdnstest2.com,netflix
-host-suffix,netflixdnstest3.com,netflix
-host-suffix,netflixdnstest4.com,netflix
-host-suffix,netflixdnstest5.com,netflix
-host-suffix,netflixdnstest6.com,netflix
-host-suffix,netflixdnstest7.com,netflix
-host-suffix,netflixdnstest8.com,netflix
-host-suffix,netflixdnstest9.com,netflix
-host-suffix,netflixinvestor.com,netflix
-host-suffix,netflixtechblog.com,netflix
-host-suffix,nflxext.com,netflix
-host-suffix,nflximg.com,netflix
-host-suffix,nflximg.net,netflix
-host-suffix,nflxsearch.net,netflix
-host-suffix,nflxso.net,netflix
-host-suffix,nflxvideo.net,netflix
-host-wildcard,*.dualstack.apiproxy-?*.amazonaws.com,netflix
-host-wildcard,*.dualstack.ichnaea-web-?*.amazonaws.com,netflix
-host-wildcard,*.apiproxy-device-prod-nlb-?*.amazonaws.com,netflix
-host-wildcard,*.apiproxy-website-nlb-prod-?*.amazonaws.com,netflix
-host-wildcard,dualstack.apiproxy-?*.amazonaws.com,netflix
-host-wildcard,dualstack.ichnaea-web-?*.amazonaws.com,netflix
-host-wildcard,apiproxy-device-prod-nlb-?*.amazonaws.com,netflix
-host-wildcard,apiproxy-website-nlb-prod-?*.amazonaws.com,netflix
+host,netflix.com.edgesuite.net,proxy
+host-suffix,fast.com,proxy
+host-suffix,netflix.ca,proxy
+host-suffix,netflix.com,proxy
+host-suffix,netflix.net,proxy
+host-suffix,netflixdnstest0.com,proxy
+host-suffix,netflixdnstest1.com,proxy
+host-suffix,netflixdnstest10.com,proxy
+host-suffix,netflixdnstest2.com,proxy
+host-suffix,netflixdnstest3.com,proxy
+host-suffix,netflixdnstest4.com,proxy
+host-suffix,netflixdnstest5.com,proxy
+host-suffix,netflixdnstest6.com,proxy
+host-suffix,netflixdnstest7.com,proxy
+host-suffix,netflixdnstest8.com,proxy
+host-suffix,netflixdnstest9.com,proxy
+host-suffix,netflixinvestor.com,proxy
+host-suffix,netflixtechblog.com,proxy
+host-suffix,nflxext.com,proxy
+host-suffix,nflximg.com,proxy
+host-suffix,nflximg.net,proxy
+host-suffix,nflxsearch.net,proxy
+host-suffix,nflxso.net,proxy
+host-suffix,nflxvideo.net,proxy
+host-wildcard,*.dualstack.apiproxy-?*.amazonaws.com,proxy
+host-wildcard,*.dualstack.ichnaea-web-?*.amazonaws.com,proxy
+host-wildcard,*.apiproxy-device-prod-nlb-?*.amazonaws.com,proxy
+host-wildcard,*.apiproxy-website-nlb-prod-?*.amazonaws.com,proxy
+host-wildcard,dualstack.apiproxy-?*.amazonaws.com,proxy
+host-wildcard,dualstack.ichnaea-web-?*.amazonaws.com,proxy
+host-wildcard,apiproxy-device-prod-nlb-?*.amazonaws.com,proxy
+host-wildcard,apiproxy-website-nlb-prod-?*.amazonaws.com,proxy

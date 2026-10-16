@@ -1,79 +1,22 @@
 # Name: microsoft
-# Updated: 2026-10-16 10:42:40 UTC
+# Updated: 2026-10-16 12:08:00 UTC
 # Source Authors: V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 654
+# Rules: 595
 # Managed by: WayX Rule Aggregator
 
-host,b.c2r.ts.cdn.office.net,direct
-host,f.c2r.ts.cdn.office.net,direct
-host,azuremigrate.download.prss.microsoft.com,direct
-host,azuremigratetest.download.prss.microsoft.com,direct
-host,azurestackhub.download.prss.microsoft.com,direct
-host,azurestackhubuat.download.prss.microsoft.com,direct
-host,cbdstest.download.prss.microsoft.com,direct
-host,collaborate.download.prss.microsoft.com,direct
-host,collaborateppe.download.prss.microsoft.com,direct
-host,dreamspark.download.prss.microsoft.com,direct
-host,dreamsparkuat.download.prss.microsoft.com,direct
-host,itacademy.download.prss.microsoft.com,direct
-host,itacademyuat.download.prss.microsoft.com,direct
-host,lex.download.prss.microsoft.com,direct
-host,lexuat.download.prss.microsoft.com,direct
-host,mbs.download.prss.microsoft.com,direct
-host,mpnbenefits.download.prss.microsoft.com,direct
-host,mpnbenefitsrtl.download.prss.microsoft.com,direct
-host,mpnbenefitsrtluat.download.prss.microsoft.com,direct
-host,msdn.download.prss.microsoft.com,direct
-host,msdprod-ad.download.prss.microsoft.com,direct
-host,msproduct.download.prss.microsoft.com,direct
-host,myvs.download.prss.microsoft.com,direct
-host,oemsoc.download.prss.microsoft.com,direct
-host,oemsocuat.download.prss.microsoft.com,direct
-host,officemkt.download.prss.microsoft.com,direct
-host,officemktuat.download.prss.microsoft.com,direct
-host,osrelease.download.prss.microsoft.com,direct
-host,rsm.download.prss.microsoft.com,direct
-host,software.download.prss.microsoft.com,direct
-host,statics.teams.cdn.office.net,direct
-host,storecorefulfillment.download.prss.microsoft.com,direct
-host,storeedgefd.dsx.mp.microsoft.com,direct
-host,surface.download.prss.microsoft.com,direct
-host,surface.downloads.prss.microsoft.com,direct
-host,vlportal.download.prss.microsoft.com,direct
-host,volic.download.prss.microsoft.com,direct
-host,vscode.download.prss.microsoft.com,direct
-host,vz.download.prss.microsoft.com,direct
-host,windbg.download.prss.microsoft.com,direct
-host,bj1.api.bing.com,direct
-host,download.visualstudio.microsoft.com,direct
-host,shell.cdn.office.net,direct
-host,cn.windowssearch.com,direct
-host,ctldl.windowsupdate.com,direct
-host,developer.microsoft.com,direct
-host,download.microsoft.com,direct
 host,img-prod-cms-rt-microsoft-com.akamaized.net,direct
 host,img-s-msn-com.akamaized.net,direct
 host,mwf-service.akamaized.net,direct
 host,officecdn-microsoft-com.akamaized.net,direct
-host,officecdn.microsoft.com,direct
 host,rink.hockeyapp.net,direct
-host,sdx.microsoft.com,direct
 host,statics-marketingsites-eas-ms-com.akamaized.net,direct
 host,statics-marketingsites-eus-ms-com.akamaized.net,direct
 host,statics-marketingsites-wcus-ms-com.akamaized.net,direct
-host,storeedge.microsoft.com,direct
 host,vsmarketplacebadge.apphb.com,direct
-host-suffix,dl.delivery.mp.microsoft.com,direct
-host-suffix,cn.mm.bing.net,direct
 host-suffix,bing.com.cn,direct
-host-suffix,cn.bing.com,direct
-host-suffix,cn.bing.net,direct
-host-suffix,dcg.microsoft.com,direct
-host-suffix,ditu.live.com,direct
-host-suffix,download.windowsupdate.com,direct
 host-suffix,live.com.au,direct
 host-suffix,microsoftonline-p-i.net.cn,direct
 host-suffix,microsoftonline-p.net.cn,direct
@@ -81,11 +24,9 @@ host-suffix,microsoftreactor.com.cn,direct
 host-suffix,microsoftstore.com.cn,direct
 host-suffix,microsoftstore.com.hk,direct
 host-suffix,onedrive.co.uk,direct
-host-suffix,r.bing.com,direct
 host-suffix,reactorms.com.cn,direct
 host-suffix,skype-edf.akadns.net,direct
 host-suffix,skypedata.akadns.net,direct
-host-suffix,th.bing.com,direct
 host-suffix,visualstudio.co.uk,direct
 host-suffix,1drv.com,direct
 host-suffix,1drv.ms,direct

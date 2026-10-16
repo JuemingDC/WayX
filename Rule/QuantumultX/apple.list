@@ -1,5 +1,5 @@
 # Name: apple
-# Updated: 2026-10-16 11:11:32 UTC
+# Updated: 2026-10-16 12:08:00 UTC
 # Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list ; https://ruleset.skk.moe/List/non_ip/stream.conf
@@ -98,8 +98,8 @@ host,gspe79-cn-ssl.ls.apple.com,direct
 host,gspe85-cn-ssl.ls.apple.com,direct
 host,guzzoni-apple-com.v.aaplimg.com,direct
 host,guzzoni.smoot.apple.com,direct
-host,hls-amt.itunes.apple.com,apple
-host,hls.itunes.apple.com,apple
+host,hls-amt.itunes.apple.com,proxy
+host,hls.itunes.apple.com,proxy
 host,inappcheck.itunes.apple.com,direct
 host,init-p01st.push.apple.com,direct
 host,init-s01st.push.apple.com,direct
@@ -110,17 +110,17 @@ host,iosapps.itunes.apple.com,direct
 host,itunes-apple.com.akadns.net,direct
 host,js-cdn.music.apple.com,direct
 host,km.support.apple.com,direct
-host,linear.tv.apple.com,apple
+host,linear.tv.apple.com,proxy
 host,misc-assets.itunes.apple.com,direct
 host,musicstatus.music.apple.com,direct
 host,mvod.itunes.apple.com,direct
 host,myapp.itunes.apple.com,direct
 host,notary-submissions-prod.s3-accelerate.amazonaws.com,direct
-host,np-edge.itunes.apple.com,apple
+host,np-edge.itunes.apple.com,proxy
 host,osxapps.itunes.apple.com,direct
 host,pd-nk.itunes.apple.com,direct
 host,pd.itunes.apple.com,direct
-host,play-edge.itunes.apple.com,apple
+host,play-edge.itunes.apple.com,proxy
 host,play.itunes.apple.com,direct
 host,play.music.apple.com,direct
 host,podcasts.itunes.apple.com,direct
@@ -147,7 +147,7 @@ host,sync.itunes.apple.com,direct
 host,tf-feedback.itunes.apple.com,direct
 host,universal-activity-service.itunes.apple.com,direct
 host,upp.itunes.apple.com,direct
-host,uts-api.itunes.apple.com,apple
+host,uts-api.itunes.apple.com,proxy
 host,www.support.apple.com,direct
 host,a1.mzstatic.com,direct
 host,a2.mzstatic.com,direct
@@ -157,8 +157,8 @@ host,a5.mzstatic.com,direct
 host,adcdownload.apple.com,direct
 host,app-site-association.cdn-apple.com,direct
 host,appldnld.apple.com,direct
-host,apple-tv-plus-press.apple.com,apple
-host,apple.comscoreresearch.com,apple
+host,apple-tv-plus-press.apple.com,proxy
+host,apple.comscoreresearch.com,proxy
 host,appleid.cdn-apple.com,direct
 host,apps.mzstatic.com,direct
 host,cdn-cn.apple-mapkit.com,direct
@@ -218,12 +218,12 @@ host,mensura.cdn-apple.com,direct
 host,mesu.apple.com,direct
 host,ml.cdn-apple.com,direct
 host,music.apple.com,direct
-host,news-client.apple.com,apple
-host,news-edge.apple.com,apple
-host,news-events.apple.com,apple
+host,news-client.apple.com,proxy
+host,news-edge.apple.com,proxy
+host,news-events.apple.com,proxy
 host,ocsp.apple.com,direct
 host,ocsp2.apple.com,direct
-host,ocvideo.apple.com,apple
+host,ocvideo.apple.com,proxy
 host,oscdn.apple.com,direct
 host,p-events-delivery.akamaized.net,direct
 host,pancake.apple.com,direct
@@ -252,7 +252,7 @@ host,sylvan.apple.com,direct
 host,tj-pod1-smp-device.apple.com,direct
 host,tj-pod2-smp-device.apple.com,direct
 host,tj-pod3-smp-device.apple.com,direct
-host,tv.applemusic.com,apple
+host,tv.applemusic.com,proxy
 host,updates-http.cdn-apple.com,direct
 host,updates.cdn-apple.com,direct
 host,valid.apple.com,direct
@@ -409,7 +409,7 @@ host-suffix,push.apple.com,direct
 host-suffix,quicktime.com.au,direct
 host-suffix,researchkit.com.cn,direct
 host-suffix,swiftui.com.cn,direct
-host-suffix,tv.apple.com,apple
+host-suffix,tv.apple.com,proxy
 host-suffix,webobjects.co.uk,direct
 host-suffix,100beatscheap.com,direct
 host-suffix,12diasdepresentesdeitunes.com,direct
@@ -537,7 +537,7 @@ host-suffix,apple.me,direct
 host-suffix,apple.my,direct
 host-suffix,apple.net,direct
 host-suffix,apple.news,direct
-host-suffix,apple.news,apple
+host-suffix,apple.news,proxy
 host-suffix,apple.nl,direct
 host-suffix,apple.no,direct
 host-suffix,apple.pk,direct
@@ -621,7 +621,7 @@ host-suffix,applemasters.info,direct
 host-suffix,applemusic.berlin,direct
 host-suffix,applemusic.co,direct
 host-suffix,applemusic.com,direct
-host-suffix,applemusic.com,apple
+host-suffix,applemusic.com,proxy
 host-suffix,applemusic.hamburg,direct
 host-suffix,applemusic.wang,direct
 host-suffix,applemusicconnect.com,direct

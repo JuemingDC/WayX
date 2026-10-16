@@ -652,12 +652,13 @@ function validateSurgeRuleLine(line,entry,declaredArguments=new Set()) {
 }
 
 // Native filter/rule-set resources use the same rule-line contracts as modules.
-export function validateQxFilterList(text,entry={id:'filter-list'}) {
+export function validateQxFilterList(text,entry={id:'filter-list'},{builtInPoliciesOnly=false}={}) {
   for(const raw of String(text).split('\n')) {
     const line=raw.trim();
     if(!line||/^(?:#|;|\/\/)/.test(line))continue;
     if(!QX_WAYX_FILTER_TYPES.has(line.split(',')[0].trim().toLowerCase()))throw new Error(entry.id+': unsupported QX filter type: '+line);
     validateQxExecutableLine(line,entry,'filter_local');
+    if(builtInPoliciesOnly&&!['direct','reject','proxy'].includes(line.split(',')[2]?.trim()))throw new Error(entry.id+': generated rule policy must be direct, reject or proxy: '+line);
   }
 }
 

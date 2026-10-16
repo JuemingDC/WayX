@@ -37,7 +37,7 @@ for(const file of Object.keys(routing.outputs||{})) {
  try {
   if(!/^Rule\/(?:QuantumultX|Surge)\/[a-z0-9_]+\.list$/.test(file))throw new Error('Invalid managed rule collection path');
   const text=await fs.readFile(file,'utf8');
-  if(file.startsWith('Rule/QuantumultX/'))validateQxFilterList(text,{id:file});
+  if(file.startsWith('Rule/QuantumultX/'))validateQxFilterList(text,{id:file},{builtInPoliciesOnly:true});
   else validateSurgeRuleSet(text,{id:file});
  }catch(error){errors.push({file,code:'rule-collection-format',text:String(error.message||error)});}
 }

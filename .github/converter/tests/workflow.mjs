@@ -370,6 +370,8 @@ module.execute_checks('fixture', [('first-fails',[sys.executable,'-c','raise Sys
   assert.throws(()=>validateSurgeRuleSet('DOMAIN,example.com,PROXY\n'),/options\/policy/);
   assert.throws(()=>validateQxFilterList('PROCESS-NAME,Claude,proxy\n'),/unsupported QX filter/);
   assert.throws(()=>validateQxFilterList('host,example.com\n'));
+  validateQxFilterList('host,one.test,direct\nhost,two.test,reject\nhost,three.test,proxy\n',{id:'mixed'},{builtInPoliciesOnly:true});
+  assert.throws(()=>validateQxFilterList('host,example.com,Media\n',{id:'named'},{builtInPoliciesOnly:true}),/policy must be/);
   const pythonRules=runIsolatedCase('python',['-c',String.raw`
 import importlib.util,sys,tempfile,os,json
 from pathlib import Path
@@ -379,6 +381,9 @@ assert m.compact([R('DOMAIN-SUFFIX','example.com'),R('DOMAIN','a.example.com'),R
 assert m.compact([R('DOMAIN','example.com'),R('DOMAIN-SUFFIX','sub.example.com')])==[R('DOMAIN','example.com'),R('DOMAIN-SUFFIX','sub.example.com')]
 for policy in ['REJECT','REJECT-DROP','REJECT-NO-DROP','REJECT-TINYGIF']:
  assert m.serialize(R('DOMAIN','example.com'),policy,'QuantumultX')=='host,example.com,reject'
+for policy in ['PROXY','proxy','ai','Media','google','',None]:
+ assert m.serialize(R('DOMAIN','example.com'),policy,'QuantumultX')=='host,example.com,proxy'
+assert m.serialize(R('DOMAIN','example.com'),'direct','QuantumultX')=='host,example.com,direct'
 assert m.serialize(R('IP-CIDR','1.2.3.0/24',('no-resolve',)),'DIRECT','Surge')=='IP-CIDR,1.2.3.0/24,no-resolve'
 assert m.serialize(R('IP-CIDR','1.2.3.0/24',('no-resolve',)),'DIRECT','QuantumultX')=='ip-cidr,1.2.3.0/24,direct'
 assert m.regex_native(r'^a.+?\.example\.com$')=={R('DOMAIN-WILDCARD','a?*.example.com')}
@@ -439,12 +444,19 @@ config={'applications':[{'name':'brand','tags':['fixture','proxy'],'proxy_tags':
 'sources':[{'id':'supplement','format':'ruleset','author':'Fixture','url':'https://example.test/rules','category':'brand','policy':'DIRECT'}]}
 outputs,metadata,anomalies=m.build(config,{'geosite':encoded,'supplement':b'DOMAIN,static.proxy.example.com,DIRECT\nPROCESS-NAME,Claude Helper\n'})
 qx=outputs['Rule/QuantumultX/brand.list']
-assert qx.index('host,static.proxy.example.com,direct')<qx.index('host-suffix,proxy.example.com,brand')<qx.index('host-suffix,example.com,direct')
+assert qx.index('host,static.proxy.example.com,direct')<qx.index('host-suffix,proxy.example.com,proxy')<qx.index('host-suffix,example.com,direct')
 assert all('PROCESS-NAME' not in text for text in outputs.values())
 assert metadata['Rule/Surge/brand_direct.list']['category']=='app'
 assert 'NOT,((DOMAIN,static.proxy.example.com))' in outputs['Rule/Surge/brand_proxy.list']
 assert any(item['code']=='filtered-desktop-rule' for item in anomalies)
 assert not any(item['code']=='filtered-unsupported-target' for item in anomalies)
+# Mixed files keep explicit direct/reject and normalize every placeholder to proxy.
+mixed,_,_=m.build(config,{'geosite':encoded,'supplement':b'DOMAIN,static.proxy.example.com,DIRECT\nDOMAIN,blocked.example.com,REJECT-DROP\nDOMAIN,blocked.example.com,PROXY\nDOMAIN,extra.test,PROXY'})
+mixed_qx=mixed['Rule/QuantumultX/brand.list']
+assert 'host,blocked.example.com,reject' in mixed_qx and 'host,extra.test,proxy' in mixed_qx
+assert 'host,static.proxy.example.com,direct' in mixed_qx
+assert mixed_qx.index('host,blocked.example.com,reject')<mixed_qx.index('host,blocked.example.com,proxy')
+assert {line.split(',')[2] for line in mixed_qx.splitlines()}=={'direct','reject','proxy'}
 # Exclusions apply to primary and supplemental category inputs without per-source special cases.
 config['applications'][0]['exclude_tags']=['fixture']
 scoped,_,_=m.build(config,{'geosite':encoded,'supplement':b'DOMAIN,domestic.example.com,PROXY\nDOMAIN-SUFFIX,elsewhere.test,PROXY'})
