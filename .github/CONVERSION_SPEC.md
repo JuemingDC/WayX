@@ -1,8 +1,8 @@
 # WayX Conversion Specification
 
-版本：2.7
+版本：2.8
 
-更新：2026-10-14
+更新：2026-10-16
 作者：chance  
 状态：唯一权威转换规范（Authoritative）
 
@@ -126,6 +126,10 @@ Script v2 path/tag/img_url 必须是固定 String/Raw String，真实模板或�
 ## 2.11 Rule 与目标输出
 
 Rule 使用独立 target-neutral IR，仅输出官方已确认的 type/policy/参数。除下面列出的用户策略外保留源 policy；Surge 的 PROXY 需要外部 Module 参数绑定，QX 保留字面 policy 名。不用 HTTP Rewrite Script 冒充 QX 网络层缺失的 Rule 类型。未知或不能安全表达的类型注释并诊断。
+
+Loon build 1008+ 的 `DOMAIN-WILDCARD` 使用完整域名 Glob 匹配，支持 `*`（含零字符、跨点）、`?`（一个字符）、`[abc]`、`[0-9]` 和 `[!abc]`/`[^abc]`。Surge 使用官方 `DOMAIN-WILDCARD` 原样保留 pattern（包括逻辑子规则），沿用 policy 绑定及 matching 增强；不得降为 DOMAIN-SUFFIX 或 URL-REGEX。QX 按用户确认，将所有形式的 `DOMAIN-WILDCARD` 统一直接映射为 `host-wildcard`，完整保留 pattern，包括字符集合、范围及否定集合；不添加 pattern 形式判断、Review 拦截或 HTTP Script。类型命名与分段格式仍遵循上传的《示例配置(1).txt》。原注释、禁用状态、作者、转换时间与分类沿用共同输出逻辑。
+
+依据：Loon https://nsloon.app/docs/Rule/domain_rule/；Surge https://manual.nssurge.com/rules/domain.html；QX 为用户上传官方示例。Script Hub Beta `b31b010d111aa81e8b89635f08d401c960d29538` 的 Loon/Surge DOMAIN-WILDCARD 保留逻辑仅作实现参考，不替代上述目标官方依据。
 
 用户指定的精确域名例外：所有转换产物中的 `DOMAIN,dns.weixin.qq.com` 和 `DOMAIN,dns.weixin.qq.com.cn` 使用 DIRECT（QX 为 `host, ..., direct`），在目标 planner 统一执行，不依赖插件 id。源 Loon 快照保留原文；不扩展到 DOMAIN-SUFFIX、DOMAIN-KEYWORD、逻辑子条件或其它子域名。Surge DIRECT 不携带仅适用于拒绝策略的 pre-matching；extended-matching 沿用既有目标规则。
 
