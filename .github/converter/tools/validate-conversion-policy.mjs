@@ -3,6 +3,7 @@
 // Author: chance
 // Category: Converter / Validation / CLI
 import fs from 'node:fs/promises';
+import {writeValidationEvidence} from '../src/workflow.mjs';
 import {execFileSync} from 'node:child_process';
 import {validateQX} from "../src/output.mjs";
 import {validateSurgeModule} from "../src/output.mjs";
@@ -26,9 +27,10 @@ for(const {entry,target,file} of selected){
   validateConversionMetadata(text,entry,target);
   if(target==='qx')validateQX(text,entry);
   else validateSurgeModule(text,entry);
- }catch(error){errors.push(file+': '+String(error.message||error));}
+ }catch(error){errors.push({file,plugin:entry.id,code:'target-format',text:String(error.message||error)});}
 }
+await writeValidationEvidence(selected.length,errors);
 if(errors.length){
- for(const error of errors)console.error('ERROR: '+error);
+ for(const error of errors)console.error('ERROR: '+error.file+': '+error.text);
  process.exitCode=1;
 }else console.log('Conversion policy validation passed for '+selected.length+' generated target(s).');

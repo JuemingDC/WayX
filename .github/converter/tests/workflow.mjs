@@ -7,9 +7,9 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { conversionStampFromText, firstConversionStamp, generatedScriptDiffs, inspectManagedSource, isWayxGeneratedHelperFilename, managedSourceDigest, managedTargetDiffs, normalizeManagedSource, readCatalogSource, readManagedTargetState, syncGeneratedScripts, syncManagedSource, writeManagedSource, writeManagedTargets, ORIGINAL_FETCH_PROFILES, WAYX_FETCH_UA, WAYX_LOON_FETCH_UA, resolveOriginalUrl, selectOriginalFetchProfile, loadLoonSourceCatalog, qxTargetPath, surgeTargetPath } from "../src/index.mjs";
-import { createWorkflowFailureReporter, formatWorkflowErrorAnnotation, buildSyncFailure, failureDeclarationContext, README_AUTO_UPDATE_INTERVAL, QX_MIXED_REWRITE_MIN_BUILD, buildReadmePlan, qxAddResourceUrl, qxSnippetInstallUrl, surgeModuleInstallUrl } from "../src/workflow.mjs";
+import { recordOutputMismatch, outputMismatch, validationArtifactDigest, writeValidationEvidence, createWorkflowFailureReporter, formatWorkflowErrorAnnotation, buildSyncFailure, failureDeclarationContext, README_AUTO_UPDATE_INTERVAL, QX_MIXED_REWRITE_MIN_BUILD, buildReadmePlan, qxAddResourceUrl, qxSnippetInstallUrl, surgeModuleInstallUrl } from "../src/workflow.mjs";
 import { isLoonPluginSource } from "../../scripts/sync-convert.mjs";
-import { syncFailureIssueBody, syncFailureTitle, targetProblemIssueBody, targetProblemTitle, monitorFailureTitle, monitorFailureIssueBody, recoveredMonitorIssues } from "../../scripts/propose-conversion-issues.mjs";
+import { syncFailureIssueBody, syncFailureTitle, targetProblemIssueBody, targetProblemTitle, monitorFailureTitle, monitorFailureIssueBody, recoveredMonitorIssues, validationIssueCandidates, validationFailureTitle, validationFailureIssueBody, recoveredValidationIssues, recoveredConversionIssues } from "../../scripts/propose-conversion-issues.mjs";
 
 import { spawnSync as runIsolatedCase } from 'node:child_process';
 import { fileURLToPath as isolatedSuitePath } from 'node:url';
@@ -288,13 +288,16 @@ try {
   const output=path.join(automationRoot,'output');
   const required=['syntax','catalog','checkpoint','loon_sync','verify','reports','issues'];
   const outcomes=Object.fromEntries(required.map(name=>[name,{outcome:'success'}]));
-  const gate=async(stages,integrity='true',monitor='false',complete='true')=>{
+  const gate=async(stages,integrity='true',monitor='false',complete='true',evidence=null)=>{
+    const validation=evidence||{version:1,stages:Object.fromEntries(Object.entries(stages).filter(([name])=>name!=='issues').map(([name,value])=>[name,{complete:true,checks:[{id:'fixture',status:value.outcome==='success'?'passed':'failed'}]}]))};
+    await fs.writeFile(path.join(automationRoot,'.github/monitor/.runtime/validation-results.json'),JSON.stringify(validation));
     await fs.writeFile(output,'');
     const result=runIsolatedCase('bash',['-e','-c',gateProgram],{cwd:automationRoot,encoding:'utf8',env:{...process.env,STAGES:JSON.stringify(stages),SYNC_PUBLISHABLE:integrity,MONITOR_ENABLED:monitor,MONITOR_COMPLETE:complete,GITHUB_OUTPUT:output}});
     assert.equal(result.status,0,result.stderr);
     return JSON.parse(await fs.readFile(path.join(automationRoot,'.github/monitor/.runtime/pipeline-result.json'),'utf8'));
   };
   assert.equal((await gate(outcomes)).publishable,true);
+  for(const evidence of [{version:1,stages:{}},{version:1,stages:{syntax:{complete:false,checks:[]}}}])assert.equal((await gate(outcomes,'true','false','true',evidence)).publishable,false,'missing/incomplete machine checks must block green workflow outcomes');
   for(const name of required)for(const outcome of ['failure','skipped']) {
     const result=await gate({...outcomes,[name]:{outcome}});
     assert.equal(result.publishable,false);assert.ok(result.failedGates.includes(name));
@@ -318,6 +321,49 @@ try {
   assert.equal(finalize('true','success').status,0);
   assert.notEqual(finalize('false','success').status,0);
   assert.notEqual(finalize('true','failure').status,0);
+  const expected='# Converted: old\nline one\nexpected\n';
+  assert.equal(outputMismatch('file',expected,expected.replace('old','new')),null);
+  const mismatch=outputMismatch('file',expected,expected.replace('expected','actual'),'plugin');
+  assert.equal(mismatch.line,3);assert.match(mismatch.expected,/expected/);assert.match(mismatch.actual,/actual/);
+  assert.notEqual(mismatch.expectedHash,mismatch.actualHash);
+  assert.equal(outputMismatch('missing','expected',null).actualHash,null);
+  const priorEvidence=process.env.WAYX_CHECK_REPORT;
+  try {
+    process.env.WAYX_CHECK_REPORT=path.join(automationRoot,'differences.json');
+    const recorded=await recordOutputMismatch('output.snippet','first\nexpected\nlast\n','first\nactual\nlast\n','fixture');
+    const patch=await fs.readFile(path.resolve(recorded.evidence.patch),'utf8');
+    assert.match(patch,/-expected/);assert.match(patch,/\+actual/);
+    assert.equal(await fs.readFile(path.resolve(recorded.evidence.expected),'utf8'),'first\nexpected\nlast\n');
+  } finally {if(priorEvidence===undefined)delete process.env.WAYX_CHECK_REPORT;else process.env.WAYX_CHECK_REPORT=priorEvidence;}
+  const convertedIssue={title:'[conversion-unknown:0123456789abcdef] fixture unknown-source-syntax',state:'OPEN',labels:[{name:'conversion-unknown'}]};
+  const healthyConversion={syncReport:{publishable:true,convertedPlugins:['fixture'],failures:[]},targetProblems:[]};
+  assert.deepEqual(recoveredConversionIssues(healthyConversion,[convertedIssue]),[convertedIssue]);
+  assert.deepEqual(recoveredConversionIssues({...healthyConversion,targetProblems:[{plugin:{id:'fixture'}}]},[convertedIssue]),[]);
+  assert.deepEqual(recoveredConversionIssues({...healthyConversion,syncReport:{...healthyConversion.syncReport,convertedPlugins:[]}},[convertedIssue]),[]);
+
+  const execute=runIsolatedCase('python',['-c',String.raw`
+import importlib.util, sys
+spec=importlib.util.spec_from_file_location('automation',sys.argv[1]); module=importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+module.execute_checks('fixture', [('first-fails',[sys.executable,'-c','raise SystemExit(2)']),('second-runs',[sys.executable,'-c','print("completed")'])])
+`,path.join(ROOT,'.github/scripts/automation.py')],{cwd:automationRoot,encoding:'utf8'});
+  assert.notEqual(execute.status,0);
+  const evidence=JSON.parse(await fs.readFile(path.join(automationRoot,'.github/monitor/.runtime/validation-results.json'),'utf8'));
+  assert.deepEqual(evidence.stages.fixture.checks.map(check=>check.status),['failed','passed'],'independent checks continue after failure');
+  const validation=await validationIssueCandidates(automationRoot);
+  assert.equal(validation.validationFailures.length,1);
+  const failure=validation.validationFailures[0];
+  assert.equal(failure.checks.length,1);assert.equal(failure.stage,'fixture');
+  assert.match(validationFailureIssueBody(failure),/first-fails/);
+  assert.doesNotMatch(validationFailureIssueBody(failure),/second-runs/,'successful checks stay out of human review');
+  assert.equal(validationFailureTitle(failure),validationFailureTitle({...failure,checks:[]}), 'stage issues are reused as failure details change');
+  const managedValidation={title:validationFailureTitle(failure),state:'OPEN',labels:[{name:'validation-failure'}]};
+  assert.deepEqual(recoveredValidationIssues(evidence,[managedValidation]),[]);
+  const healthy={stages:{fixture:{complete:true,checks:[{id:'first-fails',status:'passed'}]}}};
+  assert.deepEqual(recoveredValidationIssues(healthy,[managedValidation]),[managedValidation]);
+  assert.deepEqual(recoveredValidationIssues({...healthy,stages:{fixture:{complete:false,checks:[]}}},[managedValidation]),[]);
+  const interrupted=await validationIssueCandidates(automationRoot,{catalog:{outcome:'failure'}});
+  assert.ok(interrupted.validationFailures.some(failure=>failure.stage==='catalog'));
+
   const icu=(pattern)=>runIsolatedCase('python',[path.join(ROOT,'.github/scripts/automation.py'),'regex'],{
     encoding:'utf8',input:JSON.stringify([{pattern,label:'target fixture'}]),
   });
@@ -409,14 +455,12 @@ if (selectedCase === "upstream-automation.mjs") {
     assert.equal(result.status,0,result.stderr);
     const {a,b,titles}=JSON.parse(result.stdout);assert.deepEqual(a,b,'fingerprints and candidates remain stable');
     assert.equal(a.syncFailures.length,1,'read the same .github runtime report written by sync');
-    assert.equal(a.targetProblems.length,8,'new identifiers and unsupported V2/legacy syntax are reported');
-    assert.ok(a.targetProblems.some(group=>group.source===fresh&&group.reasons.some(reason=>reason.includes('response.header.del'))));
+    assert.equal(a.targetProblems.length,5,'only unregistered or invalid source grammar requires review');
+    for(const source of [fresh,legacyNew,scriptNew])assert.ok(!a.targetProblems.some(group=>group.source===source),'registered syntax is accepted even when absent from historical catalog: '+source);
     assert.ok(a.targetProblems.some(group=>group.source===unknown));
-    for(const source of [legacyNew,legacyUnknown,scriptNew,scriptUnknown,declarationOnly])assert.ok(a.targetProblems.some(group=>group.source===source),source);
-    assert.ok(a.targetProblems.some(group=>group.source===legacyNew&&group.reasons.some(reason=>reason.includes('legacyRewrite.actionKinds'))));
-    assert.ok(a.targetProblems.some(group=>group.source===scriptNew&&group.reasons.some(reason=>reason.includes('legacyScript.optionNames'))));
+    for(const source of [legacyUnknown,scriptUnknown,declarationOnly])assert.ok(a.targetProblems.some(group=>group.source===source),source);
     assert.ok(a.targetProblems.every(group=>![known,selectedScript,legacyKnown,scriptKnown,'response reject','generic reject'].includes(group.source)&&group.declarations[0].line===group.source));
-    assert.equal(new Set(titles).size,8);
+    assert.equal(new Set(titles).size,5);
     assert.ok(a.targetProblems.some(group=>group.source===selectedJq),'source preflight must review all retained actions, including those alongside JQ');
     const sourcePath=path.join(issueFixture,'Resource/Loon/test.lpx');
     const originalSource=await fs.readFile(sourcePath,'utf8');
@@ -429,7 +473,7 @@ if (selectedCase === "upstream-automation.mjs") {
     const merged=runIsolatedCase(process.execPath,['--input-type=module','-e','import {collectIssueCandidates} from '+JSON.stringify(url)+'; console.log(JSON.stringify(await collectIssueCandidates()));'],{cwd:issueFixture,encoding:'utf8'});
     assert.equal(merged.status,0,merged.stderr);
     const mergedProblems=JSON.parse(merged.stdout).targetProblems;
-    assert.equal(mergedProblems.length,8,'source and target representations of the same declaration must deduplicate');
+    assert.equal(mergedProblems.length,5,'source and target representations of the same declaration must deduplicate');
     assert.equal(mergedProblems.filter(group=>group.source===legacyUnknown).length,1);
     assert.ok(mergedProblems.find(group=>group.source===legacyUnknown).locations.length>0);
     const monitorFailure={source:{id:'official-fixture',repo:'example/docs',ref:'main'},stage:'fetch-and-mirror',errorType:'RuntimeError',reason:'HTTP 503 downloading docs.js',rollbackSucceeded:true};
@@ -488,7 +532,15 @@ if (selectedCase === "upstream-automation.mjs") {
     await fs.writeFile(path.join(issueFixture,'Adblock/Surge/test.sgmodule'),'[Rule]\nDOMAIN,example.test,REJECT\n');
     await fs.writeFile(baseline,JSON.stringify(validBaseline));
     const runReports=()=>runIsolatedCase(process.execPath,[new URL('../tools/conversion-reports.mjs',import.meta.url).pathname],{cwd:issueFixture,encoding:'utf8'});
+    assert.notEqual(runReports().status,0,'missing canonical evidence cannot imply successful conversion');
+    const artifacts={};
+    for(const file of ['Resource/Loon/test.lpx','Adblock/Quantumult X/test.snippet','Adblock/Surge/test.sgmodule'])artifacts[file]=validationArtifactDigest(await fs.readFile(path.join(issueFixture,file),'utf8'));
+    await fs.writeFile(path.join(runtime,'validation-results.json'),JSON.stringify({version:1,stages:{verify:{complete:true,checks:[{id:'tools/regenerate-canonical.mjs',status:'passed',coverage:{plugins:[plugin.id],artifacts}}]}}}));
     const reported=runReports();assert.equal(reported.status,0,reported.stderr);
+    await fs.appendFile(path.join(issueFixture,'Adblock/Surge/test.sgmodule'),'DOMAIN,changed.test,REJECT\n');
+    assert.notEqual(runReports().status,0,'stale canonical evidence cannot validate changed outputs');
+    await fs.writeFile(path.join(issueFixture,'Adblock/Surge/test.sgmodule'),'[Rule]\nDOMAIN,example.test,REJECT\n');
+
     assert.ok(reported.stdout.includes('qx Review count increased from 0 to 1'),'use migrated baseline, not decoy old path');
     const reportFile=path.join(runtime,'review-inventory.json'), savedReport=await fs.readFile(reportFile,'utf8');
     for(const bad of [null,'{invalid JSON','null','{}',JSON.stringify({version:1,review:{byPlatform:{qx:-1,surge:0}}}),JSON.stringify({version:1,review:{byPlatform:{qx:0}}})]) {

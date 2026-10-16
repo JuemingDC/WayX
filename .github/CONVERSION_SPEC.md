@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：2.11
+版本：2.12
 
 更新：2026-10-16
 作者：chance  
@@ -177,7 +177,7 @@ loon.json 为完整生成态 Catalog。可莉目录从 https://hub.kelee.one/lis
 
 Plugin、作者 Script、JQ/mock 依赖均读取原作者 URL。host profile 可选择 User-Agent、Python urllib 或 Node fetch，原 URL 不变，不用镜像/仓库 fallback；瞬时网络错误只有限重试同一 URL。Python 抓取成功只证明可取得内容，不证明真实客户端执行、编码、压缩或缓冲等价。
 
-发现入口将原始响应及来源 URL 交监控复用，缺失/空内容/来源不符失败，不重复获取另一份目录。报告记录新增、修改、删除的实际条目，新语义必须先审查，不自动修改 capability/golden baseline。
+发现入口将原始响应及来源 URL 交监控复用，缺失/空内容/来源不符失败，不重复获取另一份目录。报告记录新增、修改、删除的实际条目，已注册语法按目标规划直接转换，不以历史目录是否出现作为审批条件；未知语法或无法满足目标契约时保留源声明并提 Issue，不自动扩充 capability/golden baseline。
 
 端到端黄金测试使用 `fixtures/end-to-end-sources/` 中的固定离线输入，不读取每天同步更新的 Resource 源文件；输入快照及预期摘要仅在审查后共同更新。实际 Catalog 与最新源的校验仍由目录 inventory、全量转换、canonical 和成品验证承担，不能以固定黄金样本替代。
 
@@ -209,13 +209,19 @@ Review inventory baseline 必须可读且结构有效，不能跳过比较。同
 
 监控告警恢复在现有 Issue 生命周期统一处理：仅完整、无失败且明确列出该来源成功的报告可关闭带受管监控标签的对应告警。缺失报告、未覆盖来源、失败或只读执行不得关闭告警。
 
+所有自动化阶段通过 automation.py 的共同检查入口执行，独立检查失败后继续收集同阶段其它检查。每项记录命令、退出码、完成状态及日志位置，实际差异保存文件、首个差异位置、预期/实际片段及摘要；语法、规范能力、Rule/Rewrite/Script/General/MITM、依赖、helpers/runtime、metadata/注释、目录/README/手写资源和发布门禁继续使用现有领域检查，不另写同类特例。成功项在控制台和 summary 只显示计数，完整日志随 artifact 保存，人工仅查看异常。机器报告缺失、不完整或失败不得由绿色 step 状态替代。
+
+验证异常按阶段使用稳定 fingerprint 复用受管 Issue，附本次 Action 链接、失败检查与证据位置；完整成功的同阶段检查才可关闭该类告警。只读执行不得写 Issue。未知源语法继续附源声明，不能猜测为有效规则。
+
+Canonical 逐文件比较实际源、QX、Surge 和 helper；对账报告只将已通过 canonical 比较且源/目标摘要仍匹配的条目标为 verified。缺失证据、未匹配声明、变化后的过期证据都标为异常，不能把“没有诊断注释”当成转换成功。已隔离并完整保留旧基线的同步失败单独标为 retained，继续通过原有同步 Issue 跟踪，不冒充本轮转换成功，也不因此取消其它插件的发布资格；旧基线仍须通过目标格式、引用和仓库完整性检查。Markdown 对账仅列异常，完整结构化明细留在 artifact。
+
 发布只允许通过全部 required gates 的产物，提交前核对请求 head 未推进，提交后确认受管工作区无未保存变化。日志、发现结果、监控缓存、失败报告和生成产物随已有 artifact 保存。
 
 流程控制由 `.github/scripts/automation.py` 承担：分支预算、语法/checkpoint/成品验证编排、Issue 写入或只读选择、发布门禁、受管 Git 提交与 run summary。YAML 保留事件和阶段条件；Bash 仅调用程序并转存日志，不嵌入业务分支或 Python heredoc。发布程序继续核对 expected head、限制 main/test 与受管提交范围，并检查产物工作区。Node.js 26、Python 3.14 及转换核心语言不因该迁移改变。
 
 ## 2.17 验证要求
 
-保留 syntax、core/rewrite/script/conversion/architecture/workflow/official-capabilities/runtime、catalog、target policy、canonical、managed cleanliness、repository audit、helper/ref、作者 URL 与确定性检查。Inventory 只锁 semantic token，不使用完整 AST signature 白名单。
+保留 syntax、core/rewrite/script/conversion/architecture/workflow/official-capabilities/runtime、catalog、target policy、canonical、managed cleanliness、repository audit、helper/ref、作者 URL 与确定性检查。Inventory 记录观测类型与特征，不用历史 token 或具体正则清单作为新内容白名单；语法注册表、目标 validators、ICU 编译和独立语义测试决定是否可发布。
 
 Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生成脚本/原生 jq 对照。覆盖命中/no-op、URL/method/headers/body/status、captures、动作顺序、阶段所有权、单次 `$done`、missing/null/false/空值、Unicode/转义/原型键、依赖失败隔离与事务回滚。条件证据分别统计 false-positive / false-negative evidence；finite fixture 不能单独证明 native-equivalent，仍须结构及官方能力依据。
 

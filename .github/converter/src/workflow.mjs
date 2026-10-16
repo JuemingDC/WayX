@@ -5,6 +5,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
+import {spawnSync} from "node:child_process";
 import { normalizePluginSource, parseLoonPlugin } from "./input.mjs";
 
 
@@ -655,6 +656,48 @@ export async function writeSyncFailureReport(root,failures,{runtimeDir='.github/
 // Shared workflow diagnostics for catalog conversion runners.
 // Author: chance
 // Category: Converter / Workflow Diagnostics
+
+// Shared machine evidence for existing validation commands. Successful outputs
+// remain counts; mismatches retain bounded actual/expected excerpts and hashes.
+export async function writeValidationEvidence(checked,findings,coverage={}) {
+  const file=process.env.WAYX_CHECK_REPORT;
+  if(!file)return;
+  await fs.mkdir(path.dirname(file),{recursive:true});
+  await fs.writeFile(file,JSON.stringify({version:1,checked,findings,coverage},null,2)+'\n');
+}
+
+export async function recordOutputMismatch(file,expected,actual,plugin=null) {
+  const finding=outputMismatch(file,expected,actual,plugin);
+  const report=process.env.WAYX_CHECK_REPORT;
+  if(!finding||!report)return finding;
+  const dir=path.join(path.dirname(report),'output-differences');
+  await fs.mkdir(dir,{recursive:true});
+  const key=crypto.createHash('sha256').update(file).digest('hex').slice(0,16);
+  const want=path.join(dir,key+'.expected'),got=path.join(dir,key+'.actual'),patch=path.join(dir,key+'.patch');
+  await fs.writeFile(want,artifactContent(expected)??'');
+  await fs.writeFile(got,artifactContent(actual)??'');
+  const diff=spawnSync('git',['diff','--no-index','--no-color','--',want,got],{encoding:'utf8',maxBuffer:16*1024*1024});
+  if(diff.error||![0,1].includes(diff.status))throw new Error('Cannot record output difference: '+(diff.error?.message||diff.stderr));
+  await fs.writeFile(patch,diff.stdout);
+  finding.evidence={expected:path.relative(process.cwd(),want),actual:path.relative(process.cwd(),got),patch:path.relative(process.cwd(),patch)};
+  return finding;
+}
+
+export function validationArtifactDigest(value) {
+  const text=artifactContent(value);
+  return text==null?null:crypto.createHash('sha256').update(text).digest('hex');
+}
+
+export function outputMismatch(file,expected,actual,plugin=null) {
+  const want=artifactContent(expected),got=artifactContent(actual);
+  if(want===got)return null;
+  const a=String(want??'').split('\n'),b=String(got??'').split('\n');
+  let first=0;while(first<Math.min(a.length,b.length)&&a[first]===b[first])first++;
+  const digest=validationArtifactDigest;
+  return {code:'output-mismatch',file,plugin,line:first+1,expectedHash:digest(want),actualHash:digest(got),
+    expected:want==null?'(absent)':a.slice(Math.max(0,first-1),first+3).join('\n').slice(0,2000),
+    actual:got==null?'(absent)':b.slice(Math.max(0,first-1),first+3).join('\n').slice(0,2000)};
+}
 
 function fallbackValue(error, mode) {
   return mode === 'error' ? error : error?.message;

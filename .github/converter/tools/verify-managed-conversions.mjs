@@ -4,7 +4,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { loadLoonSourceCatalog } from "../src/input.mjs";
-import { buildReadmePlan } from "../src/workflow.mjs";
+import { writeValidationEvidence, buildReadmePlan } from "../src/workflow.mjs";
 
 const ROOT=process.cwd();
 const manifest=await loadLoonSourceCatalog(path.join(ROOT,'.github/sources/loon.json'));
@@ -90,6 +90,7 @@ if(readme){
   }
 }
 
+await writeValidationEvidence(manifest.length,findings.map(text=>({code:'managed-integrity',text})));
 if(findings.length){
   console.error('Managed conversion cleanliness gate failed with '+findings.length+' finding(s):');
   for(const finding of findings) console.error('- '+finding);

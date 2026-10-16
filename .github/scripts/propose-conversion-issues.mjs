@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { loadLoonSourceCatalog } from "../converter/src/input.mjs";
 import { parseLoonPlugin } from "../converter/src/input.mjs";
 
-import { isRewriteV2, parseRewriteV2, selectRewritePipelineLayer, classifyLegacyRewriteAction } from '../converter/src/rewrite.mjs';
+import { isRewriteV2, parseRewriteV2, selectRewritePipelineLayer, classifyLegacyRewriteAction, validateRewriteV2Ast, LOON_LEGACY_MOCK_OPTION_NAMES } from '../converter/src/rewrite.mjs';
 import { isScriptV2, parseScriptV2, parseLegacyScriptLine } from '../converter/src/script.mjs';
 
 const ROOT = process.cwd();
@@ -206,7 +206,7 @@ export function targetProblemIssueBody(group) {
     '',
     '## Automation behavior',
     '',
-    group.code==='new-catalog-semantic' ? 'This source declaration introduces syntax or semantic identifiers outside the reviewed catalog baseline. Review the conversion support before publishing the catalog update; automation preserves the declaration in this Issue.' : 'WayX failed closed for this declaration. No guessed active target rule is generated. The GitHub Actions workflow keeps processing other plugins and tracks this problem through this Issue.',
+    'WayX failed closed for this declaration. No guessed active target rule is generated. The workflow continues other plugins and tracks the original declaration through this Issue.',
     '',
   ].join('\n');
 }
@@ -279,73 +279,90 @@ async function upsertIssue({title,body,label}) {
   return url;
 }
 
-async function newCatalogSemantics(catalog,{root=ROOT,sourceOverrides=null}={}) {
-  const [v2,legacy]=await Promise.all(['catalog-syntax-inventory.json','catalog-legacy-syntax-inventory.json'].map(async name=>JSON.parse(await fs.readFile(path.join(root,'.github/converter/fixtures',name),'utf8'))));
-  const baseline={...v2,...legacy};
+async function sourceSemanticProblems(catalog,{root=ROOT,sourceOverrides=null}={}) {
   const out=[];
   for(const entry of catalog) {
     let plugin;
     try {plugin=parseLoonPlugin(sourceOverrides?.has(entry.id)?sourceOverrides.get(entry.id):await fs.readFile(path.join(root,'Resource/Loon',entry.file),'utf8'));}
-    catch {continue;} // A source read failure is reported by the sync transaction.
+    catch {continue;} // Source I/O failures belong to the sync transaction.
     for(const section of ['Rewrite','Script'])for(const raw of plugin.sections.get(section)||[]) {
       const line=raw.trim();if(!line || /^(?:#|;|\/\/)/.test(line))continue;
-      const scriptSyntax=isScriptV2(line);
-      const v2Syntax=scriptSyntax || (section==='Rewrite' && isRewriteV2(line));
-      const family=scriptSyntax?'scriptV2':section==='Rewrite'?(v2Syntax?'rewriteV2':'legacyRewrite'):'legacyScript';
-      const reasons=new Set();
-      const check=(key,value)=>{if(!baseline[family][key].includes(value))reasons.add('New '+family+'.'+key+': '+value);};
       try {
-        let ast;
-        if(v2Syntax)ast=scriptSyntax?parseScriptV2(line):selectRewritePipelineLayer(parseRewriteV2(line));
+        if(isScriptV2(line))parseScriptV2(line);
+        else if(section==='Rewrite' && isRewriteV2(line))validateRewriteV2Ast(selectRewritePipelineLayer(parseRewriteV2(line)));
         else if(section==='Rewrite') {
           const separator=line.search(/\s/);
           if(separator<1)throw new Error('Malformed Legacy Rewrite declaration');
-          const action=line.slice(separator).trim().replace(/^\-\s+/,'');
-          const operation=classifyLegacyRewriteAction(action);
+          const operation=classifyLegacyRewriteAction(line.slice(separator).trim().replace(/^\-\s+/,''));
           if(operation.kind==='unknown')throw new Error(operation.reason||'Unknown Legacy Rewrite action');
-          check('actionKinds',operation.kind);
-          for(const option of operation.optionNames||[])check('mockOptionNames',option);
-        } else {
-          ast=parseLegacyScriptLine(line);
-          if(!ast)throw new Error('Unregistered Legacy Script declaration or option');
-        }
-        if(ast) {
-          check('phases',ast.phase);
-          for(const action of ast.actions||[])check('actionNames',action.name);
-          for(const option of ast.options||[])check('optionNames',option.name);
-        }
-        const visit=node=>{
-          if(!node)return;
-          if(node.type==='group')return visit(node.expression);
-          if(node.type==='logical'){check('logicalOperators',node.operator);visit(node.left);visit(node.right);return;}
-          if(node.type==='comparison'){
-            const name=node.left.name;
-            const variable=/^(?:request|response)\.header\[['"].+['"]\]$/.test(name)?name.split('.')[0]+'.header[*]':['url','request.method','response.status'].includes(name)?name:'argument';
-            check('conditionVariables',variable);check('conditionOperators',node.operator);
-          }
-        };
-        if(ast)visit(ast.condition);
-      }catch(error){reasons.add('Source syntax requires review: '+error.message);}
-      if(!reasons.size)continue;
-      const code='new-catalog-semantic';
-      out.push({fingerprint:fingerprint([entry.id,'unknown',code,line]),kind:'unknown',code,plugin:entry,source:line,
-        reasons:[...reasons].sort(),locations:[],sourceSection:section,declarations:[{section,line}]});
+          for(const option of operation.optionNames||[])if(!LOON_LEGACY_MOCK_OPTION_NAMES.has(option))throw new Error('Unknown Legacy mock option: '+option);
+        } else if(!parseLegacyScriptLine(line))throw new Error('Unregistered Legacy Script declaration or option');
+      }catch(error){
+        const code='unknown-source-syntax';
+        out.push({fingerprint:fingerprint([entry.id,'unknown',code,line]),kind:'unknown',code,plugin:entry,source:line,
+          reasons:['Source syntax requires review: '+error.message],locations:[],sourceSection:section,declarations:[{section,line}]});
+      }
     }
   }
   return out;
 }
 
+export async function validationIssueCandidates(root=ROOT,stages={}) {
+  let report;
+  try {report=JSON.parse(await fs.readFile(path.join(root,'.github/monitor/.runtime/validation-results.json'),'utf8'));}
+  catch(error){if(error.code!=='ENOENT')throw error;report={version:1,stages:{}};}
+  if(report?.version!==1||!report.stages||typeof report.stages!=='object'||Array.isArray(report.stages))throw new Error('Invalid validation-results.json');
+  const failures=[];
+  for(const [stage,result] of Object.entries(report.stages)) {
+    if(typeof result?.complete!=='boolean'||!Array.isArray(result.checks)||result.checks.some(check=>!check?.id||!['passed','failed'].includes(check.status)))throw new Error('Invalid validation-results.json stage: '+stage);
+    const checks=result.checks.filter(check=>check.status==='failed');
+    if(!result.complete)checks.push({id:'incomplete-stage',status:'failed',detail:'Stage did not finish; previous successful evidence is invalid.'});
+    if(checks.length)failures.push({stage,checks});
+  }
+  for(const [stage,result] of Object.entries(stages))if(result.outcome==='failure'&&!['issues','gate','publish'].includes(stage)&&!failures.some(failure=>failure.stage===stage)) {
+    failures.push({stage,checks:[{id:'stage-failure',status:'failed',detail:'Workflow stage failed before complete check evidence was available. Inspect the stage log in the run artifact.'}]});
+  }
+  return {validationReport:report,validationFailures:failures};
+}
+
+export function validationFailureTitle(failure) {
+  return '[WayX validation] '+failure.stage+' ['+fingerprint(['validation',failure.stage])+']';
+}
+
+export function validationFailureIssueBody(failure) {
+  const run=process.env.GITHUB_RUN_ID,server=process.env.GITHUB_SERVER_URL||'https://github.com';
+  const lines=['Automated checks found results that require review. Publication remains gated.','',
+    '- Stage: '+failure.stage,'- Failed checks: '+failure.checks.length,
+    '- Run: '+(run?server+'/'+repo+'/actions/runs/'+run:'local validation'),
+    '- Full evidence: validation-results.json and per-check logs in the run artifact',''];
+  for(const check of failure.checks.slice(0,30)) {
+    lines.push('### '+check.id,'','- Log: '+(check.log||'workflow stage log'),'','~~~text',
+      JSON.stringify(check.findings?.length?check.findings:check.detail||'Check failed',null,2).slice(0,1400),'~~~','');
+  }
+  if(failure.checks.length>30)lines.push('Additional failures are preserved in the artifact.');
+  return lines.join('\n');
+}
+
+export function recoveredValidationIssues(report,issues) {
+  return issues.filter(issue=>{
+    const match=String(issue.title??'').match(/^\[WayX validation\] (\S+) \[([a-f0-9]{16})\]$/);
+    const result=match&&report?.stages?.[match[1]];
+    return issue.state==='OPEN'&&issue.labels?.some(label=>label.name==='validation-failure')&&result?.complete===true&&result.checks?.length>0&&result.checks.every(check=>check.status==='passed');
+  });
+}
+
 export async function collectIssueCandidates({root=ROOT,catalog=null,sourceOverrides=null,includeTargets=true,includeSyncFailures=true}={}) {
   catalog=catalog||await loadLoonSourceCatalog(path.join(root,'.github/sources/loon.json'));
   const targetProblems=includeTargets?await groupedTargetProblems(catalog):[];
-  for(const problem of await newCatalogSemantics(catalog,{root,sourceOverrides})){
+  for(const problem of await sourceSemanticProblems(catalog,{root,sourceOverrides})){
     if(!targetProblems.some(group=>group.plugin.id===problem.plugin.id&&group.source===problem.source))targetProblems.push(problem);
   }
   const syncReport=includeSyncFailures?await readFailureReport(path.join(root,'.github/monitor/.runtime/sync-failures.json'),'sync'):{failures:[]};
   const syncFailures=syncReport.failures;
   const monitorReport=includeSyncFailures?await readFailureReport(path.join(root,'.github/monitor/.runtime/monitor-result.json'),'monitor'):{failures:[]};
   const monitorFailures=monitorReport.failures;
-  return {targetProblems,syncFailures,monitorFailures,monitorReport};
+  const validation=includeSyncFailures?await validationIssueCandidates(root,JSON.parse(process.env.STAGES||'{}')):{validationReport:{version:1,stages:{}},validationFailures:[]};
+  return {targetProblems,syncFailures,monitorFailures,monitorReport,syncReport,...validation};
 }
 
 export function monitorFailureTitle(failure) {
@@ -374,17 +391,31 @@ export function recoveredMonitorIssues(report,issues) {
   });
 }
 
-function reconcileMonitorIssues(report) {
-  if(report?.complete!==true||report.failures.length||!report.results?.length)return;
-  const issues=JSON.parse(gh(['issue','list','--repo',repo,'--state','open','--label','upstream-monitor-failure','--limit','1000','--json','number,title,state,labels']));
-  for(const issue of recoveredMonitorIssues(report,issues)) {
+export function recoveredConversionIssues({syncReport,targetProblems},issues) {
+  if(syncReport?.publishable!==true||!Array.isArray(syncReport.convertedPlugins)||!Array.isArray(syncReport.failures))return [];
+  const healthy=new Set(syncReport.convertedPlugins),failed=new Set(syncReport.failures.map(failure=>failure.plugin.id));
+  for(const problem of targetProblems)failed.add(problem.plugin.id);
+  return issues.filter(issue=>{
+    const match=String(issue.title??'').match(/^\[conversion-(failure|unknown|review):[a-f0-9]{16}\] (\S+) /);
+    return issue.state==='OPEN'&&match&&issue.labels?.some(label=>label.name==='conversion-'+match[1])&&healthy.has(match[2])&&!failed.has(match[2]);
+  });
+}
+
+function reconcileManagedIssues(context) {
+  const {monitorReport,validationReport,validationFailures,syncReport}=context;
+  if(monitorReport.complete!==true&&!Object.values(validationReport.stages).some(stage=>stage.complete)&&syncReport.publishable!==true)return;
+  const issues=JSON.parse(gh(['issue','list','--repo',repo,'--state','open','--limit','1000','--json','number,title,state,labels']));
+  const recovered=[...recoveredMonitorIssues(monitorReport,issues),
+    ...recoveredValidationIssues(validationReport,issues).filter(issue=>!validationFailures.some(failure=>validationFailureTitle(failure)===issue.title)),
+    ...recoveredConversionIssues(context,issues)];
+  for(const issue of recovered) {
     gh(['issue','close',String(issue.number),'--repo',repo,'--reason','completed']);
-    console.log('Resolved recovered monitor issue #'+issue.number);
+    console.log('Resolved recovered managed issue #'+issue.number);
   }
 }
 
 async function main() {
-  const {targetProblems,syncFailures,monitorFailures,monitorReport}=await collectIssueCandidates();
+  const {targetProblems,syncFailures,monitorFailures,monitorReport,syncReport,validationReport,validationFailures}=await collectIssueCandidates();
   await fs.mkdir(runtimeDir,{recursive:true});
   const lines=[
     '# WayX automated conversion issues',
@@ -392,6 +423,7 @@ async function main() {
     '- Source/target semantic problems: '+targetProblems.length,
     '- Hard sync failures: '+syncFailures.length,
     '- Upstream monitor failures: '+monitorFailures.length,
+    '- Validation stages requiring review: '+validationFailures.length,
     '',
   ];
   for (const group of targetProblems) {
@@ -400,20 +432,24 @@ async function main() {
   }
   for (const failure of syncFailures) lines.push('- '+syncFailureTitle(failure));
   for (const failure of monitorFailures) lines.push('- '+monitorFailureTitle(failure));
+  for(const failure of validationFailures)lines.push('- '+validationFailureTitle(failure));
   await fs.writeFile(summaryPath,lines.join('\n')+'\n');
 
   const output=process.env.GITHUB_OUTPUT;
   if (output) {
-    await fs.appendFile(output,'has_issues='+(targetProblems.length || syncFailures.length || monitorFailures.length ? 'true' : 'false')+'\n');
+    await fs.appendFile(output,'has_issues='+(targetProblems.length || syncFailures.length || monitorFailures.length || validationFailures.length ? 'true' : 'false')+'\n');
     await fs.appendFile(output,'summary='+path.relative(ROOT,summaryPath).replaceAll(path.sep,'/')+'\n');
   }
 
   if (dryRun) {
-    console.log(JSON.stringify({targetProblems,syncFailures,monitorFailures},null,2));
+    console.log(JSON.stringify({targetProblems,syncFailures,monitorFailures,validationFailures},null,2));
     return;
   }
-  if(repo)reconcileMonitorIssues(monitorReport);
-  if (!targetProblems.length && !syncFailures.length && !monitorFailures.length) {
+  if(repo){
+    if(validationFailures.length)await ensureLabel('validation-failure','Automated output, syntax, runtime or workflow validation failed','B60205');
+    reconcileManagedIssues({monitorReport,validationReport,validationFailures,syncReport,targetProblems});
+  }
+  if (!targetProblems.length && !syncFailures.length && !monitorFailures.length && !validationFailures.length) {
     console.log('No conversion issue candidates found.');
     return;
   }
@@ -438,6 +474,7 @@ async function main() {
       label:'conversion-failure',
     });
   }
+  for(const failure of validationFailures)await upsertIssue({title:validationFailureTitle(failure),body:validationFailureIssueBody(failure),label:'validation-failure'});
   for(const failure of monitorFailures)await upsertIssue({title:monitorFailureTitle(failure),body:monitorFailureIssueBody(failure),label:'upstream-monitor-failure'});
 }
 
