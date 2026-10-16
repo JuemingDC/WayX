@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/webpage.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-10-13 12:35:02 +08:00
+# Converted: 2026-10-16 13:45:12 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/webpage.lpx
@@ -25,8 +25,8 @@ host, yhg007.com, PROXY
 
 # 桌面端请使用 https://google.com/ncr
 # 谷歌服务重定向 //*.google.cn
-^ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Webpage/redirect_c6b7d5dbe6.js
-^ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Webpage/redirect_b0a7bd4ec8.js
+(?i)^https?:\/\/(www\.)?(?:g|google)\.cn url 302 https://www.google.com
+(?i)^https?:\/\/translate\.google\.cn url 302 https://translate.google.com
 
 {# Avple 跳转弹窗 //asserts.avple.tv #} (?i)^https:\/\/asserts\.avple\.tv\/file\/avple-images\/ad\.js url reject
 
@@ -37,11 +37,11 @@ host, yhg007.com, PROXY
 (?i)https:\/\/(rule\.)?kelee\.one\/ url response-header (?m)^()(?i:content-type):[^\r\n]*(?:\r?\n|$) response-header $1
 (?i)https:\/\/(rule\.)?kelee\.one\/ url response-header ^([^\r\n]+)(\r\n) response-header $1$2content-type: text/plain; charset=utf-8$2
 
-{# E-Hentai (https://e-hentai.org) //e-hentai.org, exhentai.org #} ^ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Webpage/redirect_1cb6a93724.js
+{# E-Hentai (https://e-hentai.org) //e-hentai.org, exhentai.org #} (?i)^https:\/\/exhentai\.org url 307 https://e-hentai.org
 
 # PornHub (https://cn.pornhub.com/) //*.pornhub.com
-^ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Webpage/redirect_36a839ae2e.js
-^ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Webpage/redirect_4e266d46a5.js
+(?i)^(https:\/\/cn\.pornhub\.com\/view_video\.php\?viewkey=[^&]+)&.*$ url 302 $1
+(?i)^https:\/\/www\.pornhub\.com\/ url 302 https://cn.pornhub.com/
 (?i)^https:\/\/cn\.pornhub\.com\/(?:interstitial|_xa\/ads) url reject-dict
 # ======= 普通网页 ======= #
 # 百度 //boxer.baidu.com, m.baidu.com, www.baidu.com, zhidao.baidu.com
