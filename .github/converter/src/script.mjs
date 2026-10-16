@@ -4,7 +4,7 @@
 
 import { splitTopLevelCsv } from "./rule.mjs";
 import { parseRewriteV2, selectRewritePipelineLayer, conditionToSource, valueToSource, isRewriteV2, simpleUrlRewriteCondition } from "./rewrite.mjs";
-import { scanSourceRegexLiteral, normalizeRegexBodyForTarget, stringTemplateParts } from "./core.mjs";
+import { scanSourceRegexLiteral, normalizeRegexBodyForTarget, surgeRegexParameter, stringTemplateParts } from "./core.mjs";
 
 
 
@@ -1293,7 +1293,7 @@ export function surgeScriptV2Plan(ast, {scriptUrl = ast?.script?.path, name = 's
     notes = condition.notes || [];
     params = [
       'type=http-' + ast.phase,
-      'pattern=' + condition.pattern,
+      'pattern=' + surgeRegexParameter(condition.pattern),
     ];
   } else {
     const trigger = surgeTriggerParams(ast, argumentTable);
@@ -1481,7 +1481,7 @@ export function planSurgeScript(ir,ctx={}) {
   }
 
   const notes=[];
-  const params=['type='+sc.httpType,'pattern='+targetPattern,'script-path='+scriptUrl];
+  const params=['type='+sc.httpType,'pattern='+surgeRegexParameter(targetPattern),'script-path='+scriptUrl];
   if (sc.requiresBody) {
     params.push('requires-body=true');
     params.push('max-size='+(sc.maxSize || '-1'));

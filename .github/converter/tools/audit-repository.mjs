@@ -3,6 +3,8 @@
 // Category: Converter / Repository Audit
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { targetRegexValidationInventory } from '../src/core.mjs';
 import { validateQX } from "../src/output.mjs";
 import { parseLoonPlugin } from "../src/input.mjs";
 import { validateSurgeModule } from "../src/output.mjs";
@@ -114,6 +116,14 @@ for (const file of files) {
     }
   }
 }
+
+// Validate the serialized target expressions independently of helper bodies.
+const regexAudit=spawnSync('python',['.github/scripts/automation.py','regex'],{
+  input:JSON.stringify(targetRegexValidationInventory()),encoding:'utf8',maxBuffer:4*1024*1024,
+});
+if(regexAudit.error || regexAudit.status!==0) {
+  findings.push({file:'.github/converter',line:1,code:'target-icu-regex',text:regexAudit.error?.message || regexAudit.stderr || regexAudit.stdout});
+} else console.log(regexAudit.stdout.trim());
 
 if (findings.length) {
   console.error('Repository audit failed with ' + findings.length + ' finding(s):');

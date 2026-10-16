@@ -2,7 +2,7 @@
 // Author: chance
 // Category: Converter / rule
 
-import { normalizeRegexBodyForTarget, QX_WAYX_FILTER_TYPES, SURGE_WAYX_RULE_TYPES, SURGE_WAYX_RULE_BUILTIN_POLICIES } from "./core.mjs";
+import { normalizeRegexBodyForTarget, surgeRegexParameter, QX_WAYX_FILTER_TYPES, SURGE_WAYX_RULE_TYPES, SURGE_WAYX_RULE_BUILTIN_POLICIES } from "./core.mjs";
 
 
 
@@ -286,14 +286,9 @@ export const SURGE_RULE_TYPES=SURGE_WAYX_RULE_TYPES;
 export const SURGE_MODULE_POLICIES=SURGE_WAYX_RULE_BUILTIN_POLICIES;
 
 
-function surgeCsvRegexField(value) {
-  const text=String(value ?? '');
-  return text.includes(',') ? '"' + text.replace(/"/g,'\\"') + '"' : text;
-}
-
 function surgeValueRenderer(node) {
   if (node.type!=='URL-REGEX') return node.valueRaw;
-  return surgeCsvRegexField(normalizeRegexBodyForTarget(node.value));
+  return surgeRegexParameter(normalizeRegexBodyForTarget(node.value));
 }
 
 const SURGE_REJECT_MATCH_POLICIES=new Set(['REJECT','REJECT-DROP','REJECT-NO-DROP','REJECT-TINYGIF']);
@@ -463,18 +458,61 @@ function invalidRulePlan(source,reason,target) {
   };
 }
 
+// ICU rejects whitespace inside bounded quantifiers. Repair only an explicit
+// numeric interval outside escapes/classes; keep the source AST for diagnostics.
+function repairRuleRegexIntervals(ast) {
+  let changed=false;
+  const result=structuredClone(ast);
+  walkRuleAst(result,node=>{
+    if(node.type!=='URL-REGEX')return;
+    let value='',escaped=false,inClass=false,quoted=false;
+    for(let i=0;i<node.value.length;i++) {
+      const ch=node.value[i];
+      if(quoted) {
+        value+=ch;
+        if(ch==='\\' && node.value[i+1]==='E'){value+='E';i++;quoted=false;}
+        continue;
+      }
+      if(escaped){value+=ch;escaped=false;continue;}
+      if(ch==='\\') {
+        value+=ch;
+        if(node.value[i+1]==='Q'){value+='Q';i++;quoted=true;}
+        else escaped=true;
+        continue;
+      }
+      if(ch==='[')inClass=true;
+      if(ch===']')inClass=false;
+      const interval=!inClass && ch==='{' ? node.value.slice(i).match(/^\{(\d+),[ \t]+(\d+)\}/) : null;
+      if(interval && Number(interval[1])<=Number(interval[2])) {
+        value+='{'+interval[1]+','+interval[2]+'}';
+        i+=interval[0].length-1;changed=true;
+      } else value+=ch;
+    }
+    node.value=value;
+  });
+  return {ast:result,changed};
+}
+
+function repairedRulePlan(parsed,source,target,options) {
+  const repaired=repairRuleRegexIntervals(parsed.ast);
+  const plan=target==='qx' ? planQxRuleAst(repaired.ast) : planSurgeModuleRuleAst(repaired.ast,options);
+  if(!repaired.changed || plan.kind==='comment')return plan;
+  const note=['# [WayX] Repaired invalid source regex quantifier whitespace for ICU compatibility.', '# Source declaration: '+source];
+  return target==='qx' ? {...plan,line:note.join('\n')+'\n'+plan.line} : {...plan,lines:[...note,...plan.lines]};
+}
+
 export function qxRule(line) {
   const source=String(line ?? '').trim();
   const parsed=parseLoonRuleAst(source);
   if (!parsed.ok) return invalidRulePlan(source,parsed.reason,'qx');
-  return planQxRuleAst(parsed.ast);
+  return repairedRulePlan(parsed,source,'qx');
 }
 
 export function surgeModuleRule(line,{proxyPolicyPlaceholder=null,matchingEnhancements=false,preMatching=true}={}) {
   const source=String(line ?? '').trim();
   const parsed=parseLoonRuleAst(source);
   if (!parsed.ok) return invalidRulePlan(source,parsed.reason,'surge');
-  return planSurgeModuleRuleAst(parsed.ast,{proxyPolicyPlaceholder,matchingEnhancements,preMatching});
+  return repairedRulePlan(parsed,source,'surge',{proxyPolicyPlaceholder,matchingEnhancements,preMatching});
 }
 
 export function surgeRule(line) {

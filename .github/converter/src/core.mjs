@@ -398,6 +398,45 @@ export function normalizeRegexBodyForTarget(pattern) {
   return String(pattern ?? '');
 }
 
+// Preserve regex backslashes when quoting a comma-separated Surge field.
+export function surgeRegexParameter(pattern) {
+  const value=String(pattern ?? '');
+  return /[,\s"']/.test(value) ? '"'+value.replace(/"/g,'\\"')+'"' : value;
+}
+
+// This checks configuration transport and portable regex syntax. It does not
+// claim JavaScript and the clients' ICU engines have identical semantics.
+const targetRegexInventory=new Map();
+export function targetRegexValidationInventory() {
+  return [...targetRegexInventory].map(([pattern,label])=>({pattern,label}));
+}
+
+export function validateTargetRegex(pattern, label, {token=false}={}) {
+  const value=String(pattern ?? '');
+  if(!value || /[\r\n\0]/.test(value) || /^(?:undefined|null|NaN)$/.test(value) || /\$\{[^}]+\}/.test(value) || (token && /\s/.test(value))) {
+    throw new Error(label+': missing or malformed target regex: '+value);
+  }
+  let escaped=false,inClass=false,depth=0;
+  const structural=value.replace(/\\Q[\s\S]*?(?:\\E|$)/g,'literal').replace(/\(\?#[^)]*\)/g,'');
+  for(const ch of structural) {
+    if(escaped){escaped=false;continue;}
+    if(ch==='\\'){escaped=true;continue;}
+    if(inClass){if(ch===']')inClass=false;continue;}
+    if(ch==='['){inClass=true;continue;}
+    if(ch==='(')depth++;
+    if(ch===')' && --depth<0)throw new Error(label+': unbalanced target regex: '+value);
+  }
+  if(escaped || inClass || depth)throw new Error(label+': unbalanced target regex: '+value);
+  // Leave dialect-specific constructs to the client engine, while still
+  // enforcing the structural/transport checks above for every expression.
+  targetRegexInventory.set(value,label);
+  if(/\\[pPQN]|\(\?>|(?:[*+?]|\})\+|\(\?[ims-]+:/.test(value))return;
+  const portable=value.replace(/\(\?[ims-]+\)/g,'').replace(/\(\?#[^)]*\)/g,'');
+  try {new RegExp(portable);} catch(error) {
+    throw new Error(label+': invalid target regex: '+value+' ('+error.message+')');
+  }
+}
+
 export function compileRegexForTarget(regex, { subject = 'url', target = 'generic', requireEquivalent = false } = {}) {
   if (!regex || regex.type !== 'regex') throw new TypeError('Expected Rewrite v2 regex AST node');
 

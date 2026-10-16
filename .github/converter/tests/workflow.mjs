@@ -318,6 +318,15 @@ try {
   assert.equal(finalize('true','success').status,0);
   assert.notEqual(finalize('false','success').status,0);
   assert.notEqual(finalize('true','failure').status,0);
+  const icu=(pattern)=>runIsolatedCase('python',[path.join(ROOT,'.github/scripts/automation.py'),'regex'],{
+    encoding:'utf8',input:JSON.stringify([{pattern,label:'target fixture'}]),
+  });
+  assert.equal(icu(String.raw`(?i)^https://example\.com/[0-9]{1,3}`).status,0);
+  for(const pattern of ['[','a{1, 4}','*','(?i)(api']) {
+    const result=icu(pattern);
+    assert.notEqual(result.status,0,pattern);
+    assert.match(result.stderr,/ICU target regex audit failed/);
+  }
   const repo=path.join(automationRoot,'repo'),remote=path.join(automationRoot,'remote.git');
   await fs.mkdir(repo);const git=(...args)=>{
     const result=runIsolatedCase('git',args,{cwd:repo,encoding:'utf8'});
