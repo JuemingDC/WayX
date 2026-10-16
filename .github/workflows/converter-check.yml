@@ -70,7 +70,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python .github/converter/tools/refresh-kelee-catalog.py 2>&1 | tee .github/monitor/.runtime/catalog.log
+          python .github/scripts/automation.py catalog 2>&1 | tee .github/monitor/.runtime/catalog.log
 
       - name: Converter checkpoint
         id: checkpoint
@@ -88,7 +88,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          node .github/scripts/sync-convert.mjs 2>&1 | tee .github/monitor/.runtime/loon-sync.log
+          python .github/scripts/automation.py sync 2>&1 | tee .github/monitor/.runtime/loon-sync.log
 
       - name: Verify complete generated repository
         id: verify
@@ -108,7 +108,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          python .github/monitor/monitor_upstreams.py 2>&1 | tee .github/monitor/.runtime/monitor.log
+          python .github/scripts/automation.py monitor 2>&1 | tee .github/monitor/.runtime/monitor.log
 
       - name: Generate reconciliation and Review inventory
         id: reports
@@ -117,7 +117,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          node .github/converter/tools/conversion-reports.mjs 2>&1 | tee .github/monitor/.runtime/reports.log
+          python .github/scripts/automation.py reports 2>&1 | tee .github/monitor/.runtime/reports.log
 
       - name: Create or update conversion issues
         id: issues
@@ -127,6 +127,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PUBLISH_BRANCH: ${{ env.PUBLISH_BRANCH }}
+          STAGES: ${{ toJSON(steps) }}
         run: |
           set -euo pipefail
           python .github/scripts/automation.py issues 2>&1 | tee .github/monitor/.runtime/issues.log

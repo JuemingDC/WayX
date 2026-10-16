@@ -38,7 +38,7 @@ export async function syncCatalogEntry(entry,{
     const semantic=await collectIssueCandidates({root,catalog:[entry],sourceOverrides:new Map([[entry.id,source]]),includeTargets:false,includeSyncFailures:false});
     if(semantic.targetProblems.length) {
       declarations=semantic.targetProblems.flatMap(problem=>problem.declarations);
-      throw new Error('Unreviewed source semantics: '+semantic.targetProblems.flatMap(problem=>problem.reasons).join('; '));
+      throw new Error('Unknown or invalid source grammar: '+semantic.targetProblems.flatMap(problem=>problem.reasons).join('; '));
     }
     const context=await materialize(entry,source,{onStage});
     const out=convert(entry,source,context,{stamp:nowConversionStamp(),rawBase:RAW_BASE,onStage});

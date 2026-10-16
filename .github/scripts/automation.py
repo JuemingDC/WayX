@@ -1,7 +1,6 @@
 """GitHub Actions orchestration; converter and runtime versions stay independent."""
 from __future__ import annotations
 
-import compileall
 import json
 import os
 from pathlib import Path
@@ -31,8 +30,66 @@ def write_result(result: dict) -> None:
         json.dumps(result, indent=2) + '\n', encoding='utf-8')
 
 
+def execute_checks(stage: str, checks: list[tuple[str, list[str]]]) -> None:
+    """Run every independent check; only anomalies enter the review queue."""
+    RUNTIME.mkdir(parents=True, exist_ok=True)
+    report_file = RUNTIME / 'validation-results.json'
+    report = read_report('validation-results.json', {'version': 1, 'stages': {}})
+    if report.get('version') != 1 or not isinstance(report.get('stages'), dict):
+        raise ValueError('Invalid validation-results.json')
+    results = []
+    # Invalidate an earlier result before starting so interrupted runs cannot pass.
+    report['stages'][stage] = {'complete': False, 'checks': results}
+    report_file.write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
+    for index, (check, command) in enumerate(checks):
+        stem = f'{stage}-{index:04d}'
+        log_file = RUNTIME / (stem + '.log')
+        evidence_file = RUNTIME / (stem + '.json')
+        evidence_file.unlink(missing_ok=True)
+        env = dict(os.environ)
+        env.pop('WAYX_CHECK_REPORT', None)
+        if stage == 'verify':
+            env['WAYX_CHECK_REPORT'] = str(evidence_file.resolve())
+        with log_file.open('w', encoding='utf-8') as stream:
+            try:
+                process = subprocess.run(command, stdout=stream, stderr=subprocess.STDOUT,
+                                         env=env, text=True, check=False)
+                code = process.returncode
+            except OSError as error:
+                stream.write(str(error))
+                code = 127
+        item = {'id': check, 'command': command, 'status': 'passed' if code == 0 else 'failed',
+                'exitCode': code, 'log': log_file.as_posix()}
+        if evidence_file.exists():
+            try:
+                evidence = json.loads(evidence_file.read_text(encoding='utf-8'))
+                if evidence.get('version') != 1 or not isinstance(evidence.get('findings'), list):
+                    raise ValueError('Invalid check evidence')
+                item['findings'] = evidence['findings']
+                item['checked'] = evidence.get('checked', 0)
+                item['coverage'] = evidence.get('coverage', {})
+                if item['findings']:
+                    item['status'] = 'failed'
+            except (ValueError, AttributeError) as error:
+                item['status'] = 'failed'
+                item['findings'] = [{'code': 'invalid-check-evidence', 'text': str(error)}]
+        if item['status'] == 'failed':
+            text = log_file.read_text(encoding='utf-8', errors='replace')
+            item['detail'] = text if len(text) <= 4000 else text[:2000] + '\n[full log in artifact]\n' + text[-2000:]
+            print(f'::error title=WayX validation::{stage}/{check}: see {log_file}')
+        results.append(item)
+        report_file.write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
+    report['stages'][stage]['complete'] = True
+    report_file.write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
+    failed = sum(item['status'] == 'failed' for item in results)
+    print(f'{stage}: passed={len(results) - failed}, failed={failed}; details: {report_file}')
+    if failed:
+        raise RuntimeError(f'{stage}: {failed} check(s) require review')
+
+
 def prepare() -> None:
     RUNTIME.mkdir(parents=True, exist_ok=True)
+    (RUNTIME / 'validation-results.json').unlink(missing_ok=True)
     refs = run(['git', 'ls-remote', '--heads', 'origin'], capture=True)
     branches = [line.split()[1].removeprefix('refs/heads/')
                 for line in refs.splitlines()]
@@ -44,19 +101,20 @@ def prepare() -> None:
 
 
 def syntax() -> None:
+    checks = []
     for directory in ['.github/converter', '.github/scripts', 'Script']:
         for file in sorted(Path(directory).rglob('*')):
             if file.is_file() and file.suffix in {'.js', '.mjs'}:
-                run(['node', '--check', str(file)])
-    for directory in ['.github/converter', '.github/scripts', '.github/monitor']:
-        if not compileall.compile_dir(directory, quiet=1):
-            raise RuntimeError('Python syntax check failed: ' + directory)
+                checks.append(('syntax:' + file.as_posix(), ['node', '--check', str(file)]))
+    checks.append(('python-syntax', [sys.executable, '-m', 'compileall', '-q',
+                                   '.github/converter', '.github/scripts', '.github/monitor']))
+    execute_checks('syntax', checks)
 
 
 def checkpoint() -> None:
-    for suite in ['core', 'rewrite', 'script', 'conversion', 'architecture',
-                  'workflow', 'official-capabilities', 'runtime']:
-        run(['node', f'.github/converter/tests/{suite}.mjs'])
+    execute_checks('checkpoint', [(suite, ['node', f'.github/converter/tests/{suite}.mjs'])
+                   for suite in ['core', 'rewrite', 'script', 'conversion', 'architecture',
+                                 'workflow', 'official-capabilities', 'runtime']])
 
 
 def regex() -> None:
@@ -112,8 +170,24 @@ def verify() -> None:
         ['tools/update-readme.mjs'], ['tools/verify-managed-conversions.mjs'],
         ['tools/audit-repository.mjs'], ['tests/artifacts.mjs'],
     ]
-    for file, *args in commands:
-        run(['node', '.github/converter/' + file, *args])
+    execute_checks('verify', [(file, ['node', '.github/converter/' + file, *args])
+                              for file, *args in commands])
+
+
+def catalog() -> None:
+    execute_checks('catalog', [('discovery', [sys.executable, '.github/converter/tools/refresh-kelee-catalog.py'])])
+
+
+def sync() -> None:
+    execute_checks('loon_sync', [('full-catalog', ['node', '.github/scripts/sync-convert.mjs'])])
+
+
+def monitor() -> None:
+    execute_checks('monitor', [('upstreams', [sys.executable, '.github/monitor/monitor_upstreams.py'])])
+
+
+def reports() -> None:
+    execute_checks('reports', [('reconciliation', ['node', '.github/converter/tools/conversion-reports.mjs'])])
 
 
 def issues() -> None:
@@ -130,6 +204,14 @@ def gate() -> None:
     if monitor:
         required.append('monitor')
     failed = [name for name in required if stages.get(name, {}).get('outcome') != 'success']
+    validation = read_report('validation-results.json', {'version': 1, 'stages': {}})
+    audited = [name for name in required if name != 'issues']
+    if (validation.get('version') != 1 or any(
+            validation.get('stages', {}).get(name, {}).get('complete') is not True or
+            not validation['stages'][name].get('checks') or
+            any(check.get('status') != 'passed' for check in validation['stages'][name]['checks'])
+            for name in audited)):
+        failed.append('validation integrity')
     if os.environ.get('SYNC_PUBLISHABLE') != 'true':
         failed.append('sync integrity')
     if monitor and os.environ.get('MONITOR_COMPLETE') != 'true':
@@ -196,6 +278,13 @@ def summary() -> None:
     lines.append(f"- Monitor failures: {len(monitor.get('failures', []))}")
     for key in ['added', 'updated', 'removed']:
         lines.append(f'- Discovery {key}: {len(discovery.get(key, []))}')
+    validation = read_report('validation-results.json', {'stages': {}})
+    passed = sum(check['status'] == 'passed' for stage in validation['stages'].values() for check in stage['checks'])
+    failed = [(name, check) for name, stage in validation['stages'].items() for check in stage['checks'] if check['status'] == 'failed']
+    lines += ['', f'- Automated checks passed: {passed}', f'- Checks requiring review: {len(failed)}',
+              '- Details: validation-results.json and per-check logs in the run artifact']
+    for name, check in failed:
+        lines.append(f"- {name}/{check['id']}: {check['log']}")
     lines += ['', 'Failed gates: ' + ', '.join(result.get('failedGates', []))]
     with open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8') as stream:
         stream.write('\n'.join(lines) + '\n')
@@ -207,7 +296,7 @@ def final() -> None:
 
 
 COMMANDS = {function.__name__: function for function in
-            [prepare, syntax, checkpoint, verify, issues, gate, publish, summary, regex, final]}
+            [prepare, syntax, catalog, checkpoint, sync, verify, monitor, reports, issues, gate, publish, summary, regex, final]}
 
 if __name__ == '__main__':
     try:

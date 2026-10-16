@@ -9,7 +9,7 @@ import {
   convertPluginWithContext,
   validateConvertedPlugin,
 } from "../src/conversion.mjs";
-import { createWorkflowFailureReporter, formatWorkflowErrorAnnotation } from "../src/workflow.mjs";
+import { writeValidationEvidence, validationArtifactDigest, recordOutputMismatch, createWorkflowFailureReporter, formatWorkflowErrorAnnotation } from "../src/workflow.mjs";
 import {
   firstConversionStamp,
   generatedScriptDiffs,
@@ -38,6 +38,8 @@ if(process.argv.includes('--successful-only')) {
   if([...selectedIds].some(id=>!manifest.some(entry=>entry.id===id)))throw new Error('Unknown plugin in full conversion report');
 }
 const staleEntries = [];
+const findings=[],verifiedPlugins=[],artifacts={};
+let checked=0;
 const failures = createWorkflowFailureReporter({
   summaryLabel:'Canonical regeneration failures',
   detailFallback:'error',
@@ -46,6 +48,7 @@ const failures = createWorkflowFailureReporter({
 
 for (const entry of manifest) {
   if(selectedIds && !selectedIds.has(entry.id))continue;
+  checked++;
   try {
     const source = await readCatalogSource(ROOT, entry);
     const targetState = await readManagedTargetState(ROOT, entry);
@@ -65,11 +68,20 @@ for (const entry of manifest) {
 
     const differs = targetDiffs.length > 0 || helperDiffs.length > 0;
     if (!differs) {
-      console.log(entry.id + ': canonical outputs current');
+      verifiedPlugins.push(entry.id);
+      for(const [file,text] of [['Resource/Loon/'+entry.file,source],[targetState.qxRelativePath,oldQx],[targetState.surgeRelativePath,oldSurge]])artifacts[file]=validationArtifactDigest(text);
       continue;
     }
 
     staleEntries.push(entry.id);
+    for(const target of targetDiffs)findings.push(await recordOutputMismatch(targetState[target+'RelativePath'],out[target],targetState[target],entry.id));
+    for(const name of helperDiffs) {
+      const stale=name.startsWith('delete:'),filename=stale?name.slice(7):name;
+      const relative='Script/'+entry.id+'/'+filename;
+      let actual=null;
+      try {actual=await fs.readFile(path.join(ROOT,relative),'utf8');}catch(error){if(error.code!=='ENOENT')throw error;}
+      findings.push(await recordOutputMismatch(relative,stale?null:out.generatedScripts.get(filename),actual,entry.id));
+    }
     if (mode === 'check') {
       console.error(formatWorkflowErrorAnnotation(entry,new Error('canonical outputs/helpers are stale'),{annotationFallback:'error'}));
       continue;
@@ -92,9 +104,12 @@ for (const entry of manifest) {
       (out.generatedScripts.size ? ' + helpers=' + out.generatedScripts.size : '')
     );
   } catch (error) {
+    findings.push({code:'canonical-validation',plugin:entry.id,file:'Resource/Loon/'+entry.file,text:error.message});
     failures.capture(entry,error);
   }
 }
+
+await writeValidationEvidence(checked,mode==='check'?findings.filter(Boolean):[],{plugins:verifiedPlugins,artifacts,complete:true});
 
 if (failures.report()) {
   process.exitCode = 1;

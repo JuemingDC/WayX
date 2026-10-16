@@ -5,7 +5,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { loadLoonSourceCatalog } from "../src/input.mjs";
-import { qxTargetPath, surgeTargetPath } from "../src/workflow.mjs";
+import { validationArtifactDigest, qxTargetPath, surgeTargetPath } from "../src/workflow.mjs";
 
 const ROOT = process.cwd();
 const SOURCE_CATALOG = path.join(ROOT, '.github', 'sources', 'loon.json');
@@ -137,10 +137,10 @@ function popMarker(map, source) {
   return list.shift();
 }
 
-function reconcileTarget(items, targetText, target) {
+function reconcileTarget(items, targetText, target,verified) {
   const markers = declarationMarkers(targetText);
   const markerMap = multimap(markers);
-  const counts = {converted:0,review:0,issue:0,unsupported:0,disabled:0,commented:0,intentionalDrop:0};
+  const counts = {converted:0,review:0,issue:0,unsupported:0,disabled:0,commented:0,intentionalDrop:0,unverified:0};
   const details = [];
   for (const item of items) {
     const drop = intentionalDrop(item, target);
@@ -155,8 +155,9 @@ function reconcileTarget(items, targetText, target) {
       details.push({...item,outcome:marker.kind,reason:marker.marker || marker.kind});
       continue;
     }
-    counts.converted++;
-    details.push({...item,outcome:'converted'});
+    const outcome=verified?'converted':'unverified';
+    counts[outcome]++;
+    details.push({...item,outcome});
   }
   const unmatchedTargetDeclarations = [];
   for (const list of markerMap.values()) for (const marker of list) unmatchedTargetDeclarations.push(marker);
@@ -164,7 +165,8 @@ function reconcileTarget(items, targetText, target) {
   return {
     sourceItems:items.length,
     counts,
-    reconciled:total===items.length && unmatchedTargetDeclarations.length===0,
+    verified,
+    reconciled:verified && total===items.length && unmatchedTargetDeclarations.length===0,
     unmatchedTargetDeclarations,
     target:activeTargetStats(targetText),
     details,
@@ -202,9 +204,9 @@ function markdownReconciliation(report) {
   const lines=['# WayX Source to Target Reconciliation',''];
   lines.push('| Plugin | Source items | QX converted | QX comment/review/issue/drop | QX OK | Surge converted | Surge comment/review/issue/drop | Surge OK |');
   lines.push('|---|---:|---:|---:|:---:|---:|---:|:---:|');
-  for (const item of report.entries) {
+  for (const item of report.entries.filter(entry=>!entry.qx.reconciled||!entry.surge.reconciled)) {
     const q=item.qx.counts, s=item.surge.counts;
-    lines.push('| '+item.id+' | '+item.source.items+' | '+q.converted+' | '+(item.qx.sourceItems-q.converted)+' | '+(item.qx.reconciled?'yes':'NO')+' | '+s.converted+' | '+(item.surge.sourceItems-s.converted)+' | '+(item.surge.reconciled?'yes':'NO')+' |');
+    lines.push('| '+item.id+(item.retained?' (retained baseline; see sync Issue)':'')+' | '+item.source.items+' | '+q.converted+' | '+(item.qx.sourceItems-q.converted)+' | '+(item.qx.reconciled?'yes':'NO')+' | '+s.converted+' | '+(item.surge.sourceItems-s.converted)+' | '+(item.surge.reconciled?'yes':'NO')+' |');
   }
   lines.push('','- Catalog plugins: '+report.summary.plugins,'- Source semantic items: '+report.summary.sourceItems,'- Source Argument declarations: '+report.summary.arguments,'- QX reconciled: '+report.summary.qxReconciled+'/'+report.summary.plugins,'- Surge reconciled: '+report.summary.surgeReconciled+'/'+report.summary.plugins,'');
   return lines.join('\n');
@@ -221,6 +223,11 @@ const catalog=await loadLoonSourceCatalog(SOURCE_CATALOG);
 const manualConfig=await readJson(MANUAL_ASSETS,{version:1,assets:[]});
 const reconciliation={version:1,entries:[],summary:{plugins:catalog.length,sourceItems:0,arguments:0,qxReconciled:0,surgeReconciled:0}};
 const inventory=[];
+const validation=await readJson(path.join(ROOT,'.github/monitor/.runtime/validation-results.json'),{stages:{}});
+const canonical=validation.stages?.verify?.checks?.find(check=>check.id==='tools/regenerate-canonical.mjs');
+const verifiedPlugins=new Set(canonical?.coverage?.plugins||[]);
+const sync=await readJson(path.join(ROOT,'.github/monitor/.runtime/sync-failures.json'),{});
+const retainedPlugins=new Set(sync.publishable===true?(sync.retainedPlugins||[]).filter(id=>sync.failures?.some(failure=>failure.plugin.id===id)):[]);
 
 for (const entry of catalog) {
   const sourcePath=path.join(ROOT,'Resource','Loon',entry.file);
@@ -228,10 +235,12 @@ for (const entry of catalog) {
   const surgePath=path.join(ROOT,surgeTargetPath(entry));
   const [source,qx,surge]=await Promise.all([read(sourcePath),read(qxPath),read(surgePath)]);
   const parsed=sourceItems(source);
-  const qxRecon=reconcileTarget(parsed.items,qx,'qx');
-  const surgeRecon=reconcileTarget(parsed.items,surge,'surge');
+  const sourceVerified=verifiedPlugins.has(entry.id)&&canonical.coverage.artifacts?.[rel(sourcePath)]===validationArtifactDigest(source);
+  const qxRecon=reconcileTarget(parsed.items,qx,'qx',sourceVerified&&canonical.coverage.artifacts?.[rel(qxPath)]===validationArtifactDigest(qx));
+  const surgeRecon=reconcileTarget(parsed.items,surge,'surge',sourceVerified&&canonical.coverage.artifacts?.[rel(surgePath)]===validationArtifactDigest(surge));
   reconciliation.entries.push({
     id:entry.id,
+    retained:retainedPlugins.has(entry.id),
     source:{file:rel(sourcePath),items:parsed.items.length,arguments:parsed.arguments.length,bySection:Object.fromEntries([...new Set(parsed.items.map(x=>x.section))].sort().map(section=>[section,parsed.items.filter(x=>x.section===section).length]))},
     qx:qxRecon,
     surge:surgeRecon,
@@ -283,11 +292,11 @@ console.log('Reconciliation report: '+rel(reconciliationJson));
 console.log('Review inventory: '+rel(reviewJson));
 console.log('Review totals: QX='+(reviewInventory.review.byPlatform.qx||0)+', Surge='+(reviewInventory.review.byPlatform.surge||0)+'; Issue='+reviewInventory.issue.total);
 
-const bad=reconciliation.entries.filter(entry=>!entry.qx.reconciled||!entry.surge.reconciled);
+const bad=reconciliation.entries.filter(entry=>!entry.retained&&(!entry.qx.reconciled||!entry.surge.reconciled));
 if(bad.length){
   for(const entry of bad){
-    if(!entry.qx.reconciled) console.error('::error title=QX reconciliation failed::'+entry.id+' has unmatched source/target declarations');
-    if(!entry.surge.reconciled) console.error('::error title=Surge reconciliation failed::'+entry.id+' has unmatched source/target declarations');
+    if(!entry.qx.reconciled) console.error('::error title=QX reconciliation failed::'+entry.id+' lacks canonical verification or has unmatched source/target declarations');
+    if(!entry.surge.reconciled) console.error('::error title=Surge reconciliation failed::'+entry.id+' lacks canonical verification or has unmatched source/target declarations');
   }
   process.exitCode=1;
 }
