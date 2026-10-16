@@ -74,6 +74,45 @@ const entry={
   assert.doesNotMatch(converted.qx,/script-(?:echo-response|request|response)|setTimeout|setInterval/);
 }
 
+// Loon build 1008+ wildcard rules must survive the complete output pipeline.
+// Source: official domain_rule docs; QX evidence: uploaded sample host-wildcard.
+{
+  const patterns=['*.example.com','api?.example.com','*.goo?le.com',
+    'node[abc].example.com','node[0-9].example.com',
+    'node[!abc].example.com','node[^abc].example.com'];
+  const source=['#!name=Wildcard', '[Rule]', '# Wildcard source note',
+    ...patterns.map(pattern=>'DOMAIN-WILDCARD,'+pattern+',REJECT'),
+    'domain-wildcard,Api?.Example.com,DIRECT',
+    'DOMAIN-WILDCARD,proxy*.example.com,PROXY',
+    '# DOMAIN-WILDCARD,disabled*.example.com,REJECT',
+    'AND,((DOMAIN-WILDCARD,node[0-9].example.com),(PROTOCOL,QUIC)),REJECT',
+  ].join('\n');
+  const converted=convertPlugin(entry,source,{stamp:'2026-10-16 13:00:00 +08:00',rawBase:'https://example.com'});
+  validateQX(converted.qx,entry);
+  validateSurgeModule(converted.surge,entry);
+  for(const pattern of patterns) {
+    assert.ok(converted.surge.includes('DOMAIN-WILDCARD,'+pattern+',REJECT,extended-matching,pre-matching'));
+    if(pattern.includes('[')) {
+      assert.ok(converted.qx.includes('# Source declaration: DOMAIN-WILDCARD,'+pattern+',REJECT'));
+      assert.ok(!converted.qx.includes('host-wildcard, '+pattern+','));
+    } else assert.ok(converted.qx.includes('host-wildcard, '+pattern+', reject'));
+  }
+  assert.ok(converted.qx.includes('host-wildcard, Api?.Example.com, direct'));
+  assert.ok(converted.qx.includes('host-wildcard, proxy*.example.com, PROXY'));
+  assert.ok(converted.surge.includes('DOMAIN-WILDCARD,proxy*.example.com,{{{wayx_proxy_policy}}},extended-matching'));
+  assert.ok(converted.surge.includes('AND,((DOMAIN-WILDCARD,node[0-9].example.com,extended-matching),(PROTOCOL,QUIC)),REJECT'));
+  for(const output of [converted.qx,converted.surge]) {
+    assert.ok(output.includes('# Wildcard source note'));
+    assert.doesNotMatch(output,/^(?:host-wildcard, |DOMAIN-WILDCARD,)disabled/m);
+    assert.match(output,/# DOMAIN-WILDCARD,disabled\*\.example\.com,REJECT/);
+  }
+  assert.match(converted.qx,/^# \[filter_local\]$/m);
+  assert.equal(converted.generatedScripts.size,0);
+  for(const pattern of patterns.filter(p=>p.includes('['))) {
+    assert.equal(qxRule('DOMAIN-WILDCARD,'+pattern+',REJECT').reason,'unsupported-qx-wildcard-character-class');
+  }
+}
+
 const source=[
   '#!name=Demo',
   '#!desc=Demo Loon plugin',

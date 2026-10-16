@@ -253,6 +253,17 @@ export function planQxRuleAst(ast) {
     if (action) return {kind:'rewrite',line:`${value} url ${action}`,reason:'wayx-url-regex-reject'};
   }
 
+  // Loon build 1008+ also accepts character classes. The uploaded QX sample
+  // confirms only * and ? for host-wildcard; preserve unverified classes as
+  // source comments rather than silently changing network-layer matching.
+  if (type==='DOMAIN-WILDCARD' && /[\[\]]/.test(value)) {
+    return {
+      kind:'comment',
+      line:`# [WayX] REVIEW REQUIRED: Quantumult X host-wildcard character classes are not verified by the official sample\n# Source declaration: ${source}`,
+      reason:'unsupported-qx-wildcard-character-class',
+    };
+  }
+
   const qxType=QX_RULE_TYPES.get(type);
   if (!qxType || !QX_WAYX_FILTER_TYPES.has(qxType)) {
     return {
