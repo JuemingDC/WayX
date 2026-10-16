@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：2.9
+版本：2.10
 
 更新：2026-10-16
 作者：chance  
@@ -131,6 +131,8 @@ Loon build 1008+ 的 `DOMAIN-WILDCARD` 使用完整域名 Glob 匹配，支持 `
 
 依据：Loon https://nsloon.app/docs/Rule/domain_rule/；Surge https://manual.nssurge.com/rules/domain.html；QX 为用户上传官方示例。Script Hub Beta `b31b010d111aa81e8b89635f08d401c960d29538` 的 Loon/Surge DOMAIN-WILDCARD 保留逻辑仅作实现参考，不替代上述目标官方依据。
 
+源 Rule 的 URL-REGEX（包括逻辑子规则）若包含 ICU 不接受的 `{数字, 空白数字}`，仅在字符类、转义和 `\Q...\E` 之外、上下界有效时移除逗号后的空格。源快照/AST 保留原文，目标修复须注明原因及源声明；不修改被转义的花括号、字符类或无效上下界，不据此作通用正则重写。此例外用于修复原本无法编译的量词语法。
+
 用户指定的精确域名例外：所有转换产物中的 `DOMAIN,dns.weixin.qq.com` 和 `DOMAIN,dns.weixin.qq.com.cn` 使用 DIRECT（QX 为 `host, ..., direct`），在目标 planner 统一执行，不依赖插件 id。源 Loon 快照保留原文；不扩展到 DOMAIN-SUFFIX、DOMAIN-KEYWORD、逻辑子条件或其它子域名。Surge DIRECT 不携带仅适用于拒绝策略的 pre-matching；extended-matching 沿用既有目标规则。
 
 Loon `[Rule]` 的 `URL-REGEX,<regex>,REJECT` 转为 Quantumult X 重写 `<regex> url reject`，不再默认使用 `reject-200`。仅当源 policy 明确为 `REJECT-200`（识别不区分大小写）时输出 `<regex> url reject-200`；不得根据 URL 文本、响应猜测或普通 REJECT 推断 HTTP 200。原有 `REJECT-IMG/DICT/ARRAY` 专用映射、`REJECT-DROP` 映射以及 Surge 输出不变；DIRECT/PROXY 等非拒绝策略不得强制改写为 reject。此规则只约束 Rule 中 URL-REGEX 的目标适配，不改变 `[Rewrite]` 里显式 action 的映射。 Rule 策略及 Rewrite v2 的动作/状态码均从各自基础映射表直接查找；Safe Tier 复用同一 Rewrite 原语查询，不再维护独立拒绝映射或追加特例分支。
@@ -140,6 +142,12 @@ Loon `[Rule]` 的 `URL-REGEX,<regex>,REJECT` 转为 Quantumult X 重写 `<regex>
 Surge 逐条 Rule 使用已支持的 pre-matching/extended-matching 增强，保持类型与官方最低应用版本边界，不根据 Body Rewrite 的 CORE_VERSION 推断这些能力。QX 不输出 Surge 参数或 no-resolve 字段；目标不支持的属性按明确目标策略处理。
 
 QX 原生 URL Rewrite `reject` 按上传官方 sample.conf 返回空体 404；短时间内重复请求越多，软件响应延迟由 0 秒增至最多约 5 秒。这是响应延迟，不是规则开始生效的时间或规则寿命；官方示例没有证明按源 App 独立计数。Rule 的 URL-REGEX → reject、legacy reject、v2 reject(404) 均保留原生目标动作，由 QX 自行计数和延迟，不添加计数器、定时器、脚本响应或改为 reject-200。显式 200/图片/对象/数组变体保留各自类型，不推断它们有相同延迟机制。filter 的 reject（含 DNS 行为）、URL rewrite 的 reject 与 Surge 自动 REJECT-DROP 升级机制分别处理；复杂条件或自定义响应本来需要 helper 时，不宣称 helper 复现原生 backoff。输出校验器与能力清单共用原生 reject 动作集合，Body/Header 的匹配与替换 action token 必须同阶段。
+
+所有目标配置在生成和发布前必须独立校验外层 URL/Headers 匹配表达式，不能因 Script 内含完整条件而跳过。校验空值、未展开变量、括号/字符类/转义完整性及公共 Regex 语法；QX 同时校验分段与 action，Surge 同时校验各 HTTP 处理分段及 Script 参数。公共 Regex 语法检查不宣称 JavaScript 与客户端 ICU 引擎等价；保留 ICU 专用构造，并检查其传输与结构。全仓库审计收集已经序列化到配置中的实际表达式，调用运行环境 ICU 批量编译，任何失败或 ICU 不可用均阻止发布；不以脚本内部条件或库名注册代替输出验证。运行环境 ICU 的语法检查不等同于各客户端版本全部语义和生命周期的运行证明。
+
+Surge Script 的 pattern 含逗号、空白或引号时统一使用公共参数编码器，保持 Regex 反斜线；validator 按引号解析逗号分隔参数，拒绝截断、残缺或重复参数。该规则覆盖源 Script、legacy/v2 Rewrite helper 和复杂动作 helper。
+
+带 flags 的静态 URL 条件在 helper 的外层预筛选中同样保留 `(?i/m/s)` 形式，不因 flags 退化成宽匹配。固定 String/Raw String URL 相等条件直接编译为转义字面量并首尾锚定的 Regex，复用 QX/Surge 原生动作与 Script 声明；动态 String 不作静态相等映射。没有可安全下推的 URL 条件时可以使用合法宽匹配，但 helper 必须执行完整条件，且不能据此绕过合成响应的精确条件要求。
 
 QX 重定向统一使用官方原生 `<URL正则> url 302/307 <目标地址>`；存在可精确表达的请求条件时使用 `url-and-header`。URL 捕获 `${alias.N}` 转为 `$N`，保留源正则主体、flags 映射和规则顺序。不得将原生 302/307 转成 redirect helper 或宽匹配 `^ url script-echo-response`；无法用原生语法完整表达的条件或模板保留源声明并诊断，不生成重定向脚本。
 

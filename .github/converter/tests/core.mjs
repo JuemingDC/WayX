@@ -3,7 +3,7 @@
 // Category: Converter / core / Regression Suite
 
 import { QX_RULE_TYPES, RULE_POLICY_MAPPINGS, SURGE_RULE_TYPES, SURGE_MODULE_POLICIES, parseRewriteV2, parseLoonRuleAst, renderRuleAst, ruleTypesInAst, planQxRuleAst, planSurgeModuleRuleAst, renderSurgeRuleAst, validateSurgeRuleAst, surgeRuleTypesInTree, surgeModuleRule, classifyLegacyRewriteAction } from "../src/index.mjs";
-import { compileSourceRegex, execSourceRegex, evaluateCondition, EQUIVALENCE_KINDS, nativeEquivalent, guardedHelper, phaseDispatcher, unsupported, differentialConditionOracle } from "../src/core.mjs";
+import { validateTargetRegex, surgeRegexParameter, compileSourceRegex, execSourceRegex, evaluateCondition, EQUIVALENCE_KINDS, nativeEquivalent, guardedHelper, phaseDispatcher, unsupported, differentialConditionOracle } from "../src/core.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -216,6 +216,26 @@ if (selectedCase === "rule.mjs") {
 
 
 
+
+// Configuration transport and regex syntax must be checked before publication.
+for(const pattern of ['^','(?ims)^https?://example\\.com/(a|b){1,3}$',String.raw`(?i)^https://a/\Q(unbalanced[\E`,String.raw`(?>a++)`,'[[a-z](]','[a[b]{1, 4}]']) {
+  assert.doesNotThrow(()=>validateTargetRegex(pattern,'fixture'));
+}
+for(const pattern of ['', 'undefined', '${urlMatch.1}', '[', '(api', 'api)', 'a{3,1}', '*', 'a\nurl reject']) {
+  assert.throws(()=>validateTargetRegex(pattern,'fixture'),/regex/);
+}
+assert.equal(surgeRegexParameter(String.raw`^https://a/\w{1,3}`),String.raw`"^https://a/\w{1,3}"`);
+
+const invalidInterval='AND,((URL-REGEX,"^http://[a-f0-9]{1, 4}$"),(USER-AGENT,App*)),REJECT';
+const intervalPlan=surgeModuleRule(invalidInterval);
+assert.ok(intervalPlan.line.includes('{1,4}'));
+assert.ok(intervalPlan.lines.some(line=>line.includes('Repaired invalid source regex')));
+assert.ok(intervalPlan.lines.includes('# Source declaration: '+invalidInterval));
+const protectedIntervals=String.raw`URL-REGEX,"^[a{1, 4}]\{1, 4\}\Q{1, 4}\E$",REJECT`;
+assert.ok(surgeModuleRule(protectedIntervals).line.includes(String.raw`[a{1, 4}]\{1, 4\}\Q{1, 4}\E`));
+const nestedSetInterval=surgeModuleRule('URL-REGEX,"[a[b]{1, 4}]",REJECT');
+assert.ok(nestedSetInterval.line.includes('[a[b]{1, 4}]'));
+assert.ok(!nestedSetInterval.lines.some(line=>line.includes('Repaired invalid source regex')));
 
 // Completeness is checked against target capabilities and the independently
 // reviewed source fixtures, including known unsupported types/policy contexts.

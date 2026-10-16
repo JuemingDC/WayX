@@ -820,7 +820,7 @@ const mixedJsonAdd = renderMixedRewriteScript(
 assert.match(mixedJsonAdd.script, /__wayxJsonAdd\(j,\["data","new"\],true\)/);
 
 const flaggedHeaderHelper = renderQxHeaderScript(parseRewriteV2('request if ${url} ~= /api/i then request.header.replace("X-Test", /value/ms, "ok")'));
-assert.equal(flaggedHeaderHelper.pattern, '^');
+assert.equal(flaggedHeaderHelper.pattern, '(?i)api');
 assert.equal(flaggedHeaderHelper.script.includes('"flags":"i"'), true);
 assert.equal(flaggedHeaderHelper.script.includes('"ms"'), true);
 assert.match(flaggedHeaderHelper.script, /__wayxHeaderReplace\("X-Test","value",v,"ms"\)/);
@@ -1797,6 +1797,38 @@ const unsafeResponseHeaderSource='response if ${url} ~= /api/ then response.head
 const qxUnsafeResponseHeader=planQxRewrite(v2(unsafeResponseHeaderSource),ctx());
 assert.equal(qxUnsafeResponseHeader.section,'comment');
 assert.equal(qxUnsafeResponseHeader.reason,'unsupported-qx-response-header-add-comment');
+
+// A declared native primitive must actually be selected before helper fallback.
+for(const [name,statuses] of Object.entries(QX_REWRITE_PRIMITIVES)) {
+  if(!statuses || typeof statuses==='string')continue;
+  for(const [status,token] of Object.entries(statuses)) {
+    for(const condition of ['${url} ~= /api/i','${url} == "https://api.example/fixed"']) {
+      const source='request if '+condition+' then '+name+'('+status+(name==='redirect'?',"https://target.example"':'')+')';
+      const context=ctx();
+      const planned=planQxRewrite(v2(source),context);
+      assert.equal(planned.section,'rewrite',source);
+      assert.ok(planned.line.includes(' url '+token),source);
+      assert.equal(context.generatedScripts.size,0,source);
+    }
+  }
+}
+
+// Fixed URL equality lowers to anchored native syntax in both targets.
+for(const action of ['reject(404)','redirect(302,"https://target.example")','redirect(307,"https://target.example")','response.json.delete("ads")','response.body.replace(/ads/,"ok")']) {
+  const source='response if ${url} == "https://api.example/fixed?x=1" then '+action;
+  const ast=parseRewriteV2(source.replace(/^response/,action.startsWith('redirect')?'request':'response'));
+  const qctx=ctx(),sctx=ctx();
+  const qx=planQxRewrite(rewriteV2AstToSemanticIr(ast),qctx),surge=planSurgeRewrite(rewriteV2AstToSemanticIr(ast),sctx);
+  assert.equal(qx.section,'rewrite',action);
+  assert.ok(qx.line.startsWith(String.raw`^https://api\.example/fixed\?x=1$ url `),action);
+  assert.notEqual(surge.section,'comment',action);
+  assert.equal(qctx.generatedScripts.size,0,action);
+  assert.equal(sctx.generatedScripts.size,0,action);
+}
+for(const flags of ['i','m','s','ims']) {
+  const ast=parseRewriteV2('response if ${url} ~= /API/'+flags+' && ${response.status} == 200 then response.header.del("Server")');
+  assert.equal(qxRewriteMatcherPlan(ast).urlPattern,'(?'+flags+')API');
+}
 
 const redirectSource='request if ${url} ~= /(^https:\\/\\/old\\.example\\.com\\/)(.*)/ as hit then redirect(302, "${hit.1}new")';
 const redirectIr=v2(redirectSource);

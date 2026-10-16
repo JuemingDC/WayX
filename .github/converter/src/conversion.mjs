@@ -3,6 +3,7 @@
 // Category: Converter / conversion
 
 import crypto from "node:crypto";
+import { surgeRegexParameter } from "./core.mjs";
 import { renderRewritePhaseDispatcher } from "./runtime.mjs";
 import { splitScriptPipelineSources, scriptIrTag, parseScriptDeclaration, isScriptV2, planQxScript, planSurgeScript, scriptOption, analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs, surgeArgumentMetadata, surgeRewriteArgumentPayload } from "./script.mjs";
 import { qxRule as canonicalQxRule, surgeModuleRule } from "./rule.mjs";
@@ -197,7 +198,7 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
     // A narrow owner can preserve that relation without executing remote code.
     const bodyMatchers=group.map(item=>simpleUrlRewriteCondition(item.ast));
     const bodyOwner=external && !legacy && !blockedV2.has(phase) && group.length>0 &&
-      bodyMatchers.every((matcher,index)=>matcher.ok && !group[index].ast.condition.right.flags) &&
+      bodyMatchers.every((matcher,index)=>matcher.ok && !matcher.regex.flags) &&
       new Set(bodyMatchers.map(matcher=>matcher.pattern)).size===1 &&
       group.some(item=>item.ast.actions.some(action=>new RegExp('^'+phase+'\\.(?:body\\.(?:replace|mock|mock_file)|json\\.)').test(action.name)));
     try {
@@ -219,7 +220,7 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
       ctx.generatedScripts.set(filename,plan.script);
       const url=ctx.rawBase+'/Script/'+ctx.id+'/'+filename;
       const mapped=target==='qx' ? {section:'rewrite',line:plan.pattern+' url '+plan.qxAction+' '+url} :
-        {section:'script',line:'wayx_phase_'+phase+'_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+url+(plan.requiresBody?',requires-body=true,max-size=-1':'')+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:'')};
+        {section:'script',line:'wayx_phase_'+phase+'_'+key+' = type='+plan.surgeType+',pattern='+surgeRegexParameter(plan.pattern)+',script-path='+url+(plan.requiresBody?',requires-body=true,max-size=-1':'')+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:'')};
       group.forEach((item,index)=>result.set(item.sourceIndex,index===0?mapped:{section:'drop',reason:'phase-dispatcher-member'}));
     } catch (error) {
       for (const item of group) {
@@ -227,10 +228,10 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
         // stays on the compatibility path; compound guards need a phase owner.
         if (/script-(?:request|response)-(?:header|body)|type=http-/.test(item.mapped.line || '')) {
           const ast=item.ast;
-          const c=ast.condition;
-          if (c?.type==='comparison' && c.left?.name==='url' && c.right?.type==='regex') {
-            const pattern=String(c.right.pattern);
-            const line=target==='qx' ? item.mapped.line.replace(/^(?:\^https\?:\/\/|\^) url /,pattern+' url ') : item.mapped.line.replace(/pattern=(?:\^https\?:\/\/|\^),/,'pattern='+pattern+',');
+          const narrow=simpleUrlRewriteCondition(ast);
+          if (narrow.ok) {
+            const pattern=narrow.pattern;
+            const line=target==='qx' ? item.mapped.line.replace(/^(?:\^https\?:\/\/|\^) url /,()=>pattern+' url ') : item.mapped.line.replace(/pattern=(?:\^https\?:\/\/|\^),/,()=> 'pattern='+surgeRegexParameter(pattern)+',');
             result.set(item.sourceIndex,{...item.mapped,line:'# [WayX] COMPATIBILITY LIMITATION: '+error.message+'; retained source URL prefilter is not a source-flag equivalence proof.\n'+line});
           } else result.set(item.sourceIndex,ast.actions.length>1 && !ast.sourceActionCount?{section:'comment',line:'# [WayX] OMITTED: action pipeline cannot use a safe phase script: '+error.message+'\n# Source declaration: '+item.line}:rewriteReview(item.line,error.message));
         }

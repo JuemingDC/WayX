@@ -155,13 +155,59 @@ def summary() -> None:
         stream.write('\n'.join(lines) + '\n')
 
 
+def regex() -> None:
+    """Compile emitted HTTP matchers with the runner's ICU regex engine."""
+    import ctypes
+    import ctypes.util
+    import re
+
+    name = ctypes.util.find_library('icui18n')
+    if not name:
+        raise RuntimeError('ICU regex library is required for target publication audit')
+    library = ctypes.CDLL(name)
+    suffix = re.search(r'\.(\d+)$', name)
+
+    def symbol(base: str):
+        value = getattr(library, base, None)
+        if value is None and suffix:
+            value = getattr(library, base + '_' + suffix[1], None)
+        if value is None:
+            raise RuntimeError('ICU regex symbol unavailable: ' + base)
+        return value
+
+    open_regex = symbol('uregex_open')
+    open_regex.argtypes = [ctypes.c_void_p, ctypes.c_int32, ctypes.c_uint32,
+                          ctypes.c_void_p, ctypes.POINTER(ctypes.c_int32)]
+    open_regex.restype = ctypes.c_void_p
+    close_regex = symbol('uregex_close')
+    close_regex.argtypes = [ctypes.c_void_p]
+    error_name = symbol('u_errorName')
+    error_name.argtypes = [ctypes.c_int32]
+    error_name.restype = ctypes.c_char_p
+    patterns = json.load(sys.stdin)
+    failures = []
+    for item in patterns:
+        encoded = item['pattern'].encode('utf-16-le')
+        buffer = ctypes.create_string_buffer(encoded + b'\0\0')
+        status = ctypes.c_int32(0)
+        compiled = open_regex(buffer, len(encoded) // 2, 0, None, ctypes.byref(status))
+        if compiled:
+            close_regex(compiled)
+        if status.value > 0:
+            failures.append(item['label'] + ': ' + error_name(status.value).decode()
+                            + ': ' + item['pattern'])
+    if failures:
+        raise RuntimeError('ICU target regex audit failed:\n' + '\n'.join(failures))
+    print(f'ICU target regex audit passed: {len(patterns)} unique patterns')
+
+
 def final() -> None:
     if os.environ.get('PUBLISHABLE') != 'true' or os.environ.get('PUBLICATION_OUTCOME') != 'success':
         raise RuntimeError('Publication blocked or failed')
 
 
 COMMANDS = {function.__name__: function for function in
-            [prepare, syntax, checkpoint, verify, issues, gate, publish, summary, final]}
+            [prepare, syntax, checkpoint, verify, issues, gate, publish, summary, regex, final]}
 
 if __name__ == '__main__':
     try:

@@ -5,8 +5,8 @@
 import { isRewriteV2 } from "./rewrite.mjs";
 import { parseLegacyScriptLine } from "./script.mjs";
 import { cleanSourceComments, sourceCommentText } from "./input.mjs";
-import { QX_WAYX_REJECT_ACTIONS, QX_WAYX_FILTER_TYPES, QX_WAYX_REWRITE_MATCHERS, QX_WAYX_SCRIPT_ACTIONS, QX_WAYX_SNIPPET_MITM_KEYS, SURGE_WAYX_REWRITE_SECTIONS, SURGE_WAYX_URL_REWRITE_TYPES, SURGE_WAYX_HEADER_REWRITE_ACTIONS, SURGE_WAYX_BODY_REWRITE_TYPES, SURGE_WAYX_MAP_LOCAL_DATA_TYPES, SURGE_WAYX_SCRIPT_TYPES, SURGE_WAYX_MITM_KEYS } from "./core.mjs";
-import { splitTopLevelCsv, surgeRuleTypesInTree, SURGE_MODULE_POLICIES } from "./rule.mjs";
+import { validateTargetRegex, QX_WAYX_REJECT_ACTIONS, QX_WAYX_FILTER_TYPES, QX_WAYX_REWRITE_MATCHERS, QX_WAYX_SCRIPT_ACTIONS, QX_WAYX_SNIPPET_MITM_KEYS, SURGE_WAYX_REWRITE_SECTIONS, SURGE_WAYX_URL_REWRITE_TYPES, SURGE_WAYX_HEADER_REWRITE_ACTIONS, SURGE_WAYX_BODY_REWRITE_TYPES, SURGE_WAYX_MAP_LOCAL_DATA_TYPES, SURGE_WAYX_SCRIPT_TYPES, SURGE_WAYX_MITM_KEYS } from "./core.mjs";
+import { parseLoonRuleAst, walkRuleAst, splitTopLevelCsv, surgeRuleTypesInTree, SURGE_MODULE_POLICIES } from "./rule.mjs";
 
 
 
@@ -452,12 +452,46 @@ function splitQxRewriteLine(line) {
   return null;
 }
 
+function targetRegex(pattern,entry,target,token=true) {
+  validateTargetRegex(pattern,entry.id+': '+target,{token});
+}
+
+function surgeScriptParameters(body,entry) {
+  const fields=[];
+  let part='',quote=null,escaped=false;
+  for(const ch of body) {
+    if(quote) {
+      part+=ch;
+      if(escaped)escaped=false;
+      else if(ch==='\\')escaped=true;
+      else if(ch===quote)quote=null;
+    } else if(ch==='"' || ch==="'") {quote=ch;part+=ch;}
+    else if(ch===',') {fields.push(part.trim());part='';}
+    else part+=ch;
+  }
+  if(quote)throw new Error(entry.id+': unclosed Surge Script parameter quote');
+  fields.push(part.trim());
+  const params=new Map();
+  for(const field of fields) {
+    const match=field.match(/^([a-z][a-z0-9-]*)=(.+)$/i);
+    if(!match || params.has(match[1].toLowerCase()))throw new Error(entry.id+': malformed/duplicate Surge Script parameter: '+field);
+    const raw=match[2].trim();
+    let value=raw;
+    if((raw.startsWith('"') && raw.endsWith('"')) || (raw.startsWith("'") && raw.endsWith("'"))) {
+      value=raw.slice(1,-1);
+      if(raw[0]==='"')value=value.replace(/\\"/g,'"');
+    }
+    params.set(match[1].toLowerCase(),value);
+  }
+  return params;
+}
+
 function validateQxRewriteAction(action,line,entry) {
   if (QX_WAYX_REJECT_ACTIONS.has(action)) return;
   if (/^(?:302|307)\s+\S+$/.test(action)) return;
   if (/^jsonjq-(?:request|response)-body\s+'.+'$/.test(action)) return;
-  if (/^(request-body|response-body)\s+.+\s+\1\s+.+$/.test(action)) return;
-  if (/^(request-header|response-header)\s+.+\s+\1\s+.+$/.test(action)) return;
+  const replacement=action.match(/^(request-body|response-body|request-header|response-header)\s+(.+?)\s+\1\s+.+$/);
+  if(replacement) {targetRegex(replacement[2],entry,'Quantumult X replacement matcher',false);return;}
 
   const echo=action.match(/^echo-response\s+(.+)\s+echo-response\s+(\S+)$/);
   if (echo) {
@@ -522,6 +556,7 @@ function validateQxExecutableLine(line, entry, section = null) {
 
   const mitm=line.match(/^([A-Za-z0-9_-]+)\s*=/);
   if (mitm) {
+    if(section && section!=='mitm')throw new Error(entry.id+': QX MITM assignment outside mitm section: '+line);
     if (!QX_WAYX_SNIPPET_MITM_KEYS.has(mitm[1].toLowerCase())) {
       throw new Error(`${entry.id}: unverified/unsupported Quantumult X snippet MITM key: ${mitm[1]}`);
     }
@@ -530,6 +565,7 @@ function validateQxExecutableLine(line, entry, section = null) {
 
   const rewrite=splitQxRewriteLine(line);
   if (rewrite) {
+    if(section && section!=='rewrite_local')throw new Error(entry.id+': QX rewrite outside rewrite_local section: '+line);
     if (!QX_WAYX_REWRITE_MATCHERS.has(rewrite.matcher)) {
       throw new Error(`${entry.id}: unverified/unsupported Quantumult X rewrite matcher: ${rewrite.matcher}`);
     }
@@ -539,12 +575,15 @@ function validateQxExecutableLine(line, entry, section = null) {
     if (rewrite.matcher==='url-and-header' && !rewrite.headersPattern) {
       throw new Error(`${entry.id}: Quantumult X url-and-header rewrite has an empty Headers pattern: ${line}`);
     }
+    targetRegex(rewrite.urlPattern,entry,'Quantumult X URL');
+    if(rewrite.headersPattern)targetRegex(rewrite.headersPattern,entry,'Quantumult X Headers',false);
     validateQxRewriteAction(rewrite.action,line,entry);
     return;
   }
 
   const comma=line.indexOf(',');
   if (comma > 0) {
+    if(section && section!=='filter_local')throw new Error(entry.id+': QX filter outside filter_local section: '+line);
     const type=line.slice(0,comma).trim().toLowerCase();
     if (!QX_WAYX_FILTER_TYPES.has(type)) {
       throw new Error(`${entry.id}: unverified/unsupported Quantumult X filter type: ${type}`);
@@ -702,6 +741,8 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
       if (!typeTree.ok) {
         throw new Error(`${entry.id}: unsupported Surge rule type/combination in module (${typeTree.reason}): ${line}`);
       }
+      const parsed=parseLoonRuleAst(line);
+      walkRuleAst(parsed.ast,node=>{if(node.type==='URL-REGEX')targetRegex(node.value,entry,'Surge URL-REGEX',false);});
       const policyRaw = String(parts[2] || '');
       const argumentPolicy = policyRaw.match(/^\{\{\{([A-Za-z0-9_]+)\}\}\}$/);
       if (argumentPolicy) {
@@ -721,6 +762,8 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
     }
 
     if (current === 'URL Rewrite') {
+      if(!/^\S+\s+\S+\s+\S+$/.test(line))throw new Error(entry.id+': malformed Surge URL Rewrite: '+line);
+      targetRegex(line.split(/\s+/)[0],entry,'Surge URL Rewrite');
       const type = line.trim().split(/\s+/).at(-1);
       if (!SURGE_WAYX_URL_REWRITE_TYPES.has(type)) {
         throw new Error(`${entry.id}: invalid Surge URL Rewrite line: ${line}`);
@@ -732,6 +775,7 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
     }
 
     if (current === 'Header Rewrite') {
+      targetRegex(line.split(/\s+/)[1],entry,'Surge Header Rewrite URL');
       const match = line.match(/^http-(?:request|response)\s+\S+\s+(header-[a-z-]+)\b/);
       if (!match || !SURGE_WAYX_HEADER_REWRITE_ACTIONS.has(match[1])) {
         throw new Error(`${entry.id}: invalid Surge Header Rewrite line: ${line}`);
@@ -740,6 +784,7 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
     }
 
     if (current === 'Body Rewrite') {
+      targetRegex(line.split(/\s+/)[1],entry,'Surge Body Rewrite URL');
       hasBodyRewrite = true;
       const type = line.trim().split(/\s+/, 1)[0];
       if (!SURGE_WAYX_BODY_REWRITE_TYPES.has(type)) {
@@ -749,6 +794,7 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
     }
 
     if (current === 'Map Local') {
+      targetRegex(line.split(/\s+/)[0],entry,'Surge Map Local URL');
       const dataType = line.match(/\bdata-type=([^\s]+)/)?.[1];
       if (!dataType || !SURGE_WAYX_MAP_LOCAL_DATA_TYPES.has(dataType)) {
         throw new Error(`${entry.id}: invalid Surge Map Local line: ${line}`);
@@ -761,29 +807,15 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
       const declaration = line.match(/^([^=]+?)\s*=\s*(.+)$/);
       if (!declaration) throw new Error(`${entry.id}: invalid Surge [Script] declaration: ${line}`);
       const body = declaration[2];
-      const typeMatch = body.match(/(?:^|,)\s*type=([^,\s]+)/);
-      if (!typeMatch) throw new Error(`${entry.id}: Surge [Script] declaration must include an explicit type: ${line}`);
-      const type = typeMatch[1];
-      if (!SURGE_WAYX_SCRIPT_TYPES.has(type)) {
-        throw new Error(`${entry.id}: unsupported Surge [Script] type for WayX conversion: ${line}`);
-      }
-      if (!/(?:^|,)\s*script-path=[^,\s]+/.test(body)) {
-        throw new Error(`${entry.id}: Surge [Script] missing script-path: ${line}`);
-      }
-      if (type === 'http-request' || type === 'http-response') {
-        const patternMatch = body.match(/(?:^|,)\s*pattern=([^,]+)/);
-        if (!patternMatch) {
-          throw new Error(`${entry.id}: Surge HTTP script missing pattern: ${line}`);
-        }
-      } else if (type === 'cron') {
-        if (!/(?:^|,)\s*cronexp=(?:"(?:[^"\\]|\\.)*"|[^,]+)/.test(body)) {
-          throw new Error(`${entry.id}: Surge cron script missing cronexp: ${line}`);
-        }
-      } else if (type === 'event') {
-        if (!/(?:^|,)\s*event-name=[^,\s]+/.test(body)) {
-          throw new Error(`${entry.id}: Surge event script missing event-name: ${line}`);
-        }
-      }
+      const params=surgeScriptParameters(body,entry);
+      const type=params.get('type');
+      if(!SURGE_WAYX_SCRIPT_TYPES.has(type))throw new Error(entry.id+': unsupported/missing Surge Script type: '+line);
+      if(!params.get('script-path'))throw new Error(entry.id+': Surge [Script] missing script-path: '+line);
+      if(type==='http-request' || type==='http-response') {
+        if(!params.has('pattern'))throw new Error(entry.id+': Surge HTTP script missing pattern: '+line);
+        targetRegex(params.get('pattern'),entry,'Surge Script pattern',false);
+      } else if(type==='cron' && !params.get('cronexp'))throw new Error(entry.id+': Surge cron script missing cronexp: '+line);
+      else if(type==='event' && !params.get('event-name'))throw new Error(entry.id+': Surge event script missing event-name: '+line);
       continue;
     }
 

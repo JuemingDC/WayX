@@ -115,6 +115,40 @@ const entry={
   }
 }
 
+// Public output validators reject bad external matchers even for valid scripts.
+{
+  const validSurge=convertPlugin(entry,'#!name=RegexAudit\n[Script]\nhttp-response ^https://audit.example script-path=https://example.com/a.js',{stamp:'2026-10-16 14:00:00 +08:00',rawBase:'https://example.com'}).surge;
+  for(const matcher of ['[', '(api', 'api)', '*', '${urlMatch.1}', 'undefined']) {
+    assert.throws(()=>validateQX('# [rewrite_local]\n'+matcher+' url script-response-body https://example.com/a.js',entry),/regex/);
+    assert.throws(()=>validateSurgeModule(validSurge.replace('pattern=^https://audit.example','pattern='+matcher),entry),/regex/);
+  }
+  assert.throws(()=>validateQX('# [filter_local]\n^https://a url reject',entry),/outside/);
+  assert.throws(()=>validateQX('# [rewrite_local]\n^https://a [ url-and-header reject',entry),/regex/);
+  const scriptSource=['#!name=ParameterSyntax','[Script]',
+    'http-response ^https://a.example/\\w{1,3} script-path=https://example.com/a.js,requires-body=true',
+    'response if ${url} == "https://a.example/fixed?x=1" then script("https://example.com/b.js") with requires_body=true',
+  ].join('\n');
+  const output=convertPlugin(entry,scriptSource,{stamp:'2026-10-16 14:00:00 +08:00',rawBase:'https://example.com'});
+  assert.ok(output.surge.includes('pattern="^https://a.example/\\w{1,3}",script-path='));
+  validateQX(output.qx,entry);
+  validateSurgeModule(output.surge,entry);
+  assert.throws(()=>validateSurgeModule(output.surge.replace('pattern="^https://a.example/\\w{1,3}"','pattern=^https://a.example/\\w{1,3}'),entry),/parameter/);
+  assert.doesNotMatch(output.qx,/REVIEW REQUIRED/);
+  const fallbackSource=['#!name=CompatibilityMatcher','[Rewrite]',
+    'response if ${url} ~= /api(node{1,3})/i as hit then response.header.set("X-Route", "${hit.1}")',
+    '[Script]','http-response original script-path=https://example.com/author.js',
+  ].join('\n');
+  const fallback=convertPlugin(entry,fallbackSource,{stamp:'2026-10-16 14:00:00 +08:00',rawBase:'https://example.com'});
+  assert.ok(fallback.qx.includes('(?i)api(node{1,3}) url script-response-header'));
+  assert.ok(fallback.surge.includes('pattern="(?i)api(node{1,3})",script-path='));
+  validateQX(fallback.qx,entry);
+  validateSurgeModule(fallback.surge,entry);
+  const actualSource=await fs.readFile('Resource/Loon/BaiduSearchWebpage_remove_ads.lpx','utf8');
+  const actual=convertPlugin(entry,actualSource,{stamp:'2026-10-16 14:00:00 +08:00',rawBase:'https://example.com'});
+  assert.match(actual.surge,/pattern="[^"\n]*\{8,9\}[^"\n]*",script-path=/);
+  validateSurgeModule(actual.surge,entry);
+}
+
 // Real QuickSearch regression: preserve each URL matcher and native redirect.
 {
   const source=await fs.readFile('Resource/Loon/QuickSearch.lpx','utf8');

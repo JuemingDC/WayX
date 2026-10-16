@@ -2,7 +2,7 @@
 // Author: chance
 // Category: Converter / rewrite
 
-import { scanSourceRegexLiteral, normalizeRegexBodyForTarget, compileRegexForTarget, conditionRuntimeSource, compileSourceRegex, stringTemplateParts } from "./core.mjs";
+import { scanSourceRegexLiteral, normalizeRegexBodyForTarget, surgeRegexParameter, compileRegexForTarget, conditionRuntimeSource, compileSourceRegex, stringTemplateParts } from "./core.mjs";
 import { renderQxHeaderScript, renderQxInlineMockScript, renderSurgeRequestMockScript, renderQxMockFileScript, renderQxRejectScript, headerOpsForMock, renderMixedRewriteScript, renderSingleJsonMutationScript, renderSingleRewriteMutationScript } from "./runtime.mjs";
 import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
@@ -1139,7 +1139,7 @@ export function planRewriteFeatureHelper(ast,target,ctx) {
     if(narrowJq)plan.pattern=jqMatcher.pattern;
     const prefix=narrowJq ? jqMatcher.pattern+' url ' : qxRewriteMatcherPlan(ast).prefix;
     const line=target==='qx' ? prefix+plan.qxAction+' '+url :
-      'wayx_features_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+url+(plan.requiresBody?',requires-body=true,max-size=-1':'')+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:'');
+      'wayx_features_'+key+' = type='+plan.surgeType+',pattern='+surgeRegexParameter(plan.pattern)+',script-path='+url+(plan.requiresBody?',requires-body=true,max-size=-1':'')+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:'');
     ctx.generatedScripts.set(filename,plan.script);
     return {ok:true,handler:'source-feature-collection',section:target==='qx'?'rewrite':'script',line};
   }catch(error){return {ok:false,terminal:true,reason:String(error.message || error)};}
@@ -1319,19 +1319,27 @@ function scalarItems(node) {
   return node?.type === 'array' ? node.items : [node];
 }
 
+function urlComparisonRegex(c) {
+  if(c?.type!=='comparison' || c.left?.type!=='variable' || c.left.name!=='url')return null;
+  if(c.operator==='~=' && c.right?.type==='regex')return {regex:c.right,capture:c.capture || null};
+  if(c.operator!=='==' || !['string','raw-string'].includes(c.right?.type))return null;
+  const parts=stringTemplateParts(c.right);
+  if(parts.some(([kind])=>kind!=='s'))return null;
+  const value=parts.map(([,part])=>part).join('');
+  const pattern='^'+regexEscape(value).replace(/\s/g,ch=>'\\u'+ch.charCodeAt(0).toString(16).padStart(4,'0'))+'$';
+  return {regex:{type:'regex',pattern,flags:''},capture:null};
+}
+
 export function simpleUrlRewriteCondition(ast, {target = 'generic'} = {}) {
   if (!ast || ast.type !== 'rewrite') return unsupported('expected Rewrite v2 AST');
-  const c = ast.condition;
-  if (!c || c.type !== 'comparison' || c.operator !== '~=' ||
-      c.left?.type !== 'variable' || c.left.name !== 'url' ||
-      c.right?.type !== 'regex') {
-    return unsupported('condition is not a single URL regex');
-  }
+  const c = unwrap(ast.condition);
+  const match=urlComparisonRegex(c);
+  if(!match)return unsupported('condition is not a single fixed URL comparison');
   // URL matcher bodies are source regex bodies after the Loon literal wrapper
   // has been removed by the parser. Do not compile/canonicalize them here.
-  const compiled=compileRegexForTarget(c.right);
+  const compiled=compileRegexForTarget(match.regex);
   if (!compiled.ok) return compiled;
-  return {...compiled,regex:c.right,capture:c.capture || null};
+  return {...compiled,regex:match.regex,capture:match.capture};
 }
 
 function parseKeyPath(path) {
@@ -1502,7 +1510,7 @@ export function qxDirectRewritePlan(ast, {matcher = null} = {}) {
     if(ast.phase!=='request' || status?.type!=='number' || ![302,307].includes(status.value)) {
       return unsupported('QX native redirect requires request phase and status 302 or 307');
     }
-    const urlConditions=findRewriteComparisons(ast.condition,c=>c.operator==='~=' && c.left?.type==='variable' && c.left.name==='url' && c.right?.type==='regex');
+    const urlConditions=findRewriteComparisons(ast.condition,c=>Boolean(urlComparisonRegex(c)));
     if(urlConditions.length!==1)return unsupported('QX native redirect requires one URL regex capture scope');
     try {
       const replacement=loonTemplateToNativeUrl(action.args[1],urlConditions[0].capture,null,'Quantumult X');
@@ -2083,12 +2091,13 @@ function comparisonKey(node, {compatibility=false}={}) {
   const n=unwrap(node);
   if (n?.type!=='comparison' || n.left?.type!=='variable') return null;
 
-  if (n.left.name==='url' && n.operator==='~=' && n.right?.type==='regex' && (compatibility || !n.right.flags)) {
+  const url=urlComparisonRegex(n);
+  if(url && (compatibility || !url.regex.flags)) {
     return {
       kind:'url-regex',
-      key:'url-regex\u0000'+String(n.right.pattern)+'\u0000'+String(n.right.flags || ''),
-      sourceFlags:String(n.right.flags || ''),
-      pattern:compileRegexForTarget(n.right).pattern,
+      key:'url-regex\u0000'+url.regex.pattern+'\u0000'+String(url.regex.flags || ''),
+      sourceFlags:String(url.regex.flags || ''),
+      pattern:compileRegexForTarget(url.regex).pattern,
     };
   }
 
@@ -2140,7 +2149,7 @@ function guaranteedPredicates(node) {
   if (!n) return new Map();
 
   if (n.type==='comparison') {
-    const item=comparisonKey(n);
+    const item=comparisonKey(n,{compatibility:true});
     return item ? new Map([[item.key,item]]) : new Map();
   }
 
@@ -2595,7 +2604,7 @@ function planMock(pattern, action, parsed, target, ctx) {
     ctx.generatedScripts.set(filename, plan.script);
     return {
       section:'script',
-      line:'wayx_legacy_request_mock_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+ctx.rawBase+'/Script/'+ctx.id+'/'+filename+',requires-body=true'+(plan.binaryBodyMode?',binary-body-mode=true':''),
+      line:'wayx_legacy_request_mock_'+key+' = type='+plan.surgeType+',pattern='+surgeRegexParameter(plan.pattern)+',script-path='+ctx.rawBase+'/Script/'+ctx.id+'/'+filename+',requires-body=true'+(plan.binaryBodyMode?',binary-body-mode=true':''),
     };
   } catch (error) {
     return legacyRewriteReview(pattern, action, String(error?.message || error));
@@ -3043,7 +3052,7 @@ function ensureSurgeRewriteHandlers() {
         return {
           ok:true,
           section:'script',
-          line:'wayx_complex_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+surgeRewriteRawBase(ctx)+'/Script/'+ctx.id+'/'+filename+(plan.requiresBody?',requires-body=true':'')+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:''),
+          line:'wayx_complex_'+key+' = type='+plan.surgeType+',pattern='+surgeRegexParameter(plan.pattern)+',script-path='+surgeRewriteRawBase(ctx)+'/Script/'+ctx.id+'/'+filename+(plan.requiresBody?',requires-body=true':'')+(plan.fullHeaderMode?',full-header-mode=true':'')+(payload.value?',argument='+payload.value:''),
         };
       } catch (error) {
         return {ok:false,terminal:true,reason:String(error?.message||error)};
@@ -3104,7 +3113,7 @@ export function planSurgeRewrite(ir,ctx={}) {
       ctx.generatedScripts.set(filename,plan.script);
       return {
         section:'script',
-        line:'wayx_request_mock_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+surgeRewriteRawBase(ctx)+'/Script/'+ctx.id+'/'+filename+',requires-body=true'+(plan.binaryBodyMode?',binary-body-mode=true':''),
+        line:'wayx_request_mock_'+key+' = type='+plan.surgeType+',pattern='+surgeRegexParameter(plan.pattern)+',script-path='+surgeRewriteRawBase(ctx)+'/Script/'+ctx.id+'/'+filename+',requires-body=true'+(plan.binaryBodyMode?',binary-body-mode=true':''),
       };
     } catch (error) {
       return rewriteReview(source,String(error?.message||error).split('\n')[0]);
@@ -3155,7 +3164,7 @@ export function planSurgeRewrite(ir,ctx={}) {
       ctx.generatedScripts.set(filename,plan.script);
       return {
         section:'script',
-        line:'wayx_json_mutation_'+key+' = type='+plan.surgeType+',pattern='+plan.pattern+',script-path='+surgeRewriteRawBase(ctx)+'/Script/'+ctx.id+'/'+filename+',requires-body=true'+(payload.value?',argument='+payload.value:''),
+        line:'wayx_json_mutation_'+key+' = type='+plan.surgeType+',pattern='+surgeRegexParameter(plan.pattern)+',script-path='+surgeRewriteRawBase(ctx)+'/Script/'+ctx.id+'/'+filename+',requires-body=true'+(payload.value?',argument='+payload.value:''),
       };
     } catch (error) {
       return rewriteReview(source,String(error?.message||error).split('\n')[0]);
