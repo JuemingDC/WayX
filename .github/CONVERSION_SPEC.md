@@ -264,7 +264,7 @@ Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生�
 
 ## 2.19 Python 规则集聚合
 
-规则集聚合领域统一由 `.github/converter/rules.py` 管理，来源、分类、品牌默认策略和子服务归属集中于 `.github/sources/rules.json`。只排除直接 blackmatrix7 来源，接受其它维护者引用它的情况。采用 V2Fly 官方发布及 SHA-256 校验；SagerNet geosite 与其共用相同上游，不重复下载相同数据。MetaCubeX 持续生成的具体分类、其维护的补充及 Nexitally 的直连/代理/AI/加密货币/推送列表按来源策略合并。来源作者、URL、许可证及内容摘要保留。
+规则集聚合领域统一由 `.github/converter/rules.py` 管理，来源、分类、品牌默认策略和子服务归属集中于 `.github/sources/rules.json`。只排除直接 blackmatrix7 来源，接受其它维护者引用它的情况。采用 V2Fly 官方发布及 SHA-256 校验；SagerNet geosite 与其共用相同上游，不重复下载相同数据。MetaCubeX 持续生成的具体分类、其维护的补充及 Nexitally 的直连/代理/AI/加密货币/推送列表按来源策略合并。来源作者、URL、许可证及内容摘要保留。注册表 rule_exclusions 可按分类、原生类型和操作数表达式统一排除规则，作用于所有输入和两端输出，不能直接编辑生成文件；排除通配符不影响对应 CIDR 或其它规则类型。
 
 QX 原生 filter 文件仅输出 direct/reject/proxy：显式 DIRECT 保留 direct、REJECT 家族统一 reject，其余品牌名、Media、未指定策略等统一 proxy。先归一化动作，再合并同动作规则去重；混合文件保留显式直连/拒绝例外，不使用 force-policy 覆盖。原生格式门禁同时检查三种标准策略。Surge 外部 RULE-SET 行不携带策略，混合策略分类统一分为 direct/proxy 文件；两端合集统一过滤进程名、进程路径、用户/UID 等桌面身份条件，复合条件包含这类谓词时整条过滤，不能删除条件后扩大匹配。过滤项单独统计且不提转换错误 Issue。域名正则的锚定字面量、有限分支、字符集合和有界重复精确展开为原生 DOMAIN/DOMAIN-SUFFIX；点号、点星、点加精确映射为原生域名通配符。不支持的正则/原生类型/选项按用户要求忽略，仅在 Action 报告统计且不提 Issue；不能放宽匹配或改成脚本；可证明已被字面后缀覆盖的表达式视为冗余。sing-box JSON 支持官方版本 1–5，只解析已支持字段；含无对应原生谓词的条件整体忽略，不能去掉部分 AND 条件后扩大匹配；源模式损坏仍阻止发布。
 
