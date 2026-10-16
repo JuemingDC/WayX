@@ -115,6 +115,22 @@ const entry={
   }
 }
 
+// Real QuickSearch regression: preserve each URL matcher and native redirect.
+{
+  const source=await fs.readFile('Resource/Loon/QuickSearch.lpx','utf8');
+  const converted=convertPlugin(entry,source,{stamp:'2026-10-16 14:00:00 +08:00',rawBase:'https://example.com'});
+  const asts=parseLoonPlugin(source).sections.get('Rewrite').filter(line=>line.startsWith('request ')).map(parseRewriteV2);
+  assert.ok(asts.length>=8);
+  for(const ast of asts) {
+    const pattern='(?'+ast.condition.right.flags+')'+ast.condition.right.pattern;
+    const target=ast.actions[0].args[1].value.replace(/\$\{urlMatch\.(\d+)\}/g,(_,n)=>'$'+n);
+    assert.ok(converted.qx.includes(pattern+' url 307 '+target));
+  }
+  validateQX(converted.qx,entry);
+  assert.doesNotMatch(converted.qx,/script-echo-response|REVIEW REQUIRED/);
+  assert.equal(converted.generatedScripts.size,0);
+}
+
 const source=[
   '#!name=Demo',
   '#!desc=Demo Loon plugin',

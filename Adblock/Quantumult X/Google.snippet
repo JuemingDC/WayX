@@ -6,7 +6,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Google.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-04 18:36:25 +08:00
+# Converted: 2026-10-16 13:44:07 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Google.lpx
@@ -15,8 +15,8 @@
 # [filter_local]
 
 # [rewrite_local]
-^ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Google/redirect_9b0981a17a.js
-^ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Google/redirect_2cffca5b95.js
+(?i)^https?:\/\/(www.)?(g|google)\.cn url 307 https://www.google.com
+(?i)^https?:\/\/(ditu|maps).google\.cn url 307 https://maps.google.com
 
 # [mitm]
 hostname = www.google.cn

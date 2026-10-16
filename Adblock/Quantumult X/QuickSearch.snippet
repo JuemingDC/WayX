@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Safari.png
 # Updated: 2026-10-16 11:03:37
 
-# Converted: 2026-10-16 13:34:21 +08:00
+# Converted: 2026-10-16 13:44:30 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/QuickSearch.lpx
@@ -17,14 +17,14 @@
 
 # [rewrite_local]
 
-^ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_QuickSearch/redirect_f02aecf4f3.js
-^ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_QuickSearch/redirect_8f4b574872.js
-^ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_QuickSearch/redirect_59afedd757.js
-^ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_QuickSearch/redirect_6ec184ed36.js
-^ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_QuickSearch/redirect_64305a02c8.js
-^ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_QuickSearch/redirect_a4db0be32e.js
-^ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_QuickSearch/redirect_979bb1f59c.js
-^ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_QuickSearch/redirect_1a1f8541ca.js
+(?i)^https:\/\/duckduckgo\.com\/\?q=bd\+([^&]+).+ url 307 https://www.baidu.com/s?wd=$1
+(?i)^https:\/\/duckduckgo\.com\/\?q=bdimg\+([^&]+).+ url 307 https://image.baidu.com/search/index?tn=baiduimage&word=$1
+(?i)^https:\/\/duckduckgo\.com\/\?q=gimg\+([^&]+).+ url 307 https://www.google.com/search?&tbm=isch&q=$1
+(?i)^https:\/\/duckduckgo\.com\/\?q=b\+([^&]+).+ url 307 https://www.bing.com/search?q=$1
+(?i)^https:\/\/duckduckgo\.com\/\?q=wk\+([^&]+).+ url 307 https://zh.wikipedia.org/wiki/$1
+(?i)^https:\/\/duckduckgo\.com\/\?q=qm\+([^&]+).+ url 307 https://www.qimai.cn/search/index/country/cn/search/$1
+(?i)^https:\/\/duckduckgo\.com\/\?q=gh\+([^&]+).+ url 307 https://github.com/search?q=$1
+(?i)^https:\/\/duckduckgo\.com\/\?q=(?!(?:bd|bdimg|gimg|b|wk|qm|gh)\+)([^&]+).+ url 307 https://www.google.com/search?q=$1
 
 # [mitm]
 hostname = duckduckgo.com

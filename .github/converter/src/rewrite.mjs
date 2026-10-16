@@ -3,7 +3,7 @@
 // Category: Converter / rewrite
 
 import { scanSourceRegexLiteral, normalizeRegexBodyForTarget, compileRegexForTarget, conditionRuntimeSource, compileSourceRegex, stringTemplateParts } from "./core.mjs";
-import { renderQxHeaderScript, renderQxInlineMockScript, renderSurgeRequestMockScript, renderQxMockFileScript, renderQxRedirectScript, renderQxRejectScript, headerOpsForMock, renderMixedRewriteScript, renderSingleJsonMutationScript, renderSingleRewriteMutationScript } from "./runtime.mjs";
+import { renderQxHeaderScript, renderQxInlineMockScript, renderSurgeRequestMockScript, renderQxMockFileScript, renderQxRejectScript, headerOpsForMock, renderMixedRewriteScript, renderSingleJsonMutationScript, renderSingleRewriteMutationScript } from "./runtime.mjs";
 import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { surgeRewriteArgumentPayload } from "./script.mjs";
@@ -1497,6 +1497,22 @@ export function qxDirectRewritePlan(ast, {matcher = null} = {}) {
 
   const action = ast.actions[0];
 
+  if (action.name==='redirect') {
+    const status=action.args[0];
+    if(ast.phase!=='request' || status?.type!=='number' || ![302,307].includes(status.value)) {
+      return unsupported('QX native redirect requires request phase and status 302 or 307');
+    }
+    const urlConditions=findRewriteComparisons(ast.condition,c=>c.operator==='~=' && c.left?.type==='variable' && c.left.name==='url' && c.right?.type==='regex');
+    if(urlConditions.length!==1)return unsupported('QX native redirect requires one URL regex capture scope');
+    try {
+      const replacement=loonTemplateToNativeUrl(action.args[1],urlConditions[0].capture,null,'Quantumult X');
+      return {ok:true,strategy:'direct',section:'rewrite',pattern:condition.pattern,
+        line:condition.prefix+status.value+' '+replacement,notes:condition.notes};
+    } catch(error) {
+      return unsupported(String(error.message || error));
+    }
+  }
+
   const primitive = qxPrimitiveForRewriteV2Action(action);
   if (primitive && /^(?:reject-|reject$)/.test(primitive)) {
     return {
@@ -1604,18 +1620,18 @@ export function surgeDirectRewritePlan(ast) {
   return unsupported('action requires generated script or target-specific mapping');
 }
 
-function loonTemplateToSurge(node, capture, argumentTable = null) {
+function loonTemplateToNativeUrl(node, capture, argumentTable = null, target = 'Surge') {
   return stringTemplateParts(node).map(([kind,value]) => {
     if (kind==='s') {
       // Native URL Rewrite has no documented literal-dollar escape. Never
       // reinterpret raw/escaped Loon text as a target capture or placeholder.
-      if (/[$\\\s]/.test(value)) throw new Error('URL replacement literal cannot be represented safely in native Surge URL Rewrite');
+      if (/[$\\\s]/.test(value)) throw new Error('URL replacement literal cannot be represented safely in native '+target+' URL Rewrite');
       return value;
     }
     const ref=value.match(/^([A-Za-z_][A-Za-z0-9_-]*)\.(\d+)$/);
     if (ref) {
       if (!capture || ref[1]!==capture) throw new Error('URL replacement contains a non-URL capture');
-      if (Number(ref[2])===0) throw new Error('Surge URL Rewrite does not document a complete-match $0 replacement');
+      if (Number(ref[2])===0) throw new Error(target+' URL Rewrite does not document a complete-match $0 replacement');
       return '$'+Number(ref[2]);
     }
     const entry=argumentTable?.byId?.get(value);
@@ -1639,7 +1655,7 @@ export function surgeRedirectRewritePlan(ast, {argumentTable = null} = {}) {
     if (status?.type !== 'number' || ![302,307].includes(status.value)) return unsupported('redirect status must be 302 or 307');
     if (target === null) return unsupported('redirect target must be a fixed string');
     try {
-      const replacement = loonTemplateToSurge(action.args[1], condition.capture, argumentTable);
+      const replacement = loonTemplateToNativeUrl(action.args[1], condition.capture, argumentTable);
       return {
         ok:true, strategy:'direct', section:'url', pattern:condition.pattern,
         line:condition.pattern + ' ' + replacement + ' ' + status.value, notes:condition.notes,
@@ -1652,7 +1668,7 @@ export function surgeRedirectRewritePlan(ast, {argumentTable = null} = {}) {
   const target = stringNode(action.args[0]);
   if (target === null) return unsupported('url.replace target must be a fixed string');
   try {
-    const replacement = loonTemplateToSurge(action.args[0], condition.capture, argumentTable);
+    const replacement = loonTemplateToNativeUrl(action.args[0], condition.capture, argumentTable);
     return {
       ok:true, strategy:'direct', section:'url', pattern:condition.pattern,
       line:condition.pattern + ' ' + replacement + ' header', notes:condition.notes,
@@ -2812,6 +2828,13 @@ export function planQxRewrite(ir, ctx={}) {
     return rewriteReview(source,'Quantumult X cannot carry Loon plugin [Argument] references without changing the source script/runtime contract: '+argumentRefs.join(', '));
   }
 
+  if(singleOp?.kind==='redirect') {
+    const matcher=qxExactRewriteMatcherPlan(ast,{compatibility:true});
+    if(!matcher.ok)return rewriteReview(source,'QX native redirect requires an exact condition: '+matcher.reason);
+    const direct=qxDirectRewritePlan(ast,{matcher});
+    return direct.ok ? {section:direct.section,line:direct.line} : rewriteReview(source,direct.reason);
+  }
+
   const nativeJson=nativeJsonPriorityPlan(ast,'qx');
   if(nativeJson)return nativeJson;
 
@@ -2942,21 +2965,6 @@ export function planQxRewrite(ir, ctx={}) {
       const plan=renderSingleRewriteMutationScript(ast,{target:'qx',stamp:ctx.stamp,category:ctx.category,sourceLine:source});
       const key=crypto.createHash('sha1').update('body-single-complex\\0'+source).digest('hex').slice(0,10);
       const filename='body_'+key+'.js';
-      ctx.generatedScripts.set(filename,plan.script);
-      const matcher=qxRewriteMatcherPlan(ast);
-      return {section:'rewrite',line:matcher.prefix+plan.qxAction+' '+qxRewriteRawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
-    } catch (error) {
-      return rewriteReview(source,String(error?.message||error).split('\n')[0]);
-    }
-  }
-
-  if (singleOp?.kind==='redirect') {
-    try {
-      const exact=qxExactRewriteMatcherPlan(ast,{compatibility:true});
-      if (!exact.ok) throw new Error('QX echo-response requires an exact condition; guarded pass-through is not documented: '+exact.reason);
-      const plan=renderQxRedirectScript(ast,{conditionMode:'full',stamp:ctx.stamp,category:ctx.category,sourceLine:source});
-      const key=crypto.createHash('sha1').update('redirect\0'+source).digest('hex').slice(0,10);
-      const filename='redirect_'+key+'.js';
       ctx.generatedScripts.set(filename,plan.script);
       const matcher=qxRewriteMatcherPlan(ast);
       return {section:'rewrite',line:matcher.prefix+plan.qxAction+' '+qxRewriteRawBase(ctx)+'/Script/'+ctx.id+'/'+filename};
