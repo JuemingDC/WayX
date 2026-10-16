@@ -47,20 +47,6 @@ jobs:
           python-version: '3.14'
           check-latest: true
 
-      - name: Archive retired duplicate wildcard branch
-        shell: bash
-        run: |
-          set -euo pipefail
-          retired_ref=refs/heads/feature/loon-domain-wildcard-20261016
-          retired_sha=ea2aa8b0c20cfc4aaed2b390905064956b1a81f0
-          archive_ref=refs/tags/archive/loon-domain-wildcard-20261016
-          current_sha=$(git ls-remote origin "$retired_ref" | cut -f1)
-          if [ -n "$current_sha" ]; then
-            test "$current_sha" = "$retired_sha"
-            git push origin "$retired_sha:$archive_ref"
-            git push --force-with-lease="$retired_ref:$retired_sha" origin ":$retired_ref"
-          fi
-
       - name: Prepare runtime logs and enforce branch budget
         shell: bash
         run: |
