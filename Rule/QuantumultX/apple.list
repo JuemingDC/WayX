@@ -1,10 +1,10 @@
 # Name: apple
-# Updated: 2026-10-16 10:42:40 UTC
-# Source Authors: Nexitally, V2Fly
+# Updated: 2026-10-16 11:11:32 UTC
+# Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1787
+# Rules: 1795
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,direct
@@ -110,6 +110,7 @@ host,iosapps.itunes.apple.com,direct
 host,itunes-apple.com.akadns.net,direct
 host,js-cdn.music.apple.com,direct
 host,km.support.apple.com,direct
+host,linear.tv.apple.com,apple
 host,misc-assets.itunes.apple.com,direct
 host,musicstatus.music.apple.com,direct
 host,mvod.itunes.apple.com,direct
@@ -157,6 +158,7 @@ host,adcdownload.apple.com,direct
 host,app-site-association.cdn-apple.com,direct
 host,appldnld.apple.com,direct
 host,apple-tv-plus-press.apple.com,apple
+host,apple.comscoreresearch.com,apple
 host,appleid.cdn-apple.com,direct
 host,apps.mzstatic.com,direct
 host,cdn-cn.apple-mapkit.com,direct
@@ -216,8 +218,12 @@ host,mensura.cdn-apple.com,direct
 host,mesu.apple.com,direct
 host,ml.cdn-apple.com,direct
 host,music.apple.com,direct
+host,news-client.apple.com,apple
+host,news-edge.apple.com,apple
+host,news-events.apple.com,apple
 host,ocsp.apple.com,direct
 host,ocsp2.apple.com,direct
+host,ocvideo.apple.com,apple
 host,oscdn.apple.com,direct
 host,p-events-delivery.akamaized.net,direct
 host,pancake.apple.com,direct
@@ -531,6 +537,7 @@ host-suffix,apple.me,direct
 host-suffix,apple.my,direct
 host-suffix,apple.net,direct
 host-suffix,apple.news,direct
+host-suffix,apple.news,apple
 host-suffix,apple.nl,direct
 host-suffix,apple.no,direct
 host-suffix,apple.pk,direct
@@ -614,6 +621,7 @@ host-suffix,applemasters.info,direct
 host-suffix,applemusic.berlin,direct
 host-suffix,applemusic.co,direct
 host-suffix,applemusic.com,direct
+host-suffix,applemusic.com,apple
 host-suffix,applemusic.hamburg,direct
 host-suffix,applemusic.wang,direct
 host-suffix,applemusicconnect.com,direct

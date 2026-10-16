@@ -266,10 +266,10 @@ Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生�
 
 规则集聚合领域统一由 `.github/converter/rules.py` 管理，来源、分类、品牌默认策略和子服务归属集中于 `.github/sources/rules.json`。只排除直接 blackmatrix7 来源，接受其它维护者引用它的情况。采用 V2Fly 官方发布及 SHA-256 校验；SagerNet geosite 与其共用相同上游，不重复下载相同数据。MetaCubeX 持续生成的具体分类、其维护的补充及 Nexitally 的直连/代理/AI/加密货币/推送列表按来源策略合并。来源作者、URL、许可证及内容摘要保留。
 
-QX 同品牌 direct/proxy 在一个原生 filter 文件内保留逐条策略，REJECT 家族统一输出 reject，不使用 force-policy 覆盖混合文件。Surge 外部 RULE-SET 行不携带策略，混合策略分类统一分为 direct/proxy 文件；两端合集统一过滤进程名、进程路径、用户/UID 等桌面身份条件，复合条件包含这类谓词时整条过滤，不能删除条件后扩大匹配。过滤项单独统计且不提转换错误 Issue。域名正则的锚定字面量、有限分支、字符集合和有界重复精确展开为原生 DOMAIN/DOMAIN-SUFFIX；点号、点星、点加精确映射为原生域名通配符。不支持的正则保留异常，不能放宽匹配或改成脚本；可证明已被字面后缀覆盖的表达式视为冗余。sing-box JSON 支持官方版本 1–5，只解析已支持字段，不能忽略未知谓词。
+QX 同品牌 direct/proxy 在一个原生 filter 文件内保留逐条策略，REJECT 家族统一输出 reject，不使用 force-policy 覆盖混合文件。Surge 外部 RULE-SET 行不携带策略，混合策略分类统一分为 direct/proxy 文件；两端合集统一过滤进程名、进程路径、用户/UID 等桌面身份条件，复合条件包含这类谓词时整条过滤，不能删除条件后扩大匹配。过滤项单独统计且不提转换错误 Issue。域名正则的锚定字面量、有限分支、字符集合和有界重复精确展开为原生 DOMAIN/DOMAIN-SUFFIX；点号、点星、点加精确映射为原生域名通配符。不支持的正则/原生类型/选项按用户要求忽略，仅在 Action 报告统计且不提 Issue；不能放宽匹配或改成脚本；可证明已被字面后缀覆盖的表达式视为冗余。sing-box JSON 支持官方版本 1–5，只解析已支持字段；含无对应原生谓词的条件整体忽略，不能去掉部分 AND 条件后扩大匹配；源模式损坏仍阻止发布。
 
-先规范化并按同分类、同策略、同参数去重，再进行域名后缀覆盖压缩。保留跨策略例外；有其它策略干预的分类不做父后缀覆盖删除。具体域名与更具体后缀优先，不能固定以 direct 或 proxy 一概优先。Surge 分文件后，用原生 AND/NOT 从代理规则中排除更具体的直连例外，不能靠错误的文件安装顺序掩盖优先级差异。品牌与子服务归属配置化，AI 独立于其它应用分类，覆盖国内外 AI，QX 保留逐条策略，Surge 按 direct/proxy 拆分。media/media_cn 为其余应用，proxy/cn 为较宽兜底，用户仍须配置最终策略。共享域名归属有歧义时保持补充集位置并提 Issue，不按字母顺序猜测归属。
+先规范化并按同分类、同策略、同参数去重，再进行域名后缀覆盖压缩。保留跨策略例外；有其它策略干预的分类不做父后缀覆盖删除。具体域名与更具体后缀优先，不能固定以 direct 或 proxy 一概优先。Surge 分文件后，用原生 AND/NOT 从代理规则中排除更具体的直连例外，不能靠错误的文件安装顺序掩盖优先级差异。品牌与子服务归属配置化，AI 独立于其它应用分类，仅收录国外 AI；注册表 exclude_tags 对所有该分类来源统一生效，国内 AI 留在 media_cn。media/media_cn 为其余应用，proxy/cn 为较宽兜底，用户仍须配置最终策略。共享域名归属有歧义时保持补充集位置并提 Issue，不按字母顺序猜测归属。
 
-生成文件集中在 Rule/QuantumultX 与 Rule/Surge；英文头包括 Name、Updated、Source Authors、Category 以及来源。Category 固定为广告 Adblock、应用/AI/media 为 app、cn/proxy 为 general。只在实际输出或元信息变化时更新时间；只清理状态文件记录且仍有受管标记的旧产物，保护手写文件。下载、校验或事务失败保留旧产物；未知/目标不可表示的声明保存在 rules-result.json，按来源/错误类型复用 Issue，已支持规则继续发布，不能将隔离项宣称已转换。完整成功且不再出现该类声明时关闭对应告警。
+生成文件集中在 Rule/QuantumultX 与 Rule/Surge；英文头包括 Name、Updated、Source Authors、Category 以及来源。Category 固定为广告 Adblock、应用/AI/media 为 app、cn/proxy 为 general。只在实际输出或元信息变化时更新时间；只清理状态文件记录且仍有受管标记的旧产物，保护手写文件。下载、校验或事务失败保留旧产物；无法表示的声明保存在 rules-result.json.filtered；格式损坏及归属歧义等异常按来源/错误类型复用 Issue，已支持规则继续发布，不能将隔离项宣称已转换。完整成功且不再出现该类声明时关闭对应告警。
 
-接入同一 Action 的 rules 阶段，verify 根据本次完整输入快照重新构建并逐字节校验产物、英文元信息与状态，不用旧状态代替本轮成功。语法、重复、覆盖边界、direct/proxy 优先级、protobuf/JSON 模式、拒绝动作降级、桌面条件过滤、有限正则原生转换、无变化不写入、失败回滚与手写文件保护在现有 workflow 领域套件验证。详细源快照与异常随现有 artifact 保存，summary 仅列计数和异常。
+补充广告、应用、AI、域名兜底及中国 CIDR 来源直接合并现有分类产物，来源仅在统一注册表声明，不为单个来源另造输出。完整转换/合并/去重仅由 Action 执行。接入同一 Action 的 rules 阶段，verify 根据本次完整输入快照重新构建并逐字节校验产物、英文元信息与状态，不用旧状态代替本轮成功。语法、重复、覆盖边界、direct/proxy 优先级、protobuf/JSON 模式、拒绝动作降级、桌面条件过滤、有限正则原生转换、无变化不写入、失败回滚与手写文件保护在现有 workflow 领域套件验证。详细源快照与异常随现有 artifact 保存，summary 仅列计数和异常。
