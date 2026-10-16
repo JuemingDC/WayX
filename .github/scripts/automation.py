@@ -281,7 +281,7 @@ def summary() -> None:
         lines.append(f'- {key}: {len(sync.get(key, []))}')
     rule_report = read_report('rules-result.json', {})
     lines.append(f"- Aggregated rule sets: {len(rule_report.get('counts', {}))}")
-    lines.append(f"- Filtered desktop rules: {len(rule_report.get('filtered', []))}")
+    lines.append(f"- Intentionally ignored rules: {len(rule_report.get('filtered', []))}")
     lines.append(f"- Quarantined source rules: {len(rule_report.get('quarantined', []))}")
     lines.append(f"- Monitor failures: {len(monitor.get('failures', []))}")
     for key in ['added', 'updated', 'removed']:

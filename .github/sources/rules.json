@@ -72,15 +72,11 @@
       "name": "ai",
       "tags": [
         "category-ai-!cn",
-        "category-ai-cn",
         "apple-intelligence",
         "github-copilot"
       ],
-      "split": true,
-      "proxy_tags": [
-        "category-ai-!cn",
-        "apple-intelligence",
-        "github-copilot"
+      "exclude_tags": [
+        "category-ai-cn"
       ]
     },
     {
@@ -376,15 +372,6 @@
       "license": "See upstream LICENSE"
     },
     {
-      "id": "mihomo-category-ai-cn",
-      "author": "MetaCubeX",
-      "format": "sing-box-json",
-      "category": "ai",
-      "policy": "DIRECT",
-      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-ai-cn.json",
-      "license": "See upstream LICENSE"
-    },
-    {
       "id": "dustinwin-ai",
       "author": "DustinWin",
       "format": "sing-box-json",
@@ -392,6 +379,199 @@
       "policy": "ai",
       "url": "https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/ai.json",
       "license": "GPL-3.0"
+    },
+    {
+      "id": "hagezi-light",
+      "author": "HaGeZi",
+      "format": "domain-suffixes",
+      "category": "adblock",
+      "policy": "REJECT",
+      "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/light-onlydomains.txt",
+      "license": "GPL-3.0"
+    },
+    {
+      "id": "awavenue-ads",
+      "author": "TG-Twilight",
+      "format": "ruleset",
+      "category": "adblock",
+      "policy": "REJECT",
+      "url": "https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-Surge-RULE-SET-Only.Ads.list",
+      "license": "GPL-3.0"
+    },
+    {
+      "id": "anti-ad",
+      "author": "privacy-protection-tools",
+      "format": "ruleset",
+      "category": "adblock",
+      "policy": "REJECT",
+      "url": "https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-surge.txt",
+      "license": "MIT"
+    },
+    {
+      "id": "sukka-media-non_ip",
+      "author": "Sukka",
+      "format": "ruleset",
+      "category": "media",
+      "policy": "PROXY",
+      "url": "https://ruleset.skk.moe/List/non_ip/stream.conf",
+      "license": "AGPL-3.0",
+      "mirrors": [
+        "https://ruleset-mirror.skk.moe/List/non_ip/stream.conf",
+        "https://raw.githubusercontent.com/SukkaLab/ruleset.skk.moe/master/List/non_ip/stream.conf"
+      ],
+      "timeout": 8,
+      "max_age_days": 7
+    },
+    {
+      "id": "sukka-ai-non_ip",
+      "author": "Sukka",
+      "format": "ruleset",
+      "category": "ai",
+      "policy": "ai",
+      "url": "https://ruleset.skk.moe/List/non_ip/ai.conf",
+      "license": "AGPL-3.0",
+      "mirrors": [
+        "https://ruleset-mirror.skk.moe/List/non_ip/ai.conf",
+        "https://raw.githubusercontent.com/SukkaLab/ruleset.skk.moe/master/List/non_ip/ai.conf"
+      ],
+      "timeout": 8,
+      "max_age_days": 7
+    },
+    {
+      "id": "sukka-domestic-non_ip",
+      "author": "Sukka",
+      "format": "ruleset",
+      "category": "cn",
+      "policy": "DIRECT",
+      "url": "https://ruleset.skk.moe/List/non_ip/domestic.conf",
+      "license": "AGPL-3.0",
+      "mirrors": [
+        "https://ruleset-mirror.skk.moe/List/non_ip/domestic.conf",
+        "https://raw.githubusercontent.com/SukkaLab/ruleset.skk.moe/master/List/non_ip/domestic.conf"
+      ],
+      "timeout": 8,
+      "max_age_days": 7,
+      "classify_apps": false
+    },
+    {
+      "id": "sukka-media-ip",
+      "author": "Sukka",
+      "format": "ruleset",
+      "category": "media",
+      "policy": "PROXY",
+      "url": "https://ruleset.skk.moe/List/ip/stream.conf",
+      "license": "AGPL-3.0",
+      "mirrors": [
+        "https://ruleset-mirror.skk.moe/List/ip/stream.conf",
+        "https://raw.githubusercontent.com/SukkaLab/ruleset.skk.moe/master/List/ip/stream.conf"
+      ],
+      "timeout": 8,
+      "max_age_days": 7
+    },
+    {
+      "id": "sukka-ai-ip",
+      "author": "Sukka",
+      "format": "ruleset",
+      "category": "ai",
+      "policy": "ai",
+      "url": "https://ruleset.skk.moe/List/ip/ai.conf",
+      "license": "AGPL-3.0",
+      "mirrors": [
+        "https://ruleset-mirror.skk.moe/List/ip/ai.conf",
+        "https://raw.githubusercontent.com/SukkaLab/ruleset.skk.moe/master/List/ip/ai.conf"
+      ],
+      "timeout": 8,
+      "max_age_days": 7
+    },
+    {
+      "id": "sukka-domestic-ip",
+      "author": "Sukka",
+      "format": "ruleset",
+      "category": "cn",
+      "policy": "DIRECT",
+      "url": "https://ruleset.skk.moe/List/ip/domestic.conf",
+      "license": "AGPL-3.0",
+      "mirrors": [
+        "https://ruleset-mirror.skk.moe/List/ip/domestic.conf",
+        "https://raw.githubusercontent.com/SukkaLab/ruleset.skk.moe/master/List/ip/domestic.conf"
+      ],
+      "timeout": 8,
+      "max_age_days": 7,
+      "classify_apps": false
+    },
+    {
+      "id": "sukka-global",
+      "author": "Sukka",
+      "format": "ruleset",
+      "category": "proxy",
+      "policy": "PROXY",
+      "url": "https://ruleset.skk.moe/List/non_ip/global.conf",
+      "license": "AGPL-3.0",
+      "mirrors": [
+        "https://ruleset-mirror.skk.moe/List/non_ip/global.conf",
+        "https://raw.githubusercontent.com/SukkaLab/ruleset.skk.moe/master/List/non_ip/global.conf"
+      ],
+      "timeout": 8,
+      "max_age_days": 7,
+      "classify_apps": false
+    },
+    {
+      "id": "acl4ssr-media",
+      "author": "ACL4SSR",
+      "format": "ruleset",
+      "category": "media",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list",
+      "license": "CC-BY-SA-4.0"
+    },
+    {
+      "id": "dustinwin-media",
+      "author": "DustinWin",
+      "format": "sing-box-json",
+      "category": "media",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json",
+      "license": "GPL-3.0"
+    },
+    {
+      "id": "loyalsoldier-direct",
+      "author": "Loyalsoldier",
+      "format": "ruleset",
+      "category": "cn",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt",
+      "license": "GPL-3.0",
+      "classify_apps": false
+    },
+    {
+      "id": "loyalsoldier-proxy",
+      "author": "Loyalsoldier",
+      "format": "ruleset",
+      "category": "proxy",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt",
+      "license": "GPL-3.0",
+      "classify_apps": false
+    },
+    {
+      "id": "gaoyifan-cn",
+      "author": "gaoyifan",
+      "format": "cidr",
+      "category": "cn",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china.txt",
+      "license": "MIT",
+      "classify_apps": false
+    },
+    {
+      "id": "gaoyifan-cn6",
+      "author": "gaoyifan",
+      "format": "cidr",
+      "category": "cn",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china6.txt",
+      "license": "MIT",
+      "classify_apps": false
     }
   ],
   "indirect_upstreams": "Allowed; only direct blackmatrix7 inputs are excluded."

@@ -405,9 +405,19 @@ rows=m.native_rules(json.dumps({'version':5,'rules':[{'domain':'example.com','do
 assert (R('DOMAIN-SUFFIX','example.com'),'PROXY') in rows
 assert (R('DOMAIN-WILDCARD','*.sub.example.net'),'PROXY') in rows
 assert not issues
-try:m.native_rules('{"version":2,"rules":[{"invert":true,"domain":"example.com"}]}',source,[])
-except ValueError:pass
-else:raise AssertionError('Unknown predicates cannot be ignored')
+ignored=[]
+assert not m.native_rules('{"version":2,"rules":[{"invert":true,"domain":"example.com"}]}',source,ignored)
+assert ignored[0]['code']=='filtered-unsupported-rule'
+assert not m.native_rules('{"version":5,"rules":[{"domain":"example.com","ip_cidr":"1.2.3.0/24"}]}',source,[])
+ignored=[]
+assert m.native_rules('DST-PORT,443,PROXY\nDOMAIN,ok.example,PROXY',{'id':'fixture','format':'ruleset'},ignored)==[(R('DOMAIN','ok.example'),'PROXY')]
+assert ignored[0]['code']=='filtered-unsupported-rule'
+assert m.native_rules('sub.example\n',{'id':'domains','format':'domain-suffixes','policy':'REJECT'},[])==[(R('DOMAIN-SUFFIX','sub.example'),'REJECT')]
+assert m.native_rules('2001:db8::1/32\n',{'id':'cidr','format':'cidr','policy':'DIRECT'},[])==[(R('IP-CIDR6','2001:db8::/32',('no-resolve',)),'DIRECT')]
+assert m.serialize(m.normalized('GEOIP','cn'),'DIRECT','Surge')=='GEOIP,CN'
+assert m.serialize(m.normalized('GEOIP','cn'),'DIRECT','QuantumultX')=='geoip,cn,direct'
+assert m.native_rules('host-suffix,example.com,REJECT',{'id':'qx','format':'ruleset'},[])==[(R('DOMAIN-SUFFIX','example.com'),'REJECT')]
+
 def varint(value):
  out=b''
  while value>127:out+=bytes([(value&127)|128]);value>>=7
@@ -434,7 +444,13 @@ assert all('PROCESS-NAME' not in text for text in outputs.values())
 assert metadata['Rule/Surge/brand_direct.list']['category']=='app'
 assert 'NOT,((DOMAIN,static.proxy.example.com))' in outputs['Rule/Surge/brand_proxy.list']
 assert any(item['code']=='filtered-desktop-rule' for item in anomalies)
-assert not any(item['code']=='unsupported-target-rule' for item in anomalies)
+assert not any(item['code']=='filtered-unsupported-target' for item in anomalies)
+# Exclusions apply to primary and supplemental category inputs without per-source special cases.
+config['applications'][0]['exclude_tags']=['fixture']
+scoped,_,_=m.build(config,{'geosite':encoded,'supplement':b'DOMAIN,domestic.example.com,PROXY\nDOMAIN-SUFFIX,elsewhere.test,PROXY'})
+assert all('domestic.example.com' not in text for name,text in scoped.items() if '/brand' in name)
+assert 'host-suffix,elsewhere.test,proxy' in scoped['Rule/QuantumultX/brand.list']
+
 with tempfile.TemporaryDirectory() as temp:
  os.chdir(temp)
  changed,_=m.apply_outputs(outputs,metadata,{'outputs':{}});assert changed==len(outputs)

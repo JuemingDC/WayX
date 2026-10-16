@@ -28,7 +28,8 @@ DESKTOP_JSON = frozenset({'process_name', 'process_path', 'process_path_regex',
                           'process_name_regex', 'package_name_regex', 'user', 'user_id', 'package_name'})
 QX_TYPES = {'DOMAIN': 'host', 'DOMAIN-SUFFIX': 'host-suffix',
             'DOMAIN-KEYWORD': 'host-keyword', 'DOMAIN-WILDCARD': 'host-wildcard',
-            'IP-CIDR': 'ip-cidr', 'IP-CIDR6': 'ip6-cidr', 'IP-ASN': 'ip-asn'}
+            'IP-CIDR': 'ip-cidr', 'IP-CIDR6': 'ip6-cidr', 'IP-ASN': 'ip-asn', 'GEOIP': 'geoip'}
+NATIVE_TYPES = {value.upper(): key for key, value in QX_TYPES.items()}
 
 
 def digest(data):
@@ -126,7 +127,7 @@ class Rule:
 
 
 def normalized(kind, value, options=()):
-    kind = kind.upper()
+    kind = NATIVE_TYPES.get(kind.upper(), kind.upper())
     if kind == 'PROCESS-NAME':
         if not value or re.search(r'[\r\n,\x00]', value) or options:
             raise ValueError('Invalid process rule')
@@ -145,6 +146,8 @@ def normalized(kind, value, options=()):
         if network.version != (6 if kind == 'IP-CIDR6' else 4):
             raise ValueError('IP family mismatch')
         value = str(network)
+    elif kind == 'GEOIP' and not re.fullmatch('[a-z]{2}', value):
+        raise ValueError('Invalid country code')
     elif kind == 'IP-ASN' and not value.isdecimal():
         raise ValueError('Invalid ASN')
     options = tuple(sorted(set(item.lower() for item in options)))
@@ -166,7 +169,13 @@ def native_rules(text, source, anomalies):
                                   'code': 'filtered-desktop-rule', 'reason': 'Desktop/application identity condition intentionally excluded'})
                 continue
             if set(item) - {'domain', 'domain_suffix', 'domain_keyword', 'domain_regex', 'ip_cidr'}:
-                raise ValueError('Unsupported sing-box rule-set predicate')
+                anomalies.append({'source': source['id'], 'declaration': json.dumps(item, sort_keys=True),
+                                  'code': 'filtered-unsupported-rule', 'reason': 'No native equivalent for all predicates; entire condition omitted'})
+                continue
+            if item.get('ip_cidr') and any(item.get(key) for key in ('domain', 'domain_suffix', 'domain_keyword', 'domain_regex')):
+                anomalies.append({'source': source['id'], 'declaration': json.dumps(item, sort_keys=True),
+                                  'code': 'filtered-unsupported-rule', 'reason': 'Combined domain/IP AND condition cannot be flattened into independent rules'})
+                continue
             fields = {key: [value] if isinstance(value, str) else value for key, value in item.items()}
             exact = set(fields.get('domain', []))
             suffixes = fields.get('domain_suffix', [])
@@ -182,7 +191,7 @@ def native_rules(text, source, anomalies):
                             result.extend((rule, source.get('policy', 'PROXY')) for rule in converted)
                         else:
                             anomalies.append({'source': source['id'], 'category': source['category'], 'declaration': 'regexp:' + value,
-                                              'code': 'unsupported-domain-regexp', 'reason': 'Outside bounded exact native conversion subset; no widening allowed'})
+                                              'code': 'filtered-unsupported-regexp', 'reason': 'Outside bounded exact native conversion subset; no widening allowed'})
                         continue
                     kind = {'domain': 'DOMAIN', 'domain_suffix': 'DOMAIN-SUFFIX', 'domain_keyword': 'DOMAIN-KEYWORD', 'ip_cidr': 'IP-CIDR6' if ':' in value else 'IP-CIDR'}[key]
                     if key == 'domain_suffix' and value.startswith('.'):
@@ -202,7 +211,11 @@ def native_rules(text, source, anomalies):
             fields = [part.strip() for part in line.split(',')]
             policy = source.get('policy', 'PROXY')
             options = []
-            if source['format'] == 'domainset':
+            if source['format'] == 'domain-suffixes':
+                rule = normalized('DOMAIN-SUFFIX', line.lstrip('.'))
+            elif source['format'] == 'cidr':
+                rule = normalized('IP-CIDR6' if ':' in line else 'IP-CIDR', line, ('no-resolve',))
+            elif source['format'] == 'domainset':
                 rule = normalized('DOMAIN-SUFFIX' if line.startswith('.') else 'DOMAIN', line.lstrip('.'))
             elif source['format'] == 'geosite-text':
                 value, *attributes = line.split()
@@ -212,7 +225,10 @@ def native_rules(text, source, anomalies):
                 kinds = {'domain': 'DOMAIN-SUFFIX', 'full': 'DOMAIN', 'keyword': 'DOMAIN-KEYWORD'}
                 if prefix == 'regexp':
                     converted = regex_native(value)
-                    if converted is None: raise ValueError('Outside bounded exact native regex conversion subset')
+                    if converted is None:
+                        anomalies.append({'source': source['id'], 'line': number, 'declaration': line,
+                                          'code': 'filtered-unsupported-regexp', 'reason': 'No exact native regex conversion; intentionally omitted'})
+                        continue
                     result.extend((item, 'DIRECT' if '@cn' in attributes else policy) for item in converted)
                     continue
                 rule = normalized(kinds.get(prefix, prefix), value)
@@ -230,7 +246,8 @@ def native_rules(text, source, anomalies):
             result.append((rule, policy))
         except (ValueError, UnicodeError) as error:
             anomalies.append({'source': source['id'], 'line': number, 'declaration': line,
-                              'code': 'unsupported-source-rule', 'reason': str(error)})
+                              'code': 'filtered-unsupported-rule' if str(error).startswith(('Unsupported native rule type:', 'Unsupported native rule parameters')) else 'unsupported-source-rule',
+                              'reason': str(error)})
     return result
 
 
@@ -423,7 +440,7 @@ def compact(rules):
                 continue
         result.append(rule)
     rank = {'DOMAIN': 0, 'DOMAIN-SUFFIX': 1, 'DOMAIN-WILDCARD': 2,
-            'DOMAIN-KEYWORD': 3, 'IP-CIDR': 4, 'IP-CIDR6': 5, 'IP-ASN': 6, 'PROCESS-NAME': 7}
+            'DOMAIN-KEYWORD': 3, 'IP-CIDR': 4, 'IP-CIDR6': 5, 'IP-ASN': 6, 'GEOIP': 7, 'PROCESS-NAME': 8}
     return sorted(result, key=lambda rule: (rank[rule.kind], rule.value, rule.options))
 
 
@@ -435,7 +452,7 @@ def serialize(rule, policy, target):
     if target == 'QuantumultX':
         action = 'reject' if policy.startswith('REJECT') else policy.lower() if policy in ('DIRECT', 'PROXY') else policy
         return ','.join((QX_TYPES[rule.kind], rule.value, action))
-    return ','.join((rule.kind, rule.value, *rule.options))
+    return ','.join((rule.kind, rule.value.upper() if rule.kind == 'GEOIP' else rule.value, *rule.options))
 
 
 def surge_proxy_exclusions(rule, policy, direct_rules):
@@ -459,10 +476,17 @@ def build(config, inputs):
     anomalies = []; buckets = {}; authors = {}; urls = {}
     sites = geosites(inputs['geosite'], anomalies)
     app_names = {app['name'] for app in config['applications']}
+    scope_exclusions = {}
+    def excluded(name, rule):
+        rules = scope_exclusions.get(name, set())
+        if not rules: return False
+        return Rule(rule.kind, rule.value) in rules or (rule.kind in ('DOMAIN', 'DOMAIN-SUFFIX') and any(
+            Rule('DOMAIN-SUFFIX', '.'.join(rule.value.split('.')[i:])) in rules
+            for i in range(len(rule.value.split('.')))))
     owned_exact = {}; owned_suffix = {}
     def add(name, policy, rules, author, source):
         key = (name, policy)
-        rules = set(rules)
+        rules = {rule for rule in rules if not excluded(name, rule)}
         buckets.setdefault(key, set()).update(rules)
         if name in app_names:
             for rule in rules:
@@ -486,7 +510,7 @@ def build(config, inputs):
                     if converted is not None:
                         result.update(converted); continue
                     anomalies.append({'source': 'V2Fly', 'category': group, 'declaration': 'regexp:' + operand,
-                                      'code': 'unsupported-domain-regexp', 'reason': 'Outside bounded exact native conversion subset; no widening allowed'})
+                                      'code': 'filtered-unsupported-regexp', 'reason': 'Outside bounded exact native conversion subset; no widening allowed'})
                     continue
                 try:
                     result.add(normalized({0: 'DOMAIN-KEYWORD', 2: 'DOMAIN-SUFFIX', 3: 'DOMAIN'}[kind], operand))
@@ -494,11 +518,13 @@ def build(config, inputs):
                     anomalies.append({'source': 'V2Fly', 'category': group, 'declaration': operand,
                                       'code': 'unsupported-source-rule', 'reason': str(error)})
         return result
+    for app in config['applications']:
+        scope_exclusions[app['name']] = select(app.get('exclude_tags', []), app['name'])
     origin = config['geosite']['repository']
     named = set()
     for app in config['applications']:
-        name = app['name']; ordinary = select(app['tags'], name)
-        proxy = select(app.get('proxy_tags', []), name)
+        name = app['name']; ordinary = {rule for rule in select(app['tags'], name) if not excluded(name, rule)}
+        proxy = {rule for rule in select(app.get('proxy_tags', []), name) if not excluded(name, rule)}
         if app.get('split'):
             # Attributes describe access points, not a universal proxy policy.
             # The registry makes the brand default and proxy exceptions explicit.
@@ -573,7 +599,7 @@ def build(config, inputs):
                 source_authors.update(authors[(name, policy)]); sources.update(urls[(name, policy)])
                 for rule in rules:
                     if target == 'QuantumultX' and (rule.kind not in QX_TYPES or 'extended-matching' in rule.options):
-                        anomalies.append({'source': ' / '.join(sorted(authors[(name, policy)])), 'category': name, 'target': target, 'declaration': rule.kind + ',' + rule.value, 'code': 'unsupported-target-rule', 'reason': 'Native rule type/options are not supported by Quantumult X'})
+                        anomalies.append({'source': ' / '.join(sorted(authors[(name, policy)])), 'category': name, 'target': target, 'declaration': rule.kind + ',' + rule.value, 'code': 'filtered-unsupported-target', 'reason': 'Native rule type/options are not supported by Quantumult X'})
                         continue
                     ordered.append((rule, policy))
             for rule, policy in sorted(ordered, key=lambda pair: (0 if pair[0].kind == 'DOMAIN' else 1 if pair[0].kind == 'DOMAIN-SUFFIX' else 2 if pair[0].kind in ('DOMAIN-WILDCARD', 'DOMAIN-KEYWORD') else 3, -pair[0].value.count('.'), pair[0].value, pair[1] != 'DIRECT', pair[1], pair[0].kind, pair[0].options)):
@@ -662,8 +688,8 @@ def run(mode, online=True):
         raise ValueError('No generated rule sets')
     state = json_file(STATE, {'version': 1, 'outputs': {}})
     counts = {file: meta['count'] for file, meta in metadata.items()}
-    report = {'version': 1, 'complete': True, 'quarantined': [item for item in anomalies if item['code'] != 'filtered-desktop-rule'],
-              'filtered': [item for item in anomalies if item['code'] == 'filtered-desktop-rule'],
+    report = {'version': 1, 'complete': True, 'quarantined': [item for item in anomalies if not item['code'].startswith('filtered-')],
+              'filtered': [item for item in anomalies if item['code'].startswith('filtered-')],
               'sources': index['sources'], 'counts': counts}
     if mode == 'sync':
         for file, count in counts.items():
@@ -691,7 +717,7 @@ def run(mode, online=True):
                 raise ValueError('Generated rule output/metadata mismatch: ' + file)
     RUNTIME.mkdir(parents=True, exist_ok=True)
     (RUNTIME / 'rules-result.json').write_text(json.dumps(report, indent=2) + '\n')
-    print('Rule aggregation: files=' + str(len(outputs)) + ', rules=' + str(sum(counts.values())) + ', quarantined=' + str(len(report['quarantined'])) + ', desktopFiltered=' + str(len(report['filtered'])))
+    print('Rule aggregation: files=' + str(len(outputs)) + ', rules=' + str(sum(counts.values())) + ', quarantined=' + str(len(report['quarantined'])) + ', ignored=' + str(len(report['filtered'])))
 
 
 if __name__ == '__main__':
