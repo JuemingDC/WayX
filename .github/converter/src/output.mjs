@@ -5,7 +5,7 @@
 import { isRewriteV2 } from "./rewrite.mjs";
 import { parseLegacyScriptLine } from "./script.mjs";
 import { cleanSourceComments, sourceCommentText } from "./input.mjs";
-import { validateTargetRegex, QX_WAYX_REJECT_ACTIONS, QX_WAYX_FILTER_TYPES, QX_WAYX_REWRITE_MATCHERS, QX_WAYX_SCRIPT_ACTIONS, QX_WAYX_SNIPPET_MITM_KEYS, SURGE_WAYX_REWRITE_SECTIONS, SURGE_WAYX_URL_REWRITE_TYPES, SURGE_WAYX_HEADER_REWRITE_ACTIONS, SURGE_WAYX_BODY_REWRITE_TYPES, SURGE_WAYX_MAP_LOCAL_DATA_TYPES, SURGE_WAYX_SCRIPT_TYPES, SURGE_WAYX_MITM_KEYS } from "./core.mjs";
+import { parseSurgeParameters, validateTargetRegex, QX_WAYX_REJECT_ACTIONS, QX_WAYX_FILTER_TYPES, QX_WAYX_REWRITE_MATCHERS, QX_WAYX_SCRIPT_ACTIONS, QX_WAYX_SNIPPET_MITM_KEYS, SURGE_WAYX_REWRITE_SECTIONS, SURGE_WAYX_URL_REWRITE_TYPES, SURGE_WAYX_HEADER_REWRITE_ACTIONS, SURGE_WAYX_BODY_REWRITE_TYPES, SURGE_WAYX_MAP_LOCAL_DATA_TYPES, SURGE_WAYX_SCRIPT_TYPES, SURGE_WAYX_MITM_KEYS } from "./core.mjs";
 import { parseLoonRuleAst, walkRuleAst, splitTopLevelCsv, surgeRuleTypesInTree, SURGE_MODULE_POLICIES } from "./rule.mjs";
 
 
@@ -456,36 +456,6 @@ function targetRegex(pattern,entry,target,token=true) {
   validateTargetRegex(pattern,entry.id+': '+target,{token});
 }
 
-function surgeScriptParameters(body,entry) {
-  const fields=[];
-  let part='',quote=null,escaped=false;
-  for(const ch of body) {
-    if(quote) {
-      part+=ch;
-      if(escaped)escaped=false;
-      else if(ch==='\\')escaped=true;
-      else if(ch===quote)quote=null;
-    } else if(ch==='"' || ch==="'") {quote=ch;part+=ch;}
-    else if(ch===',') {fields.push(part.trim());part='';}
-    else part+=ch;
-  }
-  if(quote)throw new Error(entry.id+': unclosed Surge Script parameter quote');
-  fields.push(part.trim());
-  const params=new Map();
-  for(const field of fields) {
-    const match=field.match(/^([a-z][a-z0-9-]*)=(.+)$/i);
-    if(!match || params.has(match[1].toLowerCase()))throw new Error(entry.id+': malformed/duplicate Surge Script parameter: '+field);
-    const raw=match[2].trim();
-    let value=raw;
-    if((raw.startsWith('"') && raw.endsWith('"')) || (raw.startsWith("'") && raw.endsWith("'"))) {
-      value=raw.slice(1,-1);
-      if(raw[0]==='"')value=value.replace(/\\"/g,'"');
-    }
-    params.set(match[1].toLowerCase(),value);
-  }
-  return params;
-}
-
 function validateQxRewriteAction(action,line,entry) {
   if (QX_WAYX_REJECT_ACTIONS.has(action)) return;
   if (/^(?:302|307)\s+\S+$/.test(action)) return;
@@ -807,7 +777,7 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
       const declaration = line.match(/^([^=]+?)\s*=\s*(.+)$/);
       if (!declaration) throw new Error(`${entry.id}: invalid Surge [Script] declaration: ${line}`);
       const body = declaration[2];
-      const params=surgeScriptParameters(body,entry);
+      const params=parseSurgeParameters(body,entry.id+': Surge Script');
       const type=params.get('type');
       if(!SURGE_WAYX_SCRIPT_TYPES.has(type))throw new Error(entry.id+': unsupported/missing Surge Script type: '+line);
       if(!params.get('script-path'))throw new Error(entry.id+': Surge [Script] missing script-path: '+line);

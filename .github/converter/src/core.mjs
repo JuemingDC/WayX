@@ -398,10 +398,69 @@ export function normalizeRegexBodyForTarget(pattern) {
   return String(pattern ?? '');
 }
 
+// Shared target-regex syntax repair; domain planners retain source provenance.
+export function repairTargetRegexSyntax(pattern) {
+  const source=String(pattern ?? '');
+  let value='',escaped=false,classDepth=0,quoted=false,changed=false;
+  for(let i=0;i<source.length;i++) {
+    const ch=source[i];
+    if(quoted) {
+      value+=ch;
+      if(ch==='\\' && source[i+1]==='E'){value+='E';i++;quoted=false;}
+      continue;
+    }
+    if(escaped){value+=ch;escaped=false;continue;}
+    if(ch==='\\') {
+      value+=ch;
+      if(source[i+1]==='Q'){value+='Q';i++;quoted=true;}
+      else escaped=true;
+      continue;
+    }
+    if(ch==='[')classDepth++;
+    if(ch===']' && classDepth)classDepth--;
+    const interval=!classDepth && ch==='{' ? source.slice(i).match(/^\{(\d+),[ \t]+(\d+)\}/) : null;
+    if(interval && Number(interval[1])<=Number(interval[2])) {
+      value+='{'+interval[1]+','+interval[2]+'}';
+      i+=interval[0].length-1;changed=true;
+    } else value+=ch;
+  }
+  return {pattern:value,changed};
+}
+
 // Preserve regex backslashes when quoting a comma-separated Surge field.
 export function surgeRegexParameter(pattern) {
   const value=String(pattern ?? '');
   return /[,\s"']/.test(value) ? '"'+value.replace(/"/g,'\\"')+'"' : value;
+}
+
+export function parseSurgeParameters(body,context='Surge') {
+  const fields=[];
+  let part='',quote=null,escaped=false;
+  for(const ch of body) {
+    if(quote) {
+      part+=ch;
+      if(escaped)escaped=false;
+      else if(ch==='\\')escaped=true;
+      else if(ch===quote)quote=null;
+    } else if(ch==='"' || ch==="'") {quote=ch;part+=ch;}
+    else if(ch===',') {fields.push(part.trim());part='';}
+    else part+=ch;
+  }
+  if(quote)throw new Error(context+': unclosed parameter quote');
+  fields.push(part.trim());
+  const params=new Map();
+  for(const field of fields) {
+    const match=field.match(/^([a-z][a-z0-9-]*)=(.+)$/i);
+    if(!match || params.has(match[1].toLowerCase()))throw new Error(context+': malformed/duplicate parameter: '+field);
+    const raw=match[2].trim();
+    let value=raw;
+    if((raw.startsWith('"') && raw.endsWith('"')) || (raw.startsWith("'") && raw.endsWith("'"))) {
+      value=raw.slice(1,-1);
+      if(raw[0]==='"')value=value.replace(/\\"/g,'"');
+    }
+    params.set(match[1].toLowerCase(),value);
+  }
+  return params;
 }
 
 // This checks configuration transport and portable regex syntax. It does not

@@ -2,7 +2,7 @@
 // Author: chance
 // Category: Converter / rule
 
-import { normalizeRegexBodyForTarget, surgeRegexParameter, QX_WAYX_FILTER_TYPES, SURGE_WAYX_RULE_TYPES, SURGE_WAYX_RULE_BUILTIN_POLICIES } from "./core.mjs";
+import { normalizeRegexBodyForTarget, repairTargetRegexSyntax, surgeRegexParameter, QX_WAYX_FILTER_TYPES, SURGE_WAYX_RULE_TYPES, SURGE_WAYX_RULE_BUILTIN_POLICIES } from "./core.mjs";
 
 
 
@@ -458,43 +458,14 @@ function invalidRulePlan(source,reason,target) {
   };
 }
 
-// ICU rejects whitespace inside bounded quantifiers. Repair only an explicit
-// numeric interval outside escapes/classes; keep the source AST for diagnostics.
-function repairRuleRegexIntervals(ast) {
-  let changed=false;
-  const result=structuredClone(ast);
-  walkRuleAst(result,node=>{
-    if(node.type!=='URL-REGEX')return;
-    let value='',escaped=false,classDepth=0,quoted=false;
-    for(let i=0;i<node.value.length;i++) {
-      const ch=node.value[i];
-      if(quoted) {
-        value+=ch;
-        if(ch==='\\' && node.value[i+1]==='E'){value+='E';i++;quoted=false;}
-        continue;
-      }
-      if(escaped){value+=ch;escaped=false;continue;}
-      if(ch==='\\') {
-        value+=ch;
-        if(node.value[i+1]==='Q'){value+='Q';i++;quoted=true;}
-        else escaped=true;
-        continue;
-      }
-      if(ch==='[')classDepth++;
-      if(ch===']' && classDepth)classDepth--;
-      const interval=!classDepth && ch==='{' ? node.value.slice(i).match(/^\{(\d+),[ \t]+(\d+)\}/) : null;
-      if(interval && Number(interval[1])<=Number(interval[2])) {
-        value+='{'+interval[1]+','+interval[2]+'}';
-        i+=interval[0].length-1;changed=true;
-      } else value+=ch;
-    }
-    node.value=value;
-  });
-  return {ast:result,changed};
-}
-
 function repairedRulePlan(parsed,source,target,options) {
-  const repaired=repairRuleRegexIntervals(parsed.ast);
+  const repaired={ast:structuredClone(parsed.ast),changed:false};
+  walkRuleAst(repaired.ast,node=>{
+    if(node.type!=='URL-REGEX')return;
+    const normalized=repairTargetRegexSyntax(node.value);
+    node.value=normalized.pattern;
+    repaired.changed ||= normalized.changed;
+  });
   const plan=target==='qx' ? planQxRuleAst(repaired.ast) : planSurgeModuleRuleAst(repaired.ast,options);
   if(!repaired.changed || plan.kind==='comment')return plan;
   const note=['# [WayX] Repaired invalid source regex quantifier whitespace for ICU compatibility.', '# Source declaration: '+source];

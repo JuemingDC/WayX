@@ -345,7 +345,7 @@ export async function collectIssueCandidates({root=ROOT,catalog=null,sourceOverr
   const syncFailures=syncReport.failures;
   const monitorReport=includeSyncFailures?await readFailureReport(path.join(root,'.github/monitor/.runtime/monitor-result.json'),'monitor'):{failures:[]};
   const monitorFailures=monitorReport.failures;
-  return {targetProblems,syncFailures,monitorFailures};
+  return {targetProblems,syncFailures,monitorFailures,monitorReport};
 }
 
 export function monitorFailureTitle(failure) {
@@ -363,8 +363,28 @@ export function monitorFailureIssueBody(failure) {
     '', 'No conversion semantics are inferred from this monitoring failure.'].join('\n');
 }
 
+// Only explicit successful source results can resolve managed monitoring alerts.
+export function recoveredMonitorIssues(report,issues) {
+  if(report?.complete!==true||!Array.isArray(report.failures)||report.failures.length||!Array.isArray(report.results))return [];
+  const recovered=new Set(report.results.filter(result=>result?.succeeded===true&&typeof result.source?.id==='string').map(result=>result.source.id));
+  const failed=new Set(report.results.filter(result=>result?.succeeded!==true).map(result=>result?.source?.id));
+  return issues.filter(issue=>{
+    const match=String(issue.title??'').match(/^\[WayX monitor\] (\S+) \[([a-f0-9]{16})\]$/);
+    return issue.state==='OPEN'&&issue.labels?.some(label=>label.name==='upstream-monitor-failure')&&match&&recovered.has(match[1])&&!failed.has(match[1]);
+  });
+}
+
+function reconcileMonitorIssues(report) {
+  if(report?.complete!==true||report.failures.length||!report.results?.length)return;
+  const issues=JSON.parse(gh(['issue','list','--repo',repo,'--state','open','--label','upstream-monitor-failure','--limit','1000','--json','number,title,state,labels']));
+  for(const issue of recoveredMonitorIssues(report,issues)) {
+    gh(['issue','close',String(issue.number),'--repo',repo,'--reason','completed']);
+    console.log('Resolved recovered monitor issue #'+issue.number);
+  }
+}
+
 async function main() {
-  const {targetProblems,syncFailures,monitorFailures}=await collectIssueCandidates();
+  const {targetProblems,syncFailures,monitorFailures,monitorReport}=await collectIssueCandidates();
   await fs.mkdir(runtimeDir,{recursive:true});
   const lines=[
     '# WayX automated conversion issues',
@@ -388,12 +408,13 @@ async function main() {
     await fs.appendFile(output,'summary='+path.relative(ROOT,summaryPath).replaceAll(path.sep,'/')+'\n');
   }
 
-  if (!targetProblems.length && !syncFailures.length && !monitorFailures.length) {
-    console.log('No conversion issue candidates found.');
-    return;
-  }
   if (dryRun) {
     console.log(JSON.stringify({targetProblems,syncFailures,monitorFailures},null,2));
+    return;
+  }
+  if(repo)reconcileMonitorIssues(monitorReport);
+  if (!targetProblems.length && !syncFailures.length && !monitorFailures.length) {
+    console.log('No conversion issue candidates found.');
     return;
   }
   if (!repo) throw new Error('GITHUB_REPOSITORY is required to create conversion issues');
