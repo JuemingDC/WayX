@@ -1,13 +1,12 @@
 # Name: media
-# Updated: 2026-10-16 11:11:32 UTC
+# Updated: 2026-10-16 12:45:01 UTC
 # Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 6868
+# Rules: 6863
 # Managed by: WayX Rule Aggregator
 
-DOMAIN,7h15.ru1353t.1s.m4d3.by.5ukk4w.skk.moe
 DOMAIN,cdn.globalsigncdn.com.cdn.cloudflare.net
 DOMAIN,a4e8s8k3.map2.ssl.hwcdn.net
 DOMAIN,akmcdnoversea-tw.inter.ptqy.gitv.tv
@@ -1344,7 +1343,6 @@ DOMAIN-SUFFIX,attwirelesssolutions.com
 DOMAIN-SUFFIX,audible.com
 DOMAIN-SUFFIX,audiencenetwork.com
 DOMAIN-SUFFIX,audiencenetwork.tv
-DOMAIN-SUFFIX,auth0.com
 DOMAIN-SUFFIX,authorxml.com
 DOMAIN-SUFFIX,autocad-schulungen.com
 DOMAIN-SUFFIX,autocad.com
@@ -3771,9 +3769,7 @@ DOMAIN-SUFFIX,interactivebrokers.com
 DOMAIN-SUFFIX,interactivebrokers.eu
 DOMAIN-SUFFIX,interactivebrokers.ie
 DOMAIN-SUFFIX,intercom.com
-DOMAIN-SUFFIX,intercom.io
 DOMAIN-SUFFIX,intercomassets.com
-DOMAIN-SUFFIX,intercomcdn.com
 DOMAIN-SUFFIX,interforest.org
 DOMAIN-SUFFIX,internationalsaimoe.com
 DOMAIN-SUFFIX,internet.ru
@@ -4270,7 +4266,6 @@ DOMAIN-SUFFIX,merakigo.com
 DOMAIN-SUFFIX,meridian.net
 DOMAIN-SUFFIX,meshmixer.com
 DOMAIN-SUFFIX,meshmixerforum.com
-DOMAIN-SUFFIX,meta.ai
 DOMAIN-SUFFIX,metabora.io
 DOMAIN-SUFFIX,metacloud.com
 DOMAIN-SUFFIX,metacpan.org

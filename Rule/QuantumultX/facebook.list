@@ -1,10 +1,10 @@
 # Name: facebook
-# Updated: 2026-10-16 12:08:00 UTC
+# Updated: 2026-10-16 12:45:01 UTC
 # Source Authors: MetaCubeX, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/meta.json
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 550
+# Rules: 547
 # Managed by: WayX Rule Aggregator
 
 host,fbcdn-a.akamaihd.net,proxy
@@ -474,13 +474,10 @@ host-suffix,mcrouter.net,proxy
 host-suffix,mcrouter.org,proxy
 host-suffix,messenger.com,proxy
 host-suffix,messengerdevelopers.com,proxy
-host-suffix,meta.ai,proxy
 host-suffix,meta.com,proxy
-host-suffix,metaaivm.com,proxy
 host-suffix,midentsolutions.com,proxy
 host-suffix,mobilefacebook.com,proxy
 host-suffix,moneywithfacebook.com,proxy
-host-suffix,muse.ai,proxy
 host-suffix,myfbfans.com,proxy
 host-suffix,nbabot.net,proxy
 host-suffix,newsfeed.com,proxy
