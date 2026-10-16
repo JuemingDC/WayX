@@ -13,7 +13,8 @@
         "google"
       ],
       "children": [
-        "youtube"
+        "youtube",
+        "ai"
       ]
     },
     {
@@ -62,12 +63,24 @@
       "name": "github",
       "tags": [
         "github"
+      ],
+      "children": [
+        "ai"
       ]
     },
     {
-      "name": "openai",
+      "name": "ai",
       "tags": [
-        "openai"
+        "category-ai-!cn",
+        "category-ai-cn",
+        "apple-intelligence",
+        "github-copilot"
+      ],
+      "split": true,
+      "proxy_tags": [
+        "category-ai-!cn",
+        "apple-intelligence",
+        "github-copilot"
       ]
     },
     {
@@ -80,6 +93,9 @@
       "proxy_tags": [
         "apple-intelligence",
         "apple-tvplus"
+      ],
+      "children": [
+        "ai"
       ]
     },
     {
@@ -93,7 +109,8 @@
         "github-copilot"
       ],
       "children": [
-        "github"
+        "github",
+        "ai"
       ]
     }
   ],
@@ -207,8 +224,8 @@
       "id": "nexitally-extra_ai",
       "author": "Nexitally",
       "format": "ruleset",
-      "category": "media",
-      "policy": "PROXY",
+      "category": "ai",
+      "policy": "ai",
       "url": "https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_AI.list",
       "license": "No license declared; attribution retained",
       "mirrors": [
@@ -324,8 +341,8 @@
       "id": "mihomo-openai",
       "author": "MetaCubeX",
       "format": "sing-box-json",
-      "category": "openai",
-      "policy": "openai",
+      "category": "ai",
+      "policy": "ai",
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/openai.json",
       "license": "See upstream LICENSE"
     },
@@ -348,6 +365,33 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json",
       "license": "See upstream LICENSE",
       "classify_apps": false
+    },
+    {
+      "id": "mihomo-category-ai-not-cn",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "ai",
+      "policy": "ai",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-ai-!cn.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-category-ai-cn",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "ai",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-ai-cn.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "dustinwin-ai",
+      "author": "DustinWin",
+      "format": "sing-box-json",
+      "category": "ai",
+      "policy": "ai",
+      "url": "https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/ai.json",
+      "license": "GPL-3.0"
     }
   ],
   "indirect_upstreams": "Allowed; only direct blackmatrix7 inputs are excluded."

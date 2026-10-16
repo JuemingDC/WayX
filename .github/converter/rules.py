@@ -22,6 +22,10 @@ RUNTIME = Path('.github/monitor/.runtime')
 CONFIG = Path('.github/sources/rules.json')
 STATE = Path('.github/sources/rules-state.json')
 MARKER = '# Managed by: WayX Rule Aggregator'
+DESKTOP_TYPES = frozenset({'PROCESS-NAME', 'PROCESS-PATH', 'PROCESS-NAME-REGEX',
+                           'PROCESS-PATH-REGEX', 'UID', 'USER', 'USER-ID'})
+DESKTOP_JSON = frozenset({'process_name', 'process_path', 'process_path_regex',
+                          'process_name_regex', 'package_name_regex', 'user', 'user_id', 'package_name'})
 QX_TYPES = {'DOMAIN': 'host', 'DOMAIN-SUFFIX': 'host-suffix',
             'DOMAIN-KEYWORD': 'host-keyword', 'DOMAIN-WILDCARD': 'host-wildcard',
             'IP-CIDR': 'ip-cidr', 'IP-CIDR6': 'ip6-cidr', 'IP-ASN': 'ip-asn'}
@@ -153,9 +157,14 @@ def native_rules(text, source, anomalies):
     result = []
     if source['format'] == 'sing-box-json':
         document = json.loads(text)
-        if document.get('version') not in (1, 2, 3) or not isinstance(document.get('rules'), list):
+        if document.get('version') not in (1, 2, 3, 4, 5) or not isinstance(document.get('rules'), list):
             raise ValueError('Unsupported sing-box rule-set schema')
         for number, item in enumerate(document['rules'], 1):
+            if set(item) & DESKTOP_JSON:
+                # These fields are AND predicates: omitting only the field would broaden matching.
+                anomalies.append({'source': source['id'], 'declaration': json.dumps(item, sort_keys=True),
+                                  'code': 'filtered-desktop-rule', 'reason': 'Desktop/application identity condition intentionally excluded'})
+                continue
             if set(item) - {'domain', 'domain_suffix', 'domain_keyword', 'domain_regex', 'ip_cidr'}:
                 raise ValueError('Unsupported sing-box rule-set predicate')
             fields = {key: [value] if isinstance(value, str) else value for key, value in item.items()}
@@ -166,9 +175,14 @@ def native_rules(text, source, anomalies):
                     raise ValueError('Invalid sing-box operand array')
                 for value in values:
                     if key == 'domain_regex':
-                        if not regex_covered(value, {s.lstrip('.') for s in suffixes if not s.startswith('.') or s[1:] in exact}):
+                        if regex_covered(value, {s.lstrip('.') for s in suffixes if not s.startswith('.') or s[1:] in exact}):
+                            continue
+                        converted = regex_native(value)
+                        if converted is not None:
+                            result.extend((rule, source.get('policy', 'PROXY')) for rule in converted)
+                        else:
                             anomalies.append({'source': source['id'], 'category': source['category'], 'declaration': 'regexp:' + value,
-                                              'code': 'unsupported-domain-regexp', 'reason': 'No equivalent native domain-regexp filter'})
+                                              'code': 'unsupported-domain-regexp', 'reason': 'Outside bounded exact native conversion subset; no widening allowed'})
                         continue
                     kind = {'domain': 'DOMAIN', 'domain_suffix': 'DOMAIN-SUFFIX', 'domain_keyword': 'DOMAIN-KEYWORD', 'ip_cidr': 'IP-CIDR6' if ':' in value else 'IP-CIDR'}[key]
                     if key == 'domain_suffix' and value.startswith('.'):
@@ -181,6 +195,10 @@ def native_rules(text, source, anomalies):
         if not line or line.startswith(('#', ';', '//')):
             continue
         try:
+            if re.search(r'(?:^|[,()])\s*(?:' + '|'.join(sorted(DESKTOP_TYPES)) + r')\s*,', line, re.I):
+                anomalies.append({'source': source['id'], 'line': number, 'declaration': line,
+                                  'code': 'filtered-desktop-rule', 'reason': 'Desktop identity condition intentionally excluded'})
+                continue
             fields = [part.strip() for part in line.split(',')]
             policy = source.get('policy', 'PROXY')
             options = []
@@ -192,6 +210,11 @@ def native_rules(text, source, anomalies):
                     raise ValueError('Unsupported geosite fields')
                 prefix, value = value.split(':', 1) if ':' in value else ('domain', value)
                 kinds = {'domain': 'DOMAIN-SUFFIX', 'full': 'DOMAIN', 'keyword': 'DOMAIN-KEYWORD'}
+                if prefix == 'regexp':
+                    converted = regex_native(value)
+                    if converted is None: raise ValueError('Outside bounded exact native regex conversion subset')
+                    result.extend((item, 'DIRECT' if '@cn' in attributes else policy) for item in converted)
+                    continue
                 rule = normalized(kinds.get(prefix, prefix), value)
                 if '@cn' in attributes:
                     policy = 'DIRECT'
@@ -239,6 +262,102 @@ def wire_fields(data):
         else:
             raise ValueError('Unsupported protobuf wire type: ' + str(wire))
         yield field, wire, value
+
+
+def regex_native(pattern, limit=256):
+    """Expand a bounded finite regex language to exact DOMAIN/DOMAIN-SUFFIX rules.
+
+    Supports literal alternatives, finite ASCII classes, optional groups and
+    bounded repetitions; dot/dot-star/dot-plus become native wildcards.
+    Rejects unanchored patterns, assertions, backreferences, unbounded class repetition and excessive expansion; never approximates a regex.
+    """
+    if len(pattern) > 4096: return None
+    try: re.compile(pattern)
+    except (re.error, RecursionError): return None
+    suffix = False
+    for prefix in (r'(^|\.)', r'(?:^|\.)'):
+        if pattern.startswith(prefix):
+            pattern = pattern[len(prefix):]; suffix = True; break
+    else:
+        if not pattern.startswith('^'): return None
+        pattern = pattern[1:]
+    if not pattern.endswith('$'): return None
+    pattern = pattern[:-1]; position = 0
+
+    def combine(left, right):
+        if len(left) * len(right) > limit: raise ValueError('Expansion limit')
+        result = {a + b for a in left for b in right}
+        if any(len(value) > 253 for value in result): raise ValueError('Domain length')
+        return result
+
+    def expression(nested=False):
+        nonlocal position
+        choices = set(); sequence = {''}
+        while position < len(pattern) and pattern[position] != ')':
+            char = pattern[position]; position += 1
+            if char == '|':
+                if not nested: raise ValueError('Alternation crosses anchors')
+                choices.update(sequence); sequence = {''}; continue
+            if char == '(':
+                if pattern[position:position+2] == '?:': position += 2
+                atom = expression(True)
+                if position >= len(pattern) or pattern[position] != ')': raise ValueError('Unclosed group')
+                position += 1
+            elif char == '\\':
+                if position >= len(pattern): raise ValueError('Trailing escape')
+                escaped = pattern[position]; position += 1
+                if escaped == 'd': atom = set('0123456789')
+                elif escaped in '.-_': atom = {escaped}
+                else: raise ValueError('Unsupported escape')
+            elif char == '[':
+                atom = set()
+                while position < len(pattern) and pattern[position] != ']':
+                    first = pattern[position]; position += 1
+                    if not re.fullmatch('[a-zA-Z0-9_-]', first): raise ValueError('Unsupported class')
+                    if position + 1 < len(pattern) and pattern[position] == '-' and pattern[position+1] != ']':
+                        last = pattern[position+1]; position += 2
+                        if not ((first.isdigit() and last.isdigit()) or ('a' <= first <= last <= 'z') or ('A' <= first <= last <= 'Z')):
+                            raise ValueError('Unsupported range')
+                        atom.update(chr(code) for code in range(ord(first), ord(last)+1))
+                    else: atom.add(first)
+                if not atom or position >= len(pattern): raise ValueError('Invalid class')
+                position += 1
+            elif char == '.': atom = {'?'}
+            elif re.fullmatch('[a-zA-Z0-9_-]', char): atom = {char}
+            else: raise ValueError('Unsupported operator')
+            if atom == {'?'} and position < len(pattern) and pattern[position] in '*+':
+                atom = {'*' if pattern[position] == '*' else '?*'}; position += 1
+                if position < len(pattern) and pattern[position] == '?': position += 1
+            minimum = maximum = 1
+            if position < len(pattern) and pattern[position] == '?':
+                minimum = 0; position += 1
+            elif position < len(pattern) and pattern[position] == '{':
+                count = re.match(r'\{(\d+)(?:,(\d+))?\}', pattern[position:])
+                if not count: raise ValueError('Unbounded repetition')
+                minimum = int(count[1]); maximum = int(count[2] or count[1]); position += len(count[0])
+                if not 0 <= minimum <= maximum <= 8: raise ValueError('Repetition limit')
+            if position < len(pattern) and pattern[position] == '?': position += 1  # lazy quantifier: same language
+            repeated = set(); power = {''}
+            for n in range(maximum + 1):
+                if n >= minimum: repeated.update(power)
+                if len(repeated) > limit: raise ValueError('Expansion limit')
+                if n < maximum: power = combine(power, atom)
+            sequence = combine(sequence, repeated)
+        choices.update(sequence)
+        if len(choices) > limit: raise ValueError('Expansion limit')
+        return choices
+    try:
+        values = expression()
+        if position != len(pattern): return None
+        result = set()
+        for value in values:
+            if '*' in value or '?' in value:
+                result.add(normalized('DOMAIN-WILDCARD', value))
+                if suffix: result.add(normalized('DOMAIN-WILDCARD', '*.' + value))
+            else: result.add(normalized('DOMAIN-SUFFIX' if suffix else 'DOMAIN', value))
+        return result
+    except (ValueError, UnicodeError, RecursionError):
+        return None
 
 
 def regex_covered(pattern, suffixes):
@@ -363,8 +482,11 @@ def build(config, inputs):
                 if kind == 1:
                     if regex_covered(operand, suffixes):
                         continue
+                    converted = regex_native(operand)
+                    if converted is not None:
+                        result.update(converted); continue
                     anomalies.append({'source': 'V2Fly', 'category': group, 'declaration': 'regexp:' + operand,
-                                      'code': 'unsupported-domain-regexp', 'reason': 'No equivalent native domain-regexp rule in the target filter formats'})
+                                      'code': 'unsupported-domain-regexp', 'reason': 'Outside bounded exact native conversion subset; no widening allowed'})
                     continue
                 try:
                     result.add(normalized({0: 'DOMAIN-KEYWORD', 2: 'DOMAIN-SUFFIX', 3: 'DOMAIN'}[kind], operand))
@@ -462,7 +584,7 @@ def build(config, inputs):
                 continue
             rendered[file] = '\n'.join(lines) + '\n'
             metadata[file] = {'authors': sorted(source_authors), 'sources': sorted(sources),
-                              'category': 'Advertising' if groups[0][0].startswith('adblock') else 'Routing',
+                              'category': 'Adblock' if groups[0][0].startswith('adblock') else 'general' if groups[0][0] in ('cn', 'proxy') else 'app',
                               'count': len(lines), 'policy': groups[0][1]}
     unique = {}
     for item in anomalies:
@@ -540,7 +662,8 @@ def run(mode, online=True):
         raise ValueError('No generated rule sets')
     state = json_file(STATE, {'version': 1, 'outputs': {}})
     counts = {file: meta['count'] for file, meta in metadata.items()}
-    report = {'version': 1, 'complete': True, 'quarantined': anomalies,
+    report = {'version': 1, 'complete': True, 'quarantined': [item for item in anomalies if item['code'] != 'filtered-desktop-rule'],
+              'filtered': [item for item in anomalies if item['code'] == 'filtered-desktop-rule'],
               'sources': index['sources'], 'counts': counts}
     if mode == 'sync':
         for file, count in counts.items():
@@ -568,7 +691,7 @@ def run(mode, online=True):
                 raise ValueError('Generated rule output/metadata mismatch: ' + file)
     RUNTIME.mkdir(parents=True, exist_ok=True)
     (RUNTIME / 'rules-result.json').write_text(json.dumps(report, indent=2) + '\n')
-    print('Rule aggregation: files=' + str(len(outputs)) + ', rules=' + str(sum(counts.values())) + ', quarantined=' + str(len(anomalies)))
+    print('Rule aggregation: files=' + str(len(outputs)) + ', rules=' + str(sum(counts.values())) + ', quarantined=' + str(len(report['quarantined'])) + ', desktopFiltered=' + str(len(report['filtered'])))
 
 
 if __name__ == '__main__':

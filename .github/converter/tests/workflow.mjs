@@ -381,12 +381,27 @@ for policy in ['REJECT','REJECT-DROP','REJECT-NO-DROP','REJECT-TINYGIF']:
  assert m.serialize(R('DOMAIN','example.com'),policy,'QuantumultX')=='host,example.com,reject'
 assert m.serialize(R('IP-CIDR','1.2.3.0/24',('no-resolve',)),'DIRECT','Surge')=='IP-CIDR,1.2.3.0/24,no-resolve'
 assert m.serialize(R('IP-CIDR','1.2.3.0/24',('no-resolve',)),'DIRECT','QuantumultX')=='ip-cidr,1.2.3.0/24,direct'
-assert m.normalized('PROCESS-NAME','Claude Helper').value=='Claude Helper'
+assert m.regex_native(r'^a.+?\.example\.com$')=={R('DOMAIN-WILDCARD','a?*.example.com')}
+assert m.regex_native(r'^a.+\.example\.com$')=={R('DOMAIN-WILDCARD','a?*.example.com')}
+assert m.regex_native(r'(^|\.)api-.*\.example\.com$')=={R('DOMAIN-WILDCARD','api-*.example.com'),R('DOMAIN-WILDCARD','*.api-*.example.com')}
+assert m.regex_native(r'^other|a\.example\.com$') is None
+assert m.regex_native(r'^api(1|2)\.example\.com$')=={R('DOMAIN','api1.example.com'),R('DOMAIN','api2.example.com')}
+assert m.regex_native(r'(^|\.)app[1-3]?\.example\.com$')=={R('DOMAIN-SUFFIX',f'app{x}.example.com') for x in ['',1,2,3]}
+assert m.regex_native(r'^app[0-9]{2}\.example\.com$')=={R('DOMAIN',f'app{x:02}.example.com') for x in range(100)}
+assert m.regex_native(r'^a[0-9]+\.example\.com$') is None
+for pattern in [r'foo\.example\.com$',r'^a[0-9]+\.example\.com$',r'^a[0-9]{4}\.example\.com$',r'^(?=a)a\.example\.com$']:
+ assert m.regex_native(pattern) is None,pattern
+filtered=[]
+assert not m.native_rules('PROCESS-PATH,/Applications/App,PROXY\nUID,1000,PROXY\nAND,((DOMAIN,example.com),(PROCESS-NAME,app)),PROXY',{'id':'desktop','format':'ruleset'},filtered)
+assert len(filtered)==3
+filtered=[]
+assert not m.native_rules(json.dumps({'version':3,'rules':[{'domain':'example.com','process_name':'app'}]}),{'id':'desktop','format':'sing-box-json'},filtered)
+assert len(filtered)==1
 assert m.regex_covered(r'^r+[0-9]+\.example\.com$',{'example.com'})
 assert not m.regex_covered(r'^other|foo\.example\.com$',{'example.com'})
 assert not m.regex_covered(r'foo\.example\.com',{'example.com'})
 issues=[];source={'id':'fixture','format':'sing-box-json','category':'fixture','policy':'PROXY'}
-rows=m.native_rules(json.dumps({'version':2,'rules':[{'domain':'example.com','domain_suffix':['.example.com','.sub.example.net']}]}),source,issues)
+rows=m.native_rules(json.dumps({'version':5,'rules':[{'domain':'example.com','domain_suffix':['.example.com','.sub.example.net']}]}),source,issues)
 assert (R('DOMAIN-SUFFIX','example.com'),'PROXY') in rows
 assert (R('DOMAIN-WILDCARD','*.sub.example.net'),'PROXY') in rows
 assert not issues
@@ -406,7 +421,7 @@ for bad in [b'\x0a\x05a',b'\x08\x01',b'\x80'*11]:
  try:m.geosites(bad,[])
  except (ValueError,TypeError):pass
  else:raise AssertionError('Malformed protobuf accepted')
-# Exercise a whole plan, including native process preservation and policy order.
+# Exercise a whole plan, including intentional desktop filtering and policy order.
 proxy_entry=b'\x08\x02'+field(2,b'proxy.example.com')
 encoded+=field(1,field(1,b'proxy')+field(2,proxy_entry))
 config={'applications':[{'name':'brand','tags':['fixture','proxy'],'proxy_tags':['proxy'],'split':True}],'split_names':['brand'],
@@ -415,9 +430,11 @@ config={'applications':[{'name':'brand','tags':['fixture','proxy'],'proxy_tags':
 outputs,metadata,anomalies=m.build(config,{'geosite':encoded,'supplement':b'DOMAIN,static.proxy.example.com,DIRECT\nPROCESS-NAME,Claude Helper\n'})
 qx=outputs['Rule/QuantumultX/brand.list']
 assert qx.index('host,static.proxy.example.com,direct')<qx.index('host-suffix,proxy.example.com,brand')<qx.index('host-suffix,example.com,direct')
-assert 'PROCESS-NAME,Claude Helper' in outputs['Rule/Surge/brand_direct.list']
+assert all('PROCESS-NAME' not in text for text in outputs.values())
+assert metadata['Rule/Surge/brand_direct.list']['category']=='app'
 assert 'NOT,((DOMAIN,static.proxy.example.com))' in outputs['Rule/Surge/brand_proxy.list']
-assert any(item['code']=='unsupported-target-rule' for item in anomalies)
+assert any(item['code']=='filtered-desktop-rule' for item in anomalies)
+assert not any(item['code']=='unsupported-target-rule' for item in anomalies)
 with tempfile.TemporaryDirectory() as temp:
  os.chdir(temp)
  changed,_=m.apply_outputs(outputs,metadata,{'outputs':{}});assert changed==len(outputs)
