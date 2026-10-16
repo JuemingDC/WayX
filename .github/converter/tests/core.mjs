@@ -271,6 +271,53 @@ for (const type of ['DEST-PORT','SRC-PORT','PROTOCOL','PROCESS-NAME','DOMAIN-SET
 assert.equal(planQxRuleAst(parseLoonRuleAst('DOMAIN,example.com,UNKNOWN').ast).kind, 'comment');
 console.log('Complete Rule mapping matrix passed: 9 filter types × 15 policies × 2 targets; URL variants/case and unsupported boundaries');
 
+// Loon build 1008+ Glob: '*' crosses dots, '?' is one character, '[...]'
+// supports ranges/negation. Preserve all source patterns on Surge, but do not
+// emit unverified QX host-wildcard character-class syntax as an active filter.
+for (const [pattern,policy] of [
+  ['*.example.com','REJECT'], ['api?.example.com','DIRECT'],
+  ['node[0-9].example.com','REJECT'], ['node[abc].example.com','DIRECT'],
+  ['node[!abc].example.com','REJECT'], ['node[^abc].example.com','REJECT'],
+]) {
+  const source=`DOMAIN-WILDCARD,${pattern},${policy}`;
+  const parsed=parseLoonRuleAst(source);
+  assert.equal(parsed.ok,true,source);
+  assert.equal(parsed.ast.value,pattern);
+  assert.equal(renderRuleAst(parsed.ast),source);
+  const surge=planSurgeModuleRuleAst(parsed.ast,{matchingEnhancements:true});
+  assert.equal(surge.kind,'rule',source);
+  assert.equal(surge.line,source+',extended-matching'+(policy==='REJECT'?',pre-matching':''),source);
+  const qx=planQxRuleAst(parsed.ast);
+  if (pattern.includes('[')) {
+    assert.equal(qx.kind,'comment',source);
+    assert.equal(qx.reason,'unsupported-qx-wildcard-character-class',source);
+    assert.ok(qx.line.includes('# Source declaration: '+source),source);
+  } else {
+    assert.equal(qx.kind,'filter',source);
+    assert.equal(qx.line,`host-wildcard, ${pattern}, ${policy.toLowerCase()}`,source);
+  }
+}
+{
+  const {convertPlugin,validateConvertedPlugin}=await import('../src/conversion.mjs');
+  const entry={id:'LoonWildcard',source:'https://example.test/wildcard.lpx',category:'测试'};
+  const source=[
+    '#!name=Loon wildcard', '[Rule]', '# Wildcard source annotation',
+    'DOMAIN-WILDCARD,*.example.com,REJECT',
+    'DOMAIN-WILDCARD,api?.example.com,DIRECT',
+    'DOMAIN-WILDCARD,node[0-9].example.com,REJECT',
+  ].join('\\n');
+  const out=convertPlugin(entry,source,{stamp:'2026-10-16 13:00:00 +08:00',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
+  validateConvertedPlugin(entry,out);
+  assert.match(out.qx,/host-wildcard, \\*\\.example\\.com, reject/);
+  assert.match(out.qx,/host-wildcard, api\\?\\.example\\.com, direct/);
+  assert.doesNotMatch(out.qx,/^host-wildcard, node\\[0-9\\]/m);
+  assert.match(out.qx,/REVIEW REQUIRED: Loon DOMAIN-WILDCARD character classes/);
+  assert.match(out.qx,/# Source declaration: DOMAIN-WILDCARD,node\\[0-9\\]\\.example\\.com,REJECT/);
+  assert.match(out.surge,/DOMAIN-WILDCARD,node\\[0-9\\]\\.example\\.com,REJECT,extended-matching,pre-matching/);
+  assert.match(out.surge,/# Wildcard source annotation/);
+  assert.equal(out.generatedScripts.size,0);
+}
+
 const simple=parseLoonRuleAst('DOMAIN, example.com, REJECT');
 assert.equal(simple.ok,true);
 assert.equal(simple.ast.kind,'rule');
