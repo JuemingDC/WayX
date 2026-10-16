@@ -127,6 +127,8 @@ Script v2 path/tag/img_url 必须是固定 String/Raw String，真实模板或�
 
 Rule 使用独立 target-neutral IR，仅输出官方已确认的 type/policy/参数。除下面列出的用户策略外保留源 policy；Surge 的 PROXY 需要外部 Module 参数绑定，QX 保留字面 policy 名。不用 HTTP Rewrite Script 冒充 QX 网络层缺失的 Rule 类型。未知或不能安全表达的类型注释并诊断。
 
+Loon `DOMAIN-WILDCARD`（build 1008+）是大小写不敏感的完整域名 Glob，支持 `*`（含跨 `.`、允许零字符）、`?`（恰好一个字符）和 `[abc]`、`[0-9]`、`[!abc]`、`[^abc]` 字符类。源规则由现有 Rule IR 直接保留，不添加旁路解析器；Surge 官方也支持上述三类通配符，继续原样转换并沿用既有 extended-matching/pre-matching。Quantumult X 官方 sample.conf 的 `host-wildcard` 只证实 `*` 和 `?`：这两种保持原生 `host-wildcard`，含 `[` / `]` 的字符类在 QX 输出中注释保留原始声明并标记 REVIEW REQUIRED，禁止误当作等价的活动规则，也不降级为 `host-suffix` 或 Script。需在实际目标应用确认字符类语义后才能扩展 QX 能力表。官方核查：Loon https://nsloon.app/docs/Rule/domain_rule/ 、Surge https://manual.nssurge.com/rules/domain.html 、QX 用户提供的官方 sample.conf；另比对 ScriptHub 2026-10-15 的 Beta `DOMAIN-WILDCARD` 修复提交 b31b010（仅参考差异，不直接移植其目标过滤逻辑）。
+
 用户指定的精确域名例外：所有转换产物中的 `DOMAIN,dns.weixin.qq.com` 和 `DOMAIN,dns.weixin.qq.com.cn` 使用 DIRECT（QX 为 `host, ..., direct`），在目标 planner 统一执行，不依赖插件 id。源 Loon 快照保留原文；不扩展到 DOMAIN-SUFFIX、DOMAIN-KEYWORD、逻辑子条件或其它子域名。Surge DIRECT 不携带仅适用于拒绝策略的 pre-matching；extended-matching 沿用既有目标规则。
 
 Loon `[Rule]` 的 `URL-REGEX,<regex>,REJECT` 转为 Quantumult X 重写 `<regex> url reject`，不再默认使用 `reject-200`。仅当源 policy 明确为 `REJECT-200`（识别不区分大小写）时输出 `<regex> url reject-200`；不得根据 URL 文本、响应猜测或普通 REJECT 推断 HTTP 200。原有 `REJECT-IMG/DICT/ARRAY` 专用映射、`REJECT-DROP` 映射以及 Surge 输出不变；DIRECT/PROXY 等非拒绝策略不得强制改写为 reject。此规则只约束 Rule 中 URL-REGEX 的目标适配，不改变 `[Rewrite]` 里显式 action 的映射。 Rule 策略及 Rewrite v2 的动作/状态码均从各自基础映射表直接查找；Safe Tier 复用同一 Rewrite 原语查询，不再维护独立拒绝映射或追加特例分支。
