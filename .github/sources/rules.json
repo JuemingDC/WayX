@@ -557,10 +557,27 @@
       "url": "https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china6.txt",
       "license": "MIT",
       "classify_apps": false
+    },
+    {
+      "id": "loyalsoldier-telegram-cidr",
+      "author": "Loyalsoldier",
+      "format": "ruleset",
+      "category": "telegram",
+      "policy": "telegram",
+      "url": "https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/telegramcidr.txt",
+      "license": "GPL-3.0"
     }
   ],
   "indirect_upstreams": "Allowed; only direct blackmatrix7 inputs are excluded.",
   "category_priority": [
     "ai"
-  ]
+  ],
+  "rule_exclusions": {
+    "proxy": [
+      {
+        "kind": "DOMAIN-WILDCARD",
+        "value_regex": "^(?:\\*\\.)?91cg"
+      }
+    ]
+  }
 }

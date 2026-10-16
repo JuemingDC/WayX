@@ -490,6 +490,25 @@ guarded,_,_=m.build(pc,pi)
 assert 'host-suffix,meta.ai,reject' in guarded['Rule/QuantumultX/adblock.list']
 assert 'host-suffix,meta.ai,proxy' in guarded['Rule/QuantumultX/ai.list']
 
+# Registry exclusions apply to all sources and both targets, scoped by category and type.
+excluded_config={**pc,'rule_exclusions':{'proxy':[{'kind':'DOMAIN-WILDCARD','value_regex':r'^(?:\*\.)?91cg'}]},
+ 'sources':[{**shared,'id':'exclusions','category':'proxy','classify_apps':False}]}
+exclusion_text=b'DOMAIN-WILDCARD,91cg?com\nDOMAIN-WILDCARD,*.91cg01?com\nDOMAIN-WILDCARD,allowed?.test\nDOMAIN-SUFFIX,91cg.example\nIP-CIDR,91.108.4.0/22'
+filtered,_,_=m.build(excluded_config,{'geosite':pi['geosite'],'exclusions':exclusion_text})
+for target,kind,ip in [('QuantumultX','host-wildcard','ip-cidr'),('Surge','DOMAIN-WILDCARD','IP-CIDR')]:
+ text=filtered['Rule/'+target+'/proxy.list']
+ assert not any('91cg' in line for line in text.splitlines() if line.startswith(kind+','))
+ assert kind+',allowed?.test' in text
+ assert ip+',91.108.4.0/22' in text
+ assert ('host-suffix' if target=='QuantumultX' else 'DOMAIN-SUFFIX')+',91cg.example' in text
+# Official Telegram CIDRs retain their address family and use the existing Telegram category.
+telegram_config={**pc,'applications':[{'name':'telegram','tags':['fixture']}], 'category_priority':[],
+ 'sources':[{**shared,'id':'telegram-cidr','category':'telegram','policy':'telegram'}]}
+tg,_,_=m.build(telegram_config,{'geosite':encoded,'telegram-cidr':b'IP-CIDR,91.108.4.0/22\nIP-CIDR6,2001:b28:f23c::/47'})
+assert 'ip-cidr,91.108.4.0/22,proxy' in tg['Rule/QuantumultX/telegram.list']
+assert 'ip6-cidr,2001:b28:f23c::/47,proxy' in tg['Rule/QuantumultX/telegram.list']
+assert 'IP-CIDR6,2001:b28:f23c::/47' in tg['Rule/Surge/telegram.list']
+
 with tempfile.TemporaryDirectory() as temp:
  os.chdir(temp)
  changed,_=m.apply_outputs(outputs,metadata,{'outputs':{}});assert changed==len(outputs)

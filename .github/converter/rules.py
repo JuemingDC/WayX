@@ -483,7 +483,18 @@ def build(config, inputs):
     if len(set(priority)) != len(priority) or set(priority) - app_names:
         raise ValueError('Invalid application category priority')
     scope_exclusions = {}
+    rule_exclusions = {}
+    for name, specifications in config.get('rule_exclusions', {}).items():
+        if name not in app_names | {'adblock', 'adblock_extra', 'media', 'media_cn', 'cn', 'proxy'}:
+            raise ValueError('Unknown rule exclusion category: ' + name)
+        rule_exclusions[name] = []
+        for specification in specifications:
+            if set(specification) != {'kind', 'value_regex'} or specification['kind'] not in QX_TYPES:
+                raise ValueError('Invalid configured rule exclusion')
+            rule_exclusions[name].append((specification['kind'], re.compile(specification['value_regex'])))
     def excluded(name, rule):
+        if any(rule.kind == kind and pattern.search(rule.value) for kind, pattern in rule_exclusions.get(name, [])):
+            return True
         rules = scope_exclusions.get(name, set())
         if not rules: return False
         return Rule(rule.kind, rule.value) in rules or (rule.kind in ('DOMAIN', 'DOMAIN-SUFFIX') and any(

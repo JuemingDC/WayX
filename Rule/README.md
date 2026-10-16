@@ -16,6 +16,8 @@ Only direct blackmatrix7 inputs are excluded. Other maintainers' upstream choice
 
 Metadata categories are `Adblock` for advertising collections, `app` for named applications/AI/media, and `general` for cn/proxy fallbacks.
 
+Telegram also merges Loyalsoldier telegramcidr IPv4/IPv6 rules. Registry `rule_exclusions` removes the requested 91cg wildcard family from proxy only, across both targets; other match types and categories remain independent.
+
 Supplemental application inputs include Sukka stream lists, ACL4SSR ProxyMedia and DustinWin media. General inputs include Sukka domestic/global, Loyalsoldier direct/proxy and gaoyifan Chinese IPv4/IPv6 ranges. All merge into the existing category files; no per-source output files are created.
 
 ## Policies and order

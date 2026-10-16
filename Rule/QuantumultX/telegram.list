@@ -1,10 +1,10 @@
 # Name: telegram
-# Updated: 2026-10-16 12:08:00 UTC
-# Source Authors: MetaCubeX, Nexitally, V2Fly
+# Updated: 2026-10-16 13:08:10 UTC
+# Source Authors: Loyalsoldier, MetaCubeX, Nexitally, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/telegram.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/telegramcidr.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/telegram.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 21
+# Rules: 33
 # Managed by: WayX Rule Aggregator
 
 host-suffix,cdn-telegram.org,proxy
@@ -28,3 +28,15 @@ host-suffix,ton.org,proxy
 host-suffix,toncenter.com,proxy
 host-suffix,tx.me,proxy
 host-suffix,usercontent.dev,proxy
+ip-cidr,149.154.160.0/20,proxy
+ip-cidr,185.76.151.0/24,proxy
+ip-cidr,91.105.192.0/23,proxy
+ip-cidr,91.108.16.0/21,proxy
+ip-cidr,91.108.4.0/22,proxy
+ip-cidr,91.108.56.0/22,proxy
+ip-cidr,91.108.8.0/21,proxy
+ip-cidr,95.161.64.0/20,proxy
+ip6-cidr,2001:67c:4e8::/48,proxy
+ip6-cidr,2001:b28:f23c::/47,proxy
+ip6-cidr,2001:b28:f23f::/48,proxy
+ip6-cidr,2a0a:f280::/32,proxy
