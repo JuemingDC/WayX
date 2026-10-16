@@ -218,7 +218,7 @@ if (selectedCase === "rule.mjs") {
 
 
 // Configuration transport and regex syntax must be checked before publication.
-for(const pattern of ['^','(?ims)^https?://example\\.com/(a|b){1,3}$',String.raw`(?i)^https://a/\Q(unbalanced[\E`,String.raw`(?>a++)`]) {
+for(const pattern of ['^','(?ims)^https?://example\\.com/(a|b){1,3}$',String.raw`(?i)^https://a/\Q(unbalanced[\E`,String.raw`(?>a++)`,'[[a-z](]','[a[b]{1, 4}]']) {
   assert.doesNotThrow(()=>validateTargetRegex(pattern,'fixture'));
 }
 for(const pattern of ['', 'undefined', '${urlMatch.1}', '[', '(api', 'api)', 'a{3,1}', '*', 'a\nurl reject']) {
@@ -233,6 +233,9 @@ assert.ok(intervalPlan.lines.some(line=>line.includes('Repaired invalid source r
 assert.ok(intervalPlan.lines.includes('# Source declaration: '+invalidInterval));
 const protectedIntervals=String.raw`URL-REGEX,"^[a{1, 4}]\{1, 4\}\Q{1, 4}\E$",REJECT`;
 assert.ok(surgeModuleRule(protectedIntervals).line.includes(String.raw`[a{1, 4}]\{1, 4\}\Q{1, 4}\E`));
+const nestedSetInterval=surgeModuleRule('URL-REGEX,"[a[b]{1, 4}]",REJECT');
+assert.ok(nestedSetInterval.line.includes('[a[b]{1, 4}]'));
+assert.ok(!nestedSetInterval.lines.some(line=>line.includes('Repaired invalid source regex')));
 
 // Completeness is checked against target capabilities and the independently
 // reviewed source fixtures, including known unsupported types/policy contexts.

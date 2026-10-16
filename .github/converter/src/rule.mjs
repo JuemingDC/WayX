@@ -465,7 +465,7 @@ function repairRuleRegexIntervals(ast) {
   const result=structuredClone(ast);
   walkRuleAst(result,node=>{
     if(node.type!=='URL-REGEX')return;
-    let value='',escaped=false,inClass=false,quoted=false;
+    let value='',escaped=false,classDepth=0,quoted=false;
     for(let i=0;i<node.value.length;i++) {
       const ch=node.value[i];
       if(quoted) {
@@ -480,9 +480,9 @@ function repairRuleRegexIntervals(ast) {
         else escaped=true;
         continue;
       }
-      if(ch==='[')inClass=true;
-      if(ch===']')inClass=false;
-      const interval=!inClass && ch==='{' ? node.value.slice(i).match(/^\{(\d+),[ \t]+(\d+)\}/) : null;
+      if(ch==='[')classDepth++;
+      if(ch===']' && classDepth)classDepth--;
+      const interval=!classDepth && ch==='{' ? node.value.slice(i).match(/^\{(\d+),[ \t]+(\d+)\}/) : null;
       if(interval && Number(interval[1])<=Number(interval[2])) {
         value+='{'+interval[1]+','+interval[2]+'}';
         i+=interval[0].length-1;changed=true;

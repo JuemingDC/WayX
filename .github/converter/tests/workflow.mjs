@@ -322,6 +322,8 @@ try {
     encoding:'utf8',input:JSON.stringify([{pattern,label:'target fixture'}]),
   });
   assert.equal(icu(String.raw`(?i)^https://example\.com/[0-9]{1,3}`).status,0);
+  assert.equal(icu('[[a-z](]').status,0);
+  assert.equal(icu('[a[b]{1, 4}]').status,0);
   for(const pattern of ['[','a{1, 4}','*','(?i)(api']) {
     const result=icu(pattern);
     assert.notEqual(result.status,0,pattern);
