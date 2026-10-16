@@ -17,8 +17,8 @@
     "Rule/QuantumultX/media.list": "2e09c5bafde8ab3bf9206797d64e02e6e22c2e714dd4cffc19c4d4feda42e390",
     "Rule/QuantumultX/cn.list": "9e8e0dd07a4715477aa6ed372f379c76e58df2c5187ae6577dd9ee01a8f1e769",
     "Rule/QuantumultX/proxy.list": "b7c652ebc96e6ae9eca29a865019756cdd6b26033930412a84a7076ffe87a88c",
-    "Rule/QuantumultX/adblock.list": "06f6557465cecaf6cb19da746fd731b0b0f51cfce990b7f805736c63df3acc3d",
-    "Rule/QuantumultX/adblock_extra.list": "6fe51d191767fabd1f62545ca3d73b400b0ddc4f236bdc946cc08f93b09a9fa5",
+    "Rule/QuantumultX/adblock.list": "a0de587415f3ae9999ac7d91c04cdccd42f00cc478fcff583a8d50a87068cb75",
+    "Rule/QuantumultX/adblock_extra.list": "ab9231865b831f174cc5dba199faae52c3a3eafd711bdcce059ccbd1d1f79bd0",
     "Rule/Surge/google.list": "f3ecea930e42504268c0005adc897e2f439b0f78fccc62eda25428620f156a8f",
     "Rule/Surge/facebook.list": "a019fcd24cd83cf876b562480ffaa609727c51c2322d338fcd011fdd7c0c6284",
     "Rule/Surge/netflix.list": "68a65cdd61f12260137e28ef84cd0ec256cb9d1041dfb28058fb515393a85cef",
@@ -36,8 +36,8 @@
     "Rule/Surge/media.list": "bacc63978fb75b06fb8b571fa726493aca9efab1c0ba97180ee691d811e4a964",
     "Rule/Surge/cn.list": "e93ec62589d35b928f0eaa01eaf475fc345844bdee9da374f69326964a3cfeab",
     "Rule/Surge/proxy.list": "330a3345a36e05eb3a118b406f7e949138bd41cfa61120a518f7c3eef8232c3d",
-    "Rule/Surge/adblock.list": "d1d7cfdc98e1353eacc4aad27dce70b6990241c1bd1bfbe86bd14058c0693c4b",
-    "Rule/Surge/adblock_extra.list": "d9dbad2fdab58d67ed61f7245b5e59279d2867b4e1b8bb1f2a9037a956e0a877"
+    "Rule/Surge/adblock.list": "42135c263714a2429c360765460bd2cc0c469b454f1f3c9a1dc0db1ae023932b",
+    "Rule/Surge/adblock_extra.list": "93f7619d06b8152e19cd57844ec50dfa2e3d2c5de0ca6d49c08d4b00435669e8"
   },
   "counts": {
     "Rule/QuantumultX/google.list": 675,
@@ -56,8 +56,8 @@
     "Rule/QuantumultX/media.list": 6863,
     "Rule/QuantumultX/cn.list": 122545,
     "Rule/QuantumultX/proxy.list": 26083,
-    "Rule/QuantumultX/adblock.list": 261947,
-    "Rule/QuantumultX/adblock_extra.list": 2817,
+    "Rule/QuantumultX/adblock.list": 262392,
+    "Rule/QuantumultX/adblock_extra.list": 2822,
     "Rule/Surge/google.list": 675,
     "Rule/Surge/facebook.list": 547,
     "Rule/Surge/netflix.list": 32,
@@ -75,8 +75,8 @@
     "Rule/Surge/media.list": 6863,
     "Rule/Surge/cn.list": 122545,
     "Rule/Surge/proxy.list": 26083,
-    "Rule/Surge/adblock.list": 261947,
-    "Rule/Surge/adblock_extra.list": 2817
+    "Rule/Surge/adblock.list": 262392,
+    "Rule/Surge/adblock_extra.list": 2822
   },
   "sources": [
     {
@@ -99,7 +99,7 @@
       "url": "https://raw.githubusercontent.com/217heidai/adblockfilters/main/rules/adblockloon.list",
       "license": "GPL-3.0",
       "fetched_url": "https://raw.githubusercontent.com/217heidai/adblockfilters/main/rules/adblockloon.list",
-      "sha256": "6e7327ec2bad8b0c3707598316fb55b53876267759b6d2d8523f6a4192e3bda3"
+      "sha256": "71e0888f1ce1d46a681787632fc2f6757bc8edaee8793bc7b6dfce956e90df00"
     },
     {
       "id": "sukka-base",
@@ -116,7 +116,7 @@
       "max_age_days": 7,
       "timeout": 8,
       "fetched_url": "https://ruleset.skk.moe/List/domainset/reject.conf",
-      "sha256": "c93d0fc5ee9da1b958ea5f180ca9812e929793ead8a4842fdb310bcbdad21b9f"
+      "sha256": "9f9c74585f8903c4842dc79a917a74435c519dd3dcbcfc9a7f94309b898d3e3e"
     },
     {
       "id": "mihomo-proxy",
@@ -378,7 +378,7 @@
       "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/light-onlydomains.txt",
       "license": "GPL-3.0",
       "fetched_url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/light-onlydomains.txt",
-      "sha256": "85ea805a7d73640ce0d36e87035d1a2b065c96ff52402c3a573683acf022dcc9"
+      "sha256": "d6c0312f6736e7f6fd23b36fd5db7d86b1460305c22382e607fec03ed42d296f"
     },
     {
       "id": "awavenue-ads",
