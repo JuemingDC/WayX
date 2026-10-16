@@ -305,15 +305,15 @@ for (const [pattern,policy] of [
     'DOMAIN-WILDCARD,*.example.com,REJECT',
     'DOMAIN-WILDCARD,api?.example.com,DIRECT',
     'DOMAIN-WILDCARD,node[0-9].example.com,REJECT',
-  ].join('\\n');
+  ].join('\n');
   const out=convertPlugin(entry,source,{stamp:'2026-10-16 13:00:00 +08:00',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
   validateConvertedPlugin(entry,out);
-  assert.match(out.qx,/host-wildcard, \\*\\.example\\.com, reject/);
-  assert.match(out.qx,/host-wildcard, api\\?\\.example\\.com, direct/);
-  assert.doesNotMatch(out.qx,/^host-wildcard, node\\[0-9\\]/m);
+  assert.match(out.qx,/host-wildcard, \*\.example\.com, reject/);
+  assert.match(out.qx,/host-wildcard, api\?\.example\.com, direct/);
+  assert.doesNotMatch(out.qx,/^host-wildcard, node\[0-9\]/m);
   assert.match(out.qx,/REVIEW REQUIRED: Loon DOMAIN-WILDCARD character classes/);
-  assert.match(out.qx,/# Source declaration: DOMAIN-WILDCARD,node\\[0-9\\]\\.example\\.com,REJECT/);
-  assert.match(out.surge,/DOMAIN-WILDCARD,node\\[0-9\\]\\.example\\.com,REJECT,extended-matching,pre-matching/);
+  assert.match(out.qx,/# Source declaration: DOMAIN-WILDCARD,node\[0-9\]\.example\.com,REJECT/);
+  assert.match(out.surge,/DOMAIN-WILDCARD,node\[0-9\]\.example\.com,REJECT,extended-matching,pre-matching/);
   assert.match(out.surge,/# Wildcard source annotation/);
   assert.equal(out.generatedScripts.size,0);
 }
