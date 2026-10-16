@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：2.10
+版本：2.11
 
 更新：2026-10-16
 作者：chance  
@@ -207,6 +207,8 @@ sync 是产物与 README 的写入入口；canonical/README 验证只检查，�
 
 Review inventory baseline 必须可读且结构有效，不能跳过比较。同步/监控报告只在 ENOENT 时允许为空；损坏 JSON、结构/版本/IO 错误使 Issue 步骤失败。同步报告支持版本 1/2，监控报告支持版本 1。每次新语义/同步/监控失败使用稳定 fingerprint 复用 Issue，保留源声明、阶段、错误与回滚结果。
 
+监控告警恢复在现有 Issue 生命周期统一处理：仅完整、无失败且明确列出该来源成功的报告可关闭带受管监控标签的对应告警。缺失报告、未覆盖来源、失败或只读执行不得关闭告警。
+
 发布只允许通过全部 required gates 的产物，提交前核对请求 head 未推进，提交后确认受管工作区无未保存变化。日志、发现结果、监控缓存、失败报告和生成产物随已有 artifact 保存。
 
 流程控制由 `.github/scripts/automation.py` 承担：分支预算、语法/checkpoint/成品验证编排、Issue 写入或只读选择、发布门禁、受管 Git 提交与 run summary。YAML 保留事件和阶段条件；Bash 仅调用程序并转存日志，不嵌入业务分支或 Python heredoc。发布程序继续核对 expected head、限制 main/test 与受管提交范围，并检查产物工作区。Node.js 26、Python 3.14 及转换核心语言不因该迁移改变。
@@ -238,6 +240,8 @@ Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生�
 | workflow.mjs | 产物生命周期、README 索引、诊断与报告 |
 | conversion.mjs | 共享选层、物化、转换与验证 pipeline |
 | index.mjs | 统一公开 exports，不复制实现 |
+
+同类问题在所属领域的公共入口修复，不按插件名、来源名或 Issue 编号追加特殊分支。Regex 语法修复、目标参数编解码与共用校验集中于 core.mjs；rule.mjs 只负责规则 AST 和目标规划，output.mjs 负责目标格式验证。自动化的正则编译与验证编排相邻组织，Issue 创建、复用和恢复关闭统一由 propose-conversion-issues.mjs 管理。测试补在现有领域套件，不新增平行实现文件。
 
 生产入口为 .github/scripts/sync-convert.mjs；canonical 为 .github/converter/tools/regenerate-canonical.mjs；QX/Surge validators 位于 output.mjs。测试归领域套件，以独立子进程隔离各案例。
 

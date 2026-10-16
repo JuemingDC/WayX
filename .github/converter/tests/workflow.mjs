@@ -9,7 +9,7 @@ import path from "node:path";
 import { conversionStampFromText, firstConversionStamp, generatedScriptDiffs, inspectManagedSource, isWayxGeneratedHelperFilename, managedSourceDigest, managedTargetDiffs, normalizeManagedSource, readCatalogSource, readManagedTargetState, syncGeneratedScripts, syncManagedSource, writeManagedSource, writeManagedTargets, ORIGINAL_FETCH_PROFILES, WAYX_FETCH_UA, WAYX_LOON_FETCH_UA, resolveOriginalUrl, selectOriginalFetchProfile, loadLoonSourceCatalog, qxTargetPath, surgeTargetPath } from "../src/index.mjs";
 import { createWorkflowFailureReporter, formatWorkflowErrorAnnotation, buildSyncFailure, failureDeclarationContext, README_AUTO_UPDATE_INTERVAL, QX_MIXED_REWRITE_MIN_BUILD, buildReadmePlan, qxAddResourceUrl, qxSnippetInstallUrl, surgeModuleInstallUrl } from "../src/workflow.mjs";
 import { isLoonPluginSource } from "../../scripts/sync-convert.mjs";
-import { syncFailureIssueBody, syncFailureTitle, targetProblemIssueBody, targetProblemTitle, monitorFailureTitle, monitorFailureIssueBody } from "../../scripts/propose-conversion-issues.mjs";
+import { syncFailureIssueBody, syncFailureTitle, targetProblemIssueBody, targetProblemTitle, monitorFailureTitle, monitorFailureIssueBody, recoveredMonitorIssues } from "../../scripts/propose-conversion-issues.mjs";
 
 import { spawnSync as runIsolatedCase } from 'node:child_process';
 import { fileURLToPath as isolatedSuitePath } from 'node:url';
@@ -440,6 +440,11 @@ if (selectedCase === "upstream-automation.mjs") {
     assert.equal(monitorFailureTitle(monitorFailure),monitorFailureTitle({...monitorFailure,reason:'HTTP 502 at a later timestamp'}),'monitor retries must reuse the same fingerprint');
     assert.notEqual(monitorFailureTitle(monitorFailure),monitorFailureTitle({...monitorFailure,stage:'write-state'}));
     for(const content of ['official-fixture','https://github.com/example/docs','fetch-and-mirror','HTTP 503','Rollback succeeded: true'])assert.ok(monitorFailureIssueBody(monitorFailure).includes(content));
+    const managed={number:1,title:monitorFailureTitle(monitorFailure),state:'OPEN',labels:[{name:'upstream-monitor-failure'}]};
+    const recovered={version:1,complete:true,failures:[],results:[{source:monitorFailure.source,succeeded:true}]};
+    assert.deepEqual(recoveredMonitorIssues(recovered,[managed]),[managed]);
+    for(const report of [null,{failures:[]},{...recovered,complete:false},{...recovered,failures:[monitorFailure]},{...recovered,results:[]},{...recovered,results:[{source:{id:'another'},succeeded:true}]},{...recovered,results:[...recovered.results,{source:monitorFailure.source,succeeded:false}]}])assert.deepEqual(recoveredMonitorIssues(report,[managed]),[]);
+    for(const issue of [{...managed,state:'CLOSED'},{...managed,labels:[]},{...managed,title:'Manual monitoring issue'},{...managed,title:managed.title.replace('monitor','sync')}])assert.deepEqual(recoveredMonitorIssues(recovered,[issue]),[]);
     const dry=runIsolatedCase(process.execPath,[new URL('../../scripts/propose-conversion-issues.mjs',import.meta.url).pathname,'--dry-run'],{cwd:issueFixture,encoding:'utf8'});assert.equal(dry.status,0,dry.stderr);
     assert.ok((await fs.readFile(path.join(issueFixture,'.github/monitor/.runtime/conversion-issues.md'),'utf8')).includes('Hard sync failures: 1'));
     assert.ok((await fs.readFile(path.join(issueFixture,'.github/monitor/.runtime/conversion-issues.md'),'utf8')).includes('Upstream monitor failures: 1'));
