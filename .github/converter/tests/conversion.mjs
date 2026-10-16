@@ -75,7 +75,7 @@ const entry={
 }
 
 // Loon build 1008+ wildcard rules must survive the complete output pipeline.
-// Source: official domain_rule docs; QX evidence: uploaded sample host-wildcard.
+// Source: official domain_rule docs; QX patterns pass through per user confirmation.
 {
   const patterns=['*.example.com','api?.example.com','*.goo?le.com',
     'node[abc].example.com','node[0-9].example.com',
@@ -92,10 +92,7 @@ const entry={
   validateSurgeModule(converted.surge,entry);
   for(const pattern of patterns) {
     assert.ok(converted.surge.includes('DOMAIN-WILDCARD,'+pattern+',REJECT,extended-matching,pre-matching'));
-    if(pattern.includes('[')) {
-      assert.ok(converted.qx.includes('# Source declaration: DOMAIN-WILDCARD,'+pattern+',REJECT'));
-      assert.ok(!converted.qx.includes('host-wildcard, '+pattern+','));
-    } else assert.ok(converted.qx.includes('host-wildcard, '+pattern+', reject'));
+    assert.ok(converted.qx.includes('host-wildcard, '+pattern+', reject'));
   }
   assert.ok(converted.qx.includes('host-wildcard, Api?.Example.com, direct'));
   assert.ok(converted.qx.includes('host-wildcard, proxy*.example.com, PROXY'));
@@ -108,8 +105,13 @@ const entry={
   }
   assert.match(converted.qx,/^# \[filter_local\]$/m);
   assert.equal(converted.generatedScripts.size,0);
-  for(const pattern of patterns.filter(p=>p.includes('['))) {
-    assert.equal(qxRule('DOMAIN-WILDCARD,'+pattern+',REJECT').reason,'unsupported-qx-wildcard-character-class');
+  assert.doesNotMatch(converted.qx,/REVIEW REQUIRED/);
+  for(const pattern of patterns) {
+    for(const [policy,targetPolicy] of [['DIRECT','direct'],['PROXY','PROXY'],['REJECT','reject']]) {
+      const planned=qxRule('DOMAIN-WILDCARD,'+pattern+','+policy);
+      assert.equal(planned.kind,'filter');
+      assert.equal(planned.line,'host-wildcard, '+pattern+', '+targetPolicy);
+    }
   }
 }
 
