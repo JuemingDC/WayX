@@ -9,6 +9,7 @@ import path from "node:path";
 import { conversionStampFromText, firstConversionStamp, generatedScriptDiffs, inspectManagedSource, isWayxGeneratedHelperFilename, managedSourceDigest, managedTargetDiffs, normalizeManagedSource, readCatalogSource, readManagedTargetState, syncGeneratedScripts, syncManagedSource, writeManagedSource, writeManagedTargets, ORIGINAL_FETCH_PROFILES, WAYX_FETCH_UA, WAYX_LOON_FETCH_UA, resolveOriginalUrl, selectOriginalFetchProfile, loadLoonSourceCatalog, qxTargetPath, surgeTargetPath } from "../src/index.mjs";
 import { recordOutputMismatch, outputMismatch, validationArtifactDigest, writeValidationEvidence, createWorkflowFailureReporter, formatWorkflowErrorAnnotation, buildSyncFailure, failureDeclarationContext, README_AUTO_UPDATE_INTERVAL, QX_MIXED_REWRITE_MIN_BUILD, buildReadmePlan, qxAddResourceUrl, qxSnippetInstallUrl, surgeModuleInstallUrl } from "../src/workflow.mjs";
 import { isLoonPluginSource } from "../../scripts/sync-convert.mjs";
+import {validateQxFilterList,validateSurgeRuleSet} from '../src/output.mjs';
 import { syncFailureIssueBody, syncFailureTitle, targetProblemIssueBody, targetProblemTitle, monitorFailureTitle, monitorFailureIssueBody, recoveredMonitorIssues, validationIssueCandidates, validationFailureTitle, validationFailureIssueBody, recoveredValidationIssues, recoveredConversionIssues } from "../../scripts/propose-conversion-issues.mjs";
 
 import { spawnSync as runIsolatedCase } from 'node:child_process';
@@ -286,7 +287,7 @@ const automationRoot=await fs.mkdtemp(path.join(os.tmpdir(),'wayx-pipeline-'));
 try {
   await fs.mkdir(path.join(automationRoot,'.github/monitor/.runtime'),{recursive:true});
   const output=path.join(automationRoot,'output');
-  const required=['syntax','catalog','checkpoint','loon_sync','verify','reports','issues'];
+  const required=['syntax','catalog','rules','checkpoint','loon_sync','verify','reports','issues'];
   const outcomes=Object.fromEntries(required.map(name=>[name,{outcome:'success'}]));
   const gate=async(stages,integrity='true',monitor='false',complete='true',evidence=null)=>{
     const validation=evidence||{version:1,stages:Object.fromEntries(Object.entries(stages).filter(([name])=>name!=='issues').map(([name,value])=>[name,{complete:true,checks:[{id:'fixture',status:value.outcome==='success'?'passed':'failed'}]}]))};
@@ -364,6 +365,100 @@ module.execute_checks('fixture', [('first-fails',[sys.executable,'-c','raise Sys
   const interrupted=await validationIssueCandidates(automationRoot,{catalog:{outcome:'failure'}});
   assert.ok(interrupted.validationFailures.some(failure=>failure.stage==='catalog'));
 
+  validateQxFilterList('# Name: Native\nhost,example.com,direct\nhost-wildcard,*.example.com,proxy\n');
+  validateSurgeRuleSet('DOMAIN,example.com\nAND,((DOMAIN-SUFFIX,example.net),(NOT,((DOMAIN,static.example.net))))\nPROCESS-NAME,Claude Helper\n');
+  assert.throws(()=>validateSurgeRuleSet('DOMAIN,example.com,PROXY\n'),/options\/policy/);
+  assert.throws(()=>validateQxFilterList('PROCESS-NAME,Claude,proxy\n'),/unsupported QX filter/);
+  assert.throws(()=>validateQxFilterList('host,example.com\n'));
+  const pythonRules=runIsolatedCase('python',['-c',String.raw`
+import importlib.util,sys,tempfile,os,json
+from pathlib import Path
+spec=importlib.util.spec_from_file_location('wayx_rules',sys.argv[1]);m=importlib.util.module_from_spec(spec);sys.modules[spec.name]=m;spec.loader.exec_module(m)
+R=m.Rule
+assert m.compact([R('DOMAIN-SUFFIX','example.com'),R('DOMAIN','a.example.com'),R('DOMAIN-SUFFIX','sub.example.com')])==[R('DOMAIN-SUFFIX','example.com')]
+assert m.compact([R('DOMAIN','example.com'),R('DOMAIN-SUFFIX','sub.example.com')])==[R('DOMAIN','example.com'),R('DOMAIN-SUFFIX','sub.example.com')]
+for policy in ['REJECT','REJECT-DROP','REJECT-NO-DROP','REJECT-TINYGIF']:
+ assert m.serialize(R('DOMAIN','example.com'),policy,'QuantumultX')=='host,example.com,reject'
+assert m.serialize(R('IP-CIDR','1.2.3.0/24',('no-resolve',)),'DIRECT','Surge')=='IP-CIDR,1.2.3.0/24,no-resolve'
+assert m.serialize(R('IP-CIDR','1.2.3.0/24',('no-resolve',)),'DIRECT','QuantumultX')=='ip-cidr,1.2.3.0/24,direct'
+assert m.regex_native(r'^a.+?\.example\.com$')=={R('DOMAIN-WILDCARD','a?*.example.com')}
+assert m.regex_native(r'^a.+\.example\.com$')=={R('DOMAIN-WILDCARD','a?*.example.com')}
+assert m.regex_native(r'(^|\.)api-.*\.example\.com$')=={R('DOMAIN-WILDCARD','api-*.example.com'),R('DOMAIN-WILDCARD','*.api-*.example.com')}
+assert m.regex_native(r'^other|a\.example\.com$') is None
+assert m.regex_native(r'^api(1|2)\.example\.com$')=={R('DOMAIN','api1.example.com'),R('DOMAIN','api2.example.com')}
+assert m.regex_native(r'(^|\.)app[1-3]?\.example\.com$')=={R('DOMAIN-SUFFIX',f'app{x}.example.com') for x in ['',1,2,3]}
+assert m.regex_native(r'^app[0-9]{2}\.example\.com$')=={R('DOMAIN',f'app{x:02}.example.com') for x in range(100)}
+assert m.regex_native(r'^a[0-9]+\.example\.com$') is None
+for pattern in [r'foo\.example\.com$',r'^a[0-9]+\.example\.com$',r'^a[0-9]{4}\.example\.com$',r'^(?=a)a\.example\.com$']:
+ assert m.regex_native(pattern) is None,pattern
+filtered=[]
+assert not m.native_rules('PROCESS-PATH,/Applications/App,PROXY\nUID,1000,PROXY\nAND,((DOMAIN,example.com),(PROCESS-NAME,app)),PROXY',{'id':'desktop','format':'ruleset'},filtered)
+assert len(filtered)==3
+filtered=[]
+assert not m.native_rules(json.dumps({'version':3,'rules':[{'domain':'example.com','process_name':'app'}]}),{'id':'desktop','format':'sing-box-json'},filtered)
+assert len(filtered)==1
+assert m.regex_covered(r'^r+[0-9]+\.example\.com$',{'example.com'})
+assert not m.regex_covered(r'^other|foo\.example\.com$',{'example.com'})
+assert not m.regex_covered(r'foo\.example\.com',{'example.com'})
+issues=[];source={'id':'fixture','format':'sing-box-json','category':'fixture','policy':'PROXY'}
+rows=m.native_rules(json.dumps({'version':5,'rules':[{'domain':'example.com','domain_suffix':['.example.com','.sub.example.net']}]}),source,issues)
+assert (R('DOMAIN-SUFFIX','example.com'),'PROXY') in rows
+assert (R('DOMAIN-WILDCARD','*.sub.example.net'),'PROXY') in rows
+assert not issues
+try:m.native_rules('{"version":2,"rules":[{"invert":true,"domain":"example.com"}]}',source,[])
+except ValueError:pass
+else:raise AssertionError('Unknown predicates cannot be ignored')
+def varint(value):
+ out=b''
+ while value>127:out+=bytes([(value&127)|128]);value>>=7
+ return out+bytes([value])
+def field(key,payload):return varint(key*8+2)+varint(len(payload))+payload
+entry=b'\x08\x02'+field(2,b'example.com')+field(3,field(1,b'cn')+b'\x10\x01')
+site=field(1,b'fixture')+field(2,entry)
+encoded=field(1,site)
+assert m.geosites(encoded,[])['fixture']==[(2,'example.com',frozenset({'cn'}))]
+for bad in [b'\x0a\x05a',b'\x08\x01',b'\x80'*11]:
+ try:m.geosites(bad,[])
+ except (ValueError,TypeError):pass
+ else:raise AssertionError('Malformed protobuf accepted')
+# Exercise a whole plan, including intentional desktop filtering and policy order.
+proxy_entry=b'\x08\x02'+field(2,b'proxy.example.com')
+encoded+=field(1,field(1,b'proxy')+field(2,proxy_entry))
+config={'applications':[{'name':'brand','tags':['fixture','proxy'],'proxy_tags':['proxy'],'split':True}],'split_names':['brand'],
+'geosite':{'repository':'https://example.test/official'},'collections':{key:['fixture'] for key in ['cn','proxy','media','media_cn']},
+'sources':[{'id':'supplement','format':'ruleset','author':'Fixture','url':'https://example.test/rules','category':'brand','policy':'DIRECT'}]}
+outputs,metadata,anomalies=m.build(config,{'geosite':encoded,'supplement':b'DOMAIN,static.proxy.example.com,DIRECT\nPROCESS-NAME,Claude Helper\n'})
+qx=outputs['Rule/QuantumultX/brand.list']
+assert qx.index('host,static.proxy.example.com,direct')<qx.index('host-suffix,proxy.example.com,brand')<qx.index('host-suffix,example.com,direct')
+assert all('PROCESS-NAME' not in text for text in outputs.values())
+assert metadata['Rule/Surge/brand_direct.list']['category']=='app'
+assert 'NOT,((DOMAIN,static.proxy.example.com))' in outputs['Rule/Surge/brand_proxy.list']
+assert any(item['code']=='filtered-desktop-rule' for item in anomalies)
+assert not any(item['code']=='unsupported-target-rule' for item in anomalies)
+with tempfile.TemporaryDirectory() as temp:
+ os.chdir(temp)
+ changed,_=m.apply_outputs(outputs,metadata,{'outputs':{}});assert changed==len(outputs)
+ before={name:Path(name).read_bytes() for name in outputs}
+ changed,_=m.apply_outputs(outputs,metadata,{'outputs':{name:'sha' for name in outputs}});assert changed==0
+ assert before=={name:Path(name).read_bytes() for name in outputs}
+ revised={name:body+'# changed\n' for name,body in outputs.items()}
+ calls=[]
+ def fail(file,data):
+  calls.append(file)
+  if len(calls)==2:raise OSError('injected write failure')
+  file.write_bytes(data)
+ try:m.apply_outputs(revised,metadata,{'outputs':{}},fail)
+ except OSError:pass
+ else:raise AssertionError('Missing write failure')
+ assert before=={name:Path(name).read_bytes() for name in outputs},'All old output bytes must roll back'
+ file=next(iter(outputs));Path(file).write_text('manual content\n')
+ try:m.apply_outputs(outputs,metadata,{'outputs':{}})
+ except ValueError:pass
+ else:raise AssertionError('Unmanaged file overwritten')
+print('Python rule aggregation contracts passed')
+`,path.join(ROOT,'.github/converter/rules.py')],{encoding:'utf8'});
+  assert.equal(pythonRules.status,0,pythonRules.stdout+'\n'+pythonRules.stderr);
+
   const icu=(pattern)=>runIsolatedCase('python',[path.join(ROOT,'.github/scripts/automation.py'),'regex'],{
     encoding:'utf8',input:JSON.stringify([{pattern,label:'target fixture'}]),
   });
@@ -381,7 +476,7 @@ module.execute_checks('fixture', [('first-fails',[sys.executable,'-c','raise Sys
     assert.equal(result.status,0,result.stderr);return result.stdout.trim();
   };
   git('init','-q','-b','main');git('config','user.name','fixture');git('config','user.email','fixture@example.test');
-  const files=['.github/sources/loon.json','Resource/Loon/test.lpx','Adblock/Quantumult X/test.snippet','Adblock/Surge/test.sgmodule','Script/Test/manual.js','README.md','.github/monitor/state.json','.github/monitor/upstream/spec.txt','Boxjs/manual.json'];
+  const files=['.github/sources/loon.json','Resource/Loon/test.lpx','Adblock/Quantumult X/test.snippet','Adblock/Surge/test.sgmodule','Script/Test/manual.js','Rule/QuantumultX/test.list','README.md','.github/monitor/state.json','.github/monitor/upstream/spec.txt','Boxjs/manual.json'];
   for(const file of files){await fs.mkdir(path.dirname(path.join(repo,file)),{recursive:true});await fs.writeFile(path.join(repo,file),'baseline\n');}
   git('add','.');git('commit','-qm','fixture baseline');const baseline=git('rev-parse','HEAD');
   git('init','-q','--bare',remote);git('remote','add','origin',remote);git('push','-q','origin','HEAD:main','HEAD:test');

@@ -1,0 +1,398 @@
+{
+  "version": 1,
+  "geosite": {
+    "repository": "https://github.com/v2fly/domain-list-community",
+    "release_api": "https://api.github.com/repos/v2fly/domain-list-community/releases/latest",
+    "consumer_provenance": "https://github.com/SagerNet/sing-geosite/blob/main/main.go",
+    "license": "MIT"
+  },
+  "applications": [
+    {
+      "name": "google",
+      "tags": [
+        "google"
+      ],
+      "children": [
+        "youtube",
+        "ai"
+      ]
+    },
+    {
+      "name": "facebook",
+      "tags": [
+        "meta"
+      ]
+    },
+    {
+      "name": "netflix",
+      "tags": [
+        "netflix"
+      ]
+    },
+    {
+      "name": "disney",
+      "tags": [
+        "disney"
+      ]
+    },
+    {
+      "name": "youtube",
+      "tags": [
+        "youtube"
+      ]
+    },
+    {
+      "name": "telegram",
+      "tags": [
+        "telegram"
+      ]
+    },
+    {
+      "name": "x",
+      "tags": [
+        "twitter"
+      ]
+    },
+    {
+      "name": "spotify",
+      "tags": [
+        "spotify"
+      ]
+    },
+    {
+      "name": "github",
+      "tags": [
+        "github"
+      ],
+      "children": [
+        "ai"
+      ]
+    },
+    {
+      "name": "ai",
+      "tags": [
+        "category-ai-!cn",
+        "category-ai-cn",
+        "apple-intelligence",
+        "github-copilot"
+      ],
+      "split": true,
+      "proxy_tags": [
+        "category-ai-!cn",
+        "apple-intelligence",
+        "github-copilot"
+      ]
+    },
+    {
+      "name": "apple",
+      "tags": [
+        "apple",
+        "apple-intelligence"
+      ],
+      "split": true,
+      "proxy_tags": [
+        "apple-intelligence",
+        "apple-tvplus"
+      ],
+      "children": [
+        "ai"
+      ]
+    },
+    {
+      "name": "microsoft",
+      "tags": [
+        "microsoft",
+        "github-copilot"
+      ],
+      "split": true,
+      "proxy_tags": [
+        "github-copilot"
+      ],
+      "children": [
+        "github",
+        "ai"
+      ]
+    }
+  ],
+  "split_names": [
+    "apple",
+    "microsoft"
+  ],
+  "collections": {
+    "media": [
+      "category-companies",
+      "category-entertainment",
+      "category-communication",
+      "category-dev",
+      "category-ai-!cn",
+      "category-social-media-!cn"
+    ],
+    "media_cn": [
+      "category-entertainment-cn",
+      "category-social-media-cn",
+      "category-dev-cn",
+      "category-ai-cn"
+    ],
+    "proxy": [
+      "geolocation-!cn"
+    ],
+    "cn": [
+      "geolocation-cn",
+      "tld-cn"
+    ]
+  },
+  "sources": [
+    {
+      "id": "limbo",
+      "author": "limbopro",
+      "format": "ruleset",
+      "category": "adblock",
+      "policy": "REJECT",
+      "url": "https://raw.githubusercontent.com/limbopro/Adblock4limbo/main/Adblock4limbo_surge.list",
+      "license": "MIT"
+    },
+    {
+      "id": "heidai",
+      "author": "217heidai",
+      "format": "ruleset",
+      "category": "adblock",
+      "policy": "REJECT",
+      "url": "https://raw.githubusercontent.com/217heidai/adblockfilters/main/rules/adblockloon.list",
+      "license": "GPL-3.0"
+    },
+    {
+      "id": "sukka-base",
+      "author": "Sukka",
+      "format": "domainset",
+      "category": "adblock_extra",
+      "policy": "REJECT",
+      "url": "https://ruleset.skk.moe/List/domainset/reject.conf",
+      "license": "AGPL-3.0",
+      "mirrors": [
+        "https://ruleset-mirror.skk.moe/List/domainset/reject.conf",
+        "https://raw.githubusercontent.com/SukkaLab/ruleset.skk.moe/master/List/domainset/reject.conf"
+      ],
+      "max_age_days": 7,
+      "timeout": 8
+    },
+    {
+      "id": "mihomo-proxy",
+      "author": "MetaCubeX",
+      "format": "geosite-text",
+      "category": "proxy",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt",
+      "license": "See upstream LICENSE",
+      "classify_apps": false
+    },
+    {
+      "id": "mihomo-direct",
+      "author": "MetaCubeX",
+      "format": "geosite-text",
+      "category": "cn",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/direct.txt",
+      "license": "See upstream LICENSE",
+      "allow_empty": true,
+      "classify_apps": false
+    },
+    {
+      "id": "nexitally-extra_cn_3",
+      "author": "Nexitally",
+      "format": "ruleset",
+      "category": "cn",
+      "policy": "DIRECT",
+      "url": "https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_CN_3.list",
+      "license": "No license declared; attribution retained",
+      "mirrors": [
+        "https://raw.githubusercontent.com/nexitallyy/ProxyRules/main/Extra_CN_3.list"
+      ]
+    },
+    {
+      "id": "nexitally-extra_proxies",
+      "author": "Nexitally",
+      "format": "ruleset",
+      "category": "proxy",
+      "policy": "PROXY",
+      "url": "https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list",
+      "license": "No license declared; attribution retained",
+      "mirrors": [
+        "https://raw.githubusercontent.com/nexitallyy/ProxyRules/main/Extra_Proxies.list"
+      ]
+    },
+    {
+      "id": "nexitally-extra_ai",
+      "author": "Nexitally",
+      "format": "ruleset",
+      "category": "ai",
+      "policy": "ai",
+      "url": "https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_AI.list",
+      "license": "No license declared; attribution retained",
+      "mirrors": [
+        "https://raw.githubusercontent.com/nexitallyy/ProxyRules/main/Extra_AI.list"
+      ]
+    },
+    {
+      "id": "nexitally-extra_crypto",
+      "author": "Nexitally",
+      "format": "ruleset",
+      "category": "media",
+      "policy": "PROXY",
+      "url": "https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list",
+      "license": "No license declared; attribution retained",
+      "mirrors": [
+        "https://raw.githubusercontent.com/nexitallyy/ProxyRules/main/Extra_Crypto.list"
+      ]
+    },
+    {
+      "id": "nexitally-applepush",
+      "author": "Nexitally",
+      "format": "ruleset",
+      "category": "apple",
+      "policy": "DIRECT",
+      "url": "https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list",
+      "license": "No license declared; attribution retained",
+      "mirrors": [
+        "https://raw.githubusercontent.com/nexitallyy/ProxyRules/main/ApplePush.list"
+      ]
+    },
+    {
+      "id": "mihomo-google",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "google",
+      "policy": "google",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-facebook",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "facebook",
+      "policy": "facebook",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/meta.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-netflix",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "netflix",
+      "policy": "netflix",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/netflix.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-disney",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "disney",
+      "policy": "disney",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/disney.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-youtube",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "youtube",
+      "policy": "youtube",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/youtube.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-telegram",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "telegram",
+      "policy": "telegram",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/telegram.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-x",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "x",
+      "policy": "x",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/twitter.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-spotify",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "spotify",
+      "policy": "spotify",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/spotify.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-github",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "github",
+      "policy": "github",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/github.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-openai",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "ai",
+      "policy": "ai",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/openai.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-mihomo-cn",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "cn",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json",
+      "license": "See upstream LICENSE",
+      "classify_apps": false
+    },
+    {
+      "id": "mihomo-mihomo-proxy-set",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "proxy",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json",
+      "license": "See upstream LICENSE",
+      "classify_apps": false
+    },
+    {
+      "id": "mihomo-category-ai-not-cn",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "ai",
+      "policy": "ai",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-ai-!cn.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-category-ai-cn",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "ai",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-ai-cn.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "dustinwin-ai",
+      "author": "DustinWin",
+      "format": "sing-box-json",
+      "category": "ai",
+      "policy": "ai",
+      "url": "https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/ai.json",
+      "license": "GPL-3.0"
+    }
+  ],
+  "indirect_upstreams": "Allowed; only direct blackmatrix7 inputs are excluded."
+}

@@ -626,6 +626,51 @@ export function hasActiveSurgeLines(lines = []) {
   });
 }
 
+function validateSurgeRuleLine(line,entry,declaredArguments=new Set()) {
+      const parts = splitTopLevelCsv(line);
+      const typeTree = surgeRuleTypesInTree(line);
+      if (!typeTree.ok) {
+        throw new Error(`${entry.id}: unsupported Surge rule type/combination in module (${typeTree.reason}): ${line}`);
+      }
+      const parsed=parseLoonRuleAst(line);
+      walkRuleAst(parsed.ast,node=>{if(node.type==='URL-REGEX')targetRegex(node.value,entry,'Surge URL-REGEX',false);});
+      const policyRaw = String(parts[2] || '');
+      const argumentPolicy = policyRaw.match(/^\{\{\{([A-Za-z0-9_]+)\}\}\}$/);
+      if (argumentPolicy) {
+        if (!declaredArguments.has(argumentPolicy[1])) {
+          throw new Error(`${entry.id}: Surge module [Rule] references undeclared policy argument ${argumentPolicy[1]}: ${line}`);
+        }
+      } else {
+        const policy = policyRaw.toUpperCase();
+        if (!SURGE_MODULE_POLICIES.has(policy)) {
+          throw new Error(`${entry.id}: Surge module [Rule] policy is outside the WayX accepted Surge Rule built-in policy set or a declared {{{argument}}}: ${line}`);
+        }
+      }
+      if (line !== parts.join(',')) {
+        throw new Error(`${entry.id}: Surge module [Rule] must use canonical top-level comma formatting: ${line}`);
+      }
+}
+
+// Native filter/rule-set resources use the same rule-line contracts as modules.
+export function validateQxFilterList(text,entry={id:'filter-list'}) {
+  for(const raw of String(text).split('\n')) {
+    const line=raw.trim();
+    if(!line||/^(?:#|;|\/\/)/.test(line))continue;
+    if(!QX_WAYX_FILTER_TYPES.has(line.split(',')[0].trim().toLowerCase()))throw new Error(entry.id+': unsupported QX filter type: '+line);
+    validateQxExecutableLine(line,entry,'filter_local');
+  }
+}
+
+export function validateSurgeRuleSet(text,entry={id:'rule-set'}) {
+  for(const raw of String(text).split('\n')) {
+    const line=raw.trim();
+    if(!line||/^(?:#|;|\/\/)/.test(line))continue;
+    const parts=splitTopLevelCsv(line);
+    if(parts.length<2||parts.slice(2).some(option=>!['no-resolve','extended-matching'].includes(option)))throw new Error(entry.id+': invalid external rule-set options/policy: '+line);
+    validateSurgeRuleLine([parts[0],parts[1],'DIRECT',...parts.slice(2)].join(','),entry);
+  }
+}
+
 export function validateSurgeModule(text, entry = {id:'module'}) {
   const allowedSections = new Set(['General','Rule', ...SURGE_WAYX_REWRITE_SECTIONS, 'MITM']);
 
@@ -706,28 +751,7 @@ export function validateSurgeModule(text, entry = {id:'module'}) {
     }
 
     if (current === 'Rule') {
-      const parts = splitTopLevelCsv(line);
-      const typeTree = surgeRuleTypesInTree(line);
-      if (!typeTree.ok) {
-        throw new Error(`${entry.id}: unsupported Surge rule type/combination in module (${typeTree.reason}): ${line}`);
-      }
-      const parsed=parseLoonRuleAst(line);
-      walkRuleAst(parsed.ast,node=>{if(node.type==='URL-REGEX')targetRegex(node.value,entry,'Surge URL-REGEX',false);});
-      const policyRaw = String(parts[2] || '');
-      const argumentPolicy = policyRaw.match(/^\{\{\{([A-Za-z0-9_]+)\}\}\}$/);
-      if (argumentPolicy) {
-        if (!declaredArguments.has(argumentPolicy[1])) {
-          throw new Error(`${entry.id}: Surge module [Rule] references undeclared policy argument ${argumentPolicy[1]}: ${line}`);
-        }
-      } else {
-        const policy = policyRaw.toUpperCase();
-        if (!SURGE_MODULE_POLICIES.has(policy)) {
-          throw new Error(`${entry.id}: Surge module [Rule] policy is outside the WayX accepted Surge Rule built-in policy set or a declared {{{argument}}}: ${line}`);
-        }
-      }
-      if (line !== parts.join(',')) {
-        throw new Error(`${entry.id}: Surge module [Rule] must use canonical top-level comma formatting: ${line}`);
-      }
+      validateSurgeRuleLine(line,entry,declaredArguments);
       continue;
     }
 
