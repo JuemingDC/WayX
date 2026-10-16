@@ -444,14 +444,17 @@ def compact(rules):
     return sorted(result, key=lambda rule: (rank[rule.kind], rule.value, rule.options))
 
 
+def qx_policy(policy):
+    value = str(policy or '').strip().upper()
+    return 'REJECT' if value.startswith('REJECT') else 'DIRECT' if value == 'DIRECT' else 'PROXY'
+
+
 def serialize(rule, policy, target):
+    if target == 'QuantumultX':
+        return ','.join((QX_TYPES[rule.kind], rule.value, qx_policy(policy).lower()))
     if policy not in ('DIRECT', 'PROXY') and not policy.startswith('REJECT'):
-        # Application policies are explicit names supplied by the source registry.
         if not re.fullmatch(r'[A-Za-z][A-Za-z0-9_]*', policy):
             raise ValueError('Invalid policy name')
-    if target == 'QuantumultX':
-        action = 'reject' if policy.startswith('REJECT') else policy.lower() if policy in ('DIRECT', 'PROXY') else policy
-        return ','.join((QX_TYPES[rule.kind], rule.value, action))
     return ','.join((rule.kind, rule.value.upper() if rule.kind == 'GEOIP' else rule.value, *rule.options))
 
 
@@ -602,7 +605,15 @@ def build(config, inputs):
                         anomalies.append({'source': ' / '.join(sorted(authors[(name, policy)])), 'category': name, 'target': target, 'declaration': rule.kind + ',' + rule.value, 'code': 'filtered-unsupported-target', 'reason': 'Native rule type/options are not supported by Quantumult X'})
                         continue
                     ordered.append((rule, policy))
-            for rule, policy in sorted(ordered, key=lambda pair: (0 if pair[0].kind == 'DOMAIN' else 1 if pair[0].kind == 'DOMAIN-SUFFIX' else 2 if pair[0].kind in ('DOMAIN-WILDCARD', 'DOMAIN-KEYWORD') else 3, -pair[0].value.count('.'), pair[0].value, pair[1] != 'DIRECT', pair[1], pair[0].kind, pair[0].options)):
+            if target == 'QuantumultX':
+                # Coalesce placeholder names before deduplication; retain opposite-action exceptions.
+                actions = {}
+                for rule, policy in ordered:
+                    actions.setdefault(qx_policy(policy), set()).add(rule)
+                mixed = len(actions) > 1
+                ordered = [(rule, action) for action, rules in actions.items()
+                           for rule in (sorted(rules) if mixed else compact(rules))]
+            for rule, policy in sorted(ordered, key=lambda pair: (0 if pair[0].kind == 'DOMAIN' else 1 if pair[0].kind == 'DOMAIN-SUFFIX' else 2 if pair[0].kind in ('DOMAIN-WILDCARD', 'DOMAIN-KEYWORD') else 3, -pair[0].value.count('.'), pair[0].value, 0 if pair[1] == 'DIRECT' else 1 if pair[1].startswith('REJECT') else 2, pair[1], pair[0].kind, pair[0].options)):
                     line = surge_proxy_exclusions(rule, policy, buckets.get((groups[0][0], 'DIRECT'), set())) if target == 'Surge' and policy != 'DIRECT' and groups[0][0] in split_names else serialize(rule, policy, target)
                     if line is not None and line not in seen:
                         lines.append(line); seen.add(line)
