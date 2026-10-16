@@ -1,14 +1,12 @@
 # Name: media_cn
-# Updated: 2026-10-16 08:44:01 UTC
+# Updated: 2026-10-16 10:42:40 UTC
 # Source Authors: V2Fly
-# Category: Routing
+# Category: app
 # Sources: https://github.com/v2fly/domain-list-community
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1185
+# Rules: 1071
 # Managed by: WayX Rule Aggregator
 
-host,ai.zhaomi.cn,direct
-host,cueme-api.quark.cn,direct
 host,end-api.shallow.ink,direct
 host,end.shallow.ink,direct
 host,p1-juejin.byteimg.com,direct
@@ -37,18 +35,15 @@ host-suffix,gouhuo.qq.com,direct
 host-suffix,hikunpeng.com.cn,direct
 host-suffix,hisilicon.com.cn,direct
 host-suffix,hoopchina.com.cn,direct
-host-suffix,hunyuan.tencent.com,direct
 host-suffix,ign.com.cn,direct
 host-suffix,jvcsmart.com.cn,direct
 host-suffix,kg.qq.com,direct
 host-suffix,linyaps.org.cn,direct
-host-suffix,marscode.com.cn,direct
 host-suffix,music.qq.com,direct
 host-suffix,news.yxrb.net,direct
 host-suffix,nikkigames.com.cn,direct
 host-suffix,programmer.com.cn,direct
 host-suffix,programmer.net.cn,direct
-host-suffix,qianwen.aliyun.com,direct
 host-suffix,qishui.com.cn,direct
 host-suffix,qishuimusic.com.cn,direct
 host-suffix,roblox.qq.com,direct
@@ -56,17 +51,11 @@ host-suffix,roco.qq.com,direct
 host-suffix,rrsp.com.cn,direct
 host-suffix,sina.com.cn,direct
 host-suffix,tieba.baidu.com,direct
-host-suffix,tongyi.aliyun.com,direct
-host-suffix,trae.com.cn,direct
 host-suffix,vistopia.com.cn,direct
 host-suffix,wegame.com.cn,direct
 host-suffix,weibo.com.cn,direct
 host-suffix,werepository.com.cn,direct
-host-suffix,xinghuo.xfyun.cn,direct
 host-suffix,y.qq.com,direct
-host-suffix,yiyan.baidu.com,direct
-host-suffix,yuanbao.tencent.com,direct
-host-suffix,yuanqi.tencent.com,direct
 host-suffix,11222.cn,direct
 host-suffix,13a.com,direct
 host-suffix,17173.com,direct
@@ -157,7 +146,6 @@ host-suffix,aichongzoo.cn,direct
 host-suffix,aihst8.com,direct
 host-suffix,aireads.cn,direct
 host-suffix,aisee.tv,direct
-host-suffix,aispeech.com,direct
 host-suffix,aixcoder.com,direct
 host-suffix,aixifan.com,direct
 host-suffix,aki-game.com,direct
@@ -173,18 +161,13 @@ host-suffix,animetamashi.com,direct
 host-suffix,anitabi.cn,direct
 host-suffix,anitama.cn,direct
 host-suffix,anitama.net,direct
-host-suffix,antafu.com,direct
-host-suffix,antaq.com,direct
 host-suffix,anticheatexpert.com,direct
-host-suffix,aorizon.cn,direct
-host-suffix,api-building.fun,direct
 host-suffix,apifox.cn,direct
 host-suffix,apifox.com,direct
 host-suffix,apipost.cn,direct
 host-suffix,apipost.net,direct
 host-suffix,appeeres.com,direct
 host-suffix,arcaea.cn,direct
-host-suffix,askdiandian.com,direct
 host-suffix,asktug.com,direct
 host-suffix,astral-vector.com,direct
 host-suffix,atianqi.com,direct
@@ -195,7 +178,6 @@ host-suffix,awemeugsoul.com,direct
 host-suffix,awemeugwave.com,direct
 host-suffix,b23.tv,direct
 host-suffix,b612kaji.com,direct
-host-suffix,baichuan-ai.com,direct
 host-suffix,baihe.com,direct
 host-suffix,baltamatica.cn,direct
 host-suffix,baltamatica.com,direct
@@ -218,7 +200,6 @@ host-suffix,bh3.com,direct
 host-suffix,bhsr.com,direct
 host-suffix,bigfun.cn,direct
 host-suffix,bigfunapp.cn,direct
-host-suffix,bigmodel.cn,direct
 host-suffix,biji.com,direct
 host-suffix,bili22.cn,direct
 host-suffix,bili2233.cn,direct
@@ -256,10 +237,7 @@ host-suffix,blogjava.net,direct
 host-suffix,boxdouyin.com,direct
 host-suffix,brawlstars.cn,direct
 host-suffix,bsbsb.top,direct
-host-suffix,building.fun,direct
 host-suffix,buke999.com,direct
-host-suffix,butterfly-static.cn,direct
-host-suffix,butterflyai.cn,direct
 host-suffix,bx1k.com,direct
 host-suffix,cbjq.com,direct
 host-suffix,ccw.site,direct
@@ -274,7 +252,6 @@ host-suffix,changyou.com,direct
 host-suffix,chat.top,direct
 host-suffix,chatdrama.cn,direct
 host-suffix,chatdrama.net,direct
-host-suffix,chatglm.cn,direct
 host-suffix,chatqidian.cn,direct
 host-suffix,chatqidian.net,direct
 host-suffix,chattext.cn,direct
@@ -286,7 +263,6 @@ host-suffix,chuapp.com,direct
 host-suffix,cibn.cc,direct
 host-suffix,cibntv.net,direct
 host-suffix,ciweimao.com,direct
-host-suffix,clawhub-mirror.com,direct
 host-suffix,cnb.cool,direct
 host-suffix,cnb.space,direct
 host-suffix,cnblogs.com,direct
@@ -294,7 +270,6 @@ host-suffix,cnblogs.vip,direct
 host-suffix,cnitblog.com,direct
 host-suffix,cnweblog.com,direct
 host-suffix,cocos.com,direct
-host-suffix,codebuddy.cn,direct
 host-suffix,codechina.net,direct
 host-suffix,coding.me,direct
 host-suffix,coding.net,direct
@@ -305,43 +280,23 @@ host-suffix,coolapk.com,direct
 host-suffix,coolapkmarket.com,direct
 host-suffix,coolapkmarket.net,direct
 host-suffix,cowlevel.net,direct
-host-suffix,coze-dns-01.com,direct
-host-suffix,coze.cn,direct
-host-suffix,coze.email,direct
-host-suffix,coze.site,direct
-host-suffix,cozeapp.net,direct
-host-suffix,cozebaas.cn,direct
-host-suffix,cozebuild.com,direct
-host-suffix,cozecdn.com,direct
-host-suffix,cozedeploy.com,direct
-host-suffix,cozefn.cn,direct
-host-suffix,cozeide.cn,direct
-host-suffix,cozesdk.com,direct
-host-suffix,cozetest.cn,direct
-host-suffix,cozetest2.cn,direct
-host-suffix,cozetest3.cn,direct
 host-suffix,cppblog.com,direct
 host-suffix,csdn.com,direct
 host-suffix,csdn.net,direct
 host-suffix,csdnimg.cn,direct
 host-suffix,csto.com,direct
-host-suffix,cueme.cn,direct
 host-suffix,cy.com,direct
 host-suffix,dandan818.com,direct
 host-suffix,dandanvoice.com,direct
 host-suffix,dataeye.com,direct
 host-suffix,datasea.cn,direct
-host-suffix,dbbuilding.fun,direct
 host-suffix,ddmogo.com,direct
 host-suffix,debugmode.cn,direct
 host-suffix,dedao.cn,direct
 host-suffix,deepin.cn,direct
 host-suffix,deepin.com,direct
-host-suffix,deepseek.com,direct
-host-suffix,deepseeksvc.com,direct
 host-suffix,dengguobi.com,direct
 host-suffix,devui.design,direct
-host-suffix,diandianlife.top,direct
 host-suffix,dishu3.com,direct
 host-suffix,diyring.cc,direct
 host-suffix,dm5.cn,direct
@@ -355,10 +310,6 @@ host-suffix,dongqiudi.com,direct
 host-suffix,douban.com,direct
 host-suffix,douban.fm,direct
 host-suffix,doubanio.com,direct
-host-suffix,doubao-dev.com,direct
-host-suffix,doubao.com,direct
-host-suffix,doubaocdn.com,direct
-host-suffix,doudou.com,direct
 host-suffix,douyin.com,direct
 host-suffix,douyinact.com,direct
 host-suffix,douyinact.net,direct
@@ -378,10 +329,7 @@ host-suffix,douyucdn2.cn,direct
 host-suffix,douyuscdn.com,direct
 host-suffix,douyutv.com,direct
 host-suffix,dtstatic.com,direct
-host-suffix,dui.ai,direct
-host-suffix,duiopen.com,direct
 host-suffix,duitang.com,direct
-host-suffix,dumate.cn,direct
 host-suffix,duoduo.link,direct
 host-suffix,duoduocdn.com,direct
 host-suffix,duoshan.com,direct
@@ -408,7 +356,6 @@ host-suffix,fanqiesdkpic.com,direct
 host-suffix,fanqiesdkstatic.com,direct
 host-suffix,fanqiesdkvod.com,direct
 host-suffix,fanxingliveshow.com,direct
-host-suffix,faxingbao.com,direct
 host-suffix,feihuo.com,direct
 host-suffix,fengniao.com,direct
 host-suffix,ffbuddy.com,direct
@@ -528,13 +475,10 @@ host-suffix,gtgres.com,direct
 host-suffix,guoping123.com,direct
 host-suffix,gzlzfm.com,direct
 host-suffix,haidubooks.com,direct
-host-suffix,hailuoai.com,direct
 host-suffix,hammi.cn,direct
 host-suffix,haohaowan.net,direct
 host-suffix,happyelements.com,direct
 host-suffix,happyhlddz.com,direct
-host-suffix,happyhorse.cn,direct
-host-suffix,happyshrimp.cn,direct
 host-suffix,harmonyos.com,direct
 host-suffix,haydaypop.cn,direct
 host-suffix,hbooker.com,direct
@@ -547,7 +491,6 @@ host-suffix,heiyanimg.com,direct
 host-suffix,hero.com,direct
 host-suffix,heroesports.com,direct
 host-suffix,herogame.com,direct
-host-suffix,hi-butterfly.cn,direct
 host-suffix,hiascend.cn,direct
 host-suffix,hiascend.com,direct
 host-suffix,hiclc.com,direct
@@ -622,7 +565,6 @@ host-suffix,in.th,direct
 host-suffix,inke.cn,direct
 host-suffix,inkuai.com,direct
 host-suffix,inkwai.com,direct
-host-suffix,instreet.com,direct
 host-suffix,iqiyi.com,direct
 host-suffix,iqiyipic.com,direct
 host-suffix,ishuqi.com,direct
@@ -647,14 +589,10 @@ host-suffix,jvcsmart.cn,direct
 host-suffix,kaifayun.com,direct
 host-suffix,kaihong.com,direct
 host-suffix,kajicam.com,direct
-host-suffix,kechuangai.com,direct
 host-suffix,kgimg.com,direct
 host-suffix,kglink.cn,direct
-host-suffix,kimi.com,direct
 host-suffix,kjcdn.com,direct
 host-suffix,kkmh.com,direct
-host-suffix,kling-ai.com,direct
-host-suffix,klingai.com,direct
 host-suffix,kolbuyer.cn,direct
 host-suffix,koowo.cn,direct
 host-suffix,koowo.com,direct
@@ -718,13 +656,9 @@ host-suffix,letv.com,direct
 host-suffix,letvcdn.com,direct
 host-suffix,letvimg.com,direct
 host-suffix,leyuansu.com,direct
-host-suffix,liblib.art,direct
-host-suffix,liblib.cloud,direct
-host-suffix,liblib.tv,direct
 host-suffix,lifexue.com,direct
 host-suffix,linglong.space,direct
 host-suffix,lingxigames.com,direct
-host-suffix,linka2a.net,direct
 host-suffix,lizhi.fm,direct
 host-suffix,lizhifm.com,direct
 host-suffix,lizhiinc.com,direct
@@ -752,31 +686,19 @@ host-suffix,manhuaren.com,direct
 host-suffix,manmankan.com,direct
 host-suffix,maoer.com,direct
 host-suffix,maoercdn.com,direct
-host-suffix,maoxiangai.com,direct
-host-suffix,marscode.cn,direct
 host-suffix,max-c.com,direct
 host-suffix,maxadmin.cn,direct
 host-suffix,maxjia.com,direct
-host-suffix,mcbaas.work,direct
-host-suffix,mcdemo.show,direct
-host-suffix,mchost.guru,direct
-host-suffix,mcprev.cn,direct
-host-suffix,mcpworld.com,direct
 host-suffix,me4399.com,direct
 host-suffix,meipian.cn,direct
 host-suffix,meipian.me,direct
-host-suffix,meta.law,direct
 host-suffix,metalrevolution.com,direct
-host-suffix,metaso.cn,direct
 host-suffix,mfuns.cn,direct
 host-suffix,mfuns.net,direct
 host-suffix,mgtv.com,direct
 host-suffix,mhystatic.com,direct
 host-suffix,mhyurl.cn,direct
-host-suffix,miaibox.com,direct
-host-suffix,miaoda.cn,direct
 host-suffix,miaopai.com,direct
-host-suffix,miaoyanai.com,direct
 host-suffix,midasbuy.com,direct
 host-suffix,mihayo.com,direct
 host-suffix,mihayou.com,direct
@@ -786,13 +708,11 @@ host-suffix,mihoyogift.com,direct
 host-suffix,mihoyomall.com,direct
 host-suffix,mincdn.com,direct
 host-suffix,mindspore.cn,direct
-host-suffix,minimaxi.com,direct
 host-suffix,missevan.com,direct
 host-suffix,miyoushe.com,direct
 host-suffix,mogoo.com,direct
 host-suffix,mojidoc.com,direct
 host-suffix,momocdn.com,direct
-host-suffix,moonshot.cn,direct
 host-suffix,morefreegame.com,direct
 host-suffix,motie.com,direct
 host-suffix,motieimg.com,direct
@@ -806,14 +726,11 @@ host-suffix,mting.info,direct
 host-suffix,muwai.com,direct
 host-suffix,muyewx.com,direct
 host-suffix,my4399.com,direct
-host-suffix,myparallelstory.com,direct
 host-suffix,mysiteres.com,direct
 host-suffix,mysxl.cn,direct
-host-suffix,n.cn,direct
 host-suffix,nadianshi.com,direct
 host-suffix,nagcloudcs.com,direct
 host-suffix,nalrer.cn,direct
-host-suffix,namiso.com,direct
 host-suffix,natfrp.com,direct
 host-suffix,newstjk.com,direct
 host-suffix,nextstudios.com,direct
@@ -826,9 +743,6 @@ host-suffix,novelfmpic.com,direct
 host-suffix,novelfmstatic.com,direct
 host-suffix,novelfmvod.com,direct
 host-suffix,nzsiteres.com,direct
-host-suffix,obriccloud.com,direct
-host-suffix,obricclouddw.com,direct
-host-suffix,oceancloudapi.com,direct
 host-suffix,oend.net,direct
 host-suffix,okjike.com,direct
 host-suffix,okjk.co,direct
@@ -845,13 +759,11 @@ host-suffix,pgyer.com,direct
 host-suffix,phira.cn,direct
 host-suffix,php.cn,direct
 host-suffix,phpweblog.net,direct
-host-suffix,picpic-ai.cn,direct
 host-suffix,picself.cn,direct
 host-suffix,pingcap.cn,direct
 host-suffix,pingcap.com,direct
 host-suffix,pingcode.com,direct
 host-suffix,pipi.cn,direct
-host-suffix,pixeldance.com,direct
 host-suffix,playcool.com,direct
 host-suffix,podcast.xyz,direct
 host-suffix,ppkankan01.com,direct
@@ -867,8 +779,6 @@ host-suffix,pubgno1.cn,direct
 host-suffix,pubgtool.com,direct
 host-suffix,qdmm.com,direct
 host-suffix,qianliaowang.com,direct
-host-suffix,qianwen.com,direct
-host-suffix,qianwenai.com,direct
 host-suffix,qidian.com,direct
 host-suffix,qimao.com,direct
 host-suffix,qingque.cn,direct
@@ -892,8 +802,6 @@ host-suffix,qtfm.cn,direct
 host-suffix,quehu.com,direct
 host-suffix,qwapp.top,direct
 host-suffix,qwdjapp.com,direct
-host-suffix,qwen.ai,direct
-host-suffix,qwenlm.ai,direct
 host-suffix,qy.net,direct
 host-suffix,qznovel.com,direct
 host-suffix,qznovelpic.com,direct
@@ -913,10 +821,7 @@ host-suffix,rrsp.app,direct
 host-suffix,ruby-china.org,direct
 host-suffix,rubyconfchina.org,direct
 host-suffix,ruguoapp.com,direct
-host-suffix,rwkv.cn,direct
-host-suffix,rwkv.com,direct
 host-suffix,saasops.tech,direct
-host-suffix,safeskill.cn,direct
 host-suffix,sanguosha.com,direct
 host-suffix,sao.cn,direct
 host-suffix,saolife.com,direct
@@ -937,7 +842,6 @@ host-suffix,shihuo.cn,direct
 host-suffix,shoutanjjj.com,direct
 host-suffix,showstart.com,direct
 host-suffix,shuhai.com,direct
-host-suffix,shunjing.xin,direct
 host-suffix,shuqi.com,direct
 host-suffix,shuqiapi.com,direct
 host-suffix,shuqiread.com,direct
@@ -955,10 +859,8 @@ host-suffix,sinaimg.com,direct
 host-suffix,sinajs.cn,direct
 host-suffix,sinajs.com,direct
 host-suffix,singworld.net,direct
-host-suffix,skillhub.cn,direct
 host-suffix,skydweller.cn,direct
 host-suffix,sl916.com,direct
-host-suffix,sleeplesshorizon.cn,direct
 host-suffix,smgbb.cn,direct
 host-suffix,sndu.cn,direct
 host-suffix,soku.com,direct
@@ -984,12 +886,10 @@ host-suffix,taou.com,direct
 host-suffix,tapapks.com,direct
 host-suffix,tapimg.com,direct
 host-suffix,tapimg.net,direct
-host-suffix,tapnow.top,direct
 host-suffix,taptap.cn,direct
 host-suffix,taptap.com,direct
 host-suffix,taptapdada.com,direct
 host-suffix,tcfmglobal.com,direct
-host-suffix,tcwqqdy.guru,direct
 host-suffix,teachblog.net,direct
 host-suffix,teleows.com,direct
 host-suffix,tencent-cloud.cn,direct
@@ -1010,7 +910,6 @@ host-suffix,th-music.com,direct
 host-suffix,themisweeps.com,direct
 host-suffix,tiancity.com,direct
 host-suffix,tiancitycdn.com,direct
-host-suffix,tiangong.cn,direct
 host-suffix,tidb.ai,direct
 host-suffix,tidb.net,direct
 host-suffix,tidbcloud.com,direct
@@ -1021,10 +920,7 @@ host-suffix,tingbook.com,direct
 host-suffix,tingmall.com,direct
 host-suffix,tipdm.org,direct
 host-suffix,tjstats.com,direct
-host-suffix,tongyi.com,direct
 host-suffix,tracup.com,direct
-host-suffix,trae.cn,direct
-host-suffix,trae.guru,direct
 host-suffix,tuchong.com,direct
 host-suffix,tudou.com,direct
 host-suffix,tuer123.com,direct
@@ -1085,7 +981,6 @@ host-suffix,wmupd.com,direct
 host-suffix,wo1wan.com,direct
 host-suffix,woaihuoshan.com,direct
 host-suffix,wohst8.com,direct
-host-suffix,workbuddy.cn,direct
 host-suffix,wskwai.com,direct
 host-suffix,wsukwai.com,direct
 host-suffix,wting.info,direct
@@ -1102,16 +997,12 @@ host-suffix,xhscdn.com,direct
 host-suffix,xhscdn.net,direct
 host-suffix,xhslink.com,direct
 host-suffix,xhsrcdn.com,direct
-host-suffix,xiaoaiassist.com,direct
 host-suffix,xiaochuankeji.cn,direct
 host-suffix,xiaoheihe.cn,direct
 host-suffix,xiaohongshu.com,direct
-host-suffix,xiaomimimo.com,direct
 host-suffix,xiaoyuzhoufm.com,direct
-host-suffix,xiezuocat.com,direct
 host-suffix,ximalaya.com,direct
 host-suffix,xindong.com,direct
-host-suffix,xingyeai.com,direct
 host-suffix,xinlishumeng.com,direct
 host-suffix,xinwuji.com,direct
 host-suffix,xishanju.com,direct
@@ -1143,7 +1034,6 @@ host-suffix,yjwujian.cn,direct
 host-suffix,ykimg.com,direct
 host-suffix,yo9.com,direct
 host-suffix,yokaverse.com,direct
-host-suffix,yoma.cn,direct
 host-suffix,youba.com,direct
 host-suffix,youku.com,direct
 host-suffix,youkuhonor.com,direct
@@ -1166,20 +1056,15 @@ host-suffix,yy.com,direct
 host-suffix,yysls.cn,direct
 host-suffix,yystatic.com,direct
 host-suffix,yystv.cn,direct
-host-suffix,yzsgo.com,direct
 host-suffix,yzyxgame.com,direct
-host-suffix,z.ai,direct
 host-suffix,zastatic.com,direct
 host-suffix,zcjbgame.com,direct
 host-suffix,zhanqi.tv,direct
 host-suffix,zhenai.com,direct
 host-suffix,zhibo8.cc,direct
 host-suffix,zhibo8.com,direct
-host-suffix,zhiexa.com,direct
 host-suffix,zhihu.com,direct
 host-suffix,zhimg.com,direct
-host-suffix,zhipuai.cn,direct
-host-suffix,zhipucn.com,direct
 host-suffix,zhulang.com,direct
 host-suffix,zhuoyou.com,direct
 host-suffix,zhuoyuegame.com,direct
@@ -1192,3 +1077,4 @@ host-suffix,zx.com,direct
 host-suffix,sina,direct
 host-suffix,weibo,direct
 host-suffix,xn--9krt00a,direct
+host-wildcard,?*-mihayo.akamaized.net,direct

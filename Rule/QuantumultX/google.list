@@ -1,10 +1,10 @@
 # Name: google
-# Updated: 2026-10-16 08:44:01 UTC
-# Source Authors: MetaCubeX, Nexitally, V2Fly
-# Category: Routing
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_AI.list
+# Updated: 2026-10-16 10:42:40 UTC
+# Source Authors: MetaCubeX, V2Fly
+# Category: app
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google.json
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 677
+# Rules: 675
 # Managed by: WayX Rule Aggregator
 
 host,redirector.c.youtubeeducation.com,google
@@ -152,7 +152,6 @@ host-suffix,advertiserscommunity.com,google
 host-suffix,adwords-community.com,google
 host-suffix,adwords.com,google
 host-suffix,adwordsexpress.com,google
-host-suffix,ai.studio,google
 host-suffix,android.com,google
 host-suffix,androidify.com,google
 host-suffix,angulardart.org,google
@@ -275,7 +274,6 @@ host-suffix,dartsearch.net,google
 host-suffix,dataliberation.org,google
 host-suffix,debug.com,google
 host-suffix,debugproject.com,google
-host-suffix,deepmind.com,google
 host-suffix,deps.dev,google
 host-suffix,deps.info,google
 host-suffix,devsitetest.how,google

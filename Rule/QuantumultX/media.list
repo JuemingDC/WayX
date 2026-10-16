@@ -1,16 +1,15 @@
 # Name: media
-# Updated: 2026-10-16 08:44:01 UTC
+# Updated: 2026-10-16 10:42:40 UTC
 # Source Authors: Nexitally, V2Fly
-# Category: Routing
-# Sources: https://github.com/v2fly/domain-list-community ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_AI.list ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list
+# Category: app
+# Sources: https://github.com/v2fly/domain-list-community ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 6345
+# Rules: 6180
 # Managed by: WayX Rule Aggregator
 
 host,cdn.globalsigncdn.com.cdn.cloudflare.net,Media
 host,a4e8s8k3.map2.ssl.hwcdn.net,Media
 host,docker-images-prod.6aa30f8b08e16409b46e0173d6de2f56.r2.cloudflarestorage.com,Media
-host,openaicomproductionae4b.blob.core.windows.net,Media
 host,prodforza.blob.core.windows.net,Media
 host,roblox-poc.global.ssl.fastly.net,Media
 host,steamcloudsweden.blob.core.windows.net,Media
@@ -18,16 +17,12 @@ host,steamcommunity-a.akamaihd.net.edgesuite.net,Media
 host,steamugcquincy.blob.core.windows.net,Media
 host,teamviewer.com.cdn.cloudflare.net,Media
 host,vscode.blob.core.windows.net,Media
-host,alkalicore-pa.clients6.google.com,Media
-host,alkalimakersuite-pa.clients6.google.com,Media
 host,az764295.vo.msecnd.net,Media
 host,blizzard.nefficient.co.kr,Media
 host,datarouter.apps.netherrealm.com,Media
 host,discord-attachments-uploads-prd.storage.googleapis.com,Media
 host,e122475.dscg.akamaiedge.net,Media
 host,f3b7q2p3.ssl.hwcdn.net,Media
-host,geminiweb-pa.clients.google.com,Media
-host,geminiweb-pa.clients6.google.com,Media
 host,gitlab-assets.oss-cn-hongkong.aliyuncs.com,Media
 host,gog-cdn-lumen.secure2.footprint.net,Media
 host,hammerandchisel.ssl.zendesk.com,Media
@@ -35,7 +30,6 @@ host,lastfm-img.freetls.fastly.net,Media
 host,lastfm.freetls.fastly.net,Media
 host,licdn.cn.cdn20.com,Media
 host,mozilla.map.fastly.net,Media
-host,openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net,Media
 host,robloxcorp.s.llnwi.net,Media
 host,roovza.inapps.appsflyersdk.com,Media
 host,roovza.launches.appsflyersdk.com,Media
@@ -45,15 +39,11 @@ host,sni1dcb6gl.wpc.edgecastcdn.net,Media
 host,token-api.metaswap.codefi.network,Media
 host,ubisoft.siteintercept.qualtrics.com,Media
 host,vscode.search.windows.net,Media
-host,webchannel-alkalimakersuite-pa.clients6.google.com,Media
 host,a.ppy.sh,Media
 host,abematv.akamaized.net,Media
 host,agb9r0ad.qllfkl.com,Media
-host,ai.google.dev,Media
 host,amp.akamaized.net,Media
 host,android.googlesource.com,Media
-host,antigravity-pa.googleapis.com,Media
-host,antigravity.googleapis.com,Media
 host,assets.ppy.sh,Media
 host,avatargarenanow-a.akamaihd.net,Media
 host,bingsettingssearch.trafficmanager.net,Media
@@ -68,14 +58,10 @@ host,bnetshopus.akamaized.net,Media
 host,bybit.ada.support,Media
 host,c.ppy.sh,Media
 host,cdn.js7k.com,Media
-host,cdn.usefathom.com,Media
 host,cdngarenanow-a.akamaihd.net,Media
 host,cisco.evergage.com,Media
 host,ciscolivehls-i.akamaihd.net,Media
-host,cloudaicompanion.googleapis.com,Media
-host,cloudcode-pa.googleapis.com,Media
 host,crl.versign.net,Media
-host,daily-cloudcode-pa.googleapis.com,Media
 host,default.exp-tas.com,Media
 host,developers.facebook.com,Media
 host,dlgarenanow-a.akamaihd.net,Media
@@ -84,6 +70,16 @@ host,ds-linear-abematv.akamaized.net,Media
 host,ds-vod-abematv.akamaized.net,Media
 host,dtlgalleryint.cloudapp.net,Media
 host,eaassets-a.akamaihd.net,Media
+host,epicgames-download0.akamaized.net,Media
+host,epicgames-download1.akamaized.net,Media
+host,epicgames-download2.akamaized.net,Media
+host,epicgames-download3.akamaized.net,Media
+host,epicgames-download4.akamaized.net,Media
+host,epicgames-download5.akamaized.net,Media
+host,epicgames-download6.akamaized.net,Media
+host,epicgames-download7.akamaized.net,Media
+host,epicgames-download8.akamaized.net,Media
+host,epicgames-download9.akamaized.net,Media
 host,faronics.kayako.com,Media
 host,firebase.googleapis.com,Media
 host,firebaseappcheck.googleapis.com,Media
@@ -114,11 +110,8 @@ host,m1.ppy.sh,Media
 host,media-rockstargames-com.akamaized.net,Media
 host,mozilla-ohttp.fastly-edge.com,Media
 host,nbbb1bb7.pmhcjk.com,Media
-host,notebooklm-pa.googleapis.com,Media
-host,notebooklm.googleapis.com,Media
 host,notify.ppy.sh,Media
 host,ood.opsource.net,Media
-host,openai-api.arkoselabs.com,Media
 host,opgg-static.akamaized.net,Media
 host,origin-a.akamaihd.net,Media
 host,osu.ppy.sh,Media
@@ -126,18 +119,14 @@ host,p16-tiktok-dm-sticker-sign-sg.ibyteimg.com,Media
 host,p16-tiktokcdn-com.akamaized.net,Media
 host,packages.microsoft.com,Media
 host,poshtestgallery.cloudapp.net,Media
-host,pplx-res.cloudinary.com,Media
 host,prd-priconne-redive.akamaized.net,Media
-host,production-openaicom-storage.azureedge.net,Media
 host,psg-int-centralus.cloudapp.net,Media
 host,psg-int-eastus.cloudapp.net,Media
 host,pubg1.battleye.com,Media
 host,q676790b.pmhcjk.com,Media
 host,roovza-launches.appsflyersdk.com,Media
 host,sentry.ppy.sh,Media
-host,servd-anthropic-website.b-cdn.net,Media
 host,spectator.ppy.sh,Media
-host,static.cloudflareinsights.com,Media
 host,steambroadcast.akamaized.net,Media
 host,steamcdn-a.akamaihd.net,Media
 host,steamcommunity-a.akamaihd.net,Media
@@ -184,7 +173,6 @@ host,vscode-sync.trafficmanager.net,Media
 host,ws.audioscrobbler.com,Media
 host,xz.pphimalayanrt.com,Media
 host,adobeereg.com,Media
-host,browser-intake-datadoghq.com,Media
 host-suffix,edge.steam-dns.top.comcast.net,Media
 host-suffix,hbo.com.c.footprint.net,Media
 host-suffix,okx.com.cdn.cloudflare.net,Media
@@ -192,15 +180,12 @@ host-suffix,qualcomm.cn.cdn.cloudflare.net,Media
 host-suffix,steam.cdn.orcon.net.nz,Media
 host-suffix,steam.cdn.slingshot.co.nz,Media
 host-suffix,affinity.api.serifservices.com,Media
-host-suffix,coderabbit.gallery.vsassets.io,Media
 host-suffix,dl.steam.clngaa.com,Media
-host-suffix,gateway.ai.cloudflare.com,Media
 host-suffix,gstore.val.manlaxy.com,Media
 host-suffix,gtlsca.nat.gov.tw,Media
 host-suffix,hbo.com.edgesuite.net,Media
 host-suffix,hbo.map.fastly.net,Media
 host-suffix,hbomaxdash.s.llnwi.net,Media
-host-suffix,labstailwind.pa.googleapis.com,Media
 host-suffix,naver.com.akadns.net,Media
 host-suffix,naverads.com.akadns.net,Media
 host-suffix,s-bid.rmp.rakuten.com,Media
@@ -227,10 +212,6 @@ host-suffix,abematv.co.jp,Media
 host-suffix,aboutamazon.co.uk,Media
 host-suffix,aboutamazon.com.au,Media
 host-suffix,acer.com.cn,Media
-host-suffix,aicode.googleapis.com,Media
-host-suffix,aida.googleapis.com,Media
-host-suffix,aisandbox-pa.googleapis.com,Media
-host-suffix,aistudio.google.com,Media
 host-suffix,alexafund.com.cn,Media
 host-suffix,alibabacloud.co.in,Media
 host-suffix,alibabacloud.com.au,Media
@@ -271,13 +252,11 @@ host-suffix,amd.com.cn,Media
 host-suffix,amplifi.com.cn,Media
 host-suffix,amzndns.co.uk,Media
 host-suffix,antenna.co.kr,Media
-host-suffix,api.statsig.com,Media
 host-suffix,appdynamics.co.uk,Media
 host-suffix,asus.com.cn,Media
 host-suffix,awesomeent.co.kr,Media
 host-suffix,bahamut.akamaized.net,Media
 host-suffix,bahamut.com.tw,Media
-host-suffix,bard.google.com,Media
 host-suffix,bhent.co.kr,Media
 host-suffix,bitnodes.earn.com,Media
 host-suffix,bsc.getblock.io,Media
@@ -303,12 +282,9 @@ host-suffix,cht.com.tw,Media
 host-suffix,chtf.org.tw,Media
 host-suffix,cisco.com.cn,Media
 host-suffix,clickedu.co.uk,Media
-host-suffix,client-api.arkoselabs.com,Media
 host-suffix,client-update.queniuqe.com,Media
 host-suffix,coinone.co.kr,Media
 host-suffix,collabora.co.uk,Media
-host-suffix,copilot.cloud.microsoft,Media
-host-suffix,copilot.microsoft.com,Media
 host-suffix,crypton.co.jp,Media
 host-suffix,csgo.com.cn,Media
 host-suffix,csgo.wmsj.cn,Media
@@ -398,13 +374,11 @@ host-suffix,eakorea.co.kr,Media
 host-suffix,egdownload.fastly-edge.com,Media
 host-suffix,eligens.com.br,Media
 host-suffix,enpay.co.jp,Media
-host-suffix,events.statsigapi.net,Media
 host-suffix,faronics.co.uk,Media
 host-suffix,faronics.com.au,Media
 host-suffix,faronics.com.sg,Media
 host-suffix,faronicswise.co.uk,Media
 host-suffix,firebase.google.com,Media
-host-suffix,flow.google.com,Media
 host-suffix,fortnite-vod.akamaized.net,Media
 host-suffix,frontrow.com.cn,Media
 host-suffix,gamebase.com.tw,Media
@@ -417,10 +391,6 @@ host-suffix,garena.co.th,Media
 host-suffix,geforce.co.kr,Media
 host-suffix,geforce.co.uk,Media
 host-suffix,geforce.com.tw,Media
-host-suffix,geller-pa.googleapis.com,Media
-host-suffix,gemini.google.com,Media
-host-suffix,gemini.gstatic.com,Media
-host-suffix,generativelanguage.googleapis.com,Media
 host-suffix,globalsign.co.uk,Media
 host-suffix,globalsign.com.au,Media
 host-suffix,globalsign.com.br,Media
@@ -431,7 +401,6 @@ host-suffix,gputechconf.co.kr,Media
 host-suffix,gputechconf.com.au,Media
 host-suffix,gputechconf.com.tw,Media
 host-suffix,greenend.org.uk,Media
-host-suffix,grok.x.com,Media
 host-suffix,group-ib.co.uk,Media
 host-suffix,hbogo.co.th,Media
 host-suffix,hbomax-images.warnermediacdn.com,Media
@@ -486,7 +455,6 @@ host-suffix,ird.co.jp,Media
 host-suffix,istent.co.kr,Media
 host-suffix,itunes.apple.com,Media
 host-suffix,jetbrains.com.cn,Media
-host-suffix,jules.google.com,Media
 host-suffix,jwide.co.kr,Media
 host-suffix,kakao.co.kr,Media
 host-suffix,kaspersky.co.in,Media
@@ -514,7 +482,6 @@ host-suffix,korbit.co.kr,Media
 host-suffix,l-0005.dc-msedge.net,Media
 host-suffix,l-0005.l-msedge.net,Media
 host-suffix,labo.wovs.tk,Media
-host-suffix,labs.google.com,Media
 host-suffix,leagueoflegends.co.kr,Media
 host-suffix,legendofzelda.com.cn,Media
 host-suffix,lge.co.kr,Media
@@ -529,7 +496,6 @@ host-suffix,logosfilm.co.kr,Media
 host-suffix,lolshop.co.kr,Media
 host-suffix,lpl.com.cn,Media
 host-suffix,mageconf.com.ua,Media
-host-suffix,makersuite.google.com,Media
 host-suffix,mariokart.com.cn,Media
 host-suffix,marketo.co.uk,Media
 host-suffix,mcr.microsoft.com,Media
@@ -573,8 +539,6 @@ host-suffix,nintendo.com.hk,Media
 host-suffix,nintendo.com.pt,Media
 host-suffix,nintendoswitch.com.cn,Media
 host-suffix,njpw.co.jp,Media
-host-suffix,notebook.google.com,Media
-host-suffix,notebooklm.google.com,Media
 host-suffix,now.com.hk,Media
 host-suffix,nvidia.co.at,Media
 host-suffix,nvidia.co.in,Media
@@ -592,8 +556,6 @@ host-suffix,nvidia.com.ua,Media
 host-suffix,nvidia.com.ve,Media
 host-suffix,odnoklassniki.co.ee,Media
 host-suffix,ootbstudio.co.kr,Media
-host-suffix,opal.google.com,Media
-host-suffix,openaicom.imgix.net,Media
 host-suffix,openbook.org.tw,Media
 host-suffix,openweather.co.uk,Media
 host-suffix,pixiv.co.jp,Media
@@ -602,7 +564,6 @@ host-suffix,playgrounds-cdn.apple.com,Media
 host-suffix,podcast.apple.com,Media
 host-suffix,podcasts.apple.com,Media
 host-suffix,primeday.com.cn,Media
-host-suffix,proactivebackend-pa.googleapis.com,Media
 host-suffix,product.co.jp,Media
 host-suffix,qceventscenter.com.cn,Media
 host-suffix,qnap.com.cn,Media
@@ -621,7 +582,6 @@ host-suffix,quickbooks.com.br,Media
 host-suffix,quickbooksgetconnected.co.za,Media
 host-suffix,redtube.com.br,Media
 host-suffix,riotgames.co.kr,Media
-host-suffix,robinfrontend-pa.googleapis.com,Media
 host-suffix,roblox-api.arkoselabs.com,Media
 host-suffix,roblox.co.jp,Media
 host-suffix,roblox.co.uk,Media
@@ -682,7 +642,6 @@ host-suffix,sonyprotechnosupport.co.jp,Media
 host-suffix,sonystoragemedia.co.jp,Media
 host-suffix,sonytc.co.jp,Media
 host-suffix,speedtest.com.hk,Media
-host-suffix,stitch.withgoogle.com,Media
 host-suffix,stmicroelectronics.com.cn,Media
 host-suffix,supermariobros.com.cn,Media
 host-suffix,supersmashbros.com.cn,Media
@@ -981,8 +940,6 @@ host-suffix,agedm.org,Media
 host-suffix,agedm.tv,Media
 host-suffix,agefans.com,Media
 host-suffix,agemys.org,Media
-host-suffix,agentclientprotocol.com,Media
-host-suffix,ai.com,Media
 host-suffix,aicoin.com,Media
 host-suffix,aimoon.com,Media
 host-suffix,air-watch.com,Media
@@ -996,7 +953,6 @@ host-suffix,aiv-cdn.net,Media
 host-suffix,akiba-souken.com,Media
 host-suffix,alexa.com,Media
 host-suffix,alexafund.cn,Media
-host-suffix,algolia.net,Media
 host-suffix,algoritmika.org,Media
 host-suffix,alias.com,Media
 host-suffix,aliasadvantage.com,Media
@@ -1161,13 +1117,9 @@ host-suffix,animary.jp,Media
 host-suffix,animedao-tv.com,Media
 host-suffix,anthemgame.com,Media
 host-suffix,anthemthegame.com,Media
-host-suffix,anthropic.com,Media
-host-suffix,antigravity-unleash.goog,Media
-host-suffix,antigravity.google,Media
 host-suffix,antiphishing.nl,Media
 host-suffix,antiphishing.ru,Media
 host-suffix,anydesk.com,Media
-host-suffix,anythingllm.com,Media
 host-suffix,ao3.org,Media
 host-suffix,aodahl.com,Media
 host-suffix,aolcdn.com,Media
@@ -1202,7 +1154,6 @@ host-suffix,archlinux.page,Media
 host-suffix,archlinuxarm.org,Media
 host-suffix,archlinuxcn.org,Media
 host-suffix,arcraiders.com,Media
-host-suffix,arena.ai,Media
 host-suffix,arewereadyyet.com,Media
 host-suffix,argo-bdp.com,Media
 host-suffix,arma3.com,Media
@@ -1781,7 +1732,6 @@ host-suffix,centrino.com,Media
 host-suffix,centrino.net,Media
 host-suffix,ceosummit.ru,Media
 host-suffix,ceramics-cadcam.com,Media
-host-suffix,cerebras.ai,Media
 host-suffix,cert-gib.com,Media
 host-suffix,cert-gib.ru,Media
 host-suffix,cex.io,Media
@@ -1809,14 +1759,9 @@ host-suffix,chippay.com,Media
 host-suffix,chips.com,Media
 host-suffix,chobit.cc,Media
 host-suffix,chocolatey.org,Media
-host-suffix,chorus.sh,Media
 host-suffix,chunkbase.com,Media
-host-suffix,chutes.ai,Media
 host-suffix,ci-en.jp,Media
 host-suffix,ci-en.net,Media
-host-suffix,cici.com,Media
-host-suffix,ciciai.com,Media
-host-suffix,ciciaicdn.com,Media
 host-suffix,ciciq.net,Media
 host-suffix,cilk.com,Media
 host-suffix,cilk.net,Media
@@ -1869,21 +1814,12 @@ host-suffix,clashmini.com,Media
 host-suffix,clashofclans.com,Media
 host-suffix,clashroyale.com,Media
 host-suffix,clashroyaleapp.com,Media
-host-suffix,clau.de,Media
-host-suffix,claude.ai,Media
-host-suffix,claude.com,Media
-host-suffix,claude.dev,Media
-host-suffix,claudemcpclient.com,Media
-host-suffix,claudemcpcontent.com,Media
-host-suffix,claudeusercontent.com,Media
-host-suffix,clawhub.ai,Media
 host-suffix,clck.ru,Media
 host-suffix,clco.cc,Media
 host-suffix,clearlinux.org,Media
 host-suffix,clearpool.finance,Media
 host-suffix,click-sec.com,Media
 host-suffix,climate-server.com,Media
-host-suffix,clipdrop.co,Media
 host-suffix,clojure.org,Media
 host-suffix,cloudc.one,Media
 host-suffix,cloudchoose.com,Media
@@ -1915,12 +1851,7 @@ host-suffix,codeberg.org,Media
 host-suffix,codeberg.page,Media
 host-suffix,codebuff.com,Media
 host-suffix,codeforaliving.io,Media
-host-suffix,codeium.com,Media
-host-suffix,codeiumdata.com,Media
-host-suffix,coderabbit.ai,Media
 host-suffix,coeteco.jp,Media
-host-suffix,cohere.ai,Media
-host-suffix,cohere.com,Media
 host-suffix,coin.dance,Media
 host-suffix,coinalyze.net,Media
 host-suffix,coinbase.com,Media
@@ -1944,9 +1875,6 @@ host-suffix,colleee.net,Media
 host-suffix,colorfulstage.com,Media
 host-suffix,colorme-repeat.jp,Media
 host-suffix,colorprotechnology.com,Media
-host-suffix,comfy.org,Media
-host-suffix,comfyci.org,Media
-host-suffix,comfyregistry.org,Media
 host-suffix,comic-growl.com,Media
 host-suffix,comicbushi-web.com,Media
 host-suffix,comm-verse.com,Media
@@ -1985,7 +1913,6 @@ host-suffix,cotolia.com,Media
 host-suffix,cotweet.com,Media
 host-suffix,covid19-rx.org,Media
 host-suffix,covid19rx.org,Media
-host-suffix,coze.com,Media
 host-suffix,cpan.org,Media
 host-suffix,cpedge.com,Media
 host-suffix,crankplayer.com,Media
@@ -1998,7 +1925,6 @@ host-suffix,creativepass.com,Media
 host-suffix,creativesdk.com,Media
 host-suffix,creatwhatsnext.com,Media
 host-suffix,creditkarma.com,Media
-host-suffix,crewai.com,Media
 host-suffix,crit-staging.com,Media
 host-suffix,crocoblock.com,Media
 host-suffix,crossout.net,Media
@@ -2025,10 +1951,6 @@ host-suffix,cups.online,Media
 host-suffix,currently.com,Media
 host-suffix,currently.net,Media
 host-suffix,curseforge.com,Media
-host-suffix,cursor-cdn.com,Media
-host-suffix,cursor.com,Media
-host-suffix,cursor.sh,Media
-host-suffix,cursorapi.com,Media
 host-suffix,curve.fi,Media
 host-suffix,custhelp.com,Media
 host-suffix,customercontrolpanel.de,Media
@@ -2087,9 +2009,6 @@ host-suffix,deepfreeze.com,Media
 host-suffix,deepfreeze.eu,Media
 host-suffix,deepfreeze.net,Media
 host-suffix,deepfreeze.tech,Media
-host-suffix,deepmind.google,Media
-host-suffix,deepwiki.com,Media
-host-suffix,deepwiki.org,Media
 host-suffix,deezer.com,Media
 host-suffix,defieye.io,Media
 host-suffix,defillama.com,Media
@@ -2226,22 +2145,18 @@ host-suffix,devcon.org,Media
 host-suffix,developria.com,Media
 host-suffix,deviantart.com,Media
 host-suffix,deviantart.net,Media
-host-suffix,devin.ai,Media
 host-suffix,devm2m.com,Media
 host-suffix,dextools.io,Media
 host-suffix,diablo.com,Media
 host-suffix,diablo3.com,Media
 host-suffix,diablo4.com,Media
 host-suffix,diabloimmortal.com,Media
-host-suffix,diabrowser.com,Media
-host-suffix,diabrowser.engineering,Media
 host-suffix,dialga.com,Media
 host-suffix,dice.se,Media
 host-suffix,dicela.com,Media
 host-suffix,dicela.net,Media
 host-suffix,diddykongracing.com,Media
 host-suffix,dierectv.com,Media
-host-suffix,dify.ai,Media
 host-suffix,digiconomist.net,Media
 host-suffix,digitalocean-ui.com,Media
 host-suffix,digitalocean.com,Media
@@ -2362,7 +2277,6 @@ host-suffix,dodv.com,Media
 host-suffix,dogatch.jp,Media
 host-suffix,dogecoin.com,Media
 host-suffix,dokusho-ojikan.jp,Media
-host-suffix,dola.com,Media
 host-suffix,dollarfotoclub.com,Media
 host-suffix,dollarphotoclub.com,Media
 host-suffix,dollarphotosclub.com,Media
@@ -2379,7 +2293,6 @@ host-suffix,dragonagemovie.com,Media
 host-suffix,dragoniscoming.com,Media
 host-suffix,drainage.com,Media
 host-suffix,dreamforce.com,Media
-host-suffix,dreamgen.com,Media
 host-suffix,dreamorder.com,Media
 host-suffix,driveawaytaxi.org,Media
 host-suffix,drmario-world.com,Media
@@ -2404,7 +2317,6 @@ host-suffix,dsmynas.net,Media
 host-suffix,dsmynas.org,Media
 host-suffix,dtv2009offers.com,Media
 host-suffix,dtvce.com,Media
-host-suffix,duck.ai,Media
 host-suffix,duneanalytics.com,Media
 host-suffix,dungeonkeeper.cn,Media
 host-suffix,dungeonkeeper.com,Media
@@ -2472,8 +2384,6 @@ host-suffix,electronjs.org,Media
 host-suffix,elegantthemes.com,Media
 host-suffix,element.io,Media
 host-suffix,elementary.io,Media
-host-suffix,elevenlabs.com,Media
-host-suffix,elevenlabs.io,Media
 host-suffix,eligens.cl,Media
 host-suffix,eligens.io,Media
 host-suffix,elixir-lang.org,Media
@@ -2493,9 +2403,6 @@ host-suffix,energystarbuildings.com,Media
 host-suffix,enlisted.net,Media
 host-suffix,enpirion.com,Media
 host-suffix,enterprisepaging.com,Media
-host-suffix,envato-static.com,Media
-host-suffix,envato.com,Media
-host-suffix,envatousercontent.com,Media
 host-suffix,envybox.company,Media
 host-suffix,envybox.family,Media
 host-suffix,envybox.io,Media
@@ -2590,7 +2497,6 @@ host-suffix,fashionbykakao.com,Media
 host-suffix,fc-buddyfight.com,Media
 host-suffix,feanonlinear.com,Media
 host-suffix,featurecam.com,Media
-host-suffix,featuregates.org,Media
 host-suffix,fedoraforum.org,Media
 host-suffix,fedorainfracloud.org,Media
 host-suffix,fedoramagazine.org,Media
@@ -2635,7 +2541,6 @@ host-suffix,flickr.com,Media
 host-suffix,flickr.net,Media
 host-suffix,flipnotestudio.com,Media
 host-suffix,flipshare.com,Media
-host-suffix,flow.google,Media
 host-suffix,flowfront.com,Media
 host-suffix,flowfront.net,Media
 host-suffix,fluffychat.im,Media
@@ -2760,8 +2665,6 @@ host-suffix,gekkan-bushi.com,Media
 host-suffix,gemfire.net,Media
 host-suffix,gemfury.com,Media
 host-suffix,gemini.com,Media
-host-suffix,gemini.google,Media
-host-suffix,generativeai.google,Media
 host-suffix,genetic-technologies.am,Media
 host-suffix,geneticconstructor.com,Media
 host-suffix,genotek.am,Media
@@ -2914,15 +2817,11 @@ host-suffix,gr-assets.com,Media
 host-suffix,grafolio.com,Media
 host-suffix,granulate.io,Media
 host-suffix,gravitytank.com,Media
-host-suffix,grazie.ai,Media
 host-suffix,greatgame.asia,Media
 host-suffix,greenbuildingstudio.com,Media
 host-suffix,greenlakeaas.com,Media
 host-suffix,greenlakehybridcloud.com,Media
 host-suffix,greenplum.net,Media
-host-suffix,grok.com,Media
-host-suffix,grokipedia.com,Media
-host-suffix,groq.com,Media
 host-suffix,group-ib.ae,Media
 host-suffix,group-ib.com,Media
 host-suffix,group-ib.de,Media
@@ -2936,7 +2835,6 @@ host-suffix,groupib.us,Media
 host-suffix,gv.com,Media
 host-suffix,gyutte.site,Media
 host-suffix,h264.io,Media
-host-suffix,h2o.ai,Media
 host-suffix,hackasaurus.org,Media
 host-suffix,hackharassment.com,Media
 host-suffix,hackyourconsole.com,Media
@@ -3032,8 +2930,6 @@ host-suffix,hewlettpackard.enterprises,Media
 host-suffix,hex.pm,Media
 host-suffix,hexdocs.pm,Media
 host-suffix,heywire.com,Media
-host-suffix,hf.co,Media
-host-suffix,hf.space,Media
 host-suffix,hh.by,Media
 host-suffix,hh.kz,Media
 host-suffix,hh.ru,Media
@@ -3210,7 +3106,6 @@ host-suffix,hsmxpress.com,Media
 host-suffix,htx.com,Media
 host-suffix,htznr.li,Media
 host-suffix,hubblephone.com,Media
-host-suffix,huggingface.co,Media
 host-suffix,humancoexperience.com,Media
 host-suffix,humblebundle.com,Media
 host-suffix,huobi.com,Media
@@ -3282,7 +3177,6 @@ host-suffix,idea-server.com,Media
 host-suffix,ideco.dev,Media
 host-suffix,ideco.ru,Media
 host-suffix,idecosoftware.ru,Media
-host-suffix,identrust.com,Media
 host-suffix,igcc.jp,Media
 host-suffix,ign.com,Media
 host-suffix,ignimg.com,Media
@@ -3537,13 +3431,11 @@ host-suffix,izatcloud.net,Media
 host-suffix,izmirautodeskegitimleri.com,Media
 host-suffix,jasa3dmax.com,Media
 host-suffix,jasaautocad.com,Media
-host-suffix,jasper.ai,Media
 host-suffix,java.com,Media
 host-suffix,java.net,Media
 host-suffix,jaxx.io,Media
 host-suffix,jb.gg,Media
 host-suffix,jenkins.io,Media
-host-suffix,jetbrains.ai,Media
 host-suffix,jetbrains.cloud,Media
 host-suffix,jetbrains.com,Media
 host-suffix,jetbrains.dev,Media
@@ -3568,7 +3460,6 @@ host-suffix,js.org,Media
 host-suffix,jsati.com,Media
 host-suffix,jsatmobile.com,Media
 host-suffix,jtvnw.net,Media
-host-suffix,jules.google,Media
 host-suffix,jupyter.org,Media
 host-suffix,justveryok.com,Media
 host-suffix,jword.jp,Media
@@ -3638,7 +3529,6 @@ host-suffix,kgisystems.com,Media
 host-suffix,kgslb.com,Media
 host-suffix,kick.com,Media
 host-suffix,killercb.ru,Media
-host-suffix,kimi.ai,Media
 host-suffix,kindle.cn,Media
 host-suffix,kindle.com,Media
 host-suffix,kindle.de,Media
@@ -3664,7 +3554,6 @@ host-suffix,kion.ru,Media
 host-suffix,kirbysepicyarn.com,Media
 host-suffix,kirbysuperstarultra.com,Media
 host-suffix,kireipass.jp,Media
-host-suffix,kiro.dev,Media
 host-suffix,kiwi.jp,Media
 host-suffix,kk.stream,Media
 host-suffix,kkbox.com,Media
@@ -3706,14 +3595,11 @@ host-suffix,kumagai.com,Media
 host-suffix,kumapon.jp,Media
 host-suffix,kynogon.com,Media
 host-suffix,kyurem.com,Media
-host-suffix,labs.google,Media
-host-suffix,langchain.com,Media
 host-suffix,lapriere.jp,Media
 host-suffix,lasersawapp.com,Media
 host-suffix,last.fm,Media
 host-suffix,latamvmwareforum.com,Media
 host-suffix,latencytop.com,Media
-host-suffix,launchdarkly.com,Media
 host-suffix,launchpad.net,Media
 host-suffix,launchpadcontent.net,Media
 host-suffix,launchpadlibrarian.com,Media
@@ -3790,11 +3676,9 @@ host-suffix,litbus-anime.com,Media
 host-suffix,litv.tv,Media
 host-suffix,live-video.net,Media
 host-suffix,livehdcams.com,Media
-host-suffix,liveperson.net,Media
 host-suffix,livesketchshare.com,Media
 host-suffix,livestream.com,Media
 host-suffix,lizardwrangler.com,Media
-host-suffix,lmstudio.ai,Media
 host-suffix,lnkd.in,Media
 host-suffix,loanscan.io,Media
 host-suffix,localbitcoins.com,Media
@@ -3820,11 +3704,9 @@ host-suffix,lookinside.com,Media
 host-suffix,lordofultima.com,Media
 host-suffix,louisvuitton.cn,Media
 host-suffix,louisvuitton.com,Media
-host-suffix,lovart.ai,Media
 host-suffix,loverslab.com,Media
 host-suffix,lovina.app,Media
 host-suffix,lowiro.com,Media
-host-suffix,lpsnmedia.net,Media
 host-suffix,lrfdsoftware.com,Media
 host-suffix,lua.org,Media
 host-suffix,luckysrv.de,Media
@@ -3876,8 +3758,6 @@ host-suffix,manhuagui.com,Media
 host-suffix,maniakey.homes,Media
 host-suffix,manjaro.org,Media
 host-suffix,mantan-web.jp,Media
-host-suffix,manus.im,Media
-host-suffix,manuscdn.com,Media
 host-suffix,map-software.com,Media
 host-suffix,mapguide.com,Media
 host-suffix,maple.finance,Media
@@ -3900,7 +3780,6 @@ host-suffix,marketo.tv,Media
 host-suffix,marketodesigner.com,Media
 host-suffix,marketolive.com,Media
 host-suffix,markingmenus.com,Media
-host-suffix,marscode.com,Media
 host-suffix,masseffect.com,Media
 host-suffix,masseffectarchives.com,Media
 host-suffix,masternodes.online,Media
@@ -3985,7 +3864,6 @@ host-suffix,mgo-images.com,Media
 host-suffix,mgo.com,Media
 host-suffix,mhgui.com,Media
 host-suffix,michill.jp,Media
-host-suffix,midjourney.com,Media
 host-suffix,miitomo.com,Media
 host-suffix,miiverse.com,Media
 host-suffix,mikanani.me,Media
@@ -4005,7 +3883,6 @@ host-suffix,mindmeld.com,Media
 host-suffix,minecraft.wiki,Media
 host-suffix,minecraftforge.net,Media
 host-suffix,mingw.org,Media
-host-suffix,minimax.io,Media
 host-suffix,minne.com,Media
 host-suffix,mirabilis.com,Media
 host-suffix,mirandaicq.com,Media
@@ -4023,7 +3900,6 @@ host-suffix,misskey.gg,Media
 host-suffix,misskey.io,Media
 host-suffix,misskey.stream,Media
 host-suffix,misskeyusercontent.jp,Media
-host-suffix,mistral.ai,Media
 host-suffix,mixi.jp,Media
 host-suffix,mixi.net,Media
 host-suffix,mktdns.com,Media
@@ -4058,7 +3934,6 @@ host-suffix,mongodb.org,Media
 host-suffix,moomoo.com,Media
 host-suffix,moomooequity.com,Media
 host-suffix,moomootrustee.com,Media
-host-suffix,moonshot.ai,Media
 host-suffix,moov.hk,Media
 host-suffix,more.tv,Media
 host-suffix,morewithautodesk.com,Media
@@ -4095,7 +3970,6 @@ host-suffix,mozgcp.net,Media
 host-suffix,mozilla-europe.org,Media
 host-suffix,mozilla-hispano.org,Media
 host-suffix,mozilla-mexico.org,Media
-host-suffix,mozilla.ai,Media
 host-suffix,mozilla.com,Media
 host-suffix,mozilla.community,Media
 host-suffix,mozilla.cz,Media
@@ -4362,11 +4236,7 @@ host-suffix,nomadproject.io,Media
 host-suffix,nomyne.com,Media
 host-suffix,nonfungible.com,Media
 host-suffix,nonlinearnastran.com,Media
-host-suffix,notebook.google,Media
-host-suffix,notebooklm.google,Media
-host-suffix,notegpt.io,Media
 host-suffix,notepad-plus-plus.org,Media
-host-suffix,novelai.net,Media
 host-suffix,now-ashare.com,Media
 host-suffix,now-tv.com,Media
 host-suffix,now.com,Media
@@ -4412,7 +4282,6 @@ host-suffix,oath.cloud,Media
 host-suffix,oath.com,Media
 host-suffix,objectarx.com,Media
 host-suffix,observable.net,Media
-host-suffix,observeit.net,Media
 host-suffix,obsrvbl.com,Media
 host-suffix,odkl.ru,Media
 host-suffix,odnoklasniki.by,Media
@@ -4447,7 +4316,6 @@ host-suffix,olevod.com,Media
 host-suffix,olevod.io,Media
 host-suffix,olevod.tv,Media
 host-suffix,olevodtv.com,Media
-host-suffix,ollama.com,Media
 host-suffix,omakase.in,Media
 host-suffix,omekinteractive.com,Media
 host-suffix,omnitek.tv,Media
@@ -4468,23 +4336,17 @@ host-suffix,onkakao.net,Media
 host-suffix,onlinegamer.jp,Media
 host-suffix,onlyfans.com,Media
 host-suffix,op.gg,Media
-host-suffix,opal.google,Media
 host-suffix,openamt.com,Media
 host-suffix,openapiplatform.com,Media
 host-suffix,openapiservice.com,Media
-host-suffix,openart.ai,Media
 host-suffix,opencas.io,Media
-host-suffix,openclaw.ai,Media
-host-suffix,opencode.ai,Media
 host-suffix,opendns.com,Media
 host-suffix,opendroneid.org,Media
 host-suffix,openjsf.org,Media
 host-suffix,openreality.com,Media
 host-suffix,openrec.tv,Media
 host-suffix,openresty.org,Media
-host-suffix,openrouter.ai,Media
 host-suffix,opensea.io,Media
-host-suffix,openspec.dev,Media
 host-suffix,openssl.org,Media
 host-suffix,opensuse.org,Media
 host-suffix,opentimetable.jp,Media
@@ -4519,7 +4381,6 @@ host-suffix,ouryahoo.com,Media
 host-suffix,out-app-purchase.com,Media
 host-suffix,overcast.fm,Media
 host-suffix,owxd.xyz,Media
-host-suffix,oystermercury.top,Media
 host-suffix,packagecloud.io,Media
 host-suffix,packaging-cadcam.com,Media
 host-suffix,packagingcadcam.com,Media
@@ -4560,8 +4421,6 @@ host-suffix,pentium.com,Media
 host-suffix,pentium.net,Media
 host-suffix,pepabo.com,Media
 host-suffix,perl.org,Media
-host-suffix,perplexity.ai,Media
-host-suffix,perplexity.com,Media
 host-suffix,personaltrainermath.com,Media
 host-suffix,phantom.app,Media
 host-suffix,phantomjs.org,Media
@@ -4590,7 +4449,6 @@ host-suffix,pixtronix.com,Media
 host-suffix,pkgbuild.com,Media
 host-suffix,placesdocs.com,Media
 host-suffix,planetminecraft.com,Media
-host-suffix,plannotator.ai,Media
 host-suffix,plansondemand.com,Media
 host-suffix,plantsvszombies2.com,Media
 host-suffix,plasma-mobile.org,Media
@@ -4626,8 +4484,6 @@ host-suffix,pm.me,Media
 host-suffix,pmem.org,Media
 host-suffix,pmem.us,Media
 host-suffix,pocketcasts.com,Media
-host-suffix,poe.com,Media
-host-suffix,poecdn.net,Media
 host-suffix,pogo.com,Media
 host-suffix,pogobeta.com,Media
 host-suffix,pointtown.com,Media
@@ -4681,7 +4537,6 @@ host-suffix,powermillna.com,Media
 host-suffix,powershape-e.com,Media
 host-suffix,powershape.com,Media
 host-suffix,powersrv.de,Media
-host-suffix,pplx.ai,Media
 host-suffix,prcm.jp,Media
 host-suffix,premier.one,Media
 host-suffix,pricesearch.jp,Media
@@ -4746,7 +4601,6 @@ host-suffix,qlinkto.cn,Media
 host-suffix,qnap.com,Media
 host-suffix,qnapsupport.net,Media
 host-suffix,qobuz.com,Media
-host-suffix,qoder.com,Media
 host-suffix,qoo-app.com,Media
 host-suffix,qprize.com,Media
 host-suffix,qt-project.org,Media
@@ -5023,7 +4877,6 @@ host-suffix,secondns.at,Media
 host-suffix,securecloudtransformation.com,Media
 host-suffix,securitypreview.com,Media
 host-suffix,seeurlpcl.com,Media
-host-suffix,segment.io,Media
 host-suffix,sekirothegame.com,Media
 host-suffix,selcdn.net,Media
 host-suffix,selectel.academy,Media
@@ -5082,7 +4935,6 @@ host-suffix,shownote.com,Media
 host-suffix,showtime.com,Media
 host-suffix,showtimeanytime.com,Media
 host-suffix,shuminavi.net,Media
-host-suffix,sider.ai,Media
 host-suffix,siege-amazon.com,Media
 host-suffix,sierragames.com,Media
 host-suffix,sign.new,Media
@@ -5256,7 +5108,6 @@ host-suffix,spcc-sp.com,Media
 host-suffix,spearhead.kr,Media
 host-suffix,speedhunters.com,Media
 host-suffix,speedrun.com,Media
-host-suffix,spicywriter.com,Media
 host-suffix,spigotmc.org,Media
 host-suffix,splatoon2tournament.com,Media
 host-suffix,splunk.com,Media
@@ -5398,7 +5249,6 @@ host-suffix,synology.me,Media
 host-suffix,synologydownload.com,Media
 host-suffix,synologyupdate.com,Media
 host-suffix,synthetix.io,Media
-host-suffix,syntx.ai,Media
 host-suffix,syosetu.com,Media
 host-suffix,system76.com,Media
 host-suffix,t-splines.com,Media
@@ -5407,13 +5257,11 @@ host-suffix,tail-f.com,Media
 host-suffix,tailf.com,Media
 host-suffix,take2games.com,Media
 host-suffix,talantix.ru,Media
-host-suffix,talkai.info,Media
 host-suffix,talkingkotlin.com,Media
 host-suffix,tampermonkey.net,Media
 host-suffix,tamtam.chat,Media
 host-suffix,tandberg-china.com,Media
 host-suffix,tandberg.com,Media
-host-suffix,tapnow.ai,Media
 host-suffix,tarantool.io,Media
 host-suffix,tarantoolplus.ru,Media
 host-suffix,tarkov.com,Media
@@ -5466,7 +5314,6 @@ host-suffix,theintelstore.com,Media
 host-suffix,theinventionworks.com,Media
 host-suffix,theinventionworks.net,Media
 host-suffix,thelegendarystarfy.com,Media
-host-suffix,themeforest.net,Media
 host-suffix,themoviedb.org,Media
 host-suffix,thequestion.ru,Media
 host-suffix,thesffblog.com,Media
@@ -5547,14 +5394,12 @@ host-suffix,toycadcam.com,Media
 host-suffix,tradeblock.com,Media
 host-suffix,traderjoexyz.com,Media
 host-suffix,tradingview.com,Media
-host-suffix,trae.ai,Media
 host-suffix,trbcdn.net,Media
 host-suffix,trello.com,Media
 host-suffix,trellocdn.com,Media
 host-suffix,treyarch.com,Media
 host-suffix,trezor.io,Media
 host-suffix,triokini.com,Media
-host-suffix,tripo3d.ai,Media
 host-suffix,tronlink.org,Media
 host-suffix,tronscan.org,Media
 host-suffix,trpger.us,Media
@@ -5972,8 +5817,6 @@ host-suffix,wiiugamepad.com,Media
 host-suffix,wiivc.net,Media
 host-suffix,wimpmusic.com,Media
 host-suffix,windowsuem.com,Media
-host-suffix,windsurf.build,Media
-host-suffix,windsurf.com,Media
 host-suffix,wing.com,Media
 host-suffix,wink.am,Media
 host-suffix,wink.ru,Media
@@ -6021,7 +5864,6 @@ host-suffix,wwe9.com,Media
 host-suffix,wwr-stardom.com,Media
 host-suffix,wwtbam.com,Media
 host-suffix,www8-hp.com,Media
-host-suffix,x.ai,Media
 host-suffix,x.co,Media
 host-suffix,x.org,Media
 host-suffix,xandr.com,Media
@@ -6258,9 +6100,6 @@ host-suffix,yota.ru,Media
 host-suffix,yotagamer.ru,Media
 host-suffix,youla.io,Media
 host-suffix,youla.ru,Media
-host-suffix,youmind.ai,Media
-host-suffix,youmind.com,Media
-host-suffix,youmind.site,Media
 host-suffix,youporn.com,Media
 host-suffix,youporngay.com,Media
 host-suffix,youpornpremium.com,Media
@@ -6348,7 +6187,3 @@ host-suffix,yahoo,Media
 host-suffix,yamaxun,Media
 host-suffix,yandex,Media
 host-suffix,zappos,Media
-host-keyword,openai,Media
-ip-cidr,24.199.123.28/32,Media
-ip-cidr,64.23.132.171/32,Media
-ip-asn,20473,Media

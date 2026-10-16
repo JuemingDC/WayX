@@ -1,10 +1,10 @@
 # Name: apple
-# Updated: 2026-10-16 08:44:01 UTC
+# Updated: 2026-10-16 10:42:40 UTC
 # Source Authors: Nexitally, V2Fly
-# Category: Routing
+# Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1792
+# Rules: 1787
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,direct
@@ -66,7 +66,6 @@ host,aod-ssl.itunes.apple.com,direct
 host,aod.itunes.apple.com,direct
 host,api-edge.apps.apple.com,direct
 host,appldnld.g.aaplimg.com,direct
-host,apple-relay.mask.apple-dns.net,apple
 host,apple.com.akadns.net,direct
 host,appleworldwidedeveloper.hb-api.omtrdc.net,direct
 host,appleworldwidedeveloper.sc.omtrdc.net,direct
@@ -88,7 +87,6 @@ host,gsp13-cn.ls.apple.com,direct
 host,gsp4-cn.ls.apple.com,direct
 host,gsp5-cn.ls.apple.com,direct
 host,gsp85-cn-ssl.ls.apple.com,direct
-host,gspe1-ssl.ls.apple.com,apple
 host,gspe11-2-cn-ssl.ls.apple.com,direct
 host,gspe12-cn-ssl.ls.apple.com,direct
 host,gspe19-2-cn-ssl.ls.apple.com,direct
@@ -158,9 +156,6 @@ host,a5.mzstatic.com,direct
 host,adcdownload.apple.com,direct
 host,app-site-association.cdn-apple.com,direct
 host,appldnld.apple.com,direct
-host,apple-relay.apple.com,apple
-host,apple-relay.cloudflare.com,apple
-host,apple-relay.fastly-edge.com,apple
 host,apple-tv-plus-press.apple.com,apple
 host,appleid.cdn-apple.com,direct
 host,apps.mzstatic.com,direct

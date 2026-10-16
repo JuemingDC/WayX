@@ -1,10 +1,10 @@
 # Name: microsoft
-# Updated: 2026-10-16 08:44:01 UTC
-# Source Authors: Nexitally, V2Fly
-# Category: Routing
-# Sources: https://github.com/v2fly/domain-list-community ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_AI.list
+# Updated: 2026-10-16 10:42:40 UTC
+# Source Authors: V2Fly
+# Category: app
+# Sources: https://github.com/v2fly/domain-list-community
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 658
+# Rules: 654
 # Managed by: WayX Rule Aggregator
 
 host,b.c2r.ts.cdn.office.net,direct
@@ -51,7 +51,6 @@ host,bj1.api.bing.com,direct
 host,download.visualstudio.microsoft.com,direct
 host,shell.cdn.office.net,direct
 host,cn.windowssearch.com,direct
-host,copilot.microsoft.com,microsoft
 host,ctldl.windowsupdate.com,direct
 host,developer.microsoft.com,direct
 host,download.microsoft.com,direct
@@ -82,7 +81,6 @@ host-suffix,microsoftreactor.com.cn,direct
 host-suffix,microsoftstore.com.cn,direct
 host-suffix,microsoftstore.com.hk,direct
 host-suffix,onedrive.co.uk,direct
-host-suffix,openaiapi-site.azureedge.net,microsoft
 host-suffix,r.bing.com,direct
 host-suffix,reactorms.com.cn,direct
 host-suffix,skype-edf.akadns.net,direct
@@ -243,8 +241,6 @@ host-suffix,chinacloudsites.cn,direct
 host-suffix,cloudapp.net,direct
 host-suffix,cloudappsecurity.com,direct
 host-suffix,codethemicrobit.com,direct
-host-suffix,copilot-stg.com,direct
-host-suffix,copilot.com,direct
 host-suffix,cortanaanalytics.com,direct
 host-suffix,cortanaskills.com,direct
 host-suffix,cosmosdb.info,direct

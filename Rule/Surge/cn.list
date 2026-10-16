@@ -1,10 +1,10 @@
 # Name: cn
-# Updated: 2026-10-16 08:44:01 UTC
+# Updated: 2026-10-16 10:42:40 UTC
 # Source Authors: MetaCubeX, Nexitally, V2Fly
-# Category: Routing
+# Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_CN_3.list
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 110822
+# Rules: 110821
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,api.blipsandchitz.me
@@ -110828,4 +110828,3 @@ DOMAIN-SUFFIX,yun
 IP-CIDR,142.248.148.0/24
 IP-CIDR,209.248.34.0/24
 IP-CIDR,87.83.109.0/24
-PROCESS-NAME,Weixin.exe

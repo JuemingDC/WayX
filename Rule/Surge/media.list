@@ -1,16 +1,15 @@
 # Name: media
-# Updated: 2026-10-16 08:44:01 UTC
+# Updated: 2026-10-16 10:42:40 UTC
 # Source Authors: Nexitally, V2Fly
-# Category: Routing
-# Sources: https://github.com/v2fly/domain-list-community ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_AI.list ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list
+# Category: app
+# Sources: https://github.com/v2fly/domain-list-community ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 6360
+# Rules: 6180
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,cdn.globalsigncdn.com.cdn.cloudflare.net
 DOMAIN,a4e8s8k3.map2.ssl.hwcdn.net
 DOMAIN,docker-images-prod.6aa30f8b08e16409b46e0173d6de2f56.r2.cloudflarestorage.com
-DOMAIN,openaicomproductionae4b.blob.core.windows.net
 DOMAIN,prodforza.blob.core.windows.net
 DOMAIN,roblox-poc.global.ssl.fastly.net
 DOMAIN,steamcloudsweden.blob.core.windows.net
@@ -18,16 +17,12 @@ DOMAIN,steamcommunity-a.akamaihd.net.edgesuite.net
 DOMAIN,steamugcquincy.blob.core.windows.net
 DOMAIN,teamviewer.com.cdn.cloudflare.net
 DOMAIN,vscode.blob.core.windows.net
-DOMAIN,alkalicore-pa.clients6.google.com
-DOMAIN,alkalimakersuite-pa.clients6.google.com
 DOMAIN,az764295.vo.msecnd.net
 DOMAIN,blizzard.nefficient.co.kr
 DOMAIN,datarouter.apps.netherrealm.com
 DOMAIN,discord-attachments-uploads-prd.storage.googleapis.com
 DOMAIN,e122475.dscg.akamaiedge.net
 DOMAIN,f3b7q2p3.ssl.hwcdn.net
-DOMAIN,geminiweb-pa.clients.google.com
-DOMAIN,geminiweb-pa.clients6.google.com
 DOMAIN,gitlab-assets.oss-cn-hongkong.aliyuncs.com
 DOMAIN,gog-cdn-lumen.secure2.footprint.net
 DOMAIN,hammerandchisel.ssl.zendesk.com
@@ -35,7 +30,6 @@ DOMAIN,lastfm-img.freetls.fastly.net
 DOMAIN,lastfm.freetls.fastly.net
 DOMAIN,licdn.cn.cdn20.com
 DOMAIN,mozilla.map.fastly.net
-DOMAIN,openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net
 DOMAIN,robloxcorp.s.llnwi.net
 DOMAIN,roovza.inapps.appsflyersdk.com
 DOMAIN,roovza.launches.appsflyersdk.com
@@ -45,15 +39,11 @@ DOMAIN,sni1dcb6gl.wpc.edgecastcdn.net
 DOMAIN,token-api.metaswap.codefi.network
 DOMAIN,ubisoft.siteintercept.qualtrics.com
 DOMAIN,vscode.search.windows.net
-DOMAIN,webchannel-alkalimakersuite-pa.clients6.google.com
 DOMAIN,a.ppy.sh
 DOMAIN,abematv.akamaized.net
 DOMAIN,agb9r0ad.qllfkl.com
-DOMAIN,ai.google.dev
 DOMAIN,amp.akamaized.net
 DOMAIN,android.googlesource.com
-DOMAIN,antigravity-pa.googleapis.com
-DOMAIN,antigravity.googleapis.com
 DOMAIN,assets.ppy.sh
 DOMAIN,avatargarenanow-a.akamaihd.net
 DOMAIN,bingsettingssearch.trafficmanager.net
@@ -68,14 +58,10 @@ DOMAIN,bnetshopus.akamaized.net
 DOMAIN,bybit.ada.support
 DOMAIN,c.ppy.sh
 DOMAIN,cdn.js7k.com
-DOMAIN,cdn.usefathom.com
 DOMAIN,cdngarenanow-a.akamaihd.net
 DOMAIN,cisco.evergage.com
 DOMAIN,ciscolivehls-i.akamaihd.net
-DOMAIN,cloudaicompanion.googleapis.com
-DOMAIN,cloudcode-pa.googleapis.com
 DOMAIN,crl.versign.net
-DOMAIN,daily-cloudcode-pa.googleapis.com
 DOMAIN,default.exp-tas.com
 DOMAIN,developers.facebook.com
 DOMAIN,dlgarenanow-a.akamaihd.net
@@ -84,6 +70,16 @@ DOMAIN,ds-linear-abematv.akamaized.net
 DOMAIN,ds-vod-abematv.akamaized.net
 DOMAIN,dtlgalleryint.cloudapp.net
 DOMAIN,eaassets-a.akamaihd.net
+DOMAIN,epicgames-download0.akamaized.net
+DOMAIN,epicgames-download1.akamaized.net
+DOMAIN,epicgames-download2.akamaized.net
+DOMAIN,epicgames-download3.akamaized.net
+DOMAIN,epicgames-download4.akamaized.net
+DOMAIN,epicgames-download5.akamaized.net
+DOMAIN,epicgames-download6.akamaized.net
+DOMAIN,epicgames-download7.akamaized.net
+DOMAIN,epicgames-download8.akamaized.net
+DOMAIN,epicgames-download9.akamaized.net
 DOMAIN,faronics.kayako.com
 DOMAIN,firebase.googleapis.com
 DOMAIN,firebaseappcheck.googleapis.com
@@ -114,11 +110,8 @@ DOMAIN,m1.ppy.sh
 DOMAIN,media-rockstargames-com.akamaized.net
 DOMAIN,mozilla-ohttp.fastly-edge.com
 DOMAIN,nbbb1bb7.pmhcjk.com
-DOMAIN,notebooklm-pa.googleapis.com
-DOMAIN,notebooklm.googleapis.com
 DOMAIN,notify.ppy.sh
 DOMAIN,ood.opsource.net
-DOMAIN,openai-api.arkoselabs.com
 DOMAIN,opgg-static.akamaized.net
 DOMAIN,origin-a.akamaihd.net
 DOMAIN,osu.ppy.sh
@@ -126,18 +119,14 @@ DOMAIN,p16-tiktok-dm-sticker-sign-sg.ibyteimg.com
 DOMAIN,p16-tiktokcdn-com.akamaized.net
 DOMAIN,packages.microsoft.com
 DOMAIN,poshtestgallery.cloudapp.net
-DOMAIN,pplx-res.cloudinary.com
 DOMAIN,prd-priconne-redive.akamaized.net
-DOMAIN,production-openaicom-storage.azureedge.net
 DOMAIN,psg-int-centralus.cloudapp.net
 DOMAIN,psg-int-eastus.cloudapp.net
 DOMAIN,pubg1.battleye.com
 DOMAIN,q676790b.pmhcjk.com
 DOMAIN,roovza-launches.appsflyersdk.com
 DOMAIN,sentry.ppy.sh
-DOMAIN,servd-anthropic-website.b-cdn.net
 DOMAIN,spectator.ppy.sh
-DOMAIN,static.cloudflareinsights.com
 DOMAIN,steambroadcast.akamaized.net
 DOMAIN,steamcdn-a.akamaihd.net
 DOMAIN,steamcommunity-a.akamaihd.net
@@ -184,7 +173,6 @@ DOMAIN,vscode-sync.trafficmanager.net
 DOMAIN,ws.audioscrobbler.com
 DOMAIN,xz.pphimalayanrt.com
 DOMAIN,adobeereg.com
-DOMAIN,browser-intake-datadoghq.com
 DOMAIN-SUFFIX,edge.steam-dns.top.comcast.net
 DOMAIN-SUFFIX,hbo.com.c.footprint.net
 DOMAIN-SUFFIX,okx.com.cdn.cloudflare.net
@@ -192,15 +180,12 @@ DOMAIN-SUFFIX,qualcomm.cn.cdn.cloudflare.net
 DOMAIN-SUFFIX,steam.cdn.orcon.net.nz
 DOMAIN-SUFFIX,steam.cdn.slingshot.co.nz
 DOMAIN-SUFFIX,affinity.api.serifservices.com
-DOMAIN-SUFFIX,coderabbit.gallery.vsassets.io
 DOMAIN-SUFFIX,dl.steam.clngaa.com
-DOMAIN-SUFFIX,gateway.ai.cloudflare.com
 DOMAIN-SUFFIX,gstore.val.manlaxy.com
 DOMAIN-SUFFIX,gtlsca.nat.gov.tw
 DOMAIN-SUFFIX,hbo.com.edgesuite.net
 DOMAIN-SUFFIX,hbo.map.fastly.net
 DOMAIN-SUFFIX,hbomaxdash.s.llnwi.net
-DOMAIN-SUFFIX,labstailwind.pa.googleapis.com
 DOMAIN-SUFFIX,naver.com.akadns.net
 DOMAIN-SUFFIX,naverads.com.akadns.net
 DOMAIN-SUFFIX,s-bid.rmp.rakuten.com
@@ -227,10 +212,6 @@ DOMAIN-SUFFIX,abematv.co.jp
 DOMAIN-SUFFIX,aboutamazon.co.uk
 DOMAIN-SUFFIX,aboutamazon.com.au
 DOMAIN-SUFFIX,acer.com.cn
-DOMAIN-SUFFIX,aicode.googleapis.com
-DOMAIN-SUFFIX,aida.googleapis.com
-DOMAIN-SUFFIX,aisandbox-pa.googleapis.com
-DOMAIN-SUFFIX,aistudio.google.com
 DOMAIN-SUFFIX,alexafund.com.cn
 DOMAIN-SUFFIX,alibabacloud.co.in
 DOMAIN-SUFFIX,alibabacloud.com.au
@@ -271,13 +252,11 @@ DOMAIN-SUFFIX,amd.com.cn
 DOMAIN-SUFFIX,amplifi.com.cn
 DOMAIN-SUFFIX,amzndns.co.uk
 DOMAIN-SUFFIX,antenna.co.kr
-DOMAIN-SUFFIX,api.statsig.com
 DOMAIN-SUFFIX,appdynamics.co.uk
 DOMAIN-SUFFIX,asus.com.cn
 DOMAIN-SUFFIX,awesomeent.co.kr
 DOMAIN-SUFFIX,bahamut.akamaized.net
 DOMAIN-SUFFIX,bahamut.com.tw
-DOMAIN-SUFFIX,bard.google.com
 DOMAIN-SUFFIX,bhent.co.kr
 DOMAIN-SUFFIX,bitnodes.earn.com
 DOMAIN-SUFFIX,bsc.getblock.io
@@ -303,12 +282,9 @@ DOMAIN-SUFFIX,cht.com.tw
 DOMAIN-SUFFIX,chtf.org.tw
 DOMAIN-SUFFIX,cisco.com.cn
 DOMAIN-SUFFIX,clickedu.co.uk
-DOMAIN-SUFFIX,client-api.arkoselabs.com
 DOMAIN-SUFFIX,client-update.queniuqe.com
 DOMAIN-SUFFIX,coinone.co.kr
 DOMAIN-SUFFIX,collabora.co.uk
-DOMAIN-SUFFIX,copilot.cloud.microsoft
-DOMAIN-SUFFIX,copilot.microsoft.com
 DOMAIN-SUFFIX,crypton.co.jp
 DOMAIN-SUFFIX,csgo.com.cn
 DOMAIN-SUFFIX,csgo.wmsj.cn
@@ -398,13 +374,11 @@ DOMAIN-SUFFIX,eakorea.co.kr
 DOMAIN-SUFFIX,egdownload.fastly-edge.com
 DOMAIN-SUFFIX,eligens.com.br
 DOMAIN-SUFFIX,enpay.co.jp
-DOMAIN-SUFFIX,events.statsigapi.net
 DOMAIN-SUFFIX,faronics.co.uk
 DOMAIN-SUFFIX,faronics.com.au
 DOMAIN-SUFFIX,faronics.com.sg
 DOMAIN-SUFFIX,faronicswise.co.uk
 DOMAIN-SUFFIX,firebase.google.com
-DOMAIN-SUFFIX,flow.google.com
 DOMAIN-SUFFIX,fortnite-vod.akamaized.net
 DOMAIN-SUFFIX,frontrow.com.cn
 DOMAIN-SUFFIX,gamebase.com.tw
@@ -417,10 +391,6 @@ DOMAIN-SUFFIX,garena.co.th
 DOMAIN-SUFFIX,geforce.co.kr
 DOMAIN-SUFFIX,geforce.co.uk
 DOMAIN-SUFFIX,geforce.com.tw
-DOMAIN-SUFFIX,geller-pa.googleapis.com
-DOMAIN-SUFFIX,gemini.google.com
-DOMAIN-SUFFIX,gemini.gstatic.com
-DOMAIN-SUFFIX,generativelanguage.googleapis.com
 DOMAIN-SUFFIX,globalsign.co.uk
 DOMAIN-SUFFIX,globalsign.com.au
 DOMAIN-SUFFIX,globalsign.com.br
@@ -431,7 +401,6 @@ DOMAIN-SUFFIX,gputechconf.co.kr
 DOMAIN-SUFFIX,gputechconf.com.au
 DOMAIN-SUFFIX,gputechconf.com.tw
 DOMAIN-SUFFIX,greenend.org.uk
-DOMAIN-SUFFIX,grok.x.com
 DOMAIN-SUFFIX,group-ib.co.uk
 DOMAIN-SUFFIX,hbogo.co.th
 DOMAIN-SUFFIX,hbomax-images.warnermediacdn.com
@@ -486,7 +455,6 @@ DOMAIN-SUFFIX,ird.co.jp
 DOMAIN-SUFFIX,istent.co.kr
 DOMAIN-SUFFIX,itunes.apple.com
 DOMAIN-SUFFIX,jetbrains.com.cn
-DOMAIN-SUFFIX,jules.google.com
 DOMAIN-SUFFIX,jwide.co.kr
 DOMAIN-SUFFIX,kakao.co.kr
 DOMAIN-SUFFIX,kaspersky.co.in
@@ -514,7 +482,6 @@ DOMAIN-SUFFIX,korbit.co.kr
 DOMAIN-SUFFIX,l-0005.dc-msedge.net
 DOMAIN-SUFFIX,l-0005.l-msedge.net
 DOMAIN-SUFFIX,labo.wovs.tk
-DOMAIN-SUFFIX,labs.google.com
 DOMAIN-SUFFIX,leagueoflegends.co.kr
 DOMAIN-SUFFIX,legendofzelda.com.cn
 DOMAIN-SUFFIX,lge.co.kr
@@ -529,7 +496,6 @@ DOMAIN-SUFFIX,logosfilm.co.kr
 DOMAIN-SUFFIX,lolshop.co.kr
 DOMAIN-SUFFIX,lpl.com.cn
 DOMAIN-SUFFIX,mageconf.com.ua
-DOMAIN-SUFFIX,makersuite.google.com
 DOMAIN-SUFFIX,mariokart.com.cn
 DOMAIN-SUFFIX,marketo.co.uk
 DOMAIN-SUFFIX,mcr.microsoft.com
@@ -573,8 +539,6 @@ DOMAIN-SUFFIX,nintendo.com.hk
 DOMAIN-SUFFIX,nintendo.com.pt
 DOMAIN-SUFFIX,nintendoswitch.com.cn
 DOMAIN-SUFFIX,njpw.co.jp
-DOMAIN-SUFFIX,notebook.google.com
-DOMAIN-SUFFIX,notebooklm.google.com
 DOMAIN-SUFFIX,now.com.hk
 DOMAIN-SUFFIX,nvidia.co.at
 DOMAIN-SUFFIX,nvidia.co.in
@@ -592,8 +556,6 @@ DOMAIN-SUFFIX,nvidia.com.ua
 DOMAIN-SUFFIX,nvidia.com.ve
 DOMAIN-SUFFIX,odnoklassniki.co.ee
 DOMAIN-SUFFIX,ootbstudio.co.kr
-DOMAIN-SUFFIX,opal.google.com
-DOMAIN-SUFFIX,openaicom.imgix.net
 DOMAIN-SUFFIX,openbook.org.tw
 DOMAIN-SUFFIX,openweather.co.uk
 DOMAIN-SUFFIX,pixiv.co.jp
@@ -602,7 +564,6 @@ DOMAIN-SUFFIX,playgrounds-cdn.apple.com
 DOMAIN-SUFFIX,podcast.apple.com
 DOMAIN-SUFFIX,podcasts.apple.com
 DOMAIN-SUFFIX,primeday.com.cn
-DOMAIN-SUFFIX,proactivebackend-pa.googleapis.com
 DOMAIN-SUFFIX,product.co.jp
 DOMAIN-SUFFIX,qceventscenter.com.cn
 DOMAIN-SUFFIX,qnap.com.cn
@@ -621,7 +582,6 @@ DOMAIN-SUFFIX,quickbooks.com.br
 DOMAIN-SUFFIX,quickbooksgetconnected.co.za
 DOMAIN-SUFFIX,redtube.com.br
 DOMAIN-SUFFIX,riotgames.co.kr
-DOMAIN-SUFFIX,robinfrontend-pa.googleapis.com
 DOMAIN-SUFFIX,roblox-api.arkoselabs.com
 DOMAIN-SUFFIX,roblox.co.jp
 DOMAIN-SUFFIX,roblox.co.uk
@@ -682,7 +642,6 @@ DOMAIN-SUFFIX,sonyprotechnosupport.co.jp
 DOMAIN-SUFFIX,sonystoragemedia.co.jp
 DOMAIN-SUFFIX,sonytc.co.jp
 DOMAIN-SUFFIX,speedtest.com.hk
-DOMAIN-SUFFIX,stitch.withgoogle.com
 DOMAIN-SUFFIX,stmicroelectronics.com.cn
 DOMAIN-SUFFIX,supermariobros.com.cn
 DOMAIN-SUFFIX,supersmashbros.com.cn
@@ -981,8 +940,6 @@ DOMAIN-SUFFIX,agedm.org
 DOMAIN-SUFFIX,agedm.tv
 DOMAIN-SUFFIX,agefans.com
 DOMAIN-SUFFIX,agemys.org
-DOMAIN-SUFFIX,agentclientprotocol.com
-DOMAIN-SUFFIX,ai.com
 DOMAIN-SUFFIX,aicoin.com
 DOMAIN-SUFFIX,aimoon.com
 DOMAIN-SUFFIX,air-watch.com
@@ -996,7 +953,6 @@ DOMAIN-SUFFIX,aiv-cdn.net
 DOMAIN-SUFFIX,akiba-souken.com
 DOMAIN-SUFFIX,alexa.com
 DOMAIN-SUFFIX,alexafund.cn
-DOMAIN-SUFFIX,algolia.net
 DOMAIN-SUFFIX,algoritmika.org
 DOMAIN-SUFFIX,alias.com
 DOMAIN-SUFFIX,aliasadvantage.com
@@ -1161,13 +1117,9 @@ DOMAIN-SUFFIX,animary.jp
 DOMAIN-SUFFIX,animedao-tv.com
 DOMAIN-SUFFIX,anthemgame.com
 DOMAIN-SUFFIX,anthemthegame.com
-DOMAIN-SUFFIX,anthropic.com
-DOMAIN-SUFFIX,antigravity-unleash.goog
-DOMAIN-SUFFIX,antigravity.google
 DOMAIN-SUFFIX,antiphishing.nl
 DOMAIN-SUFFIX,antiphishing.ru
 DOMAIN-SUFFIX,anydesk.com
-DOMAIN-SUFFIX,anythingllm.com
 DOMAIN-SUFFIX,ao3.org
 DOMAIN-SUFFIX,aodahl.com
 DOMAIN-SUFFIX,aolcdn.com
@@ -1202,7 +1154,6 @@ DOMAIN-SUFFIX,archlinux.page
 DOMAIN-SUFFIX,archlinuxarm.org
 DOMAIN-SUFFIX,archlinuxcn.org
 DOMAIN-SUFFIX,arcraiders.com
-DOMAIN-SUFFIX,arena.ai
 DOMAIN-SUFFIX,arewereadyyet.com
 DOMAIN-SUFFIX,argo-bdp.com
 DOMAIN-SUFFIX,arma3.com
@@ -1781,7 +1732,6 @@ DOMAIN-SUFFIX,centrino.com
 DOMAIN-SUFFIX,centrino.net
 DOMAIN-SUFFIX,ceosummit.ru
 DOMAIN-SUFFIX,ceramics-cadcam.com
-DOMAIN-SUFFIX,cerebras.ai
 DOMAIN-SUFFIX,cert-gib.com
 DOMAIN-SUFFIX,cert-gib.ru
 DOMAIN-SUFFIX,cex.io
@@ -1809,14 +1759,9 @@ DOMAIN-SUFFIX,chippay.com
 DOMAIN-SUFFIX,chips.com
 DOMAIN-SUFFIX,chobit.cc
 DOMAIN-SUFFIX,chocolatey.org
-DOMAIN-SUFFIX,chorus.sh
 DOMAIN-SUFFIX,chunkbase.com
-DOMAIN-SUFFIX,chutes.ai
 DOMAIN-SUFFIX,ci-en.jp
 DOMAIN-SUFFIX,ci-en.net
-DOMAIN-SUFFIX,cici.com
-DOMAIN-SUFFIX,ciciai.com
-DOMAIN-SUFFIX,ciciaicdn.com
 DOMAIN-SUFFIX,ciciq.net
 DOMAIN-SUFFIX,cilk.com
 DOMAIN-SUFFIX,cilk.net
@@ -1869,21 +1814,12 @@ DOMAIN-SUFFIX,clashmini.com
 DOMAIN-SUFFIX,clashofclans.com
 DOMAIN-SUFFIX,clashroyale.com
 DOMAIN-SUFFIX,clashroyaleapp.com
-DOMAIN-SUFFIX,clau.de
-DOMAIN-SUFFIX,claude.ai
-DOMAIN-SUFFIX,claude.com
-DOMAIN-SUFFIX,claude.dev
-DOMAIN-SUFFIX,claudemcpclient.com
-DOMAIN-SUFFIX,claudemcpcontent.com
-DOMAIN-SUFFIX,claudeusercontent.com
-DOMAIN-SUFFIX,clawhub.ai
 DOMAIN-SUFFIX,clck.ru
 DOMAIN-SUFFIX,clco.cc
 DOMAIN-SUFFIX,clearlinux.org
 DOMAIN-SUFFIX,clearpool.finance
 DOMAIN-SUFFIX,click-sec.com
 DOMAIN-SUFFIX,climate-server.com
-DOMAIN-SUFFIX,clipdrop.co
 DOMAIN-SUFFIX,clojure.org
 DOMAIN-SUFFIX,cloudc.one
 DOMAIN-SUFFIX,cloudchoose.com
@@ -1915,12 +1851,7 @@ DOMAIN-SUFFIX,codeberg.org
 DOMAIN-SUFFIX,codeberg.page
 DOMAIN-SUFFIX,codebuff.com
 DOMAIN-SUFFIX,codeforaliving.io
-DOMAIN-SUFFIX,codeium.com
-DOMAIN-SUFFIX,codeiumdata.com
-DOMAIN-SUFFIX,coderabbit.ai
 DOMAIN-SUFFIX,coeteco.jp
-DOMAIN-SUFFIX,cohere.ai
-DOMAIN-SUFFIX,cohere.com
 DOMAIN-SUFFIX,coin.dance
 DOMAIN-SUFFIX,coinalyze.net
 DOMAIN-SUFFIX,coinbase.com
@@ -1944,9 +1875,6 @@ DOMAIN-SUFFIX,colleee.net
 DOMAIN-SUFFIX,colorfulstage.com
 DOMAIN-SUFFIX,colorme-repeat.jp
 DOMAIN-SUFFIX,colorprotechnology.com
-DOMAIN-SUFFIX,comfy.org
-DOMAIN-SUFFIX,comfyci.org
-DOMAIN-SUFFIX,comfyregistry.org
 DOMAIN-SUFFIX,comic-growl.com
 DOMAIN-SUFFIX,comicbushi-web.com
 DOMAIN-SUFFIX,comm-verse.com
@@ -1985,7 +1913,6 @@ DOMAIN-SUFFIX,cotolia.com
 DOMAIN-SUFFIX,cotweet.com
 DOMAIN-SUFFIX,covid19-rx.org
 DOMAIN-SUFFIX,covid19rx.org
-DOMAIN-SUFFIX,coze.com
 DOMAIN-SUFFIX,cpan.org
 DOMAIN-SUFFIX,cpedge.com
 DOMAIN-SUFFIX,crankplayer.com
@@ -1998,7 +1925,6 @@ DOMAIN-SUFFIX,creativepass.com
 DOMAIN-SUFFIX,creativesdk.com
 DOMAIN-SUFFIX,creatwhatsnext.com
 DOMAIN-SUFFIX,creditkarma.com
-DOMAIN-SUFFIX,crewai.com
 DOMAIN-SUFFIX,crit-staging.com
 DOMAIN-SUFFIX,crocoblock.com
 DOMAIN-SUFFIX,crossout.net
@@ -2025,10 +1951,6 @@ DOMAIN-SUFFIX,cups.online
 DOMAIN-SUFFIX,currently.com
 DOMAIN-SUFFIX,currently.net
 DOMAIN-SUFFIX,curseforge.com
-DOMAIN-SUFFIX,cursor-cdn.com
-DOMAIN-SUFFIX,cursor.com
-DOMAIN-SUFFIX,cursor.sh
-DOMAIN-SUFFIX,cursorapi.com
 DOMAIN-SUFFIX,curve.fi
 DOMAIN-SUFFIX,custhelp.com
 DOMAIN-SUFFIX,customercontrolpanel.de
@@ -2087,9 +2009,6 @@ DOMAIN-SUFFIX,deepfreeze.com
 DOMAIN-SUFFIX,deepfreeze.eu
 DOMAIN-SUFFIX,deepfreeze.net
 DOMAIN-SUFFIX,deepfreeze.tech
-DOMAIN-SUFFIX,deepmind.google
-DOMAIN-SUFFIX,deepwiki.com
-DOMAIN-SUFFIX,deepwiki.org
 DOMAIN-SUFFIX,deezer.com
 DOMAIN-SUFFIX,defieye.io
 DOMAIN-SUFFIX,defillama.com
@@ -2226,22 +2145,18 @@ DOMAIN-SUFFIX,devcon.org
 DOMAIN-SUFFIX,developria.com
 DOMAIN-SUFFIX,deviantart.com
 DOMAIN-SUFFIX,deviantart.net
-DOMAIN-SUFFIX,devin.ai
 DOMAIN-SUFFIX,devm2m.com
 DOMAIN-SUFFIX,dextools.io
 DOMAIN-SUFFIX,diablo.com
 DOMAIN-SUFFIX,diablo3.com
 DOMAIN-SUFFIX,diablo4.com
 DOMAIN-SUFFIX,diabloimmortal.com
-DOMAIN-SUFFIX,diabrowser.com
-DOMAIN-SUFFIX,diabrowser.engineering
 DOMAIN-SUFFIX,dialga.com
 DOMAIN-SUFFIX,dice.se
 DOMAIN-SUFFIX,dicela.com
 DOMAIN-SUFFIX,dicela.net
 DOMAIN-SUFFIX,diddykongracing.com
 DOMAIN-SUFFIX,dierectv.com
-DOMAIN-SUFFIX,dify.ai
 DOMAIN-SUFFIX,digiconomist.net
 DOMAIN-SUFFIX,digitalocean-ui.com
 DOMAIN-SUFFIX,digitalocean.com
@@ -2362,7 +2277,6 @@ DOMAIN-SUFFIX,dodv.com
 DOMAIN-SUFFIX,dogatch.jp
 DOMAIN-SUFFIX,dogecoin.com
 DOMAIN-SUFFIX,dokusho-ojikan.jp
-DOMAIN-SUFFIX,dola.com
 DOMAIN-SUFFIX,dollarfotoclub.com
 DOMAIN-SUFFIX,dollarphotoclub.com
 DOMAIN-SUFFIX,dollarphotosclub.com
@@ -2379,7 +2293,6 @@ DOMAIN-SUFFIX,dragonagemovie.com
 DOMAIN-SUFFIX,dragoniscoming.com
 DOMAIN-SUFFIX,drainage.com
 DOMAIN-SUFFIX,dreamforce.com
-DOMAIN-SUFFIX,dreamgen.com
 DOMAIN-SUFFIX,dreamorder.com
 DOMAIN-SUFFIX,driveawaytaxi.org
 DOMAIN-SUFFIX,drmario-world.com
@@ -2404,7 +2317,6 @@ DOMAIN-SUFFIX,dsmynas.net
 DOMAIN-SUFFIX,dsmynas.org
 DOMAIN-SUFFIX,dtv2009offers.com
 DOMAIN-SUFFIX,dtvce.com
-DOMAIN-SUFFIX,duck.ai
 DOMAIN-SUFFIX,duneanalytics.com
 DOMAIN-SUFFIX,dungeonkeeper.cn
 DOMAIN-SUFFIX,dungeonkeeper.com
@@ -2472,8 +2384,6 @@ DOMAIN-SUFFIX,electronjs.org
 DOMAIN-SUFFIX,elegantthemes.com
 DOMAIN-SUFFIX,element.io
 DOMAIN-SUFFIX,elementary.io
-DOMAIN-SUFFIX,elevenlabs.com
-DOMAIN-SUFFIX,elevenlabs.io
 DOMAIN-SUFFIX,eligens.cl
 DOMAIN-SUFFIX,eligens.io
 DOMAIN-SUFFIX,elixir-lang.org
@@ -2493,9 +2403,6 @@ DOMAIN-SUFFIX,energystarbuildings.com
 DOMAIN-SUFFIX,enlisted.net
 DOMAIN-SUFFIX,enpirion.com
 DOMAIN-SUFFIX,enterprisepaging.com
-DOMAIN-SUFFIX,envato-static.com
-DOMAIN-SUFFIX,envato.com
-DOMAIN-SUFFIX,envatousercontent.com
 DOMAIN-SUFFIX,envybox.company
 DOMAIN-SUFFIX,envybox.family
 DOMAIN-SUFFIX,envybox.io
@@ -2590,7 +2497,6 @@ DOMAIN-SUFFIX,fashionbykakao.com
 DOMAIN-SUFFIX,fc-buddyfight.com
 DOMAIN-SUFFIX,feanonlinear.com
 DOMAIN-SUFFIX,featurecam.com
-DOMAIN-SUFFIX,featuregates.org
 DOMAIN-SUFFIX,fedoraforum.org
 DOMAIN-SUFFIX,fedorainfracloud.org
 DOMAIN-SUFFIX,fedoramagazine.org
@@ -2635,7 +2541,6 @@ DOMAIN-SUFFIX,flickr.com
 DOMAIN-SUFFIX,flickr.net
 DOMAIN-SUFFIX,flipnotestudio.com
 DOMAIN-SUFFIX,flipshare.com
-DOMAIN-SUFFIX,flow.google
 DOMAIN-SUFFIX,flowfront.com
 DOMAIN-SUFFIX,flowfront.net
 DOMAIN-SUFFIX,fluffychat.im
@@ -2760,8 +2665,6 @@ DOMAIN-SUFFIX,gekkan-bushi.com
 DOMAIN-SUFFIX,gemfire.net
 DOMAIN-SUFFIX,gemfury.com
 DOMAIN-SUFFIX,gemini.com
-DOMAIN-SUFFIX,gemini.google
-DOMAIN-SUFFIX,generativeai.google
 DOMAIN-SUFFIX,genetic-technologies.am
 DOMAIN-SUFFIX,geneticconstructor.com
 DOMAIN-SUFFIX,genotek.am
@@ -2914,15 +2817,11 @@ DOMAIN-SUFFIX,gr-assets.com
 DOMAIN-SUFFIX,grafolio.com
 DOMAIN-SUFFIX,granulate.io
 DOMAIN-SUFFIX,gravitytank.com
-DOMAIN-SUFFIX,grazie.ai
 DOMAIN-SUFFIX,greatgame.asia
 DOMAIN-SUFFIX,greenbuildingstudio.com
 DOMAIN-SUFFIX,greenlakeaas.com
 DOMAIN-SUFFIX,greenlakehybridcloud.com
 DOMAIN-SUFFIX,greenplum.net
-DOMAIN-SUFFIX,grok.com
-DOMAIN-SUFFIX,grokipedia.com
-DOMAIN-SUFFIX,groq.com
 DOMAIN-SUFFIX,group-ib.ae
 DOMAIN-SUFFIX,group-ib.com
 DOMAIN-SUFFIX,group-ib.de
@@ -2936,7 +2835,6 @@ DOMAIN-SUFFIX,groupib.us
 DOMAIN-SUFFIX,gv.com
 DOMAIN-SUFFIX,gyutte.site
 DOMAIN-SUFFIX,h264.io
-DOMAIN-SUFFIX,h2o.ai
 DOMAIN-SUFFIX,hackasaurus.org
 DOMAIN-SUFFIX,hackharassment.com
 DOMAIN-SUFFIX,hackyourconsole.com
@@ -3032,8 +2930,6 @@ DOMAIN-SUFFIX,hewlettpackard.enterprises
 DOMAIN-SUFFIX,hex.pm
 DOMAIN-SUFFIX,hexdocs.pm
 DOMAIN-SUFFIX,heywire.com
-DOMAIN-SUFFIX,hf.co
-DOMAIN-SUFFIX,hf.space
 DOMAIN-SUFFIX,hh.by
 DOMAIN-SUFFIX,hh.kz
 DOMAIN-SUFFIX,hh.ru
@@ -3210,7 +3106,6 @@ DOMAIN-SUFFIX,hsmxpress.com
 DOMAIN-SUFFIX,htx.com
 DOMAIN-SUFFIX,htznr.li
 DOMAIN-SUFFIX,hubblephone.com
-DOMAIN-SUFFIX,huggingface.co
 DOMAIN-SUFFIX,humancoexperience.com
 DOMAIN-SUFFIX,humblebundle.com
 DOMAIN-SUFFIX,huobi.com
@@ -3282,7 +3177,6 @@ DOMAIN-SUFFIX,idea-server.com
 DOMAIN-SUFFIX,ideco.dev
 DOMAIN-SUFFIX,ideco.ru
 DOMAIN-SUFFIX,idecosoftware.ru
-DOMAIN-SUFFIX,identrust.com
 DOMAIN-SUFFIX,igcc.jp
 DOMAIN-SUFFIX,ign.com
 DOMAIN-SUFFIX,ignimg.com
@@ -3537,13 +3431,11 @@ DOMAIN-SUFFIX,izatcloud.net
 DOMAIN-SUFFIX,izmirautodeskegitimleri.com
 DOMAIN-SUFFIX,jasa3dmax.com
 DOMAIN-SUFFIX,jasaautocad.com
-DOMAIN-SUFFIX,jasper.ai
 DOMAIN-SUFFIX,java.com
 DOMAIN-SUFFIX,java.net
 DOMAIN-SUFFIX,jaxx.io
 DOMAIN-SUFFIX,jb.gg
 DOMAIN-SUFFIX,jenkins.io
-DOMAIN-SUFFIX,jetbrains.ai
 DOMAIN-SUFFIX,jetbrains.cloud
 DOMAIN-SUFFIX,jetbrains.com
 DOMAIN-SUFFIX,jetbrains.dev
@@ -3568,7 +3460,6 @@ DOMAIN-SUFFIX,js.org
 DOMAIN-SUFFIX,jsati.com
 DOMAIN-SUFFIX,jsatmobile.com
 DOMAIN-SUFFIX,jtvnw.net
-DOMAIN-SUFFIX,jules.google
 DOMAIN-SUFFIX,jupyter.org
 DOMAIN-SUFFIX,justveryok.com
 DOMAIN-SUFFIX,jword.jp
@@ -3638,7 +3529,6 @@ DOMAIN-SUFFIX,kgisystems.com
 DOMAIN-SUFFIX,kgslb.com
 DOMAIN-SUFFIX,kick.com
 DOMAIN-SUFFIX,killercb.ru
-DOMAIN-SUFFIX,kimi.ai
 DOMAIN-SUFFIX,kindle.cn
 DOMAIN-SUFFIX,kindle.com
 DOMAIN-SUFFIX,kindle.de
@@ -3664,7 +3554,6 @@ DOMAIN-SUFFIX,kion.ru
 DOMAIN-SUFFIX,kirbysepicyarn.com
 DOMAIN-SUFFIX,kirbysuperstarultra.com
 DOMAIN-SUFFIX,kireipass.jp
-DOMAIN-SUFFIX,kiro.dev
 DOMAIN-SUFFIX,kiwi.jp
 DOMAIN-SUFFIX,kk.stream
 DOMAIN-SUFFIX,kkbox.com
@@ -3706,14 +3595,11 @@ DOMAIN-SUFFIX,kumagai.com
 DOMAIN-SUFFIX,kumapon.jp
 DOMAIN-SUFFIX,kynogon.com
 DOMAIN-SUFFIX,kyurem.com
-DOMAIN-SUFFIX,labs.google
-DOMAIN-SUFFIX,langchain.com
 DOMAIN-SUFFIX,lapriere.jp
 DOMAIN-SUFFIX,lasersawapp.com
 DOMAIN-SUFFIX,last.fm
 DOMAIN-SUFFIX,latamvmwareforum.com
 DOMAIN-SUFFIX,latencytop.com
-DOMAIN-SUFFIX,launchdarkly.com
 DOMAIN-SUFFIX,launchpad.net
 DOMAIN-SUFFIX,launchpadcontent.net
 DOMAIN-SUFFIX,launchpadlibrarian.com
@@ -3790,11 +3676,9 @@ DOMAIN-SUFFIX,litbus-anime.com
 DOMAIN-SUFFIX,litv.tv
 DOMAIN-SUFFIX,live-video.net
 DOMAIN-SUFFIX,livehdcams.com
-DOMAIN-SUFFIX,liveperson.net
 DOMAIN-SUFFIX,livesketchshare.com
 DOMAIN-SUFFIX,livestream.com
 DOMAIN-SUFFIX,lizardwrangler.com
-DOMAIN-SUFFIX,lmstudio.ai
 DOMAIN-SUFFIX,lnkd.in
 DOMAIN-SUFFIX,loanscan.io
 DOMAIN-SUFFIX,localbitcoins.com
@@ -3820,11 +3704,9 @@ DOMAIN-SUFFIX,lookinside.com
 DOMAIN-SUFFIX,lordofultima.com
 DOMAIN-SUFFIX,louisvuitton.cn
 DOMAIN-SUFFIX,louisvuitton.com
-DOMAIN-SUFFIX,lovart.ai
 DOMAIN-SUFFIX,loverslab.com
 DOMAIN-SUFFIX,lovina.app
 DOMAIN-SUFFIX,lowiro.com
-DOMAIN-SUFFIX,lpsnmedia.net
 DOMAIN-SUFFIX,lrfdsoftware.com
 DOMAIN-SUFFIX,lua.org
 DOMAIN-SUFFIX,luckysrv.de
@@ -3876,8 +3758,6 @@ DOMAIN-SUFFIX,manhuagui.com
 DOMAIN-SUFFIX,maniakey.homes
 DOMAIN-SUFFIX,manjaro.org
 DOMAIN-SUFFIX,mantan-web.jp
-DOMAIN-SUFFIX,manus.im
-DOMAIN-SUFFIX,manuscdn.com
 DOMAIN-SUFFIX,map-software.com
 DOMAIN-SUFFIX,mapguide.com
 DOMAIN-SUFFIX,maple.finance
@@ -3900,7 +3780,6 @@ DOMAIN-SUFFIX,marketo.tv
 DOMAIN-SUFFIX,marketodesigner.com
 DOMAIN-SUFFIX,marketolive.com
 DOMAIN-SUFFIX,markingmenus.com
-DOMAIN-SUFFIX,marscode.com
 DOMAIN-SUFFIX,masseffect.com
 DOMAIN-SUFFIX,masseffectarchives.com
 DOMAIN-SUFFIX,masternodes.online
@@ -3985,7 +3864,6 @@ DOMAIN-SUFFIX,mgo-images.com
 DOMAIN-SUFFIX,mgo.com
 DOMAIN-SUFFIX,mhgui.com
 DOMAIN-SUFFIX,michill.jp
-DOMAIN-SUFFIX,midjourney.com
 DOMAIN-SUFFIX,miitomo.com
 DOMAIN-SUFFIX,miiverse.com
 DOMAIN-SUFFIX,mikanani.me
@@ -4005,7 +3883,6 @@ DOMAIN-SUFFIX,mindmeld.com
 DOMAIN-SUFFIX,minecraft.wiki
 DOMAIN-SUFFIX,minecraftforge.net
 DOMAIN-SUFFIX,mingw.org
-DOMAIN-SUFFIX,minimax.io
 DOMAIN-SUFFIX,minne.com
 DOMAIN-SUFFIX,mirabilis.com
 DOMAIN-SUFFIX,mirandaicq.com
@@ -4023,7 +3900,6 @@ DOMAIN-SUFFIX,misskey.gg
 DOMAIN-SUFFIX,misskey.io
 DOMAIN-SUFFIX,misskey.stream
 DOMAIN-SUFFIX,misskeyusercontent.jp
-DOMAIN-SUFFIX,mistral.ai
 DOMAIN-SUFFIX,mixi.jp
 DOMAIN-SUFFIX,mixi.net
 DOMAIN-SUFFIX,mktdns.com
@@ -4058,7 +3934,6 @@ DOMAIN-SUFFIX,mongodb.org
 DOMAIN-SUFFIX,moomoo.com
 DOMAIN-SUFFIX,moomooequity.com
 DOMAIN-SUFFIX,moomootrustee.com
-DOMAIN-SUFFIX,moonshot.ai
 DOMAIN-SUFFIX,moov.hk
 DOMAIN-SUFFIX,more.tv
 DOMAIN-SUFFIX,morewithautodesk.com
@@ -4095,7 +3970,6 @@ DOMAIN-SUFFIX,mozgcp.net
 DOMAIN-SUFFIX,mozilla-europe.org
 DOMAIN-SUFFIX,mozilla-hispano.org
 DOMAIN-SUFFIX,mozilla-mexico.org
-DOMAIN-SUFFIX,mozilla.ai
 DOMAIN-SUFFIX,mozilla.com
 DOMAIN-SUFFIX,mozilla.community
 DOMAIN-SUFFIX,mozilla.cz
@@ -4362,11 +4236,7 @@ DOMAIN-SUFFIX,nomadproject.io
 DOMAIN-SUFFIX,nomyne.com
 DOMAIN-SUFFIX,nonfungible.com
 DOMAIN-SUFFIX,nonlinearnastran.com
-DOMAIN-SUFFIX,notebook.google
-DOMAIN-SUFFIX,notebooklm.google
-DOMAIN-SUFFIX,notegpt.io
 DOMAIN-SUFFIX,notepad-plus-plus.org
-DOMAIN-SUFFIX,novelai.net
 DOMAIN-SUFFIX,now-ashare.com
 DOMAIN-SUFFIX,now-tv.com
 DOMAIN-SUFFIX,now.com
@@ -4412,7 +4282,6 @@ DOMAIN-SUFFIX,oath.cloud
 DOMAIN-SUFFIX,oath.com
 DOMAIN-SUFFIX,objectarx.com
 DOMAIN-SUFFIX,observable.net
-DOMAIN-SUFFIX,observeit.net
 DOMAIN-SUFFIX,obsrvbl.com
 DOMAIN-SUFFIX,odkl.ru
 DOMAIN-SUFFIX,odnoklasniki.by
@@ -4447,7 +4316,6 @@ DOMAIN-SUFFIX,olevod.com
 DOMAIN-SUFFIX,olevod.io
 DOMAIN-SUFFIX,olevod.tv
 DOMAIN-SUFFIX,olevodtv.com
-DOMAIN-SUFFIX,ollama.com
 DOMAIN-SUFFIX,omakase.in
 DOMAIN-SUFFIX,omekinteractive.com
 DOMAIN-SUFFIX,omnitek.tv
@@ -4468,23 +4336,17 @@ DOMAIN-SUFFIX,onkakao.net
 DOMAIN-SUFFIX,onlinegamer.jp
 DOMAIN-SUFFIX,onlyfans.com
 DOMAIN-SUFFIX,op.gg
-DOMAIN-SUFFIX,opal.google
 DOMAIN-SUFFIX,openamt.com
 DOMAIN-SUFFIX,openapiplatform.com
 DOMAIN-SUFFIX,openapiservice.com
-DOMAIN-SUFFIX,openart.ai
 DOMAIN-SUFFIX,opencas.io
-DOMAIN-SUFFIX,openclaw.ai
-DOMAIN-SUFFIX,opencode.ai
 DOMAIN-SUFFIX,opendns.com
 DOMAIN-SUFFIX,opendroneid.org
 DOMAIN-SUFFIX,openjsf.org
 DOMAIN-SUFFIX,openreality.com
 DOMAIN-SUFFIX,openrec.tv
 DOMAIN-SUFFIX,openresty.org
-DOMAIN-SUFFIX,openrouter.ai
 DOMAIN-SUFFIX,opensea.io
-DOMAIN-SUFFIX,openspec.dev
 DOMAIN-SUFFIX,openssl.org
 DOMAIN-SUFFIX,opensuse.org
 DOMAIN-SUFFIX,opentimetable.jp
@@ -4519,7 +4381,6 @@ DOMAIN-SUFFIX,ouryahoo.com
 DOMAIN-SUFFIX,out-app-purchase.com
 DOMAIN-SUFFIX,overcast.fm
 DOMAIN-SUFFIX,owxd.xyz
-DOMAIN-SUFFIX,oystermercury.top
 DOMAIN-SUFFIX,packagecloud.io
 DOMAIN-SUFFIX,packaging-cadcam.com
 DOMAIN-SUFFIX,packagingcadcam.com
@@ -4560,8 +4421,6 @@ DOMAIN-SUFFIX,pentium.com
 DOMAIN-SUFFIX,pentium.net
 DOMAIN-SUFFIX,pepabo.com
 DOMAIN-SUFFIX,perl.org
-DOMAIN-SUFFIX,perplexity.ai
-DOMAIN-SUFFIX,perplexity.com
 DOMAIN-SUFFIX,personaltrainermath.com
 DOMAIN-SUFFIX,phantom.app
 DOMAIN-SUFFIX,phantomjs.org
@@ -4590,7 +4449,6 @@ DOMAIN-SUFFIX,pixtronix.com
 DOMAIN-SUFFIX,pkgbuild.com
 DOMAIN-SUFFIX,placesdocs.com
 DOMAIN-SUFFIX,planetminecraft.com
-DOMAIN-SUFFIX,plannotator.ai
 DOMAIN-SUFFIX,plansondemand.com
 DOMAIN-SUFFIX,plantsvszombies2.com
 DOMAIN-SUFFIX,plasma-mobile.org
@@ -4626,8 +4484,6 @@ DOMAIN-SUFFIX,pm.me
 DOMAIN-SUFFIX,pmem.org
 DOMAIN-SUFFIX,pmem.us
 DOMAIN-SUFFIX,pocketcasts.com
-DOMAIN-SUFFIX,poe.com
-DOMAIN-SUFFIX,poecdn.net
 DOMAIN-SUFFIX,pogo.com
 DOMAIN-SUFFIX,pogobeta.com
 DOMAIN-SUFFIX,pointtown.com
@@ -4681,7 +4537,6 @@ DOMAIN-SUFFIX,powermillna.com
 DOMAIN-SUFFIX,powershape-e.com
 DOMAIN-SUFFIX,powershape.com
 DOMAIN-SUFFIX,powersrv.de
-DOMAIN-SUFFIX,pplx.ai
 DOMAIN-SUFFIX,prcm.jp
 DOMAIN-SUFFIX,premier.one
 DOMAIN-SUFFIX,pricesearch.jp
@@ -4746,7 +4601,6 @@ DOMAIN-SUFFIX,qlinkto.cn
 DOMAIN-SUFFIX,qnap.com
 DOMAIN-SUFFIX,qnapsupport.net
 DOMAIN-SUFFIX,qobuz.com
-DOMAIN-SUFFIX,qoder.com
 DOMAIN-SUFFIX,qoo-app.com
 DOMAIN-SUFFIX,qprize.com
 DOMAIN-SUFFIX,qt-project.org
@@ -5023,7 +4877,6 @@ DOMAIN-SUFFIX,secondns.at
 DOMAIN-SUFFIX,securecloudtransformation.com
 DOMAIN-SUFFIX,securitypreview.com
 DOMAIN-SUFFIX,seeurlpcl.com
-DOMAIN-SUFFIX,segment.io
 DOMAIN-SUFFIX,sekirothegame.com
 DOMAIN-SUFFIX,selcdn.net
 DOMAIN-SUFFIX,selectel.academy
@@ -5082,7 +4935,6 @@ DOMAIN-SUFFIX,shownote.com
 DOMAIN-SUFFIX,showtime.com
 DOMAIN-SUFFIX,showtimeanytime.com
 DOMAIN-SUFFIX,shuminavi.net
-DOMAIN-SUFFIX,sider.ai
 DOMAIN-SUFFIX,siege-amazon.com
 DOMAIN-SUFFIX,sierragames.com
 DOMAIN-SUFFIX,sign.new
@@ -5256,7 +5108,6 @@ DOMAIN-SUFFIX,spcc-sp.com
 DOMAIN-SUFFIX,spearhead.kr
 DOMAIN-SUFFIX,speedhunters.com
 DOMAIN-SUFFIX,speedrun.com
-DOMAIN-SUFFIX,spicywriter.com
 DOMAIN-SUFFIX,spigotmc.org
 DOMAIN-SUFFIX,splatoon2tournament.com
 DOMAIN-SUFFIX,splunk.com
@@ -5398,7 +5249,6 @@ DOMAIN-SUFFIX,synology.me
 DOMAIN-SUFFIX,synologydownload.com
 DOMAIN-SUFFIX,synologyupdate.com
 DOMAIN-SUFFIX,synthetix.io
-DOMAIN-SUFFIX,syntx.ai
 DOMAIN-SUFFIX,syosetu.com
 DOMAIN-SUFFIX,system76.com
 DOMAIN-SUFFIX,t-splines.com
@@ -5407,13 +5257,11 @@ DOMAIN-SUFFIX,tail-f.com
 DOMAIN-SUFFIX,tailf.com
 DOMAIN-SUFFIX,take2games.com
 DOMAIN-SUFFIX,talantix.ru
-DOMAIN-SUFFIX,talkai.info
 DOMAIN-SUFFIX,talkingkotlin.com
 DOMAIN-SUFFIX,tampermonkey.net
 DOMAIN-SUFFIX,tamtam.chat
 DOMAIN-SUFFIX,tandberg-china.com
 DOMAIN-SUFFIX,tandberg.com
-DOMAIN-SUFFIX,tapnow.ai
 DOMAIN-SUFFIX,tarantool.io
 DOMAIN-SUFFIX,tarantoolplus.ru
 DOMAIN-SUFFIX,tarkov.com
@@ -5466,7 +5314,6 @@ DOMAIN-SUFFIX,theintelstore.com
 DOMAIN-SUFFIX,theinventionworks.com
 DOMAIN-SUFFIX,theinventionworks.net
 DOMAIN-SUFFIX,thelegendarystarfy.com
-DOMAIN-SUFFIX,themeforest.net
 DOMAIN-SUFFIX,themoviedb.org
 DOMAIN-SUFFIX,thequestion.ru
 DOMAIN-SUFFIX,thesffblog.com
@@ -5547,14 +5394,12 @@ DOMAIN-SUFFIX,toycadcam.com
 DOMAIN-SUFFIX,tradeblock.com
 DOMAIN-SUFFIX,traderjoexyz.com
 DOMAIN-SUFFIX,tradingview.com
-DOMAIN-SUFFIX,trae.ai
 DOMAIN-SUFFIX,trbcdn.net
 DOMAIN-SUFFIX,trello.com
 DOMAIN-SUFFIX,trellocdn.com
 DOMAIN-SUFFIX,treyarch.com
 DOMAIN-SUFFIX,trezor.io
 DOMAIN-SUFFIX,triokini.com
-DOMAIN-SUFFIX,tripo3d.ai
 DOMAIN-SUFFIX,tronlink.org
 DOMAIN-SUFFIX,tronscan.org
 DOMAIN-SUFFIX,trpger.us
@@ -5972,8 +5817,6 @@ DOMAIN-SUFFIX,wiiugamepad.com
 DOMAIN-SUFFIX,wiivc.net
 DOMAIN-SUFFIX,wimpmusic.com
 DOMAIN-SUFFIX,windowsuem.com
-DOMAIN-SUFFIX,windsurf.build
-DOMAIN-SUFFIX,windsurf.com
 DOMAIN-SUFFIX,wing.com
 DOMAIN-SUFFIX,wink.am
 DOMAIN-SUFFIX,wink.ru
@@ -6021,7 +5864,6 @@ DOMAIN-SUFFIX,wwe9.com
 DOMAIN-SUFFIX,wwr-stardom.com
 DOMAIN-SUFFIX,wwtbam.com
 DOMAIN-SUFFIX,www8-hp.com
-DOMAIN-SUFFIX,x.ai
 DOMAIN-SUFFIX,x.co
 DOMAIN-SUFFIX,x.org
 DOMAIN-SUFFIX,xandr.com
@@ -6258,9 +6100,6 @@ DOMAIN-SUFFIX,yota.ru
 DOMAIN-SUFFIX,yotagamer.ru
 DOMAIN-SUFFIX,youla.io
 DOMAIN-SUFFIX,youla.ru
-DOMAIN-SUFFIX,youmind.ai
-DOMAIN-SUFFIX,youmind.com
-DOMAIN-SUFFIX,youmind.site
 DOMAIN-SUFFIX,youporn.com
 DOMAIN-SUFFIX,youporngay.com
 DOMAIN-SUFFIX,youpornpremium.com
@@ -6348,22 +6187,3 @@ DOMAIN-SUFFIX,yahoo
 DOMAIN-SUFFIX,yamaxun
 DOMAIN-SUFFIX,yandex
 DOMAIN-SUFFIX,zappos
-DOMAIN-KEYWORD,openai
-IP-CIDR,24.199.123.28/32,no-resolve
-IP-CIDR,64.23.132.171/32,no-resolve
-PROCESS-NAME,Binance.exe
-PROCESS-NAME,Huobi.exe
-PROCESS-NAME,OKX.exe
-PROCESS-NAME,Rithmic Trader Pro.exe
-PROCESS-NAME,bookmap.exe
-PROCESS-NAME,daytradr64.exe
-PROCESS-NAME,tws.exe
-IP-ASN,20473,no-resolve
-PROCESS-NAME,Claude
-PROCESS-NAME,Claude Code
-PROCESS-NAME,Claude Code Helper
-PROCESS-NAME,Claude Helper
-PROCESS-NAME,Claude Helper (GPU)
-PROCESS-NAME,Claude Helper (Plugin)
-PROCESS-NAME,Claude Helper (Renderer)
-PROCESS-NAME,claude

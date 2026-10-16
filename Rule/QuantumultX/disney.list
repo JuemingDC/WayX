@@ -1,16 +1,24 @@
 # Name: disney
-# Updated: 2026-10-16 08:44:01 UTC
+# Updated: 2026-10-16 10:42:40 UTC
 # Source Authors: MetaCubeX, Nexitally, V2Fly
-# Category: Routing
+# Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/disney.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 222
+# Rules: 230
 # Managed by: WayX Rule Aggregator
 
 host,disneyplus.com.ssl.sc.omtrdc.net,disney
 host,disney.my.sentry.io,disney
 host,espn.hb.omtrdc.net,disney
 host,espndotcom.tt.omtrdc.net,disney
+host,hses.akamaized.net,disney
+host,hses1.akamaized.net,disney
+host,hses2.akamaized.net,disney
+host,hses3.akamaized.net,disney
+host,hses4.akamaized.net,disney
+host,hses5.akamaized.net,disney
+host,hses6.akamaized.net,disney
+host,hses7.akamaized.net,disney
 host-suffix,disney-portal.my.onetrust.com,disney
 host-suffix,20thcenturystudios.com.au,disney
 host-suffix,20thcenturystudios.com.br,disney
