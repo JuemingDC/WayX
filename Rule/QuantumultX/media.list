@@ -1,13 +1,12 @@
 # Name: media
-# Updated: 2026-10-16 12:08:00 UTC
+# Updated: 2026-10-16 12:45:01 UTC
 # Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 6868
+# Rules: 6863
 # Managed by: WayX Rule Aggregator
 
-host,7h15.ru1353t.1s.m4d3.by.5ukk4w.skk.moe,proxy
 host,cdn.globalsigncdn.com.cdn.cloudflare.net,proxy
 host,a4e8s8k3.map2.ssl.hwcdn.net,proxy
 host,akmcdnoversea-tw.inter.ptqy.gitv.tv,proxy
@@ -1344,7 +1343,6 @@ host-suffix,attwirelesssolutions.com,proxy
 host-suffix,audible.com,proxy
 host-suffix,audiencenetwork.com,proxy
 host-suffix,audiencenetwork.tv,proxy
-host-suffix,auth0.com,proxy
 host-suffix,authorxml.com,proxy
 host-suffix,autocad-schulungen.com,proxy
 host-suffix,autocad.com,proxy
@@ -3771,9 +3769,7 @@ host-suffix,interactivebrokers.com,proxy
 host-suffix,interactivebrokers.eu,proxy
 host-suffix,interactivebrokers.ie,proxy
 host-suffix,intercom.com,proxy
-host-suffix,intercom.io,proxy
 host-suffix,intercomassets.com,proxy
-host-suffix,intercomcdn.com,proxy
 host-suffix,interforest.org,proxy
 host-suffix,internationalsaimoe.com,proxy
 host-suffix,internet.ru,proxy
@@ -4270,7 +4266,6 @@ host-suffix,merakigo.com,proxy
 host-suffix,meridian.net,proxy
 host-suffix,meshmixer.com,proxy
 host-suffix,meshmixerforum.com,proxy
-host-suffix,meta.ai,proxy
 host-suffix,metabora.io,proxy
 host-suffix,metacloud.com,proxy
 host-suffix,metacpan.org,proxy

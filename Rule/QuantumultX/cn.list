@@ -1,14 +1,13 @@
 # Name: cn
-# Updated: 2026-10-16 11:11:32 UTC
+# Updated: 2026-10-16 12:45:01 UTC
 # Source Authors: Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly, gaoyifan
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china.txt ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china6.txt ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_CN_3.list ; https://ruleset.skk.moe/List/ip/domestic.conf ; https://ruleset.skk.moe/List/non_ip/domestic.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 122550
+# Rules: 122545
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,direct
-host,7h15.ru1353t.1s.m4d3.by.5ukk4w.skk.moe,direct
 host,cl2.apple.com.edgekey.net.globalredir.akadns.net,direct
 host,images.apple.com.edgekey.net.globalredir.akadns.net,direct
 host,store.apple.com.edgekey.net.globalredir.akadns.net,direct
@@ -58615,7 +58614,6 @@ host-suffix,kilo1kw.com,direct
 host-suffix,kiloai.com,direct
 host-suffix,kimberley-technology.com,direct
 host-suffix,kimderlite.com,direct
-host-suffix,kimi.ai,direct
 host-suffix,kimi.com,direct
 host-suffix,kimi.link,direct
 host-suffix,kimi.pub,direct
@@ -66480,7 +66478,6 @@ host-suffix,minigui.org,direct
 host-suffix,minihaowan.com,direct
 host-suffix,minimaituan.com,direct
 host-suffix,minimax.chat,direct
-host-suffix,minimax.io,direct
 host-suffix,minimaxi.com,direct
 host-suffix,mining120.com,direct
 host-suffix,mininglamp.com,direct
@@ -67204,7 +67201,6 @@ host-suffix,moonjer.com,direct
 host-suffix,moonlian.com,direct
 host-suffix,moonsec.com,direct
 host-suffix,moonsees.com,direct
-host-suffix,moonshot.ai,direct
 host-suffix,moonstatistics.com,direct
 host-suffix,moonton.com,direct
 host-suffix,moontonapp.com,direct
@@ -76003,7 +75999,6 @@ host-suffix,qnydns.net,direct
 host-suffix,qnzrmyy.com,direct
 host-suffix,qnzyy.com,direct
 host-suffix,qoder.ai,direct
-host-suffix,qoder.com,direct
 host-suffix,qolai.com,direct
 host-suffix,qooboo.com,direct
 host-suffix,qoocc.com,direct

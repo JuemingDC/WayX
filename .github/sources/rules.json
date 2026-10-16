@@ -13,8 +13,7 @@
         "google"
       ],
       "children": [
-        "youtube",
-        "ai"
+        "youtube"
       ]
     },
     {
@@ -63,9 +62,6 @@
       "name": "github",
       "tags": [
         "github"
-      ],
-      "children": [
-        "ai"
       ]
     },
     {
@@ -89,9 +85,6 @@
       "proxy_tags": [
         "apple-intelligence",
         "apple-tvplus"
-      ],
-      "children": [
-        "ai"
       ]
     },
     {
@@ -105,8 +98,7 @@
         "github-copilot"
       ],
       "children": [
-        "github",
-        "ai"
+        "github"
       ]
     }
   ],
@@ -567,5 +559,8 @@
       "classify_apps": false
     }
   ],
-  "indirect_upstreams": "Allowed; only direct blackmatrix7 inputs are excluded."
+  "indirect_upstreams": "Allowed; only direct blackmatrix7 inputs are excluded.",
+  "category_priority": [
+    "ai"
+  ]
 }
