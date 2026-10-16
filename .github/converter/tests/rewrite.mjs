@@ -1803,8 +1803,8 @@ const redirectIr=v2(redirectSource);
 const qxRedirectCtx=ctx();
 const qxRedirect=planQxRewrite(redirectIr,qxRedirectCtx);
 assert.equal(qxRedirect.section,'rewrite');
-assert.match(qxRedirect.line,/script-echo-response/);
-assert.equal(qxRedirectCtx.generatedScripts.size,1);
+assert.match(qxRedirect.line,/ url 302 \$1new$/);
+assert.equal(qxRedirectCtx.generatedScripts.size,0);
 const surgeRedirect=planSurgeRewrite(redirectIr,ctx());
 assert.equal(surgeRedirect.section,'url');
 assert.match(surgeRedirect.line,/ 302$/);
@@ -1813,25 +1813,21 @@ const redirectMethodSource='request if ${url} ~= /\\/old\\/(\\d+)/ as hit && ${r
 const redirectMethodCtx=ctx();
 const redirectMethod=planQxRewrite(v2(redirectMethodSource),redirectMethodCtx);
 assert.equal(redirectMethod.section,'rewrite');
-assert.match(redirectMethod.line,/^\\\/old\\\/\(\\d\+\) \^POST\[ \] url-and-header script-echo-response /);
-const redirectMethodScript=[...redirectMethodCtx.generatedScripts.values()][0];
-assert.ok(redirectMethodScript.includes(JSON.stringify('\\/old\\/(\\d+)')));
-assert.match(redirectMethodScript,/"name":"request.method".*"value":"POST"/);
-assert.match(redirectMethodScript,/\.exec\(__wayxUrl\)/);
-assert.match(redirectMethodScript,/__wayxMatch\[1\] === undefined/);
+assert.ok(redirectMethod.line.endsWith('^POST[ ] url-and-header 302 /new/$1'));
+assert.equal(redirectMethodCtx.generatedScripts.size,0);
 
 const redirectHeaderSource='request if ${url} ~= /api\\/(\\d+)/ as hit && ${request.header[\'X-Region\']} == "CN" then redirect(307, "/v/${hit.1}")';
 const redirectHeaderCtx=ctx();
 const redirectHeader=planQxRewrite(v2(redirectHeaderSource),redirectHeaderCtx);
 assert.equal(redirectHeader.section,'comment');
-assert.match(redirectHeader.line,/echo-response requires an exact condition/);
+assert.match(redirectHeader.line,/native redirect requires an exact condition/);
 assert.equal(redirectHeaderCtx.generatedScripts.size,0);
 
 const redirectResponseStatusSource='response if ${url} ~= /api\\/(\\d+)/ as hit && ${response.status} == 201 then redirect(302, "/ok/${hit.1}")';
 const redirectResponseStatusCtx=ctx();
 const redirectResponseStatus=planQxRewrite(v2(redirectResponseStatusSource),redirectResponseStatusCtx);
 assert.equal(redirectResponseStatus.section,'comment');
-assert.match(redirectResponseStatus.line,/echo-response requires an exact condition/);
+assert.match(redirectResponseStatus.line,/native redirect requires an exact condition/);
 assert.equal(redirectResponseStatusCtx.generatedScripts.size,0);
 
 const redirectOrSource='request if (${url} ~= /a\\/(\\d+)/ as a && ${request.method} == "POST") || ${url} ~= /b\\/(\\d+)/ as b then redirect(302, "/x")';
