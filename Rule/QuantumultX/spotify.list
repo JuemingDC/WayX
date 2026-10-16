@@ -1,5 +1,5 @@
 # Name: spotify
-# Updated: 2026-10-16 11:11:32 UTC
+# Updated: 2026-10-16 12:08:00 UTC
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/spotify.json ; https://ruleset.skk.moe/List/non_ip/stream.conf
@@ -7,28 +7,28 @@
 # Rules: 25
 # Managed by: WayX Rule Aggregator
 
-host,spotify.com.edgesuite.net,spotify
-host,spotify.map.fastly.net,spotify
-host,spotify.map.fastlylb.net,spotify
-host,audio-ak-spotify-com.akamaized.net,spotify
-host,audio4-ak-spotify-com.akamaized.net,spotify
-host,cdn-spotify-experiments.conductrics.com,spotify
-host,heads-ak-spotify-com.akamaized.net,spotify
-host,heads4-ak-spotify-com.akamaized.net,spotify
-host-suffix,byspotify.com,spotify
-host-suffix,lifeatspotify.com,spotify
-host-suffix,pscdn.co,spotify
-host-suffix,scdn.co,spotify
-host-suffix,spoti.fi,spotify
-host-suffix,spotify-everywhere.com,spotify
-host-suffix,spotify.com,spotify
-host-suffix,spotify.design,spotify
-host-suffix,spotify.link,spotify
-host-suffix,spotifycdn.com,spotify
-host-suffix,spotifycdn.net,spotify
-host-suffix,spotifycharts.com,spotify
-host-suffix,spotifycodes.com,spotify
-host-suffix,spotifyforbrands.com,spotify
-host-suffix,spotifyforvendors.com,spotify
-host-suffix,spotifyjobs.com,spotify
-host-suffix,tospotify.com,spotify
+host,spotify.com.edgesuite.net,proxy
+host,spotify.map.fastly.net,proxy
+host,spotify.map.fastlylb.net,proxy
+host,audio-ak-spotify-com.akamaized.net,proxy
+host,audio4-ak-spotify-com.akamaized.net,proxy
+host,cdn-spotify-experiments.conductrics.com,proxy
+host,heads-ak-spotify-com.akamaized.net,proxy
+host,heads4-ak-spotify-com.akamaized.net,proxy
+host-suffix,byspotify.com,proxy
+host-suffix,lifeatspotify.com,proxy
+host-suffix,pscdn.co,proxy
+host-suffix,scdn.co,proxy
+host-suffix,spoti.fi,proxy
+host-suffix,spotify-everywhere.com,proxy
+host-suffix,spotify.com,proxy
+host-suffix,spotify.design,proxy
+host-suffix,spotify.link,proxy
+host-suffix,spotifycdn.com,proxy
+host-suffix,spotifycdn.net,proxy
+host-suffix,spotifycharts.com,proxy
+host-suffix,spotifycodes.com,proxy
+host-suffix,spotifyforbrands.com,proxy
+host-suffix,spotifyforvendors.com,proxy
+host-suffix,spotifyjobs.com,proxy
+host-suffix,tospotify.com,proxy

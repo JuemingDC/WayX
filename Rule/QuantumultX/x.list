@@ -1,5 +1,5 @@
 # Name: x
-# Updated: 2026-10-16 10:42:40 UTC
+# Updated: 2026-10-16 12:08:00 UTC
 # Source Authors: MetaCubeX, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/twitter.json
@@ -7,27 +7,27 @@
 # Rules: 24
 # Managed by: WayX Rule Aggregator
 
-host-suffix,twitter.map.fastly.net,x
-host-suffix,ads-twitter.com,x
-host-suffix,cms-twdigitalassets.com,x
-host-suffix,periscope.tv,x
-host-suffix,pscp.tv,x
-host-suffix,t.co,x
-host-suffix,tellapart.com,x
-host-suffix,tweetdeck.com,x
-host-suffix,twimg.com,x
-host-suffix,twitpic.com,x
-host-suffix,twitter.biz,x
-host-suffix,twitter.com,x
-host-suffix,twitter.jp,x
-host-suffix,twittercommunity.com,x
-host-suffix,twitterflightschool.com,x
-host-suffix,twitterinc.com,x
-host-suffix,twitteroauth.com,x
-host-suffix,twitterstat.us,x
-host-suffix,twtrdns.net,x
-host-suffix,twttr.com,x
-host-suffix,twttr.net,x
-host-suffix,twvid.com,x
-host-suffix,vine.co,x
-host-suffix,x.com,x
+host-suffix,twitter.map.fastly.net,proxy
+host-suffix,ads-twitter.com,proxy
+host-suffix,cms-twdigitalassets.com,proxy
+host-suffix,periscope.tv,proxy
+host-suffix,pscp.tv,proxy
+host-suffix,t.co,proxy
+host-suffix,tellapart.com,proxy
+host-suffix,tweetdeck.com,proxy
+host-suffix,twimg.com,proxy
+host-suffix,twitpic.com,proxy
+host-suffix,twitter.biz,proxy
+host-suffix,twitter.com,proxy
+host-suffix,twitter.jp,proxy
+host-suffix,twittercommunity.com,proxy
+host-suffix,twitterflightschool.com,proxy
+host-suffix,twitterinc.com,proxy
+host-suffix,twitteroauth.com,proxy
+host-suffix,twitterstat.us,proxy
+host-suffix,twtrdns.net,proxy
+host-suffix,twttr.com,proxy
+host-suffix,twttr.net,proxy
+host-suffix,twvid.com,proxy
+host-suffix,vine.co,proxy
+host-suffix,x.com,proxy
