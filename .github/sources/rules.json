@@ -419,8 +419,7 @@
         "https://ruleset-mirror.skk.moe/List/non_ip/stream.conf",
         "https://raw.githubusercontent.com/SukkaLab/ruleset.skk.moe/master/List/non_ip/stream.conf"
       ],
-      "timeout": 8,
-      "max_age_days": 7
+      "timeout": 8
     },
     {
       "id": "sukka-ai-non_ip",
@@ -434,8 +433,7 @@
         "https://ruleset-mirror.skk.moe/List/non_ip/ai.conf",
         "https://raw.githubusercontent.com/SukkaLab/ruleset.skk.moe/master/List/non_ip/ai.conf"
       ],
-      "timeout": 8,
-      "max_age_days": 7
+      "timeout": 8
     },
     {
       "id": "sukka-domestic-non_ip",
@@ -450,7 +448,6 @@
         "https://raw.githubusercontent.com/SukkaLab/ruleset.skk.moe/master/List/non_ip/domestic.conf"
       ],
       "timeout": 8,
-      "max_age_days": 7,
       "classify_apps": false
     },
     {
@@ -465,8 +462,7 @@
         "https://ruleset-mirror.skk.moe/List/ip/stream.conf",
         "https://raw.githubusercontent.com/SukkaLab/ruleset.skk.moe/master/List/ip/stream.conf"
       ],
-      "timeout": 8,
-      "max_age_days": 7
+      "timeout": 8
     },
     {
       "id": "sukka-ai-ip",
@@ -480,8 +476,7 @@
         "https://ruleset-mirror.skk.moe/List/ip/ai.conf",
         "https://raw.githubusercontent.com/SukkaLab/ruleset.skk.moe/master/List/ip/ai.conf"
       ],
-      "timeout": 8,
-      "max_age_days": 7
+      "timeout": 8
     },
     {
       "id": "sukka-domestic-ip",
@@ -496,7 +491,6 @@
         "https://raw.githubusercontent.com/SukkaLab/ruleset.skk.moe/master/List/ip/domestic.conf"
       ],
       "timeout": 8,
-      "max_age_days": 7,
       "classify_apps": false
     },
     {
@@ -512,7 +506,6 @@
         "https://raw.githubusercontent.com/SukkaLab/ruleset.skk.moe/master/List/non_ip/global.conf"
       ],
       "timeout": 8,
-      "max_age_days": 7,
       "classify_apps": false
     },
     {
