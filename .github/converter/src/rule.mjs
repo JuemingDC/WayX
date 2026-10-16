@@ -256,10 +256,10 @@ export function planQxRuleAst(ast) {
   // Loon 3.5.3 (build 1008+) and Surge support Glob character classes,
   // while the reviewed QX host-wildcard sample only proves * and ?.
   // Do not turn a source [0-9]/[!abc] class into a misleading literal QX match.
-  if (type==='DOMAIN-WILDCARD' && /[\\[\\]]/.test(value)) {
+  if (type==='DOMAIN-WILDCARD' && /[\[\]]/.test(value)) {
     return {
       kind:'comment',
-      line:`# [WayX] REVIEW REQUIRED: Loon DOMAIN-WILDCARD character classes ([...]) have no verified Quantumult X host-wildcard equivalent (official sample documents * and ? only)\\n# Source declaration: ${source}`,
+      line:`# [WayX] REVIEW REQUIRED: Loon DOMAIN-WILDCARD character classes ([...]) have no verified Quantumult X host-wildcard equivalent (official sample documents * and ? only)\n# Source declaration: ${source}`,
       reason:'unsupported-qx-wildcard-character-class',
     };
   }
