@@ -1,0 +1,31 @@
+# Name: openai
+# Updated: 2026-10-16 08:44:01 UTC
+# Source Authors: MetaCubeX, Nexitally, V2Fly
+# Category: Routing
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/openai.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_AI.list
+# Licenses: See .github/sources/rules.json and original source repositories
+# Rules: 22
+# Managed by: WayX Rule Aggregator
+
+host,openaiassets.blob.core.windows.net,openai
+host,openaicomproductionae4b.blob.core.windows.net,openai
+host,o33249.ingest.sentry.io,openai
+host,openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net,openai
+host,openai.qualtrics.com,openai
+host,openaiapi-site.azureedge.net,openai
+host,openaicom.imgix.net,openai
+host,production-openaicom-storage.azureedge.net,openai
+host,browser-intake-datadoghq.com,openai
+host-suffix,openai.com.cdn.cloudflare.net,openai
+host-suffix,chatgpt.livekit.cloud,openai
+host-suffix,host.livekit.cloud,openai
+host-suffix,turn.livekit.cloud,openai
+host-suffix,chat.com,openai
+host-suffix,chatgpt.com,openai
+host-suffix,chatgpt.site,openai
+host-suffix,crixet.com,openai
+host-suffix,oaistatic.com,openai
+host-suffix,oaistatsig.com,openai
+host-suffix,oaiusercontent.com,openai
+host-suffix,openai.com,openai
+host-suffix,sora.com,openai

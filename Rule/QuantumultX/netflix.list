@@ -1,0 +1,33 @@
+# Name: netflix
+# Updated: 2026-10-16 08:44:01 UTC
+# Source Authors: MetaCubeX, V2Fly
+# Category: Routing
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/netflix.json
+# Licenses: See .github/sources/rules.json and original source repositories
+# Rules: 24
+# Managed by: WayX Rule Aggregator
+
+host,netflix.com.edgesuite.net,netflix
+host-suffix,fast.com,netflix
+host-suffix,netflix.ca,netflix
+host-suffix,netflix.com,netflix
+host-suffix,netflix.net,netflix
+host-suffix,netflixdnstest0.com,netflix
+host-suffix,netflixdnstest1.com,netflix
+host-suffix,netflixdnstest10.com,netflix
+host-suffix,netflixdnstest2.com,netflix
+host-suffix,netflixdnstest3.com,netflix
+host-suffix,netflixdnstest4.com,netflix
+host-suffix,netflixdnstest5.com,netflix
+host-suffix,netflixdnstest6.com,netflix
+host-suffix,netflixdnstest7.com,netflix
+host-suffix,netflixdnstest8.com,netflix
+host-suffix,netflixdnstest9.com,netflix
+host-suffix,netflixinvestor.com,netflix
+host-suffix,netflixtechblog.com,netflix
+host-suffix,nflxext.com,netflix
+host-suffix,nflximg.com,netflix
+host-suffix,nflximg.net,netflix
+host-suffix,nflxsearch.net,netflix
+host-suffix,nflxso.net,netflix
+host-suffix,nflxvideo.net,netflix
