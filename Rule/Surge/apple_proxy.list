@@ -1,17 +1,23 @@
 # Name: apple_proxy
-# Updated: 2026-10-16 10:42:40 UTC
-# Source Authors: V2Fly
+# Updated: 2026-10-16 11:11:32 UTC
+# Source Authors: ACL4SSR, DustinWin, Sukka, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 8
+# Rules: 14
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,hls-amt.itunes.apple.com
 DOMAIN,hls.itunes.apple.com
+DOMAIN,linear.tv.apple.com
 DOMAIN,np-edge.itunes.apple.com
 DOMAIN,play-edge.itunes.apple.com
 DOMAIN,uts-api.itunes.apple.com
 DOMAIN,apple-tv-plus-press.apple.com
+DOMAIN,apple.comscoreresearch.com
+DOMAIN,news-client.apple.com
+DOMAIN,news-edge.apple.com
+DOMAIN,news-events.apple.com
+DOMAIN,ocvideo.apple.com
 DOMAIN,tv.applemusic.com
 DOMAIN-SUFFIX,tv.apple.com
