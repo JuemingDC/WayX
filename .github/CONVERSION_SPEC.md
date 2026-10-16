@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：2.12
+版本：2.13
 
 更新：2026-10-16
 作者：chance  
@@ -261,3 +261,15 @@ Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生�
 | 原地址、全量转换与不覆盖 | input transport、sync-convert、workflow lifecycle | source-fetch、事务/发布测试、完整 Action |
 
 能力扩展必须先有源/目标官方依据及独立语义证据，再经过完整目录、canonical、validator 和 Action。不能仅为减少诊断而扩大未证明的转换范围。
+
+## 2.19 Python 规则集聚合
+
+规则集聚合领域统一由 `.github/converter/rules.py` 管理，来源、分类、品牌默认策略和子服务归属集中于 `.github/sources/rules.json`。只排除直接 blackmatrix7 来源，接受其它维护者引用它的情况。采用 V2Fly 官方发布及 SHA-256 校验；SagerNet geosite 与其共用相同上游，不重复下载相同数据。MetaCubeX 持续生成的具体分类、其维护的补充及 Nexitally 的直连/代理/AI/加密货币/推送列表按来源策略合并。来源作者、URL、许可证及内容摘要保留。
+
+QX 同品牌 direct/proxy 在一个原生 filter 文件内保留逐条策略，REJECT 家族统一输出 reject，不使用 force-policy 覆盖混合文件。Surge 外部 RULE-SET 行不携带策略，混合策略分类统一分为 direct/proxy 文件；可保留原生进程规则，QX 不支持的部分单独隔离。域名正则不改写成更宽泛的通配符，不转换为脚本；只有能证明被现有锚定字面域名后缀覆盖时才视为冗余。
+
+先规范化并按同分类、同策略、同参数去重，再进行域名后缀覆盖压缩。保留跨策略例外；有其它策略干预的分类不做父后缀覆盖删除。具体域名与更具体后缀优先，不能固定以 direct 或 proxy 一概优先。Surge 分文件后，用原生 AND/NOT 从代理规则中排除更具体的直连例外，不能靠错误的文件安装顺序掩盖优先级差异。品牌与子服务归属配置化，media/media_cn 为其余应用，proxy/cn 为较宽兜底，用户仍须配置最终策略。共享域名归属有歧义时保持补充集位置并提 Issue，不按字母顺序猜测归属。
+
+生成文件集中在 Rule/QuantumultX 与 Rule/Surge；英文头包括 Name、Updated、Source Authors、Category 以及来源。只在实际输出或元信息变化时更新时间；只清理状态文件记录且仍有受管标记的旧产物，保护手写文件。下载、校验或事务失败保留旧产物；未知/目标不可表示的声明保存在 rules-result.json，按来源/错误类型复用 Issue，已支持规则继续发布，不能将隔离项宣称已转换。完整成功且不再出现该类声明时关闭对应告警。
+
+接入同一 Action 的 rules 阶段，verify 根据本次完整输入快照重新构建并逐字节校验产物、英文元信息与状态，不用旧状态代替本轮成功。语法、重复、覆盖边界、direct/proxy 优先级、protobuf/JSON 模式、拒绝动作降级、进程差异、无变化不写入、失败回滚与手写文件保护在现有 workflow 领域套件验证。详细源快照与异常随现有 artifact 保存，summary 仅列计数和异常。

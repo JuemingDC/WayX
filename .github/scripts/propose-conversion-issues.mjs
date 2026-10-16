@@ -351,6 +351,36 @@ export function recoveredValidationIssues(report,issues) {
   });
 }
 
+export async function ruleIssueCandidates(root=ROOT) {
+  let report;
+  try {report=JSON.parse(await fs.readFile(path.join(root,'.github/monitor/.runtime/rules-result.json'),'utf8'));}
+  catch(error){if(error.code==='ENOENT')return {ruleReport:null,ruleProblems:[]};throw error;}
+  if(report?.version!==1||typeof report.complete!=='boolean'||!Array.isArray(report.quarantined))throw new Error('Invalid rules-result.json');
+  const groups=new Map();
+  for(const item of report.quarantined) {
+    if(!item.source||!item.code||!item.declaration||!item.reason)throw new Error('Invalid quarantined source rule');
+    const key=fingerprint([item.source,item.code]);
+    if(!groups.has(key))groups.set(key,{fingerprint:key,source:item.source,code:item.code,items:[]});
+    groups.get(key).items.push(item);
+  }
+  return {ruleReport:report,ruleProblems:[...groups.values()]};
+}
+
+export function ruleProblemTitle(group) {return '[WayX rules:'+group.fingerprint+'] '+group.source+' '+group.code;}
+export function ruleProblemBody(group) {
+  return ['Native rule aggregation quarantined declarations that cannot be emitted without changing matching semantics.',
+    '- Source: '+group.source,'- Type: '+group.code,'- Declarations: '+group.items.length,
+    '- Full evidence: rules-result.json in the Action artifact',
+    '- Supported rules continue to publish; quarantined rules are not widened or converted into scripts.',
+    '', '~~~json',JSON.stringify(group.items.slice(0,40),null,2).slice(0,48000),'~~~'].join('\n');
+}
+
+export function recoveredRuleIssues(report,problems,issues) {
+  if(report?.complete!==true)return [];
+  const active=new Set(problems.map(ruleProblemTitle));
+  return issues.filter(issue=>issue.state==='OPEN'&&issue.labels?.some(label=>label.name==='rules-review')&&/^\[WayX rules:[a-f0-9]{16}\] /.test(issue.title)&&!active.has(issue.title));
+}
+
 export async function collectIssueCandidates({root=ROOT,catalog=null,sourceOverrides=null,includeTargets=true,includeSyncFailures=true}={}) {
   catalog=catalog||await loadLoonSourceCatalog(path.join(root,'.github/sources/loon.json'));
   const targetProblems=includeTargets?await groupedTargetProblems(catalog):[];
@@ -362,7 +392,8 @@ export async function collectIssueCandidates({root=ROOT,catalog=null,sourceOverr
   const monitorReport=includeSyncFailures?await readFailureReport(path.join(root,'.github/monitor/.runtime/monitor-result.json'),'monitor'):{failures:[]};
   const monitorFailures=monitorReport.failures;
   const validation=includeSyncFailures?await validationIssueCandidates(root,JSON.parse(process.env.STAGES||'{}')):{validationReport:{version:1,stages:{}},validationFailures:[]};
-  return {targetProblems,syncFailures,monitorFailures,monitorReport,syncReport,...validation};
+  const rules=includeSyncFailures?await ruleIssueCandidates(root):{ruleReport:null,ruleProblems:[]};
+  return {targetProblems,syncFailures,monitorFailures,monitorReport,syncReport,...validation,...rules};
 }
 
 export function monitorFailureTitle(failure) {
@@ -402,12 +433,12 @@ export function recoveredConversionIssues({syncReport,targetProblems},issues) {
 }
 
 function reconcileManagedIssues(context) {
-  const {monitorReport,validationReport,validationFailures,syncReport}=context;
+  const {monitorReport,validationReport,validationFailures,syncReport,ruleReport,ruleProblems}=context;
   if(monitorReport.complete!==true&&!Object.values(validationReport.stages).some(stage=>stage.complete)&&syncReport.publishable!==true)return;
   const issues=JSON.parse(gh(['issue','list','--repo',repo,'--state','open','--limit','1000','--json','number,title,state,labels']));
   const recovered=[...recoveredMonitorIssues(monitorReport,issues),
     ...recoveredValidationIssues(validationReport,issues).filter(issue=>!validationFailures.some(failure=>validationFailureTitle(failure)===issue.title)),
-    ...recoveredConversionIssues(context,issues)];
+    ...recoveredConversionIssues(context,issues),...recoveredRuleIssues(ruleReport,ruleProblems,issues)];
   for(const issue of recovered) {
     gh(['issue','close',String(issue.number),'--repo',repo,'--reason','completed']);
     console.log('Resolved recovered managed issue #'+issue.number);
@@ -415,7 +446,7 @@ function reconcileManagedIssues(context) {
 }
 
 async function main() {
-  const {targetProblems,syncFailures,monitorFailures,monitorReport,syncReport,validationReport,validationFailures}=await collectIssueCandidates();
+  const {targetProblems,syncFailures,monitorFailures,monitorReport,syncReport,validationReport,validationFailures,ruleReport,ruleProblems}=await collectIssueCandidates();
   await fs.mkdir(runtimeDir,{recursive:true});
   const lines=[
     '# WayX automated conversion issues',
@@ -424,6 +455,7 @@ async function main() {
     '- Hard sync failures: '+syncFailures.length,
     '- Upstream monitor failures: '+monitorFailures.length,
     '- Validation stages requiring review: '+validationFailures.length,
+    '- Quarantined rule groups: '+ruleProblems.length,
     '',
   ];
   for (const group of targetProblems) {
@@ -433,23 +465,25 @@ async function main() {
   for (const failure of syncFailures) lines.push('- '+syncFailureTitle(failure));
   for (const failure of monitorFailures) lines.push('- '+monitorFailureTitle(failure));
   for(const failure of validationFailures)lines.push('- '+validationFailureTitle(failure));
+  for(const problem of ruleProblems)lines.push('- '+ruleProblemTitle(problem));
   await fs.writeFile(summaryPath,lines.join('\n')+'\n');
 
   const output=process.env.GITHUB_OUTPUT;
   if (output) {
-    await fs.appendFile(output,'has_issues='+(targetProblems.length || syncFailures.length || monitorFailures.length || validationFailures.length ? 'true' : 'false')+'\n');
+    await fs.appendFile(output,'has_issues='+(targetProblems.length || syncFailures.length || monitorFailures.length || validationFailures.length || ruleProblems.length ? 'true' : 'false')+'\n');
     await fs.appendFile(output,'summary='+path.relative(ROOT,summaryPath).replaceAll(path.sep,'/')+'\n');
   }
 
   if (dryRun) {
-    console.log(JSON.stringify({targetProblems,syncFailures,monitorFailures,validationFailures},null,2));
+    console.log(JSON.stringify({targetProblems,syncFailures,monitorFailures,validationFailures,ruleProblems},null,2));
     return;
   }
   if(repo){
     if(validationFailures.length)await ensureLabel('validation-failure','Automated output, syntax, runtime or workflow validation failed','B60205');
-    reconcileManagedIssues({monitorReport,validationReport,validationFailures,syncReport,targetProblems});
+    if(ruleProblems.length)await ensureLabel('rules-review','Source rule declarations quarantined by native target conversion','FBCA04');
+    reconcileManagedIssues({monitorReport,validationReport,validationFailures,syncReport,targetProblems,ruleReport,ruleProblems});
   }
-  if (!targetProblems.length && !syncFailures.length && !monitorFailures.length && !validationFailures.length) {
+  if (!targetProblems.length && !syncFailures.length && !monitorFailures.length && !validationFailures.length && !ruleProblems.length) {
     console.log('No conversion issue candidates found.');
     return;
   }
@@ -474,6 +508,7 @@ async function main() {
       label:'conversion-failure',
     });
   }
+  for(const problem of ruleProblems)await upsertIssue({title:ruleProblemTitle(problem),body:ruleProblemBody(problem),label:'rules-review'});
   for(const failure of validationFailures)await upsertIssue({title:validationFailureTitle(failure),body:validationFailureIssueBody(failure),label:'validation-failure'});
   for(const failure of monitorFailures)await upsertIssue({title:monitorFailureTitle(failure),body:monitorFailureIssueBody(failure),label:'upstream-monitor-failure'});
 }

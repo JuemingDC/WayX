@@ -9,7 +9,7 @@ import sys
 
 RUNTIME = Path('.github/monitor/.runtime')
 MANAGED = ['.github/sources/', 'Resource/Loon', 'Adblock/Quantumult X',
-           'Adblock/Surge', 'Script', 'README.md']
+           'Adblock/Surge', 'Script', 'Rule', 'README.md']
 CLEAN = ['.github/sources/loon.json', *MANAGED[1:]]
 
 
@@ -171,7 +171,11 @@ def verify() -> None:
         ['tools/audit-repository.mjs'], ['tests/artifacts.mjs'],
     ]
     execute_checks('verify', [(file, ['node', '.github/converter/' + file, *args])
-                              for file, *args in commands])
+                              for file, *args in commands] + [('rule-aggregation', [sys.executable, '.github/converter/rules.py', 'check'])])
+
+
+def rules() -> None:
+    execute_checks('rules', [('aggregate', [sys.executable, '.github/converter/rules.py', 'sync'])])
 
 
 def catalog() -> None:
@@ -199,7 +203,7 @@ def issues() -> None:
 
 def gate() -> None:
     stages = json.loads(os.environ['STAGES'])
-    required = ['syntax', 'catalog', 'checkpoint', 'loon_sync', 'verify', 'reports', 'issues']
+    required = ['syntax', 'catalog', 'rules', 'checkpoint', 'loon_sync', 'verify', 'reports', 'issues']
     monitor = os.environ.get('MONITOR_ENABLED') == 'true'
     if monitor:
         required.append('monitor')
@@ -275,6 +279,9 @@ def summary() -> None:
     for key in ['validatedPlugins', 'convertedPlugins', 'updatedPlugins', 'unchangedPlugins',
                 'retainedPlugins', 'deferredPlugins']:
         lines.append(f'- {key}: {len(sync.get(key, []))}')
+    rule_report = read_report('rules-result.json', {})
+    lines.append(f"- Aggregated rule sets: {len(rule_report.get('counts', {}))}")
+    lines.append(f"- Quarantined source rules: {len(rule_report.get('quarantined', []))}")
     lines.append(f"- Monitor failures: {len(monitor.get('failures', []))}")
     for key in ['added', 'updated', 'removed']:
         lines.append(f'- Discovery {key}: {len(discovery.get(key, []))}')
@@ -296,7 +303,7 @@ def final() -> None:
 
 
 COMMANDS = {function.__name__: function for function in
-            [prepare, syntax, catalog, checkpoint, sync, verify, monitor, reports, issues, gate, publish, summary, regex, final]}
+            [prepare, syntax, catalog, rules, checkpoint, sync, verify, monitor, reports, issues, gate, publish, summary, regex, final]}
 
 if __name__ == '__main__':
     try:

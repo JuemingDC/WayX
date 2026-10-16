@@ -72,6 +72,17 @@ jobs:
           set -euo pipefail
           python .github/scripts/automation.py catalog 2>&1 | tee .github/monitor/.runtime/catalog.log
 
+      - name: Aggregate and convert routing rule sets
+        id: rules
+        if: steps.catalog.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python .github/scripts/automation.py rules
+
       - name: Converter checkpoint
         id: checkpoint
         if: steps.catalog.outcome == 'success'
@@ -180,6 +191,7 @@ jobs:
             .github/monitor/.runtime/
             .github/sources/loon.json
             Resource/Loon/
+            Rule/
             Adblock/Quantumult X/
             Adblock/Surge/
             Script/
