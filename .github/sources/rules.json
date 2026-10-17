@@ -585,6 +585,16 @@
       "policy": "DIRECT",
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/steam@cn.json",
       "license": "See upstream LICENSE"
+    },
+    {
+      "id": "dh-teams-cn",
+      "author": "DH-Teams",
+      "format": "ruleset",
+      "category": "cn",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_All_Surge.list",
+      "license": "No license declared; attribution retained",
+      "classify_apps": false
     }
   ],
   "indirect_upstreams": "Allowed; only direct blackmatrix7 inputs are excluded.",

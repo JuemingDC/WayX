@@ -19,7 +19,7 @@ Metadata categories are `Adblock` for advertising collections, `app` for named a
 
 Telegram also merges Loyalsoldier telegramcidr IPv4/IPv6 rules. Registry `rule_exclusions` removes the requested 91cg wildcard family from proxy only, across both targets; other match types and categories remain independent.
 
-Supplemental application inputs include Sukka stream lists, ACL4SSR ProxyMedia and DustinWin media. General inputs include Sukka domestic/global, Loyalsoldier direct/proxy and gaoyifan Chinese IPv4/IPv6 ranges. All merge into the existing category files; no per-source output files are created.
+Supplemental application inputs include Sukka stream lists, ACL4SSR ProxyMedia and DustinWin media. General inputs include Sukka domestic/global, Loyalsoldier direct/proxy, gaoyifan Chinese IPv4/IPv6 ranges and DH-Teams Geo_AS_IP_CN_All_Surge IPv4/IPv6 ranges. DH-Teams merges into cn with DIRECT. All merge into the existing category files; no per-source output files are created.
 
 ## Policies and order
 
