@@ -16,8 +16,8 @@
     "Rule/QuantumultX/microsoft.list": "3e1adfb83c478aa49021c0ba6abe882a705713a7f8162f24c67c348817b67668",
     "Rule/QuantumultX/media_cn.list": "8927156ba9c9c211e228d723cadec30d33f06d02f4ce84457156387906bd090c",
     "Rule/QuantumultX/media.list": "40707e07d1fad4f1e60f70da351baa81a08b241f999908c9537c1a8047c07151",
-    "Rule/QuantumultX/cn.list": "ce1f45407ea3f15db02760bb2e83d7b272e85e175cec768f313d6370670b8a00",
-    "Rule/QuantumultX/proxy.list": "e6a68f3736f5e0676ed47869cee24b8bbddcf5e4e92aadbc5c4c5df10a7bf23c",
+    "Rule/QuantumultX/cn.list": "63738a9aac784b3d560571e4872494f53f3f80d3a8b2730d8113d8dc58a7382b",
+    "Rule/QuantumultX/proxy.list": "ffc44d1b050a7a63f07af0169ab9faf036d98f7cec488a4820612cb30654c111",
     "Rule/QuantumultX/adblock.list": "d6839a42e9597dd9e57c92a9633b27df573ae3ad9e082f91cc97b9518d86d444",
     "Rule/QuantumultX/adblock_extra.list": "1ef7ae3cd613768fb0a568f3ffde96677bc3706868d1751e4041ccc5d7767167",
     "Rule/Surge/google.list": "f3ecea930e42504268c0005adc897e2f439b0f78fccc62eda25428620f156a8f",
@@ -37,8 +37,8 @@
     "Rule/Surge/microsoft_direct.list": "83cee0db513c4291a63085a0a8103082f2c2ea60929216c701bf157ebfa69925",
     "Rule/Surge/media_cn.list": "754ceef462126a6d91cffbf4a4e27e59290bd2b4e1335136b344e73ce186315d",
     "Rule/Surge/media.list": "2b6d047cfe1e24a97c53fdc2197ecc52db0cece06099e0401f09bad6f7157eb8",
-    "Rule/Surge/cn.list": "b3f1b1c483125b9d7a677bbc8ee703ba1381e0580702e6cf4873c48d0ed05320",
-    "Rule/Surge/proxy.list": "2f7d6299be829a8420d4990cec3bebf0b64fbb141e2617cac2763bdd76ad64d0",
+    "Rule/Surge/cn.list": "64ee448e5af8ea1ab6d5e2ae65624e615d08f93f59abfa125a0893f1f9b605ff",
+    "Rule/Surge/proxy.list": "c62585053b06e28c9cf5dab60c9a93e34b61ba23aecc3dabd85b81bc8571aa55",
     "Rule/Surge/adblock.list": "17512c81f965aa2e36185dc4bdfb33f229bddd575a5923e4bfd661b21ae94206",
     "Rule/Surge/adblock_extra.list": "621534fdc21e70dd2bd6afc073a2e35f8416d988f8ed918dfd515fda3ba6bddf"
   },
@@ -58,8 +58,8 @@
     "Rule/QuantumultX/microsoft.list": 595,
     "Rule/QuantumultX/media_cn.list": 1186,
     "Rule/QuantumultX/media.list": 6811,
-    "Rule/QuantumultX/cn.list": 122550,
-    "Rule/QuantumultX/proxy.list": 26085,
+    "Rule/QuantumultX/cn.list": 125820,
+    "Rule/QuantumultX/proxy.list": 26087,
     "Rule/QuantumultX/adblock.list": 263065,
     "Rule/QuantumultX/adblock_extra.list": 2760,
     "Rule/Surge/google.list": 675,
@@ -79,8 +79,8 @@
     "Rule/Surge/microsoft_direct.list": 654,
     "Rule/Surge/media_cn.list": 1186,
     "Rule/Surge/media.list": 6811,
-    "Rule/Surge/cn.list": 122550,
-    "Rule/Surge/proxy.list": 26085,
+    "Rule/Surge/cn.list": 125820,
+    "Rule/Surge/proxy.list": 26087,
     "Rule/Surge/adblock.list": 263065,
     "Rule/Surge/adblock_extra.list": 2760
   },
@@ -373,7 +373,7 @@
       "url": "https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/ai.json",
       "license": "GPL-3.0",
       "fetched_url": "https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/ai.json",
-      "sha256": "e69b12e6f05c38e24148084cab84e6cc5c81106b857b033d3b36edb0d4de153f"
+      "sha256": "a8ce99093b1aa3b38a97100ccac3355378c56797f9f14bffa10a7892d2d81b81"
     },
     {
       "id": "hagezi-light",
@@ -567,7 +567,7 @@
       "license": "GPL-3.0",
       "classify_apps": false,
       "fetched_url": "https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt",
-      "sha256": "4ef75c82f1edef3d482a0b51e7180df0633783e098147c8bd41bb0db35929e60"
+      "sha256": "9793904c6ba1bef9cca7f9a1e5a45ae06a66638a53059111206d620cbd910b5c"
     },
     {
       "id": "gaoyifan-cn",
@@ -616,6 +616,18 @@
       "sha256": "3c7a9af2351e6d7060a6fec81c99788fa3323b395f0366984f724b6c667ff9e1"
     },
     {
+      "id": "dh-teams-cn",
+      "author": "DH-Teams",
+      "format": "ruleset",
+      "category": "cn",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_All_Surge.list",
+      "license": "No license declared; attribution retained",
+      "classify_apps": false,
+      "fetched_url": "https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_All_Surge.list",
+      "sha256": "13f72786158a576ea19b1be219c68f5140d1d3eab9329a5b09d832ab9edf5b40"
+    },
+    {
       "id": "geosite",
       "author": "V2Fly",
       "format": "protobuf",
@@ -635,6 +647,6 @@
       "sha256": "81f4af1bcf56e1e551897dfbe13532f2fde8bd0277656b2c4bc54b4f35077410"
     }
   ],
-  "configuration": "b7978d90ee9e0f5944572ec482ad7add2fbfefb83e2d9e8288ee30659441e51e",
+  "configuration": "74939fd547e51b9693f9f583d4a8e9ac0fa4ee777be23db29789782607e93523",
   "generator": "e7cc98c3b6a43848c89aef6ce5603a729fbe96dc35a831bec5a0a7854e122d10"
 }
