@@ -1,14 +1,13 @@
 # Name: media
-# Updated: 2026-10-16 12:45:01 UTC
+# Updated: 2026-10-17 03:22:10 UTC
 # Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 6863
+# Rules: 6809
 # Managed by: WayX Rule Aggregator
 
 host,cdn.globalsigncdn.com.cdn.cloudflare.net,proxy
-host,a4e8s8k3.map2.ssl.hwcdn.net,proxy
 host,akmcdnoversea-tw.inter.ptqy.gitv.tv,proxy
 host,chuangcachecdnoversea-tw.inter.ptqy.gitv.tv,proxy
 host,docker-images-prod.6aa30f8b08e16409b46e0173d6de2f56.r2.cloudflarestorage.com,proxy
@@ -16,9 +15,6 @@ host,edge.cwtv-vod-ext.top.comcast.net,proxy
 host,hulu.com.c.footprint.net,proxy
 host,prodforza.blob.core.windows.net,proxy
 host,roblox-poc.global.ssl.fastly.net,proxy
-host,steamcloudsweden.blob.core.windows.net,proxy
-host,steamcommunity-a.akamaihd.net.edgesuite.net,proxy
-host,steamugcquincy.blob.core.windows.net,proxy
 host,teamviewer.com.cdn.cloudflare.net,proxy
 host,vscode.blob.core.windows.net,proxy
 host,az764295.vo.msecnd.net,proxy
@@ -31,7 +27,6 @@ host,dca-lm-livedazn.secure.footprint.net,proxy
 host,discord-attachments-uploads-prd.storage.googleapis.com,proxy
 host,e122475.dscg.akamaiedge.net,proxy
 host,e13252.dscg.akamaiedge.net,proxy
-host,f3b7q2p3.ssl.hwcdn.net,proxy
 host,gitlab-assets.oss-cn-hongkong.aliyuncs.com,proxy
 host,gog-cdn-lumen.secure2.footprint.net,proxy
 host,hammerandchisel.ssl.zendesk.com,proxy
@@ -104,7 +99,6 @@ host,i.jeded.com,proxy
 host,itvpnpmobile-a.akamaihd.net,proxy
 host,lazer.ppy.sh,proxy
 host,lolstatic-a.akamaihd.net,proxy
-host,lv.queniujq.cn,proxy
 host,m1.ppy.sh,proxy
 host,mozilla-ohttp.fastly-edge.com,proxy
 host,nbbb1bb7.pmhcjk.com,proxy
@@ -124,12 +118,6 @@ host,rpg.pic-imges.com,proxy
 host,rthklive2-lh.akamaihd.net,proxy
 host,sentry.ppy.sh,proxy
 host,spectator.ppy.sh,proxy
-host,steamcdn-a.akamaihd.net,proxy
-host,steamcommunity-a.akamaihd.net,proxy
-host,steamstore-a.akamaihd.net,proxy
-host,steamusercontent-a.akamaihd.net,proxy
-host,steamuserimages-a.akamaihd.net,proxy
-host,steamvideo-a.akamaihd.net,proxy
 host,supercell.helpshift.com,proxy
 host,supercell.zendesk.com,proxy
 host,tmdb-image-prod.b-cdn.net,proxy
@@ -163,20 +151,16 @@ host,vscode-sync.trafficmanager.net,proxy
 host,ws.audioscrobbler.com,proxy
 host,www.tubi.tv,proxy
 host,www.tubitv.com,proxy
-host,xz.pphimalayanrt.com,proxy
 host,adobeereg.com,proxy
 host,tubi.tv,proxy
 host,tubitv.com,proxy
 host,vudu.com,proxy
 host-suffix,cbsi.live.ott.irdeto.com,proxy
 host-suffix,cf-images.ap-southeast-1.prod.boltdns.net,proxy
-host-suffix,edge.steam-dns.top.comcast.net,proxy
 host-suffix,hbo.com.c.footprint.net,proxy
 host-suffix,okx.com.cdn.cloudflare.net,proxy
 host-suffix,psg.cdn.hgc.com.hk,proxy
 host-suffix,qualcomm.cn.cdn.cloudflare.net,proxy
-host-suffix,steam.cdn.orcon.net.nz,proxy
-host-suffix,steam.cdn.slingshot.co.nz,proxy
 host-suffix,affinity.api.serifservices.com,proxy
 host-suffix,api.tv.colnv.com,proxy
 host-suffix,bbcfmt.s.llnwi.net,proxy
@@ -186,9 +170,7 @@ host-suffix,dc1-lm-live2dazn.secure.footprint.net,proxy
 host-suffix,dc2-vodhls-perform.secure.footprint.net,proxy
 host-suffix,dca-ll-livedazn-dznlivejp.s.llnwi.net,proxy
 host-suffix,dca-ll-voddazn-dznvodjp.s.llnwi.net,proxy
-host-suffix,dl.steam.clngaa.com,proxy
 host-suffix,edge.api.brightcove.com,proxy
-host-suffix,gstore.val.manlaxy.com,proxy
 host-suffix,gtlsca.nat.gov.tw,proxy
 host-suffix,hbo.com.edgesuite.net,proxy
 host-suffix,hbo.map.fastly.net,proxy
@@ -200,17 +182,6 @@ host-suffix,naver.com.akadns.net,proxy
 host-suffix,naverads.com.akadns.net,proxy
 host-suffix,netflix.com.edgesuite.net,proxy
 host-suffix,s-bid.rmp.rakuten.com,proxy
-host-suffix,st.dl.bscstorage.net,proxy
-host-suffix,st.dl.eccdnx.com,proxy
-host-suffix,st.dl.pinyuncloud.com,proxy
-host-suffix,steam.apac.qtlglb.com,proxy
-host-suffix,steam.cdn.on.net,proxy
-host-suffix,steam.cdn.webra.ru,proxy
-host-suffix,steam.eca.qtlglb.com,proxy
-host-suffix,steam.naeu.qtlglb.com,proxy
-host-suffix,steam.ru.qtlglb.com,proxy
-host-suffix,steampowered.com.8686c.com,proxy
-host-suffix,steamstatic.com.8686c.com,proxy
 host-suffix,tiktokcdn-us.com.edgesuite.net,proxy
 host-suffix,tiktokcdn.com.edgesuite.net,proxy
 host-suffix,tiktokv.com.edgekey.net,proxy
@@ -307,14 +278,11 @@ host-suffix,cht.com.tw,proxy
 host-suffix,chtf.org.tw,proxy
 host-suffix,cisco.com.cn,proxy
 host-suffix,clickedu.co.uk,proxy
-host-suffix,client-update.queniuqe.com,proxy
 host-suffix,coinone.co.kr,proxy
 host-suffix,collabora.co.uk,proxy
 host-suffix,content.jwplatform.com,proxy
 host-suffix,control.kochava.com,proxy
 host-suffix,crypton.co.jp,proxy
-host-suffix,csgo.com.cn,proxy
-host-suffix,csgo.wmsj.cn,proxy
 host-suffix,cygames.co.jp,proxy
 host-suffix,d9.flashtalking.com,proxy
 host-suffix,deepfreeze.co.uk,proxy
@@ -397,8 +365,6 @@ host-suffix,disney.demdex.net,proxy
 host-suffix,dlsite.com.tw,proxy
 host-suffix,dmm.co.jp,proxy
 host-suffix,docs.lotu.sh,proxy
-host-suffix,dota2.com.cn,proxy
-host-suffix,dota2.wmsj.cn,proxy
 host-suffix,drweb.co.jp,proxy
 host-suffix,dungeonkeeper.com.cn,proxy
 host-suffix,eakorea.co.kr,proxy
@@ -2462,7 +2428,6 @@ host-suffix,dollarphotosclub.com,proxy
 host-suffix,dolphiners.com,proxy
 host-suffix,donationalerts.com,proxy
 host-suffix,donkeykongcountryreturns.com,proxy
-host-suffix,dota2.com,proxy
 host-suffix,dotdeb.org,proxy
 host-suffix,douwriteright.com,proxy
 host-suffix,dovemetrics.com,proxy
@@ -4946,7 +4911,6 @@ host-suffix,plastics-cadcam.com,proxy
 host-suffix,play4free.com,proxy
 host-suffix,playads.jp,proxy
 host-suffix,playapex.com,proxy
-host-suffix,playartifact.com,proxy
 host-suffix,playbattlegrounds.com,proxy
 host-suffix,playerjs.io,proxy
 host-suffix,playfamily.ru,proxy
@@ -5337,7 +5301,6 @@ host-suffix,s-bluemix.net,proxy
 host-suffix,s-cashonmobile.com,proxy
 host-suffix,s-nbcnews.com,proxy
 host-suffix,s-rewards.hk,proxy
-host-suffix,s.team,proxy
 host-suffix,s2stagehance.com,proxy
 host-suffix,s81c.com,proxy
 host-suffix,saas-support.com,proxy
@@ -5716,22 +5679,9 @@ host-suffix,static-verizon.com,proxy
 host-suffix,staticflickr.com,proxy
 host-suffix,staticmy.com,proxy
 host-suffix,statuspage.io,proxy
-host-suffix,steam-api.com,proxy
-host-suffix,steam-chat.com,proxy
-host-suffix,steam.tv,proxy
-host-suffix,steamchina.com,proxy
-host-suffix,steamcommunity.com,proxy
-host-suffix,steamconnecttest.com,proxy
-host-suffix,steamcontent.com,proxy
 host-suffix,steamdb.info,proxy
-host-suffix,steamdeck.com,proxy
-host-suffix,steamgames.com,proxy
 host-suffix,steaminventoryhelper.com,proxy
-host-suffix,steampowered.com,proxy
-host-suffix,steamserver.net,proxy
-host-suffix,steamstatic.com,proxy
 host-suffix,steamunlocked.net,proxy
-host-suffix,steamusercontent.com,proxy
 host-suffix,steelbrick.com,proxy
 host-suffix,stellasora.global,proxy
 host-suffix,stellasora.jp,proxy
@@ -6076,7 +6026,6 @@ host-suffix,ultrasrv.de,proxy
 host-suffix,uma.media,proxy
 host-suffix,umbrella.com,proxy
 host-suffix,umschool.net,proxy
-host-suffix,underlords.com,proxy
 host-suffix,unext-info.jp,proxy
 host-suffix,unext.jp,proxy
 host-suffix,unisat.io,proxy
@@ -6114,8 +6063,6 @@ host-suffix,vagrantup.com,proxy
 host-suffix,value-domain.com,proxy
 host-suffix,value-server.com,proxy
 host-suffix,valuegb.com,proxy
-host-suffix,valve.net,proxy
-host-suffix,valvesoftware.com,proxy
 host-suffix,vastenm.com,proxy
 host-suffix,vaultproject.io,proxy
 host-suffix,vbcdn.com,proxy
@@ -6453,7 +6400,6 @@ host-suffix,wise-research.com,proxy
 host-suffix,wisecoin.com,proxy
 host-suffix,wiseid.com,proxy
 host-suffix,wisekey.com,proxy
-host-suffix,wmsjsteam.com,proxy
 host-suffix,wofl.tv,proxy
 host-suffix,woflthenewsstation.com,proxy
 host-suffix,wogx.com,proxy

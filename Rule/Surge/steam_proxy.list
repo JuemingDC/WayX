@@ -1,0 +1,50 @@
+# Name: steam_proxy
+# Updated: 2026-10-17 03:22:10 UTC
+# Source Authors: V2Fly
+# Category: app
+# Sources: https://github.com/v2fly/domain-list-community
+# Licenses: See .github/sources/rules.json and original source repositories
+# Rules: 41
+# Managed by: WayX Rule Aggregator
+
+DOMAIN,a4e8s8k3.map2.ssl.hwcdn.net
+DOMAIN,steamcloudsweden.blob.core.windows.net
+DOMAIN,steamcommunity-a.akamaihd.net.edgesuite.net
+DOMAIN,steamugcquincy.blob.core.windows.net
+DOMAIN,f3b7q2p3.ssl.hwcdn.net
+DOMAIN,steambroadcast.akamaized.net
+DOMAIN,steamcdn-a.akamaihd.net
+DOMAIN,steamcommunity-a.akamaihd.net
+DOMAIN,steammobile.akamaized.net
+DOMAIN,steampipe-kr.akamaized.net
+DOMAIN,steampipe-partner.akamaized.net
+DOMAIN,steampipe.akamaized.net
+DOMAIN,steamstore-a.akamaihd.net
+DOMAIN,steamusercontent-a.akamaihd.net
+DOMAIN,steamuserimages-a.akamaihd.net
+DOMAIN,steamvideo-a.akamaihd.net
+DOMAIN-SUFFIX,edge.steam-dns.top.comcast.net
+DOMAIN-SUFFIX,steam.cdn.orcon.net.nz
+DOMAIN-SUFFIX,steam.cdn.slingshot.co.nz
+DOMAIN-SUFFIX,steam.apac.qtlglb.com
+DOMAIN-SUFFIX,steam.cdn.on.net
+DOMAIN-SUFFIX,steam.cdn.webra.ru
+DOMAIN-SUFFIX,steam.eca.qtlglb.com
+DOMAIN-SUFFIX,steam.naeu.qtlglb.com
+DOMAIN-SUFFIX,steam.ru.qtlglb.com
+DOMAIN-SUFFIX,dota2.com
+DOMAIN-SUFFIX,playartifact.com
+DOMAIN-SUFFIX,s.team
+DOMAIN-SUFFIX,steam-api.com
+DOMAIN-SUFFIX,steam-chat.com
+DOMAIN-SUFFIX,steam.tv
+DOMAIN-SUFFIX,steamcommunity.com
+DOMAIN-SUFFIX,steamconnecttest.com
+AND,((DOMAIN-SUFFIX,steamcontent.com),(NOT,((DOMAIN,alibaba.cdn.steampipe.steamcontent.com))))
+DOMAIN-SUFFIX,steamdeck.com
+DOMAIN-SUFFIX,steamgames.com
+DOMAIN-SUFFIX,steampowered.com
+DOMAIN-SUFFIX,steamstatic.com
+DOMAIN-SUFFIX,underlords.com
+DOMAIN-SUFFIX,valve.net
+DOMAIN-SUFFIX,valvesoftware.com
