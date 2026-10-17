@@ -6,7 +6,8 @@ Python aggregates the registered upstreams into native Quantumult X and Surge li
 
 - `adblock`: 217heidai + limbopro + HaGeZi Light + AWAvenue Only Ads + anti-AD, merged with same-policy domain coverage deduplication.
 - `adblock_extra`: optional incremental Sukka base domains. Keep this disabled unless extra filtering is wanted.
-- Named applications: Google, Facebook/Meta, Netflix, Disney, YouTube, Telegram, X, Spotify, GitHub, Apple and Microsoft.
+- Named applications: Google, Facebook/Meta, Netflix, Disney, YouTube, Telegram, Steam, X, Spotify, GitHub, Apple and Microsoft.
+- Steam uses the maintained V2Fly `steam@cn` / `steam@!cn` attributes and MetaCubeX domestic supplements. Quantumult X combines direct/proxy rows in `steam.list`; Surge uses `steam_direct.list` and `steam_proxy.list`. Domestic entries are not inferred from domain spelling.
 - `ai`: overseas AI services only, using the `ai` policy, including OpenAI, Claude, Gemini, Copilot and Apple Intelligence. Inputs include V2Fly, MetaCubeX, Nexitally, DustinWin and Sukka. Domestic AI tags are excluded from every AI input.
 - `media`: other overseas applications, including non-video services.
 - `media_cn`: domestic applications.
@@ -24,7 +25,7 @@ Supplemental application inputs include Sukka stream lists, ACL4SSR ProxyMedia a
 
 Quantumult X lists carry per-rule built-in policies: explicit DIRECT stays `direct`, every REJECT-family action becomes `reject`, and all other or unspecified actions become `proxy`, including application names and Media placeholders. Mixed lists retain these per-rule exceptions. Do not apply `force-policy` to mixed direct/reject/proxy files. Rules sharing the same normalized action are deduplicated together.
 
-Surge lists omit policy fields. Reference each list with RULE-SET and the desired policy. Apple and Microsoft have separate `_direct` and `_proxy` lists. Other mixed-policy categories are split the same way. Proxy rules use native AND/NOT exclusions where needed so a more-specific direct exception remains effective even when the proxy list is installed before a broad brand-direct list. Rejection variants retain separate Surge lists if an input supplies them.
+Surge lists omit policy fields. Reference each list with RULE-SET and the desired policy. Steam, Apple and Microsoft have separate `_direct` and `_proxy` lists. Other mixed-policy categories are split the same way. Proxy rules use native AND/NOT exclusions where needed so a more-specific direct exception remains effective even when the proxy list is installed before a broad brand-direct list. Rejection variants retain separate Surge lists if an input supplies them.
 
 Apply personal exceptions and local-network handling first, then advertising rules, named applications and their direct exceptions, media/media_cn, and broad proxy/cn fallbacks. The registry declares AI as the highest-priority routing category. Known AI rules shared with any brand belong to AI and are removed from overlapping routing collections; advertising/rejection rules remain independent. Explicit supplemental ownership is indexed before classification so source ordering cannot change the result. AI precedes other named applications; YouTube precedes Google; GitHub precedes Microsoft; specific brand proxy exceptions precede broad brand-direct rules. Put direct exceptions before broader conflicting proxy rules. Match domain rules before resolving general IP/GEOIP fallbacks. Shared CDN names are not assigned to an application solely from corporate ownership. Keep direct and proxy fallbacks ordered according to your intended policy; overlaps are not a proof of a universally correct route.
 
