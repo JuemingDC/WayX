@@ -509,6 +509,24 @@ assert 'ip-cidr,91.108.4.0/22,proxy' in tg['Rule/QuantumultX/telegram.list']
 assert 'ip6-cidr,2001:b28:f23c::/47,proxy' in tg['Rule/QuantumultX/telegram.list']
 assert 'IP-CIDR6,2001:b28:f23c::/47' in tg['Rule/Surge/telegram.list']
 
+# Attribute selectors split a service's maintained domestic/foreign declarations.
+steam_config={**telegram_config,'applications':[{'name':'steam','tags':['fixture@cn'],'proxy_tags':['fixture@!cn'],'split':True}],
+ 'sources':[]}
+steam_outputs,_,_=m.build(steam_config,{'geosite':encoded})
+assert 'host-suffix,example.com,direct' in steam_outputs['Rule/QuantumultX/steam.list']
+assert 'DOMAIN-SUFFIX,example.com' in steam_outputs['Rule/Surge/steam_direct.list']
+assert 'Rule/Surge/steam_proxy.list' not in steam_outputs
+steam_config['applications'][0]['tags']=['proxy@cn']
+steam_config['applications'][0]['proxy_tags']=['proxy@!cn']
+steam_outputs,_,_=m.build(steam_config,{'geosite':encoded})
+assert 'host-suffix,proxy.example.com,proxy' in steam_outputs['Rule/QuantumultX/steam.list']
+assert 'DOMAIN-SUFFIX,proxy.example.com' in steam_outputs['Rule/Surge/steam_proxy.list']
+assert 'Rule/Surge/steam_direct.list' not in steam_outputs
+steam_config['applications'][0]['tags']=['fixture@cn']
+steam_outputs,_,_=m.build(steam_config,{'geosite':encoded})
+assert 'host-suffix,example.com,direct' in steam_outputs['Rule/QuantumultX/steam.list']
+assert 'host-suffix,proxy.example.com,proxy' in steam_outputs['Rule/QuantumultX/steam.list']
+
 with tempfile.TemporaryDirectory() as temp:
  os.chdir(temp)
  changed,_=m.apply_outputs(outputs,metadata,{'outputs':{}});assert changed==len(outputs)

@@ -516,27 +516,35 @@ def build(config, inputs):
         urls.setdefault(key, set()).add(source)
     def select(tags, group):
         result = set()
-        suffixes = {value.lower() for tag in tags if tag in sites for kind, value, attrs in sites[tag] if kind == 2 and 'ads' not in attrs}
-        for tag in tags:
+        entries = []
+        for selector in tags:
+            tag, separator, attribute = selector.partition('@')
             if tag not in sites:
                 raise ValueError('Unknown configured geosite: ' + tag)
-            for kind, operand, attributes in sites[tag]:
-                if 'ads' in attributes:
+            if separator and not re.fullmatch(r'!?[a-z0-9_-]+', attribute):
+                raise ValueError('Invalid geosite attribute selector: ' + selector)
+            for entry in sites[tag]:
+                if separator and ((attribute.lstrip('!') in entry[2]) == attribute.startswith('!')):
                     continue
-                if kind == 1:
-                    if regex_covered(operand, suffixes):
-                        continue
-                    converted = regex_native(operand)
-                    if converted is not None:
-                        result.update(converted); continue
-                    anomalies.append({'source': 'V2Fly', 'category': group, 'declaration': 'regexp:' + operand,
-                                      'code': 'filtered-unsupported-regexp', 'reason': 'Outside bounded exact native conversion subset; no widening allowed'})
+                entries.append(entry)
+        suffixes = {value.lower() for kind, value, attrs in entries if kind == 2 and 'ads' not in attrs}
+        for kind, operand, attributes in entries:
+            if 'ads' in attributes:
+                continue
+            if kind == 1:
+                if regex_covered(operand, suffixes):
                     continue
-                try:
-                    result.add(normalized({0: 'DOMAIN-KEYWORD', 2: 'DOMAIN-SUFFIX', 3: 'DOMAIN'}[kind], operand))
-                except (ValueError, UnicodeError) as error:
-                    anomalies.append({'source': 'V2Fly', 'category': group, 'declaration': operand,
-                                      'code': 'unsupported-source-rule', 'reason': str(error)})
+                converted = regex_native(operand)
+                if converted is not None:
+                    result.update(converted); continue
+                anomalies.append({'source': 'V2Fly', 'category': group, 'declaration': 'regexp:' + operand,
+                                  'code': 'filtered-unsupported-regexp', 'reason': 'Outside bounded exact native conversion subset; no widening allowed'})
+                continue
+            try:
+                result.add(normalized({0: 'DOMAIN-KEYWORD', 2: 'DOMAIN-SUFFIX', 3: 'DOMAIN'}[kind], operand))
+            except (ValueError, UnicodeError) as error:
+                anomalies.append({'source': 'V2Fly', 'category': group, 'declaration': operand,
+                                  'code': 'unsupported-source-rule', 'reason': str(error)})
         return result
     for app in config['applications']:
         scope_exclusions[app['name']] = select(app.get('exclude_tags', []), app['name'])

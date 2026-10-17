@@ -1,10 +1,10 @@
 # Name: proxy
-# Updated: 2026-10-16 13:08:10 UTC
+# Updated: 2026-10-17 03:22:10 UTC
 # Source Authors: Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 26083
+# Rules: 26084
 # Managed by: WayX Rule Aggregator
 
 host,a4e8s8k3.map2.ssl.hwcdn.net,proxy
@@ -1781,6 +1781,7 @@ host-suffix,7mmtv.tv,proxy
 host-suffix,7tb.cc,proxy
 host-suffix,7tv.app,proxy
 host-suffix,7tv.io,proxy
+host-suffix,7x24hrs.com,proxy
 host-suffix,8-d.com,proxy
 host-suffix,80000sao.com,proxy
 host-suffix,8008206616.com,proxy

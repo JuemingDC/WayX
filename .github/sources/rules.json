@@ -47,6 +47,16 @@
       ]
     },
     {
+      "name": "steam",
+      "tags": [
+        "steam@cn"
+      ],
+      "split": true,
+      "proxy_tags": [
+        "steam@!cn"
+      ]
+    },
+    {
       "name": "x",
       "tags": [
         "twitter"
@@ -566,6 +576,15 @@
       "policy": "telegram",
       "url": "https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/telegramcidr.txt",
       "license": "GPL-3.0"
+    },
+    {
+      "id": "mihomo-steam-cn",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "steam",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/steam@cn.json",
+      "license": "See upstream LICENSE"
     }
   ],
   "indirect_upstreams": "Allowed; only direct blackmatrix7 inputs are excluded.",
