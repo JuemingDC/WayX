@@ -1,10 +1,10 @@
 # Name: media
-# Updated: 2026-10-17 19:39:17 UTC
+# Updated: 2026-10-18 19:34:20 UTC
 # Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 6811
+# Rules: 6821
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,cdn.globalsigncdn.com.cdn.cloudflare.net
@@ -88,7 +88,6 @@ DOMAIN,firebaselogging-pa.googleapis.com
 DOMAIN,firebaselogging.googleapis.com
 DOMAIN,firebaseperusertopics-pa.googleapis.com
 DOMAIN,firebaseremoteconfig.googleapis.com
-DOMAIN,flightsimulator.azureedge.net
 DOMAIN,gog.qtlglb.com
 DOMAIN,h-dazn.online-metrix.net
 DOMAIN,h-netflix.online-metrix.net
@@ -1515,8 +1514,15 @@ DOMAIN-SUFFIX,beeline.tv
 DOMAIN-SUFFIX,beesbfl.ru
 DOMAIN-SUFFIX,beescrm.ru
 DOMAIN-SUFFIX,beforeigners.com
+DOMAIN-SUFFIX,beget.app
+DOMAIN-SUFFIX,beget.cloud
 DOMAIN-SUFFIX,beget.com
+DOMAIN-SUFFIX,beget.de
+DOMAIN-SUFFIX,beget.hosting
+DOMAIN-SUFFIX,beget.pro
 DOMAIN-SUFFIX,beget.ru
+DOMAIN-SUFFIX,beget.tech
+DOMAIN-SUFFIX,begetcdn.cloud
 DOMAIN-SUFFIX,behance.net
 DOMAIN-SUFFIX,behindthescreenz.com
 DOMAIN-SUFFIX,bejeweledstars.com
@@ -1527,6 +1533,7 @@ DOMAIN-SUFFIX,bentobox.tv
 DOMAIN-SUFFIX,berizaryad.ru
 DOMAIN-SUFFIX,berkanawireless.com
 DOMAIN-SUFFIX,beru.ru
+DOMAIN-SUFFIX,beserver.ru
 DOMAIN-SUFFIX,best4bim.com
 DOMAIN-SUFFIX,bestbim.com
 DOMAIN-SUFFIX,bestdori.com
@@ -1534,6 +1541,7 @@ DOMAIN-SUFFIX,bestsrv.de
 DOMAIN-SUFFIX,betterbim.com
 DOMAIN-SUFFIX,betterwithautodesk.com
 DOMAIN-SUFFIX,beyondcore.com
+DOMAIN-SUFFIX,bget.ru
 DOMAIN-SUFFIX,bgm.tv
 DOMAIN-SUFFIX,bibox.com
 DOMAIN-SUFFIX,bigbeans.solutions
@@ -5624,6 +5632,7 @@ DOMAIN-SUFFIX,spore.com
 DOMAIN-SUFFIX,sportmail.ru
 DOMAIN-SUFFIX,spotifynewsroom.jp
 DOMAIN-SUFFIX,spotilocal.com
+DOMAIN-SUFFIX,sprut.io
 DOMAIN-SUFFIX,sptvbroadcast.com
 DOMAIN-SUFFIX,spyjinx.com
 DOMAIN-SUFFIX,spyrothedragon.com
@@ -6466,6 +6475,7 @@ DOMAIN-SUFFIX,xn--80aqcf7a6do.com
 DOMAIN-SUFFIX,xn--80arpq.xn--p1ai
 DOMAIN-SUFFIX,xn--80asgb.xn--p1ai
 DOMAIN-SUFFIX,xn--90absjljw3g.xn--p1ai
+DOMAIN-SUFFIX,xn--90aefb9d.xn--p1ai
 DOMAIN-SUFFIX,xn--d1acpjx3f.xn--p1ai
 DOMAIN-SUFFIX,xn--e1aigb.xn--p1ai
 DOMAIN-SUFFIX,xn--mts47c3w9b1qr.cn

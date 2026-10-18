@@ -1,10 +1,10 @@
 # Name: media
-# Updated: 2026-10-17 19:39:17 UTC
+# Updated: 2026-10-18 19:34:20 UTC
 # Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 6811
+# Rules: 6821
 # Managed by: WayX Rule Aggregator
 
 host,cdn.globalsigncdn.com.cdn.cloudflare.net,proxy
@@ -88,7 +88,6 @@ host,firebaselogging-pa.googleapis.com,proxy
 host,firebaselogging.googleapis.com,proxy
 host,firebaseperusertopics-pa.googleapis.com,proxy
 host,firebaseremoteconfig.googleapis.com,proxy
-host,flightsimulator.azureedge.net,proxy
 host,gog.qtlglb.com,proxy
 host,h-dazn.online-metrix.net,proxy
 host,h-netflix.online-metrix.net,proxy
@@ -1515,8 +1514,15 @@ host-suffix,beeline.tv,proxy
 host-suffix,beesbfl.ru,proxy
 host-suffix,beescrm.ru,proxy
 host-suffix,beforeigners.com,proxy
+host-suffix,beget.app,proxy
+host-suffix,beget.cloud,proxy
 host-suffix,beget.com,proxy
+host-suffix,beget.de,proxy
+host-suffix,beget.hosting,proxy
+host-suffix,beget.pro,proxy
 host-suffix,beget.ru,proxy
+host-suffix,beget.tech,proxy
+host-suffix,begetcdn.cloud,proxy
 host-suffix,behance.net,proxy
 host-suffix,behindthescreenz.com,proxy
 host-suffix,bejeweledstars.com,proxy
@@ -1527,6 +1533,7 @@ host-suffix,bentobox.tv,proxy
 host-suffix,berizaryad.ru,proxy
 host-suffix,berkanawireless.com,proxy
 host-suffix,beru.ru,proxy
+host-suffix,beserver.ru,proxy
 host-suffix,best4bim.com,proxy
 host-suffix,bestbim.com,proxy
 host-suffix,bestdori.com,proxy
@@ -1534,6 +1541,7 @@ host-suffix,bestsrv.de,proxy
 host-suffix,betterbim.com,proxy
 host-suffix,betterwithautodesk.com,proxy
 host-suffix,beyondcore.com,proxy
+host-suffix,bget.ru,proxy
 host-suffix,bgm.tv,proxy
 host-suffix,bibox.com,proxy
 host-suffix,bigbeans.solutions,proxy
@@ -5624,6 +5632,7 @@ host-suffix,spore.com,proxy
 host-suffix,sportmail.ru,proxy
 host-suffix,spotifynewsroom.jp,proxy
 host-suffix,spotilocal.com,proxy
+host-suffix,sprut.io,proxy
 host-suffix,sptvbroadcast.com,proxy
 host-suffix,spyjinx.com,proxy
 host-suffix,spyrothedragon.com,proxy
@@ -6466,6 +6475,7 @@ host-suffix,xn--80aqcf7a6do.com,proxy
 host-suffix,xn--80arpq.xn--p1ai,proxy
 host-suffix,xn--80asgb.xn--p1ai,proxy
 host-suffix,xn--90absjljw3g.xn--p1ai,proxy
+host-suffix,xn--90aefb9d.xn--p1ai,proxy
 host-suffix,xn--d1acpjx3f.xn--p1ai,proxy
 host-suffix,xn--e1aigb.xn--p1ai,proxy
 host-suffix,xn--mts47c3w9b1qr.cn,proxy
