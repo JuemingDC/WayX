@@ -1,10 +1,10 @@
 # Name: media
-# Updated: 2026-10-18 19:34:20 UTC
+# Updated: 2026-10-19 21:42:37 UTC
 # Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 6821
+# Rules: 6823
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,cdn.globalsigncdn.com.cdn.cloudflare.net
@@ -4392,6 +4392,7 @@ DOMAIN-SUFFIX,msnbc.com
 DOMAIN-SUFFIX,msoopent.com
 DOMAIN-SUFFIX,msys2.org
 DOMAIN-SUFFIX,mt.lv
+DOMAIN-SUFFIX,mts-link.ru
 DOMAIN-SUFFIX,mts-ws.net
 DOMAIN-SUFFIX,mts.ru
 DOMAIN-SUFFIX,mtsbank.ru
@@ -4990,6 +4991,7 @@ DOMAIN-SUFFIX,porniq.com
 DOMAIN-SUFFIX,pornmd.com
 DOMAIN-SUFFIX,portfoliowall.com
 DOMAIN-SUFFIX,postgresql.org
+DOMAIN-SUFFIX,postman.com
 DOMAIN-SUFFIX,posty.kr
 DOMAIN-SUFFIX,potplayer.tv
 DOMAIN-SUFFIX,poweranimator.com

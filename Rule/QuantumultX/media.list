@@ -1,10 +1,10 @@
 # Name: media
-# Updated: 2026-10-18 19:34:20 UTC
+# Updated: 2026-10-19 21:42:37 UTC
 # Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 6821
+# Rules: 6823
 # Managed by: WayX Rule Aggregator
 
 host,cdn.globalsigncdn.com.cdn.cloudflare.net,proxy
@@ -4392,6 +4392,7 @@ host-suffix,msnbc.com,proxy
 host-suffix,msoopent.com,proxy
 host-suffix,msys2.org,proxy
 host-suffix,mt.lv,proxy
+host-suffix,mts-link.ru,proxy
 host-suffix,mts-ws.net,proxy
 host-suffix,mts.ru,proxy
 host-suffix,mtsbank.ru,proxy
@@ -4990,6 +4991,7 @@ host-suffix,porniq.com,proxy
 host-suffix,pornmd.com,proxy
 host-suffix,portfoliowall.com,proxy
 host-suffix,postgresql.org,proxy
+host-suffix,postman.com,proxy
 host-suffix,posty.kr,proxy
 host-suffix,potplayer.tv,proxy
 host-suffix,poweranimator.com,proxy

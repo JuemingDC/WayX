@@ -1,10 +1,10 @@
 # Name: cn
-# Updated: 2026-10-18 19:34:20 UTC
+# Updated: 2026-10-19 21:42:37 UTC
 # Source Authors: DH-Teams, Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly, gaoyifan
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_All_Surge.list ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china.txt ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china6.txt ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_CN_3.list ; https://ruleset.skk.moe/List/ip/domestic.conf ; https://ruleset.skk.moe/List/non_ip/domestic.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 125713
+# Rules: 125714
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net
@@ -122097,11 +122097,9 @@ IP-CIDR6,2401:b180::/32,no-resolve
 IP-CIDR6,2401:b220::/32,no-resolve
 IP-CIDR6,2401:b340::/32,no-resolve
 IP-CIDR6,2401:b360::/32,no-resolve
-IP-CIDR6,2401:b400:11::/48,no-resolve
 IP-CIDR6,2401:b400:14::/48,no-resolve
 IP-CIDR6,2401:b400:16::/47,no-resolve
 IP-CIDR6,2401:b400:20::/47,no-resolve
-IP-CIDR6,2401:b400:8::/47,no-resolve
 IP-CIDR6,2401:b400::/32,no-resolve
 IP-CIDR6,2401:b400::/45,no-resolve
 IP-CIDR6,2401:b40::/32,no-resolve
@@ -123943,7 +123941,10 @@ IP-CIDR6,2406:840:9fc0::/43,no-resolve
 IP-CIDR6,2406:840:9fe0::/44,no-resolve
 IP-CIDR6,2406:840::/48,no-resolve
 IP-CIDR6,2406:840:a000::/35,no-resolve
-IP-CIDR6,2406:840:a00::/44,no-resolve
+IP-CIDR6,2406:840:a01::/48,no-resolve
+IP-CIDR6,2406:840:a02::/47,no-resolve
+IP-CIDR6,2406:840:a04::/46,no-resolve
+IP-CIDR6,2406:840:a08::/45,no-resolve
 IP-CIDR6,2406:840:a0::/43,no-resolve
 IP-CIDR6,2406:840:a12::/47,no-resolve
 IP-CIDR6,2406:840:a14::/46,no-resolve
@@ -124643,7 +124644,6 @@ IP-CIDR6,2408:4014::/31,no-resolve
 IP-CIDR6,2408:4016:1000::/36,no-resolve
 IP-CIDR6,2408:4016:100::/40,no-resolve
 IP-CIDR6,2408:4016:10::/44,no-resolve
-IP-CIDR6,2408:4016:1::/48,no-resolve
 IP-CIDR6,2408:4016:2000::/35,no-resolve
 IP-CIDR6,2408:4016:200::/39,no-resolve
 IP-CIDR6,2408:4016:20::/43,no-resolve
@@ -125633,6 +125633,7 @@ IP-CIDR6,2a0e:b107:2440::/44,no-resolve
 IP-CIDR6,2a0e:b107:740::/44,no-resolve
 IP-CIDR6,2a0f:1cc5:1600::/44,no-resolve
 IP-CIDR6,2a0f:1cc5:4700::/40,no-resolve
+IP-CIDR6,2a0f:6280:7400::/39,no-resolve
 IP-CIDR6,2a0f:9400:6110::/48,no-resolve
 IP-CIDR6,2a10:fa86::/34,no-resolve
 IP-CIDR6,2a12:cb41:1200::/44,no-resolve
