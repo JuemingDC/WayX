@@ -1,10 +1,10 @@
 # Name: proxy
-# Updated: 2026-10-17 23:51:29 UTC
+# Updated: 2026-10-19 01:26:15 UTC
 # Source Authors: Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 26087
+# Rules: 26094
 # Managed by: WayX Rule Aggregator
 
 host,a4e8s8k3.map2.ssl.hwcdn.net,proxy
@@ -3586,7 +3586,6 @@ host-suffix,asminternational.org,proxy
 host-suffix,asmr.gay,proxy
 host-suffix,asmrbuluo.com,proxy
 host-suffix,asn-online.org,proxy
-host-suffix,asobostudio.com,proxy
 host-suffix,asp-cc.com,proxy
 host-suffix,asp.net,proxy
 host-suffix,aspbjournals.org,proxy
@@ -4535,7 +4534,13 @@ host-suffix,beevpn.com,proxy
 host-suffix,beforeigners.com,proxy
 host-suffix,befuck.com,proxy
 host-suffix,befuck.net,proxy
+host-suffix,beget.app,proxy
+host-suffix,beget.cloud,proxy
 host-suffix,beget.com,proxy
+host-suffix,beget.hosting,proxy
+host-suffix,beget.pro,proxy
+host-suffix,beget.tech,proxy
+host-suffix,begetcdn.cloud,proxy
 host-suffix,begin-trade.com,proxy
 host-suffix,behance.net,proxy
 host-suffix,behindthescreenz.com,proxy
@@ -9531,7 +9536,6 @@ host-suffix,fli8.xyz,proxy
 host-suffix,flickr.com,proxy
 host-suffix,flickr.net,proxy
 host-suffix,flightradar24.com,proxy
-host-suffix,flightsimulator.com,proxy
 host-suffix,flipboard.com,proxy
 host-suffix,flipfap.com,proxy
 host-suffix,flipkart.com,proxy
@@ -18623,6 +18627,7 @@ host-suffix,putaozy98.com,proxy
 host-suffix,putaozy99.com,proxy
 host-suffix,putinho.net,proxy
 host-suffix,putty.org,proxy
+host-suffix,pv-cdn.net,proxy
 host-suffix,pvp.net,proxy
 host-suffix,pvp.tv,proxy
 host-suffix,pvt.sexy,proxy
@@ -20789,6 +20794,7 @@ host-suffix,springernature.com,proxy
 host-suffix,springwood.me,proxy
 host-suffix,sprinklesapp.com,proxy
 host-suffix,sproutcore.com,proxy
+host-suffix,sprut.io,proxy
 host-suffix,sptvbroadcast.com,proxy
 host-suffix,sputnikglobe.com,proxy
 host-suffix,sputnikimages.com,proxy
@@ -24663,6 +24669,7 @@ host-suffix,xn--8uq428d76d.tokyo,proxy
 host-suffix,xn--90ab.com,proxy
 host-suffix,xn--90ab2c.xn--p1ai,proxy
 host-suffix,xn--90absjljw3g.xn--p1ai,proxy
+host-suffix,xn--90aefb9d.xn--p1ai,proxy
 host-suffix,xn--90aifd0az.shop,proxy
 host-suffix,xn--90aifd0azb.xn--p1acf,proxy
 host-suffix,xn--90wwvt03e.com,proxy
