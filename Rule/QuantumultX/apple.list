@@ -1,10 +1,10 @@
 # Name: apple
-# Updated: 2026-10-16 12:08:00 UTC
-# Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, V2Fly
+# Updated: 2026-10-20 20:48:19 UTC
+# Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, V2Fly, 奶思 / fmz200
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list ; https://ruleset.skk.moe/List/non_ip/stream.conf
+# Sources: https://github.com/fmz200/wool_scripts/raw/main/QuantumultX/filter/filterFix.list ; https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1795
+# Rules: 1799
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,direct
@@ -249,6 +249,7 @@ host,swcdn.apple.com,direct
 host,swdist.apple.com,direct
 host,swscan.apple.com,direct
 host,sylvan.apple.com,direct
+host,time.apple.com,direct
 host,tj-pod1-smp-device.apple.com,direct
 host,tj-pod2-smp-device.apple.com,direct
 host,tj-pod3-smp-device.apple.com,direct
@@ -410,6 +411,9 @@ host-suffix,quicktime.com.au,direct
 host-suffix,researchkit.com.cn,direct
 host-suffix,swiftui.com.cn,direct
 host-suffix,tv.apple.com,proxy
+host-suffix,weather-analytics-events.apple.com,direct
+host-suffix,weather-data.apple.com,direct
+host-suffix,weather-map.apple.com,direct
 host-suffix,webobjects.co.uk,direct
 host-suffix,100beatscheap.com,direct
 host-suffix,12diasdepresentesdeitunes.com,direct

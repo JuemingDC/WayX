@@ -2,9 +2,9 @@
 # Description: 移除网页广告。
 # Author: RuCu6[https://github.com/RuCu6]
 # Icon: https://rucu6.pages.dev/Icons/app/webpage.png
-# Updated: 2026-08-30 10:10
+# Updated: 2026-10-20 16:30
 
-# Converted: 2026-10-16 13:45:12 +08:00
+# Converted: 2026-10-21 04:49:55 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/webpage.lpx
@@ -66,6 +66,9 @@ host, yhg007.com, PROXY
 # 18hlw_web_ads
 (?i)^https:\/\/(?:18hlw\.com|8olbt\.imsatcmn\.cc)\/ url script-response-body https://rucu6.pages.dev/Scripts/webpage/myblockads.js
 
+# javrk_web_ads
+{# 什么值得冲 //javranking.cc #} (?i)^https:\/\/javranking\.cc\/(?:zh-hans|en)\/ url script-response-body https://rucu6.pages.dev/Scripts/webpage/myblockads.js
+
 # 52ywy_web_ads
 {# 夜未央 //miniapp2.52ywy.com #} (?i)^https:\/\/miniapp2\.52ywy\.com\/(?:ywyminiappbot\/(?:getLatest|getLatestAll|getCategoryVideos|getSearch|series|movies|tv|av|getbloger)|player\/getPlayer)(\?|$) url script-response-body https://rucu6.pages.dev/Scripts/webpage/52ywy.js
 
@@ -88,4 +91,4 @@ host, yhg007.com, PROXY
 {# PornHub //*.pornhub.com #} (?i)^https:\/\/cn\.pornhub\.com\/ url script-response-body https://rucu6.pages.dev/Scripts/webpage/pornhub.js
 
 # [mitm]
-hostname = *.google.cn, asserts.avple.tv, kelee.one, rule.kelee.one, e-hentai.org, exhentai.org, *.pornhub.com, boxer.baidu.com, m.baidu.com, www.baidu.com, zhidao.baidu.com, www.hgeme.com, www.xn--wcv59z.com, yhg007.com, *.111107?.xyz, 18hlw.com, 8olbt.imsatcmn.cc, miniapp2.52ywy.com, *.zimuquan*.top, *.zimuquan*.uk, *.zimuquan*.com, hanime1.me, javdb.com, missav.ai, missav.fans, missav.ws
+hostname = *.google.cn, asserts.avple.tv, kelee.one, rule.kelee.one, e-hentai.org, exhentai.org, *.pornhub.com, boxer.baidu.com, m.baidu.com, www.baidu.com, zhidao.baidu.com, www.hgeme.com, www.xn--wcv59z.com, yhg007.com, *.111107?.xyz, 18hlw.com, 8olbt.imsatcmn.cc, javranking.cc, miniapp2.52ywy.com, *.zimuquan*.top, *.zimuquan*.uk, *.zimuquan*.com, hanime1.me, javdb.com, missav.ai, missav.fans, missav.ws

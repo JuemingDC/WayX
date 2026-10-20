@@ -1,10 +1,10 @@
 # Name: apple_direct
-# Updated: 2026-10-16 10:42:40 UTC
-# Source Authors: Nexitally, V2Fly
+# Updated: 2026-10-20 20:48:19 UTC
+# Source Authors: Nexitally, V2Fly, 奶思 / fmz200
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list
+# Sources: https://github.com/fmz200/wool_scripts/raw/main/QuantumultX/filter/filterFix.list ; https://github.com/v2fly/domain-list-community ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1779
+# Rules: 1783
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net
@@ -237,6 +237,7 @@ DOMAIN,swcdn.apple.com
 DOMAIN,swdist.apple.com
 DOMAIN,swscan.apple.com
 DOMAIN,sylvan.apple.com
+DOMAIN,time.apple.com
 DOMAIN,tj-pod1-smp-device.apple.com
 DOMAIN,tj-pod2-smp-device.apple.com
 DOMAIN,tj-pod3-smp-device.apple.com
@@ -396,6 +397,9 @@ DOMAIN-SUFFIX,push.apple.com
 DOMAIN-SUFFIX,quicktime.com.au
 DOMAIN-SUFFIX,researchkit.com.cn
 DOMAIN-SUFFIX,swiftui.com.cn
+DOMAIN-SUFFIX,weather-analytics-events.apple.com
+DOMAIN-SUFFIX,weather-data.apple.com
+DOMAIN-SUFFIX,weather-map.apple.com
 DOMAIN-SUFFIX,webobjects.co.uk
 DOMAIN-SUFFIX,100beatscheap.com
 DOMAIN-SUFFIX,12diasdepresentesdeitunes.com
