@@ -4,15 +4,21 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { writeValidationEvidence } from '../src/workflow.mjs';
+import { writeValidationEvidence, validationArtifactDigest, qxTargetPath, surgeTargetPath } from '../src/workflow.mjs';
 import { targetRegexValidationInventory } from '../src/core.mjs';
-import { validateQX } from "../src/output.mjs";
+import { validateQX, validateQxFilterList, validateSurgeRuleSet, validateSurgeRuleSection, validateConversionMetadata } from "../src/output.mjs";
 import { parseLoonPlugin } from "../src/input.mjs";
 import { validateSurgeModule } from "../src/output.mjs";
 
 const ROOT = process.cwd();
 const findings = [];
 const validated = { qx: 0, surge: 0, loon: 0 };
+const artifacts = {};
+const catalog = JSON.parse(await fs.readFile('.github/sources/loon.json','utf8'));
+const managed = new Map(catalog.flatMap(entry=>[
+  [qxTargetPath(entry),{entry,target:'qx'}], [surgeTargetPath(entry),{entry,target:'surge'}],
+]));
+const routing = new Set(Object.keys(JSON.parse(await fs.readFile('.github/sources/rules-state.json','utf8')).outputs));
 
 async function walk(dir) {
   const out = [];
@@ -35,7 +41,7 @@ const active = line => {
 const files = await walk(ROOT);
 for (const file of files) {
   const rp = rel(file);
-  if (!/\.(?:snippet|sgmodule|mjs|js|json|md|txt|yml|yaml|py|lpx|jq|list)$/i.test(rp)) continue;
+  if (!/\.(?:snippet|sgmodule|mjs|js|json|md|txt|yml|yaml|py|lpx|jq|list|dconf)$/i.test(rp)) continue;
 
   let text;
   try { text = await fs.readFile(file, 'utf8'); } catch { continue; }
@@ -43,6 +49,20 @@ for (const file of files) {
   if (/\r/.test(text)) add(file, 1, 'crlf', 'CR/CRLF newline present');
 
   const lines = text.split('\n');
+  artifacts[rp] = validationArtifactDigest(text);
+  if(managed.has(rp)) {
+    const {entry,target}=managed.get(rp);
+    try {validateConversionMetadata(text,entry,target);}
+    catch(error){add(file,1,'conversion-metadata',error.message);}
+  }
+
+  if(routing.has(rp)) {
+    try {
+      if(rp.startsWith('Rule/QuantumultX/'))validateQxFilterList(text,{id:rp},{builtInPoliciesOnly:true});
+      else if(rp.endsWith('.dconf'))validateSurgeRuleSection(text,{id:rp});
+      else validateSurgeRuleSet(text,{id:rp});
+    } catch(error){add(file,1,'rule-format',error.message);}
+  }
 
   if (rp.endsWith('.snippet')) {
     try {
@@ -126,7 +146,12 @@ if(regexAudit.error || regexAudit.status!==0) {
   findings.push({file:'.github/converter',line:1,code:'target-icu-regex',text:regexAudit.error?.message || regexAudit.stderr || regexAudit.stdout});
 } else console.log(regexAudit.stdout.trim());
 
-await writeValidationEvidence(validated.qx+validated.surge+validated.loon,findings,{regexPatterns:targetRegexValidationInventory().length});
+const plugins=catalog.filter(entry=>['Resource/Loon/'+entry.file,qxTargetPath(entry),surgeTargetPath(entry)]
+  .every(file=>artifacts[file])).map(entry=>entry.id);
+for(const entry of catalog)for(const file of ['Resource/Loon/'+entry.file,qxTargetPath(entry),surgeTargetPath(entry)]) {
+  if(!artifacts[file])findings.push({file,line:1,code:'missing-conversion-artifact',text:entry.id+': missing generated file'});
+}
+await writeValidationEvidence(validated.qx+validated.surge+validated.loon,findings,{regexPatterns:targetRegexValidationInventory().length,plugins,artifacts});
 
 if (findings.length) {
   console.error('Repository audit failed with ' + findings.length + ' finding(s):');

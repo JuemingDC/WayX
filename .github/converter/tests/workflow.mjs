@@ -9,7 +9,7 @@ import path from "node:path";
 import { conversionStampFromText, firstConversionStamp, generatedScriptDiffs, inspectManagedSource, isWayxGeneratedHelperFilename, managedSourceDigest, managedTargetDiffs, normalizeManagedSource, readCatalogSource, readManagedTargetState, syncGeneratedScripts, syncManagedSource, writeManagedSource, writeManagedTargets, ORIGINAL_FETCH_PROFILES, WAYX_FETCH_UA, WAYX_LOON_FETCH_UA, resolveOriginalUrl, selectOriginalFetchProfile, loadLoonSourceCatalog, qxTargetPath, surgeTargetPath } from "../src/index.mjs";
 import { recordOutputMismatch, outputMismatch, validationArtifactDigest, writeValidationEvidence, createWorkflowFailureReporter, formatWorkflowErrorAnnotation, buildSyncFailure, failureDeclarationContext, README_AUTO_UPDATE_INTERVAL, QX_MIXED_REWRITE_MIN_BUILD, buildReadmePlan, qxAddResourceUrl, qxSnippetInstallUrl, surgeModuleInstallUrl } from "../src/workflow.mjs";
 import { isLoonPluginSource } from "../../scripts/sync-convert.mjs";
-import {validateQxFilterList,validateSurgeRuleSet} from '../src/output.mjs';
+import {validateQxFilterList,validateSurgeRuleSet,validateSurgeRuleSection} from '../src/output.mjs';
 import { syncFailureIssueBody, syncFailureTitle, targetProblemIssueBody, targetProblemTitle, monitorFailureTitle, monitorFailureIssueBody, recoveredMonitorIssues, validationIssueCandidates, validationFailureTitle, validationFailureIssueBody, recoveredValidationIssues, recoveredConversionIssues } from "../../scripts/propose-conversion-issues.mjs";
 
 import { spawnSync as runIsolatedCase } from 'node:child_process';
@@ -287,7 +287,7 @@ const automationRoot=await fs.mkdtemp(path.join(os.tmpdir(),'wayx-pipeline-'));
 try {
   await fs.mkdir(path.join(automationRoot,'.github/monitor/.runtime'),{recursive:true});
   const output=path.join(automationRoot,'output');
-  const required=['syntax','catalog','rules','checkpoint','loon_sync','verify','reports','issues'];
+  const required=['catalog','rules','loon_sync','verify','reports','issues'];
   const outcomes=Object.fromEntries(required.map(name=>[name,{outcome:'success'}]));
   const gate=async(stages,integrity='true',monitor='false',complete='true',evidence=null)=>{
     const validation=evidence||{version:1,stages:Object.fromEntries(Object.entries(stages).filter(([name])=>name!=='issues').map(([name,value])=>[name,{complete:true,checks:[{id:'fixture',status:value.outcome==='success'?'passed':'failed'}]}]))};
@@ -298,7 +298,7 @@ try {
     return JSON.parse(await fs.readFile(path.join(automationRoot,'.github/monitor/.runtime/pipeline-result.json'),'utf8'));
   };
   assert.equal((await gate(outcomes)).publishable,true);
-  for(const evidence of [{version:1,stages:{}},{version:1,stages:{syntax:{complete:false,checks:[]}}}])assert.equal((await gate(outcomes,'true','false','true',evidence)).publishable,false,'missing/incomplete machine checks must block green workflow outcomes');
+  for(const evidence of [{version:1,stages:{}},{version:1,stages:{verify:{complete:false,checks:[]}}}])assert.equal((await gate(outcomes,'true','false','true',evidence)).publishable,false,'missing/incomplete machine checks must block green workflow outcomes');
   for(const name of required)for(const outcome of ['failure','skipped']) {
     const result=await gate({...outcomes,[name]:{outcome}});
     assert.equal(result.publishable,false);assert.ok(result.failedGates.includes(name));
@@ -368,6 +368,7 @@ module.execute_checks('fixture', [('first-fails',[sys.executable,'-c','raise Sys
   validateQxFilterList('# Name: Native\nhost,example.com,direct\nhost-wildcard,*.example.com,proxy\n');
   validateSurgeRuleSet('DOMAIN,example.com\nAND,((DOMAIN-SUFFIX,example.net),(NOT,((DOMAIN,static.example.net))))\nPROCESS-NAME,Claude Helper\n');
   assert.throws(()=>validateSurgeRuleSet('DOMAIN,example.com,PROXY\n'),/options\/policy/);
+  validateSurgeRuleSection('[Rule]\nDOMAIN,domestic.test,DIRECT\nDOMAIN-KEYWORD,podcasts.apple.com,PROXY\n');
   assert.throws(()=>validateQxFilterList('PROCESS-NAME,Claude,proxy\n'),/unsupported QX filter/);
   assert.throws(()=>validateQxFilterList('host,example.com\n'));
   validateQxFilterList('host,one.test,direct\nhost,two.test,reject\nhost,three.test,proxy\n',{id:'mixed'},{builtInPoliciesOnly:true});
@@ -450,6 +451,15 @@ assert metadata['Rule/Surge/brand_direct.list']['category']=='app'
 assert 'NOT,((DOMAIN,static.proxy.example.com))' in outputs['Rule/Surge/brand_proxy.list']
 assert any(item['code']=='filtered-desktop-rule' for item in anomalies)
 assert not any(item['code']=='filtered-unsupported-target' for item in anomalies)
+# An independent mixed-policy source must not leak into cn or create split outputs.
+independent={**config,'sources':[{'id':'fix','format':'ruleset','author':'Fixture','url':'https://example.test/fix','category':'filterfix','standalone':True}]}
+fixed,_,_=m.build(independent,{'geosite':encoded,'fix':b'# original comment\nhost,domestic.test,direct\nhost-keyword,podcasts.apple.com,proxy\n'})
+assert 'Rule/Surge/cn_proxy.list' not in fixed
+assert 'Rule/Surge/filterfix_proxy.list' not in fixed
+assert 'DOMAIN-KEYWORD,podcasts.apple.com,PROXY' in fixed['Rule/Surge/filterfix.dconf']
+assert '# original comment' in fixed['Rule/Surge/filterfix.dconf']
+assert 'host,domestic.test,direct' in fixed['Rule/QuantumultX/filterfix.list']
+assert all('domestic.test' not in text and 'podcasts.apple.com' not in text for name,text in fixed.items() if 'filterfix' not in name)
 # Mixed files keep explicit direct/reject and normalize every placeholder to proxy.
 mixed,_,_=m.build(config,{'geosite':encoded,'supplement':b'DOMAIN,static.proxy.example.com,DIRECT\nDOMAIN,blocked.example.com,REJECT-DROP\nDOMAIN,blocked.example.com,PROXY\nDOMAIN,extra.test,PROXY'})
 mixed_qx=mixed['Rule/QuantumultX/brand.list']
@@ -611,7 +621,7 @@ console.log('Workflow lifecycle/result boundary contract passed');
 
 if (selectedCase === "upstream-automation.mjs") {
   const scopedWorkflow=await fs.readFile('.github/workflows/converter-check.yml','utf8');
-  assert.ok(scopedWorkflow.indexOf('Refresh Kelee ad-block and dependency catalog')<scopedWorkflow.indexOf('Converter checkpoint'),'catalog refresh must precede category-sensitive golden checks');
+  assert.doesNotMatch(scopedWorkflow,/id: checkpoint|automation\.py syntax/,'routine sync does not run regression suites or a global syntax prescan');
   const issueFixture=await fs.mkdtemp(path.join(os.tmpdir(),'wayx-issues-'));
   try {
     await fs.mkdir(path.join(issueFixture,'.github/sources'),{recursive:true});
@@ -719,13 +729,14 @@ if (selectedCase === "upstream-automation.mjs") {
     await fs.writeFile(path.join(issueFixture,'Adblock/Surge/test.sgmodule'),'[Rule]\nDOMAIN,example.test,REJECT\n');
     await fs.writeFile(baseline,JSON.stringify(validBaseline));
     const runReports=()=>runIsolatedCase(process.execPath,[new URL('../tools/conversion-reports.mjs',import.meta.url).pathname],{cwd:issueFixture,encoding:'utf8'});
-    assert.notEqual(runReports().status,0,'missing canonical evidence cannot imply successful conversion');
+    assert.notEqual(runReports().status,0,'missing final-output evidence cannot imply successful conversion');
     const artifacts={};
     for(const file of ['Resource/Loon/test.lpx','Adblock/Quantumult X/test.snippet','Adblock/Surge/test.sgmodule'])artifacts[file]=validationArtifactDigest(await fs.readFile(path.join(issueFixture,file),'utf8'));
-    await fs.writeFile(path.join(runtime,'validation-results.json'),JSON.stringify({version:1,stages:{verify:{complete:true,checks:[{id:'tools/regenerate-canonical.mjs',status:'passed',coverage:{plugins:[plugin.id],artifacts}}]}}}));
+    await fs.writeFile(path.join(runtime,'sync-failures.json'),JSON.stringify({version:2,failures:[],publishable:true,convertedPlugins:[plugin.id]}));
+    await fs.writeFile(path.join(runtime,'validation-results.json'),JSON.stringify({version:1,stages:{verify:{complete:true,checks:[{id:'tools/audit-repository.mjs',status:'passed',coverage:{plugins:[plugin.id],artifacts}}]}}}));
     const reported=runReports();assert.equal(reported.status,0,reported.stderr);
     await fs.appendFile(path.join(issueFixture,'Adblock/Surge/test.sgmodule'),'DOMAIN,changed.test,REJECT\n');
-    assert.notEqual(runReports().status,0,'stale canonical evidence cannot validate changed outputs');
+    assert.notEqual(runReports().status,0,'stale final-output evidence cannot validate changed outputs');
     await fs.writeFile(path.join(issueFixture,'Adblock/Surge/test.sgmodule'),'[Rule]\nDOMAIN,example.test,REJECT\n');
 
     assert.ok(reported.stdout.includes('qx Review count increased from 0 to 1'),'use migrated baseline, not decoy old path');
@@ -1278,8 +1289,8 @@ if(selectedCase==='managed-artifacts.mjs') {
     const same=await syncCatalogEntry(e,{root,log:()=>{},fetchText:async()=>text.replace(/\n/g,'\r\n'),
       materialize:async(...args)=>{calls.push('dependencies');return materializeConversionRunContext(...args);},
       convert:(...args)=>{calls.push('conversion');return convertPluginWithContext(...args);},
-      validate:(...args)=>{calls.push('validation');return validateConvertedPlugin(...args);}});
-    assert.deepEqual(calls,['dependencies','conversion','validation'],'unchanged upstream is fully converted');
+      });
+    assert.deepEqual(calls,['dependencies','conversion'],'upstream is converted once; target validation belongs to the final audit');
     assert.equal(same.changed,false);assert.deepEqual(same.targetChanges,[]);assert.deepEqual(same.helperChanges,[]);
     assert.deepEqual(await inventory(),baselineUnchanged,'identical output preserves every artifact byte despite fresh candidate timestamps');
     for(const [file,time] of beforeTimes)assert.equal((await fs.stat(path.join(root,file))).mtimeMs,time,'unchanged artifact must not be rewritten: '+file);

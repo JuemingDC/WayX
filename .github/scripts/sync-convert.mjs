@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadLoonSourceCatalog, fetchOriginalText } from '../converter/src/input.mjs';
-import { materializeConversionRunContext, convertPluginWithContext, validateConvertedPlugin } from '../converter/src/conversion.mjs';
+import { materializeConversionRunContext, convertPluginWithContext } from '../converter/src/conversion.mjs';
 import { createWorkflowFailureReporter, writeReadmePlan, normalizeManagedSource, nowConversionStamp, inspectManagedSource, readCatalogSource, readManagedTargetState, commitManagedConversion, buildSyncFailure, writeSyncFailureReport } from '../converter/src/workflow.mjs';
 import { collectIssueCandidates } from './propose-conversion-issues.mjs';
 
@@ -18,7 +18,7 @@ export function isLoonPluginSource(text) {
 // continues only after a failure has left the previous artifacts intact.
 export async function syncCatalogEntry(entry,{
   root=ROOT,fetchText=fetchOriginalText,materialize=materializeConversionRunContext,
-  convert=convertPluginWithContext,validate=validateConvertedPlugin,commit=commitManagedConversion,
+  convert=convertPluginWithContext,commit=commitManagedConversion,
   log=console.log,
 }={}) {
   let stage='read-current-source',previousSource=null,source=null,targetState=null;
@@ -42,7 +42,6 @@ export async function syncCatalogEntry(entry,{
     }
     const context=await materialize(entry,source,{onStage});
     const out=convert(entry,source,context,{stamp:nowConversionStamp(),rawBase:RAW_BASE,onStage});
-    validate(entry,out,{onStage});
     stage='review-target-mapping';
     if(/^# \[WayX\].*(?:REVIEW REQUIRED|ISSUE REQUIRED)/m.test(out.qx+'\n'+out.surge)) {
       declarations=[...(out.qx+'\n'+out.surge).matchAll(/^# Source declaration:\s*(.+)$/gm)].map(match=>({section:'Source',line:match[1]}));

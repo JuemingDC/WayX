@@ -53,19 +53,10 @@ jobs:
           set -euo pipefail
           python .github/scripts/automation.py prepare
 
-      - name: Syntax check repository JavaScript and Python
-        id: syntax
-        continue-on-error: true
-        shell: bash
-        run: |
-          set -euo pipefail
-          python .github/scripts/automation.py syntax
-
       - name: Refresh plugin catalogs and prune retired artifacts
         id: catalog
         env:
           RUCU6_LIST_URL: ${{ vars.RUCU6_LIST_URL }}
-        if: steps.syntax.outcome == 'success'
         continue-on-error: true
         shell: bash
         run: |
@@ -83,18 +74,9 @@ jobs:
           set -euo pipefail
           python .github/scripts/automation.py rules
 
-      - name: Converter checkpoint
-        id: checkpoint
-        if: steps.catalog.outcome == 'success'
-        continue-on-error: true
-        shell: bash
-        run: |
-          set -euo pipefail
-          python .github/scripts/automation.py checkpoint 2>&1 | tee .github/monitor/.runtime/checkpoint.log
-
       - name: Pull discovered upstreams and convert
         id: loon_sync
-        if: steps.checkpoint.outcome == 'success'
+        if: steps.catalog.outcome == 'success'
         continue-on-error: true
         shell: bash
         run: |
@@ -112,7 +94,7 @@ jobs:
 
       - name: Check monitored upstream specifications
         id: monitor
-        if: env.PUBLISH_BRANCH != '' && steps.syntax.outcome == 'success'
+        if: env.PUBLISH_BRANCH != '' && steps.catalog.outcome == 'success'
         continue-on-error: true
         shell: bash
         env:

@@ -224,9 +224,10 @@ const manualConfig=await readJson(MANUAL_ASSETS,{version:1,assets:[]});
 const reconciliation={version:1,entries:[],summary:{plugins:catalog.length,sourceItems:0,arguments:0,qxReconciled:0,surgeReconciled:0}};
 const inventory=[];
 const validation=await readJson(path.join(ROOT,'.github/monitor/.runtime/validation-results.json'),{stages:{}});
-const canonical=validation.stages?.verify?.checks?.find(check=>check.id==='tools/regenerate-canonical.mjs');
-const verifiedPlugins=new Set(canonical?.coverage?.plugins||[]);
+const audit=validation.stages?.verify?.checks?.find(check=>check.id==='tools/audit-repository.mjs'&&check.status==='passed');
 const sync=await readJson(path.join(ROOT,'.github/monitor/.runtime/sync-failures.json'),{});
+const auditedPlugins=new Set(audit?.coverage?.plugins||[]);
+const verifiedPlugins=new Set(sync.publishable===true?(sync.convertedPlugins||[]).filter(id=>auditedPlugins.has(id)):[]);
 const retainedPlugins=new Set(sync.publishable===true?(sync.retainedPlugins||[]).filter(id=>sync.failures?.some(failure=>failure.plugin.id===id)):[]);
 
 for (const entry of catalog) {
@@ -235,9 +236,9 @@ for (const entry of catalog) {
   const surgePath=path.join(ROOT,surgeTargetPath(entry));
   const [source,qx,surge]=await Promise.all([read(sourcePath),read(qxPath),read(surgePath)]);
   const parsed=sourceItems(source);
-  const sourceVerified=verifiedPlugins.has(entry.id)&&canonical.coverage.artifacts?.[rel(sourcePath)]===validationArtifactDigest(source);
-  const qxRecon=reconcileTarget(parsed.items,qx,'qx',sourceVerified&&canonical.coverage.artifacts?.[rel(qxPath)]===validationArtifactDigest(qx));
-  const surgeRecon=reconcileTarget(parsed.items,surge,'surge',sourceVerified&&canonical.coverage.artifacts?.[rel(surgePath)]===validationArtifactDigest(surge));
+  const sourceVerified=verifiedPlugins.has(entry.id)&&audit.coverage.artifacts?.[rel(sourcePath)]===validationArtifactDigest(source);
+  const qxRecon=reconcileTarget(parsed.items,qx,'qx',sourceVerified&&audit.coverage.artifacts?.[rel(qxPath)]===validationArtifactDigest(qx));
+  const surgeRecon=reconcileTarget(parsed.items,surge,'surge',sourceVerified&&audit.coverage.artifacts?.[rel(surgePath)]===validationArtifactDigest(surge));
   reconciliation.entries.push({
     id:entry.id,
     retained:retainedPlugins.has(entry.id),
@@ -295,8 +296,8 @@ console.log('Review totals: QX='+(reviewInventory.review.byPlatform.qx||0)+', Su
 const bad=reconciliation.entries.filter(entry=>!entry.retained&&(!entry.qx.reconciled||!entry.surge.reconciled));
 if(bad.length){
   for(const entry of bad){
-    if(!entry.qx.reconciled) console.error('::error title=QX reconciliation failed::'+entry.id+' lacks canonical verification or has unmatched source/target declarations');
-    if(!entry.surge.reconciled) console.error('::error title=Surge reconciliation failed::'+entry.id+' lacks canonical verification or has unmatched source/target declarations');
+    if(!entry.qx.reconciled) console.error('::error title=QX reconciliation failed::'+entry.id+' lacks current conversion/output evidence or has unmatched source/target declarations');
+    if(!entry.surge.reconciled) console.error('::error title=Surge reconciliation failed::'+entry.id+' lacks current conversion/output evidence or has unmatched source/target declarations');
   }
   process.exitCode=1;
 }

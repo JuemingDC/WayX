@@ -5,7 +5,7 @@
 import fs from 'node:fs/promises';
 import {writeValidationEvidence} from '../src/workflow.mjs';
 import {execFileSync} from 'node:child_process';
-import {validateQxFilterList,validateSurgeRuleSet,validateQX} from "../src/output.mjs";
+import {validateQxFilterList,validateSurgeRuleSet,validateSurgeRuleSection,validateQX} from "../src/output.mjs";
 import {validateSurgeModule} from "../src/output.mjs";
 import {validateConversionMetadata} from "../src/output.mjs";
 import {loadLoonSourceCatalog} from "../src/input.mjs";
@@ -35,9 +35,10 @@ try {routing=JSON.parse(await fs.readFile('.github/sources/rules-state.json','ut
 catch(error){if(error.code!=='ENOENT')throw error;}
 for(const file of Object.keys(routing.outputs||{})) {
  try {
-  if(!/^Rule\/(?:QuantumultX|Surge)\/[a-z0-9_]+\.list$/.test(file))throw new Error('Invalid managed rule collection path');
+  if(!/^Rule\/(?:QuantumultX\/[a-z0-9_]+\.list|Surge\/[a-z0-9_]+\.(?:list|dconf))$/.test(file))throw new Error('Invalid managed rule collection path');
   const text=await fs.readFile(file,'utf8');
   if(file.startsWith('Rule/QuantumultX/'))validateQxFilterList(text,{id:file},{builtInPoliciesOnly:true});
+  else if(file.endsWith('.dconf'))validateSurgeRuleSection(text,{id:file});
   else validateSurgeRuleSet(text,{id:file});
  }catch(error){errors.push({file,code:'rule-collection-format',text:String(error.message||error)});}
 }
