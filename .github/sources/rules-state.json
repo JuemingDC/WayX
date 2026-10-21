@@ -18,8 +18,8 @@
     "Rule/QuantumultX/media.list": "8a65c180fddd9aebeffc6cce8196840d326452ccf1ca9f6359b8663be7ca7363",
     "Rule/QuantumultX/cn.list": "df90af43f9aaad1411645ef787a0adeebf8f1621bd6ef7c0cf6e7b7d850b5a1b",
     "Rule/QuantumultX/proxy.list": "83796c4ea3b4c8ebea4fef9633cdca812a6078c825bc8ee1ed1015aa4b80e3e3",
-    "Rule/QuantumultX/adblock.list": "279c52a6ada3593e6acb200a43ffb1e499b0443db5a89f59947e7e6087739842",
-    "Rule/QuantumultX/adblock_extra.list": "8f5a7d548ebe50fb460ae413de058fea8c5dcec9337683a3930f0e5fae8d700d",
+    "Rule/QuantumultX/adblock.list": "a346bed8eabdda46afc3bab1c0a1b05e7fda36fd81cc3c95ab603cdd6d56a4f0",
+    "Rule/QuantumultX/adblock_extra.list": "3127e447ab7fc2eac9a3195214bf6e50dce94cdb9c61480bfac1f0993ac5e370",
     "Rule/Surge/google.list": "f3ecea930e42504268c0005adc897e2f439b0f78fccc62eda25428620f156a8f",
     "Rule/Surge/facebook.list": "a019fcd24cd83cf876b562480ffaa609727c51c2322d338fcd011fdd7c0c6284",
     "Rule/Surge/netflix.list": "68a65cdd61f12260137e28ef84cd0ec256cb9d1041dfb28058fb515393a85cef",
@@ -39,8 +39,8 @@
     "Rule/Surge/media.list": "f41f91873be9e0b8d2596f886515a94283e68a3c53f2a91f5d947ef57c972db5",
     "Rule/Surge/cn.list": "2912640e2fa1729b0315a65743eb766c27d9750ebb8fc54f4e01c0d46beac4a9",
     "Rule/Surge/proxy.list": "3f955a648a72327adbf6137f003b93e07d188f899fc622429969596d37a99945",
-    "Rule/Surge/adblock.list": "279ffa981691f366e9ffd2777f1adc811370025c7c5eecd5594d3f40533d3001",
-    "Rule/Surge/adblock_extra.list": "93c00744e98ee2d0cd251a46cbe9e8354436447c5a682062364ce5b02aea64c5",
+    "Rule/Surge/adblock.list": "986c583fa2b000576b89d0a9acf184b6cb64ec8775205487e50dc6237e34d71f",
+    "Rule/Surge/adblock_extra.list": "b3eda696c255178b97d5bf00c5fa986b319261faee119ef46a551a792a3ba8d2",
     "Rule/QuantumultX/filterfix.list": "5c0caa3df0f67bcaf9e34930a3a32fad183bc889eb4a2ed462628d84e09ce4b1",
     "Rule/Surge/filterfix.dconf": "1ff3fab6d009e3a53d8ef05849c4447a8fa3346cbf631b41efd5b3e505336828"
   },
@@ -62,8 +62,8 @@
     "Rule/QuantumultX/media.list": 6834,
     "Rule/QuantumultX/cn.list": 125714,
     "Rule/QuantumultX/proxy.list": 26097,
-    "Rule/QuantumultX/adblock.list": 265834,
-    "Rule/QuantumultX/adblock_extra.list": 3753,
+    "Rule/QuantumultX/adblock.list": 266201,
+    "Rule/QuantumultX/adblock_extra.list": 3750,
     "Rule/Surge/google.list": 675,
     "Rule/Surge/facebook.list": 547,
     "Rule/Surge/netflix.list": 32,
@@ -83,8 +83,8 @@
     "Rule/Surge/media.list": 6834,
     "Rule/Surge/cn.list": 125714,
     "Rule/Surge/proxy.list": 26097,
-    "Rule/Surge/adblock.list": 265834,
-    "Rule/Surge/adblock_extra.list": 3753,
+    "Rule/Surge/adblock.list": 266201,
+    "Rule/Surge/adblock_extra.list": 3750,
     "Rule/QuantumultX/filterfix.list": 63,
     "Rule/Surge/filterfix.dconf": 63
   },
@@ -121,7 +121,7 @@
       "url": "https://raw.githubusercontent.com/217heidai/adblockfilters/main/rules/adblockloon.list",
       "license": "GPL-3.0",
       "fetched_url": "https://raw.githubusercontent.com/217heidai/adblockfilters/main/rules/adblockloon.list",
-      "sha256": "86eef5ca93fda901ec04185258c340b6da6c9354d8e83b29669c669436e586e9"
+      "sha256": "e810823f1e0e6709975f7a94f25e353f60c39fe672d88757418d0411285e896b"
     },
     {
       "id": "sukka-base",
@@ -138,7 +138,7 @@
       "max_age_days": 7,
       "timeout": 8,
       "fetched_url": "https://ruleset.skk.moe/List/domainset/reject.conf",
-      "sha256": "86cc91d94b0c0749428fefcdc5c1672107ba32e47dc8775a6129a1673988dd96"
+      "sha256": "be3bb1fceee467afbb141f30c9726054b4abb0d6f71e2a16899bb030603412ec"
     },
     {
       "id": "mihomo-proxy",
@@ -400,7 +400,7 @@
       "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/light-onlydomains.txt",
       "license": "GPL-3.0",
       "fetched_url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/light-onlydomains.txt",
-      "sha256": "46511ed003c1a2cea380da3801fcdddc7c10e46cae037d3776285315cc78e1e3"
+      "sha256": "5c3d3b3e3a971c6fc65289616b010ee6d5c6a6d9bc559dc048a3db6d1b1b8b7f"
     },
     {
       "id": "awavenue-ads",
