@@ -1,11 +1,11 @@
 # Name: cn
-# Updated: 2026-10-21 00:17:18 UTC
+# Updated: 2026-10-21 15:01:31 UTC
 # Converted by: chance
 # Source Authors: DH-Teams, Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly, gaoyifan
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_All_Surge.list ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china.txt ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china6.txt ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_CN_3.list ; https://ruleset.skk.moe/List/ip/domestic.conf ; https://ruleset.skk.moe/List/non_ip/domestic.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 125716
+# Rules: 125714
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,direct
@@ -116421,10 +116421,6 @@ ip-cidr,124.64.0.0/15,direct
 ip-cidr,124.66.0.0/17,direct
 ip-cidr,124.67.0.0/16,direct
 ip-cidr,124.68.16.0/20,direct
-ip-cidr,124.68.176.0/20,direct
-ip-cidr,124.68.224.0/20,direct
-ip-cidr,124.68.244.0/22,direct
-ip-cidr,124.68.248.0/21,direct
 ip-cidr,124.68.64.0/18,direct
 ip-cidr,124.69.0.0/16,direct
 ip-cidr,124.70.0.0/16,direct
@@ -117022,13 +117018,15 @@ ip-cidr,170.33.129.0/24,direct
 ip-cidr,170.33.130.0/23,direct
 ip-cidr,170.33.136.0/23,direct
 ip-cidr,170.33.138.0/24,direct
-ip-cidr,170.33.169.0/24,direct
+ip-cidr,170.33.15.0/24,direct
+ip-cidr,170.33.168.0/23,direct
 ip-cidr,170.33.192.0/23,direct
 ip-cidr,170.33.20.0/22,direct
 ip-cidr,170.33.24.0/24,direct
 ip-cidr,170.33.29.0/24,direct
 ip-cidr,170.33.30.0/23,direct
 ip-cidr,170.33.32.0/22,direct
+ip-cidr,170.33.41.0/24,direct
 ip-cidr,170.33.64.0/23,direct
 ip-cidr,170.33.66.0/24,direct
 ip-cidr,170.33.68.0/23,direct
@@ -120559,6 +120557,7 @@ ip-cidr,45.119.104.0/22,direct
 ip-cidr,45.119.104.0/23,direct
 ip-cidr,45.119.116.0/22,direct
 ip-cidr,45.119.232.0/22,direct
+ip-cidr,45.119.42.0/23,direct
 ip-cidr,45.119.60.0/22,direct
 ip-cidr,45.119.64.0/21,direct
 ip-cidr,45.119.68.0/22,direct
@@ -122099,9 +122098,11 @@ ip6-cidr,2401:b180::/32,direct
 ip6-cidr,2401:b220::/32,direct
 ip6-cidr,2401:b340::/32,direct
 ip6-cidr,2401:b360::/32,direct
+ip6-cidr,2401:b400:11::/48,direct
 ip6-cidr,2401:b400:14::/48,direct
 ip6-cidr,2401:b400:16::/47,direct
 ip6-cidr,2401:b400:20::/47,direct
+ip6-cidr,2401:b400:8::/47,direct
 ip6-cidr,2401:b400::/32,direct
 ip6-cidr,2401:b400::/45,direct
 ip6-cidr,2401:b40::/32,direct
@@ -122125,9 +122126,6 @@ ip6-cidr,2401:bc60::/31,direct
 ip6-cidr,2401:bda0::/32,direct
 ip6-cidr,2401:be00::/32,direct
 ip6-cidr,2401:bf20::/32,direct
-ip6-cidr,2401:c020:14::/48,direct
-ip6-cidr,2401:c020:6::/48,direct
-ip6-cidr,2401:c020:8::/47,direct
 ip6-cidr,2401:c020::/32,direct
 ip6-cidr,2401:c200::/32,direct
 ip6-cidr,2401:c40::/32,direct
@@ -123917,6 +123915,7 @@ ip6-cidr,2406:840:98::/45,direct
 ip6-cidr,2406:840:9900::/42,direct
 ip6-cidr,2406:840:9940::/43,direct
 ip6-cidr,2406:840:9960::/47,direct
+ip6-cidr,2406:840:9963::/48,direct
 ip6-cidr,2406:840:9965::/48,direct
 ip6-cidr,2406:840:9968::/46,direct
 ip6-cidr,2406:840:996d::/48,direct
@@ -125473,7 +125472,6 @@ ip6-cidr,2605:9d80:9033::/48,direct
 ip6-cidr,2605:9d80:9042::/48,direct
 ip6-cidr,2605:9d80:9071::/48,direct
 ip6-cidr,2605:9d80:9092::/48,direct
-ip6-cidr,2620:57:4004::/47,direct
 ip6-cidr,2804:1e48:9002::/48,direct
 ip6-cidr,2a03:f900::/29,direct
 ip6-cidr,2a04:3e00:1001::/48,direct

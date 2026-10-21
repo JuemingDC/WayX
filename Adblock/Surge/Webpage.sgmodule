@@ -7,9 +7,9 @@
 
 # Author: RuCu6[https://github.com/RuCu6]
 # Icon: https://rucu6.pages.dev/Icons/app/webpage.png
-# Updated: 2026-10-20 16:30
+# Updated: 2026-10-21 19:35
 
-# Converted: 2026-10-21 04:49:55 +08:00
+# Converted: 2026-10-21 23:03:07 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/webpage.lpx
 # Target: Surge
@@ -67,8 +67,8 @@ baidu_zhidao = type=http-response,pattern=(?i)^https:\/\/zhidao\.baidu\.com\/(?:
 guanying_web_ads = type=http-response,pattern=(?i)^https:\/\/www\.(?:hgeme|xn--wcv59z)\.com\/,script-path=https://rucu6.pages.dev/Scripts/webpage/myblockads.js,requires-body=true,max-size=-1,timeout=20
 
 # 移花宫 //yhg007.com, *.111107?.xyz
-yihuagong_hash_ad = type=http-response,pattern=(?i)^https:\/\/(?:yhg007\.com|[a-z]{8}\.111107\d\.xyz)\/hash\/(?:[a-fA-F0-9]{40}|[A-Z2-7]{32})\.html$,script-path=https://rucu6.pages.dev/Scripts/webpage/myblockads.js,requires-body=true,max-size=-1,timeout=20
-yihuagong_search_ads = type=http-response,pattern=(?i)^https:\/\/(?:yhg007\.com|[a-z]{8}\.111107\d\.xyz)\/search-[^\/]+\.html$,script-path=https://rucu6.pages.dev/Scripts/webpage/myblockads.js,requires-body=true,max-size=-1,timeout=20
+yihuagong_hash_ad = type=http-response,pattern=(?i)^https:\/\/(?:yhg007\.com|[a-z]{8}\.111107\d\.xyz)\/hash\/(?:[a-fA-F0-9]{40}|[A-Z2-7]{32})\.html,script-path=https://rucu6.pages.dev/Scripts/webpage/myblockads.js,requires-body=true,max-size=-1,timeout=20
+yihuagong_search_ads = type=http-response,pattern=(?i)^https:\/\/(?:yhg007\.com|[a-z]{8}\.111107\d\.xyz)\/search-[^\/]+\.html,script-path=https://rucu6.pages.dev/Scripts/webpage/myblockads.js,requires-body=true,max-size=-1,timeout=20
 
 # ======= ooxx ======= #
 # 黑料网 //18hlw.com, 8olbt.imsatcmn.cc
