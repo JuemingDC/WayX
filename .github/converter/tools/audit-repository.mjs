@@ -18,6 +18,7 @@ const catalog = JSON.parse(await fs.readFile('.github/sources/loon.json','utf8')
 const managed = new Map(catalog.flatMap(entry=>[
   [qxTargetPath(entry),{entry,target:'qx'}], [surgeTargetPath(entry),{entry,target:'surge'}],
 ]));
+const routing = new Set(Object.keys(JSON.parse(await fs.readFile('.github/sources/rules-state.json','utf8')).outputs));
 
 async function walk(dir) {
   const out = [];
@@ -55,7 +56,7 @@ for (const file of files) {
     catch(error){add(file,1,'conversion-metadata',error.message);}
   }
 
-  if(/^Rule\/(QuantumultX|Surge)\//.test(rp) && /\.(?:list|dconf)$/.test(rp)) {
+  if(routing.has(rp)) {
     try {
       if(rp.startsWith('Rule/QuantumultX/'))validateQxFilterList(text,{id:rp},{builtInPoliciesOnly:true});
       else if(rp.endsWith('.dconf'))validateSurgeRuleSection(text,{id:rp});

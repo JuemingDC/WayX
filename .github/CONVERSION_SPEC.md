@@ -179,7 +179,7 @@ Plugin、作者 Script、JQ/mock 依赖均读取原作者 URL。host profile 可
 
 发现入口将原始响应及来源 URL 交监控复用，缺失/空内容/来源不符失败，不重复获取另一份目录。报告记录新增、修改、删除的实际条目，已注册语法按目标规划直接转换，不以历史目录是否出现作为审批条件；未知语法或无法满足目标契约时保留源声明并提 Issue，不自动扩充 capability/golden baseline。
 
-端到端黄金测试使用 `fixtures/end-to-end-sources/` 中的固定离线输入，不读取每天同步更新的 Resource 源文件；输入快照及预期摘要仅在审查后共同更新。实际 Catalog 与最新源的校验仍由目录 inventory、全量转换、canonical 和成品验证承担，不能以固定黄金样本替代。
+端到端黄金测试使用 `fixtures/end-to-end-sources/` 中的固定离线输入，作为开发时按需入口，不读取每天同步更新的 Resource 源文件。日常同步按实际 Catalog 全量转换一次并检查最终产物，不运行黄金测试或 canonical 重转。
 
 ## 2.14 全量转换、事务与发布
 
@@ -217,7 +217,7 @@ Review inventory baseline 必须可读且结构有效，不能跳过比较。同
 
 发布只允许通过全部 required gates 的产物，提交前核对请求 head 未推进，提交后确认受管工作区无未保存变化。日志、发现结果、监控缓存、失败报告和生成产物随已有 artifact 保存。
 
-流程控制由 `.github/scripts/automation.py` 承担：分支预算、语法/checkpoint/成品验证编排、Issue 写入或只读选择、发布门禁、受管 Git 提交与 run summary。YAML 保留事件和阶段条件；Bash 仅调用程序并转存日志，不嵌入业务分支或 Python heredoc。发布程序继续核对 expected head、限制 main/test 与受管提交范围，并检查产物工作区。Node.js 26、Python 3.14 及转换核心语言不因该迁移改变。
+流程控制由 `.github/scripts/automation.py` 承担：分支预算、转换任务与唯一最终检查、Issue 写入或只读选择、发布门禁、受管 Git 提交与 run summary。YAML 保留事件和阶段条件；Bash 仅调用程序并转存日志，不嵌入业务分支或 Python heredoc。发布程序继续核对 expected head、限制 main/test 与受管提交范围，并检查产物工作区。Node.js 26、Python 3.14 及转换核心语言不变。
 
 ## 2.17 验证要求
 
@@ -260,7 +260,7 @@ Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生�
 | README 来源折叠组及动态索引 | buildReadmePlan、sync transaction | readme-index、managed cleanliness |
 | 原地址、全量转换与不覆盖 | input transport、sync-convert、workflow lifecycle | source-fetch、事务/发布测试、完整 Action |
 
-能力扩展必须先有源/目标官方依据及独立语义证据，再经过完整目录、canonical、validator 和 Action。不能仅为减少诊断而扩大未证明的转换范围。
+能力扩展须有源/目标官方依据及相应语义证据，开发时按改动范围验证；日常 Action 不重跑开发回归。不能仅为减少诊断而扩大未证明的转换范围。
 
 ## 2.19 Python 规则集聚合
 
