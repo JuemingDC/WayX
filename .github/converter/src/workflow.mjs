@@ -378,7 +378,7 @@ async function scanCategory(root, category) {
     if (category === 'BoxJs' && ext !== '.json') continue;
     if (category === 'Module' && !['.snippet', '.sgmodule'].includes(ext)) continue;
     if (category === 'Adblock' && !['.snippet', '.sgmodule'].includes(ext)) continue;
-    if (category === 'Rule' && !['.list', '.snippet', '.sgmodule'].includes(ext)) continue;
+    if (category === 'Rule' && !['.list', '.snippet', '.sgmodule', '.dconf'].includes(ext)) continue;
     // Root-level Module files do not include a platform directory.
     // Infer the platform only there, from the unambiguous module extension.
     const platform = detectPlatform(rel) ?? (category === 'Module' && rel.split('/').length === 2

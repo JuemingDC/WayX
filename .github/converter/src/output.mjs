@@ -626,7 +626,7 @@ export function hasActiveSurgeLines(lines = []) {
   });
 }
 
-function validateSurgeRuleLine(line,entry,declaredArguments=new Set()) {
+function validateSurgeRuleLine(line,entry,declaredArguments=new Set(),profilePolicies=false) {
       const parts = splitTopLevelCsv(line);
       const typeTree = surgeRuleTypesInTree(line);
       if (!typeTree.ok) {
@@ -640,7 +640,7 @@ function validateSurgeRuleLine(line,entry,declaredArguments=new Set()) {
         if (!declaredArguments.has(argumentPolicy[1])) {
           throw new Error(`${entry.id}: Surge module [Rule] references undeclared policy argument ${argumentPolicy[1]}: ${line}`);
         }
-      } else {
+      } else if (!profilePolicies) {
         const policy = policyRaw.toUpperCase();
         if (!SURGE_MODULE_POLICIES.has(policy)) {
           throw new Error(`${entry.id}: Surge module [Rule] policy is outside the WayX accepted Surge Rule built-in policy set or a declared {{{argument}}}: ${line}`);
@@ -670,6 +670,19 @@ export function validateSurgeRuleSet(text,entry={id:'rule-set'}) {
     if(parts.length<2||parts.slice(2).some(option=>!['no-resolve','extended-matching'].includes(option)))throw new Error(entry.id+': invalid external rule-set options/policy: '+line);
     validateSurgeRuleLine([parts[0],parts[1],'DIRECT',...parts.slice(2)].join(','),entry);
   }
+}
+
+export function validateSurgeRuleSection(text,entry={id:'rule-section'}) {
+  let section = null;
+  for (const raw of String(text).split('\n')) {
+    const line=raw.trim();
+    if(!line||/^(?:#|;|\/\/)/.test(line))continue;
+    if(line==='[Rule]'){section='Rule';continue;}
+    if(section!=='Rule'||line.startsWith('['))throw new Error(entry.id+': expected detached [Rule] section');
+    if(!splitTopLevelCsv(line)[2]?.trim())throw new Error(entry.id+': missing profile policy');
+    validateSurgeRuleLine(line,entry,new Set(),true);
+  }
+  if(section!=='Rule')throw new Error(entry.id+': missing [Rule] section');
 }
 
 export function validateSurgeModule(text, entry = {id:'module'}) {

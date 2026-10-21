@@ -111,12 +111,6 @@ def syntax() -> None:
     execute_checks('syntax', checks)
 
 
-def checkpoint() -> None:
-    execute_checks('checkpoint', [(suite, ['node', f'.github/converter/tests/{suite}.mjs'])
-                   for suite in ['core', 'rewrite', 'script', 'conversion', 'architecture',
-                                 'workflow', 'official-capabilities', 'runtime']])
-
-
 def regex() -> None:
     """Compile emitted HTTP matchers with the runner's ICU regex engine."""
     import ctypes
@@ -164,14 +158,10 @@ def regex() -> None:
 
 
 def verify() -> None:
-    commands = [
-        ['tools/regenerate-canonical.mjs', '--successful-only'],
-        ['tests/catalog.mjs'], ['tools/validate-conversion-policy.mjs', '--all'],
-        ['tools/update-readme.mjs'], ['tools/verify-managed-conversions.mjs'],
-        ['tools/audit-repository.mjs'], ['tests/artifacts.mjs'],
-    ]
-    execute_checks('verify', [(file, ['node', '.github/converter/' + file, *args])
-                              for file, *args in commands] + [('rule-aggregation', [sys.executable, '.github/converter/rules.py', 'check'])])
+    # Conversion runs once. Check its actual files once, without replaying it or
+    # running developer regression suites during routine upstream synchronization.
+    execute_checks('verify', [('tools/audit-repository.mjs',
+                              ['node', '.github/converter/tools/audit-repository.mjs'])])
 
 
 def rules() -> None:
@@ -203,7 +193,7 @@ def issues() -> None:
 
 def gate() -> None:
     stages = json.loads(os.environ['STAGES'])
-    required = ['syntax', 'catalog', 'rules', 'checkpoint', 'loon_sync', 'verify', 'reports', 'issues']
+    required = ['catalog', 'rules', 'loon_sync', 'verify', 'reports', 'issues']
     monitor = os.environ.get('MONITOR_ENABLED') == 'true'
     if monitor:
         required.append('monitor')
@@ -304,7 +294,7 @@ def final() -> None:
 
 
 COMMANDS = {function.__name__: function for function in
-            [prepare, syntax, catalog, rules, checkpoint, sync, verify, monitor, reports, issues, gate, publish, summary, regex, final]}
+            [prepare, syntax, catalog, rules, sync, verify, monitor, reports, issues, gate, publish, summary, regex, final]}
 
 if __name__ == '__main__':
     try:

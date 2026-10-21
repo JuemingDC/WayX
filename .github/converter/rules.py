@@ -576,8 +576,12 @@ def build(config, inputs):
     # Index all explicitly classified supplements before resolving shared rules.
     # Ownership must not depend on source order.
     for source, rows in parsed_sources:
+        if source.get('standalone'):
+            continue
         index_owner(source['category'], (rule for rule, _ in rows))
     for source, rows in parsed_sources:
+        if source.get('standalone'):
+            continue
         for rule, policy in rows:
             destination = source['category']
             # Supplemental known app domains inherit that app's user-visible
@@ -666,6 +670,36 @@ def build(config, inputs):
             metadata[file] = {'authors': sorted(source_authors), 'sources': sorted(sources),
                               'category': 'Adblock' if groups[0][0].startswith('adblock') else 'general' if groups[0][0] in ('cn', 'proxy') else 'app',
                               'count': len(lines), 'policy': groups[0][1]}
+    # Independent sources retain their own order, comments and per-line policies.
+    # Surge detached [Rule] sections support mixed policies; external RULE-SETs do not.
+    for source, rows in parsed_sources:
+        if not source.get('standalone'):
+            continue
+        comments = [line for line in inputs[source['id']].decode('utf-8-sig').splitlines()
+                    if line.lstrip().startswith(('#', ';', '//'))]
+        comments = [('# ' + line if line.lstrip().startswith('#!') else line) for line in comments]
+        for target in ('QuantumultX', 'Surge'):
+            lines = []
+            for rule, policy in rows:
+                if target == 'QuantumultX' and (rule.kind not in QX_TYPES or 'extended-matching' in rule.options):
+                    anomalies.append({'source': source['id'], 'category': source['category'], 'target': target,
+                                      'declaration': rule.kind + ',' + rule.value, 'code': 'filtered-unsupported-target',
+                                      'reason': 'Native rule type/options are not supported by Quantumult X'})
+                    continue
+                if target == 'Surge':
+                    lines.append(','.join((rule.kind, rule.value.upper() if rule.kind == 'GEOIP' else rule.value,
+                                           policy, *rule.options)))
+                else:
+                    lines.append(serialize(rule, policy, target))
+            extension = '.dconf' if target == 'Surge' else '.list'
+            file = 'Rule/' + target + '/' + source['category'] + extension
+            if file in rendered:
+                raise ValueError('Independent source output collides with a collection: ' + file)
+            section = ['# Include this file in the profile [Rule] section with #!include.',
+                       '# PROXY must refer to an existing proxy or policy group in that profile.', '[Rule]'] if target == 'Surge' else []
+            rendered[file] = '\n'.join([*comments, '', *section, *lines]) + '\n'
+            metadata[file] = {'authors': [source['author']], 'sources': [source['url']],
+                              'category': 'general', 'count': len(lines), 'policy': 'mixed'}
     unique = {}
     for item in anomalies:
         key = (item['source'], item['code'], item['declaration'], item.get('target', 'both'))
@@ -675,7 +709,7 @@ def build(config, inputs):
 
 
 def header(file, meta, stamp):
-    return '\n'.join(['# Name: ' + Path(file).stem, '# Updated: ' + stamp,
+    return '\n'.join(['# Name: ' + Path(file).stem, '# Updated: ' + stamp, '# Converted by: chance',
                       '# Source Authors: ' + ', '.join(meta['authors']), '# Category: ' + meta['category'],
                       '# Sources: ' + ' ; '.join(meta['sources']),
                       '# Licenses: See .github/sources/rules.json and original source repositories',

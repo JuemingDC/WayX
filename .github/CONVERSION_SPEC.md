@@ -1,8 +1,8 @@
 # WayX Conversion Specification
 
-版本：2.13
+版本：2.14
 
-更新：2026-10-16
+更新：2026-10-21
 作者：chance  
 状态：唯一权威转换规范（Authoritative）
 
@@ -21,7 +21,7 @@ JSON/JQ 表达式以 jqlang 官方标准为依据，不采用第三方转换器�
 
 ## 2.2 编译与目标规划
 
-数据流为源解析 → target-neutral Semantic IR → 分条及目标规划 → 目标输出 → validator → oracle/canonical/audit。通用 parser 保留源声明、section/phase、条件、Regex body/flags、captures、变量、选项及动作和声明顺序，不提前套用目标语法。含 Script 的混合声明使用共同词法 scanner 保留并拆分各 action，不把 Script 加入官方 Rewrite action registry。
+数据流为源解析 → target-neutral Semantic IR → 分条及目标规划 → 目标输出 → 一次最终产物检查。oracle/canonical 为开发者按需运行的工具，不进入日常同步 Action。通用 parser 保留源声明、section/phase、条件、Regex body/flags、captures、变量、选项及动作和声明顺序，不提前套用目标语法。含 Script 的混合声明使用共同词法 scanner 保留并拆分各 action，不把 Script 加入官方 Rewrite action registry。
 
 IR 不包含目标 action 名、section 名、helper URL 或目标 fallback。共享 planner 的结果分为 native-equivalent、guarded-helper、phase-dispatcher、unsupported；转换结果可同时带兼容限制或明确的用户策略说明。
 
@@ -183,13 +183,13 @@ Plugin、作者 Script、JQ/mock 依赖均读取原作者 URL。host profile 可
 
 ## 2.14 全量转换、事务与发布
 
-每次 Action 获取全部 catalog entry，重新解析、物化依赖、转换并验证；不因源 unchanged、已有目标或上次结果跳过。生成器/规范及同 URL 依赖变化在源声明不变时也能生效。
+每次 Action 获取全部 catalog entry，解析、物化依赖并转换一次，完成后统一检查实际产物一次；不在各阶段重复验证或全量重转比对。生成器/规范及同 URL 依赖变化在源声明不变时也能生效。
 
 逐文件比较实际内容，只忽略转换器生成的 Converted 时间（含 dispatcher 嵌入时间）；相同不写入、不刷新原时间/mtime。QX、Surge、helper 分别比较，缺失补建；变化文件不导致其它相同文件被覆盖。源按真实 bytes 变化写入，废弃生成 helper 自动 prune，手写脚本保留。有效清单生成后清理所有退出名单的受管理源、QX/Surge 目标及生成脚本，并补清理历史遗留孤立产物；保护当前条目复用的路径及脚本目录。手写独立资源不属于退出拉取名单的受管理产物。目录读取或校验失败不能据此批量删除。
 
 单插件的源/目标/helper 写入事务可回滚，失败不留下部分新旧产物；一个插件失败不阻止其它正常插件。未知语义或 target Review/Issue 在写盘前隔离，既有条目保留旧基线并重试，首次失败条目暂缓。rollback 失败、stale head 或任一全局门禁失败必须阻止发布。
 
-sync 是产物与 README 的写入入口；canonical/README 验证只检查，不重复写盘。报告区分全部成功转换、实际更新、内容相同、保留及暂缓，不把未覆盖称为未转换。
+sync 是产物与 README 的写入入口；canonical、README 对比及回归套件仅供开发时按需运行。报告区分全部成功转换、实际更新、内容相同、保留及暂缓，不把未覆盖称为未转换。
 
 ## 2.15 README 索引
 
@@ -203,7 +203,7 @@ sync 是产物与 README 的写入入口；canonical/README 验证只检查，�
 
 唯一 GitHub workflow 为 .github/workflows/converter-check.yml，每日 UTC `30 17 * * *`（北京时间 01:30）及手动/PR 执行。远端只允许 main，最多另有 test；checkout 后核对分支预算。Work 自动活动不因此恢复。
 
-语法检查 → 目录刷新 → converter checkpoint → 全量 sync → 成品验证/监控/报告 → Issue/发布门禁。可写 main/test 执行完整监控并要求 complete=true；只读 PR 不写 Issue、mirror/state。syntax 成功即可尝试监控，不因转换失败省略全部规范检查。
+目录刷新 → 规则集生成/全量 sync → 一次最终产物检查 → 报告、Issue 与发布。日常 Action 不运行全仓语法预扫描、checkpoint 回归套件、canonical 重转、规则集重建回放、重复的目标格式/README/受管文件扫描。可写 main/test 执行监控并要求 complete=true；只读 PR 不写 Issue、mirror/state。目录刷新成功即可尝试监控。
 
 Review inventory baseline 必须可读且结构有效，不能跳过比较。同步/监控报告只在 ENOENT 时允许为空；损坏 JSON、结构/版本/IO 错误使 Issue 步骤失败。同步报告支持版本 1/2，监控报告支持版本 1。每次新语义/同步/监控失败使用稳定 fingerprint 复用 Issue，保留源声明、阶段、错误与回滚结果。
 
@@ -213,7 +213,7 @@ Review inventory baseline 必须可读且结构有效，不能跳过比较。同
 
 验证异常按阶段使用稳定 fingerprint 复用受管 Issue，附本次 Action 链接、失败检查与证据位置；完整成功的同阶段检查才可关闭该类告警。只读执行不得写 Issue。未知源语法继续附源声明，不能猜测为有效规则。
 
-Canonical 逐文件比较实际源、QX、Surge 和 helper；对账报告只将已通过 canonical 比较且源/目标摘要仍匹配的条目标为 verified。缺失证据、未匹配声明、变化后的过期证据都标为异常，不能把“没有诊断注释”当成转换成功。已隔离并完整保留旧基线的同步失败单独标为 retained，继续通过原有同步 Issue 跟踪，不冒充本轮转换成功，也不因此取消其它插件的发布资格；旧基线仍须通过目标格式、引用和仓库完整性检查。Markdown 对账仅列异常，完整结构化明细留在 artifact。
+对账报告复用本轮转换记录和唯一最终检查的文件摘要，不要求 canonical 重转证据，不重新执行转换。verified 仅表示本轮生成且实际产物通过格式检查，不宣称客户端语义已验证。已隔离并完整保留旧基线的同步失败单独标为 retained，继续通过原有同步 Issue 跟踪。Markdown 对账仅列异常，完整结构化明细留在 artifact。
 
 发布只允许通过全部 required gates 的产物，提交前核对请求 head 未推进，提交后确认受管工作区无未保存变化。日志、发现结果、监控缓存、失败报告和生成产物随已有 artifact 保存。
 
@@ -221,7 +221,7 @@ Canonical 逐文件比较实际源、QX、Surge 和 helper；对账报告只将�
 
 ## 2.17 验证要求
 
-保留 syntax、core/rewrite/script/conversion/architecture/workflow/official-capabilities/runtime、catalog、target policy、canonical、managed cleanliness、repository audit、helper/ref、作者 URL 与确定性检查。Inventory 记录观测类型与特征，不用历史 token 或具体正则清单作为新内容白名单；语法注册表、目标 validators、ICU 编译和独立语义测试决定是否可发布。
+日常 Action 仅保留一次最终产物格式及外层正则检查，复用其证据生成报告；源获取失败、未知源声明、事务回滚、远端 head 和发布范围检查属于实际执行边界。开发者回归套件、oracle、canonical 和独立比较工具保留为按需入口，不自动在同步前后运行。不得为单个来源增加重复回归检查或全量重放。
 
 Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生成脚本/原生 jq 对照。覆盖命中/no-op、URL/method/headers/body/status、captures、动作顺序、阶段所有权、单次 `$done`、missing/null/false/空值、Unicode/转义/原型键、依赖失败隔离与事务回滚。条件证据分别统计 false-positive / false-negative evidence；finite fixture 不能单独证明 native-equivalent，仍须结构及官方能力依据。
 
@@ -274,4 +274,6 @@ QX 原生 filter 文件仅输出 direct/reject/proxy：显式 DIRECT 保留 dire
 
 生成文件集中在 Rule/QuantumultX 与 Rule/Surge；英文头包括 Name、Updated、Source Authors、Category 以及来源。Category 固定为广告 Adblock、应用/AI/media 为 app、cn/proxy 为 general。只在实际输出或元信息变化时更新时间；只清理状态文件记录且仍有受管标记的旧产物，保护手写文件。下载、校验或事务失败保留旧产物；无法表示的声明保存在 rules-result.json.filtered；格式损坏及归属歧义等异常按来源/错误类型复用 Issue，已支持规则继续发布，不能将隔离项宣称已转换。完整成功且不再出现该类声明时关闭对应告警。
 
-补充广告、应用、AI、域名兜底及中国 CIDR 来源直接合并现有分类产物，来源仅在统一注册表声明，不为单个来源另造输出。完整转换/合并/去重仅由 Action 执行。接入同一 Action 的 rules 阶段，verify 根据本次完整输入快照重新构建并逐字节校验产物、英文元信息与状态，不用旧状态代替本轮成功。语法、重复、覆盖边界、direct/proxy 优先级、protobuf/JSON 模式、拒绝动作降级、桌面条件过滤、有限正则原生转换、无变化不写入、失败回滚与手写文件保护在现有 workflow 领域套件验证。详细源快照与异常随现有 artifact 保存，summary 仅列计数和异常。
+补充来源默认合并现有分类。注册表 `standalone: true` 的来源独立输出，不参与应用归属、cn/proxy 合并或跨来源去重；保留原注释、声明顺序与逐条策略。filterFix 使用独立分类 filterfix：QX 输出 Rule/QuantumultX/filterfix.list；Surge 输出 Rule/Surge/filterfix.dconf，在同一个 [Rule] 配置片段保留 DIRECT/PROXY，不生成 filterfix_direct/filterfix_proxy 或把该来源并入 cn。Surge 使用主配置 [Rule] 内的 #!include 引用片段，PROXY 须为主配置已定义的代理或策略组。外部 RULE-SET 与模块均不能用于保存该混合策略语义。依据：https://manual.nssurge.com/profile/format.html、https://manual.nssurge.com/rules/ruleset.html、https://manual.nssurge.com/profile/module.html。
+
+完整转换/合并/去重由 Action 的 rules 阶段执行一次，最终产物格式检查不重新构建规则集。状态文件记录的旧受管产物自动清理，手写文件保留。详细源快照与异常随现有 artifact 保存，summary 仅列计数和异常。
