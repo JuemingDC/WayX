@@ -1,11 +1,11 @@
 # Name: media
-# Updated: 2026-10-21 00:17:18 UTC
+# Updated: 2026-10-21 15:01:31 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 6823
+# Rules: 6834
 # Managed by: WayX Rule Aggregator
 
 host,cdn.globalsigncdn.com.cdn.cloudflare.net,proxy
@@ -2711,6 +2711,17 @@ host-suffix,flowfront.com,proxy
 host-suffix,flowfront.net,proxy
 host-suffix,fluffychat.im,proxy
 host-suffix,fluidfxapp.com,proxy
+host-suffix,fluxer.app,proxy
+host-suffix,fluxer.com,proxy
+host-suffix,fluxer.dev,proxy
+host-suffix,fluxer.gg,proxy
+host-suffix,fluxer.gift,proxy
+host-suffix,fluxer.media,proxy
+host-suffix,fluxer.tools,proxy
+host-suffix,fluxerapp.com,proxy
+host-suffix,fluxerstatic.com,proxy
+host-suffix,fluxerstatus.com,proxy
+host-suffix,fluxerusercontent.com,proxy
 host-suffix,flxvpn.net,proxy
 host-suffix,fmdesktop.com,proxy
 host-suffix,foftolia.com,proxy
