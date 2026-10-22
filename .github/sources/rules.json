@@ -11,9 +11,6 @@
       "name": "google",
       "tags": [
         "google"
-      ],
-      "children": [
-        "youtube"
       ]
     },
     {
@@ -106,9 +103,6 @@
       "split": true,
       "proxy_tags": [
         "github-copilot"
-      ],
-      "children": [
-        "github"
       ]
     }
   ],
@@ -190,8 +184,7 @@
       "category": "proxy",
       "policy": "PROXY",
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt",
-      "license": "See upstream LICENSE",
-      "classify_apps": false
+      "license": "See upstream LICENSE"
     },
     {
       "id": "mihomo-direct",
@@ -201,8 +194,7 @@
       "policy": "DIRECT",
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/direct.txt",
       "license": "See upstream LICENSE",
-      "allow_empty": true,
-      "classify_apps": false
+      "allow_empty": true
     },
     {
       "id": "nexitally-extra_cn_3",
@@ -370,8 +362,7 @@
       "category": "cn",
       "policy": "DIRECT",
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json",
-      "license": "See upstream LICENSE",
-      "classify_apps": false
+      "license": "See upstream LICENSE"
     },
     {
       "id": "mihomo-mihomo-proxy-set",
@@ -380,8 +371,7 @@
       "category": "proxy",
       "policy": "PROXY",
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json",
-      "license": "See upstream LICENSE",
-      "classify_apps": false
+      "license": "See upstream LICENSE"
     },
     {
       "id": "mihomo-category-ai-not-cn",
@@ -468,8 +458,7 @@
         "https://ruleset-mirror.skk.moe/List/non_ip/domestic.conf",
         "https://raw.githubusercontent.com/SukkaLab/ruleset.skk.moe/master/List/non_ip/domestic.conf"
       ],
-      "timeout": 8,
-      "classify_apps": false
+      "timeout": 8
     },
     {
       "id": "sukka-media-ip",
@@ -511,8 +500,7 @@
         "https://ruleset-mirror.skk.moe/List/ip/domestic.conf",
         "https://raw.githubusercontent.com/SukkaLab/ruleset.skk.moe/master/List/ip/domestic.conf"
       ],
-      "timeout": 8,
-      "classify_apps": false
+      "timeout": 8
     },
     {
       "id": "sukka-global",
@@ -526,8 +514,7 @@
         "https://ruleset-mirror.skk.moe/List/non_ip/global.conf",
         "https://raw.githubusercontent.com/SukkaLab/ruleset.skk.moe/master/List/non_ip/global.conf"
       ],
-      "timeout": 8,
-      "classify_apps": false
+      "timeout": 8
     },
     {
       "id": "acl4ssr-media",
@@ -554,8 +541,7 @@
       "category": "cn",
       "policy": "DIRECT",
       "url": "https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt",
-      "license": "GPL-3.0",
-      "classify_apps": false
+      "license": "GPL-3.0"
     },
     {
       "id": "loyalsoldier-proxy",
@@ -564,8 +550,7 @@
       "category": "proxy",
       "policy": "PROXY",
       "url": "https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt",
-      "license": "GPL-3.0",
-      "classify_apps": false
+      "license": "GPL-3.0"
     },
     {
       "id": "gaoyifan-cn",
@@ -574,8 +559,7 @@
       "category": "cn",
       "policy": "DIRECT",
       "url": "https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china.txt",
-      "license": "MIT",
-      "classify_apps": false
+      "license": "MIT"
     },
     {
       "id": "gaoyifan-cn6",
@@ -584,8 +568,7 @@
       "category": "cn",
       "policy": "DIRECT",
       "url": "https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china6.txt",
-      "license": "MIT",
-      "classify_apps": false
+      "license": "MIT"
     },
     {
       "id": "loyalsoldier-telegram-cidr",
@@ -612,14 +595,10 @@
       "category": "cn",
       "policy": "DIRECT",
       "url": "https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_All_Surge.list",
-      "license": "No license declared; attribution retained",
-      "classify_apps": false
+      "license": "No license declared; attribution retained"
     }
   ],
   "indirect_upstreams": "Allowed; only direct blackmatrix7 inputs are excluded.",
-  "category_priority": [
-    "ai"
-  ],
   "rule_exclusions": {
     "proxy": [
       {
