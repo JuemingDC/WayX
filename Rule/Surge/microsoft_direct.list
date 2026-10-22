@@ -1,11 +1,11 @@
 # Name: microsoft_direct
-# Updated: 2026-10-22 11:05:53 UTC
+# Updated: 2026-10-22 15:31:27 UTC
 # Converted by: chance
-# Source Authors: V2Fly
+# Source Authors: Loyalsoldier, MetaCubeX, Sukka, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://ruleset.skk.moe/List/non_ip/domestic.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 700
+# Rules: 708
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,b.c2r.ts.cdn.office.net
@@ -50,18 +50,13 @@ DOMAIN,vz.download.prss.microsoft.com
 DOMAIN,windbg.download.prss.microsoft.com
 DOMAIN,bj1.api.bing.com
 DOMAIN,download.visualstudio.microsoft.com
-DOMAIN,github-cloud.s3.amazonaws.com
-DOMAIN,github-production-release-asset-2e65be.s3.amazonaws.com
-DOMAIN,github-production-repository-file-5c1aeb.s3.amazonaws.com
-DOMAIN,github-production-repository-image-32fea6.s3.amazonaws.com
-DOMAIN,github-production-upload-manifest-file-7fdce7.s3.amazonaws.com
-DOMAIN,github-production-user-asset-6210df.s3.amazonaws.com
 DOMAIN,shell.cdn.office.net
+DOMAIN,assets1.xboxlive.cn
+DOMAIN,assets2.xboxlive.cn
 DOMAIN,cn.windowssearch.com
 DOMAIN,ctldl.windowsupdate.com
 DOMAIN,developer.microsoft.com
 DOMAIN,download.microsoft.com
-DOMAIN,github-api.arkoselabs.com
 DOMAIN,img-prod-cms-rt-microsoft-com.akamaized.net
 DOMAIN,img-s-msn-com.akamaized.net
 DOMAIN,mwf-service.akamaized.net
@@ -74,15 +69,55 @@ DOMAIN,statics-marketingsites-eus-ms-com.akamaized.net
 DOMAIN,statics-marketingsites-wcus-ms-com.akamaized.net
 DOMAIN,storeedge.microsoft.com
 DOMAIN,vsmarketplacebadge.apphb.com
+DOMAIN-SUFFIX,b.c2r.ts.cdn.office.net
+DOMAIN-SUFFIX,f.c2r.ts.cdn.office.net
+DOMAIN-SUFFIX,azuremigrate.download.prss.microsoft.com
+DOMAIN-SUFFIX,azuremigratetest.download.prss.microsoft.com
+DOMAIN-SUFFIX,azurestackhub.download.prss.microsoft.com
+DOMAIN-SUFFIX,azurestackhubuat.download.prss.microsoft.com
 DOMAIN-SUFFIX,browser.events.data.msn.cn
 DOMAIN-SUFFIX,browser.events.data.msn.com
+DOMAIN-SUFFIX,cbdstest.download.prss.microsoft.com
+DOMAIN-SUFFIX,collaborate.download.prss.microsoft.com
+DOMAIN-SUFFIX,collaborateppe.download.prss.microsoft.com
 DOMAIN-SUFFIX,dl.delivery.mp.microsoft.com
+DOMAIN-SUFFIX,dreamspark.download.prss.microsoft.com
+DOMAIN-SUFFIX,dreamsparkuat.download.prss.microsoft.com
+DOMAIN-SUFFIX,itacademy.download.prss.microsoft.com
+DOMAIN-SUFFIX,itacademyuat.download.prss.microsoft.com
+DOMAIN-SUFFIX,lex.download.prss.microsoft.com
+DOMAIN-SUFFIX,lexuat.download.prss.microsoft.com
+DOMAIN-SUFFIX,mbs.download.prss.microsoft.com
+DOMAIN-SUFFIX,mpnbenefits.download.prss.microsoft.com
+DOMAIN-SUFFIX,mpnbenefitsrtl.download.prss.microsoft.com
+DOMAIN-SUFFIX,mpnbenefitsrtluat.download.prss.microsoft.com
+DOMAIN-SUFFIX,msdn.download.prss.microsoft.com
+DOMAIN-SUFFIX,msdprod-ad.download.prss.microsoft.com
+DOMAIN-SUFFIX,msproduct.download.prss.microsoft.com
+DOMAIN-SUFFIX,myvs.download.prss.microsoft.com
+DOMAIN-SUFFIX,oemsoc.download.prss.microsoft.com
+DOMAIN-SUFFIX,oemsocuat.download.prss.microsoft.com
+DOMAIN-SUFFIX,officemkt.download.prss.microsoft.com
+DOMAIN-SUFFIX,officemktuat.download.prss.microsoft.com
+DOMAIN-SUFFIX,osrelease.download.prss.microsoft.com
+DOMAIN-SUFFIX,rsm.download.prss.microsoft.com
+DOMAIN-SUFFIX,software.download.prss.microsoft.com
+DOMAIN-SUFFIX,storecorefulfillment.download.prss.microsoft.com
+DOMAIN-SUFFIX,surface.download.prss.microsoft.com
+DOMAIN-SUFFIX,surface.downloads.prss.microsoft.com
+DOMAIN-SUFFIX,vlportal.download.prss.microsoft.com
+DOMAIN-SUFFIX,volic.download.prss.microsoft.com
+DOMAIN-SUFFIX,vscode.download.prss.microsoft.com
+DOMAIN-SUFFIX,vz.download.prss.microsoft.com
+DOMAIN-SUFFIX,windbg.download.prss.microsoft.com
+DOMAIN-SUFFIX,bj1.api.bing.com
 DOMAIN-SUFFIX,cn.mm.bing.net
+DOMAIN-SUFFIX,download.visualstudio.microsoft.com
+DOMAIN-SUFFIX,assets.msn.cn
 DOMAIN-SUFFIX,bing.com.cn
-DOMAIN-SUFFIX,cafe.github.com
 DOMAIN-SUFFIX,cn.bing.com
 DOMAIN-SUFFIX,cn.bing.net
-DOMAIN-SUFFIX,collector.github.com
+DOMAIN-SUFFIX,ctldl.windowsupdate.com
 DOMAIN-SUFFIX,dcg.microsoft.com
 DOMAIN-SUFFIX,ditu.live.com
 DOMAIN-SUFFIX,download.windowsupdate.com
@@ -92,13 +127,18 @@ DOMAIN-SUFFIX,microsoftonline-p.net.cn
 DOMAIN-SUFFIX,microsoftreactor.com.cn
 DOMAIN-SUFFIX,microsoftstore.com.cn
 DOMAIN-SUFFIX,microsoftstore.com.hk
+DOMAIN-SUFFIX,officecdn.microsoft.com
 DOMAIN-SUFFIX,onedrive.co.uk
 DOMAIN-SUFFIX,r.bing.com
 DOMAIN-SUFFIX,reactorms.com.cn
+DOMAIN-SUFFIX,sdx.microsoft.com
 DOMAIN-SUFFIX,skype-edf.akadns.net
 DOMAIN-SUFFIX,skypedata.akadns.net
+DOMAIN-SUFFIX,storeedge.microsoft.com
 DOMAIN-SUFFIX,th.bing.com
+DOMAIN-SUFFIX,update.microsoft.com
 DOMAIN-SUFFIX,visualstudio.co.uk
+DOMAIN-SUFFIX,windowsupdate.microsoft.com
 DOMAIN-SUFFIX,1drv.com
 DOMAIN-SUFFIX,1drv.ms
 DOMAIN-SUFFIX,21vbc.com
@@ -121,7 +161,6 @@ DOMAIN-SUFFIX,appserviceenvironment.cn
 DOMAIN-SUFFIX,aria.ms
 DOMAIN-SUFFIX,asp.net
 DOMAIN-SUFFIX,aspnetcdn.com
-DOMAIN-SUFFIX,atom.io
 DOMAIN-SUFFIX,azchcdna.com
 DOMAIN-SUFFIX,azchcdnb.com
 DOMAIN-SUFFIX,azchcdnc.com
@@ -255,8 +294,6 @@ DOMAIN-SUFFIX,clarity.ms
 DOMAIN-SUFFIX,cloudapp.net
 DOMAIN-SUFFIX,cloudappsecurity.com
 DOMAIN-SUFFIX,codethemicrobit.com
-DOMAIN-SUFFIX,copilot-stg.com
-DOMAIN-SUFFIX,copilot.com
 DOMAIN-SUFFIX,cortanaanalytics.com
 DOMAIN-SUFFIX,cortanaskills.com
 DOMAIN-SUFFIX,cosmosdb.info
@@ -264,7 +301,6 @@ DOMAIN-SUFFIX,cosmosdb.net
 DOMAIN-SUFFIX,crmdynint-gcc.com
 DOMAIN-SUFFIX,crmdynint.com
 DOMAIN-SUFFIX,crossborderexpansion.com
-DOMAIN-SUFFIX,dependabot.com
 DOMAIN-SUFFIX,devopsassessment.net
 DOMAIN-SUFFIX,devopsms.com
 DOMAIN-SUFFIX,dictate.ms
@@ -293,27 +329,7 @@ DOMAIN-SUFFIX,gears5.com
 DOMAIN-SUFFIX,gearspop.com
 DOMAIN-SUFFIX,gearstactics.com
 DOMAIN-SUFFIX,gfx.ms
-DOMAIN-SUFFIX,gh.io
-DOMAIN-SUFFIX,ghcr.io
-DOMAIN-SUFFIX,ghe.com
 DOMAIN-SUFFIX,gigjam.com
-DOMAIN-SUFFIX,git.io
-DOMAIN-SUFFIX,github.ai
-DOMAIN-SUFFIX,github.blog
-DOMAIN-SUFFIX,github.career
-DOMAIN-SUFFIX,github.com
-DOMAIN-SUFFIX,github.community
-DOMAIN-SUFFIX,github.dev
-DOMAIN-SUFFIX,github.io
-DOMAIN-SUFFIX,githubapp.com
-DOMAIN-SUFFIX,githubassets.com
-DOMAIN-SUFFIX,githubhackathon.com
-DOMAIN-SUFFIX,githubnext.com
-DOMAIN-SUFFIX,githubpreview.dev
-DOMAIN-SUFFIX,githubstatus.com
-DOMAIN-SUFFIX,githubsupport.com
-DOMAIN-SUFFIX,githubuniverse.com
-DOMAIN-SUFFIX,githubusercontent.com
 DOMAIN-SUFFIX,gotcosmos.com
 DOMAIN-SUFFIX,graphengine.io
 DOMAIN-SUFFIX,hdinsightservices.cn
@@ -533,12 +549,8 @@ DOMAIN-SUFFIX,msturing.org
 DOMAIN-SUFFIX,msudalosti.com
 DOMAIN-SUFFIX,msunlimitedcloudsummit.com
 DOMAIN-SUFFIX,mymicrosoft.com
-DOMAIN-SUFFIX,myoctocat.com
 DOMAIN-SUFFIX,nelreports.net
 DOMAIN-SUFFIX,nextechafrica.net
-DOMAIN-SUFFIX,npm.community
-DOMAIN-SUFFIX,npmjs.com
-DOMAIN-SUFFIX,npmjs.org
 DOMAIN-SUFFIX,nuget.org
 DOMAIN-SUFFIX,nugettest.org
 DOMAIN-SUFFIX,nxta.org
@@ -547,7 +559,6 @@ DOMAIN-SUFFIX,o365files.cn
 DOMAIN-SUFFIX,o365weve-dev.com
 DOMAIN-SUFFIX,o365weve-ppe.com
 DOMAIN-SUFFIX,o365weve.com
-DOMAIN-SUFFIX,octocaptcha.com
 DOMAIN-SUFFIX,office.com
 DOMAIN-SUFFIX,office.net
 DOMAIN-SUFFIX,office365-net.cn
@@ -566,7 +577,6 @@ DOMAIN-SUFFIX,onenote.com
 DOMAIN-SUFFIX,onenote.net
 DOMAIN-SUFFIX,onestore.ms
 DOMAIN-SUFFIX,onmschina.cn
-DOMAIN-SUFFIX,opensource.guide
 DOMAIN-SUFFIX,opentranslatorstothings.org
 DOMAIN-SUFFIX,opticsforthecloud.net
 DOMAIN-SUFFIX,orithegame.com
@@ -593,7 +603,6 @@ DOMAIN-SUFFIX,pwabuilder.com
 DOMAIN-SUFFIX,pxt.io
 DOMAIN-SUFFIX,renovacionoffice.com
 DOMAIN-SUFFIX,renovacionxboxlive.com
-DOMAIN-SUFFIX,repo.new
 DOMAIN-SUFFIX,s-dc-msedge.net
 DOMAIN-SUFFIX,s-microsoft.com
 DOMAIN-SUFFIX,s-msedge.net
@@ -632,7 +641,6 @@ DOMAIN-SUFFIX,tailwindtraders.com
 DOMAIN-SUFFIX,techhub.ms
 DOMAIN-SUFFIX,tellmewhygame.com
 DOMAIN-SUFFIX,tfsallin.net
-DOMAIN-SUFFIX,thegithubshop.com
 DOMAIN-SUFFIX,timelinestoryteller.com
 DOMAIN-SUFFIX,trafficmanager.cn
 DOMAIN-SUFFIX,trafficmanager.net

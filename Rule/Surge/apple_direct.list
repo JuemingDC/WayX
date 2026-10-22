@@ -1,11 +1,11 @@
 # Name: apple_direct
-# Updated: 2026-10-22 11:05:53 UTC
+# Updated: 2026-10-22 15:31:27 UTC
 # Converted by: chance
-# Source Authors: Nexitally, V2Fly
+# Source Authors: Loyalsoldier, MetaCubeX, Nexitally, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1784
+# Rules: 1786
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net
@@ -114,9 +114,11 @@ DOMAIN,musicstatus.music.apple.com
 DOMAIN,mvod.itunes.apple.com
 DOMAIN,myapp.itunes.apple.com
 DOMAIN,notary-submissions-prod.s3-accelerate.amazonaws.com
+DOMAIN,np-edge.itunes.apple.com
 DOMAIN,osxapps.itunes.apple.com
 DOMAIN,pd-nk.itunes.apple.com
 DOMAIN,pd.itunes.apple.com
+DOMAIN,play-edge.itunes.apple.com
 DOMAIN,play.itunes.apple.com
 DOMAIN,play.music.apple.com
 DOMAIN,podcasts.itunes.apple.com

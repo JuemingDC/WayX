@@ -1,14 +1,13 @@
 # Name: github
-# Updated: 2026-10-22 11:05:53 UTC
+# Updated: 2026-10-22 15:31:27 UTC
 # Converted by: chance
-# Source Authors: MetaCubeX, V2Fly
+# Source Authors: Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/github.json
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/github.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 65
+# Rules: 105
 # Managed by: WayX Rule Aggregator
 
-host,copilotprodattachments.blob.core.windows.net,proxy
 host,productionresultssa0.blob.core.windows.net,proxy
 host,productionresultssa1.blob.core.windows.net,proxy
 host,productionresultssa10.blob.core.windows.net,proxy
@@ -29,47 +28,88 @@ host,productionresultssa6.blob.core.windows.net,proxy
 host,productionresultssa7.blob.core.windows.net,proxy
 host,productionresultssa8.blob.core.windows.net,proxy
 host,productionresultssa9.blob.core.windows.net,proxy
+host,github-cloud.s3.amazonaws.com,direct
 host,github-cloud.s3.amazonaws.com,proxy
+host,github-production-release-asset-2e65be.s3.amazonaws.com,direct
 host,github-production-release-asset-2e65be.s3.amazonaws.com,proxy
+host,github-production-repository-file-5c1aeb.s3.amazonaws.com,direct
 host,github-production-repository-file-5c1aeb.s3.amazonaws.com,proxy
+host,github-production-repository-image-32fea6.s3.amazonaws.com,direct
 host,github-production-repository-image-32fea6.s3.amazonaws.com,proxy
+host,github-production-upload-manifest-file-7fdce7.s3.amazonaws.com,direct
 host,github-production-upload-manifest-file-7fdce7.s3.amazonaws.com,proxy
+host,github-production-user-asset-6210df.s3.amazonaws.com,direct
 host,github-production-user-asset-6210df.s3.amazonaws.com,proxy
-host,copilot-proxy.githubusercontent.com,proxy
-host,copilot-telemetry-service.githubusercontent.com,proxy
-host,copilot-telemetry.githubusercontent.com,proxy
-host,copilot-workspace.githubnext.com,proxy
+host,bybit-exchange.github.io,proxy
+host,github-api.arkoselabs.com,direct
 host,github-api.arkoselabs.com,proxy
+host,matsuridayo.github.io,proxy
+host,metacubex.github.io,proxy
+host,nix-community.github.io,proxy
+host,throneproj.github.io,proxy
+host,trojan-gfw.github.io,proxy
+host,xtls.github.io,proxy
+host-suffix,cafe.github.com,direct
 host-suffix,cafe.github.com,proxy
+host-suffix,collector.github.com,direct
 host-suffix,collector.github.com,proxy
+host-suffix,atom.io,direct
 host-suffix,atom.io,proxy
+host-suffix,dependabot.com,direct
 host-suffix,dependabot.com,proxy
+host-suffix,gh.io,direct
 host-suffix,gh.io,proxy
+host-suffix,ghcr.io,direct
 host-suffix,ghcr.io,proxy
+host-suffix,ghe.com,direct
 host-suffix,ghe.com,proxy
+host-suffix,git.io,direct
 host-suffix,git.io,proxy
+host-suffix,github.ai,direct
 host-suffix,github.ai,proxy
+host-suffix,github.blog,direct
 host-suffix,github.blog,proxy
+host-suffix,github.career,direct
 host-suffix,github.career,proxy
+host-suffix,github.com,direct
 host-suffix,github.com,proxy
+host-suffix,github.community,direct
 host-suffix,github.community,proxy
+host-suffix,github.dev,direct
 host-suffix,github.dev,proxy
+host-suffix,github.io,direct
 host-suffix,github.io,proxy
+host-suffix,githubapp.com,direct
 host-suffix,githubapp.com,proxy
+host-suffix,githubassets.com,direct
 host-suffix,githubassets.com,proxy
-host-suffix,githubcopilot.com,proxy
+host-suffix,githubhackathon.com,direct
 host-suffix,githubhackathon.com,proxy
+host-suffix,githubnext.com,direct
 host-suffix,githubnext.com,proxy
+host-suffix,githubpreview.dev,direct
 host-suffix,githubpreview.dev,proxy
+host-suffix,githubstatus.com,direct
 host-suffix,githubstatus.com,proxy
+host-suffix,githubsupport.com,direct
 host-suffix,githubsupport.com,proxy
+host-suffix,githubuniverse.com,direct
 host-suffix,githubuniverse.com,proxy
+host-suffix,githubusercontent.com,direct
 host-suffix,githubusercontent.com,proxy
+host-suffix,myoctocat.com,direct
 host-suffix,myoctocat.com,proxy
+host-suffix,npm.community,direct
 host-suffix,npm.community,proxy
+host-suffix,npmjs.com,direct
 host-suffix,npmjs.com,proxy
+host-suffix,npmjs.org,direct
 host-suffix,npmjs.org,proxy
+host-suffix,octocaptcha.com,direct
 host-suffix,octocaptcha.com,proxy
+host-suffix,opensource.guide,direct
 host-suffix,opensource.guide,proxy
+host-suffix,repo.new,direct
 host-suffix,repo.new,proxy
+host-suffix,thegithubshop.com,direct
 host-suffix,thegithubshop.com,proxy
