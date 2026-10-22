@@ -1,11 +1,11 @@
 # Name: steam
-# Updated: 2026-10-21 00:17:18 UTC
+# Updated: 2026-10-22 10:41:07 UTC
 # Converted by: chance
 # Source Authors: MetaCubeX, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/steam@cn.json
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 62
+# Rules: 63
 # Managed by: WayX Rule Aggregator
 
 host,a4e8s8k3.map2.ssl.hwcdn.net,proxy
@@ -60,6 +60,7 @@ host-suffix,steamconnecttest.com,proxy
 host-suffix,steamcontent.com,proxy
 host-suffix,steamdeck.com,proxy
 host-suffix,steamgames.com,proxy
+host-suffix,steamos.cloud,proxy
 host-suffix,steampowered.com,proxy
 host-suffix,steamserver.net,direct
 host-suffix,steamserver.net,proxy

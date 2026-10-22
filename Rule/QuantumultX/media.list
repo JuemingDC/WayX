@@ -1,11 +1,11 @@
 # Name: media
-# Updated: 2026-10-21 15:01:31 UTC
+# Updated: 2026-10-22 10:41:07 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 6834
+# Rules: 6846
 # Managed by: WayX Rule Aggregator
 
 host,cdn.globalsigncdn.com.cdn.cloudflare.net,proxy
@@ -2648,6 +2648,7 @@ host-suffix,famitsu.com,proxy
 host-suffix,fanatical.com,proxy
 host-suffix,fanbox.cc,proxy
 host-suffix,fandango.com,proxy
+host-suffix,fanfiction.net,proxy
 host-suffix,fanfictionero.com,proxy
 host-suffix,fanfox.net,proxy
 host-suffix,fansly.com,proxy
@@ -2974,6 +2975,7 @@ host-suffix,galaxymobile.jp,proxy
 host-suffix,game-platform.net,proxy
 host-suffix,game-repack.site,proxy
 host-suffix,gameapps.hk,proxy
+host-suffix,gamebanana.com,proxy
 host-suffix,gamebiz.jp,proxy
 host-suffix,gamebusiness.jp,proxy
 host-suffix,gamemeca.com,proxy
@@ -3034,6 +3036,7 @@ host-suffix,getpaint.net,proxy
 host-suffix,getpersonas.com,proxy
 host-suffix,getpocket.com,proxy
 host-suffix,getprintersupports.com,proxy
+host-suffix,getsafety.com,proxy
 host-suffix,getsentry.com,proxy
 host-suffix,getws1.com,proxy
 host-suffix,getwsone.com,proxy
@@ -5074,6 +5077,7 @@ host-suffix,pypi.io,proxy
 host-suffix,pypi.org,proxy
 host-suffix,python.org,proxy
 host-suffix,pythonhosted.org,proxy
+host-suffix,pyup.io,proxy
 host-suffix,q13.com,proxy
 host-suffix,q13fox.com,proxy
 host-suffix,qcomgeo2.com,proxy
@@ -5148,6 +5152,7 @@ host-suffix,qwant.fr,proxy
 host-suffix,qwant.it,proxy
 host-suffix,r-project.org,proxy
 host-suffix,r01.ru,proxy
+host-suffix,r2modman.com,proxy
 host-suffix,rabbitcounter.com,proxy
 host-suffix,rabota.by,proxy
 host-suffix,racked.com,proxy
@@ -5328,6 +5333,7 @@ host-suffix,s81c.com,proxy
 host-suffix,saas-support.com,proxy
 host-suffix,saasexch.cc,proxy
 host-suffix,saasexch.com,proxy
+host-suffix,safetycli.com,proxy
 host-suffix,saffrontech.com,proxy
 host-suffix,sahabatsetiasmartone.com,proxy
 host-suffix,saiganak.com,proxy
@@ -5817,6 +5823,7 @@ host-suffix,telega.me,proxy
 host-suffix,telemundo.com,proxy
 host-suffix,telerik.com,proxy
 host-suffix,temp-mail.org,proxy
+host-suffix,templatemonster.com,proxy
 host-suffix,tenbin.ai,proxy
 host-suffix,tenbyfotolia.com,proxy
 host-suffix,tenten.vn,proxy
@@ -5867,6 +5874,8 @@ host-suffix,thumbzilla.com,proxy
 host-suffix,thunderbird.net,proxy
 host-suffix,thunderbolttechnology.net,proxy
 host-suffix,thundermail.com,proxy
+host-suffix,thunderstore.io,proxy
+host-suffix,thunderstore.org,proxy
 host-suffix,tiberiumalliances.com,proxy
 host-suffix,tiburon.com,proxy
 host-suffix,tidal.com,proxy
@@ -5910,6 +5919,7 @@ host-suffix,tinkerplay.net,proxy
 host-suffix,tire-cadcam.com,proxy
 host-suffix,titanfall.com,proxy
 host-suffix,tmdb.org,proxy
+host-suffix,tmimgcdn.com,proxy
 host-suffix,tnt-ea.com,proxy
 host-suffix,token.im,proxy
 host-suffix,tokenpocket.pro,proxy
@@ -6442,6 +6452,7 @@ host-suffix,worldoftanks.com,proxy
 host-suffix,worldoftanks.eu,proxy
 host-suffix,worldofwarcraft.com,proxy
 host-suffix,worldofwarplanes.com,proxy
+host-suffix,worldofwarships.asia,proxy
 host-suffix,worldofwarships.com,proxy
 host-suffix,worldsecureemail.com,proxy
 host-suffix,worldsecuresystems.com,proxy
@@ -6451,6 +6462,7 @@ host-suffix,wotblitz.com,proxy
 host-suffix,wowsblitz.com,proxy
 host-suffix,wp-themes.com,proxy
 host-suffix,wp.com,proxy
+host-suffix,wplace.live,proxy
 host-suffix,wpmailsmtp.com,proxy
 host-suffix,wpvip.com,proxy
 host-suffix,ws-blau.com,proxy

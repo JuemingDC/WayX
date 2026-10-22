@@ -1,11 +1,11 @@
 # Name: apple
-# Updated: 2026-10-21 00:17:18 UTC
+# Updated: 2026-10-22 10:41:07 UTC
 # Converted by: chance
-# Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, V2Fly
+# Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, Tartarus2014, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list ; https://ruleset.skk.moe/List/non_ip/stream.conf
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Rule/Apple/TestFlight.lsr ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1795
+# Rules: 1797
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,direct
@@ -162,6 +162,7 @@ host,apple-tv-plus-press.apple.com,proxy
 host,apple.comscoreresearch.com,proxy
 host,appleid.cdn-apple.com,direct
 host,apps.mzstatic.com,direct
+host,beta.apple.com,proxy
 host,cdn-cn.apple-mapkit.com,direct
 host,cdn-cn1.apple-mapkit.com,direct
 host,cdn-cn2.apple-mapkit.com,direct
@@ -250,6 +251,7 @@ host,swcdn.apple.com,direct
 host,swdist.apple.com,direct
 host,swscan.apple.com,direct
 host,sylvan.apple.com,direct
+host,testflight.apple.com,proxy
 host,tj-pod1-smp-device.apple.com,direct
 host,tj-pod2-smp-device.apple.com,direct
 host,tj-pod3-smp-device.apple.com,direct

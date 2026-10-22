@@ -1,11 +1,11 @@
 # Name: media
-# Updated: 2026-10-21 15:01:31 UTC
+# Updated: 2026-10-22 10:41:07 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 6834
+# Rules: 6846
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,cdn.globalsigncdn.com.cdn.cloudflare.net
@@ -2648,6 +2648,7 @@ DOMAIN-SUFFIX,famitsu.com
 DOMAIN-SUFFIX,fanatical.com
 DOMAIN-SUFFIX,fanbox.cc
 DOMAIN-SUFFIX,fandango.com
+DOMAIN-SUFFIX,fanfiction.net
 DOMAIN-SUFFIX,fanfictionero.com
 DOMAIN-SUFFIX,fanfox.net
 DOMAIN-SUFFIX,fansly.com
@@ -2974,6 +2975,7 @@ DOMAIN-SUFFIX,galaxymobile.jp
 DOMAIN-SUFFIX,game-platform.net
 DOMAIN-SUFFIX,game-repack.site
 DOMAIN-SUFFIX,gameapps.hk
+DOMAIN-SUFFIX,gamebanana.com
 DOMAIN-SUFFIX,gamebiz.jp
 DOMAIN-SUFFIX,gamebusiness.jp
 DOMAIN-SUFFIX,gamemeca.com
@@ -3034,6 +3036,7 @@ DOMAIN-SUFFIX,getpaint.net
 DOMAIN-SUFFIX,getpersonas.com
 DOMAIN-SUFFIX,getpocket.com
 DOMAIN-SUFFIX,getprintersupports.com
+DOMAIN-SUFFIX,getsafety.com
 DOMAIN-SUFFIX,getsentry.com
 DOMAIN-SUFFIX,getws1.com
 DOMAIN-SUFFIX,getwsone.com
@@ -5074,6 +5077,7 @@ DOMAIN-SUFFIX,pypi.io
 DOMAIN-SUFFIX,pypi.org
 DOMAIN-SUFFIX,python.org
 DOMAIN-SUFFIX,pythonhosted.org
+DOMAIN-SUFFIX,pyup.io
 DOMAIN-SUFFIX,q13.com
 DOMAIN-SUFFIX,q13fox.com
 DOMAIN-SUFFIX,qcomgeo2.com
@@ -5148,6 +5152,7 @@ DOMAIN-SUFFIX,qwant.fr
 DOMAIN-SUFFIX,qwant.it
 DOMAIN-SUFFIX,r-project.org
 DOMAIN-SUFFIX,r01.ru
+DOMAIN-SUFFIX,r2modman.com
 DOMAIN-SUFFIX,rabbitcounter.com
 DOMAIN-SUFFIX,rabota.by
 DOMAIN-SUFFIX,racked.com
@@ -5328,6 +5333,7 @@ DOMAIN-SUFFIX,s81c.com
 DOMAIN-SUFFIX,saas-support.com
 DOMAIN-SUFFIX,saasexch.cc
 DOMAIN-SUFFIX,saasexch.com
+DOMAIN-SUFFIX,safetycli.com
 DOMAIN-SUFFIX,saffrontech.com
 DOMAIN-SUFFIX,sahabatsetiasmartone.com
 DOMAIN-SUFFIX,saiganak.com
@@ -5817,6 +5823,7 @@ DOMAIN-SUFFIX,telega.me
 DOMAIN-SUFFIX,telemundo.com
 DOMAIN-SUFFIX,telerik.com
 DOMAIN-SUFFIX,temp-mail.org
+DOMAIN-SUFFIX,templatemonster.com
 DOMAIN-SUFFIX,tenbin.ai
 DOMAIN-SUFFIX,tenbyfotolia.com
 DOMAIN-SUFFIX,tenten.vn
@@ -5867,6 +5874,8 @@ DOMAIN-SUFFIX,thumbzilla.com
 DOMAIN-SUFFIX,thunderbird.net
 DOMAIN-SUFFIX,thunderbolttechnology.net
 DOMAIN-SUFFIX,thundermail.com
+DOMAIN-SUFFIX,thunderstore.io
+DOMAIN-SUFFIX,thunderstore.org
 DOMAIN-SUFFIX,tiberiumalliances.com
 DOMAIN-SUFFIX,tiburon.com
 DOMAIN-SUFFIX,tidal.com
@@ -5910,6 +5919,7 @@ DOMAIN-SUFFIX,tinkerplay.net
 DOMAIN-SUFFIX,tire-cadcam.com
 DOMAIN-SUFFIX,titanfall.com
 DOMAIN-SUFFIX,tmdb.org
+DOMAIN-SUFFIX,tmimgcdn.com
 DOMAIN-SUFFIX,tnt-ea.com
 DOMAIN-SUFFIX,token.im
 DOMAIN-SUFFIX,tokenpocket.pro
@@ -6442,6 +6452,7 @@ DOMAIN-SUFFIX,worldoftanks.com
 DOMAIN-SUFFIX,worldoftanks.eu
 DOMAIN-SUFFIX,worldofwarcraft.com
 DOMAIN-SUFFIX,worldofwarplanes.com
+DOMAIN-SUFFIX,worldofwarships.asia
 DOMAIN-SUFFIX,worldofwarships.com
 DOMAIN-SUFFIX,worldsecureemail.com
 DOMAIN-SUFFIX,worldsecuresystems.com
@@ -6451,6 +6462,7 @@ DOMAIN-SUFFIX,wotblitz.com
 DOMAIN-SUFFIX,wowsblitz.com
 DOMAIN-SUFFIX,wp-themes.com
 DOMAIN-SUFFIX,wp.com
+DOMAIN-SUFFIX,wplace.live
 DOMAIN-SUFFIX,wpmailsmtp.com
 DOMAIN-SUFFIX,wpvip.com
 DOMAIN-SUFFIX,ws-blau.com
