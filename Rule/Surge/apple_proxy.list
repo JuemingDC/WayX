@@ -1,26 +1,25 @@
 # Name: apple_proxy
-# Updated: 2026-10-22 10:41:07 UTC
+# Updated: 2026-10-22 11:05:53 UTC
 # Converted by: chance
-# Source Authors: ACL4SSR, DustinWin, Sukka, Tartarus2014, V2Fly
+# Source Authors: Tartarus2014, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Rule/Apple/TestFlight.lsr ; https://ruleset.skk.moe/List/non_ip/stream.conf
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Rule/Apple/TestFlight.lsr
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 16
+# Rules: 15
 # Managed by: WayX Rule Aggregator
 
+DOMAIN,apple-relay.mask.apple-dns.net
+DOMAIN,gspe1-ssl.ls.apple.com
 DOMAIN,hls-amt.itunes.apple.com
 DOMAIN,hls.itunes.apple.com
-DOMAIN,linear.tv.apple.com
 DOMAIN,np-edge.itunes.apple.com
 DOMAIN,play-edge.itunes.apple.com
 DOMAIN,uts-api.itunes.apple.com
+DOMAIN,apple-relay.apple.com
+DOMAIN,apple-relay.cloudflare.com
+DOMAIN,apple-relay.fastly-edge.com
 DOMAIN,apple-tv-plus-press.apple.com
-DOMAIN,apple.comscoreresearch.com
 DOMAIN,beta.apple.com
-DOMAIN,news-client.apple.com
-DOMAIN,news-edge.apple.com
-DOMAIN,news-events.apple.com
-DOMAIN,ocvideo.apple.com
 DOMAIN,testflight.apple.com
 DOMAIN,tv.applemusic.com
 DOMAIN-SUFFIX,tv.apple.com

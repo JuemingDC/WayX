@@ -1,23 +1,96 @@
 # Name: microsoft
-# Updated: 2026-10-21 00:17:18 UTC
+# Updated: 2026-10-22 11:05:53 UTC
 # Converted by: chance
 # Source Authors: V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 593
+# Rules: 706
 # Managed by: WayX Rule Aggregator
 
+host,b.c2r.ts.cdn.office.net,direct
+host,f.c2r.ts.cdn.office.net,direct
+host,azuremigrate.download.prss.microsoft.com,direct
+host,azuremigratetest.download.prss.microsoft.com,direct
+host,azurestackhub.download.prss.microsoft.com,direct
+host,azurestackhubuat.download.prss.microsoft.com,direct
+host,cbdstest.download.prss.microsoft.com,direct
+host,collaborate.download.prss.microsoft.com,direct
+host,collaborateppe.download.prss.microsoft.com,direct
+host,copilotprodattachments.blob.core.windows.net,proxy
+host,dreamspark.download.prss.microsoft.com,direct
+host,dreamsparkuat.download.prss.microsoft.com,direct
+host,itacademy.download.prss.microsoft.com,direct
+host,itacademyuat.download.prss.microsoft.com,direct
+host,lex.download.prss.microsoft.com,direct
+host,lexuat.download.prss.microsoft.com,direct
+host,mbs.download.prss.microsoft.com,direct
+host,mpnbenefits.download.prss.microsoft.com,direct
+host,mpnbenefitsrtl.download.prss.microsoft.com,direct
+host,mpnbenefitsrtluat.download.prss.microsoft.com,direct
+host,msdn.download.prss.microsoft.com,direct
+host,msdprod-ad.download.prss.microsoft.com,direct
+host,msproduct.download.prss.microsoft.com,direct
+host,myvs.download.prss.microsoft.com,direct
+host,oemsoc.download.prss.microsoft.com,direct
+host,oemsocuat.download.prss.microsoft.com,direct
+host,officemkt.download.prss.microsoft.com,direct
+host,officemktuat.download.prss.microsoft.com,direct
+host,osrelease.download.prss.microsoft.com,direct
+host,rsm.download.prss.microsoft.com,direct
+host,software.download.prss.microsoft.com,direct
+host,statics.teams.cdn.office.net,direct
+host,storecorefulfillment.download.prss.microsoft.com,direct
+host,storeedgefd.dsx.mp.microsoft.com,direct
+host,surface.download.prss.microsoft.com,direct
+host,surface.downloads.prss.microsoft.com,direct
+host,vlportal.download.prss.microsoft.com,direct
+host,volic.download.prss.microsoft.com,direct
+host,vscode.download.prss.microsoft.com,direct
+host,vz.download.prss.microsoft.com,direct
+host,windbg.download.prss.microsoft.com,direct
+host,bj1.api.bing.com,direct
+host,download.visualstudio.microsoft.com,direct
+host,github-cloud.s3.amazonaws.com,direct
+host,github-production-release-asset-2e65be.s3.amazonaws.com,direct
+host,github-production-repository-file-5c1aeb.s3.amazonaws.com,direct
+host,github-production-repository-image-32fea6.s3.amazonaws.com,direct
+host,github-production-upload-manifest-file-7fdce7.s3.amazonaws.com,direct
+host,github-production-user-asset-6210df.s3.amazonaws.com,direct
+host,shell.cdn.office.net,direct
+host,cn.windowssearch.com,direct
+host,copilot-proxy.githubusercontent.com,proxy
+host,copilot-telemetry-service.githubusercontent.com,proxy
+host,copilot-telemetry.githubusercontent.com,proxy
+host,copilot-workspace.githubnext.com,proxy
+host,ctldl.windowsupdate.com,direct
+host,developer.microsoft.com,direct
+host,download.microsoft.com,direct
+host,github-api.arkoselabs.com,direct
 host,img-prod-cms-rt-microsoft-com.akamaized.net,direct
 host,img-s-msn-com.akamaized.net,direct
 host,mwf-service.akamaized.net,direct
 host,officecdn-microsoft-com.akamaized.net,direct
+host,officecdn.microsoft.com,direct
 host,rink.hockeyapp.net,direct
+host,sdx.microsoft.com,direct
 host,statics-marketingsites-eas-ms-com.akamaized.net,direct
 host,statics-marketingsites-eus-ms-com.akamaized.net,direct
 host,statics-marketingsites-wcus-ms-com.akamaized.net,direct
+host,storeedge.microsoft.com,direct
 host,vsmarketplacebadge.apphb.com,direct
+host-suffix,browser.events.data.msn.cn,direct
+host-suffix,browser.events.data.msn.com,direct
+host-suffix,dl.delivery.mp.microsoft.com,direct
+host-suffix,cn.mm.bing.net,direct
 host-suffix,bing.com.cn,direct
+host-suffix,cafe.github.com,direct
+host-suffix,cn.bing.com,direct
+host-suffix,cn.bing.net,direct
+host-suffix,collector.github.com,direct
+host-suffix,dcg.microsoft.com,direct
+host-suffix,ditu.live.com,direct
+host-suffix,download.windowsupdate.com,direct
 host-suffix,live.com.au,direct
 host-suffix,microsoftonline-p-i.net.cn,direct
 host-suffix,microsoftonline-p.net.cn,direct
@@ -25,9 +98,11 @@ host-suffix,microsoftreactor.com.cn,direct
 host-suffix,microsoftstore.com.cn,direct
 host-suffix,microsoftstore.com.hk,direct
 host-suffix,onedrive.co.uk,direct
+host-suffix,r.bing.com,direct
 host-suffix,reactorms.com.cn,direct
 host-suffix,skype-edf.akadns.net,direct
 host-suffix,skypedata.akadns.net,direct
+host-suffix,th.bing.com,direct
 host-suffix,visualstudio.co.uk,direct
 host-suffix,1drv.com,direct
 host-suffix,1drv.ms,direct
@@ -51,6 +126,7 @@ host-suffix,appserviceenvironment.cn,direct
 host-suffix,aria.ms,direct
 host-suffix,asp.net,direct
 host-suffix,aspnetcdn.com,direct
+host-suffix,atom.io,direct
 host-suffix,azchcdna.com,direct
 host-suffix,azchcdnb.com,direct
 host-suffix,azchcdnc.com,direct
@@ -153,6 +229,7 @@ host-suffix,binads.com,direct
 host-suffix,bing.com,direct
 host-suffix,bing.net,direct
 host-suffix,bing123.com,direct
+host-suffix,bingads.com,direct
 host-suffix,bingagencyawards.com,direct
 host-suffix,bingapis.com,direct
 host-suffix,bingapistatistics.com,direct
@@ -179,9 +256,12 @@ host-suffix,chinacloud-mobile.cn,direct
 host-suffix,chinacloudapi.cn,direct
 host-suffix,chinacloudapp.cn,direct
 host-suffix,chinacloudsites.cn,direct
+host-suffix,clarity.ms,direct
 host-suffix,cloudapp.net,direct
 host-suffix,cloudappsecurity.com,direct
 host-suffix,codethemicrobit.com,direct
+host-suffix,copilot-stg.com,direct
+host-suffix,copilot.com,direct
 host-suffix,cortanaanalytics.com,direct
 host-suffix,cortanaskills.com,direct
 host-suffix,cosmosdb.info,direct
@@ -189,6 +269,7 @@ host-suffix,cosmosdb.net,direct
 host-suffix,crmdynint-gcc.com,direct
 host-suffix,crmdynint.com,direct
 host-suffix,crossborderexpansion.com,direct
+host-suffix,dependabot.com,direct
 host-suffix,devopsassessment.net,direct
 host-suffix,devopsms.com,direct
 host-suffix,dictate.ms,direct
@@ -217,7 +298,28 @@ host-suffix,gears5.com,direct
 host-suffix,gearspop.com,direct
 host-suffix,gearstactics.com,direct
 host-suffix,gfx.ms,direct
+host-suffix,gh.io,direct
+host-suffix,ghcr.io,direct
+host-suffix,ghe.com,direct
 host-suffix,gigjam.com,direct
+host-suffix,git.io,direct
+host-suffix,github.ai,direct
+host-suffix,github.blog,direct
+host-suffix,github.career,direct
+host-suffix,github.com,direct
+host-suffix,github.community,direct
+host-suffix,github.dev,direct
+host-suffix,github.io,direct
+host-suffix,githubapp.com,direct
+host-suffix,githubassets.com,direct
+host-suffix,githubcopilot.com,proxy
+host-suffix,githubhackathon.com,direct
+host-suffix,githubnext.com,direct
+host-suffix,githubpreview.dev,direct
+host-suffix,githubstatus.com,direct
+host-suffix,githubsupport.com,direct
+host-suffix,githubuniverse.com,direct
+host-suffix,githubusercontent.com,direct
 host-suffix,gotcosmos.com,direct
 host-suffix,graphengine.io,direct
 host-suffix,hdinsightservices.cn,direct
@@ -312,6 +414,7 @@ host-suffix,microsoft.vn,direct
 host-suffix,microsoft365.com,direct
 host-suffix,microsoftaccountguard.com,direct
 host-suffix,microsoftadc.com,direct
+host-suffix,microsoftads.com,direct
 host-suffix,microsoftadvertising.com,direct
 host-suffix,microsoftadvertisingregionalawards.com,direct
 host-suffix,microsoftaffiliates.com,direct
@@ -391,6 +494,7 @@ host-suffix,morphcharts.com,direct
 host-suffix,mpnevolution.com,direct
 host-suffix,ms-studiosmedia.com,direct
 host-suffix,ms365surfaceoffer.com,direct
+host-suffix,msads.net,direct
 host-suffix,msappproxy.cn,direct
 host-suffix,msauth.cn,direct
 host-suffix,msauth.net,direct
@@ -435,7 +539,12 @@ host-suffix,msturing.org,direct
 host-suffix,msudalosti.com,direct
 host-suffix,msunlimitedcloudsummit.com,direct
 host-suffix,mymicrosoft.com,direct
+host-suffix,myoctocat.com,direct
+host-suffix,nelreports.net,direct
 host-suffix,nextechafrica.net,direct
+host-suffix,npm.community,direct
+host-suffix,npmjs.com,direct
+host-suffix,npmjs.org,direct
 host-suffix,nuget.org,direct
 host-suffix,nugettest.org,direct
 host-suffix,nxta.org,direct
@@ -444,6 +553,7 @@ host-suffix,o365files.cn,direct
 host-suffix,o365weve-dev.com,direct
 host-suffix,o365weve-ppe.com,direct
 host-suffix,o365weve.com,direct
+host-suffix,octocaptcha.com,direct
 host-suffix,office.com,direct
 host-suffix,office.net,direct
 host-suffix,office365-net.cn,direct
@@ -462,6 +572,7 @@ host-suffix,onenote.com,direct
 host-suffix,onenote.net,direct
 host-suffix,onestore.ms,direct
 host-suffix,onmschina.cn,direct
+host-suffix,opensource.guide,direct
 host-suffix,opentranslatorstothings.org,direct
 host-suffix,opticsforthecloud.net,direct
 host-suffix,orithegame.com,direct
@@ -488,6 +599,7 @@ host-suffix,pwabuilder.com,direct
 host-suffix,pxt.io,direct
 host-suffix,renovacionoffice.com,direct
 host-suffix,renovacionxboxlive.com,direct
+host-suffix,repo.new,direct
 host-suffix,s-dc-msedge.net,direct
 host-suffix,s-microsoft.com,direct
 host-suffix,s-msedge.net,direct
@@ -526,6 +638,7 @@ host-suffix,tailwindtraders.com,direct
 host-suffix,techhub.ms,direct
 host-suffix,tellmewhygame.com,direct
 host-suffix,tfsallin.net,direct
+host-suffix,thegithubshop.com,direct
 host-suffix,timelinestoryteller.com,direct
 host-suffix,trafficmanager.cn,direct
 host-suffix,trafficmanager.net,direct
