@@ -1,11 +1,11 @@
 # Name: apple_direct
-# Updated: 2026-10-21 00:17:18 UTC
+# Updated: 2026-10-22 11:05:53 UTC
 # Converted by: chance
 # Source Authors: Nexitally, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1779
+# Rules: 1784
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net
@@ -261,6 +261,8 @@ DOMAIN-SUFFIX,12diasderegalosdeitunes.com.ni
 DOMAIN-SUFFIX,12diasderegalosdeitunes.com.ve
 DOMAIN-SUFFIX,1to1computing.com.au
 DOMAIN-SUFFIX,1to1conference.com.au
+DOMAIN-SUFFIX,advertising.apple.com
+DOMAIN-SUFFIX,api-adservices.apple.com
 DOMAIN-SUFFIX,apple-dns.com.cn
 DOMAIN-SUFFIX,apple-watch.com.ru
 DOMAIN-SUFFIX,apple.co.cr
@@ -351,6 +353,8 @@ DOMAIN-SUFFIX,beats2.com.cn
 DOMAIN-SUFFIX,beatsbydre.com.cn
 DOMAIN-SUFFIX,ecgapp.com.cn
 DOMAIN-SUFFIX,emac.co.in
+DOMAIN-SUFFIX,iad.apple.com
+DOMAIN-SUFFIX,iadsdk.apple.com
 DOMAIN-SUFFIX,ibook.co.nz
 DOMAIN-SUFFIX,ichat.co.in
 DOMAIN-SUFFIX,icloud-content.com.cn
@@ -1672,6 +1676,7 @@ DOMAIN-SUFFIX,quicktime.com
 DOMAIN-SUFFIX,quicktime.eu
 DOMAIN-SUFFIX,quicktime.net
 DOMAIN-SUFFIX,quicktime.tv
+DOMAIN-SUFFIX,qwapi.com
 DOMAIN-SUFFIX,rbsgr.com
 DOMAIN-SUFFIX,reform-apple.com
 DOMAIN-SUFFIX,repsneakermall.com

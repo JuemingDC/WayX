@@ -1,14 +1,16 @@
 # Name: disney
-# Updated: 2026-10-21 00:17:18 UTC
+# Updated: 2026-10-22 11:05:53 UTC
 # Converted by: chance
-# Source Authors: ACL4SSR, DustinWin, MetaCubeX, Nexitally, Sukka, V2Fly
+# Source Authors: MetaCubeX, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/disney.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list ; https://ruleset.skk.moe/List/non_ip/stream.conf
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/disney.json
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 230
+# Rules: 232
 # Managed by: WayX Rule Aggregator
 
 host,disneyplus.com.ssl.sc.omtrdc.net,proxy
+host,espn.api.edge.bamgrid.com,proxy
+host,hulu.playback.edge.bamgrid.com,proxy
 host,disney.my.sentry.io,proxy
 host,espn.hb.omtrdc.net,proxy
 host,espndotcom.tt.omtrdc.net,proxy
