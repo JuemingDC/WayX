@@ -420,6 +420,7 @@ def serialize(rule, policy, target):
 
 def build(config, inputs):
     anomalies = []; buckets = {}; authors = {}; urls = {}
+    records = []
     sites = geosites(inputs['geosite'], anomalies)
     app_names = {app['name'] for app in config['applications']}
     scope_exclusions = {}
@@ -441,11 +442,13 @@ def build(config, inputs):
             Rule('DOMAIN-SUFFIX', '.'.join(rule.value.split('.')[i:])) in rules
             for i in range(len(rule.value.split('.')))))
     def add(name, policy, rules, author, source):
-        key = (name, policy)
-        rules = {rule for rule in rules if not excluded(name, rule)}
-        buckets.setdefault(key, set()).update(rules)
-        authors.setdefault(key, set()).add(author)
-        urls.setdefault(key, set()).add(source)
+        for rule in rules:
+            # Explicit user removals apply before classification; application
+            # scope selectors are checked against the final destination.
+            if any(rule.kind == kind and pattern.search(rule.value)
+                   for kind, pattern in rule_exclusions.get(name, [])):
+                continue
+            records.append((name, policy, rule, author, source))
     def select(tags, group):
         result = set()
         entries = []
@@ -490,9 +493,8 @@ def build(config, inputs):
     foreign = select(config['collections']['proxy'], 'proxy')
     domestic_apps = select(config['collections']['media_cn'], 'media_cn')
     overseas_apps = select(config['collections']['media'], 'media')
-    # Registered collections and sources are independent inputs. Retain every
-    # declaration in its configured category and policy; only exact duplicates
-    # within the same output are coalesced during serialization.
+    # First collect all inputs without subtracting other collections. Assignment
+    # below changes only the destination collection, never a source action.
     add('media_cn', 'DIRECT', domestic_apps, 'V2Fly', origin)
     add('media', 'Media', overseas_apps, 'V2Fly', origin)
     add('cn', 'DIRECT', cn, 'V2Fly', origin)
@@ -504,6 +506,73 @@ def build(config, inputs):
             continue
         for rule, policy in rows:
             add(source['category'], policy, [rule], source['author'], source['url'])
+
+    classification = config.get('classification', {})
+    priority = classification.get('priority', [])
+    if len(set(priority)) != len(priority) or set(priority) - app_names:
+        raise ValueError('Invalid classification priority')
+    ownership = {}
+    suffix_owners = {}
+    def index(name, rules):
+        for rule in rules:
+            if excluded(name, rule):
+                continue
+            ownership.setdefault(Rule(rule.kind, rule.value), set()).add(name)
+            if rule.kind == 'DOMAIN-SUFFIX':
+                suffix_owners.setdefault(rule.value, set()).add(name)
+    for app in config['applications']:
+        index(app['name'], select([*app['tags'], *app.get('proxy_tags', [])], app['name']))
+    index('media_cn', domestic_apps | select(classification.get('domestic_tags', []), 'media_cn'))
+    index('media', overseas_apps | select(classification.get('overseas_tags', []), 'media'))
+    # Explicit application supplements also provide ownership evidence. General
+    # direct/proxy feeds, IP geolocation and TLDs never establish app identity.
+    for name, policy, rule, author, source in records:
+        if name in app_names | {'media', 'media_cn'}:
+            index(name, [rule])
+
+    def destination(name, policy, rule, source):
+        if name.startswith('adblock') or policy.startswith('REJECT'):
+            return name
+        candidates = set(ownership.get(Rule(rule.kind, rule.value), ()))
+        if rule.kind in ('DOMAIN', 'DOMAIN-SUFFIX') and not candidates & app_names:
+            labels = rule.value.split('.')
+            # A more-specific upstream domain association wins over a parent.
+            for offset in range(len(labels)):
+                matches = suffix_owners.get('.'.join(labels[offset:]), ())
+                if matches:
+                    candidates.update(matches)
+                    if candidates & app_names:
+                        break
+        named = candidates & app_names
+        preferred = next((item for item in priority if item in named), None)
+        if preferred:
+            return preferred
+        if len(named) == 1:
+            return next(iter(named))
+        if len(named) > 1:
+            if name in named:
+                return name
+            anomalies.append({'source': source, 'category': name,
+                              'declaration': rule.kind + ',' + rule.value,
+                              'code': 'ambiguous-app-ownership',
+                              'reason': 'Conflicting upstream app ownership: ' + ', '.join(sorted(named))})
+            return name
+        if 'media_cn' in candidates:
+            return 'media_cn'
+        if 'media' in candidates:
+            return 'media'
+        if name in ('cn', 'proxy'):
+            return 'cn' if policy == 'DIRECT' else 'proxy'
+        return name
+
+    for name, policy, rule, author, source in records:
+        target = destination(name, policy, rule, source)
+        if excluded(target, rule):
+            continue
+        key = (target, policy)
+        buckets.setdefault(key, set()).add(rule)
+        authors.setdefault(key, set()).add(author)
+        urls.setdefault(key, set()).add(source)
     rendered = {}; metadata = {}
     def surge_action(policy):
         return policy if policy == 'DIRECT' or policy.startswith('REJECT') else 'PROXY'
