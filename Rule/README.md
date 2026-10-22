@@ -8,6 +8,7 @@ Python aggregates the registered upstreams into native Quantumult X and Surge li
 - `adblock_extra`: optional incremental Sukka base domains. Keep this disabled unless extra filtering is wanted.
 - Named applications: Google, Facebook/Meta, Netflix, Disney, YouTube, Telegram, Steam, X, Spotify, GitHub, Apple and Microsoft.
 - Steam uses the maintained V2Fly `steam@cn` / `steam@!cn` attributes and MetaCubeX domestic supplements. Quantumult X combines direct/proxy rows in `steam.list`; Surge uses `steam_direct.list` and `steam_proxy.list`. Domestic entries are not inferred from domain spelling.
+- Apple merges Tartarus2014’s dedicated TestFlight list into the existing proxy exceptions (`beta.apple.com` and `testflight.apple.com`). Install `apple_proxy.list` with a proxy policy before `apple_direct.list`; Quantumult X preserves the per-rule proxy actions in `apple.list`.
 - `ai`: overseas AI services only, using the `ai` policy, including OpenAI, Claude, Gemini, Copilot and Apple Intelligence. Inputs include V2Fly, MetaCubeX, Nexitally, DustinWin and Sukka. Domestic AI tags are excluded from every AI input.
 - `media`: other overseas applications, including non-video services.
 - `media_cn`: domestic applications.
