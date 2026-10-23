@@ -618,6 +618,12 @@ def build(config, inputs):
             policy = default_policies.get(target, policy)
         if target in routing_policies and policy not in ('DIRECT', 'PROXY') and not policy.startswith('REJECT'):
             policy = routing_policies[target]
+        # Modified: 2026-10-23 (chance). Move media_cn proxy actions to media
+        # after policy resolution; keep media_cn direct-only without rewriting actions.
+        if target == 'media_cn' and qx_policy(policy) == 'PROXY':
+            target = 'media'
+            if excluded(target, rule):
+                continue
         if explicit:
             explicit_rules.add((target, rule, qx_policy(policy)))
         key = (target, policy)
