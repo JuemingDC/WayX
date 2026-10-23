@@ -1,6 +1,6 @@
 {
-  "version": 8,
-  "modified": "2026-10-23 (chance): use one del call for independent selectors and reduce/delpaths for ordered deletions; refresh affected output hashes and sizes.",
+  "version": 9,
+  "modified": "2026-10-23 (chance): distinguish source execution semantics and actual index shifts; independent numeric traversal no longer requires reduce/delpaths.",
   "stamp": "2026-09-29 12:00:00 +08:00",
   "cases": {
     "HTTPDNS": {
@@ -37,10 +37,10 @@
       ]
     },
     "MyBlockAds": {
-      "qxSha256": "44fc4e8642f23ed7f4835ae024965e09eef62ffca5ce4de5f1d0f29657c4ba19",
-      "surgeSha256": "f51c4b970cccef288395743c0245a948bba86ab7ed0505b26f0af06e9770de52",
-      "qxBytes": 24602,
-      "surgeBytes": 34432,
+      "qxSha256": "4c27ba30a374900c2b516b5851f9551d42360546a217a115f260113c4c5aff8f",
+      "surgeSha256": "9eddb51b39382cf93bb15e754e5a9bafd92fa8bad99d69985aff5f093d2d0dfb",
+      "qxBytes": 24554,
+      "surgeBytes": 34384,
       "sourceScriptCount": 9,
       "generatedScriptCount": 0,
       "qxReview": 0,

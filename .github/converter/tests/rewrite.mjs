@@ -5,6 +5,7 @@
 import { REWRITE_MUTATION_MAPPINGS, QX_REWRITE_PRIMITIVES, jsonActionToJq, analyzeSafeRewriteV2, dependencySpecFromAction, jqDependencySpecFromAction, inlineResolvedDependency, inlineResolvedLegacyJqPathIr, legacyJqPathDependencySpecFromIr, listRewriteV2Dependencies, qxMockPlanFromAction, compileRegexForTarget, qxDirectRewritePlan, surgeDirectRewritePlan, surgeRedirectRewritePlan, surgeRejectRewritePlan, surgeHeaderRewritePlan, surgeInlineMockPlan, surgeMockFilePlan, renderQxRedirectScript, renderQxRejectScript, renderQxHeaderScript, renderQxInlineMockScript, renderQxMockFileScript, renderSurgeRequestMockScript, LOON_REWRITE_V2_ACTIONS, minifyJq, minifyJqFile, quoteJq, renderFixedPathDeleteJq, classifyLegacyRewrite, legacyRewriteToSemanticIr, planLegacyRewrite, planLegacyRewriteIr, validateLoonSourceCatalog, planMitmLine, resolveOriginalUrl, parseLoonArguments, surgeArgumentMetadata, surgePluginObjectArgument, surgeRewriteArgumentPayload, surgeEnableRequirement, parseLegacyLoonPluginObjectRefs, analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs, parseRewriteV2, qxPrimitiveForRewriteV2Action, qxRule, qxTargetPath, rewriteV2ToSource, selectQxScriptAction, parseScriptV2, scriptV2ToSource, scriptV2ArgumentRefs, scriptV2DynamicOptionRefs, scriptOptionBoolean, qxScriptV2Plan, surgeScriptV2Plan, surgeRule, surgeModuleRule, renderSurgeModuleHeader, renderQxSnippetHeader, validateSurgeModule, surgeTargetPath, validateRewriteV2Ast, classifyComplexRewrite, complexConditionKinds, registerComplexRewriteHandler, planComplexRewrite, listComplexRewriteHandlers, renderMixedRewriteScript, renderSingleJsonMutationScript, isEmptyJsonJqIr, isEmptyLegacyJsonJqIr, rewriteV2AstToSemanticIr, singleRewriteOperation, rewriteOperationKinds, planQxRewrite, jsonPipelineToSafeNativeJq, qxExactRewriteMatcherPlan, qxRewriteMatcherPlan, planSurgeRewrite } from "../src/index.mjs";
 import assert from "node:assert/strict";
 import vm from "node:vm";
+import { planFixedPathDeleteJq } from "../src/index.mjs";
 
 import { spawnSync as runIsolatedCase } from 'node:child_process';
 import { fileURLToPath as isolatedSuitePath } from 'node:url';
@@ -306,6 +307,26 @@ assert.equal(
   ]),
   'reduce [["items",0],["items",1]][] as $p (.; delpaths([$p]))',
 );
+
+// Modified: 2026-10-23 (chance). Execute planner decisions with real jq:
+// identical paths require different results under sequential/snapshot semantics.
+for(const {paths,options,input,expected,form} of [
+  {paths:[['items',0],['items',1]],options:{},input:{items:['a','b','c','d']},expected:{items:['b','d']},form:'ordered-delpaths'},
+  {paths:[['items',0],['items',1]],options:{execution:'snapshot'},input:{items:['a','b','c','d']},expected:{items:['c','d']},form:'del'},
+  {paths:[['items',0],['items',1]],options:{sourceForm:'path-arrays',execution:'snapshot'},input:{items:['a','b','c','d']},expected:{items:['c','d']},form:'delpaths'},
+  {paths:[['items',2],['items',0]],options:{},input:{items:['a','b','c','d']},expected:{items:['b','d']},form:'del'},
+  {paths:[['items',0,'ad'],['items',1,'ad']],options:{},input:{items:[{ad:1,keep:2},{ad:3,keep:4}]},expected:{items:[{keep:2},{keep:4}]},form:'del'},
+  {paths:[['a'],['a','b']],options:{},input:{a:1,keep:2},expected:{keep:2},form:'ordered-delpaths'},
+  {paths:[['a.b','0'],['other']],options:{sourceForm:'path-arrays'},input:{'a.b':{'0':1,keep:2},other:3},expected:{'a.b':{keep:2}},form:'delpaths'},
+]) {
+  const plan=planFixedPathDeleteJq(paths,options);
+  assert.equal(plan.form,form);
+  assert.ok(plan.reason);
+  const result=runIsolatedCase('jq',['-c',plan.jq],{input:JSON.stringify(input),encoding:'utf8'});
+  assert.equal(result.status,0,result.stderr);
+  assert.deepEqual(JSON.parse(result.stdout),expected);
+  assert.ok(!plan.jq.includes('|'),'generated deletion must not contain del pipelines');
+}
 
 assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:true,scriptUrl:'https://example.com/request.js',sourceText:'$done({status:"HTTP/1.1 200 OK",body:$request.body});'}).action, 'script-request-body');
 assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:false,scriptUrl:'https://example.com/header.js',sourceText:'$done({headers:$request.headers});'}).action, 'script-request-header');
@@ -1150,7 +1171,7 @@ const legacyJsonDelBatch = planLegacyRewrite(
   legacyCtx,
 );
 assert.equal(legacyJsonDelBatch.section, 'rewrite');
-assert.ok(legacyJsonDelBatch.line.includes('reduce [["data","ads"],["data","items",0]][] as $p (.; delpaths([$p]))'));
+assert.ok(legacyJsonDelBatch.line.includes('del(.data.ads,.data.items[0])'));
 
 const jqFileAst = parseRewriteV2('response if ${url} ~= /api/ then response.json.jq_file("filters/remove-ads.jq")');
 const deps = listRewriteV2Dependencies(jqFileAst, {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
@@ -1286,8 +1307,7 @@ for (const target of ['qx','surge']) for (const flags of ['', 'i','m','s','im','
 const qxDeleteV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /^https:\\/\\/api\\.example\\.com\\/feed/i then response.json.delete(["data.ads", "data.apps[0].promo"])'));
 assert.equal(qxDeleteV2.ok, true);
 assert.match(qxDeleteV2.line, /url jsonjq-response-body/);
-assert.match(qxDeleteV2.line, /delpaths/);
-assert.ok(qxDeleteV2.line.includes('reduce [["data","ads"],["data","apps",0,"promo"]][] as $p (.; delpaths([$p]))'));
+assert.ok(qxDeleteV2.line.includes('del(.data.ads,.data.apps[0].promo)'));
 
 const qxDeleteObjectsV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /api/ then response.json.delete(["data.ads", "data.promo"])'));
 assert.equal(qxDeleteObjectsV2.ok, true);

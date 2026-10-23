@@ -618,23 +618,51 @@ function validateParts(parts) {
   return parts;
 }
 
-// Modified: 2026-10-23 (chance). Use del(selector, selector) for deletions
-// that share an input snapshot. Source-ordered indexed/dependent deletions use
-// reduce over typed paths with delpaths, never a pipeline of separate del calls.
-export function renderFixedPathDeleteJq(paths) {
+// Modified: 2026-10-23 (chance). Decide by source representation and execution
+// semantics, per jqlang 1.8 del(path_expression)/delpaths(PATHS). Numeric
+// traversal alone is harmless; only earlier removals that affect later paths
+// require ordered evaluation. Return the decision/reason for callers to inspect.
+export function planFixedPathDeleteJq(paths, {sourceForm='key-path', execution='sequential'}={}) {
   if (!Array.isArray(paths) || !paths.length) {
     throw new Error('delete path list must contain nonempty parsed paths');
   }
-  paths=paths.map(item=>({parts:validateParts(Array.isArray(item)?item:item?.parts)}));
-  const single=item=>'del('+jqPathSelector(item.parts)+')';
-  if(paths.length===1)return single(paths[0]);
-  const prefix=(a,b)=>a.length<=b.length && a.every((part,i)=>part===b[i]);
-  const dependent=paths.some((item,i)=>paths.slice(i+1).some(other=>
-    prefix(item.parts,other.parts)||prefix(other.parts,item.parts)));
-  if(dependent || paths.some(item=>item.parts.some(part=>typeof part==='number'))) {
-    return 'reduce '+JSON.stringify(paths.map(item=>item.parts))+'[] as $p (.; delpaths([$p]))';
+  if(!['key-path','path-arrays'].includes(sourceForm) || !['sequential','snapshot'].includes(execution)) {
+    throw new Error('unknown deletion source representation or execution semantics');
   }
-  return 'del('+paths.map(item=>jqPathSelector(item.parts)).join(',')+')';
+  const parts=paths.map(item=>validateParts(Array.isArray(item)?item:item?.parts));
+  const prefix=(a,b)=>a.length<=b.length && a.every((part,i)=>part===b[i]);
+  let dependency=null;
+  if(execution==='sequential') {
+    for(let i=0;i<parts.length && !dependency;i++) {
+      const earlier=parts[i], parent=earlier.slice(0,-1), removed=earlier.at(-1);
+      for(const later of parts.slice(i+1)) {
+        if(prefix(earlier,later) || prefix(later,earlier)) {
+          dependency='overlapping-source-paths'; break;
+        }
+        const next=later[parent.length];
+        if(typeof removed==='number' && prefix(parent,later) && typeof next==='number' &&
+           (removed<0 || next<0 || next>=removed)) {
+          dependency='earlier-array-removal-shifts-later-index'; break;
+        }
+      }
+    }
+  }
+  if(dependency)return {
+    form:'ordered-delpaths', reason:dependency, sourceForm, execution,
+    jq:'reduce '+JSON.stringify(parts)+'[] as $p (.; delpaths([$p]))',
+  };
+  if(sourceForm==='path-arrays')return {
+    form:'delpaths', reason:'typed-source-path-arrays', sourceForm, execution,
+    jq:'delpaths('+JSON.stringify(parts)+')',
+  };
+  return {
+    form:'del', reason:'source-selectors-can-share-input', sourceForm, execution,
+    jq:'del('+parts.map(jqPathSelector).join(',')+')',
+  };
+}
+
+export function renderFixedPathDeleteJq(paths, options) {
+  return planFixedPathDeleteJq(paths, options).jq;
 }
 
 // Integrated policy entry point retained from concurrent test-branch refactor.
