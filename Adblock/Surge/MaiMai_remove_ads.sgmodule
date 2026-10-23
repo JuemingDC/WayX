@@ -10,14 +10,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MaiMai.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:30 +08:00
+# Converted: 2026-10-23 22:46:19 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/MaiMai_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 
-http-response-jq (?i)^https:\/\/(h3\.)?open\.taou\.com\/maimai\/feed\/v6\/detail_recommend_feeds\? 'delpaths([["feeds"]])'
+http-response-jq (?i)^https:\/\/(h3\.)?open\.taou\.com\/maimai\/feed\/v6\/detail_recommend_feeds\? 'del(.feeds)'
 
 [Map Local]
 (?i)^https:\/\/(h3\.)?open\.taou\.com\/maimai\/adshow\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"

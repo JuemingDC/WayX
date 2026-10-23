@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KuaiDi100.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:23 +08:00
+# Converted: 2026-10-23 22:46:10 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/KuaiDi100_remove_ads.lpx
@@ -17,9 +17,9 @@
 
 # [rewrite_local]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https?:\/\/p\.kuaidi100\.com\/mobile\/mobileapi\.do$ url jsonjq-response-body 'delpaths([["adsplash"],["adIsConsumable"],["adProductId"],["nologin_tips"],["index_banner"],["me_banner"],["index_banner_shadow"],["adshongbao"],["adsapp_homepage_ticket_pop"],["adsoptimizationsend"],["adsapp_activity_ad_array"],["adbanner"],["adposition"],["adShowAgainTime"]])'
+(?i)^https?:\/\/p\.kuaidi100\.com\/mobile\/mobileapi\.do$ url jsonjq-response-body 'del(.adsplash,.adIsConsumable,.adProductId,.nologin_tips,.index_banner,.me_banner,.index_banner_shadow,.adshongbao,.adsapp_homepage_ticket_pop,.adsoptimizationsend,.adsapp_activity_ad_array,.adbanner,.adposition,.adShowAgainTime)'
 
-(?i)^https?:\/\/p\.kuaidi100\.com\/apicenter\/xcx\.dox url jsonjq-response-body 'delpaths([["data","secondMenuList"]])'
+(?i)^https?:\/\/p\.kuaidi100\.com\/apicenter\/xcx\.dox url jsonjq-response-body 'del(.data.secondMenuList)'
 
 (?i)^https?:\/\/p\.kuaidi100\.com\/advertisement\/ url reject-dict
 (?i)^https?:\/\/p\.kuaidi100\.com\/e-commerce\/act\/actInfo\? url reject-dict

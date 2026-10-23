@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/GuideRank.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:18 +08:00
+# Converted: 2026-10-23 22:46:03 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/GuideRank_remove_ads.lpx
 # Target: Surge
@@ -18,9 +18,9 @@
 [Body Rewrite]
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-http-response-jq (?i)^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/home\/getHomePageV 'delpaths([["data","countdownBanner"],["data","newEvaluations"],["data","freeToPayBannerPhotoUrl"],["data","groupBuyingList"],["data","multiCountdownBanner"],["data","banners"],["data","multiPlatformBanner"],["data","specialSaleBannerPhotoUrl"],["data","guide90Evaluation"],["data","insurancePromotions"]])'
+http-response-jq (?i)^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/home\/getHomePageV 'del(.data.countdownBanner,.data.newEvaluations,.data.freeToPayBannerPhotoUrl,.data.groupBuyingList,.data.multiCountdownBanner,.data.banners,.data.multiPlatformBanner,.data.specialSaleBannerPhotoUrl,.data.guide90Evaluation,.data.insurancePromotions)'
 
-http-response-jq (?i)^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/common\/getInitData\.do 'delpaths([["data","SpecialSalePageMidTabConfig"]])'
+http-response-jq (?i)^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/common\/getInitData\.do 'del(.data.SpecialSalePageMidTabConfig)'
 
 [Map Local]
 (?i)^https:\/\/zone\.guiderank-app\.com\/guiderank-web\/app\/common\/getWeworkPromotionInfoBySceneType data-type=text data="{}" status-code=200 header="Content-Type:application/json"

@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MeituMYXJ.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:29 +08:00
+# Converted: 2026-10-23 22:46:17 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/MeituMYXJ_remove_ads.lpx
@@ -21,7 +21,7 @@ host, adui.tg.meitu.com, reject
 
 (?i)^https:\/\/api\.meiyan\.com\/vip\/permission_update_popup\.json\? url reject-dict
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/api\.meiyan\.com\/operation\/get_config\.json\? url jsonjq-response-body 'delpaths([["response","time_limit"],["response","bubble"],["response","person_center"]])'
+(?i)^https:\/\/api\.meiyan\.com\/operation\/get_config\.json\? url jsonjq-response-body 'del(.response.time_limit,.response.bubble,.response.person_center)'
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
 (?i)^https:\/\/api\.meiyan\.com\/operation\/get_config\.json\? url jsonjq-response-body 'setpath(["response","function_pop","meiyan_style","is_pop"]; false) | setpath(["response","onoff","vip_half_window_exit_remain_popup","open"]; 0) | setpath(["response","onoff","vip_home_exit_remain_popup"]; 0)'
 # 精简首页功能栏目并移除美颜推荐

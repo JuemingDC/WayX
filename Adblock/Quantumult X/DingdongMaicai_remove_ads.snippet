@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DingdongMaicai.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:15 +08:00
+# Converted: 2026-10-23 22:45:59 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/DingdongMaicai_remove_ads.lpx
@@ -41,18 +41,18 @@ host, rttrack.ddxq.mobi, reject
 
 (?i)^https:\/\/user\.api\.ddxq\.mobi\/userportal-service\/api\/v1\/user\/queryMyPage\/\? url reject-dict
 
-(?i)^https:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/categoriesNewDetail\? url jsonjq-response-body 'delpaths([["data","ad_info"]])'
+(?i)^https:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/categoriesNewDetail\? url jsonjq-response-body 'del(.data.ad_info)'
 
-(?i)^https:\/\/maicai\.api\.ddxq\.mobi\/tool\/getConfig\? url jsonjq-response-body 'delpaths([["data","ai_enter_config"]])'
+(?i)^https:\/\/maicai\.api\.ddxq\.mobi\/tool\/getConfig\? url jsonjq-response-body 'del(.data.ai_enter_config)'
 
 (?i)^https:\/\/maicai\.api\.ddxq\.mobi\/guide-service\/userLike\/flowData$ url reject-dict
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/newDetails\? url jsonjq-response-body 'delpaths([["data","top_advert_data"],["data","suspension"]])'
+(?i)^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/newDetails\? url jsonjq-response-body 'del(.data.top_advert_data,.data.suspension)'
 
 (?i)^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/newDetails\? url jsonjq-response-body '.data.list |= map(select(has("capsule_freedom_zone") | not))'
 
-(?i)^https:\/\/maicai\.api\.ddxq\.mobi\/guide-service\/productApi\/productDetail\/info\? url jsonjq-response-body 'delpaths([["data","detail","chatEntry"]])'
+(?i)^https:\/\/maicai\.api\.ddxq\.mobi\/guide-service\/productApi\/productDetail\/info\? url jsonjq-response-body 'del(.data.detail.chatEntry)'
 
 (?i)^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/bottomNavi url jsonjq-response-body 'del(.data.adId?) | if (.data.bottom_list? | length > 0) then .data.bottom_list |= map(select(.type != "eatwhat")) else . end'
 

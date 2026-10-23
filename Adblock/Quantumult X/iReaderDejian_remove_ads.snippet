@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/iReaderDejian.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:14 +08:00
+# Converted: 2026-10-23 22:45:58 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/iReaderDejian_remove_ads.lpx
@@ -19,13 +19,13 @@ host, saad.ms.zhangyue.net, reject
 
 # [rewrite_local]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/dj\.palmestore\.com\/zybk\/api\/powerup\/userGroup\? url jsonjq-response-body 'delpaths([["body","sevenDaysAd"],["body","shortPlayShow"],["body","sdkShortPlayAB"]])'
+(?i)^https:\/\/dj\.palmestore\.com\/zybk\/api\/powerup\/userGroup\? url jsonjq-response-body 'del(.body.sevenDaysAd,.body.shortPlayShow,.body.sdkShortPlayAB)'
 
 (?i)^https:\/\/dj\.palmestore\.com\/djad\/ url reject-dict
 (?i)^https:\/\/dj\.palmestore\.com\/zybk\/api\/ad\/ url reject-dict
 (?i)^https:\/\/dj\.palmestore\.com\/zyapi\/bookstore\/ad\/ url reject-dict
 
-(?i)^https:\/\/dj\.palmestore\.com\/zybk\/api\/search\/index\? url jsonjq-response-body 'delpaths([["body","keywords"]])'
+(?i)^https:\/\/dj\.palmestore\.com\/zybk\/api\/search\/index\? url jsonjq-response-body 'del(.body.keywords)'
 
 (?i)^https:\/\/dj\.palmestore\.com\/zybk\/api\/bookshelf\/index\? url reject-dict
 

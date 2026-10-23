@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Yueyou.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:51 +08:00
+# Converted: 2026-10-23 22:46:45 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Yueyou_remove_ads.lpx
@@ -18,7 +18,7 @@ host, ads.reader.yueyouxs.com, reject
 
 # [rewrite_local]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/goway\.reader\.yueyouxs\.com\/assemble\/app\/basic\/getAppInfo\? url jsonjq-response-body 'delpaths([["data","isShowDLPopup"],["data","isShowGame"],["data","touTiaoShowDlPopup"],["data","offLineDownload","WatchVideoBtnDesc"],["data","readVipFirstCfg"],["data","readVipNormalCfg"],["data","notifyAd"],["data","hotStartSplashTime"],["data","hotStartReqSwitch"],["data","isShowBFTab"],["data","popReqDelayTime"],["data","benefitCfg"],["data","chestTask"],["data","hotStartAd"],["data","activeTagList"],["data","secondOrderCfg"],["data","secondOrderList"],["data","blockedWordsCfg"],["data","aaReportListCfg"],["data","pddAdSwitch"],["data","isShowShelfAuthPopup"],["data","firstPopUpAmount"]])'
+(?i)^https:\/\/goway\.reader\.yueyouxs\.com\/assemble\/app\/basic\/getAppInfo\? url jsonjq-response-body 'del(.data.isShowDLPopup,.data.isShowGame,.data.touTiaoShowDlPopup,.data.offLineDownload.WatchVideoBtnDesc,.data.readVipFirstCfg,.data.readVipNormalCfg,.data.notifyAd,.data.hotStartSplashTime,.data.hotStartReqSwitch,.data.isShowBFTab,.data.popReqDelayTime,.data.benefitCfg,.data.chestTask,.data.hotStartAd,.data.activeTagList,.data.secondOrderCfg,.data.secondOrderList,.data.blockedWordsCfg,.data.aaReportListCfg,.data.pddAdSwitch,.data.isShowShelfAuthPopup,.data.firstPopUpAmount)'
 
 (?i)^https:\/\/goway\.reader\.yueyouxs\.com\/assemble\/app\/basic\/getAppInfo\? url jsonjq-response-body 'setpath(["data","isAdClosed"]; true)'
 
