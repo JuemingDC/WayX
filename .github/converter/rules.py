@@ -430,8 +430,8 @@ def build(config, inputs):
     sites = geosites(inputs['geosite'], anomalies)
     app_names = {app['name'] for app in config['applications']}
     # A routing requirement is authoritative, unlike an actionless source's
-    # default. Resolve it after ownership so generic DIRECT feeds cannot reopen
-    # direct access for a service explicitly configured to require a proxy.
+    # default. Resolve it after ownership; source DIRECT declarations belong to
+    # cn rather than changing a proxy-only service's routing requirement.
     routing_policies = config.get('routing_policies', {})
     if any(name not in app_names or policy != 'PROXY'
            for name, policy in routing_policies.items()):
@@ -597,6 +597,13 @@ def build(config, inputs):
         target = destination(name, policy, rule, source)
         if excluded(target, rule):
             continue
+        # Keep upstream direct access declarations without adding DIRECT to a
+        # proxy-only app list or rewriting the source action as PROXY. Do this
+        # before application defaults can replace a generic source's DIRECT.
+        if target in routing_policies and policy == 'DIRECT':
+            target = 'cn'
+            if excluded(target, rule):
+                continue
         if not explicit and not policy.startswith('REJECT'):
             preferred = application_defaults.get((target, rule), set())
             # A generic feed supplies matchers, not an application-specific
