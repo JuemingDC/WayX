@@ -100,6 +100,31 @@ def prepare() -> None:
         raise RuntimeError('Unexpected WayX branch: ' + ', '.join(sorted(unexpected)))
 
 
+def setup_jq() -> None:
+    # Modified: 2026-10-23 (chance). Use official jq 1.8.2 for all conversion
+    # and final syntax checks, verifying its pinned SHA-256 before execution.
+    import hashlib
+    import urllib.request
+
+    version = '1.8.2'
+    expected = 'b1c22172dd303f3be49e935aa56aa48a8b7a46e0bc838b4997d3bb451495870f'
+    url = f'https://github.com/jqlang/jq/releases/download/jq-{version}/jq-linux-amd64'
+    with urllib.request.urlopen(url, timeout=60) as response:
+        data = response.read(16 * 1024 * 1024 + 1)
+    if len(data) > 16 * 1024 * 1024 or hashlib.sha256(data).hexdigest() != expected:
+        raise RuntimeError('Official jq binary SHA-256 mismatch')
+    directory = Path(os.environ['RUNNER_TEMP']) / f'wayx-jq-{version}'
+    directory.mkdir(parents=True, exist_ok=True)
+    binary = directory / 'jq'
+    binary.write_bytes(data)
+    binary.chmod(0o755)
+    if run([str(binary), '--version'], capture=True) != f'jq-{version}':
+        raise RuntimeError('Unexpected jq compiler version')
+    with open(os.environ['GITHUB_PATH'], 'a', encoding='utf-8') as stream:
+        stream.write(str(directory) + '\n')
+    print(f'Installed verified jq-{version}')
+
+
 def syntax() -> None:
     checks = []
     for directory in ['.github/converter', '.github/scripts', 'Script']:
@@ -294,7 +319,7 @@ def final() -> None:
 
 
 COMMANDS = {function.__name__: function for function in
-            [prepare, syntax, catalog, rules, sync, verify, monitor, reports, issues, gate, publish, summary, regex, final]}
+            [prepare, setup_jq, syntax, catalog, rules, sync, verify, monitor, reports, issues, gate, publish, summary, regex, final]}
 
 if __name__ == '__main__':
     try:

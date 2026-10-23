@@ -1,8 +1,8 @@
 # WayX Conversion Specification
 
-版本：2.14
+版本：2.15
 
-更新：2026-10-21
+更新：2026-10-23
 作者：chance  
 状态：唯一权威转换规范（Authoritative）
 
@@ -15,7 +15,7 @@ WayX 仅执行 Loon → Quantumult X / Surge 转换，Egern 不纳入转换链�
 - Loon：https://nsloon.app/en/docs/Rewrite/rewrite_v2/、https://nsloon.app/en/docs/Script/script_v2/、https://nsloon.app/docs/intro。
 - Quantumult X：crossutility/Quantumult-X 官方仓库中的 sample.conf、rewrite.md、sample-rewrite-request-header.js、sample-rewrite-response-header.js、sample-rewrite-with-script.js、sample-echo-response.js，以及用户提供的官方 sample.txt。
 - Surge：https://manual.nssurge.com/，包括 URL/Header/Body Rewrite、Script、Module 与 Rule 文档。
-- JQ：https://jqlang.org/manual/v1.6/。兼容基线为已验证的 jq 1.6，不假定客户端支持更新特性。
+- JQ：https://jqlang.org/manual/v1.8/，稳定版基线 jq 1.8.2。Action 下载官方二进制并校验固定 SHA-256，转换与最终语法检查使用同一版本；不以此推断客户端内置引擎版本。
 
 JSON/JQ 表达式以 jqlang 官方标准为依据，不采用第三方转换器模板。作者异步脚本组合工具属于实验入口，不进入常规同步或 canonical 产物。
 
@@ -68,7 +68,9 @@ Key Path 解析为 String/Number segments，支持 dot key、数字索引及 quo
 原生 JSON 使用共同 WayX JQ 生成器：
 
 - add：采用 ScriptHub 的设置策略，直接 `setpath(PATH; VALUE)`，覆盖已有值并创建缺失路径；必要 helper 同样设置路径。
-- delete：`delpaths(PATHS)`。数字索引批量按源顺序逐项调用，保留位移语义，不能合并成针对原数组的一次删除。
+- delete：根据源规则的执行顺序、路径表示和依赖选择 `del` 或 `delpaths`，不单凭路径数量判断。`del(path_expression)` 接收路径表达式，支持在一个调用中使用逗号列出多个路径；`delpaths(PATHS)` 接收保留 String/Number 类型的路径数组。单个固定路径使用 `del(.a)`；固定对象路径互不包含、无数字索引且同时删除与源顺序执行等价时，使用 `del(.a,.b.c)`。含数字索引、父子重叠或重复路径的源批量删除通过 `reduce PATHS[] as $p (.; delpaths([$p]))` 按源顺序执行，保留数组位移和前次删除对后续路径的影响；不拼接多个 `del` 管道。quoted key、字符串数字键和数组数字索引保留各自类型。作者已有 `del`、`delpaths`、遍历或条件筛选表达式保持原义，不拆分或合并。
+
+<!-- Modified: 2026-10-23 (chance). Upgrade jq to 1.8.2; use comma-separated del selectors or ordered reduce/delpaths according to source semantics, with no generated del pipelines. -->
 - replace：直接 `setpath(PATH; VALUE)`，不添加 getpath/has 或字段存在性检查。PATH 为保留 String/Number 类型的路径数组；批量替换按源顺序用 ` | ` 连接。遵循 jq 原生设置语义，包括缺失路径创建及类型错误。VALUE 保留源声明类型：字符串 `"[]"` 不等于数组 `[]`，不得统一字符串化。必要 JSON replace helper 同样执行路径设置，不检查末端字段是否存在。
 
 add/replace 的 PATH 使用保留 String/Number 类型的路径数组，特殊键和数组索引不改变含义。生成的原生表达式不添加统一 type guard、`$__wayx_before` 或 try/catch 回滚，使用 jqlang 原生类型、错误和管道语义；作者自带 if/try/catch 保留。批量动作内部可形成有序原生操作，多个源 actions 仍按 2.3 分条。
