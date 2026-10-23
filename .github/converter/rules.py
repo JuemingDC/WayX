@@ -549,6 +549,10 @@ def build(config, inputs):
     def destination(name, policy, rule, source):
         if name.startswith('adblock') or policy.startswith('REJECT'):
             return name
+        # Modified: 2026-10-23 (chance). Keep general feeds in cn/proxy;
+        # application ownership must not absorb or reinterpret their actions.
+        if name in ('cn', 'proxy'):
+            return 'cn' if qx_policy(policy) == 'DIRECT' else 'proxy'
         candidates = set(ownership.get(Rule(rule.kind, rule.value), ()))
         if rule.kind in ('DOMAIN', 'DOMAIN-SUFFIX') and not candidates & app_names:
             labels = rule.value.split('.')
@@ -577,8 +581,6 @@ def build(config, inputs):
             return 'media_cn'
         if 'media' in candidates:
             return 'media'
-        if name in ('cn', 'proxy'):
-            return 'cn' if policy == 'DIRECT' else 'proxy'
         return name
 
     default_policies = config.get('default_policies', {})
@@ -588,6 +590,8 @@ def build(config, inputs):
     if any(name in routing_policies and policy != routing_policies[name]
            for name, policy in default_policies.items()):
         raise ValueError('Category default conflicts with application routing policy')
+    # Modified: 2026-10-23 (chance). Application defaults resolve only
+    # actionless placeholders; explicit/registered DIRECT/PROXY bypass them.
     application_defaults = {}
     for name, policy, rule, author, source, explicit in records:
         if name in app_names and not explicit and not policy.startswith('REJECT') and not excluded(name, rule):
@@ -604,14 +608,15 @@ def build(config, inputs):
             target = 'cn'
             if excluded(target, rule):
                 continue
-        if not explicit and not policy.startswith('REJECT'):
+        # Modified: 2026-10-23 (chance). Source row actions and registered
+        # DIRECT/PROXY feed actions are authoritative. Infer a category default
+        # only for placeholders; remove the former cross-feed action override.
+        if not explicit and policy not in ('DIRECT', 'PROXY') and not policy.startswith('REJECT'):
             preferred = application_defaults.get((target, rule), set())
-            # A generic feed supplies matchers, not an application-specific
-            # routing exception. Reuse an unambiguous registered app action.
             if name != target and len(preferred) == 1:
                 policy = next(iter(preferred))
             policy = default_policies.get(target, policy)
-        if target in routing_policies and not policy.startswith('REJECT'):
+        if target in routing_policies and policy not in ('DIRECT', 'PROXY') and not policy.startswith('REJECT'):
             policy = routing_policies[target]
         if explicit:
             explicit_rules.add((target, rule, qx_policy(policy)))
