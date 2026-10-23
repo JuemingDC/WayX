@@ -156,8 +156,10 @@ def normalized(kind, value, options=()):
     return Rule(kind, value, options)
 
 
-def native_rules(text, source, anomalies):
+def native_rules(text, source, anomalies, *, with_origin=False):
     result = []
+    def emit(rule, policy, explicit=False):
+        result.append((rule, policy, explicit) if with_origin else (rule, policy))
     if source['format'] == 'sing-box-json':
         document = json.loads(text)
         if document.get('version') not in (1, 2, 3, 4, 5) or not isinstance(document.get('rules'), list):
@@ -185,7 +187,8 @@ def native_rules(text, source, anomalies):
                     if key == 'domain_regex':
                         converted = regex_native(value)
                         if converted is not None:
-                            result.extend((rule, source.get('policy', 'PROXY')) for rule in converted)
+                            for rule in converted:
+                                emit(rule, source.get('policy', 'PROXY'))
                         else:
                             anomalies.append({'source': source['id'], 'category': source['category'], 'declaration': 'regexp:' + value,
                                               'code': 'filtered-unsupported-regexp', 'reason': 'Outside bounded exact native conversion subset; no widening allowed'})
@@ -194,7 +197,7 @@ def native_rules(text, source, anomalies):
                     if key == 'domain_suffix' and value.startswith('.'):
                         if value[1:] in exact: value = value[1:]
                         else: kind, value = 'DOMAIN-WILDCARD', '*' + value
-                    result.append((normalized(kind, value), source.get('policy', 'PROXY')))
+                    emit(normalized(kind, value), source.get('policy', 'PROXY'))
         return result
     for number, raw in enumerate(text.splitlines(), 1):
         line = raw.strip()
@@ -207,6 +210,7 @@ def native_rules(text, source, anomalies):
                 continue
             fields = [part.strip() for part in line.split(',')]
             policy = source.get('policy', 'PROXY')
+            explicit = False
             options = []
             if source['format'] == 'domain-suffixes':
                 rule = normalized('DOMAIN-SUFFIX', line.lstrip('.'))
@@ -226,7 +230,8 @@ def native_rules(text, source, anomalies):
                         anomalies.append({'source': source['id'], 'line': number, 'declaration': line,
                                           'code': 'filtered-unsupported-regexp', 'reason': 'No exact native regex conversion; intentionally omitted'})
                         continue
-                    result.extend((item, policy) for item in converted)
+                    for item in converted:
+                        emit(item, policy)
                     continue
                 rule = normalized(kinds.get(prefix, prefix), value)
             else:
@@ -235,10 +240,11 @@ def native_rules(text, source, anomalies):
                 for field in fields[2:]:
                     if field.upper() in ('DIRECT', 'PROXY') or field.upper().startswith('REJECT'):
                         policy = field.upper()
+                        explicit = True
                     else:
                         options.append(field)
                 rule = normalized(fields[0], fields[1], options)
-            result.append((rule, policy))
+            emit(rule, policy, explicit)
         except (ValueError, UnicodeError) as error:
             anomalies.append({'source': source['id'], 'line': number, 'declaration': line,
                               'code': 'filtered-unsupported-rule' if str(error).startswith(('Unsupported native rule type:', 'Unsupported native rule parameters')) else 'unsupported-source-rule',
@@ -420,6 +426,7 @@ def serialize(rule, policy, target):
 
 def build(config, inputs):
     anomalies = []; buckets = {}; authors = {}; urls = {}
+    records = []
     sites = geosites(inputs['geosite'], anomalies)
     app_names = {app['name'] for app in config['applications']}
     scope_exclusions = {}
@@ -440,12 +447,14 @@ def build(config, inputs):
         return Rule(rule.kind, rule.value) in rules or (rule.kind in ('DOMAIN', 'DOMAIN-SUFFIX') and any(
             Rule('DOMAIN-SUFFIX', '.'.join(rule.value.split('.')[i:])) in rules
             for i in range(len(rule.value.split('.')))))
-    def add(name, policy, rules, author, source):
-        key = (name, policy)
-        rules = {rule for rule in rules if not excluded(name, rule)}
-        buckets.setdefault(key, set()).update(rules)
-        authors.setdefault(key, set()).add(author)
-        urls.setdefault(key, set()).add(source)
+    def add(name, policy, rules, author, source, explicit=False):
+        for rule in rules:
+            # Explicit user removals apply before classification; application
+            # scope selectors are checked against the final destination.
+            if any(rule.kind == kind and pattern.search(rule.value)
+                   for kind, pattern in rule_exclusions.get(name, [])):
+                continue
+            records.append((name, policy, rule, author, source, explicit))
     def select(tags, group):
         result = set()
         entries = []
@@ -490,30 +499,120 @@ def build(config, inputs):
     foreign = select(config['collections']['proxy'], 'proxy')
     domestic_apps = select(config['collections']['media_cn'], 'media_cn')
     overseas_apps = select(config['collections']['media'], 'media')
-    # Registered collections and sources are independent inputs. Retain every
-    # declaration in its configured category and policy; only exact duplicates
-    # within the same output are coalesced during serialization.
+    # First collect all inputs without subtracting other collections. Assignment
+    # below changes only the destination collection, never a source action.
     add('media_cn', 'DIRECT', domestic_apps, 'V2Fly', origin)
     add('media', 'Media', overseas_apps, 'V2Fly', origin)
     add('cn', 'DIRECT', cn, 'V2Fly', origin)
     add('proxy', 'PROXY', foreign, 'V2Fly', origin)
-    parsed_sources = [(source, native_rules(inputs[source['id']].decode('utf-8-sig'), source, anomalies))
+    parsed_sources = [(source, native_rules(inputs[source['id']].decode('utf-8-sig'), source, anomalies, with_origin=True))
                       for source in config['sources']]
     for source, rows in parsed_sources:
         if source.get('standalone'):
             continue
-        for rule, policy in rows:
-            add(source['category'], policy, [rule], source['author'], source['url'])
+        for rule, policy, explicit in rows:
+            add(source['category'], policy, [rule], source['author'], source['url'], explicit)
+
+    classification = config.get('classification', {})
+    priority = classification.get('priority', [])
+    if len(set(priority)) != len(priority) or set(priority) - app_names:
+        raise ValueError('Invalid classification priority')
+    ownership = {}
+    suffix_owners = {}
+    def index(name, rules):
+        for rule in rules:
+            if excluded(name, rule):
+                continue
+            ownership.setdefault(Rule(rule.kind, rule.value), set()).add(name)
+            if rule.kind == 'DOMAIN-SUFFIX':
+                suffix_owners.setdefault(rule.value, set()).add(name)
+    for app in config['applications']:
+        index(app['name'], select([*app['tags'], *app.get('proxy_tags', [])], app['name']))
+    index('media_cn', domestic_apps | select(classification.get('domestic_tags', []), 'media_cn'))
+    index('media', overseas_apps | select(classification.get('overseas_tags', []), 'media'))
+    # Explicit application supplements also provide ownership evidence. General
+    # direct/proxy feeds, IP geolocation and TLDs never establish app identity.
+    for name, policy, rule, author, source, explicit in records:
+        if name in app_names | {'media', 'media_cn'}:
+            index(name, [rule])
+
+    def destination(name, policy, rule, source):
+        if name.startswith('adblock') or policy.startswith('REJECT'):
+            return name
+        candidates = set(ownership.get(Rule(rule.kind, rule.value), ()))
+        if rule.kind in ('DOMAIN', 'DOMAIN-SUFFIX') and not candidates & app_names:
+            labels = rule.value.split('.')
+            # A more-specific upstream domain association wins over a parent.
+            for offset in range(len(labels)):
+                matches = suffix_owners.get('.'.join(labels[offset:]), ())
+                if matches:
+                    candidates.update(matches)
+                    if candidates & app_names:
+                        break
+        named = candidates & app_names
+        preferred = next((item for item in priority if item in named), None)
+        if preferred:
+            return preferred
+        if len(named) == 1:
+            return next(iter(named))
+        if len(named) > 1:
+            if name in named:
+                return name
+            anomalies.append({'source': source, 'category': name,
+                              'declaration': rule.kind + ',' + rule.value,
+                              'code': 'ambiguous-app-ownership',
+                              'reason': 'Conflicting upstream app ownership: ' + ', '.join(sorted(named))})
+            return name
+        if 'media_cn' in candidates:
+            return 'media_cn'
+        if 'media' in candidates:
+            return 'media'
+        if name in ('cn', 'proxy'):
+            return 'cn' if policy == 'DIRECT' else 'proxy'
+        return name
+
+    default_policies = config.get('default_policies', {})
+    if any(name not in app_names | {'media', 'media_cn', 'cn', 'proxy'} or policy not in ('DIRECT', 'PROXY')
+           for name, policy in default_policies.items()):
+        raise ValueError('Invalid category default policy')
+    application_defaults = {}
+    for name, policy, rule, author, source, explicit in records:
+        if name in app_names and not explicit and not policy.startswith('REJECT') and not excluded(name, rule):
+            application_defaults.setdefault((name, rule), set()).add(qx_policy(policy))
+    explicit_rules = set()
+    for name, policy, rule, author, source, explicit in records:
+        target = destination(name, policy, rule, source)
+        if excluded(target, rule):
+            continue
+        if not explicit and not policy.startswith('REJECT'):
+            preferred = application_defaults.get((target, rule), set())
+            # A generic feed supplies matchers, not an application-specific
+            # routing exception. Reuse an unambiguous registered app action.
+            if name != target and len(preferred) == 1:
+                policy = next(iter(preferred))
+            policy = default_policies.get(target, policy)
+        if explicit:
+            explicit_rules.add((target, rule, qx_policy(policy)))
+        key = (target, policy)
+        buckets.setdefault(key, set()).add(rule)
+        authors.setdefault(key, set()).add(author)
+        urls.setdefault(key, set()).add(source)
     rendered = {}; metadata = {}
     def surge_action(policy):
         return policy if policy == 'DIRECT' or policy.startswith('REJECT') else 'PROXY'
-    split_names = set(config['split_names']) | {name for name, _ in buckets
-        if len({surge_action(policy) for n, policy in buckets if n == name}) > 1}
+    layouts = config.get('surge_output', {})
+    categories = app_names | {'media', 'media_cn', 'cn', 'proxy', 'adblock', 'adblock_extra'}
+    if any(name not in categories or layout not in ('split', 'combined') for name, layout in layouts.items()):
+        raise ValueError('Invalid Surge output layout')
+    split_names = {name for name, _ in buckets if layouts.get(name) == 'split' or (
+        layouts.get(name) != 'combined' and
+        len({surge_action(policy) for n, policy in buckets if n == name}) > 1)}
     for target in ('QuantumultX', 'Surge'):
         grouped = {}
         for (name, policy), rules in buckets.items():
             suffix = ('_' + surge_action(policy).lower().replace('-', '_')) if target == 'Surge' and name in split_names else ''
-            if target == 'Surge' and name not in split_names and policy.startswith('REJECT') and policy != 'REJECT':
+            if target == 'Surge' and name not in split_names and policy.startswith('REJECT') and (
+                    policy != 'REJECT' or any(n == name and not p.startswith('REJECT') for n, p in buckets)):
                 suffix = '_' + policy.lower().replace('-', '_')
             file = 'Rule/' + target + '/' + name + suffix + '.list'
             group = grouped.setdefault(file, [])
@@ -536,7 +635,14 @@ def build(config, inputs):
                     actions.setdefault(qx_policy(policy), set()).add(rule)
                 ordered = [(rule, action) for action, rules in actions.items()
                            for rule in sorted(rules)]
-            for rule, policy in sorted(ordered, key=lambda pair: (0 if pair[0].kind == 'DOMAIN' else 1 if pair[0].kind == 'DOMAIN-SUFFIX' else 2 if pair[0].kind in ('DOMAIN-WILDCARD', 'DOMAIN-KEYWORD') else 3, -pair[0].value.count('.'), pair[0].value, 0 if pair[1] == 'DIRECT' else 1 if pair[1].startswith('REJECT') else 2, pair[1], pair[0].kind, pair[0].options)):
+            def output_key(pair):
+                rule, policy = pair
+                rank = 0 if rule.kind == 'DOMAIN' else 1 if rule.kind == 'DOMAIN-SUFFIX' else 2 if rule.kind in ('DOMAIN-WILDCARD', 'DOMAIN-KEYWORD') else 3
+                return (rank, -rule.value.count('.'), rule.value,
+                        (groups[0][0], rule, qx_policy(policy)) not in explicit_rules,
+                        0 if policy == 'DIRECT' else 1 if policy.startswith('REJECT') else 2,
+                        policy, rule.kind, rule.options)
+            for rule, policy in sorted(ordered, key=output_key):
                     line = serialize(rule, policy, target)
                     if line is not None and line not in seen:
                         lines.append(line); seen.add(line)
@@ -556,7 +662,7 @@ def build(config, inputs):
         comments = [('# ' + line if line.lstrip().startswith('#!') else line) for line in comments]
         for target in ('QuantumultX', 'Surge'):
             lines = []
-            for rule, policy in rows:
+            for rule, policy, explicit in rows:
                 if target == 'QuantumultX' and (rule.kind not in QX_TYPES or 'extended-matching' in rule.options):
                     anomalies.append({'source': source['id'], 'category': source['category'], 'target': target,
                                       'declaration': rule.kind + ',' + rule.value, 'code': 'filtered-unsupported-target',

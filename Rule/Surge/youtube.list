@@ -1,13 +1,17 @@
 # Name: youtube
-# Updated: 2026-10-22 11:05:53 UTC
+# Updated: 2026-10-22 15:31:27 UTC
 # Converted by: chance
-# Source Authors: MetaCubeX, V2Fly
+# Source Authors: ACL4SSR, DustinWin, Loyalsoldier, MetaCubeX, Sukka, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/youtube.json
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/youtube.json ; https://ruleset.skk.moe/List/non_ip/global.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 178
+# Rules: 182
 # Managed by: WayX Rule Aggregator
 
+DOMAIN,music.youtube.com
+DOMAIN,youtube.googleapis.com
+DOMAIN,youtubei.googleapis.com
+DOMAIN,yt3.ggpht.com
 DOMAIN,yt3.googleusercontent.com
 DOMAIN-SUFFIX,wide-youtube.l.google.com
 DOMAIN-SUFFIX,youtube-ui.l.google.com

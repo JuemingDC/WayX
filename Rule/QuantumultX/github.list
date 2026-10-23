@@ -1,14 +1,13 @@
 # Name: github
-# Updated: 2026-10-22 11:05:53 UTC
+# Updated: 2026-10-23 02:11:01 UTC
 # Converted by: chance
-# Source Authors: MetaCubeX, V2Fly
+# Source Authors: Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/github.json
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/github.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 65
+# Rules: 66
 # Managed by: WayX Rule Aggregator
 
-host,copilotprodattachments.blob.core.windows.net,proxy
 host,productionresultssa0.blob.core.windows.net,proxy
 host,productionresultssa1.blob.core.windows.net,proxy
 host,productionresultssa10.blob.core.windows.net,proxy
@@ -35,11 +34,14 @@ host,github-production-repository-file-5c1aeb.s3.amazonaws.com,proxy
 host,github-production-repository-image-32fea6.s3.amazonaws.com,proxy
 host,github-production-upload-manifest-file-7fdce7.s3.amazonaws.com,proxy
 host,github-production-user-asset-6210df.s3.amazonaws.com,proxy
-host,copilot-proxy.githubusercontent.com,proxy
-host,copilot-telemetry-service.githubusercontent.com,proxy
-host,copilot-telemetry.githubusercontent.com,proxy
-host,copilot-workspace.githubnext.com,proxy
+host,bybit-exchange.github.io,proxy
 host,github-api.arkoselabs.com,proxy
+host,matsuridayo.github.io,proxy
+host,metacubex.github.io,proxy
+host,nix-community.github.io,proxy
+host,throneproj.github.io,proxy
+host,trojan-gfw.github.io,proxy
+host,xtls.github.io,proxy
 host-suffix,cafe.github.com,proxy
 host-suffix,collector.github.com,proxy
 host-suffix,atom.io,proxy
@@ -57,7 +59,6 @@ host-suffix,github.dev,proxy
 host-suffix,github.io,proxy
 host-suffix,githubapp.com,proxy
 host-suffix,githubassets.com,proxy
-host-suffix,githubcopilot.com,proxy
 host-suffix,githubhackathon.com,proxy
 host-suffix,githubnext.com,proxy
 host-suffix,githubpreview.dev,proxy

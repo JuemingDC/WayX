@@ -10,7 +10,11 @@
     {
       "name": "google",
       "tags": [
-        "google"
+        "google@cn"
+      ],
+      "split": true,
+      "proxy_tags": [
+        "google@!cn"
       ]
     },
     {
@@ -85,11 +89,11 @@
     {
       "name": "apple",
       "tags": [
-        "apple",
-        "apple-intelligence"
+        "apple@cn"
       ],
       "split": true,
       "proxy_tags": [
+        "apple@!cn",
         "apple-intelligence",
         "apple-tvplus"
       ]
@@ -97,19 +101,34 @@
     {
       "name": "microsoft",
       "tags": [
-        "microsoft",
-        "github-copilot"
+        "microsoft@cn"
       ],
       "split": true,
       "proxy_tags": [
+        "microsoft@!cn",
         "github-copilot"
       ]
     }
   ],
-  "split_names": [
-    "apple",
-    "microsoft"
-  ],
+  "surge_output": {
+    "apple": "split",
+    "microsoft": "split",
+    "google": "split",
+    "steam": "split",
+    "github": "combined",
+    "spotify": "combined",
+    "facebook": "combined",
+    "netflix": "combined",
+    "disney": "combined",
+    "youtube": "combined",
+    "telegram": "combined",
+    "x": "combined",
+    "ai": "combined",
+    "media": "combined"
+  },
+  "default_policies": {
+    "media_cn": "DIRECT"
+  },
   "collections": {
     "media": [
       "category-companies",
@@ -131,6 +150,38 @@
     "cn": [
       "geolocation-cn",
       "tld-cn"
+    ]
+  },
+  "classification": {
+    "priority": ["ai", "youtube", "github"],
+    "domestic_tags": [
+      "category-automobile-cn", "category-blog-cn", "category-dev-cn",
+      "category-electronic-cn", "category-entertainment-cn", "category-food-cn",
+      "category-logistics-cn", "category-media-cn", "category-network-security-cn",
+      "category-social-media-cn", "category-bank-cn", "category-securities-cn",
+      "category-hospital-cn", "category-education-cn", "category-scholar-cn",
+      "category-wiki-cn", "category-ai-cn", "category-collaborate-cn",
+      "category-documents-cn", "category-enterprise-query-platform-cn",
+      "category-game-accelerator-cn", "category-netdisk-cn", "category-outsource-cn",
+      "58tongcheng", "ctrip", "dangdang", "dewu", "dongjiao", "jd", "lianjia",
+      "meituan", "miaomiaozhe", "mogujie", "pinduoduo", "smzdm", "suning",
+      "tongcheng", "vancl", "youzan", "ziroom", "b3log", "kechuang", "nga",
+      "stage1st", "airchina", "hainanairlines", "guokr", "ihuman", "bjyouth",
+      "51job", "afdian", "agora", "chinaso", "chinaz", "colorfulclouds",
+      "flowus", "hanyi", "intsig", "jianshu", "jinshuju", "keep", "lagou",
+      "liepin", "linakesi", "mafengwo", "meitu", "moji", "moonvy", "nowcoder",
+      "polyv", "qweather", "renren", "suishouji", "weathercn", "wjx", "wolai",
+      "zhangtao", "zhubajie", "alibaba", "anker", "baidu", "beisen", "bluepoch",
+      "bytedance", "didi", "dingdatech", "dji", "focuschina", "gree", "haier",
+      "hikvision", "hisense", "honor", "huawei", "hupun", "iflytek", "jushuitan",
+      "jutongbao", "kingsoft", "lenovo", "meizu", "midea", "narwal", "netease",
+      "oppo", "qianxin", "qihoo360", "tcl", "tencent", "tongfang", "vivo",
+      "wanmei", "xiaomi", "xunlei", "zte"
+    ],
+    "overseas_tags": [
+      "category-ecommerce", "category-finance", "category-forums",
+      "category-games-!cn", "category-netdisk-!cn", "category-password-management",
+      "category-scholar-!cn", "category-tech-media"
     ]
   },
   "sources": [
