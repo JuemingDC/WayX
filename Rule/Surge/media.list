@@ -1,18 +1,20 @@
 # Name: media
-# Updated: 2026-10-23 09:29:33 UTC
+# Updated: 2026-10-23 09:32:10 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 7277
+# Rules: 7300
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,cdn.globalsigncdn.com.cdn.cloudflare.net
 DOMAIN,devforum-uploads.s3.dualstack.us-east-2.amazonaws.com
 DOMAIN,44wilhpljf.execute-api.ap-southeast-1.amazonaws.com
+DOMAIN,akmcdnoversea-tw.inter.ptqy.gitv.tv
 DOMAIN,cbsi.live.ott.irdeto.com
 DOMAIN,cf-images.ap-southeast-1.prod.boltdns.net
+DOMAIN,chuangcachecdnoversea-tw.inter.ptqy.gitv.tv
 DOMAIN,docker-images-prod.6aa30f8b08e16409b46e0173d6de2f56.r2.cloudflarestorage.com
 DOMAIN,edge.cwtv-vod-ext.top.comcast.net
 DOMAIN,efe8f8a4-abd5-44c9-bf5c-cd217442c52f.t.ssp.hinet.net
@@ -30,6 +32,7 @@ DOMAIN,analytics.mobile.yandex.net
 DOMAIN,api.viu.now.com
 DOMAIN,apl-hamivideo.cdn.hinet.net
 DOMAIN,blizzard.nefficient.co.kr
+DOMAIN,cache.video.iqiyi.com
 DOMAIN,cbsplaylistserver.aws.syncbak.com
 DOMAIN,cbsservice.aws.syncbak.com
 DOMAIN,chatscc-hamivideo2.cdn.hinet.net
@@ -229,6 +232,7 @@ DOMAIN,api.dashlytrack.app
 DOMAIN,api.mindbox.cloud
 DOMAIN,api.mindbox.ru
 DOMAIN,api.okzy.tv
+DOMAIN,apm-misaka.biliapi.net
 DOMAIN,assets.ppy.sh
 DOMAIN,athome.fandango.com
 DOMAIN,atv-ps.amazon.com
@@ -865,12 +869,16 @@ DOMAIN-SUFFIX,intel.com.tr
 DOMAIN-SUFFIX,intel.com.tw
 DOMAIN-SUFFIX,intel.com.uy
 DOMAIN-SUFFIX,intel.com.ve
+DOMAIN-SUFFIX,inter.iqiyi.com
 DOMAIN-SUFFIX,interactivebrokers.co.in
 DOMAIN-SUFFIX,interactivebrokers.co.jp
 DOMAIN-SUFFIX,interactivebrokers.co.uk
 DOMAIN-SUFFIX,interactivebrokers.com.au
 DOMAIN-SUFFIX,interactivebrokers.com.hk
 DOMAIN-SUFFIX,interactivebrokers.com.sg
+DOMAIN-SUFFIX,intl-rcd.iqiyi.com
+DOMAIN-SUFFIX,intl-subscription.iqiyi.com
+DOMAIN-SUFFIX,intl.iqiyi.com
 DOMAIN-SUFFIX,intuit.co.uk
 DOMAIN-SUFFIX,intuit.com.au
 DOMAIN-SUFFIX,ird.co.jp
@@ -1129,6 +1137,8 @@ DOMAIN-SUFFIX,umamusume.akamaized.net
 DOMAIN-SUFFIX,unext.co.jp
 DOMAIN-SUFFIX,unityads.unity3d.com
 DOMAIN-SUFFIX,uum.com.cn
+DOMAIN-SUFFIX,v.smtcdns.com
+DOMAIN-SUFFIX,v.smtcdns.net
 DOMAIN-SUFFIX,verisign.co.in
 DOMAIN-SUFFIX,verisign.co.uk
 DOMAIN-SUFFIX,verisign.com.au
@@ -2152,6 +2162,7 @@ DOMAIN-SUFFIX,bycsi.com
 DOMAIN-SUFFIX,byd3c3.com
 DOMAIN-SUFFIX,bymj.io
 DOMAIN-SUFFIX,bystys.tech
+DOMAIN-SUFFIX,byteoversea.com
 DOMAIN-SUFFIX,bytetree.com
 DOMAIN-SUFFIX,bytick.com
 DOMAIN-SUFFIX,c-ij.com
@@ -3945,6 +3956,8 @@ DOMAIN-SUFFIX,ibm.com
 DOMAIN-SUFFIX,ibm.eu
 DOMAIN-SUFFIX,ibm.net
 DOMAIN-SUFFIX,ibm.us
+DOMAIN-SUFFIX,ibytedtos.com
+DOMAIN-SUFFIX,ibyteimg.com
 DOMAIN-SUFFIX,icodrops.com
 DOMAIN-SUFFIX,icq-download.com
 DOMAIN-SUFFIX,icq-mobile.com
@@ -4860,6 +4873,8 @@ DOMAIN-SUFFIX,mubicdn.net
 DOMAIN-SUFFIX,mudbox3d.com
 DOMAIN-SUFFIX,mudvod.tv
 DOMAIN-SUFFIX,multiplydiversity.com
+DOMAIN-SUFFIX,muscdn.com
+DOMAIN-SUFFIX,musical.ly
 DOMAIN-SUFFIX,musixmatch.com
 DOMAIN-SUFFIX,muumuu-domain.com
 DOMAIN-SUFFIX,muvluv-girls-garden.com
@@ -5998,6 +6013,7 @@ DOMAIN-SUFFIX,snmc.io
 DOMAIN-SUFFIX,snow.me
 DOMAIN-SUFFIX,snowcorp.com
 DOMAIN-SUFFIX,snowmiku.com
+DOMAIN-SUFFIX,snssdk.com
 DOMAIN-SUFFIX,socailcam.com
 DOMAIN-SUFFIX,soccermatchpass.com
 DOMAIN-SUFFIX,socdm.com
@@ -6327,7 +6343,12 @@ DOMAIN-SUFFIX,tiberiumalliances.com
 DOMAIN-SUFFIX,tiburon.com
 DOMAIN-SUFFIX,tidal.com
 DOMAIN-SUFFIX,tidalhifi.com
+DOMAIN-SUFFIX,tik-tokapi.com
+DOMAIN-SUFFIX,tiktok.com
 DOMAIN-SUFFIX,tiktok.us
+DOMAIN-SUFFIX,tiktokcdn.com
+DOMAIN-SUFFIX,tiktokv.com
+DOMAIN-SUFFIX,tiktokv.us
 DOMAIN-SUFFIX,tiktokw.com
 DOMAIN-SUFFIX,tilda.cc
 DOMAIN-SUFFIX,tilda.ru
@@ -6816,6 +6837,8 @@ DOMAIN-SUFFIX,webvisor.com
 DOMAIN-SUFFIX,webvisor.org
 DOMAIN-SUFFIX,weinvoiceit.com
 DOMAIN-SUFFIX,westerndigital.com
+DOMAIN-SUFFIX,wetv.vip
+DOMAIN-SUFFIX,wetvinfo.com
 DOMAIN-SUFFIX,weverse.io
 DOMAIN-SUFFIX,wfm.com
 DOMAIN-SUFFIX,wgcdn.co

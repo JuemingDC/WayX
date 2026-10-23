@@ -1,16 +1,13 @@
 # Name: media_cn
-# Updated: 2026-10-23 09:29:33 UTC
+# Updated: 2026-10-23 09:32:10 UTC
 # Converted by: chance
-# Source Authors: ACL4SSR, DustinWin, Sukka, V2Fly
+# Source Authors: V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://ruleset.skk.moe/List/non_ip/stream.conf
+# Sources: https://github.com/v2fly/domain-list-community
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1376
+# Rules: 1353
 # Managed by: WayX Rule Aggregator
 
-host,akmcdnoversea-tw.inter.ptqy.gitv.tv,proxy
-host,chuangcachecdnoversea-tw.inter.ptqy.gitv.tv,proxy
-host,cache.video.iqiyi.com,proxy
 host,gitlab-assets.oss-cn-hongkong.aliyuncs.com,direct
 host,roovza.inapps.appsflyersdk.com,direct
 host,roovza.launches.appsflyersdk.com,direct
@@ -23,7 +20,6 @@ host,ads5-normal.zijieapi.com,direct
 host,ai.zhaomi.cn,direct
 host,api.alibabacloud.com,direct
 host,apilog-web.acfun.cn,direct
-host,apm-misaka.biliapi.net,proxy
 host,cn.alibabacloud.com,direct
 host,cueme-api.quark.cn,direct
 host,end-api.shallow.ink,direct
@@ -152,10 +148,6 @@ host-suffix,hoopchina.com.cn,direct
 host-suffix,hunyuan.tencent.com,direct
 host-suffix,ifacelog.iqiyi.com,direct
 host-suffix,ign.com.cn,direct
-host-suffix,inter.iqiyi.com,proxy
-host-suffix,intl-rcd.iqiyi.com,proxy
-host-suffix,intl-subscription.iqiyi.com,proxy
-host-suffix,intl.iqiyi.com,proxy
 host-suffix,ja.gamersky.com,direct
 host-suffix,ja1.gamersky.com,direct
 host-suffix,ja2.gamersky.com,direct
@@ -199,8 +191,6 @@ host-suffix,tongyi.aliyun.com,direct
 host-suffix,trae.com.cn,direct
 host-suffix,unityads.unity.cn,direct
 host-suffix,unityads.unitychina.cn,direct
-host-suffix,v.smtcdns.com,proxy
-host-suffix,v.smtcdns.net,proxy
 host-suffix,vistopia.com.cn,direct
 host-suffix,wegame.com.cn,direct
 host-suffix,weibo.com.cn,direct
@@ -413,7 +403,6 @@ host-suffix,butterfly-static.cn,direct
 host-suffix,butterflyai.cn,direct
 host-suffix,bx1k.com,direct
 host-suffix,bytedapm.com,direct
-host-suffix,byteoversea.com,proxy
 host-suffix,cbjq.com,direct
 host-suffix,ccw.site,direct
 host-suffix,cdkeynogap.com,direct
@@ -746,8 +735,6 @@ host-suffix,hzdtv.tv,direct
 host-suffix,hzman.net,direct
 host-suffix,i3839.com,direct
 host-suffix,ibidian.com,direct
-host-suffix,ibytedtos.com,proxy
-host-suffix,ibyteimg.com,proxy
 host-suffix,idouyinliving.com,direct
 host-suffix,idouyinpic.com,direct
 host-suffix,idouyinstatic.com,direct
@@ -960,9 +947,7 @@ host-suffix,mtime.cn,direct
 host-suffix,mtime.com,direct
 host-suffix,mting.info,direct
 host-suffix,muscdn.com,direct
-host-suffix,muscdn.com,proxy
 host-suffix,musical.ly,direct
-host-suffix,musical.ly,proxy
 host-suffix,muwai.com,direct
 host-suffix,muyewx.com,direct
 host-suffix,my4399.com,direct
@@ -1121,7 +1106,6 @@ host-suffix,sl916.com,direct
 host-suffix,sleeplesshorizon.cn,direct
 host-suffix,smgbb.cn,direct
 host-suffix,sndu.cn,direct
-host-suffix,snssdk.com,proxy
 host-suffix,soku.com,direct
 host-suffix,soulapp.cn,direct
 host-suffix,sqreader.com,direct
@@ -1177,15 +1161,12 @@ host-suffix,tidb.net,direct
 host-suffix,tidbcloud.com,direct
 host-suffix,tieba.com,direct
 host-suffix,tik-tokapi.com,direct
-host-suffix,tik-tokapi.com,proxy
 host-suffix,tiktok-minis.com,direct
 host-suffix,tiktok-row.net,direct
 host-suffix,tiktok.com,direct
-host-suffix,tiktok.com,proxy
 host-suffix,tiktokcdn-eu.com,direct
 host-suffix,tiktokcdn-us.com,direct
 host-suffix,tiktokcdn.com,direct
-host-suffix,tiktokcdn.com,proxy
 host-suffix,tiktokd.net,direct
 host-suffix,tiktokd.org,direct
 host-suffix,tiktokeu-cdn.com,direct
@@ -1193,10 +1174,8 @@ host-suffix,tiktokglobalshopv.com,direct
 host-suffix,tiktokminis.us,direct
 host-suffix,tiktokrow-cdn.com,direct
 host-suffix,tiktokv.com,direct
-host-suffix,tiktokv.com,proxy
 host-suffix,tiktokv.eu,direct
 host-suffix,tiktokv.us,direct
-host-suffix,tiktokv.us,proxy
 host-suffix,tiktokw.eu,direct
 host-suffix,tiktokw.us,direct
 host-suffix,tikv.org,direct
@@ -1267,8 +1246,6 @@ host-suffix,weibo.com,direct
 host-suffix,weibocdn.com,direct
 host-suffix,weibopay.com,direct
 host-suffix,weixinbridge.com,direct
-host-suffix,wetv.vip,proxy
-host-suffix,wetvinfo.com,proxy
 host-suffix,weui.io,direct
 host-suffix,winegame.net,direct
 host-suffix,wmsj.cn,direct

@@ -1,18 +1,20 @@
 # Name: media
-# Updated: 2026-10-23 09:29:33 UTC
+# Updated: 2026-10-23 09:32:10 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 7277
+# Rules: 7300
 # Managed by: WayX Rule Aggregator
 
 host,cdn.globalsigncdn.com.cdn.cloudflare.net,proxy
 host,devforum-uploads.s3.dualstack.us-east-2.amazonaws.com,proxy
 host,44wilhpljf.execute-api.ap-southeast-1.amazonaws.com,proxy
+host,akmcdnoversea-tw.inter.ptqy.gitv.tv,proxy
 host,cbsi.live.ott.irdeto.com,proxy
 host,cf-images.ap-southeast-1.prod.boltdns.net,proxy
+host,chuangcachecdnoversea-tw.inter.ptqy.gitv.tv,proxy
 host,docker-images-prod.6aa30f8b08e16409b46e0173d6de2f56.r2.cloudflarestorage.com,proxy
 host,edge.cwtv-vod-ext.top.comcast.net,proxy
 host,efe8f8a4-abd5-44c9-bf5c-cd217442c52f.t.ssp.hinet.net,proxy
@@ -30,6 +32,7 @@ host,analytics.mobile.yandex.net,proxy
 host,api.viu.now.com,proxy
 host,apl-hamivideo.cdn.hinet.net,proxy
 host,blizzard.nefficient.co.kr,proxy
+host,cache.video.iqiyi.com,proxy
 host,cbsplaylistserver.aws.syncbak.com,proxy
 host,cbsservice.aws.syncbak.com,proxy
 host,chatscc-hamivideo2.cdn.hinet.net,proxy
@@ -229,6 +232,7 @@ host,api.dashlytrack.app,proxy
 host,api.mindbox.cloud,proxy
 host,api.mindbox.ru,proxy
 host,api.okzy.tv,proxy
+host,apm-misaka.biliapi.net,proxy
 host,assets.ppy.sh,proxy
 host,athome.fandango.com,proxy
 host,atv-ps.amazon.com,proxy
@@ -865,12 +869,16 @@ host-suffix,intel.com.tr,proxy
 host-suffix,intel.com.tw,proxy
 host-suffix,intel.com.uy,proxy
 host-suffix,intel.com.ve,proxy
+host-suffix,inter.iqiyi.com,proxy
 host-suffix,interactivebrokers.co.in,proxy
 host-suffix,interactivebrokers.co.jp,proxy
 host-suffix,interactivebrokers.co.uk,proxy
 host-suffix,interactivebrokers.com.au,proxy
 host-suffix,interactivebrokers.com.hk,proxy
 host-suffix,interactivebrokers.com.sg,proxy
+host-suffix,intl-rcd.iqiyi.com,proxy
+host-suffix,intl-subscription.iqiyi.com,proxy
+host-suffix,intl.iqiyi.com,proxy
 host-suffix,intuit.co.uk,proxy
 host-suffix,intuit.com.au,proxy
 host-suffix,ird.co.jp,proxy
@@ -1129,6 +1137,8 @@ host-suffix,umamusume.akamaized.net,proxy
 host-suffix,unext.co.jp,proxy
 host-suffix,unityads.unity3d.com,proxy
 host-suffix,uum.com.cn,proxy
+host-suffix,v.smtcdns.com,proxy
+host-suffix,v.smtcdns.net,proxy
 host-suffix,verisign.co.in,proxy
 host-suffix,verisign.co.uk,proxy
 host-suffix,verisign.com.au,proxy
@@ -2152,6 +2162,7 @@ host-suffix,bycsi.com,proxy
 host-suffix,byd3c3.com,proxy
 host-suffix,bymj.io,proxy
 host-suffix,bystys.tech,proxy
+host-suffix,byteoversea.com,proxy
 host-suffix,bytetree.com,proxy
 host-suffix,bytick.com,proxy
 host-suffix,c-ij.com,proxy
@@ -3945,6 +3956,8 @@ host-suffix,ibm.com,proxy
 host-suffix,ibm.eu,proxy
 host-suffix,ibm.net,proxy
 host-suffix,ibm.us,proxy
+host-suffix,ibytedtos.com,proxy
+host-suffix,ibyteimg.com,proxy
 host-suffix,icodrops.com,proxy
 host-suffix,icq-download.com,proxy
 host-suffix,icq-mobile.com,proxy
@@ -4860,6 +4873,8 @@ host-suffix,mubicdn.net,proxy
 host-suffix,mudbox3d.com,proxy
 host-suffix,mudvod.tv,proxy
 host-suffix,multiplydiversity.com,proxy
+host-suffix,muscdn.com,proxy
+host-suffix,musical.ly,proxy
 host-suffix,musixmatch.com,proxy
 host-suffix,muumuu-domain.com,proxy
 host-suffix,muvluv-girls-garden.com,proxy
@@ -5998,6 +6013,7 @@ host-suffix,snmc.io,proxy
 host-suffix,snow.me,proxy
 host-suffix,snowcorp.com,proxy
 host-suffix,snowmiku.com,proxy
+host-suffix,snssdk.com,proxy
 host-suffix,socailcam.com,proxy
 host-suffix,soccermatchpass.com,proxy
 host-suffix,socdm.com,proxy
@@ -6327,7 +6343,12 @@ host-suffix,tiberiumalliances.com,proxy
 host-suffix,tiburon.com,proxy
 host-suffix,tidal.com,proxy
 host-suffix,tidalhifi.com,proxy
+host-suffix,tik-tokapi.com,proxy
+host-suffix,tiktok.com,proxy
 host-suffix,tiktok.us,proxy
+host-suffix,tiktokcdn.com,proxy
+host-suffix,tiktokv.com,proxy
+host-suffix,tiktokv.us,proxy
 host-suffix,tiktokw.com,proxy
 host-suffix,tilda.cc,proxy
 host-suffix,tilda.ru,proxy
@@ -6816,6 +6837,8 @@ host-suffix,webvisor.com,proxy
 host-suffix,webvisor.org,proxy
 host-suffix,weinvoiceit.com,proxy
 host-suffix,westerndigital.com,proxy
+host-suffix,wetv.vip,proxy
+host-suffix,wetvinfo.com,proxy
 host-suffix,weverse.io,proxy
 host-suffix,wfm.com,proxy
 host-suffix,wgcdn.co,proxy
