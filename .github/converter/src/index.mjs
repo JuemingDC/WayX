@@ -81,6 +81,8 @@ export {
   qxPrimitiveForRewriteV2Action,
   qxRewriteMatcherPlan,
   registerComplexRewriteHandler,
+  // Modified: 2026-10-23 (chance). Expose the source-semantic deletion planner.
+  planFixedPathDeleteJq,
   renderFixedPathDeleteJq,
   rewriteIrDeclaration,
   rewriteIssue,

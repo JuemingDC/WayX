@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：2.15
+版本：2.16
 
 更新：2026-10-23
 作者：chance  
@@ -68,9 +68,9 @@ Key Path 解析为 String/Number segments，支持 dot key、数字索引及 quo
 原生 JSON 使用共同 WayX JQ 生成器：
 
 - add：采用 ScriptHub 的设置策略，直接 `setpath(PATH; VALUE)`，覆盖已有值并创建缺失路径；必要 helper 同样设置路径。
-- delete：根据源规则的执行顺序、路径表示和依赖选择 `del` 或 `delpaths`，不单凭路径数量判断。`del(path_expression)` 接收路径表达式，支持在一个调用中使用逗号列出多个路径；`delpaths(PATHS)` 接收保留 String/Number 类型的路径数组。单个固定路径使用 `del(.a)`；固定对象路径互不包含、无数字索引且同时删除与源顺序执行等价时，使用 `del(.a,.b.c)`。含数字索引、父子重叠或重复路径的源批量删除通过 `reduce PATHS[] as $p (.; delpaths([$p]))` 按源顺序执行，保留数组位移和前次删除对后续路径的影响；不拼接多个 `del` 管道。quoted key、字符串数字键和数组数字索引保留各自类型。作者已有 `del`、`delpaths`、遍历或条件筛选表达式保持原义，不拆分或合并。
+- delete：使用 `planFixedPathDeleteJq` 根据源规则的路径表示、执行顺序和路径依赖自动决定转换形式，并返回 `form`、`reason`、`jq`。`del(path_expression)` 接收路径表达式，可用逗号列出多个路径，也能删除数组元素；`delpaths(PATHS)` 接收保留 String/Number 类型的路径数组。源 Key Path 使用 `sourceForm=key-path`；源本身提供类型化路径数组时使用 `sourceForm=path-arrays`，不能仅凭中间表示是数组就改变源形式。Loon JSON delete 的默认语义是 `execution=sequential`，源明确针对同一输入取路径时才使用 `execution=snapshot`。先检测父子重叠、重复路径，以及前一次数组元素删除是否会移动后续使用的索引；存在这些顺序依赖时，通过 `reduce PATHS[] as $p (.; delpaths([$p]))` 按源顺序执行。仅仅遍历数字索引（例如 `items[0].ad`）不代表发生数组位移；同数组降序删除或不同数组中的独立删除也可直接表达。无顺序依赖时，源 Key Path 生成一个 `del(.a,.b.c)`，源类型化路径数组生成一个 `delpaths(PATHS)`。不拼接多个 `del` 管道。quoted key、字符串数字键和数组数字索引保留各自类型。作者已有 `del`、`delpaths`、遍历或条件筛选表达式保持原义，不拆分或合并。
 
-<!-- Modified: 2026-10-23 (chance). Upgrade jq to 1.8.2; use comma-separated del selectors or ordered reduce/delpaths according to source semantics, with no generated del pipelines. -->
+<!-- Modified: 2026-10-23 (chance). Add an inspectable source-semantic deletion planner; distinguish del expressions from delpaths arrays and detect actual index-shift dependencies rather than all numeric traversal. -->
 - replace：直接 `setpath(PATH; VALUE)`，不添加 getpath/has 或字段存在性检查。PATH 为保留 String/Number 类型的路径数组；批量替换按源顺序用 ` | ` 连接。遵循 jq 原生设置语义，包括缺失路径创建及类型错误。VALUE 保留源声明类型：字符串 `"[]"` 不等于数组 `[]`，不得统一字符串化。必要 JSON replace helper 同样执行路径设置，不检查末端字段是否存在。
 
 add/replace 的 PATH 使用保留 String/Number 类型的路径数组，特殊键和数组索引不改变含义。生成的原生表达式不添加统一 type guard、`$__wayx_before` 或 try/catch 回滚，使用 jqlang 原生类型、错误和管道语义；作者自带 if/try/catch 保留。批量动作内部可形成有序原生操作，多个源 actions 仍按 2.3 分条。
