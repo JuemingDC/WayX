@@ -1,11 +1,11 @@
 # Name: apple_proxy
-# Updated: 2026-10-23 09:09:28 UTC
+# Updated: 2026-10-23 09:29:33 UTC
 # Converted by: chance
-# Source Authors: ACL4SSR, DustinWin, Loyalsoldier, MetaCubeX, Sukka, Tartarus2014, V2Fly
+# Source Authors: ACL4SSR, DustinWin, Sukka, Tartarus2014, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Rule/Apple/TestFlight.lsr ; https://ruleset.skk.moe/List/non_ip/stream.conf
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Rule/Apple/TestFlight.lsr ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 29
+# Rules: 28
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,hls-amt.itunes.apple.com
@@ -13,8 +13,6 @@ DOMAIN,hls.itunes.apple.com
 DOMAIN,linear.tv.apple.com
 DOMAIN,np-edge.itunes.apple.com
 DOMAIN,play-edge.itunes.apple.com
-DOMAIN,time.asia.apple.com
-DOMAIN,time.euro.apple.com
 DOMAIN,uts-api.itunes.apple.com
 DOMAIN,apple-tv-plus-press.apple.com
 DOMAIN,apple.comscoreresearch.com
@@ -24,7 +22,6 @@ DOMAIN,news-edge.apple.com
 DOMAIN,news-events.apple.com
 DOMAIN,ocvideo.apple.com
 DOMAIN,testflight.apple.com
-DOMAIN,time.apple.com
 DOMAIN,tv.applemusic.com
 DOMAIN-SUFFIX,developer.apple.com
 DOMAIN-SUFFIX,developerservices2.apple.com
@@ -37,3 +34,5 @@ DOMAIN-SUFFIX,podcast.apple.com
 DOMAIN-SUFFIX,podcasts.apple.com
 DOMAIN-SUFFIX,timestamp.apple.com
 DOMAIN-SUFFIX,tv.apple.com
+DOMAIN-SUFFIX,apple.news
+DOMAIN-SUFFIX,applemusic.com

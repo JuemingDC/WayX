@@ -1,15 +1,14 @@
 # Name: steam_direct
-# Updated: 2026-10-22 15:31:27 UTC
+# Updated: 2026-10-23 09:29:33 UTC
 # Converted by: chance
-# Source Authors: Loyalsoldier, MetaCubeX, Sukka, V2Fly
+# Source Authors: MetaCubeX, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/steam@cn.json ; https://ruleset.skk.moe/List/non_ip/domestic.conf
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/steam@cn.json
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 21
+# Rules: 19
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,alibaba.cdn.steampipe.steamcontent.com
-DOMAIN,gstore.val.manlaxy.com
 DOMAIN,lv.queniujq.cn
 DOMAIN,xz.pphimalayanrt.com
 DOMAIN-SUFFIX,dl.steam.clngaa.com
@@ -20,7 +19,6 @@ DOMAIN-SUFFIX,st.dl.pinyuncloud.com
 DOMAIN-SUFFIX,steampowered.com.8686c.com
 DOMAIN-SUFFIX,steamstatic.com.8686c.com
 DOMAIN-SUFFIX,client-update.queniuqe.com
-DOMAIN-SUFFIX,cm.steampowered.com
 DOMAIN-SUFFIX,csgo.com.cn
 DOMAIN-SUFFIX,csgo.wmsj.cn
 DOMAIN-SUFFIX,dota2.com.cn

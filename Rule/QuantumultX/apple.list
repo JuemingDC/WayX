@@ -1,11 +1,11 @@
 # Name: apple
-# Updated: 2026-10-23 09:09:28 UTC
+# Updated: 2026-10-23 09:29:33 UTC
 # Converted by: chance
-# Source Authors: ACL4SSR, DustinWin, Loyalsoldier, MetaCubeX, Nexitally, Sukka, Tartarus2014, V2Fly
+# Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, Tartarus2014, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Rule/Apple/TestFlight.lsr ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list ; https://ruleset.skk.moe/List/non_ip/stream.conf
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Rule/Apple/TestFlight.lsr ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1813
+# Rules: 1812
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,direct
@@ -146,8 +146,6 @@ host,swallow-apple-com.v.aaplimg.com,direct
 host,swcdn.g.aaplimg.com,direct
 host,sync.itunes.apple.com,direct
 host,tf-feedback.itunes.apple.com,direct
-host,time.asia.apple.com,proxy
-host,time.euro.apple.com,proxy
 host,universal-activity-service.itunes.apple.com,direct
 host,upp.itunes.apple.com,direct
 host,uts-api.itunes.apple.com,proxy
@@ -254,7 +252,6 @@ host,swdist.apple.com,direct
 host,swscan.apple.com,direct
 host,sylvan.apple.com,direct
 host,testflight.apple.com,proxy
-host,time.apple.com,proxy
 host,tj-pod1-smp-device.apple.com,direct
 host,tj-pod2-smp-device.apple.com,direct
 host,tj-pod3-smp-device.apple.com,direct
@@ -557,6 +554,7 @@ host-suffix,apple.me,direct
 host-suffix,apple.my,direct
 host-suffix,apple.net,direct
 host-suffix,apple.news,direct
+host-suffix,apple.news,proxy
 host-suffix,apple.nl,direct
 host-suffix,apple.no,direct
 host-suffix,apple.pk,direct
@@ -640,6 +638,7 @@ host-suffix,applemasters.info,direct
 host-suffix,applemusic.berlin,direct
 host-suffix,applemusic.co,direct
 host-suffix,applemusic.com,direct
+host-suffix,applemusic.com,proxy
 host-suffix,applemusic.hamburg,direct
 host-suffix,applemusic.wang,direct
 host-suffix,applemusicconnect.com,direct

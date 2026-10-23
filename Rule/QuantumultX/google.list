@@ -1,11 +1,11 @@
 # Name: google
-# Updated: 2026-10-23 02:46:02 UTC
+# Updated: 2026-10-23 09:29:33 UTC
 # Converted by: chance
-# Source Authors: ACL4SSR, DustinWin, Loyalsoldier, MetaCubeX, Sukka, V2Fly
+# Source Authors: ACL4SSR, DustinWin, MetaCubeX, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google.json ; https://ruleset.skk.moe/List/non_ip/global.conf
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google.json
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 898
+# Rules: 891
 # Managed by: WayX Rule Aggregator
 
 host,c.android.clients.google.com,proxy
@@ -188,11 +188,6 @@ host,ssl.gstatic.com,proxy
 host,staging-controlbe.floonet.goog,proxy
 host,staging-databe.floonet.goog,proxy
 host,tac.googleapis.com,proxy
-host,time.google.com,proxy
-host,time1.google.com,proxy
-host,time2.google.com,proxy
-host,time3.google.com,proxy
-host,time4.google.com,proxy
 host,tools.google.com,proxy
 host,update.crashlytics.com,proxy
 host,update.googleapis.com,proxy
@@ -262,7 +257,6 @@ host-suffix,blogspot.com.mt,proxy
 host-suffix,blogspot.com.ng,proxy
 host-suffix,blogspot.com.tr,proxy
 host-suffix,blogspot.com.uy,proxy
-host-suffix,clickserver.googleads.com,proxy
 host-suffix,fcmatch.google.com,proxy
 host-suffix,firebase.google.com,proxy
 host-suffix,google.co.ao,proxy
@@ -351,7 +345,6 @@ host-suffix,howtogetmo.co.uk,proxy
 host-suffix,mail-ads.google.com,proxy
 host-suffix,marketingplatform.google.com,proxy
 host-suffix,mobileads.google.com,proxy
-host-suffix,services.googleapis.cn,proxy
 host-suffix,thinkquarterly.co.uk,proxy
 host-suffix,video.google.com,proxy
 host-suffix,womenwill.com.br,proxy

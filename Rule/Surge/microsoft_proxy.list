@@ -1,34 +1,24 @@
 # Name: microsoft_proxy
-# Updated: 2026-10-23 02:11:01 UTC
+# Updated: 2026-10-23 09:29:33 UTC
 # Converted by: chance
-# Source Authors: Loyalsoldier, MetaCubeX, Sukka, V2Fly
+# Source Authors: V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://ruleset.skk.moe/List/non_ip/global.conf
+# Sources: https://github.com/v2fly/domain-list-community
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 497
+# Rules: 485
 # Managed by: WayX Rule Aggregator
 
-DOMAIN,epc-de-agent-proxy.germanywestcentral.cloudapp.azure.com
 DOMAIN,prodforza.blob.core.windows.net
 DOMAIN,vscode.blob.core.windows.net
 DOMAIN,az764295.vo.msecnd.net
 DOMAIN,vscode.search.windows.net
-DOMAIN,azure.microsoft.com
-DOMAIN,azuremarketplace.microsoft.com
 DOMAIN,bingsettingssearch.trafficmanager.net
-DOMAIN,client-teamviewer-com.trafficmanager.net
-DOMAIN,crl.microsoft.com
 DOMAIN,default.exp-tas.com
 DOMAIN,dtlgalleryint.cloudapp.net
-DOMAIN,gigabyte2.azureedge.net
 DOMAIN,img-prod-cms-rt-microsoft-com.akamaized.net
 DOMAIN,img-s-msn-com.akamaized.net
-DOMAIN,location.microsoft.com
-DOMAIN,mscrl.microsoft.com
 DOMAIN,mwf-service.akamaized.net
-DOMAIN,ocsp.microsoft.com
 DOMAIN,officecdn-microsoft-com.akamaized.net
-DOMAIN,oneocsp.microsoft.com
 DOMAIN,packages.microsoft.com
 DOMAIN,poshtestgallery.cloudapp.net
 DOMAIN,psg-int-centralus.cloudapp.net
@@ -37,11 +27,9 @@ DOMAIN,rink.hockeyapp.net
 DOMAIN,statics-marketingsites-eas-ms-com.akamaized.net
 DOMAIN,statics-marketingsites-eus-ms-com.akamaized.net
 DOMAIN,statics-marketingsites-wcus-ms-com.akamaized.net
-DOMAIN,time.windows.com
 DOMAIN,vscode-sync-insiders.trafficmanager.net
 DOMAIN,vscode-sync.trafficmanager.net
 DOMAIN,vsmarketplacebadge.apphb.com
-DOMAIN,www.microsoft.com
 DOMAIN-SUFFIX,browser.events.data.msn.cn
 DOMAIN-SUFFIX,browser.events.data.msn.com
 DOMAIN-SUFFIX,l-0005.l-msedge.net
