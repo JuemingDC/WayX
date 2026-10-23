@@ -575,12 +575,15 @@ def build(config, inputs):
     if any(name not in app_names | {'media', 'media_cn', 'cn', 'proxy'} or policy not in ('DIRECT', 'PROXY')
            for name, policy in default_policies.items()):
         raise ValueError('Invalid category default policy')
+    explicit_rules = set()
     for name, policy, rule, author, source, explicit in records:
         target = destination(name, policy, rule, source)
         if excluded(target, rule):
             continue
         if not explicit and not policy.startswith('REJECT'):
             policy = default_policies.get(target, policy)
+        if explicit:
+            explicit_rules.add((target, rule, qx_policy(policy)))
         key = (target, policy)
         buckets.setdefault(key, set()).add(rule)
         authors.setdefault(key, set()).add(author)
@@ -623,7 +626,14 @@ def build(config, inputs):
                     actions.setdefault(qx_policy(policy), set()).add(rule)
                 ordered = [(rule, action) for action, rules in actions.items()
                            for rule in sorted(rules)]
-            for rule, policy in sorted(ordered, key=lambda pair: (0 if pair[0].kind == 'DOMAIN' else 1 if pair[0].kind == 'DOMAIN-SUFFIX' else 2 if pair[0].kind in ('DOMAIN-WILDCARD', 'DOMAIN-KEYWORD') else 3, -pair[0].value.count('.'), pair[0].value, 0 if pair[1] == 'DIRECT' else 1 if pair[1].startswith('REJECT') else 2, pair[1], pair[0].kind, pair[0].options)):
+            def output_key(pair):
+                rule, policy = pair
+                rank = 0 if rule.kind == 'DOMAIN' else 1 if rule.kind == 'DOMAIN-SUFFIX' else 2 if rule.kind in ('DOMAIN-WILDCARD', 'DOMAIN-KEYWORD') else 3
+                return (rank, -rule.value.count('.'), rule.value,
+                        (groups[0][0], rule, qx_policy(policy)) not in explicit_rules,
+                        0 if policy == 'DIRECT' else 1 if policy.startswith('REJECT') else 2,
+                        policy, rule.kind, rule.options)
+            for rule, policy in sorted(ordered, key=output_key):
                     line = serialize(rule, policy, target)
                     if line is not None and line not in seen:
                         lines.append(line); seen.add(line)
