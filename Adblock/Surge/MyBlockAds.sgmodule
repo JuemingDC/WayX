@@ -7,7 +7,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/walalala.png
 # Updated: 2026-10-07 10:00
 
-# Converted: 2026-10-23 22:46:58 +08:00
+# Converted: 2026-10-23 23:04:31 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/myblockads.lpx
 # Target: Surge
@@ -384,7 +384,7 @@ http-response-jq (?i)^https:\/\/api\.xiachufang\.com\/v2\/homepage\/paged_waterf
 # 小米商城 //api.m.mi.com, shop-api.retail.mi.com, xiaomishop.retail.mi.com
 http-response-jq (?i)^https:\/\/api\.m\.mi\.com\/v1\/order\/expressView 'del(.data.bottom.ad_info)'
 http-response-jq (?i)^https:\/\/shop-api\.retail\.mi\.com\/mtop\/act\/mishopSearch\/mainSearch 'setpath(["data","recProductList"]; [])'
-http-response-jq (?i)^https:\/\/shop-api\.retail\.mi\.com\/mtop\/mf\/home\/v1\/index 'reduce [["data","floors",0,"data","left_icon_config"],["data","floors",0,"data","right_icon_config"]][] as $p (.; delpaths([$p]))'
+http-response-jq (?i)^https:\/\/shop-api\.retail\.mi\.com\/mtop\/mf\/home\/v1\/index 'del(.data.floors[0].data.left_icon_config,.data.floors[0].data.right_icon_config)'
 http-response-jq (?i)^https:\/\/shop-api\.retail\.mi\.com\/mtop\/mf\/usercenter\/personalHome 'del(.data.carouselAD)'
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
 http-response-jq (?i)^https:\/\/xiaomishop\.retail\.mi\.com\/mtop\/xiaomishop\/product\/info 'del(.data.carouselAdInfo,.data.product.floatWindow)'
