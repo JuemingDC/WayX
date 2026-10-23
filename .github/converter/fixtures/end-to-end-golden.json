@@ -1,5 +1,6 @@
 {
-  "version": 7,
+  "version": 8,
+  "modified": "2026-10-23 (chance): use one del call for independent selectors and reduce/delpaths for ordered deletions; refresh affected output hashes and sizes.",
   "stamp": "2026-09-29 12:00:00 +08:00",
   "cases": {
     "HTTPDNS": {
@@ -19,10 +20,10 @@
       ]
     },
     "PinDuoDuo": {
-      "qxSha256": "c122ac71d842c885f4e01a4d588042faa2aa4e2be3630c7cc195772f3cf1fce5",
-      "surgeSha256": "c7d21128b6949705ef95fcb1b9e9dfa7e1a8a4ac0ac2e7bfe70943cfaf235c69",
-      "qxBytes": 6195,
-      "surgeBytes": 7585,
+      "qxSha256": "ba8ca55531d775a633877aae2abb7d42cadfc61f094afd5c5e65b2d53b47919d",
+      "surgeSha256": "9f45f1f68f816d48e45a6661f13f7fcf56b61d527044ec8508ce63afa977f86a",
+      "qxBytes": 6135,
+      "surgeBytes": 7525,
       "sourceScriptCount": 1,
       "generatedScriptCount": 0,
       "qxReview": 0,
@@ -36,10 +37,10 @@
       ]
     },
     "MyBlockAds": {
-      "qxSha256": "9e46991533096a5e75dbbc5e97e245cbfb29e56e56f919d66993476df673beff",
-      "surgeSha256": "8e5fac608dc4dc46302894c06c54d4b70fd68ae717b5e6f20c8a534c60ba697d",
-      "qxBytes": 24674,
-      "surgeBytes": 34504,
+      "qxSha256": "44fc4e8642f23ed7f4835ae024965e09eef62ffca5ce4de5f1d0f29657c4ba19",
+      "surgeSha256": "f51c4b970cccef288395743c0245a948bba86ab7ed0505b26f0af06e9770de52",
+      "qxBytes": 24602,
+      "surgeBytes": 34432,
       "sourceScriptCount": 9,
       "generatedScriptCount": 0,
       "qxReview": 0,
@@ -54,10 +55,10 @@
       ]
     },
     "JingDong": {
-      "qxSha256": "bc08ebbbc2c63edc1ffc501fd910b54658538357a2de4ecdb747dfd4e256608d",
-      "surgeSha256": "b1896b2ce790e74752f8f55b7859d44bcb0f6ce1028d2ac8ba9178a93d6ea4e2",
-      "qxBytes": 2576,
-      "surgeBytes": 2738,
+      "qxSha256": "f14e9cc4141c71006ded20cfceb3f3eee15b823fdb60e1405973b07f144e1108",
+      "surgeSha256": "d3bb0247e461f2e85aa9eeac2b510bf3794be8be78532a0450d46de3d6919228",
+      "qxBytes": 2561,
+      "surgeBytes": 2723,
       "sourceScriptCount": 3,
       "generatedScriptCount": 0,
       "qxReview": 0,

@@ -10,18 +10,18 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/51Job.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 12:33:59 +08:00
+# Converted: 2026-10-23 22:46:22 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/51Job_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 
-http-response-jq (?i)^https:\/\/cupid\.51jobapp\.com\/open\/noauth\/recommend\/job-tab-dynamic\? 'delpaths([["resultbody","adsTabFeeds"]])'
+http-response-jq (?i)^https:\/\/cupid\.51jobapp\.com\/open\/noauth\/recommend\/job-tab-dynamic\? 'del(.resultbody.adsTabFeeds)'
 
-http-response-jq (?i)^https:\/\/cupid\.51jobapp\.com\/open\/user-task\/user\/task\/ 'delpaths([["resultbody","availableTaskList"]])'
+http-response-jq (?i)^https:\/\/cupid\.51jobapp\.com\/open\/user-task\/user\/task\/ 'del(.resultbody.availableTaskList)'
 
-http-response-jq (?i)^https:\/\/cupid\.51jobapp\.com\/open\/tab\/good-job\/modules\? 'delpaths([["resultbody","bannerList"]])'
+http-response-jq (?i)^https:\/\/cupid\.51jobapp\.com\/open\/tab\/good-job\/modules\? 'del(.resultbody.bannerList)'
 
 [Map Local]
 (?i)^https:\/\/appapi\.51jobapp\.com\/api\/market\/get_launch\.php\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"

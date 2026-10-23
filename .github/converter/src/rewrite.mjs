@@ -618,17 +618,23 @@ function validateParts(parts) {
   return parts;
 }
 
-// WayX delete uses jqlang delpaths(PATHS). Numeric indices are lowered
-// sequentially because each source deletion shifts the next array index.
+// Modified: 2026-10-23 (chance). Use del(selector, selector) for deletions
+// that share an input snapshot. Source-ordered indexed/dependent deletions use
+// reduce over typed paths with delpaths, never a pipeline of separate del calls.
 export function renderFixedPathDeleteJq(paths) {
   if (!Array.isArray(paths) || !paths.length) {
     throw new Error('delete path list must contain nonempty parsed paths');
   }
   paths=paths.map(item=>({parts:validateParts(Array.isArray(item)?item:item?.parts)}));
-  if(paths.some(item=>item.parts.some(part=>typeof part==='number'))) {
-    return paths.map(item=>'delpaths('+JSON.stringify([item.parts])+')').join(' | ');
+  const single=item=>'del('+jqPathSelector(item.parts)+')';
+  if(paths.length===1)return single(paths[0]);
+  const prefix=(a,b)=>a.length<=b.length && a.every((part,i)=>part===b[i]);
+  const dependent=paths.some((item,i)=>paths.slice(i+1).some(other=>
+    prefix(item.parts,other.parts)||prefix(other.parts,item.parts)));
+  if(dependent || paths.some(item=>item.parts.some(part=>typeof part==='number'))) {
+    return 'reduce '+JSON.stringify(paths.map(item=>item.parts))+'[] as $p (.; delpaths([$p]))';
   }
-  return 'delpaths('+JSON.stringify(paths.map(item=>item.parts))+')';
+  return 'del('+paths.map(item=>jqPathSelector(item.parts)).join(',')+')';
 }
 
 // Integrated policy entry point retained from concurrent test-branch refactor.

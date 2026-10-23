@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YoudaoDict.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 12:34:16 +08:00
+# Converted: 2026-10-23 22:46:31 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/YoudaoDict_remove_ads.lpx
 # Target: Surge
@@ -20,7 +20,7 @@
 # Source declaration: ad-sdk-config.youdao.com
 
 [Body Rewrite]
-http-response-jq (?i)^https:\/\/dict\.youdao\.com\/homepage\/toolbar\/get\/ 'delpaths([["data","vipTag"]])'
+http-response-jq (?i)^https:\/\/dict\.youdao\.com\/homepage\/toolbar\/get\/ 'del(.data.vipTag)'
 
 [Map Local]
 

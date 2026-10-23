@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/LZMH.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 12:33:45 +08:00
+# Converted: 2026-10-23 22:46:14 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/LZMH_remove_ads.lpx
 # Target: Surge
@@ -21,7 +21,7 @@
 
 [Body Rewrite]
 
-http-response-jq (?i)^https:\/\/lzmh\.lz-qs\.com:6025\/lzmh_app_api\/api\/v2\/user\/getUserBaseInfoAndConfig\? 'delpaths([["value","config"]])'
+http-response-jq (?i)^https:\/\/lzmh\.lz-qs\.com:6025\/lzmh_app_api\/api\/v2\/user\/getUserBaseInfoAndConfig\? 'del(.value.config)'
 
 [Map Local]
 (?i)^https:\/\/lzmh\.lz-qs\.com:6025\/lzmh_app_api\/api\/v1\/app3rd\/getApp3rdGenreList\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"

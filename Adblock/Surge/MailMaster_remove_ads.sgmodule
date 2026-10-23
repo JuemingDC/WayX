@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MailMaster.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:40 +08:00
+# Converted: 2026-10-23 22:46:31 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/MailMaster_remove_ads.lpx
 # Target: Surge
@@ -18,7 +18,7 @@
 [Body Rewrite]
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-http-response-jq (?i)^https:\/\/appconf\.mail\.163\.com\/mailmaster\/api\/page\/v2\/conf\.do$ 'delpaths([["data","functionOperatorInfoList"],["data","memberOperator"],["data","activityTabInfoList"]])'
+http-response-jq (?i)^https:\/\/appconf\.mail\.163\.com\/mailmaster\/api\/page\/v2\/conf\.do$ 'del(.data.functionOperatorInfoList,.data.memberOperator,.data.activityTabInfoList)'
 
 http-response-jq (?i)^https:\/\/appconf\.mail\.163\.com\/mailmaster\/api\/config\/function\.do$ '.data.config[] |= if .result.tools then .result.tools |= map(select(.name == "邮件追踪" or .name == "替身邮箱")) else . end | del(.data.config[] | select(.functionName == "Function-AD"))'
 

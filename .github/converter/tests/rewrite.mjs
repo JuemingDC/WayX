@@ -42,7 +42,7 @@ assert.throws(
 const jqDeletePolicy=jsonPipelineToSafeNativeJq(parseRewriteV2(
   'response if ${url} ~= /api/ then response.json.delete(["activity_switch","wl_config.pb_banner_funad_cache_strategy","scheme_whitelist"])'
 ));
-assert.match(jqDeletePolicy.jq,/delpaths/);
+assert.match(jqDeletePolicy.jq,/del\(/);
 assert.doesNotMatch(jqDeletePolicy.jq,/getpath|setpath/);
 
 const jqAddPolicy=jsonPipelineToSafeNativeJq(parseRewriteV2(
@@ -290,19 +290,21 @@ const compact = minifyJq('walk( if type == "object" then .a = [] | del(.b, .c) e
 assert.equal(compact.includes('"object"'), true);
 assert.equal(compact.includes('del(.b,.c)'), true);
 
+// Modified: 2026-10-23 (chance). Use one del call for independent selectors
+// and reduce/delpaths for ordered indexed source deletions, without del pipelines.
 assert.equal(
   renderFixedPathDeleteJq([
     {parts:['a'], selector:'.a'},
     {parts:['b','c'], selector:'.b.c'},
   ]),
-  'delpaths([["a"],["b","c"]])',
+  'del(.a,.b.c)',
 );
 assert.equal(
   renderFixedPathDeleteJq([
     {parts:['items',0], selector:'.items[0]'},
     {parts:['items',1], selector:'.items[1]'},
   ]),
-  'delpaths([["items",0]]) | delpaths([["items",1]])',
+  'reduce [["items",0],["items",1]][] as $p (.; delpaths([$p]))',
 );
 
 assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:true,scriptUrl:'https://example.com/request.js',sourceText:'$done({status:"HTTP/1.1 200 OK",body:$request.body});'}).action, 'script-request-body');
@@ -985,7 +987,7 @@ assert.equal(planMitmLine('hostname = api.example.com, *.example.com', 'qx').lin
 assert.equal(planMitmLine('hostname = api.example.com, *.example.com', 'surge').line, 'hostname = %APPEND% api.example.com, *.example.com');
 assert.equal(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', 'response-body-json-del data.ads', 'qx', legacyCtx).line,
-  '^https:\\/\\/api\\.example\\.com url jsonjq-response-body \'delpaths([["data","ads"]])\'',
+  '^https:\\/\\/api\\.example\\.com url jsonjq-response-body \'del(.data.ads)\'',
 );
 assert.equal(
   planLegacyRewrite('^https:\\/\\/api\\.example\\.com', "response-body-json-jq ''", 'qx', legacyCtx).section,
@@ -1148,7 +1150,7 @@ const legacyJsonDelBatch = planLegacyRewrite(
   legacyCtx,
 );
 assert.equal(legacyJsonDelBatch.section, 'rewrite');
-assert.ok(legacyJsonDelBatch.line.includes('delpaths([["data","ads"]]) | delpaths([["data","items",0]])'));
+assert.ok(legacyJsonDelBatch.line.includes('reduce [["data","ads"],["data","items",0]][] as $p (.; delpaths([$p]))'));
 
 const jqFileAst = parseRewriteV2('response if ${url} ~= /api/ then response.json.jq_file("filters/remove-ads.jq")');
 const deps = listRewriteV2Dependencies(jqFileAst, {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
@@ -1285,11 +1287,11 @@ const qxDeleteV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /^h
 assert.equal(qxDeleteV2.ok, true);
 assert.match(qxDeleteV2.line, /url jsonjq-response-body/);
 assert.match(qxDeleteV2.line, /delpaths/);
-assert.ok(qxDeleteV2.line.includes('delpaths([["data","ads"]]) | delpaths([["data","apps",0,"promo"]])'));
+assert.ok(qxDeleteV2.line.includes('reduce [["data","ads"],["data","apps",0,"promo"]][] as $p (.; delpaths([$p]))'));
 
 const qxDeleteObjectsV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /api/ then response.json.delete(["data.ads", "data.promo"])'));
 assert.equal(qxDeleteObjectsV2.ok, true);
-assert.ok(qxDeleteObjectsV2.line.includes('delpaths([["data","ads"],["data","promo"]])'));
+assert.ok(qxDeleteObjectsV2.line.includes('del(.data.ads,.data.promo)'));
 
 const qxReplaceV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /search/i then response.json.replace("data.items", `[]`)'));
 assert.equal(qxReplaceV2.ok, true);
@@ -2274,8 +2276,8 @@ const safeJsonPipelineJq=jsonPipelineToSafeNativeJq(safeJsonPipelineAst);
 assert.equal(safeJsonPipelineJq.ok,true);
 assert.match(safeJsonPipelineJq.jq,/^setpath\(\["flag"\]/);
 assert.ok(safeJsonPipelineJq.jq.indexOf('setpath(["flag"]; true)') < safeJsonPipelineJq.jq.indexOf('setpath(["count"]; 2)'));
-assert.ok(safeJsonPipelineJq.jq.indexOf('setpath(["count"]; 2)') < safeJsonPipelineJq.jq.indexOf('delpaths([["old"]])'));
-assert.match(safeJsonPipelineJq.jq,/delpaths/);
+assert.ok(safeJsonPipelineJq.jq.indexOf('setpath(["count"]; 2)') < safeJsonPipelineJq.jq.indexOf('del(.old)'));
+assert.match(safeJsonPipelineJq.jq,/del\(/);
 assert.doesNotMatch(safeJsonPipelineJq.jq,/getpath|has\(/);
 
 const nativeJsonPipelineSource='response if ${url} ~= /api/ then response.json.add("flag",true) | response.json.replace("count",2) | response.json.delete("old")';
@@ -2285,7 +2287,7 @@ assert.equal(nativeJsonPipeline.section,'rewrite');
 assert.match(nativeJsonPipeline.line,/^api url jsonjq-response-body '/);
 assert.doesNotMatch(nativeJsonPipeline.line,/__wayx_before|try |catch |type == "object"/);
 assert.ok(nativeJsonPipeline.line.indexOf('setpath(["flag"]; true)') < nativeJsonPipeline.line.indexOf('setpath(["count"]; 2)'));
-assert.ok(nativeJsonPipeline.line.indexOf('setpath(["count"]; 2)') < nativeJsonPipeline.line.indexOf('delpaths([["old"]])'));
+assert.ok(nativeJsonPipeline.line.indexOf('setpath(["count"]; 2)') < nativeJsonPipeline.line.indexOf('del(.old)'));
 assert.equal(nativeJsonPipelineCtx.generatedScripts.size,0);
 
 const methodNativeJsonPipelineSource='request if ${url} ~= /api/ && ${request.method} == "POST" then request.json.add(["one","two"],[1,2]) | request.json.delete(["old","unused"])';
@@ -2294,8 +2296,8 @@ const methodNativeJsonPipeline=planQxRewrite(v2(methodNativeJsonPipelineSource),
 assert.equal(methodNativeJsonPipeline.section,'rewrite');
 assert.match(methodNativeJsonPipeline.line,/^api \^POST\[ \] url-and-header jsonjq-request-body '/);
 assert.ok(methodNativeJsonPipeline.line.indexOf('setpath(["one"]; 1)') < methodNativeJsonPipeline.line.indexOf('setpath(["two"]; 2)'));
-assert.ok(methodNativeJsonPipeline.line.indexOf('setpath(["two"]; 2)') < methodNativeJsonPipeline.line.indexOf('delpaths([["old"],["unused"]])'));
-assert.ok(methodNativeJsonPipeline.line.includes('delpaths([["old"],["unused"]])'));
+assert.ok(methodNativeJsonPipeline.line.indexOf('setpath(["two"]; 2)') < methodNativeJsonPipeline.line.indexOf('del(.old,.unused)'));
+assert.ok(methodNativeJsonPipeline.line.includes('del(.old,.unused)'));
 assert.equal(methodNativeJsonPipelineCtx.generatedScripts.size,0);
 
 const flagsNativeJsonPipelineSource='response if ${url} ~= /api/ims then response.json.add("a",1) | response.json.delete("b")';

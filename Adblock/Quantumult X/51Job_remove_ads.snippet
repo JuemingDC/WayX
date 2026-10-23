@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/51Job.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 12:33:59 +08:00
+# Converted: 2026-10-23 22:46:22 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/51Job_remove_ads.lpx
@@ -20,7 +20,7 @@
 
 (?i)^https:\/\/cupid\.51jobapp\.com\/open\/operation\/get\/latest\/banner-list\? url reject-dict
 
-(?i)^https:\/\/cupid\.51jobapp\.com\/open\/noauth\/recommend\/job-tab-dynamic\? url jsonjq-response-body 'delpaths([["resultbody","adsTabFeeds"]])'
+(?i)^https:\/\/cupid\.51jobapp\.com\/open\/noauth\/recommend\/job-tab-dynamic\? url jsonjq-response-body 'del(.resultbody.adsTabFeeds)'
 
 (?i)^https:\/\/cupid\.51jobapp\.com\/open\/51job-activities\/secJob\/queryHomeSecondConfigV2\? url reject-dict
 
@@ -28,14 +28,14 @@
 
 (?i)^https:\/\/cupid\.51jobapp\.com\/open\/noauth\/jobs\/job-detail\/user-rights\? url reject-dict
 
-(?i)^https:\/\/cupid\.51jobapp\.com\/open\/user-task\/user\/task\/ url jsonjq-response-body 'delpaths([["resultbody","availableTaskList"]])'
+(?i)^https:\/\/cupid\.51jobapp\.com\/open\/user-task\/user\/task\/ url jsonjq-response-body 'del(.resultbody.availableTaskList)'
 
 (?i)^https:\/\/cupid\.51jobapp\.com\/open\/resume\/strategy\/resume-build\? url reject-dict
 
 (?i)^https:\/\/cupid\.51jobapp\.com\/launch-hub\/open\/noauth\/popUp\/ url reject-dict
 (?i)^https:\/\/cupid\.51jobapp\.com\/launch-hub\/open\/noauth\/popUp\/getHomePagePopUp\? url reject-dict
 
-(?i)^https:\/\/cupid\.51jobapp\.com\/open\/tab\/good-job\/modules\? url jsonjq-response-body 'delpaths([["resultbody","bannerList"]])'
+(?i)^https:\/\/cupid\.51jobapp\.com\/open\/tab\/good-job\/modules\? url jsonjq-response-body 'del(.resultbody.bannerList)'
 
 # [mitm]
 hostname = appapi.51jobapp.com, cupid.51jobapp.com

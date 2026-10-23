@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BooHee.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:11 +08:00
+# Converted: 2026-10-23 22:45:54 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/BooHee_remove_ads.lpx
@@ -17,7 +17,7 @@
 
 # [rewrite_local]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/api\.boohee\.com\/meta-interface\/v2\/index\? url jsonjq-response-body 'delpaths([["data","recom_cards"],["data","recom_btns"]])'
+(?i)^https:\/\/api\.boohee\.com\/meta-interface\/v2\/index\? url jsonjq-response-body 'del(.data.recom_cards,.data.recom_btns)'
 
 (?i)^https:\/\/api\.boohee\.com\/meta-interface\/v1\/index\/page_float_bubbles\? url reject-dict
 
@@ -29,10 +29,10 @@
 
 (?i)^https:\/\/bohe\.sfo-tx-shanghai-01\.saas\.sensorsdata\.cn\/api\/v2\/sfo\/user_popup_configs\? url reject-dict
 
-(?i)^https:\/\/api\.boohee\.com\/meta-interface\/v1\/index\/plaza\? url jsonjq-response-body 'delpaths([["data","tabs",1,"badge"]]) | delpaths([["data","recommend_ads"]])'
+(?i)^https:\/\/api\.boohee\.com\/meta-interface\/v1\/index\/plaza\? url jsonjq-response-body 'reduce [["data","tabs",1,"badge"],["data","recommend_ads"]][] as $p (.; delpaths([$p]))'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/api\.boohee\.com\/open-interface\/v1\/string\/market_page\?title=metabolism_config$ url jsonjq-response-body 'delpaths([["top_banner"],["diagnos_config"],["partner_hospital"],["question_answer"],["product"],["brand_story"]])'
+(?i)^https:\/\/api\.boohee\.com\/open-interface\/v1\/string\/market_page\?title=metabolism_config$ url jsonjq-response-body 'del(.top_banner,.diagnos_config,.partner_hospital,.question_answer,.product,.brand_story)'
 
 (?i)^https:\/\/api\.boohee\.com\/meta-interface\/v1\/index\/sensor-banners\? url reject-dict
 # 移除广场推荐页面横幅
