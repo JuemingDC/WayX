@@ -106,10 +106,25 @@
       ]
     }
   ],
-  "split_names": [
-    "apple",
-    "microsoft"
-  ],
+  "surge_output": {
+    "apple": "split",
+    "microsoft": "split",
+    "google": "split",
+    "steam": "split",
+    "github": "combined",
+    "spotify": "combined",
+    "facebook": "combined",
+    "netflix": "combined",
+    "disney": "combined",
+    "youtube": "combined",
+    "telegram": "combined",
+    "x": "combined",
+    "ai": "combined",
+    "media": "combined"
+  },
+  "default_policies": {
+    "media_cn": "DIRECT"
+  },
   "collections": {
     "media": [
       "category-companies",
