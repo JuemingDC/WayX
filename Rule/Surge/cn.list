@@ -1,22 +1,137 @@
 # Name: cn
-# Updated: 2026-10-22 15:31:27 UTC
+# Updated: 2026-10-23 02:46:02 UTC
 # Converted by: chance
 # Source Authors: DH-Teams, Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly, gaoyifan
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_All_Surge.list ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china.txt ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china6.txt ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_CN_3.list ; https://ruleset.skk.moe/List/ip/domestic.conf ; https://ruleset.skk.moe/List/non_ip/domestic.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 121224
+# Rules: 121347
 # Managed by: WayX Rule Aggregator
 
+DOMAIN,7h15.ru1353t.1s.m4d3.by.5ukk4w.skk.moe
+DOMAIN,c.android.clients.google.com
+DOMAIN,redirector.c.chat.google.com
+DOMAIN,redirector.c.mail.google.com
+DOMAIN,redirector.c.pack.google.com
+DOMAIN,redirector.c.play.google.com
+DOMAIN,beacons.gcp.gvt2.com
+DOMAIN,cache.pack.google.com
+DOMAIN,dg-meta.video.google.com
+DOMAIN,dl.l.google.com
+DOMAIN,download.mlcc.google.com
+DOMAIN,download.tensorflow.google.com
 DOMAIN,geetest.datasink.sensorsdata.cn
+DOMAIN,gstaticadssl.l.google.com
 DOMAIN,media.cdn.queniuqe.com
+DOMAIN,pagead-googlehosted.l.google.com
+DOMAIN,pki-goog.l.google.com
+DOMAIN,prod.databe.floonet.goog
+DOMAIN,redirector.c.youtubeeducation.com
+DOMAIN,redirector.gcpcdn.gvt1.com
+DOMAIN,redirector.offline-maps.gvt1.com
+DOMAIN,redirector.snap.gvt1.com
+DOMAIN,ssl-google-analytics.l.google.com
+DOMAIN,staging.databe.floonet.goog
+DOMAIN,www-google-analytics.l.google.com
+DOMAIN,www-googletagmanager.l.google.com
+DOMAIN,adservice.google.com
 DOMAIN,api.blipsandchitz.me
 DOMAIN,app.viayoo.com
+DOMAIN,apps5.oingo.com
+DOMAIN,avail.googleflights.net
+DOMAIN,beacons.gvt2.com
+DOMAIN,beacons2.gvt2.com
+DOMAIN,beacons3.gvt2.com
+DOMAIN,c.admob.com
+DOMAIN,c.pki.goog
+DOMAIN,cache-management-prod.google.com
+DOMAIN,checkin.gstatic.com
+DOMAIN,clickserve.cc-dt.com
+DOMAIN,clickserve.dartsearch.net
+DOMAIN,clickserver.googleads.com
+DOMAIN,clientservices.googleapis.com
+DOMAIN,cn.widevine.com
+DOMAIN,connectivitycheck.gstatic.com
+DOMAIN,crashlyticsreports-pa.googleapis.com
+DOMAIN,crl.pki.goog
+DOMAIN,crls.pki.goog
+DOMAIN,csi.gstatic.com
+DOMAIN,dl.google.com
+DOMAIN,firebase-settings.crashlytics.com
+DOMAIN,fontfiles.googleapis.com
+DOMAIN,fonts.googleapis.com
+DOMAIN,fonts.gstatic.com
+DOMAIN,g0.gstatic.com
+DOMAIN,g1.gstatic.com
+DOMAIN,g2.gstatic.com
+DOMAIN,g3.gstatic.com
+DOMAIN,gtm.oasisfeng.com
+DOMAIN,i.pki.goog
+DOMAIN,imasdk.googleapis.com
 DOMAIN,kms.03k.org
+DOMAIN,o.pki.goog
+DOMAIN,ocsp.pki.goog
+DOMAIN,performanceparameters.googleapis.com
+DOMAIN,prod-controlbe.floonet.goog
+DOMAIN,prod-databe.floonet.goog
+DOMAIN,qpx.googleflights.net
+DOMAIN,redirector.bdn.dev
+DOMAIN,redirector.gvt1.com
+DOMAIN,redirector.xn--ngstr-lra8j.com
 DOMAIN,res.viayoo.com
+DOMAIN,safebrowsing-cache.google.com
+DOMAIN,safebrowsing.googleapis.com
+DOMAIN,service.urchin.com
+DOMAIN,ssl.gstatic.com
+DOMAIN,staging-controlbe.floonet.goog
+DOMAIN,staging-databe.floonet.goog
+DOMAIN,tac.googleapis.com
+DOMAIN,tools.google.com
+DOMAIN,update.crashlytics.com
+DOMAIN,update.googleapis.com
+DOMAIN,wear.googleapis.com
+DOMAIN,www.destinationurl.com
 DOMAIN,www.entrust.cn
+DOMAIN,www.gstatic.com
 DOMAIN,www.layuicdn.com
+DOMAIN,www.pxcc.com
+DOMAIN,www.recaptcha-cn.net
+DOMAIN,www.recaptcha.net
 DOMAIN,www.viayoo.com
+DOMAIN,2mdn-cn.net
+DOMAIN,2mdn.net
+DOMAIN,admob-cn.com
+DOMAIN,app-analytics-services.com
+DOMAIN,app-measurement-cn.com
+DOMAIN,app-measurement.com
+DOMAIN,dartsearch-cn.net
+DOMAIN,doubleclick-cn.net
+DOMAIN,doubleclick.net
+DOMAIN,gonglchuangl.net
+DOMAIN,gongyichuangyi.net
+DOMAIN,google-analytics-cn.com
+DOMAIN,google-analytics.com
+DOMAIN,googleadservices-cn.com
+DOMAIN,googleadservices.com
+DOMAIN,googleanalytics.com
+DOMAIN,googleapis-cn.com
+DOMAIN,googleapps-cn.com
+DOMAIN,googleflights-cn.net
+DOMAIN,googleoptimize-cn.com
+DOMAIN,googleoptimize.com
+DOMAIN,googlesyndication-cn.com
+DOMAIN,googlesyndication.com
+DOMAIN,googletagmanager-cn.com
+DOMAIN,googletagmanager.com
+DOMAIN,googletagservices-cn.com
+DOMAIN,googletagservices.com
+DOMAIN,googletraveladservices-cn.com
+DOMAIN,googletraveladservices.com
+DOMAIN,googlevads-cn.com
+DOMAIN,gstatic-cn.com
+DOMAIN,qiao-cn.com
+DOMAIN,recaptcha-cn.net
+DOMAIN,recaptcha.net
 DOMAIN,viayoo.com
 DOMAIN-SUFFIX,oemssl.cn.cdn.cloudflare.net
 DOMAIN-SUFFIX,sectigochina.com.cdn.cloudflare.net
@@ -3341,6 +3456,7 @@ DOMAIN-SUFFIX,263y.com
 DOMAIN-SUFFIX,264006.com
 DOMAIN-SUFFIX,264321.com
 DOMAIN-SUFFIX,264400.com
+DOMAIN-SUFFIX,265.com
 DOMAIN-SUFFIX,26582.vip
 DOMAIN-SUFFIX,26595.com
 DOMAIN-SUFFIX,265g.com
@@ -38820,6 +38936,8 @@ DOMAIN-SUFFIX,gvi-tech.com
 DOMAIN-SUFFIX,gvlocalization.com
 DOMAIN-SUFFIX,gvmocpc.com
 DOMAIN-SUFFIX,gvoiceplat.com
+DOMAIN-SUFFIX,gvt1-cn.com
+DOMAIN-SUFFIX,gvt2-cn.com
 DOMAIN-SUFFIX,gvwyuik.com
 DOMAIN-SUFFIX,gw-dv.vip
 DOMAIN-SUFFIX,gw-ec.com
@@ -56022,6 +56140,7 @@ DOMAIN-SUFFIX,killdb.com
 DOMAIN-SUFFIX,kiloai.com
 DOMAIN-SUFFIX,kimberley-technology.com
 DOMAIN-SUFFIX,kimderlite.com
+DOMAIN-SUFFIX,kimi.ai
 DOMAIN-SUFFIX,kimi.link
 DOMAIN-SUFFIX,kimi.pub
 DOMAIN-SUFFIX,kimi.site
@@ -63528,6 +63647,7 @@ DOMAIN-SUFFIX,minigui.org
 DOMAIN-SUFFIX,minihaowan.com
 DOMAIN-SUFFIX,minimaituan.com
 DOMAIN-SUFFIX,minimax.chat
+DOMAIN-SUFFIX,minimax.io
 DOMAIN-SUFFIX,mining120.com
 DOMAIN-SUFFIX,mininglamp.com
 DOMAIN-SUFFIX,minip-service.com
@@ -64215,6 +64335,7 @@ DOMAIN-SUFFIX,moonjer.com
 DOMAIN-SUFFIX,moonlian.com
 DOMAIN-SUFFIX,moonsec.com
 DOMAIN-SUFFIX,moonsees.com
+DOMAIN-SUFFIX,moonshot.ai
 DOMAIN-SUFFIX,moonstatistics.com
 DOMAIN-SUFFIX,moonton.com
 DOMAIN-SUFFIX,moontonapp.com
@@ -72667,6 +72788,7 @@ DOMAIN-SUFFIX,qnydns.net
 DOMAIN-SUFFIX,qnzrmyy.com
 DOMAIN-SUFFIX,qnzyy.com
 DOMAIN-SUFFIX,qoder.ai
+DOMAIN-SUFFIX,qoder.com
 DOMAIN-SUFFIX,qolai.com
 DOMAIN-SUFFIX,qooboo.com
 DOMAIN-SUFFIX,qoocc.com
@@ -77686,6 +77808,7 @@ DOMAIN-SUFFIX,shanghaicredit.org
 DOMAIN-SUFFIX,shanghaicup.com
 DOMAIN-SUFFIX,shanghaidaily.com
 DOMAIN-SUFFIX,shanghaidelong.com
+DOMAIN-SUFFIX,shanghaidisneyresort.com
 DOMAIN-SUFFIX,shanghaidite.com
 DOMAIN-SUFFIX,shanghaigm.com
 DOMAIN-SUFFIX,shanghaigobroadhospital.com
