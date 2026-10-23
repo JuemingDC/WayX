@@ -429,6 +429,16 @@ def build(config, inputs):
     records = []
     sites = geosites(inputs['geosite'], anomalies)
     app_names = {app['name'] for app in config['applications']}
+    # A routing requirement is authoritative, unlike an actionless source's
+    # default. Resolve it after ownership so generic DIRECT feeds cannot reopen
+    # direct access for a service explicitly configured to require a proxy.
+    routing_policies = config.get('routing_policies', {})
+    if any(name not in app_names or policy != 'PROXY'
+           for name, policy in routing_policies.items()):
+        raise ValueError('Invalid application routing policy')
+    if any(app.get('split') or app.get('proxy_tags')
+           for app in config['applications'] if app['name'] in routing_policies):
+        raise ValueError('Proxy-only applications cannot declare direct/proxy selectors')
     scope_exclusions = {}
     rule_exclusions = {}
     for name, specifications in config.get('rule_exclusions', {}).items():
@@ -500,7 +510,7 @@ def build(config, inputs):
     domestic_apps = select(config['collections']['media_cn'], 'media_cn')
     overseas_apps = select(config['collections']['media'], 'media')
     # First collect all inputs without subtracting other collections. Assignment
-    # below changes only the destination collection, never a source action.
+    # below resolves ownership before applying configured routing requirements.
     add('media_cn', 'DIRECT', domestic_apps, 'V2Fly', origin)
     add('media', 'Media', overseas_apps, 'V2Fly', origin)
     add('cn', 'DIRECT', cn, 'V2Fly', origin)
@@ -575,6 +585,9 @@ def build(config, inputs):
     if any(name not in app_names | {'media', 'media_cn', 'cn', 'proxy'} or policy not in ('DIRECT', 'PROXY')
            for name, policy in default_policies.items()):
         raise ValueError('Invalid category default policy')
+    if any(name in routing_policies and policy != routing_policies[name]
+           for name, policy in default_policies.items()):
+        raise ValueError('Category default conflicts with application routing policy')
     application_defaults = {}
     for name, policy, rule, author, source, explicit in records:
         if name in app_names and not explicit and not policy.startswith('REJECT') and not excluded(name, rule):
@@ -591,6 +604,8 @@ def build(config, inputs):
             if name != target and len(preferred) == 1:
                 policy = next(iter(preferred))
             policy = default_policies.get(target, policy)
+        if target in routing_policies and not policy.startswith('REJECT'):
+            policy = routing_policies[target]
         if explicit:
             explicit_rules.add((target, rule, qx_policy(policy)))
         key = (target, policy)
@@ -604,9 +619,11 @@ def build(config, inputs):
     categories = app_names | {'media', 'media_cn', 'cn', 'proxy', 'adblock', 'adblock_extra'}
     if any(name not in categories or layout not in ('split', 'combined') for name, layout in layouts.items()):
         raise ValueError('Invalid Surge output layout')
-    split_names = {name for name, _ in buckets if layouts.get(name) == 'split' or (
+    if any(layouts.get(name) == 'split' for name in routing_policies):
+        raise ValueError('Proxy-only applications require a single Surge rule-set')
+    split_names = {name for name, _ in buckets if name not in routing_policies and (layouts.get(name) == 'split' or (
         layouts.get(name) != 'combined' and
-        len({surge_action(policy) for n, policy in buckets if n == name}) > 1)}
+        len({surge_action(policy) for n, policy in buckets if n == name}) > 1))}
     for target in ('QuantumultX', 'Surge'):
         grouped = {}
         for (name, policy), rules in buckets.items():

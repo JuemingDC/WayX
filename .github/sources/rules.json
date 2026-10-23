@@ -10,11 +10,7 @@
     {
       "name": "google",
       "tags": [
-        "google@cn"
-      ],
-      "split": true,
-      "proxy_tags": [
-        "google@!cn"
+        "google"
       ]
     },
     {
@@ -113,7 +109,7 @@
   "surge_output": {
     "apple": "split",
     "microsoft": "split",
-    "google": "split",
+    "google": "combined",
     "steam": "split",
     "github": "combined",
     "spotify": "combined",
@@ -125,6 +121,17 @@
     "x": "combined",
     "ai": "combined",
     "media": "combined"
+  },
+  "routing_policies": {
+    "google": "PROXY",
+    "youtube": "PROXY",
+    "facebook": "PROXY",
+    "x": "PROXY",
+    "telegram": "PROXY",
+    "github": "PROXY",
+    "ai": "PROXY",
+    "netflix": "PROXY",
+    "disney": "PROXY"
   },
   "default_policies": {
     "media_cn": "DIRECT"
