@@ -1,11 +1,11 @@
 # Name: google
-# Updated: 2026-10-23 02:46:02 UTC
+# Updated: 2026-10-23 09:29:33 UTC
 # Converted by: chance
-# Source Authors: ACL4SSR, DustinWin, Loyalsoldier, MetaCubeX, Sukka, V2Fly
+# Source Authors: ACL4SSR, DustinWin, MetaCubeX, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google.json ; https://ruleset.skk.moe/List/non_ip/global.conf
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google.json
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 898
+# Rules: 891
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,c.android.clients.google.com
@@ -188,11 +188,6 @@ DOMAIN,ssl.gstatic.com
 DOMAIN,staging-controlbe.floonet.goog
 DOMAIN,staging-databe.floonet.goog
 DOMAIN,tac.googleapis.com
-DOMAIN,time.google.com
-DOMAIN,time1.google.com
-DOMAIN,time2.google.com
-DOMAIN,time3.google.com
-DOMAIN,time4.google.com
 DOMAIN,tools.google.com
 DOMAIN,update.crashlytics.com
 DOMAIN,update.googleapis.com
@@ -262,7 +257,6 @@ DOMAIN-SUFFIX,blogspot.com.mt
 DOMAIN-SUFFIX,blogspot.com.ng
 DOMAIN-SUFFIX,blogspot.com.tr
 DOMAIN-SUFFIX,blogspot.com.uy
-DOMAIN-SUFFIX,clickserver.googleads.com
 DOMAIN-SUFFIX,fcmatch.google.com
 DOMAIN-SUFFIX,firebase.google.com
 DOMAIN-SUFFIX,google.co.ao
@@ -351,7 +345,6 @@ DOMAIN-SUFFIX,howtogetmo.co.uk
 DOMAIN-SUFFIX,mail-ads.google.com
 DOMAIN-SUFFIX,marketingplatform.google.com
 DOMAIN-SUFFIX,mobileads.google.com
-DOMAIN-SUFFIX,services.googleapis.cn
 DOMAIN-SUFFIX,thinkquarterly.co.uk
 DOMAIN-SUFFIX,video.google.com
 DOMAIN-SUFFIX,womenwill.com.br
