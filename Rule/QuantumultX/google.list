@@ -1,11 +1,11 @@
 # Name: google
-# Updated: 2026-10-22 15:31:27 UTC
+# Updated: 2026-10-23 02:11:01 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, Loyalsoldier, MetaCubeX, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google.json ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1015
+# Rules: 1021
 # Managed by: WayX Rule Aggregator
 
 host,c.android.clients.google.com,direct
@@ -641,6 +641,7 @@ host-suffix,foofle.com,proxy
 host-suffix,froogle.com,proxy
 host-suffix,fuchsia.dev,proxy
 host-suffix,g-tun.com,proxy
+host-suffix,g.cn,direct
 host-suffix,g.cn,proxy
 host-suffix,g.co,proxy
 host-suffix,g.dev,proxy
@@ -657,6 +658,7 @@ host-suffix,get.rsvp,proxy
 host-suffix,getbumptop.com,proxy
 host-suffix,ggoogle.com,proxy
 host-suffix,gipscorp.com,proxy
+host-suffix,gkecnapps.cn,direct
 host-suffix,gkecnapps.cn,proxy
 host-suffix,globaledu.org,proxy
 host-suffix,gmail.com,proxy
@@ -706,6 +708,7 @@ host-suffix,google.ch,proxy
 host-suffix,google.ci,proxy
 host-suffix,google.cl,proxy
 host-suffix,google.cm,proxy
+host-suffix,google.cn,direct
 host-suffix,google.cn,proxy
 host-suffix,google.co,proxy
 host-suffix,google.com,proxy
@@ -811,6 +814,7 @@ host-suffix,googleblog.com,proxy
 host-suffix,googlebot.com,proxy
 host-suffix,googlecapital.com,proxy
 host-suffix,googlecert.net,proxy
+host-suffix,googlecnapps.cn,direct
 host-suffix,googlecnapps.cn,proxy
 host-suffix,googlecode.com,proxy
 host-suffix,googlecommerce.com,proxy
@@ -850,8 +854,10 @@ host-suffix,goolge.com,proxy
 host-suffix,gooogle.com,proxy
 host-suffix,gridaware.app,proxy
 host-suffix,gsrc.io,proxy
+host-suffix,gstatic.cn,direct
 host-suffix,gstatic.cn,proxy
 host-suffix,gstatic.com,proxy
+host-suffix,gstaticcnapps.cn,direct
 host-suffix,gstaticcnapps.cn,proxy
 host-suffix,gsuite.com,proxy
 host-suffix,gvt0.com,proxy

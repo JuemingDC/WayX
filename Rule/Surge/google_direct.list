@@ -1,11 +1,11 @@
 # Name: google_direct
-# Updated: 2026-10-22 15:31:27 UTC
+# Updated: 2026-10-23 02:11:01 UTC
 # Converted by: chance
-# Source Authors: Loyalsoldier, MetaCubeX
+# Source Authors: Loyalsoldier, MetaCubeX, V2Fly
 # Category: app
-# Sources: https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 117
+# Rules: 123
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,c.android.clients.google.com
@@ -123,5 +123,11 @@ DOMAIN,qiao-cn.com
 DOMAIN,recaptcha-cn.net
 DOMAIN,recaptcha.net
 DOMAIN-SUFFIX,265.com
+DOMAIN-SUFFIX,g.cn
+DOMAIN-SUFFIX,gkecnapps.cn
+DOMAIN-SUFFIX,google.cn
+DOMAIN-SUFFIX,googlecnapps.cn
+DOMAIN-SUFFIX,gstatic.cn
+DOMAIN-SUFFIX,gstaticcnapps.cn
 DOMAIN-SUFFIX,gvt1-cn.com
 DOMAIN-SUFFIX,gvt2-cn.com
