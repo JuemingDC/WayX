@@ -282,4 +282,8 @@ QX 原生 filter 文件仅输出 direct/reject/proxy：显式 DIRECT 保留 dire
 
 完整转换/合并/去重由 Action 的 rules 阶段执行一次，最终产物格式检查不重新构建规则集。状态文件记录的旧受管产物自动清理，手写文件保留。详细源快照与异常随现有 artifact 保存，summary 仅列计数和异常。
 
-TestFlight 子服务采用 Tartarus2014 的 `Rule/Apple/TestFlight.lsr` 作为 Apple 代理补充源，在注册表声明为 `category: apple`、`policy: PROXY`，沿用原生源解析与两端生成。不得把它并入 Apple 默认直连或在转换器写域名特判；QX 保留逐条 proxy，Surge 合并现有 apple_proxy.list 并要求其先于 apple_direct.list 引用。
+TestFlight 子服务采用 Tartarus2014 的 `Rule/Apple/TestFlight.lsr` 作为 Apple 代理补充源，在注册表声明为 `category: apple`、`policy: PROXY`，沿用原生源解析与两端生成。不得把它并入 Apple 默认直连或在转换器写域名特判；QX 保留逐条 proxy，Surge 合并现有 apple_proxy.list。安装时具体服务例外先于覆盖它的宽泛规则，不要求整个 proxy 合集无条件先于 direct 合集。
+
+参考 V2Fly 的归属与属性分离、DustinWin 的 apple-cn/microsoft-cn/google-cn、Sukka 的服务/CDN 分层以及 ACL4SSR 的专项例外顺序：Apple、Microsoft、Google 通过显式 @cn 选择器声明国内接入点的 DIRECT，互补选择器及专项服务声明 PROXY；不把品牌全部默认为 DIRECT。没有逐条策略的通用来源被归入某应用时，如果同一原生匹配条件在应用专属来源中具有唯一的已配置动作，沿用该动作，保留通用来源的匹配声明和署名；不能让通用列表默认 PROXY 重造应用已明确直连端点的冲突。应用专属来源之间的冲突及源规则逐条明确写出的策略仍保留，不按多数表决、不扩大匹配、不删除不同类型/参数规则。共享 CDN 或云厂商域名不能单凭托管关系推断应用，明确的应用专用主机优先于云厂商父域名。
+
+参考来源：https://github.com/v2fly/domain-list-community 、https://github.com/DustinWin/ruleset_geodata 、https://github.com/SukkaW/Surge 、https://github.com/ACL4SSR/ACL4SSR/blob/master/Clash/config/ACL4SSR_Online_Full.ini 。

@@ -575,12 +575,21 @@ def build(config, inputs):
     if any(name not in app_names | {'media', 'media_cn', 'cn', 'proxy'} or policy not in ('DIRECT', 'PROXY')
            for name, policy in default_policies.items()):
         raise ValueError('Invalid category default policy')
+    application_defaults = {}
+    for name, policy, rule, author, source, explicit in records:
+        if name in app_names and not explicit and not policy.startswith('REJECT') and not excluded(name, rule):
+            application_defaults.setdefault((name, rule), set()).add(qx_policy(policy))
     explicit_rules = set()
     for name, policy, rule, author, source, explicit in records:
         target = destination(name, policy, rule, source)
         if excluded(target, rule):
             continue
         if not explicit and not policy.startswith('REJECT'):
+            preferred = application_defaults.get((target, rule), set())
+            # A generic feed supplies matchers, not an application-specific
+            # routing exception. Reuse an unambiguous registered app action.
+            if name != target and len(preferred) == 1:
+                policy = next(iter(preferred))
             policy = default_policies.get(target, policy)
         if explicit:
             explicit_rules.add((target, rule, qx_policy(policy)))
