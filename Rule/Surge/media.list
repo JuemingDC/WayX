@@ -1,11 +1,11 @@
-# Name: media_proxy
-# Updated: 2026-10-22 15:31:27 UTC
+# Name: media
+# Updated: 2026-10-23 02:00:48 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/global.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/domestic.conf ; https://ruleset.skk.moe/List/non_ip/global.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 9982
+# Rules: 10025
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,cdn.globalsigncdn.com.cdn.cloudflare.net
@@ -90,6 +90,7 @@ DOMAIN,ereg.wip3.adobe.com
 DOMAIN,ereg.wip4.adobe.com
 DOMAIN,favoritescc-hamivideo2.cdn.hinet.net
 DOMAIN,fontshop-prod-responsive-images.s3.amazonaws.com
+DOMAIN,funko.my.site.com
 DOMAIN,gamer-cds.cdn.hinet.net
 DOMAIN,gamer2-cds.cdn.hinet.net
 DOMAIN,gog-cdn-lumen.secure2.footprint.net
@@ -343,6 +344,7 @@ DOMAIN,clck.yandex.com
 DOMAIN,clck.yandex.net
 DOMAIN,clck.yango.com
 DOMAIN,click.rustore.ru
+DOMAIN,config.ubnt.com
 DOMAIN,content.jwplatform.com
 DOMAIN,crl.globalsign.net
 DOMAIN,crl.kaspersky.com
@@ -414,6 +416,7 @@ DOMAIN,ddpjwstwtpszg.cloudfront.net
 DOMAIN,dfp6rglgjqszk.cloudfront.net
 DOMAIN,dgeft87wbj63p.cloudfront.net
 DOMAIN,dl.begellhouse.com
+DOMAIN,dl.ubnt.com
 DOMAIN,dlgarenanow-a.akamaihd.net
 DOMAIN,dlmobilegarena-a.akamaihd.net
 DOMAIN,dmqdd6hw24ucf.cloudfront.net
@@ -467,6 +470,7 @@ DOMAIN,help.ubnt.com
 DOMAIN,hl2rcv.adobe.com
 DOMAIN,homebrew.bintray.com
 DOMAIN,hpstore.corpmerchandise.com
+DOMAIN,i.dell.com
 DOMAIN,i.jeded.com
 DOMAIN,images-cn-8.ssl-images-amazon.com
 DOMAIN,images-cn.ssl-images-amazon.com
@@ -515,6 +519,8 @@ DOMAIN,news.ycombinator.com
 DOMAIN,notify.ppy.sh
 DOMAIN,ntp.ubuntu.com
 DOMAIN,nvidia.custhelp.com
+DOMAIN,ocsp.globalsign.com
+DOMAIN,ocsp2.globalsign.com
 DOMAIN,ood.opsource.net
 DOMAIN,opgg-static.akamaized.net
 DOMAIN,origin-a.akamaihd.net
@@ -565,7 +571,9 @@ DOMAIN,supercell.helpshift.com
 DOMAIN,supercell.zendesk.com
 DOMAIN,t.mail.ru
 DOMAIN,target.vk.com
+DOMAIN,time.amazonaws.cn
 DOMAIN,time.aws.com
+DOMAIN,time.izatcloud.net
 DOMAIN,time.xtracloud.net
 DOMAIN,tmdb-image-prod.b-cdn.net
 DOMAIN,tmdb-web-image-prod.b-cdn.net
@@ -718,6 +726,7 @@ DOMAIN,wwis-dubc1-vip96.adobe.com
 DOMAIN,wwis-dubc1-vip97.adobe.com
 DOMAIN,wwis-dubc1-vip98.adobe.com
 DOMAIN,wwis-dubc1-vip99.adobe.com
+DOMAIN,www.intel.cn
 DOMAIN,www.tubi.tv
 DOMAIN,www.tubitv.com
 DOMAIN,xapi.ozon.by
@@ -732,15 +741,20 @@ DOMAIN,tubi.tv
 DOMAIN,tubitv.com
 DOMAIN,vudu.com
 DOMAIN-SUFFIX,disneyplus.com.ssl.sc.omtrdc.net
+DOMAIN-SUFFIX,gs2.ww.prod.dl.playstation.net
 DOMAIN-SUFFIX,prod.service.minerva.devices.a2z.com
 DOMAIN-SUFFIX,cbsi.live.ott.irdeto.com
 DOMAIN-SUFFIX,cf-images.ap-southeast-1.prod.boltdns.net
 DOMAIN-SUFFIX,config.uca.cloud.unity3d.com
+DOMAIN-SUFFIX,dcn01.ps4.update.playstation.net
+DOMAIN-SUFFIX,dcn01.ps5.update.playstation.net
+DOMAIN-SUFFIX,gst.prod.dl.playstation.net
 DOMAIN-SUFFIX,hbo.com.c.footprint.net
 DOMAIN-SUFFIX,okx.com.cdn.cloudflare.net
 DOMAIN-SUFFIX,prd-lender.cdp.internal.unity3d.com
 DOMAIN-SUFFIX,psg.cdn.hgc.com.hk
 DOMAIN-SUFFIX,qualcomm.cn.cdn.cloudflare.net
+DOMAIN-SUFFIX,sgst.prod.dl.playstation.net
 DOMAIN-SUFFIX,ad.games.dmm.com
 DOMAIN-SUFFIX,affinity.api.serifservices.com
 DOMAIN-SUFFIX,analytics.cloud.unity3d.com
@@ -756,6 +770,7 @@ DOMAIN-SUFFIX,cbsplaylistserver.aws.syncbak.com
 DOMAIN-SUFFIX,cbsservice.aws.syncbak.com
 DOMAIN-SUFFIX,cdp.cloud.unity3d.com
 DOMAIN-SUFFIX,cognito-identity.us-east-1.amazonaws.com
+DOMAIN-SUFFIX,createpoint.qti.qualcomm.com
 DOMAIN-SUFFIX,dc1-lm-live2dazn.secure.footprint.net
 DOMAIN-SUFFIX,dc2-vodhls-perform.secure.footprint.net
 DOMAIN-SUFFIX,dca-ll-livedazn-dznlivejp.s.llnwi.net
@@ -788,6 +803,7 @@ DOMAIN-SUFFIX,s-bid.rmp.rakuten.com
 DOMAIN-SUFFIX,theater-kktv.cdn.hinet.net
 DOMAIN-SUFFIX,tidal-cms.s3.amazonaws.com
 DOMAIN-SUFFIX,voa-11.akacast.akamaistream.net
+DOMAIN-SUFFIX,vulcan.dl.playstation.net
 DOMAIN-SUFFIX,1010.com.hk
 DOMAIN-SUFFIX,114bank.co.jp
 DOMAIN-SUFFIX,2gis.com.cy
@@ -952,6 +968,8 @@ DOMAIN-SUFFIX,bhent.co.kr
 DOMAIN-SUFFIX,bidi.net.uk
 DOMAIN-SUFFIX,bigbigchannel.com.hk
 DOMAIN-SUFFIX,bitnodes.earn.com
+DOMAIN-SUFFIX,bjgvpn.amd.com
+DOMAIN-SUFFIX,bjgvpn2.amd.com
 DOMAIN-SUFFIX,bk.mufg.jp
 DOMAIN-SUFFIX,boj.or.jp
 DOMAIN-SUFFIX,book.com.tw
@@ -979,6 +997,7 @@ DOMAIN-SUFFIX,canon.com.tr
 DOMAIN-SUFFIX,canon.com.tw
 DOMAIN-SUFFIX,cbbank.com.mm
 DOMAIN-SUFFIX,cbm.com.mm
+DOMAIN-SUFFIX,ccmdls.adobe.com
 DOMAIN-SUFFIX,cdn.jetbrains.com
 DOMAIN-SUFFIX,cdn.optimizely.com
 DOMAIN-SUFFIX,challenges.cloudflare.com
@@ -995,6 +1014,7 @@ DOMAIN-SUFFIX,citibank.co.jp
 DOMAIN-SUFFIX,clck.yandex.ru
 DOMAIN-SUFFIX,clickedu.co.uk
 DOMAIN-SUFFIX,clickstream.sberbank.ru
+DOMAIN-SUFFIX,cn.sc.com
 DOMAIN-SUFFIX,coinone.co.kr
 DOMAIN-SUFFIX,collabora.co.uk
 DOMAIN-SUFFIX,connectcommerce.com.cn
@@ -1002,6 +1022,8 @@ DOMAIN-SUFFIX,content-ause1-ur-discovery1.uplynk.com
 DOMAIN-SUFFIX,content.jwplatform.com
 DOMAIN-SUFFIX,control.kochava.com
 DOMAIN-SUFFIX,counter.yandex.ru
+DOMAIN-SUFFIX,crl.globalsign.net
+DOMAIN-SUFFIX,crl.kaspersky.com
 DOMAIN-SUFFIX,crypton.co.jp
 DOMAIN-SUFFIX,cws-hulu.conviva.com
 DOMAIN-SUFFIX,cws.conviva.com
@@ -1012,6 +1034,7 @@ DOMAIN-SUFFIX,d1k2us671qcoau.cloudfront.net
 DOMAIN-SUFFIX,d1sgwhnao7452x.cloudfront.net
 DOMAIN-SUFFIX,d2anahhhmp1ffz.cloudfront.net
 DOMAIN-SUFFIX,d3c7rimkq79yfu.cloudfront.net
+DOMAIN-SUFFIX,d4z1onkegyrs5.cloudfront.net
 DOMAIN-SUFFIX,d9.flashtalking.com
 DOMAIN-SUFFIX,daiichibank.co.jp
 DOMAIN-SUFFIX,dcalivedazn.akamaized.net
@@ -1095,6 +1118,7 @@ DOMAIN-SUFFIX,dln1.ncdn.ec
 DOMAIN-SUFFIX,dlsite.com.tw
 DOMAIN-SUFFIX,dmm.co.jp
 DOMAIN-SUFFIX,docs.lotu.sh
+DOMAIN-SUFFIX,drivers.amd.com
 DOMAIN-SUFFIX,drweb.co.jp
 DOMAIN-SUFFIX,dungeonkeeper.com.cn
 DOMAIN-SUFFIX,e.mindbox.ru
@@ -1176,6 +1200,8 @@ DOMAIN-SUFFIX,geforce.co.kr
 DOMAIN-SUFFIX,geforce.co.uk
 DOMAIN-SUFFIX,geforce.com.tw
 DOMAIN-SUFFIX,gemini.yahoo.com
+DOMAIN-SUFFIX,geo.kaspersky.com
+DOMAIN-SUFFIX,global-download.acer.com
 DOMAIN-SUFFIX,globalsign.co.uk
 DOMAIN-SUFFIX,globalsign.com.au
 DOMAIN-SUFFIX,globalsign.com.br
@@ -1294,6 +1320,7 @@ DOMAIN-SUFFIX,ikea.com.tr
 DOMAIN-SUFFIX,ikea.com.tw
 DOMAIN-SUFFIX,ikea.com.ua
 DOMAIN-SUFFIX,ikedashinsen.co.jp
+DOMAIN-SUFFIX,img.samsungapps.com
 DOMAIN-SUFFIX,infolinker.com.tw
 DOMAIN-SUFFIX,insights-collector.gog.com
 DOMAIN-SUFFIX,intel.co.ae
@@ -1467,6 +1494,7 @@ DOMAIN-SUFFIX,msk.kitazawa.me
 DOMAIN-SUFFIX,muji.com.cn
 DOMAIN-SUFFIX,muji.com.hk
 DOMAIN-SUFFIX,musashinobank.co.jp
+DOMAIN-SUFFIX,my.st.com
 DOMAIN-SUFFIX,nantobank.co.jp
 DOMAIN-SUFFIX,nbc-sports.go-vip.net
 DOMAIN-SUFFIX,nbcsports.h-cdn.com
@@ -1499,6 +1527,7 @@ DOMAIN-SUFFIX,nishinipponbank.co.jp
 DOMAIN-SUFFIX,njpw.co.jp
 DOMAIN-SUFFIX,nochubank.or.jp
 DOMAIN-SUFFIX,now.com.hk
+DOMAIN-SUFFIX,nvgate16.nvidia.com
 DOMAIN-SUFFIX,nvidia.co.at
 DOMAIN-SUFFIX,nvidia.co.in
 DOMAIN-SUFFIX,nvidia.co.jp
@@ -1525,6 +1554,8 @@ DOMAIN-SUFFIX,openweather.co.uk
 DOMAIN-SUFFIX,ozon.com.by
 DOMAIN-SUFFIX,ozon.com.kz
 DOMAIN-SUFFIX,ozonru.co.il
+DOMAIN-SUFFIX,p-bstarstatic.akamaized.net
+DOMAIN-SUFFIX,p.bstarstatic.com
 DOMAIN-SUFFIX,paypay-bank.co.jp
 DOMAIN-SUFFIX,pchome.com.tw
 DOMAIN-SUFFIX,pchomeonline.com.tw
@@ -1543,6 +1574,7 @@ DOMAIN-SUFFIX,product.co.jp
 DOMAIN-SUFFIX,production-public.tubi.io
 DOMAIN-SUFFIX,profile.line-scdn.net
 DOMAIN-SUFFIX,prostores.com.cn
+DOMAIN-SUFFIX,qcc.qualcomm.com
 DOMAIN-SUFFIX,qceventscenter.com.cn
 DOMAIN-SUFFIX,qnap.com.cn
 DOMAIN-SUFFIX,qobuz.co.uk
@@ -1603,6 +1635,8 @@ DOMAIN-SUFFIX,sci.hubg.org
 DOMAIN-SUFFIX,sekai.colorfulpalette.org
 DOMAIN-SUFFIX,sena.co.kr
 DOMAIN-SUFFIX,sevenbank.co.jp
+DOMAIN-SUFFIX,shavpn.amd.com
+DOMAIN-SUFFIX,shavpn2.amd.com
 DOMAIN-SUFFIX,shigagin.co.jp
 DOMAIN-SUFFIX,shikokubank.co.jp
 DOMAIN-SUFFIX,shimizubank.co.jp
@@ -1670,10 +1704,13 @@ DOMAIN-SUFFIX,sourcingforebay.com.cn
 DOMAIN-SUFFIX,speedtest.com.hk
 DOMAIN-SUFFIX,spotify-com.akamaized.net
 DOMAIN-SUFFIX,ssb.msk.ru
+DOMAIN-SUFFIX,static.eprintsw.com
 DOMAIN-SUFFIX,stmicroelectronics.com.cn
 DOMAIN-SUFFIX,supermariobros.com.cn
 DOMAIN-SUFFIX,supersmashbros.com.cn
+DOMAIN-SUFFIX,support-cn.samsung.com
 DOMAIN-SUFFIX,surugabank.co.jp
+DOMAIN-SUFFIX,suz-vpn.amd.com
 DOMAIN-SUFFIX,tagapie.com.tw
 DOMAIN-SUFFIX,tajimabank.co.jp
 DOMAIN-SUFFIX,tandf.co.uk
@@ -1715,6 +1752,10 @@ DOMAIN-SUFFIX,ui.com.cn
 DOMAIN-SUFFIX,umamusume.akamaized.net
 DOMAIN-SUFFIX,unext.co.jp
 DOMAIN-SUFFIX,unityads.unity3d.com
+DOMAIN-SUFFIX,upd.kaspersky.com
+DOMAIN-SUFFIX,upos-bstar-mirrorakam.akamaized.net
+DOMAIN-SUFFIX,upos-bstar1-mirrorakam.akamaized.net
+DOMAIN-SUFFIX,upos-hz-mirrorakam.akamaized.net
 DOMAIN-SUFFIX,uum.com.cn
 DOMAIN-SUFFIX,verisign.co.in
 DOMAIN-SUFFIX,verisign.co.uk
@@ -1748,6 +1789,8 @@ DOMAIN-SUFFIX,wholefoodsmarket.co.uk
 DOMAIN-SUFFIX,wildberries.co.il
 DOMAIN-SUFFIX,wisekey.com.hk
 DOMAIN-SUFFIX,worldflipper.akamaized.net
+DOMAIN-SUFFIX,www.redhat.com
+DOMAIN-SUFFIX,www.st.com
 DOMAIN-SUFFIX,yahoo-news.com.hk
 DOMAIN-SUFFIX,yahoo.co.ao
 DOMAIN-SUFFIX,yahoo.co.bw

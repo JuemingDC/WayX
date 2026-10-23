@@ -1,40 +1,37 @@
 # Name: media_cn
-# Updated: 2026-10-22 15:31:27 UTC
+# Updated: 2026-10-23 02:00:48 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, Loyalsoldier, MetaCubeX, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://ruleset.skk.moe/List/non_ip/domestic.conf ; https://ruleset.skk.moe/List/non_ip/global.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 6239
+# Rules: 6192
 # Managed by: WayX Rule Aggregator
 
-host,akmcdnoversea-tw.inter.ptqy.gitv.tv,proxy
-host,chuangcachecdnoversea-tw.inter.ptqy.gitv.tv,proxy
-host,cache.video.iqiyi.com,proxy
-host,gitlab-assets.oss-cn-hongkong.aliyuncs.com,proxy
+host,akmcdnoversea-tw.inter.ptqy.gitv.tv,direct
+host,chuangcachecdnoversea-tw.inter.ptqy.gitv.tv,direct
+host,cache.video.iqiyi.com,direct
+host,gitlab-assets.oss-cn-hongkong.aliyuncs.com,direct
 host,hellofontpreview.oss-cn-beijing.aliyuncs.com,direct
 host,hellowebfonts.oss-cn-beijing.aliyuncs.com,direct
 host,hospital.pku.edu.cn,direct
 host,opencourse.pku.edu.cn,direct
-host,roovza.inapps.appsflyersdk.com,proxy
-host,roovza.launches.appsflyersdk.com,proxy
-host,roovza.skadsdk.appsflyersdk.com,proxy
+host,roovza.inapps.appsflyersdk.com,direct
+host,roovza.launches.appsflyersdk.com,direct
+host,roovza.skadsdk.appsflyersdk.com,direct
 host,ss.bjmu.edu.cn,direct
 host,account-cn.alibabacloud.com,direct
-host,account-cn.alibabacloud.com,proxy
 host,ads3-normal-hl.zijieapi.com,direct
 host,ads3-normal.zijieapi.com,direct
 host,ads5-normal-hl.zijieapi.com,direct
 host,ads5-normal.zijieapi.com,direct
 host,ai.zhaomi.cn,direct
 host,api.alibabacloud.com,direct
-host,api.alibabacloud.com,proxy
 host,apilog-web.acfun.cn,direct
-host,apm-misaka.biliapi.net,proxy
+host,apm-misaka.biliapi.net,direct
 host,cdnstatic.tencentcs.com,direct
 host,cn.alibabacloud.com,direct
-host,cn.alibabacloud.com,proxy
-host,community.oneplus.com,proxy
+host,community.oneplus.com,direct
 host,ctdsb.clouddiffuse.xyz,direct
 host,cueme-api.quark.cn,direct
 host,end-api.shallow.ink,direct
@@ -46,36 +43,22 @@ host,log5-applog-hl.fqnovel.com,direct
 host,log5-applog.fqnovel.com,direct
 host,moocs.unipus.cn,direct
 host,ntp.aliyun.com,direct
-host,ntp.aliyun.com,proxy
 host,ntp.tencent.com,direct
-host,ntp.tencent.com,proxy
 host,ntp1.aliyun.com,direct
-host,ntp1.aliyun.com,proxy
 host,ntp1.tencent.com,direct
-host,ntp1.tencent.com,proxy
 host,ntp2.aliyun.com,direct
-host,ntp2.aliyun.com,proxy
 host,ntp2.tencent.com,direct
-host,ntp2.tencent.com,proxy
 host,ntp3.aliyun.com,direct
-host,ntp3.aliyun.com,proxy
 host,ntp3.tencent.com,direct
-host,ntp3.tencent.com,proxy
 host,ntp4.aliyun.com,direct
-host,ntp4.aliyun.com,proxy
 host,ntp4.tencent.com,direct
-host,ntp4.tencent.com,proxy
 host,ntp5.aliyun.com,direct
-host,ntp5.aliyun.com,proxy
 host,ntp5.tencent.com,direct
-host,ntp5.tencent.com,proxy
 host,ntp6.aliyun.com,direct
-host,ntp6.aliyun.com,proxy
 host,ntp7.aliyun.com,direct
-host,ntp7.aliyun.com,proxy
 host,p1-juejin.byteimg.com,direct
-host,p16-tiktok-dm-sticker-sign-sg.ibyteimg.com,proxy
-host,p16-tiktokcdn-com.akamaized.net,proxy
+host,p16-tiktok-dm-sticker-sign-sg.ibyteimg.com,direct
+host,p16-tiktokcdn-com.akamaized.net,direct
 host,p2-juejin.byteimg.com,direct
 host,p3-ad-sign.byteimg.com,direct
 host,p3-juejin.byteimg.com,direct
@@ -89,13 +72,12 @@ host,p7-juejin.byteimg.com,direct
 host,p8-juejin.byteimg.com,direct
 host,p9-ad-sign.byteimg.com,direct
 host,p9-juejin.byteimg.com,direct
-host,roovza-launches.appsflyersdk.com,proxy
+host,roovza-launches.appsflyersdk.com,direct
 host,rtlog3-applog-hl.fqnovel.com,direct
 host,rtlog3-applog.fqnovel.com,direct
 host,rtlog5-applog-hl.fqnovel.com,direct
 host,rtlog5-applog.fqnovel.com,direct
 host,status.alibabacloud.com,direct
-host,status.alibabacloud.com,proxy
 host,study.163.com,direct
 host,wlog.kuaishou.com,direct
 host,ykimg.alicdn.com,direct
@@ -219,7 +201,6 @@ host-suffix,mountain.zhidao.baidu.com,direct
 host-suffix,msg.video.qiyi.com,direct
 host-suffix,msg2.video.qiyi.com,direct
 host-suffix,ntp.neu.edu.cn,direct
-host-suffix,ntp.neu.edu.cn,proxy
 host-suffix,p.aty.sohu.com,direct
 host-suffix,p4p.sina.com.cn,direct
 host-suffix,pb.i.sogou.com,direct
@@ -237,18 +218,18 @@ host-suffix,sdkclick.mobile.sina.cn,direct
 host-suffix,sentry.d.mi.com,direct
 host-suffix,sentry.d.xiaomi.net,direct
 host-suffix,sentry.music.163.com,direct
-host-suffix,shortconn.im.qcloud.com,proxy
+host-suffix,shortconn.im.qcloud.com,direct
 host-suffix,slog.sina.com.cn,direct
 host-suffix,splash-ads.cdn.unity.cn,direct
 host-suffix,stat.m.jd.com,direct
 host-suffix,stat.y.qq.com,direct
 host-suffix,stats.music.xiaomi.com,direct
 host-suffix,testads.api.my7v.com,direct
-host-suffix,tiktokcdn-us.com.edgesuite.net,proxy
-host-suffix,tiktokcdn.com.akamaized.net,proxy
-host-suffix,tiktokcdn.com.edgesuite.net,proxy
-host-suffix,tiktokv.com.edgekey.net,proxy
-host-suffix,tiktokv.com.edgesuite.net,proxy
+host-suffix,tiktokcdn-us.com.edgesuite.net,direct
+host-suffix,tiktokcdn.com.akamaized.net,direct
+host-suffix,tiktokcdn.com.edgesuite.net,direct
+host-suffix,tiktokv.com.edgekey.net,direct
+host-suffix,tiktokv.com.edgesuite.net,direct
 host-suffix,tmead.y.qq.com,direct
 host-suffix,tmeadcomm.y.qq.com,direct
 host-suffix,tns.simba.taobao.com,direct
@@ -325,17 +306,11 @@ host-suffix,airchinalimited.com.cn,direct
 host-suffix,ak-d.tripcdn.com,direct
 host-suffix,ak-v.tripcdn.com,direct
 host-suffix,alibabacloud.co.in,direct
-host-suffix,alibabacloud.co.in,proxy
 host-suffix,alibabacloud.com.au,direct
-host-suffix,alibabacloud.com.au,proxy
 host-suffix,alibabacloud.com.hk,direct
-host-suffix,alibabacloud.com.hk,proxy
 host-suffix,alibabacloud.com.my,direct
-host-suffix,alibabacloud.com.my,proxy
 host-suffix,alibabacloud.com.sg,direct
-host-suffix,alibabacloud.com.sg,proxy
 host-suffix,alibabacloud.com.tw,direct
-host-suffix,alibabacloud.com.tw,proxy
 host-suffix,alihealth.com.cn,direct
 host-suffix,alimama.alicdn.com,direct
 host-suffix,alipay.com.cn,direct
@@ -348,7 +323,6 @@ host-suffix,alogus.umeng.com,direct
 host-suffix,ami-alliance.org.cn,direct
 host-suffix,analytics.163.com,direct
 host-suffix,analytics.tiktok.com,direct
-host-suffix,analytics.tiktok.com,proxy
 host-suffix,androidgo.duapp.com,direct
 host-suffix,anker.com.cn,direct
 host-suffix,anlaiye.com.cn,direct
@@ -387,7 +361,7 @@ host-suffix,boscam.com.cn,direct
 host-suffix,bsb.com.cn,direct
 host-suffix,btrace.qq.com,direct
 host-suffix,bugly.qq.com,direct
-host-suffix,bx.in.th,proxy
+host-suffix,bx.in.th,direct
 host-suffix,bxexpress.com.cn,direct
 host-suffix,byteplus-api-test.com.cn,direct
 host-suffix,byteplus-api.com.cn,direct
@@ -396,7 +370,7 @@ host-suffix,byteplusapi.com.cn,direct
 host-suffix,bytepluses.com.cn,direct
 host-suffix,bzclk.baidu.com,direct
 host-suffix,c-nfa.jd.com,direct
-host-suffix,c.mi.com,proxy
+host-suffix,c.mi.com,direct
 host-suffix,caijing.com.cn,direct
 host-suffix,cainiao.com.cn,direct
 host-suffix,cb.baidu.com,direct
@@ -598,11 +572,8 @@ host-suffix,hotfix-api.aliyuncs.com,direct
 host-suffix,hq-tracking.qq.com,direct
 host-suffix,hrsec.com.cn,direct
 host-suffix,hsbc.com.cn,direct
-host-suffix,hsbc.com.cn,proxy
 host-suffix,hsbcinsurance.com.cn,direct
-host-suffix,hsbcinsurance.com.cn,proxy
 host-suffix,hsbcqh.com.cn,direct
-host-suffix,hsbcqh.com.cn,proxy
 host-suffix,htrace.wetvinfo.com,direct
 host-suffix,htsc.com.cn,direct
 host-suffix,httpdns.alicdn.com,direct
@@ -642,10 +613,10 @@ host-suffix,img-x.jd.com,direct
 host-suffix,imgstat.baidu.com,direct
 host-suffix,inte.sogou.com,direct
 host-suffix,inte.sogoucdn.com,direct
-host-suffix,inter.iqiyi.com,proxy
-host-suffix,intl-rcd.iqiyi.com,proxy
-host-suffix,intl-subscription.iqiyi.com,proxy
-host-suffix,intl.iqiyi.com,proxy
+host-suffix,inter.iqiyi.com,direct
+host-suffix,intl-rcd.iqiyi.com,direct
+host-suffix,intl-subscription.iqiyi.com,direct
+host-suffix,intl.iqiyi.com,direct
 host-suffix,ioppo.com.cn,direct
 host-suffix,ipanda.com.cn,direct
 host-suffix,iscas.ac.cn,direct
@@ -701,12 +672,11 @@ host-suffix,lu.sogou.com,direct
 host-suffix,lu.sogoucdn.com,direct
 host-suffix,lydaas.com.cn,direct
 host-suffix,lydass.com.cn,direct
-host-suffix,m.moegirl.org,proxy
+host-suffix,m.moegirl.org,direct
 host-suffix,marketing.alibaba.com,direct
 host-suffix,marscode.com.cn,direct
 host-suffix,mbdlog.iqiyi.com,direct
 host-suffix,mcdonalds.com.cn,direct
-host-suffix,mcdonalds.com.cn,proxy
 host-suffix,mcs.snssdk.com,direct
 host-suffix,mdt.qq.com,direct
 host-suffix,mengniu.com.cn,direct
@@ -814,7 +784,7 @@ host-suffix,roco.qq.com,direct
 host-suffix,rrsp.com.cn,direct
 host-suffix,rs.sinajs.cn,direct
 host-suffix,rtx.com.cn,direct
-host-suffix,ru.ccb.com,proxy
+host-suffix,ru.ccb.com,direct
 host-suffix,rudder.com.cn,direct
 host-suffix,s.360.cn,direct
 host-suffix,sa.sina.cn,direct
@@ -839,7 +809,6 @@ host-suffix,sse.com.cn,direct
 host-suffix,ssreader.com.cn,direct
 host-suffix,ssvideo.com.cn,direct
 host-suffix,starbucks.com.cn,direct
-host-suffix,starbucks.com.cn,proxy
 host-suffix,stat.youku.com,direct
 host-suffix,static.tripcdn.com,direct
 host-suffix,sto-express.com.cn,direct
@@ -902,8 +871,8 @@ host-suffix,unityads.unity.cn,direct
 host-suffix,unityads.unitychina.cn,direct
 host-suffix,uranus.sogou.com,direct
 host-suffix,utoken.umeng.com,direct
-host-suffix,v.smtcdns.com,proxy
-host-suffix,v.smtcdns.net,proxy
+host-suffix,v.smtcdns.com,direct
+host-suffix,v.smtcdns.net,direct
 host-suffix,ve-omnishield.com.cn,direct
 host-suffix,vistopia.com.cn,direct
 host-suffix,vivo.com.cn,direct
@@ -1118,7 +1087,6 @@ host-suffix,3ili6.cn,direct
 host-suffix,3songshu.com,direct
 host-suffix,40017.cn,direct
 host-suffix,4008-517-517.cn,direct
-host-suffix,4008-517-517.cn,proxy
 host-suffix,4008117117.com,direct
 host-suffix,4399.cn,direct
 host-suffix,4399.com,direct
@@ -1335,7 +1303,6 @@ host-suffix,alibabacapital.com,direct
 host-suffix,alibabachengdun.com,direct
 host-suffix,alibabachengdun.net,direct
 host-suffix,alibabacloud.com,direct
-host-suffix,alibabacloud.com,proxy
 host-suffix,alibabacorp.com,direct
 host-suffix,alibabadesign.com,direct
 host-suffix,alibabadns.com,direct
@@ -1350,7 +1317,6 @@ host-suffix,alibabaued.com,direct
 host-suffix,alibabausercontent.com,direct
 host-suffix,alicdn.com,direct
 host-suffix,alicloud.com,direct
-host-suffix,alicloud.com,proxy
 host-suffix,alicloudapi.com,direct
 host-suffix,alicloudccp.com,direct
 host-suffix,alidayu.com,direct
@@ -1790,7 +1756,7 @@ host-suffix,bytedance.net,direct
 host-suffix,bytedance.org,direct
 host-suffix,bytedanceapi.com,direct
 host-suffix,bytedancehermestest.com,direct
-host-suffix,bytedapm.com,proxy
+host-suffix,bytedapm.com,direct
 host-suffix,bytedcdn.com,direct
 host-suffix,bytedeliver.com,direct
 host-suffix,bytedgames.com,direct
@@ -1836,7 +1802,7 @@ host-suffix,bytenewst.com,direct
 host-suffix,byteoc.com,direct
 host-suffix,byteorg.com,direct
 host-suffix,byteorge.com,direct
-host-suffix,byteoversea.com,proxy
+host-suffix,byteoversea.com,direct
 host-suffix,byteplus-api-test.com,direct
 host-suffix,byteplusapi-test.com,direct
 host-suffix,bytepluses-test.com,direct
@@ -3098,7 +3064,6 @@ host-suffix,hdslb.org,direct
 host-suffix,hdyxgame.com,direct
 host-suffix,healthjd.com,direct
 host-suffix,heavenlywind.cc,direct
-host-suffix,heavenlywind.cc,proxy
 host-suffix,hecdn.net,direct
 host-suffix,heimadata.com,direct
 host-suffix,heiyan.com,direct
@@ -3320,8 +3285,8 @@ host-suffix,ibdxiguavod.com,direct
 host-suffix,ibidian.com,direct
 host-suffix,ibobscs.com,direct
 host-suffix,ibytedapm.com,direct
-host-suffix,ibytedtos.com,proxy
-host-suffix,ibyteimg.com,proxy
+host-suffix,ibytedtos.com,direct
+host-suffix,ibyteimg.com,direct
 host-suffix,ibytepluses-test.com,direct
 host-suffix,ica-alliance.org,direct
 host-suffix,icbcina.com,direct
@@ -3938,7 +3903,6 @@ host-suffix,lckfb.com,direct
 host-suffix,lczq.com,direct
 host-suffix,ld246.com,direct
 host-suffix,ldmnq.com,direct
-host-suffix,ldmnq.com,proxy
 host-suffix,le.com,direct
 host-suffix,le5vb.cn,direct
 host-suffix,leautolink.com,direct
@@ -4032,7 +3996,6 @@ host-suffix,lppzimg.com,direct
 host-suffix,lrts.me,direct
 host-suffix,ls66.cn,direct
 host-suffix,lsplayer.com,direct
-host-suffix,lsplayer.com,proxy
 host-suffix,lu1da.cn,direct
 host-suffix,luckincoffeecdn.com,direct
 host-suffix,luckysf.net,direct
@@ -4102,9 +4065,7 @@ host-suffix,mayshijia.com,direct
 host-suffix,mbalib.com,direct
 host-suffix,mcbaas.work,direct
 host-suffix,mcd.cn,direct
-host-suffix,mcd.cn,proxy
 host-suffix,mcdchina.net,direct
-host-suffix,mcdchina.net,proxy
 host-suffix,mcdemo.show,direct
 host-suffix,mchost.guru,direct
 host-suffix,mcmod.cn,direct
@@ -4249,8 +4210,8 @@ host-suffix,mting.info,direct
 host-suffix,mtyun.com,direct
 host-suffix,multilingual-volc.com,direct
 host-suffix,mumbuy365.com,direct
-host-suffix,muscdn.com,proxy
-host-suffix,musical.ly,proxy
+host-suffix,muscdn.com,direct
+host-suffix,musical.ly,direct
 host-suffix,muwai.com,direct
 host-suffix,muyewx.com,direct
 host-suffix,mvad.com,direct
@@ -4886,7 +4847,6 @@ host-suffix,smzdmimg.com,direct
 host-suffix,sndu.cn,direct
 host-suffix,snowballsecurities.com,direct
 host-suffix,snssdk.com,direct
-host-suffix,snssdk.com,proxy
 host-suffix,snxw.com,direct
 host-suffix,so.com,direct
 host-suffix,sogo.com,direct
@@ -4945,7 +4905,6 @@ host-suffix,stcn.com,direct
 host-suffix,stdaily.com,direct
 host-suffix,steam302.xyz,direct
 host-suffix,steampp.net,direct
-host-suffix,steampp.net,proxy
 host-suffix,sto-express.cn,direct
 host-suffix,sto-express.com,direct
 host-suffix,sto.cn,direct
@@ -5215,25 +5174,23 @@ host-suffix,tieba.com,direct
 host-suffix,tiebaimg.com,direct
 host-suffix,tieyou.com,direct
 host-suffix,tik-tokapi.com,direct
-host-suffix,tik-tokapi.com,proxy
-host-suffix,tiktok-minis.com,proxy
-host-suffix,tiktok-row.net,proxy
-host-suffix,tiktok.com,proxy
-host-suffix,tiktokcdn-eu.com,proxy
-host-suffix,tiktokcdn-us.com,proxy
-host-suffix,tiktokcdn.com,proxy
-host-suffix,tiktokd.net,proxy
-host-suffix,tiktokd.org,proxy
-host-suffix,tiktokeu-cdn.com,proxy
-host-suffix,tiktokglobalshopv.com,proxy
-host-suffix,tiktokminis.us,proxy
+host-suffix,tiktok-minis.com,direct
+host-suffix,tiktok-row.net,direct
+host-suffix,tiktok.com,direct
+host-suffix,tiktokcdn-eu.com,direct
+host-suffix,tiktokcdn-us.com,direct
+host-suffix,tiktokcdn.com,direct
+host-suffix,tiktokd.net,direct
+host-suffix,tiktokd.org,direct
+host-suffix,tiktokeu-cdn.com,direct
+host-suffix,tiktokglobalshopv.com,direct
+host-suffix,tiktokminis.us,direct
 host-suffix,tiktokrow-cdn.com,direct
-host-suffix,tiktokrow-cdn.com,proxy
-host-suffix,tiktokv.com,proxy
-host-suffix,tiktokv.eu,proxy
-host-suffix,tiktokv.us,proxy
-host-suffix,tiktokw.eu,proxy
-host-suffix,tiktokw.us,proxy
+host-suffix,tiktokv.com,direct
+host-suffix,tiktokv.eu,direct
+host-suffix,tiktokv.us,direct
+host-suffix,tiktokw.eu,direct
+host-suffix,tiktokw.us,direct
 host-suffix,tikv.org,direct
 host-suffix,time-weekly.com,direct
 host-suffix,timibase.com,direct
@@ -5330,15 +5287,15 @@ host-suffix,tsparkling.com,direct
 host-suffix,ttbyte.cn,direct
 host-suffix,ttbyte.com,direct
 host-suffix,ttbyte.net,direct
-host-suffix,ttcdn-us.com,proxy
+host-suffix,ttcdn-us.com,direct
 host-suffix,ttgslb.com,direct
 host-suffix,ttgtm.com,direct
 host-suffix,ttjisu.com,direct
-host-suffix,ttlivecdn.com,proxy
-host-suffix,ttoverseaus.net,proxy
+host-suffix,ttlivecdn.com,direct
+host-suffix,ttoverseaus.net,direct
 host-suffix,ttpod.com,direct
 host-suffix,ttwebview.com,direct
-host-suffix,ttwstatic.com,proxy
+host-suffix,ttwstatic.com,direct
 host-suffix,tuchong.com,direct
 host-suffix,tudou.com,direct
 host-suffix,tuer123.com,direct
@@ -5664,7 +5621,6 @@ host-suffix,webank.com,direct
 host-suffix,webankcdn.net,direct
 host-suffix,webgame163.com,direct
 host-suffix,webnovel.com,direct
-host-suffix,webnovel.com,proxy
 host-suffix,weboss.hk,direct
 host-suffix,wechat.com,direct
 host-suffix,wechatpay.cn,direct
@@ -5694,9 +5650,7 @@ host-suffix,wenxiaozhan.net,direct
 host-suffix,wenxin-ge.com,direct
 host-suffix,west95582.com,direct
 host-suffix,wetv.vip,direct
-host-suffix,wetv.vip,proxy
 host-suffix,wetvinfo.com,direct
-host-suffix,wetvinfo.com,proxy
 host-suffix,weui.io,direct
 host-suffix,wework-studio.com,direct
 host-suffix,wf.pub,direct
@@ -5944,7 +5898,6 @@ host-suffix,ydsys.cn,direct
 host-suffix,yeah.net,direct
 host-suffix,yebaojiasu.com,direct
 host-suffix,yeshen.com,direct
-host-suffix,yeshen.com,proxy
 host-suffix,yeshj.com,direct
 host-suffix,yesky.com,direct
 host-suffix,yeyou.com,direct

@@ -1,17 +1,24 @@
-# Name: media_cn_direct
-# Updated: 2026-10-22 15:31:27 UTC
+# Name: media_cn
+# Updated: 2026-10-23 02:00:48 UTC
 # Converted by: chance
-# Source Authors: Loyalsoldier, MetaCubeX, Sukka, V2Fly
+# Source Authors: ACL4SSR, DustinWin, Loyalsoldier, MetaCubeX, Sukka, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://ruleset.skk.moe/List/non_ip/domestic.conf
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://ruleset.skk.moe/List/non_ip/domestic.conf ; https://ruleset.skk.moe/List/non_ip/global.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 6138
+# Rules: 6192
 # Managed by: WayX Rule Aggregator
 
+DOMAIN,akmcdnoversea-tw.inter.ptqy.gitv.tv
+DOMAIN,chuangcachecdnoversea-tw.inter.ptqy.gitv.tv
+DOMAIN,cache.video.iqiyi.com
+DOMAIN,gitlab-assets.oss-cn-hongkong.aliyuncs.com
 DOMAIN,hellofontpreview.oss-cn-beijing.aliyuncs.com
 DOMAIN,hellowebfonts.oss-cn-beijing.aliyuncs.com
 DOMAIN,hospital.pku.edu.cn
 DOMAIN,opencourse.pku.edu.cn
+DOMAIN,roovza.inapps.appsflyersdk.com
+DOMAIN,roovza.launches.appsflyersdk.com
+DOMAIN,roovza.skadsdk.appsflyersdk.com
 DOMAIN,ss.bjmu.edu.cn
 DOMAIN,account-cn.alibabacloud.com
 DOMAIN,ads3-normal-hl.zijieapi.com
@@ -21,8 +28,10 @@ DOMAIN,ads5-normal.zijieapi.com
 DOMAIN,ai.zhaomi.cn
 DOMAIN,api.alibabacloud.com
 DOMAIN,apilog-web.acfun.cn
+DOMAIN,apm-misaka.biliapi.net
 DOMAIN,cdnstatic.tencentcs.com
 DOMAIN,cn.alibabacloud.com
+DOMAIN,community.oneplus.com
 DOMAIN,ctdsb.clouddiffuse.xyz
 DOMAIN,cueme-api.quark.cn
 DOMAIN,end-api.shallow.ink
@@ -48,6 +57,8 @@ DOMAIN,ntp5.tencent.com
 DOMAIN,ntp6.aliyun.com
 DOMAIN,ntp7.aliyun.com
 DOMAIN,p1-juejin.byteimg.com
+DOMAIN,p16-tiktok-dm-sticker-sign-sg.ibyteimg.com
+DOMAIN,p16-tiktokcdn-com.akamaized.net
 DOMAIN,p2-juejin.byteimg.com
 DOMAIN,p3-ad-sign.byteimg.com
 DOMAIN,p3-juejin.byteimg.com
@@ -61,6 +72,7 @@ DOMAIN,p7-juejin.byteimg.com
 DOMAIN,p8-juejin.byteimg.com
 DOMAIN,p9-ad-sign.byteimg.com
 DOMAIN,p9-juejin.byteimg.com
+DOMAIN,roovza-launches.appsflyersdk.com
 DOMAIN,rtlog3-applog-hl.fqnovel.com
 DOMAIN,rtlog3-applog.fqnovel.com
 DOMAIN,rtlog5-applog-hl.fqnovel.com
@@ -206,12 +218,18 @@ DOMAIN-SUFFIX,sdkclick.mobile.sina.cn
 DOMAIN-SUFFIX,sentry.d.mi.com
 DOMAIN-SUFFIX,sentry.d.xiaomi.net
 DOMAIN-SUFFIX,sentry.music.163.com
+DOMAIN-SUFFIX,shortconn.im.qcloud.com
 DOMAIN-SUFFIX,slog.sina.com.cn
 DOMAIN-SUFFIX,splash-ads.cdn.unity.cn
 DOMAIN-SUFFIX,stat.m.jd.com
 DOMAIN-SUFFIX,stat.y.qq.com
 DOMAIN-SUFFIX,stats.music.xiaomi.com
 DOMAIN-SUFFIX,testads.api.my7v.com
+DOMAIN-SUFFIX,tiktokcdn-us.com.edgesuite.net
+DOMAIN-SUFFIX,tiktokcdn.com.akamaized.net
+DOMAIN-SUFFIX,tiktokcdn.com.edgesuite.net
+DOMAIN-SUFFIX,tiktokv.com.edgekey.net
+DOMAIN-SUFFIX,tiktokv.com.edgesuite.net
 DOMAIN-SUFFIX,tmead.y.qq.com
 DOMAIN-SUFFIX,tmeadcomm.y.qq.com
 DOMAIN-SUFFIX,tns.simba.taobao.com
@@ -343,6 +361,7 @@ DOMAIN-SUFFIX,boscam.com.cn
 DOMAIN-SUFFIX,bsb.com.cn
 DOMAIN-SUFFIX,btrace.qq.com
 DOMAIN-SUFFIX,bugly.qq.com
+DOMAIN-SUFFIX,bx.in.th
 DOMAIN-SUFFIX,bxexpress.com.cn
 DOMAIN-SUFFIX,byteplus-api-test.com.cn
 DOMAIN-SUFFIX,byteplus-api.com.cn
@@ -351,6 +370,7 @@ DOMAIN-SUFFIX,byteplusapi.com.cn
 DOMAIN-SUFFIX,bytepluses.com.cn
 DOMAIN-SUFFIX,bzclk.baidu.com
 DOMAIN-SUFFIX,c-nfa.jd.com
+DOMAIN-SUFFIX,c.mi.com
 DOMAIN-SUFFIX,caijing.com.cn
 DOMAIN-SUFFIX,cainiao.com.cn
 DOMAIN-SUFFIX,cb.baidu.com
@@ -593,6 +613,10 @@ DOMAIN-SUFFIX,img-x.jd.com
 DOMAIN-SUFFIX,imgstat.baidu.com
 DOMAIN-SUFFIX,inte.sogou.com
 DOMAIN-SUFFIX,inte.sogoucdn.com
+DOMAIN-SUFFIX,inter.iqiyi.com
+DOMAIN-SUFFIX,intl-rcd.iqiyi.com
+DOMAIN-SUFFIX,intl-subscription.iqiyi.com
+DOMAIN-SUFFIX,intl.iqiyi.com
 DOMAIN-SUFFIX,ioppo.com.cn
 DOMAIN-SUFFIX,ipanda.com.cn
 DOMAIN-SUFFIX,iscas.ac.cn
@@ -648,6 +672,7 @@ DOMAIN-SUFFIX,lu.sogou.com
 DOMAIN-SUFFIX,lu.sogoucdn.com
 DOMAIN-SUFFIX,lydaas.com.cn
 DOMAIN-SUFFIX,lydass.com.cn
+DOMAIN-SUFFIX,m.moegirl.org
 DOMAIN-SUFFIX,marketing.alibaba.com
 DOMAIN-SUFFIX,marscode.com.cn
 DOMAIN-SUFFIX,mbdlog.iqiyi.com
@@ -759,6 +784,7 @@ DOMAIN-SUFFIX,roco.qq.com
 DOMAIN-SUFFIX,rrsp.com.cn
 DOMAIN-SUFFIX,rs.sinajs.cn
 DOMAIN-SUFFIX,rtx.com.cn
+DOMAIN-SUFFIX,ru.ccb.com
 DOMAIN-SUFFIX,rudder.com.cn
 DOMAIN-SUFFIX,s.360.cn
 DOMAIN-SUFFIX,sa.sina.cn
@@ -845,6 +871,8 @@ DOMAIN-SUFFIX,unityads.unity.cn
 DOMAIN-SUFFIX,unityads.unitychina.cn
 DOMAIN-SUFFIX,uranus.sogou.com
 DOMAIN-SUFFIX,utoken.umeng.com
+DOMAIN-SUFFIX,v.smtcdns.com
+DOMAIN-SUFFIX,v.smtcdns.net
 DOMAIN-SUFFIX,ve-omnishield.com.cn
 DOMAIN-SUFFIX,vistopia.com.cn
 DOMAIN-SUFFIX,vivo.com.cn
@@ -1728,6 +1756,7 @@ DOMAIN-SUFFIX,bytedance.net
 DOMAIN-SUFFIX,bytedance.org
 DOMAIN-SUFFIX,bytedanceapi.com
 DOMAIN-SUFFIX,bytedancehermestest.com
+DOMAIN-SUFFIX,bytedapm.com
 DOMAIN-SUFFIX,bytedcdn.com
 DOMAIN-SUFFIX,bytedeliver.com
 DOMAIN-SUFFIX,bytedgames.com
@@ -1773,6 +1802,7 @@ DOMAIN-SUFFIX,bytenewst.com
 DOMAIN-SUFFIX,byteoc.com
 DOMAIN-SUFFIX,byteorg.com
 DOMAIN-SUFFIX,byteorge.com
+DOMAIN-SUFFIX,byteoversea.com
 DOMAIN-SUFFIX,byteplus-api-test.com
 DOMAIN-SUFFIX,byteplusapi-test.com
 DOMAIN-SUFFIX,bytepluses-test.com
@@ -3255,6 +3285,8 @@ DOMAIN-SUFFIX,ibdxiguavod.com
 DOMAIN-SUFFIX,ibidian.com
 DOMAIN-SUFFIX,ibobscs.com
 DOMAIN-SUFFIX,ibytedapm.com
+DOMAIN-SUFFIX,ibytedtos.com
+DOMAIN-SUFFIX,ibyteimg.com
 DOMAIN-SUFFIX,ibytepluses-test.com
 DOMAIN-SUFFIX,ica-alliance.org
 DOMAIN-SUFFIX,icbcina.com
@@ -4178,6 +4210,8 @@ DOMAIN-SUFFIX,mting.info
 DOMAIN-SUFFIX,mtyun.com
 DOMAIN-SUFFIX,multilingual-volc.com
 DOMAIN-SUFFIX,mumbuy365.com
+DOMAIN-SUFFIX,muscdn.com
+DOMAIN-SUFFIX,musical.ly
 DOMAIN-SUFFIX,muwai.com
 DOMAIN-SUFFIX,muyewx.com
 DOMAIN-SUFFIX,mvad.com
@@ -5140,7 +5174,23 @@ DOMAIN-SUFFIX,tieba.com
 DOMAIN-SUFFIX,tiebaimg.com
 DOMAIN-SUFFIX,tieyou.com
 DOMAIN-SUFFIX,tik-tokapi.com
+DOMAIN-SUFFIX,tiktok-minis.com
+DOMAIN-SUFFIX,tiktok-row.net
+DOMAIN-SUFFIX,tiktok.com
+DOMAIN-SUFFIX,tiktokcdn-eu.com
+DOMAIN-SUFFIX,tiktokcdn-us.com
+DOMAIN-SUFFIX,tiktokcdn.com
+DOMAIN-SUFFIX,tiktokd.net
+DOMAIN-SUFFIX,tiktokd.org
+DOMAIN-SUFFIX,tiktokeu-cdn.com
+DOMAIN-SUFFIX,tiktokglobalshopv.com
+DOMAIN-SUFFIX,tiktokminis.us
 DOMAIN-SUFFIX,tiktokrow-cdn.com
+DOMAIN-SUFFIX,tiktokv.com
+DOMAIN-SUFFIX,tiktokv.eu
+DOMAIN-SUFFIX,tiktokv.us
+DOMAIN-SUFFIX,tiktokw.eu
+DOMAIN-SUFFIX,tiktokw.us
 DOMAIN-SUFFIX,tikv.org
 DOMAIN-SUFFIX,time-weekly.com
 DOMAIN-SUFFIX,timibase.com
@@ -5237,11 +5287,15 @@ DOMAIN-SUFFIX,tsparkling.com
 DOMAIN-SUFFIX,ttbyte.cn
 DOMAIN-SUFFIX,ttbyte.com
 DOMAIN-SUFFIX,ttbyte.net
+DOMAIN-SUFFIX,ttcdn-us.com
 DOMAIN-SUFFIX,ttgslb.com
 DOMAIN-SUFFIX,ttgtm.com
 DOMAIN-SUFFIX,ttjisu.com
+DOMAIN-SUFFIX,ttlivecdn.com
+DOMAIN-SUFFIX,ttoverseaus.net
 DOMAIN-SUFFIX,ttpod.com
 DOMAIN-SUFFIX,ttwebview.com
+DOMAIN-SUFFIX,ttwstatic.com
 DOMAIN-SUFFIX,tuchong.com
 DOMAIN-SUFFIX,tudou.com
 DOMAIN-SUFFIX,tuer123.com

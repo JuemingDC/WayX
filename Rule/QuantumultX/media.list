@@ -1,11 +1,11 @@
 # Name: media
-# Updated: 2026-10-22 15:31:27 UTC
+# Updated: 2026-10-23 02:00:48 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/domestic.conf ; https://ruleset.skk.moe/List/non_ip/global.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 10309
+# Rules: 10310
 # Managed by: WayX Rule Aggregator
 
 host,cdn.globalsigncdn.com.cdn.cloudflare.net,direct
@@ -120,6 +120,7 @@ host,ereg.wip3.adobe.com,proxy
 host,ereg.wip4.adobe.com,proxy
 host,favoritescc-hamivideo2.cdn.hinet.net,proxy
 host,fontshop-prod-responsive-images.s3.amazonaws.com,proxy
+host,funko.my.site.com,proxy
 host,gamer-cds.cdn.hinet.net,proxy
 host,gamer2-cds.cdn.hinet.net,proxy
 host,gog-cdn-lumen.secure2.footprint.net,proxy
