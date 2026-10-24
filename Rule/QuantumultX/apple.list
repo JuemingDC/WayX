@@ -1,11 +1,11 @@
 # Name: apple
-# Updated: 2026-10-23 09:29:33 UTC
+# Updated: 2026-10-24 19:42:56 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, Tartarus2014, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Rule/Apple/TestFlight.lsr ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1812
+# Rules: 1811
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,direct
@@ -1320,7 +1320,6 @@ host-suffix,icloud-content.com,direct
 host-suffix,icloud-isupport.com,direct
 host-suffix,icloud-sandbox.com,direct
 host-suffix,icloud.ch,direct
-host-suffix,icloud.cn,direct
 host-suffix,icloud.com,direct
 host-suffix,icloud.de,direct
 host-suffix,icloud.ee,direct

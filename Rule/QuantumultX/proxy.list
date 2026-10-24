@@ -1,11 +1,11 @@
 # Name: proxy
-# Updated: 2026-10-23 09:29:33 UTC
+# Updated: 2026-10-24 19:42:56 UTC
 # Converted by: chance
 # Source Authors: Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 34099
+# Rules: 34115
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,proxy
@@ -2526,6 +2526,7 @@ host-suffix,fukuokabank.co.jp,proxy
 host-suffix,fulipic.gumroad.com,proxy
 host-suffix,g.mindbox.ru,proxy
 host-suffix,g1.com.br,proxy
+host-suffix,ga.jspm.io,proxy
 host-suffix,gamebase.com.tw,proxy
 host-suffix,gamefocus.co.kr,proxy
 host-suffix,gameover.com.hk,proxy
@@ -4623,6 +4624,7 @@ host-suffix,1password.ca,proxy
 host-suffix,1password.co,proxy
 host-suffix,1password.com,proxy
 host-suffix,1password.community,proxy
+host-suffix,1password.dev,proxy
 host-suffix,1password.eu,proxy
 host-suffix,1password.io,proxy
 host-suffix,1passwordservices.com,proxy
@@ -10441,6 +10443,10 @@ host-suffix,cdp1998.org,proxy
 host-suffix,cdp2006.org,proxy
 host-suffix,cdpeu.org,proxy
 host-suffix,cdpn.io,proxy
+host-suffix,cdpred.services,proxy
+host-suffix,cdprojekt.com,proxy
+host-suffix,cdprojekt.red,proxy
+host-suffix,cdprojektred.com,proxy
 host-suffix,cdpweb.org,proxy
 host-suffix,cdpwu.org,proxy
 host-suffix,cdw.com,proxy
@@ -11581,6 +11587,7 @@ host-suffix,cybercrimecon.com,proxy
 host-suffix,cyberghost.app,proxy
 host-suffix,cyberghostvpn.com,proxy
 host-suffix,cybermondaybeats4sale.com,proxy
+host-suffix,cyberpunk.net,proxy
 host-suffix,cybersport.ru,proxy
 host-suffix,cyberx.com,proxy
 host-suffix,cygames.jp,proxy
@@ -17474,7 +17481,6 @@ host-suffix,icloud-content.com,proxy
 host-suffix,icloud-isupport.com,proxy
 host-suffix,icloud-sandbox.com,proxy
 host-suffix,icloud.ch,proxy
-host-suffix,icloud.cn,proxy
 host-suffix,icloud.com,proxy
 host-suffix,icloud.de,proxy
 host-suffix,icloud.ee,proxy
@@ -24381,6 +24387,7 @@ host-suffix,playfab.com,proxy
 host-suffix,playfabapi.com,proxy
 host-suffix,playfamily.ru,proxy
 host-suffix,playforceone.com,proxy
+host-suffix,playgwent.com,proxy
 host-suffix,playhearthstone.com,proxy
 host-suffix,playmation.com,proxy
 host-suffix,playmeow.com,proxy
@@ -28960,6 +28967,7 @@ host-suffix,theweek.com,proxy
 host-suffix,theweek.in,proxy
 host-suffix,thewgo.org,proxy
 host-suffix,thewirechina.com,proxy
+host-suffix,thewitcher.com,proxy
 host-suffix,thewonderful101.com,proxy
 host-suffix,theync.com,proxy
 host-suffix,theyxxx.com,proxy
@@ -32487,6 +32495,12 @@ host-suffix,xn--d1acpjx3f.xn--p1ai,proxy
 host-suffix,xn--d4ty0ojsqzfd.com,proxy
 host-suffix,xn--e1adjldbbpv.xn--90ais,proxy
 host-suffix,xn--e1aigb.xn--p1ai,proxy
+host-suffix,xn--fiq80y.hk,proxy
+host-suffix,xn--fiq80y.xn--j6w193g,proxy
+host-suffix,xn--fiq80y3xbiwr.hk,proxy
+host-suffix,xn--fiq80y3xbiwr.xn--j6w193g,proxy
+host-suffix,xn--fiq80y3xbiwrs0kiu9d.hk,proxy
+host-suffix,xn--fiq80y3xbiwrs0kiu9d.xn--j6w193g,proxy
 host-suffix,xn--fiqs8s1bxp3anr7a.hk,proxy
 host-suffix,xn--fiqs8s1bxp3anr7a.xn--j6w193g,proxy
 host-suffix,xn--fiqs8s1byzqyvl.hk,proxy
@@ -32525,6 +32539,7 @@ host-suffix,xn--p8j9a0d9c9a.xn--q9jyb4c,proxy
 host-suffix,xn--pearsonenespaol-brb.com,proxy
 host-suffix,xn--pssu7ci2j23mp9ny48b.hk,proxy
 host-suffix,xn--pssu7ci2j23mp9ny48b.xn--j6w193g,proxy
+host-suffix,xn--pssu7ci3q5oge0ai91q.xn--j6w193g,proxy
 host-suffix,xn--pssu7cv61af1tcs59bnvd.hk,proxy
 host-suffix,xn--pssu7cv61af1tcs59bnvd.xn--j6w193g,proxy
 host-suffix,xn--pssu7cv61af44b.hk,proxy
@@ -32533,6 +32548,7 @@ host-suffix,xn--pssu7cv61ahw8aq79bztd.hk,proxy
 host-suffix,xn--pssu7cv61ahw8aq79bztd.xn--j6w193g,proxy
 host-suffix,xn--pssu7cv61ahwcb1p2yk.hk,proxy
 host-suffix,xn--pssu7cv61ahwcb1p2yk.xn--j6w193g,proxy
+host-suffix,xn--pssu7cz8nr8ibkx1e8a.xn--j6w193g,proxy
 host-suffix,xn--q41am8x.com,proxy
 host-suffix,xn--qoq462m.com,proxy
 host-suffix,xn--r8jwklh769h2mc880dk1o431a.com,proxy

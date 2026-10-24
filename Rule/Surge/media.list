@@ -1,11 +1,11 @@
 # Name: media
-# Updated: 2026-10-23 09:32:10 UTC
+# Updated: 2026-10-24 19:42:56 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 7300
+# Rules: 7307
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,cdn.globalsigncdn.com.cdn.cloudflare.net
@@ -2292,6 +2292,10 @@ DOMAIN-SUFFIX,cdn-vk.ru
 DOMAIN-SUFFIX,cdnmail.ru
 DOMAIN-SUFFIX,cdnvideo.ru
 DOMAIN-SUFFIX,cdnvideohub.com
+DOMAIN-SUFFIX,cdpred.services
+DOMAIN-SUFFIX,cdprojekt.com
+DOMAIN-SUFFIX,cdprojekt.red
+DOMAIN-SUFFIX,cdprojektred.com
 DOMAIN-SUFFIX,celeron.com
 DOMAIN-SUFFIX,celeron.net
 DOMAIN-SUFFIX,centos.org
@@ -2549,6 +2553,7 @@ DOMAIN-SUFFIX,cwtv.com
 DOMAIN-SUFFIX,cxacg.com
 DOMAIN-SUFFIX,cxhub.ru
 DOMAIN-SUFFIX,cybercrimecon.com
+DOMAIN-SUFFIX,cyberpunk.net
 DOMAIN-SUFFIX,cybersport.ru
 DOMAIN-SUFFIX,cyberx.com
 DOMAIN-SUFFIX,cygames.jp
@@ -5396,6 +5401,7 @@ DOMAIN-SUFFIX,playapex.com
 DOMAIN-SUFFIX,playbattlegrounds.com
 DOMAIN-SUFFIX,playerjs.io
 DOMAIN-SUFFIX,playfamily.ru
+DOMAIN-SUFFIX,playgwent.com
 DOMAIN-SUFFIX,playhearthstone.com
 DOMAIN-SUFFIX,playnintendo.com
 DOMAIN-SUFFIX,playoverwatch.com
@@ -6327,6 +6333,7 @@ DOMAIN-SUFFIX,thesimssocial.com
 DOMAIN-SUFFIX,thetie.io
 DOMAIN-SUFFIX,thetvdb.com
 DOMAIN-SUFFIX,theverge.com
+DOMAIN-SUFFIX,thewitcher.com
 DOMAIN-SUFFIX,thewonderful101.com
 DOMAIN-SUFFIX,thinkboxsoftware.com
 DOMAIN-SUFFIX,thirdns.de

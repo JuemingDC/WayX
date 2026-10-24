@@ -1,11 +1,11 @@
 # Name: media
-# Updated: 2026-10-23 09:32:10 UTC
+# Updated: 2026-10-24 19:42:56 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 7300
+# Rules: 7307
 # Managed by: WayX Rule Aggregator
 
 host,cdn.globalsigncdn.com.cdn.cloudflare.net,proxy
@@ -2292,6 +2292,10 @@ host-suffix,cdn-vk.ru,proxy
 host-suffix,cdnmail.ru,proxy
 host-suffix,cdnvideo.ru,proxy
 host-suffix,cdnvideohub.com,proxy
+host-suffix,cdpred.services,proxy
+host-suffix,cdprojekt.com,proxy
+host-suffix,cdprojekt.red,proxy
+host-suffix,cdprojektred.com,proxy
 host-suffix,celeron.com,proxy
 host-suffix,celeron.net,proxy
 host-suffix,centos.org,proxy
@@ -2549,6 +2553,7 @@ host-suffix,cwtv.com,proxy
 host-suffix,cxacg.com,proxy
 host-suffix,cxhub.ru,proxy
 host-suffix,cybercrimecon.com,proxy
+host-suffix,cyberpunk.net,proxy
 host-suffix,cybersport.ru,proxy
 host-suffix,cyberx.com,proxy
 host-suffix,cygames.jp,proxy
@@ -5396,6 +5401,7 @@ host-suffix,playapex.com,proxy
 host-suffix,playbattlegrounds.com,proxy
 host-suffix,playerjs.io,proxy
 host-suffix,playfamily.ru,proxy
+host-suffix,playgwent.com,proxy
 host-suffix,playhearthstone.com,proxy
 host-suffix,playnintendo.com,proxy
 host-suffix,playoverwatch.com,proxy
@@ -6327,6 +6333,7 @@ host-suffix,thesimssocial.com,proxy
 host-suffix,thetie.io,proxy
 host-suffix,thetvdb.com,proxy
 host-suffix,theverge.com,proxy
+host-suffix,thewitcher.com,proxy
 host-suffix,thewonderful101.com,proxy
 host-suffix,thinkboxsoftware.com,proxy
 host-suffix,thirdns.de,proxy
