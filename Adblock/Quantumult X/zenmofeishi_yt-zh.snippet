@@ -1,0 +1,18 @@
+# Name: YouTube 强制简体中文字幕
+# Updated: 2026-10-25 19:01:30 +08:00
+# Merged by: chance
+# Source Authors: 怎么肥事, @ZenmoFeiShi
+# Category: app
+# Managed by: WayX Native QX
+
+# [rewrite_local]
+# Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/Yt-zh.snippet
+# Upstream author=@ZenmoFeiShi
+# Upstream name=YouTube 强制简体中文字幕
+^https://www\.youtube\.com/api/timedtext\?.*_ytzhsub=1 url script-request-header https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/yt-sub-clean.js
+^https://www\.youtube\.com/api/timedtext\? url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/yt-zh-sub.js
+
+# [mitm]
+
+# Upstream hostname = www.youtube.com
+hostname = www.youtube.com

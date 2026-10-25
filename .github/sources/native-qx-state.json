@@ -1,268 +1,342 @@
 {
   "version": 1,
-  "commit": "bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7",
+  "sources": [
+    {
+      "repository": "ishowshu/qx",
+      "prefix": "ishowshu_",
+      "commit": "bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7"
+    },
+    {
+      "repository": "ZenmoFeiShi/Qx",
+      "prefix": "zenmofeishi_",
+      "commit": "6bb62bec15a36719ef4acc9ad9252f60055259a6"
+    }
+  ],
   "inputs": [
     {
+      "repository": "ishowshu/qx",
       "path": "filter/ad-platform.snippet",
       "sha256": "5842f05070a8acefbbcc584c9d7c63fe50d1331a9a1d10346fc1ef5100b6ccf9"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "filter/apple-notice.snippet",
       "sha256": "6731cd1dadba8a7c90c157d194117a97aced0e482fba5bb10bd8dd2795df1ecc"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "filter/geoip.snippet",
       "sha256": "e0535d86977bdb8b5921b790f2e410036e310f6edc26680d3178fddd35265fab"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "filter/pdd.snippet",
       "sha256": "5de16fec4352ada23698514815582b55a06bf04d41a9f116de611534668b0390"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "filter/taobao.snippet",
       "sha256": "b7e56fbe58098ba995ddfbf2f251138272534054fe7ccf24860085d002c28af4"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/amap-new.snippet",
       "sha256": "46501be7318c8593c1ca06078f1fac06cafdec14dbb818662a62a397838a440f"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/amap.snippet",
       "sha256": "f16ff0ee3054f6fcc296a59fe00dbc5c5f4dd4b053e63711cec32502271b7025"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/bestv.snippet",
       "sha256": "d416530faf3bd42158b6eecaf74c664bcd93ce6a62c0e1a888d6e862d7b5faf1"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/bilibili-qx.snippet",
       "sha256": "d87046cc9762cffb062d1934188399a525d271ba55a47de29f6eec03e51c2574"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/bilibili.snippet",
       "sha256": "a66a6a3b406f92e28f48b2b1ac9f1d1c1aaf34d49ed1b07b44ec6b14800d754c"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/caiyun.snippet",
       "sha256": "8c35a6e6bf33688ca041460e1ba7fc41fb92bb71fb64c57d79931b7eaa3265a1"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/cmbchina.snippet",
       "sha256": "28ead4f5910d22cf37d9072c11d6e59f779490d85cf10dd7b23c58f2a7f2cec8"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/didi.snippet",
       "sha256": "771cfc56b5b9c16543f4ac2a2e5c22116e8d6aae70cc7dde995a857dcbcdcff8"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/douban.snippet",
       "sha256": "1161b50e3c4018daac072bedabd63bce3d68b76d76faaa675630e95d10f72418"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/github.snippet",
       "sha256": "6b7d88f492a2d39a1ad69c822c159c911bf481abfe39a49fb330e2bdebfdc247"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/goofish.snippet",
       "sha256": "e8054eb951d282aede6ab1be0e4a964cee4dc10aa7c27cbc0c37d3c740581d14"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/hupu.snippet",
       "sha256": "8ad149ddd1a3f6b2ccda3a3ffd1bdf7aed20e4e3cbf0492474e01ed68d3a9b91"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/jd.snippet",
       "sha256": "2c81f10b20c871cd2cf99ebebe37648b6c57aeeead1f8ff2c2361a91192d427f"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/jx.snippet",
       "sha256": "9bbc3def09e7e138976ecb21925aa03d3c72f82390ebb65d7d9d1d2ebae038ec"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/keep.snippet",
       "sha256": "7dd0f9ba10fb279ef06fe2cf647320c17ddde12c119a2fd0cff033a645682d61"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/lecheng.snippet",
       "sha256": "9fdab16878a016a1c8ed2f93731db22677d4a3c036bf7967e032d6b3b8d6c2b1"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/leisu.snippet",
       "sha256": "e69a4891d1c5b09275a1325ad792d14a650f237385282b39b2a94ee8d4f67ae4"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/pdd.snippet",
       "sha256": "0390ab4cac52c0e0be88b1dcfd3d90bd20edfbeb73d605b340220076782ad4ac"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/pupu.snippet",
       "sha256": "f166ca9cf1c901421f110b3461ecd127319a1e05bf210f463a3ceb7e3129f428"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/shihuo.snippet",
       "sha256": "2f7c97d300ad92c174f639e342c4da8a1cb13d9af87ecf13adb79b1bc42bd9b9"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/soul.snippet",
       "sha256": "6ca0b61e719734fb591ff96507485c67a1e192d2ed225b06e91f3fe6f7fd8703"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/taobao.snippet",
       "sha256": "c6989320173a48fa169a6de54e025df7c9be5dba9e7ec0dd2d6c54c5b390b9ac"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/ttts.snippet",
       "sha256": "eba9dfd3aafaac9dc1247673af786db040335af840a05105c7406d8b7435d05e"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/xhs.snippet",
       "sha256": "81754623deece2816fbd746963fcd5033e19af27c346d9be937aa012a4c29c19"
     },
     {
+      "repository": "ishowshu/qx",
       "path": "rewrite/youtube.snippet",
       "sha256": "f2df12ececb5ba8e3d27ad6bb448a10abada501f368da39c04b1517ba0a6ffe8"
     },
     {
-      "url": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/pdd.js",
-      "sha256": "fa4d1cac3c791fdac0d6007ce67e3a2ba7c1703d15807c2dd086dbf6d6bd8ddb"
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "bili_view_ad_rewrite.snippet",
+      "sha256": "74cdef65292afaa8c97cb67665d315218ee3cd33f667d7db193810427cf5dd83"
     },
     {
-      "url": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/amap-new.js",
-      "sha256": "38e5772eb450d2f7eeb8d8f29011e470243367967fd01c907ec8178771f2f4ce"
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "Cwkj.snippet",
+      "sha256": "7280bcd842b72eed1ad41a63fe7e6dc1814de7cf05a2d74ed484ded8b0d9af19"
     },
     {
-      "url": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/bestv.js",
-      "sha256": "a0b53d7d95c77ad576245a5a9c770a262c1204ca85e58ea1c6d9badee0e71b51"
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "Didichuxing.snippet",
+      "sha256": "6fb275fdac5599c88c1bda47ee7f43dab25429fc1a9678b4013835436b1d2a40"
     },
     {
-      "url": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/bilibili-ad.js",
-      "sha256": "f6b52b5370d979368121ecd757b5eaeea114d8668f5b9141c2197127a47a150a"
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "helloobike.snippet",
+      "sha256": "672d9a0467ce2039182de019f1d9383e732dc5dba961f4eac8af7f5aa5cf24e8"
     },
     {
-      "url": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/caiyun.js",
-      "sha256": "003c3b37dfc1293b082daeca7469b9db478dacf2edd1580b1a3d416be4682bc0"
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "hlwxx_remove_ads.snippet",
+      "sha256": "e03088ba146047c9d6fa69290177d47ddbbcc6779ff30eb037524112ec37eb52"
     },
     {
-      "url": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/goofish.js",
-      "sha256": "d76d0a65d975a523ad4bb62c5d90dc9898a5a93ad79cf03dea01150705792b20"
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "HP.snippet",
+      "sha256": "7de13dc469638c0eecfbb8816d1e59cb9b374d4696109bca4a1da249d72160e2"
     },
     {
-      "url": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/keep.js",
-      "sha256": "d955973bdc94d7dab355bd534b60a5627b21bb0c3f9e89c9296214c41a9e7091"
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "Keep.snippet",
+      "sha256": "09814a6d9eed6d3f15a90953a3855ab2cd265bb21ed10ce640b960bb72767864"
     },
     {
-      "url": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/pp.js",
-      "sha256": "3b419ba2d6a95c31432c6cf025218c618b190d5a0bf793855e9346f21f6668bf"
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "KuAn.snippet",
+      "sha256": "462290777e5cdd56864523a4074bec543c8dda3f7efe12c21d8871423581804b"
     },
     {
-      "url": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/shihuo.js",
-      "sha256": "f29be23186bdee00873c43387a0b5cd4dc9b0d359cb11041558fb9257b5bc30b"
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "mgtv_vip.snippet",
+      "sha256": "6a990666658222e9cf80f5c7f47185560e1feeb452b35110e610525d63f2acd8"
     },
     {
-      "url": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/soul_qx.js",
-      "sha256": "0bbbfc3474f3b0c5a294fd167dff2a804d40cb585cc80d63a868333f9770d605"
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "migu_vip_share.snippet",
+      "sha256": "a3f8740f0d9caea42e7b8974215c7762bb8db8b64310236923f642317d28e83f"
     },
     {
-      "url": "https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js",
-      "sha256": "f98483d5f5017514f82502253c0db5ce2d4ffb7839887aa2cadc22666f5a7f12"
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "MT.snippet",
+      "sha256": "914dd717dabcd66544e75ab6c405c8607cf4677d085ca52ca20be9455531decc"
+    },
+    {
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "Pinduoduo.snippet",
+      "sha256": "6b5572ce97308d32c90252567a804fdb0780439a562945e8c58da8c7b6f92064"
+    },
+    {
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "SF.snippet",
+      "sha256": "95445739907818f7513044a0e9f14c2bed502784cfae74c7d9cc75ccef8a09f0"
+    },
+    {
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "Smzdm.snippet",
+      "sha256": "faf1d16dc81346221f44e1587fa82db47d801c74a331eb80dfc3ce8526e2cb78"
+    },
+    {
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "Soul.snippet",
+      "sha256": "f293bcd95b771eea905cbe6673f47816205cb0757f7fbb83ea1aac620ff28046"
+    },
+    {
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "T3.snippet",
+      "sha256": "0149482d4eb8f11ae43ce995bc7fd3f79002ac7b82388cf94ab5f6fc54e950a5"
+    },
+    {
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "TB.snippet",
+      "sha256": "82107f479d78496c39a6245a3a2473ca0ecafcdba030a38b36c999867bb17568"
+    },
+    {
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "TH.snippet",
+      "sha256": "50a43955cb3f93973101e889f3da862557bc7b8abaeda956e194c61dd97072c0"
+    },
+    {
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "TilingSales_ad_remove.snippet",
+      "sha256": "87fdcc81e716d0ab3b4287b8fd89c0e124e54dabf7048839b155b4e580ae5a1f"
+    },
+    {
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "WB.snippet",
+      "sha256": "9d03db2bc5f963dd7a0352f45a1e6f69ed030c61ae5c12086a00426c5c2c131a"
+    },
+    {
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "WxPureDominion.snippet",
+      "sha256": "c2593be9b4b6a13095b751b34b901db0fafc779233ae577f80ba93dd1116580f"
+    },
+    {
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "xhey-ad-clean.snippet",
+      "sha256": "44ad38b74b00ce4054529e5dd49714ac88a060338ec7c545c5522037e0824c92"
+    },
+    {
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "xTerm256.snippet",
+      "sha256": "1306ed3daa8e0c4b36afdf77a55c0232e370559dda043b7007eda49a83f64e17"
+    },
+    {
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "xzimu-unlock.snippet",
+      "sha256": "58e1c8280bff565c3b659d6b9a2b892b02d6946746abdd8450729a85ef1e6a77"
+    },
+    {
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "Youtube.snippet",
+      "sha256": "94c4cb66fefae74abb8156838155ef8f35321c29eb03c12edc78c30557626a35"
+    },
+    {
+      "repository": "ZenmoFeiShi/Qx",
+      "path": "Yt-zh.snippet",
+      "sha256": "47567c39bb91bbc281f81e172d8251178d362f97fcabc5544e799e3e1a312222"
     }
   ],
   "skipped": [],
   "diagnostics": [
     {
+      "repository": "ishowshu/qx",
       "application": "taobao",
       "source": "^http:\\/\\/amdc\\.m\\.taobao\\.com\\/amdc\\/mobileDispatch %E6%B7%98%E5%AE%9D* url-and-header reject",
-      "reason": "QX whole-header matcher has no verified native Surge equivalent"
+      "reason": "URL-and-header conjunction retained for review; dropping the header condition would broaden matching"
     },
     {
+      "repository": "ishowshu/qx",
       "application": "amap",
       "source": "^http:\\/\\/amdc\\.m\\.taobao\\.com\\/amdc\\/mobileDispatch AMapiPhone* url-and-header reject",
-      "reason": "QX whole-header matcher has no verified native Surge equivalent"
+      "reason": "URL-and-header conjunction retained for review; dropping the header condition would broaden matching"
     },
     {
-      "application": "bestv",
-      "source": "https:\\/\\/bp-api\\.bestv\\.(?:com\\.cn|cn)\\/cms\\/api\\/(live\\/studio\\/id\\/v8|c\\/player\\/common) url script-response-body https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js",
-      "reason": "Original script source unavailable for API verification"
-    },
-    {
-      "application": "bestv",
-      "source": "^https?:\\/\\/360\\.com\\/(?:video|nba\\.m3u|dianshi\\.m3u)$ url script-response-body https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js",
-      "reason": "Original script source unavailable for API verification"
-    },
-    {
-      "application": "github",
-      "source": "^https:\\/\\/(raw|gist)\\.githubusercontent\\.com\\/ url request-header (\\r\\n)Accept-Language:.+(\\r\\n) request-header $1Accept-Language: en-us$2",
-      "reason": "No verified equivalent for QX action: request-header"
-    },
-    {
-      "application": "github",
-      "source": "^https:\\/\\/github\\.com\\/ url request-header (\\r\\n)Accept-Language:.+(\\r\\n) request-header $1Accept-Language: en-us$2",
-      "reason": "No verified equivalent for QX action: request-header"
-    },
-    {
+      "repository": "ishowshu/qx",
       "application": "goofish",
       "source": "^http:\\/\\/amdc\\.m\\.taobao\\.com\\/amdc\\/mobileDispatch %E9%97%B2%E9%B1%BC* url-and-header reject",
-      "reason": "QX whole-header matcher has no verified native Surge equivalent"
+      "reason": "URL-and-header conjunction retained for review; dropping the header condition would broaden matching"
     },
     {
+      "repository": "ishowshu/qx",
       "application": "lecheng",
       "source": "^https:\\/\\/img1\\.360buyimg\\.com\\/pop\\/jfs\\/t1 LCIphoneAdhocIP* url-and-header reject-dict",
-      "reason": "QX whole-header matcher has no verified native Surge equivalent"
+      "reason": "URL-and-header conjunction retained for review; dropping the header condition would broaden matching"
     },
     {
+      "repository": "ishowshu/qx",
       "application": "leisu",
       "source": "^https:\\/\\/s3plus\\.meituan\\.net\\/ leisu* url-and-header reject-dict",
-      "reason": "QX whole-header matcher has no verified native Surge equivalent"
+      "reason": "URL-and-header conjunction retained for review; dropping the header condition would broaden matching"
     },
     {
+      "repository": "ishowshu/qx",
       "application": "leisu",
       "source": "^https:\\/\\/img1\\.360buyimg\\.com\\/pop\\/jfs\\/t1 leisu* url-and-header reject-dict",
-      "reason": "QX whole-header matcher has no verified native Surge equivalent"
+      "reason": "URL-and-header conjunction retained for review; dropping the header condition would broaden matching"
     },
     {
-      "application": "soul",
-      "source": "^https:\\/\\/api-chat\\.soulapp\\.cn\\/chat\\/limitInfo url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/soul_qx.js",
-      "reason": "Script compatibility not proven for tokens/fields: $notify"
-    },
-    {
-      "application": "soul",
-      "source": "^https:\\/\\/api-chat\\.soulapp\\.cn\\/snapchat\\/url url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/soul_qx.js",
-      "reason": "Script compatibility not proven for tokens/fields: $notify"
-    },
-    {
-      "application": "youtube",
-      "source": "^https:\\/\\/youtubei\\.googleapis\\.com\\/youtubei\\/v1\\/browse url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js",
-      "reason": "Script compatibility not proven for tokens/fields: $r, $e, $t, $s, $n, $i, $loon, $prefs, $notify, $task"
-    },
-    {
-      "application": "youtube",
-      "source": "^https:\\/\\/youtubei\\.googleapis\\.com\\/youtubei\\/v1\\/search url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js",
-      "reason": "Script compatibility not proven for tokens/fields: $r, $e, $t, $s, $n, $i, $loon, $prefs, $notify, $task"
-    },
-    {
-      "application": "youtube",
-      "source": "^https:\\/\\/youtubei\\.googleapis\\.com\\/youtubei\\/v1\\/account\\/get_setting url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js",
-      "reason": "Script compatibility not proven for tokens/fields: $r, $e, $t, $s, $n, $i, $loon, $prefs, $notify, $task"
-    },
-    {
-      "application": "youtube",
-      "source": "^https:\\/\\/youtubei\\.googleapis\\.com\\/youtubei\\/v1\\/get_watch url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js",
-      "reason": "Script compatibility not proven for tokens/fields: $r, $e, $t, $s, $n, $i, $loon, $prefs, $notify, $task"
-    },
-    {
-      "application": "youtube",
-      "source": "^https:\\/\\/youtubei\\.googleapis\\.com\\/youtubei\\/v1\\/next url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js",
-      "reason": "Script compatibility not proven for tokens/fields: $r, $e, $t, $s, $n, $i, $loon, $prefs, $notify, $task"
-    },
-    {
-      "application": "youtube",
-      "source": "^https:\\/\\/youtubei\\.googleapis\\.com\\/youtubei\\/v1\\/player\\? url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js",
-      "reason": "Script compatibility not proven for tokens/fields: $r, $e, $t, $s, $n, $i, $loon, $prefs, $notify, $task"
-    },
-    {
-      "application": "youtube",
-      "source": "^https:\\/\\/youtubei\\.googleapis\\.com\\/youtubei\\/v1\\/reel\\/reel_watch_sequence url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js",
-      "reason": "Script compatibility not proven for tokens/fields: $r, $e, $t, $s, $n, $i, $loon, $prefs, $notify, $task"
+      "repository": "ZenmoFeiShi/Qx",
+      "application": "helloobike",
+      "source": "^https:\\/\\/resource\\.51downapp\\.cn\\/f414fbc17c411b4e986ba8891c738a49\\.json\\?(?:[^#]*&)?md5=e5230c919f7e3f3af3256161fbfaa0e2&(?:[^#]*&)?hbe_qx_ui=1\\.3$ url script-echo-response https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/easybike-ad.js",
+      "reason": "No verified equivalent for QX action: script-echo-response"
     }
   ],
   "outputs": [
@@ -317,6 +391,58 @@
     "Adblock/Quantumult X/ishowshu_xhs.snippet",
     "Adblock/Surge/ishowshu_xhs.sgmodule",
     "Adblock/Quantumult X/ishowshu_youtube.snippet",
-    "Adblock/Surge/ishowshu_youtube.sgmodule"
+    "Adblock/Surge/ishowshu_youtube.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_bili-view-ad-rewrite.snippet",
+    "Adblock/Surge/zenmofeishi_bili-view-ad-rewrite.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_cwkj.snippet",
+    "Adblock/Surge/zenmofeishi_cwkj.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_didichuxing.snippet",
+    "Adblock/Surge/zenmofeishi_didichuxing.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_helloobike.snippet",
+    "Adblock/Surge/zenmofeishi_helloobike.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_hlwxx-remove-ads.snippet",
+    "Adblock/Surge/zenmofeishi_hlwxx-remove-ads.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_hp.snippet",
+    "Adblock/Surge/zenmofeishi_hp.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_keep.snippet",
+    "Adblock/Surge/zenmofeishi_keep.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_kuan.snippet",
+    "Adblock/Surge/zenmofeishi_kuan.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_mgtv-vip.snippet",
+    "Adblock/Surge/zenmofeishi_mgtv-vip.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_migu-vip-share.snippet",
+    "Adblock/Surge/zenmofeishi_migu-vip-share.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_mt.snippet",
+    "Adblock/Surge/zenmofeishi_mt.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_pinduoduo.snippet",
+    "Adblock/Surge/zenmofeishi_pinduoduo.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_sf.snippet",
+    "Adblock/Surge/zenmofeishi_sf.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_smzdm.snippet",
+    "Adblock/Surge/zenmofeishi_smzdm.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_soul.snippet",
+    "Adblock/Surge/zenmofeishi_soul.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_t3.snippet",
+    "Adblock/Surge/zenmofeishi_t3.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_tb.snippet",
+    "Adblock/Surge/zenmofeishi_tb.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_th.snippet",
+    "Adblock/Surge/zenmofeishi_th.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_tilingsales-ad-remove.snippet",
+    "Adblock/Surge/zenmofeishi_tilingsales-ad-remove.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_wb.snippet",
+    "Adblock/Surge/zenmofeishi_wb.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_wxpuredominion.snippet",
+    "Adblock/Surge/zenmofeishi_wxpuredominion.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_xhey-ad-clean.snippet",
+    "Adblock/Surge/zenmofeishi_xhey-ad-clean.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_xterm256.snippet",
+    "Adblock/Surge/zenmofeishi_xterm256.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_xzimu-unlock.snippet",
+    "Adblock/Surge/zenmofeishi_xzimu-unlock.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_youtube.snippet",
+    "Adblock/Surge/zenmofeishi_youtube.sgmodule",
+    "Adblock/Quantumult X/zenmofeishi_yt-zh.snippet",
+    "Adblock/Surge/zenmofeishi_yt-zh.sgmodule"
   ]
 }

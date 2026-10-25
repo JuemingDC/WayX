@@ -1,0 +1,35 @@
+#!name=途虎养车净化
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 途虎养车净化
+# Updated: 2026-10-25 19:01:30 +08:00
+# Merged by: chance
+# Source Authors: 怎么肥事
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/TH.snippet
+# Upstream name = 途虎养车净化
+# Upstream author = 怎么肥事
+# Upstream update = 2026-4-14
+# // 营销弹窗 & 横幅 & 超级会员 & 推荐 & 搜索热词
+# // 门店Tab - 移除横幅 + 过滤推广模块
+# // 个人中心模块 - 移除多余入口
+# Upstream hostname = mkt-gateway.tuhu.cn, cl-gateway.tuhu.cn
+
+[Map Local]
+^https:\/\/mkt-gateway\.tuhu\.cn\/mkt-scene-marketing-service\/api\/scene\/queryScheme data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/mkt-gateway\.tuhu\.cn\/mkt-push-message-box\/banner\/cms\/getIndexBanner data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/cl-gateway\.tuhu\.cn\/cl-common-api\/api\/personalCenter\/getAutoSuperConfig data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/mkt-gateway\.tuhu\.cn\/mkt-cms\/circle\/recommend\/v3 data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/mkt-gateway\.tuhu\.cn\/mlp-product-search-api\/search\/helper\/defaultAndHotWord data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Body Rewrite]
+http-response-jq ^https:\/\/cl-gateway\.tuhu\.cn\/cl-shop-api\/shopTab\/getModuleForC 'del(.data.bannersList) | .data.cmsList |= map(select(.bottomMargin != 12))'
+http-response-jq ^https:\/\/cl-gateway\.tuhu\.cn\/cl-common-api\/api\/personalCenter\/getCmsModuleList '.data.cmsList |= map(select(.moduleTypeId != 90 and .moduleTypeId != 17 and .moduleTypeId != 13 and .moduleTypeId != 35 and .moduleTypeId != 10 and .moduleTypeId != 7 and .mainTitle != "保养超值卡" and .mainTitle != "特价团购" and .mainTitle != "合作加盟" and .mainTitle != "抖音团购券兑换" and .mainTitle != "集团客户" and .mainTitle != "美团兑换" and .mainTitle != "评价途虎"))'
+
+[MITM]
+hostname = %APPEND% mkt-gateway.tuhu.cn, cl-gateway.tuhu.cn

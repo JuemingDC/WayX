@@ -6,7 +6,7 @@
 
 [Rule]
 # Name: 闲鱼
-# Updated: 2026-10-25 18:31:42 +08:00
+# Updated: 2026-10-25 19:01:27 +08:00
 # Merged by: chance
 # Source Authors: 树先生, 可莉, 奶思, 怎么肥事
 # Category: app
@@ -18,7 +18,7 @@
 # 分流添加广告下发
 USER-AGENT,%E9%97%B2%E9%B1%BC*,REJECT
 # 拦截广告下发
-# [WayX] REVIEW REQUIRED: QX whole-header matcher has no verified native Surge equivalent
+# [WayX] REVIEW REQUIRED: URL-and-header conjunction retained for review; dropping the header condition would broaden matching
 # Source declaration: ^http:\/\/amdc\.m\.taobao\.com\/amdc\/mobileDispatch %E9%97%B2%E9%B1%BC* url-and-header reject
 # 搜索页多余推荐列表
 # 这些宝贝超好卖

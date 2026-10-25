@@ -1,0 +1,21 @@
+# Name: X字幕 (xzimu) 无限翻译次数
+# Updated: 2026-10-25 19:01:30 +08:00
+# Merged by: chance
+# Source Authors: 怎么肥事
+# Category: app
+# Managed by: WayX Native QX
+
+# [rewrite_local]
+# Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/xzimu-unlock.snippet
+# Upstream name = X字幕 (xzimu) 无限翻译次数
+# Upstream author = 怎么肥事
+# Upstream update = 2026-4-20
+
+^http:\/\/apps\.tltgame\.com\/api\/user\/updateStatus url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/xzimu-unlock.js
+^http:\/\/apps\.tltgame\.com\/api\/task\/offline\/post url script-request-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/xzimu-unlock.js
+^http:\/\/apps\.tltgame\.com\/api\/task\/offline\/post url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/xzimu-unlock.js
+^http:\/\/47\.251\.39\.178:18080\/task\/runSegment url script-request-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/xzimu-unlock.js
+
+# [mitm]
+# Upstream hostname = apps.tltgame.com,47.251.39.178
+hostname = apps.tltgame.com, 47.251.39.178

@@ -1,0 +1,25 @@
+# Name: 畅玩空间
+# Updated: 2026-10-25 19:01:30 +08:00
+# Merged by: chance
+# Source Authors: 怎么肥事
+# Category: app
+# Managed by: WayX Native QX
+
+# [rewrite_local]
+# Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/Cwkj.snippet
+# Upstream name = 畅玩空间
+# Upstream author = 怎么肥事
+# Upstream update = 2026-4-14
+
+# // 用户信息 - 修改等级/VIP
+^https:\/\/play\.wo1wan\.com\/nextgame\/igwuser\/userinfo url jsonjq-response-body '.info.LevelInfo.Level = 999 | .info.LevelInfo.VipLevel = 8 | .info.LevelInfo.Svip = 8 | .info.LevelInfo.VipExpires = "2099-01-01T00:00:00Z" | .info.LevelInfo.SVipExpires = "2099-01-01T00:00:00Z"'
+
+# // 用户公开信息 - 修改等级/VIP
+^https:\/\/play\.wo1wan\.com\/nextgame\/igwuser\/useropeninfo url jsonjq-response-body '.data.LevelInfo.Level = 999 | .data.LevelInfo.VipLevel = 8 | .data.LevelInfo.Svip = 8 | .data.LevelInfo.VipExpires = "2099-01-01T00:00:00Z" | .data.LevelInfo.SVipExpires = "2099-01-01T00:00:00Z"'
+
+# [mitm]
+
+
+# Upstream hostname = play.wo1wan.com
+
+hostname = play.wo1wan.com

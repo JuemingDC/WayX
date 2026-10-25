@@ -6,7 +6,7 @@
 
 [Rule]
 # Name: 雷速体育
-# Updated: 2026-10-25 18:31:42 +08:00
+# Updated: 2026-10-25 19:01:27 +08:00
 # Merged by: chance
 # Source Authors: 树先生
 # Category: app
@@ -42,9 +42,9 @@ DOMAIN,pgdt.ugdtimg.com,REJECT
 DOMAIN,mi.gdt.qq.com,REJECT
 DOMAIN,xadsmartget.adgain.cn,REJECT
 DOMAIN-SUFFIX,optaim.com,REJECT
-# [WayX] REVIEW REQUIRED: QX whole-header matcher has no verified native Surge equivalent
+# [WayX] REVIEW REQUIRED: URL-and-header conjunction retained for review; dropping the header condition would broaden matching
 # Source declaration: ^https:\/\/s3plus\.meituan\.net\/ leisu* url-and-header reject-dict
-# [WayX] REVIEW REQUIRED: QX whole-header matcher has no verified native Surge equivalent
+# [WayX] REVIEW REQUIRED: URL-and-header conjunction retained for review; dropping the header condition would broaden matching
 # Source declaration: ^https:\/\/img1\.360buyimg\.com\/pop\/jfs\/t1 leisu* url-and-header reject-dict
 # Upstream hostname = s3plus.meituan.net, img1.360buyimg.com, app-gateway.leisuapi.com
 

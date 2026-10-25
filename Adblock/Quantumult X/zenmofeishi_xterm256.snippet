@@ -1,0 +1,20 @@
+# Name: xterm256
+# Updated: 2026-10-25 19:01:30 +08:00
+# Merged by: chance
+# Source Authors: 怎么肥事
+# Category: app
+# Managed by: WayX Native QX
+
+# [rewrite_local]
+# Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/xTerm256.snippet
+# //2025/10/18
+#Name：xTerm256调试解锁🔓会员
+#Author：怎么肥事
+#使用方法：打开重写进软件恢复购买
+^https:\/\/buy\.itunes\.apple\.com\/verifyReceipt url jsonjq-response-body '.receipt.in_app[].expires_date_ms = "4092599349000" | .latest_receipt_info[].expires_date_ms = "4092599349000" | .pending_renewal_info[].auto_renew_status = "1"'
+
+# [mitm]
+
+# Upstream hostname = buy.itunes.apple.com
+
+hostname = buy.itunes.apple.com

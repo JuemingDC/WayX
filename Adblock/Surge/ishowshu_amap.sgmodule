@@ -6,7 +6,7 @@
 
 [Rule]
 # Name: 高德地图
-# Updated: 2026-10-25 18:31:41 +08:00
+# Updated: 2026-10-25 19:01:27 +08:00
 # Merged by: chance
 # Source Authors: 树先生
 # Category: app
@@ -17,7 +17,7 @@
 # Upstream author = 树先生
 # Upstream date = 2026-09-16
 # 阿里平台广告
-# [WayX] REVIEW REQUIRED: QX whole-header matcher has no verified native Surge equivalent
+# [WayX] REVIEW REQUIRED: URL-and-header conjunction retained for review; dropping the header condition would broaden matching
 # Source declaration: ^http:\/\/amdc\.m\.taobao\.com\/amdc\/mobileDispatch AMapiPhone* url-and-header reject
 # 开屏广告
 # 打车页面底部推广

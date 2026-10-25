@@ -1,0 +1,46 @@
+#!name=贴吧净化
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 贴吧净化
+# Updated: 2026-10-25 19:01:30 +08:00
+# Merged by: chance
+# Source Authors: 怎么肥事, app2smile, 可莉
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/TB.snippet
+# Upstream name = 贴吧净化
+# Upstream author = 怎么肥事、app2smile、可莉
+# Upstream update = 2026-4-14
+# // 分流
+DOMAIN,afd.baidu.com,REJECT
+DOMAIN,mobads.baidu.com,REJECT
+# // 聊天订阅 & 搜索发现 & 吧引导
+# // 直播Feed - 移除横幅
+# // 侧边栏 - 移除VIP横幅和工具
+# // 用户资料 - 移除广告/推广/多余功能区
+# // 吧底部 - 移除活动卡片和AI聊天引导
+# // 贴吧去广告(app2smile JSON版)
+# // 贴吧去广告(app2smile Proto版)
+# Upstream hostname = tieba.baidu.com, tiebac.baidu.com
+
+[Map Local]
+^https:\/\/tiebac\.baidu\.com\/c\/u\/chat\/getChatSubscriptionList data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/tiebac\.baidu\.com\/c\/f\/search\/discover data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/tiebac\.baidu\.com\/c\/f\/forum\/forumGuide data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Body Rewrite]
+http-response-jq ^https:\/\/tiebac\.baidu\.com\/livefeed\/feed 'del(.data.banner.items)'
+http-response-jq ^https:\/\/tiebac\.baidu\.com\/c\/f\/sidebar\/home 'del(.vip_banner, .tools)'
+http-response-jq ^https:\/\/tiebac\.baidu\.com\/c\/u\/user\/profile 'del(.banner, .duxiaoman_entry, .recom_naws_list, .vip_banner, .namoaixud_entry, .user.user_growth, .zone_info[1].commerce, .zone_info[2].banner, .zone_info[0].common_func, .zone_info[3].game, .zone_info[4].auxiliary_func) | .custom_grid |= map(select(.type != 60 and .type != 53 and .type != 58 and .type != 50 and .type != 10 and .type != 64 and .type != 51 and .type != 52 and .type != 55 and .type != 57 and .type != 62))'
+http-response-jq ^https:\/\/tieba\.baidu\.com\/c\/f\/frs\/frsBottom 'del(.card_activity.small_card, .card_activity.big_card, .ai_chatroom_guide)'
+
+[Script]
+zenmofeishi_tb_1 = type=http-response,pattern=^http(s:\/\/tiebac|:\/\/c\.tieba)\.baidu\.com\/(c\/f\/(frs\/(page|threadlist|generalTabList)|pb\/page|excellent\/personalized)$|tiebaads\/commonbatch|c\/s\/sync$),script-path=https://raw.githubusercontent.com/app2smile/rules/master/js/tieba-json.js,requires-body=true
+zenmofeishi_tb_2 = type=http-response,pattern=^http(s:\/\/tiebac|:\/\/c\.tieba)\.baidu\.com\/c\/f\/(frs\/(page|threadlist|generalTabList)|pb\/page|excellent\/personalized)\?cmd,script-path=https://raw.githubusercontent.com/app2smile/rules/master/js/tieba-proto.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% tieba.baidu.com, tiebac.baidu.com
