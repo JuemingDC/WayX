@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/WeixinMiniPrograms.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 16:18:03 +08:00
+# Converted: 2026-10-25 16:33:19 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/WexinMiniPrograms_Remove_ads.lpx
@@ -192,7 +192,7 @@ host, e.jparking.cn, reject
 (?i)^https:\/\/daijia\.kuaidadi\.com\/gateway\?api=prado\.cms\.delivery\.batch&apiVe url reject-dict
 
 (?i)^https:\/\/mcsp\.cloudpnr\.com\/api\/miniapp\/popular\/T_MINIAPP$ url jsonjq-response-body 'delpaths([["data"]])'
-(?i)^https:\/\/saas-ad\.cloudpnr\.com\/huifuad-base-api\/api\/tactics\/ad$ url jsonjq-response-body 'delpaths([["data",0]]) | delpaths([["data",1]]) | delpaths([["data",2]])'
+(?i)^https:\/\/saas-ad\.cloudpnr\.com\/huifuad-base-api\/api\/tactics\/ad$ url jsonjq-response-body 'delpaths([["data",0],["data",1],["data",2]])'
 
 (?i)^https:\/\/api\.szbgcx\.cn\/account\/adv\/ url reject
 

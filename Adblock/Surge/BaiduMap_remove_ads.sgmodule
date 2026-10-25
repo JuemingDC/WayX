@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduMap.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 16:18:02 +08:00
+# Converted: 2026-10-25 16:33:19 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduMap_remove_ads.lpx
 # Target: Surge
@@ -25,7 +25,7 @@ http-response-jq (?i)^https:\/\/newclient\.map\.baidu\.com\/(client\/)?usersyste
 
 http-response-jq (?i)^https:\/\/newclient\.map\.baidu\.com\/client\/phpui2\/\?qt=ads&type=user_home_new_service 'delpaths([["ads"]])'
 
-http-response-jq (?i)^https:\/\/newclient\.map\.baidu\.com\/living\/nearby\/api\? 'delpaths([["Result","cards",1]]) | delpaths([["Result","cards",4]]) | delpaths([["Result","cards",5]]) | delpaths([["Result","cards",9]])'
+http-response-jq (?i)^https:\/\/newclient\.map\.baidu\.com\/living\/nearby\/api\? 'delpaths([["Result","cards",1],["Result","cards",4],["Result","cards",5],["Result","cards",9]])'
 
 [Map Local]
 (?i)^https:\/\/afd\.baidu\.com\/afd\/entry\?action=(update|query) data-type=text data="{}" status-code=200 header="Content-Type:application/json"

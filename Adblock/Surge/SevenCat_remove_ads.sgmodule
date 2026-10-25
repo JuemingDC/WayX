@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SevenCat.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 16:18:03 +08:00
+# Converted: 2026-10-25 16:33:19 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/SevenCat_remove_ads.lpx
 # Target: Surge
@@ -28,7 +28,7 @@ DOMAIN-SUFFIX,gdt.qq.com,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 
-http-response-jq (?i)^https:\/\/xiaoshuo\.wtzw\.com\/api\/v\d\/user\/my-center\? 'delpaths([["data","func_area",1]]) | delpaths([["data","func_area",2]])'
+http-response-jq (?i)^https:\/\/xiaoshuo\.wtzw\.com\/api\/v\d\/user\/my-center\? 'delpaths([["data","func_area",1],["data","func_area",2]])'
 
 [Map Local]
 (?i)^https:\/\/api-cfg\.wtzw\.com\/v\d\/splash\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
