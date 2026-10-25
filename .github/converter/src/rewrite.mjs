@@ -618,10 +618,8 @@ function validateParts(parts) {
   return parts;
 }
 
-// Modified: 2026-10-23 (chance). Decide by source representation and execution
-// semantics, per jqlang 1.8 del(path_expression)/delpaths(PATHS). Numeric
-// traversal alone is harmless; only earlier removals that affect later paths
-// require ordered evaluation. Return the decision/reason for callers to inspect.
+// Modified: 2026-10-25 (chance). Always generate native delpaths path arrays
+// for fixed-path deletion; preserve ordered evaluation for dependent removals.
 export function planFixedPathDeleteJq(paths, {sourceForm='key-path', execution='sequential'}={}) {
   if (!Array.isArray(paths) || !paths.length) {
     throw new Error('delete path list must contain nonempty parsed paths');
@@ -651,13 +649,9 @@ export function planFixedPathDeleteJq(paths, {sourceForm='key-path', execution='
     form:'ordered-delpaths', reason:dependency, sourceForm, execution,
     jq:'reduce '+JSON.stringify(parts)+'[] as $p (.; delpaths([$p]))',
   };
-  if(sourceForm==='path-arrays')return {
-    form:'delpaths', reason:'typed-source-path-arrays', sourceForm, execution,
-    jq:'delpaths('+JSON.stringify(parts)+')',
-  };
   return {
-    form:'del', reason:'source-selectors-can-share-input', sourceForm, execution,
-    jq:'del('+parts.map(jqPathSelector).join(',')+')',
+    form:'delpaths', reason:'native-path-array-deletion', sourceForm, execution,
+    jq:'delpaths('+JSON.stringify(parts)+')',
   };
 }
 
