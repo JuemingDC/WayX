@@ -261,7 +261,8 @@ for (const [type,value,qxType] of filterCases) {
     else assert.equal(qx.kind, 'comment', type + '/' + policy);
     const surge = planSurgeModuleRuleAst(ast, {proxyPolicyPlaceholder:'{{{policy}}}'});
     const expected = policy === 'PROXY' ? '{{{policy}}}' : policy === 'REJECT-IMG' ? 'REJECT-TINYGIF' : policy;
-    if (policy === 'PROXY' || SURGE_MODULE_POLICIES.has(expected)) assert.equal(surge.line, `${type},${value},${expected}`);
+    // Modified: 2026-10-25 (chance). IP output now includes the user-requested DNS guard.
+    if (policy === 'PROXY' || SURGE_MODULE_POLICIES.has(expected)) assert.equal(surge.line, `${type},${value},${expected}`+(['IP-CIDR','IP-CIDR6','GEOIP','IP-ASN'].includes(type)?',no-resolve':''));
     else assert.equal(surge.kind, 'comment', type + '/' + policy);
   }
 }
@@ -308,6 +309,21 @@ assert.equal(inlineComment.ast.syntaxSource,'DOMAIN, mallapi2.qinlinkeji.com, RE
 assert.equal(inlineComment.ast.inlineComment,'商城页面');
 assert.equal(inlineComment.ast.policy,'REJECT');
 
+// Modified: 2026-10-25 (chance). Shared native-QX/Loon Surge adapter adds
+// no-resolve exactly once, preserving action/order, nesting and source AST.
+for(const [type,value] of [['IP-CIDR','192.0.2.0/24'],['IP-CIDR6','2001:db8::/32'],['GEOIP','CN'],['IP-ASN','13335']]) {
+  for(const policy of ['DIRECT','REJECT','PROXY']) {
+    const options={proxyPolicyPlaceholder:'{{{PROXY}}}'};
+    const expected=type+','+value+','+(policy==='PROXY'?'{{{PROXY}}}':policy)+',no-resolve';
+    const ast=parseLoonRuleAst(type+','+value+','+policy).ast;
+    const before=JSON.stringify(ast);
+    assert.equal(planSurgeModuleRuleAst(ast,options).line,expected);
+    assert.equal(JSON.stringify(ast),before);
+    assert.equal(surgeModuleRule(type+','+value+','+policy+',no-resolve',options).line,expected);
+  }
+}
+assert.equal(surgeModuleRule('AND,((DOMAIN,example.com),(IP-CIDR,192.0.2.0/24)),REJECT').line,
+  'AND,((DOMAIN,example.com),(IP-CIDR,192.0.2.0/24,no-resolve)),REJECT');
 const ipAsn=parseLoonRuleAst('IP-ASN, 6185, REJECT-DROP, no-resolve');
 assert.equal(ipAsn.ok,true);
 assert.equal(planQxRuleAst(ipAsn.ast).line,'ip-asn, 6185, reject');

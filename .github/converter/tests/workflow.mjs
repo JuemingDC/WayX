@@ -389,6 +389,11 @@ for policy in ['REJECT','REJECT-DROP','REJECT-NO-DROP','REJECT-TINYGIF']:
 for policy in ['PROXY','proxy','ai','Media','google','',None]:
  assert m.serialize(R('DOMAIN','example.com'),policy,'QuantumultX')=='host,example.com,proxy'
 assert m.serialize(R('DOMAIN','example.com'),'direct','QuantumultX')=='host,example.com,direct'
+# Modified: 2026-10-25 (chance). All four IP kinds gain one no-resolve,
+# while QX output retains its own native format.
+for kind,value in [('IP-CIDR','1.2.3.0/24'),('IP-CIDR6','2001:db8::/32'),('GEOIP','CN'),('IP-ASN','13335')]:
+ assert m.serialize(R(kind,value),'DIRECT','Surge')==kind+','+value+',no-resolve'
+ assert m.surge_options(R(kind,value,('no-resolve',)))==('no-resolve',)
 assert m.serialize(R('IP-CIDR','1.2.3.0/24',('no-resolve',)),'DIRECT','Surge')=='IP-CIDR,1.2.3.0/24,no-resolve'
 assert m.serialize(R('IP-CIDR','1.2.3.0/24',('no-resolve',)),'DIRECT','QuantumultX')=='ip-cidr,1.2.3.0/24,direct'
 assert m.regex_native(r'^a.+?\.example\.com$')=={R('DOMAIN-WILDCARD','a?*.example.com')}
@@ -421,7 +426,7 @@ assert m.native_rules('DST-PORT,443,PROXY\nDOMAIN,ok.example,PROXY',{'id':'fixtu
 assert ignored[0]['code']=='filtered-unsupported-rule'
 assert m.native_rules('sub.example\n',{'id':'domains','format':'domain-suffixes','policy':'REJECT'},[])==[(R('DOMAIN-SUFFIX','sub.example'),'REJECT')]
 assert m.native_rules('2001:db8::1/32\n',{'id':'cidr','format':'cidr','policy':'DIRECT'},[])==[(R('IP-CIDR6','2001:db8::/32',('no-resolve',)),'DIRECT')]
-assert m.serialize(m.normalized('GEOIP','cn'),'DIRECT','Surge')=='GEOIP,CN'
+assert m.serialize(m.normalized('GEOIP','cn'),'DIRECT','Surge')=='GEOIP,CN,no-resolve'
 assert m.serialize(m.normalized('GEOIP','cn'),'DIRECT','QuantumultX')=='geoip,cn,direct'
 assert m.native_rules('host-suffix,example.com,REJECT',{'id':'qx','format':'ruleset'},[])==[(R('DOMAIN-SUFFIX','example.com'),'REJECT')]
 
@@ -1330,7 +1335,7 @@ const convertedNative=convertNativeQxToSurge(qxConversionInput,{id:'native_fixtu
 assert.equal(convertedNative.diagnostics.length,0);
 assert.match(convertedNative.surge,/DOMAIN,keep\.example,DIRECT/);
 assert.ok(convertedNative.surge.includes('DOMAIN-SUFFIX,proxy.example,{{{PROXY}}}'));
-assert.match(convertedNative.surge,/IP-CIDR6,2001:db8::\/32,REJECT/);
+assert.match(convertedNative.surge,/IP-CIDR6,2001:db8::\/32,REJECT,no-resolve/);
 assert.match(convertedNative.surge,/a\.example _ reject/);
 assert.match(convertedNative.surge,/data="\{\}" status-code=200/);
 assert.ok(convertedNative.surge.includes("http-response-jq ^https://c.example 'delpaths([[\"ad\"],[\"banner\"]])'"));

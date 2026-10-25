@@ -422,13 +422,20 @@ def qx_policy(policy):
     return 'REJECT' if value.startswith('REJECT') else 'DIRECT' if value == 'DIRECT' else 'PROXY'
 
 
+# Modified: 2026-10-25 (chance). Surge IP rules never trigger DNS during
+# matching; cover rule sets and standalone policy-bearing sections identically.
+def surge_options(rule):
+    options = rule.options + (('no-resolve',) if rule.kind in ('IP-CIDR', 'IP-CIDR6', 'GEOIP', 'IP-ASN') else ())
+    return tuple(dict.fromkeys(options))
+
+
 def serialize(rule, policy, target):
     if target == 'QuantumultX':
         return ','.join((QX_TYPES[rule.kind], rule.value, qx_policy(policy).lower()))
     if policy not in ('DIRECT', 'PROXY') and not policy.startswith('REJECT'):
         if not re.fullmatch(r'[A-Za-z][A-Za-z0-9_]*', policy):
             raise ValueError('Invalid policy name')
-    return ','.join((rule.kind, rule.value.upper() if rule.kind == 'GEOIP' else rule.value, *rule.options))
+    return ','.join((rule.kind, rule.value.upper() if rule.kind == 'GEOIP' else rule.value, *surge_options(rule)))
 
 
 def build(config, inputs):
@@ -712,7 +719,7 @@ def build(config, inputs):
                     continue
                 if target == 'Surge':
                     lines.append(','.join((rule.kind, rule.value.upper() if rule.kind == 'GEOIP' else rule.value,
-                                           policy, *rule.options)))
+                                           policy, *surge_options(rule))))
                 else:
                     lines.append(serialize(rule, policy, target))
             extension = '.dconf' if target == 'Surge' else '.list'

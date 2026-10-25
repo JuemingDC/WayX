@@ -6,7 +6,7 @@
 
 [Rule]
 # Name: Soul
-# Updated: 2026-10-25 19:01:27 +08:00
+# Updated: 2026-10-25 22:57:12 +08:00
 # Merged by: chance
 # Source Authors: 树先生, 怎么肥事, 奶思
 # Category: app
@@ -17,11 +17,11 @@
 # Upstream desc = 移除广告，需要卸载重装生效
 # Upstream date = 2026-09-19
 # 分流走直连，避免影响功能使用
-IP-CIDR,13.127.149.196/32,DIRECT
-IP-CIDR,52.194.158.59/32,DIRECT
-IP-CIDR,47.56.131.76/32,DIRECT
-IP-CIDR,47.75.72.47/32,DIRECT
-IP-CIDR,3.0.163.78/32,DIRECT
+IP-CIDR,13.127.149.196/32,DIRECT,no-resolve
+IP-CIDR,52.194.158.59/32,DIRECT,no-resolve
+IP-CIDR,47.56.131.76/32,DIRECT,no-resolve
+IP-CIDR,47.75.72.47/32,DIRECT,no-resolve
+IP-CIDR,3.0.163.78/32,DIRECT,no-resolve
 # 官方广告
 DOMAIN,ssp.soulapp.cn,REJECT
 DOMAIN,soul-ad.soulapp.cn,REJECT

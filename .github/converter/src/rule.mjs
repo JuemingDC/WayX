@@ -351,6 +351,14 @@ export function surgeRuleTypesInTree(line,{subrule=false}={}) {
 
 export function planSurgeModuleRuleAst(ast,{proxyPolicyPlaceholder=null,matchingEnhancements=false,preMatching=true}={}) {
   ast=applyWayxDomainPolicy(ast);
+  // Modified: 2026-10-25 (chance). User requests no-resolve for all Surge
+  // destination-IP predicates, including nested ones; preserve policies/order
+  // and keep the caller's source AST unchanged. Do not duplicate existing flags.
+  ast=structuredClone(ast);
+  walkRuleAst(ast,node=>{
+    if(['IP-CIDR','IP-CIDR6','GEOIP','IP-ASN'].includes(node.type)&&!node.params.some(p=>p.name==='no-resolve'))
+      node.params.push({name:'no-resolve',raw:'no-resolve',value:null});
+  });
   const source=ast.source;
   const type=ast.type;
 
