@@ -99,7 +99,9 @@ export function resolveOriginalUrl(reference, baseUrl=null) {
 
 async function fetchViaNode(sourceUrl, profile, timeoutMs) {
   const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),timeoutMs);
+  // Modified: 2026-10-25 (chance). Give deadline failures a stable retry code.
+  const timeoutError=Object.assign(new Error(`Original source timed out: ${sourceUrl}`),{code:'ETIMEDOUT'});
+  const timer=setTimeout(()=>controller.abort(timeoutError),timeoutMs);
   try {
     const res=await fetch(sourceUrl,{
       headers:{'User-Agent':profile.userAgent,'Accept':profile.accept},
@@ -107,7 +109,22 @@ async function fetchViaNode(sourceUrl, profile, timeoutMs) {
       signal:controller.signal,
     });
     if (!res.ok) throw new Error(`HTTP ${res.status} from original source ${sourceUrl}`);
-    return Buffer.from(await res.arrayBuffer());
+    // Modified: 2026-10-25 (chance). Bound actual streamed bytes, including
+    // decompressed responses without a trustworthy Content-Length header.
+    const chunks=[];
+    let size=0;
+    for await (const chunk of res.body ?? []) {
+      size+=chunk.byteLength;
+      if(size>MAX_FETCH_BYTES) {
+        controller.abort();
+        throw Object.assign(new Error(`Source exceeds bounded download size: ${sourceUrl}`),{code:'ERR_FETCH_SIZE'});
+      }
+      chunks.push(chunk);
+    }
+    return Buffer.concat(chunks,size);
+  } catch(error) {
+    if(controller.signal.reason===timeoutError)throw timeoutError;
+    throw error;
   } finally {
     clearTimeout(timer);
   }
@@ -122,6 +139,7 @@ async function fetchViaPython(sourceUrl, profile, timeoutMs) {
       '--user-agent',profile.userAgent,
       '--accept',profile.accept,
       '--timeout-seconds',String(timeoutSeconds),
+      '--max-bytes',String(MAX_FETCH_BYTES),
     ],{
       encoding:null,
       maxBuffer:MAX_FETCH_BYTES,
@@ -135,11 +153,23 @@ async function fetchViaPython(sourceUrl, profile, timeoutMs) {
       ? error.stderr.toString('utf8').trim()
       : String(error?.stderr ?? '').trim();
     const detail=stderr || String(error?.message ?? error);
-    throw new Error(`Python urllib fetch failed from original source ${sourceUrl}: ${detail}`);
+    // Modified: 2026-10-25 (chance). Preserve subprocess deadline failures for retry.
+    const failure=new Error(`Python urllib fetch failed from original source ${sourceUrl}: ${detail}`,{cause:error});
+    if(error.code===25)failure.code='ERR_FETCH_SIZE';
+    if(error.killed && error.signal==='SIGKILL')failure.code='ETIMEDOUT';
+    throw failure;
   }
 }
 
 function isTransientFetchError(error) {
+  // Modified: 2026-10-25 (chance). Node fetch exposes network codes in cause;
+  // permanent size failures must never become retries through message matching.
+  if(error?.code==='ERR_FETCH_SIZE')return false;
+  const codes=new Set(['ECONNRESET','ECONNREFUSED','EAI_AGAIN','ETIMEDOUT','UND_ERR_CONNECT_TIMEOUT','UND_ERR_HEADERS_TIMEOUT','UND_ERR_BODY_TIMEOUT','UND_ERR_SOCKET']);
+  for(let cause=error,seen=new Set();cause && !seen.has(cause);cause=cause.cause) {
+    seen.add(cause);
+    if(codes.has(cause.code))return true;
+  }
   const text=String(error?.message ?? error);
   return /(?:ECONNRESET|ECONNREFUSED|EAI_AGAIN|ETIMEDOUT|Connection reset|Temporary failure|timed out|Timeout|HTTP (?:408|425|429|5\d\d)\b)/i.test(text);
 }

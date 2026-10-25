@@ -125,15 +125,30 @@ def setup_jq() -> None:
     print(f'Installed verified jq-{version}')
 
 
-def syntax() -> None:
+def syntax_checks(*, changed_scripts: bool = False) -> list[tuple[str, list[str]]]:
     checks = []
+    # Modified: 2026-10-25 (chance). Final verification checks converter syntax
+    # and only new/changed generated scripts, without rebuilding conversions.
+    changed = set()
+    if changed_scripts:
+        for command in [
+            ['git', 'diff', '--name-only', '-z', '--diff-filter=ACMR', 'HEAD', '--', 'Script'],
+            ['git', 'ls-files', '--others', '--exclude-standard', '-z', '--', 'Script'],
+        ]:
+            changed.update(subprocess.check_output(command).decode('utf-8').split('\0'))
     for directory in ['.github/converter', '.github/scripts', 'Script']:
         for file in sorted(Path(directory).rglob('*')):
             if file.is_file() and file.suffix in {'.js', '.mjs'}:
+                if changed_scripts and directory == 'Script' and file.as_posix() not in changed:
+                    continue
                 checks.append(('syntax:' + file.as_posix(), ['node', '--check', str(file)]))
     checks.append(('python-syntax', [sys.executable, '-m', 'compileall', '-q',
                                    '.github/converter', '.github/scripts', '.github/monitor']))
-    execute_checks('syntax', checks)
+    return checks
+
+
+def syntax() -> None:
+    execute_checks('syntax', syntax_checks())
 
 
 def regex() -> None:
@@ -185,7 +200,7 @@ def regex() -> None:
 def verify() -> None:
     # Conversion runs once. Check its actual files once, without replaying it or
     # running developer regression suites during routine upstream synchronization.
-    execute_checks('verify', [('tools/audit-repository.mjs',
+    execute_checks('verify', [*syntax_checks(changed_scripts=True), ('tools/audit-repository.mjs',
                               ['node', '.github/converter/tools/audit-repository.mjs'])])
 
 
