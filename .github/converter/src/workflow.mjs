@@ -533,14 +533,9 @@ export function qxSnippetInstallUrl(item) {
   if (!item?.rel || item.ext !== '.snippet') {
     throw new Error('Quantumult X module/adblock install target must be a .snippet resource');
   }
-  // Modified: 2026-10-25 (chance). One native file may supply both routing
-  // and rewrite subscriptions; register each existing section with the same URL.
-  if(item.text?.includes(NATIVE_QX_MARKER)) {
-    const descriptor=qxRemoteDescriptor(rawRepoUrl(item.rel),item.name),payload={};
-    if(/^# \[filter_local\]$/m.test(item.text))payload.filter_remote=[descriptor];
-    if(/^# \[rewrite_local\]$/m.test(item.text)||/^hostname\s*=/m.test(item.text))payload.rewrite_remote=[descriptor];
-    return qxAddResourceUrl(payload);
-  }
+  // Modified: 2026-10-25 (chance). QX build 844+ reads filter rules
+  // inside a rewrite snippet. All authors use one file and one subscription;
+  // never register that same app snippet in filter_remote a second time.
   return qxAddResourceUrl({
     rewrite_remote:[qxRemoteDescriptor(rawRepoUrl(item.rel), item.name)],
   });

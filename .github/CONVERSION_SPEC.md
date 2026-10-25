@@ -343,7 +343,7 @@ TestFlight 子服务采用 Tartarus2014 的 `Rule/Apple/TestFlight.lsr` 作为 A
 
 ## 2.20 原生 QX 来源同步
 
-`native-qx.json` 登记树先生 ishowshu/qx 与怎么肥事 ZenmoFeiShi/Qx，独立于 Loon→QX/Surge 转换。一次获取固定上游 commit 及完整目录，按应用文件名合并 filter/rewrite，保留原声明、类型、策略、注释、JQ 和脚本原地址；不执行 Loon 正则 flags 或 jq_delete 适配。上游未加引号的 jq 仅序列化为合法配置引号；REJECT 指令规范为小写 reject，注释标记规范为 #，原始声明保留为注释，不修改 JQ 程序或策略含义。MITM hostname 按出现顺序合并，段标题使用 QX 注释格式。多版本默认仅选择唯一单一作者版本，缺少唯一合格版本时记录 skipped；用户明确指定的 preferred_versions 优先，当前高德采用 amap-new，哔哩哔哩按用户新指令采用 bilibili-qx，不混合旧版，index 占位文件排除；其它独立分流也保留独立资源。输出使用 ishowshu_ 命名空间与专属管理标记，避免与其它作者覆盖、避免被 Loon 清理器删除。原生同步与既有同步共用当前运行快照，在 seal 前取得全部输入；未知语法、下载或校验失败阻止发布，事务失败回滚，退出来源仅清理专属状态记录中的文件。记录 commit、输入摘要及输出归属；内容不变时保留更新时间。README 归“树先生”，组内沿用 A–Z 排列，同时提供 QX 和对应 Surge 模块，待核对条目显示计数。一键导入按实际存在的分流/重写段分别向 filter_remote、rewrite_remote 登记同一文件 URL；仅分流的文件只登记 filter_remote，不设置 force-policy 覆盖源策略。依据 QX 官方 url-scheme.md 的批量 add-resource 格式。
+`native-qx.json` 登记树先生 ishowshu/qx 与怎么肥事 ZenmoFeiShi/Qx，独立于 Loon→QX/Surge 转换。一次获取固定上游 commit 及完整目录，按应用文件名合并 filter/rewrite，保留原声明、类型、策略、注释、JQ 和脚本原地址；不执行 Loon 正则 flags 或 jq_delete 适配。上游未加引号的 jq 仅序列化为合法配置引号；REJECT 指令规范为小写 reject，注释标记规范为 #，原始声明保留为注释，不修改 JQ 程序或策略含义。MITM hostname 按出现顺序合并，段标题使用 QX 注释格式。多版本默认仅选择唯一单一作者版本，缺少唯一合格版本时记录 skipped；用户明确指定的 preferred_versions 优先，当前高德采用 amap-new，哔哩哔哩按用户新指令采用 bilibili-qx，不混合旧版，index 占位文件排除；其它独立分流也保留独立资源。输出使用 ishowshu_ 命名空间与专属管理标记，避免与其它作者覆盖、避免被 Loon 清理器删除。原生同步与既有同步共用当前运行快照，在 seal 前取得全部输入；未知语法、下载或校验失败阻止发布，事务失败回滚，退出来源仅清理专属状态记录中的文件。记录 commit、输入摘要及输出归属；内容不变时保留更新时间。README 归“树先生”，组内沿用 A–Z 排列，同时提供 QX 和对应 Surge 模块，待核对条目显示计数。所有作者的应用资源一律合并为一个 .snippet（分流、重写和 MITM 同文件），一键导入只向 rewrite_remote 登记一次，不再向 filter_remote 重复登记同一应用。仅分流的应用 snippet 也沿用单一重写订阅入口；独立 Rule/*.list 仍作为分流规则集导入。不设置 force-policy 覆盖源策略。依据 QX 1.5.2 build 844 官方发布说明，重写 snippet 已支持包含分流规则，以及 QX 官方 url-scheme.md 的 add-resource 格式。
 
 <!-- Modified: 2026-10-25 (chance). Add bounded native QX-to-Surge conversion with explicit unsupported-semantics diagnostics and original script source checks. -->
 
@@ -356,3 +356,6 @@ TestFlight 子服务采用 Tartarus2014 的 `Rule/Apple/TestFlight.lsr` 作为 A
 Modified: 2026-10-25 (chance). 原生 QX 注册表 version 2 支持多个独立作者；继续支持 v1。新增 ZenmoFeiShi/Qx 根目录全部 .snippet，使用 zenmofeishi_ 前缀，README 独立归类“怎么肥事”；每个来源固定 commit、独立输入摘要，合并成一次事务提交和清理，不影响其它作者。依据 https://manual.nssurge.com/http/header-rewrite.html 及 QX 官方示例 request-header 整头语义；header-replace 缺字段时不新增。
 
 Modified: 2026-10-25 (chance). Echo 声明映射依据用户提供的 QX 官方示例（script-analyze-echo-response 等待请求体）及 https://manual.nssurge.com/scripting/http-request.html；这不构成作者 JavaScript API 兼容性验证。
+
+<!-- Modified: 2026-10-25 (chance). Remove author-specific dual subscription imports; all app resources use one mixed snippet and one rewrite_remote entry. -->
+应用资源的一文件一订阅约束适用于可莉、RuCu6、树先生、怎么肥事和其它作者。作者分组/独立版本保持，不按同名把不同作者的规则混用；同一作者同一应用的 filter/rewrite 源在转换准备时合并。Loon 转换器原本已在 renderQxOutput 中输出合并片段，原生 QX 同步器使用 mergeNativeQxSources；不得在导入阶段再次拆分。无需另行维护或订阅分流文件。已导入的旧分流订阅不会被新链接自动删除，用户需删除旧重复引用。QX build 844 发布证据：https://t.me/s/QuanXNews?before=313 。
