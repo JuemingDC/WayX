@@ -121,43 +121,202 @@
     {
       "path": "rewrite/youtube.snippet",
       "sha256": "f2df12ececb5ba8e3d27ad6bb448a10abada501f368da39c04b1517ba0a6ffe8"
+    },
+    {
+      "url": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/pdd.js",
+      "sha256": "fa4d1cac3c791fdac0d6007ce67e3a2ba7c1703d15807c2dd086dbf6d6bd8ddb"
+    },
+    {
+      "url": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/amap-new.js",
+      "sha256": "38e5772eb450d2f7eeb8d8f29011e470243367967fd01c907ec8178771f2f4ce"
+    },
+    {
+      "url": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/bestv.js",
+      "sha256": "a0b53d7d95c77ad576245a5a9c770a262c1204ca85e58ea1c6d9badee0e71b51"
+    },
+    {
+      "url": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/bilibili-ad.js",
+      "sha256": "f6b52b5370d979368121ecd757b5eaeea114d8668f5b9141c2197127a47a150a"
+    },
+    {
+      "url": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/caiyun.js",
+      "sha256": "003c3b37dfc1293b082daeca7469b9db478dacf2edd1580b1a3d416be4682bc0"
+    },
+    {
+      "url": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/goofish.js",
+      "sha256": "d76d0a65d975a523ad4bb62c5d90dc9898a5a93ad79cf03dea01150705792b20"
+    },
+    {
+      "url": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/keep.js",
+      "sha256": "d955973bdc94d7dab355bd534b60a5627b21bb0c3f9e89c9296214c41a9e7091"
+    },
+    {
+      "url": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/pp.js",
+      "sha256": "3b419ba2d6a95c31432c6cf025218c618b190d5a0bf793855e9346f21f6668bf"
+    },
+    {
+      "url": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/shihuo.js",
+      "sha256": "f29be23186bdee00873c43387a0b5cd4dc9b0d359cb11041558fb9257b5bc30b"
+    },
+    {
+      "url": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/soul_qx.js",
+      "sha256": "0bbbfc3474f3b0c5a294fd167dff2a804d40cb585cc80d63a868333f9770d605"
+    },
+    {
+      "url": "https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js",
+      "sha256": "f98483d5f5017514f82502253c0db5ce2d4ffb7839887aa2cadc22666f5a7f12"
     }
   ],
-  "skipped": [
+  "skipped": [],
+  "diagnostics": [
     {
-      "application": "bilibili",
-      "reason": "No unique single-author version",
-      "sources": [
-        "rewrite/bilibili-qx.snippet",
-        "rewrite/bilibili.snippet"
-      ]
+      "application": "taobao",
+      "source": "^http:\\/\\/amdc\\.m\\.taobao\\.com\\/amdc\\/mobileDispatch %E6%B7%98%E5%AE%9D* url-and-header reject",
+      "reason": "QX whole-header matcher has no verified native Surge equivalent"
+    },
+    {
+      "application": "amap",
+      "source": "^http:\\/\\/amdc\\.m\\.taobao\\.com\\/amdc\\/mobileDispatch AMapiPhone* url-and-header reject",
+      "reason": "QX whole-header matcher has no verified native Surge equivalent"
+    },
+    {
+      "application": "bestv",
+      "source": "https:\\/\\/bp-api\\.bestv\\.(?:com\\.cn|cn)\\/cms\\/api\\/(live\\/studio\\/id\\/v8|c\\/player\\/common) url script-response-body https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js",
+      "reason": "Original script source unavailable for API verification"
+    },
+    {
+      "application": "bestv",
+      "source": "^https?:\\/\\/360\\.com\\/(?:video|nba\\.m3u|dianshi\\.m3u)$ url script-response-body https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js",
+      "reason": "Original script source unavailable for API verification"
+    },
+    {
+      "application": "github",
+      "source": "^https:\\/\\/(raw|gist)\\.githubusercontent\\.com\\/ url request-header (\\r\\n)Accept-Language:.+(\\r\\n) request-header $1Accept-Language: en-us$2",
+      "reason": "No verified equivalent for QX action: request-header"
+    },
+    {
+      "application": "github",
+      "source": "^https:\\/\\/github\\.com\\/ url request-header (\\r\\n)Accept-Language:.+(\\r\\n) request-header $1Accept-Language: en-us$2",
+      "reason": "No verified equivalent for QX action: request-header"
+    },
+    {
+      "application": "goofish",
+      "source": "^http:\\/\\/amdc\\.m\\.taobao\\.com\\/amdc\\/mobileDispatch %E9%97%B2%E9%B1%BC* url-and-header reject",
+      "reason": "QX whole-header matcher has no verified native Surge equivalent"
+    },
+    {
+      "application": "lecheng",
+      "source": "^https:\\/\\/img1\\.360buyimg\\.com\\/pop\\/jfs\\/t1 LCIphoneAdhocIP* url-and-header reject-dict",
+      "reason": "QX whole-header matcher has no verified native Surge equivalent"
+    },
+    {
+      "application": "leisu",
+      "source": "^https:\\/\\/s3plus\\.meituan\\.net\\/ leisu* url-and-header reject-dict",
+      "reason": "QX whole-header matcher has no verified native Surge equivalent"
+    },
+    {
+      "application": "leisu",
+      "source": "^https:\\/\\/img1\\.360buyimg\\.com\\/pop\\/jfs\\/t1 leisu* url-and-header reject-dict",
+      "reason": "QX whole-header matcher has no verified native Surge equivalent"
+    },
+    {
+      "application": "soul",
+      "source": "^https:\\/\\/api-chat\\.soulapp\\.cn\\/chat\\/limitInfo url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/soul_qx.js",
+      "reason": "Script compatibility not proven for tokens/fields: $notify"
+    },
+    {
+      "application": "soul",
+      "source": "^https:\\/\\/api-chat\\.soulapp\\.cn\\/snapchat\\/url url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/soul_qx.js",
+      "reason": "Script compatibility not proven for tokens/fields: $notify"
+    },
+    {
+      "application": "youtube",
+      "source": "^https:\\/\\/youtubei\\.googleapis\\.com\\/youtubei\\/v1\\/browse url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js",
+      "reason": "Script compatibility not proven for tokens/fields: $r, $e, $t, $s, $n, $i, $loon, $prefs, $notify, $task"
+    },
+    {
+      "application": "youtube",
+      "source": "^https:\\/\\/youtubei\\.googleapis\\.com\\/youtubei\\/v1\\/search url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js",
+      "reason": "Script compatibility not proven for tokens/fields: $r, $e, $t, $s, $n, $i, $loon, $prefs, $notify, $task"
+    },
+    {
+      "application": "youtube",
+      "source": "^https:\\/\\/youtubei\\.googleapis\\.com\\/youtubei\\/v1\\/account\\/get_setting url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js",
+      "reason": "Script compatibility not proven for tokens/fields: $r, $e, $t, $s, $n, $i, $loon, $prefs, $notify, $task"
+    },
+    {
+      "application": "youtube",
+      "source": "^https:\\/\\/youtubei\\.googleapis\\.com\\/youtubei\\/v1\\/get_watch url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js",
+      "reason": "Script compatibility not proven for tokens/fields: $r, $e, $t, $s, $n, $i, $loon, $prefs, $notify, $task"
+    },
+    {
+      "application": "youtube",
+      "source": "^https:\\/\\/youtubei\\.googleapis\\.com\\/youtubei\\/v1\\/next url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js",
+      "reason": "Script compatibility not proven for tokens/fields: $r, $e, $t, $s, $n, $i, $loon, $prefs, $notify, $task"
+    },
+    {
+      "application": "youtube",
+      "source": "^https:\\/\\/youtubei\\.googleapis\\.com\\/youtubei\\/v1\\/player\\? url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js",
+      "reason": "Script compatibility not proven for tokens/fields: $r, $e, $t, $s, $n, $i, $loon, $prefs, $notify, $task"
+    },
+    {
+      "application": "youtube",
+      "source": "^https:\\/\\/youtubei\\.googleapis\\.com\\/youtubei\\/v1\\/reel\\/reel_watch_sequence url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js",
+      "reason": "Script compatibility not proven for tokens/fields: $r, $e, $t, $s, $n, $i, $loon, $prefs, $notify, $task"
     }
   ],
   "outputs": [
     "Adblock/Quantumult X/ishowshu_ad-platform.snippet",
+    "Adblock/Surge/ishowshu_ad-platform.sgmodule",
     "Adblock/Quantumult X/ishowshu_apple-notice.snippet",
+    "Adblock/Surge/ishowshu_apple-notice.sgmodule",
     "Adblock/Quantumult X/ishowshu_geoip.snippet",
+    "Adblock/Surge/ishowshu_geoip.sgmodule",
     "Adblock/Quantumult X/ishowshu_pdd.snippet",
+    "Adblock/Surge/ishowshu_pdd.sgmodule",
     "Adblock/Quantumult X/ishowshu_taobao.snippet",
+    "Adblock/Surge/ishowshu_taobao.sgmodule",
     "Adblock/Quantumult X/ishowshu_amap.snippet",
+    "Adblock/Surge/ishowshu_amap.sgmodule",
     "Adblock/Quantumult X/ishowshu_bestv.snippet",
+    "Adblock/Surge/ishowshu_bestv.sgmodule",
+    "Adblock/Quantumult X/ishowshu_bilibili.snippet",
+    "Adblock/Surge/ishowshu_bilibili.sgmodule",
     "Adblock/Quantumult X/ishowshu_caiyun.snippet",
+    "Adblock/Surge/ishowshu_caiyun.sgmodule",
     "Adblock/Quantumult X/ishowshu_cmbchina.snippet",
+    "Adblock/Surge/ishowshu_cmbchina.sgmodule",
     "Adblock/Quantumult X/ishowshu_didi.snippet",
+    "Adblock/Surge/ishowshu_didi.sgmodule",
     "Adblock/Quantumult X/ishowshu_douban.snippet",
+    "Adblock/Surge/ishowshu_douban.sgmodule",
     "Adblock/Quantumult X/ishowshu_github.snippet",
+    "Adblock/Surge/ishowshu_github.sgmodule",
     "Adblock/Quantumult X/ishowshu_goofish.snippet",
+    "Adblock/Surge/ishowshu_goofish.sgmodule",
     "Adblock/Quantumult X/ishowshu_hupu.snippet",
+    "Adblock/Surge/ishowshu_hupu.sgmodule",
     "Adblock/Quantumult X/ishowshu_jd.snippet",
+    "Adblock/Surge/ishowshu_jd.sgmodule",
     "Adblock/Quantumult X/ishowshu_jx.snippet",
+    "Adblock/Surge/ishowshu_jx.sgmodule",
     "Adblock/Quantumult X/ishowshu_keep.snippet",
+    "Adblock/Surge/ishowshu_keep.sgmodule",
     "Adblock/Quantumult X/ishowshu_lecheng.snippet",
+    "Adblock/Surge/ishowshu_lecheng.sgmodule",
     "Adblock/Quantumult X/ishowshu_leisu.snippet",
+    "Adblock/Surge/ishowshu_leisu.sgmodule",
     "Adblock/Quantumult X/ishowshu_pupu.snippet",
+    "Adblock/Surge/ishowshu_pupu.sgmodule",
     "Adblock/Quantumult X/ishowshu_shihuo.snippet",
+    "Adblock/Surge/ishowshu_shihuo.sgmodule",
     "Adblock/Quantumult X/ishowshu_soul.snippet",
+    "Adblock/Surge/ishowshu_soul.sgmodule",
     "Adblock/Quantumult X/ishowshu_ttts.snippet",
+    "Adblock/Surge/ishowshu_ttts.sgmodule",
     "Adblock/Quantumult X/ishowshu_xhs.snippet",
-    "Adblock/Quantumult X/ishowshu_youtube.snippet"
+    "Adblock/Surge/ishowshu_xhs.sgmodule",
+    "Adblock/Quantumult X/ishowshu_youtube.snippet",
+    "Adblock/Surge/ishowshu_youtube.sgmodule"
   ]
 }

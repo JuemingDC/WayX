@@ -1,0 +1,26 @@
+#!name=天天跳绳
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 天天跳绳
+# Updated: 2026-10-25 18:31:43 +08:00
+# Merged by: chance
+# Source Authors: 树先生
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/ttts.snippet
+# Upstream name = 天天跳绳
+# Upstream author = 树先生
+# Upstream desc = 移除广告
+# Upstream hostname = api.tiantiantiaosheng.com
+
+[Map Local]
+^https:\/\/api\.tiantiantiaosheng\.com\/api2\/abtest\/ads_v2 data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.tiantiantiaosheng\.com\/api2\/ad_sys\/fetch data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.tiantiantiaosheng\.com\/api2\/popup\/list data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% api.tiantiantiaosheng.com

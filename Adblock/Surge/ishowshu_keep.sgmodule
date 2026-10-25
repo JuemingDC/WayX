@@ -1,0 +1,47 @@
+#!name=Keep
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: Keep
+# Updated: 2026-10-25 18:31:42 +08:00
+# Merged by: chance
+# Source Authors: 树先生
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/keep.snippet
+# Upstream name=Keep
+# Upstream desc=我真的是来运动的
+# Upstream author=树先生
+DOMAIN,hc-ssp.sm.cn,REJECT
+DOMAIN,httpdns.calorietech.com,REJECT
+# > keep广告
+# 搜索页榜单
+# 热门搜索
+# 搜索关键词
+# 底部tab、发现tab项的顶部
+# 帖子详情页底部推荐帖子修改成只加载一个，全部干掉会有问题
+#^https:\/\/api\.gotokeep\.com\/twins\/v4\/feed\/entryDetail url jsonjq-response-body .data.modules = [.data.modules[0]]
+# 社区过滤掉推荐动态和推荐用户
+# Source declaration: ^https:\/\/api\.gotokeep\.com\/twins\/v1\/social\/tab\/friends url jsonjq-response-body .data.modules |= map(select(.positions | type == "object" and (has("recommendReason") | not) and (has("recommendUsers") | not)))
+# Upstream hostname = api.gotokeep.com, kad.gotokeep.com
+
+[Map Local]
+^https:\/\/kad\.gotokeep\.com\/op-engine-webapp\/v\d\/ad data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.gotokeep\.com\/op-engine-webapp\/v\d\/ad\/preload data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.gotokeep\.com\/search\/v5\/hotCourse\/list data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.gotokeep\.com\/search\/v4\/hotword\/list\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.gotokeep\.com\/search\/v6\/default\/keyword\/list\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.gotokeep\.com\/anno\/v1\/upgrade\/check$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.gotokeep\.com\/guide-webapp\/v1\/popup\/getPopUp data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Body Rewrite]
+http-response-jq ^https:\/\/api\.gotokeep\.com\/twins\/v1\/social\/tab\/friends '.data.modules |= map(select(.positions | type == "object" and (has("recommendReason") | not) and (has("recommendUsers") | not)))'
+
+[Script]
+ishowshu_keep_1 = type=http-response,pattern=^https:\/\/api\.gotokeep\.com\/config\/v3\/basic\?,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/keep.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% api.gotokeep.com, kad.gotokeep.com

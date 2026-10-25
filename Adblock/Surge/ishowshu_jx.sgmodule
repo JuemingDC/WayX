@@ -1,0 +1,29 @@
+#!name=吉祥航空
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 吉祥航空
+# Updated: 2026-10-25 18:31:42 +08:00
+# Merged by: chance
+# Source Authors: 树先生
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/jx.snippet
+# Upstream name = 吉祥航空
+# Upstream desc = 移除广告
+# Upstream author = 树先生
+# Upstream date = 2026-08-21 15:00
+# Source declaration: ^https:\/\/hoapp\.juneyaoair\.com\/data\/index\/getPictureList url jsonjq-response-body if (.objData | any(.picLocation == "POSITION_POP_INDEX" or .picLocation == "POSITION_MY_ADD")) then .objData = [] else . end
+# Upstream hostname = hoapp.juneyaoair.com
+
+[Map Local]
+^https:\/\/hoapp\.juneyaoair\.com\/data\/index\/getLoadPic data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Body Rewrite]
+http-response-jq ^https:\/\/hoapp\.juneyaoair\.com\/data\/index\/getPictureList 'if (.objData | any(.picLocation == "POSITION_POP_INDEX" or .picLocation == "POSITION_MY_ADD")) then .objData = [] else . end'
+
+[MITM]
+hostname = %APPEND% hoapp.juneyaoair.com

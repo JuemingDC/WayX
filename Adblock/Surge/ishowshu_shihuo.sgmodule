@@ -1,0 +1,56 @@
+#!name=识货
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 识货
+# Updated: 2026-10-25 18:31:42 +08:00
+# Merged by: chance
+# Source Authors: 树先生
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/shihuo.snippet
+# Upstream name = 识货
+# Upstream desc = 识货简化、开屏来源：https://github.com/fmz200/wool_scripts/raw/main/QuantumultX/rewrite/chongxie.txt
+# Upstream author = 树先生
+# 开屏广告
+# 首页相关
+# 搜索页图片
+# 搜索页榜单
+# 搜索页发现
+# 我的页面精选
+# 商品详情页
+# 我的页面背景
+# 首页商品列表广告:已加密
+#^https:\/\/sh-gateway\.shihuo\.cn\/v3\/sh-api\/daga\/home\/feed\/v1 url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/shihuo.js
+# 新版我的页面热门菜单
+# 新版我的页面头像和收藏等菜单
+# 每个页面的右下角调研图标
+# 商品详情页底部菜单栏爆料入口(2025-06-04-已被加密处理，失效)
+#^https:\/\/sh-gateway\.shihuo\.cn\/v4\/services\/sh-goodsapi\/public\/detail url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/shihuo.js
+# Upstream hostname = sh-gateway.shihuo.cn, static.shihuocdn.cn
+
+[URL Rewrite]
+^https?:\/\/sh-gateway\.shihuo\.cn\/v\d\/services\/sh-adapi\/home\/(screen|ad) _ reject
+^https:\/\/sh-gateway\.shihuo\.cn\/v3\/sh-api\/daga\/gdetails\/middleList\/v1 _ reject
+^https:\/\/sh-gateway\.shihuo\.cn\/v4\/services\/sh-goodsapi\/app_swoole_zone\/collections\/simple _ reject
+
+[Map Local]
+^https?:\/\/static\.shihuocdn\.cn\/admin\/imgs/202[0-9]{5}\/[a-z0-9]{32}_513x777\.png data-type=text data="" status-code=200
+^https?:\/\/static\.shihuocdn\.cn\/admin\/imgs/202[0-9]{5}\/[a-z0-9]{32}_750x1624\.png data-type=text data="" status-code=200
+^https:\/\/sh-gateway\.shihuo\.cn\/v4\/services\/sh-appapi\/search\/act data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/sh-gateway\.shihuo\.cn\/v4\/services\/sh-appapi\/search\/soaringlist data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/sh-gateway\.shihuo\.cn\/v3\/sh-api\/sh\/searchSpeed\/hotWordSearch data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/sh-gateway\.shihuo\.cn\/v3\/sh-api\/daga\/myPage\/goodsList\/v1 data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Script]
+ishowshu_shihuo_1 = type=http-response,pattern=^https:\/\/sh-gateway\.shihuo\.cn\/v4\/services\/sh-appapi\/home\/info\/v1,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/shihuo.js,requires-body=true
+ishowshu_shihuo_2 = type=http-response,pattern=^https:\/\/sh-gateway\.shihuo\.cn\/v4\/services\/sh-appapi\/my\/info,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/shihuo.js,requires-body=true
+ishowshu_shihuo_3 = type=http-response,pattern=^https:\/\/sh-gateway\.shihuo\.cn\/v4\/services\/sh-appapi\/center\/config\?,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/shihuo.js,requires-body=true
+ishowshu_shihuo_4 = type=http-response,pattern=^https:\/\/sh-gateway\.shihuo\.cn\/v4\/services\/sh-appapi\/center\/info\?,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/shihuo.js,requires-body=true
+ishowshu_shihuo_5 = type=http-response,pattern=^https:\/\/sh-gateway\.shihuo\.cn\/v4\/services\/sh-applicationapi\/pti,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/shihuo.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% sh-gateway.shihuo.cn, static.shihuocdn.cn

@@ -1,0 +1,55 @@
+#!name=雷速体育
+#!desc=Native QX conversion · 2 declarations require review
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 2
+
+[Rule]
+# Name: 雷速体育
+# Updated: 2026-10-25 18:31:42 +08:00
+# Merged by: chance
+# Source Authors: 树先生
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/leisu.snippet
+# Upstream name = 雷速体育
+# Upstream desc = 移除开屏和评论区广告
+# Upstream author = 树先生
+# Upstream date = 2026-09-09
+DOMAIN,api-ad.chuangyuejoy.com,REJECT
+DOMAIN,dsp-tos.mongac.com,REJECT
+DOMAIN,et.tanx.com,REJECT
+DOMAIN-SUFFIX,ubixioe.com,REJECT
+DOMAIN,v.adintl.cn,REJECT
+DOMAIN-SUFFIX,shunchangzhixing.com,REJECT
+DOMAIN,ad-api.adn-plus.com.cn,REJECT
+DOMAIN,res1.hubcloud.com.cn,REJECT
+DOMAIN-SUFFIX,zhangyuyidong.cn,REJECT
+DOMAIN,sdk.1rtb.net,REJECT
+DOMAIN,opehs.tanx.com,REJECT
+DOMAIN,dsp.1rtb.com,REJECT
+DOMAIN,dsp.ads.umeng.com,REJECT
+DOMAIN,analytics.oceanengine.com,REJECT
+DOMAIN,sdk-config.tanx.com,REJECT
+DOMAIN,adsmartget.datads.cn,REJECT
+DOMAIN,api-access.pangolin-sdk-toutiao-b.com,REJECT
+DOMAIN,api-access.pangolin-sdk-toutiao.com,REJECT
+DOMAIN-SUFFIX,anythinktech.com,REJECT
+DOMAIN,tnc3-alisc1.zijieapi.com,REJECT
+DOMAIN,v2mi.gdt.qq.com,REJECT
+DOMAIN-SUFFIX,pglstatp-toutiao.com,REJECT
+DOMAIN,pgdt.ugdtimg.com,REJECT
+DOMAIN,mi.gdt.qq.com,REJECT
+DOMAIN,xadsmartget.adgain.cn,REJECT
+DOMAIN-SUFFIX,optaim.com,REJECT
+# [WayX] REVIEW REQUIRED: QX whole-header matcher has no verified native Surge equivalent
+# Source declaration: ^https:\/\/s3plus\.meituan\.net\/ leisu* url-and-header reject-dict
+# [WayX] REVIEW REQUIRED: QX whole-header matcher has no verified native Surge equivalent
+# Source declaration: ^https:\/\/img1\.360buyimg\.com\/pop\/jfs\/t1 leisu* url-and-header reject-dict
+# Upstream hostname = s3plus.meituan.net, img1.360buyimg.com, app-gateway.leisuapi.com
+
+[Map Local]
+^https:\/\/app-gateway\.leisuapi\.com\/v1\/app\/mobile\/ads data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% s3plus.meituan.net, img1.360buyimg.com, app-gateway.leisuapi.com

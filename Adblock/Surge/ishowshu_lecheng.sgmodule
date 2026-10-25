@@ -1,0 +1,37 @@
+#!name=乐橙
+#!desc=Native QX conversion · 1 declarations require review
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 1
+
+[Rule]
+# Name: 乐橙
+# Updated: 2026-10-25 18:31:42 +08:00
+# Merged by: chance
+# Source Authors: 树先生
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/lecheng.snippet
+# Upstream name = 乐橙
+# Upstream desc = 移除开屏广告
+# Upstream author = 树先生
+DOMAIN-SUFFIX,ubixioe.com,REJECT
+DOMAIN,s.tuia.cn,REJECT
+DOMAIN,ssp.iytcdn.com,REJECT
+DOMAIN-SUFFIX,1rtb.net,REJECT
+DOMAIN,acg.youku.com,REJECT
+DOMAIN,mpcfg.fancydsp.com,REJECT
+DOMAIN-SUFFIX,zhangyuyidong.cn,REJECT
+DOMAIN-SUFFIX,1rtb.com,REJECT
+DOMAIN-SUFFIX,adx.adwangmai.com,REJECT
+DOMAIN,dsp-x.jd.com,REJECT
+DOMAIN,dspvideo.umeng.com,REJECT
+# [WayX] REVIEW REQUIRED: QX whole-header matcher has no verified native Surge equivalent
+# Source declaration: ^https:\/\/img1\.360buyimg\.com\/pop\/jfs\/t1 LCIphoneAdhocIP* url-and-header reject-dict
+# Upstream hostname = img1.360buyimg.com, dl-ct-hz.imou.com, dl-cm-hz.imou.com
+
+[Map Local]
+^https:\/\/dl-(?:ct|cm)-hz\.imou\.com(:443)?\/lechange\/saas\/advertisement\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% img1.360buyimg.com, dl-ct-hz.imou.com, dl-cm-hz.imou.com

@@ -1,0 +1,33 @@
+#!name=彩云天气Pro
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 彩云天气Pro
+# Updated: 2026-10-25 18:31:41 +08:00
+# Merged by: chance
+# Source Authors: 树先生, RuCu6
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/caiyun.snippet
+# Upstream name = 彩云天气Pro
+# Upstream desc = 去除广告
+# Upstream author = RuCu6
+DOMAIN,abyss.cyapi.cn,REJECT
+DOMAIN,ad.cyapi.cn,REJECT
+# Upstream hostname = api.caiyunapp.com, *.cyapi.cn
+
+[Map Local]
+^https:\/\/biz\.cyapi\.cn\/(p\/v1\/entries|p\/v1\/trial_card\/info|v2\/product) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/starplucker\.cyapi\.cn\/v3\/(config\/cypage\/\w+\/conditions|notification\/message_center|operation\/homefeatures) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Script]
+ishowshu_caiyun_1 = type=http-response,pattern=^https:\/\/api\.caiyunapp\.com\/v1\/activity\?,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/caiyun.js,requires-body=true
+ishowshu_caiyun_2 = type=http-response,pattern=^https:\/\/biz\.cyapi\.cn\/(api\/v1\/user_detail|p\/v1\/vip_info|v2\/user),script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/caiyun.js,requires-body=true
+ishowshu_caiyun_3 = type=http-response,pattern=^https:\/\/wrapper\.cyapi\.cn\/v1\/activity\?,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/caiyun.js,requires-body=true
+ishowshu_caiyun_4 = type=http-request,pattern=^https:\/\/wrapper\.cyapi\.cn\/v1\/(nafp\/origin_images|satellite)\?,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/caiyun.js,requires-body=false
+
+[MITM]
+hostname = %APPEND% api.caiyunapp.com, *.cyapi.cn

@@ -1,0 +1,25 @@
+#!name=京东
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 京东
+# Updated: 2026-10-25 18:31:42 +08:00
+# Merged by: chance
+# Source Authors: 树先生
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/jd.snippet
+# Upstream name = 京东
+# Upstream desc = 开屏广告
+# Upstream author = 树先生
+# Upstream hostname = m.360buyimg.com
+
+[Map Local]
+^https?:\/\/m\.360buyimg\.com\/mobilecms\/s1125x2436_jfs data-type=text data="" status-code=200
+^https?:\/\/m\.360buyimg\.com\/mobilecms\/jfs\/t1\/\d+\/\d+\/\d+\/\d+\/[a-zA-Z0-9]+\/[a-zA-Z0-9]+\.jpg$ data-type=text data="" status-code=200
+
+[MITM]
+hostname = %APPEND% m.360buyimg.com
