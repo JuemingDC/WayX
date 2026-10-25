@@ -10,13 +10,13 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/OraySunlogin.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:46 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/OraySunlogin_remove_ads.lpx
 # Target: Surge
 
 [Map Local]
-(?i)^https:\/\/client-api-v2\.oray\.com\/materials\/SLCC_iOS_DEVICE_FREE\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/client-api-v2\.oray\.com\/materials\/SLCC_iOS_DEVICE_FREE\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% client-api-v2.oray.com

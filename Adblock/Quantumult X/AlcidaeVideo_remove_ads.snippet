@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/AlcidaeVideo.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:19 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/AlcidaeVideo_remove_ads.lpx
@@ -16,15 +16,15 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/app-api-32\.ihaique\.net\/api\/app\/v\d\/appad\/cmd\/AppadGetSplashAds\? url reject-dict
+^https:\/\/app-api-32\.ihaique\.net\/api\/app\/v\d\/appad\/cmd\/AppadGetSplashAds\? url reject-dict
 
-(?i)^https:\/\/app-api-32\.ihaique\.net\/api\/app\/v\d\/appad\/cmd\/AppGetAttentionInfos\? url reject-dict
+^https:\/\/app-api-32\.ihaique\.net\/api\/app\/v\d\/appad\/cmd\/AppGetAttentionInfos\? url reject-dict
 
-(?i)^https:\/\/app-api-32\.ihaique\.net\/api\/app\/v\d\/appad\/cmd\/AppadGetBannerAds\? url reject-dict
+^https:\/\/app-api-32\.ihaique\.net\/api\/app\/v\d\/appad\/cmd\/AppadGetBannerAds\? url reject-dict
 
-(?i)^https:\/\/g\.ihaique\.net\/alcidae\/info\/index\.html$ url reject
+^https:\/\/g\.ihaique\.net\/alcidae\/info\/index\.html$ url reject
 
-(?i)^https:\/\/shop151522958\.youzan\.com\/v\d\/showcase\/homepage\? url reject
+^https:\/\/shop151522958\.youzan\.com\/v\d\/showcase\/homepage\? url reject
 
 # [mitm]
 hostname = app-api-32.ihaique.net, g.ihaique.net, shop151522958.youzan.com

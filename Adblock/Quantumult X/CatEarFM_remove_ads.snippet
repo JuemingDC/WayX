@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/CatEarFM.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 16:33:19 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/CatEarFM_remove_ads.lpx
@@ -16,33 +16,33 @@
 # [filter_local]
 
 # [rewrite_local]
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/app\.missevan\.com\/site\/launch\? url jsonjq-response-body 'delpaths([["info","splash"],["info","splash_ready"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+^https:\/\/app\.missevan\.com\/site\/launch\? url jsonjq-response-body 'delpaths([["info","splash"],["info","splash_ready"]])'
 
-(?i)^https:\/\/data\.missevan\.com\/site\/ad-track$ url reject-dict
+^https:\/\/data\.missevan\.com\/site\/ad-track$ url reject-dict
 
-(?i)^https:\/\/app\.missevan\.com\/site\/config$ url jsonjq-response-body 'delpaths([["info","tab_bar_live"],["0"],["info","enable_tab_bar_live_notice"],["false"],["info","teenager_popup_mode"],["0"]])'
+^https:\/\/app\.missevan\.com\/site\/config$ url jsonjq-response-body 'delpaths([["info","tab_bar_live"],["0"],["info","enable_tab_bar_live_notice"],["false"],["info","teenager_popup_mode"],["0"]])'
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/app\.missevan\.com\/site\/config$ url jsonjq-response-body 'delpaths([["info","httpdns"],["info","homepage_top_task_button"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+^https:\/\/app\.missevan\.com\/site\/config$ url jsonjq-response-body 'delpaths([["info","httpdns"],["info","homepage_top_task_button"]])'
 
-(?i)^https:\/\/app\.missevan\.com\/site\/config$ url jsonjq-response-body '.info.cronet |= (fromjson | .quic=false | tojson)'
+^https:\/\/app\.missevan\.com\/site\/config$ url jsonjq-response-body '.info.cronet |= (fromjson | .quic=false | tojson)'
 
-(?i)^https:\/\/app\.missevan\.com\/x\/recommend\/get-popup$ url reject-dict
+^https:\/\/app\.missevan\.com\/x\/recommend\/get-popup$ url reject-dict
 
-(?i)^https:\/\/fm\.missevan\.com\/api\/v2\/meta\/banner$ url reject-dict
+^https:\/\/fm\.missevan\.com\/api\/v2\/meta\/banner$ url reject-dict
 
-(?i)^https:\/\/app\.missevan\.com\/site\/tabs\? url jsonjq-response-body '.info.tabs |= map(select(.title as $t | ["直播", "发现", "广播剧", "听书", "分类"] | index($t) != null))'
+^https:\/\/app\.missevan\.com\/site\/tabs\? url jsonjq-response-body '.info.tabs |= map(select(.title as $t | ["直播", "发现", "广播剧", "听书", "分类"] | index($t) != null))'
 
-(?i)^https:\/\/app\.missevan\.com\/site\/icons\? url jsonjq-response-body '.info.icons |= map(select(.title as $t | $t == "直播" or $t == "必听剧" or $t == "免费榜" or $t == "夜猫子" or $t == "启动音"))'
+^https:\/\/app\.missevan\.com\/site\/icons\? url jsonjq-response-body '.info.icons |= map(select(.title as $t | $t == "直播" or $t == "必听剧" or $t == "免费榜" or $t == "夜猫子" or $t == "启动音"))'
 
-(?i)^https:\/\/fm\.missevan\.com\/api\/v2\/recommended\/top\? url reject-dict
+^https:\/\/fm\.missevan\.com\/api\/v2\/recommended\/top\? url reject-dict
 
-(?i)^https:\/\/app\.missevan\.com\/discovery\/list$ url jsonjq-response-body '.info |= map(map(select(.title != "免流服务")))'
+^https:\/\/app\.missevan\.com\/discovery\/list$ url jsonjq-response-body '.info |= map(map(select(.title != "免流服务")))'
 
-(?i)^https:\/\/fm\.missevan\.com\/api\/v2\/chatroom\/sound\/recommend\? url reject-dict
+^https:\/\/fm\.missevan\.com\/api\/v2\/chatroom\/sound\/recommend\? url reject-dict
 
-(?i)^https:\/\/app\.missevan\.com\/site\/get-top$ url jsonjq-response-body 'delpaths([["info","search_words"]])'
+^https:\/\/app\.missevan\.com\/site\/get-top$ url jsonjq-response-body 'delpaths([["info","search_words"]])'
 
 # [mitm]
 hostname = app.missevan.com, data.missevan.com, fm.missevan.com

@@ -10,24 +10,24 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MaiMai.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 15:58:33 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/MaiMai_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 
-http-response-jq (?i)^https:\/\/(h3\.)?open\.taou\.com\/maimai\/feed\/v6\/detail_recommend_feeds\? 'delpaths([["feeds"]])'
+http-response-jq ^https:\/\/(h3\.)?open\.taou\.com\/maimai\/feed\/v6\/detail_recommend_feeds\? 'delpaths([["feeds"]])'
 
 [Map Local]
-(?i)^https:\/\/(h3\.)?open\.taou\.com\/maimai\/adshow\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/(h3\.)?open\.taou\.com\/maimai\/adshow\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/(h3\.)?open\.taou\.com\/maimai\/pay\/v5\/check_gift\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/(h3\.)?open\.taou\.com\/maimai\/pay\/v5\/check_gift\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/(h3\.)?open\.taou\.com\/maimai\/go_gossip_darwin\/external\/v2\/query_flow_cards\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/(h3\.)?open\.taou\.com\/maimai\/go_gossip_darwin\/external\/v2\/query_flow_cards\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-移除信息流和评论区大块广告 = type=http-response,pattern=(?i)^https:\/\/(h3\.)?open\.taou\.com\/maimai\/(feed|gossip)\/v\d\/(focus_feed|gossip_detail_comment|feed_detail_comment?)\?,script-path=https://kelee.one/Resource/JavaScript/MaiMai/MaiMai_remove_ads.js,requires-body=true,max-size=-1,timeout=20
+移除信息流和评论区大块广告 = type=http-response,pattern=^https:\/\/(h3\.)?open\.taou\.com\/maimai\/(feed|gossip)\/v\d\/(focus_feed|gossip_detail_comment|feed_detail_comment?)\?,script-path=https://kelee.one/Resource/JavaScript/MaiMai/MaiMai_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% open.taou.com, h3.open.taou.com

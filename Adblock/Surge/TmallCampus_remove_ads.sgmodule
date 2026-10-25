@@ -10,25 +10,25 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/TmallCampus.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 15:58:33 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/TmallCampus_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-http-response-jq (?i)^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.tmall\.kangaroo\.core\.service\.route\.fixrespagerecommend\/ 'delpaths([["data","resultValue","data","normal-banner-resource-code"],["data","resultValue","data","feeds-channel-code"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+http-response-jq ^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.tmall\.kangaroo\.core\.service\.route\.fixrespagerecommend\/ 'delpaths([["data","resultValue","data","normal-banner-resource-code"],["data","resultValue","data","feeds-channel-code"]])'
 
-http-response-jq (?i)^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.tmall\.campus\.guide\.app\.userprofile\.framework\.v\d\/ 'del(.data.memberBenefit, .data.memberBenefitNew) | .data.moduleSorts |= map(select(. != "memberBenefit" and . != "memberBenefitNew"))'
+http-response-jq ^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.tmall\.campus\.guide\.app\.userprofile\.framework\.v\d\/ 'del(.data.memberBenefit, .data.memberBenefitNew) | .data.moduleSorts |= map(select(. != "memberBenefit" and . != "memberBenefitNew"))'
 
 [Map Local]
-(?i)^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.tmall\.campus\.guide\.advertising\.config\.list\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.tmall\.campus\.guide\.advertising\.config\.list\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.tmall\.campus\.ai\.agent\.assistant\.settings\.get\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.tmall\.campus\.ai\.agent\.assistant\.settings\.get\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.tmall\.campus\.guide\.delivering\.recall\.general\.data\.query\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-(?i)^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.tmall\.campus\.guide\.app\.home\.pop\.get\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.tmall\.campus\.guide\.delivering\.recall\.general\.data\.query\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.tmall\.campus\.guide\.app\.home\.pop\.get\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% acs.m.taobao.com

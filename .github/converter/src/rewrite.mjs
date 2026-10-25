@@ -1118,7 +1118,7 @@ function nativeJsonPriorityPlan(ast,target) {
   if(!matcher.ok)return null;
   const mapped=jsonPipelineToSafeNativeJq(ast);
   if(!mapped.ok)return null;
-  const note=ast.condition?.right?.flags ? '# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags '+ast.condition.right.flags+'; this mapping is not a verified target-engine equivalence.\n' : '';
+  const note=ast.condition?.right?.flags ? '# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags '+ast.condition.right.flags+'; user-authorized compatibility downgrade; matching semantics may differ.\n' : '';
   const mapping=REWRITE_MUTATION_MAPPINGS[ast.actions[0].name];
   const line=target==='qx' ? matcher.pattern+' url '+mapping.qx+' '+quoteJq(mapped.jq) : mapping.surge+' '+matcher.pattern+' '+quoteJq(mapped.jq);
   return {section:target==='qx'?'rewrite':'body',line,...(note?{lines:[note.trim(),line]}:{})};
@@ -2761,7 +2761,10 @@ function qxNativeHeaderPlan(ast) {
       const pattern=String(regex.pattern);
       if(/[\^$]|\\[sSDWnr1-9xucpP0]|\(\?[^:]|\[\^|\[\[:/.test(pattern) || (regex.flags?.includes('s') && pattern.includes('.')))return null;
       const field=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-      const body=regex.flags?'(?'+regex.flags+':'+pattern+')':'(?:'+pattern+')';
+      // Modified: 2026-10-25 (chance). Apply the same source-flag omission
+      // to the embedded Header value matcher; keep grouping/captures intact.
+      // const body=regex.flags?'(?'+regex.flags+':'+pattern+')':'(?:'+pattern+')';
+      const body='(?:'+pattern+')';
       const token=REWRITE_MUTATION_MAPPINGS[ast.actions[0].name].qx;
       const search='(?m)^((?i:'+field+'):[\\t\\x20]*[^\\r\\n]*?)('+body+')';
       const value='$1'+replacement.replace(/\$(\d+)/g,(_,number)=>'$'+(Number(number)+2));

@@ -9,17 +9,17 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MoeGirlWiki.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:30 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/MoeGirlWiki_remove_ads.lpx
 # Target: Surge
 
 [URL Rewrite]
-(?i)^https:\/\/grpc\.moegirl\.org\.cn\/moegirl\.moepad\.MoepadAppMetaService\/GetAppInitialInfo$ _ reject
+^https:\/\/grpc\.moegirl\.org\.cn\/moegirl\.moepad\.MoepadAppMetaService\/GetAppInitialInfo$ _ reject
 
-(?i)^https:\/\/grpc\.moegirl\.org\.cn\/moegirl\.moepad\.MoepadService\/GetLaunchAdPage$ _ reject
+^https:\/\/grpc\.moegirl\.org\.cn\/moegirl\.moepad\.MoepadService\/GetLaunchAdPage$ _ reject
 
-(?i)^https:\/\/grpc\.moegirl\.org\.cn\/moegirl\.moepad\.MoepadService\/GetFeedAdProbability$ _ reject
+^https:\/\/grpc\.moegirl\.org\.cn\/moegirl\.moepad\.MoepadService\/GetFeedAdProbability$ _ reject
 
 [MITM]
 hostname = %APPEND% grpc.moegirl.org.cn

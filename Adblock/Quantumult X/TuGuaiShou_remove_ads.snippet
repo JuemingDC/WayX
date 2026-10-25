@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/TuGuaiShou.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:39 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/TuGuaiShou_remove_ads.lpx
@@ -16,10 +16,10 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/api\.818ps\.com\/v4\/advertisement\/ url reject-dict
+^https:\/\/api\.818ps\.com\/v4\/advertisement\/ url reject-dict
 
-(?i)^https:\/\/api\.818ps\.com\/v4\/popup\/ url reject-dict
-(?i)^https:\/\/api\.818ps\.com\/v4\/festival\/newYear\/pop\? url reject-dict
+^https:\/\/api\.818ps\.com\/v4\/popup\/ url reject-dict
+^https:\/\/api\.818ps\.com\/v4\/festival\/newYear\/pop\? url reject-dict
 
 # [mitm]
 hostname = api.818ps.com

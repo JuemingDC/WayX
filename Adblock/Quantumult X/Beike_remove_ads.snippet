@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Beike.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 15:58:32 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Beike_remove_ads.lpx
@@ -16,21 +16,21 @@
 # [filter_local]
 
 # [rewrite_local]
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/homepage\/initData\/mini\? url jsonjq-response-body 'delpaths([["data","bootpage"],["data","bottom_bar_activity"]])'
-(?i)^https:\/\/apps\.api\.ke\.com\/config\/config\/bootpage\? url reject-dict
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/homepage\/initData\/mini\? url jsonjq-response-body 'delpaths([["data","bootpage"],["data","bottom_bar_activity"]])'
+^https:\/\/apps\.api\.ke\.com\/config\/config\/bootpage\? url reject-dict
 
-(?i)^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/userCenter\/feed\? url reject-dict
+^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/userCenter\/feed\? url reject-dict
 
-(?i)^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/userCenter\/info\? url jsonjq-response-body 'delpaths([["data","islandModule"]])'
+^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/userCenter\/info\? url jsonjq-response-body 'delpaths([["data","islandModule"]])'
 
-(?i)^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/userCenter\/info\? url jsonjq-response-body 'del(.data.mainIcons.list[] | select(.indexKey == "coupon"))'
+^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/userCenter\/info\? url jsonjq-response-body 'del(.data.mainIcons.list[] | select(.indexKey == "coupon"))'
 
-(?i)^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/myhome\/pagedetail\? url jsonjq-response-body '.data.moduleList |= map(select(.tab != "myHomeDecorV4"))'
+^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/myhome\/pagedetail\? url jsonjq-response-body '.data.moduleList |= map(select(.tab != "myHomeDecorV4"))'
 
-(?i)^https:\/\/apps\.api\.ke\.com\/config\/config\/getactivityconfig\? url reject-dict
+^https:\/\/apps\.api\.ke\.com\/config\/config\/getactivityconfig\? url reject-dict
 
-(?i)^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/homepage\/feed\? url jsonjq-response-body '.data.list |= map(select(.cardType == "houseContainer" or .cardType == "houseV2" or .cardType == "houseV3" or .cardType == "rentHouseDiscount" or .cardType == "decorationCase"))'
+^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/homepage\/feed\? url jsonjq-response-body '.data.list |= map(select(.cardType == "houseContainer" or .cardType == "houseV2" or .cardType == "houseV3" or .cardType == "rentHouseDiscount" or .cardType == "decorationCase"))'
 
 # [mitm]
 hostname = apps.api.ke.com

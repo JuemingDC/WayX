@@ -10,21 +10,21 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/OKOK.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:01 +08:00
+# Converted: 2026-10-25 17:18:10 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/OKOK_remove_ads.lpx
 # Target: Surge
 
 [URL Rewrite]
 
-(?i)^https:\/\/shop171777386\.m\.youzan\.com\/v2\/showcase\/homepage\? _ reject
+^https:\/\/shop171777386\.m\.youzan\.com\/v2\/showcase\/homepage\? _ reject
 
 [Map Local]
-(?i)^https:\/\/api\.chips-cloud\.com\/v\d\/home\/collection\/smartv\d\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.chips-cloud\.com\/v\d\/home\/collection\/smartv\d\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/api\.chips-cloud\.com\/v\d\/communityManage\/list\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.chips-cloud\.com\/v\d\/communityManage\/list\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/api\.chips-cloud\.com\/v\d\/good\/list\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.chips-cloud\.com\/v\d\/good\/list\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% api.chips-cloud.com, shop171777386.m.youzan.com

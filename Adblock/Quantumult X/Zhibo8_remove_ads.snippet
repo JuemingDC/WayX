@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Zhibo8.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 15:58:33 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Zhibo8_remove_ads.lpx
@@ -16,33 +16,33 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/headline\.qiumibao\.com\/recommend\/list\? url jsonjq-response-body '.news|=map(select(.model=="news" or .model=="video"))'
+^https:\/\/headline\.qiumibao\.com\/recommend\/list\? url jsonjq-response-body '.news|=map(select(.model=="news" or .model=="video"))'
 
-(?i)^https:\/\/a\.qiumibao\.com\/found\/\? url jsonjq-response-body 'map(select(.is_game != true))'
+^https:\/\/a\.qiumibao\.com\/found\/\? url jsonjq-response-body 'map(select(.is_game != true))'
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/a\.qiumibao\.com\/ios\/config\/\? url jsonjq-response-body 'delpaths([["skin"],["advert"],["advert_config"],["mall"],["httpdns"],["reward"],["pgame"],["corner_mark"],["liveshop"],["theme"],["pop"],["live_activity_push"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+^https:\/\/a\.qiumibao\.com\/ios\/config\/\? url jsonjq-response-body 'delpaths([["skin"],["advert"],["advert_config"],["mall"],["httpdns"],["reward"],["pgame"],["corner_mark"],["liveshop"],["theme"],["pop"],["live_activity_push"]])'
 
-(?i)^https:\/\/a\.qiumibao\.com\/ios\/config\/\? url jsonjq-response-body '.all_sections.match_sections.labels |= (if . then (.blacks_disable |= if . then map(select(. != "游戏")) else . end) | (.show |= if . then map(select(. != "游戏")) else . end) else . end)'
+^https:\/\/a\.qiumibao\.com\/ios\/config\/\? url jsonjq-response-body '.all_sections.match_sections.labels |= (if . then (.blacks_disable |= if . then map(select(. != "游戏")) else . end) | (.show |= if . then map(select(. != "游戏")) else . end) else . end)'
 
-(?i)^https:\/\/rn\.qiumibao\.com\/news\/relation\.php$ url reject-dict
+^https:\/\/rn\.qiumibao\.com\/news\/relation\.php$ url reject-dict
 
-(?i)^https:\/\/guess\.qiumibao\.com\/api\/c\/notice$ url reject-dict
+^https:\/\/guess\.qiumibao\.com\/api\/c\/notice$ url reject-dict
 
-(?i)^https:\/\/guess\.qiumibao\.com\/api\/c\/pop$ url reject-dict
+^https:\/\/guess\.qiumibao\.com\/api\/c\/pop$ url reject-dict
 
-(?i)^https:\/\/guess\.qiumibao\.com\/api\/ep\/pop$ url reject-dict
+^https:\/\/guess\.qiumibao\.com\/api\/ep\/pop$ url reject-dict
 
-(?i)^https:\/\/guess\.qiumibao\.com\/api\/c\/banner$ url reject-dict
-(?i)^https:\/\/guess\.qiumibao\.com\/api\/n\/rcd$ url jsonjq-response-body 'delpaths([["data","banner"]])'
-(?i)^https:\/\/pre-match\.qiumibao\.com\/pre_match_data\/v\d\/\d+-\d+-\d+\/\d+_fund\.htm\? url jsonjq-response-body 'del(.data[] | select(.type == "guide"))'
+^https:\/\/guess\.qiumibao\.com\/api\/c\/banner$ url reject-dict
+^https:\/\/guess\.qiumibao\.com\/api\/n\/rcd$ url jsonjq-response-body 'delpaths([["data","banner"]])'
+^https:\/\/pre-match\.qiumibao\.com\/pre_match_data\/v\d\/\d+-\d+-\d+\/\d+_fund\.htm\? url jsonjq-response-body 'del(.data[] | select(.type == "guide"))'
 
-(?i)^https:\/\/guess\.qiumibao\.com\/api\/c\/menu$ url jsonjq-response-body 'delpaths([["data","banner"]])'
+^https:\/\/guess\.qiumibao\.com\/api\/c\/menu$ url jsonjq-response-body 'delpaths([["data","banner"]])'
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/s\.qiumibao\.com\/m\/ios\/json\/zhibo\/zuqiu\/\d+\/match\d+vl\.htm\? url jsonjq-response-body 'delpaths([["ep_v2"],["ep_live"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+^https:\/\/s\.qiumibao\.com\/m\/ios\/json\/zhibo\/zuqiu\/\d+\/match\d+vl\.htm\? url jsonjq-response-body 'delpaths([["ep_v2"],["ep_live"]])'
 
-(?i)^https:\/\/search\.qiumibao\.com\/hot\/word_list$ url reject-dict
+^https:\/\/search\.qiumibao\.com\/hot\/word_list$ url reject-dict
 
 # [mitm]
 hostname = headline.qiumibao.com, a.qiumibao.com, rn.qiumibao.com, guess.qiumibao.com, s.qiumibao.com, pre-match.qiumibao.com, search.qiumibao.com

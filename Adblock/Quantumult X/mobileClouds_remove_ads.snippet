@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/mobileClouds.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:53 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/mobileClouds_remove_ads.lpx
@@ -17,10 +17,10 @@
 
 # [rewrite_local]
 # 移除开屏广告
-(?i)^https:\/\/jzts\.cmpassport\.com\/personalized\/getPushContent url script-response-body https://kelee.one/Resource/JavaScript/mobileClouds/mobileClouds_remove_ads.js
+^https:\/\/jzts\.cmpassport\.com\/personalized\/getPushContent url script-response-body https://kelee.one/Resource/JavaScript/mobileClouds/mobileClouds_remove_ads.js
 
 # 移除应用内广告
-(?i)^https:\/\/ad\.mcloud\.139\.com\/advertapi\/adv-filter\/ url script-response-body https://kelee.one/Resource/JavaScript/mobileClouds/mobileClouds_remove_ads.js
+^https:\/\/ad\.mcloud\.139\.com\/advertapi\/adv-filter\/ url script-response-body https://kelee.one/Resource/JavaScript/mobileClouds/mobileClouds_remove_ads.js
 
 # [mitm]
 hostname = jzts.cmpassport.com, ad.mcloud.139.com

@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/iReaderDejian.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 15:58:32 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/iReaderDejian_remove_ads.lpx
 # Target: Surge
@@ -20,18 +20,18 @@ DOMAIN,smad.ms.zhangyue.net,REJECT,extended-matching,pre-matching
 DOMAIN,saad.ms.zhangyue.net,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-http-response-jq (?i)^https:\/\/dj\.palmestore\.com\/zybk\/api\/powerup\/userGroup\? 'delpaths([["body","sevenDaysAd"],["body","shortPlayShow"],["body","sdkShortPlayAB"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+http-response-jq ^https:\/\/dj\.palmestore\.com\/zybk\/api\/powerup\/userGroup\? 'delpaths([["body","sevenDaysAd"],["body","shortPlayShow"],["body","sdkShortPlayAB"]])'
 
-http-response-jq (?i)^https:\/\/dj\.palmestore\.com\/zybk\/api\/search\/index\? 'delpaths([["body","keywords"]])'
+http-response-jq ^https:\/\/dj\.palmestore\.com\/zybk\/api\/search\/index\? 'delpaths([["body","keywords"]])'
 
 [Map Local]
 
-(?i)^https:\/\/dj\.palmestore\.com\/djad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-(?i)^https:\/\/dj\.palmestore\.com\/zybk\/api\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-(?i)^https:\/\/dj\.palmestore\.com\/zyapi\/bookstore\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/dj\.palmestore\.com\/djad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/dj\.palmestore\.com\/zybk\/api\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/dj\.palmestore\.com\/zyapi\/bookstore\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/dj\.palmestore\.com\/zybk\/api\/bookshelf\/index\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/dj\.palmestore\.com\/zybk\/api\/bookshelf\/index\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% dj.palmestore.com

@@ -10,23 +10,23 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Roborock.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:02 +08:00
+# Converted: 2026-10-25 17:18:10 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Roborock_remove_ads.lpx
 # Target: Surge
 
 [URL Rewrite]
 
-(?i)^https:\/\/cniot\.roborock\.com\/api\/v1\/app\/theme\/device\/icon\? _ reject
+^https:\/\/cniot\.roborock\.com\/api\/v1\/app\/theme\/device\/icon\? _ reject
 
 [Body Rewrite]
 
-http-response-jq (?i)^https:\/\/api\.roborock\.com\/v2\/h5\.page\.item\.info\?id=4115$ '.data |= map(select(.title == "常用功能"))'
+http-response-jq ^https:\/\/api\.roborock\.com\/v2\/h5\.page\.item\.info\?id=4115$ '.data |= map(select(.title == "常用功能"))'
 
 [Map Local]
-(?i)^https:\/\/cniot\.roborock\.com\/api\/v1\/activity\/banner\/list$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/cniot\.roborock\.com\/api\/v1\/activity\/banner\/list$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/cniot\.roborock\.com\/api\/v1\/activity\/latest$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/cniot\.roborock\.com\/api\/v1\/activity\/latest$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% cniot.roborock.com, api.roborock.com

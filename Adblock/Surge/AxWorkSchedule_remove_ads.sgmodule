@@ -10,17 +10,17 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/AxWorkSchedule.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:31 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/AxWorkSchedule_remove_ads.lpx
 # Target: Surge
 
 [Map Local]
-(?i)^https:\/\/schedule-api\.julanling\.com\/api\d\/get_splash$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/schedule-api\.julanling\.com\/api\d\/get_splash$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/schedule-api\.julanling\.com\/api\d\/index_advert$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/schedule-api\.julanling\.com\/api\d\/index_advert$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/schedule-api\.julanling\.com\/api\d\/queryAdvertConfig$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/schedule-api\.julanling\.com\/api\d\/queryAdvertConfig$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% schedule-api.julanling.com

@@ -10,22 +10,22 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FlyerTea.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:16 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/FlyerTea_remove_ads.lpx
 # Target: Surge
 
 [URL Rewrite]
-(?i)^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=advis _ reject
+^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=advis _ reject
 
 [Map Local]
-(?i)^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=vip_coupon data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-(?i)^https:\/\/ptf\.flyertrip\.com\/static\/img\/common\/ic_plate_mine_button\.png data-type=tiny-gif status-code=200
-(?i)^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=getdata data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=vip_coupon data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/ptf\.flyertrip\.com\/static\/img\/common\/ic_plate_mine_button\.png data-type=tiny-gif status-code=200
+^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=getdata data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-移除板块广告 = type=http-response,pattern=(?i)^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?version=5,script-path=https://kelee.one/Resource/JavaScript/FlyerTea/FlyerTea_remove_ads.js,requires-body=true,max-size=-1,timeout=20
-移除签到弹窗广告 = type=http-response,pattern=(?i)^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=plugin&id=k_misign:sign,script-path=https://kelee.one/Resource/JavaScript/FlyerTea/FlyerTea_remove_ads.js,requires-body=true,max-size=-1,timeout=20
+移除板块广告 = type=http-response,pattern=^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?version=5,script-path=https://kelee.one/Resource/JavaScript/FlyerTea/FlyerTea_remove_ads.js,requires-body=true,max-size=-1,timeout=20
+移除签到弹窗广告 = type=http-response,pattern=^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=plugin&id=k_misign:sign,script-path=https://kelee.one/Resource/JavaScript/FlyerTea/FlyerTea_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% www.flyert.com.cn, ptf.flyertrip.com

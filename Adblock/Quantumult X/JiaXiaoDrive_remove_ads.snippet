@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/JiaXiaoDrive.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 15:58:32 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/JiaXiaoDrive_remove_ads.lpx
@@ -16,12 +16,12 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/richmanrules\.ksedt\.com\/serverConfig\/3\/adConfig\.json url reject-dict
-(?i)^https:\/\/gouche\.ksedt\.com\/config\/popup\/info$ url reject-dict
-(?i)^https:\/\/richmanrules\.ksedt\.com\/intellectWaterfallBidding\/find$ url reject-dict
-(?i)^https:\/\/op\.ksedt\.com\/jxedtLive\/liveIntroduceResource url reject-dict
-(?i)^https:\/\/richmanrules\.ksedt\.com\/intellectWaterfall\/find$ url reject-dict
-(?i)http-response url jsonjq-response-body 'delpaths([["^https:\\/\\/api\\","ksedt\\","com\\/api\\/config\\/"]])'
+^https:\/\/richmanrules\.ksedt\.com\/serverConfig\/3\/adConfig\.json url reject-dict
+^https:\/\/gouche\.ksedt\.com\/config\/popup\/info$ url reject-dict
+^https:\/\/richmanrules\.ksedt\.com\/intellectWaterfallBidding\/find$ url reject-dict
+^https:\/\/op\.ksedt\.com\/jxedtLive\/liveIntroduceResource url reject-dict
+^https:\/\/richmanrules\.ksedt\.com\/intellectWaterfall\/find$ url reject-dict
+http-response url jsonjq-response-body 'delpaths([["^https:\\/\\/api\\","ksedt\\","com\\/api\\/config\\/"]])'
 
 # [mitm]
 hostname = richmanrules.ksedt.com, gouche.ksedt.com, muses.ksedt.com, op.ksedt.com, api.ksedt.com

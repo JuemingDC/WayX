@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/jingdong.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-10-25 15:58:33 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/jingdong.lpx
@@ -15,19 +15,19 @@
 # Source declaration: AND, ((DOMAIN, api.m.jd.com), (PROTOCOL, TCP)), REJECT-NO-DROP
 
 # [rewrite_local]
-(?i)^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(?:cartCouponRecommendGoods|intelligentRecommendSku|obtainGrowingInfo|recommendShop|searchBoxWord|stationPullService|uniformRecommend) url reject-dict
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=basicConfig url jsonjq-response-body 'setpath(["data","JDMessage","socketmonitor","isSocketEstablishedAhead"]; 0) | setpath(["data","JDMessage","socketmonitor","isSocketReport"]; 0) | setpath(["data","JDHttpToolKit","httpdns","httpdns"]; 0)'
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=cart url jsonjq-response-body 'delpaths([["cartLocationMap","loc_emptyCartFloor2"],["emptyCartRecommendFloor"]])'
+^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(?:cartCouponRecommendGoods|intelligentRecommendSku|obtainGrowingInfo|recommendShop|searchBoxWord|stationPullService|uniformRecommend) url reject-dict
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=basicConfig url jsonjq-response-body 'setpath(["data","JDMessage","socketmonitor","isSocketEstablishedAhead"]; 0) | setpath(["data","JDMessage","socketmonitor","isSocketReport"]; 0) | setpath(["data","JDHttpToolKit","httpdns","httpdns"]; 0)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=cart url jsonjq-response-body 'delpaths([["cartLocationMap","loc_emptyCartFloor2"],["emptyCartRecommendFloor"]])'
 # manmanbuy_cookies
 # [WayX] Source enable forced to enabled for Quantumult X by user conversion policy; source default/off switch is not carried over.
-(?i)^https:\/\/apapia-sqk-weblogic\.manmanbuy\.com\/baoliao\/center\/menu$ url script-request-body https://rucu6.pages.dev/Scripts/manmanbuy_ck.js
+^https:\/\/apapia-sqk-weblogic\.manmanbuy\.com\/baoliao\/center\/menu$ url script-request-body https://rucu6.pages.dev/Scripts/manmanbuy_ck.js
 # jingdong_noad
-(?i)^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(?:deliverLayer|getTabHomeInfo|myOrderInfo|orderTrackBusiness|personinfoBusiness|start|welcomeHome) url script-response-body https://rucu6.pages.dev/Scripts/jingdong.js
+^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(?:deliverLayer|getTabHomeInfo|myOrderInfo|orderTrackBusiness|personinfoBusiness|start|welcomeHome) url script-response-body https://rucu6.pages.dev/Scripts/jingdong.js
 # jd_price
 # [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
-(?i)^https:\/\/in\.m\.jd\.com\/product\/graphext\/\d+\.html\? url script-response-body https://rucu6.pages.dev/Scripts/jd_price.js
+^https:\/\/in\.m\.jd\.com\/product\/graphext\/\d+\.html\? url script-response-body https://rucu6.pages.dev/Scripts/jd_price.js
 
 # [mitm]
 hostname = apapia-sqk-weblogic.manmanbuy.com, api.m.jd.com, in.m.jd.com

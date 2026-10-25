@@ -10,17 +10,17 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/WPForum.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:42 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/WPForum_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 
-http-response-jq (?i)^https:\/\/api\.wfdata\.club\/v2\/yesfeng\/slideshow\? '.data |= map(select(.protocolId == 1))'
+http-response-jq ^https:\/\/api\.wfdata\.club\/v2\/yesfeng\/slideshow\? '.data |= map(select(.protocolId == 1))'
 
 [Map Local]
-(?i)^https:\/\/api\.wfdata\.club\/v2\/yesfeng\/yesList\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.wfdata\.club\/v2\/yesfeng\/yesList\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% api.wfdata.club

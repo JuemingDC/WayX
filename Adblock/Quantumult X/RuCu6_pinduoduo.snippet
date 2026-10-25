@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/pinduoduo.png
 # Updated: 2026-09-28 21:10
 
-# Converted: 2026-10-25 15:58:33 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 插件
 # Source: https://rucu6.pages.dev/Plugins/pinduoduo.lpx
@@ -28,30 +28,30 @@ host, th.pinduoduo.com, reject
 host, titan.pinduoduo.com, reject
 
 # [rewrite_local]
-(?i)^https:\/\/api\.(?:pinduoduo|yangkeduo)\.com\/api\/cappuccino\/splash\? url reject-dict
-(?i)^https:\/\/api\.pinduoduo\.com\/api\/alexa\/(?:cells\/hub|goods\/back_up) url reject-dict
-(?i)^https:\/\/api\.pinduoduo\.com\/api\/aquarius\/hungary\/global\/homepage\? url reject-dict
-(?i)^https:\/\/api\.pinduoduo\.com\/api\/brand-olay\/goods_detail\/bybt_guide url reject-dict
-(?i)^https:\/\/api\.pinduoduo\.com\/api\/buffon\/nasus\/recommend\? url reject-dict
-(?i)^https:\/\/api\.pinduoduo\.com\/api\/caterham\/v3\/query\/ url reject-dict
+^https:\/\/api\.(?:pinduoduo|yangkeduo)\.com\/api\/cappuccino\/splash\? url reject-dict
+^https:\/\/api\.pinduoduo\.com\/api\/alexa\/(?:cells\/hub|goods\/back_up) url reject-dict
+^https:\/\/api\.pinduoduo\.com\/api\/aquarius\/hungary\/global\/homepage\? url reject-dict
+^https:\/\/api\.pinduoduo\.com\/api\/brand-olay\/goods_detail\/bybt_guide url reject-dict
+^https:\/\/api\.pinduoduo\.com\/api\/buffon\/nasus\/recommend\? url reject-dict
+^https:\/\/api\.pinduoduo\.com\/api\/caterham\/v3\/query\/ url reject-dict
 ^https:\/\/api\.pinduoduo\.com\/api\/dunkirk\/subaru\/goods_list_v2\? url reject-dict
-(?i)^https:\/\/api\.pinduoduo\.com\/api\/engels\/reviews\/require\/append url reject-dict
-(?i)^https:\/\/api\.pinduoduo\.com\/api\/express\/post\/landing_page\/ad\/recommend_goods_list\/pickup_identity_code\? url reject-dict
-(?i)^https:\/\/api\.pinduoduo\.com\/api\/flow\/hungary\/window\/global\/v2\? url reject-dict
-(?i)^https:\/\/api\.pinduoduo\.com\/api\/zaire_biz\/chat\/resource\/get_list_data url reject-dict
-(?i)^https:\/\/api\.pinduoduo\.com\/api\/xrec\/goods_rec\/pay_after_use_v2\? url reject-dict
-(?i)^https:\/\/api\.pinduoduo\.com\/search_hotquery\? url reject-dict
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/api\.pinduoduo\.com\/api\/oak\/integration\/render url jsonjq-response-body 'delpaths([["bottom_section_list"],["ui","bottom_section"],["ui","live_section","float_info"]])'
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/api\.pinduoduo\.com\/api\/philo\/personal\/hub\? url jsonjq-response-body 'delpaths([["monthly_card_entrance"],["personal_banner"],["personal_center_style_v2_vo"],["icon_set","icons"],["icon_set","top_personal_icons"],["title_bar_items"]])'
-(?i)^https:\/\/api\.pinduoduo\.com\/search url jsonjq-response-body 'delpaths([["expansion"]])'
+^https:\/\/api\.pinduoduo\.com\/api\/engels\/reviews\/require\/append url reject-dict
+^https:\/\/api\.pinduoduo\.com\/api\/express\/post\/landing_page\/ad\/recommend_goods_list\/pickup_identity_code\? url reject-dict
+^https:\/\/api\.pinduoduo\.com\/api\/flow\/hungary\/window\/global\/v2\? url reject-dict
+^https:\/\/api\.pinduoduo\.com\/api\/zaire_biz\/chat\/resource\/get_list_data url reject-dict
+^https:\/\/api\.pinduoduo\.com\/api\/xrec\/goods_rec\/pay_after_use_v2\? url reject-dict
+^https:\/\/api\.pinduoduo\.com\/search_hotquery\? url reject-dict
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+^https:\/\/api\.pinduoduo\.com\/api\/oak\/integration\/render url jsonjq-response-body 'delpaths([["bottom_section_list"],["ui","bottom_section"],["ui","live_section","float_info"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+^https:\/\/api\.pinduoduo\.com\/api\/philo\/personal\/hub\? url jsonjq-response-body 'delpaths([["monthly_card_entrance"],["personal_banner"],["personal_center_style_v2_vo"],["icon_set","icons"],["icon_set","top_personal_icons"],["title_bar_items"]])'
+^https:\/\/api\.pinduoduo\.com\/search url jsonjq-response-body 'delpaths([["expansion"]])'
 # 精简首页
-(?i)^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub\? url script-response-body https://rucu6.pages.dev/Scripts/pinduoduo.js
+^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub\? url script-response-body https://rucu6.pages.dev/Scripts/pinduoduo.js
 # 精简评价页
-(?i)^https:\/\/m\.pinduoduo\.net\/comment_result\.html\? url script-response-body https://rucu6.pages.dev/Scripts/pinduoduo.js
+^https:\/\/m\.pinduoduo\.net\/comment_result\.html\? url script-response-body https://rucu6.pages.dev/Scripts/pinduoduo.js
 # 精简取件页
-(?i)^https:\/\/m\.pinduoduo\.net\/mdkd\/package\? url script-response-body https://rucu6.pages.dev/Scripts/pinduoduo.js
+^https:\/\/m\.pinduoduo\.net\/mdkd\/package\? url script-response-body https://rucu6.pages.dev/Scripts/pinduoduo.js
 
 # [mitm]
 hostname = api.pinduoduo.com, api.yangkeduo.com, m.pinduoduo.net

@@ -10,17 +10,17 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/NarwelRobots.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:51 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/NarwelRobots_remove_ads.lpx
 # Target: Surge
 
 [Map Local]
-(?i)^https:\/\/cn-app\.narwaltech\.com\/operate\/appPosition\/listSplash\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/cn-app\.narwaltech\.com\/operate\/appPosition\/listSplash\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/cn-app\.narwaltech\.com\/operate\/cactivity\/listByResourceIds\?resourceIds=(user_center_banner|index_banner) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/cn-app\.narwaltech\.com\/operate\/cactivity\/listByResourceIds\?resourceIds=(user_center_banner|index_banner) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/store\.narwal\.com\/mall\/customPage\/getByPageKeyword\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/store\.narwal\.com\/mall\/customPage\/getByPageKeyword\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% cn-app.narwaltech.com, store.narwal.com

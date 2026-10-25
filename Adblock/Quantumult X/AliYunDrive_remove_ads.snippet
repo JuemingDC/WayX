@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/AliYunDrive.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:07 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/AliYunDrive_remove_ads.lpx
@@ -17,12 +17,12 @@
 ip-cidr, 203.107.1.1/24, reject
 
 # [rewrite_local]
-(?i)^https:\/\/member\.alipan\.com\/v2\/activity\/sign_in_luckyBottle url reject-dict
-(?i)^https:\/\/api\.alipan\.com\/adrive\/v1\/file\/getTopFolders url reject-dict
+^https:\/\/member\.alipan\.com\/v2\/activity\/sign_in_luckyBottle url reject-dict
+^https:\/\/api\.alipan\.com\/adrive\/v1\/file\/getTopFolders url reject-dict
 # 移除阿里云盘广告
-(?i)^https:\/\/(biz)?api\.alipan\.com\/apps\/v\d\/users?\/home\/(news|widgets) url script-response-body https://kelee.one/Resource/JavaScript/AliYunDrive/AliYunDrive_remove_ads.js
+^https:\/\/(biz)?api\.alipan\.com\/apps\/v\d\/users?\/home\/(news|widgets) url script-response-body https://kelee.one/Resource/JavaScript/AliYunDrive/AliYunDrive_remove_ads.js
 # 移除阿里云盘广告
-(?i)^https:\/\/member\.alipan\.com\/v1\/users\/onboard_list url script-response-body https://kelee.one/Resource/JavaScript/AliYunDrive/AliYunDrive_remove_ads.js
+^https:\/\/member\.alipan\.com\/v1\/users\/onboard_list url script-response-body https://kelee.one/Resource/JavaScript/AliYunDrive/AliYunDrive_remove_ads.js
 
 # [mitm]
 hostname = api.alipan.com, member.alipan.com, bizapi.alipan.com

@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Kuwo.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:26 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Kuwo_remove_ads.lpx
 # Target: Surge
@@ -20,7 +20,7 @@ IP-CIDR,111.206.98.63/32,REJECT,no-resolve,pre-matching
 
 [Body Rewrite]
 
-http-response-jq (?i)^http:\/\/wapi\.kuwo\.cn\/openapi\/v\d\/tingshu\/index\/radio 'walk(if type == "object" and .type == "stripAdvert" then del(.child) else . end)'
+http-response-jq ^http:\/\/wapi\.kuwo\.cn\/openapi\/v\d\/tingshu\/index\/radio 'walk(if type == "object" and .type == "stripAdvert" then del(.child) else . end)'
 
 [Map Local]
 ^http:\/\/rich\.kuwo\.cn\/AdService\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
@@ -36,10 +36,10 @@ http-response-jq (?i)^http:\/\/wapi\.kuwo\.cn\/openapi\/v\d\/tingshu\/index\/rad
 ^http:\/\/vip\d\.kuwo\.cn\/vip\/v\d\/sysinfo\?op=getRePayAndDoPayBox data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 ^http:\/\/wapi\.kuwo\.cn\/openapi\/v\d\/album\/adBar\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-(?i)^https:\/\/vip\d\.kuwo\.cn\/commercia\/vipconf\/projectPage\/getPageContent data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-(?i)^https:\/\/tingshu\.kuwo\.cn\/v2\/api\/pay\/user\/info data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/vip\d\.kuwo\.cn\/commercia\/vipconf\/projectPage\/getPageContent data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/tingshu\.kuwo\.cn\/v2\/api\/pay\/user\/info data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/appi\.kuwo\.cn\/kuwopay\/personal\/cells data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/appi\.kuwo\.cn\/kuwopay\/personal\/cells data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% appi.kuwo.cn, mc.tencentmusic.com, vip*.kuwo.cn, tingshu.kuwo.cn

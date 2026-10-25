@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/XiaoCan.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 12:34:30 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/XiaoCan_remove_ads.lpx
@@ -16,13 +16,13 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/gw\.xiaocantech\.com\/rpc url request-header (?m)^((?i:methodname):[\t\x20]*[^\r\n]*?)((?:.*(GetBannerList|IsShowOrderAwardPopup|UserLifeShopList|BrandBannerList|GetPromotionGlobalCfg))) request-header $1null
+^https:\/\/gw\.xiaocantech\.com\/rpc url request-header (?m)^((?i:methodname):[\t\x20]*[^\r\n]*?)((?:.*(GetBannerList|IsShowOrderAwardPopup|UserLifeShopList|BrandBannerList|GetPromotionGlobalCfg))) request-header $1null
 
-(?i)^https:\/\/web2\.realtech-inc\.com\/oss\/xc-app-assets\/configs\/common\/theme\.json url reject-dict
+^https:\/\/web2\.realtech-inc\.com\/oss\/xc-app-assets\/configs\/common\/theme\.json url reject-dict
 
-(?i)^https:\/\/sdk\.1rtb\.net\/sdk\/req_ad\? url reject-dict
+^https:\/\/sdk\.1rtb\.net\/sdk\/req_ad\? url reject-dict
 
-(?i)^https:\/\/gw\.xiaocantech\.com\/g\/pa url reject-dict
+^https:\/\/gw\.xiaocantech\.com\/g\/pa url reject-dict
 
 # [mitm]
 hostname = gw.xiaocantech.com, web2.realtech-inc.com, sdk.1rtb.net

@@ -388,9 +388,9 @@ export function stripRegexFlags(node) {
 // Author: chance
 // Category: Converter / Regex / Cross-platform
 //
-// Native target fields encode Loon i/m/s as leading inline modifiers.
+// Native target fields currently emit only the regex body by user policy.
 // Client-engine equivalence remains unverified; JavaScript helpers use RegExp flags.
-// Updated: 2026-10-13
+// Updated: 2026-10-25
 
 export function normalizeRegexBodyForTarget(pattern) {
   // Historical name kept to avoid broad call-site churn. This is deliberately
@@ -500,7 +500,7 @@ export function validateTargetRegex(pattern, label, {token=false}={}) {
 // field. Runner ICU compilation never upgrades an unverified client capability.
 export const TARGET_REGEX_CAPABILITIES=Object.freeze(Object.fromEntries(
   ['qx','surge','generic'].map(target=>[target,Object.freeze(Object.fromEntries(
-    ['url','body','header','script'].map(field=>[field,Object.freeze({inlineFlags:'unverified',flags:'ims'})])
+    ['url','body','header','script'].map(field=>[field,Object.freeze({inlineFlags:'temporarily-disabled',flags:'ims'})])
   ))])
 ));
 export function targetRegexCapability(target,subject) {
@@ -517,7 +517,12 @@ export function compileRegexForTarget(regex, { subject = 'url', target = 'generi
   const capability=targetRegexCapability(target,subject);
   const compatibilityUnverified=Boolean(flags) && capability.inlineFlags!=='verified';
   if (compatibilityUnverified && requireEquivalent) return {ok:false,reason:target+' native '+subject+' regex has no verified engine-equivalence proof for flags '+flags,pattern,sourceFlags:flags};
-  return {ok:true,pattern:flags ? '(?'+flags+')'+pattern : pattern,sourceFlags:flags,compatibilityUnverified,capability,notes:[]};
+  // Modified: 2026-10-25 (chance). User-authorized temporary compatibility
+  // downgrade: omit source suffix flags in native fields, retain source AST.
+  // Re-enable only after client support for the relevant field is confirmed.
+  let targetPattern=pattern;
+  // targetPattern = flags ? '(?'+flags+')'+pattern : pattern;
+  return {ok:true,pattern:targetPattern,sourceFlags:flags,compatibilityUnverified,capability,notes:[]};
 }
 
 // qx-official-capabilities.mjs

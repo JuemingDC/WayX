@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/XiaoHeiHe.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:46 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/XiaoHeiHe_remove_ads.lpx
@@ -16,8 +16,8 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/api\.xiaoheihe\.cn\/account\/get_ads_info_v2 url reject-dict
-(?i)^https:\/\/api\.xiaoheihe\.cn\/bbs\/app\/feeds\/news url jsonjq-response-body '.result.links |= map(if .content_type == 27 then del(.title, .ad_pm, .img_gif, .idea_id, .ad_report, .label, .source, .intranet_only, .ad_cm, .content_type, .PROTOCOL, .img, .ad_ratio) else . end)'
+^https:\/\/api\.xiaoheihe\.cn\/account\/get_ads_info_v2 url reject-dict
+^https:\/\/api\.xiaoheihe\.cn\/bbs\/app\/feeds\/news url jsonjq-response-body '.result.links |= map(if .content_type == 27 then del(.title, .ad_pm, .img_gif, .idea_id, .ad_report, .label, .source, .intranet_only, .ad_cm, .content_type, .PROTOCOL, .img, .ad_ratio) else . end)'
 
 # [mitm]
 hostname = api.xiaoheihe.cn

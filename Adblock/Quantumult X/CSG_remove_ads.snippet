@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/CSG.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:31 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/CSG_remove_ads.lpx
@@ -16,10 +16,10 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/95598\.csg\.cn\/mp\/mpaas\/mgw\.htm$ url jsonjq-response-body 'if .info | contains("RUBIK-TRACEID:") then .scene.page.areas |= map(select(.areaId | test("kingkong_|9grid_|message_|nearmap_|recommend_"))) else . end'
+^https:\/\/95598\.csg\.cn\/mp\/mpaas\/mgw\.htm$ url jsonjq-response-body 'if .info | contains("RUBIK-TRACEID:") then .scene.page.areas |= map(select(.areaId | test("kingkong_|9grid_|message_|nearmap_|recommend_"))) else . end'
 
-(?i)^https:\/\/95598\.csg\.cn\/mp\/ucs\/ma\/zt\/content\/queryHotInformations$ url reject-dict
-(?i)^https:\/\/95598\.csg\.cn\/mp\/mpaas\/rubik\/openapi\/rubik\/mobile\/getRubikScene$ url reject-dict
+^https:\/\/95598\.csg\.cn\/mp\/ucs\/ma\/zt\/content\/queryHotInformations$ url reject-dict
+^https:\/\/95598\.csg\.cn\/mp\/mpaas\/rubik\/openapi\/rubik\/mobile\/getRubikScene$ url reject-dict
 
 # [mitm]
 hostname = 95598.csg.cn

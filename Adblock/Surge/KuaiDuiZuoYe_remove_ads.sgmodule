@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KuaiDuiZuoYe.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 15:58:32 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/KuaiDuiZuoYe_remove_ads.lpx
 # Target: Surge
@@ -20,17 +20,17 @@ DOMAIN,adx.zuoyebang.com,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 
-http-response-jq (?i)^https:\/\/www\.kuaiduizuoye\.com\/codesearch\/aid\/home$ 'delpaths([["data","homeBannerList"]])'
+http-response-jq ^https:\/\/www\.kuaiduizuoye\.com\/codesearch\/aid\/home$ 'delpaths([["data","homeBannerList"]])'
 
 [Map Local]
-(?i)^https:\/\/www\.kuaiduizuoye\.com\/init\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/www\.kuaiduizuoye\.com\/init\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/www\.kuaiduizuoye\.com\/activity\/init\/checkappconfig$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/www\.kuaiduizuoye\.com\/activity\/init\/checkappconfig$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/www\.kuaiduizuoye\.com\/kdapi\/conf\/appbannersv3$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-(?i)^https:\/\/www\.kuaiduizuoye\.com\/kdapi\/conf\/initbanner$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/www\.kuaiduizuoye\.com\/kdapi\/conf\/appbannersv3$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/www\.kuaiduizuoye\.com\/kdapi\/conf\/initbanner$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/apivip\.kuaiduizuoye\.com\/viponline\/scancode\/mycard$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/apivip\.kuaiduizuoye\.com\/viponline\/scancode\/mycard$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% www.kuaiduizuoye.com, apivip.kuaiduizuoye.com

@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MaFengWo.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:27 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/MaFengWo_remove_ads.lpx
 # Target: Surge
@@ -19,13 +19,13 @@
 DOMAIN,advert.mafengwo.cn,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
-http-response-jq (?i)^https:\/\/mapi\.mafengwo\.cn\/discovery\/get_index\/v7\? '.data.list |= map(select(.data.business_type != "gdcpm"))'
+http-response-jq ^https:\/\/mapi\.mafengwo\.cn\/discovery\/get_index\/v7\? '.data.list |= map(select(.data.business_type != "gdcpm"))'
 
-http-response-jq (?i)^https:\/\/mapi\.mafengwo\.cn\/sales\/home\/get_header\/v3\? '.data.list[] |= ( .data |= del(.banners) )'
+http-response-jq ^https:\/\/mapi\.mafengwo\.cn\/sales\/home\/get_header\/v3\? '.data.list[] |= ( .data |= del(.banners) )'
 
 [Map Local]
 
-(?i)^https:\/\/mapi\.mafengwo\.cn\/user\/growth\/get_growth_tip\/v1\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/mapi\.mafengwo\.cn\/user\/growth\/get_growth_tip\/v1\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% mapi.mafengwo.cn

@@ -10,21 +10,21 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/2bulu.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:26 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/2bulu_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
-http-response-jq (?i)^https:\/\/helper\.2bulu\.com\/getAppEntranceConfig\? '.configData=(.configData|fromjson|del(.adPlatform,.adIntertitialShowType,.adsConfig,.adIntertitialDisplayedLimit,.adSplashShowTypeWhenHotStart,.adIntertitialDayDisplayedMaxCount,.od_adsType,.showMeBaiHeAdView)|tojson)'
+http-response-jq ^https:\/\/helper\.2bulu\.com\/getAppEntranceConfig\? '.configData=(.configData|fromjson|del(.adPlatform,.adIntertitialShowType,.adsConfig,.adIntertitialDisplayedLimit,.adSplashShowTypeWhenHotStart,.adIntertitialDayDisplayedMaxCount,.od_adsType,.showMeBaiHeAdView)|tojson)'
 
 [Map Local]
 
-(?i)^https:\/\/helper\.2bulu\.com\/search\/searchHotKeyList\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/helper\.2bulu\.com\/search\/searchHotKeyList\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/helper\.2bulu\.com\/promote\/getAppUserModule\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/helper\.2bulu\.com\/promote\/getAppUserModule\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/helper\.2bulu\.com\/proSpecial\/allData\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/helper\.2bulu\.com\/proSpecial\/allData\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% helper.2bulu.com

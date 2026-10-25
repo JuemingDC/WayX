@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/EasyCharge.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:17:59 +08:00
+# Converted: 2026-10-25 17:18:10 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/EasyCharge_remove_ads.lpx
@@ -17,16 +17,16 @@
 host, adash-evone.echargenet.com, reject
 
 # [rewrite_local]
-(?i)^https:\/\/aserver-evone\.echargenet\.com\/orange\/datacenter\/snapshot-meta\? url reject-dict
+^https:\/\/aserver-evone\.echargenet\.com\/orange\/datacenter\/snapshot-meta\? url reject-dict
 
-(?i)^https:\/\/api-evone\.echargenet\.com\/gw\/evone\.echargeapi\.open\.ad\.getadmaterials\/ url reject-dict
+^https:\/\/api-evone\.echargenet\.com\/gw\/evone\.echargeapi\.open\.ad\.getadmaterials\/ url reject-dict
 
-(?i)^https:\/\/api-evone\.echargenet\.com\/gw\/evone\.appsns\.open\.efriend\.topic\.listrecommenttopic\/ url reject-dict
+^https:\/\/api-evone\.echargenet\.com\/gw\/evone\.appsns\.open\.efriend\.topic\.listrecommenttopic\/ url reject-dict
 
-(?i)^https:\/\/api-evone\.echargenet\.com\/gw\/evone\.appsns\.open\.efriend\.post\.listapppost\/ url reject-dict
+^https:\/\/api-evone\.echargenet\.com\/gw\/evone\.appsns\.open\.efriend\.post\.listapppost\/ url reject-dict
 
-(?i)^https:\/\/api-evone\.echargenet\.com\/gw\/evone\.appsns\.open\.merchant\.merchant\.list\/ url reject-dict
-(?i)^https:\/\/api-evone\.echargenet\.com\/gw\/evone\.appsns\.open\.merchant\.news\.pagelistapp\/ url reject-dict
+^https:\/\/api-evone\.echargenet\.com\/gw\/evone\.appsns\.open\.merchant\.merchant\.list\/ url reject-dict
+^https:\/\/api-evone\.echargenet\.com\/gw\/evone\.appsns\.open\.merchant\.news\.pagelistapp\/ url reject-dict
 
 # [mitm]
 hostname = aserver-evone.echargenet.com, api-evone.echargenet.com

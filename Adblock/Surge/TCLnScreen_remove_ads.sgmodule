@@ -10,25 +10,25 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/TCLnScreen.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:16 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/TCLnScreen_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 
-http-response-jq (?i)^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/config\/function\? '.data |= map(select(.module == "tools"))'
+http-response-jq ^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/config\/function\? '.data |= map(select(.module == "tools"))'
 
 [Map Local]
-(?i)^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/ads\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/ads\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/selection\/banner$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/selection\/banner$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/searchrank$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/searchrank$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/selection\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/selection\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/message\/v\d\/activity\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/message\/v\d\/activity\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% tcast-o.api.leiniao.com

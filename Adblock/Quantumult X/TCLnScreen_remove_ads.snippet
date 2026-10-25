@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/TCLnScreen.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:16 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/TCLnScreen_remove_ads.lpx
@@ -16,17 +16,17 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/ads\/ url reject-dict
+^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/ads\/ url reject-dict
 
-(?i)^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/selection\/banner$ url reject-dict
+^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/selection\/banner$ url reject-dict
 
-(?i)^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/config\/function\? url jsonjq-response-body '.data |= map(select(.module == "tools"))'
+^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/config\/function\? url jsonjq-response-body '.data |= map(select(.module == "tools"))'
 
-(?i)^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/searchrank$ url reject-dict
+^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/searchrank$ url reject-dict
 
-(?i)^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/selection\? url reject-dict
+^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/selection\? url reject-dict
 
-(?i)^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/message\/v\d\/activity\? url reject-dict
+^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/message\/v\d\/activity\? url reject-dict
 
 # [mitm]
 hostname = tcast-o.api.leiniao.com

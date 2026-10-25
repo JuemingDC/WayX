@@ -10,20 +10,20 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/VideoGo.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:50 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/VideoGo_remove_ads.lpx
 # Target: Surge
 
 [URL Rewrite]
-(?i)^https:\/\/api\.ys7\.com\/api\/ads _ reject
+^https:\/\/api\.ys7\.com\/api\/ads _ reject
 
 [Map Local]
-(?i)^https:\/\/i\.ys7\.com\/api\/user\/tabList data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-(?i)^https:\/\/api\.ys7\.com\/v3\/config\/service\/entrance\/bannerInfo data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-(?i)^https:\/\/api\.ys7\.com\/v3\/intelligent-app\/apps\/linkage data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-(?i)^https:\/\/api\.ys7\.com\/v3\/configurations\/gray\/info\?grayTypes=185 data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-(?i)^https:\/\/api\.ys7\.com\/v3\/videoclips\/square\/video\/query data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/i\.ys7\.com\/api\/user\/tabList data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.ys7\.com\/v3\/config\/service\/entrance\/bannerInfo data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.ys7\.com\/v3\/intelligent-app\/apps\/linkage data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.ys7\.com\/v3\/configurations\/gray\/info\?grayTypes=185 data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.ys7\.com\/v3\/videoclips\/square\/video\/query data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% api.ys7.com, i.ys7.com

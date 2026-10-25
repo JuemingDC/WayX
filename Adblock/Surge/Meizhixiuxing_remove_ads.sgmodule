@@ -10,30 +10,30 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Meizhixiuxing.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 15:58:33 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Meizhixiuxing_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-http-response-jq (?i)^https:\/\/api\.bevol\.com\/appmain\/app\/home\/page$ 'delpaths([["result","versionPopUp"],["result","isShowSearchLabel"],["result","isShowSearchFeedBack"],["result","centerBannerAdvert"],["result","programmaticAdvertising"],["result","mattsData"],["result","questionnaireMap"],["result","appPullDownAdvert"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+http-response-jq ^https:\/\/api\.bevol\.com\/appmain\/app\/home\/page$ 'delpaths([["result","versionPopUp"],["result","isShowSearchLabel"],["result","isShowSearchFeedBack"],["result","centerBannerAdvert"],["result","programmaticAdvertising"],["result","mattsData"],["result","questionnaireMap"],["result","appPullDownAdvert"]])'
 
-http-response-jq (?i)^https:\/\/api\.bevol\.com\/appmain\/app\/home\/feed$ 'delpaths([["result","banners"]])'
-http-response-jq (?i)^https:\/\/api\.bevol\.com\/appmain\/app\/home\/feed$ '. | .result.returnList |= (map(select(.tname == "userPart"))) | .result.returnList |= map(select(. | has("adId") | not))'
+http-response-jq ^https:\/\/api\.bevol\.com\/appmain\/app\/home\/feed$ 'delpaths([["result","banners"]])'
+http-response-jq ^https:\/\/api\.bevol\.com\/appmain\/app\/home\/feed$ '. | .result.returnList |= (map(select(.tname == "userPart"))) | .result.returnList |= map(select(. | has("adId") | not))'
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-http-response-jq (?i)^https:\/\/api\.bevol\.com\/trialbox\/shop\/app\/homePage$ 'delpaths([["result","firstPersonActivity"],["result","mainActivity"],["result","brandZone"],["result","imageAD2"],["result","couponPopupInfo"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+http-response-jq ^https:\/\/api\.bevol\.com\/trialbox\/shop\/app\/homePage$ 'delpaths([["result","firstPersonActivity"],["result","mainActivity"],["result","brandZone"],["result","imageAD2"],["result","couponPopupInfo"]])'
 
 [Map Local]
-(?i)^https:\/\/api\.bevol\.com\/appmain\/app\/home\/launch$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.bevol\.com\/appmain\/app\/home\/launch$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/api\.bevol\.com\/appmain\/app\/home\/popup$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.bevol\.com\/appmain\/app\/home\/popup$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/api\.bevol\.com\/personal\/page$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.bevol\.com\/personal\/page$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/api\.bevol\.com\/seach\/foundAndTopSearch$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.bevol\.com\/seach\/foundAndTopSearch$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% api.bevol.com

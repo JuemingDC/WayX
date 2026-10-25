@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FenBi.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 15:58:32 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/FenBi_remove_ads.lpx
@@ -16,31 +16,31 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/keapi\.fenbi\.com\/app\/(iphone|ipad)\/position_resource\/get_banners\? url reject-dict
+^https:\/\/keapi\.fenbi\.com\/app\/(iphone|ipad)\/position_resource\/get_banners\? url reject-dict
 
-(?i)^https:\/\/market-api\.fenbi\.com\/(iphone|ipad)\/v1\/assistant\/info\? url reject-dict
+^https:\/\/market-api\.fenbi\.com\/(iphone|ipad)\/v1\/assistant\/info\? url reject-dict
 
-(?i)^https:\/\/keapi\.fenbi\.com\/app\/(iphone|ipad)\/position_resource\/get_home_banners\?.*position_resource_type=1 url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_FenBi_remove_ads/mock_92cfc04125.js
+^https:\/\/keapi\.fenbi\.com\/app\/(iphone|ipad)\/position_resource\/get_home_banners\?.*position_resource_type=1 url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_FenBi_remove_ads/mock_92cfc04125.js
 
-(?i)^https:\/\/keapi\.fenbi\.com\/app\/(iphone|ipad)\/position_resource\/get_home_banners\?.*position_resource_type=2 url reject-dict
+^https:\/\/keapi\.fenbi\.com\/app\/(iphone|ipad)\/position_resource\/get_home_banners\?.*position_resource_type=2 url reject-dict
 
-(?i)^https:\/\/keapi\.fenbi\.com\/app\/iphone\/\w+\/reddot\? url reject-dict
+^https:\/\/keapi\.fenbi\.com\/app\/iphone\/\w+\/reddot\? url reject-dict
 
-(?i)^https:\/\/ke\.fenbi\.com\/(iphone|ipad)\/v3\/timetable\/today_with_public_episodes\? url reject-dict
+^https:\/\/ke\.fenbi\.com\/(iphone|ipad)\/v3\/timetable\/today_with_public_episodes\? url reject-dict
 
-(?i)^https:\/\/hera-webapp\.fenbi\.com\/(iphone|ipad)\/topic\/hotquery\/list\? url reject-dict
+^https:\/\/hera-webapp\.fenbi\.com\/(iphone|ipad)\/topic\/hotquery\/list\? url reject-dict
 
-(?i)^https:\/\/hera-webapp\.fenbi\.com\/(iphone|ipad)\/explore\/consts\? url reject-dict
+^https:\/\/hera-webapp\.fenbi\.com\/(iphone|ipad)\/explore\/consts\? url reject-dict
 
-(?i)^https:\/\/hera-webapp\.fenbi\.com\/(iphone|ipad)\/recommend\/info\? url jsonjq-response-body 'delpaths([["data","rollingBanner"]])'
+^https:\/\/hera-webapp\.fenbi\.com\/(iphone|ipad)\/recommend\/info\? url jsonjq-response-body 'delpaths([["data","rollingBanner"]])'
 
-(?i)^https:\/\/hera-webapp\.fenbi\.com\/(iphone|ipad)\/announcement\/hotquery\/list\? url reject-dict
+^https:\/\/hera-webapp\.fenbi\.com\/(iphone|ipad)\/announcement\/hotquery\/list\? url reject-dict
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/ke\.fenbi\.com\/(iphone|ipad)\/v3\/apps\/config\? url jsonjq-response-body 'delpaths([["data","bottomIconInfos","position","iconDefaultUrl"],["data","bottomIconInfos","position","iconSelectedUrl"],["data","bottomIconInfos","position","nightModeIconDefaultUrl"],["data","bottomIconInfos","position","nightModeIconSelectedUrl"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+^https:\/\/ke\.fenbi\.com\/(iphone|ipad)\/v3\/apps\/config\? url jsonjq-response-body 'delpaths([["data","bottomIconInfos","position","iconDefaultUrl"],["data","bottomIconInfos","position","iconSelectedUrl"],["data","bottomIconInfos","position","nightModeIconDefaultUrl"],["data","bottomIconInfos","position","nightModeIconSelectedUrl"]])'
 
-(?i)^https:\/\/ke\.fenbi\.com\/(iphone|ipad)\/v3\/user_member\/entry\? url reject-dict
-(?i)^https:\/\/market-api\.fenbi\.com\/(iphone|ipad)\/v1\/assistant\/my\? url reject-dict
+^https:\/\/ke\.fenbi\.com\/(iphone|ipad)\/v3\/user_member\/entry\? url reject-dict
+^https:\/\/market-api\.fenbi\.com\/(iphone|ipad)\/v1\/assistant\/my\? url reject-dict
 
 # [mitm]
 hostname = keapi.fenbi.com, market-api.fenbi.com, ke.fenbi.com, hera-webapp.fenbi.com

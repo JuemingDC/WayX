@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SF-Express.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:36 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/SF-Express_remove_ads.lpx
@@ -16,13 +16,13 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/ccsp-egmas\.sf-express\.com\/cx-app-base\/base\/app\/ad\/ url reject-dict
+^https:\/\/ccsp-egmas\.sf-express\.com\/cx-app-base\/base\/app\/ad\/ url reject-dict
 
-(?i)^https:\/\/ucmp\.sf-express\.com\/proxy\/esgcempcore\/memberGoods\/pointMallService\/goodsList$ url reject-dict
+^https:\/\/ucmp\.sf-express\.com\/proxy\/esgcempcore\/memberGoods\/pointMallService\/goodsList$ url reject-dict
 
-(?i)^https:\/\/ucmp(-static)?\.sf-express\.com\/proxy\/ccspBase\/module-config\/(login\/)?query\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_SF-Express_remove_ads/mock_e3fe61f81a.js
+^https:\/\/ucmp(-static)?\.sf-express\.com\/proxy\/ccspBase\/module-config\/(login\/)?query\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_SF-Express_remove_ads/mock_e3fe61f81a.js
 
-(?i)^https:\/\/ccsp-egmas\.sf-express\.com\/cx-app-base\/base\/app\/appHomeConfig\/query$ url jsonjq-response-body '.obj |= map(select(.position != 2))'
+^https:\/\/ccsp-egmas\.sf-express\.com\/cx-app-base\/base\/app\/appHomeConfig\/query$ url jsonjq-response-body '.obj |= map(select(.position != 2))'
 
 # [mitm]
 hostname = ccsp-egmas.sf-express.com, ucmp.sf-express.com, ucmp-static.sf-express.com

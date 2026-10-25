@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FC_Box.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 15:58:32 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/FC_Box_remove_ads.lpx
@@ -16,23 +16,23 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/consumer\.fcbox\.com\/fcboxactivityweb\/api\/v\d\/clientPage\/modulesAggregated\? url reject-dict
-(?i)^https:\/\/consumer\.fcbox\.com\/fcboxactivityweb\/api\/v\d\/clientPage\/jinGangFirst\? url reject-dict
+^https:\/\/consumer\.fcbox\.com\/fcboxactivityweb\/api\/v\d\/clientPage\/modulesAggregated\? url reject-dict
+^https:\/\/consumer\.fcbox\.com\/fcboxactivityweb\/api\/v\d\/clientPage\/jinGangFirst\? url reject-dict
 
-(?i)^https:\/\/consumer\.fcbox\.com\/v2\/home\/mallInfo$ url reject-dict
+^https:\/\/consumer\.fcbox\.com\/v2\/home\/mallInfo$ url reject-dict
 
-(?i)^https:\/\/dsp\.fcbox\.com\/adSearch\/ url reject-dict
+^https:\/\/dsp\.fcbox\.com\/adSearch\/ url reject-dict
 
-(?i)^https:\/\/consumer\.fcbox\.com\/hs-portal\/app\/config\/page\/home\/v2\? url reject-dict
+^https:\/\/consumer\.fcbox\.com\/hs-portal\/app\/config\/page\/home\/v2\? url reject-dict
 
-(?i)^https:\/\/consumer\.fcbox\.com\/post\/suggestion\/query$ url reject-dict
+^https:\/\/consumer\.fcbox\.com\/post\/suggestion\/query$ url reject-dict
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/consumer\.fcbox\.com\/v1\/dynamicConfig\/findTabbarConfig\/mainPage$ url jsonjq-response-body 'delpaths([["data","lifeService"],["data","mall"],["data","wash"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+^https:\/\/consumer\.fcbox\.com\/v1\/dynamicConfig\/findTabbarConfig\/mainPage$ url jsonjq-response-body 'delpaths([["data","lifeService"],["data","mall"],["data","wash"]])'
 
-(?i)^https:\/\/consumer\.fcbox\.com\/fcboxactivityweb\/marketingEntrance\/retentionPopup$ url reject-dict
-(?i)^https:\/\/consumer\.fcbox\.com\/fcboxactivityweb\/api\/clientPopup\/v\d\/queryPopupWithPriority$ url reject-dict
-(?i)^https:\/\/consumer\.fcbox\.com\/fcboxactivityweb\/api\/guidePopup\/popup$ url reject-dict
+^https:\/\/consumer\.fcbox\.com\/fcboxactivityweb\/marketingEntrance\/retentionPopup$ url reject-dict
+^https:\/\/consumer\.fcbox\.com\/fcboxactivityweb\/api\/clientPopup\/v\d\/queryPopupWithPriority$ url reject-dict
+^https:\/\/consumer\.fcbox\.com\/fcboxactivityweb\/api\/guidePopup\/popup$ url reject-dict
 
 # [mitm]
 hostname = consumer.fcbox.com, dsp.fcbox.com

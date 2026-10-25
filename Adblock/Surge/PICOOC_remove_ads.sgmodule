@@ -10,21 +10,21 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/PICOOC.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:01 +08:00
+# Converted: 2026-10-25 17:18:10 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/PICOOC_remove_ads.lpx
 # Target: Surge
 
 [Map Local]
-(?i)^https:\/\/api2\.picooc\.com\/v\d\/api\/focus\/strategy\/execute\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api2\.picooc\.com\/v\d\/api\/focus\/strategy\/execute\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/api2\.picooc\.com\/v\d\/api\/dietGuide\/query\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api2\.picooc\.com\/v\d\/api\/dietGuide\/query\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/api2\.picooc\.com\/program\/listMainProgram\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api2\.picooc\.com\/program\/listMainProgram\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/a\.picooc\.com\/v\d\/api\/camp\/sys\/config\/coupon\/pattern\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/a\.picooc\.com\/v\d\/api\/camp\/sys\/config\/coupon\/pattern\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/api2\.picooc\.com\/v\d\/api\/account\/getTabsInfo\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api2\.picooc\.com\/v\d\/api\/account\/getTabsInfo\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% api2.picooc.com, a.picooc.com

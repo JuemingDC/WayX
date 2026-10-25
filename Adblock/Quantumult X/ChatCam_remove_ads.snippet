@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ChatCam.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:23 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/ChatCam_remove_ads.lpx
@@ -16,9 +16,9 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/fast\.jfgou\.com:1443\/api\/web\/v\d\/no\/app\/advertisement\/ url reject-dict
+^https:\/\/fast\.jfgou\.com:1443\/api\/web\/v\d\/no\/app\/advertisement\/ url reject-dict
 
-(?i)^https:\/\/jiafeigou-1251885898\.cos\.ap-guangzhou\.myqcloud\.com\/forever\/web_server\/app_config\/banner_\d+ url reject
+^https:\/\/jiafeigou-1251885898\.cos\.ap-guangzhou\.myqcloud\.com\/forever\/web_server\/app_config\/banner_\d+ url reject
 
 # [mitm]
 hostname = fast.jfgou.com, jiafeigou-1251885898.cos.ap-guangzhou.myqcloud.com

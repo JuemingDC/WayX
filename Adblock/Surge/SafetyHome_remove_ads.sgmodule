@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SafetyHome.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:17:57 +08:00
+# Converted: 2026-10-25 17:18:10 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/SafetyHome_remove_ads.lpx
 # Target: Surge
@@ -19,7 +19,7 @@
 DOMAIN,ad.iot.360.cn,REJECT,extended-matching,pre-matching
 
 [Map Local]
-(?i)^https:\/\/app\.home\.360\.cn\/v1\/config\/custom_config data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/app\.home\.360\.cn\/v1\/config\/custom_config data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% app.home.360.cn
