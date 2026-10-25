@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KingdeeMyMoney.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:36 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/KingdeeMyMoney_remove_ads.lpx
@@ -16,17 +16,17 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/tg\.feidee\.com\/online_ad\/api\/search\.do$ url reject-dict
+^https:\/\/tg\.feidee\.com\/online_ad\/api\/search\.do$ url reject-dict
 
-(?i)^https:\/\/yunmk\.feidee\.net\/cab-market-ws\/market\/v2\/contents$ url reject-dict
+^https:\/\/yunmk\.feidee\.net\/cab-market-ws\/market\/v2\/contents$ url reject-dict
 
-(?i)^https:\/\/tg\.feidee\.com\/vis-ad-engine-ws\/api\/v2\/ads\/.+esultNum url reject-dict
+^https:\/\/tg\.feidee\.com\/vis-ad-engine-ws\/api\/v2\/ads\/.+esultNum url reject-dict
 
-(?i)^https:\/\/api\.feidee\.net\/v1\/configs\/client\/configs url reject
+^https:\/\/api\.feidee\.net\/v1\/configs\/client\/configs url reject
 
-(?i)^https:\/\/tg\.feidee\.com\/vis-ad-engine-ws\/api\/show url reject-dict
+^https:\/\/tg\.feidee\.com\/vis-ad-engine-ws\/api\/show url reject-dict
 
-(?i)^https:\/\/yun\.feidee\.net\/cab-periodic-activity-ws\/terminal\/v1\/members\/status url reject-dict
+^https:\/\/yun\.feidee\.net\/cab-periodic-activity-ws\/terminal\/v1\/members\/status url reject-dict
 
 # [mitm]
 hostname = tg.feidee.com, yunmk.feidee.net, community.feidee.com, api.feidee.net, yun.feidee.net

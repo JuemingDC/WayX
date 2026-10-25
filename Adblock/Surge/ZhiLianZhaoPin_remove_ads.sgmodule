@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ZhiLianZhaoPin.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 15:58:33 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/ZhiLianZhaoPin_remove_ads.lpx
 # Target: Surge
@@ -20,14 +20,14 @@ URL-REGEX,^https:\/\/(ask|cgate)\.zhaopin\.com\/operation\/ad\/,REJECT,extended-
 
 [URL Rewrite]
 
-(?i)^https:\/\/cgate\.zhaopin\.com\/bdp\/commercial\/queryLinkData$ _ reject
+^https:\/\/cgate\.zhaopin\.com\/bdp\/commercial\/queryLinkData$ _ reject
 
 [Body Rewrite]
-http-response-jq (?i)^https:\/\/ask\.zhaopin\.com\/plat-zqa-server\/home\/\d\.\d\.\d\/getHomeContents\? 'delpaths([["data","templates",0,"data","banner"]])'
+http-response-jq ^https:\/\/ask\.zhaopin\.com\/plat-zqa-server\/home\/\d\.\d\.\d\/getHomeContents\? 'delpaths([["data","templates",0,"data","banner"]])'
 
 [Map Local]
 
-(?i)^https:\/\/cgate\.zhaopin\.com\/resumeapi\/resumeCheck\/positionDetailBottomTipCheck$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/cgate\.zhaopin\.com\/resumeapi\/resumeCheck\/positionDetailBottomTipCheck$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% ask.zhaopin.com, cgate.zhaopin.com

@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SevenCat.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 16:33:19 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/SevenCat_remove_ads.lpx
@@ -19,22 +19,22 @@ host, cdn-new-ad.wtzw.com, reject
 host-suffix, gdt.qq.com, reject
 
 # [rewrite_local]
-(?i)^https:\/\/api-cfg\.wtzw\.com\/v\d\/splash\/ url reject-dict
-(?i)^https:\/\/api-bc\.wtzw\.com\/api\/v4\/search\/dispose url reject-dict
-(?i)^https:\/\/api-bc\.wtzw\.com\/api\/v\d\/book-store\/config url reject-dict
-(?i)^https:\/\/api-bc\.wtzw\.com\/api\/v\d\/book-store\/push-book url reject-dict
-(?i)^https:\/\/api-bc\.wtzw\.com\/api\/v\d\/operation url reject-dict
-(?i)^https:\/\/sf3-fe-tos\.pglstatp-toutiao\.com\/obj\/ad-pattern\/ url reject
-(?i)^https:\/\/api-gw\.wtzw\.com\/welf\/app\/v\d\/task\/red-packet url reject-dict
-(?i)^https:\/\/cdn\.wtzw\.com\/bookimg\/free\/api\/v\d\/reader\/reader-copy-paragraph-all\.json url reject-dict
+^https:\/\/api-cfg\.wtzw\.com\/v\d\/splash\/ url reject-dict
+^https:\/\/api-bc\.wtzw\.com\/api\/v4\/search\/dispose url reject-dict
+^https:\/\/api-bc\.wtzw\.com\/api\/v\d\/book-store\/config url reject-dict
+^https:\/\/api-bc\.wtzw\.com\/api\/v\d\/book-store\/push-book url reject-dict
+^https:\/\/api-bc\.wtzw\.com\/api\/v\d\/operation url reject-dict
+^https:\/\/sf3-fe-tos\.pglstatp-toutiao\.com\/obj\/ad-pattern\/ url reject
+^https:\/\/api-gw\.wtzw\.com\/welf\/app\/v\d\/task\/red-packet url reject-dict
+^https:\/\/cdn\.wtzw\.com\/bookimg\/free\/api\/v\d\/reader\/reader-copy-paragraph-all\.json url reject-dict
 
-(?i)^https:\/\/api-cfg\.wtzw\.com\/v\d\/reward\/ url reject
-(?i)^https:\/\/api-cfg\.wtzw\.com\/v\d\/adv\/ url reject
-(?i)^https:\/\/api-cfg\.wtzw\.com\/v\d\/offline-adv\/index url reject-dict
-(?i)^https:\/\/api-cfg\.wtzw\.com\/v\d\/operation\/index\?ad_personal_switch url reject-dict
-(?i)^https:\/\/xiaoshuo\.wtzw\.com\/api\/v\d\/withdraw\/init url reject-dict
+^https:\/\/api-cfg\.wtzw\.com\/v\d\/reward\/ url reject
+^https:\/\/api-cfg\.wtzw\.com\/v\d\/adv\/ url reject
+^https:\/\/api-cfg\.wtzw\.com\/v\d\/offline-adv\/index url reject-dict
+^https:\/\/api-cfg\.wtzw\.com\/v\d\/operation\/index\?ad_personal_switch url reject-dict
+^https:\/\/xiaoshuo\.wtzw\.com\/api\/v\d\/withdraw\/init url reject-dict
 
-(?i)^https:\/\/xiaoshuo\.wtzw\.com\/api\/v\d\/user\/my-center\? url jsonjq-response-body 'delpaths([["data","func_area",1],["data","func_area",2]])'
+^https:\/\/xiaoshuo\.wtzw\.com\/api\/v\d\/user\/my-center\? url jsonjq-response-body 'delpaths([["data","func_area",1],["data","func_area",2]])'
 
 # [mitm]
 hostname = api-cfg.wtzw.com, sf3-fe-tos.pglstatp-toutiao.com, api-bc.wtzw.com, api-gw.wtzw.com, cdn.wtzw.com

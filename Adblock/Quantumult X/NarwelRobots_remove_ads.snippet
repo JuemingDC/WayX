@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/NarwelRobots.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:51 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/NarwelRobots_remove_ads.lpx
@@ -16,11 +16,11 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/cn-app\.narwaltech\.com\/operate\/appPosition\/listSplash\? url reject-dict
+^https:\/\/cn-app\.narwaltech\.com\/operate\/appPosition\/listSplash\? url reject-dict
 
-(?i)^https:\/\/cn-app\.narwaltech\.com\/operate\/cactivity\/listByResourceIds\?resourceIds=(user_center_banner|index_banner) url reject-dict
+^https:\/\/cn-app\.narwaltech\.com\/operate\/cactivity\/listByResourceIds\?resourceIds=(user_center_banner|index_banner) url reject-dict
 
-(?i)^https:\/\/store\.narwal\.com\/mall\/customPage\/getByPageKeyword\? url reject-dict
+^https:\/\/store\.narwal\.com\/mall\/customPage\/getByPageKeyword\? url reject-dict
 
 # [mitm]
 hostname = cn-app.narwaltech.com, store.narwal.com

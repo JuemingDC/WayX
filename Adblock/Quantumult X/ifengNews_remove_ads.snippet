@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ifengNews.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 15:58:32 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/ifengNews_remove_ads.lpx
@@ -16,48 +16,48 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/nine\.ifeng\.com\/adPreload\? url reject-dict
+^https:\/\/nine\.ifeng\.com\/adPreload\? url reject-dict
 
-(?i)^https:\/\/nine\.ifeng\.com\/startUpAdPrestrainList\? url reject-dict
-(?i)^https:\/\/nine\.ifeng\.com\/startUpAddAd\? url reject-dict
+^https:\/\/nine\.ifeng\.com\/startUpAdPrestrainList\? url reject-dict
+^https:\/\/nine\.ifeng\.com\/startUpAddAd\? url reject-dict
 
-(?i)^https:\/\/config\.nine\.ifeng\.com\/news\/cow\? url jsonjq-response-body '.bottomNav|=map(select(.NavId=="bottomNavNews" or .NavId=="bottomNavMine"))'
+^https:\/\/config\.nine\.ifeng\.com\/news\/cow\? url jsonjq-response-body '.bottomNav|=map(select(.NavId=="bottomNavNews" or .NavId=="bottomNavMine"))'
 
-(?i)^https:\/\/config\.nine\.ifeng\.com\/news\/cow\? url jsonjq-response-body 'delpaths([["zip_url"]])'
+^https:\/\/config\.nine\.ifeng\.com\/news\/cow\? url jsonjq-response-body 'delpaths([["zip_url"]])'
 
-(?i)^https:\/\/config\.nine\.ifeng\.com\/news\/h5prepublish\? url reject
+^https:\/\/config\.nine\.ifeng\.com\/news\/h5prepublish\? url reject
 
-(?i)^https:\/\/nine\.ifeng\.com\/searchhotwordsrollv\d\? url reject-dict
-(?i)^https:\/\/nine\.ifeng\.com\/searchvideohotwordsroll\? url reject-dict
+^https:\/\/nine\.ifeng\.com\/searchhotwordsrollv\d\? url reject-dict
+^https:\/\/nine\.ifeng\.com\/searchvideohotwordsroll\? url reject-dict
 
-(?i)^https:\/\/nine\.ifeng\.com\/searchHotwordsReact\? url reject-dict
+^https:\/\/nine\.ifeng\.com\/searchHotwordsReact\? url reject-dict
 
-(?i)^https:\/\/user\.iclient\.ifeng\.com\/active_task\/channel\? url reject-dict
+^https:\/\/user\.iclient\.ifeng\.com\/active_task\/channel\? url reject-dict
 
-(?i)^https:\/\/config\.nine\.ifeng\.com\/news\/channel\? url jsonjq-response-body '.defaultChannel |= map(select(.id == "commenterch" or .id == "sy" or .id == "vipchannel" or .id == "rank_hot_merge" or .id == "rtnews" or .id == "sp" or .id == "mil" or .id == "finance" or .id == "history" or .id == "momentsnew" or .id == "taihai" or .id == "focusnews" or .id == "rcmd" or .id == "tw" or .id == "HK" or .id == "dawanqu1"))'
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/config\.nine\.ifeng\.com\/news\/channel\? url jsonjq-response-body 'delpaths([["more"],["youngChannel"]])'
+^https:\/\/config\.nine\.ifeng\.com\/news\/channel\? url jsonjq-response-body '.defaultChannel |= map(select(.id == "commenterch" or .id == "sy" or .id == "vipchannel" or .id == "rank_hot_merge" or .id == "rtnews" or .id == "sp" or .id == "mil" or .id == "finance" or .id == "history" or .id == "momentsnew" or .id == "taihai" or .id == "focusnews" or .id == "rcmd" or .id == "tw" or .id == "HK" or .id == "dawanqu1"))'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+^https:\/\/config\.nine\.ifeng\.com\/news\/channel\? url jsonjq-response-body 'delpaths([["more"],["youngChannel"]])'
 
-(?i)^https:\/\/nine\.ifeng\.com\/headline\? url jsonjq-response-body 'walk(if type == "object" and has("item") and (.item | type == "array") then .item |= map(select(.type == "phvideo" or .type == "doc" or .type == "phreclist")) else . end)'
+^https:\/\/nine\.ifeng\.com\/headline\? url jsonjq-response-body 'walk(if type == "object" and has("item") and (.item | type == "array") then .item |= map(select(.type == "phvideo" or .type == "doc" or .type == "phreclist")) else . end)'
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/nine\.ifeng\.com\/getNewsDocs\? url jsonjq-response-body 'delpaths([["body","showAdvert"],["body","adData"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+^https:\/\/nine\.ifeng\.com\/getNewsDocs\? url jsonjq-response-body 'delpaths([["body","showAdvert"],["body","adData"]])'
 
-(?i)^https:\/\/nine\.ifeng\.com\/newRelatedDocs\? url reject-dict
+^https:\/\/nine\.ifeng\.com\/newRelatedDocs\? url reject-dict
 
-(?i)^https:\/\/nine\.ifeng\.com\/getdocbackinfo\? url reject-dict
+^https:\/\/nine\.ifeng\.com\/getdocbackinfo\? url reject-dict
 
-(?i)^https:\/\/user\.iclient\.ifeng\.com\/event_protal\/list_lite\? url reject-dict
+^https:\/\/user\.iclient\.ifeng\.com\/event_protal\/list_lite\? url reject-dict
 
-(?i)^https:\/\/nine\.ifeng\.com\/phoenixTvChannel\? url jsonjq-response-body 'map(if has("item") then .item|=map(select(.type=="columnfastmessagescroll" or .type=="phvideo" or .type=="videoseriesrecommendmarquee" or .type=="short")) else . end)'
+^https:\/\/nine\.ifeng\.com\/phoenixTvChannel\? url jsonjq-response-body 'map(if has("item") then .item|=map(select(.type=="columnfastmessagescroll" or .type=="phvideo" or .type=="videoseriesrecommendmarquee" or .type=="short")) else . end)'
 
-(?i)^https:\/\/nine\.ifeng\.com\/adVideoImmersionWindow\? url reject-dict
+^https:\/\/nine\.ifeng\.com\/adVideoImmersionWindow\? url reject-dict
 
-(?i)^https:\/\/nine\.ifeng\.com\/videoimmersionlistv\d\? url jsonjq-response-body 'map(if has("item") then .item|=map(select(.type=="miniVideo" or .type=="phvideo")) else . end)'
+^https:\/\/nine\.ifeng\.com\/videoimmersionlistv\d\? url jsonjq-response-body 'map(if has("item") then .item|=map(select(.type=="miniVideo" or .type=="phvideo")) else . end)'
 
-(?i)^https:\/\/nine\.ifeng\.com\/shortList\? url jsonjq-response-body 'map(.item|=map(select(.type=="short")))'
+^https:\/\/nine\.ifeng\.com\/shortList\? url jsonjq-response-body 'map(.item|=map(select(.type=="short")))'
 
-(?i)^https:\/\/comment\.ifeng\.com\/v\d\/get\/commentlist\? url jsonjq-response-body 'del(.comments[] | select(.type == "advert"))'
+^https:\/\/comment\.ifeng\.com\/v\d\/get\/commentlist\? url jsonjq-response-body 'del(.comments[] | select(.type == "advert"))'
 
 # [mitm]
 hostname = nine.ifeng.com, config.nine.ifeng.com, user.iclient.ifeng.com, comment.ifeng.com

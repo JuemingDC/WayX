@@ -10,13 +10,13 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YoudaoNote.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:50 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/YoudaoNote_remove_ads.lpx
 # Target: Surge
 
 [Map Local]
-(?i)^https:\/\/silk\.lx\.netease\.com\/api\/open\/advertOpen\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/silk\.lx\.netease\.com\/api\/open\/advertOpen\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% silk.lx.netease.com

@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/LiveLab.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:18 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/LiveLab_remove_ads.lpx
@@ -16,15 +16,15 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/api\.livelab\.com\.cn\/pgc\/advert\/ url reject-dict
+^https:\/\/api\.livelab\.com\.cn\/pgc\/advert\/ url reject-dict
 
-(?i)^https:\/\/api\.livelab\.com\.cn\/search\/appHotWords\/app\/queryHotWords$ url reject-dict
+^https:\/\/api\.livelab\.com\.cn\/search\/appHotWords\/app\/queryHotWords$ url reject-dict
 
-(?i)^https:\/\/api\.livelab\.com\.cn\/appShow\/hotSearch\/app\/rankList$ url reject-dict
+^https:\/\/api\.livelab\.com\.cn\/appShow\/hotSearch\/app\/rankList$ url reject-dict
 
-(?i)^https:\/\/api\.livelab\.com\.cn\/appShow\/app\/homepage\/banners\?bannerModuleId=(82|84|53) url reject-dict
+^https:\/\/api\.livelab\.com\.cn\/appShow\/app\/homepage\/banners\?bannerModuleId=(82|84|53) url reject-dict
 
-(?i)^https:\/\/api\.livelab\.com\.cn\/appShow\/app\/homepage\/modules\?tabId=5$ url jsonjq-response-body '.data |= map(select(.id | IN(51, 52, 81, 82, 83, 84)))'
+^https:\/\/api\.livelab\.com\.cn\/appShow\/app\/homepage\/modules\?tabId=5$ url jsonjq-response-body '.data |= map(select(.id | IN(51, 52, 81, 82, 83, 84)))'
 
 # [mitm]
 hostname = api.livelab.com.cn

@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ZhiLianZhaoPin.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 15:58:33 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/ZhiLianZhaoPin_remove_ads.lpx
@@ -17,11 +17,11 @@
 
 # [rewrite_local]
 ^https:\/\/(ask|cgate)\.zhaopin\.com\/operation\/ad\/ url reject
-(?i)^https:\/\/ask\.zhaopin\.com\/plat-zqa-server\/home\/\d\.\d\.\d\/getHomeContents\? url jsonjq-response-body 'delpaths([["data","templates",0,"data","banner"]])'
+^https:\/\/ask\.zhaopin\.com\/plat-zqa-server\/home\/\d\.\d\.\d\/getHomeContents\? url jsonjq-response-body 'delpaths([["data","templates",0,"data","banner"]])'
 
-(?i)^https:\/\/cgate\.zhaopin\.com\/resumeapi\/resumeCheck\/positionDetailBottomTipCheck$ url reject-dict
+^https:\/\/cgate\.zhaopin\.com\/resumeapi\/resumeCheck\/positionDetailBottomTipCheck$ url reject-dict
 
-(?i)^https:\/\/cgate\.zhaopin\.com\/bdp\/commercial\/queryLinkData$ url reject
+^https:\/\/cgate\.zhaopin\.com\/bdp\/commercial\/queryLinkData$ url reject
 
 # [mitm]
 hostname = ask.zhaopin.com, cgate.zhaopin.com

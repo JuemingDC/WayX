@@ -10,21 +10,21 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FerrisWheel.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:30 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/FerrisWheel_remove_ads.lpx
 # Target: Surge
 
 [Map Local]
-(?i)^https:\/\/appapi\.motianlun\.cn\/showapi\/pub\/site\/\d+\/app\/loading\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/appapi\.motianlun\.cn\/showapi\/pub\/site\/\d+\/app\/loading\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/appapi\.motianlun\.cn\/showapi\/pub\/site\/\d+\/banner\/app\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/appapi\.motianlun\.cn\/showapi\/pub\/site\/\d+\/banner\/app\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/appapi\.motianlun\.cn\/userdataapi\/pub\/v\d\/top\/keywords\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/appapi\.motianlun\.cn\/userdataapi\/pub\/v\d\/top\/keywords\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/appapi\.motianlun\.cn\/buyerapi\/buyer\/v\d\/search\/index\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/appapi\.motianlun\.cn\/buyerapi\/buyer\/v\d\/search\/index\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/appapi\.motianlun\.cn\/showapi\/site\/\d+\/transfer\/recentShows\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/appapi\.motianlun\.cn\/showapi\/site\/\d+\/transfer\/recentShows\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% appapi.motianlun.cn

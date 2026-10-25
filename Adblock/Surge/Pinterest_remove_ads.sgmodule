@@ -10,15 +10,15 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Pinterest.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:01 +08:00
+# Converted: 2026-10-25 17:18:10 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Pinterest_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
-http-response-jq (?i)^https:\/\/api\.pinterest\.com\/v\d\/feeds\/home\/\? '.data |= map(select(.is_promoted == false or .is_promoted == "false"))'
+http-response-jq ^https:\/\/api\.pinterest\.com\/v\d\/feeds\/home\/\? '.data |= map(select(.is_promoted == false or .is_promoted == "false"))'
 
-http-response-jq (?i)^https:\/\/api\.pinterest\.com\/v\d\/pins\/\d+\/related\/modules\/\? '.data |= map(select(.is_promoted == false or .is_promoted == "false"))'
+http-response-jq ^https:\/\/api\.pinterest\.com\/v\d\/pins\/\d+\/related\/modules\/\? '.data |= map(select(.is_promoted == false or .is_promoted == "false"))'
 
 [MITM]
 hostname = %APPEND% api.pinterest.com

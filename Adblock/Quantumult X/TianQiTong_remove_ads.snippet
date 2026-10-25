@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/TianQiTong.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:38 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/TianQiTong_remove_ads.lpx
@@ -16,15 +16,15 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/forecast\.sina\.cn\/app\/overall\/switch\.php\? url reject-dict
-(?i)^https:\/\/tqt\.weibo\.cn\/business\/advert\/ url reject-dict
-(?i)^https:\/\/tqt\.weibo\.cn\/user\/device\/ad_multi_star\? url reject-dict
+^https:\/\/forecast\.sina\.cn\/app\/overall\/switch\.php\? url reject-dict
+^https:\/\/tqt\.weibo\.cn\/business\/advert\/ url reject-dict
+^https:\/\/tqt\.weibo\.cn\/user\/device\/ad_multi_star\? url reject-dict
 
-(?i)^https:\/\/tqt\.weibo\.cn\/operation\/activity\/ url reject-dict
+^https:\/\/tqt\.weibo\.cn\/operation\/activity\/ url reject-dict
 
-(?i)^https:\/\/tqt\.weibo\.cn\/master\/nav\/tab\? url jsonjq-response-body 'map(.tabs|=map(select(.type=="weather" or .type=="radar" or .type=="my")))'
+^https:\/\/tqt\.weibo\.cn\/master\/nav\/tab\? url jsonjq-response-body 'map(.tabs|=map(select(.type=="weather" or .type=="radar" or .type=="my")))'
 
-(?i)^https:\/\/tqt\.weibo\.cn\/api\/user\/user\/\d\.\d\/\?method=personal_center$ url reject-dict
+^https:\/\/tqt\.weibo\.cn\/api\/user\/user\/\d\.\d\/\?method=personal_center$ url reject-dict
 
 # [mitm]
 hostname = forecast.sina.cn, tqt.weibo.cn

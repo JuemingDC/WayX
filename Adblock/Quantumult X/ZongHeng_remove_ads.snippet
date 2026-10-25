@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ZongHeng.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:53 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/ZongHeng_remove_ads.lpx
@@ -16,8 +16,8 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/api1\.zongheng\.com\/iosapi\/system\/startup$ url reject
-(?i)^https:\/\/api2\.zongheng\.com\/api\/giftBag\/bindingBag$ url reject-dict
+^https:\/\/api1\.zongheng\.com\/iosapi\/system\/startup$ url reject
+^https:\/\/api2\.zongheng\.com\/api\/giftBag\/bindingBag$ url reject-dict
 
 # [mitm]
 hostname = api?.zongheng.com

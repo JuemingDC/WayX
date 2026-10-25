@@ -10,21 +10,21 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SF-Express.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:36 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/SF-Express_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 
-http-response-jq (?i)^https:\/\/ccsp-egmas\.sf-express\.com\/cx-app-base\/base\/app\/appHomeConfig\/query$ '.obj |= map(select(.position != 2))'
+http-response-jq ^https:\/\/ccsp-egmas\.sf-express\.com\/cx-app-base\/base\/app\/appHomeConfig\/query$ '.obj |= map(select(.position != 2))'
 
 [Map Local]
-(?i)^https:\/\/ccsp-egmas\.sf-express\.com\/cx-app-base\/base\/app\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/ccsp-egmas\.sf-express\.com\/cx-app-base\/base\/app\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/ucmp\.sf-express\.com\/proxy\/esgcempcore\/memberGoods\/pointMallService\/goodsList$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/ucmp\.sf-express\.com\/proxy\/esgcempcore\/memberGoods\/pointMallService\/goodsList$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/ucmp(-static)?\.sf-express\.com\/proxy\/ccspBase\/module-config\/(login\/)?query\? data-type=text data="{\"version\":\"2.0\",\"success\":true,\"obj\":[{\"positionName\":\"APP2025\",\"positionChannel\":\"app\",\"sceneList\":[{\"urlType\":\"webview\",\"sceneCode\":\"ddcb36295d5d2939ba4bbe2e5e02a4d8\",\"extendField1\":\"{\\\"boundApp\\\":\\\"Android,iOS\\\"}\",\"id\":29130,\"extendFieldOneDTO\":{\"boundApp\":\"Android,iOS\"},\"seq\":0,\"sceneName\":\"寄快递\",\"updateTime\":\"2026-02-06 18:55:15\",\"url\":\"{ \\\"needLogin\\\": true, \\\"classify\\\": \\\"MY_SERVICE\\\", \\\"params\\\": { \\\"jumpName\\\": \\\"快速寄件\\" status-code=200 header="Content-Type:application/json"
+^https:\/\/ucmp(-static)?\.sf-express\.com\/proxy\/ccspBase\/module-config\/(login\/)?query\? data-type=text data="{\"version\":\"2.0\",\"success\":true,\"obj\":[{\"positionName\":\"APP2025\",\"positionChannel\":\"app\",\"sceneList\":[{\"urlType\":\"webview\",\"sceneCode\":\"ddcb36295d5d2939ba4bbe2e5e02a4d8\",\"extendField1\":\"{\\\"boundApp\\\":\\\"Android,iOS\\\"}\",\"id\":29130,\"extendFieldOneDTO\":{\"boundApp\":\"Android,iOS\"},\"seq\":0,\"sceneName\":\"寄快递\",\"updateTime\":\"2026-02-06 18:55:15\",\"url\":\"{ \\\"needLogin\\\": true, \\\"classify\\\": \\\"MY_SERVICE\\\", \\\"params\\\": { \\\"jumpName\\\": \\\"快速寄件\\" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% ccsp-egmas.sf-express.com, ucmp.sf-express.com, ucmp-static.sf-express.com

@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduMap.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 16:33:19 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduMap_remove_ads.lpx
@@ -16,26 +16,26 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/afd\.baidu\.com\/afd\/entry\?action=(update|query) url reject-dict
+^https:\/\/afd\.baidu\.com\/afd\/entry\?action=(update|query) url reject-dict
 
-(?i)^https:\/\/newclient\.map\.baidu\.com\/feed\/govui\/rich_content url jsonjq-response-body 'delpaths([["data"]])'
+^https:\/\/newclient\.map\.baidu\.com\/feed\/govui\/rich_content url jsonjq-response-body 'delpaths([["data"]])'
 
-(?i)^https:\/\/newclient\.map\.baidu\.com\/client\/noticebar\/get\? url jsonjq-response-body 'delpaths([["content","multi_data"]])'
+^https:\/\/newclient\.map\.baidu\.com\/client\/noticebar\/get\? url jsonjq-response-body 'delpaths([["content","multi_data"]])'
 
-(?i)^https:\/\/newclient\.map\.baidu\.com\/(client\/)?usersystem\/mine\/page\? url jsonjq-response-body 'setpath(["data"]; "{}")'
+^https:\/\/newclient\.map\.baidu\.com\/(client\/)?usersystem\/mine\/page\? url jsonjq-response-body 'setpath(["data"]; "{}")'
 
-(?i)^https:\/\/newclient\.map\.baidu\.com\/client\/phpui2\/\?qt=ads&type=user_home_new_service url jsonjq-response-body 'delpaths([["ads"]])'
+^https:\/\/newclient\.map\.baidu\.com\/client\/phpui2\/\?qt=ads&type=user_home_new_service url jsonjq-response-body 'delpaths([["ads"]])'
 
-(?i)^https:\/\/yongche\.baidu\.com\/gomarketing\/api\/popup\/getentrancecordovaurl$ url reject-dict
+^https:\/\/yongche\.baidu\.com\/gomarketing\/api\/popup\/getentrancecordovaurl$ url reject-dict
 
-(?i)^https:\/\/yongche\.baidu\.com\/goorder\/passenger\/cobuild\/pull\? url reject-dict
-(?i)^https:\/\/yongche\.baidu\.com\/goorder\/passenger\/operationgirdle$ url reject-dict
-(?i)^https:\/\/yongche\.baidu\.com\/goorder\/passenger\/baseinfo$ url reject-dict
+^https:\/\/yongche\.baidu\.com\/goorder\/passenger\/cobuild\/pull\? url reject-dict
+^https:\/\/yongche\.baidu\.com\/goorder\/passenger\/operationgirdle$ url reject-dict
+^https:\/\/yongche\.baidu\.com\/goorder\/passenger\/baseinfo$ url reject-dict
 
-(?i)^https:\/\/ecom\.map\.baidu\.com\/ad-ops\/afd\/popup\? url reject-dict
-(?i)^https:\/\/maphotel\.baidu\.com\/hotel\/goextranet\/activity\/detail\? url reject-dict
+^https:\/\/ecom\.map\.baidu\.com\/ad-ops\/afd\/popup\? url reject-dict
+^https:\/\/maphotel\.baidu\.com\/hotel\/goextranet\/activity\/detail\? url reject-dict
 
-(?i)^https:\/\/newclient\.map\.baidu\.com\/living\/nearby\/api\? url jsonjq-response-body 'delpaths([["Result","cards",1],["Result","cards",4],["Result","cards",5],["Result","cards",9]])'
+^https:\/\/newclient\.map\.baidu\.com\/living\/nearby\/api\? url jsonjq-response-body 'delpaths([["Result","cards",1],["Result","cards",4],["Result","cards",5],["Result","cards",9]])'
 
 # [mitm]
 hostname = afd.baidu.com, newclient.map.baidu.com, yongche.baidu.com, ecom.map.baidu.com

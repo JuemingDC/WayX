@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ColorfulClouds.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:12 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/ColorfulClouds_remove_ads.lpx
@@ -19,10 +19,10 @@ host, ad.cyapi.cn, reject
 host, gather.colorfulclouds.net, reject
 
 # [rewrite_local]
-(?i)^https:\/\/biz\.cyapi\.cn\/(p\/v1\/entries|p\/v1\/trial_card\/info|v2\/product) url reject-dict
-(?i)^https:\/\/starplucker\.cyapi\.cn\/v3\/(config\/cypage\/\w+\/conditions|notification\/message_center|operation\/homefeatures) url reject-dict
+^https:\/\/biz\.cyapi\.cn\/(p\/v1\/entries|p\/v1\/trial_card\/info|v2\/product) url reject-dict
+^https:\/\/starplucker\.cyapi\.cn\/v3\/(config\/cypage\/\w+\/conditions|notification\/message_center|operation\/homefeatures) url reject-dict
 # 彩云天气去广告
-(?i)^https:\/\/(wrapper\.cyapi\.cn|api\.caiyunapp\.com|cdn-w\.caiyunapp\.com)\/v1\/activity\? url script-response-body https://kelee.one/Resource/JavaScript/ColorfulClouds/ColorfulClouds_remove_ads.js
+^https:\/\/(wrapper\.cyapi\.cn|api\.caiyunapp\.com|cdn-w\.caiyunapp\.com)\/v1\/activity\? url script-response-body https://kelee.one/Resource/JavaScript/ColorfulClouds/ColorfulClouds_remove_ads.js
 
 # [mitm]
 hostname = biz.cyapi.cn, starplucker.cyapi.cn, api.caiyunapp.com, cdn-w.caiyunapp.com

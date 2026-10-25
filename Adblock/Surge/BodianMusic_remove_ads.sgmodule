@@ -10,55 +10,55 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BodianMusic.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 15:58:32 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/BodianMusic_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-http-response-jq (?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/conf\/all\? 'delpaths([["data","groupSign","adStartAppDialog"],["data","groupSign","adGuideTest"],["data","groupSign","playTips"],["data","groupSign","adExitChange"],["data","conf","adGuidePopCount"],["data","conf","adDownListOpen"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+http-response-jq ^https:\/\/bd-api\.kuwo\.cn\/api\/service\/conf\/all\? 'delpaths([["data","groupSign","adStartAppDialog"],["data","groupSign","adGuideTest"],["data","groupSign","playTips"],["data","groupSign","adExitChange"],["data","conf","adGuidePopCount"],["data","conf","adDownListOpen"]])'
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-http-response-jq (?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/conf\/all\? 'setpath(["data","conf","flowControlConfig","uploadEnable"]; false) | setpath(["data","conf","flowControlConfig","p2pEnable"]; false)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+http-response-jq ^https:\/\/bd-api\.kuwo\.cn\/api\/service\/conf\/all\? 'setpath(["data","conf","flowControlConfig","uploadEnable"]; false) | setpath(["data","conf","flowControlConfig","p2pEnable"]; false)'
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-http-response-jq (?i)^https:\/\/ab-bodian\.kuwo\.cn\/abtest\/ui\/info\? 'delpaths([["data","mapTestInfo","CommentADPosition"],["data","mapTestInfo","DiscoverADPosition"],["data","mapTestInfo","DownloadAd"],["data","mapTestInfo","FreeModVoiceReminder"],["data","mapTestInfo","GamesTrans"],["data","mapTestInfo","bodianmvdialog"],["data","mapTestInfo","MvTryShowAds"],["data","mapTestInfo","insert"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+http-response-jq ^https:\/\/ab-bodian\.kuwo\.cn\/abtest\/ui\/info\? 'delpaths([["data","mapTestInfo","CommentADPosition"],["data","mapTestInfo","DiscoverADPosition"],["data","mapTestInfo","DownloadAd"],["data","mapTestInfo","FreeModVoiceReminder"],["data","mapTestInfo","GamesTrans"],["data","mapTestInfo","bodianmvdialog"],["data","mapTestInfo","MvTryShowAds"],["data","mapTestInfo","insert"]])'
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-http-response-jq (?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/global\/config\/scene\? 'delpaths([["data","iosP2PCacheEnable"],["data","warmStartDialog"],["data","adsNotFinishVipPop4DayInterval"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+http-response-jq ^https:\/\/bd-api\.kuwo\.cn\/api\/service\/global\/config\/scene\? 'delpaths([["data","iosP2PCacheEnable"],["data","warmStartDialog"],["data","adsNotFinishVipPop4DayInterval"]])'
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-http-response-jq (?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/global\/config\/scene\? 'setpath(["data","showShopEntry"]; false) | setpath(["data","iosP2pEnableSendDataLimit"]; 1)'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+http-response-jq ^https:\/\/bd-api\.kuwo\.cn\/api\/service\/global\/config\/scene\? 'setpath(["data","showShopEntry"]; false) | setpath(["data","iosP2pEnableSendDataLimit"]; 1)'
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-http-response-jq (?i)^https:\/\/bd-api\.kuwo\.cn\/api\/search\/topic\/word\/list\? 'delpaths([["data","hotTopic"],["data","searchFind"],["data","globalJumpInfo"],["data","hotWord"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+http-response-jq ^https:\/\/bd-api\.kuwo\.cn\/api\/search\/topic\/word\/list\? 'delpaths([["data","hotTopic"],["data","searchFind"],["data","globalJumpInfo"],["data","hotWord"]])'
 
-http-response-jq (?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/home\/index\? '.data.moduleList |= map(select(.type | tostring | (. != "8" and . != "1")))'
+http-response-jq ^https:\/\/bd-api\.kuwo\.cn\/api\/service\/home\/index\? '.data.moduleList |= map(select(.type | tostring | (. != "8" and . != "1")))'
 
-http-response-jq (?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/music\/recommendList\? '.data.musicList[] |= del(.showAd)'
+http-response-jq ^https:\/\/bd-api\.kuwo\.cn\/api\/service\/music\/recommendList\? '.data.musicList[] |= del(.showAd)'
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-http-response-jq (?i)^https:\/\/bd-api\.kuwo\.cn\/api\/comments\/v3\/topInfo\? 'delpaths([["data","putao"],["data","bannerVos"]])'
+# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
+http-response-jq ^https:\/\/bd-api\.kuwo\.cn\/api\/comments\/v3\/topInfo\? 'delpaths([["data","putao"],["data","bannerVos"]])'
 
 [Map Local]
-(?i)^https:\/\/bd-api\.kuwo\.cn\/api\/(play|service|advert)\/advert\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/bd-api\.kuwo\.cn\/api\/(play|service|advert)\/advert\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/banner\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/bd-api\.kuwo\.cn\/api\/service\/banner\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/bd-api\.kuwo\.cn\/api\/ucenter\/vip\/give\/config\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/bd-api\.kuwo\.cn\/api\/ucenter\/vip\/give\/config\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/home\/module\?.*&moduleId=6 data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/bd-api\.kuwo\.cn\/api\/service\/home\/module\?.*&moduleId=6 data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/bd-api\.kuwo\.cn\/api\/pay\/vip\/lowPriceText\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-(?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/global\/config\/vipEnter\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/bd-api\.kuwo\.cn\/api\/pay\/vip\/lowPriceText\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/bd-api\.kuwo\.cn\/api\/service\/global\/config\/vipEnter\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-(?i)^https:\/\/bd-api\.kuwo\.cn\/api\/popup\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-(?i)^https:\/\/bd-api\.kuwo\.cn\/api\/pay\/vip\/invitation\/swell\/popup\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-(?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/version\/popup\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-(?i)^https:\/\/bd-api\.kuwo\.cn\/api\/pay\/vip\/invitation\/assist\/popup\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-(?i)^https:\/\/bd-api\.kuwo\.cn\/api\/pay\/h5\/common\/popup\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/bd-api\.kuwo\.cn\/api\/popup\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/bd-api\.kuwo\.cn\/api\/pay\/vip\/invitation\/swell\/popup\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/bd-api\.kuwo\.cn\/api\/service\/version\/popup\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/bd-api\.kuwo\.cn\/api\/pay\/vip\/invitation\/assist\/popup\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/bd-api\.kuwo\.cn\/api\/pay\/h5\/common\/popup\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% bd-api.kuwo.cn

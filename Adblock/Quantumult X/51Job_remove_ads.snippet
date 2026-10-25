@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/51Job.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 15:58:33 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/51Job_remove_ads.lpx
@@ -16,26 +16,26 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/appapi\.51jobapp\.com\/api\/market\/get_launch\.php\? url reject-dict
+^https:\/\/appapi\.51jobapp\.com\/api\/market\/get_launch\.php\? url reject-dict
 
-(?i)^https:\/\/cupid\.51jobapp\.com\/open\/operation\/get\/latest\/banner-list\? url reject-dict
+^https:\/\/cupid\.51jobapp\.com\/open\/operation\/get\/latest\/banner-list\? url reject-dict
 
-(?i)^https:\/\/cupid\.51jobapp\.com\/open\/noauth\/recommend\/job-tab-dynamic\? url jsonjq-response-body 'delpaths([["resultbody","adsTabFeeds"]])'
+^https:\/\/cupid\.51jobapp\.com\/open\/noauth\/recommend\/job-tab-dynamic\? url jsonjq-response-body 'delpaths([["resultbody","adsTabFeeds"]])'
 
-(?i)^https:\/\/cupid\.51jobapp\.com\/open\/51job-activities\/secJob\/queryHomeSecondConfigV2\? url reject-dict
+^https:\/\/cupid\.51jobapp\.com\/open\/51job-activities\/secJob\/queryHomeSecondConfigV2\? url reject-dict
 
-(?i)^https:\/\/cupid\.51jobapp\.com\/open\/noauth\/jobs\/detail\/sesame-competitive\/ url reject-dict
+^https:\/\/cupid\.51jobapp\.com\/open\/noauth\/jobs\/detail\/sesame-competitive\/ url reject-dict
 
-(?i)^https:\/\/cupid\.51jobapp\.com\/open\/noauth\/jobs\/job-detail\/user-rights\? url reject-dict
+^https:\/\/cupid\.51jobapp\.com\/open\/noauth\/jobs\/job-detail\/user-rights\? url reject-dict
 
-(?i)^https:\/\/cupid\.51jobapp\.com\/open\/user-task\/user\/task\/ url jsonjq-response-body 'delpaths([["resultbody","availableTaskList"]])'
+^https:\/\/cupid\.51jobapp\.com\/open\/user-task\/user\/task\/ url jsonjq-response-body 'delpaths([["resultbody","availableTaskList"]])'
 
-(?i)^https:\/\/cupid\.51jobapp\.com\/open\/resume\/strategy\/resume-build\? url reject-dict
+^https:\/\/cupid\.51jobapp\.com\/open\/resume\/strategy\/resume-build\? url reject-dict
 
-(?i)^https:\/\/cupid\.51jobapp\.com\/launch-hub\/open\/noauth\/popUp\/ url reject-dict
-(?i)^https:\/\/cupid\.51jobapp\.com\/launch-hub\/open\/noauth\/popUp\/getHomePagePopUp\? url reject-dict
+^https:\/\/cupid\.51jobapp\.com\/launch-hub\/open\/noauth\/popUp\/ url reject-dict
+^https:\/\/cupid\.51jobapp\.com\/launch-hub\/open\/noauth\/popUp\/getHomePagePopUp\? url reject-dict
 
-(?i)^https:\/\/cupid\.51jobapp\.com\/open\/tab\/good-job\/modules\? url jsonjq-response-body 'delpaths([["resultbody","bannerList"]])'
+^https:\/\/cupid\.51jobapp\.com\/open\/tab\/good-job\/modules\? url jsonjq-response-body 'delpaths([["resultbody","bannerList"]])'
 
 # [mitm]
 hostname = appapi.51jobapp.com, cupid.51jobapp.com

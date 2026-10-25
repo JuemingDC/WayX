@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Jump.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:00 +08:00
+# Converted: 2026-10-25 17:18:10 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Jump_remove_ads.lpx
@@ -23,8 +23,8 @@ host, qh-material.taobao.com, reject
 host-suffix, admobile.top, reject
 
 # [rewrite_local]
-(?i)^https:?\/\/switch.jumpvg.com\/jump\/getlaunchad\/v2$ url jsonjq-response-body 'del(.data.adList)|.data.launchAd.showType=0'
-(?i)^https:?\/\/switch.jumpvg.com\/jump\/recommend\/ad_conf$ url jsonjq-response-body '.data=[]'
+^https:?\/\/switch.jumpvg.com\/jump\/getlaunchad\/v2$ url jsonjq-response-body 'del(.data.adList)|.data.launchAd.showType=0'
+^https:?\/\/switch.jumpvg.com\/jump\/recommend\/ad_conf$ url jsonjq-response-body '.data=[]'
 
 # [mitm]
 hostname = switch.jumpvg.com

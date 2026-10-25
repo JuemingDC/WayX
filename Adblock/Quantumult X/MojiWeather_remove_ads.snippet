@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MojiWeather.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:30 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/MojiWeather_remove_ads.lpx
@@ -16,16 +16,16 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/fcard\.api\.moji\.com\/flycard\/flyCard\? url reject
+^https:\/\/fcard\.api\.moji\.com\/flycard\/flyCard\? url reject
 
-(?i)^https:\/\/vdo\.api\.moji\.com\/shortvideo\/card\/subscribe$ url reject-dict
-(?i)^https:\/\/vdo\.api\.moji\.com\/shortvideo\/video\/index_flow\? url reject-dict
-(?i)^https:\/\/vdo\.api\.moji\.com\/shortvideo\/video_user\/hotGuyRcm\? url reject-dict
-(?i)^https:\/\/vdo\.api\.moji\.com\/shortvideo\/zone\/follow_src_zone\? url reject-dict
+^https:\/\/vdo\.api\.moji\.com\/shortvideo\/card\/subscribe$ url reject-dict
+^https:\/\/vdo\.api\.moji\.com\/shortvideo\/video\/index_flow\? url reject-dict
+^https:\/\/vdo\.api\.moji\.com\/shortvideo\/video_user\/hotGuyRcm\? url reject-dict
+^https:\/\/vdo\.api\.moji\.com\/shortvideo\/zone\/follow_src_zone\? url reject-dict
 
-(?i)^https:\/\/sns\.api\.moji\.com\/user\/dynamic_v9\/json\/someone_interest\? url reject-dict
+^https:\/\/sns\.api\.moji\.com\/user\/dynamic_v9\/json\/someone_interest\? url reject-dict
 
-(?i)^https:\/\/mme\.api\.moji\.com\/json\/entrance\/list$ url jsonjq-response-body 'del(.entrance_region_res_list[] | select(.region_name == "皇冠区域" or .region_name == "banner区")) | .entrance_region_res_list[].entrance_res_list |= if . then map(select(.entrance_name | . != "墨迹钱包" and . != "墨圈")) else . end'
+^https:\/\/mme\.api\.moji\.com\/json\/entrance\/list$ url jsonjq-response-body 'del(.entrance_region_res_list[] | select(.region_name == "皇冠区域" or .region_name == "banner区")) | .entrance_region_res_list[].entrance_res_list |= if . then map(select(.entrance_name | . != "墨迹钱包" and . != "墨圈")) else . end'
 
 # [mitm]
 hostname = fcard.api.moji.com, vdo.api.moji.com, sns.api.moji.com, mme.api.moji.com, psnlz.api.moji.com

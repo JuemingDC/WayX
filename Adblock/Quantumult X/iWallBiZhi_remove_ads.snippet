@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/iWallBiZhi.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:54 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/iWallBiZhi_remove_ads.lpx
@@ -16,17 +16,17 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/api\.fzxhmy\.com\/seek\/trendingword\? url reject-dict
+^https:\/\/api\.fzxhmy\.com\/seek\/trendingword\? url reject-dict
 
-(?i)^https:\/\/api\.fzxhmy\.com\/tone\/trending\? url reject-dict
+^https:\/\/api\.fzxhmy\.com\/tone\/trending\? url reject-dict
 # 移除首页广告配置
-(?i)^https:\/\/api\.fzxhmy\.com\/core\/initialize\? url script-response-body https://kelee.one/Resource/JavaScript/iWallBiZhi/core_initialize.js
+^https:\/\/api\.fzxhmy\.com\/core\/initialize\? url script-response-body https://kelee.one/Resource/JavaScript/iWallBiZhi/core_initialize.js
 
 # 移除首页轮播图广告
-(?i)^https:\/\/api\.fzxhmy\.com\/landing\/initialize\? url script-response-body https://kelee.one/Resource/JavaScript/iWallBiZhi/landing_initialize.js
+^https:\/\/api\.fzxhmy\.com\/landing\/initialize\? url script-response-body https://kelee.one/Resource/JavaScript/iWallBiZhi/landing_initialize.js
 
 # 移除头像页横幅跳转
-(?i)^https:\/\/api\.fzxhmy\.com\/avatar\/landing\? url script-response-body https://kelee.one/Resource/JavaScript/iWallBiZhi/landing.js
+^https:\/\/api\.fzxhmy\.com\/avatar\/landing\? url script-response-body https://kelee.one/Resource/JavaScript/iWallBiZhi/landing.js
 
 # [mitm]
 hostname = api.fzxhmy.com

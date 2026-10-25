@@ -10,17 +10,17 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ChatCam.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:23 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/ChatCam_remove_ads.lpx
 # Target: Surge
 
 [URL Rewrite]
 
-(?i)^https:\/\/jiafeigou-1251885898\.cos\.ap-guangzhou\.myqcloud\.com\/forever\/web_server\/app_config\/banner_\d+ _ reject
+^https:\/\/jiafeigou-1251885898\.cos\.ap-guangzhou\.myqcloud\.com\/forever\/web_server\/app_config\/banner_\d+ _ reject
 
 [Map Local]
-(?i)^https:\/\/fast\.jfgou\.com:1443\/api\/web\/v\d\/no\/app\/advertisement\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/fast\.jfgou\.com:1443\/api\/web\/v\d\/no\/app\/advertisement\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% fast.jfgou.com, jiafeigou-1251885898.cos.ap-guangzhou.myqcloud.com

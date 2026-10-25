@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KuGouYouth.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:25 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/KuGouYouth_remove_ads.lpx
@@ -16,25 +16,25 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/gateway\.kugou\.com\/ads\.service\/ url reject-dict
+^https:\/\/gateway\.kugou\.com\/ads\.service\/ url reject-dict
 
-(?i)^https:\/\/gateway\.kugou\.com\/youth\/v1\/start_img\/last\? url reject-dict
+^https:\/\/gateway\.kugou\.com\/youth\/v1\/start_img\/last\? url reject-dict
 
-(?i)^https:\/\/gateway\.kugou\.com\/youth\/v1\/yueku\/tab\? url jsonjq-response-body '.data.responses |= map(select(.module == "new_song_publish" or .module == "song_rank"))'
+^https:\/\/gateway\.kugou\.com\/youth\/v1\/yueku\/tab\? url jsonjq-response-body '.data.responses |= map(select(.module == "new_song_publish" or .module == "song_rank"))'
 
-(?i)^https:\/\/gateway\.kugou\.com\/ads\.gateway\/ url reject-dict
+^https:\/\/gateway\.kugou\.com\/ads\.gateway\/ url reject-dict
 
-(?i)^http:\/\/mobilelog\.kugou\.com\/adtrackconfig\.json$ url reject-dict
+^http:\/\/mobilelog\.kugou\.com\/adtrackconfig\.json$ url reject-dict
 
-(?i)^https:\/\/gateway\.kugou\.com\/youth\/v1\/experiment\/get_params\? url reject-dict
+^https:\/\/gateway\.kugou\.com\/youth\/v1\/experiment\/get_params\? url reject-dict
 
-(?i)^https:\/\/gateway\.kugou\.com\/youth\/api\/user\/v1\/init\? url reject-dict
+^https:\/\/gateway\.kugou\.com\/youth\/api\/user\/v1\/init\? url reject-dict
 
-(?i)^https:\/\/gateway\.kugou\.com\/youth\/v2\/activity\/task_list\? url reject-dict
+^https:\/\/gateway\.kugou\.com\/youth\/v2\/activity\/task_list\? url reject-dict
 
-(?i)^https:\/\/gateway\.kugou\.com\/youth\/v1\/channel\/tab_list\? url reject-dict
+^https:\/\/gateway\.kugou\.com\/youth\/v1\/channel\/tab_list\? url reject-dict
 
-(?i)^https:\/\/gateway\.kugou\.com\/goddess\/v1\/content\/biz_list\? url reject-dict
+^https:\/\/gateway\.kugou\.com\/goddess\/v1\/content\/biz_list\? url reject-dict
 
 # [mitm]
 hostname = gateway.kugou.com

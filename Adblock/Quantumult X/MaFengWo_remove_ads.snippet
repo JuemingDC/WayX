@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MaFengWo.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:27 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/MaFengWo_remove_ads.lpx
@@ -17,11 +17,11 @@
 host, advert.mafengwo.cn, reject
 
 # [rewrite_local]
-(?i)^https:\/\/mapi\.mafengwo\.cn\/discovery\/get_index\/v7\? url jsonjq-response-body '.data.list |= map(select(.data.business_type != "gdcpm"))'
+^https:\/\/mapi\.mafengwo\.cn\/discovery\/get_index\/v7\? url jsonjq-response-body '.data.list |= map(select(.data.business_type != "gdcpm"))'
 
-(?i)^https:\/\/mapi\.mafengwo\.cn\/sales\/home\/get_header\/v3\? url jsonjq-response-body '.data.list[] |= ( .data |= del(.banners) )'
+^https:\/\/mapi\.mafengwo\.cn\/sales\/home\/get_header\/v3\? url jsonjq-response-body '.data.list[] |= ( .data |= del(.banners) )'
 
-(?i)^https:\/\/mapi\.mafengwo\.cn\/user\/growth\/get_growth_tip\/v1\? url reject-dict
+^https:\/\/mapi\.mafengwo\.cn\/user\/growth\/get_growth_tip\/v1\? url reject-dict
 
 # [mitm]
 hostname = mapi.mafengwo.cn

@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Tencent_Video.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:38 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Tencent_Video_remove_ads.lpx
@@ -32,10 +32,10 @@ ip-cidr, 47.110.187.87/32, reject
 ^http:\/\/[\d\.:]*\/?(defaultts\.tc|vmind\.qqvideo\.tc|finderpdd\.video)\.qq\.com\/\w+ url reject
 ^http:\/\/apd-vlive\.apdcdn\.tc\.qq\.com\/vmind\.qqvideo\.tc\.qq\.com\/\w+ url reject
 ^http:\/\/apd-\w+\.v\.smtcdns\.com\/(defaultts|omts|vmind\.qqvideo)\.tc\.qq\.com\/\w+ url reject
-(?i)^https?:\/\/vv\.video\.qq\.com\/(diff|get)vmind url reject-dict
+^https?:\/\/vv\.video\.qq\.com\/(diff|get)vmind url reject-dict
 # 移除广告
 # [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
-(?i)^https?:\/\/vv\.video\.qq\.com\/getvinfo url script-request-body https://kelee.one/Resource/JavaScript/CommonScript/replace-body.js
+^https?:\/\/vv\.video\.qq\.com\/getvinfo url script-request-body https://kelee.one/Resource/JavaScript/CommonScript/replace-body.js
 
 # [mitm]
 hostname = vv.video.qq.com

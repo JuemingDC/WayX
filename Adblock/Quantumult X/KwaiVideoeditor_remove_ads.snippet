@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KwaiVideoeditor.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:24 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/KwaiVideoeditor_remove_ads.lpx
@@ -16,16 +16,16 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/resource\/get\? url reject-dict
+^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/resource\/get\? url reject-dict
 
-(?i)^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/banner\/common\/getBannerByTypeV2\? url jsonjq-response-body 'del(.list[] | select(.bannerChannelName == "活动"))'
-(?i)^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/banner\/common\/getAllBannerPage\? url jsonjq-response-body 'del(.data[] | select(.bannerChannelName == "活动"))'
+^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/banner\/common\/getBannerByTypeV2\? url jsonjq-response-body 'del(.list[] | select(.bannerChannelName == "活动"))'
+^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/banner\/common\/getAllBannerPage\? url jsonjq-response-body 'del(.data[] | select(.bannerChannelName == "活动"))'
 
-(?i)^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/banner\/common\/getBannerByType\? url reject-dict
+^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/banner\/common\/getBannerByType\? url reject-dict
 
-(?i)^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/merchant\/ad\/ url reject-dict
+^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/merchant\/ad\/ url reject-dict
 
-(?i)^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/resource\/activity\/pendant\? url reject-dict
+^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/resource\/activity\/pendant\? url reject-dict
 
 # [mitm]
 hostname = api.kmovie.gifshow.com

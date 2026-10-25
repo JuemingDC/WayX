@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/RoboTaxi.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:27 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/RoboTaxi_remove_ads.lpx
@@ -16,10 +16,10 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/idgdata\.baidu\.com\/mc\/app\/api\/listterminal\? url reject-dict
-(?i)^https:\/\/idgdata\.baidu\.com\/operation\/api\/announce\/screen\/image_manage\? url reject-dict
+^https:\/\/idgdata\.baidu\.com\/mc\/app\/api\/listterminal\? url reject-dict
+^https:\/\/idgdata\.baidu\.com\/operation\/api\/announce\/screen\/image_manage\? url reject-dict
 
-(?i)^https:\/\/idgdata\.baidu\.com\/idgactivity\/api\/newuser\/info\? url reject-dict
+^https:\/\/idgdata\.baidu\.com\/idgactivity\/api\/newuser\/info\? url reject-dict
 
 # [mitm]
 hostname = idgdata.baidu.com

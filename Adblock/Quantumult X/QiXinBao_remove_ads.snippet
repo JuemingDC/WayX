@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/QiXinBao.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:34 +08:00
+# Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/QiXinBao_remove_ads.lpx
@@ -16,25 +16,25 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/appc\.qixin\.com\/v4\/general\/getSearchPlaceholderRedirect$ url reject-dict
+^https:\/\/appc\.qixin\.com\/v4\/general\/getSearchPlaceholderRedirect$ url reject-dict
 
-(?i)^https:\/\/appc-v6\.qixin\.com\/v4\/general\/getAppFloatAd$ url reject-dict
+^https:\/\/appc-v6\.qixin\.com\/v4\/general\/getAppFloatAd$ url reject-dict
 
-(?i)^https:\/\/appc-v6\.qixin\.com\/v4\/general\/getAppBanners$ url reject-dict
+^https:\/\/appc-v6\.qixin\.com\/v4\/general\/getAppBanners$ url reject-dict
 
-(?i)^https:\/\/appc-v6\.qixin\.com\/v4\/user\/getUserActivitys$ url reject-dict
+^https:\/\/appc-v6\.qixin\.com\/v4\/user\/getUserActivitys$ url reject-dict
 
-(?i)^https:\/\/appc-v6\.qixin\.com\/v4\/enterprise\/homePageRecommend\/recommendCard\d+ url reject-dict
+^https:\/\/appc-v6\.qixin\.com\/v4\/enterprise\/homePageRecommend\/recommendCard\d+ url reject-dict
 
-(?i)^https:\/\/appc-v6\.qixin\.com\/v4\/user\/getRecommendPersons$ url reject-dict
+^https:\/\/appc-v6\.qixin\.com\/v4\/user\/getRecommendPersons$ url reject-dict
 
-(?i)^https:\/\/appc-v6\.qixin\.com\/v4\/enterprise\/getRecommendEnts$ url reject-dict
+^https:\/\/appc-v6\.qixin\.com\/v4\/enterprise\/getRecommendEnts$ url reject-dict
 
-(?i)^https:\/\/appc-v6\.qixin\.com\/v4\/enterprise\/getRecommendation$ url reject-dict
+^https:\/\/appc-v6\.qixin\.com\/v4\/enterprise\/getRecommendation$ url reject-dict
 
-(?i)^https:\/\/appc-v6\.qixin\.com\/v4\/general\/getAppBottomBanners$ url reject-dict
+^https:\/\/appc-v6\.qixin\.com\/v4\/general\/getAppBottomBanners$ url reject-dict
 
-(?i)^https:\/\/qxb-minicode-pic-osscache\.qixin\.com\/web\/ url reject
+^https:\/\/qxb-minicode-pic-osscache\.qixin\.com\/web\/ url reject
 
 # [mitm]
 hostname = appc.qixin.com, appc-v6.qixin.com, qxb-minicode-pic-osscache.qixin.com

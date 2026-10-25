@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Roborock.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:02 +08:00
+# Converted: 2026-10-25 17:18:10 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Roborock_remove_ads.lpx
@@ -16,13 +16,13 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/cniot\.roborock\.com\/api\/v1\/activity\/banner\/list$ url reject-dict
+^https:\/\/cniot\.roborock\.com\/api\/v1\/activity\/banner\/list$ url reject-dict
 
-(?i)^https:\/\/cniot\.roborock\.com\/api\/v1\/activity\/latest$ url reject-dict
+^https:\/\/cniot\.roborock\.com\/api\/v1\/activity\/latest$ url reject-dict
 
-(?i)^https:\/\/cniot\.roborock\.com\/api\/v1\/app\/theme\/device\/icon\? url reject
+^https:\/\/cniot\.roborock\.com\/api\/v1\/app\/theme\/device\/icon\? url reject
 
-(?i)^https:\/\/api\.roborock\.com\/v2\/h5\.page\.item\.info\?id=4115$ url jsonjq-response-body '.data |= map(select(.title == "常用功能"))'
+^https:\/\/api\.roborock\.com\/v2\/h5\.page\.item\.info\?id=4115$ url jsonjq-response-body '.data |= map(select(.title == "常用功能"))'
 
 # [mitm]
 hostname = cniot.roborock.com, api.roborock.com
