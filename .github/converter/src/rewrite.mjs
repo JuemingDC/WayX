@@ -618,39 +618,18 @@ function validateParts(parts) {
   return parts;
 }
 
-// Modified: 2026-10-25 (chance). Always generate native delpaths path arrays
-// for fixed-path deletion; dependent removals use ordered native pipes.
-export function planFixedPathDeleteJq(paths, {sourceForm='key-path', execution='sequential'}={}) {
+// Modified: 2026-10-25 (chance). One source deletion batch becomes one
+// native delpaths call, including repeated/overlapping paths and array indices.
+export function planFixedPathDeleteJq(paths, {sourceForm='key-path'}={}) {
   if (!Array.isArray(paths) || !paths.length) {
     throw new Error('delete path list must contain nonempty parsed paths');
   }
-  if(!['key-path','path-arrays'].includes(sourceForm) || !['sequential','snapshot'].includes(execution)) {
-    throw new Error('unknown deletion source representation or execution semantics');
+  if(!['key-path','path-arrays'].includes(sourceForm)) {
+    throw new Error('unknown deletion source representation');
   }
   const parts=paths.map(item=>validateParts(Array.isArray(item)?item:item?.parts));
-  const prefix=(a,b)=>a.length<=b.length && a.every((part,i)=>part===b[i]);
-  let dependency=null;
-  if(execution==='sequential') {
-    for(let i=0;i<parts.length && !dependency;i++) {
-      const earlier=parts[i], parent=earlier.slice(0,-1), removed=earlier.at(-1);
-      for(const later of parts.slice(i+1)) {
-        if(prefix(earlier,later) || prefix(later,earlier)) {
-          dependency='overlapping-source-paths'; break;
-        }
-        const next=later[parent.length];
-        if(typeof removed==='number' && prefix(parent,later) && typeof next==='number' &&
-           (removed<0 || next<0 || next>=removed)) {
-          dependency='earlier-array-removal-shifts-later-index'; break;
-        }
-      }
-    }
-  }
-  if(dependency)return {
-    form:'ordered-delpaths', reason:dependency, sourceForm, execution,
-    jq:parts.map(path=>'delpaths('+JSON.stringify([path])+')').join(' | '),
-  };
   return {
-    form:'delpaths', reason:'native-path-array-deletion', sourceForm, execution,
+    form:'delpaths', reason:'native-path-array-deletion', sourceForm, execution:'snapshot',
     jq:'delpaths('+JSON.stringify(parts)+')',
   };
 }

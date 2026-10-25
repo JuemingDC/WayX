@@ -292,7 +292,7 @@ assert.equal(compact.includes('"object"'), true);
 assert.equal(compact.includes('del(.b,.c)'), true);
 
 // Modified: 2026-10-25 (chance). All generated fixed deletions use native
-// delpaths arrays, retaining ordered evaluation when indices depend on removal.
+// delpaths arrays in one call, without inferred sequential deletion.
 assert.equal(
   renderFixedPathDeleteJq([
     {parts:['a'], selector:'.a'},
@@ -305,18 +305,17 @@ assert.equal(
     {parts:['items',0], selector:'.items[0]'},
     {parts:['items',1], selector:'.items[1]'},
   ]),
-  'delpaths([["items",0]]) | delpaths([["items",1]])',
+  'delpaths([["items",0],["items",1]])',
 );
 
-// Modified: 2026-10-23 (chance). Execute planner decisions with real jq:
-// identical paths require different results under sequential/snapshot semantics.
+// Modified: 2026-10-25 (chance). Execute native batch deletion with real jq;
+// array indices refer to the same input, not shifted intermediate arrays.
 for(const {paths,options,input,expected,form} of [
-  {paths:[['items',0],['items',1]],options:{},input:{items:['a','b','c','d']},expected:{items:['b','d']},form:'ordered-delpaths'},
-  {paths:[['items',0],['items',1]],options:{execution:'snapshot'},input:{items:['a','b','c','d']},expected:{items:['c','d']},form:'delpaths'},
-  {paths:[['items',0],['items',1]],options:{sourceForm:'path-arrays',execution:'snapshot'},input:{items:['a','b','c','d']},expected:{items:['c','d']},form:'delpaths'},
+  {paths:[['items',0],['items',1]],options:{},input:{items:['a','b','c','d']},expected:{items:['c','d']},form:'delpaths'},
+  {paths:[['items',0],['items',1]],options:{sourceForm:'path-arrays'},input:{items:['a','b','c','d']},expected:{items:['c','d']},form:'delpaths'},
   {paths:[['items',2],['items',0]],options:{},input:{items:['a','b','c','d']},expected:{items:['b','d']},form:'delpaths'},
   {paths:[['items',0,'ad'],['items',1,'ad']],options:{},input:{items:[{ad:1,keep:2},{ad:3,keep:4}]},expected:{items:[{keep:2},{keep:4}]},form:'delpaths'},
-  {paths:[['a'],['a','b']],options:{},input:{a:1,keep:2},expected:{keep:2},form:'ordered-delpaths'},
+  {paths:[['a'],['a','b']],options:{},input:{a:1,keep:2},expected:{keep:2},form:'delpaths'},
   {paths:[['a.b','0'],['other']],options:{sourceForm:'path-arrays'},input:{'a.b':{'0':1,keep:2},other:3},expected:{'a.b':{keep:2}},form:'delpaths'},
 ]) {
   const plan=planFixedPathDeleteJq(paths,options);
@@ -325,7 +324,7 @@ for(const {paths,options,input,expected,form} of [
   const result=runIsolatedCase('jq',['-c',plan.jq],{input:JSON.stringify(input),encoding:'utf8'});
   assert.equal(result.status,0,result.stderr);
   assert.deepEqual(JSON.parse(result.stdout),expected);
-  assert.ok(!plan.jq.includes('reduce '),'generated deletion uses native pipes rather than reduce');
+  assert.ok(!plan.jq.includes('reduce ') && !plan.jq.includes('|'),'one source deletion batch must use one delpaths call');
 }
 
 assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:true,scriptUrl:'https://example.com/request.js',sourceText:'$done({status:"HTTP/1.1 200 OK",body:$request.body});'}).action, 'script-request-body');
@@ -2374,3 +2373,10 @@ assert.equal(nonExactNativeAddPipelineCtx.generatedScripts.size,0);
 
 console.log('Rewrite target planner contract passed');
 }
+
+// Modified: 2026-10-25 (chance). Preserve the screenshot's duplicate paths
+// inside one native deletion call rather than synthesizing an ordered pipeline.
+assert.equal(renderFixedPathDeleteJq([
+ ['result','dy_module','irregular_banner_dy'],['result','icon_set'],
+ ['result','search_bar_hot_query'],['result','dy_module','irregular_banner_dy'],
+]),'delpaths([["result","dy_module","irregular_banner_dy"],["result","icon_set"],["result","search_bar_hot_query"],["result","dy_module","irregular_banner_dy"]])');

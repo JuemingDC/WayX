@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：2.23
+版本：2.24
 
 更新：2026-10-25
 作者：chance  
@@ -68,10 +68,9 @@ Key Path 解析为 String/Number segments，支持 dot key、数字索引及 quo
 原生 JSON 使用共同 WayX JQ 生成器：
 
 - add：采用 ScriptHub 的设置策略，直接 `setpath(PATH; VALUE)`，覆盖已有值并创建缺失路径；必要 helper 同样设置路径。
-- delete：`jq_delete` 和固定路径 JSON delete 一律生成 jq 原生 `delpaths(PATHS)`；PATHS 是路径数组的数组，字符串段表示对象键，数字段表示数组索引，例如 `delpaths([["a"],["items",0,"ad"]])`。不再根据源路径表示生成 `del(...)`。保留 `planFixedPathDeleteJq` 的源执行语义判断：默认顺序删除；存在父子重叠、重复路径或数组删除影响后续索引时，使用原生 `delpaths([path1]) | delpaths([path2])` 按源顺序删除；独立路径和 snapshot 语义使用一次 `delpaths(PATHS)`。作者已有 jq 表达式保留原义。
+<!-- Modified: 2026-10-25 (chance). Use a single native delpaths batch, including duplicate and overlapping source paths; remove inferred sequential deletion. -->
+- delete：同一条 `jq_delete` 或固定路径 JSON delete 的所有路径一律合在一次 jq 原生 `delpaths(PATHS)` 中。PATHS 是路径数组的数组，字符串段表示对象键，数字段表示数组索引，例如 `delpaths([["a"],["items",0,"ad"]])`。重复、父子重叠、同数组多个索引均保留在这一次调用中，按 jq 原生同一输入批量删除语义执行；不能自动生成 delpaths 管道或 reduce。两端均保持单条合并 jq 规则。源明确写出的多个独立 actions、作者已有 jq 管道和表达式仍保持原顺序与原义。
 
-
-<!-- Modified: 2026-10-25 (chance). Generate native delpaths for every fixed-path deletion while preserving typed segments and sequential dependencies with pipes, never reduce. -->
 - replace：直接 `setpath(PATH; VALUE)`，不添加 getpath/has 或字段存在性检查。PATH 为保留 String/Number 类型的路径数组；批量替换按源顺序用 ` | ` 连接。遵循 jq 原生设置语义，包括缺失路径创建及类型错误。VALUE 保留源声明类型：字符串 `"[]"` 不等于数组 `[]`，不得统一字符串化。必要 JSON replace helper 同样执行路径设置，不检查末端字段是否存在。
 
 add/replace 的 PATH 使用保留 String/Number 类型的路径数组，特殊键和数组索引不改变含义。生成的原生表达式不添加统一 type guard、`$__wayx_before` 或 try/catch 回滚，使用 jqlang 原生类型、错误和管道语义；作者自带 if/try/catch 保留。批量动作内部可形成有序原生操作，多个源 actions 仍按 2.3 分条。

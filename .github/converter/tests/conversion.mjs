@@ -1322,7 +1322,7 @@ assert.equal(addSurge.ok, true);
 assert.match(addSurge.line, /^http-response-jq /);
 
 // Modified: 2026-10-23 (chance). Use del selector lists or ordered
-// reduce/delpaths as required by the source, without generating del pipelines.
+// one native delpaths batch, without inferred sequential deletion pipelines.
 const scalarDeleteAst = parseRewriteV2(
   'response if ${url} ~= /api/ then response.json.delete("data.ad")'
 );
@@ -1333,8 +1333,8 @@ const indexedDeleteAst = parseRewriteV2(
 );
 const indexedDeleteQx = qxDirectRewritePlan(indexedDeleteAst);
 const indexedDeleteSurge = surgeDirectRewritePlan(indexedDeleteAst);
-assert.ok(indexedDeleteQx.line.includes('delpaths([["items",0]]) | delpaths([["items",1]])'));
-assert.ok(indexedDeleteSurge.line.includes('delpaths([["items",0]]) | delpaths([["items",1]])'));
+assert.ok(indexedDeleteQx.line.includes('delpaths([["items",0],["items",1]])'));
+assert.ok(indexedDeleteSurge.line.includes('delpaths([["items",0],["items",1]])'));
 
 const jqAst = parseRewriteV2(
   'response if ${url} ~= /^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idle\\.trade\\.full\\.info\\//i then response.json.jq(".data.components |= map(select(.render | . == \\"orderStatusVO\\" or . == \\"addressInfoVO\\" or . == \\"orderInfoVO\\"))")'
