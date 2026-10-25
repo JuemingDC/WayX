@@ -496,6 +496,17 @@ export function validateTargetRegex(pattern, label, {token=false}={}) {
   }
 }
 
+// Modified: 2026-10-25 (chance). Centralize native regex support by target and
+// field. Runner ICU compilation never upgrades an unverified client capability.
+export const TARGET_REGEX_CAPABILITIES=Object.freeze(Object.fromEntries(
+  ['qx','surge','generic'].map(target=>[target,Object.freeze(Object.fromEntries(
+    ['url','body','header','script'].map(field=>[field,Object.freeze({inlineFlags:'unverified',flags:'ims'})])
+  ))])
+));
+export function targetRegexCapability(target,subject) {
+  return TARGET_REGEX_CAPABILITIES[target]?.[subject] ?? TARGET_REGEX_CAPABILITIES.generic.url;
+}
+
 export function compileRegexForTarget(regex, { subject = 'url', target = 'generic', requireEquivalent = false } = {}) {
   if (!regex || regex.type !== 'regex') throw new TypeError('Expected Rewrite v2 regex AST node');
 
@@ -503,8 +514,10 @@ export function compileRegexForTarget(regex, { subject = 'url', target = 'generi
   const flags = String(regex.flags || '');
 
   assertRegexNode(regex);
-  if (flags && requireEquivalent) return {ok:false,reason:target+' native '+subject+' regex has no verified engine-equivalence proof for flags '+flags,pattern,sourceFlags:flags};
-  return {ok:true,pattern:flags ? '(?'+flags+')'+pattern : pattern,sourceFlags:flags,compatibilityUnverified:Boolean(flags),notes:[]};
+  const capability=targetRegexCapability(target,subject);
+  const compatibilityUnverified=Boolean(flags) && capability.inlineFlags!=='verified';
+  if (compatibilityUnverified && requireEquivalent) return {ok:false,reason:target+' native '+subject+' regex has no verified engine-equivalence proof for flags '+flags,pattern,sourceFlags:flags};
+  return {ok:true,pattern:flags ? '(?'+flags+')'+pattern : pattern,sourceFlags:flags,compatibilityUnverified,capability,notes:[]};
 }
 
 // qx-official-capabilities.mjs

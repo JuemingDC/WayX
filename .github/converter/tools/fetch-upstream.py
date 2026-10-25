@@ -25,7 +25,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--accept", default="*/*")
     parser.add_argument("--timeout-seconds", type=float, default=20.0)
     # Modified: 2026-10-25 (chance). Enforce the caller's byte limit while reading.
-    parser.add_argument("--max-bytes", type=int, default=64 * 1024 * 1024)
+    parser.add_argument("--max-bytes", type=int, default=512 * 1024 * 1024)
     return parser.parse_args()
 
 

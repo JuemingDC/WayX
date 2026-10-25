@@ -3,6 +3,8 @@
 // Category: Converter / Canonical Output
 import path from 'node:path';
 import fs from 'node:fs/promises';
+import crypto from 'node:crypto';
+import {createResourceSnapshot} from '../src/resources.mjs';
 import { loadLoonSourceCatalog } from "../src/input.mjs";
 import {
   materializeConversionRunContext,
@@ -46,6 +48,8 @@ const failures = createWorkflowFailureReporter({
   annotationFallback:'error',
 });
 
+// Modified: 2026-10-25 (chance). Canonical regeneration reuses dependencies across entries.
+const resources=createResourceSnapshot({directory:path.join(ROOT,'.github/monitor/.runtime/resources',crypto.randomUUID())});
 for (const entry of manifest) {
   if(selectedIds && !selectedIds.has(entry.id))continue;
   checked++;
@@ -55,7 +59,7 @@ for (const entry of manifest) {
     const oldQx = targetState.qx;
     const oldSurge = targetState.surge;
     const stamp = firstConversionStamp([oldQx, oldSurge], {trim:true}) || nowConversionStamp();
-    const context = await materializeConversionRunContext(entry,source);
+    const context = await materializeConversionRunContext(entry,source,{resources});
 
     let out = convertPluginWithContext(entry,source,context,{
       stamp,
@@ -108,6 +112,8 @@ for (const entry of manifest) {
     failures.capture(entry,error);
   }
 }
+
+await resources.seal();
 
 await writeValidationEvidence(checked,mode==='check'?findings.filter(Boolean):[],{plugins:verifiedPlugins,artifacts,complete:true});
 

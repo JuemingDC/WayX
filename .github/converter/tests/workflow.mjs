@@ -1332,7 +1332,13 @@ if(selectedCase==='managed-artifacts.mjs') {
     await fs.writeFile(path.join(root,'.github/monitor/.runtime/kelee-catalog.json'),JSON.stringify({count:3,plugins:catalog.map((e,order)=>({...e,order}))}));
     const before=new Map(await inventory());
     const unknown='#!name=Future\n[Rewrite]\nresponse if ${url} ~= /api/ then response.future.action()\n';
-    const run=await runCatalogSync({root,log:()=>{},writeError:()=>{},warn:()=>{},entryOptions:{fetchText:async url=>url===good.source?source('updated'):unknown}});
+    // Modified: 2026-10-25 (chance). Every source is acquired before the first conversion.
+    const events=[];
+    const run=await runCatalogSync({root,log:()=>{},writeError:()=>{},warn:()=>{},entryOptions:{
+      fetchText:async url=>{events.push('fetch');return url===good.source?source('updated'):unknown;},
+      convert:(...args)=>{events.push('convert');return convertPluginWithContext(...args);},
+    }});
+    assert.ok(events.lastIndexOf('fetch')<events.indexOf('convert'),'acquisition must finish before target conversion');
     assert.equal(run.publishable,true);assert.deepEqual(run.convertedPlugins,['Good']);assert.deepEqual(run.unchangedPlugins,[]);assert.deepEqual(run.validatedPlugins,['Good']);assert.deepEqual(run.retainedPlugins,['Bad']);assert.deepEqual(run.deferredPlugins,['Fresh']);
     assert.equal(run.failures.length,2);assert.ok(run.failures.every(failure=>failure.declarations.some(d=>d.line.includes('future.action'))));
     for(const [file,bytes] of await inventory())if(file.includes('/Bad/')||file.endsWith('/Bad.lpx')||file.endsWith('/Bad.snippet')||file.endsWith('/Bad.sgmodule'))assert.deepEqual(bytes,before.get(file),'failed plugin baseline preserved');
@@ -1364,4 +1370,84 @@ if(selectedCase==='managed-artifacts.mjs') {
     assert.equal(JSON.parse(await fs.readFile(path.join(root,'.github/monitor/.runtime/sync-failures.json'),'utf8')).publishable,false);
     console.log('Plugin isolation/transactions passed: helper/target/source/first-install rollback, stale cleanup, mixed catalog publication, deferred retry, Issue context and fatal rollback gate');
   }finally{await fs.rm(root,{recursive:true,force:true});}
+}
+
+if (selectedCase === "source-fetch.mjs") {
+// Modified: 2026-10-25 (chance). Exercise acquisition boundaries, run snapshots,
+// shared source preparation and routing-only deduplication without live services.
+// Author: chance
+// Category: Converter / Resource Architecture Verification
+const {spawnSync}=await import('node:child_process');
+const {createResourceSnapshot,fetchOriginalBytes,FETCH_LIMITS}=await import('../src/resources.mjs');
+const {materializeConversionContext,convertPluginWithContext,convertPlugin}=await import('../src/conversion.mjs');
+const {uniqueRoutingLines}=await import('../src/output.mjs');
+const {targetRegexCapability,compileRegexForTarget}=await import('../src/core.mjs');
+const root=await fs.mkdtemp(path.join(os.tmpdir(),'wayx-resource-'));
+const originalFetch=globalThis.fetch;
+try {
+  assert.equal(FETCH_LIMITS.text,128*1024*1024);
+  assert.equal(FETCH_LIMITS.binary,512*1024*1024);
+  let calls=0,cancelled=false;
+  globalThis.fetch=async()=>{calls++;return new Response(new ReadableStream({pull(c){c.enqueue(new Uint8Array(8));},cancel(){cancelled=true;}}));};
+  await assert.rejects(fetchOriginalBytes('https://example.test/large',{maxBytes:10}),e=>e.code==='ERR_FETCH_SIZE');
+  assert.equal(calls,1);assert.equal(cancelled,true);
+  calls=0;
+  globalThis.fetch=async(_url,{signal})=>{calls++;if(calls===1)return new Promise((_,reject)=>signal.addEventListener('abort',()=>reject(signal.reason),{once:true}));return new Response('ok');};
+  assert.equal(String(await fetchOriginalBytes('https://example.test/timeout',10)),'ok');assert.equal(calls,2);
+  calls=0;
+  globalThis.fetch=async()=>{calls++;throw new TypeError('fetch failed',{cause:{code:'ECONNRESET'}});};
+  await assert.rejects(fetchOriginalBytes('https://example.test/reset'),/fetch failed/);assert.equal(calls,3);
+  calls=0;globalThis.fetch=async()=>{calls++;return new Response('',{status:404});};
+  await assert.rejects(fetchOriginalBytes('https://example.test/Timeout-ECONNRESET'),/HTTP 404/);assert.equal(calls,1);
+  globalThis.fetch=originalFetch;
+
+  let reads=0;
+  const store=createResourceSnapshot({directory:path.join(root,'snapshot'),fetchBytes:async()=>{reads++;return Buffer.from('first\r\n');}});
+  const url='https://example.test/shared';
+  const [text,bytes]=await Promise.all([store.fetchText(url),store.fetchBytes(url)]);
+  assert.equal(reads,1);assert.equal(text,'first\n');assert.equal(String(bytes),'first\r\n');
+  bytes.fill(0);assert.equal(await store.fetchText(url),'first\n');
+  await store.seal();
+  assert.equal(await store.fetchText(url),'first\n');
+  await assert.rejects(store.fetchText('https://example.test/new'),/sealed/);assert.equal(reads,1);
+  const manifest=JSON.parse(await fs.readFile(path.join(root,'snapshot/manifest.json'),'utf8'));
+  assert.equal(manifest.resources[0].size,7);assert.match(manifest.resources[0].sha256,/^[a-f0-9]{64}$/);
+  await fs.writeFile(path.join(root,'snapshot',manifest.resources[0].storage),'corrupted');
+  await assert.rejects(store.fetchText(url),/checksum mismatch/);
+  let failures=0;
+  const failed=createResourceSnapshot({directory:path.join(root,'failed'),fetchBytes:async()=>{failures++;throw new Error('unavailable');}});
+  await assert.rejects(failed.fetchText(url),/unavailable/);await assert.rejects(failed.fetchBytes(url),/unavailable/);
+  await failed.seal();assert.equal(failures,1);
+
+  const entry={id:'Resources',file:'Resources.lpx',source:'https://example.test/plugins/plugin.lpx',qx:'Resources.snippet',surge:'Resources.sgmodule',category:'去广告'};
+  let jqReads=0;
+  const shared=createResourceSnapshot({directory:path.join(root,'plugins'),fetchText:async()=>{jqReads++;return 'del(.ad)';}});
+  const source='#!name=Resources\n[Rewrite]\nresponse if ${url} ~= /api/i then response.json.jq_file("shared.jq")\nresponse if ${url} ~= /other/i then response.json.jq_file("shared.jq")\n';
+  const first=await materializeConversionContext(entry,source,{resources:shared});
+  const second=await materializeConversionContext({...entry,id:'Other'},source,{resources:shared});
+  await shared.seal();assert.equal(jqReads,1);
+  globalThis.fetch=()=>{throw new Error('Conversion must not access network');};
+  const options={stamp:'2026-10-25 12:00:00 +08:00',rawBase:'https://example.test'};
+  const out=convertPluginWithContext(entry,source,first,options);
+  assert.match(out.qx,/del\(\.ad\)/);assert.match(out.surge,/del\(\.ad\)/);
+  assert.throws(()=>convertPluginWithContext(entry,source+'# changed',first,options),/does not match/);
+  const ast=first.declarations.values().next().value.ast;const before=JSON.stringify(ast);
+  convertPluginWithContext(entry,source,first,options);assert.equal(JSON.stringify(ast),before);
+  assert.ok(second.declarations.size);
+  assert.deepEqual(uniqueRoutingLines(['# one','host, a, direct','# two','host, a, direct','host, a, proxy']),['# one','host, a, direct','# two','host, a, proxy']);
+  const repeated='#!name=Resources\n[Rule]\nDOMAIN,a.example,REJECT\n# keep comment\nDOMAIN,a.example,REJECT\n[Rewrite]\nresponse if ${url} ~= /api/ then response.json.jq(`.x += 1`)\nresponse if ${url} ~= /api/ then response.json.jq(`.x += 1`)\n';
+  const repeatOut=convertPlugin(entry,repeated,options);
+  assert.equal((repeatOut.qx.match(/^host, a.example, reject$/gm)||[]).length,1);
+  assert.equal((repeatOut.qx.match(/\.x \+= 1/g)||[]).length,2);assert.match(repeatOut.qx,/# keep comment/);
+  assert.equal(targetRegexCapability('qx','url').inlineFlags,'unverified');
+  assert.equal(compileRegexForTarget({type:'regex',pattern:'api',flags:'i'},{target:'qx',requireEquivalent:true}).ok,false);
+
+  // Python enforces its own bound before producing any stdout body.
+  const python=`import importlib.util,io,sys\nspec=importlib.util.spec_from_file_location('f','.github/converter/tools/fetch-upstream.py')\nm=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)\nclass Reply(io.BytesIO):\n def __enter__(self):return self\n def __exit__(self,*args):self.close()\nm.urllib.request.urlopen=lambda *a,**k:Reply(b'12345')\nsys.argv=['fetch','--url','https://example.test/','--user-agent','test','--max-bytes',sys.argv[1]]\nraise SystemExit(m.main())\n`;
+  for(const [limit,code] of [[4,25],[5,0]]) {
+    const result=spawnSync('python',['-c',python,String(limit)]);
+    assert.equal(result.status,code,result.stderr.toString());assert.equal(result.stdout.toString(),code===0?'12345':'');
+  }
+  console.log('Resource architecture: streaming limits, retry classification, snapshot consistency, shared dependencies, pure conversion and safe deduplication passed');
+} finally {globalThis.fetch=originalFetch;await fs.rm(root,{recursive:true,force:true});}
 }

@@ -1,8 +1,8 @@
 # WayX Conversion Specification
 
-版本：2.16
+版本：2.17
 
-更新：2026-10-23
+更新：2026-10-25
 作者：chance  
 状态：唯一权威转换规范（Authoritative）
 
@@ -82,6 +82,19 @@ add/replace 的 PATH 使用保留 String/Number 类型的路径数组，特殊�
 必要 JS runtime 支持的固定 JQ 子集可含 identity、固定对象赋值、del/delete-many、点分及 quoted bracket 路径，不支持任意完整 jq。一个 JQ action 成功才提交，失败回滚当前 action，先前 action 的提交不回滚，后续动作继续。原生 JQ 的错误行为不套用 JS helper 的事务语义。
 
 ## 2.7 文件依赖与上游 JQ 错误
+
+<!-- Modified: 2026-10-25 (chance). Separate acquisition, source preparation, target planning and final publication; centralize run snapshots and resource limits. -->
+
+资源获取由 `resources.mjs` 统一负责；文本资源默认上限 128 MiB，二进制 mock 默认上限 512 MiB。上限按实际读取字节执行，调用者可显式传入更合适的单次上限；不得将资源下载上限当作目标客户端的正文处理能力。临时网络错误、超时、HTTP 408/425/429 和 5xx 才重试；永久 HTTP 错误与超限立即失败。
+
+一次完整同步先准备所有插件的源文件、脚本、jq 和 mock 依赖，再封存资源快照，最后逐插件转换并提交。原 URL 和请求 profile 决定缓存身份；成功资源存于运行目录，manifest 记录 URL、profile、SHA-256 和字节数，读取时校验。失败保留有限重试后的结果，不因后续插件重复引用而再次下载。相同 URL 以首次成功获取的字节为准；文本/二进制读取仍分别执行各自上限。快照仅用于当前运行，不跨运行复用旧资源。
+
+解析阶段统一准备源 Rewrite 声明：新版 AST、旧版 Semantic IR 和解析诊断按源声明绑定，文件依赖与两个目标规划器共享准备结果；各规划器获得独立副本，原注释、正则 flags、动作顺序和路径类型不得改变。准备上下文绑定源 URL 与内容摘要，不得用于另一个源版本。转换阶段不得联网。
+
+目标正则能力由 `TARGET_REGEX_CAPABILITIES` 按客户端与配置字段集中声明；`unverified` 不得因为 runner ICU 编译成功而提升为已验证，也不得据此删除 flags 或自动改变既有原生优先策略。最终验证集中检查转换器语法、变化的生成脚本及实际配置产物，不在各阶段重复完整生成。
+
+输出阶段仅对同一规则区段中完全相同的活动路由声明去重，保留首次位置和所有源注释。策略或参数不同的规则不得合并；Rewrite、Body、Header 和 Script 等可能重复执行的动作不得按行去重。
+
 
 jq_file、jq-path 和 mock_file 只读取源声明指定的原地址。JQ 文件内联实际程序，不把路径当 JQ、不用仓库副本替代、不为 JQ 文件本身创建脚本。作者表达式只做单行配置必需的转义、非字符串注释处理与空白压缩，不作代数改写。
 
