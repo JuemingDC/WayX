@@ -1,3 +1,4 @@
+import {convertNativeQxToSurge} from "../src/conversion.mjs";
 // Consolidated: 2026-10-03
 // Author: chance
 // Category: Converter / workflow / Regression Suite
@@ -1308,6 +1309,25 @@ assert.match(variants.outputs.get('Adblock/Quantumult X/ishowshu_amap.snippet'),
 assert.doesNotMatch(variants.outputs.get('Adblock/Quantumult X/ishowshu_amap.snippet'),/old\.example/);
 assert.equal(variants.outputs.has('Adblock/Quantumult X/ishowshu_bilibili.snippet'),false);
 assert.equal(variants.skipped[0].application,'bilibili');
+// Modified: 2026-10-25 (chance). Verify native QX policies, HTTP actions,
+// unchanged author Script URLs and explicit unsupported API/header boundaries.
+const qxConversionInput='# Name: Native fixture\n# [filter_local]\nhost,keep.example,direct\nhost-suffix,proxy.example,proxy\nip6-cidr,2001:db8::/32,reject\n# [rewrite_local]\n^https://a.example url reject\n^https://b.example url reject-dict\n^https://c.example url jsonjq-response-body \'delpaths([["ad"],["banner"]])\'\n^https://d.example url script-response-body https://example.test/original.js\n# [mitm]\nhostname = a.example, b.example\n';
+const convertedNative=convertNativeQxToSurge(qxConversionInput,{id:'native_fixture',scriptSources:new Map([['https://example.test/original.js','const body=$response.body;$done({body});']])});
+assert.equal(convertedNative.diagnostics.length,0);
+assert.match(convertedNative.surge,/DOMAIN,keep\.example,DIRECT/);
+assert.ok(convertedNative.surge.includes('DOMAIN-SUFFIX,proxy.example,{{{PROXY}}}'));
+assert.match(convertedNative.surge,/IP-CIDR6,2001:db8::\/32,REJECT/);
+assert.match(convertedNative.surge,/a\.example _ reject/);
+assert.match(convertedNative.surge,/data="\{\}" status-code=200/);
+assert.ok(convertedNative.surge.includes("http-response-jq ^https://c.example 'delpaths([[\"ad\"],[\"banner\"]])'"));
+assert.ok(convertedNative.surge.includes('script-path=https://example.test/original.js'));
+assert.match(convertedNative.surge,/requires-body=true/);
+const unsupportedNative=convertNativeQxToSurge(qxConversionInput.replace('# [mitm]','^https://guard.example UA* url-and-header reject\n# [mitm]'),{scriptSources:new Map([['https://example.test/original.js','$notify("a","b","c");$done({});']])});
+assert.equal(unsupportedNative.diagnostics.length,2);
+assert.doesNotMatch(unsupportedNative.surge,/^native_qx_\d+ = /m);
+nativeConfig.preferred_versions={bilibili:'rewrite/bilibili-qx.snippet'};
+await fs.writeFile(path.join(root,'.github/sources/native-qx.json'),JSON.stringify(nativeConfig));
+assert.ok((await prepareNativeQxSync(root,{fetchText:nativeFetch})).outputs.has('Adblock/Quantumult X/ishowshu_bilibili.snippet'));
 await fs.rm(root,{recursive:true,force:true});
 console.log('README index contract passed: stable source groups, alphabetical subgroups, policy order and target additions/removals');
 }

@@ -5,6 +5,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
+import {convertNativeQxToSurge} from "./conversion.mjs";
 import {quoteJq} from "./rewrite.mjs";
 import {validateQX} from "./output.mjs";
 import {spawnSync} from "node:child_process";
@@ -290,7 +291,7 @@ export async function prepareNativeQxSync(root,{fetchText}={}) {
   if(tree.truncated || !Array.isArray(tree.tree))throw Error('Incomplete native QX source tree');
   const files=tree.tree.filter(x=>x.type==='blob'&&/^(?:filter|rewrite)\/[^/]+\.snippet$/.test(x.path)&&!config.exclude.includes(x.path)).sort((a,b)=>a.path.localeCompare(b.path,'en'));
   if(!files.length)throw Error('Empty native QX source catalog');
-  const groups=new Map(),inputs=[],skipped=[];
+  const groups=new Map(),inputs=[],skipped=[],diagnostics=[];
   for(const file of files) {
     const url='https://raw.githubusercontent.com/'+config.repository+'/'+commit+'/'+file.path;
     const text=await fetchText(url);if(/^\s*</.test(text))throw Error('HTML response for '+url);
@@ -307,7 +308,9 @@ export async function prepareNativeQxSync(root,{fetchText}={}) {
     // only a uniquely single-author version, never infer an attribution.
     const rewrites=allSources.filter(x=>x.path.startsWith('rewrite/'));
     if(rewrites.length>1) {
+      const preferred=config.preferred_versions?.[key];
       const eligible=rewrites.filter(x=>{
+        if(preferred)return x.path===preferred;
         const authors=x.text.match(/^#!author\s*=\s*(.+)$/mi)?.[1]?.split(/[,，、&]/).map(a=>a.trim()).filter(Boolean);
         return authors?.length===1;
       });
@@ -317,8 +320,19 @@ export async function prepareNativeQxSync(root,{fetchText}={}) {
     const name=sources.map(x=>x.text.match(/^#!name\s*=\s*(.+)$/mi)?.[1]).filter(Boolean).at(-1) || config.names[key] || key;
     const text=mergeNativeQxSources(sources,{name,author:config.author});validateQX(text,{id:config.prefix+key});
     outputs.set(QX_ADBLOCK_DIR+'/'+config.prefix+key+'.snippet',text);
+    if(config.surge) {
+      const scriptSources=new Map();
+      for(const match of text.matchAll(/^[^#\n]*\surl\sscript-(?:request|response)-(?:body|header)\s+(https?:\/\/\S+)$/gm)) {
+        const url=match[1];if(scriptSources.has(url))continue;
+        try{const source=await fetchText(url);scriptSources.set(url,source);inputs.push({url,sha256:crypto.createHash('sha256').update(source).digest('hex')});}
+        catch{scriptSources.set(url,null);}
+      }
+      const converted=convertNativeQxToSurge(text,{id:config.prefix+key,scriptSources});
+      outputs.set(SURGE_ADBLOCK_DIR+'/'+config.prefix+key+'.sgmodule',converted.surge);
+      diagnostics.push(...converted.diagnostics.map(item=>({application:key,...item})));
+    }
   }
-  return {outputs,commit,inputs,skipped};
+  return {outputs,commit,inputs,skipped,diagnostics};
 }
 export async function commitNativeQxSync(root,plan) {
   if(!plan)return;
@@ -326,7 +340,7 @@ export async function commitNativeQxSync(root,plan) {
   let prior={outputs:[]};try{prior=JSON.parse(await fs.readFile(path.join(root,statePath),'utf8'));}catch(error){if(error.code!=='ENOENT')throw error;}
   const old=new Map(),writes=new Map();
   for(const relative of new Set([...prior.outputs,...plan.outputs.keys()])) {
-    if(!/^Adblock\/Quantumult X\/ishowshu_[a-z0-9-]+\.snippet$/.test(relative))throw Error('Native QX ownership boundary violation');
+    if(!/^Adblock\/(?:Quantumult X\/ishowshu_[a-z0-9-]+\.snippet|Surge\/ishowshu_[a-z0-9-]+\.sgmodule)$/.test(relative))throw Error('Native QX ownership boundary violation');
     let previous=null;try{previous=await fs.readFile(path.join(root,relative),'utf8');}catch(error){if(error.code!=='ENOENT')throw error;}
     if(previous!==null && !previous.includes(NATIVE_QX_MARKER))throw Error('Refusing to overwrite unmanaged native QX resource: '+relative);
     old.set(relative,previous);let next=plan.outputs.get(relative)??null;
@@ -334,7 +348,7 @@ export async function commitNativeQxSync(root,plan) {
     if(next!==previous)writes.set(relative,next);
   }
   let state=null;try{state=await fs.readFile(path.join(root,statePath),'utf8');}catch(error){if(error.code!=='ENOENT')throw error;}
-  old.set(statePath,state);writes.set(statePath,JSON.stringify({version:1,commit:plan.commit,inputs:plan.inputs,skipped:plan.skipped,outputs:[...plan.outputs.keys()]},null,2)+'\n');
+  old.set(statePath,state);writes.set(statePath,JSON.stringify({version:1,commit:plan.commit,inputs:plan.inputs,skipped:plan.skipped,diagnostics:plan.diagnostics,outputs:[...plan.outputs.keys()]},null,2)+'\n');
   try{for(const [relative,text] of writes){const file=path.join(root,relative);await fs.mkdir(path.dirname(file),{recursive:true});if(text===null)await fs.rm(file,{force:true});else await fs.writeFile(file,text);}}
   catch(error){for(const [relative,text] of old){const file=path.join(root,relative);if(text===null)await fs.rm(file,{force:true});else await fs.writeFile(file,text);}throw error;}
 }
@@ -551,7 +565,11 @@ function rowInstallCells(category, row) {
   }
 
   if (row.surge) {
-    if (row.surge.ext === '.sgmodule') surge = markdownLink('一键安装', surgeModuleInstallUrl(row.surge.rel));
+    if (row.surge.ext === '.sgmodule') {
+      surge = markdownLink('一键安装', surgeModuleInstallUrl(row.surge.rel));
+      const count=Number(row.surge.text?.match(/^# Native QX review count: (\d+)$/m)?.[1] || 0);
+      if(count)surge+=' · '+count+' 条待核对';
+    }
     else surge = markdownLink('查看规则', rawRepoUrl(row.surge.rel));
   }
   return {qx, surge};

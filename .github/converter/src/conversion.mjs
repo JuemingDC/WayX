@@ -9,7 +9,7 @@ import { surgeRegexParameter } from "./core.mjs";
 import { renderRewritePhaseDispatcher } from "./runtime.mjs";
 import { splitScriptPipelineSources, scriptIrTag, parseScriptDeclaration, isScriptV2, planQxScript, planSurgeScript, scriptOption, analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs, surgeArgumentMetadata, surgeRewriteArgumentPayload } from "./script.mjs";
 import { qxRule as canonicalQxRule, surgeModuleRule } from "./rule.mjs";
-import { repairUpstreamJq, unquoteRewriteToken, isRewriteV2, parseRewriteV2, selectRewritePipelineLayer, rewriteV2ToSource, validateRewriteV2Ast, classifyLegacyRewriteAction, isEmptyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr, inlineResolvedDependency, inlineResolvedLegacyJqPathIr, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr, planQxRewrite, planSurgeRewrite, rewriteReview, rewriteIssue, supportsRewritePhaseActions, planRewriteFeatureHelper, simpleUrlRewriteCondition, jsonPipelineToSafeNativeJq } from "./rewrite.mjs";
+import { repairUpstreamJq, unquoteRewriteToken, isRewriteV2, parseRewriteV2, selectRewritePipelineLayer, rewriteV2ToSource, validateRewriteV2Ast, classifyLegacyRewriteAction, isEmptyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr, inlineResolvedDependency, inlineResolvedLegacyJqPathIr, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr, planQxRewrite, planSurgeRewrite, quoteJq, rewriteReview, rewriteIssue, supportsRewritePhaseActions, planRewriteFeatureHelper, simpleUrlRewriteCondition, jsonPipelineToSafeNativeJq } from "./rewrite.mjs";
 import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection, parseLoonPlugin, materializeRewriteDependencies, materializeSourceScripts, fetchOriginalText, fetchOriginalBytes, prepareRewriteDeclarations, preparedRewriteAst } from "./input.mjs";
 import { attachQxInlineNote, createQxOutputState, appendQxOutput, qxOutputDestination, qxRuleOutputDestination, qxRewriteOutputDestination, renderQxOutput, createSurgeOutputState, appendSurgeOutput, surgeOutputDestination, surgeRuleOutputDestination, surgeRewriteOutputDestination, renderSurgeOutput, validateQX, validateSurgeModule } from "./output.mjs";
 import { parseConfigurationDeclaration, planConfiguration } from "./configuration.mjs";
@@ -689,4 +689,59 @@ export function validateConvertedPlugin(entry, out, {
   else validateSurgeModule(out.surge,entry,surgeValidationOptions);
 
   return out;
+}
+
+// Modified: 2026-10-25 (chance). Native QX -> Surge lowering preserves source
+// policies/programs and original Script URLs; unsupported semantics stay diagnosed.
+export function convertNativeQxToSurge(text,{id='native_qx',scriptSources=new Map()}={}) {
+  validateQX(text,{id});
+  const name=text.match(/^# Name: (.*)$/m)?.[1] || id;
+  const sections={Rule:[],'URL Rewrite':[],'Map Local':[],'Body Rewrite':[],Script:[],MITM:[]},diagnostics=[];
+  const issue=(line,reason)=>{diagnostics.push({source:line,reason});sections.Rule.push('# [WayX] REVIEW REQUIRED: '+reason,'# Source declaration: '+line);};
+  const types={'host':'DOMAIN','host-suffix':'DOMAIN-SUFFIX','host-keyword':'DOMAIN-KEYWORD','host-wildcard':'DOMAIN-WILDCARD','ip-cidr':'IP-CIDR','ip6-cidr':'IP-CIDR6','ip-asn':'IP-ASN','geoip':'GEOIP','user-agent':'USER-AGENT'};
+  let scriptIndex=0;
+  for(const raw of text.split('\n')) {
+    const line=raw.trim();if(!line)continue;
+    if(line.startsWith('#')){if(!/^# \[(?:filter_local|rewrite_local|mitm)\]$/.test(line))sections.Rule.push(line);continue;}
+    if(/^hostname\s*=/.test(line)){sections.MITM.push(line.replace(/^hostname\s*=\s*/,'hostname = %APPEND% '));continue;}
+    const rule=line.match(/^([^,]+),\s*([^,]+),\s*([^,]+)(.*)$/);
+    if(rule && types[rule[1].toLowerCase()]) {
+      const plan=surgeModuleRule(types[rule[1].toLowerCase()]+','+rule[2]+','+rule[3]+rule[4],{preMatching:false,proxyPolicyPlaceholder:'{{{PROXY}}}'});
+      if(plan.kind==='comment'){issue(line,'No verified routing equivalent');continue;}
+      sections[plan.section==='map'?'Map Local':'Rule'].push(...plan.lines);continue;
+    }
+    if(/\surl-and-header\s/.test(line)){issue(line,'QX whole-header matcher has no verified native Surge equivalent');continue;}
+    const match=line.match(/^(\S+)\s+url\s+(.+)$/);if(!match){issue(line,'Unrecognized QX declaration');continue;}
+    const [,pattern,action]=match;
+    // User-authorized QX reject -> Surge reject; QX dynamic delay is not preserved.
+    if(action==='reject'){sections['URL Rewrite'].push(pattern+' _ reject');continue;}
+    if(['reject-200','reject-dict','reject-array'].includes(action)) {
+      const body=action==='reject-dict'?'{}':action==='reject-array'?'[]':'';
+      sections['Map Local'].push(pattern+' data-type=text data='+JSON.stringify(body)+' status-code=200'+(body?' header="Content-Type:application/json"':''));continue;
+    }
+    const redirect=action.match(/^(302|307)\s+(\S+)$/);if(redirect){sections['URL Rewrite'].push(pattern+' '+redirect[2]+' '+redirect[1]);continue;}
+    const jq=action.match(/^jsonjq-(request|response)-body\s+'(.*)'$/);
+    if(jq){sections['Body Rewrite'].push('http-'+jq[1]+'-jq '+pattern+' '+quoteJq(jq[2]));continue;}
+    const body=action.match(/^(request|response)-body\s+(\S+)\s+\1-body\s+(.*)$/);
+    if(body){sections['Body Rewrite'].push('http-'+body[1]+' '+pattern+' '+body[2]+' '+body[3]);continue;}
+    const script=action.match(/^script-(request|response)-(body|header)\s+(https?:\/\/\S+)$/);
+    if(script) {
+      const code=scriptSources.get(script[3]);
+      if(typeof code!=='string'){issue(line,'Original script source unavailable for API verification');continue;}
+      // Conservative checks never rewrite an author program or assume that
+      // QX-only globals/byte/status fields exist in Surge. typeof probes are safe.
+      const probeFree=code.replace(/typeof\s+\$task\b/g,'undefined');
+      const globals=[...new Set(probeFree.match(/\$[A-Za-z_][A-Za-z_0-9]*/g)||[])];
+      const supported=new Set(['$request','$response','$done','$argument','$environment','$httpClient','$persistentStore','$notification','$utils','$script']);
+      const unsupported=globals.filter(x=>!supported.has(x));
+      if(unsupported.length || /\bbodyBytes\b|\$response\.statusCode\b|\$done\s*\(\s*\{\s*status\s*:/.test(code)) {
+        issue(line,'Script compatibility not proven for tokens/fields: '+(unsupported.join(', ')||'QX byte/status result fields'));continue;
+      }
+      sections.Script.push(id+'_'+(++scriptIndex)+' = type=http-'+script[1]+',pattern='+surgeRegexParameter(pattern)+',script-path='+surgeRegexParameter(script[3])+',requires-body='+(script[2]==='body'));continue;
+    }
+    issue(line,'No verified equivalent for QX action: '+action.split(/\s/)[0]);
+  }
+  const header=[...(sections.Rule.some(line=>line.includes('{{{PROXY}}}'))?['#!arguments=PROXY:PROXY','#!arguments-desc=PROXY:Upstream proxy policy group']:[]),'#!name='+name,'#!desc=Native QX conversion'+(diagnostics.length?' · '+diagnostics.length+' declarations require review':''),'#!category=WayX','#!requirement=CORE_VERSION>=20','# Native QX review count: '+diagnostics.length];
+  const out=header.join('\n')+'\n\n'+Object.entries(sections).filter(([,lines])=>lines.length).map(([section,lines])=>'['+section+']\n'+lines.join('\n')).join('\n\n')+'\n';
+  validateSurgeModule(out,{id});return {surge:out,diagnostics};
 }
