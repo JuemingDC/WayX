@@ -693,10 +693,10 @@ export function validateConvertedPlugin(entry, out, {
 
 // Modified: 2026-10-25 (chance). Native QX -> Surge lowering preserves source
 // policies/programs and original Script URLs; unsupported semantics stay diagnosed.
-export function convertNativeQxToSurge(text,{id='native_qx',scriptSources=new Map()}={}) {
+export function convertNativeQxToSurge(text,{id='native_qx'}={}) {
   validateQX(text,{id});
   const name=text.match(/^# Name: (.*)$/m)?.[1] || id;
-  const sections={Rule:[],'URL Rewrite':[],'Map Local':[],'Body Rewrite':[],Script:[],MITM:[]},diagnostics=[];
+  const sections={Rule:[],'URL Rewrite':[],'Map Local':[],'Body Rewrite':[],'Header Rewrite':[],Script:[],MITM:[]},diagnostics=[];
   const issue=(line,reason)=>{diagnostics.push({source:line,reason});sections.Rule.push('# [WayX] REVIEW REQUIRED: '+reason,'# Source declaration: '+line);};
   const types={'host':'DOMAIN','host-suffix':'DOMAIN-SUFFIX','host-keyword':'DOMAIN-KEYWORD','host-wildcard':'DOMAIN-WILDCARD','ip-cidr':'IP-CIDR','ip6-cidr':'IP-CIDR6','ip-asn':'IP-ASN','geoip':'GEOIP','user-agent':'USER-AGENT'};
   let scriptIndex=0;
@@ -710,7 +710,7 @@ export function convertNativeQxToSurge(text,{id='native_qx',scriptSources=new Ma
       if(plan.kind==='comment'){issue(line,'No verified routing equivalent');continue;}
       sections[plan.section==='map'?'Map Local':'Rule'].push(...plan.lines);continue;
     }
-    if(/\surl-and-header\s/.test(line)){issue(line,'QX whole-header matcher has no verified native Surge equivalent');continue;}
+    if(/\surl-and-header\s/.test(line)){issue(line,'URL-and-header conjunction retained for review; dropping the header condition would broaden matching');continue;}
     const match=line.match(/^(\S+)\s+url\s+(.+)$/);if(!match){issue(line,'Unrecognized QX declaration');continue;}
     const [,pattern,action]=match;
     // User-authorized QX reject -> Surge reject; QX dynamic delay is not preserved.
@@ -724,19 +724,21 @@ export function convertNativeQxToSurge(text,{id='native_qx',scriptSources=new Ma
     if(jq){sections['Body Rewrite'].push('http-'+jq[1]+'-jq '+pattern+' '+quoteJq(jq[2]));continue;}
     const body=action.match(/^(request|response)-body\s+(\S+)\s+\1-body\s+(.*)$/);
     if(body){sections['Body Rewrite'].push('http-'+body[1]+' '+pattern+' '+body[2]+' '+body[3]);continue;}
+    // Modified: 2026-10-25 (chance). Lower a CRLF-bounded, single-field
+    // replacement only; never treat a whole-header regex as a value regex.
+    const headerAction=action.match(/^(request|response)-header\s+(\S+)\s+\1-header\s+(.*)$/);
+    if(headerAction) {
+      const field=headerAction[2].match(/^\(\\r\\n\)([A-Za-z0-9-]+):\.\+\(\\r\\n\)$/);
+      const replacement=field && headerAction[3].match(/^\$1([A-Za-z0-9-]+): ([^\r\n$]*)\$2$/);
+      if(field && replacement && field[1]===replacement[1] && !/^(?:Content-Length|Transfer-Encoding)$/i.test(field[1])) {
+        sections['Header Rewrite'].push('http-'+headerAction[1]+' '+pattern+' header-replace '+field[1]+' '+replacement[2]);continue;
+      }
+      issue(line,'Whole-header replacement is outside the supported CRLF-bounded single-field form');continue;
+    }
     const script=action.match(/^script-(request|response)-(body|header)\s+(https?:\/\/\S+)$/);
     if(script) {
-      const code=scriptSources.get(script[3]);
-      if(typeof code!=='string'){issue(line,'Original script source unavailable for API verification');continue;}
-      // Conservative checks never rewrite an author program or assume that
-      // QX-only globals/byte/status fields exist in Surge. typeof probes are safe.
-      const probeFree=code.replace(/typeof\s+\$task\b/g,'undefined');
-      const globals=[...new Set(probeFree.match(/\$[A-Za-z_][A-Za-z_0-9]*/g)||[])];
-      const supported=new Set(['$request','$response','$done','$argument','$environment','$httpClient','$persistentStore','$notification','$utils','$script']);
-      const unsupported=globals.filter(x=>!supported.has(x));
-      if(unsupported.length || /\bbodyBytes\b|\$response\.statusCode\b|\$done\s*\(\s*\{\s*status\s*:/.test(code)) {
-        issue(line,'Script compatibility not proven for tokens/fields: '+(unsupported.join(', ')||'QX byte/status result fields'));continue;
-      }
+      // Modified: 2026-10-25 (chance). User explicitly requests original
+      // author URLs without per-program API scans or source-download gates.
       sections.Script.push(id+'_'+(++scriptIndex)+' = type=http-'+script[1]+',pattern='+surgeRegexParameter(pattern)+',script-path='+surgeRegexParameter(script[3])+',requires-body='+(script[2]==='body'));continue;
     }
     issue(line,'No verified equivalent for QX action: '+action.split(/\s/)[0]);

@@ -282,24 +282,35 @@ export function mergeNativeQxSources(sources,{name,author,stamp=nowConversionSta
   return out.join('\n').replace(/\n*$/,'\n');
 }
 export async function prepareNativeQxSync(root,{fetchText}={}) {
-  let config;try{config=JSON.parse(await fs.readFile(path.join(root,'.github/sources/native-qx.json'),'utf8'));}catch(error){if(error.code==='ENOENT')return null;throw error;}
+  let registry;try{registry=JSON.parse(await fs.readFile(path.join(root,'.github/sources/native-qx.json'),'utf8'));}catch(error){if(error.code==='ENOENT')return null;throw error;}
+  // Modified: 2026-10-25 (chance). Isolated author registries share a
+  // single acquisition/commit transaction; v1 remains valid for existing users.
+  const configs=registry.version===2?registry.sources:[registry];
+  if(!Array.isArray(configs)||!configs.length)throw Error('Empty native QX registry');
+  const plans=[];
+  for(const config of configs)plans.push(await prepareNativeQxSource(config,{fetchText}));
+  const outputs=new Map();
+  for(const plan of plans)for(const [file,text] of plan.outputs){if(outputs.has(file))throw Error('Duplicate native QX output: '+file);outputs.set(file,text);}
+  return {outputs,commit:plans.length===1?plans[0].commit:undefined,sources:plans.map((plan,i)=>({repository:configs[i].repository,prefix:configs[i].prefix,commit:plan.commit})),inputs:plans.flatMap(p=>p.inputs),skipped:plans.flatMap(p=>p.skipped),diagnostics:plans.flatMap(p=>p.diagnostics)};
+}
+async function prepareNativeQxSource(config,{fetchText}) {
   if(config.version!==1 || !/^[\w.-]+\/[\w.-]+$/.test(config.repository)|| !/^[a-z0-9_]+$/.test(config.prefix))throw Error('Invalid native QX registry');
   const api='https://api.github.com/repos/'+config.repository;
   const commit=JSON.parse(await fetchText(api+'/commits/'+encodeURIComponent(config.ref))).sha;
   if(!/^[a-f0-9]{40}$/.test(commit))throw Error('Invalid native QX snapshot commit');
   const tree=JSON.parse(await fetchText(api+'/git/trees/'+commit+'?recursive=1'));
   if(tree.truncated || !Array.isArray(tree.tree))throw Error('Incomplete native QX source tree');
-  const files=tree.tree.filter(x=>x.type==='blob'&&/^(?:filter|rewrite)\/[^/]+\.snippet$/.test(x.path)&&!config.exclude.includes(x.path)).sort((a,b)=>a.path.localeCompare(b.path,'en'));
+  const files=tree.tree.filter(x=>x.type==='blob'&&(config.layout==='root'?/^[^/]+\.snippet$/:/^(?:filter|rewrite)\/[^/]+\.snippet$/).test(x.path)&&!(config.exclude||[]).includes(x.path)).sort((a,b)=>a.path.localeCompare(b.path,'en'));
   if(!files.length)throw Error('Empty native QX source catalog');
   const groups=new Map(),inputs=[],skipped=[],diagnostics=[];
   for(const file of files) {
     const url='https://raw.githubusercontent.com/'+config.repository+'/'+commit+'/'+file.path;
     const text=await fetchText(url);if(/^\s*</.test(text))throw Error('HTML response for '+url);
-    const stem=path.posix.basename(file.path,'.snippet'),key=config.aliases[stem] || stem;
+    const stem=path.posix.basename(file.path,'.snippet'),key=config.aliases?.[stem] || (config.layout==='root'?stem.toLowerCase().replace(/_/g,'-'):stem);
     if(!/^[a-z0-9-]+$/.test(key))throw Error('Invalid native QX application key');
     if(!groups.has(key))groups.set(key,[]);
     groups.get(key).push({text,path:file.path,url:'https://raw.githubusercontent.com/'+config.repository+'/'+config.ref+'/'+file.path});
-    inputs.push({path:file.path,sha256:crypto.createHash('sha256').update(text).digest('hex')});
+    inputs.push({repository:config.repository,path:file.path,sha256:crypto.createHash('sha256').update(text).digest('hex')});
   }
   const outputs=new Map();
   for(const [key,allSources] of groups) {
@@ -317,19 +328,15 @@ export async function prepareNativeQxSync(root,{fetchText}={}) {
       if(eligible.length!==1){skipped.push({application:key,reason:'No unique single-author version',sources:rewrites.map(x=>x.path)});continue;}
       sources=allSources.filter(x=>!x.path.startsWith('rewrite/')||x===eligible[0]);
     }
-    const name=sources.map(x=>x.text.match(/^#!name\s*=\s*(.+)$/mi)?.[1]).filter(Boolean).at(-1) || config.names[key] || key;
+    const name=sources.map(x=>x.text.match(/^#!name\s*=\s*(.+)$/mi)?.[1]).filter(Boolean).at(-1) || config.names?.[key] || key;
     const text=mergeNativeQxSources(sources,{name,author:config.author});validateQX(text,{id:config.prefix+key});
     outputs.set(QX_ADBLOCK_DIR+'/'+config.prefix+key+'.snippet',text);
     if(config.surge) {
-      const scriptSources=new Map();
-      for(const match of text.matchAll(/^[^#\n]*\surl\sscript-(?:request|response)-(?:body|header)\s+(https?:\/\/\S+)$/gm)) {
-        const url=match[1];if(scriptSources.has(url))continue;
-        try{const source=await fetchText(url);scriptSources.set(url,source);inputs.push({url,sha256:crypto.createHash('sha256').update(source).digest('hex')});}
-        catch{scriptSources.set(url,null);}
-      }
-      const converted=convertNativeQxToSurge(text,{id:config.prefix+key,scriptSources});
+      // Modified: 2026-10-25 (chance). No author-JS downloads/API scan;
+      // forward every original URL and declaration mode unchanged.
+      const converted=convertNativeQxToSurge(text,{id:config.prefix+key});
       outputs.set(SURGE_ADBLOCK_DIR+'/'+config.prefix+key+'.sgmodule',converted.surge);
-      diagnostics.push(...converted.diagnostics.map(item=>({application:key,...item})));
+      diagnostics.push(...converted.diagnostics.map(item=>({repository:config.repository,application:key,...item})));
     }
   }
   return {outputs,commit,inputs,skipped,diagnostics};
@@ -340,7 +347,7 @@ export async function commitNativeQxSync(root,plan) {
   let prior={outputs:[]};try{prior=JSON.parse(await fs.readFile(path.join(root,statePath),'utf8'));}catch(error){if(error.code!=='ENOENT')throw error;}
   const old=new Map(),writes=new Map();
   for(const relative of new Set([...prior.outputs,...plan.outputs.keys()])) {
-    if(!/^Adblock\/(?:Quantumult X\/ishowshu_[a-z0-9-]+\.snippet|Surge\/ishowshu_[a-z0-9-]+\.sgmodule)$/.test(relative))throw Error('Native QX ownership boundary violation');
+    if(!/^Adblock\/(?:Quantumult X\/(?:ishowshu|zenmofeishi)_[a-z0-9-]+\.snippet|Surge\/(?:ishowshu|zenmofeishi)_[a-z0-9-]+\.sgmodule)$/.test(relative))throw Error('Native QX ownership boundary violation');
     let previous=null;try{previous=await fs.readFile(path.join(root,relative),'utf8');}catch(error){if(error.code!=='ENOENT')throw error;}
     if(previous!==null && !previous.includes(NATIVE_QX_MARKER))throw Error('Refusing to overwrite unmanaged native QX resource: '+relative);
     old.set(relative,previous);let next=plan.outputs.get(relative)??null;
@@ -348,7 +355,7 @@ export async function commitNativeQxSync(root,plan) {
     if(next!==previous)writes.set(relative,next);
   }
   let state=null;try{state=await fs.readFile(path.join(root,statePath),'utf8');}catch(error){if(error.code!=='ENOENT')throw error;}
-  old.set(statePath,state);writes.set(statePath,JSON.stringify({version:1,commit:plan.commit,inputs:plan.inputs,skipped:plan.skipped,diagnostics:plan.diagnostics,outputs:[...plan.outputs.keys()]},null,2)+'\n');
+  old.set(statePath,state);writes.set(statePath,JSON.stringify({version:1,commit:plan.commit,sources:plan.sources,inputs:plan.inputs,skipped:plan.skipped,diagnostics:plan.diagnostics,outputs:[...plan.outputs.keys()]},null,2)+'\n');
   try{for(const [relative,text] of writes){const file=path.join(root,relative);await fs.mkdir(path.dirname(file),{recursive:true});if(text===null)await fs.rm(file,{force:true});else await fs.writeFile(file,text);}}
   catch(error){for(const [relative,text] of old){const file=path.join(root,relative);if(text===null)await fs.rm(file,{force:true});else await fs.writeFile(file,text);}throw error;}
 }
@@ -583,6 +590,8 @@ function adblockSource(row) {
     if(host==='kelee.one' || host.endsWith('.kelee.one'))return '可莉';
     if(host==='rucu6.pages.dev')return 'RuCu6';
     if(['github.com','raw.githubusercontent.com'].includes(host)&&url.pathname.split('/')[1]==='ishowshu')return '树先生';
+    // Modified: 2026-10-25 (chance). Keep the new native author in its own A–Z group.
+    if(['github.com','raw.githubusercontent.com'].includes(host)&&url.pathname.split('/')[1].toLowerCase()==='zenmofeishi')return '怎么肥事';
     if(host==='raw.githubusercontent.com' || host==='github.com')return url.pathname.split('/').filter(Boolean)[0] || host;
     return host;
   }catch{return '本地资源';}

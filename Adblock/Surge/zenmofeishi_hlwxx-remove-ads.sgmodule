@@ -1,0 +1,44 @@
+#!name=黑料不打烊净化
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 黑料不打烊净化
+# Updated: 2026-10-25 19:01:30 +08:00
+# Merged by: chance
+# Source Authors: 怎么肥事
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/hlwxx_remove_ads.snippet
+# Upstream name = 黑料不打烊净化
+# Upstream author = 怎么肥事
+# Upstream update = 2026-10-02
+# Upstream hostname = *heiliao*, *hlwxx*, *hlcx*, *97baoliao*, stats.kwvprfcr.xyz, mc.yandex.ru, api1.cghhqca.cc, api.shuifeng.cc, ads.zyudkkup.com, static.cloudflareinsights.com, *.googletagmanager.com, *.google-analytics.com
+
+[URL Rewrite]
+^https?:\/\/(?:www\.)?97baoliao\.com\/usr\/plugins\/AiSuite\/assets\/js\/adfloat\.js(?:\?.*)?$ _ reject
+^https?:\/\/(?:www\.)?97baoliao\.com\/usr\/themes\/Mirages\/js\/7\.10\.0\/bottom_ad_poll\.js(?:\?.*)?$ _ reject
+^https?:\/\/stats\.kwvprfcr\.xyz _ reject
+^https?:\/\/mc\.yandex\.ru _ reject
+^https?:\/\/static\.cloudflareinsights\.com\/beacon _ reject
+^https?:\/\/(?:www\.)?googletagmanager\.com\/(?:gtag\/js|gtm\.js)(?:\?.*)?$ _ reject
+^https?:\/\/(?:www\.)?google-analytics\.com\/ _ reject
+
+[Map Local]
+^https?:\/\/(?:www\.)?97baoliao\.com\/storage\/static\/popup-feed\.json(?:\?.*)?$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https?:\/\/api1\.cghhqca\.cc\/api\/eventTracking data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https?:\/\/api\.shuifeng\.cc\/api\/eventTracking data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https?:\/\/ads\.zyudkkup\.com\/api\/eventTracking data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Header Rewrite]
+http-request ^https?:\/\/(?:www\.)?(?:heiliao|hlwxx|hlcx\d*)\.com\/(?!static\/|favicon|api\/|index\/statistics|uploads\/) header-replace Accept-Encoding identity
+http-request ^https?:\/\/(?:www\.)?97baoliao\.com\/(?!usr\/|storage\/|api\/|favicon\.ico) header-replace Accept-Encoding identity
+
+[Script]
+zenmofeishi_hlwxx-remove-ads_1 = type=http-response,pattern=^https?:\/\/(?:www\.)?(?:heiliao|hlwxx|hlcx\d*)\.com\/(?!static\/|favicon|api\/|index\/statistics|uploads\/),script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/hlwxx_remove_ads.js,requires-body=true
+zenmofeishi_hlwxx-remove-ads_2 = type=http-response,pattern=^https?:\/\/(?:www\.)?97baoliao\.com\/(?!usr\/|storage\/|api\/|favicon\.ico),script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/hlwxx_remove_ads.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% *heiliao*, *hlwxx*, *hlcx*, *97baoliao*, stats.kwvprfcr.xyz, mc.yandex.ru, api1.cghhqca.cc, api.shuifeng.cc, ads.zyudkkup.com, static.cloudflareinsights.com, *.googletagmanager.com, *.google-analytics.com

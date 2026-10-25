@@ -1,0 +1,35 @@
+#!name=哈啰净化
+#!desc=Native QX conversion · 1 declarations require review
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 1
+
+[Rule]
+# Name: 哈啰净化
+# Updated: 2026-10-25 19:01:30 +08:00
+# Merged by: chance
+# Source Authors: 怎么肥事, TG@ZenMoFiShi
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/helloobike.snippet
+# Upstream name = 哈啰净化
+# Upstream author = TG@ZenMoFiShi
+# Upstream update = 2026-10-23
+# Upstream desc = 净化弹窗、首页推荐流、借钱入口与会员领券横条，隐藏我的页推广宫格、推荐、奖励金、接单券提醒及钱包金融整排。
+# [WayX] REVIEW REQUIRED: No verified equivalent for QX action: script-echo-response
+# Source declaration: ^https:\/\/resource\.51downapp\.cn\/f414fbc17c411b4e986ba8891c738a49\.json\?(?:[^#]*&)?md5=e5230c919f7e3f3af3256161fbfaa0e2&(?:[^#]*&)?hbe_qx_ui=1\.3$ url script-echo-response https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/easybike-ad.js
+# Upstream hostname = api.hellobike.com, marketingapi.hellobike.com, entertainment.hellobike.com, api-htp.beizi.biz, adservice.sigmob.cn, tm.sigmob.cn, mi.gdt.qq.com, v2mi.gdt.qq.com, resource.51downapp.cn
+
+[Map Local]
+^https?:\/\/api-htp\.beizi\.biz\/mb\/sdk0\/json(?:\?|$) data-type=text data="" status-code=200
+^https?:\/\/adservice\.sigmob\.cn\/(?:hb\/v2\/ad|ad\/v4)(?:\?|$) data-type=text data="" status-code=200
+^https?:\/\/tm\.sigmob\.cn\/(?:waterfall\/v1|strategy\/v6)(?:\?|$) data-type=text data="" status-code=200
+^https?:\/\/(?:mi|v2mi)\.gdt\.qq\.com\/(?:gdt_mview\.fcg|server_bidding2)(?:\?|$) data-type=text data="" status-code=200
+
+[Script]
+zenmofeishi_helloobike_1 = type=http-response,pattern=^https:\/\/api\.hellobike\.com(?::443)?\/secretkey(?:\?|$),script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/easybike-ad.js,requires-body=true
+zenmofeishi_helloobike_2 = type=http-request,pattern=^https?:\/\/(?:api|marketingapi|entertainment)\.hellobike\.com(?::\d+)?\/api(?:\?|$),script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/easybike-ad.js,requires-body=true
+zenmofeishi_helloobike_3 = type=http-response,pattern=^https?:\/\/(?:api|marketingapi|entertainment)\.hellobike\.com(?::\d+)?\/api(?:\?|$),script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/easybike-ad.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% api.hellobike.com, marketingapi.hellobike.com, entertainment.hellobike.com, api-htp.beizi.biz, adservice.sigmob.cn, tm.sigmob.cn, mi.gdt.qq.com, v2mi.gdt.qq.com, resource.51downapp.cn

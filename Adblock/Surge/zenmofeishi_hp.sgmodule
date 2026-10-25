@@ -1,0 +1,46 @@
+#!name=虎扑净化
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 虎扑净化
+# Updated: 2026-10-25 19:01:30 +08:00
+# Merged by: chance
+# Source Authors: 怎么肥事
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/HP.snippet
+# Upstream name = 虎扑净化
+# Upstream author = 怎么肥事
+# Upstream update = 2026-4-14
+# // 图库模块
+# // 红点提示
+# // 热门标签 & 排行榜
+# // 搜索提示 & 热搜
+# // 插屏广告
+# // 比分Tab & 横幅
+# // 预览横幅 - 清空数据
+# // 热门列表 - 移除顶部横幅
+# // 论坛功能入口 - 移除多余图标 & "我的应用"卡片
+# // 用户页 - 移除VIP信息
+# Upstream hostname = *.hupu.com
+
+[Map Local]
+^https:\/\/fairy\.mobileapi\.hupu\.com\/gallery\/getmod2 data-type=text data="" status-code=200
+^https:\/\/games\.mobileapi\.hupu\.com\/\d\/\d\.\d\.\d+\/bplapi\/reddot\/v1\/app\/getReddot data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/bbs\.mobileapi\.hupu\.com\/\d\/\d\.\d\.\d+\/(bbsallapi\/tag\/v1\/heatTag|bbsrankapi\/v1\/rating\/list) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/games\.mobileapi\.hupu\.com\/\d\/\d\.\d\.\d+\/search\/v2\/(hintkeylist|hotkeylist) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/goblin\.hupu\.com\/\d\/\d\.\d\.\d+\/interfaceAd\/getOther\/(v\d|batch) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/games\.mobileapi\.hupu\.com\/3\/8\.0\.86\/bplcommentapi\/bpl\/score_tab\/groups data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/games\.mobileapi\.hupu\.com\/3\/8\.0\.86\/bplapi\/banner\/getLocationBanners data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Body Rewrite]
+http-response-jq ^https:\/\/fairy\.mobileapi\.hupu\.com\/mang\/preview\/banners '.data = null'
+http-response-jq ^https:\/\/games\.mobileapi\.hupu\.com\/\d\/\d\.\d\.\d+\/buffer\/hotList 'del(.result.topBanner)'
+http-response-jq ^https:\/\/bbs\.mobileapi\.hupu\.com\/\d\/\d\.\d\.\d+\/bbsallapi\/lego\/data '.data.cards |= map(if .code == "multiIcon" then .components |= map(select(.data.title != "个性换肤" and .data.title != "专家预测" and .data.title != "邀请好友" and .data.title != "版主中心" and .data.title != "JRs战术板" and .data.title != "草稿箱" and .data.title != "58同城")) else . end) | .data.cards |= map(select(.components | if type == "array" then all(.data.title != "我的应用") else true end))'
+http-response-jq ^https:\/\/games\.mobileapi\.hupu\.com\/\d\/\d\.\d\.\d+\/bplapi\/user\/v1\/more 'del(.result.vipInfo)'
+
+[MITM]
+hostname = %APPEND% *.hupu.com

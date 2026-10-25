@@ -1,0 +1,49 @@
+#!name=T3出行
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: T3出行
+# Updated: 2026-10-25 19:01:30 +08:00
+# Merged by: chance
+# Source Authors: 怎么肥事
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/T3.snippet
+# Upstream name = T3出行
+# Upstream author = 怎么肥事
+# Upstream update = 2026-4-14
+# // 广告弹窗 & 推送 & 负一屏 & 活动
+# // 首页菜单 - 只保留打车/预约车/优惠券
+# // 负一屏广告 - 清空数据
+# // 活动弹窗 - 清空数据
+# // 公告通知 - 清空数据
+# // 浮窗广告 - 清空数据
+# Upstream hostname = *.t3go.cn, 124.71.144.189, 123.60.34.69, 121.36.220.180, 121.37.134.39
+
+[URL Rewrite]
+^http:\/\/.+\/resolve _ reject
+
+[Map Local]
+^https:\/\/passenger\.t3go\.cn(:\d+)?\/passenger-activity-api\/api\/ad\/act\/v1\/notoken\/popup data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/passenger\.t3go\.cn(:\d+)?\/passenger-activity-api\/api\/ad\/act\/v1\/notoken\/negativeScreen data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/passenger\.t3go\.cn(:\d+)?\/open-app-api\/api\/intime\/push\/offline\/pull data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/passenger\.t3go\.cn(:\d+)?\/passenger-activity-api\/api\/ad\/act\/v1\/notoken\/addressUp data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/passenger\.t3go\.cn(:\d+)?\/passenger-activity-api\/api\/v1\/ad\/getNotices data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/passenger\.t3go\.cn(:\d+)?\/passenger-activity-api\/notoken\/api\/v1\/resource\/getPageSceneListData data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/passenger\.t3go\.cn(:\d+)?\/passenger-activity-api\/api\/v1\/resource\/getTripRemind data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/passenger\.t3go\.cn(:\d+)?\/common-app-api\/api\/passenger\/v1\/getCardInfo data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/passenger\.t3go\.cn(:\d+)?\/passenger-activity-api\/api\/v3\/resource\/bottom data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/passenger\.t3go\.cn(:\d+)?\/passenger-app-api\/notoken\/api\/home\/v\d\/leftmenu data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Body Rewrite]
+http-response-jq ^https:\/\/passenger\.t3go\.cn(:\d+)?\/solution-passenger-api\/notoken\/trip\/api\/solution\/passenger\/open\/getHomeMenuList '.data.baseMenuList |= map(select(.menuId == "100001" or .menuId == "100018" or .menuId == "100046")) | .data.subMenuList = []'
+http-response-jq ^https:\/\/passenger\.t3go\.cn(:\d+)?\/passenger-activity-api\/notoken\/api\/v\d\/ad\/getNegativescreen '.data = null'
+http-response-jq ^https:\/\/passenger\.t3go\.cn(:\d+)?\/passenger-activity-api\/notoken\/api\/v\d\/ad\/getActivityPopup '.data = null'
+http-response-jq ^https:\/\/passenger\.t3go\.cn(:\d+)?\/passenger-activity-api\/notoken\/api\/v\d\/ad\/getNotices '.data = null'
+http-response-jq ^https:\/\/passenger\.t3go\.cn(:\d+)?\/passenger-activity-api\/notoken\/api\/v\d\/resourceLocation\/floating '.data = null'
+
+[MITM]
+hostname = %APPEND% *.t3go.cn, 124.71.144.189, 123.60.34.69, 121.36.220.180, 121.37.134.39

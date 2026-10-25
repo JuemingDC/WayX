@@ -1,0 +1,19 @@
+# Name: 芒果tv解锁会员
+# Updated: 2026-10-25 19:01:30 +08:00
+# Merged by: chance
+# Source Authors: 怎么肥事
+# Category: app
+# Managed by: WayX Native QX
+
+# [rewrite_local]
+# Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/mgtv_vip.snippet
+# Upstream name = 芒果tv解锁会员
+# Upstream author = 怎么肥事
+# Upstream update = 2026-05-14
+^https?:\/\/mobile-stream\.api\.mgtv\.com\/v1\/video\/source url script-request-header https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/mgtv_vip.js
+
+# [mitm]
+
+# Upstream hostname = mobile-stream.api.mgtv.com
+
+hostname = mobile-stream.api.mgtv.com

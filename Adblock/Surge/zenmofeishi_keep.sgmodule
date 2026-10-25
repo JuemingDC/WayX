@@ -1,0 +1,40 @@
+#!name=Keep净化
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: Keep净化
+# Updated: 2026-10-25 19:01:30 +08:00
+# Merged by: chance
+# Source Authors: 怎么肥事
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/Keep.snippet
+# Upstream name = Keep净化
+# Upstream author = 怎么肥事
+# Upstream update = 2026-4-14
+# Keep分流
+DOMAIN,hc-ssp.sm.cn,REJECT
+DOMAIN,httpdns.calorietech.com,REJECT
+# // 未读消息 & 广告 & 搜索热词
+# // 个人页 - 移除会员信息 & 多余标签组(订单与钱包/我的团队/帮助中心)
+# // 基础配置 - 课程Tab移除直播/会员，底部栏移除商城/课程/今日
+# Upstream hostname = kad.gotokeep.com, 42.187.199.248, api.gotokeep.com
+
+[Map Local]
+^https:\/\/api\.gotokeep\.com\/messenger\/v\d\/conversations\/unread data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/kad\.gotokeep\.com\/op-engine-webapp\/v\d\/ad data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.gotokeep\.com\/op-engine-webapp\/v\d\/ad\/preload data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.gotokeep\.com\/search\/v\d\/hotHashtag\/list data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.gotokeep\.com\/search\/v\d\/hotCourse\/list data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.gotokeep\.com\/search\/v\d\/hotword\/list data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/api\.gotokeep\.com\/search\/v\d\/default\/keyword\/list data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Body Rewrite]
+http-response-jq ^https:\/\/api\.gotokeep\.com\/athena\/v\d\/people\/my 'del(.data.memberInfo) | .data.groupTags |= map(select(.tags | all(.name != "订单与钱包" and .name != "我的团队" and .name != "帮助中心")))'
+http-response-jq ^https:\/\/api\.gotokeep\.com\/config\/v\d\/basic '.data.coursePageConfigs.courseTabs |= map(select(.name != "直播" and .name != "会员")) | .data.bottomBarControl.tabs |= map(select(.name != "商城" and .name != "课程" and .name != "今日"))'
+
+[MITM]
+hostname = %APPEND% kad.gotokeep.com, 42.187.199.248, api.gotokeep.com

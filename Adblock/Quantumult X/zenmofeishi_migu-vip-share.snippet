@@ -1,0 +1,19 @@
+# Name: 咪咕视频解锁会员
+# Updated: 2026-10-25 19:01:30 +08:00
+# Merged by: chance
+# Source Authors: 怎么肥事
+# Category: app
+# Managed by: WayX Native QX
+
+# [rewrite_local]
+# Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/migu_vip_share.snippet
+# Upstream name = 咪咕视频解锁会员
+# Upstream author = 怎么肥事
+# Upstream update = 2026-05-14
+^https?:\/\/(play|play-pre|v|v[0-9]?-sc|vmesh|app-sc|vms-sc|display(-sc)?|common-sc|program-sc|d[0-9]-sc|fs-sc|fsdv-sc|mp-user|recommend-dy|chat|chat-wx|public-deliver[0-9]?|public-operbiz[0-9]?|public-img)\.miguvideo\.com\/.+ url script-request-header https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/migu_vip.js
+
+^https?:\/\/(passport|uem|push|jadeite|jadeiteapp|hound|feedback|rcsdk)\.migu\.cn\/.+ url script-request-header https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/migu_vip.js
+
+# [mitm]
+# Upstream hostname = *.miguvideo.com, *.migu.cn
+hostname = *.miguvideo.com, *.migu.cn

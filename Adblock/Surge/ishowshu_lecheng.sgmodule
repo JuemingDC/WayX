@@ -6,7 +6,7 @@
 
 [Rule]
 # Name: 乐橙
-# Updated: 2026-10-25 18:31:42 +08:00
+# Updated: 2026-10-25 19:01:27 +08:00
 # Merged by: chance
 # Source Authors: 树先生
 # Category: app
@@ -26,7 +26,7 @@ DOMAIN-SUFFIX,1rtb.com,REJECT
 DOMAIN-SUFFIX,adx.adwangmai.com,REJECT
 DOMAIN,dsp-x.jd.com,REJECT
 DOMAIN,dspvideo.umeng.com,REJECT
-# [WayX] REVIEW REQUIRED: QX whole-header matcher has no verified native Surge equivalent
+# [WayX] REVIEW REQUIRED: URL-and-header conjunction retained for review; dropping the header condition would broaden matching
 # Source declaration: ^https:\/\/img1\.360buyimg\.com\/pop\/jfs\/t1 LCIphoneAdhocIP* url-and-header reject-dict
 # Upstream hostname = img1.360buyimg.com, dl-ct-hz.imou.com, dl-cm-hz.imou.com
 

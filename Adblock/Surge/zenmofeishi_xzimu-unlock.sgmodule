@@ -1,0 +1,27 @@
+#!name=X字幕 (xzimu) 无限翻译次数
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: X字幕 (xzimu) 无限翻译次数
+# Updated: 2026-10-25 19:01:30 +08:00
+# Merged by: chance
+# Source Authors: 怎么肥事
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/xzimu-unlock.snippet
+# Upstream name = X字幕 (xzimu) 无限翻译次数
+# Upstream author = 怎么肥事
+# Upstream update = 2026-4-20
+# Upstream hostname = apps.tltgame.com,47.251.39.178
+
+[Script]
+zenmofeishi_xzimu-unlock_1 = type=http-response,pattern=^http:\/\/apps\.tltgame\.com\/api\/user\/updateStatus,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/xzimu-unlock.js,requires-body=true
+zenmofeishi_xzimu-unlock_2 = type=http-request,pattern=^http:\/\/apps\.tltgame\.com\/api\/task\/offline\/post,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/xzimu-unlock.js,requires-body=true
+zenmofeishi_xzimu-unlock_3 = type=http-response,pattern=^http:\/\/apps\.tltgame\.com\/api\/task\/offline\/post,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/xzimu-unlock.js,requires-body=true
+zenmofeishi_xzimu-unlock_4 = type=http-request,pattern=^http:\/\/47\.251\.39\.178:18080\/task\/runSegment,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/xzimu-unlock.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% apps.tltgame.com, 47.251.39.178

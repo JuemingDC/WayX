@@ -1,22 +1,36 @@
 {
-  "version": 1,
-  "repository": "ishowshu/qx",
-  "ref": "main",
-  "author": "树先生",
-  "prefix": "ishowshu_",
-  "exclude": [
-    "filter/index.snippet",
-    "rewrite/index.snippet"
-  ],
-  "aliases": {
-    "amap-new": "amap",
-    "bilibili-qx": "bilibili"
-  },
-  "names": {
-    "geoip": "国内 IP"
-  },
-  "preferred_versions": {
-    "bilibili": "rewrite/bilibili-qx.snippet"
-  },
-  "surge": true
+  "version": 2,
+  "sources": [
+    {
+      "version": 1,
+      "repository": "ishowshu/qx",
+      "ref": "main",
+      "author": "树先生",
+      "prefix": "ishowshu_",
+      "exclude": [
+        "filter/index.snippet",
+        "rewrite/index.snippet"
+      ],
+      "aliases": {
+        "amap-new": "amap",
+        "bilibili-qx": "bilibili"
+      },
+      "names": {
+        "geoip": "国内 IP"
+      },
+      "preferred_versions": {
+        "bilibili": "rewrite/bilibili-qx.snippet"
+      },
+      "surge": true
+    },
+    {
+      "version": 1,
+      "repository": "ZenmoFeiShi/Qx",
+      "ref": "main",
+      "author": "怎么肥事",
+      "prefix": "zenmofeishi_",
+      "layout": "root",
+      "surge": true
+    }
+  ]
 }

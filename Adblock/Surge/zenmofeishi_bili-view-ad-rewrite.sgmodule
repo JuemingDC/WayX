@@ -1,0 +1,47 @@
+#!name=B站gRPC数据包净化
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: B站gRPC数据包净化
+# Updated: 2026-10-25 19:01:30 +08:00
+# Merged by: chance
+# Source Authors: 怎么肥事
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/bili_view_ad_rewrite.snippet
+# Upstream name = B站gRPC数据包净化
+# Upstream author = 怎么肥事
+# Upstream update = 2026-05-14
+#   1. 相关推荐列表中的广告卡片（游戏推广等）
+#   2. 视频详情页底部的广告控制模块
+#   3. 搜索框预填充的推荐搜索词
+#   4. 热门页面的UP主推荐关注卡片
+#   5. 关注页面的"你可能感兴趣的UP主"卡片
+#   6. 广告转化追踪请求
+#   7. 广告数据上报
+#   8. 番剧/影视播放页底部"超大会员限时秒杀 一份价格两份权益"会员推广
+# Source declaration: ^https?:\/\/api\.bilibili\.com\/x\/vip\/window\/list\? url jsonjq-response-body .data.list = []
+# Source declaration: ^https?:\/\/api\.bilibili\.com\/x\/vip\/web\/vip_center\/(v2|modules) url jsonjq-response-body .data.benefits = [] | .data.welfare = null | .data.free_welfare = null | .data.draw_cards_welfare = null | .data.draw_cards_welfare_v2 = null
+# Upstream hostname = *bili*,api-pt.chuangyuejoy.com
+
+[Map Local]
+^https:\/\/cm\.bilibili\.com\/cm\/api\/(conversion|fees)\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/dataflow\.biliapi\.com\/log\/pbmobile\/ data-type=text data="" status-code=200
+^https:\/\/api-pt\.chuangyuejoy\.com\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Body Rewrite]
+http-response-jq ^https?:\/\/api\.bilibili\.com\/x\/vip\/window\/list\? '.data.list = []'
+http-response-jq ^https?:\/\/api\.bilibili\.com\/x\/vip\/web\/vip_center\/(v2|modules) '.data.benefits = [] | .data.welfare = null | .data.free_welfare = null | .data.draw_cards_welfare = null | .data.draw_cards_welfare_v2 = null'
+
+[Script]
+zenmofeishi_bili-view-ad-rewrite_1 = type=http-response,pattern=^https:\/\/app\.bilibili\.com\/bilibili\.app\.viewunite\.v1\.View\/View$,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/bili_view_ad.js,requires-body=true
+zenmofeishi_bili-view-ad-rewrite_2 = type=http-response,pattern=^https:\/\/app\.bilibili\.com\/bilibili\.app\.playerunite\.v1\.Player\/PlayViewUnite$,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/bili_view_ad.js,requires-body=true
+zenmofeishi_bili-view-ad-rewrite_3 = type=http-response,pattern=^https:\/\/app\.bilibili\.com\/bilibili\.app\.interface\.v1\.Search\/DefaultWords$,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/bili_view_ad.js,requires-body=true
+zenmofeishi_bili-view-ad-rewrite_4 = type=http-response,pattern=^https:\/\/app\.bilibili\.com\/bilibili\.app\.show\.v1\.Popular\/Index$,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/bili_view_ad.js,requires-body=true
+zenmofeishi_bili-view-ad-rewrite_5 = type=http-response,pattern=^https:\/\/app\.bilibili\.com\/bilibili\.app\.dynamic\.v2\.Dynamic\/DynAll$,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/bili_view_ad.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% *bili*, api-pt.chuangyuejoy.com

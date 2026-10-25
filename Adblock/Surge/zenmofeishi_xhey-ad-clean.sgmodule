@@ -1,0 +1,34 @@
+#!name=XCamera广告净化合集
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: XCamera广告净化合集
+# Updated: 2026-10-25 19:01:30 +08:00
+# Merged by: chance
+# Source Authors: 怎么肥事
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/xhey-ad-clean.snippet
+# Upstream name=XCamera广告净化合集
+# Upstream desc=XCamera 3.0.480开屏、插屏、信息流与RTB广告净化；作者：TG@ZenMoFiShi
+# Upstream hostname = ad.xhey.top, 39.108.85.131, sdk.1rtb.net, adx-strategy-api-cn.statisticslinks.com, adx-micro.statisticslinks.com, da.statisticslinks.com, tk.statisticslinks.com, sdkquic.e.qq.com, als.baidu.com, jt-sdk-ios.oss-cn-beijing.aliyuncs.com
+
+[URL Rewrite]
+^https?:\/\/ad\.xhey\.top\/next\/(?:app\/adx\/|promote\/operation\/appstart\/adx\/|ad\/event\/track\/).* _ reject
+^https?:\/\/39\.108\.85\.131\/next\/(?:ios\/config\/cache|promote\/operation\/config\/get\/cache)(?:\?.*)?$ _ reject
+^https?:\/\/sdk\.1rtb\.net\/sdk\/(?:config\/v2a|req_ad)(?:\?.*)?$ _ reject
+^https?:\/\/adx-strategy-api-cn\.statisticslinks\.com\/sdk\/pl_strategy(?:\?.*)?$ _ reject
+^https?:\/\/adx-micro\.statisticslinks\.com\/http_bid(?:\?.*)?$ _ reject
+^https?:\/\/da\.statisticslinks\.com\/v1\/open\/da(?:\?.*)?$ _ reject
+^https?:\/\/tk\.statisticslinks\.com\/v2\/open\/a_tk(?:\?.*)?$ _ reject
+^https?:\/\/sdkquic\.e\.qq\.com\/launch(?:\?.*)?$ _ reject
+^https?:\/\/als\.baidu\.com\/clog\/glog(?:\?.*)?$ _ reject
+
+[Script]
+zenmofeishi_xhey-ad-clean_1 = type=http-response,pattern=^https?:\/\/jt-sdk-ios\.oss-cn-beijing\.aliyuncs\.com\/iOSConfig\.txt(?:\?.*)?$,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/xhey-ad-clean.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% ad.xhey.top, 39.108.85.131, sdk.1rtb.net, adx-strategy-api-cn.statisticslinks.com, adx-micro.statisticslinks.com, da.statisticslinks.com, tk.statisticslinks.com, sdkquic.e.qq.com, als.baidu.com, jt-sdk-ios.oss-cn-beijing.aliyuncs.com
