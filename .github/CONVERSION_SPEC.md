@@ -37,6 +37,10 @@ IR 不包含目标 action 名、section 名、helper URL 或目标 fallback。�
 
 **例外仅限用户明确授权的具体行为。** 已有显式转换策略按本节前文保留；例如 `jq_replace` 明确要求使用 `setpath(PATH; VALUE)`，包括覆盖值及创建缺失路径，这是已授权的策略差异，不能据此认定 delete 或其它操作也可改变语义。例外记录必须说明源操作、目标写法、授权的差异及适用范围；不能把一种操作的例外推广为全局规则，也不能把结果宣称为完整语义等价。作者原有 jq 不因生成器的某个例外而被重写。
 
+<!-- Modified: 2026-10-25 (chance). Explicit user instruction: add no-resolve to Surge IP rules across all generated sources. -->
+Surge 输出的目的 IP 类规则（IP-CIDR、IP-CIDR6、GEOIP、IP-ASN，包括复合条件中的 IP 子项）统一补一个 `no-resolve`，已有参数不重复；Loon 转模块、原生 QX 转模块、分流规则集与独立含策略片段使用相同策略。保留地址、策略、其它参数及规则顺序，不向域名规则添加此参数，QX 原生输出不变。这是用户明确授权的解析行为差异：未解析的域名请求跳过 IP 条件，不由 IP 规则主动触发 DNS；不能宣称它与未加参数的源行为完全相同。依据 https://manual.nssurge.com/rules/ip.html 。
+
+
 <!-- Modified: 2026-10-25 (chance). Record the explicit original-URL Script lowering exception, including both echo modes. -->
 用户明确授权原生 QX Script 声明直接转换为 Surge 通用 HTTP Script，保留原脚本 URL，不下载/扫描/改写/包装作者 JavaScript。`script-echo-response` → `type=http-request,requires-body=false`；`script-analyze-echo-response` → `type=http-request,requires-body=true`（QX 官方示例明确后者等待请求体）。普通 request/response 的 header/body 脚本分别保留阶段并设置 requires-body=false/true。此授权只针对声明转换，不声称原脚本返回对象或 API 在 Surge 中已验证等价。Surge http-request 支持脚本直接返回 response；原作者程序是否使用该格式由原脚本决定，不增加转换包装。`url-and-header` 仍注释并保留完整源声明和诊断，不删除 header 条件，也不生成无法保留完整整头语义的脚本。
 
