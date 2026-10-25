@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MeiTu.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-23 22:46:17 +08:00
+# Converted: 2026-10-25 15:58:33 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/MeiTu_remove_ads.lpx
 # Target: Surge
@@ -20,7 +20,7 @@ DOMAIN,adui.tg.meitu.com,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 
-http-response-jq (?i)^https:\/\/api\.posters\.meitu\.com\/common\/init\.json 'del(.data.vip)'
+http-response-jq (?i)^https:\/\/api\.posters\.meitu\.com\/common\/init\.json 'delpaths([["data","vip"]])'
 
 [MITM]
 hostname = %APPEND% api.posters.meitu.com

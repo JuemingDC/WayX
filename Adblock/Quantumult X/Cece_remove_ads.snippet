@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Cece.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-23 22:45:56 +08:00
+# Converted: 2026-10-25 15:58:32 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Cece_remove_ads.lpx
@@ -17,13 +17,13 @@
 
 # [rewrite_local]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/api\.cece\.com\/user\/init\? url jsonjq-response-body 'del(.data.launch_img_url,.data.launch_goto_url)'
+(?i)^https:\/\/api\.cece\.com\/user\/init\? url jsonjq-response-body 'delpaths([["data","launch_img_url"],["data","launch_goto_url"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
 (?i)^https:\/\/api\.cece\.com\/common\/app\/app_config\? url jsonjq-response-body 'setpath(["data","is_new_year"]; false) | setpath(["data","spring_festival"]; false) | setpath(["data","show_feedback_entry"]; false) | setpath(["data","show_course_entry"]; false) | setpath(["data","show_store_entry"]; false) | setpath(["data","show_luna"]; false) | setpath(["data","show_ead"]; false) | setpath(["data","show_ad"]; false) | setpath(["data","show_live_filter_tarot"]; false) | setpath(["data","community_feed_adswitch"]; false) | setpath(["data","open_screen_ad_times"]; 0) | setpath(["data","open_screen_ad_duration"]; 0) | setpath(["data","isShowThumbsGif"]; false) | setpath(["data","teenager_mode_open"]; false) | setpath(["data","flu_log"]; false)'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/api\.cece\.com\/common\/app\/app_config\? url jsonjq-response-body 'del(.data.activity_list,.data.fortune_ab_config)'
+(?i)^https:\/\/api\.cece\.com\/common\/app\/app_config\? url jsonjq-response-body 'delpaths([["data","activity_list"],["data","fortune_ab_config"]])'
 
 (?i)^https:\/\/api\.cece\.com\/user\/index\/banners\? url reject-dict
 

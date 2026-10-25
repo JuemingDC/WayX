@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/WeixinMiniPrograms.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-23 22:46:37 +08:00
+# Converted: 2026-10-25 15:58:33 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/WexinMiniPrograms_Remove_ads.lpx
@@ -191,7 +191,7 @@ host, e.jparking.cn, reject
 (?i)^https:\/\/as\.xiaojukeji\.com\/ep\/as\/conf\?ns=daijia-front&name= url reject-dict
 (?i)^https:\/\/daijia\.kuaidadi\.com\/gateway\?api=prado\.cms\.delivery\.batch&apiVe url reject-dict
 
-(?i)^https:\/\/mcsp\.cloudpnr\.com\/api\/miniapp\/popular\/T_MINIAPP$ url jsonjq-response-body 'del(.data)'
+(?i)^https:\/\/mcsp\.cloudpnr\.com\/api\/miniapp\/popular\/T_MINIAPP$ url jsonjq-response-body 'delpaths([["data"]])'
 (?i)^https:\/\/saas-ad\.cloudpnr\.com\/huifuad-base-api\/api\/tactics\/ad$ url jsonjq-response-body 'reduce [["data",0],["data",1],["data",2]][] as $p (.; delpaths([$p]))'
 
 (?i)^https:\/\/api\.szbgcx\.cn\/account\/adv\/ url reject
@@ -200,12 +200,12 @@ host, e.jparking.cn, reject
 (?i)^https:\/\/mobile\.12306\.cn\/wxxcx\/openplatform-inner\/miniprogram\/wifiapps\/tourism\/tourismBase\/api\/scenic\/getThemeProduct? url reject-dict
 (?i)^https:\/\/mobile\.12306\.cn\/wxxcx\/openplatform-inner\/miniprogram\/wifiapps\/appFrontEnd\/v2\/lounge\/open-smooth-common\/carService\/getCivilzedSlogan url reject-dict
 
-(?i)^https:\/\/rms\.meituan\.com\/api\/v1\/rmsmina\/c\/queryShopPortalInfo\? url jsonjq-response-body 'del(.data.popUpWindows)'
+(?i)^https:\/\/rms\.meituan\.com\/api\/v1\/rmsmina\/c\/queryShopPortalInfo\? url jsonjq-response-body 'delpaths([["data","popUpWindows"]])'
 
 (?i)^https:\/\/chong\.qq\.com\/tws\/wxmobile\/GetProduct4App\? url jsonjq-response-body 'del(.respInfo.reserveProductList) | .respInfo.shortcut |= map(select(.name != "充流量" and .name != "领话费券"))'
 (?i)^https:\/\/chong\.qq\.com\/tws\/wxmobile4app\/GetSecondProduct\? url jsonjq-response-body 'del(.respInfo.productList) | .respInfo.shortcut |= map(select(.name != "充流量" and .name != "领话费券"))'
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/chong\.qq\.com\/tws\/usernumberinfo\/GetUserInfo\? url jsonjq-response-body 'del(.data.request.number.markSeat.servicehallOperList,.data.request.number.servicehallOperList,.data.request.number.markSeat.servicehallFuncList,.data.request.number.servicehallFuncList)'
+(?i)^https:\/\/chong\.qq\.com\/tws\/usernumberinfo\/GetUserInfo\? url jsonjq-response-body 'delpaths([["data","request","number","markSeat","servicehallOperList"],["data","request","number","servicehallOperList"],["data","request","number","markSeat","servicehallFuncList"],["data","request","number","servicehallFuncList"]])'
 (?i)^https:\/\/wx\.online-cmcc\.cn\/contactpoint\/customer\/api\/list\? url reject-dict
 (?i)^https:\/\/wx\.10086\.cn\/qwhdhub\/activity\/info url reject-dict
 # 企迈点单系统去广告

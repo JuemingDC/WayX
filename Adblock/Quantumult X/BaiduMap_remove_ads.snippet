@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduMap.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-23 22:45:49 +08:00
+# Converted: 2026-10-25 15:58:32 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduMap_remove_ads.lpx
@@ -18,13 +18,13 @@
 # [rewrite_local]
 (?i)^https:\/\/afd\.baidu\.com\/afd\/entry\?action=(update|query) url reject-dict
 
-(?i)^https:\/\/newclient\.map\.baidu\.com\/feed\/govui\/rich_content url jsonjq-response-body 'del(.data)'
+(?i)^https:\/\/newclient\.map\.baidu\.com\/feed\/govui\/rich_content url jsonjq-response-body 'delpaths([["data"]])'
 
-(?i)^https:\/\/newclient\.map\.baidu\.com\/client\/noticebar\/get\? url jsonjq-response-body 'del(.content.multi_data)'
+(?i)^https:\/\/newclient\.map\.baidu\.com\/client\/noticebar\/get\? url jsonjq-response-body 'delpaths([["content","multi_data"]])'
 
 (?i)^https:\/\/newclient\.map\.baidu\.com\/(client\/)?usersystem\/mine\/page\? url jsonjq-response-body 'setpath(["data"]; "{}")'
 
-(?i)^https:\/\/newclient\.map\.baidu\.com\/client\/phpui2\/\?qt=ads&type=user_home_new_service url jsonjq-response-body 'del(.ads)'
+(?i)^https:\/\/newclient\.map\.baidu\.com\/client\/phpui2\/\?qt=ads&type=user_home_new_service url jsonjq-response-body 'delpaths([["ads"]])'
 
 (?i)^https:\/\/yongche\.baidu\.com\/gomarketing\/api\/popup\/getentrancecordovaurl$ url reject-dict
 

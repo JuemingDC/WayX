@@ -1,11 +1,11 @@
 # Name: cn
-# Updated: 2026-10-25 04:09:57 UTC
+# Updated: 2026-10-25 07:57:42 UTC
 # Converted by: chance
 # Source Authors: DH-Teams, Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly, gaoyifan
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_All_Surge.list ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china.txt ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china6.txt ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_CN_3.list ; https://ruleset.skk.moe/List/ip/domestic.conf ; https://ruleset.skk.moe/List/non_ip/domestic.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 128226
+# Rules: 128225
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net
@@ -115769,7 +115769,6 @@ IP-CIDR,103.186.228.0/23,no-resolve
 IP-CIDR,103.186.4.0/23,no-resolve
 IP-CIDR,103.189.152.0/22,no-resolve
 IP-CIDR,103.189.154.0/23,no-resolve
-IP-CIDR,103.189.197.0/24,no-resolve
 IP-CIDR,103.189.92.0/23,no-resolve
 IP-CIDR,103.19.12.0/22,no-resolve
 IP-CIDR,103.19.232.0/22,no-resolve

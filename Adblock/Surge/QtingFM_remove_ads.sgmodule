@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/QtingFM.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-23 22:46:24 +08:00
+# Converted: 2026-10-25 15:58:33 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/QtingFM_remove_ads.lpx
 # Target: Surge
@@ -32,14 +32,14 @@ http-response-jq (?i)^https:\/\/app\.qtfm\.cn\/m-bff\/v\d\/signin\/show_homepage
 http-response-jq (?i)^https:\/\/app\.qtfm\.cn\/recommendapi\/v\d\/hotpage\? '.data.head |= map(select(.type == "IconGrid")) | .data.feeds |= map(select(.type == "Channel" or .type == "Radio" or .type == "ListenListChannel"))'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-http-response-jq (?i)^https:\/\/app\.qtfm\.cn\/m-bff\/v\d\/channel\/\d{6}\/playpage\/\d{8} 'del(.data.related_recommend,.data.recommend_bar)'
+http-response-jq (?i)^https:\/\/app\.qtfm\.cn\/m-bff\/v\d\/channel\/\d{6}\/playpage\/\d{8} 'delpaths([["data","related_recommend"],["data","recommend_bar"]])'
 
-http-response-jq (?i)^https:\/\/app\.qtfm\.cn\/m-bff\/v\d\/mylistenpage 'del(.data.banner)'
+http-response-jq (?i)^https:\/\/app\.qtfm\.cn\/m-bff\/v\d\/mylistenpage 'delpaths([["data","banner"]])'
 
-http-response-jq (?i)^https:\/\/app\.qtfm\.cn\/m-bff\/v\d\/subscribed_channels\? 'del(.data.recommends)'
+http-response-jq (?i)^https:\/\/app\.qtfm\.cn\/m-bff\/v\d\/subscribed_channels\? 'delpaths([["data","recommends"]])'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-http-response-jq (?i)^https:\/\/app\.qtfm\.cn\/m-bff\/v1\/channelpage\/\d+$ 'del(.data.vip_recommend,.data.recommend_delivery)'
+http-response-jq (?i)^https:\/\/app\.qtfm\.cn\/m-bff\/v1\/channelpage\/\d+$ 'delpaths([["data","vip_recommend"],["data","recommend_delivery"]])'
 
 [Map Local]
 (?i)^https:\/\/app\.qtfm\.cn\/recommendapi\/v8\/ai_assistant_point$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
