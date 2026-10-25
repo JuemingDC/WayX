@@ -5,6 +5,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
+import {quoteJq} from "./rewrite.mjs";
+import {validateQX} from "./output.mjs";
 import {spawnSync} from "node:child_process";
 import { normalizePluginSource, parseLoonPlugin } from "./input.mjs";
 
@@ -245,6 +247,98 @@ export async function writeManagedTargets(state, out) {
   return changed;
 }
 
+// Modified: 2026-10-25 (chance). Import native QX resources without passing
+// through the Loon compiler. Keep upstream active text/order and original JS URLs.
+const NATIVE_QX_MARKER='# Managed by: WayX Native QX';
+export function mergeNativeQxSources(sources,{name,author,stamp=nowConversionStamp()}={}) {
+  const sections={filter_local:[],rewrite_local:[],mitm:[]},hosts=[];
+  for(const source of sources) {
+    let pending=['# Source: '+source.url];
+    for(const original of source.text.replace(/^\uFEFF/,'').replace(/\r\n?/g,'\n').split('\n')) {
+      const line=original.trim();
+      if(!line || /^(?:#|;|\/\/)/.test(line)) {pending.push(original.startsWith('#!')?'# Upstream '+original.slice(2):/^(?:;|\/\/)/.test(line)?'# '+original:original);continue;}
+      if(/^\[(?:filter_local|rewrite_local|mitm)\]$/i.test(line)){pending.push('# '+line);continue;}
+      const mitm=line.match(/^hostname\s*=\s*(.*)$/i);
+      if(mitm){sections.mitm.push(...pending,'# Upstream '+original);pending=[];for(const host of mitm[1].split(',').map(x=>x.trim()).filter(Boolean))if(!hosts.includes(host))hosts.push(host);continue;}
+      const key=/\surl(?:-and-header)?\s/.test(line)?'rewrite_local':/^(?:host(?:-suffix|-keyword|-wildcard)?|ip-cidr|ip6-cidr|geoip|user-agent)\s*,/i.test(line)?'filter_local':null;
+      if(!key)throw Error('Unknown native QX declaration in '+source.url+': '+line);
+      // Modified: 2026-10-25 (chance). Serialize upstream bare jq into the
+      // existing quoted config format without changing its program or actions.
+      const jq=key==='rewrite_local'?original.match(/^(.*?\surl(?:-and-header)?\s+jsonjq-(?:request|response)-body)\s+(.+)$/):null;
+      const quoted=jq && !/^'.*'$/.test(jq[2])?jq[1]+' '+quoteJq(jq[2]):original;
+      const serialized=quoted.replace(/^(\S+(?:\s+\S+)?\s+url(?:-and-header)?\s+)REJECT$/, '$1reject');
+      sections[key].push(...pending,...(serialized!==original?['# Source declaration: '+original]:[]),serialized);pending=[];
+    }
+    // Trailing comments are still source content, even after a MITM declaration.
+    sections.mitm.push(...pending);
+  }
+  const authors=[...new Set([author,...sources.flatMap(source=>(source.text.match(/^#!author\s*=\s*(.+)$/mi)?.[1] || '').split(/[,，、&]/).map(x=>x.trim()).filter(Boolean))])];
+  const out=['# Name: '+name,'# Updated: '+stamp,'# Merged by: chance','# Source Authors: '+authors.join(', '),'# Category: app',NATIVE_QX_MARKER,''];
+  for(const key of ['filter_local','rewrite_local','mitm']) {
+    if(!sections[key].some(x=>x.trim()) && !(key==='mitm'&&hosts.length))continue;
+    out.push('# ['+key+']',...sections[key]);if(key==='mitm'&&hosts.length)out.push('hostname = '+hosts.join(', '));out.push('');
+  }
+  return out.join('\n').replace(/\n*$/,'\n');
+}
+export async function prepareNativeQxSync(root,{fetchText}={}) {
+  let config;try{config=JSON.parse(await fs.readFile(path.join(root,'.github/sources/native-qx.json'),'utf8'));}catch(error){if(error.code==='ENOENT')return null;throw error;}
+  if(config.version!==1 || !/^[\w.-]+\/[\w.-]+$/.test(config.repository)|| !/^[a-z0-9_]+$/.test(config.prefix))throw Error('Invalid native QX registry');
+  const api='https://api.github.com/repos/'+config.repository;
+  const commit=JSON.parse(await fetchText(api+'/commits/'+encodeURIComponent(config.ref))).sha;
+  if(!/^[a-f0-9]{40}$/.test(commit))throw Error('Invalid native QX snapshot commit');
+  const tree=JSON.parse(await fetchText(api+'/git/trees/'+commit+'?recursive=1'));
+  if(tree.truncated || !Array.isArray(tree.tree))throw Error('Incomplete native QX source tree');
+  const files=tree.tree.filter(x=>x.type==='blob'&&/^(?:filter|rewrite)\/[^/]+\.snippet$/.test(x.path)&&!config.exclude.includes(x.path)).sort((a,b)=>a.path.localeCompare(b.path,'en'));
+  if(!files.length)throw Error('Empty native QX source catalog');
+  const groups=new Map(),inputs=[],skipped=[];
+  for(const file of files) {
+    const url='https://raw.githubusercontent.com/'+config.repository+'/'+commit+'/'+file.path;
+    const text=await fetchText(url);if(/^\s*</.test(text))throw Error('HTML response for '+url);
+    const stem=path.posix.basename(file.path,'.snippet'),key=config.aliases[stem] || stem;
+    if(!/^[a-z0-9-]+$/.test(key))throw Error('Invalid native QX application key');
+    if(!groups.has(key))groups.set(key,[]);
+    groups.get(key).push({text,path:file.path,url:'https://raw.githubusercontent.com/'+config.repository+'/'+config.ref+'/'+file.path});
+    inputs.push({path:file.path,sha256:crypto.createHash('sha256').update(text).digest('hex')});
+  }
+  const outputs=new Map();
+  for(const [key,allSources] of groups) {
+    let sources=allSources;
+    // Modified: 2026-10-25 (chance). For alternative app versions, retain
+    // only a uniquely single-author version, never infer an attribution.
+    const rewrites=allSources.filter(x=>x.path.startsWith('rewrite/'));
+    if(rewrites.length>1) {
+      const eligible=rewrites.filter(x=>{
+        const authors=x.text.match(/^#!author\s*=\s*(.+)$/mi)?.[1]?.split(/[,，、&]/).map(a=>a.trim()).filter(Boolean);
+        return authors?.length===1;
+      });
+      if(eligible.length!==1){skipped.push({application:key,reason:'No unique single-author version',sources:rewrites.map(x=>x.path)});continue;}
+      sources=allSources.filter(x=>!x.path.startsWith('rewrite/')||x===eligible[0]);
+    }
+    const name=sources.map(x=>x.text.match(/^#!name\s*=\s*(.+)$/mi)?.[1]).filter(Boolean).at(-1) || config.names[key] || key;
+    const text=mergeNativeQxSources(sources,{name,author:config.author});validateQX(text,{id:config.prefix+key});
+    outputs.set(QX_ADBLOCK_DIR+'/'+config.prefix+key+'.snippet',text);
+  }
+  return {outputs,commit,inputs,skipped};
+}
+export async function commitNativeQxSync(root,plan) {
+  if(!plan)return;
+  const statePath='.github/sources/native-qx-state.json';
+  let prior={outputs:[]};try{prior=JSON.parse(await fs.readFile(path.join(root,statePath),'utf8'));}catch(error){if(error.code!=='ENOENT')throw error;}
+  const old=new Map(),writes=new Map();
+  for(const relative of new Set([...prior.outputs,...plan.outputs.keys()])) {
+    if(!/^Adblock\/Quantumult X\/ishowshu_[a-z0-9-]+\.snippet$/.test(relative))throw Error('Native QX ownership boundary violation');
+    let previous=null;try{previous=await fs.readFile(path.join(root,relative),'utf8');}catch(error){if(error.code!=='ENOENT')throw error;}
+    if(previous!==null && !previous.includes(NATIVE_QX_MARKER))throw Error('Refusing to overwrite unmanaged native QX resource: '+relative);
+    old.set(relative,previous);let next=plan.outputs.get(relative)??null;
+    if(previous && next && previous.replace(/^# Updated:.*$/m,'')===next.replace(/^# Updated:.*$/m,''))next=previous;
+    if(next!==previous)writes.set(relative,next);
+  }
+  let state=null;try{state=await fs.readFile(path.join(root,statePath),'utf8');}catch(error){if(error.code!=='ENOENT')throw error;}
+  old.set(statePath,state);writes.set(statePath,JSON.stringify({version:1,commit:plan.commit,inputs:plan.inputs,skipped:plan.skipped,outputs:[...plan.outputs.keys()]},null,2)+'\n');
+  try{for(const [relative,text] of writes){const file=path.join(root,relative);await fs.mkdir(path.dirname(file),{recursive:true});if(text===null)await fs.rm(file,{force:true});else await fs.writeFile(file,text);}}
+  catch(error){for(const [relative,text] of old){const file=path.join(root,relative);if(text===null)await fs.rm(file,{force:true});else await fs.writeFile(file,text);}throw error;}
+}
+
 // readme-index.mjs
 export const README_AUTO_UPDATE_INTERVAL = 86400;
 export const QX_MIXED_REWRITE_MIN_BUILD = 844;
@@ -418,6 +512,14 @@ export function qxSnippetInstallUrl(item) {
   if (!item?.rel || item.ext !== '.snippet') {
     throw new Error('Quantumult X module/adblock install target must be a .snippet resource');
   }
+  // Modified: 2026-10-25 (chance). One native file may supply both routing
+  // and rewrite subscriptions; register each existing section with the same URL.
+  if(item.text?.includes(NATIVE_QX_MARKER)) {
+    const descriptor=qxRemoteDescriptor(rawRepoUrl(item.rel),item.name),payload={};
+    if(/^# \[filter_local\]$/m.test(item.text))payload.filter_remote=[descriptor];
+    if(/^# \[rewrite_local\]$/m.test(item.text)||/^hostname\s*=/m.test(item.text))payload.rewrite_remote=[descriptor];
+    return qxAddResourceUrl(payload);
+  }
   return qxAddResourceUrl({
     rewrite_remote:[qxRemoteDescriptor(rawRepoUrl(item.rel), item.name)],
   });
@@ -462,6 +564,7 @@ function adblockSource(row) {
     const url=new URL(source),host=url.hostname.toLowerCase();
     if(host==='kelee.one' || host.endsWith('.kelee.one'))return '可莉';
     if(host==='rucu6.pages.dev')return 'RuCu6';
+    if(['github.com','raw.githubusercontent.com'].includes(host)&&url.pathname.split('/')[1]==='ishowshu')return '树先生';
     if(host==='raw.githubusercontent.com' || host==='github.com')return url.pathname.split('/').filter(Boolean)[0] || host;
     return host;
   }catch{return '本地资源';}

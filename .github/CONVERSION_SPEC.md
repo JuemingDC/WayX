@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：2.27
+版本：2.28
 
 更新：2026-10-25
 作者：chance  
@@ -334,3 +334,9 @@ TestFlight 子服务采用 Tartarus2014 的 `Rule/Apple/TestFlight.lsr` 作为 A
 参考 V2Fly 的归属与属性分离、DustinWin 的 apple-cn/microsoft-cn、Sukka 的服务/CDN 分层以及 ACL4SSR 的专项例外顺序：Apple、Microsoft 通过显式 @cn 选择器声明国内接入点的 DIRECT，互补选择器及专项服务声明 PROXY；不把品牌全部默认为 DIRECT。没有逐条策略的通用来源被归入某应用时，如果同一原生匹配条件在应用专属来源中具有唯一的已配置动作，沿用该动作，保留通用来源的匹配声明和署名；不能让通用列表默认 PROXY 重造应用已明确直连端点的冲突。全代理约束以外，应用专属来源之间的冲突及源规则逐条明确写出的策略仍保留，不按多数表决、不扩大匹配、不删除不同类型/参数规则。共享 CDN 或云厂商域名不能单凭托管关系推断应用，明确的应用专用主机优先于云厂商父域名。
 
 参考来源：https://github.com/v2fly/domain-list-community 、https://github.com/DustinWin/ruleset_geodata 、https://github.com/SukkaW/Surge 、https://github.com/ACL4SSR/ACL4SSR/blob/master/Clash/config/ACL4SSR_Online_Full.ini 。
+
+<!-- Modified: 2026-10-25 (chance). Import native QX app resources separately from Loon conversion and merge routing/rewrites without rewriting upstream expressions. -->
+
+## 2.20 原生 QX 来源同步
+
+`native-qx.json` 登记树先生 ishowshu/qx，独立于 Loon→QX/Surge 转换。一次获取固定上游 commit 及完整目录，按应用文件名合并 filter/rewrite，保留原声明、类型、策略、注释、JQ 和脚本原地址；不执行 Loon 正则 flags 或 jq_delete 适配。上游未加引号的 jq 仅序列化为合法配置引号；REJECT 指令规范为小写 reject，注释标记规范为 #，原始声明保留为注释，不修改 JQ 程序或策略含义。MITM hostname 按出现顺序合并，段标题使用 QX 注释格式。多版本应用按用户要求仅选择唯一单一作者版本；高德当前选择 amap-new，哔哩哔哩两版均为多作者则暂不纳入，缺少唯一合格版本时记录 skipped，不擅自混合或猜选，index 占位文件排除；其它独立分流也保留独立资源。输出使用 ishowshu_ 命名空间与专属管理标记，避免与其它作者覆盖、避免被 Loon 清理器删除。原生同步与既有同步共用当前运行快照，在 seal 前取得全部输入；未知语法、下载或校验失败阻止发布，事务失败回滚，退出来源仅清理专属状态记录中的文件。记录 commit、输入摘要及输出归属；内容不变时保留更新时间。README 归“树先生”，组内沿用 A–Z 排列，仅提供 QX。一键导入按实际存在的分流/重写段分别向 filter_remote、rewrite_remote 登记同一文件 URL；仅分流的文件只登记 filter_remote，不设置 force-policy 覆盖源策略。依据 QX 官方 url-scheme.md 的批量 add-resource 格式。
