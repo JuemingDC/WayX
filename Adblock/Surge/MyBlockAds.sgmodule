@@ -7,7 +7,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/walalala.png
 # Updated: 2026-10-07 10:00
 
-# Converted: 2026-10-23 23:04:31 +08:00
+# Converted: 2026-10-25 12:26:28 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/myblockads.lpx
 # Target: Surge
@@ -61,7 +61,6 @@ DOMAIN,nadvideo2.baidu.com,REJECT,extended-matching,pre-matching
 DOMAIN,nsclick.baidu.com,REJECT,extended-matching,pre-matching
 
 # 百度地图
-DOMAIN,afd.baidu.com,REJECT,extended-matching,pre-matching
 DOMAIN,afdconf.baidu.com,REJECT,extended-matching,pre-matching
 DOMAIN,lc.map.baidu.com,REJECT,extended-matching,pre-matching
 IP-CIDR,180.76.76.112/32,REJECT,no-resolve,pre-matching
@@ -134,7 +133,6 @@ DOMAIN-SUFFIX,kuaishouzt.com,REJECT,extended-matching,pre-matching
 DOMAIN-SUFFIX,mdt.qq.com,REJECT,extended-matching,pre-matching
 DOMAIN-SUFFIX,miaozhen.com,REJECT,extended-matching,pre-matching
 DOMAIN-SUFFIX,ubixioe.com,REJECT,extended-matching,pre-matching
-DOMAIN-SUFFIX,unityads.unity3d.com,REJECT,extended-matching,pre-matching
 DOMAIN-SUFFIX,v.smtcdns.com,REJECT,extended-matching,pre-matching
 DOMAIN,ad.toutiao.com,REJECT,extended-matching,pre-matching
 DOMAIN,ad.zijieapi.com,REJECT,extended-matching,pre-matching
@@ -296,7 +294,6 @@ DOMAIN,pro.bugly.qq.com,REJECT,extended-matching,pre-matching
 DOMAIN,qzs.gdtimg.com,REJECT,extended-matching,pre-matching
 DOMAIN,qzs.qq.com,REJECT,extended-matching,pre-matching
 DOMAIN,rmonitor.qq.com,REJECT,extended-matching,pre-matching
-DOMAIN,sdk.e.qq.com,REJECT,extended-matching,pre-matching
 DOMAIN,sdkconfig.video.qq.com,REJECT,extended-matching,pre-matching
 DOMAIN,splashqqlive.gtimg.com,REJECT,extended-matching,pre-matching
 DOMAIN,tmead.y.qq.com,REJECT,extended-matching,pre-matching
@@ -322,7 +319,6 @@ DOMAIN,mobilead.kuwo.cn,REJECT,extended-matching,pre-matching
 DOMAIN,mobilelog.kugou.com,REJECT,extended-matching,pre-matching
 DOMAIN,rich.kuwo.cn,REJECT,extended-matching,pre-matching
 DOMAIN,splashimgbssdl.yun.kugou.com,REJECT,extended-matching,pre-matching
-DOMAIN,tmead.y.qq.com,REJECT,extended-matching,pre-matching
 
 # 天猫精灵
 AND,((URL-REGEX,^http:\/\/.+\/amdc\/mobileDispatch,extended-matching),(USER-AGENT,"TmallGenie*")),REJECT
