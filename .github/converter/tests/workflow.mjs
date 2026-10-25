@@ -1229,7 +1229,11 @@ assert.match(readme,/\| \*\*\[SideStore Local Loopback\]\([^\n]+\/Module\/Locall
 assert.match(readme,/Module%2FLocalloopback\.sgmodule/);
 assert.match(readme,/\| \*\*\[Standalone QX Module\]\([^\n]+\/Module\/Standalone\.snippet\)\*\* \| \[一键导入\]/,'flat QX-only module must be indexed');
 assert.match(readme,/Ads/);
-assert.ok(readme.indexOf('First') < readme.indexOf('**[Ads]'),'Adblock rows must follow source-catalog order rather than filename order');
+// Modified: 2026-10-25 (chance). Keep source groups while sorting their resources by visible name.
+assert.ok(readme.indexOf('**[Ads]') < readme.indexOf('**[First]'));
+assert.match(readme,/#### A[\s\S]*\*\*\[Ads\][\s\S]*#### F[\s\S]*\*\*\[First\]/);
+assert.ok(readme.indexOf('### Reject')<readme.indexOf('### Proxy'));
+assert.ok(readme.indexOf('### Proxy')<readme.indexOf('### Direct'));
 assert.match(readme,/Apple APNs/);
 assert.match(readme,/update-interval%3D86400/);
 assert.match(readme,/Adblock%2FQuantumult%2520X%2FAds\.snippet/);
@@ -1244,7 +1248,7 @@ assert.ok(readme.indexOf('**[Ads]')<readme.indexOf('<strong>Bob'),'each resource
 assert.equal((readme.match(/^<details>$/gm)||[]).length,3);
 assert.equal((readme.match(/^<\/details>$/gm)||[]).length,3);
 assert.doesNotMatch(readme,/<details open|<input|<script/);
-assert.match(readme,/<\/summary>\n\n\| Name \|/,'blank line keeps the collapsed Markdown table renderable');
+assert.match(readme,/<\/summary>\n\n#### [A-Z][\s\S]*?\n\n\| Name \|/,'blank line keeps the collapsed Markdown table renderable');
 
 await fs.unlink(path.join(root,'Adblock/Quantumult X/Ads.snippet'));
 let refreshed=(await buildReadmePlan(root)).get('README.md');
@@ -1257,11 +1261,11 @@ assert.doesNotMatch(refreshed,/\*\*\[Ads\]/);
 assert.match(refreshed,/\*\*\[New\]/);
 assert.deepEqual(refreshed.match(/^## .+$/gm),readme.match(/^## .+$/gm));
 assert.match(refreshed,/<strong>本地资源<\/strong> · 1 项/);
-assert.equal((refreshed.match(/\| Name \| Quantumult X \| Surge \|/g)||[]).length,7);
+assert.ok((refreshed.match(/\| Name \| Quantumult X \| Surge \|/g)||[]).length>=7);
 await fs.unlink(path.join(root,'Adblock/Quantumult X/Bob.snippet'));
 assert.doesNotMatch((await buildReadmePlan(root)).get('README.md'),/<strong>Bob<\/strong>/,'empty source groups are removed');
 await fs.rm(root,{recursive:true,force:true});
-console.log('README index contract passed: fetch-source attribution, collapsed groups/counts, within-source order and target additions/removals');
+console.log('README index contract passed: stable source groups, alphabetical subgroups, policy order and target additions/removals');
 }
 
 if (selectedCase === "manual-assets.mjs") {

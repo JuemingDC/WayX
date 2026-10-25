@@ -405,11 +405,12 @@ async function scanCategory(root, category) {
   }
   const {order:sourceOrder,sources}=await catalogRowMetadata(root,category);
   for(const row of rows.values())row.catalogSource=sources.get(row.key);
+  // Modified: 2026-10-25 (chance). Keep fetch-source group order separate
+  // from alphabetical resource order within each existing author group.
   return [...rows.values()].sort((a,b)=>{
-    const ar=sourceOrder.has(a.key) ? sourceOrder.get(a.key) : Number.POSITIVE_INFINITY;
-    const br=sourceOrder.has(b.key) ? sourceOrder.get(b.key) : Number.POSITIVE_INFINITY;
-    if(ar!==br) return ar-br;
-    return a.key.localeCompare(b.key,'en');
+    const ar=sourceOrder.has(a.key)?sourceOrder.get(a.key):Infinity;
+    const br=sourceOrder.has(b.key)?sourceOrder.get(b.key):Infinity;
+    return ar-br || a.key.localeCompare(b.key,'en');
   });
 }
 
@@ -484,6 +485,44 @@ function renderTable(category, rows, heading=category, level=2) {
   return lines.join('\n');
 }
 
+// Modified: 2026-10-25 (chance). Group visible names by Latin/pinyin initial;
+// numeric and other names retain dedicated groups after A-Z.
+const nameCollator=new Intl.Collator('zh-Hans-CN-u-co-pinyin',{numeric:true,sensitivity:'base'});
+const initialBoundaries=[['A','阿'],['B','八'],['C','擦'],['D','搭'],['E','蛾'],['F','发'],['G','噶'],['H','哈'],['J','击'],['K','喀'],['L','垃'],['M','妈'],['N','拿'],['O','哦'],['P','啪'],['Q','期'],['R','然'],['S','撒'],['T','塌'],['W','挖'],['X','昔'],['Y','压'],['Z','匝']];
+function rowName(row){return (row.qx ?? row.surge)?.name || row.key;}
+function rowInitial(row){
+  const first=rowName(row).trim().replace(/^[^\p{L}\p{N}]+/u,'').charAt(0);
+  if(/[a-z]/i.test(first))return first.toUpperCase();
+  if(/[0-9]/.test(first))return '0–9';
+  if(/\p{Script=Han}/u.test(first)) {
+    for(const [letter,boundary] of [...initialBoundaries].reverse())if(nameCollator.compare(first,boundary)>=0)return letter;
+  }
+  return '其他';
+}
+function alphabetTables(category,rows,level=4){
+  const groups=new Map();
+  for(const row of rows){const letter=rowInitial(row);if(!groups.has(letter))groups.set(letter,[]);groups.get(letter).push(row);}
+  return [...groups].sort(([a],[b])=>{
+    const rank=x=>/^[A-Z]$/.test(x)?x.charCodeAt(0):x==='0–9'?100:101;
+    return rank(a)-rank(b);
+  }).map(([letter,items])=>renderTable(category,items.sort((a,b)=>nameCollator.compare(rowName(a),rowName(b))||a.key.localeCompare(b.key)),letter,level)).join('\n\n');
+}
+// README grouping only: preserve the actual policies and install descriptors.
+function ruleGroup(row){
+  const actions=new Set();
+  for(const line of (row.qx?.text || row.surge?.text || '').split('\n')){
+    if(!line.trim() || /^[#;]/.test(line.trim()) || line.startsWith('//'))continue;
+    const action=line.match(/,\s*(direct|proxy|reject(?:-[a-z0-9]+)?)\s*$/i)?.[1]?.toLowerCase();
+    if(action)actions.add(action.startsWith('reject')?'reject':action);
+  }
+  if(actions.size===1 && actions.has('reject'))return 'Reject';
+  if(actions.has('proxy'))return 'Proxy';
+  if(actions.size===1 && actions.has('direct'))return 'Direct';
+  if(/(?:^|_)(?:direct|cn)(?:_|$)/i.test(row.key))return 'Direct';
+  if(/(?:adblock|reject)/i.test(row.key))return 'Reject';
+  return 'Proxy';
+}
+
 export async function buildReadmePlan(root=process.cwd()) {
   const sections = [];
   for (const category of README_CATEGORY_ORDER) {
@@ -495,8 +534,10 @@ export async function buildReadmePlan(root=process.cwd()) {
         if(!groups.has(author))groups.set(author,[]);
         groups.get(author).push(row);
       }
-      sections.push('## Adblock\n\n按拉取来源分组，点击展开。展开后可用 Ctrl+F / ⌘F 查找资源名称。\n\n'+[...groups].map(([author,items])=>'<details>\n<summary><strong>'+escapeHtml(author)+'</strong> · '+items.length+' 项</summary>\n\n'+renderTable(category,items,null)+'\n\n</details>').join('\n\n'));
-    } else sections.push(renderTable(category, rows));
+      sections.push('## Adblock\n\n按拉取来源分组，点击展开；各来源内部按名称 A–Z 分栏，中文按拼音首字母，数字单列。\n\n'+[...groups].map(([author,items])=>'<details>\n<summary><strong>'+escapeHtml(author)+'</strong> · '+items.length+' 项</summary>\n\n'+alphabetTables(category,items)+'\n\n</details>').join('\n\n'));
+    } else if(category==='Module')sections.push('## Module\n\n'+alphabetTables(category,rows,3));
+    else if(category==='Rule')sections.push('## Rule\n\n按 Reject → Proxy → Direct 排列；混合策略资源列在 Proxy，导入时保留文件中的逐条策略。\n\n'+['Reject','Proxy','Direct'].map(group=>renderTable(category,rows.filter(row=>ruleGroup(row)===group).sort((a,b)=>nameCollator.compare(rowName(a),rowName(b))),group,3)).join('\n\n'));
+    else sections.push(renderTable(category, rows));
   }
 
   const readme = [

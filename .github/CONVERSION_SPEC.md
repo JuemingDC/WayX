@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：2.25
+版本：2.26
 
 更新：2026-10-25
 作者：chance  
@@ -222,7 +222,9 @@ sync 是产物与 README 的写入入口；canonical、README 对比及回归套
 
 根 README 保持标题、导航、BoxJs/Module/Adblock/Rule 顺序及 Name/Quantumult X/Surge 三列。Adblock 按实际拉取来源分组，不按插件内 `Author` 或 Converted by 署名分组。已登记资源使用 Catalog 的 source；未登记资源从 QX、Surge 的 Source 注释依次取得原地址。kelee.one 及其子域归“可莉”，rucu6.pages.dev 归“RuCu6”，GitHub/raw.githubusercontent.com 地址归仓库 owner；其它有效来源使用域名，缺失或无效来源归“本地资源”。资源署名与原作者 URL 保留在资源文件中。
 
-来源组按条目在 Catalog 中首次出现的顺序排列，组内保留 Catalog 顺序；未登记资源随后按文件名稳定排序。每个资源只出现一次。每组使用 GitHub 支持的 details/summary 默认折叠，summary 显示来源名称与资源数量，名称作 HTML 转义；summary 后及表格结束处保留空行，使三列表格正确显示。README 提示点击展开后使用页面查找定位资源，不添加脚本或无效搜索框。
+<!-- Modified: 2026-10-25 (chance). Preserve source grouping and order; alphabetize names inside each source and group rule links by policy. -->
+
+来源组按条目在 Catalog 中首次出现的顺序排列，分类和外层顺序保持。每个来源内部按展示名称 A–Z 分字母小节并排序；中文按拼音首字母，数字及其它字符单列，Module 同样按字母分组。Rule 目录按 Reject、Proxy、Direct 分组排序，仅调整链接展示，不改变资源内容或动作；混合策略文件列在 Proxy 并提示保留逐条策略。每个资源只出现一次。每组使用 GitHub 支持的 details/summary 默认折叠，summary 显示来源名称与资源数量，名称作 HTML 转义；summary 后及表格结束处保留空行，使三列表格正确显示。README 提示点击展开后使用页面查找定位资源，不添加脚本或无效搜索框。
 
 按实际目标文件生成索引：新增加条目，删除删条目，单目标缺失显示 —，空来源组不保留；已退出拉取名单的自动管理产物必须实际删除，不继续展示过时条目。安装 URL 与每日 update-interval=86400 保持。相同 README 不写入，校验须核对来源分组、折叠结构、资源数量、组内顺序、链接与实际产物一致。
 
