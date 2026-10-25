@@ -10,14 +10,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Daily.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-23 22:46:29 +08:00
+# Converted: 2026-10-25 15:58:33 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Daily_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-http-response-jq (?i)^https?:\/\/m\.pvp\.xoyo\.com\/conf\/server-mapping$ 'del(.data.splashConf,.data.splashConfNew)'
+http-response-jq (?i)^https?:\/\/m\.pvp\.xoyo\.com\/conf\/server-mapping$ 'delpaths([["data","splashConf"],["data","splashConfNew"]])'
 
 [MITM]
 hostname = %APPEND% m.pvp.xoyo.com

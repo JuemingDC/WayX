@@ -1274,7 +1274,7 @@ assert.deepEqual(generatedScriptSemantics(outA.generatedScripts), generatedScrip
 assert.ok(qxSemantics(outA.qx, entryA.id).includes('^https:\\/\\/ads\\.example\\.com url reject-dict'));
 assert.ok(surgeSemantics(outA.surge, entryA.id).includes('^https:\\/\\/ads\\.example\\.com data-type=text data="{}" status-code=200 header="Content-Type:application/json"'));
 assert.ok(surgeSemantics(outA.surge, entryA.id).some(x=>x.startsWith('http-response ^https:\\/\\/api\\.example\\.com enabled:true enabled:false')));
-assert.ok(qxSemantics(outA.qx, entryA.id).some(x=>x.includes(`jsonjq-response-body 'del(.data.ads)'`)));
+assert.ok(qxSemantics(outA.qx, entryA.id).some(x=>x.includes(`jsonjq-response-body 'delpaths([["data","ads"]])'`)));
 assert.ok(qxSemantics(outA.qx, entryA.id).some(x=>x.includes('script-response-body https://scripts.example.com/generic.js')));
 
 console.log('Generic identity-invariance conversion test passed');
@@ -1292,11 +1292,11 @@ const deleteQx = qxDirectRewritePlan(deleteAst);
 const deleteSurge = surgeDirectRewritePlan(deleteAst);
 assert.equal(deleteQx.ok, true);
 assert.match(deleteQx.line, /jsonjq-response-body/);
-assert.match(deleteQx.line, /del\(/);
-assert.match(deleteQx.line, /del\(\.activity_switch,\.video_report_config,\.wl_config\.pb_banner_funad_cache_strategy,\.scheme_whitelist\)/);
+assert.match(deleteQx.line, /delpaths\(/);
+assert.ok(deleteQx.line.includes('delpaths([["activity_switch"],["video_report_config"],["wl_config","pb_banner_funad_cache_strategy"],["scheme_whitelist"]])'));
 assert.equal(deleteSurge.ok, true);
 assert.match(deleteSurge.line, /^http-response-jq /);
-assert.match(deleteSurge.line, /del\(\.activity_switch,\.video_report_config,\.wl_config\.pb_banner_funad_cache_strategy,\.scheme_whitelist\)/);
+assert.ok(deleteSurge.line.includes('delpaths([["activity_switch"],["video_report_config"],["wl_config","pb_banner_funad_cache_strategy"],["scheme_whitelist"]])'));
 
 const replaceAst = parseRewriteV2(
   'response if ${url} ~= /^https?:\\/\\/tiebac\\.baidu\\.com\\/c\\/s\\/sync$/i then response.json.replace(["wl_config.home_ad_num", "wl_config.frs_ad_num", "wl_config.index_bear_first_floor_max"], [0, 0, 999999999])'
@@ -1322,19 +1322,19 @@ assert.equal(addSurge.ok, true);
 assert.match(addSurge.line, /^http-response-jq /);
 
 // Modified: 2026-10-23 (chance). Use del selector lists or ordered
-// reduce/delpaths as required by the source, without generating del pipelines.
+// one native delpaths batch, without inferred sequential deletion pipelines.
 const scalarDeleteAst = parseRewriteV2(
   'response if ${url} ~= /api/ then response.json.delete("data.ad")'
 );
-assert.match(qxDirectRewritePlan(scalarDeleteAst).line, /'del\(\.data\.ad\)'$/);
+assert.ok(qxDirectRewritePlan(scalarDeleteAst).line.endsWith("'delpaths([[\"data\",\"ad\"]])'"));
 
 const indexedDeleteAst = parseRewriteV2(
   'response if ${url} ~= /api/ then response.json.delete(["items[0]", "items[1]"])'
 );
 const indexedDeleteQx = qxDirectRewritePlan(indexedDeleteAst);
 const indexedDeleteSurge = surgeDirectRewritePlan(indexedDeleteAst);
-assert.ok(indexedDeleteQx.line.includes('reduce [["items",0],["items",1]][] as $p (.; delpaths([$p]))'));
-assert.ok(indexedDeleteSurge.line.includes('reduce [["items",0],["items",1]][] as $p (.; delpaths([$p]))'));
+assert.ok(indexedDeleteQx.line.includes('delpaths([["items",0],["items",1]])'));
+assert.ok(indexedDeleteSurge.line.includes('delpaths([["items",0],["items",1]])'));
 
 const jqAst = parseRewriteV2(
   'response if ${url} ~= /^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idle\\.trade\\.full\\.info\\//i then response.json.jq(".data.components |= map(select(.render | . == \\"orderStatusVO\\" or . == \\"addressInfoVO\\" or . == \\"orderInfoVO\\"))")'

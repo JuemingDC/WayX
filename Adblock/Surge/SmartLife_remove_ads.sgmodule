@@ -10,14 +10,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/SmartLife.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-23 22:46:06 +08:00
+# Converted: 2026-10-25 15:58:32 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/SmartLife_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-http-response-jq (?i)^https:\/\/i\.ilife798\.com\/api\/v\d\/acc\/login$ 'del(.data.ar,.data.showAd)'
+http-response-jq (?i)^https:\/\/i\.ilife798\.com\/api\/v\d\/acc\/login$ 'delpaths([["data","ar"],["data","showAd"]])'
 
 [Map Local]
 

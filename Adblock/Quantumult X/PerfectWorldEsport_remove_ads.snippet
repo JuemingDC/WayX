@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/PerfectWorldEsport.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-23 22:46:32 +08:00
+# Converted: 2026-10-25 15:58:33 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/PerfectWorldEsport_remove_ads.lpx
@@ -16,7 +16,7 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/api\.wmpvp\.com\/api\/v1\/config\/promote$ url jsonjq-response-body 'del(.data.ad)'
+(?i)^https:\/\/api\.wmpvp\.com\/api\/v1\/config\/promote$ url jsonjq-response-body 'delpaths([["data","ad"]])'
 
 (?i)^https:\/\/appactivity\.wmpvp\.com\/hotsearch\/all\? url reject-dict
 

@@ -10,22 +10,22 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduMap.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-23 22:45:49 +08:00
+# Converted: 2026-10-25 16:33:19 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduMap_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 
-http-response-jq (?i)^https:\/\/newclient\.map\.baidu\.com\/feed\/govui\/rich_content 'del(.data)'
+http-response-jq (?i)^https:\/\/newclient\.map\.baidu\.com\/feed\/govui\/rich_content 'delpaths([["data"]])'
 
-http-response-jq (?i)^https:\/\/newclient\.map\.baidu\.com\/client\/noticebar\/get\? 'del(.content.multi_data)'
+http-response-jq (?i)^https:\/\/newclient\.map\.baidu\.com\/client\/noticebar\/get\? 'delpaths([["content","multi_data"]])'
 
 http-response-jq (?i)^https:\/\/newclient\.map\.baidu\.com\/(client\/)?usersystem\/mine\/page\? 'setpath(["data"]; "{}")'
 
-http-response-jq (?i)^https:\/\/newclient\.map\.baidu\.com\/client\/phpui2\/\?qt=ads&type=user_home_new_service 'del(.ads)'
+http-response-jq (?i)^https:\/\/newclient\.map\.baidu\.com\/client\/phpui2\/\?qt=ads&type=user_home_new_service 'delpaths([["ads"]])'
 
-http-response-jq (?i)^https:\/\/newclient\.map\.baidu\.com\/living\/nearby\/api\? 'reduce [["Result","cards",1],["Result","cards",4],["Result","cards",5],["Result","cards",9]][] as $p (.; delpaths([$p]))'
+http-response-jq (?i)^https:\/\/newclient\.map\.baidu\.com\/living\/nearby\/api\? 'delpaths([["Result","cards",1],["Result","cards",4],["Result","cards",5],["Result","cards",9]])'
 
 [Map Local]
 (?i)^https:\/\/afd\.baidu\.com\/afd\/entry\?action=(update|query) data-type=text data="{}" status-code=200 header="Content-Type:application/json"

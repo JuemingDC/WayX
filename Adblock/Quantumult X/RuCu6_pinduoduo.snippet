@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/pinduoduo.png
 # Updated: 2026-09-28 21:10
 
-# Converted: 2026-10-23 22:46:54 +08:00
+# Converted: 2026-10-25 15:58:33 +08:00
 # Converted by: chance
 # Category: 插件
 # Source: https://rucu6.pages.dev/Plugins/pinduoduo.lpx
@@ -42,10 +42,10 @@ host, titan.pinduoduo.com, reject
 (?i)^https:\/\/api\.pinduoduo\.com\/api\/xrec\/goods_rec\/pay_after_use_v2\? url reject-dict
 (?i)^https:\/\/api\.pinduoduo\.com\/search_hotquery\? url reject-dict
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/api\.pinduoduo\.com\/api\/oak\/integration\/render url jsonjq-response-body 'del(.bottom_section_list,.ui.bottom_section,.ui.live_section.float_info)'
+(?i)^https:\/\/api\.pinduoduo\.com\/api\/oak\/integration\/render url jsonjq-response-body 'delpaths([["bottom_section_list"],["ui","bottom_section"],["ui","live_section","float_info"]])'
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-(?i)^https:\/\/api\.pinduoduo\.com\/api\/philo\/personal\/hub\? url jsonjq-response-body 'del(.monthly_card_entrance,.personal_banner,.personal_center_style_v2_vo,.icon_set.icons,.icon_set.top_personal_icons,.title_bar_items)'
-(?i)^https:\/\/api\.pinduoduo\.com\/search url jsonjq-response-body 'del(.expansion)'
+(?i)^https:\/\/api\.pinduoduo\.com\/api\/philo\/personal\/hub\? url jsonjq-response-body 'delpaths([["monthly_card_entrance"],["personal_banner"],["personal_center_style_v2_vo"],["icon_set","icons"],["icon_set","top_personal_icons"],["title_bar_items"]])'
+(?i)^https:\/\/api\.pinduoduo\.com\/search url jsonjq-response-body 'delpaths([["expansion"]])'
 # 精简首页
 (?i)^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub\? url script-response-body https://rucu6.pages.dev/Scripts/pinduoduo.js
 # 精简评价页

@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/TmallCampus.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-23 22:46:28 +08:00
+# Converted: 2026-10-25 15:58:33 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/TmallCampus_remove_ads.lpx
 # Target: Surge
@@ -18,7 +18,7 @@
 [Body Rewrite]
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher encodes inline Loon flags i; this mapping is not a verified target-engine equivalence.
-http-response-jq (?i)^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.tmall\.kangaroo\.core\.service\.route\.fixrespagerecommend\/ 'del(.data.resultValue.data["normal-banner-resource-code"],.data.resultValue.data["feeds-channel-code"])'
+http-response-jq (?i)^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.tmall\.kangaroo\.core\.service\.route\.fixrespagerecommend\/ 'delpaths([["data","resultValue","data","normal-banner-resource-code"],["data","resultValue","data","feeds-channel-code"]])'
 
 http-response-jq (?i)^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.tmall\.campus\.guide\.app\.userprofile\.framework\.v\d\/ 'del(.data.memberBenefit, .data.memberBenefitNew) | .data.moduleSorts |= map(select(. != "memberBenefit" and . != "memberBenefitNew"))'
 
