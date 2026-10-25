@@ -1,0 +1,22 @@
+# Name: 豆瓣
+# Updated: 2026-10-25 18:04:02 +08:00
+# Merged by: chance
+# Source Authors: 树先生, 奶思
+# Category: app
+# Managed by: WayX Native QX
+
+# [rewrite_local]
+# Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/douban.snippet
+# Upstream name = 豆瓣
+# Upstream desc = 仅去除开屏广告
+# Upstream author = 树先生、奶思
+
+^https:\/\/storage\.360buyimg\.com\/material-video\/video\/[a-f0-9]{32}\.mp4$ url reject-dict
+^https:\/\/img\d+\.360buyimg\.com\/pop\/jfs\/t\d+\/\d+\/\d+\/\d+\/\d+\/[A-Za-z0-9]{10,40}\/[A-Za-z0-9]{10,40}\.jpg$ url reject-dict
+^https:\/\/api\.douban\.com\/v2\/app_ads url reject-dict
+
+# [mitm]
+
+# Upstream hostname = *.360buyimg.com, api.douban.com
+
+hostname = *.360buyimg.com, api.douban.com

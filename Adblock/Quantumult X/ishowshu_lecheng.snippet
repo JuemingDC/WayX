@@ -1,0 +1,35 @@
+# Name: 乐橙
+# Updated: 2026-10-25 18:04:02 +08:00
+# Merged by: chance
+# Source Authors: 树先生
+# Category: app
+# Managed by: WayX Native QX
+
+# [filter_local]
+# Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/lecheng.snippet
+# Upstream name = 乐橙
+# Upstream desc = 移除开屏广告
+# Upstream author = 树先生
+
+host-suffix, ubixioe.com, reject
+host, s.tuia.cn, reject
+host, ssp.iytcdn.com, reject
+host-suffix, 1rtb.net, reject
+host, acg.youku.com, reject
+host, mpcfg.fancydsp.com, reject
+host-suffix, zhangyuyidong.cn, reject
+host-suffix, 1rtb.com, reject
+host-suffix, adx.adwangmai.com, reject
+host, dsp-x.jd.com, reject
+host, dspvideo.umeng.com, reject
+
+# [rewrite_local]
+
+^https:\/\/dl-(?:ct|cm)-hz\.imou\.com(:443)?\/lechange\/saas\/advertisement\/ url reject-dict
+^https:\/\/img1\.360buyimg\.com\/pop\/jfs\/t1 LCIphoneAdhocIP* url-and-header reject-dict
+
+# [mitm]
+
+# Upstream hostname = img1.360buyimg.com, dl-ct-hz.imou.com, dl-cm-hz.imou.com
+
+hostname = img1.360buyimg.com, dl-ct-hz.imou.com, dl-cm-hz.imou.com

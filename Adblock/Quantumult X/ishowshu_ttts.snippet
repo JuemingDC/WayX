@@ -1,0 +1,22 @@
+# Name: 天天跳绳
+# Updated: 2026-10-25 18:04:02 +08:00
+# Merged by: chance
+# Source Authors: 树先生
+# Category: app
+# Managed by: WayX Native QX
+
+# [rewrite_local]
+# Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/ttts.snippet
+# Upstream name = 天天跳绳
+# Upstream author = 树先生
+# Upstream desc = 移除广告
+
+^https:\/\/api\.tiantiantiaosheng\.com\/api2\/abtest\/ads_v2 url reject-dict
+^https:\/\/api\.tiantiantiaosheng\.com\/api2\/ad_sys\/fetch url reject-dict
+^https:\/\/api\.tiantiantiaosheng\.com\/api2\/popup\/list url reject-dict
+
+# [mitm]
+
+# Upstream hostname = api.tiantiantiaosheng.com
+
+hostname = api.tiantiantiaosheng.com

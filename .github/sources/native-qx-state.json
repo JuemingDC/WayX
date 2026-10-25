@@ -1,0 +1,163 @@
+{
+  "version": 1,
+  "commit": "bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7",
+  "inputs": [
+    {
+      "path": "filter/ad-platform.snippet",
+      "sha256": "5842f05070a8acefbbcc584c9d7c63fe50d1331a9a1d10346fc1ef5100b6ccf9"
+    },
+    {
+      "path": "filter/apple-notice.snippet",
+      "sha256": "6731cd1dadba8a7c90c157d194117a97aced0e482fba5bb10bd8dd2795df1ecc"
+    },
+    {
+      "path": "filter/geoip.snippet",
+      "sha256": "e0535d86977bdb8b5921b790f2e410036e310f6edc26680d3178fddd35265fab"
+    },
+    {
+      "path": "filter/pdd.snippet",
+      "sha256": "5de16fec4352ada23698514815582b55a06bf04d41a9f116de611534668b0390"
+    },
+    {
+      "path": "filter/taobao.snippet",
+      "sha256": "b7e56fbe58098ba995ddfbf2f251138272534054fe7ccf24860085d002c28af4"
+    },
+    {
+      "path": "rewrite/amap-new.snippet",
+      "sha256": "46501be7318c8593c1ca06078f1fac06cafdec14dbb818662a62a397838a440f"
+    },
+    {
+      "path": "rewrite/amap.snippet",
+      "sha256": "f16ff0ee3054f6fcc296a59fe00dbc5c5f4dd4b053e63711cec32502271b7025"
+    },
+    {
+      "path": "rewrite/bestv.snippet",
+      "sha256": "d416530faf3bd42158b6eecaf74c664bcd93ce6a62c0e1a888d6e862d7b5faf1"
+    },
+    {
+      "path": "rewrite/bilibili-qx.snippet",
+      "sha256": "d87046cc9762cffb062d1934188399a525d271ba55a47de29f6eec03e51c2574"
+    },
+    {
+      "path": "rewrite/bilibili.snippet",
+      "sha256": "a66a6a3b406f92e28f48b2b1ac9f1d1c1aaf34d49ed1b07b44ec6b14800d754c"
+    },
+    {
+      "path": "rewrite/caiyun.snippet",
+      "sha256": "8c35a6e6bf33688ca041460e1ba7fc41fb92bb71fb64c57d79931b7eaa3265a1"
+    },
+    {
+      "path": "rewrite/cmbchina.snippet",
+      "sha256": "28ead4f5910d22cf37d9072c11d6e59f779490d85cf10dd7b23c58f2a7f2cec8"
+    },
+    {
+      "path": "rewrite/didi.snippet",
+      "sha256": "771cfc56b5b9c16543f4ac2a2e5c22116e8d6aae70cc7dde995a857dcbcdcff8"
+    },
+    {
+      "path": "rewrite/douban.snippet",
+      "sha256": "1161b50e3c4018daac072bedabd63bce3d68b76d76faaa675630e95d10f72418"
+    },
+    {
+      "path": "rewrite/github.snippet",
+      "sha256": "6b7d88f492a2d39a1ad69c822c159c911bf481abfe39a49fb330e2bdebfdc247"
+    },
+    {
+      "path": "rewrite/goofish.snippet",
+      "sha256": "e8054eb951d282aede6ab1be0e4a964cee4dc10aa7c27cbc0c37d3c740581d14"
+    },
+    {
+      "path": "rewrite/hupu.snippet",
+      "sha256": "8ad149ddd1a3f6b2ccda3a3ffd1bdf7aed20e4e3cbf0492474e01ed68d3a9b91"
+    },
+    {
+      "path": "rewrite/jd.snippet",
+      "sha256": "2c81f10b20c871cd2cf99ebebe37648b6c57aeeead1f8ff2c2361a91192d427f"
+    },
+    {
+      "path": "rewrite/jx.snippet",
+      "sha256": "9bbc3def09e7e138976ecb21925aa03d3c72f82390ebb65d7d9d1d2ebae038ec"
+    },
+    {
+      "path": "rewrite/keep.snippet",
+      "sha256": "7dd0f9ba10fb279ef06fe2cf647320c17ddde12c119a2fd0cff033a645682d61"
+    },
+    {
+      "path": "rewrite/lecheng.snippet",
+      "sha256": "9fdab16878a016a1c8ed2f93731db22677d4a3c036bf7967e032d6b3b8d6c2b1"
+    },
+    {
+      "path": "rewrite/leisu.snippet",
+      "sha256": "e69a4891d1c5b09275a1325ad792d14a650f237385282b39b2a94ee8d4f67ae4"
+    },
+    {
+      "path": "rewrite/pdd.snippet",
+      "sha256": "0390ab4cac52c0e0be88b1dcfd3d90bd20edfbeb73d605b340220076782ad4ac"
+    },
+    {
+      "path": "rewrite/pupu.snippet",
+      "sha256": "f166ca9cf1c901421f110b3461ecd127319a1e05bf210f463a3ceb7e3129f428"
+    },
+    {
+      "path": "rewrite/shihuo.snippet",
+      "sha256": "2f7c97d300ad92c174f639e342c4da8a1cb13d9af87ecf13adb79b1bc42bd9b9"
+    },
+    {
+      "path": "rewrite/soul.snippet",
+      "sha256": "6ca0b61e719734fb591ff96507485c67a1e192d2ed225b06e91f3fe6f7fd8703"
+    },
+    {
+      "path": "rewrite/taobao.snippet",
+      "sha256": "c6989320173a48fa169a6de54e025df7c9be5dba9e7ec0dd2d6c54c5b390b9ac"
+    },
+    {
+      "path": "rewrite/ttts.snippet",
+      "sha256": "eba9dfd3aafaac9dc1247673af786db040335af840a05105c7406d8b7435d05e"
+    },
+    {
+      "path": "rewrite/xhs.snippet",
+      "sha256": "81754623deece2816fbd746963fcd5033e19af27c346d9be937aa012a4c29c19"
+    },
+    {
+      "path": "rewrite/youtube.snippet",
+      "sha256": "f2df12ececb5ba8e3d27ad6bb448a10abada501f368da39c04b1517ba0a6ffe8"
+    }
+  ],
+  "skipped": [
+    {
+      "application": "bilibili",
+      "reason": "No unique single-author version",
+      "sources": [
+        "rewrite/bilibili-qx.snippet",
+        "rewrite/bilibili.snippet"
+      ]
+    }
+  ],
+  "outputs": [
+    "Adblock/Quantumult X/ishowshu_ad-platform.snippet",
+    "Adblock/Quantumult X/ishowshu_apple-notice.snippet",
+    "Adblock/Quantumult X/ishowshu_geoip.snippet",
+    "Adblock/Quantumult X/ishowshu_pdd.snippet",
+    "Adblock/Quantumult X/ishowshu_taobao.snippet",
+    "Adblock/Quantumult X/ishowshu_amap.snippet",
+    "Adblock/Quantumult X/ishowshu_bestv.snippet",
+    "Adblock/Quantumult X/ishowshu_caiyun.snippet",
+    "Adblock/Quantumult X/ishowshu_cmbchina.snippet",
+    "Adblock/Quantumult X/ishowshu_didi.snippet",
+    "Adblock/Quantumult X/ishowshu_douban.snippet",
+    "Adblock/Quantumult X/ishowshu_github.snippet",
+    "Adblock/Quantumult X/ishowshu_goofish.snippet",
+    "Adblock/Quantumult X/ishowshu_hupu.snippet",
+    "Adblock/Quantumult X/ishowshu_jd.snippet",
+    "Adblock/Quantumult X/ishowshu_jx.snippet",
+    "Adblock/Quantumult X/ishowshu_keep.snippet",
+    "Adblock/Quantumult X/ishowshu_lecheng.snippet",
+    "Adblock/Quantumult X/ishowshu_leisu.snippet",
+    "Adblock/Quantumult X/ishowshu_pupu.snippet",
+    "Adblock/Quantumult X/ishowshu_shihuo.snippet",
+    "Adblock/Quantumult X/ishowshu_soul.snippet",
+    "Adblock/Quantumult X/ishowshu_ttts.snippet",
+    "Adblock/Quantumult X/ishowshu_xhs.snippet",
+    "Adblock/Quantumult X/ishowshu_youtube.snippet"
+  ]
+}
