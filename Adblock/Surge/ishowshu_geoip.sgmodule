@@ -6,10 +6,10 @@
 
 [Rule]
 # Name: 国内 IP
-# Updated: 2026-10-25 18:31:40 +08:00
+# Updated: 2026-10-25 22:57:12 +08:00
 # Merged by: chance
 # Source Authors: 树先生
 # Category: app
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/filter/geoip.snippet
-GEOIP,cn,DIRECT
+GEOIP,cn,DIRECT,no-resolve
