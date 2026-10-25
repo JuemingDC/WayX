@@ -37,6 +37,10 @@ IR 不包含目标 action 名、section 名、helper URL 或目标 fallback。�
 
 **例外仅限用户明确授权的具体行为。** 已有显式转换策略按本节前文保留；例如 `jq_replace` 明确要求使用 `setpath(PATH; VALUE)`，包括覆盖值及创建缺失路径，这是已授权的策略差异，不能据此认定 delete 或其它操作也可改变语义。例外记录必须说明源操作、目标写法、授权的差异及适用范围；不能把一种操作的例外推广为全局规则，也不能把结果宣称为完整语义等价。作者原有 jq 不因生成器的某个例外而被重写。
 
+<!-- Modified: 2026-10-25 (chance). Record the explicit original-URL Script lowering exception, including both echo modes. -->
+用户明确授权原生 QX Script 声明直接转换为 Surge 通用 HTTP Script，保留原脚本 URL，不下载/扫描/改写/包装作者 JavaScript。`script-echo-response` → `type=http-request,requires-body=false`；`script-analyze-echo-response` → `type=http-request,requires-body=true`（QX 官方示例明确后者等待请求体）。普通 request/response 的 header/body 脚本分别保留阶段并设置 requires-body=false/true。此授权只针对声明转换，不声称原脚本返回对象或 API 在 Surge 中已验证等价。Surge http-request 支持脚本直接返回 response；原作者程序是否使用该格式由原脚本决定，不增加转换包装。`url-and-header` 仍注释并保留完整源声明和诊断，不删除 header 条件，也不生成无法保留完整整头语义的脚本。
+
+
 ## 2.3 单条组合与声明顺序
 
 组合指一条声明 action 区域中的 `|`，不指分开的同正则声明。独立声明按源顺序转换，不能因正则相同而跨声明择一或去重。
@@ -350,3 +354,5 @@ TestFlight 子服务采用 Tartarus2014 的 `Rule/Apple/TestFlight.lsr` 作为 A
 原生 snippet 的下载/语法失败继续阻止整批发布；额外用于 Surge API 审查的脚本源码不可取得时，仅将相应 Surge Script 明确注释并记录诊断，不使用替代脚本地址。不能把静态 token 筛查发现的局部变量或字符串当作已证明不兼容；它们仅代表尚未证明、需人工核对的边界。
 
 Modified: 2026-10-25 (chance). 原生 QX 注册表 version 2 支持多个独立作者；继续支持 v1。新增 ZenmoFeiShi/Qx 根目录全部 .snippet，使用 zenmofeishi_ 前缀，README 独立归类“怎么肥事”；每个来源固定 commit、独立输入摘要，合并成一次事务提交和清理，不影响其它作者。依据 https://manual.nssurge.com/http/header-rewrite.html 及 QX 官方示例 request-header 整头语义；header-replace 缺字段时不新增。
+
+Modified: 2026-10-25 (chance). Echo 声明映射依据用户提供的 QX 官方示例（script-analyze-echo-response 等待请求体）及 https://manual.nssurge.com/scripting/http-request.html；这不构成作者 JavaScript API 兼容性验证。
