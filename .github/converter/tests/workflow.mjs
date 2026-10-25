@@ -560,6 +560,64 @@ with tempfile.TemporaryDirectory() as temp:
  try:m.apply_outputs(outputs,metadata,{'outputs':{}})
  except ValueError:pass
  else:raise AssertionError('Unmanaged file overwritten')
+# Modified: 2026-10-25 (chance). Use the actual registry selectors with an
+# optimized apple fixture that omits gdmf; the independent update tag must survive.
+registry=json.loads((Path(sys.argv[1]).parent.parent/'sources/rules.json').read_text())
+apple=next(item for item in registry['applications'] if item['name']=='apple')
+assert 'apple-update' in apple['tags']
+def site_payload(tag,domains):
+ return field(1,field(1,tag.encode())+b''.join(field(2,b'\x08\x02'+field(2,d.encode())) for d in domains))
+update_hosts=['gdmf.apple.com','gdmf-ados.apple.com','mesu.apple.com','swscan.apple.com','updates.cdn-apple.com']
+apple_data=site_payload('apple',['apple.com'])+site_payload('apple-update',update_hosts)+site_payload('apple-intelligence',[])+site_payload('apple-tvplus',['tv.apple.com'])
+apple_config={'applications':[apple],'geosite':{'repository':'https://example.test/official'},
+ 'collections':{key:[] for key in ['cn','proxy','media','media_cn']},'sources':[],'surge_output':{'apple':'split'}}
+apple_out,_,_=m.build(apple_config,{'geosite':apple_data})
+for host in update_hosts:
+ assert 'host-suffix,'+host+',direct' in apple_out['Rule/QuantumultX/apple.list']
+ assert 'host-suffix,'+host+',proxy' not in apple_out['Rule/QuantumultX/apple.list']
+ assert 'DOMAIN-SUFFIX,'+host in apple_out['Rule/Surge/apple_direct.list']
+assert 'host-suffix,tv.apple.com,proxy' in apple_out['Rule/QuantumultX/apple.list']
+
+# Modified: 2026-10-25 (chance). Independent Microsoft services must keep
+# their own cn attributes rather than inheriting a blanket action from a parent.
+ms=next(item for item in registry['applications'] if item['name']=='microsoft')
+assert 'azure@cn' in ms['tags'] and 'azure@!cn' in ms['proxy_tags']
+assert 'azure' not in ms['tags']+ms['proxy_tags']
+selected={tag.split('@')[0] for tag in ms['tags']+ms['proxy_tags']}
+ms_data=b''.join(site_payload(tag,[]) for tag in selected-{'microsoft','azure'})
+ms_data+=site_payload('microsoft',['microsoft.com'])
+azure_cn=b'\x08\x02'+field(2,b'azure.example.cn')+field(3,field(1,b'cn')+b'\x10\x01')
+azure_proxy=b'\x08\x03'+field(2,b'portal.microsoft.com')
+ms_data+=field(1,field(1,b'azure')+field(2,azure_cn)+field(2,azure_proxy))
+ms_config={'applications':[ms],'geosite':{'repository':'https://example.test/official'},
+ 'collections':{key:[] for key in ['cn','proxy','media','media_cn']},'sources':[],'surge_output':{'microsoft':'split'}}
+ms_out,_,_=m.build(ms_config,{'geosite':ms_data})
+assert 'host-suffix,azure.example.cn,direct' in ms_out['Rule/QuantumultX/microsoft.list']
+assert 'host,portal.microsoft.com,proxy' in ms_out['Rule/QuantumultX/microsoft.list']
+assert 'DOMAIN-SUFFIX,azure.example.cn' in ms_out['Rule/Surge/microsoft_direct.list']
+assert 'DOMAIN,portal.microsoft.com' in ms_out['Rule/Surge/microsoft_proxy.list']
+
+# Modified: 2026-10-25 (chance). Joint primary MetaCubeX/V2Fly feeds must carry
+# update/attributed-cn DIRECT and service PROXY through both target layouts.
+feed_ids=['mihomo-apple-update','mihomo-azure-cn','mihomo-onedrive']
+feeds=[next(row for row in registry['sources'] if row['id']==name) for name in feed_ids]
+feed_config={'applications':[apple,ms],'geosite':{'repository':'https://example.test/official'},
+ 'collections':{key:[] for key in ['cn','proxy','media','media_cn']},'sources':feeds,
+ 'surge_output':{'apple':'split','microsoft':'split'}}
+feed_inputs={'geosite':apple_data+ms_data}
+for feed,host in zip(feeds,['gdmf.apple.com','azure.example.cn','onedrive.example.com']):
+ feed_inputs[feed['id']]=json.dumps({'version':2,'rules':[{'domain_suffix':host}]}).encode()
+feed_out,feed_meta,feed_anomalies=m.build(feed_config,feed_inputs)
+assert not feed_anomalies
+assert {'V2Fly','MetaCubeX'} <= set(feed_meta['Rule/QuantumultX/apple.list']['authors'])
+assert feeds[0]['url'] in feed_meta['Rule/QuantumultX/apple.list']['sources']
+assert feed_config['geosite']['repository'] in feed_meta['Rule/QuantumultX/apple.list']['sources']
+assert 'host-suffix,gdmf.apple.com,direct' in feed_out['Rule/QuantumultX/apple.list']
+assert 'host-suffix,azure.example.cn,direct' in feed_out['Rule/QuantumultX/microsoft.list']
+assert 'host-suffix,onedrive.example.com,proxy' in feed_out['Rule/QuantumultX/microsoft.list']
+assert 'DOMAIN-SUFFIX,azure.example.cn' in feed_out['Rule/Surge/microsoft_direct.list']
+assert 'DOMAIN-SUFFIX,onedrive.example.com' in feed_out['Rule/Surge/microsoft_proxy.list']
+
 print('Python rule aggregation contracts passed')
 `,path.join(ROOT,'.github/converter/rules.py')],{encoding:'utf8'});
   assert.equal(pythonRules.status,0,pythonRules.stdout+'\n'+pythonRules.stderr);

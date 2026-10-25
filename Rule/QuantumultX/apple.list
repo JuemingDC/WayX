@@ -1,11 +1,11 @@
 # Name: apple
-# Updated: 2026-10-24 19:42:56 UTC
+# Updated: 2026-10-25 05:49:22 UTC
 # Converted by: chance
-# Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, Tartarus2014, V2Fly
+# Source Authors: ACL4SSR, DustinWin, MetaCubeX, Nexitally, Sukka, Tartarus2014, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Rule/Apple/TestFlight.lsr ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list ; https://ruleset.skk.moe/List/non_ip/stream.conf
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-tvplus.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-update.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Rule/Apple/TestFlight.lsr ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1811
+# Rules: 1832
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,direct
@@ -278,6 +278,7 @@ host-suffix,1to1computing.com.au,direct
 host-suffix,1to1conference.com.au,direct
 host-suffix,advertising.apple.com,direct
 host-suffix,api-adservices.apple.com,direct
+host-suffix,appldnld.apple.com,direct
 host-suffix,apple-dns.com.cn,direct
 host-suffix,apple-watch.com.ru,direct
 host-suffix,apple.co.cr,direct
@@ -366,12 +367,19 @@ host-suffix,appstore.co.id,direct
 host-suffix,beats1.com.cn,direct
 host-suffix,beats2.com.cn,direct
 host-suffix,beatsbydre.com.cn,direct
+host-suffix,configuration.apple.com,direct
 host-suffix,developer.apple.com,proxy
 host-suffix,developerservices2.apple.com,proxy
 host-suffix,devimages-cdn.apple.com,proxy
 host-suffix,devstreaming-cdn.apple.com,proxy
 host-suffix,ecgapp.com.cn,direct
 host-suffix,emac.co.in,direct
+host-suffix,fcs-keys-pub-prod.cdn-apple.com,direct
+host-suffix,gdmf-ados.apple.com,direct
+host-suffix,gdmf.apple.com,direct
+host-suffix,gg.apple.com,direct
+host-suffix,gs.apple.com,direct
+host-suffix,gsra.apple.com,direct
 host-suffix,iad.apple.com,direct
 host-suffix,iadsdk.apple.com,direct
 host-suffix,ibook.co.nz,direct
@@ -379,6 +387,7 @@ host-suffix,ichat.co.in,direct
 host-suffix,icloud-content.com.cn,direct
 host-suffix,icloud.com.cn,direct
 host-suffix,icloud.net.cn,direct
+host-suffix,ig.apple.com,direct
 host-suffix,ilecture.co.nz,direct
 host-suffix,imac.co.nz,direct
 host-suffix,ipad.co.kr,direct
@@ -416,18 +425,30 @@ host-suffix,macbookair.com.cn,direct
 host-suffix,macbookair.com.es,direct
 host-suffix,macbookpro.com.au,direct
 host-suffix,macos.com.au,direct
+host-suffix,mesu.apple.com,direct
 host-suffix,mr-apple.com.tw,direct
 host-suffix,music.apple.com,proxy
+host-suffix,oscdn.apple.com,direct
+host-suffix,osrecovery.apple.com,direct
 host-suffix,playgrounds-cdn.apple.com,proxy
 host-suffix,podcast.apple.com,proxy
 host-suffix,podcasts.apple.com,proxy
 host-suffix,push.apple.com,direct
 host-suffix,quicktime.com.au,direct
 host-suffix,researchkit.com.cn,direct
+host-suffix,skl.apple.com,direct
+host-suffix,swcdn.apple.com,direct
+host-suffix,swdist.apple.com,direct
+host-suffix,swdownload.apple.com,direct
 host-suffix,swiftui.com.cn,direct
+host-suffix,swscan.apple.com,direct
 host-suffix,timestamp.apple.com,proxy
 host-suffix,tv.apple.com,proxy
+host-suffix,updates-http.cdn-apple.com,direct
+host-suffix,updates.cdn-apple.com,direct
 host-suffix,webobjects.co.uk,direct
+host-suffix,wkms-public.apple.com,direct
+host-suffix,xp.apple.com,direct
 host-suffix,100beatscheap.com,direct
 host-suffix,12diasdepresentesdeitunes.com,direct
 host-suffix,12diasderegalosdeitunes.cl,direct

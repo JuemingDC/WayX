@@ -1,11 +1,11 @@
 # Name: disney
-# Updated: 2026-10-23 09:29:33 UTC
+# Updated: 2026-10-25 05:49:22 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Sukka, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/disney.json ; https://ruleset.skk.moe/List/non_ip/stream.conf
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/disney.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/espn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/hulu.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/starplus.json ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 234
+# Rules: 238
 # Managed by: WayX Rule Aggregator
 
 host,disneyplus.com.ssl.sc.omtrdc.net,proxy
@@ -23,6 +23,10 @@ host,hses4.akamaized.net,proxy
 host,hses5.akamaized.net,proxy
 host,hses6.akamaized.net,proxy
 host,hses7.akamaized.net,proxy
+host-suffix,star.api.edge.bamgrid.com,proxy
+host-suffix,star.connections.edge.bamgrid.com,proxy
+host-suffix,star.content.edge.bamgrid.com,proxy
+host-suffix,star.playback.edge.bamgrid.com,proxy
 host-suffix,cdn.registerdisney.go.com,proxy
 host-suffix,disney-portal.my.onetrust.com,proxy
 host-suffix,20thcenturystudios.com.au,proxy
