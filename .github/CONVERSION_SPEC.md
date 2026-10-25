@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：2.24
+版本：2.25
 
 更新：2026-10-25
 作者：chance  
@@ -28,6 +28,14 @@ IR 不包含目标 action 名、section 名、helper URL 或目标 fallback。�
 能够证明完整等价时优先 native；必要且已支持的语义缺口由共同 helper/dispatcher 承担；不能安全表示则注释源声明并诊断，不生成假可用规则。不得按插件 id、名称、作者或完整 catalog signature 特判。
 
 用户指定的正则 flags 内联映射、QX 强制 enable、作者 argument 省略、单条 pipeline 分条输出和 JSON add/replace 直接 setpath 是明确的转换策略，不能称为完整源语义等价。除此之外，不静默删除条件或动作。
+
+<!-- Modified: 2026-10-25 (chance). Make source/target semantic equivalence the default invariant and distinguish explicit semantic exceptions from syntax preferences. -->
+
+**转换前后语义一致是默认硬约束。** 任何输出压缩、合并、拆分、原生化或语言/架构调整都服从此约束。先用源平台官方说明或可复现的源客户端行为确定源语义，再验证目标表达式；目标 jq 文档、语法检查成功、目标表达式之间结果相同，均不能单独证明与源规则等价。不得把未经证实的“默认顺序执行”或“默认同一输入批量执行”当作事实。
+
+等价范围包含匹配条件、作用阶段、字段及值类型、路径不存在时的行为、数组索引及删除移位、重复和父子重叠路径、动作顺序与边界、失败/跳过/回滚以及后续动作是否继续。用户要求某种写法或“合在一起”，只授权调整表达形式，不自动授权改变以上行为。无法证明请求的形式等价时，明确说明限制并使用已证明的等价路径或既有诊断边界，不靠猜测输出代码，也不能把目标原生行为直接定义成源语义。
+
+**例外仅限用户明确授权的具体行为。** 已有显式转换策略按本节前文保留；例如 `jq_replace` 明确要求使用 `setpath(PATH; VALUE)`，包括覆盖值及创建缺失路径，这是已授权的策略差异，不能据此认定 delete 或其它操作也可改变语义。例外记录必须说明源操作、目标写法、授权的差异及适用范围；不能把一种操作的例外推广为全局规则，也不能把结果宣称为完整语义等价。作者原有 jq 不因生成器的某个例外而被重写。
 
 ## 2.3 单条组合与声明顺序
 
@@ -68,8 +76,8 @@ Key Path 解析为 String/Number segments，支持 dot key、数字索引及 quo
 原生 JSON 使用共同 WayX JQ 生成器：
 
 - add：采用 ScriptHub 的设置策略，直接 `setpath(PATH; VALUE)`，覆盖已有值并创建缺失路径；必要 helper 同样设置路径。
-<!-- Modified: 2026-10-25 (chance). Use a single native delpaths batch, including duplicate and overlapping source paths; remove inferred sequential deletion. -->
-- delete：同一条 `jq_delete` 或固定路径 JSON delete 的所有路径一律合在一次 jq 原生 `delpaths(PATHS)` 中。PATHS 是路径数组的数组，字符串段表示对象键，数字段表示数组索引，例如 `delpaths([["a"],["items",0,"ad"]])`。重复、父子重叠、同数组多个索引均保留在这一次调用中，按 jq 原生同一输入批量删除语义执行；不能自动生成 delpaths 管道或 reduce。两端均保持单条合并 jq 规则。源明确写出的多个独立 actions、作者已有 jq 管道和表达式仍保持原顺序与原义。
+<!-- Modified: 2026-10-25 (chance). Keep the requested one-call deletion form only where it preserves established source semantics; batching is not a semantic exception. -->
+- delete：用户要求的输出形式是把同一删除批次的路径直接放进一个原生 `delpaths(PATHS)`，而非多个调用以管道连接。PATHS 为路径数组的数组，字符串段表示对象键，数字段表示数组索引，例如 `delpaths([["a"],["items",0,"ad"]])`。此写法须符合第 2.2 节的语义约束，不能只凭输出格式要求，把源批次擅自解释为同一输入批量删除。特别要确认重复路径、父子重叠路径和同数组多索引的源行为；一旦源明确为逐次删除且有移位影响，单次 delpaths 不可直接替代。源语义未知或所要求形式不能等价表达时使用诊断边界，不能静默改变执行方式。两端保持合并格式；独立源 actions 及作者自带 jq 表达式保留已确定的原顺序与原义。
 
 - replace：直接 `setpath(PATH; VALUE)`，不添加 getpath/has 或字段存在性检查。PATH 为保留 String/Number 类型的路径数组；批量替换按源顺序用 ` | ` 连接。遵循 jq 原生设置语义，包括缺失路径创建及类型错误。VALUE 保留源声明类型：字符串 `"[]"` 不等于数组 `[]`，不得统一字符串化。必要 JSON replace helper 同样执行路径设置，不检查末端字段是否存在。
 
