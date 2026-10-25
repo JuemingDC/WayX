@@ -1,11 +1,11 @@
 # Name: media
-# Updated: 2026-10-24 19:42:56 UTC
+# Updated: 2026-10-25 05:30:58 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 7307
+# Rules: 7387
 # Managed by: WayX Rule Aggregator
 
 host,cdn.globalsigncdn.com.cdn.cloudflare.net,proxy
@@ -116,6 +116,7 @@ host,ntdofifreemobile-tgc.cdn.hinet.net,proxy
 host,ntdofifreepc-tgc.cdn.hinet.net,proxy
 host,ntdofifreetv-tgc.cdn.hinet.net,proxy
 host,ntdofifreevcpc-tgc.cdn.hinet.net,proxy
+host,o4504926511693824.ingest.sentry.io,proxy
 host,p00.upd.kaspersky.com,proxy
 host,p01.upd.kaspersky.com,proxy
 host,p02.upd.kaspersky.com,proxy
@@ -136,6 +137,7 @@ host,p16.upd.kaspersky.com,proxy
 host,p17.upd.kaspersky.com,proxy
 host,p18.upd.kaspersky.com,proxy
 host,p19.upd.kaspersky.com,proxy
+host,paper-attachments.s3.amazonaws.com,proxy
 host,pvr-hamivideo.cdn.hinet.net,proxy
 host,refresh-bkg.activation-v2.kaspersky.com,proxy
 host,report.ap.yandex-net.ru,proxy
@@ -184,6 +186,7 @@ host,weblivea-hamivideo.cdn.hinet.net,proxy
 host,webvodad-hamivideo.cdn.hinet.net,proxy
 host,1l-hit.mail.ru,proxy
 host,1l-hit.vkplay.ru,proxy
+host,1password.drift.click,proxy
 host,a.ppy.sh,proxy
 host,abematv.akamaized.net,proxy
 host,activation-v2.kaspersky.com,proxy
@@ -336,6 +339,7 @@ host,doy2mn9upadnk.cloudfront.net,proxy
 host,dqd0jw5gvbchn.cloudfront.net,proxy
 host,dqrpb9wgowsf5.cloudfront.net,proxy
 host,drivers.amd.com,proxy
+host,dropbox.zendesk.com,proxy
 host,ds-linear-abematv.akamaized.net,proxy
 host,ds-vod-abematv.akamaized.net,proxy
 host,ds0h3roq6wcgc.cloudfront.net,proxy
@@ -937,6 +941,7 @@ host-suffix,mariokart.com.cn,proxy
 host-suffix,marketo.co.uk,proxy
 host-suffix,mc.yandex.ru,proxy
 host-suffix,medical-reserve.co.jp,proxy
+host-suffix,mega.co.nz,proxy
 host-suffix,megamon.co.kr,proxy
 host-suffix,metrics.duolingo.com,proxy
 host-suffix,metrics.viqeo.tv,proxy
@@ -1248,6 +1253,7 @@ host-suffix,zeetv.co.uk,proxy
 host-suffix,01.org,proxy
 host-suffix,1-account.com,proxy
 host-suffix,100classicbooks.com,proxy
+host-suffix,1024terabox.com,proxy
 host-suffix,10xfotolia.com,proxy
 host-suffix,123-hp.com,proxy
 host-suffix,123dapp.com,proxy
@@ -1266,7 +1272,19 @@ host-suffix,123dpro.net,proxy
 host-suffix,123dsculpt.com,proxy
 host-suffix,123hplaserjet.com,proxy
 host-suffix,1inch.io,proxy
+host-suffix,1infra.net,proxy
 host-suffix,1ml.com,proxy
+host-suffix,1password.ca,proxy
+host-suffix,1password.co,proxy
+host-suffix,1password.com,proxy
+host-suffix,1password.community,proxy
+host-suffix,1password.dev,proxy
+host-suffix,1password.eu,proxy
+host-suffix,1password.io,proxy
+host-suffix,1passwordservices.com,proxy
+host-suffix,1passwordusercontent.ca,proxy
+host-suffix,1passwordusercontent.com,proxy
+host-suffix,1passwordusercontent.eu,proxy
 host-suffix,1thek.com,proxy
 host-suffix,2025copy.com,proxy
 host-suffix,20yearsoffea.com,proxy
@@ -1361,6 +1379,7 @@ host-suffix,adbecrsl.com,proxy
 host-suffix,addthis.com,proxy
 host-suffix,addthiscdn.com,proxy
 host-suffix,addthisedge.com,proxy
+host-suffix,addtodropbox.com,proxy
 host-suffix,adfox.ru,proxy
 host-suffix,adinst.com,proxy
 host-suffix,admetrica.ru,proxy
@@ -1435,6 +1454,7 @@ host-suffix,agedm.org,proxy
 host-suffix,agedm.tv,proxy
 host-suffix,agefans.com,proxy
 host-suffix,agemys.org,proxy
+host-suffix,agilebits.com,proxy
 host-suffix,aicoin.com,proxy
 host-suffix,aimoon.com,proxy
 host-suffix,air-watch.com,proxy
@@ -1754,6 +1774,8 @@ host-suffix,audible.com,proxy
 host-suffix,audiencenetwork.com,proxy
 host-suffix,audiencenetwork.tv,proxy
 host-suffix,authorxml.com,proxy
+host-suffix,authpass.app,proxy
+host-suffix,authy.com,proxy
 host-suffix,autocad-schulungen.com,proxy
 host-suffix,autocad.com,proxy
 host-suffix,autocad360.com,proxy
@@ -1985,6 +2007,7 @@ host-suffix,beru.ru,proxy
 host-suffix,beserver.ru,proxy
 host-suffix,best4bim.com,proxy
 host-suffix,bestbim.com,proxy
+host-suffix,bestclouddrive.com,proxy
 host-suffix,bestdori.com,proxy
 host-suffix,bestsrv.de,proxy
 host-suffix,betterbim.com,proxy
@@ -2049,6 +2072,9 @@ host-suffix,bitsquare.io,proxy
 host-suffix,bitstamp.net,proxy
 host-suffix,bittrex.com,proxy
 host-suffix,bitvise.com,proxy
+host-suffix,bitwarden.com,proxy
+host-suffix,bitwarden.eu,proxy
+host-suffix,bitwarden.net,proxy
 host-suffix,bizmrg.com,proxy
 host-suffix,bizographics.com,proxy
 host-suffix,bk.ru,proxy
@@ -2119,6 +2145,8 @@ host-suffix,bsky.network,proxy
 host-suffix,bsky.social,proxy
 host-suffix,bstarstatic.com,proxy
 host-suffix,btc.com,proxy
+host-suffix,btwrdn.co,proxy
+host-suffix,btwrdn.com,proxy
 host-suffix,bucketeer.jp,proxy
 host-suffix,budatt.com,proxy
 host-suffix,buddymedia.com,proxy
@@ -2576,6 +2604,8 @@ host-suffix,darivoa.com,proxy
 host-suffix,darkageofcamelot.com,proxy
 host-suffix,darkness-risen.com,proxy
 host-suffix,darwindimensions.com,proxy
+host-suffix,dash.ai,proxy
+host-suffix,dashlane.com,proxy
 host-suffix,dashly.app,proxy
 host-suffix,dashly.help,proxy
 host-suffix,dashly.io,proxy
@@ -2601,6 +2631,7 @@ host-suffix,daznedge.net,proxy
 host-suffix,daznfeeds.com,proxy
 host-suffix,daznplayer.com,proxy
 host-suffix,daznservices.com,proxy
+host-suffix,db.tt,proxy
 host-suffix,dbo-dengi.online,proxy
 host-suffix,dcabtc.com,proxy
 host-suffix,deadspacegame.com,proxy
@@ -2882,6 +2913,7 @@ host-suffix,docker.io,proxy
 host-suffix,dockerizer.com,proxy
 host-suffix,dockerstatic.com,proxy
 host-suffix,docs.rs,proxy
+host-suffix,docsend.com,proxy
 host-suffix,documentforce.com,proxy
 host-suffix,dodi-repacks.download,proxy
 host-suffix,dodi-repacks.site,proxy
@@ -2908,6 +2940,22 @@ host-suffix,dreamorder.com,proxy
 host-suffix,driveawaytaxi.org,proxy
 host-suffix,drmario-world.com,proxy
 host-suffix,drnastran.com,proxy
+host-suffix,dropbox-dns.com,proxy
+host-suffix,dropbox.com,proxy
+host-suffix,dropbox.tech,proxy
+host-suffix,dropboxapi.com,proxy
+host-suffix,dropboxbusiness.com,proxy
+host-suffix,dropboxcaptcha.com,proxy
+host-suffix,dropboxexperiment.com,proxy
+host-suffix,dropboxforum.com,proxy
+host-suffix,dropboxforums.com,proxy
+host-suffix,dropboxinsiders.com,proxy
+host-suffix,dropboxlegal.com,proxy
+host-suffix,dropboxmail.com,proxy
+host-suffix,dropboxpartners.com,proxy
+host-suffix,dropboxstatic.com,proxy
+host-suffix,dropboxteam.com,proxy
+host-suffix,dropboxusercontent.com,proxy
 host-suffix,dropsearn.com,proxy
 host-suffix,drweb-av.de,proxy
 host-suffix,drweb-av.es,proxy
@@ -3019,6 +3067,7 @@ host-suffix,enablementadobe.com,proxy
 host-suffix,encoretvb.com,proxy
 host-suffix,energystarbuildings.com,proxy
 host-suffix,enlisted.net,proxy
+host-suffix,enpass.io,proxy
 host-suffix,enpirion.com,proxy
 host-suffix,enterprisepaging.com,proxy
 host-suffix,envybox.company,proxy
@@ -3375,6 +3424,7 @@ host-suffix,freedirecttvspecial.com,proxy
 host-suffix,freedomplatform.tv,proxy
 host-suffix,freefbx.com,proxy
 host-suffix,freenode.net,proxy
+host-suffix,freeterabox.com,proxy
 host-suffix,friday.tw,proxy
 host-suffix,frontrow.com,proxy
 host-suffix,frostbite.com,proxy
@@ -3488,6 +3538,7 @@ host-suffix,getboxer.com,proxy
 host-suffix,getbuzzsaw.com,proxy
 host-suffix,getcomposer.org,proxy
 host-suffix,getdirect.tv,proxy
+host-suffix,getdropbox.com,proxy
 host-suffix,getfedora.org,proxy
 host-suffix,getfiddler.com,proxy
 host-suffix,getfirebug.com,proxy
@@ -3719,7 +3770,9 @@ host-suffix,heaven-burns-red.com,proxy
 host-suffix,heco-scan.com,proxy
 host-suffix,hecochain.com,proxy
 host-suffix,hecoview.com,proxy
+host-suffix,hellofax.com,proxy
 host-suffix,hellomoto.com,proxy
+host-suffix,hellosign.com,proxy
 host-suffix,hellosmartbook.com,proxy
 host-suffix,hentaiverse.org,proxy
 host-suffix,heptio.cn,proxy
@@ -4369,6 +4422,9 @@ host-suffix,kaspersky.ru,proxy
 host-suffix,kaspersky.se,proxy
 host-suffix,kaydara.com,proxy
 host-suffix,kde.org,proxy
+host-suffix,keepass.info,proxy
+host-suffix,keeper.io,proxy
+host-suffix,keepersecurity.com,proxy
 host-suffix,keepyourcad.com,proxy
 host-suffix,keezmovies.com,proxy
 host-suffix,kemptechnologies.com,proxy
@@ -4456,6 +4512,8 @@ host-suffix,kyurem.com,proxy
 host-suffix,lapriere.jp,proxy
 host-suffix,lasersawapp.com,proxy
 host-suffix,last.fm,proxy
+host-suffix,lastpass.com,proxy
+host-suffix,lastpass.eu,proxy
 host-suffix,latamvmwareforum.com,proxy
 host-suffix,latencytop.com,proxy
 host-suffix,launchpad.net,proxy
@@ -4568,6 +4626,7 @@ host-suffix,louisvuitton.com,proxy
 host-suffix,loverslab.com,proxy
 host-suffix,lovina.app,proxy
 host-suffix,lowiro.com,proxy
+host-suffix,lputil.com,proxy
 host-suffix,lrfdsoftware.com,proxy
 host-suffix,lua.org,proxy
 host-suffix,luckysrv.de,proxy
@@ -4697,10 +4756,15 @@ host-suffix,mediafiles-cisco.com,proxy
 host-suffix,medicalimplants-cadcam.com,proxy
 host-suffix,mediumquality.ru,proxy
 host-suffix,meetsmartbook.com,proxy
+host-suffix,mega.io,proxy
+host-suffix,mega.nz,proxy
+host-suffix,megaad.nz,proxy
 host-suffix,megafon.com,proxy
 host-suffix,megafon.ru,proxy
 host-suffix,megafonpro.ru,proxy
+host-suffix,megapay.nz,proxy
 host-suffix,megaphone.fm,proxy
+host-suffix,megas4.com,proxy
 host-suffix,megasrv.de,proxy
 host-suffix,megogo.net,proxy
 host-suffix,melon.com,proxy
@@ -4946,6 +5010,8 @@ host-suffix,mymts.ru,proxy
 host-suffix,mynavi.jp,proxy
 host-suffix,mynetname.net,proxy
 host-suffix,mynixos.com,proxy
+host-suffix,mypikpak.com,proxy
+host-suffix,mypikpak.net,proxy
 host-suffix,myproseries.com,proxy
 host-suffix,myq2.com,proxy
 host-suffix,myqnapcloud.cn,proxy
@@ -5026,6 +5092,7 @@ host-suffix,nenastran.com,proxy
 host-suffix,nentindo.net,proxy
 host-suffix,neoforged.net,proxy
 host-suffix,neovim.io,proxy
+host-suffix,nephobox.com,proxy
 host-suffix,nervanasys.com,proxy
 host-suffix,netacad.com,proxy
 host-suffix,netacad.net,proxy
@@ -5340,6 +5407,7 @@ host-suffix,parstream.net,proxy
 host-suffix,parstream.org,proxy
 host-suffix,partmaker.com,proxy
 host-suffix,pashtovoa.com,proxy
+host-suffix,passage.id,proxy
 host-suffix,passwordday.org,proxy
 host-suffix,pastahealth.com,proxy
 host-suffix,patentgold.net,proxy
@@ -5372,6 +5440,10 @@ host-suffix,php.net,proxy
 host-suffix,phprcdn.com,proxy
 host-suffix,pi-vr.com,proxy
 host-suffix,piapro.net,proxy
+host-suffix,pickpackapp.com,proxy
+host-suffix,pikpak.io,proxy
+host-suffix,pikpak.me,proxy
+host-suffix,pikpakdrive.com,proxy
 host-suffix,pinkcore.com,proxy
 host-suffix,pinkcore.net,proxy
 host-suffix,pintool.com,proxy
@@ -5751,6 +5823,7 @@ host-suffix,roblox.us,proxy
 host-suffix,roblox.vn,proxy
 host-suffix,robloxlabs.com,proxy
 host-suffix,robobat.com,proxy
+host-suffix,roboform.com,proxy
 host-suffix,roborecall.com,proxy
 host-suffix,robotoffice.com,proxy
 host-suffix,rockstargames.com,proxy
@@ -6191,6 +6264,7 @@ host-suffix,streaks.jp,proxy
 host-suffix,strikingly.com,proxy
 host-suffix,strikinglycdn.com,proxy
 host-suffix,stripe.com,proxy
+host-suffix,strongboxsafe.com,proxy
 host-suffix,studiodell.com,proxy
 host-suffix,studiolico.com,proxy
 host-suffix,studioncorp.com,proxy
@@ -6296,6 +6370,9 @@ host-suffix,templatemonster.com,proxy
 host-suffix,tenbin.ai,proxy
 host-suffix,tenbyfotolia.com,proxy
 host-suffix,tenten.vn,proxy
+host-suffix,terabox.com,proxy
+host-suffix,terabox1024.com,proxy
+host-suffix,teraboxcdn.com,proxy
 host-suffix,termius.com,proxy
 host-suffix,termux.com,proxy
 host-suffix,termux.dev,proxy
@@ -6401,6 +6478,7 @@ host-suffix,trace-flow.ru,proxy
 host-suffix,tradeblock.com,proxy
 host-suffix,traderjoexyz.com,proxy
 host-suffix,tradingview.com,proxy
+host-suffix,transfer.it,proxy
 host-suffix,trbcdn.net,proxy
 host-suffix,trello.com,proxy
 host-suffix,trellocdn.com,proxy
@@ -6542,6 +6620,8 @@ host-suffix,urduvoa.com,proxy
 host-suffix,usanetwork.com,proxy
 host-suffix,userapi.com,proxy
 host-suffix,userapi.ru,proxy
+host-suffix,userdrive.org,proxy
+host-suffix,usersdrive.com,proxy
 host-suffix,usocial.pro,proxy
 host-suffix,uverse.com,proxy
 host-suffix,uweb.ru,proxy

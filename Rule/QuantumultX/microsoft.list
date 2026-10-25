@@ -1,11 +1,11 @@
 # Name: microsoft
-# Updated: 2026-10-23 09:29:33 UTC
+# Updated: 2026-10-25 05:30:58 UTC
 # Converted by: chance
 # Source Authors: V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 674
+# Rules: 684
 # Managed by: WayX Rule Aggregator
 
 host,b.c2r.ts.cdn.office.net,direct
@@ -55,8 +55,11 @@ host,bj1.api.bing.com,direct
 host,download.visualstudio.microsoft.com,direct
 host,shell.cdn.office.net,direct
 host,vscode.search.windows.net,proxy
+host,azure.microsoft.com,proxy
+host,azuremarketplace.microsoft.com,proxy
 host,bingsettingssearch.trafficmanager.net,proxy
 host,cn.windowssearch.com,direct
+host,crl.microsoft.com,proxy
 host,ctldl.windowsupdate.com,direct
 host,default.exp-tas.com,proxy
 host,developer.microsoft.com,direct
@@ -64,9 +67,13 @@ host,download.microsoft.com,direct
 host,dtlgalleryint.cloudapp.net,proxy
 host,img-prod-cms-rt-microsoft-com.akamaized.net,proxy
 host,img-s-msn-com.akamaized.net,proxy
+host,location.microsoft.com,proxy
+host,mscrl.microsoft.com,proxy
 host,mwf-service.akamaized.net,proxy
+host,ocsp.microsoft.com,proxy
 host,officecdn-microsoft-com.akamaized.net,proxy
 host,officecdn.microsoft.com,direct
+host,oneocsp.microsoft.com,proxy
 host,packages.microsoft.com,proxy
 host,poshtestgallery.cloudapp.net,proxy
 host,psg-int-centralus.cloudapp.net,proxy
@@ -80,6 +87,7 @@ host,storeedge.microsoft.com,direct
 host,vscode-sync-insiders.trafficmanager.net,proxy
 host,vscode-sync.trafficmanager.net,proxy
 host,vsmarketplacebadge.apphb.com,proxy
+host,www.microsoft.com,proxy
 host-suffix,browser.events.data.msn.cn,proxy
 host-suffix,browser.events.data.msn.com,proxy
 host-suffix,dl.delivery.mp.microsoft.com,direct
@@ -99,10 +107,12 @@ host-suffix,microsoftreactor.com.cn,direct
 host-suffix,microsoftstore.com.cn,direct
 host-suffix,microsoftstore.com.hk,proxy
 host-suffix,onedrive.co.uk,proxy
+host-suffix,onedrive.live.com,proxy
 host-suffix,r.bing.com,direct
 host-suffix,reactorms.com.cn,direct
 host-suffix,skype-edf.akadns.net,proxy
 host-suffix,skypedata.akadns.net,proxy
+host-suffix,storage.live.com,proxy
 host-suffix,th.bing.com,direct
 host-suffix,visualstudio.co.uk,proxy
 host-suffix,1drv.com,proxy

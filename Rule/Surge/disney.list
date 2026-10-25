@@ -1,11 +1,11 @@
 # Name: disney
-# Updated: 2026-10-23 09:29:33 UTC
+# Updated: 2026-10-25 05:30:58 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/disney.json ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 234
+# Rules: 238
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,disneyplus.com.ssl.sc.omtrdc.net
@@ -23,6 +23,10 @@ DOMAIN,hses4.akamaized.net
 DOMAIN,hses5.akamaized.net
 DOMAIN,hses6.akamaized.net
 DOMAIN,hses7.akamaized.net
+DOMAIN-SUFFIX,star.api.edge.bamgrid.com
+DOMAIN-SUFFIX,star.connections.edge.bamgrid.com
+DOMAIN-SUFFIX,star.content.edge.bamgrid.com
+DOMAIN-SUFFIX,star.playback.edge.bamgrid.com
 DOMAIN-SUFFIX,cdn.registerdisney.go.com
 DOMAIN-SUFFIX,disney-portal.my.onetrust.com
 DOMAIN-SUFFIX,20thcenturystudios.com.au

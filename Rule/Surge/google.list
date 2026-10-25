@@ -1,11 +1,11 @@
 # Name: google
-# Updated: 2026-10-23 09:29:33 UTC
+# Updated: 2026-10-25 05:30:58 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google.json
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 891
+# Rules: 897
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,c.android.clients.google.com
@@ -345,6 +345,11 @@ DOMAIN-SUFFIX,howtogetmo.co.uk
 DOMAIN-SUFFIX,mail-ads.google.com
 DOMAIN-SUFFIX,marketingplatform.google.com
 DOMAIN-SUFFIX,mobileads.google.com
+DOMAIN-SUFFIX,play-fe.googleapis.com
+DOMAIN-SUFFIX,play-games.googleusercontent.com
+DOMAIN-SUFFIX,play-lh.googleusercontent.com
+DOMAIN-SUFFIX,play.google.com
+DOMAIN-SUFFIX,play.googleapis.com
 DOMAIN-SUFFIX,thinkquarterly.co.uk
 DOMAIN-SUFFIX,video.google.com
 DOMAIN-SUFFIX,womenwill.com.br
@@ -802,6 +807,7 @@ DOMAIN-SUFFIX,picasaweb.org
 DOMAIN-SUFFIX,picnik.com
 DOMAIN-SUFFIX,pittpatt.com
 DOMAIN-SUFFIX,pixate.com
+DOMAIN-SUFFIX,pki.goog
 DOMAIN-SUFFIX,polymer-project.org
 DOMAIN-SUFFIX,polymerproject.org
 DOMAIN-SUFFIX,postini.com
