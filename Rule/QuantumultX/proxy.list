@@ -1,11 +1,11 @@
 # Name: proxy
-# Updated: 2026-10-24 19:42:56 UTC
+# Updated: 2026-10-25 04:09:57 UTC
 # Converted by: chance
 # Source Authors: Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 34115
+# Rules: 34110
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,proxy
@@ -4304,6 +4304,7 @@ host-suffix,123-hp.com,proxy
 host-suffix,123.one,proxy
 host-suffix,123av.com,proxy
 host-suffix,123av.me,proxy
+host-suffix,123av.org,proxy
 host-suffix,123bin.cc,proxy
 host-suffix,123dapp.com,proxy
 host-suffix,123dappipad.com,proxy
@@ -5881,6 +5882,7 @@ host-suffix,addthis.com,proxy
 host-suffix,addthiscdn.com,proxy
 host-suffix,addthisedge.com,proxy
 host-suffix,addtoany.com,proxy
+host-suffix,addtodropbox.com,proxy
 host-suffix,addyoutube.com,proxy
 host-suffix,adfox.ru,proxy
 host-suffix,adgoogle.net,proxy
@@ -11688,6 +11690,7 @@ host-suffix,darwinsource.com,proxy
 host-suffix,darwinsource.org,proxy
 host-suffix,darwinsourcecode.com,proxy
 host-suffix,dasaob.online,proxy
+host-suffix,dash.ai,proxy
 host-suffix,dashlane.com,proxy
 host-suffix,dashly.app,proxy
 host-suffix,dashly.help,proxy
@@ -12353,6 +12356,7 @@ host-suffix,docs.com,proxy
 host-suffix,docs.new,proxy
 host-suffix,docs.rs,proxy
 host-suffix,docs.rw,proxy
+host-suffix,docsend.com,proxy
 host-suffix,doctor-videos.com,proxy
 host-suffix,documentforce.com,proxy
 host-suffix,documentingreality.com,proxy
@@ -12669,12 +12673,15 @@ host-suffix,dropbox.tech,proxy
 host-suffix,dropboxapi.com,proxy
 host-suffix,dropboxbusiness.com,proxy
 host-suffix,dropboxcaptcha.com,proxy
+host-suffix,dropboxexperiment.com,proxy
 host-suffix,dropboxforum.com,proxy
 host-suffix,dropboxforums.com,proxy
 host-suffix,dropboxinsiders.com,proxy
+host-suffix,dropboxlegal.com,proxy
 host-suffix,dropboxmail.com,proxy
 host-suffix,dropboxpartners.com,proxy
 host-suffix,dropboxstatic.com,proxy
+host-suffix,dropboxteam.com,proxy
 host-suffix,dropboxusercontent.com,proxy
 host-suffix,drpc.org,proxy
 host-suffix,drtuber.com,proxy
@@ -16506,9 +16513,11 @@ host-suffix,heise360182.buzz,proxy
 host-suffix,helixstudios.net,proxy
 host-suffix,helloandroid.com,proxy
 host-suffix,helloavgirls.com,proxy
+host-suffix,hellofax.com,proxy
 host-suffix,hellokittybeats.com,proxy
 host-suffix,hellomoto.com,proxy
 host-suffix,helloqueer.com,proxy
+host-suffix,hellosign.com,proxy
 host-suffix,hellosmartbook.com,proxy
 host-suffix,hellporno.com,proxy
 host-suffix,hellven.net,proxy
@@ -19555,6 +19564,7 @@ host-suffix,kimoav97.com,proxy
 host-suffix,kimoav98.com,proxy
 host-suffix,kimoav99.com,proxy
 host-suffix,kimogirl.cc,proxy
+host-suffix,kimootoko.net,proxy
 host-suffix,kimosex.com,proxy
 host-suffix,kindgirls.com,proxy
 host-suffix,kindindianporn.com,proxy
@@ -21577,6 +21587,7 @@ host-suffix,miniwidget.ca,proxy
 host-suffix,miniwindsor.com,proxy
 host-suffix,miniworkshop.com,proxy
 host-suffix,miniyaletown.ca,proxy
+host-suffix,minkch.com,proxy
 host-suffix,minnano-av.com,proxy
 host-suffix,minne.com,proxy
 host-suffix,minneapolisbmw.com,proxy
@@ -24436,6 +24447,7 @@ host-suffix,pmatehunter.com,proxy
 host-suffix,pmem.org,proxy
 host-suffix,pmem.us,proxy
 host-suffix,pnas.org,proxy
+host-suffix,po-kaki-to.com,proxy
 host-suffix,po2b.com,proxy
 host-suffix,pobeda.page,proxy
 host-suffix,pobl-content.com,proxy
@@ -32501,15 +32513,9 @@ host-suffix,xn--fiq80y3xbiwr.hk,proxy
 host-suffix,xn--fiq80y3xbiwr.xn--j6w193g,proxy
 host-suffix,xn--fiq80y3xbiwrs0kiu9d.hk,proxy
 host-suffix,xn--fiq80y3xbiwrs0kiu9d.xn--j6w193g,proxy
-host-suffix,xn--fiqs8s1bxp3anr7a.hk,proxy
-host-suffix,xn--fiqs8s1bxp3anr7a.xn--j6w193g,proxy
-host-suffix,xn--fiqs8s1byzqyvl.hk,proxy
-host-suffix,xn--fiqs8s1byzqyvl.xn--j6w193g,proxy
 host-suffix,xn--fiqs8sxootzz.cn,proxy
 host-suffix,xn--fiqs8sxootzz.xn--hxt814e,proxy
 host-suffix,xn--flw351e.com,proxy
-host-suffix,xn--gdt08a.hk,proxy
-host-suffix,xn--gdt08a.xn--j6w193g,proxy
 host-suffix,xn--ggle-55da.com,proxy
 host-suffix,xn--gmq348bujlxrb.com,proxy
 host-suffix,xn--gmq92kd2rm1kx34a.com,proxy
@@ -32529,8 +32535,6 @@ host-suffix,xn--kput3imi374g.xn--hxt814e,proxy
 host-suffix,xn--mts47c3w9b1qr.cn,proxy
 host-suffix,xn--mts47c3w9b1qr.net,proxy
 host-suffix,xn--mtswd61ejxq.com,proxy
-host-suffix,xn--mxtq18a.hk,proxy
-host-suffix,xn--mxtq18a.xn--j6w193g,proxy
 host-suffix,xn--ngstr-lra8j.com,proxy
 host-suffix,xn--noss43i.com,proxy
 host-suffix,xn--ohq11k7pl25iyo8a.cn,proxy
@@ -32540,14 +32544,8 @@ host-suffix,xn--pearsonenespaol-brb.com,proxy
 host-suffix,xn--pssu7ci2j23mp9ny48b.hk,proxy
 host-suffix,xn--pssu7ci2j23mp9ny48b.xn--j6w193g,proxy
 host-suffix,xn--pssu7ci3q5oge0ai91q.xn--j6w193g,proxy
-host-suffix,xn--pssu7cv61af1tcs59bnvd.hk,proxy
-host-suffix,xn--pssu7cv61af1tcs59bnvd.xn--j6w193g,proxy
 host-suffix,xn--pssu7cv61af44b.hk,proxy
 host-suffix,xn--pssu7cv61af44b.xn--j6w193g,proxy
-host-suffix,xn--pssu7cv61ahw8aq79bztd.hk,proxy
-host-suffix,xn--pssu7cv61ahw8aq79bztd.xn--j6w193g,proxy
-host-suffix,xn--pssu7cv61ahwcb1p2yk.hk,proxy
-host-suffix,xn--pssu7cv61ahwcb1p2yk.xn--j6w193g,proxy
 host-suffix,xn--pssu7cz8nr8ibkx1e8a.xn--j6w193g,proxy
 host-suffix,xn--q41am8x.com,proxy
 host-suffix,xn--qoq462m.com,proxy
@@ -32563,11 +32561,7 @@ host-suffix,xn--uis17aj9kmuf.com,proxy
 host-suffix,xn--uis44a.xn--j6w193g,proxy
 host-suffix,xn--urs05q.jp,proxy
 host-suffix,xn--vuqv2cf7wzyig79c.com,proxy
-host-suffix,xn--wcv22d.hk,proxy
-host-suffix,xn--wcv22d.xn--j6w193g,proxy
 host-suffix,xn--wcvs22d.xn--j6w193g,proxy
-host-suffix,xn--wcvs22d1m.hk,proxy
-host-suffix,xn--wcvs22d1m.xn--j6w193g,proxy
 host-suffix,xn--x-qeu1ji09tzlg.biz,proxy
 host-suffix,xn--x-qeu1ji09tzlg.net,proxy
 host-suffix,xn--xsq421m.com,proxy
@@ -33739,6 +33733,7 @@ host-suffix,zorglist.com,proxy
 host-suffix,zorrovpn.com,proxy
 host-suffix,zotero.org,proxy
 host-suffix,zozotown.com,proxy
+host-suffix,zozovideo.com,proxy
 host-suffix,zpagov.net,proxy
 host-suffix,zpath.com,proxy
 host-suffix,zpn.im,proxy

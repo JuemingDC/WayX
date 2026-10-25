@@ -16,9 +16,9 @@
     "Rule/QuantumultX/microsoft.list": "6314ef28bceb851e10f9a26add32135b1cf3141631438416e560927812b18971",
     "Rule/QuantumultX/media_cn.list": "463d73ef8ba305c44b6f4de40bf00c271c7a5589921a9ba43058c7ec764e8ffe",
     "Rule/QuantumultX/media.list": "8e11c6850be37f55426368e34d5295a82dab1646c215e20a5b8ccda7c8a639be",
-    "Rule/QuantumultX/cn.list": "b29a15c68b25a8072bfeab2eff0aaa29ef5253078c9db545d65edad942655e2c",
-    "Rule/QuantumultX/proxy.list": "57cb5bbe7b90bc21ac543c2bf1e1fa079e92fa92fbb2b5fee50bd63a2a892b51",
-    "Rule/QuantumultX/adblock.list": "5fe092ba104f381aff8e9aacd35a36eef27c3c52401e7068562b9783e37c0cb7",
+    "Rule/QuantumultX/cn.list": "1bd71d054335ea253be452ae719e740c07f57a00b0c5e34a38cdf0b8e511b3bd",
+    "Rule/QuantumultX/proxy.list": "2da7871ae5fe397104300fc6673be7425c82cbaed800813224227e88e600d9de",
+    "Rule/QuantumultX/adblock.list": "82cc864f96d9adb38e6662e82bfa70183b2e914563cf3959b3ee2c9d32c4582a",
     "Rule/QuantumultX/adblock_extra.list": "6965792eab8342238357ea05a37a2408ee3971a7543bfa57c869e0cfbd818b0d",
     "Rule/Surge/google.list": "0aa3977878f3bedeef10d64094195122efad3272503343a75ecaa69323a93938",
     "Rule/Surge/youtube.list": "1f5a9d6d4d357d6b2c8f012f624ff96eb05d525bc83557144bb78f48f3dde038",
@@ -38,9 +38,9 @@
     "Rule/Surge/microsoft_proxy.list": "90d53639efdb81b3780582c4337011c8c294e55d641371ae2c9e6f1200fa429b",
     "Rule/Surge/media_cn.list": "0f7a862cb63ffce6d1c76802a0d8273edd26346e1d9c22196cf76f2eea480e66",
     "Rule/Surge/media.list": "1347772a3f55de75749003ee4f16364da270b0b0c037b2008b97a9414490bdaa",
-    "Rule/Surge/cn.list": "56eefce7ac5d091149cc9368d926f47e5d97e5a1301db36167e1511548b34e7d",
-    "Rule/Surge/proxy.list": "8d80cd821a6fd81d068fb4502227f5ba45e292f5895d3ba4a0864442ffc79c65",
-    "Rule/Surge/adblock.list": "da49af9a28bc146f1e31a787f5e581ad54c29c36ec83fc21ba6a0a5c1fefbf25",
+    "Rule/Surge/cn.list": "f012785332230d260d7a816bea7df8d89c425801d8c3231d5e234d7b19a4e6ad",
+    "Rule/Surge/proxy.list": "8dfc768d712f91aa0c402cd75ecaf0bddfa0eadcffcb347dd2dd72a643d5941b",
+    "Rule/Surge/adblock.list": "b1487f1237b4624881f4ea74f91ceb089961d6fadceac41ba1bf8a3dbff04196",
     "Rule/Surge/adblock_extra.list": "8af76e607c51100417e8a1656b8fb8d6192a54735f31f2e64f25bcceb02408ac",
     "Rule/QuantumultX/filterfix.list": "5c0caa3df0f67bcaf9e34930a3a32fad183bc889eb4a2ed462628d84e09ce4b1",
     "Rule/Surge/filterfix.dconf": "1ff3fab6d009e3a53d8ef05849c4447a8fa3346cbf631b41efd5b3e505336828"
@@ -61,9 +61,9 @@
     "Rule/QuantumultX/microsoft.list": 674,
     "Rule/QuantumultX/media_cn.list": 1352,
     "Rule/QuantumultX/media.list": 7307,
-    "Rule/QuantumultX/cn.list": 128227,
-    "Rule/QuantumultX/proxy.list": 34115,
-    "Rule/QuantumultX/adblock.list": 283700,
+    "Rule/QuantumultX/cn.list": 128226,
+    "Rule/QuantumultX/proxy.list": 34110,
+    "Rule/QuantumultX/adblock.list": 283834,
     "Rule/QuantumultX/adblock_extra.list": 144759,
     "Rule/Surge/google.list": 891,
     "Rule/Surge/youtube.list": 182,
@@ -83,9 +83,9 @@
     "Rule/Surge/microsoft_proxy.list": 485,
     "Rule/Surge/media_cn.list": 1352,
     "Rule/Surge/media.list": 7307,
-    "Rule/Surge/cn.list": 128227,
-    "Rule/Surge/proxy.list": 34115,
-    "Rule/Surge/adblock.list": 283700,
+    "Rule/Surge/cn.list": 128226,
+    "Rule/Surge/proxy.list": 34110,
+    "Rule/Surge/adblock.list": 283834,
     "Rule/Surge/adblock_extra.list": 144759,
     "Rule/QuantumultX/filterfix.list": 63,
     "Rule/Surge/filterfix.dconf": 63
@@ -123,7 +123,7 @@
       "url": "https://raw.githubusercontent.com/217heidai/adblockfilters/main/rules/adblockloon.list",
       "license": "GPL-3.0",
       "fetched_url": "https://raw.githubusercontent.com/217heidai/adblockfilters/main/rules/adblockloon.list",
-      "sha256": "be809e7b4841c674291a9fd49f53a72dd8bd7ad8fbd9095bfe41e6deb4a45617"
+      "sha256": "0b085f9275cf9f663d3ff2c6610de7d553719dab0e017056ecc9579259e806c3"
     },
     {
       "id": "sukka-base",
@@ -255,7 +255,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google.json",
-      "sha256": "51578c8011fb5aec63a93a57e346b607760867d7c45148d096b7de8478b72f2b"
+      "sha256": "5d24d73f755c3d86d79f7da902f81010dbb2e72e0974feea2cf29a626cdeb95a"
     },
     {
       "id": "mihomo-facebook",
@@ -266,7 +266,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/meta.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/meta.json",
-      "sha256": "c10cdcdfcfbe04a873f465f7f3346c200fb0d0299a95bb63bd924f173d09629b"
+      "sha256": "5795beb89dc62310912cb507dd080ec6bffb836bda565588305adc13b088b12d"
     },
     {
       "id": "mihomo-netflix",
@@ -288,7 +288,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/disney.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/disney.json",
-      "sha256": "9452592f3da9181f0dda5dc5d4c16784c2d61fef0c9ce0fd4fc9d1e77f9eab5a"
+      "sha256": "30e2839d110d7d3ce1dfc4196a42d756444dfc2cfcd25a070e7006b9d1acae27"
     },
     {
       "id": "mihomo-youtube",
@@ -376,7 +376,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json",
-      "sha256": "576a1b4140e2ae8f6fd8865c7a56db6b5242ae9c3fcc30c9ee158c39d3c1105a"
+      "sha256": "e5ef204c3845ac659d5f2305cf28e09b46aac7f0083ae1599058c88f2fe70435"
     },
     {
       "id": "mihomo-category-ai-not-cn",
@@ -387,7 +387,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-ai-!cn.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-ai-!cn.json",
-      "sha256": "00b64da04da8b97936c1057b169c8f60764f99aeefb6a9324a1e7c5641eebfa0"
+      "sha256": "15c342142e0904e54406e0b395bf2da684191ba17bf3574f8d000eba79af6c5c"
     },
     {
       "id": "dustinwin-ai",
@@ -576,7 +576,7 @@
       "url": "https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt",
       "license": "GPL-3.0",
       "fetched_url": "https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt",
-      "sha256": "6f64e0639cd867f1abefa31c5753410d6f51f61d84fffc66026cfe9f0661bb15"
+      "sha256": "5b85c8974cb466176b58c1238791ed7304c480693c5b6cfbfa567fe070e4b817"
     },
     {
       "id": "loyalsoldier-proxy",
@@ -587,7 +587,7 @@
       "url": "https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt",
       "license": "GPL-3.0",
       "fetched_url": "https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt",
-      "sha256": "e0a5a4cc9ea1e92ae8a3cf2e5131133dd4d7bd9e8e1f128bcb88d9f52dd1c0c4"
+      "sha256": "f8078a275665a99e940cdc98d571f9bf33f70ef4310622c5b391beb515f055d4"
     },
     {
       "id": "gaoyifan-cn",
@@ -648,20 +648,20 @@
       "id": "geosite",
       "author": "V2Fly",
       "format": "protobuf",
-      "url": "https://github.com/v2fly/domain-list-community/releases/download/20261024132648/dlc.dat",
+      "url": "https://github.com/v2fly/domain-list-community/releases/download/20261025014458/dlc.dat",
       "license": "MIT",
-      "revision": "20261024132648",
-      "fetched_url": "https://github.com/v2fly/domain-list-community/releases/download/20261024132648/dlc.dat",
-      "sha256": "80c7e23186671049ea54280bf0a18e1f782a81fde92c56694044f4bcb5cd077a"
+      "revision": "20261025014458",
+      "fetched_url": "https://github.com/v2fly/domain-list-community/releases/download/20261025014458/dlc.dat",
+      "sha256": "dae1d66a2055a3e88fdf68e4932ec0e1fbfcdb6c5ec824031af2ea74458bdec3"
     },
     {
       "id": "geosite-checksum",
       "author": "V2Fly",
       "format": "checksum",
-      "url": "https://github.com/v2fly/domain-list-community/releases/download/20261024132648/dlc.dat.sha256sum",
+      "url": "https://github.com/v2fly/domain-list-community/releases/download/20261025014458/dlc.dat.sha256sum",
       "license": "MIT",
-      "fetched_url": "https://github.com/v2fly/domain-list-community/releases/download/20261024132648/dlc.dat.sha256sum",
-      "sha256": "3c541af84065d20aaed75cbf6b3c79a51915f28f5df4cfdd8590ae41c5fbd0a4"
+      "fetched_url": "https://github.com/v2fly/domain-list-community/releases/download/20261025014458/dlc.dat.sha256sum",
+      "sha256": "0d04810a6068c9bd8c86923a2cfd8f55558a15fcf2730b7a9c3b2bc610d12b12"
     }
   ],
   "configuration": "8b7cf5d833df7a36ca0968116a76f8c824fc8ed2c3a6ed57966f34f06878e233",
