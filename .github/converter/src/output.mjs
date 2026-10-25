@@ -246,6 +246,8 @@ export function qxRewriteOutputDestination(state,section) {
   return qxOutputDestination(state,'notes');
 }
 
+// Modified: 2026-10-25 (chance). Every author/app emits one mixed snippet;
+// filter, rewrite and MITM stay together for the single rewrite subscription.
 export function renderQxOutput({state,headerLines,entry,stamp}) {
   const header=renderQxSnippetHeader(headerLines,entry,stamp);
   const lines=[

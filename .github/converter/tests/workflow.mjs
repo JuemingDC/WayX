@@ -1283,9 +1283,23 @@ assert.ok(merged.includes("jsonjq-response-body 'del(.ad) | .flag = false'"));
 assert.ok(merged.includes('script-response-body https://github.com/ishowshu/qx/raw/main/script/pdd.js'));
 assert.match(merged,/hostname = example.com/);
 const nativeInstall=JSON.parse(decodeURIComponent(qxSnippetInstallUrl({rel:'Adblock/Quantumult X/ishowshu_pdd.snippet',name:'拼多多',ext:'.snippet',text:merged}).split('remote-resource=')[1]));
-assert.deepEqual(nativeInstall.filter_remote,nativeInstall.rewrite_remote);
-assert.equal(nativeInstall.filter_remote.length,1);
-assert.ok(!nativeInstall.filter_remote[0].includes('force-policy'));
+assert.deepEqual(Object.keys(nativeInstall),['rewrite_remote']);
+assert.equal(nativeInstall.rewrite_remote.length,1);
+assert.ok(!nativeInstall.rewrite_remote[0].includes('force-policy'));
+// Modified: 2026-10-25 (chance). Author/ownership markers never change the
+// single mixed-snippet import contract, even when filter headers are empty.
+for(const fixture of [
+  {name:'Loon author',text:merged.replace('# Managed by: WayX Native QX','')},
+  {name:'Another author',text:merged.replaceAll('树先生','Another author')},
+  {name:'Filter only',text:'# [filter_local]\nhost,only.example,DIRECT\n'},
+  {name:'Rewrite only',text:'# [filter_local]\n# [rewrite_local]\n^https://only.example url reject\n'},
+]) {
+  const payload=JSON.parse(decodeURIComponent(qxSnippetInstallUrl({rel:'Adblock/Quantumult X/app.snippet',ext:'.snippet',...fixture}).split('remote-resource=')[1]));
+  assert.deepEqual(Object.keys(payload),['rewrite_remote'],fixture.name);
+  assert.equal(payload.rewrite_remote.length,1,fixture.name);
+  assert.ok(payload.rewrite_remote[0].startsWith('https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/app.snippet'),fixture.name);
+  assert.ok(!payload.rewrite_remote[0].includes('force-policy'),fixture.name);
+}
 
 await commitNativeQxSync(root,native);
 const owned=path.join(root,'Adblock/Quantumult X/ishowshu_pdd.snippet');
