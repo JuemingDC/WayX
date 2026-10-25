@@ -182,6 +182,18 @@ export function compactOutputLines(lines = []) {
   return out;
 }
 
+// Modified: 2026-10-25 (chance). Remove only identical active routing rules;
+// preserve all comments, policy differences and mutation/Script execution counts.
+export function uniqueRoutingLines(lines=[]) {
+  const seen=new Set();
+  return lines.filter(raw=>{
+    const line=String(raw ?? '').trim();
+    if(!line || /^(?:#|;|\/\/)/.test(line))return true;
+    if(seen.has(line))return false;
+    seen.add(line);return true;
+  });
+}
+
 export function hasActiveOutputLines(lines = []) {
   return lines.some(raw=>{
     const line=String(raw ?? '').trim();
@@ -241,7 +253,7 @@ export function renderQxOutput({state,headerLines,entry,stamp}) {
     '',
     ...(state.notes.length ? [...state.notes,''] : []),
     '# [filter_local]',
-    ...compactOutputLines(state.filter),
+    ...compactOutputLines(uniqueRoutingLines(state.filter)),
     '',
     '# [rewrite_local]',
     ...compactOutputLines(state.rewrite),
@@ -334,7 +346,7 @@ export function renderSurgeOutput({
 
   for (const [key,title] of SURGE_SECTION_ORDER) {
     if (!state[key].length) continue;
-    sections.push(title,...compactOutputLines(state[key]),'');
+    sections.push(title,...compactOutputLines(key==='rule'?uniqueRoutingLines(state[key]):state[key]),'');
   }
 
   return finalizeOutputLines([...header,'',...sections]);

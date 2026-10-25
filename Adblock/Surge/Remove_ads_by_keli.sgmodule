@@ -9,7 +9,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/Other_icon/120px/KeLee.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-13 10:18:23 +08:00
+# Converted: 2026-10-25 12:26:28 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Remove_ads_by_keli.lpx
 # Target: Surge
@@ -22,8 +22,6 @@ DOMAIN,sin3-ib.adnxs.com,REJECT,extended-matching,pre-matching
 DOMAIN,sdkconfig.ad.xiaomi.com,REJECT,extended-matching,pre-matching
 DOMAIN,data.mistat.xiaomi.com,REJECT,extended-matching,pre-matching
 DOMAIN,tracking.intl.miui.com,REJECT,extended-matching,pre-matching
-
-DOMAIN,sdkconfig.ad.xiaomi.com,REJECT,extended-matching,pre-matching
 
 DOMAIN-SUFFIX,doubleclick-cn.net,REJECT,extended-matching,pre-matching
 DOMAIN-SUFFIX,doubleclick.net,REJECT,extended-matching,pre-matching

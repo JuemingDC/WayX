@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/PinDuoDuo.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-23 22:46:21 +08:00
+# Converted: 2026-10-25 12:26:28 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/PinDuoDuo_remove_ads.lpx
 # Target: Surge
@@ -22,7 +22,6 @@ AND,((DOMAIN,api.pinduoduo.com,extended-matching),(PROTOCOL,QUIC)),REJECT
 DOMAIN,titan.pinduoduo.com,REJECT,extended-matching,pre-matching
 DOMAIN,xg.pinduoduo.com,REJECT,extended-matching,pre-matching
 DOMAIN,cdl-1.pddpic.com,REJECT,extended-matching,pre-matching
-DOMAIN,titan.pinduoduo.com,REJECT,extended-matching,pre-matching
 DOMAIN,cdl-p2.pddpic.com,REJECT,extended-matching,pre-matching
 DOMAIN,cd-1.pddpic.com,REJECT,extended-matching,pre-matching
 DOMAIN,apm.pinduoduo.com,REJECT,extended-matching,pre-matching

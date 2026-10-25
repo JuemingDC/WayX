@@ -2,189 +2,18 @@
 // Author: chance
 // Category: Converter / input
 
-import { execFile } from "node:child_process";
-import { fileURLToPath } from "node:url";
-import { promisify } from "node:util";
 import fs from "node:fs/promises";
 import { splitScriptPipelineSources, isScriptV2, parseScriptV2 } from "./script.mjs";
 import { minifyJqFile, isRewriteV2, parseRewriteV2, selectRewritePipelineLayer, validateRewriteV2Ast, legacyRewriteToSemanticIr, dependencySpecFromAction, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr, isTextRequestMockAction } from "./rewrite.mjs";
 
 
 
-// source-fetch.mjs
-// Direct upstream fetch utilities.
-// Author: chance
-// Category: Automation / Original Source Fetch
-// Spec: Blocks 05 / 50 / 60 / 90
-//
-// WayX intentionally has no mirror/fallback source mechanism here.
-// The caller must pass the URL declared by the original plugin/source.
-// Transport/header profiles may vary by original host, but never substitute the URL.
-
-
-
-
-
-const execFileAsync=promisify(execFile);
-const PYTHON_FETCHER=fileURLToPath(new URL('../tools/fetch-upstream.py',import.meta.url));
-const MAX_FETCH_BYTES=64*1024*1024;
-const TRANSIENT_FETCH_ATTEMPTS=3;
-const TRANSIENT_FETCH_BASE_DELAY_MS=250;
-
-export const WAYX_FETCH_UA='StashCore/2.7.1 Stash/2.7.1 Clash/1.11.0';
-export const WAYX_LOON_FETCH_UA='Loon/764 CFNetwork/1498.700.1 Darwin/23.6.0 iPhone/17.6.1';
-
-export const ORIGINAL_FETCH_PROFILES=Object.freeze({
-  default:Object.freeze({
-    id:'default',
-    transport:'node-fetch',
-    userAgent:WAYX_FETCH_UA,
-    accept:'*/*',
-  }),
-  kelee:Object.freeze({
-    id:'kelee',
-    transport:'python-urllib',
-    userAgent:WAYX_LOON_FETCH_UA,
-    accept:'*/*',
-  }),
-  rucu6:Object.freeze({
-    id:'rucu6',
-    transport:'python-urllib',
-    userAgent:WAYX_LOON_FETCH_UA,
-    accept:'*/*',
-  }),
-});
-
-function assertHttpUrl(value) {
-  const text=String(value ?? '').trim();
-  let url;
-  try { url=new URL(text); }
-  catch { throw new Error('source URL must be absolute: ' + text); }
-  if (!['http:','https:'].includes(url.protocol)) {
-    throw new Error('source URL must use HTTP(S): ' + text);
-  }
-  return text;
-}
-
-export function selectOriginalFetchProfile(value) {
-  const sourceUrl=assertHttpUrl(value);
-  const hostname=new URL(sourceUrl).hostname.toLowerCase();
-  if (hostname==='kelee.one' || hostname.endsWith('.kelee.one')) {
-    return ORIGINAL_FETCH_PROFILES.kelee;
-  }
-  if (hostname==='rucu6.pages.dev') {
-    return ORIGINAL_FETCH_PROFILES.rucu6;
-  }
-  return ORIGINAL_FETCH_PROFILES.default;
-}
-
-export function resolveOriginalUrl(reference, baseUrl=null) {
-  const ref=String(reference ?? '').trim();
-  if (!ref) throw new Error('empty original source reference');
-  try {
-    const absolute=new URL(ref);
-    if (!['http:','https:'].includes(absolute.protocol)) throw new Error('unsupported protocol');
-    return absolute.toString();
-  } catch (error) {
-    if (!baseUrl) throw new Error('relative source reference requires original plugin URL: ' + ref);
-    let resolved;
-    try { resolved=new URL(ref, assertHttpUrl(baseUrl)); }
-    catch { throw new Error('cannot resolve original source reference: ' + ref); }
-    if (!['http:','https:'].includes(resolved.protocol)) {
-      throw new Error('resolved source reference must use HTTP(S): ' + resolved.toString());
-    }
-    return resolved.toString();
-  }
-}
-
-async function fetchViaNode(sourceUrl, profile, timeoutMs) {
-  const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),timeoutMs);
-  try {
-    const res=await fetch(sourceUrl,{
-      headers:{'User-Agent':profile.userAgent,'Accept':profile.accept},
-      redirect:'follow',
-      signal:controller.signal,
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status} from original source ${sourceUrl}`);
-    return Buffer.from(await res.arrayBuffer());
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-async function fetchViaPython(sourceUrl, profile, timeoutMs) {
-  const timeoutSeconds=Math.max(1,Math.ceil(timeoutMs/1000));
-  try {
-    const {stdout}=await execFileAsync('python3',[
-      PYTHON_FETCHER,
-      '--url',sourceUrl,
-      '--user-agent',profile.userAgent,
-      '--accept',profile.accept,
-      '--timeout-seconds',String(timeoutSeconds),
-    ],{
-      encoding:null,
-      maxBuffer:MAX_FETCH_BYTES,
-      timeout:timeoutMs+5000,
-      killSignal:'SIGKILL',
-      windowsHide:true,
-    });
-    return Buffer.from(stdout);
-  } catch (error) {
-    const stderr=Buffer.isBuffer(error?.stderr)
-      ? error.stderr.toString('utf8').trim()
-      : String(error?.stderr ?? '').trim();
-    const detail=stderr || String(error?.message ?? error);
-    throw new Error(`Python urllib fetch failed from original source ${sourceUrl}: ${detail}`);
-  }
-}
-
-function isTransientFetchError(error) {
-  const text=String(error?.message ?? error);
-  return /(?:ECONNRESET|ECONNREFUSED|EAI_AGAIN|ETIMEDOUT|Connection reset|Temporary failure|timed out|Timeout|HTTP (?:408|425|429|5\d\d)\b)/i.test(text);
-}
-
-function delay(ms) {
-  return new Promise(resolve=>setTimeout(resolve,ms));
-}
-
-async function fetchOriginalBuffer(url, timeoutMs) {
-  const sourceUrl=assertHttpUrl(url);
-  const profile=selectOriginalFetchProfile(sourceUrl);
-  const fetcher=profile.transport==='python-urllib' ? fetchViaPython : fetchViaNode;
-  let lastError=null;
-
-  for (let attempt=1; attempt<=TRANSIENT_FETCH_ATTEMPTS; attempt++) {
-    try {
-      const value=await fetcher(sourceUrl,profile,timeoutMs);
-      if (!value.length) throw new Error('empty response from original source ' + sourceUrl);
-      return value;
-    } catch (error) {
-      lastError=error;
-      if (attempt>=TRANSIENT_FETCH_ATTEMPTS || !isTransientFetchError(error)) throw error;
-      await delay(TRANSIENT_FETCH_BASE_DELAY_MS * (2 ** (attempt-1)));
-    }
-  }
-
-  throw lastError;
-}
-
-async function fetchOriginal(url, {timeoutMs=20000, bytes=false}={}) {
-  const sourceUrl=assertHttpUrl(url);
-  const value=await fetchOriginalBuffer(sourceUrl,timeoutMs);
-  if (bytes) return value;
-  const text=value.toString('utf8').replace(/\r\n?/g,'\n').replace(/^\uFEFF/,'');
-  if (!text.trim()) throw new Error('empty response from original source ' + sourceUrl);
-  return text;
-}
-
-export function fetchOriginalText(url, timeoutMs=20000) {
-  return fetchOriginal(url,{timeoutMs,bytes:false});
-}
-
-export function fetchOriginalBytes(url, timeoutMs=20000) {
-  return fetchOriginal(url,{timeoutMs,bytes:true});
-}
+// Modified: 2026-10-25 (chance). Input parsing consumes resource acquisition;
+// these exports preserve the existing tools API without a second fetch path.
+import {fetchOriginalText,fetchOriginalBytes,memoizeResourceReads} from './resources.mjs';
+export {fetchOriginalText,fetchOriginalBytes,selectOriginalFetchProfile,resolveOriginalUrl,
+  ORIGINAL_FETCH_PROFILES,WAYX_FETCH_UA,WAYX_LOON_FETCH_UA} from './resources.mjs';
+import {resolveOriginalUrl} from './resources.mjs';
 
 // source-catalog.mjs
 // WayX declarative Loon source catalog
@@ -419,6 +248,31 @@ export async function materializeSourceScripts(source,pluginSourceUrl,{
 // Author: chance
 // Category: Converter / Dependency / Materialization
 
+// Modified: 2026-10-25 (chance). Prepare source syntax once, independently of
+// target planning. Return clones so one planner cannot mutate the other's IR.
+export function prepareRewriteDeclarations(parsed) {
+  const declarations=new Map();
+  for(const item of rewriteDependencyItems(parsed)) {
+    if(!item.line || isScriptV2(item.line) || declarations.has(item.line))continue;
+    try {
+      if(isRewriteV2(item.line)) {
+        const ast=selectRewritePipelineLayer(parseRewriteV2(item.line));
+        validateRewriteV2Ast(ast);
+        declarations.set(item.line,{ast});
+      }else {
+        const legacy=splitLegacyRewriteLine(item.line);
+        if(legacy)declarations.set(item.line,{ir:legacyRewriteToSemanticIr(legacy.pattern,legacy.action)});
+      }
+    }catch(error){declarations.set(item.line,{error});}
+  }
+  return declarations;
+}
+export function preparedRewriteAst(declarations,line) {
+  const record=declarations?.get(line);
+  if(record?.error)throw record.error;
+  return record?.ast ? structuredClone(record.ast) : selectRewritePipelineLayer(parseRewriteV2(line));
+}
+
 function rewriteDependencyItems(parsed) {
   return [
     ...groupSourceSectionItems(parsed?.sections?.get('Rewrite')),
@@ -443,23 +297,20 @@ async function readActionDependencies(files,{single,read,spec,label}) {
 export async function materializeMockFiles(entry,parsed,{
   fetchText=fetchOriginalText,
   fetchBytes=fetchOriginalBytes,
+  declarations=null,
 }={}) {
+  const reads=memoizeResourceReads({fetchText,fetchBytes});
   const out=new Map();
   for (const item of rewriteDependencyItems(parsed)) {
     if (!item.line || !isRewriteV2(item.line) || isScriptV2(item.line)) continue;
     try {
-      const ast=selectRewritePipelineLayer(parseRewriteV2(item.line));
+      const ast=preparedRewriteAst(declarations,item.line);
       validateRewriteV2Ast(ast);
       const files=ast.actions.map((action,index)=>({action,index:ast.sourceActionIndices?.[index] ?? index})).filter(({action})=>/^(?:request|response)\.body\.mock_file$/.test(action.name));
       if(!files.length)continue;
       // Separate output retains every file action and its original index.
       // Keep the historical single-file shape for independent declarations.
-      const cache=new Map();
-      const text=url=>{
-        if(files.length===1)return fetchText(url);
-        if(!cache.has(url))cache.set(url,Promise.resolve().then(()=>fetchText(url)));
-        return cache.get(url);
-      };
+      const text=reads.fetchText;
       const read=async action=>{
         const plan=dependencySpecFromAction(action,{pluginSourceUrl:entry.source});
         if(plan.base64){
@@ -468,7 +319,7 @@ export async function materializeMockFiles(entry,parsed,{
           if(!/^[A-Za-z0-9+/]*={0,2}$/.test(compact) || compact.length%4===1)throw new Error('invalid Base64 mock_file content');
           return {bodyBase64:Buffer.from(compact,'base64').toString('base64'),sourceFile:plan.url};
         }
-        if(plan.binary)return {bodyBase64:Buffer.from(await fetchBytes(plan.url)).toString('base64'),sourceFile:plan.url};
+        if(plan.binary)return {bodyBase64:Buffer.from(await reads.fetchBytes(plan.url)).toString('base64'),sourceFile:plan.url};
         return {bodyText:await text(plan.url),sourceFile:plan.url};
       };
       out.set(item.line,await readActionDependencies(files,{
@@ -494,7 +345,9 @@ function splitLegacyRewriteLine(line) {
 
 export async function materializeJqFiles(entry,parsed,{
   fetchText=fetchOriginalText,
+  declarations=null,
 }={}) {
+  const reads=memoizeResourceReads({fetchText});
   const out=new Map();
   for (const item of rewriteDependencyItems(parsed)) {
     if (!item.line) continue;
@@ -502,16 +355,14 @@ export async function materializeJqFiles(entry,parsed,{
       let spec=null;
       if (isScriptV2(item.line))continue;
       if (isRewriteV2(item.line)) {
-        const ast=selectRewritePipelineLayer(parseRewriteV2(item.line));
+        const ast=preparedRewriteAst(declarations,item.line);
         validateRewriteV2Ast(ast);
         const files=ast.actions.map((action,index)=>({action,index:ast.sourceActionIndices?.[index] ?? index})).filter(({action})=>/^(request|response)\.json\.(jq|jq_file)$/.test(action.name) && (action.name.endsWith('.jq_file') || /^jq-path\s*=/i.test(String(action.args[0]?.value || '').trim())));
         if(!files.length)continue;
-        const cache=new Map();
         const read=async action=>{
           const dependency=jqDependencySpecFromAction(action,{pluginSourceUrl:entry.source});
           if(!dependency?.resolvable || !dependency.url)throw new Error(dependency?.reason || 'JQ dependency is not resolvable');
-          if(!cache.has(dependency.url))cache.set(dependency.url,Promise.resolve().then(()=>fetchText(dependency.url)));
-          const content=minifyJqFile(await cache.get(dependency.url));
+          const content=minifyJqFile(await reads.fetchText(dependency.url));
           if(!content)throw new Error('JQ dependency resolved to empty content');
           return {content,sourceFile:dependency.url,legacyAlias:Boolean(dependency.legacyAlias)};
         };
@@ -532,7 +383,7 @@ export async function materializeJqFiles(entry,parsed,{
         throw new Error(spec.reason || 'JQ dependency is not resolvable');
       }
 
-      const text=await fetchText(spec.url);
+      const text=await reads.fetchText(spec.url);
       const content=minifyJqFile(text);
       if (!content) throw new Error('JQ dependency resolved to empty content');
       out.set(item.line,{

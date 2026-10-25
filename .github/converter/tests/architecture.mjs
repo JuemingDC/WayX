@@ -32,7 +32,8 @@ if (selectedCase === "architecture-contract.mjs") {
 const ROOT=process.cwd();
 const spec=await fs.readFile(path.join(ROOT,'.github/CONVERSION_SPEC.md'),'utf8');
 
-assert.match(spec,/版本：2\.13\b/,'Authoritative specification uses version 2.13');
+// Modified: 2026-10-25 (chance). Validate the current major spec without pinning old patch text.
+assert.match(spec,/^版本：2\.\d+\s*$/m,'Authoritative specification declares its current v2 revision');
 assert.match(spec,/^## 2\.1 /m);
 assert.doesNotMatch(spec,/迁移状态|历史记录|失败案例|PR #|（v1\.\d+|版本：1\.|已由 §|本轮验收/,'specification contains only current normative content');
 for (const evidence of [
@@ -155,7 +156,8 @@ for (const rel of [
 
 console.log('Semantic compiler architecture contract passed');
 
-assert.deepEqual((await fs.readdir(path.join(ROOT,'.github/converter/src'))).sort(),['configuration.mjs','conversion.mjs','core.mjs','index.mjs','input.mjs','output.mjs','rewrite.mjs','rule.mjs','runtime.mjs','script.mjs','workflow.mjs'].sort(),'implementations must stay in consolidated semantic domains');
+// Modified: 2026-10-25 (chance). Resource acquisition is a separate semantic domain.
+assert.deepEqual((await fs.readdir(path.join(ROOT,'.github/converter/src'))).sort(),['configuration.mjs','conversion.mjs','core.mjs','index.mjs','input.mjs','output.mjs','resources.mjs','rewrite.mjs','rule.mjs','runtime.mjs','script.mjs','workflow.mjs'].sort(),'implementations must stay in consolidated semantic domains');
 
 assert.deepEqual((await fs.readdir(path.join(ROOT,'.github/converter/tests'))).filter(name=>name.endsWith('.mjs')).sort(),["architecture.mjs","artifacts.mjs","catalog.mjs","conversion.mjs","core.mjs","official-capabilities.mjs","rewrite.mjs","runtime.mjs","script.mjs","workflow.mjs"],'tests must stay in consolidated suites');
 }
@@ -214,7 +216,8 @@ if (selectedCase === "repository-layout.mjs") {
 
 
 const ROOT=process.cwd();
-const allowedRoot=new Set(['.git','.github','README.md','Adblock','Resource','Boxjs','Module','Rule','Script']);
+// Modified: 2026-10-25 (chance). AGENTS.md is the tracked implementation policy.
+const allowedRoot=new Set(['.git','.github','AGENTS.md','README.md','Adblock','Resource','Boxjs','Module','Rule','Script']);
 const rootEntries=await fs.readdir(ROOT);
 const unexpected=rootEntries.filter(name=>!allowedRoot.has(name)).sort();
 assert.deepEqual(

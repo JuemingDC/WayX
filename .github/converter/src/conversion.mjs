@@ -3,12 +3,14 @@
 // Category: Converter / conversion
 
 import crypto from "node:crypto";
+import path from "node:path";
+import {createResourceSnapshot} from "./resources.mjs";
 import { surgeRegexParameter } from "./core.mjs";
 import { renderRewritePhaseDispatcher } from "./runtime.mjs";
 import { splitScriptPipelineSources, scriptIrTag, parseScriptDeclaration, isScriptV2, planQxScript, planSurgeScript, scriptOption, analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs, surgeArgumentMetadata, surgeRewriteArgumentPayload } from "./script.mjs";
 import { qxRule as canonicalQxRule, surgeModuleRule } from "./rule.mjs";
 import { repairUpstreamJq, unquoteRewriteToken, isRewriteV2, parseRewriteV2, selectRewritePipelineLayer, rewriteV2ToSource, validateRewriteV2Ast, classifyLegacyRewriteAction, isEmptyJsonJqIr, legacyRewriteToSemanticIr, rewriteV2AstToSemanticIr, inlineResolvedDependency, inlineResolvedLegacyJqPathIr, jqDependencySpecFromAction, legacyJqPathDependencySpecFromIr, planQxRewrite, planSurgeRewrite, rewriteReview, rewriteIssue, supportsRewritePhaseActions, planRewriteFeatureHelper, simpleUrlRewriteCondition, jsonPipelineToSafeNativeJq } from "./rewrite.mjs";
-import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection, parseLoonPlugin, materializeRewriteDependencies, materializeSourceScripts, fetchOriginalText, fetchOriginalBytes } from "./input.mjs";
+import { groupSourceSectionItems, cleanSourceComments, isSupportedSourceSection, parseLoonPlugin, materializeRewriteDependencies, materializeSourceScripts, fetchOriginalText, fetchOriginalBytes, prepareRewriteDeclarations, preparedRewriteAst } from "./input.mjs";
 import { attachQxInlineNote, createQxOutputState, appendQxOutput, qxOutputDestination, qxRuleOutputDestination, qxRewriteOutputDestination, renderQxOutput, createSurgeOutputState, appendSurgeOutput, surgeOutputDestination, surgeRuleOutputDestination, surgeRewriteOutputDestination, renderSurgeOutput, validateQX, validateSurgeModule } from "./output.mjs";
 import { parseConfigurationDeclaration, planConfiguration } from "./configuration.mjs";
 
@@ -99,7 +101,7 @@ function rewriteV2Action(line,target,ctx) {
 
   let ast;
   try {
-    ast=selectRewritePipelineLayer(parseRewriteV2(line));
+    ast=preparedRewriteAst(ctx.declarations,line);
     if(ctx.splitPipelineAction && !ast.sourceActionCount)ast={...ast,sourceActionCount:1,sourceActionIndices:[0]};
     validateRewriteV2Ast(ast);
   } catch (error) {
@@ -172,7 +174,7 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
   // Script/legacy owners also retain their existing phase contracts.
   const blockedV2=new Set();
   for(const item of items)if(isRewriteV2(item.line) && !isScriptV2(item.line))try {
-    const ast=resolveRewriteJqDependencies(parseRewriteV2(item.line),item.line,ctx);
+    const ast=resolveRewriteJqDependencies(preparedRewriteAst(ctx.declarations,item.line),item.line,ctx);
     const nativeJson=(ast.actions.length>1 || ast.actions[0]?.args.some(arg=>arg.type==='array')) && simpleUrlRewriteCondition(ast).ok && jsonPipelineToSafeNativeJq(ast).ok;
     if(ast.sourceActionCount || nativeJson || ast.actions.every(a=>a.name===ast.phase+'.json.jq') || !supportsRewritePhaseActions(ast,target))blockedV2.add(ast.phase);
   }catch { /* Invalid declarations keep the ordinary diagnostic. */ }
@@ -180,7 +182,7 @@ function prepareRewriteDispatchers(plugin,target,ctx) {
   for (const item of items) {
     if (!isRewriteV2(item.line) || isScriptV2(item.line) || item.pipelineMember) continue;
     try {
-      const ast=resolveRewriteJqDependencies(parseRewriteV2(item.line),item.line,ctx);
+      const ast=resolveRewriteJqDependencies(preparedRewriteAst(ctx.declarations,item.line),item.line,ctx);
       validateRewriteV2Ast(ast);
       const mapped=rewriteV2Action(item.line,target,ctx);
       if(mapped.section==='split')continue;
@@ -257,10 +259,13 @@ export function convertPlugin(entry,source,{
   mockFiles=new Map(),
   jqFiles=new Map(),
   rawBase='',
+  declarations=null,
 }={}) {
   if (!stamp) throw new Error('convertPlugin requires a conversion stamp');
 
   const plugin=parsed ?? parseLoonPlugin(source);
+  // Modified: 2026-10-25 (chance). Both targets consume one prepared source IR.
+  declarations=declarations ?? prepareRewriteDeclarations(plugin);
   const sourceHeader=plugin.header;
   const qx=createQxOutputState();
   const sg=createSurgeOutputState();
@@ -292,6 +297,7 @@ export function convertPlugin(entry,source,{
 
   const upstreamRepairs=new Map();
   const qctx={
+    declarations,
     upstreamRepairs,
     scriptMap,
     id:entry.id,
@@ -306,6 +312,7 @@ export function convertPlugin(entry,source,{
     rawBase,
   };
   const sctx={
+    declarations,
     upstreamRepairs,
     scriptMap,
     id:entry.id,
@@ -410,7 +417,7 @@ export function convertPlugin(entry,source,{
     let sr=surgeDispatchers.get(item.sourceIndex) || rewriteV2Action(item.line,'surge',item.pipelineMember?{...sctx,splitPipelineAction:true}:sctx);
     if (!qr || !sr) {
       const [pattern,action]=splitPatternAction(item.line);
-      let ir=legacyRewriteToSemanticIr(pattern,action);
+      let ir=declarations.get(item.line)?.ir ? structuredClone(declarations.get(item.line).ir) : legacyRewriteToSemanticIr(pattern,action);
       if (isEmptyJsonJqIr(ir)) {
         qr={section:'drop',reason:'empty-json-jq'};
         sr={section:'drop',reason:'empty-json-jq'};
@@ -613,21 +620,33 @@ function notify(onStage, stage) {
   if (typeof onStage === 'function') onStage(stage);
 }
 
+// Modified: 2026-10-25 (chance). Acquisition prepares a source-bound context;
+// conversion consumes it synchronously and never performs network I/O.
 export async function materializeConversionContext(entry,source,{
   fetchText=fetchOriginalText,
   fetchBytes=fetchOriginalBytes,
+  resources=null,
 }={}) {
+  const snapshot=resources ?? createResourceSnapshot({
+    directory:path.join(process.cwd(),'.github/monitor/.runtime/resources',crypto.randomUUID()),
+    fetchText:fetchText===fetchOriginalText?null:fetchText,fetchBytes,
+  });
   const parsed=parseLoonPlugin(source);
-  const [{mockFiles,jqFiles},scriptMap]=await Promise.all([
-    materializeRewriteDependencies(entry,parsed,{fetchText,fetchBytes}),
-    materializeSourceScripts(source,entry.source,{parsed,fetchText}),
-  ]);
-  return {parsed,scriptMap,mockFiles,jqFiles};
+  const declarations=prepareRewriteDeclarations(parsed);
+  const reads={fetchText:snapshot.fetchText,fetchBytes:snapshot.fetchBytes,declarations};
+  try {
+    const [{mockFiles,jqFiles},scriptMap]=await Promise.all([
+      materializeRewriteDependencies(entry,parsed,reads),
+      materializeSourceScripts(source,entry.source,{parsed,fetchText:snapshot.fetchText}),
+    ]);
+    return {parsed,declarations,scriptMap,mockFiles,jqFiles,sourceUrl:entry.source,
+      sourceDigest:crypto.createHash('sha256').update(source).digest('hex')};
+  }finally{if(!resources)await snapshot.seal();}
 }
 
-export async function materializeConversionRunContext(entry, source, {onStage=null}={}) {
+export async function materializeConversionRunContext(entry, source, {onStage=null,...options}={}) {
   notify(onStage,'materialize-context');
-  return await materializeConversionContext(entry,source);
+  return await materializeConversionContext(entry,source,options);
 }
 
 export function convertPluginWithContext(entry, source, context, {
@@ -639,9 +658,13 @@ export function convertPluginWithContext(entry, source, context, {
     throw new TypeError('convertPluginWithContext requires a materialized conversion context');
   }
 
+  if(context.sourceDigest && (context.sourceUrl!==entry.source || context.sourceDigest!==crypto.createHash('sha256').update(source).digest('hex'))) {
+    throw new Error('Prepared conversion context does not match source');
+  }
   notify(onStage,'convert');
   return convertPlugin(entry,source,{
     parsed:context.parsed,
+    declarations:context.declarations,
     scriptMap:context.scriptMap,
     stamp,
     mockFiles:context.mockFiles,

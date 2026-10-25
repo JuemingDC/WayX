@@ -1,6 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import crypto from 'node:crypto';
+import {createResourceSnapshot} from '../converter/src/resources.mjs';
 import { loadLoonSourceCatalog, fetchOriginalText } from '../converter/src/input.mjs';
 import { materializeConversionRunContext, convertPluginWithContext } from '../converter/src/conversion.mjs';
 import { createWorkflowFailureReporter, writeReadmePlan, normalizeManagedSource, nowConversionStamp, inspectManagedSource, readCatalogSource, readManagedTargetState, commitManagedConversion, buildSyncFailure, writeSyncFailureReport } from '../converter/src/workflow.mjs';
@@ -14,33 +16,43 @@ export function isLoonPluginSource(text) {
   return /^#!name\s*=\s*\S/m.test(source) && /^\[[^\]]+\]\s*$/m.test(source);
 }
 
+// Modified: 2026-10-25 (chance). Preparation can be separated from the
+// per-plugin conversion/write transaction without repeating acquisition.
 // Each plugin has its own conversion and write transaction. The catalog loop
 // continues only after a failure has left the previous artifacts intact.
 export async function syncCatalogEntry(entry,{
   root=ROOT,fetchText=fetchOriginalText,materialize=materializeConversionRunContext,
   convert=convertPluginWithContext,commit=commitManagedConversion,
-  log=console.log,
+  log=console.log,resources=null,prepared=null,prepareOnly=false,
 }={}) {
   let stage='read-current-source',previousSource=null,source=null,targetState=null;
   const onStage=value=>{stage=value;};
   let declarations=null;
   try {
-    try {previousSource=await readCatalogSource(root,entry);}catch(error){if(error.code!=='ENOENT')throw error;}
-    stage='read-target-state';targetState=await readManagedTargetState(root,entry);
-    stage='fetch-upstream';source=normalizeManagedSource(await fetchText(entry.source));
-    stage='validate-source';if(!isLoonPluginSource(source))throw new Error('downloaded content is not a valid Loon plugin');
-    stage='inspect-source-change';const sourceState=await inspectManagedSource(root,entry,source);
-    const changed=sourceState.changed;
-    log(`${changed?'changed':'unchanged'} upstream source via ${entry.source}; sha256=${sourceState.digest}`);
-    // Every Action compiles every entry, including unchanged upstream text:
-    // Generator, specification and remote dependency changes affect output too.
-    stage='review-source-semantics';
-    const semantic=await collectIssueCandidates({root,catalog:[entry],sourceOverrides:new Map([[entry.id,source]]),includeTargets:false,includeSyncFailures:false});
-    if(semantic.targetProblems.length) {
-      declarations=semantic.targetProblems.flatMap(problem=>problem.declarations);
-      throw new Error('Unknown or invalid source grammar: '+semantic.targetProblems.flatMap(problem=>problem.reasons).join('; '));
+    let context,sourceState,changed;
+    if(prepared) {
+      if(prepared.id!==entry.id || prepared.sourceUrl!==entry.source)throw new Error('Prepared entry does not match catalog source');
+      ({previousSource,source,targetState,context,sourceState,changed}=prepared);
+      stage='convert';
+    }else {
+      try {previousSource=await readCatalogSource(root,entry);}catch(error){if(error.code!=='ENOENT')throw error;}
+      stage='read-target-state';targetState=await readManagedTargetState(root,entry);
+      stage='fetch-upstream';source=normalizeManagedSource(await fetchText(entry.source));
+      stage='validate-source';if(!isLoonPluginSource(source))throw new Error('downloaded content is not a valid Loon plugin');
+      stage='inspect-source-change';sourceState=await inspectManagedSource(root,entry,source);
+      changed=sourceState.changed;
+      log(`${changed?'changed':'unchanged'} upstream source via ${entry.source}; sha256=${sourceState.digest}`);
+      // Every Action compiles every entry, including unchanged upstream text:
+      // Generator, specification and remote dependency changes affect output too.
+      stage='review-source-semantics';
+      const semantic=await collectIssueCandidates({root,catalog:[entry],sourceOverrides:new Map([[entry.id,source]]),includeTargets:false,includeSyncFailures:false});
+      if(semantic.targetProblems.length) {
+        declarations=semantic.targetProblems.flatMap(problem=>problem.declarations);
+        throw new Error('Unknown or invalid source grammar: '+semantic.targetProblems.flatMap(problem=>problem.reasons).join('; '));
+      }
+      context=await materialize(entry,source,{onStage,resources,fetchText});
     }
-    const context=await materialize(entry,source,{onStage});
+    if(prepareOnly)return {id:entry.id,sourceUrl:entry.source,previousSource,source,targetState,context,sourceState,changed};
     const out=convert(entry,source,context,{stamp:nowConversionStamp(),rawBase:RAW_BASE,onStage});
     stage='review-target-mapping';
     if(/^# \[WayX\].*(?:REVIEW REQUIRED|ISSUE REQUIRED)/m.test(out.qx+'\n'+out.surge)) {
@@ -86,20 +98,35 @@ export async function runCatalogSync({root=ROOT,entryOptions={},log=console.log,
   const failures=createWorkflowFailureReporter({summaryLabel:'Isolated sync failures',writeError});
   const structuredFailures=[],validatedPlugins=[],convertedPlugins=[],updatedPlugins=[],unchangedPlugins=[],retainedPlugins=[],deferredPlugins=[];
   let publishable=true;
+  // Modified: 2026-10-25 (chance). Finish acquisition for the complete catalog
+  // and seal one shared snapshot before any target is generated or committed.
+  const resources=createResourceSnapshot({
+    directory:path.join(root,'.github/monitor/.runtime/resources',crypto.randomUUID()),
+    fetchText:entryOptions.fetchText,fetchBytes:entryOptions.fetchBytes,
+  });
+  const preparedEntries=[];
+  const capture=(entry,error)=>{
+    failures.capture(entry,error);structuredFailures.push(error.syncFailure||buildSyncFailure({entry,stage:'sync',error}));
+    if(!error.rollbackSucceeded)publishable=false;
+    else if(error.baselineAvailable)retainedPlugins.push(entry.id);
+    else deferredPlugins.push(entry.id);
+  };
   for (const entry of manifest) {
-    log(`\n== ${entry.id} ==`);
+    log(`\n== acquire ${entry.id} ==`);
     try {
-      const result=await syncCatalogEntry(entry,{...entryOptions,root,log});
+      const prepared=await syncCatalogEntry(entry,{...entryOptions,root,log,fetchText:resources.fetchText,resources,prepareOnly:true});
+      preparedEntries.push({entry,prepared});
+    }catch(error){capture(entry,error);}
+  }
+  await resources.seal();
+  for (const {entry,prepared} of preparedEntries) {
+    log(`\n== convert ${entry.id} ==`);
+    try {
+      const result=await syncCatalogEntry(entry,{...entryOptions,root,log,resources,prepared});
       validatedPlugins.push(entry.id);
       convertedPlugins.push(entry.id);
       (result.targetChanges.length || result.helperChanges.length ? updatedPlugins : unchangedPlugins).push(entry.id);
-    }
-    catch(error) {
-      failures.capture(entry,error);structuredFailures.push(error.syncFailure||buildSyncFailure({entry,stage:'sync',error}));
-      if(!error.rollbackSucceeded)publishable=false;
-      else if(error.baselineAvailable)retainedPlugins.push(entry.id);
-      else deferredPlugins.push(entry.id);
-    }
+    }catch(error){capture(entry,error);}
   }
   try {
     if(publishable) {

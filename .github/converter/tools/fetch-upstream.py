@@ -24,6 +24,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--user-agent", required=True)
     parser.add_argument("--accept", default="*/*")
     parser.add_argument("--timeout-seconds", type=float, default=20.0)
+    # Modified: 2026-10-25 (chance). Enforce the caller's byte limit while reading.
+    parser.add_argument("--max-bytes", type=int, default=512 * 1024 * 1024)
     return parser.parse_args()
 
 
@@ -36,6 +38,9 @@ def validate_url(value: str) -> str:
 
 def main() -> int:
     args = parse_args()
+    if args.max_bytes <= 0:
+        print("max-bytes must be positive", file=sys.stderr)
+        return 2
     try:
         url = validate_url(args.url)
     except ValueError as exc:
@@ -52,7 +57,15 @@ def main() -> int:
 
     try:
         with urllib.request.urlopen(request, timeout=args.timeout_seconds) as response:
-            body = response.read()
+            body = bytearray()
+            while True:
+                chunk = response.read(min(64 * 1024, args.max_bytes + 1 - len(body)))
+                if not chunk:
+                    break
+                body.extend(chunk)
+                if len(body) > args.max_bytes:
+                    print(f"Source exceeds bounded download size: {url}", file=sys.stderr)
+                    return 25
     except urllib.error.HTTPError as exc:
         server = exc.headers.get("server", "") if exc.headers else ""
         print(

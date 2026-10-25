@@ -16,6 +16,7 @@ import re
 import sys
 import time
 import urllib.request
+import urllib.error
 
 ROOT = Path.cwd()
 RUNTIME = Path('.github/monitor/.runtime')
@@ -56,7 +57,13 @@ def fetch(url, timeout=35):
             if len(data) > 32 * 1024 * 1024:
                 raise ValueError('Source exceeds bounded download size: ' + url)
             return data
-        except (OSError, ValueError):
+        # Modified: 2026-10-25 (chance). Permanent HTTP and byte-limit failures
+        # do not consume retry attempts; transient network/server failures do.
+        except urllib.error.HTTPError as error:
+            if attempt == 2 or error.code not in {408, 425, 429} and not 500 <= error.code <= 599:
+                raise
+            time.sleep(attempt + 1)
+        except OSError:
             if attempt == 2:
                 raise
             time.sleep(attempt + 1)
