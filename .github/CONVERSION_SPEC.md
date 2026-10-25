@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：2.19
+版本：2.20
 
 更新：2026-10-25
 作者：chance  
@@ -283,6 +283,11 @@ Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生�
 能力扩展须有源/目标官方依据及相应语义证据，开发时按改动范围验证；日常 Action 不重跑开发回归。不能仅为减少诊断而扩大未证明的转换范围。
 
 ## 2.19 Python 规则集聚合
+
+
+<!-- Modified: 2026-10-25 (chance). Add measured independent-service selectors rather than widening regex/domain boundaries or automatically expanding all upstream children. -->
+
+覆盖补充按当前发布数据比较父分类与独立子服务，只有存在额外原生声明且属于既有业务范围才显式登记；不自动递归拉取全部子分类，不把细分声明增加等同于所有域名此前未覆盖。Google 补 Play/FCM/Trust Services/Scholar，Disney 补 ESPN/Hulu/Star+；Microsoft 对 Azure/Bing/PKI/OneDrive 分别使用 `@cn` 和 `@!cn`，不凭新增子服务改写直连/代理默认。media_cn 适度加入国内协作、文档、网盘；media 加海外网盘和密码管理。独立服务无额外声明的分类不为数量增加重复 selectors。广告拦截、通用 cn/proxy 和独立 filterfix 不随此覆盖补充扩大。
 
 
 <!-- Modified: 2026-10-25 (chance). Explicitly select the independent apple-update service; the optimized aggregate apple release may omit its more-specific entries. -->

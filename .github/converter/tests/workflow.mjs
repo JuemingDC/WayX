@@ -578,6 +578,25 @@ for host in update_hosts:
  assert 'DOMAIN-SUFFIX,'+host in apple_out['Rule/Surge/apple_direct.list']
 assert 'host-suffix,tv.apple.com,proxy' in apple_out['Rule/QuantumultX/apple.list']
 
+# Modified: 2026-10-25 (chance). Independent Microsoft services must keep
+# their own cn attributes rather than inheriting a blanket action from a parent.
+ms=next(item for item in registry['applications'] if item['name']=='microsoft')
+assert 'azure@cn' in ms['tags'] and 'azure@!cn' in ms['proxy_tags']
+assert 'azure' not in ms['tags']+ms['proxy_tags']
+selected={tag.split('@')[0] for tag in ms['tags']+ms['proxy_tags']}
+ms_data=b''.join(site_payload(tag,[]) for tag in selected-{'microsoft','azure'})
+ms_data+=site_payload('microsoft',['microsoft.com'])
+azure_cn=b'\x08\x02'+field(2,b'azure.example.cn')+field(3,field(1,b'cn')+b'\x10\x01')
+azure_proxy=b'\x08\x03'+field(2,b'portal.microsoft.com')
+ms_data+=field(1,field(1,b'azure')+field(2,azure_cn)+field(2,azure_proxy))
+ms_config={'applications':[ms],'geosite':{'repository':'https://example.test/official'},
+ 'collections':{key:[] for key in ['cn','proxy','media','media_cn']},'sources':[],'surge_output':{'microsoft':'split'}}
+ms_out,_,_=m.build(ms_config,{'geosite':ms_data})
+assert 'host-suffix,azure.example.cn,direct' in ms_out['Rule/QuantumultX/microsoft.list']
+assert 'host,portal.microsoft.com,proxy' in ms_out['Rule/QuantumultX/microsoft.list']
+assert 'DOMAIN-SUFFIX,azure.example.cn' in ms_out['Rule/Surge/microsoft_direct.list']
+assert 'DOMAIN,portal.microsoft.com' in ms_out['Rule/Surge/microsoft_proxy.list']
+
 print('Python rule aggregation contracts passed')
 `,path.join(ROOT,'.github/converter/rules.py')],{encoding:'utf8'});
   assert.equal(pythonRules.status,0,pythonRules.stdout+'\n'+pythonRules.stderr);

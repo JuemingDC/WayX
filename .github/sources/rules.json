@@ -10,7 +10,11 @@
     {
       "name": "google",
       "tags": [
-        "google"
+        "google",
+        "google-play",
+        "googlefcm",
+        "google-trust-services",
+        "google-scholar"
       ]
     },
     {
@@ -28,7 +32,10 @@
     {
       "name": "disney",
       "tags": [
-        "disney"
+        "disney",
+        "espn",
+        "hulu",
+        "starplus"
       ]
     },
     {
@@ -97,12 +104,20 @@
     {
       "name": "microsoft",
       "tags": [
-        "microsoft@cn"
+        "microsoft@cn",
+        "azure@cn",
+        "bing@cn",
+        "microsoft-pki@cn",
+        "onedrive@cn"
       ],
       "split": true,
       "proxy_tags": [
         "microsoft@!cn",
-        "github-copilot"
+        "github-copilot",
+        "azure@!cn",
+        "bing@!cn",
+        "microsoft-pki@!cn",
+        "onedrive@!cn"
       ]
     }
   ],
@@ -143,13 +158,18 @@
       "category-communication",
       "category-dev",
       "category-ai-!cn",
-      "category-social-media-!cn"
+      "category-social-media-!cn",
+      "category-netdisk-!cn",
+      "category-password-management"
     ],
     "media_cn": [
       "category-entertainment-cn",
       "category-social-media-cn",
       "category-dev-cn",
-      "category-ai-cn"
+      "category-ai-cn",
+      "category-collaborate-cn",
+      "category-documents-cn",
+      "category-netdisk-cn"
     ],
     "proxy": [
       "geolocation-!cn"

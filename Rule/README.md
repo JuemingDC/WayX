@@ -23,6 +23,12 @@ Telegram also merges Loyalsoldier telegramcidr IPv4/IPv6 rules. Registry `rule_e
 
 Supplemental application inputs include Sukka stream lists, ACL4SSR ProxyMedia and DustinWin media. General inputs include Sukka domestic/global, Loyalsoldier direct/proxy, gaoyifan Chinese IPv4/IPv6 ranges and DH-Teams Geo_AS_IP_CN_All_Surge IPv4/IPv6 ranges. DH-Teams merges into cn with DIRECT. These merge into the existing category files. Sources explicitly registered with `standalone: true` keep independent output files.
 
+## Service coverage
+
+<!-- Modified: 2026-10-25 (chance). Explicitly select measured child-service declarations while preserving policy selectors and existing collection scope. -->
+
+Selected independent service tags retain details that optimized aggregate tags can omit. Google adds Play, FCM, Trust Services and Scholar; Disney adds ESPN, Hulu and Star+. Microsoft selects Azure, Bing, PKI and OneDrive with matching `@cn`/`@!cn` selectors on the direct/proxy sides. Domestic media adds collaboration, documents and cloud storage; overseas media adds cloud storage and password managers. Existing policy precedence, named-app ownership, AI exclusions and standalone sources still apply. These additions retain specific declarations; they do not imply every added hostname was previously unmatched. Other named collections keep their existing selectors where candidate child tags add no declarations.
+
 ## Policies and order
 
 <!-- Modified: 2026-10-25 (chance). Document mixed Apple resource policy and ordering; do not confuse repository coverage with device connectivity. -->
