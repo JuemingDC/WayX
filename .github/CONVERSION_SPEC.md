@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：2.26
+版本：2.27
 
 更新：2026-10-25
 作者：chance  
@@ -27,7 +27,7 @@ IR 不包含目标 action 名、section 名、helper URL 或目标 fallback。�
 
 能够证明完整等价时优先 native；必要且已支持的语义缺口由共同 helper/dispatcher 承担；不能安全表示则注释源声明并诊断，不生成假可用规则。不得按插件 id、名称、作者或完整 catalog signature 特判。
 
-用户指定的正则 flags 内联映射、QX 强制 enable、作者 argument 省略、单条 pipeline 分条输出和 JSON add/replace 直接 setpath 是明确的转换策略，不能称为完整源语义等价。除此之外，不静默删除条件或动作。
+用户指定的临时正则 flags 省略策略、QX 强制 enable、作者 argument 省略、单条 pipeline 分条输出和 JSON add/replace 直接 setpath 是明确的转换策略，不能称为完整源语义等价。除此之外，不静默删除条件或动作。
 
 <!-- Modified: 2026-10-25 (chance). Make source/target semantic equivalence the default invariant and distinguish explicit semantic exceptions from syntax preferences. -->
 
@@ -49,9 +49,12 @@ IR 不包含目标 action 名、section 名、helper URL 或目标 fallback。�
 
 ## 2.4 Regex、条件与捕获
 
-源 Regex literal 只去除最外层 delimiter；仅结束分隔符后的后缀识别为 flags。逐字符保留主体中的转义、斜线、字符类、分组、量词和 lookaround，不作 case folding、全局 `\\/ → /`、捕获组重写；flag 内联前缀在目标输出阶段添加。
+源 Regex literal 只去除最外层 delimiter；仅结束分隔符后的后缀识别为 flags。逐字符保留主体中的转义、斜线、字符类、分组、量词和 lookaround，不作 case folding、全局 `\\/ → /`、捕获组重写；源后缀 flags 保留在 AST/IR，当前目标原生输出暂不添加内联前缀。
 
-当前生产转换保留源 `i/m/s`：Surge 与 Quantumult X 原生正则字段将 `/pattern/i`、`/pattern/m`、`/pattern/s` 及组合 flags 转为 `(?i)pattern`、`(?m)pattern`、`(?s)pattern`、`(?ims)pattern` 等内联形式；无 flags 时不添加前缀。仅添加前缀，主体与源 AST/IR 保持不变。生成的 JavaScript helper 使用 `new RegExp(source, flags)`，不把内联修饰符放进 JavaScript 正则。内联映射是用户指定策略，尚不构成客户端引擎完整等价证明；原生 COMPATIBILITY LIMITATION 注释保留。生产原生 Header/Body 正则按同一内联策略规划，不因 `i/m/s` 单独生成 helper；严格等价检查接口仍独立保留。QX Header Rewrite 操作完整 Header 文本，只将可以安全限制到字段值并映射捕获编号的替换转为原生，其余保留 helper。Surge 使用 Header Rewrite / Body Rewrite；QX 使用 request/response-header、request/response-body。不支持的 `as` 捕获、动态值及条件继续使用 helper 或既有诊断。
+<!-- Modified: 2026-10-25 (chance). Temporarily omit native inline flags at the user's explicit request; retain commented mapping for later field-specific verification. -->
+
+当前用户明确授权的临时兼容例外：QX/Surge 原生字段只输出正则主体，暂停把源 `/pattern/i`、`/pattern/m`、`/pattern/s` 或组合后缀改为 `(?i)` 等前缀；映射赋值代码注释保留，以便后续在确认客户端相应字段支持后恢复。原生 Header 值匹配中的源 flags 嵌入同样暂停。不能据用户设备现象宣称所有版本、所有字段均不支持；也不能声称省略 flags 与源语义等价。源 AST/IR、原始声明及 JavaScript helper 内的 `RegExp(source, flags)` 保留源 flags，用户授权只适用于目标原生 flags 映射，不改变其它转换语义。严格等价接口仍拒绝未经证明的 flagged 原生映射；不得因本策略静默改写原作者脚本。
+
 
 动态 Regex 只接受完整 `/pattern/flags` 或语义 Regex 节点，不执行表达式、不二次展开变量，缺失或无效值不匹配；生成 helper 保留解析出的 `i/m/s`。
 
@@ -170,9 +173,9 @@ QX 原生 URL Rewrite `reject` 按上传官方 sample.conf 返回空体 404；�
 
 Surge Script 的 pattern 含逗号、空白或引号时统一使用公共参数编码器，保持 Regex 反斜线；validator 按引号解析逗号分隔参数，拒绝截断、残缺或重复参数。该规则覆盖源 Script、legacy/v2 Rewrite helper 和复杂动作 helper。
 
-带 flags 的静态 URL 条件在 helper 的外层预筛选中同样保留 `(?i/m/s)` 形式，不因 flags 退化成宽匹配。固定 String/Raw String URL 相等条件直接编译为转义字面量并首尾锚定的 Regex，复用 QX/Surge 原生动作与 Script 声明；动态 String 不作静态相等映射。没有可安全下推的 URL 条件时可以使用合法宽匹配，但 helper 必须执行完整条件，且不能据此绕过合成响应的精确条件要求。
+带 flags 的静态 URL 条件在 helper 外层预筛选中按当前授权策略仅输出主体，不附加 flags 前缀；这可能漏掉源 flags 本可匹配的请求，内部 JS 保留 flags 也不能弥补外层漏匹配，因此明确记录为临时兼容降级，不声称等价。固定 String/Raw String URL 相等条件直接编译为转义字面量并首尾锚定的 Regex，复用 QX/Surge 原生动作与 Script 声明；动态 String 不作静态相等映射。没有可安全下推的 URL 条件时可以使用合法宽匹配，但 helper 必须执行完整条件，且不能据此绕过合成响应的精确条件要求。
 
-QX 重定向统一使用官方原生 `<URL正则> url 302/307 <目标地址>`；存在可精确表达的请求条件时使用 `url-and-header`。URL 捕获 `${alias.N}` 转为 `$N`，保留源正则主体、flags 映射和规则顺序。不得将原生 302/307 转成 redirect helper 或宽匹配 `^ url script-echo-response`；无法用原生语法完整表达的条件或模板保留源声明并诊断，不生成重定向脚本。
+QX 重定向统一使用官方原生 `<URL正则> url 302/307 <目标地址>`；存在可精确表达的请求条件时使用 `url-and-header`。URL 捕获 `${alias.N}` 转为 `$N`，保留源正则主体和规则顺序，flags 按当前临时策略省略映射。不得将原生 302/307 转成 redirect helper 或宽匹配 `^ url script-echo-response`；无法用原生语法完整表达的条件或模板保留源声明并诊断，不生成重定向脚本。
 
 QX 仅输出官方证明的 url/url-and-header、reject 系列、302/307、header/body/jsonjq/echo 及各 Script action。url-and-header 的 URL 先匹配，再检查 method/path/request headers。response-body Script 可同时返回 body/headers/status，但不能冒充只改 Header 的 action；echo-response 的宽 matcher 必须满足安全边界。
 
@@ -254,7 +257,7 @@ Review inventory baseline 必须可读且结构有效，不能跳过比较。同
 
 Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生成脚本/原生 jq 对照。覆盖命中/no-op、URL/method/headers/body/status、captures、动作顺序、阶段所有权、单次 `$done`、missing/null/false/空值、Unicode/转义/原型键、依赖失败隔离与事务回滚。条件证据分别统计 false-positive / false-negative evidence；finite fixture 不能单独证明 native-equivalent，仍须结构及官方能力依据。
 
-用户降级策略的目标预期与源全行为 oracle 分开，不据 flags 内联映射或 JQ 分条宣称源行为完全等价。Golden 在独立语义检查通过后仅用于发现输出漂移，不用更新 Golden 掩盖错误。真实 jq 编译和结果/错误传播同时验证。
+用户降级策略的目标预期与源全行为 oracle 分开，不据 flags 省略策略或 JQ 分条宣称源行为完全等价。Golden 在独立语义检查通过后仅用于发现输出漂移，不用更新 Golden 掩盖错误。真实 jq 编译和结果/错误传播同时验证。
 
 验收包括上游预检/目录/转换一致选层、真实同正则独立规则保留、分条 JSON/JQ、错误 JQ 诊断作用域、README 来源分组/折叠及增减、完整 Action 和逐文件内容比较。零 Review/Issue 不等于全 Loon 语法或真实客户端行为已证明。
 
