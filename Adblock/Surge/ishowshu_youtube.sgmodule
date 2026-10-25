@@ -1,0 +1,48 @@
+#!name=Youtube
+#!desc=Native QX conversion · 7 declarations require review
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 7
+
+[Rule]
+# Name: Youtube
+# Updated: 2026-10-25 18:31:43 +08:00
+# Merged by: chance
+# Source Authors: 树先生, Maasea
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/youtube.snippet
+# Upstream name = Youtube
+# Upstream author = Maasea
+# Upstream desc = 移除广告
+#^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&oad url reject-dict
+#^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.* url script-request-body https://raw.githubusercontent.com/Maasea/sgmodule/master/Script/Youtube/youtube.request.js
+#^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch) url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js
+# //  信息流
+# [WayX] REVIEW REQUIRED: Script compatibility not proven for tokens/fields: $r, $e, $t, $s, $n, $i, $loon, $prefs, $notify, $task
+# Source declaration: ^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/browse url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js
+# //  搜索页结果
+# [WayX] REVIEW REQUIRED: Script compatibility not proven for tokens/fields: $r, $e, $t, $s, $n, $i, $loon, $prefs, $notify, $task
+# Source declaration: ^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/search url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js
+# //  首页顶部导航菜单、软件dock菜单栏，(导航会误杀
+#^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/guide url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js
+# //  获取配置
+# [WayX] REVIEW REQUIRED: Script compatibility not proven for tokens/fields: $r, $e, $t, $s, $n, $i, $loon, $prefs, $notify, $task
+# Source declaration: ^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/account\/get_setting url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js
+# //  播放页
+# [WayX] REVIEW REQUIRED: Script compatibility not proven for tokens/fields: $r, $e, $t, $s, $n, $i, $loon, $prefs, $notify, $task
+# Source declaration: ^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/get_watch url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js
+# [WayX] REVIEW REQUIRED: Script compatibility not proven for tokens/fields: $r, $e, $t, $s, $n, $i, $loon, $prefs, $notify, $task
+# Source declaration: ^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/next url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js
+# //  短视频
+# [WayX] REVIEW REQUIRED: Script compatibility not proven for tokens/fields: $r, $e, $t, $s, $n, $i, $loon, $prefs, $notify, $task
+# Source declaration: ^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/player\? url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js
+# [WayX] REVIEW REQUIRED: Script compatibility not proven for tokens/fields: $r, $e, $t, $s, $n, $i, $loon, $prefs, $notify, $task
+# Source declaration: ^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/reel\/reel_watch_sequence url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js
+# Upstream hostname = *.googlevideo.com, youtubei.googleapis.com
+
+[Map Local]
+^https:\/\/rr[\w-]+\.googlevideo\.com\/initplayback\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% *.googlevideo.com, youtubei.googleapis.com

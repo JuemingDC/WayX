@@ -1,0 +1,41 @@
+#!name=淘宝
+#!desc=Native QX conversion · 1 declarations require review
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 1
+
+[Rule]
+# Name: 淘宝
+# Updated: 2026-10-25 18:31:41 +08:00
+# Merged by: chance
+# Source Authors: 树先生, 可莉
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ishowshu/qx/main/filter/taobao.snippet
+# Upstream name = 淘宝
+# Upstream desc = 移除开屏
+# Upstream author = 树先生
+#host, heic.alicdn.com, reject
+DOMAIN,adashx.m.taobao.com,REJECT
+DOMAIN,h-adashx.ut.taobao.com,REJECT
+# Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/taobao.snippet
+# Upstream name = 淘宝
+# Upstream desc = 移除开屏
+# Upstream author = 树先生, 可莉
+USER-AGENT,%E6%B7%98%E5%AE%9D*,REJECT
+DOMAIN,adashx.m.taobao.com,REJECT
+DOMAIN,h-adashx.ut.taobao.com,REJECT
+# [WayX] REVIEW REQUIRED: QX whole-header matcher has no verified native Surge equivalent
+# Source declaration: ^http:\/\/amdc\.m\.taobao\.com\/amdc\/mobileDispatch %E6%B7%98%E5%AE%9D* url-and-header reject
+# 开屏广告
+# 百亿补贴开屏
+# Upstream hostname = heic.alicdn.com, gw.alicdn.com
+
+[Map Local]
+^https:\/\/heic\.alicdn\.com\/imgextra\/i\d\/[A-Za-z0-9_!]+-\d+-tps-\d+-\d+\.png_\d+x\d*q\d+\.jpg_\.heic$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/heic\.alicdn\.com\/imgextra\/i\d\/[A-Za-z0-9_!]+-\d+-tps-\d+-\d+\.jpg_\d+x\d*q\d+\.jpg_\.heic$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/heic\.alicdn\.com\/imgextra\/i\d\/\d*\/?[\w!]+-\d-(octopus|tps-1125-1602|tps-1080-1920|tps-1125-1950)\.(jp|pn)g_(1\d{3}|9\d{2})x(1\d{3}|9\d{2})q[59]0 data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https?:\/\/gw\.alicdn\.com\/imgextra\/i\d+\/[^\/]+_!!\d+-\d+-tps-(720-1280|1080-1920|1125-1602|1242-2208)\.(jpg|png|jpeg)_[^\/]+\.webp data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% heic.alicdn.com, gw.alicdn.com

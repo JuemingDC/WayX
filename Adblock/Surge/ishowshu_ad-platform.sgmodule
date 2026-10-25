@@ -1,0 +1,35 @@
+#!name=广告平台
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 广告平台
+# Updated: 2026-10-25 18:31:40 +08:00
+# Merged by: chance
+# Source Authors: 树先生
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ishowshu/qx/main/filter/ad-platform.snippet
+# Upstream name = 广告平台
+# Upstream desc = 对一些app有奇特效果
+# Upstream author = 树先生
+# 知名广告平台
+DOMAIN-KEYWORD,pglstatp-toutiao.com,REJECT
+DOMAIN-KEYWORD,pangolin-sdk-toutiao,REJECT
+DOMAIN,mi.gdt.qq.com,REJECT
+DOMAIN,v2mi.gdt.qq.com,REJECT
+DOMAIN-KEYWORD,tnc3-alisc1.zijieapi.com,REJECT
+DOMAIN-KEYWORD,lf-cdn-tos.bytescm.com,REJECT
+DOMAIN-KEYWORD,wkanx.com,REJECT
+DOMAIN,mobads.baidu.com,REJECT
+DOMAIN,open.e.kuaishou.cn,REJECT
+DOMAIN,open.e.kuaishou.com,REJECT
+DOMAIN-SUFFIX,yfanads.com,REJECT
+DOMAIN-SUFFIX,adkwai.com,REJECT
+DOMAIN,adsmind.ugdtimg.com,REJECT
+#HOST, pgdt.ugdtimg.com, REJECT
+DOMAIN,da.bridgeturbo.com,REJECT
+DOMAIN,adx-os.bridgeturbo.com,REJECT
+DOMAIN,adx-bj.anythinktech.com,REJECT

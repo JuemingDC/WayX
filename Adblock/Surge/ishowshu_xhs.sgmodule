@@ -1,0 +1,78 @@
+#!name=小红书
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 小红书
+# Updated: 2026-10-25 18:31:43 +08:00
+# Merged by: chance
+# Source Authors: 树先生, 奶思
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/xhs.snippet
+# Upstream name = 小红书
+# Upstream author = 树先生, 奶思
+# Upstream desc = 移除广告
+# Upstream date = 2026-09-11
+DOMAIN,ads-img-qc.xhscdn.com,REJECT
+DOMAIN,ads-video-al.xhscdn.com,REJECT
+DOMAIN,ads-video-qc.xhscdn.com,REJECT
+DOMAIN,t-ads.xiaohongshu.com,REJECT
+DOMAIN,mediacloud.xiaohongshu.com,REJECT
+DOMAIN,t2.xiaohongshu.com,REJECT
+DOMAIN,spider-tracker.xiaohongshu.com,REJECT
+DOMAIN,as.xiaohongshu.com,REJECT
+DOMAIN,crash.xiaohongshu.com,REJECT
+DOMAIN,fe.xiaohongshu.com,REJECT
+DOMAIN,lng.xiaohongshu.com,REJECT
+# 信息流
+# 我的页面中间提示横幅
+# 广告资源请求
+# ip获取
+# 广告请求
+# banner
+# 用户指引
+# 开屏广告
+# Source declaration: ^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/system_service\/config\? url jsonjq-response-body del(.data.app_theme, .data.loading_img, .data.splash, .data.store)
+# Source declaration: ^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/system_service\/splash_config url jsonjq-response-body .data.ads_groups? |= map(.start_time = 3818332800 | .end_time = 3818419199 | .ads? |= map(.start_time = 3818332800 | .end_time = 3818419199))
+# 详情页小部件
+# Source declaration: ^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/note\/widgets url jsonjq-response-body del(.data.cooperate_binds, .data.generic, .data.note_next_step, .data.widget_list)
+# 搜索页
+# Source declaration: ^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/search\/banner_list url jsonjq-response-body .data = {}
+# Source declaration: ^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/search\/hot_list url jsonjq-response-body .data.items = []
+# Source declaration: ^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/search\/hint\? url jsonjq-response-body .data.hint_words = []
+# Source declaration: ^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/search\/trending\? url jsonjq-response-body .data.queries = [] | .data.hint_word = {}
+# Source declaration: ^https?:\/\/(so|edith)\.xiaohongshu\.com\/api\/sns\/v\d+\/search\/notes\? url jsonjq-response-body .data.items? |= map(select(.model_type == "note"))
+# 我的页面感兴趣的人推荐
+# Source declaration: ^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v5\/recommend\/user\/explore url jsonjq-response-body .data = []
+# Upstream hostname = edith.xiaohongshu.com, www.xiaohongshu.com, so.xiaohongshu.com, gslb.xiaohongshu.com, rec.xiaohongshu.com
+
+[Map Local]
+^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/note\/guide\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/note\/detailfeed\/preload\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/guide\/user_banner data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https?:\/\/www\.xiaohongshu\.com\/api\/sns\/(v\d+\/ads\/resource|v\d+\/hey\/\w+\/hey_gallery) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/content\/navigator data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/ads\/resource data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/gslb\.xiaohongshu\.com\/api\/httpdns\/v1\/domains data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/gslb\.xiaohongshu\.com\/api\/gslb\/v1\/domainNew data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/www\.xiaohongshu\.com\/api\/sns\/v1\/tag\/ads_engage data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/www\.xiaohongshu\.com\/api\/sns\/v1\/ads\/apple\/record data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/edith\.xiaohongshu\.com\/api\/im\/v2\/get_banner_list data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v2\/guide\/user_guide data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Body Rewrite]
+http-response-jq ^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/system_service\/config\? 'del(.data.app_theme, .data.loading_img, .data.splash, .data.store)'
+http-response-jq ^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/system_service\/splash_config '.data.ads_groups? |= map(.start_time = 3818332800 | .end_time = 3818419199 | .ads? |= map(.start_time = 3818332800 | .end_time = 3818419199))'
+http-response-jq ^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/note\/widgets 'del(.data.cooperate_binds, .data.generic, .data.note_next_step, .data.widget_list)'
+http-response-jq ^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/search\/banner_list '.data = {}'
+http-response-jq ^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/search\/hot_list '.data.items = []'
+http-response-jq ^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/search\/hint\? '.data.hint_words = []'
+http-response-jq ^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/search\/trending\? '.data.queries = [] | .data.hint_word = {}'
+http-response-jq ^https?:\/\/(so|edith)\.xiaohongshu\.com\/api\/sns\/v\d+\/search\/notes\? '.data.items? |= map(select(.model_type == "note"))'
+http-response-jq ^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v5\/recommend\/user\/explore '.data = []'
+
+[MITM]
+hostname = %APPEND% edith.xiaohongshu.com, www.xiaohongshu.com, so.xiaohongshu.com, gslb.xiaohongshu.com, rec.xiaohongshu.com

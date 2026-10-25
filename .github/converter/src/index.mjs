@@ -256,3 +256,6 @@ export {
   planConfiguration,
   planMitmLine
 } from './configuration.mjs';
+
+// Modified: 2026-10-25 (chance). Expose the native QX-to-Surge entry point.
+export {convertNativeQxToSurge} from "./conversion.mjs";

@@ -1,3 +1,4 @@
+import {convertNativeQxToSurge} from "../src/conversion.mjs";
 // Consolidated: 2026-10-03
 // Author: chance
 // Category: Converter / workflow / Regression Suite
@@ -7,7 +8,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { conversionStampFromText, firstConversionStamp, generatedScriptDiffs, inspectManagedSource, isWayxGeneratedHelperFilename, managedSourceDigest, managedTargetDiffs, normalizeManagedSource, readCatalogSource, readManagedTargetState, syncGeneratedScripts, syncManagedSource, writeManagedSource, writeManagedTargets, ORIGINAL_FETCH_PROFILES, WAYX_FETCH_UA, WAYX_LOON_FETCH_UA, resolveOriginalUrl, selectOriginalFetchProfile, loadLoonSourceCatalog, qxTargetPath, surgeTargetPath } from "../src/index.mjs";
-import { recordOutputMismatch, outputMismatch, validationArtifactDigest, writeValidationEvidence, createWorkflowFailureReporter, formatWorkflowErrorAnnotation, buildSyncFailure, failureDeclarationContext, README_AUTO_UPDATE_INTERVAL, QX_MIXED_REWRITE_MIN_BUILD, buildReadmePlan, qxAddResourceUrl, qxSnippetInstallUrl, surgeModuleInstallUrl } from "../src/workflow.mjs";
+import { mergeNativeQxSources, prepareNativeQxSync, commitNativeQxSync, recordOutputMismatch, outputMismatch, validationArtifactDigest, writeValidationEvidence, createWorkflowFailureReporter, formatWorkflowErrorAnnotation, buildSyncFailure, failureDeclarationContext, README_AUTO_UPDATE_INTERVAL, QX_MIXED_REWRITE_MIN_BUILD, buildReadmePlan, qxAddResourceUrl, qxSnippetInstallUrl, surgeModuleInstallUrl } from "../src/workflow.mjs";
 import { isLoonPluginSource } from "../../scripts/sync-convert.mjs";
 import {validateQxFilterList,validateSurgeRuleSet,validateSurgeRuleSection} from '../src/output.mjs';
 import { syncFailureIssueBody, syncFailureTitle, targetProblemIssueBody, targetProblemTitle, monitorFailureTitle, monitorFailureIssueBody, recoveredMonitorIssues, validationIssueCandidates, validationFailureTitle, validationFailureIssueBody, recoveredValidationIssues, recoveredConversionIssues } from "../../scripts/propose-conversion-issues.mjs";
@@ -1264,6 +1265,69 @@ assert.match(refreshed,/<strong>本地资源<\/strong> · 1 项/);
 assert.ok((refreshed.match(/\| Name \| Quantumult X \| Surge \|/g)||[]).length>=7);
 await fs.unlink(path.join(root,'Adblock/Quantumult X/Bob.snippet'));
 assert.doesNotMatch((await buildReadmePlan(root)).get('README.md'),/<strong>Bob<\/strong>/,'empty source groups are removed');
+// Modified: 2026-10-25 (chance). Native QX sync merges a source app's routing,
+// jq and Script declarations while retaining source policies and owned-file scope.
+const nativeConfig={version:1,repository:'ishowshu/qx',ref:'main',prefix:'ishowshu_',author:'树先生',exclude:[],aliases:{},names:{}};
+await fs.writeFile(path.join(root,'.github/sources/native-qx.json'),JSON.stringify(nativeConfig));
+const nativeFiles={
+ 'filter/pdd.snippet':'# filter comment\nhost,example.com,DIRECT\n',
+ 'rewrite/pdd.snippet':'#!name = 拼多多\n#!author = 树先生\n// preserve comment\n^https://example.com url jsonjq-response-body del(.ad) | .flag = false\n^https://example.com/api url script-response-body https://github.com/ishowshu/qx/raw/main/script/pdd.js\nhostname = example.com\n',
+};
+const nativeFetch=async url=>url.includes('/commits/')?JSON.stringify({sha:'a'.repeat(40)}):url.includes('/git/trees/')?JSON.stringify({tree:Object.keys(nativeFiles).map(path=>({path,type:'blob'}))}):nativeFiles[new URL(url).pathname.split('/').slice(4).join('/')];
+const native=await prepareNativeQxSync(root,{fetchText:nativeFetch});
+assert.equal(native.outputs.size,1);
+const merged=native.outputs.values().next().value;
+assert.match(merged,/# \[filter_local\][\s\S]*host,example.com,DIRECT/);
+assert.match(merged,/# \[rewrite_local\]/);
+assert.ok(merged.includes("jsonjq-response-body 'del(.ad) | .flag = false'"));
+assert.ok(merged.includes('script-response-body https://github.com/ishowshu/qx/raw/main/script/pdd.js'));
+assert.match(merged,/hostname = example.com/);
+const nativeInstall=JSON.parse(decodeURIComponent(qxSnippetInstallUrl({rel:'Adblock/Quantumult X/ishowshu_pdd.snippet',name:'拼多多',ext:'.snippet',text:merged}).split('remote-resource=')[1]));
+assert.deepEqual(nativeInstall.filter_remote,nativeInstall.rewrite_remote);
+assert.equal(nativeInstall.filter_remote.length,1);
+assert.ok(!nativeInstall.filter_remote[0].includes('force-policy'));
+
+await commitNativeQxSync(root,native);
+const owned=path.join(root,'Adblock/Quantumult X/ishowshu_pdd.snippet');
+const before=await fs.readFile(owned,'utf8');
+await commitNativeQxSync(root,{...native,outputs:new Map([...native.outputs].map(([file,text])=>[file,text.replace(/^# Updated:.*$/m,'# Updated: different')]))});
+assert.equal(await fs.readFile(owned,'utf8'),before,'unchanged content keeps timestamp');
+assert.match((await buildReadmePlan(root)).get('README.md'),/<strong>树先生<\/strong>/);
+await assert.rejects(prepareNativeQxSync(root,{fetchText:async()=>{throw Error('injected source failure');}}),/injected source failure/);
+assert.equal(await fs.readFile(owned,'utf8'),before);
+await commitNativeQxSync(root,{...native,outputs:new Map()});
+await assert.rejects(fs.stat(owned),{code:'ENOENT'});
+// Multiple versions require one unambiguous single-author source.
+nativeConfig.aliases={'amap-new':'amap','bilibili-qx':'bilibili'};
+await fs.writeFile(path.join(root,'.github/sources/native-qx.json'),JSON.stringify(nativeConfig));
+nativeFiles['rewrite/amap.snippet']='#!author = A, B\n^https://old.example url reject\n';
+nativeFiles['rewrite/amap-new.snippet']='#!author = 树先生\n^https://new.example url reject\n';
+nativeFiles['rewrite/bilibili.snippet']='#!author = A, B\n^https://bili.example url reject\n';
+nativeFiles['rewrite/bilibili-qx.snippet']='#!author = A, C\n^https://bili.example url reject\n';
+const variants=await prepareNativeQxSync(root,{fetchText:nativeFetch});
+assert.match(variants.outputs.get('Adblock/Quantumult X/ishowshu_amap.snippet'),/new\.example/);
+assert.doesNotMatch(variants.outputs.get('Adblock/Quantumult X/ishowshu_amap.snippet'),/old\.example/);
+assert.equal(variants.outputs.has('Adblock/Quantumult X/ishowshu_bilibili.snippet'),false);
+assert.equal(variants.skipped[0].application,'bilibili');
+// Modified: 2026-10-25 (chance). Verify native QX policies, HTTP actions,
+// unchanged author Script URLs and explicit unsupported API/header boundaries.
+const qxConversionInput='# Name: Native fixture\n# [filter_local]\nhost,keep.example,direct\nhost-suffix,proxy.example,proxy\nip6-cidr,2001:db8::/32,reject\n# [rewrite_local]\n^https://a.example url reject\n^https://b.example url reject-dict\n^https://c.example url jsonjq-response-body \'delpaths([["ad"],["banner"]])\'\n^https://d.example url script-response-body https://example.test/original.js\n# [mitm]\nhostname = a.example, b.example\n';
+const convertedNative=convertNativeQxToSurge(qxConversionInput,{id:'native_fixture',scriptSources:new Map([['https://example.test/original.js','const body=$response.body;$done({body});']])});
+assert.equal(convertedNative.diagnostics.length,0);
+assert.match(convertedNative.surge,/DOMAIN,keep\.example,DIRECT/);
+assert.ok(convertedNative.surge.includes('DOMAIN-SUFFIX,proxy.example,{{{PROXY}}}'));
+assert.match(convertedNative.surge,/IP-CIDR6,2001:db8::\/32,REJECT/);
+assert.match(convertedNative.surge,/a\.example _ reject/);
+assert.match(convertedNative.surge,/data="\{\}" status-code=200/);
+assert.ok(convertedNative.surge.includes("http-response-jq ^https://c.example 'delpaths([[\"ad\"],[\"banner\"]])'"));
+assert.ok(convertedNative.surge.includes('script-path=https://example.test/original.js'));
+assert.match(convertedNative.surge,/requires-body=true/);
+const unsupportedNative=convertNativeQxToSurge(qxConversionInput.replace('# [mitm]','^https://guard.example UA* url-and-header reject\n# [mitm]'),{scriptSources:new Map([['https://example.test/original.js','$notify("a","b","c");$done({});']])});
+assert.equal(unsupportedNative.diagnostics.length,2);
+assert.doesNotMatch(unsupportedNative.surge,/^native_qx_\d+ = /m);
+nativeConfig.preferred_versions={bilibili:'rewrite/bilibili-qx.snippet'};
+await fs.writeFile(path.join(root,'.github/sources/native-qx.json'),JSON.stringify(nativeConfig));
+assert.ok((await prepareNativeQxSync(root,{fetchText:nativeFetch})).outputs.has('Adblock/Quantumult X/ishowshu_bilibili.snippet'));
 await fs.rm(root,{recursive:true,force:true});
 console.log('README index contract passed: stable source groups, alphabetical subgroups, policy order and target additions/removals');
 }

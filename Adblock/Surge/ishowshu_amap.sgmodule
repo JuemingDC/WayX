@@ -1,0 +1,91 @@
+#!name=高德地图
+#!desc=Native QX conversion · 1 declarations require review
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 1
+
+[Rule]
+# Name: 高德地图
+# Updated: 2026-10-25 18:31:41 +08:00
+# Merged by: chance
+# Source Authors: 树先生
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/amap-new.snippet
+# Upstream name = 高德地图
+# Upstream desc = 移除广告
+# Upstream author = 树先生
+# Upstream date = 2026-09-16
+# 阿里平台广告
+# [WayX] REVIEW REQUIRED: QX whole-header matcher has no verified native Surge equivalent
+# Source declaration: ^http:\/\/amdc\.m\.taobao\.com\/amdc\/mobileDispatch AMapiPhone* url-and-header reject
+# 开屏广告
+# 打车页面底部推广
+# 首页底部ai、探索ai分析
+# 订单页详情底部目的地附近好店推荐
+# 订单页详情打车服务评价
+# 订单页详情底部支付宝推广横幅
+# 订单页详情底部问题反馈
+# 搜索某地点结果列表广告(麦当劳关键词
+# 首页地图定位标识路线建议
+# 搜索结果建议
+# 打车广告
+# 导航路线详情页底部签到推荐
+# 驾车导航路线打车推广
+# 导航路线详情底部的附近推荐
+# 公共交通导航路线列表的顺风车推广
+# 首页地图顶部横幅通知过滤
+# 打车页右上角悬浮广告
+# 订单页详情底部广告
+# Source declaration: ^https:\/\/m5-zb\.amap\.com\/ws\/promotion-web\/resource url jsonjq-response-body del(.data.banner, .data.popup)
+# 首页搜索框提示
+# Source declaration: ^https:\/\/m5\.amap\.com\/ws\/shield\/scene\/recommend url jsonjq-response-body .data.shadingWords = {}
+# 开屏广告
+# Source declaration: ^https:\/\/m5\.amap\.com\/ws\/valueadded\/alimama\/splash_screen\? url jsonjq-response-body .data.ad |= map(.set.setting.display_time = 0 | .creative |= map(.start_time = 3818332800 | .end_time = 3818419199))
+# 我的页面精简
+# Source declaration: ^https:\/\/m5\.amap\.com\/ws\/shield\/dsp\/profile\/index\/nodefaasv3\? url jsonjq-response-body .data.cardList |= map(select(.dataKey == (["MineNewFootprintCard","MineNewBEntranceCardV4","MineNewBEntranceCardV3"][])))
+# 首页地图图层推广
+# Source declaration: ^https:\/\/m5\.amap\.com\/ws\/faas\/amap-navigation\/main-page-aiqs url jsonjq-response-body .data.mapBizList |= map(select(IN(.dataKey; "UserAssetsVirtualCard", "FootPrintNewCityDialog", "PoiRecommendVirtualCard", "PersonalRecommendVirtualCard") | not))
+# 首页地图顶部横幅通知过滤
+#^https:\/\/m5\.amap\.com\/ws\/faas\/amap-navigation\/main-page-assets url jsonjq-response-body .data.msgs |= map(select(.category | IN(1, 2, 5, 24)))
+# 打车页面图标菜单
+# 搜索打开目的地详情的广告
+# 搜索结果列表
+# 酒店页面广告
+# Upstream hostname = m5.amap.com,amap-aos-info-nogw.amap.com,m5-zb.amap.com,info.amap.com,ai.amap.com,render.amap.com
+
+[Map Local]
+^https:\/\/amap-aos-info-nogw\.amap\.com\/ws\/aos\/alimama\/splash_screen_rt data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/m5-zb\.amap\.com\/ws\/promotion-web\/resource\/home data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/ai\.amap\.com\/v1\/ai_rec\/home_qs data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/m5\.amap\.com\/ws\/info_bff\/rankingCard data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/m5-zb\.amap\.com\/ws\/boss\/order\/car\/remark\/satisfactionConf data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/m5-zb\.amap\.com\/ws\/boss\/pay\/web\/paySuccess\/info\/request data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/m5-zb\.amap\.com\/ws\/boss\/order\/car\/feedback\/get_card_questions data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/m5\.amap\.com\/ws\/shield\/search_business\/process\/marketingOperationStructured data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/render\.amap\.com\/ws\/render\/api\/data data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/m5\.amap\.com\/ws\/shield\/search_poi\/tips_adv data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/m5-zb\.amap\.com\/ws\/fluorite\/resource data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/m5\.amap\.com\/ws\/aos\/activity\/bus\/sign\/task data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/m5-zb\.amap\.com\/ws\/boss\/transportation\/diversion\/resource\/driving data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/m5\.amap\.com\/ws\/aos_public_travel\/recommend_plan data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/ai\.amap\.com\/v1\/ai_rec\/nav_start data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/m5-zb\.amap\.com\/ws\/boss\/transportation\/diversion\/resource\/bus_only_refresh data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/m5\.amap\.com\/ws\/faas\/amap-navigation\/main-page-assets data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/m5-zb\.amap\.com\/ws\/promotion-web\/resource data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Body Rewrite]
+http-response-jq ^https:\/\/m5-zb\.amap\.com\/ws\/promotion-web\/resource 'del(.data.banner, .data.popup)'
+http-response-jq ^https:\/\/m5\.amap\.com\/ws\/shield\/scene\/recommend '.data.shadingWords = {}'
+http-response-jq ^https:\/\/m5\.amap\.com\/ws\/valueadded\/alimama\/splash_screen\? '.data.ad |= map(.set.setting.display_time = 0 | .creative |= map(.start_time = 3818332800 | .end_time = 3818419199))'
+http-response-jq ^https:\/\/m5\.amap\.com\/ws\/shield\/dsp\/profile\/index\/nodefaasv3\? '.data.cardList |= map(select(.dataKey == (["MineNewFootprintCard","MineNewBEntranceCardV4","MineNewBEntranceCardV3"][])))'
+http-response-jq ^https:\/\/m5\.amap\.com\/ws\/faas\/amap-navigation\/main-page-aiqs '.data.mapBizList |= map(select(IN(.dataKey; "UserAssetsVirtualCard", "FootPrintNewCityDialog", "PoiRecommendVirtualCard", "PersonalRecommendVirtualCard") | not))'
+
+[Script]
+ishowshu_amap_1 = type=http-response,pattern=^https:\/\/m5-zb\.amap\.com\/ws\/boss\/car\/order\/content_info,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/amap-new.js,requires-body=true
+ishowshu_amap_2 = type=http-response,pattern=^https:\/\/info\.amap\.com\/ws\/shield\/search\/poi\/detail,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/amap-new.js,requires-body=true
+ishowshu_amap_3 = type=http-response,pattern=^https:\/\/m5\.amap\.com\/ws\/shield\/search_poi\/search\/sp,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/amap-new.js,requires-body=true
+ishowshu_amap_4 = type=http-response,pattern=^https:\/\/m5\.amap\.com\/ws\/info_bff\/tradeUnionPortal,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/amap-new.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% m5.amap.com, amap-aos-info-nogw.amap.com, m5-zb.amap.com, info.amap.com, ai.amap.com, render.amap.com

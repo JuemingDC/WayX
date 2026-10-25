@@ -5,7 +5,7 @@ import crypto from 'node:crypto';
 import {createResourceSnapshot} from '../converter/src/resources.mjs';
 import { loadLoonSourceCatalog, fetchOriginalText } from '../converter/src/input.mjs';
 import { materializeConversionRunContext, convertPluginWithContext } from '../converter/src/conversion.mjs';
-import { createWorkflowFailureReporter, writeReadmePlan, normalizeManagedSource, nowConversionStamp, inspectManagedSource, readCatalogSource, readManagedTargetState, commitManagedConversion, buildSyncFailure, writeSyncFailureReport } from '../converter/src/workflow.mjs';
+import { prepareNativeQxSync, commitNativeQxSync, createWorkflowFailureReporter, writeReadmePlan, normalizeManagedSource, nowConversionStamp, inspectManagedSource, readCatalogSource, readManagedTargetState, commitManagedConversion, buildSyncFailure, writeSyncFailureReport } from '../converter/src/workflow.mjs';
 import { collectIssueCandidates } from './propose-conversion-issues.mjs';
 
 const ROOT=process.cwd();
@@ -118,6 +118,11 @@ export async function runCatalogSync({root=ROOT,entryOptions={},log=console.log,
       preparedEntries.push({entry,prepared});
     }catch(error){capture(entry,error);}
   }
+  // Modified: 2026-10-25 (chance). Acquire native QX app bundles in the same
+  // run snapshot; a failed/partial source set prevents publication.
+  let nativeQxPlan=null;
+  try{nativeQxPlan=await prepareNativeQxSync(root,{fetchText:resources.fetchText});}
+  catch(error){publishable=false;writeError('Native QX acquisition failed: '+String(error.stack||error));}
   await resources.seal();
   for (const {entry,prepared} of preparedEntries) {
     log(`\n== convert ${entry.id} ==`);
@@ -132,6 +137,7 @@ export async function runCatalogSync({root=ROOT,entryOptions={},log=console.log,
     if(publishable) {
       await deferCatalogEntries(root,manifest,deferredPlugins);
     }
+    if(publishable)await commitNativeQxSync(root,nativeQxPlan);
     await writeReadmePlan(root);
   }catch(error){publishable=false;writeError('Catalog/README publication preparation failed: '+String(error.stack||error));}
   const summary={publishable,validatedPlugins,convertedPlugins,updatedPlugins,unchangedPlugins,retainedPlugins,deferredPlugins};

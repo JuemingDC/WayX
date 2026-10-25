@@ -1,0 +1,43 @@
+#!name=看东方
+#!desc=Native QX conversion · 2 declarations require review
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 2
+
+[Rule]
+# Name: 看东方
+# Updated: 2026-10-25 18:31:41 +08:00
+# Merged by: chance
+# Source Authors: 树先生, baby
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/bestv.snippet
+# Upstream name = 看东方
+# Upstream desc = 移除广告
+# Upstream author = 树先生, baby
+# 开屏广告
+# 首页弹窗广告
+# 开屏广告（清除缓存）
+# 我的页面横幅
+# 直播源
+#^https:\/\/bp-api\.bestv\.cn\/cms\/api\/live\/studio\/id\/v4 url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/bestv.js
+# nba/电视
+# [WayX] REVIEW REQUIRED: Original script source unavailable for API verification
+# Source declaration: https:\/\/bp-api\.bestv\.(?:com\.cn|cn)\/cms\/api\/(live\/studio\/id\/v8|c\/player\/common) url script-response-body https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js
+# HTML页面
+# [WayX] REVIEW REQUIRED: Original script source unavailable for API verification
+# Source declaration: ^https?:\/\/360\.com\/(?:video|nba\.m3u|dianshi\.m3u)$ url script-response-body https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js
+# Upstream hostname = bp-api.bestv.com.cn, bp-api.bestv.cn, 360.com
+
+[URL Rewrite]
+^https:\/\/bp-api\.bestv\.cn\/cms\/api\/advertise\/project\/advertise\/popup\/scene$ _ reject
+^https:\/\/bp-api\.bestv\.cn\/cms\/api\/free\/open\/advertisingV2 _ reject
+
+[Map Local]
+^https:\/\/bp-api\.bestv\.com\.cn\/cms\/api\/free\/open\/advertisingV2 data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Script]
+ishowshu_bestv_1 = type=http-response,pattern=^https:\/\/bp-api\.bestv\.cn\/cms\/api\/advertise\/project\/userCenter,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/bestv.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% bp-api.bestv.com.cn, bp-api.bestv.cn, 360.com

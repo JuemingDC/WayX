@@ -1,0 +1,31 @@
+# Name: 彩云天气Pro
+# Updated: 2026-10-25 18:04:02 +08:00
+# Merged by: chance
+# Source Authors: 树先生, RuCu6
+# Category: app
+# Managed by: WayX Native QX
+
+# [filter_local]
+# Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/caiyun.snippet
+# Upstream name = 彩云天气Pro
+# Upstream desc = 去除广告
+# Upstream author = RuCu6
+
+host, abyss.cyapi.cn, reject
+host, ad.cyapi.cn, reject
+
+# [rewrite_local]
+
+^https:\/\/biz\.cyapi\.cn\/(p\/v1\/entries|p\/v1\/trial_card\/info|v2\/product) url reject-dict
+^https:\/\/starplucker\.cyapi\.cn\/v3\/(config\/cypage\/\w+\/conditions|notification\/message_center|operation\/homefeatures) url reject-dict
+
+^https:\/\/api\.caiyunapp\.com\/v1\/activity\? url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/caiyun.js
+^https:\/\/biz\.cyapi\.cn\/(api\/v1\/user_detail|p\/v1\/vip_info|v2\/user) url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/caiyun.js
+^https:\/\/wrapper\.cyapi\.cn\/v1\/activity\? url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/caiyun.js
+^https:\/\/wrapper\.cyapi\.cn\/v1\/(nafp\/origin_images|satellite)\? url script-request-header https://github.com/ishowshu/qx/raw/refs/heads/main/script/caiyun.js
+
+# [mitm]
+
+# Upstream hostname = api.caiyunapp.com, *.cyapi.cn
+
+hostname = api.caiyunapp.com, *.cyapi.cn

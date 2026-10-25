@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：2.27
+版本：2.29
 
 更新：2026-10-25
 作者：chance  
@@ -8,7 +8,7 @@
 
 ## 2.1 范围与证据
 
-WayX 仅执行 Loon → Quantumult X / Surge 转换，Egern 不纳入转换链。本文件是唯一规范源，不维护分散规范副本。
+WayX 支持 Loon → Quantumult X / Surge 及原生 Quantumult X → Surge 转换，Egern 不纳入转换链。本文件是唯一规范源，不维护分散规范副本。
 
 源语法以 Loon 官方文档为准；目标语法和 API 必须有目标平台官方依据。上游插件正文用于理解源行为，不替代目标能力证明。第三方解析器只可作实现参考。
 
@@ -334,3 +334,17 @@ TestFlight 子服务采用 Tartarus2014 的 `Rule/Apple/TestFlight.lsr` 作为 A
 参考 V2Fly 的归属与属性分离、DustinWin 的 apple-cn/microsoft-cn、Sukka 的服务/CDN 分层以及 ACL4SSR 的专项例外顺序：Apple、Microsoft 通过显式 @cn 选择器声明国内接入点的 DIRECT，互补选择器及专项服务声明 PROXY；不把品牌全部默认为 DIRECT。没有逐条策略的通用来源被归入某应用时，如果同一原生匹配条件在应用专属来源中具有唯一的已配置动作，沿用该动作，保留通用来源的匹配声明和署名；不能让通用列表默认 PROXY 重造应用已明确直连端点的冲突。全代理约束以外，应用专属来源之间的冲突及源规则逐条明确写出的策略仍保留，不按多数表决、不扩大匹配、不删除不同类型/参数规则。共享 CDN 或云厂商域名不能单凭托管关系推断应用，明确的应用专用主机优先于云厂商父域名。
 
 参考来源：https://github.com/v2fly/domain-list-community 、https://github.com/DustinWin/ruleset_geodata 、https://github.com/SukkaW/Surge 、https://github.com/ACL4SSR/ACL4SSR/blob/master/Clash/config/ACL4SSR_Online_Full.ini 。
+
+<!-- Modified: 2026-10-25 (chance). Import native QX app resources separately from Loon conversion and merge routing/rewrites without rewriting upstream expressions. -->
+
+## 2.20 原生 QX 来源同步
+
+`native-qx.json` 登记树先生 ishowshu/qx，独立于 Loon→QX/Surge 转换。一次获取固定上游 commit 及完整目录，按应用文件名合并 filter/rewrite，保留原声明、类型、策略、注释、JQ 和脚本原地址；不执行 Loon 正则 flags 或 jq_delete 适配。上游未加引号的 jq 仅序列化为合法配置引号；REJECT 指令规范为小写 reject，注释标记规范为 #，原始声明保留为注释，不修改 JQ 程序或策略含义。MITM hostname 按出现顺序合并，段标题使用 QX 注释格式。多版本默认仅选择唯一单一作者版本，缺少唯一合格版本时记录 skipped；用户明确指定的 preferred_versions 优先，当前高德采用 amap-new，哔哩哔哩按用户新指令采用 bilibili-qx，不混合旧版，index 占位文件排除；其它独立分流也保留独立资源。输出使用 ishowshu_ 命名空间与专属管理标记，避免与其它作者覆盖、避免被 Loon 清理器删除。原生同步与既有同步共用当前运行快照，在 seal 前取得全部输入；未知语法、下载或校验失败阻止发布，事务失败回滚，退出来源仅清理专属状态记录中的文件。记录 commit、输入摘要及输出归属；内容不变时保留更新时间。README 归“树先生”，组内沿用 A–Z 排列，同时提供 QX 和对应 Surge 模块，待核对条目显示计数。一键导入按实际存在的分流/重写段分别向 filter_remote、rewrite_remote 登记同一文件 URL；仅分流的文件只登记 filter_remote，不设置 force-policy 覆盖源策略。依据 QX 官方 url-scheme.md 的批量 add-resource 格式。
+
+<!-- Modified: 2026-10-25 (chance). Add bounded native QX-to-Surge conversion with explicit unsupported-semantics diagnostics and original script source checks. -->
+
+原生 QX → Surge：分流类型映射到等价 Surge Rule，逐条保留策略；拒绝/空响应、302/307、JQ、Body 替换和共享 API HTTP Script 分别输出到对应节，MITM 合并。脚本获取原地址用于 API 检查，活动配置保留原 URL，不镜像、包装或改写作者 JS。QX-only 全局、bodyBytes/statusCode 等返回差异、whole-header 条件及无法证明等价的动作保留原声明并显式 REVIEW 注释，诊断记录到 native-qx-state，不能伪装全部转换成功。已明确指定 bilibili-qx 覆盖一般的单一作者筛选政策。QX 与 Surge 产物共同事务写入与退出清理。
+
+用户本次明确授权 QX `reject` 直接转换 Surge `reject`；这不保留 QX 重复请求动态延迟，属于限定兼容例外。分流 PROXY 保留为模块 PROXY 参数引用，默认同名策略组，主配置需提供该组或在安装时选择对应代理策略组。无法等价转换的条目在模块和 README 显示待核对数量。
+
+原生 snippet 的下载/语法失败继续阻止整批发布；额外用于 Surge API 审查的脚本源码不可取得时，仅将相应 Surge Script 明确注释并记录诊断，不使用替代脚本地址。不能把静态 token 筛查发现的局部变量或字符串当作已证明不兼容；它们仅代表尚未证明、需人工核对的边界。
