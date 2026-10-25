@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduMap.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 15:58:32 +08:00
+# Converted: 2026-10-25 16:18:02 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduMap_remove_ads.lpx
@@ -35,7 +35,7 @@
 (?i)^https:\/\/ecom\.map\.baidu\.com\/ad-ops\/afd\/popup\? url reject-dict
 (?i)^https:\/\/maphotel\.baidu\.com\/hotel\/goextranet\/activity\/detail\? url reject-dict
 
-(?i)^https:\/\/newclient\.map\.baidu\.com\/living\/nearby\/api\? url jsonjq-response-body 'reduce [["Result","cards",1],["Result","cards",4],["Result","cards",5],["Result","cards",9]][] as $p (.; delpaths([$p]))'
+(?i)^https:\/\/newclient\.map\.baidu\.com\/living\/nearby\/api\? url jsonjq-response-body 'delpaths([["Result","cards",1]]) | delpaths([["Result","cards",4]]) | delpaths([["Result","cards",5]]) | delpaths([["Result","cards",9]])'
 
 # [mitm]
 hostname = afd.baidu.com, newclient.map.baidu.com, yongche.baidu.com, ecom.map.baidu.com
