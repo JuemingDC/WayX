@@ -1,11 +1,11 @@
 # Name: github
-# Updated: 2026-10-23 09:29:33 UTC
+# Updated: 2026-10-25 05:49:22 UTC
 # Converted by: chance
 # Source Authors: MetaCubeX, Nexitally, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/github.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/github.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 60
+# Rules: 61
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,productionresultssa0.blob.core.windows.net
@@ -36,6 +36,7 @@ DOMAIN,github-production-upload-manifest-file-7fdce7.s3.amazonaws.com
 DOMAIN,github-production-user-asset-6210df.s3.amazonaws.com
 DOMAIN,bybit-exchange.github.io
 DOMAIN,github-api.arkoselabs.com
+DOMAIN,nix-community.github.io
 DOMAIN-SUFFIX,cafe.github.com
 DOMAIN-SUFFIX,collector.github.com
 DOMAIN-SUFFIX,atom.io
