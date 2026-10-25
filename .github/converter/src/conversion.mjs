@@ -735,11 +735,18 @@ export function convertNativeQxToSurge(text,{id='native_qx'}={}) {
       }
       issue(line,'Whole-header replacement is outside the supported CRLF-bounded single-field form');continue;
     }
-    const script=action.match(/^script-(request|response)-(body|header)\s+(https?:\/\/\S+)$/);
+    const script=action.match(/^script-((?:request|response)-(?:body|header)|(?:analyze-)?echo-response)\s+(https?:\/\/\S+)$/);
     if(script) {
-      // Modified: 2026-10-25 (chance). User explicitly requests original
-      // author URLs without per-program API scans or source-download gates.
-      sections.Script.push(id+'_'+(++scriptIndex)+' = type=http-'+script[1]+',pattern='+surgeRegexParameter(pattern)+',script-path='+surgeRegexParameter(script[3])+',requires-body='+(script[2]==='body'));continue;
+      // Modified: 2026-10-25 (chance). User authorizes direct native Script
+      // declarations for echo too, keeping original author URLs without API scans.
+      // QX analyze-echo waits for the request body; ordinary echo does not.
+      const modes={
+        'request-header':['request',false], 'request-body':['request',true],
+        'response-header':['response',false], 'response-body':['response',true],
+        'echo-response':['request',false], 'analyze-echo-response':['request',true],
+      };
+      const [phase,requiresBody]=modes[script[1]];
+      sections.Script.push(id+'_'+(++scriptIndex)+' = type=http-'+phase+',pattern='+surgeRegexParameter(pattern)+',script-path='+surgeRegexParameter(script[2])+',requires-body='+requiresBody);continue;
     }
     issue(line,'No verified equivalent for QX action: '+action.split(/\s/)[0]);
   }

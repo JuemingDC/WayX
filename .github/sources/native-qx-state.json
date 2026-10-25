@@ -9,7 +9,7 @@
     {
       "repository": "ZenmoFeiShi/Qx",
       "prefix": "zenmofeishi_",
-      "commit": "6bb62bec15a36719ef4acc9ad9252f60055259a6"
+      "commit": "388f0ae10a6a0f54a9ba55d6bb707ee954ff9959"
     }
   ],
   "inputs": [
@@ -216,7 +216,7 @@
     {
       "repository": "ZenmoFeiShi/Qx",
       "path": "MT.snippet",
-      "sha256": "914dd717dabcd66544e75ab6c405c8607cf4677d085ca52ca20be9455531decc"
+      "sha256": "e2c72b6676ad026b4f3c67f70614d7c2c7dafe0343c2dae4bb80b2762bf4e07a"
     },
     {
       "repository": "ZenmoFeiShi/Qx",
@@ -331,12 +331,6 @@
       "application": "leisu",
       "source": "^https:\\/\\/img1\\.360buyimg\\.com\\/pop\\/jfs\\/t1 leisu* url-and-header reject-dict",
       "reason": "URL-and-header conjunction retained for review; dropping the header condition would broaden matching"
-    },
-    {
-      "repository": "ZenmoFeiShi/Qx",
-      "application": "helloobike",
-      "source": "^https:\\/\\/resource\\.51downapp\\.cn\\/f414fbc17c411b4e986ba8891c738a49\\.json\\?(?:[^#]*&)?md5=e5230c919f7e3f3af3256161fbfaa0e2&(?:[^#]*&)?hbe_qx_ui=1\\.3$ url script-echo-response https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/easybike-ad.js",
-      "reason": "No verified equivalent for QX action: script-echo-response"
     }
   ],
   "outputs": [

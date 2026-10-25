@@ -1337,6 +1337,17 @@ assert.equal(convertNativeQxToSurge(headerInput.replace('Accept-Language: en-us'
 assert.equal(convertNativeQxToSurge(headerInput.replaceAll('Accept-Language','Content-Length')).diagnostics.length,1);
 const unscanned=convertNativeQxToSurge(qxConversionInput);
 assert.match(unscanned.surge,/script-path=https:\/\/example.test\/original.js/);
+// Modified: 2026-10-25 (chance). All six native HTTP Script declarations
+// retain their original URL and phase/body timing, including both echo forms.
+for(const [action,phase,requiresBody] of [
+  ['request-header','request',false],['request-body','request',true],
+  ['response-header','response',false],['response-body','response',true],
+  ['echo-response','request',false],['analyze-echo-response','request',true],
+]) {
+  const out=convertNativeQxToSurge('# [rewrite_local]\n^https://echo.example url script-'+action+' https://example.test/original.js\n',{id:'echo_fixture'});
+  assert.equal(out.diagnostics.length,0,action);
+  assert.ok(out.surge.includes('type=http-'+phase+',pattern=^https://echo.example,script-path=https://example.test/original.js,requires-body='+requiresBody),action);
+}
 nativeConfig.preferred_versions={bilibili:'rewrite/bilibili-qx.snippet'};
 await fs.writeFile(path.join(root,'.github/sources/native-qx.json'),JSON.stringify(nativeConfig));
 assert.ok((await prepareNativeQxSync(root,{fetchText:nativeFetch})).outputs.has('Adblock/Quantumult X/ishowshu_bilibili.snippet'));
