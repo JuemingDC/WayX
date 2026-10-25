@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：2.20
+版本：2.21
 
 更新：2026-10-25
 作者：chance  
@@ -295,6 +295,10 @@ Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生�
 Apple 的直连 tags 显式同时选择 `apple` 与 `apple-update`；不能依赖综合 `apple` 发布数据保留所有更新服务的细分域名。保留上游 `apple-update` 的原生匹配类型，由既有 split 默认直连逻辑处理，不手写生成文件、不把其它源的 PROXY 声明改成 DIRECT。QX 的 Apple 资源必须保留逐条策略并放在通用 cn/proxy fallback 之前；`force-policy` 会覆盖逐条策略，资源选择器无法修复设备端的强制策略、DNS 或 HTTPS 解密设置。仓库覆盖检查不等于设备端已恢复更新。
 
 Geosite 分类选择器统一支持 `分类@属性` 与 `分类@!属性`，按发布数据中的属性拆分，不在转换器中按应用名称编写分支。Steam 使用 `steam@cn` 直连、其余 Steam 规则代理；补充国内源并入同一分类。QX 保留单文件逐条策略，Surge 拆分 direct/proxy。
+
+<!-- Modified: 2026-10-25 (chance). Treat MetaCubeX and V2Fly as joint primary inputs; preserve source actions and independent acquisition evidence. -->
+
+V2Fly 与 MetaCubeX（Mihomo 侧）是共同主要来源，独立获取与校验，不设主次、不在其中一方成功时跳过另一方；按原生匹配条件与动作合并，重复声明同时保留双方作者与 URL。MetaCubeX 登记与现有 media/media_cn collections 对应的全部国内外应用分类 JSON，并扩充独立服务：Apple Update 直连、Apple Intelligence 归 AI、TV+ 代理；Google 的 Play/FCM/Trust Services/Scholar、Disney 的 ESPN/Hulu/Star+；Microsoft 的 `microsoft@cn`、`azure@cn`、`bing@cn` 直连，以及当前没有 cn 属性分组的 PKI/OneDrive 代理；国内协作/文档/网盘直连，海外网盘/密码管理代理。两者共同驱动现有 QX/Surge 聚合器，不是新增 Mihomo 输出。MetaCubeX 当前没有发布 `@!cn` 文件，不能用完整 Microsoft/Azure/Bing 文件代替补集代理，否则会把其中的直连声明重复登记为代理。media 类 JSON 本身不携带动作，使用既有 `Media` 默认占位，归属后沿用已声明的应用动作，不能给整个公司分类强加 PROXY 而重造国内接入点冲突。双方同条声明去重并合并来源证据，新增来源不保证等量增加规则。
 
 规则集聚合领域统一由 `.github/converter/rules.py` 管理，来源、分类、品牌默认策略和子服务归属集中于 `.github/sources/rules.json`。只排除直接 blackmatrix7 来源，接受其它维护者引用它的情况。采用 V2Fly 官方发布及 SHA-256 校验；SagerNet geosite 与其共用相同上游，不重复下载相同数据。MetaCubeX 持续生成的具体分类、其维护的补充及 Nexitally 的直连/代理/AI/加密货币/推送列表按来源策略合并。来源作者、URL、许可证及内容摘要保留。注册表 rule_exclusions 可按分类、原生类型和操作数表达式统一排除规则，作用于所有输入和两端输出，不能直接编辑生成文件；排除通配符不影响对应 CIDR 或其它规则类型。
 

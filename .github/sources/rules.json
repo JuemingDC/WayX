@@ -674,6 +674,267 @@
       "policy": "DIRECT",
       "url": "https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_All_Surge.list",
       "license": "No license declared; attribution retained"
+    },
+    {
+      "id": "mihomo-apple-update",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "apple",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-update.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-apple-intelligence",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "ai",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-intelligence.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-apple-tvplus",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "apple",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-tvplus.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-microsoft-cn",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "microsoft",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/microsoft@cn.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-azure-cn",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "microsoft",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/azure@cn.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-microsoft-pki",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "microsoft",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/microsoft-pki.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-onedrive",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "microsoft",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/onedrive.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-google-play",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "google",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google-play.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-googlefcm",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "google",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/googlefcm.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-google-trust-services",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "google",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google-trust-services.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-google-scholar",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "google",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google-scholar.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-espn",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "disney",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/espn.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-hulu",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "disney",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/hulu.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-starplus",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "disney",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/starplus.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-category-collaborate-cn",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "media_cn",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-collaborate-cn.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-category-documents-cn",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "media_cn",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-documents-cn.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-category-netdisk-cn",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "media_cn",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-cn.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-category-netdisk-!cn",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "media",
+      "policy": "Media",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-!cn.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-category-password-management",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "media",
+      "policy": "Media",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-password-management.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-category-companies",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "media",
+      "policy": "Media",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-category-entertainment",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "media",
+      "policy": "Media",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-category-communication",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "media",
+      "policy": "Media",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-communication.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-category-dev",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "media",
+      "policy": "Media",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-category-social-media-!cn",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "media",
+      "policy": "Media",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-!cn.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-category-entertainment-cn",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "media_cn",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment-cn.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-category-social-media-cn",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "media_cn",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-cn.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-category-dev-cn",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "media_cn",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev-cn.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-category-ai-cn",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "media_cn",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-ai-cn.json",
+      "license": "See upstream LICENSE"
+    },
+    {
+      "id": "mihomo-bing-cn",
+      "author": "MetaCubeX",
+      "format": "sing-box-json",
+      "category": "microsoft",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/bing@cn.json",
+      "license": "See upstream LICENSE"
     }
   ],
   "indirect_upstreams": "Allowed; only direct blackmatrix7 inputs are excluded.",

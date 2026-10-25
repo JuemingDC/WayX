@@ -597,6 +597,27 @@ assert 'host,portal.microsoft.com,proxy' in ms_out['Rule/QuantumultX/microsoft.l
 assert 'DOMAIN-SUFFIX,azure.example.cn' in ms_out['Rule/Surge/microsoft_direct.list']
 assert 'DOMAIN,portal.microsoft.com' in ms_out['Rule/Surge/microsoft_proxy.list']
 
+# Modified: 2026-10-25 (chance). Joint primary MetaCubeX/V2Fly feeds must carry
+# update/attributed-cn DIRECT and service PROXY through both target layouts.
+feed_ids=['mihomo-apple-update','mihomo-azure-cn','mihomo-onedrive']
+feeds=[next(row for row in registry['sources'] if row['id']==name) for name in feed_ids]
+feed_config={'applications':[apple,ms],'geosite':{'repository':'https://example.test/official'},
+ 'collections':{key:[] for key in ['cn','proxy','media','media_cn']},'sources':feeds,
+ 'surge_output':{'apple':'split','microsoft':'split'}}
+feed_inputs={'geosite':apple_data+ms_data}
+for feed,host in zip(feeds,['gdmf.apple.com','azure.example.cn','onedrive.example.com']):
+ feed_inputs[feed['id']]=json.dumps({'version':2,'rules':[{'domain_suffix':host}]}).encode()
+feed_out,feed_meta,feed_anomalies=m.build(feed_config,feed_inputs)
+assert not feed_anomalies
+assert {'V2Fly','MetaCubeX'} <= set(feed_meta['Rule/QuantumultX/apple.list']['authors'])
+assert feeds[0]['url'] in feed_meta['Rule/QuantumultX/apple.list']['sources']
+assert feed_config['geosite']['repository'] in feed_meta['Rule/QuantumultX/apple.list']['sources']
+assert 'host-suffix,gdmf.apple.com,direct' in feed_out['Rule/QuantumultX/apple.list']
+assert 'host-suffix,azure.example.cn,direct' in feed_out['Rule/QuantumultX/microsoft.list']
+assert 'host-suffix,onedrive.example.com,proxy' in feed_out['Rule/QuantumultX/microsoft.list']
+assert 'DOMAIN-SUFFIX,azure.example.cn' in feed_out['Rule/Surge/microsoft_direct.list']
+assert 'DOMAIN-SUFFIX,onedrive.example.com' in feed_out['Rule/Surge/microsoft_proxy.list']
+
 print('Python rule aggregation contracts passed')
 `,path.join(ROOT,'.github/converter/rules.py')],{encoding:'utf8'});
   assert.equal(pythonRules.status,0,pythonRules.stdout+'\n'+pythonRules.stderr);
