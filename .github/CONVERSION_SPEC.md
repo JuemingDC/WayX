@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：2.17
+版本：2.18
 
 更新：2026-10-25
 作者：chance  
@@ -198,6 +198,10 @@ Plugin、作者 Script、JQ/mock 依赖均读取原作者 URL。host profile 可
 
 ## 2.14 全量转换、事务与发布
 
+<!-- Modified: 2026-10-25 (chance). Consolidate validation after the full requested change set; do not use intermediate Action runs as development checkpoints. -->
+
+开发修改先在本地完成当前请求范围内的全部实现、规范和必要测试，再按改动范围集中检查一次。不得每改一处就触发 Action、推送中间检查点或重跑完整生成；完整批次通过后一次性更新远端，使用由该最终更新触发的一次 Action 验证集成。最终检查发现问题时，集中修复已定位问题并复查受影响项目，再更新最终批次；不重复已通过且未受影响的检查。每日定时上游同步不受此开发约束改变。
+
 每次 Action 获取全部 catalog entry，解析、物化依赖并转换一次，完成后统一检查实际产物一次；不在各阶段重复验证或全量重转比对。生成器/规范及同 URL 依赖变化在源声明不变时也能生效。
 
 逐文件比较实际内容，只忽略转换器生成的 Converted 时间（含 dispatcher 嵌入时间）；相同不写入、不刷新原时间/mtime。QX、Surge、helper 分别比较，缺失补建；变化文件不导致其它相同文件被覆盖。源按真实 bytes 变化写入，废弃生成 helper 自动 prune，手写脚本保留。有效清单生成后清理所有退出名单的受管理源、QX/Surge 目标及生成脚本，并补清理历史遗留孤立产物；保护当前条目复用的路径及脚本目录。手写独立资源不属于退出拉取名单的受管理产物。目录读取或校验失败不能据此批量删除。
@@ -236,7 +240,7 @@ Review inventory baseline 必须可读且结构有效，不能跳过比较。同
 
 ## 2.17 验证要求
 
-日常 Action 仅保留一次最终产物格式及外层正则检查，复用其证据生成报告；源获取失败、未知源声明、事务回滚、远端 head 和发布范围检查属于实际执行边界。开发者回归套件、oracle、canonical 和独立比较工具保留为按需入口，不自动在同步前后运行。不得为单个来源增加重复回归检查或全量重放。
+日常 Action 在同一最终阶段检查转换器语法、本次变化的生成脚本、实际产物格式及外层正则，复用其证据生成报告；源获取失败、未知源声明、事务回滚、远端 head 和发布范围检查属于实际执行边界。开发者回归套件、oracle、canonical 和独立比较工具保留为按需入口，不自动在同步前后运行。不得为单个来源增加重复回归检查或全量重放。
 
 Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生成脚本/原生 jq 对照。覆盖命中/no-op、URL/method/headers/body/status、captures、动作顺序、阶段所有权、单次 `$done`、missing/null/false/空值、Unicode/转义/原型键、依赖失败隔离与事务回滚。条件证据分别统计 false-positive / false-negative evidence；finite fixture 不能单独证明 native-equivalent，仍须结构及官方能力依据。
 
@@ -246,7 +250,7 @@ Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生�
 
 ## 2.18 实现组织与契约对应
 
-根目录为 .github、README.md、Adblock、Resource、Boxjs、Module、Rule、Script。生产实现为十个领域文件和 index.mjs 公开入口；不新增平行碎片或旧路径转发壳，结构调整保持公开函数、原作者 URL 和外部产物接口。
+根目录为 AGENTS.md、.github、README.md、Adblock、Resource、Boxjs、Module、Rule、Script。生产实现为十一个领域文件和 index.mjs 公开入口；不新增平行碎片或旧路径转发壳，结构调整保持公开函数、原作者 URL 和外部产物接口。
 
 | 文件 | 职责 |
 | --- | --- |
@@ -255,7 +259,8 @@ Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生�
 | rewrite.mjs | Rewrite parser/IR、选层、JSON/JQ/依赖、复杂动作规划 |
 | script.mjs | Script scanner/parser/IR、Argument 与目标适配 |
 | configuration.mjs | General/MITM IR 与目标适配 |
-| input.mjs | Catalog、原地址抓取、插件解析与 materialization |
+| resources.mjs | 原地址传输、资源限额、运行级依赖缓存与磁盘快照 |
+| input.mjs | Catalog、插件解析、源声明准备与 materialization |
 | output.mjs | Metadata/注释、目标序列化与 validators |
 | runtime.mjs | 共同 helper/dispatcher emitter |
 | workflow.mjs | 产物生命周期、README 索引、诊断与报告 |
@@ -273,7 +278,7 @@ Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生�
 | 复杂脚本及阶段 owner | planRewriteFeatureHelper、prepareRewriteDispatchers | runtime/oracle、phase/author ownership |
 | 作者选项与参数 | Script planners、共同绑定校验 | script、conversion-policy |
 | README 来源折叠组及动态索引 | buildReadmePlan、sync transaction | readme-index、managed cleanliness |
-| 原地址、全量转换与不覆盖 | input transport、sync-convert、workflow lifecycle | source-fetch、事务/发布测试、完整 Action |
+| 原地址、全量转换与不覆盖 | resources transport/snapshot、sync-convert、workflow lifecycle | source-fetch、事务/发布测试、完整 Action |
 
 能力扩展须有源/目标官方依据及相应语义证据，开发时按改动范围验证；日常 Action 不重跑开发回归。不能仅为减少诊断而扩大未证明的转换范围。
 

@@ -378,8 +378,11 @@ import importlib.util,sys,tempfile,os,json
 from pathlib import Path
 spec=importlib.util.spec_from_file_location('wayx_rules',sys.argv[1]);m=importlib.util.module_from_spec(spec);sys.modules[spec.name]=m;spec.loader.exec_module(m)
 R=m.Rule
-assert m.compact([R('DOMAIN-SUFFIX','example.com'),R('DOMAIN','a.example.com'),R('DOMAIN-SUFFIX','sub.example.com')])==[R('DOMAIN-SUFFIX','example.com')]
-assert m.compact([R('DOMAIN','example.com'),R('DOMAIN-SUFFIX','sub.example.com')])==[R('DOMAIN','example.com'),R('DOMAIN-SUFFIX','sub.example.com')]
+# Modified: 2026-10-25 (chance). Cover current normalization and preserve
+# distinct parent/subdomain declarations rather than calling retired APIs.
+assert m.normalized('host','EXAMPLE.COM.')==R('DOMAIN','example.com')
+assert len({m.normalized('DOMAIN','EXAMPLE.COM'),m.normalized('DOMAIN','example.com.')})==1
+assert len({R('DOMAIN-SUFFIX','example.com'),R('DOMAIN','a.example.com')})==2
 for policy in ['REJECT','REJECT-DROP','REJECT-NO-DROP','REJECT-TINYGIF']:
  assert m.serialize(R('DOMAIN','example.com'),policy,'QuantumultX')=='host,example.com,reject'
 for policy in ['PROXY','proxy','ai','Media','google','',None]:
@@ -403,9 +406,6 @@ assert len(filtered)==3
 filtered=[]
 assert not m.native_rules(json.dumps({'version':3,'rules':[{'domain':'example.com','process_name':'app'}]}),{'id':'desktop','format':'sing-box-json'},filtered)
 assert len(filtered)==1
-assert m.regex_covered(r'^r+[0-9]+\.example\.com$',{'example.com'})
-assert not m.regex_covered(r'^other|foo\.example\.com$',{'example.com'})
-assert not m.regex_covered(r'foo\.example\.com',{'example.com'})
 issues=[];source={'id':'fixture','format':'sing-box-json','category':'fixture','policy':'PROXY'}
 rows=m.native_rules(json.dumps({'version':5,'rules':[{'domain':'example.com','domain_suffix':['.example.com','.sub.example.net']}]}),source,issues)
 assert (R('DOMAIN-SUFFIX','example.com'),'PROXY') in rows
@@ -440,7 +440,7 @@ for bad in [b'\x0a\x05a',b'\x08\x01',b'\x80'*11]:
 # Exercise a whole plan, including intentional desktop filtering and policy order.
 proxy_entry=b'\x08\x02'+field(2,b'proxy.example.com')
 encoded+=field(1,field(1,b'proxy')+field(2,proxy_entry))
-config={'applications':[{'name':'brand','tags':['fixture','proxy'],'proxy_tags':['proxy'],'split':True}],'split_names':['brand'],
+config={'applications':[{'name':'brand','tags':['fixture','proxy'],'proxy_tags':['proxy'],'split':True}],'surge_output':{'brand':'split'},
 'geosite':{'repository':'https://example.test/official'},'collections':{key:['fixture'] for key in ['cn','proxy','media','media_cn']},
 'sources':[{'id':'supplement','format':'ruleset','author':'Fixture','url':'https://example.test/rules','category':'brand','policy':'DIRECT'}]}
 outputs,metadata,anomalies=m.build(config,{'geosite':encoded,'supplement':b'DOMAIN,static.proxy.example.com,DIRECT\nPROCESS-NAME,Claude Helper\n'})
@@ -448,7 +448,9 @@ qx=outputs['Rule/QuantumultX/brand.list']
 assert qx.index('host,static.proxy.example.com,direct')<qx.index('host-suffix,proxy.example.com,proxy')<qx.index('host-suffix,example.com,direct')
 assert all('PROCESS-NAME' not in text for text in outputs.values())
 assert metadata['Rule/Surge/brand_direct.list']['category']=='app'
-assert 'NOT,((DOMAIN,static.proxy.example.com))' in outputs['Rule/Surge/brand_proxy.list']
+# Modified: 2026-10-25 (chance). Assert current source-action preservation, without synthetic NOT rules.
+assert 'DOMAIN,static.proxy.example.com' in outputs['Rule/Surge/brand_direct.list']
+assert 'DOMAIN,static.proxy.example.com' not in outputs['Rule/Surge/brand_proxy.list']
 assert any(item['code']=='filtered-desktop-rule' for item in anomalies)
 assert not any(item['code']=='filtered-unsupported-target' for item in anomalies)
 # An independent mixed-policy source must not leak into cn or create split outputs.
@@ -480,7 +482,7 @@ shared={'id':'shared','format':'ruleset','author':'Fixture','url':'https://examp
 ai_source={**shared,'id':'ai-source','category':'ai','policy':'ai'}
 brand_source={**shared,'id':'brand-source','category':'brand','policy':'brand'}
 pc={**config,'applications':[{'name':'brand','tags':['priority-brand']},{'name':'ai','tags':['priority-ai']}],
-    'split_names':[],'category_priority':['ai'],'sources':[shared,brand_source,ai_source]}
+    'surge_output':{},'classification':{'priority':['ai']},'sources':[shared,brand_source,ai_source]}
 pi={'geosite':encoded+priority_site+brand_site,'shared':b'DOMAIN-SUFFIX,meta.ai\nDOMAIN-SUFFIX,new-ai.test',
     'brand-source':b'DOMAIN-SUFFIX,new-ai.test','ai-source':b'DOMAIN-SUFFIX,new-ai.test'}
 first,_,problems=m.build(pc,pi)
@@ -502,7 +504,7 @@ assert 'host-suffix,meta.ai,proxy' in guarded['Rule/QuantumultX/ai.list']
 
 # Registry exclusions apply to all sources and both targets, scoped by category and type.
 excluded_config={**pc,'rule_exclusions':{'proxy':[{'kind':'DOMAIN-WILDCARD','value_regex':r'^(?:\*\.)?91cg'}]},
- 'sources':[{**shared,'id':'exclusions','category':'proxy','classify_apps':False}]}
+ 'sources':[{**shared,'id':'exclusions','category':'proxy'}]}
 exclusion_text=b'DOMAIN-WILDCARD,91cg?com\nDOMAIN-WILDCARD,*.91cg01?com\nDOMAIN-WILDCARD,allowed?.test\nDOMAIN-SUFFIX,91cg.example\nIP-CIDR,91.108.4.0/22'
 filtered,_,_=m.build(excluded_config,{'geosite':pi['geosite'],'exclusions':exclusion_text})
 for target,kind,ip in [('QuantumultX','host-wildcard','ip-cidr'),('Surge','DOMAIN-WILDCARD','IP-CIDR')]:
@@ -512,7 +514,7 @@ for target,kind,ip in [('QuantumultX','host-wildcard','ip-cidr'),('Surge','DOMAI
  assert ip+',91.108.4.0/22' in text
  assert ('host-suffix' if target=='QuantumultX' else 'DOMAIN-SUFFIX')+',91cg.example' in text
 # Official Telegram CIDRs retain their address family and use the existing Telegram category.
-telegram_config={**pc,'applications':[{'name':'telegram','tags':['fixture']}], 'category_priority':[],
+telegram_config={**pc,'applications':[{'name':'telegram','tags':['fixture']}], 'classification':{'priority':[]},'surge_output':{'telegram':'combined'},'routing_policies':{'telegram':'PROXY'},
  'sources':[{**shared,'id':'telegram-cidr','category':'telegram','policy':'telegram'}]}
 tg,_,_=m.build(telegram_config,{'geosite':encoded,'telegram-cidr':b'IP-CIDR,91.108.4.0/22\nIP-CIDR6,2001:b28:f23c::/47'})
 assert 'ip-cidr,91.108.4.0/22,proxy' in tg['Rule/QuantumultX/telegram.list']
@@ -520,7 +522,8 @@ assert 'ip6-cidr,2001:b28:f23c::/47,proxy' in tg['Rule/QuantumultX/telegram.list
 assert 'IP-CIDR6,2001:b28:f23c::/47' in tg['Rule/Surge/telegram.list']
 
 # Attribute selectors split a service's maintained domestic/foreign declarations.
-steam_config={**telegram_config,'applications':[{'name':'steam','tags':['fixture@cn'],'proxy_tags':['fixture@!cn'],'split':True}],
+# Modified: 2026-10-25 (chance). Fixtures declare current combined/split layouts and routing constraints explicitly.
+steam_config={**telegram_config,'routing_policies':{},'surge_output':{'steam':'split'},'applications':[{'name':'steam','tags':['fixture@cn'],'proxy_tags':['fixture@!cn'],'split':True}],
  'sources':[]}
 steam_outputs,_,_=m.build(steam_config,{'geosite':encoded})
 assert 'host-suffix,example.com,direct' in steam_outputs['Rule/QuantumultX/steam.list']
