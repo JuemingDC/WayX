@@ -1,11 +1,11 @@
 # Name: apple_direct
-# Updated: 2026-10-24 19:42:56 UTC
+# Updated: 2026-10-25 05:19:54 UTC
 # Converted by: chance
 # Source Authors: Nexitally, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1783
+# Rules: 1804
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net
@@ -263,6 +263,7 @@ DOMAIN-SUFFIX,1to1computing.com.au
 DOMAIN-SUFFIX,1to1conference.com.au
 DOMAIN-SUFFIX,advertising.apple.com
 DOMAIN-SUFFIX,api-adservices.apple.com
+DOMAIN-SUFFIX,appldnld.apple.com
 DOMAIN-SUFFIX,apple-dns.com.cn
 DOMAIN-SUFFIX,apple-watch.com.ru
 DOMAIN-SUFFIX,apple.co.cr
@@ -351,8 +352,15 @@ DOMAIN-SUFFIX,appstore.co.id
 DOMAIN-SUFFIX,beats1.com.cn
 DOMAIN-SUFFIX,beats2.com.cn
 DOMAIN-SUFFIX,beatsbydre.com.cn
+DOMAIN-SUFFIX,configuration.apple.com
 DOMAIN-SUFFIX,ecgapp.com.cn
 DOMAIN-SUFFIX,emac.co.in
+DOMAIN-SUFFIX,fcs-keys-pub-prod.cdn-apple.com
+DOMAIN-SUFFIX,gdmf-ados.apple.com
+DOMAIN-SUFFIX,gdmf.apple.com
+DOMAIN-SUFFIX,gg.apple.com
+DOMAIN-SUFFIX,gs.apple.com
+DOMAIN-SUFFIX,gsra.apple.com
 DOMAIN-SUFFIX,iad.apple.com
 DOMAIN-SUFFIX,iadsdk.apple.com
 DOMAIN-SUFFIX,ibook.co.nz
@@ -360,6 +368,7 @@ DOMAIN-SUFFIX,ichat.co.in
 DOMAIN-SUFFIX,icloud-content.com.cn
 DOMAIN-SUFFIX,icloud.com.cn
 DOMAIN-SUFFIX,icloud.net.cn
+DOMAIN-SUFFIX,ig.apple.com
 DOMAIN-SUFFIX,ilecture.co.nz
 DOMAIN-SUFFIX,imac.co.nz
 DOMAIN-SUFFIX,ipad.co.kr
@@ -396,12 +405,24 @@ DOMAIN-SUFFIX,macbookair.com.cn
 DOMAIN-SUFFIX,macbookair.com.es
 DOMAIN-SUFFIX,macbookpro.com.au
 DOMAIN-SUFFIX,macos.com.au
+DOMAIN-SUFFIX,mesu.apple.com
 DOMAIN-SUFFIX,mr-apple.com.tw
+DOMAIN-SUFFIX,oscdn.apple.com
+DOMAIN-SUFFIX,osrecovery.apple.com
 DOMAIN-SUFFIX,push.apple.com
 DOMAIN-SUFFIX,quicktime.com.au
 DOMAIN-SUFFIX,researchkit.com.cn
+DOMAIN-SUFFIX,skl.apple.com
+DOMAIN-SUFFIX,swcdn.apple.com
+DOMAIN-SUFFIX,swdist.apple.com
+DOMAIN-SUFFIX,swdownload.apple.com
 DOMAIN-SUFFIX,swiftui.com.cn
+DOMAIN-SUFFIX,swscan.apple.com
+DOMAIN-SUFFIX,updates-http.cdn-apple.com
+DOMAIN-SUFFIX,updates.cdn-apple.com
 DOMAIN-SUFFIX,webobjects.co.uk
+DOMAIN-SUFFIX,wkms-public.apple.com
+DOMAIN-SUFFIX,xp.apple.com
 DOMAIN-SUFFIX,100beatscheap.com
 DOMAIN-SUFFIX,12diasdepresentesdeitunes.com
 DOMAIN-SUFFIX,12diasderegalosdeitunes.cl
