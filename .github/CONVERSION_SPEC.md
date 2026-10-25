@@ -1,6 +1,6 @@
 # WayX Conversion Specification
 
-版本：2.18
+版本：2.19
 
 更新：2026-10-25
 作者：chance  
@@ -283,6 +283,11 @@ Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生�
 能力扩展须有源/目标官方依据及相应语义证据，开发时按改动范围验证；日常 Action 不重跑开发回归。不能仅为减少诊断而扩大未证明的转换范围。
 
 ## 2.19 Python 规则集聚合
+
+
+<!-- Modified: 2026-10-25 (chance). Explicitly select the independent apple-update service; the optimized aggregate apple release may omit its more-specific entries. -->
+
+Apple 的直连 tags 显式同时选择 `apple` 与 `apple-update`；不能依赖综合 `apple` 发布数据保留所有更新服务的细分域名。保留上游 `apple-update` 的原生匹配类型，由既有 split 默认直连逻辑处理，不手写生成文件、不把其它源的 PROXY 声明改成 DIRECT。QX 的 Apple 资源必须保留逐条策略并放在通用 cn/proxy fallback 之前；`force-policy` 会覆盖逐条策略，资源选择器无法修复设备端的强制策略、DNS 或 HTTPS 解密设置。仓库覆盖检查不等于设备端已恢复更新。
 
 Geosite 分类选择器统一支持 `分类@属性` 与 `分类@!属性`，按发布数据中的属性拆分，不在转换器中按应用名称编写分支。Steam 使用 `steam@cn` 直连、其余 Steam 规则代理；补充国内源并入同一分类。QX 保留单文件逐条策略，Surge 拆分 direct/proxy。
 

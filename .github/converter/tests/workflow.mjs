@@ -560,6 +560,24 @@ with tempfile.TemporaryDirectory() as temp:
  try:m.apply_outputs(outputs,metadata,{'outputs':{}})
  except ValueError:pass
  else:raise AssertionError('Unmanaged file overwritten')
+# Modified: 2026-10-25 (chance). Use the actual registry selectors with an
+# optimized apple fixture that omits gdmf; the independent update tag must survive.
+registry=json.loads((Path(sys.argv[1]).parent.parent/'sources/rules.json').read_text())
+apple=next(item for item in registry['applications'] if item['name']=='apple')
+assert 'apple-update' in apple['tags']
+def site_payload(tag,domains):
+ return field(1,field(1,tag.encode())+b''.join(field(2,b'\x08\x02'+field(2,d.encode())) for d in domains))
+update_hosts=['gdmf.apple.com','gdmf-ados.apple.com','mesu.apple.com','swscan.apple.com','updates.cdn-apple.com']
+apple_data=site_payload('apple',['apple.com'])+site_payload('apple-update',update_hosts)+site_payload('apple-intelligence',[])+site_payload('apple-tvplus',['tv.apple.com'])
+apple_config={'applications':[apple],'geosite':{'repository':'https://example.test/official'},
+ 'collections':{key:[] for key in ['cn','proxy','media','media_cn']},'sources':[],'surge_output':{'apple':'split'}}
+apple_out,_,_=m.build(apple_config,{'geosite':apple_data})
+for host in update_hosts:
+ assert 'host-suffix,'+host+',direct' in apple_out['Rule/QuantumultX/apple.list']
+ assert 'host-suffix,'+host+',proxy' not in apple_out['Rule/QuantumultX/apple.list']
+ assert 'DOMAIN-SUFFIX,'+host in apple_out['Rule/Surge/apple_direct.list']
+assert 'host-suffix,tv.apple.com,proxy' in apple_out['Rule/QuantumultX/apple.list']
+
 print('Python rule aggregation contracts passed')
 `,path.join(ROOT,'.github/converter/rules.py')],{encoding:'utf8'});
   assert.equal(pythonRules.status,0,pythonRules.stdout+'\n'+pythonRules.stderr);
