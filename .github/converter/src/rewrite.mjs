@@ -619,7 +619,7 @@ function validateParts(parts) {
 }
 
 // Modified: 2026-10-25 (chance). Always generate native delpaths path arrays
-// for fixed-path deletion; preserve ordered evaluation for dependent removals.
+// for fixed-path deletion; dependent removals use ordered native pipes.
 export function planFixedPathDeleteJq(paths, {sourceForm='key-path', execution='sequential'}={}) {
   if (!Array.isArray(paths) || !paths.length) {
     throw new Error('delete path list must contain nonempty parsed paths');
@@ -647,7 +647,7 @@ export function planFixedPathDeleteJq(paths, {sourceForm='key-path', execution='
   }
   if(dependency)return {
     form:'ordered-delpaths', reason:dependency, sourceForm, execution,
-    jq:'reduce '+JSON.stringify(parts)+'[] as $p (.; delpaths([$p]))',
+    jq:parts.map(path=>'delpaths('+JSON.stringify([path])+')').join(' | '),
   };
   return {
     form:'delpaths', reason:'native-path-array-deletion', sourceForm, execution,

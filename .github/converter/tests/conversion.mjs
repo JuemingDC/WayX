@@ -1333,8 +1333,8 @@ const indexedDeleteAst = parseRewriteV2(
 );
 const indexedDeleteQx = qxDirectRewritePlan(indexedDeleteAst);
 const indexedDeleteSurge = surgeDirectRewritePlan(indexedDeleteAst);
-assert.ok(indexedDeleteQx.line.includes('reduce [["items",0],["items",1]][] as $p (.; delpaths([$p]))'));
-assert.ok(indexedDeleteSurge.line.includes('reduce [["items",0],["items",1]][] as $p (.; delpaths([$p]))'));
+assert.ok(indexedDeleteQx.line.includes('delpaths([["items",0]]) | delpaths([["items",1]])'));
+assert.ok(indexedDeleteSurge.line.includes('delpaths([["items",0]]) | delpaths([["items",1]])'));
 
 const jqAst = parseRewriteV2(
   'response if ${url} ~= /^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idle\\.trade\\.full\\.info\\//i then response.json.jq(".data.components |= map(select(.render | . == \\"orderStatusVO\\" or . == \\"addressInfoVO\\" or . == \\"orderInfoVO\\"))")'

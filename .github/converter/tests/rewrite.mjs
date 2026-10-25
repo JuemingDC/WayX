@@ -305,7 +305,7 @@ assert.equal(
     {parts:['items',0], selector:'.items[0]'},
     {parts:['items',1], selector:'.items[1]'},
   ]),
-  'reduce [["items",0],["items",1]][] as $p (.; delpaths([$p]))',
+  'delpaths([["items",0]]) | delpaths([["items",1]])',
 );
 
 // Modified: 2026-10-23 (chance). Execute planner decisions with real jq:
@@ -325,7 +325,7 @@ for(const {paths,options,input,expected,form} of [
   const result=runIsolatedCase('jq',['-c',plan.jq],{input:JSON.stringify(input),encoding:'utf8'});
   assert.equal(result.status,0,result.stderr);
   assert.deepEqual(JSON.parse(result.stdout),expected);
-  assert.ok(!plan.jq.includes('|'),'generated deletion must not contain del pipelines');
+  assert.ok(!plan.jq.includes('reduce '),'generated deletion uses native pipes rather than reduce');
 }
 
 assert.equal(selectQxScriptAction({phase:'http-request',requiresBody:true,scriptUrl:'https://example.com/request.js',sourceText:'$done({status:"HTTP/1.1 200 OK",body:$request.body});'}).action, 'script-request-body');
