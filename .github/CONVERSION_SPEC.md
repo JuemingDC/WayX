@@ -57,11 +57,13 @@ Surge 输出的目的 IP 类规则（IP-CIDR、IP-CIDR6、GEOIP、IP-ASN，包�
 
 ## 2.4 Regex、条件与捕获
 
-源 Regex literal 只去除最外层 delimiter；仅结束分隔符后的后缀识别为 flags。逐字符保留主体中的转义、斜线、字符类、分组、量词和 lookaround，不作 case folding、全局 `\\/ → /`、捕获组重写；源后缀 flags 保留在 AST/IR，当前目标原生输出暂不添加内联前缀。
+源 Regex literal 只去除最外层 delimiter；仅结束分隔符后的后缀识别为 flags。逐字符保留主体中的转义、斜线、字符类、分组、量词和 lookaround，不作 case folding、全局 `\\/ → /`、捕获组重写；源后缀 flags 保留在 AST/IR，目标原生输出按下述目标/字段策略映射 flags。
 
-<!-- Modified: 2026-10-25 (chance). Temporarily omit native inline flags at the user's explicit request; retain commented mapping for later field-specific verification. -->
+<!-- Modified: 2026-10-26 (chance). QX author confirms ims support; user restores only native Header/Body m/s. -->
 
-当前用户明确授权的临时兼容例外：QX/Surge 原生字段只输出正则主体，暂停把源 `/pattern/i`、`/pattern/m`、`/pattern/s` 或组合后缀改为 `(?i)` 等前缀；映射赋值代码注释保留，以便后续在确认客户端相应字段支持后恢复。原生 Header 值匹配中的源 flags 嵌入同样暂停。不能据用户设备现象宣称所有版本、所有字段均不支持；也不能声称省略 flags 与源语义等价。源 AST/IR、原始声明及 JavaScript helper 内的 `RegExp(source, flags)` 保留源 flags，用户授权只适用于目标原生 flags 映射，不改变其它转换语义。严格等价接口仍拒绝未经证明的 flagged 原生映射；不得因本策略静默改写原作者脚本。
+2026-10-26 用户提供 Quantumult X 作者回复，确认 URL、request/response-header 和 request/response-body 正则均支持 `(?i)`、`(?m)`、`(?s)` 及组合，版本间支持一致。作者建议 URL 匹配通常省略 flags。用户进一步明确：继续忽略源 `i`，URL 仅保留正则主体；QX Header/Body 恢复源 `m`、`s`，组合按 `(?ms)` 输出，Header 值嵌入使用 `(?ms:pattern)` 保留局部作用域。没有源 flags 时不新增。Surge 未获其作者确认，继续省略源 flags，不依据 QX 回复推断 Surge 支持。
+
+上述省略 `i`、URL flags 仍是用户授权的语义例外，不能声称支持缺失，也不能声称与保留全部源 flags 完全等价。严格等价接口拒绝被省略的源 flags；QX Header/Body 仅含 m/s 时允许映射。源 AST/IR、作者原脚本和 JavaScript helper 内的 `RegExp(source, flags)` 保留原 flags。协议 Header 名称匹配所需的大小写处理和整头遍历标记不属于源 flags，不因本策略删除；无法安全限制在单字段的 Header 替换继续使用原有 helper/诊断边界。保留域名字面量的 `\.`，不自动给作者正则加锚点或改写点号。
 
 
 动态 Regex 只接受完整 `/pattern/flags` 或语义 Regex 节点，不执行表达式、不二次展开变量，缺失或无效值不匹配；生成 helper 保留解析出的 `i/m/s`。

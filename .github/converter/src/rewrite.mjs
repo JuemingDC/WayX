@@ -1566,7 +1566,8 @@ export function qxDirectRewritePlan(ast, {matcher = null} = {}) {
     const regex = action.args[0];
     const replacement = stringNode(action.args[1]);
     if (regex?.type !== 'regex' || replacement === null) return unsupported(action.name + ': invalid body replacement arguments');
-    const bodyRegex = compileRegexForTarget(regex, { subject: 'body' });
+    // Modified: 2026-10-26 (chance). Apply QX-only Header/Body m/s policy.
+    const bodyRegex = compileRegexForTarget(regex, { subject: 'body', target: 'qx' });
     if (!bodyRegex.ok) return unsupported(bodyRegex.reason);
     if (/\s/.test(bodyRegex.pattern) || /[\r\n]/.test(replacement)) return unsupported('QX direct body replacement with literal whitespace requires script fallback');
     const token = primitive;
@@ -1621,7 +1622,8 @@ export function surgeDirectRewritePlan(ast) {
     const regex = action.args[0];
     const replacement = stringNode(action.args[1]);
     if (regex?.type !== 'regex' || replacement === null) return unsupported(action.name + ': invalid body replacement arguments');
-    const bodyRegex = compileRegexForTarget(regex, { subject: 'body' });
+    // Modified: 2026-10-26 (chance). Keep Surge flag mapping independently disabled.
+    const bodyRegex = compileRegexForTarget(regex, { subject: 'body', target: 'surge' });
     if (!bodyRegex.ok) return unsupported(bodyRegex.reason);
     if (/\s/.test(bodyRegex.pattern) || /[\r\n]/.test(replacement)) return unsupported('Surge direct body replacement with literal whitespace requires script fallback');
     const token = REWRITE_MUTATION_MAPPINGS[action.name].surge;
@@ -1774,7 +1776,8 @@ function surgeHeaderLine(pattern, action, args) {
     const regex = args[1];
     const replacement = fixedNoTemplate(args[2], 'header replacement');
     if (regex?.type !== 'regex') throw new Error('header.replace regex must be fixed');
-    const compiled = compileRegexForTarget(regex, {subject:'header'});
+    // Modified: 2026-10-26 (chance). QX author confirmation does not apply to Surge.
+    const compiled = compileRegexForTarget(regex, {subject:'header',target:'surge'});
     if (!compiled.ok) throw new Error(compiled.reason);
     if (/\s/.test(compiled.pattern) || /[\r\n]/.test(replacement)) {
       throw new Error('Surge header-replace-regex with literal whitespace requires script fallback');
@@ -2761,10 +2764,11 @@ function qxNativeHeaderPlan(ast) {
       const pattern=String(regex.pattern);
       if(/[\^$]|\\[sSDWnr1-9xucpP0]|\(\?[^:]|\[\^|\[\[:/.test(pattern) || (regex.flags?.includes('s') && pattern.includes('.')))return null;
       const field=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-      // Modified: 2026-10-25 (chance). Apply the same source-flag omission
-      // to the embedded Header value matcher; keep grouping/captures intact.
-      // const body=regex.flags?'(?'+regex.flags+':'+pattern+')':'(?:'+pattern+')';
-      const body='(?:'+pattern+')';
+      // Modified: 2026-10-26 (chance). Restore only source m/s inside the
+      // Header value group. Keep source i omitted and field-name casing intact.
+      const compiled=compileRegexForTarget(regex,{subject:'header',target:'qx'});
+      if(!compiled.ok)return null;
+      const body=compiled.mappedFlags?'(?'+compiled.mappedFlags+':'+pattern+')':'(?:'+pattern+')';
       const token=REWRITE_MUTATION_MAPPINGS[ast.actions[0].name].qx;
       const search='(?m)^((?i:'+field+'):[\\t\\x20]*[^\\r\\n]*?)('+body+')';
       const value='$1'+replacement.replace(/\$(\d+)/g,(_,number)=>'$'+(Number(number)+2));

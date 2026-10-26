@@ -1303,6 +1303,27 @@ for (const target of ['qx','surge']) for (const flags of ['', 'i','m','s','im','
   assert.equal(compileRegexForTarget(regex,{target,requireEquivalent:true}).ok,!flags,'inline policy does not assert unverified client equivalence');
 }
 
+// Modified: 2026-10-26 (chance). Only QX Header/Body source m/s return;
+// source i and all URL flags stay omitted, and Surge is independently disabled.
+for(const target of ['qx','surge']) for(const subject of ['url','header','body','script']) for(const flags of ['', 'i','m','s','im','is','ms','ims','smi']) {
+  const regex={type:'regex',pattern:'a.b',flags},before=JSON.stringify(regex);
+  const mapped=target==='qx'&&['header','body'].includes(subject)?[...'ms'].filter(f=>flags.includes(f)).join(''):'';
+  const out=compileRegexForTarget(regex,{target,subject});
+  assert.equal(out.pattern,(mapped?'(?'+mapped+')':'')+'a.b');
+  assert.equal(JSON.stringify(regex),before);
+  assert.equal(compileRegexForTarget(regex,{target,subject,requireEquivalent:true}).ok,[...flags].every(f=>mapped.includes(f)));
+}
+const restoredBodyAst=parseRewriteV2('response if ${url} ~= /api/i then response.body.replace(/a.b/ims, "x")');
+const restoredBody=qxDirectRewritePlan(restoredBodyAst);
+assert.ok(restoredBody.line.includes('api url response-body (?ms)a.b response-body x'));
+assert.ok(!restoredBody.line.includes('(?i)'));
+assert.ok(!surgeDirectRewritePlan(restoredBodyAst).line.includes('(?ms)'));
+const restoredHeaderSource='request if ${url} ~= /api/i then request.header.replace("X-Test", /abc/ims, "xyz")';
+const restoredHeaderIr=rewriteV2AstToSemanticIr(parseRewriteV2(restoredHeaderSource),restoredHeaderSource);
+const restoredHeader=planQxRewrite(restoredHeaderIr);
+assert.ok(restoredHeader.line.includes('(?ms:abc)'));
+assert.ok(!restoredHeader.line.includes('(?ims:abc)'));
+assert.ok(restoredHeader.line.startsWith('api url request-header '));
 const qxDeleteV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /^https:\\/\\/api\\.example\\.com\\/feed/i then response.json.delete(["data.ads", "data.apps[0].promo"])'));
 assert.equal(qxDeleteV2.ok, true);
 assert.match(qxDeleteV2.line, /url jsonjq-response-body/);
