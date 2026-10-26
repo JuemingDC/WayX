@@ -1,11 +1,11 @@
 # Name: proxy
-# Updated: 2026-10-26 01:18:26 UTC
+# Updated: 2026-10-26 21:48:15 UTC
 # Converted by: chance
 # Source Authors: Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 34111
+# Rules: 34118
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,proxy
@@ -195,6 +195,8 @@ host,cma.itunes.apple.com,proxy
 host,cn.download.nvidia.com,proxy
 host,csis-prod.s3.amazonaws.com,proxy
 host,datarouter.apps.netherrealm.com,proxy
+host,dc.applicationinsights.azure.com,proxy
+host,dc.services.visualstudio.com,proxy
 host,dc1-cert.ksn.kaspersky-labs.com,proxy
 host,dc1-file.ksn.kaspersky-labs.com,proxy
 host,dc1-pp.ksn.kaspersky-labs.com,proxy
@@ -318,6 +320,7 @@ host,lgcscc-hamivideo2.cdn.hinet.net,proxy
 host,lgelectronics.122.2o7.net,proxy
 host,licdn.cn.cdn20.com,proxy
 host,linkedin.sc.omtrdc.net,proxy
+host,live.applicationinsights.azure.com,proxy
 host,lm.licenses.adobe.com,proxy
 host,lmlicenses.wip4.adobe.com,proxy
 host,log.strm.yandex.ru,proxy
@@ -394,6 +397,7 @@ host,robloxcorp.s.llnwi.net,proxy
 host,roovza.inapps.appsflyersdk.com,proxy
 host,roovza.launches.appsflyersdk.com,proxy
 host,roovza.skadsdk.appsflyersdk.com,proxy
+host,rt.services.visualstudio.com,proxy
 host,s00.upd.kaspersky.com,proxy
 host,s01.upd.kaspersky.com,proxy
 host,s02.upd.kaspersky.com,proxy
@@ -1499,6 +1503,7 @@ host-suffix,greatfire.us7.list-manage.com,proxy
 host-suffix,gstore.val.manlaxy.com,proxy
 host-suffix,gtlsca.nat.gov.tw,proxy
 host-suffix,hkcoc.weather.com.hk,proxy
+host-suffix,in.applicationinsights.azure.com,proxy
 host-suffix,ipfs.eth.aragon.network,proxy
 host-suffix,jstage.jst.go.jp,proxy
 host-suffix,ncbi.nlm.nih.gov,proxy
@@ -2201,6 +2206,7 @@ host-suffix,daiichibank.co.jp,proxy
 host-suffix,dailymail.co.uk,proxy
 host-suffix,dailymail.com.au,proxy
 host-suffix,dailytelegraph.com.au,proxy
+host-suffix,data.microsoft.com,proxy
 host-suffix,dcg.microsoft.com,proxy
 host-suffix,ddc.com.tw,proxy
 host-suffix,deepfreeze.co.uk,proxy
@@ -3708,6 +3714,7 @@ host-suffix,tbr.tangbr.net,proxy
 host-suffix,technogym.com.br,proxy
 host-suffix,techtudo.com.br,proxy
 host-suffix,tegrazone.co.kr,proxy
+host-suffix,telemetry.microsoft.com,proxy
 host-suffix,terapeak.com.hk,proxy
 host-suffix,tesla.com.cn,proxy
 host-suffix,teslamotors.com.cn,proxy
@@ -19966,6 +19973,7 @@ host-suffix,library.lol,proxy
 host-suffix,librarylovefest.com,proxy
 host-suffix,libraryofthumbs.com,proxy
 host-suffix,libredd.it,proxy
+host-suffix,librewolf.dev,proxy
 host-suffix,librewolf.net,proxy
 host-suffix,libsolutions.app,proxy
 host-suffix,libsolutions.domains,proxy
@@ -28788,7 +28796,6 @@ host-suffix,test-ipv6.cz,proxy
 host-suffix,test-ipv6.hu,proxy
 host-suffix,test-ipv6.is,proxy
 host-suffix,test-ipv6.se,proxy
-host-suffix,testipv6.cn,proxy
 host-suffix,testipv6.de,proxy
 host-suffix,testonfox.com,proxy
 host-suffix,tetrika-school.ru,proxy

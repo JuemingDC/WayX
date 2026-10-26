@@ -1,11 +1,11 @@
 # Name: microsoft
-# Updated: 2026-10-25 05:49:22 UTC
+# Updated: 2026-10-26 21:48:15 UTC
 # Converted by: chance
 # Source Authors: MetaCubeX, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/azure@cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/bing@cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/microsoft-pki.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/microsoft@cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/onedrive.json
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 697
+# Rules: 704
 # Managed by: WayX Rule Aggregator
 
 host,b.c2r.ts.cdn.office.net,direct
@@ -52,7 +52,11 @@ host,vz.download.prss.microsoft.com,direct
 host,windbg.download.prss.microsoft.com,direct
 host,az764295.vo.msecnd.net,proxy
 host,bj1.api.bing.com,direct
+host,dc.applicationinsights.azure.com,proxy
+host,dc.services.visualstudio.com,proxy
 host,download.visualstudio.microsoft.com,direct
+host,live.applicationinsights.azure.com,proxy
+host,rt.services.visualstudio.com,proxy
 host,shell.cdn.office.net,direct
 host,vscode.search.windows.net,proxy
 host,azure.microsoft.com,proxy
@@ -94,10 +98,12 @@ host-suffix,browser.events.data.msn.cn,proxy
 host-suffix,browser.events.data.msn.com,proxy
 host-suffix,dl.delivery.mp.microsoft.com,direct
 host-suffix,cn.mm.bing.net,direct
+host-suffix,in.applicationinsights.azure.com,proxy
 host-suffix,skydrive.wns.windows.com,proxy
 host-suffix,bing.com.cn,direct
 host-suffix,cn.bing.com,direct
 host-suffix,cn.bing.net,direct
+host-suffix,data.microsoft.com,proxy
 host-suffix,dcg.microsoft.com,direct
 host-suffix,ditu.live.com,direct
 host-suffix,download.windowsupdate.com,direct
@@ -120,6 +126,7 @@ host-suffix,skypedata.akadns.net,proxy
 host-suffix,spoprod-a.akamaihd.net,proxy
 host-suffix,storage.live.com,proxy
 host-suffix,storage.msn.com,proxy
+host-suffix,telemetry.microsoft.com,proxy
 host-suffix,th.bing.com,direct
 host-suffix,visualstudio.co.uk,proxy
 host-suffix,1drv.com,proxy

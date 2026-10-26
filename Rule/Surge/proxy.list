@@ -1,11 +1,11 @@
 # Name: proxy
-# Updated: 2026-10-26 01:18:26 UTC
+# Updated: 2026-10-26 21:48:15 UTC
 # Converted by: chance
 # Source Authors: Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 34111
+# Rules: 34118
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net
@@ -195,6 +195,8 @@ DOMAIN,cma.itunes.apple.com
 DOMAIN,cn.download.nvidia.com
 DOMAIN,csis-prod.s3.amazonaws.com
 DOMAIN,datarouter.apps.netherrealm.com
+DOMAIN,dc.applicationinsights.azure.com
+DOMAIN,dc.services.visualstudio.com
 DOMAIN,dc1-cert.ksn.kaspersky-labs.com
 DOMAIN,dc1-file.ksn.kaspersky-labs.com
 DOMAIN,dc1-pp.ksn.kaspersky-labs.com
@@ -318,6 +320,7 @@ DOMAIN,lgcscc-hamivideo2.cdn.hinet.net
 DOMAIN,lgelectronics.122.2o7.net
 DOMAIN,licdn.cn.cdn20.com
 DOMAIN,linkedin.sc.omtrdc.net
+DOMAIN,live.applicationinsights.azure.com
 DOMAIN,lm.licenses.adobe.com
 DOMAIN,lmlicenses.wip4.adobe.com
 DOMAIN,log.strm.yandex.ru
@@ -394,6 +397,7 @@ DOMAIN,robloxcorp.s.llnwi.net
 DOMAIN,roovza.inapps.appsflyersdk.com
 DOMAIN,roovza.launches.appsflyersdk.com
 DOMAIN,roovza.skadsdk.appsflyersdk.com
+DOMAIN,rt.services.visualstudio.com
 DOMAIN,s00.upd.kaspersky.com
 DOMAIN,s01.upd.kaspersky.com
 DOMAIN,s02.upd.kaspersky.com
@@ -1499,6 +1503,7 @@ DOMAIN-SUFFIX,greatfire.us7.list-manage.com
 DOMAIN-SUFFIX,gstore.val.manlaxy.com
 DOMAIN-SUFFIX,gtlsca.nat.gov.tw
 DOMAIN-SUFFIX,hkcoc.weather.com.hk
+DOMAIN-SUFFIX,in.applicationinsights.azure.com
 DOMAIN-SUFFIX,ipfs.eth.aragon.network
 DOMAIN-SUFFIX,jstage.jst.go.jp
 DOMAIN-SUFFIX,ncbi.nlm.nih.gov
@@ -2201,6 +2206,7 @@ DOMAIN-SUFFIX,daiichibank.co.jp
 DOMAIN-SUFFIX,dailymail.co.uk
 DOMAIN-SUFFIX,dailymail.com.au
 DOMAIN-SUFFIX,dailytelegraph.com.au
+DOMAIN-SUFFIX,data.microsoft.com
 DOMAIN-SUFFIX,dcg.microsoft.com
 DOMAIN-SUFFIX,ddc.com.tw
 DOMAIN-SUFFIX,deepfreeze.co.uk
@@ -3708,6 +3714,7 @@ DOMAIN-SUFFIX,tbr.tangbr.net
 DOMAIN-SUFFIX,technogym.com.br
 DOMAIN-SUFFIX,techtudo.com.br
 DOMAIN-SUFFIX,tegrazone.co.kr
+DOMAIN-SUFFIX,telemetry.microsoft.com
 DOMAIN-SUFFIX,terapeak.com.hk
 DOMAIN-SUFFIX,tesla.com.cn
 DOMAIN-SUFFIX,teslamotors.com.cn
@@ -19966,6 +19973,7 @@ DOMAIN-SUFFIX,library.lol
 DOMAIN-SUFFIX,librarylovefest.com
 DOMAIN-SUFFIX,libraryofthumbs.com
 DOMAIN-SUFFIX,libredd.it
+DOMAIN-SUFFIX,librewolf.dev
 DOMAIN-SUFFIX,librewolf.net
 DOMAIN-SUFFIX,libsolutions.app
 DOMAIN-SUFFIX,libsolutions.domains
@@ -28788,7 +28796,6 @@ DOMAIN-SUFFIX,test-ipv6.cz
 DOMAIN-SUFFIX,test-ipv6.hu
 DOMAIN-SUFFIX,test-ipv6.is
 DOMAIN-SUFFIX,test-ipv6.se
-DOMAIN-SUFFIX,testipv6.cn
 DOMAIN-SUFFIX,testipv6.de
 DOMAIN-SUFFIX,testonfox.com
 DOMAIN-SUFFIX,tetrika-school.ru

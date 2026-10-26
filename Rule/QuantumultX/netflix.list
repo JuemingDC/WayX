@@ -1,14 +1,15 @@
 # Name: netflix
-# Updated: 2026-10-25 05:49:22 UTC
+# Updated: 2026-10-26 21:48:15 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/netflix.json ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 32
+# Rules: 33
 # Managed by: WayX Rule Aggregator
 
 host,netflix.com.edgesuite.net,proxy
+host-suffix,netflix.com.edgesuite.net,proxy
 host-suffix,fast.com,proxy
 host-suffix,netflix.ca,proxy
 host-suffix,netflix.com,proxy

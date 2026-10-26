@@ -1,11 +1,11 @@
 # Name: ai
-# Updated: 2026-10-25 19:54:50 UTC
+# Updated: 2026-10-26 21:48:15 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/ai.json ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-intelligence.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-ai-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-communication.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/github.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/meta.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/openai.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_AI.list ; https://ruleset.skk.moe/List/ip/ai.conf ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/ai.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 416
+# Rules: 419
 # Managed by: WayX Rule Aggregator
 
 host,7h15.ru1353t.1s.m4d3.by.5ukk4w.skk.moe,proxy
@@ -17,6 +17,8 @@ host,openaicomproductionae4b.blob.core.windows.net,proxy
 host,alkalicore-pa.clients6.google.com,proxy
 host,alkalimakersuite-pa.clients6.google.com,proxy
 host,apple-relay.mask.apple-dns.net,proxy
+host,appsgenaiserver-pa.clients.google.com,proxy
+host,appsgenaiserver-pa.clients6.google.com,proxy
 host,gateway.ai.cloudflare.com,proxy
 host,geminiweb-pa.clients.google.com,proxy
 host,geminiweb-pa.clients6.google.com,proxy
@@ -40,6 +42,7 @@ host,api.together.xyz,proxy
 host,apple-relay.apple.com,proxy
 host,apple-relay.cloudflare.com,proxy
 host,apple-relay.fastly-edge.com,proxy
+host,appsgenaiserver-pa.googleapis.com,proxy
 host,bard.google.com,proxy
 host,cdn.usefathom.com,proxy
 host,cloudaicompanion.googleapis.com,proxy
