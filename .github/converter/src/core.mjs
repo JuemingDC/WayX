@@ -496,11 +496,15 @@ export function validateTargetRegex(pattern, label, {token=false}={}) {
   }
 }
 
-// Modified: 2026-10-25 (chance). Centralize native regex support by target and
-// field. Runner ICU compilation never upgrades an unverified client capability.
+// Modified: 2026-10-26 (chance). QX author confirms ims support. User
+// requests only source m/s in Header/Body; URL flags and source i stay omitted.
+// Surge remains disabled pending its own field-specific confirmation.
 export const TARGET_REGEX_CAPABILITIES=Object.freeze(Object.fromEntries(
   ['qx','surge','generic'].map(target=>[target,Object.freeze(Object.fromEntries(
-    ['url','body','header','script'].map(field=>[field,Object.freeze({inlineFlags:'temporarily-disabled',flags:'ims'})])
+    ['url','body','header','script'].map(field=>[field,Object.freeze({
+      inlineFlags:target==='qx'?'verified':'temporarily-disabled',flags:'ims',
+      emitFlags:target==='qx'&&['body','header'].includes(field)?'ms':'',
+    })])
   ))])
 ));
 export function targetRegexCapability(target,subject) {
@@ -509,20 +513,16 @@ export function targetRegexCapability(target,subject) {
 
 export function compileRegexForTarget(regex, { subject = 'url', target = 'generic', requireEquivalent = false } = {}) {
   if (!regex || regex.type !== 'regex') throw new TypeError('Expected Rewrite v2 regex AST node');
-
   const pattern = normalizeRegexBodyForTarget(regex.pattern);
   const flags = String(regex.flags || '');
-
   assertRegexNode(regex);
   const capability=targetRegexCapability(target,subject);
+  const mappedFlags=[...capability.emitFlags].filter(flag=>flags.includes(flag)).join('');
+  const omittedFlags=[...flags].filter(flag=>!mappedFlags.includes(flag)).join('');
   const compatibilityUnverified=Boolean(flags) && capability.inlineFlags!=='verified';
-  if (compatibilityUnverified && requireEquivalent) return {ok:false,reason:target+' native '+subject+' regex has no verified engine-equivalence proof for flags '+flags,pattern,sourceFlags:flags};
-  // Modified: 2026-10-25 (chance). User-authorized temporary compatibility
-  // downgrade: omit source suffix flags in native fields, retain source AST.
-  // Re-enable only after client support for the relevant field is confirmed.
-  let targetPattern=pattern;
-  // targetPattern = flags ? '(?'+flags+')'+pattern : pattern;
-  return {ok:true,pattern:targetPattern,sourceFlags:flags,compatibilityUnverified,capability,notes:[]};
+  if (requireEquivalent && (omittedFlags || compatibilityUnverified)) return {ok:false,reason:target+' native '+subject+' regex cannot preserve source flags '+flags+' under the selected mapping policy',pattern,sourceFlags:flags};
+  const targetPattern=mappedFlags?'(?'+mappedFlags+')'+pattern:pattern;
+  return {ok:true,pattern:targetPattern,sourceFlags:flags,mappedFlags,omittedFlags,compatibilityUnverified,capability,notes:[]};
 }
 
 // qx-official-capabilities.mjs
