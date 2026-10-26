@@ -388,14 +388,39 @@ export function stripRegexFlags(node) {
 // Author: chance
 // Category: Converter / Regex / Cross-platform
 //
-// Native target fields currently emit only the regex body by user policy.
-// Client-engine equivalence remains unverified; JavaScript helpers use RegExp flags.
-// Updated: 2026-10-25
+// Modified: 2026-10-26 (chance). Native flags follow target/field policy;
+// literal URL host separators follow the user-authorized tightening below.
+// Source AST and JavaScript helper regexes retain their original semantics.
 
 export function normalizeRegexBodyForTarget(pattern) {
   // Historical name kept to avoid broad call-site churn. This is deliberately
   // an identity operation: no global \/ -> / or other regex-body rewriting.
   return String(pattern ?? '');
+}
+
+// Modified: 2026-10-26 (chance). User requests literal domain separators
+// in both targets. Only URL authority dots between host labels are tightened;
+// preserve existing escapes, classes, wildcard operators and the entire path.
+export function normalizeUrlRegexForTarget(pattern) {
+  const source=normalizeRegexBodyForTarget(pattern);
+  const prefix=source.match(/^(?:\(\?[ims-]+\))?\^?http(?:s|\(s\)|\(\?:s\))?\??:(?:\\?\/){2}/);
+  if(!prefix)return source;
+  let out=source.slice(0,prefix[0].length),classDepth=0,quoted=false;
+  for(let i=prefix[0].length;i<source.length;i++) {
+    const ch=source[i];
+    if(quoted){out+=ch;if(ch==='\\'&&source[i+1]==='E'){out+='E';i++;quoted=false;}continue;}
+    if(ch==='\\') {
+      if(source[i+1]==='Q')quoted=true;
+      if(source[i+1]==='/'&&!classDepth)return out+source.slice(i);
+      out+=source.slice(i,i+2);i++;continue;
+    }
+    if(ch==='/'&&!classDepth)return out+source.slice(i);
+    if(ch==='[')classDepth++;
+    if(ch===']'&&classDepth)classDepth--;
+    const separator=ch==='.'&&!classDepth&&/[A-Za-z0-9_)\]]/.test(source[i-1]||'')&&/[A-Za-z0-9_(\[]/.test(source[i+1]||'');
+    out+=separator?'\\.':ch;
+  }
+  return out;
 }
 
 // Shared target-regex syntax repair; domain planners retain source provenance.
@@ -513,7 +538,7 @@ export function targetRegexCapability(target,subject) {
 
 export function compileRegexForTarget(regex, { subject = 'url', target = 'generic', requireEquivalent = false } = {}) {
   if (!regex || regex.type !== 'regex') throw new TypeError('Expected Rewrite v2 regex AST node');
-  const pattern = normalizeRegexBodyForTarget(regex.pattern);
+  const pattern = subject==='url'||subject==='script'?normalizeUrlRegexForTarget(regex.pattern):normalizeRegexBodyForTarget(regex.pattern);
   const flags = String(regex.flags || '');
   assertRegexNode(regex);
   const capability=targetRegexCapability(target,subject);

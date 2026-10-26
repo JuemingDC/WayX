@@ -5,7 +5,7 @@
 import crypto from "node:crypto";
 import path from "node:path";
 import {createResourceSnapshot} from "./resources.mjs";
-import { surgeRegexParameter } from "./core.mjs";
+import { surgeRegexParameter, normalizeUrlRegexForTarget } from "./core.mjs";
 import { renderRewritePhaseDispatcher } from "./runtime.mjs";
 import { splitScriptPipelineSources, scriptIrTag, parseScriptDeclaration, isScriptV2, planQxScript, planSurgeScript, scriptOption, analyzePluginArgumentUsage, rewriteV2PluginArgumentRefs, surgeArgumentMetadata, surgeRewriteArgumentPayload } from "./script.mjs";
 import { qxRule as canonicalQxRule, surgeModuleRule } from "./rule.mjs";
@@ -701,7 +701,7 @@ export function convertNativeQxToSurge(text,{id='native_qx'}={}) {
   const types={'host':'DOMAIN','host-suffix':'DOMAIN-SUFFIX','host-keyword':'DOMAIN-KEYWORD','host-wildcard':'DOMAIN-WILDCARD','ip-cidr':'IP-CIDR','ip6-cidr':'IP-CIDR6','ip-asn':'IP-ASN','geoip':'GEOIP','user-agent':'USER-AGENT'};
   let scriptIndex=0;
   for(const raw of text.split('\n')) {
-    const line=raw.trim();if(!line)continue;
+    let line=raw.trim();if(!line)continue;
     if(line.startsWith('#')){if(!/^# \[(?:filter_local|rewrite_local|mitm)\]$/.test(line))sections.Rule.push(line);continue;}
     if(/^hostname\s*=/.test(line)){sections.MITM.push(line.replace(/^hostname\s*=\s*/,'hostname = %APPEND% '));continue;}
     const rule=line.match(/^([^,]+),\s*([^,]+),\s*([^,]+)(.*)$/);
@@ -710,6 +710,9 @@ export function convertNativeQxToSurge(text,{id='native_qx'}={}) {
       if(plan.kind==='comment'){issue(line,'No verified routing equivalent');continue;}
       sections[plan.section==='map'?'Map Local':'Rule'].push(...plan.lines);continue;
     }
+    // Modified: 2026-10-26 (chance). Direct native-QX conversion shares
+    // the same host-separator policy as merged QX and Loon outputs.
+    line=line.replace(/^(\S+)/,normalizeUrlRegexForTarget);
     if(/\surl-and-header\s/.test(line)){issue(line,'URL-and-header conjunction retained for review; dropping the header condition would broaden matching');continue;}
     const match=line.match(/^(\S+)\s+url\s+(.+)$/);if(!match){issue(line,'Unrecognized QX declaration');continue;}
     const [,pattern,action]=match;

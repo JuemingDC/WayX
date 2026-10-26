@@ -1,8 +1,9 @@
 // Consolidated: 2026-10-03
 // Author: chance
+// Modified: 2026-10-26 (chance). Normalize literal URL host dots in target fields only.
 // Category: Converter / rewrite
 
-import { scanSourceRegexLiteral, normalizeRegexBodyForTarget, surgeRegexParameter, compileRegexForTarget, conditionRuntimeSource, compileSourceRegex, stringTemplateParts } from "./core.mjs";
+import { scanSourceRegexLiteral, normalizeRegexBodyForTarget, normalizeUrlRegexForTarget, surgeRegexParameter, compileRegexForTarget, conditionRuntimeSource, compileSourceRegex, stringTemplateParts } from "./core.mjs";
 import { renderQxHeaderScript, renderQxInlineMockScript, renderSurgeRequestMockScript, renderQxMockFileScript, renderQxRejectScript, headerOpsForMock, renderMixedRewriteScript, renderSingleJsonMutationScript, renderSingleRewriteMutationScript } from "./runtime.mjs";
 import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
@@ -2456,7 +2457,7 @@ function planHeader(pattern, action, parsed, target, ctx) {
   if (!tokens.length || tokens.length % width) return legacyRewriteReview(pattern, action, 'invalid legacy header argument grouping');
 
   if (target === 'qx' && parsed.op === 'add' && ['request','response'].includes(parsed.phase)) {
-    const targetPattern=normalizeRegexBodyForTarget(pattern);
+    const targetPattern=normalizeUrlRegexForTarget(pattern);
     const pairs=[];
     for(let i=0;i<tokens.length;i+=width){
       const [name,value]=tokens.slice(i,i+width).map(unquote);
@@ -2505,7 +2506,7 @@ function planHeader(pattern, action, parsed, target, ctx) {
     }
   }
 
-  const targetPattern=normalizeRegexBodyForTarget(pattern);
+  const targetPattern=normalizeUrlRegexForTarget(pattern);
   const lines=[];
   for(let i=0;i<tokens.length;i+=width){
     const args=tokens.slice(i,i+width).map(unquote);
@@ -2517,7 +2518,7 @@ function planHeader(pattern, action, parsed, target, ctx) {
 function planBodyRegex(pattern, action, parsed, target) {
   const tokens=legacyShellTokens(parsed.rest).map(unquote);
   if (!tokens.length || tokens.length % 2) return legacyRewriteReview(pattern, action, 'body regex rewrite requires regex/replacement pairs');
-  const targetPattern=normalizeRegexBodyForTarget(pattern);
+  const targetPattern=normalizeUrlRegexForTarget(pattern);
   for(let i=0;i<tokens.length;i+=2) tokens[i]=normalizeRegexBodyForTarget(tokens[i]);
   if (target === 'qx') {
     const verb=parsed.phase === 'request' ? 'request-body' : 'response-body';
@@ -2544,7 +2545,7 @@ function planJson(pattern, action, parsed, target, ctx) {
   let quoted;
   try { quoted=quoteJq(jq); }
   catch (error) { return legacyRewriteReview(pattern, action, String(error?.message || error)); }
-  const targetPattern=normalizeRegexBodyForTarget(pattern);
+  const targetPattern=normalizeUrlRegexForTarget(pattern);
   if (target === 'qx') {
     const verb=REWRITE_MUTATION_MAPPINGS[parsed.phase+'.json.jq'].qx;
     return {section:'rewrite', line:`${targetPattern} url ${verb} ${quoted}`};
@@ -2628,7 +2629,7 @@ export function planLegacyRewriteIr(ir, target, ctx={}) {
   const pattern=ir.condition?.pattern ?? '';
   const action=ir.operations[0]?.raw ?? '';
   if (isEmptyLegacyJsonJqIr(ir)) return {section:'drop', reason:'empty-legacy-json-jq'};
-  const targetPattern=normalizeRegexBodyForTarget(pattern);
+  const targetPattern=normalizeUrlRegexForTarget(pattern);
   const operation=ir.operations[0];
   const parsed=classifyLegacyRewrite(action);
   if (operation.kind === 'reject' && operation.variant !== 'video') {
