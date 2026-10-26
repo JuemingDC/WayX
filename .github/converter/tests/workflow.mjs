@@ -1336,9 +1336,9 @@ assert.equal(convertedNative.diagnostics.length,0);
 assert.match(convertedNative.surge,/DOMAIN,keep\.example,DIRECT/);
 assert.ok(convertedNative.surge.includes('DOMAIN-SUFFIX,proxy.example,{{{PROXY}}}'));
 assert.match(convertedNative.surge,/IP-CIDR6,2001:db8::\/32,REJECT,no-resolve/);
-assert.match(convertedNative.surge,/a\.example _ reject/);
+assert.match(convertedNative.surge,/a\\\.example _ reject/);
 assert.match(convertedNative.surge,/data="\{\}" status-code=200/);
-assert.ok(convertedNative.surge.includes("http-response-jq ^https://c.example 'delpaths([[\"ad\"],[\"banner\"]])'"));
+assert.ok(convertedNative.surge.includes("http-response-jq ^https://c\\.example 'delpaths([[\"ad\"],[\"banner\"]])'"));
 assert.ok(convertedNative.surge.includes('script-path=https://example.test/original.js'));
 assert.match(convertedNative.surge,/requires-body=true/);
 const unsupportedNative=convertNativeQxToSurge(qxConversionInput.replace('# [mitm]','^https://guard.example UA* url-and-header reject\n# [mitm]'));
@@ -1351,7 +1351,7 @@ const headerInput=String.raw`# [rewrite_local]
 ^https://github.com url request-header (\r\n)Accept-Language:.+(\r\n) request-header $1Accept-Language: en-us$2`;
 const headerConverted=convertNativeQxToSurge(headerInput);
 assert.equal(headerConverted.diagnostics.length,0);
-assert.match(headerConverted.surge,/\[Header Rewrite\]\nhttp-request \^https:\/\/github.com header-replace Accept-Language en-us/);
+assert.match(headerConverted.surge,/\[Header Rewrite\]\nhttp-request \^https:\/\/github\\\.com header-replace Accept-Language en-us/);
 assert.equal(convertNativeQxToSurge(headerInput.replace('Accept-Language: en-us','Other: en-us')).diagnostics.length,1);
 assert.equal(convertNativeQxToSurge(headerInput.replaceAll('Accept-Language','Content-Length')).diagnostics.length,1);
 const unscanned=convertNativeQxToSurge(qxConversionInput);
@@ -1365,7 +1365,7 @@ for(const [action,phase,requiresBody] of [
 ]) {
   const out=convertNativeQxToSurge('# [rewrite_local]\n^https://echo.example url script-'+action+' https://example.test/original.js\n',{id:'echo_fixture'});
   assert.equal(out.diagnostics.length,0,action);
-  assert.ok(out.surge.includes('type=http-'+phase+',pattern=^https://echo.example,script-path=https://example.test/original.js,requires-body='+requiresBody),action);
+  assert.ok(out.surge.includes('type=http-'+phase+',pattern=^https://echo\\.example,script-path=https://example.test/original.js,requires-body='+requiresBody),action);
 }
 nativeConfig.preferred_versions={bilibili:'rewrite/bilibili-qx.snippet'};
 await fs.writeFile(path.join(root,'.github/sources/native-qx.json'),JSON.stringify(nativeConfig));

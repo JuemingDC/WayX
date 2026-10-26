@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/NeteaseCloudMusic.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 17:18:11 +08:00
+# Converted: 2026-10-26 09:42:36 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/NeteaseCloudMusic_remove_ads.lpx
@@ -29,7 +29,7 @@ host, ipv6.music.163.com, reject
 ^https?:\/\/interface\d?\.music\.163\.com\/eapi\/(?:community\/friends\/fans-group\/artist\/group\/|mine\/applet\/redpoint|music\/songshare\/text\/recommend\/|resniche\/position\/play\/new\/|resniche\/tspopup\/show|resource\/comments?\/musiciansaid\/|user\/sub\/artist) url reject-dict
 ^https?:\/\/interface\d?\.music\.163\.com\/eapi\/(?:ios\/version|mlivestream\/entrance\/playpage\/|link\/position\/show\/strategy|link\/scene\/show\/resource|v1\/content\/exposure\/comment\/banner\/) url reject-dict
 
-^https?:\/\/interface\d?\.music\.163.com\/w?e?api\/search\/default url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_NeteaseCloudMusic_remove_ads/mock_6705698be0.js
+^https?:\/\/interface\d?\.music\.163\.com\/w?e?api\/search\/default url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_NeteaseCloudMusic_remove_ads/mock_6705698be0.js
 ^https?:\/\/interface\d?\.music\.163\.com\/w?eapi\/(?:activity\/bonus\/playpage\/time\/query|resource-exposure\/|search\/(?:chart\/|rcmd\/keyword\/|specialkeyword\/)) url reject-dict
 
 ^https:\/\/interface\d\.music\.163\.com\/eapi\/my\/podcast\/tab\/recommend url reject-dict

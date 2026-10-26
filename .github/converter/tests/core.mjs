@@ -3,7 +3,7 @@
 // Category: Converter / core / Regression Suite
 
 import { QX_RULE_TYPES, RULE_POLICY_MAPPINGS, SURGE_RULE_TYPES, SURGE_MODULE_POLICIES, parseRewriteV2, parseLoonRuleAst, renderRuleAst, ruleTypesInAst, planQxRuleAst, planSurgeModuleRuleAst, renderSurgeRuleAst, validateSurgeRuleAst, surgeRuleTypesInTree, surgeModuleRule, classifyLegacyRewriteAction } from "../src/index.mjs";
-import { validateTargetRegex, surgeRegexParameter, compileSourceRegex, execSourceRegex, evaluateCondition, EQUIVALENCE_KINDS, nativeEquivalent, guardedHelper, phaseDispatcher, unsupported, differentialConditionOracle } from "../src/core.mjs";
+import { normalizeUrlRegexForTarget, validateTargetRegex, surgeRegexParameter, compileSourceRegex, execSourceRegex, evaluateCondition, EQUIVALENCE_KINDS, nativeEquivalent, guardedHelper, phaseDispatcher, unsupported, differentialConditionOracle } from "../src/core.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -28,6 +28,23 @@ if (selectedCase === "core-semantics.mjs") {
 // Category: Converter / Core / Reference Semantics
 
 
+// Modified: 2026-10-26 (chance). Literal host separators are escaped once,
+// with wildcard operators, character classes, paths and quoted regex untouched.
+for(const [input,expected] of [
+ ['^https?://api.example.com/v1.2/.*','^https?://api\\.example\\.com/v1.2/.*'],
+ [String.raw`^https?:\/\/(api|m).example.com/a.b`,String.raw`^https?:\/\/(api|m)\.example\.com/a.b`],
+ [String.raw`^http(s)?://api.example.com`,String.raw`^http(s)?://api\.example\.com`],
+ [String.raw`^https?://.*\.example.com/`,String.raw`^https?://.*\.example\.com/`],
+ [String.raw`^https?://api[.]example\.com/`,String.raw`^https?://api[.]example\.com/`],
+ [String.raw`^https?://\Qapi.example.com\E/`,String.raw`^https?://\Qapi.example.com\E/`],
+ ['example.com','example.com'],
+]) {
+ assert.equal(normalizeUrlRegexForTarget(input),expected);
+ assert.equal(normalizeUrlRegexForTarget(expected),expected);
+}
+const literalHost=normalizeUrlRegexForTarget('^https?://example.com/api/');
+assert.ok(new RegExp(literalHost).test('https://example.com/api/'));
+assert.ok(!new RegExp(literalHost).test('https://exampleXcom/api/'));
 function condition(source) {
   return parseRewriteV2(source).condition;
 }
@@ -275,7 +292,7 @@ for (const policy of RULE_POLICY_MAPPINGS.keys()) {
   for (const token of [policy,policy.toLowerCase()]) {
     const ast = parseLoonRuleAst('URL-REGEX,"^https://example.com/(a,b)",' + token).ast;
     const qx = planQxRuleAst(ast);
-    if (urlPolicies.has(policy)) assert.equal(qx.line, '^https://example.com/(a,b) url ' + urlPolicies.get(policy));
+    if (urlPolicies.has(policy)) assert.equal(qx.line, '^https://example\\.com/(a,b) url ' + urlPolicies.get(policy));
     else assert.equal(qx.kind, 'comment', 'URL-REGEX/' + policy);
     const surge = planSurgeModuleRuleAst(ast, {proxyPolicyPlaceholder:'{{{policy}}}'});
     if (['REJECT-200','REJECT-DICT','REJECT-ARRAY'].includes(policy)) {
@@ -626,7 +643,7 @@ if(selectedCase==='rule.mjs') {
   assert.equal(enhanced('DOMAIN,ads.test,REJECT').line,'DOMAIN,ads.test,REJECT,extended-matching,pre-matching');
   assert.equal(enhanced('DEST-PORT,4480,REJECT-NO-DROP').line,'DEST-PORT,4480,REJECT-NO-DROP,pre-matching');
   assert.equal(enhanced('DOMAIN,allow.test,DIRECT').line,'DOMAIN,allow.test,DIRECT,extended-matching');
-  assert.equal(enhanced('URL-REGEX,^https://ads.test/,REJECT').line,'URL-REGEX,^https://ads.test/,REJECT,extended-matching');
+  assert.equal(enhanced('URL-REGEX,^https://ads\\.test/,REJECT').line,'URL-REGEX,^https://ads\\.test/,REJECT,extended-matching');
   assert.equal(enhanced('RULE-SET,https://example.test/list,REJECT').line,'RULE-SET,https://example.test/list,REJECT,extended-matching');
   assert.equal(enhanced('DOMAIN-SET,https://example.test/domains,REJECT').line,'DOMAIN-SET,https://example.test/domains,REJECT,extended-matching,pre-matching');
   const logical=enhanced('AND,((DOMAIN-SUFFIX,chat.bilibili.com),(OR,((DOMAIN-KEYWORD,stun),(DOMAIN-KEYWORD,tracker),(DOMAIN-KEYWORD,p2p)))),REJECT');

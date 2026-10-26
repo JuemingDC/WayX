@@ -57,13 +57,17 @@ Surge 输出的目的 IP 类规则（IP-CIDR、IP-CIDR6、GEOIP、IP-ASN，包�
 
 ## 2.4 Regex、条件与捕获
 
+<!-- Modified: 2026-10-26 (chance). User requests escaped literal host separators in all QX/Surge URL regexes. -->
+QX/Surge 的目标 URL 正则统一将可识别 HTTP(S) authority 中的字面域名分隔点写成 `\.`，包括 Loon 新旧 Rewrite、URL-REGEX Rule、Script 的 URL matcher 及原生 QX 来源；已有 `\.` 不重复转义。不修改路径/查询中的点号、Header/Body 匹配正则、MITM hostname、普通分流域名、重定向目标或脚本资源 URL。保护现有反斜杠、字符类、分组与 `.*`/`.+` 等通配操作；不能确定为普通域名分隔符的结构保留原样，不对任意正则做全局点号替换。该收紧是用户明确授权的匹配范围变化：源未转义 `example.com` 原可匹配 `exampleXcom`，目标 `example\.com` 不再匹配它。源 AST/IR、原始源码及来源注释不改，生成目标字段幂等，不能声称此策略与未转义的源完全等价。
+
+
 源 Regex literal 只去除最外层 delimiter；仅结束分隔符后的后缀识别为 flags。逐字符保留主体中的转义、斜线、字符类、分组、量词和 lookaround，不作 case folding、全局 `\\/ → /`、捕获组重写；源后缀 flags 保留在 AST/IR，目标原生输出按下述目标/字段策略映射 flags。
 
 <!-- Modified: 2026-10-26 (chance). QX author confirms ims support; user restores only native Header/Body m/s. -->
 
 2026-10-26 用户提供 Quantumult X 作者回复，确认 URL、request/response-header 和 request/response-body 正则均支持 `(?i)`、`(?m)`、`(?s)` 及组合，版本间支持一致。作者建议 URL 匹配通常省略 flags。用户进一步明确：继续忽略源 `i`，URL 仅保留正则主体；QX Header/Body 恢复源 `m`、`s`，组合按 `(?ms)` 输出，Header 值嵌入使用 `(?ms:pattern)` 保留局部作用域。没有源 flags 时不新增。Surge 未获其作者确认，继续省略源 flags，不依据 QX 回复推断 Surge 支持。
 
-上述省略 `i`、URL flags 仍是用户授权的语义例外，不能声称支持缺失，也不能声称与保留全部源 flags 完全等价。严格等价接口拒绝被省略的源 flags；QX Header/Body 仅含 m/s 时允许映射。源 AST/IR、作者原脚本和 JavaScript helper 内的 `RegExp(source, flags)` 保留原 flags。协议 Header 名称匹配所需的大小写处理和整头遍历标记不属于源 flags，不因本策略删除；无法安全限制在单字段的 Header 替换继续使用原有 helper/诊断边界。保留域名字面量的 `\.`，不自动给作者正则加锚点或改写点号。
+上述省略 `i`、URL flags 仍是用户授权的语义例外，不能声称支持缺失，也不能声称与保留全部源 flags 完全等价。严格等价接口拒绝被省略的源 flags；QX Header/Body 仅含 m/s 时允许映射。源 AST/IR、作者原脚本和 JavaScript helper 内的 `RegExp(source, flags)` 保留原 flags。协议 Header 名称匹配所需的大小写处理和整头遍历标记不属于源 flags，不因本策略删除；无法安全限制在单字段的 Header 替换继续使用原有 helper/诊断边界。保留域名字面量的 `\.`，不自动给作者正则加锚点；域名点号按下述用户授权策略处理。
 
 
 动态 Regex 只接受完整 `/pattern/flags` 或语义 Regex 节点，不执行表达式、不二次展开变量，缺失或无效值不匹配；生成 helper 保留解析出的 `i/m/s`。

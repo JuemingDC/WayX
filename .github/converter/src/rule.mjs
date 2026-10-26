@@ -1,8 +1,9 @@
 // Consolidated: 2026-10-03
 // Author: chance
+// Modified: 2026-10-26 (chance). Normalize literal URL host dots in target fields only.
 // Category: Converter / rule
 
-import { normalizeRegexBodyForTarget, repairTargetRegexSyntax, surgeRegexParameter, QX_WAYX_FILTER_TYPES, SURGE_WAYX_RULE_TYPES, SURGE_WAYX_RULE_BUILTIN_POLICIES } from "./core.mjs";
+import { normalizeUrlRegexForTarget, repairTargetRegexSyntax, surgeRegexParameter, QX_WAYX_FILTER_TYPES, SURGE_WAYX_RULE_TYPES, SURGE_WAYX_RULE_BUILTIN_POLICIES } from "./core.mjs";
 
 
 
@@ -244,7 +245,7 @@ export function planQxRuleAst(ast) {
   }
 
   const type=ast.type;
-  const value=type==='URL-REGEX' ? normalizeRegexBodyForTarget(ast.value) : ast.value;
+  const value=type==='URL-REGEX' ? normalizeUrlRegexForTarget(ast.value) : ast.value;
   const policyRaw=ast.policy;
   const mapping=RULE_POLICY_MAPPINGS.get(policyRaw);
 
@@ -288,7 +289,7 @@ export const SURGE_MODULE_POLICIES=SURGE_WAYX_RULE_BUILTIN_POLICIES;
 
 function surgeValueRenderer(node) {
   if (node.type!=='URL-REGEX') return node.valueRaw;
-  return surgeRegexParameter(normalizeRegexBodyForTarget(node.value));
+  return surgeRegexParameter(normalizeUrlRegexForTarget(node.value));
 }
 
 const SURGE_REJECT_MATCH_POLICIES=new Set(['REJECT','REJECT-DROP','REJECT-NO-DROP','REJECT-TINYGIF']);
@@ -363,7 +364,7 @@ export function planSurgeModuleRuleAst(ast,{proxyPolicyPlaceholder=null,matching
   const type=ast.type;
 
   if (type==='URL-REGEX') {
-    const pattern=normalizeRegexBodyForTarget(ast.value);
+    const pattern=normalizeUrlRegexForTarget(ast.value);
     const argumentsOut=RULE_POLICY_MAPPINGS.get(ast.policy)?.surgeMap;
     const mapLocal=argumentsOut ? `${pattern} ${argumentsOut}` : null;
     if (mapLocal) {

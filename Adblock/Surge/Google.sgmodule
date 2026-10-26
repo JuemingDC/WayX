@@ -8,14 +8,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Google.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 17:18:10 +08:00
+# Converted: 2026-10-26 09:42:36 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Google.lpx
 # Target: Surge
 
 [URL Rewrite]
 ^https?:\/\/(www.)?(g|google)\.cn https://www.google.com 307
-^https?:\/\/(ditu|maps).google\.cn https://maps.google.com 307
+^https?:\/\/(ditu|maps)\.google\.cn https://maps.google.com 307
 
 [MITM]
 hostname = %APPEND% www.google.cn

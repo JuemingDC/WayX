@@ -6,6 +6,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
 import {convertNativeQxToSurge} from "./conversion.mjs";
+import {normalizeUrlRegexForTarget} from "./core.mjs";
 import {quoteJq} from "./rewrite.mjs";
 import {validateQX} from "./output.mjs";
 import {spawnSync} from "node:child_process";
@@ -267,7 +268,10 @@ export function mergeNativeQxSources(sources,{name,author,stamp=nowConversionSta
       // existing quoted config format without changing its program or actions.
       const jq=key==='rewrite_local'?original.match(/^(.*?\surl(?:-and-header)?\s+jsonjq-(?:request|response)-body)\s+(.+)$/):null;
       const quoted=jq && !/^'.*'$/.test(jq[2])?jq[1]+' '+quoteJq(jq[2]):original;
-      const serialized=quoted.replace(/^(\S+(?:\s+\S+)?\s+url(?:-and-header)?\s+)REJECT$/, '$1reject');
+      let serialized=quoted.replace(/^(\S+(?:\s+\S+)?\s+url(?:-and-header)?\s+)REJECT$/, '$1reject');
+      // Modified: 2026-10-26 (chance). Normalize only the URL matcher;
+      // retain original declarations for provenance, not script URLs or bodies.
+      if(key==='rewrite_local')serialized=serialized.replace(/^(\s*)(\S+)/,(_,space,pattern)=>space+normalizeUrlRegexForTarget(pattern));
       sections[key].push(...pending,...(serialized!==original?['# Source declaration: '+original]:[]),serialized);pending=[];
     }
     // Trailing comments are still source content, even after a MITM declaration.

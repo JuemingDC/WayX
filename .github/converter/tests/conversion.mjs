@@ -64,9 +64,9 @@ const entry={
   const converted=convertPlugin(entry,mixedSource,{stamp:'2026-10-15 11:00:00 +08:00',rawBase:'https://example.com'});
   validateQX(converted.qx,entry);
   validateSurgeModule(converted.surge,entry);
-  for(const [i,[,action]] of policies.entries()) assert.ok(converted.qx.includes('^https://rule.example/p'+i+'$ url '+action));
+  for(const [i,[,action]] of policies.entries()) assert.ok(converted.qx.includes('^https://rule\\.example/p'+i+'$ url '+action));
   for(const [i,[,action]] of nativeActions.entries()) {
-    assert.ok(converted.qx.includes('^https://legacy.example/p'+i+'$ url '+action));
+    assert.ok(converted.qx.includes('^https://legacy\\.example/p'+i+'$ url '+action));
     assert.ok(converted.qx.includes('^https:\\/\\/v2\\.example\\/p'+i+'$ url '+action));
   }
   assert.match(converted.qx,/host, ads\.example, reject/);
@@ -120,7 +120,7 @@ const entry={
   const validSurge=convertPlugin(entry,'#!name=RegexAudit\n[Script]\nhttp-response ^https://audit.example script-path=https://example.com/a.js',{stamp:'2026-10-16 14:00:00 +08:00',rawBase:'https://example.com'}).surge;
   for(const matcher of ['[', '(api', 'api)', '*', '${urlMatch.1}', 'undefined']) {
     assert.throws(()=>validateQX('# [rewrite_local]\n'+matcher+' url script-response-body https://example.com/a.js',entry),/regex/);
-    assert.throws(()=>validateSurgeModule(validSurge.replace('pattern=^https://audit.example','pattern='+matcher),entry),/regex/);
+    assert.throws(()=>validateSurgeModule(validSurge.replace('pattern=^https://audit\\.example','pattern='+matcher),entry),/regex/);
   }
   assert.throws(()=>validateQX('# [filter_local]\n^https://a url reject',entry),/outside/);
   assert.throws(()=>validateQX('# [rewrite_local]\n^https://a [ url-and-header reject',entry),/regex/);
@@ -129,10 +129,10 @@ const entry={
     'response if ${url} == "https://a.example/fixed?x=1" then script("https://example.com/b.js") with requires_body=true',
   ].join('\n');
   const output=convertPlugin(entry,scriptSource,{stamp:'2026-10-16 14:00:00 +08:00',rawBase:'https://example.com'});
-  assert.ok(output.surge.includes('pattern="^https://a.example/\\w{1,3}",script-path='));
+  assert.ok(output.surge.includes('pattern="^https://a\\.example/\\w{1,3}",script-path='));
   validateQX(output.qx,entry);
   validateSurgeModule(output.surge,entry);
-  assert.throws(()=>validateSurgeModule(output.surge.replace('pattern="^https://a.example/\\w{1,3}"','pattern=^https://a.example/\\w{1,3}'),entry),/parameter/);
+  assert.throws(()=>validateSurgeModule(output.surge.replace('pattern="^https://a\\.example/\\w{1,3}"','pattern=^https://a\\.example/\\w{1,3}'),entry),/parameter/);
   assert.doesNotMatch(output.qx,/REVIEW REQUIRED/);
   const fallbackSource=['#!name=CompatibilityMatcher','[Rewrite]',
     'response if ${url} ~= /api(node{1,3})/i as hit then response.header.set("X-Route", "${hit.1}")',

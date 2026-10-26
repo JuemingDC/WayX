@@ -1,10 +1,11 @@
 // Consolidated: 2026-10-03
 // Author: chance
+// Modified: 2026-10-26 (chance). Normalize literal URL host dots in target fields only.
 // Category: Converter / script
 
 import { splitTopLevelCsv } from "./rule.mjs";
 import { parseRewriteV2, selectRewritePipelineLayer, conditionToSource, valueToSource, isRewriteV2, simpleUrlRewriteCondition } from "./rewrite.mjs";
-import { scanSourceRegexLiteral, normalizeRegexBodyForTarget, surgeRegexParameter, stringTemplateParts } from "./core.mjs";
+import { scanSourceRegexLiteral, normalizeUrlRegexForTarget, surgeRegexParameter, stringTemplateParts } from "./core.mjs";
 
 
 
@@ -1387,7 +1388,7 @@ export function planQxScript(ir,ctx={}) {
   const sc=legacyScriptIrDeclaration(ir);
   if (!sc?.script?.path) return unsupported('Legacy Script declaration is missing script-path');
 
-  const targetPattern=normalizeRegexBodyForTarget(sc.pattern);
+  const targetPattern=normalizeUrlRegexForTarget(sc.pattern);
   const enableFixed=sc.enable ? String(sc.enable).trim().toLowerCase() : '';
   const enableDynamic=Boolean(sc.enable) && !['true','false','1','0'].includes(enableFixed);
   const debugFixed=sc.debug ? String(sc.debug).trim().toLowerCase() : '';
@@ -1462,7 +1463,7 @@ export function planSurgeScript(ir,ctx={}) {
   const sc=legacyScriptIrDeclaration(ir);
   if (!sc?.script?.path) return unsupported('Legacy Script declaration is missing script-path');
 
-  const targetPattern=normalizeRegexBodyForTarget(sc.pattern);
+  const targetPattern=normalizeUrlRegexForTarget(sc.pattern);
   const enableFixed=sc.enable ? String(sc.enable).trim().toLowerCase() : '';
   const enableDynamic=Boolean(sc.enable) && !['true','false','1','0'].includes(enableFixed);
 

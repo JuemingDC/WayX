@@ -12,7 +12,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/NeteaseCloudMusic.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 17:18:11 +08:00
+# Converted: 2026-10-26 09:42:36 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/NeteaseCloudMusic_remove_ads.lpx
 # Target: Surge
@@ -33,7 +33,7 @@ DOMAIN,ipv6.music.163.com,REJECT,extended-matching,pre-matching
 ^https?:\/\/interface\d?\.music\.163\.com\/eapi\/(?:community\/friends\/fans-group\/artist\/group\/|mine\/applet\/redpoint|music\/songshare\/text\/recommend\/|resniche\/position\/play\/new\/|resniche\/tspopup\/show|resource\/comments?\/musiciansaid\/|user\/sub\/artist) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 ^https?:\/\/interface\d?\.music\.163\.com\/eapi\/(?:ios\/version|mlivestream\/entrance\/playpage\/|link\/position\/show\/strategy|link\/scene\/show\/resource|v1\/content\/exposure\/comment\/banner\/) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https?:\/\/interface\d?\.music\.163.com\/w?e?api\/search\/default data-type=text data="" status-code=200 header="Content-Type:text/plain"
+^https?:\/\/interface\d?\.music\.163\.com\/w?e?api\/search\/default data-type=text data="" status-code=200 header="Content-Type:text/plain"
 ^https?:\/\/interface\d?\.music\.163\.com\/w?eapi\/(?:activity\/bonus\/playpage\/time\/query|resource-exposure\/|search\/(?:chart\/|rcmd\/keyword\/|specialkeyword\/)) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 ^https:\/\/interface\d\.music\.163\.com\/eapi\/my\/podcast\/tab\/recommend data-type=text data="{}" status-code=200 header="Content-Type:application/json"
