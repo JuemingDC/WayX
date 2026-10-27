@@ -94,7 +94,8 @@ Key Path 解析为 String/Number segments，支持 dot key、数字索引及 quo
 
 - add：采用 ScriptHub 的设置策略，直接 `setpath(PATH; VALUE)`，覆盖已有值并创建缺失路径；必要 helper 同样设置路径。
 <!-- Modified: 2026-10-25 (chance). Keep the requested one-call deletion form only where it preserves established source semantics; batching is not a semantic exception. -->
-- delete：用户要求的输出形式是把同一删除批次的路径直接放进一个原生 `delpaths(PATHS)`，而非多个调用以管道连接。PATHS 为路径数组的数组，字符串段表示对象键，数字段表示数组索引，例如 `delpaths([["a"],["items",0,"ad"]])`。此写法须符合第 2.2 节的语义约束，不能只凭输出格式要求，把源批次擅自解释为同一输入批量删除。特别要确认重复路径、父子重叠路径和同数组多索引的源行为；一旦源明确为逐次删除且有移位影响，单次 delpaths 不可直接替代。源语义未知或所要求形式不能等价表达时使用诊断边界，不能静默改变执行方式。两端保持合并格式；独立源 actions 及作者自带 jq 表达式保留已确定的原顺序与原义。
+<!-- Modified: 2026-10-28 (chance). Preserve sequential deletion while compacting independent object paths. -->
+- delete：独立、互不为父子路径的纯对象键合并为 `del(.a,.data.ads)`；特殊键保留方括号字符串。含数字索引或父子重叠的多路径批次使用 `reduce PATHS[] as $p (.;delpaths([$p]))`，单个数字路径使用 `delpaths([PATH])`。按源顺序处理数组移位与重复索引，不按快照批量删除；作者自带 jq/jq_file 不改写。此规则取代一律单次 delpaths 的旧要求。
 
 - replace：直接 `setpath(PATH; VALUE)`，不添加 getpath/has 或字段存在性检查。PATH 为保留 String/Number 类型的路径数组；批量替换按源顺序用 ` | ` 连接。遵循 jq 原生设置语义，包括缺失路径创建及类型错误。VALUE 保留源声明类型：字符串 `"[]"` 不等于数组 `[]`，不得统一字符串化。必要 JSON replace helper 同样执行路径设置，不检查末端字段是否存在。
 
