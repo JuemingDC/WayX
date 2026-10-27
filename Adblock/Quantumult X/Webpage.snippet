@@ -2,9 +2,9 @@
 # Description: 移除网页广告。
 # Author: RuCu6[https://github.com/RuCu6]
 # Icon: https://rucu6.pages.dev/Icons/app/webpage.png
-# Updated: 2026-10-21 19:35
+# Updated: 2026-10-27 13:45
 
-# Converted: 2026-10-25 17:18:11 +08:00
+# Converted: 2026-10-27 15:22:20 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/webpage.lpx
@@ -13,10 +13,19 @@
 # [WayX] Policy binding: source PROXY is preserved as literal QX policy name PROXY; a matching target policy must exist.
 
 # [filter_local]
-host-suffix, mypikpak.com, PROXY
+# PikPak
+host, access.mypikpak.com, PROXY
+host, api-drive.mypikpak.com, PROXY
+host, user.mypikpak.com, PROXY
+host-suffix, mypikpak.com, direct
+host-suffix, mypikpak.net, direct
+host-suffix, pikpakdrive.com, direct
+host-suffix, pikpak.io, direct
+host-suffix, pikpak.me, direct
+# 黑料网
 host, 18hlw.com, PROXY
 host, 8olbt.imsatcmn.cc, PROXY
-host, yhg007.com, PROXY
+{# 移花宫 #} host, yhg007.com, PROXY
 
 # [rewrite_local]
 # 解决 GitHub 速率限制返回429问题

@@ -643,7 +643,7 @@
 </details>
 
 <details>
-<summary><strong>怎么肥事</strong> · 26 项</summary>
+<summary><strong>怎么肥事</strong> · 27 项</summary>
 
 #### B
 
@@ -710,6 +710,7 @@
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
+| **[腾讯视频净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/zenmofeishi_txvideoad.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fzenmofeishi_txvideoad.snippet%2C%20tag%3D%E8%85%BE%E8%AE%AF%E8%A7%86%E9%A2%91%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fzenmofeishi_txvideoad.sgmodule) |
 | **[贴吧净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/zenmofeishi_tb.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fzenmofeishi_tb.snippet%2C%20tag%3D%E8%B4%B4%E5%90%A7%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fzenmofeishi_tb.sgmodule) |
 | **[途虎养车净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/zenmofeishi_th.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fzenmofeishi_th.snippet%2C%20tag%3D%E9%80%94%E8%99%8E%E5%85%BB%E8%BD%A6%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fzenmofeishi_th.sgmodule) |
 | **[T3出行](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/zenmofeishi_t3.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fzenmofeishi_t3.snippet%2C%20tag%3DT3%E5%87%BA%E8%A1%8C%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fzenmofeishi_t3.sgmodule) |
