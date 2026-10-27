@@ -1,5 +1,5 @@
 # Name: telegram
-# Updated: 2026-10-25 05:49:22 UTC
+# Updated: 2026-10-27 01:17:54 UTC
 # Converted by: chance
 # Source Authors: Loyalsoldier, MetaCubeX, Nexitally, V2Fly
 # Category: app
@@ -8,36 +8,36 @@
 # Rules: 33
 # Managed by: WayX Rule Aggregator
 
-host-suffix,cdn-telegram.org,proxy
-host-suffix,comments.app,proxy
-host-suffix,contest.com,proxy
-host-suffix,fragment.com,proxy
-host-suffix,graph.org,proxy
-host-suffix,quiz.directory,proxy
-host-suffix,t.me,proxy
-host-suffix,tdesktop.com,proxy
-host-suffix,telega.one,proxy
-host-suffix,telegra.ph,proxy
-host-suffix,telegram-cdn.org,proxy
-host-suffix,telegram.dog,proxy
-host-suffix,telegram.me,proxy
-host-suffix,telegram.org,proxy
-host-suffix,telegram.space,proxy
-host-suffix,telesco.pe,proxy
-host-suffix,tg.dev,proxy
-host-suffix,ton.org,proxy
-host-suffix,toncenter.com,proxy
-host-suffix,tx.me,proxy
-host-suffix,usercontent.dev,proxy
-ip-cidr,149.154.160.0/20,proxy
-ip-cidr,185.76.151.0/24,proxy
-ip-cidr,91.105.192.0/23,proxy
-ip-cidr,91.108.16.0/21,proxy
-ip-cidr,91.108.4.0/22,proxy
-ip-cidr,91.108.56.0/22,proxy
-ip-cidr,91.108.8.0/21,proxy
-ip-cidr,95.161.64.0/20,proxy
-ip6-cidr,2001:67c:4e8::/48,proxy
-ip6-cidr,2001:b28:f23c::/47,proxy
-ip6-cidr,2001:b28:f23f::/48,proxy
-ip6-cidr,2a0a:f280::/32,proxy
+host-suffix,cdn-telegram.org,ssid
+host-suffix,comments.app,ssid
+host-suffix,contest.com,ssid
+host-suffix,fragment.com,ssid
+host-suffix,graph.org,ssid
+host-suffix,quiz.directory,ssid
+host-suffix,t.me,ssid
+host-suffix,tdesktop.com,ssid
+host-suffix,telega.one,ssid
+host-suffix,telegra.ph,ssid
+host-suffix,telegram-cdn.org,ssid
+host-suffix,telegram.dog,ssid
+host-suffix,telegram.me,ssid
+host-suffix,telegram.org,ssid
+host-suffix,telegram.space,ssid
+host-suffix,telesco.pe,ssid
+host-suffix,tg.dev,ssid
+host-suffix,ton.org,ssid
+host-suffix,toncenter.com,ssid
+host-suffix,tx.me,ssid
+host-suffix,usercontent.dev,ssid
+ip-cidr,149.154.160.0/20,ssid
+ip-cidr,185.76.151.0/24,ssid
+ip-cidr,91.105.192.0/23,ssid
+ip-cidr,91.108.16.0/21,ssid
+ip-cidr,91.108.4.0/22,ssid
+ip-cidr,91.108.56.0/22,ssid
+ip-cidr,91.108.8.0/21,ssid
+ip-cidr,95.161.64.0/20,ssid
+ip6-cidr,2001:67c:4e8::/48,ssid
+ip6-cidr,2001:b28:f23c::/47,ssid
+ip6-cidr,2001:b28:f23f::/48,ssid
+ip6-cidr,2a0a:f280::/32,ssid
