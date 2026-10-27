@@ -1,11 +1,11 @@
 # Name: media
-# Updated: 2026-10-26 21:48:15 UTC
+# Updated: 2026-10-27 07:35:36 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-communication.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-password-management.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 7532
+# Rules: 7526
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,cdn.globalsigncdn.com.cdn.cloudflare.net
@@ -490,7 +490,6 @@ DOMAIN,stats.dahlmessenger.com
 DOMAIN,stats.rustore.ru
 DOMAIN,stats.telega.info
 DOMAIN,stats.vk-portal.net
-DOMAIN,supercell.helpshift.com
 DOMAIN,supercell.zendesk.com
 DOMAIN,t.mail.ru
 DOMAIN,target.vk.com
@@ -673,7 +672,6 @@ DOMAIN-SUFFIX,espn.hb.omtrdc.net
 DOMAIN-SUFFIX,espndotcom.tt.omtrdc.net
 DOMAIN-SUFFIX,execute-api.us-east-1.amazonaws.com
 DOMAIN-SUFFIX,gtlsca.nat.gov.tw
-DOMAIN-SUFFIX,hbo.com.edgesuite.net
 DOMAIN-SUFFIX,hbo.map.fastly.net
 DOMAIN-SUFFIX,hbogeo.cust.footprint.net
 DOMAIN-SUFFIX,hbomaxdash.s.llnwi.net
@@ -684,8 +682,6 @@ DOMAIN-SUFFIX,manifest.prod.boltdns.net
 DOMAIN-SUFFIX,mobileanalytics.us-east-1.amazonaws.com
 DOMAIN-SUFFIX,mytvsuperlimited.hb.omtrdc.net
 DOMAIN-SUFFIX,mytvsuperlimited.sc.omtrdc.net
-DOMAIN-SUFFIX,naver.com.akadns.net
-DOMAIN-SUFFIX,naverads.com.akadns.net
 DOMAIN-SUFFIX,perf-events.cloud.unity3d.com
 DOMAIN-SUFFIX,perf.cloud.unity3d.com
 DOMAIN-SUFFIX,s-bid.rmp.rakuten.com
@@ -803,7 +799,6 @@ DOMAIN-SUFFIX,canon.com.my
 DOMAIN-SUFFIX,canon.com.tr
 DOMAIN-SUFFIX,canon.com.tw
 DOMAIN-SUFFIX,cdn.jetbrains.com
-DOMAIN-SUFFIX,cdn.optimizely.com
 DOMAIN-SUFFIX,challenges.cloudflare.com
 DOMAIN-SUFFIX,chocotv.com.tw
 DOMAIN-SUFFIX,cht.com.tw
@@ -1077,7 +1072,6 @@ DOMAIN-SUFFIX,logitech.com.cn
 DOMAIN-SUFFIX,logitechg.com.cn
 DOMAIN-SUFFIX,logitechio.com.cn
 DOMAIN-SUFFIX,logosfilm.co.kr
-DOMAIN-SUFFIX,logx.optimizely.com
 DOMAIN-SUFFIX,lolshop.co.kr
 DOMAIN-SUFFIX,lpl.com.cn
 DOMAIN-SUFFIX,mageconf.com.ua

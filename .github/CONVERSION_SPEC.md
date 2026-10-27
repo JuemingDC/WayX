@@ -374,3 +374,8 @@ Modified: 2026-10-25 (chance). Echo 声明映射依据用户提供的 QX 官方�
 
 <!-- Modified: 2026-10-27 (chance). Merge only Surge Apple CN/direct outputs while preserving layered routing. -->
 仅 Surge Apple 将原 apple_direct.list 的默认直连规则合入 apple_cn.list，移除 apple_direct.list。为保持合并前的 CN → proxy → fallback 语义，CN 专属规则原样直连，合入的默认直连规则仅在与代理规则相交时使用官方 AND/NOT（多项为 OR）排除代理匹配；原生声明保留于逻辑子条件中，不扩大匹配。此为 Apple 两文件输出的限定语义保真例外，其它规则集仍不合成 AND/NOT。依据：https://manual.nssurge.com/rules/logical.html。QX 文件与三层排序不变。
+
+<!-- Modified: 2026-10-27 (chance). Microsoft CN declarations override actionless company and OneDrive feeds. -->
+Microsoft 增加 QuixoticHeart 的 microsoft-cn、microsoft、onedrive 三个来源，保留原作者、URL 和 GPL-3.0 记录。routing_layers 第一层合并 microsoft-cn、既有 V2Fly 的 Microsoft/Azure/Bing/PKI/OneDrive @cn 与 MetaCubeX 的 Microsoft/Azure/Bing CN，策略 DIRECT；无逐条策略的公司/OneDrive 重复声明采用该层动作，其余沿用已登记代理动作。逐条明确动作保留，GitHub/Copilot 等仍按既有归属优先级处理。QX 单一 microsoft.list，DIRECT 层先于代理层，代理使用 ssid；Surge 仍为 microsoft_direct.list → microsoft_proxy.list。不能因直连下载端点把整个 microsoft.com/windowsupdate.com 或所有 OneDrive 都设为直连。
+
+Microsoft 分类限定排除 DOMAIN-SUFFIX tenor.com 的错误归属，Google 分类与代理动作保留。官方归属依据：https://blog.google/products-and-platforms/products/search/making-it-easier-find-and-share-gifs-google/ 。此排除不删除 Google 规则集中的 Tenor。

@@ -743,7 +743,7 @@
 
 ## Rule
 
-按 Reject → Proxy → Direct 展示；这不是引用优先级。Apple 在 Surge 中按 apple_cn（DIRECT）→ apple_proxy（代理）引用。混合策略资源导入时保留逐条策略。
+按 Reject → Proxy → Direct 展示；这不是引用优先级。Apple 在 Surge 中按 apple_cn（DIRECT）→ apple_proxy（代理）引用；Microsoft 按 microsoft_direct（DIRECT）→ microsoft_proxy（代理）引用。混合策略资源导入时保留逐条策略。
 
 ### Reject
 

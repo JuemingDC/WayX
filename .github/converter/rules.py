@@ -652,6 +652,11 @@ def build(config, inputs):
         # Named layers are user-authorized defaults; other feed defaults do not imply proxy routing.
         if target == 'apple' and not explicit and not policy.startswith('REJECT'):
             policy = route_layer(target, rule)[1] or 'DIRECT'
+        # Modified: 2026-10-27 (chance). Microsoft's configured CN layer
+        # takes precedence over actionless company/OneDrive feeds, without
+        # changing explicit per-row actions or unrelated application defaults.
+        elif routing_layers.get(target) and not explicit and not policy.startswith('REJECT'):
+            policy = route_layer(target, rule)[1] or policy
         # Modified: 2026-10-23 (chance). Source row actions and registered
         # DIRECT/PROXY feed actions are authoritative. Infer a category default
         # only for placeholders; remove the former cross-feed action override.

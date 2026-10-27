@@ -13,3 +13,5 @@
 - Modified: 2026-10-27 (chance). Apple actionless rows follow configured routing layers: domestic/update DIRECT first, named proxy services (including TestFlight) second, remaining Apple DIRECT last; explicit source actions remain authoritative. QX Rule outputs render semantic proxy routing as the existing user policy group ssid.
 
 - Modified: 2026-10-27 (chance). Surge Apple outputs only apple_cn and apple_proxy. Merge direct fallback into apple_cn using official logical exclusions only where needed to preserve CN/proxy/fallback routing; QX and other collections keep their existing layout.
+
+- Modified: 2026-10-27 (chance). Microsoft CN routing layers override actionless company/OneDrive feed defaults only; preserve explicit row actions, domestic-first ordering, existing GitHub/AI ownership and Microsoft output filenames.

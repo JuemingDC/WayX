@@ -617,7 +617,8 @@ assert 'AND,((DOMAIN-SUFFIX,apple.com),(NOT,((DOMAIN,testflight.apple.com))))' i
 
 # Modified: 2026-10-25 (chance). Independent Microsoft services must keep
 # their own cn attributes rather than inheriting a blanket action from a parent.
-ms=next(item for item in registry['applications'] if item['name']=='microsoft')
+ms=dict(next(item for item in registry['applications'] if item['name']=='microsoft'))
+ms.pop('routing_layers',None)
 assert 'azure@cn' in ms['tags'] and 'azure@!cn' in ms['proxy_tags']
 assert 'azure' not in ms['tags']+ms['proxy_tags']
 selected={tag.split('@')[0] for tag in ms['tags']+ms['proxy_tags']}
@@ -633,6 +634,22 @@ assert 'host-suffix,azure.example.cn,direct' in ms_out['Rule/QuantumultX/microso
 assert 'host,portal.microsoft.com,ssid' in ms_out['Rule/QuantumultX/microsoft.list']
 assert 'DOMAIN-SUFFIX,azure.example.cn' in ms_out['Rule/Surge/microsoft_direct.list']
 assert 'DOMAIN,portal.microsoft.com' in ms_out['Rule/Surge/microsoft_proxy.list']
+# Modified: 2026-10-27 (chance). The Microsoft CN layer must win over an
+# actionless company/OneDrive list even for identical native declarations.
+ms_layer={**ms,'routing_layers':[{'policy':'DIRECT','surge_suffix':'direct',
+ 'tags':ms['tags'],'sources':['ms-cn']}]}
+ms_sources=[{'id':'ms-cn','format':'ruleset','category':'microsoft','policy':'DIRECT','author':'Fixture','url':'https://example.test/ms-cn'},
+ {'id':'ms-all','format':'ruleset','category':'microsoft','policy':'PROXY','author':'Fixture','url':'https://example.test/ms'}]
+ml,_,_=m.build({**ms_config,'applications':[ms_layer],'sources':ms_sources},
+ {'geosite':ms_data,'ms-cn':b'DOMAIN,download.microsoft.com\nDOMAIN-SUFFIX,sharepoint.cn',
+ 'ms-all':b'DOMAIN,download.microsoft.com\nDOMAIN-SUFFIX,sharepoint.cn\nDOMAIN-SUFFIX,microsoft.com\nDOMAIN-SUFFIX,onedrive.live.com'})
+mq=ml['Rule/QuantumultX/microsoft.list']
+assert mq.index('host,download.microsoft.com,direct') < mq.index('host-suffix,microsoft.com,ssid')
+assert 'host-suffix,sharepoint.cn,direct' in mq and 'host-suffix,sharepoint.cn,ssid' not in mq
+assert 'host-suffix,onedrive.live.com,ssid' in mq
+assert 'DOMAIN,download.microsoft.com' in ml['Rule/Surge/microsoft_direct.list']
+assert 'DOMAIN-SUFFIX,onedrive.live.com' in ml['Rule/Surge/microsoft_proxy.list']
+
 
 # Modified: 2026-10-25 (chance). Joint primary MetaCubeX/V2Fly feeds must carry
 # update/attributed-cn DIRECT and service PROXY through both target layouts.

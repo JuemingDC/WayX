@@ -1,11 +1,11 @@
 # Name: microsoft_direct
-# Updated: 2026-10-25 05:49:22 UTC
+# Updated: 2026-10-27 07:34:07 UTC
 # Converted by: chance
-# Source Authors: MetaCubeX, V2Fly
+# Source Authors: MetaCubeX, QuixoticHeart, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/azure@cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/bing@cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/microsoft@cn.json
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/azure@cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/bing@cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/microsoft@cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/onedrive.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/microsoft-cn.list ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/microsoft.list ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/onedrive.list
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 189
+# Rules: 190
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,b.c2r.ts.cdn.office.net
@@ -197,3 +197,4 @@ DOMAIN-SUFFIX,trustcenter.cn
 DOMAIN-SUFFIX,windowsazure.cn
 DOMAIN-SUFFIX,windowsazurestatus.cn
 DOMAIN-SUFFIX,xboxlive.cn
+DOMAIN-SUFFIX,unity3dcloud.cn

@@ -78,3 +78,8 @@ For large lists, open the GitHub Raw URL rather than relying on a truncated file
 
 <!-- Modified: 2026-10-27 (chance). Merge Surge apple_direct into apple_cn only. -->
 Surge Apple uses only apple_cn.list (DIRECT) then apple_proxy.list (proxy). Merged fallback rules use native logical exclusions where necessary so broad Apple direct domains cannot capture proxy services; domestic/update matches still win. Quantumult X is unchanged.
+
+<!-- Modified: 2026-10-27 (chance). Adopt Microsoft domestic-first classification from QuixoticHeart. -->
+Microsoft merges QuixoticHeart microsoft-cn, microsoft and onedrive. Its CN layer combines that source with existing V2Fly attributed-CN selectors and MetaCubeX Microsoft/Azure/Bing CN feeds. Domestic/update/download/Office CDN declarations are DIRECT before the company/OneDrive PROXY fallback. Explicit source-row actions remain present; GitHub and AI ownership priorities still apply. QX keeps microsoft.list with direct/ssid actions. Surge keeps microsoft_direct.list (DIRECT) before microsoft_proxy.list (proxy group), both before general fallbacks. This does not imply every Windows Update host is direct; only declared domestic access points use DIRECT.
+
+The imported Microsoft classification excludes tenor.com; Google ownership and proxy routing remain intact, following Google’s official Tenor acquisition announcement.

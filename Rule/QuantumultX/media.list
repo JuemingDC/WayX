@@ -1,11 +1,11 @@
 # Name: media
-# Updated: 2026-10-27 01:17:54 UTC
+# Updated: 2026-10-27 07:35:36 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-communication.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-password-management.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 7532
+# Rules: 7526
 # Managed by: WayX Rule Aggregator
 
 host,cdn.globalsigncdn.com.cdn.cloudflare.net,ssid
@@ -490,7 +490,6 @@ host,stats.dahlmessenger.com,ssid
 host,stats.rustore.ru,ssid
 host,stats.telega.info,ssid
 host,stats.vk-portal.net,ssid
-host,supercell.helpshift.com,ssid
 host,supercell.zendesk.com,ssid
 host,t.mail.ru,ssid
 host,target.vk.com,ssid
@@ -673,7 +672,6 @@ host-suffix,espn.hb.omtrdc.net,ssid
 host-suffix,espndotcom.tt.omtrdc.net,ssid
 host-suffix,execute-api.us-east-1.amazonaws.com,ssid
 host-suffix,gtlsca.nat.gov.tw,ssid
-host-suffix,hbo.com.edgesuite.net,ssid
 host-suffix,hbo.map.fastly.net,ssid
 host-suffix,hbogeo.cust.footprint.net,ssid
 host-suffix,hbomaxdash.s.llnwi.net,ssid
@@ -684,8 +682,6 @@ host-suffix,manifest.prod.boltdns.net,ssid
 host-suffix,mobileanalytics.us-east-1.amazonaws.com,ssid
 host-suffix,mytvsuperlimited.hb.omtrdc.net,ssid
 host-suffix,mytvsuperlimited.sc.omtrdc.net,ssid
-host-suffix,naver.com.akadns.net,ssid
-host-suffix,naverads.com.akadns.net,ssid
 host-suffix,perf-events.cloud.unity3d.com,ssid
 host-suffix,perf.cloud.unity3d.com,ssid
 host-suffix,s-bid.rmp.rakuten.com,ssid
@@ -803,7 +799,6 @@ host-suffix,canon.com.my,ssid
 host-suffix,canon.com.tr,ssid
 host-suffix,canon.com.tw,ssid
 host-suffix,cdn.jetbrains.com,ssid
-host-suffix,cdn.optimizely.com,ssid
 host-suffix,challenges.cloudflare.com,ssid
 host-suffix,chocotv.com.tw,ssid
 host-suffix,cht.com.tw,ssid
@@ -1077,7 +1072,6 @@ host-suffix,logitech.com.cn,ssid
 host-suffix,logitechg.com.cn,ssid
 host-suffix,logitechio.com.cn,ssid
 host-suffix,logosfilm.co.kr,ssid
-host-suffix,logx.optimizely.com,ssid
 host-suffix,lolshop.co.kr,ssid
 host-suffix,lpl.com.cn,ssid
 host-suffix,mageconf.com.ua,ssid
