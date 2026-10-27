@@ -431,7 +431,9 @@ def surge_options(rule):
 
 def serialize(rule, policy, target):
     if target == 'QuantumultX':
-        return ','.join((QX_TYPES[rule.kind], rule.value, qx_policy(policy).lower()))
+        # Modified: 2026-10-27 (chance). Render proxy routing through the user's ssid policy group; keep semantic actions internal.
+        action = qx_policy(policy).lower()
+        return ','.join((QX_TYPES[rule.kind], rule.value, 'ssid' if action == 'proxy' else action))
     if policy not in ('DIRECT', 'PROXY') and not policy.startswith('REJECT'):
         if not re.fullmatch(r'[A-Za-z][A-Za-z0-9_]*', policy):
             raise ValueError('Invalid policy name')
@@ -622,6 +624,10 @@ def build(config, inputs):
             target = 'cn'
             if excluded(target, rule):
                 continue
+        # Modified: 2026-10-27 (chance). Apple defaults to DIRECT unless the source row explicitly declares an action.
+        # Registered feed defaults and geosite membership are not per-rule proxy declarations.
+        if target == 'apple' and not explicit and not policy.startswith('REJECT'):
+            policy = 'DIRECT'
         # Modified: 2026-10-23 (chance). Source row actions and registered
         # DIRECT/PROXY feed actions are authoritative. Infer a category default
         # only for placeholders; remove the former cross-feed action override.

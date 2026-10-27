@@ -372,7 +372,7 @@ module.execute_checks('fixture', [('first-fails',[sys.executable,'-c','raise Sys
   validateSurgeRuleSection('[Rule]\nDOMAIN,domestic.test,DIRECT\nDOMAIN-KEYWORD,podcasts.apple.com,PROXY\n');
   assert.throws(()=>validateQxFilterList('PROCESS-NAME,Claude,proxy\n'),/unsupported QX filter/);
   assert.throws(()=>validateQxFilterList('host,example.com\n'));
-  validateQxFilterList('host,one.test,direct\nhost,two.test,reject\nhost,three.test,proxy\n',{id:'mixed'},{builtInPoliciesOnly:true});
+  validateQxFilterList('host,one.test,direct\nhost,two.test,reject\nhost,three.test,ssid\n',{id:'mixed'},{builtInPoliciesOnly:true});
   assert.throws(()=>validateQxFilterList('host,example.com,Media\n',{id:'named'},{builtInPoliciesOnly:true}),/policy must be/);
   const pythonRules=runIsolatedCase('python',['-c',String.raw`
 import importlib.util,sys,tempfile,os,json
@@ -387,7 +387,7 @@ assert len({R('DOMAIN-SUFFIX','example.com'),R('DOMAIN','a.example.com')})==2
 for policy in ['REJECT','REJECT-DROP','REJECT-NO-DROP','REJECT-TINYGIF']:
  assert m.serialize(R('DOMAIN','example.com'),policy,'QuantumultX')=='host,example.com,reject'
 for policy in ['PROXY','proxy','ai','Media','google','',None]:
- assert m.serialize(R('DOMAIN','example.com'),policy,'QuantumultX')=='host,example.com,proxy'
+ assert m.serialize(R('DOMAIN','example.com'),policy,'QuantumultX')=='host,example.com,ssid'
 assert m.serialize(R('DOMAIN','example.com'),'direct','QuantumultX')=='host,example.com,direct'
 # Modified: 2026-10-25 (chance). All four IP kinds gain one no-resolve,
 # while QX output retains its own native format.
@@ -451,7 +451,7 @@ config={'applications':[{'name':'brand','tags':['fixture','proxy'],'proxy_tags':
 'sources':[{'id':'supplement','format':'ruleset','author':'Fixture','url':'https://example.test/rules','category':'brand','policy':'DIRECT'}]}
 outputs,metadata,anomalies=m.build(config,{'geosite':encoded,'supplement':b'DOMAIN,static.proxy.example.com,DIRECT\nPROCESS-NAME,Claude Helper\n'})
 qx=outputs['Rule/QuantumultX/brand.list']
-assert qx.index('host,static.proxy.example.com,direct')<qx.index('host-suffix,proxy.example.com,proxy')<qx.index('host-suffix,example.com,direct')
+assert qx.index('host,static.proxy.example.com,direct')<qx.index('host-suffix,proxy.example.com,ssid')<qx.index('host-suffix,example.com,direct')
 assert all('PROCESS-NAME' not in text for text in outputs.values())
 assert metadata['Rule/Surge/brand_direct.list']['category']=='app'
 # Modified: 2026-10-25 (chance). Assert current source-action preservation, without synthetic NOT rules.
@@ -468,18 +468,18 @@ assert 'DOMAIN-KEYWORD,podcasts.apple.com,PROXY' in fixed['Rule/Surge/filterfix.
 assert '# original comment' in fixed['Rule/Surge/filterfix.dconf']
 assert 'host,domestic.test,direct' in fixed['Rule/QuantumultX/filterfix.list']
 assert all('domestic.test' not in text and 'podcasts.apple.com' not in text for name,text in fixed.items() if 'filterfix' not in name)
-# Mixed files keep explicit direct/reject and normalize every placeholder to proxy.
+# Modified: 2026-10-27 (chance). Mixed files retain direct/reject and render proxy routing as ssid.
 mixed,_,_=m.build(config,{'geosite':encoded,'supplement':b'DOMAIN,static.proxy.example.com,DIRECT\nDOMAIN,blocked.example.com,REJECT-DROP\nDOMAIN,blocked.example.com,PROXY\nDOMAIN,extra.test,PROXY'})
 mixed_qx=mixed['Rule/QuantumultX/brand.list']
-assert 'host,blocked.example.com,reject' in mixed_qx and 'host,extra.test,proxy' in mixed_qx
+assert 'host,blocked.example.com,reject' in mixed_qx and 'host,extra.test,ssid' in mixed_qx
 assert 'host,static.proxy.example.com,direct' in mixed_qx
-assert mixed_qx.index('host,blocked.example.com,reject')<mixed_qx.index('host,blocked.example.com,proxy')
-assert {line.split(',')[2] for line in mixed_qx.splitlines()}=={'direct','reject','proxy'}
+assert mixed_qx.index('host,blocked.example.com,reject')<mixed_qx.index('host,blocked.example.com,ssid')
+assert {line.split(',')[2] for line in mixed_qx.splitlines()}=={'direct','reject','ssid'}
 # Exclusions apply to primary and supplemental category inputs without per-source special cases.
 config['applications'][0]['exclude_tags']=['fixture']
 scoped,_,_=m.build(config,{'geosite':encoded,'supplement':b'DOMAIN,domestic.example.com,PROXY\nDOMAIN-SUFFIX,elsewhere.test,PROXY'})
 assert all('domestic.example.com' not in text for name,text in scoped.items() if '/brand' in name)
-assert 'host-suffix,elsewhere.test,proxy' in scoped['Rule/QuantumultX/brand.list']
+assert 'host-suffix,elsewhere.test,ssid' in scoped['Rule/QuantumultX/brand.list']
 
 # A service shared with any brand uses configured category priority, regardless of source order.
 priority_site=field(1,field(1,b'priority-ai')+field(2,b'\x08\x02'+field(2,b'meta.ai')))
@@ -493,10 +493,10 @@ pi={'geosite':encoded+priority_site+brand_site,'shared':b'DOMAIN-SUFFIX,meta.ai\
     'brand-source':b'DOMAIN-SUFFIX,new-ai.test','ai-source':b'DOMAIN-SUFFIX,new-ai.test'}
 first,_,problems=m.build(pc,pi)
 assert not any(item['code']=='ambiguous-app-ownership' for item in problems)
-assert 'host-suffix,meta.ai,proxy' in first['Rule/QuantumultX/ai.list']
-assert 'host-suffix,new-ai.test,proxy' in first['Rule/QuantumultX/ai.list']
+assert 'host-suffix,meta.ai,ssid' in first['Rule/QuantumultX/ai.list']
+assert 'host-suffix,new-ai.test,ssid' in first['Rule/QuantumultX/ai.list']
 assert 'DOMAIN-SUFFIX,meta.ai' in first['Rule/Surge/ai.list']
-assert 'host-suffix,mail.example,proxy' in first['Rule/QuantumultX/brand.list']
+assert 'host-suffix,mail.example,ssid' in first['Rule/QuantumultX/brand.list']
 assert 'mail.example' not in first['Rule/QuantumultX/ai.list']
 assert all('meta.ai' not in text and 'new-ai.test' not in text for name,text in first.items() if '/ai.' not in name)
 pc['sources']=list(reversed(pc['sources']))
@@ -506,7 +506,7 @@ pc['sources'].append({**shared,'id':'ads','category':'adblock','policy':'REJECT'
 pi['ads']=b'DOMAIN-SUFFIX,meta.ai'
 guarded,_,_=m.build(pc,pi)
 assert 'host-suffix,meta.ai,reject' in guarded['Rule/QuantumultX/adblock.list']
-assert 'host-suffix,meta.ai,proxy' in guarded['Rule/QuantumultX/ai.list']
+assert 'host-suffix,meta.ai,ssid' in guarded['Rule/QuantumultX/ai.list']
 
 # Registry exclusions apply to all sources and both targets, scoped by category and type.
 excluded_config={**pc,'rule_exclusions':{'proxy':[{'kind':'DOMAIN-WILDCARD','value_regex':r'^(?:\*\.)?91cg'}]},
@@ -523,8 +523,8 @@ for target,kind,ip in [('QuantumultX','host-wildcard','ip-cidr'),('Surge','DOMAI
 telegram_config={**pc,'applications':[{'name':'telegram','tags':['fixture']}], 'classification':{'priority':[]},'surge_output':{'telegram':'combined'},'routing_policies':{'telegram':'PROXY'},
  'sources':[{**shared,'id':'telegram-cidr','category':'telegram','policy':'telegram'}]}
 tg,_,_=m.build(telegram_config,{'geosite':encoded,'telegram-cidr':b'IP-CIDR,91.108.4.0/22\nIP-CIDR6,2001:b28:f23c::/47'})
-assert 'ip-cidr,91.108.4.0/22,proxy' in tg['Rule/QuantumultX/telegram.list']
-assert 'ip6-cidr,2001:b28:f23c::/47,proxy' in tg['Rule/QuantumultX/telegram.list']
+assert 'ip-cidr,91.108.4.0/22,ssid' in tg['Rule/QuantumultX/telegram.list']
+assert 'ip6-cidr,2001:b28:f23c::/47,ssid' in tg['Rule/QuantumultX/telegram.list']
 assert 'IP-CIDR6,2001:b28:f23c::/47' in tg['Rule/Surge/telegram.list']
 
 # Attribute selectors split a service's maintained domestic/foreign declarations.
@@ -538,13 +538,13 @@ assert 'Rule/Surge/steam_proxy.list' not in steam_outputs
 steam_config['applications'][0]['tags']=['proxy@cn']
 steam_config['applications'][0]['proxy_tags']=['proxy@!cn']
 steam_outputs,_,_=m.build(steam_config,{'geosite':encoded})
-assert 'host-suffix,proxy.example.com,proxy' in steam_outputs['Rule/QuantumultX/steam.list']
+assert 'host-suffix,proxy.example.com,ssid' in steam_outputs['Rule/QuantumultX/steam.list']
 assert 'DOMAIN-SUFFIX,proxy.example.com' in steam_outputs['Rule/Surge/steam_proxy.list']
 assert 'Rule/Surge/steam_direct.list' not in steam_outputs
 steam_config['applications'][0]['tags']=['fixture@cn']
 steam_outputs,_,_=m.build(steam_config,{'geosite':encoded})
 assert 'host-suffix,example.com,direct' in steam_outputs['Rule/QuantumultX/steam.list']
-assert 'host-suffix,proxy.example.com,proxy' in steam_outputs['Rule/QuantumultX/steam.list']
+assert 'host-suffix,proxy.example.com,ssid' in steam_outputs['Rule/QuantumultX/steam.list']
 
 with tempfile.TemporaryDirectory() as temp:
  os.chdir(temp)
@@ -580,9 +580,18 @@ apple_config={'applications':[apple],'geosite':{'repository':'https://example.te
 apple_out,_,_=m.build(apple_config,{'geosite':apple_data})
 for host in update_hosts:
  assert 'host-suffix,'+host+',direct' in apple_out['Rule/QuantumultX/apple.list']
- assert 'host-suffix,'+host+',proxy' not in apple_out['Rule/QuantumultX/apple.list']
+ assert 'host-suffix,'+host+',ssid' not in apple_out['Rule/QuantumultX/apple.list']
  assert 'DOMAIN-SUFFIX,'+host in apple_out['Rule/Surge/apple_direct.list']
-assert 'host-suffix,tv.apple.com,proxy' in apple_out['Rule/QuantumultX/apple.list']
+# Modified: 2026-10-27 (chance). Actionless Apple services default to DIRECT, including TV and TestFlight.
+assert 'host-suffix,tv.apple.com,direct' in apple_out['Rule/QuantumultX/apple.list']
+# Verify that a registered feed default cannot override Apple's actionless
+# default, while an explicit per-row PROXY and REJECT remain authoritative.
+apple_config['sources']=[{'id':'apple-extra','format':'ruleset','category':'apple','policy':'PROXY','author':'Fixture','url':'https://example.test/apple'}]
+extra,_,_=m.build(apple_config,{'geosite':apple_data,'apple-extra':b'DOMAIN,testflight.apple.com\nDOMAIN,explicit.apple.com,PROXY\nDOMAIN,blocked.apple.com,REJECT'})
+assert 'host,testflight.apple.com,direct' in extra['Rule/QuantumultX/apple.list']
+assert 'host,explicit.apple.com,ssid' in extra['Rule/QuantumultX/apple.list']
+assert 'host,blocked.apple.com,reject' in extra['Rule/QuantumultX/apple.list']
+
 
 # Modified: 2026-10-25 (chance). Independent Microsoft services must keep
 # their own cn attributes rather than inheriting a blanket action from a parent.
@@ -599,7 +608,7 @@ ms_config={'applications':[ms],'geosite':{'repository':'https://example.test/off
  'collections':{key:[] for key in ['cn','proxy','media','media_cn']},'sources':[],'surge_output':{'microsoft':'split'}}
 ms_out,_,_=m.build(ms_config,{'geosite':ms_data})
 assert 'host-suffix,azure.example.cn,direct' in ms_out['Rule/QuantumultX/microsoft.list']
-assert 'host,portal.microsoft.com,proxy' in ms_out['Rule/QuantumultX/microsoft.list']
+assert 'host,portal.microsoft.com,ssid' in ms_out['Rule/QuantumultX/microsoft.list']
 assert 'DOMAIN-SUFFIX,azure.example.cn' in ms_out['Rule/Surge/microsoft_direct.list']
 assert 'DOMAIN,portal.microsoft.com' in ms_out['Rule/Surge/microsoft_proxy.list']
 
@@ -620,7 +629,7 @@ assert feeds[0]['url'] in feed_meta['Rule/QuantumultX/apple.list']['sources']
 assert feed_config['geosite']['repository'] in feed_meta['Rule/QuantumultX/apple.list']['sources']
 assert 'host-suffix,gdmf.apple.com,direct' in feed_out['Rule/QuantumultX/apple.list']
 assert 'host-suffix,azure.example.cn,direct' in feed_out['Rule/QuantumultX/microsoft.list']
-assert 'host-suffix,onedrive.example.com,proxy' in feed_out['Rule/QuantumultX/microsoft.list']
+assert 'host-suffix,onedrive.example.com,ssid' in feed_out['Rule/QuantumultX/microsoft.list']
 assert 'DOMAIN-SUFFIX,azure.example.cn' in feed_out['Rule/Surge/microsoft_direct.list']
 assert 'DOMAIN-SUFFIX,onedrive.example.com' in feed_out['Rule/Surge/microsoft_proxy.list']
 

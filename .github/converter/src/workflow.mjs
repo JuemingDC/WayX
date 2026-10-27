@@ -641,8 +641,9 @@ function ruleGroup(row){
   const actions=new Set();
   for(const line of (row.qx?.text || row.surge?.text || '').split('\n')){
     if(!line.trim() || /^[#;]/.test(line.trim()) || line.startsWith('//'))continue;
-    const action=line.match(/,\s*(direct|proxy|reject(?:-[a-z0-9]+)?)\s*$/i)?.[1]?.toLowerCase();
-    if(action)actions.add(action.startsWith('reject')?'reject':action);
+    // Modified: 2026-10-27 (chance). Classify ssid as proxy routing in the resource index.
+    const action=line.match(/,\s*(direct|proxy|ssid|reject(?:-[a-z0-9]+)?)\s*$/i)?.[1]?.toLowerCase();
+    if(action)actions.add(action.startsWith('reject')?'reject':action==='ssid'?'proxy':action);
   }
   if(actions.size===1 && actions.has('reject'))return 'Reject';
   if(actions.has('proxy'))return 'Proxy';

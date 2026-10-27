@@ -1,11 +1,11 @@
 # Name: proxy
-# Updated: 2026-10-26 21:48:15 UTC
+# Updated: 2026-10-27 01:17:54 UTC
 # Converted by: chance
 # Source Authors: Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 34118
+# Rules: 34121
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net
@@ -175,6 +175,8 @@ DOMAIN,appldnld.g.aaplimg.com
 DOMAIN,apple.com.akadns.net
 DOMAIN,appleworldwidedeveloper.hb-api.omtrdc.net
 DOMAIN,appleworldwidedeveloper.sc.omtrdc.net
+DOMAIN,appsgenaiserver-pa.clients.google.com
+DOMAIN,appsgenaiserver-pa.clients6.google.com
 DOMAIN,apptrailers.itunes.apple.com
 DOMAIN,asahishimbun.sc.omtrdc.net
 DOMAIN,az764295.vo.msecnd.net
@@ -642,6 +644,7 @@ DOMAIN,apple-tv-plus-press.apple.com
 DOMAIN,appleid.cdn-apple.com
 DOMAIN,apps.mzstatic.com
 DOMAIN,apps5.oingo.com
+DOMAIN,appsgenaiserver-pa.googleapis.com
 DOMAIN,as-dash-uk-live.akamaized.net
 DOMAIN,as-hls-uk-live.akamaized.net
 DOMAIN,assets.ppy.sh

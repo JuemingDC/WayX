@@ -1,11 +1,11 @@
 # Name: apple
-# Updated: 2026-10-25 05:49:22 UTC
+# Updated: 2026-10-27 01:17:54 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Nexitally, Sukka, Tartarus2014, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-tvplus.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-update.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Rule/Apple/TestFlight.lsr ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1832
+# Rules: 1830
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,direct
@@ -99,8 +99,8 @@ host,gspe79-cn-ssl.ls.apple.com,direct
 host,gspe85-cn-ssl.ls.apple.com,direct
 host,guzzoni-apple-com.v.aaplimg.com,direct
 host,guzzoni.smoot.apple.com,direct
-host,hls-amt.itunes.apple.com,proxy
-host,hls.itunes.apple.com,proxy
+host,hls-amt.itunes.apple.com,direct
+host,hls.itunes.apple.com,direct
 host,inappcheck.itunes.apple.com,direct
 host,init-p01st.push.apple.com,direct
 host,init-s01st.push.apple.com,direct
@@ -111,17 +111,17 @@ host,iosapps.itunes.apple.com,direct
 host,itunes-apple.com.akadns.net,direct
 host,js-cdn.music.apple.com,direct
 host,km.support.apple.com,direct
-host,linear.tv.apple.com,proxy
+host,linear.tv.apple.com,direct
 host,misc-assets.itunes.apple.com,direct
 host,musicstatus.music.apple.com,direct
 host,mvod.itunes.apple.com,direct
 host,myapp.itunes.apple.com,direct
 host,notary-submissions-prod.s3-accelerate.amazonaws.com,direct
-host,np-edge.itunes.apple.com,proxy
+host,np-edge.itunes.apple.com,direct
 host,osxapps.itunes.apple.com,direct
 host,pd-nk.itunes.apple.com,direct
 host,pd.itunes.apple.com,direct
-host,play-edge.itunes.apple.com,proxy
+host,play-edge.itunes.apple.com,direct
 host,play.itunes.apple.com,direct
 host,play.music.apple.com,direct
 host,podcasts.itunes.apple.com,direct
@@ -148,7 +148,7 @@ host,sync.itunes.apple.com,direct
 host,tf-feedback.itunes.apple.com,direct
 host,universal-activity-service.itunes.apple.com,direct
 host,upp.itunes.apple.com,direct
-host,uts-api.itunes.apple.com,proxy
+host,uts-api.itunes.apple.com,direct
 host,www.support.apple.com,direct
 host,a1.mzstatic.com,direct
 host,a2.mzstatic.com,direct
@@ -158,11 +158,11 @@ host,a5.mzstatic.com,direct
 host,adcdownload.apple.com,direct
 host,app-site-association.cdn-apple.com,direct
 host,appldnld.apple.com,direct
-host,apple-tv-plus-press.apple.com,proxy
-host,apple.comscoreresearch.com,proxy
+host,apple-tv-plus-press.apple.com,direct
+host,apple.comscoreresearch.com,direct
 host,appleid.cdn-apple.com,direct
 host,apps.mzstatic.com,direct
-host,beta.apple.com,proxy
+host,beta.apple.com,direct
 host,cdn-cn.apple-mapkit.com,direct
 host,cdn-cn1.apple-mapkit.com,direct
 host,cdn-cn2.apple-mapkit.com,direct
@@ -220,12 +220,12 @@ host,mensura.cdn-apple.com,direct
 host,mesu.apple.com,direct
 host,ml.cdn-apple.com,direct
 host,music.apple.com,direct
-host,news-client.apple.com,proxy
-host,news-edge.apple.com,proxy
-host,news-events.apple.com,proxy
+host,news-client.apple.com,direct
+host,news-edge.apple.com,direct
+host,news-events.apple.com,direct
 host,ocsp.apple.com,direct
 host,ocsp2.apple.com,direct
-host,ocvideo.apple.com,proxy
+host,ocvideo.apple.com,direct
 host,oscdn.apple.com,direct
 host,p-events-delivery.akamaized.net,direct
 host,pancake.apple.com,direct
@@ -251,11 +251,11 @@ host,swcdn.apple.com,direct
 host,swdist.apple.com,direct
 host,swscan.apple.com,direct
 host,sylvan.apple.com,direct
-host,testflight.apple.com,proxy
+host,testflight.apple.com,direct
 host,tj-pod1-smp-device.apple.com,direct
 host,tj-pod2-smp-device.apple.com,direct
 host,tj-pod3-smp-device.apple.com,direct
-host,tv.applemusic.com,proxy
+host,tv.applemusic.com,direct
 host,updates-http.cdn-apple.com,direct
 host,updates.cdn-apple.com,direct
 host,valid.apple.com,direct
@@ -368,10 +368,10 @@ host-suffix,beats1.com.cn,direct
 host-suffix,beats2.com.cn,direct
 host-suffix,beatsbydre.com.cn,direct
 host-suffix,configuration.apple.com,direct
-host-suffix,developer.apple.com,proxy
-host-suffix,developerservices2.apple.com,proxy
-host-suffix,devimages-cdn.apple.com,proxy
-host-suffix,devstreaming-cdn.apple.com,proxy
+host-suffix,developer.apple.com,direct
+host-suffix,developerservices2.apple.com,direct
+host-suffix,devimages-cdn.apple.com,direct
+host-suffix,devstreaming-cdn.apple.com,direct
 host-suffix,ecgapp.com.cn,direct
 host-suffix,emac.co.in,direct
 host-suffix,fcs-keys-pub-prod.cdn-apple.com,direct
@@ -412,7 +412,7 @@ host-suffix,ipod.com.sg,direct
 host-suffix,ipod.com.tw,direct
 host-suffix,ipodrocks.com.au,direct
 host-suffix,ipodshop.com.au,direct
-host-suffix,itunes.apple.com,proxy
+host-suffix,itunes.apple.com,direct
 host-suffix,itunes.co.th,direct
 host-suffix,itunesradio.com.cn,direct
 host-suffix,livephotos.com.cn,direct
@@ -427,12 +427,12 @@ host-suffix,macbookpro.com.au,direct
 host-suffix,macos.com.au,direct
 host-suffix,mesu.apple.com,direct
 host-suffix,mr-apple.com.tw,direct
-host-suffix,music.apple.com,proxy
+host-suffix,music.apple.com,direct
 host-suffix,oscdn.apple.com,direct
 host-suffix,osrecovery.apple.com,direct
-host-suffix,playgrounds-cdn.apple.com,proxy
-host-suffix,podcast.apple.com,proxy
-host-suffix,podcasts.apple.com,proxy
+host-suffix,playgrounds-cdn.apple.com,direct
+host-suffix,podcast.apple.com,direct
+host-suffix,podcasts.apple.com,direct
 host-suffix,push.apple.com,direct
 host-suffix,quicktime.com.au,direct
 host-suffix,researchkit.com.cn,direct
@@ -442,8 +442,8 @@ host-suffix,swdist.apple.com,direct
 host-suffix,swdownload.apple.com,direct
 host-suffix,swiftui.com.cn,direct
 host-suffix,swscan.apple.com,direct
-host-suffix,timestamp.apple.com,proxy
-host-suffix,tv.apple.com,proxy
+host-suffix,timestamp.apple.com,direct
+host-suffix,tv.apple.com,direct
 host-suffix,updates-http.cdn-apple.com,direct
 host-suffix,updates.cdn-apple.com,direct
 host-suffix,webobjects.co.uk,direct
@@ -575,7 +575,6 @@ host-suffix,apple.me,direct
 host-suffix,apple.my,direct
 host-suffix,apple.net,direct
 host-suffix,apple.news,direct
-host-suffix,apple.news,proxy
 host-suffix,apple.nl,direct
 host-suffix,apple.no,direct
 host-suffix,apple.pk,direct
@@ -659,7 +658,6 @@ host-suffix,applemasters.info,direct
 host-suffix,applemusic.berlin,direct
 host-suffix,applemusic.co,direct
 host-suffix,applemusic.com,direct
-host-suffix,applemusic.com,proxy
 host-suffix,applemusic.hamburg,direct
 host-suffix,applemusic.wang,direct
 host-suffix,applemusicconnect.com,direct

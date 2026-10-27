@@ -1,5 +1,5 @@
 # Name: steam
-# Updated: 2026-10-25 05:49:22 UTC
+# Updated: 2026-10-27 01:17:54 UTC
 # Converted by: chance
 # Source Authors: MetaCubeX, V2Fly
 # Category: app
@@ -8,39 +8,39 @@
 # Rules: 63
 # Managed by: WayX Rule Aggregator
 
-host,a4e8s8k3.map2.ssl.hwcdn.net,proxy
+host,a4e8s8k3.map2.ssl.hwcdn.net,ssid
 host,alibaba.cdn.steampipe.steamcontent.com,direct
-host,steamcloudsweden.blob.core.windows.net,proxy
-host,steamcommunity-a.akamaihd.net.edgesuite.net,proxy
-host,steamugcquincy.blob.core.windows.net,proxy
-host,f3b7q2p3.ssl.hwcdn.net,proxy
+host,steamcloudsweden.blob.core.windows.net,ssid
+host,steamcommunity-a.akamaihd.net.edgesuite.net,ssid
+host,steamugcquincy.blob.core.windows.net,ssid
+host,f3b7q2p3.ssl.hwcdn.net,ssid
 host,lv.queniujq.cn,direct
-host,steambroadcast.akamaized.net,proxy
-host,steamcdn-a.akamaihd.net,proxy
-host,steamcommunity-a.akamaihd.net,proxy
-host,steammobile.akamaized.net,proxy
-host,steampipe-kr.akamaized.net,proxy
-host,steampipe-partner.akamaized.net,proxy
-host,steampipe.akamaized.net,proxy
-host,steamstore-a.akamaihd.net,proxy
-host,steamusercontent-a.akamaihd.net,proxy
-host,steamuserimages-a.akamaihd.net,proxy
-host,steamvideo-a.akamaihd.net,proxy
+host,steambroadcast.akamaized.net,ssid
+host,steamcdn-a.akamaihd.net,ssid
+host,steamcommunity-a.akamaihd.net,ssid
+host,steammobile.akamaized.net,ssid
+host,steampipe-kr.akamaized.net,ssid
+host,steampipe-partner.akamaized.net,ssid
+host,steampipe.akamaized.net,ssid
+host,steamstore-a.akamaihd.net,ssid
+host,steamusercontent-a.akamaihd.net,ssid
+host,steamuserimages-a.akamaihd.net,ssid
+host,steamvideo-a.akamaihd.net,ssid
 host,xz.pphimalayanrt.com,direct
-host-suffix,edge.steam-dns.top.comcast.net,proxy
-host-suffix,steam.cdn.orcon.net.nz,proxy
-host-suffix,steam.cdn.slingshot.co.nz,proxy
+host-suffix,edge.steam-dns.top.comcast.net,ssid
+host-suffix,steam.cdn.orcon.net.nz,ssid
+host-suffix,steam.cdn.slingshot.co.nz,ssid
 host-suffix,dl.steam.clngaa.com,direct
 host-suffix,gstore.val.manlaxy.com,direct
 host-suffix,st.dl.bscstorage.net,direct
 host-suffix,st.dl.eccdnx.com,direct
 host-suffix,st.dl.pinyuncloud.com,direct
-host-suffix,steam.apac.qtlglb.com,proxy
-host-suffix,steam.cdn.on.net,proxy
-host-suffix,steam.cdn.webra.ru,proxy
-host-suffix,steam.eca.qtlglb.com,proxy
-host-suffix,steam.naeu.qtlglb.com,proxy
-host-suffix,steam.ru.qtlglb.com,proxy
+host-suffix,steam.apac.qtlglb.com,ssid
+host-suffix,steam.cdn.on.net,ssid
+host-suffix,steam.cdn.webra.ru,ssid
+host-suffix,steam.eca.qtlglb.com,ssid
+host-suffix,steam.naeu.qtlglb.com,ssid
+host-suffix,steam.ru.qtlglb.com,ssid
 host-suffix,steampowered.com.8686c.com,direct
 host-suffix,steamstatic.com.8686c.com,direct
 host-suffix,client-update.queniuqe.com,direct
@@ -48,26 +48,26 @@ host-suffix,csgo.com.cn,direct
 host-suffix,csgo.wmsj.cn,direct
 host-suffix,dota2.com.cn,direct
 host-suffix,dota2.wmsj.cn,direct
-host-suffix,dota2.com,proxy
-host-suffix,playartifact.com,proxy
-host-suffix,s.team,proxy
-host-suffix,steam-api.com,proxy
-host-suffix,steam-chat.com,proxy
-host-suffix,steam.tv,proxy
+host-suffix,dota2.com,ssid
+host-suffix,playartifact.com,ssid
+host-suffix,s.team,ssid
+host-suffix,steam-api.com,ssid
+host-suffix,steam-chat.com,ssid
+host-suffix,steam.tv,ssid
 host-suffix,steamchina.com,direct
-host-suffix,steamcommunity.com,proxy
-host-suffix,steamconnecttest.com,proxy
-host-suffix,steamcontent.com,proxy
-host-suffix,steamdeck.com,proxy
-host-suffix,steamgames.com,proxy
-host-suffix,steamos.cloud,proxy
-host-suffix,steampowered.com,proxy
+host-suffix,steamcommunity.com,ssid
+host-suffix,steamconnecttest.com,ssid
+host-suffix,steamcontent.com,ssid
+host-suffix,steamdeck.com,ssid
+host-suffix,steamgames.com,ssid
+host-suffix,steamos.cloud,ssid
+host-suffix,steampowered.com,ssid
 host-suffix,steamserver.net,direct
-host-suffix,steamserver.net,proxy
-host-suffix,steamstatic.com,proxy
+host-suffix,steamserver.net,ssid
+host-suffix,steamstatic.com,ssid
 host-suffix,steamusercontent.com,direct
-host-suffix,steamusercontent.com,proxy
-host-suffix,underlords.com,proxy
-host-suffix,valve.net,proxy
-host-suffix,valvesoftware.com,proxy
+host-suffix,steamusercontent.com,ssid
+host-suffix,underlords.com,ssid
+host-suffix,valve.net,ssid
+host-suffix,valvesoftware.com,ssid
 host-suffix,wmsjsteam.com,direct

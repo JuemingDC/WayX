@@ -672,7 +672,8 @@ export function validateQxFilterList(text,entry={id:'filter-list'},{builtInPolic
     if(!line||/^(?:#|;|\/\/)/.test(line))continue;
     if(!QX_WAYX_FILTER_TYPES.has(line.split(',')[0].trim().toLowerCase()))throw new Error(entry.id+': unsupported QX filter type: '+line);
     validateQxExecutableLine(line,entry,'filter_local');
-    if(builtInPoliciesOnly&&!['direct','reject','proxy'].includes(line.split(',')[2]?.trim()))throw new Error(entry.id+': generated rule policy must be direct, reject or proxy: '+line);
+    // Modified: 2026-10-27 (chance). Generated routing lists use the ssid policy group for proxy traffic.
+    if(builtInPoliciesOnly&&!['direct','reject','ssid'].includes(line.split(',')[2]?.trim()))throw new Error(entry.id+': generated rule policy must be direct, reject or ssid: '+line);
   }
 }
 
