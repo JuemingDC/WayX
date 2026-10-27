@@ -986,6 +986,39 @@
       "sha256": "267339d58ff75a42307ce866b44a18229feeb2c630b60f607545cc8ac4407d7b"
     },
     {
+      "id": "quixotic-microsoft-cn",
+      "author": "QuixoticHeart",
+      "format": "ruleset",
+      "category": "microsoft",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/microsoft-cn.list",
+      "license": "GPL-3.0; see upstream LICENSE",
+      "fetched_url": "https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/microsoft-cn.list",
+      "sha256": "04a7231c141abfbd0de36f886b122840f8e43e63ef1963d568efb7ee5c20d087"
+    },
+    {
+      "id": "quixotic-microsoft",
+      "author": "QuixoticHeart",
+      "format": "ruleset",
+      "category": "microsoft",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/microsoft.list",
+      "license": "GPL-3.0; see upstream LICENSE",
+      "fetched_url": "https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/microsoft.list",
+      "sha256": "5749aa8fb1ab65ebed5b67f2a4d0ab66e9ffc261450b5db6957f92418fb9a7ad"
+    },
+    {
+      "id": "quixotic-onedrive",
+      "author": "QuixoticHeart",
+      "format": "ruleset",
+      "category": "microsoft",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/onedrive.list",
+      "license": "GPL-3.0; see upstream LICENSE",
+      "fetched_url": "https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/onedrive.list",
+      "sha256": "fad1bc4461cd887c9300300fdcacee0deb053039193dc71b34c9771b40e6df84"
+    },
+    {
       "id": "geosite",
       "author": "V2Fly",
       "format": "protobuf",
@@ -1003,39 +1036,6 @@
       "license": "MIT",
       "fetched_url": "https://github.com/v2fly/domain-list-community/releases/download/20261027070632/dlc.dat.sha256sum",
       "sha256": "aab9b016ca98d74d340e25f8a5f58638ed7f18b7671296363822615392c9a70a"
-    },
-    {
-      "id": "quixotic-onedrive",
-      "author": "QuixoticHeart",
-      "format": "ruleset",
-      "category": "microsoft",
-      "policy": "PROXY",
-      "url": "https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/onedrive.list",
-      "license": "GPL-3.0; see upstream LICENSE",
-      "fetched_url": "https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/onedrive.list",
-      "sha256": "fad1bc4461cd887c9300300fdcacee0deb053039193dc71b34c9771b40e6df84"
-    },
-    {
-      "id": "quixotic-microsoft",
-      "author": "QuixoticHeart",
-      "format": "ruleset",
-      "category": "microsoft",
-      "policy": "PROXY",
-      "url": "https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/microsoft.list",
-      "license": "GPL-3.0; see upstream LICENSE",
-      "fetched_url": "https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/microsoft.list",
-      "sha256": "5749aa8fb1ab65ebed5b67f2a4d0ab66e9ffc261450b5db6957f92418fb9a7ad"
-    },
-    {
-      "id": "quixotic-microsoft-cn",
-      "author": "QuixoticHeart",
-      "format": "ruleset",
-      "category": "microsoft",
-      "policy": "DIRECT",
-      "url": "https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/microsoft-cn.list",
-      "license": "GPL-3.0; see upstream LICENSE",
-      "fetched_url": "https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/microsoft-cn.list",
-      "sha256": "04a7231c141abfbd0de36f886b122840f8e43e63ef1963d568efb7ee5c20d087"
     }
   ],
   "configuration": "4aea8168f0408c55f29fe34297c1bc576c988332713a0c4570f2d77028315755",
