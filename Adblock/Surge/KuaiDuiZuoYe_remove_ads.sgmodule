@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KuaiDuiZuoYe.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 17:18:11 +08:00
+# Converted: 2026-10-28 07:44:10 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/KuaiDuiZuoYe_remove_ads.lpx
 # Target: Surge
@@ -20,7 +20,7 @@ DOMAIN,adx.zuoyebang.com,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 
-http-response-jq ^https:\/\/www\.kuaiduizuoye\.com\/codesearch\/aid\/home$ 'delpaths([["data","homeBannerList"]])'
+http-response-jq ^https:\/\/www\.kuaiduizuoye\.com\/codesearch\/aid\/home$ 'del(.data.homeBannerList)'
 
 [Map Local]
 ^https:\/\/www\.kuaiduizuoye\.com\/init\/ad\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"

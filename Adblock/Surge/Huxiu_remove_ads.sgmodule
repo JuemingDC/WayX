@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Huxiu.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 17:18:11 +08:00
+# Converted: 2026-10-28 07:44:10 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Huxiu_remove_ads.lpx
 # Target: Surge
@@ -20,7 +20,7 @@ DOMAIN,api-ad-product.huxiu.com,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 
-http-response-jq ^https:\/\/api-ms-feed\.huxiu\.com\/v1\/media\/recommend$ 'delpaths([["data","live"]])'
+http-response-jq ^https:\/\/api-ms-feed\.huxiu\.com\/v1\/media\/recommend$ 'del(.data.live)'
 
 [Map Local]
 ^https:\/\/api-ms-config\.huxiu\.com\/v1\/adConfig$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"

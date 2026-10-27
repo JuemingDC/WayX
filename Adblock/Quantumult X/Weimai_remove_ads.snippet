@@ -8,7 +8,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Weimai.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 17:18:11 +08:00
+# Converted: 2026-10-28 07:44:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Weimai_remove_ads.lpx
@@ -19,7 +19,7 @@
 # [rewrite_local]
 ^https:\/\/confssl\d?\.iweimai\.cn\/wm_ios_update\.json\? url jsonjq-response-body 'setpath(["isShowCJAd"]; 0)'
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
-^https:\/\/confssl\d?\.iweimai\.cn\/wm_ios_update\.json\? url jsonjq-response-body 'delpaths([["launchAd"],["adBanners"],["ad"]])'
+^https:\/\/confssl\d?\.iweimai\.cn\/wm_ios_update\.json\? url jsonjq-response-body 'del(.launchAd,.adBanners,.ad)'
 
 # [mitm]
 hostname = confssl*.iweimai.cn

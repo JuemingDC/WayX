@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduTranslate.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 17:18:11 +08:00
+# Converted: 2026-10-28 07:44:10 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/BaiduTranslate_remove_ads.lpx
 # Target: Surge
@@ -22,10 +22,10 @@
 [Body Rewrite]
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
-http-response-jq ^https:\/\/fanyi-app\.baidu\.com\/transapp\/comment\/my\? 'delpaths([["data","taskBanner"],["data","act"]])'
+http-response-jq ^https:\/\/fanyi-app\.baidu\.com\/transapp\/comment\/my\? 'del(.data.taskBanner,.data.act)'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
-http-response-jq ^https:\/\/fanyi-app\.baidu\.com\/transapp\/recitewd\/myplan\? 'delpaths([["data","activityRec"],["data","activityRecList"]])'
+http-response-jq ^https:\/\/fanyi-app\.baidu\.com\/transapp\/recitewd\/myplan\? 'del(.data.activityRec,.data.activityRecList)'
 
 [Map Local]
 ^https:\/\/fanyi-app\.baidu\.com\/transapp\/v2\/api\/launch\/config\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"

@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Yueyou.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 17:18:11 +08:00
+# Converted: 2026-10-28 07:44:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Yueyou_remove_ads.lpx
 # Target: Surge
@@ -20,7 +20,7 @@ DOMAIN,ads.reader.yueyouxs.com,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
-http-response-jq ^https:\/\/goway\.reader\.yueyouxs\.com\/assemble\/app\/basic\/getAppInfo\? 'delpaths([["data","isShowDLPopup"],["data","isShowGame"],["data","touTiaoShowDlPopup"],["data","offLineDownload","WatchVideoBtnDesc"],["data","readVipFirstCfg"],["data","readVipNormalCfg"],["data","notifyAd"],["data","hotStartSplashTime"],["data","hotStartReqSwitch"],["data","isShowBFTab"],["data","popReqDelayTime"],["data","benefitCfg"],["data","chestTask"],["data","hotStartAd"],["data","activeTagList"],["data","secondOrderCfg"],["data","secondOrderList"],["data","blockedWordsCfg"],["data","aaReportListCfg"],["data","pddAdSwitch"],["data","isShowShelfAuthPopup"],["data","firstPopUpAmount"]])'
+http-response-jq ^https:\/\/goway\.reader\.yueyouxs\.com\/assemble\/app\/basic\/getAppInfo\? 'del(.data.isShowDLPopup,.data.isShowGame,.data.touTiaoShowDlPopup,.data.offLineDownload.WatchVideoBtnDesc,.data.readVipFirstCfg,.data.readVipNormalCfg,.data.notifyAd,.data.hotStartSplashTime,.data.hotStartReqSwitch,.data.isShowBFTab,.data.popReqDelayTime,.data.benefitCfg,.data.chestTask,.data.hotStartAd,.data.activeTagList,.data.secondOrderCfg,.data.secondOrderList,.data.blockedWordsCfg,.data.aaReportListCfg,.data.pddAdSwitch,.data.isShowShelfAuthPopup,.data.firstPopUpAmount)'
 
 http-response-jq ^https:\/\/goway\.reader\.yueyouxs\.com\/assemble\/app\/basic\/getAppInfo\? 'setpath(["data","isAdClosed"]; true)'
 
