@@ -539,6 +539,30 @@ def build(config, inputs):
         for rule, policy, explicit in rows:
             add(source['category'], policy, [rule], source['author'], source['url'], explicit)
 
+    # Modified: 2026-10-27 (chance). Ordered, source-backed application layers
+    # separate domestic/update DIRECT, named PROXY services and the brand fallback.
+    routing_layers = {}
+    for app in config['applications']:
+        layers = []
+        for layer in app.get('routing_layers', []):
+            if layer['policy'] not in ('DIRECT', 'PROXY') or not re.fullmatch(r'[a-z][a-z0-9_]*', layer['surge_suffix']):
+                raise ValueError('Invalid application routing layer')
+            known = {source['id'] for source, _ in parsed_sources}
+            if not set(layer.get('sources', [])) <= known:
+                raise ValueError('Unknown application routing layer source')
+            rules = select(layer.get('tags', []), app['name'])
+            for source, rows in parsed_sources:
+                if source['id'] in layer.get('sources', []):
+                    rules.update(rule for rule, _, _ in rows)
+            layers.append((layer['policy'], layer['surge_suffix'], rules))
+        routing_layers[app['name']] = layers
+
+    def route_layer(name, rule, policy=None):
+        for position, (action, suffix, rules) in enumerate(routing_layers.get(name, [])):
+            if rule in rules and (policy is None or qx_policy(policy) == action):
+                return position, action, suffix
+        return len(routing_layers.get(name, [])), None, None
+
     classification = config.get('classification', {})
     priority = classification.get('priority', [])
     if len(set(priority)) != len(priority) or set(priority) - app_names:
@@ -625,9 +649,14 @@ def build(config, inputs):
             if excluded(target, rule):
                 continue
         # Modified: 2026-10-27 (chance). Apple defaults to DIRECT unless the source row explicitly declares an action.
-        # Registered feed defaults and geosite membership are not per-rule proxy declarations.
+        # Named layers are user-authorized defaults; other feed defaults do not imply proxy routing.
         if target == 'apple' and not explicit and not policy.startswith('REJECT'):
-            policy = 'DIRECT'
+            policy = route_layer(target, rule)[1] or 'DIRECT'
+        # Modified: 2026-10-27 (chance). Microsoft's configured CN layer
+        # takes precedence over actionless company/OneDrive feeds, without
+        # changing explicit per-row actions or unrelated application defaults.
+        elif routing_layers.get(target) and not explicit and not policy.startswith('REJECT'):
+            policy = route_layer(target, rule)[1] or policy
         # Modified: 2026-10-23 (chance). Source row actions and registered
         # DIRECT/PROXY feed actions are authoritative. Infer a category default
         # only for placeholders; remove the former cross-feed action override.
@@ -662,6 +691,29 @@ def build(config, inputs):
     split_names = {name for name, _ in buckets if name not in routing_policies and (layouts.get(name) == 'split' or (
         layouts.get(name) != 'combined' and
         len({surge_action(policy) for n, policy in buckets if n == name}) > 1))}
+    # Modified: 2026-10-27 (chance). CN-specific rules stay unconditional;
+    # exclude proxy matches only from the merged Apple direct fallback so the
+    # two Surge files preserve CN -> proxy -> fallback behavior.
+    apple_proxy_rules = sorted({rule for (name, policy), rules in buckets.items()
+                                if name == 'apple' and qx_policy(policy) == 'PROXY' for rule in rules})
+
+    def overlaps(left, right):
+        if left.kind not in ('DOMAIN', 'DOMAIN-SUFFIX') or right.kind not in ('DOMAIN', 'DOMAIN-SUFFIX'):
+            return True
+        return (left.value == right.value or
+                left.kind == 'DOMAIN-SUFFIX' and right.value.endswith('.' + left.value) or
+                right.kind == 'DOMAIN-SUFFIX' and left.value.endswith('.' + right.value))
+
+    def surge_apple_direct(rule):
+        native = serialize(rule, 'DIRECT', 'Surge')
+        if route_layer('apple', rule, 'DIRECT')[2] is not None:
+            return native
+        blockers = [serialize(other, 'PROXY', 'Surge') for other in apple_proxy_rules if overlaps(rule, other)]
+        if not blockers:
+            return native
+        blocked = blockers[0] if len(blockers) == 1 else 'OR,(' + ','.join('(' + item + ')' for item in blockers) + ')'
+        return 'AND,((' + native + '),(NOT,((' + blocked + '))))'
+
     for target in ('QuantumultX', 'Surge'):
         grouped = {}
         for (name, policy), rules in buckets.items():
@@ -669,9 +721,19 @@ def build(config, inputs):
             if target == 'Surge' and name not in split_names and policy.startswith('REJECT') and (
                     policy != 'REJECT' or any(n == name and not p.startswith('REJECT') for n, p in buckets)):
                 suffix = '_' + policy.lower().replace('-', '_')
-            file = 'Rule/' + target + '/' + name + suffix + '.list'
-            group = grouped.setdefault(file, [])
-            group.append((name, policy, sorted(rules)))
+            # Modified: 2026-10-27 (chance). Surge layer files are installed
+            # QX retains CN/proxy/fallback order; Surge merges Apple DIRECT into CN.
+            partitions = {}
+            for rule in rules:
+                layer_suffix = route_layer(name, rule, policy)[2]
+                output_suffix = '_' + layer_suffix if target == 'Surge' and layer_suffix else suffix
+                if target == 'Surge' and name == 'apple' and policy == 'DIRECT':
+                    output_suffix = '_cn'
+                partitions.setdefault(output_suffix, []).append(rule)
+            for output_suffix, partition in partitions.items():
+                file = 'Rule/' + target + '/' + name + output_suffix + '.list'
+                group = grouped.setdefault(file, [])
+                group.append((name, policy, sorted(partition)))
         for file, groups in grouped.items():
             # Final ordering uses specificity across policies, not a blanket direct/proxy preference.
             groups.sort(key=lambda group: group[1] == 'DIRECT')
@@ -693,12 +755,13 @@ def build(config, inputs):
             def output_key(pair):
                 rule, policy = pair
                 rank = 0 if rule.kind == 'DOMAIN' else 1 if rule.kind == 'DOMAIN-SUFFIX' else 2 if rule.kind in ('DOMAIN-WILDCARD', 'DOMAIN-KEYWORD') else 3
-                return (rank, -rule.value.count('.'), rule.value,
+                return (route_layer(groups[0][0], rule, policy)[0], rank, -rule.value.count('.'), rule.value,
                         (groups[0][0], rule, qx_policy(policy)) not in explicit_rules,
                         0 if policy == 'DIRECT' else 1 if policy.startswith('REJECT') else 2,
                         policy, rule.kind, rule.options)
             for rule, policy in sorted(ordered, key=output_key):
-                    line = serialize(rule, policy, target)
+                    line = (surge_apple_direct(rule) if target == 'Surge' and groups[0][0] == 'apple' and policy == 'DIRECT'
+                            else serialize(rule, policy, target))
                     if line is not None and line not in seen:
                         lines.append(line); seen.add(line)
             if not lines:

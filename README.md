@@ -643,7 +643,7 @@
 </details>
 
 <details>
-<summary><strong>怎么肥事</strong> · 26 项</summary>
+<summary><strong>怎么肥事</strong> · 27 项</summary>
 
 #### B
 
@@ -710,6 +710,7 @@
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
+| **[腾讯视频净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/zenmofeishi_txvideoad.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fzenmofeishi_txvideoad.snippet%2C%20tag%3D%E8%85%BE%E8%AE%AF%E8%A7%86%E9%A2%91%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fzenmofeishi_txvideoad.sgmodule) |
 | **[贴吧净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/zenmofeishi_tb.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fzenmofeishi_tb.snippet%2C%20tag%3D%E8%B4%B4%E5%90%A7%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fzenmofeishi_tb.sgmodule) |
 | **[途虎养车净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/zenmofeishi_th.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fzenmofeishi_th.snippet%2C%20tag%3D%E9%80%94%E8%99%8E%E5%85%BB%E8%BD%A6%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fzenmofeishi_th.sgmodule) |
 | **[T3出行](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/zenmofeishi_t3.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fzenmofeishi_t3.snippet%2C%20tag%3DT3%E5%87%BA%E8%A1%8C%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fzenmofeishi_t3.sgmodule) |
@@ -742,7 +743,7 @@
 
 ## Rule
 
-按 Reject → Proxy → Direct 排列；混合策略资源列在 Proxy，导入时保留文件中的逐条策略。
+按 Reject → Proxy → Direct 展示；这不是引用优先级。Apple 在 Surge 中按 apple_cn（DIRECT）→ apple_proxy（代理）引用；Microsoft 按 microsoft_direct（DIRECT）→ microsoft_proxy（代理）引用。混合策略资源导入时保留逐条策略。
 
 ### Reject
 
@@ -756,7 +757,9 @@
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
 | **[ai](https://github.com/JuemingDC/WayX/blob/main/Rule/QuantumultX/ai.list)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22filter_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FRule%2FQuantumultX%2Fai.list%2C%20tag%3Dai%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [查看规则](https://raw.githubusercontent.com/JuemingDC/WayX/main/Rule/Surge/ai.list) |
+| **[apple](https://github.com/JuemingDC/WayX/blob/main/Rule/QuantumultX/apple.list)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22filter_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FRule%2FQuantumultX%2Fapple.list%2C%20tag%3Dapple%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | — |
 | **[Apple APNs](https://github.com/JuemingDC/WayX/blob/main/Rule/QuantumultX/AppleAPNs.list)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22filter_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FRule%2FQuantumultX%2FAppleAPNs.list%2C%20tag%3DApple%20APNs%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | — |
+| **[apple_proxy](https://github.com/JuemingDC/WayX/blob/main/Rule/Surge/apple_proxy.list)** | — | [查看规则](https://raw.githubusercontent.com/JuemingDC/WayX/main/Rule/Surge/apple_proxy.list) |
 | **[disney](https://github.com/JuemingDC/WayX/blob/main/Rule/QuantumultX/disney.list)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22filter_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FRule%2FQuantumultX%2Fdisney.list%2C%20tag%3Ddisney%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [查看规则](https://raw.githubusercontent.com/JuemingDC/WayX/main/Rule/Surge/disney.list) |
 | **[facebook](https://github.com/JuemingDC/WayX/blob/main/Rule/QuantumultX/facebook.list)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22filter_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FRule%2FQuantumultX%2Ffacebook.list%2C%20tag%3Dfacebook%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [查看规则](https://raw.githubusercontent.com/JuemingDC/WayX/main/Rule/Surge/facebook.list) |
 | **[filterfix](https://github.com/JuemingDC/WayX/blob/main/Rule/QuantumultX/filterfix.list)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22filter_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FRule%2FQuantumultX%2Ffilterfix.list%2C%20tag%3Dfilterfix%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [查看规则](https://raw.githubusercontent.com/JuemingDC/WayX/main/Rule/Surge/filterfix.dconf) |
@@ -778,8 +781,7 @@
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
-| **[apple](https://github.com/JuemingDC/WayX/blob/main/Rule/QuantumultX/apple.list)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22filter_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FRule%2FQuantumultX%2Fapple.list%2C%20tag%3Dapple%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | — |
-| **[apple_direct](https://github.com/JuemingDC/WayX/blob/main/Rule/Surge/apple_direct.list)** | — | [查看规则](https://raw.githubusercontent.com/JuemingDC/WayX/main/Rule/Surge/apple_direct.list) |
+| **[apple_cn](https://github.com/JuemingDC/WayX/blob/main/Rule/Surge/apple_cn.list)** | — | [查看规则](https://raw.githubusercontent.com/JuemingDC/WayX/main/Rule/Surge/apple_cn.list) |
 | **[cn](https://github.com/JuemingDC/WayX/blob/main/Rule/QuantumultX/cn.list)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22filter_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FRule%2FQuantumultX%2Fcn.list%2C%20tag%3Dcn%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [查看规则](https://raw.githubusercontent.com/JuemingDC/WayX/main/Rule/Surge/cn.list) |
 | **[media_cn](https://github.com/JuemingDC/WayX/blob/main/Rule/QuantumultX/media_cn.list)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22filter_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FRule%2FQuantumultX%2Fmedia_cn.list%2C%20tag%3Dmedia_cn%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [查看规则](https://raw.githubusercontent.com/JuemingDC/WayX/main/Rule/Surge/media_cn.list) |
 | **[microsoft_direct](https://github.com/JuemingDC/WayX/blob/main/Rule/Surge/microsoft_direct.list)** | — | [查看规则](https://raw.githubusercontent.com/JuemingDC/WayX/main/Rule/Surge/microsoft_direct.list) |

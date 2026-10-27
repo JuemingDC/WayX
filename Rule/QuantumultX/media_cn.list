@@ -1,11 +1,11 @@
 # Name: media_cn
-# Updated: 2026-10-26 21:48:15 UTC
+# Updated: 2026-10-27 07:34:07 UTC
 # Converted by: chance
 # Source Authors: MetaCubeX, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-ai-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-collaborate-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-documents-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-cn.json
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1493
+# Rules: 1489
 # Managed by: WayX Rule Aggregator
 
 host,gitlab-assets.oss-cn-hongkong.aliyuncs.com,direct
@@ -86,11 +86,8 @@ host-suffix,sdkclick.mobile.sina.cn,direct
 host-suffix,slog.sina.com.cn,direct
 host-suffix,splash-ads.cdn.unity.cn,direct
 host-suffix,stat.y.qq.com,direct
-host-suffix,tiktokcdn-us.com.edgesuite.net,direct
 host-suffix,tiktokcdn.com.akamaized.net,direct
-host-suffix,tiktokcdn.com.edgesuite.net,direct
 host-suffix,tiktokv.com.edgekey.net,direct
-host-suffix,tiktokv.com.edgesuite.net,direct
 host-suffix,tmead.y.qq.com,direct
 host-suffix,tmeadcomm.y.qq.com,direct
 host-suffix,v6-adashx.ut.youku.com,direct
@@ -1325,7 +1322,6 @@ host-suffix,uneedx.com,direct
 host-suffix,uniontech.cn,direct
 host-suffix,uniontech.com,direct
 host-suffix,unity.cn,direct
-host-suffix,unity3dcloud.cn,direct
 host-suffix,unitychina.cn,direct
 host-suffix,updream.cn,direct
 host-suffix,v3mh.com,direct

@@ -7,17 +7,27 @@
 
 # Author: RuCu6[https://github.com/RuCu6]
 # Icon: https://rucu6.pages.dev/Icons/app/webpage.png
-# Updated: 2026-10-21 19:35
+# Updated: 2026-10-27 13:45
 
-# Converted: 2026-10-25 17:18:11 +08:00
+# Converted: 2026-10-27 15:22:20 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/webpage.lpx
 # Target: Surge
 
 [Rule]
-DOMAIN-SUFFIX,mypikpak.com,{{{wayx_proxy_policy}}},extended-matching
+# PikPak
+DOMAIN,access.mypikpak.com,{{{wayx_proxy_policy}}},extended-matching
+DOMAIN,api-drive.mypikpak.com,{{{wayx_proxy_policy}}},extended-matching
+DOMAIN,user.mypikpak.com,{{{wayx_proxy_policy}}},extended-matching
+DOMAIN-SUFFIX,mypikpak.com,DIRECT,extended-matching
+DOMAIN-SUFFIX,mypikpak.net,DIRECT,extended-matching
+DOMAIN-SUFFIX,pikpakdrive.com,DIRECT,extended-matching
+DOMAIN-SUFFIX,pikpak.io,DIRECT,extended-matching
+DOMAIN-SUFFIX,pikpak.me,DIRECT,extended-matching
+# 黑料网
 DOMAIN,18hlw.com,{{{wayx_proxy_policy}}},extended-matching
 DOMAIN,8olbt.imsatcmn.cc,{{{wayx_proxy_policy}}},extended-matching
+# 移花宫
 DOMAIN,yhg007.com,{{{wayx_proxy_policy}}},extended-matching
 
 [URL Rewrite]

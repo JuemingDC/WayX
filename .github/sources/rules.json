@@ -99,6 +99,27 @@
       "proxy_tags": [
         "apple-intelligence",
         "apple-tvplus"
+      ],
+      "routing_layers": [
+        {
+          "policy": "DIRECT",
+          "surge_suffix": "cn",
+          "tags": [
+            "apple-update"
+          ],
+          "sources": [
+            "quixotic-apple-cn",
+            "mihomo-apple-update"
+          ]
+        },
+        {
+          "policy": "PROXY",
+          "surge_suffix": "proxy",
+          "sources": [
+            "quixotic-apple-proxy",
+            "tartarus-testflight"
+          ]
+        }
       ]
     },
     {
@@ -118,6 +139,25 @@
         "bing@!cn",
         "microsoft-pki@!cn",
         "onedrive@!cn"
+      ],
+      "routing_layers": [
+        {
+          "policy": "DIRECT",
+          "surge_suffix": "direct",
+          "tags": [
+            "microsoft@cn",
+            "azure@cn",
+            "bing@cn",
+            "microsoft-pki@cn",
+            "onedrive@cn"
+          ],
+          "sources": [
+            "quixotic-microsoft-cn",
+            "mihomo-microsoft-cn",
+            "mihomo-azure-cn",
+            "mihomo-bing-cn"
+          ]
+        }
       ]
     }
   ],
@@ -339,7 +379,7 @@
       "author": "Tartarus2014",
       "format": "ruleset",
       "category": "apple",
-      "policy": "DIRECT",
+      "policy": "PROXY",
       "url": "https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Rule/Apple/TestFlight.lsr",
       "license": "See upstream LICENSE"
     },
@@ -935,10 +975,61 @@
       "policy": "DIRECT",
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/bing@cn.json",
       "license": "See upstream LICENSE"
+    },
+    {
+      "id": "quixotic-apple-cn",
+      "author": "QuixoticHeart",
+      "format": "ruleset",
+      "category": "apple",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-cn.list",
+      "license": "GPL-3.0; see upstream LICENSE"
+    },
+    {
+      "id": "quixotic-apple-proxy",
+      "author": "QuixoticHeart",
+      "format": "ruleset",
+      "category": "apple",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-proxy.list",
+      "license": "GPL-3.0; see upstream LICENSE"
+    },
+    {
+      "id": "quixotic-microsoft-cn",
+      "author": "QuixoticHeart",
+      "format": "ruleset",
+      "category": "microsoft",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/microsoft-cn.list",
+      "license": "GPL-3.0; see upstream LICENSE"
+    },
+    {
+      "id": "quixotic-microsoft",
+      "author": "QuixoticHeart",
+      "format": "ruleset",
+      "category": "microsoft",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/microsoft.list",
+      "license": "GPL-3.0; see upstream LICENSE"
+    },
+    {
+      "id": "quixotic-onedrive",
+      "author": "QuixoticHeart",
+      "format": "ruleset",
+      "category": "microsoft",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/onedrive.list",
+      "license": "GPL-3.0; see upstream LICENSE"
     }
   ],
   "indirect_upstreams": "Allowed; only direct blackmatrix7 inputs are excluded.",
   "rule_exclusions": {
+    "microsoft": [
+      {
+        "kind": "DOMAIN-SUFFIX",
+        "value_regex": "^tenor\\.com$"
+      }
+    ],
     "proxy": [
       {
         "kind": "DOMAIN-WILDCARD",

@@ -1,0 +1,31 @@
+#!name=腾讯视频净化
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 腾讯视频净化
+# Updated: 2026-10-27 15:22:19 +08:00
+# Merged by: chance
+# Source Authors: 怎么肥事, TG@ZenMoFiShi
+# Category: app
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/TxvideoAD.snippet
+# Upstream name = 腾讯视频净化
+# Upstream author = TG@ZenMoFiShi
+# Upstream update = 2026-10-27
+# Upstream desc = 去除开屏广告、视频播放前广告、底部的多余 tap 栏、我的页面美化、我的界面顶部广告
+DOMAIN,iacc.stgw.qq.com,REJECT
+DOMAIN,tacc.video.qq.com,REJECT
+# Upstream hostname = i.video.qq.com, iacc.qq.com, config.ab.qq.com, rdelivery.qq.com
+
+[Script]
+zenmofeishi_txvideoad_1 = type=http-request,pattern=^https?:\/\/i\.video\.qq\.com\/(?:\?.*)?$,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/Txvideoad.js,requires-body=true
+zenmofeishi_txvideoad_2 = type=http-response,pattern=^https?:\/\/i\.video\.qq\.com\/(?:\?.*)?$,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/Txvideoad.js,requires-body=true
+zenmofeishi_txvideoad_3 = type=http-response,pattern=^https?:\/\/iacc\.qq\.com\/(?:\?.*)?$,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/Txvideoad.js,requires-body=true
+zenmofeishi_txvideoad_4 = type=http-response,pattern=^https?:\/\/config\.ab\.qq\.com\/tab\/GetTabRemoteConfig(?:\?.*)?$,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/Txvideoad.js,requires-body=true
+zenmofeishi_txvideoad_5 = type=http-response,pattern=^https:\/\/rdelivery\.qq\.com\/v1\/sdkconfig\/get(?:\?.*)?$,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/Txvideoad.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% i.video.qq.com, iacc.qq.com, config.ab.qq.com, rdelivery.qq.com

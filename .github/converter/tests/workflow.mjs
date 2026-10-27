@@ -569,7 +569,9 @@ with tempfile.TemporaryDirectory() as temp:
 # Modified: 2026-10-25 (chance). Use the actual registry selectors with an
 # optimized apple fixture that omits gdmf; the independent update tag must survive.
 registry=json.loads((Path(sys.argv[1]).parent.parent/'sources/rules.json').read_text())
-apple=next(item for item in registry['applications'] if item['name']=='apple')
+apple=dict(next(item for item in registry['applications'] if item['name']=='apple'))
+# Layer behavior is exercised below with bounded, independent source fixtures.
+apple.pop('routing_layers',None)
 assert 'apple-update' in apple['tags']
 def site_payload(tag,domains):
  return field(1,field(1,tag.encode())+b''.join(field(2,b'\x08\x02'+field(2,d.encode())) for d in domains))
@@ -581,7 +583,7 @@ apple_out,_,_=m.build(apple_config,{'geosite':apple_data})
 for host in update_hosts:
  assert 'host-suffix,'+host+',direct' in apple_out['Rule/QuantumultX/apple.list']
  assert 'host-suffix,'+host+',ssid' not in apple_out['Rule/QuantumultX/apple.list']
- assert 'DOMAIN-SUFFIX,'+host in apple_out['Rule/Surge/apple_direct.list']
+ assert 'DOMAIN-SUFFIX,'+host in apple_out['Rule/Surge/apple_cn.list']
 # Modified: 2026-10-27 (chance). Actionless Apple services default to DIRECT, including TV and TestFlight.
 assert 'host-suffix,tv.apple.com,direct' in apple_out['Rule/QuantumultX/apple.list']
 # Verify that a registered feed default cannot override Apple's actionless
@@ -591,11 +593,32 @@ extra,_,_=m.build(apple_config,{'geosite':apple_data,'apple-extra':b'DOMAIN,test
 assert 'host,testflight.apple.com,direct' in extra['Rule/QuantumultX/apple.list']
 assert 'host,explicit.apple.com,ssid' in extra['Rule/QuantumultX/apple.list']
 assert 'host,blocked.apple.com,reject' in extra['Rule/QuantumultX/apple.list']
+# Modified: 2026-10-27 (chance). Domestic/update rules precede proxy
+# parents, TestFlight proxies before the Apple fallback, and both targets agree.
+layered_apple={**apple,'routing_layers':[
+ {'policy':'DIRECT','surge_suffix':'cn','tags':['apple-update'],'sources':['cn-layer']},
+ {'policy':'PROXY','surge_suffix':'proxy','sources':['proxy-layer']}]}
+layers_config={**apple_config,'applications':[layered_apple],'sources':[
+ {'id':'cn-layer','format':'ruleset','category':'apple','policy':'DIRECT','author':'Fixture','url':'https://example.test/cn'},
+ {'id':'proxy-layer','format':'ruleset','category':'apple','policy':'PROXY','author':'Fixture','url':'https://example.test/proxy'}]}
+layered,_,_=m.build(layers_config,{'geosite':apple_data,
+ 'cn-layer':b'DOMAIN-SUFFIX,updates.cdn-apple.com\nDOMAIN-SUFFIX,apps.apple.com',
+ 'proxy-layer':b'DOMAIN,testflight.apple.com\nDOMAIN-SUFFIX,cdn-apple.com\nDOMAIN-SUFFIX,apps.apple.com'})
+lq=layered['Rule/QuantumultX/apple.list']
+assert lq.index('host-suffix,updates.cdn-apple.com,direct') < lq.index('host-suffix,cdn-apple.com,ssid')
+assert lq.index('host,testflight.apple.com,ssid') < lq.index('host-suffix,apple.com,direct')
+assert 'host-suffix,apps.apple.com,ssid' not in lq
+assert 'DOMAIN-SUFFIX,gdmf.apple.com' in layered['Rule/Surge/apple_cn.list']
+assert 'DOMAIN,testflight.apple.com' in layered['Rule/Surge/apple_proxy.list']
+assert 'Rule/Surge/apple_direct.list' not in layered
+assert 'AND,((DOMAIN-SUFFIX,apple.com),(NOT,((DOMAIN,testflight.apple.com))))' in layered['Rule/Surge/apple_cn.list']
+
 
 
 # Modified: 2026-10-25 (chance). Independent Microsoft services must keep
 # their own cn attributes rather than inheriting a blanket action from a parent.
-ms=next(item for item in registry['applications'] if item['name']=='microsoft')
+ms=dict(next(item for item in registry['applications'] if item['name']=='microsoft'))
+ms.pop('routing_layers',None)
 assert 'azure@cn' in ms['tags'] and 'azure@!cn' in ms['proxy_tags']
 assert 'azure' not in ms['tags']+ms['proxy_tags']
 selected={tag.split('@')[0] for tag in ms['tags']+ms['proxy_tags']}
@@ -611,6 +634,22 @@ assert 'host-suffix,azure.example.cn,direct' in ms_out['Rule/QuantumultX/microso
 assert 'host,portal.microsoft.com,ssid' in ms_out['Rule/QuantumultX/microsoft.list']
 assert 'DOMAIN-SUFFIX,azure.example.cn' in ms_out['Rule/Surge/microsoft_direct.list']
 assert 'DOMAIN,portal.microsoft.com' in ms_out['Rule/Surge/microsoft_proxy.list']
+# Modified: 2026-10-27 (chance). The Microsoft CN layer must win over an
+# actionless company/OneDrive list even for identical native declarations.
+ms_layer={**ms,'routing_layers':[{'policy':'DIRECT','surge_suffix':'direct',
+ 'tags':ms['tags'],'sources':['ms-cn']}]}
+ms_sources=[{'id':'ms-cn','format':'ruleset','category':'microsoft','policy':'DIRECT','author':'Fixture','url':'https://example.test/ms-cn'},
+ {'id':'ms-all','format':'ruleset','category':'microsoft','policy':'PROXY','author':'Fixture','url':'https://example.test/ms'}]
+ml,_,_=m.build({**ms_config,'applications':[ms_layer],'sources':ms_sources},
+ {'geosite':ms_data,'ms-cn':b'DOMAIN,download.microsoft.com\nDOMAIN-SUFFIX,sharepoint.cn',
+ 'ms-all':b'DOMAIN,download.microsoft.com\nDOMAIN-SUFFIX,sharepoint.cn\nDOMAIN-SUFFIX,microsoft.com\nDOMAIN-SUFFIX,onedrive.live.com'})
+mq=ml['Rule/QuantumultX/microsoft.list']
+assert mq.index('host,download.microsoft.com,direct') < mq.index('host-suffix,microsoft.com,ssid')
+assert 'host-suffix,sharepoint.cn,direct' in mq and 'host-suffix,sharepoint.cn,ssid' not in mq
+assert 'host-suffix,onedrive.live.com,ssid' in mq
+assert 'DOMAIN,download.microsoft.com' in ml['Rule/Surge/microsoft_direct.list']
+assert 'DOMAIN-SUFFIX,onedrive.live.com' in ml['Rule/Surge/microsoft_proxy.list']
+
 
 # Modified: 2026-10-25 (chance). Joint primary MetaCubeX/V2Fly feeds must carry
 # update/attributed-cn DIRECT and service PROXY through both target layouts.
