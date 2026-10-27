@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/KuaiDuiZuoYe.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 17:18:11 +08:00
+# Converted: 2026-10-28 07:44:10 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/KuaiDuiZuoYe_remove_ads.lpx
@@ -24,7 +24,7 @@ host, adx.zuoyebang.com, reject
 ^https:\/\/www\.kuaiduizuoye\.com\/kdapi\/conf\/appbannersv3$ url reject-dict
 ^https:\/\/www\.kuaiduizuoye\.com\/kdapi\/conf\/initbanner$ url reject-dict
 
-^https:\/\/www\.kuaiduizuoye\.com\/codesearch\/aid\/home$ url jsonjq-response-body 'delpaths([["data","homeBannerList"]])'
+^https:\/\/www\.kuaiduizuoye\.com\/codesearch\/aid\/home$ url jsonjq-response-body 'del(.data.homeBannerList)'
 
 ^https:\/\/apivip\.kuaiduizuoye\.com\/viponline\/scancode\/mycard$ url reject-dict
 

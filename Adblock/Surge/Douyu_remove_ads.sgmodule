@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Douyu.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 17:18:11 +08:00
+# Converted: 2026-10-28 07:44:10 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Douyu_remove_ads.lpx
 # Target: Surge
@@ -29,7 +29,7 @@ DOMAIN,stun1.qvb.qcloud.com,REJECT,extended-matching,pre-matching
 [Body Rewrite]
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
-http-response-jq ^https:\/\/apiv2\.douyucdn\.cn\/japi\/entrance\/roomRes\/nc\/m\/list 'delpaths([["data","pendant_a"],["data","entrance_d"]])'
+http-response-jq ^https:\/\/apiv2\.douyucdn\.cn\/japi\/entrance\/roomRes\/nc\/m\/list 'del(.data.pendant_a,.data.entrance_d)'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
 http-response-jq ^https:\/\/venus\.douyucdn\.cn\/venus\/config\/static\/update.+keyCodeSet=flow_config 'setpath(["greatGodGameSitterSwitch"]; 0) | setpath(["followMoreAnchorEntrance"]; 0) | setpath(["sdklivebanner"]; 0) | setpath(["homeActFloatSwitch"]; 0) | setpath(["bringGoodsSwitch"]; 0) | setpath(["qqGameSwitch"]; 0)'

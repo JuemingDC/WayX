@@ -10,7 +10,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/WeixinMiniPrograms.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 17:18:11 +08:00
+# Converted: 2026-10-28 07:44:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/WexinMiniPrograms_Remove_ads.lpx
 # Target: Surge
@@ -66,15 +66,15 @@ DOMAIN,e.jparking.cn,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 
-http-response-jq ^https:\/\/mcsp\.cloudpnr\.com\/api\/miniapp\/popular\/T_MINIAPP$ 'delpaths([["data"]])'
-http-response-jq ^https:\/\/saas-ad\.cloudpnr\.com\/huifuad-base-api\/api\/tactics\/ad$ 'delpaths([["data",0],["data",1],["data",2]])'
+http-response-jq ^https:\/\/mcsp\.cloudpnr\.com\/api\/miniapp\/popular\/T_MINIAPP$ 'del(.data)'
+http-response-jq ^https:\/\/saas-ad\.cloudpnr\.com\/huifuad-base-api\/api\/tactics\/ad$ 'reduce [["data",0],["data",1],["data",2]][] as $p (.;delpaths([$p]))'
 
-http-response-jq ^https:\/\/rms\.meituan\.com\/api\/v1\/rmsmina\/c\/queryShopPortalInfo\? 'delpaths([["data","popUpWindows"]])'
+http-response-jq ^https:\/\/rms\.meituan\.com\/api\/v1\/rmsmina\/c\/queryShopPortalInfo\? 'del(.data.popUpWindows)'
 
 http-response-jq ^https:\/\/chong\.qq\.com\/tws\/wxmobile\/GetProduct4App\? 'del(.respInfo.reserveProductList) | .respInfo.shortcut |= map(select(.name != "充流量" and .name != "领话费券"))'
 http-response-jq ^https:\/\/chong\.qq\.com\/tws\/wxmobile4app\/GetSecondProduct\? 'del(.respInfo.productList) | .respInfo.shortcut |= map(select(.name != "充流量" and .name != "领话费券"))'
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
-http-response-jq ^https:\/\/chong\.qq\.com\/tws\/usernumberinfo\/GetUserInfo\? 'delpaths([["data","request","number","markSeat","servicehallOperList"],["data","request","number","servicehallOperList"],["data","request","number","markSeat","servicehallFuncList"],["data","request","number","servicehallFuncList"]])'
+http-response-jq ^https:\/\/chong\.qq\.com\/tws\/usernumberinfo\/GetUserInfo\? 'del(.data.request.number.markSeat.servicehallOperList,.data.request.number.servicehallOperList,.data.request.number.markSeat.servicehallFuncList,.data.request.number.servicehallFuncList)'
 
 [Map Local]
 ^https:\/\/webapi\.qmai\.cn\/web\/catering\/advertising\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"

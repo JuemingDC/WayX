@@ -10,14 +10,14 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/WakeupSchedule.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 17:18:11 +08:00
+# Converted: 2026-10-28 07:44:10 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/WakeupSchedule_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 
-http-response-jq ^https:\/\/api\.wakeup\.fun\/wakeup\/user\/mine$ 'delpaths([["data","bannerItems"]])'
+http-response-jq ^https:\/\/api\.wakeup\.fun\/wakeup\/user\/mine$ 'del(.data.bannerItems)'
 
 [Map Local]
 ^https:\/\/api\.wakeup\.fun\/wakeup\/app\/bannerconf$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"

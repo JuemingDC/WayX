@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Zhihu.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 17:18:11 +08:00
+# Converted: 2026-10-28 07:44:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Zhihu_remove_ads.lpx
@@ -28,35 +28,35 @@
 
 ^https:\/\/api\.zhihu\.com\/commercial_api\/banners_v\d\/app_float_corner\? url reject-dict
 
-^https:\/\/api\.zhihu\.com\/questions\/\d+\/feeds\? url jsonjq-response-body 'delpaths([["ad_info"]])'
+^https:\/\/api\.zhihu\.com\/questions\/\d+\/feeds\? url jsonjq-response-body 'del(.ad_info)'
 
 ^https:\/\/api\.zhihu\.com\/next-render\?id=\d+&type=answer url reject-dict
 
-^https:\/\/api\.zhihu\.com\/comment_v\d\/(answers|pins)\/\d+\/root_comment\? url jsonjq-response-body 'delpaths([["atmosphere_voting_config"]])'
+^https:\/\/api\.zhihu\.com\/comment_v\d\/(answers|pins)\/\d+\/root_comment\? url jsonjq-response-body 'del(.atmosphere_voting_config)'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
-^https:\/\/(api|page-info)(?:\.zhihu)?\.com\/answers\/v\d\/\d+(?:\?.*)?$ url jsonjq-response-body 'delpaths([["third_business"],["float_search_word"]])'
+^https:\/\/(api|page-info)(?:\.zhihu)?\.com\/answers\/v\d\/\d+(?:\?.*)?$ url jsonjq-response-body 'del(.third_business,.float_search_word)'
 
 ^https:\/\/(api|page-info)(?:\.zhihu)?\.com\/answers\/v\d\/\d+(?:\?.*)?$ url jsonjq-response-body '.structured_content.segments |= map(select(.type != "card"))'
 ^https:\/\/api\.zhihu\.com\/topstory\/recommend\? url jsonjq-response-body '.data[]?.children |= (if type == "array" then map(select(.id != "ring")) else . end)'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
-^https:\/\/api\.zhihu\.com\/(articles|answers|pins)\/v\d\/\d+\? url jsonjq-response-body 'delpaths([["third_business"],["ring_info"],["interaction_bar_plugins"]])'
+^https:\/\/api\.zhihu\.com\/(articles|answers|pins)\/v\d\/\d+\? url jsonjq-response-body 'del(.third_business,.ring_info,.interaction_bar_plugins)'
 
-^https:\/\/api\.zhihu\.com\/comment_v\d\/answers\/\d+\/list-headers$ url jsonjq-response-body 'delpaths([["continuous_consumption_module"]])'
+^https:\/\/api\.zhihu\.com\/comment_v\d\/answers\/\d+\/list-headers$ url jsonjq-response-body 'del(.continuous_consumption_module)'
 
 ^https:\/\/api\.zhihu\.com\/commercial_api\/answer\/\d+\/bottom-v\d$ url reject-dict
 
 ^https:\/\/api\.zhihu\.com\/related_recommend\/feed\/waterfall\? url reject-dict
 
-^https:\/\/api\.zhihu\.com\/podcasts\/hub\/v\d$ url jsonjq-response-body 'delpaths([["banners"]])'
+^https:\/\/api\.zhihu\.com\/podcasts\/hub\/v\d$ url jsonjq-response-body 'del(.banners)'
 
 ^https:\/\/api\.zhihu\.com\/search\/preset_words\? url reject-dict
 ^https:\/\/api\.zhihu\.com\/search\/related_queries\/question\/\d+$ url reject-dict
 
 ^https:\/\/api\.zhihu\.com\/search\/recommend_query\/v\d\? url jsonjq-response-body '.recommend_queries.queries |= map(select(.type == "normal"))'
 
-^https:\/\/api\.zhihu\.com\/search_v\d\? url jsonjq-response-body 'delpaths([["pendant"]])'
+^https:\/\/api\.zhihu\.com\/search_v\d\? url jsonjq-response-body 'del(.pendant)'
 
 ^https:\/\/api\.zhihu\.com\/search\/tabs\? url jsonjq-response-body '.data |= map(select(.t | IN("general", "ai_zhida", "recent", "people", "zvideo", "ring", "topic", "podcast", "column", "pin", "favlist")))'
 
@@ -73,7 +73,7 @@
 ^https:\/\/api\.zhihu\.com\/kvip\/right\/my_card\? url reject-dict
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
-^https:\/\/api\.zhihu\.com\/people\/self$ url jsonjq-response-body 'delpaths([["vip_info","entrance_new","right_button"],["vip_info","entrance_v2"]])'
+^https:\/\/api\.zhihu\.com\/people\/self$ url jsonjq-response-body 'del(.vip_info.entrance_new.right_button,.vip_info.entrance_v2)'
 ^https:\/\/api\.zhihu\.com\/unlimited\/go\/my_card\/v\d\? url reject-dict
 
 # [mitm]

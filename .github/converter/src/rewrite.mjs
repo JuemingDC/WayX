@@ -619,20 +619,21 @@ function validateParts(parts) {
   return parts;
 }
 
-// Modified: 2026-10-25 (chance). One source deletion batch becomes one
-// native delpaths call, including repeated/overlapping paths and array indices.
+// Modified: 2026-10-28 (chance). Compact independent object deletions;
+// preserve sequential batch semantics with reduce for numeric/overlapping paths.
 export function planFixedPathDeleteJq(paths, {sourceForm='key-path'}={}) {
-  if (!Array.isArray(paths) || !paths.length) {
-    throw new Error('delete path list must contain nonempty parsed paths');
-  }
-  if(!['key-path','path-arrays'].includes(sourceForm)) {
-    throw new Error('unknown deletion source representation');
-  }
+  if (!Array.isArray(paths) || !paths.length) throw new Error('delete path list must contain nonempty parsed paths');
+  if(!['key-path','path-arrays'].includes(sourceForm)) throw new Error('unknown deletion source representation');
   const parts=paths.map(item=>validateParts(Array.isArray(item)?item:item?.parts));
-  return {
-    form:'delpaths', reason:'native-path-array-deletion', sourceForm, execution:'snapshot',
-    jq:'delpaths('+JSON.stringify(parts)+')',
-  };
+  const prefix=(a,b)=>a.length<b.length&&a.every((part,i)=>part===b[i]);
+  const independent=parts.every(path=>path.every(part=>typeof part==='string')) &&
+    !parts.some((path,i)=>parts.some((other,j)=>i!==j&&(prefix(path,other)||prefix(other,path))));
+  if(independent){
+    const selectors=parts.map(path=>'.'+path.map((key,i)=>/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)?(i?'.':'')+key:'['+JSON.stringify(key)+']').join(''));
+    return {form:'del',reason:'independent-object-paths',sourceForm,execution:'sequential',jq:'del('+selectors.join(',')+')'};
+  }
+  return {form:parts.length===1?'delpaths':'reduce',reason:'ordered-path-deletion',sourceForm,execution:'sequential',
+    jq:parts.length===1?'delpaths('+JSON.stringify(parts)+')':'reduce '+JSON.stringify(parts)+'[] as $p (.;delpaths([$p]))'};
 }
 
 export function renderFixedPathDeleteJq(paths, options) {

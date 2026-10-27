@@ -10,20 +10,20 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Cece.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 17:18:11 +08:00
+# Converted: 2026-10-28 07:44:10 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Cece_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
-http-response-jq ^https:\/\/api\.cece\.com\/user\/init\? 'delpaths([["data","launch_img_url"],["data","launch_goto_url"]])'
+http-response-jq ^https:\/\/api\.cece\.com\/user\/init\? 'del(.data.launch_img_url,.data.launch_goto_url)'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
 http-response-jq ^https:\/\/api\.cece\.com\/common\/app\/app_config\? 'setpath(["data","is_new_year"]; false) | setpath(["data","spring_festival"]; false) | setpath(["data","show_feedback_entry"]; false) | setpath(["data","show_course_entry"]; false) | setpath(["data","show_store_entry"]; false) | setpath(["data","show_luna"]; false) | setpath(["data","show_ead"]; false) | setpath(["data","show_ad"]; false) | setpath(["data","show_live_filter_tarot"]; false) | setpath(["data","community_feed_adswitch"]; false) | setpath(["data","open_screen_ad_times"]; 0) | setpath(["data","open_screen_ad_duration"]; 0) | setpath(["data","isShowThumbsGif"]; false) | setpath(["data","teenager_mode_open"]; false) | setpath(["data","flu_log"]; false)'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
-http-response-jq ^https:\/\/api\.cece\.com\/common\/app\/app_config\? 'delpaths([["data","activity_list"],["data","fortune_ab_config"]])'
+http-response-jq ^https:\/\/api\.cece\.com\/common\/app\/app_config\? 'del(.data.activity_list,.data.fortune_ab_config)'
 
 http-response-jq ^https:\/\/api\.cece\.com\/chart\/tools\/home_10_tools\? '.data.tools |= map(del(.icon_tip_image))'
 

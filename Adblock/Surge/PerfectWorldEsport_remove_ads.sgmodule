@@ -10,13 +10,13 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/PerfectWorldEsport.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 17:18:11 +08:00
+# Converted: 2026-10-28 07:44:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/PerfectWorldEsport_remove_ads.lpx
 # Target: Surge
 
 [Body Rewrite]
-http-response-jq ^https:\/\/api\.wmpvp\.com\/api\/v1\/config\/promote$ 'delpaths([["data","ad"]])'
+http-response-jq ^https:\/\/api\.wmpvp\.com\/api\/v1\/config\/promote$ 'del(.data.ad)'
 
 [Map Local]
 

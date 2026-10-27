@@ -7,7 +7,7 @@
 # Icon: https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Zhibo8.png
 # Updated: 2026-10-02 13:57:49
 
-# Converted: 2026-10-25 17:18:11 +08:00
+# Converted: 2026-10-28 07:44:11 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Zhibo8_remove_ads.lpx
@@ -21,7 +21,7 @@
 ^https:\/\/a\.qiumibao\.com\/found\/\? url jsonjq-response-body 'map(select(.is_game != true))'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
-^https:\/\/a\.qiumibao\.com\/ios\/config\/\? url jsonjq-response-body 'delpaths([["skin"],["advert"],["advert_config"],["mall"],["httpdns"],["reward"],["pgame"],["corner_mark"],["liveshop"],["theme"],["pop"],["live_activity_push"]])'
+^https:\/\/a\.qiumibao\.com\/ios\/config\/\? url jsonjq-response-body 'del(.skin,.advert,.advert_config,.mall,.httpdns,.reward,.pgame,.corner_mark,.liveshop,.theme,.pop,.live_activity_push)'
 
 ^https:\/\/a\.qiumibao\.com\/ios\/config\/\? url jsonjq-response-body '.all_sections.match_sections.labels |= (if . then (.blacks_disable |= if . then map(select(. != "游戏")) else . end) | (.show |= if . then map(select(. != "游戏")) else . end) else . end)'
 
@@ -34,13 +34,13 @@
 ^https:\/\/guess\.qiumibao\.com\/api\/ep\/pop$ url reject-dict
 
 ^https:\/\/guess\.qiumibao\.com\/api\/c\/banner$ url reject-dict
-^https:\/\/guess\.qiumibao\.com\/api\/n\/rcd$ url jsonjq-response-body 'delpaths([["data","banner"]])'
+^https:\/\/guess\.qiumibao\.com\/api\/n\/rcd$ url jsonjq-response-body 'del(.data.banner)'
 ^https:\/\/pre-match\.qiumibao\.com\/pre_match_data\/v\d\/\d+-\d+-\d+\/\d+_fund\.htm\? url jsonjq-response-body 'del(.data[] | select(.type == "guide"))'
 
-^https:\/\/guess\.qiumibao\.com\/api\/c\/menu$ url jsonjq-response-body 'delpaths([["data","banner"]])'
+^https:\/\/guess\.qiumibao\.com\/api\/c\/menu$ url jsonjq-response-body 'del(.data.banner)'
 
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
-^https:\/\/s\.qiumibao\.com\/m\/ios\/json\/zhibo\/zuqiu\/\d+\/match\d+vl\.htm\? url jsonjq-response-body 'delpaths([["ep_v2"],["ep_live"]])'
+^https:\/\/s\.qiumibao\.com\/m\/ios\/json\/zhibo\/zuqiu\/\d+\/match\d+vl\.htm\? url jsonjq-response-body 'del(.ep_v2,.ep_live)'
 
 ^https:\/\/search\.qiumibao\.com\/hot\/word_list$ url reject-dict
 
