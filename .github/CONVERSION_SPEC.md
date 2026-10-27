@@ -336,7 +336,7 @@ QX 原生 filter 文件仅输出 direct/reject/ssid：未受全代理约束的�
 
 先归类，再执行 routing_policies 中明确登记的全代理约束：Google、YouTube、Facebook/Meta、X、Telegram、GitHub、海外 AI、Netflix、Disney 合集只输出代理访问规则。属于这些应用的源 DIRECT 声明（逐条显式动作及来源注册的 DIRECT 默认值）合并到 cn，保留 DIRECT，不改写为 PROXY；在应用默认动作推断前分流，保留匹配条件与来源署名。其它非拒绝声明使用 PROXY，按最终合集、动作和完整匹配条件精确去重；REJECT 和独立 filterfix 保持原行为。全代理分类禁止 direct/proxy 选择器、DIRECT 默认值和 Surge split 布局，避免配置退回旧行为。其它分类保留来源逐条明确写出的 DIRECT/PROXY/REJECT。无逐条策略的输入在分类后使用 default_policies：media_cn 默认 DIRECT，其它合集沿用来源注册策略；解析时须记录策略是否明确写在源规则中，不能把源文件默认值误认为逐条例外。不根据 @cn 属性或服务器位置自行推断 DIRECT。Geosite 的直连/代理划分仅使用显式配置的 tags/proxy_tags。去重键包含目标规则类型、操作数、策略及可表达参数；相同域名的不同类型、不同策略、不同参数均保留。不得做后缀覆盖压缩、跨策略删除、父子应用裁剪或 adblock_extra 增量覆盖过滤；可转换正则也须保留。来自不同合集的同一规则可在明确归属后汇总到同一目标，只有完全重复项才能合并。Surge 不合成 AND/NOT、不因直连冲突删除代理规则。此前明确指定的 rule_exclusions、exclude_tags 和目标不支持条件的整条过滤继续生效；被 AI 范围排除的国内应用可按其国内应用证据归入 media_cn。
 
-两端文件布局独立：Quantumult X 每个合集始终单文件，逐条保留 native direct/ssid/reject，不能因 Surge 拆分而生成 QX 的 _direct/_proxy 文件。Surge 的 surge_output 显式规定 split/combined：Apple、Microsoft、Steam 拆为 _direct.list/_proxy.list；Google、YouTube、Facebook/Meta、X、Telegram、GitHub、海外 AI、Netflix、Disney 输出单一 .list，主配置以代理策略引用，不生成 _direct/_proxy 两份；Spotify 的 DIRECT/PROXY 匹配项合并为 spotify.list，不带策略，由主配置统一选择一个策略，不宣称它能保留逐条分流差异。没有上游直连证据时不补造 Spotify DIRECT。其它合集存在不同策略时自动拆分；REJECT 家族独立输出，不能混入以代理引用的文件。Surge 外部 RULE-SET 均不带逐条策略。filterfix 的独立混合策略 dconf 规则继续生效。
+两端文件布局独立：Quantumult X 每个合集始终单文件，逐条保留 native direct/ssid/reject，不能因 Surge 拆分而生成 QX 的 _direct/_proxy 文件。Surge 的 surge_output 显式规定 split/combined：Apple 根据 routing_layers 输出 apple_cn.list/apple_proxy.list/apple_direct.list；Microsoft、Steam 拆为 _direct.list/_proxy.list；Google、YouTube、Facebook/Meta、X、Telegram、GitHub、海外 AI、Netflix、Disney 输出单一 .list，主配置以代理策略引用，不生成 _direct/_proxy 两份；Spotify 的 DIRECT/PROXY 匹配项合并为 spotify.list，不带策略，由主配置统一选择一个策略，不宣称它能保留逐条分流差异。没有上游直连证据时不补造 Spotify DIRECT。其它合集存在不同策略时自动拆分；REJECT 家族独立输出，不能混入以代理引用的文件。Surge 外部 RULE-SET 均不带逐条策略。filterfix 的独立混合策略 dconf 规则继续生效。
 
 生成文件集中在 Rule/QuantumultX 与 Rule/Surge；英文头包括 Name、Updated、Source Authors、Category 以及来源。Category 固定为广告 Adblock、应用/AI/media 为 app、cn/proxy 为 general。只在实际输出或元信息变化时更新时间；只清理状态文件记录且仍有受管标记的旧产物，保护手写文件。下载、校验或事务失败保留旧产物；无法表示的声明保存在 rules-result.json.filtered；格式损坏等异常按来源/错误类型复用 Issue，已支持规则继续发布，不能将隔离项宣称已转换。完整成功且不再出现该类声明时关闭对应告警。
 
@@ -344,8 +344,8 @@ QX 原生 filter 文件仅输出 direct/reject/ssid：未受全代理约束的�
 
 完整转换/合并/去重由 Action 的 rules 阶段执行一次，最终产物格式检查不重新构建规则集。状态文件记录的旧受管产物自动清理，手写文件保留。详细源快照与异常随现有 artifact 保存，summary 仅列计数和异常。
 
-<!-- Modified: 2026-10-27 (chance). Apple actionless sources default to DIRECT; QX proxy output uses ssid. -->
-Apple 来源逐条未声明策略时统一默认 DIRECT，包含 TestFlight 及无策略 TV 来源，不以来源注册的 PROXY 默认或服务归属推定必须代理。逐条明确 DIRECT/PROXY/REJECT 保留。TestFlight 可直连或代理，本项目无逐条策略时取 DIRECT。此 Apple 默认例外优先于通用来源默认策略。Quantumult X 的 Rule 输出将语义 PROXY 渲染为自定义策略组 ssid，direct/reject 不变；内部归类仍使用 PROXY，Surge 不变。主配置须已有 ssid 策略组。
+<!-- Modified: 2026-10-27 (chance). Adopt source-backed Apple CN/proxy layers and proxy TestFlight. -->
+Apple 用应用注册的 routing_layers 分层：第一层合并 QuixoticHeart apple-cn、V2Fly apple-update、MetaCubeX apple-update，策略 DIRECT；第二层为 QuixoticHeart apple-proxy 与 Tartarus TestFlight，策略 PROXY；未声明策略且未归入层的 Apple 默认 DIRECT。相同原生匹配声明在两个无策略来源重复时采用前层动作；逐条明确策略继续保留，不做域名扩大或父域覆盖压缩。QuixoticHeart 保留作者、原链接、GPL-3.0 来源信息，不把其 QX 文件名策略误认为内建动作。系统更新域名先于宽泛 cdn-apple.com 代理规则，TestFlight 先于 apple.com 默认直连。QX 保持单一 apple.list，层内沿用原生类型和具体度排序，代理渲染为 ssid；Surge 按 apple_cn.list (DIRECT) → apple_proxy.list (代理策略组) → apple_direct.list (DIRECT) 引用，三份均置于通用 cn/proxy/IP fallback 前。层信息只参与登记应用，不更改其它应用规则的默认或顺序。主配置须已有 ssid 策略组。
 
 参考 V2Fly 的归属与属性分离、DustinWin 的 apple-cn/microsoft-cn、Sukka 的服务/CDN 分层以及 ACL4SSR 的专项例外顺序：Apple、Microsoft 通过显式 @cn 选择器声明国内接入点的 DIRECT，互补选择器及专项服务声明 PROXY；不把品牌全部默认为 DIRECT。没有逐条策略的通用来源被归入某应用时，如果同一原生匹配条件在应用专属来源中具有唯一的已配置动作，沿用该动作，保留通用来源的匹配声明和署名；不能让通用列表默认 PROXY 重造应用已明确直连端点的冲突。全代理约束以外，应用专属来源之间的冲突及源规则逐条明确写出的策略仍保留，不按多数表决、不扩大匹配、不删除不同类型/参数规则。共享 CDN 或云厂商域名不能单凭托管关系推断应用，明确的应用专用主机优先于云厂商父域名。
 

@@ -1,11 +1,11 @@
 # Name: proxy
-# Updated: 2026-10-27 01:17:54 UTC
+# Updated: 2026-10-27 07:16:42 UTC
 # Converted by: chance
 # Source Authors: Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 34121
+# Rules: 34104
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,ssid
@@ -335,7 +335,6 @@ host,musicstatus.music.apple.com,ssid
 host,mvod.itunes.apple.com,ssid
 host,myapp.itunes.apple.com,ssid
 host,na1r.services.adobe.com,ssid
-host,netflix.com.edgesuite.net,ssid
 host,notary-submissions-prod.s3-accelerate.amazonaws.com,ssid
 host,np-edge.itunes.apple.com,ssid
 host,ntdfreemobile-tgc.cdn.hinet.net,ssid
@@ -476,7 +475,6 @@ host,shell.cdn.office.net,ssid
 host,sni1dcb6gl.wpc.edgecastcdn.net,ssid
 host,sp.itunes.apple.com,ssid
 host,speedysub.music.apple.com,ssid
-host,spotify.com.edgesuite.net,ssid
 host,spotify.map.fastly.net,ssid
 host,spotify.map.fastlylb.net,ssid
 host,srch-telemeter10.g.smailru.net,ssid
@@ -1150,7 +1148,9 @@ host,sentry.wb.ru,ssid
 host,sequoia.apple.com,ssid
 host,servd-anthropic-website.b-cdn.net,ssid
 host,service.urchin.com,ssid
+host,sh-pod1-smp-device.apple.com,ssid
 host,sh-pod2-smp-device.apple.com,ssid
+host,sh-pod3-smp-device.apple.com,ssid
 host,shazam-insights.cdn-apple.com,ssid
 host,smp-device-content.apple.com,ssid
 host,spectator.ppy.sh,ssid
@@ -1543,10 +1543,6 @@ host-suffix,steam.naeu.qtlglb.com,ssid
 host-suffix,steam.ru.qtlglb.com,ssid
 host-suffix,steampowered.com.8686c.com,ssid
 host-suffix,steamstatic.com.8686c.com,ssid
-host-suffix,test-ipv6.cs.umd.edu,ssid
-host-suffix,test-ipv6.csclub.uwaterloo.ca,ssid
-host-suffix,test-ipv6.ke.liquidtelecom.net,ssid
-host-suffix,test-ipv6.sin.vr.org,ssid
 host-suffix,tiktokcdn-us.com.edgesuite.net,ssid
 host-suffix,tiktokcdn.com.akamaized.net,ssid
 host-suffix,tiktokcdn.com.edgesuite.net,ssid
@@ -3721,18 +3717,6 @@ host-suffix,telemetry.microsoft.com,ssid
 host-suffix,terapeak.com.hk,ssid
 host-suffix,tesla.com.cn,ssid
 host-suffix,teslamotors.com.cn,ssid
-host-suffix,test-ipv6.alpinedc.ch,ssid
-host-suffix,test-ipv6.arauc.br,ssid
-host-suffix,test-ipv6.belwue.net,ssid
-host-suffix,test-ipv6.carnet.hr,ssid
-host-suffix,test-ipv6.epic.network,ssid
-host-suffix,test-ipv6.fratec.net,ssid
-host-suffix,test-ipv6.freerangecloud.com,ssid
-host-suffix,test-ipv6.go6.si,ssid
-host-suffix,test-ipv6.iu13.net,ssid
-host-suffix,test-ipv6.noroutetohost.net,ssid
-host-suffix,test-ipv6.roedu.net,ssid
-host-suffix,test-ipv6.ttk.ru,ssid
 host-suffix,tfc-taiwan.org.tw,ssid
 host-suffix,tfd.org.tw,ssid
 host-suffix,tgdaily.co.kr,ssid
@@ -7376,6 +7360,7 @@ host-suffix,arte.tv,ssid
 host-suffix,artel.watch,ssid
 host-suffix,arteldoc.com,ssid
 host-suffix,arteldoc.tv,ssid
+host-suffix,artificialanalysis.ai,ssid
 host-suffix,artixlinux.org,ssid
 host-suffix,artnudegalleries.com,ssid
 host-suffix,artoferotica.info,ssid
@@ -11003,6 +10988,7 @@ host-suffix,clementine-player.org,ssid
 host-suffix,click-sec.com,ssid
 host-suffix,click-url.com,ssid
 host-suffix,climate-server.com,ssid
+host-suffix,cline.bot,ssid
 host-suffix,clinica-tibet.ru,ssid
 host-suffix,clinical-videos.com,ssid
 host-suffix,clinicalkey.com,ssid
@@ -11247,6 +11233,7 @@ host-suffix,comicuniverse.org,ssid
 host-suffix,comixzilla.com,ssid
 host-suffix,comm-verse.com,ssid
 host-suffix,commandandconquer.com,ssid
+host-suffix,commandcode.ai,ssid
 host-suffix,comments.app,ssid
 host-suffix,commentshk.com,ssid
 host-suffix,commerceos.com,ssid
@@ -11301,6 +11288,7 @@ host-suffix,containersonaws.com,ssid
 host-suffix,contechacademy.com,ssid
 host-suffix,contentful.com,ssid
 host-suffix,contest.com,ssid
+host-suffix,context7.com,ssid
 host-suffix,convertio.co,ssid
 host-suffix,convrgencegame.com,ssid
 host-suffix,cookiebot.com,ssid
@@ -21116,6 +21104,7 @@ host-suffix,messytube.com,ssid
 host-suffix,met-nude.com,ssid
 host-suffix,meta.ai,ssid
 host-suffix,meta.com,ssid
+host-suffix,metaaiusercontent.com,ssid
 host-suffix,metaaivm.com,ssid
 host-suffix,metabora.io,ssid
 host-suffix,metabrainz.org,ssid
@@ -23108,6 +23097,7 @@ host-suffix,notion.site,ssid
 host-suffix,notion.so,ssid
 host-suffix,notionusercontent.com,ssid
 host-suffix,nottinghampost.com,ssid
+host-suffix,nousresearch.com,ssid
 host-suffix,novelai.net,ssid
 host-suffix,noveltrove.com,ssid
 host-suffix,novids.com,ssid
@@ -27356,7 +27346,6 @@ host-suffix,sites.new,ssid
 host-suffix,situero.com,ssid
 host-suffix,six-degrees.io,ssid
 host-suffix,six9dy.pw,ssid
-host-suffix,sixte.st,ssid
 host-suffix,sjcollect.com,ssid
 host-suffix,sjhsp1.buzz,ssid
 host-suffix,skate2.com,ssid
@@ -28793,13 +28782,6 @@ host-suffix,teslaenergy.services,ssid
 host-suffix,teslamotors.cn,ssid
 host-suffix,teslamotors.com,ssid
 host-suffix,teslazta.net,ssid
-host-suffix,test-ipv6.cl,ssid
-host-suffix,test-ipv6.com,ssid
-host-suffix,test-ipv6.cz,ssid
-host-suffix,test-ipv6.hu,ssid
-host-suffix,test-ipv6.is,ssid
-host-suffix,test-ipv6.se,ssid
-host-suffix,testipv6.de,ssid
 host-suffix,testonfox.com,ssid
 host-suffix,tetrika-school.ru,ssid
 host-suffix,tettediferro.it,ssid
@@ -29004,6 +28986,7 @@ host-suffix,thinkdifferent.us,ssid
 host-suffix,thinkgeek.com,ssid
 host-suffix,thinkingtaiwan.com,ssid
 host-suffix,thinkofliving.com,ssid
+host-suffix,thinkorswim.com,ssid
 host-suffix,thinkquarterly.com,ssid
 host-suffix,thinkwithgoogle.com,ssid
 host-suffix,thirdmill.org,ssid

@@ -653,6 +653,7 @@ function ruleGroup(row){
   return 'Proxy';
 }
 
+// Modified: 2026-10-27 (chance). Show Apple layer import order separately from resource-index display order.
 export async function buildReadmePlan(root=process.cwd()) {
   const sections = [];
   for (const category of README_CATEGORY_ORDER) {
@@ -666,7 +667,7 @@ export async function buildReadmePlan(root=process.cwd()) {
       }
       sections.push('## Adblock\n\n按拉取来源分组，点击展开；各来源内部按名称 A–Z 分栏，中文按拼音首字母，数字单列。\n\n'+[...groups].map(([author,items])=>'<details>\n<summary><strong>'+escapeHtml(author)+'</strong> · '+items.length+' 项</summary>\n\n'+alphabetTables(category,items)+'\n\n</details>').join('\n\n'));
     } else if(category==='Module')sections.push('## Module\n\n'+alphabetTables(category,rows,3));
-    else if(category==='Rule')sections.push('## Rule\n\n按 Reject → Proxy → Direct 排列；混合策略资源列在 Proxy，导入时保留文件中的逐条策略。\n\n'+['Reject','Proxy','Direct'].map(group=>renderTable(category,rows.filter(row=>ruleGroup(row)===group).sort((a,b)=>nameCollator.compare(rowName(a),rowName(b))),group,3)).join('\n\n'));
+    else if(category==='Rule')sections.push('## Rule\n\n按 Reject → Proxy → Direct 展示；这不是引用优先级。Apple 在 Surge 中按 apple_cn（DIRECT）→ apple_proxy（代理）→ apple_direct（DIRECT）引用。混合策略资源导入时保留逐条策略。\n\n'+['Reject','Proxy','Direct'].map(group=>renderTable(category,rows.filter(row=>ruleGroup(row)===group).sort((a,b)=>nameCollator.compare(rowName(a),rowName(b))),group,3)).join('\n\n'));
     else sections.push(renderTable(category, rows));
   }
 

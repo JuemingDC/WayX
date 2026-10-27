@@ -539,6 +539,30 @@ def build(config, inputs):
         for rule, policy, explicit in rows:
             add(source['category'], policy, [rule], source['author'], source['url'], explicit)
 
+    # Modified: 2026-10-27 (chance). Ordered, source-backed application layers
+    # separate domestic/update DIRECT, named PROXY services and the brand fallback.
+    routing_layers = {}
+    for app in config['applications']:
+        layers = []
+        for layer in app.get('routing_layers', []):
+            if layer['policy'] not in ('DIRECT', 'PROXY') or not re.fullmatch(r'[a-z][a-z0-9_]*', layer['surge_suffix']):
+                raise ValueError('Invalid application routing layer')
+            known = {source['id'] for source, _ in parsed_sources}
+            if not set(layer.get('sources', [])) <= known:
+                raise ValueError('Unknown application routing layer source')
+            rules = select(layer.get('tags', []), app['name'])
+            for source, rows in parsed_sources:
+                if source['id'] in layer.get('sources', []):
+                    rules.update(rule for rule, _, _ in rows)
+            layers.append((layer['policy'], layer['surge_suffix'], rules))
+        routing_layers[app['name']] = layers
+
+    def route_layer(name, rule, policy=None):
+        for position, (action, suffix, rules) in enumerate(routing_layers.get(name, [])):
+            if rule in rules and (policy is None or qx_policy(policy) == action):
+                return position, action, suffix
+        return len(routing_layers.get(name, [])), None, None
+
     classification = config.get('classification', {})
     priority = classification.get('priority', [])
     if len(set(priority)) != len(priority) or set(priority) - app_names:
@@ -625,9 +649,9 @@ def build(config, inputs):
             if excluded(target, rule):
                 continue
         # Modified: 2026-10-27 (chance). Apple defaults to DIRECT unless the source row explicitly declares an action.
-        # Registered feed defaults and geosite membership are not per-rule proxy declarations.
+        # Named layers are user-authorized defaults; other feed defaults do not imply proxy routing.
         if target == 'apple' and not explicit and not policy.startswith('REJECT'):
-            policy = 'DIRECT'
+            policy = route_layer(target, rule)[1] or 'DIRECT'
         # Modified: 2026-10-23 (chance). Source row actions and registered
         # DIRECT/PROXY feed actions are authoritative. Infer a category default
         # only for placeholders; remove the former cross-feed action override.
@@ -669,9 +693,17 @@ def build(config, inputs):
             if target == 'Surge' and name not in split_names and policy.startswith('REJECT') and (
                     policy != 'REJECT' or any(n == name and not p.startswith('REJECT') for n, p in buckets)):
                 suffix = '_' + policy.lower().replace('-', '_')
-            file = 'Rule/' + target + '/' + name + suffix + '.list'
-            group = grouped.setdefault(file, [])
-            group.append((name, policy, sorted(rules)))
+            # Modified: 2026-10-27 (chance). Surge layer files are installed
+            # cn -> proxy -> direct; QX retains the same order in one mixed file.
+            partitions = {}
+            for rule in rules:
+                layer_suffix = route_layer(name, rule, policy)[2]
+                output_suffix = '_' + layer_suffix if target == 'Surge' and layer_suffix else suffix
+                partitions.setdefault(output_suffix, []).append(rule)
+            for output_suffix, partition in partitions.items():
+                file = 'Rule/' + target + '/' + name + output_suffix + '.list'
+                group = grouped.setdefault(file, [])
+                group.append((name, policy, sorted(partition)))
         for file, groups in grouped.items():
             # Final ordering uses specificity across policies, not a blanket direct/proxy preference.
             groups.sort(key=lambda group: group[1] == 'DIRECT')
@@ -693,7 +725,7 @@ def build(config, inputs):
             def output_key(pair):
                 rule, policy = pair
                 rank = 0 if rule.kind == 'DOMAIN' else 1 if rule.kind == 'DOMAIN-SUFFIX' else 2 if rule.kind in ('DOMAIN-WILDCARD', 'DOMAIN-KEYWORD') else 3
-                return (rank, -rule.value.count('.'), rule.value,
+                return (route_layer(groups[0][0], rule, policy)[0], rank, -rule.value.count('.'), rule.value,
                         (groups[0][0], rule, qx_policy(policy)) not in explicit_rules,
                         0 if policy == 'DIRECT' else 1 if policy.startswith('REJECT') else 2,
                         policy, rule.kind, rule.options)

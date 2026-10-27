@@ -569,7 +569,9 @@ with tempfile.TemporaryDirectory() as temp:
 # Modified: 2026-10-25 (chance). Use the actual registry selectors with an
 # optimized apple fixture that omits gdmf; the independent update tag must survive.
 registry=json.loads((Path(sys.argv[1]).parent.parent/'sources/rules.json').read_text())
-apple=next(item for item in registry['applications'] if item['name']=='apple')
+apple=dict(next(item for item in registry['applications'] if item['name']=='apple'))
+# Layer behavior is exercised below with bounded, independent source fixtures.
+apple.pop('routing_layers',None)
 assert 'apple-update' in apple['tags']
 def site_payload(tag,domains):
  return field(1,field(1,tag.encode())+b''.join(field(2,b'\x08\x02'+field(2,d.encode())) for d in domains))
@@ -591,6 +593,25 @@ extra,_,_=m.build(apple_config,{'geosite':apple_data,'apple-extra':b'DOMAIN,test
 assert 'host,testflight.apple.com,direct' in extra['Rule/QuantumultX/apple.list']
 assert 'host,explicit.apple.com,ssid' in extra['Rule/QuantumultX/apple.list']
 assert 'host,blocked.apple.com,reject' in extra['Rule/QuantumultX/apple.list']
+# Modified: 2026-10-27 (chance). Domestic/update rules precede proxy
+# parents, TestFlight proxies before the Apple fallback, and both targets agree.
+layered_apple={**apple,'routing_layers':[
+ {'policy':'DIRECT','surge_suffix':'cn','tags':['apple-update'],'sources':['cn-layer']},
+ {'policy':'PROXY','surge_suffix':'proxy','sources':['proxy-layer']}]}
+layers_config={**apple_config,'applications':[layered_apple],'sources':[
+ {'id':'cn-layer','format':'ruleset','category':'apple','policy':'DIRECT','author':'Fixture','url':'https://example.test/cn'},
+ {'id':'proxy-layer','format':'ruleset','category':'apple','policy':'PROXY','author':'Fixture','url':'https://example.test/proxy'}]}
+layered,_,_=m.build(layers_config,{'geosite':apple_data,
+ 'cn-layer':b'DOMAIN-SUFFIX,updates.cdn-apple.com\nDOMAIN-SUFFIX,apps.apple.com',
+ 'proxy-layer':b'DOMAIN,testflight.apple.com\nDOMAIN-SUFFIX,cdn-apple.com\nDOMAIN-SUFFIX,apps.apple.com'})
+lq=layered['Rule/QuantumultX/apple.list']
+assert lq.index('host-suffix,updates.cdn-apple.com,direct') < lq.index('host-suffix,cdn-apple.com,ssid')
+assert lq.index('host,testflight.apple.com,ssid') < lq.index('host-suffix,apple.com,direct')
+assert 'host-suffix,apps.apple.com,ssid' not in lq
+assert 'DOMAIN-SUFFIX,gdmf.apple.com' in layered['Rule/Surge/apple_cn.list']
+assert 'DOMAIN,testflight.apple.com' in layered['Rule/Surge/apple_proxy.list']
+assert 'DOMAIN-SUFFIX,apple.com' in layered['Rule/Surge/apple_direct.list']
+
 
 
 # Modified: 2026-10-25 (chance). Independent Microsoft services must keep

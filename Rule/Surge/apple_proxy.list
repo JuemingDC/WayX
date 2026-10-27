@@ -1,0 +1,49 @@
+# Name: apple_proxy
+# Updated: 2026-10-27 07:16:42 UTC
+# Converted by: chance
+# Source Authors: ACL4SSR, DustinWin, MetaCubeX, QuixoticHeart, Sukka, Tartarus2014, V2Fly
+# Category: app
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-tvplus.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-proxy.list ; https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Rule/Apple/TestFlight.lsr ; https://ruleset.skk.moe/List/non_ip/stream.conf
+# Licenses: See .github/sources/rules.json and original source repositories
+# Rules: 39
+# Managed by: WayX Rule Aggregator
+
+DOMAIN,api-glb-sea.smoot.apple.com
+DOMAIN,books.itunes.apple.com
+DOMAIN,docs-assets.developer.apple.com
+DOMAIN,hls-svod.itunes.apple.com
+DOMAIN,js-cdn.music.apple.com
+DOMAIN,np-edge.itunes.apple.com
+DOMAIN,play-edge.itunes.apple.com
+DOMAIN,sandbox.itunes.apple.com
+DOMAIN,uts-api.itunes.apple.com
+DOMAIN,apple.comscoreresearch.com
+DOMAIN,beta.apple.com
+DOMAIN,cdn.apple-cloudkit.com
+DOMAIN,cp4.cloudflare.com
+DOMAIN,cvws.icloud-content.com
+DOMAIN,developer.apple.com
+DOMAIN,devimages-cdn.apple.com
+DOMAIN,devstreaming-cdn.apple.com
+DOMAIN,itunes.apple.com
+DOMAIN,lookup-api.apple.com
+DOMAIN,mask-api.icloud.com
+DOMAIN,mask-h2.icloud.com
+DOMAIN,mask.icloud.com
+DOMAIN,news-assets.apple.com
+DOMAIN,news-client.apple.com
+DOMAIN,news-edge.apple.com
+DOMAIN,news-events.apple.com
+DOMAIN,testflight.apple.com
+DOMAIN,tv.applemusic.com
+DOMAIN-SUFFIX,audio-ssl.itunes.apple.com
+DOMAIN-SUFFIX,hls-amt.itunes.apple.com
+DOMAIN-SUFFIX,hls.itunes.apple.com
+DOMAIN-SUFFIX,blobstore.apple.com
+DOMAIN-SUFFIX,tv.apple.com
+DOMAIN-SUFFIX,apple-dns.net
+DOMAIN-SUFFIX,apple.news
+DOMAIN-SUFFIX,appsto.re
+DOMAIN-SUFFIX,cdn-apple.com
+DOMAIN-SUFFIX,digicert.com
+DOMAIN-SUFFIX,safebrowsing.apple

@@ -1,11 +1,11 @@
 # Name: proxy
-# Updated: 2026-10-27 01:17:54 UTC
+# Updated: 2026-10-27 07:16:42 UTC
 # Converted by: chance
 # Source Authors: Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 34121
+# Rules: 34104
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net
@@ -335,7 +335,6 @@ DOMAIN,musicstatus.music.apple.com
 DOMAIN,mvod.itunes.apple.com
 DOMAIN,myapp.itunes.apple.com
 DOMAIN,na1r.services.adobe.com
-DOMAIN,netflix.com.edgesuite.net
 DOMAIN,notary-submissions-prod.s3-accelerate.amazonaws.com
 DOMAIN,np-edge.itunes.apple.com
 DOMAIN,ntdfreemobile-tgc.cdn.hinet.net
@@ -476,7 +475,6 @@ DOMAIN,shell.cdn.office.net
 DOMAIN,sni1dcb6gl.wpc.edgecastcdn.net
 DOMAIN,sp.itunes.apple.com
 DOMAIN,speedysub.music.apple.com
-DOMAIN,spotify.com.edgesuite.net
 DOMAIN,spotify.map.fastly.net
 DOMAIN,spotify.map.fastlylb.net
 DOMAIN,srch-telemeter10.g.smailru.net
@@ -1150,7 +1148,9 @@ DOMAIN,sentry.wb.ru
 DOMAIN,sequoia.apple.com
 DOMAIN,servd-anthropic-website.b-cdn.net
 DOMAIN,service.urchin.com
+DOMAIN,sh-pod1-smp-device.apple.com
 DOMAIN,sh-pod2-smp-device.apple.com
+DOMAIN,sh-pod3-smp-device.apple.com
 DOMAIN,shazam-insights.cdn-apple.com
 DOMAIN,smp-device-content.apple.com
 DOMAIN,spectator.ppy.sh
@@ -1543,10 +1543,6 @@ DOMAIN-SUFFIX,steam.naeu.qtlglb.com
 DOMAIN-SUFFIX,steam.ru.qtlglb.com
 DOMAIN-SUFFIX,steampowered.com.8686c.com
 DOMAIN-SUFFIX,steamstatic.com.8686c.com
-DOMAIN-SUFFIX,test-ipv6.cs.umd.edu
-DOMAIN-SUFFIX,test-ipv6.csclub.uwaterloo.ca
-DOMAIN-SUFFIX,test-ipv6.ke.liquidtelecom.net
-DOMAIN-SUFFIX,test-ipv6.sin.vr.org
 DOMAIN-SUFFIX,tiktokcdn-us.com.edgesuite.net
 DOMAIN-SUFFIX,tiktokcdn.com.akamaized.net
 DOMAIN-SUFFIX,tiktokcdn.com.edgesuite.net
@@ -3721,18 +3717,6 @@ DOMAIN-SUFFIX,telemetry.microsoft.com
 DOMAIN-SUFFIX,terapeak.com.hk
 DOMAIN-SUFFIX,tesla.com.cn
 DOMAIN-SUFFIX,teslamotors.com.cn
-DOMAIN-SUFFIX,test-ipv6.alpinedc.ch
-DOMAIN-SUFFIX,test-ipv6.arauc.br
-DOMAIN-SUFFIX,test-ipv6.belwue.net
-DOMAIN-SUFFIX,test-ipv6.carnet.hr
-DOMAIN-SUFFIX,test-ipv6.epic.network
-DOMAIN-SUFFIX,test-ipv6.fratec.net
-DOMAIN-SUFFIX,test-ipv6.freerangecloud.com
-DOMAIN-SUFFIX,test-ipv6.go6.si
-DOMAIN-SUFFIX,test-ipv6.iu13.net
-DOMAIN-SUFFIX,test-ipv6.noroutetohost.net
-DOMAIN-SUFFIX,test-ipv6.roedu.net
-DOMAIN-SUFFIX,test-ipv6.ttk.ru
 DOMAIN-SUFFIX,tfc-taiwan.org.tw
 DOMAIN-SUFFIX,tfd.org.tw
 DOMAIN-SUFFIX,tgdaily.co.kr
@@ -7376,6 +7360,7 @@ DOMAIN-SUFFIX,arte.tv
 DOMAIN-SUFFIX,artel.watch
 DOMAIN-SUFFIX,arteldoc.com
 DOMAIN-SUFFIX,arteldoc.tv
+DOMAIN-SUFFIX,artificialanalysis.ai
 DOMAIN-SUFFIX,artixlinux.org
 DOMAIN-SUFFIX,artnudegalleries.com
 DOMAIN-SUFFIX,artoferotica.info
@@ -11003,6 +10988,7 @@ DOMAIN-SUFFIX,clementine-player.org
 DOMAIN-SUFFIX,click-sec.com
 DOMAIN-SUFFIX,click-url.com
 DOMAIN-SUFFIX,climate-server.com
+DOMAIN-SUFFIX,cline.bot
 DOMAIN-SUFFIX,clinica-tibet.ru
 DOMAIN-SUFFIX,clinical-videos.com
 DOMAIN-SUFFIX,clinicalkey.com
@@ -11247,6 +11233,7 @@ DOMAIN-SUFFIX,comicuniverse.org
 DOMAIN-SUFFIX,comixzilla.com
 DOMAIN-SUFFIX,comm-verse.com
 DOMAIN-SUFFIX,commandandconquer.com
+DOMAIN-SUFFIX,commandcode.ai
 DOMAIN-SUFFIX,comments.app
 DOMAIN-SUFFIX,commentshk.com
 DOMAIN-SUFFIX,commerceos.com
@@ -11301,6 +11288,7 @@ DOMAIN-SUFFIX,containersonaws.com
 DOMAIN-SUFFIX,contechacademy.com
 DOMAIN-SUFFIX,contentful.com
 DOMAIN-SUFFIX,contest.com
+DOMAIN-SUFFIX,context7.com
 DOMAIN-SUFFIX,convertio.co
 DOMAIN-SUFFIX,convrgencegame.com
 DOMAIN-SUFFIX,cookiebot.com
@@ -21116,6 +21104,7 @@ DOMAIN-SUFFIX,messytube.com
 DOMAIN-SUFFIX,met-nude.com
 DOMAIN-SUFFIX,meta.ai
 DOMAIN-SUFFIX,meta.com
+DOMAIN-SUFFIX,metaaiusercontent.com
 DOMAIN-SUFFIX,metaaivm.com
 DOMAIN-SUFFIX,metabora.io
 DOMAIN-SUFFIX,metabrainz.org
@@ -23108,6 +23097,7 @@ DOMAIN-SUFFIX,notion.site
 DOMAIN-SUFFIX,notion.so
 DOMAIN-SUFFIX,notionusercontent.com
 DOMAIN-SUFFIX,nottinghampost.com
+DOMAIN-SUFFIX,nousresearch.com
 DOMAIN-SUFFIX,novelai.net
 DOMAIN-SUFFIX,noveltrove.com
 DOMAIN-SUFFIX,novids.com
@@ -27356,7 +27346,6 @@ DOMAIN-SUFFIX,sites.new
 DOMAIN-SUFFIX,situero.com
 DOMAIN-SUFFIX,six-degrees.io
 DOMAIN-SUFFIX,six9dy.pw
-DOMAIN-SUFFIX,sixte.st
 DOMAIN-SUFFIX,sjcollect.com
 DOMAIN-SUFFIX,sjhsp1.buzz
 DOMAIN-SUFFIX,skate2.com
@@ -28793,13 +28782,6 @@ DOMAIN-SUFFIX,teslaenergy.services
 DOMAIN-SUFFIX,teslamotors.cn
 DOMAIN-SUFFIX,teslamotors.com
 DOMAIN-SUFFIX,teslazta.net
-DOMAIN-SUFFIX,test-ipv6.cl
-DOMAIN-SUFFIX,test-ipv6.com
-DOMAIN-SUFFIX,test-ipv6.cz
-DOMAIN-SUFFIX,test-ipv6.hu
-DOMAIN-SUFFIX,test-ipv6.is
-DOMAIN-SUFFIX,test-ipv6.se
-DOMAIN-SUFFIX,testipv6.de
 DOMAIN-SUFFIX,testonfox.com
 DOMAIN-SUFFIX,tetrika-school.ru
 DOMAIN-SUFFIX,tettediferro.it
@@ -29004,6 +28986,7 @@ DOMAIN-SUFFIX,thinkdifferent.us
 DOMAIN-SUFFIX,thinkgeek.com
 DOMAIN-SUFFIX,thinkingtaiwan.com
 DOMAIN-SUFFIX,thinkofliving.com
+DOMAIN-SUFFIX,thinkorswim.com
 DOMAIN-SUFFIX,thinkquarterly.com
 DOMAIN-SUFFIX,thinkwithgoogle.com
 DOMAIN-SUFFIX,thirdmill.org

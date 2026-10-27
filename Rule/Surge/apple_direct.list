@@ -1,11 +1,11 @@
 # Name: apple_direct
-# Updated: 2026-10-27 01:17:54 UTC
+# Updated: 2026-10-27 07:16:42 UTC
 # Converted by: chance
-# Source Authors: ACL4SSR, DustinWin, MetaCubeX, Nexitally, Sukka, Tartarus2014, V2Fly
+# Source Authors: DustinWin, MetaCubeX, Nexitally, QuixoticHeart, Sukka, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-tvplus.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-update.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Rule/Apple/TestFlight.lsr ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list ; https://ruleset.skk.moe/List/non_ip/stream.conf
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-tvplus.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-update.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-cn.list ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-proxy.list ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1830
+# Rules: 1784
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net
@@ -109,7 +109,6 @@ DOMAIN,init.gc.apple.com
 DOMAIN,init.itunes.apple.com
 DOMAIN,iosapps.itunes.apple.com
 DOMAIN,itunes-apple.com.akadns.net
-DOMAIN,js-cdn.music.apple.com
 DOMAIN,km.support.apple.com
 DOMAIN,linear.tv.apple.com
 DOMAIN,misc-assets.itunes.apple.com
@@ -117,11 +116,9 @@ DOMAIN,musicstatus.music.apple.com
 DOMAIN,mvod.itunes.apple.com
 DOMAIN,myapp.itunes.apple.com
 DOMAIN,notary-submissions-prod.s3-accelerate.amazonaws.com
-DOMAIN,np-edge.itunes.apple.com
 DOMAIN,osxapps.itunes.apple.com
 DOMAIN,pd-nk.itunes.apple.com
 DOMAIN,pd.itunes.apple.com
-DOMAIN,play-edge.itunes.apple.com
 DOMAIN,play.itunes.apple.com
 DOMAIN,play.music.apple.com
 DOMAIN,podcasts.itunes.apple.com
@@ -148,7 +145,6 @@ DOMAIN,sync.itunes.apple.com
 DOMAIN,tf-feedback.itunes.apple.com
 DOMAIN,universal-activity-service.itunes.apple.com
 DOMAIN,upp.itunes.apple.com
-DOMAIN,uts-api.itunes.apple.com
 DOMAIN,www.support.apple.com
 DOMAIN,a1.mzstatic.com
 DOMAIN,a2.mzstatic.com
@@ -159,10 +155,8 @@ DOMAIN,adcdownload.apple.com
 DOMAIN,app-site-association.cdn-apple.com
 DOMAIN,appldnld.apple.com
 DOMAIN,apple-tv-plus-press.apple.com
-DOMAIN,apple.comscoreresearch.com
 DOMAIN,appleid.cdn-apple.com
 DOMAIN,apps.mzstatic.com
-DOMAIN,beta.apple.com
 DOMAIN,cdn-cn.apple-mapkit.com
 DOMAIN,cdn-cn1.apple-mapkit.com
 DOMAIN,cdn-cn2.apple-mapkit.com
@@ -191,8 +185,6 @@ DOMAIN,crl.apple.com
 DOMAIN,cstat.apple.com
 DOMAIN,cstat.cdn-apple.com
 DOMAIN,dejavu.apple.com
-DOMAIN,devimages-cdn.apple.com
-DOMAIN,devstreaming-cdn.apple.com
 DOMAIN,discussionschinese.apple.com
 DOMAIN,experiments.apple.com
 DOMAIN,fides-pol.apple.com
@@ -213,16 +205,12 @@ DOMAIN,is4-ssl.mzstatic.com
 DOMAIN,is4.mzstatic.com
 DOMAIN,is5-ssl.mzstatic.com
 DOMAIN,is5.mzstatic.com
-DOMAIN,itunes.apple.com
 DOMAIN,itunesconnect.apple.com
 DOMAIN,maps.apple.com
 DOMAIN,mensura.cdn-apple.com
 DOMAIN,mesu.apple.com
 DOMAIN,ml.cdn-apple.com
 DOMAIN,music.apple.com
-DOMAIN,news-client.apple.com
-DOMAIN,news-edge.apple.com
-DOMAIN,news-events.apple.com
 DOMAIN,ocsp.apple.com
 DOMAIN,ocsp2.apple.com
 DOMAIN,ocvideo.apple.com
@@ -239,7 +227,9 @@ DOMAIN,s3.mzstatic.com
 DOMAIN,s4.mzstatic.com
 DOMAIN,s5.mzstatic.com
 DOMAIN,sequoia.apple.com
+DOMAIN,sh-pod1-smp-device.apple.com
 DOMAIN,sh-pod2-smp-device.apple.com
+DOMAIN,sh-pod3-smp-device.apple.com
 DOMAIN,shazam-insights.cdn-apple.com
 DOMAIN,smp-device-content.apple.com
 DOMAIN,stocks-sparkline.apple.com
@@ -251,11 +241,9 @@ DOMAIN,swcdn.apple.com
 DOMAIN,swdist.apple.com
 DOMAIN,swscan.apple.com
 DOMAIN,sylvan.apple.com
-DOMAIN,testflight.apple.com
 DOMAIN,tj-pod1-smp-device.apple.com
 DOMAIN,tj-pod2-smp-device.apple.com
 DOMAIN,tj-pod3-smp-device.apple.com
-DOMAIN,tv.applemusic.com
 DOMAIN,updates-http.cdn-apple.com
 DOMAIN,updates.cdn-apple.com
 DOMAIN,valid.apple.com
@@ -266,7 +254,6 @@ DOMAIN,weatherkit.apple.com
 DOMAIN,www.apple.com
 DOMAIN,xp.apple.com
 DOMAIN-SUFFIX,courier-push-apple.com.akadns.net
-DOMAIN-SUFFIX,itunes-apple.com.akadns.net
 DOMAIN-SUFFIX,12diasderegalosdeitunes.co.cr
 DOMAIN-SUFFIX,12diasderegalosdeitunes.co.ni
 DOMAIN-SUFFIX,12diasderegalosdeitunes.co.ve
@@ -278,7 +265,6 @@ DOMAIN-SUFFIX,1to1computing.com.au
 DOMAIN-SUFFIX,1to1conference.com.au
 DOMAIN-SUFFIX,advertising.apple.com
 DOMAIN-SUFFIX,api-adservices.apple.com
-DOMAIN-SUFFIX,appldnld.apple.com
 DOMAIN-SUFFIX,apple-dns.com.cn
 DOMAIN-SUFFIX,apple-watch.com.ru
 DOMAIN-SUFFIX,apple.co.cr
@@ -293,7 +279,6 @@ DOMAIN-SUFFIX,apple.com.af
 DOMAIN-SUFFIX,apple.com.au
 DOMAIN-SUFFIX,apple.com.bo
 DOMAIN-SUFFIX,apple.com.br
-DOMAIN-SUFFIX,apple.com.cn
 DOMAIN-SUFFIX,apple.com.co
 DOMAIN-SUFFIX,apple.com.de
 DOMAIN-SUFFIX,apple.com.do
@@ -367,27 +352,15 @@ DOMAIN-SUFFIX,appstore.co.id
 DOMAIN-SUFFIX,beats1.com.cn
 DOMAIN-SUFFIX,beats2.com.cn
 DOMAIN-SUFFIX,beatsbydre.com.cn
-DOMAIN-SUFFIX,configuration.apple.com
 DOMAIN-SUFFIX,developer.apple.com
 DOMAIN-SUFFIX,developerservices2.apple.com
-DOMAIN-SUFFIX,devimages-cdn.apple.com
-DOMAIN-SUFFIX,devstreaming-cdn.apple.com
 DOMAIN-SUFFIX,ecgapp.com.cn
 DOMAIN-SUFFIX,emac.co.in
-DOMAIN-SUFFIX,fcs-keys-pub-prod.cdn-apple.com
-DOMAIN-SUFFIX,gdmf-ados.apple.com
-DOMAIN-SUFFIX,gdmf.apple.com
-DOMAIN-SUFFIX,gg.apple.com
-DOMAIN-SUFFIX,gs.apple.com
-DOMAIN-SUFFIX,gsra.apple.com
 DOMAIN-SUFFIX,iad.apple.com
-DOMAIN-SUFFIX,iadsdk.apple.com
 DOMAIN-SUFFIX,ibook.co.nz
 DOMAIN-SUFFIX,ichat.co.in
 DOMAIN-SUFFIX,icloud-content.com.cn
-DOMAIN-SUFFIX,icloud.com.cn
 DOMAIN-SUFFIX,icloud.net.cn
-DOMAIN-SUFFIX,ig.apple.com
 DOMAIN-SUFFIX,ilecture.co.nz
 DOMAIN-SUFFIX,imac.co.nz
 DOMAIN-SUFFIX,ipad.co.kr
@@ -412,7 +385,6 @@ DOMAIN-SUFFIX,ipod.com.sg
 DOMAIN-SUFFIX,ipod.com.tw
 DOMAIN-SUFFIX,ipodrocks.com.au
 DOMAIN-SUFFIX,ipodshop.com.au
-DOMAIN-SUFFIX,itunes.apple.com
 DOMAIN-SUFFIX,itunes.co.th
 DOMAIN-SUFFIX,itunesradio.com.cn
 DOMAIN-SUFFIX,livephotos.com.cn
@@ -425,30 +397,16 @@ DOMAIN-SUFFIX,macbookair.com.cn
 DOMAIN-SUFFIX,macbookair.com.es
 DOMAIN-SUFFIX,macbookpro.com.au
 DOMAIN-SUFFIX,macos.com.au
-DOMAIN-SUFFIX,mesu.apple.com
 DOMAIN-SUFFIX,mr-apple.com.tw
-DOMAIN-SUFFIX,music.apple.com
-DOMAIN-SUFFIX,oscdn.apple.com
-DOMAIN-SUFFIX,osrecovery.apple.com
 DOMAIN-SUFFIX,playgrounds-cdn.apple.com
 DOMAIN-SUFFIX,podcast.apple.com
 DOMAIN-SUFFIX,podcasts.apple.com
 DOMAIN-SUFFIX,push.apple.com
 DOMAIN-SUFFIX,quicktime.com.au
 DOMAIN-SUFFIX,researchkit.com.cn
-DOMAIN-SUFFIX,skl.apple.com
-DOMAIN-SUFFIX,swcdn.apple.com
-DOMAIN-SUFFIX,swdist.apple.com
-DOMAIN-SUFFIX,swdownload.apple.com
 DOMAIN-SUFFIX,swiftui.com.cn
-DOMAIN-SUFFIX,swscan.apple.com
 DOMAIN-SUFFIX,timestamp.apple.com
-DOMAIN-SUFFIX,tv.apple.com
-DOMAIN-SUFFIX,updates-http.cdn-apple.com
-DOMAIN-SUFFIX,updates.cdn-apple.com
 DOMAIN-SUFFIX,webobjects.co.uk
-DOMAIN-SUFFIX,wkms-public.apple.com
-DOMAIN-SUFFIX,xp.apple.com
 DOMAIN-SUFFIX,100beatscheap.com
 DOMAIN-SUFFIX,12diasdepresentesdeitunes.com
 DOMAIN-SUFFIX,12diasderegalosdeitunes.cl
@@ -515,7 +473,6 @@ DOMAIN-SUFFIX,apple-darwin.net
 DOMAIN-SUFFIX,apple-darwin.org
 DOMAIN-SUFFIX,apple-dns.cn
 DOMAIN-SUFFIX,apple-dns.com
-DOMAIN-SUFFIX,apple-dns.net
 DOMAIN-SUFFIX,apple-enews.com
 DOMAIN-SUFFIX,apple-expo.com
 DOMAIN-SUFFIX,apple-expo.eu
@@ -574,7 +531,6 @@ DOMAIN-SUFFIX,apple.lv
 DOMAIN-SUFFIX,apple.me
 DOMAIN-SUFFIX,apple.my
 DOMAIN-SUFFIX,apple.net
-DOMAIN-SUFFIX,apple.news
 DOMAIN-SUFFIX,apple.nl
 DOMAIN-SUFFIX,apple.no
 DOMAIN-SUFFIX,apple.pk
@@ -753,7 +709,6 @@ DOMAIN-SUFFIX,applfe.com
 DOMAIN-SUFFIX,applle.com
 DOMAIN-SUFFIX,applw.com
 DOMAIN-SUFFIX,appmediagroup.com
-DOMAIN-SUFFIX,appsto.re
 DOMAIN-SUFFIX,appstore.hk
 DOMAIN-SUFFIX,appstore.my
 DOMAIN-SUFFIX,appstore.ph
@@ -1095,7 +1050,6 @@ DOMAIN-SUFFIX,casquemonsterbeats.com
 DOMAIN-SUFFIX,casquemonsterbeatsbydre2013.com
 DOMAIN-SUFFIX,casquesbeatsaudio.com
 DOMAIN-SUFFIX,catalina.hk
-DOMAIN-SUFFIX,cdn-apple.com
 DOMAIN-SUFFIX,cheap-beats-by-dre.net
 DOMAIN-SUFFIX,cheap-beatsbydre.com
 DOMAIN-SUFFIX,cheapbagshoes.com

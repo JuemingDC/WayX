@@ -99,6 +99,27 @@
       "proxy_tags": [
         "apple-intelligence",
         "apple-tvplus"
+      ],
+      "routing_layers": [
+        {
+          "policy": "DIRECT",
+          "surge_suffix": "cn",
+          "tags": [
+            "apple-update"
+          ],
+          "sources": [
+            "quixotic-apple-cn",
+            "mihomo-apple-update"
+          ]
+        },
+        {
+          "policy": "PROXY",
+          "surge_suffix": "proxy",
+          "sources": [
+            "quixotic-apple-proxy",
+            "tartarus-testflight"
+          ]
+        }
       ]
     },
     {
@@ -339,7 +360,7 @@
       "author": "Tartarus2014",
       "format": "ruleset",
       "category": "apple",
-      "policy": "DIRECT",
+      "policy": "PROXY",
       "url": "https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Rule/Apple/TestFlight.lsr",
       "license": "See upstream LICENSE"
     },
@@ -935,6 +956,24 @@
       "policy": "DIRECT",
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/bing@cn.json",
       "license": "See upstream LICENSE"
+    },
+    {
+      "id": "quixotic-apple-cn",
+      "author": "QuixoticHeart",
+      "format": "ruleset",
+      "category": "apple",
+      "policy": "DIRECT",
+      "url": "https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-cn.list",
+      "license": "GPL-3.0; see upstream LICENSE"
+    },
+    {
+      "id": "quixotic-apple-proxy",
+      "author": "QuixoticHeart",
+      "format": "ruleset",
+      "category": "apple",
+      "policy": "PROXY",
+      "url": "https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-proxy.list",
+      "license": "GPL-3.0; see upstream LICENSE"
     }
   ],
   "indirect_upstreams": "Allowed; only direct blackmatrix7 inputs are excluded.",
