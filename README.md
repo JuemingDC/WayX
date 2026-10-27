@@ -743,7 +743,7 @@
 
 ## Rule
 
-按 Reject → Proxy → Direct 展示；这不是引用优先级。Apple 在 Surge 中按 apple_cn（DIRECT）→ apple_proxy（代理）→ apple_direct（DIRECT）引用。混合策略资源导入时保留逐条策略。
+按 Reject → Proxy → Direct 展示；这不是引用优先级。Apple 在 Surge 中按 apple_cn（DIRECT）→ apple_proxy（代理）引用。混合策略资源导入时保留逐条策略。
 
 ### Reject
 
@@ -782,7 +782,6 @@
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
 | **[apple_cn](https://github.com/JuemingDC/WayX/blob/main/Rule/Surge/apple_cn.list)** | — | [查看规则](https://raw.githubusercontent.com/JuemingDC/WayX/main/Rule/Surge/apple_cn.list) |
-| **[apple_direct](https://github.com/JuemingDC/WayX/blob/main/Rule/Surge/apple_direct.list)** | — | [查看规则](https://raw.githubusercontent.com/JuemingDC/WayX/main/Rule/Surge/apple_direct.list) |
 | **[cn](https://github.com/JuemingDC/WayX/blob/main/Rule/QuantumultX/cn.list)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22filter_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FRule%2FQuantumultX%2Fcn.list%2C%20tag%3Dcn%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [查看规则](https://raw.githubusercontent.com/JuemingDC/WayX/main/Rule/Surge/cn.list) |
 | **[media_cn](https://github.com/JuemingDC/WayX/blob/main/Rule/QuantumultX/media_cn.list)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22filter_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FRule%2FQuantumultX%2Fmedia_cn.list%2C%20tag%3Dmedia_cn%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [查看规则](https://raw.githubusercontent.com/JuemingDC/WayX/main/Rule/Surge/media_cn.list) |
 | **[microsoft_direct](https://github.com/JuemingDC/WayX/blob/main/Rule/Surge/microsoft_direct.list)** | — | [查看规则](https://raw.githubusercontent.com/JuemingDC/WayX/main/Rule/Surge/microsoft_direct.list) |

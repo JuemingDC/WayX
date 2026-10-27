@@ -686,6 +686,29 @@ def build(config, inputs):
     split_names = {name for name, _ in buckets if name not in routing_policies and (layouts.get(name) == 'split' or (
         layouts.get(name) != 'combined' and
         len({surge_action(policy) for n, policy in buckets if n == name}) > 1))}
+    # Modified: 2026-10-27 (chance). CN-specific rules stay unconditional;
+    # exclude proxy matches only from the merged Apple direct fallback so the
+    # two Surge files preserve CN -> proxy -> fallback behavior.
+    apple_proxy_rules = sorted({rule for (name, policy), rules in buckets.items()
+                                if name == 'apple' and qx_policy(policy) == 'PROXY' for rule in rules})
+
+    def overlaps(left, right):
+        if left.kind not in ('DOMAIN', 'DOMAIN-SUFFIX') or right.kind not in ('DOMAIN', 'DOMAIN-SUFFIX'):
+            return True
+        return (left.value == right.value or
+                left.kind == 'DOMAIN-SUFFIX' and right.value.endswith('.' + left.value) or
+                right.kind == 'DOMAIN-SUFFIX' and left.value.endswith('.' + right.value))
+
+    def surge_apple_direct(rule):
+        native = serialize(rule, 'DIRECT', 'Surge')
+        if route_layer('apple', rule, 'DIRECT')[2] is not None:
+            return native
+        blockers = [serialize(other, 'PROXY', 'Surge') for other in apple_proxy_rules if overlaps(rule, other)]
+        if not blockers:
+            return native
+        blocked = blockers[0] if len(blockers) == 1 else 'OR,(' + ','.join('(' + item + ')' for item in blockers) + ')'
+        return 'AND,((' + native + '),(NOT,((' + blocked + '))))'
+
     for target in ('QuantumultX', 'Surge'):
         grouped = {}
         for (name, policy), rules in buckets.items():
@@ -694,11 +717,13 @@ def build(config, inputs):
                     policy != 'REJECT' or any(n == name and not p.startswith('REJECT') for n, p in buckets)):
                 suffix = '_' + policy.lower().replace('-', '_')
             # Modified: 2026-10-27 (chance). Surge layer files are installed
-            # cn -> proxy -> direct; QX retains the same order in one mixed file.
+            # QX retains CN/proxy/fallback order; Surge merges Apple DIRECT into CN.
             partitions = {}
             for rule in rules:
                 layer_suffix = route_layer(name, rule, policy)[2]
                 output_suffix = '_' + layer_suffix if target == 'Surge' and layer_suffix else suffix
+                if target == 'Surge' and name == 'apple' and policy == 'DIRECT':
+                    output_suffix = '_cn'
                 partitions.setdefault(output_suffix, []).append(rule)
             for output_suffix, partition in partitions.items():
                 file = 'Rule/' + target + '/' + name + output_suffix + '.list'
@@ -730,7 +755,8 @@ def build(config, inputs):
                         0 if policy == 'DIRECT' else 1 if policy.startswith('REJECT') else 2,
                         policy, rule.kind, rule.options)
             for rule, policy in sorted(ordered, key=output_key):
-                    line = serialize(rule, policy, target)
+                    line = (surge_apple_direct(rule) if target == 'Surge' and groups[0][0] == 'apple' and policy == 'DIRECT'
+                            else serialize(rule, policy, target))
                     if line is not None and line not in seen:
                         lines.append(line); seen.add(line)
             if not lines:

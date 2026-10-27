@@ -583,7 +583,7 @@ apple_out,_,_=m.build(apple_config,{'geosite':apple_data})
 for host in update_hosts:
  assert 'host-suffix,'+host+',direct' in apple_out['Rule/QuantumultX/apple.list']
  assert 'host-suffix,'+host+',ssid' not in apple_out['Rule/QuantumultX/apple.list']
- assert 'DOMAIN-SUFFIX,'+host in apple_out['Rule/Surge/apple_direct.list']
+ assert 'DOMAIN-SUFFIX,'+host in apple_out['Rule/Surge/apple_cn.list']
 # Modified: 2026-10-27 (chance). Actionless Apple services default to DIRECT, including TV and TestFlight.
 assert 'host-suffix,tv.apple.com,direct' in apple_out['Rule/QuantumultX/apple.list']
 # Verify that a registered feed default cannot override Apple's actionless
@@ -610,7 +610,8 @@ assert lq.index('host,testflight.apple.com,ssid') < lq.index('host-suffix,apple.
 assert 'host-suffix,apps.apple.com,ssid' not in lq
 assert 'DOMAIN-SUFFIX,gdmf.apple.com' in layered['Rule/Surge/apple_cn.list']
 assert 'DOMAIN,testflight.apple.com' in layered['Rule/Surge/apple_proxy.list']
-assert 'DOMAIN-SUFFIX,apple.com' in layered['Rule/Surge/apple_direct.list']
+assert 'Rule/Surge/apple_direct.list' not in layered
+assert 'AND,((DOMAIN-SUFFIX,apple.com),(NOT,((DOMAIN,testflight.apple.com))))' in layered['Rule/Surge/apple_cn.list']
 
 
 
