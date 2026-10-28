@@ -6,17 +6,23 @@
 
 [Rule]
 # Name: XCamera广告净化合集
-# Updated: 2026-10-25 19:01:30 +08:00
+# Updated: 2026-10-29 05:53:54 +08:00
 # Merged by: chance
 # Source Authors: 怎么肥事
 # Category: app
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/xhey-ad-clean.snippet
 # Upstream name=XCamera广告净化合集
-# Upstream desc=XCamera 3.0.480开屏、插屏、信息流与RTB广告净化；作者：TG@ZenMoFiShi
-# Upstream hostname = ad.xhey.top, 39.108.85.131, sdk.1rtb.net, adx-strategy-api-cn.statisticslinks.com, adx-micro.statisticslinks.com, da.statisticslinks.com, tk.statisticslinks.com, sdkquic.e.qq.com, als.baidu.com, jt-sdk-ios.oss-cn-beijing.aliyuncs.com
+# Upstream desc=今日水印专业版3.0.186全局关广告开关、TopOn/百度/快手/CLL广告请求拦截。作者：TG@ZenMoFiShi
+# Upstream hostname = abtest-tx-beijing-01.saas.sensorsdata.cn, api.anythinktech.com, da.anythinktech.com, tk.anythinktech.com, adx.anythinktech.com, api.toponadss.com, mobads.baidu.com, mobads-logs.baidu.com, mobads-pre-config.bj.bcebos.com, mobads-pre-config.cdn.bcebos.com, open.e.kuaishou.com, open.e.kuaishou.cn, stage2.chelaile.net.cn, ad.xhey.top, 39.108.85.131, sdk.1rtb.net, adx-strategy-api-cn.statisticslinks.com, adx-micro.statisticslinks.com, da.statisticslinks.com, tk.statisticslinks.com, sdkquic.e.qq.com, als.baidu.com, jt-sdk-ios.oss-cn-beijing.aliyuncs.com
 
 [URL Rewrite]
+^https?:\/\/(?:api|da|tk|adx)\.anythinktech\.com\/ _ reject
+^https?:\/\/api\.toponadss\.com\/ _ reject
+^https?:\/\/mobads(?:-logs)?\.baidu\.com\/ _ reject
+^https?:\/\/mobads-pre-config\.(?:bj|cdn)\.bcebos\.com\/ _ reject
+^https?:\/\/open\.e\.kuaishou\.(?:com|cn)\/ _ reject
+^https?:\/\/stage2\.chelaile\.net\.cn\/sdk _ reject
 ^https?:\/\/ad\.xhey\.top\/next\/(?:app\/adx\/|promote\/operation\/appstart\/adx\/|ad\/event\/track\/).* _ reject
 ^https?:\/\/39\.108\.85\.131\/next\/(?:ios\/config\/cache|promote\/operation\/config\/get\/cache)(?:\?.*)?$ _ reject
 ^https?:\/\/sdk\.1rtb\.net\/sdk\/(?:config\/v2a|req_ad)(?:\?.*)?$ _ reject
@@ -28,7 +34,8 @@
 ^https?:\/\/als\.baidu\.com\/clog\/glog(?:\?.*)?$ _ reject
 
 [Script]
-zenmofeishi_xhey-ad-clean_1 = type=http-response,pattern=^https?:\/\/jt-sdk-ios\.oss-cn-beijing\.aliyuncs\.com\/iOSConfig\.txt(?:\?.*)?$,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/xhey-ad-clean.js,requires-body=true
+zenmofeishi_xhey-ad-clean_1 = type=http-response,pattern=^https?:\/\/abtest-tx-beijing-01\.saas\.sensorsdata\.cn\/api\/v2\/abtest\/online\/results\?project-key=(?:0E6053C30A799D63EFA48959776B2EE2EDC81359|EE39C73914ED208E6EBE24A7333CAF5C3FE2E89D),script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/xhey-ad-clean.js,requires-body=true
+zenmofeishi_xhey-ad-clean_2 = type=http-response,pattern=^https?:\/\/jt-sdk-ios\.oss-cn-beijing\.aliyuncs\.com\/iOSConfig\.txt(?:\?.*)?$,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/xhey-ad-clean.js,requires-body=true
 
 [MITM]
-hostname = %APPEND% ad.xhey.top, 39.108.85.131, sdk.1rtb.net, adx-strategy-api-cn.statisticslinks.com, adx-micro.statisticslinks.com, da.statisticslinks.com, tk.statisticslinks.com, sdkquic.e.qq.com, als.baidu.com, jt-sdk-ios.oss-cn-beijing.aliyuncs.com
+hostname = %APPEND% abtest-tx-beijing-01.saas.sensorsdata.cn, api.anythinktech.com, da.anythinktech.com, tk.anythinktech.com, adx.anythinktech.com, api.toponadss.com, mobads.baidu.com, mobads-logs.baidu.com, mobads-pre-config.bj.bcebos.com, mobads-pre-config.cdn.bcebos.com, open.e.kuaishou.com, open.e.kuaishou.cn, stage2.chelaile.net.cn, ad.xhey.top, 39.108.85.131, sdk.1rtb.net, adx-strategy-api-cn.statisticslinks.com, adx-micro.statisticslinks.com, da.statisticslinks.com, tk.statisticslinks.com, sdkquic.e.qq.com, als.baidu.com, jt-sdk-ios.oss-cn-beijing.aliyuncs.com
