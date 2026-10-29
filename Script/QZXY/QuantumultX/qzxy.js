@@ -1,189 +1,121 @@
+// Modified: 2026-10-29 (chance). HAR-backed ad cleanup; retain response shapes.
 /*
- * Name: 趣智校园首页净化
- * Author: chance
- * Category: 去广告 / 响应体净化
- * Converted: 2026-09-22
- * Target: Quantumult X
- * Source: https://raw.githubusercontent.com/JuemingDC/QuantumultX/main/Rewrite/qzxy.snippet
- * Basis: quantumult-x-2026-09-15-160818.har
+ * name: 趣智校园净化
+ * author: chance
+ * category: 广告净化 / 应用精简
+ * converted: 2026-09-27
+ * updated: 2026-10-29
+ * target: Quantumult X
+ * source: 趣智校园冷启动 HAR（2026-09-27）
  *
- * 设计原则：
- * 1. jq 能安全处理的专用广告接口不进入本脚本；
- * 2. 本脚本只处理“核心业务响应中混有广告字段”的接口；
- * 3. 修改前校验响应结构，字段不存在时保持原响应，降低误杀风险。
+ * 稳定版：
+ * - 严格保留服务端 JSON 数据类型与层级，避免 App 因强制解包/类型断言闪退
+ * - 清空推广频道、广告链、广告位与返现活动
+ * - 关闭广告相关开关
+ * - 将当前项目加入 taskAdvertiseProjectBlackList
+ * - 不修改登录、校园项目、钱包、充值/退款、报修、扫码用水等核心接口
  */
 
-let body = $response.body;
+var url = $request.url;
+var body = $response.body;
 
-try {
-  const obj = JSON.parse(body);
-  const url = $request.url || "";
+if (!body) {
+  $done({});
+} else {
+  try {
+    var obj = JSON.parse(body);
+    var data = obj && obj.data;
 
-  const isObject = (v) =>
-    v !== null &&
-    typeof v === "object" &&
-    !Array.isArray(v);
+    // Modified: 2026-10-29 (chance). Clear only observed slogan slots;
+    // keep account, wallet, payment, repair and project notices untouched.
+    if (/\/project\/iconSlogan(?:\?|$)/.test(url)) {
+      if (data && typeof data === "object" && !Array.isArray(data)) {
+        ["front", "wallet", "service", "mine"].forEach(function (key) {
+          if (key in data) data[key] = null;
+        });
+      }
+    } else if (url.indexOf("/user/coin/info/withAppAdvChannel") !== -1) {
+      // 必须保留 data 与 coinInfo 对象；直接设为 null 会导致当前 iOS 客户端冷启动闪退。
+      if (data && typeof data === "object" && !Array.isArray(data)) {
+        data.appAdvChannelList = [];
+      }
+    } else if (url.indexOf("/project/adv/chain/get") !== -1) {
+      if (Array.isArray(data)) obj.data = [];
+    } else if (url.indexOf("/project/advSpace/app/v2/list") !== -1) {
+      // 保留原对象结构，只清除广告字段。
+      if (data && typeof data === "object" && !Array.isArray(data)) {
+        var adKeys = [
+          "openAdvId",
+          "cutAdvId",
+          "nativeAdvId",
+          "feedAdvId",
+          "feedGroupAdvId",
+          "jutuiIconAdvId",
+          "jutuiFloatAdvId",
+          "jutuiTextLinkAdvId",
+          "yifanTextLinkAdvId"
+        ];
 
-  const has = (o, k) =>
-    isObject(o) &&
-    Object.prototype.hasOwnProperty.call(o, k);
-
-  /*
-   * /project/info/triple
-   *
-   * 该接口同时承载学校、支付、维修等核心项目配置。
-   * 因此不能粗暴重构 data，也不修改含义较宽的非广告字段。
-   *
-   * 仅处理：
-   * - appAdvertiseSwitch
-   * - screenAdvertisingSwitch
-   * - jobAdvertisingSwitch
-   * - appAdvertiseLevel
-   * - taskImg
-   * - taskAdvertiseProjectBlackList
-   */
-  if (
-    /\/project\/info\/triple(?:\?|$)/.test(url) &&
-    isObject(obj.data)
-  ) {
-    const data = obj.data;
-    const switches = data.clientProjectInfoSwitchDTO;
-    const config = data.clientProjectInfoConfigDTO;
-
-    if (isObject(switches)) {
-      [
-        "appAdvertiseSwitch",
-        "screenAdvertisingSwitch",
-        "jobAdvertisingSwitch"
-      ].forEach((key) => {
-        if (has(switches, key)) {
-          switches[key] = 0;
+        for (var i = 0; i < adKeys.length; i++) {
+          if (adKeys[i] in data) data[adKeys[i]] = "";
         }
-      });
-    }
 
-    if (isObject(config)) {
-      if (has(config, "appAdvertiseLevel")) {
-        config.appAdvertiseLevel = 0;
+        if ("commandAdvStr" in data) data.commandAdvStr = "";
+        if ("jumpDDLWay" in data) data.jumpDDLWay = 0;
       }
-
-      if (has(config, "taskImg")) {
-        config.taskImg = null;
+    } else if (url.indexOf("/settlement/advertise/freeMeal/activity/index") !== -1) {
+      // 保留对象结构，避免客户端对 data.amount / activityList 强制读取时崩溃。
+      if (data && typeof data === "object" && !Array.isArray(data)) {
+        if ("amount" in data) data.amount = 0;
+        data.activityList = [];
       }
+    } else if (url.indexOf("/project/info/triple") !== -1) {
+      if (data && typeof data === "object" && !Array.isArray(data)) {
+        var sw = data.clientProjectInfoSwitchDTO;
+        if (sw && typeof sw === "object" && !Array.isArray(sw)) {
+          var switchKeys = [
+            "screenAdvertisingSwitch",
+            "appAdvertiseSwitch",
+            "aliXcxAdvertiseSwitch",
+            "weChatXcxAdvertiseSwitch",
+            "jobAdvertisingSwitch"
+          ];
 
-      /*
-       * 保留服务端现有黑名单，只追加当前 projectId。
-       *
-       * 例如：
-       * 原始：
-       * 3170,3454
-       *
-       * 当前 projectId：
-       * 3118
-       *
-       * 修改后：
-       * 3170,3454,3118
-       *
-       * 不直接写死黑名单，避免覆盖服务端以后新增的项目。
-       */
-      if (
-        has(config, "taskAdvertiseProjectBlackList") &&
-        data.projectId != null
-      ) {
-        const projectId = String(data.projectId).trim();
-        const raw = config.taskAdvertiseProjectBlackList;
+          for (var j = 0; j < switchKeys.length; j++) {
+            if (switchKeys[j] in sw) sw[switchKeys[j]] = 0;
+          }
+        }
 
-        if (projectId) {
-          if (typeof raw === "string") {
-            const list = raw
+        var cfg = data.clientProjectInfoConfigDTO;
+        if (cfg && typeof cfg === "object" && !Array.isArray(cfg)) {
+          if ("appAdvertiseLevel" in cfg) cfg.appAdvertiseLevel = 0;
+          if ("aliXcxAdvertiseLevel" in cfg) cfg.aliXcxAdvertiseLevel = 0;
+          if ("weChatXcxAdvertiseLevel" in cfg) cfg.weChatXcxAdvertiseLevel = 0;
+          if ("taskImg" in cfg) cfg.taskImg = null;
+          if ("thirdChannelLink" in cfg) cfg.thirdChannelLink = null;
+
+          // 冷启动 HAR 中当前项目为 3118。
+          // 保留原字段类型（逗号分隔字符串），仅追加当前项目 ID。
+          if ("taskAdvertiseProjectBlackList" in cfg) {
+            var projectId = String(data.projectId || "");
+            var ids = String(cfg.taskAdvertiseProjectBlackList || "")
               .split(",")
-              .map((v) => v.trim())
+              .map(function (v) { return v.trim(); })
               .filter(Boolean);
 
-            if (!list.includes(projectId)) {
-              list.push(projectId);
+            if (projectId && ids.indexOf(projectId) === -1) {
+              ids.push(projectId);
             }
 
-            config.taskAdvertiseProjectBlackList =
-              list.join(",");
-          } else if (raw == null) {
-            config.taskAdvertiseProjectBlackList =
-              projectId;
+            cfg.taskAdvertiseProjectBlackList = ids.join(",");
           }
         }
       }
     }
+
+    $done({ body: JSON.stringify(obj) });
+  } catch (e) {
+    // 解析异常时完全透传原响应。
+    $done({});
   }
-
-  /*
-   * /user/coin/info/withAppAdvChannel
-   *
-   * 该接口同时包含：
-   * - coinInfo
-   * - appAdvChannelList
-   *
-   * 截图中圈出的：
-   * - 每天赚（省）点零花钱
-   * - 可提现金
-   * - 超值购物
-   * - 霸王餐
-   * - 小说
-   * - 任务赚现金
-   * - 看视频赚现金
-   * - 抖音直播
-   * - 闪购外卖券
-   * - 28 元红包
-   * - 外卖券
-   * - 学生享好价
-   *
-   * 均位于这一整块首页商业模块中。
-   *
-   * 不能只清空 appAdvChannelList：
-   * 这样仍可能保留 coinInfo 对应的
-   * “每天赚零花钱 / 可提现金”父级 UI。
-   *
-   * 但也不能无条件 data = null。
-   * 只有当当前 HAR 已确认的结构同时存在时，
-   * 才隐藏整个模块。
-   *
-   * 如果服务端未来改版：
-   * - coinInfo 不存在
-   * - appAdvChannelList 不存在
-   * - 字段类型改变
-   *
-   * 则保持原响应，避免误杀其他功能。
-   */
-  if (
-    /\/user\/coin\/info\/withAppAdvChannel(?:\?|$)/.test(url) &&
-    isObject(obj.data)
-  ) {
-    const data = obj.data;
-
-    const matchedCurrentShape =
-      has(data, "coinInfo") &&
-      isObject(data.coinInfo) &&
-      has(data, "appAdvChannelList") &&
-      Array.isArray(data.appAdvChannelList);
-
-    if (matchedCurrentShape) {
-      obj.data = null;
-    }
-  }
-
-  body = JSON.stringify(obj);
-} catch (_) {
-  /*
-   * 非 JSON、空响应或服务端响应结构异常时：
-   * 不修改 body。
-   *
-   * 这样即使接口临时返回：
-   * - HTML
-   * - 网关错误
-   * - 空字符串
-   * - 非标准 JSON
-   *
-   * 也不会因为脚本解析失败导致 APP 请求进一步异常。
-   */
 }
-
-$done(body);

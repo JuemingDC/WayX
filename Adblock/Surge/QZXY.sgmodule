@@ -1,23 +1,80 @@
 #!name=趣智校园净化
-#!desc=稳定修订：清除首页广告、任务墙、外卖返现、直播间与推广入口，同时保留接口原始数据结构，避免趣智校园冷启动闪退。
+#!desc=净化广告链、SDK 广告位、推广频道与口令跳转；保留支付、钱包、用水、报修和学校通知。
 #!category=WayX
 #!requirement=SYSTEM=='iOS'
-# author: chance
-# converted: 2026-09-27
-# updated: 2026-10-04
-# source: 趣智校园冷启动 HAR（2026-09-27）
-#
-# 稳定性原则：不将客户端预期的对象字段改为 null。
-# 不修改正常支付、登录、钱包、退款、报修、扫码用水接口。
+# Author: chance
+# Original Author: Magdalena
+# Converted: 2026-09-27
+# Updated: 2026-10-29
+# Basis: qzxy抓包.har
+# Modified: 2026-10-29 (chance). 同步 QX 广告域名，新增广告标语及精确素材拦截。
 
 [Rule]
-DOMAIN-SUFFIX,waimaimingtang.com,REJECT,pre-matching,extended-matching
-DOMAIN-SUFFIX,xiaozhuanbang.cn,REJECT,pre-matching,extended-matching
+DOMAIN,ad.shunchangzhixing.com,REJECT,pre-matching,extended-matching
+DOMAIN,inner.shunchangzhixing.com,REJECT,pre-matching,extended-matching
+DOMAIN,static.shunchangzhixing.com,REJECT,pre-matching,extended-matching
+DOMAIN,inner-hw.huazirc.com,REJECT,pre-matching,extended-matching
 DOMAIN,ad.lovefree.cc,REJECT,pre-matching,extended-matching
+DOMAIN,ax.admobile.top,REJECT,pre-matching,extended-matching
+DOMAIN,api.track.admobile.top,REJECT,pre-matching,extended-matching
+DOMAIN,img.admobile.top,REJECT,pre-matching,extended-matching
+DOMAIN,sdk.tianmu.mobi,REJECT,pre-matching,extended-matching
+DOMAIN,tracker.tianmu.mobi,REJECT,pre-matching,extended-matching
+DOMAIN,ad-proxy.tianmu.mobi,REJECT,pre-matching,extended-matching
+DOMAIN,event.mvpmob.com,REJECT,pre-matching,extended-matching
+DOMAIN,e.api.adwanji.com,REJECT,pre-matching,extended-matching
+DOMAIN,s.tuia.cn,REJECT,pre-matching,extended-matching
+DOMAIN,event.tuia.cn,REJECT,pre-matching,extended-matching
+DOMAIN,tuia-adx-web.tuia.cn,REJECT,pre-matching,extended-matching
+DOMAIN,api-collect.yunjuhe.cn,REJECT,pre-matching,extended-matching
+DOMAIN,track.bytrabbit.com,REJECT,pre-matching,extended-matching
+DOMAIN,t.adbiding.cn,REJECT,pre-matching,extended-matching
+DOMAIN,wj.netpoint25.com,REJECT,pre-matching,extended-matching
+DOMAIN,report.dxunion.cn,REJECT,pre-matching,extended-matching
+DOMAIN,track.spin-view.com,REJECT,pre-matching,extended-matching
+DOMAIN,bid.atx.hangzhoumengfa.com,REJECT,pre-matching,extended-matching
+DOMAIN,px.effirst.com,REJECT,pre-matching,extended-matching
+DOMAIN,adx.journeyads.cn,REJECT,pre-matching,extended-matching
+DOMAIN,adx-feed.syzzm.top,REJECT,pre-matching,extended-matching
+DOMAIN,adx-back.jizbmedia.com,REJECT,pre-matching,extended-matching
+DOMAIN,adimage.bwton.com,REJECT,pre-matching,extended-matching
+DOMAIN,dsp.ads.umeng.com,REJECT,pre-matching,extended-matching
+DOMAIN,tencent-ssp.66mobi.com,REJECT,pre-matching,extended-matching
+DOMAIN,openapi.prosunnymob.cn,REJECT,pre-matching,extended-matching
+DOMAIN,api.mobrtb.com,REJECT,pre-matching,extended-matching
+DOMAIN,huichuan.sm.cn,REJECT,pre-matching,extended-matching
+DOMAIN,huichuan-mc.sm.cn,REJECT,pre-matching,extended-matching
+DOMAIN,t-dsp.pinduoduo.com,REJECT,pre-matching,extended-matching
+DOMAIN,api-access.pangolin-sdk-toutiao.com,REJECT,pre-matching,extended-matching
+DOMAIN,api-access.pangolin-sdk-toutiao1.com,REJECT,pre-matching,extended-matching
+DOMAIN,log-api.pangolin-sdk-toutiao.com,REJECT,pre-matching,extended-matching
+DOMAIN,gromore.pangolin-sdk-toutiao.com,REJECT,pre-matching,extended-matching
+DOMAIN,api.anythinktech.com,REJECT,pre-matching,extended-matching
+DOMAIN,da.anythinktech.com,REJECT,pre-matching,extended-matching
+DOMAIN,tk.anythinktech.com,REJECT,pre-matching,extended-matching
+DOMAIN,ujoy.anythinktech.com,REJECT,pre-matching,extended-matching
+DOMAIN,sdk.xiaozhuanbang.cn,REJECT,pre-matching,extended-matching
+DOMAIN,static.xiaozhuanbang.cn,REJECT,pre-matching,extended-matching
+DOMAIN,x.xiaozhuanbang.cn,REJECT,pre-matching,extended-matching
+DOMAIN-SUFFIX,xiaozhuanbang.cn,REJECT,pre-matching,extended-matching
+DOMAIN,wmmt-zfb-app.waimaimingtang.com,REJECT,pre-matching,extended-matching
+DOMAIN,wmh5-api.waimaimingtang.com,REJECT,pre-matching,extended-matching
+DOMAIN,open-gw.waimaimingtang.com,REJECT,pre-matching,extended-matching
+DOMAIN,wmapp-api-v2.waimaimingtang.com,REJECT,pre-matching,extended-matching
+DOMAIN,wmapp-api.waimaimingtang.com,REJECT,pre-matching,extended-matching
+DOMAIN,cdn.waimaimingtang.com,REJECT,pre-matching,extended-matching
+DOMAIN-SUFFIX,waimaimingtang.com,REJECT,pre-matching,extended-matching
 DOMAIN-SUFFIX,zhixuexingtu.cn,REJECT,pre-matching,extended-matching
+DOMAIN,track.fyxhlink.com,REJECT,pre-matching,extended-matching
+DOMAIN,img.huazirc.com,REJECT,pre-matching,extended-matching
+
+[URL Rewrite]
+^https?:\/\/101\.126\.18\.212\/report\/channel(?:\?|$) _ reject
+^https:\/\/v3-api\.china-qzxy\.cn\/project\/clickAdv(?:\?|$) _ reject
+^https:\/\/oss\.china-qzxy\.cn\/qzxy_images\/(?:adv\/|prod\/(?:0a87648bf938f8835ca7538ce5db44c8|1cd4f79fc0624a6715a2d060b1cbc93e|2125112e7f68357bbdc6019a06bb31ff|4804872c27c722e25391a4dffb57996b|63b7b6fa7d2d27a236fb77d0ad405bc6|66d46f770e852dfd71244bb38cb10f05|693c8d5cfa102fe01272db57f03d7f46|69e72787740ee18226adca6b0b610a95|70cc25df0ff8644632de4f85d8be732d|7bdaaa68e66951c3c5697a6551a40a28|998a71c47c0872aa7e83463607a80622|9caef3692060104047733da082cd2d9f|c3a415f68503c37364a0d024aced32f3)\.png(?:\?|$)) _ reject
 
 [Script]
-趣智校园净化 = type=http-response,pattern=^https:\/\/v3-api\.china-qzxy\.cn\/(?:user\/coin\/info\/withAppAdvChannel|project\/adv\/chain\/get|project\/advSpace\/app\/v2\/list|settlement\/advertise\/freeMeal\/activity\/index|project\/info\/triple)(?:\?|$),requires-body=true,max-size=262144,script-update-interval=60,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/QZXY/Surge/QZXYCleaner.js
+趣智校园净化 = type=http-response,pattern=^https:\/\/v3-api\.china-qzxy\.cn\/(?:user\/coin\/info\/withAppAdvChannel|project\/adv\/chain\/get|project\/advSpace\/app\/v2\/list|settlement\/advertise\/freeMeal\/activity\/index|project\/info\/triple|project\/iconSlogan)(?:\?|$),requires-body=true,max-size=262144,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/QZXY/Surge/QZXYCleaner.js
 
 [MITM]
-hostname = %APPEND% v3-api.china-qzxy.cn
+hostname = %APPEND% v3-api.china-qzxy.cn, oss.china-qzxy.cn
