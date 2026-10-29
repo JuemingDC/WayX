@@ -1,3 +1,4 @@
+import {keleePaused,isKeleeSource} from "../converter/src/source-pause.mjs";
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -25,6 +26,8 @@ export async function syncCatalogEntry(entry,{
   convert=convertPluginWithContext,commit=commitManagedConversion,
   log=console.log,resources=null,prepared=null,prepareOnly=false,
 }={}) {
+  // Modified: 2026-10-29 (chance). Direct callers also honor source freeze.
+  if(await keleePaused(root) && isKeleeSource(entry.source))return {id:entry.id,paused:true};
   let stage='read-current-source',previousSource=null,source=null,targetState=null;
   const onStage=value=>{stage=value;};
   let declarations=null;
@@ -115,6 +118,7 @@ export async function runCatalogSync({root=ROOT,entryOptions={},log=console.log,
     log(`\n== acquire ${entry.id} ==`);
     try {
       const prepared=await syncCatalogEntry(entry,{...entryOptions,root,log,fetchText:resources.fetchText,resources,prepareOnly:true});
+      if(prepared.paused){retainedPlugins.push(entry.id);log(`paused ${entry.id}: existing artifacts retained`);continue;}
       preparedEntries.push({entry,prepared});
     }catch(error){capture(entry,error);}
   }

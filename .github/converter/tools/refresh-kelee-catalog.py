@@ -472,8 +472,11 @@ def main() -> int:
     if not isinstance(previous, list) or not isinstance(static, list):
         raise ValueError("WayX source catalogs must be JSON arrays")
 
-    feed_text = fetch_bytes(args.list_url).decode("utf-8-sig")
-    payload = json.loads(feed_text)
+    # Modified: 2026-10-29 (chance). Preserve frozen entries during discovery;
+    # absence/inaccessibility of the paused directory must never retire artifacts.
+    paused = load_json(ROOT / ".github/sources/kelee-pause.json", {}).get("paused") is True
+    feed_text = "" if paused else fetch_bytes(args.list_url).decode("utf-8-sig")
+    payload = None if paused else json.loads(feed_text)
     rucu6_feed = None
     if args.rucu6_list_url:
         index_url = args.rucu6_list_url
@@ -487,7 +490,13 @@ def main() -> int:
         except json.JSONDecodeError: rucu6_payload = rucu6_feed
         rucu6 = build_rucu6_catalog(rucu6_payload, previous, static)
         static = [entry for entry in static if urllib.parse.urlsplit(entry["source"]).hostname != "rucu6.pages.dev"] + rucu6
-    combined, metadata = build_catalog(payload, previous, static)
+    if paused:
+        frozen = [entry for entry in previous if (urllib.parse.urlsplit(entry["source"]).hostname or "").endswith("kelee.one")]
+        combined = frozen + [entry for entry in static if not (urllib.parse.urlsplit(entry["source"]).hostname or "").endswith("kelee.one")]
+        metadata = [{**entry, "order": order} for order, entry in enumerate(frozen)]
+        print(f"Kelee paused: preserving {len(frozen)} catalog entries and their artifacts")
+    else:
+        combined, metadata = build_catalog(payload, previous, static)
     validate_combined(combined)
 
     desired = json.dumps(combined, ensure_ascii=False, indent=2) + "\n"
@@ -506,7 +515,7 @@ def main() -> int:
     CATALOG.write_text(desired, encoding="utf-8")
     RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
     # Discovery and monitoring share the same validated upstream response.
-    (RUNTIME_DIR / "kelee-feed.json").write_text(
+    if not paused: (RUNTIME_DIR / "kelee-feed.json").write_text(
         json.dumps({"source": args.list_url, "text": feed_text}, ensure_ascii=False) + "\n", encoding="utf-8",
     )
     (RUNTIME_DIR / "rucu6-discovery.json").write_text(json.dumps({
