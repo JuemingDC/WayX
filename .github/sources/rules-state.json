@@ -16,9 +16,9 @@
     "Rule/QuantumultX/microsoft.list": "10ec6da81cfceb03a9cf7429bc2999a56cb27bb4b9fd9fdca5535a29abeca256",
     "Rule/QuantumultX/media_cn.list": "013443ffdd7076624b1cc9f520e18409f1ed6068589816001e3ea86ee895cf55",
     "Rule/QuantumultX/media.list": "43a9dcda1c65142163a1db76bb8d72a5dbfaf028ce8138d1668ddb8ad1e577a0",
-    "Rule/QuantumultX/cn.list": "2be25f7a2fc8bb6f00e6d1a1c8a99f9f297237de4870e6a1c29f84d88717c398",
+    "Rule/QuantumultX/cn.list": "d773cba9bd45c576f70fb2d6f767a9bd95d0e7fd4ff68190f88ef0a37141a9c1",
     "Rule/QuantumultX/proxy.list": "ab2c3e7da5e3729c9aab42ac318abc3551853186711caf9a57acafedd50d7c73",
-    "Rule/QuantumultX/adblock.list": "ed9e1a0b215905c0b25f0501a005dd8dacb455d19ba99216218a6f8b19a183b2",
+    "Rule/QuantumultX/adblock.list": "5be4cc3ff0ccc8a3b2c1b1f706e8cd53c6efe1f0cca3b5f4c6f1559c3072659f",
     "Rule/QuantumultX/adblock_extra.list": "fe326ed1eaccf912aa06fc884ca777d643f95b5ca0b715109b7625a73f1357d7",
     "Rule/Surge/google.list": "912e0c6188e8ba45b52e86b262bb46ce9f2c31cb29b0cbe28a13f04e5482eaa9",
     "Rule/Surge/youtube.list": "1f5a9d6d4d357d6b2c8f012f624ff96eb05d525bc83557144bb78f48f3dde038",
@@ -38,9 +38,9 @@
     "Rule/Surge/microsoft_proxy.list": "386dbcd19b067d027602f77abbeaf8e9bcff75b284274633ab7fd3db6c4fca4d",
     "Rule/Surge/media_cn.list": "bf6080b19b4a6befd9927e0c14fba6ede158db9429233b53b0d60951e8e2a131",
     "Rule/Surge/media.list": "bfcd665457099c76212de4d10f3edc838f8b33b4a9d578dfdb9afc95dcc4f919",
-    "Rule/Surge/cn.list": "6eb28524f3bb7ec6f5bd2a50b4bbcb67c8cc3bd76f2aee789638ed52ccc0afec",
+    "Rule/Surge/cn.list": "bfe775d462a97ae882276a631ead850f24ce9edcb60a53c7a5e91eee6cea37b6",
     "Rule/Surge/proxy.list": "be878faf60d910502804fc15efa285079a14a3b9b0c26a5988f4d85cee48153c",
-    "Rule/Surge/adblock.list": "43fd3654b78336813dbf89802f1d30b0264971fe77938e63cf4d824141f53595",
+    "Rule/Surge/adblock.list": "28dd3068c17767c63ee5893b0e5c8a2b63c2b3041cb0d9617b795f5ac1370740",
     "Rule/Surge/adblock_extra.list": "6fcdb96f7af47ee163620d75d444600c1d1d4fad6d27b56e5f5950ec9f066427",
     "Rule/QuantumultX/filterfix.list": "bc2f4b0be6d4d4f0a9c490b2f4e3259cabeda3ae6cd729a4c7d32d76fc1edffd",
     "Rule/Surge/filterfix.dconf": "ba43f26b47a1eb7f9b8659d65da7c41e5a9639f23a6a8b20b673c559359befeb"
@@ -61,9 +61,9 @@
     "Rule/QuantumultX/microsoft.list": 843,
     "Rule/QuantumultX/media_cn.list": 1489,
     "Rule/QuantumultX/media.list": 7527,
-    "Rule/QuantumultX/cn.list": 128237,
+    "Rule/QuantumultX/cn.list": 128251,
     "Rule/QuantumultX/proxy.list": 34105,
-    "Rule/QuantumultX/adblock.list": 281872,
+    "Rule/QuantumultX/adblock.list": 282514,
     "Rule/QuantumultX/adblock_extra.list": 145537,
     "Rule/Surge/google.list": 897,
     "Rule/Surge/youtube.list": 182,
@@ -83,9 +83,9 @@
     "Rule/Surge/microsoft_proxy.list": 653,
     "Rule/Surge/media_cn.list": 1489,
     "Rule/Surge/media.list": 7527,
-    "Rule/Surge/cn.list": 128237,
+    "Rule/Surge/cn.list": 128251,
     "Rule/Surge/proxy.list": 34105,
-    "Rule/Surge/adblock.list": 281872,
+    "Rule/Surge/adblock.list": 282514,
     "Rule/Surge/adblock_extra.list": 145537,
     "Rule/QuantumultX/filterfix.list": 63,
     "Rule/Surge/filterfix.dconf": 63
@@ -409,7 +409,7 @@
       "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/light-onlydomains.txt",
       "license": "GPL-3.0",
       "fetched_url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/light-onlydomains.txt",
-      "sha256": "23e4149eefc20925eae9d49eafdd83e4be3c44aa8bb4a8b676c124a25d022f77"
+      "sha256": "f68c0dd0b263d41469bc874586d6202cc34ce94639e6fa79b711c6a90fab90b0"
     },
     {
       "id": "awavenue-ads",
@@ -598,7 +598,7 @@
       "url": "https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china.txt",
       "license": "MIT",
       "fetched_url": "https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china.txt",
-      "sha256": "51759a0e2c86bc6530d0572eeefbee145cb4cdea646da8a310d818b41e455b56"
+      "sha256": "6ceadbf3db2c123ad8728e7d74fc934b254e87f12f28d065049e142e9202d0f4"
     },
     {
       "id": "gaoyifan-cn6",
@@ -609,7 +609,7 @@
       "url": "https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china6.txt",
       "license": "MIT",
       "fetched_url": "https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china6.txt",
-      "sha256": "2ba372a950e775a13a62e4a3400fa4ac408076d7b114a8124eaa9ee29782bf10"
+      "sha256": "619ed9ba163d1df5552d605398f487d396d7dcd3f6dac816703d7dbb3bcaf9a9"
     },
     {
       "id": "loyalsoldier-telegram-cidr",
@@ -642,7 +642,7 @@
       "url": "https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_All_Surge.list",
       "license": "No license declared; attribution retained",
       "fetched_url": "https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_All_Surge.list",
-      "sha256": "0aeac75c265673b439f3cc664431435df49a3a0cbadb3f8245d4a5b14cc2fae4"
+      "sha256": "3f9c7d635e6e3a29035f3eb6bec93db67334b2b3642ce6275a9724e32fc75b8e"
     },
     {
       "id": "mihomo-apple-update",
