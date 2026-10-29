@@ -380,3 +380,25 @@ Modified: 2026-10-25 (chance). Echo 声明映射依据用户提供的 QX 官方�
 Microsoft 增加 QuixoticHeart 的 microsoft-cn、microsoft、onedrive 三个来源，保留原作者、URL 和 GPL-3.0 记录。routing_layers 第一层合并 microsoft-cn、既有 V2Fly 的 Microsoft/Azure/Bing/PKI/OneDrive @cn 与 MetaCubeX 的 Microsoft/Azure/Bing CN，策略 DIRECT；无逐条策略的公司/OneDrive 重复声明采用该层动作，其余沿用已登记代理动作。逐条明确动作保留，GitHub/Copilot 等仍按既有归属优先级处理。QX 单一 microsoft.list，DIRECT 层先于代理层，代理使用 ssid；Surge 仍为 microsoft_direct.list → microsoft_proxy.list。不能因直连下载端点把整个 microsoft.com/windowsupdate.com 或所有 OneDrive 都设为直连。
 
 Microsoft 分类限定排除 DOMAIN-SUFFIX tenor.com 的错误归属，Google 分类与代理动作保留。官方归属依据：https://blog.google/products-and-platforms/products/search/making-it-easier-find-and-share-gifs-google/ 。此排除不删除 Google 规则集中的 Tenor。
+
+
+## 2.18 Quantumult X Script API → Surge（2026-10-29）
+
+原生 QX 同步取得作者脚本源码及 SHA-256，QX 订阅仍使用作者原地址；Surge 使用独立生成的适配脚本，保留作者程序、来源及转换日期。不得继续把未经核对的 QX JS 原地址直接当作等价 Surge JS。未知接口、源码缺失、动态全局访问只输出 REVIEW REQUIRED，不生成活动脚本声明。
+
+| QX API | Surge 对应 | 当前转换边界 |
+| --- | --- | --- |
+| `$request.url/method/headers/body` | 同名字段 | Body 仅在对应请求 Body 模式暴露 |
+| `$response.statusCode` | `$response.status` | 数字状态码 |
+| `$response.headers/body` | 同名字段 | Body 仅在响应 Body 模式暴露 |
+| `$done(string)` | `$done({body:string})` | Body 或 echo 模式 |
+| `$done({status:HTTP状态行,...})` | 数字 `status` | 支持 HTTP/1.0、HTTP/1.1 状态行 |
+| echo 的 `$done(result)` | `$done({response:result})` | 普通 echo 不等请求 Body；analyze echo 等待 |
+| `$task.fetch` | `$httpClient` + Promise | 尚不启用：错误对象、超时、Cookie、二进制及策略选项需单独验证 |
+| `$prefs` | `$persistentStore` | 尚不启用：键限制、容量、删除返回值及 removeAll 无完整等价证据 |
+| `$notify` | `$notification.post` | 尚不启用：通知选项及返回值需核对 |
+| `$environment`、`$configuration`、`$message`、`sessionIndex` | 无完整已证实映射 | 诊断，不能伪造环境或会话信息 |
+
+Body 模式在空 Body 时跳过作者程序，与 QX 官方配置示例一致。对象返回保持字段类型、模式与边界；不把 Header 模式升级成 Body 模式。该版本仅覆盖上表已启用的 HTTP API 子集；禁止称为全量 Script API 等价转换。AST/动态访问、别名逃逸及不同客户端运行时差异尚未完成实机证明，当前实现必须保持草稿状态，不能用于无人审核生产同步。
+
+依据：Quantumult X 官方 `sample-rewrite-with-script.js`、`sample-task.js`、项目提供的官方示例配置；Surge 官方 `scripting/api.html`、`scripting/http-request.html`、`scripting/http-response.html`。这些契约测试验证字段和完成结果转换，不替代客户端实机验证。

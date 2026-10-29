@@ -1,3 +1,5 @@
+// Modified: 2026-10-29 (chance). Include native QX API contract in final script checks.
+import "./qx-script-api.mjs";
 // Consolidated: 2026-10-03
 // Author: chance
 // Category: Converter / script / Regression Suite

@@ -1,3 +1,4 @@
+import {planQxScriptApi} from "./qx-script-api.mjs";
 // Consolidated: 2026-10-03
 // Author: chance
 // Category: Converter / conversion
@@ -468,7 +469,7 @@ export function convertPlugin(entry,source,{
   }
 
   const scriptSectionLines=plugin.sections.get('Script') || [];
-  let scriptIndex=0;
+  let scriptIndex=0;const scripts=new Map();
   for (const item of groupSourceSectionItems(scriptSectionLines)) {
     const comments=cleanSourceComments(item.comments);
     if (!item.line) continue;
@@ -691,15 +692,15 @@ export function validateConvertedPlugin(entry, out, {
   return out;
 }
 
-// Modified: 2026-10-25 (chance). Native QX -> Surge lowering preserves source
-// policies/programs and original Script URLs; unsupported semantics stay diagnosed.
-export function convertNativeQxToSurge(text,{id='native_qx'}={}) {
+// Modified: 2026-10-29 (chance). Native QX -> Surge preserves policies/programs;
+// Script URLs point to API adapters only after source verification.
+export function convertNativeQxToSurge(text,{id='native_qx',scriptSources=new Map(),scriptBase='https://raw.githubusercontent.com/JuemingDC/WayX/main'}={}) {
   validateQX(text,{id});
   const name=text.match(/^# Name: (.*)$/m)?.[1] || id;
   const sections={Rule:[],'URL Rewrite':[],'Map Local':[],'Body Rewrite':[],'Header Rewrite':[],Script:[],MITM:[]},diagnostics=[];
   const issue=(line,reason)=>{diagnostics.push({source:line,reason});sections.Rule.push('# [WayX] REVIEW REQUIRED: '+reason,'# Source declaration: '+line);};
   const types={'host':'DOMAIN','host-suffix':'DOMAIN-SUFFIX','host-keyword':'DOMAIN-KEYWORD','host-wildcard':'DOMAIN-WILDCARD','ip-cidr':'IP-CIDR','ip6-cidr':'IP-CIDR6','ip-asn':'IP-ASN','geoip':'GEOIP','user-agent':'USER-AGENT'};
-  let scriptIndex=0;
+  let scriptIndex=0;const scripts=new Map();
   for(const raw of text.split('\n')) {
     let line=raw.trim();if(!line)continue;
     if(line.startsWith('#')){if(!/^# \[(?:filter_local|rewrite_local|mitm)\]$/.test(line))sections.Rule.push(line);continue;}
@@ -740,20 +741,20 @@ export function convertNativeQxToSurge(text,{id='native_qx'}={}) {
     }
     const script=action.match(/^script-((?:request|response)-(?:body|header)|(?:analyze-)?echo-response)\s+(https?:\/\/\S+)$/);
     if(script) {
-      // Modified: 2026-10-25 (chance). User authorizes direct native Script
-      // declarations for echo too, keeping original author URLs without API scans.
-      // QX analyze-echo waits for the request body; ordinary echo does not.
-      const modes={
-        'request-header':['request',false], 'request-body':['request',true],
-        'response-header':['response',false], 'response-body':['response',true],
-        'echo-response':['request',false], 'analyze-echo-response':['request',true],
-      };
-      const [phase,requiresBody]=modes[script[1]];
-      sections.Script.push(id+'_'+(++scriptIndex)+' = type=http-'+phase+',pattern='+surgeRegexParameter(pattern)+',script-path='+surgeRegexParameter(script[2])+',requires-body='+requiresBody);continue;
+      // Modified: 2026-10-29 (chance). Verify and adapt source APIs before
+      // enabling a Surge declaration. Missing/unknown contracts remain diagnosed.
+      const mode=script[1],url=script[2];
+      const plan=planQxScriptApi(scriptSources.get(url),{mode,sourceUrl:url});
+      if(!plan.ok){issue(line,plan.reason);continue;}
+      const phase=mode.startsWith('response-')?'response':'request';
+      const requiresBody=mode.endsWith('-body')||mode==='analyze-echo-response';
+      const file='Script/'+id+'/qx_api_'+(++scriptIndex)+'.js';
+      scripts.set(file,plan.script);
+      sections.Script.push(id+'_'+scriptIndex+' = type=http-'+phase+',pattern='+surgeRegexParameter(pattern)+',script-path='+scriptBase+'/'+file+',requires-body='+requiresBody+(requiresBody?',max-size=-1':''));continue;
     }
     issue(line,'No verified equivalent for QX action: '+action.split(/\s/)[0]);
   }
   const header=[...(sections.Rule.some(line=>line.includes('{{{PROXY}}}'))?['#!arguments=PROXY:PROXY','#!arguments-desc=PROXY:Upstream proxy policy group']:[]),'#!name='+name,'#!desc=Native QX conversion'+(diagnostics.length?' · '+diagnostics.length+' declarations require review':''),'#!category=WayX','#!requirement=CORE_VERSION>=20','# Native QX review count: '+diagnostics.length];
   const out=header.join('\n')+'\n\n'+Object.entries(sections).filter(([,lines])=>lines.length).map(([section,lines])=>'['+section+']\n'+lines.join('\n')).join('\n\n')+'\n';
-  validateSurgeModule(out,{id});return {surge:out,diagnostics};
+  validateSurgeModule(out,{id});return {surge:out,diagnostics,scripts};
 }
