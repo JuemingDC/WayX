@@ -638,7 +638,7 @@
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
-| **[趣智校园去广告](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/QZXY.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FQZXY.snippet%2C%20tag%3D%E8%B6%A3%E6%99%BA%E6%A0%A1%E5%9B%AD%E5%8E%BB%E5%B9%BF%E5%91%8A%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FQZXY.sgmodule) |
+| **[趣智校园净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/QZXY.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FQZXY.snippet%2C%20tag%3D%E8%B6%A3%E6%99%BA%E6%A0%A1%E5%9B%AD%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FQZXY.sgmodule) |
 
 </details>
 

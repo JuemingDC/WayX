@@ -1,9 +1,10 @@
+// Modified: 2026-10-29 (chance). HAR-backed ad cleanup; retain response shapes.
 /*
  * name: 趣智校园净化
  * author: chance
  * category: 广告净化 / 应用精简
  * converted: 2026-09-27
- * updated: 2026-09-27
+ * updated: 2026-10-29
  * target: Surge
  * source: 趣智校园冷启动 HAR（2026-09-27）
  *
@@ -25,13 +26,21 @@ if (!body) {
     var obj = JSON.parse(body);
     var data = obj && obj.data;
 
-    if (url.indexOf("/user/coin/info/withAppAdvChannel") !== -1) {
+    // Modified: 2026-10-29 (chance). Clear only observed slogan slots;
+    // keep account, wallet, payment, repair and project notices untouched.
+    if (/\/project\/iconSlogan(?:\?|$)/.test(url)) {
+      if (data && typeof data === "object" && !Array.isArray(data)) {
+        ["front", "wallet", "service", "mine"].forEach(function (key) {
+          if (key in data) data[key] = null;
+        });
+      }
+    } else if (url.indexOf("/user/coin/info/withAppAdvChannel") !== -1) {
       // 必须保留 data 与 coinInfo 对象；直接设为 null 会导致当前 iOS 客户端冷启动闪退。
       if (data && typeof data === "object" && !Array.isArray(data)) {
         data.appAdvChannelList = [];
       }
     } else if (url.indexOf("/project/adv/chain/get") !== -1) {
-      obj.data = [];
+      if (Array.isArray(data)) obj.data = [];
     } else if (url.indexOf("/project/advSpace/app/v2/list") !== -1) {
       // 保留原对象结构，只清除广告字段。
       if (data && typeof data === "object" && !Array.isArray(data)) {
