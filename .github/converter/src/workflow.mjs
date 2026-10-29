@@ -316,7 +316,7 @@ async function prepareNativeQxSource(config,{fetchText}) {
     groups.get(key).push({text,path:file.path,url:'https://raw.githubusercontent.com/'+config.repository+'/'+config.ref+'/'+file.path});
     inputs.push({repository:config.repository,path:file.path,sha256:crypto.createHash('sha256').update(text).digest('hex')});
   }
-  const outputs=new Map(),scriptSources=new Map();
+  const outputs=new Map();
   for(const [key,allSources] of groups) {
     let sources=allSources;
     // Modified: 2026-10-25 (chance). For alternative app versions, retain
@@ -336,17 +336,9 @@ async function prepareNativeQxSource(config,{fetchText}) {
     const text=mergeNativeQxSources(sources,{name,author:config.author});validateQX(text,{id:config.prefix+key});
     outputs.set(QX_ADBLOCK_DIR+'/'+config.prefix+key+'.snippet',text);
     if(config.surge) {
-      // Modified: 2026-10-29 (chance). Acquire author JS once per snapshot,
-      // record its digest and publish only verified API adapters with the module.
-      for(const match of text.matchAll(/\burl\s+script-[\w-]+\s+(https?:\/\/\S+)/g)) {
-        const url=match[1];
-        if(!scriptSources.has(url)) {
-          const source=await fetchText(url);scriptSources.set(url,source);
-          inputs.push({repository:config.repository,url,sha256:crypto.createHash('sha256').update(source).digest('hex')});
-        }
-      }
-      const converted=convertNativeQxToSurge(text,{id:config.prefix+key,scriptSources});
-      for(const [file,source] of converted.scripts)outputs.set(file,source);
+      // Modified: 2026-10-29 (chance). User requires no JS downloads/API conversion;
+      // forward every original URL and declaration mode unchanged.
+      const converted=convertNativeQxToSurge(text,{id:config.prefix+key});
       outputs.set(SURGE_ADBLOCK_DIR+'/'+config.prefix+key+'.sgmodule',converted.surge);
       diagnostics.push(...converted.diagnostics.map(item=>({repository:config.repository,application:key,...item})));
     }
@@ -359,8 +351,7 @@ export async function commitNativeQxSync(root,plan) {
   let prior={outputs:[]};try{prior=JSON.parse(await fs.readFile(path.join(root,statePath),'utf8'));}catch(error){if(error.code!=='ENOENT')throw error;}
   const old=new Map(),writes=new Map();
   for(const relative of new Set([...prior.outputs,...plan.outputs.keys()])) {
-    // Modified: 2026-10-29 (chance). Own only this registry's generated API helpers.
-    if(!/^Script\/(?:ishowshu|zenmofeishi)_[a-z0-9-]+\/qx_api_[1-9][0-9]*\.js$/.test(relative) && !/^Adblock\/(?:Quantumult X\/(?:ishowshu|zenmofeishi)_[a-z0-9-]+\.snippet|Surge\/(?:ishowshu|zenmofeishi)_[a-z0-9-]+\.sgmodule)$/.test(relative))throw Error('Native QX ownership boundary violation');
+    if(!/^Adblock\/(?:Quantumult X\/(?:ishowshu|zenmofeishi)_[a-z0-9-]+\.snippet|Surge\/(?:ishowshu|zenmofeishi)_[a-z0-9-]+\.sgmodule)$/.test(relative))throw Error('Native QX ownership boundary violation');
     let previous=null;try{previous=await fs.readFile(path.join(root,relative),'utf8');}catch(error){if(error.code!=='ENOENT')throw error;}
     if(previous!==null && !previous.includes(NATIVE_QX_MARKER))throw Error('Refusing to overwrite unmanaged native QX resource: '+relative);
     old.set(relative,previous);let next=plan.outputs.get(relative)??null;

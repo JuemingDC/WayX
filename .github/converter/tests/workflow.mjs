@@ -1376,11 +1376,10 @@ assert.match(variants.outputs.get('Adblock/Quantumult X/ishowshu_amap.snippet'),
 assert.doesNotMatch(variants.outputs.get('Adblock/Quantumult X/ishowshu_amap.snippet'),/old\.example/);
 assert.equal(variants.outputs.has('Adblock/Quantumult X/ishowshu_bilibili.snippet'),false);
 assert.equal(variants.skipped[0].application,'bilibili');
-// Modified: 2026-10-29 (chance). Verify API-backed helpers, source admission
-// and explicit unsupported header boundaries.
+// Modified: 2026-10-25 (chance). Verify native QX policies, HTTP actions,
+// unchanged author Script URLs and explicit unsupported header boundaries.
 const qxConversionInput='# Name: Native fixture\n# [filter_local]\nhost,keep.example,direct\nhost-suffix,proxy.example,proxy\nip6-cidr,2001:db8::/32,reject\n# [rewrite_local]\n^https://a.example url reject\n^https://b.example url reject-dict\n^https://c.example url jsonjq-response-body \'delpaths([["ad"],["banner"]])\'\n^https://d.example url script-response-body https://example.test/original.js\n# [mitm]\nhostname = a.example, b.example\n';
-const apiSources=new Map([['https://example.test/original.js','$done({body:$response.body});']]);
-const convertedNative=convertNativeQxToSurge(qxConversionInput,{id:'native_fixture',scriptSources:apiSources});
+const convertedNative=convertNativeQxToSurge(qxConversionInput,{id:'native_fixture'});
 assert.equal(convertedNative.diagnostics.length,0);
 assert.match(convertedNative.surge,/DOMAIN,keep\.example,DIRECT/);
 assert.ok(convertedNative.surge.includes('DOMAIN-SUFFIX,proxy.example,{{{PROXY}}}'));
@@ -1388,13 +1387,12 @@ assert.match(convertedNative.surge,/IP-CIDR6,2001:db8::\/32,REJECT,no-resolve/);
 assert.match(convertedNative.surge,/a\\\.example _ reject/);
 assert.match(convertedNative.surge,/data="\{\}" status-code=200/);
 assert.ok(convertedNative.surge.includes("http-response-jq ^https://c\\.example 'delpaths([[\"ad\"],[\"banner\"]])'"));
-assert.equal(convertedNative.scripts.size,1);
-assert.match(convertedNative.surge,/script-path=.*Script\/native_fixture\/qx_api_1.js/);
+assert.ok(convertedNative.surge.includes('script-path=https://example.test/original.js'));
 assert.match(convertedNative.surge,/requires-body=true/);
-const unsupportedNative=convertNativeQxToSurge(qxConversionInput.replace('# [mitm]','^https://guard.example UA* url-and-header reject\n# [mitm]'),{scriptSources:apiSources});
+const unsupportedNative=convertNativeQxToSurge(qxConversionInput.replace('# [mitm]','^https://guard.example UA* url-and-header reject\n# [mitm]'));
 assert.equal(unsupportedNative.diagnostics.length,1);
 assert.match(unsupportedNative.surge,/^native_qx_\d+ = /m);
-assert.equal(unsupportedNative.scripts.size,1);
+assert.ok(unsupportedNative.surge.includes('script-path=https://example.test/original.js'));
 // Modified: 2026-10-25 (chance). Header lowering retains field/URL and
 // missing-field behavior; complex whole-block patterns remain diagnosed.
 const headerInput=String.raw`# [rewrite_local]
@@ -1405,18 +1403,17 @@ assert.match(headerConverted.surge,/\[Header Rewrite\]\nhttp-request \^https:\/\
 assert.equal(convertNativeQxToSurge(headerInput.replace('Accept-Language: en-us','Other: en-us')).diagnostics.length,1);
 assert.equal(convertNativeQxToSurge(headerInput.replaceAll('Accept-Language','Content-Length')).diagnostics.length,1);
 const unscanned=convertNativeQxToSurge(qxConversionInput);
-assert.equal(unscanned.diagnostics.length,1);
-assert.doesNotMatch(unscanned.surge,/^native_qx_\d+ = /m);
-// Modified: 2026-10-29 (chance). All six modes use generated API helpers
-// while retaining phase/body timing, including both echo forms.
+assert.match(unscanned.surge,/script-path=https:\/\/example.test\/original.js/);
+// Modified: 2026-10-25 (chance). All six native HTTP Script declarations
+// retain their original URL and phase/body timing, including both echo forms.
 for(const [action,phase,requiresBody] of [
   ['request-header','request',false],['request-body','request',true],
   ['response-header','response',false],['response-body','response',true],
   ['echo-response','request',false],['analyze-echo-response','request',true],
 ]) {
-  const out=convertNativeQxToSurge('# [rewrite_local]\n^https://echo.example url script-'+action+' https://example.test/original.js\n',{id:'echo_fixture',scriptSources:new Map([['https://example.test/original.js','$done({});']])});
+  const out=convertNativeQxToSurge('# [rewrite_local]\n^https://echo.example url script-'+action+' https://example.test/original.js\n',{id:'echo_fixture'});
   assert.equal(out.diagnostics.length,0,action);
-  assert.ok(out.surge.includes('type=http-'+phase+',pattern=^https://echo\\.example,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/echo_fixture/qx_api_1.js,requires-body='+requiresBody),action);
+  assert.ok(out.surge.includes('type=http-'+phase+',pattern=^https://echo\\.example,script-path=https://example.test/original.js,requires-body='+requiresBody),action);
 }
 nativeConfig.preferred_versions={bilibili:'rewrite/bilibili-qx.snippet'};
 await fs.writeFile(path.join(root,'.github/sources/native-qx.json'),JSON.stringify(nativeConfig));
@@ -1424,10 +1421,10 @@ assert.ok((await prepareNativeQxSync(root,{fetchText:nativeFetch})).outputs.has(
 const zenmoConfig={version:1,repository:'ZenmoFeiShi/Qx',ref:'main',prefix:'zenmofeishi_',author:'怎么肥事',layout:'root',surge:true};
 nativeFiles['MT.snippet']='#!name = 美团\nhost,mt.example,REJECT\n^https://mt.example url script-response-body https://example.test/not-fetched.js\n';
 await fs.writeFile(path.join(root,'.github/sources/native-qx.json'),JSON.stringify({version:2,sources:[nativeConfig,zenmoConfig]}));
-const allAuthors=await prepareNativeQxSync(root,{fetchText:async url=>url.endsWith('.js')?'$done({body:$response.body});':nativeFetch(url)});
+const allAuthors=await prepareNativeQxSync(root,{fetchText:async url=>{assert.ok(!url.endsWith('.js'),'do not fetch original scripts');return nativeFetch(url);}});
 assert.equal(allAuthors.sources.length,2);
 assert.ok(allAuthors.outputs.has('Adblock/Quantumult X/zenmofeishi_mt.snippet'));
-assert.match(allAuthors.outputs.get('Adblock/Surge/zenmofeishi_mt.sgmodule'),/script-path=.*Script\/zenmofeishi_mt\/qx_api_1.js/);
+assert.match(allAuthors.outputs.get('Adblock/Surge/zenmofeishi_mt.sgmodule'),/script-path=https:\/\/example.test\/not-fetched.js/);
 await commitNativeQxSync(root,allAuthors);
 assert.match((await buildReadmePlan(root)).get('README.md'),/<strong>怎么肥事<\/strong>/);
 await fs.rm(root,{recursive:true,force:true});
