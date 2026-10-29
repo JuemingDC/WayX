@@ -407,7 +407,13 @@ def main() -> int:
     results = []
     failures = []
 
+    # Modified: 2026-10-29 (chance). Skip Kelee directory monitoring without
+    # changing its previous mirror or state while user-requested freeze is active.
+    pause_kelee = load_json(ROOT / ".github/sources/kelee-pause.json", {}).get("paused") is True
     for src in cfg.get("sources", []):
+        if pause_kelee and src.get("id") == "kelee-plugin-directory":
+            print("Kelee directory monitoring paused; mirror/state retained")
+            continue
         source_id = src["id"]
         previous_state = copy.deepcopy(state)
         snapshot = None

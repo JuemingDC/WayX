@@ -1,3 +1,4 @@
+import {keleePaused,isKeleeSource} from "../src/source-pause.mjs";
 // Canonical target regeneration for checked-in Loon sources using original source-script URLs.
 // Author: chance
 // Category: Converter / Canonical Output
@@ -50,7 +51,10 @@ const failures = createWorkflowFailureReporter({
 
 // Modified: 2026-10-25 (chance). Canonical regeneration reuses dependencies across entries.
 const resources=createResourceSnapshot({directory:path.join(ROOT,'.github/monitor/.runtime/resources',crypto.randomUUID())});
+// Modified: 2026-10-29 (chance). Do not rematerialize frozen Kelee dependencies.
+const pauseKelee=await keleePaused(ROOT);
 for (const entry of manifest) {
+  if(pauseKelee && isKeleeSource(entry.source))continue;
   if(selectedIds && !selectedIds.has(entry.id))continue;
   checked++;
   try {
