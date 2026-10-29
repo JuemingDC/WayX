@@ -691,7 +691,7 @@ export function validateConvertedPlugin(entry, out, {
   return out;
 }
 
-// Modified: 2026-10-25 (chance). Native QX -> Surge lowering preserves source
+// Modified: 2026-10-29 (chance). Native QX -> Surge lowering preserves source
 // policies/programs and original Script URLs; unsupported semantics stay diagnosed.
 export function convertNativeQxToSurge(text,{id='native_qx'}={}) {
   validateQX(text,{id});
@@ -740,7 +740,7 @@ export function convertNativeQxToSurge(text,{id='native_qx'}={}) {
     }
     const script=action.match(/^script-((?:request|response)-(?:body|header)|(?:analyze-)?echo-response)\s+(https?:\/\/\S+)$/);
     if(script) {
-      // Modified: 2026-10-25 (chance). User authorizes direct native Script
+      // Modified: 2026-10-29 (chance). User requires original native Script
       // declarations for echo too, keeping original author URLs without API scans.
       // QX analyze-echo waits for the request body; ordinary echo does not.
       const modes={

@@ -15,3 +15,5 @@
 - Modified: 2026-10-27 (chance). Surge Apple outputs only apple_cn and apple_proxy. Merge direct fallback into apple_cn using official logical exclusions only where needed to preserve CN/proxy/fallback routing; QX and other collections keep their existing layout.
 
 - Modified: 2026-10-27 (chance). Microsoft CN routing layers override actionless company/OneDrive feed defaults only; preserve explicit row actions, domestic-first ordering, existing GitHub/AI ownership and Microsoft output filenames.
+
+- Modified: 2026-10-29 (chance). Native QX Script conversion only lowers declarations and always retains the author's original script URL. Do not download, scan or rewrite author JS, inject internal API shims, or generate API adapter copies. Source script runtime compatibility is outside this conversion scope.

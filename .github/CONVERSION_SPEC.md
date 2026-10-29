@@ -380,3 +380,8 @@ Modified: 2026-10-25 (chance). Echo 声明映射依据用户提供的 QX 官方�
 Microsoft 增加 QuixoticHeart 的 microsoft-cn、microsoft、onedrive 三个来源，保留原作者、URL 和 GPL-3.0 记录。routing_layers 第一层合并 microsoft-cn、既有 V2Fly 的 Microsoft/Azure/Bing/PKI/OneDrive @cn 与 MetaCubeX 的 Microsoft/Azure/Bing CN，策略 DIRECT；无逐条策略的公司/OneDrive 重复声明采用该层动作，其余沿用已登记代理动作。逐条明确动作保留，GitHub/Copilot 等仍按既有归属优先级处理。QX 单一 microsoft.list，DIRECT 层先于代理层，代理使用 ssid；Surge 仍为 microsoft_direct.list → microsoft_proxy.list。不能因直连下载端点把整个 microsoft.com/windowsupdate.com 或所有 OneDrive 都设为直连。
 
 Microsoft 分类限定排除 DOMAIN-SUFFIX tenor.com 的错误归属，Google 分类与代理动作保留。官方归属依据：https://blog.google/products-and-platforms/products/search/making-it-easier-find-and-share-gifs-google/ 。此排除不删除 Google 规则集中的 Tenor。
+
+
+## 2.18 原生 QX Script 原链接引用（2026-10-29）
+
+依用户明确指令，QX → Surge 仅转换 Script 配置声明，不转换脚本内部 API。所有六种原生 HTTP Script 模式一律保留作者原脚本 URL；不得下载作者 JS 做 API 扫描、改写 `$done`、注入兼容层或生成 API 适配副本。请求/响应阶段、requires-body 与两类 echo 的等待时机仍按声明转换。脚本运行时的跨客户端兼容性由原脚本决定，不将原链接引用宣称为内部 API 语义等价。撤回此前受限 API 适配草稿及专用测试，保留既有原链接/模式转换检查。

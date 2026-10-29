@@ -336,7 +336,7 @@ async function prepareNativeQxSource(config,{fetchText}) {
     const text=mergeNativeQxSources(sources,{name,author:config.author});validateQX(text,{id:config.prefix+key});
     outputs.set(QX_ADBLOCK_DIR+'/'+config.prefix+key+'.snippet',text);
     if(config.surge) {
-      // Modified: 2026-10-25 (chance). No author-JS downloads/API scan;
+      // Modified: 2026-10-29 (chance). User requires no JS downloads/API conversion;
       // forward every original URL and declaration mode unchanged.
       const converted=convertNativeQxToSurge(text,{id:config.prefix+key});
       outputs.set(SURGE_ADBLOCK_DIR+'/'+config.prefix+key+'.sgmodule',converted.surge);
