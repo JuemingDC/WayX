@@ -1,0 +1,58 @@
+#!name=Apple证书屏蔽验证
+#!desc=精准屏蔽 Apple p12证书验证，让已过期证书能够继续使用
+# Upstream #!author=Salem
+# Upstream #!homepage=https://github.com/salem-2007/apple-cert-block
+# Upstream #!openUrl=https://t.me/LKm0907
+# Upstream #!icon=https://cdn.jsdelivr.net/gh/salem-2007/apple-cert-block@main/icon.png
+# Upstream #!tag=Apple,Certificate,AntiRevoke
+# Upstream #!loon_version=3.2.0
+# Upstream #!system=iOS,iPadOS
+# Upstream #!update-url=https://raw.githubusercontent.com/salem-2007/apple-cert-block/main/AntiRevoke.plugin
+# Converted by: chance
+# Target: Surge
+#!category=WayX
+# 模块分类: 工具 / 证书状态检查屏蔽
+# Converted: 2026-10-30 (Asia/Shanghai)
+# Modified: 2026-10-30 (chance). 保留源 17 条精确域名拒绝规则、原注释和 3 个 MITM 主机；仅转换客户端格式。
+# Source: https://raw.githubusercontent.com/salem-2007/apple-cert-block/main/AntiRevoke.plugin
+# Note: 屏蔽在线状态检查不延长证书有效期，也不保证已吊销应用可用。
+# Note: 源包含第三方 CA 的 OCSP/CRL 域名，作用范围不限于 Apple 应用签名。
+
+# =========================================
+# AntiRevoke - Core
+# Only blocks certificate verification
+# =========================================
+
+[Rule]
+
+# Apple OCSP
+DOMAIN,ocsp.apple.com,REJECT
+DOMAIN,ocsp2.apple.com,REJECT
+
+# Apple Validation
+DOMAIN,valid.apple.com,REJECT
+DOMAIN,ppq.apple.com,REJECT
+DOMAIN,ppq-ext.v.aaplimg.com,REJECT
+
+# Apple CRL
+DOMAIN,crl.apple.com,REJECT
+DOMAIN,certs.apple.com,REJECT
+
+# DigiCert
+DOMAIN,ocsp.digicert.com,REJECT
+DOMAIN,ocsp.digicert.cn,REJECT
+DOMAIN,crl3.digicert.com,REJECT
+DOMAIN,crl4.digicert.com,REJECT
+
+# Entrust
+DOMAIN,ocsp.entrust.net,REJECT
+DOMAIN,crl.entrust.net,REJECT
+
+# Sectigo / USERTrust
+DOMAIN,ocsp.sectigo.com,REJECT
+DOMAIN,crl.sectigo.com,REJECT
+DOMAIN,ocsp.usertrust.com,REJECT
+DOMAIN,crl.usertrust.com,REJECT
+
+[MITM]
+hostname = %APPEND% ocsp.apple.com, ocsp2.apple.com, valid.apple.com

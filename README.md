@@ -22,6 +22,12 @@
 
 ## Module
 
+### A
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[Apple证书屏蔽验证](https://github.com/JuemingDC/WayX/blob/main/Module/AntiRevoke/QuantumultX/AntiRevoke.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FAntiRevoke%2FQuantumultX%2FAntiRevoke.snippet%2C%20tag%3DApple%E8%AF%81%E4%B9%A6%E5%B1%8F%E8%94%BD%E9%AA%8C%E8%AF%81%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FAntiRevoke%2FSurge%2FAntiRevoke.sgmodule) |
+
 ### K
 
 | Name | Quantumult X | Surge |
