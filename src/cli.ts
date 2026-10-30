@@ -38,7 +38,7 @@ try {
   switch (command) {
     case "help":
       console.log(
-        "WayX: prepare setup-jq catalog rules sync verify monitor reports issues gate publish summary final check test regenerate regex",
+        "WayX: prepare setup-jq icons catalog rules sync verify monitor reports issues gate publish summary final check test regenerate regex",
       );
       break;
     case "prepare":
@@ -47,6 +47,10 @@ try {
     case "setup-jq":
     case "setup_jq":
       await automation.setupJq();
+      break;
+    // Modified: 2026-10-30 (chance). Refresh metadata independently of plugin/rule generation.
+    case "icons":
+      await (await import("./application/icons.ts")).refreshIcons();
       break;
     case "catalog":
       await automation.executeChecks("catalog", [

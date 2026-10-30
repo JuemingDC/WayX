@@ -1,3 +1,4 @@
+import { loadIconIndex } from "../ingest/icons.ts";
 import { opaqueEntries } from "../ingest/formats.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript publish layer; preserve source behavior.
 import { keleePaused, isKeleeSource } from "../ingest/source-pause.ts";
@@ -74,6 +75,8 @@ const resources: any = createResourceSnapshot({
   ),
 });
 // Modified: 2026-10-29 (chance). Do not rematerialize frozen Kelee dependencies.
+// Modified: 2026-10-30 (chance). Canonical metadata uses the same original icon inputs.
+const icons = await loadIconIndex(ROOT, resources);
 const pauseKelee: any = await keleePaused(ROOT);
 const opaque = await opaqueEntries(ROOT);
 for (const entry of manifest) {
@@ -95,6 +98,7 @@ for (const entry of manifest) {
     let out: any = convertPluginWithContext(entry, source, context, {
       stamp,
       rawBase: RAW_BASE,
+      icons,
     });
     validateConvertedPlugin(entry, out, {
       surgeValidationOptions: { adblockScope: true },
@@ -160,6 +164,7 @@ for (const entry of manifest) {
     out = convertPluginWithContext(entry, source, context, {
       stamp: nowConversionStamp(),
       rawBase: RAW_BASE,
+      icons,
     });
     validateConvertedPlugin(entry, out, {
       surgeValidationOptions: { adblockScope: true },

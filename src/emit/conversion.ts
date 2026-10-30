@@ -1,3 +1,4 @@
+import { addAppIcon } from "../domain/icons.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript emit layer; preserve source behavior.
 // Consolidated: 2026-10-03
 // Author: chance
@@ -671,6 +672,7 @@ export function convertPlugin(
     jqFiles = new Map(),
     rawBase = "",
     declarations = null,
+    icons = null,
   }: any = {},
 ): any {
   if (!stamp) throw new Error("convertPlugin requires a conversion stamp");
@@ -1173,16 +1175,25 @@ export function convertPlugin(
     appendQxOutput(qx, "notes", ...notes);
     appendSurgeOutput(sg, "notes", ...notes);
   }
+  // Modified: 2026-10-30 (chance). Fill missing target metadata only; author icons win.
   return {
-    qx: renderQxOutput({ state: qx, headerLines: sourceHeader, entry, stamp }),
-    surge: renderSurgeOutput({
-      state: sg,
-      headerLines: sourceHeader,
-      entry,
-      stamp,
-      argumentMetadata: surgeArgumentPlan.lines,
-      needsLineRequirement: surgeNeedsLineRequirement,
-    }),
+    qx: addAppIcon(
+      renderQxOutput({ state: qx, headerLines: sourceHeader, entry, stamp }),
+      icons,
+      [entry.id],
+    ).text,
+    surge: addAppIcon(
+      renderSurgeOutput({
+        state: sg,
+        headerLines: sourceHeader,
+        entry,
+        stamp,
+        argumentMetadata: surgeArgumentPlan.lines,
+        needsLineRequirement: surgeNeedsLineRequirement,
+      }),
+      icons,
+      [entry.id],
+    ).text,
     generatedScripts: new Map([...qx.generatedScripts, ...sg.generatedScripts]),
   };
 }
@@ -1255,7 +1266,7 @@ export function convertPluginWithContext(
   entry: any,
   source: any,
   context: any,
-  { stamp = "", rawBase = "", onStage = null }: any = {},
+  { stamp = "", rawBase = "", onStage = null, icons = null }: any = {},
 ): any {
   if (!context || typeof context !== "object") {
     throw new TypeError(
@@ -1272,6 +1283,7 @@ export function convertPluginWithContext(
   }
   notify(onStage, "convert");
   return convertPlugin(entry, source, {
+    icons,
     parsed: context.parsed,
     declarations: context.declarations,
     scriptMap: context.scriptMap,
@@ -1333,11 +1345,17 @@ export function convertNativeQxToSurge(
     geoip: "GEOIP",
     "user-agent": "USER-AGENT",
   };
+  // Modified: 2026-10-30 (chance). Preserve icon links in declaration comments.
+  const iconMetadata: string[] = [];
   let scriptIndex: any = 0;
   for (const raw of text.split("\n")) {
     let line: any = raw.trim();
     if (!line) continue;
     if (line.startsWith("#")) {
+      if (/^# Icon(?: Collection)?:/.test(line)) {
+        iconMetadata.push(raw);
+        continue;
+      }
       if (!/^# \[(?:filter_local|rewrite_local|mitm)\]$/.test(line))
         sections.Rule.push(line);
       continue;
@@ -1498,6 +1516,7 @@ export function convertNativeQxToSurge(
         ]
       : []),
     "#!name=" + name,
+    ...iconMetadata,
     "#!desc=Native QX conversion" +
       (diagnostics.length
         ? " · " + diagnostics.length + " declarations require review"
