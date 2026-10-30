@@ -15,6 +15,8 @@ const out=convertPlugin(entry,source,{icons:index,stamp:'2026-10-30'});for(const
 const withAuthorIcon=convertPlugin(entry,source.replace('[Rule]','#!icon=https://original.test/author.png\n[Rule]'),{icons:index,stamp:'2026-10-30'});for(const text of [withAuthorIcon.qx,withAuthorIcon.surge]){assert.match(text,/https:\/\/original.test\/author.png/);assert.doesNotMatch(text,/example.test\/base.png/);}
 const merged=addAppIcon(mergeNativeQxSources([{text:'#!name=微博\n^https://example.test/ads url reject\n',url:'https://author.test/plugin'}],{name:'微博',author:'Author',stamp:'fixed'}),index).text;
 const surge=convertNativeQxToSurge(merged).surge;assert.ok(surge.indexOf('# Icon:')<surge.indexOf('[Rule]'));assert.equal((surge.match(/^# Icon:/gm)||[]).length,1);validateSurgeModule(surge,{id:'native'});
+// Modified: 2026-10-30 (chance). Metadata-only refresh and normal generation must emit identical declaration order.
+const plainMerged=merged.replace(/^# Icon(?: Collection)?:.*\n/gm,'');assert.equal(convertNativeQxToSurge(merged).surge,addAppIcon(convertNativeQxToSurge(plainMerged).surge,index).text);
 const root=await fs.mkdtemp(path.join(os.tmpdir(),'wayx-icons-'));try{
  await fs.mkdir(path.join(root,'.github/sources'),{recursive:true});await fs.writeFile(path.join(root,'.github/sources/icons.json'),JSON.stringify(registry));let reads=0;
  const loaded=await loadIconIndex(root,{fetchText:async url=>{reads++;return JSON.stringify(documents[url===registry.sources[0].url?0:1]);}});assert.equal(reads,2);assert.ok(loaded);assert.equal(JSON.parse(await fs.readFile(path.join(root,'.github/monitor/.runtime/icon-feeds/first.json'),'utf8')).source,registry.sources[0].url);

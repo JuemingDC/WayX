@@ -1516,6 +1516,7 @@ export function convertNativeQxToSurge(
         ]
       : []),
     "#!name=" + name,
+    ...iconMetadata,
     "#!desc=Native QX conversion" +
       (diagnostics.length
         ? " · " + diagnostics.length + " declarations require review"
@@ -1523,7 +1524,6 @@ export function convertNativeQxToSurge(
     "#!category=WayX",
     "#!requirement=CORE_VERSION>=20",
     "# Native QX review count: " + diagnostics.length,
-    ...iconMetadata,
   ];
   const out: any =
     header.join("\n") +
