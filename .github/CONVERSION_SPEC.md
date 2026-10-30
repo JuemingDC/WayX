@@ -1,8 +1,8 @@
 # WayX Conversion Specification
 
-版本：2.29
+版本：2.30
 
-更新：2026-10-25
+更新：2026-10-30
 作者：chance  
 状态：唯一权威转换规范（Authoritative）
 
@@ -111,7 +111,7 @@ add/replace 的 PATH 使用保留 String/Number 类型的路径数组，特殊�
 
 <!-- Modified: 2026-10-25 (chance). Separate acquisition, source preparation, target planning and final publication; centralize run snapshots and resource limits. -->
 
-资源获取由 `resources.mjs` 统一负责；文本资源默认上限 128 MiB，二进制 mock 默认上限 512 MiB。上限按实际读取字节执行，调用者可显式传入更合适的单次上限；不得将资源下载上限当作目标客户端的正文处理能力。临时网络错误、超时、HTTP 408/425/429 和 5xx 才重试；永久 HTTP 错误与超限立即失败。
+资源获取由 `src/ingest/resources.ts` 统一负责；文本资源默认上限 128 MiB，二进制 mock 默认上限 512 MiB。上限按实际读取字节执行，调用者可显式传入更合适的单次上限；不得将资源下载上限当作目标客户端的正文处理能力。临时网络错误、超时、HTTP 408/425/429 和 5xx 才重试；永久 HTTP 错误与超限立即失败。
 
 一次完整同步先准备所有插件的源文件、脚本、jq 和 mock 依赖，再封存资源快照，最后逐插件转换并提交。原 URL 和请求 profile 决定缓存身份；成功资源存于运行目录，manifest 记录 URL、profile、SHA-256 和字节数，读取时校验。失败保留有限重试后的结果，不因后续插件重复引用而再次下载。相同 URL 以首次成功获取的字节为准；文本/二进制读取仍分别执行各自上限。快照仅用于当前运行，不跨运行复用旧资源。
 
@@ -256,7 +256,7 @@ Review inventory baseline 必须可读且结构有效，不能跳过比较。同
 
 监控告警恢复在现有 Issue 生命周期统一处理：仅完整、无失败且明确列出该来源成功的报告可关闭带受管监控标签的对应告警。缺失报告、未覆盖来源、失败或只读执行不得关闭告警。
 
-所有自动化阶段通过 automation.py 的共同检查入口执行，独立检查失败后继续收集同阶段其它检查。每项记录命令、退出码、完成状态及日志位置，实际差异保存文件、首个差异位置、预期/实际片段及摘要；语法、规范能力、Rule/Rewrite/Script/General/MITM、依赖、helpers/runtime、metadata/注释、目录/README/手写资源和发布门禁继续使用现有领域检查，不另写同类特例。成功项在控制台和 summary 只显示计数，完整日志随 artifact 保存，人工仅查看异常。机器报告缺失、不完整或失败不得由绿色 step 状态替代。
+所有自动化阶段通过 src/application/automation.ts 的共同检查入口执行，独立检查失败后继续收集同阶段其它检查。每项记录命令、退出码、完成状态及日志位置，实际差异保存文件、首个差异位置、预期/实际片段及摘要；语法、规范能力、Rule/Rewrite/Script/General/MITM、依赖、helpers/runtime、metadata/注释、目录/README/手写资源和发布门禁继续使用现有领域检查，不另写同类特例。成功项在控制台和 summary 只显示计数，完整日志随 artifact 保存，人工仅查看异常。机器报告缺失、不完整或失败不得由绿色 step 状态替代。
 
 验证异常按阶段使用稳定 fingerprint 复用受管 Issue，附本次 Action 链接、失败检查与证据位置；完整成功的同阶段检查才可关闭该类告警。只读执行不得写 Issue。未知源语法继续附源声明，不能猜测为有效规则。
 
@@ -264,7 +264,8 @@ Review inventory baseline 必须可读且结构有效，不能跳过比较。同
 
 发布只允许通过全部 required gates 的产物，提交前核对请求 head 未推进，提交后确认受管工作区无未保存变化。日志、发现结果、监控缓存、失败报告和生成产物随已有 artifact 保存。
 
-流程控制由 `.github/scripts/automation.py` 承担：分支预算、转换任务与唯一最终检查、Issue 写入或只读选择、发布门禁、受管 Git 提交与 run summary。YAML 保留事件和阶段条件；Bash 仅调用程序并转存日志，不嵌入业务分支或 Python heredoc。发布程序继续核对 expected head、限制 main/test 与受管提交范围，并检查产物工作区。Node.js 保持 26 大版本，以 `^26.12.1` 和 `check-latest: true` 设置安全版本下限并获取后续兼容更新；Python 3.14 及转换核心语言不变。安全补丁依据：https://nodejs.org/en/blog/vulnerability/october-2026-security-releases，26.12.1 发布说明：https://nodejs.org/en/blog/release/v26.12.1/。
+<!-- Modified: 2026-10-30 (chance). All production orchestration uses the TypeScript CLI. -->
+流程控制由 `src/cli.ts` 和 `src/application/automation.ts` 承担：分支预算、转换任务与唯一最终检查、Issue 写入或只读选择、发布门禁、受管 Git 提交与 run summary。YAML 保留事件和阶段条件；Bash 仅调用程序并转存日志。发布前核对 expected head，限制 main/test 与受管范围。Node 原生执行可擦除 TypeScript，`tsc --noEmit` 独立检查；依赖通过锁文件和 npm ci 安装，CI 保持 Node 26 安全版本下限。Python 与旧 MJS 入口全部移除。
 
 ## 2.17 验证要求
 
@@ -278,26 +279,23 @@ Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生�
 
 ## 2.18 实现组织与契约对应
 
-根目录为 AGENTS.md、.github、README.md、Adblock、Resource、Boxjs、Module、Rule、Script。生产实现为十一个领域文件和 index.mjs 公开入口；不新增平行碎片或旧路径转发壳，结构调整保持公开函数、原作者 URL 和外部产物接口。
+<!-- Modified: 2026-10-30 (chance). Establish one typed layered production tree. -->
+生产源码只位于 src/，通过 src/cli.ts 调度；测试位于 tests/，静态输入、规范、上游快照和注册表继续位于 .github/。客户端作者脚本与生成 Script/*.js 仍为客户端可执行 JavaScript，不作为仓库自动化入口。
 
-| 文件 | 职责 |
+| 层 | 职责 |
 | --- | --- |
-| core.mjs | Regex/条件解析、reference evaluator、目标能力与等价规划 |
-| rule.mjs | Rule IR 与目标适配 |
-| rewrite.mjs | Rewrite parser/IR、选层、JSON/JQ/依赖、复杂动作规划 |
-| script.mjs | Script scanner/parser/IR、Argument 与目标适配 |
-| configuration.mjs | General/MITM IR 与目标适配 |
-| resources.mjs | 原地址传输、资源限额、运行级依赖缓存与磁盘快照 |
-| input.mjs | Catalog、插件解析、源声明准备与 materialization |
-| output.mjs | Metadata/注释、目标序列化与 validators |
-| runtime.mjs | 共同 helper/dispatcher emitter |
-| workflow.mjs | 产物生命周期、README 索引、诊断与报告 |
-| conversion.mjs | 共享选层、物化、转换与验证 pipeline |
-| index.mjs | 统一公开 exports，不复制实现 |
+| src/domain | 源语义契约、Regex/条件、规则聚合与路由归属；不访问网络或文件 |
+| src/ingest | 来源发现、统一 Surge UA、字节限额、快照、冻结、加密分类和归档 |
+| src/parser | 插件、声明、Rule/Rewrite/Script AST 与 Semantic IR、现有语义规划 |
+| src/emit | QX/Surge 转换与 helper/dispatcher 输出 |
+| src/validation | 目标格式、真实 ICU 外层正则、实际产物和规范检查 |
+| src/publish | 源/目标/helper 生命周期、事务、README 和对账报告 |
+| src/application | 任务编排、监控、错误隔离、Issue、门禁及受管 Git 发布 |
+| src/index.ts | 稳定的公开转换 API，仅 re-export |
 
-同类问题在所属领域的公共入口修复，不按插件名、来源名或 Issue 编号追加特殊分支。Regex 语法修复、目标参数编解码与共用校验集中于 core.mjs；rule.mjs 只负责规则 AST 和目标规划，output.mjs 负责目标格式验证。自动化的正则编译与验证编排相邻组织，Issue 创建、复用和恢复关闭统一由 propose-conversion-issues.mjs 管理。测试补在现有领域套件，不新增平行实现文件。
+同类问题在所属语义领域公共入口修复，不按插件名追加特殊分支。语法解析与规划保留既有共享领域接口；资源获取和发布必须通过统一服务，转换阶段复用已封存快照。原作者 JS 只保留原地址，不获取、扫描或修改其内部 API。
 
-生产入口为 .github/scripts/sync-convert.mjs；canonical 为 .github/converter/tools/regenerate-canonical.mjs；QX/Surge validators 位于 output.mjs。测试归领域套件，以独立子进程隔离各案例。
+统一命令为 node src/cli.ts；开发者回归为 npm test，类型检查为 npm run typecheck。常规同步只生成一次并检查本轮实际产物，不自动调用 canonical 重新转换；PR 回归套件独立于日常计划同步。
 
 | 契约 | 实现入口 | 验证 |
 | --- | --- | --- |
@@ -328,7 +326,7 @@ Geosite 分类选择器统一支持 `分类@属性` 与 `分类@!属性`，按�
 
 V2Fly 与 MetaCubeX（Mihomo 侧）是共同主要来源，独立获取与校验，不设主次、不在其中一方成功时跳过另一方；按原生匹配条件与动作合并，重复声明同时保留双方作者与 URL。MetaCubeX 登记与现有 media/media_cn collections 对应的全部国内外应用分类 JSON，并扩充独立服务：Apple Update 直连、Apple Intelligence 归 AI、无逐条策略的 TV+ 默认直连；Google 的 Play/FCM/Trust Services/Scholar、Disney 的 ESPN/Hulu/Star+；Microsoft 的 `microsoft@cn`、`azure@cn`、`bing@cn` 直连，以及当前没有 cn 属性分组的 PKI/OneDrive 代理；国内协作/文档/网盘直连，海外网盘/密码管理代理。两者共同驱动现有 QX/Surge 聚合器，不是新增 Mihomo 输出。MetaCubeX 当前没有发布 `@!cn` 文件，不能用完整 Microsoft/Azure/Bing 文件代替补集代理，否则会把其中的直连声明重复登记为代理。media 类 JSON 本身不携带动作，使用既有 `Media` 默认占位，归属后沿用已声明的应用动作，不能给整个公司分类强加 PROXY 而重造国内接入点冲突。双方同条声明去重并合并来源证据，新增来源不保证等量增加规则。
 
-规则集聚合领域统一由 `.github/converter/rules.py` 管理，来源、分类、品牌默认策略和子服务归属集中于 `.github/sources/rules.json`。只排除直接 blackmatrix7 来源，接受其它维护者引用它的情况。采用 V2Fly 官方发布及 SHA-256 校验；SagerNet geosite 与其共用相同上游，不重复下载相同数据。MetaCubeX 持续生成的具体分类、其维护的补充及 Nexitally 的直连/代理/AI/加密货币/推送列表按来源策略合并。来源作者、URL、许可证及内容摘要保留。注册表 rule_exclusions 可按分类、原生类型和操作数表达式统一排除规则，作用于所有输入和两端输出，不能直接编辑生成文件；排除通配符不影响对应 CIDR 或其它规则类型。
+规则集聚合领域统一由 `src/domain/aggregate.ts` 和 `src/application/rules.ts` 管理，来源、分类、品牌默认策略和子服务归属集中于 `.github/sources/rules.json`。只排除直接 blackmatrix7 来源，接受其它维护者引用它的情况。采用 V2Fly 官方发布及 SHA-256 校验；SagerNet geosite 与其共用相同上游，不重复下载相同数据。MetaCubeX 持续生成的具体分类、其维护的补充及 Nexitally 的直连/代理/AI/加密货币/推送列表按来源策略合并。来源作者、URL、许可证及内容摘要保留。注册表 rule_exclusions 可按分类、原生类型和操作数表达式统一排除规则，作用于所有输入和两端输出，不能直接编辑生成文件；排除通配符不影响对应 CIDR 或其它规则类型。
 
 <!-- Modified: 2026-10-27 (chance). Render proxy actions as ssid in QX routing lists. -->
 QX 原生 filter 文件仅输出 direct/reject/ssid：未受全代理约束的显式 DIRECT 保留 direct、REJECT 家族统一 reject，其余品牌名、Media、未指定策略等在应用配置默认值后统一 ssid。先归一化动作，再合并同动作规则去重；混合文件保留显式直连/拒绝例外，不使用 force-policy 覆盖。原生格式门禁同时检查三种标准策略。Surge 外部 RULE-SET 行不携带策略，混合策略分类按 surge_output 决定拆分或合并；两端合集统一过滤进程名、进程路径、用户/UID 等桌面身份条件，复合条件包含这类谓词时整条过滤，不能删除条件后扩大匹配。过滤项单独统计且不提转换错误 Issue。域名正则的锚定字面量、有限分支、字符集合和有界重复精确展开为原生 DOMAIN/DOMAIN-SUFFIX；点号、点星、点加精确映射为原生域名通配符。不支持的正则/原生类型/选项按用户要求忽略，仅在 Action 报告统计且不提 Issue；不能放宽匹配或改成脚本；可转换正则独立保留，不因其它规则覆盖而省略。sing-box JSON 支持官方版本 1–5，只解析已支持字段；含无对应原生谓词的条件整体忽略，不能去掉部分 AND 条件后扩大匹配；源模式损坏仍阻止发布。
@@ -364,7 +362,7 @@ Apple 用应用注册的 routing_layers 分层：第一层合并 QuixoticHeart a
 
 用户本次明确授权 QX `reject` 直接转换 Surge `reject`；这不保留 QX 重复请求动态延迟，属于限定兼容例外。分流 PROXY 保留为模块 PROXY 参数引用，默认同名策略组，主配置需提供该组或在安装时选择对应代理策略组。无法等价转换的条目在模块和 README 显示待核对数量。
 
-原生 snippet 的下载/语法失败继续阻止整批发布；额外用于 Surge API 审查的脚本源码不可取得时，仅将相应 Surge Script 明确注释并记录诊断，不使用替代脚本地址。不能把静态 token 筛查发现的局部变量或字符串当作已证明不兼容；它们仅代表尚未证明、需人工核对的边界。
+原生 snippet 的下载/语法失败继续阻止整批发布。原作者 JavaScript 不下载、不扫描或改写，不生成内部 API 适配层；声明转换保留原脚本 URL。
 
 Modified: 2026-10-25 (chance). 原生 QX 注册表 version 2 支持多个独立作者；继续支持 v1。新增 ZenmoFeiShi/Qx 根目录全部 .snippet，使用 zenmofeishi_ 前缀，README 独立归类“怎么肥事”；每个来源固定 commit、独立输入摘要，合并成一次事务提交和清理，不影响其它作者。依据 https://manual.nssurge.com/http/header-rewrite.html 及 QX 官方示例 request-header 整头语义；header-replace 缺字段时不新增。
 
@@ -390,3 +388,14 @@ Microsoft 分类限定排除 DOMAIN-SUFFIX tenor.com 的错误归属，Google �
 ## 2.19 可莉来源暂停（2026-10-29）
 
 用户要求暂停拉取可莉插件。`sources/kelee-pause.json` 的 paused=true 同时冻结目录获取、插件同步、依赖重取/重新转换及目录监控，保留 loon.json 中的可莉条目和现有源文件、QX/Surge 产物、脚本依赖及监控镜像。暂停不代表来源退出，不因目录不可用清理已有产物。其他来源继续更新；不自动按期限恢复，需用户明确恢复后将 paused 设为 false。
+
+## 2.20 字节获取、加密插件与来源声明
+
+<!-- Modified: 2026-10-30 (chance). Preserve raw encrypted input without inventing decryption or source authentication. -->
+所有源和依赖通过 src/ingest/resources.ts 获取。默认 UA 由 config/fetch.json 定义，WAYX_FETCH_UA 可统一覆盖；不按来源切换 Stash/Loon UA。当前固定值来自用户 HAR 实测 Surge 请求，不把应用商店版本号拼装成 UA，也不宣称已证明是最新构建。
+
+.lpxe 按加密 Loon 包处理；未知非 UTF-8 或包含 NUL 的二进制按 opaque 处理。先保存原始字节、原 URL、SHA-256、大小和类型，再记录活动状态。原始归档位于 Resource/Encrypted/Loon/<id>/<sha>，不得把下载成功标为已转换，不尝试猜测加密头、解密或解析密文。普通无效文本和 HTML 按源校验失败隔离，不能伪装成正常加密包。
+
+活动 opaque 条目通过归档摘要验证后可保留旧转换产物；首次遇到的包允许仅归档，报告明确标为不可转换，不发布虚构片段。已冻结的可莉条目不获取正文或依赖。恢复明文后退出 opaque 状态，历史字节归档保留；现有未知语法和失败事务规则继续适用。
+
+作者 #!source 原样作为注释保留；它是 Loon 插件下载 URL 的 SHA-256 绑定元数据，不是内容签名，不能证明内容完整性或授予解密能力。转换为 QX/Surge 不执行 Loon 的来源告警逻辑，也不为输出地址重算作者值。归档使用独立内容 SHA-256，不混用两种摘要。

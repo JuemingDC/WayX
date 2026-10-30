@@ -17,3 +17,5 @@
 - Modified: 2026-10-27 (chance). Microsoft CN routing layers override actionless company/OneDrive feed defaults only; preserve explicit row actions, domestic-first ordering, existing GitHub/AI ownership and Microsoft output filenames.
 
 - Modified: 2026-10-29 (chance). Native QX Script conversion only lowers declarations and always retains the author's original script URL. Do not download, scan or rewrite author JS, inject internal API shims, or generate API adapter copies. Source script runtime compatibility is outside this conversion scope.
+
+- Modified: 2026-10-30 (chance). Production automation is TypeScript under src/, dispatched by src/cli.ts. Keep domain logic free of I/O; all HTTP uses the unified Surge transport, and managed writes use transactions. Never restore Python/MJS forwarding entry points. Archive encrypted source bytes without parsing them or replacing prior client outputs; preserve author #!source and original JS URLs. Source pauses remain authoritative.

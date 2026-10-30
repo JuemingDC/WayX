@@ -4,8 +4,7 @@
     "state_file": ".github/monitor/state.json",
     "mirror_root": ".github/monitor/upstream",
     "runtime_root": ".github/monitor/.runtime",
-    "timeout_seconds": 25,
-    "user_agent": "chance-upstream-monitor/2.0"
+    "timeout_seconds": 25
   },
   "sources": [
     {
