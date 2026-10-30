@@ -50,6 +50,7 @@ export interface PublicationPlan {
   diagnostics: Diagnostic[];
 }
 export interface FetchOptions {
+  allowEmpty?: boolean;
   timeoutMs?: number;
   maxBytes?: number;
   headers?: Record<string, string>;

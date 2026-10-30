@@ -174,7 +174,11 @@ export async function fetchOriginalBytes(
     url,
     typeof options === "number" ? { timeoutMs: options } : options,
   );
-  if (!result.bytes.length)
+  // Modified: 2026-10-30 (chance). Only explicitly empty-capable feeds may return zero bytes.
+  if (
+    !result.bytes.length &&
+    !(typeof options === "object" && options.allowEmpty)
+  )
     throw Error("empty response from original source " + url);
   return result.bytes;
 }

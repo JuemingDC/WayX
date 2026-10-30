@@ -154,7 +154,8 @@ try {
       throw Error("Unknown WayX command: " + command);
   }
 } catch (error: any) {
-  if (command === "rules")
+  // Modified: 2026-10-30 (chance). Keep the source failure detail and valid Issue report schema.
+  if (command === "rules" && ["sync", "check"].includes(args[0]))
     await fs.mkdir(".github/monitor/.runtime", { recursive: true }).then(() =>
       fs.writeFile(
         ".github/monitor/.runtime/rules-result.json",
@@ -162,6 +163,7 @@ try {
           version: 1,
           complete: false,
           error: error.message,
+          quarantined: [],
         }) + "\n",
       ),
     );

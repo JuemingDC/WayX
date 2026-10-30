@@ -52,8 +52,9 @@ export async function loadInputs(
     }
     return [data, index];
   }
-  const get = (url: string, timeout = 35) =>
+  const get = (url: string, timeout = 35, allowEmpty = false) =>
     fetchBytes(url, {
+      allowEmpty,
       timeoutMs: timeout * 1000,
       maxBytes: 32 * 1024 * 1024,
       headers:
@@ -92,7 +93,11 @@ export async function loadInputs(
     const errors: string[] = [];
     for (const url of [item.url, ...(item.mirrors ?? [])])
       try {
-        const payload = await get(url, item.timeout ?? 35);
+        const payload = await get(
+          url,
+          item.timeout ?? 35,
+          item.allow_empty === true,
+        );
         if (!payload.toString().trim() && !item.allow_empty)
           throw Error("Empty rule source: " + item.id);
         if (/^\s*<(?:!doctype|html)/i.test(payload.toString("utf8", 0, 128)))

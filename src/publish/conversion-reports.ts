@@ -1,3 +1,4 @@
+import { keleePaused, isKeleeSource } from "../ingest/source-pause.ts";
 import { opaqueEntries } from "../ingest/formats.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript publish layer; preserve source behavior.
 // WayX machine-readable reconciliation + Review inventory reports
@@ -347,7 +348,11 @@ function markdownReconciliation(report: any): any {
     lines.push(
       "| " +
         item.id +
-        (item.retained ? " (retained baseline; see sync Issue)" : "") +
+        (item.paused
+          ? " (paused; retained baseline)"
+          : item.retained
+            ? " (retained baseline; see sync Issue)"
+            : "") +
         " | " +
         item.source.items +
         " | " +
@@ -447,10 +452,20 @@ const verifiedPlugins: any = new Set(
       )
     : [],
 );
+const pauseKelee = await keleePaused(ROOT);
+// Modified: 2026-10-30 (chance). A deliberately frozen source retains its baseline, not current conversion evidence.
+const pausedIds = new Set(
+  catalog
+    .filter((e: any) => pauseKelee && isKeleeSource(e.source))
+    .map((e: any) => e.id),
+);
 const retainedPlugins: any = new Set(
   sync.publishable === true
-    ? (sync.retainedPlugins || []).filter((id: any): any =>
-        sync.failures?.some((failure: any): any => failure.plugin.id === id),
+    ? (sync.retainedPlugins || []).filter(
+        (id: any): any =>
+          sync.failures?.some(
+            (failure: any): any => failure.plugin.id === id,
+          ) || pausedIds.has(id),
       )
     : [],
 );
@@ -497,6 +512,7 @@ for (const entry of catalog) {
   reconciliation.entries.push({
     id: entry.id,
     retained: retainedPlugins.has(entry.id),
+    paused: pausedIds.has(entry.id),
     source: {
       file: rel(sourcePath),
       items: parsed.items.length,
