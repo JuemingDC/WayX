@@ -20,10 +20,10 @@
       ]
     },
     "PinDuoDuo": {
-      "qxSha256": "5300ec5d881f73b57eeda500236b993781f9d738a3a8ffedb736cb2d6c6bcbe4",
-      "surgeSha256": "a7d2c0e53056e2b7d8aba121cc5e294128bba12aa0f1158b179d5cf0e58bcd32",
-      "qxBytes": 6113,
-      "surgeBytes": 7472,
+      "qxSha256": "445b4323b12b7079d42886ba6e3ecab2aed39e2d96c41847663fe880451402a5",
+      "surgeSha256": "c617d7908efe07bf9c61c8f91e17947bb4bddcf400a326da629663999077ec8f",
+      "qxBytes": 5997,
+      "surgeBytes": 7356,
       "sourceScriptCount": 1,
       "generatedScriptCount": 0,
       "qxReview": 0,
@@ -37,10 +37,10 @@
       ]
     },
     "MyBlockAds": {
-      "qxSha256": "16e59bce64f93bd25dd5d44b7b03bd8f88d59e8cae6440f02f046232a93519f6",
-      "surgeSha256": "a85148e427b7da045ab28c3f25bfd6412ba5388ff00a0338d866b0be94746214",
-      "qxBytes": 24235,
-      "surgeBytes": 33941,
+      "qxSha256": "d79ceac223cd270bf28746dde612680b7bb20e7c3ce4b6fb43e37e3a7506a43a",
+      "surgeSha256": "337e435a4bb492b5c4b062e20751a252a9bf2baacb2a1589f123c8d27fc7952f",
+      "qxBytes": 24176,
+      "surgeBytes": 33882,
       "sourceScriptCount": 9,
       "generatedScriptCount": 0,
       "qxReview": 0,
@@ -55,10 +55,10 @@
       ]
     },
     "JingDong": {
-      "qxSha256": "a4646096a6ca3097a1d6e08e896a5d84c733ee16d00ff35bef8ebdca1a649a83",
-      "surgeSha256": "0a6b3bb3b7cfc14e06d2beffd1fa075dc334cd4ce80cf7b25dfde31b71e38404",
-      "qxBytes": 2586,
-      "surgeBytes": 2748,
+      "qxSha256": "ccef95c9083ac68aca39720198df865aec30a03162f61320ad1123a67d6e3a18",
+      "surgeSha256": "8f9fb45fce320b0e0755962734491ab8ff7128f2f9fb46332cc9874ce53d344a",
+      "qxBytes": 2571,
+      "surgeBytes": 2733,
       "sourceScriptCount": 3,
       "generatedScriptCount": 0,
       "qxReview": 0,
@@ -71,5 +71,6 @@
         "MITM"
       ]
     }
-  }
+  },
+  "note": "Modified: 2026-10-30 (chance). Refresh stale URL-metadata expectations after the previously merged original-script-URL policy; TypeScript outputs are byte-identical to the pre-migration generator for these fixtures."
 }

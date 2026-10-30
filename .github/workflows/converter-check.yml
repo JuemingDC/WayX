@@ -11,6 +11,12 @@ on:
       - 'Module/**'
       - 'Rule/**'
       - 'README.md'
+      - 'src/**'
+      - 'tests/**'
+      - 'config/**'
+      - 'docs/**'
+      - 'package*.json'
+      - 'tsconfig.json'
   workflow_dispatch:
   schedule:
     # 01:30 Asia/Shanghai; the schedule uses UTC.
@@ -43,21 +49,24 @@ jobs:
           # October 2026 security release; continue tracking patched Node 26 builds.
           node-version: '^26.12.1'
           check-latest: true
-      - uses: actions/setup-python@v7
-        with:
-          python-version: '3.14'
-          check-latest: true
+      # Modified: 2026-10-30 (chance). All automation runs through TypeScript.
+      - name: Install locked TypeScript runtime dependencies
+        run: npm ci
 
       # Modified: 2026-10-23 (chance). Pin the official jq compiler used by
       # conversion and final validation instead of inheriting the runner version.
       - name: Install verified jq 1.8.2
-        run: python .github/scripts/automation.py setup_jq
+        run: node src/cli.ts setup_jq
+
+      - name: Run semantic regression suites for proposed code changes
+        if: github.event_name == 'pull_request'
+        run: npm test
 
       - name: Prepare runtime logs and enforce branch budget
         shell: bash
         run: |
           set -euo pipefail
-          python .github/scripts/automation.py prepare
+          node src/cli.ts prepare
 
       - name: Refresh plugin catalogs and prune retired artifacts
         id: catalog
@@ -67,7 +76,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python .github/scripts/automation.py catalog 2>&1 | tee .github/monitor/.runtime/catalog.log
+          node src/cli.ts catalog 2>&1 | tee .github/monitor/.runtime/catalog.log
 
       - name: Aggregate and convert routing rule sets
         id: rules
@@ -78,7 +87,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          python .github/scripts/automation.py rules
+          node src/cli.ts rules
 
       - name: Pull discovered upstreams and convert
         id: loon_sync
@@ -87,7 +96,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python .github/scripts/automation.py sync 2>&1 | tee .github/monitor/.runtime/loon-sync.log
+          node src/cli.ts sync 2>&1 | tee .github/monitor/.runtime/loon-sync.log
 
       - name: Verify complete generated repository
         id: verify
@@ -96,7 +105,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python .github/scripts/automation.py verify 2>&1 | tee .github/monitor/.runtime/verification.log
+          node src/cli.ts verify 2>&1 | tee .github/monitor/.runtime/verification.log
 
       - name: Check monitored upstream specifications
         id: monitor
@@ -107,7 +116,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          python .github/scripts/automation.py monitor 2>&1 | tee .github/monitor/.runtime/monitor.log
+          node src/cli.ts monitor 2>&1 | tee .github/monitor/.runtime/monitor.log
 
       - name: Generate reconciliation and Review inventory
         id: reports
@@ -116,7 +125,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python .github/scripts/automation.py reports 2>&1 | tee .github/monitor/.runtime/reports.log
+          node src/cli.ts reports 2>&1 | tee .github/monitor/.runtime/reports.log
 
       - name: Create or update conversion issues
         id: issues
@@ -129,7 +138,7 @@ jobs:
           STAGES: ${{ toJSON(steps) }}
         run: |
           set -euo pipefail
-          python .github/scripts/automation.py issues 2>&1 | tee .github/monitor/.runtime/issues.log
+          node src/cli.ts issues 2>&1 | tee .github/monitor/.runtime/issues.log
 
       - name: Evaluate publication gates
         id: gate
@@ -142,7 +151,7 @@ jobs:
           MONITOR_COMPLETE: ${{ steps.monitor.outputs.complete }}
         run: |
           set -euo pipefail
-          python .github/scripts/automation.py gate
+          node src/cli.ts gate
 
       - name: Publish validated outputs to the existing branch
         id: publish
@@ -156,7 +165,7 @@ jobs:
           MONITOR_ENABLED: ${{ env.PUBLISH_BRANCH != '' && 'true' || 'false' }}
         run: |
           set -euo pipefail
-          python .github/scripts/automation.py publish
+          node src/cli.ts publish
 
       - name: Record run summary
         if: always()
@@ -165,7 +174,7 @@ jobs:
           PUBLICATION: ${{ steps.publish.outputs.publication }}
         run: |
           set -euo pipefail
-          python .github/scripts/automation.py summary
+          node src/cli.ts summary
 
       - name: Upload automation reports and generated outputs
         if: always()
@@ -179,6 +188,7 @@ jobs:
             .github/monitor/.runtime/
             .github/sources/loon.json
             Resource/Loon/
+            Resource/Encrypted/
             Rule/
             Adblock/Quantumult X/
             Adblock/Surge/
@@ -193,5 +203,5 @@ jobs:
           PUBLICATION_OUTCOME: ${{ steps.publish.outcome }}
         run: |
           set -euo pipefail
-          python .github/scripts/automation.py final
+          node src/cli.ts final
 

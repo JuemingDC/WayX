@@ -1,0 +1,2830 @@
+[
+  {
+    "config": {
+      "applications": [
+        {
+          "name": "brand",
+          "tags": [
+            "fixture",
+            "proxy"
+          ],
+          "proxy_tags": [
+            "proxy"
+          ],
+          "split": true
+        }
+      ],
+      "surge_output": {
+        "brand": "split"
+      },
+      "geosite": {
+        "repository": "https://example.test/official"
+      },
+      "collections": {
+        "cn": [
+          "fixture"
+        ],
+        "proxy": [
+          "fixture"
+        ],
+        "media": [
+          "fixture"
+        ],
+        "media_cn": [
+          "fixture"
+        ]
+      },
+      "sources": [
+        {
+          "id": "supplement",
+          "format": "ruleset",
+          "author": "Fixture",
+          "url": "https://example.test/rules",
+          "category": "brand",
+          "policy": "DIRECT"
+        }
+      ]
+    },
+    "inputs": {
+      "geosite": "CiIKB2ZpeHR1cmUSFwgCEgtleGFtcGxlLmNvbRoGCgJjbhABCh4KBXByb3h5EhUIAhIRcHJveHkuZXhhbXBsZS5jb20=",
+      "supplement": "RE9NQUlOLHN0YXRpYy5wcm94eS5leGFtcGxlLmNvbSxESVJFQ1QKUFJPQ0VTUy1OQU1FLENsYXVkZSBIZWxwZXIK"
+    },
+    "expected": [
+      {
+        "Rule/QuantumultX/brand.list": "host,static.proxy.example.com,direct\nhost-suffix,proxy.example.com,ssid\nhost-suffix,example.com,direct\n",
+        "Rule/QuantumultX/cn.list": "host-suffix,example.com,direct\n",
+        "Rule/QuantumultX/proxy.list": "host-suffix,example.com,ssid\n",
+        "Rule/Surge/brand_direct.list": "DOMAIN,static.proxy.example.com\nDOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/brand_proxy.list": "DOMAIN-SUFFIX,proxy.example.com\n",
+        "Rule/Surge/cn.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/proxy.list": "DOMAIN-SUFFIX,example.com\n"
+      },
+      {
+        "Rule/QuantumultX/brand.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://example.test/rules"
+          ],
+          "category": "app",
+          "count": 3,
+          "policy": "brand"
+        },
+        "Rule/QuantumultX/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/QuantumultX/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/brand_direct.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://example.test/rules"
+          ],
+          "category": "app",
+          "count": 2,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/brand_proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "brand"
+        },
+        "Rule/Surge/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        }
+      },
+      [
+        {
+          "source": "supplement",
+          "line": 2,
+          "declaration": "PROCESS-NAME,Claude Helper",
+          "code": "filtered-desktop-rule",
+          "reason": "Desktop identity condition intentionally excluded",
+          "categories": []
+        }
+      ]
+    ]
+  },
+  {
+    "config": {
+      "applications": [
+        {
+          "name": "brand",
+          "tags": [
+            "fixture",
+            "proxy"
+          ],
+          "proxy_tags": [
+            "proxy"
+          ],
+          "split": true
+        }
+      ],
+      "surge_output": {
+        "brand": "split"
+      },
+      "geosite": {
+        "repository": "https://example.test/official"
+      },
+      "collections": {
+        "cn": [
+          "fixture"
+        ],
+        "proxy": [
+          "fixture"
+        ],
+        "media": [
+          "fixture"
+        ],
+        "media_cn": [
+          "fixture"
+        ]
+      },
+      "sources": [
+        {
+          "id": "fix",
+          "format": "ruleset",
+          "author": "Fixture",
+          "url": "https://example.test/fix",
+          "category": "filterfix",
+          "standalone": true
+        }
+      ]
+    },
+    "inputs": {
+      "geosite": "CiIKB2ZpeHR1cmUSFwgCEgtleGFtcGxlLmNvbRoGCgJjbhABCh4KBXByb3h5EhUIAhIRcHJveHkuZXhhbXBsZS5jb20=",
+      "fix": "IyBvcmlnaW5hbCBjb21tZW50Cmhvc3QsZG9tZXN0aWMudGVzdCxkaXJlY3QKaG9zdC1rZXl3b3JkLHBvZGNhc3RzLmFwcGxlLmNvbSxwcm94eQo="
+    },
+    "expected": [
+      {
+        "Rule/QuantumultX/brand.list": "host-suffix,proxy.example.com,ssid\nhost-suffix,example.com,direct\n",
+        "Rule/QuantumultX/cn.list": "host-suffix,example.com,direct\n",
+        "Rule/QuantumultX/proxy.list": "host-suffix,example.com,ssid\n",
+        "Rule/Surge/brand_direct.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/brand_proxy.list": "DOMAIN-SUFFIX,proxy.example.com\n",
+        "Rule/Surge/cn.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/proxy.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/QuantumultX/filterfix.list": "# original comment\n\nhost,domestic.test,direct\nhost-keyword,podcasts.apple.com,ssid\n",
+        "Rule/Surge/filterfix.dconf": "# original comment\n\n# Include this file in the profile [Rule] section with #!include.\n# PROXY must refer to an existing proxy or policy group in that profile.\n[Rule]\nDOMAIN,domestic.test,DIRECT\nDOMAIN-KEYWORD,podcasts.apple.com,PROXY\n"
+      },
+      {
+        "Rule/QuantumultX/brand.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 2,
+          "policy": "brand"
+        },
+        "Rule/QuantumultX/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/QuantumultX/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/brand_direct.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/brand_proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "brand"
+        },
+        "Rule/Surge/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        },
+        "Rule/QuantumultX/filterfix.list": {
+          "authors": [
+            "Fixture"
+          ],
+          "sources": [
+            "https://example.test/fix"
+          ],
+          "category": "general",
+          "count": 2,
+          "policy": "mixed"
+        },
+        "Rule/Surge/filterfix.dconf": {
+          "authors": [
+            "Fixture"
+          ],
+          "sources": [
+            "https://example.test/fix"
+          ],
+          "category": "general",
+          "count": 2,
+          "policy": "mixed"
+        }
+      },
+      []
+    ]
+  },
+  {
+    "config": {
+      "applications": [
+        {
+          "name": "brand",
+          "tags": [
+            "fixture",
+            "proxy"
+          ],
+          "proxy_tags": [
+            "proxy"
+          ],
+          "split": true
+        }
+      ],
+      "surge_output": {
+        "brand": "split"
+      },
+      "geosite": {
+        "repository": "https://example.test/official"
+      },
+      "collections": {
+        "cn": [
+          "fixture"
+        ],
+        "proxy": [
+          "fixture"
+        ],
+        "media": [
+          "fixture"
+        ],
+        "media_cn": [
+          "fixture"
+        ]
+      },
+      "sources": [
+        {
+          "id": "supplement",
+          "format": "ruleset",
+          "author": "Fixture",
+          "url": "https://example.test/rules",
+          "category": "brand",
+          "policy": "DIRECT"
+        }
+      ]
+    },
+    "inputs": {
+      "geosite": "CiIKB2ZpeHR1cmUSFwgCEgtleGFtcGxlLmNvbRoGCgJjbhABCh4KBXByb3h5EhUIAhIRcHJveHkuZXhhbXBsZS5jb20=",
+      "supplement": "RE9NQUlOLHN0YXRpYy5wcm94eS5leGFtcGxlLmNvbSxESVJFQ1QKRE9NQUlOLGJsb2NrZWQuZXhhbXBsZS5jb20sUkVKRUNULURST1AKRE9NQUlOLGJsb2NrZWQuZXhhbXBsZS5jb20sUFJPWFkKRE9NQUlOLGV4dHJhLnRlc3QsUFJPWFk="
+    },
+    "expected": [
+      {
+        "Rule/QuantumultX/brand.list": "host,static.proxy.example.com,direct\nhost,blocked.example.com,reject\nhost,blocked.example.com,ssid\nhost,extra.test,ssid\nhost-suffix,proxy.example.com,ssid\nhost-suffix,example.com,direct\n",
+        "Rule/QuantumultX/cn.list": "host-suffix,example.com,direct\n",
+        "Rule/QuantumultX/proxy.list": "host-suffix,example.com,ssid\n",
+        "Rule/Surge/brand_direct.list": "DOMAIN,static.proxy.example.com\nDOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/brand_proxy.list": "DOMAIN,blocked.example.com\nDOMAIN,extra.test\nDOMAIN-SUFFIX,proxy.example.com\n",
+        "Rule/Surge/cn.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/proxy.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/brand_reject_drop.list": "DOMAIN,blocked.example.com\n"
+      },
+      {
+        "Rule/QuantumultX/brand.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://example.test/rules"
+          ],
+          "category": "app",
+          "count": 6,
+          "policy": "brand"
+        },
+        "Rule/QuantumultX/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/QuantumultX/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/brand_direct.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://example.test/rules"
+          ],
+          "category": "app",
+          "count": 2,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/brand_proxy.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://example.test/rules"
+          ],
+          "category": "app",
+          "count": 3,
+          "policy": "brand"
+        },
+        "Rule/Surge/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/brand_reject_drop.list": {
+          "authors": [
+            "Fixture"
+          ],
+          "sources": [
+            "https://example.test/rules"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "REJECT-DROP"
+        }
+      },
+      []
+    ]
+  },
+  {
+    "config": {
+      "applications": [
+        {
+          "name": "brand",
+          "tags": [
+            "fixture",
+            "proxy"
+          ],
+          "proxy_tags": [
+            "proxy"
+          ],
+          "split": true,
+          "exclude_tags": [
+            "fixture"
+          ]
+        }
+      ],
+      "surge_output": {
+        "brand": "split"
+      },
+      "geosite": {
+        "repository": "https://example.test/official"
+      },
+      "collections": {
+        "cn": [
+          "fixture"
+        ],
+        "proxy": [
+          "fixture"
+        ],
+        "media": [
+          "fixture"
+        ],
+        "media_cn": [
+          "fixture"
+        ]
+      },
+      "sources": [
+        {
+          "id": "supplement",
+          "format": "ruleset",
+          "author": "Fixture",
+          "url": "https://example.test/rules",
+          "category": "brand",
+          "policy": "DIRECT"
+        }
+      ]
+    },
+    "inputs": {
+      "geosite": "CiIKB2ZpeHR1cmUSFwgCEgtleGFtcGxlLmNvbRoGCgJjbhABCh4KBXByb3h5EhUIAhIRcHJveHkuZXhhbXBsZS5jb20=",
+      "supplement": "RE9NQUlOLGRvbWVzdGljLmV4YW1wbGUuY29tLFBST1hZCkRPTUFJTi1TVUZGSVgsZWxzZXdoZXJlLnRlc3QsUFJPWFk="
+    },
+    "expected": [
+      {
+        "Rule/QuantumultX/media_cn.list": "host-suffix,example.com,direct\n",
+        "Rule/QuantumultX/media.list": "host,domestic.example.com,ssid\nhost-suffix,example.com,ssid\n",
+        "Rule/QuantumultX/cn.list": "host-suffix,example.com,direct\n",
+        "Rule/QuantumultX/proxy.list": "host-suffix,example.com,ssid\n",
+        "Rule/QuantumultX/brand.list": "host-suffix,elsewhere.test,ssid\n",
+        "Rule/Surge/media_cn.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/media.list": "DOMAIN,domestic.example.com\nDOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/cn.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/proxy.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/brand_proxy.list": "DOMAIN-SUFFIX,elsewhere.test\n"
+      },
+      {
+        "Rule/QuantumultX/media_cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/QuantumultX/media.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://example.test/rules"
+          ],
+          "category": "app",
+          "count": 2,
+          "policy": "Media"
+        },
+        "Rule/QuantumultX/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/QuantumultX/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        },
+        "Rule/QuantumultX/brand.list": {
+          "authors": [
+            "Fixture"
+          ],
+          "sources": [
+            "https://example.test/rules"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/media_cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/media.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://example.test/rules"
+          ],
+          "category": "app",
+          "count": 2,
+          "policy": "Media"
+        },
+        "Rule/Surge/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/brand_proxy.list": {
+          "authors": [
+            "Fixture"
+          ],
+          "sources": [
+            "https://example.test/rules"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "PROXY"
+        }
+      },
+      []
+    ]
+  },
+  {
+    "config": {
+      "applications": [
+        {
+          "name": "brand",
+          "tags": [
+            "priority-brand"
+          ]
+        },
+        {
+          "name": "ai",
+          "tags": [
+            "priority-ai"
+          ]
+        }
+      ],
+      "surge_output": {},
+      "geosite": {
+        "repository": "https://example.test/official"
+      },
+      "collections": {
+        "cn": [
+          "fixture"
+        ],
+        "proxy": [
+          "fixture"
+        ],
+        "media": [
+          "fixture"
+        ],
+        "media_cn": [
+          "fixture"
+        ]
+      },
+      "sources": [
+        {
+          "id": "shared",
+          "format": "ruleset",
+          "author": "Fixture",
+          "url": "https://example.test/shared",
+          "category": "media",
+          "policy": "PROXY"
+        },
+        {
+          "id": "brand-source",
+          "format": "ruleset",
+          "author": "Fixture",
+          "url": "https://example.test/shared",
+          "category": "brand",
+          "policy": "brand"
+        },
+        {
+          "id": "ai-source",
+          "format": "ruleset",
+          "author": "Fixture",
+          "url": "https://example.test/shared",
+          "category": "ai",
+          "policy": "ai"
+        }
+      ],
+      "classification": {
+        "priority": [
+          "ai"
+        ]
+      }
+    },
+    "inputs": {
+      "geosite": "CiIKB2ZpeHR1cmUSFwgCEgtleGFtcGxlLmNvbRoGCgJjbhABCh4KBXByb3h5EhUIAhIRcHJveHkuZXhhbXBsZS5jb20KGgoLcHJpb3JpdHktYWkSCwgCEgdtZXRhLmFpCi8KDnByaW9yaXR5LWJyYW5kEgsIAhIHbWV0YS5haRIQCAISDG1haWwuZXhhbXBsZQ==",
+      "shared": "RE9NQUlOLVNVRkZJWCxtZXRhLmFpCkRPTUFJTi1TVUZGSVgsbmV3LWFpLnRlc3Q=",
+      "brand-source": "RE9NQUlOLVNVRkZJWCxuZXctYWkudGVzdA==",
+      "ai-source": "RE9NQUlOLVNVRkZJWCxuZXctYWkudGVzdA=="
+    },
+    "expected": [
+      {
+        "Rule/QuantumultX/brand.list": "host-suffix,mail.example,ssid\n",
+        "Rule/QuantumultX/ai.list": "host-suffix,meta.ai,ssid\nhost-suffix,new-ai.test,ssid\n",
+        "Rule/QuantumultX/media_cn.list": "host-suffix,example.com,direct\n",
+        "Rule/QuantumultX/media.list": "host-suffix,example.com,ssid\n",
+        "Rule/QuantumultX/cn.list": "host-suffix,example.com,direct\n",
+        "Rule/QuantumultX/proxy.list": "host-suffix,example.com,ssid\n",
+        "Rule/Surge/brand.list": "DOMAIN-SUFFIX,mail.example\n",
+        "Rule/Surge/ai.list": "DOMAIN-SUFFIX,meta.ai\nDOMAIN-SUFFIX,new-ai.test\n",
+        "Rule/Surge/media_cn.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/media.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/cn.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/proxy.list": "DOMAIN-SUFFIX,example.com\n"
+      },
+      {
+        "Rule/QuantumultX/brand.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "brand"
+        },
+        "Rule/QuantumultX/ai.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://example.test/shared"
+          ],
+          "category": "app",
+          "count": 2,
+          "policy": "PROXY"
+        },
+        "Rule/QuantumultX/media_cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/QuantumultX/media.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "Media"
+        },
+        "Rule/QuantumultX/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/QuantumultX/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/brand.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "brand"
+        },
+        "Rule/Surge/ai.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://example.test/shared"
+          ],
+          "category": "app",
+          "count": 2,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/media_cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/media.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "Media"
+        },
+        "Rule/Surge/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        }
+      },
+      []
+    ]
+  },
+  {
+    "config": {
+      "applications": [
+        {
+          "name": "brand",
+          "tags": [
+            "priority-brand"
+          ]
+        },
+        {
+          "name": "ai",
+          "tags": [
+            "priority-ai"
+          ]
+        }
+      ],
+      "surge_output": {},
+      "geosite": {
+        "repository": "https://example.test/official"
+      },
+      "collections": {
+        "cn": [
+          "fixture"
+        ],
+        "proxy": [
+          "fixture"
+        ],
+        "media": [
+          "fixture"
+        ],
+        "media_cn": [
+          "fixture"
+        ]
+      },
+      "sources": [
+        {
+          "id": "ai-source",
+          "format": "ruleset",
+          "author": "Fixture",
+          "url": "https://example.test/shared",
+          "category": "ai",
+          "policy": "ai"
+        },
+        {
+          "id": "brand-source",
+          "format": "ruleset",
+          "author": "Fixture",
+          "url": "https://example.test/shared",
+          "category": "brand",
+          "policy": "brand"
+        },
+        {
+          "id": "shared",
+          "format": "ruleset",
+          "author": "Fixture",
+          "url": "https://example.test/shared",
+          "category": "media",
+          "policy": "PROXY"
+        }
+      ],
+      "classification": {
+        "priority": [
+          "ai"
+        ]
+      }
+    },
+    "inputs": {
+      "geosite": "CiIKB2ZpeHR1cmUSFwgCEgtleGFtcGxlLmNvbRoGCgJjbhABCh4KBXByb3h5EhUIAhIRcHJveHkuZXhhbXBsZS5jb20KGgoLcHJpb3JpdHktYWkSCwgCEgdtZXRhLmFpCi8KDnByaW9yaXR5LWJyYW5kEgsIAhIHbWV0YS5haRIQCAISDG1haWwuZXhhbXBsZQ==",
+      "shared": "RE9NQUlOLVNVRkZJWCxtZXRhLmFpCkRPTUFJTi1TVUZGSVgsbmV3LWFpLnRlc3Q=",
+      "brand-source": "RE9NQUlOLVNVRkZJWCxuZXctYWkudGVzdA==",
+      "ai-source": "RE9NQUlOLVNVRkZJWCxuZXctYWkudGVzdA=="
+    },
+    "expected": [
+      {
+        "Rule/QuantumultX/brand.list": "host-suffix,mail.example,ssid\n",
+        "Rule/QuantumultX/ai.list": "host-suffix,meta.ai,ssid\nhost-suffix,new-ai.test,ssid\n",
+        "Rule/QuantumultX/media_cn.list": "host-suffix,example.com,direct\n",
+        "Rule/QuantumultX/media.list": "host-suffix,example.com,ssid\n",
+        "Rule/QuantumultX/cn.list": "host-suffix,example.com,direct\n",
+        "Rule/QuantumultX/proxy.list": "host-suffix,example.com,ssid\n",
+        "Rule/Surge/brand.list": "DOMAIN-SUFFIX,mail.example\n",
+        "Rule/Surge/ai.list": "DOMAIN-SUFFIX,meta.ai\nDOMAIN-SUFFIX,new-ai.test\n",
+        "Rule/Surge/media_cn.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/media.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/cn.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/proxy.list": "DOMAIN-SUFFIX,example.com\n"
+      },
+      {
+        "Rule/QuantumultX/brand.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "brand"
+        },
+        "Rule/QuantumultX/ai.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://example.test/shared"
+          ],
+          "category": "app",
+          "count": 2,
+          "policy": "PROXY"
+        },
+        "Rule/QuantumultX/media_cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/QuantumultX/media.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "Media"
+        },
+        "Rule/QuantumultX/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/QuantumultX/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/brand.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "brand"
+        },
+        "Rule/Surge/ai.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://example.test/shared"
+          ],
+          "category": "app",
+          "count": 2,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/media_cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/media.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "Media"
+        },
+        "Rule/Surge/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        }
+      },
+      []
+    ]
+  },
+  {
+    "config": {
+      "applications": [
+        {
+          "name": "brand",
+          "tags": [
+            "priority-brand"
+          ]
+        },
+        {
+          "name": "ai",
+          "tags": [
+            "priority-ai"
+          ]
+        }
+      ],
+      "surge_output": {},
+      "geosite": {
+        "repository": "https://example.test/official"
+      },
+      "collections": {
+        "cn": [
+          "fixture"
+        ],
+        "proxy": [
+          "fixture"
+        ],
+        "media": [
+          "fixture"
+        ],
+        "media_cn": [
+          "fixture"
+        ]
+      },
+      "sources": [
+        {
+          "id": "ai-source",
+          "format": "ruleset",
+          "author": "Fixture",
+          "url": "https://example.test/shared",
+          "category": "ai",
+          "policy": "ai"
+        },
+        {
+          "id": "brand-source",
+          "format": "ruleset",
+          "author": "Fixture",
+          "url": "https://example.test/shared",
+          "category": "brand",
+          "policy": "brand"
+        },
+        {
+          "id": "shared",
+          "format": "ruleset",
+          "author": "Fixture",
+          "url": "https://example.test/shared",
+          "category": "media",
+          "policy": "PROXY"
+        },
+        {
+          "id": "ads",
+          "format": "ruleset",
+          "author": "Fixture",
+          "url": "https://example.test/shared",
+          "category": "adblock",
+          "policy": "REJECT"
+        }
+      ],
+      "classification": {
+        "priority": [
+          "ai"
+        ]
+      }
+    },
+    "inputs": {
+      "geosite": "CiIKB2ZpeHR1cmUSFwgCEgtleGFtcGxlLmNvbRoGCgJjbhABCh4KBXByb3h5EhUIAhIRcHJveHkuZXhhbXBsZS5jb20KGgoLcHJpb3JpdHktYWkSCwgCEgdtZXRhLmFpCi8KDnByaW9yaXR5LWJyYW5kEgsIAhIHbWV0YS5haRIQCAISDG1haWwuZXhhbXBsZQ==",
+      "shared": "RE9NQUlOLVNVRkZJWCxtZXRhLmFpCkRPTUFJTi1TVUZGSVgsbmV3LWFpLnRlc3Q=",
+      "brand-source": "RE9NQUlOLVNVRkZJWCxuZXctYWkudGVzdA==",
+      "ai-source": "RE9NQUlOLVNVRkZJWCxuZXctYWkudGVzdA==",
+      "ads": "RE9NQUlOLVNVRkZJWCxtZXRhLmFp"
+    },
+    "expected": [
+      {
+        "Rule/QuantumultX/brand.list": "host-suffix,mail.example,ssid\n",
+        "Rule/QuantumultX/ai.list": "host-suffix,meta.ai,ssid\nhost-suffix,new-ai.test,ssid\n",
+        "Rule/QuantumultX/media_cn.list": "host-suffix,example.com,direct\n",
+        "Rule/QuantumultX/media.list": "host-suffix,example.com,ssid\n",
+        "Rule/QuantumultX/cn.list": "host-suffix,example.com,direct\n",
+        "Rule/QuantumultX/proxy.list": "host-suffix,example.com,ssid\n",
+        "Rule/QuantumultX/adblock.list": "host-suffix,meta.ai,reject\n",
+        "Rule/Surge/brand.list": "DOMAIN-SUFFIX,mail.example\n",
+        "Rule/Surge/ai.list": "DOMAIN-SUFFIX,meta.ai\nDOMAIN-SUFFIX,new-ai.test\n",
+        "Rule/Surge/media_cn.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/media.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/cn.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/proxy.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/adblock.list": "DOMAIN-SUFFIX,meta.ai\n"
+      },
+      {
+        "Rule/QuantumultX/brand.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "brand"
+        },
+        "Rule/QuantumultX/ai.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://example.test/shared"
+          ],
+          "category": "app",
+          "count": 2,
+          "policy": "PROXY"
+        },
+        "Rule/QuantumultX/media_cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/QuantumultX/media.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "Media"
+        },
+        "Rule/QuantumultX/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/QuantumultX/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        },
+        "Rule/QuantumultX/adblock.list": {
+          "authors": [
+            "Fixture"
+          ],
+          "sources": [
+            "https://example.test/shared"
+          ],
+          "category": "Adblock",
+          "count": 1,
+          "policy": "REJECT"
+        },
+        "Rule/Surge/brand.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "brand"
+        },
+        "Rule/Surge/ai.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://example.test/shared"
+          ],
+          "category": "app",
+          "count": 2,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/media_cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/media.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "Media"
+        },
+        "Rule/Surge/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/adblock.list": {
+          "authors": [
+            "Fixture"
+          ],
+          "sources": [
+            "https://example.test/shared"
+          ],
+          "category": "Adblock",
+          "count": 1,
+          "policy": "REJECT"
+        }
+      },
+      []
+    ]
+  },
+  {
+    "config": {
+      "applications": [
+        {
+          "name": "brand",
+          "tags": [
+            "priority-brand"
+          ]
+        },
+        {
+          "name": "ai",
+          "tags": [
+            "priority-ai"
+          ]
+        }
+      ],
+      "surge_output": {},
+      "geosite": {
+        "repository": "https://example.test/official"
+      },
+      "collections": {
+        "cn": [
+          "fixture"
+        ],
+        "proxy": [
+          "fixture"
+        ],
+        "media": [
+          "fixture"
+        ],
+        "media_cn": [
+          "fixture"
+        ]
+      },
+      "sources": [
+        {
+          "id": "exclusions",
+          "format": "ruleset",
+          "author": "Fixture",
+          "url": "https://example.test/shared",
+          "category": "proxy",
+          "policy": "PROXY"
+        }
+      ],
+      "classification": {
+        "priority": [
+          "ai"
+        ]
+      },
+      "rule_exclusions": {
+        "proxy": [
+          {
+            "kind": "DOMAIN-WILDCARD",
+            "value_regex": "^(?:\\*\\.)?91cg"
+          }
+        ]
+      }
+    },
+    "inputs": {
+      "geosite": "CiIKB2ZpeHR1cmUSFwgCEgtleGFtcGxlLmNvbRoGCgJjbhABCh4KBXByb3h5EhUIAhIRcHJveHkuZXhhbXBsZS5jb20KGgoLcHJpb3JpdHktYWkSCwgCEgdtZXRhLmFpCi8KDnByaW9yaXR5LWJyYW5kEgsIAhIHbWV0YS5haRIQCAISDG1haWwuZXhhbXBsZQ==",
+      "exclusions": "RE9NQUlOLVdJTERDQVJELDkxY2c/Y29tCkRPTUFJTi1XSUxEQ0FSRCwqLjkxY2cwMT9jb20KRE9NQUlOLVdJTERDQVJELGFsbG93ZWQ/LnRlc3QKRE9NQUlOLVNVRkZJWCw5MWNnLmV4YW1wbGUKSVAtQ0lEUiw5MS4xMDguNC4wLzIy"
+    },
+    "expected": [
+      {
+        "Rule/QuantumultX/brand.list": "host-suffix,mail.example,ssid\n",
+        "Rule/QuantumultX/ai.list": "host-suffix,meta.ai,ssid\n",
+        "Rule/QuantumultX/media_cn.list": "host-suffix,example.com,direct\n",
+        "Rule/QuantumultX/media.list": "host-suffix,example.com,ssid\n",
+        "Rule/QuantumultX/cn.list": "host-suffix,example.com,direct\n",
+        "Rule/QuantumultX/proxy.list": "host-suffix,91cg.example,ssid\nhost-suffix,example.com,ssid\nhost-wildcard,allowed?.test,ssid\nip-cidr,91.108.4.0/22,ssid\n",
+        "Rule/Surge/brand.list": "DOMAIN-SUFFIX,mail.example\n",
+        "Rule/Surge/ai.list": "DOMAIN-SUFFIX,meta.ai\n",
+        "Rule/Surge/media_cn.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/media.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/cn.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/proxy.list": "DOMAIN-SUFFIX,91cg.example\nDOMAIN-SUFFIX,example.com\nDOMAIN-WILDCARD,allowed?.test\nIP-CIDR,91.108.4.0/22,no-resolve\n"
+      },
+      {
+        "Rule/QuantumultX/brand.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "brand"
+        },
+        "Rule/QuantumultX/ai.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "PROXY"
+        },
+        "Rule/QuantumultX/media_cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/QuantumultX/media.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "Media"
+        },
+        "Rule/QuantumultX/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/QuantumultX/proxy.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://example.test/shared"
+          ],
+          "category": "general",
+          "count": 4,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/brand.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "brand"
+        },
+        "Rule/Surge/ai.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/media_cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/media.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "Media"
+        },
+        "Rule/Surge/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/proxy.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://example.test/shared"
+          ],
+          "category": "general",
+          "count": 4,
+          "policy": "PROXY"
+        }
+      },
+      []
+    ]
+  },
+  {
+    "config": {
+      "applications": [
+        {
+          "name": "telegram",
+          "tags": [
+            "fixture"
+          ]
+        }
+      ],
+      "surge_output": {
+        "telegram": "combined"
+      },
+      "geosite": {
+        "repository": "https://example.test/official"
+      },
+      "collections": {
+        "cn": [
+          "fixture"
+        ],
+        "proxy": [
+          "fixture"
+        ],
+        "media": [
+          "fixture"
+        ],
+        "media_cn": [
+          "fixture"
+        ]
+      },
+      "sources": [
+        {
+          "id": "telegram-cidr",
+          "format": "ruleset",
+          "author": "Fixture",
+          "url": "https://example.test/shared",
+          "category": "telegram",
+          "policy": "telegram"
+        }
+      ],
+      "classification": {
+        "priority": []
+      },
+      "routing_policies": {
+        "telegram": "PROXY"
+      }
+    },
+    "inputs": {
+      "geosite": "CiIKB2ZpeHR1cmUSFwgCEgtleGFtcGxlLmNvbRoGCgJjbhABCh4KBXByb3h5EhUIAhIRcHJveHkuZXhhbXBsZS5jb20=",
+      "telegram-cidr": "SVAtQ0lEUiw5MS4xMDguNC4wLzIyCklQLUNJRFI2LDIwMDE6YjI4OmYyM2M6Oi80Nw=="
+    },
+    "expected": [
+      {
+        "Rule/QuantumultX/telegram.list": "host-suffix,example.com,ssid\nip-cidr,91.108.4.0/22,ssid\nip6-cidr,2001:b28:f23c::/47,ssid\n",
+        "Rule/QuantumultX/cn.list": "host-suffix,example.com,direct\n",
+        "Rule/QuantumultX/proxy.list": "host-suffix,example.com,ssid\n",
+        "Rule/Surge/telegram.list": "DOMAIN-SUFFIX,example.com\nIP-CIDR,91.108.4.0/22,no-resolve\nIP-CIDR6,2001:b28:f23c::/47,no-resolve\n",
+        "Rule/Surge/cn.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/proxy.list": "DOMAIN-SUFFIX,example.com\n"
+      },
+      {
+        "Rule/QuantumultX/telegram.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://example.test/shared"
+          ],
+          "category": "app",
+          "count": 3,
+          "policy": "PROXY"
+        },
+        "Rule/QuantumultX/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/QuantumultX/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/telegram.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://example.test/shared"
+          ],
+          "category": "app",
+          "count": 3,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        }
+      },
+      []
+    ]
+  },
+  {
+    "config": {
+      "applications": [
+        {
+          "name": "steam",
+          "tags": [
+            "fixture@cn"
+          ],
+          "proxy_tags": [
+            "fixture@!cn"
+          ],
+          "split": true
+        }
+      ],
+      "surge_output": {
+        "steam": "split"
+      },
+      "geosite": {
+        "repository": "https://example.test/official"
+      },
+      "collections": {
+        "cn": [
+          "fixture"
+        ],
+        "proxy": [
+          "fixture"
+        ],
+        "media": [
+          "fixture"
+        ],
+        "media_cn": [
+          "fixture"
+        ]
+      },
+      "sources": [],
+      "classification": {
+        "priority": []
+      },
+      "routing_policies": {}
+    },
+    "inputs": {
+      "geosite": "CiIKB2ZpeHR1cmUSFwgCEgtleGFtcGxlLmNvbRoGCgJjbhABCh4KBXByb3h5EhUIAhIRcHJveHkuZXhhbXBsZS5jb20="
+    },
+    "expected": [
+      {
+        "Rule/QuantumultX/steam.list": "host-suffix,example.com,direct\n",
+        "Rule/QuantumultX/cn.list": "host-suffix,example.com,direct\n",
+        "Rule/QuantumultX/proxy.list": "host-suffix,example.com,ssid\n",
+        "Rule/Surge/steam_direct.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/cn.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/proxy.list": "DOMAIN-SUFFIX,example.com\n"
+      },
+      {
+        "Rule/QuantumultX/steam.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/QuantumultX/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/QuantumultX/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/steam_direct.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        }
+      },
+      []
+    ]
+  },
+  {
+    "config": {
+      "applications": [
+        {
+          "name": "steam",
+          "tags": [
+            "proxy@cn"
+          ],
+          "proxy_tags": [
+            "proxy@!cn"
+          ],
+          "split": true
+        }
+      ],
+      "surge_output": {
+        "steam": "split"
+      },
+      "geosite": {
+        "repository": "https://example.test/official"
+      },
+      "collections": {
+        "cn": [
+          "fixture"
+        ],
+        "proxy": [
+          "fixture"
+        ],
+        "media": [
+          "fixture"
+        ],
+        "media_cn": [
+          "fixture"
+        ]
+      },
+      "sources": [],
+      "classification": {
+        "priority": []
+      },
+      "routing_policies": {}
+    },
+    "inputs": {
+      "geosite": "CiIKB2ZpeHR1cmUSFwgCEgtleGFtcGxlLmNvbRoGCgJjbhABCh4KBXByb3h5EhUIAhIRcHJveHkuZXhhbXBsZS5jb20="
+    },
+    "expected": [
+      {
+        "Rule/QuantumultX/steam.list": "host-suffix,proxy.example.com,ssid\n",
+        "Rule/QuantumultX/media_cn.list": "host-suffix,example.com,direct\n",
+        "Rule/QuantumultX/media.list": "host-suffix,example.com,ssid\n",
+        "Rule/QuantumultX/cn.list": "host-suffix,example.com,direct\n",
+        "Rule/QuantumultX/proxy.list": "host-suffix,example.com,ssid\n",
+        "Rule/Surge/steam_proxy.list": "DOMAIN-SUFFIX,proxy.example.com\n",
+        "Rule/Surge/media_cn.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/media.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/cn.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/proxy.list": "DOMAIN-SUFFIX,example.com\n"
+      },
+      {
+        "Rule/QuantumultX/steam.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "steam"
+        },
+        "Rule/QuantumultX/media_cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/QuantumultX/media.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "Media"
+        },
+        "Rule/QuantumultX/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/QuantumultX/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/steam_proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "steam"
+        },
+        "Rule/Surge/media_cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/media.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "Media"
+        },
+        "Rule/Surge/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        }
+      },
+      []
+    ]
+  },
+  {
+    "config": {
+      "applications": [
+        {
+          "name": "steam",
+          "tags": [
+            "fixture@cn"
+          ],
+          "proxy_tags": [
+            "proxy@!cn"
+          ],
+          "split": true
+        }
+      ],
+      "surge_output": {
+        "steam": "split"
+      },
+      "geosite": {
+        "repository": "https://example.test/official"
+      },
+      "collections": {
+        "cn": [
+          "fixture"
+        ],
+        "proxy": [
+          "fixture"
+        ],
+        "media": [
+          "fixture"
+        ],
+        "media_cn": [
+          "fixture"
+        ]
+      },
+      "sources": [],
+      "classification": {
+        "priority": []
+      },
+      "routing_policies": {}
+    },
+    "inputs": {
+      "geosite": "CiIKB2ZpeHR1cmUSFwgCEgtleGFtcGxlLmNvbRoGCgJjbhABCh4KBXByb3h5EhUIAhIRcHJveHkuZXhhbXBsZS5jb20="
+    },
+    "expected": [
+      {
+        "Rule/QuantumultX/steam.list": "host-suffix,proxy.example.com,ssid\nhost-suffix,example.com,direct\n",
+        "Rule/QuantumultX/cn.list": "host-suffix,example.com,direct\n",
+        "Rule/QuantumultX/proxy.list": "host-suffix,example.com,ssid\n",
+        "Rule/Surge/steam_direct.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/steam_proxy.list": "DOMAIN-SUFFIX,proxy.example.com\n",
+        "Rule/Surge/cn.list": "DOMAIN-SUFFIX,example.com\n",
+        "Rule/Surge/proxy.list": "DOMAIN-SUFFIX,example.com\n"
+      },
+      {
+        "Rule/QuantumultX/steam.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 2,
+          "policy": "steam"
+        },
+        "Rule/QuantumultX/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/QuantumultX/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/steam_direct.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/steam_proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "steam"
+        },
+        "Rule/Surge/cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "general",
+          "count": 1,
+          "policy": "PROXY"
+        }
+      },
+      []
+    ]
+  },
+  {
+    "config": {
+      "applications": [
+        {
+          "name": "apple",
+          "tags": [
+            "apple",
+            "apple-update"
+          ],
+          "split": true,
+          "proxy_tags": [
+            "apple-intelligence",
+            "apple-tvplus"
+          ]
+        }
+      ],
+      "geosite": {
+        "repository": "https://example.test/official"
+      },
+      "collections": {
+        "cn": [],
+        "proxy": [],
+        "media": [],
+        "media_cn": []
+      },
+      "sources": [],
+      "surge_output": {
+        "apple": "split"
+      }
+    },
+    "inputs": {
+      "geosite": "ChYKBWFwcGxlEg0IAhIJYXBwbGUuY29tCoABCgxhcHBsZS11cGRhdGUSEggCEg5nZG1mLmFwcGxlLmNvbRIXCAISE2dkbWYtYWRvcy5hcHBsZS5jb20SEggCEg5tZXN1LmFwcGxlLmNvbRIUCAISEHN3c2Nhbi5hcHBsZS5jb20SGQgCEhV1cGRhdGVzLmNkbi1hcHBsZS5jb20KFAoSYXBwbGUtaW50ZWxsaWdlbmNlCiAKDGFwcGxlLXR2cGx1cxIQCAISDHR2LmFwcGxlLmNvbQ=="
+    },
+    "expected": [
+      {
+        "Rule/QuantumultX/apple.list": "host-suffix,gdmf-ados.apple.com,direct\nhost-suffix,gdmf.apple.com,direct\nhost-suffix,mesu.apple.com,direct\nhost-suffix,swscan.apple.com,direct\nhost-suffix,tv.apple.com,direct\nhost-suffix,updates.cdn-apple.com,direct\nhost-suffix,apple.com,direct\n",
+        "Rule/Surge/apple_cn.list": "DOMAIN-SUFFIX,gdmf-ados.apple.com\nDOMAIN-SUFFIX,gdmf.apple.com\nDOMAIN-SUFFIX,mesu.apple.com\nDOMAIN-SUFFIX,swscan.apple.com\nDOMAIN-SUFFIX,tv.apple.com\nDOMAIN-SUFFIX,updates.cdn-apple.com\nDOMAIN-SUFFIX,apple.com\n"
+      },
+      {
+        "Rule/QuantumultX/apple.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 7,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/apple_cn.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 7,
+          "policy": "DIRECT"
+        }
+      },
+      []
+    ]
+  },
+  {
+    "config": {
+      "applications": [
+        {
+          "name": "apple",
+          "tags": [
+            "apple",
+            "apple-update"
+          ],
+          "split": true,
+          "proxy_tags": [
+            "apple-intelligence",
+            "apple-tvplus"
+          ]
+        }
+      ],
+      "geosite": {
+        "repository": "https://example.test/official"
+      },
+      "collections": {
+        "cn": [],
+        "proxy": [],
+        "media": [],
+        "media_cn": []
+      },
+      "sources": [
+        {
+          "id": "apple-extra",
+          "format": "ruleset",
+          "category": "apple",
+          "policy": "PROXY",
+          "author": "Fixture",
+          "url": "https://example.test/apple"
+        }
+      ],
+      "surge_output": {
+        "apple": "split"
+      }
+    },
+    "inputs": {
+      "geosite": "ChYKBWFwcGxlEg0IAhIJYXBwbGUuY29tCoABCgxhcHBsZS11cGRhdGUSEggCEg5nZG1mLmFwcGxlLmNvbRIXCAISE2dkbWYtYWRvcy5hcHBsZS5jb20SEggCEg5tZXN1LmFwcGxlLmNvbRIUCAISEHN3c2Nhbi5hcHBsZS5jb20SGQgCEhV1cGRhdGVzLmNkbi1hcHBsZS5jb20KFAoSYXBwbGUtaW50ZWxsaWdlbmNlCiAKDGFwcGxlLXR2cGx1cxIQCAISDHR2LmFwcGxlLmNvbQ==",
+      "apple-extra": "RE9NQUlOLHRlc3RmbGlnaHQuYXBwbGUuY29tCkRPTUFJTixleHBsaWNpdC5hcHBsZS5jb20sUFJPWFkKRE9NQUlOLGJsb2NrZWQuYXBwbGUuY29tLFJFSkVDVA=="
+    },
+    "expected": [
+      {
+        "Rule/QuantumultX/apple.list": "host,blocked.apple.com,reject\nhost,explicit.apple.com,ssid\nhost,testflight.apple.com,direct\nhost-suffix,gdmf-ados.apple.com,direct\nhost-suffix,gdmf.apple.com,direct\nhost-suffix,mesu.apple.com,direct\nhost-suffix,swscan.apple.com,direct\nhost-suffix,tv.apple.com,direct\nhost-suffix,updates.cdn-apple.com,direct\nhost-suffix,apple.com,direct\n",
+        "Rule/Surge/apple_cn.list": "DOMAIN,testflight.apple.com\nDOMAIN-SUFFIX,gdmf-ados.apple.com\nDOMAIN-SUFFIX,gdmf.apple.com\nDOMAIN-SUFFIX,mesu.apple.com\nDOMAIN-SUFFIX,swscan.apple.com\nDOMAIN-SUFFIX,tv.apple.com\nDOMAIN-SUFFIX,updates.cdn-apple.com\nAND,((DOMAIN-SUFFIX,apple.com),(NOT,((DOMAIN,explicit.apple.com))))\n",
+        "Rule/Surge/apple_proxy.list": "DOMAIN,explicit.apple.com\n",
+        "Rule/Surge/apple_reject.list": "DOMAIN,blocked.apple.com\n"
+      },
+      {
+        "Rule/QuantumultX/apple.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/apple",
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 10,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/apple_cn.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/apple",
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 8,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/apple_proxy.list": {
+          "authors": [
+            "Fixture"
+          ],
+          "sources": [
+            "https://example.test/apple"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/apple_reject.list": {
+          "authors": [
+            "Fixture"
+          ],
+          "sources": [
+            "https://example.test/apple"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "REJECT"
+        }
+      },
+      []
+    ]
+  },
+  {
+    "config": {
+      "applications": [
+        {
+          "name": "apple",
+          "tags": [
+            "apple",
+            "apple-update"
+          ],
+          "split": true,
+          "proxy_tags": [
+            "apple-intelligence",
+            "apple-tvplus"
+          ],
+          "routing_layers": [
+            {
+              "policy": "DIRECT",
+              "surge_suffix": "cn",
+              "tags": [
+                "apple-update"
+              ],
+              "sources": [
+                "cn-layer"
+              ]
+            },
+            {
+              "policy": "PROXY",
+              "surge_suffix": "proxy",
+              "sources": [
+                "proxy-layer"
+              ]
+            }
+          ]
+        }
+      ],
+      "geosite": {
+        "repository": "https://example.test/official"
+      },
+      "collections": {
+        "cn": [],
+        "proxy": [],
+        "media": [],
+        "media_cn": []
+      },
+      "sources": [
+        {
+          "id": "cn-layer",
+          "format": "ruleset",
+          "category": "apple",
+          "policy": "DIRECT",
+          "author": "Fixture",
+          "url": "https://example.test/cn"
+        },
+        {
+          "id": "proxy-layer",
+          "format": "ruleset",
+          "category": "apple",
+          "policy": "PROXY",
+          "author": "Fixture",
+          "url": "https://example.test/proxy"
+        }
+      ],
+      "surge_output": {
+        "apple": "split"
+      }
+    },
+    "inputs": {
+      "geosite": "ChYKBWFwcGxlEg0IAhIJYXBwbGUuY29tCoABCgxhcHBsZS11cGRhdGUSEggCEg5nZG1mLmFwcGxlLmNvbRIXCAISE2dkbWYtYWRvcy5hcHBsZS5jb20SEggCEg5tZXN1LmFwcGxlLmNvbRIUCAISEHN3c2Nhbi5hcHBsZS5jb20SGQgCEhV1cGRhdGVzLmNkbi1hcHBsZS5jb20KFAoSYXBwbGUtaW50ZWxsaWdlbmNlCiAKDGFwcGxlLXR2cGx1cxIQCAISDHR2LmFwcGxlLmNvbQ==",
+      "cn-layer": "RE9NQUlOLVNVRkZJWCx1cGRhdGVzLmNkbi1hcHBsZS5jb20KRE9NQUlOLVNVRkZJWCxhcHBzLmFwcGxlLmNvbQ==",
+      "proxy-layer": "RE9NQUlOLHRlc3RmbGlnaHQuYXBwbGUuY29tCkRPTUFJTi1TVUZGSVgsY2RuLWFwcGxlLmNvbQpET01BSU4tU1VGRklYLGFwcHMuYXBwbGUuY29t"
+    },
+    "expected": [
+      {
+        "Rule/QuantumultX/apple.list": "host-suffix,apps.apple.com,direct\nhost-suffix,gdmf-ados.apple.com,direct\nhost-suffix,gdmf.apple.com,direct\nhost-suffix,mesu.apple.com,direct\nhost-suffix,swscan.apple.com,direct\nhost-suffix,updates.cdn-apple.com,direct\nhost,testflight.apple.com,ssid\nhost-suffix,cdn-apple.com,ssid\nhost-suffix,tv.apple.com,direct\nhost-suffix,apple.com,direct\n",
+        "Rule/Surge/apple_cn.list": "DOMAIN-SUFFIX,apps.apple.com\nDOMAIN-SUFFIX,gdmf-ados.apple.com\nDOMAIN-SUFFIX,gdmf.apple.com\nDOMAIN-SUFFIX,mesu.apple.com\nDOMAIN-SUFFIX,swscan.apple.com\nDOMAIN-SUFFIX,updates.cdn-apple.com\nDOMAIN-SUFFIX,tv.apple.com\nAND,((DOMAIN-SUFFIX,apple.com),(NOT,((DOMAIN,testflight.apple.com))))\n",
+        "Rule/Surge/apple_proxy.list": "DOMAIN,testflight.apple.com\nDOMAIN-SUFFIX,cdn-apple.com\n"
+      },
+      {
+        "Rule/QuantumultX/apple.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/cn",
+            "https://example.test/official",
+            "https://example.test/proxy"
+          ],
+          "category": "app",
+          "count": 10,
+          "policy": "PROXY"
+        },
+        "Rule/Surge/apple_cn.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/cn",
+            "https://example.test/official",
+            "https://example.test/proxy"
+          ],
+          "category": "app",
+          "count": 8,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/apple_proxy.list": {
+          "authors": [
+            "Fixture"
+          ],
+          "sources": [
+            "https://example.test/proxy"
+          ],
+          "category": "app",
+          "count": 2,
+          "policy": "PROXY"
+        }
+      },
+      []
+    ]
+  },
+  {
+    "config": {
+      "applications": [
+        {
+          "name": "microsoft",
+          "tags": [
+            "microsoft@cn",
+            "azure@cn",
+            "bing@cn",
+            "microsoft-pki@cn",
+            "onedrive@cn"
+          ],
+          "split": true,
+          "proxy_tags": [
+            "microsoft@!cn",
+            "github-copilot",
+            "azure@!cn",
+            "bing@!cn",
+            "microsoft-pki@!cn",
+            "onedrive@!cn"
+          ]
+        }
+      ],
+      "geosite": {
+        "repository": "https://example.test/official"
+      },
+      "collections": {
+        "cn": [],
+        "proxy": [],
+        "media": [],
+        "media_cn": []
+      },
+      "sources": [],
+      "surge_output": {
+        "microsoft": "split"
+      }
+    },
+    "inputs": {
+      "geosite": "CgoKCG9uZWRyaXZlCg8KDW1pY3Jvc29mdC1wa2kKEAoOZ2l0aHViLWNvcGlsb3QKBgoEYmluZwoeCgltaWNyb3NvZnQSEQgCEg1taWNyb3NvZnQuY29tCj8KBWF6dXJlEhwIAhIQYXp1cmUuZXhhbXBsZS5jbhoGCgJjbhABEhgIAxIUcG9ydGFsLm1pY3Jvc29mdC5jb20="
+    },
+    "expected": [
+      {
+        "Rule/QuantumultX/microsoft.list": "host,portal.microsoft.com,ssid\nhost-suffix,azure.example.cn,direct\nhost-suffix,microsoft.com,ssid\n",
+        "Rule/Surge/microsoft_direct.list": "DOMAIN-SUFFIX,azure.example.cn\n",
+        "Rule/Surge/microsoft_proxy.list": "DOMAIN,portal.microsoft.com\nDOMAIN-SUFFIX,microsoft.com\n"
+      },
+      {
+        "Rule/QuantumultX/microsoft.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 3,
+          "policy": "microsoft"
+        },
+        "Rule/Surge/microsoft_direct.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/microsoft_proxy.list": {
+          "authors": [
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 2,
+          "policy": "microsoft"
+        }
+      },
+      []
+    ]
+  },
+  {
+    "config": {
+      "applications": [
+        {
+          "name": "microsoft",
+          "tags": [
+            "microsoft@cn",
+            "azure@cn",
+            "bing@cn",
+            "microsoft-pki@cn",
+            "onedrive@cn"
+          ],
+          "split": true,
+          "proxy_tags": [
+            "microsoft@!cn",
+            "github-copilot",
+            "azure@!cn",
+            "bing@!cn",
+            "microsoft-pki@!cn",
+            "onedrive@!cn"
+          ],
+          "routing_layers": [
+            {
+              "policy": "DIRECT",
+              "surge_suffix": "direct",
+              "tags": [
+                "microsoft@cn",
+                "azure@cn",
+                "bing@cn",
+                "microsoft-pki@cn",
+                "onedrive@cn"
+              ],
+              "sources": [
+                "ms-cn"
+              ]
+            }
+          ]
+        }
+      ],
+      "geosite": {
+        "repository": "https://example.test/official"
+      },
+      "collections": {
+        "cn": [],
+        "proxy": [],
+        "media": [],
+        "media_cn": []
+      },
+      "sources": [
+        {
+          "id": "ms-cn",
+          "format": "ruleset",
+          "category": "microsoft",
+          "policy": "DIRECT",
+          "author": "Fixture",
+          "url": "https://example.test/ms-cn"
+        },
+        {
+          "id": "ms-all",
+          "format": "ruleset",
+          "category": "microsoft",
+          "policy": "PROXY",
+          "author": "Fixture",
+          "url": "https://example.test/ms"
+        }
+      ],
+      "surge_output": {
+        "microsoft": "split"
+      }
+    },
+    "inputs": {
+      "geosite": "CgoKCG9uZWRyaXZlCg8KDW1pY3Jvc29mdC1wa2kKEAoOZ2l0aHViLWNvcGlsb3QKBgoEYmluZwoeCgltaWNyb3NvZnQSEQgCEg1taWNyb3NvZnQuY29tCj8KBWF6dXJlEhwIAhIQYXp1cmUuZXhhbXBsZS5jbhoGCgJjbhABEhgIAxIUcG9ydGFsLm1pY3Jvc29mdC5jb20=",
+      "ms-cn": "RE9NQUlOLGRvd25sb2FkLm1pY3Jvc29mdC5jb20KRE9NQUlOLVNVRkZJWCxzaGFyZXBvaW50LmNu",
+      "ms-all": "RE9NQUlOLGRvd25sb2FkLm1pY3Jvc29mdC5jb20KRE9NQUlOLVNVRkZJWCxzaGFyZXBvaW50LmNuCkRPTUFJTi1TVUZGSVgsbWljcm9zb2Z0LmNvbQpET01BSU4tU1VGRklYLG9uZWRyaXZlLmxpdmUuY29t"
+    },
+    "expected": [
+      {
+        "Rule/QuantumultX/microsoft.list": "host,download.microsoft.com,direct\nhost-suffix,azure.example.cn,direct\nhost-suffix,sharepoint.cn,direct\nhost,portal.microsoft.com,ssid\nhost-suffix,onedrive.live.com,ssid\nhost-suffix,microsoft.com,ssid\n",
+        "Rule/Surge/microsoft_direct.list": "DOMAIN,download.microsoft.com\nDOMAIN-SUFFIX,azure.example.cn\nDOMAIN-SUFFIX,sharepoint.cn\n",
+        "Rule/Surge/microsoft_proxy.list": "DOMAIN,portal.microsoft.com\nDOMAIN-SUFFIX,onedrive.live.com\nDOMAIN-SUFFIX,microsoft.com\n"
+      },
+      {
+        "Rule/QuantumultX/microsoft.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/ms",
+            "https://example.test/ms-cn",
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 6,
+          "policy": "microsoft"
+        },
+        "Rule/Surge/microsoft_direct.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/ms",
+            "https://example.test/ms-cn",
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 3,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/microsoft_proxy.list": {
+          "authors": [
+            "Fixture",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/ms",
+            "https://example.test/official"
+          ],
+          "category": "app",
+          "count": 3,
+          "policy": "microsoft"
+        }
+      },
+      []
+    ]
+  },
+  {
+    "config": {
+      "applications": [
+        {
+          "name": "apple",
+          "tags": [
+            "apple",
+            "apple-update"
+          ],
+          "split": true,
+          "proxy_tags": [
+            "apple-intelligence",
+            "apple-tvplus"
+          ]
+        },
+        {
+          "name": "microsoft",
+          "tags": [
+            "microsoft@cn",
+            "azure@cn",
+            "bing@cn",
+            "microsoft-pki@cn",
+            "onedrive@cn"
+          ],
+          "split": true,
+          "proxy_tags": [
+            "microsoft@!cn",
+            "github-copilot",
+            "azure@!cn",
+            "bing@!cn",
+            "microsoft-pki@!cn",
+            "onedrive@!cn"
+          ]
+        }
+      ],
+      "geosite": {
+        "repository": "https://example.test/official"
+      },
+      "collections": {
+        "cn": [],
+        "proxy": [],
+        "media": [],
+        "media_cn": []
+      },
+      "sources": [
+        {
+          "id": "mihomo-apple-update",
+          "author": "MetaCubeX",
+          "format": "sing-box-json",
+          "category": "apple",
+          "policy": "DIRECT",
+          "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-update.json",
+          "license": "See upstream LICENSE"
+        },
+        {
+          "id": "mihomo-azure-cn",
+          "author": "MetaCubeX",
+          "format": "sing-box-json",
+          "category": "microsoft",
+          "policy": "DIRECT",
+          "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/azure@cn.json",
+          "license": "See upstream LICENSE"
+        },
+        {
+          "id": "mihomo-onedrive",
+          "author": "MetaCubeX",
+          "format": "sing-box-json",
+          "category": "microsoft",
+          "policy": "PROXY",
+          "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/onedrive.json",
+          "license": "See upstream LICENSE"
+        }
+      ],
+      "surge_output": {
+        "apple": "split",
+        "microsoft": "split"
+      }
+    },
+    "inputs": {
+      "geosite": "ChYKBWFwcGxlEg0IAhIJYXBwbGUuY29tCoABCgxhcHBsZS11cGRhdGUSEggCEg5nZG1mLmFwcGxlLmNvbRIXCAISE2dkbWYtYWRvcy5hcHBsZS5jb20SEggCEg5tZXN1LmFwcGxlLmNvbRIUCAISEHN3c2Nhbi5hcHBsZS5jb20SGQgCEhV1cGRhdGVzLmNkbi1hcHBsZS5jb20KFAoSYXBwbGUtaW50ZWxsaWdlbmNlCiAKDGFwcGxlLXR2cGx1cxIQCAISDHR2LmFwcGxlLmNvbQoKCghvbmVkcml2ZQoPCg1taWNyb3NvZnQtcGtpChAKDmdpdGh1Yi1jb3BpbG90CgYKBGJpbmcKHgoJbWljcm9zb2Z0EhEIAhINbWljcm9zb2Z0LmNvbQo/CgVhenVyZRIcCAISEGF6dXJlLmV4YW1wbGUuY24aBgoCY24QARIYCAMSFHBvcnRhbC5taWNyb3NvZnQuY29t",
+      "mihomo-apple-update": "eyJ2ZXJzaW9uIjogMiwgInJ1bGVzIjogW3siZG9tYWluX3N1ZmZpeCI6ICJnZG1mLmFwcGxlLmNvbSJ9XX0=",
+      "mihomo-azure-cn": "eyJ2ZXJzaW9uIjogMiwgInJ1bGVzIjogW3siZG9tYWluX3N1ZmZpeCI6ICJhenVyZS5leGFtcGxlLmNuIn1dfQ==",
+      "mihomo-onedrive": "eyJ2ZXJzaW9uIjogMiwgInJ1bGVzIjogW3siZG9tYWluX3N1ZmZpeCI6ICJvbmVkcml2ZS5leGFtcGxlLmNvbSJ9XX0="
+    },
+    "expected": [
+      {
+        "Rule/QuantumultX/apple.list": "host-suffix,gdmf-ados.apple.com,direct\nhost-suffix,gdmf.apple.com,direct\nhost-suffix,mesu.apple.com,direct\nhost-suffix,swscan.apple.com,direct\nhost-suffix,tv.apple.com,direct\nhost-suffix,updates.cdn-apple.com,direct\nhost-suffix,apple.com,direct\n",
+        "Rule/QuantumultX/microsoft.list": "host,portal.microsoft.com,ssid\nhost-suffix,azure.example.cn,direct\nhost-suffix,onedrive.example.com,ssid\nhost-suffix,microsoft.com,ssid\n",
+        "Rule/Surge/apple_cn.list": "DOMAIN-SUFFIX,gdmf-ados.apple.com\nDOMAIN-SUFFIX,gdmf.apple.com\nDOMAIN-SUFFIX,mesu.apple.com\nDOMAIN-SUFFIX,swscan.apple.com\nDOMAIN-SUFFIX,tv.apple.com\nDOMAIN-SUFFIX,updates.cdn-apple.com\nDOMAIN-SUFFIX,apple.com\n",
+        "Rule/Surge/microsoft_direct.list": "DOMAIN-SUFFIX,azure.example.cn\n",
+        "Rule/Surge/microsoft_proxy.list": "DOMAIN,portal.microsoft.com\nDOMAIN-SUFFIX,onedrive.example.com\nDOMAIN-SUFFIX,microsoft.com\n"
+      },
+      {
+        "Rule/QuantumultX/apple.list": {
+          "authors": [
+            "MetaCubeX",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-update.json"
+          ],
+          "category": "app",
+          "count": 7,
+          "policy": "DIRECT"
+        },
+        "Rule/QuantumultX/microsoft.list": {
+          "authors": [
+            "MetaCubeX",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/azure@cn.json",
+            "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/onedrive.json"
+          ],
+          "category": "app",
+          "count": 4,
+          "policy": "microsoft"
+        },
+        "Rule/Surge/apple_cn.list": {
+          "authors": [
+            "MetaCubeX",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-update.json"
+          ],
+          "category": "app",
+          "count": 7,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/microsoft_direct.list": {
+          "authors": [
+            "MetaCubeX",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/azure@cn.json"
+          ],
+          "category": "app",
+          "count": 1,
+          "policy": "DIRECT"
+        },
+        "Rule/Surge/microsoft_proxy.list": {
+          "authors": [
+            "MetaCubeX",
+            "V2Fly"
+          ],
+          "sources": [
+            "https://example.test/official",
+            "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/onedrive.json"
+          ],
+          "category": "app",
+          "count": 3,
+          "policy": "microsoft"
+        }
+      },
+      []
+    ]
+  }
+]
