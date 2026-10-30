@@ -1,3 +1,4 @@
+import { addAppIcon } from "../domain/icons.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript publish layer; preserve source behavior.
 // Consolidated: 2026-10-03
 // Author: chance
@@ -462,7 +463,7 @@ export function mergeNativeQxSources(
 }
 export async function prepareNativeQxSync(
   root: any,
-  { fetchText }: any = {},
+  { fetchText, icons = null }: any = {},
 ): Promise<any> {
   let registry: any;
   try {
@@ -483,7 +484,7 @@ export async function prepareNativeQxSync(
     throw Error("Empty native QX registry");
   const plans: any = [];
   for (const config of configs)
-    plans.push(await prepareNativeQxSource(config, { fetchText }));
+    plans.push(await prepareNativeQxSource(config, { fetchText, icons }));
   const outputs: any = new Map();
   for (const plan of plans)
     for (const [file, text] of plan.outputs) {
@@ -505,7 +506,7 @@ export async function prepareNativeQxSync(
 }
 async function prepareNativeQxSource(
   config: any,
-  { fetchText }: any,
+  { fetchText, icons = null }: any,
 ): Promise<any> {
   if (
     config.version !== 1 ||
@@ -614,10 +615,15 @@ async function prepareNativeQxSource(
         .at(-1) ||
       config.names?.[key] ||
       key;
-    const text: any = mergeNativeQxSources(sources, {
-      name,
-      author: config.author,
-    });
+    // Modified: 2026-10-30 (chance). Apply app metadata before stable native output comparison.
+    const text: any = addAppIcon(
+      mergeNativeQxSources(sources, {
+        name,
+        author: config.author,
+      }),
+      icons,
+      [key],
+    ).text;
     validateQX(text, { id: config.prefix + key });
     outputs.set(QX_ADBLOCK_DIR + "/" + config.prefix + key + ".snippet", text);
     if (config.surge) {

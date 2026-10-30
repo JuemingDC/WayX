@@ -19,3 +19,5 @@
 - Modified: 2026-10-29 (chance). Native QX Script conversion only lowers declarations and always retains the author's original script URL. Do not download, scan or rewrite author JS, inject internal API shims, or generate API adapter copies. Source script runtime compatibility is outside this conversion scope.
 
 - Modified: 2026-10-30 (chance). Production automation is TypeScript under src/, dispatched by src/cli.ts. Keep domain logic free of I/O; all HTTP uses the unified Surge transport, and managed writes use transactions. Never restore Python/MJS forwarding entry points. Archive encrypted source bytes without parsing them or replacing prior client outputs; preserve author #!source and original JS URLs. Source pauses remain authoritative.
+
+- Modified: 2026-10-30 (chance). Icon manifests and app aliases belong to .github/sources/icons.json. Fill only absent target declaration metadata; preserve author-provided image URLs, source files, client logic and timestamps. Reuse the unified fetch snapshot, reference original image URLs, and keep unmatched apps unchanged.

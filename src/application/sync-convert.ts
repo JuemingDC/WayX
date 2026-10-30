@@ -1,3 +1,5 @@
+import { loadIconIndex } from "../ingest/icons.ts";
+import { backfillIcons } from "./icons.ts";
 import {
   identifyResource,
   archiveOpaque,
@@ -54,6 +56,7 @@ export async function syncCatalogEntry(
     resources = null,
     prepared = null,
     prepareOnly = false,
+    icons = null,
   }: any = {},
 ): Promise<any> {
   // Modified: 2026-10-29 (chance). Direct callers also honor source freeze.
@@ -165,6 +168,7 @@ export async function syncCatalogEntry(
     const out: any = convert(entry, source, context, {
       stamp: nowConversionStamp(),
       rawBase: RAW_BASE,
+      icons,
       onStage,
     });
     stage = "review-target-mapping";
@@ -294,6 +298,8 @@ export async function runCatalogSync({
             Buffer.from(await entryOptions.fetchText(url), "utf8")
         : undefined),
   });
+  // Modified: 2026-10-30 (chance). Share one original icon snapshot with all emitters.
+  const icons = await loadIconIndex(root, resources);
   const preparedEntries: any = [];
   const capture: any = (entry: any, error: any): any => {
     failures.capture(entry, error);
@@ -343,6 +349,7 @@ export async function runCatalogSync({
   try {
     nativeQxPlan = await prepareNativeQxSync(root, {
       fetchText: resources.fetchText,
+      icons,
     });
   } catch (error: any) {
     publishable = false;
@@ -358,6 +365,7 @@ export async function runCatalogSync({
         log,
         resources,
         prepared,
+        icons,
       });
       validatedPlugins.push(entry.id);
       convertedPlugins.push(entry.id);
@@ -374,6 +382,7 @@ export async function runCatalogSync({
       await deferCatalogEntries(root, manifest, deferredPlugins);
     }
     if (publishable) await commitNativeQxSync(root, nativeQxPlan);
+    if (publishable) await backfillIcons(root, icons);
     await writeReadmePlan(root);
   } catch (error: any) {
     publishable = false;

@@ -72,6 +72,36 @@
         "*.snippet"
       ],
       "category": "资源解析器"
+    },
+    {
+      "id": "icons-lige47",
+      "name": "lige47 应用图标集",
+      "kind": "http",
+      "url": "https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json",
+      "save_as": "Icons/lige47.json",
+      "normalize": "raw",
+      "category": "应用图标",
+      "cached_feed": ".github/monitor/.runtime/icon-feeds/lige47.json"
+    },
+    {
+      "id": "icons-fmz200",
+      "name": "fmz200 应用图标集",
+      "kind": "http",
+      "url": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/icons-all.json",
+      "save_as": "Icons/fmz200.json",
+      "normalize": "raw",
+      "category": "应用图标",
+      "cached_feed": ".github/monitor/.runtime/icon-feeds/fmz200.json"
+    },
+    {
+      "id": "icons-qure-color",
+      "name": "qure-color 应用图标集",
+      "kind": "http",
+      "url": "https://raw.githubusercontent.com/Koolson/Qure/master/Other/QureColor.json",
+      "save_as": "Icons/qure-color.json",
+      "normalize": "raw",
+      "category": "应用图标",
+      "cached_feed": ".github/monitor/.runtime/icon-feeds/qure-color.json"
     }
   ]
 }
