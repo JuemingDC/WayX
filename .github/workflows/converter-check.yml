@@ -19,8 +19,8 @@ on:
       - 'tsconfig.json'
   workflow_dispatch:
   schedule:
-    # 01:30 Asia/Shanghai; the schedule uses UTC.
-    - cron: '30 17 * * *'
+    # Modified: 2026-10-31 (chance). Run daily at 05:30 Asia/Shanghai (21:30 UTC on the previous day).
+    - cron: '30 21 * * *'
 
 permissions:
   contents: write
