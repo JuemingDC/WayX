@@ -1,11 +1,11 @@
 # Name: proxy
-# Updated: 2026-10-28 21:52:33 UTC
+# Updated: 2026-10-31 00:55:27 UTC
 # Converted by: chance
 # Source Authors: Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 34105
+# Rules: 34114
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,ssid
@@ -4443,6 +4443,7 @@ host-suffix,18comic-god.club,ssid
 host-suffix,18comic-god.xyz,ssid
 host-suffix,18comic.cc,ssid
 host-suffix,18comic.company,ssid
+host-suffix,18comic.ink,ssid
 host-suffix,18comic.org,ssid
 host-suffix,18comic.vip,ssid
 host-suffix,18commic.com,ssid
@@ -8837,6 +8838,7 @@ host-suffix,bingapistatistics.com,ssid
 host-suffix,bingoporno.com,ssid
 host-suffix,bingparachute.com,ssid
 host-suffix,bingsandbox.com,ssid
+host-suffix,bingstatic.com,ssid
 host-suffix,bingvisualsearch.com,ssid
 host-suffix,bingworld.com,ssid
 host-suffix,bingx.com,ssid
@@ -9758,6 +9760,7 @@ host-suffix,bsappapi.com,ssid
 host-suffix,bscdnweb.com,ssid
 host-suffix,bsi.ir,ssid
 host-suffix,bsky.app,ssid
+host-suffix,bsky.chat,ssid
 host-suffix,bsky.network,ssid
 host-suffix,bsky.social,ssid
 host-suffix,bspb.ru,ssid
@@ -15679,6 +15682,7 @@ host-suffix,githubapp.com,ssid
 host-suffix,githubassets.com,ssid
 host-suffix,githubcopilot.com,ssid
 host-suffix,githubhackathon.com,ssid
+host-suffix,githubhelp.com,ssid
 host-suffix,githubnext.com,ssid
 host-suffix,githubpreview.dev,ssid
 host-suffix,githubstatus.com,ssid
@@ -22117,6 +22121,7 @@ host-suffix,msftconnecttest.com,ssid
 host-suffix,msfteducation.ca,ssid
 host-suffix,msftncsi.com,ssid
 host-suffix,msftnet.org,ssid
+host-suffix,msftstatic.com,ssid
 host-suffix,msgamesresearch.com,ssid
 host-suffix,msgamestudios.com,ssid
 host-suffix,msha.gov,ssid
@@ -23125,6 +23130,7 @@ host-suffix,npm.im,ssid
 host-suffix,npm.io,ssid
 host-suffix,npmjs.com,ssid
 host-suffix,npmjs.org,ssid
+host-suffix,npmx.dev,ssid
 host-suffix,npnt.me,ssid
 host-suffix,npr.org,ssid
 host-suffix,npsboost.com,ssid
@@ -29131,9 +29137,12 @@ host-suffix,tiktokeu-cdn.com,ssid
 host-suffix,tiktokglobalshopv.com,ssid
 host-suffix,tiktokminis.us,ssid
 host-suffix,tiktokrow-cdn.com,ssid
+host-suffix,tiktokshop.com,ssid
+host-suffix,tiktokstaticb.com,ssid
 host-suffix,tiktokv.com,ssid
 host-suffix,tiktokv.eu,ssid
 host-suffix,tiktokv.us,ssid
+host-suffix,tiktokvapp.com,ssid
 host-suffix,tiktokw.eu,ssid
 host-suffix,tiktokw.us,ssid
 host-suffix,tilda.cc,ssid

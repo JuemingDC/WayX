@@ -1,11 +1,11 @@
 # Name: microsoft
-# Updated: 2026-10-27 07:35:36 UTC
+# Updated: 2026-10-31 00:55:27 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, QuixoticHeart, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/azure@cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/bing@cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/microsoft-pki.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/microsoft@cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/onedrive.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/microsoft-cn.list ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/microsoft.list ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/onedrive.list
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 843
+# Rules: 845
 # Managed by: WayX Rule Aggregator
 
 host,b.c2r.ts.cdn.office.net,direct
@@ -385,6 +385,7 @@ host-suffix,bingpix.com,ssid
 host-suffix,bingpk.com,ssid
 host-suffix,bings.com,ssid
 host-suffix,bingsandbox.com,ssid
+host-suffix,bingstatic.com,ssid
 host-suffix,bingtoolbar.com,ssid
 host-suffix,bingtranslator.com,ssid
 host-suffix,bingvisualsearch.com,ssid
@@ -643,6 +644,7 @@ host-suffix,msfteducation.ca,ssid
 host-suffix,msftidentity.com,ssid
 host-suffix,msftncsi.com,ssid
 host-suffix,msftnet.org,ssid
+host-suffix,msftstatic.com,ssid
 host-suffix,msgamesresearch.com,ssid
 host-suffix,msgamestudios.com,ssid
 host-suffix,mshome.net,ssid

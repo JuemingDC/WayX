@@ -1,11 +1,11 @@
 # Name: media_cn
-# Updated: 2026-10-27 07:34:07 UTC
+# Updated: 2026-10-31 00:55:27 UTC
 # Converted by: chance
 # Source Authors: MetaCubeX, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-ai-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-collaborate-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-documents-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-cn.json
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1489
+# Rules: 1495
 # Managed by: WayX Rule Aggregator
 
 host,gitlab-assets.oss-cn-hongkong.aliyuncs.com,direct
@@ -604,6 +604,9 @@ host-suffix,fanqiesdkpic.com,direct
 host-suffix,fanqiesdkstatic.com,direct
 host-suffix,fanqiesdkvod.com,direct
 host-suffix,fanxingliveshow.com,direct
+host-suffix,favonis.cloud,direct
+host-suffix,favonis.com,direct
+host-suffix,favonis.space,direct
 host-suffix,faxingbao.com,direct
 host-suffix,feihengip.com,direct
 host-suffix,feihuo.com,direct
@@ -1280,9 +1283,12 @@ host-suffix,tiktokeu-cdn.com,direct
 host-suffix,tiktokglobalshopv.com,direct
 host-suffix,tiktokminis.us,direct
 host-suffix,tiktokrow-cdn.com,direct
+host-suffix,tiktokshop.com,direct
+host-suffix,tiktokstaticb.com,direct
 host-suffix,tiktokv.com,direct
 host-suffix,tiktokv.eu,direct
 host-suffix,tiktokv.us,direct
+host-suffix,tiktokvapp.com,direct
 host-suffix,tiktokw.eu,direct
 host-suffix,tiktokw.us,direct
 host-suffix,tikv.org,direct
