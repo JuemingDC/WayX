@@ -1,11 +1,11 @@
 # Name: proxy
-# Updated: 2026-10-31 00:55:27 UTC
+# Updated: 2026-11-01 00:16:00 UTC
 # Converted by: chance
 # Source Authors: Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 34114
+# Rules: 34116
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net
@@ -29322,6 +29322,7 @@ DOMAIN-SUFFIX,toroporno.com
 DOMAIN-SUFFIX,torproject.org
 DOMAIN-SUFFIX,torrentgalaxy.to
 DOMAIN-SUFFIX,torrentkitty.tv
+DOMAIN-SUFFIX,torrentleech.org
 DOMAIN-SUFFIX,torrentprivacy.com
 DOMAIN-SUFFIX,torrentproject.se
 DOMAIN-SUFFIX,torrenty.org
@@ -33492,6 +33493,7 @@ DOMAIN-SUFFIX,youtubego.in
 DOMAIN-SUFFIX,youtubekids.com
 DOMAIN-SUFFIX,youtubemobilesupport.com
 DOMAIN-SUFFIX,youversion.com
+DOMAIN-SUFFIX,youversionapi.com
 DOMAIN-SUFFIX,youwin.com
 DOMAIN-SUFFIX,youwuss.com
 DOMAIN-SUFFIX,youx.xxx

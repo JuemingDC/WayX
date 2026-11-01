@@ -1,11 +1,11 @@
 # Name: cn
-# Updated: 2026-10-31 00:55:27 UTC
+# Updated: 2026-11-01 00:16:00 UTC
 # Converted by: chance
 # Source Authors: DH-Teams, Loyalsoldier, MetaCubeX, Nexitally, QuixoticHeart, Sukka, V2Fly, gaoyifan
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_All_Surge.list ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-cn.list ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china.txt ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china6.txt ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_CN_3.list ; https://ruleset.skk.moe/List/ip/domestic.conf ; https://ruleset.skk.moe/List/non_ip/domestic.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 127868
+# Rules: 127870
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net
@@ -115731,6 +115731,7 @@ IP-CIDR,103.17.228.0/22,no-resolve
 IP-CIDR,103.17.40.0/22,no-resolve
 IP-CIDR,103.17.64.0/22,no-resolve
 IP-CIDR,103.170.134.0/23,no-resolve
+IP-CIDR,103.170.210.0/23,no-resolve
 IP-CIDR,103.170.212.0/23,no-resolve
 IP-CIDR,103.170.4.0/23,no-resolve
 IP-CIDR,103.171.166.0/24,no-resolve
@@ -118865,13 +118866,14 @@ IP-CIDR,124.128.0.0/13,no-resolve
 IP-CIDR,124.14.0.0/15,no-resolve
 IP-CIDR,124.14.12.0/23,no-resolve
 IP-CIDR,124.14.15.0/24,no-resolve
+IP-CIDR,124.14.2.0/24,no-resolve
 IP-CIDR,124.14.22.0/24,no-resolve
 IP-CIDR,124.14.224.0/19,no-resolve
 IP-CIDR,124.14.5.0/24,no-resolve
 IP-CIDR,124.14.52.0/22,no-resolve
 IP-CIDR,124.14.6.0/24,no-resolve
 IP-CIDR,124.14.64.0/18,no-resolve
-IP-CIDR,124.14.8.0/24,no-resolve
+IP-CIDR,124.14.8.0/23,no-resolve
 IP-CIDR,124.147.128.0/17,no-resolve
 IP-CIDR,124.150.137.0/24,no-resolve
 IP-CIDR,124.151.0.0/16,no-resolve
@@ -122186,7 +122188,7 @@ IP-CIDR,223.122.14.0/23,no-resolve
 IP-CIDR,223.122.18.0/23,no-resolve
 IP-CIDR,223.122.20.0/22,no-resolve
 IP-CIDR,223.122.26.0/23,no-resolve
-IP-CIDR,223.122.28.0/23,no-resolve
+IP-CIDR,223.122.29.0/24,no-resolve
 IP-CIDR,223.122.5.0/24,no-resolve
 IP-CIDR,223.122.6.0/23,no-resolve
 IP-CIDR,223.123.196.0/22,no-resolve
@@ -124557,6 +124559,7 @@ IP-CIDR6,2402:7d80::/48,no-resolve
 IP-CIDR6,2402:7da0::/32,no-resolve
 IP-CIDR6,2402:7e20::/32,no-resolve
 IP-CIDR6,2402:7ee0::/32,no-resolve
+IP-CIDR6,2402:8160::/32,no-resolve
 IP-CIDR6,2402:8180::/32,no-resolve
 IP-CIDR6,2402:8300::/32,no-resolve
 IP-CIDR6,2402:8380::/32,no-resolve
@@ -126475,6 +126478,7 @@ IP-CIDR6,2406:840:fe26::/48,no-resolve
 IP-CIDR6,2406:840:fe28::/45,no-resolve
 IP-CIDR6,2406:840:fe30::/44,no-resolve
 IP-CIDR6,2406:840:fe40::/44,no-resolve
+IP-CIDR6,2406:840:fe51::/48,no-resolve
 IP-CIDR6,2406:840:fe52::/47,no-resolve
 IP-CIDR6,2406:840:fe54::/46,no-resolve
 IP-CIDR6,2406:840:fe58::/45,no-resolve
@@ -127791,9 +127795,7 @@ IP-CIDR6,2a0e:b107:740::/44,no-resolve
 IP-CIDR6,2a0f:1cc5:1600::/44,no-resolve
 IP-CIDR6,2a0f:1cc5:4700::/40,no-resolve
 IP-CIDR6,2a0f:6280:7400::/39,no-resolve
-IP-CIDR6,2a0f:9400:6110::/48,no-resolve
 IP-CIDR6,2a10:fa86::/34,no-resolve
-IP-CIDR6,2a12:cb41:1300::/44,no-resolve
 IP-CIDR6,2a12:cb41:600::/44,no-resolve
 IP-CIDR6,2a13:1800:1000::/36,no-resolve
 IP-CIDR6,2a13:1800:100::/40,no-resolve
