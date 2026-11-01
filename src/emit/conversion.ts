@@ -1351,7 +1351,8 @@ export function convertNativeQxToSurge(
   for (const raw of text.split("\n")) {
     let line: any = raw.trim();
     if (!line) continue;
-    if (line.startsWith("#")) {
+    // Modified: 2026-11-01 (chance). Preserve native author comments when lowering the separately checked QX input.
+    if (/^(?:#|;|\/\/)/.test(line)) {
       if (/^# Icon(?: Collection)?:/.test(line)) {
         iconMetadata.push(raw);
         continue;

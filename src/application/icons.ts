@@ -26,7 +26,8 @@ export async function backfillIcons(root: string, index: IconIndex | null) {
         "Adblock/Quantumult X/" + e.qx,
         "Adblock/Surge/" + e.surge,
       ]),
-      ...native.outputs,
+      // Modified: 2026-11-01 (chance). Native QX is checked/copied, not rewritten by metadata backfill; Surge targets may still receive missing icons.
+      ...native.outputs.filter((file) => file.endsWith(".sgmodule")),
       ...manual.assets.flatMap((e) =>
         [e.qx, e.surge].filter((f): f is string => Boolean(f)),
       ),

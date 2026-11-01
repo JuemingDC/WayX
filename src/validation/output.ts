@@ -744,7 +744,8 @@ export function validateQX(text: any, entry: any): any {
       section = sectionMatch[1].toLowerCase();
       continue;
     }
-    if (!line || line.startsWith("#")) continue;
+    // Modified: 2026-11-01 (chance). Native QX preserves official semicolon and double-slash comments verbatim.
+    if (!line || /^(?:#|;|\/\/)/.test(line)) continue;
     if (/\[hH\]\[tT\]\[tT\]\[pP\](?:\[sS\])?/.test(line)) {
       throw new Error(
         `${entry.id}: Quantumult X output must not emulate case-insensitive flags with manual HTTP case-fold classes: ${line}`,
@@ -767,7 +768,7 @@ export function validateQX(text: any, entry: any): any {
       .split("\n")
       .find(
         (line: any): any =>
-          line.trim() && !line.trim().startsWith("#") && line.includes(bad),
+          line.trim() && !/^(?:#|;|\/\/)/.test(line.trim()) && line.includes(bad),
       );
     if (active) throw new Error(`${entry.id}: unconverted QX token ${bad}`);
   }

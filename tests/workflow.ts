@@ -446,6 +446,25 @@ assert.equal(noField.replace(new RegExp(headerPattern),headerTemplate),noField);
 const embyConverted=convertNativeQxToSurge('# [rewrite_local]\n'+embyRule);
 assert.equal(embyConverted.diagnostics.length,0);
 assert.ok(embyConverted.surge.includes('header-replace Accept-Encoding gzip, deflate, br'));
+// Modified: 2026-11-01 (chance). Correct native QX text survives unchanged, including section/hostname order, regex, comments, body whitespace and author JS URL; only Surge uses the converter.
+const nativeOriginal=String.raw`# [mitm]
+hostname = first.example, second.example
+; source semicolon comment
+// source slash comment
+# [rewrite_local]
+^https://first.example/a url request-body "key" : ".*" request-body "key" : "value"
+^https://first.example/b url script-response-body https://author.example/original.js
+`;
+const nativeCopy=mergeNativeQxSources([{text:nativeOriginal,url:'https://author.example/source.snippet'}],{name:'fixture',stamp:'fixed'});
+assert.ok(nativeCopy.includes(nativeOriginal.trimEnd()));
+const nativeActive=(text:string)=>text.split('\n').filter(line=>line.trim()&&!/^(?:#|;|\/\/)/.test(line.trim()));
+assert.deepEqual(nativeActive(nativeCopy),nativeActive(nativeOriginal));
+const separateSurge=convertNativeQxToSurge(nativeCopy);
+assert.equal(separateSurge.diagnostics.length,0);
+assert.ok(separateSurge.surge.includes('script-path=https://author.example/original.js'));
+assert.ok(nativeCopy.includes('^https://first.example/a url'));
+assert.ok(separateSurge.surge.includes('first\\.example'));
+assert.throws(()=>mergeNativeQxSources([{text:'# [rewrite_local]\nnot-a-supported-declaration',url:'https://author.example/bad'}]),/Unknown native QX/);
 const unscanned=convertNativeQxToSurge(qxConversionInput);
 assert.match(unscanned.surge,/script-path=https:\/\/example.test\/original.js/);
 // Modified: 2026-10-25 (chance). All six native HTTP Script declarations

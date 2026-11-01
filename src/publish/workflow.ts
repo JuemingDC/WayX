@@ -7,7 +7,6 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
 import { convertNativeQxToSurge } from "../emit/conversion.ts";
-import { normalizeUrlRegexForTarget } from "../domain/core.ts";
 import { quoteJq } from "../parser/rewrite.ts";
 import { validateQX } from "../validation/output.ts";
 import { spawnSync } from "node:child_process";
@@ -354,121 +353,44 @@ export function repairNativeQxSource(source: {url: string; text: string}): strin
     ? "# Modified: 2026-11-01 (chance). Repair missing CRLF capture references; replace only an existing Accept-Encoding field.\n# Source declaration: " + original + "\n" + corrected
     : line).join("\n");
 }
+// Modified: 2026-11-01 (chance). Native QX follows check/copy: retain executable text and order; only repair snippet formatting and the explicitly authorized source typo.
 export function mergeNativeQxSources(
   sources: any,
   { name, author, stamp = nowConversionStamp() }: any = {},
 ): any {
-  const sections: any = { filter_local: [], rewrite_local: [], mitm: [] },
-    hosts: any = [];
+  const out: string[] = [
+    "# Name: " + name, "# Updated: " + stamp, "# Copied by: chance",
+    "# Source Authors: " + (author ?? ""), "# Category: app", NATIVE_QX_MARKER, "",
+  ];
   for (const source of sources) {
-    let pending: any = ["# Source: " + source.url];
-    for (const original of repairNativeQxSource(source)
-      .replace(/^\uFEFF/, "")
-      .replace(/\r\n?/g, "\n")
-      .split("\n")) {
-      const line: any = original.trim();
-      if (!line || /^(?:#|;|\/\/)/.test(line)) {
-        pending.push(
-          original.startsWith("#!")
-            ? "# Upstream " + original.slice(2)
-            : /^(?:;|\/\/)/.test(line)
-              ? "# " + original
-              : original,
-        );
+    out.push("# Source: " + source.url);
+    let section: string | null = null;
+    for (const original of repairNativeQxSource(source).replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").split("\n")) {
+      const line = original.trim();
+      const heading = line.match(/^(?:#\s*)?\[(filter_local|rewrite_local|mitm)\]$/i);
+      if (heading) {
+        section = heading[1].toLowerCase();
+        out.push(line.startsWith("#") ? original : "# " + original);
         continue;
       }
-      if (/^\[(?:filter_local|rewrite_local|mitm)\]$/i.test(line)) {
-        pending.push("# " + line);
-        continue;
-      }
-      const mitm: any = line.match(/^hostname\s*=\s*(.*)$/i);
-      if (mitm) {
-        sections.mitm.push(...pending, "# Upstream " + original);
-        pending = [];
-        for (const host of mitm[1]
-          .split(",")
-          .map((x: any): any => x.trim())
-          .filter(Boolean))
-          if (!hosts.includes(host)) hosts.push(host);
-        continue;
-      }
-      const key: any = /\surl(?:-and-header)?\s/.test(line)
-        ? "rewrite_local"
-        : /^(?:host(?:-suffix|-keyword|-wildcard)?|ip-cidr|ip6-cidr|geoip|user-agent)\s*,/i.test(
-              line,
-            )
-          ? "filter_local"
-          : null;
-      if (!key)
-        throw Error(
-          "Unknown native QX declaration in " + source.url + ": " + line,
-        );
-      // Modified: 2026-10-25 (chance). Serialize upstream bare jq into the
-      // existing quoted config format without changing its program or actions.
-      const jq: any =
-        key === "rewrite_local"
-          ? original.match(
-              /^(.*?\surl(?:-and-header)?\s+jsonjq-(?:request|response)-body)\s+(.+)$/,
-            )
-          : null;
-      const quoted: any =
-        jq && !/^'.*'$/.test(jq[2]) ? jq[1] + " " + quoteJq(jq[2]) : original;
-      let serialized: any = quoted.replace(
-        /^(\S+(?:\s+\S+)?\s+url(?:-and-header)?\s+)REJECT$/,
-        "$1reject",
-      );
-      // Modified: 2026-10-26 (chance). Normalize only the URL matcher;
-      // retain original declarations for provenance, not script URLs or bodies.
-      if (key === "rewrite_local")
-        serialized = serialized.replace(
-          /^(\s*)(\S+)/,
-          (_: any, space: any, pattern: any): any =>
-            space + normalizeUrlRegexForTarget(pattern),
-        );
-      sections[key].push(
-        ...pending,
-        ...(serialized !== original
-          ? ["# Source declaration: " + original]
-          : []),
-        serialized,
-      );
-      pending = [];
+      if (/^#!(?!source\s*=)/.test(line)) { out.push("# Upstream " + original.slice(original.indexOf("#!") + 2)); continue; }
+      if (!line || /^(?:#|;|\/\/)/.test(line)) { out.push(original); continue; }
+      const target = /^hostname\s*=/.test(line) ? "mitm"
+        : /\surl(?:-and-header)?\s/.test(line) ? "rewrite_local"
+        : /^(?:host(?:-suffix|-keyword|-wildcard)?|ip-cidr|ip6-cidr|ip-asn|geoip|user-agent)\s*,/i.test(line) ? "filter_local" : null;
+      if (!target) throw Error("Unknown native QX declaration in " + source.url + ": " + line);
+      if (target !== section) { out.push("# [" + target + "]"); section = target; }
+      // Only quoting of bare jq is a formatting correction; never rewrite its program, URL matcher, action or script URL.
+      const jq = original.match(/^(.*?\surl(?:-and-header)?\s+jsonjq-(?:request|response)-body)\s+(.+)$/);
+      const formatted = jq && !/^'.*'$/.test(jq[2]) ? jq[1] + " " + quoteJq(jq[2]) : original;
+      if (formatted !== original) out.push("# Source declaration: " + original);
+      out.push(formatted);
     }
-    // Trailing comments are still source content, even after a MITM declaration.
-    sections.mitm.push(...pending);
-  }
-  const authors: any = [
-    ...new Set([
-      author,
-      ...sources.flatMap((source: any): any =>
-        (source.text.match(/^#!author\s*=\s*(.+)$/im)?.[1] || "")
-          .split(/[,，、&]/)
-          .map((x: any): any => x.trim())
-          .filter(Boolean),
-      ),
-    ]),
-  ];
-  const out: any = [
-    "# Name: " + name,
-    "# Updated: " + stamp,
-    "# Merged by: chance",
-    "# Source Authors: " + authors.join(", "),
-    "# Category: app",
-    NATIVE_QX_MARKER,
-    "",
-  ];
-  for (const key of ["filter_local", "rewrite_local", "mitm"]) {
-    if (
-      !sections[key].some((x: any): any => x.trim()) &&
-      !(key === "mitm" && hosts.length)
-    )
-      continue;
-    out.push("# [" + key + "]", ...sections[key]);
-    if (key === "mitm" && hosts.length)
-      out.push("hostname = " + hosts.join(", "));
     out.push("");
   }
-  return out.join("\n").replace(/\n*$/, "\n");
+  const text = out.join("\n").replace(/\n*$/, "\n");
+  validateQX(text, {id: name ?? "native_qx"});
+  return text;
 }
 export async function prepareNativeQxSync(
   root: any,
@@ -627,16 +549,8 @@ async function prepareNativeQxSource(
         .at(-1) ||
       config.names?.[key] ||
       key;
-    // Modified: 2026-10-30 (chance). Apply app metadata before stable native output comparison.
-    const text: any = addAppIcon(
-      mergeNativeQxSources(sources, {
-        name,
-        author: config.author,
-      }),
-      icons,
-      [key],
-    ).text;
-    validateQX(text, { id: config.prefix + key });
+    // Modified: 2026-11-01 (chance). QX copies checked native declarations; no Loon compiler, URL normalization or icon backfill is applied.
+    const text = mergeNativeQxSources(sources, { name, author: config.author });
     // Modified: 2026-11-01 (chance). Function/HTML enhancements are Modules; advertising filters remain Adblock.
     const category = config.directories?.[sources[0].path.split("/")[0]] ?? "Adblock";
     if (!["Adblock", "Module"].includes(category)) throw Error("Invalid native category");
@@ -656,7 +570,7 @@ async function prepareNativeQxSource(
       });
       outputs.set(
         surgeDir + "/" + config.prefix + key + ".sgmodule",
-        converted.surge,
+        addAppIcon(converted.surge, icons, [key]).text,
       );
       diagnostics.push(
         ...converted.diagnostics.map((item: any): any => ({
