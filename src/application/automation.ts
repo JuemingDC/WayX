@@ -125,7 +125,8 @@ export async function executeChecks(
       );
     }
     // Modified: 2026-11-01 (chance). Surface the actual failure tail in Actions instead of forcing a download of the full artifact to diagnose acquisition/API errors.
-    if (item.status === "failed") console.error((await fs.readFile(log,"utf8")).slice(-12000));
+    if (item.status === "failed")
+      console.error((await fs.readFile(log, "utf8")).slice(-12000));
     results.push(item);
     await writeReport("validation-results.json", report);
   }
@@ -208,8 +209,19 @@ export async function syntaxChecks(
   }
   for (const file of await listFiles("Script")) {
     const relative = "Script/" + file;
-    if (file.endsWith(".js") && (!changedScripts || changed.has(relative)))
-      checks.push(["syntax:" + relative, ["node", "--check", relative]]);
+    // Modified: 2026-11-01 (chance). Universal proxy scripts use classic JS,
+    // not this repository's type=module semantics, regardless of source suffix.
+    const shared = relative.startsWith("Script/Adblock/");
+    if (
+      (shared || file.endsWith(".js")) &&
+      (!changedScripts || changed.has(relative))
+    )
+      checks.push([
+        "syntax:" + relative,
+        shared
+          ? ["node", "src/cli.ts", "script-syntax", relative]
+          : ["node", "--check", relative],
+      ]);
   }
   return checks;
 }

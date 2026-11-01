@@ -38,7 +38,7 @@ try {
   switch (command) {
     case "help":
       console.log(
-        "WayX: prepare setup-jq icons catalog rules sync verify monitor reports issues gate publish summary final check test regenerate regex script-api",
+        "WayX: prepare setup-jq icons catalog rules sync verify monitor reports issues gate publish summary final check test regenerate regex script-api script-syntax",
       );
       break;
     case "prepare":
@@ -178,6 +178,15 @@ try {
         );
       else process.stdout.write(plan.code!);
       if (plan.status === "blocked") process.exitCode = 2;
+      break;
+    }
+    // Modified: 2026-11-01 (chance). Parse proxy callback scripts as classic JS
+    // without executing source code or inheriting package.json module strictness.
+    case "script-syntax": {
+      if (!args[0]) throw Error("Missing script path");
+      const { Script } = await import("node:vm");
+      new Script(await fs.readFile(args[0], "utf8"), { filename: args[0] });
+      console.log("Classic JavaScript syntax passed: " + args[0]);
       break;
     }
     case "regex": {

@@ -6,6 +6,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import {spawnSync} from 'node:child_process';
 import {planUniversalAdblockScript,universalScriptPath} from '../src/parser/universal-script.ts';
 import {prepareScriptApiAdapters} from '../src/application/script-api.ts';
 import {scriptReferences} from '../src/parser/backup-references.ts';
@@ -74,3 +75,17 @@ for(const scenario of ['binary','echo'] as const) {
  }
 }
 console.log('Universal binary/echo programs passed on the same bytes in all three hosts');
+
+// Regression: node --check inherits package type=module for .js and incorrectly
+// rejects valid classic-source deletion. The production checker only parses.
+const syntaxRoot=await fs.mkdtemp(path.join(os.tmpdir(),'wayx-classic-syntax-'));
+try {
+ const plan=planUniversalAdblockScript('var temporary=1;delete temporary;$done({body:"classic"});','loon',[{phase:'response'}]);
+ assert.equal(plan.status,'universal',JSON.stringify(plan.problems));
+ const file=path.join(syntaxRoot,'original.js');
+ await fs.writeFile(file,plan.code!+'\nthrow new Error("must not execute source during syntax check");');
+ const valid=spawnSync(process.execPath,['src/cli.ts','script-syntax',file],{encoding:'utf8'});assert.equal(valid.status,0,valid.stdout+valid.stderr);
+ await fs.writeFile(file,'"use strict";delete temporary;');
+ const invalid=spawnSync(process.execPath,['src/cli.ts','script-syntax',file],{encoding:'utf8'});assert.notEqual(invalid.status,0,'source strict-mode errors must still be rejected');
+}finally{await fs.rm(syntaxRoot,{recursive:true,force:true});}
+console.log('Classic proxy-script syntax gate passed: sloppy source accepted, explicit strict errors rejected, code never executed');
