@@ -387,6 +387,28 @@ assert.match(variants.outputs.get('Adblock/Quantumult X/ishowshu_amap.snippet'),
 assert.doesNotMatch(variants.outputs.get('Adblock/Quantumult X/ishowshu_amap.snippet'),/old\.example/);
 assert.equal(variants.outputs.has('Adblock/Quantumult X/ishowshu_bilibili.snippet'),false);
 assert.equal(variants.skipped[0].application,'bilibili');
+// Modified: 2026-11-01 (chance). Actions pulls exactly Naisi's collection and standalone Xiaohongshu; unrelated files are neither fetched nor registered.
+const naisiConfig=JSON.parse(await fs.readFile(new URL('../.github/sources/native-qx.json',import.meta.url),'utf8')).sources.find((c:any)=>c.prefix==='fmz200_');
+await fs.writeFile(path.join(root,'.github/sources/native-qx.json'),JSON.stringify(naisiConfig));
+const naisiPaths=[...naisiConfig.include,'QuantumultX/rewrite/other.snippet'];
+const naisiText='# [rewrite_local]\n^https://naisi.example/ad url reject-img\n# [mitm]\nhostname = naisi.example\n';
+const fetched:string[]=[];
+const naisiFetch=async(url:string)=>{
+ if(url.includes('/commits/'))return JSON.stringify({sha:'b'.repeat(40)});
+ if(url.includes('/git/trees/'))return JSON.stringify({tree:naisiPaths.map(path=>({path,type:'blob'}))});
+ const file=new URL(url).pathname.split('/').slice(4).join('/');fetched.push(file);return naisiText;
+};
+const naisiPlan=await prepareNativeQxSync(root,{fetchText:naisiFetch});
+assert.deepEqual(fetched.sort(),[...naisiConfig.include].sort());
+assert.equal(naisiPlan.outputs.size,4);
+for(const key of ['blockads','xiaohongshu']){
+ const copy=naisiPlan.outputs.get('Adblock/Quantumult X/fmz200_'+key+'.snippet');
+ assert.ok(copy.includes(naisiText.trimEnd()));
+ assert.ok(naisiPlan.outputs.get('Adblock/Surge/fmz200_'+key+'.sgmodule').includes('data-type=tiny-gif status-code=200'));
+}
+await commitNativeQxSync(root,naisiPlan);
+assert.equal(await fs.readFile(path.join(root,'Adblock/Quantumult X/fmz200_xiaohongshu.snippet'),'utf8'),naisiPlan.outputs.get('Adblock/Quantumult X/fmz200_xiaohongshu.snippet'));
+await assert.rejects(prepareNativeQxSync(root,{fetchText:async(url:string)=>url.includes('/git/trees/')?JSON.stringify({tree:[{path:naisiConfig.include[0],type:'blob'}]}):naisiFetch(url)}),/Missing requested native QX source/);
 // Modified: 2026-10-25 (chance). Verify native QX policies, HTTP actions,
 // unchanged author Script URLs and explicit unsupported header boundaries.
 const qxConversionInput='# Name: Native fixture\n# [filter_local]\nhost,keep.example,direct\nhost-suffix,proxy.example,proxy\nip6-cidr,2001:db8::/32,reject\n# [rewrite_local]\n^https://a.example url reject\n^https://b.example url reject-dict\n^https://c.example url jsonjq-response-body \'delpaths([["ad"],["banner"]])\'\n^https://d.example url script-response-body https://example.test/original.js\n# [mitm]\nhostname = a.example, b.example\n';

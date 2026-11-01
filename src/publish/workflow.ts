@@ -445,6 +445,8 @@ async function prepareNativeQxSource(
     !/^[a-z0-9_]+$/.test(config.prefix)
   )
     throw Error("Invalid native QX registry");
+  // Modified: 2026-11-01 (chance). Explicit native QX allowlists select only the requested collection and standalone app; missing entries fail instead of pruning old outputs.
+  if (config.include && (!Array.isArray(config.include) || !config.include.length || config.include.some((p: any) => typeof p !== "string" || p.startsWith("/") || p.split("/").includes("..") || !p.endsWith(".snippet")))) throw Error("Invalid native QX include list");
   const api: any = "https://api.github.com/repos/" + config.repository;
   const commit: any = JSON.parse(
     await fetchText(api + "/commits/" + encodeURIComponent(config.ref)),
@@ -461,16 +463,17 @@ async function prepareNativeQxSource(
     .filter(
       (x: any): any =>
         x.type === "blob" &&
-        (config.directories
+        (config.include ? config.include.includes(x.path) : (config.directories
           ? new RegExp("^(?:" + Object.keys(config.directories).join("|") + ")/[^/]+\\.conf$")
           : config.layout === "root"
           ? /^[^/]+\.snippet$/
           : /^(?:filter|rewrite)\/[^/]+\.snippet$/
-        ).test(x.path) &&
+        ).test(x.path)) &&
         !(config.exclude || []).includes(x.path),
     )
     .sort((a: any, b: any): any => a.path.localeCompare(b.path, "en"));
   if (!files.length) throw Error("Empty native QX source catalog");
+  if (config.include?.some((p: string) => !files.some((f: any) => f.path === p))) throw Error("Missing requested native QX source");
   const groups: any = new Map(),
     inputs: any = [],
     skipped: any = [],
@@ -596,7 +599,7 @@ export async function commitNativeQxSync(root: any, plan: any): Promise<any> {
     writes: any = new Map();
   for (const relative of new Set([...prior.outputs, ...plan.outputs.keys()])) {
     if (
-      !/^(?:Adblock\/(?:Quantumult X\/(?:ishowshu|zenmofeishi|ddgksf2013)_[a-z0-9-]+\.snippet|Surge\/(?:ishowshu|zenmofeishi|ddgksf2013)_[a-z0-9-]+\.sgmodule)|Module\/(?:QuantumultX\/ddgksf2013_[a-z0-9-]+\.snippet|Surge\/ddgksf2013_[a-z0-9-]+\.sgmodule))$/.test(
+      !/^(?:Adblock\/(?:Quantumult X\/(?:ishowshu|zenmofeishi|ddgksf2013|fmz200)_[a-z0-9-]+\.snippet|Surge\/(?:ishowshu|zenmofeishi|ddgksf2013|fmz200)_[a-z0-9-]+\.sgmodule)|Module\/(?:QuantumultX\/ddgksf2013_[a-z0-9-]+\.snippet|Surge\/ddgksf2013_[a-z0-9-]+\.sgmodule))$/.test(
         relative,
       )
     )
@@ -913,6 +916,8 @@ function adblockSource(row: any): any {
       host: any = url.hostname.toLowerCase();
     // Modified: 2026-11-01 (chance). Label the upstream author consistently in the README.
     if (["github.com", "raw.githubusercontent.com"].includes(host) && url.pathname.split("/")[1] === "ddgksf2013") return "墨鱼";
+    // Modified: 2026-11-01 (chance). Attribute the collection and standalone app to the registered upstream author.
+    if (["github.com", "raw.githubusercontent.com"].includes(host) && url.pathname.split("/")[1] === "fmz200") return "奶思";
     if (host === "kelee.one" || host.endsWith(".kelee.one")) return "可莉";
     if (host === "rucu6.pages.dev") return "RuCu6";
     if (

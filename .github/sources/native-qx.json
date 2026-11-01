@@ -44,6 +44,26 @@
         "Html": "Module"
       },
       "surge": true
+    },
+    {
+      "version": 1,
+      "repository": "fmz200/wool_scripts",
+      "ref": "main",
+      "author": "奶思 / fmz200",
+      "prefix": "fmz200_",
+      "layout": "root",
+      "include": [
+        "QuantumultX/rewrite/rewrite.snippet",
+        "QuantumultX/rewrite/split/partX/Xiaohongshu.snippet"
+      ],
+      "aliases": {
+        "rewrite": "blockads"
+      },
+      "names": {
+        "blockads": "广告拦截&净化合集（奶思）",
+        "xiaohongshu": "小红书（奶思）"
+      },
+      "surge": true
     }
   ]
 }
