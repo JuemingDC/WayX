@@ -476,7 +476,7 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
     // Loon disables the same-phase author Script when a Body Rewrite matches.
     // A narrow owner can preserve that relation without executing remote code.
     const bodyMatchers: any = group.map((item: any): any =>
-      simpleUrlRewriteCondition(item.ast),
+      simpleUrlRewriteCondition(item.ast, { target }),
     );
     const bodyOwner: any =
       external &&
@@ -511,7 +511,9 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
         x.ast.actions.some((a: any): any => a.name.endsWith(".json.jq")),
       );
       const jqMatchers: any = jqGroup
-        ? group.map((x: any): any => simpleUrlRewriteCondition(x.ast))
+        ? group.map((x: any): any =>
+            simpleUrlRewriteCondition(x.ast, { target }),
+          )
         : [];
       if (
         jqGroup &&
@@ -600,7 +602,8 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
           )
         ) {
           const ast: any = item.ast;
-          const narrow: any = simpleUrlRewriteCondition(ast);
+          // Modified: 2026-11-01 (chance). Preserve flags in retained Surge prefilters.
+          const narrow: any = simpleUrlRewriteCondition(ast, { target });
           if (narrow.ok) {
             const pattern: any = narrow.pattern;
             const line: any =

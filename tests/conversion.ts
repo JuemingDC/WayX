@@ -4,7 +4,7 @@
 // Category: Converter / conversion / Regression Suite
 
 import assert from "node:assert/strict";
-import { normalizePluginSource, parseLoonPlugin, convertPlugin, materializeJqFiles, materializeMockFiles, discoverSourceScriptUrls, inspectSourceScript, materializeSourceScripts, materializeConversionContext, validateQX, validateSurgeModule, parseRewriteV2, qxDirectRewritePlan, surgeDirectRewritePlan, surgeRejectRewritePlan, renderQxInlineMockScript, surgeInlineMockPlan, qxPrimitiveForRewriteV2Action, qxRule, surgeRule, rewriteV2AstToSemanticIr, legacyRewriteToSemanticIr, planQxRewrite, planSurgeRewrite, parseScriptDeclaration, planQxScript, planSurgeScript, parseConfigurationDeclaration, planConfiguration, WAYX_SUPPORTED_SOURCE_SECTIONS, cleanSourceComments, groupSourceSectionItems, isSupportedSourceSection, sourceCommentText, attachQxInlineNote, looksLikeCommentedSourceDeclaration, parseSourceMetadataHeader, renderQxSnippetHeader, renderSurgeModuleHeader, compactOutputLines, finalizeOutputLines, hasActiveOutputLines, appendQxOutput, createQxOutputState, qxOutputDestination, qxRuleOutputDestination, qxRewriteOutputDestination, renderQxOutput, appendSurgeOutput, createSurgeOutputState, renderSurgeOutput, surgeOutputDestination, surgeRuleOutputDestination, surgeRewriteOutputDestination, validateConversionMetadata } from "../src/index.ts";
+import { compileRegexForTarget, normalizePluginSource, parseLoonPlugin, convertPlugin, materializeJqFiles, materializeMockFiles, discoverSourceScriptUrls, inspectSourceScript, materializeSourceScripts, materializeConversionContext, validateQX, validateSurgeModule, parseRewriteV2, qxDirectRewritePlan, surgeDirectRewritePlan, surgeRejectRewritePlan, renderQxInlineMockScript, surgeInlineMockPlan, qxPrimitiveForRewriteV2Action, qxRule, surgeRule, rewriteV2AstToSemanticIr, legacyRewriteToSemanticIr, planQxRewrite, planSurgeRewrite, parseScriptDeclaration, planQxScript, planSurgeScript, parseConfigurationDeclaration, planConfiguration, WAYX_SUPPORTED_SOURCE_SECTIONS, cleanSourceComments, groupSourceSectionItems, isSupportedSourceSection, sourceCommentText, attachQxInlineNote, looksLikeCommentedSourceDeclaration, parseSourceMetadataHeader, renderQxSnippetHeader, renderSurgeModuleHeader, compactOutputLines, finalizeOutputLines, hasActiveOutputLines, appendQxOutput, createQxOutputState, qxOutputDestination, qxRuleOutputDestination, qxRewriteOutputDestination, renderQxOutput, appendSurgeOutput, createSurgeOutputState, renderSurgeOutput, surgeOutputDestination, surgeRuleOutputDestination, surgeRewriteOutputDestination, validateConversionMetadata } from "../src/index.ts";
 import { materializeConversionRunContext, convertPluginWithContext, validateConvertedPlugin } from "../src/emit/conversion.ts";
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
@@ -141,7 +141,7 @@ const entry={
   ].join('\n');
   const fallback=convertPlugin(entry,fallbackSource,{stamp:'2026-10-16 14:00:00 +08:00',rawBase:'https://example.com'});
   assert.ok(fallback.qx.includes('api(node{1,3}) url script-response-header'));
-  assert.ok(fallback.surge.includes('pattern="api(node{1,3})",script-path='));
+  assert.ok(fallback.surge.includes('pattern="(?i)api(node{1,3})",script-path='));
   validateQX(fallback.qx,entry);
   validateSurgeModule(fallback.surge,entry);
   const actualSource=await fs.readFile('Resource/Loon/BaiduSearchWebpage_remove_ads.lpx','utf8');
@@ -966,10 +966,10 @@ assert.match(unknownSectionOutput.surge, /# Source declaration: foo = bar/);
 const disabledRewriteOutput = convert(disabledRewriteFixture, disabledRewriteSource, new Map(), STAMP);
 assert.match(disabledRewriteOutput.surge, /^\[Body Rewrite\]$/m);
 assert.match(disabledRewriteOutput.surge, /#response if \$\{url\} ~= \/\^https:\\\/\\\/api\\\.example\\\.com\\\/json\\\?\/i then response\.json\.jq/);
-assert.ok(disabledRewriteOutput.surge.includes("# http-response-jq ^https:\\/\\/api\\.example\\.com\\/json\\? '.data.ads = []'"));
+assert.ok(disabledRewriteOutput.surge.includes("# http-response-jq (?i)^https:\\/\\/api\\.example\\.com\\/json\\? '.data.ads = []'"));
 assert.match(disabledRewriteOutput.surge, /^\[Map Local\]$/m);
 assert.match(disabledRewriteOutput.surge, /#response if \$\{url\} ~= \/\^https:\\\/\\\/api\\\.example\\\.com\\\/mock\\\?\/i then response\.body\.mock\("text", "OK", 200\)/);
-assert.ok(disabledRewriteOutput.surge.includes('# ^https:\\/\\/api\\.example\\.com\\/mock\\? data-type=text data="OK" status-code=200 header="Content-Type:text/plain"'));
+assert.ok(disabledRewriteOutput.surge.includes('# (?i)^https:\\/\\/api\\.example\\.com\\/mock\\? data-type=text data="OK" status-code=200 header="Content-Type:text/plain"'));
 assert.equal(
   disabledRewriteOutput.surge.split(/\r?\n/).some(line => !line.trim().startsWith('#') && /api\\\.example\\\.com\/(?:mock|json)/.test(line)),
   false,
@@ -1980,7 +1980,7 @@ if(selectedCase==='conversion-policy.mjs') {
     assert.ok(pattern);
     const out=convertPlugin(entry,source,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
     for(const target of ['qx','surge']) {
-      const inlinePattern=pattern;
+      const inlinePattern=target==='surge'?compileRegexForTarget(asts[0].condition.right,{target}).pattern:pattern;
       const prefix=target==='qx'?inlinePattern+' url jsonjq-response-body ': 'http-response-jq '+inlinePattern+' ';
       const active=out[target].split('\n').filter(x=>x.startsWith(prefix));
       assert.equal(active.length,asts.length,name+' retains every independent same-regex JSON/JQ declaration');

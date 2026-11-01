@@ -29,7 +29,7 @@ IR 不包含目标 action 名、section 名、helper URL 或目标 fallback。�
 
 能够证明完整等价时优先 native；必要且已支持的语义缺口由共同 helper/dispatcher 承担；不能安全表示则注释源声明并诊断，不生成假可用规则。不得按插件 id、名称、作者或完整 catalog signature 特判。
 
-用户指定的临时正则 flags 省略策略、QX 强制 enable、作者 argument 省略、单条 pipeline 分条输出和 JSON add/replace 直接 setpath 是明确的转换策略，不能称为完整源语义等价。除此之外，不静默删除条件或动作。
+用户指定的 QX 正则 flags 省略策略、QX 强制 enable、作者 argument 省略、单条 pipeline 分条输出和 JSON add/replace 直接 setpath 是明确的转换策略，不能称为完整源语义等价。除此之外，不静默删除条件或动作。
 
 <!-- Modified: 2026-10-25 (chance). Make source/target semantic equivalence the default invariant and distinguish explicit semantic exceptions from syntax preferences. -->
 
@@ -67,9 +67,17 @@ QX/Surge 的目标 URL 正则统一将可识别 HTTP(S) authority 中的字面�
 
 <!-- Modified: 2026-10-26 (chance). QX author confirms ims support; user restores only native Header/Body m/s. -->
 
-2026-10-26 用户提供 Quantumult X 作者回复，确认 URL、request/response-header 和 request/response-body 正则均支持 `(?i)`、`(?m)`、`(?s)` 及组合，版本间支持一致。作者建议 URL 匹配通常省略 flags。用户进一步明确：继续忽略源 `i`，URL 仅保留正则主体；QX Header/Body 恢复源 `m`、`s`，组合按 `(?ms)` 输出，Header 值嵌入使用 `(?ms:pattern)` 保留局部作用域。没有源 flags 时不新增。Surge 未获其作者确认，继续省略源 flags，不依据 QX 回复推断 Surge 支持。
+2026-10-26 用户提供 Quantumult X 作者回复，确认 URL、request/response-header 和 request/response-body 正则均支持 `(?i)`、`(?m)`、`(?s)` 及组合，版本间支持一致。作者建议 URL 匹配通常省略 flags。用户进一步明确：继续忽略源 `i`，URL 仅保留正则主体；QX Header/Body 恢复源 `m`、`s`，组合按 `(?ms)` 输出，Header 值嵌入使用 `(?ms:pattern)` 保留局部作用域。没有源 flags 时不新增。Surge 按下述独立确认恢复 flags，不套用 QX 省略策略。
 
-上述省略 `i`、URL flags 仍是用户授权的语义例外，不能声称支持缺失，也不能声称与保留全部源 flags 完全等价。严格等价接口拒绝被省略的源 flags；QX Header/Body 仅含 m/s 时允许映射。源 AST/IR、作者原脚本和 JavaScript helper 内的 `RegExp(source, flags)` 保留原 flags。协议 Header 名称匹配所需的大小写处理和整头遍历标记不属于源 flags，不因本策略删除；无法安全限制在单字段的 Header 替换继续使用原有 helper/诊断边界。保留域名字面量的 `\.`，不自动给作者正则加锚点；域名点号按下述用户授权策略处理。
+上述 QX 省略 `i`、URL flags 仍是用户授权的语义例外，不能声称支持缺失，也不能声称与保留全部源 flags 完全等价。严格等价接口拒绝被省略的源 flags；QX Header/Body 仅含 m/s 时允许映射。源 AST/IR、作者原脚本和 JavaScript helper 内的 `RegExp(source, flags)` 保留原 flags。协议 Header 名称匹配所需的大小写处理和整头遍历标记不属于源 flags，不因本策略删除；无法安全限制在单字段的 Header 替换继续使用原有 helper/诊断边界。保留域名字面量的 `\.`，不自动给作者正则加锚点；域名点号按下述用户授权策略处理。
+
+
+<!-- Modified: 2026-11-01 (chance). Restore Surge flags based on the supplied Miles / Surge Networks support email. -->
+Surge 官方支持邮件确认：`[URL Rewrite]`、`[Map Local]`、`[Script]`、`[Header Rewrite]` 的 pattern，以及 `[Body Rewrite]` 的 URL 和正文正则均使用 Apple ICU，支持 `(?i)`、`(?m)`、`(?s)`、`(?x)` 及组合，iOS/Mac 共用核心。恢复所有 Surge 输出路径的源 flags，包括 Rewrite v2、Script v2、原生 QX 转换和保留的窄 URL prefilter；不得再以未确认支持为由删除。Loon literal 后缀仍仅解析来源已支持的 i/m/s，映射为固定顺序 `(?ims)`；原生来源中的内联 x 及其作用域原样保留，不凭目标支持扩充来源语法，JS helper 不接受虚构的 `/pattern/x`。ICU 校验继续作为发布门禁。
+
+仅 Surge `[Body Rewrite]` 的正文 regex 默认开启 m，URL regex 没有该默认；所有字段默认关闭 s。Loon 源正文未启用 m 时显式输出 `(?-m)`（与 i/s 合并为 `(?i-m)`、`(?s-m)` 等），源有 m 则保留 m，避免 `^`/`$` 从整段边界扩大到每行边界；正文内的显式作用域仍可覆盖前置模式。该默认补偿只用于明确的 Loon Regex AST，不能把 Surge 原生正文默认强行改为关闭。无源 i/s/x 时不凭空开启；不改变 QX 的既有策略。官方正文默认说明：https://manual.nssurge.com/http/body-rewrite.html 。恢复模式不代表 ICU 与 JavaScript 的 Unicode/换行/匹配替换语义已获全量等价认证。
+
+本次用户授权的 Surge flags 修正同样覆盖暂停可莉来源的现有产物：Actions 从已保存的 Resource/Loon 快照恢复能唯一对应的 URL/Header/Body/Script 字段，不获取新插件、不取消暂停、不重新生成其它内容。保留脚本备份/API 地址，歧义字段保留并记入运行报告 `.github/monitor/.runtime/surge-flags.json`。变更通过原有事务与最终 ICU 校验后发布；重复运行幂等。
 
 
 动态 Regex 只接受完整 `/pattern/flags` 或语义 Regex 节点，不执行表达式、不二次展开变量，缺失或无效值不匹配；生成 helper 保留解析出的 `i/m/s`。
@@ -105,7 +113,7 @@ add/replace 的 PATH 使用保留 String/Number 类型的路径数组，特殊�
 
 单条固定作者 jq 或文件 jq 优先使用原 URL matcher 和 QX jsonjq-request/response-body、Surge http-request/response-jq；不因可编译为 JavaScript、嵌套路径、flags 或同阶段其它声明自动迁为 Script。原生 matcher 无法表示的纯 jq 声明保持既有 Review/注释边界。
 
-动态路径/值、数组索引和复杂条件按各 action 的既有 native/必要 helper/Review 边界处理。固定对象路径的 JSON 批量动作原生优先，flags 不单独导致宽 matcher helper；有 flags 的原生映射保留兼容说明。
+动态路径/值、数组索引和复杂条件按各 action 的既有 native/必要 helper/Review 边界处理。固定对象路径的 JSON 批量动作原生优先，flags 不单独导致宽 matcher helper；仅仍省略 flags 的 QX 原生映射保留相应兼容说明；Surge 恢复 flags 后不再输出过期的省略警告。
 
 必要 JS runtime 支持的固定 JQ 子集可含 identity、固定对象赋值、del/delete-many、点分及 quoted bracket 路径，不支持任意完整 jq。一个 JQ action 成功才提交，失败回滚当前 action，先前 action 的提交不回滚，后续动作继续。原生 JQ 的错误行为不套用 JS helper 的事务语义。
 

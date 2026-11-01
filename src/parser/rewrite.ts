@@ -2135,15 +2135,16 @@ function nativeJsonPriorityPlan(ast: any, target: any): any {
   )
     return null;
   // Fixed JSON batches use the same native matcher compatibility contract as JQ.
-  const matcher: any = simpleUrlRewriteCondition(ast);
+  const matcher: any = simpleUrlRewriteCondition(ast, { target });
   if (!matcher.ok) return null;
   const mapped: any = jsonPipelineToSafeNativeJq(ast);
   if (!mapped.ok) return null;
-  const note: any = ast.condition?.right?.flags
-    ? "# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags " +
-      ast.condition.right.flags +
-      "; user-authorized compatibility downgrade; matching semantics may differ.\n"
-    : "";
+  const note: any =
+    target === "qx" && ast.condition?.right?.flags
+      ? "# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags " +
+        ast.condition.right.flags +
+        "; user-authorized compatibility downgrade; matching semantics may differ.\n"
+      : "";
   const mapping: any = REWRITE_MUTATION_MAPPINGS[ast.actions[0].name];
   const line: any =
     target === "qx"
@@ -2515,7 +2516,8 @@ export function simpleUrlRewriteCondition(
     return unsupported("condition is not a single fixed URL comparison");
   // URL matcher bodies are source regex bodies after the Loon literal wrapper
   // has been removed by the parser. Do not compile/canonicalize them here.
-  const compiled: any = compileRegexForTarget(match.regex);
+  // Modified: 2026-11-01 (chance). Honor target URL flags, including Script v2.
+  const compiled: any = compileRegexForTarget(match.regex, { target });
   if (!compiled.ok) return compiled;
   return { ...compiled, regex: match.regex, capture: match.capture };
 }
@@ -2869,7 +2871,7 @@ export function surgeDirectRewritePlan(ast: any): any {
   validateRewriteV2Ast(ast);
   if (ast.actions.length !== 1)
     return unsupported("Surge direct mapping requires exactly one action");
-  const condition: any = simpleUrlRewriteCondition(ast);
+  const condition: any = simpleUrlRewriteCondition(ast, { target: "surge" });
   if (!condition.ok) return condition;
   const action: any = ast.actions[0];
   if (action.name === "request.json.jq" || action.name === "response.json.jq") {
@@ -2920,7 +2922,7 @@ export function surgeDirectRewritePlan(ast: any): any {
     const replacement: any = stringNode(action.args[1]);
     if (regex?.type !== "regex" || replacement === null)
       return unsupported(action.name + ": invalid body replacement arguments");
-    // Modified: 2026-10-26 (chance). Keep Surge flag mapping independently disabled.
+    // Modified: 2026-11-01 (chance). Restore flags and account for Surge body default m.
     const bodyRegex: any = compileRegexForTarget(regex, {
       subject: "body",
       target: "surge",
@@ -3003,7 +3005,7 @@ export function surgeRedirectRewritePlan(
       "Surge URL Rewrite mapping requires one redirect/url.replace action",
     );
   }
-  const condition: any = simpleUrlRewriteCondition(ast);
+  const condition: any = simpleUrlRewriteCondition(ast, { target: "surge" });
   if (!condition.ok) return condition;
   const action: any = ast.actions[0];
   if (action.name === "redirect") {
@@ -3059,7 +3061,7 @@ export function surgeRejectRewritePlan(ast: any): any {
   validateRewriteV2Ast(ast);
   if (ast.actions.length !== 1)
     return unsupported("Surge reject mapping requires exactly one action");
-  const condition: any = simpleUrlRewriteCondition(ast);
+  const condition: any = simpleUrlRewriteCondition(ast, { target: "surge" });
   if (!condition.ok) return condition;
   const action: any = ast.actions[0];
   if (
@@ -3166,7 +3168,7 @@ function surgeHeaderLine(pattern: any, action: any, args: any): any {
     const replacement: any = fixedNoTemplate(args[2], "header replacement");
     if (regex?.type !== "regex")
       throw new Error("header.replace regex must be fixed");
-    // Modified: 2026-10-26 (chance). QX author confirmation does not apply to Surge.
+    // Modified: 2026-11-01 (chance). Surge support confirms header inline flags.
     const compiled: any = compileRegexForTarget(regex, {
       subject: "header",
       target: "surge",
@@ -3208,7 +3210,7 @@ export function surgeHeaderRewritePlan(ast: any): any {
       "Surge Header Rewrite requires same-phase header actions only",
     );
   }
-  const condition: any = simpleUrlRewriteCondition(ast);
+  const condition: any = simpleUrlRewriteCondition(ast, { target: "surge" });
   if (!condition.ok) return condition;
   try {
     const lines: any = [];
@@ -3300,7 +3302,7 @@ export function surgeInlineMockPlan(ast: any): any {
   validateRewriteV2Ast(ast);
   if (ast.phase !== "response")
     return unsupported("Surge Map Local maps response.body.mock only");
-  const condition: any = simpleUrlRewriteCondition(ast);
+  const condition: any = simpleUrlRewriteCondition(ast, { target: "surge" });
   if (!condition.ok) return condition;
   const mocks: any = ast.actions.filter(
     (action: any): any => action.name === "response.body.mock",

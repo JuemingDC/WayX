@@ -1300,18 +1300,19 @@ for (const target of ['qx','surge']) for (const flags of ['', 'i','m','s','im','
   const regex={type:'regex',pattern:String.raw`^https:\/\/api\.example\.com\/(a|b)[im]+$`,flags};
   const before=structuredClone(regex);
   const compiled=compileRegexForTarget(regex,{target});
-  assert.equal(compiled.pattern,regex.pattern);
+  assert.equal(compiled.pattern,(target==='surge'&&flags?'(?'+[...'ims'].filter(f=>flags.includes(f)).join('')+')':'')+regex.pattern);
   assert.deepEqual(regex,before,'native lowering preserves source AST and captures');
-  assert.equal(compileRegexForTarget(regex,{target,requireEquivalent:true}).ok,!flags,'inline policy does not assert unverified client equivalence');
+  assert.equal(compileRegexForTarget(regex,{target,requireEquivalent:true}).ok,target==='surge'||!flags,'inline policy does not assert unverified client equivalence');
 }
 
-// Modified: 2026-10-26 (chance). Only QX Header/Body source m/s return;
-// source i and all URL flags stay omitted, and Surge is independently disabled.
+// Modified: 2026-11-01 (chance). Surge restores ims; QX keeps its existing policy.
+// Surge body explicitly disables the default m when absent from source.
 for(const target of ['qx','surge']) for(const subject of ['url','header','body','script']) for(const flags of ['', 'i','m','s','im','is','ms','ims','smi']) {
   const regex={type:'regex',pattern:'a.b',flags},before=JSON.stringify(regex);
-  const mapped=target==='qx'&&['header','body'].includes(subject)?[...'ms'].filter(f=>flags.includes(f)).join(''):'';
+  const mapped=target==='surge'?[...'ims'].filter(f=>flags.includes(f)).join(''):target==='qx'&&['header','body'].includes(subject)?[...'ms'].filter(f=>flags.includes(f)).join(''):'';
+  const mode=mapped+(target==='surge'&&subject==='body'&&!flags.includes('m')?'-m':'');
   const out=compileRegexForTarget(regex,{target,subject});
-  assert.equal(out.pattern,(mapped?'(?'+mapped+')':'')+'a.b');
+  assert.equal(out.pattern,(mode?'(?'+mode+')':'')+'a.b');
   assert.equal(JSON.stringify(regex),before);
   assert.equal(compileRegexForTarget(regex,{target,subject,requireEquivalent:true}).ok,[...flags].every(f=>mapped.includes(f)));
 }
@@ -1319,7 +1320,7 @@ const restoredBodyAst=parseRewriteV2('response if ${url} ~= /api/i then response
 const restoredBody=qxDirectRewritePlan(restoredBodyAst);
 assert.ok(restoredBody.line.includes('api url response-body (?ms)a.b response-body x'));
 assert.ok(!restoredBody.line.includes('(?i)'));
-assert.ok(!surgeDirectRewritePlan(restoredBodyAst).line.includes('(?ms)'));
+assert.ok(surgeDirectRewritePlan(restoredBodyAst).line.includes('http-response (?i)api (?ims)a.b x'));
 const restoredHeaderSource='request if ${url} ~= /api/i then request.header.replace("X-Test", /abc/ims, "xyz")';
 const restoredHeaderIr=rewriteV2AstToSemanticIr(parseRewriteV2(restoredHeaderSource),restoredHeaderSource);
 const restoredHeader=planQxRewrite(restoredHeaderIr);
@@ -1365,9 +1366,9 @@ const surgeRedirectV2 = surgeRedirectRewritePlan(redirectV2);
 assert.equal(surgeRedirectV2.ok, true);
 assert.equal(
   surgeRedirectV2.line,
-  '(^https:\\/\\/live\\.bilibili\\.com\\/\\d+)(?:\\/?\\?.*) $1 302',
+  '(?i)(^https:\\/\\/live\\.bilibili\\.com\\/\\d+)(?:\\/?\\?.*) $1 302',
 );
-assert.match(surgeRedirectV2.line, /^\(\^/);
+assert.match(surgeRedirectV2.line, /^\(\?i\)\(\^/);
 assert.equal(surgeRedirectV2.line.includes('\\/'), true);
 assert.match(surgeRedirectV2.line, /\$1 302$/);
 
@@ -1561,6 +1562,7 @@ const surgeScriptV2Native = surgeScriptV2Plan(
   {scriptUrl:'https://example.com/request.js', name:'request_script'},
 );
 assert.equal(surgeScriptV2Native.ok, true);
+assert.ok(surgeScriptV2Native.line.includes("pattern=(?i)submit,"));
 assert.match(surgeScriptV2Native.line, /^request_script = type=http-request,/);
 assert.match(surgeScriptV2Native.line, /requires-body=true/);
 assert.match(surgeScriptV2Native.line, /binary-body-mode=true/);

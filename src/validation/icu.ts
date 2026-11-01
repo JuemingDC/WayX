@@ -80,13 +80,15 @@ export function replaceIcu(
   pattern: string,
   replacement: string,
   text: string,
+  // Modified: 2026-11-01 (chance). Fixtures can reproduce Surge body default MULTILINE (8).
+  flags: number = 0,
 ): string {
   const api = icu(),
     source = Buffer.from(pattern, "utf16le"),
     input = Buffer.from(text, "utf16le"),
     value = Buffer.from(replacement, "utf16le"),
     status = [0],
-    compiled = api.open(source, source.length / 2, 0, null, status);
+    compiled = api.open(source, source.length / 2, flags, null, status);
   if (status[0] > 0 || !compiled) throw Error(api.errorName(status[0]));
   try {
     api.setText(compiled, input, input.length / 2, status);

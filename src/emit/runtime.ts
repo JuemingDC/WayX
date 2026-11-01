@@ -966,7 +966,13 @@ function expand(action: any): any {
     action.args.map((arg: any): any => arg.items[i]),
   );
 }
-function coarsePattern(ast: any): any {
+function coarsePattern(ast: any, target: any): any {
+  // Modified: 2026-11-01 (chance). A Surge helper prefilter must retain the
+  // source URL flags too; its internal JS guard cannot recover missed requests.
+  if (target === "surge") {
+    const matcher = simpleUrlRewriteCondition(ast, { target });
+    if (matcher.ok) return matcher.pattern;
+  }
   return qxRewriteMatcherPlan(ast).urlPattern;
 }
 function jsonValueSource(
@@ -1486,7 +1492,7 @@ function renderRewriteScript(
       ? "script-request-header"
       : "script-response-header";
   return {
-    pattern: coarsePattern(ast),
+    pattern: coarsePattern(ast, target),
     script: lines.join("\n"),
     qxAction,
     surgeType: ast.phase === "request" ? "http-request" : "http-response",

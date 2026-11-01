@@ -503,7 +503,7 @@ export function normalizeRegexBodyForTarget(pattern: any): any {
 export function normalizeUrlRegexForTarget(pattern: any): any {
   const source: any = normalizeRegexBodyForTarget(pattern);
   const prefix: any = source.match(
-    /^(?:\(\?[ims-]+\))?\^?http(?:s|\(s\)|\(\?:s\))?\??:(?:\\?\/){2}/,
+    /^(?:\(\?[imsx-]+\))?\^?http(?:s|\(s\)|\(\?:s\))?\??:(?:\\?\/){2}/,
   );
   if (!prefix) return source;
   let out: any = source.slice(0, prefix[0].length),
@@ -654,6 +654,12 @@ export function validateTargetRegex(
   ) {
     throw new Error(label + ": missing or malformed target regex: " + value);
   }
+  // Modified: 2026-11-01 (chance). ICU extended mode owns comment/whitespace
+  // parsing; JS/parenthesis heuristics cannot validate comments containing ().
+  if (/\(\?[imsx-]*x[imsx-]*[:)]/.test(value)) {
+    targetRegexInventory.set(value, label);
+    return;
+  }
   let escaped: any = false,
     classDepth: any = 0,
     nestedClass: any = false,
@@ -688,10 +694,10 @@ export function validateTargetRegex(
   // Leave dialect-specific constructs to the client engine, while still
   // enforcing the structural/transport checks above for every expression.
   targetRegexInventory.set(value, label);
-  if (nestedClass || /\\[pPQN]|\(\?>|(?:[*+?]|\})\+|\(\?[ims-]+:/.test(value))
+  if (nestedClass || /\\[pPQN]|\(\?>|(?:[*+?]|\})\+|\(\?[imsx-]+:/.test(value))
     return;
   const portable: any = value
-    .replace(/\(\?[ims-]+\)/g, "")
+    .replace(/\(\?[imsx-]+\)/g, "")
     .replace(/\(\?#[^)]*\)/g, "");
   try {
     new RegExp(portable);
@@ -701,9 +707,9 @@ export function validateTargetRegex(
     );
   }
 }
-// Modified: 2026-10-26 (chance). QX author confirms ims support. User
-// requests only source m/s in Header/Body; URL flags and source i stay omitted.
-// Surge remains disabled pending its own field-specific confirmation.
+// Modified: 2026-11-01 (chance). Surge support confirms ICU inline flags in
+// URL/Header/Body/Map Local/Script. Restore Surge flags independently of the
+// existing QX omission policy; Body Rewrite alone defaults to multiline.
 export const TARGET_REGEX_CAPABILITIES: any = Object.freeze(
   Object.fromEntries(
     ["qx", "surge", "generic"].map((target: any): any => [
@@ -713,13 +719,16 @@ export const TARGET_REGEX_CAPABILITIES: any = Object.freeze(
           ["url", "body", "header", "script"].map((field: any): any => [
             field,
             Object.freeze({
-              inlineFlags:
-                target === "qx" ? "verified" : "temporarily-disabled",
-              flags: "ims",
+              inlineFlags: ["qx", "surge"].includes(target)
+                ? "verified"
+                : "temporarily-disabled",
+              flags: target === "surge" ? "imsx" : "ims",
               emitFlags:
-                target === "qx" && ["body", "header"].includes(field)
-                  ? "ms"
-                  : "",
+                target === "surge"
+                  ? "imsx"
+                  : target === "qx" && ["body", "header"].includes(field)
+                    ? "ms"
+                    : "",
             }),
           ]),
         ),
@@ -767,9 +776,15 @@ export function compileRegexForTarget(
       pattern,
       sourceFlags: flags,
     };
-  const targetPattern: any = mappedFlags
-    ? "(?" + mappedFlags + ")" + pattern
-    : pattern;
+  // Modified: 2026-11-01 (chance). Disable Surge body default m when the
+  // source did not enable it; an explicit inline source group can override it.
+  const disableMultiline =
+    target === "surge" && subject === "body" && !flags.includes("m");
+  const prefix =
+    mappedFlags || disableMultiline
+      ? "(?" + mappedFlags + (disableMultiline ? "-m" : "") + ")"
+      : "";
+  const targetPattern: any = prefix + pattern;
   return {
     ok: true,
     pattern: targetPattern,

@@ -7,10 +7,12 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {spawnSync} from 'node:child_process';
 import {parseRewriteV2,parseLoonPlugin,materializeConversionContext,materializeJqFiles,convertPlugin} from '../src/index.ts';
-import {validateConvertedPlugin} from '../src/emit/conversion.ts';
+import {validateConvertedPlugin,convertNativeQxToSurge} from '../src/emit/conversion.ts';
 import {renderSingleRewriteMutationScript,renderMixedRewriteScript,renderQxRedirectScript,renderQxInlineMockScript} from '../src/emit/runtime.ts';
 import {evaluateRewriteActions} from '../src/domain/core.ts';
-import {parseJsonKeyPath} from '../src/parser/rewrite.ts';
+import {parseJsonKeyPath,surgeDirectRewritePlan} from '../src/parser/rewrite.ts';
+import {compileRegexForTarget,validateTargetRegex} from '../src/domain/core.ts';
+import {validateIcuPatterns} from '../src/validation/icu.ts';
 const entry={id:'RuntimePolicy',source:'https://example.test/plugins/source.lpx',category:'Test'};
 const options={stamp:'2026-10-13',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'};
 const normalize=value=>JSON.parse(JSON.stringify(value));
@@ -67,8 +69,7 @@ for(const target of ['qx','surge'])for(const phase of ['request','response'])for
   const program=line.match(/'(.+)'$/)[1];const result=spawnSync('jq',['-c',program],{input:JSON.stringify(input),encoding:'utf8'});
   assert.equal(result.status,0,result.stderr);assert.deepEqual(JSON.parse(result.stdout),expected);checked++;
 }
-// Modified: 2026-10-30 (chance). Match the existing authorized flag policy:
-// QX body keeps m/s; source i and Surge native flags are omitted.
+// Modified: 2026-11-01 (chance). Surge restores flags and compensates default m; QX retains m/s.
 for(const phase of ['request','response'])for(const flags of ['i','m','s','ims']) {
   const line=phase+' if ${url} ~= /api/i then '+phase+'.body.replace([/old/'+flags+',/disabled/],["new","enabled"])';
   const output=convertPlugin(entry,'[Rewrite]\n'+line,options);validateConvertedPlugin(entry,output);
@@ -76,7 +77,7 @@ for(const phase of ['request','response'])for(const flags of ['i','m','s','ims']
   for(const target of ['qx','surge']) {
     const active=output[target].split('\n').filter(line=>line && !line.startsWith('#'));
     assert.equal(active.filter(line=>line.includes(target==='qx'?phase+'-body':'http-'+phase+' ')).length,2);
-    const nativeFlags=target==='qx'?flags.replace(/i/g,''):'';assert.ok(active.some(line=>line.includes((nativeFlags?'(?'+nativeFlags+')':'')+'old')));checked++;
+    const nativeFlags=target==='qx'?flags.replace(/i/g,''):flags+(flags.includes('m')?'':'-m');assert.ok(active.some(line=>line.includes((nativeFlags?'(?'+nativeFlags+')':'')+'old')));checked++;
   }
 }
 // QX whole-header replacements: actual generated regex and capture templates
@@ -484,7 +485,8 @@ function executeSelectedJq(output,target,phase,body) {
       const jq=runIsolatedCase('jq',['-c',filter],{input:'{"data":{"ad":true,"keep":1}}',encoding:'utf8'});assert.equal(jq.status,0,jq.stderr);
       const expected=operation==='delete'?{data:{}}:operation==='replace'?{data:{ad:false,keep:2}}:{data:{ad:false,keep:2}};
       assert.deepEqual(JSON.parse(jq.stdout),expected);
-      if(flags)assert.match(output[target],/COMPATIBILITY LIMITATION.*matching semantics may differ/);
+      if(flags&&target==='qx')assert.match(output[target],/COMPATIBILITY LIMITATION.*matching semantics may differ/);
+      if(target==='surge')assert.doesNotMatch(output[target],/temporarily omits Loon flags/);
       checked++;
     }
   }
@@ -585,3 +587,28 @@ const mockOutput=convertPlugin(entry,'[Rewrite]\n'+mockChain,{...options,...mock
 assert.doesNotMatch(mockOutput.qx+mockOutput.surge,/REVIEW REQUIRED/);
 for(const body of ['ONE','TWO'])assert.ok([...mockOutput.generatedScripts.values()].some(script=>script.includes(body)));
 console.log('Script/Mock pipeline isolation passed: guarded helpers in both sections/targets and indexed response mock dependencies');
+
+// Modified: 2026-11-01 (chance). Exercise actual ICU with Surge body default m;
+// compare Loon JS ims behavior on ASCII/newline fixtures instead of string-only tests.
+for(const flags of ['', 'i', 'm', 's', 'im', 'is', 'ms', 'ims']) {
+  const plan=surgeDirectRewritePlan(parseRewriteV2('response if ${url} ~= /API/i then response.body.replace(/^a.b$/'+flags+', "hit")'));
+  assert.ok(plan.ok); assert.equal(plan.pattern,'(?i)API');
+  const regex=compileRegexForTarget({type:'regex',pattern:'^a.b$',flags},{target:'surge',subject:'body'});
+  for(const body of ['a.b','A.B','a\nb','before\na.b\nafter','before\nA\nB\nafter']) {
+    assert.equal(replaceIcu(regex.pattern,'hit',body,8),body.replace(new RegExp('^a.b$',flags+'g'),'hit'));
+  }
+}
+for(const pattern of ['(?x)^https?://example\\.com/api', '(?x:a b)', '(?x)a# ignored ( [']) {
+  validateTargetRegex(pattern,'Surge extended mode fixture');
+  validateIcuPatterns([{pattern,label:'Surge extended mode fixture'}]);
+}
+assert.equal(replaceIcu('(?x)a b','hit','ab'),'hit');
+assert.equal(replaceIcu('a.b','hit','a\nb'),'a\nb');
+assert.equal(replaceIcu('(?s)a.b','hit','a\nb'),'hit');
+console.log('Surge restored flags passed: actual ICU i/m/s, default-m compensation and native x syntax');
+
+// Native inline flags retain their original scope and are not reinterpreted as Loon suffixes.
+const nativeFlagsOutput=convertNativeQxToSurge('# [rewrite_local]\n(?ims)^https://example.com/a url reject\n(?x)^https://example.com/b url script-response-body https://example.test/original.js\n(?i)^https://example.com/c url jsonjq-response-body \'.\'\n',{id:'NativeFlags'});
+assert.ok(nativeFlagsOutput.surge.includes('(?ims)^https://example\\.com/a _ reject'));
+assert.ok(nativeFlagsOutput.surge.includes('pattern=(?x)^https://example\\.com/b,script-path='));
+assert.ok(nativeFlagsOutput.surge.includes('http-response-jq (?i)^https://example\\.com/c'));

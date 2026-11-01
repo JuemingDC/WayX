@@ -67,6 +67,23 @@ if (selectedCase === "source-script-url-preservation.mjs") {
 const ROOT=process.cwd();
 const catalog=await loadLoonSourceCatalog(path.join(ROOT,'.github','sources','loon.json'));
 const failures=[];
+// Modified: 2026-11-01 (chance). Source identity survives verified backup/API
+// rebinding; require the exact bound operand, source provenance and byte audit.
+const backupIndex=JSON.parse(await fs.readFile(path.join(ROOT,'Resource/Backup/index.json'),'utf8'));
+const {validateSourceBackups}=await import('../src/validation/backups.ts');
+assert.deepEqual(await validateSourceBackups(ROOT),[]);
+const rawBase='https://raw.githubusercontent.com/JuemingDC/WayX/main/';
+function preservesReference(text, ref, artifact) {
+  if(text.includes(ref)) return true;
+  const source=new URL(ref), fragment=source.hash; source.hash='';
+  const url=source.href;
+  const bound=(backupIndex.bindings?.[artifact]?.[ref] ?? backupIndex.bindings?.[artifact]?.[url])?.path;
+  const validBound=bound && backupIndex.adapters?.[bound]?.sourceUrl===url;
+  const archived=backupIndex.latest[url];
+  const validArchive=archived && backupIndex.objects[archived]?.kind==='script' && backupIndex.objects[archived]?.url===url;
+  return Boolean((validBound && text.includes(rawBase+bound+fragment)) ||
+    (validArchive && text.includes(rawBase+archived+fragment)));
+}
 
 for(const entry of catalog){
   const source=await fs.readFile(path.join(ROOT,'Resource','Loon',entry.file),'utf8');
@@ -79,8 +96,8 @@ for(const entry of catalog){
     catch { continue; } // relative refs are covered by resolveOriginalUrl unit tests.
     if (!['http:','https:'].includes(url.protocol)) continue;
 
-    if(!qx.includes(ref)) failures.push({plugin:entry.id,target:'qx',sourceScript:ref});
-    if(!surge.includes(ref)) failures.push({plugin:entry.id,target:'surge',sourceScript:ref});
+    if(!preservesReference(qx,ref,qxTargetPath(entry))) failures.push({plugin:entry.id,target:'qx',sourceScript:ref});
+    if(!preservesReference(surge,ref,surgeTargetPath(entry))) failures.push({plugin:entry.id,target:'surge',sourceScript:ref});
 
     const basename=decodeURIComponent(url.pathname.split('/').filter(Boolean).at(-1)||'');
     if(basename){
