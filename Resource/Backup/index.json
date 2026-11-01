@@ -12247,6 +12247,357 @@
         "$done",
         "$response.body"
       ]
+    },
+    "Script/Adblock/kelee.one-d61358f358cf/BiliComic_remove_ads.js": {
+      "path": "Script/Adblock/kelee.one-d61358f358cf/BiliComic_remove_ads.js",
+      "sourceUrl": "https://kelee.one/Resource/JavaScript/BiliComic/BiliComic_remove_ads.js",
+      "sourceSha256": "a44f3d9f44b79940c1d75561a3e4ddc1a57a6a989b6c39f7d97e48db4245224d",
+      "sha256": "89ea15dff697166c6c4d5c573fdc7219461d961277eb2d4e14fb92ec00061dbf",
+      "from": "loon",
+      "targets": [
+        "qx",
+        "surge",
+        "loon"
+      ],
+      "contexts": {
+        "response": {
+          "qx": {
+            "from": "loon",
+            "to": "qx",
+            "phase": "response",
+            "binary": false
+          },
+          "surge": {
+            "from": "loon",
+            "to": "surge",
+            "phase": "response",
+            "binary": false
+          },
+          "loon": {
+            "from": "loon",
+            "to": "loon",
+            "phase": "response",
+            "binary": false
+          }
+        }
+      },
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ]
+    },
+    "Script/Adblock/kelee.one-1717ca508ca6/CaixinMedia_remove_ads.js": {
+      "path": "Script/Adblock/kelee.one-1717ca508ca6/CaixinMedia_remove_ads.js",
+      "sourceUrl": "https://kelee.one/Resource/JavaScript/CaixinMedia/CaixinMedia_remove_ads.js",
+      "sourceSha256": "591a0e4aa1e5b6efb60a1d88fb9ef04e2d372cc4b2f3a8cc7d40f8abd6622ca5",
+      "sha256": "19b9379c4e76c06d4aee8928c5a8899accc9028bd7b0f869d1520c39478187b5",
+      "from": "loon",
+      "targets": [
+        "qx",
+        "surge",
+        "loon"
+      ],
+      "contexts": {
+        "response": {
+          "qx": {
+            "from": "loon",
+            "to": "qx",
+            "phase": "response",
+            "binary": false
+          },
+          "surge": {
+            "from": "loon",
+            "to": "surge",
+            "phase": "response",
+            "binary": false
+          },
+          "loon": {
+            "from": "loon",
+            "to": "loon",
+            "phase": "response",
+            "binary": false
+          }
+        }
+      },
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ]
+    },
+    "Script/Adblock/rucu6.pages.dev-d477c79dc184/myblockads.js": {
+      "path": "Script/Adblock/rucu6.pages.dev-d477c79dc184/myblockads.js",
+      "sourceUrl": "https://rucu6.pages.dev/Scripts/myblockads.js",
+      "sourceSha256": "55725115e4adc11d8594d252617728c3b0267caa44fec21e6e819c9a81e17fa8",
+      "sha256": "3ab230299db55474c1b96b1fdaf85908a2858b276e6873bde807ba8cdb93ca05",
+      "from": "loon",
+      "targets": [
+        "qx",
+        "surge",
+        "loon"
+      ],
+      "contexts": {
+        "response": {
+          "qx": {
+            "from": "loon",
+            "to": "qx",
+            "phase": "response",
+            "binary": false
+          },
+          "surge": {
+            "from": "loon",
+            "to": "surge",
+            "phase": "response",
+            "binary": false
+          },
+          "loon": {
+            "from": "loon",
+            "to": "loon",
+            "phase": "response",
+            "binary": false
+          }
+        }
+      },
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ]
+    },
+    "Script/Adblock/rucu6.pages.dev-8f7d651e07b1/kugou.js": {
+      "path": "Script/Adblock/rucu6.pages.dev-8f7d651e07b1/kugou.js",
+      "sourceUrl": "https://rucu6.pages.dev/Scripts/kugou.js",
+      "sourceSha256": "6063f59363090b1434f415eda9ade4f6011a7b409d0d500677cc4a081f89f43d",
+      "sha256": "7660f89be791df843f000293116666d859ea2c1f5e3150934a0c062ee4bd6537",
+      "from": "loon",
+      "targets": [
+        "qx",
+        "surge",
+        "loon"
+      ],
+      "contexts": {
+        "response": {
+          "qx": {
+            "from": "loon",
+            "to": "qx",
+            "phase": "response",
+            "binary": false
+          },
+          "surge": {
+            "from": "loon",
+            "to": "surge",
+            "phase": "response",
+            "binary": false
+          },
+          "loon": {
+            "from": "loon",
+            "to": "loon",
+            "phase": "response",
+            "binary": false
+          }
+        }
+      },
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ]
+    },
+    "Script/Adblock/kelee.one-6659152f24c8/Soul_remove_ads.js": {
+      "path": "Script/Adblock/kelee.one-6659152f24c8/Soul_remove_ads.js",
+      "sourceUrl": "https://kelee.one/Resource/JavaScript/Soul/Soul_remove_ads.js",
+      "sourceSha256": "5a9a02b54668a58dbe2942d39eca12612b2f4669a6cd4fe2847032cbea753d0a",
+      "sha256": "de23a64d973d6020f3777790415c5e0567416ca72dffe5b681d44e995fc3d74e",
+      "from": "loon",
+      "targets": [
+        "qx",
+        "surge",
+        "loon"
+      ],
+      "contexts": {
+        "response": {
+          "qx": {
+            "from": "loon",
+            "to": "qx",
+            "phase": "response",
+            "binary": false
+          },
+          "surge": {
+            "from": "loon",
+            "to": "surge",
+            "phase": "response",
+            "binary": false
+          },
+          "loon": {
+            "from": "loon",
+            "to": "loon",
+            "phase": "response",
+            "binary": false
+          }
+        }
+      },
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ]
+    },
+    "Script/Adblock/kelee.one-9d853d73b21f/Taobao_remove_ads.js": {
+      "path": "Script/Adblock/kelee.one-9d853d73b21f/Taobao_remove_ads.js",
+      "sourceUrl": "https://kelee.one/Resource/JavaScript/Taobao/Taobao_remove_ads.js",
+      "sourceSha256": "3ccb2093683d84a0085a24506fb04d3ac87713e8e1bade764711816e8908d903",
+      "sha256": "f8fb98e78664ba2b831038101750e7d9a06f725212be428896f28c09afc856b3",
+      "from": "loon",
+      "targets": [
+        "qx",
+        "surge",
+        "loon"
+      ],
+      "contexts": {
+        "response": {
+          "qx": {
+            "from": "loon",
+            "to": "qx",
+            "phase": "response",
+            "binary": false
+          },
+          "surge": {
+            "from": "loon",
+            "to": "surge",
+            "phase": "response",
+            "binary": false
+          },
+          "loon": {
+            "from": "loon",
+            "to": "loon",
+            "phase": "response",
+            "binary": false
+          }
+        }
+      },
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ]
+    },
+    "Script/Adblock/rucu6.pages.dev-5d99ca157433/weibo.js": {
+      "path": "Script/Adblock/rucu6.pages.dev-5d99ca157433/weibo.js",
+      "sourceUrl": "https://rucu6.pages.dev/Scripts/weibo.js",
+      "sourceSha256": "7498cbef4c2f3293afebc3a686faec63220e27a62cd16303c18db2371bf529f3",
+      "sha256": "c873b98873ce7987682334b67204f3de131fa77a70e1ca1944a6c8950d75f7f4",
+      "from": "loon",
+      "targets": [
+        "qx",
+        "surge",
+        "loon"
+      ],
+      "contexts": {
+        "response": {
+          "qx": {
+            "from": "loon",
+            "to": "qx",
+            "phase": "response",
+            "binary": false
+          },
+          "surge": {
+            "from": "loon",
+            "to": "surge",
+            "phase": "response",
+            "binary": false
+          },
+          "loon": {
+            "from": "loon",
+            "to": "loon",
+            "phase": "response",
+            "binary": false
+          }
+        }
+      },
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ]
+    },
+    "Script/Adblock/kelee.one-dc0eef05c006/Weibo_remove_ads.js": {
+      "path": "Script/Adblock/kelee.one-dc0eef05c006/Weibo_remove_ads.js",
+      "sourceUrl": "https://kelee.one/Resource/JavaScript/Weibo/Weibo_remove_ads.js",
+      "sourceSha256": "026ccd766a53f744c2bf2aad93c4deb6f207defe4daf973178bb3e4193c997fb",
+      "sha256": "fc87ea0b05818766afab928b6a4155cb5491465640bed1779859917f84fd0574",
+      "from": "loon",
+      "targets": [
+        "qx",
+        "surge",
+        "loon"
+      ],
+      "contexts": {
+        "response": {
+          "qx": {
+            "from": "loon",
+            "to": "qx",
+            "phase": "response",
+            "binary": false
+          },
+          "surge": {
+            "from": "loon",
+            "to": "surge",
+            "phase": "response",
+            "binary": false
+          },
+          "loon": {
+            "from": "loon",
+            "to": "loon",
+            "phase": "response",
+            "binary": false
+          }
+        }
+      },
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ]
+    },
+    "Script/Adblock/raw.githubusercontent.com-99c1f7a94b66/myBlockAds.js": {
+      "path": "Script/Adblock/raw.githubusercontent.com-99c1f7a94b66/myBlockAds.js",
+      "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/myBlockAds.js",
+      "sourceSha256": "4cf62100424886068a5470daecec319e93ccd034c647d79a9daaa72bbbc341bb",
+      "sha256": "adae84acb8e8aaf4dacf3bc056890843b50c7228ceedc8992bfbe1b318fac765",
+      "from": "qx",
+      "targets": [
+        "qx",
+        "surge",
+        "loon"
+      ],
+      "contexts": {
+        "response": {
+          "qx": {
+            "from": "qx",
+            "to": "qx",
+            "phase": "response",
+            "binary": false
+          },
+          "surge": {
+            "from": "qx",
+            "to": "surge",
+            "phase": "response",
+            "binary": false
+          },
+          "loon": {
+            "from": "qx",
+            "to": "loon",
+            "phase": "response",
+            "binary": false
+          }
+        }
+      },
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ]
     }
   },
   "bindings": {
@@ -12366,6 +12717,16 @@
       },
       "https://rucu6.pages.dev/Scripts/cloud139.js": {
         "path": "Script/Adblock/rucu6.pages.dev-db81649b5167/cloud139.js",
+        "binary": false,
+        "echo": false
+      },
+      "https://rucu6.pages.dev/Scripts/myblockads.js": {
+        "path": "Script/Adblock/rucu6.pages.dev-d477c79dc184/myblockads.js",
+        "binary": false,
+        "echo": false
+      },
+      "https://rucu6.pages.dev/Scripts/kugou.js": {
+        "path": "Script/Adblock/rucu6.pages.dev-8f7d651e07b1/kugou.js",
         "binary": false,
         "echo": false
       }
@@ -12614,6 +12975,16 @@
       },
       "https://rucu6.pages.dev/Scripts/cloud139.js": {
         "path": "Script/Adblock/rucu6.pages.dev-db81649b5167/cloud139.js",
+        "binary": false,
+        "echo": false
+      },
+      "https://rucu6.pages.dev/Scripts/myblockads.js": {
+        "path": "Script/Adblock/rucu6.pages.dev-d477c79dc184/myblockads.js",
+        "binary": false,
+        "echo": false
+      },
+      "https://rucu6.pages.dev/Scripts/kugou.js": {
+        "path": "Script/Adblock/rucu6.pages.dev-8f7d651e07b1/kugou.js",
         "binary": false,
         "echo": false
       }
@@ -13073,6 +13444,11 @@
       },
       "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/zhuanzhuan/zhuanzhuan.js": {
         "path": "Script/Adblock/raw.githubusercontent.com-5af7cfca554d/zhuanzhuan.js",
+        "binary": false,
+        "echo": false
+      },
+      "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/myBlockAds.js": {
+        "path": "Script/Adblock/raw.githubusercontent.com-99c1f7a94b66/myBlockAds.js",
         "binary": false,
         "echo": false
       }
@@ -13651,6 +14027,11 @@
         "path": "Script/Adblock/raw.githubusercontent.com-5af7cfca554d/zhuanzhuan.js",
         "binary": false,
         "echo": false
+      },
+      "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/myBlockAds.js": {
+        "path": "Script/Adblock/raw.githubusercontent.com-99c1f7a94b66/myBlockAds.js",
+        "binary": false,
+        "echo": false
       }
     },
     "Adblock/Quantumult X/zenmofeishi_tb.snippet": {
@@ -13747,6 +14128,90 @@
     "Adblock/Quantumult X/zenmofeishi_wxpuredominion.snippet": {
       "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MeiTuanNoAd.js": {
         "path": "Script/Adblock/raw.githubusercontent.com-99b02d3cac44/MeiTuanNoAd.js",
+        "binary": false,
+        "echo": false
+      }
+    },
+    "Adblock/Quantumult X/BiliComic_remove_ads.snippet": {
+      "https://kelee.one/Resource/JavaScript/BiliComic/BiliComic_remove_ads.js": {
+        "path": "Script/Adblock/kelee.one-d61358f358cf/BiliComic_remove_ads.js",
+        "binary": false,
+        "echo": false
+      }
+    },
+    "Adblock/Surge/BiliComic_remove_ads.sgmodule": {
+      "https://kelee.one/Resource/JavaScript/BiliComic/BiliComic_remove_ads.js": {
+        "path": "Script/Adblock/kelee.one-d61358f358cf/BiliComic_remove_ads.js",
+        "binary": false,
+        "echo": false
+      }
+    },
+    "Adblock/Quantumult X/CaixinMedia_remove_ads.snippet": {
+      "https://kelee.one/Resource/JavaScript/CaixinMedia/CaixinMedia_remove_ads.js": {
+        "path": "Script/Adblock/kelee.one-1717ca508ca6/CaixinMedia_remove_ads.js",
+        "binary": false,
+        "echo": false
+      }
+    },
+    "Adblock/Surge/CaixinMedia_remove_ads.sgmodule": {
+      "https://kelee.one/Resource/JavaScript/CaixinMedia/CaixinMedia_remove_ads.js": {
+        "path": "Script/Adblock/kelee.one-1717ca508ca6/CaixinMedia_remove_ads.js",
+        "binary": false,
+        "echo": false
+      }
+    },
+    "Adblock/Quantumult X/Soul_remove_ads.snippet": {
+      "https://kelee.one/Resource/JavaScript/Soul/Soul_remove_ads.js": {
+        "path": "Script/Adblock/kelee.one-6659152f24c8/Soul_remove_ads.js",
+        "binary": false,
+        "echo": false
+      }
+    },
+    "Adblock/Surge/Soul_remove_ads.sgmodule": {
+      "https://kelee.one/Resource/JavaScript/Soul/Soul_remove_ads.js": {
+        "path": "Script/Adblock/kelee.one-6659152f24c8/Soul_remove_ads.js",
+        "binary": false,
+        "echo": false
+      }
+    },
+    "Adblock/Quantumult X/Taobao_remove_ads.snippet": {
+      "https://kelee.one/Resource/JavaScript/Taobao/Taobao_remove_ads.js": {
+        "path": "Script/Adblock/kelee.one-9d853d73b21f/Taobao_remove_ads.js",
+        "binary": false,
+        "echo": false
+      }
+    },
+    "Adblock/Surge/Taobao_remove_ads.sgmodule": {
+      "https://kelee.one/Resource/JavaScript/Taobao/Taobao_remove_ads.js": {
+        "path": "Script/Adblock/kelee.one-9d853d73b21f/Taobao_remove_ads.js",
+        "binary": false,
+        "echo": false
+      }
+    },
+    "Adblock/Quantumult X/Weibo.snippet": {
+      "https://rucu6.pages.dev/Scripts/weibo.js": {
+        "path": "Script/Adblock/rucu6.pages.dev-5d99ca157433/weibo.js",
+        "binary": false,
+        "echo": false
+      }
+    },
+    "Adblock/Surge/Weibo.sgmodule": {
+      "https://rucu6.pages.dev/Scripts/weibo.js": {
+        "path": "Script/Adblock/rucu6.pages.dev-5d99ca157433/weibo.js",
+        "binary": false,
+        "echo": false
+      }
+    },
+    "Adblock/Quantumult X/Weibo_remove_ads.snippet": {
+      "https://kelee.one/Resource/JavaScript/Weibo/Weibo_remove_ads.js": {
+        "path": "Script/Adblock/kelee.one-dc0eef05c006/Weibo_remove_ads.js",
+        "binary": false,
+        "echo": false
+      }
+    },
+    "Adblock/Surge/Weibo_remove_ads.sgmodule": {
+      "https://kelee.one/Resource/JavaScript/Weibo/Weibo_remove_ads.js": {
+        "path": "Script/Adblock/kelee.one-dc0eef05c006/Weibo_remove_ads.js",
         "binary": false,
         "echo": false
       }

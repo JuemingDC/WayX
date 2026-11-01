@@ -25,21 +25,21 @@
 
 ^https:\/\/msgapi\.caixin\.com\/msg_api\/annmsg\/annlist url reject-dict
 # 移除财新数据通广告
-^https:\/\/entities\.caixin\.com\/api\/dataplus\/columns url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/1717ca508ca6ae8a8fc6547f13019fe069c760253c4b59112ffd8d7748221c5d/CaixinMedia_remove_ads.js
+^https:\/\/entities\.caixin\.com\/api\/dataplus\/columns url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-1717ca508ca6/CaixinMedia_remove_ads.js
 
 # 移除文末广告
-^https:\/\/gateway\.caixin\.com\/api\/app-api\/(caixinapp\/appinfo|search\/getkeyword) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/1717ca508ca6ae8a8fc6547f13019fe069c760253c4b59112ffd8d7748221c5d/CaixinMedia_remove_ads.js
+^https:\/\/gateway\.caixin\.com\/api\/app-api\/(caixinapp\/appinfo|search\/getkeyword) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-1717ca508ca6/CaixinMedia_remove_ads.js
 
 # 移除财新FM广告
-^https:\/\/gateway\.caixin\.com\/api\/app-content\/fm\/index\/list\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/1717ca508ca6ae8a8fc6547f13019fe069c760253c4b59112ffd8d7748221c5d/CaixinMedia_remove_ads.js
+^https:\/\/gateway\.caixin\.com\/api\/app-content\/fm\/index\/list\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-1717ca508ca6/CaixinMedia_remove_ads.js
 
 # 移除开屏广告
-^https:\/\/gg\.caixin\.com\/s\?z=caixin&op=\d url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/1717ca508ca6ae8a8fc6547f13019fe069c760253c4b59112ffd8d7748221c5d/CaixinMedia_remove_ads.js
+^https:\/\/gg\.caixin\.com\/s\?z=caixin&op=\d url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-1717ca508ca6/CaixinMedia_remove_ads.js
 
 # 移除正文广告
-^https:\/\/mappsv5\.caixin\.com\/articlev5\/\d+\/\d+\.json$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/1717ca508ca6ae8a8fc6547f13019fe069c760253c4b59112ffd8d7748221c5d/CaixinMedia_remove_ads.js
+^https:\/\/mappsv5\.caixin\.com\/articlev5\/\d+\/\d+\.json$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-1717ca508ca6/CaixinMedia_remove_ads.js
 # 移除正文广告
-^https:\/\/mapps?v5\.caixin\.com\/(channelv5\/list|\/?index_page_v5\/)\w+ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/1717ca508ca6ae8a8fc6547f13019fe069c760253c4b59112ffd8d7748221c5d/CaixinMedia_remove_ads.js
+^https:\/\/mapps?v5\.caixin\.com\/(channelv5\/list|\/?index_page_v5\/)\w+ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-1717ca508ca6/CaixinMedia_remove_ads.js
 
 # [mitm]
 hostname = e*.caixin.com, g*.caixin.com, m*.caixin.com

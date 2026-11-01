@@ -489,11 +489,11 @@ aliyun_mine = type=http-response,pattern=(?i)^https:\/\/(biz)?api\.alipan\.com\/
 aliyun_board = type=http-response,pattern=(?i)^https:\/\/member\.alipan\.com\/v1\/users\/onboard_list,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-9102b70e3365/adrive.js,requires-body=true,max-size=-1,timeout=20
 
 # 阿里巴巴 //acs.m.taobao.com, heic.alicdn.com, guide-acs.m.taobao.com, poplayer.template.alibaba.com
-taobao_1 = type=http-response,pattern=(?i)^https:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.taobao\.(?:cloudvideo\.video\.query|wireless\.home\.splash\.awesome\.get),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/d477c79dc18470c7bae046d39330871387988061aa34ce6cb0a8a3df4ea45856/myblockads.js,requires-body=true,max-size=-1,timeout=20
-taobao_2 = type=http-response,pattern=(?i)^https:\/\/poplayer\.template\.alibaba\.com\/\w+\.json,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/d477c79dc18470c7bae046d39330871387988061aa34ce6cb0a8a3df4ea45856/myblockads.js,requires-body=true,max-size=-1,timeout=20
+taobao_1 = type=http-response,pattern=(?i)^https:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.taobao\.(?:cloudvideo\.video\.query|wireless\.home\.splash\.awesome\.get),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-d477c79dc184/myblockads.js,requires-body=true,max-size=-1,timeout=20
+taobao_2 = type=http-response,pattern=(?i)^https:\/\/poplayer\.template\.alibaba\.com\/\w+\.json,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-d477c79dc184/myblockads.js,requires-body=true,max-size=-1,timeout=20
 
 # 草榴社区 //2023.redircdn.com
-caoliu = type=http-response,pattern=(?i)^https:\/\/2023\.redircdn\.com\/web\/mob_post\.js\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/d477c79dc18470c7bae046d39330871387988061aa34ce6cb0a8a3df4ea45856/myblockads.js,requires-body=true,max-size=-1,timeout=20
+caoliu = type=http-response,pattern=(?i)^https:\/\/2023\.redircdn\.com\/web\/mob_post\.js\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-d477c79dc184/myblockads.js,requires-body=true,max-size=-1,timeout=20
 
 # 昌原云充 五代十路 //www.washpayer.com
 changyuan = type=http-response,pattern=(?i)^https:\/\/www\.washpayer\.com\/user\/message\/equipmentPara\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-c51a82707df8/changyuan.js,requires-body=true,max-size=-1,timeout=20
@@ -502,17 +502,17 @@ changyuan = type=http-response,pattern=(?i)^https:\/\/www\.washpayer\.com\/user\
 coolapk = type=http-response,pattern=(?i)^https:\/\/api\.coolapk\.com\/v6\/(?:feed\/detail|feed\/replyList|page\/dataList|main\/dataList|main\/indexV8|main\/init),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-93242e4da35e/coolapk.js,requires-body=true,max-size=-1,timeout=20
 
 # 酷狗音乐 //adserviceretry.kglink.cn, gateway.kugou.com
-kg_gateway = type=http-response,pattern=(?i)^https:\/\/gateway\.kugou\.com\/(?:adp\/ad\/v1\/mine_top_banner|ads\.gateway\/v2\/home_card),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8f7d651e07b13ce7cdd20c95f294f04f40c679170ce6701febf868f96222beb2/kugou.js,requires-body=true,max-size=-1,timeout=20
-kg_linkcn = type=http-response,pattern=(?i)^https?:\/\/adserviceretry\.kglink\.cn\/v\d\/mobile\w+,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8f7d651e07b13ce7cdd20c95f294f04f40c679170ce6701febf868f96222beb2/kugou.js,requires-body=true,max-size=-1,timeout=20
+kg_gateway = type=http-response,pattern=(?i)^https:\/\/gateway\.kugou\.com\/(?:adp\/ad\/v1\/mine_top_banner|ads\.gateway\/v2\/home_card),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-8f7d651e07b1/kugou.js,requires-body=true,max-size=-1,timeout=20
+kg_linkcn = type=http-response,pattern=(?i)^https?:\/\/adserviceretry\.kglink\.cn\/v\d\/mobile\w+,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-8f7d651e07b1/kugou.js,requires-body=true,max-size=-1,timeout=20
 
 # 微信封禁页面 //weixin110.qq.com, security.wechat.com
 wechat = type=http-response,pattern=(?i)^https\:\/\/(?:weixin110\.qq|security\.wechat)\.com\/cgi-bin\/mmspamsupport-bin\/newredirectconfirmcgi\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/06cb926a57e5541695aa9fc972751a3b94682030339647b39c3ced5f897e833b/wechat.js,requires-body=true,max-size=-1,timeout=20
 
 # 小米商城 //api.m.mi.com, shop-api.retail.mi.com
-mi_mall = type=http-response,pattern=(?i)^https:\/\/api\.m\.mi\.com\/v1\/app\/start,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/d477c79dc18470c7bae046d39330871387988061aa34ce6cb0a8a3df4ea45856/myblockads.js,requires-body=true,max-size=-1,timeout=20
+mi_mall = type=http-response,pattern=(?i)^https:\/\/api\.m\.mi\.com\/v1\/app\/start,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-d477c79dc184/myblockads.js,requires-body=true,max-size=-1,timeout=20
 
 # 迅雷 //api-gateway-pan.xunlei.com
-thunder = type=http-response,pattern=(?i)^https:\/\/api-gateway-pan\.xunlei\.com\/content\/v1\/aggregate\/info\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/d477c79dc18470c7bae046d39330871387988061aa34ce6cb0a8a3df4ea45856/myblockads.js,requires-body=true,max-size=-1,timeout=20
+thunder = type=http-response,pattern=(?i)^https:\/\/api-gateway-pan\.xunlei\.com\/content\/v1\/aggregate\/info\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-d477c79dc184/myblockads.js,requires-body=true,max-size=-1,timeout=20
 
 # 中国农业银行 //mobilepaas.abchina.com.cn
 abchina = type=http-request,pattern=(?i)^https:\/\/mobilepaas\.abchina\.com\.cn:441\/mgw\.htm$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/2b9fc61260fcedbf1e81cd88fdde9e074fc62571fc8af7210db6bf5641c43843/header.js,timeout=20
