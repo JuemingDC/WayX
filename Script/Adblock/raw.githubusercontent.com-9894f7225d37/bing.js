@@ -13,23 +13,12 @@ const __wayxRun=function($request,$response,$done,$script,$persistentStore,$pref
 > 通知频道：https://t.me/ddgksf2021
 > 特别提醒：如需转载请注明出处，谢谢合作！
 ***********************************************/
+
+
 const version = 'V1.0.1';
-let body = $response.body;
-if (body) {
-    if (true === /config\/api\/v1\/get/.test($request.url))
-        try {
-            let e = JSON.parse(body);
-            e.data.apps = e.data.apps.filter(e => !("News" == e.appCategory || "Operation" == e.appCategory || "Entertainment" == e.appCategory || "Weather" == e.appName || "Weather: Maps" == e.appName || "0News-L2SDK-Interests" == e.appName)), body = JSON.stringify(e);
-        }
-        catch (a) {
-            console.log("bing : " + a);
-        }
-    else
-        $done({});
-    $done({ body });
-}
-else
-    $done({});
+
+
+let body=$response.body;if(body){if(true===/config\/api\/v1\/get/.test($request.url))try{let e=JSON.parse(body);e.data.apps=e.data.apps.filter(e=>!("News"==e.appCategory||"Operation"==e.appCategory||"Entertainment"==e.appCategory||"Weather"==e.appName||"Weather: Maps"==e.appName||"0News-L2SDK-Interests"==e.appName)),body=JSON.stringify(e)}catch(a){console.log("bing : "+a)}else $done({});$done({body})}else $done({});
 
 };
 if(__wayxTarget==="qx")return __wayxRun(__wayxHost.request,__wayxHost.response,__wayxHost.done,__wayxHost.script,__wayxHost.store,__wayxHost.prefs,__wayxHost.notify,__wayxHost.notifyQx,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval);

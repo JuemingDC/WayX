@@ -28,7 +28,7 @@
     },
     "lexicalBindings": {
       "status": "supported",
-      "domain": "TypeScript-resolved local bindings, capture-free generated bindings, mapped context-presence guards, unused pure host-presence probes and pure source-host typeof/const branches with var-hoist preservation",
+      "domain": "TypeScript-resolved local bindings, capture-free generated bindings, mapped context-presence guards, unused pure host-presence probes and pure source-host typeof/const branches with var-hoist preservation, localized source edits and nonescaping function proofs",
       "outside": "Escaping platform aliases, class-getter receiver identity, nonsequential const/TDZ uses, dynamic receivers, eval and Function construction remain blocked"
     },
     "completion": {
@@ -50,7 +50,7 @@
     },
     "http": {
       "status": "callback-pair-only; blocked-for-three-host-equivalence",
-      "implemented": "Surge/Loon CLI pair: seven native callback methods, HTTP-only literal options, explicit timeout/cookie=false/redirect=false, explicit UA/Accept/identity encoding, ASCII <=64KiB, one active request, ignored return, Boolean-only errors and numeric response.status; native timeout unit conversion",
+      "implemented": "Surge/Loon CLI pair: seven native callback methods, HTTP-only literal options, explicit timeout/cookie=false/redirect=false, explicit UA/Accept/identity encoding, ASCII <=64KiB, one active request, ignored return, Boolean-only errors and success-guarded response/data with numeric response.status; native timeout unit conversion",
       "production": "No Adblock HTTP shim is published until QX also passes; the pairwise CLI implementation is not a three-host certification",
       "fixtures": "tests/support/http-contract-server.ts, tests/script-contracts.ts and manual tools/script-client-probe.js; no real-client result has been supplied",
       "methods": [
@@ -31215,7 +31215,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -31237,7 +31237,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -31259,7 +31259,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -31281,7 +31281,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -31303,7 +31303,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -31325,7 +31325,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -31347,7 +31347,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -31369,7 +31369,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -31391,7 +31391,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -31413,7 +31413,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -31435,7 +31435,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -31457,7 +31457,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -31479,7 +31479,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -31501,7 +31501,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -31523,7 +31523,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -31545,7 +31545,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -31567,7 +31567,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -31589,7 +31589,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -31611,7 +31611,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -31633,7 +31633,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -31655,7 +31655,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -31677,7 +31677,7 @@
       ],
       "problems": [],
       "specialization": {
-        "folds": 2,
+        "folds": 1,
         "branches": 0,
         "reason": "pure source-host specialization"
       },
@@ -92604,9 +92604,9 @@
         }
       ],
       "specialization": {
-        "folds": 45,
+        "folds": 0,
         "branches": 0,
-        "reason": "pure source-host specialization"
+        "reason": "no provable host branch"
       }
     },
     {
@@ -92685,9 +92685,9 @@
         }
       ],
       "specialization": {
-        "folds": 45,
+        "folds": 0,
         "branches": 0,
-        "reason": "pure source-host specialization"
+        "reason": "no provable host branch"
       }
     },
     {
@@ -92766,9 +92766,9 @@
         }
       ],
       "specialization": {
-        "folds": 45,
+        "folds": 0,
         "branches": 0,
-        "reason": "pure source-host specialization"
+        "reason": "no provable host branch"
       }
     },
     {
@@ -92847,9 +92847,9 @@
         }
       ],
       "specialization": {
-        "folds": 45,
+        "folds": 0,
         "branches": 0,
-        "reason": "pure source-host specialization"
+        "reason": "no provable host branch"
       }
     },
     {
@@ -92928,9 +92928,9 @@
         }
       ],
       "specialization": {
-        "folds": 45,
+        "folds": 0,
         "branches": 0,
-        "reason": "pure source-host specialization"
+        "reason": "no provable host branch"
       }
     },
     {
@@ -93009,9 +93009,9 @@
         }
       ],
       "specialization": {
-        "folds": 45,
+        "folds": 0,
         "branches": 0,
-        "reason": "pure source-host specialization"
+        "reason": "no provable host branch"
       }
     },
     {
@@ -93090,9 +93090,9 @@
         }
       ],
       "specialization": {
-        "folds": 45,
+        "folds": 0,
         "branches": 0,
-        "reason": "pure source-host specialization"
+        "reason": "no provable host branch"
       }
     },
     {
@@ -93171,9 +93171,9 @@
         }
       ],
       "specialization": {
-        "folds": 45,
+        "folds": 0,
         "branches": 0,
-        "reason": "pure source-host specialization"
+        "reason": "no provable host branch"
       }
     },
     {
@@ -93252,9 +93252,9 @@
         }
       ],
       "specialization": {
-        "folds": 45,
+        "folds": 0,
         "branches": 0,
-        "reason": "pure source-host specialization"
+        "reason": "no provable host branch"
       }
     },
     {
@@ -93333,9 +93333,9 @@
         }
       ],
       "specialization": {
-        "folds": 45,
+        "folds": 0,
         "branches": 0,
-        "reason": "pure source-host specialization"
+        "reason": "no provable host branch"
       }
     },
     {

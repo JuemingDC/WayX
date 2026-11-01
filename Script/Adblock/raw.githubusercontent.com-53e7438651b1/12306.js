@@ -5,8 +5,7 @@ const __wayxHost={request:typeof $request==='undefined'?undefined:$request,respo
 const __wayxContexts={"request":{"qx":{"from":"qx","to":"qx","phase":"echo","binary":false},"surge":{"from":"qx","to":"surge","phase":"echo","binary":false,"headerReads":{}},"loon":{"from":"qx","to":"loon","phase":"echo","binary":false,"headerReads":{}}}},__wayxRole=__wayxHost.response===undefined?'request':'response',__wayxConfig=__wayxContexts[__wayxRole]&&__wayxContexts[__wayxRole][__wayxTarget];
 if(!__wayxConfig)throw new Error('Unregistered adblock HTTP trigger');
 const __wayxRun=function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,__wayxContext,setTimeout,setInterval){
-!function () { let e, a = JSON.parse($request.body); e = "0007" === a.placementNo ? '{"materialsList":[{"billMaterialsId":"255","filePath":"h","creativeType":1}],"advertParam":{"skipTime":1}}' : "G0054" === a.placementNo ? '{"code":"00","materialsList":[{}]}' : '{"code":"00","message":"无广告返回"}'; (0, $done({ body: e })); }();
-
+!function(){let e,a=JSON.parse($request.body);e="0007"===a.placementNo?'{"materialsList":[{"billMaterialsId":"255","filePath":"h","creativeType":1}],"advertParam":{"skipTime":1}}':"G0054"===a.placementNo?'{"code":"00","materialsList":[{}]}':'{"code":"00","message":"无广告返回"}';(0,$done({body:e}))}();
 };
 if(__wayxTarget==="qx")return __wayxRun(__wayxHost.request,__wayxHost.response,__wayxHost.done,__wayxHost.script,__wayxHost.store,__wayxHost.prefs,__wayxHost.notify,__wayxHost.notifyQx,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval);
 return (function(config,host,run){
