@@ -384,7 +384,8 @@ export function mergeNativeQxSources(
       if (target !== section) { out.push("# [" + target + "]"); section = target; }
       // Only quoting of bare jq is a formatting correction; never rewrite its program, URL matcher, action or script URL.
       const jq = original.match(/^(.*?\surl(?:-and-header)?\s+jsonjq-(?:request|response)-body)\s+(.+)$/);
-      const formatted = jq && !/^'.*'$/.test(jq[2]) ? jq[1] + " " + quoteJq(jq[2]) : original;
+      // Modified: 2026-11-01 (chance). Canonicalize an upstream all-caps REJECT typo to the official QX rewrite action; preserve the original as provenance.
+      const formatted = (jq && !/^'.*'$/.test(jq[2]) ? jq[1] + " " + quoteJq(jq[2]) : original).replace(/(\surl(?:-and-header)?\s+)REJECT\s*$/, "$1reject");
       if (formatted !== original) out.push("# Source declaration: " + original);
       out.push(formatted);
     }

@@ -399,3 +399,5 @@ Modified: 2026-11-01 (chance). 每次同步使用同一运行快照的原始响�
 生成完成后只替换活动声明的脚本操作数，QX 仍使用官方支持的 `script-request/response-header/body`、两种 echo 和任务格式；Surge 仍使用 `script-path`。不全局替换 URL，不改注释、匹配正则、跳转目标、图标、argument 或 JS 正文。备份、索引、脚本引用及产物同一 Git 提交发布。原生 QX、Loon 转换及已有 Module 统一执行。
 
 每次均重新获取同 URL 的脚本，不因插件正文未变化跳过。下载失败时使用索引中已校验的旧备份并列明失败；无旧备份则保留既有作者地址，`status.json` 明确记录缺失项与 unresolvedReferences，不能声称全量备份完成。空内容、HTML 错误页、超出 Git 单文件限制的响应不伪装为脚本。校验失败、事务失败或缺失 WayX 引用阻止发布。原文归档不套用生成代码的换行/BOM/Node 语法要求，独立校验所有归档字节和引用闭包。
+
+Modified: 2026-11-01 (chance). 原生 QX 上游整条 URL rewrite 使用大写 `REJECT` 时，按上传 sample 的小写 `reject` 规范化该动作 token，并保留完整原声明注释；不调整 matcher、Header、参数或脚本正文，不推广到未知动作。

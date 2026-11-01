@@ -331,6 +331,10 @@ await fs.unlink(path.join(root,'Adblock/Quantumult X/Bob.snippet'));
 assert.doesNotMatch((await buildReadmePlan(root)).get('README.md'),/<strong>Bob<\/strong>/,'empty source groups are removed');
 // Modified: 2026-10-25 (chance). Native QX sync merges a source app's routing,
 // jq and Script declarations while retaining source policies and owned-file scope.
+// Modified: 2026-11-01 (chance). Preserve the upstream typo in a comment and emit the official lowercase reject action.
+const uppercaseReject=mergeNativeQxSources([{url:'https://example.test/plugin.conf',text:'^http:\\/\\/139\\.196\\.12\\.179:8053\\/httpdns\\/ url REJECT\n'}],{name:'UppercaseReject'});
+assert.match(uppercaseReject,/^# Source declaration:.*url REJECT$/m);
+assert.match(uppercaseReject,/^[^#\n].* url reject$/m);
 const nativeConfig={version:1,repository:'ishowshu/qx',ref:'main',prefix:'ishowshu_',author:'树先生',exclude:[],aliases:{},names:{}};
 await fs.writeFile(path.join(root,'.github/sources/native-qx.json'),JSON.stringify(nativeConfig));
 const nativeFiles={
