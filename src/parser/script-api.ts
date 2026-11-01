@@ -419,7 +419,9 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
     return name;
   };
   const ctxBinding = fresh("__wayxContext"),
-    entryBinding = fresh("__wayxEgernEntry");
+    entryBinding = fresh("__wayxEgernEntry"),
+    // Modified: 2026-11-02 (chance). Keep legacy CLI bridges capture-free too.
+    hostBinding = fresh("__wayxHost");
   const add = (api: string, reason: string, solution: string) =>
     problems.push({ api, reason, solution });
   const allowedFields: Record<string, Set<string>> = {
@@ -820,14 +822,14 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
         ");"
       : source;
   const run = `function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,${ctxBinding},setTimeout,setInterval){\n${body}\n}`;
-  const core = `(${scriptApiRuntime})(${config},__wayxHost,${run})`;
+  const core = `(${scriptApiRuntime})(${config},${hostBinding},${run})`;
   const header = `// Modified: 2026-11-01 (chance). Documented script API subset: ${options.from} -> ${options.to}; upstream body preserved in its separate raw backup.\n// Category: Script API adapter\n// Source: ${String(options.sourceUrl ?? "").replace(/[\r\n]/g, "")}\n`;
   const code =
     options.to === "egern"
       ? header +
-        `export default async function(ctx){const __wayxHost={ctx};return await ${core};}\n`
+        `export default async function(ctx){const ${hostBinding}={ctx};return await ${core};}\n`
       : header +
-        `(function(){const __wayxHost={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify};${core};})();\n`;
+        `(function(){const ${hostBinding}={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify};${core};})();\n`;
   return {
     status: "adapted" as const,
     problems: [],

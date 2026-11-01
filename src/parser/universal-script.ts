@@ -121,20 +121,32 @@ export function planUniversalAdblockScript(
     ts.forEachChild(n, visit);
   };
   visit(inventory.tree);
-  let ctx = "__wayxContext";
-  while (identifiers.has(ctx)) ctx += "_";
-  // Preserve the source program once. Runtime/source identity and HTTP settings
-  // are executable data, not injected author/category/source declarations.
+  // Modified: 2026-11-02 (chance). Generated lexical bindings must never
+  // capture an author identifier, including free typeof probes.
+  const fresh = (base: string) => {
+    let name = base;
+    while (identifiers.has(name)) name += "_";
+    identifiers.add(name);
+    return name;
+  };
+  const ctx = fresh("__wayxContext"),
+    target = fresh("__wayxTarget"),
+    host = fresh("__wayxHost"),
+    contextTable = fresh("__wayxContexts"),
+    role = fresh("__wayxRole"),
+    config = fresh("__wayxConfig"),
+    runBinding = fresh("__wayxRun");
+  // The source business body occurs once; only generated bindings are renamed.
   const run = `function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,${ctx},setTimeout,setInterval){\n${source}\n}`;
   const code = `(function(){
-const target=typeof $loon==='string'?'loon':typeof $task!=='undefined'&&typeof $task.fetch==='function'?'qx':typeof $environment!=='undefined'&&$environment['surge-version']?'surge':null;
-if(!target)throw new Error('Unsupported adblock script host');
-const host={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify};
-const contexts=${JSON.stringify(contexts)},role=host.response===undefined?'request':'response',config=contexts[role]&&contexts[role][target];
-if(!config)throw new Error('Unregistered adblock HTTP trigger');
-const run=${run};
-if(target===${JSON.stringify(from)})return run(host.request,host.response,host.done,host.script,host.store,host.prefs,host.notify,host.notifyQx,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval);
-return (${scriptApiRuntime})(config,host,run);
+const ${target}=typeof $loon==='string'?'loon':typeof $task!=='undefined'&&typeof $task.fetch==='function'?'qx':typeof $environment!=='undefined'&&$environment['surge-version']?'surge':null;
+if(!${target})throw new Error('Unsupported adblock script host');
+const ${host}={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify};
+const ${contextTable}=${JSON.stringify(contexts)},${role}=${host}.response===undefined?'request':'response',${config}=${contextTable}[${role}]&&${contextTable}[${role}][${target}];
+if(!${config})throw new Error('Unregistered adblock HTTP trigger');
+const ${runBinding}=${run};
+if(${target}===${JSON.stringify(from)})return ${runBinding}(${host}.request,${host}.response,${host}.done,${host}.script,${host}.store,${host}.prefs,${host}.notify,${host}.notifyQx,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval);
+return (${scriptApiRuntime})(${config},${host},${runBinding});
 })();\n`;
   try {
     new vm.Script(code);

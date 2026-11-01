@@ -25,7 +25,7 @@ export const scriptCapabilityBoundaries = {
   lexicalBindings: {
     status: "supported",
     domain:
-      "TypeScript-resolved local bindings, mapped context-presence guards and unused pure host-presence probes",
+      "TypeScript-resolved local bindings, capture-free generated bindings, mapped context-presence guards and unused pure host-presence probes",
     outside:
       "Escaping platform aliases, dynamic receivers, eval and Function construction remain blocked",
   },

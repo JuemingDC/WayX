@@ -84,3 +84,16 @@ console.log('Guarded storage reads passed: null/undefined/empty distinctions, fa
  }finally{await fs.rm(root,{recursive:true,force:true});}
 }
 console.log('Retained script-echo integration passed: original evidence, linked script backup, shared URL, fragment and repeated synchronization');
+
+// Author identifiers must not resolve to generated wrapper variables, including
+// free variables and names already using the private helper prefix.
+const captureSource='$done({body:[typeof target,typeof host,typeof contexts,typeof role,typeof config,typeof run,typeof __wayxTarget,typeof __wayxHost,typeof __wayxContext,typeof __wayxRun].join(",")});';
+for(const from of ['qx','surge','loon'] as const) {
+ const plan=planUniversalAdblockScript(captureSource,from,[{phase:'response'}]);assert.equal(plan.status,'universal',JSON.stringify(plan.problems));
+ for(const target of ['qx','surge','loon']) {
+  let result:any;vm.runInNewContext(plan.code!,{setTimeout,$response:{body:''},$done:(v:any)=>result=v,...(target==='qx'?{$task:{fetch(){}}}:target==='loon'?{$loon:'test'}:{$environment:{'surge-version':'test'}})});
+  assert.equal(result.body,Array(10).fill('undefined').join(','));
+ }
+}
+const legacyCapture=planScriptApiConversion('$done({body:typeof __wayxHost});',{from:'loon',to:'surge',phase:'response'});assert.equal(legacyCapture.status,'adapted');let captured:any;vm.runInNewContext(legacyCapture.code!,{setTimeout,$response:{body:''},$done:(v:any)=>captured=v});assert.equal(captured.body,'undefined');
+console.log('Capture-free wrapper regression passed: original/free/private-prefix identifiers across all three hosts and the CLI bridge');
