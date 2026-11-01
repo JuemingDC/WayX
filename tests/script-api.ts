@@ -83,3 +83,18 @@ for(const source of ['implicit=1;$done({body:"x"});','[implicit]=[1];$done({body
 const strictResult=await execute('export default async function(ctx){try{undeclaredWrite=1;return {body:"incorrect"};}catch(e){return {body:e.name};}}','egern','surge','response',{$response:{body:'',status:200}});assert.equal(strictResult.result.body,'ReferenceError');
 assert.equal(planScriptApiConversion('const setTimeout=()=>{};$done({body:"x"});',{from:'loon',to:'surge',phase:'response'}).status,'blocked');
 console.log('Script API strictness passed: Egern module semantics, implicit/destructured global writes, reserved timer bindings and source strict exception behavior');
+
+// Rebinding a QX binary source must not use the target's injected binary flag as source identity.
+{
+ const fs=await import('node:fs/promises'),os=await import('node:os'),path=await import('node:path');const {refreshSourceBackups}=await import('../src/application/backups.ts');
+ const root=await fs.mkdtemp(path.join(os.tmpdir(),'wayx-native-binary-'));
+ try{
+  for(const dir of ['Adblock/Quantumult X','Adblock/Surge'])await fs.mkdir(path.join(root,dir),{recursive:true});
+  const marker='# Managed by: WayX Native QX\n',url='https://author.test/binary.js';
+  await fs.writeFile(path.join(root,'Adblock/Quantumult X/binary.snippet'),marker+'^https://example.test/ url script-response-body '+url+'\n');
+  const target='Adblock/Surge/binary.sgmodule';await fs.writeFile(path.join(root,target),marker+'s = type=http-response,pattern=^https://example.test/,script-path='+url+',requires-body=true\n');
+  const resources={fetchBytes:async()=>Buffer.from('$done({bodyBytes:$response.bodyBytes});'),cachedBytes:async()=>null};
+  await refreshSourceBackups(root,{resources,log:()=>{}});const first=await fs.readFile(path.join(root,target),'utf8');
+  await refreshSourceBackups(root,{resources,log:()=>{}});assert.equal(await fs.readFile(path.join(root,target),'utf8'),first,'unchanged binary source must keep the adapter URL fixed');
+ }finally{await fs.rm(root,{recursive:true,force:true});}
+}

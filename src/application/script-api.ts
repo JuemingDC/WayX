@@ -205,6 +205,8 @@ export async function prepareScriptApiAdapters(
           continue;
         }
         profile.phase = phases[0];
+        // Modified: 2026-11-01 (chance). QX byte access is an API property, not a source binary-mode declaration; do not feed the injected Surge flag back into source identity.
+        profile.binary = false;
       }
       let text: string;
       try {
