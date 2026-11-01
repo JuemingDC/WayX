@@ -1,5 +1,7 @@
 // Modified: 2026-11-01 (chance). Inspect JavaScript syntax rather than replacing API names in strings/comments; only emit adapters for a documented bounded contract.
 import ts from "typescript";
+import { callbackHttpContract } from "./script-http.ts";
+import { readonlyHeaderContract } from "./script-headers.ts";
 import {
   scriptChecker,
   safePresenceUse,
@@ -404,6 +406,17 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
   const inventory = inspectScriptApis(source),
     problems = [...inventory.problems],
     features = inventory.paths;
+  // Modified: 2026-11-02 (chance). Grant only proven readonly headers and explicit callback HTTP options.
+  const headerContract = readonlyHeaderContract(
+    inventory.tree,
+    inventory.checker,
+  );
+  const httpContract = callbackHttpContract(
+    inventory.tree,
+    inventory.checker,
+    options.from,
+    options.to,
+  );
   if (options.to === "egern" && options.from !== "egern")
     problems.push(...moduleStrictnessProblems(inventory.tree));
   const identifiers = new Set<string>();
@@ -438,6 +451,7 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
   };
   for (const api of features) {
     const [root, field] = api.split(".");
+    if (root === "$httpClient" && httpContract.ok) continue;
     if (gaps[root]) {
       const [reason, solution] = gaps[root];
       add(root, reason, solution);
@@ -477,7 +491,10 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
         "Use source binary-body mode and the correct host field",
       );
   }
-  if (features.some((p) => /^\$(?:request|response)\.headers(?:\.|$)/.test(p)))
+  if (
+    !headerContract.ok &&
+    features.some((p) => /^\$(?:request|response)\.headers(?:\.|$)/.test(p))
+  )
     add(
       "headers-shape",
       "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
@@ -756,6 +773,7 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
   }
   if (
     options.to === "qx" &&
+    !headerContract.ok &&
     features.some(
       (p) =>
         p.startsWith("$request.headers") || p.startsWith("$response.headers"),
@@ -808,6 +826,8 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
     };
   const effectiveOptions = {
     ...options,
+    ...(httpContract.ok ? { httpCallback: true } : {}),
+    ...(headerContract.ok ? { headerReads: headerContract.reads } : {}),
     ...(options.to === "qx" && synthesis ? { phase: "echo" } : {}),
   };
   const config = JSON.stringify(effectiveOptions);
@@ -821,7 +841,7 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
         ctxBinding +
         ");"
       : source;
-  const run = `function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,${ctxBinding},setTimeout,setInterval){\n${body}\n}`;
+  const run = `function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,${ctxBinding},setTimeout,setInterval${httpContract.ok ? ",$httpClient" : ""}){\n${body}\n}`;
   const core = `(${scriptApiRuntime})(${config},${hostBinding},${run})`;
   const header = `// Modified: 2026-11-01 (chance). Documented script API subset: ${options.from} -> ${options.to}; upstream body preserved in its separate raw backup.\n// Category: Script API adapter\n// Source: ${String(options.sourceUrl ?? "").replace(/[\r\n]/g, "")}\n`;
   const code =
@@ -829,12 +849,13 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
       ? header +
         `export default async function(ctx){const ${hostBinding}={ctx};return await ${core};}\n`
       : header +
-        `(function(){const ${hostBinding}={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify};${core};})();\n`;
+        `(function(){const ${hostBinding}={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify,http:typeof $httpClient==='undefined'?undefined:$httpClient};${core};})();\n`;
   return {
     status: "adapted" as const,
     problems: [],
     features,
     code,
+    contract: { headerReads: headerContract.reads },
     echoRequired: options.to === "qx" && synthesis > 0,
   };
 }

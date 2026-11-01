@@ -3,6 +3,7 @@
 import crypto from "node:crypto";
 import vm from "node:vm";
 import ts from "typescript";
+import { specializeScript } from "./script-specialize.ts";
 import {
   inspectScriptApis,
   planScriptApiConversion,
@@ -39,6 +40,9 @@ export function planUniversalAdblockScript(
   from: ScriptPlatform,
   profiles: UniversalProfile[],
 ) {
+  // Modified: 2026-11-02 (chance). Analyze and emit the same source-host specialization; raw archives remain exact.
+  const specialization = specializeScript(source, from);
+  source = specialization.source;
   const inventory = inspectScriptApis(source),
     features = inventory.paths;
   const excluded = features.filter((api) =>
@@ -103,12 +107,18 @@ export function planUniversalAdblockScript(
         from,
         to,
         ...profile,
+        ...(plan.contract ?? {}),
         ...(plan.echoRequired ? { phase: "echo" } : {}),
       };
     }
   }
   if (problems.length)
     return {
+      specialization: {
+        folds: specialization.folds,
+        branches: specialization.branches,
+        reason: specialization.reason,
+      },
       status: "blocked" as const,
       code: null,
       features,
@@ -167,6 +177,11 @@ return (${scriptApiRuntime})(${config},${host},${runBinding});
   }
   return {
     status: "universal" as const,
+    specialization: {
+      folds: specialization.folds,
+      branches: specialization.branches,
+      reason: specialization.reason,
+    },
     code,
     features,
     problems: [] as ApiProblem[],

@@ -425,7 +425,7 @@ Modified: 2026-11-01 (chance). 实现与证据详见 docs/script-api-compatibili
 
 原始备份和通用文件均原位更新，与引用在 Actions 的同一次提交发布；原文归档不改写。迁移后仅删除没有活动声明再引用的 Script/Api 旧文件，范围外仍在使用的文件继续保留。测试须实际用同一份 JS 字节运行三端上下文，检查状态字段、正文、二进制偏移、存储及 echo 声明、文件名冲突、重复同步、来源升级保留和引用完整性。Node VM/ICU 通过不等于各 iOS 客户端的全量实机认证。
 
-Modified: 2026-11-02 (chance). 新增能力必须给出可证明的输入域：解析 TypeScript 词法绑定，局部 `$` 变量不当作宿主 API；包装层变量名避开作者 AST 的所有标识符（包括自由变量和 typeof 探测），不得捕获或文本替换作者变量；映射上下文的纯 typeof/布尔存在性检查及未被使用的纯宿主探测不作为外端能力调用。允许类中保持原严格接收者的 this，但动态/全局接收者及反射构造仍阻断。`$done(result)` 仅在变量初始化与全部写入均为字面量对象、无逃逸/别名/动态字段/循环赋值时放行；不能因为能识别变量名就允许任意动态结果。初始化的放行分支与合成响应分支都参与 QX echo 类型判定。
+Modified: 2026-11-02 (chance). 新增能力必须给出可证明的输入域：解析 TypeScript 词法绑定，局部 `$` 变量不当作宿主 API；包装层变量名避开作者 AST 的所有标识符（包括自由变量和 typeof 探测），不得捕获或文本替换作者变量；映射上下文的纯 typeof/布尔存在性检查及未被使用的纯宿主探测不作为外端能力调用。允许类中保持原严格接收者的 this，但动态/全局接收者及反射构造仍阻断。`$done(result)` 允许已知字面量/条件结果、闭合变量的字面量赋值和静态 body/bodyBytes/status/statusCode/url 标量字段读写/删除；仍须无逃逸/别名/动态字段/循环赋值；不能因为能识别变量名就允许任意动态结果。初始化的放行分支与合成响应分支都参与 QX echo 类型判定。
 
 存储缺失值仅在调用方只能观察相同结果时允许规范化：`||`、`??`、布尔判断、非严格空值比较，或所有使用点均满足这些条件的局部别名。严格 null/undefined 比较、String/JSON 序列化、外传或动态键不放行；涉及 Loon 的空字符串写入继续阻断，不拿空字符串代替删除。新增 AST 证明以未改写的作者正文执行，不进行 `$done(` 文本替换。
 
@@ -434,3 +434,14 @@ Modified: 2026-11-02 (chance). 新增能力必须给出可证明的输入域：�
 远程 echo 脚本修正匹配 HTTP(S) URL 的 js/mjs/cjs pathname 或受校验的 WayX 通用脚本命名空间（大小写、query、fragment 保留），兼容原 MIME 与重复 echo 分隔符；旧声明留作出处。普通 JSON/数据保持原数据语义，不作为 JS 执行；未知无扩展名资源需先建立内容证据。本轮还修复测试中的 .js 前缀截断问题：真实源名可以是 .json，引用完整性按活动脚本操作数检查完整路径，不将 .json 截为 .js。
 
 Modified: 2026-11-01 (chance). 对捕获的奶思合集仅为已知 QX reject 动作将 legacy `-` 分隔符规范为 `url`。上游远程 echo-response 文件与 sample 的本地 Data 路径契约冲突，完整保留源行并在目标注释隔离 SOURCE INVALID，同时记录 native diagnostics；不得默默生成一次网络 fetch 去模拟这个未验证的源行为。
+
+
+## 2.24 来源分支、窄 HTTP 与可采集证据
+
+Modified: 2026-11-02 (chance). 去广告范围和三端共用一文件规则不变。通用版本允许折叠纯来源宿主 typeof 判断、同一顺序语句列表内已初始化的 const 条件，保留死分支 var 提升；不执行作者 JS。不确定的 getter 接收者、TDZ、Annex B 函数、宿主写入和源码文本观察保留阻断，原件字节不变。索引与状态记录 specialization 原因及次数。
+
+Header 仅增加经过证明的只读单字段操作：Object.keys(h).find(k=>k.toLowerCase()===固定小写字段)，key 仅参与缺失判断及相应 guarded lookup，不能外传或观察大小写。保留字典和作者查找表达式；目标验证查询字段最多一个 string 值，重复字段或数组值显式失败。此限定输入域不放开普通 Header 对象、Header 输出写入或 framing，不引入全局小写 Proxy。
+
+底层 CLI 可提供 Surge/Loon 七种 callback HTTP 方法的窄适配，但生产 Adblock 仍须三端全部通过。限定字面量 HTTP URL、显式正超时/关闭 cookie 与 redirect、UA/Accept/identity、ASCII <=64KiB、一个活动请求、忽略返回值、错误仅布尔可观察、响应仅数字 status；秒/毫秒显式换算，保留 Host，缺失响应不能成功。HTTPS/TLS/ALPN、一般 Header/二进制、QX 对等超时/取消尚未证明，不使用 Promise.race 假取消。Node 本地服务和手动客户端探针属于隔离测试工具，不改变统一生产传输或托管写入规则，也不代表已取得实机结果。
+
+WASM 对受大小约束且明确命名的 base64 字面量做解码、SHA-256、编译、imports/exports 检查，绝不实例化或执行作者 start；无法定位的动态模块报告缺口。相同摘要仅用于归并 ABI 调查，Node 编译不证明目标引擎可用。状态问题分类区分 source-invalid、analysis-unresolved、mapping-missing、target-contract-unverified 与范围外，不能将所有 blocked 称为不可运行。每次 Actions 连同原文、脚本、证据、索引及引用同事务更新；未通过升级继续保留已验证旧版本。

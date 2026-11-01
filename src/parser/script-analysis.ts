@@ -103,6 +103,13 @@ export function completionObjects(
   if (ts.isParenthesizedExpression(node))
     return completionObjects(node.expression, tree, checker);
   if (ts.isObjectLiteralExpression(node)) return [node];
+  // Modified: 2026-11-02 (chance). Both conditional result shapes must be known;
+  // keep the condition and all business expressions in the original program.
+  if (ts.isConditionalExpression(node)) {
+    const yes = completionObjects(node.whenTrue, tree, checker),
+      no = completionObjects(node.whenFalse, tree, checker);
+    return yes && no ? [...yes, ...no] : null;
+  }
   if (!ts.isIdentifier(node)) return null;
   const symbol = checker.getSymbolAtLocation(node),
     decl = symbol?.valueDeclaration;
@@ -115,6 +122,13 @@ export function completionObjects(
   )
     return null;
   const values = [decl.initializer];
+  const scalarFields = new Set([
+    "body",
+    "bodyBytes",
+    "status",
+    "statusCode",
+    "url",
+  ]);
   let valid = true;
   function visit(n: ts.Node) {
     if (ts.isIdentifier(n) && valueSymbol(n, checker) === symbol) {
@@ -144,6 +158,48 @@ export function completionObjects(
         !checker.getSymbolAtLocation(p.expression) &&
         p.arguments[0] === n
       ) {
+      } else if (
+        (ts.isPropertyAccessExpression(p) || ts.isElementAccessExpression(p)) &&
+        p.expression === n
+      ) {
+        // Modified: 2026-11-02 (chance). Closed static scalar fields can be read,
+        // assigned or deleted; whole-result aliases and nested/header writes cannot.
+        const name = ts.isPropertyAccessExpression(p)
+          ? p.name
+          : p.argumentExpression;
+        const key =
+          ts.isIdentifier(name) && ts.isPropertyAccessExpression(p)
+            ? name.text
+            : ts.isStringLiteralLike(name)
+              ? name.text
+              : null;
+        const op = p.parent;
+        if (!key || !scalarFields.has(key)) valid = false;
+        else if (
+          ts.isBinaryExpression(op) &&
+          op.left === p &&
+          op.operatorToken.kind === ts.SyntaxKind.EqualsToken
+        ) {
+          values.push(
+            ts.factory.createObjectLiteralExpression([
+              ts.factory.createPropertyAssignment(
+                name as ts.PropertyName,
+                op.right,
+              ),
+            ]),
+          );
+        } else if (ts.isDeleteExpression(op) && op.expression === p) {
+          // Removing a scalar field introduces no new result shape.
+        } else if (
+          (ts.isBinaryExpression(op) &&
+            op.left === p &&
+            op.operatorToken.kind >= ts.SyntaxKind.FirstAssignment &&
+            op.operatorToken.kind <= ts.SyntaxKind.LastAssignment) ||
+          ts.isPrefixUnaryExpression(op) ||
+          ts.isPostfixUnaryExpression(op) ||
+          (ts.isCallExpression(op) && op.expression === p)
+        )
+          valid = false;
       } else valid = false;
     }
     ts.forEachChild(n, visit);

@@ -1,3 +1,8 @@
+// Modified: 2026-11-02 (chance). Report static module evidence and analysis categories per source without executing archived author code.
+import {
+  inspectEmbeddedWasm,
+  scriptProblemCategory,
+} from "../parser/script-wasm.ts";
 import { scriptCapabilityBoundaries } from "../parser/script-boundaries.ts";
 // Modified: 2026-11-01 (chance). Adblock-only publication groups by original URL,
 // emits one source-named three-client program and rebinds every proven context.
@@ -152,6 +157,8 @@ export async function prepareScriptApiAdapters(
       (await readOptional(path.join(root, record.path)));
     if (!raw) throw Error("Missing raw API input: " + record.path);
     let result: any;
+    const sourceText = new TextDecoder("utf8", { fatal: false }).decode(raw);
+    const wasmEvidence = inspectEmbeddedWasm(sourceText);
     if (group.from.size !== 1 || !group.profiles.length)
       result = {
         status: "blocked",
@@ -246,6 +253,7 @@ export async function prepareScriptApiAdapters(
         targets: ["qx", "surge", "loon"],
         contexts: result.contexts,
         features: result.features,
+        specialization: result.specialization,
       };
       counts.universal++;
     }
@@ -282,7 +290,17 @@ export async function prepareScriptApiAdapters(
         to,
         status: result.status,
         features: result.features,
-        problems: result.problems,
+        problems: result.problems.map((p: any) => ({
+          ...p,
+          category:
+            result.status === "excluded"
+              ? "out-of-scope"
+              : scriptProblemCategory(p.api),
+        })),
+        ...(result.specialization
+          ? { specialization: result.specialization }
+          : {}),
+        ...(wasmEvidence ? { wasm: wasmEvidence } : {}),
         ...(binding
           ? { path: binding.path, retained: result.status !== "universal" }
           : {}),

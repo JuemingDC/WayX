@@ -25,16 +25,16 @@ export const scriptCapabilityBoundaries = {
   lexicalBindings: {
     status: "supported",
     domain:
-      "TypeScript-resolved local bindings, capture-free generated bindings, mapped context-presence guards and unused pure host-presence probes",
+      "TypeScript-resolved local bindings, capture-free generated bindings, mapped context-presence guards, unused pure host-presence probes and pure source-host typeof/const branches with var-hoist preservation",
     outside:
-      "Escaping platform aliases, dynamic receivers, eval and Function construction remain blocked",
+      "Escaping platform aliases, class-getter receiver identity, nonsequential const/TDZ uses, dynamic receivers, eval and Function construction remain blocked",
   },
   completion: {
     status: "conditional",
     domain:
-      "Literal objects, or closed result variables initialized and assigned only literal objects; class-local strict receivers preserve native calls",
+      "Literal/conditional result objects, closed variables assigned literal objects and static scalar body/bodyBytes/status/statusCode/url reads, assignments or deletion; class-local strict receivers preserve native calls",
     outside:
-      "Alias escapes, shorthand escapes, duplicate dynamic declarations, loop assignment, unknown returns and dynamic property writes remain blocked",
+      "Alias escapes, shorthand escapes, duplicate dynamic declarations, loop assignment, unknown returns, header/response mutations and dynamic property writes remain blocked",
   },
   storage: {
     status: "conditional",
@@ -44,13 +44,23 @@ export const scriptCapabilityBoundaries = {
       "Strict null/undefined observations, stringification, implicit/dynamic keys, Loon empty-string writes and full cleanup remain blocked",
   },
   headers: {
-    status: "blocked-for-general-object",
+    status: "conditional-readonly-singleton",
+    domain:
+      "Pure Object.keys(h).find(k=>k.toLowerCase()===literal) with a const result key, guarded readonly lookup and no key/header alias escape; target validates one string value per queried name",
+    outside:
+      "General object casing, duplicate values, mutation, output headers and framing remain unproven",
     reason:
       "Global lowercase proxies alter enumeration, overwrite case variants and can remove Host or mutate unrelated source behavior",
-    next: "Prove per-field operation semantics; preserve names/duplicates and framing rather than applying a global case-fold proxy",
+    next: "Extend exact per-field operations and real-client vectors without changing dictionary casing, duplicates or framing",
   },
   http: {
-    status: "blocked-for-three-host-equivalence",
+    status: "callback-pair-only; blocked-for-three-host-equivalence",
+    implemented:
+      "Surge/Loon CLI pair: seven native callback methods, HTTP-only literal options, explicit timeout/cookie=false/redirect=false, explicit UA/Accept/identity encoding, ASCII <=64KiB, one active request, ignored return, Boolean-only errors and numeric response.status; native timeout unit conversion",
+    production:
+      "No Adblock HTTP shim is published until QX also passes; the pairwise CLI implementation is not a three-host certification",
+    fixtures:
+      "tests/support/http-contract-server.ts, tests/script-contracts.ts and manual tools/script-client-probe.js; no real-client result has been supplied",
     methods: ["GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH"],
     timeout: {
       surge: "seconds; default 5",
@@ -74,7 +84,9 @@ export const scriptCapabilityBoundaries = {
     status: "blocked-without-engine-proof",
     reason:
       "Identical JS glue does not establish WASM availability, module imports, memory or native ABI equivalence on all hosts",
-    next: "Verify each target engine/module profile or replace the specific exported operation with independent pure-JS code and byte vectors; no empty exports",
+    inspection:
+      "Literal WASM_BASE64/base64_wasm modules are decoded, hashed and compiled without instantiation, recording imports/exports per source; never execute author start functions",
+    next: "Verify exact module hashes and each target engine/module profile or replace the specific exported operation with independent pure-JS code and byte vectors; no empty exports",
   },
   hostWebApi: {
     status: "blocked-unless-locally-implemented",
