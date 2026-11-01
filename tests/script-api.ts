@@ -29,7 +29,7 @@ assert.equal(planScriptApiConversion('export default async function(ctx){return 
 const oneShot=await execute('setInterval(()=>$done({body:"once"}),1);','loon','surge','response',{$response:{body:''}});assert.equal(oneShot.result.body,'once');
 console.log('Script API subset passed: QX/Surge/Loon/Egern contexts, echo/status, binary offsets, explicit storage deletion, one-shot Loon timer, AST string/comment safety and unsupported API diagnostics');
 
-// Production path: one raw source snapshot, separate per-target adapters, fixed URLs and in-place script updates.
+// Production path: one raw source snapshot and one source-named QX/Surge/Loon program with fixed URLs and in-place updates.
 {
  const fs=await import('node:fs/promises'),os=await import('node:os'),path=await import('node:path');
  const {refreshSourceBackups}=await import('../src/application/backups.ts');
@@ -48,8 +48,8 @@ console.log('Script API subset passed: QX/Surge/Loon/Egern contexts, echo/status
   let script=Buffer.from('$done({body:$response.body.replace("a","b")});\r\n');
   const resources={cachedBytes:async(u:string)=>u===entry.source?source:null,fetchBytes:async(u:string)=>{assert.equal(u,url);return script;}};
   await refreshSourceBackups(root,{catalog:[entry],resources,log:()=>{}});
-  const first=await fs.readFile(path.join(root,surgeFile),'utf8');assert.ok(first.includes('/Script/Api/loon-to-surge/'));
-  let index=JSON.parse(await fs.readFile(path.join(root,'Resource/Backup/index.json'),'utf8'));const adapter=Object.values<any>(index.adapters).find(a=>a.to==='surge')!;
+  const first=await fs.readFile(path.join(root,surgeFile),'utf8');assert.ok(first.includes('/Script/Adblock/author.test-'));
+  let index=JSON.parse(await fs.readFile(path.join(root,'Resource/Backup/index.json'),'utf8'));const adapter=Object.values<any>(index.adapters).find(a=>a.targets?.includes('surge'))!;
   const before=await fs.readFile(path.join(root,adapter.path),'utf8');assert.ok(before.includes(script.toString().trim()));
   const raw=index.objects[index.latest[url]];assert.deepEqual(await fs.readFile(path.join(root,raw.path)),script);
   assert.equal((await validateSourceBackups(root)).length,0);
@@ -57,14 +57,14 @@ console.log('Script API subset passed: QX/Surge/Loon/Egern contexts, echo/status
   await refreshSourceBackups(root,{catalog:[entry],resources,log:()=>{}});
   assert.equal(await fs.readFile(path.join(root,surgeFile),'utf8'),first);
   assert.notEqual(await fs.readFile(path.join(root,adapter.path),'utf8'),before);
-  index=JSON.parse(await fs.readFile(path.join(root,'Resource/Backup/index.json'),'utf8'));assert.equal(Object.keys(index.adapters).length,2);
+  index=JSON.parse(await fs.readFile(path.join(root,'Resource/Backup/index.json'),'utf8'));assert.equal(Object.keys(index.adapters).length,1);
   assert.equal((await validateSourceBackups(root)).length,0);
   script=Buffer.from('$dns.query({},()=>{});$done();');
   await refreshSourceBackups(root,{catalog:[entry],resources,log:()=>{}});
   assert.equal(await fs.readFile(path.join(root,surgeFile),'utf8'),first,'unsupported new source retains the prior verified adapter');
   const status=JSON.parse(await fs.readFile(path.join(root,'Resource/Backup/script-api-status.json'),'utf8'));assert.equal(status.blocked,2);assert.ok(status.diagnostics.every((d:any)=>d.problems.some((p:any)=>p.api==='$dns')));
  }finally{await fs.rm(root,{recursive:true,force:true});}
- console.log('Script API production integration passed: raw byte retention, separate QX/Surge adapters, fixed references, in-place regeneration, integrity and unsupported-update retention');
+ console.log('Script API production integration passed: raw byte retention, shared QX/Surge/Loon script, fixed references, in-place regeneration, integrity and unsupported-update retention');
 }
 
 for(const from of ['qx','loon','surge','egern'])for(const to of ['qx','loon','surge','egern']){

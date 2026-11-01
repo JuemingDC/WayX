@@ -1,0 +1,163 @@
+// Modified: 2026-11-01 (chance). One author-named adblock script serves QX,
+// Surge and Loon; publish only after every declared HTTP context passes all hosts.
+import crypto from "node:crypto";
+import vm from "node:vm";
+import ts from "typescript";
+import {
+  inspectScriptApis,
+  planScriptApiConversion,
+  type ApiProblem,
+  type ScriptPlatform,
+} from "./script-api.ts";
+import { scriptApiRuntime } from "../emit/script-api-runtime.ts";
+export type UniversalProfile = {
+  phase: "request" | "response" | "echo";
+  binary?: boolean;
+  name?: string;
+};
+export const universalTargets = ["qx", "surge", "loon"] as const;
+export function universalScriptPath(url: string) {
+  const u = new URL(url);
+  u.hash = "";
+  let original = u.pathname.split("/").filter(Boolean).at(-1) ?? "script.js";
+  try {
+    original = decodeURIComponent(original);
+  } catch {}
+  const name = original.replace(/[^\p{L}\p{N}_.-]/gu, "_") || "script.js";
+  const host = u.hostname.replace(/[^a-zA-Z0-9_.-]/g, "_");
+  return (
+    "Script/Adblock/" +
+    host +
+    "-" +
+    crypto.createHash("sha256").update(u.href).digest("hex").slice(0, 12) +
+    "/" +
+    name
+  );
+}
+export function planUniversalAdblockScript(
+  source: string,
+  from: ScriptPlatform,
+  profiles: UniversalProfile[],
+) {
+  const inventory = inspectScriptApis(source),
+    features = inventory.paths;
+  const excluded = features.filter((api) =>
+    /^\$(?:config|surge|httpAPI|configuration)(?:\.|$)/.test(api),
+  );
+  const problem = (
+    api: string,
+    reason: string,
+    solution: string,
+  ): ApiProblem => ({ api, reason, solution });
+  if (from === "egern" || excluded.length || !profiles.length)
+    return {
+      status: "excluded" as const,
+      code: null,
+      features,
+      problems: [
+        problem(
+          excluded.join(", ") || "scope",
+          "Only QX/Surge/Loon HTTP adblock scripts are in scope; configuration control, Egern and tasks remain native",
+          "Keep the original script; do not add configuration-control shims",
+        ),
+      ],
+      contexts: {},
+    };
+  const problems: ApiProblem[] = [],
+    contexts: Record<string, any> = {};
+  const usesName = features.some((p) => /^\$script\.name(?:\.|$)/.test(p));
+  for (const role of ["request", "response"]) {
+    const candidates = profiles.filter(
+      (p) => (p.phase === "response" ? "response" : "request") === role,
+    );
+    if (!candidates.length) continue;
+    const modes = [...new Set(candidates.map((p) => p.phase))];
+    const binary = [...new Set(candidates.map((p) => Boolean(p.binary)))];
+    const names = [...new Set(candidates.map((p) => p.name).filter(Boolean))];
+    if (
+      modes.length !== 1 ||
+      binary.length !== 1 ||
+      (usesName && (names.length !== 1 || candidates.some((p) => !p.name)))
+    ) {
+      problems.push(
+        problem(
+          "source-profile",
+          "The same script has indistinguishable HTTP contexts with different echo/binary/observable source names",
+          "Keep one shared file only after the declaration identity can be determined at runtime; never choose the last profile",
+        ),
+      );
+      continue;
+    }
+    const profile = {
+      phase: modes[0],
+      binary: binary[0],
+      ...(usesName ? { name: names[0] } : {}),
+    };
+    contexts[role] = {};
+    for (const to of universalTargets) {
+      const plan = planScriptApiConversion(source, { from, to, ...profile });
+      problems.push(
+        ...plan.problems.map((p) => ({ ...p, reason: to + ": " + p.reason })),
+      );
+      contexts[role][to] = {
+        from,
+        to,
+        ...profile,
+        ...(plan.echoRequired ? { phase: "echo" } : {}),
+      };
+    }
+  }
+  if (problems.length)
+    return {
+      status: "blocked" as const,
+      code: null,
+      features,
+      problems,
+      contexts,
+    };
+  const identifiers = new Set<string>();
+  const visit = (n: ts.Node) => {
+    if (ts.isIdentifier(n)) identifiers.add(n.text);
+    ts.forEachChild(n, visit);
+  };
+  visit(inventory.tree);
+  let ctx = "__wayxContext";
+  while (identifiers.has(ctx)) ctx += "_";
+  // Preserve the source program once. Runtime/source identity and HTTP settings
+  // are executable data, not injected author/category/source declarations.
+  const run = `function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,${ctx},setTimeout,setInterval){\n${source}\n}`;
+  const code = `(function(){
+const target=typeof $loon==='string'?'loon':typeof $task!=='undefined'&&typeof $task.fetch==='function'?'qx':typeof $environment!=='undefined'&&$environment['surge-version']?'surge':null;
+if(!target)throw new Error('Unsupported adblock script host');
+const host={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify};
+const contexts=${JSON.stringify(contexts)},role=host.response===undefined?'request':'response',config=contexts[role]&&contexts[role][target];
+if(!config)throw new Error('Unregistered adblock HTTP trigger');
+const run=${run};
+if(target===${JSON.stringify(from)})return run(host.request,host.response,host.done,host.script,host.store,host.prefs,host.notify,host.notifyQx,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval);
+return (${scriptApiRuntime})(config,host,run);
+})();\n`;
+  try {
+    new vm.Script(code);
+  } catch (error: any) {
+    return {
+      status: "blocked" as const,
+      code: null,
+      features,
+      problems: [
+        problem(
+          "syntax",
+          error.message,
+          "Repair source syntax before publishing the shared HTTP program",
+        ),
+      ],
+      contexts,
+    };
+  }
+  return {
+    status: "universal" as const,
+    code,
+    features,
+    problems: [] as ApiProblem[],
+    contexts,
+  };
+}

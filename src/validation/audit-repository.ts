@@ -76,6 +76,7 @@ for (const file of files) {
   // Modified: 2026-11-01 (chance). Upstream archives retain BOM/CRLF/binary bytes; validate their checksums and reference closure separately, not as generated source code.
   if (rp.startsWith("Resource/Backup/")) continue;
   if (
+    !rp.startsWith("Script/Adblock/") &&
     !/\.(?:snippet|sgmodule|ts|js|json|md|txt|yml|yaml|lpx|jq|list|dconf)$/i.test(
       rp,
     )
@@ -88,7 +89,9 @@ for (const file of files) {
     continue;
   }
   if (text.charCodeAt(0) === 0xfeff) add(file, 1, "bom", "UTF-8 BOM present");
-  if (/\r/.test(text)) add(file, 1, "crlf", "CR/CRLF newline present");
+  // Modified: 2026-11-01 (chance). Shared adblock programs preserve embedded author line endings; parse every shared program independently in the checksum audit.
+  if (!rp.startsWith("Script/Adblock/") && /\r/.test(text))
+    add(file, 1, "crlf", "CR/CRLF newline present");
   const lines: any = text.split("\n");
   artifacts[rp] = validationArtifactDigest(text);
   if (managed.has(rp)) {
@@ -210,6 +213,7 @@ for (const file of files) {
       if (
         /^(?:\/\/|\/\*|\*)/.test(t) &&
         !rp.startsWith("Script/Api/") &&
+        !rp.startsWith("Script/Adblock/") &&
         /WayX.*(?:bridge|wrapper)|Script v2 ->|Converted Script/i.test(t)
       ) {
         add(file, i + 1, "script-body-adaptation-artifact", t);

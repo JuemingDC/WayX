@@ -318,7 +318,13 @@ export async function refreshSourceBackups(
     scriptUrls: usedScripts.size,
     backedUpScripts: [...usedScripts].filter((u) => index.latest[u]).length,
     rewrittenArtifacts: rewritten,
-    scriptApi: { adapted: scriptApi.adapted, blocked: scriptApi.blocked },
+    // Modified: 2026-11-01 (chance). Count shared adblock programs separately from per-declaration references and excluded utilities.
+    scriptApi: {
+      universal: scriptApi.universal,
+      adapted: scriptApi.adapted,
+      blocked: scriptApi.blocked,
+      excluded: scriptApi.excluded,
+    },
     unresolvedReferences: unresolved,
     failures,
   };

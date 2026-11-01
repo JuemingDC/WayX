@@ -1,12 +1,14 @@
 // Modified: 2026-11-01 (chance). Validate exact upstream checksums and local closure independently of generated JavaScript syntax.
 import path from "node:path";
 import crypto from "node:crypto";
+import vm from "node:vm";
 import {
   listFiles,
   readJson,
   readOptional,
   safePath,
 } from "../publish/transaction.ts";
+import { universalScriptPath } from "../parser/universal-script.ts";
 import { scriptReferences } from "../parser/backup-references.ts";
 export async function validateSourceBackups(root: string) {
   const findings: any[] = [];
@@ -55,16 +57,23 @@ export async function validateSourceBackups(root: string) {
       add(file, "backup-integrity", e.message);
     }
   }
-  // Modified: 2026-11-01 (chance). Generated adapter integrity is separate from upstream raw-byte evidence.
+  // Modified: 2026-11-01 (chance). Universal source-named adblock programs and retained legacy adapter bytes are audited separately from raw evidence.
   for (const [file, record] of Object.entries<any>(index.adapters ?? {})) {
     try {
       if (
-        !/^Script\/Api\/(?:qx|loon|surge|egern)-to-(?:qx|loon|surge|egern)\/[a-f0-9]{64}\.js$/.test(
+        !/^(?:Script\/Api\/(?:qx|loon|surge|egern)-to-(?:qx|loon|surge|egern)\/[a-f0-9]{64}\.js|Script\/Adblock\/[a-zA-Z0-9_.-]+-[a-f0-9]{12}\/[\p{L}\p{N}_.-]+)$/u.test(
           file,
         ) ||
         file !== record.path
       )
         throw Error("Invalid API adapter path");
+      if (
+        file.startsWith("Script/Adblock/") &&
+        (file !== universalScriptPath(record.sourceUrl) ||
+          JSON.stringify(record.targets) !==
+            JSON.stringify(["qx", "surge", "loon"]))
+      )
+        throw Error("Invalid universal script identity or target coverage");
       const bytes = await readOptional(safePath(root, file));
       if (
         !bytes ||
@@ -72,6 +81,8 @@ export async function validateSourceBackups(root: string) {
           record.sha256
       )
         throw Error("Missing or corrupted API adapter");
+      if (file.startsWith("Script/Adblock/"))
+        new vm.Script(bytes.toString(), { filename: file });
     } catch (e: any) {
       add(file, "api-adapter-integrity", e.message);
     }
@@ -89,7 +100,7 @@ export async function validateSourceBackups(root: string) {
           /^https:\/\/raw\.githubusercontent\.com\/JuemingDC\/WayX\/[^/]+\/(Resource\/Backup\/[^#?]+)/,
         );
         const adapter = ref.value.match(
-          /^https:\/\/raw\.githubusercontent\.com\/JuemingDC\/WayX\/[^/]+\/(Script\/Api\/[^#?]+)/,
+          /^https:\/\/raw\.githubusercontent\.com\/JuemingDC\/WayX\/[^/]+\/(Script\/(?:Api|Adblock)\/[^#?]+)/,
         );
         if (adapter && !index.adapters?.[adapter[1]])
           add(relative, "missing-api-adapter", ref.value);
