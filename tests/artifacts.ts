@@ -4,6 +4,7 @@
 // Category: Converter / artifacts / Regression Suite
 
 import assert from "node:assert/strict";
+import {scriptReferences} from "../src/parser/backup-references.ts";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { loadLoonSourceCatalog, qxTargetPath, surgeTargetPath, discoverSourceScriptUrls } from "../src/index.ts";
@@ -46,9 +47,11 @@ for(const root of TARGETS){
   for(const file of await walk(root)){
     if(!/\.(?:snippet|sgmodule)$/i.test(file)) continue;
     const text=await fs.readFile(file,'utf8');
-    const re=/https:\/\/raw\.githubusercontent\.com\/JuemingDC\/WayX\/main\/(Script\/[A-Za-z0-9%._~!$&'()*+,;=:@\/-]+\.js)/g;
-    for(const m of text.matchAll(re)){
-      const rel=decodeURIComponent(m[1]);
+    // Modified: 2026-11-02 (chance). Source names may end in .json or have no
+    // extension; inspect actual script operands instead of truncating at .js.
+    for(const operand of scriptReferences(text)){
+      if(!operand.value.startsWith(RAW_PREFIX+'Script/'))continue;
+      const rel=decodeURIComponent(new URL(operand.value).pathname.slice(new URL(RAW_PREFIX).pathname.length));
       assert.ok(rel.startsWith('Script/') && !rel.split('/').includes('..'), 'unsafe generated helper path: '+rel);
       refs.push({file:path.relative(ROOT,file),rel});
       try { await fs.access(path.join(ROOT,rel)); }

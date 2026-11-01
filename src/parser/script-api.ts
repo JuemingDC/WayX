@@ -1,5 +1,14 @@
 // Modified: 2026-11-01 (chance). Inspect JavaScript syntax rather than replacing API names in strings/comments; only emit adapters for a documented bounded contract.
 import ts from "typescript";
+import {
+  scriptChecker,
+  safePresenceUse,
+  unusedPresenceProbe,
+  classLocalThis,
+  completionObjects,
+  valueSymbol,
+  safeStorageRead,
+} from "./script-analysis.ts";
 import { scriptApiRuntime } from "../emit/script-api-runtime.ts";
 export type ScriptPlatform = "qx" | "loon" | "surge" | "egern";
 export type ApiOptions = {
@@ -71,6 +80,14 @@ function propertyPath(node: ts.Node): string | null {
   }
   return null;
 }
+function memberName(n: ts.Node): string | null {
+  return ts.isPropertyAccessExpression(n)
+    ? n.name.text
+    : ts.isElementAccessExpression(n) &&
+        ts.isStringLiteralLike(n.argumentExpression)
+      ? n.argumentExpression.text
+      : null;
+}
 export function inspectScriptApis(source: string) {
   const tree = ts.createSourceFile(
     "upstream.js",
@@ -79,13 +96,15 @@ export function inspectScriptApis(source: string) {
     true,
     ts.ScriptKind.JS,
   );
+  // Modified: 2026-11-02 (chance). Local bindings and harmless context guards are not foreign host API calls.
+  const checker = scriptChecker(tree);
   const paths = new Set<string>(),
     calls: { api: string; node: ts.CallExpression }[] = [],
     problems: ApiProblem[] = [];
   const add = (api: string, reason: string, solution: string) =>
     problems.push({ api, reason, solution });
   function visit(node: ts.Node) {
-    if (node.kind === ts.SyntaxKind.ThisKeyword)
+    if (node.kind === ts.SyntaxKind.ThisKeyword && !classLocalThis(node))
       add(
         "this",
         "Dynamic receiver access requires scope/data-flow proof",
@@ -112,12 +131,44 @@ export function inspectScriptApis(source: string) {
       );
     if (ts.isCallExpression(node)) {
       const api = propertyPath(node.expression);
-      if (api) calls.push({ api, node });
+      let root: ts.Expression = node.expression;
+      while (
+        ts.isPropertyAccessExpression(root) ||
+        ts.isElementAccessExpression(root)
+      )
+        root = root.expression;
+      const bound = ts.isIdentifier(root)
+        ? checker.getSymbolAtLocation(root)
+        : null;
+      if (api && !bound?.declarations?.some((d) => d.getSourceFile() === tree))
+        calls.push({ api, node });
       if (api === "eval" || api?.startsWith("Reflect."))
         add(
           api,
           "Dynamic lookup cannot be proven safe by a finite static inventory",
           "Audit the evaluated program/property targets explicitly",
+        );
+    }
+    if (
+      (ts.isPropertyAccessExpression(node) ||
+        ts.isElementAccessExpression(node)) &&
+      (memberName(node) === "constructor" ||
+        memberName(node.expression) === "constructor")
+    ) {
+      const parent = node.parent;
+      if (
+        memberName(node.expression) === "constructor" ||
+        (memberName(node) === "constructor" &&
+          ((ts.isCallExpression(parent) && parent.expression === node) ||
+            (ts.isNewExpression(parent) && parent.expression === node) ||
+            (ts.isTaggedTemplateExpression(parent) && parent.tag === node) ||
+            (ts.isVariableDeclaration(parent) && parent.initializer === node) ||
+            (ts.isBinaryExpression(parent) && parent.right === node)))
+      )
+        add(
+          "function-constructor",
+          "Constructor reflection can compile uninspected code",
+          "Retain native or resolve the exact constructor and call before adaptation",
         );
     }
     if (
@@ -156,6 +207,35 @@ export function inspectScriptApis(source: string) {
             "Use explicit script arguments rather than the host call frame",
           );
       }
+      const local = valueSymbol(node, checker);
+      // Bound ordinary variables (including minified $e/$t) remain ordinary JS.
+      // Shadowed injected top-level bindings are still rejected by syntax/gates.
+      if (
+        local?.declarations?.some((d) => d.getSourceFile() === tree) &&
+        !["setTimeout", "setInterval"].includes(node.text)
+      ) {
+        ts.forEachChild(node, visit);
+        return;
+      }
+      if (unusedPresenceProbe(node, tree, checker)) {
+        ts.forEachChild(node, visit);
+        return;
+      }
+      if (
+        [
+          "$request",
+          "$response",
+          "$script",
+          "$persistentStore",
+          "$prefs",
+          "$notification",
+          "$notify",
+        ].includes(node.text) &&
+        safePresenceUse(node)
+      ) {
+        ts.forEachChild(node, visit);
+        return;
+      }
       const name = node.text,
         isProperty =
           (ts.isPropertyAccessExpression(node.parent) &&
@@ -163,7 +243,7 @@ export function inspectScriptApis(source: string) {
           (ts.isPropertyAssignment(node.parent) && node.parent.name === node);
       if (
         !isProperty &&
-        /^(?:globalThis|window|global|require|fetch|XMLHttpRequest|WebAssembly|TextEncoder|TextDecoder|URL|URLSearchParams|Buffer|crypto|CompressionStream|DecompressionStream|atob|btoa)$/.test(
+        /^(?:globalThis|window|global|require|eval|Function|Reflect|fetch|XMLHttpRequest|WebAssembly|TextEncoder|TextDecoder|URL|URLSearchParams|Buffer|crypto|CompressionStream|DecompressionStream|atob|btoa)$/.test(
           name,
         )
       )
@@ -222,7 +302,7 @@ export function inspectScriptApis(source: string) {
       ts.flattenDiagnosticMessageText(d.messageText, " "),
       "Preserve the raw script and repair syntax before conversion",
     );
-  return { tree, paths: [...paths].sort(), calls, problems };
+  return { tree, checker, paths: [...paths].sort(), calls, problems };
 }
 // Modified: 2026-11-01 (chance). Egern modules are strict; reject observable sloppy-script constructs before putting legacy code inside an ES module.
 function moduleStrictnessProblems(tree: ts.SourceFile): ApiProblem[] {
@@ -234,24 +314,7 @@ function moduleStrictnessProblems(tree: ts.SourceFile): ApiProblem[] {
       solution:
         "Declare variables and remove sloppy-only constructs, or retain the source runtime",
     });
-  const host: ts.CompilerHost = {
-    getSourceFile: (n) => (n.endsWith("upstream.js") ? tree : undefined),
-    getDefaultLibFileName: () => "",
-    writeFile: () => {},
-    getCurrentDirectory: () => "",
-    getDirectories: () => [],
-    fileExists: (n) => n.endsWith("upstream.js"),
-    readFile: () => undefined,
-    getCanonicalFileName: (n) => n,
-    useCaseSensitiveFileNames: () => true,
-    getNewLine: () => "\n",
-  };
-  const program = ts.createProgram(
-      ["upstream.js"],
-      { noLib: true, allowJs: true, target: ts.ScriptTarget.Latest },
-      host,
-    ),
-    checker = program.getTypeChecker();
+  const checker = scriptChecker(tree);
   const written = (n: ts.Node) => {
     if (ts.isParenthesizedExpression(n)) {
       written(n.expression);
@@ -515,65 +578,71 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
   for (const { api, node } of inventory.calls) {
     if (api === "$done") {
       const arg = node.arguments[0];
-      if (arg && ts.isObjectLiteralExpression(arg)) {
-        let response = false;
-        for (const property of arg.properties) {
-          if (
-            !ts.isPropertyAssignment(property) &&
-            !ts.isShorthandPropertyAssignment(property)
-          ) {
-            add(
-              "$done",
-              "Computed/spread completion fields are not statically verified",
-              "Construct an explicit completion result",
-            );
-            continue;
-          }
-          const key = property.name
-            ?.getText(inventory.tree)
-            .replace(/^['"]|['"]$/g, "");
-          if (key === "response") {
-            response = true;
+      // Modified: 2026-11-02 (chance). Prove all closed literal assignments to a result variable; do not guess arbitrary dynamic objects.
+      const objects = arg
+        ? completionObjects(arg, inventory.tree, inventory.checker)
+        : null;
+      if (objects) {
+        for (const object of objects) {
+          let response = false;
+          for (const property of object.properties) {
             if (
-              !ts.isPropertyAssignment(property) ||
-              !ts.isObjectLiteralExpression(property.initializer)
+              !ts.isPropertyAssignment(property) &&
+              !ts.isShorthandPropertyAssignment(property)
+            ) {
+              add(
+                "$done",
+                "Computed/spread completion fields are not statically verified",
+                "Construct an explicit completion result",
+              );
+              continue;
+            }
+            const key = property.name
+              ?.getText(inventory.tree)
+              .replace(/^['"]|['"]$/g, "");
+            if (key === "response") {
+              response = true;
+              if (
+                !ts.isPropertyAssignment(property) ||
+                !ts.isObjectLiteralExpression(property.initializer)
+              )
+                add(
+                  "$done.response",
+                  "Dynamic synthetic response needs field/data-flow proof",
+                  "Use explicit documented response fields or retain the native script",
+                );
+            }
+            if (
+              ![
+                "body",
+                "bodyBytes",
+                "headers",
+                "status",
+                "statusCode",
+                "url",
+                "response",
+                "abort",
+              ].includes(key ?? "")
             )
               add(
-                "$done.response",
-                "Dynamic synthetic response needs field/data-flow proof",
-                "Use explicit documented response fields or retain the native script",
+                "$done." + key,
+                "Completion field has no mapped target contract",
+                "Implement the target-specific request control/trailers API or retain native",
+              );
+            if (
+              key === "abort" &&
+              options.to !== "surge" &&
+              options.to !== "egern"
+            )
+              add(
+                "$done.abort",
+                "Target abort equivalence is unproven",
+                "Retain native blocking or use a verified target declaration",
               );
           }
-          if (
-            ![
-              "body",
-              "bodyBytes",
-              "headers",
-              "status",
-              "statusCode",
-              "url",
-              "response",
-              "abort",
-            ].includes(key ?? "")
-          )
-            add(
-              "$done." + key,
-              "Completion field has no mapped target contract",
-              "Implement the target-specific request control/trailers API or retain native",
-            );
-          if (
-            key === "abort" &&
-            options.to !== "surge" &&
-            options.to !== "egern"
-          )
-            add(
-              "$done.abort",
-              "Target abort equivalence is unproven",
-              "Retain native blocking or use a verified target declaration",
-            );
+          if (response) synthesis++;
+          else passOrModify++;
         }
-        if (response) synthesis++;
-        else passOrModify++;
       } else if (arg && !ts.isStringLiteralLike(arg))
         add(
           "$done",
@@ -612,13 +681,20 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
           "Translate options individually; delayed notification is not equivalent to a timer cancelled by $done",
         );
     if (api === "$prefs.valueForKey" || api === "$persistentStore.read") {
-      if (options.from !== "surge")
+      if (
+        options.from !== "surge" &&
+        !safeStorageRead(node, inventory.tree, inventory.checker)
+      )
         add(
           api,
           "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
           "Verify missing/empty/string values in the real source client; never silently coerce storage absence",
         );
-      if (args.length !== 1 || !ts.isStringLiteralLike(args[0]))
+      if (
+        args.length !== 1 ||
+        !ts.isStringLiteralLike(args[0]) ||
+        /[\\/]/.test(args[0].text)
+      )
         add(
           api,
           "Default/dynamic key namespaces differ across clients",
@@ -634,6 +710,17 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
     ) {
       const key = args[api === "$prefs.removeValueForKey" ? 0 : 1],
         value = args[0];
+      if (
+        value &&
+        ts.isStringLiteralLike(value) &&
+        value.text === "" &&
+        [options.from, options.to].includes("loon")
+      )
+        add(
+          api,
+          "Loon empty-string storage semantics are not a portable deletion/write contract",
+          "Use an explicit deletion or a nonempty string; do not equate empty strings with missing keys",
+        );
       if (!key || !ts.isStringLiteralLike(key) || /[\\/]/.test(key.text))
         add(
           api,

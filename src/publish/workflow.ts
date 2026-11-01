@@ -1,5 +1,5 @@
 import { QX_WAYX_REJECT_ACTIONS } from "../domain/core.ts";
-import { bindKnownBackups } from "../parser/backup-references.ts";
+import { normalizeRemoteScriptEcho, bindKnownBackups } from "../parser/backup-references.ts";
 import { readJson } from "./transaction.ts";
 import { addAppIcon } from "../domain/icons.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript publish layer; preserve source behavior.
@@ -375,6 +375,8 @@ export function mergeNativeQxSources(
       // Modified: 2026-11-01 (chance). A captured Naisi line uses the legacy '-' separator for a known QX reject action; repair only that delimiter.
       const shorthand = canonical.match(/^(\s*\S+)\s+-\s+(reject(?:-[a-z0-9-]+)?)\s*$/);
       if (shorthand && QX_WAYX_REJECT_ACTIONS.has(shorthand[2])) canonical = shorthand[1] + " url " + shorthand[2];
+      // Modified: 2026-11-02 (chance). A remote JS echo operand is an authorized script-echo correction; retain the original below.
+      canonical = normalizeRemoteScriptEcho(canonical);
       const line = canonical.trim();
       const heading = line.match(/^(?:#\s*)?\[(filter_local|rewrite_local|mitm)\]$/i);
       if (heading) {

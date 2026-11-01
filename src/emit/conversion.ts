@@ -1,3 +1,4 @@
+import { repairScriptEchoDeclarations } from "../parser/backup-references.ts";
 import { bindKnownBackups } from "../parser/backup-references.ts";
 import { addAppIcon } from "../domain/icons.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript emit layer; preserve source behavior.
@@ -1337,6 +1338,8 @@ export function convertNativeQxToSurge(
   text: any,
   { id = "native_qx" }: any = {},
 ): any {
+  // Modified: 2026-11-02 (chance). Apply the authorized remote-script echo repair for standalone native conversion too.
+  text = repairScriptEchoDeclarations(String(text)).text;
   validateQX(text, { id });
   const name: any = text.match(/^# Name: (.*)$/m)?.[1] || id;
   const sections: any = {

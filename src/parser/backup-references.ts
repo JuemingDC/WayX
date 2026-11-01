@@ -153,3 +153,37 @@ export function scriptReferencePhase(
     binary: /\bbinary-body-mode\s*=\s*true/.test(line),
   };
 }
+
+// Modified: 2026-11-02 (chance). User-authorized correction: a remote JS
+// operand denotes a script echo, not a Data-local echo body. JSON/data stays data.
+export function normalizeRemoteScriptEcho(line: string): string {
+  if (/^\s*(?:#|;|\/\/)/.test(line)) return line;
+  const m = line.match(
+    /^(\s*\S+\s+url\s+)(echo-response|analyze-echo-response)(?:\s+.+?\s+\2)?\s+(https?:\/\/\S+)\s*$/,
+  );
+  if (!m) return line;
+  try {
+    const url = new URL(m[3]);
+    const managed =
+      url.hostname === "raw.githubusercontent.com" &&
+      /^\/JuemingDC\/WayX\/[^/]+\/Script\/Adblock\/[A-Za-z0-9_.-]+-[a-f0-9]{12}\//.test(
+        url.pathname,
+      );
+    if (!/\.[cm]?js$/i.test(url.pathname) && !managed) return line;
+  } catch {
+    return line;
+  }
+  return m[1] + "script-" + m[2] + " " + m[3];
+}
+// Modified: 2026-11-02 (chance). Correct retained artifacts as well as freshly
+// copied sources; preserve original declarations and avoid duplicate repair notes.
+export function repairScriptEchoDeclarations(text: string) {
+  let count = 0;
+  const lines = text.split("\n").map((line) => {
+    const repaired = normalizeRemoteScriptEcho(line);
+    if (repaired === line) return line;
+    count++;
+    return "# Source declaration: " + line + "\n" + repaired;
+  });
+  return { text: lines.join("\n"), count };
+}

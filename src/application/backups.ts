@@ -12,6 +12,7 @@ import {
 } from "../publish/transaction.ts";
 import {
   scriptReferences,
+  repairScriptEchoDeclarations,
   sourceScriptUrls,
   replaceScriptReferences,
 } from "../parser/backup-references.ts";
@@ -233,7 +234,11 @@ export async function refreshSourceBackups(
     for (const file of await listFiles(path.join(root, directory))) {
       if (!/\.(?:snippet|sgmodule|plugin|conf)$/i.test(file)) continue;
       const relative = directory + "/" + file,
-        text = await fs.readFile(path.join(root, relative), "utf8");
+        original = await fs.readFile(path.join(root, relative), "utf8");
+      // Modified: 2026-11-02 (chance). Apply authorized script-echo corrections to retained/pause artifacts before backup operand discovery.
+      const repaired = repairScriptEchoDeclarations(original),
+        text = repaired.text;
+      if (repaired.count) changes.set(relative, text);
       const refs = scriptReferences(text);
       artifacts.push({ relative, text, refs });
       for (const ref of refs) {

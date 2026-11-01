@@ -364,7 +364,7 @@ Apple 用应用注册的 routing_layers 分层：第一层合并 QuixoticHeart a
 
 ## 2.20 原生 QX 来源同步
 
-Modified: 2026-11-01 (chance). Actions 内原生 QX 走格式校验与复制路径：仅补充必要的注释分段、将客户端不支持的元数据转为注释、为裸 jq 补引用。保留原注释、执行声明顺序、URL 正则、动作、hostname 文本及脚本正文；脚本操作数统一由发布前备份步骤重绑定；不再按目标端逻辑重写 QX、不重组分段、不合并 hostname、不补写原生 QX 图标。此前明确授权的 Emby 指定错误修正继续生效。
+Modified: 2026-11-01 (chance). Actions 内原生 QX 走格式校验与复制路径：仅补充必要的注释分段、将客户端不支持的元数据转为注释、为裸 jq 补引用。保留原注释、执行声明顺序、URL 正则、动作、hostname 文本及脚本正文；脚本操作数统一由发布前备份步骤重绑定；不再按目标端逻辑重写 QX、不重组分段、不合并 hostname、不补写原生 QX 图标。此前明确授权的 Emby 指定错误修正继续生效。 Modified: 2026-11-02 (chance). 用户新增授权：echo-response/analyze-echo-response 后的 HTTP(S) JS 脚本操作数修正为对应 script echo，保留 analyze 的请求体等待；不将 JSON/数据或本地资源误判为脚本。
 
 同作者同应用的 filter/rewrite 文件按来源顺序连接为一份混合 snippet；不混用不同作者。Surge 输出统一调用 convertNativeQxToSurge；作者 JS 通过统一快照下载并按原字节归档，不改写。元数据图标补全只作用于 Surge 或非原生 QX 转换产物。既有来源版本选择、分类、所有权、整批事务与失败保留机制继续生效。新内容及生成产物只由 Actions 拉取、生成和发布，本地只提交代码及孤立测试。
 
@@ -424,5 +424,13 @@ Modified: 2026-11-01 (chance). 实现与证据详见 docs/script-api-compatibili
 发布前按所有已知 request/response/echo profile 分别规划三个客户端。request/response 可通过当前 HTTP 上下文区分；不可观察的不同 tag 不制造额外脚本，只有脚本读取名称时才要求唯一源名称。无法区分的 echo/binary/可观察名称不得任选一个 profile。未证明的 HTTP 选项、Header 对象形状、动态存储/结果、反射及编码等继续 blocked；配置控制为 excluded，不输出伪兼容文件。已有通用脚本的新版本不兼容时保留经过校验的旧版并报告；初次转换不通过则保留源备份或已验证旧适配，不宣称通用支持。逐引用报告位于 `Resource/Backup/script-api-status.json`，需区分 universal 文件数、adapted 引用数、blocked 与 excluded。
 
 原始备份和通用文件均原位更新，与引用在 Actions 的同一次提交发布；原文归档不改写。迁移后仅删除没有活动声明再引用的 Script/Api 旧文件，范围外仍在使用的文件继续保留。测试须实际用同一份 JS 字节运行三端上下文，检查状态字段、正文、二进制偏移、存储及 echo 声明、文件名冲突、重复同步、来源升级保留和引用完整性。Node VM/ICU 通过不等于各 iOS 客户端的全量实机认证。
+
+Modified: 2026-11-02 (chance). 新增能力必须给出可证明的输入域：解析 TypeScript 词法绑定，局部 `$` 变量不当作宿主 API；映射上下文的纯 typeof/布尔存在性检查及未被使用的纯宿主探测不作为外端能力调用。允许类中保持原严格接收者的 this，但动态/全局接收者及反射构造仍阻断。`$done(result)` 仅在变量初始化与全部写入均为字面量对象、无逃逸/别名/动态字段/循环赋值时放行；不能因为能识别变量名就允许任意动态结果。初始化的放行分支与合成响应分支都参与 QX echo 类型判定。
+
+存储缺失值仅在调用方只能观察相同结果时允许规范化：`||`、`??`、布尔判断、非严格空值比较，或所有使用点均满足这些条件的局部别名。严格 null/undefined 比较、String/JSON 序列化、外传或动态键不放行；涉及 Loon 的空字符串写入继续阻断，不拿空字符串代替删除。新增 AST 证明以未改写的作者正文执行，不进行 `$done(` 文本替换。
+
+`Resource/Backup/script-api-status.json` 除逐引用问题外写入 capabilities，列明具体支持域、阻断原因、方案和 ScriptHub 比较修订。本次重新读取 ScriptHub `script-converter.js`，其内容与文件修订 b943361f11be5795b3eb10f9cc4e5497642922fc 一致。HTTP 的 GET/POST 二分、错误成功化、timer no-op、全局 Header 小写代理和 $done 文本替换不采用；独立实现绑定解析、有限对象流和缺失值观察证明。Loon HTTP timeout 为毫秒/默认 5000，Surge 为秒/默认 5；QX 对等请求超时/取消契约未由引用示例建立。Loon insecure 默认 true、ALPN 默认 h1；QX auto-cookie 在 build 934+ 默认 false，与两种回调宿主默认 true 不同。不得悄悄继承来源错误的默认值或用 Promise.race 冒充底层取消。
+
+远程 echo 脚本修正匹配 HTTP(S) URL 的 js/mjs/cjs pathname 或受校验的 WayX 通用脚本命名空间（大小写、query、fragment 保留），兼容原 MIME 与重复 echo 分隔符；旧声明留作出处。普通 JSON/数据保持原数据语义，不作为 JS 执行；未知无扩展名资源需先建立内容证据。本轮还修复测试中的 .js 前缀截断问题：真实源名可以是 .json，引用完整性按活动脚本操作数检查完整路径，不将 .json 截为 .js。
 
 Modified: 2026-11-01 (chance). 对捕获的奶思合集仅为已知 QX reject 动作将 legacy `-` 分隔符规范为 `url`。上游远程 echo-response 文件与 sample 的本地 Data 路径契约冲突，完整保留源行并在目标注释隔离 SOURCE INVALID，同时记录 native diagnostics；不得默默生成一次网络 fetch 去模拟这个未验证的源行为。

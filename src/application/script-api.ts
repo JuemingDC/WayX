@@ -1,3 +1,4 @@
+import { scriptCapabilityBoundaries } from "../parser/script-boundaries.ts";
 // Modified: 2026-11-01 (chance). Adblock-only publication groups by original URL,
 // emits one source-named three-client program and rebinds every proven context.
 import crypto from "node:crypto";
@@ -333,6 +334,8 @@ export async function prepareScriptApiAdapters(
     version: 2,
     scope: "adblock-http",
     targets: ["qx", "surge", "loon"],
+    // Modified: 2026-11-02 (chance). Include the audited capability domains and exact upstream comparison revision.
+    capabilities: scriptCapabilityBoundaries,
     ...counts,
     diagnostics,
   };
