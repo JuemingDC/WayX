@@ -1,10 +1,10 @@
 (function(){
-const target=typeof $loon==='string'?'loon':typeof $task!=='undefined'&&typeof $task.fetch==='function'?'qx':typeof $environment!=='undefined'&&$environment['surge-version']?'surge':null;
-if(!target)throw new Error('Unsupported adblock script host');
-const host={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify};
-const contexts={"response":{"qx":{"from":"qx","to":"qx","phase":"response","binary":false},"surge":{"from":"qx","to":"surge","phase":"response","binary":false},"loon":{"from":"qx","to":"loon","phase":"response","binary":false}}},role=host.response===undefined?'request':'response',config=contexts[role]&&contexts[role][target];
-if(!config)throw new Error('Unregistered adblock HTTP trigger');
-const run=function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,__wayxContext,setTimeout,setInterval){
+const __wayxTarget=typeof $loon==='string'?'loon':typeof $task!=='undefined'&&typeof $task.fetch==='function'?'qx':typeof $environment!=='undefined'&&$environment['surge-version']?'surge':null;
+if(!__wayxTarget)throw new Error('Unsupported adblock script host');
+const __wayxHost={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify};
+const __wayxContexts={"response":{"qx":{"from":"qx","to":"qx","phase":"response","binary":false},"surge":{"from":"qx","to":"surge","phase":"response","binary":false},"loon":{"from":"qx","to":"loon","phase":"response","binary":false}}},__wayxRole=__wayxHost.response===undefined?'request':'response',__wayxConfig=__wayxContexts[__wayxRole]&&__wayxContexts[__wayxRole][__wayxTarget];
+if(!__wayxConfig)throw new Error('Unregistered adblock HTTP trigger');
+const __wayxRun=function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,__wayxContext,setTimeout,setInterval){
 /***********************************************
 > 应用名称：墨鱼自用彩云天气去广告脚本
 > 脚本作者：@ddgksf2013
@@ -24,7 +24,7 @@ const version = 'V1.0.8';
 let responseBody={};$request.url.includes("/v2/user")?((responseBody=JSON.parse($response.body)).result.is_vip=1,responseBody.result.svip_expired_at=1892260800,responseBody.result.wt.vip.expired_at=1892260800,responseBody.result.svip_take_effect=1,responseBody.result.vip_type="s"):$request.url.includes("user_detail")?(responseBody=JSON.parse($response.body),["svip","vip"].forEach(e=>{responseBody.vip_info[e]&&(responseBody.vip_info[e]={expires_time:"1892260800",is_auto_renewal:!0})})):$request.url.includes("activity")?responseBody=$request.url.includes("type_id=A03")?{status:"ok",activities:[{type:"tabbar",name:"aichat",feature:!1}]}:{status:"ok",activities:[{items:[{}]}]}:$request.url.includes("operation/homefeatures")?responseBody={data:[]}:$request.url.includes("operation/feeds")?(responseBody=JSON.parse($response.body)).data=responseBody.data.filter(e=>-1!=e.category_times_text.indexOf("人查看")):$request.url.includes("operation/banners")?responseBody={data:[{avatar:"https://cdn-w.caiyunapp.com/p/app/operation/prod/banner/668502d5c3a2362582a2a5da/d9f198473e7f387d13ea892719959ddb.jpg",url:"https://cdn-w.caiyunapp.com/p/app/operation/prod/article/66850143c3a2362582a2a5d9/index.html",title:"暴雨来袭，这些避险“秘籍”你学会了吗？",banner_type:"article"}]}:$request.url.includes("operation/features")?(responseBody=JSON.parse($response.body)).data=responseBody.data.filter(e=>-1!=e.url.indexOf("cy://")):$request.url.includes("campaigns")?responseBody={campaigns:[{name:"driveweather",title:"驾驶天气新功能",url:"cy://page_driving_weather",cover:"https://cdn-w.caiyunapp.com/p/banner/test/668d442c4fe75aca7251c161.png"}]}:$request.url.includes("notification/message_center")?responseBody={messages:[]}:$request.url.includes("config/cypage")?responseBody={popups:[],actions:[]}:$done({}),$done({body:JSON.stringify(responseBody)});
 
 };
-if(target==="qx")return run(host.request,host.response,host.done,host.script,host.store,host.prefs,host.notify,host.notifyQx,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval);
+if(__wayxTarget==="qx")return __wayxRun(__wayxHost.request,__wayxHost.response,__wayxHost.done,__wayxHost.script,__wayxHost.store,__wayxHost.prefs,__wayxHost.notify,__wayxHost.notifyQx,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval);
 return (function(config,host,run){
   const fail=message=>{throw new Error('WayX API contract: '+message);};
   const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
@@ -117,5 +117,5 @@ return (function(config,host,run){
     return await start(await input(host.ctx.request,'request'),await input(host.ctx.response,'response'));
   })();
   return start(host.request,host.response);
-})(config,host,run);
+})(__wayxConfig,__wayxHost,__wayxRun);
 })();
