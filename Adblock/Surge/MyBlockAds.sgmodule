@@ -481,7 +481,7 @@ http-response-jq (?i)^https:\/\/conf-m-ssl\.xunlei\.com\/external\/[0-9-a-z]+\? 
 
 [Script]
 # 12306 //ad.12306.cn, mobile.12306.cn
-12306_splash = type=http-request,pattern=(?i)^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/821aa576b617d831a428200e731f412041c3fdd4f21eaabfa8b712f85716c636/12306.js,requires-body=true,max-size=-1,timeout=20
+12306_splash = type=http-request,pattern=(?i)^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-821aa576b617/12306.js,requires-body=true,max-size=-1,timeout=20
 12306_ads = type=http-request,pattern=(?i)^https:\/\/mobile\.12306\.cn\/otsmobile\/app\/mgs\/mgw\.htm$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/2b9fc61260fcedbf1e81cd88fdde9e074fc62571fc8af7210db6bf5641c43843/header.js,timeout=20
 
 # 阿里云盘 //*api.alipan.com, member.alipan.com

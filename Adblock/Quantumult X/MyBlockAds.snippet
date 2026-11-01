@@ -461,7 +461,7 @@ host, switch.cup.com.cn, reject
 {# 云闪付 //wallet.95516.com #} ^https:\/\/wallet\.95516\.com(:10533)?\/s\/wl\/icon\/large\/1 url reject
 # 12306 //ad.12306.cn, mobile.12306.cn
 # 12306_splash
-^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList$ url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/821aa576b617d831a428200e731f412041c3fdd4f21eaabfa8b712f85716c636/12306.js
+^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList$ url script-analyze-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-821aa576b617/12306.js
 # 12306_ads
 ^https:\/\/mobile\.12306\.cn\/otsmobile\/app\/mgs\/mgw\.htm$ url script-request-header https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/2b9fc61260fcedbf1e81cd88fdde9e074fc62571fc8af7210db6bf5641c43843/header.js
 

@@ -18,8 +18,8 @@
     "Rule/QuantumultX/media.list": "3025f7b1fe574076552f08ed9afd3e8fcf7c14b8a29afc0712b65df317f6bbbd",
     "Rule/QuantumultX/cn.list": "190072556b854f92eef572e6429157837f25eeeeda27477eb2fe223c8d3bc9d1",
     "Rule/QuantumultX/proxy.list": "280cea05acfccadaf6f069f1afba84659c6974966dd1e563d128478d35575dc1",
-    "Rule/QuantumultX/adblock.list": "0bb76b9b85972bebb1041fec50401736a5f295660d2e368dff3ffcfebb21a7e2",
-    "Rule/QuantumultX/adblock_extra.list": "028f20c6aedc442eeb3b4ba0b0fbf5b25ee09da6a57219b5e813f942a80b7509",
+    "Rule/QuantumultX/adblock.list": "f7378129431cf554003223440aeaa432a08fcb8e696923c878f5e8fc617cbc35",
+    "Rule/QuantumultX/adblock_extra.list": "03b2af8bb79a2f9d02f705909a51d6a16191692c38b802ebf8b3cf4954a88b9e",
     "Rule/Surge/google.list": "912e0c6188e8ba45b52e86b262bb46ce9f2c31cb29b0cbe28a13f04e5482eaa9",
     "Rule/Surge/youtube.list": "1f5a9d6d4d357d6b2c8f012f624ff96eb05d525bc83557144bb78f48f3dde038",
     "Rule/Surge/ai.list": "f893455d270cd10e7881a7d514c3b4c2db1848c2371aeb8afb370ba2efc047d5",
@@ -40,8 +40,8 @@
     "Rule/Surge/media.list": "fa564355a026840ccd77f518c8dffe596a33e7b98f7082673ab0d62a14ff766a",
     "Rule/Surge/cn.list": "1629c2354dbd93f38ace21364d680efd05d0afb69b141087c794689da6f97f43",
     "Rule/Surge/proxy.list": "2a5db6354d65768df5c15d18dd0b615a97bafe6b5278dcfb8bf76697aa8629f2",
-    "Rule/Surge/adblock.list": "dbb0143ac22e210a5679788031eef5c9422f3e47ad25ec5095fadf06cc2ac6e8",
-    "Rule/Surge/adblock_extra.list": "1432f83162c5a99836f510329180571430fe47f62dc93c910724ab2e70bdbba7",
+    "Rule/Surge/adblock.list": "ede3e59d0e0683a90414d3c6c10f3189952a977986917c1ed51afa83a7d56470",
+    "Rule/Surge/adblock_extra.list": "99ebcf1b834768ce103f021717272436f9abfff5900a301e130e5ce776180aa7",
     "Rule/QuantumultX/filterfix.list": "bc2f4b0be6d4d4f0a9c490b2f4e3259cabeda3ae6cd729a4c7d32d76fc1edffd",
     "Rule/Surge/filterfix.dconf": "ba43f26b47a1eb7f9b8659d65da7c41e5a9639f23a6a8b20b673c559359befeb"
   },
@@ -63,8 +63,8 @@
     "Rule/QuantumultX/media.list": 7543,
     "Rule/QuantumultX/cn.list": 127889,
     "Rule/QuantumultX/proxy.list": 34125,
-    "Rule/QuantumultX/adblock.list": 286337,
-    "Rule/QuantumultX/adblock_extra.list": 146328,
+    "Rule/QuantumultX/adblock.list": 286545,
+    "Rule/QuantumultX/adblock_extra.list": 146468,
     "Rule/Surge/google.list": 897,
     "Rule/Surge/youtube.list": 182,
     "Rule/Surge/ai.list": 675,
@@ -85,8 +85,8 @@
     "Rule/Surge/media.list": 7543,
     "Rule/Surge/cn.list": 127889,
     "Rule/Surge/proxy.list": 34125,
-    "Rule/Surge/adblock.list": 286337,
-    "Rule/Surge/adblock_extra.list": 146328,
+    "Rule/Surge/adblock.list": 286545,
+    "Rule/Surge/adblock_extra.list": 146468,
     "Rule/QuantumultX/filterfix.list": 63,
     "Rule/Surge/filterfix.dconf": 63
   },
@@ -140,7 +140,7 @@
       "max_age_days": 7,
       "timeout": 8,
       "fetched_url": "https://ruleset.skk.moe/List/domainset/reject.conf",
-      "sha256": "b5194fde4ec648cdfd3cf7928b6dfbe210b5b0fae0f607593b4e0584418bb787"
+      "sha256": "0ea730857b0b1ea3cdc43a330d258f5c2d96de5989e20fcba12bbe8f1136c95e"
     },
     {
       "id": "mihomo-proxy",
@@ -431,7 +431,7 @@
       "url": "https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-surge.txt",
       "license": "MIT",
       "fetched_url": "https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-surge.txt",
-      "sha256": "967ccf2c02254de6e4efa639bbae3c6def10ae953112ab7cb3b6bd7ad7584879"
+      "sha256": "76b96fd8cae1bc9601876440e91e0c8e42db777f09a56103c0131fe359cef88a"
     },
     {
       "id": "sukka-media-non_ip",
@@ -576,7 +576,7 @@
       "url": "https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt",
       "license": "GPL-3.0",
       "fetched_url": "https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt",
-      "sha256": "d6d74f450689314c62c29ae64089daed84ad9dbe4fadf9d810f57125f6f5cc91"
+      "sha256": "3c8af27208a26c462ae8a9f6ed310c21f5347660945f6a2ea95fdd400a2f8802"
     },
     {
       "id": "loyalsoldier-proxy",
@@ -587,7 +587,7 @@
       "url": "https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt",
       "license": "GPL-3.0",
       "fetched_url": "https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt",
-      "sha256": "ebc503446346dd7b434f2b51cc665bf3809e913768d1e1b41619d25ace507fdc"
+      "sha256": "149db07d1c654918f1537afa1e4bbbfc8abcc8ad9f433bec23f2298d8625cb2a"
     },
     {
       "id": "gaoyifan-cn",

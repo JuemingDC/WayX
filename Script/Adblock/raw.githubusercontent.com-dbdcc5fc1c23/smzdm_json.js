@@ -2,7 +2,7 @@
 const __wayxTarget=typeof $loon==='string'?'loon':typeof $task!=='undefined'&&typeof $task.fetch==='function'?'qx':typeof $environment!=='undefined'&&$environment['surge-version']?'surge':null;
 if(!__wayxTarget)throw new Error('Unsupported adblock script host');
 const __wayxHost={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify};
-const __wayxContexts={"response":{"qx":{"from":"qx","to":"qx","phase":"response","binary":false},"surge":{"from":"qx","to":"surge","phase":"response","binary":false},"loon":{"from":"qx","to":"loon","phase":"response","binary":false}}},__wayxRole=__wayxHost.response===undefined?'request':'response',__wayxConfig=__wayxContexts[__wayxRole]&&__wayxContexts[__wayxRole][__wayxTarget];
+const __wayxContexts={"response":{"qx":{"from":"qx","to":"qx","phase":"response","binary":false},"surge":{"from":"qx","to":"surge","phase":"response","binary":false,"headerReads":{}},"loon":{"from":"qx","to":"loon","phase":"response","binary":false,"headerReads":{}}}},__wayxRole=__wayxHost.response===undefined?'request':'response',__wayxConfig=__wayxContexts[__wayxRole]&&__wayxContexts[__wayxRole][__wayxTarget];
 if(!__wayxConfig)throw new Error('Unregistered adblock HTTP trigger');
 const __wayxRun=function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,__wayxContext,setTimeout,setInterval){
 /***********************************************
@@ -15,11 +15,53 @@ const __wayxRun=function($request,$response,$done,$script,$persistentStore,$pref
 > 问题反馈：ddgksf2013@163.com
 > 特别提醒：如需转载请注明出处，谢谢合作！
 ***********************************************/
-
-
 const version = 'V1.0.6';
-
-let body=$response.body;if(body){try{let t=$request.url,a=JSON.parse(body);switch(!0){case/util\/loading/.test(t):a.data.forEach(t=>{t.start_date="2030-12-24 00:00:00",t.end_date="2030-12-24 23:59:59",t.unix_start_date="1924272000",t.unix_end_date="1924358399",t.is_show_ad="0"});break;case/advert_distribution\/get_all_advertise/.test(t):a.data.start_date="2030-12-24 00:00:00",a.data.end_date="2030-12-24 23:59:59",a.data.unix_start_date="1924272000",a.data.unix_end_date="1924358399",a.data.is_show_ad="0";break;case/^https?:\/\/homepage-api\.smzdm\.com\/v3\/home/.test(t):a.data.component=a.data.component.filter(t=>("banner"===t.zz_type?t.zz_content=t.zz_content.filter(t=>"广告"!==t.tag):"list"===t.zz_type?t.zz_content=t.zz_content.filter(t=>"ads"!==t.zz_content.model_type):"circular_banner"===t.zz_type&&(t.zz_content.circular_banner_option.background="1",t.zz_content.circular_banner_option.color_card="#ffffff",t.zz_content.circular_banner_option.img=""),"top_banner"!==t.zz_type&&"hongbao"!==t.zz_type));break;case/^https?:\/\/haojia-api\.smzdm\.com\/home\/list/.test(t):a.data.banner_v2=a.data.banner_v2.filter(t=>"21028"===t.cell_type),a.data.rows=a.data.rows.filter(t=>!t.hasOwnProperty("ad_banner_id"));break;case/^https?:\/\/haojia\.m\.smzdm\.com\/detail_modul\/article_releated_modul/.test(t):a.data.lanmu_qikan={};break;case/^https?:\/\/s-api.smzdm\.com\/sou\/search_default_keyword/.test(t):a.data={home:[{keyword:"",show_search_word:"",source:"发现"}]};break;case/^https?:\/\/baike-api\.smzdm\.com\/home_v3\/list/.test(t):a.data.rows=a.data.rows.filter(t=>!t.hasOwnProperty("ad_banner_id")||""===t.ad_banner_id);break;case/^https?:\/\/s-api\.smzdm\.com\/sou\/filter\/tags\/hot_tags/.test(t):a.data.hongbao={};break;case/^https?:\/\/s-api\.smzdm\.com\/sou\/list_v10/.test(t):a.data.rows=a.data.rows.filter(t=>"广告"!==t.article_tag);break;case/^https?:\/\/zhiyou\.m\.smzdm\.com\/user\/vip\/ajax_get_banner/.test(t):a.data.big_banner=a.data.big_banner.filter(t=>"广告"!==t.logo_title);break;default:$done({})}body=JSON.stringify(a)}catch(e){console.log(`Error processing URL: ${$request.url}, Error: ${e}`)}$done({body})}else $done({});
+let body = $response.body;
+if (body) {
+    try {
+        let t = $request.url, a = JSON.parse(body);
+        switch (true) {
+            case /util\/loading/.test(t):
+                a.data.forEach(t => { t.start_date = "2030-12-24 00:00:00", t.end_date = "2030-12-24 23:59:59", t.unix_start_date = "1924272000", t.unix_end_date = "1924358399", t.is_show_ad = "0"; });
+                break;
+            case /advert_distribution\/get_all_advertise/.test(t):
+                a.data.start_date = "2030-12-24 00:00:00", a.data.end_date = "2030-12-24 23:59:59", a.data.unix_start_date = "1924272000", a.data.unix_end_date = "1924358399", a.data.is_show_ad = "0";
+                break;
+            case /^https?:\/\/homepage-api\.smzdm\.com\/v3\/home/.test(t):
+                a.data.component = a.data.component.filter(t => ("banner" === t.zz_type ? t.zz_content = t.zz_content.filter(t => "广告" !== t.tag) : "list" === t.zz_type ? t.zz_content = t.zz_content.filter(t => "ads" !== t.zz_content.model_type) : "circular_banner" === t.zz_type && (t.zz_content.circular_banner_option.background = "1", t.zz_content.circular_banner_option.color_card = "#ffffff", t.zz_content.circular_banner_option.img = ""), "top_banner" !== t.zz_type && "hongbao" !== t.zz_type));
+                break;
+            case /^https?:\/\/haojia-api\.smzdm\.com\/home\/list/.test(t):
+                a.data.banner_v2 = a.data.banner_v2.filter(t => "21028" === t.cell_type), a.data.rows = a.data.rows.filter(t => !t.hasOwnProperty("ad_banner_id"));
+                break;
+            case /^https?:\/\/haojia\.m\.smzdm\.com\/detail_modul\/article_releated_modul/.test(t):
+                a.data.lanmu_qikan = {};
+                break;
+            case /^https?:\/\/s-api.smzdm\.com\/sou\/search_default_keyword/.test(t):
+                a.data = { home: [{ keyword: "", show_search_word: "", source: "发现" }] };
+                break;
+            case /^https?:\/\/baike-api\.smzdm\.com\/home_v3\/list/.test(t):
+                a.data.rows = a.data.rows.filter(t => !t.hasOwnProperty("ad_banner_id") || "" === t.ad_banner_id);
+                break;
+            case /^https?:\/\/s-api\.smzdm\.com\/sou\/filter\/tags\/hot_tags/.test(t):
+                a.data.hongbao = {};
+                break;
+            case /^https?:\/\/s-api\.smzdm\.com\/sou\/list_v10/.test(t):
+                a.data.rows = a.data.rows.filter(t => "广告" !== t.article_tag);
+                break;
+            case /^https?:\/\/zhiyou\.m\.smzdm\.com\/user\/vip\/ajax_get_banner/.test(t):
+                a.data.big_banner = a.data.big_banner.filter(t => "广告" !== t.logo_title);
+                break;
+            default: $done({});
+        }
+        body = JSON.stringify(a);
+    }
+    catch (e) {
+        console.log(`Error processing URL: ${$request.url}, Error: ${e}`);
+    }
+    $done({ body });
+}
+else
+    $done({});
 
 };
 if(__wayxTarget==="qx")return __wayxRun(__wayxHost.request,__wayxHost.response,__wayxHost.done,__wayxHost.script,__wayxHost.store,__wayxHost.prefs,__wayxHost.notify,__wayxHost.notifyQx,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval);
@@ -30,8 +72,15 @@ return (function(config,host,run){
   const buffer=value=>{const b=bytes(value);return b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength);};
   const status=value=>{if(typeof value==='number'&&Number.isInteger(value)&&value>=100&&value<=599)return value;const m=typeof value==='string'&&value.match(/^HTTP\/\d(?:\.\d)?\s+(\d{3})(?:\s.*)?$/);return m?Number(m[1]):fail('unsupported HTTP status');};
   const reasons={200:'OK',201:'Created',204:'No Content',301:'Moved Permanently',302:'Found',304:'Not Modified',307:'Temporary Redirect',308:'Permanent Redirect',400:'Bad Request',401:'Unauthorized',403:'Forbidden',404:'Not Found',500:'Internal Server Error',502:'Bad Gateway',503:'Service Unavailable'};
-  function view(value){
+  // Modified: 2026-11-02 (chance). Validate only queried singleton fields;
+  // preserve the author's dictionary and case-insensitive lookup unchanged.
+  function view(value,role){
     if(value===undefined)return undefined;
+    const names=config.headerReads&&config.headerReads[role]||[];
+    if(names.length){
+      if(!value.headers||typeof value.headers!=='object'||Array.isArray(value.headers))fail('header dictionary required');
+      for(const name of names){const keys=Object.keys(value.headers).filter(k=>k.toLowerCase()===name);if(keys.length>1||keys.some(k=>typeof value.headers[k]!=='string'))fail('header lookup requires a singleton string field: '+name);}
+    }
     const result=Object.assign({},value);
     if(config.from==='qx'){
       if(own(result,'status')){result.statusCode=status(result.status);delete result.status;}
@@ -100,12 +149,32 @@ return (function(config,host,run){
     if(config.to==='loon'&&result.abort)fail('Loon abort result is not documented');
     return host.done(result);
   }
+  // Modified: 2026-11-02 (chance). Callback-only HTTP mapping keeps explicit
+  // cookies/redirects and native cancellation; no fake Promise timeout or null success.
+  function callbackHttp(){
+    if(!config.httpCallback)return undefined;
+    if(!host.http)fail('native callback HTTP transport unavailable');
+    const client={};let active=false;
+    for(const method of ['get','post','put','delete','head','options','patch'])client[method]=(input,callback)=>{
+      if(active)fail('callback HTTP subset permits one active request');active=true;
+      const opts=Object.assign({},input,{headers:Object.assign({},input.headers)});
+      opts.timeout=input.timeout*(config.from==='surge'?1000:1)/(config.to==='surge'?1000:1);
+      return host.http[method](opts,(error,response,data)=>{
+        active=false;
+        if(error)return callback(error,response,data);
+        if(!response||typeof response.status!=='number'||!Number.isInteger(response.status)||response.status<100||response.status>599)fail('HTTP success requires a numeric response status');
+        if(typeof data!=='string'||data.length>65536||/[^\x00-\x7f]/.test(data))fail('callback HTTP subset requires ASCII response text');
+        return callback(error,response,data);
+      });
+    };
+    return client;
+  }
   function start(request,response){
     const script={name:config.name||host.script&&host.script.name||host.ctx&&host.ctx.script.name};
     if(host.script&&host.script.startTime!==undefined){const start=host.script.startTime;script.startTime=config.from==='loon'?(start instanceof Date?start:new Date(start*1000)):(start instanceof Date?start.getTime()/1000:start);}
     const ctx={request:ctxMessage(request),response:ctxMessage(response),script,respond:value=>({response:value}),abort:()=>({abort:true})};
     const sourceTimer=(callback,delay,...args)=>setTimeout(()=>callback(...args),delay);
-    const result=run(view(request),view(response),done,config.from==='qx'?undefined:script,config.from==='qx'?undefined:sourceStore,config.from==='qx'?sourcePrefs:undefined,config.from==='qx'?undefined:{post:notify},config.from==='qx'?notify:undefined,ctx,config.from==='loon'?sourceTimer:setTimeout,config.from==='loon'?sourceTimer:undefined);
+    const result=run(view(request,'request'),view(response,'response'),done,config.from==='qx'?undefined:script,config.from==='qx'?undefined:sourceStore,config.from==='qx'?sourcePrefs:undefined,config.from==='qx'?undefined:{post:notify},config.from==='qx'?notify:undefined,ctx,config.from==='loon'?sourceTimer:setTimeout,config.from==='loon'?sourceTimer:undefined,callbackHttp());
     if(config.from==='egern')return Promise.resolve(result).then(done);
     return completion||result;
   }
