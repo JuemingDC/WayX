@@ -8,10 +8,10 @@
 
 [Rule]
 # Name: 美团App 12.67.403
-# Updated: 2026-10-30 15:52:24 +08:00
-# Merged by: chance
-# Source Authors: 怎么肥事, TG@ZenMoFiShi
-# Category: app
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
+# Source Authors: 怎么肥事
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/MT.snippet
 # Upstream name = 美团App 12.67.403
@@ -63,21 +63,20 @@ IP-CIDR6,2405:1480:3000:303b::303b/128,REJECT,no-resolve
 IP-CIDR6,2405:1480:1000:3::1e/128,REJECT,no-resolve
 IP-CIDR6,2405:1480:1000:4::15/128,REJECT,no-resolve
 IP-CIDR6,2402:4e00:40:40::2:373/128,REJECT,no-resolve
-# Upstream hostname = apimobile.meituan.com, feedguess.meituan.com, mop.meituan.com, mt-personalcenter.meituan.com, assistify.meituan.com, httpdns.meituan.com, httpdnsmultiapi.meituan.com
 
 [URL Rewrite]
 ^https?:\/\/(httpdns|httpdnsvip|httpdnsmultiapi|httpdnsmultiapivip)\.meituan\.com\/ _ reject
 ^http:\/\/103\.37\.155\.60\/fetch _ reject
 
 [Script]
-zenmofeishi_mt_1 = type=http-response,pattern=^https?:\/\/apimobile\.meituan\.com\/aggroup\/indexTab,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.js,requires-body=true
-zenmofeishi_mt_2 = type=http-response,pattern=^https?:\/\/feedguess\.meituan\.com\/lycoris\/scene\/(gwc_feed1_2265|personalcenter_2154)(\?|$),script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.js,requires-body=true
-zenmofeishi_mt_3 = type=http-response,pattern=^https?:\/\/mt-personalcenter\.meituan\.com\/usercenter\/display,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.js,requires-body=true
-zenmofeishi_mt_4 = type=http-response,pattern=^https?:\/\/apimobile\.meituan\.com\/group\/v1\/deal\/searchpage\/defaultword,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.js,requires-body=true
-zenmofeishi_mt_5 = type=http-response,pattern=^https?:\/\/apimobile\.meituan\.com\/group\/v1\/deal\/searchpage\/hotword\/city\/divide\/hotrecommend\/,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.js,requires-body=true
-zenmofeishi_mt_6 = type=http-response,pattern=^https?:\/\/assistify\.meituan\.com\/assistant\/getAppClientHornConfig,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.js,requires-body=true
-zenmofeishi_mt_7 = type=http-response,pattern=^https?:\/\/mop\.meituan\.com\/mop\/entry\/shoppingCartEntry,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.js,requires-body=true
-zenmofeishi_mt_8 = type=http-response,pattern=^https?:\/\/mop\.meituan\.com\/api\/entryModule\/startupPicture,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.js,requires-body=true
+zenmofeishi_mt_1 = type=http-response,pattern=^https?:\/\/apimobile\.meituan\.com\/aggroup\/indexTab,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/52eaad15c8b39f2c2f34b9d9b6d5f240df893579fee28146233bbf41abb20444/MT.js,requires-body=true
+zenmofeishi_mt_2 = type=http-response,pattern=^https?:\/\/feedguess\.meituan\.com\/lycoris\/scene\/(gwc_feed1_2265|personalcenter_2154)(\?|$),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/52eaad15c8b39f2c2f34b9d9b6d5f240df893579fee28146233bbf41abb20444/MT.js,requires-body=true
+zenmofeishi_mt_3 = type=http-response,pattern=^https?:\/\/mt-personalcenter\.meituan\.com\/usercenter\/display,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/52eaad15c8b39f2c2f34b9d9b6d5f240df893579fee28146233bbf41abb20444/MT.js,requires-body=true
+zenmofeishi_mt_4 = type=http-response,pattern=^https?:\/\/apimobile\.meituan\.com\/group\/v1\/deal\/searchpage\/defaultword,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/52eaad15c8b39f2c2f34b9d9b6d5f240df893579fee28146233bbf41abb20444/MT.js,requires-body=true
+zenmofeishi_mt_5 = type=http-response,pattern=^https?:\/\/apimobile\.meituan\.com\/group\/v1\/deal\/searchpage\/hotword\/city\/divide\/hotrecommend\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/52eaad15c8b39f2c2f34b9d9b6d5f240df893579fee28146233bbf41abb20444/MT.js,requires-body=true
+zenmofeishi_mt_6 = type=http-response,pattern=^https?:\/\/assistify\.meituan\.com\/assistant\/getAppClientHornConfig,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/52eaad15c8b39f2c2f34b9d9b6d5f240df893579fee28146233bbf41abb20444/MT.js,requires-body=true
+zenmofeishi_mt_7 = type=http-response,pattern=^https?:\/\/mop\.meituan\.com\/mop\/entry\/shoppingCartEntry,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/52eaad15c8b39f2c2f34b9d9b6d5f240df893579fee28146233bbf41abb20444/MT.js,requires-body=true
+zenmofeishi_mt_8 = type=http-response,pattern=^https?:\/\/mop\.meituan\.com\/api\/entryModule\/startupPicture,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/52eaad15c8b39f2c2f34b9d9b6d5f240df893579fee28146233bbf41abb20444/MT.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% apimobile.meituan.com, feedguess.meituan.com, mop.meituan.com, mt-personalcenter.meituan.com, assistify.meituan.com, httpdns.meituan.com, httpdnsmultiapi.meituan.com

@@ -1,11 +1,10 @@
 # Name: 看东方
-# Updated: 2026-10-25 18:04:02 +08:00
-# Merged by: chance
-# Source Authors: 树先生, baby
-# Category: app
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
+# Source Authors: 树先生
+# Category: Adblock
 # Managed by: WayX Native QX
 
-# [rewrite_local]
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/bestv.snippet
 # Upstream name = 看东方
 # Upstream desc = 移除广告
@@ -13,13 +12,14 @@
 
 
 # 开屏广告
+# [rewrite_local]
 ^https:\/\/bp-api\.bestv\.com\.cn\/cms\/api\/free\/open\/advertisingV2 url reject-dict
 # 首页弹窗广告
 ^https:\/\/bp-api\.bestv\.cn\/cms\/api\/advertise\/project\/advertise\/popup\/scene$ url reject
 # 开屏广告（清除缓存）
 ^https:\/\/bp-api\.bestv\.cn\/cms\/api\/free\/open\/advertisingV2 url reject
 # 我的页面横幅
-^https:\/\/bp-api\.bestv\.cn\/cms\/api\/advertise\/project\/userCenter url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/bestv.js
+^https:\/\/bp-api\.bestv\.cn\/cms\/api\/advertise\/project\/userCenter url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/e6cdd3dd2d164b451d50ae03c325d69b989ed5292a6ebc1315a01d8dcef88897/bestv.js
 # 直播源
 #^https:\/\/bp-api\.bestv\.cn\/cms\/api\/live\/studio\/id\/v4 url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/bestv.js
 
@@ -29,7 +29,4 @@ https:\/\/bp-api\.bestv\.(?:com\.cn|cn)\/cms\/api\/(live\/studio\/id\/v8|c\/play
 ^https?:\/\/360\.com\/(?:video|nba\.m3u|dianshi\.m3u)$ url script-response-body https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js
 
 # [mitm]
-
-# Upstream hostname = bp-api.bestv.com.cn, bp-api.bestv.cn, 360.com
-
 hostname = bp-api.bestv.com.cn, bp-api.bestv.cn, 360.com

@@ -6,16 +6,15 @@
 
 [Rule]
 # Name: 天天跳绳
-# Updated: 2026-10-25 18:31:43 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
 # Source Authors: 树先生
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/ttts.snippet
 # Upstream name = 天天跳绳
 # Upstream author = 树先生
 # Upstream desc = 移除广告
-# Upstream hostname = api.tiantiantiaosheng.com
 
 [Map Local]
 ^https:\/\/api\.tiantiantiaosheng\.com\/api2\/abtest\/ads_v2 data-type=text data="{}" status-code=200 header="Content-Type:application/json"

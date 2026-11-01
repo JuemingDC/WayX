@@ -8,10 +8,10 @@
 
 [Rule]
 # Name: 微博净化Qx版
-# Updated: 2026-10-30 15:52:24 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
 # Source Authors: 怎么肥事
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/WB.snippet
 # Upstream name = 微博净化Qx版
@@ -39,7 +39,6 @@ DOMAIN-SUFFIX,biz.weibo.com,REJECT
 # Source declaration: ^https:\/\/api\.weibo\.cn\/2\/guest\/container_timeline_hot url jsonjq-response-body def is_ad_item: ((.data.is_ad? == 1) or (.data.ad_state? == 1) or ((.data.mblogtypename? // "") == "广告") or ((.data.content_auth_info?.content_auth_title? // "") == "广告") or ((.data.readtimetype? // "") | tostring | ascii_downcase | contains("ad")) or (.data.ad_object? != null) or ((.data.timestamp_text? // "") == "推荐内容")); if (.items | type) == "array" then .items |= map(select(is_ad_item | not)) else . end
 # Source declaration: ^https:\/\/api\.weibo\.cn\/2\/statuses\/container_positive url jsonjq-response-body def str: (. // "") | tostring; def is_interest: (type == "object") and ((((.header?.title?.content? | str) == "你可能感兴趣") or ((.data?.header?.title?.content? | str) == "你可能感兴趣") or ((.title?.content? | str) == "你可能感兴趣") or ((.data?.title?.content? | str) == "你可能感兴趣"))); def clean: if type == "array" then map(clean) | map(select(is_interest | not)) elif type == "object" then with_entries(.value |= clean) | with_entries(select((.value | is_interest) | not)) else . end; clean
 # Source declaration: ^https:\/\/api\.weibo\.cn\/2\/comments\/build_comments url jsonjq-response-body if (.datas? | type) == "array" then .datas |= map(if (.adType? | type) == "string" and (.adType | contains("荐读")) then del(.adType) else . end) else . end
-# Upstream hostname = api.weibo.cn
 
 [Map Local]
 ^https:\/\/api\.weibo\.cn\/2\/guest\/cardlist data-type=text data="{}" status-code=200 header="Content-Type:application/json"

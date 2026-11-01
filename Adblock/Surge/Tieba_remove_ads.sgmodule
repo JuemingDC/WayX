@@ -57,7 +57,7 @@ http-response-jq ^https?:\/\/tiebac\.baidu\.com\/c\/f\/sidebar\/home$ 'del(.game
 ^http:\/\/c\.tieba\.baidu\.com\/c\/f\/forum\/hotforum$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-ProtoBuf处理 = type=http-response,pattern=^https?:\/\/tieba(?:c)?\.baidu\.com\/c\/(f\/excellent\/personalized|f\/frs\/page|b\/ad\/adBid|f\/ad\/getFeedAd|f\/pb\/page|f\/frs\/generalTabList)\?cmd=\d+&format=protobuf,script-path=https://kelee.one/Resource/JavaScript/Tieba/tieba-proto.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=10,argument="{\"per_filter_video_thread\":\"{{{per_filter_video_thread}}}\"}"
+ProtoBuf处理 = type=http-response,pattern=^https?:\/\/tieba(?:c)?\.baidu\.com\/c\/(f\/excellent\/personalized|f\/frs\/page|b\/ad\/adBid|f\/ad\/getFeedAd|f\/pb\/page|f\/frs\/generalTabList)\?cmd=\d+&format=protobuf,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/3a02881f13f2cc05630d750b53d6b0a3484c5fb25b305021aa845ecea9ea5d8d/tieba-proto.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=10,argument="{\"per_filter_video_thread\":\"{{{per_filter_video_thread}}}\"}"
 
 [MITM]
 hostname = %APPEND% tiebac.baidu.com, tieba.baidu.com

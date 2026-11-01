@@ -1,23 +1,41 @@
 # Name: 菜鸟[菜鸟裹裹](支付宝小程序)净化[墨鱼版]
-# Updated: 2026-11-01 09:49:35 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:26 +08:00
+# Copied by: chance
 # Source Authors: 墨鱼 / ddgksf2013
 # Category: Adblock
 # Managed by: WayX Native QX
 
-# [rewrite_local]
+# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/CainiaoAds.conf
+// ==UserScript==
+// @ScriptName        菜鸟[菜鸟裹裹](支付宝小程序)净化[墨鱼版]
+// @Author            @ddgksf2013
+// @WechatID          墨鱼手记
+// @TgChannel         https://t.me/ddgksf2021
+// @Contribute        https://t.me/ddgksf2013_bot
+// @UpdateTime        2025-10-07
+// @Suitable          自行观看“# > ”注释内容
+// @Attention         使用前请卸载菜鸟APP，挂载脚本然后使用
+// @Attention         如需引用请注明出处，谢谢合作！
+// @Version           V1.0.16
+// @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/CainiaoAds.conf
+// ==/UserScript==
+
+
+# [mitm]
+hostname=*.cainiao.com, guide-acs.m.taobao.com, acs4miniapp-inner.m.taobao.com
 
 
 # > 菜鸟裹裹_amdc处理@ddgksf2013
-^http:\/\/amdc\.m\.taobao\.com url script-response-body https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/amdc.js
+# [rewrite_local]
+^http:\/\/amdc\.m\.taobao\.com url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/ef90ca68bf9216b4289ad0997bf4b0c8bf5b92b79d4e419a1f206cce601dc019/amdc.js
 # > 菜鸟裹裹_我的页面去除推广[卸载重装]@ddgksf2013
-^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch url script-response-body https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/cainiao_json.js
+^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/c53fa988e9de2faf0062a2a0c7ff8321d6a6b63eef7e3d0ba577da4358b27be7/cainiao_json.js
 # > 菜鸟裹裹_首页中部的问邻居推广@ddgksf2013
-^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.nbpresentation\.homepage\.merge\.get\.cn url script-response-body https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/cainiao_json.js
+^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.nbpresentation\.homepage\.merge\.get\.cn url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/c53fa988e9de2faf0062a2a0c7ff8321d6a6b63eef7e3d0ba577da4358b27be7/cainiao_json.js
 # > 菜鸟裹裹_首页中部的惊喜福利推广@ddgksf2013
-^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.nbpresentation\.protocol\.homepage\.get\.cn url script-response-body https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/cainiao_json.js
+^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.nbpresentation\.protocol\.homepage\.get\.cn url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/c53fa988e9de2faf0062a2a0c7ff8321d6a6b63eef7e3d0ba577da4358b27be7/cainiao_json.js
 # > 菜鸟裹裹_搜索框下方今日好物推荐@ddgksf2013
-^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.adkeyword url script-response-body https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/cainiao_json.js
+^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.adkeyword url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/c53fa988e9de2faf0062a2a0c7ff8321d6a6b63eef7e3d0ba577da4358b27be7/cainiao_json.js
 # > 菜鸟裹裹_通用广告请求@ddgksf2013
 ^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.(?!.*_home) url reject-200
 # > 菜鸟裹裹_通用广告请求@ddgksf2013
@@ -36,24 +54,3 @@
 ^https?:\/\/[a-zA-Z0-9_.-]+\.taobao\.com\/gw\/mtop\.cainiao\.adx\.flyad\.getad url reject-200
 # > 菜鸟裹裹_支付宝小程序_匿名选择@ddgksf2013
 ^https?:\/\/[a-zA-Z0-9_.-]+\.taobao\.com\/gw\/mtop\.cainiao\.nbmensa\.research\.researchservice\.consultmerge url reject-200
-
-# [mitm]
-# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/CainiaoAds.conf
-# // ==UserScript==
-# // @ScriptName        菜鸟[菜鸟裹裹](支付宝小程序)净化[墨鱼版]
-# // @Author            @ddgksf2013
-# // @WechatID          墨鱼手记
-# // @TgChannel         https://t.me/ddgksf2021
-# // @Contribute        https://t.me/ddgksf2013_bot
-# // @UpdateTime        2025-10-07
-# // @Suitable          自行观看“# > ”注释内容
-# // @Attention         使用前请卸载菜鸟APP，挂载脚本然后使用
-# // @Attention         如需引用请注明出处，谢谢合作！
-# // @Version           V1.0.16
-# // @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/CainiaoAds.conf
-# // ==/UserScript==
-
-
-# Upstream hostname=*.cainiao.com, guide-acs.m.taobao.com, acs4miniapp-inner.m.taobao.com
-
-hostname = *.cainiao.com, guide-acs.m.taobao.com, acs4miniapp-inner.m.taobao.com

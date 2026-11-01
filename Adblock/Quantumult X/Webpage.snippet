@@ -46,49 +46,49 @@ https:\/\/(rule\.)?kelee\.one\/ url response-header ^([^\r\n]+)(\r\n) response-h
 # ======= 普通网页 ======= #
 # 百度 //boxer.baidu.com, m.baidu.com, www.baidu.com, zhidao.baidu.com
 # baidu_boxer
-^https:\/\/boxer\.baidu\.com\/scheme\?scheme url script-request-body https://rucu6.pages.dev/Scripts/baidu/baiduNoRedirect.js
+^https:\/\/boxer\.baidu\.com\/scheme\?scheme url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/bbc2d768f38a841840d4729b5086ac803121a5730637f841316ba2f08c3e18a6/baiduNoRedirect.js
 # baidu_home
-^https:\/\/(?:www|m)\.baidu\.com(\/|\/\?(tn=&)?from=\d+\w)?$ url script-response-body https://rucu6.pages.dev/Scripts/webpage/baidu-index.js
+^https:\/\/(?:www|m)\.baidu\.com(\/|\/\?(tn=&)?from=\d+\w)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-qx/0443d2b53d8bbb3c3c837e801b844b6efae811e26e423bbcbb7b6913e39cf551.js
 # baidu_zhidao
-^https:\/\/zhidao\.baidu\.com\/(?:question|index|\?fr|\?word) url script-response-body https://rucu6.pages.dev/Scripts/webpage/baidu-zhidao.js
+^https:\/\/zhidao\.baidu\.com\/(?:question|index|\?fr|\?word) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-qx/c375b67cf3839ed20940676d4570db8ab99854ead1db638a5ef7c76848646ab3.js
 
 # guanying_web_ads
-{# 观影 //www.hgeme.com, www.xn--wcv59z.com #} ^https:\/\/www\.(?:hgeme|xn--wcv59z)\.com\/ url script-response-body https://rucu6.pages.dev/Scripts/webpage/myblockads.js
+{# 观影 //www.hgeme.com, www.xn--wcv59z.com #} ^https:\/\/www\.(?:hgeme|xn--wcv59z)\.com\/ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/75448e274a792df0699e55ecce4f9bfb1056f54b9516d204087e1f61d46608e6/myblockads.js
 
 # 移花宫 //yhg007.com, *.111107?.xyz
 # yihuagong_hash_ad
-^https:\/\/(?:yhg007\.com|[a-z]{8}\.111107\d\.xyz)\/hash\/(?:[a-fA-F0-9]{40}|[A-Z2-7]{32})\.html url script-response-body https://rucu6.pages.dev/Scripts/webpage/myblockads.js
+^https:\/\/(?:yhg007\.com|[a-z]{8}\.111107\d\.xyz)\/hash\/(?:[a-fA-F0-9]{40}|[A-Z2-7]{32})\.html url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/75448e274a792df0699e55ecce4f9bfb1056f54b9516d204087e1f61d46608e6/myblockads.js
 # yihuagong_search_ads
-^https:\/\/(?:yhg007\.com|[a-z]{8}\.111107\d\.xyz)\/search-[^\/]+\.html url script-response-body https://rucu6.pages.dev/Scripts/webpage/myblockads.js
+^https:\/\/(?:yhg007\.com|[a-z]{8}\.111107\d\.xyz)\/search-[^\/]+\.html url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/75448e274a792df0699e55ecce4f9bfb1056f54b9516d204087e1f61d46608e6/myblockads.js
 
 # ======= ooxx ======= #
 # 黑料网 //18hlw.com, 8olbt.imsatcmn.cc
 # 18hlw_web_ads
-^https:\/\/(?:18hlw\.com|8olbt\.imsatcmn\.cc)\/ url script-response-body https://rucu6.pages.dev/Scripts/webpage/myblockads.js
+^https:\/\/(?:18hlw\.com|8olbt\.imsatcmn\.cc)\/ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/75448e274a792df0699e55ecce4f9bfb1056f54b9516d204087e1f61d46608e6/myblockads.js
 
 # javrk_web_ads
-{# 什么值得冲 //javranking.cc #} ^https:\/\/javranking\.cc\/(?:zh-hans|en)\/ url script-response-body https://rucu6.pages.dev/Scripts/webpage/myblockads.js
+{# 什么值得冲 //javranking.cc #} ^https:\/\/javranking\.cc\/(?:zh-hans|en)\/ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/75448e274a792df0699e55ecce4f9bfb1056f54b9516d204087e1f61d46608e6/myblockads.js
 
 # 52ywy_web_ads
-{# 夜未央 //miniapp2.52ywy.com #} ^https:\/\/miniapp2\.52ywy\.com\/(?:ywyminiappbot\/(?:getLatest|getLatestAll|getCategoryVideos|getSearch|series|movies|tv|av|getbloger)|player\/getPlayer)(\?|$) url script-response-body https://rucu6.pages.dev/Scripts/webpage/52ywy.js
+{# 夜未央 //miniapp2.52ywy.com #} ^https:\/\/miniapp2\.52ywy\.com\/(?:ywyminiappbot\/(?:getLatest|getLatestAll|getCategoryVideos|getSearch|series|movies|tv|av|getbloger)|player\/getPlayer)(\?|$) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/24bc13763e144e10fa2864b8c0239419987b1d1adbe8cd3ed6abbf7624ca0b19/52ywy.js
 
 # zmq_web_ads
-{# 字母圈 //*.zimuquan*.top, *.zimuquan*.uk, *.zimuquan*.com #} ^https?:\/\/[^\/]*zimuquan[^\/]*\/index\.php\/vod\/play\/ url script-response-body https://rucu6.pages.dev/Scripts/webpage/zimuquan.js
+{# 字母圈 //*.zimuquan*.top, *.zimuquan*.uk, *.zimuquan*.com #} ^https?:\/\/[^\/]*zimuquan[^\/]*\/index\.php\/vod\/play\/ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/20f454d55c70ecb70ff6bfcf2b6a47583df9fd0fd6ce1e3e4b4a9ed7872b19d4/zimuquan.js
 
 # ehentai_web_ads
-{# E-Hentai //e-hentai.org #} ^https:\/\/e-hentai\.org\/g\/ url script-response-body https://rucu6.pages.dev/Scripts/webpage/ehentai.js
+{# E-Hentai //e-hentai.org #} ^https:\/\/e-hentai\.org\/g\/ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/0ff77e6a08bcc0a1faa6cdde63dec8da3c3c46cf097b6f1e9df778b111f37ec3/ehentai.js
 
 # hanime_web_ads
-{# Hanime1 //hanime1.me #} ^https:\/\/hanime1\.me\/(?!(favicon|css|js|cdn-cgi|load)) url script-response-body https://rucu6.pages.dev/Scripts/webpage/hanime.js
+{# Hanime1 //hanime1.me #} ^https:\/\/hanime1\.me\/(?!(favicon|css|js|cdn-cgi|load)) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/ceb4bbfde63b333edd46f20884f99c7dff7bdfd7ed5acbb49a8faebb76a9ec7d/hanime.js
 
 # javdb_web_ads
-{# JavDB //javdb.com #} ^https:\/\/javdb\.com\/(?!over18\?) url script-response-body https://rucu6.pages.dev/Scripts/webpage/myblockads.js
+{# JavDB //javdb.com #} ^https:\/\/javdb\.com\/(?!over18\?) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/75448e274a792df0699e55ecce4f9bfb1056f54b9516d204087e1f61d46608e6/myblockads.js
 
 # missav_web_ads
-{# MissAV //missav.ai, missav.fans, missav.ws #} ^https:\/\/missav\.(?:ai|fans|ws)\/(?!favicon)(?!(build|fonts|img|js|api|cdn-cgi)\/). url script-response-body https://rucu6.pages.dev/Scripts/webpage/missav.js
+{# MissAV //missav.ai, missav.fans, missav.ws #} ^https:\/\/missav\.(?:ai|fans|ws)\/(?!favicon)(?!(build|fonts|img|js|api|cdn-cgi)\/). url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/a7046a06dbbcd6c256d12fb312ba8d1dbefe59159914473541c874869071d160/missav.js
 
 # pornhub_web_ads
-{# PornHub //*.pornhub.com #} ^https:\/\/cn\.pornhub\.com\/ url script-response-body https://rucu6.pages.dev/Scripts/webpage/pornhub.js
+{# PornHub //*.pornhub.com #} ^https:\/\/cn\.pornhub\.com\/ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-qx/47d1ae3fc7f861165f61fa3572d3c039dcd0340679900df213150605b4ea2b37.js
 
 # [mitm]
 hostname = *.google.cn, asserts.avple.tv, kelee.one, rule.kelee.one, e-hentai.org, exhentai.org, *.pornhub.com, boxer.baidu.com, m.baidu.com, www.baidu.com, zhidao.baidu.com, www.hgeme.com, www.xn--wcv59z.com, yhg007.com, *.111107?.xyz, 18hlw.com, 8olbt.imsatcmn.cc, javranking.cc, miniapp2.52ywy.com, *.zimuquan*.top, *.zimuquan*.uk, *.zimuquan*.com, hanime1.me, javdb.com, missav.ai, missav.fans, missav.ws

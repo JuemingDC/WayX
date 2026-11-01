@@ -8,16 +8,15 @@
 
 [Rule]
 # Name: Github
-# Updated: 2026-10-30 15:52:20 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
 # Source Authors: 树先生
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/github.snippet
 # Upstream name = Github
 # Upstream desc = raw文件拉取
 # Upstream author = 树先生
-# Upstream hostname = raw.githubusercontent.com, gist.githubusercontent.com, github.com
 
 [Header Rewrite]
 http-request ^https:\/\/(raw|gist)\.githubusercontent\.com\/ header-replace Accept-Language en-us

@@ -30,7 +30,7 @@ http-response-jq ^https:\/\/api\.meiyan\.com\/operation\/get_config\.json\? 'set
 ^https:\/\/api\.meiyan\.com\/vip\/permission_update_popup\.json\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-精简首页功能栏目并移除美颜推荐 = type=http-response,pattern=^https:\/\/api\.meiyan\.com\/operation\/home\.json\?,script-path=https://kelee.one/Resource/JavaScript/MeituMYXJ/MeituMYXJ_remove_ads.js,requires-body=true,max-size=-1,timeout=20
+精简首页功能栏目并移除美颜推荐 = type=http-response,pattern=^https:\/\/api\.meiyan\.com\/operation\/home\.json\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-surge/ec9674300c04924b9424d246900667e49e6cbb29d26f22e0e25d6ec1930c45ed.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% api.meiyan.com

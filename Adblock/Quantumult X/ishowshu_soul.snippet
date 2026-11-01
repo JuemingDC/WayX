@@ -1,13 +1,10 @@
 # Name: Soul
-# Icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/soul.png
-# Icon Collection: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json
-# Updated: 2026-10-25 18:04:02 +08:00
-# Merged by: chance
-# Source Authors: 树先生, 怎么肥事, 奶思
-# Category: app
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
+# Source Authors: 树先生
+# Category: Adblock
 # Managed by: WayX Native QX
 
-# [filter_local]
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/soul.snippet
 # Upstream name = Soul
 # Upstream author = 树先生，怎么肥事, 奶思
@@ -15,6 +12,7 @@
 # Upstream date = 2026-09-19
 
 # 分流走直连，避免影响功能使用
+# [filter_local]
 ip-cidr, 13.127.149.196/32, direct
 ip-cidr, 52.194.158.59/32, direct
 ip-cidr, 47.56.131.76/32, direct
@@ -32,9 +30,8 @@ host, impdsp.meituan.com, reject
 #host, s3plus.meituan.net, reject
 host, ssp.maplehaze.cn, reject
 
-# [rewrite_local]
-
 # 广告下发(ip映射请求
+# [rewrite_local]
 ^https:\/\/ssp\.soulapp\.cn\/api url reject-dict
 ^https:\/\/47\.110\.187\.87\/winterfell\/(?:v2\/)?getIpByDomain url reject-dict
 # 我的页面瞬间指导
@@ -107,11 +104,9 @@ host, ssp.maplehaze.cn, reject
 ^https:\/\/chat-live\.soulapp\.cn\/chatroom\/getRoomTagInfo url jsonjq-response-body '.data.res |= map(.iconConfig = null)'
 
 # 私聊限制
-^https:\/\/api-chat\.soulapp\.cn\/chat\/limitInfo url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/soul_qx.js
+^https:\/\/api-chat\.soulapp\.cn\/chat\/limitInfo url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/0d48f859129b52476a0f2b4cd1bad287f81db4aa70937ac0efacf91b12f7847f/soul_qx.js
 # 私聊阅后即焚
-^https:\/\/api-chat\.soulapp\.cn\/snapchat\/url url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/soul_qx.js
+^https:\/\/api-chat\.soulapp\.cn\/snapchat\/url url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/0d48f859129b52476a0f2b4cd1bad287f81db4aa70937ac0efacf91b12f7847f/soul_qx.js
 
 # [mitm]
-
-# Upstream hostname = ssp.soulapp.cn, increase-openapi.soulapp.cn, post.soulapp.cn, api-account.soulapp.cn, api-a.soulapp.cn, gateway-mobile-gray.soulapp.cn, api-user.soulapp.cn, chat-live.soulapp.cn, api-chat.soulapp.cn, activity.soulapp.cn, 47.110.187.87, 47.75.72.47, 47.96.7.91, 47.96.11.46, 47.96.20.45, 47.97.215.55, 47.98.54.106, 47.98.137.249, 47.99.42.29, 114.215.255.94, 116.62.28.7, 116.62.47.28, 118.31.7.235, 118.31.112.221, 120.27.235.201, 120.55.55.115, 120.55.62.124, 121.196.197.147, 121.196.203.183
 hostname = ssp.soulapp.cn, increase-openapi.soulapp.cn, post.soulapp.cn, api-account.soulapp.cn, api-a.soulapp.cn, gateway-mobile-gray.soulapp.cn, api-user.soulapp.cn, chat-live.soulapp.cn, api-chat.soulapp.cn, activity.soulapp.cn, 47.110.187.87, 47.75.72.47, 47.96.7.91, 47.96.11.46, 47.96.20.45, 47.97.215.55, 47.98.54.106, 47.98.137.249, 47.99.42.29, 114.215.255.94, 116.62.28.7, 116.62.47.28, 118.31.7.235, 118.31.112.221, 120.27.235.201, 120.55.55.115, 120.55.62.124, 121.196.197.147, 121.196.203.183

@@ -1,18 +1,16 @@
 # Name: 美团App 12.67.403
-# Icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/meituan.png
-# Icon Collection: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json
-# Updated: 2026-10-25 19:07:37 +08:00
-# Merged by: chance
-# Source Authors: 怎么肥事, TG@ZenMoFiShi
-# Category: app
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
+# Source Authors: 怎么肥事
+# Category: Adblock
 # Managed by: WayX Native QX
 
-# [filter_local]
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/MT.snippet
 # Upstream name = 美团App 12.67.403
 # Upstream author = TG@ZenMoFiShi
 # Upstream update = 2026.10.25
 
+# [filter_local]
 host, shark-mt.meituan.com, reject
 host, shark-default.meituan.com, reject
 host, shark-dp.meituan.com, reject
@@ -61,20 +59,16 @@ ip6-cidr, 2405:1480:1000:4::15/128, reject
 ip6-cidr, 2402:4e00:40:40::2:373/128, reject
 
 # [rewrite_local]
-
 ^https?:\/\/(httpdns|httpdnsvip|httpdnsmultiapi|httpdnsmultiapivip)\.meituan\.com\/ url reject
 ^http:\/\/103\.37\.155\.60\/fetch url reject
-^https?:\/\/apimobile\.meituan\.com\/aggroup\/indexTab url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.js
-^https?:\/\/feedguess\.meituan\.com\/lycoris\/scene\/(gwc_feed1_2265|personalcenter_2154)(\?|$) url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.js
-^https?:\/\/mt-personalcenter\.meituan\.com\/usercenter\/display url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.js
-^https?:\/\/apimobile\.meituan\.com\/group\/v1\/deal\/searchpage\/defaultword url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.js
-^https?:\/\/apimobile\.meituan\.com\/group\/v1\/deal\/searchpage\/hotword\/city\/divide\/hotrecommend\/ url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.js
-^https?:\/\/assistify\.meituan\.com\/assistant\/getAppClientHornConfig url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.js
-^https?:\/\/mop\.meituan\.com\/mop\/entry\/shoppingCartEntry url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.js
-^https?:\/\/mop\.meituan\.com\/api\/entryModule\/startupPicture url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.js
+^https?:\/\/apimobile\.meituan\.com\/aggroup\/indexTab url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/52eaad15c8b39f2c2f34b9d9b6d5f240df893579fee28146233bbf41abb20444/MT.js
+^https?:\/\/feedguess\.meituan\.com\/lycoris\/scene\/(gwc_feed1_2265|personalcenter_2154)(\?|$) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/52eaad15c8b39f2c2f34b9d9b6d5f240df893579fee28146233bbf41abb20444/MT.js
+^https?:\/\/mt-personalcenter\.meituan\.com\/usercenter\/display url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/52eaad15c8b39f2c2f34b9d9b6d5f240df893579fee28146233bbf41abb20444/MT.js
+^https?:\/\/apimobile\.meituan\.com\/group\/v1\/deal\/searchpage\/defaultword url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/52eaad15c8b39f2c2f34b9d9b6d5f240df893579fee28146233bbf41abb20444/MT.js
+^https?:\/\/apimobile\.meituan\.com\/group\/v1\/deal\/searchpage\/hotword\/city\/divide\/hotrecommend\/ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/52eaad15c8b39f2c2f34b9d9b6d5f240df893579fee28146233bbf41abb20444/MT.js
+^https?:\/\/assistify\.meituan\.com\/assistant\/getAppClientHornConfig url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/52eaad15c8b39f2c2f34b9d9b6d5f240df893579fee28146233bbf41abb20444/MT.js
+^https?:\/\/mop\.meituan\.com\/mop\/entry\/shoppingCartEntry url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/52eaad15c8b39f2c2f34b9d9b6d5f240df893579fee28146233bbf41abb20444/MT.js
+^https?:\/\/mop\.meituan\.com\/api\/entryModule\/startupPicture url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/52eaad15c8b39f2c2f34b9d9b6d5f240df893579fee28146233bbf41abb20444/MT.js
 
 # [mitm]
-
-# Upstream hostname = apimobile.meituan.com, feedguess.meituan.com, mop.meituan.com, mt-personalcenter.meituan.com, assistify.meituan.com, httpdns.meituan.com, httpdnsmultiapi.meituan.com
-
 hostname = apimobile.meituan.com, feedguess.meituan.com, mop.meituan.com, mt-personalcenter.meituan.com, assistify.meituan.com, httpdns.meituan.com, httpdnsmultiapi.meituan.com

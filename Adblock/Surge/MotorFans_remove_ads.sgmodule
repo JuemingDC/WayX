@@ -34,7 +34,7 @@ http-response-jq ^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayContro
 ^https:\/\/api\.58moto\.com\/forum\/public\/labelController\.do\?action=20112 data-type=text data="{\"code\":0,\"msg\":\"success\"}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-修改配置 = type=http-response,pattern=^https:\/\/api\.58moto\.com\/expands\/config\/appWholeConfig\?key=app_whole_config$,script-path=https://kelee.one/Resource/JavaScript/MotorFans/MotorFans_remove_ads.js,requires-body=true,max-size=-1,timeout=20
+修改配置 = type=http-response,pattern=^https:\/\/api\.58moto\.com\/expands\/config\/appWholeConfig\?key=app_whole_config$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/28e7d9d5ad8f354c52ac7d0660709a809f8386b593b0b5cc1ffc88b796844ee1/MotorFans_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% api.58moto.com

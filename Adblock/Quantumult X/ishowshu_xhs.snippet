@@ -1,19 +1,17 @@
 # Name: 小红书
-# Icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/xiaohongshu.png
-# Icon Collection: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json
-# Updated: 2026-10-25 18:04:02 +08:00
-# Merged by: chance
-# Source Authors: 树先生, 奶思
-# Category: app
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
+# Source Authors: 树先生
+# Category: Adblock
 # Managed by: WayX Native QX
 
-# [filter_local]
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/xhs.snippet
 # Upstream name = 小红书
 # Upstream author = 树先生, 奶思
 # Upstream desc = 移除广告
 # Upstream date = 2026-09-11
 
+# [filter_local]
 host, ads-img-qc.xhscdn.com, reject
 host, ads-video-al.xhscdn.com, reject
 host, ads-video-qc.xhscdn.com, reject
@@ -27,9 +25,8 @@ host, crash.xiaohongshu.com, reject
 host, fe.xiaohongshu.com, reject
 host, lng.xiaohongshu.com, reject
 
-# [rewrite_local]
-
 # 信息流
+# [rewrite_local]
 ^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/note\/guide\? url reject-dict
 ^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/note\/detailfeed\/preload\? url reject-dict
 ^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/guide\/user_banner url reject-dict
@@ -73,7 +70,4 @@ host, lng.xiaohongshu.com, reject
 ^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v5\/recommend\/user\/explore url jsonjq-response-body '.data = []'
 
 # [mitm]
-
-# Upstream hostname = edith.xiaohongshu.com, www.xiaohongshu.com, so.xiaohongshu.com, gslb.xiaohongshu.com, rec.xiaohongshu.com
-
 hostname = edith.xiaohongshu.com, www.xiaohongshu.com, so.xiaohongshu.com, gslb.xiaohongshu.com, rec.xiaohongshu.com

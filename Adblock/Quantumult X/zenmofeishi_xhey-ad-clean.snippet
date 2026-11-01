@@ -1,17 +1,15 @@
 # Name: XCamera广告净化合集
-# Icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/Jinrishuiyinxiangji.png
-# Icon Collection: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json
-# Updated: 2026-10-29 05:53:54 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
 # Source Authors: 怎么肥事
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 
-# [rewrite_local]
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/xhey-ad-clean.snippet
 # Upstream name=XCamera广告净化合集
 # Upstream desc=今日水印专业版3.0.186全局关广告开关、TopOn/百度/快手/CLL广告请求拦截。作者：TG@ZenMoFiShi
-^https?:\/\/abtest-tx-beijing-01\.saas\.sensorsdata\.cn\/api\/v2\/abtest\/online\/results\?project-key=(?:0E6053C30A799D63EFA48959776B2EE2EDC81359|EE39C73914ED208E6EBE24A7333CAF5C3FE2E89D) url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/xhey-ad-clean.js
+# [rewrite_local]
+^https?:\/\/abtest-tx-beijing-01\.saas\.sensorsdata\.cn\/api\/v2\/abtest\/online\/results\?project-key=(?:0E6053C30A799D63EFA48959776B2EE2EDC81359|EE39C73914ED208E6EBE24A7333CAF5C3FE2E89D) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/48dd0194aea228c386f8809b2a9dd638b70a508072beb0fbb0eb8788690c0521/xhey-ad-clean.js
 ^https?:\/\/(?:api|da|tk|adx)\.anythinktech\.com\/ url reject
 ^https?:\/\/api\.toponadss\.com\/ url reject
 ^https?:\/\/mobads(?:-logs)?\.baidu\.com\/ url reject
@@ -27,9 +25,6 @@
 ^https?:\/\/tk\.statisticslinks\.com\/v2\/open\/a_tk(?:\?.*)?$ url reject
 ^https?:\/\/sdkquic\.e\.qq\.com\/launch(?:\?.*)?$ url reject
 ^https?:\/\/als\.baidu\.com\/clog\/glog(?:\?.*)?$ url reject
-^https?:\/\/jt-sdk-ios\.oss-cn-beijing\.aliyuncs\.com\/iOSConfig\.txt(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/xhey-ad-clean.js
-
+^https?:\/\/jt-sdk-ios\.oss-cn-beijing\.aliyuncs\.com\/iOSConfig\.txt(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/48dd0194aea228c386f8809b2a9dd638b70a508072beb0fbb0eb8788690c0521/xhey-ad-clean.js
 # [mitm]
-# Upstream hostname = abtest-tx-beijing-01.saas.sensorsdata.cn, api.anythinktech.com, da.anythinktech.com, tk.anythinktech.com, adx.anythinktech.com, api.toponadss.com, mobads.baidu.com, mobads-logs.baidu.com, mobads-pre-config.bj.bcebos.com, mobads-pre-config.cdn.bcebos.com, open.e.kuaishou.com, open.e.kuaishou.cn, stage2.chelaile.net.cn, ad.xhey.top, 39.108.85.131, sdk.1rtb.net, adx-strategy-api-cn.statisticslinks.com, adx-micro.statisticslinks.com, da.statisticslinks.com, tk.statisticslinks.com, sdkquic.e.qq.com, als.baidu.com, jt-sdk-ios.oss-cn-beijing.aliyuncs.com
-
 hostname = abtest-tx-beijing-01.saas.sensorsdata.cn, api.anythinktech.com, da.anythinktech.com, tk.anythinktech.com, adx.anythinktech.com, api.toponadss.com, mobads.baidu.com, mobads-logs.baidu.com, mobads-pre-config.bj.bcebos.com, mobads-pre-config.cdn.bcebos.com, open.e.kuaishou.com, open.e.kuaishou.cn, stage2.chelaile.net.cn, ad.xhey.top, 39.108.85.131, sdk.1rtb.net, adx-strategy-api-cn.statisticslinks.com, adx-micro.statisticslinks.com, da.statisticslinks.com, tk.statisticslinks.com, sdkquic.e.qq.com, als.baidu.com, jt-sdk-ios.oss-cn-beijing.aliyuncs.com

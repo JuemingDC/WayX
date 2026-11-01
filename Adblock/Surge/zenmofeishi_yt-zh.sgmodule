@@ -8,19 +8,18 @@
 
 [Rule]
 # Name: YouTube 强制简体中文字幕
-# Updated: 2026-10-30 15:52:24 +08:00
-# Merged by: chance
-# Source Authors: 怎么肥事, @ZenmoFeiShi
-# Category: app
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
+# Source Authors: 怎么肥事
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/Yt-zh.snippet
 # Upstream author=@ZenmoFeiShi
 # Upstream name=YouTube 强制简体中文字幕
-# Upstream hostname = www.youtube.com
 
 [Script]
-zenmofeishi_yt-zh_1 = type=http-request,pattern=^https://www\.youtube\.com/api/timedtext\?.*_ytzhsub=1,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/yt-sub-clean.js,requires-body=false
-zenmofeishi_yt-zh_2 = type=http-response,pattern=^https://www\.youtube\.com/api/timedtext\?,script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/yt-zh-sub.js,requires-body=true
+zenmofeishi_yt-zh_1 = type=http-request,pattern=^https://www\.youtube\.com/api/timedtext\?.*_ytzhsub=1,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/586340f11939d72f1be8707ea0b256940efa61b3b7183830ee10b2e6f2f64bde/yt-sub-clean.js,requires-body=false
+zenmofeishi_yt-zh_2 = type=http-response,pattern=^https://www\.youtube\.com/api/timedtext\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/941838a3032e0df344badc85327699fd45b8a04a9370abe493ba9b52cf5edff5/yt-zh-sub.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% www.youtube.com

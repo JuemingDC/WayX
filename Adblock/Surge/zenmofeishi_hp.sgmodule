@@ -6,26 +6,25 @@
 
 [Rule]
 # Name: 虎扑净化
-# Updated: 2026-10-25 19:01:30 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
 # Source Authors: 怎么肥事
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/HP.snippet
 # Upstream name = 虎扑净化
 # Upstream author = 怎么肥事
 # Upstream update = 2026-4-14
-# // 图库模块
-# // 红点提示
-# // 热门标签 & 排行榜
-# // 搜索提示 & 热搜
-# // 插屏广告
-# // 比分Tab & 横幅
-# // 预览横幅 - 清空数据
-# // 热门列表 - 移除顶部横幅
-# // 论坛功能入口 - 移除多余图标 & "我的应用"卡片
-# // 用户页 - 移除VIP信息
-# Upstream hostname = *.hupu.com
+// 图库模块
+// 红点提示
+// 热门标签 & 排行榜
+// 搜索提示 & 热搜
+// 插屏广告
+// 比分Tab & 横幅
+// 预览横幅 - 清空数据
+// 热门列表 - 移除顶部横幅
+// 论坛功能入口 - 移除多余图标 & "我的应用"卡片
+// 用户页 - 移除VIP信息
 
 [Map Local]
 ^https:\/\/fairy\.mobileapi\.hupu\.com\/gallery\/getmod2 data-type=text data="" status-code=200

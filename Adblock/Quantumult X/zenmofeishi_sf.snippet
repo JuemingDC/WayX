@@ -1,18 +1,16 @@
 # Name: 顺丰app净化
-# Icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/shunfeng.png
-# Icon Collection: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json
-# Updated: 2026-10-25 19:01:30 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
 # Source Authors: 怎么肥事
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 
-# [rewrite_local]
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/SF.snippet
 # Upstream name = 顺丰app净化
 # Upstream author = 怎么肥事
 # Upstream update = 2024-02-01
 
+# [rewrite_local]
 ^https:\/\/ccsp-egmas\.sf-express\.com\/cx-app-video\/video\/app\/video\/labelClusterList url reject-dict
 
 ^https:\/\/ucmp\.sf-express\.com\/proxy\/esgcempcore\/memberGoods\/pointMallService\/goodsList url reject-dict
@@ -22,7 +20,4 @@
 ^https:\/\/ccsp-egmas\.sf-express\.com\/cx-app-base\/base\/app\/bms\/queryRecommend url reject-dict
 
 # [mitm]
-
-# Upstream hostname = ucmp.sf-express.com,ccsp-egmas.sf-express.com
-
-hostname = ucmp.sf-express.com, ccsp-egmas.sf-express.com
+hostname = ucmp.sf-express.com,ccsp-egmas.sf-express.com

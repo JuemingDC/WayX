@@ -1,29 +1,24 @@
 # Name: 腾讯视频净化
-# Icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/tengxunshipin.png
-# Icon Collection: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json
-# Updated: 2026-10-27 15:22:19 +08:00
-# Merged by: chance
-# Source Authors: 怎么肥事, TG@ZenMoFiShi
-# Category: app
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
+# Source Authors: 怎么肥事
+# Category: Adblock
 # Managed by: WayX Native QX
 
-# [filter_local]
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/TxvideoAD.snippet
 # Upstream name = 腾讯视频净化
 # Upstream author = TG@ZenMoFiShi
-# Upstream update = 2026-10-27
+# Upstream update = 2026-11-1
 # Upstream desc = 去除开屏广告、视频播放前广告、底部的多余 tap 栏、我的页面美化、我的界面顶部广告
+# [filter_local]
 host, iacc.stgw.qq.com, reject
 host, tacc.video.qq.com, reject
-
 # [rewrite_local]
-^https?:\/\/i\.video\.qq\.com\/(?:\?.*)?$ url script-request-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/Txvideoad.js
-^https?:\/\/i\.video\.qq\.com\/(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/Txvideoad.js
-^https?:\/\/iacc\.qq\.com\/(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/Txvideoad.js
-^https?:\/\/config\.ab\.qq\.com\/tab\/GetTabRemoteConfig(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/Txvideoad.js
-^https:\/\/rdelivery\.qq\.com\/v1\/sdkconfig\/get(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/Txvideoad.js
+^https?:\/\/i\.video\.qq\.com\/(?:\?.*)?$ url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/32b2671fd33fa9e5844b6d7a172ed4d9d606a3c1ddc0975c805b20dadf8765dc/Txvideoad.js
+^https?:\/\/i\.video\.qq\.com\/(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/32b2671fd33fa9e5844b6d7a172ed4d9d606a3c1ddc0975c805b20dadf8765dc/Txvideoad.js
+^https?:\/\/iacc\.qq\.com\/(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/32b2671fd33fa9e5844b6d7a172ed4d9d606a3c1ddc0975c805b20dadf8765dc/Txvideoad.js
+^https?:\/\/config\.ab\.qq\.com\/tab\/GetTabRemoteConfig(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/32b2671fd33fa9e5844b6d7a172ed4d9d606a3c1ddc0975c805b20dadf8765dc/Txvideoad.js
+^https:\/\/rdelivery\.qq\.com\/v1\/sdkconfig\/get(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/32b2671fd33fa9e5844b6d7a172ed4d9d606a3c1ddc0975c805b20dadf8765dc/Txvideoad.js
 
 # [mitm]
-
-# Upstream hostname = i.video.qq.com, iacc.qq.com, config.ab.qq.com, rdelivery.qq.com
 hostname = i.video.qq.com, iacc.qq.com, config.ab.qq.com, rdelivery.qq.com

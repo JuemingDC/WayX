@@ -8,10 +8,10 @@
 
 [Rule]
 # Name: Keep
-# Updated: 2026-10-30 15:52:20 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
 # Source Authors: 树先生
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/keep.snippet
 # Upstream name=Keep
@@ -28,7 +28,6 @@ DOMAIN,httpdns.calorietech.com,REJECT
 #^https:\/\/api\.gotokeep\.com\/twins\/v4\/feed\/entryDetail url jsonjq-response-body .data.modules = [.data.modules[0]]
 # 社区过滤掉推荐动态和推荐用户
 # Source declaration: ^https:\/\/api\.gotokeep\.com\/twins\/v1\/social\/tab\/friends url jsonjq-response-body .data.modules |= map(select(.positions | type == "object" and (has("recommendReason") | not) and (has("recommendUsers") | not)))
-# Upstream hostname = api.gotokeep.com, kad.gotokeep.com
 
 [Map Local]
 ^https:\/\/kad\.gotokeep\.com\/op-engine-webapp\/v\d\/ad data-type=text data="{}" status-code=200 header="Content-Type:application/json"
@@ -43,7 +42,7 @@ DOMAIN,httpdns.calorietech.com,REJECT
 http-response-jq ^https:\/\/api\.gotokeep\.com\/twins\/v1\/social\/tab\/friends '.data.modules |= map(select(.positions | type == "object" and (has("recommendReason") | not) and (has("recommendUsers") | not)))'
 
 [Script]
-ishowshu_keep_1 = type=http-response,pattern=^https:\/\/api\.gotokeep\.com\/config\/v3\/basic\?,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/keep.js,requires-body=true
+ishowshu_keep_1 = type=http-response,pattern=^https:\/\/api\.gotokeep\.com\/config\/v3\/basic\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/6cdf53173dd7a340e52aadfea0b8894aecec504fd6bba584833fa1fabc61994d.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% api.gotokeep.com, kad.gotokeep.com

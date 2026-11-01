@@ -1,32 +1,32 @@
 # Name: 淘宝
-# Icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/taobao.png
-# Icon Collection: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json
-# Updated: 2026-10-25 18:04:02 +08:00
-# Merged by: chance
-# Source Authors: 树先生, 可莉
-# Category: app
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
+# Source Authors: 树先生
+# Category: Adblock
 # Managed by: WayX Native QX
 
-# [filter_local]
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/filter/taobao.snippet
 # Upstream name = 淘宝
 # Upstream desc = 移除开屏
 # Upstream author = 树先生
 
 #host, heic.alicdn.com, reject
+# [filter_local]
 host, adashx.m.taobao.com, reject
 host, h-adashx.ut.taobao.com, reject
+
+
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/taobao.snippet
 # Upstream name = 淘宝
 # Upstream desc = 移除开屏
 # Upstream author = 树先生, 可莉
 
+# [filter_local]
 user-agent, %E6%B7%98%E5%AE%9D*, reject
 host, adashx.m.taobao.com, reject
 host, h-adashx.ut.taobao.com, reject
 
 # [rewrite_local]
-
 ^http:\/\/amdc\.m\.taobao\.com\/amdc\/mobileDispatch %E6%B7%98%E5%AE%9D* url-and-header reject
 # 开屏广告
 ^https:\/\/heic\.alicdn\.com\/imgextra\/i\d\/[A-Za-z0-9_!]+-\d+-tps-\d+-\d+\.png_\d+x\d*q\d+\.jpg_\.heic$ url reject-dict
@@ -37,8 +37,4 @@ host, h-adashx.ut.taobao.com, reject
 ^https?:\/\/gw\.alicdn\.com\/imgextra\/i\d+\/[^\/]+_!!\d+-\d+-tps-(720-1280|1080-1920|1125-1602|1242-2208)\.(jpg|png|jpeg)_[^\/]+\.webp url reject-dict
 
 # [mitm]
-
-
-# Upstream hostname = heic.alicdn.com, gw.alicdn.com
-
 hostname = heic.alicdn.com, gw.alicdn.com

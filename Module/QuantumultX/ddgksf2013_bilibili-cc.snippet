@@ -1,32 +1,29 @@
 # Name: 哔哩哔哩繁体CC字幕转中文简体[墨鱼版]
-# Updated: 2026-11-01 09:49:35 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:26 +08:00
+# Copied by: chance
 # Source Authors: 墨鱼 / ddgksf2013
 # Category: Module
 # Managed by: WayX Native QX
 
-# [rewrite_local]
+# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/Function/Bilibili_CC.conf
+// ==UserScript==
+// @ScriptName        哔哩哔哩繁体CC字幕转中文简体[墨鱼版]
+// @Author            @ddgksf2013
+// @ForHelp           若有屏蔽广告的需求，可公众号后台回复APP名称
+// @WechatID          墨鱼手记
+// @TgChannel         https://t.me/ddgksf2021
+// @Contribute        https://t.me/ddgksf2013_bot
+// @UpdateTime        2023-04-13
+// @Suitable          自行观看“# > ”注释内容
+// @Attention         如需引用请注明出处，谢谢合作！
+// @Version           V1.0.12
+// @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/Function/Bilibili_CC.conf
+// ==/UserScript==
 
-# > 哔哩哔哩繁体CC字幕转中文简体（2023-04-11）@ddgksf2013
-^https?:\/\/.*\.hdslb\.com\/bfs\/subtitle\/.+\.json url script-response-body https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/bilibili_cc.js
 
 # [mitm]
-# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/Function/Bilibili_CC.conf
-# // ==UserScript==
-# // @ScriptName        哔哩哔哩繁体CC字幕转中文简体[墨鱼版]
-# // @Author            @ddgksf2013
-# // @ForHelp           若有屏蔽广告的需求，可公众号后台回复APP名称
-# // @WechatID          墨鱼手记
-# // @TgChannel         https://t.me/ddgksf2021
-# // @Contribute        https://t.me/ddgksf2013_bot
-# // @UpdateTime        2023-04-13
-# // @Suitable          自行观看“# > ”注释内容
-# // @Attention         如需引用请注明出处，谢谢合作！
-# // @Version           V1.0.12
-# // @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/Function/Bilibili_CC.conf
-# // ==/UserScript==
+hostname = aisubtitle.hdslb.com,i0.hdslb.com
 
-
-# Upstream hostname = aisubtitle.hdslb.com,i0.hdslb.com
-
-hostname = aisubtitle.hdslb.com, i0.hdslb.com
+# > 哔哩哔哩繁体CC字幕转中文简体（2023-04-11）@ddgksf2013
+# [rewrite_local]
+^https?:\/\/.*\.hdslb\.com\/bfs\/subtitle\/.+\.json url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/6d721ef51052bdf933956dd741ebfef7ac101103fc5fe3c5a16aee0b7c8b3e52/bilibili_cc.js

@@ -8,26 +8,25 @@
 
 [Rule]
 # Name: 贴吧净化
-# Updated: 2026-10-30 15:52:24 +08:00
-# Merged by: chance
-# Source Authors: 怎么肥事, app2smile, 可莉
-# Category: app
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
+# Source Authors: 怎么肥事
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/TB.snippet
 # Upstream name = 贴吧净化
 # Upstream author = 怎么肥事、app2smile、可莉
 # Upstream update = 2026-4-14
-# // 分流
+// 分流
 DOMAIN,afd.baidu.com,REJECT
 DOMAIN,mobads.baidu.com,REJECT
-# // 聊天订阅 & 搜索发现 & 吧引导
-# // 直播Feed - 移除横幅
-# // 侧边栏 - 移除VIP横幅和工具
-# // 用户资料 - 移除广告/推广/多余功能区
-# // 吧底部 - 移除活动卡片和AI聊天引导
-# // 贴吧去广告(app2smile JSON版)
-# // 贴吧去广告(app2smile Proto版)
-# Upstream hostname = tieba.baidu.com, tiebac.baidu.com
+// 聊天订阅 & 搜索发现 & 吧引导
+// 直播Feed - 移除横幅
+// 侧边栏 - 移除VIP横幅和工具
+// 用户资料 - 移除广告/推广/多余功能区
+// 吧底部 - 移除活动卡片和AI聊天引导
+// 贴吧去广告(app2smile JSON版)
+// 贴吧去广告(app2smile Proto版)
 
 [Map Local]
 ^https:\/\/tiebac\.baidu\.com\/c\/u\/chat\/getChatSubscriptionList data-type=text data="{}" status-code=200 header="Content-Type:application/json"
@@ -41,8 +40,8 @@ http-response-jq ^https:\/\/tiebac\.baidu\.com\/c\/u\/user\/profile 'del(.banner
 http-response-jq ^https:\/\/tieba\.baidu\.com\/c\/f\/frs\/frsBottom 'del(.card_activity.small_card, .card_activity.big_card, .ai_chatroom_guide)'
 
 [Script]
-zenmofeishi_tb_1 = type=http-response,pattern=^http(s:\/\/tiebac|:\/\/c\.tieba)\.baidu\.com\/(c\/f\/(frs\/(page|threadlist|generalTabList)|pb\/page|excellent\/personalized)$|tiebaads\/commonbatch|c\/s\/sync$),script-path=https://raw.githubusercontent.com/app2smile/rules/master/js/tieba-json.js,requires-body=true
-zenmofeishi_tb_2 = type=http-response,pattern=^http(s:\/\/tiebac|:\/\/c\.tieba)\.baidu\.com\/c\/f\/(frs\/(page|threadlist|generalTabList)|pb\/page|excellent\/personalized)\?cmd,script-path=https://raw.githubusercontent.com/app2smile/rules/master/js/tieba-proto.js,requires-body=true
+zenmofeishi_tb_1 = type=http-response,pattern=^http(s:\/\/tiebac|:\/\/c\.tieba)\.baidu\.com\/(c\/f\/(frs\/(page|threadlist|generalTabList)|pb\/page|excellent\/personalized)$|tiebaads\/commonbatch|c\/s\/sync$),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/1e3d22996ea2585c0c6adca3504c37bdb1778f9c64af7501ec185ba92648572a.js,requires-body=true
+zenmofeishi_tb_2 = type=http-response,pattern=^http(s:\/\/tiebac|:\/\/c\.tieba)\.baidu\.com\/c\/f\/(frs\/(page|threadlist|generalTabList)|pb\/page|excellent\/personalized)\?cmd,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/f38021eb462fc211f4f2a268377861af099b43fbfb4eb694b9db532b5376b213/tieba-proto.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% tieba.baidu.com, tiebac.baidu.com

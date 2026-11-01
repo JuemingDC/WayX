@@ -1,27 +1,10 @@
 # Name: youtubeads
-# Updated: 2026-11-01 09:49:35 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:26 +08:00
+# Copied by: chance
 # Source Authors: 墨鱼 / ddgksf2013
 # Category: Adblock
 # Managed by: WayX Native QX
 
-# [rewrite_local]
-
-# ======= 视频广告请求 ======= #
-(^https?:\/\/[\w-]+\.googlevideo\.com\/(?!dclk_video_ads).+?)&ctier=L(&.+?),ctier,(.+) url 302 $1$2$3
-^https?:\/\/[\w-]+\.googlevideo\.com\/(?!(dclk_video_ads|videoplayback\?)).+&oad url reject-200
-
-
-# ======= 视频PIP|后台播放|瀑布流|搜索页|播放页|短视频|贴片广告  ======= #
-^https?:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch) url script-response-body https://raw.githubusercontent.com/Maasea/sgmodule/refs/heads/master/Script/Youtube/youtube.response.js
-
-
-# ======= 通用广告请求 ======= #
-^https?:\/\/(www|s)\.youtube\.com\/api\/stats\/ads url reject-200
-^https?:\/\/(www|s)\.youtube\.com\/(pagead|ptracking) url reject-200
-^https?:\/\/s\.youtube\.com\/api\/stats\/qoe\?adcontext url reject-200
-
-# [mitm]
 # Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/YoutubeAds.conf
 ########################################
 #应用名称：  Youtube Block AD
@@ -37,6 +20,20 @@
 #重写地址：  https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/YoutubeAds.conf
 ########################################
 
-# Upstream hostname = -redirector*.googlevideo.com,*.googlevideo.com,www.youtube.com,s.youtube.com,youtubei.googleapis.com
+# [mitm]
+hostname = -redirector*.googlevideo.com,*.googlevideo.com,www.youtube.com,s.youtube.com,youtubei.googleapis.com
 
-hostname = -redirector*.googlevideo.com, *.googlevideo.com, www.youtube.com, s.youtube.com, youtubei.googleapis.com
+# ======= 视频广告请求 ======= #
+# [rewrite_local]
+(^https?:\/\/[\w-]+\.googlevideo\.com\/(?!dclk_video_ads).+?)&ctier=L(&.+?),ctier,(.+) url 302 $1$2$3
+^https?:\/\/[\w-]+\.googlevideo\.com\/(?!(dclk_video_ads|videoplayback\?)).+&oad url reject-200
+
+
+# ======= 视频PIP|后台播放|瀑布流|搜索页|播放页|短视频|贴片广告  ======= #
+^https?:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/b4990e49550a5d8d9faa02a517837d3d8b3ff5bb2a4904a65cd3ffaadbbf9722/youtube.response.js
+
+
+# ======= 通用广告请求 ======= #
+^https?:\/\/(www|s)\.youtube\.com\/api\/stats\/ads url reject-200
+^https?:\/\/(www|s)\.youtube\.com\/(pagead|ptracking) url reject-200
+^https?:\/\/s\.youtube\.com\/api\/stats\/qoe\?adcontext url reject-200

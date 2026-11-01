@@ -8,29 +8,28 @@
 
 [Rule]
 # Name: Soul净化
-# Updated: 2026-10-30 15:52:24 +08:00
-# Merged by: chance
-# Source Authors: 怎么肥事, 怎么肥事  感谢@可莉对去除开屏广告提供的帮助
-# Category: app
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
+# Source Authors: 怎么肥事
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/Soul.snippet
 # Upstream name = Soul净化
 # Upstream author = 怎么肥事  感谢@可莉对去除开屏广告提供的帮助
 # Upstream update = 2026-4-14
-# // 广告 & 聊天菜单
-# // 礼物列表 - 清空数据
-# // 热门排行 - 清空数据
-# // 版本更新 - 清空数据
-# // 聊天限制 - 解除限制
-# // 首页引导卡片 - 清空数据
-# // 位置内容 - 清空数据
-# // 青少年模式 - 清空数据
-# // DNS劫持 - 清空数据
-# // 官方场景模块 - 清空数据
-# // 聊天室列表 - 清空房间
-# // 星球配置 - 移除指定游戏/功能入口 + 样式修正
-# // 推荐广场Tab - 只保留指定类型
-# Upstream hostname = api-account.soulapp.cn, chat-live.soulapp.cn, api-a.soulapp.cn, api-pay.soulapp.cn, gateway-mobile-gray.soulapp.cn, api-chat.soulapp.cn, 120.55.55.115, 120.55.62.124, 121.196.203.183, 47.96.20.45, 47.98.54.106, 118.31.112.221, 8.210.3.170, 47.75.72.47, post.soulapp.cn, api-user.soulapp.cn, ssp.soulapp.cn, 47.110.187.87
+// 广告 & 聊天菜单
+// 礼物列表 - 清空数据
+// 热门排行 - 清空数据
+// 版本更新 - 清空数据
+// 聊天限制 - 解除限制
+// 首页引导卡片 - 清空数据
+// 位置内容 - 清空数据
+// 青少年模式 - 清空数据
+// DNS劫持 - 清空数据
+// 官方场景模块 - 清空数据
+// 聊天室列表 - 清空房间
+// 星球配置 - 移除指定游戏/功能入口 + 样式修正
+// 推荐广场Tab - 只保留指定类型
 
 [Map Local]
 ^https:\/\/ssp\.soulapp\.cn\/api\/q data-type=text data="{}" status-code=200 header="Content-Type:application/json"

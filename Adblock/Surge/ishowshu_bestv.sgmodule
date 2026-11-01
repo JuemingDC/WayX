@@ -6,10 +6,10 @@
 
 [Rule]
 # Name: 看东方
-# Updated: 2026-10-25 19:01:27 +08:00
-# Merged by: chance
-# Source Authors: 树先生, baby
-# Category: app
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
+# Source Authors: 树先生
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/bestv.snippet
 # Upstream name = 看东方
@@ -23,7 +23,6 @@
 #^https:\/\/bp-api\.bestv\.cn\/cms\/api\/live\/studio\/id\/v4 url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/bestv.js
 # nba/电视
 # HTML页面
-# Upstream hostname = bp-api.bestv.com.cn, bp-api.bestv.cn, 360.com
 
 [URL Rewrite]
 ^https:\/\/bp-api\.bestv\.cn\/cms\/api\/advertise\/project\/advertise\/popup\/scene$ _ reject
@@ -33,7 +32,7 @@
 ^https:\/\/bp-api\.bestv\.com\.cn\/cms\/api\/free\/open\/advertisingV2 data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-ishowshu_bestv_1 = type=http-response,pattern=^https:\/\/bp-api\.bestv\.cn\/cms\/api\/advertise\/project\/userCenter,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/bestv.js,requires-body=true
+ishowshu_bestv_1 = type=http-response,pattern=^https:\/\/bp-api\.bestv\.cn\/cms\/api\/advertise\/project\/userCenter,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/8416dc04aa1a178eaad4c813fceb44e6a5364c7c43b6ca36f71fb8738bd0998b.js,requires-body=true
 ishowshu_bestv_2 = type=http-response,pattern=https:\/\/bp-api\.bestv\.(?:com\.cn|cn)\/cms\/api\/(live\/studio\/id\/v8|c\/player\/common),script-path=https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js,requires-body=true
 ishowshu_bestv_3 = type=http-response,pattern=^https?:\/\/360\.com\/(?:video|nba\.m3u|dianshi\.m3u)$,script-path=https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js,requires-body=true
 

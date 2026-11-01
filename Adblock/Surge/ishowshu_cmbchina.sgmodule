@@ -8,10 +8,10 @@
 
 [Rule]
 # Name: 招商银行
-# Updated: 2026-10-30 15:52:20 +08:00
-# Merged by: chance
-# Source Authors: 树先生, 奶思
-# Category: app
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
+# Source Authors: 树先生
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/cmbchina.snippet
 # Upstream name = 招商银行
@@ -24,7 +24,6 @@
 # hostname = webappcfg.paas.cmbchina.com, mbmodule-openapi.paas.cmbchina.com
 # 开屏广告
 # 首页横幅广告
-# Upstream hostname = webappcfg.paas.cmbchina.com, mbmodule-openapi.paas.cmbchina.com, mbasecc.bas.cmbchina.com, mbasecc.bcs.cmbchina.com
 
 [Map Local]
 ^https?:\/\/mbasecc\.(bas|bcs)\.cmbchina\.com\/Edge\/api\/mlife\.clientface\.clientservice\.api\.advertiseService\/preCacheAdvertiseSec data-type=text data="{}" status-code=200 header="Content-Type:application/json"

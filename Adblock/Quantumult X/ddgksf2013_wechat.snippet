@@ -1,27 +1,24 @@
 # Name: 微信公众号去广告[已失效]
-# Updated: 2026-11-01 09:49:35 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:26 +08:00
+# Copied by: chance
 # Source Authors: 墨鱼 / ddgksf2013
 # Category: Adblock
 # Managed by: WayX Native QX
 
-# [rewrite_local]
+# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/WeChat.conf
+// ==UserScript==
+// @ScriptName        微信公众号去广告[已失效]
+// @Author            @ddgksf2013
+// @TgChannel         https://t.me/ddgksf2021
+// @Function          Block AD
+// @ScriptTime        2024-04-21
+// @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/WeChat.conf
+// ==/UserScript==
 
-# > 微信公众号去广告[已失效][不包含公众号信息流AD、朋友圈AD][推荐开启青少年模式可去除朋友圈AD]
-^https?:\/\/mp\.weixin\.qq\.com\/mp\/getappmsgad url response-body advertisement response-body ddgksf2013
 
 # [mitm]
-# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/WeChat.conf
-# // ==UserScript==
-# // @ScriptName        微信公众号去广告[已失效]
-# // @Author            @ddgksf2013
-# // @TgChannel         https://t.me/ddgksf2021
-# // @Function          Block AD
-# // @ScriptTime        2024-04-21
-# // @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/WeChat.conf
-# // ==/UserScript==
-
-
-# Upstream hostname = mp.weixin.qq.com
-
 hostname = mp.weixin.qq.com
+
+# > 微信公众号去广告[已失效][不包含公众号信息流AD、朋友圈AD][推荐开启青少年模式可去除朋友圈AD]
+# [rewrite_local]
+^https?:\/\/mp\.weixin\.qq\.com\/mp\/getappmsgad url response-body advertisement response-body ddgksf2013

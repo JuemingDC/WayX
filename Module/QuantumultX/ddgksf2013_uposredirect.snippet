@@ -1,15 +1,10 @@
 # Name: uposredirect
-# Updated: 2026-11-01 09:49:35 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:26 +08:00
+# Copied by: chance
 # Source Authors: 墨鱼 / ddgksf2013
 # Category: Module
 # Managed by: WayX Native QX
 
-# [rewrite_local]
-
-^https?:\/\/upos-hz-mirrorakam\.akamaized\.net\/(.*) url 302 https://upos-sz-mirrorcos.bilivideo.com/$1
-
-# [mitm]
 # Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/Function/UposRedirect.conf
 ##########################################################################################
 # - 哔哩哔哩Upos服务器替换为腾讯Cos对象存储
@@ -21,6 +16,8 @@
 ###########################################################################################
 
 
-# Upstream hostname=upos-hz-mirrorakam.akamaized.net
+# [mitm]
+hostname=upos-hz-mirrorakam.akamaized.net
 
-hostname = upos-hz-mirrorakam.akamaized.net
+# [rewrite_local]
+^https?:\/\/upos-hz-mirrorakam\.akamaized\.net\/(.*) url 302 https://upos-sz-mirrorcos.bilivideo.com/$1

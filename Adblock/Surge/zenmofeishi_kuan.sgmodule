@@ -8,16 +8,15 @@
 
 [Rule]
 # Name: 酷安全面净化
-# Updated: 2026-10-30 15:52:24 +08:00
-# Merged by: chance
-# Source Authors: 怎么肥事, walala
-# Category: app
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
+# Source Authors: 怎么肥事
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/KuAn.snippet
 # Upstream name = 酷安全面净化
 # Upstream author = 怎么肥事、walala
 # Upstream update = 2025-11-01
-# Upstream hostname = api.coolapk.com
 
 [Map Local]
 https:\/\/api\.coolapk\.com\/v6\/search\?.*type=hotSearch data-type=text data="{}" status-code=200 header="Content-Type:application/json"

@@ -1,18 +1,16 @@
 # Name: 滴滴出行
-# Icon: https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/apps/didi.png
-# Icon Collection: https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/icons-all.json
-# Updated: 2026-10-25 19:01:30 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
 # Source Authors: 怎么肥事
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 
-# [filter_local]
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/Didichuxing.snippet
 # Upstream name = 滴滴出行
 # Upstream author = 怎么肥事
 # Upstream update = 2026-6-13
 
+# [filter_local]
 host, gwp.xiaojukeji.com, reject
 ip-cidr, 139.199.244.6/32, reject
 ip-cidr, 113.46.225.9/32, reject
@@ -31,7 +29,6 @@ ip-cidr, 116.85.1.22/32, reject
 ip-cidr, 116.85.3.25/32, reject
 
 # [rewrite_local]
-
 ^https:\/\/res\.xiaojukeji\.com\/resapi\/activity\/getMulti\? url reject-dict
 ^https:\/\/res\.xiaojukeji\.com\/resapi\/activity\/xpget url reject-dict
 ^https:\/\/ct\.xiaojukeji\.com\/agent\/v3\/feeds url reject-dict
@@ -69,9 +66,6 @@ ip-cidr, 116.85.3.25/32, reject
 
 ^https:\/\/ddpay\.xiaojukeji\.com\/ddpay\/api\/manhattan-small-change\/get-apollo-config url jsonjq-response-body '.data.result.hideList = []'
 
+
 # [mitm]
-
-
-# Upstream hostname = 117.51.168.*, 113.46.225.*, common.diditaxi.com.cn, freight.xiaojukeji.com, daijia.kuaidadi.com, 162.14.157.*, ct.xiaojukeji.com, res.xiaojukeji.com, conf.diditaxi.com.cn, api.udache.com, 123.207.209.*, 112.53.55.225, 120.241.142.*, 120.241.143.*, 116.85.*, 139.199.240.84, mapi.xiaojukeji.com, manhattan.webapp.xiaojukeji.com, ddpay.xiaojukeji.com
-
 hostname = 117.51.168.*, 113.46.225.*, common.diditaxi.com.cn, freight.xiaojukeji.com, daijia.kuaidadi.com, 162.14.157.*, ct.xiaojukeji.com, res.xiaojukeji.com, conf.diditaxi.com.cn, api.udache.com, 123.207.209.*, 112.53.55.225, 120.241.142.*, 120.241.143.*, 116.85.*, 139.199.240.84, mapi.xiaojukeji.com, manhattan.webapp.xiaojukeji.com, ddpay.xiaojukeji.com

@@ -6,14 +6,13 @@
 
 [Rule]
 # Name: general
-# Updated: 2026-11-01 09:49:35 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:26 +08:00
+# Copied by: chance
 # Source Authors: 墨鱼 / ddgksf2013
 # Category: Module
 # Managed by: WayX Native QX
-# Redirect Google Search Service
 # Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/Html/General.conf
-# Upstream hostname = www.google.cn
+# Redirect Google Search Service
 
 [URL Rewrite]
 ^https?:\/\/(www.)?(g|google)\.cn https://www.google.com 302

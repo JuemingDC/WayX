@@ -1,18 +1,16 @@
 # Name: 酷安全面净化
-# Icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/kuancoolapk.png
-# Icon Collection: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json
-# Updated: 2026-10-25 19:01:30 +08:00
-# Merged by: chance
-# Source Authors: 怎么肥事, walala
-# Category: app
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
+# Source Authors: 怎么肥事
+# Category: Adblock
 # Managed by: WayX Native QX
 
-# [rewrite_local]
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/KuAn.snippet
 # Upstream name = 酷安全面净化
 # Upstream author = 怎么肥事、walala
 # Upstream update = 2025-11-01
 
+# [rewrite_local]
 ^https:\/\/api\.coolapk\.com\/v6\/user\/profile url jsonjq-response-body '.data.level = 20 | .data.fans = 99999 | .data.experience = 94575543 | .data.next_level_experience = 200000000'
 
 https:\/\/api\.coolapk\.com\/v6\/search\?.*type=hotSearch url reject-dict
@@ -24,9 +22,7 @@ https:\/\/api\.coolapk\.com\/v6\/search\?.*type=hotSearch url reject-dict
 
 ^https:\/\/api\.coolapk\.com\/v6\/account\/loadConfig\?key=my_page_card_config url jsonjq-response-body '.data |= map(select(.entityType != "textLink" and (.entityId != 1001 and .entityId != 1003 and .entityId != 1004 and .entityId != 1005)) | if .entities then .entities |= map(select(.entityType != "textLink")) else . end)'
 
+
+
 # [mitm]
-
-
-
-# Upstream hostname = api.coolapk.com
 hostname = api.coolapk.com

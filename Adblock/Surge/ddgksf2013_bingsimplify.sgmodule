@@ -6,31 +6,30 @@
 
 [Rule]
 # Name: Bing首页简化[墨鱼版]
-# Updated: 2026-11-01 09:49:35 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:26 +08:00
+# Copied by: chance
 # Source Authors: 墨鱼 / ddgksf2013
 # Category: Adblock
 # Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/BingSimplify.conf
+// ==UserScript==
+// @ScriptName        Bing首页简化[墨鱼版]
+// @Author            @ddgksf2013
+// @Function          如果有需要的去除广告的APP，可自行在共享表格中添加需求
+// @AddRequest        https://bit.ly/addRequestforAdBlock
+// @WechatID          墨鱼手记
+// @TgChannel         https://t.me/ddgksf2021
+// @Contribute        https://t.me/ddgksf2013_bot
+// @UpdateTime        2023-12-18
+// @Suitable          自行观看“# > ”注释内容[请卸载重装]
+// @Attention         如需引用请注明出处，谢谢合作！
+// @Version           V1.0.4
+// @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/BingSimplify.conf
+// ==/UserScript==
 # > bing_首页优化@ddgksf2013
 # > bing_位置请求@ddgksf2013
 # > bing_信息流@LE
 # > bing_天气请求@ddgksf2013
-# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/BingSimplify.conf
-# // ==UserScript==
-# // @ScriptName        Bing首页简化[墨鱼版]
-# // @Author            @ddgksf2013
-# // @Function          如果有需要的去除广告的APP，可自行在共享表格中添加需求
-# // @AddRequest        https://bit.ly/addRequestforAdBlock
-# // @WechatID          墨鱼手记
-# // @TgChannel         https://t.me/ddgksf2021
-# // @Contribute        https://t.me/ddgksf2013_bot
-# // @UpdateTime        2023-12-18
-# // @Suitable          自行观看“# > ”注释内容[请卸载重装]
-# // @Attention         如需引用请注明出处，谢谢合作！
-# // @Version           V1.0.4
-# // @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/BingSimplify.conf
-# // ==/UserScript==
-# Upstream hostname = sapphire.api.microsoftapp.net, assets.msn.com, api.msn.com
 
 [Map Local]
 ^https?:\/\/assets\.msn\.com\/service\/weather\/locations\/search data-type=text data="{}" status-code=200 header="Content-Type:application/json"
@@ -38,7 +37,7 @@
 ^https?:\/\/api\.msn\.com\/weather data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-ddgksf2013_bingsimplify_1 = type=http-response,pattern=^https?:\/\/sapphire\.api\.microsoftapp\.net\/config\/api\/v1\/get,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/bing.js,requires-body=true
+ddgksf2013_bingsimplify_1 = type=http-response,pattern=^https?:\/\/sapphire\.api\.microsoftapp\.net\/config\/api\/v1\/get,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/208a10646b58ecbfe670e44d0fb794da8d2edadfb6ef3399abbd4673a4dab9ae.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% sapphire.api.microsoftapp.net, assets.msn.com, api.msn.com

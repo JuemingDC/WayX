@@ -6,11 +6,27 @@
 
 [Rule]
 # Name: 彩云天气净化[墨鱼版]
-# Updated: 2026-11-01 09:49:35 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:26 +08:00
+# Copied by: chance
 # Source Authors: 墨鱼 / ddgksf2013
 # Category: Adblock
 # Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/CaiYunAds.conf
+// ==UserScript==
+// @ScriptName        彩云天气净化[墨鱼版]
+// @Author            @ddgksf2013
+// @Function          如果有需要的去除广告的APP，可自行在共享表格中添加需求
+// @AddRequest        https://bit.ly/addRequestforAdBlock
+// @WechatID          墨鱼手记
+// @TgChannel         https://t.me/ddgksf2021
+// @Contribute        https://t.me/ddgksf2013_bot
+// @UpdateTime        2024-09-27
+// @Suitable          自行观看“# > ”注释内容
+// @Attention         如需引用请注明出处，谢谢合作！
+// @Version           V1.0.8
+// @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/CaiYunAds.conf
+// ==/UserScript==
+#若有彩云天气会员需求，请自行抓包旧版[ ≤ 7.20.2 ]使用，并添加MITM [ biz.cyapi.cn ]
 # > 伪装VIP解锁48小时降水[需登录][新验证接口][需旧版≤ 7.20.2]@ddgksf2013
 # > 伪装VIP解锁48小时降水[需登录][需旧版≤ 7.20.2]@ddgksf2013
 # > 图层推广@ddgksf2013
@@ -23,39 +39,22 @@
 # > 发现页中间部分@ddgksf2013
 # > 发现页活动@ddgksf2013
 # > 通用广告请求@ddgksf2013
-# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/CaiYunAds.conf
-# // ==UserScript==
-# // @ScriptName        彩云天气净化[墨鱼版]
-# // @Author            @ddgksf2013
-# // @Function          如果有需要的去除广告的APP，可自行在共享表格中添加需求
-# // @AddRequest        https://bit.ly/addRequestforAdBlock
-# // @WechatID          墨鱼手记
-# // @TgChannel         https://t.me/ddgksf2021
-# // @Contribute        https://t.me/ddgksf2013_bot
-# // @UpdateTime        2024-09-27
-# // @Suitable          自行观看“# > ”注释内容
-# // @Attention         如需引用请注明出处，谢谢合作！
-# // @Version           V1.0.8
-# // @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/CaiYunAds.conf
-# // ==/UserScript==
-#若有彩云天气会员需求，请自行抓包旧版[ ≤ 7.20.2 ]使用，并添加MITM [ biz.cyapi.cn ]
-# Upstream hostname = wrapper.cyapi.cn, api.caiyunapp.com, starplucker.cyapi.cn, ad.cyapi.cn
 
 [Map Local]
 ^https?:\/\/ad\.cyapi\.cn\/v\d data-type=text data="" status-code=200
 
 [Script]
-ddgksf2013_caiyunads_1 = type=http-response,pattern=^https?:\/\/biz\.cyapi\.cn\/api\/v\d\/user_detail,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/caiyun_json.js,requires-body=true
-ddgksf2013_caiyunads_2 = type=http-response,pattern=^https?:\/\/biz\.cyapi\.cn\/v\d\/user,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/caiyun_json.js,requires-body=true
-ddgksf2013_caiyunads_3 = type=http-response,pattern=^https?:\/\/wrapper\.cyapi\.cn\/v\d\/activity,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/caiyun_json.js,requires-body=true
-ddgksf2013_caiyunads_4 = type=http-response,pattern=^https?:\/\/api\.caiyunapp\.com\/v\d\/activity,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/caiyun_json.js,requires-body=true
-ddgksf2013_caiyunads_5 = type=http-response,pattern=^https?:\/\/starplucker\.cyapi\.cn\/v\d/operation/homefeatures,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/caiyun_json.js,requires-body=true
-ddgksf2013_caiyunads_6 = type=http-response,pattern=^https?:\/\/starplucker\.cyapi\.cn\/v\d/notification/message_center,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/caiyun_json.js,requires-body=true
-ddgksf2013_caiyunads_7 = type=http-response,pattern=^https?:\/\/starplucker\.cyapi\.cn\/v\d/config/cypage,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/caiyun_json.js,requires-body=true
-ddgksf2013_caiyunads_8 = type=http-response,pattern=^https?:\/\/starplucker\.cyapi\.cn\/v\d/operation/feeds,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/caiyun_json.js,requires-body=true
-ddgksf2013_caiyunads_9 = type=http-response,pattern=^https?:\/\/starplucker\.cyapi\.cn\/v\d/operation/banners,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/caiyun_json.js,requires-body=true
-ddgksf2013_caiyunads_10 = type=http-response,pattern=^https?:\/\/starplucker\.cyapi\.cn\/v\d/operation/features,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/caiyun_json.js,requires-body=true
-ddgksf2013_caiyunads_11 = type=http-response,pattern=^https?:\/\/starplucker\.cyapi\.cn\/v\d/campaigns,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/caiyun_json.js,requires-body=true
+ddgksf2013_caiyunads_1 = type=http-response,pattern=^https?:\/\/biz\.cyapi\.cn\/api\/v\d\/user_detail,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/2825ff91d50df63ea70172ca37f0ca71165dc9ea09506d0633f7e13ff1c6e241.js,requires-body=true
+ddgksf2013_caiyunads_2 = type=http-response,pattern=^https?:\/\/biz\.cyapi\.cn\/v\d\/user,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/2825ff91d50df63ea70172ca37f0ca71165dc9ea09506d0633f7e13ff1c6e241.js,requires-body=true
+ddgksf2013_caiyunads_3 = type=http-response,pattern=^https?:\/\/wrapper\.cyapi\.cn\/v\d\/activity,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/2825ff91d50df63ea70172ca37f0ca71165dc9ea09506d0633f7e13ff1c6e241.js,requires-body=true
+ddgksf2013_caiyunads_4 = type=http-response,pattern=^https?:\/\/api\.caiyunapp\.com\/v\d\/activity,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/2825ff91d50df63ea70172ca37f0ca71165dc9ea09506d0633f7e13ff1c6e241.js,requires-body=true
+ddgksf2013_caiyunads_5 = type=http-response,pattern=^https?:\/\/starplucker\.cyapi\.cn\/v\d/operation/homefeatures,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/2825ff91d50df63ea70172ca37f0ca71165dc9ea09506d0633f7e13ff1c6e241.js,requires-body=true
+ddgksf2013_caiyunads_6 = type=http-response,pattern=^https?:\/\/starplucker\.cyapi\.cn\/v\d/notification/message_center,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/2825ff91d50df63ea70172ca37f0ca71165dc9ea09506d0633f7e13ff1c6e241.js,requires-body=true
+ddgksf2013_caiyunads_7 = type=http-response,pattern=^https?:\/\/starplucker\.cyapi\.cn\/v\d/config/cypage,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/2825ff91d50df63ea70172ca37f0ca71165dc9ea09506d0633f7e13ff1c6e241.js,requires-body=true
+ddgksf2013_caiyunads_8 = type=http-response,pattern=^https?:\/\/starplucker\.cyapi\.cn\/v\d/operation/feeds,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/2825ff91d50df63ea70172ca37f0ca71165dc9ea09506d0633f7e13ff1c6e241.js,requires-body=true
+ddgksf2013_caiyunads_9 = type=http-response,pattern=^https?:\/\/starplucker\.cyapi\.cn\/v\d/operation/banners,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/2825ff91d50df63ea70172ca37f0ca71165dc9ea09506d0633f7e13ff1c6e241.js,requires-body=true
+ddgksf2013_caiyunads_10 = type=http-response,pattern=^https?:\/\/starplucker\.cyapi\.cn\/v\d/operation/features,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/2825ff91d50df63ea70172ca37f0ca71165dc9ea09506d0633f7e13ff1c6e241.js,requires-body=true
+ddgksf2013_caiyunads_11 = type=http-response,pattern=^https?:\/\/starplucker\.cyapi\.cn\/v\d/campaigns,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/2825ff91d50df63ea70172ca37f0ca71165dc9ea09506d0633f7e13ff1c6e241.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% wrapper.cyapi.cn, api.caiyunapp.com, starplucker.cyapi.cn, ad.cyapi.cn

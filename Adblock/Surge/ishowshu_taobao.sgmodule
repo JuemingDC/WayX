@@ -8,10 +8,10 @@
 
 [Rule]
 # Name: 淘宝
-# Updated: 2026-10-30 15:52:20 +08:00
-# Merged by: chance
-# Source Authors: 树先生, 可莉
-# Category: app
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
+# Source Authors: 树先生
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/filter/taobao.snippet
 # Upstream name = 淘宝
@@ -31,7 +31,6 @@ DOMAIN,h-adashx.ut.taobao.com,REJECT
 # Source declaration: ^http:\/\/amdc\.m\.taobao\.com\/amdc\/mobileDispatch %E6%B7%98%E5%AE%9D* url-and-header reject
 # 开屏广告
 # 百亿补贴开屏
-# Upstream hostname = heic.alicdn.com, gw.alicdn.com
 
 [Map Local]
 ^https:\/\/heic\.alicdn\.com\/imgextra\/i\d\/[A-Za-z0-9_!]+-\d+-tps-\d+-\d+\.png_\d+x\d*q\d+\.jpg_\.heic$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"

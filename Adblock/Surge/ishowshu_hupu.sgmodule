@@ -6,10 +6,10 @@
 
 [Rule]
 # Name: 虎扑
-# Updated: 2026-10-25 18:31:42 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
 # Source Authors: 树先生
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/hupu.snippet
 # Upstream name = 虎扑
@@ -38,7 +38,6 @@
 # Source declaration: ^https:\/\/bbs\.mobileapi\.hupu\.com\/\d\/\d\.\d\.\d+\/bbsallapi\/tab\/cardModule url jsonjq-response-body .data = {}
 # 顶部频道净化
 #^https:\/\/games\.mobileapi\.hupu\.com\/\d\/\d\.\d\.\d+\/bpldeviceapi\/device\/v1\/nav\/detail url jsonjq-response-body .result.topNav.navs |= map(.usePic = false)
-# Upstream hostname = games.mobileapi.hupu.com, fairy.mobileapi.hupu.com, bbs.mobileapi.hupu.com, goblin.hupu.com, match-api.hupu.com, *.hupu.com
 
 [Map Local]
 ^https:\/\/fairy\.mobileapi\.hupu\.com\/gallery\/getmod2 data-type=text data="{}" status-code=200 header="Content-Type:application/json"

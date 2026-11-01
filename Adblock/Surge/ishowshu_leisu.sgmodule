@@ -6,10 +6,10 @@
 
 [Rule]
 # Name: 雷速体育
-# Updated: 2026-10-25 19:01:27 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
 # Source Authors: 树先生
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/leisu.snippet
 # Upstream name = 雷速体育
@@ -46,7 +46,6 @@ DOMAIN-SUFFIX,optaim.com,REJECT
 # Source declaration: ^https:\/\/s3plus\.meituan\.net\/ leisu* url-and-header reject-dict
 # [WayX] REVIEW REQUIRED: URL-and-header conjunction retained for review; dropping the header condition would broaden matching
 # Source declaration: ^https:\/\/img1\.360buyimg\.com\/pop\/jfs\/t1 leisu* url-and-header reject-dict
-# Upstream hostname = s3plus.meituan.net, img1.360buyimg.com, app-gateway.leisuapi.com
 
 [Map Local]
 ^https:\/\/app-gateway\.leisuapi\.com\/v1\/app\/mobile\/ads data-type=text data="{}" status-code=200 header="Content-Type:application/json"

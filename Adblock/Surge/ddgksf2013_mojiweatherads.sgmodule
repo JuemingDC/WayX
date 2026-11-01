@@ -6,13 +6,26 @@
 
 [Rule]
 # Name: 墨迹天气净化[墨鱼版]
-# Updated: 2026-11-01 09:49:35 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:26 +08:00
+# Copied by: chance
 # Source Authors: 墨鱼 / ddgksf2013
 # Category: Adblock
 # Managed by: WayX Native QX
-# > 开屏广告@ddgksf2013
-DOMAIN-SUFFIX,adlaunch.moji.com,REJECT
+# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/MoJiWeatherAds.conf
+// ==UserScript==
+// @ScriptName        墨迹天气净化[墨鱼版]
+// @Author            @ddgksf2013
+// @Function          如果有需要的去除广告的APP，可自行在共享表格中添加需求
+// @AddRequest        https://bit.ly/addRequestforAdBlock
+// @WechatID          墨鱼手记
+// @TgChannel         https://t.me/ddgksf2021
+// @Contribute        https://t.me/ddgksf2013_bot
+// @UpdateTime        2025-11-03
+// @Suitable          自行观看“# > ”注释内容
+// @Attention         如需引用请注明出处，谢谢合作！
+// @Version           V1.0.2
+// @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/MoJiWeatherAds.conf
+// ==/UserScript==
 # > 我的页面@ddgksf2013
 # > 首页顶部浮窗推广@ddgksf2013
 # > 首页底部短视频流@ddgksf2013
@@ -20,22 +33,8 @@ DOMAIN-SUFFIX,adlaunch.moji.com,REJECT
 # > 屏蔽时景发现页@ddgksf2013
 # > 屏蔽时景关注@ddgksf2013
 # > DNS处理@ddgksf2013
-# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/MoJiWeatherAds.conf
-# // ==UserScript==
-# // @ScriptName        墨迹天气净化[墨鱼版]
-# // @Author            @ddgksf2013
-# // @Function          如果有需要的去除广告的APP，可自行在共享表格中添加需求
-# // @AddRequest        https://bit.ly/addRequestforAdBlock
-# // @WechatID          墨鱼手记
-# // @TgChannel         https://t.me/ddgksf2021
-# // @Contribute        https://t.me/ddgksf2013_bot
-# // @UpdateTime        2025-11-03
-# // @Suitable          自行观看“# > ”注释内容
-# // @Attention         如需引用请注明出处，谢谢合作！
-# // @Version           V1.0.2
-# // @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/MoJiWeatherAds.conf
-# // ==/UserScript==
-# Upstream hostname = *.api.moji.com, tnc*-*.zijieapi.com
+# > 开屏广告@ddgksf2013
+DOMAIN-SUFFIX,adlaunch.moji.com,REJECT
 
 [Map Local]
 ^https?:\/\/.*api\.moji\.com\/flycard\/flyCard data-type=text data="" status-code=200

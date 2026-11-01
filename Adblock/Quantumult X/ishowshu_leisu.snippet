@@ -1,17 +1,17 @@
 # Name: 雷速体育
-# Updated: 2026-10-25 18:04:02 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
 # Source Authors: 树先生
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 
-# [filter_local]
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/leisu.snippet
 # Upstream name = 雷速体育
 # Upstream desc = 移除开屏和评论区广告
 # Upstream author = 树先生
 # Upstream date = 2026-09-09
 
+# [filter_local]
 host, api-ad.chuangyuejoy.com, reject
 host, dsp-tos.mongac.com, reject
 host, et.tanx.com, reject
@@ -40,14 +40,10 @@ host, xadsmartget.adgain.cn, reject
 host-suffix, optaim.com, reject
 
 # [rewrite_local]
-
 ^https:\/\/s3plus\.meituan\.net\/ leisu* url-and-header reject-dict
 ^https:\/\/img1\.360buyimg\.com\/pop\/jfs\/t1 leisu* url-and-header reject-dict
 
 ^https:\/\/app-gateway\.leisuapi\.com\/v1\/app\/mobile\/ads url reject-dict
 
 # [mitm]
-
-# Upstream hostname = s3plus.meituan.net, img1.360buyimg.com, app-gateway.leisuapi.com
-
 hostname = s3plus.meituan.net, img1.360buyimg.com, app-gateway.leisuapi.com

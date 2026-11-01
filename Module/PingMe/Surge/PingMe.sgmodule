@@ -3,9 +3,9 @@
 # author=fmz200, converted for Surge
 
 [Script]
-PingMe获取签到参数 = type=http-request, pattern=^https://api\.pingmeapp\.net/app/queryBalanceAndBonus, script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/cookie/get_cookie.js, timeout=60
+PingMe获取签到参数 = type=http-request, pattern=^https://api\.pingmeapp\.net/app/queryBalanceAndBonus, script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/a943b76122af0c513bd9c94a0d9038796006c8b35c0d590a5e8a64434dde1dd0/get_cookie.js, timeout=60
 
-PingMe签到 = type=cron, cronexp="0 */4 * * *", script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/PingMe/PingMeSignin.js, timeout=300, script-update-interval=0
+PingMe签到 = type=cron, cronexp="0 */4 * * *", script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/30469e8d5c52944fa08fa0d9babae4de5ec62d1bfddb877c912cbe9ec131c489/PingMeSignin.js, timeout=300, script-update-interval=0
 
 [MITM]
 hostname = %APPEND% api.pingmeapp.net

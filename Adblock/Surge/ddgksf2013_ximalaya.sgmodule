@@ -1,4 +1,6 @@
 #!name=喜马拉雅净化[墨鱼版]
+# Icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/ximalaya.png
+# Icon Collection: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json
 #!desc=Native QX conversion
 #!category=WayX
 #!requirement=CORE_VERSION>=20
@@ -6,11 +8,27 @@
 
 [Rule]
 # Name: 喜马拉雅净化[墨鱼版]
-# Updated: 2026-11-01 09:49:35 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:26 +08:00
+# Copied by: chance
 # Source Authors: 墨鱼 / ddgksf2013
 # Category: Adblock
 # Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/Ximalaya.conf
+// ==UserScript==
+// @ScriptName        喜马拉雅净化[墨鱼版]
+// @Author            @ddgksf2013
+// @ForHelp           若有屏蔽广告的需求，可公众号后台回复APP名称
+// @WechatID          墨鱼手记
+// @TgChannel         https://t.me/ddgksf2021
+// @Contribute        https://t.me/ddgksf2013_bot
+// @UpdateTime        2024-04-13
+// @Attention         如果广告仍然存在，请清除缓存或卸载应用重新安装
+// @Function          去广告配置（自用，不定期更新）
+// @Suitable          自行观看“# > ”注释内容
+// @Attention         如需引用请注明出处，谢谢合作！
+// @Version           V1.0.27
+// @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/Ximalaya.conf
+// ==/UserScript==
 # > XiMaLaYa_喜马拉雅_首页顶部去除直播@ddgksf2013
 # > XiMaLaYa_喜马拉雅_修复轮播Ad失效Bug@ddgksf2013
 # > XiMaLaYa_喜马拉雅_播放页_Live@ddgksf2013
@@ -35,23 +53,6 @@
 # > XiMaLaYa_喜马拉雅_屏蔽首页动态_Ad@ddgksf2013
 # > XiMaLaYa_喜马拉雅_屏蔽Tab页滚动_Ad@ddgksf2013
 # > XiMaLaYa_喜马拉雅_去除我的页面Ad_Tag@ddgksf2013
-# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/Ximalaya.conf
-# // ==UserScript==
-# // @ScriptName        喜马拉雅净化[墨鱼版]
-# // @Author            @ddgksf2013
-# // @ForHelp           若有屏蔽广告的需求，可公众号后台回复APP名称
-# // @WechatID          墨鱼手记
-# // @TgChannel         https://t.me/ddgksf2021
-# // @Contribute        https://t.me/ddgksf2013_bot
-# // @UpdateTime        2024-04-13
-# // @Attention         如果广告仍然存在，请清除缓存或卸载应用重新安装
-# // @Function          去广告配置（自用，不定期更新）
-# // @Suitable          自行观看“# > ”注释内容
-# // @Attention         如需引用请注明出处，谢谢合作！
-# // @Version           V1.0.27
-# // @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/Ximalaya.conf
-# // ==/UserScript==
-# Upstream hostname = *.xima*.*, *.xmcdn.*
 
 [URL Rewrite]
 ^https?:\/\/.*\.xima.*\.com\/discovery-feed\/focus\/queryF _ reject
@@ -75,11 +76,11 @@
 ^https?:\/\/.*\.xima.*\.com\/ting\/(loading|feed|home)? _ reject
 
 [Script]
-ddgksf2013_ximalaya_1 = type=http-response,pattern=^https?:\/\/.*\.xima.*\.com\/discovery-category\/customCategories,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/ximalaya_json.js,requires-body=true
-ddgksf2013_ximalaya_2 = type=http-response,pattern=^https?:\/\/.*\.xima.*\.com\/focus-mobile\/focusPic,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/ximalaya_json.js,requires-body=true
-ddgksf2013_ximalaya_3 = type=http-response,pattern=^https?:\/\/.*\.xima.*\.com\/discovery-feed\/v\d\/mix,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/ximalaya_json.js,requires-body=true
-ddgksf2013_ximalaya_4 = type=http-response,pattern=^https?:\/\/.*\.xima.*\.com\/discovery-category\/v\d/category,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/ximalaya_json.js,requires-body=true
-ddgksf2013_ximalaya_5 = type=http-response,pattern=^https?:\/\/.*\.xima.*\.com\/mobile-user\/v\d\/homePage,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/ximalaya_json.js,requires-body=true
+ddgksf2013_ximalaya_1 = type=http-response,pattern=^https?:\/\/.*\.xima.*\.com\/discovery-category\/customCategories,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/e741cabf33ab91d98c76eeb95884429b0f0bbbf68825934088a365406aa43b6b.js,requires-body=true
+ddgksf2013_ximalaya_2 = type=http-response,pattern=^https?:\/\/.*\.xima.*\.com\/focus-mobile\/focusPic,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/e741cabf33ab91d98c76eeb95884429b0f0bbbf68825934088a365406aa43b6b.js,requires-body=true
+ddgksf2013_ximalaya_3 = type=http-response,pattern=^https?:\/\/.*\.xima.*\.com\/discovery-feed\/v\d\/mix,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/e741cabf33ab91d98c76eeb95884429b0f0bbbf68825934088a365406aa43b6b.js,requires-body=true
+ddgksf2013_ximalaya_4 = type=http-response,pattern=^https?:\/\/.*\.xima.*\.com\/discovery-category\/v\d/category,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/e741cabf33ab91d98c76eeb95884429b0f0bbbf68825934088a365406aa43b6b.js,requires-body=true
+ddgksf2013_ximalaya_5 = type=http-response,pattern=^https?:\/\/.*\.xima.*\.com\/mobile-user\/v\d\/homePage,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/e741cabf33ab91d98c76eeb95884429b0f0bbbf68825934088a365406aa43b6b.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% *.xima*.*, *.xmcdn.*

@@ -1,4 +1,6 @@
 #!name=微信公众号去广告[已失效]
+# Icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/wechat.png
+# Icon Collection: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json
 #!desc=Native QX conversion
 #!category=WayX
 #!requirement=CORE_VERSION>=20
@@ -6,22 +8,21 @@
 
 [Rule]
 # Name: 微信公众号去广告[已失效]
-# Updated: 2026-11-01 09:49:35 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:26 +08:00
+# Copied by: chance
 # Source Authors: 墨鱼 / ddgksf2013
 # Category: Adblock
 # Managed by: WayX Native QX
-# > 微信公众号去广告[已失效][不包含公众号信息流AD、朋友圈AD][推荐开启青少年模式可去除朋友圈AD]
 # Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/WeChat.conf
-# // ==UserScript==
-# // @ScriptName        微信公众号去广告[已失效]
-# // @Author            @ddgksf2013
-# // @TgChannel         https://t.me/ddgksf2021
-# // @Function          Block AD
-# // @ScriptTime        2024-04-21
-# // @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/WeChat.conf
-# // ==/UserScript==
-# Upstream hostname = mp.weixin.qq.com
+// ==UserScript==
+// @ScriptName        微信公众号去广告[已失效]
+// @Author            @ddgksf2013
+// @TgChannel         https://t.me/ddgksf2021
+// @Function          Block AD
+// @ScriptTime        2024-04-21
+// @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/WeChat.conf
+// ==/UserScript==
+# > 微信公众号去广告[已失效][不包含公众号信息流AD、朋友圈AD][推荐开启青少年模式可去除朋友圈AD]
 
 [Body Rewrite]
 http-response ^https?:\/\/mp\.weixin\.qq\.com\/mp\/getappmsgad advertisement ddgksf2013

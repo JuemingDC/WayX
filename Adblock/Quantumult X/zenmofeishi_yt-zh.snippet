@@ -1,20 +1,16 @@
 # Name: YouTube 强制简体中文字幕
-# Icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/04ProxySoft/Youtube.png
-# Icon Collection: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json
-# Updated: 2026-10-25 19:01:30 +08:00
-# Merged by: chance
-# Source Authors: 怎么肥事, @ZenmoFeiShi
-# Category: app
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
+# Source Authors: 怎么肥事
+# Category: Adblock
 # Managed by: WayX Native QX
 
-# [rewrite_local]
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/Yt-zh.snippet
 # Upstream author=@ZenmoFeiShi
 # Upstream name=YouTube 强制简体中文字幕
-^https://www\.youtube\.com/api/timedtext\?.*_ytzhsub=1 url script-request-header https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/yt-sub-clean.js
-^https://www\.youtube\.com/api/timedtext\? url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/yt-zh-sub.js
+# [rewrite_local]
+^https://www\.youtube\.com/api/timedtext\?.*_ytzhsub=1 url script-request-header https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/586340f11939d72f1be8707ea0b256940efa61b3b7183830ee10b2e6f2f64bde/yt-sub-clean.js
+^https://www\.youtube\.com/api/timedtext\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/941838a3032e0df344badc85327699fd45b8a04a9370abe493ba9b52cf5edff5/yt-zh-sub.js
 
 # [mitm]
-
-# Upstream hostname = www.youtube.com
 hostname = www.youtube.com

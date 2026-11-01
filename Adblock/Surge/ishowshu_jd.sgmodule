@@ -8,16 +8,15 @@
 
 [Rule]
 # Name: 京东
-# Updated: 2026-10-30 15:52:20 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
 # Source Authors: 树先生
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/jd.snippet
 # Upstream name = 京东
 # Upstream desc = 开屏广告
 # Upstream author = 树先生
-# Upstream hostname = m.360buyimg.com
 
 [Map Local]
 ^https?:\/\/m\.360buyimg\.com\/mobilecms\/s1125x2436_jfs data-type=text data="" status-code=200

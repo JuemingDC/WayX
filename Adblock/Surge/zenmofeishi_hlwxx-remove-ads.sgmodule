@@ -6,16 +6,15 @@
 
 [Rule]
 # Name: 黑料不打烊净化
-# Updated: 2026-10-25 19:01:30 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
 # Source Authors: 怎么肥事
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/hlwxx_remove_ads.snippet
 # Upstream name = 黑料不打烊净化
 # Upstream author = 怎么肥事
 # Upstream update = 2026-10-02
-# Upstream hostname = *heiliao*, *hlwxx*, *hlcx*, *97baoliao*, stats.kwvprfcr.xyz, mc.yandex.ru, api1.cghhqca.cc, api.shuifeng.cc, ads.zyudkkup.com, static.cloudflareinsights.com, *.googletagmanager.com, *.google-analytics.com
 
 [URL Rewrite]
 ^https?:\/\/(?:www\.)?97baoliao\.com\/usr\/plugins\/AiSuite\/assets\/js\/adfloat\.js(?:\?.*)?$ _ reject
@@ -37,8 +36,8 @@ http-request ^https?:\/\/(?:www\.)?(?:heiliao|hlwxx|hlcx\d*)\.com\/(?!static\/|f
 http-request ^https?:\/\/(?:www\.)?97baoliao\.com\/(?!usr\/|storage\/|api\/|favicon\.ico) header-replace Accept-Encoding identity
 
 [Script]
-zenmofeishi_hlwxx-remove-ads_1 = type=http-response,pattern=^https?:\/\/(?:www\.)?(?:heiliao|hlwxx|hlcx\d*)\.com\/(?!static\/|favicon|api\/|index\/statistics|uploads\/),script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/hlwxx_remove_ads.js,requires-body=true
-zenmofeishi_hlwxx-remove-ads_2 = type=http-response,pattern=^https?:\/\/(?:www\.)?97baoliao\.com\/(?!usr\/|storage\/|api\/|favicon\.ico),script-path=https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/hlwxx_remove_ads.js,requires-body=true
+zenmofeishi_hlwxx-remove-ads_1 = type=http-response,pattern=^https?:\/\/(?:www\.)?(?:heiliao|hlwxx|hlcx\d*)\.com\/(?!static\/|favicon|api\/|index\/statistics|uploads\/),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/bc92afe8943e0f96c5492c34ca80a1a1a433bd518589b835a0535c9c93b036fa.js,requires-body=true
+zenmofeishi_hlwxx-remove-ads_2 = type=http-response,pattern=^https?:\/\/(?:www\.)?97baoliao\.com\/(?!usr\/|storage\/|api\/|favicon\.ico),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/bc92afe8943e0f96c5492c34ca80a1a1a433bd518589b835a0535c9c93b036fa.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% *heiliao*, *hlwxx*, *hlcx*, *97baoliao*, stats.kwvprfcr.xyz, mc.yandex.ru, api1.cghhqca.cc, api.shuifeng.cc, ads.zyudkkup.com, static.cloudflareinsights.com, *.googletagmanager.com, *.google-analytics.com

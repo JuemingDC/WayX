@@ -1,14 +1,12 @@
 # Name: 拼多多
-# Icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/pinduoduo.png
-# Icon Collection: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json
-# Updated: 2026-10-25 18:04:02 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
 # Source Authors: 树先生
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 
-# [filter_local]
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/filter/pdd.snippet
+# [filter_local]
 ip-cidr,27.36.119.41/32,reject
 ip-cidr,27.37.204.80/32,reject
 
@@ -127,13 +125,14 @@ host,th-b.pinduoduo.com,reject
 host,th.pinduoduo.com,reject
 host,titan.pinduoduo.com,reject
 
-# [rewrite_local]
+
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/pdd.snippet
 # Upstream name = 拼多多
 # Upstream desc = 移除广告，沉浸购物
 # Upstream author = 树先生
 
 # 开屏广告
+# [rewrite_local]
 ^https:\/\/api\.pinduoduo\.com\/api\/cappuccino\/splash url reject-dict
 # 拼多多首页搜索框关键词
 ^https:\/\/api\.pinduoduo\.com\/search_hotquery url reject-dict
@@ -166,11 +165,7 @@ host,titan.pinduoduo.com,reject
 ^https:\/\/api\.pinduoduo\.com\/order\/\d+-\d+\/shipping url jsonjq-response-body 'del(.shipping.banner_above_recommend)'
 
 # 拼多多首页简化(底部菜单、顶部分类)
-^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/pdd.js
+^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/95107c304a301601dc63c96d67c37270e5b99896b2b8a8430a69452d4f55bdc4/pdd.js
 
 # [mitm]
-
-
-# Upstream hostname = api.pinduoduo.com
-
 hostname = api.pinduoduo.com

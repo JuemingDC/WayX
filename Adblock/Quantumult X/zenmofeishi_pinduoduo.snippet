@@ -1,20 +1,18 @@
 # Name: 拼多多净化页面布局
-# Icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/pinduoduo.png
-# Icon Collection: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json
-# Updated: 2026-10-25 19:01:30 +08:00
-# Merged by: chance
-# Source Authors: 怎么肥事, 怎么肥事 walala
-# Category: app
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
+# Source Authors: 怎么肥事
+# Category: Adblock
 # Managed by: WayX Native QX
 
-# [filter_local]
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/Pinduoduo.snippet
 # Upstream name = 拼多多净化页面布局
 # Upstream author = 怎么肥事 walala
 # Upstream update = 2025-11-01
 # Upstream 版本号：7.79.0
 
-# //pdd
+//pdd
+# [filter_local]
 host, sdk.1rtb.net, reject
 host, titan.pinduoduo.com, reject
 ip-cidr, 121.5.84.85/32, reject
@@ -24,7 +22,6 @@ ip-cidr, 81.69.116.33/32, reject
 ip-cidr, 183.194.214.20/32, reject
 ip-cidr, 117.185.244.145/32, reject
 ip-cidr, 183.194.214.14/32, reject
-
 # [rewrite_local]
 ^https:\/\/api\.pinduoduo\.com\/api\/engels\/wait\/receive\/review url reject-dict
 ^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub url jsonjq-response-body 'del(.result.icon_set, .result.search_bar_hot_query, .result.dy_module.irregular_banner_dy,.result.dy_module.recommend_fresh_info) | if .result.bottom_tabs then .result.bottom_tabs |= map(select(.link == "index.html" or .link == "chat_list.html" or .link == "personal.html")) else . end'
@@ -51,9 +48,7 @@ ip-cidr, 183.194.214.14/32, reject
 ^https:\/\/api\.pinduoduo\.com\/api\/dunkirk\/liveactivity\/push\/create\/url\/report url reject-dict
 ^https:\/\/api\.pinduoduo\.com\/api\/growth\/nagato\/app\/index\/gather url reject-dict
 
+
+
 # [mitm]
-
-
-
-# Upstream hostname = api.pinduoduo.com
 hostname = api.pinduoduo.com

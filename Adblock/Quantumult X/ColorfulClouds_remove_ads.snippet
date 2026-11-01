@@ -22,7 +22,7 @@ host, gather.colorfulclouds.net, reject
 ^https:\/\/biz\.cyapi\.cn\/(p\/v1\/entries|p\/v1\/trial_card\/info|v2\/product) url reject-dict
 ^https:\/\/starplucker\.cyapi\.cn\/v3\/(config\/cypage\/\w+\/conditions|notification\/message_center|operation\/homefeatures) url reject-dict
 # 彩云天气去广告
-^https:\/\/(wrapper\.cyapi\.cn|api\.caiyunapp\.com|cdn-w\.caiyunapp\.com)\/v1\/activity\? url script-response-body https://kelee.one/Resource/JavaScript/ColorfulClouds/ColorfulClouds_remove_ads.js
+^https:\/\/(wrapper\.cyapi\.cn|api\.caiyunapp\.com|cdn-w\.caiyunapp\.com)\/v1\/activity\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-qx/310205c0ad95f25bddf75fc8be6087f7d083b724ff9d803ac4c7072716cac2c2.js
 
 # [mitm]
 hostname = biz.cyapi.cn, starplucker.cyapi.cn, api.caiyunapp.com, cdn-w.caiyunapp.com

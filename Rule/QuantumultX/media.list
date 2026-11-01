@@ -1,11 +1,11 @@
 # Name: media
-# Updated: 2026-10-28 21:52:33 UTC
+# Updated: 2026-11-01 13:23:11 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-communication.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-password-management.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 7527
+# Rules: 7543
 # Managed by: WayX Rule Aggregator
 
 host,cdn.globalsigncdn.com.cdn.cloudflare.net,ssid
@@ -2235,6 +2235,7 @@ host-suffix,bluemix.net,ssid
 host-suffix,blurams.app,ssid
 host-suffix,blurams.com,ssid
 host-suffix,blz-contentstack.com,ssid
+host-suffix,bmonkeys.net,ssid
 host-suffix,bnappzh.co,ssid
 host-suffix,bnappzh.com,ssid
 host-suffix,bnappzh.mobi,ssid
@@ -2244,6 +2245,7 @@ host-suffix,bntrace.com,ssid
 host-suffix,bnxz.net,ssid
 host-suffix,boba.network,ssid
 host-suffix,bohemia.net,ssid
+host-suffix,boldgrid.com,ssid
 host-suffix,bookmate.ru,ssid
 host-suffix,boom.ru,ssid
 host-suffix,boombeach.com,ssid
@@ -2577,6 +2579,7 @@ host-suffix,cloudinsights.com,ssid
 host-suffix,cloudlive.com,ssid
 host-suffix,cloudlock.com,ssid
 host-suffix,cloudvolumes.com,ssid
+host-suffix,cloudwp.dev,ssid
 host-suffix,cloupia.com,ssid
 host-suffix,cloupia.net,ssid
 host-suffix,clova.ai,ssid
@@ -3171,6 +3174,7 @@ host-suffix,ecscad.com,ssid
 host-suffix,ecspublisher.com,ssid
 host-suffix,edadeal.ru,ssid
 host-suffix,edgefonts.net,ssid
+host-suffix,editorx.com,ssid
 host-suffix,education-cadcam.com,ssid
 host-suffix,eft-store.com,ssid
 host-suffix,egta.com,ssid
@@ -5539,6 +5543,7 @@ host-suffix,paradisehotelquizfox.com,ssid
 host-suffix,paragon.com,ssid
 host-suffix,paramount.com,ssid
 host-suffix,paramountplus.com,ssid
+host-suffix,parastorage.com,ssid
 host-suffix,pardot.com,ssid
 host-suffix,parity.io,ssid
 host-suffix,parstream.com,ssid
@@ -6391,6 +6396,7 @@ host-suffix,staticmy.com,ssid
 host-suffix,statuspage.io,ssid
 host-suffix,steamdb.info,ssid
 host-suffix,steaminventoryhelper.com,ssid
+host-suffix,steampeek.hu,ssid
 host-suffix,steamunlocked.net,ssid
 host-suffix,steelbrick.com,ssid
 host-suffix,stellasora.global,ssid
@@ -7052,11 +7058,14 @@ host-suffix,webex.com,ssid
 host-suffix,webex.de,ssid
 host-suffix,webex.es,ssid
 host-suffix,webex.fr,ssid
+host-suffix,webflow-ext.com,ssid
 host-suffix,webflow.com,ssid
+host-suffix,webflow.io,ssid
 host-suffix,webhosting.com,ssid
 host-suffix,weblate.org,ssid
 host-suffix,webmademovies.org,ssid
 host-suffix,webpass.net,ssid
+host-suffix,website-files.com,ssid
 host-suffix,webtoons.com,ssid
 host-suffix,webtoonscorp.com,ssid
 host-suffix,webvisor.com,ssid
@@ -7111,6 +7120,13 @@ host-suffix,wise-research.com,ssid
 host-suffix,wisecoin.com,ssid
 host-suffix,wiseid.com,ssid
 host-suffix,wisekey.com,ssid
+host-suffix,wix-code.com,ssid
+host-suffix,wix.com,ssid
+host-suffix,wixanswers.com,ssid
+host-suffix,wixapps.net,ssid
+host-suffix,wixmp.com,ssid
+host-suffix,wixsite.com,ssid
+host-suffix,wixstatic.com,ssid
 host-suffix,wofl.tv,ssid
 host-suffix,woflthenewsstation.com,ssid
 host-suffix,wogx.com,ssid

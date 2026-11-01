@@ -8,10 +8,10 @@
 
 [Rule]
 # Name: 闲鱼
-# Updated: 2026-10-30 15:52:20 +08:00
-# Merged by: chance
-# Source Authors: 树先生, 可莉, 奶思, 怎么肥事
-# Category: app
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
+# Source Authors: 树先生
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/goofish.snippet
 # Upstream name = 闲鱼
@@ -66,7 +66,6 @@ USER-AGENT,%E9%97%B2%E9%B1%BC*,REJECT
 # 商品详情页周边推荐
 # 搜索结果信息流广告
 # 同城页横幅广告
-# Upstream hostname = acs.m.goofish.com, g-acs.m.goofish.com
 
 [URL Rewrite]
 ^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idle\.playboy\.recommend\/1\.0 _ reject
@@ -98,13 +97,13 @@ http-response-jq ^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idle\.trade\
 http-response-jq ^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idle\.trade\.order\.render\/ 'del(.data.bottomBarVO.benefitPointAtmosphere) | .data.components |= map(select(.render != "meanTimeBuyVO"))'
 
 [Script]
-ishowshu_goofish_1 = type=http-response,pattern=^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idlehome\.home\.nextfresh\/,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/goofish.js,requires-body=true
-ishowshu_goofish_2 = type=http-response,pattern=^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idle\.local\.home\/,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/goofish.js,requires-body=true
-ishowshu_goofish_3 = type=http-response,pattern=^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.idle\.user\.page\.my\.adapter\/,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/goofish.js,requires-body=true
-ishowshu_goofish_4 = type=http-response,pattern=^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idlehome\.home\.circle\.list\/,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/goofish.js,requires-body=true
-ishowshu_goofish_5 = type=http-response,pattern=^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idle\.local\.nearby\.itemdetail\.enter\/,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/goofish.js,requires-body=true
-ishowshu_goofish_6 = type=http-response,pattern=^https:\/\/g-acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idlemtopsearch\.search\/,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/goofish.js,requires-body=true
-ishowshu_goofish_7 = type=http-response,pattern=^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idle\.local\.flow\.plat\.section,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/goofish.js,requires-body=true
+ishowshu_goofish_1 = type=http-response,pattern=^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idlehome\.home\.nextfresh\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/4af7c2976bcd2f60958df8972bd14d177329b5bb37d61ea39bb0ce0d758ab588.js,requires-body=true
+ishowshu_goofish_2 = type=http-response,pattern=^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idle\.local\.home\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/4af7c2976bcd2f60958df8972bd14d177329b5bb37d61ea39bb0ce0d758ab588.js,requires-body=true
+ishowshu_goofish_3 = type=http-response,pattern=^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.idle\.user\.page\.my\.adapter\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/4af7c2976bcd2f60958df8972bd14d177329b5bb37d61ea39bb0ce0d758ab588.js,requires-body=true
+ishowshu_goofish_4 = type=http-response,pattern=^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idlehome\.home\.circle\.list\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/4af7c2976bcd2f60958df8972bd14d177329b5bb37d61ea39bb0ce0d758ab588.js,requires-body=true
+ishowshu_goofish_5 = type=http-response,pattern=^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idle\.local\.nearby\.itemdetail\.enter\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/4af7c2976bcd2f60958df8972bd14d177329b5bb37d61ea39bb0ce0d758ab588.js,requires-body=true
+ishowshu_goofish_6 = type=http-response,pattern=^https:\/\/g-acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idlemtopsearch\.search\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/4af7c2976bcd2f60958df8972bd14d177329b5bb37d61ea39bb0ce0d758ab588.js,requires-body=true
+ishowshu_goofish_7 = type=http-response,pattern=^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idle\.local\.flow\.plat\.section,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/4af7c2976bcd2f60958df8972bd14d177329b5bb37d61ea39bb0ce0d758ab588.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% acs.m.goofish.com, g-acs.m.goofish.com

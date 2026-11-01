@@ -8,29 +8,28 @@
 
 [Rule]
 # Name: 什么值得买净化
-# Updated: 2026-10-30 15:52:24 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
 # Source Authors: 怎么肥事
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/Smzdm.snippet
 # Upstream name = 什么值得买净化
 # Upstream author = 怎么肥事
 # Upstream update = 2026-4-14
-# // 广告拦截
-# // 开屏 loading - 清空数据 (已 reject-dict，此条备用)
-# // ^https:\/\/app-api\.smzdm\.com\/util\/loading url jsonjq-response-body '.data = null'
-# // 好价列表 - 移除横幅广告 + 过滤广告行 + 移除挂件
-# // 应用更新 - 移除广告黑名单/浮窗/好价挂件
-# // 首页 - 递归移除广告cell + 精简功能入口 + 精简组件 + 移除浮窗
-# // 搜索结果 - 过滤广告
-# // VIP页 - 移除横幅和邀请晒物
-# // VIP底部卡片 - 清空
-# // 发布气泡 - 清空数据
-# // 钱包首页 - 只保留核心功能(余额/优惠券)
-# // 详情页用户相关 - 移除超级优惠券
-# // 文章底部列表 - 移除活动横幅图片
-# Upstream hostname = haojia-api.smzdm.com, s-api.smzdm.com, homepage-api.smzdm.com, app-api.smzdm.com, user-api.smzdm.com, article-api.smzdm.com, qianbao.smzdm.com, s3.zdmimg.com, post.m.smzdm.com, haojia.m.smzdm.com
+// 广告拦截
+// 开屏 loading - 清空数据 (已 reject-dict，此条备用)
+// ^https:\/\/app-api\.smzdm\.com\/util\/loading url jsonjq-response-body '.data = null'
+// 好价列表 - 移除横幅广告 + 过滤广告行 + 移除挂件
+// 应用更新 - 移除广告黑名单/浮窗/好价挂件
+// 首页 - 递归移除广告cell + 精简功能入口 + 精简组件 + 移除浮窗
+// 搜索结果 - 过滤广告
+// VIP页 - 移除横幅和邀请晒物
+// VIP底部卡片 - 清空
+// 发布气泡 - 清空数据
+// 钱包首页 - 只保留核心功能(余额/优惠券)
+// 详情页用户相关 - 移除超级优惠券
+// 文章底部列表 - 移除活动横幅图片
 
 [Map Local]
 ^https:\/\/haojia\.m\.smzdm\.com\/detail_modul\/(other_modul|wiki_related_modul) data-type=text data="{}" status-code=200 header="Content-Type:application/json"

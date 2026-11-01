@@ -1,26 +1,24 @@
 # Name: wxpuredominion
-# Icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/wechat.png
-# Icon Collection: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json
-# Updated: 2026-10-25 19:01:30 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
 # Source Authors: 怎么肥事
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 
-# [rewrite_local]
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/WxPureDominion.snippet
 
-# //          2025/9/29
-# //小桔充电
+//          2025/9/29
+//小桔充电
+# [rewrite_local]
 ^https:\/\/energy\.xiaojukeji\.com\/mission\/api\/page\/activityInfo url reject-dict
 ^https:\/\/energy\.xiaojukeji\.com\/mission\/api\/page\/getPageDetail url reject-dict
 ^https:\/\/energy\.xiaojukeji\.com\/energy\/hummer\/api\/resource\/display url reject-dict
 ^https:\/\/energy\.xiaojukeji\.com\/am\/marketing\/api\/member\/facade\/charge\/personal\/center url reject-dict
-# //云快充
+//云快充
 ^https:\/\/gw3\.ykccn\.com\/api\/omp\/mt\/enterpriseWeChatConfig\/app\/queryCityConfig url reject-dict
 ^https:\/\/gw3\.ykccn\.com\/api\/omp\/mt\/appAdvertising\/queryAdvertisingByParams url reject-dict
 ^https:\/\/gw3\.ykccn\.com\/api\/omp\/mt\/charge\/activity\/package\/newest url reject-dict
-#  //同程旅行
+ //同程旅行
 ^https:\/\/wx\.17u\.cn\/wxorderextend\/banner\/get url reject-dict
 ^https:\/\/wx\.17u\.cn\/wxorderextend\/banner\/get url reject-dict
 ^https:\/\/wx\.17u\.cn\/xcxhomeapi\/aggregator\/index url reject-dict
@@ -40,18 +38,16 @@
 ^https:\/\/wx\.17u\.cn\/wireless\/monitor\/wx\/common\/compressevent url reject-dict
 ^https:\/\/wx\.17u\.cn\/wechatmypubapi\/myInfo\/listIcons url reject-dict
 ^https:\/\/a1d5b283e-wx621112590b635086\.sh\.wxgateway\.com\/xcxhomeapi\/home\/screen url reject-dict
-# //美团
+//美团
 ^https:\/\/mapi\.dianping\.com\/baymax\/adrec\/getrecads url reject-dict
 ^https:\/\/mapi\.dianping\.com\/baymax\/getSlotAds url reject-dict
-^https:\/\/web\.meituan\.com\/api\/miniprogram\/tabbar\/all\/query url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MeiTuanNoAd.js
-^https:\/\/web\.meituan\.com\/api\/miniprogram\/index\/aggregate url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MeiTuanNoAd.js
+^https:\/\/web\.meituan\.com\/api\/miniprogram\/tabbar\/all\/query url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/99b02d3cac44ef89da33adb23bd977e98130af91022003e959895e86cad54010/MeiTuanNoAd.js
+^https:\/\/web\.meituan\.com\/api\/miniprogram\/index\/aggregate url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/99b02d3cac44ef89da33adb23bd977e98130af91022003e959895e86cad54010/MeiTuanNoAd.js
 ^https:\/\/web\.meituan\.com\/api\/miniprogram\/my\/novelZone url reject-dict
 ^https:\/\/web\.meituan\.com\/api\/miniprogram\/my\/resources url reject-dict
 ^https:\/\/npay\.meituan\.com\/conch\/flow\/mypage-wallet-info url reject-dict
 ^https:\/\/web\.meituan\.com\/newUser\/returnMoney\/popWindow url reject-dict
 
+
 # [mitm]
-
-
-# Upstream hostname= energy.xiaojukeji.com,gw3.ykccn.com,wx.17u.cn,web.meituan.com,npay.meituan.com,mapi.dianping.com,a1d5b283e-wx621112590b635086.sh.wxgateway.com,apimobile.meituan.com
-hostname = energy.xiaojukeji.com, gw3.ykccn.com, wx.17u.cn, web.meituan.com, npay.meituan.com, mapi.dianping.com, a1d5b283e-wx621112590b635086.sh.wxgateway.com, apimobile.meituan.com
+hostname= energy.xiaojukeji.com,gw3.ykccn.com,wx.17u.cn,web.meituan.com,npay.meituan.com,mapi.dianping.com,a1d5b283e-wx621112590b635086.sh.wxgateway.com,apimobile.meituan.com

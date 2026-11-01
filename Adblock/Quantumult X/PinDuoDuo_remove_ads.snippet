@@ -77,7 +77,7 @@ host, apm-a.pinduoduo.com, reject
 
 ^https:\/\/api\.pinduoduo\.com\/api\/aristotle\/order_list_v4\? url jsonjq-response-body '.orders |= map(.order_buttons |= map(del(.order_growth_tip)))'
 # 移除扫码取件页面商品推荐及弹窗
-^https:\/\/m\.pinduoduo\.net\/mdkd\/package\?from_app_scan url script-response-body https://kelee.one/Resource/JavaScript/PinDuoDuo/PinDuoDuo_remove_ads.js
+^https:\/\/m\.pinduoduo\.net\/mdkd\/package\?from_app_scan url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-qx/175c66e41b710ca95fa8b64850ea8c42ce41a01973ca698eed203143cbc9b8f4.js
 
 # [mitm]
 hostname = api.pinduoduo.com, m.pinduoduo.net

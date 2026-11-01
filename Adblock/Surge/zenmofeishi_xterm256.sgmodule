@@ -8,17 +8,16 @@
 
 [Rule]
 # Name: xterm256
-# Updated: 2026-10-30 15:52:24 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
 # Source Authors: 怎么肥事
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/xTerm256.snippet
-# //2025/10/18
+//2025/10/18
 #Name：xTerm256调试解锁🔓会员
 #Author：怎么肥事
 #使用方法：打开重写进软件恢复购买
-# Upstream hostname = buy.itunes.apple.com
 
 [Body Rewrite]
 http-response-jq ^https:\/\/buy\.itunes\.apple\.com\/verifyReceipt '.receipt.in_app[].expires_date_ms = "4092599349000" | .latest_receipt_info[].expires_date_ms = "4092599349000" | .pending_renewal_info[].auto_renew_status = "1"'

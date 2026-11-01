@@ -8,10 +8,10 @@
 
 [Rule]
 # Name: 识货
-# Updated: 2026-10-30 15:52:20 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
 # Source Authors: 树先生
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/shihuo.snippet
 # Upstream name = 识货
@@ -32,7 +32,6 @@
 # 每个页面的右下角调研图标
 # 商品详情页底部菜单栏爆料入口(2025-06-04-已被加密处理，失效)
 #^https:\/\/sh-gateway\.shihuo\.cn\/v4\/services\/sh-goodsapi\/public\/detail url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/shihuo.js
-# Upstream hostname = sh-gateway.shihuo.cn, static.shihuocdn.cn
 
 [URL Rewrite]
 ^https?:\/\/sh-gateway\.shihuo\.cn\/v\d\/services\/sh-adapi\/home\/(screen|ad) _ reject
@@ -48,11 +47,11 @@
 ^https:\/\/sh-gateway\.shihuo\.cn\/v3\/sh-api\/daga\/myPage\/goodsList\/v1 data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-ishowshu_shihuo_1 = type=http-response,pattern=^https:\/\/sh-gateway\.shihuo\.cn\/v4\/services\/sh-appapi\/home\/info\/v1,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/shihuo.js,requires-body=true
-ishowshu_shihuo_2 = type=http-response,pattern=^https:\/\/sh-gateway\.shihuo\.cn\/v4\/services\/sh-appapi\/my\/info,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/shihuo.js,requires-body=true
-ishowshu_shihuo_3 = type=http-response,pattern=^https:\/\/sh-gateway\.shihuo\.cn\/v4\/services\/sh-appapi\/center\/config\?,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/shihuo.js,requires-body=true
-ishowshu_shihuo_4 = type=http-response,pattern=^https:\/\/sh-gateway\.shihuo\.cn\/v4\/services\/sh-appapi\/center\/info\?,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/shihuo.js,requires-body=true
-ishowshu_shihuo_5 = type=http-response,pattern=^https:\/\/sh-gateway\.shihuo\.cn\/v4\/services\/sh-applicationapi\/pti,script-path=https://github.com/ishowshu/qx/raw/refs/heads/main/script/shihuo.js,requires-body=true
+ishowshu_shihuo_1 = type=http-response,pattern=^https:\/\/sh-gateway\.shihuo\.cn\/v4\/services\/sh-appapi\/home\/info\/v1,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/95febf3b113140738b9531f57dab6d21f0f99fb0ef0926b8ef6eaa20d5af731d.js,requires-body=true
+ishowshu_shihuo_2 = type=http-response,pattern=^https:\/\/sh-gateway\.shihuo\.cn\/v4\/services\/sh-appapi\/my\/info,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/95febf3b113140738b9531f57dab6d21f0f99fb0ef0926b8ef6eaa20d5af731d.js,requires-body=true
+ishowshu_shihuo_3 = type=http-response,pattern=^https:\/\/sh-gateway\.shihuo\.cn\/v4\/services\/sh-appapi\/center\/config\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/95febf3b113140738b9531f57dab6d21f0f99fb0ef0926b8ef6eaa20d5af731d.js,requires-body=true
+ishowshu_shihuo_4 = type=http-response,pattern=^https:\/\/sh-gateway\.shihuo\.cn\/v4\/services\/sh-appapi\/center\/info\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/95febf3b113140738b9531f57dab6d21f0f99fb0ef0926b8ef6eaa20d5af731d.js,requires-body=true
+ishowshu_shihuo_5 = type=http-response,pattern=^https:\/\/sh-gateway\.shihuo\.cn\/v4\/services\/sh-applicationapi\/pti,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/95febf3b113140738b9531f57dab6d21f0f99fb0ef0926b8ef6eaa20d5af731d.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% sh-gateway.shihuo.cn, static.shihuocdn.cn

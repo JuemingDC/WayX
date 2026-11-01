@@ -1,13 +1,10 @@
 # Name: 高德地图
-# Icon: https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/apps/GaodeMap.jpg
-# Icon Collection: https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/icons-all.json
-# Updated: 2026-10-25 18:04:02 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
 # Source Authors: 树先生
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 
-# [rewrite_local]
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/amap-new.snippet
 # Upstream name = 高德地图
 # Upstream desc = 移除广告
@@ -15,6 +12,7 @@
 # Upstream date = 2026-09-16
 
 # 阿里平台广告
+# [rewrite_local]
 ^http:\/\/amdc\.m\.taobao\.com\/amdc\/mobileDispatch AMapiPhone* url-and-header reject
 # 开屏广告
 ^https:\/\/amap-aos-info-nogw\.amap\.com\/ws\/aos\/alimama\/splash_screen_rt url reject-dict
@@ -71,16 +69,13 @@
 #^https:\/\/m5\.amap\.com\/ws\/faas\/amap-navigation\/main-page-assets url jsonjq-response-body .data.msgs |= map(select(.category | IN(1, 2, 5, 24)))
 
 # 打车页面图标菜单
-^https:\/\/m5-zb\.amap\.com\/ws\/boss\/car\/order\/content_info url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/amap-new.js
+^https:\/\/m5-zb\.amap\.com\/ws\/boss\/car\/order\/content_info url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/a8cb102909042edbe4c8ef4acd675443c911ff77a1fa4432e33933fd9b2c253f/amap-new.js
 # 搜索打开目的地详情的广告
-^https:\/\/info\.amap\.com\/ws\/shield\/search\/poi\/detail url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/amap-new.js
+^https:\/\/info\.amap\.com\/ws\/shield\/search\/poi\/detail url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/a8cb102909042edbe4c8ef4acd675443c911ff77a1fa4432e33933fd9b2c253f/amap-new.js
 # 搜索结果列表
-^https:\/\/m5\.amap\.com\/ws\/shield\/search_poi\/search\/sp url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/amap-new.js
+^https:\/\/m5\.amap\.com\/ws\/shield\/search_poi\/search\/sp url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/a8cb102909042edbe4c8ef4acd675443c911ff77a1fa4432e33933fd9b2c253f/amap-new.js
 # 酒店页面广告
-^https:\/\/m5\.amap\.com\/ws\/info_bff\/tradeUnionPortal url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/amap-new.js
+^https:\/\/m5\.amap\.com\/ws\/info_bff\/tradeUnionPortal url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/a8cb102909042edbe4c8ef4acd675443c911ff77a1fa4432e33933fd9b2c253f/amap-new.js
 
 # [mitm]
-
-# Upstream hostname = m5.amap.com,amap-aos-info-nogw.amap.com,m5-zb.amap.com,info.amap.com,ai.amap.com,render.amap.com
-
-hostname = m5.amap.com, amap-aos-info-nogw.amap.com, m5-zb.amap.com, info.amap.com, ai.amap.com, render.amap.com
+hostname = m5.amap.com,amap-aos-info-nogw.amap.com,m5-zb.amap.com,info.amap.com,ai.amap.com,render.amap.com

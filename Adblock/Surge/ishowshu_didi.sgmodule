@@ -8,10 +8,10 @@
 
 [Rule]
 # Name: 滴滴出行
-# Updated: 2026-10-30 15:52:20 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
 # Source Authors: 树先生
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/didi.snippet
 # Upstream name = 滴滴出行
@@ -69,7 +69,6 @@ IP-CIDR,123.207.209.39/32,REJECT,no-resolve
 # Source declaration: ^https:\/\/api\.udache\.com\/gulfstream\/passenger-center\/v2\/bronze\/pInTripLayout url jsonjq-response-body .data.layout.order |= ["header-card-1", "driver-card-1"]
 # 订单列表tip提示
 # Source declaration: ^https:\/\/common\.diditaxi\.com\.cn\/passenger\/historyV2 url jsonjq-response-body .data.orders |= map(del(.guide_bar))
-# Upstream hostname = 123.207.209.*, 116.85.2.14, 116.85.2.40, 116.85.2.41, 113.46.225.4, 113.46.225.5, 113.46.225.2, 113.46.225.3, ct.xiaojukeji.com, conf.diditaxi.com.cn, api.udache.com, common.diditaxi.com.cn, res.xiaojukeji.com
 
 [Map Local]
 ^https:\/\/conf\.diditaxi\.com\.cn\/homepage\/v1\/other\/slow data-type=text data="{}" status-code=200 header="Content-Type:application/json"

@@ -8,19 +8,18 @@
 
 [Rule]
 # Name: 途虎养车净化
-# Updated: 2026-10-30 15:52:24 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
 # Source Authors: 怎么肥事
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/TH.snippet
 # Upstream name = 途虎养车净化
 # Upstream author = 怎么肥事
 # Upstream update = 2026-4-14
-# // 营销弹窗 & 横幅 & 超级会员 & 推荐 & 搜索热词
-# // 门店Tab - 移除横幅 + 过滤推广模块
-# // 个人中心模块 - 移除多余入口
-# Upstream hostname = mkt-gateway.tuhu.cn, cl-gateway.tuhu.cn
+// 营销弹窗 & 横幅 & 超级会员 & 推荐 & 搜索热词
+// 门店Tab - 移除横幅 + 过滤推广模块
+// 个人中心模块 - 移除多余入口
 
 [Map Local]
 ^https:\/\/mkt-gateway\.tuhu\.cn\/mkt-scene-marketing-service\/api\/scene\/queryScheme data-type=text data="{}" status-code=200 header="Content-Type:application/json"

@@ -1,24 +1,21 @@
 # Name: Keep
-# Icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/keep.png
-# Icon Collection: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json
-# Updated: 2026-10-25 18:04:02 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
 # Source Authors: 树先生
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 
-# [filter_local]
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/keep.snippet
 # Upstream name=Keep
 # Upstream desc=我真的是来运动的
 # Upstream author=树先生
 
+# [filter_local]
 host, hc-ssp.sm.cn, reject
 host, httpdns.calorietech.com, reject
 
-# [rewrite_local]
-
 # > keep广告
+# [rewrite_local]
 ^https:\/\/kad\.gotokeep\.com\/op-engine-webapp\/v\d\/ad url reject-dict
 ^https:\/\/api\.gotokeep\.com\/op-engine-webapp\/v\d\/ad\/preload url reject-dict
 # 搜索页榜单
@@ -31,7 +28,7 @@ host, httpdns.calorietech.com, reject
 ^https:\/\/api\.gotokeep\.com\/guide-webapp\/v1\/popup\/getPopUp url reject-dict
 
 # 底部tab、发现tab项的顶部
-^https:\/\/api\.gotokeep\.com\/config\/v3\/basic\? url script-response-body https://github.com/ishowshu/qx/raw/refs/heads/main/script/keep.js
+^https:\/\/api\.gotokeep\.com\/config\/v3\/basic\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/db0b34b4344c01c721b2843c4096bd093514e4053ecb8b83f44cc5b928686a19/keep.js
 # 帖子详情页底部推荐帖子修改成只加载一个，全部干掉会有问题
 #^https:\/\/api\.gotokeep\.com\/twins\/v4\/feed\/entryDetail url jsonjq-response-body .data.modules = [.data.modules[0]]
 # 社区过滤掉推荐动态和推荐用户
@@ -39,7 +36,4 @@ host, httpdns.calorietech.com, reject
 ^https:\/\/api\.gotokeep\.com\/twins\/v1\/social\/tab\/friends url jsonjq-response-body '.data.modules |= map(select(.positions | type == "object" and (has("recommendReason") | not) and (has("recommendUsers") | not)))'
 
 # [mitm]
-
-# Upstream hostname = api.gotokeep.com, kad.gotokeep.com
-
 hostname = api.gotokeep.com, kad.gotokeep.com

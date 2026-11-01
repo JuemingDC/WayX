@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "pluginSources": 362,
+  "scriptUrls": 246,
+  "backedUpScripts": 241,
+  "rewrittenArtifacts": 226,
+  "scriptApi": {
+    "adapted": 290,
+    "blocked": 655
+  },
+  "unresolvedReferences": 14,
+  "failures": [
+    {
+      "url": "https://raw.githubusercontent.com/JuemingDC/QuantumultX/refs/heads/main/Rewrite/qzxy.snippet",
+      "error": "HTTP 404 from original source https://raw.githubusercontent.com/JuemingDC/QuantumultX/refs/heads/main/Rewrite/qzxy.snippet",
+      "kind": "plugin",
+      "retained": null
+    },
+    {
+      "url": "https://kelee.one/Resource/JavaScript/EasyBike/mobileconfig-gateway.js",
+      "error": "HTTP 404 from original source https://kelee.one/Resource/JavaScript/EasyBike/mobileconfig-gateway.js",
+      "retained": null
+    },
+    {
+      "url": "https://kelee.one/Resource/JavaScript/CommonScript/replace-body.js",
+      "error": "HTTP 404 from original source https://kelee.one/Resource/JavaScript/CommonScript/replace-body.js",
+      "retained": null
+    },
+    {
+      "url": "https://rucu6.pages.dev/Scripts/youtube/request.js",
+      "error": "HTTP 404 from original source https://rucu6.pages.dev/Scripts/youtube/request.js",
+      "retained": null
+    },
+    {
+      "url": "https://rucu6.pages.dev/Scripts/youtube/response.js",
+      "error": "HTTP 404 from original source https://rucu6.pages.dev/Scripts/youtube/response.js",
+      "retained": null
+    },
+    {
+      "url": "https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js",
+      "error": "HTTP 404 from original source https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js",
+      "retained": null
+    }
+  ]
+}

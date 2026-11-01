@@ -1,11 +1,11 @@
 # Name: cn
-# Updated: 2026-11-01 00:16:00 UTC
+# Updated: 2026-11-01 13:23:11 UTC
 # Converted by: chance
 # Source Authors: DH-Teams, Loyalsoldier, MetaCubeX, Nexitally, QuixoticHeart, Sukka, V2Fly, gaoyifan
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_All_Surge.list ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-cn.list ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china.txt ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china6.txt ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_CN_3.list ; https://ruleset.skk.moe/List/ip/domestic.conf ; https://ruleset.skk.moe/List/non_ip/domestic.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 127870
+# Rules: 127889
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net
@@ -643,6 +643,12 @@ DOMAIN-SUFFIX,lofter.httpdns.c.163.com
 DOMAIN-SUFFIX,log.mix.sina.com.cn
 DOMAIN-SUFFIX,logupdate.avlyun.sec.miui.com
 DOMAIN-SUFFIX,mbs.download.prss.microsoft.com
+DOMAIN-SUFFIX,mnc000.mcc460.pub.3gppnetwork.org
+DOMAIN-SUFFIX,mnc002.mcc460.pub.3gppnetwork.org
+DOMAIN-SUFFIX,mnc004.mcc460.pub.3gppnetwork.org
+DOMAIN-SUFFIX,mnc007.mcc460.pub.3gppnetwork.org
+DOMAIN-SUFFIX,mnc011.mcc460.pub.3gppnetwork.org
+DOMAIN-SUFFIX,mnc015.mcc460.pub.3gppnetwork.org
 DOMAIN-SUFFIX,mpnbenefits.download.prss.microsoft.com
 DOMAIN-SUFFIX,mpnbenefitsrtl.download.prss.microsoft.com
 DOMAIN-SUFFIX,mpnbenefitsrtluat.download.prss.microsoft.com
@@ -19564,6 +19570,7 @@ DOMAIN-SUFFIX,busnc.com
 DOMAIN-SUFFIX,bustoprint.com
 DOMAIN-SUFFIX,bustruckexpo.com
 DOMAIN-SUFFIX,busuanzi.cc
+DOMAIN-SUFFIX,busyming.com
 DOMAIN-SUFFIX,but7.com
 DOMAIN-SUFFIX,butair.com
 DOMAIN-SUFFIX,butao.com
@@ -31983,6 +31990,7 @@ DOMAIN-SUFFIX,doubaninfo.com
 DOMAIN-SUFFIX,doubanio.com
 DOMAIN-SUFFIX,doubao-dev.com
 DOMAIN-SUFFIX,doubao.com
+DOMAIN-SUFFIX,doubaoapps.com
 DOMAIN-SUFFIX,doubaocdn.com
 DOMAIN-SUFFIX,doubaozhidao.com
 DOMAIN-SUFFIX,doubean.com
@@ -48155,6 +48163,7 @@ DOMAIN-SUFFIX,hmwzjs.com
 DOMAIN-SUFFIX,hmx-led.com
 DOMAIN-SUFFIX,hmx3556y0o.com
 DOMAIN-SUFFIX,hmxixie.com
+DOMAIN-SUFFIX,hmxs.cn
 DOMAIN-SUFFIX,hmxw.com
 DOMAIN-SUFFIX,hmxx.net
 DOMAIN-SUFFIX,hmyzs.com
@@ -66885,6 +66894,7 @@ DOMAIN-SUFFIX,maydo.group
 DOMAIN-SUFFIX,mayerse.com
 DOMAIN-SUFFIX,mayi.com
 DOMAIN-SUFFIX,mayiangel.com
+DOMAIN-SUFFIX,mayibao.cn
 DOMAIN-SUFFIX,mayicms.com
 DOMAIN-SUFFIX,mayihr.com
 DOMAIN-SUFFIX,mayiic.com
@@ -89668,6 +89678,7 @@ DOMAIN-SUFFIX,t-d.tv
 DOMAIN-SUFFIX,t-dsyy.com
 DOMAIN-SUFFIX,t-firefly.com
 DOMAIN-SUFFIX,t-gafa.com
+DOMAIN-SUFFIX,t-head.cn
 DOMAIN-SUFFIX,t-io.org
 DOMAIN-SUFFIX,t-machine.biz
 DOMAIN-SUFFIX,t-npm.com
@@ -91060,6 +91071,7 @@ DOMAIN-SUFFIX,tenorshare.com
 DOMAIN-SUFFIX,tenorshare.tw
 DOMAIN-SUFFIX,tenovatech.com
 DOMAIN-SUFFIX,tenpay.com
+DOMAIN-SUFFIX,tenpayglobal.com
 DOMAIN-SUFFIX,tenqent.com
 DOMAIN-SUFFIX,tenrays.com
 DOMAIN-SUFFIX,tensafe.com
@@ -98143,6 +98155,7 @@ DOMAIN-SUFFIX,westonecloud.com
 DOMAIN-SUFFIX,westpac.group
 DOMAIN-SUFFIX,westsh.com
 DOMAIN-SUFFIX,westsummitcap.com
+DOMAIN-SUFFIX,wesure.cn
 DOMAIN-SUFFIX,wesure100.com
 DOMAIN-SUFFIX,wetab.link
 DOMAIN-SUFFIX,wetest.host
@@ -114619,6 +114632,7 @@ DOMAIN-SUFFIX,zylianto.com
 DOMAIN-SUFFIX,zymc1.com
 DOMAIN-SUFFIX,zymkcdn.com
 DOMAIN-SUFFIX,zymkshop.com
+DOMAIN-SUFFIX,zymls.com
 DOMAIN-SUFFIX,zyms8.me
 DOMAIN-SUFFIX,zyoffice.com
 DOMAIN-SUFFIX,zyoo.net
@@ -115731,7 +115745,6 @@ IP-CIDR,103.17.228.0/22,no-resolve
 IP-CIDR,103.17.40.0/22,no-resolve
 IP-CIDR,103.17.64.0/22,no-resolve
 IP-CIDR,103.170.134.0/23,no-resolve
-IP-CIDR,103.170.210.0/23,no-resolve
 IP-CIDR,103.170.212.0/23,no-resolve
 IP-CIDR,103.170.4.0/23,no-resolve
 IP-CIDR,103.171.166.0/24,no-resolve
@@ -121461,6 +121474,7 @@ IP-CIDR,204.235.241.0/24,no-resolve
 IP-CIDR,204.77.130.0/24,no-resolve
 IP-CIDR,205.198.19.0/24,no-resolve
 IP-CIDR,206.109.70.0/23,no-resolve
+IP-CIDR,206.109.71.0/24,no-resolve
 IP-CIDR,206.109.75.0/24,no-resolve
 IP-CIDR,207.57.167.0/24,no-resolve
 IP-CIDR,207.57.168.0/24,no-resolve
@@ -126257,7 +126271,7 @@ IP-CIDR6,2406:840:e900::/40,no-resolve
 IP-CIDR6,2406:840:ea00::/40,no-resolve
 IP-CIDR6,2406:840:eb06::/48,no-resolve
 IP-CIDR6,2406:840:eb09::/48,no-resolve
-IP-CIDR6,2406:840:eb0a::/47,no-resolve
+IP-CIDR6,2406:840:eb0a::/48,no-resolve
 IP-CIDR6,2406:840:eb0c::/47,no-resolve
 IP-CIDR6,2406:840:eb0e::/48,no-resolve
 IP-CIDR6,2406:840:eb10::/44,no-resolve
@@ -126478,7 +126492,6 @@ IP-CIDR6,2406:840:fe26::/48,no-resolve
 IP-CIDR6,2406:840:fe28::/45,no-resolve
 IP-CIDR6,2406:840:fe30::/44,no-resolve
 IP-CIDR6,2406:840:fe40::/44,no-resolve
-IP-CIDR6,2406:840:fe51::/48,no-resolve
 IP-CIDR6,2406:840:fe52::/47,no-resolve
 IP-CIDR6,2406:840:fe54::/46,no-resolve
 IP-CIDR6,2406:840:fe58::/45,no-resolve
@@ -126834,6 +126847,7 @@ IP-CIDR6,2408:4014::/31,no-resolve
 IP-CIDR6,2408:4016:1000::/36,no-resolve
 IP-CIDR6,2408:4016:100::/40,no-resolve
 IP-CIDR6,2408:4016:10::/44,no-resolve
+IP-CIDR6,2408:4016:1::/48,no-resolve
 IP-CIDR6,2408:4016:2000::/35,no-resolve
 IP-CIDR6,2408:4016:200::/39,no-resolve
 IP-CIDR6,2408:4016:20::/43,no-resolve
@@ -127750,7 +127764,9 @@ IP-CIDR6,2a0a:d685:280::/41,no-resolve
 IP-CIDR6,2a0a:d685:300::/40,no-resolve
 IP-CIDR6,2a0a:d685:4000::/34,no-resolve
 IP-CIDR6,2a0a:d685:400::/40,no-resolve
-IP-CIDR6,2a0a:d685:500::/45,no-resolve
+IP-CIDR6,2a0a:d685:500::/46,no-resolve
+IP-CIDR6,2a0a:d685:504::/48,no-resolve
+IP-CIDR6,2a0a:d685:506::/47,no-resolve
 IP-CIDR6,2a0a:d685:508::/48,no-resolve
 IP-CIDR6,2a0a:d685:50a::/47,no-resolve
 IP-CIDR6,2a0a:d685:50c::/46,no-resolve
@@ -127795,7 +127811,10 @@ IP-CIDR6,2a0e:b107:740::/44,no-resolve
 IP-CIDR6,2a0f:1cc5:1600::/44,no-resolve
 IP-CIDR6,2a0f:1cc5:4700::/40,no-resolve
 IP-CIDR6,2a0f:6280:7400::/39,no-resolve
+IP-CIDR6,2a0f:9400:6110::/48,no-resolve
 IP-CIDR6,2a10:fa86::/34,no-resolve
+IP-CIDR6,2a12:cb41:1300::/44,no-resolve
+IP-CIDR6,2a12:cb41:13f0::/44,no-resolve
 IP-CIDR6,2a12:cb41:600::/44,no-resolve
 IP-CIDR6,2a13:1800:1000::/36,no-resolve
 IP-CIDR6,2a13:1800:100::/40,no-resolve

@@ -1,15 +1,35 @@
 # Name: 哔哩哔哩漫画净化[墨鱼版]
-# Updated: 2026-11-01 09:49:35 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:26 +08:00
+# Copied by: chance
 # Source Authors: 墨鱼 / ddgksf2013
 # Category: Adblock
 # Managed by: WayX Native QX
 
-# [rewrite_local]
+# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/BiliBiliComicsAds.conf
+// ==UserScript==
+// @ScriptName        哔哩哔哩漫画净化[墨鱼版]
+// @Author            @ddgksf2013
+// @Function          如果有需要的去除广告的APP，可自行在共享表格中添加需求
+// @AddRequest        https://bit.ly/addRequestforAdBlock
+// @WechatID          墨鱼手记
+// @TgChannel         https://t.me/ddgksf2021
+// @Contribute        https://t.me/ddgksf2013_bot
+// @UpdateTime        2026-06-14
+// @Suitable          自行观看“# > ”注释内容
+// @Attention         使用前请卸载哔哩哔哩漫画，挂载脚本然后使用
+// @Attention         如需引用请注明出处，谢谢合作！
+// @Version           V1.0.6
+// @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/BiliBiliComicsAds.conf
+// ==/UserScript==
+
+
+# [mitm]
+hostname = manga.bilibili.com
   
 # ===== 哔哩哔哩漫画净化 =====
 
 # 开屏 / 活动弹窗
+# [rewrite_local]
 ^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v\d\.Comic\/ListFlash url jsonjq-response-body '.data.list=[] | .data.ad_list=[] | .data.show=[] | .data.verifying_list=[] | .data.ad_loc=false'
 
 # 首页轮播 Banner
@@ -68,26 +88,3 @@
 
 # 推荐
 ^https:\/\/manga\.bilibili\.com\/twirp\/comic\.v\d\.Comic\/Recommend url jsonjq-response-body '.data=[]'
-
-# [mitm]
-# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/BiliBiliComicsAds.conf
-# // ==UserScript==
-# // @ScriptName        哔哩哔哩漫画净化[墨鱼版]
-# // @Author            @ddgksf2013
-# // @Function          如果有需要的去除广告的APP，可自行在共享表格中添加需求
-# // @AddRequest        https://bit.ly/addRequestforAdBlock
-# // @WechatID          墨鱼手记
-# // @TgChannel         https://t.me/ddgksf2021
-# // @Contribute        https://t.me/ddgksf2013_bot
-# // @UpdateTime        2026-06-14
-# // @Suitable          自行观看“# > ”注释内容
-# // @Attention         使用前请卸载哔哩哔哩漫画，挂载脚本然后使用
-# // @Attention         如需引用请注明出处，谢谢合作！
-# // @Version           V1.0.6
-# // @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/BiliBiliComicsAds.conf
-# // ==/UserScript==
-
-
-# Upstream hostname = manga.bilibili.com
-
-hostname = manga.bilibili.com

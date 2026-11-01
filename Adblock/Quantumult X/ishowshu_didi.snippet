@@ -1,18 +1,16 @@
 # Name: 滴滴出行
-# Icon: https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/apps/didi.png
-# Icon Collection: https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/icons-all.json
-# Updated: 2026-10-25 18:04:02 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
 # Source Authors: 树先生
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 
-# [filter_local]
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/didi.snippet
 # Upstream name = 滴滴出行
 # Upstream desc = 给你一个干净的坐车体验
 # Upstream author = 树先生
 
+# [filter_local]
 host, as.xiaojukeji.com, reject
 host, gwp.xiaojukeji.com, reject
 host, adtrack.xiaojukeji.com, reject
@@ -50,9 +48,8 @@ ip-cidr, 116.85.3.37/32, reject
 ip-cidr, 123.207.209.60/32, reject
 ip-cidr, 123.207.209.39/32, reject
 
-# [rewrite_local]
-
 # 首页底部重逢福利推广
+# [rewrite_local]
 ^https:\/\/conf\.diditaxi\.com\.cn\/homepage\/v1\/other\/slow url reject-dict
 # 订单详情页底部推广
 ^https:\/\/ct\.xiaojukeji\.com\/agent\/v3\/feeds url reject-dict
@@ -82,7 +79,4 @@ ip-cidr, 123.207.209.39/32, reject
 ^https:\/\/common\.diditaxi\.com\.cn\/passenger\/historyV2 url jsonjq-response-body '.data.orders |= map(del(.guide_bar))'
 
 # [mitm]
-
-# Upstream hostname = 123.207.209.*, 116.85.2.14, 116.85.2.40, 116.85.2.41, 113.46.225.4, 113.46.225.5, 113.46.225.2, 113.46.225.3, ct.xiaojukeji.com, conf.diditaxi.com.cn, api.udache.com, common.diditaxi.com.cn, res.xiaojukeji.com
-
 hostname = 123.207.209.*, 116.85.2.14, 116.85.2.40, 116.85.2.41, 113.46.225.4, 113.46.225.5, 113.46.225.2, 113.46.225.3, ct.xiaojukeji.com, conf.diditaxi.com.cn, api.udache.com, common.diditaxi.com.cn, res.xiaojukeji.com

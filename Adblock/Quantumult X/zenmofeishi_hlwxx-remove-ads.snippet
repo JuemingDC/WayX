@@ -1,19 +1,19 @@
 # Name: 黑料不打烊净化
-# Updated: 2026-10-25 19:01:30 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
 # Source Authors: 怎么肥事
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 
-# [rewrite_local]
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/hlwxx_remove_ads.snippet
 # Upstream name = 黑料不打烊净化
 # Upstream author = 怎么肥事
 # Upstream update = 2026-10-02
+# [rewrite_local]
 ^https?:\/\/(?:www\.)?(?:heiliao|hlwxx|hlcx\d*)\.com\/(?!static\/|favicon|api\/|index\/statistics|uploads\/) url request-header (\r\n)Accept-Encoding:.+(\r\n) request-header $1Accept-Encoding: identity$2
-^https?:\/\/(?:www\.)?(?:heiliao|hlwxx|hlcx\d*)\.com\/(?!static\/|favicon|api\/|index\/statistics|uploads\/) url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/hlwxx_remove_ads.js
+^https?:\/\/(?:www\.)?(?:heiliao|hlwxx|hlcx\d*)\.com\/(?!static\/|favicon|api\/|index\/statistics|uploads\/) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/4b8d1b919e60e42746a00dfe7d1317765aef73c85e7eaba9c30746a2c05d1e65/hlwxx_remove_ads.js
 ^https?:\/\/(?:www\.)?97baoliao\.com\/(?!usr\/|storage\/|api\/|favicon\.ico) url request-header (\r\n)Accept-Encoding:.+(\r\n) request-header $1Accept-Encoding: identity$2
-^https?:\/\/(?:www\.)?97baoliao\.com\/(?!usr\/|storage\/|api\/|favicon\.ico) url script-response-body https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/hlwxx_remove_ads.js
+^https?:\/\/(?:www\.)?97baoliao\.com\/(?!usr\/|storage\/|api\/|favicon\.ico) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/4b8d1b919e60e42746a00dfe7d1317765aef73c85e7eaba9c30746a2c05d1e65/hlwxx_remove_ads.js
 ^https?:\/\/(?:www\.)?97baoliao\.com\/storage\/static\/popup-feed\.json(?:\?.*)?$ url reject-dict
 ^https?:\/\/(?:www\.)?97baoliao\.com\/usr\/plugins\/AiSuite\/assets\/js\/adfloat\.js(?:\?.*)?$ url reject
 ^https?:\/\/(?:www\.)?97baoliao\.com\/usr\/themes\/Mirages\/js\/7\.10\.0\/bottom_ad_poll\.js(?:\?.*)?$ url reject
@@ -27,6 +27,4 @@
 ^https?:\/\/(?:www\.)?google-analytics\.com\/ url reject
 
 # [mitm]
-
-# Upstream hostname = *heiliao*, *hlwxx*, *hlcx*, *97baoliao*, stats.kwvprfcr.xyz, mc.yandex.ru, api1.cghhqca.cc, api.shuifeng.cc, ads.zyudkkup.com, static.cloudflareinsights.com, *.googletagmanager.com, *.google-analytics.com
 hostname = *heiliao*, *hlwxx*, *hlcx*, *97baoliao*, stats.kwvprfcr.xyz, mc.yandex.ru, api1.cghhqca.cc, api.shuifeng.cc, ads.zyudkkup.com, static.cloudflareinsights.com, *.googletagmanager.com, *.google-analytics.com

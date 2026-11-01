@@ -1,11 +1,11 @@
 # Name: cn
-# Updated: 2026-11-01 00:16:00 UTC
+# Updated: 2026-11-01 13:23:11 UTC
 # Converted by: chance
 # Source Authors: DH-Teams, Loyalsoldier, MetaCubeX, Nexitally, QuixoticHeart, Sukka, V2Fly, gaoyifan
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_All_Surge.list ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-cn.list ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china.txt ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china6.txt ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_CN_3.list ; https://ruleset.skk.moe/List/ip/domestic.conf ; https://ruleset.skk.moe/List/non_ip/domestic.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 127870
+# Rules: 127889
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,direct
@@ -643,6 +643,12 @@ host-suffix,lofter.httpdns.c.163.com,direct
 host-suffix,log.mix.sina.com.cn,direct
 host-suffix,logupdate.avlyun.sec.miui.com,direct
 host-suffix,mbs.download.prss.microsoft.com,direct
+host-suffix,mnc000.mcc460.pub.3gppnetwork.org,direct
+host-suffix,mnc002.mcc460.pub.3gppnetwork.org,direct
+host-suffix,mnc004.mcc460.pub.3gppnetwork.org,direct
+host-suffix,mnc007.mcc460.pub.3gppnetwork.org,direct
+host-suffix,mnc011.mcc460.pub.3gppnetwork.org,direct
+host-suffix,mnc015.mcc460.pub.3gppnetwork.org,direct
 host-suffix,mpnbenefits.download.prss.microsoft.com,direct
 host-suffix,mpnbenefitsrtl.download.prss.microsoft.com,direct
 host-suffix,mpnbenefitsrtluat.download.prss.microsoft.com,direct
@@ -19564,6 +19570,7 @@ host-suffix,busnc.com,direct
 host-suffix,bustoprint.com,direct
 host-suffix,bustruckexpo.com,direct
 host-suffix,busuanzi.cc,direct
+host-suffix,busyming.com,direct
 host-suffix,but7.com,direct
 host-suffix,butair.com,direct
 host-suffix,butao.com,direct
@@ -31983,6 +31990,7 @@ host-suffix,doubaninfo.com,direct
 host-suffix,doubanio.com,direct
 host-suffix,doubao-dev.com,direct
 host-suffix,doubao.com,direct
+host-suffix,doubaoapps.com,direct
 host-suffix,doubaocdn.com,direct
 host-suffix,doubaozhidao.com,direct
 host-suffix,doubean.com,direct
@@ -48155,6 +48163,7 @@ host-suffix,hmwzjs.com,direct
 host-suffix,hmx-led.com,direct
 host-suffix,hmx3556y0o.com,direct
 host-suffix,hmxixie.com,direct
+host-suffix,hmxs.cn,direct
 host-suffix,hmxw.com,direct
 host-suffix,hmxx.net,direct
 host-suffix,hmyzs.com,direct
@@ -66885,6 +66894,7 @@ host-suffix,maydo.group,direct
 host-suffix,mayerse.com,direct
 host-suffix,mayi.com,direct
 host-suffix,mayiangel.com,direct
+host-suffix,mayibao.cn,direct
 host-suffix,mayicms.com,direct
 host-suffix,mayihr.com,direct
 host-suffix,mayiic.com,direct
@@ -89668,6 +89678,7 @@ host-suffix,t-d.tv,direct
 host-suffix,t-dsyy.com,direct
 host-suffix,t-firefly.com,direct
 host-suffix,t-gafa.com,direct
+host-suffix,t-head.cn,direct
 host-suffix,t-io.org,direct
 host-suffix,t-machine.biz,direct
 host-suffix,t-npm.com,direct
@@ -91060,6 +91071,7 @@ host-suffix,tenorshare.com,direct
 host-suffix,tenorshare.tw,direct
 host-suffix,tenovatech.com,direct
 host-suffix,tenpay.com,direct
+host-suffix,tenpayglobal.com,direct
 host-suffix,tenqent.com,direct
 host-suffix,tenrays.com,direct
 host-suffix,tensafe.com,direct
@@ -98143,6 +98155,7 @@ host-suffix,westonecloud.com,direct
 host-suffix,westpac.group,direct
 host-suffix,westsh.com,direct
 host-suffix,westsummitcap.com,direct
+host-suffix,wesure.cn,direct
 host-suffix,wesure100.com,direct
 host-suffix,wetab.link,direct
 host-suffix,wetest.host,direct
@@ -114619,6 +114632,7 @@ host-suffix,zylianto.com,direct
 host-suffix,zymc1.com,direct
 host-suffix,zymkcdn.com,direct
 host-suffix,zymkshop.com,direct
+host-suffix,zymls.com,direct
 host-suffix,zyms8.me,direct
 host-suffix,zyoffice.com,direct
 host-suffix,zyoo.net,direct
@@ -115731,7 +115745,6 @@ ip-cidr,103.17.228.0/22,direct
 ip-cidr,103.17.40.0/22,direct
 ip-cidr,103.17.64.0/22,direct
 ip-cidr,103.170.134.0/23,direct
-ip-cidr,103.170.210.0/23,direct
 ip-cidr,103.170.212.0/23,direct
 ip-cidr,103.170.4.0/23,direct
 ip-cidr,103.171.166.0/24,direct
@@ -121461,6 +121474,7 @@ ip-cidr,204.235.241.0/24,direct
 ip-cidr,204.77.130.0/24,direct
 ip-cidr,205.198.19.0/24,direct
 ip-cidr,206.109.70.0/23,direct
+ip-cidr,206.109.71.0/24,direct
 ip-cidr,206.109.75.0/24,direct
 ip-cidr,207.57.167.0/24,direct
 ip-cidr,207.57.168.0/24,direct
@@ -126257,7 +126271,7 @@ ip6-cidr,2406:840:e900::/40,direct
 ip6-cidr,2406:840:ea00::/40,direct
 ip6-cidr,2406:840:eb06::/48,direct
 ip6-cidr,2406:840:eb09::/48,direct
-ip6-cidr,2406:840:eb0a::/47,direct
+ip6-cidr,2406:840:eb0a::/48,direct
 ip6-cidr,2406:840:eb0c::/47,direct
 ip6-cidr,2406:840:eb0e::/48,direct
 ip6-cidr,2406:840:eb10::/44,direct
@@ -126478,7 +126492,6 @@ ip6-cidr,2406:840:fe26::/48,direct
 ip6-cidr,2406:840:fe28::/45,direct
 ip6-cidr,2406:840:fe30::/44,direct
 ip6-cidr,2406:840:fe40::/44,direct
-ip6-cidr,2406:840:fe51::/48,direct
 ip6-cidr,2406:840:fe52::/47,direct
 ip6-cidr,2406:840:fe54::/46,direct
 ip6-cidr,2406:840:fe58::/45,direct
@@ -126834,6 +126847,7 @@ ip6-cidr,2408:4014::/31,direct
 ip6-cidr,2408:4016:1000::/36,direct
 ip6-cidr,2408:4016:100::/40,direct
 ip6-cidr,2408:4016:10::/44,direct
+ip6-cidr,2408:4016:1::/48,direct
 ip6-cidr,2408:4016:2000::/35,direct
 ip6-cidr,2408:4016:200::/39,direct
 ip6-cidr,2408:4016:20::/43,direct
@@ -127750,7 +127764,9 @@ ip6-cidr,2a0a:d685:280::/41,direct
 ip6-cidr,2a0a:d685:300::/40,direct
 ip6-cidr,2a0a:d685:4000::/34,direct
 ip6-cidr,2a0a:d685:400::/40,direct
-ip6-cidr,2a0a:d685:500::/45,direct
+ip6-cidr,2a0a:d685:500::/46,direct
+ip6-cidr,2a0a:d685:504::/48,direct
+ip6-cidr,2a0a:d685:506::/47,direct
 ip6-cidr,2a0a:d685:508::/48,direct
 ip6-cidr,2a0a:d685:50a::/47,direct
 ip6-cidr,2a0a:d685:50c::/46,direct
@@ -127795,7 +127811,10 @@ ip6-cidr,2a0e:b107:740::/44,direct
 ip6-cidr,2a0f:1cc5:1600::/44,direct
 ip6-cidr,2a0f:1cc5:4700::/40,direct
 ip6-cidr,2a0f:6280:7400::/39,direct
+ip6-cidr,2a0f:9400:6110::/48,direct
 ip6-cidr,2a10:fa86::/34,direct
+ip6-cidr,2a12:cb41:1300::/44,direct
+ip6-cidr,2a12:cb41:13f0::/44,direct
 ip6-cidr,2a12:cb41:600::/44,direct
 ip6-cidr,2a13:1800:1000::/36,direct
 ip6-cidr,2a13:1800:100::/40,direct

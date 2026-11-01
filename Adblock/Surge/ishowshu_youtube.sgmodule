@@ -8,10 +8,10 @@
 
 [Rule]
 # Name: Youtube
-# Updated: 2026-10-30 15:52:20 +08:00
-# Merged by: chance
-# Source Authors: 树先生, Maasea
-# Category: app
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
+# Source Authors: 树先生
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/youtube.snippet
 # Upstream name = Youtube
@@ -20,26 +20,25 @@
 #^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&oad url reject-dict
 #^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.* url script-request-body https://raw.githubusercontent.com/Maasea/sgmodule/master/Script/Youtube/youtube.request.js
 #^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch) url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js
-# //  信息流
-# //  搜索页结果
-# //  首页顶部导航菜单、软件dock菜单栏，(导航会误杀
+//  信息流
+//  搜索页结果
+//  首页顶部导航菜单、软件dock菜单栏，(导航会误杀
 #^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/guide url script-response-body https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js
-# //  获取配置
-# //  播放页
-# //  短视频
-# Upstream hostname = *.googlevideo.com, youtubei.googleapis.com
+//  获取配置
+//  播放页
+//  短视频
 
 [Map Local]
 ^https:\/\/rr[\w-]+\.googlevideo\.com\/initplayback\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-ishowshu_youtube_1 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/browse,script-path=https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js,requires-body=true
-ishowshu_youtube_2 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/search,script-path=https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js,requires-body=true
-ishowshu_youtube_3 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/account\/get_setting,script-path=https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js,requires-body=true
-ishowshu_youtube_4 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/get_watch,script-path=https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js,requires-body=true
-ishowshu_youtube_5 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/next,script-path=https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js,requires-body=true
-ishowshu_youtube_6 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/player\?,script-path=https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js,requires-body=true
-ishowshu_youtube_7 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/reel\/reel_watch_sequence,script-path=https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js,requires-body=true
+ishowshu_youtube_1 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/browse,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/2ac96d103b8f2e91d7cb24bb251254d06ddb79ba2c3b7405616b9ff5a2037317/youtube.response.js,requires-body=true
+ishowshu_youtube_2 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/search,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/2ac96d103b8f2e91d7cb24bb251254d06ddb79ba2c3b7405616b9ff5a2037317/youtube.response.js,requires-body=true
+ishowshu_youtube_3 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/account\/get_setting,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/2ac96d103b8f2e91d7cb24bb251254d06ddb79ba2c3b7405616b9ff5a2037317/youtube.response.js,requires-body=true
+ishowshu_youtube_4 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/get_watch,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/2ac96d103b8f2e91d7cb24bb251254d06ddb79ba2c3b7405616b9ff5a2037317/youtube.response.js,requires-body=true
+ishowshu_youtube_5 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/next,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/2ac96d103b8f2e91d7cb24bb251254d06ddb79ba2c3b7405616b9ff5a2037317/youtube.response.js,requires-body=true
+ishowshu_youtube_6 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/player\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/2ac96d103b8f2e91d7cb24bb251254d06ddb79ba2c3b7405616b9ff5a2037317/youtube.response.js,requires-body=true
+ishowshu_youtube_7 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/reel\/reel_watch_sequence,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/2ac96d103b8f2e91d7cb24bb251254d06ddb79ba2c3b7405616b9ff5a2037317/youtube.response.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% *.googlevideo.com, youtubei.googleapis.com

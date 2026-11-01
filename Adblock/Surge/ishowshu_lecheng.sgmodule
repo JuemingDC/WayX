@@ -6,10 +6,10 @@
 
 [Rule]
 # Name: 乐橙
-# Updated: 2026-10-25 19:01:27 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
 # Source Authors: 树先生
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/lecheng.snippet
 # Upstream name = 乐橙
@@ -28,7 +28,6 @@ DOMAIN,dsp-x.jd.com,REJECT
 DOMAIN,dspvideo.umeng.com,REJECT
 # [WayX] REVIEW REQUIRED: URL-and-header conjunction retained for review; dropping the header condition would broaden matching
 # Source declaration: ^https:\/\/img1\.360buyimg\.com\/pop\/jfs\/t1 LCIphoneAdhocIP* url-and-header reject-dict
-# Upstream hostname = img1.360buyimg.com, dl-ct-hz.imou.com, dl-cm-hz.imou.com
 
 [Map Local]
 ^https:\/\/dl-(?:ct|cm)-hz\.imou\.com(:443)?\/lechange\/saas\/advertisement\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"

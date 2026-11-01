@@ -6,11 +6,27 @@
 
 [Rule]
 # Name: 小黄鱼净化[墨鱼版]
-# Updated: 2026-11-01 09:49:35 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:26 +08:00
+# Copied by: chance
 # Source Authors: 墨鱼 / ddgksf2013
 # Category: Adblock
 # Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/GoofishAds.conf
+// ==UserScript==
+// @ScriptName        小黄鱼净化[墨鱼版]
+// @Author            @ddgksf2013
+// @Function          如果有需要的去除开屏广告的APP，可自行在共享表格中添加需求
+// @AddRequest        https://bit.ly/addRequestforAdBlock
+// @WechatID          墨鱼手记
+// @TgChannel         https://t.me/ddgksf2021
+// @Contribute        https://t.me/ddgksf2013_bot
+// @UpdateTime        2025-09-06
+// @Suitable          自行观看“# > ”注释内容
+// @Attention         使用前请卸载咸鱼，挂载脚本然后使用
+// @Attention         如需引用请注明出处，谢谢合作！
+// @Version           V1.0.11
+// @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/GoofishAds.conf
+// ==/UserScript==
 DOMAIN-SUFFIX,iyes.youku.com,REJECT
 # > 开屏广告@ddgksf2013
 # > 首页右下角悬浮球@ddgksf2013
@@ -26,23 +42,6 @@ DOMAIN-SUFFIX,iyes.youku.com,REJECT
 # > 搜索结果信息流AD@ddgksf2013
 # > 商品底部推荐商品信息流AD@ddgksf2013
 # > AMDC处理@ddgksf2013
-# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/GoofishAds.conf
-# // ==UserScript==
-# // @ScriptName        小黄鱼净化[墨鱼版]
-# // @Author            @ddgksf2013
-# // @Function          如果有需要的去除开屏广告的APP，可自行在共享表格中添加需求
-# // @AddRequest        https://bit.ly/addRequestforAdBlock
-# // @WechatID          墨鱼手记
-# // @TgChannel         https://t.me/ddgksf2021
-# // @Contribute        https://t.me/ddgksf2013_bot
-# // @UpdateTime        2025-09-06
-# // @Suitable          自行观看“# > ”注释内容
-# // @Attention         使用前请卸载咸鱼，挂载脚本然后使用
-# // @Attention         如需引用请注明出处，谢谢合作！
-# // @Version           V1.0.11
-# // @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/GoofishAds.conf
-# // ==/UserScript==
-# Upstream hostname = acs.m.goofish.com, g-acs.m.goofish.com
 
 [Map Local]
 ^https?:\/\/(g-)?acs\.m\.goofish\.com\/gw\/mtop.*splash\.ads data-type=text data="" status-code=200
@@ -62,7 +61,7 @@ http-response-jq ^https?:\/\/(g-)?acs\.m\.goofish\.com\/gw\/mtop.taobao.idlemtop
 http-response-jq ^https?:\/\/(g-)?acs\.m\.goofish\.com\/gw\/mtop.taobao.idle.item.recommend '.data.cardList |= map(select(.cardData.bizType != "mamaAD"))'
 
 [Script]
-ddgksf2013_goofishads_1 = type=http-response,pattern="^http:\/\/[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+){1,4}(:\d+)?\/amdc\/mobileDispatch",script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/amdc.js,requires-body=true
+ddgksf2013_goofishads_1 = type=http-response,pattern="^http:\/\/[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+){1,4}(:\d+)?\/amdc\/mobileDispatch",script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/ef90ca68bf9216b4289ad0997bf4b0c8bf5b92b79d4e419a1f206cce601dc019/amdc.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% acs.m.goofish.com, g-acs.m.goofish.com

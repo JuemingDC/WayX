@@ -6,22 +6,21 @@
 
 [Rule]
 # Name: T3出行
-# Updated: 2026-10-25 19:01:30 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
 # Source Authors: 怎么肥事
-# Category: app
+# Category: Adblock
 # Managed by: WayX Native QX
 # Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/T3.snippet
 # Upstream name = T3出行
 # Upstream author = 怎么肥事
 # Upstream update = 2026-4-14
-# // 广告弹窗 & 推送 & 负一屏 & 活动
-# // 首页菜单 - 只保留打车/预约车/优惠券
-# // 负一屏广告 - 清空数据
-# // 活动弹窗 - 清空数据
-# // 公告通知 - 清空数据
-# // 浮窗广告 - 清空数据
-# Upstream hostname = *.t3go.cn, 124.71.144.189, 123.60.34.69, 121.36.220.180, 121.37.134.39
+// 广告弹窗 & 推送 & 负一屏 & 活动
+// 首页菜单 - 只保留打车/预约车/优惠券
+// 负一屏广告 - 清空数据
+// 活动弹窗 - 清空数据
+// 公告通知 - 清空数据
+// 浮窗广告 - 清空数据
 
 [URL Rewrite]
 ^http:\/\/.+\/resolve _ reject

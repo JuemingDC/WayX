@@ -461,54 +461,54 @@ host, switch.cup.com.cn, reject
 {# 云闪付 //wallet.95516.com #} ^https:\/\/wallet\.95516\.com(:10533)?\/s\/wl\/icon\/large\/1 url reject
 # 12306 //ad.12306.cn, mobile.12306.cn
 # 12306_splash
-^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList$ url script-request-body https://rucu6.pages.dev/Scripts/12306.js
+^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList$ url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/821aa576b617d831a428200e731f412041c3fdd4f21eaabfa8b712f85716c636/12306.js
 # 12306_ads
-^https:\/\/mobile\.12306\.cn\/otsmobile\/app\/mgs\/mgw\.htm$ url script-request-header https://rucu6.pages.dev/Scripts/header.js
+^https:\/\/mobile\.12306\.cn\/otsmobile\/app\/mgs\/mgw\.htm$ url script-request-header https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/2b9fc61260fcedbf1e81cd88fdde9e074fc62571fc8af7210db6bf5641c43843/header.js
 
 # 阿里云盘 //*api.alipan.com, member.alipan.com
 # aliyun_mine
-^https:\/\/(biz)?api\.alipan\.com\/apps\/v\d\/users?\/home\/(?:news|widgets) url script-response-body https://rucu6.pages.dev/Scripts/adrive.js
+^https:\/\/(biz)?api\.alipan\.com\/apps\/v\d\/users?\/home\/(?:news|widgets) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/9102b70e3365c403dda863baa75138b5daa594ac08a7d39b7aff3d4a2c15ba7c/adrive.js
 # aliyun_board
-^https:\/\/member\.alipan\.com\/v1\/users\/onboard_list url script-response-body https://rucu6.pages.dev/Scripts/adrive.js
+^https:\/\/member\.alipan\.com\/v1\/users\/onboard_list url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/9102b70e3365c403dda863baa75138b5daa594ac08a7d39b7aff3d4a2c15ba7c/adrive.js
 
 # 阿里巴巴 //acs.m.taobao.com, heic.alicdn.com, guide-acs.m.taobao.com, poplayer.template.alibaba.com
 # taobao_1
-^https:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.taobao\.(?:cloudvideo\.video\.query|wireless\.home\.splash\.awesome\.get) url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
+^https:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.taobao\.(?:cloudvideo\.video\.query|wireless\.home\.splash\.awesome\.get) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/d477c79dc18470c7bae046d39330871387988061aa34ce6cb0a8a3df4ea45856/myblockads.js
 # taobao_2
-^https:\/\/poplayer\.template\.alibaba\.com\/\w+\.json url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
+^https:\/\/poplayer\.template\.alibaba\.com\/\w+\.json url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/d477c79dc18470c7bae046d39330871387988061aa34ce6cb0a8a3df4ea45856/myblockads.js
 
 # caoliu
-{# 草榴社区 //2023.redircdn.com #} ^https:\/\/2023\.redircdn\.com\/web\/mob_post\.js\? url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
+{# 草榴社区 //2023.redircdn.com #} ^https:\/\/2023\.redircdn\.com\/web\/mob_post\.js\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/d477c79dc18470c7bae046d39330871387988061aa34ce6cb0a8a3df4ea45856/myblockads.js
 
 # changyuan
-{# 昌原云充 五代十路 //www.washpayer.com #} ^https:\/\/www\.washpayer\.com\/user\/message\/equipmentPara\? url script-response-body https://rucu6.pages.dev/Scripts/changyuan.js
+{# 昌原云充 五代十路 //www.washpayer.com #} ^https:\/\/www\.washpayer\.com\/user\/message\/equipmentPara\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-qx/6971b3ae719a6c35e2b89e0c18e8e0da9445f1aa62844c5851901217c39c2382.js
 
 # coolapk
-{# 酷安 //api.coolapk.com #} ^https:\/\/api\.coolapk\.com\/v6\/(?:feed\/detail|feed\/replyList|page\/dataList|main\/dataList|main\/indexV8|main\/init) url script-response-body https://rucu6.pages.dev/Scripts/coolapk.js
+{# 酷安 //api.coolapk.com #} ^https:\/\/api\.coolapk\.com\/v6\/(?:feed\/detail|feed\/replyList|page\/dataList|main\/dataList|main\/indexV8|main\/init) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-qx/3faefab63665bf7f15cd38f957a82a298a9be65d28b40d3b9e87d9666eaf5c45.js
 
 # 酷狗音乐 //adserviceretry.kglink.cn, gateway.kugou.com
 # kg_gateway
-^https:\/\/gateway\.kugou\.com\/(?:adp\/ad\/v1\/mine_top_banner|ads\.gateway\/v2\/home_card) url script-response-body https://rucu6.pages.dev/Scripts/kugou.js
+^https:\/\/gateway\.kugou\.com\/(?:adp\/ad\/v1\/mine_top_banner|ads\.gateway\/v2\/home_card) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8f7d651e07b13ce7cdd20c95f294f04f40c679170ce6701febf868f96222beb2/kugou.js
 # kg_linkcn
-^https?:\/\/adserviceretry\.kglink\.cn\/v\d\/mobile\w+ url script-response-body https://rucu6.pages.dev/Scripts/kugou.js
+^https?:\/\/adserviceretry\.kglink\.cn\/v\d\/mobile\w+ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8f7d651e07b13ce7cdd20c95f294f04f40c679170ce6701febf868f96222beb2/kugou.js
 
 # wechat
-{# 微信封禁页面 //weixin110.qq.com, security.wechat.com #} ^https\:\/\/(?:weixin110\.qq|security\.wechat)\.com\/cgi-bin\/mmspamsupport-bin\/newredirectconfirmcgi\? url script-response-body https://rucu6.pages.dev/Scripts/wechat.js
+{# 微信封禁页面 //weixin110.qq.com, security.wechat.com #} ^https\:\/\/(?:weixin110\.qq|security\.wechat)\.com\/cgi-bin\/mmspamsupport-bin\/newredirectconfirmcgi\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/06cb926a57e5541695aa9fc972751a3b94682030339647b39c3ced5f897e833b/wechat.js
 
 # mi_mall
-{# 小米商城 //api.m.mi.com, shop-api.retail.mi.com #} ^https:\/\/api\.m\.mi\.com\/v1\/app\/start url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
+{# 小米商城 //api.m.mi.com, shop-api.retail.mi.com #} ^https:\/\/api\.m\.mi\.com\/v1\/app\/start url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/d477c79dc18470c7bae046d39330871387988061aa34ce6cb0a8a3df4ea45856/myblockads.js
 
 # thunder
-{# 迅雷 //api-gateway-pan.xunlei.com #} ^https:\/\/api-gateway-pan\.xunlei\.com\/content\/v1\/aggregate\/info\? url script-response-body https://rucu6.pages.dev/Scripts/myblockads.js
+{# 迅雷 //api-gateway-pan.xunlei.com #} ^https:\/\/api-gateway-pan\.xunlei\.com\/content\/v1\/aggregate\/info\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/d477c79dc18470c7bae046d39330871387988061aa34ce6cb0a8a3df4ea45856/myblockads.js
 
 # abchina
-{# 中国农业银行 //mobilepaas.abchina.com.cn #} ^https:\/\/mobilepaas\.abchina\.com\.cn:441\/mgw\.htm$ url script-request-header https://rucu6.pages.dev/Scripts/header.js
+{# 中国农业银行 //mobilepaas.abchina.com.cn #} ^https:\/\/mobilepaas\.abchina\.com\.cn:441\/mgw\.htm$ url script-request-header https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/2b9fc61260fcedbf1e81cd88fdde9e074fc62571fc8af7210db6bf5641c43843/header.js
 
 # 中国移动云盘 //ad.mcloud.139.com, jzts.cmpassport.com
 # cloud139_1
-^https:\/\/ad\.mcloud\.139\.com\/advertapi\/adv-filter\/ url script-response-body https://rucu6.pages.dev/Scripts/cloud139.js
+^https:\/\/ad\.mcloud\.139\.com\/advertapi\/adv-filter\/ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/db81649b516738b5eca7adc11b0385f34753063e80b453f6b70dfddcc34e8f1a/cloud139.js
 # cloud139_2
-^https:\/\/jzts\.cmpassport\.com\/personalized\/getPushContent url script-response-body https://rucu6.pages.dev/Scripts/cloud139.js
+^https:\/\/jzts\.cmpassport\.com\/personalized\/getPushContent url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/db81649b516738b5eca7adc11b0385f34753063e80b453f6b70dfddcc34e8f1a/cloud139.js
 
 # [mitm]
 hostname = ad.12306.cn, mobile.12306.cn, list-app-m.i4.cn, *api.alipan.com, member.alipan.com, acs.m.taobao.com, gw.alicdn.com, heic.alicdn.com, guide-acs.m.taobao.com, poplayer.template.alibaba.com, pan.baidu.com, 2023.redircdn.com, www.washpayer.com, oneapph5.dongfeng-nissan.com.cn, api.douban.com, img3.doubanio.com, qnmob3.doubanio.com, image.mybank.icbc.com.cn, hfapp-service.qweather.net, acs-m.freshippo.com, gab.122.gov.cn, api.coolapk.com, adserviceretry.kglink.cn, gateway.kugou.com, p0.pipi.cn, mme.api.moji.com, sns.api.moji.com, flowplus.meituan.net, img.meituan.net, s3plus.meituan.net, home.mi.com, gql.reddit.com, gql-fed.reddit.com, a.cpiccdn.com, osg-service.sgcc.com.cn, api.xiachufang.com, mp.weixin.qq.com, weixin110.qq.com, security.wechat.com, marketing-aibox.v.mitvos.com, api.m.mi.com, shop-api.retail.mi.com, xiaomishop.retail.mi.com, gateway.sccncdn.com, gateway.starcharge.com, api-gateway-pan.xunlei.com, api-shoulei-ssl.xunlei.com, conf-m-ssl.xunlei.com, login-service.mobile-bank.psbc.com, wallet.95516.com, mobilepaas.abchina.com.cn, ad.mcloud.139.com, jzts.cmpassport.com

@@ -47,10 +47,10 @@
 
 ^https:\/\/api\.hibixin\.com\/resource\/v\d\/common\/tab$ url jsonjq-response-body '.result |= map(select(.type != "activityCenter"))'
 # 精简首页标签
-^https:\/\/gateway\.hibixin\.com\/resource\/v\d\/common\/tab\/query$ url script-response-body https://kelee.one/Resource/JavaScript/Bixin/common_tab.js
+^https:\/\/gateway\.hibixin\.com\/resource\/v\d\/common\/tab\/query$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/30db55816f59864c4ed8879fbeb736948c147e311b4f18809d9a93f8abdc36fe/common_tab.js
 
 # 精简我的页面
-^https:\/\/gateway\.hibixin\.com\/resource\/v\d\/my\/page$ url script-response-body https://kelee.one/Resource/JavaScript/Bixin/my_page.js
+^https:\/\/gateway\.hibixin\.com\/resource\/v\d\/my\/page$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/fd6b8721676ce2dfba09da8ee940b78cce3f6b97a7a530078c6db476a91df4ef/my_page.js
 
 # [mitm]
 hostname = web.hibixin.com, api.hibixin.com, gateway.hibixin.com, gateway.xxqapp.cn, api.xxqapp.cn, web-bxyuer.bixin.cn, gateway.bxyuer.com

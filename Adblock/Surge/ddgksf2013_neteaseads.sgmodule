@@ -6,11 +6,26 @@
 
 [Rule]
 # Name: 网易云音乐净化[墨鱼版]
-# Updated: 2026-11-01 09:49:35 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:26 +08:00
+# Copied by: chance
 # Source Authors: 墨鱼 / ddgksf2013
 # Category: Adblock
 # Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/NeteaseAds.conf
+// ==UserScript==
+// @ScriptName        网易云音乐净化[墨鱼版]
+// @Author            @ddgksf2013
+// @ForHelp           压抑云之旅开始啦
+// @WechatID          墨鱼手记
+// @TgChannel         https://t.me/ddgksf2021
+// @Contribute        https://t.me/ddgksf2013_bot
+// @UpdateTime        2025-03-19
+// @Suitable          自行观看“# > ”注释内容
+// @Attention         如需引用请注明出处，谢谢合作！
+// @Version           V1.0.33
+// @RewriteURL        https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/NeteaseAds.conf
+// ==/UserScript==
+// 墨鱼：默认不去除底部【漫游】，可在侧栏设置中手动关闭
 # ======= 网易云框架区 ======= #
 # > 底部Tab@ddgksf2013
 # > 发现页@ddgksf2013
@@ -45,22 +60,6 @@
 # > 活动推广@ddgksf2013
 # > 评论区插入推广@ddgksf2013
 # > 购买实体专辑@ddgksf2013
-# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/NeteaseAds.conf
-# // ==UserScript==
-# // @ScriptName        网易云音乐净化[墨鱼版]
-# // @Author            @ddgksf2013
-# // @ForHelp           压抑云之旅开始啦
-# // @WechatID          墨鱼手记
-# // @TgChannel         https://t.me/ddgksf2021
-# // @Contribute        https://t.me/ddgksf2013_bot
-# // @UpdateTime        2025-03-19
-# // @Suitable          自行观看“# > ”注释内容
-# // @Attention         如需引用请注明出处，谢谢合作！
-# // @Version           V1.0.33
-# // @RewriteURL        https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/NeteaseAds.conf
-# // ==/UserScript==
-# // 墨鱼：默认不去除底部【漫游】，可在侧栏设置中手动关闭
-# Upstream hostname = interface*.music.163.com
 
 [Map Local]
 ^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/content\/activity\/music\/jar\/template\/list data-type=text data="" status-code=200
@@ -71,29 +70,29 @@
 ^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/resource-exposure\/config data-type=text data="" status-code=200
 
 [Script]
-ddgksf2013_neteaseads_1 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/link\/home\/framework\/tab,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_2 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/link\/page\/discovery\/resource\/show,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_3 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/link\/page\/rcmd\/resource\/show,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_4 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/ios\/upgrade\/get,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_5 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/search\/default\/keyword\/list,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_6 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/search\/rcmd\/keyword\/get,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_7 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/search\/chart\/list,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_8 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/search\/chart\/detail,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_9 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/search\/suggest\/keyword\/get,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_10 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/search\/specialkeyword\/get,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_11 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/ad\/loading\/get,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_12 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/ad\/loading\/current,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_13 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/ad\/get,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_14 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/link\/position\/show\/resource,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_15 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/link\/scene\/show\/resource,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_16 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/vip\/cashier\/tspopup\/get,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_17 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/vipnewcenter\/app\/resource\/newaccountpage,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_18 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/side-bar\/mini-program\/music-service\/account,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_19 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/delivery\/deliver,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_20 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/delivery\/batch-deliver,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_21 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/yunbei\/account\/entrance\/get,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_22 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/creator\/musician\/reminder\/message\/get,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
-ddgksf2013_neteaseads_23 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/batch,script-path=https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_1 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/link\/home\/framework\/tab,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_2 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/link\/page\/discovery\/resource\/show,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_3 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/link\/page\/rcmd\/resource\/show,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_4 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/ios\/upgrade\/get,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_5 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/search\/default\/keyword\/list,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_6 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/search\/rcmd\/keyword\/get,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_7 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/search\/chart\/list,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_8 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/search\/chart\/detail,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_9 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/search\/suggest\/keyword\/get,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_10 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/search\/specialkeyword\/get,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_11 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/ad\/loading\/get,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_12 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/ad\/loading\/current,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_13 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/ad\/get,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_14 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/link\/position\/show\/resource,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_15 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/link\/scene\/show\/resource,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_16 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/vip\/cashier\/tspopup\/get,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_17 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/vipnewcenter\/app\/resource\/newaccountpage,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_18 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/side-bar\/mini-program\/music-service\/account,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_19 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/delivery\/deliver,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_20 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/delivery\/batch-deliver,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_21 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/yunbei\/account\/entrance\/get,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_22 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/creator\/musician\/reminder\/message\/get,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
+ddgksf2013_neteaseads_23 = type=http-response,pattern=^https?:\/\/interface(\d)?\.music\.163\.com\/e?api\/batch,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38/netease.adblock.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% interface*.music.163.com

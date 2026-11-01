@@ -1,13 +1,10 @@
 # Name: 招商银行
-# Icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/zhaoshangyinhang.png
-# Icon Collection: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json
-# Updated: 2026-10-25 18:04:02 +08:00
-# Merged by: chance
-# Source Authors: 树先生, 奶思
-# Category: app
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
+# Source Authors: 树先生
+# Category: Adblock
 # Managed by: WayX Native QX
 
-# [rewrite_local]
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/cmbchina.snippet
 # Upstream name = 招商银行
 # Upstream desc = 开屏广告
@@ -16,6 +13,7 @@
 ###### 掌上生活
 # hostname = mbasecc.bas.cmbchina.com, mbasecc.bcs.cmbchina.com
 # 开屏广告
+# [rewrite_local]
 ^https?:\/\/mbasecc\.(bas|bcs)\.cmbchina\.com\/Edge\/api\/mlife\.clientface\.clientservice\.api\.advertiseService\/preCacheAdvertiseSec url reject-dict
 ###### 招商银行
 # hostname = webappcfg.paas.cmbchina.com, mbmodule-openapi.paas.cmbchina.com
@@ -25,7 +23,4 @@
 ^https?:\/\/mbmodule-openapi\.paas\.cmbchina\.com\/graphic\/v2\/module\/graphic url reject-dict
 
 # [mitm]
-
-# Upstream hostname = webappcfg.paas.cmbchina.com, mbmodule-openapi.paas.cmbchina.com, mbasecc.bas.cmbchina.com, mbasecc.bcs.cmbchina.com
-
 hostname = webappcfg.paas.cmbchina.com, mbmodule-openapi.paas.cmbchina.com, mbasecc.bas.cmbchina.com, mbasecc.bcs.cmbchina.com

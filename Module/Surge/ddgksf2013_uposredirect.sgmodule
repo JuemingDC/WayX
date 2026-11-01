@@ -6,8 +6,8 @@
 
 [Rule]
 # Name: uposredirect
-# Updated: 2026-11-01 09:49:35 +08:00
-# Merged by: chance
+# Updated: 2026-11-01 21:23:26 +08:00
+# Copied by: chance
 # Source Authors: 墨鱼 / ddgksf2013
 # Category: Module
 # Managed by: WayX Native QX
@@ -20,7 +20,6 @@
 # - 如需引用请注明出处，谢谢合作！
 # - https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/Function/UposRedirect.conf
 ###########################################################################################
-# Upstream hostname=upos-hz-mirrorakam.akamaized.net
 
 [URL Rewrite]
 ^https?:\/\/upos-hz-mirrorakam\.akamaized\.net\/(.*) https://upos-sz-mirrorcos.bilivideo.com/$1 302
