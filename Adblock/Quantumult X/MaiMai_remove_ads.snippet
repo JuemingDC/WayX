@@ -24,7 +24,7 @@
 
 ^https:\/\/(h3\.)?open\.taou\.com\/maimai\/feed\/v6\/detail_recommend_feeds\? url jsonjq-response-body 'del(.feeds)'
 # 移除信息流和评论区大块广告
-^https:\/\/(h3\.)?open\.taou\.com\/maimai\/(feed|gossip)\/v\d\/(focus_feed|gossip_detail_comment|feed_detail_comment?)\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-qx/7bfe9fd6b9fdf7cb663e60b1ca615d2bab145e9d67722cc926210b8231df3a4f.js
+^https:\/\/(h3\.)?open\.taou\.com\/maimai\/(feed|gossip)\/v\d\/(focus_feed|gossip_detail_comment|feed_detail_comment?)\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-88e0dafed4cd/MaiMai_remove_ads.js
 
 # [mitm]
 hostname = open.taou.com, h3.open.taou.com

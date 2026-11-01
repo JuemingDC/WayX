@@ -24,8 +24,8 @@
 (?i)^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=getdata data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-移除板块广告 = type=http-response,pattern=(?i)^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?version=5,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/dd1adf0ea56d8040bbbada3f2575b2c9fc3b2780d7bf4c955c9bff7c08862ac6/FlyerTea_remove_ads.js,requires-body=true,max-size=-1,timeout=20
-移除签到弹窗广告 = type=http-response,pattern=(?i)^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=plugin&id=k_misign:sign,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/dd1adf0ea56d8040bbbada3f2575b2c9fc3b2780d7bf4c955c9bff7c08862ac6/FlyerTea_remove_ads.js,requires-body=true,max-size=-1,timeout=20
+移除板块广告 = type=http-response,pattern=(?i)^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?version=5,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-dd1adf0ea56d/FlyerTea_remove_ads.js,requires-body=true,max-size=-1,timeout=20
+移除签到弹窗广告 = type=http-response,pattern=(?i)^https:\/\/www\.flyert\.com\.cn\/api\/mobile\/index\.php\?module=plugin&id=k_misign:sign,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-dd1adf0ea56d/FlyerTea_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% www.flyert.com.cn, ptf.flyertrip.com

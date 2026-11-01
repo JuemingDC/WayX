@@ -37,7 +37,7 @@
 ^https?:\/\/api\.msn\.com\/weather data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-ddgksf2013_bingsimplify_1 = type=http-response,pattern=^https?:\/\/sapphire\.api\.microsoftapp\.net\/config\/api\/v1\/get,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/208a10646b58ecbfe670e44d0fb794da8d2edadfb6ef3399abbd4673a4dab9ae.js,requires-body=true
+ddgksf2013_bingsimplify_1 = type=http-response,pattern=^https?:\/\/sapphire\.api\.microsoftapp\.net\/config\/api\/v1\/get,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-9894f7225d37/bing.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% sapphire.api.microsoftapp.net, assets.msn.com, api.msn.com

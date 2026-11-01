@@ -76,11 +76,11 @@
 ^https?:\/\/.*\.xima.*\.com\/ting\/(loading|feed|home)? _ reject
 
 [Script]
-ddgksf2013_ximalaya_1 = type=http-response,pattern=^https?:\/\/.*\.xima.*\.com\/discovery-category\/customCategories,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/e741cabf33ab91d98c76eeb95884429b0f0bbbf68825934088a365406aa43b6b.js,requires-body=true
-ddgksf2013_ximalaya_2 = type=http-response,pattern=^https?:\/\/.*\.xima.*\.com\/focus-mobile\/focusPic,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/e741cabf33ab91d98c76eeb95884429b0f0bbbf68825934088a365406aa43b6b.js,requires-body=true
-ddgksf2013_ximalaya_3 = type=http-response,pattern=^https?:\/\/.*\.xima.*\.com\/discovery-feed\/v\d\/mix,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/e741cabf33ab91d98c76eeb95884429b0f0bbbf68825934088a365406aa43b6b.js,requires-body=true
-ddgksf2013_ximalaya_4 = type=http-response,pattern=^https?:\/\/.*\.xima.*\.com\/discovery-category\/v\d/category,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/e741cabf33ab91d98c76eeb95884429b0f0bbbf68825934088a365406aa43b6b.js,requires-body=true
-ddgksf2013_ximalaya_5 = type=http-response,pattern=^https?:\/\/.*\.xima.*\.com\/mobile-user\/v\d\/homePage,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/e741cabf33ab91d98c76eeb95884429b0f0bbbf68825934088a365406aa43b6b.js,requires-body=true
+ddgksf2013_ximalaya_1 = type=http-response,pattern=^https?:\/\/.*\.xima.*\.com\/discovery-category\/customCategories,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-7207e9dc0800/ximalaya_json.js,requires-body=true
+ddgksf2013_ximalaya_2 = type=http-response,pattern=^https?:\/\/.*\.xima.*\.com\/focus-mobile\/focusPic,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-7207e9dc0800/ximalaya_json.js,requires-body=true
+ddgksf2013_ximalaya_3 = type=http-response,pattern=^https?:\/\/.*\.xima.*\.com\/discovery-feed\/v\d\/mix,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-7207e9dc0800/ximalaya_json.js,requires-body=true
+ddgksf2013_ximalaya_4 = type=http-response,pattern=^https?:\/\/.*\.xima.*\.com\/discovery-category\/v\d/category,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-7207e9dc0800/ximalaya_json.js,requires-body=true
+ddgksf2013_ximalaya_5 = type=http-response,pattern=^https?:\/\/.*\.xima.*\.com\/mobile-user\/v\d\/homePage,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-7207e9dc0800/ximalaya_json.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% *.xima*.*, *.xmcdn.*

@@ -23,9 +23,9 @@
 (?i)^https:\/\/zgrb\.epicc\.com\.cn\/G-HAPP\/a\/config\/guessYouLike\/v3 data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-移除主页推广 = type=http-response,pattern=(?i)^https:\/\/zgrb\.epicc\.com\.cn\/G-HAPP\/a\/config\/homeInit\/v3,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/a09af5bf8168156cc91f95255ba73d64cc3f55670713dccec6cd874e4fdcfeb2/PICC_Insurance_remove_ads.js,requires-body=true,max-size=-1,timeout=20
+移除主页推广 = type=http-response,pattern=(?i)^https:\/\/zgrb\.epicc\.com\.cn\/G-HAPP\/a\/config\/homeInit\/v3,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-a09af5bf8168/PICC_Insurance_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
-移除我的页面推广 = type=http-response,pattern=(?i)^https:\/\/zgrb\.epicc\.com\.cn\/G-HAPP\/mpageconfig\/myPageConfigList\/v3,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/a09af5bf8168156cc91f95255ba73d64cc3f55670713dccec6cd874e4fdcfeb2/PICC_Insurance_remove_ads.js,requires-body=true,max-size=-1,timeout=20
+移除我的页面推广 = type=http-response,pattern=(?i)^https:\/\/zgrb\.epicc\.com\.cn\/G-HAPP\/mpageconfig\/myPageConfigList\/v3,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-a09af5bf8168/PICC_Insurance_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% zgrb.epicc.com.cn

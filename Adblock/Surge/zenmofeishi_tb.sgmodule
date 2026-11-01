@@ -40,7 +40,7 @@ http-response-jq ^https:\/\/tiebac\.baidu\.com\/c\/u\/user\/profile 'del(.banner
 http-response-jq ^https:\/\/tieba\.baidu\.com\/c\/f\/frs\/frsBottom 'del(.card_activity.small_card, .card_activity.big_card, .ai_chatroom_guide)'
 
 [Script]
-zenmofeishi_tb_1 = type=http-response,pattern=^http(s:\/\/tiebac|:\/\/c\.tieba)\.baidu\.com\/(c\/f\/(frs\/(page|threadlist|generalTabList)|pb\/page|excellent\/personalized)$|tiebaads\/commonbatch|c\/s\/sync$),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/1e3d22996ea2585c0c6adca3504c37bdb1778f9c64af7501ec185ba92648572a.js,requires-body=true
+zenmofeishi_tb_1 = type=http-response,pattern=^http(s:\/\/tiebac|:\/\/c\.tieba)\.baidu\.com\/(c\/f\/(frs\/(page|threadlist|generalTabList)|pb\/page|excellent\/personalized)$|tiebaads\/commonbatch|c\/s\/sync$),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-9d456958a066/tieba-json.js,requires-body=true
 zenmofeishi_tb_2 = type=http-response,pattern=^http(s:\/\/tiebac|:\/\/c\.tieba)\.baidu\.com\/c\/f\/(frs\/(page|threadlist|generalTabList)|pb\/page|excellent\/personalized)\?cmd,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/f38021eb462fc211f4f2a268377861af099b43fbfb4eb694b9db532b5376b213/tieba-proto.js,requires-body=true
 
 [MITM]

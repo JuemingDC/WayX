@@ -485,8 +485,8 @@ http-response-jq (?i)^https:\/\/conf-m-ssl\.xunlei\.com\/external\/[0-9-a-z]+\? 
 12306_ads = type=http-request,pattern=(?i)^https:\/\/mobile\.12306\.cn\/otsmobile\/app\/mgs\/mgw\.htm$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/2b9fc61260fcedbf1e81cd88fdde9e074fc62571fc8af7210db6bf5641c43843/header.js,timeout=20
 
 # 阿里云盘 //*api.alipan.com, member.alipan.com
-aliyun_mine = type=http-response,pattern=(?i)^https:\/\/(biz)?api\.alipan\.com\/apps\/v\d\/users?\/home\/(?:news|widgets),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/9102b70e3365c403dda863baa75138b5daa594ac08a7d39b7aff3d4a2c15ba7c/adrive.js,requires-body=true,max-size=-1,timeout=20
-aliyun_board = type=http-response,pattern=(?i)^https:\/\/member\.alipan\.com\/v1\/users\/onboard_list,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/9102b70e3365c403dda863baa75138b5daa594ac08a7d39b7aff3d4a2c15ba7c/adrive.js,requires-body=true,max-size=-1,timeout=20
+aliyun_mine = type=http-response,pattern=(?i)^https:\/\/(biz)?api\.alipan\.com\/apps\/v\d\/users?\/home\/(?:news|widgets),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-9102b70e3365/adrive.js,requires-body=true,max-size=-1,timeout=20
+aliyun_board = type=http-response,pattern=(?i)^https:\/\/member\.alipan\.com\/v1\/users\/onboard_list,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-9102b70e3365/adrive.js,requires-body=true,max-size=-1,timeout=20
 
 # 阿里巴巴 //acs.m.taobao.com, heic.alicdn.com, guide-acs.m.taobao.com, poplayer.template.alibaba.com
 taobao_1 = type=http-response,pattern=(?i)^https:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.taobao\.(?:cloudvideo\.video\.query|wireless\.home\.splash\.awesome\.get),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/d477c79dc18470c7bae046d39330871387988061aa34ce6cb0a8a3df4ea45856/myblockads.js,requires-body=true,max-size=-1,timeout=20
@@ -496,10 +496,10 @@ taobao_2 = type=http-response,pattern=(?i)^https:\/\/poplayer\.template\.alibaba
 caoliu = type=http-response,pattern=(?i)^https:\/\/2023\.redircdn\.com\/web\/mob_post\.js\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/d477c79dc18470c7bae046d39330871387988061aa34ce6cb0a8a3df4ea45856/myblockads.js,requires-body=true,max-size=-1,timeout=20
 
 # 昌原云充 五代十路 //www.washpayer.com
-changyuan = type=http-response,pattern=(?i)^https:\/\/www\.washpayer\.com\/user\/message\/equipmentPara\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-surge/6971b3ae719a6c35e2b89e0c18e8e0da9445f1aa62844c5851901217c39c2382.js,requires-body=true,max-size=-1,timeout=20
+changyuan = type=http-response,pattern=(?i)^https:\/\/www\.washpayer\.com\/user\/message\/equipmentPara\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-c51a82707df8/changyuan.js,requires-body=true,max-size=-1,timeout=20
 
 # 酷安 //api.coolapk.com
-coolapk = type=http-response,pattern=(?i)^https:\/\/api\.coolapk\.com\/v6\/(?:feed\/detail|feed\/replyList|page\/dataList|main\/dataList|main\/indexV8|main\/init),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-surge/3faefab63665bf7f15cd38f957a82a298a9be65d28b40d3b9e87d9666eaf5c45.js,requires-body=true,max-size=-1,timeout=20
+coolapk = type=http-response,pattern=(?i)^https:\/\/api\.coolapk\.com\/v6\/(?:feed\/detail|feed\/replyList|page\/dataList|main\/dataList|main\/indexV8|main\/init),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-93242e4da35e/coolapk.js,requires-body=true,max-size=-1,timeout=20
 
 # 酷狗音乐 //adserviceretry.kglink.cn, gateway.kugou.com
 kg_gateway = type=http-response,pattern=(?i)^https:\/\/gateway\.kugou\.com\/(?:adp\/ad\/v1\/mine_top_banner|ads\.gateway\/v2\/home_card),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/8f7d651e07b13ce7cdd20c95f294f04f40c679170ce6701febf868f96222beb2/kugou.js,requires-body=true,max-size=-1,timeout=20
@@ -518,8 +518,8 @@ thunder = type=http-response,pattern=(?i)^https:\/\/api-gateway-pan\.xunlei\.com
 abchina = type=http-request,pattern=(?i)^https:\/\/mobilepaas\.abchina\.com\.cn:441\/mgw\.htm$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/2b9fc61260fcedbf1e81cd88fdde9e074fc62571fc8af7210db6bf5641c43843/header.js,timeout=20
 
 # 中国移动云盘 //ad.mcloud.139.com, jzts.cmpassport.com
-cloud139_1 = type=http-response,pattern=(?i)^https:\/\/ad\.mcloud\.139\.com\/advertapi\/adv-filter\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/db81649b516738b5eca7adc11b0385f34753063e80b453f6b70dfddcc34e8f1a/cloud139.js,requires-body=true,max-size=-1,timeout=20
-cloud139_2 = type=http-response,pattern=(?i)^https:\/\/jzts\.cmpassport\.com\/personalized\/getPushContent,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/db81649b516738b5eca7adc11b0385f34753063e80b453f6b70dfddcc34e8f1a/cloud139.js,requires-body=true,max-size=-1,timeout=20
+cloud139_1 = type=http-response,pattern=(?i)^https:\/\/ad\.mcloud\.139\.com\/advertapi\/adv-filter\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-db81649b5167/cloud139.js,requires-body=true,max-size=-1,timeout=20
+cloud139_2 = type=http-response,pattern=(?i)^https:\/\/jzts\.cmpassport\.com\/personalized\/getPushContent,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-db81649b5167/cloud139.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% ad.12306.cn, mobile.12306.cn, list-app-m.i4.cn, *api.alipan.com, member.alipan.com, acs.m.taobao.com, gw.alicdn.com, heic.alicdn.com, guide-acs.m.taobao.com, poplayer.template.alibaba.com, pan.baidu.com, 2023.redircdn.com, www.washpayer.com, oneapph5.dongfeng-nissan.com.cn, api.douban.com, img3.doubanio.com, qnmob3.doubanio.com, image.mybank.icbc.com.cn, hfapp-service.qweather.net, acs-m.freshippo.com, gab.122.gov.cn, api.coolapk.com, adserviceretry.kglink.cn, gateway.kugou.com, p0.pipi.cn, mme.api.moji.com, sns.api.moji.com, flowplus.meituan.net, img.meituan.net, s3plus.meituan.net, home.mi.com, gql.reddit.com, gql-fed.reddit.com, a.cpiccdn.com, osg-service.sgcc.com.cn, api.xiachufang.com, mp.weixin.qq.com, weixin110.qq.com, security.wechat.com, marketing-aibox.v.mitvos.com, api.m.mi.com, shop-api.retail.mi.com, xiaomishop.retail.mi.com, gateway.sccncdn.com, gateway.starcharge.com, api-gateway-pan.xunlei.com, api-shoulei-ssl.xunlei.com, conf-m-ssl.xunlei.com, login-service.mobile-bank.psbc.com, wallet.95516.com, mobilepaas.abchina.com.cn, ad.mcloud.139.com, jzts.cmpassport.com

@@ -149,7 +149,7 @@ http-response-jq ^https:\/\/api\.pinduoduo\.com\/api\/growth\/nagato\/app\/index
 http-response-jq ^https:\/\/api\.pinduoduo\.com\/order\/\d+-\d+\/shipping 'del(.shipping.banner_above_recommend)'
 
 [Script]
-ishowshu_pdd_1 = type=http-response,pattern=^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/5771dfb84c29b856fd1dce9d6f46b9ef6996880eb42a24f1ab653512a87f7038.js,requires-body=true
+ishowshu_pdd_1 = type=http-response,pattern=^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/github.com-95107c304a30/pdd.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% api.pinduoduo.com

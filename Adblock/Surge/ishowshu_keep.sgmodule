@@ -42,7 +42,7 @@ DOMAIN,httpdns.calorietech.com,REJECT
 http-response-jq ^https:\/\/api\.gotokeep\.com\/twins\/v1\/social\/tab\/friends '.data.modules |= map(select(.positions | type == "object" and (has("recommendReason") | not) and (has("recommendUsers") | not)))'
 
 [Script]
-ishowshu_keep_1 = type=http-response,pattern=^https:\/\/api\.gotokeep\.com\/config\/v3\/basic\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/6cdf53173dd7a340e52aadfea0b8894aecec504fd6bba584833fa1fabc61994d.js,requires-body=true
+ishowshu_keep_1 = type=http-response,pattern=^https:\/\/api\.gotokeep\.com\/config\/v3\/basic\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/github.com-db0b34b4344c/keep.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% api.gotokeep.com, kad.gotokeep.com

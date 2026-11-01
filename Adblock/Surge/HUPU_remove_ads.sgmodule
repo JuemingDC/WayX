@@ -26,10 +26,10 @@
 (?i)^https:\/\/games\.mobileapi\.hupu\.com\/3\/8\.0\.86\/bplapi\/banner\/getLocationBanners data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-移除虎扑广告 = type=http-response,pattern=(?i)^https:\/\/fairy\.mobileapi\.hupu\.com\/mang\/preview\/banners,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-surge/9365b8547a3324097139e672ae529f6d2f28dc09e02dc45fe1e2244a116bbee8.js,requires-body=true,max-size=-1,timeout=20
-移除虎扑广告 = type=http-response,pattern=(?i)^https:\/\/bbs\.mobileapi\.hupu\.com\/\d\/\d\.\d\.\d+\/bbsallapi\/lego\/data,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-surge/9365b8547a3324097139e672ae529f6d2f28dc09e02dc45fe1e2244a116bbee8.js,requires-body=true,max-size=-1,timeout=20
-移除虎扑广告 = type=http-response,pattern=(?i)^https:\/\/games\.mobileapi\.hupu\.com\/\d\/\d\.\d\.\d+\/buffer\/hotList,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-surge/9365b8547a3324097139e672ae529f6d2f28dc09e02dc45fe1e2244a116bbee8.js,requires-body=true,max-size=-1,timeout=20
-移除虎扑广告 = type=http-response,pattern=(?i)^https:\/\/games\.mobileapi\.hupu\.com\/\d\/\d\.\d\.\d+\/bplapi\/user\/v1\/more,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-surge/9365b8547a3324097139e672ae529f6d2f28dc09e02dc45fe1e2244a116bbee8.js,requires-body=true,max-size=-1,timeout=20
+移除虎扑广告 = type=http-response,pattern=(?i)^https:\/\/fairy\.mobileapi\.hupu\.com\/mang\/preview\/banners,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-09e8dc8c196b/HUPU_remove_ads.js,requires-body=true,max-size=-1,timeout=20
+移除虎扑广告 = type=http-response,pattern=(?i)^https:\/\/bbs\.mobileapi\.hupu\.com\/\d\/\d\.\d\.\d+\/bbsallapi\/lego\/data,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-09e8dc8c196b/HUPU_remove_ads.js,requires-body=true,max-size=-1,timeout=20
+移除虎扑广告 = type=http-response,pattern=(?i)^https:\/\/games\.mobileapi\.hupu\.com\/\d\/\d\.\d\.\d+\/buffer\/hotList,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-09e8dc8c196b/HUPU_remove_ads.js,requires-body=true,max-size=-1,timeout=20
+移除虎扑广告 = type=http-response,pattern=(?i)^https:\/\/games\.mobileapi\.hupu\.com\/\d\/\d\.\d\.\d+\/bplapi\/user\/v1\/more,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-09e8dc8c196b/HUPU_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% games.mobileapi.hupu.com, fairy.mobileapi.hupu.com, bbs.mobileapi.hupu.com, goblin.hupu.com

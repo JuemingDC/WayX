@@ -11,9 +11,9 @@
 # Upstream update = 2026-10-02
 # [rewrite_local]
 ^https?:\/\/(?:www\.)?(?:heiliao|hlwxx|hlcx\d*)\.com\/(?!static\/|favicon|api\/|index\/statistics|uploads\/) url request-header (\r\n)Accept-Encoding:.+(\r\n) request-header $1Accept-Encoding: identity$2
-^https?:\/\/(?:www\.)?(?:heiliao|hlwxx|hlcx\d*)\.com\/(?!static\/|favicon|api\/|index\/statistics|uploads\/) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/4b8d1b919e60e42746a00dfe7d1317765aef73c85e7eaba9c30746a2c05d1e65/hlwxx_remove_ads.js
+^https?:\/\/(?:www\.)?(?:heiliao|hlwxx|hlcx\d*)\.com\/(?!static\/|favicon|api\/|index\/statistics|uploads\/) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-4b8d1b919e60/hlwxx_remove_ads.js
 ^https?:\/\/(?:www\.)?97baoliao\.com\/(?!usr\/|storage\/|api\/|favicon\.ico) url request-header (\r\n)Accept-Encoding:.+(\r\n) request-header $1Accept-Encoding: identity$2
-^https?:\/\/(?:www\.)?97baoliao\.com\/(?!usr\/|storage\/|api\/|favicon\.ico) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/4b8d1b919e60e42746a00dfe7d1317765aef73c85e7eaba9c30746a2c05d1e65/hlwxx_remove_ads.js
+^https?:\/\/(?:www\.)?97baoliao\.com\/(?!usr\/|storage\/|api\/|favicon\.ico) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-4b8d1b919e60/hlwxx_remove_ads.js
 ^https?:\/\/(?:www\.)?97baoliao\.com\/storage\/static\/popup-feed\.json(?:\?.*)?$ url reject-dict
 ^https?:\/\/(?:www\.)?97baoliao\.com\/usr\/plugins\/AiSuite\/assets\/js\/adfloat\.js(?:\?.*)?$ url reject
 ^https?:\/\/(?:www\.)?97baoliao\.com\/usr\/themes\/Mirages\/js\/7\.10\.0\/bottom_ad_poll\.js(?:\?.*)?$ url reject

@@ -24,13 +24,13 @@
 (?i)^https:\/\/api\.chenlongtech\.cn\/v\d\/user\/checkQTSheInsurance$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-移除匹配卡横幅 = type=http-response,pattern=(?i)^https:\/\/api\.chenlongtech\.cn\/v\d\/lover\/productList,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/6cf1d356d9f8222e430e69ed1fff490ceef3692740e272ad17bad15d4be18aff/Uki_remove_ads.js,requires-body=true,max-size=-1,timeout=20
+移除匹配卡横幅 = type=http-response,pattern=(?i)^https:\/\/api\.chenlongtech\.cn\/v\d\/lover\/productList,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-6cf1d356d9f8/Uki_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
-移除密友横幅 = type=http-response,pattern=(?i)^https:\/\/api\.chenlongtech\.cn\/v\d\/friends\/closeFriend\/home,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/6cf1d356d9f8222e430e69ed1fff490ceef3692740e272ad17bad15d4be18aff/Uki_remove_ads.js,requires-body=true,max-size=-1,timeout=20
+移除密友横幅 = type=http-response,pattern=(?i)^https:\/\/api\.chenlongtech\.cn\/v\d\/friends\/closeFriend\/home,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-6cf1d356d9f8/Uki_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
-移除娱乐页面横幅和悬浮窗配置 = type=http-response,pattern=(?i)^https:\/\/api\.chenlongtech\.cn\/v\d\/party\/config$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/6cf1d356d9f8222e430e69ed1fff490ceef3692740e272ad17bad15d4be18aff/Uki_remove_ads.js,requires-body=true,max-size=-1,timeout=20
+移除娱乐页面横幅和悬浮窗配置 = type=http-response,pattern=(?i)^https:\/\/api\.chenlongtech\.cn\/v\d\/party\/config$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-6cf1d356d9f8/Uki_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
-移除广场搜索填充词 = type=http-response,pattern=(?i)^https:\/\/api\.chenlongtech\.cn\/v1\/post\/fetchSearchRecommend$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/6cf1d356d9f8222e430e69ed1fff490ceef3692740e272ad17bad15d4be18aff/Uki_remove_ads.js,requires-body=true,max-size=-1,timeout=20
+移除广场搜索填充词 = type=http-response,pattern=(?i)^https:\/\/api\.chenlongtech\.cn\/v1\/post\/fetchSearchRecommend$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-6cf1d356d9f8/Uki_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% api.chenlongtech.cn

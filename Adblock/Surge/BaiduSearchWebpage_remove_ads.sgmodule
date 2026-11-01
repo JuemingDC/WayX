@@ -14,7 +14,7 @@
 # Target: Surge
 
 [Script]
-移除百度搜索首页信息流广告 = type=http-response,pattern="(?i)^https?:\/\/(www|m)\.baidu\.com\/?($|\?from=\w{8,9})",script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-surge/2fef537c0ca3fb8c6e9fb949a748d7c9ef79d2cdbbf007a885a1aa8cfb9c2f60.js,requires-body=true,max-size=-1,timeout=20
+移除百度搜索首页信息流广告 = type=http-response,pattern="(?i)^https?:\/\/(www|m)\.baidu\.com\/?($|\?from=\w{8,9})",script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-c5a7ae3bef67/BaiduSearchHomePage_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% m.baidu.com, www.baidu.com

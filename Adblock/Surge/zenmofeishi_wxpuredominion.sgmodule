@@ -55,8 +55,8 @@
 ^https:\/\/web\.meituan\.com\/newUser\/returnMoney\/popWindow data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-zenmofeishi_wxpuredominion_1 = type=http-response,pattern=^https:\/\/web\.meituan\.com\/api\/miniprogram\/tabbar\/all\/query,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/af1d6eaac620eeb1730155c3aab0e9873fbf9ef20d6bac6a71b8d167c8c534a0.js,requires-body=true
-zenmofeishi_wxpuredominion_2 = type=http-response,pattern=^https:\/\/web\.meituan\.com\/api\/miniprogram\/index\/aggregate,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/af1d6eaac620eeb1730155c3aab0e9873fbf9ef20d6bac6a71b8d167c8c534a0.js,requires-body=true
+zenmofeishi_wxpuredominion_1 = type=http-response,pattern=^https:\/\/web\.meituan\.com\/api\/miniprogram\/tabbar\/all\/query,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-99b02d3cac44/MeiTuanNoAd.js,requires-body=true
+zenmofeishi_wxpuredominion_2 = type=http-response,pattern=^https:\/\/web\.meituan\.com\/api\/miniprogram\/index\/aggregate,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-99b02d3cac44/MeiTuanNoAd.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% energy.xiaojukeji.com,gw3.ykccn.com,wx.17u.cn,web.meituan.com,npay.meituan.com,mapi.dianping.com,a1d5b283e-wx621112590b635086.sh.wxgateway.com,apimobile.meituan.com

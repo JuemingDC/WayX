@@ -45,7 +45,7 @@
 http-response ^(http|https):\/\/mp\.weixin\.qq\.com\/mp\/getappmsgad advertisement ddgksf2013
 
 [Script]
-ddgksf2013_applet_1 = type=http-response,pattern=^https?:\/\/wx\.mygolbs\.com\/WxBusServer\/ApiData\.do,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/69e9b61c179271bc0f3a57ae6af7cf35e540f01bb36164211838c6f719b3887a.js,requires-body=true
+ddgksf2013_applet_1 = type=http-response,pattern=^https?:\/\/wx\.mygolbs\.com\/WxBusServer\/ApiData\.do,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-2ca8a4753be1/zhangshanggongjiao.js,requires-body=true
 ddgksf2013_applet_2 = type=http-response,pattern="^(https?://)?([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\.)+[a-zA-Z]{2,}(:\d+)?/wp-json/[a-zA-Z0-9_-]+/(mp\/)?v\d/posts",script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/a94e56a8e11325bbdd4bda192c88018c46e23ce2b741bf84e13d75184fd0cd37/applet.js,requires-body=true
 
 [MITM]

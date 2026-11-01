@@ -51,10 +51,10 @@
 
 [Script]
 ddgksf2013_cainiaoads_1 = type=http-response,pattern=^http:\/\/amdc\.m\.taobao\.com,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/ef90ca68bf9216b4289ad0997bf4b0c8bf5b92b79d4e419a1f206cce601dc019/amdc.js,requires-body=true
-ddgksf2013_cainiaoads_2 = type=http-response,pattern=^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/11652fbba8cfaee2827524655eab1b55eb2400ceed6970704e2d4669453aad03.js,requires-body=true
-ddgksf2013_cainiaoads_3 = type=http-response,pattern=^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.nbpresentation\.homepage\.merge\.get\.cn,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/11652fbba8cfaee2827524655eab1b55eb2400ceed6970704e2d4669453aad03.js,requires-body=true
-ddgksf2013_cainiaoads_4 = type=http-response,pattern=^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.nbpresentation\.protocol\.homepage\.get\.cn,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/11652fbba8cfaee2827524655eab1b55eb2400ceed6970704e2d4669453aad03.js,requires-body=true
-ddgksf2013_cainiaoads_5 = type=http-response,pattern=^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.adkeyword,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/qx-to-surge/11652fbba8cfaee2827524655eab1b55eb2400ceed6970704e2d4669453aad03.js,requires-body=true
+ddgksf2013_cainiaoads_2 = type=http-response,pattern=^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-c53fa988e9de/cainiao_json.js,requires-body=true
+ddgksf2013_cainiaoads_3 = type=http-response,pattern=^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.nbpresentation\.homepage\.merge\.get\.cn,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-c53fa988e9de/cainiao_json.js,requires-body=true
+ddgksf2013_cainiaoads_4 = type=http-response,pattern=^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.nbpresentation\.protocol\.homepage\.get\.cn,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-c53fa988e9de/cainiao_json.js,requires-body=true
+ddgksf2013_cainiaoads_5 = type=http-response,pattern=^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.adkeyword,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-c53fa988e9de/cainiao_json.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% *.cainiao.com, guide-acs.m.taobao.com, acs4miniapp-inner.m.taobao.com
