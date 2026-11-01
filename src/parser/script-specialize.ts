@@ -106,7 +106,8 @@ export function specializeScript(source: string, from: ScriptPlatform) {
     function evaluate(n: ts.Node): Value {
       if (ts.isParenthesizedExpression(n)) return evaluate(n.expression);
       if (ts.isStringLiteralLike(n)) return n.text;
-      if (ts.isNumericLiteral(n)) return Number(n.text);
+      if (ts.isNumericLiteral(n))
+        return Number.isFinite(Number(n.text)) ? Number(n.text) : UNKNOWN;
       if (n.kind === ts.SyntaxKind.TrueKeyword) return true;
       if (n.kind === ts.SyntaxKind.FalseKeyword) return false;
       if (n.kind === ts.SyntaxKind.NullKeyword) return null;
@@ -168,18 +169,6 @@ export function specializeScript(source: string, from: ScriptPlatform) {
       }
       return UNKNOWN;
     }
-    const literal = (v: Exclude<Value, typeof UNKNOWN>): ts.Expression =>
-      v === undefined
-        ? ts.factory.createVoidZero()
-        : v === null
-          ? ts.factory.createNull()
-          : typeof v === "boolean"
-            ? v
-              ? ts.factory.createTrue()
-              : ts.factory.createFalse()
-            : typeof v === "number"
-              ? ts.factory.createNumericLiteral(v)
-              : ts.factory.createStringLiteral(v);
     function hoists(node: ts.Node | undefined): ts.Statement[] | null {
       const names = new Set<string>();
       let safe = true;
@@ -225,76 +214,120 @@ export function specializeScript(source: string, from: ScriptPlatform) {
             ]
           : [];
     }
-    const transformed = ts.transform(tree, [
-      (context) => {
-        const visit: ts.Visitor = (n) => {
-          if (ts.isIfStatement(n)) {
-            const v = evaluate(n.expression);
-            if (v !== UNKNOWN) {
-              const selected = v ? n.thenStatement : n.elseStatement,
-                dead = v ? n.elseStatement : n.thenStatement,
-                vars = hoists(dead);
-              if (vars && hoists(selected)) {
-                changed++;
-                branches++;
-                return ts.factory.createBlock(
-                  [
-                    ...vars,
-                    ...(selected
-                      ? [ts.visitNode(selected, visit) as ts.Statement]
-                      : []),
-                  ],
-                  true,
-                );
-              }
-            }
-          }
-          if (ts.isConditionalExpression(n)) {
-            const v = evaluate(n.condition);
-            if (v !== UNKNOWN) {
-              const chosen = v ? n.whenTrue : n.whenFalse;
-              if (
-                !ts.isFunctionExpression(chosen) &&
-                !ts.isArrowFunction(chosen) &&
-                !ts.isClassExpression(chosen)
-              ) {
-                changed++;
-                branches++;
-                // Conditional expressions produce values, never member references.
-                // Preserve an unbound receiver (and indirect eval) with comma GetValue.
-                return ts.factory.createParenthesizedExpression(
-                  ts.factory.createComma(
-                    ts.factory.createNumericLiteral(0),
-                    ts.visitNode(chosen, visit) as ts.Expression,
-                  ),
-                );
-              }
-            }
-          }
+    // Modified: 2026-11-02 (chance). Apply localized text edits instead of
+    // reprinting author functions. Skip function bodies whose value may escape;
+    // an unknown caller may observe Function#toString or implicit coercion.
+    const safeFunction = (n: ts.Node) => {
+      if (
+        !ts.isFunctionDeclaration(n) &&
+        !ts.isFunctionExpression(n) &&
+        !ts.isArrowFunction(n)
+      )
+        return false;
+      let current: ts.Node = n;
+      while (ts.isParenthesizedExpression(current.parent))
+        current = current.parent;
+      if (
+        ts.isCallExpression(current.parent) &&
+        current.parent.expression === current
+      )
+        return true;
+      const p = n.parent;
+      let symbol: ts.Symbol | undefined;
+      if (ts.isFunctionDeclaration(n) && n.name)
+        symbol = checker.getSymbolAtLocation(n.name);
+      else if (
+        ts.isVariableDeclaration(p) &&
+        p.initializer === n &&
+        ts.isIdentifier(p.name) &&
+        ts.isVariableDeclarationList(p.parent) &&
+        p.parent.flags & ts.NodeFlags.Const
+      )
+        symbol = checker.getSymbolAtLocation(p.name);
+      if (!symbol) return false;
+      let safe = true;
+      const refs = (node: ts.Node) => {
+        if (ts.isIdentifier(node) && valueSymbol(node, checker) === symbol) {
+          const p = node.parent;
           if (
-            ts.isTypeOfExpression(n) ||
-            ts.isBinaryExpression(n) ||
-            ts.isPrefixUnaryExpression(n)
+            (ts.isFunctionDeclaration(p) && p.name === node) ||
+            (ts.isVariableDeclaration(p) && p.name === node)
           ) {
-            const v = evaluate(n);
-            if (v !== UNKNOWN) {
-              changed++;
-              return literal(v);
-            }
+          } else if (!ts.isCallExpression(p) || p.expression !== node)
+            safe = false;
+        }
+        ts.forEachChild(node, refs);
+      };
+      refs(tree);
+      return safe;
+    };
+    const printer = ts.createPrinter();
+    function rewrite(n: ts.Node): string {
+      const start = ts.isSourceFile(n) ? 0 : n.getStart(tree),
+        end = n.end;
+      if (ts.isClassLike(n) || (ts.isFunctionLike(n) && !safeFunction(n)))
+        return source.slice(start, end);
+      if (ts.isIfStatement(n)) {
+        const v = evaluate(n.expression);
+        if (v !== UNKNOWN) {
+          const selected = v ? n.thenStatement : n.elseStatement,
+            dead = v ? n.elseStatement : n.thenStatement,
+            vars = hoists(dead);
+          if (vars && hoists(selected)) {
+            changed++;
+            branches++;
+            return (
+              "{" +
+              vars
+                .map((s) => printer.printNode(ts.EmitHint.Unspecified, s, tree))
+                .join("\n") +
+              "\n" +
+              (selected ? rewrite(selected) : "") +
+              "\n}"
+            );
           }
-          return ts.visitEachChild(n, visit, context);
-        };
-        return (node) => ts.visitNode(node, visit) as ts.SourceFile;
-      },
-    ]);
-    if (!changed) {
-      transformed.dispose();
-      break;
+        }
+      }
+      if (ts.isConditionalExpression(n)) {
+        const v = evaluate(n.condition);
+        if (v !== UNKNOWN) {
+          const chosen = v ? n.whenTrue : n.whenFalse;
+          if (
+            !ts.isFunctionExpression(chosen) &&
+            !ts.isArrowFunction(chosen) &&
+            !ts.isClassExpression(chosen)
+          ) {
+            changed++;
+            branches++;
+            // GetValue retains an unbound callee and suppresses name inference.
+            return "(0," + rewrite(chosen) + ")";
+          }
+        }
+      }
+      if (
+        ts.isTypeOfExpression(n) ||
+        ts.isBinaryExpression(n) ||
+        ts.isPrefixUnaryExpression(n)
+      ) {
+        const v = evaluate(n);
+        if (v !== UNKNOWN) {
+          changed++;
+          return v === undefined ? "(void 0)" : JSON.stringify(v);
+        }
+      }
+      let text = "",
+        cursor = start;
+      ts.forEachChild(n, (child) => {
+        const pos = child.getStart(tree);
+        if (pos < cursor || child.end > end) return;
+        text += source.slice(cursor, pos) + rewrite(child);
+        cursor = child.end;
+      });
+      return text + source.slice(cursor, end);
     }
-    source = ts
-      .createPrinter({ newLine: ts.NewLineKind.LineFeed })
-      .printFile(transformed.transformed[0]);
-    transformed.dispose();
+    const next = rewrite(tree);
+    if (!changed) break;
+    source = next;
     folds += changed;
   }
   return {

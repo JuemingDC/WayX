@@ -25,7 +25,7 @@ export const scriptCapabilityBoundaries = {
   lexicalBindings: {
     status: "supported",
     domain:
-      "TypeScript-resolved local bindings, capture-free generated bindings, mapped context-presence guards, unused pure host-presence probes and pure source-host typeof/const branches with var-hoist preservation",
+      "TypeScript-resolved local bindings, capture-free generated bindings, mapped context-presence guards, unused pure host-presence probes and pure source-host typeof/const branches with var-hoist preservation, localized source edits and nonescaping function proofs",
     outside:
       "Escaping platform aliases, class-getter receiver identity, nonsequential const/TDZ uses, dynamic receivers, eval and Function construction remain blocked",
   },
@@ -56,7 +56,7 @@ export const scriptCapabilityBoundaries = {
   http: {
     status: "callback-pair-only; blocked-for-three-host-equivalence",
     implemented:
-      "Surge/Loon CLI pair: seven native callback methods, HTTP-only literal options, explicit timeout/cookie=false/redirect=false, explicit UA/Accept/identity encoding, ASCII <=64KiB, one active request, ignored return, Boolean-only errors and numeric response.status; native timeout unit conversion",
+      "Surge/Loon CLI pair: seven native callback methods, HTTP-only literal options, explicit timeout/cookie=false/redirect=false, explicit UA/Accept/identity encoding, ASCII <=64KiB, one active request, ignored return, Boolean-only errors and success-guarded response/data with numeric response.status; native timeout unit conversion",
     production:
       "No Adblock HTTP shim is published until QX also passes; the pairwise CLI implementation is not a three-host certification",
     fixtures:

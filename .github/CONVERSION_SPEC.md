@@ -445,3 +445,5 @@ Header 仅增加经过证明的只读单字段操作：Object.keys(h).find(k=>k.
 底层 CLI 可提供 Surge/Loon 七种 callback HTTP 方法的窄适配，但生产 Adblock 仍须三端全部通过。限定字面量 HTTP URL、显式正超时/关闭 cookie 与 redirect、UA/Accept/identity、ASCII <=64KiB、一个活动请求、忽略返回值、错误仅布尔可观察、响应仅数字 status；秒/毫秒显式换算，保留 Host，缺失响应不能成功。HTTPS/TLS/ALPN、一般 Header/二进制、QX 对等超时/取消尚未证明，不使用 Promise.race 假取消。Node 本地服务和手动客户端探针属于隔离测试工具，不改变统一生产传输或托管写入规则，也不代表已取得实机结果。
 
 WASM 对受大小约束且明确命名的 base64 字面量做解码、SHA-256、编译、imports/exports 检查，绝不实例化或执行作者 start；无法定位的动态模块报告缺口。相同摘要仅用于归并 ABI 调查，Node 编译不证明目标引擎可用。状态问题分类区分 source-invalid、analysis-unresolved、mapping-missing、target-contract-unverified 与范围外，不能将所有 blocked 称为不可运行。每次 Actions 连同原文、脚本、证据、索引及引用同事务更新；未通过升级继续保留已验证旧版本。
+
+Modified: 2026-11-02 (chance). 最终复核修正：来源分支优化使用局部文本替换，不整文件重排；未证明仅直接调用的函数体和类体不做内部裁剪，保留可隐式字符串化的作者函数文本。条件表达式取值保留 unbound callee 语义。HTTP 回调的 response/data 只允许在已证明 error 为假的成功分支观察，错误结果形状不猜测。补充相应反例验证。

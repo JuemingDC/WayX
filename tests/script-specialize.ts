@@ -97,3 +97,23 @@ vm.runInNewContext(specializeScript(receiver, "loon").source, {
 });
 assert.equal(compiled.body, native.body);
 assert.equal(compiled.body, true);
+
+// Modified: 2026-11-02 (chance). Preserve function source under implicit
+// string coercion, and do not specialize bodies exposed to an unknown caller.
+for (const text of [
+  'function f () { return 1; } if(typeof $task!=="undefined")$task.fetch({});else $done({body:""+f});',
+  'function f () { return typeof $task; } if(typeof $task!=="undefined")$task.fetch({});else $done({body:[f].join("")});',
+]) {
+  let before: any, after: any;
+  vm.runInNewContext(text, { $done: (v: any) => (before = v) });
+  vm.runInNewContext(specializeScript(text, "loon").source, {
+    $done: (v: any) => (after = v),
+  });
+  assert.equal(after.body, before.body);
+}
+
+assert.match(
+  specializeScript("$done({body:1e999||0});", "loon").source,
+  /1e999/,
+  "nonfinite numeric literals must not become JSON null",
+);

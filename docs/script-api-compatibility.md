@@ -83,3 +83,5 @@ Modified: 2026-11-02 (chance). 以下内容是当前实现，取代上文对应�
 `tools/script-client-probe.js` 是手动 HTTP 脚本探针，各客户端以其支持的参数入口提供测试服务 origin；QX 可在测试副本开头直接设置 raw 为 origin（不改变正式通用脚本）。探针依次记录七方法、Host/正文、重定向、Cookie 关闭、重复 Header、字节、503、断连及延迟的实际结果；QX 延迟项记录自然完成，**不假设有等价请求取消选项**。WASM 项只编译自有空模块，不执行备份作者模块。探针日志是待采集证据，不是已经完成的实机验证。
 
 `node tests/script-contracts.ts` 使用真实本地 HTTP 服务和 Node 实现的宿主 API 测试替身，验证方法、超时单位、Host、Cookie/redirect 选项、503、超时/断连、缺失响应和 Header/结果反例；`node tests/script-specialize.ts` 验证来源分支、变量提升、词法遮蔽、TDZ 和未知条件。这些测试不冒充 Surge/Loon/QX 实机。
+
+Modified: 2026-11-02 (chance). 最终复核修正：来源分支优化使用局部文本替换，不整文件重排；未证明仅直接调用的函数体和类体不做内部裁剪，保留可隐式字符串化的作者函数文本。条件表达式取值保留 unbound callee 语义。HTTP 回调的 response/data 只允许在已证明 error 为假的成功分支观察，错误结果形状不猜测。补充相应反例验证。

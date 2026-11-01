@@ -178,6 +178,7 @@ try {
   for (const bad of [
     source.replace('"auto-cookie":false', '"auto-cookie":true'),
     source.replace("http://", "https://"),
+    source.replace('body:"error"', "body:data"),
     source.replace("if(error)", 'if(typeof error==="string")'),
     source.replace("body:data", "body:response.headers"),
     source.replace("body:data", "body:arguments[0]"),

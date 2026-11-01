@@ -151,11 +151,37 @@ export function callbackHttpContract(
     }
     const err = checker.getSymbolAtLocation(fn.parameters[0].name),
       res = checker.getSymbolAtLocation(fn.parameters[1].name);
+    const dataSymbol = checker.getSymbolAtLocation(fn.parameters[2].name);
+    // Modified: 2026-11-02 (chance). Error-response/data shapes are not
+    // documented equivalently. Permit them only in a proven success branch.
+    const onSuccess = (node: ts.Node) => {
+      let current = node;
+      while (current.parent && current.parent !== fn.body) {
+        const p = current.parent;
+        if (ts.isIfStatement(p)) {
+          const c = p.expression,
+            negative =
+              ts.isPrefixUnaryExpression(c) &&
+              c.operator === ts.SyntaxKind.ExclamationToken;
+          const probe = negative ? (c as ts.PrefixUnaryExpression).operand : c;
+          if (
+            ts.isIdentifier(probe) &&
+            valueSymbol(probe, checker) === err &&
+            ((negative && p.thenStatement === current) ||
+              (!negative && p.elseStatement === current))
+          )
+            return true;
+        }
+        current = p;
+      }
+      return false;
+    };
     walk(fn.body, (node) => {
       if (ts.isIdentifier(node) && node.text === "arguments") ok = false;
       if (!ts.isIdentifier(node)) return;
       const sym = valueSymbol(node, checker),
         p = node.parent;
+      if ((sym === res || sym === dataSymbol) && !onSuccess(node)) ok = false;
       if (sym === err && (!safePresenceUse(node) || ts.isTypeOfExpression(p)))
         ok = false;
       if (
