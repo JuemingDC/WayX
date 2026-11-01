@@ -142,9 +142,14 @@ export async function prepareScriptApiAdapters(
       const mode = scriptReferencePhase(artifact.text, ref);
       let profile: any = { phase: mode.phase, binary: mode.binary };
       if (entry) {
-        const choices = (
-          profiles.get(entry.source + "\0" + key(sourceUrl)) ?? []
-        ).filter(
+        // Modified: 2026-11-01 (chance). Repeated match conditions may share the exact same runtime profile; that is not an ambiguous API context.
+        const choices = [
+          ...new Map(
+            (profiles.get(entry.source + "\0" + key(sourceUrl)) ?? []).map(
+              (p) => [JSON.stringify(p), p],
+            ),
+          ).values(),
+        ].filter(
           (p) =>
             p.phase === (mode.phase === "echo" ? "request" : mode.phase) ||
             mode.phase === "task",

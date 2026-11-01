@@ -38,7 +38,8 @@ console.log('Script API subset passed: QX/Surge/Loon/Egern contexts, echo/status
  try{
   const entry={id:'ApiFixture',file:'api.lpx',source:'https://author.test/api.lpx',qx:'api.snippet',surge:'api.sgmodule'};
   const url='https://author.test/response.js';
-  const source=Buffer.from('#!name=ApiFixture\n[Script]\nresponse if ${url} ~= /^https:\\/\\/example\\.test\\// then script("'+url+'") with requires_body=true,tag="Original"\n');
+  let source=Buffer.from('#!name=ApiFixture\n[Script]\nresponse if ${url} ~= /^https:\\/\\/example\\.test\\// then script("'+url+'") with requires_body=true,tag="Original"\n');
+  source=Buffer.concat([source,Buffer.from(source.toString().split('\n').find(line=>line.startsWith('response if'))!+'\n')]);
   for(const p of ['Resource/Loon','Adblock/Quantumult X','Adblock/Surge'])await fs.mkdir(path.join(root,p),{recursive:true});
   await fs.writeFile(path.join(root,'Resource/Loon/api.lpx'),source);
   const qxFile='Adblock/Quantumult X/api.snippet',surgeFile='Adblock/Surge/api.sgmodule';
@@ -76,3 +77,9 @@ const synthesized=await execute('$done({response:{status:201,body:"made"}});','l
 console.log('Script API direction matrix: 12 text-body directions plus Loon synthetic-response QX echo mode passed');
 
 assert.equal(planScriptApiConversion('$prefs.setValueForKey(null,"key");$done();',{from:"qx",to:"surge",phase:"task"}).status,"blocked");
+
+// Egern uses ES modules: do not silently change sloppy-mode globals, deletion or duplicate parameter behavior.
+for(const source of ['implicit=1;$done({body:"x"});','[implicit]=[1];$done({body:"x"});','function f(a,a){};$done({body:"x"});','delete implicit;$done({body:"x"});'])assert.equal(planScriptApiConversion(source,{from:'qx',to:'egern',phase:'response'}).status,'blocked');
+const strictResult=await execute('export default async function(ctx){try{undeclaredWrite=1;return {body:"incorrect"};}catch(e){return {body:e.name};}}','egern','surge','response',{$response:{body:'',status:200}});assert.equal(strictResult.result.body,'ReferenceError');
+assert.equal(planScriptApiConversion('const setTimeout=()=>{};$done({body:"x"});',{from:'loon',to:'surge',phase:'response'}).status,'blocked');
+console.log('Script API strictness passed: Egern module semantics, implicit/destructured global writes, reserved timer bindings and source strict exception behavior');

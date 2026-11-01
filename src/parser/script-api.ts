@@ -120,7 +120,42 @@ export function inspectScriptApis(source: string) {
           "Audit the evaluated program/property targets explicitly",
         );
     }
+    if (
+      ts.isPropertyAccessExpression(node) &&
+      ["caller", "callee"].includes(node.name.text)
+    )
+      add(
+        "function-reflection",
+        "Caller/callee identity changes across wrappers and strict modules",
+        "Retain native or replace reflective control flow with explicit functions",
+      );
     if (ts.isIdentifier(node)) {
+      if (
+        ["setTimeout", "setInterval"].includes(node.text) &&
+        (ts.isVariableDeclaration(node.parent) ||
+          ts.isParameter(node.parent)) &&
+        node.parent.name === node
+      )
+        add(
+          node.text,
+          "Source declares/shadows an injected timer binding",
+          "Resolve the lexical binding before timer adaptation",
+        );
+      if (node.text === "arguments") {
+        let parent: ts.Node | undefined = node.parent;
+        while (
+          parent &&
+          !ts.isFunctionDeclaration(parent) &&
+          !ts.isFunctionExpression(parent)
+        )
+          parent = parent.parent;
+        if (!parent)
+          add(
+            "arguments",
+            "Top-level host invocation arguments are not a portable contract",
+            "Use explicit script arguments rather than the host call frame",
+          );
+      }
       const name = node.text,
         isProperty =
           (ts.isPropertyAccessExpression(node.parent) &&
@@ -166,7 +201,9 @@ export function inspectScriptApis(source: string) {
           );
         if (
           outer === node &&
-          !(ts.isCallExpression(node.parent) && node.parent.expression === node) &&
+          !(
+            ts.isCallExpression(node.parent) && node.parent.expression === node
+          ) &&
           !ts.isTypeOfExpression(node.parent)
         )
           add(
@@ -187,6 +224,112 @@ export function inspectScriptApis(source: string) {
     );
   return { tree, paths: [...paths].sort(), calls, problems };
 }
+// Modified: 2026-11-01 (chance). Egern modules are strict; reject observable sloppy-script constructs before putting legacy code inside an ES module.
+function moduleStrictnessProblems(tree: ts.SourceFile): ApiProblem[] {
+  const problems: ApiProblem[] = [];
+  const add = (reason: string) =>
+    problems.push({
+      api: "module-strictness",
+      reason,
+      solution:
+        "Declare variables and remove sloppy-only constructs, or retain the source runtime",
+    });
+  const host: ts.CompilerHost = {
+    getSourceFile: (n) => (n.endsWith("upstream.js") ? tree : undefined),
+    getDefaultLibFileName: () => "",
+    writeFile: () => {},
+    getCurrentDirectory: () => "",
+    getDirectories: () => [],
+    fileExists: (n) => n.endsWith("upstream.js"),
+    readFile: () => undefined,
+    getCanonicalFileName: (n) => n,
+    useCaseSensitiveFileNames: () => true,
+    getNewLine: () => "\n",
+  };
+  const program = ts.createProgram(
+      ["upstream.js"],
+      { noLib: true, allowJs: true, target: ts.ScriptTarget.Latest },
+      host,
+    ),
+    checker = program.getTypeChecker();
+  const written = (n: ts.Node) => {
+    if (ts.isParenthesizedExpression(n)) {
+      written(n.expression);
+      return;
+    }
+    if (ts.isArrayLiteralExpression(n)) {
+      for (const e of n.elements)
+        written(ts.isSpreadElement(e) ? e.expression : e);
+      return;
+    }
+    if (ts.isObjectLiteralExpression(n)) {
+      for (const p of n.properties) {
+        if (ts.isPropertyAssignment(p)) written(p.initializer);
+        else if (ts.isShorthandPropertyAssignment(p)) written(p.name);
+        else if (ts.isSpreadAssignment(p)) written(p.expression);
+      }
+      return;
+    }
+    if (
+      ts.isIdentifier(n) &&
+      (!checker.getSymbolAtLocation(n) ||
+        ["undefined", "NaN", "Infinity"].includes(n.text))
+    )
+      add(
+        "Undeclared/global write changes behavior in Egern strict modules: " +
+          n.text,
+      );
+  };
+  const visit = (n: ts.Node) => {
+    if (
+      ts.isBinaryExpression(n) &&
+      n.operatorToken.kind >= ts.SyntaxKind.FirstAssignment &&
+      n.operatorToken.kind <= ts.SyntaxKind.LastAssignment
+    )
+      written(n.left);
+    if (
+      (ts.isPrefixUnaryExpression(n) || ts.isPostfixUnaryExpression(n)) &&
+      (n.operator === ts.SyntaxKind.PlusPlusToken ||
+        n.operator === ts.SyntaxKind.MinusMinusToken)
+    )
+      written(n.operand);
+    if (ts.isForInStatement(n) || ts.isForOfStatement(n))
+      written(n.initializer);
+    if (ts.isDeleteExpression(n) && ts.isIdentifier(n.expression))
+      add("Deleting an identifier is forbidden in strict modules");
+    if (ts.isNumericLiteral(n) && /^0[0-9]/.test(n.getText(tree)))
+      add("Legacy octal/leading-zero literal is not strict-compatible");
+    if (ts.isStringLiteral(n)) {
+      const raw = n.getText(tree);
+      for (let i = 1; i < raw.length - 1; i++)
+        if (raw[i] === "\\") {
+          i++;
+          if (
+            /[1-7]/.test(raw[i]) ||
+            (raw[i] === "0" && /[0-9]/.test(raw[i + 1] ?? ""))
+          )
+            add("Legacy octal string escape is not strict-compatible");
+        }
+    }
+    if (
+      ts.isIdentifier(n) &&
+      ["eval", "arguments"].includes(n.text) &&
+      (ts.isVariableDeclaration(n.parent) ||
+        ts.isParameter(n.parent) ||
+        ts.isFunctionDeclaration(n.parent)) &&
+      n.parent.name === n
+    )
+      add("Reserved strict-mode binding: " + n.text);
+    if (ts.isFunctionDeclaration(n) || ts.isFunctionExpression(n)) {
+      const names = n.parameters.map((p) => p.name.getText(tree));
+      if (new Set(names).size !== names.length)
+        add("Duplicate function parameters are not strict-compatible");
+    }
+    ts.forEachChild(n, visit);
+  };
+  visit(tree);
+  return problems;
+}
 export function planScriptApiConversion(source: string, options: ApiOptions) {
   if (options.from === options.to)
     return {
@@ -198,6 +341,8 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
   const inventory = inspectScriptApis(source),
     problems = [...inventory.problems],
     features = inventory.paths;
+  if (options.to === "egern" && options.from !== "egern")
+    problems.push(...moduleStrictnessProblems(inventory.tree));
   const identifiers = new Set<string>();
   const collect = (n: ts.Node) => {
     if (ts.isIdentifier(n)) identifiers.add(n.text);
@@ -389,7 +534,15 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
             .replace(/^['"]|['"]$/g, "");
           if (key === "response") {
             response = true;
-            if(!ts.isPropertyAssignment(property)||!ts.isObjectLiteralExpression(property.initializer))add('$done.response','Dynamic synthetic response needs field/data-flow proof','Use explicit documented response fields or retain the native script');
+            if (
+              !ts.isPropertyAssignment(property) ||
+              !ts.isObjectLiteralExpression(property.initializer)
+            )
+              add(
+                "$done.response",
+                "Dynamic synthetic response needs field/data-flow proof",
+                "Use explicit documented response fields or retain the native script",
+              );
           }
           if (
             ![
@@ -492,7 +645,8 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
         (!value ||
           !(
             ts.isStringLiteralLike(value) ||
-            (value.kind === ts.SyntaxKind.NullKeyword && options.from !== "qx") ||
+            (value.kind === ts.SyntaxKind.NullKeyword &&
+              options.from !== "qx") ||
             (options.from === "loon" &&
               ts.isIdentifier(value) &&
               value.text === "undefined")
@@ -570,7 +724,13 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
   const config = JSON.stringify(effectiveOptions);
   const body =
     options.from === "egern"
-      ? entry! + "\nreturn " + entryBinding + "(" + ctxBinding + ");"
+      ? '"use strict";\n' +
+        entry! +
+        "\nreturn " +
+        entryBinding +
+        "(" +
+        ctxBinding +
+        ");"
       : source;
   const run = `function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,${ctxBinding},setTimeout,setInterval){\n${body}\n}`;
   const core = `(${scriptApiRuntime})(${config},__wayxHost,${run})`;

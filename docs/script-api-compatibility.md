@@ -34,6 +34,8 @@ ScriptHub 已检查到提交 [502cf03](https://github.com/Script-Hub-Org/Script-
 
 已接通的子域：纯文本 HTTP Script 上下文与 completion；QX statusCode/状态行和回调型宿主 status；QX 合成响应与 request.response；纯二进制 ArrayBuffer/Uint8Array 的精确偏移；显式常量字符串键/值写入及单键删除；普通三字段通知；已知名称和可映射开始时间；Loon 文档规定的单次 interval；Egern 可验证的 text/json/arrayBuffer 读取和函数返回值。混合合成响应与普通放行、动态 completion/来源 profile、缺省键或不受支持选项会进入 blocked。
 
+ESM 与旧式全局脚本还需要严格模式检查：已加入未声明写入、解构写入、删除标识符、重复参数、旧八进制、绑定冲突及反射控制流的阻断；Egern 转回其它端保留模块的严格执行。
+
 测试覆盖 12 个方向的受限文本正文转换、echo、状态码、二进制切片、单键删除、Loon 一次性 interval、源字符串/注释不被替换、原始备份和适配文件分离、固定地址更新、损坏校验与不兼容升级保留。测试为 Node VM 和文件事务夹具，尚不等于 iOS 各客户端实机认证。
 
 ## 仍不能直接证明等价的 API 与方案
