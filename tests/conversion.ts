@@ -1501,7 +1501,8 @@ for(const name of await fs.readdir('.github/workflows')){
  }
 }
 const scheduled=await fs.readFile('.github/workflows/converter-check.yml','utf8');
-assert.match(scheduled,/cron: '30 17 \* \* \*'/);
+// Modified: 2026-11-01 (chance). Match the established 05:30 Asia/Shanghai schedule.
+assert.match(scheduled,/cron: '30 21 \* \* \*'/);
 assert.match(scheduled,/workflow_dispatch:/);
 console.log('Semantic domain migration passed: IR provenance independence, MITM order/comments, workflow paths/pause');
 }

@@ -651,10 +651,11 @@ if(selectedCase==='managed-artifacts.mjs') {
       fetchText:async url=>{events.push('fetch');return url===good.source?source('updated'):unknown;},
       convert:(...args)=>{events.push('convert');return convertPluginWithContext(...args);},
     }});
-    assert.ok(events.lastIndexOf('fetch')<events.indexOf('convert'),'acquisition must finish before target conversion');
+    // Modified: 2026-11-01 (chance). Catalog acquisition precedes conversion; the final backup pass also acquires origins referenced only by retained artifacts.
+    assert.equal(events.slice(0,events.indexOf('convert')).filter(e=>e==='fetch').length,catalog.length,'all catalog responses must be acquired before target conversion');
     assert.equal(run.publishable,true);assert.deepEqual(run.convertedPlugins,['Good']);assert.deepEqual(run.unchangedPlugins,[]);assert.deepEqual(run.validatedPlugins,['Good']);assert.deepEqual(run.retainedPlugins,['Bad']);assert.deepEqual(run.deferredPlugins,['Fresh']);
     assert.equal(run.failures.length,2);assert.ok(run.failures.every(failure=>failure.declarations.some(d=>d.line.includes('future.action'))));
-    for(const [file,bytes] of await inventory())if(file.includes('/Bad/')||file.endsWith('/Bad.lpx')||file.endsWith('/Bad.snippet')||file.endsWith('/Bad.sgmodule'))assert.deepEqual(bytes,before.get(file),'failed plugin baseline preserved');
+    for(const [file,bytes] of await inventory())if(!file.startsWith('Resource/Backup/')&&(file.includes('/Bad/')||file.endsWith('/Bad.lpx')||file.endsWith('/Bad.snippet')||file.endsWith('/Bad.sgmodule')))assert.deepEqual(bytes,before.get(file),'failed plugin conversion baseline preserved; raw acquisition archives are independent');
     assert.match(await fs.readFile(path.join(root,'Resource/Loon/Good.lpx'),'utf8'),/updated/);
     assert.deepEqual(JSON.parse(await fs.readFile(path.join(root,'.github/sources/loon.json'),'utf8')).map(e=>e.id),['Good','Bad']);
     assert.equal(JSON.parse(await fs.readFile(path.join(root,'.github/sources/loon-static.json'),'utf8')).length,3,'discovery source remains intact for retries');

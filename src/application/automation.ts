@@ -17,11 +17,14 @@ const managed = [
   ".github/sources/",
   "Resource/Loon",
   "Resource/Encrypted",
+  // Modified: 2026-11-01 (chance). Publish exact upstream archives and their source-to-backup index with generated targets.
+  "Resource/Backup",
   "Adblock/Quantumult X",
   "Adblock/Surge",
   // Modified: 2026-11-01 (chance). Publish native functional modules alongside their registry state and Adblock counterparts.
   "Module/QuantumultX",
   "Module/Surge",
+  "Module",
   "Script",
   "Rule",
   "README.md",

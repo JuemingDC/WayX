@@ -1,3 +1,5 @@
+import { readJson } from "../publish/transaction.ts";
+import { refreshSourceBackups } from "./backups.ts";
 import { loadIconIndex } from "../ingest/icons.ts";
 import { backfillIcons } from "./icons.ts";
 import {
@@ -168,6 +170,10 @@ export async function syncCatalogEntry(
     const out: any = convert(entry, source, context, {
       stamp: nowConversionStamp(),
       rawBase: RAW_BASE,
+      backupIndex: await readJson(
+        path.join(root, "Resource/Backup/index.json"),
+        null,
+      ),
       icons,
       onStage,
     });
@@ -355,7 +361,7 @@ export async function runCatalogSync({
     publishable = false;
     writeError("Native QX acquisition failed: " + String(error.stack || error));
   }
-  await resources.seal();
+  // Modified: 2026-11-01 (chance). Keep the run snapshot open through backup acquisition; seal it before publication.
   for (const { entry, prepared } of preparedEntries) {
     log(`\n== convert ${entry.id} ==`);
     try {
@@ -383,6 +389,15 @@ export async function runCatalogSync({
     }
     if (publishable) await commitNativeQxSync(root, nativeQxPlan);
     if (publishable) await backfillIcons(root, icons);
+    // Modified: 2026-11-01 (chance). Archive plugin/script bytes and rebind all published declarations, including paused and retained artifacts, without resuming catalog conversion.
+    if (publishable)
+      await refreshSourceBackups(root, {
+        root,
+        resources,
+        catalog: manifest,
+        nativeInputs: nativeQxPlan?.inputs ?? [],
+        log,
+      });
     await writeReadmePlan(root);
   } catch (error: any) {
     publishable = false;
@@ -391,6 +406,7 @@ export async function runCatalogSync({
         String(error.stack || error),
     );
   }
+  await resources.seal();
   const summary: any = {
     publishable,
     validatedPlugins,

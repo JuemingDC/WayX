@@ -1,6 +1,19 @@
 name: WayX Automation
 
 on:
+  # Modified: 2026-11-01 (chance). Code/specification pushes run acquisition and publication; generated backup/target commits do not retrigger the workflow.
+  push:
+    branches: [main, test]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'config/**'
+      - 'docs/**'
+      - 'AGENTS.md'
+      - '.github/CONVERSION_SPEC.md'
+      - '.github/workflows/**'
+      - 'package*.json'
+      - 'tsconfig.json'
   pull_request:
     paths:
       - '.github/**'
@@ -158,6 +171,7 @@ jobs:
             .github/sources/loon.json
             Resource/Loon/
             Resource/Encrypted/
+            Resource/Backup/
             Rule/
             Adblock/Quantumult X/
             Adblock/Surge/

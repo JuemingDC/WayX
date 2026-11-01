@@ -1,3 +1,4 @@
+import { bindKnownBackups } from "../parser/backup-references.ts";
 import { addAppIcon } from "../domain/icons.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript emit layer; preserve source behavior.
 // Consolidated: 2026-10-03
@@ -1266,7 +1267,13 @@ export function convertPluginWithContext(
   entry: any,
   source: any,
   context: any,
-  { stamp = "", rawBase = "", onStage = null, icons = null }: any = {},
+  {
+    stamp = "",
+    rawBase = "",
+    onStage = null,
+    icons = null,
+    backupIndex = null,
+  }: any = {},
 ): any {
   if (!context || typeof context !== "object") {
     throw new TypeError(
@@ -1282,7 +1289,7 @@ export function convertPluginWithContext(
     throw new Error("Prepared conversion context does not match source");
   }
   notify(onStage, "convert");
-  return convertPlugin(entry, source, {
+  const out = convertPlugin(entry, source, {
     icons,
     parsed: context.parsed,
     declarations: context.declarations,
@@ -1292,6 +1299,11 @@ export function convertPluginWithContext(
     jqFiles: context.jqFiles,
     rawBase,
   });
+  // Modified: 2026-11-01 (chance). Bind verified established backup paths at emission; the shared backup pass handles newly discovered URLs.
+  if (backupIndex)
+    for (const target of ["qx", "surge"])
+      out[target] = bindKnownBackups(out[target], backupIndex, rawBase);
+  return out;
 }
 export function validateConvertedPlugin(
   entry: any,
@@ -1405,7 +1417,9 @@ export function convertNativeQxToSurge(
     }
     // Modified: 2026-11-01 (chance). QX reject-img returns HTTP 200/1px GIF; use the existing Surge inline mock semantics, not a rejecting policy.
     if (action === "reject-img") {
-      sections["Map Local"].push(pattern + " data-type=tiny-gif status-code=200");
+      sections["Map Local"].push(
+        pattern + " data-type=tiny-gif status-code=200",
+      );
       continue;
     }
     if (["reject-200", "reject-dict", "reject-array"].includes(action)) {
@@ -1440,9 +1454,16 @@ export function convertNativeQxToSurge(
     if (body) {
       sections["Body Rewrite"].push(
         // Modified: 2026-11-01 (chance). Split at the repeated QX action delimiter; quote whole Surge tokens so spaces, quotes and backslashes stay literal.
-        "http-" + body[1] + " " + pattern + " " +
-          (/\s|["\\]/.test(body[2]) ? JSON.stringify(body[2]) : body[2]) + " " +
-          (/\s|["\\]/.test(body[3]) || !body[3] ? JSON.stringify(body[3]) : body[3]),
+        "http-" +
+          body[1] +
+          " " +
+          pattern +
+          " " +
+          (/\s|["\\]/.test(body[2]) ? JSON.stringify(body[2]) : body[2]) +
+          " " +
+          (/\s|["\\]/.test(body[3]) || !body[3]
+            ? JSON.stringify(body[3])
+            : body[3]),
       );
       continue;
     }

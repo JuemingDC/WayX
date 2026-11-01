@@ -1,3 +1,4 @@
+import { readJson as readBackupJson } from "./transaction.ts";
 import { loadIconIndex } from "../ingest/icons.ts";
 import { opaqueEntries } from "../ingest/formats.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript publish layer; preserve source behavior.
@@ -98,6 +99,10 @@ for (const entry of manifest) {
     let out: any = convertPluginWithContext(entry, source, context, {
       stamp,
       rawBase: RAW_BASE,
+      backupIndex: await readBackupJson(
+        path.join(ROOT, "Resource/Backup/index.json"),
+        null,
+      ),
       icons,
     });
     validateConvertedPlugin(entry, out, {
@@ -164,6 +169,10 @@ for (const entry of manifest) {
     out = convertPluginWithContext(entry, source, context, {
       stamp: nowConversionStamp(),
       rawBase: RAW_BASE,
+      backupIndex: await readBackupJson(
+        path.join(ROOT, "Resource/Backup/index.json"),
+        null,
+      ),
       icons,
     });
     validateConvertedPlugin(entry, out, {

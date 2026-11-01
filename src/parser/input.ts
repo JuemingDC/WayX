@@ -235,9 +235,14 @@ export function discoverSourceScriptUrls(
 ): any {
   const text: any = String(source ?? "");
   const urls: any = new Set(
-    [...text.matchAll(/script-path=([^,\s]+)/gi)].map((match: any): any =>
-      match[1].trim(),
-    ),
+    // Modified: 2026-11-01 (chance). Disabled declarations remain dependencies, but documentation/commented examples are not executable script references.
+    [
+      ...text
+        .split("\n")
+        .filter((line: string) => !/^\s*(?:#|;|\/\/)/.test(line))
+        .join("\n")
+        .matchAll(/script-path\s*=\s*([^,\s]+)/gi),
+    ].map((match: any): any => match[1].trim()),
   );
   const plugin: any = parsed || parseLoonPlugin(text);
   for (const item of [

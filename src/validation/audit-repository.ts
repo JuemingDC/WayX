@@ -1,3 +1,4 @@
+import { validateSourceBackups } from "./backups.ts";
 import { opaqueEntries } from "../ingest/formats.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript validation layer; preserve source behavior.
 // Repository-wide static audit for target configs and converter safety.
@@ -72,6 +73,8 @@ const active: any = (line: any): any => {
 const files: any = await walk(ROOT);
 for (const file of files) {
   const rp: any = rel(file);
+  // Modified: 2026-11-01 (chance). Upstream archives retain BOM/CRLF/binary bytes; validate their checksums and reference closure separately, not as generated source code.
+  if (rp.startsWith("Resource/Backup/")) continue;
   if (
     !/\.(?:snippet|sgmodule|ts|js|json|md|txt|yml|yaml|lpx|jq|list|dconf)$/i.test(
       rp,
@@ -213,6 +216,8 @@ for (const file of files) {
     }
   }
 }
+// Modified: 2026-11-01 (chance). Never publish a dangling or corrupted backed-up script reference.
+for (const problem of await validateSourceBackups(ROOT)) findings.push(problem);
 // Validate the serialized target expressions independently of helper bodies.
 const regexAudit: any = spawnSync(process.execPath, ["src/cli.ts", "regex"], {
   input: JSON.stringify(targetRegexValidationInventory()),

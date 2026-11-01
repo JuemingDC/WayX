@@ -1,3 +1,5 @@
+import { bindKnownBackups } from "../parser/backup-references.ts";
+import { readJson } from "./transaction.ts";
 import { addAppIcon } from "../domain/icons.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript publish layer; preserve source behavior.
 // Consolidated: 2026-10-03
@@ -342,7 +344,7 @@ export async function writeManagedTargets(state: any, out: any): Promise<any> {
   return changed;
 }
 // Modified: 2026-10-25 (chance). Import native QX resources without passing
-// through the Loon compiler. Keep upstream active text/order and original JS URLs.
+// through the Loon compiler. Keep upstream active text/order; backup publication later rebinds only script operands.
 const NATIVE_QX_MARKER: any = "# Managed by: WayX Native QX";
 // Modified: 2026-11-01 (chance). User-authorized repair is restricted to this exact upstream declaration; retain its original text and do not generalize malformed replacement handling.
 export function repairNativeQxSource(source: {url: string; text: string}): string {
@@ -511,6 +513,9 @@ async function prepareNativeQxSource(
     inputs.push({
       repository: config.repository,
       path: file.path,
+      // Modified: 2026-11-01 (chance). Retain both requested immutable snapshot and author URL for exact-byte source archiving.
+      acquiredUrl: url,
+      sourceUrl: "https://raw.githubusercontent.com/" + config.repository + "/" + config.ref + "/" + file.path,
       sha256: crypto.createHash("sha256").update(text).digest("hex"),
     });
   }
@@ -566,8 +571,7 @@ async function prepareNativeQxSource(
     const surgeExclusion = config.surge_exclude?.[key];
     if (surgeExclusion) diagnostics.push({ repository: config.repository, application: key, reason: surgeExclusion });
     if (config.surge && !surgeExclusion) {
-      // Modified: 2026-10-29 (chance). User requires no JS downloads/API conversion;
-      // forward every original URL and declaration mode unchanged.
+      // Modified: 2026-11-01 (chance). Keep declaration modes and JS APIs unchanged; the shared backup pass downloads bytes and rebinds script operands before publication.
       const converted: any = convertNativeQxToSurge(categorized, {
         id: config.prefix + key,
       });
@@ -588,6 +592,9 @@ async function prepareNativeQxSource(
 }
 export async function commitNativeQxSync(root: any, plan: any): Promise<any> {
   if (!plan) return;
+  // Modified: 2026-11-01 (chance). Compare final stable script references so unchanged native outputs retain their prior update stamps.
+  const backups = await readJson(path.join(root,"Resource/Backup/index.json"),null);
+  if (backups) for (const [file,text] of plan.outputs) plan.outputs.set(file,bindKnownBackups(text,backups,"https://raw.githubusercontent.com/JuemingDC/WayX/main"));
   const statePath: any = ".github/sources/native-qx-state.json";
   let prior: any = { outputs: [] };
   try {

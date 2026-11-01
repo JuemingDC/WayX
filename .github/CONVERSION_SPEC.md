@@ -44,14 +44,14 @@ Surge 输出的目的 IP 类规则（IP-CIDR、IP-CIDR6、GEOIP、IP-ASN，包�
 
 
 <!-- Modified: 2026-10-25 (chance). Record the explicit original-URL Script lowering exception, including both echo modes. -->
-用户明确授权原生 QX Script 声明直接转换为 Surge 通用 HTTP Script，保留原脚本 URL，不下载/扫描/改写/包装作者 JavaScript。`script-echo-response` → `type=http-request,requires-body=false`；`script-analyze-echo-response` → `type=http-request,requires-body=true`（QX 官方示例明确后者等待请求体）。普通 request/response 的 header/body 脚本分别保留阶段并设置 requires-body=false/true。此授权只针对声明转换，不声称原脚本返回对象或 API 在 Surge 中已验证等价。Surge http-request 支持脚本直接返回 response；原作者程序是否使用该格式由原脚本决定，不增加转换包装。`url-and-header` 仍注释并保留完整源声明和诊断，不删除 header 条件，也不生成无法保留完整整头语义的脚本。
+用户明确授权原生 QX Script 声明直接转换为 Surge 通用 HTTP Script，保留作者脚本原始字节，不进行 API 扫描、改写或包装；根据 2026-11-01 授权，发布前将脚本资源操作数绑定到已校验的 WayX 备份地址。`script-echo-response` → `type=http-request,requires-body=false`；`script-analyze-echo-response` → `type=http-request,requires-body=true`（QX 官方示例明确后者等待请求体）。普通 request/response 的 header/body 脚本分别保留阶段并设置 requires-body=false/true。此授权只针对声明转换，不声称原脚本返回对象或 API 在 Surge 中已验证等价。Surge http-request 支持脚本直接返回 response；原作者程序是否使用该格式由原脚本决定，不增加转换包装。`url-and-header` 仍注释并保留完整源声明和诊断，不删除 header 条件，也不生成无法保留完整整头语义的脚本。
 
 
 ## 2.3 单条组合与声明顺序
 
 组合指一条声明 action 区域中的 `|`，不指分开的同正则声明。独立声明按源顺序转换，不能因正则相同而跨声明择一或去重。
 
-单条声明中的各 action 按源顺序分别规划和输出，保留 Script、Header、Body、JSON/JQ、Mock 和 URL 动作，不再按家族择一。Script 使用原作者 URL 及受支持选项；不能原生表达的独立 action 使用既有 helper 或明确诊断，失败 action 不删除其余成功 action。
+单条声明中的各 action 按源顺序分别规划和输出，保留 Script、Header、Body、JSON/JQ、Mock 和 URL 动作，不再按家族择一。Script 使用已校验的 WayX 备份地址及原声明受支持选项；不能原生表达的独立 action 使用既有 helper 或明确诊断，失败 action 不删除其余成功 action。
 
 动作分隔使用共同词法扫描器，保护 Regex alternation、逻辑 `||`、String/Raw String 内部 JQ 管道、变量、括号与 Script with 选项。数组批量参数仍属于一个 action，按数组顺序输出其目标操作。各文件依赖按原 action 索引绑定，Script 混合声明的分条在依赖发现、源审查和转换中使用同一入口。
 
@@ -115,7 +115,7 @@ add/replace 的 PATH 使用保留 String/Number 类型的路径数组，特殊�
 
 资源获取由 `src/ingest/resources.ts` 统一负责；文本资源默认上限 128 MiB，二进制 mock 默认上限 512 MiB。上限按实际读取字节执行，调用者可显式传入更合适的单次上限；不得将资源下载上限当作目标客户端的正文处理能力。临时网络错误、超时、HTTP 408/425/429 和 5xx 才重试；永久 HTTP 错误与超限立即失败。
 
-一次完整同步先准备所有插件的源文件、脚本、jq 和 mock 依赖，再封存资源快照，最后逐插件转换并提交。原 URL 和请求 profile 决定缓存身份；成功资源存于运行目录，manifest 记录 URL、profile、SHA-256 和字节数，读取时校验。失败保留有限重试后的结果，不因后续插件重复引用而再次下载。相同 URL 以首次成功获取的字节为准；文本/二进制读取仍分别执行各自上限。快照仅用于当前运行，不跨运行复用旧资源。
+一次完整同步先准备所有插件的源文件、脚本、jq 和 mock 依赖，逐插件转换，补齐原生 QX 和保留产物的源脚本归档并重绑定后封存资源快照，最后统一校验及 Git 发布。原 URL 和请求 profile 决定缓存身份；成功资源存于运行目录，manifest 记录 URL、profile、SHA-256 和字节数，读取时校验。失败保留有限重试后的结果，不因后续插件重复引用而再次下载。相同 URL 以首次成功获取的字节为准；文本/二进制读取仍分别执行各自上限。快照仅用于当前运行，不跨运行复用旧资源。
 
 解析阶段统一准备源 Rewrite 声明：新版 AST、旧版 Semantic IR 和解析诊断按源声明绑定，文件依赖与两个目标规划器共享准备结果；各规划器获得独立副本，原注释、正则 flags、动作顺序和路径类型不得改变。准备上下文绑定源 URL 与内容摘要，不得用于另一个源版本。转换阶段不得联网。
 
@@ -150,7 +150,7 @@ Body Rewrite 与原作者 Script 的窄 owner 仅用于同阶段、同一个无 
 
 ## 2.10 作者 Script 与参数
 
-作者 Script 从原 URL 拉取供分析；活动声明保留原作者 URL，不镜像、不 fork、不内联、不包装、不改正文。下载失败保留原 URL，不声称取得源码或完成客户端审查。
+Modified: 2026-11-01 (chance). 作者 Script 从原 URL 拉取并按原始字节归档；活动声明在发布前改为已校验的 WayX 备份地址，不 fork、不内联、不包装、不改正文。下载失败优先保留已校验旧备份；初次即失败时保留现有作者引用并明确列为未备份，不虚构地址或声称备份完整。
 
 所有受支持触发类型保留 phase、requires_body、binary_body_mode、timeout、enable、debug、argument 和 trigger IR。body 与 binary 选项独立，不能互相推导。
 
@@ -218,7 +218,7 @@ loon.json 为完整生成态 Catalog。可莉目录从 https://hub.kelee.one/lis
 
 用户明确停拉的来源优先于目录发现。自 2026-10-08 起，排除可莉的 `Bilibili_remove_ads.lpx` 与 RuCu6 的 `bilibili.lpx`；查询参数或 fragment 不改变排除身份。动态目录与旧静态清单均不得重新引入这两个源，按现有受管理产物清理契约删除其源文件、目标与生成 helper，不影响其他作者来源。
 
-Plugin、作者 Script、JQ/mock 依赖均读取原作者 URL。host profile 可选择 User-Agent、Python urllib 或 Node fetch，原 URL 不变，不用镜像/仓库 fallback；瞬时网络错误只有限重试同一 URL。Python 抓取成功只证明可取得内容，不证明真实客户端执行、编码、压缩或缓冲等价。
+Modified: 2026-11-01 (chance). Plugin、作者 Script、JQ/mock 依赖均通过统一 Surge transport 读取原作者 URL，不用第三方镜像作为获取回退；瞬时网络错误仅有限重试同一 URL。下载源地址与产物脚本地址分开：后者使用经过字节校验的 WayX 备份。获取成功不证明真实客户端运行时 API、编码、压缩或缓冲等价。
 
 发现入口将原始响应及来源 URL 交监控复用，缺失/空内容/来源不符失败，不重复获取另一份目录。报告记录新增、修改、删除的实际条目，已注册语法按目标规划直接转换，不以历史目录是否出现作为审批条件；未知语法或无法满足目标契约时保留源声明并提 Issue，不自动扩充 capability/golden baseline。
 
@@ -356,18 +356,18 @@ Apple 用应用注册的 routing_layers 分层：第一层合并 QuixoticHeart a
 
 ## 2.20 原生 QX 来源同步
 
-Modified: 2026-11-01 (chance). Actions 内原生 QX 走格式校验与复制路径：仅补充必要的注释分段、将客户端不支持的元数据转为注释、为裸 jq 补引用。保留原注释、执行声明顺序、URL 正则、动作、脚本地址及 hostname 文本；不再按目标端逻辑重写 QX、不重组分段、不合并 hostname、不补写原生 QX 图标。此前明确授权的 Emby 指定错误修正继续生效。
+Modified: 2026-11-01 (chance). Actions 内原生 QX 走格式校验与复制路径：仅补充必要的注释分段、将客户端不支持的元数据转为注释、为裸 jq 补引用。保留原注释、执行声明顺序、URL 正则、动作、hostname 文本及脚本正文；脚本操作数统一由发布前备份步骤重绑定；不再按目标端逻辑重写 QX、不重组分段、不合并 hostname、不补写原生 QX 图标。此前明确授权的 Emby 指定错误修正继续生效。
 
-同作者同应用的 filter/rewrite 文件按来源顺序连接为一份混合 snippet；不混用不同作者。Surge 输出统一调用 convertNativeQxToSurge；作者 JS 不下载、不改写。元数据图标补全只作用于 Surge 或非原生 QX 转换产物。既有来源版本选择、分类、所有权、整批事务与失败保留机制继续生效。新内容及生成产物只由 Actions 拉取、生成和发布，本地只提交代码及孤立测试。
+同作者同应用的 filter/rewrite 文件按来源顺序连接为一份混合 snippet；不混用不同作者。Surge 输出统一调用 convertNativeQxToSurge；作者 JS 通过统一快照下载并按原字节归档，不改写。元数据图标补全只作用于 Surge 或非原生 QX 转换产物。既有来源版本选择、分类、所有权、整批事务与失败保留机制继续生效。新内容及生成产物只由 Actions 拉取、生成和发布，本地只提交代码及孤立测试。
 
-## 2.18 原生 QX Script 原链接引用（2026-10-29）
+## 2.18 原生 QX Script 字节保留与备份引用（2026-11-01）
 
-依用户明确指令，QX → Surge 仅转换 Script 配置声明，不转换脚本内部 API。所有六种原生 HTTP Script 模式一律保留作者原脚本 URL；不得下载作者 JS 做 API 扫描、改写 `$done`、注入兼容层或生成 API 适配副本。请求/响应阶段、requires-body 与两类 echo 的等待时机仍按声明转换。脚本运行时的跨客户端兼容性由原脚本决定，不将原链接引用宣称为内部 API 语义等价。撤回此前受限 API 适配草稿及专用测试，保留既有原链接/模式转换检查。
+依用户明确指令，QX → Surge 仅转换 Script 配置声明，不转换脚本内部 API。Modified: 2026-11-01 (chance). 所有六种原生 HTTP Script 模式均下载作者 JS 原始字节作备份，再在活动声明中使用 WayX 固定备份地址；不得做 API 扫描、改写 `$done`、注入兼容层或生成 API 适配副本。请求/响应阶段、requires-body 与两类 echo 的等待时机仍按声明转换。脚本运行时的跨客户端兼容性由原脚本决定，不将字节备份引用宣称为内部 API 语义等价。撤回此前受限 API 适配草稿及专用测试，保留原模式转换检查，增加脚本地址重绑定与原始字节完整性检查。
 
 
 ## 2.19 可莉来源暂停（2026-10-29）
 
-用户要求暂停拉取可莉插件。`sources/kelee-pause.json` 的 paused=true 同时冻结目录获取、插件同步、依赖重取/重新转换及目录监控，保留 loon.json 中的可莉条目和现有源文件、QX/Surge 产物、脚本依赖及监控镜像。暂停不代表来源退出，不因目录不可用清理已有产物。其他来源继续更新；不自动按期限恢复，需用户明确恢复后将 paused 设为 false。
+用户要求暂停拉取可莉插件。`sources/kelee-pause.json` 的 paused=true 同时冻结目录获取、插件同步、依赖重取/重新转换及目录监控，保留 loon.json 中的可莉条目和现有源文件、QX/Surge 产物、脚本依赖及监控镜像。暂停不代表来源退出，不因目录不可用清理已有产物。其他来源继续更新；不自动按期限恢复，需用户明确恢复后将 paused 设为 false。Modified: 2026-11-01 (chance). 本次用户明确要求全仓库脚本备份和引用替换，因此备份步骤可读取已保留的可莉插件快照、刷新其脚本正文并重绑定现有活动脚本地址；不恢复其目录发现或重新转换，插件快照明确标记 retained-repository-snapshot。
 
 ## 2.20 字节获取、加密插件与来源声明
 
@@ -376,7 +376,7 @@ Modified: 2026-11-01 (chance). Actions 内原生 QX 走格式校验与复制路�
 
 .lpxe 按加密 Loon 包处理；未知非 UTF-8 或包含 NUL 的二进制按 opaque 处理。先保存原始字节、原 URL、SHA-256、大小和类型，再记录活动状态。原始归档位于 Resource/Encrypted/Loon/<id>/<sha>，不得把下载成功标为已转换，不尝试猜测加密头、解密或解析密文。普通无效文本和 HTML 按源校验失败隔离，不能伪装成正常加密包。
 
-活动 opaque 条目通过归档摘要验证后可保留旧转换产物；首次遇到的包允许仅归档，报告明确标为不可转换，不发布虚构片段。已冻结的可莉条目不获取正文或依赖。恢复明文后退出 opaque 状态，历史字节归档保留；现有未知语法和失败事务规则继续适用。
+活动 opaque 条目通过归档摘要验证后可保留旧转换产物；首次遇到的包允许仅归档，报告明确标为不可转换，不发布虚构片段。已冻结的可莉条目不重新获取插件正文或转换依赖；仅执行 2.19 明确授权的脚本备份与引用替换。恢复明文后退出 opaque 状态，历史字节归档保留；现有未知语法和失败事务规则继续适用。
 
 作者 #!source 原样作为注释保留；它是 Loon 插件下载 URL 的 SHA-256 绑定元数据，不是内容签名，不能证明内容完整性或授予解密能力。转换为 QX/Surge 不执行 Loon 的来源告警逻辑，也不为输出地址重算作者值。归档使用独立内容 SHA-256，不混用两种摘要。
 
@@ -385,6 +385,17 @@ Modified: 2026-11-01 (chance). Actions 内原生 QX 走格式校验与复制路�
 <!-- Modified: 2026-10-30 (chance). Add source-backed app icons only where metadata is missing. -->
 `.github/sources/icons.json` 登记 lige47、fmz200、Qure Color 原始图标集，按登记顺序优先；同集优先无编号版本，其余保持原顺序。只做名称规范化、明确应用别名及有限功能后缀匹配，不用任意子串匹配、不用通用图标填补未知应用。作者已有非空图标声明及图片地址优先保留，不重写或替换。
 
-补全只在 QX/Surge 目标声明头使用现有 `# Icon: URL` 注释约定，并保留图标集来源；不添加未获目标官方证明的活动图标指令，不据此宣称客户端必定显示模块图标。图片引用原作者地址，不镜像图片。Loon 原件、原脚本链接、规则和动作、时间戳以及 `#!source` 不改。
+补全只在 QX/Surge 目标声明头使用现有 `# Icon: URL` 注释约定，并保留图标集来源；不添加未获目标官方证明的活动图标指令，不据此宣称客户端必定显示模块图标。图片引用原作者地址，不镜像图片。Loon 原件、规则和动作、时间戳以及 `#!source` 不改；活动脚本资源链接在统一备份步骤按 2.22 重绑定，来源注释中的原地址保留。
 
 图标集通过统一获取器和运行快照拉取一次，监控复用本轮输入并保存原始集合内容。正常转换在目标比较前补全，metadata-only icons 命令仅补全登记的受管目标；重复执行保持稳定，未匹配列表保留在报告中。可莉暂停继续阻止源和依赖获取。
+
+
+## 2.22 插件正文与源脚本持久备份
+
+Modified: 2026-11-01 (chance). 每次同步使用同一运行快照的原始响应字节归档 Loon 与原生 QX 插件正文，并获取其活动脚本声明及现有 Adblock/Module 产物直接引用的 HTTP(S) 脚本；包括任务脚本和已登记的暂停来源。未参与本次拉取的保留源快照须标记来源状态，不冒充最新上游响应。未引用的任意历史脚本与脚本内部动态网络依赖不靠猜测枚举。
+
+归档位于 `Resource/Backup/plugin/<URL SHA-256>/<文件名>` 和 `Resource/Backup/script/<URL SHA-256>/<文件名>`。查询参数属于资源身份；fragment 不发到服务器，不参与字节获取身份，但在目标脚本地址中原样保留。原始文件逐字节保留 BOM、CRLF、注释和署名，不追加备份头。整理时间、作者 chance、分类及出处写在规范/索引/状态文件，不能污染作者脚本。`index.json` 记录原 URL、获取 URL、正文 SHA-256、大小与路径；备份地址固定；检测到内容变化时原位替换原文并更新摘要，旧版本保留在 Git 历史中。
+
+生成完成后只替换活动声明的脚本操作数，QX 仍使用官方支持的 `script-request/response-header/body`、两种 echo 和任务格式；Surge 仍使用 `script-path`。不全局替换 URL，不改注释、匹配正则、跳转目标、图标、argument 或 JS 正文。备份、索引、脚本引用及产物同一 Git 提交发布。原生 QX、Loon 转换及已有 Module 统一执行。
+
+每次均重新获取同 URL 的脚本，不因插件正文未变化跳过。下载失败时使用索引中已校验的旧备份并列明失败；无旧备份则保留既有作者地址，`status.json` 明确记录缺失项与 unresolvedReferences，不能声称全量备份完成。空内容、HTML 错误页、超出 Git 单文件限制的响应不伪装为脚本。校验失败、事务失败或缺失 WayX 引用阻止发布。原文归档不套用生成代码的换行/BOM/Node 语法要求，独立校验所有归档字节和引用闭包。

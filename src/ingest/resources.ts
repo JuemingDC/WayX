@@ -231,7 +231,10 @@ export function createResourceSnapshot({
     records = new Map<string, any>();
   let sealed = false;
   async function read(url: string, kind: "text" | "binary"): Promise<Buffer> {
-    const original = assertHttpUrl(url),
+    // Modified: 2026-11-01 (chance). Fragments are client arguments, never HTTP resource identity; reuse one byte snapshot across fragment variants.
+    const requestUrl = new URL(assertHttpUrl(url));
+    requestUrl.hash = "";
+    const original = requestUrl.href,
       key = JSON.stringify([original, profile]),
       limit = FETCH_LIMITS[kind];
     if (!pending.has(key)) {
@@ -293,6 +296,21 @@ export function createResourceSnapshot({
     return bytes;
   }
   return Object.freeze({
+    // Modified: 2026-11-01 (chance). Expose the acquired response without a second request so archives and conversion share exact bytes.
+    async cachedBytes(url: string): Promise<Buffer | null> {
+      const requestUrl = new URL(assertHttpUrl(url));
+      requestUrl.hash = "";
+      const key = JSON.stringify([requestUrl.href, profile]);
+      if (!pending.has(key)) return null;
+      const record = await pending.get(key);
+      const bytes = await fs.readFile(record.file);
+      if (
+        crypto.createHash("sha256").update(bytes).digest("hex") !==
+        record.sha256
+      )
+        throw Error("Resource snapshot checksum mismatch: " + url);
+      return bytes;
+    },
     fetchBytes: (url: string) => read(url, "binary"),
     fetchText: async (url: string) => {
       const text = new TextDecoder("utf-8", { fatal: true })
