@@ -1,3 +1,4 @@
+import { QX_WAYX_REJECT_ACTIONS } from "../domain/core.ts";
 import { bindKnownBackups } from "../parser/backup-references.ts";
 import { readJson } from "./transaction.ts";
 import { addAppIcon } from "../domain/icons.ts";
@@ -358,7 +359,7 @@ export function repairNativeQxSource(source: {url: string; text: string}): strin
 // Modified: 2026-11-01 (chance). Native QX follows check/copy: retain executable text and order; only repair snippet formatting and the explicitly authorized source typo.
 export function mergeNativeQxSources(
   sources: any,
-  { name, author, stamp = nowConversionStamp() }: any = {},
+  { name, author, stamp = nowConversionStamp(), diagnostics = [] }: any = {},
 ): any {
   const out: string[] = [
     "# Name: " + name, "# Updated: " + stamp, "# Copied by: chance",
@@ -368,7 +369,13 @@ export function mergeNativeQxSources(
     out.push("# Source: " + source.url);
     let section: string | null = null;
     for (const original of repairNativeQxSource(source).replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").split("\n")) {
-      const line = original.trim();
+      // Modified: 2026-11-01 (chance). Repair known foreign filter type spellings in native snippets (observed DOMAIN rows in Naisi); preserve operands and policy verbatim.
+      const filterAliases: Record<string,string> = {DOMAIN:"host","DOMAIN-SUFFIX":"host-suffix","DOMAIN-KEYWORD":"host-keyword","DOMAIN-WILDCARD":"host-wildcard","IP-CIDR":"ip-cidr","IP6-CIDR":"ip6-cidr","USER-AGENT":"user-agent"};
+      let canonical = original.replace(/^(\s*)([A-Z][A-Z0-9-]*)(\s*,)/,(all,space,type,comma) => filterAliases[type] ? space+filterAliases[type]+comma : all);
+      // Modified: 2026-11-01 (chance). A captured Naisi line uses the legacy '-' separator for a known QX reject action; repair only that delimiter.
+      const shorthand = canonical.match(/^(\s*\S+)\s+-\s+(reject(?:-[a-z0-9-]+)?)\s*$/);
+      if (shorthand && QX_WAYX_REJECT_ACTIONS.has(shorthand[2])) canonical = shorthand[1] + " url " + shorthand[2];
+      const line = canonical.trim();
       const heading = line.match(/^(?:#\s*)?\[(filter_local|rewrite_local|mitm)\]$/i);
       if (heading) {
         section = heading[1].toLowerCase();
@@ -380,12 +387,19 @@ export function mergeNativeQxSources(
       const target = /^hostname\s*=/.test(line) ? "mitm"
         : /\surl(?:-and-header)?\s/.test(line) ? "rewrite_local"
         : /^(?:host(?:-suffix|-keyword|-wildcard)?|ip-cidr|ip6-cidr|ip-asn|geoip|user-agent)\s*,/i.test(line) ? "filter_local" : null;
+      // Modified: 2026-11-01 (chance). QX echo-response accepts a Data-relative local resource, not a remote URL; retain and diagnose invalid upstream syntax without inventing a network-fetch replacement.
+      if (/\surl\s+echo-response\s+.+\s+echo-response\s+https?:\/\//.test(line)) {
+        const reason = "QX echo-response requires a local Data-relative resource; upstream remote resource is not supported by the official sample";
+        out.push("# [WayX] SOURCE INVALID: " + reason, "# Source declaration: " + original);
+        diagnostics.push({source:source.url,declaration:original,reason});
+        continue;
+      }
       if (!target) throw Error("Unknown native QX declaration in " + source.url + ": " + line);
       if (target !== section) { out.push("# [" + target + "]"); section = target; }
       // Only quoting of bare jq is a formatting correction; never rewrite its program, URL matcher, action or script URL.
-      const jq = original.match(/^(.*?\surl(?:-and-header)?\s+jsonjq-(?:request|response)-body)\s+(.+)$/);
+      const jq = canonical.match(/^(.*?\surl(?:-and-header)?\s+jsonjq-(?:request|response)-body)\s+(.+)$/);
       // Modified: 2026-11-01 (chance). Canonicalize an upstream all-caps REJECT typo to the official QX rewrite action; preserve the original as provenance.
-      const formatted = (jq && !/^'.*'$/.test(jq[2]) ? jq[1] + " " + quoteJq(jq[2]) : original).replace(/(\surl(?:-and-header)?\s+)REJECT\s*$/, "$1reject");
+      const formatted = (jq && !/^'.*'$/.test(jq[2]) ? jq[1] + " " + quoteJq(jq[2]) : canonical).replace(/(\surl(?:-and-header)?\s+)REJECT\s*$/, "$1reject");
       if (formatted !== original) out.push("# Source declaration: " + original);
       out.push(formatted);
     }
@@ -559,7 +573,7 @@ async function prepareNativeQxSource(
       config.names?.[key] ||
       key;
     // Modified: 2026-11-01 (chance). QX copies checked native declarations; no Loon compiler, URL normalization or icon backfill is applied.
-    const text = mergeNativeQxSources(sources, { name, author: config.author });
+    const text = mergeNativeQxSources(sources, { name, author: config.author, diagnostics });
     // Modified: 2026-11-01 (chance). Function/HTML enhancements are Modules; advertising filters remain Adblock.
     const category = config.directories?.[sources[0].path.split("/")[0]] ?? "Adblock";
     if (!["Adblock", "Module"].includes(category)) throw Error("Invalid native category");
@@ -595,7 +609,7 @@ export async function commitNativeQxSync(root: any, plan: any): Promise<any> {
   if (!plan) return;
   // Modified: 2026-11-01 (chance). Compare final stable script references so unchanged native outputs retain their prior update stamps.
   const backups = await readJson(path.join(root,"Resource/Backup/index.json"),null);
-  if (backups) for (const [file,text] of plan.outputs) plan.outputs.set(file,bindKnownBackups(text,backups,"https://raw.githubusercontent.com/JuemingDC/WayX/main"));
+  if (backups) for (const [file,text] of plan.outputs) plan.outputs.set(file,bindKnownBackups(text,backups,"https://raw.githubusercontent.com/JuemingDC/WayX/main",file));
   const statePath: any = ".github/sources/native-qx-state.json";
   let prior: any = { outputs: [] };
   try {

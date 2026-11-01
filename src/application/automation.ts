@@ -124,6 +124,8 @@ export async function executeChecks(
         `::error title=WayX validation::${stage}/${id}: see ${log}`,
       );
     }
+    // Modified: 2026-11-01 (chance). Surface the actual failure tail in Actions instead of forcing a download of the full artifact to diagnose acquisition/API errors.
+    if (item.status === "failed") console.error((await fs.readFile(log,"utf8")).slice(-12000));
     results.push(item);
     await writeReport("validation-results.json", report);
   }

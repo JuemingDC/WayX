@@ -55,6 +55,27 @@ export async function validateSourceBackups(root: string) {
       add(file, "backup-integrity", e.message);
     }
   }
+  // Modified: 2026-11-01 (chance). Generated adapter integrity is separate from upstream raw-byte evidence.
+  for (const [file, record] of Object.entries<any>(index.adapters ?? {})) {
+    try {
+      if (
+        !/^Script\/Api\/(?:qx|loon|surge|egern)-to-(?:qx|loon|surge|egern)\/[a-f0-9]{64}\.js$/.test(
+          file,
+        ) ||
+        file !== record.path
+      )
+        throw Error("Invalid API adapter path");
+      const bytes = await readOptional(safePath(root, file));
+      if (
+        !bytes ||
+        crypto.createHash("sha256").update(bytes).digest("hex") !==
+          record.sha256
+      )
+        throw Error("Missing or corrupted API adapter");
+    } catch (e: any) {
+      add(file, "api-adapter-integrity", e.message);
+    }
+  }
   for (const [url, file] of Object.entries<any>(index.latest))
     if (index.objects[file]?.url !== url)
       add("Resource/Backup/index.json", "backup-source-index", url);
@@ -67,6 +88,11 @@ export async function validateSourceBackups(root: string) {
         const match = ref.value.match(
           /^https:\/\/raw\.githubusercontent\.com\/JuemingDC\/WayX\/[^/]+\/(Resource\/Backup\/[^#?]+)/,
         );
+        const adapter = ref.value.match(
+          /^https:\/\/raw\.githubusercontent\.com\/JuemingDC\/WayX\/[^/]+\/(Script\/Api\/[^#?]+)/,
+        );
+        if (adapter && !index.adapters?.[adapter[1]])
+          add(relative, "missing-api-adapter", ref.value);
         if (match && index.objects[match[1]]?.kind !== "script")
           add(relative, "missing-script-backup", ref.value);
       }

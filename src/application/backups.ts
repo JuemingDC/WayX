@@ -1,3 +1,4 @@
+import { prepareScriptApiAdapters } from "./script-api.ts";
 // Modified: 2026-11-01 (chance). Archive upstream bytes and publish only verified WayX script references, in one repository transaction.
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -35,6 +36,8 @@ type BackupIndex = {
   version: number;
   objects: Record<string, BackupObject>;
   latest: Record<string, string>;
+  adapters?: Record<string, any>;
+  bindings?: Record<string, any>;
 };
 function sourceKey(value: string): string {
   const url = new URL(value);
@@ -268,7 +271,12 @@ export async function refreshSourceBackups(
     for (const { value } of refs) {
       if (!/^https?:\/\//.test(value)) continue;
       const local = ownPath(value),
-        old = local ? index.objects[local] : null;
+        old = local
+          ? (index.objects[local] ??
+            (index.adapters?.[local]
+              ? { url: index.adapters[local].sourceUrl }
+              : null))
+          : null;
       if (!local || old) requested.add(old?.url ?? value);
     }
   const urls = [...requested];
@@ -294,6 +302,14 @@ export async function refreshSourceBackups(
       rewritten++;
     }
   }
+  // Modified: 2026-11-01 (chance). API adaptation uses the archived body, never replaces it, and records every unsupported cross-client API separately.
+  const scriptApi = await prepareScriptApiAdapters(root, {
+    artifacts,
+    catalog,
+    index,
+    changes,
+    rawBase,
+  });
   for (const record of Object.values(index.objects)) await verify(record);
   changes.set(INDEX, JSON.stringify(index, null, 2) + "\n");
   const report = {
@@ -302,6 +318,7 @@ export async function refreshSourceBackups(
     scriptUrls: usedScripts.size,
     backedUpScripts: [...usedScripts].filter((u) => index.latest[u]).length,
     rewrittenArtifacts: rewritten,
+    scriptApi: { adapted: scriptApi.adapted, blocked: scriptApi.blocked },
     unresolvedReferences: unresolved,
     failures,
   };

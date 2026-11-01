@@ -209,6 +209,7 @@ for (const file of files) {
       // string literals, so payload content must not be audited as helper code.
       if (
         /^(?:\/\/|\/\*|\*)/.test(t) &&
+        !rp.startsWith("Script/Api/") &&
         /WayX.*(?:bridge|wrapper)|Script v2 ->|Converted Script/i.test(t)
       ) {
         add(file, i + 1, "script-body-adaptation-artifact", t);

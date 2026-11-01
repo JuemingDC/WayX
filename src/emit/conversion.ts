@@ -1302,7 +1302,14 @@ export function convertPluginWithContext(
   // Modified: 2026-11-01 (chance). Bind verified established backup paths at emission; the shared backup pass handles newly discovered URLs.
   if (backupIndex)
     for (const target of ["qx", "surge"])
-      out[target] = bindKnownBackups(out[target], backupIndex, rawBase);
+      out[target] = bindKnownBackups(
+        out[target],
+        backupIndex,
+        rawBase,
+        target === "qx"
+          ? "Adblock/Quantumult X/" + entry.qx
+          : "Adblock/Surge/" + entry.surge,
+      );
   return out;
 }
 export function validateConvertedPlugin(

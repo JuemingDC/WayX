@@ -38,7 +38,7 @@ try {
   switch (command) {
     case "help":
       console.log(
-        "WayX: prepare setup-jq icons catalog rules sync verify monitor reports issues gate publish summary final check test regenerate regex",
+        "WayX: prepare setup-jq icons catalog rules sync verify monitor reports issues gate publish summary final check test regenerate regex script-api",
       );
       break;
     case "prepare":
@@ -139,6 +139,47 @@ try {
     case "regenerate":
       await invoke("src/publish/regenerate-canonical.ts", args);
       break;
+    // Modified: 2026-11-01 (chance). Expose the same API planner for isolated script conversions and auditable blocked-API reports.
+    case "script-api": {
+      const chunks: Buffer[] = [];
+      for await (const chunk of process.stdin) chunks.push(Buffer.from(chunk));
+      const value = (name: string) => {
+        const i = args.indexOf(name);
+        return i >= 0 ? args[i + 1] : undefined;
+      };
+      const { planScriptApiConversion } = await import(
+        "./parser/script-api.ts"
+      );
+      const from = value("--from") ?? "",
+        to = value("--to") ?? "",
+        phase = value("--phase") ?? "response";
+      if (
+        !["qx", "loon", "surge", "egern"].includes(from) ||
+        !["qx", "loon", "surge", "egern"].includes(to) ||
+        !["request", "response", "echo", "task", "network", "generic"].includes(
+          phase,
+        )
+      )
+        throw Error(
+          "script-api requires --from/--to qx|loon|surge|egern and a supported --phase",
+        );
+      const plan = planScriptApiConversion(Buffer.concat(chunks).toString(), {
+        from: from as any,
+        to: to as any,
+        phase: phase as any,
+      });
+      if (args.includes("--report") || plan.status === "blocked")
+        console.log(
+          JSON.stringify(
+            plan.status === "blocked" ? plan : { ...plan, code: undefined },
+            null,
+            2,
+          ),
+        );
+      else process.stdout.write(plan.code!);
+      if (plan.status === "blocked") process.exitCode = 2;
+      break;
+    }
     case "regex": {
       const chunks: Buffer[] = [];
       for await (const chunk of process.stdin) chunks.push(Buffer.from(chunk));

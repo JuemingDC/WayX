@@ -44,7 +44,7 @@ Surge 输出的目的 IP 类规则（IP-CIDR、IP-CIDR6、GEOIP、IP-ASN，包�
 
 
 <!-- Modified: 2026-10-25 (chance). Record the explicit original-URL Script lowering exception, including both echo modes. -->
-用户明确授权原生 QX Script 声明直接转换为 Surge 通用 HTTP Script，保留作者脚本原始字节，不进行 API 扫描、改写或包装；根据 2026-11-01 授权，发布前将脚本资源操作数绑定到已校验的 WayX 备份地址。`script-echo-response` → `type=http-request,requires-body=false`；`script-analyze-echo-response` → `type=http-request,requires-body=true`（QX 官方示例明确后者等待请求体）。普通 request/response 的 header/body 脚本分别保留阶段并设置 requires-body=false/true。此授权只针对声明转换，不声称原脚本返回对象或 API 在 Surge 中已验证等价。Surge http-request 支持脚本直接返回 response；原作者程序是否使用该格式由原脚本决定，不增加转换包装。`url-and-header` 仍注释并保留完整源声明和诊断，不删除 header 条件，也不生成无法保留完整整头语义的脚本。
+用户明确授权原生 QX Script 声明直接转换为 Surge 通用 HTTP Script，保留作者脚本原始字节；根据本次后续授权对独立适配副本执行 AST API 分析与受限转换；根据 2026-11-01 授权，发布前将脚本资源操作数绑定到已校验的 WayX 备份地址。`script-echo-response` → `type=http-request,requires-body=false`；`script-analyze-echo-response` → `type=http-request,requires-body=true`（QX 官方示例明确后者等待请求体）。普通 request/response 的 header/body 脚本分别保留阶段并设置 requires-body=false/true。声明映射和内部 API 映射分别验证；只有 API 规划通过的已支持子域才引用适配文件，不能以声明通过推断原脚本已经等价。Surge http-request 支持脚本直接返回 response；原作者程序是否使用该格式由源码分析与原触发类型确定；适配遵守 2.23 的严格边界。`url-and-header` 仍注释并保留完整源声明和诊断，不删除 header 条件，也不生成无法保留完整整头语义的脚本。
 
 
 ## 2.3 单条组合与声明顺序
@@ -295,7 +295,7 @@ Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生�
 | src/application | 任务编排、监控、错误隔离、Issue、门禁及受管 Git 发布 |
 | src/index.ts | 稳定的公开转换 API，仅 re-export |
 
-同类问题在所属语义领域公共入口修复，不按插件名追加特殊分支。语法解析与规划保留既有共享领域接口；资源获取和发布必须通过统一服务，转换阶段复用已封存快照。原作者 JS 只保留原地址，不获取、扫描或修改其内部 API。
+同类问题在所属语义领域公共入口修复，不按插件名追加特殊分支。语法解析与规划保留既有共享领域接口；资源获取和发布必须通过统一服务，转换阶段复用已封存快照。原作者 JS 按字节保存在固定备份路径；AST 分析和 API 转换只生成单独的 Script/Api 产物，原始归档不改。
 
 统一命令为 node src/cli.ts；开发者回归为 npm test，类型检查为 npm run typecheck。常规同步只生成一次并检查本轮实际产物，不自动调用 canonical 重新转换；PR 回归套件独立于日常计划同步。
 
@@ -362,7 +362,7 @@ Modified: 2026-11-01 (chance). Actions 内原生 QX 走格式校验与复制路�
 
 ## 2.18 原生 QX Script 字节保留与备份引用（2026-11-01）
 
-依用户明确指令，QX → Surge 仅转换 Script 配置声明，不转换脚本内部 API。Modified: 2026-11-01 (chance). 所有六种原生 HTTP Script 模式均下载作者 JS 原始字节作备份，再在活动声明中使用 WayX 固定备份地址；不得做 API 扫描、改写 `$done`、注入兼容层或生成 API 适配副本。请求/响应阶段、requires-body 与两类 echo 的等待时机仍按声明转换。脚本运行时的跨客户端兼容性由原脚本决定，不将字节备份引用宣称为内部 API 语义等价。撤回此前受限 API 适配草稿及专用测试，保留原模式转换检查，增加脚本地址重绑定与原始字节完整性检查。
+Modified: 2026-11-01 (chance). 用户本次进一步授权补全跨软件脚本 API 转换，取代此前仅转换声明的限制。QX/Loon/Surge/Egern 的 API 引擎独立于配置转换；原 JS 始终按字节保存。支持子域生成单独的 Script/Api/<source>-to-<target>/<id>.js，完成类型/触发器/返回值/二进制等检查后才引用；未支持部分保留经过校验的旧适配版本或原备份引用并明确报告，不宣称跨端兼容。API 分析必须使用 JavaScript AST，不用正则替换所有 $done 字符串，不对无法证明等价的 API 造假结果。
 
 
 ## 2.19 可莉来源暂停（2026-10-29）
@@ -401,3 +401,18 @@ Modified: 2026-11-01 (chance). 每次同步使用同一运行快照的原始响�
 每次均重新获取同 URL 的脚本，不因插件正文未变化跳过。下载失败时使用索引中已校验的旧备份并列明失败；无旧备份则保留既有作者地址，`status.json` 明确记录缺失项与 unresolvedReferences，不能声称全量备份完成。空内容、HTML 错误页、超出 Git 单文件限制的响应不伪装为脚本。校验失败、事务失败或缺失 WayX 引用阻止发布。原文归档不套用生成代码的换行/BOM/Node 语法要求，独立校验所有归档字节和引用闭包。
 
 Modified: 2026-11-01 (chance). 原生 QX 上游整条 URL rewrite 使用大写 `REJECT` 时，按上传 sample 的小写 `reject` 规范化该动作 token，并保留完整原声明注释；不调整 matcher、Header、参数或脚本正文，不推广到未知动作。
+
+Modified: 2026-11-01 (chance). 奶思大合集中实测含非 QX 的 DOMAIN 类型声明；原生片段格式修正只将已知 DOMAIN/DOMAIN-SUFFIX/DOMAIN-KEYWORD/DOMAIN-WILDCARD 类型分别改为 host/host-suffix/host-keyword/host-wildcard，并规范已支持 IP-CIDR/IP6-CIDR/USER-AGENT 类型的大小写。保留参数、策略、顺序和原声明注释，不猜测未知类型。
+
+
+## 2.23 跨客户端 Script API 规划与剩余差异
+
+Modified: 2026-11-01 (chance). 实现与证据详见 docs/script-api-compatibility.md。Loon Script v2 是配置语法，JS API 与原运行时一致，必须同时核查当前官方 Script API。ScriptHub 502cf03f7db2e077d96c07c2cb151a8f0b152a80 只作实现对照：其 timer no-op、GET/POST 二分、resolve(null) 错误吞并、HTTP 默认值省略及 $done 文本替换不作为等价依据。
+
+四平台 API 入口返回 native/adapted/blocked 与逐项 reason/solution；现有 QX/Surge 自动产物只为明确登记来源/唯一原触发 profile 的已支持程序生成适配文件。已支持子域覆盖基础 HTTP Script 上下文、completion、状态字段、纯二进制 ArrayBuffer/Uint8Array 偏移、纯合成响应、显式常量字符串键/值的写入与单键删除、普通通知、受限时钟及 Loon 一次性 interval。Egern 按当前 export default async function(ctx) 模型处理可支持的文本/二进制读方法和返回值。每项仍受输入域与目标声明限制，不声称任意 JS/所有 API 的通用等价。
+
+HTTP client 的默认值、协议/ALPN、TLS、cookie、超时取消、错误与容量；存储缺省键/全量删除/空值/返回类型；Header 大小写/多值/枚举与 framing；平台身份/参数/控制接口；DNS/本地 GeoIP/ASN、AES/gzip；Egern 流、Widget/SSH/SFTP；动态 eval/Function/反射/模块依赖均单列边界与方案。未建立官方契约/真实客户端证据时必须 blocked，禁止使用空函数、伪 Boolean、Promise.race 假装网络取消、异步替换同步 API，或静默丢弃 options。
+
+原始备份和适配文件均用固定地址原位更新，索引分别记录原始 SHA-256 与适配 SHA-256；Git 保存历史。源脚本变化触发适配再生成；新版本超出已支持子域时保留旧适配并在报告中列明，不能覆写为伪兼容程序。独立 VM/字节/错误夹具属于工程验证，报告必须区分这些检查与真实客户端执行证明。
+
+Modified: 2026-11-01 (chance). 对捕获的奶思合集仅为已知 QX reject 动作将 legacy `-` 分隔符规范为 `url`。上游远程 echo-response 文件与 sample 的本地 Data 路径契约冲突，完整保留源行并在目标注释隔离 SOURCE INVALID，同时记录 native diagnostics；不得默默生成一次网络 fetch 去模拟这个未验证的源行为。

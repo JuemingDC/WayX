@@ -335,6 +335,16 @@ assert.doesNotMatch((await buildReadmePlan(root)).get('README.md'),/<strong>Bob<
 const uppercaseReject=mergeNativeQxSources([{url:'https://example.test/plugin.conf',text:'^http:\\/\\/139\\.196\\.12\\.179:8053\\/httpdns\\/ url REJECT\n'}],{name:'UppercaseReject'});
 assert.match(uppercaseReject,/^# Source declaration:.*url REJECT$/m);
 assert.match(uppercaseReject,/^[^#\n].* url reject$/m);
+// Modified: 2026-11-01 (chance). Naisi's mixed snippet includes foreign DOMAIN/IP type spellings; only type tokens are normalized to QX forms.
+const mixedTypes=mergeNativeQxSources([{url:'https://example.test/mixed.snippet',text:'DOMAIN, httpdns.alicdn.com, reject\nIP-CIDR, 203.107.1.1/24, reject\nUSER-AGENT,AVOS*, reject\n'}],{name:'MixedTypes'});
+assert.match(mixedTypes,/^host, httpdns\.alicdn\.com, reject$/m);
+assert.match(mixedTypes,/^ip-cidr, 203\.107\.1\.1\/24, reject$/m);
+assert.match(mixedTypes,/^user-agent,AVOS\*, reject$/m);
+assert.match(mixedTypes,/^# Source declaration: DOMAIN,/m);
+// Modified: 2026-11-01 (chance). Keep malformed source evidence; never invent remote echo-response semantics in a QX-native copy.
+const invalidDiagnostics=[];
+const invalidEcho=mergeNativeQxSources([{url:'https://example.test/source.snippet',text:'^https://example.test/ url echo-response application/json echo-response https://example.test/mock.json\n^https://example.test/other - reject-200\n'}],{name:'InvalidEcho',diagnostics:invalidDiagnostics});
+assert.equal(invalidDiagnostics.length,1);assert.match(invalidEcho,/^# \[WayX\] SOURCE INVALID:/m);assert.match(invalidEcho,/^[^#\n].* url reject-200$/m);
 const nativeConfig={version:1,repository:'ishowshu/qx',ref:'main',prefix:'ishowshu_',author:'树先生',exclude:[],aliases:{},names:{}};
 await fs.writeFile(path.join(root,'.github/sources/native-qx.json'),JSON.stringify(nativeConfig));
 const nativeFiles={

@@ -248,3 +248,6 @@ export {
 } from "./parser/configuration.ts";
 // Modified: 2026-10-25 (chance). Expose the native QX-to-Surge entry point.
 export { convertNativeQxToSurge } from "./emit/conversion.ts";
+
+// Modified: 2026-11-01 (chance). Public API planner exposes four runtime contracts and structured unsupported-API evidence.
+export { inspectScriptApis, planScriptApiConversion } from "./parser/script-api.ts";

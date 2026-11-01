@@ -66,15 +66,90 @@ export function bindKnownBackups(
   text: string,
   index: any,
   rawBase: string,
+  artifact?: string,
 ): string {
-  return replaceScriptReferences(text, (value) => {
-    if (!/^https?:\/\//.test(value)) return value;
-    const url = new URL(value),
+  const bindings: Record<string, ScriptBinding> = {};
+  for (const ref of scriptReferences(text)) {
+    if (!/^https?:\/\//.test(ref.value)) continue;
+    const url = new URL(ref.value),
       fragment = url.hash;
     url.hash = "";
+    const known = index?.bindings?.[artifact ?? ""]?.[ref.value];
     const record = index?.objects?.[index?.latest?.[url.href]];
-    return record?.kind === "script"
-      ? rawBase + "/" + record.path + fragment
-      : value;
-  });
+    if (known) bindings[ref.value] = known;
+    else if (record?.kind === "script")
+      bindings[ref.value] = { path: record.path };
+  }
+  return applyScriptBindings(text, bindings, rawBase);
+}
+
+// Modified: 2026-11-01 (chance). A script binding may also require a documented echo trigger or binary input declaration.
+export type ScriptBinding = { path: string; binary?: boolean; echo?: boolean };
+export function applyScriptBindings(
+  text: string,
+  bindings: Record<string, ScriptBinding>,
+  rawBase: string,
+): string {
+  for (const ref of scriptReferences(text).reverse()) {
+    const binding = bindings[ref.value];
+    if (!binding) continue;
+    const first = text.lastIndexOf("\n", ref.start - 1) + 1,
+      last = text.indexOf("\n", ref.end),
+      end = last < 0 ? text.length : last;
+    let line =
+      text.slice(first, ref.start) +
+      rawBase +
+      "/" +
+      binding.path +
+      new URL(ref.value).hash +
+      text.slice(ref.end, end);
+    if (binding.echo)
+      line = line.replace(
+        /(\surl\s+)script-request-(header|body)\b/,
+        (_all, prefix, mode) =>
+          prefix +
+          (mode === "body"
+            ? "script-analyze-echo-response"
+            : "script-echo-response"),
+      );
+    if (
+      binding.binary &&
+      /\bscript-path\s*=/.test(line) &&
+      !/\bbinary-body-mode\s*=/.test(line)
+    )
+      line += ",binary-body-mode=true";
+    text = text.slice(0, first) + line + text.slice(end);
+  }
+  return text;
+}
+export function scriptReferencePhase(
+  text: string,
+  ref: ScriptReference,
+): {
+  phase: "request" | "response" | "echo" | "task";
+  body: boolean;
+  binary: boolean;
+} {
+  const first = text.lastIndexOf("\n", ref.start - 1) + 1,
+    last = text.indexOf("\n", ref.end),
+    line = text.slice(first, last < 0 ? undefined : last);
+  const qx = line.match(/\surl(?:-and-header)?\s+script-([a-z-]+)/);
+  const phase = qx
+    ? qx[1].includes("echo")
+      ? "echo"
+      : qx[1].startsWith("response")
+        ? "response"
+        : "request"
+    : /\btype\s*=\s*http-response/.test(line)
+      ? "response"
+      : /\btype\s*=\s*http-request/.test(line)
+        ? "request"
+        : "task";
+  return {
+    phase,
+    body: qx
+      ? /body|analyze/.test(qx[1])
+      : /\brequires-body\s*=\s*true/.test(line),
+    binary: /\bbinary-body-mode\s*=\s*true/.test(line),
+  };
 }
