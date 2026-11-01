@@ -1,5 +1,5 @@
 # Name: Emby增强[墨鱼整理版]
-# Updated: 2026-11-01 09:49:35 +08:00
+# Updated: 2026-11-01 09:56:39 +08:00
 # Merged by: chance
 # Source Authors: 墨鱼 / ddgksf2013
 # Category: Module
@@ -19,7 +19,9 @@
 # > 下载文件重命名
 (\/[Vv]ideos\/\d+\/stream\?.+&filename)|(\/[Vv]ideos\/\d+\/\w{32}\/[Ss]ubtitles\/.+&filename) url script-response-header https://raw.githubusercontent.com/rartv/EmbyPublic/refs/heads/test/surge/download_file_rename.js
 # > 解决QX抓取某些公益服该请求乱码问题
-\/Users\/\w{32}\/Items\/\d+\? url request-header (\r\n)Accept-Encoding:.+ request-header $Accept-Encoding: gzip, deflate, br
+# Modified: 2026-11-01 (chance). Repair missing CRLF capture references; replace only an existing Accept-Encoding field.
+# Source declaration: \/Users\/\w{32}\/Items\/\d+\? url request-header (\r\n)Accept-Encoding:.+ request-header $Accept-Encoding: gzip, deflate, br
+\/Users\/\w{32}\/Items\/\d+\? url request-header (\r\n)Accept-Encoding:.+(\r\n) request-header $1Accept-Encoding: gzip, deflate, br$2
 
 # [mitm]
 # Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/Function/EmbyPlugin.conf

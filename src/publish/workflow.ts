@@ -345,6 +345,15 @@ export async function writeManagedTargets(state: any, out: any): Promise<any> {
 // Modified: 2026-10-25 (chance). Import native QX resources without passing
 // through the Loon compiler. Keep upstream active text/order and original JS URLs.
 const NATIVE_QX_MARKER: any = "# Managed by: WayX Native QX";
+// Modified: 2026-11-01 (chance). User-authorized repair is restricted to this exact upstream declaration; retain its original text and do not generalize malformed replacement handling.
+export function repairNativeQxSource(source: {url: string; text: string}): string {
+  if (source.url !== "https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/Function/EmbyPlugin.conf") return source.text;
+  const original = String.raw`\/Users\/\w{32}\/Items\/\d+\? url request-header (\r\n)Accept-Encoding:.+ request-header $Accept-Encoding: gzip, deflate, br`;
+  const corrected = String.raw`\/Users\/\w{32}\/Items\/\d+\? url request-header (\r\n)Accept-Encoding:.+(\r\n) request-header $1Accept-Encoding: gzip, deflate, br$2`;
+  return source.text.split("\n").map(line => line === original
+    ? "# Modified: 2026-11-01 (chance). Repair missing CRLF capture references; replace only an existing Accept-Encoding field.\n# Source declaration: " + original + "\n" + corrected
+    : line).join("\n");
+}
 export function mergeNativeQxSources(
   sources: any,
   { name, author, stamp = nowConversionStamp() }: any = {},
@@ -353,7 +362,7 @@ export function mergeNativeQxSources(
     hosts: any = [];
   for (const source of sources) {
     let pending: any = ["# Source: " + source.url];
-    for (const original of source.text
+    for (const original of repairNativeQxSource(source)
       .replace(/^\uFEFF/, "")
       .replace(/\r\n?/g, "\n")
       .split("\n")) {
@@ -833,7 +842,8 @@ function stemOf(rel: any): any {
 function rowKey(category: any, rel: any): any {
   const parts: any = rel.split("/");
   if (category === "Module")
-    return parts.length === 2 ? stemOf(rel) : parts[1] || stemOf(rel);
+    // Modified: 2026-11-01 (chance). Flat per-platform Module directories use the filename identity; do not collapse every app into one platform row.
+    return parts.length === 2 || ["quantumultx", "surge"].includes(normalizePlatformPart(parts[1])) ? stemOf(rel) : parts[1] || stemOf(rel);
   return stemOf(rel);
 }
 async function catalogRowMetadata(root: any, category: any): Promise<any> {

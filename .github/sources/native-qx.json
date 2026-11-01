@@ -43,10 +43,7 @@
         "Function": "Module",
         "Html": "Module"
       },
-      "surge": true,
-      "surge_exclude": {
-        "embyplugin": "Whole-header request-header replacement has no verified equivalent; retain complete QX output only."
-      }
+      "surge": true
     }
   ]
 }

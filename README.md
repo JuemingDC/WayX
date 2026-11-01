@@ -28,6 +28,37 @@
 | :--- | :---: | :---: |
 | **[Apple证书屏蔽验证](https://github.com/JuemingDC/WayX/blob/main/Module/AntiRevoke/QuantumultX/AntiRevoke.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FAntiRevoke%2FQuantumultX%2FAntiRevoke.snippet%2C%20tag%3DApple%E8%AF%81%E4%B9%A6%E5%B1%8F%E8%94%BD%E9%AA%8C%E8%AF%81%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FAntiRevoke%2FSurge%2FAntiRevoke.sgmodule) |
 
+### B
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[哔哩哔哩繁体CC字幕转中文简体[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Module/QuantumultX/ddgksf2013_bilibili-cc.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumultX%2Fddgksf2013_bilibili-cc.snippet%2C%20tag%3D%E5%93%94%E5%93%A9%E5%93%94%E5%93%A9%E7%B9%81%E4%BD%93CC%E5%AD%97%E5%B9%95%E8%BD%AC%E4%B8%AD%E6%96%87%E7%AE%80%E4%BD%93%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013_bilibili-cc.sgmodule) |
+
+### D
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[douban](https://github.com/JuemingDC/WayX/blob/main/Module/QuantumultX/ddgksf2013_douban.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumultX%2Fddgksf2013_douban.snippet%2C%20tag%3Ddouban%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013_douban.sgmodule) |
+
+### E
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[Emby增强[墨鱼整理版]](https://github.com/JuemingDC/WayX/blob/main/Module/QuantumultX/ddgksf2013_embyplugin.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumultX%2Fddgksf2013_embyplugin.snippet%2C%20tag%3DEmby%E5%A2%9E%E5%BC%BA%5B%E5%A2%A8%E9%B1%BC%E6%95%B4%E7%90%86%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013_embyplugin.sgmodule) |
+
+### F
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[forceinstalltf](https://github.com/JuemingDC/WayX/blob/main/Module/QuantumultX/ddgksf2013_forceinstalltf.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumultX%2Fddgksf2013_forceinstalltf.snippet%2C%20tag%3Dforceinstalltf%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013_forceinstalltf.sgmodule) |
+
+### G
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[general](https://github.com/JuemingDC/WayX/blob/main/Module/QuantumultX/ddgksf2013_general.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumultX%2Fddgksf2013_general.snippet%2C%20tag%3Dgeneral%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013_general.sgmodule) |
+| **[google自动翻页](https://github.com/JuemingDC/WayX/blob/main/Module/QuantumultX/ddgksf2013_endlessgoogle.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumultX%2Fddgksf2013_endlessgoogle.snippet%2C%20tag%3Dgoogle%E8%87%AA%E5%8A%A8%E7%BF%BB%E9%A1%B5%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013_endlessgoogle.sgmodule) |
+
 ### K
 
 | Name | Quantumult X | Surge |
@@ -40,6 +71,12 @@
 | :--- | :---: | :---: |
 | **[PingMe 签到](https://github.com/JuemingDC/WayX/blob/main/Module/PingMe/Surge/PingMe.sgmodule)** | — | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FPingMe%2FSurge%2FPingMe.sgmodule) |
 
+### Q
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[q-search](https://github.com/JuemingDC/WayX/blob/main/Module/QuantumultX/ddgksf2013_q-search.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumultX%2Fddgksf2013_q-search.snippet%2C%20tag%3Dq-search%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013_q-search.sgmodule) |
+
 ### S
 
 | Name | Quantumult X | Surge |
@@ -51,13 +88,14 @@
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
 | **[Telegram 第三方客户端重定向](https://github.com/JuemingDC/WayX/blob/main/Module/Telegram/QuantumultX/TelegramRedirect.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FTelegram%2FQuantumultX%2FTelegramRedirect.snippet%2C%20tag%3DTelegram%20%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%87%8D%E5%AE%9A%E5%90%91%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FTelegram%2FSurge%2FTelegramRedirect.sgmodule) |
+| **[TFDownload](https://github.com/JuemingDC/WayX/blob/main/Module/QuantumultX/ddgksf2013_tfdownload.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumultX%2Fddgksf2013_tfdownload.snippet%2C%20tag%3DTFDownload%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013_tfdownload.sgmodule) |
 
 ### U
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
-| **[uposredirect](https://github.com/JuemingDC/WayX/blob/main/Module/QuantumultX/ddgksf2013_uposredirect.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumultX%2Fddgksf2013_uposredirect.snippet%2C%20tag%3Duposredirect%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | — |
-| **[uposredirect](https://github.com/JuemingDC/WayX/blob/main/Module/Surge/ddgksf2013_uposredirect.sgmodule)** | — | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013_uposredirect.sgmodule) |
+| **[unblockurlinwechat](https://github.com/JuemingDC/WayX/blob/main/Module/QuantumultX/ddgksf2013_unblockurlinwechat.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumultX%2Fddgksf2013_unblockurlinwechat.snippet%2C%20tag%3Dunblockurlinwechat%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013_unblockurlinwechat.sgmodule) |
+| **[uposredirect](https://github.com/JuemingDC/WayX/blob/main/Module/QuantumultX/ddgksf2013_uposredirect.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumultX%2Fddgksf2013_uposredirect.snippet%2C%20tag%3Duposredirect%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013_uposredirect.sgmodule) |
 
 ### W
 

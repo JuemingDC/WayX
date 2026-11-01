@@ -9,7 +9,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { conversionStampFromText, firstConversionStamp, generatedScriptDiffs, inspectManagedSource, isWayxGeneratedHelperFilename, managedSourceDigest, managedTargetDiffs, normalizeManagedSource, readCatalogSource, readManagedTargetState, syncGeneratedScripts, syncManagedSource, writeManagedSource, writeManagedTargets, ORIGINAL_FETCH_PROFILES, WAYX_FETCH_UA, resolveOriginalUrl, selectOriginalFetchProfile, loadLoonSourceCatalog, qxTargetPath, surgeTargetPath } from "../src/index.ts";
-import { mergeNativeQxSources, prepareNativeQxSync, commitNativeQxSync, recordOutputMismatch, outputMismatch, validationArtifactDigest, writeValidationEvidence, createWorkflowFailureReporter, formatWorkflowErrorAnnotation, buildSyncFailure, failureDeclarationContext, README_AUTO_UPDATE_INTERVAL, QX_MIXED_REWRITE_MIN_BUILD, buildReadmePlan, qxAddResourceUrl, qxSnippetInstallUrl, surgeModuleInstallUrl } from "../src/publish/workflow.ts";
+import { repairNativeQxSource, mergeNativeQxSources, prepareNativeQxSync, commitNativeQxSync, recordOutputMismatch, outputMismatch, validationArtifactDigest, writeValidationEvidence, createWorkflowFailureReporter, formatWorkflowErrorAnnotation, buildSyncFailure, failureDeclarationContext, README_AUTO_UPDATE_INTERVAL, QX_MIXED_REWRITE_MIN_BUILD, buildReadmePlan, qxAddResourceUrl, qxSnippetInstallUrl, surgeModuleInstallUrl } from "../src/publish/workflow.ts";
 import { isLoonPluginSource } from "../src/application/sync-convert.ts";
 import {validateQxFilterList,validateSurgeRuleSet,validateSurgeRuleSection} from '../src/validation/output.ts';
 import { syncFailureIssueBody, syncFailureTitle, targetProblemIssueBody, targetProblemTitle, monitorFailureTitle, monitorFailureIssueBody, recoveredMonitorIssues, validationIssueCandidates, validationFailureTitle, validationFailureIssueBody, recoveredValidationIssues, recoveredConversionIssues } from "../src/application/propose-conversion-issues.ts";
@@ -430,6 +430,22 @@ for (const phase of ['request','response']) {
   const input='{"storefrontId" : "00000"}';
   assert.equal(input.replace(new RegExp(JSON.parse(tokens[2]),'g'),JSON.parse(tokens[3])),input.replace(new RegExp(regex,'g'),replacement));
 }
+// Modified: 2026-11-01 (chance). Verify the exact authorized Emby repair, CRLF preservation, missing-field no-op and source isolation.
+const embyOriginal=String.raw`\/Users\/\w{32}\/Items\/\d+\? url request-header (\r\n)Accept-Encoding:.+ request-header $Accept-Encoding: gzip, deflate, br`;
+const embySource={url:'https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/Function/EmbyPlugin.conf',text:embyOriginal};
+const embyRepaired=repairNativeQxSource(embySource);
+assert.ok(embyRepaired.includes('# Source declaration: '+embyOriginal));
+assert.equal(repairNativeQxSource({...embySource,url:'https://example.test/other.conf'}),embyOriginal);
+const embyRule=embyRepaired.split('\n').at(-1);
+const headerPattern=embyRule.split(' request-header ')[1];
+const headerTemplate=embyRule.split(' request-header ')[2];
+const head='GET / HTTP/1.1\r\nAccept-Encoding: identity\r\nX-Keep: yes\r\n';
+assert.equal(head.replace(new RegExp(headerPattern),headerTemplate),head.replace('Accept-Encoding: identity','Accept-Encoding: gzip, deflate, br'));
+const noField='GET / HTTP/1.1\r\nX-Keep: yes\r\n';
+assert.equal(noField.replace(new RegExp(headerPattern),headerTemplate),noField);
+const embyConverted=convertNativeQxToSurge('# [rewrite_local]\n'+embyRule);
+assert.equal(embyConverted.diagnostics.length,0);
+assert.ok(embyConverted.surge.includes('header-replace Accept-Encoding gzip, deflate, br'));
 const unscanned=convertNativeQxToSurge(qxConversionInput);
 assert.match(unscanned.surge,/script-path=https:\/\/example.test\/original.js/);
 // Modified: 2026-10-25 (chance). All six native HTTP Script declarations

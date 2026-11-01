@@ -21,6 +21,8 @@ JSON/JQ 表达式以 jqlang 官方标准为依据，不采用第三方转换器�
 
 ## 2.2 编译与目标规划
 
+Modified: 2026-11-01 (chance). 用户授权修正墨鱼 EmbyPlugin 的指定错误声明：仅当源 URL 为 ddgksf2013/Rewrite/master/Function/EmbyPlugin.conf 且整条原文完全匹配时，将 `$Accept-Encoding` 修正为双 CRLF 捕获引用 `$1Accept-Encoding: gzip, deflate, br$2`。保留原声明注释，不推广至其他源、不改变 URL 或脚本。见 docs/moyu-sources.md。
+
 数据流为源解析 → target-neutral Semantic IR → 分条及目标规划 → 目标输出 → 一次最终产物检查。oracle/canonical 为开发者按需运行的工具，不进入日常同步 Action。通用 parser 保留源声明、section/phase、条件、Regex body/flags、captures、变量、选项及动作和声明顺序，不提前套用目标语法。含 Script 的混合声明使用共同词法 scanner 保留并拆分各 action，不把 Script 加入官方 Rewrite action registry。
 
 IR 不包含目标 action 名、section 名、helper URL 或目标 fallback。共享 planner 的结果分为 native-equivalent、guarded-helper、phase-dispatcher、unsupported；转换结果可同时带兼容限制或明确的用户策略说明。

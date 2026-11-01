@@ -475,13 +475,7 @@
     }
   ],
   "skipped": [],
-  "diagnostics": [
-    {
-      "repository": "ddgksf2013/Rewrite",
-      "application": "embyplugin",
-      "reason": "Whole-header request-header replacement has no verified equivalent; retain complete QX output only."
-    }
-  ],
+  "diagnostics": [],
   "outputs": [
     "Adblock/Quantumult X/ddgksf2013_amapads.snippet",
     "Adblock/Surge/ddgksf2013_amapads.sgmodule",
@@ -534,6 +528,7 @@
     "Module/QuantumultX/ddgksf2013_bilibili-cc.snippet",
     "Module/Surge/ddgksf2013_bilibili-cc.sgmodule",
     "Module/QuantumultX/ddgksf2013_embyplugin.snippet",
+    "Module/Surge/ddgksf2013_embyplugin.sgmodule",
     "Module/QuantumultX/ddgksf2013_forceinstalltf.snippet",
     "Module/Surge/ddgksf2013_forceinstalltf.sgmodule",
     "Module/QuantumultX/ddgksf2013_tfdownload.snippet",
