@@ -1402,6 +1402,11 @@ export function convertNativeQxToSurge(
       sections["URL Rewrite"].push(pattern + " _ reject");
       continue;
     }
+    // Modified: 2026-11-01 (chance). QX reject-img returns HTTP 200/1px GIF; use the existing Surge inline mock semantics, not a rejecting policy.
+    if (action === "reject-img") {
+      sections["Map Local"].push(pattern + " data-type=tiny-gif status-code=200");
+      continue;
+    }
     if (["reject-200", "reject-dict", "reject-array"].includes(action)) {
       const body: any =
         action === "reject-dict" ? "{}" : action === "reject-array" ? "[]" : "";
@@ -1429,11 +1434,14 @@ export function convertNativeQxToSurge(
       continue;
     }
     const body: any = action.match(
-      /^(request|response)-body\s+(\S+)\s+\1-body\s+(.*)$/,
+      /^(request|response)-body\s+(.+?)\s+\1-body\s+(.*)$/,
     );
     if (body) {
       sections["Body Rewrite"].push(
-        "http-" + body[1] + " " + pattern + " " + body[2] + " " + body[3],
+        // Modified: 2026-11-01 (chance). Split at the repeated QX action delimiter; quote whole Surge tokens so spaces, quotes and backslashes stay literal.
+        "http-" + body[1] + " " + pattern + " " +
+          (/\s|["\\]/.test(body[2]) ? JSON.stringify(body[2]) : body[2]) + " " +
+          (/\s|["\\]/.test(body[3]) || !body[3] ? JSON.stringify(body[3]) : body[3]),
       );
       continue;
     }

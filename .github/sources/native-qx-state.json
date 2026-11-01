@@ -478,22 +478,13 @@
   "diagnostics": [
     {
       "repository": "ddgksf2013/Rewrite",
-      "application": "amapads",
-      "reason": "QX reject-img has no verified equivalent; retain complete QX output only."
-    },
-    {
-      "repository": "ddgksf2013/Rewrite",
       "application": "embyplugin",
       "reason": "Whole-header request-header replacement has no verified equivalent; retain complete QX output only."
-    },
-    {
-      "repository": "ddgksf2013/Rewrite",
-      "application": "tfdownload",
-      "reason": "QX request-body replacement has no verified equivalent; retain complete QX output only."
     }
   ],
   "outputs": [
     "Adblock/Quantumult X/ddgksf2013_amapads.snippet",
+    "Adblock/Surge/ddgksf2013_amapads.sgmodule",
     "Adblock/Quantumult X/ddgksf2013_applet.snippet",
     "Adblock/Surge/ddgksf2013_applet.sgmodule",
     "Adblock/Quantumult X/ddgksf2013_bilibilicomicsads.snippet",
@@ -546,6 +537,7 @@
     "Module/QuantumultX/ddgksf2013_forceinstalltf.snippet",
     "Module/Surge/ddgksf2013_forceinstalltf.sgmodule",
     "Module/QuantumultX/ddgksf2013_tfdownload.snippet",
+    "Module/Surge/ddgksf2013_tfdownload.sgmodule",
     "Module/QuantumultX/ddgksf2013_unblockurlinwechat.snippet",
     "Module/Surge/ddgksf2013_unblockurlinwechat.sgmodule",
     "Module/QuantumultX/ddgksf2013_uposredirect.snippet",

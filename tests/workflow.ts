@@ -413,6 +413,23 @@ assert.equal(headerConverted.diagnostics.length,0);
 assert.match(headerConverted.surge,/\[Header Rewrite\]\nhttp-request \^https:\/\/github\\\.com header-replace Accept-Language en-us/);
 assert.equal(convertNativeQxToSurge(headerInput.replace('Accept-Language: en-us','Other: en-us')).diagnostics.length,1);
 assert.equal(convertNativeQxToSurge(headerInput.replaceAll('Accept-Language','Content-Length')).diagnostics.length,1);
+// Modified: 2026-11-01 (chance). Image mocks and whitespace-bearing QX body replacements retain response status and complete regex/template tokens.
+const imageNative=convertNativeQxToSurge('# [rewrite_local]\n^https://img.example/ad url reject-img');
+assert.equal(imageNative.diagnostics.length,0);
+assert.match(imageNative.surge,/data-type=tiny-gif status-code=200/);
+assert.doesNotMatch(imageNative.surge,/REJECT-TINYGIF/);
+for (const phase of ['request','response']) {
+  const regex='storefrontId" : ".*"';
+  const replacement='storefrontId" : "143441-1,29"';
+  const result=convertNativeQxToSurge('# [rewrite_local]\n^https://tf.example/install url '+phase+'-body '+regex+' '+phase+'-body '+replacement);
+  assert.equal(result.diagnostics.length,0);
+  const row=result.surge.split('\n').find(line=>line.startsWith('http-'+phase+' '));
+  const tokens=row.match(/"(?:\\.|[^"\\])*"|\S+/g);
+  assert.equal(JSON.parse(tokens[2]),regex);
+  assert.equal(JSON.parse(tokens[3]),replacement);
+  const input='{"storefrontId" : "00000"}';
+  assert.equal(input.replace(new RegExp(JSON.parse(tokens[2]),'g'),JSON.parse(tokens[3])),input.replace(new RegExp(regex,'g'),replacement));
+}
 const unscanned=convertNativeQxToSurge(qxConversionInput);
 assert.match(unscanned.surge,/script-path=https:\/\/example.test\/original.js/);
 // Modified: 2026-10-25 (chance). All six native HTTP Script declarations
