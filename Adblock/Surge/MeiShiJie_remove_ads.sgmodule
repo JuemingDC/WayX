@@ -16,7 +16,7 @@
 # Target: Surge
 
 [Body Rewrite]
-http-response-jq ^https:\/\/newapi\.meishi\.cc\/indexnew\/home_feeds 'if .data.items then .data.items |= map(select(.type | . != "101" and . != "12")) else . end'
+http-response-jq (?i)^https:\/\/newapi\.meishi\.cc\/indexnew\/home_feeds 'if .data.items then .data.items |= map(select(.type | . != "101" and . != "12")) else . end'
 
 [MITM]
 hostname = %APPEND% newapi.meishi.cc

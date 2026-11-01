@@ -16,11 +16,11 @@
 # Target: Surge
 
 [Body Rewrite]
-http-response-jq ^https:\/\/api\.wmpvp\.com\/api\/v1\/config\/promote$ 'del(.data.ad)'
+http-response-jq (?i)^https:\/\/api\.wmpvp\.com\/api\/v1\/config\/promote$ 'del(.data.ad)'
 
 [Map Local]
 
-^https:\/\/appactivity\.wmpvp\.com\/hotsearch\/all\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/appactivity\.wmpvp\.com\/hotsearch\/all\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% api.wmpvp.com, appactivity.wmpvp.com

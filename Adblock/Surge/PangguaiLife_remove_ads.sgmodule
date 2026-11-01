@@ -17,21 +17,21 @@
 
 [Body Rewrite]
 
-http-response-jq ^https:\/\/userapi\.qiekj\.com\/local-life\/tab-order$ 'setpath(["data"]; "[]")'
-http-response-jq ^https:\/\/userapi\.qiekj\.com\/integralGoods\/queryIntegralGoodsCategoryList$ 'setpath(["data"]; "[]")'
+http-response-jq (?i)^https:\/\/userapi\.qiekj\.com\/local-life\/tab-order$ 'setpath(["data"]; "[]")'
+http-response-jq (?i)^https:\/\/userapi\.qiekj\.com\/integralGoods\/queryIntegralGoodsCategoryList$ 'setpath(["data"]; "[]")'
 
 [Map Local]
-^https:\/\/userapi\.qiekj\.com\/slot\/get$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/userapi\.qiekj\.com\/slot\/get$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/userapi\.qiekj\.com\/appTitle\/get$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/userapi\.qiekj\.com\/appTitle\/get$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/userapi\.qiekj\.com\/integralRecord\/integralDailStatistics$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/userapi\.qiekj\.com\/integralRecord\/integralDailStatistics$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/userapi\.qiekj\.com\/local-life\/category$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/userapi\.qiekj\.com\/local-life\/category$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/userapi\.qiekj\.com\/integralGoods\/queryIntegralGoodsPage$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/userapi\.qiekj\.com\/integralGoods\/queryIntegralGoodsPage$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/userapi\.qiekj\.com\/task\/list$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/userapi\.qiekj\.com\/task\/list$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% userapi.qiekj.com

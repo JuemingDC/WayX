@@ -17,10 +17,10 @@
 
 [Body Rewrite]
 
-http-response-jq ^https:\/\/api\.wakeup\.fun\/wakeup\/user\/mine$ 'del(.data.bannerItems)'
+http-response-jq (?i)^https:\/\/api\.wakeup\.fun\/wakeup\/user\/mine$ 'del(.data.bannerItems)'
 
 [Map Local]
-^https:\/\/api\.wakeup\.fun\/wakeup\/app\/bannerconf$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/api\.wakeup\.fun\/wakeup\/app\/bannerconf$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% api.wakeup.fun

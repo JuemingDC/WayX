@@ -20,14 +20,14 @@ URL-REGEX,^https:\/\/(ask|cgate)\.zhaopin\.com\/operation\/ad\/,REJECT,extended-
 
 [URL Rewrite]
 
-^https:\/\/cgate\.zhaopin\.com\/bdp\/commercial\/queryLinkData$ _ reject
+(?i)^https:\/\/cgate\.zhaopin\.com\/bdp\/commercial\/queryLinkData$ _ reject
 
 [Body Rewrite]
-http-response-jq ^https:\/\/ask\.zhaopin\.com\/plat-zqa-server\/home\/\d\.\d\.\d\/getHomeContents\? 'delpaths([["data","templates",0,"data","banner"]])'
+http-response-jq (?i)^https:\/\/ask\.zhaopin\.com\/plat-zqa-server\/home\/\d\.\d\.\d\/getHomeContents\? 'delpaths([["data","templates",0,"data","banner"]])'
 
 [Map Local]
 
-^https:\/\/cgate\.zhaopin\.com\/resumeapi\/resumeCheck\/positionDetailBottomTipCheck$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/cgate\.zhaopin\.com\/resumeapi\/resumeCheck\/positionDetailBottomTipCheck$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% ask.zhaopin.com, cgate.zhaopin.com

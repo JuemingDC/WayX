@@ -17,24 +17,24 @@
 
 [Body Rewrite]
 
-http-response-jq ^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do\?action=22004 'del(.data.link)'
+http-response-jq (?i)^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do\?action=22004 'del(.data.link)'
 
 [Map Local]
-^https:\/\/api\.58moto\.com\/advert\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/api\.58moto\.com\/advert\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/api\.58moto\.com\/mall\/goods\/self\/list\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/api\.58moto\.com\/mall\/goods\/self\/homeList\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/api\.58moto\.com\/mall\/goods\/self\/list\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/api\.58moto\.com\/mall\/goods\/self\/homeList\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do\?action=22025 data-type=text data="{\"code\":0,\"msg\":\"success\"}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do\?action=22025 data-type=text data="{\"code\":0,\"msg\":\"success\"}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do\?action=22038 data-type=text data="{\"code\":0,\"msg\":\"success\"}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do\?action=22038 data-type=text data="{\"code\":0,\"msg\":\"success\"}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/api\.58moto\.com\/forum\/public\/labelController\.do\?action=20112 data-type=text data="{\"code\":0,\"msg\":\"success\"}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/api\.58moto\.com\/forum\/public\/labelController\.do\?action=20112 data-type=text data="{\"code\":0,\"msg\":\"success\"}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-修改配置 = type=http-response,pattern=^https:\/\/api\.58moto\.com\/expands\/config\/appWholeConfig\?key=app_whole_config$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/28e7d9d5ad8f354c52ac7d0660709a809f8386b593b0b5cc1ffc88b796844ee1/MotorFans_remove_ads.js,requires-body=true,max-size=-1,timeout=20
+修改配置 = type=http-response,pattern=(?i)^https:\/\/api\.58moto\.com\/expands\/config\/appWholeConfig\?key=app_whole_config$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/28e7d9d5ad8f354c52ac7d0660709a809f8386b593b0b5cc1ffc88b796844ee1/MotorFans_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% api.58moto.com

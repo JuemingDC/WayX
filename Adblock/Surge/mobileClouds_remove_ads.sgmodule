@@ -15,9 +15,9 @@
 # Target: Surge
 
 [Script]
-移除开屏广告 = type=http-response,pattern=^https:\/\/jzts\.cmpassport\.com\/personalized\/getPushContent,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/9858236b73662cb2e7afd86b4b7dd9bff9525d6fd6b7eb8a500c226834b618a2/mobileClouds_remove_ads.js,requires-body=true,max-size=-1,timeout=20
+移除开屏广告 = type=http-response,pattern=(?i)^https:\/\/jzts\.cmpassport\.com\/personalized\/getPushContent,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/9858236b73662cb2e7afd86b4b7dd9bff9525d6fd6b7eb8a500c226834b618a2/mobileClouds_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
-移除应用内广告 = type=http-response,pattern=^https:\/\/ad\.mcloud\.139\.com\/advertapi\/adv-filter\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/9858236b73662cb2e7afd86b4b7dd9bff9525d6fd6b7eb8a500c226834b618a2/mobileClouds_remove_ads.js,requires-body=true,max-size=-1,timeout=20
+移除应用内广告 = type=http-response,pattern=(?i)^https:\/\/ad\.mcloud\.139\.com\/advertapi\/adv-filter\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/9858236b73662cb2e7afd86b4b7dd9bff9525d6fd6b7eb8a500c226834b618a2/mobileClouds_remove_ads.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% jzts.cmpassport.com, ad.mcloud.139.com

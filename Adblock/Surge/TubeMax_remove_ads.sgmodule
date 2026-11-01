@@ -28,7 +28,7 @@ DOMAIN-SUFFIX,adsmoloco.com,REJECT,extended-matching,pre-matching
 DOMAIN-SUFFIX,adcanvas.com,REJECT,extended-matching,pre-matching
 
 [URL Rewrite]
-^https:\/\/.*\.i18n-pglstatp\.com\/obj\/ad-pattern-sg _ reject
+(?i)^https:\/\/.*\.i18n-pglstatp\.com\/obj\/ad-pattern-sg _ reject
 
 [MITM]
 hostname = %APPEND% *.i18n-pglstatp.com

@@ -16,11 +16,11 @@
 # Target: Surge
 
 [Map Local]
-^https:\/\/jz\.wacaijizhang\.com\/api\/banners\/ribbon\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/jz\.wacaijizhang\.com\/api\/banners\/ribbon\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/jz\.wacaijizhang\.com\/api\/banners\/list\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/jz\.wacaijizhang\.com\/api\/banners\/list\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/jz\.wacaijizhang\.com\/api\/resource\/universal\/fetch$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/jz\.wacaijizhang\.com\/api\/resource\/universal\/fetch$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% jz.wacaijizhang.com

@@ -15,7 +15,7 @@
 # Target: Surge
 
 [URL Rewrite]
-^https:\/\/api\.miaomiaoyd\.com\/book\/config\/getAdsSettings$ _ reject
+(?i)^https:\/\/api\.miaomiaoyd\.com\/book\/config\/getAdsSettings$ _ reject
 
 [MITM]
 hostname = %APPEND% api.miaomiaoyd.com

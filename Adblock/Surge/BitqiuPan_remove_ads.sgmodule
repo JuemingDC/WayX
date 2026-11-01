@@ -16,11 +16,11 @@
 # Target: Surge
 
 [Map Local]
-^https:\/\/pan-api\.bitqiu\.com\/activity\/getPromoteGuide$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/pan-api\.bitqiu\.com\/activity\/getPromoteGuide$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^http:\/\/pan-api\.bitqiu\.com\/activity\/getUrlList$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^http:\/\/pan-api\.bitqiu\.com\/activity\/getUrlList$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/pan-api\.bitqiu\.com\/activity\/guides$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/pan-api\.bitqiu\.com\/activity\/guides$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% pan-api.bitqiu.com

@@ -20,7 +20,7 @@ DOMAIN,adui.tg.meitu.com,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
 
-http-response-jq ^https:\/\/api\.posters\.meitu\.com\/common\/init\.json 'del(.data.vip)'
+http-response-jq (?i)^https:\/\/api\.posters\.meitu\.com\/common\/init\.json 'del(.data.vip)'
 
 [MITM]
 hostname = %APPEND% api.posters.meitu.com

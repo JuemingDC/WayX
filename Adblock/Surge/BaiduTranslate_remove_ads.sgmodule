@@ -17,18 +17,16 @@
 
 [URL Rewrite]
 
-^https:\/\/fanyi-app\.baidu\.com\/static\/react-activity\/page\/courseBoutique\.html\? _ reject
+(?i)^https:\/\/fanyi-app\.baidu\.com\/static\/react-activity\/page\/courseBoutique\.html\? _ reject
 
 [Body Rewrite]
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
-http-response-jq ^https:\/\/fanyi-app\.baidu\.com\/transapp\/comment\/my\? 'del(.data.taskBanner,.data.act)'
+http-response-jq (?i)^https:\/\/fanyi-app\.baidu\.com\/transapp\/comment\/my\? 'del(.data.taskBanner,.data.act)'
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
-http-response-jq ^https:\/\/fanyi-app\.baidu\.com\/transapp\/recitewd\/myplan\? 'del(.data.activityRec,.data.activityRecList)'
+http-response-jq (?i)^https:\/\/fanyi-app\.baidu\.com\/transapp\/recitewd\/myplan\? 'del(.data.activityRec,.data.activityRecList)'
 
 [Map Local]
-^https:\/\/fanyi-app\.baidu\.com\/transapp\/v2\/api\/launch\/config\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/fanyi-app\.baidu\.com\/transapp\/v2\/api\/launch\/config\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% fanyi-app.baidu.com

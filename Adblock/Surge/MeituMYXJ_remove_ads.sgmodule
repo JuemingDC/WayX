@@ -19,18 +19,16 @@
 DOMAIN,adui.tg.meitu.com,REJECT,extended-matching,pre-matching
 
 [Body Rewrite]
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
-http-response-jq ^https:\/\/api\.meiyan\.com\/operation\/get_config\.json\? 'del(.response.time_limit,.response.bubble,.response.person_center)'
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
-http-response-jq ^https:\/\/api\.meiyan\.com\/operation\/get_config\.json\? 'setpath(["response","function_pop","meiyan_style","is_pop"]; false) | setpath(["response","onoff","vip_half_window_exit_remain_popup","open"]; 0) | setpath(["response","onoff","vip_home_exit_remain_popup"]; 0)'
+http-response-jq (?i)^https:\/\/api\.meiyan\.com\/operation\/get_config\.json\? 'del(.response.time_limit,.response.bubble,.response.person_center)'
+http-response-jq (?i)^https:\/\/api\.meiyan\.com\/operation\/get_config\.json\? 'setpath(["response","function_pop","meiyan_style","is_pop"]; false) | setpath(["response","onoff","vip_half_window_exit_remain_popup","open"]; 0) | setpath(["response","onoff","vip_home_exit_remain_popup"]; 0)'
 
 [Map Local]
-^https:\/\/api\.meiyan\.com\/operation\/home_banner\.json\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/api\.meiyan\.com\/operation\/home_banner\.json\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/api\.meiyan\.com\/vip\/permission_update_popup\.json\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/api\.meiyan\.com\/vip\/permission_update_popup\.json\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-精简首页功能栏目并移除美颜推荐 = type=http-response,pattern=^https:\/\/api\.meiyan\.com\/operation\/home\.json\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-surge/ec9674300c04924b9424d246900667e49e6cbb29d26f22e0e25d6ec1930c45ed.js,requires-body=true,max-size=-1,timeout=20
+精简首页功能栏目并移除美颜推荐 = type=http-response,pattern=(?i)^https:\/\/api\.meiyan\.com\/operation\/home\.json\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-surge/ec9674300c04924b9424d246900667e49e6cbb29d26f22e0e25d6ec1930c45ed.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% api.meiyan.com

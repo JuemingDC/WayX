@@ -16,12 +16,12 @@
 # Target: Surge
 
 [Map Local]
-^https:\/\/m\.riskbird\.com\/prod-qbb-api\/user\/getBannerList data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/m\.riskbird\.com\/prod-qbb-api\/user\/getBannerList data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/m\.riskbird\.com\/prod-qbb-api\/searchHotEnt data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/m\.riskbird\.com\/prod-qbb-api\/searchHotEnt data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-移除推荐老板 = type=http-response,pattern=^https:\/\/m\.riskbird\.com\/prod-qbb-api\/query\/person\/personRecommend,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-surge/db4048a46ecb6727f04bafc5833ae8cf79581d0634aa2eff2c6927006ab5920e.js,requires-body=true,max-size=-1,timeout=20
+移除推荐老板 = type=http-response,pattern=(?i)^https:\/\/m\.riskbird\.com\/prod-qbb-api\/query\/person\/personRecommend,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-surge/db4048a46ecb6727f04bafc5833ae8cf79581d0634aa2eff2c6927006ab5920e.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% m.riskbird.com

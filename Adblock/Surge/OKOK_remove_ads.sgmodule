@@ -17,14 +17,14 @@
 
 [URL Rewrite]
 
-^https:\/\/shop171777386\.m\.youzan\.com\/v2\/showcase\/homepage\? _ reject
+(?i)^https:\/\/shop171777386\.m\.youzan\.com\/v2\/showcase\/homepage\? _ reject
 
 [Map Local]
-^https:\/\/api\.chips-cloud\.com\/v\d\/home\/collection\/smartv\d\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/api\.chips-cloud\.com\/v\d\/home\/collection\/smartv\d\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/api\.chips-cloud\.com\/v\d\/communityManage\/list\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/api\.chips-cloud\.com\/v\d\/communityManage\/list\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
-^https:\/\/api\.chips-cloud\.com\/v\d\/good\/list\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/api\.chips-cloud\.com\/v\d\/good\/list\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% api.chips-cloud.com, shop171777386.m.youzan.com

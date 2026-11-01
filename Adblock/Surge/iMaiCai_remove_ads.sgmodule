@@ -16,16 +16,16 @@
 # Target: Surge
 
 [Map Local]
-^https:\/\/mall\.meituan\.com\/api\/c\/homepage\/splash data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/mall\.meituan\.com\/api\/c\/homepage\/bubble\/operate\/info data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/mall\.meituan\.com\/api\/c\/jigsaw\/code\/category-banner-\d+\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/mall\.meituan\.com\/api\/c\/poi\/\d+\/order\/recommend\/v\d data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/mall\.meituan\.com\/api\/c\/banner\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/mall\.meituan\.com\/api\/c\/poi\/\d+\/personal\/recommend data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/businessapi\.ksedt\.com\/signupindex\/jxlist data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/mall\.meituan\.com\/api\/c\/homepage\/splash data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/mall\.meituan\.com\/api\/c\/homepage\/bubble\/operate\/info data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/mall\.meituan\.com\/api\/c\/jigsaw\/code\/category-banner-\d+\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/mall\.meituan\.com\/api\/c\/poi\/\d+\/order\/recommend\/v\d data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/mall\.meituan\.com\/api\/c\/banner\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/mall\.meituan\.com\/api\/c\/poi\/\d+\/personal\/recommend data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/businessapi\.ksedt\.com\/signupindex\/jxlist data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-移除下发广告 = type=http-response,pattern=^https:\/\/portal-portm\.meituan\.com\/horn_ios\/mergeRequest,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-surge/54f78ec7b7e84be7790fd9f229c789e628c3eda94b969aa8747c552d3eaac82f.js,requires-body=true,max-size=-1,timeout=20
+移除下发广告 = type=http-response,pattern=(?i)^https:\/\/portal-portm\.meituan\.com\/horn_ios\/mergeRequest,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Api/loon-to-surge/54f78ec7b7e84be7790fd9f229c789e628c3eda94b969aa8747c552d3eaac82f.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% portal-portm.meituan.com, mall.meituan.com, businessapi.ksedt.com

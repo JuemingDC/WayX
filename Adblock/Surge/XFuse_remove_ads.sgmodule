@@ -15,7 +15,7 @@
 # Target: Surge
 
 [URL Rewrite]
-^https:\/\/cili\.xfuse\.fun\/s\/ _ reject
+(?i)^https:\/\/cili\.xfuse\.fun\/s\/ _ reject
 
 [MITM]
 hostname = %APPEND% cili.xfuse.fun, i.micecube.com, img.mofyi.com

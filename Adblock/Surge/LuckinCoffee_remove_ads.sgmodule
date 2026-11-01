@@ -15,20 +15,20 @@
 # Target: Surge
 
 [URL Rewrite]
-^https:\/\/capi\.lkcoffee\.com\/resource\/m\/growUp\/calendarList _ reject
+(?i)^https:\/\/capi\.lkcoffee\.com\/resource\/m\/growUp\/calendarList _ reject
 
-^https:\/\/capi\.lkcoffee\.com\/resource\/m\/promotion\/giftCard\/topPage _ reject
+(?i)^https:\/\/capi\.lkcoffee\.com\/resource\/m\/promotion\/giftCard\/topPage _ reject
 
-^https:\/\/capi\.lkcoffee\.com\/resource\/m\/sys\/base\/myLittleLuck _ reject
+(?i)^https:\/\/capi\.lkcoffee\.com\/resource\/m\/sys\/base\/myLittleLuck _ reject
 
-^https:\/\/capi\.lkcoffee\.com\/resource\/core\/v2\/menu\/ordinaryUserLayeredArea _ reject
+(?i)^https:\/\/capi\.lkcoffee\.com\/resource\/core\/v2\/menu\/ordinaryUserLayeredArea _ reject
 
-^https:\/\/capi\.lkcoffee\.com\/resource\/m\/sys\/common\/modules _ reject
+(?i)^https:\/\/capi\.lkcoffee\.com\/resource\/m\/sys\/common\/modules _ reject
 
-^https:\/\/capi\.lkcoffee\.com\/resource\/core\/v2\/homepage\/homePageCoffeeList _ reject
-^https:\/\/capi\.lkcoffee\.com\/resource\/m\/eorder\/product\/popAppTagProductList _ reject
+(?i)^https:\/\/capi\.lkcoffee\.com\/resource\/core\/v2\/homepage\/homePageCoffeeList _ reject
+(?i)^https:\/\/capi\.lkcoffee\.com\/resource\/m\/eorder\/product\/popAppTagProductList _ reject
 
-^https:\/\/capi\.lkcoffee\.com\/resource\/m\/sys\/app\/adposNew _ reject
+(?i)^https:\/\/capi\.lkcoffee\.com\/resource\/m\/sys\/app\/adposNew _ reject
 
 [MITM]
 hostname = %APPEND% capi.lkcoffee.com

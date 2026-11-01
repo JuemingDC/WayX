@@ -16,12 +16,12 @@
 # Target: Surge
 
 [Body Rewrite]
-http-response-jq ^https:\/\/95598\.csg\.cn\/mp\/mpaas\/mgw\.htm$ 'if .info | contains("RUBIK-TRACEID:") then .scene.page.areas |= map(select(.areaId | test("kingkong_|9grid_|message_|nearmap_|recommend_"))) else . end'
+http-response-jq (?i)^https:\/\/95598\.csg\.cn\/mp\/mpaas\/mgw\.htm$ 'if .info | contains("RUBIK-TRACEID:") then .scene.page.areas |= map(select(.areaId | test("kingkong_|9grid_|message_|nearmap_|recommend_"))) else . end'
 
 [Map Local]
 
-^https:\/\/95598\.csg\.cn\/mp\/ucs\/ma\/zt\/content\/queryHotInformations$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-^https:\/\/95598\.csg\.cn\/mp\/mpaas\/rubik\/openapi\/rubik\/mobile\/getRubikScene$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/95598\.csg\.cn\/mp\/ucs\/ma\/zt\/content\/queryHotInformations$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+(?i)^https:\/\/95598\.csg\.cn\/mp\/mpaas\/rubik\/openapi\/rubik\/mobile\/getRubikScene$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% 95598.csg.cn
