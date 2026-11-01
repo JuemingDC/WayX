@@ -35,16 +35,20 @@ jobs:
     if: github.event_name == 'pull_request' || github.ref_name == 'main' || github.ref_name == 'test'
     runs-on: ubuntu-26.04
     timeout-minutes: 90
+    # Modified: 2026-11-01 (chance). Share bash fail-fast/pipefail semantics instead of repeating shell setup in every step.
+    defaults:
+      run:
+        shell: bash
     env:
       PUBLISH_BRANCH: ${{ github.event_name != 'pull_request' && github.ref_name || (github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'test' && 'test' || '') }}
       EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
+      # Modified: 2026-11-01 (chance). Use verified v7 patch releases; publication only needs the requested HEAD, not full history.
       - name: Checkout requested baseline
-        uses: actions/checkout@v7
+        uses: actions/checkout@v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-          fetch-depth: 0
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@v7.1.0
         with:
           # October 2026 security release; continue tracking patched Node 26 builds.
           node-version: '^26.12.1'
@@ -56,129 +60,94 @@ jobs:
       # Modified: 2026-10-23 (chance). Pin the official jq compiler used by
       # conversion and final validation instead of inheriting the runner version.
       - name: Install verified jq 1.8.2
-        run: node src/cli.ts setup_jq
+        run: node src/cli.ts setup-jq
 
       - name: Run semantic regression suites for proposed code changes
         if: github.event_name == 'pull_request'
         run: npm test
 
       - name: Prepare runtime logs and enforce branch budget
-        shell: bash
-        run: |
-          set -euo pipefail
-          node src/cli.ts prepare
+        run: node src/cli.ts prepare
 
       - name: Refresh plugin catalogs and prune retired artifacts
         id: catalog
         env:
           RUCU6_LIST_URL: ${{ vars.RUCU6_LIST_URL }}
         continue-on-error: true
-        shell: bash
-        run: |
-          set -euo pipefail
-          node src/cli.ts catalog 2>&1 | tee .github/monitor/.runtime/catalog.log
+        run: node src/cli.ts catalog 2>&1 | tee .github/monitor/.runtime/catalog.log
 
       - name: Aggregate and convert routing rule sets
         id: rules
         if: steps.catalog.outcome == 'success'
         continue-on-error: true
-        shell: bash
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          node src/cli.ts rules
+        run: node src/cli.ts rules
 
       - name: Pull discovered upstreams and convert
         id: loon_sync
         if: steps.catalog.outcome == 'success'
         continue-on-error: true
-        shell: bash
-        run: |
-          set -euo pipefail
-          node src/cli.ts sync 2>&1 | tee .github/monitor/.runtime/loon-sync.log
+        run: node src/cli.ts sync 2>&1 | tee .github/monitor/.runtime/loon-sync.log
 
       - name: Verify complete generated repository
         id: verify
         if: steps.loon_sync.outputs.publishable == 'true'
         continue-on-error: true
-        shell: bash
-        run: |
-          set -euo pipefail
-          node src/cli.ts verify 2>&1 | tee .github/monitor/.runtime/verification.log
+        run: node src/cli.ts verify 2>&1 | tee .github/monitor/.runtime/verification.log
 
       - name: Check monitored upstream specifications
         id: monitor
         if: env.PUBLISH_BRANCH != '' && steps.catalog.outcome == 'success'
         continue-on-error: true
-        shell: bash
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          node src/cli.ts monitor 2>&1 | tee .github/monitor/.runtime/monitor.log
+        run: node src/cli.ts monitor 2>&1 | tee .github/monitor/.runtime/monitor.log
 
       - name: Generate reconciliation and Review inventory
         id: reports
         if: always()
         continue-on-error: true
-        shell: bash
-        run: |
-          set -euo pipefail
-          node src/cli.ts reports 2>&1 | tee .github/monitor/.runtime/reports.log
+        run: node src/cli.ts reports 2>&1 | tee .github/monitor/.runtime/reports.log
 
       - name: Create or update conversion issues
         id: issues
         if: always()
         continue-on-error: true
-        shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-          PUBLISH_BRANCH: ${{ env.PUBLISH_BRANCH }}
           STAGES: ${{ toJSON(steps) }}
-        run: |
-          set -euo pipefail
-          node src/cli.ts issues 2>&1 | tee .github/monitor/.runtime/issues.log
+        run: node src/cli.ts issues 2>&1 | tee .github/monitor/.runtime/issues.log
 
       - name: Evaluate publication gates
         id: gate
         if: always()
-        shell: bash
         env:
           STAGES: ${{ toJSON(steps) }}
           SYNC_PUBLISHABLE: ${{ steps.loon_sync.outputs.publishable }}
           MONITOR_ENABLED: ${{ env.PUBLISH_BRANCH != '' && 'true' || 'false' }}
           MONITOR_COMPLETE: ${{ steps.monitor.outputs.complete }}
-        run: |
-          set -euo pipefail
-          node src/cli.ts gate
+        run: node src/cli.ts gate
 
       - name: Publish validated outputs to the existing branch
         id: publish
         if: always()
         continue-on-error: true
-        shell: bash
         env:
           PUBLISHABLE: ${{ steps.gate.outputs.publishable }}
-          PUBLISH_BRANCH: ${{ env.PUBLISH_BRANCH }}
-          EXPECTED_HEAD: ${{ env.EXPECTED_HEAD }}
           MONITOR_ENABLED: ${{ env.PUBLISH_BRANCH != '' && 'true' || 'false' }}
-        run: |
-          set -euo pipefail
-          node src/cli.ts publish
+        run: node src/cli.ts publish
 
       - name: Record run summary
         if: always()
-        shell: bash
         env:
           PUBLICATION: ${{ steps.publish.outputs.publication }}
-        run: |
-          set -euo pipefail
-          node src/cli.ts summary
+        run: node src/cli.ts summary
 
+      # Modified: 2026-11-01 (chance). Include functional native Module outputs in the downloadable artifacts.
       - name: Upload automation reports and generated outputs
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: wayx-conversion-${{ github.run_id }}-${{ github.run_attempt }}
           if-no-files-found: warn
@@ -192,16 +161,15 @@ jobs:
             Rule/
             Adblock/Quantumult X/
             Adblock/Surge/
+            Module/QuantumultX/
+            Module/Surge/
             Script/
             README.md
 
       - name: Surface blocked or failed publication
         if: always()
-        shell: bash
         env:
           PUBLISHABLE: ${{ steps.gate.outputs.publishable }}
           PUBLICATION_OUTCOME: ${{ steps.publish.outcome }}
-        run: |
-          set -euo pipefail
-          node src/cli.ts final
+        run: node src/cli.ts final
 

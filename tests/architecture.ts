@@ -19,7 +19,11 @@ for(const file of await listFiles('src')){
 const workflow=await fs.readFile('.github/workflows/converter-check.yml','utf8');
 assert.doesNotMatch(workflow,/setup-python|automation\.py/);assert.match(workflow,/npm ci/);assert.match(workflow,/node src\/cli\.ts gate/);
 assert.match(workflow,/steps\.loon_sync\.outputs\.publishable == 'true'/);assert.match(workflow,/cancel-in-progress: false/);
-assert.match(workflow,/cron: '30 17 \* \* \*'/);
+// Modified: 2026-11-01 (chance). Assert the current 05:30 Beijing schedule and shared shell defaults.
+assert.match(workflow,/cron: '30 21 \* \* \*'/);
+assert.match(workflow,/defaults:\n      run:\n        shell: bash/);
+assert.doesNotMatch(workflow,/set -euo pipefail|fetch-depth: 0/);
+for(const directory of ['Module/QuantumultX/','Module/Surge/'])assert.ok(workflow.includes(directory));
 const spec=await fs.readFile('.github/CONVERSION_SPEC.md','utf8');
 for(const requirement of ['Semantic IR','false negative','native-equivalent','crossutility/Quantumult-X','manual.nssurge.com'])assert.ok(spec.includes(requirement),requirement);
 console.log('TypeScript architecture: imports, pure domain, workflow gates and normative semantics passed');

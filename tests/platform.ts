@@ -6,7 +6,7 @@ import {archiveOpaque,identifyResource,opaqueEntries,clearOpaque} from '../src/i
 import {buildCatalog,extractLpxUrl,buildRucu6Catalog} from '../src/ingest/catalog.ts';
 import {monitorSource,normalizeDocument,selected} from '../src/application/monitor.ts';
 import {commitFiles,safePath} from '../src/publish/transaction.ts';
-import {executeChecks,publicationGate} from '../src/application/automation.ts';
+import {executeChecks,publicationGate,publish} from '../src/application/automation.ts';
 import {validateQX,validateSurgeModule,convertPlugin} from '../src/index.ts';
 const root=await fs.mkdtemp(path.join(os.tmpdir(),'wayx-platform-')),cwd=process.cwd();
 try{
@@ -66,5 +66,18 @@ try{
  const evidence=JSON.parse(await fs.readFile('.github/monitor/.runtime/validation-results.json','utf8'));assert.deepEqual(evidence.stages.fixture.checks.map((c:any)=>c.status),['failed','passed']);
  const required=['catalog','rules','loon_sync','verify','reports','issues'];const stages=Object.fromEntries(required.map(name=>[name,{outcome:'success'}]));const validation={version:1,stages:Object.fromEntries(required.filter(x=>x!=='issues').map(name=>[name,{complete:true,checks:[{status:'passed'}]}]))};
  await fs.writeFile('.github/monitor/.runtime/validation-results.json',JSON.stringify(validation));const env={STAGES:JSON.stringify(stages),SYNC_PUBLISHABLE:'true'};assert.equal((await publicationGate(env)).publishable,true);assert.equal((await publicationGate({...env,SYNC_PUBLISHABLE:'false'})).publishable,false);assert.equal((await publicationGate({...env,STAGES:JSON.stringify({...stages,verify:{outcome:'skipped'}})})).publishable,false);
+ // Modified: 2026-11-01 (chance). A real local Git publication must commit updated native Module files with their registry state.
+ const {execFileSync}=await import('node:child_process');
+ const publicationRoot=path.join(root,'publication'),remoteRoot=path.join(root,'remote.git');
+ await fs.mkdir(publicationRoot);const git=(...args:string[])=>execFileSync('git',args,{cwd:publicationRoot,encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();
+ git('init','--bare',remoteRoot);git('init','-b','main');git('config','user.name','Fixture');git('config','user.email','fixture@example.test');git('remote','add','origin',remoteRoot);
+ for(const file of ['Module/QuantumultX/fixture.snippet','Module/Surge/fixture.sgmodule','.github/sources/fixture.json']){await fs.mkdir(path.dirname(path.join(publicationRoot,file)),{recursive:true});await fs.writeFile(path.join(publicationRoot,file),'old');}
+ git('add','.');git('commit','-m','baseline');git('push','origin','main');
+ const expected=git('rev-parse','HEAD');
+ for(const file of ['Module/QuantumultX/fixture.snippet','Module/Surge/fixture.sgmodule','.github/sources/fixture.json'])await fs.writeFile(path.join(publicationRoot,file),'new');
+ const envKeys=['PUBLISHABLE','PUBLISH_BRANCH','EXPECTED_HEAD','MONITOR_ENABLED'],saved=Object.fromEntries(envKeys.map(key=>[key,process.env[key]]));
+ process.chdir(publicationRoot);Object.assign(process.env,{PUBLISHABLE:'true',PUBLISH_BRANCH:'main',EXPECTED_HEAD:expected,MONITOR_ENABLED:'false'});
+ try{await publish();assert.equal(git('status','--porcelain'),'');assert.equal(git('show','HEAD:Module/QuantumultX/fixture.snippet'),'new');assert.equal(git('show','HEAD:Module/Surge/fixture.sgmodule'),'new');assert.equal(git('ls-remote','origin','refs/heads/main').split(/\s+/)[0],git('rev-parse','HEAD'));}
+ finally{for(const key of envKeys)if(saved[key]===undefined)delete process.env[key];else process.env[key]=saved[key];process.chdir(root);}
  console.error=errorLog;console.log(`Platform contracts passed: ${cases.length} pre-migration rule baselines, archive bytes, stable catalog identities, metadata, rollback, monitor and gates`);
 }finally{process.chdir(cwd);await fs.rm(root,{recursive:true,force:true});}
