@@ -1,8 +1,8 @@
 {
   "version": 1,
   "native": 432,
-  "adapted": 290,
-  "blocked": 655,
+  "adapted": 320,
+  "blocked": 625,
   "diagnostics": [
     {
       "artifact": "Adblock/Quantumult X/12306_remove_ads.snippet",
@@ -32,26 +32,30 @@
     {
       "artifact": "Adblock/Quantumult X/AliYunDrive_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/AliYunDrive/AliYunDrive_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Quantumult X/AliYunDrive_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/AliYunDrive/AliYunDrive_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Quantumult X/AutoHome_remove_ads.snippet",
@@ -397,24 +401,52 @@
     {
       "artifact": "Adblock/Quantumult X/DianPing.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js",
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.headers",
+        "$request.url",
+        "$response.body"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "headers-shape",
+          "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+        },
+        {
+          "api": "headers",
+          "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
+          "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
         }
       ]
     },
     {
       "artifact": "Adblock/Quantumult X/DianPing.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js",
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.headers",
+        "$request.url",
+        "$response.body"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "headers-shape",
+          "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+        },
+        {
+          "api": "headers",
+          "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
+          "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
         }
       ]
     },
@@ -519,50 +551,58 @@
     {
       "artifact": "Adblock/Quantumult X/HUPU_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/HUPU/HUPU_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Quantumult X/HUPU_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/HUPU/HUPU_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Quantumult X/HUPU_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/HUPU/HUPU_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Quantumult X/HUPU_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/HUPU/HUPU_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Quantumult X/IThome_remove_ads.snippet",
@@ -847,108 +887,351 @@
     {
       "artifact": "Adblock/Quantumult X/KebidaDushu_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/KebidaDushu/KebidaDushu_remove_ads.js",
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.statusCode",
+        "$request.url",
+        "$response.body",
+        "$response.headers.reqEntryption",
+        "$response.headers.reqentryption",
+        "$response.status"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "this",
+          "reason": "Dynamic receiver access requires scope/data-flow proof",
+          "solution": "Keep native or resolve the receiver before adaptation"
+        },
+        {
+          "api": "$request.statusCode",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+        },
+        {
+          "api": "headers-shape",
+          "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+        },
+        {
+          "api": "headers",
+          "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
+          "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
         }
       ]
     },
     {
       "artifact": "Adblock/Quantumult X/KebidaDushu_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/KebidaDushu/KebidaDushu_remove_ads.js",
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.statusCode",
+        "$request.url",
+        "$response.body",
+        "$response.headers.reqEntryption",
+        "$response.headers.reqentryption",
+        "$response.status"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "this",
+          "reason": "Dynamic receiver access requires scope/data-flow proof",
+          "solution": "Keep native or resolve the receiver before adaptation"
+        },
+        {
+          "api": "$request.statusCode",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+        },
+        {
+          "api": "headers-shape",
+          "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+        },
+        {
+          "api": "headers",
+          "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
+          "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
         }
       ]
     },
     {
       "artifact": "Adblock/Quantumult X/KebidaDushu_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/KebidaDushu/KebidaDushu_remove_ads.js",
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.statusCode",
+        "$request.url",
+        "$response.body",
+        "$response.headers.reqEntryption",
+        "$response.headers.reqentryption",
+        "$response.status"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "this",
+          "reason": "Dynamic receiver access requires scope/data-flow proof",
+          "solution": "Keep native or resolve the receiver before adaptation"
+        },
+        {
+          "api": "$request.statusCode",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+        },
+        {
+          "api": "headers-shape",
+          "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+        },
+        {
+          "api": "headers",
+          "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
+          "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
         }
       ]
     },
     {
       "artifact": "Adblock/Quantumult X/KebidaDushu_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/KebidaDushu/KebidaDushu_remove_ads.js",
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.statusCode",
+        "$request.url",
+        "$response.body",
+        "$response.headers.reqEntryption",
+        "$response.headers.reqentryption",
+        "$response.status"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "this",
+          "reason": "Dynamic receiver access requires scope/data-flow proof",
+          "solution": "Keep native or resolve the receiver before adaptation"
+        },
+        {
+          "api": "$request.statusCode",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+        },
+        {
+          "api": "headers-shape",
+          "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+        },
+        {
+          "api": "headers",
+          "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
+          "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
         }
       ]
     },
     {
       "artifact": "Adblock/Quantumult X/KebidaDushu_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/KebidaDushu/KebidaDushu_remove_ads.js",
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.statusCode",
+        "$request.url",
+        "$response.body",
+        "$response.headers.reqEntryption",
+        "$response.headers.reqentryption",
+        "$response.status"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "this",
+          "reason": "Dynamic receiver access requires scope/data-flow proof",
+          "solution": "Keep native or resolve the receiver before adaptation"
+        },
+        {
+          "api": "$request.statusCode",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+        },
+        {
+          "api": "headers-shape",
+          "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+        },
+        {
+          "api": "headers",
+          "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
+          "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
         }
       ]
     },
     {
       "artifact": "Adblock/Quantumult X/KebidaDushu_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/KebidaDushu/KebidaDushu_remove_ads.js",
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.statusCode",
+        "$request.url",
+        "$response.body",
+        "$response.headers.reqEntryption",
+        "$response.headers.reqentryption",
+        "$response.status"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "this",
+          "reason": "Dynamic receiver access requires scope/data-flow proof",
+          "solution": "Keep native or resolve the receiver before adaptation"
+        },
+        {
+          "api": "$request.statusCode",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+        },
+        {
+          "api": "headers-shape",
+          "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+        },
+        {
+          "api": "headers",
+          "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
+          "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
         }
       ]
     },
     {
       "artifact": "Adblock/Quantumult X/KebidaDushu_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/KebidaDushu/KebidaDushu_remove_ads.js",
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.statusCode",
+        "$request.url",
+        "$response.body",
+        "$response.headers.reqEntryption",
+        "$response.headers.reqentryption",
+        "$response.status"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "this",
+          "reason": "Dynamic receiver access requires scope/data-flow proof",
+          "solution": "Keep native or resolve the receiver before adaptation"
+        },
+        {
+          "api": "$request.statusCode",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+        },
+        {
+          "api": "headers-shape",
+          "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+        },
+        {
+          "api": "headers",
+          "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
+          "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
         }
       ]
     },
     {
       "artifact": "Adblock/Quantumult X/KebidaDushu_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/KebidaDushu/KebidaDushu_remove_ads.js",
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.statusCode",
+        "$request.url",
+        "$response.body",
+        "$response.headers.reqEntryption",
+        "$response.headers.reqentryption",
+        "$response.status"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "this",
+          "reason": "Dynamic receiver access requires scope/data-flow proof",
+          "solution": "Keep native or resolve the receiver before adaptation"
+        },
+        {
+          "api": "$request.statusCode",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+        },
+        {
+          "api": "headers-shape",
+          "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+        },
+        {
+          "api": "headers",
+          "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
+          "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
         }
       ]
     },
     {
       "artifact": "Adblock/Quantumult X/KebidaDushu_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/KebidaDushu/KebidaDushu_remove_ads.js",
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.statusCode",
+        "$request.url",
+        "$response.body",
+        "$response.headers.reqEntryption",
+        "$response.headers.reqentryption",
+        "$response.status"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "this",
+          "reason": "Dynamic receiver access requires scope/data-flow proof",
+          "solution": "Keep native or resolve the receiver before adaptation"
+        },
+        {
+          "api": "$request.statusCode",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+        },
+        {
+          "api": "headers-shape",
+          "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+        },
+        {
+          "api": "headers",
+          "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
+          "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
         }
       ]
     },
@@ -1531,38 +1814,44 @@
     {
       "artifact": "Adblock/Quantumult X/NeteaseNews_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Quantumult X/NeteaseNews_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Quantumult X/NeteaseNews_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Quantumult X/PICC_Insurance_remove_ads.snippet",
@@ -1664,74 +1953,86 @@
     {
       "artifact": "Adblock/Quantumult X/PuPuMall_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/PuPuMall/PuPuMall_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Quantumult X/PuPuMall_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/PuPuMall/PuPuMall_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Quantumult X/PuPuMall_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/PuPuMall/PuPuMall_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Quantumult X/PuPuMall_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/PuPuMall/PuPuMall_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Quantumult X/PuPuMall_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/PuPuMall/PuPuMall_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Quantumult X/PuPuMall_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/PuPuMall/PuPuMall_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Quantumult X/Qbb_remove_ads.snippet",
@@ -2701,24 +3002,42 @@
     {
       "artifact": "Adblock/Quantumult X/Taobao_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/Taobao/Taobao_remove_ads.js",
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response",
+        "$response.body"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "$response",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
         }
       ]
     },
     {
       "artifact": "Adblock/Quantumult X/Taobao_remove_ads.snippet",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/Taobao/Taobao_remove_ads.js",
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response",
+        "$response.body"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "$response",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
         }
       ]
     },
@@ -5111,26 +5430,30 @@
     {
       "artifact": "Adblock/Surge/AliYunDrive_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/AliYunDrive/AliYunDrive_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Surge/AliYunDrive_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/AliYunDrive/AliYunDrive_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Surge/AutoHome_remove_ads.sgmodule",
@@ -5574,50 +5897,58 @@
     {
       "artifact": "Adblock/Surge/HUPU_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/HUPU/HUPU_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Surge/HUPU_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/HUPU/HUPU_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Surge/HUPU_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/HUPU/HUPU_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Surge/HUPU_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/HUPU/HUPU_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Surge/IThome_remove_ads.sgmodule",
@@ -5876,108 +6207,306 @@
     {
       "artifact": "Adblock/Surge/KebidaDushu_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/KebidaDushu/KebidaDushu_remove_ads.js",
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.statusCode",
+        "$request.url",
+        "$response.body",
+        "$response.headers.reqEntryption",
+        "$response.headers.reqentryption",
+        "$response.status"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "this",
+          "reason": "Dynamic receiver access requires scope/data-flow proof",
+          "solution": "Keep native or resolve the receiver before adaptation"
+        },
+        {
+          "api": "$request.statusCode",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+        },
+        {
+          "api": "headers-shape",
+          "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
         }
       ]
     },
     {
       "artifact": "Adblock/Surge/KebidaDushu_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/KebidaDushu/KebidaDushu_remove_ads.js",
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.statusCode",
+        "$request.url",
+        "$response.body",
+        "$response.headers.reqEntryption",
+        "$response.headers.reqentryption",
+        "$response.status"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "this",
+          "reason": "Dynamic receiver access requires scope/data-flow proof",
+          "solution": "Keep native or resolve the receiver before adaptation"
+        },
+        {
+          "api": "$request.statusCode",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+        },
+        {
+          "api": "headers-shape",
+          "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
         }
       ]
     },
     {
       "artifact": "Adblock/Surge/KebidaDushu_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/KebidaDushu/KebidaDushu_remove_ads.js",
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.statusCode",
+        "$request.url",
+        "$response.body",
+        "$response.headers.reqEntryption",
+        "$response.headers.reqentryption",
+        "$response.status"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "this",
+          "reason": "Dynamic receiver access requires scope/data-flow proof",
+          "solution": "Keep native or resolve the receiver before adaptation"
+        },
+        {
+          "api": "$request.statusCode",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+        },
+        {
+          "api": "headers-shape",
+          "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
         }
       ]
     },
     {
       "artifact": "Adblock/Surge/KebidaDushu_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/KebidaDushu/KebidaDushu_remove_ads.js",
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.statusCode",
+        "$request.url",
+        "$response.body",
+        "$response.headers.reqEntryption",
+        "$response.headers.reqentryption",
+        "$response.status"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "this",
+          "reason": "Dynamic receiver access requires scope/data-flow proof",
+          "solution": "Keep native or resolve the receiver before adaptation"
+        },
+        {
+          "api": "$request.statusCode",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+        },
+        {
+          "api": "headers-shape",
+          "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
         }
       ]
     },
     {
       "artifact": "Adblock/Surge/KebidaDushu_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/KebidaDushu/KebidaDushu_remove_ads.js",
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.statusCode",
+        "$request.url",
+        "$response.body",
+        "$response.headers.reqEntryption",
+        "$response.headers.reqentryption",
+        "$response.status"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "this",
+          "reason": "Dynamic receiver access requires scope/data-flow proof",
+          "solution": "Keep native or resolve the receiver before adaptation"
+        },
+        {
+          "api": "$request.statusCode",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+        },
+        {
+          "api": "headers-shape",
+          "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
         }
       ]
     },
     {
       "artifact": "Adblock/Surge/KebidaDushu_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/KebidaDushu/KebidaDushu_remove_ads.js",
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.statusCode",
+        "$request.url",
+        "$response.body",
+        "$response.headers.reqEntryption",
+        "$response.headers.reqentryption",
+        "$response.status"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "this",
+          "reason": "Dynamic receiver access requires scope/data-flow proof",
+          "solution": "Keep native or resolve the receiver before adaptation"
+        },
+        {
+          "api": "$request.statusCode",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+        },
+        {
+          "api": "headers-shape",
+          "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
         }
       ]
     },
     {
       "artifact": "Adblock/Surge/KebidaDushu_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/KebidaDushu/KebidaDushu_remove_ads.js",
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.statusCode",
+        "$request.url",
+        "$response.body",
+        "$response.headers.reqEntryption",
+        "$response.headers.reqentryption",
+        "$response.status"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "this",
+          "reason": "Dynamic receiver access requires scope/data-flow proof",
+          "solution": "Keep native or resolve the receiver before adaptation"
+        },
+        {
+          "api": "$request.statusCode",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+        },
+        {
+          "api": "headers-shape",
+          "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
         }
       ]
     },
     {
       "artifact": "Adblock/Surge/KebidaDushu_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/KebidaDushu/KebidaDushu_remove_ads.js",
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.statusCode",
+        "$request.url",
+        "$response.body",
+        "$response.headers.reqEntryption",
+        "$response.headers.reqentryption",
+        "$response.status"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "this",
+          "reason": "Dynamic receiver access requires scope/data-flow proof",
+          "solution": "Keep native or resolve the receiver before adaptation"
+        },
+        {
+          "api": "$request.statusCode",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+        },
+        {
+          "api": "headers-shape",
+          "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
         }
       ]
     },
     {
       "artifact": "Adblock/Surge/KebidaDushu_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/KebidaDushu/KebidaDushu_remove_ads.js",
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.statusCode",
+        "$request.url",
+        "$response.body",
+        "$response.headers.reqEntryption",
+        "$response.headers.reqentryption",
+        "$response.status"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "this",
+          "reason": "Dynamic receiver access requires scope/data-flow proof",
+          "solution": "Keep native or resolve the receiver before adaptation"
+        },
+        {
+          "api": "$request.statusCode",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+        },
+        {
+          "api": "headers-shape",
+          "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
         }
       ]
     },
@@ -6550,38 +7079,44 @@
     {
       "artifact": "Adblock/Surge/NeteaseNews_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Surge/NeteaseNews_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Surge/NeteaseNews_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Surge/PICC_Insurance_remove_ads.sgmodule",
@@ -6683,74 +7218,86 @@
     {
       "artifact": "Adblock/Surge/PuPuMall_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/PuPuMall/PuPuMall_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Surge/PuPuMall_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/PuPuMall/PuPuMall_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Surge/PuPuMall_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/PuPuMall/PuPuMall_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Surge/PuPuMall_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/PuPuMall/PuPuMall_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Surge/PuPuMall_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/PuPuMall/PuPuMall_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Surge/PuPuMall_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/PuPuMall/PuPuMall_remove_ads.js",
-      "status": "blocked",
-      "problems": [
-        {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
-        }
-      ]
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
+      "status": "adapted",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": []
     },
     {
       "artifact": "Adblock/Surge/Qbb_remove_ads.sgmodule",
@@ -7986,24 +8533,42 @@
     {
       "artifact": "Adblock/Surge/Taobao_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/Taobao/Taobao_remove_ads.js",
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response",
+        "$response.body"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "$response",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
         }
       ]
     },
     {
       "artifact": "Adblock/Surge/Taobao_remove_ads.sgmodule",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/Taobao/Taobao_remove_ads.js",
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
       "status": "blocked",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response",
+        "$response.body"
+      ],
       "problems": [
         {
-          "api": "source-profile",
-          "reason": "Script trigger/binary/name profile is missing or ambiguous",
-          "solution": "Bind this script to one original Script v2 declaration before adapting"
+          "api": "$response",
+          "reason": "API/member is outside the documented portable subset",
+          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
         }
       ]
     },

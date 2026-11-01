@@ -9322,9 +9322,128 @@
         "$request.url",
         "$response.body"
       ]
+    },
+    "Script/Api/loon-to-qx/eb4dbe1e45d2ba10c974b66b396ae4cb82df984a424fcd9eabd1fbde450bbccb.js": {
+      "path": "Script/Api/loon-to-qx/eb4dbe1e45d2ba10c974b66b396ae4cb82df984a424fcd9eabd1fbde450bbccb.js",
+      "sourceUrl": "https://kelee.one/Resource/JavaScript/AliYunDrive/AliYunDrive_remove_ads.js",
+      "sourceSha256": "4909ecde19541ad5e83be296e87eab83e62ede4e710fceee3d59dc4cf11f3e38",
+      "sha256": "a2c81877979da71ca66aab28f654964e7e4297a70bfca9b7670be066b873bd35",
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ]
+    },
+    "Script/Api/loon-to-qx/9365b8547a3324097139e672ae529f6d2f28dc09e02dc45fe1e2244a116bbee8.js": {
+      "path": "Script/Api/loon-to-qx/9365b8547a3324097139e672ae529f6d2f28dc09e02dc45fe1e2244a116bbee8.js",
+      "sourceUrl": "https://kelee.one/Resource/JavaScript/HUPU/HUPU_remove_ads.js",
+      "sourceSha256": "43ec9962925a76ca49cf1491a73430bd1b7fc3ef206de50eb0083c75b69865a6",
+      "sha256": "a4a3ca0042225d074748e8729edea4659dec9b5f92ac45bbfe8f5adc82b56caa",
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ]
+    },
+    "Script/Api/loon-to-qx/2ff9808167122f1ac6dfde46b8efb8fdf6e90ca88df91144f40c484092a1eb0a.js": {
+      "path": "Script/Api/loon-to-qx/2ff9808167122f1ac6dfde46b8efb8fdf6e90ca88df91144f40c484092a1eb0a.js",
+      "sourceUrl": "https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js",
+      "sourceSha256": "9f03b3b39c8b6d576b1ac18cd098ef5fd08c17fb2be9044f94344ea3a3ff4b8b",
+      "sha256": "00e847b0f5c5a7e844922734d2a40ea601dcbffa22cec89ed8d9b833b2a4f055",
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ]
+    },
+    "Script/Api/loon-to-qx/77bd143e183c6c5b0a93e247147f7299b0ec9b248bbe84d22e46abe101919483.js": {
+      "path": "Script/Api/loon-to-qx/77bd143e183c6c5b0a93e247147f7299b0ec9b248bbe84d22e46abe101919483.js",
+      "sourceUrl": "https://kelee.one/Resource/JavaScript/PuPuMall/PuPuMall_remove_ads.js",
+      "sourceSha256": "76659d365b0da3eef1ef54cde44254f9d951799138af52a3edeea2e29a43f83f",
+      "sha256": "6e4e8b428cb06278ed3f1eb702e159bcedaac1335f2237c5cbb162481bece75e",
+      "from": "loon",
+      "to": "qx",
+      "phase": "response",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ]
+    },
+    "Script/Api/loon-to-surge/eb4dbe1e45d2ba10c974b66b396ae4cb82df984a424fcd9eabd1fbde450bbccb.js": {
+      "path": "Script/Api/loon-to-surge/eb4dbe1e45d2ba10c974b66b396ae4cb82df984a424fcd9eabd1fbde450bbccb.js",
+      "sourceUrl": "https://kelee.one/Resource/JavaScript/AliYunDrive/AliYunDrive_remove_ads.js",
+      "sourceSha256": "4909ecde19541ad5e83be296e87eab83e62ede4e710fceee3d59dc4cf11f3e38",
+      "sha256": "0e2c1e5227cc026617a830db18c3741d8b9b19a01e7c1ae2808183b6695dbd42",
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ]
+    },
+    "Script/Api/loon-to-surge/9365b8547a3324097139e672ae529f6d2f28dc09e02dc45fe1e2244a116bbee8.js": {
+      "path": "Script/Api/loon-to-surge/9365b8547a3324097139e672ae529f6d2f28dc09e02dc45fe1e2244a116bbee8.js",
+      "sourceUrl": "https://kelee.one/Resource/JavaScript/HUPU/HUPU_remove_ads.js",
+      "sourceSha256": "43ec9962925a76ca49cf1491a73430bd1b7fc3ef206de50eb0083c75b69865a6",
+      "sha256": "65a2e4a6e2789b346f4a27f1e932feed379f1086b2d92a7c7577420b89d55790",
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ]
+    },
+    "Script/Api/loon-to-surge/2ff9808167122f1ac6dfde46b8efb8fdf6e90ca88df91144f40c484092a1eb0a.js": {
+      "path": "Script/Api/loon-to-surge/2ff9808167122f1ac6dfde46b8efb8fdf6e90ca88df91144f40c484092a1eb0a.js",
+      "sourceUrl": "https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js",
+      "sourceSha256": "9f03b3b39c8b6d576b1ac18cd098ef5fd08c17fb2be9044f94344ea3a3ff4b8b",
+      "sha256": "d2aacc220da9b92c21bb400091dea9b0127f02bb94589beb7065b560ed6ef655",
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ]
+    },
+    "Script/Api/loon-to-surge/77bd143e183c6c5b0a93e247147f7299b0ec9b248bbe84d22e46abe101919483.js": {
+      "path": "Script/Api/loon-to-surge/77bd143e183c6c5b0a93e247147f7299b0ec9b248bbe84d22e46abe101919483.js",
+      "sourceUrl": "https://kelee.one/Resource/JavaScript/PuPuMall/PuPuMall_remove_ads.js",
+      "sourceSha256": "76659d365b0da3eef1ef54cde44254f9d951799138af52a3edeea2e29a43f83f",
+      "sha256": "a8ed39ee3193ea6e079ce5df436e7991f682e561cd519a93bda09668d4dffe14",
+      "from": "loon",
+      "to": "surge",
+      "phase": "response",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ]
     }
   },
   "bindings": {
+    "Adblock/Quantumult X/AliYunDrive_remove_ads.snippet": {
+      "https://kelee.one/Resource/JavaScript/AliYunDrive/AliYunDrive_remove_ads.js": {
+        "path": "Script/Api/loon-to-qx/eb4dbe1e45d2ba10c974b66b396ae4cb82df984a424fcd9eabd1fbde450bbccb.js",
+        "binary": false,
+        "echo": false
+      }
+    },
     "Adblock/Quantumult X/BaiduSearchWebpage_remove_ads.snippet": {
       "https://kelee.one/Resource/JavaScript/BaiduSearch/BaiduSearchHomePage_remove_ads.js": {
         "path": "Script/Api/loon-to-qx/2fef537c0ca3fb8c6e9fb949a748d7c9ef79d2cdbbf007a885a1aa8cfb9c2f60.js",
@@ -9370,6 +9489,13 @@
     "Adblock/Quantumult X/DubbingShow_remove_ads.snippet": {
       "https://kelee.one/Resource/JavaScript/DubbingShow/DubbingShow_remove_ads.js": {
         "path": "Script/Api/loon-to-qx/70546f228bcf4c7fe5b9f36ed39ba9369a3589deddb1fe5e4fa6711b5bfee95c.js",
+        "binary": false,
+        "echo": false
+      }
+    },
+    "Adblock/Quantumult X/HUPU_remove_ads.snippet": {
+      "https://kelee.one/Resource/JavaScript/HUPU/HUPU_remove_ads.js": {
+        "path": "Script/Api/loon-to-qx/9365b8547a3324097139e672ae529f6d2f28dc09e02dc45fe1e2244a116bbee8.js",
         "binary": false,
         "echo": false
       }
@@ -9421,9 +9547,23 @@
         "echo": false
       }
     },
+    "Adblock/Quantumult X/NeteaseNews_remove_ads.snippet": {
+      "https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js": {
+        "path": "Script/Api/loon-to-qx/2ff9808167122f1ac6dfde46b8efb8fdf6e90ca88df91144f40c484092a1eb0a.js",
+        "binary": false,
+        "echo": false
+      }
+    },
     "Adblock/Quantumult X/PinDuoDuo_remove_ads.snippet": {
       "https://kelee.one/Resource/JavaScript/PinDuoDuo/PinDuoDuo_remove_ads.js": {
         "path": "Script/Api/loon-to-qx/175c66e41b710ca95fa8b64850ea8c42ce41a01973ca698eed203143cbc9b8f4.js",
+        "binary": false,
+        "echo": false
+      }
+    },
+    "Adblock/Quantumult X/PuPuMall_remove_ads.snippet": {
+      "https://kelee.one/Resource/JavaScript/PuPuMall/PuPuMall_remove_ads.js": {
+        "path": "Script/Api/loon-to-qx/77bd143e183c6c5b0a93e247147f7299b0ec9b248bbe84d22e46abe101919483.js",
         "binary": false,
         "echo": false
       }
@@ -9530,6 +9670,13 @@
         "echo": false
       }
     },
+    "Adblock/Surge/AliYunDrive_remove_ads.sgmodule": {
+      "https://kelee.one/Resource/JavaScript/AliYunDrive/AliYunDrive_remove_ads.js": {
+        "path": "Script/Api/loon-to-surge/eb4dbe1e45d2ba10c974b66b396ae4cb82df984a424fcd9eabd1fbde450bbccb.js",
+        "binary": false,
+        "echo": false
+      }
+    },
     "Adblock/Surge/BaiduSearchWebpage_remove_ads.sgmodule": {
       "https://kelee.one/Resource/JavaScript/BaiduSearch/BaiduSearchHomePage_remove_ads.js": {
         "path": "Script/Api/loon-to-surge/2fef537c0ca3fb8c6e9fb949a748d7c9ef79d2cdbbf007a885a1aa8cfb9c2f60.js",
@@ -9575,6 +9722,13 @@
     "Adblock/Surge/DubbingShow_remove_ads.sgmodule": {
       "https://kelee.one/Resource/JavaScript/DubbingShow/DubbingShow_remove_ads.js": {
         "path": "Script/Api/loon-to-surge/70546f228bcf4c7fe5b9f36ed39ba9369a3589deddb1fe5e4fa6711b5bfee95c.js",
+        "binary": false,
+        "echo": false
+      }
+    },
+    "Adblock/Surge/HUPU_remove_ads.sgmodule": {
+      "https://kelee.one/Resource/JavaScript/HUPU/HUPU_remove_ads.js": {
+        "path": "Script/Api/loon-to-surge/9365b8547a3324097139e672ae529f6d2f28dc09e02dc45fe1e2244a116bbee8.js",
         "binary": false,
         "echo": false
       }
@@ -9626,9 +9780,23 @@
         "echo": false
       }
     },
+    "Adblock/Surge/NeteaseNews_remove_ads.sgmodule": {
+      "https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js": {
+        "path": "Script/Api/loon-to-surge/2ff9808167122f1ac6dfde46b8efb8fdf6e90ca88df91144f40c484092a1eb0a.js",
+        "binary": false,
+        "echo": false
+      }
+    },
     "Adblock/Surge/PinDuoDuo_remove_ads.sgmodule": {
       "https://kelee.one/Resource/JavaScript/PinDuoDuo/PinDuoDuo_remove_ads.js": {
         "path": "Script/Api/loon-to-surge/175c66e41b710ca95fa8b64850ea8c42ce41a01973ca698eed203143cbc9b8f4.js",
+        "binary": false,
+        "echo": false
+      }
+    },
+    "Adblock/Surge/PuPuMall_remove_ads.sgmodule": {
+      "https://kelee.one/Resource/JavaScript/PuPuMall/PuPuMall_remove_ads.js": {
+        "path": "Script/Api/loon-to-surge/77bd143e183c6c5b0a93e247147f7299b0ec9b248bbe84d22e46abe101919483.js",
         "binary": false,
         "echo": false
       }
