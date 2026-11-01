@@ -525,11 +525,14 @@ async function prepareNativeQxSource(
   );
   if (tree.truncated || !Array.isArray(tree.tree))
     throw Error("Incomplete native QX source tree");
+  // Modified: 2026-11-01 (chance). Discover configured QX conf directories and route each directory to its declared category.
   const files: any = tree.tree
     .filter(
       (x: any): any =>
         x.type === "blob" &&
-        (config.layout === "root"
+        (config.directories
+          ? new RegExp("^(?:" + Object.keys(config.directories).join("|") + ")/[^/]+\\.conf$")
+          : config.layout === "root"
           ? /^[^/]+\.snippet$/
           : /^(?:filter|rewrite)\/[^/]+\.snippet$/
         ).test(x.path) &&
@@ -551,10 +554,10 @@ async function prepareNativeQxSource(
       file.path;
     const text: any = await fetchText(url);
     if (/^\s*</.test(text)) throw Error("HTML response for " + url);
-    const stem: any = path.posix.basename(file.path, ".snippet"),
+    const stem: any = path.posix.basename(file.path, path.posix.extname(file.path)),
       key: any =
         config.aliases?.[stem] ||
-        (config.layout === "root"
+        ((config.layout === "root" || config.directories)
           ? stem.toLowerCase().replace(/_/g, "-")
           : stem);
     if (!/^[a-z0-9-]+$/.test(key))
@@ -610,7 +613,7 @@ async function prepareNativeQxSource(
     }
     const name: any =
       sources
-        .map((x: any): any => x.text.match(/^#!name\s*=\s*(.+)$/im)?.[1])
+        .map((x: any): any => (x.text.match(/^#!name\s*=\s*(.+)$/im)?.[1] || x.text.match(/^\s*\/\/\s*@ScriptName\s+(.+)$/im)?.[1]))
         .filter(Boolean)
         .at(-1) ||
       config.names?.[key] ||
@@ -625,15 +628,25 @@ async function prepareNativeQxSource(
       [key],
     ).text;
     validateQX(text, { id: config.prefix + key });
-    outputs.set(QX_ADBLOCK_DIR + "/" + config.prefix + key + ".snippet", text);
-    if (config.surge) {
+    // Modified: 2026-11-01 (chance). Function/HTML enhancements are Modules; advertising filters remain Adblock.
+    const category = config.directories?.[sources[0].path.split("/")[0]] ?? "Adblock";
+    if (!["Adblock", "Module"].includes(category)) throw Error("Invalid native category");
+    if (sources.some((x: any) => (config.directories?.[x.path.split("/")[0]] ?? "Adblock") !== category)) throw Error("Mixed native categories");
+    const qxDir = category === "Module" ? "Module/QuantumultX" : QX_ADBLOCK_DIR;
+    const surgeDir = category === "Module" ? "Module/Surge" : SURGE_ADBLOCK_DIR;
+    const categorized = text.replace(/^# Category:.*$/m, "# Category: " + category);
+    outputs.set(qxDir + "/" + config.prefix + key + ".snippet", categorized);
+    // Modified: 2026-11-01 (chance). Do not publish partial Surge modules when source actions lack verified equivalents.
+    const surgeExclusion = config.surge_exclude?.[key];
+    if (surgeExclusion) diagnostics.push({ repository: config.repository, application: key, reason: surgeExclusion });
+    if (config.surge && !surgeExclusion) {
       // Modified: 2026-10-29 (chance). User requires no JS downloads/API conversion;
       // forward every original URL and declaration mode unchanged.
-      const converted: any = convertNativeQxToSurge(text, {
+      const converted: any = convertNativeQxToSurge(categorized, {
         id: config.prefix + key,
       });
       outputs.set(
-        SURGE_ADBLOCK_DIR + "/" + config.prefix + key + ".sgmodule",
+        surgeDir + "/" + config.prefix + key + ".sgmodule",
         converted.surge,
       );
       diagnostics.push(
@@ -660,7 +673,7 @@ export async function commitNativeQxSync(root: any, plan: any): Promise<any> {
     writes: any = new Map();
   for (const relative of new Set([...prior.outputs, ...plan.outputs.keys()])) {
     if (
-      !/^Adblock\/(?:Quantumult X\/(?:ishowshu|zenmofeishi)_[a-z0-9-]+\.snippet|Surge\/(?:ishowshu|zenmofeishi)_[a-z0-9-]+\.sgmodule)$/.test(
+      !/^(?:Adblock\/(?:Quantumult X\/(?:ishowshu|zenmofeishi|ddgksf2013)_[a-z0-9-]+\.snippet|Surge\/(?:ishowshu|zenmofeishi|ddgksf2013)_[a-z0-9-]+\.sgmodule)|Module\/(?:QuantumultX\/ddgksf2013_[a-z0-9-]+\.snippet|Surge\/ddgksf2013_[a-z0-9-]+\.sgmodule))$/.test(
         relative,
       )
     )
@@ -974,6 +987,8 @@ function adblockSource(row: any): any {
   try {
     const url: any = new URL(source),
       host: any = url.hostname.toLowerCase();
+    // Modified: 2026-11-01 (chance). Label the upstream author consistently in the README.
+    if (["github.com", "raw.githubusercontent.com"].includes(host) && url.pathname.split("/")[1] === "ddgksf2013") return "墨鱼";
     if (host === "kelee.one" || host.endsWith(".kelee.one")) return "可莉";
     if (host === "rucu6.pages.dev") return "RuCu6";
     if (

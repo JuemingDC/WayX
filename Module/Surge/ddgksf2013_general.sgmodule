@@ -1,0 +1,22 @@
+#!name=general
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: general
+# Updated: 2026-11-01 09:49:35 +08:00
+# Merged by: chance
+# Source Authors: 墨鱼 / ddgksf2013
+# Category: Module
+# Managed by: WayX Native QX
+# Redirect Google Search Service
+# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/Html/General.conf
+# Upstream hostname = www.google.cn
+
+[URL Rewrite]
+^https?:\/\/(www.)?(g|google)\.cn https://www.google.com 302
+
+[MITM]
+hostname = %APPEND% www.google.cn

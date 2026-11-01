@@ -1,0 +1,27 @@
+# Name: TFDownload
+# Updated: 2026-11-01 09:49:35 +08:00
+# Merged by: chance
+# Source Authors: 墨鱼 / ddgksf2013
+# Category: Module
+# Managed by: WayX Native QX
+
+# [rewrite_local]
+
+^https?:\/\/testflight\.apple\.com\/v2\/accounts\/.*\/apps\/\d*/builds/\d*/install url request-body storefrontId" : ".*" request-body storefrontId" : "143441-1,29"
+
+# [mitm]
+# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/Function/TFDownload.conf
+# // ==UserScript==
+# // @ScriptName        TFDownload
+# // @Author            @id77, Modified by Cuttlefish
+# // @TgChannel         https://t.me/ddgksf2021
+# // @WechatID          墨鱼手记
+# // @UpdateTime        2022-02-15
+# // @Function          解决国区TF中无法下载某些应用（QX、小火箭、LOON）的问题
+# // @Attention         对于普通TF应用的更新应该没有啥影响，具体事项未测试
+# // @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/Function/TFDownload.conf
+# // ==/UserScript==
+
+# Upstream hostname = testflight.apple.com
+
+hostname = testflight.apple.com

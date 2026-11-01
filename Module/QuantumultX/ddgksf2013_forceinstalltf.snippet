@@ -1,0 +1,26 @@
+# Name: forceinstalltf
+# Updated: 2026-11-01 09:49:35 +08:00
+# Merged by: chance
+# Source Authors: 墨鱼 / ddgksf2013
+# Category: Module
+# Managed by: WayX Native QX
+
+# [rewrite_local]
+
+^https:\/\/testflight\.apple\.com((\/v3\/accounts\/.+?\/apps$)|(\/v2\/accounts\/.+?\/apps\/.+?\/builds\/.+)) url script-response-body https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/ForceInstall.js
+
+# [mitm]
+# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/Function/ForceInstallTF.conf
+# // ==UserScript==
+# // @Name              M系列Mac解除iOS TF軟件下載限制
+# // @Author            Skyxim
+# // @TgChannel         https://t.me/ddgksf2021
+# // @WechatID          公眾號墨魚手記
+# // @UpdateTime        2022-03-12
+# // @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/Function/ForceInstallTF.conf
+# // ==/UserScript==
+
+
+# Upstream hostname = testflight.apple.com
+
+hostname = testflight.apple.com

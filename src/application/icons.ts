@@ -37,9 +37,10 @@ export async function backfillIcons(root: string, index: IconIndex | null) {
       existing: [],
       unmatched: [],
     };
+  // Modified: 2026-11-01 (chance). Permit managed Moyu Module icon metadata without changing source URLs.
   for (const file of [...files].sort()) {
     if (
-      !/^Adblock\/(?:Quantumult X\/.*\.snippet|Surge\/.*\.sgmodule)$/.test(file)
+      !/^(?:Adblock\/(?:Quantumult X\/.*\.snippet|Surge\/.*\.sgmodule)|Module\/(?:QuantumultX\/ddgksf2013_.*\.snippet|Surge\/ddgksf2013_.*\.sgmodule))$/.test(file)
     )
       throw Error("Unmanaged icon target: " + file);
     const bytes = await readOptional(path.join(root, file));

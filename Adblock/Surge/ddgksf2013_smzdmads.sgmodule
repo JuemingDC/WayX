@@ -1,0 +1,62 @@
+#!name=什么值得买净化[墨鱼版]
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 什么值得买净化[墨鱼版]
+# Updated: 2026-11-01 09:49:35 +08:00
+# Merged by: chance
+# Source Authors: 墨鱼 / ddgksf2013
+# Category: Adblock
+# Managed by: WayX Native QX
+# > 搜索框填词@ddgksf2013
+# Source declaration: ^https?:\/\/s-api.smzdm\.com\/sou\/search_default_keyword url script-response-body https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/smzdm_json.js
+# > 好价详情页去广告@blackmatrix7
+# > 好价详情页红包小助手@blackmatrix7
+# > Wiki@blackmatrix7
+# > 开屏去广告@blackmatrix7@ddgksf2013
+# > 首页去广告@blackmatrix7@ddgksf2013
+# > 好价去广告@blackmatrix7
+# > 好价详情页去广告@blackmatrix7
+# > 百科去广告@blackmatrix7
+# > 搜索结果去广告@blackmatrix7
+# > 搜索标签去广告@blackmatrix7
+# > 值会员权益中心banner广告@blackmatrix7
+# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/SmzdmAds.conf
+# // ==UserScript==
+# // @ScriptName        什么值得买净化[墨鱼版]
+# // @Author            @blackmatrix7, @ddgksf2013
+# // @Function          如果有需要的去除广告的APP，可自行在共享表格中添加需求
+# // @AddRequest        https://bit.ly/addRequestforAdBlock
+# // @WechatID          墨鱼手记
+# // @TgChannel         https://t.me/ddgksf2021
+# // @Contribute        https://t.me/ddgksf2013_bot
+# // @UpdateTime        2024-08-12
+# // @Suitable          自行观看“# > ”注释内容
+# // @Attention         如需引用请注明出处，谢谢合作！
+# // @Version           V1.0.3
+# // @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/SmzdmAds.conf
+# // ==/UserScript==
+# Upstream hostname = app-api.smzdm.com, *.zdmimg.com, homepage-api.smzdm.com, haojia-api.smzdm.com, haojia.m.smzdm.com, baike-api.smzdm.com, s-api.smzdm.com, zhiyou.m.smzdm.com
+
+[Map Local]
+^https?:\/\/haojia\.m\.smzdm\.com\/detail_modul\/other_modul data-type=text data="" status-code=200
+^https?:\/\/haojia\.m\.smzdm\.com\/detail_modul\/user_related_modul data-type=text data="" status-code=200
+^https?:\/\/haojia\.m\.smzdm\.com\/detail_modul\/wiki_related_modul data-type=text data="" status-code=200
+
+[Script]
+ddgksf2013_smzdmads_1 = type=http-response,pattern=^https?:\/\/s-api\.smzdm\.com\/sou\/search_default_keyword,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/smzdm_json.js,requires-body=true
+ddgksf2013_smzdmads_2 = type=http-response,pattern=^https?:\/\/app-api\.smzdm\.com\/util\/loading,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/smzdm_json.js,requires-body=true
+ddgksf2013_smzdmads_3 = type=http-response,pattern=^https?:\/\/.*zdmimg\.com\/cpm\/api\/v\d\/advert_distribution\/get_all_advertise,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/smzdm_json.js,requires-body=true
+ddgksf2013_smzdmads_4 = type=http-response,pattern=^https?:\/\/homepage-api\.smzdm\.com\/v3\/home,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/smzdm_json.js,requires-body=true
+ddgksf2013_smzdmads_5 = type=http-response,pattern=^https?:\/\/haojia-api\.smzdm\.com\/home\/list,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/smzdm_json.js,requires-body=true
+ddgksf2013_smzdmads_6 = type=http-response,pattern=^https?:\/\/haojia\.m\.smzdm\.com\/detail_modul\/article_releated_modul,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/smzdm_json.js,requires-body=true
+ddgksf2013_smzdmads_7 = type=http-response,pattern=^https?:\/\/baike-api\.smzdm\.com\/home_v3\/list,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/smzdm_json.js,requires-body=true
+ddgksf2013_smzdmads_8 = type=http-response,pattern=^https?:\/\/s-api\.smzdm\.com\/sou\/list_v10,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/smzdm_json.js,requires-body=true
+ddgksf2013_smzdmads_9 = type=http-response,pattern=^https?:\/\/s-api\.smzdm\.com\/sou\/filter\/tags\/hot_tags,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/smzdm_json.js,requires-body=true
+ddgksf2013_smzdmads_10 = type=http-response,pattern=^https?:\/\/zhiyou\.m\.smzdm\.com\/user\/vip\/ajax_get_banner,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/smzdm_json.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% app-api.smzdm.com, *.zdmimg.com, homepage-api.smzdm.com, haojia-api.smzdm.com, haojia.m.smzdm.com, baike-api.smzdm.com, s-api.smzdm.com, zhiyou.m.smzdm.com

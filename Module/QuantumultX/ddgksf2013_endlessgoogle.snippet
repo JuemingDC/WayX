@@ -1,0 +1,25 @@
+# Name: google自动翻页
+# Updated: 2026-11-01 09:49:35 +08:00
+# Merged by: chance
+# Source Authors: 墨鱼 / ddgksf2013
+# Category: Module
+# Managed by: WayX Native QX
+
+# [rewrite_local]
+
+^https?:\/\/www\.google\..*\/search url script-response-body https://raw.githubusercontent.com/ddgksf2013/Scripts/master/endlessgoogle.js
+
+# [mitm]
+# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/Html/EndlessGoogle.conf
+# // ==UserScript==
+# // @ScriptName        google自动翻页
+# // @Author            @langkhach270389, modified by Cuttlefish
+# // @TgChannel         https://t.me/ddgksf2021
+# // @WechatID          墨鱼手记
+# // @UpdateTime        2024-01-01
+# // @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/Html/EndlessGoogle.conf
+# // ==/UserScript==
+
+# Upstream hostname = www.google.*,
+
+hostname = www.google.*

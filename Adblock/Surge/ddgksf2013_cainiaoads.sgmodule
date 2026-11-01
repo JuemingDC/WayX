@@ -1,0 +1,61 @@
+#!name=菜鸟[菜鸟裹裹](支付宝小程序)净化[墨鱼版]
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 菜鸟[菜鸟裹裹](支付宝小程序)净化[墨鱼版]
+# Updated: 2026-11-01 09:49:35 +08:00
+# Merged by: chance
+# Source Authors: 墨鱼 / ddgksf2013
+# Category: Adblock
+# Managed by: WayX Native QX
+# > 菜鸟裹裹_amdc处理@ddgksf2013
+# > 菜鸟裹裹_我的页面去除推广[卸载重装]@ddgksf2013
+# > 菜鸟裹裹_首页中部的问邻居推广@ddgksf2013
+# > 菜鸟裹裹_首页中部的惊喜福利推广@ddgksf2013
+# > 菜鸟裹裹_搜索框下方今日好物推荐@ddgksf2013
+# > 菜鸟裹裹_通用广告请求@ddgksf2013
+# > 菜鸟裹裹_通用广告请求@ddgksf2013
+# > 菜鸟裹裹_首页底部商品推广@ddgksf2013
+# > 菜鸟裹裹_底部角标推广@ddgksf2013
+# > 菜鸟裹裹_支付宝小程序_通用广告请求@ddgksf2013
+# > 菜鸟裹裹_支付宝小程序_底部商品推广新@ddgksf2013
+# > 菜鸟裹裹_支付宝小程序_底部商品推广旧@ddgksf2013
+# > 菜鸟裹裹_支付宝小程序_匿名选择@ddgksf2013
+# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/CainiaoAds.conf
+# // ==UserScript==
+# // @ScriptName        菜鸟[菜鸟裹裹](支付宝小程序)净化[墨鱼版]
+# // @Author            @ddgksf2013
+# // @WechatID          墨鱼手记
+# // @TgChannel         https://t.me/ddgksf2021
+# // @Contribute        https://t.me/ddgksf2013_bot
+# // @UpdateTime        2025-10-07
+# // @Suitable          自行观看“# > ”注释内容
+# // @Attention         使用前请卸载菜鸟APP，挂载脚本然后使用
+# // @Attention         如需引用请注明出处，谢谢合作！
+# // @Version           V1.0.16
+# // @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/CainiaoAds.conf
+# // ==/UserScript==
+# Upstream hostname=*.cainiao.com, guide-acs.m.taobao.com, acs4miniapp-inner.m.taobao.com
+
+[Map Local]
+^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.(?!.*_home) data-type=text data="" status-code=200
+^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.mshow\.cn data-type=text data="" status-code=200
+^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.nbcps\.presentation\.fetch\.cn data-type=text data="" status-code=200
+^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.app\.home\.v\d+\.bottom\.area data-type=text data="" status-code=200
+^https?:\/\/[a-zA-Z0-9_.-]+\.taobao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\. data-type=text data="" status-code=200
+^https?:\/\/[a-zA-Z0-9_.-]+\.taobao\.com\/gw\/mtop\.alimama\.abyss\.unionpage\.get data-type=text data="" status-code=200
+^https?:\/\/[a-zA-Z0-9_.-]+\.taobao\.com\/gw\/mtop\.cainiao\.adx\.flyad\.getad data-type=text data="" status-code=200
+^https?:\/\/[a-zA-Z0-9_.-]+\.taobao\.com\/gw\/mtop\.cainiao\.nbmensa\.research\.researchservice\.consultmerge data-type=text data="" status-code=200
+
+[Script]
+ddgksf2013_cainiaoads_1 = type=http-response,pattern=^http:\/\/amdc\.m\.taobao\.com,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/amdc.js,requires-body=true
+ddgksf2013_cainiaoads_2 = type=http-response,pattern=^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/cainiao_json.js,requires-body=true
+ddgksf2013_cainiaoads_3 = type=http-response,pattern=^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.nbpresentation\.homepage\.merge\.get\.cn,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/cainiao_json.js,requires-body=true
+ddgksf2013_cainiaoads_4 = type=http-response,pattern=^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.nbpresentation\.protocol\.homepage\.get\.cn,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/cainiao_json.js,requires-body=true
+ddgksf2013_cainiaoads_5 = type=http-response,pattern=^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.adkeyword,script-path=https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/cainiao_json.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% *.cainiao.com, guide-acs.m.taobao.com, acs4miniapp-inner.m.taobao.com

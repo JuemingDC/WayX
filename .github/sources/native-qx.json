@@ -31,6 +31,24 @@
       "prefix": "zenmofeishi_",
       "layout": "root",
       "surge": true
+    },
+    {
+      "version": 1,
+      "repository": "ddgksf2013/Rewrite",
+      "ref": "master",
+      "author": "墨鱼 / ddgksf2013",
+      "prefix": "ddgksf2013_",
+      "directories": {
+        "AdBlock": "Adblock",
+        "Function": "Module",
+        "Html": "Module"
+      },
+      "surge": true,
+      "surge_exclude": {
+        "amapads": "QX reject-img has no verified equivalent; retain complete QX output only.",
+        "embyplugin": "Whole-header request-header replacement has no verified equivalent; retain complete QX output only.",
+        "tfdownload": "QX request-body replacement has no verified equivalent; retain complete QX output only."
+      }
     }
   ]
 }

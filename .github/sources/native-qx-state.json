@@ -10,6 +10,11 @@
       "repository": "ZenmoFeiShi/Qx",
       "prefix": "zenmofeishi_",
       "commit": "b03dc05f80c7e1895867f1bc5b70f8f4ada9cdd9"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "prefix": "ddgksf2013_",
+      "commit": "dc3ea2c1fb2db870676b26da24006083eb1d44d3"
     }
   ],
   "inputs": [
@@ -297,48 +302,262 @@
       "repository": "ZenmoFeiShi/Qx",
       "path": "Yt-zh.snippet",
       "sha256": "47567c39bb91bbc281f81e172d8251178d362f97fcabc5544e799e3e1a312222"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/AmapAds.conf",
+      "sha256": "d0c1caf909e3e9151ec890eb31bc14dc28b34c49d6c8a1ef42c147cd949564b3"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/Applet.conf",
+      "sha256": "42afa7243c18445001216d3fa20ba3b7f48272cd60a7738f8222e23c37f038c5"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/BiliBiliComicsAds.conf",
+      "sha256": "acc4ce31ccf8e9dd089de5a5dc2a153dae95121762c325503d5697d566e2f90b"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/BingSimplify.conf",
+      "sha256": "fc03c2292ed012b4bfe7dbc14199b4bfbe22a5906955984d09573b8d5abe17b3"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/CainiaoAds.conf",
+      "sha256": "c45b9717c6f474b652a2c8c49f0cb224c2592d222912932ffd127455c257ab6c"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/CaiYunAds.conf",
+      "sha256": "8ba68f9affa24bf759d157d1ab88c9920e1ea25b2cfc36720d0966ceb9220842"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/CheLaiLeAds.conf",
+      "sha256": "bed409e93bba662cb18bdccfa94623e8cdc77ceecc4f877a684dda20a8d083ff"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/ChinaUnicomAds.conf",
+      "sha256": "a751613faf1902f5f2a09f5a91d1359adcc270d5faaef22b433c2d89d47e26bc"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/FakeiOSAds.conf",
+      "sha256": "8dd1e28d9b71fe0244c364c3b128920d3e6fe2dd9e0f2a4bfc767d7b3212065c"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/GoofishAds.conf",
+      "sha256": "6112a98d133ccd602b6906e05c811f402ee1902a15b56397db9ebdde8d4321d1"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/KeepAds.conf",
+      "sha256": "a9d5ec743aed3d7fedc2874d3cefd2d623b7fcd290647f70cf7fec7ff83aa41e"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/MoJiWeatherAds.conf",
+      "sha256": "d0dad880065abc642de05d5d11923bbbdbcfd4cceb351dd5a93823761e967095"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/NeteaseAds.conf",
+      "sha256": "3d09d41ed78536e091612afd10fc471455ae82b274bbbf2f0b37399078e1677b"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/NeteaseMailAds.conf",
+      "sha256": "3b60dfb83759c90263db50310a947324c3760c1d513ba52eb6d0c9d39a12a949"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/QiShuiMusicAds.conf",
+      "sha256": "4754b7eeffc2c73b61b8abc23e4a2c3a51c3fdf63f1c374277c97625c6f0a150"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/RedditAds.conf",
+      "sha256": "15a17fb23d210144cc3530af925fb20116d89cbfbaf96abd9f2a140a8d24f595"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/SmzdmAds.conf",
+      "sha256": "1a7b0c4a4c4bcb6ab474c447f2def2b526fa60fec36e21cf4d10fe327fe7ba33"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/TaoPiaoPiaoAds.conf",
+      "sha256": "8bd9de75da9e2d46f5142493103728cd34947fd45d4d0be87a2e4dac7b632552"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/TieBaAds.conf",
+      "sha256": "377b0d3379329cf29c52dc081c565b4d7efa190d5a54f2a035736297f412aaf4"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/WeChat.conf",
+      "sha256": "5da780f3beb9ef3656af8249ebb3cbadfa0987971d1d3ba38f444ec1e8bc1707"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/WeiboAds.conf",
+      "sha256": "9cc47e68231ae05324f50eea108e0f1e5175fa2cfeeb6c8bae241db1556b038a"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/XiaoYuZhouAds.conf",
+      "sha256": "99fb43e0eab706d199cec15e265fd7e9da50125cc4f248d2ee714e98b688c181"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/Ximalaya.conf",
+      "sha256": "b8f2f7b8b5de969969de29f9a41dfc94bd7bd1dee34f7225bc9b7db47fa41974"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/YoutubeAds.conf",
+      "sha256": "480335f6327cd3a8e3c8dab4194bd7783f465dcc6f218a7b32c3aec89782b2b4"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "Function/Bilibili_CC.conf",
+      "sha256": "3b28379e7caec7a922018231244fb8d1d3f8abcac796c94cffc567238bbc7e85"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "Function/EmbyPlugin.conf",
+      "sha256": "824574695e2c3ed81ee388583cb572f9cff46ee54cfb8856db65100932f27937"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "Function/ForceInstallTF.conf",
+      "sha256": "56885c65b5cf8f85b079bf8a828b28a4753786789c17e9adcbb6c3492e6fe4ae"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "Function/TFDownload.conf",
+      "sha256": "01ca6a5ce6134ea44e53717460987b33f20e3b2813f576eda8d7c668d552b7a1"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "Function/UnblockURLinWeChat.conf",
+      "sha256": "6e5d2e1cea11294a3ac97a606041803d79fa4839a30aa0341f4bc25531c631c2"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "Function/UposRedirect.conf",
+      "sha256": "2c292e01ad34edf9df0c796bcda08cc726f3e1ea493ecc921f17524f162a0958"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "Html/Douban.conf",
+      "sha256": "ee9f285059e0e0e478a2585c91e53188135775a68a9795b1dd39df979abbc757"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "Html/EndlessGoogle.conf",
+      "sha256": "465e5fcb1bbee4cc88cf70218f9e85c7fedc51bf1fa9ad2f1f4af4994ff6bf5d"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "Html/General.conf",
+      "sha256": "f759ce585a197719178cfa5fe2b48c105696c3d2cb1214d09522181233105f97"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
+      "path": "Html/Q-Search.conf",
+      "sha256": "a714d37e2b367971dc5bffa54edf47ad72d9e975e0e27d4cc182abdc2391d6af"
     }
   ],
   "skipped": [],
   "diagnostics": [
     {
-      "repository": "ishowshu/qx",
-      "application": "taobao",
-      "source": "^http:\\/\\/amdc\\.m\\.taobao\\.com\\/amdc\\/mobileDispatch %E6%B7%98%E5%AE%9D* url-and-header reject",
-      "reason": "URL-and-header conjunction retained for review; dropping the header condition would broaden matching"
+      "repository": "ddgksf2013/Rewrite",
+      "application": "amapads",
+      "reason": "QX reject-img has no verified equivalent; retain complete QX output only."
     },
     {
-      "repository": "ishowshu/qx",
-      "application": "amap",
-      "source": "^http:\\/\\/amdc\\.m\\.taobao\\.com\\/amdc\\/mobileDispatch AMapiPhone* url-and-header reject",
-      "reason": "URL-and-header conjunction retained for review; dropping the header condition would broaden matching"
+      "repository": "ddgksf2013/Rewrite",
+      "application": "embyplugin",
+      "reason": "Whole-header request-header replacement has no verified equivalent; retain complete QX output only."
     },
     {
-      "repository": "ishowshu/qx",
-      "application": "goofish",
-      "source": "^http:\\/\\/amdc\\.m\\.taobao\\.com\\/amdc\\/mobileDispatch %E9%97%B2%E9%B1%BC* url-and-header reject",
-      "reason": "URL-and-header conjunction retained for review; dropping the header condition would broaden matching"
-    },
-    {
-      "repository": "ishowshu/qx",
-      "application": "lecheng",
-      "source": "^https:\\/\\/img1\\.360buyimg\\.com\\/pop\\/jfs\\/t1 LCIphoneAdhocIP* url-and-header reject-dict",
-      "reason": "URL-and-header conjunction retained for review; dropping the header condition would broaden matching"
-    },
-    {
-      "repository": "ishowshu/qx",
-      "application": "leisu",
-      "source": "^https:\\/\\/s3plus\\.meituan\\.net\\/ leisu* url-and-header reject-dict",
-      "reason": "URL-and-header conjunction retained for review; dropping the header condition would broaden matching"
-    },
-    {
-      "repository": "ishowshu/qx",
-      "application": "leisu",
-      "source": "^https:\\/\\/img1\\.360buyimg\\.com\\/pop\\/jfs\\/t1 leisu* url-and-header reject-dict",
-      "reason": "URL-and-header conjunction retained for review; dropping the header condition would broaden matching"
+      "repository": "ddgksf2013/Rewrite",
+      "application": "tfdownload",
+      "reason": "QX request-body replacement has no verified equivalent; retain complete QX output only."
     }
   ],
   "outputs": [
+    "Adblock/Quantumult X/ddgksf2013_amapads.snippet",
+    "Adblock/Quantumult X/ddgksf2013_applet.snippet",
+    "Adblock/Surge/ddgksf2013_applet.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_bilibilicomicsads.snippet",
+    "Adblock/Surge/ddgksf2013_bilibilicomicsads.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_bingsimplify.snippet",
+    "Adblock/Surge/ddgksf2013_bingsimplify.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_cainiaoads.snippet",
+    "Adblock/Surge/ddgksf2013_cainiaoads.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_caiyunads.snippet",
+    "Adblock/Surge/ddgksf2013_caiyunads.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_chelaileads.snippet",
+    "Adblock/Surge/ddgksf2013_chelaileads.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_chinaunicomads.snippet",
+    "Adblock/Surge/ddgksf2013_chinaunicomads.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_fakeiosads.snippet",
+    "Adblock/Surge/ddgksf2013_fakeiosads.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_goofishads.snippet",
+    "Adblock/Surge/ddgksf2013_goofishads.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_keepads.snippet",
+    "Adblock/Surge/ddgksf2013_keepads.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_mojiweatherads.snippet",
+    "Adblock/Surge/ddgksf2013_mojiweatherads.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_neteaseads.snippet",
+    "Adblock/Surge/ddgksf2013_neteaseads.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_neteasemailads.snippet",
+    "Adblock/Surge/ddgksf2013_neteasemailads.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_qishuimusicads.snippet",
+    "Adblock/Surge/ddgksf2013_qishuimusicads.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_redditads.snippet",
+    "Adblock/Surge/ddgksf2013_redditads.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_smzdmads.snippet",
+    "Adblock/Surge/ddgksf2013_smzdmads.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_taopiaopiaoads.snippet",
+    "Adblock/Surge/ddgksf2013_taopiaopiaoads.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_tiebaads.snippet",
+    "Adblock/Surge/ddgksf2013_tiebaads.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_wechat.snippet",
+    "Adblock/Surge/ddgksf2013_wechat.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_weiboads.snippet",
+    "Adblock/Surge/ddgksf2013_weiboads.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_xiaoyuzhouads.snippet",
+    "Adblock/Surge/ddgksf2013_xiaoyuzhouads.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_ximalaya.snippet",
+    "Adblock/Surge/ddgksf2013_ximalaya.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013_youtubeads.snippet",
+    "Adblock/Surge/ddgksf2013_youtubeads.sgmodule",
+    "Module/QuantumultX/ddgksf2013_bilibili-cc.snippet",
+    "Module/Surge/ddgksf2013_bilibili-cc.sgmodule",
+    "Module/QuantumultX/ddgksf2013_embyplugin.snippet",
+    "Module/QuantumultX/ddgksf2013_forceinstalltf.snippet",
+    "Module/Surge/ddgksf2013_forceinstalltf.sgmodule",
+    "Module/QuantumultX/ddgksf2013_tfdownload.snippet",
+    "Module/QuantumultX/ddgksf2013_unblockurlinwechat.snippet",
+    "Module/Surge/ddgksf2013_unblockurlinwechat.sgmodule",
+    "Module/QuantumultX/ddgksf2013_uposredirect.snippet",
+    "Module/Surge/ddgksf2013_uposredirect.sgmodule",
+    "Module/QuantumultX/ddgksf2013_douban.snippet",
+    "Module/Surge/ddgksf2013_douban.sgmodule",
+    "Module/QuantumultX/ddgksf2013_endlessgoogle.snippet",
+    "Module/Surge/ddgksf2013_endlessgoogle.sgmodule",
+    "Module/QuantumultX/ddgksf2013_general.snippet",
+    "Module/Surge/ddgksf2013_general.sgmodule",
+    "Module/QuantumultX/ddgksf2013_q-search.snippet",
+    "Module/Surge/ddgksf2013_q-search.sgmodule",
     "Adblock/Quantumult X/ishowshu_ad-platform.snippet",
     "Adblock/Surge/ishowshu_ad-platform.sgmodule",
     "Adblock/Quantumult X/ishowshu_apple-notice.snippet",
