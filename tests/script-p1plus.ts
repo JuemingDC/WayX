@@ -1,3 +1,4 @@
+// Modified: 2026-11-02 (chance). Generated-program fixtures follow source-specific authorized conversion hosts.
 // Modified: 2026-11-02 (chance). Exercise P1+ codecs/HTTP shapes and explicit
 // notification mapping without turning absent contracts into silent APIs.
 import assert from "node:assert/strict";
@@ -98,7 +99,7 @@ const request =
   'const URL="http://a.test/";const METHOD="POST";const UA="fixture";const PAYLOAD="abc";$task.fetch({url:URL,method:METHOD,headers:{"User-Agent":UA,"Accept":"*/*","Accept-Encoding":"identity","Content-Type":"text/plain"},body:PAYLOAD,opts:{"auto-cookie":false,redirection:false}}).then(({body:received,statusCode})=>$done({body:received+statusCode}));';
 const p = universal(request, "qx", profiles);
 assert.equal(p.status, "universal", JSON.stringify(p.problems));
-for (const h of ["qx", "surge", "loon"]) {
+for (const h of ["qx", "surge"]) {
   let done: any, options: any;
   const http = {
     post: (o: any, cb: any) => {

@@ -1,3 +1,4 @@
+// Modified: 2026-11-02 (chance). Generated-program fixtures follow source-specific authorized conversion hosts.
 // Modified: 2026-11-01 (chance). Execute the same bytes under all three hosts;
 // preserve native result shapes, source names, fragments and isolated HTTP modes.
 import assert from 'node:assert/strict';
@@ -7,16 +8,16 @@ import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import {spawnSync} from 'node:child_process';
-import {planUniversalAdblockScript,universalScriptPath} from '../src/parser/universal-script.ts';
+import {planUniversalAdblockScript,universalScriptPath,scriptTargetsForSource} from '../src/parser/universal-script.ts';
 import {prepareScriptApiAdapters} from '../src/application/script-api.ts';
 import {scriptReferences} from '../src/parser/backup-references.ts';
 const hosts:any={qx:{$task:{fetch(){}}},surge:{$environment:{'surge-version':'fixture'}},loon:{$loon:'fixture'}};
-for(const from of ['qx','surge','loon'] as const) {
+for(const from of ['qx','loon'] as const) {
  const source=from==='qx'?'$done({body:$response.statusCode+":"+$response.body});':'$done({body:$response.status+":"+$response.body});';
  const plan=planUniversalAdblockScript(source,from,[{phase:'response',name:'A'},{phase:'response',name:'B'}]);
  assert.equal(plan.status,'universal',JSON.stringify(plan.problems));assert.equal(plan.code!.split(source).length,2,'source body occurs once');
  assert.ok(!plan.code!.startsWith('//'));assert.doesNotMatch(plan.code!,/Category: Script API|Source: https/);
- for(const target of ['qx','surge','loon']) {
+ for(const target of scriptTargetsForSource(from)) {
   let result:any,calls=0;vm.runInNewContext(plan.code!,{...hosts[target],Uint8Array,ArrayBuffer,Date,setTimeout,$response:{body:'ad',...(target==='qx'?{statusCode:201}:{status:201})},$done:(v:any)=>{result=v;calls++;}});
   assert.equal(calls,1);assert.equal(result.body,'201:ad',from+' -> '+target);
  }
@@ -64,7 +65,7 @@ for(const scenario of ['binary','echo'] as const) {
  const source=scenario==='binary'?'$done({bodyBytes:$response.bodyBytes});':'$done({status:"HTTP/1.1 201 Created",body:"made"});';
  const plan=planUniversalAdblockScript(source,'qx',[{phase:scenario==='binary'?'response':'echo'}]);
  assert.equal(plan.status,'universal',JSON.stringify(plan.problems));
- for(const target of ['qx','surge','loon']) {
+ for(const target of scriptTargetsForSource('qx')) {
   let result:any;
   const slice=new Uint8Array(new Uint8Array([9,1,2,8]).buffer,1,2);
   const context=scenario==='binary'?{$response:target==='qx'?{bodyBytes:slice.buffer.slice(1,3),statusCode:200}:{body:slice,status:200}}:{$request:{url:'https://example.test'}};

@@ -1,3 +1,8 @@
+// Modified: 2026-11-02 (chance). Persist source-specific supported hosts and the authorized conversion directions.
+import {
+  scriptTargetsForSource,
+  scriptConversionDirections,
+} from "../parser/universal-script.ts";
 // Modified: 2026-11-02 (chance). Refresh API mapping and source-level priority evidence with each production report.
 import {
   scriptApiMapping,
@@ -355,7 +360,11 @@ export async function prepareScriptApiAdapters(
         sourceSha256: record.sha256,
         sha256: digest(result.code),
         from: [...group.from][0],
-        targets: ["qx", "surge", "loon"],
+        directionPolicyVersion: 1,
+        targets: scriptTargetsForSource([...group.from][0] as ScriptPlatform),
+        conversionTargets: scriptTargetsForSource(
+          [...group.from][0] as ScriptPlatform,
+        ).filter((target) => target !== [...group.from][0]),
         contexts: result.contexts,
         features: result.features,
         specialization: result.specialization,
@@ -470,7 +479,9 @@ export async function prepareScriptApiAdapters(
   const report = {
     version: 2,
     scope: "adblock-http",
-    targets: ["qx", "surge", "loon"],
+    targets: ["qx", "surge"],
+    nativeSourceHosts: ["loon", "qx"],
+    conversionDirections: scriptConversionDirections,
     // Modified: 2026-11-02 (chance). Include the audited capability domains and exact upstream comparison revision.
     capabilities: scriptCapabilityBoundaries,
     apiMapping: scriptApiMapping,

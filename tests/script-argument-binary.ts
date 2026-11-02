@@ -1,3 +1,4 @@
+// Modified: 2026-11-02 (chance). Generated-program fixtures follow source-specific authorized conversion hosts.
 // Modified: 2026-11-02 (chance). Typed Surge arguments retain false/zero/empty
 // values; QX omissions use safe author defaults, and binary inputs keep view ranges.
 import assert from "node:assert/strict";
@@ -82,7 +83,7 @@ for (const bad of [
     "blocked",
     bad,
   );
-for (const from of ["surge", "loon"]) {
+for (const from of ["loon"]) {
   const bytesSource =
     "const b=$response.body;$done({body:b.subarray(1,b.length-1)});";
   const binary = planUniversalAdblockScript(bytesSource, from as any, [

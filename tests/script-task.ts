@@ -1,3 +1,4 @@
+// Modified: 2026-11-02 (chance). Generated-program fixtures follow source-specific authorized conversion hosts.
 // Modified: 2026-11-02 (chance). Run QX-source Promise/await/byte fetch on one
 // shared program using actual local HTTP fixtures and explicit option omission.
 import assert from "node:assert/strict";
@@ -136,7 +137,7 @@ try {
     "OPTIONS",
     "PATCH",
   ])
-    for (const to of ["qx", "surge", "loon"]) {
+    for (const to of ["qx", "surge"]) {
       const source = `$task.fetch(${opts(method)}).then(r=>{$done({body:r.body,status:r.statusCode===200?"HTTP/1.1 200 OK":"HTTP/1.1 503 Failed"});},reason=>{if(reason)$done({body:"error"});});`;
       const { result } = await run(source, to);
       assert.match(String(result.status), /200/);
@@ -157,7 +158,7 @@ try {
         assert.equal(request.options.insecure, false);
       }
     }
-  for (const to of ["qx", "surge", "loon"]) {
+  for (const to of ["qx", "surge"]) {
     let source = `$task.fetch(${opts("GET", "/drop")}).then(r=>$done({body:r.body}),reason=>{if(reason.error)$done({body:"error"});});`;
     assert.equal((await run(source, to)).result.body, "error");
     source = `$task.fetch(${opts("GET", "/echo")}).then(r=>{throw Error("business")}).catch(reason=>{if(reason)$done({body:"caught"});});`;

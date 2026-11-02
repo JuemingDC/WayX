@@ -22,7 +22,22 @@ export type UniversalProfile = {
   name?: string;
   argumentSchema?: ArgumentSchema;
 };
-export const universalTargets = ["qx", "surge", "loon"] as const;
+// Modified: 2026-11-02 (chance). Production conversions are directional;
+// the source's native host is retained only to run the same source-named file.
+export const scriptConversionDirections = [
+  { from: "loon", to: "qx" },
+  { from: "loon", to: "surge" },
+  { from: "qx", to: "surge" },
+] as const;
+export function scriptTargetsForSource(
+  from: ScriptPlatform,
+): ("qx" | "surge" | "loon")[] {
+  return from === "loon"
+    ? ["qx", "surge", "loon"]
+    : from === "qx"
+      ? ["qx", "surge"]
+      : [];
+}
 export function universalScriptPath(url: string) {
   const u = new URL(url);
   u.hash = "";
@@ -59,7 +74,7 @@ export function planUniversalAdblockScript(
     reason: string,
     solution: string,
   ): ApiProblem => ({ api, reason, solution });
-  if (from === "egern" || excluded.length || !profiles.length)
+  if (!["loon", "qx"].includes(from) || excluded.length || !profiles.length)
     return {
       status: "excluded" as const,
       code: null,
@@ -67,7 +82,7 @@ export function planUniversalAdblockScript(
       problems: [
         problem(
           excluded.join(", ") || "scope",
-          "Only QX/Surge/Loon HTTP adblock scripts are in scope; configuration control, Egern and tasks remain native",
+          "Only Loon/QX-source HTTP adblock scripts are in scope: Loon to QX/Surge and QX to Surge; configuration control, Surge-source conversion, Egern and tasks remain native",
           "Keep the original script; do not add configuration-control shims",
         ),
       ],
@@ -128,7 +143,7 @@ export function planUniversalAdblockScript(
       ...(usesName ? { name: names[0] } : {}),
     };
     contexts[role] = {};
-    for (const to of universalTargets) {
+    for (const to of scriptTargetsForSource(from)) {
       const plan = planScriptApiConversion(source, { from, to, ...profile });
       problems.push(
         ...plan.problems.map((p) => ({ ...p, reason: to + ": " + p.reason })),

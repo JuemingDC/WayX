@@ -1,3 +1,4 @@
+// Modified: 2026-11-02 (chance). Generated-program fixtures follow source-specific authorized conversion hosts.
 // Modified: 2026-11-02 (chance). Execute bounded header/result/HTTP contracts
 // against a controlled local server; preserve negative cases and native limits.
 import assert from "node:assert/strict";
@@ -194,8 +195,8 @@ try {
     );
   assert.equal(
     planUniversalAdblockScript(source, "surge", [{ phase: "response" }]).status,
-    "universal",
-    "user-authorized QX timeout omission permits the bounded shared callback program",
+    "excluded",
+    "Surge-source conversions are outside the production direction policy",
   );
   const plan = planScriptApiConversion(source, {
     from: "surge",

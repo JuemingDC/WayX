@@ -118,7 +118,7 @@ export const scriptApiMapping = [
     surge: "verify engine/API mode per operation",
     loon: "verify engine; $utils.gzip / $crypto.aes have separate contracts",
     support: "inspection-only-for-wasm",
-    next: "Group exact module hashes/ABI, independently implement actual operations or certify all three engines; no fake exports/require",
+    next: "Group exact module hashes/ABI, independently implement actual operations or certify the required source/destination engines; no fake exports/require",
     dependsOn: ["codecs", "binary"],
   },
   {

@@ -1,3 +1,4 @@
+// Modified: 2026-11-02 (chance). Generated-program fixtures follow source-specific authorized conversion hosts.
 // Modified: 2026-11-02 (chance). The author's QX options survive; undocumented
 // timeout/ALPN/custom parameters are omitted without error, across all seven methods.
 import assert from "node:assert/strict";
@@ -130,7 +131,7 @@ try {
     (await execute(source("get", "", "/drop"))).result.body,
     "error",
   );
-  for (const from of ["surge", "loon"]) {
+  for (const from of ["loon"]) {
     const text = source("post"),
       plan = planUniversalAdblockScript(text, from as any, [
         { phase: "response" },

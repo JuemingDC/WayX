@@ -1,5 +1,7 @@
+// Modified: 2026-11-02 (chance). Generated-program fixtures follow source-specific authorized conversion hosts.
 // Modified: 2026-11-02 (chance). Capability growth must remove only proven
 // false positives, while preserving lexical identity and blocking alias escapes.
+import {scriptTargetsForSource} from '../src/parser/universal-script.ts';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {inspectScriptApis,planScriptApiConversion} from '../src/parser/script-api.ts';
@@ -50,7 +52,7 @@ for(const source of [
  'const value=$persistentStore.read("key");$done({body:value??"fallback"});',
 ]) {
  const plan=planUniversalAdblockScript(source,'loon',[{phase:'response'}]);assert.equal(plan.status,'universal',JSON.stringify(plan.problems));
- for(const missing of [null,undefined,''])for(const target of ['qx','surge','loon']) {
+ for(const missing of [null,undefined,''])for(const target of scriptTargetsForSource('loon')) {
   let result:any;vm.runInNewContext(plan.code!,{setTimeout,$response:{body:''},$done:(v:any)=>result=v,$persistentStore:{read:()=>missing},$prefs:{valueForKey:()=>missing},...(target==='qx'?{$task:{fetch(){}}}:target==='loon'?{$loon:'test'}:{$environment:{'surge-version':'test'}})});
   assert.equal(result.body,source.includes('||')||missing==null?'fallback':'');
  }
@@ -88,9 +90,9 @@ console.log('Retained script-echo integration passed: original evidence, linked 
 // Author identifiers must not resolve to generated wrapper variables, including
 // free variables and names already using the private helper prefix.
 const captureSource='$done({body:[typeof target,typeof host,typeof contexts,typeof role,typeof config,typeof run,typeof __wayxTarget,typeof __wayxHost,typeof __wayxContext,typeof __wayxRun].join(",")});';
-for(const from of ['qx','surge','loon'] as const) {
+for(const from of ['qx','loon'] as const) {
  const plan=planUniversalAdblockScript(captureSource,from,[{phase:'response'}]);assert.equal(plan.status,'universal',JSON.stringify(plan.problems));
- for(const target of ['qx','surge','loon']) {
+ for(const target of scriptTargetsForSource(from)) {
   let result:any;vm.runInNewContext(plan.code!,{setTimeout,$response:{body:''},$done:(v:any)=>result=v,...(target==='qx'?{$task:{fetch(){}}}:target==='loon'?{$loon:'test'}:{$environment:{'surge-version':'test'}})});
   assert.equal(result.body,Array(10).fill('undefined').join(','));
  }

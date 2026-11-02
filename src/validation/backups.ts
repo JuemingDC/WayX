@@ -8,7 +8,12 @@ import {
   readOptional,
   safePath,
 } from "../publish/transaction.ts";
-import { universalScriptPath } from "../parser/universal-script.ts";
+// Modified: 2026-11-02 (chance). Coverage follows the source's authorized
+// directions, rather than requiring a Loon destination for QX-source scripts.
+import {
+  universalScriptPath,
+  scriptTargetsForSource,
+} from "../parser/universal-script.ts";
 import { scriptReferences } from "../parser/backup-references.ts";
 export async function validateSourceBackups(root: string) {
   const findings: any[] = [];
@@ -69,9 +74,17 @@ export async function validateSourceBackups(root: string) {
         throw Error("Invalid API adapter path");
       if (
         file.startsWith("Script/Adblock/") &&
-        (file !== universalScriptPath(record.sourceUrl) ||
-          JSON.stringify(record.targets) !==
-            JSON.stringify(["qx", "surge", "loon"]))
+        (!["loon", "qx"].includes(record.from) ||
+          file !== universalScriptPath(record.sourceUrl) ||
+          (JSON.stringify(record.targets) !==
+            JSON.stringify(scriptTargetsForSource(record.from)) &&
+            // Modified: 2026-11-02 (chance). Previously published programs
+            // remain verifiable until Actions replaces their legacy metadata.
+            !(
+              record.directionPolicyVersion === undefined &&
+              JSON.stringify(record.targets) ===
+                JSON.stringify(["qx", "surge", "loon"])
+            )))
       )
         throw Error("Invalid universal script identity or target coverage");
       const bytes = await readOptional(safePath(root, file));

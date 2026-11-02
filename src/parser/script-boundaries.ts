@@ -62,7 +62,7 @@ export const scriptCapabilityBoundaries = {
     implemented:
       "Callback-source bridge: seven methods; Surge/Loon keep strict explicit HTTP options and native timeout unit conversion; QX maps author-documented fields and omits undocumented optional request parameters. QX-source literal/closed-const String request fields and fetch calls support closed then/catch, success-field destructuring without rest/defaults, and locally caught await, numeric statusCode, ASCII or exact-offset bodyBytes. All retain explicit UA/Accept/identity encoding, <=64KiB and one active request; source Promise errors propagate and unknown QX fields are omitted on all hosts including QX itself",
     production:
-      "Shared callback-source and proven QX-source Promise programs publish only after every registered profile passes all three hosts; ignored QX fields are recorded outside author scripts",
+      "Shared callback-source and proven QX-source Promise programs publish only after every registered profile passes the authorized targets and native source host; ignored QX fields are recorded outside author scripts",
     fixtures:
       "tests/support/http-contract-server.ts, tests/script-contracts.ts, tests/script-task.ts, tests/script-flow.ts, tests/script-flow-production.ts and manual tools/script-client-probe.js; no real-client result has been supplied",
     methods: ["GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH"],

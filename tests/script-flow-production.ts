@@ -42,12 +42,23 @@ try {
       "utf8",
     ),
   );
+  // Modified: 2026-11-02 (chance). QX-source publication has exactly one
+  // converted destination and never claims a Loon target in its stored contexts.
+  assert.deepEqual(report.targets, ["qx", "surge"]);
+  assert.deepEqual(report.conversionDirections, [
+    { from: "loon", to: "qx" },
+    { from: "loon", to: "surge" },
+    { from: "qx", to: "surge" },
+  ]);
   assert.equal(report.universal, 1);
   assert.equal(report.adapted, 2);
   let index = JSON.parse(
     await fs.readFile(path.join(root, "Resource/Backup/index.json"), "utf8"),
   );
   const adapter = Object.values<any>(index.adapters)[0];
+  assert.deepEqual(adapter.targets, ["qx", "surge"]);
+  assert.deepEqual(adapter.conversionTargets, ["surge"]);
+  assert.equal(adapter.contexts.response.loon, undefined);
   assert.equal(adapter.contexts.response.surge.responseBody, true);
   assert.deepEqual(
     await fs.readFile(path.join(root, index.objects[index.latest[url]].path)),

@@ -1,3 +1,4 @@
+// Modified: 2026-11-02 (chance). Generated-program fixtures follow source-specific authorized conversion hosts.
 // Modified: 2026-11-02 (chance). Prove closed context/result/string bindings
 // across the same three-host bytes, with alias, mutation and prototype counterexamples.
 import assert from "node:assert/strict";
@@ -180,7 +181,7 @@ for (const source of [
         (native = typeof v === "string" ? { body: v } : (v ?? {})),
     }),
   );
-  for (const to of ["qx", "surge", "loon"]) {
+  for (const to of ["qx", "surge"]) {
     let result: any;
     vm.runInNewContext(
       plan.code!,

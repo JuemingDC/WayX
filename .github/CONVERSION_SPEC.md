@@ -504,3 +504,10 @@ Modified: 2026-11-02 (chance). 支持同上下文短路后得到已支持标量�
 ## 2.30 P1 及后续的有限参数与调用映射
 
 Modified: 2026-11-02 (chance). QX fetch 可证明的 const String 请求字段保持原构造求值，成功参数允许闭合已知字段解构，不接受 rest/default 或响应 Header 逃逸。仅转发单一参数给原生 $done 的闭合包装函数须审查所有直接调用的实参，不能放行任意参数流。局部 UTF-8/Base64 编码器可使用一层 readonly const 别名，仍限制闭合实例和所有调用点。通知只对已获文档支持的 Loon/Surge URL、HTTP 媒体字段进行映射，非零延迟、剪贴板确认等独立阻断；目标 QX 的附加通知参数按用户授权无错省略，保留原构造表达式副作用，省略写外部 metadata。未从所查 QX 作者仓库证明的来源 rich options 不反向猜测其语义。环境、参数默认路径、WASM/压缩等未验证能力不因本条放宽。详见 docs/script-api-compatibility.md 的 P1 及后续节；仍仅由 Actions 同事务更新原文、脚本与产物。
+
+
+## 2.31 单向转换范围（取代历史三端无条件门槛）
+
+Modified: 2026-11-02 (chance). 用户明确限定三个转换方向：Loon → Quantumult X、Loon → Surge、Quantumult X → Surge。生产规划、公开 CLI 和发布报告使用同一方向表；Surge 来源、QX → Loon 及其它反向转换不属于本项目当前生产范围。来源端原生运行是保留共用脚本的来源执行，不算反向转换：Loon 来源校验 Loon/QX/Surge，QX 来源只校验 QX/Surge，不能再因 Loon 目标缺口阻断 QX 来源产物。每个源 URL 仍仅一个同源名共用文件，QX/Surge 产物引用同一地址；不需要额外 Loon 插件副本。索引 targets 按来源写实际支持宿主，报告额外记录 conversionDirections；所有仍需的目标和注册 HTTP profile 必须通过。底层隔离 pairwise 测试可保留，但不开放其它发布方向；历史“三端全部通过”规则仅对 Loon 来源适用。本条不更改 QX 未说明参数无错省略、原始字节备份、固定路径和 Actions 事务更新。
+
+Modified: 2026-11-02 (chance). 迁移时未带 directionPolicyVersion 的旧三宿主文件仍可按旧校验记录验证，直到 Actions 原位替换；新适配记录必须写 directionPolicyVersion=1 及来源相关 targets/conversionTargets，不能用旧元数据产生新的反向转换。

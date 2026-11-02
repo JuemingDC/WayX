@@ -163,6 +163,18 @@ try {
         throw Error(
           "script-api requires --from/--to qx|loon|surge|egern and a supported --phase",
         );
+      // Modified: 2026-11-02 (chance). Public conversion entry points enforce
+      // the same directional policy; pairwise library fixtures are not publishing.
+      const { scriptConversionDirections } = await import(
+        "./parser/universal-script.ts"
+      );
+      if (
+        from !== to &&
+        !scriptConversionDirections.some((d) => d.from === from && d.to === to)
+      )
+        throw Error(
+          "Authorized script directions: loon -> qx, loon -> surge, qx -> surge",
+        );
       const plan = planScriptApiConversion(Buffer.concat(chunks).toString(), {
         from: from as any,
         to: to as any,

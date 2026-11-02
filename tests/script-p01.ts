@@ -1,3 +1,4 @@
+// Modified: 2026-11-02 (chance). Generated-program fixtures follow source-specific authorized conversion hosts.
 // Modified: 2026-11-02 (chance). Expand only closed P0/P1 domains; execute
 // identical bytes on all hosts and preserve blocked ambiguity/escape cases.
 import assert from "node:assert/strict";
@@ -13,7 +14,7 @@ function hosts(
   const p = plan(source, from, profile);
   assert.equal(p.status, "universal", JSON.stringify(p.problems));
   const results = [];
-  for (const host of ["qx", "surge", "loon"]) {
+  for (const host of (from === "qx" ? ["qx", "surge"] : ["qx", "surge", "loon"])) {
     let out: unknown;
     vm.runInNewContext(p.code!, {
       setTimeout,
