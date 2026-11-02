@@ -29,15 +29,46 @@ export function valueSymbol(node: ts.Node, checker: ts.TypeChecker) {
     ? checker.getShorthandAssignmentValueSymbol(node.parent)
     : checker.getSymbolAtLocation(node);
 }
+// Modified: 2026-11-02 (chance). Logical chains are harmless only when their
+// final value is consumed as a Boolean; fallback objects may still escape.
 export function safePresenceUse(node: ts.Node): boolean {
-  const p = node.parent;
+  let value = node;
+  while (ts.isParenthesizedExpression(value.parent)) value = value.parent;
+  const p = value.parent;
+  if (
+    ts.isBinaryExpression(p) &&
+    [ts.SyntaxKind.AmpersandAmpersandToken, ts.SyntaxKind.BarBarToken].includes(
+      p.operatorToken.kind,
+    )
+  ) {
+    let chain: ts.Node = p;
+    while (
+      ts.isParenthesizedExpression(chain.parent) ||
+      (ts.isBinaryExpression(chain.parent) &&
+        [
+          ts.SyntaxKind.AmpersandAmpersandToken,
+          ts.SyntaxKind.BarBarToken,
+        ].includes(chain.parent.operatorToken.kind))
+    )
+      chain = chain.parent;
+    const sink = chain.parent;
+    return (
+      (ts.isPrefixUnaryExpression(sink) &&
+        sink.operator === ts.SyntaxKind.ExclamationToken) ||
+      ((ts.isIfStatement(sink) ||
+        ts.isWhileStatement(sink) ||
+        ts.isDoStatement(sink)) &&
+        sink.expression === chain) ||
+      (ts.isConditionalExpression(sink) && sink.condition === chain)
+    );
+  }
   return (
     ts.isTypeOfExpression(p) ||
     (ts.isPrefixUnaryExpression(p) &&
       p.operator === ts.SyntaxKind.ExclamationToken) ||
-    ((ts.isIfStatement(p) || ts.isWhileStatement(p)) &&
-      p.expression === node) ||
-    (ts.isConditionalExpression(p) && p.condition === node)
+    ((ts.isIfStatement(p) || ts.isWhileStatement(p) || ts.isDoStatement(p)) &&
+      p.expression === value) ||
+    (ts.isConditionalExpression(p) && p.condition === value)
   );
 }
 export function unusedPresenceProbe(
@@ -99,15 +130,118 @@ export function completionObjects(
   node: ts.Expression,
   tree: ts.SourceFile,
   checker: ts.TypeChecker,
+  seen = new Set<ts.Symbol>(),
 ): ts.ObjectLiteralExpression[] | null {
   if (ts.isParenthesizedExpression(node))
-    return completionObjects(node.expression, tree, checker);
-  if (ts.isObjectLiteralExpression(node)) return [node];
+    return completionObjects(node.expression, tree, checker, seen);
+  // Modified: 2026-11-02 (chance). Flatten only proven spreads for validation;
+  // the actual object expression, calls and side effects remain author code.
+  if (ts.isObjectLiteralExpression(node)) {
+    let variants: ts.ObjectLiteralElementLike[][] = [[]];
+    for (const property of node.properties) {
+      if (!ts.isSpreadAssignment(property)) {
+        for (const v of variants) v.push(property);
+        continue;
+      }
+      const objects = completionObjects(
+        property.expression,
+        tree,
+        checker,
+        seen,
+      );
+      if (!objects || variants.length * objects.length > 64) return null;
+      variants = variants.flatMap((v) =>
+        objects.map((o) => [...v, ...o.properties]),
+      );
+    }
+    return variants.map((v) => ts.factory.createObjectLiteralExpression(v));
+  }
+  if (ts.isCallExpression(node) && ts.isIdentifier(node.expression)) {
+    const symbol = valueSymbol(node.expression, checker),
+      decl = symbol?.valueDeclaration;
+    if (!symbol || seen.has(symbol) || !decl) return null;
+    const fn = ts.isFunctionDeclaration(decl)
+      ? decl
+      : ts.isVariableDeclaration(decl) &&
+          ts.isVariableDeclarationList(decl.parent) &&
+          decl.parent.flags & ts.NodeFlags.Const &&
+          decl.initializer &&
+          (ts.isArrowFunction(decl.initializer) ||
+            ts.isFunctionExpression(decl.initializer))
+        ? decl.initializer
+        : null;
+    if (
+      !fn ||
+      !fn.body ||
+      fn.asteriskToken ||
+      fn.modifiers?.some((m) => m.kind === ts.SyntaxKind.AsyncKeyword)
+    )
+      return null;
+    let closed = true;
+    const refs = (n: ts.Node) => {
+      if (ts.isIdentifier(n) && valueSymbol(n, checker) === symbol) {
+        const p = n.parent;
+        // Modified: 2026-11-02 (chance). Other calls must not leak a shared
+        // returned object to an uninspected consumer before this completion.
+        if (
+          (ts.isFunctionDeclaration(p) || ts.isVariableDeclaration(p)) &&
+          p.name === n
+        ) {
+        } else if (ts.isCallExpression(p) && p.expression === n) {
+          const sink = p.parent;
+          if (
+            p !== node &&
+            !ts.isExpressionStatement(sink) &&
+            !(
+              ts.isCallExpression(sink) &&
+              ts.isIdentifier(sink.expression) &&
+              sink.expression.text === "$done" &&
+              !valueSymbol(sink.expression, checker) &&
+              sink.arguments[0] === p
+            )
+          )
+            closed = false;
+        } else closed = false;
+      }
+      ts.forEachChild(n, refs);
+    };
+    refs(tree);
+    if (!closed) return null;
+    const next = new Set(seen).add(symbol);
+    if (!ts.isBlock(fn.body))
+      return completionObjects(fn.body, tree, checker, next);
+    const values: ts.ObjectLiteralExpression[] = [];
+    let valid = true;
+    const returns = (n: ts.Node) => {
+      if (n !== fn.body && ts.isFunctionLike(n)) return;
+      if (ts.isReturnStatement(n)) {
+        const objects = n.expression
+          ? completionObjects(n.expression, tree, checker, next)
+          : [ts.factory.createObjectLiteralExpression()];
+        if (!objects) valid = false;
+        else values.push(...objects);
+        return;
+      }
+      ts.forEachChild(n, returns);
+    };
+    returns(fn.body);
+    const terminates = (n: ts.Statement): boolean =>
+      ts.isReturnStatement(n) ||
+      ts.isThrowStatement(n) ||
+      (ts.isBlock(n) && n.statements.some(terminates)) ||
+      (ts.isIfStatement(n) &&
+        !!n.elseStatement &&
+        terminates(n.thenStatement) &&
+        terminates(n.elseStatement));
+    if (!terminates(fn.body))
+      values.push(ts.factory.createObjectLiteralExpression());
+    return valid && values.length ? values : null;
+  }
   // Modified: 2026-11-02 (chance). Both conditional result shapes must be known;
   // keep the condition and all business expressions in the original program.
   if (ts.isConditionalExpression(node)) {
-    const yes = completionObjects(node.whenTrue, tree, checker),
-      no = completionObjects(node.whenFalse, tree, checker);
+    const yes = completionObjects(node.whenTrue, tree, checker, seen),
+      no = completionObjects(node.whenFalse, tree, checker, seen);
     return yes && no ? [...yes, ...no] : null;
   }
   if (!ts.isIdentifier(node)) return null;
@@ -115,13 +249,16 @@ export function completionObjects(
     decl = symbol?.valueDeclaration;
   if (
     !symbol ||
+    seen.has(symbol) ||
     !decl ||
     !ts.isVariableDeclaration(decl) ||
-    !decl.initializer ||
-    !ts.isObjectLiteralExpression(decl.initializer)
+    !decl.initializer
   )
     return null;
-  const values = [decl.initializer];
+  const next = new Set(seen).add(symbol);
+  const initial = completionObjects(decl.initializer, tree, checker, next);
+  if (!initial) return null;
+  const values = [...initial];
   const scalarFields = new Set([
     "body",
     "bodyBytes",
@@ -135,8 +272,8 @@ export function completionObjects(
       const p = n.parent;
       if (ts.isVariableDeclaration(p) && p.name === n) {
         if (p.initializer) {
-          if (ts.isObjectLiteralExpression(p.initializer))
-            values.push(p.initializer);
+          const objects = completionObjects(p.initializer, tree, checker, next);
+          if (objects) values.push(...objects);
           else valid = false;
         }
         const list = p.parent;
@@ -148,16 +285,19 @@ export function completionObjects(
       } else if (
         ts.isBinaryExpression(p) &&
         p.left === n &&
-        p.operatorToken.kind === ts.SyntaxKind.EqualsToken &&
-        ts.isObjectLiteralExpression(p.right)
-      )
-        values.push(p.right);
-      else if (
+        p.operatorToken.kind === ts.SyntaxKind.EqualsToken
+      ) {
+        const objects = completionObjects(p.right, tree, checker, next);
+        if (objects) values.push(...objects);
+        else valid = false;
+      } else if (
         ts.isCallExpression(p) &&
         p.expression.getText(tree) === "$done" &&
         !checker.getSymbolAtLocation(p.expression) &&
         p.arguments[0] === n
       ) {
+      } else if (n === node) {
+        // This occurrence is the proven return/conditional/spread consumer.
       } else if (
         (ts.isPropertyAccessExpression(p) || ts.isElementAccessExpression(p)) &&
         p.expression === n

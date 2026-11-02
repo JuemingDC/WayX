@@ -119,12 +119,46 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     };
     return client;
   }
+  // Modified: 2026-11-02 (chance). QX-source fetch remains a real Promise.
+  // Sanitize only documented fields on every host; no timeout or cancellation shim.
+  function sourceTask(){
+    if(!config.httpTask)return undefined;
+    const native=host.task,client=host.http;let active=false;
+    if(config.to==='qx'?!native:!client)fail('native HTTP transport unavailable');
+    return {fetch:input=>{
+      if(active)fail('QX fetch subset permits one active request');active=true;
+      const incoming=input.opts||{},request={url:input.url,method:input.method||'GET',headers:Object.assign({},input.headers),opts:{redirection:incoming.redirection===undefined?true:incoming.redirection,'auto-cookie':incoming['auto-cookie']===undefined?false:incoming['auto-cookie'],'skip-cert-verify':incoming['skip-cert-verify']===undefined?false:incoming['skip-cert-verify']}};
+      if(own(input,'body'))request.body=input.body;
+      if(own(incoming,'policy'))request.opts.policy=incoming.policy;
+      const normalize=(response,data)=>{
+        if(!response||typeof response.statusCode!=='number'||!Number.isInteger(response.statusCode)||response.statusCode<100||response.statusCode>599)fail('QX fetch success requires a numeric statusCode');
+        const result={statusCode:response.statusCode};
+        if(config.httpTaskBinary){const b=bytes(data);if(b.length>65536)fail('QX fetch subset byte limit');result.bodyBytes=buffer(b);}
+        else{if(typeof data!=='string'||data.length>65536||/[^\x00-\x7f]/.test(data))fail('QX fetch subset requires ASCII response text');result.body=data;}
+        return result;
+      };
+      if(config.to==='qx'){
+        let promise;try{promise=native.fetch(request);}catch(error){active=false;throw error;}
+        return promise.then(response=>{active=false;return normalize(response,response&&(config.httpTaskBinary?response.bodyBytes:response.body));},reason=>{active=false;throw reason;});
+      }
+      const options={url:request.url,headers:request.headers,'auto-redirect':request.opts.redirection,'auto-cookie':request.opts['auto-cookie'],insecure:request.opts['skip-cert-verify']};
+      if(own(request,'body'))options.body=request.body;
+      if(own(request.opts,'policy'))options.policy=request.opts.policy==='direct'?'DIRECT':request.opts.policy;
+      if(config.httpTaskBinary)options['binary-mode']=true;
+      return new Promise((resolve,reject)=>{
+        try{client[request.method.toLowerCase()](options,(error,response,data)=>{
+          active=false;if(error){reject({error});return;}
+          try{resolve(normalize(response&&{statusCode:response.status},data));}catch(error){reject(error);}
+        });}catch(error){active=false;reject(error);}
+      });
+    }};
+  }
   function start(request,response){
     const script={name:config.name||host.script&&host.script.name||host.ctx&&host.ctx.script.name};
     if(host.script&&host.script.startTime!==undefined){const start=host.script.startTime;script.startTime=config.from==='loon'?(start instanceof Date?start:new Date(start*1000)):(start instanceof Date?start.getTime()/1000:start);}
     const ctx={request:ctxMessage(request),response:ctxMessage(response),script,respond:value=>({response:value}),abort:()=>({abort:true})};
     const sourceTimer=(callback,delay,...args)=>setTimeout(()=>callback(...args),delay);
-    const result=run(view(request,'request'),view(response,'response'),done,config.from==='qx'?undefined:script,config.from==='qx'?undefined:sourceStore,config.from==='qx'?sourcePrefs:undefined,config.from==='qx'?undefined:{post:notify},config.from==='qx'?notify:undefined,ctx,config.from==='loon'?sourceTimer:setTimeout,config.from==='loon'?sourceTimer:undefined,callbackHttp());
+    const result=run(view(request,'request'),view(response,'response'),done,config.from==='qx'?undefined:script,config.from==='qx'?undefined:sourceStore,config.from==='qx'?sourcePrefs:undefined,config.from==='qx'?undefined:{post:notify},config.from==='qx'?notify:undefined,ctx,config.from==='loon'?sourceTimer:setTimeout,config.from==='loon'?sourceTimer:undefined,callbackHttp(),sourceTask());
     if(config.from==='egern')return Promise.resolve(result).then(done);
     return completion||result;
   }

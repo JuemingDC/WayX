@@ -14,6 +14,7 @@ import { scriptApiRuntime } from "../emit/script-api-runtime.ts";
 export type UniversalProfile = {
   phase: "request" | "response" | "echo";
   binary?: boolean;
+  responseBody?: boolean;
   name?: string;
 };
 export const universalTargets = ["qx", "surge", "loon"] as const;
@@ -95,6 +96,7 @@ export function planUniversalAdblockScript(
     const profile = {
       phase: modes[0],
       binary: binary[0],
+      responseBody: candidates.every((p) => p.responseBody === true),
       ...(usesName ? { name: names[0] } : {}),
     };
     contexts[role] = {};
@@ -145,14 +147,18 @@ export function planUniversalAdblockScript(
     contextTable = fresh("__wayxContexts"),
     role = fresh("__wayxRole"),
     config = fresh("__wayxConfig"),
-    runBinding = fresh("__wayxRun");
+    runBinding = fresh("__wayxRun"),
+    unusedHttpBinding = fresh("__wayxUnusedHttp");
   // Modified: 2026-11-02 (chance). Inject HTTP only when a proven callback
   // contract needs it; all hosts still execute one author-named shared program.
   const usesHttp = Object.values(contexts).some((role: any) =>
     Object.values(role).some((c: any) => c.httpCallback),
   );
+  const usesTask = Object.values(contexts).some((role: any) =>
+    Object.values(role).some((c: any) => c.httpTask),
+  );
   // The source business body occurs once; only generated bindings are renamed.
-  const run = `function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,${ctx},setTimeout,setInterval${usesHttp ? ",$httpClient" : ""}){\n${source}\n}`;
+  const run = `function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,${ctx},setTimeout,setInterval${usesHttp ? ",$httpClient" : usesTask ? "," + unusedHttpBinding : ""}${usesTask ? ",$task" : ""}){\n${source}\n}`;
   const code = `(function(){
 const ${target}=typeof $loon==='string'?'loon':typeof $task!=='undefined'&&typeof $task.fetch==='function'?'qx':typeof $environment!=='undefined'&&$environment['surge-version']?'surge':null;
 if(!${target})throw new Error('Unsupported adblock script host');
@@ -160,7 +166,7 @@ const ${host}={request:typeof $request==='undefined'?undefined:$request,response
 const ${contextTable}=${JSON.stringify(contexts)},${role}=${host}.response===undefined?'request':'response',${config}=${contextTable}[${role}]&&${contextTable}[${role}][${target}];
 if(!${config})throw new Error('Unregistered adblock HTTP trigger');
 const ${runBinding}=${run};
-if(${target}===${JSON.stringify(from)})return ${runBinding}(${host}.request,${host}.response,${host}.done,${host}.script,${host}.store,${host}.prefs,${host}.notify,${host}.notifyQx,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval,${host}.http);
+if(${target}===${JSON.stringify(from)}&&!${config}.httpTask)return ${runBinding}(${host}.request,${host}.response,${host}.done,${host}.script,${host}.store,${host}.prefs,${host}.notify,${host}.notifyQx,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval,${host}.http);
 return (${scriptApiRuntime})(${config},${host},${runBinding});
 })();\n`;
   try {

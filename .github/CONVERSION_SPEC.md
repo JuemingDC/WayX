@@ -460,3 +460,18 @@ Modified: 2026-11-02 (chance). 用户明确要求“qx 的需要查看作者的�
 忽略列表记入上下文、索引和状态中的 omittedParameters/httpIgnoredOptions，不在脚本中加说明头。只对已证明的回调形状启用桥接：源回调错误只作布尔观察，response/data 只在成功分支读取，响应 status 与 ASCII 文本/容量检查保持原有子域；输入/结果动态逃逸等不因本例外放开。所有注册 profile 都通过后才发布源名三端同一文件。QX 来源 Promise 脚本的数据流证明仍单独处理，不能把省略可选参数等同于任意脚本 API 兼容。
 
 验证包含七种方法、未说明参数及异常类型 timeout 的无错省略、显式和缺省 Cookie/redirect/TLS 选项、真实本地延迟与断连，以及同一程序字节在三端的执行。测试不使用假超时，延迟请求可按 QX 原生默认完成；忽略参数后的行为不再声称与源选项全等价。
+
+
+## 2.26 闭合对象流与 QX Promise 的本轮扩展
+
+Modified: 2026-11-02 (chance). 在 2.25 的 QX 未说明参数省略例外下继续扩展，更新前文“QX 来源 Promise 尚不支持”的边界，不扩展配置控制/任务/Egern 范围。所有新增证明仅检查 AST/绑定；业务表达式、函数文本、求值次序与原始归档不改写。
+
+允许不逃逸且不写入的 const 请求/响应/script 对象别名，并按原上下文字段逐项检查；逻辑 &&/|| 仅在最终 Boolean 消费时视为存在性守卫，不把对象回退/类型观察当布尔。别名上的未知计算属性不能绕过 Header/字段检查。
+
+返回值增加受限函数返回、已知对象展开及闭合结果变量的组合。函数自身不能重绑定，函数返回对象也不能经其它调用逃逸给未知消费者；所有 return、隐式 undefined 及静态字段变更参与结果形状判定。未知/async 返回、动态 spread、循环/反射和不明 Header 结果继续阻断。QX 作者示例中的裸字符串完成仅在原 script-response-body 声明已确认且 String/undefined 流经过证明时放行；不能推广到 header/request/echo 或其它来源软件。const 字符串、拼接/别名可用作显式存储键；已证明不为空的已知 JSON 根序列化可以写入。缺失值、动态命名空间、空字符串删除等未被该扩展改变。
+
+QX $task.fetch 允许字面量或不逃逸 const 请求对象；支持闭合的 then(success,error)、then(...).catch(...)，以及经过本地 catch 审查的 await。成功对象仅读取 statusCode、body 或 bodyBytes；不能外传、改写、读取未知 Header，不能混用文本与字节。原生失败及业务抛错保留 Promise 拒绝，不伪装成功。错误只能被忽略或作已验证的布尔观察，await 的拒绝不能逃逸至未检查消费者。七方法、源 redirection/auto-cookie/skip-cert-verify/policy 默认值与显式值映射；source QX 无请求级 timeout 时不向回调宿主捏造 timeout，使用其原生行为，不宣称取消时限等价。
+
+QX 未说明的顶层请求字段和 opts 字段在所有执行分支省略，包括 QX 原生分支；省略列表写入外部索引/状态，构造参数的作者表达式仍正常求值，不产生参数不支持错误。现有回调来源到 QX 的省略策略继续有效；Surge/Loon 彼此已说明的 timeout 仍正常换算。source QX 字节响应 bodyBytes 与回调数据 Uint8Array 保留精确 byteOffset/byteLength，输出二进制不冒充输入声明的 binary_body_mode。请求体仍为已证明的 ASCII 文本，HTTP 响应大小/并发及输入显式 Header 约束保持受限子域。
+
+每个注册上下文及三端均通过才发布同源同名同一文件；只改原始备份的引用与通用程序，不新增方向文件、文件内声明或本地生成的正式产物。所有诊断补齐分类，区分“数据流未证明”和“目标契约未证明”。验证包括同一字节程序的三端运行、真实本地 HTTP 方法/错误/字节向量、函数结果逃逸反例，以及备份事务中的原声明 body 模式、原件字节、固定地址与省略元数据。

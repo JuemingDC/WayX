@@ -66,8 +66,16 @@ export function inspectEmbeddedWasm(source: string) {
       : "No supported literal embedding found; trace the actual module bytes and import/export ABI before choosing a backend.",
   };
 }
-export function scriptProblemCategory(api: string): string {
+// Modified: 2026-11-02 (chance). Distinguish an unproven code flow from a
+// missing host contract, including early task/profile diagnostics.
+export function scriptProblemCategory(api: string, reason = ""): string {
   if (api === "syntax" || api === "opaque-script") return "source-invalid";
+  if (
+    /data[-/ ]flow|computed.*property|dynamic.*receiver|aliases|Promise.*flow/i.test(
+      reason,
+    )
+  )
+    return "analysis-unresolved";
   if (
     /WebAssembly|WASM|httpClient|\$task|fetch|timeout|binary|headers/i.test(api)
   )

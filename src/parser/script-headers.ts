@@ -1,10 +1,12 @@
 // Modified: 2026-11-02 (chance). Prove readonly case-independent singleton
 // header lookups; never lowercase dictionaries, copy output headers or drop Host.
 import ts from "typescript";
+import { resolvedPath } from "./script-bindings.ts";
 import { valueSymbol, safePresenceUse } from "./script-analysis.ts";
 export function readonlyHeaderContract(
   tree: ts.SourceFile,
   checker: ts.TypeChecker,
+  contexts = new Map<ts.Symbol, string>(),
 ) {
   const bases: ts.Node[] = [],
     aliases = new Map<ts.Symbol, string>(),
@@ -13,14 +15,17 @@ export function readonlyHeaderContract(
     if (ts.isParenthesizedExpression(n)) return role(n.expression);
     if (ts.isIdentifier(n))
       return aliases.get(valueSymbol(n, checker)!) ?? null;
-    if (
-      ts.isPropertyAccessExpression(n) &&
-      n.name.text === "headers" &&
-      ts.isIdentifier(n.expression) &&
-      !valueSymbol(n.expression, checker) &&
-      ["$request", "$response"].includes(n.expression.text)
-    )
-      return n.expression.text.slice(1);
+    if (ts.isPropertyAccessExpression(n) && n.name.text === "headers") {
+      const root = resolvedPath(n.expression, checker, contexts);
+      if (
+        root &&
+        ["$request", "$response"].includes(root) &&
+        ts.isIdentifier(n.expression) &&
+        (contexts.has(valueSymbol(n.expression, checker)!) ||
+          !valueSymbol(n.expression, checker))
+      )
+        return root.slice(1);
+    }
     return null;
   };
   const walk = (n: ts.Node, fn: (n: ts.Node) => void) => {

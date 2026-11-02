@@ -27,21 +27,21 @@ export const scriptCapabilityBoundaries = {
   lexicalBindings: {
     status: "supported",
     domain:
-      "TypeScript-resolved local bindings, capture-free generated bindings, mapped context-presence guards, unused pure host-presence probes and pure source-host typeof/const branches with var-hoist preservation, localized source edits and nonescaping function proofs",
+      "TypeScript-resolved local bindings, capture-free generated bindings, closed const request/response/script aliases, Boolean-only logical guards, mapped context-presence guards, unused pure host-presence probes and pure source-host typeof/const branches with var-hoist preservation, localized source edits and nonescaping function proofs",
     outside:
       "Escaping platform aliases, class-getter receiver identity, nonsequential const/TDZ uses, dynamic receivers, eval and Function construction remain blocked",
   },
   completion: {
     status: "conditional",
     domain:
-      "Literal/conditional result objects, closed variables assigned literal objects and static scalar body/bodyBytes/status/statusCode/url reads, assignments or deletion; class-local strict receivers preserve native calls",
+      "Literal/conditional/spread result objects, closed object-returning functions with nonescaping call results, closed variables and static scalar body/bodyBytes/status/statusCode/url reads/assignments/deletion; proven QX string/undefined results require original response-body declarations; class-local strict receivers preserve native calls",
     outside:
-      "Alias escapes, shorthand escapes, duplicate dynamic declarations, loop assignment, unknown returns, header/response mutations and dynamic property writes remain blocked",
+      "Alias escapes, shorthand escapes, duplicate dynamic declarations, loop assignment, unknown/async returns, escaped function results, header/response mutations and dynamic property writes remain blocked",
   },
   storage: {
     status: "conditional",
     domain:
-      "Explicit plain string keys; read absence may normalize only under ||, ??, Boolean guards or loose-null tests, including fully audited local aliases",
+      "Explicit plain constant strings/concatenations/const aliases as keys; known nonempty literal-root or JSON.parse-root JSON serialization writes; read absence may normalize only under ||, ??, Boolean guards or loose-null tests, including fully audited local aliases",
     outside:
       "Strict null/undefined observations, stringification, implicit/dynamic keys, Loon empty-string writes and full cleanup remain blocked",
   },
@@ -56,14 +56,15 @@ export const scriptCapabilityBoundaries = {
     next: "Extend exact per-field operations and real-client vectors without changing dictionary casing, duplicates or framing",
   },
   http: {
-    status: "conditional-callback-bridge-with-authorized-qx-omissions",
+    status:
+      "conditional-callback-and-qx-Promise-bridge-with-authorized-omissions",
     qx: qxHttpOptions,
     implemented:
-      "Callback-source bridge: seven methods; Surge/Loon keep strict explicit HTTP options and native timeout unit conversion; QX maps author-documented fields and omits undocumented optional request parameters. Both retain bounded literal input, UA/Accept/identity encoding, ASCII <=64KiB, one active request, ignored return and success-guarded response/error data flow",
+      "Callback-source bridge: seven methods; Surge/Loon keep strict explicit HTTP options and native timeout unit conversion; QX maps author-documented fields and omits undocumented optional request parameters. QX-source literal/closed-const fetch calls support closed then/catch and locally caught await, numeric statusCode, ASCII or exact-offset bodyBytes. All retain explicit UA/Accept/identity encoding, <=64KiB and one active request; source Promise errors propagate and unknown QX fields are omitted on all hosts including QX itself",
     production:
-      "Shared callback-source scripts may publish only when all profiles pass, with QX ignored options recorded explicitly; QX-source Promise programs still need separate data-flow proof",
+      "Shared callback-source and proven QX-source Promise programs publish only after every registered profile passes all three hosts; ignored QX fields are recorded outside author scripts",
     fixtures:
-      "tests/support/http-contract-server.ts, tests/script-contracts.ts and manual tools/script-client-probe.js; no real-client result has been supplied",
+      "tests/support/http-contract-server.ts, tests/script-contracts.ts, tests/script-task.ts, tests/script-flow.ts, tests/script-flow-production.ts and manual tools/script-client-probe.js; no real-client result has been supplied",
     methods: ["GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH"],
     timeout: {
       surge: "seconds; default 5",
@@ -81,7 +82,7 @@ export const scriptCapabilityBoundaries = {
     },
     errors:
       "QX rejected Promise reason.error versus callback error/response/data; missing response must not become successful null",
-    next: "Extend QX-source Promise data flow and independent real-client fixtures; documented optional settings are mapped and undocumented QX request parameters are omitted without error",
+    next: "Extend dynamic URLs/headers, escaped response objects, detailed error observations and independent real-client fixtures; undocumented QX request parameters remain omitted without error",
   },
   webAssembly: {
     status: "blocked-without-engine-proof",

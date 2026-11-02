@@ -1,5 +1,13 @@
 // Modified: 2026-11-01 (chance). Inspect JavaScript syntax rather than replacing API names in strings/comments; only emit adapters for a documented bounded contract.
 import ts from "typescript";
+import {
+  contextAliases,
+  resolvedPath,
+  constantString,
+  storageString,
+} from "./script-bindings.ts";
+import { completionString } from "./script-string.ts";
+import { qxTaskContract } from "./script-task.ts";
 import { callbackHttpContract } from "./script-http.ts";
 import { readonlyHeaderContract } from "./script-headers.ts";
 import {
@@ -25,8 +33,8 @@ export type ApiOptions = {
 export type ApiProblem = { api: string; reason: string; solution: string };
 const gaps: Record<string, [string, string]> = {
   $task: [
-    "QX-source Promise chains and their response/error data flow are outside the currently proven callback-source HTTP subset",
-    "Prove the Promise/result flow separately; omit undocumented target-QX optional request parameters without errors under the user-authorized policy",
+    "QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
+    "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host",
   ],
   $httpClient: [
     "HTTP request/callback/error/header or binary data flow is outside the currently proven subset",
@@ -100,6 +108,7 @@ export function inspectScriptApis(source: string) {
   );
   // Modified: 2026-11-02 (chance). Local bindings and harmless context guards are not foreign host API calls.
   const checker = scriptChecker(tree);
+  const contexts = contextAliases(tree, checker);
   const paths = new Set<string>(),
     calls: { api: string; node: ts.CallExpression }[] = [],
     problems: ApiProblem[] = [];
@@ -132,7 +141,7 @@ export function inspectScriptApis(source: string) {
         "Remove dynamic code or provide a separately verified native implementation",
       );
     if (ts.isCallExpression(node)) {
-      const api = propertyPath(node.expression);
+      const api = resolvedPath(node.expression, checker, contexts.aliases);
       let root: ts.Expression = node.expression;
       while (
         ts.isPropertyAccessExpression(root) ||
@@ -142,7 +151,11 @@ export function inspectScriptApis(source: string) {
       const bound = ts.isIdentifier(root)
         ? checker.getSymbolAtLocation(root)
         : null;
-      if (api && !bound?.declarations?.some((d) => d.getSourceFile() === tree))
+      if (
+        api &&
+        (contexts.aliases.has(bound!) ||
+          !bound?.declarations?.some((d) => d.getSourceFile() === tree))
+      )
         calls.push({ api, node });
       if (api === "eval" || api?.startsWith("Reflect."))
         add(
@@ -210,6 +223,40 @@ export function inspectScriptApis(source: string) {
           );
       }
       const local = valueSymbol(node, checker);
+      // Modified: 2026-11-02 (chance). Keep author aliases untouched while
+      // inventorying their original mapped context fields and pure guards.
+      if (contexts.initializers.has(node)) {
+        ts.forEachChild(node, visit);
+        return;
+      }
+      if (local && contexts.aliases.has(local)) {
+        if (
+          ts.isVariableDeclaration(node.parent) &&
+          node.parent.name === node
+        ) {
+          ts.forEachChild(node, visit);
+          return;
+        }
+        if (!safePresenceUse(node)) {
+          let outer: ts.Node = node;
+          while (
+            (ts.isPropertyAccessExpression(outer.parent) ||
+              ts.isElementAccessExpression(outer.parent)) &&
+            outer.parent.expression === outer
+          )
+            outer = outer.parent;
+          const path = resolvedPath(outer, checker, contexts.aliases);
+          if (path) paths.add(path);
+          else
+            add(
+              contexts.aliases.get(local)!,
+              "Computed API property cannot be resolved statically",
+              "Use a static mapped context member or retain the native script",
+            );
+        }
+        ts.forEachChild(node, visit);
+        return;
+      }
       // Bound ordinary variables (including minified $e/$t) remain ordinary JS.
       // Shadowed injected top-level bindings are still rejected by syntax/gates.
       if (
@@ -304,7 +351,14 @@ export function inspectScriptApis(source: string) {
       ts.flattenDiagnosticMessageText(d.messageText, " "),
       "Preserve the raw script and repair syntax before conversion",
     );
-  return { tree, checker, paths: [...paths].sort(), calls, problems };
+  return {
+    tree,
+    checker,
+    contextAliases: contexts.aliases,
+    paths: [...paths].sort(),
+    calls,
+    problems,
+  };
 }
 // Modified: 2026-11-01 (chance). Egern modules are strict; reject observable sloppy-script constructs before putting legacy code inside an ES module.
 function moduleStrictnessProblems(tree: ts.SourceFile): ApiProblem[] {
@@ -396,20 +450,36 @@ function moduleStrictnessProblems(tree: ts.SourceFile): ApiProblem[] {
   return problems;
 }
 export function planScriptApiConversion(source: string, options: ApiOptions) {
+  const inventory = inspectScriptApis(source),
+    problems = [...inventory.problems],
+    features = inventory.paths;
+  const taskContract = qxTaskContract(
+    inventory.tree,
+    inventory.checker,
+    options.from,
+    options.to,
+  );
   if (options.from === options.to)
     return {
       status: "native" as const,
       problems: [] as ApiProblem[],
       features: [] as string[],
       code: source,
+      ...(taskContract.ok
+        ? {
+            contract: {
+              httpTask: true,
+              httpTaskBinary: taskContract.binary,
+              httpIgnoredOptions: taskContract.ignoredOptions,
+            },
+          }
+        : {}),
     };
-  const inventory = inspectScriptApis(source),
-    problems = [...inventory.problems],
-    features = inventory.paths;
   // Modified: 2026-11-02 (chance). Grant only proven readonly headers and explicit callback HTTP options.
   const headerContract = readonlyHeaderContract(
     inventory.tree,
     inventory.checker,
+    inventory.contextAliases,
   );
   const httpContract = callbackHttpContract(
     inventory.tree,
@@ -434,7 +504,8 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
   const ctxBinding = fresh("__wayxContext"),
     entryBinding = fresh("__wayxEgernEntry"),
     // Modified: 2026-11-02 (chance). Keep legacy CLI bridges capture-free too.
-    hostBinding = fresh("__wayxHost");
+    hostBinding = fresh("__wayxHost"),
+    unusedHttpBinding = fresh("__wayxUnusedHttp");
   const add = (api: string, reason: string, solution: string) =>
     problems.push({ api, reason, solution });
   const allowedFields: Record<string, Set<string>> = {
@@ -452,6 +523,7 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
   for (const api of features) {
     const [root, field] = api.split(".");
     if (root === "$httpClient" && httpContract.ok) continue;
+    if (root === "$task" && taskContract.ok) continue;
     if (gaps[root]) {
       const [reason, solution] = gaps[root];
       add(root, reason, solution);
@@ -662,7 +734,21 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
           if (response) synthesis++;
           else passOrModify++;
         }
-      } else if (arg && !ts.isStringLiteralLike(arg))
+      } else if (
+        arg &&
+        !(
+          options.from === "qx" &&
+          options.phase === "response" &&
+          options.responseBody === true &&
+          !options.binary &&
+          completionString(
+            arg,
+            inventory.tree,
+            inventory.checker,
+            inventory.contextAliases,
+          )
+        )
+      )
         add(
           "$done",
           "Dynamic completion object needs field/data-flow proof",
@@ -711,8 +797,8 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
         );
       if (
         args.length !== 1 ||
-        !ts.isStringLiteralLike(args[0]) ||
-        /[\\/]/.test(args[0].text)
+        constantString(args[0], inventory.checker) === null ||
+        /[\\/]/.test(constantString(args[0], inventory.checker) ?? "")
       )
         add(
           api,
@@ -729,10 +815,16 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
     ) {
       const key = args[api === "$prefs.removeValueForKey" ? 0 : 1],
         value = args[0];
+      const stringValue = value
+        ? storageString(value, inventory.tree, inventory.checker)
+        : { known: false, nonempty: false };
+      // Modified: 2026-11-02 (chance). Resolve constant keys and known nonempty
+      // serialization without changing source construction, order or exceptions.
       if (
+        api !== "$prefs.removeValueForKey" &&
         value &&
-        ts.isStringLiteralLike(value) &&
-        value.text === "" &&
+        stringValue.known &&
+        !stringValue.nonempty &&
         [options.from, options.to].includes("loon")
       )
         add(
@@ -740,7 +832,11 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
           "Loon empty-string storage semantics are not a portable deletion/write contract",
           "Use an explicit deletion or a nonempty string; do not equate empty strings with missing keys",
         );
-      if (!key || !ts.isStringLiteralLike(key) || /[\\/]/.test(key.text))
+      if (
+        !key ||
+        constantString(key, inventory.checker) === null ||
+        /[\\/]/.test(constantString(key, inventory.checker) ?? "")
+      )
         add(
           api,
           "Only explicit plain string keys are proven portable",
@@ -750,7 +846,7 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
         api !== "$prefs.removeValueForKey" &&
         (!value ||
           !(
-            ts.isStringLiteralLike(value) ||
+            stringValue.known ||
             (value.kind === ts.SyntaxKind.NullKeyword &&
               options.from !== "qx") ||
             (options.from === "loon" &&
@@ -827,6 +923,9 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
   const effectiveOptions = {
     ...options,
     ...(httpContract.ok ? { httpCallback: true } : {}),
+    ...(taskContract.ok
+      ? { httpTask: true, httpTaskBinary: taskContract.binary }
+      : {}),
     ...(headerContract.ok ? { headerReads: headerContract.reads } : {}),
     ...(options.to === "qx" && synthesis ? { phase: "echo" } : {}),
   };
@@ -841,7 +940,7 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
         ctxBinding +
         ");"
       : source;
-  const run = `function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,${ctxBinding},setTimeout,setInterval${httpContract.ok ? ",$httpClient" : ""}){\n${body}\n}`;
+  const run = `function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,${ctxBinding},setTimeout,setInterval${httpContract.ok ? ",$httpClient" : taskContract.ok ? "," + unusedHttpBinding : ""}${taskContract.ok ? ",$task" : ""}){\n${body}\n}`;
   const core = `(${scriptApiRuntime})(${config},${hostBinding},${run})`;
   const header = `// Modified: 2026-11-01 (chance). Documented script API subset: ${options.from} -> ${options.to}; upstream body preserved in its separate raw backup.\n// Category: Script API adapter\n// Source: ${String(options.sourceUrl ?? "").replace(/[\r\n]/g, "")}\n`;
   const code =
@@ -857,6 +956,13 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
     code,
     contract: {
       headerReads: headerContract.reads,
+      ...(taskContract.ok
+        ? {
+            httpTask: true,
+            httpTaskBinary: taskContract.binary,
+            httpIgnoredOptions: taskContract.ignoredOptions,
+          }
+        : {}),
       ...(httpContract.ok
         ? {
             httpCallback: true,

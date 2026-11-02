@@ -144,7 +144,11 @@ export async function prepareScriptApiAdapters(
       // not inherently ambiguous. Runtime selects request/response without URL forks.
       if (declared.length) group.profiles.push(...declared);
       else if (from === "qx" && to === "qx")
-        group.profiles.push({ phase: mode.phase, binary: false });
+        group.profiles.push({
+          phase: mode.phase,
+          binary: false,
+          responseBody: mode.body,
+        });
       group.refs.push({ artifact, ref, to, mode });
       groups.set(url, group);
     }
@@ -295,7 +299,7 @@ export async function prepareScriptApiAdapters(
           category:
             result.status === "excluded"
               ? "out-of-scope"
-              : scriptProblemCategory(p.api),
+              : scriptProblemCategory(p.api, p.reason),
         })),
         ...(result.specialization
           ? { specialization: result.specialization }
@@ -368,7 +372,18 @@ export async function prepareScriptApiAdapters(
     // Modified: 2026-11-02 (chance). Include the audited capability domains and exact upstream comparison revision.
     capabilities: scriptCapabilityBoundaries,
     ...counts,
-    diagnostics,
+    // Modified: 2026-11-02 (chance). Early excluded/profile records receive the
+    // same category metadata as fully planned references; none are left untyped.
+    diagnostics: diagnostics.map((d) => ({
+      ...d,
+      problems: d.problems.map((p: any) => ({
+        ...p,
+        category:
+          d.status === "excluded"
+            ? "out-of-scope"
+            : scriptProblemCategory(p.api, p.reason),
+      })),
+    })),
   };
   changes.set(
     "Resource/Backup/script-api-status.json",

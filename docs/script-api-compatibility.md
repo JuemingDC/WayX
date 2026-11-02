@@ -104,3 +104,21 @@ Modified: 2026-11-02 (chance). 以作者 [crossutility/Quantumult-X](https://git
 省略是用户授权的语义例外：不声称仍保留源请求级超时或 ALPN，不发明取消接口，不用计时器伪装请求取消。真实网络失败仍进入错误回调，成功缺少合法响应仍报契约错误；“参数不报错”不会吞掉业务 JS 错误。其它客户端的参数及 API 支持边界保持严格。
 
 已证明的源回调程序可以通过 QX 桥接进入三端共同文件；仍须三个宿主及全部声明通过。QX 来源的任意 Promise/别名/动态结果程序不因这个例外自动视为已转换。`node tests/qx-http-options.ts` 验证七方法、参数无错省略、Cookie/redirect/TLS/policy、延迟/断连及同一文件的三端执行。
+
+## 继续补充：对象流、存储及 QX 来源 Promise
+
+Modified: 2026-11-02 (chance). 本节取代上文对应的旧阻断描述；QX 未说明的请求参数继续省略、不报参数错误。
+
+| 能力               | 新增支持                                                                | 保留边界                                                                   |
+| ------------------ | ----------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| 框架中的上下文使用 | const request/response/script 别名、最终仅作 Boolean 的逻辑守卫         | 未知 this、别名外传/写入、未知计算属性和身份 getter                        |
+| 完成对象           | 闭合函数返回、已知 spread、条件结果、静态标量字段组合                   | 函数返回结果经其它调用逃逸、async/未知函数、动态展开和 Header 对象变形     |
+| QX 字符串完成      | 原 response-body 声明已确认、String/undefined 类型流已证明              | 不推广到 header/request/echo，也不把任意动态对象强转字符串                 |
+| 存储               | const 字符串键/拼接、确定非空的已知 JSON 根序列化                       | 缺失值差异、动态键归属、空字符串及未知值强制转换                           |
+| QX Promise HTTP    | 七方法，受限 then/catch、本地捕获的 await，statusCode、文本或 bodyBytes | 动态 URL/headers、响应对象外传、详细错误观察、未捕获 await 和混合文本/字节 |
+
+QX 来源的请求同样按作者示例过滤未知顶层/opts 字段，连 QX 原生分支也执行过滤；timeout、ALPN 等省略列表写外部状态，不往脚本加说明头。其它已说明选项保留映射和来源默认值。Surge/Loon 彼此的请求超时仍正常换算；QX 来源未定义对等超时时，不在其它端伪造请求取消，只使用实际原生行为。
+
+bodyBytes 按精确偏移转为/转自 Uint8Array，不用整个底层缓冲区。HTTP 文本仍限已证明的 ASCII/64KiB/单活动请求及显式 UA/Accept/identity 输入域；这些实现不是一般网络库、任意二进制或实机认证。WASM、压缩、插件参数对象、富通知及未知接收者仍单列，不靠忽略整个 API 冒充成功。
+
+新增验证：`tests/script-flow.ts` 检查对象别名、布尔守卫、函数/spread 结果、存储和逃逸反例；`tests/script-task.ts` 在真实本地 HTTP 服务上运行同一份三端脚本，检查七方法、Promise/await、网络/业务拒绝、偏移字节和参数省略；`tests/script-flow-production.ts` 经真实备份事务检查 body 模式、原始字节、固定地址、原位升级和外部元数据。

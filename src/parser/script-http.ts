@@ -225,7 +225,10 @@ export function callbackHttpContract(
           p.expression === node &&
           p.name.text === "status" &&
           !(
-            (ts.isBinaryExpression(p.parent) && p.parent.left === p) ||
+            (ts.isBinaryExpression(p.parent) &&
+              p.parent.left === p &&
+              p.parent.operatorToken.kind >= ts.SyntaxKind.FirstAssignment &&
+              p.parent.operatorToken.kind <= ts.SyntaxKind.LastAssignment) ||
             ts.isPrefixUnaryExpression(p.parent) ||
             ts.isPostfixUnaryExpression(p.parent) ||
             ts.isDeleteExpression(p.parent)
