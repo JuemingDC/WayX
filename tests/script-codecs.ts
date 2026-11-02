@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import vm from "node:vm";
 import { scriptCodecs } from "../src/emit/script-codecs.ts";
-import { planUniversalAdblockScript } from "../src/parser/universal-script.ts";
+
 const codecs = vm.runInNewContext("(" + scriptCodecs + ")()", {
   Uint8Array,
   ArrayBuffer,
@@ -144,73 +144,6 @@ assert.equal(
   observed(() => new codecs.TextEncoder().encode(Symbol())).error,
   "TypeError",
 );
-const source =
-  'const encoder=new TextEncoder();const decoder=new TextDecoder("utf-8",{fatal:true});$done({body:decoder.decode(encoder.encode($response.body))+atob(btoa("ok"))});';
-const plan = planUniversalAdblockScript(source, "loon", [
-  { phase: "response" },
-]);
-assert.equal(plan.status, "universal", JSON.stringify(plan.problems));
-for (const target of ["qx", "surge", "loon"]) {
-  let result: any;
-  vm.runInNewContext(plan.code!, {
-    setTimeout,
-    Uint8Array,
-    ArrayBuffer,
-    $response: { body: "中文😀" },
-    $done: (v: any) => (result = v),
-    ...(target === "qx"
-      ? { $task: { fetch() {} } }
-      : target === "loon"
-        ? { $loon: "test" }
-        : { $environment: { "surge-version": "test" } }),
-  });
-  assert.equal(result.body, "中文😀ok");
-}
-for (const bad of [
-  'const d=new TextDecoder("gbk");$done({body:d.decode($response.body)});',
-  // Modified: 2026-11-02 (chance). Closed const constructor aliases are now
-  // supported; mutable aliases still lack a bounded constructor identity.
-  "let D=TextDecoder;const d=new D();$done();",
-  "const d=new TextDecoder();leak(d);$done();",
-  'if(typeof TextEncoder!=="undefined")$done();',
-  'String.prototype.toLowerCase=()=>"x";const d=new TextDecoder();$done({body:d.decode()});',
-])
-  assert.equal(
-    planUniversalAdblockScript(bad, "loon", [{ phase: "response" }]).status,
-    "blocked",
-    bad,
-  );
-console.log(
-  "Scoped codecs passed: native UTF-8/Base64 differential vectors, streaming/fatal/BOM, surrogates, encodeInto capacity, exact views and the same program on all three hosts",
-);
-const shadow =
-  'const TextEncoder="author";const $argument="local";const __wayxCodecs="private";const __wayxUnusedTextEncoder="free";const d=new TextDecoder();$done({body:d.decode(new Uint8Array([65]))+TextEncoder+$argument+__wayxCodecs+__wayxUnusedTextEncoder});';
-const shadowPlan = planUniversalAdblockScript(shadow, "loon", [
-  { phase: "response" },
-]);
-assert.equal(
-  shadowPlan.status,
-  "universal",
-  JSON.stringify(shadowPlan.problems),
-);
-for (const target of ["qx", "surge", "loon"]) {
-  let result: any;
-  vm.runInNewContext(shadowPlan.code!, {
-    setTimeout,
-    Uint8Array,
-    ArrayBuffer,
-    $response: { body: "" },
-    $done: (v: any) => (result = v),
-    ...(target === "qx"
-      ? { $task: { fetch() {} } }
-      : target === "loon"
-        ? { $loon: "test" }
-        : { $environment: { "surge-version": "test" } }),
-  });
-  assert.equal(result.body, "Aauthorlocalprivatefree");
-}
-
-// Codec inputs use intrinsic brands rather than spoofable instanceof/properties.
 const foreign = vm.runInNewContext("new Uint8Array([65,66]).buffer");
 assert.equal(
   new codecs.TextDecoder().decode(foreign),
@@ -243,11 +176,6 @@ dest.set = () => {
 assert.equal(new codecs.TextEncoder().encodeInto("a", dest).written, 1);
 assert.equal(dest[0], 97);
 
-assert.equal(
-  planUniversalAdblockScript(
-    'const p=[].__proto__;p["join"]=()=>"bad";const d=new TextDecoder();$done({body:d.decode(new Uint8Array([65]))});',
-    "loon",
-    [{ phase: "response" }],
-  ).status,
-  "blocked",
+console.log(
+  "UTF-8/Base64 standard API vectors passed independently of author scripts",
 );

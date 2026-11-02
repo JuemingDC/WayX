@@ -1,19 +1,15 @@
-// Modified: 2026-11-01 (chance). One author-named adblock script serves QX,
-// Surge and Loon; publish only after every declared HTTP context passes all hosts.
+// Modified: 2026-11-02 (chance). Source declaration selects an API adapter;
+// author syntax/dataflow no longer forms the compatibility publication gate.
 import crypto from "node:crypto";
 import vm from "node:vm";
-import ts from "typescript";
-import { scriptCodecs } from "../emit/script-codecs.ts";
-import { optionalScriptParameters } from "./script-parameters.ts";
 import type { ArgumentSchema } from "./script-argument.ts";
-import { specializeScript } from "./script-specialize.ts";
 import {
   inspectScriptApis,
   planScriptApiConversion,
-  type ApiProblem,
   type ScriptPlatform,
+  type ApiProblem,
 } from "./script-api.ts";
-import { scriptApiRuntime } from "../emit/script-api-runtime.ts";
+import { emitScriptApiProgram } from "../emit/script-api-program.ts";
 export type UniversalProfile = {
   phase: "request" | "response" | "echo";
   binary?: boolean;
@@ -61,112 +57,82 @@ export function planUniversalAdblockScript(
   from: ScriptPlatform,
   profiles: UniversalProfile[],
 ) {
-  // Modified: 2026-11-02 (chance). Analyze and emit the same source-host specialization; raw archives remain exact.
-  const specialization = specializeScript(source, from);
-  source = specialization.source;
   const inventory = inspectScriptApis(source),
     features = inventory.paths;
-  const excluded = features.filter((api) =>
-    /^\$(?:config|surge|httpAPI|configuration)(?:\.|$)/.test(api),
-  );
-  const problem = (
-    api: string,
-    reason: string,
-    solution: string,
-  ): ApiProblem => ({ api, reason, solution });
-  if (!["loon", "qx"].includes(from) || excluded.length || !profiles.length)
+  const contexts: Record<string, any> = {},
+    operationPlans: Record<string, any> = {};
+  const problems: ApiProblem[] = [...inventory.problems];
+  if (!["qx", "loon"].includes(from) || !profiles.length)
     return {
       status: "excluded" as const,
       code: null,
       features,
       problems: [
-        problem(
-          excluded.join(", ") || "scope",
-          "Only Loon/QX-source HTTP adblock scripts are in scope: Loon to QX/Surge and QX to Surge; configuration control, Surge-source conversion, Egern and tasks remain native",
-          "Keep the original script; do not add configuration-control shims",
-        ),
+        {
+          api: "scope",
+          reason: "Only Loon/QX HTTP adblock declarations are converted",
+          solution: "Keep other modules and clients native",
+        },
       ],
-      contexts: {},
+      contexts,
+      operationPlans,
     };
-  const problems: ApiProblem[] = [],
-    contexts: Record<string, any> = {},
-    operationPlans: Record<string, any> = {};
-  const usesName = features.some((p) => /^\$script\.name(?:\.|$)/.test(p));
   for (const role of ["request", "response"]) {
     const candidates = profiles.filter(
       (p) => (p.phase === "response" ? "response" : "request") === role,
     );
     if (!candidates.length) continue;
-    const modes = [...new Set(candidates.map((p) => p.phase))];
-    // Modified: 2026-11-02 (chance). Distinct binary flags are immaterial
-    // only when the audited source cannot observe any input body or body mode.
-    // Unknown aliases/computed accesses keep the profile conflict intact.
-    const observesBinary =
-      inventory.problems.length > 0 ||
-      features.some((p) =>
-        /^\$(?:request|response)(?:$|\.body(?:Bytes)?(?:\.|$))|^\$script(?:$|\.binaryBodyMode(?:\.|$))/.test(
-          p,
+    const signatures = [
+      ...new Set(
+        candidates.map((p) =>
+          JSON.stringify({
+            phase: p.phase,
+            binary: !!p.binary,
+          }),
         ),
-      );
-    const binary = [
-      ...new Set(candidates.map((p) => observesBinary && Boolean(p.binary))),
+      ),
     ];
+    if (
+      signatures.length !== 1 ||
+      candidates.some((p) => p.binaryKnown === false)
+    ) {
+      problems.push({
+        api: "source-profile",
+        reason: "The same URL has ambiguous HTTP declaration context",
+        solution:
+          "Register distinguishable phase/binary/name/argument metadata",
+      });
+      continue;
+    }
     const names = [...new Set(candidates.map((p) => p.name).filter(Boolean))];
-    const argumentSchemas = [
+    const schemas = [
       ...new Set(
         candidates.map((p) => JSON.stringify(p.argumentSchema ?? null)),
       ),
     ];
-    if (
-      modes.length !== 1 ||
-      binary.length !== 1 ||
-      (observesBinary && candidates.some((p) => p.binaryKnown === false)) ||
-      (features.some((p) => p.startsWith("$argument")) &&
-        argumentSchemas.length !== 1) ||
-      (usesName && (names.length !== 1 || candidates.some((p) => !p.name)))
-    ) {
-      problems.push(
-        problem(
-          "source-profile",
-          "The same script has indistinguishable HTTP contexts with different echo/binary/observable source names",
-          "Keep one shared file only after the declaration identity can be determined at runtime; never choose the last profile",
-        ),
-      );
-      continue;
-    }
     const profile = {
-      phase: modes[0],
-      binary: binary[0],
+      ...candidates[0],
+      name: names.length === 1 ? names[0] : undefined,
+      argumentSchema:
+        schemas.length === 1 ? candidates[0].argumentSchema : undefined,
       responseBody: candidates.every((p) => p.responseBody === true),
-      ...(argumentSchemas.length === 1 && candidates[0].argumentSchema
-        ? { argumentSchema: candidates[0].argumentSchema }
-        : {}),
-      ...(usesName ? { name: names[0] } : {}),
     };
     contexts[role] = {};
     operationPlans[role] = {};
     for (const to of scriptTargetsForSource(from)) {
-      const plan = planScriptApiConversion(source, { from, to, ...profile });
-      operationPlans[role][to] = plan.operationIR;
-      problems.push(
-        ...plan.problems.map((p) => ({ ...p, reason: to + ": " + p.reason })),
+      const plan = planScriptApiConversion(
+        source,
+        { ...profile, from, to },
+        inventory,
+        false,
       );
-      contexts[role][to] = {
-        from,
-        to,
-        ...profile,
-        ...(plan.contract ?? {}),
-        ...(plan.echoRequired ? { phase: "echo" } : {}),
-      };
+      operationPlans[role][to] = plan.operationIR;
+      contexts[role][to] = { ...profile, from, to, ...plan.contract };
+      problems.push(...plan.problems);
     }
   }
   if (problems.length)
     return {
-      specialization: {
-        folds: specialization.folds,
-        branches: specialization.branches,
-        reason: specialization.reason,
-      },
       status: "blocked" as const,
       code: null,
       features,
@@ -174,80 +140,20 @@ export function planUniversalAdblockScript(
       contexts,
       operationPlans,
     };
-  const identifiers = new Set<string>();
-  const visit = (n: ts.Node) => {
-    if (ts.isIdentifier(n)) identifiers.add(n.text);
-    ts.forEachChild(n, visit);
-  };
-  visit(inventory.tree);
-  // Modified: 2026-11-02 (chance). Generated lexical bindings must never
-  // capture an author identifier, including free typeof probes.
-  const fresh = (base: string) => {
-    let name = base;
-    while (identifiers.has(name)) name += "_";
-    identifiers.add(name);
-    return name;
-  };
-  const ctx = fresh("__wayxContext"),
-    target = fresh("__wayxTarget"),
-    host = fresh("__wayxHost"),
-    contextTable = fresh("__wayxContexts"),
-    role = fresh("__wayxRole"),
-    config = fresh("__wayxConfig"),
-    runBinding = fresh("__wayxRun"),
-    codecBinding = fresh("__wayxCodecs"),
-    nativeNotify = fresh("__wayxNativeNotify");
-  // Modified: 2026-11-02 (chance). Inject HTTP only when a proven callback
-  // contract needs it; all hosts still execute one author-named shared program.
-  const usesHttp = Object.values(contexts).some((role: any) =>
-    Object.values(role).some((c: any) => c.httpCallback),
-  );
-  const usesTask = Object.values(contexts).some((role: any) =>
-    Object.values(role).some((c: any) => c.httpTask),
-  );
-  const usesArgument = features.some((p) => p.startsWith("$argument"));
-  const codecNames = [
-    ...new Set(
-      Object.values(contexts).flatMap((role: any) =>
-        Object.values(role).flatMap((c: any) => c.portableCodecs ?? []),
-      ),
-    ),
-  ] as string[];
-  const parameterTail = optionalScriptParameters(fresh, {
-    $httpClient: usesHttp,
-    $task: usesTask,
-    $argument: usesArgument,
-    ...Object.fromEntries(codecNames.map((n) => [n, true])),
-  });
-  // The source business body occurs once; only generated bindings are renamed.
-  const run = `function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,${ctx},setTimeout,setInterval${parameterTail}){\n${source}\n}`;
-  const code = `(function(){
-const ${target}=typeof $loon==='string'?'loon':typeof $task!=='undefined'&&typeof $task.fetch==='function'?'qx':typeof $environment!=='undefined'&&$environment['surge-version']?'surge':null;
-if(!${target})throw new Error('Unsupported adblock script host');
-const ${codecBinding}=${codecNames.length ? "(" + scriptCodecs + ")()" : "undefined"};
-const ${host}={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify,http:typeof $httpClient==='undefined'?undefined:$httpClient,task:typeof $task==='undefined'?undefined:$task,argument:typeof $argument==='undefined'?undefined:$argument,codecs:${codecBinding}};
-const ${contextTable}=${JSON.stringify(contexts)},${role}=${host}.response===undefined?'request':'response',${config}=${contextTable}[${role}]&&${contextTable}[${role}][${target}];
-if(!${config})throw new Error('Unregistered adblock HTTP trigger');
-const ${runBinding}=${run};
-// Modified: 2026-11-02 (chance). Apply the documented QX notification subset
-// on the native branch too; all original optional expressions still evaluate.
-const ${nativeNotify}=${config}.apiPlan.omitNotificationOptions&&${config}.omittedParameters&&${config}.omittedParameters.some(p=>p.startsWith('notification.argument'))&&typeof ${host}.notifyQx==='function'?((title,subtitle,body)=>${host}.notifyQx(title,subtitle,body)):${host}.notifyQx;
-if(${target}===${JSON.stringify(from)}&&!${config}.httpTask)return ${runBinding}(${host}.request,${host}.response,${host}.done,${host}.script,${host}.store,${host}.prefs,${host}.notify,${nativeNotify},undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval,${host}.http,${host}.task,${host}.argument,${codecBinding}&&${codecBinding}.TextEncoder,${codecBinding}&&${codecBinding}.TextDecoder,${codecBinding}&&${codecBinding}.atob,${codecBinding}&&${codecBinding}.btoa);
-return (${scriptApiRuntime})(${config},${host},${runBinding});
-})();\n`;
+  const code = emitScriptApiProgram(source, contexts);
   try {
     new vm.Script(code);
-  } catch (error: any) {
+  } catch (e: any) {
     return {
       status: "blocked" as const,
       code: null,
       features,
       problems: [
-        problem(
-          "syntax",
-          error.message,
-          "Repair source syntax before publishing the shared HTTP program",
-        ),
+        {
+          api: "syntax",
+          reason: e.message,
+          solution: "Repair classic JS composition",
+        },
       ],
       contexts,
       operationPlans,
@@ -255,15 +161,11 @@ return (${scriptApiRuntime})(${config},${host},${runBinding});
   }
   return {
     status: "universal" as const,
-    specialization: {
-      folds: specialization.folds,
-      branches: specialization.branches,
-      reason: specialization.reason,
-    },
     code,
     features,
-    problems: [] as ApiProblem[],
+    problems,
     contexts,
     operationPlans,
+    runtimePolicyVersion: 2,
   };
 }

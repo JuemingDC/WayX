@@ -1,6 +1,6 @@
 // Modified: 2026-11-02 (chance). One semantic catalog supplies parsing,
 // target lowering, runtime layouts and per-operation publication evidence.
-export type ScriptClient = "qx" | "loon" | "surge" | "egern";
+export type ScriptClient = "qx" | "loon" | "surge";
 export const scriptHttpMethods = [
   "GET",
   "POST",
@@ -15,14 +15,14 @@ export interface ScriptHostLayout {
   scriptStartTime: "date" | "epoch-seconds" | "absent";
   binaryField: "body" | "bodyBytes";
   store: {
-    style: "prefs" | "store" | "ctx";
+    style: "prefs" | "store";
     read: string;
     write: string;
     remove: string | null;
     undefinedDeletes: boolean;
   };
   http: {
-    style: "promise" | "callback" | "ctx";
+    style: "promise" | "callback";
     root: string;
     optionsRoot: string | null;
     redirect: string;
@@ -46,7 +46,7 @@ export interface ScriptHostLayout {
     statusEncoding: "line" | "number";
     synthetic: "flat" | "response";
   };
-  argument: "absent" | "string" | "typed" | "ctx";
+  argument: "absent" | "string" | "typed";
 }
 export const scriptHostLayouts: Record<ScriptClient, ScriptHostLayout> = {
   qx: {
@@ -154,42 +154,6 @@ export const scriptHostLayouts: Record<ScriptClient, ScriptHostLayout> = {
     completion: { statusEncoding: "number", synthetic: "response" },
     argument: "string",
   },
-  // Retained only for isolated legacy library fixtures; not a production direction.
-  egern: {
-    responseStatus: "status",
-    scriptStartTime: "epoch-seconds",
-    binaryField: "body",
-    store: {
-      style: "ctx",
-      read: "get",
-      write: "set",
-      remove: "delete",
-      undefinedDeletes: false,
-    },
-    http: {
-      style: "ctx",
-      root: "ctx",
-      optionsRoot: null,
-      redirect: "redirect",
-      cookie: "cookie",
-      tls: "tls",
-      policy: "policy",
-      timeoutMs: null,
-      directPolicy: "DIRECT",
-      defaults: { redirect: true, cookie: false, tls: false },
-    },
-    notification: {
-      root: "ctx.notify",
-      open: null,
-      media: null,
-      action: null,
-      openAction: null,
-      stringLink: false,
-      delay: false,
-    },
-    completion: { statusEncoding: "number", synthetic: "response" },
-    argument: "ctx",
-  },
 };
 export interface ScriptApiDefinition {
   id: string;
@@ -253,8 +217,8 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
           ? "header String / missing"
           : "header dictionary mutation",
       lowering:
-        "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
-      proof: "header-operation-proof",
+        "ScriptHub-derived case-insensitive Header facade; delete/has/Symbol traps repaired",
+      proof: "runtime-header-api-contract",
     })),
   ),
   {
@@ -283,19 +247,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     lowering: "ArrayBuffer <-> Uint8Array preserving byteOffset/byteLength",
     proof: "explicit-binary-declaration",
   })),
-  {
-    id: "complete.original-context",
-    kind: "completion",
-    selector: "original-context",
-    source: { qx: "$done", loon: "$done" },
-    target: { surge: "$done({})", qx: "$done({})", loon: "$done" },
-    canonical: "complete.pass-original",
-    value: "proven untouched response context",
-    lowering:
-      "preserve the original HTTP response without copying header/framing fields",
-    proof:
-      "same-phase-direct-original-context; immutable scalar-only reads; no alias/escape/binary",
-  },
   {
     id: "complete",
     kind: "completion",
@@ -439,7 +390,13 @@ export interface ScriptApiOperation {
     transform?: string;
     cases?: { when: string; target: string; transform: string }[];
   }[];
-  decision: "native" | "mapped" | "omitted" | "requires-proof" | "unmapped";
+  decision:
+    | "native"
+    | "mapped"
+    | "omitted"
+    | "requires-proof"
+    | "unmapped"
+    | "runtime";
   diagnostics: { api: string; reason: string; solution: string }[];
 }
 export interface ScriptApiIR {
@@ -449,48 +406,6 @@ export interface ScriptApiIR {
   sourceView: "analysis-input";
   operations: ScriptApiOperation[];
   diagnostics: { api: string; reason: string; solution: string }[];
-}
-
-// Modified: 2026-11-02 (chance). Syntax recognition includes documented foreign
-// surfaces in source-host branches; availability is a separate runtime contract.
-export function scriptKnownFields() {
-  const fields: Record<string, Set<string>> = {};
-  for (const definition of scriptApiDefinitions) {
-    for (const api of Object.values(definition.source)) {
-      if (!api?.startsWith("$")) continue;
-      const [root, field] = api.split(".");
-      if (field) (fields[root] ??= new Set()).add(field);
-    }
-  }
-  return fields;
-}
-
-// Modified: 2026-11-02 (chance). A foreign SDK reference in a guarded branch
-// preserves the source's absent binding; it must never invoke the target SDK.
-const knownRoots = new Set(
-  scriptApiDefinitions.flatMap((rule) =>
-    Object.values(rule.source)
-      .filter((api) => api.startsWith("$"))
-      .map((api) => api.split(".")[0]),
-  ),
-);
-for (const root of knownRoots) {
-  const absentClients = (["qx", "loon", "surge"] as const).filter(
-    (client) => scriptHostPresence(client)[root] === "undefined",
-  );
-  if (!absentClients.length) continue;
-  scriptApiDefinitions.push({
-    id: "source.absent." + root.slice(1),
-    kind: "environment",
-    source: Object.fromEntries(absentClients.map((client) => [client, root])),
-    target: same("undefined"),
-    canonical: "source.unavailable-binding",
-    value:
-      "undefined source SDK binding; original member access is not implemented",
-    lowering:
-      "preserve absent source binding and original branch/evaluation; never call destination SDK",
-    proof: "source-host-presence-layout; not foreign-API support",
-  });
 }
 
 // Modified: 2026-11-02 (chance). Published plans cannot mutate the global
@@ -506,32 +421,13 @@ for (const layout of Object.values(scriptHostLayouts)) {
 Object.freeze(scriptHostLayouts);
 Object.freeze(scriptHttpMethods);
 for (const definition of scriptApiDefinitions) {
+  definition.proof =
+    "runtime API contract; author values are validated at invocation";
   Object.freeze(definition.source);
   if (definition.target) Object.freeze(definition.target);
   Object.freeze(definition);
 }
 Object.freeze(scriptApiDefinitions);
-
-export function scriptHostPresence(
-  client: ScriptClient,
-): Record<string, string> {
-  const layout = scriptHostLayouts[client];
-  return {
-    $task: layout.http.style === "promise" ? "object" : "undefined",
-    $httpClient: layout.http.style === "callback" ? "object" : "undefined",
-    $loon: client === "loon" ? "string" : "undefined",
-    $script: layout.scriptStartTime === "absent" ? "undefined" : "object",
-    $prefs: layout.store.style === "prefs" ? "object" : "undefined",
-    $persistentStore: layout.store.style === "store" ? "object" : "undefined",
-    $notify: layout.notification.root === "$notify" ? "function" : "undefined",
-    $notification:
-      layout.notification.root === "$notification.post"
-        ? "object"
-        : "undefined",
-    $surge: client === "surge" ? "object" : "undefined",
-    $rocket: "undefined",
-  };
-}
 
 // Modified: 2026-11-02 (chance). Undocumented QX notification parameters
 // are omitted on source and destination branches; expression effects stay intact.

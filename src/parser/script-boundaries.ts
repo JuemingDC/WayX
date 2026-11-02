@@ -1,162 +1,60 @@
-// Modified: 2026-11-02 (chance). QX parameter omission is a user-authorized exception backed by the author repository.
-import { qxHttpOptions } from "./qx-http-options.ts";
-// Modified: 2026-11-02 (chance). Publish capability evidence with every API
-// report, separating proven subsets, precise boundaries and out-of-scope controls.
+// Modified: 2026-11-02 (chance). Runtime capabilities replace static author-
+// program proof domains. Compatible output is not a device-execution certificate.
 export const scriptCapabilityBoundaries = {
   revision: "2026-11-02",
+  runtimePolicyVersion: 2,
   scriptHub: {
     repository: "Script-Hub-Org/Script-Hub",
     commit: "b943361f11be5795b3eb10f9cc4e5497642922fc",
     file: "script-converter.js",
-    observed: [
-      "global lowercase header proxies",
-      "GET/POST-only QX fetch emulation",
-      "missing response resolved as null",
-      "timer no-ops",
-      "text replacement of $done(",
-    ],
-    reusedCode: false,
-  },
-  remoteScriptEcho: {
-    status: "supported",
-    domain:
-      "HTTP(S) operands with js/mjs/cjs pathname or a verified WayX shared-script namespace, including MIME echo delimiters, query and fragment",
-    outside:
-      "Local resources and remote JSON/data are not reclassified; extensionless resources need source-byte classification",
-  },
-  lexicalBindings: {
-    status: "supported",
-    domain:
-      "TypeScript-resolved local bindings, capture-free generated bindings, closed const request/response/script aliases, guarded same-context scalar && reads, immutable literal keys/string tables without decoder execution, including unrelated delayed readonly uses while the queried access remains top-level, Boolean-only logical guards, mapped context-presence guards, unused pure host-presence probes and pure source-host typeof/const branches with var-hoist preservation, localized source edits and nonescaping function proofs",
-    outside:
-      "Escaping platform aliases, class-getter receiver identity, nonsequential const/TDZ uses, dynamic receivers, eval and Function construction remain blocked",
-  },
-  completion: {
-    status: "conditional",
-    domain:
-      "Closed parameter/caller summaries support identical finite String wrapper arguments and direct absence-insensitive storage-return consumers; Literal/conditional/spread result objects and pristine Object.assign into a fresh empty literal from finite plain dictionaries (no getters/prototype fields), closed object-returning functions with nonescaping call results and single-parameter $done forwarding wrappers with all callers audited, closed variables and static scalar body/bodyBytes/status/statusCode/url reads/assignments/deletion; proven QX string/undefined results require original response-body declarations; class-local strict receivers preserve native calls",
-    outside:
-      "Alias escapes, shorthand escapes, duplicate dynamic declarations, loop assignment, unknown/async returns, escaped function results, header/response mutations and dynamic property writes remain blocked",
-  },
-  storage: {
-    status: "conditional",
-    domain:
-      "Explicit plain constant strings/concatenations/const aliases as keys; known nonempty JSON serialization writes and pristine Loon JSON.stringify results including undefined deletion; read absence may normalize under ||, ??, Boolean/loose-null tests or proven String/truthy branch guards, including fully audited local aliases",
-    outside:
-      "Strict null/undefined observations, stringification, implicit/dynamic keys, Loon empty-string writes and full cleanup remain blocked",
+    reusedCode: true,
+    license: "GPL-3.0",
+    notice: "vendor/script-hub/NOTICE.md",
+    approach:
+      "Native runtime API facade; author business expressions and Env objects execute unchanged",
   },
   headers: {
-    status: "conditional-singleton-query-and-request-deletion",
+    status: "runtime",
     domain:
-      "Pure Object.keys(h).find with lowercase-literal equality or anchored literal case-insensitive exact/prefix regex, guarded readonly lookup and no key/header alias escape; lexical let aliases must remain readonly; target validates one string value per queried name/prefix",
+      "Case-insensitive lowercase Header dictionary Proxy, get/set/delete/has/define/descriptor, Symbol-safe; native dictionaries are copied",
     outside:
-      "General object casing, duplicate values, mutation, output headers and framing remain unproven",
-    reason:
-      "Global lowercase proxies alter enumeration, overwrite case variants and can remove Host or mutate unrelated source behavior",
-    next: "Extend exact per-field operations and real-client vectors without changing dictionary casing, duplicates or framing",
+      "This is an explicit ScriptHub-compatible normalization policy; original key casing and duplicate-case keys are not preserved. Full-header arrays are not supported",
   },
   http: {
-    status:
-      "conditional-callback-and-qx-Promise-bridge-with-authorized-omissions",
-    qx: qxHttpOptions,
-    implemented:
-      "Callback-source bridge: seven methods; Surge/Loon keep strict explicit HTTP options and native timeout unit conversion; QX maps author-documented fields and omits undocumented optional request parameters. QX-source literal/closed-const String request fields and fetch calls support closed then/catch, readonly response const-alias chains and field destructuring/computed constant reads without rest/defaults, and locally caught await, numeric statusCode, ASCII or exact-offset bodyBytes. All retain explicit UA/Accept/identity encoding, <=64KiB and one active request; source Promise errors propagate and unknown QX fields are omitted on all hosts including QX itself",
-    production:
-      "Shared callback-source and proven QX-source Promise programs publish only after every registered profile passes the authorized targets and native source host; ignored QX fields are recorded outside author scripts",
-    fixtures:
-      "tests/support/http-contract-server.ts, tests/script-contracts.ts, tests/script-task.ts, tests/script-flow.ts, tests/script-flow-production.ts and manual tools/script-client-probe.js; no real-client result has been supplied",
-    methods: ["GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH"],
-    timeout: {
-      surge: "seconds; default 5",
-      loon: "milliseconds; default 5000",
-      qx: "omitted without parameter errors by user instruction; no request cancellation is claimed and no timer is invented",
-    },
-    cookie: {
-      surge: "default true",
-      loon: "default true",
-      qx: "auto-cookie default false on build 934+; older versions differ",
-    },
-    tls: {
-      loon: "insecure defaults true; ALPN defaults h1",
-      surge: "explicit insecure option; never inherit Loon defaults silently",
-    },
-    errors:
-      "QX rejected Promise reason.error versus callback error/response/data; missing response must not become successful null",
-    next: "Extend dynamic URLs/headers, escaped response objects, detailed error observations and independent real-client fixtures; undocumented QX request parameters remain omitted without error",
-  },
-  webAssembly: {
-    status: "blocked-without-engine-proof",
-    reason:
-      "Identical JS glue does not establish WASM availability, module imports, memory or native ABI equivalence on all hosts",
-    inspection:
-      "Literal WASM_BASE64/base64_wasm modules are decoded, hashed and compiled without instantiation, recording imports/exports per source; never execute author start functions",
-    next: "Verify exact module hashes and each target engine/module profile or replace the specific exported operation with independent pure-JS code and byte vectors; no empty exports",
-  },
-  hostWebApi: {
-    status: "blocked-unless-locally-implemented",
-    reason:
-      "Surge standard WebAPI may require WebView; QX/Loon do not promise all same globals",
-    implemented:
-      "Scoped UTF-8 TextEncoder/Decoder and atob/btoa with direct use or closed one-hop const aliases and closed instances, pristine intrinsics, exact BufferSource views, streaming/fatal/BOM, encodeInto and standard Base64 validation; tested against independent native vectors",
-    outside:
-      "Legacy encodings, shared buffers, codec reflection/escapes, intrinsic mutation, compression, arbitrary Web APIs and full DOMException identity remain unproven",
-    next: "Extend independently verified algorithms or establish each target engine contract; local author polyfills remain local code",
-  },
-  // Modified: 2026-11-02 (chance). Typed source parameters and declared byte
-  // inputs are separate contracts; QX omission never fabricates author defaults.
-  // Modified: 2026-11-02 (chance). Keep optional notification correspondence
-  // distinct from delivery, clipboard/delay lifecycle and undocumented QX fields.
-  notification: {
-    status: "conditional-url-and-http-media",
+    status: "runtime",
     domain:
-      "Three text fields; QX-undocumented optional arguments are omitted for both QX sources and destinations, preserving expression effects on native and converted branches; explicit Loon openUrl/mediaUrl or String link maps to Surge url/media-url, and explicit Surge open-url/url/media-url maps to Loon. Only HTTP(S) media and zero delay are supported; target QX omits optional arguments without parameter errors",
+      "Seven dynamic methods, concurrent requests, Promise rejection and callbacks, source defaults, units, policy names, text and exact byte views; QX-undocumented parameters omitted without deleting argument construction",
     outside:
-      "QX optional fields have no rich-feature equivalence claim: they are omitted by user policy. Clipboard confirmation, delayed delivery, base64 media, sound and lifecycle for other sources still require explicit contracts",
-    evidence:
-      "Surge scripting/api.html notification options (iOS 5.11+/Mac 5.7+); Loon Script API notification section; QX sample.conf and sample-task.js document three text fields. No notification-delivery/device certification is claimed",
+      "No fabricated timeout/cancellation on QX. Target-native detailed errors, charset handling, cookie state and source-version differences can remain observable",
   },
-  arguments: {
-    status: "conditional-with-authorized-qx-omission",
+  storage: {
+    status: "runtime",
     domain:
-      "Declared Loon Boolean/number/safe finite-select objects bind to an existing typed Surge JSON payload; native Loon uses its actual object. QX omits $argument only with proven safe author fallback expressions. Literal String schemas require actual String input",
+      "Dynamic String keys/values, explicit deletion and source-name default keys; native return/error behavior retained",
     outside:
-      "Unbounded macro String escaping, missing payload/schema, unknown properties, unsafe null/object aliases and dynamic argument consumers remain blocked",
+      "Missing null/undefined and empty-value behavior may remain target-native. Unknown source default name throws at invocation; no invented shared namespace or empty-string deletion probe",
   },
-  binaryInput: {
-    status: "conditional",
+  completion: {
+    status: "runtime",
     domain:
-      "Explicit stable binary profile and observed principal body reads map callback Uint8Array to QX ArrayBuffer bodyBytes with exact byte offsets; unflagged text retains body even if QX exposes bodyBytes too",
+      "Dynamic completion dictionaries and wrappers, source status/byte field conversion, flat/wrapped synthetic responses",
     outside:
-      "Unresolved dynamic binary mode, missing required bytes and arbitrary mixed text/byte observations remain blocked",
+      "QX synthetic response requires an echo declaration; target QX body/header restrictions and unavailable fields are checked at invocation. No catch-and-pass-through suppression",
   },
-  // Modified: 2026-11-02 (chance). Untouched original response return is an
-  // explicit pass-through contract rather than generic header output support.
-  originalContextCompletion: {
-    status: "conditional-loon-qx-response-pass-through",
+  environment: {
+    status: "compatibility-facade",
     domain:
-      "Direct $done($response) in a registered Loon/QX text response trigger with body available; all context observations are immutable scalar reads or presence checks, with no aliases, escapes, header/binary reads or mutations. Authorized target hosts receive $done({}) and retains original wire fields",
+      "Env receivers and functions are ordinary JavaScript; source API presence is provided by the facade. Loon presence marker identifies compatibility, not a target version",
     outside:
-      "Wrong phase, missing body declaration, binary input, context mutation/escape, reflective or indirect completion remain blocked; no general mutable-context/header support",
+      "Actual source device/version/source-path values cannot be reconstructed; dynamically constructed Function code and unsupported native engines are not emulated",
   },
-  configurationControl: {
-    status: "excluded",
-    apis: ["$config", "$surge", "$httpAPI", "$configuration"],
-    reason: "Only HTTP adblock scripts are in the current user scope",
-  },
-  // Modified: 2026-11-02 (chance). Closed functional Env helpers and wrapper
-  // arguments share lexical call summaries; full dynamic Env classes do not.
-  closedWrappers: {
+  codecs: {
+    status: "standard-api-fallback",
     domain:
-      "Closed direct calls of plain functions/const function bindings; identical proven String parameters, direct storage-return consumers, single literal-object QX request with audited nonescaping parameter and discarded returned Promise, pure zero-argument source-host predicates",
+      "Use native globals when available, otherwise retained UTF-8/Base64 implementations with independent standard vectors",
     outside:
-      "Escaped/reassigned functions, mutated parameters, rest/default/spread, receiver/call-frame observations, dynamic class methods, general request objects and strict missing-store observations remain blocked",
-  },
-  requestHeaderDeletion: {
-    domain:
-      "Request-only Object.keys(h).forEach with an exact lowercase-name predicate and guarded delete h[key], then headers-only completion. Detached String singleton dictionaries retain all unmodified fields; framing/control fields cannot be deleted",
-    outside:
-      "Case-sensitive native lookups/deletion, arbitrary writes, response-header mutations, duplicate/multivalue fields, dictionary escape and unknown intrinsics remain blocked",
+      "Other encodings, compression, cryptography, WASM, require and host file/control APIs require actual target support; no empty implementations",
   },
   verification:
-    "Node VM, native ICU, file-integrity and classic-JS syntax checks are engineering evidence, not blanket iOS device certification",
+    "API contract vectors and mock transports, syntax and backup integrity. Generated compatibility means API adapter composition succeeded, not every author business path or device runtime was verified",
 } as const;

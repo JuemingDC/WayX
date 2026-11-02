@@ -13,6 +13,7 @@ export function emitScriptApiPlan(ir: ScriptApiIR) {
       ir.sourceClient,
       ir.targetClient,
     ),
+    qxHttp: structuredClone(scriptHostLayouts.qx.http),
     methods: scriptHttpMethods.map((method) => method.toLowerCase()),
     source: structuredClone(scriptHostLayouts[ir.sourceClient]),
     target: structuredClone(scriptHostLayouts[ir.targetClient]),

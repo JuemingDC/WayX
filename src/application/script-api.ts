@@ -14,10 +14,12 @@ import {
   scriptConversionPriorities,
 } from "../parser/script-api-mapping.ts";
 // Modified: 2026-11-02 (chance). Report static module evidence and analysis categories per source without executing archived author code.
-import {
-  inspectEmbeddedWasm,
-  scriptProblemCategory,
-} from "../parser/script-wasm.ts";
+const scriptProblemCategory = (api: string, _reason?: string) =>
+  api === "syntax"
+    ? "source-invalid"
+    : api === "source-profile"
+      ? "declaration-unresolved"
+      : "api-capability";
 import { scriptCapabilityBoundaries } from "../parser/script-boundaries.ts";
 // Modified: 2026-11-01 (chance). Adblock-only publication groups by original URL,
 // emits one source-named three-client program and rebinds every proven context.
@@ -162,7 +164,7 @@ export async function prepareScriptApiAdapters(
         )
           argumentSchema = { kind: "string" };
         // Modified: 2026-11-02 (chance). Preserve original Loon body-read
-        // provenance; target declarations must not invent an original-context proof.
+        // provenance; runtime body conversion follows the original declaration.
         const bodyOption = ir.options?.find((o: any) =>
           /^(?:requires_body|requires-body)$/.test(o.name),
         );
@@ -256,7 +258,7 @@ export async function prepareScriptApiAdapters(
     if (!raw) throw Error("Missing raw API input: " + record.path);
     let result: any;
     const sourceText = new TextDecoder("utf8", { fatal: false }).decode(raw);
-    const wasmEvidence = inspectEmbeddedWasm(sourceText);
+
     if (group.from.size !== 1 || !group.profiles.length)
       result = {
         status: "blocked",
@@ -292,58 +294,6 @@ export async function prepareScriptApiAdapters(
         };
       }
     }
-    if (
-      result.status === "universal" &&
-      (result.features.some((p: string) =>
-        /^\$(?:request|response)\.bodyBytes(?:\.|$)/.test(p),
-      ) ||
-        Object.values(result.contexts).some(
-          (role: any) => role.qx?.binaryReads,
-        )) &&
-      group.refs.some((r: any) => !r.mode.body)
-    ) {
-      result = {
-        ...result,
-        status: "blocked",
-        code: null,
-        problems: [
-          {
-            api: "binary input",
-            reason: "A source declaration does not wait for its byte body",
-            solution:
-              "Correct the source declaration; do not add binary mode to a header-only trigger",
-          },
-        ],
-      };
-    }
-    if (
-      result.status === "universal" &&
-      result.features.some((p: string) => p.startsWith("$argument")) &&
-      group.refs.some((r: any) => {
-        if (r.to !== "surge") return false;
-        const text = r.artifact.text,
-          start = text.lastIndexOf("\n", r.ref.start - 1) + 1,
-          next = text.indexOf("\n", r.ref.end),
-          line = text.slice(start, next < 0 ? undefined : next);
-        return !splitTopLevelCsv(line.slice(line.indexOf("=") + 1)).some(
-          (token: string) => /^\s*argument\s*=/.test(token),
-        );
-      })
-    )
-      result = {
-        ...result,
-        status: "blocked",
-        code: null,
-        problems: [
-          {
-            api: "$argument",
-            reason:
-              "A Surge declaration does not carry the source argument payload",
-            solution:
-              "Restore the verified generated argument binding; do not invent saved settings or defaults",
-          },
-        ],
-      };
     if (
       result.status === "universal" &&
       group.refs.some(
@@ -400,9 +350,9 @@ export async function prepareScriptApiAdapters(
             operations: syntax,
             diagnostics: rawInventory.problems,
           },
-          specialization: result.specialization ?? null,
+          runtimePolicyVersion: 2,
           sourceView:
-            "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+            "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
           plans: result.operationPlans ?? {},
           diagnostics: result.problems,
         },
@@ -434,7 +384,7 @@ export async function prepareScriptApiAdapters(
         ).filter((target) => target !== [...group.from][0]),
         contexts: result.contexts,
         features: result.features,
-        specialization: result.specialization,
+        runtimePolicyVersion: 2,
       };
       counts.universal++;
     }
@@ -478,9 +428,7 @@ export async function prepareScriptApiAdapters(
               ? "out-of-scope"
               : scriptProblemCategory(p.api, p.reason),
         })),
-        ...(result.specialization
-          ? { specialization: result.specialization }
-          : {}),
+
         // Modified: 2026-11-02 (chance). QX omissions are informational metadata,
         // never parameter errors or extra declarations in the author script.
         ...(result.contexts
@@ -495,7 +443,7 @@ export async function prepareScriptApiAdapters(
               ],
             }
           : {}),
-        ...(wasmEvidence ? { wasm: wasmEvidence } : {}),
+
         ...(binding
           ? { path: binding.path, retained: result.status !== "universal" }
           : {}),
@@ -551,7 +499,9 @@ export async function prepareScriptApiAdapters(
   index.adapters = adapters;
   index.bindings = bindings;
   const report = {
-    version: 2,
+    version: 3,
+    runtimePolicyVersion: 2,
+    validationMode: "api-runtime-compatibility",
     scope: "adblock-http",
     targets: ["qx", "surge"],
     nativeSourceHosts: ["loon", "qx"],

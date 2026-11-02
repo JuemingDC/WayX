@@ -415,136 +415,24 @@ Modified: 2026-11-01 (chance). 原生 QX 上游整条 URL rewrite 使用大写 `
 Modified: 2026-11-01 (chance). 奶思大合集中实测含非 QX 的 DOMAIN 类型声明；原生片段格式修正只将已知 DOMAIN/DOMAIN-SUFFIX/DOMAIN-KEYWORD/DOMAIN-WILDCARD 类型分别改为 host/host-suffix/host-keyword/host-wildcard，并规范已支持 IP-CIDR/IP6-CIDR/USER-AGENT 类型的大小写。保留参数、策略、顺序和原声明注释，不猜测未知类型。
 
 
-## 2.23 跨客户端 Script API 规划与剩余差异
+## 2.23 ScriptHub 派生的通用 Script API 兼容层
 
-Modified: 2026-11-01 (chance). 实现与证据详见 docs/script-api-compatibility.md。本轮仅处理 Adblock 中 request/response/echo 去广告脚本；Module 功能脚本、任务、Egern 和 `$config`/`$surge`/`$httpAPI`/`$configuration` 等配置控制能力在范围外，不加入去广告兼容性待补清单。备份范围仍为全仓库，不因 API 处理范围收缩而停止原文备份。
+Modified: 2026-11-02 (chance). 用户要求 API 之间长期可维护的通用转换，取代历史逐源码/逐数据流放行策略。生产只开放 Loon→QX、Loon→Surge、QX→Surge；只处理 HTTP 去广告脚本。每 URL 一个同源命名的共用 JS，原业务正文一次，函数、类、this、动态对象和包装调用保持普通 JavaScript。不得新增脚本名白名单、具体实参证明器或以本地仓库脚本通过作为 API 转换依据。构建阶段仅检查经典 JS 语法、授权方向和 HTTP 触发声明；API 引用清单是描述性元数据。
 
-按无 fragment 的原 URL 分组，输出 `Script/Adblock/<来源主机>-<URL摘要前12位>/<源文件名>`；摘要目录用于区分同名文件和查询参数，不将摘要或转换方向用作文件名。保留安全的原文件名（含中文、原扩展名和无扩展名）；只替换不能安全用于声明的字符，不擅自补 js 后缀。所有通用文件不论扩展名均以普通脚本模式检查 JS 语法和摘要，不能继承仓库 type=module 的严格模式；允许嵌入的作者正文保留原换行，原始字节另有独立备份。地址不随正文摘要、目标软件、tag/name 或更新次数改变；路径身份碰撞须阻断，不能覆盖其它来源。QX/Surge 产物引用相同通用地址，fragment 原样保留，Loon 可在原 HTTP Script 声明中引用同一文件；本次不额外生成 Loon 插件副本、不改作者原始插件快照。
+复用 Script-Hub-Org/Script-Hub b943361f11be5795b3eb10f9cc4e5497642922fc 的 script-converter.js 运行时方案及 Header Proxy；固定来源、GPL 许可和修改说明放 vendor/script-hub。集中修复 delete/has/Symbol/原型方法、七 HTTP 方法、拒绝与缺失响应、字节/状态、来源默认值与单位、显式删除存储键。不得提供 timer 空函数、正则全文替换 $done、网络失败 resolve(null) 或捕错后假放行。宿主字段/默认值由 domain/script-api.ts 统一维护。
 
-通用程序以正式宿主标志识别 QX/Surge/Loon，原业务正文仅保存一次；目标原生分支保持原 API，异端通过已验证的公共桥接层执行。不得伪造宿主版本或把不兼容方法设为空函数。脚本不新增 WayX 作者、分类、来源、转换说明等内部文件头；保留原作者原注释。来源、源/产物 SHA-256、三端能力和上下文写入 `Resource/Backup/index.json`。
+## 2.24 API 兼容政策和边界
 
-发布前按所有已知 request/response/echo profile 分别规划三个客户端。request/response 可通过当前 HTTP 上下文区分；不可观察的不同 tag 不制造额外脚本，只有脚本读取名称时才要求唯一源名称。无法区分的 echo/binary/可观察名称不得任选一个 profile。未证明的 HTTP 选项、Header 对象形状、动态存储/结果、反射及编码等继续 blocked；配置控制为 excluded，不输出伪兼容文件。已有通用脚本的新版本不兼容时保留经过校验的旧版并报告；初次转换不通过则保留源备份或已验证旧适配，不宣称通用支持。逐引用报告位于 `Resource/Backup/script-api-status.json`，需区分 universal 文件数、adapted 引用数、blocked 与 excluded。
+Modified: 2026-11-02 (chance). 接受 ScriptHub 的 Header 小写、大小写无关兼容政策；它不保持键大小写与重复大小写字段，不得继续以这些源码写法静态阻断全部转换。Header 操作在独立字典上进行，完整 Header 数组和 Proxy descriptor 不变量限制明确报告。HTTP 在运行时派发动态方法/参数，保留 Promise/callback、并发和错误；QX 未说明参数省略，原实参构造、副作用和异常保留，不伪造 QX 超时/取消。存储动态 String 键值使用目标原生 API，删除使用 remove 或 null，不试写空字符串；缺失值、空值及详细错误仍可能保持目标原生差异。动态完成结果按状态/字节/response 布局适配；QX 不支持参数省略，其它不可用字段报错。QX echo 与 response-body Header 规则需要正确声明，不能从具体业务正文推断改写触发语义。
 
-原始备份和通用文件均原位更新，与引用在 Actions 的同一次提交发布；原文归档不改写。迁移后仅删除没有活动声明再引用的 Script/Api 旧文件，范围外仍在使用的文件继续保留。测试须实际用同一份 JS 字节运行三端上下文，检查状态字段、正文、二进制偏移、存储及 echo 声明、文件名冲突、重复同步、来源升级保留和引用完整性。Node VM/ICU 通过不等于各 iOS 客户端的全量实机认证。
+来源 API presence 通过兼容 facade 提供。Loon 外端 presence 使用明确兼容标识，不假装真实版本或设备；不可恢复的源元数据、任意全局反射/Function 构造代码和原生引擎能力列为边界。实际 timers 保留；未提供的 WASM/压缩/文件/配置能力不模拟成功。API 兼容组合成功不代表任意作者程序严格等价或实机认证。
 
-Modified: 2026-11-02 (chance). 新增能力必须给出可证明的输入域：解析 TypeScript 词法绑定，局部 `$` 变量不当作宿主 API；包装层变量名避开作者 AST 的所有标识符（包括自由变量和 typeof 探测），不得捕获或文本替换作者变量；映射上下文的纯 typeof/布尔存在性检查及未被使用的纯宿主探测不作为外端能力调用。允许类中保持原严格接收者的 this，但动态/全局接收者及反射构造仍阻断。`$done(result)` 允许已知字面量/条件结果、闭合变量的字面量赋值和静态 body/bodyBytes/status/statusCode/url 标量字段读写/删除；仍须无逃逸/别名/动态字段/循环赋值；不能因为能识别变量名就允许任意动态结果。初始化的放行分支与合成响应分支都参与 QX echo 类型判定。
+## 2.25 备份、清单与验证
 
-存储缺失值仅在调用方只能观察相同结果时允许规范化：`||`、`??`、布尔判断、非严格空值比较，或所有使用点均满足这些条件的局部别名。严格 null/undefined 比较、String/JSON 序列化、外传或动态键不放行；涉及 Loon 的空字符串写入继续阻断，不拿空字符串代替删除。新增 AST 证明以未改写的作者正文执行，不进行 `$done(` 文本替换。
+Modified: 2026-11-02 (chance). 原插件/脚本继续逐字节备份，源名与固定共用 URL 保持；仅 Actions 同事务拉取、更新原件、共用脚本、引用和外部 API 清单。Resource/Backup/script-api/<URL SHA>.json 绑定原件及清单摘要，记录原源码 UTF-16 API 位置与运行时适配，不记录逐业务值的伪证明。runtimePolicyVersion=2、validationMode=api-runtime-compatibility 必须明确出现在报告；保留旧版本的完整性迁移校验，不用旧 static policy 生成新文件。
 
-`Resource/Backup/script-api-status.json` 除逐引用问题外写入 capabilities，列明具体支持域、阻断原因、方案和 ScriptHub 比较修订。本次重新读取 ScriptHub `script-converter.js`，其内容与文件修订 b943361f11be5795b3eb10f9cc4e5497642922fc 一致。HTTP 的 GET/POST 二分、错误成功化、timer no-op、全局 Header 小写代理和 $done 文本替换不采用；独立实现绑定解析、有限对象流和缺失值观察证明。Loon HTTP timeout 为毫秒/默认 5000，Surge 为秒/默认 5；QX 对等请求超时/取消契约未由引用示例建立。Loon insecure 默认 true、ALPN 默认 h1；QX auto-cookie 在 build 934+ 默认 false，与两种回调宿主默认 true 不同。不得悄悄继承来源错误的默认值或用 Promise.race 冒充底层取消。
+测试由 API 契约、标准向量、模拟原生网络及合成备份事务组成；覆盖动态输入、Env 接收者、Header 操作、七方法/失败/并发、字节、存储和通知。不得用源脚本的具体语法分支堆叠测试放行清单。Rule/Rewrite/Module 的已有转换职责不受影响。
 
-远程 echo 脚本修正匹配 HTTP(S) URL 的 js/mjs/cjs pathname 或受校验的 WayX 通用脚本命名空间（大小写、query、fragment 保留），兼容原 MIME 与重复 echo 分隔符；旧声明留作出处。普通 JSON/数据保持原数据语义，不作为 JS 执行；未知无扩展名资源需先建立内容证据。本轮还修复测试中的 .js 前缀截断问题：真实源名可以是 .json，引用完整性按活动脚本操作数检查完整路径，不将 .json 截为 .js。
+原生 QX echo-response/analyze-echo-response 的远程 HTTP(S) js/mjs/cjs 或已验证 WayX 共用脚本链接，仍修复为对应 script echo，保留 analyze/body、query/fragment 与来源依据；远程 JSON/数据和本地资源不误判为脚本。来源暂停和原备份获取授权不变。
 
-Modified: 2026-11-01 (chance). 对捕获的奶思合集仅为已知 QX reject 动作将 legacy `-` 分隔符规范为 `url`。上游远程 echo-response 文件与 sample 的本地 Data 路径契约冲突，完整保留源行并在目标注释隔离 SOURCE INVALID，同时记录 native diagnostics；不得默默生成一次网络 fetch 去模拟这个未验证的源行为。
-
-
-## 2.24 来源分支、窄 HTTP 与可采集证据
-
-Modified: 2026-11-02 (chance). 去广告范围和三端共用一文件规则不变。通用版本允许折叠纯来源宿主 typeof 判断、同一顺序语句列表内已初始化的 const 条件，保留死分支 var 提升；不执行作者 JS。不确定的 getter 接收者、TDZ、Annex B 函数、宿主写入和源码文本观察保留阻断，原件字节不变。索引与状态记录 specialization 原因及次数。
-
-Header 仅增加经过证明的只读单字段操作：Object.keys(h).find(k=>k.toLowerCase()===固定小写字段)，key 仅参与缺失判断及相应 guarded lookup，不能外传或观察大小写。保留字典和作者查找表达式；目标验证查询字段最多一个 string 值，重复字段或数组值显式失败。此限定输入域不放开普通 Header 对象、Header 输出写入或 framing，不引入全局小写 Proxy。
-
-底层 CLI 可提供 Surge/Loon 七种 callback HTTP 方法的窄适配，但生产 Adblock 仍须三端全部通过。限定字面量 HTTP URL、显式正超时/关闭 cookie 与 redirect、UA/Accept/identity、ASCII <=64KiB、一个活动请求、忽略返回值、错误仅布尔可观察、响应仅数字 status；秒/毫秒显式换算，保留 Host，缺失响应不能成功。HTTPS/TLS/ALPN、一般 Header/二进制、QX 对等超时/取消尚未证明，不使用 Promise.race 假取消。Node 本地服务和手动客户端探针属于隔离测试工具，不改变统一生产传输或托管写入规则，也不代表已取得实机结果。
-
-WASM 对受大小约束且明确命名的 base64 字面量做解码、SHA-256、编译、imports/exports 检查，绝不实例化或执行作者 start；无法定位的动态模块报告缺口。相同摘要仅用于归并 ABI 调查，Node 编译不证明目标引擎可用。状态问题分类区分 source-invalid、analysis-unresolved、mapping-missing、target-contract-unverified 与范围外，不能将所有 blocked 称为不可运行。每次 Actions 连同原文、脚本、证据、索引及引用同事务更新；未通过升级继续保留已验证旧版本。
-
-Modified: 2026-11-02 (chance). 最终复核修正：来源分支优化使用局部文本替换，不整文件重排；未证明仅直接调用的函数体和类体不做内部裁剪，保留可隐式字符串化的作者函数文本。条件表达式取值保留 unbound callee 语义。HTTP 回调的 response/data 只允许在已证明 error 为假的成功分支观察，错误结果形状不猜测。补充相应反例验证。
-
-
-## 2.25 QX 作者依据及未说明请求参数的用户授权例外
-
-Modified: 2026-11-02 (chance). 用户明确要求“qx 的需要查看作者的仓库，没有提到的先忽略掉参数不报错”。本条取代前文仅因 QX 请求级 timeout/取消参数未获证明就阻断转换的策略；这是 2.2 语义保留默认规则的限定例外，仅适用于目标 QX 的 HTTP 请求参数。其它宿主、未知 API、动态对象流、WASM 等仍按各自边界处理，原始备份不改写。
-
-已查阅作者 crossutility/Quantumult-X，修订 af6fb594233ec4a3ec6d4ccb3601e9c36b75ea2d：sample-task.js 给出 url/method/headers/body/opts 和 opts.redirection、skip-cert-verify、auto-cookie；sample-fetch-opts-policy.js 给出 opts.policy；sample-bytes-rewrite.js 给出响应 bodyBytes 的 ArrayBuffer（不能推断为请求 bodyBytes 参数）；sample-fetch-opts-filter.js 标记 filter 已弃用。force-timeout 示例仅用 setTimeout 结束脚本，不是请求级取消，不生成同名超时 API 或 Promise.race 模拟取消。
-
-源回调 HTTP 到 QX 时保留七方法、URL/headers/body，将 auto-redirect → opts.redirection、insecure → opts.skip-cert-verify、auto-cookie → opts.auto-cookie、policy → opts.policy（源内置 DIRECT → direct，其余名称保留）；已知来源默认值显式绑定。QX 未说明的 timeout、ALPN、policy-descriptor 等请求选项在派发时省略，不报“参数不支持”、不输出警告，也不阻断仅因该参数存在的转换。参数对象的原构造表达式照常求值，不删除作者业务副作用；实际 JS/网络异常不在“参数不报错”的范围内。
-
-忽略列表记入上下文、索引和状态中的 omittedParameters/httpIgnoredOptions，不在脚本中加说明头。只对已证明的回调形状启用桥接：源回调错误只作布尔观察，response/data 只在成功分支读取，响应 status 与 ASCII 文本/容量检查保持原有子域；输入/结果动态逃逸等不因本例外放开。所有注册 profile 都通过后才发布源名三端同一文件。QX 来源 Promise 脚本的数据流证明仍单独处理，不能把省略可选参数等同于任意脚本 API 兼容。
-
-验证包含七种方法、未说明参数及异常类型 timeout 的无错省略、显式和缺省 Cookie/redirect/TLS 选项、真实本地延迟与断连，以及同一程序字节在三端的执行。测试不使用假超时，延迟请求可按 QX 原生默认完成；忽略参数后的行为不再声称与源选项全等价。
-
-
-## 2.26 闭合对象流与 QX Promise 的本轮扩展
-
-Modified: 2026-11-02 (chance). 在 2.25 的 QX 未说明参数省略例外下继续扩展，更新前文“QX 来源 Promise 尚不支持”的边界，不扩展配置控制/任务/Egern 范围。所有新增证明仅检查 AST/绑定；业务表达式、函数文本、求值次序与原始归档不改写。
-
-允许不逃逸且不写入的 const 请求/响应/script 对象别名，并按原上下文字段逐项检查；逻辑 &&/|| 仅在最终 Boolean 消费时视为存在性守卫，不把对象回退/类型观察当布尔。别名上的未知计算属性不能绕过 Header/字段检查。
-
-返回值增加受限函数返回、已知对象展开及闭合结果变量的组合。函数自身不能重绑定，函数返回对象也不能经其它调用逃逸给未知消费者；所有 return、隐式 undefined 及静态字段变更参与结果形状判定。未知/async 返回、动态 spread、循环/反射和不明 Header 结果继续阻断。QX 作者示例中的裸字符串完成仅在原 script-response-body 声明已确认且 String/undefined 流经过证明时放行；不能推广到 header/request/echo 或其它来源软件。const 字符串、拼接/别名可用作显式存储键；已证明不为空的已知 JSON 根序列化可以写入。缺失值、动态命名空间、空字符串删除等未被该扩展改变。
-
-QX $task.fetch 允许字面量或不逃逸 const 请求对象；支持闭合的 then(success,error)、then(...).catch(...)，以及经过本地 catch 审查的 await。成功对象仅读取 statusCode、body 或 bodyBytes；不能外传、改写、读取未知 Header，不能混用文本与字节。原生失败及业务抛错保留 Promise 拒绝，不伪装成功。错误只能被忽略或作已验证的布尔观察，await 的拒绝不能逃逸至未检查消费者。七方法、源 redirection/auto-cookie/skip-cert-verify/policy 默认值与显式值映射；source QX 无请求级 timeout 时不向回调宿主捏造 timeout，使用其原生行为，不宣称取消时限等价。
-
-QX 未说明的顶层请求字段和 opts 字段在所有执行分支省略，包括 QX 原生分支；省略列表写入外部索引/状态，构造参数的作者表达式仍正常求值，不产生参数不支持错误。现有回调来源到 QX 的省略策略继续有效；Surge/Loon 彼此已说明的 timeout 仍正常换算。source QX 字节响应 bodyBytes 与回调数据 Uint8Array 保留精确 byteOffset/byteLength，输出二进制不冒充输入声明的 binary_body_mode。请求体仍为已证明的 ASCII 文本，HTTP 响应大小/并发及输入显式 Header 约束保持受限子域。
-
-每个注册上下文及三端均通过才发布同源同名同一文件；只改原始备份的引用与通用程序，不新增方向文件、文件内声明或本地生成的正式产物。所有诊断补齐分类，区分“数据流未证明”和“目标契约未证明”。验证包括同一字节程序的三端运行、真实本地 HTTP 方法/错误/字节向量、函数结果逃逸反例，以及备份事务中的原声明 body 模式、原件字节、固定地址与省略元数据。
-
-
-## 2.27 参数绑定、二进制输入与局部标准编解码
-
-Modified: 2026-11-02 (chance). 本节补充并取代前文对应的旧阻断描述。QX 未说明的参数继续按用户要求省略，不报参数不支持；此例外包括无对应输入的 `$argument`，但不能把省略后抛错、仅被外层 catch 放行的程序算作成功去广告。必须证明作者自己的缺省分支安全，不制造默认值、保存设置或空 API。
-
-来源 `[Argument]` 和 Script 声明共同确定参数契约：Loon 原生分支读取实际对象，Surge 解码已经生成的 JSON argument 字符串，按字段验证 Boolean/number/String 与有限选项。false、0 和空字符串不当作缺失。没有实际 payload 或 schema 时阻断；Surge 模块是文本替换，任意 String 的 JSON 转义未有契约，暂只允许安全字符组成的有限 String 选项，不能保证任意字符串传递。QX 分支输入 undefined，仅启用已证明的作者默认表达式；省略记录写外部索引和状态。
-
-声明明确且一致的 binary profile 可映射主体读取：QX ArrayBuffer bodyBytes 与回调宿主 Uint8Array 保留准确 byteOffset/byteLength；动态未解析模式不猜测，缺少必需字节不退回文本。未声明二进制的文本脚本即使 QX 同时暴露 bodyBytes 也保留 String body，不能覆盖成字节数组。
-
-局部实现 UTF-8 TextEncoder/TextDecoder 与 HTML atob/btoa，注入作用域，不修改全局、不调用作者 WebView/WASM。只允许直接构造、闭合实例和已证明的方法/只读属性；覆盖流式、fatal、BOM、孤立代理项、encodeInto 容量、精确 BufferSource 视图、Base64 空白与填充及非法输入。原生标准算法作为独立向量依据；不声称错误文本/stack 或完整 DOMException 身份相同。其它编码、共享缓冲区、实例逃逸/反射、intrinsic 改写、压缩等继续阻断。
-
-存储补充：仅在 pristine JSON.stringify 证明成立时，Loon 的动态序列化写入允许 String 或 undefined，后者保持删除语义；不将此规则推广为任意 QX/Surge 写入。缺失读取可在经同符号数据流审查的 typeof String 守卫下归一化，严格 null/undefined 或序列化观察仍阻断。验证由 tests/script-argument-binary.ts、tests/script-codecs.ts 及既有全量回归覆盖；三端同文件的 VM 证据不替代实机认证。生产更新继续由 Actions 同步原文、脚本、规范证据与产物。
-
-## 2.28 API 映射与转换优先级证据
-
-Modified: 2026-11-02 (chance). 映射目录须分别列出 QX/Surge/Loon API 对应、已实现子域、依赖及剩余方案，不能以名称对应宣称完整兼容。报告每次新增 apiMapping/conversionPriorities，按源 URL 合并全部目标/profile 的 blocked 家族并集；统计受影响源、仅单家族候选及共同阻断，未知项进入 other，不丢失诊断、不累计重复引用为源数量、不把候选视作可保证解除的阻断。范围外不计入。优先级为 P0 数据流/来源前提，P1 Header/存储/参数及依赖的 HTTP/结果/字节/编码，P2 通知/实际环境/生命周期，P3 引擎与独立算法。实现必须继续按具体输入域和证据逐项验证；本条只补映射与报告，不放宽通用产物门槛。详见 docs/script-api/02-方案设计.md。
-
-
-## 2.29 P0／P1 数据流及只读 Header 扩展
-
-Modified: 2026-11-02 (chance). 支持同上下文短路后得到已支持标量的读取、闭合 const 字段名和没有任何写入/逃逸/延迟使用的字面量字符串表；不运行混淆解码器。仅在完整清单没有未知观察且完全不读取输入正文或模式时忽略 binary profile 差异；其它歧义继续阻断。Header 支持固定 literal 的锚定 i 精确/前缀 find 与 guarded singleton lookup，保留原字典和原业务表达式；多命中/非字符串明确失败，readonly let 别名须逐使用点证明，不扩展为任意可变对象。输入查询通过不能放行 String/未知输出 Header 字典。存储别名的 truthy 分支只在相同符号和所有引用经过审查时证明缺失等价；直接 JSON.parse 的 null/undefined 差异不消除。范围、三端共用文件、源名、逐字节备份和 QX 未说明参数无错省略规则不变；详见 docs/script-api-compatibility.md 的 P0／P1 节。
-
-
-## 2.30 P1 及后续的有限参数与调用映射
-
-Modified: 2026-11-02 (chance). QX fetch 可证明的 const String 请求字段保持原构造求值，成功参数允许闭合已知字段解构，不接受 rest/default 或响应 Header 逃逸。仅转发单一参数给原生 $done 的闭合包装函数须审查所有直接调用的实参，不能放行任意参数流。局部 UTF-8/Base64 编码器可使用一层 readonly const 别名，仍限制闭合实例和所有调用点。通知只对已获文档支持的 Loon/Surge URL、HTTP 媒体字段进行映射，非零延迟、剪贴板确认等独立阻断；目标 QX 的附加通知参数按用户授权无错省略，保留原构造表达式副作用，省略写外部 metadata。未从所查 QX 作者仓库证明的来源 rich options 不反向猜测其语义。环境、参数默认路径、WASM/压缩等未验证能力不因本条放宽。详见 docs/script-api-compatibility.md 的 P1 及后续节；仍仅由 Actions 同事务更新原文、脚本与产物。
-
-
-## 2.31 单向转换范围（取代历史三端无条件门槛）
-
-Modified: 2026-11-02 (chance). 用户明确限定三个转换方向：Loon → Quantumult X、Loon → Surge、Quantumult X → Surge。生产规划、公开 CLI 和发布报告使用同一方向表；Surge 来源、QX → Loon 及其它反向转换不属于本项目当前生产范围。来源端原生运行是保留共用脚本的来源执行，不算反向转换：Loon 来源校验 Loon/QX/Surge，QX 来源只校验 QX/Surge，不能再因 Loon 目标缺口阻断 QX 来源产物。每个源 URL 仍仅一个同源名共用文件，QX/Surge 产物引用同一地址；不需要额外 Loon 插件副本。索引 targets 按来源写实际支持宿主，报告额外记录 conversionDirections；所有仍需的目标和注册 HTTP profile 必须通过。底层隔离 pairwise 测试可保留，但不开放其它发布方向；历史“三端全部通过”规则仅对 Loon 来源适用。本条不更改 QX 未说明参数无错省略、原始字节备份、固定路径和 Actions 事务更新。
-
-Modified: 2026-11-02 (chance). 迁移时未带 directionPolicyVersion 的旧三宿主文件仍可按旧校验记录验证，直到 Actions 原位替换；新适配记录必须写 directionPolicyVersion=1 及来源相关 targets/conversionTargets，不能用旧元数据产生新的反向转换。
-
-
-## 2.32 字符串表只读引用证明修正
-
-Modified: 2026-11-02 (chance). 对顶层且初始化后的固定字符串表字段读取，其它函数中同表的闭合只读数字索引不是阻断理由；所查询字段本身的延迟函数访问仍须进一步证明。不可变扫描必须检测直接/括号/解构赋值和循环写入目标，以及 delete/update、别名和外传；未知索引和混淆解码调用继续阻断。按 AST 事实解释字段，不执行作者函数、不重排原文。此修正针对现存财新脚本的误阻断，不扩展方向或放宽 Header/存储等契约；Actions 同时更新原件备份、固定通用文件及状态。
-
-
-## 2.33 多类别补齐：响应别名及完成构造
-
-Modified: 2026-11-02 (chance). HTTP 成功对象可使用闭合 const 响应别名及局部字段解构；必须逐一审查全部引用，仅允许 statusCode/body/bodyBytes，拒绝写入、外传和未知字段，保留原 Promise 拒绝及 caught-await 边界。完成结果可由 pristine Object.assign({}, ...) 构造，只分析闭合普通来源对象的有限字段形状，不执行/改写作者表达式；已有目标、getter、动态/原型键、内置 Object 逃逸/修改仍阻断。两个能力家族均须独立反例和宿主执行验证，并通过同一备份事务组合测试；不能把 API 子域测试成功冒充整脚本阻断解除。源原件、固定地址、单向范围和 QX 未说明参数无错省略保持不变；实际产物和报告仅由 Actions 同步发布。
-
-
-## 2.34 Script API 具体操作与执行规则统一
-
-Modified: 2026-11-02 (chance). Script API 使用词法 AST→规范操作→目标计划→共同运行时的链路。具体 API 及宿主拼写、默认值、单位和字段由 src/domain/script-api.ts 统一提供；解析允许字段、描述型映射和执行计划共同引用，不维护平行转换表。每操作记录访问类型、成员路径、位置、源/规范/目标 API、参数映射、省略和证明；动态方法不默认 GET。数据流证明仍验证适用域，识别映射不等于整脚本通过。保留 QX 未说明参数省略及副作用规则。
-
-每 URL 生成 Resource/Backup/script-api/<URL SHA-256>.json；原始语法与特化语义位置分别绑定各自源码摘要，UTF-16 范围不可混用。index.apiPlans 绑定计划路径、内容摘要及当前原件摘要，校验失败报 api-plan-integrity。计划不注入作者正文。仅 Actions 同事务更新原件、共用脚本、计划、索引和引用；生产仍只有 2.31 的三个方向。新增转换须有具体输入对应、来源契约、目标执行及反例，不能以单脚本放行或报告映射代替实现。
-
-Modified: 2026-11-02 (chance). 语法识别须接纳共同目录中的已知跨宿主分支写法；来源 SDK 可用性是独立契约。目录为来源缺失的 SDK root 生成 source.absent 规则，目标保留来源 undefined 绑定和原条件求值，不将外端分支 API 接到真实目标 SDK。此项不是外端 API 的来源支持，不提供空实现；逐调用计划必须明确写 source.unavailable-binding。现存多端框架须有真实原件回归。
-
-
-## 2.35 来源 QX 通知省略与原样完成映射
-
-Modified: 2026-11-02 (chance). QX 作者 sample.conf、sample-task.js、sample-rewrite-with-script.js 中已核对的通知契约为三个文本参数。按用户“未说明参数直接忽略”的授权，来源 QX 的附加通知参数在所有授权目标及原生共用分支均省略，记录外部 omittedParameters 和逐调用字段。参数构造副作用、顺序及抛错仍保留，不读取省略对象的 getter，不把未证实的 rich options 映射到 Surge。Loon 来源到 Surge 的通知字段与延迟继续严格证明。宿主目录推导共同 omitNotificationOptions 执行计划，校验器、运行时及记录使用同一判断。
-
-Loon/QX 文本响应且声明读取正文时的直接 $done($response)，仅在全源码证明来源上下文没有别名、外传、Header/字节观察或任何字段写入时，映射为 complete.pass-original；授权目标的 $done({}) 保留原响应，避免把原 Header/Content-Length/编码重新提交。允许原对象的 presence 和 body 及来源 status/statusCode 标量读取，审查括号/解构/循环/delete/update 写入及 $done 的重绑定。phase、二进制、非原对象身份或未知调用不适用。目标 kernel 只对已证明的原 view 身份执行放行；其它完成对象走原规则。原生来源执行仍返回原对象，计划须如实区分。真实两份小兔充充及 Soul 原件、反例和同一备份事务验证，不运行生产本地生成。
-
-依据： https://github.com/crossutility/Quantumult-X/blob/master/sample-rewrite-with-script.js 、 https://github.com/crossutility/Quantumult-X/blob/master/sample.conf 、 https://manual.nssurge.com/scripting/http-request.html 。源码、固定共享 URL、三个生产方向与 Actions-only 发布规则保持不变。
-
-
-## 2.36 闭合包装函数、Env 辅助判断与 Header 操作
-
-Modified: 2026-11-02 (chance). script-closed-functions.ts 提供共同调用点摘要：普通命名函数或 const 函数绑定须只有直接调用，不外传/重赋值，无 rest/default/spread、this/arguments 观察，参数写入审查包含括号和解构。全部调用参数为同一已证明 String 时，键/值证明器可解析参数；直接 return 存储读取的包装函数要求每个调用结果均对缺失表示不敏感。QX 请求包装只接纳单个字面量对象实参，参数只交给 fetch、不写入/外传；返回 then 链仅在所有外层调用丢弃返回值时适用，保留 Promise 成败语义。纯零参数宿主辅助判断可参与分支特化，仍保持来源宿主与原求值顺序；不开放动态 Env 类/反射或任意方法调用。
-
-Header 增加 Object.entries(h).find(([name])=>name.toLowerCase()===literal)?.[1] 的闭合单字段查询，与已有 singleton String 契约一致。request 阶段可证明 Object.keys(h).forEach 的 lowercase-name guarded delete，并将同一闭合字典作为唯一 headers 完成字段传回。目标操作使用分离的字典，验证 singleton String 字段；禁止删除 Host、Content-Length/Type/Encoding、Transfer-Encoding、Connection、Trailer，拒绝字典外传、额外 Header 访问、未知写入及 intrinsic 修改。不能据此放行区分大小写的直接 Header 访问或一般 response Header 操作。逐操作记录删除字段和独立输出证明，不把输入查询授权当成所有 Header 输出授权。
-
-新增项必须通过独立正反例、实际 SDK payload 及组合备份事务；真实源码未完成所有证明时仍保持阻断，不以子操作支持宣称整脚本已解锁。单向生产范围、原字节、同源名称、共用 URL 和 Actions-only 更新不变。
+依据： https://github.com/crossutility/Quantumult-X 、 https://manual.nssurge.com/scripting/ 、 https://nsloon.app/docs/Script/script_api/ 、 https://nsloon.app/docs/Script/script_v2/ 。

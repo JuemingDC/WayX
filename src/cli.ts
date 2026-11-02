@@ -154,14 +154,14 @@ try {
         to = value("--to") ?? "",
         phase = value("--phase") ?? "response";
       if (
-        !["qx", "loon", "surge", "egern"].includes(from) ||
-        !["qx", "loon", "surge", "egern"].includes(to) ||
+        !["qx", "loon", "surge"].includes(from) ||
+        !["qx", "loon", "surge"].includes(to) ||
         !["request", "response", "echo", "task", "network", "generic"].includes(
           phase,
         )
       )
         throw Error(
-          "script-api requires --from/--to qx|loon|surge|egern and a supported --phase",
+          "script-api requires --from/--to qx|loon|surge and a supported --phase",
         );
       // Modified: 2026-11-02 (chance). Public conversion entry points enforce
       // the same directional policy; pairwise library fixtures are not publishing.
