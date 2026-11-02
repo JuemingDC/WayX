@@ -50,7 +50,7 @@
     },
     "completion": {
       "status": "conditional",
-      "domain": "Literal/conditional/spread result objects, closed object-returning functions with nonescaping call results and single-parameter $done forwarding wrappers with all callers audited, closed variables and static scalar body/bodyBytes/status/statusCode/url reads/assignments/deletion; proven QX string/undefined results require original response-body declarations; class-local strict receivers preserve native calls",
+      "domain": "Literal/conditional/spread result objects and pristine Object.assign into a fresh empty literal from finite plain dictionaries (no getters/prototype fields), closed object-returning functions with nonescaping call results and single-parameter $done forwarding wrappers with all callers audited, closed variables and static scalar body/bodyBytes/status/statusCode/url reads/assignments/deletion; proven QX string/undefined results require original response-body declarations; class-local strict receivers preserve native calls",
       "outside": "Alias escapes, shorthand escapes, duplicate dynamic declarations, loop assignment, unknown/async returns, escaped function results, header/response mutations and dynamic property writes remain blocked"
     },
     "storage": {
@@ -100,7 +100,7 @@
         ],
         "policy": "Omit request parameters without a documented QX equivalent without throwing; record omissions outside author script files. This is an explicit semantic exception, not equivalent timeout/cancellation."
       },
-      "implemented": "Callback-source bridge: seven methods; Surge/Loon keep strict explicit HTTP options and native timeout unit conversion; QX maps author-documented fields and omits undocumented optional request parameters. QX-source literal/closed-const String request fields and fetch calls support closed then/catch, success-field destructuring without rest/defaults, and locally caught await, numeric statusCode, ASCII or exact-offset bodyBytes. All retain explicit UA/Accept/identity encoding, <=64KiB and one active request; source Promise errors propagate and unknown QX fields are omitted on all hosts including QX itself",
+      "implemented": "Callback-source bridge: seven methods; Surge/Loon keep strict explicit HTTP options and native timeout unit conversion; QX maps author-documented fields and omits undocumented optional request parameters. QX-source literal/closed-const String request fields and fetch calls support closed then/catch, readonly response const-alias chains and field destructuring/computed constant reads without rest/defaults, and locally caught await, numeric statusCode, ASCII or exact-offset bodyBytes. All retain explicit UA/Accept/identity encoding, <=64KiB and one active request; source Promise errors propagate and unknown QX fields are omitted on all hosts including QX itself",
       "production": "Shared callback-source and proven QX-source Promise programs publish only after every registered profile passes the authorized targets and native source host; ignored QX fields are recorded outside author scripts",
       "fixtures": "tests/support/http-contract-server.ts, tests/script-contracts.ts, tests/script-task.ts, tests/script-flow.ts, tests/script-flow-production.ts and manual tools/script-client-probe.js; no real-client result has been supplied",
       "methods": [
@@ -187,7 +187,7 @@
       "qx": "$done({body,bodyBytes,status,...}); proven response-body String",
       "surge": "$done({body,status,...}); request synthetic response wrapper",
       "loon": "$done({body,status,...}); request synthetic response wrapper",
-      "support": "bounded",
+      "support": "bounded-with-fresh-object-assign",
       "next": "Prove dynamic result construction, phase and pass-through/synthetic branches before lowering",
       "dependsOn": [
         "flow"
@@ -199,7 +199,7 @@
       "qx": "$task.fetch(options) -> Promise",
       "surge": "$httpClient.<method>(options,callback)",
       "loon": "$httpClient.<method>(options,callback)",
-      "support": "bounded",
+      "support": "bounded-with-closed-response-aliases",
       "next": "Expand closed Promise/request/error flows; keep seven methods and defaults; omit QX-undocumented parameters without errors",
       "dependsOn": [
         "flow",

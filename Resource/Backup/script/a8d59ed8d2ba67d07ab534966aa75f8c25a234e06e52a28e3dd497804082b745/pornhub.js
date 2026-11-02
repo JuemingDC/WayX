@@ -1,4 +1,4 @@
-// 2026-11-02 13:10
+// 2026-11-02 13:20
 // Pornhub 去推广/广告 + 去年龄门（Loon http-response 脚本，独立版）
 // 按 home.html（首页）+ play.html（播放页）两份实测结构编写
 // 注意：广告容器的类名前缀会轮换（首页 rdisc5*、播放页 yv3wl*），不能认前缀——2e~2h 全部按结构（ins.adsbytrafficjunky 为首子元素）删
@@ -219,6 +219,24 @@ if (interTarget) {
       m.length < 6000 && m.includes("ads_batch") ? "" : m
     );
 
+  // 2s. 关掉站方 popunder 弹窗源头（用户改走脚本路线、插件 www 跳转规则不动）：页面配置里 "noPopUnder":0 = 弹窗允许，
+  //     其外部 JS 周期性拿 www 根域名开后台页/框（请求记录里的 www.pornhub.com/ 与 /?utm=about:blank 成对刷屏即它，
+  //     无痕下无频控 cookie 压制、约 11 秒一轮）。配置键全站唯一、首页与播放页各一份，0 改 1 让弹窗逻辑自己不启动；
+  //     是否被外部 JS 严格遵守以实测请求记录为准（www 根请求应消失）。
+  body = body.replace(/"noPopUnder":\s*0/g, '"noPopUnder":1');
+
+  // 2t. 去掉整个「短片」（Shorties）栏目（列表页，用户点名）：栏目是两个兄弟块——标题头 #shortiesListSection（519 字节级）
+  //     与卡片轮播 #modelShortiesVideos（内含 shortiesBox 卡片、约 15KB），都用固定 id 锚定、各带长度与内容守卫整段删。
+  //     播放页的 clipsEditor（短片剪辑工具）与操作行「短片」按钮与本栏目无关、不动。第 3 节 CSS 另给两个 id 加 display:none 兜底，
+  //     防结构变体下 DOM 删除漏网时栏目复现。
+  body = body
+    .replace(/<div\b[^>]*\bid="shortiesListSection"[^>]*>[\s\S]*?<\/div>\s*<\/div>/g, (m) =>
+      m.length < 2000 && m.includes("modelShorties__title") ? "" : m
+    )
+    .replace(/<div\b[^>]*\bid="modelShortiesVideos"[^>]*>[\s\S]*?<\/ul>\s*<\/div>/g, (m) =>
+      m.length < 60000 && m.includes("shortiesBox") ? "" : m
+    );
+
   // ============ 3. 兜底 CSS（上游改版导致上面某个锚点失效时的第二道） ============
   // 顶栏留位补偿（仅当 2d 真删了付费标签行时才加）：#mobileHeader 是 position:absolute 的悬浮层、自身不占流内高度，
   // 原页面靠 bottomNav 的 padding-top:60px 给它让位；标签行删掉后正文整体上移、顶部约 60px 被不透明顶栏盖住——
@@ -264,6 +282,11 @@ if (interTarget) {
          改 static 让它随页面滚走，tab 本身与切换功能保留不动 */
       div.tabWrapper .tabFilterWrapper {
         position: static !important;
+      }
+      /* 「短片」栏目兜底（2t 已整段删除，此处防结构变体漏网复现） */
+      #shortiesListSection,
+      #modelShortiesVideos {
+        display: none !important;
       }${navFixCss}
     </style>
   </head>`;

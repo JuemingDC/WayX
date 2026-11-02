@@ -7,9 +7,9 @@
 
 # Author: RuCu6[https://github.com/RuCu6]
 # Icon: https://rucu6.pages.dev/Icons/app/webpage.png
-# Updated: 2026-10-30 08:50
+# Updated: 2026-11-02 13:30
 
-# Converted: 2026-11-01 23:22:46 +08:00
+# Converted: 2026-11-02 13:51:26 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/webpage.lpx
 # Target: Surge
@@ -36,8 +36,9 @@ DOMAIN,yhg007.com,{{{wayx_proxy_policy}}},extended-matching
 (?i)^https:\/\/exhentai\.org https://e-hentai.org 307
 
 # PornHub (https://cn.pornhub.com/) //*.pornhub.com
-(?i)^(https:\/\/cn\.pornhub\.com\/view_video\.php\?viewkey=[^&]+)&.*$ $1 302
+(?i)^https:\/\/www\.pornhub\.com\/\?utm _ reject
 (?i)^https:\/\/www\.pornhub\.com\/ https://cn.pornhub.com/ 302
+(?i)^(https:\/\/cn\.pornhub\.com\/view_video\.php\?viewkey=[^&]+)&.*$ $1 302
 
 [Header Rewrite]
 #request if ${url} ~= /^https:\/\/(?:avatars|gist|raw)\.githubusercontent\.com\//i then request.header.set("Accept-Language", "en-us")
