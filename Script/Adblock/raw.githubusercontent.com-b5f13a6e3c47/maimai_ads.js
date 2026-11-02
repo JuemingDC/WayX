@@ -71,6 +71,13 @@ return (function(config,host,run){
       for(const name of names){const keys=Object.keys(value.headers).filter(k=>k.toLowerCase()===name);if(keys.length>1||keys.some(k=>typeof value.headers[k]!=='string'))fail('header lookup requires a singleton string field: '+name);}
     }
     const result=Object.assign({},value);
+    // Modified: 2026-11-02 (chance). Closed request-header mutations operate
+    // on a detached singleton String dictionary; no host-object mutation leaks.
+    if(config.headerDeletion&&role==='request'){
+      if(!value.headers||typeof value.headers!=='object'||Array.isArray(value.headers))fail('header dictionary required');
+      const seen=new Set();for(const key of Object.keys(value.headers)){const lower=key.toLowerCase();if(seen.has(lower)||typeof value.headers[key]!=='string')fail('header deletion requires singleton String fields');seen.add(lower);}
+      result.headers=Object.assign({},value.headers);
+    }
     // Modified: 2026-11-02 (chance). The declaration identifies the principal
     // binary input; never silently feed text into a byte-only source program.
     if(config.binaryReads&&role===(config.phase==='response'?'response':'request')){

@@ -1147,19 +1147,8 @@
               "lowering": "identity; declaration controls whether body is available",
               "proof": "header-operation-proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "headers-shape",
-                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-              },
-              {
-                "api": "headers",
-                "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
-                "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:128439",
@@ -1416,11 +1405,6 @@
             "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
           },
           {
-            "api": "headers-shape",
-            "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-            "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-          },
-          {
             "api": "$persistentStore.read",
             "reason": "Default/dynamic key namespaces differ across clients",
             "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
@@ -1434,11 +1418,6 @@
             "api": "$persistentStore.write",
             "reason": "Value coercion/deletion of dynamic non-string values is not proven equivalent",
             "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients"
-          },
-          {
-            "api": "headers",
-            "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
-            "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
           }
         ]
       },
@@ -2174,14 +2153,8 @@
               "lowering": "identity; declaration controls whether body is available",
               "proof": "header-operation-proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "headers-shape",
-                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:128439",
@@ -2436,11 +2409,6 @@
             "api": "$request",
             "reason": "API/member is outside the documented portable subset",
             "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
-            "api": "headers-shape",
-            "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-            "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
           },
           {
             "api": "$persistentStore.read",
@@ -3283,11 +3251,6 @@
       "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
     },
     {
-      "api": "headers-shape",
-      "reason": "qx: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-      "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-    },
-    {
       "api": "$persistentStore.read",
       "reason": "qx: Default/dynamic key namespaces differ across clients",
       "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
@@ -3301,11 +3264,6 @@
       "api": "$persistentStore.write",
       "reason": "qx: Value coercion/deletion of dynamic non-string values is not proven equivalent",
       "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients"
-    },
-    {
-      "api": "headers",
-      "reason": "qx: QX body-script framing/header restrictions need a declaration-specific proof",
-      "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
     },
     {
       "api": "TextEncoder",
@@ -3356,11 +3314,6 @@
       "api": "$request",
       "reason": "surge: API/member is outside the documented portable subset",
       "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
-      "api": "headers-shape",
-      "reason": "surge: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-      "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
     },
     {
       "api": "$persistentStore.read",

@@ -3002,14 +3002,8 @@
               "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
               "proof": "source-host-presence-layout; not foreign-API support"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$prefs.valueForKey",
-                "reason": "Default/dynamic key namespaces differ across clients",
-                "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:78973",
@@ -3039,14 +3033,8 @@
                 "action": "map"
               }
             ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "Default/dynamic key namespaces differ across clients",
-                "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           }
         ],
         "diagnostics": [
@@ -3129,16 +3117,6 @@
             "api": "$task",
             "reason": "QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
             "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
-          },
-          {
-            "api": "$prefs.valueForKey",
-            "reason": "Default/dynamic key namespaces differ across clients",
-            "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
-          },
-          {
-            "api": "$persistentStore.read",
-            "reason": "Default/dynamic key namespaces differ across clients",
-            "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
           }
         ]
       },
@@ -5260,14 +5238,8 @@
               "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
               "proof": "source-host-presence-layout; not foreign-API support"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$prefs.valueForKey",
-                "reason": "Default/dynamic key namespaces differ across clients",
-                "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:78973",
@@ -5297,14 +5269,8 @@
                 "action": "map"
               }
             ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "Default/dynamic key namespaces differ across clients",
-                "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           }
         ],
         "diagnostics": [
@@ -5397,16 +5363,6 @@
             "api": "$notification.post",
             "reason": "Notification attachments/actions/delay differ across clients",
             "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-          },
-          {
-            "api": "$prefs.valueForKey",
-            "reason": "Default/dynamic key namespaces differ across clients",
-            "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
-          },
-          {
-            "api": "$persistentStore.read",
-            "reason": "Default/dynamic key namespaces differ across clients",
-            "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
           }
         ]
       },
@@ -7298,16 +7254,6 @@
       "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
     },
     {
-      "api": "$prefs.valueForKey",
-      "reason": "qx: Default/dynamic key namespaces differ across clients",
-      "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
-    },
-    {
-      "api": "$persistentStore.read",
-      "reason": "qx: Default/dynamic key namespaces differ across clients",
-      "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
-    },
-    {
       "api": "$loon",
       "reason": "surge: Bare platform-object aliases require data-flow proof",
       "solution": "Access the documented member directly or keep this program native"
@@ -7396,16 +7342,6 @@
       "api": "$notification.post",
       "reason": "surge: Notification attachments/actions/delay differ across clients",
       "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-    },
-    {
-      "api": "$prefs.valueForKey",
-      "reason": "surge: Default/dynamic key namespaces differ across clients",
-      "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
-    },
-    {
-      "api": "$persistentStore.read",
-      "reason": "surge: Default/dynamic key namespaces differ across clients",
-      "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
     }
   ]
 }

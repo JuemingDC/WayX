@@ -50,7 +50,7 @@
     },
     "completion": {
       "status": "conditional",
-      "domain": "Literal/conditional/spread result objects and pristine Object.assign into a fresh empty literal from finite plain dictionaries (no getters/prototype fields), closed object-returning functions with nonescaping call results and single-parameter $done forwarding wrappers with all callers audited, closed variables and static scalar body/bodyBytes/status/statusCode/url reads/assignments/deletion; proven QX string/undefined results require original response-body declarations; class-local strict receivers preserve native calls",
+      "domain": "Closed parameter/caller summaries support identical finite String wrapper arguments and direct absence-insensitive storage-return consumers; Literal/conditional/spread result objects and pristine Object.assign into a fresh empty literal from finite plain dictionaries (no getters/prototype fields), closed object-returning functions with nonescaping call results and single-parameter $done forwarding wrappers with all callers audited, closed variables and static scalar body/bodyBytes/status/statusCode/url reads/assignments/deletion; proven QX string/undefined results require original response-body declarations; class-local strict receivers preserve native calls",
       "outside": "Alias escapes, shorthand escapes, duplicate dynamic declarations, loop assignment, unknown/async returns, escaped function results, header/response mutations and dynamic property writes remain blocked"
     },
     "storage": {
@@ -59,7 +59,7 @@
       "outside": "Strict null/undefined observations, stringification, implicit/dynamic keys, Loon empty-string writes and full cleanup remain blocked"
     },
     "headers": {
-      "status": "conditional-readonly-singleton",
+      "status": "conditional-singleton-query-and-request-deletion",
       "domain": "Pure Object.keys(h).find with lowercase-literal equality or anchored literal case-insensitive exact/prefix regex, guarded readonly lookup and no key/header alias escape; lexical let aliases must remain readonly; target validates one string value per queried name/prefix",
       "outside": "General object casing, duplicate values, mutation, output headers and framing remain unproven",
       "reason": "Global lowercase proxies alter enumeration, overwrite case variants and can remove Host or mutate unrelated source behavior",
@@ -172,6 +172,14 @@
         "$configuration"
       ],
       "reason": "Only HTTP adblock scripts are in the current user scope"
+    },
+    "closedWrappers": {
+      "domain": "Closed direct calls of plain functions/const function bindings; identical proven String parameters, direct storage-return consumers, single literal-object QX request with audited nonescaping parameter and discarded returned Promise, pure zero-argument source-host predicates",
+      "outside": "Escaped/reassigned functions, mutated parameters, rest/default/spread, receiver/call-frame observations, dynamic class methods, general request objects and strict missing-store observations remain blocked"
+    },
+    "requestHeaderDeletion": {
+      "domain": "Request-only Object.keys(h).forEach with an exact lowercase-name predicate and guarded delete h[key], then headers-only completion. Detached String singleton dictionaries retain all unmodified fields; framing/control fields cannot be deleted",
+      "outside": "Case-sensitive native lookups/deletion, arbitrary writes, response-header mutations, duplicate/multivalue fields, dictionary escape and unknown intrinsics remain blocked"
     },
     "verification": "Node VM, native ICU, file-integrity and classic-JS syntax checks are engineering evidence, not blanket iOS device certification"
   },
@@ -1127,7 +1135,7 @@
     },
     "https://rucu6.pages.dev/Scripts/wechat.js": {
       "path": "Resource/Backup/script-api/06cb926a57e5541695aa9fc972751a3b94682030339647b39c3ced5f897e833b.json",
-      "sha256": "98acd0f8420afa01094933e69598d8b65877562a10a11d9901d7fcf8158e2139",
+      "sha256": "d1dbe0a86cf59476962b6ecce6ada992504b1cc7ef216417c7b7b03f4bdf53cd",
       "sourceSha256": "6477808f1d8ba96c16b5d6851ac646ad45a28ad24d2ea829377fcb4e14832a72"
     },
     "https://rucu6.pages.dev/Scripts/cloud139.js": {
@@ -1217,7 +1225,7 @@
     },
     "https://rucu6.pages.dev/Scripts/youtube/ump_gholts.js": {
       "path": "Resource/Backup/script-api/34e7811759469267add028ad0027db93749f300aae286630b43dae441adbd2b0.json",
-      "sha256": "4c80f714290fdc6035bfd7425801d196bd34b1a03c47002e9f86f9da37925bd1",
+      "sha256": "2950a45b21c6c6f323334ace1037745c32cfde62f1914ba40129c18010726e52",
       "sourceSha256": "ee4f19c5d19deb3917b1f29674916946b8ba361e82c45adca32e23164ceaae49"
     },
     "https://kelee.one/Resource/JavaScript/ShoujiDesk/base_init.js": {
@@ -1827,7 +1835,7 @@
     },
     "https://raw.githubusercontent.com/zZPiglet/Task/master/asset/UnblockURLinWeChat.js": {
       "path": "Resource/Backup/script-api/6d1ee8efe017b7c03876a87c9c5d4e86d63520d5259dde18bed6b41165ffa247.json",
-      "sha256": "6d147464d3856686537c34a04a7adb89339e685bbf14a8b4ef063407c15bec40",
+      "sha256": "6c2d33b9310ac074bab578bb40bcfdc2536f380268839557bd065c0c92d1e6c5",
       "sourceSha256": "79098ac4d2eb7932c9b2b45ac7891469703626855e5d13ab4374af52cc48983e"
     },
     "https://raw.githubusercontent.com/Sliverkiss/QuantumultX/main/AdBlock/xmApp/wnbz.js": {
@@ -2077,12 +2085,12 @@
           "completion": 19,
           "engine": 18,
           "environment": 17,
-          "headers": 6,
+          "headers": 5,
           "http": 24,
           "notification": 7,
           "other": 18,
           "profile": 1,
-          "storage": 20
+          "storage": 18
         }
       },
       {
@@ -2120,13 +2128,13 @@
           "headers": 2,
           "notification": 7,
           "other": 15,
-          "storage": 18
+          "storage": 16
         }
       },
       {
         "family": "headers",
         "priority": "P1",
-        "affectedSources": 24,
+        "affectedSources": 23,
         "singleFamilyCandidates": [
           "https://github.com/ishowshu/qx/raw/refs/heads/main/script/caiyun.js",
           "https://kelee.one/Resource/JavaScript/12306/12306_remove_ads.js",
@@ -2144,37 +2152,37 @@
           "https://rucu6.pages.dev/Scripts/header.js"
         ],
         "coBlockers": {
-          "arguments": 2,
+          "arguments": 1,
           "binary": 1,
-          "codecs": 5,
+          "codecs": 4,
           "completion": 2,
-          "engine": 5,
+          "engine": 4,
           "environment": 3,
-          "flow": 6,
+          "flow": 5,
           "http": 2,
-          "other": 2,
-          "storage": 2
+          "other": 1,
+          "storage": 1
         }
       },
       {
         "family": "storage",
         "priority": "P1",
-        "affectedSources": 24,
+        "affectedSources": 22,
         "singleFamilyCandidates": [
           "https://kelee.one/Resource/JavaScript/RedPaper/RedPaper_remove_ads.js",
           "https://rucu6.pages.dev/Scripts/xiaohongshu.js"
         ],
         "coBlockers": {
-          "arguments": 12,
-          "codecs": 9,
+          "arguments": 10,
+          "codecs": 7,
           "completion": 16,
-          "engine": 12,
-          "environment": 17,
-          "flow": 20,
-          "headers": 2,
-          "http": 18,
-          "notification": 7,
-          "other": 14,
+          "engine": 10,
+          "environment": 15,
+          "flow": 18,
+          "headers": 1,
+          "http": 16,
+          "notification": 6,
+          "other": 12,
           "profile": 1
         }
       },
@@ -2192,11 +2200,11 @@
           "engine": 7,
           "environment": 10,
           "flow": 14,
-          "headers": 2,
+          "headers": 1,
           "http": 12,
           "notification": 6,
           "other": 7,
-          "storage": 12
+          "storage": 10
         }
       },
       {
@@ -2211,11 +2219,11 @@
           "engine": 19,
           "environment": 11,
           "flow": 14,
-          "headers": 5,
+          "headers": 4,
           "http": 10,
           "notification": 2,
           "other": 5,
-          "storage": 9
+          "storage": 7
         }
       },
       {
@@ -2247,7 +2255,7 @@
           "flow": 7,
           "http": 7,
           "other": 7,
-          "storage": 7
+          "storage": 6
         }
       },
       {
@@ -2265,7 +2273,7 @@
           "http": 17,
           "notification": 7,
           "other": 13,
-          "storage": 17
+          "storage": 15
         }
       },
       {
@@ -2287,12 +2295,12 @@
           "completion": 10,
           "environment": 14,
           "flow": 18,
-          "headers": 5,
+          "headers": 4,
           "http": 13,
           "notification": 3,
           "other": 12,
           "profile": 1,
-          "storage": 12
+          "storage": 10
         }
       },
       {
@@ -2325,10 +2333,10 @@
           "engine": 12,
           "environment": 13,
           "flow": 18,
-          "headers": 2,
+          "headers": 1,
           "http": 15,
           "notification": 7,
-          "storage": 14
+          "storage": 12
         }
       }
     ]
@@ -8057,18 +8065,6 @@
           "category": "analysis-unresolved"
         },
         {
-          "api": "$prefs.valueForKey",
-          "reason": "qx: Default/dynamic key namespaces differ across clients",
-          "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$persistentStore.read",
-          "reason": "qx: Default/dynamic key namespaces differ across clients",
-          "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$loon",
           "reason": "surge: Bare platform-object aliases require data-flow proof",
           "solution": "Access the documented member directly or keep this program native",
@@ -8174,18 +8170,6 @@
           "api": "$notification.post",
           "reason": "surge: Notification attachments/actions/delay differ across clients",
           "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$prefs.valueForKey",
-          "reason": "surge: Default/dynamic key namespaces differ across clients",
-          "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$persistentStore.read",
-          "reason": "surge: Default/dynamic key namespaces differ across clients",
-          "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy",
           "category": "mapping-missing"
         }
       ],
@@ -8322,18 +8306,6 @@
           "category": "analysis-unresolved"
         },
         {
-          "api": "$prefs.valueForKey",
-          "reason": "qx: Default/dynamic key namespaces differ across clients",
-          "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$persistentStore.read",
-          "reason": "qx: Default/dynamic key namespaces differ across clients",
-          "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$loon",
           "reason": "surge: Bare platform-object aliases require data-flow proof",
           "solution": "Access the documented member directly or keep this program native",
@@ -8439,18 +8411,6 @@
           "api": "$notification.post",
           "reason": "surge: Notification attachments/actions/delay differ across clients",
           "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$prefs.valueForKey",
-          "reason": "surge: Default/dynamic key namespaces differ across clients",
-          "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$persistentStore.read",
-          "reason": "surge: Default/dynamic key namespaces differ across clients",
-          "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy",
           "category": "mapping-missing"
         }
       ],
@@ -18663,12 +18623,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "headers-shape",
-          "reason": "qx: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
-          "category": "target-contract-unverified"
-        },
-        {
           "api": "$persistentStore.read",
           "reason": "qx: Default/dynamic key namespaces differ across clients",
           "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy",
@@ -18685,12 +18639,6 @@
           "reason": "qx: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "headers",
-          "reason": "qx: QX body-script framing/header restrictions need a declaration-specific proof",
-          "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers",
-          "category": "target-contract-unverified"
         },
         {
           "api": "TextEncoder",
@@ -18751,12 +18699,6 @@
           "reason": "surge: API/member is outside the documented portable subset",
           "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
           "category": "mapping-missing"
-        },
-        {
-          "api": "headers-shape",
-          "reason": "surge: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
-          "category": "target-contract-unverified"
         },
         {
           "api": "$persistentStore.read",
@@ -18866,12 +18808,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "headers-shape",
-          "reason": "qx: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
-          "category": "target-contract-unverified"
-        },
-        {
           "api": "$persistentStore.read",
           "reason": "qx: Default/dynamic key namespaces differ across clients",
           "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy",
@@ -18888,12 +18824,6 @@
           "reason": "qx: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "headers",
-          "reason": "qx: QX body-script framing/header restrictions need a declaration-specific proof",
-          "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers",
-          "category": "target-contract-unverified"
         },
         {
           "api": "TextEncoder",
@@ -18954,12 +18884,6 @@
           "reason": "surge: API/member is outside the documented portable subset",
           "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
           "category": "mapping-missing"
-        },
-        {
-          "api": "headers-shape",
-          "reason": "surge: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
-          "category": "target-contract-unverified"
         },
         {
           "api": "$persistentStore.read",
@@ -55973,18 +55897,6 @@
           "reason": "surge: QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
           "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host",
           "category": "analysis-unresolved"
-        },
-        {
-          "api": "$prefs.valueForKey",
-          "reason": "surge: Default/dynamic key namespaces differ across clients",
-          "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$persistentStore.read",
-          "reason": "surge: Default/dynamic key namespaces differ across clients",
-          "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
@@ -56120,18 +56032,6 @@
           "reason": "surge: QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
           "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host",
           "category": "analysis-unresolved"
-        },
-        {
-          "api": "$prefs.valueForKey",
-          "reason": "surge: Default/dynamic key namespaces differ across clients",
-          "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$persistentStore.read",
-          "reason": "surge: Default/dynamic key namespaces differ across clients",
-          "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
