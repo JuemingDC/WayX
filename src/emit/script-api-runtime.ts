@@ -16,12 +16,24 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
       for(const name of names){const keys=Object.keys(value.headers).filter(k=>k.toLowerCase()===name);if(keys.length>1||keys.some(k=>typeof value.headers[k]!=='string'))fail('header lookup requires a singleton string field: '+name);}
     }
     const result=Object.assign({},value);
+    // Modified: 2026-11-02 (chance). The declaration identifies the principal
+    // binary input; never silently feed text into a byte-only source program.
+    if(config.binaryReads&&role===(config.phase==='response'?'response':'request')){
+      if(config.to==='qx'){
+        if(!(value.bodyBytes instanceof ArrayBuffer))fail('binary trigger requires QX ArrayBuffer bodyBytes');
+        if(config.from!=='qx'){result.body=new Uint8Array(value.bodyBytes);delete result.bodyBytes;}
+      }else{
+        const input=bytes(value.body);
+        if(config.from==='qx'){result.bodyBytes=buffer(input);delete result.body;}
+        else result.body=input;
+      }
+    }
     if(config.from==='qx'){
       if(own(result,'status')){result.statusCode=status(result.status);delete result.status;}
       if(result.body instanceof Uint8Array||result.body instanceof ArrayBuffer){result.bodyBytes=buffer(result.body);delete result.body;}
     }else{
       if(own(result,'statusCode')){result.status=result.statusCode;delete result.statusCode;}
-      if(own(result,'bodyBytes')){result.body=new Uint8Array(result.bodyBytes);delete result.bodyBytes;}
+      if(own(result,'bodyBytes')){if(config.binaryReads&&role===(config.phase==='response'?'response':'request'))result.body=new Uint8Array(result.bodyBytes);delete result.bodyBytes;}
     }
     return result;
   }
@@ -153,12 +165,29 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
       });
     }};
   }
+  // Modified: 2026-11-02 (chance). Surge already carries a JSON payload for
+  // typed Loon PluginObject arguments. QX deliberately supplies no argument.
+  function sourceArgument(){
+    if(!config.argumentMapped)return undefined;
+    if(config.to==='qx')return undefined;
+    const schema=config.argumentSchema;let input=host.argument;
+    if(schema.kind==='string'){
+      if(typeof input!=='string')fail('declared source String argument missing');return input;
+    }
+    if(config.to==='surge'){
+      if(typeof input!=='string')fail('declared PluginObject JSON argument missing');
+      input=JSON.parse(input);
+    }
+    if(!input||typeof input!=='object'||Array.isArray(input))fail('PluginObject argument dictionary required');
+    for(const key of Object.keys(schema.fields)){if(!own(input,key)||typeof input[key]!==schema.fields[key])fail('PluginObject argument type mismatch: '+key);if(schema.enumValues&&schema.enumValues[key]&&!schema.enumValues[key].includes(input[key]))fail('PluginObject argument enum mismatch: '+key);}
+    return input;
+  }
   function start(request,response){
     const script={name:config.name||host.script&&host.script.name||host.ctx&&host.ctx.script.name};
     if(host.script&&host.script.startTime!==undefined){const start=host.script.startTime;script.startTime=config.from==='loon'?(start instanceof Date?start:new Date(start*1000)):(start instanceof Date?start.getTime()/1000:start);}
     const ctx={request:ctxMessage(request),response:ctxMessage(response),script,respond:value=>({response:value}),abort:()=>({abort:true})};
     const sourceTimer=(callback,delay,...args)=>setTimeout(()=>callback(...args),delay);
-    const result=run(view(request,'request'),view(response,'response'),done,config.from==='qx'?undefined:script,config.from==='qx'?undefined:sourceStore,config.from==='qx'?sourcePrefs:undefined,config.from==='qx'?undefined:{post:notify},config.from==='qx'?notify:undefined,ctx,config.from==='loon'?sourceTimer:setTimeout,config.from==='loon'?sourceTimer:undefined,callbackHttp(),sourceTask());
+    const result=run(view(request,'request'),view(response,'response'),done,config.from==='qx'?undefined:script,config.from==='qx'?undefined:sourceStore,config.from==='qx'?sourcePrefs:undefined,config.from==='qx'?undefined:{post:notify},config.from==='qx'?notify:undefined,ctx,config.from==='loon'?sourceTimer:setTimeout,config.from==='loon'?sourceTimer:undefined,callbackHttp(),sourceTask(),sourceArgument(),host.codecs&&host.codecs.TextEncoder,host.codecs&&host.codecs.TextDecoder,host.codecs&&host.codecs.atob,host.codecs&&host.codecs.btoa);
     if(config.from==='egern')return Promise.resolve(result).then(done);
     return completion||result;
   }

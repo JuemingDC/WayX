@@ -351,10 +351,105 @@ export function completionObjects(
 // Modified: 2026-11-02 (chance). Absence normalization is safe only when the
 // caller cannot distinguish null from undefined; strict equality/stringification
 // and escaping aliases remain outside this proof.
-export function absenceInsensitive(node: ts.Node): boolean {
+export function absenceInsensitive(
+  node: ts.Node,
+  checker?: ts.TypeChecker,
+): boolean {
   let value = node;
   while (ts.isParenthesizedExpression(value.parent)) value = value.parent;
   const p = value.parent;
+  // A locally bound value observed only behind its String guard cannot expose
+  // which missing representation was returned: both skip that same branch.
+  if (checker && ts.isIdentifier(value)) {
+    const symbol = valueSymbol(value, checker);
+    const stringGuard = (condition: ts.Expression): boolean | null => {
+      if (ts.isParenthesizedExpression(condition))
+        return stringGuard(condition.expression);
+      if (!ts.isBinaryExpression(condition)) return null;
+      const op = condition.operatorToken.kind,
+        expr = ts.isTypeOfExpression(condition.left)
+          ? condition.left
+          : ts.isTypeOfExpression(condition.right)
+            ? condition.right
+            : null,
+        other = expr === condition.left ? condition.right : condition.left;
+      if (
+        !expr ||
+        !ts.isIdentifier(expr.expression) ||
+        valueSymbol(expr.expression, checker) !== symbol ||
+        !ts.isStringLiteralLike(other) ||
+        other.text !== "string"
+      )
+        return null;
+      return [
+        ts.SyntaxKind.EqualsEqualsToken,
+        ts.SyntaxKind.EqualsEqualsEqualsToken,
+      ].includes(op)
+        ? true
+        : [
+              ts.SyntaxKind.ExclamationEqualsToken,
+              ts.SyntaxKind.ExclamationEqualsEqualsToken,
+            ].includes(op)
+          ? false
+          : null;
+    };
+    let current: ts.Node = value;
+    while (current.parent) {
+      const ancestor = current.parent;
+      if (ts.isBinaryExpression(ancestor) && ancestor.right === current) {
+        const guard = stringGuard(ancestor.left);
+        if (
+          (ancestor.operatorToken.kind ===
+            ts.SyntaxKind.AmpersandAmpersandToken &&
+            guard === true) ||
+          (ancestor.operatorToken.kind === ts.SyntaxKind.BarBarToken &&
+            guard === false)
+        )
+          return true;
+      }
+      if (ts.isConditionalExpression(ancestor)) {
+        const guard = stringGuard(ancestor.condition);
+        if (
+          (guard === true && ancestor.whenTrue === current) ||
+          (guard === false && ancestor.whenFalse === current)
+        )
+          return true;
+      }
+      if (ts.isIfStatement(ancestor)) {
+        const guard = stringGuard(ancestor.expression);
+        if (
+          (guard === true && ancestor.thenStatement === current) ||
+          (guard === false && ancestor.elseStatement === current)
+        )
+          return true;
+      }
+      current = ancestor;
+    }
+  }
+  // Modified: 2026-11-02 (chance). A String type test rejects both missing
+  // representations equally; optional chaining also maps both to undefined.
+  if (
+    (ts.isPropertyAccessExpression(p) || ts.isElementAccessExpression(p)) &&
+    p.expression === value &&
+    p.questionDotToken
+  )
+    return true;
+  if (ts.isTypeOfExpression(p) && ts.isBinaryExpression(p.parent)) {
+    const test = p.parent,
+      other = test.left === p ? test.right : test.left;
+    if (
+      [
+        ts.SyntaxKind.EqualsEqualsToken,
+        ts.SyntaxKind.ExclamationEqualsToken,
+        ts.SyntaxKind.EqualsEqualsEqualsToken,
+        ts.SyntaxKind.ExclamationEqualsEqualsToken,
+      ].includes(test.operatorToken.kind) &&
+      ts.isStringLiteralLike(other) &&
+      !["object", "undefined"].includes(other.text)
+    )
+      return true;
+  }
+
   if (ts.isBinaryExpression(p)) {
     if (
       p.left === value &&
@@ -386,7 +481,7 @@ export function safeStorageRead(
   tree: ts.SourceFile,
   checker: ts.TypeChecker,
 ): boolean {
-  if (absenceInsensitive(node)) return true;
+  if (absenceInsensitive(node, checker)) return true;
   const p = node.parent;
   if (
     !ts.isVariableDeclaration(p) ||
@@ -398,7 +493,7 @@ export function safeStorageRead(
   let safe = true;
   const visit = (n: ts.Node) => {
     if (ts.isIdentifier(n) && valueSymbol(n, checker) === symbol) {
-      if (n !== p.name && !absenceInsensitive(n)) safe = false;
+      if (n !== p.name && !absenceInsensitive(n, checker)) safe = false;
     }
     ts.forEachChild(n, visit);
   };

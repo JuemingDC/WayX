@@ -1,5 +1,9 @@
 // Modified: 2026-11-01 (chance). Inspect JavaScript syntax rather than replacing API names in strings/comments; only emit adapters for a documented bounded contract.
 import ts from "typescript";
+import { codecContract } from "./script-codecs.ts";
+import { scriptCodecs } from "../emit/script-codecs.ts";
+import { optionalScriptParameters } from "./script-parameters.ts";
+import { argumentContract, type ArgumentSchema } from "./script-argument.ts";
 import {
   contextAliases,
   resolvedPath,
@@ -28,6 +32,7 @@ export type ApiOptions = {
   name?: string;
   binary?: boolean;
   responseBody?: boolean;
+  argumentSchema?: ArgumentSchema;
   sourceUrl?: string;
 };
 export type ApiProblem = { api: string; reason: string; solution: string };
@@ -292,7 +297,7 @@ export function inspectScriptApis(source: string) {
           (ts.isPropertyAssignment(node.parent) && node.parent.name === node);
       if (
         !isProperty &&
-        /^(?:globalThis|window|global|require|eval|Function|Reflect|fetch|XMLHttpRequest|WebAssembly|TextEncoder|TextDecoder|URL|URLSearchParams|Buffer|crypto|CompressionStream|DecompressionStream|atob|btoa)$/.test(
+        /^(?:globalThis|window|global|require|eval|Function|Reflect|fetch|XMLHttpRequest|WebAssembly|TextEncoder|TextDecoder|URL|URLSearchParams|Buffer|crypto|CompressionStream|DecompressionStream|atob|btoa|SharedArrayBuffer|Atomics|DOMException)$/.test(
           name,
         )
       )
@@ -453,6 +458,20 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
   const inventory = inspectScriptApis(source),
     problems = [...inventory.problems],
     features = inventory.paths;
+  const codecs = codecContract(inventory.tree, inventory.checker);
+  if (codecs.ok)
+    for (let i = problems.length - 1; i >= 0; i--)
+      if (codecs.names.includes(problems[i].api)) problems.splice(i, 1);
+  const argsContract = argumentContract(
+    inventory.tree,
+    inventory.checker,
+    options.argumentSchema,
+    options.from,
+    options.to,
+  );
+  if (argsContract.ok)
+    for (let i = problems.length - 1; i >= 0; i--)
+      if (problems[i].api === "$argument") problems.splice(i, 1);
   const taskContract = qxTaskContract(
     inventory.tree,
     inventory.checker,
@@ -465,9 +484,11 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
       problems: [] as ApiProblem[],
       features: [] as string[],
       code: source,
+      ...(codecs.ok ? { contract: { portableCodecs: codecs.names } } : {}),
       ...(taskContract.ok
         ? {
             contract: {
+              ...(codecs.ok ? { portableCodecs: codecs.names } : {}),
               httpTask: true,
               httpTaskBinary: taskContract.binary,
               httpIgnoredOptions: taskContract.ignoredOptions,
@@ -504,8 +525,15 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
   const ctxBinding = fresh("__wayxContext"),
     entryBinding = fresh("__wayxEgernEntry"),
     // Modified: 2026-11-02 (chance). Keep legacy CLI bridges capture-free too.
-    hostBinding = fresh("__wayxHost"),
-    unusedHttpBinding = fresh("__wayxUnusedHttp");
+    hostBinding = fresh("__wayxHost");
+  const parameterTail = optionalScriptParameters(fresh, {
+    $httpClient: httpContract.ok,
+    $task: taskContract.ok,
+    $argument: argsContract.ok,
+    ...Object.fromEntries(
+      (codecs.ok ? codecs.names : []).map((n) => [n, true]),
+    ),
+  });
   const add = (api: string, reason: string, solution: string) =>
     problems.push({ api, reason, solution });
   const allowedFields: Record<string, Set<string>> = {
@@ -530,9 +558,10 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
       continue;
     }
     if (root === "$argument") {
+      if (argsContract.ok) continue;
       add(
         root,
-        "A QX snippet/foreign host cannot reconstruct saved Loon PluginObject values or source argument absence",
+        "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
         "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string",
       );
       continue;
@@ -847,6 +876,9 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
         (!value ||
           !(
             stringValue.known ||
+            (options.from === "loon" &&
+              "mayDelete" in stringValue &&
+              stringValue.mayDelete) ||
             (value.kind === ts.SyntaxKind.NullKeyword &&
               options.from !== "qx") ||
             (options.from === "loon" &&
@@ -897,12 +929,8 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
       "Simultaneous source text and binary views need a decoding contract",
       "Convert a binary-only or text-only program, or verify the exact codec and empty-body rules",
     );
-  if (options.to === "qx" && options.binary)
-    add(
-      "binary-mode",
-      "A declaration-level Loon/Surge binary mode must be expressed by QX bodyBytes rather than body",
-      "Use a source profile that proves the binary-only field contract before enabling this direction",
-    );
+  // Modified: 2026-11-02 (chance). Explicit binary declarations map callback
+  // Uint8Array body to QX bodyBytes; input/output are validated without text decoding.
   if (options.to === "qx" && synthesis && passOrModify)
     add(
       "$done.response",
@@ -922,7 +950,19 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
     };
   const effectiveOptions = {
     ...options,
+    binaryReads:
+      !!options.binary &&
+      features.some((p) =>
+        new RegExp(
+          "^\\$" +
+            (options.phase === "response" ? "response" : "request") +
+            "\\.(?:body|bodyBytes)(?:\\.|$)",
+        ).test(p),
+      ),
     ...(httpContract.ok ? { httpCallback: true } : {}),
+    ...(argsContract.ok
+      ? { argumentMapped: true, argumentSchema: argsContract.schema }
+      : {}),
     ...(taskContract.ok
       ? { httpTask: true, httpTaskBinary: taskContract.binary }
       : {}),
@@ -940,7 +980,7 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
         ctxBinding +
         ");"
       : source;
-  const run = `function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,${ctxBinding},setTimeout,setInterval${httpContract.ok ? ",$httpClient" : taskContract.ok ? "," + unusedHttpBinding : ""}${taskContract.ok ? ",$task" : ""}){\n${body}\n}`;
+  const run = `function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,${ctxBinding},setTimeout,setInterval${parameterTail}){\n${body}\n}`;
   const core = `(${scriptApiRuntime})(${config},${hostBinding},${run})`;
   const header = `// Modified: 2026-11-01 (chance). Documented script API subset: ${options.from} -> ${options.to}; upstream body preserved in its separate raw backup.\n// Category: Script API adapter\n// Source: ${String(options.sourceUrl ?? "").replace(/[\r\n]/g, "")}\n`;
   const code =
@@ -948,7 +988,7 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
       ? header +
         `export default async function(ctx){const ${hostBinding}={ctx};return await ${core};}\n`
       : header +
-        `(function(){const ${hostBinding}={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify,http:typeof $httpClient==='undefined'?undefined:$httpClient,task:typeof $task==='undefined'?undefined:$task};${core};})();\n`;
+        `(function(){const ${hostBinding}={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify,http:typeof $httpClient==='undefined'?undefined:$httpClient,task:typeof $task==='undefined'?undefined:$task,argument:typeof $argument==='undefined'?undefined:$argument${codecs.ok ? ",codecs:(" + scriptCodecs + ")()" : ""}};${core};})();\n`;
   return {
     status: "adapted" as const,
     problems: [],
@@ -956,6 +996,17 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
     code,
     contract: {
       headerReads: headerContract.reads,
+      binaryReads: effectiveOptions.binaryReads,
+      ...(codecs.ok ? { portableCodecs: codecs.names } : {}),
+      ...(argsContract.ok
+        ? {
+            argumentMapped: true,
+            argumentSchema: argsContract.schema,
+            ...(argsContract.omittedParameters
+              ? { omittedParameters: argsContract.omittedParameters }
+              : {}),
+          }
+        : {}),
       ...(taskContract.ok
         ? {
             httpTask: true,

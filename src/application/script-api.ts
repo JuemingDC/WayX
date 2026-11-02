@@ -21,7 +21,14 @@ import {
   applyScriptBindings,
   type ScriptBinding,
 } from "../parser/backup-references.ts";
-import { parseScriptDeclaration, scriptIrTag } from "../parser/script.ts";
+import { splitTopLevelCsv } from "../parser/rule.ts";
+import { parseLoonPlugin } from "../parser/input.ts";
+import {
+  buildSurgeArgumentTable,
+  parseLegacyLoonPluginObjectRefs,
+  parseScriptDeclaration,
+  scriptIrTag,
+} from "../parser/script.ts";
 const digest = (v: string | Uint8Array) =>
   crypto.createHash("sha256").update(v).digest("hex");
 const key = (v: string) => {
@@ -69,6 +76,11 @@ export async function prepareScriptApiAdapters(
       path.join(root, "Resource/Loon", entry.file),
     );
     if (!bytes) continue;
+    // Modified: 2026-11-02 (chance). Carry the same source schema already used
+    // by Surge's JSON argument payload; never infer saved values or defaults.
+    const table = buildSurgeArgumentTable(
+      parseLoonPlugin(bytes.toString()).sections.get("Argument") ?? [],
+    );
     for (const line of bytes.toString().split("\n")) {
       if (/^\s*(?:#|;|\/\/)/.test(line)) continue;
       try {
@@ -79,10 +91,63 @@ export async function prepareScriptApiAdapters(
           option = ir.options?.find((o: any) =>
             /^(?:binary_body_mode|binary-body-mode)$/.test(o.name),
           );
+        const binaryKnown =
+          !option ||
+          typeof option.value?.value === "boolean" ||
+          /^(?:true|false|0|1)$/.test(String(option.value ?? ""));
         const binary =
           option?.value?.value === true ||
           /^(?:true|1)$/.test(String(option?.value ?? ""));
-        const p = { phase: ir.phase, binary, name: scriptIrTag(ir) };
+        const argument: any = ir.script.argument;
+        const refs =
+          ir.sourceSyntax === "legacy"
+            ? parseLegacyLoonPluginObjectRefs(argument)
+            : argument?.type === "plugin-object"
+              ? argument.items.map((item: any) => item.name)
+              : null;
+        let argumentSchema: any;
+        if (refs) {
+          if (
+            refs.length &&
+            refs.every((id: string) => {
+              const entry = table.byId.get(id);
+              return (
+                entry?.hasDefault &&
+                (entry.valueType !== "string" ||
+                  (entry.kind === "select" &&
+                    entry.values.length &&
+                    entry.values.every((v: string) =>
+                      /^[a-zA-Z0-9_. -]*$/.test(v),
+                    )))
+              );
+            })
+          )
+            argumentSchema = {
+              kind: "object",
+              enumValues: Object.fromEntries(
+                refs
+                  .filter(
+                    (id: string) => table.byId.get(id).valueType === "string",
+                  )
+                  .map((id: string) => [id, table.byId.get(id).values]),
+              ),
+              fields: Object.fromEntries(
+                refs.map((id: string) => [id, table.byId.get(id).valueType]),
+              ),
+            };
+        } else if (
+          argument &&
+          (ir.sourceSyntax === "legacy" ||
+            ["string", "raw-string"].includes(argument.type))
+        )
+          argumentSchema = { kind: "string" };
+        const p = {
+          phase: ir.phase,
+          binary,
+          binaryKnown,
+          name: scriptIrTag(ir),
+          ...(argumentSchema ? { argumentSchema } : {}),
+        };
         const id = entry.source + "\0" + url;
         sourceProfiles.set(id, [...(sourceProfiles.get(id) ?? []), p]);
       } catch {}
@@ -200,9 +265,10 @@ export async function prepareScriptApiAdapters(
     }
     if (
       result.status === "universal" &&
-      result.features.some((p: string) =>
+      (result.features.some((p: string) =>
         /^\$(?:request|response)\.bodyBytes(?:\.|$)/.test(p),
-      ) &&
+      ) ||
+        Object.values(result.contexts).some((role: any) => role.qx?.binaryReads)) &&
       group.refs.some((r: any) => !r.mode.body)
     ) {
       result = {
@@ -219,6 +285,34 @@ export async function prepareScriptApiAdapters(
         ],
       };
     }
+    if (
+      result.status === "universal" &&
+      result.features.some((p: string) => p.startsWith("$argument")) &&
+      group.refs.some((r: any) => {
+        if (r.to !== "surge") return false;
+        const text = r.artifact.text,
+          start = text.lastIndexOf("\n", r.ref.start - 1) + 1,
+          next = text.indexOf("\n", r.ref.end),
+          line = text.slice(start, next < 0 ? undefined : next);
+        return !splitTopLevelCsv(line.slice(line.indexOf("=") + 1)).some(
+          (token: string) => /^\s*argument\s*=/.test(token),
+        );
+      })
+    )
+      result = {
+        ...result,
+        status: "blocked",
+        code: null,
+        problems: [
+          {
+            api: "$argument",
+            reason:
+              "A Surge declaration does not carry the source argument payload",
+            solution:
+              "Restore the verified generated argument binding; do not invent saved settings or defaults",
+          },
+        ],
+      };
     if (
       result.status === "universal" &&
       group.refs.some(
@@ -310,9 +404,10 @@ export async function prepareScriptApiAdapters(
           ? {
               omittedParameters: [
                 ...new Set(
-                  Object.values(result.contexts).flatMap(
-                    (role: any) => role.qx?.httpIgnoredOptions ?? [],
-                  ),
+                  Object.values(result.contexts).flatMap((role: any) => [
+                    ...(role.qx?.httpIgnoredOptions ?? []),
+                    ...(role.qx?.omittedParameters ?? []),
+                  ]),
                 ),
               ],
             }

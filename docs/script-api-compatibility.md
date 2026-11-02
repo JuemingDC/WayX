@@ -122,3 +122,15 @@ QX 来源的请求同样按作者示例过滤未知顶层/opts 字段，连 QX �
 bodyBytes 按精确偏移转为/转自 Uint8Array，不用整个底层缓冲区。HTTP 文本仍限已证明的 ASCII/64KiB/单活动请求及显式 UA/Accept/identity 输入域；这些实现不是一般网络库、任意二进制或实机认证。WASM、压缩、插件参数对象、富通知及未知接收者仍单列，不靠忽略整个 API 冒充成功。
 
 新增验证：`tests/script-flow.ts` 检查对象别名、布尔守卫、函数/spread 结果、存储和逃逸反例；`tests/script-task.ts` 在真实本地 HTTP 服务上运行同一份三端脚本，检查七方法、Promise/await、网络/业务拒绝、偏移字节和参数省略；`tests/script-flow-production.ts` 经真实备份事务检查 body 模式、原始字节、固定地址、原位升级和外部元数据。
+
+## 本轮补充： 参数绑定、二进制输入与局部标准编解码
+
+Modified: 2026-11-02 (chance). 本节补充并取代前文对应的旧阻断描述。QX 未说明的参数继续按用户要求省略，不报参数不支持；此例外包括无对应输入的 `$argument`，但不能把省略后抛错、仅被外层 catch 放行的程序算作成功去广告。必须证明作者自己的缺省分支安全，不制造默认值、保存设置或空 API。
+
+来源 `[Argument]` 和 Script 声明共同确定参数契约：Loon 原生分支读取实际对象，Surge 解码已经生成的 JSON argument 字符串，按字段验证 Boolean/number/String 与有限选项。false、0 和空字符串不当作缺失。没有实际 payload 或 schema 时阻断；Surge 模块是文本替换，任意 String 的 JSON 转义未有契约，暂只允许安全字符组成的有限 String 选项，不能保证任意字符串传递。QX 分支输入 undefined，仅启用已证明的作者默认表达式；省略记录写外部索引和状态。
+
+声明明确且一致的 binary profile 可映射主体读取：QX ArrayBuffer bodyBytes 与回调宿主 Uint8Array 保留准确 byteOffset/byteLength；动态未解析模式不猜测，缺少必需字节不退回文本。未声明二进制的文本脚本即使 QX 同时暴露 bodyBytes 也保留 String body，不能覆盖成字节数组。
+
+局部实现 UTF-8 TextEncoder/TextDecoder 与 HTML atob/btoa，注入作用域，不修改全局、不调用作者 WebView/WASM。只允许直接构造、闭合实例和已证明的方法/只读属性；覆盖流式、fatal、BOM、孤立代理项、encodeInto 容量、精确 BufferSource 视图、Base64 空白与填充及非法输入。原生标准算法作为独立向量依据；不声称错误文本/stack 或完整 DOMException 身份相同。其它编码、共享缓冲区、实例逃逸/反射、intrinsic 改写、压缩等继续阻断。
+
+存储补充：仅在 pristine JSON.stringify 证明成立时，Loon 的动态序列化写入允许 String 或 undefined，后者保持删除语义；不将此规则推广为任意 QX/Surge 写入。缺失读取可在经同符号数据流审查的 typeof String 守卫下归一化，严格 null/undefined 或序列化观察仍阻断。验证由 tests/script-argument-binary.ts、tests/script-codecs.ts 及既有全量回归覆盖；三端同文件的 VM 证据不替代实机认证。生产更新继续由 Actions 同步原文、脚本、规范证据与产物。

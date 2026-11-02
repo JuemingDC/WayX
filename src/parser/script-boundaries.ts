@@ -41,7 +41,7 @@ export const scriptCapabilityBoundaries = {
   storage: {
     status: "conditional",
     domain:
-      "Explicit plain constant strings/concatenations/const aliases as keys; known nonempty literal-root or JSON.parse-root JSON serialization writes; read absence may normalize only under ||, ??, Boolean guards or loose-null tests, including fully audited local aliases",
+      "Explicit plain constant strings/concatenations/const aliases as keys; known nonempty JSON serialization writes and pristine Loon JSON.stringify results including undefined deletion; read absence may normalize under ||, ??, Boolean/loose-null tests or proven String type guards, including fully audited local aliases",
     outside:
       "Strict null/undefined observations, stringification, implicit/dynamic keys, Loon empty-string writes and full cleanup remain blocked",
   },
@@ -96,7 +96,27 @@ export const scriptCapabilityBoundaries = {
     status: "blocked-unless-locally-implemented",
     reason:
       "Surge standard WebAPI may require WebView; QX/Loon do not promise all same globals",
-    next: "Bundle scoped codecs with standard vectors or declare a verified engine; local author polyfills are treated as local code",
+    implemented:
+      "Scoped direct UTF-8 TextEncoder/Decoder and atob/btoa with closed instances, pristine intrinsics, exact BufferSource views, streaming/fatal/BOM, encodeInto and standard Base64 validation; tested against independent native vectors",
+    outside:
+      "Legacy encodings, shared buffers, codec reflection/escapes, intrinsic mutation, compression, arbitrary Web APIs and full DOMException identity remain unproven",
+    next: "Extend independently verified algorithms or establish each target engine contract; local author polyfills remain local code",
+  },
+  // Modified: 2026-11-02 (chance). Typed source parameters and declared byte
+  // inputs are separate contracts; QX omission never fabricates author defaults.
+  arguments: {
+    status: "conditional-with-authorized-qx-omission",
+    domain:
+      "Declared Loon Boolean/number/safe finite-select objects bind to an existing typed Surge JSON payload; native Loon uses its actual object. QX omits $argument only with proven safe author fallback expressions. Literal String schemas require actual String input",
+    outside:
+      "Unbounded macro String escaping, missing payload/schema, unknown properties, unsafe null/object aliases and dynamic argument consumers remain blocked",
+  },
+  binaryInput: {
+    status: "conditional",
+    domain:
+      "Explicit stable binary profile and observed principal body reads map callback Uint8Array to QX ArrayBuffer bodyBytes with exact byte offsets; unflagged text retains body even if QX exposes bodyBytes too",
+    outside:
+      "Unresolved dynamic binary mode, missing required bytes and arbitrary mixed text/byte observations remain blocked",
   },
   configurationControl: {
     status: "excluded",

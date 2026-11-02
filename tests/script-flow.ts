@@ -136,9 +136,7 @@ for (const to of ["qx", "surge", "loon"]) {
 for (const source of [
   'const key="x/y";$persistentStore.write("v",key);$done();',
   'const empty="";$persistentStore.write(empty,"key");$done();',
-  '$persistentStore.write(JSON.stringify(undefined),"key");$done();',
   'JSON.stringify=()=>"";$persistentStore.write(JSON.stringify({x:1}),"key");$done();',
-  '$persistentStore.write(JSON.stringify({toJSON(){return undefined}}),"key");$done();',
 ])
   assert.equal(
     planUniversalAdblockScript(source, "loon", [{ phase: "response" }]).status,

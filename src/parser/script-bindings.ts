@@ -121,23 +121,20 @@ export function resolvedPath(
   }
   return null;
 }
-// Modified: 2026-11-02 (chance). JSON serialization is a nonempty string only
-// for a known JSON root and an unmodified, unaliased global JSON implementation.
-export function storageString(
+// Modified: 2026-11-02 (chance). Pristine JSON.stringify returns a nonempty
+// String or undefined (deletion on Loon); its failures still propagate normally.
+export function pristineStringify(
   node: ts.Expression,
   tree: ts.SourceFile,
   checker: ts.TypeChecker,
-) {
-  const text = constantString(node, checker);
-  if (text !== null) return { known: true, nonempty: text !== "" };
+): node is ts.CallExpression {
   if (
     !ts.isCallExpression(node) ||
-    node.arguments.length !== 1 ||
     node.expression.getText(tree) !== "JSON.stringify" ||
     !ts.isPropertyAccessExpression(node.expression) ||
     valueSymbol(node.expression.expression, checker)
   )
-    return { known: false, nonempty: false };
+    return false;
   let pure = true;
   const scan = (n: ts.Node) => {
     if (ts.isIdentifier(n) && n.text === "JSON" && !valueSymbol(n, checker)) {
@@ -153,11 +150,24 @@ export function storageString(
     ts.forEachChild(n, scan);
   };
   scan(tree);
+  return pure;
+}
+export function storageString(
+  node: ts.Expression,
+  tree: ts.SourceFile,
+  checker: ts.TypeChecker,
+) {
+  const text = constantString(node, checker);
+  if (text !== null)
+    return { known: true, nonempty: text !== "", mayDelete: false };
+  if (!pristineStringify(node, tree, checker))
+    return { known: false, nonempty: false, mayDelete: false };
+  const mayDelete = true;
   if (
-    !pure ||
+    node.arguments.length !== 1 ||
     /toJSON|__proto__|\bprototype\b|\b(?:get|set)PrototypeOf\b/.test(tree.text)
   )
-    return { known: false, nonempty: false };
+    return { known: false, nonempty: false, mayDelete };
   const arg = node.arguments[0];
   const root = (v: ts.Expression): boolean => {
     if (ts.isParenthesizedExpression(v)) return root(v.expression);
@@ -185,5 +195,5 @@ export function storageString(
       !valueSymbol(v.expression.expression, checker)
     );
   };
-  return { known: root(arg), nonempty: root(arg) };
+  return { known: root(arg), nonempty: root(arg), mayDelete };
 }

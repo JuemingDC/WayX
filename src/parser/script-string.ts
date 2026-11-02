@@ -2,7 +2,11 @@
 // without coercing unknown objects or changing author assignments and exceptions.
 import ts from "typescript";
 import { valueSymbol } from "./script-analysis.ts";
-import { constantString, resolvedPath } from "./script-bindings.ts";
+import {
+  constantString,
+  resolvedPath,
+  pristineStringify,
+} from "./script-bindings.ts";
 type Kind = "string" | "optional" | false;
 export function completionString(
   node: ts.Expression,
@@ -114,31 +118,7 @@ export function completionString(
       !/\bprototype\b|__proto__|\b(?:get|set)PrototypeOf\b/.test(tree.text)
     )
       return "string";
-    if (
-      member.getText(tree) === "JSON.stringify" &&
-      !valueSymbol(member.expression, checker)
-    ) {
-      let pristine = true;
-      const scan = (n: ts.Node) => {
-        if (
-          ts.isIdentifier(n) &&
-          n.text === "JSON" &&
-          !valueSymbol(n, checker)
-        ) {
-          const p = n.parent;
-          if (
-            !ts.isPropertyAccessExpression(p) ||
-            !["parse", "stringify"].includes(p.name.text) ||
-            !ts.isCallExpression(p.parent) ||
-            p.parent.expression !== p
-          )
-            pristine = false;
-        }
-        ts.forEachChild(n, scan);
-      };
-      scan(tree);
-      if (pristine) return "optional";
-    }
+    if (pristineStringify(node, tree, checker)) return "optional";
   }
   if (!ts.isIdentifier(node)) return false;
   const symbol = valueSymbol(node, checker),

@@ -37,6 +37,8 @@ IR 不包含目标 action 名、section 名、helper URL 或目标 fallback。�
 
 等价范围包含匹配条件、作用阶段、字段及值类型、路径不存在时的行为、数组索引及删除移位、重复和父子重叠路径、动作顺序与边界、失败/跳过/回滚以及后续动作是否继续。用户要求某种写法或“合在一起”，只授权调整表达形式，不自动授权改变以上行为。无法证明请求的形式等价时，明确说明限制并使用已证明的等价路径或既有诊断边界，不靠猜测输出代码，也不能把目标原生行为直接定义成源语义。
 
+Modified: 2026-11-02 (chance). QX 未说明参数按用户要求省略且不报参数错误；HTTP 选项见 2.25，`$argument` 的安全作者默认分支限定见 2.27，不扩展为忽略未知 API。
+
 **例外仅限用户明确授权的具体行为。** 已有显式转换策略按本节前文保留；例如 `jq_replace` 明确要求使用 `setpath(PATH; VALUE)`，包括覆盖值及创建缺失路径，这是已授权的策略差异，不能据此认定 delete 或其它操作也可改变语义。例外记录必须说明源操作、目标写法、授权的差异及适用范围；不能把一种操作的例外推广为全局规则，也不能把结果宣称为完整语义等价。作者原有 jq 不因生成器的某个例外而被重写。
 
 <!-- Modified: 2026-10-25 (chance). Explicit user instruction: add no-resolve to Surge IP rules across all generated sources. -->
@@ -475,3 +477,16 @@ QX $task.fetch 允许字面量或不逃逸 const 请求对象；支持闭合的 
 QX 未说明的顶层请求字段和 opts 字段在所有执行分支省略，包括 QX 原生分支；省略列表写入外部索引/状态，构造参数的作者表达式仍正常求值，不产生参数不支持错误。现有回调来源到 QX 的省略策略继续有效；Surge/Loon 彼此已说明的 timeout 仍正常换算。source QX 字节响应 bodyBytes 与回调数据 Uint8Array 保留精确 byteOffset/byteLength，输出二进制不冒充输入声明的 binary_body_mode。请求体仍为已证明的 ASCII 文本，HTTP 响应大小/并发及输入显式 Header 约束保持受限子域。
 
 每个注册上下文及三端均通过才发布同源同名同一文件；只改原始备份的引用与通用程序，不新增方向文件、文件内声明或本地生成的正式产物。所有诊断补齐分类，区分“数据流未证明”和“目标契约未证明”。验证包括同一字节程序的三端运行、真实本地 HTTP 方法/错误/字节向量、函数结果逃逸反例，以及备份事务中的原声明 body 模式、原件字节、固定地址与省略元数据。
+
+
+## 2.27 参数绑定、二进制输入与局部标准编解码
+
+Modified: 2026-11-02 (chance). 本节补充并取代前文对应的旧阻断描述。QX 未说明的参数继续按用户要求省略，不报参数不支持；此例外包括无对应输入的 `$argument`，但不能把省略后抛错、仅被外层 catch 放行的程序算作成功去广告。必须证明作者自己的缺省分支安全，不制造默认值、保存设置或空 API。
+
+来源 `[Argument]` 和 Script 声明共同确定参数契约：Loon 原生分支读取实际对象，Surge 解码已经生成的 JSON argument 字符串，按字段验证 Boolean/number/String 与有限选项。false、0 和空字符串不当作缺失。没有实际 payload 或 schema 时阻断；Surge 模块是文本替换，任意 String 的 JSON 转义未有契约，暂只允许安全字符组成的有限 String 选项，不能保证任意字符串传递。QX 分支输入 undefined，仅启用已证明的作者默认表达式；省略记录写外部索引和状态。
+
+声明明确且一致的 binary profile 可映射主体读取：QX ArrayBuffer bodyBytes 与回调宿主 Uint8Array 保留准确 byteOffset/byteLength；动态未解析模式不猜测，缺少必需字节不退回文本。未声明二进制的文本脚本即使 QX 同时暴露 bodyBytes 也保留 String body，不能覆盖成字节数组。
+
+局部实现 UTF-8 TextEncoder/TextDecoder 与 HTML atob/btoa，注入作用域，不修改全局、不调用作者 WebView/WASM。只允许直接构造、闭合实例和已证明的方法/只读属性；覆盖流式、fatal、BOM、孤立代理项、encodeInto 容量、精确 BufferSource 视图、Base64 空白与填充及非法输入。原生标准算法作为独立向量依据；不声称错误文本/stack 或完整 DOMException 身份相同。其它编码、共享缓冲区、实例逃逸/反射、intrinsic 改写、压缩等继续阻断。
+
+存储补充：仅在 pristine JSON.stringify 证明成立时，Loon 的动态序列化写入允许 String 或 undefined，后者保持删除语义；不将此规则推广为任意 QX/Surge 写入。缺失读取可在经同符号数据流审查的 typeof String 守卫下归一化，严格 null/undefined 或序列化观察仍阻断。验证由 tests/script-argument-binary.ts、tests/script-codecs.ts 及既有全量回归覆盖；三端同文件的 VM 证据不替代实机认证。生产更新继续由 Actions 同步原文、脚本、规范证据与产物。
