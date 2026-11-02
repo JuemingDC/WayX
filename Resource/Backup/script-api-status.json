@@ -159,8 +159,8 @@
       "outside": "Unresolved dynamic binary mode, missing required bytes and arbitrary mixed text/byte observations remain blocked"
     },
     "originalContextCompletion": {
-      "status": "conditional-qx-response-pass-through",
-      "domain": "Direct $done($response) in a QX text response-body trigger; all context observations are immutable scalar reads or presence checks, with no aliases, escapes, header/binary reads or mutations. Surge receives $done({}) and retains original wire fields",
+      "status": "conditional-loon-qx-response-pass-through",
+      "domain": "Direct $done($response) in a registered Loon/QX text response trigger with body available; all context observations are immutable scalar reads or presence checks, with no aliases, escapes, header/binary reads or mutations. Authorized target hosts receive $done({}) and retains original wire fields",
       "outside": "Wrong phase, missing body declaration, binary input, context mutation/escape, reflective or indirect completion remain blocked; no general mutable-context/header support"
     },
     "configurationControl": {
@@ -623,10 +623,13 @@
       "kind": "completion",
       "selector": "original-context",
       "source": {
-        "qx": "$done"
+        "qx": "$done",
+        "loon": "$done"
       },
       "target": {
-        "surge": "$done({})"
+        "surge": "$done({})",
+        "qx": "$done({})",
+        "loon": "$done"
       },
       "canonical": "complete.pass-original",
       "value": "proven untouched response context",
@@ -1349,7 +1352,7 @@
     },
     "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/xiaotucc/xiaotucc.js": {
       "path": "Resource/Backup/script-api/0a7f5cc6c9c50017348c32ea6516a31a639b13ad827195d3ae827d010bcec8a3.json",
-      "sha256": "8da152b298d0f643607cff178a1664a52d17bcd538c5623adfced6479434a098",
+      "sha256": "baf7d45a3bf4779ed510fdb4fe1b51a3cb81d531ce1cdd8de823bb4f5b06defb",
       "sourceSha256": "a10131a49267ce2cdd17c7c4d783eb64c8aa943b83ee4dcadb846ccd2c4bbb1b"
     },
     "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/FamilyMart/FamilyMart.js": {
@@ -2055,12 +2058,12 @@
   },
   "conversionPriorities": {
     "basis": "Distinct blocked source URLs across every registered target/profile; family counts overlap. Single-family candidates still require implementation, all API proofs and runtime checks, not guaranteed unlocks.",
-    "blockedSources": 77,
+    "blockedSources": 76,
     "families": [
       {
         "family": "flow",
         "priority": "P0",
-        "affectedSources": 40,
+        "affectedSources": 39,
         "singleFamilyCandidates": [
           "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/amap.js",
           "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/chelaile.js",
@@ -2071,7 +2074,7 @@
           "arguments": 14,
           "binary": 5,
           "codecs": 14,
-          "completion": 20,
+          "completion": 19,
           "engine": 18,
           "environment": 17,
           "headers": 6,
@@ -2085,14 +2088,14 @@
       {
         "family": "completion",
         "priority": "P1",
-        "affectedSources": 21,
+        "affectedSources": 20,
         "singleFamilyCandidates": [],
         "coBlockers": {
           "arguments": 8,
           "codecs": 8,
           "engine": 10,
           "environment": 15,
-          "flow": 20,
+          "flow": 19,
           "headers": 2,
           "http": 16,
           "notification": 6,
@@ -2330,10 +2333,10 @@
       }
     ]
   },
-  "adapted": 822,
-  "blocked": 527,
+  "adapted": 824,
+  "blocked": 525,
   "excluded": 4,
-  "universal": 146,
+  "universal": 147,
   "diagnostics": [
     {
       "artifact": "Adblock/Surge/RuCu6_nodecheck.sgmodule",
@@ -25331,57 +25334,22 @@
         "loon"
       ],
       "to": "qx",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
         "$request.url.indexOf",
         "$response",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$response",
-          "reason": "qx: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$response",
-          "reason": "qx: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$done",
-          "reason": "qx: Dynamic completion object needs field/data-flow proof",
-          "solution": "Use explicit result fields or add a verified program-specific plan",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$response",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$response",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$done",
-          "reason": "surge: Dynamic completion object needs field/data-flow proof",
-          "solution": "Use explicit result fields or add a verified program-specific plan",
-          "category": "analysis-unresolved"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/kelee.one-0a7f5cc6c9c5/xiaotucc.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Surge/WexinMiniPrograms_Remove_ads.sgmodule",
@@ -25390,57 +25358,22 @@
         "loon"
       ],
       "to": "surge",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
         "$request.url.indexOf",
         "$response",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$response",
-          "reason": "qx: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$response",
-          "reason": "qx: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$done",
-          "reason": "qx: Dynamic completion object needs field/data-flow proof",
-          "solution": "Use explicit result fields or add a verified program-specific plan",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$response",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$response",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$done",
-          "reason": "surge: Dynamic completion object needs field/data-flow proof",
-          "solution": "Use explicit result fields or add a verified program-specific plan",
-          "category": "analysis-unresolved"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/kelee.one-0a7f5cc6c9c5/xiaotucc.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Quantumult X/WexinMiniPrograms_Remove_ads.snippet",
