@@ -3,7 +3,7 @@ const __wayxTarget=typeof $loon==='string'?'loon':typeof $task!=='undefined'&&ty
 if(!__wayxTarget)throw new Error('Unsupported adblock script host');
 const __wayxCodecs=undefined;
 const __wayxHost={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify,http:typeof $httpClient==='undefined'?undefined:$httpClient,task:typeof $task==='undefined'?undefined:$task,argument:typeof $argument==='undefined'?undefined:$argument,codecs:__wayxCodecs};
-const __wayxContexts={"response":{"qx":{"from":"loon","to":"qx","phase":"response","binary":false,"responseBody":false,"headerReads":{},"binaryReads":false},"surge":{"from":"loon","to":"surge","phase":"response","binary":false,"responseBody":false,"headerReads":{},"binaryReads":false},"loon":{"from":"loon","to":"loon","phase":"response","binary":false,"responseBody":false}}},__wayxRole=__wayxHost.response===undefined?'request':'response',__wayxConfig=__wayxContexts[__wayxRole]&&__wayxContexts[__wayxRole][__wayxTarget];
+const __wayxContexts={"response":{"qx":{"from":"loon","to":"qx","phase":"response","binary":false,"responseBody":false,"headerReads":{},"headerPrefixes":{},"binaryReads":false},"surge":{"from":"loon","to":"surge","phase":"response","binary":false,"responseBody":false,"headerReads":{},"headerPrefixes":{},"binaryReads":false},"loon":{"from":"loon","to":"loon","phase":"response","binary":false,"responseBody":false}}},__wayxRole=__wayxHost.response===undefined?'request':'response',__wayxConfig=__wayxContexts[__wayxRole]&&__wayxContexts[__wayxRole][__wayxTarget];
 if(!__wayxConfig)throw new Error('Unregistered adblock HTTP trigger');
 const __wayxRun=function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,__wayxContext,setTimeout,setInterval){
 // 2024-07-10 10:53:30
@@ -75,8 +75,12 @@ return (function(config,host,run){
   function view(value,role){
     if(value===undefined)return undefined;
     const names=config.headerReads&&config.headerReads[role]||[];
-    if(names.length){
+    // Modified: 2026-11-02 (chance). Prefix-find input requires at most one
+    // matching field, so dictionary enumeration order cannot alter the result.
+    const prefixes=config.headerPrefixes&&config.headerPrefixes[role]||[];
+    if(names.length||prefixes.length){
       if(!value.headers||typeof value.headers!=='object'||Array.isArray(value.headers))fail('header dictionary required');
+      for(const prefix of prefixes){const keys=Object.keys(value.headers).filter(k=>k.toLowerCase().startsWith(prefix));if(keys.length>1||keys.some(k=>typeof value.headers[k]!=='string'))fail('header prefix lookup requires a singleton string field: '+prefix);}
       for(const name of names){const keys=Object.keys(value.headers).filter(k=>k.toLowerCase()===name);if(keys.length>1||keys.some(k=>typeof value.headers[k]!=='string'))fail('header lookup requires a singleton string field: '+name);}
     }
     const result=Object.assign({},value);

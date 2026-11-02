@@ -28,7 +28,7 @@
     },
     "lexicalBindings": {
       "status": "supported",
-      "domain": "TypeScript-resolved local bindings, capture-free generated bindings, closed const request/response/script aliases, Boolean-only logical guards, mapped context-presence guards, unused pure host-presence probes and pure source-host typeof/const branches with var-hoist preservation, localized source edits and nonescaping function proofs",
+      "domain": "TypeScript-resolved local bindings, capture-free generated bindings, closed const request/response/script aliases, guarded same-context scalar && reads, immutable literal keys/string tables without decoder execution, Boolean-only logical guards, mapped context-presence guards, unused pure host-presence probes and pure source-host typeof/const branches with var-hoist preservation, localized source edits and nonescaping function proofs",
       "outside": "Escaping platform aliases, class-getter receiver identity, nonsequential const/TDZ uses, dynamic receivers, eval and Function construction remain blocked"
     },
     "completion": {
@@ -38,12 +38,12 @@
     },
     "storage": {
       "status": "conditional",
-      "domain": "Explicit plain constant strings/concatenations/const aliases as keys; known nonempty JSON serialization writes and pristine Loon JSON.stringify results including undefined deletion; read absence may normalize under ||, ??, Boolean/loose-null tests or proven String type guards, including fully audited local aliases",
+      "domain": "Explicit plain constant strings/concatenations/const aliases as keys; known nonempty JSON serialization writes and pristine Loon JSON.stringify results including undefined deletion; read absence may normalize under ||, ??, Boolean/loose-null tests or proven String/truthy branch guards, including fully audited local aliases",
       "outside": "Strict null/undefined observations, stringification, implicit/dynamic keys, Loon empty-string writes and full cleanup remain blocked"
     },
     "headers": {
       "status": "conditional-readonly-singleton",
-      "domain": "Pure Object.keys(h).find(k=>k.toLowerCase()===literal) with a const result key, guarded readonly lookup and no key/header alias escape; target validates one string value per queried name",
+      "domain": "Pure Object.keys(h).find with lowercase-literal equality or anchored literal case-insensitive exact/prefix regex, guarded readonly lookup and no key/header alias escape; lexical let aliases must remain readonly; target validates one string value per queried name/prefix",
       "outside": "General object casing, duplicate values, mutation, output headers and framing remain unproven",
       "reason": "Global lowercase proxies alter enumeration, overwrite case variants and can remove Host or mutate unrelated source behavior",
       "next": "Extend exact per-field operations and real-client vectors without changing dictionary casing, duplicates or framing"
@@ -189,7 +189,7 @@
       "qx": "$request/$response.headers; body-script output restrictions",
       "surge": "$request/$response.headers",
       "loon": "$request/$response.headers",
-      "support": "readonly-singleton",
+      "support": "readonly-singleton-exact-and-prefix",
       "next": "Prove each read/write, duplicate-field and framing operation; never lowercase the whole dictionary",
       "dependsOn": [
         "flow",
@@ -322,10 +322,8 @@
       {
         "family": "flow",
         "priority": "P0",
-        "affectedSources": 45,
+        "affectedSources": 43,
         "singleFamilyCandidates": [
-          "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/xhey-ad-clean.js",
-          "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.js",
           "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/amap.js",
           "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/chelaile.js",
           "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/reddit.js",
@@ -388,7 +386,7 @@
       {
         "family": "headers",
         "priority": "P1",
-        "affectedSources": 22,
+        "affectedSources": 24,
         "singleFamilyCandidates": [
           "https://github.com/ishowshu/qx/raw/refs/heads/main/script/caiyun.js",
           "https://kelee.one/Resource/JavaScript/12306/12306_remove_ads.js",
@@ -398,6 +396,8 @@
           "https://raw.githubusercontent.com/app2smile/rules/master/js/spotify-qx-header.js",
           "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/amdc.js",
           "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/umetrip/umetrip_ads.js",
+          "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/bilibiliManga.js",
+          "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/ccblife.js",
           "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/flyert.js",
           "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/usmile.js",
           "https://rucu6.pages.dev/Scripts/header.js"
@@ -594,8 +594,8 @@
       }
     ]
   },
-  "adapted": 804,
-  "blocked": 545,
+  "adapted": 814,
+  "blocked": 535,
   "excluded": 4,
   "universal": 143,
   "diagnostics": [
@@ -18495,6 +18495,12 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "qx: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers",
           "reason": "qx: QX body-script framing/header restrictions need a declaration-specific proof",
           "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers",
@@ -18510,6 +18516,12 @@
           "api": "headers-shape",
           "reason": "surge: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         }
       ],
@@ -18549,6 +18561,12 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "qx: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers",
           "reason": "qx: QX body-script framing/header restrictions need a declaration-specific proof",
           "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers",
@@ -18564,6 +18582,12 @@
           "api": "headers-shape",
           "reason": "surge: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         }
       ],
@@ -43821,13 +43845,26 @@
         "qx"
       ],
       "to": "qx",
-      "status": "universal",
+      "status": "blocked",
       "features": [
         "$done",
         "$request.url",
         "$response.body"
       ],
-      "problems": [],
+      "problems": [
+        {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        }
+      ],
       "specialization": {
         "folds": 0,
         "branches": 0,
@@ -43835,7 +43872,7 @@
       },
       "omittedParameters": [],
       "path": "Script/Adblock/raw.githubusercontent.com-0827b6345221/bilibiliManga.js",
-      "retained": false
+      "retained": true
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -43844,13 +43881,26 @@
         "qx"
       ],
       "to": "qx",
-      "status": "universal",
+      "status": "blocked",
       "features": [
         "$done",
         "$request.url",
         "$response.body"
       ],
-      "problems": [],
+      "problems": [
+        {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        }
+      ],
       "specialization": {
         "folds": 0,
         "branches": 0,
@@ -43858,7 +43908,7 @@
       },
       "omittedParameters": [],
       "path": "Script/Adblock/raw.githubusercontent.com-0827b6345221/bilibiliManga.js",
-      "retained": false
+      "retained": true
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -43867,13 +43917,26 @@
         "qx"
       ],
       "to": "qx",
-      "status": "universal",
+      "status": "blocked",
       "features": [
         "$done",
         "$request.url",
         "$response.body"
       ],
-      "problems": [],
+      "problems": [
+        {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        }
+      ],
       "specialization": {
         "folds": 0,
         "branches": 0,
@@ -43881,7 +43944,7 @@
       },
       "omittedParameters": [],
       "path": "Script/Adblock/raw.githubusercontent.com-0827b6345221/bilibiliManga.js",
-      "retained": false
+      "retained": true
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -43890,13 +43953,26 @@
         "qx"
       ],
       "to": "qx",
-      "status": "universal",
+      "status": "blocked",
       "features": [
         "$done",
         "$request.url",
         "$response.body"
       ],
-      "problems": [],
+      "problems": [
+        {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        }
+      ],
       "specialization": {
         "folds": 0,
         "branches": 0,
@@ -43904,7 +43980,7 @@
       },
       "omittedParameters": [],
       "path": "Script/Adblock/raw.githubusercontent.com-0827b6345221/bilibiliManga.js",
-      "retained": false
+      "retained": true
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -43913,13 +43989,26 @@
         "qx"
       ],
       "to": "surge",
-      "status": "universal",
+      "status": "blocked",
       "features": [
         "$done",
         "$request.url",
         "$response.body"
       ],
-      "problems": [],
+      "problems": [
+        {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        }
+      ],
       "specialization": {
         "folds": 0,
         "branches": 0,
@@ -43927,7 +44016,7 @@
       },
       "omittedParameters": [],
       "path": "Script/Adblock/raw.githubusercontent.com-0827b6345221/bilibiliManga.js",
-      "retained": false
+      "retained": true
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -43936,13 +44025,26 @@
         "qx"
       ],
       "to": "surge",
-      "status": "universal",
+      "status": "blocked",
       "features": [
         "$done",
         "$request.url",
         "$response.body"
       ],
-      "problems": [],
+      "problems": [
+        {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        }
+      ],
       "specialization": {
         "folds": 0,
         "branches": 0,
@@ -43950,7 +44052,7 @@
       },
       "omittedParameters": [],
       "path": "Script/Adblock/raw.githubusercontent.com-0827b6345221/bilibiliManga.js",
-      "retained": false
+      "retained": true
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -43959,13 +44061,26 @@
         "qx"
       ],
       "to": "surge",
-      "status": "universal",
+      "status": "blocked",
       "features": [
         "$done",
         "$request.url",
         "$response.body"
       ],
-      "problems": [],
+      "problems": [
+        {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        }
+      ],
       "specialization": {
         "folds": 0,
         "branches": 0,
@@ -43973,7 +44088,7 @@
       },
       "omittedParameters": [],
       "path": "Script/Adblock/raw.githubusercontent.com-0827b6345221/bilibiliManga.js",
-      "retained": false
+      "retained": true
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -43982,13 +44097,26 @@
         "qx"
       ],
       "to": "surge",
-      "status": "universal",
+      "status": "blocked",
       "features": [
         "$done",
         "$request.url",
         "$response.body"
       ],
-      "problems": [],
+      "problems": [
+        {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        }
+      ],
       "specialization": {
         "folds": 0,
         "branches": 0,
@@ -43996,7 +44124,7 @@
       },
       "omittedParameters": [],
       "path": "Script/Adblock/raw.githubusercontent.com-0827b6345221/bilibiliManga.js",
-      "retained": false
+      "retained": true
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -45423,13 +45551,26 @@
         "qx"
       ],
       "to": "qx",
-      "status": "universal",
+      "status": "blocked",
       "features": [
         "$done",
         "$request.url",
         "$response.body"
       ],
-      "problems": [],
+      "problems": [
+        {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        }
+      ],
       "specialization": {
         "folds": 0,
         "branches": 0,
@@ -45437,7 +45578,7 @@
       },
       "omittedParameters": [],
       "path": "Script/Adblock/raw.githubusercontent.com-d2fc650d2019/ccblife.js",
-      "retained": false
+      "retained": true
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -45446,13 +45587,26 @@
         "qx"
       ],
       "to": "surge",
-      "status": "universal",
+      "status": "blocked",
       "features": [
         "$done",
         "$request.url",
         "$response.body"
       ],
-      "problems": [],
+      "problems": [
+        {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        }
+      ],
       "specialization": {
         "folds": 0,
         "branches": 0,
@@ -45460,7 +45614,7 @@
       },
       "omittedParameters": [],
       "path": "Script/Adblock/raw.githubusercontent.com-d2fc650d2019/ccblife.js",
-      "retained": false
+      "retained": true
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -67188,9 +67342,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         }
       ],
@@ -67221,9 +67387,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         }
       ],
@@ -81625,15 +81803,15 @@
       ],
       "problems": [
         {
-          "api": "headers-shape",
-          "reason": "surge: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         },
         {
-          "api": "headers-shape",
-          "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         }
       ],
@@ -81659,15 +81837,15 @@
       ],
       "problems": [
         {
-          "api": "headers-shape",
-          "reason": "surge: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         },
         {
-          "api": "headers-shape",
-          "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-          "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         }
       ],
@@ -83718,9 +83896,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         },
         {
@@ -83730,9 +83920,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         }
       ],
@@ -83765,9 +83967,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         },
         {
@@ -83777,9 +83991,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         }
       ],
@@ -83812,9 +84038,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         },
         {
@@ -83824,9 +84062,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         }
       ],
@@ -83859,9 +84109,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         },
         {
@@ -83871,9 +84133,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         }
       ],
@@ -83906,9 +84180,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         },
         {
@@ -83918,9 +84204,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         }
       ],
@@ -83953,9 +84251,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         },
         {
@@ -83965,9 +84275,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         }
       ],
@@ -84000,9 +84322,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         },
         {
@@ -84012,9 +84346,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         }
       ],
@@ -84047,9 +84393,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         },
         {
@@ -84059,9 +84417,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         }
       ],
@@ -92539,9 +92909,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         }
       ],
@@ -92573,9 +92955,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         }
       ],
@@ -92607,9 +93001,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         }
       ],
@@ -92641,9 +93047,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         }
       ],
@@ -92661,45 +93079,21 @@
         "qx"
       ],
       "to": "qx",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
-        "$request",
         "$request.url",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$request",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-52eaad15c8b3/MT.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Quantumult X/zenmofeishi_mt.snippet",
@@ -92708,45 +93102,21 @@
         "qx"
       ],
       "to": "qx",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
-        "$request",
         "$request.url",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$request",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-52eaad15c8b3/MT.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Quantumult X/zenmofeishi_mt.snippet",
@@ -92755,45 +93125,21 @@
         "qx"
       ],
       "to": "qx",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
-        "$request",
         "$request.url",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$request",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-52eaad15c8b3/MT.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Quantumult X/zenmofeishi_mt.snippet",
@@ -92802,45 +93148,21 @@
         "qx"
       ],
       "to": "qx",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
-        "$request",
         "$request.url",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$request",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-52eaad15c8b3/MT.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Quantumult X/zenmofeishi_mt.snippet",
@@ -92849,45 +93171,21 @@
         "qx"
       ],
       "to": "qx",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
-        "$request",
         "$request.url",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$request",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-52eaad15c8b3/MT.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Quantumult X/zenmofeishi_mt.snippet",
@@ -92896,45 +93194,21 @@
         "qx"
       ],
       "to": "qx",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
-        "$request",
         "$request.url",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$request",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-52eaad15c8b3/MT.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Quantumult X/zenmofeishi_mt.snippet",
@@ -92943,45 +93217,21 @@
         "qx"
       ],
       "to": "qx",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
-        "$request",
         "$request.url",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$request",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-52eaad15c8b3/MT.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Quantumult X/zenmofeishi_mt.snippet",
@@ -92990,45 +93240,21 @@
         "qx"
       ],
       "to": "qx",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
-        "$request",
         "$request.url",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$request",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-52eaad15c8b3/MT.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Surge/zenmofeishi_mt.sgmodule",
@@ -93037,45 +93263,21 @@
         "qx"
       ],
       "to": "surge",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
-        "$request",
         "$request.url",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$request",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-52eaad15c8b3/MT.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Surge/zenmofeishi_mt.sgmodule",
@@ -93084,45 +93286,21 @@
         "qx"
       ],
       "to": "surge",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
-        "$request",
         "$request.url",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$request",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-52eaad15c8b3/MT.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Surge/zenmofeishi_mt.sgmodule",
@@ -93131,45 +93309,21 @@
         "qx"
       ],
       "to": "surge",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
-        "$request",
         "$request.url",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$request",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-52eaad15c8b3/MT.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Surge/zenmofeishi_mt.sgmodule",
@@ -93178,45 +93332,21 @@
         "qx"
       ],
       "to": "surge",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
-        "$request",
         "$request.url",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$request",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-52eaad15c8b3/MT.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Surge/zenmofeishi_mt.sgmodule",
@@ -93225,45 +93355,21 @@
         "qx"
       ],
       "to": "surge",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
-        "$request",
         "$request.url",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$request",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-52eaad15c8b3/MT.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Surge/zenmofeishi_mt.sgmodule",
@@ -93272,45 +93378,21 @@
         "qx"
       ],
       "to": "surge",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
-        "$request",
         "$request.url",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$request",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-52eaad15c8b3/MT.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Surge/zenmofeishi_mt.sgmodule",
@@ -93319,45 +93401,21 @@
         "qx"
       ],
       "to": "surge",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
-        "$request",
         "$request.url",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$request",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-52eaad15c8b3/MT.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Surge/zenmofeishi_mt.sgmodule",
@@ -93366,45 +93424,21 @@
         "qx"
       ],
       "to": "surge",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
-        "$request",
         "$request.url",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$request",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-52eaad15c8b3/MT.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Quantumult X/zenmofeishi_tilingsales-ad-remove.snippet",
@@ -96349,71 +96383,22 @@
         "qx"
       ],
       "to": "qx",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
-        "$request",
         "$request.body",
         "$request.url",
-        "$response",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$request",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$response",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$response",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$response",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$response",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-48dd0194aea2/xhey-ad-clean.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Quantumult X/zenmofeishi_xhey-ad-clean.snippet",
@@ -96422,71 +96407,22 @@
         "qx"
       ],
       "to": "qx",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
-        "$request",
         "$request.body",
         "$request.url",
-        "$response",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$request",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$response",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$response",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$response",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$response",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-48dd0194aea2/xhey-ad-clean.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Surge/zenmofeishi_xhey-ad-clean.sgmodule",
@@ -96495,71 +96431,22 @@
         "qx"
       ],
       "to": "surge",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
-        "$request",
         "$request.body",
         "$request.url",
-        "$response",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$request",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$response",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$response",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$response",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$response",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-48dd0194aea2/xhey-ad-clean.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Surge/zenmofeishi_xhey-ad-clean.sgmodule",
@@ -96568,71 +96455,22 @@
         "qx"
       ],
       "to": "surge",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
-        "$request",
         "$request.body",
         "$request.url",
-        "$response",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$request",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$response",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$response",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$response",
-          "reason": "loon: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$request",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$response",
-          "reason": "loon: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-48dd0194aea2/xhey-ad-clean.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Quantumult X/zenmofeishi_xzimu-unlock.snippet",
@@ -98104,9 +97942,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         }
       ],
@@ -98137,9 +97987,21 @@
           "category": "target-contract-unverified"
         },
         {
+          "api": "$done.headers",
+          "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+          "category": "target-contract-unverified"
+        },
+        {
           "api": "headers-shape",
           "reason": "loon: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
           "solution": "Use a target-native header implementation or establish the exact header object contract on real clients",
+          "category": "target-contract-unverified"
+        },
+        {
+          "api": "$done.headers",
+          "reason": "loon: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+          "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries",
           "category": "target-contract-unverified"
         }
       ],
