@@ -1,8 +1,9 @@
 (function(){
 const __wayxTarget=typeof $loon==='string'?'loon':typeof $task!=='undefined'&&typeof $task.fetch==='function'?'qx':typeof $environment!=='undefined'&&$environment['surge-version']?'surge':null;
 if(!__wayxTarget)throw new Error('Unsupported adblock script host');
-const __wayxHost={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify,http:typeof $httpClient==='undefined'?undefined:$httpClient,task:typeof $task==='undefined'?undefined:$task};
-const __wayxContexts={"response":{"qx":{"from":"qx","to":"qx","phase":"response","binary":false,"responseBody":true},"surge":{"from":"qx","to":"surge","phase":"response","binary":false,"responseBody":true,"headerReads":{}},"loon":{"from":"qx","to":"loon","phase":"response","binary":false,"responseBody":true,"headerReads":{}}}},__wayxRole=__wayxHost.response===undefined?'request':'response',__wayxConfig=__wayxContexts[__wayxRole]&&__wayxContexts[__wayxRole][__wayxTarget];
+const __wayxCodecs=undefined;
+const __wayxHost={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify,http:typeof $httpClient==='undefined'?undefined:$httpClient,task:typeof $task==='undefined'?undefined:$task,argument:typeof $argument==='undefined'?undefined:$argument,codecs:__wayxCodecs};
+const __wayxContexts={"response":{"qx":{"from":"qx","to":"qx","phase":"response","binary":false,"responseBody":true},"surge":{"from":"qx","to":"surge","phase":"response","binary":false,"responseBody":true,"headerReads":{},"binaryReads":false},"loon":{"from":"qx","to":"loon","phase":"response","binary":false,"responseBody":true,"headerReads":{},"binaryReads":false}}},__wayxRole=__wayxHost.response===undefined?'request':'response',__wayxConfig=__wayxContexts[__wayxRole]&&__wayxContexts[__wayxRole][__wayxTarget];
 if(!__wayxConfig)throw new Error('Unregistered adblock HTTP trigger');
 const __wayxRun=function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,__wayxContext,setTimeout,setInterval){
 /***********************************************
@@ -24,7 +25,7 @@ const version = 'V1.0.21';
 var ddgksf2013=JSON.parse($response.body);if(-1!=$request.url.indexOf("mtop.cainiao.nbpresentation.protocol.homepage.get.cn"))ddgksf2013.data?.result?.dataList?.length>0&&(ddgksf2013.data.result.dataList=ddgksf2013.data.result.dataList.filter(a=>!("big_banner_area_v870"==a.type||"todo_list_v860"==a.type)));else if(-1!=$request.url.indexOf("mtop.cainiao.app.e2e.engine")){let a=["banner","activity","asset","vip","wallet"];for(let d of a)ddgksf2013.data?.data?.[d]&&delete ddgksf2013.data.data[d]}else if(-1!=$request.url.indexOf("mtop.cainiao.nbpresentation.homepage.merge.get.cn"))for(let i=0;i<4;i++){let t=`mtop.cainiao.nbpresentation.protocol.homepage.get.cn@${i}`;ddgksf2013.data?.[t]?.data?.result?.dataList?.length>0&&(ddgksf2013.data[t].data.result.dataList=ddgksf2013.data[t].data.result.dataList.filter(a=>!("big_banner_area_v870"==a.type||"todo_list_v860"==a.type)))}else -1!=$request.url.indexOf("mtop.cainiao.guoguo.nbnetflow.ads.mshow")?(ddgksf2013.data["1308"]&&delete ddgksf2013.data["1308"],ddgksf2013.data["1275"]&&delete ddgksf2013.data["1275"],ddgksf2013.data["205"]&&delete ddgksf2013.data["205"]):-1!=$request.url.indexOf("mtop.cainiao.guoguo.nbnetflow.ads.index.cn")?ddgksf2013.data?.result&&(ddgksf2013.data.result=[{}]):-1!=$request.url.indexOf("mtop.cainiao.adkeyword")&&ddgksf2013.data?.result?.adHotKeywords&&(ddgksf2013.data.result.adHotKeywords=[]);var body=JSON.stringify(ddgksf2013);$done({body});
 
 };
-if(__wayxTarget==="qx"&&!__wayxConfig.httpTask)return __wayxRun(__wayxHost.request,__wayxHost.response,__wayxHost.done,__wayxHost.script,__wayxHost.store,__wayxHost.prefs,__wayxHost.notify,__wayxHost.notifyQx,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval,__wayxHost.http);
+if(__wayxTarget==="qx"&&!__wayxConfig.httpTask)return __wayxRun(__wayxHost.request,__wayxHost.response,__wayxHost.done,__wayxHost.script,__wayxHost.store,__wayxHost.prefs,__wayxHost.notify,__wayxHost.notifyQx,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval,__wayxHost.http,__wayxHost.task,__wayxHost.argument,__wayxCodecs&&__wayxCodecs.TextEncoder,__wayxCodecs&&__wayxCodecs.TextDecoder,__wayxCodecs&&__wayxCodecs.atob,__wayxCodecs&&__wayxCodecs.btoa);
 return (function(config,host,run){
   const fail=message=>{throw new Error('WayX API contract: '+message);};
   const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
@@ -42,12 +43,24 @@ return (function(config,host,run){
       for(const name of names){const keys=Object.keys(value.headers).filter(k=>k.toLowerCase()===name);if(keys.length>1||keys.some(k=>typeof value.headers[k]!=='string'))fail('header lookup requires a singleton string field: '+name);}
     }
     const result=Object.assign({},value);
+    // Modified: 2026-11-02 (chance). The declaration identifies the principal
+    // binary input; never silently feed text into a byte-only source program.
+    if(config.binaryReads&&role===(config.phase==='response'?'response':'request')){
+      if(config.to==='qx'){
+        if(!(value.bodyBytes instanceof ArrayBuffer))fail('binary trigger requires QX ArrayBuffer bodyBytes');
+        if(config.from!=='qx'){result.body=new Uint8Array(value.bodyBytes);delete result.bodyBytes;}
+      }else{
+        const input=bytes(value.body);
+        if(config.from==='qx'){result.bodyBytes=buffer(input);delete result.body;}
+        else result.body=input;
+      }
+    }
     if(config.from==='qx'){
       if(own(result,'status')){result.statusCode=status(result.status);delete result.status;}
       if(result.body instanceof Uint8Array||result.body instanceof ArrayBuffer){result.bodyBytes=buffer(result.body);delete result.body;}
     }else{
       if(own(result,'statusCode')){result.status=result.statusCode;delete result.statusCode;}
-      if(own(result,'bodyBytes')){result.body=new Uint8Array(result.bodyBytes);delete result.bodyBytes;}
+      if(own(result,'bodyBytes')){if(config.binaryReads&&role===(config.phase==='response'?'response':'request'))result.body=new Uint8Array(result.bodyBytes);delete result.bodyBytes;}
     }
     return result;
   }
@@ -179,12 +192,29 @@ return (function(config,host,run){
       });
     }};
   }
+  // Modified: 2026-11-02 (chance). Surge already carries a JSON payload for
+  // typed Loon PluginObject arguments. QX deliberately supplies no argument.
+  function sourceArgument(){
+    if(!config.argumentMapped)return undefined;
+    if(config.to==='qx')return undefined;
+    const schema=config.argumentSchema;let input=host.argument;
+    if(schema.kind==='string'){
+      if(typeof input!=='string')fail('declared source String argument missing');return input;
+    }
+    if(config.to==='surge'){
+      if(typeof input!=='string')fail('declared PluginObject JSON argument missing');
+      input=JSON.parse(input);
+    }
+    if(!input||typeof input!=='object'||Array.isArray(input))fail('PluginObject argument dictionary required');
+    for(const key of Object.keys(schema.fields)){if(!own(input,key)||typeof input[key]!==schema.fields[key])fail('PluginObject argument type mismatch: '+key);if(schema.enumValues&&schema.enumValues[key]&&!schema.enumValues[key].includes(input[key]))fail('PluginObject argument enum mismatch: '+key);}
+    return input;
+  }
   function start(request,response){
     const script={name:config.name||host.script&&host.script.name||host.ctx&&host.ctx.script.name};
     if(host.script&&host.script.startTime!==undefined){const start=host.script.startTime;script.startTime=config.from==='loon'?(start instanceof Date?start:new Date(start*1000)):(start instanceof Date?start.getTime()/1000:start);}
     const ctx={request:ctxMessage(request),response:ctxMessage(response),script,respond:value=>({response:value}),abort:()=>({abort:true})};
     const sourceTimer=(callback,delay,...args)=>setTimeout(()=>callback(...args),delay);
-    const result=run(view(request,'request'),view(response,'response'),done,config.from==='qx'?undefined:script,config.from==='qx'?undefined:sourceStore,config.from==='qx'?sourcePrefs:undefined,config.from==='qx'?undefined:{post:notify},config.from==='qx'?notify:undefined,ctx,config.from==='loon'?sourceTimer:setTimeout,config.from==='loon'?sourceTimer:undefined,callbackHttp(),sourceTask());
+    const result=run(view(request,'request'),view(response,'response'),done,config.from==='qx'?undefined:script,config.from==='qx'?undefined:sourceStore,config.from==='qx'?sourcePrefs:undefined,config.from==='qx'?undefined:{post:notify},config.from==='qx'?notify:undefined,ctx,config.from==='loon'?sourceTimer:setTimeout,config.from==='loon'?sourceTimer:undefined,callbackHttp(),sourceTask(),sourceArgument(),host.codecs&&host.codecs.TextEncoder,host.codecs&&host.codecs.TextDecoder,host.codecs&&host.codecs.atob,host.codecs&&host.codecs.btoa);
     if(config.from==='egern')return Promise.resolve(result).then(done);
     return completion||result;
   }
