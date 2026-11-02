@@ -1,3 +1,4 @@
+import { scriptRuntimePolicyVersion } from "../domain/script-api.ts";
 import { collectScriptApiReferences } from "../parser/script-api-ir.ts";
 import { inspectScriptApis } from "../parser/script-api.ts";
 // Modified: 2026-11-02 (chance). Publish concrete semantic plans separately
@@ -350,7 +351,7 @@ export async function prepareScriptApiAdapters(
             operations: syntax,
             diagnostics: rawInventory.problems,
           },
-          runtimePolicyVersion: 2,
+          runtimePolicyVersion: scriptRuntimePolicyVersion,
           sourceView:
             "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
           plans: result.operationPlans ?? {},
@@ -384,7 +385,7 @@ export async function prepareScriptApiAdapters(
         ).filter((target) => target !== [...group.from][0]),
         contexts: result.contexts,
         features: result.features,
-        runtimePolicyVersion: 2,
+        runtimePolicyVersion: scriptRuntimePolicyVersion,
       };
       counts.universal++;
     }
@@ -483,7 +484,7 @@ export async function prepareScriptApiAdapters(
   index.bindings = bindings;
   const report = {
     version: 3,
-    runtimePolicyVersion: 2,
+    runtimePolicyVersion: scriptRuntimePolicyVersion,
     validationMode: "api-runtime-compatibility",
     scope: "adblock-http",
     targets: ["qx", "surge"],

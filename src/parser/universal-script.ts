@@ -1,3 +1,4 @@
+import { scriptRuntimePolicyVersion } from "../domain/script-api.ts";
 // Modified: 2026-11-02 (chance). Source declaration selects an API adapter;
 // author syntax/dataflow no longer forms the compatibility publication gate.
 import crypto from "node:crypto";
@@ -166,6 +167,6 @@ export function planUniversalAdblockScript(
     problems,
     contexts,
     operationPlans,
-    runtimePolicyVersion: 2,
+    runtimePolicyVersion: scriptRuntimePolicyVersion,
   };
 }

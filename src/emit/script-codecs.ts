@@ -1,6 +1,9 @@
 // Modified: 2026-11-02 (chance). Scoped WHATWG UTF-8 and HTML forgiving Base64
 // implementations need no Buffer, WebView, WASM, native codecs or global mutation.
-export const scriptCodecs=String.raw`function(){
+// Modified: 2026-11-02 (chance). Native decoding is preferred; pinned Exodus
+// handles legacy labels lazily through this branded standard facade.
+export const scriptCodecs=String.raw`function(legacy,native={}){
+  let legacyProvider;
   const text=value=>{if(typeof value==='symbol')throw new TypeError('Cannot convert a Symbol to a string');return String(value);};
   const dictionary=value=>{if(value===undefined||value===null)return {};if(typeof value!=='object'&&typeof value!=='function')throw new TypeError('Options must be an object');return value;};
   const arrayBufferLength=Object.getOwnPropertyDescriptor(ArrayBuffer.prototype,'byteLength').get;
@@ -31,14 +34,21 @@ export const scriptCodecs=String.raw`function(){
   class TextDecoder{
     constructor(label='utf-8',options=undefined){
       const encoding=text(label).replace(/^[\t\n\f\r ]+|[\t\n\f\r ]+$/g,'').toLowerCase(),opts=dictionary(options),fatal=!!opts.fatal,ignoreBOM=!!opts.ignoreBOM;
-      if(!['utf-8','utf8','unicode-1-1-utf-8','unicode11utf8','unicode20utf8','x-unicode20utf8'].includes(encoding))throw new RangeError('Only UTF-8 labels are supported');
-      const state={fatal,ignoreBOM,stream:false,bom:false};reset(state);decoders.set(this,state);
+      let delegate;
+      if(typeof native.TextDecoder==='function'){try{delegate=new native.TextDecoder(encoding,{fatal,ignoreBOM});}catch(error){if(error.name!=='RangeError')throw error;}}
+      if(!delegate&&!['utf-8','utf8','unicode-1-1-utf-8','unicode11utf8','unicode20utf8','x-unicode20utf8'].includes(encoding)){
+        if(!legacy)throw new RangeError('Encoding provider unavailable');
+        if(!legacyProvider)legacyProvider=legacy();
+        delegate=new legacyProvider.TextDecoder(encoding,{fatal,ignoreBOM});
+      }
+      const state={fatal,ignoreBOM,delegate,stream:false,bom:false};reset(state);decoders.set(this,state);
     }
-    get encoding(){decoderState(this);return 'utf-8';}
+    get encoding(){const state=decoderState(this);return state.delegate?state.delegate.encoding:'utf-8';}
     get fatal(){return decoderState(this).fatal;}
     get ignoreBOM(){return decoderState(this).ignoreBOM;}
     decode(input=undefined,options=undefined){
       const state=decoderState(this),bytes=inputBytes(input),opts=dictionary(options),stream=!!opts.stream,out=[];
+      if(state.delegate)return state.delegate.decode(bytes,{stream});
       if(!state.stream){reset(state);state.bom=false;}state.stream=stream;
       const emit=cp=>{if(!state.bom){state.bom=true;if(cp===0xfeff&&!state.ignoreBOM)return;}out.push(cp<=0xffff?String.fromCharCode(cp):String.fromCharCode(0xd800+((cp-0x10000)>>10),0xdc00+((cp-0x10000)&1023)));};
       const error=()=>{reset(state);if(state.fatal)throw new TypeError('Invalid UTF-8 data');emit(0xfffd);};

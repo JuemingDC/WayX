@@ -1,8 +1,17 @@
+import { scriptRuntimePolicyVersion } from "../domain/script-api.ts";
 // Modified: 2026-11-02 (chance). Runtime capabilities replace static author-
 // program proof domains. Compatible output is not a device-execution certificate.
+import { excludedAdblockScriptApis } from "../domain/script-api.ts";
 export const scriptCapabilityBoundaries = {
   revision: "2026-11-02",
-  runtimePolicyVersion: 2,
+  runtimePolicyVersion: scriptRuntimePolicyVersion,
+  // Modified: 2026-11-02 (chance). User scope exclusions are not deferred APIs.
+  excluded: {
+    status: "out-of-scope",
+    apis: excludedAdblockScriptApis,
+    policy:
+      "DNS and IP-database services do not participate in adblock API conversion, operation inventories or remaining-work priorities; no emulation, native binding or source deletion",
+  },
   scriptHub: {
     repository: "Script-Hub-Org/Script-Hub",
     commit: "b943361f11be5795b3eb10f9cc4e5497642922fc",
@@ -51,9 +60,9 @@ export const scriptCapabilityBoundaries = {
   codecs: {
     status: "standard-api-fallback",
     domain:
-      "Use native globals when available, otherwise retained UTF-8/Base64 implementations with independent standard vectors",
+      "Scoped UTF-8/Base64 plus native-first TextDecoder with lazy Exodus bytes 1.16.0 legacy labels, streaming/fatal/BOM support and exact byte views",
     outside:
-      "Other encoding labels need an actual native decoder. URL/URLSearchParams are native-only until a tested WHATWG bundle is integrated. WASM, require and file/control APIs need actual target support; no empty implementations",
+      "Unknown encoding labels reject. Native decoding is preferred and otherwise a pinned Exodus decoder handles standard legacy labels. WASM, require and file/control APIs need actual target support; no empty implementations",
   },
   // Modified: 2026-11-02 (chance). Distinguish implemented providers from
   // source-native services and proposals in every generated capability report.
@@ -69,15 +78,40 @@ export const scriptCapabilityBoundaries = {
     outside:
       "Valid gzip encoding bytes/header metadata and error messages may differ from native Loon. No compression algorithm is reimplemented locally",
   },
-  deferred: {
-    status: "not-implemented-cross-host",
-    aes: "Proposed pinned noble-ciphers synchronous ECB/CBC/CTR/GCM adapter; padding and separate authenticated tag need independent vectors before enabling",
-    dns: "Native Loon resolver only; no system/UDP/DoQ/cache metadata fabricated via HTTP",
-    geoip:
-      "Native Loon local country/ASN/organization databases only; no silent external lookup or alternate database",
+  // Modified: 2026-11-02 (chance). Provider work is implemented, while
+  // missing native operations are stated as boundaries rather than future mocks.
+  crypto: {
+    status: "runtime-provider",
+    provider: "@noble/ciphers 2.4.0",
+    notice: "vendor/script-api-providers/README.md",
+    domain:
+      "Native Loon AES first; otherwise synchronous ECB/CBC/CTR/GCM, 16/24/32-byte keys, PKCS7/none, 12-byte GCM nonce, AAD and separate authenticated tag",
+    outside:
+      "Invalid parameters and authentication failures throw; source error strings/codes are not promised byte-for-byte identical",
+  },
+  url: {
+    status: "runtime-provider",
+    provider: "whatwg-url 14.2.0",
+    notice: "vendor/script-api-providers/README.md",
+    domain:
+      "Native URL/URLSearchParams pair first, otherwise a linked WHATWG implementation with IDNA, parsing, setters, iteration, parse/canParse and query parameter methods",
+    outside:
+      "The pinned specification revision and actual engine versions may differ from future standards",
+  },
+  nativeBoundaries: {
+    status: "explicit-invocation-boundaries",
+    storage:
+      "Loon remove maps to QX removeAllValues; Surge has no clear-all method, so invocation throws UNSUPPORTED_API",
+    http: "QX omits undocumented options. Explicit Loon ALPN selection has no documented Surge fetch SDK field and throws; h2_trailers has no Surge completion result field",
+    headers:
+      "Only Loon/QX dictionary source contracts are adapted; Surge full-header arrays are not a new source conversion direction",
+    notification:
+      "Clipboard maps to Surge action/text. Delayed delivery surviving completion, inline media and simultaneous URL/clipboard clicks have no equivalent Surge notification contract; QX extra options are omitted",
+    identity:
+      "Real source device/version/sourcePath cannot be reconstructed; no fabricated identity",
     policy:
-      "Descriptive API entries report unavailable/native-only without statically blocking feature-detection branches; unclassified dynamic references are not support claims",
-    roadmap: "docs/script-api/03-API能力与实施路线.md",
+      "Native/absent boundaries are descriptive, never author-source whitelist gates or success suppression",
+    documentation: "docs/script-api/03-API能力与实施路线.md",
   },
   verification:
     "API contract vectors and mock transports, syntax and backup integrity. Generated compatibility means API adapter composition succeeded, not every author business path or device runtime was verified",

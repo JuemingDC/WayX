@@ -1,6 +1,22 @@
 // Modified: 2026-11-02 (chance). One semantic catalog supplies parsing,
 // target lowering, runtime layouts and per-operation publication evidence.
 export type ScriptClient = "qx" | "loon" | "surge";
+// Modified: 2026-11-02 (chance). Shared provider composition and scope revision.
+export const scriptRuntimePolicyVersion = 3;
+// Modified: 2026-11-02 (chance). User excludes resolver and IP-database APIs
+// from adblock conversion, inventories and remaining-work priorities.
+export const excludedAdblockScriptApis = Object.freeze([
+  "$dns",
+  "$utils.geoip",
+  "$utils.ipasn",
+  "$utils.ipaso",
+] as const);
+export function isExcludedAdblockScriptApi(api: string): boolean {
+  const name = api.replace(/^(?:globalThis|window|global)\./, "");
+  return excludedAdblockScriptApis.some(
+    (root) => name === root || name.startsWith(root + "."),
+  );
+}
 export const scriptHttpMethods = [
   "GET",
   "POST",
@@ -317,13 +333,15 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
   {
     id: "storage.removeAll",
     kind: "storage",
-    source: { qx: "$prefs.removeAllValues" },
+    source: { qx: "$prefs.removeAllValues", loon: "$persistentStore.remove" },
+    target: { qx: "$prefs.removeAllValues", loon: "$persistentStore.remove" },
     canonical: "storage.removeAll",
     value: "clear the source application store",
-    lowering: "native QX only; Surge has no enumerating/clear-all store API",
-    availability: { qx: "native-only", surge: "unavailable" },
+    lowering:
+      "Loon clear-all maps to actual QX removeAllValues or native Loon; Surge has no clear-all store API",
+    availability: { qx: "runtime", loon: "native-only", surge: "unavailable" },
     solution:
-      "Preserve native QX removeAllValues; do not simulate global deletion with a partial generated-key registry",
+      "Use actual QX/native Loon clear-all; Surge cannot reproduce it with a partial generated-key registry",
     proof: "native store boundary",
   },
   {
@@ -365,8 +383,9 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     kind: "codec" as const,
     source: same(api),
     canonical: "codec." + api,
-    value: "UTF-8/Base64",
-    lowering: "shared scoped standard implementation",
+    value: "UTF-8, standard legacy decoder labels and Base64",
+    lowering:
+      "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
     proof: "closed-codec-and-pristine-intrinsics-proof",
   })),
   // Modified: 2026-11-02 (chance). Compression is a source API contract,
@@ -393,65 +412,50 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     source: { loon: "$crypto.aes." + api },
     canonical: "crypto.aes." + api,
     value: "synchronous Uint8Array AES; separate GCM tag",
-    lowering: "native Loon only; no cross-client AES provider yet",
-    availability: {
-      loon: "native-only" as const,
-      qx: "unavailable" as const,
-      surge: "unavailable" as const,
+    target: {
+      loon: "$crypto.aes." + api,
+      qx: "WayX.noble." + api,
+      surge: "WayX.noble." + api,
     },
-    solution:
-      "Integrate pinned noble-ciphers synchronous ECB/CBC/CTR/GCM, explicit padding and separate authenticated tag; verify independent vectors before enabling",
-    proof: "capability boundary, not an implemented mapping",
-  })),
-  ...(["geoip", "ipasn", "ipaso"] as const).map((api) => ({
-    id: "ip." + api,
-    kind: "environment" as const,
-    source: { loon: "$utils." + api },
-    canonical: "ip." + api,
-    value: "synchronous local-database lookup",
     lowering:
-      "retain native Loon implementation; source database cannot be reconstructed",
-    availability: {
-      loon: "native-only" as const,
-      qx: "unavailable" as const,
-      surge: "unavailable" as const,
-    },
-    solution:
-      "Use a real equivalent native database only after return/absence contracts are established; alternate database or remote lookup requires explicit semantic policy",
-    proof: "native database boundary",
+      "native Loon first; lazy noble-ciphers 2.4.0 synchronous ECB/CBC/CTR/GCM, padding and separate authenticated tag",
+    proof:
+      "NIST and Node crypto vectors, three key lengths, tamper failures and exact typed views",
   })),
-  {
-    id: "dns.query",
-    kind: "http",
-    source: { loon: "$dns.query" },
-    canonical: "dns.query",
-    value:
-      "callback resolver with protocol/server/timeout/answers/cache metadata",
-    lowering: "native Loon only; HTTP fetch is not a system DNS substitute",
-    availability: {
-      loon: "native-only",
-      qx: "unavailable",
-      surge: "unavailable",
-    },
-    solution:
-      "Map only an equivalent native resolver; an explicit DoH-only provider may be added separately without claiming UDP/DoQ/system-cache equivalence",
-    proof: "native resolver boundary",
-  },
   ...(["URL", "URLSearchParams"] as const).map((api) => ({
     id: "standard." + api,
     kind: "codec" as const,
     source: same(api),
     canonical: "standard." + api,
     value: "WHATWG URL standard class",
-    lowering: "actual native engine global; no bundled fallback yet",
-    availability: {
-      loon: "native-only" as const,
-      qx: "native-only" as const,
-      surge: "native-only" as const,
-    },
-    solution:
-      "Evaluate a pinned whatwg-url bundle with URL/URLSearchParams together, WPT vectors, IDNA dependencies, ES compatibility and bundle-size budget",
-    proof: "native global boundary",
+    target: same(api),
+    lowering:
+      "native URL/URLSearchParams pair first; otherwise lazy pinned whatwg-url 14.2.0 with linked query state and IDNA",
+    proof:
+      "standard URL vectors and independent Node URL differential contracts",
+  })),
+  // Modified: 2026-11-02 (chance). Loon timers are one-shot; record source
+  // semantics explicitly instead of treating target interval names as equivalent.
+  ...(["setTimeout", "setInterval"] as const).map((api) => ({
+    id: "timer." + api,
+    kind: "environment" as const,
+    source: { loon: api, ...(api === "setTimeout" ? { qx: api } : {}) },
+    target: { loon: api, qx: "setTimeout", surge: "setTimeout" },
+    canonical: "timer.once",
+    value: "callback, milliseconds and unchanged arguments",
+    lowering:
+      "actual native setTimeout; Loon setInterval is documented as one-shot",
+    proof: "dynamic scheduling and callback arguments",
+  })),
+  ...(["request", "response"] as const).map((role) => ({
+    id: role + ".trailers",
+    kind: "context" as const,
+    source: { loon: "$" + role + ".h2_trailers" },
+    canonical: role + ".trailers",
+    value: "HTTP/2 trailer dictionary",
+    lowering:
+      "preserve native source fields when present; QX completion ignores undocumented fields; Surge completion has no trailer result field",
+    proof: "documented source field and target invocation boundary",
   })),
   {
     id: "script.name",

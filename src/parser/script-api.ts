@@ -1,3 +1,4 @@
+import { scriptRuntimePolicyVersion } from "../domain/script-api.ts";
 // Modified: 2026-11-02 (chance). API inventory is descriptive. Publication is
 // governed by syntax, HTTP declaration and runtime capability, not author dataflow.
 import ts from "typescript";
@@ -100,7 +101,7 @@ export function planScriptApiConversion(
   const apiPlan = emitScriptApiPlan(operationIR);
   const contract = {
     apiPlan,
-    runtimePolicyVersion: 2,
+    runtimePolicyVersion: scriptRuntimePolicyVersion,
     ...(options.argumentSchema
       ? { argumentSchema: options.argumentSchema }
       : {}),

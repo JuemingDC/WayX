@@ -6,6 +6,11 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { planScriptApiConversion as pair } from "../src/parser/script-api.ts";
+import {
+  isExcludedAdblockScriptApi,
+  scriptApiDefinitions,
+} from "../src/domain/script-api.ts";
+import { scriptConversionPriorities } from "../src/parser/script-api-mapping.ts";
 import { planUniversalAdblockScript as universal } from "../src/parser/universal-script.ts";
 import { refreshSourceBackups } from "../src/application/backups.ts";
 import { validateSourceBackups } from "../src/validation/backups.ts";
@@ -503,12 +508,7 @@ for (const decoder of [undefined, TextDecoder]) {
       },
     );
     await new Promise((r) => setTimeout(r, 0));
-    assert.equal(
-      r.out.body,
-      encoding === "windows-1252" && !decoder
-        ? "UNSUPPORTED_RESPONSE_CHARSET:windows-1252"
-        : expected,
-    );
+    assert.equal(r.out.body, expected);
   }
 }
 let omitted: any;
@@ -595,48 +595,43 @@ assert.throws(
   /String body/,
 );
 
-// Modified: 2026-11-02 (chance). Inventories name missing providers without
-// blocking author feature detection; unrelated target APIs are not substituted.
+// Modified: 2026-11-02 (chance). Shared providers are advertised as runtime
+// capabilities without blocking author feature detection or reusing target APIs.
 for (const to of ["qx", "surge"] as const) {
   const r = execute(
-    '$done({body:[typeof $crypto,typeof $dns,typeof $utils.gzip].join(":")});if(false){$crypto.aes.encrypt(data,options);$dns.query(options,callback);$utils.geoip(ip);new URL(input);}',
+    '$done({body:[typeof $crypto,typeof $utils.gzip].join(":")});if(false){$crypto.aes.encrypt(data,options);new URL(input);}',
     "loon",
     to,
-    { $response: {}, $crypto: { unrelated: true }, $dns: { unrelated: true } },
+    { $response: {}, $crypto: { unrelated: true } },
   );
-  assert.equal(r.out.body, "undefined:undefined:function");
+  assert.equal(r.out.body, "object:function");
   const operations = r.p.operationIR.operations;
-  for (const rule of ["crypto.aes.encrypt", "dns.query", "ip.geoip"])
+  for (const rule of ["crypto.aes.encrypt"])
     assert.equal(
       operations.find((o) => o.rule === rule)?.target.capability,
-      "unavailable",
+      "runtime",
     );
   assert.equal(
     operations.find((o) => o.rule === "standard.URL")?.target.capability,
-    "native-only",
+    "runtime",
   );
 }
 const nativeUtils = {
   gzip: (v: any) => v,
   ungzip: (v: any) => v,
-  geoip() {
-    assert.equal(this, nativeUtils);
-    return "native";
-  },
+  marker: "native",
 };
-const cryptoRef = { aes: {} };
-const dnsRef = { query() {} };
+const cryptoRef = { aes: { encrypt() {}, decrypt() {} } };
 const nativeServices = execute(
-  '$done({body:$utils.geoip("1.1.1.1")+":"+String($crypto===cryptoRef)+":"+String($dns===dnsRef)});',
+  '$done({body:$utils.marker+":"+String($crypto===cryptoRef)+":"+String($utils===utilsRef)});',
   "loon",
   "loon",
   {
     $response: {},
     $utils: nativeUtils,
     $crypto: cryptoRef,
-    $dns: dnsRef,
     cryptoRef,
-    dnsRef,
+    utilsRef: nativeUtils,
   },
 );
 assert.equal(nativeServices.out.body, "native:true:true");
@@ -703,3 +698,173 @@ const unavailableClear = execute(
   { $response: {}, $persistentStore: {} },
 );
 assert.equal(unavailableClear.out.body, "undefined");
+
+// Modified: 2026-11-02 (chance). Excluded SDK services do not become missing
+// adblock APIs; nested in-scope expressions still appear in the API inventory.
+for (const [from, to] of directions) {
+  const read = from === "qx" ? "$prefs.valueForKey" : "$persistentStore.read";
+  const source = `if(false){$dns.query({domain:${read}("host")},()=>{});globalThis.$dns.query(options,callback);$utils.geoip(ip);window.$utils.ipasn(ip);global.$utils.ipaso(ip);}$done({body:"adblock"});`;
+  const result = execute(source, from, to, { $response: {} });
+  assert.equal(result.out.body, "adblock");
+  assert.ok(result.p.code!.includes(source));
+  assert.ok(result.p.features.includes(read));
+  assert.ok(!result.p.features.some(isExcludedAdblockScriptApi));
+  assert.ok(
+    !result.p.operationIR.operations.some((o) =>
+      isExcludedAdblockScriptApi(o.source.api),
+    ),
+  );
+}
+assert.ok(
+  !scriptApiDefinitions.some((d) =>
+    Object.values(d.source).some(
+      (api) => api && isExcludedAdblockScriptApi(api),
+    ),
+  ),
+);
+const excludedPriorities = scriptConversionPriorities([
+  {
+    status: "blocked",
+    sourceUrl: "synthetic:excluded",
+    problems: [{ api: "$dns.query" }, { api: "$utils.geoip" }],
+  },
+  {
+    status: "blocked",
+    sourceUrl: "synthetic:mixed",
+    problems: [{ api: "$utils.ipasn" }, { api: "syntax" }],
+  },
+]);
+assert.equal(excludedPriorities.blockedSources, 1);
+assert.equal(
+  excludedPriorities.families.find((f) => f.family === "engine")
+    ?.affectedSources,
+  0,
+);
+assert.equal(
+  excludedPriorities.families.find((f) => f.family === "profile")
+    ?.affectedSources,
+  1,
+);
+
+// Modified: 2026-11-02 (chance). Complete supported Loon options without
+// inventing target behavior; QX omissions preserve argument construction.
+for (const to of ["qx", "surge"] as const) {
+  let cleared = 0;
+  const run = () =>
+    execute("$persistentStore.remove();$done({});", "loon", to, {
+      $response: {},
+      $prefs: {
+        removeAllValues() {
+          cleared++;
+        },
+      },
+      $persistentStore: {},
+    });
+  if (to === "qx") {
+    run();
+    assert.equal(cleared, 1);
+  } else assert.throws(run, (e: any) => e.code === "UNSUPPORTED_API");
+}
+let notice: any;
+execute(
+  '$notification.post("title","subtitle","body",{clipboard:input});$done({});',
+  "loon",
+  "surge",
+  {
+    input: "copy me",
+    $response: {},
+    $notification: {
+      post(...args: any[]) {
+        notice = args;
+      },
+    },
+  },
+);
+assert.deepEqual(flat(notice[3]), { action: "clipboard", text: "copy me" });
+for (const option of [
+  { openUrl: "https://test/", clipboard: "both" },
+  { mediaUrl: "data:image/png;base64,AA==" },
+]) {
+  assert.throws(() =>
+    execute('$notification.post("t","s","b",option);', "loon", "surge", {
+      $response: {},
+      option,
+      $notification: {
+        post() {
+          throw Error("must not submit");
+        },
+      },
+    }),
+  );
+}
+assert.throws(
+  () =>
+    execute('$httpClient.get({url:input,alpn:"h2"},()=>{});', "loon", "surge", {
+      input: "https://test/",
+      $response: {},
+    }),
+  (e: any) => e.code === "UNSUPPORTED_API",
+);
+let qxRequest: any;
+execute(
+  '$httpClient.get({url:input,alpn:"h2",unknown:(effects.push(1),true)},()=> $done({abort:true,body:"done"}));',
+  "loon",
+  "qx",
+  {
+    input: "https://test/",
+    effects: [],
+    $response: {},
+    $task: {
+      fetch: (o: any) => {
+        qxRequest = o;
+        return Promise.resolve({ statusCode: 200, headers: {}, body: "" });
+      },
+    },
+  },
+);
+await new Promise((r) => setTimeout(r, 0));
+assert.equal(qxRequest.alpn, undefined);
+const qxUnknown = execute(
+  '$done({abort:true,body:"kept",unknown:1});',
+  "loon",
+  "qx",
+  { $response: {} },
+);
+assert.deepEqual(flat(qxUnknown.out), { body: "kept" });
+for (const to of ["qx", "surge"] as const) {
+  const action = () =>
+    execute(
+      '$done({body:"value",h2_trailers:{"grpc-status":"0"}});',
+      "loon",
+      to,
+      { $response: {} },
+    );
+  if (to === "qx") assert.deepEqual(flat(action().out), { body: "value" });
+  else assert.throws(action, /h2_trailers/);
+}
+// Excluded services are never read by the host capture or rewritten body.
+const scoped = pair("if(false)$dns.query(options,callback);$done({});", {
+  from: "loon",
+  to: "surge",
+  phase: "response",
+});
+const bare: any = { $response: {}, $done() {} };
+Object.defineProperty(bare, "$dns", {
+  get() {
+    throw Error("excluded API captured");
+  },
+});
+vm.runInNewContext(scoped.code!, bare);
+console.log(
+  "Remaining Loon SDK contracts passed: real clear-all, clipboard notifications, native-only ALPN/trailer boundaries, QX omissions and excluded service isolation",
+);
+// Foreign-realm ArrayBuffers use the same completion and transport byte fields.
+const foreignBuffer = vm.runInNewContext("new Uint8Array([9,1,2,8]).buffer");
+const foreignResult = execute("$done({body:payload});", "loon", "qx", {
+  $response: {},
+  payload: foreignBuffer,
+});
+assert.deepEqual(
+  Array.from(new Uint8Array(foreignResult.out.bodyBytes)),
+  [9, 1, 2, 8],
+);

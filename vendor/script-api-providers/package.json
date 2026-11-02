@@ -1,0 +1,14 @@
+{
+  "name": "wayx-script-api-providers",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.ts"
+  },
+  "dependencies": {
+    "@exodus/bytes": "1.16.0",
+    "@noble/ciphers": "2.4.0",
+    "esbuild": "0.25.1",
+    "whatwg-url": "14.2.0"
+  }
+}

@@ -3,13 +3,18 @@
 // Modified: 2026-11-02 (chance). One API-level runtime replaces source-specific
 // flow proofs. Dynamic values and Env receivers are handled when APIs are called.
 import { scriptCompression } from "./script-compression.ts";
+import { scriptCrypto } from "./script-crypto.ts";
 import { scriptHubHeaders } from "../vendor/script-hub/headers.ts";
 export const scriptApiRuntime = String.raw`function(config,host,run){
   const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
   const fail=message=>{throw new TypeError('WayX API: '+message);};
   const source=config.apiPlan.source,target=config.apiPlan.target;
   const headers=(${scriptHubHeaders});
-  const bytes=value=>ArrayBuffer.isView(value)?new Uint8Array(value.buffer,value.byteOffset,value.byteLength):value instanceof ArrayBuffer?new Uint8Array(value):fail('binary body requires BufferSource');
+  // Modified: 2026-11-02 (chance). Exact BufferSource views across realms;
+  // ignore shadowed user properties rather than changing the selected bytes.
+  const abLength=Object.getOwnPropertyDescriptor(ArrayBuffer.prototype,'byteLength').get,typed=Object.getPrototypeOf(Uint8Array.prototype),get=name=>Object.getOwnPropertyDescriptor(typed,name).get,tag=Object.getOwnPropertyDescriptor(typed,Symbol.toStringTag).get;
+  const bytes=value=>{let length;try{length=abLength.call(value);}catch{}if(length!==undefined)return new Uint8Array(value,0,length);if(ArrayBuffer.isView(value)){const isTyped=tag.call(value)!==undefined,getter=name=>isTyped?get(name).call(value):Object.getOwnPropertyDescriptor(DataView.prototype,name).get.call(value);return new Uint8Array(getter('buffer'),getter('byteOffset'),getter('byteLength'));}return fail('binary body requires BufferSource');};
+  const binary=value=>{if(ArrayBuffer.isView(value))return true;try{abLength.call(value);return true;}catch{return false;}};
   const buffer=value=>{const b=bytes(value);return b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength);};
   // Modified: 2026-11-02 (chance). Validate status lines as well as numeric
   // values before formatting for QX; strings must not bypass result validation.
@@ -39,9 +44,11 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     if(own(out,'status'))out.status=target.completion.statusEncoding==='line'?statusLine(out.status):status(out.status);
     if(own(out,'headers')){if(!out.headers||typeof out.headers!=='object'||Array.isArray(out.headers))fail('completion headers require a dictionary');out.headers=Object.assign({},headers(out.headers));}
     if(own(out,'bodyBytes')){out.body=bytes(out.bodyBytes);delete out.bodyBytes;}
-    if(out.body instanceof ArrayBuffer||ArrayBuffer.isView(out.body)){if(target.binaryField==='bodyBytes'){out.bodyBytes=buffer(out.body);delete out.body;}else out.body=bytes(out.body);}
-    for(const key of Object.keys(out))if(!['url','headers','body','bodyBytes','status','abort'].includes(key)){if(config.to==='qx')delete out[key];else fail('unmapped completion field: '+key);}
-    if(target.completion.synthetic==='flat'&&out.abort)fail('target abort API unavailable');
+    if(binary(out.body)){if(target.binaryField==='bodyBytes'){out.bodyBytes=buffer(out.body);delete out.body;}else out.body=bytes(out.body);}
+    for(const key of Object.keys(out))if(!['url','headers','body','bodyBytes','status','abort',...(config.to==='loon'?['h2_trailers']:[])].includes(key)){if(config.to==='qx')delete out[key];else fail('unmapped completion field: '+key);}
+    // Modified: 2026-11-02 (chance). Undocumented QX completion parameters
+    // follow the user's omission policy, including abort.
+    if(target.completion.synthetic==='flat')delete out.abort;
     if(target.completion.synthetic==='flat'&&!synthetic&&config.phase==='response'&&own(out,'headers')&&!own(out,'body')&&!own(out,'bodyBytes')&&config.responseBody)fail('QX response-body requires body with changed headers');
     return out;
   }
@@ -50,7 +57,7 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     if(value===undefined||value===null)return finish({});
     if(value===response||value===request){
       // Return actual current fields; mutations made by author code are retained.
-      const out={};for(const k of ['url','headers','body','bodyBytes',source.responseStatus])if(own(value,k))out[k]=value[k];
+      const out={};for(const k of ['url','headers','body','bodyBytes','h2_trailers',source.responseStatus])if(own(value,k))out[k]=value[k];
       value=out;
     }
     if(typeof value==='string')value={body:value};
@@ -71,7 +78,7 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     if(!config.apiPlan.methods.includes(verb))return fail('HTTP method unavailable: '+verb);
     const req={url:input.url};
     if(own(input,'headers'))req.headers=Object.assign({},input.headers);
-    if(own(input,'body'))req.body=input.body instanceof ArrayBuffer||ArrayBuffer.isView(input.body)?(target.http.style==='promise'?buffer(input.body):bytes(input.body)):input.body;
+    if(own(input,'body')){const value=input.body;req.body=binary(value)?(target.http.style==='promise'?buffer(value):bytes(value)):value;}
     const mapped={};
     for(const semantic of ['redirect','cookie','tls'])mapped[target.http[semantic]]=own(options,http[semantic])?options[http[semantic]]:http.defaults[semantic];
     if(own(options,http.policy))mapped[target.http.policy]=options[http.policy]===http.directPolicy?target.http.directPolicy:options[http.policy];
@@ -88,6 +95,9 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     }
     Object.assign(req,mapped);
     if(http.timeoutMs!==null&&target.http.timeoutMs!==null&&own(input,'timeout'))req.timeout=input.timeout*http.timeoutMs/target.http.timeoutMs;
+    // Modified: 2026-11-02 (chance). Reject an explicit foreign ALPN choice
+    // on Surge instead of forwarding a field its fetch SDK does not document.
+    if(style==='callback'&&config.to==='surge'&&own(input,'alpn')){const error=new Error('Surge HTTP SDK has no Loon ALPN selector');error.code='UNSUPPORTED_API';throw error;}
     for(const key of ['binary-mode','body-base64','alpn'])if(style==='callback'&&own(input,key)&&(key!=='body-base64'||config.from===config.to))req[key]=input[key];
     if(style==='promise')req['binary-mode']=true;
     return {req,verb};
@@ -98,12 +108,12 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
       const normalize=(native,data)=>{
         if(!native)return reject({error:'HTTP transport returned no response'});
         const out={statusCode:status(native[target.responseStatus]),headers:headers(native.headers||{})};
-        if(data instanceof ArrayBuffer||ArrayBuffer.isView(data)){
+        if(binary(data)){
           out.bodyBytes=buffer(data);
           if(target.http.style==='promise'&&typeof native.body==='string')out.body=native.body;
           else{
             const type=out.headers['content-type']||'',match=typeof type==='string'&&/charset\s*=\s*["']?([^;\s"']+)/i.exec(type);
-            const encoding=match?match[1]:'utf-8',Decoder=typeof host.global.TextDecoder==='function'?host.global.TextDecoder:host.codecs.TextDecoder;
+            const encoding=match?match[1]:'utf-8',Decoder=host.codecs.TextDecoder;
             try{out.body=new Decoder(encoding).decode(bytes(data));}catch(cause){const error=new Error('HTTP response charset unavailable: '+encoding);error.code='UNSUPPORTED_RESPONSE_CHARSET';error.encoding=encoding;error.cause=cause;throw error;}
           }
         }else out.body=data;
@@ -133,6 +143,9 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     key=storageKey(key);if(value===null||(value===undefined&&source.store.undefinedDeletes))return target.store.remove?nativeStore[target.store.remove](key):nativeStore[target.store.write](null,key);
     if(typeof value!=='string')return fail('storage value must be String or deletion marker');return nativeStore[target.store.write](value,key);
   }};
+  // Modified: 2026-11-02 (chance). Loon remove clears all data, never just
+  // this script's default key. Surge exposes no equivalent SDK method.
+  store.remove=()=>{if(config.to==='loon')return host.store.remove();if(config.to==='qx'){host.prefs.removeAllValues();return;}const error=new Error('Surge storage has no clear-all API');error.code='UNSUPPORTED_API';throw error;};
   const prefKey=key=>typeof key==='string'?key:fail('QX storage requires an explicit String key');
   const prefs={valueForKey:key=>store.read(prefKey(key)),setValueForKey:(value,key)=>{key=prefKey(key);if(typeof value!=='string')return fail('QX storage value must be String');return store.write(value,key);},removeValueForKey:key=>target.store.remove?nativeStore[target.store.remove](prefKey(key)):nativeStore[target.store.write](null,prefKey(key))};
   // Modified: 2026-11-02 (chance). Native QX clear-all is real; other hosts
@@ -142,10 +155,14 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     if(config.apiPlan.omitNotificationOptions)return target.notification.root==='$notify'?host.notifyQx(title,subtitle,body):host.notify.post(title,subtitle,body);
     if(delay!==undefined&&delay!==0&&config.from!==config.to)return fail('notification delay has no target API');
     if(config.from===config.to)return host.notify.post(title,subtitle,body,option,delay);
-    const raw=typeof option==='string'?{url:option}:option||{};
-    const open=raw.openUrl||raw.url||raw['open-url'],media=raw.mediaUrl||raw['media-url'];
-    const mapped={};if(open!==undefined)mapped[target.notification.open]=open;if(media!==undefined)mapped[target.notification.media]=media;
-    for(const key of Object.keys(raw))if(!['url','openUrl','open-url','mediaUrl','media-url','action'].includes(key))fail('notification option unavailable: '+key);
+    // Modified: 2026-11-02 (chance). Map Loon's clipboard click action;
+    // reject combinations/media formats with no equivalent target behavior.
+    const raw=typeof option==='string'?{openUrl:option}:option||{},mapped={};
+    for(const key of Object.keys(raw))if(!['openUrl','mediaUrl','clipboard'].includes(key))fail('notification option unavailable: '+key);
+    if(raw.openUrl!==undefined&&raw.clipboard!==undefined)fail('target notification supports one click action, not URL plus clipboard');
+    if(raw.openUrl!==undefined)mapped.url=raw.openUrl;
+    if(raw.clipboard!==undefined){mapped.action='clipboard';mapped.text=raw.clipboard;}
+    if(raw.mediaUrl!==undefined){if(typeof raw.mediaUrl!=='string'||!/^https?:\/\//i.test(raw.mediaUrl))fail('target notification media requires HTTP(S) URL');mapped['media-url']=raw.mediaUrl;}
     return host.notify.post(title,subtitle,body,mapped);
   }
   let argument=config.from==='qx'||target.argument==='absent'?undefined:host.argument;
@@ -160,15 +177,21 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     $notify:config.from==='qx'?notify:undefined,$notification:config.from==='qx'?undefined:{post:notify},
     $argument:argument,$environment:environment,$loon:config.from==='loon'?(host.loon||'Loon (WayX API compatibility)'):undefined,
   };
-  // Modified: 2026-11-02 (chance). Preserve native source-only services on Loon;
-  // do not accidentally expose a different target API as an implemented mapping.
+  // Modified: 2026-11-02 (chance). Loon crypto/compression use pinned providers;
+  // excluded DNS/IP services receive no compatibility bindings.
   if(config.from==='loon'){
     overlay.$utils=(${scriptCompression})(host,config);
-    overlay.$crypto=config.from===config.to?host.crypto:undefined;
-    overlay.$dns=config.from===config.to?host.dns:undefined;
+    overlay.$crypto=(${scriptCrypto})(host,config);
   }
   if(config.from==='loon')overlay.setInterval=(fn,delay,...args)=>host.setTimeout(fn,delay,...args);
-  for(const name of ['TextEncoder','TextDecoder','atob','btoa'])if(typeof host.global[name]==='undefined')overlay[name]=host.codecs[name];
+  // Modified: 2026-11-02 (chance). Shared codecs prefer native decoding and
+  // provide standard legacy labels; URL classes are initialized together lazily.
+  overlay.TextDecoder=host.codecs.TextDecoder;
+  let standards;for(const name of ['URL','URLSearchParams']){
+    const set=value=>Object.defineProperty(overlay,name,{value,writable:true,enumerable:true,configurable:true});
+    Object.defineProperty(overlay,name,{enumerable:true,configurable:true,get(){if(!standards)standards=typeof host.global.URL==='function'&&typeof host.global.URLSearchParams==='function'?{URL:host.global.URL,URLSearchParams:host.global.URLSearchParams}:host.url(host.codecs);const value=standards[name];set(value);return value;},set});
+  }
+  for(const name of ['TextEncoder','atob','btoa'])if(typeof host.global[name]==='undefined')overlay[name]=host.codecs[name];
   const scope=new Proxy(overlay,{has:(t,key)=>own(t,key),get:(t,key)=>key===Symbol.unscopables?undefined:Reflect.get(t,key),set:(t,key,value)=>Reflect.set(t,key,value)});
   const global=new Proxy(host.global,{get:(t,key)=>own(overlay,key)?overlay[key]:Reflect.get(t,key),set:(t,key,value)=>own(overlay,key)?Reflect.set(overlay,key,value):Reflect.set(t,key,value),has:(t,key)=>own(overlay,key)||Reflect.has(t,key)});
   overlay.globalThis=global;overlay.window=global;overlay.global=global;

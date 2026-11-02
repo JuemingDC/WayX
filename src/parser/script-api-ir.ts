@@ -4,6 +4,7 @@ import ts from "typescript";
 import crypto from "node:crypto";
 import {
   scriptApiDefinitions,
+  isExcludedAdblockScriptApi,
   type ScriptClient,
   type ScriptApiIR,
   type ScriptApiOperation,
@@ -59,6 +60,8 @@ export function collectScriptApiReferences(
           "URLSearchParams",
           "CompressionStream",
           "DecompressionStream",
+          "setTimeout",
+          "setInterval",
         ].includes(n.text))
     ) {
       if (
@@ -101,7 +104,9 @@ export function collectScriptApiReferences(
     ts.forEachChild(n, walk);
   };
   walk(tree);
-  return refs;
+  // Modified: 2026-11-02 (chance). Out-of-scope DNS/IP utilities are neither
+  // conversion operations nor missing adblock capabilities; author bytes remain.
+  return refs.filter((ref) => !isExcludedAdblockScriptApi(ref.api));
 }
 export function parseScriptApiIR(
   tree: ts.SourceFile,
@@ -127,6 +132,10 @@ export function parseScriptApiIR(
           (a, b) =>
             (b.source[from]?.length || 0) - (a.source[from]?.length || 0),
         )[0];
+      // Modified: 2026-11-02 (chance). A mixed native-boundary rule may still
+      // be implemented on this destination; diagnose the selected target only.
+      const capability =
+        rule?.availability?.[to] || (rule ? "runtime" : "unclassified");
       const start = r.node.getStart(tree),
         position = tree.getLineAndCharacterOfPosition(start);
       return {
@@ -147,9 +156,7 @@ export function parseScriptApiIR(
         target: {
           // Modified: 2026-11-02 (chance). An inventory entry is not a support
           // certificate. Report provider/native/absent contracts explicitly.
-          capability: rule
-            ? rule.availability?.[to] || "runtime"
-            : "unclassified",
+          capability,
           api:
             rule?.availability?.[to] === "unavailable"
               ? null
@@ -159,20 +166,22 @@ export function parseScriptApiIR(
           lowering:
             rule?.lowering ||
             "Unclassified reference; depends on the actual runtime member and host capability",
-          proof: rule?.availability
-            ? "Capability boundary; no cross-host provider equivalence claim"
-            : "API runtime contract tests; no author-program static proof",
+          proof:
+            capability === "runtime"
+              ? "API runtime contract tests; no author-program static proof"
+              : "Capability boundary; no cross-host provider equivalence claim",
         },
         decision: "runtime",
-        diagnostics: rule?.availability
-          ? [
-              {
-                api: r.api,
-                reason: rule.lowering,
-                solution: rule.solution || "Use actual native capability",
-              },
-            ]
-          : [],
+        diagnostics:
+          rule && (capability === "native-only" || capability === "unavailable")
+            ? [
+                {
+                  api: r.api,
+                  reason: rule.lowering,
+                  solution: rule.solution || "Use actual native capability",
+                },
+              ]
+            : [],
       };
     },
   );

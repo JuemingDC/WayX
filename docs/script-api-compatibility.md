@@ -4,7 +4,7 @@ Modified: 2026-11-02 (chance). 当前维护方式为 ScriptHub 派生的运行�
 
 ## 范围
 
-生产方向只有 Loon→Quantumult X、Loon→Surge、Quantumult X→Surge。每个源 URL 一个原文件名的共用脚本，原正文一次；原插件和脚本字节保存在 Resource/Backup。配置控制、任务、Module 工具和 Egern 不提供新 API 适配。
+生产方向只有 Loon→Quantumult X、Loon→Surge、Quantumult X→Surge。每个源 URL 一个原文件名的共用脚本，原正文一次；原插件和脚本字节保存在 Resource/Backup。配置控制、任务、Module 工具和 Egern 不提供新 API 适配。DNS、GeoIP、ASN 等工具 API 不参与转换、操作清单、未实现能力统计或后续计划。原作者正文不删除，不添加对应兼容绑定。
 
 ## 上游和修正
 
@@ -18,15 +18,17 @@ Header 采用大小写无关、小写字典策略，这是接受的兼容规范�
 
 ## 能力边界
 
-目标原生的存储缺失值、空值、详细错误对象、编码/Cookie 状态及客户端版本可能仍不同；兼容不等于整程序严格等价。真实源设备/版本、动态 Function 代码的 globals、完整 Header 数组、受限 Proxy descriptor、未提供的 AES/DNS/GeoIP/WASM/文件/配置 API 不伪造支持。Loon gzip/ungzip 已复用固定 Pako（原生优先、延迟初始化、gzip 完整流校验）；压缩字节编码和元数据不保证与原生一致。QX echo 和 body/header 规则需要相应声明；未知默认来源存储键、不可用通知动作在调用时明确失败。
+目标原生的存储缺失值、空值、详细错误对象、编码/Cookie 状态及客户端版本可能仍不同；兼容不等于整程序严格等价。真实源设备/版本、动态 Function 代码的 globals、完整 Header 数组、受限 Proxy descriptor、未提供的 WASM/文件/配置 API 不伪造支持。Loon gzip/ungzip 已复用固定 Pako（原生优先、延迟初始化、gzip 完整流校验）；压缩字节编码和元数据不保证与原生一致。QX echo 和 body/header 规则需要相应声明；未知默认来源存储键、不可用通知动作在调用时明确失败。
 
-剩余 AES、URL、编码和宿主服务的实现选择及验收条件见 [API 能力与实施路线](script-api/03-API能力与实施路线.md)。QX removeAllValues 原生保留；目标没有全局清空存储接口时不伪造成功。
+AES 四模式、URL/URLSearchParams 和旧字符集 TextDecoder 已通过固定上游库接入公共层，保留原生优先、独立作用域和延迟初始化。实现及原生边界见 [API 能力与实施路线](script-api/03-API能力与实施路线.md)。QX removeAllValues 原生保留；目标没有全局清空存储接口时不伪造成功。
+
+Loon 全量清空存储映射到真实 QX removeAllValues，Surge 无对应 SDK 方法时明确失败。Loon clipboard 对应 Surge action/text；ALPN、trailers 和原生通知生命周期的目标差异已明确处理。
 
 ## 文件与验证
 
 原件 Resource/Backup/script/<URL SHA>/<原名>；共用文件 Script/Adblock/<来源主机>-<URL摘要>/<原名>；外部 API 清单 Resource/Backup/script-api/<URL SHA>.json。索引校验原件和清单摘要。
 
-报告 runtimePolicyVersion=2、validationMode=api-runtime-compatibility 表示 API 适配器已组合并通过契约测试，不表示作者所有业务路径已在设备上执行。验证使用独立 API 向量、模拟原生传输和合成备份事务；实际生产原件及产物仅由 Actions 更新。
+报告 runtimePolicyVersion=3、validationMode=api-runtime-compatibility 表示 API 适配器已组合并通过契约测试，不表示作者所有业务路径已在设备上执行。验证使用独立 API 向量、模拟原生传输和合成备份事务；实际生产原件及产物仅由 Actions 更新。
 
 ## 旧生成文件清理
 

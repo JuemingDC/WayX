@@ -1,6 +1,9 @@
 // Modified: 2026-11-02 (chance). Family priorities are descriptive; concrete
 // API surfaces are derived from the executable semantic catalog.
-import { scriptApiDefinitions } from "../domain/script-api.ts";
+import {
+  scriptApiDefinitions,
+  isExcludedAdblockScriptApi,
+} from "../domain/script-api.ts";
 // Modified: 2026-11-02 (chance). Keep API correspondence separate from proven
 // implementation and rank source-level blocker coverage without claiming unlocks.
 const scriptApiPriorityCatalog = [
@@ -49,6 +52,8 @@ export const scriptApiMapping = scriptApiPriorityCatalog.map((family) => {
   };
 });
 export function scriptApiFamily(api: string): string {
+  // Modified: 2026-11-02 (chance). Excluded SDK services are not engine gaps.
+  if (isExcludedAdblockScriptApi(api)) return "out-of-scope";
   if (/headers/i.test(api)) return "headers";
   if (/^\$done$/.test(api)) return "completion";
   if (/^\$(?:task|httpClient)(?:\.|$)|^fetch$/.test(api)) return "http";
@@ -59,7 +64,7 @@ export function scriptApiFamily(api: string): string {
   if (/^\$(?:notify|notification)(?:\.|$)/.test(api)) return "notification";
   if (/^\$(?:environment|loon|script)(?:\.|$)/.test(api)) return "environment";
   if (
-    /WebAssembly|WASM|Compression|Decompression|^require$|^Buffer$|^\$(?:utils|crypto|dns)(?:\.|$)/.test(
+    /WebAssembly|WASM|Compression|Decompression|^require$|^Buffer$|^\$(?:utils|crypto)(?:\.|$)/.test(
       api,
     )
   )
@@ -86,9 +91,13 @@ export function scriptConversionPriorities(
     if (d.status !== "blocked") continue;
     const key = d.sourceUrl || `artifact:${d.artifact || "unknown"}`;
     const families = sources.get(key) || new Set<string>();
-    for (const p of d.problems) families.add(scriptApiFamily(p.api));
+    // Modified: 2026-11-02 (chance). Ignore even retained historical diagnoses
+    // of excluded services; they must not inflate remaining-work counts.
+    for (const p of d.problems)
+      if (!isExcludedAdblockScriptApi(p.api))
+        families.add(scriptApiFamily(p.api));
     if (!d.problems.length) families.add("other");
-    sources.set(key, families);
+    if (families.size) sources.set(key, families);
   }
   return {
     basis:

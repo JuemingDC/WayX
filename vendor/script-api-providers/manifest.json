@@ -1,0 +1,107 @@
+{
+  "builder": "esbuild@0.25.1",
+  "target": "es2020",
+  "providers": {
+    "aes": {
+      "sha256": "893e919e56485e9bc40e94be87ed2b010a9e799d21ab98fa0f252abc7cc24825",
+      "bytes": 15028,
+      "inputs": [
+        "@noble/ciphers/_polyval.js",
+        "@noble/ciphers/aes.js",
+        "@noble/ciphers/utils.js",
+        "aes-entry.js"
+      ]
+    },
+    "encoding": {
+      "sha256": "5f5bc603f29bdd135336dea5b640dbe9c21c1ca376e51cbd0a99562ebe67c45b",
+      "bytes": 191171,
+      "inputs": [
+        "@exodus/bytes/assert.js",
+        "@exodus/bytes/base64.js",
+        "@exodus/bytes/encoding.js",
+        "@exodus/bytes/fallback/_utils.js",
+        "@exodus/bytes/fallback/base64.js",
+        "@exodus/bytes/fallback/encoding.api.js",
+        "@exodus/bytes/fallback/encoding.js",
+        "@exodus/bytes/fallback/encoding.labels.js",
+        "@exodus/bytes/fallback/encoding.util.js",
+        "@exodus/bytes/fallback/latin1.js",
+        "@exodus/bytes/fallback/multi-byte.encodings.cjs",
+        "@exodus/bytes/fallback/multi-byte.encodings.json",
+        "@exodus/bytes/fallback/multi-byte.js",
+        "@exodus/bytes/fallback/multi-byte.table.js",
+        "@exodus/bytes/fallback/platform.js",
+        "@exodus/bytes/fallback/platform.native.js",
+        "@exodus/bytes/fallback/single-byte.encodings.js",
+        "@exodus/bytes/fallback/single-byte.js",
+        "@exodus/bytes/fallback/utf16.js",
+        "@exodus/bytes/fallback/utf8.auto.js",
+        "@exodus/bytes/fallback/utf8.js",
+        "@exodus/bytes/multi-byte.js",
+        "@exodus/bytes/single-byte.js",
+        "@exodus/bytes/utf16.js",
+        "@exodus/bytes/utf16.native.js",
+        "@exodus/bytes/utf8.js",
+        "encoding-entry.js"
+      ]
+    },
+    "url": {
+      "sha256": "f216cdb83ec58608157d1a6b98976bfa7d1b302a38fad810b5da66f0fc0622a7",
+      "bytes": 295502,
+      "inputs": [
+        "punycode/punycode.es6.js",
+        "tr46/index.js",
+        "tr46/lib/mappingTable.json",
+        "tr46/lib/regexes.js",
+        "tr46/lib/statusMapping.js",
+        "url-entry.js",
+        "webidl-conversions/lib/index.js",
+        "whatwg-url/index.js",
+        "whatwg-url/lib/Function.js",
+        "whatwg-url/lib/URL-impl.js",
+        "whatwg-url/lib/URL.js",
+        "whatwg-url/lib/URLSearchParams-impl.js",
+        "whatwg-url/lib/URLSearchParams.js",
+        "whatwg-url/lib/encoding.js",
+        "whatwg-url/lib/infra.js",
+        "whatwg-url/lib/percent-encoding.js",
+        "whatwg-url/lib/url-state-machine.js",
+        "whatwg-url/lib/urlencoded.js",
+        "whatwg-url/lib/utils.js",
+        "whatwg-url/webidl2js-wrapper.js"
+      ]
+    }
+  },
+  "packages": {
+    "@noble/ciphers": {
+      "version": "2.4.0",
+      "integrity": "sha512-AnjFn0Jv92laAkvMrghlFZq4qQCIN/4DxFV/eooqtC2YTjB7kBeLMS2T9KJX4Dn+ZVXLOwK0lSgqDtx9gvxtiw==",
+      "resolved": "https://registry.npmjs.org/@noble/ciphers/-/ciphers-2.4.0.tgz"
+    },
+    "@exodus/bytes": {
+      "version": "1.16.0",
+      "integrity": "sha512-IcpW84uEn3N7ETtNZMlxKhfl6Pec8rUNGOTBtWbK1FKhJxIFAptZyVrvVRVBimAJxJCgc3PxepxkdWWG4DVzfA==",
+      "resolved": "https://registry.npmjs.org/@exodus/bytes/-/bytes-1.16.0.tgz"
+    },
+    "whatwg-url": {
+      "version": "14.2.0",
+      "integrity": "sha512-De72GdQZzNTUBBChsXueQUnPKDkg/5A5zp7pFDuQAj5UFoENpiACU0wlCvzpAGnTkj++ihpKwKyYewn/XNUbKw==",
+      "resolved": "https://registry.npmjs.org/whatwg-url/-/whatwg-url-14.2.0.tgz"
+    },
+    "webidl-conversions": {
+      "version": "7.0.0",
+      "integrity": "sha512-VwddBukDzu71offAQR975unBIGqfKZpM+8ZX6ySk8nYhVoo5CYaZyzt3YBvYtRtO+aoGlqxPg/B87NGVZ/fu6g==",
+      "resolved": "https://registry.npmjs.org/webidl-conversions/-/webidl-conversions-7.0.0.tgz"
+    },
+    "tr46": {
+      "version": "5.1.1",
+      "integrity": "sha512-hdF5ZgjTqgAntKkklYw0R03MG2x/bSzTtkxmIRw/sTNV8YXsCJ1tfLAX23lhxhHJlEf3CRCOCGGWw3vI3GaSPw==",
+      "resolved": "https://registry.npmjs.org/tr46/-/tr46-5.1.1.tgz"
+    },
+    "punycode": {
+      "version": "2.3.1",
+      "integrity": "sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==",
+      "resolved": "https://registry.npmjs.org/punycode/-/punycode-2.3.1.tgz"
+    }
+  }
+}
