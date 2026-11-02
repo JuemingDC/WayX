@@ -1,6 +1,7 @@
 // Modified: 2026-11-02 (chance). Specialize only pure source-host predicates;
 // never invent versions, execute author code, or lose dead-branch var hoisting.
 import ts from "typescript";
+import { closedFunctionCalls } from "./script-closed-functions.ts";
 // Modified: 2026-11-02 (chance). Presence branches and field lowering share
 // one source-host contract; no independent client capability table lives here.
 import { scriptHostPresence } from "../domain/script-api.ts";
@@ -96,6 +97,49 @@ export function specializeScript(source: string, from: ScriptPlatform) {
     };
     const evaluating = new Set<ts.Symbol>();
     function evaluate(n: ts.Node): Value {
+      // Modified: 2026-11-02 (chance). Pure zero-argument Env helper functions
+      // can expose the same source-host predicate as their inline equivalent.
+      if (
+        ts.isCallExpression(n) &&
+        ts.isIdentifier(n.expression) &&
+        !n.arguments.length
+      ) {
+        const symbol = valueSymbol(n.expression, checker),
+          d = symbol?.valueDeclaration;
+        const fn =
+          d && ts.isFunctionDeclaration(d)
+            ? d
+            : d &&
+                ts.isVariableDeclaration(d) &&
+                d.initializer &&
+                (ts.isArrowFunction(d.initializer) ||
+                  ts.isFunctionExpression(d.initializer))
+              ? d.initializer
+              : null;
+        if (
+          symbol &&
+          fn &&
+          !evaluating.has(symbol) &&
+          closedFunctionCalls(fn, checker) &&
+          (!ts.isVariableDeclaration(d!) || sequential(d!, n))
+        ) {
+          const body = fn.body;
+          const expr =
+            body && ts.isBlock(body)
+              ? body.statements.length === 1 &&
+                ts.isReturnStatement(body.statements[0])
+                ? body.statements[0].expression
+                : null
+              : body;
+          if (expr) {
+            evaluating.add(symbol);
+            const value = evaluate(expr);
+            evaluating.delete(symbol);
+            return value;
+          }
+        }
+      }
+
       if (ts.isParenthesizedExpression(n)) return evaluate(n.expression);
       if (ts.isStringLiteralLike(n)) return n.text;
       if (ts.isNumericLiteral(n))

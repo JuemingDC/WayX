@@ -1,7 +1,7 @@
 // Modified: 2026-11-02 (chance). Prove readonly case-independent singleton
 // header lookups; never lowercase dictionaries, copy output headers or drop Host.
 import ts from "typescript";
-import { resolvedPath } from "./script-bindings.ts";
+import { constantString, resolvedPath } from "./script-bindings.ts";
 import { valueSymbol, safePresenceUse } from "./script-analysis.ts";
 export function readonlyHeaderContract(
   tree: ts.SourceFile,
@@ -16,6 +16,17 @@ export function readonlyHeaderContract(
     >();
   const role = (n: ts.Node): string | null => {
     if (ts.isParenthesizedExpression(n)) return role(n.expression);
+    // Modified: 2026-11-02 (chance). Empty-dictionary fallback preserves the
+    // same query on the documented non-null SDK Header input domain.
+    if (
+      ts.isBinaryExpression(n) &&
+      [ts.SyntaxKind.QuestionQuestionToken, ts.SyntaxKind.BarBarToken].includes(
+        n.operatorToken.kind,
+      ) &&
+      ts.isObjectLiteralExpression(n.right) &&
+      !n.right.properties.length
+    )
+      return role(n.left);
     if (ts.isIdentifier(n))
       return aliases.get(valueSymbol(n, checker)!) ?? null;
     if (ts.isPropertyAccessExpression(n) && n.name.text === "headers") {
@@ -57,6 +68,10 @@ export function readonlyHeaderContract(
     const r = role(n);
     if (!r) return;
     const p = n.parent;
+    if (ts.isBinaryExpression(p) && p.left === n && role(p) === r) {
+      allowed.add(n);
+      return;
+    }
     if (
       isConst(p) &&
       p.initializer === n &&
@@ -72,6 +87,83 @@ export function readonlyHeaderContract(
     if (safePresenceUse(n)) {
       allowed.add(n);
       return;
+    }
+    // Modified: 2026-11-02 (chance). Closed entries/find pair extraction is
+    // the same case-independent singleton query, without exposing the pair.
+    if (
+      ts.isCallExpression(p) &&
+      p.arguments.length === 1 &&
+      p.arguments[0] === n &&
+      p.expression.getText(tree) === "Object.entries" &&
+      ts.isPropertyAccessExpression(p.expression) &&
+      !valueSymbol(p.expression.expression, checker)
+    ) {
+      const member = p.parent,
+        call = member.parent;
+      if (
+        ts.isPropertyAccessExpression(member) &&
+        member.name.text === "find" &&
+        ts.isCallExpression(call) &&
+        call.expression === member &&
+        call.arguments.length === 1
+      ) {
+        const fn = call.arguments[0];
+        if (
+          ts.isArrowFunction(fn) &&
+          !fn.modifiers?.some((m) => m.kind === ts.SyntaxKind.AsyncKeyword) &&
+          fn.parameters.length === 1 &&
+          !fn.parameters[0].initializer &&
+          !fn.parameters[0].dotDotDotToken &&
+          ts.isArrayBindingPattern(fn.parameters[0].name) &&
+          fn.parameters[0].name.elements.length === 1
+        ) {
+          const e = fn.parameters[0].name.elements[0],
+            body = fn.body;
+          if (
+            ts.isBindingElement(e) &&
+            ts.isIdentifier(e.name) &&
+            !e.initializer &&
+            !e.dotDotDotToken &&
+            ts.isBinaryExpression(body) &&
+            body.operatorToken.kind === ts.SyntaxKind.EqualsEqualsEqualsToken
+          ) {
+            const left = body.left,
+              right = constantString(body.right, checker),
+              extract = call.parent;
+            if (
+              right &&
+              right === right.toLowerCase() &&
+              /^[!#$%&'*+.^_`|~0-9a-z-]+$/.test(right) &&
+              ts.isCallExpression(left) &&
+              !left.arguments.length &&
+              ts.isPropertyAccessExpression(left.expression) &&
+              left.expression.name.text === "toLowerCase" &&
+              ts.isIdentifier(left.expression.expression) &&
+              valueSymbol(left.expression.expression, checker) ===
+                valueSymbol(e.name, checker) &&
+              ts.isElementAccessExpression(extract) &&
+              extract.expression === call &&
+              extract.questionDotToken &&
+              ts.isNumericLiteral(extract.argumentExpression) &&
+              Number(extract.argumentExpression.text) === 1
+            ) {
+              let refs = 0;
+              walk(fn.body, (x) => {
+                if (
+                  ts.isIdentifier(x) &&
+                  valueSymbol(x, checker) === valueSymbol(e.name, checker)
+                )
+                  refs++;
+              });
+              if (refs === 1) {
+                allowed.add(n);
+                reads[r] = [...new Set([...(reads[r] ?? []), right])];
+                return;
+              }
+            }
+          }
+        }
+      }
     }
     if (
       !ts.isCallExpression(p) ||
@@ -269,6 +361,7 @@ export function readonlyHeaderContract(
         member &&
         [
           "keys",
+          "entries",
           "find",
           "toLowerCase",
           "test",

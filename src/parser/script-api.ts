@@ -21,6 +21,7 @@ import {
 import { completionString } from "./script-string.ts";
 import { qxTaskContract } from "./script-task.ts";
 import { callbackHttpContract } from "./script-http.ts";
+import { requestHeaderDeletionContract } from "./script-header-mutation.ts";
 import { readonlyHeaderContract } from "./script-headers.ts";
 import {
   scriptChecker,
@@ -551,6 +552,11 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
     inventory.checker,
     inventory.contextAliases,
   );
+  const headerDeletion = requestHeaderDeletionContract(
+    inventory.tree,
+    inventory.checker,
+    options.phase,
+  );
   const httpContract = callbackHttpContract(
     inventory.tree,
     inventory.checker,
@@ -633,6 +639,7 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
   }
   if (
     !headerContract.ok &&
+    !headerDeletion.ok &&
     features.some((p) => /^\$(?:request|response)\.headers(?:\.|$)/.test(p))
   )
     add(
@@ -768,7 +775,15 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
             if (
               key === "headers" &&
               (!ts.isPropertyAssignment(property) ||
-                !ts.isObjectLiteralExpression(property.initializer))
+                !ts.isObjectLiteralExpression(property.initializer)) &&
+              !(
+                headerDeletion.ok &&
+                headerDeletion.outputs.has(
+                  ts.isPropertyAssignment(property)
+                    ? property.initializer
+                    : (property.name as ts.Expression),
+                )
+              )
             )
               add(
                 "$done.headers",
@@ -966,6 +981,7 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
   if (
     options.to === "qx" &&
     !headerContract.ok &&
+    !headerDeletion.ok &&
     features.some(
       (p) =>
         p.startsWith("$request.headers") || p.startsWith("$response.headers"),
@@ -1028,6 +1044,7 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
     ...options,
     apiPlan,
     ...(originalContext.calls.size ? { contextPassThrough: true } : {}),
+    ...(headerDeletion.ok ? { headerDeletion: headerDeletion.names } : {}),
     binaryReads:
       !!options.binary &&
       features.some((p) =>
@@ -1081,6 +1098,7 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
     contract: {
       apiPlan,
       ...(originalContext.calls.size ? { contextPassThrough: true } : {}),
+      ...(headerDeletion.ok ? { headerDeletion: headerDeletion.names } : {}),
       headerReads: headerContract.reads,
       headerPrefixes: headerContract.prefixes,
       binaryReads: effectiveOptions.binaryReads,

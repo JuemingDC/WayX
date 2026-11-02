@@ -34,7 +34,7 @@ export const scriptCapabilityBoundaries = {
   completion: {
     status: "conditional",
     domain:
-      "Literal/conditional/spread result objects and pristine Object.assign into a fresh empty literal from finite plain dictionaries (no getters/prototype fields), closed object-returning functions with nonescaping call results and single-parameter $done forwarding wrappers with all callers audited, closed variables and static scalar body/bodyBytes/status/statusCode/url reads/assignments/deletion; proven QX string/undefined results require original response-body declarations; class-local strict receivers preserve native calls",
+      "Closed parameter/caller summaries support identical finite String wrapper arguments and direct absence-insensitive storage-return consumers; Literal/conditional/spread result objects and pristine Object.assign into a fresh empty literal from finite plain dictionaries (no getters/prototype fields), closed object-returning functions with nonescaping call results and single-parameter $done forwarding wrappers with all callers audited, closed variables and static scalar body/bodyBytes/status/statusCode/url reads/assignments/deletion; proven QX string/undefined results require original response-body declarations; class-local strict receivers preserve native calls",
     outside:
       "Alias escapes, shorthand escapes, duplicate dynamic declarations, loop assignment, unknown/async returns, escaped function results, header/response mutations and dynamic property writes remain blocked",
   },
@@ -46,7 +46,7 @@ export const scriptCapabilityBoundaries = {
       "Strict null/undefined observations, stringification, implicit/dynamic keys, Loon empty-string writes and full cleanup remain blocked",
   },
   headers: {
-    status: "conditional-readonly-singleton",
+    status: "conditional-singleton-query-and-request-deletion",
     domain:
       "Pure Object.keys(h).find with lowercase-literal equality or anchored literal case-insensitive exact/prefix regex, guarded readonly lookup and no key/header alias escape; lexical let aliases must remain readonly; target validates one string value per queried name/prefix",
     outside:
@@ -142,6 +142,20 @@ export const scriptCapabilityBoundaries = {
     status: "excluded",
     apis: ["$config", "$surge", "$httpAPI", "$configuration"],
     reason: "Only HTTP adblock scripts are in the current user scope",
+  },
+  // Modified: 2026-11-02 (chance). Closed functional Env helpers and wrapper
+  // arguments share lexical call summaries; full dynamic Env classes do not.
+  closedWrappers: {
+    domain:
+      "Closed direct calls of plain functions/const function bindings; identical proven String parameters, direct storage-return consumers, single literal-object QX request with audited nonescaping parameter and discarded returned Promise, pure zero-argument source-host predicates",
+    outside:
+      "Escaped/reassigned functions, mutated parameters, rest/default/spread, receiver/call-frame observations, dynamic class methods, general request objects and strict missing-store observations remain blocked",
+  },
+  requestHeaderDeletion: {
+    domain:
+      "Request-only Object.keys(h).forEach with an exact lowercase-name predicate and guarded delete h[key], then headers-only completion. Detached String singleton dictionaries retain all unmodified fields; framing/control fields cannot be deleted",
+    outside:
+      "Case-sensitive native lookups/deletion, arbitrary writes, response-header mutations, duplicate/multivalue fields, dictionary escape and unknown intrinsics remain blocked",
   },
   verification:
     "Node VM, native ICU, file-integrity and classic-JS syntax checks are engineering evidence, not blanket iOS device certification",

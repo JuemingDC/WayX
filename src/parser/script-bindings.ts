@@ -1,6 +1,7 @@
 // Modified: 2026-11-02 (chance). Closed context aliases and constant string
 // bindings are analysis facts only; author evaluation order and text stay intact.
 import ts from "typescript";
+import { closedParameterArguments } from "./script-closed-functions.ts";
 import { valueSymbol, safePresenceUse } from "./script-analysis.ts";
 export function constantString(
   node: ts.Expression,
@@ -109,6 +110,19 @@ export function constantString(
   if (!ts.isIdentifier(node)) return null;
   const symbol = valueSymbol(node, checker),
     d = symbol?.valueDeclaration;
+  // Modified: 2026-11-02 (chance). A wrapper parameter is constant only
+  // when every closed direct caller supplies the same proven String.
+  if (symbol && d && ts.isParameter(d) && !seen.has(symbol) && seen.size < 16) {
+    const args = closedParameterArguments(node, checker);
+    if (!args) return null;
+    const next = new Set(seen);
+    next.add(symbol);
+    const values = args.map((arg) => constantString(arg, checker, next));
+    return values.every((v) => v !== null && v === values[0])
+      ? values[0]
+      : null;
+  }
+
   if (
     !symbol ||
     seen.has(symbol) ||

@@ -539,3 +539,12 @@ Modified: 2026-11-02 (chance). QX 作者 sample.conf、sample-task.js、sample-r
 Loon/QX 文本响应且声明读取正文时的直接 $done($response)，仅在全源码证明来源上下文没有别名、外传、Header/字节观察或任何字段写入时，映射为 complete.pass-original；授权目标的 $done({}) 保留原响应，避免把原 Header/Content-Length/编码重新提交。允许原对象的 presence 和 body 及来源 status/statusCode 标量读取，审查括号/解构/循环/delete/update 写入及 $done 的重绑定。phase、二进制、非原对象身份或未知调用不适用。目标 kernel 只对已证明的原 view 身份执行放行；其它完成对象走原规则。原生来源执行仍返回原对象，计划须如实区分。真实两份小兔充充及 Soul 原件、反例和同一备份事务验证，不运行生产本地生成。
 
 依据： https://github.com/crossutility/Quantumult-X/blob/master/sample-rewrite-with-script.js 、 https://github.com/crossutility/Quantumult-X/blob/master/sample.conf 、 https://manual.nssurge.com/scripting/http-request.html 。源码、固定共享 URL、三个生产方向与 Actions-only 发布规则保持不变。
+
+
+## 2.36 闭合包装函数、Env 辅助判断与 Header 操作
+
+Modified: 2026-11-02 (chance). script-closed-functions.ts 提供共同调用点摘要：普通命名函数或 const 函数绑定须只有直接调用，不外传/重赋值，无 rest/default/spread、this/arguments 观察，参数写入审查包含括号和解构。全部调用参数为同一已证明 String 时，键/值证明器可解析参数；直接 return 存储读取的包装函数要求每个调用结果均对缺失表示不敏感。QX 请求包装只接纳单个字面量对象实参，参数只交给 fetch、不写入/外传；返回 then 链仅在所有外层调用丢弃返回值时适用，保留 Promise 成败语义。纯零参数宿主辅助判断可参与分支特化，仍保持来源宿主与原求值顺序；不开放动态 Env 类/反射或任意方法调用。
+
+Header 增加 Object.entries(h).find(([name])=>name.toLowerCase()===literal)?.[1] 的闭合单字段查询，与已有 singleton String 契约一致。request 阶段可证明 Object.keys(h).forEach 的 lowercase-name guarded delete，并将同一闭合字典作为唯一 headers 完成字段传回。目标操作使用分离的字典，验证 singleton String 字段；禁止删除 Host、Content-Length/Type/Encoding、Transfer-Encoding、Connection、Trailer，拒绝字典外传、额外 Header 访问、未知写入及 intrinsic 修改。不能据此放行区分大小写的直接 Header 访问或一般 response Header 操作。逐操作记录删除字段和独立输出证明，不把输入查询授权当成所有 Header 输出授权。
+
+新增项必须通过独立正反例、实际 SDK payload 及组合备份事务；真实源码未完成所有证明时仍保持阻断，不以子操作支持宣称整脚本已解锁。单向生产范围、原字节、同源名称、共用 URL 和 Actions-only 更新不变。

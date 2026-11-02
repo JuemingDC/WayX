@@ -3,6 +3,10 @@ import { scriptHttpMethods, scriptHostLayouts } from "../domain/script-api.ts";
 // Modified: 2026-11-02 (chance). Prove QX fetch Promise/await consumers and
 // author-documented fields; optional undocumented parameters are omitted, not errors.
 import ts from "typescript";
+import {
+  closedFunctionCalls,
+  closedParameterArguments,
+} from "./script-closed-functions.ts";
 import { valueSymbol, safePresenceUse } from "./script-analysis.ts";
 import { constantString } from "./script-bindings.ts";
 import { qxHttpOptions } from "./qx-http-options.ts";
@@ -24,6 +28,27 @@ export function qxTaskContract(
   };
   const fields = (expr: ts.Expression): Map<string, ts.Expression> | null => {
     let value = expr;
+    // Modified: 2026-11-02 (chance). Closed request wrappers may pass a single
+    // literal object directly. Audit parameter uses to forbid mutation/escape.
+    const args = closedParameterArguments(expr, checker);
+    if (args) {
+      if (args.length !== 1 || !ts.isObjectLiteralExpression(args[0]))
+        return null;
+      const symbol = valueSymbol(expr, checker);
+      let safe = true;
+      walk(tree, (n) => {
+        if (
+          ts.isIdentifier(n) &&
+          valueSymbol(n, checker) === symbol &&
+          n !== expr &&
+          !(ts.isParameter(n.parent) && n.parent.name === n)
+        )
+          safe = false;
+      });
+      if (!safe) return null;
+      value = args[0];
+    }
+
     if (ts.isIdentifier(value)) {
       const symbol = valueSymbol(value, checker),
         d = symbol?.valueDeclaration;
@@ -369,6 +394,19 @@ export function qxTaskContract(
       if (
         then.arguments.length === 1 &&
         !ts.isExpressionStatement(tail) &&
+        !(
+          ts.isReturnStatement(tail) &&
+          tail.expression === then &&
+          (() => {
+            let owner: ts.Node = tail;
+            while (owner.parent && !ts.isFunctionLike(owner))
+              owner = owner.parent;
+            const calls = closedFunctionCalls(owner, checker);
+            return (
+              calls && calls.every((c) => ts.isExpressionStatement(c.parent))
+            );
+          })()
+        ) &&
         !(ts.isPropertyAccessExpression(tail) && tail.name.text === "catch")
       )
         ok = false;

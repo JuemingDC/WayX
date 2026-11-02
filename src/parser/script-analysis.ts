@@ -1,6 +1,7 @@
 // Modified: 2026-11-02 (chance). Resolve lexical bindings and finite completion
 // objects without rewriting source text or treating local $variables as host APIs.
 import ts from "typescript";
+import { closedFunctionCalls } from "./script-closed-functions.ts";
 export function scriptChecker(tree: ts.SourceFile) {
   const host: ts.CompilerHost = {
     getSourceFile: (n) => (n.endsWith("upstream.js") ? tree : undefined),
@@ -710,6 +711,16 @@ export function safeStorageRead(
   checker: ts.TypeChecker,
 ): boolean {
   if (absenceInsensitive(node, checker)) return true;
+  // Modified: 2026-11-02 (chance). A direct storage-return wrapper preserves
+  // absence only when every closed caller consumes it absence-insensitively.
+  if (ts.isReturnStatement(node.parent) && node.parent.expression === node) {
+    const block = node.parent.parent,
+      fn = block.parent;
+    if (ts.isBlock(block) && block.statements.length === 1) {
+      const calls = closedFunctionCalls(fn, checker);
+      if (calls) return calls.every((c) => absenceInsensitive(c, checker));
+    }
+  }
   const p = node.parent;
   if (
     !ts.isVariableDeclaration(p) ||

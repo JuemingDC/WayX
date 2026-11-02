@@ -10,6 +10,8 @@ import {
   type ScriptApiIR,
   type ScriptApiOperation,
 } from "../domain/script-api.ts";
+import { requestHeaderDeletionContract } from "./script-header-mutation.ts";
+import { closedParameterArguments } from "./script-closed-functions.ts";
 import { originalContextCompletionContract } from "./script-original-context.ts";
 import { completionString } from "./script-string.ts";
 import { resolvedPath, constantString } from "./script-bindings.ts";
@@ -226,6 +228,11 @@ export function parseScriptApiIR(
   >,
 ): ScriptApiIR & { analysisSourceSha256: string } {
   const operations: ScriptApiOperation[] = [];
+  const headerDeletion = requestHeaderDeletionContract(
+    tree,
+    checker,
+    options.phase,
+  );
   const originalContext = originalContextCompletionContract(tree, checker, {
     ...options,
     from,
@@ -238,6 +245,9 @@ export function parseScriptApiIR(
     n: ts.Expression | undefined,
   ): ts.ObjectLiteralExpression | null => {
     if (!n) return null;
+    const args = closedParameterArguments(n, checker);
+    if (args?.length === 1 && ts.isObjectLiteralExpression(args[0]))
+      return args[0];
     if (ts.isObjectLiteralExpression(n)) return n;
     if (ts.isIdentifier(n)) {
       const d = valueSymbol(n, checker)?.valueDeclaration;
@@ -741,6 +751,16 @@ export function parseScriptApiIR(
     const location = tree.getLineAndCharacterOfPosition(node.getStart(tree));
     const omitted = definition?.kind === "argument" && to === "qx";
     const fields = fieldsFor(definition?.kind ?? "", call);
+    if (headerDeletion.ok && definition?.id === "request.header.delete")
+      for (const name of headerDeletion.names)
+        fields.push({
+          source: "computed key",
+          canonical: "header.delete-ci:" + name,
+          target: name,
+          action: "map",
+          transform:
+            "delete all matching names in a detached singleton String dictionary",
+        });
     if (
       definition?.kind === "header" &&
       ts.isElementAccessExpression(node) &&

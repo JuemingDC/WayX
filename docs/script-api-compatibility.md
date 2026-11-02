@@ -207,3 +207,10 @@ Modified: 2026-11-02 (chance). 本批处理两个独立能力家族，不以单�
 HTTP 的请求选项、七方法、文本/字节和错误观察契约保持不变；别名证明不允许把响应对象整个交给未知函数。真实网络拒绝仍进入原 Promise 错误流；只对成功对象的已知字段建立证明。Object.assign 只是确定结果形状，不静态执行作者函数、不把源码改成 spread 或 JSON；同一源的业务正文仍只保存一次。
 
 独立验证分别为 `tests/script-response-aliases.ts`（QX/Surge 成功/失败、别名、await、字节偏移和反例）和 `tests/script-completion-assign.ts`（Loon 原生及 QX/Surge 的覆盖顺序、工厂/条件与原型/getter/逃逸反例）。`tests/script-multiclass-production.ts` 将两类用法组合在同一来源脚本中，实际通过备份事务检查逐字节原件、单一共用地址、原名、索引和方向契约。新增子域不保证现有复杂框架整脚本马上通过，其余共同阻断继续报告，发布结果以 Actions 重新统计为准。
+
+
+## 闭合包装与 Header 的本轮扩展
+
+Modified: 2026-11-02 (chance). 共同调用摘要接入四处：存储键/值的同值 String 参数、直接读取包装函数的缺失值消费者、单个字面量请求对象的 QX fetch 包装、纯零参数宿主判断辅助函数。它验证实际所有调用点，不执行作者函数；不接受重赋值/外传、参数修改、rest/default/spread、this/arguments 或任意动态 Env 类。
+
+Header 支持 entries/find 的大小写无关单字段提取，以及 request 阶段闭合的 lowercase-name 循环删除与 headers-only 结果传回。目标先复制字典再执行原表达式；singleton String 验证和 framing/control 删除禁令保持。直接大小写敏感读取/删除、任意写入和 response Header 输出仍未获得等价性证明。包装调用与原件、共用引用、语义计划在隔离事务中组合验证，再由 Actions 更新真实仓库；能力扩展不等于所有旧阻断解除。
