@@ -2,7 +2,7 @@
 // target lowering, runtime layouts and per-operation publication evidence.
 export type ScriptClient = "qx" | "loon" | "surge";
 // Modified: 2026-11-02 (chance). Shared provider composition and scope revision.
-export const scriptRuntimePolicyVersion = 3;
+export const scriptRuntimePolicyVersion = 4;
 // Modified: 2026-11-02 (chance). User excludes resolver and IP-database APIs
 // from adblock conversion, inventories and remaining-work priorities.
 export const excludedAdblockScriptApis = Object.freeze([
@@ -338,10 +338,10 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     canonical: "storage.removeAll",
     value: "clear the source application store",
     lowering:
-      "Loon clear-all maps to actual QX removeAllValues or native Loon; Surge has no clear-all store API",
-    availability: { qx: "runtime", loon: "native-only", surge: "unavailable" },
+      "Loon clear-all maps to actual QX removeAllValues or native Loon; Surge clear-all is omitted under explicit user policy",
+    availability: { qx: "runtime", loon: "native-only", surge: "runtime" },
     solution:
-      "Use actual QX/native Loon clear-all; Surge cannot reproduce it with a partial generated-key registry",
+      "Use actual QX/native Loon clear-all; Surge ignores the operation without deleting partial keys",
     proof: "native store boundary",
   },
   {

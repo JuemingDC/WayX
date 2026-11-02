@@ -101,12 +101,12 @@ export const scriptCapabilityBoundaries = {
   nativeBoundaries: {
     status: "explicit-invocation-boundaries",
     storage:
-      "Loon remove maps to QX removeAllValues; Surge has no clear-all method, so invocation throws UNSUPPORTED_API",
-    http: "QX omits undocumented options. Explicit Loon ALPN selection has no documented Surge fetch SDK field and throws; h2_trailers has no Surge completion result field",
+      "Loon remove maps to QX removeAllValues; Surge clear-all is intentionally ignored without deleting keys or reporting success",
+    http: "QX omits undocumented options. User policy omits Surge ALPN and h2_trailers/node/policy completion fields without errors",
     headers:
       "Only Loon/QX dictionary source contracts are adapted; Surge full-header arrays are not a new source conversion direction",
     notification:
-      "Clipboard maps to Surge action/text. Delayed delivery surviving completion, inline media and simultaneous URL/clipboard clicks have no equivalent Surge notification contract; QX extra options are omitted",
+      "Surge posts content immediately, ignoring delay and click actions; remote images use media-url, PNG/JPEG/GIF/WebP inline images use media-base64 and media-base64-mime; unknown media is omitted. QX extra options are omitted",
     identity:
       "Real source device/version/sourcePath cannot be reconstructed; no fabricated identity",
     policy:

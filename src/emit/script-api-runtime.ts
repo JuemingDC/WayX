@@ -45,6 +45,9 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     if(own(out,'headers')){if(!out.headers||typeof out.headers!=='object'||Array.isArray(out.headers))fail('completion headers require a dictionary');out.headers=Object.assign({},headers(out.headers));}
     if(own(out,'bodyBytes')){out.body=bytes(out.bodyBytes);delete out.bodyBytes;}
     if(binary(out.body)){if(target.binaryField==='bodyBytes'){out.bodyBytes=buffer(out.body);delete out.body;}else out.body=bytes(out.body);}
+    // Modified: 2026-11-02 (chance). User-authorized Surge omissions keep
+    // ordinary completion working when optional source fields lack target APIs.
+    if(config.to==='surge')for(const key of ['h2_trailers','node','policy'])delete out[key];
     for(const key of Object.keys(out))if(!['url','headers','body','bodyBytes','status','abort',...(config.to==='loon'?['h2_trailers']:[])].includes(key)){if(config.to==='qx')delete out[key];else fail('unmapped completion field: '+key);}
     // Modified: 2026-11-02 (chance). Undocumented QX completion parameters
     // follow the user's omission policy, including abort.
@@ -95,10 +98,9 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     }
     Object.assign(req,mapped);
     if(http.timeoutMs!==null&&target.http.timeoutMs!==null&&own(input,'timeout'))req.timeout=input.timeout*http.timeoutMs/target.http.timeoutMs;
-    // Modified: 2026-11-02 (chance). Reject an explicit foreign ALPN choice
-    // on Surge instead of forwarding a field its fetch SDK does not document.
-    if(style==='callback'&&config.to==='surge'&&own(input,'alpn')){const error=new Error('Surge HTTP SDK has no Loon ALPN selector');error.code='UNSUPPORTED_API';throw error;}
-    for(const key of ['binary-mode','body-base64','alpn'])if(style==='callback'&&own(input,key)&&(key!=='body-base64'||config.from===config.to))req[key]=input[key];
+    // Modified: 2026-11-02 (chance). Omit foreign ALPN selection
+    // on Surge under the explicit user policy.
+    for(const key of ['binary-mode','body-base64','alpn'])if(style==='callback'&&own(input,key)&&(key!=='body-base64'||config.from===config.to)&&(key!=='alpn'||config.from===config.to))req[key]=input[key];
     if(style==='promise')req['binary-mode']=true;
     return {req,verb};
   }
@@ -144,32 +146,42 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     if(typeof value!=='string')return fail('storage value must be String or deletion marker');return nativeStore[target.store.write](value,key);
   }};
   // Modified: 2026-11-02 (chance). Loon remove clears all data, never just
-  // this script's default key. Surge exposes no equivalent SDK method.
-  store.remove=()=>{if(config.to==='loon')return host.store.remove();if(config.to==='qx'){host.prefs.removeAllValues();return;}const error=new Error('Surge storage has no clear-all API');error.code='UNSUPPORTED_API';throw error;};
+  // this script's default key. User authorizes ignoring this call on Surge.
+  store.remove=()=>{if(config.to==='loon')return host.store.remove();if(config.to==='qx'){host.prefs.removeAllValues();return;}return;};
   const prefKey=key=>typeof key==='string'?key:fail('QX storage requires an explicit String key');
   const prefs={valueForKey:key=>store.read(prefKey(key)),setValueForKey:(value,key)=>{key=prefKey(key);if(typeof value!=='string')return fail('QX storage value must be String');return store.write(value,key);},removeValueForKey:key=>target.store.remove?nativeStore[target.store.remove](prefKey(key)):nativeStore[target.store.write](null,prefKey(key))};
   // Modified: 2026-11-02 (chance). Native QX clear-all is real; other hosts
   // cannot reproduce it by deleting only keys observed by this adapter.
+  if(config.from==='qx'&&config.to==='surge')prefs.removeAllValues=()=>undefined;
   if(config.from==='qx'&&config.to==='qx'&&host.prefs&&typeof host.prefs.removeAllValues==='function')prefs.removeAllValues=host.prefs.removeAllValues.bind(host.prefs);
   function notify(title='',subtitle='',body='',option,delay){
     if(config.apiPlan.omitNotificationOptions)return target.notification.root==='$notify'?host.notifyQx(title,subtitle,body):host.notify.post(title,subtitle,body);
-    if(delay!==undefined&&delay!==0&&config.from!==config.to)return fail('notification delay has no target API');
     if(config.from===config.to)return host.notify.post(title,subtitle,body,option,delay);
-    // Modified: 2026-11-02 (chance). Map Loon's clipboard click action;
-    // reject combinations/media formats with no equivalent target behavior.
-    const raw=typeof option==='string'?{openUrl:option}:option||{},mapped={};
-    for(const key of Object.keys(raw))if(!['openUrl','mediaUrl','clipboard'].includes(key))fail('notification option unavailable: '+key);
-    if(raw.openUrl!==undefined&&raw.clipboard!==undefined)fail('target notification supports one click action, not URL plus clipboard');
-    if(raw.openUrl!==undefined)mapped.url=raw.openUrl;
-    if(raw.clipboard!==undefined){mapped.action='clipboard';mapped.text=raw.clipboard;}
-    if(raw.mediaUrl!==undefined){if(typeof raw.mediaUrl!=='string'||!/^https?:\/\//i.test(raw.mediaUrl))fail('target notification media requires HTTP(S) URL');mapped['media-url']=raw.mediaUrl;}
+    // Modified: 2026-11-02 (chance). Ignore delay and click actions on Surge;
+    // retain notification content and map supported remote/inline image media.
+    const raw=typeof option==='object'&&option!==null?option:{},mapped={};
+    const media=raw.mediaUrl;
+    if(typeof media==='string'){
+      if(/^https?:\/\//i.test(media))mapped['media-url']=media;
+      else{
+        const uri=/^data:(image\/(?:png|jpeg|gif|webp));base64,([\s\S]*)$/i.exec(media);
+        let data=uri?uri[2]:media,decoded;
+        try{decoded=host.codecs.atob(data);}catch{}
+        if(decoded){
+          let mime=decoded.startsWith('\x89PNG\r\n\x1a\n')?'image/png':decoded.startsWith('\xff\xd8\xff')?'image/jpeg':/^GIF8[79]a/.test(decoded)?'image/gif':decoded.startsWith('RIFF')&&decoded.slice(8,12)==='WEBP'?'image/webp':undefined;
+          if(mime&&(!uri||uri[1].toLowerCase()===mime)){mapped['media-base64']=host.codecs.btoa(decoded);mapped['media-base64-mime']=mime;}
+        }
+      }
+    }
     return host.notify.post(title,subtitle,body,mapped);
   }
   let argument=config.from==='qx'||target.argument==='absent'?undefined:host.argument;
   if(config.argumentSchema&&config.argumentSchema.kind==='object'&&typeof argument==='string')argument=JSON.parse(argument);
   const script=config.from==='qx'?undefined:Object.assign({},host.script,{name:config.name||host.script&&host.script.name});
   if(script&&script.startTime!==undefined){const t=script.startTime;script.startTime=t instanceof Date?t:new Date(t*1000);}
-  const environment=Object.assign({},host.environment);delete environment['surge-version'];delete environment['stash-version'];
+  const environment=Object.assign({},host.environment);delete environment['surge-version'];delete environment['surge-build'];delete environment['stash-version'];
+  // Modified: 2026-11-02 (chance). Source software version/path metadata is
+  // intentionally omitted; retain source presence and real available timestamps.
   const overlay={
     $request:request,$response:response,$done:done,$script:script,
     $task:config.from==='qx'?{fetch:taskFetch}:undefined,$httpClient:config.from==='qx'?undefined:http,

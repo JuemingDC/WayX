@@ -22,13 +22,13 @@ Header 采用大小写无关、小写字典策略，这是接受的兼容规范�
 
 AES 四模式、URL/URLSearchParams 和旧字符集 TextDecoder 已通过固定上游库接入公共层，保留原生优先、独立作用域和延迟初始化。实现及原生边界见 [API 能力与实施路线](script-api/03-API能力与实施路线.md)。QX removeAllValues 原生保留；目标没有全局清空存储接口时不伪造成功。
 
-Loon 全量清空存储映射到真实 QX removeAllValues，Surge 无对应 SDK 方法时明确失败。Loon clipboard 对应 Surge action/text；ALPN、trailers 和原生通知生命周期的目标差异已明确处理。
+Loon 全量清空存储映射到真实 QX removeAllValues，Surge 无对应 SDK 方法时忽略操作。Surge 忽略通知点击/延时、ALPN 和 trailers；内嵌图片映射官方 Base64/MIME 字段。
 
 ## 文件与验证
 
 原件 Resource/Backup/script/<URL SHA>/<原名>；共用文件 Script/Adblock/<来源主机>-<URL摘要>/<原名>；外部 API 清单 Resource/Backup/script-api/<URL SHA>.json。索引校验原件和清单摘要。
 
-报告 runtimePolicyVersion=3、validationMode=api-runtime-compatibility 表示 API 适配器已组合并通过契约测试，不表示作者所有业务路径已在设备上执行。验证使用独立 API 向量、模拟原生传输和合成备份事务；实际生产原件及产物仅由 Actions 更新。
+报告 runtimePolicyVersion=4、validationMode=api-runtime-compatibility 表示 API 适配器已组合并通过契约测试，不表示作者所有业务路径已在设备上执行。验证使用独立 API 向量、模拟原生传输和合成备份事务；实际生产原件及产物仅由 Actions 更新。
 
 ## 旧生成文件清理
 

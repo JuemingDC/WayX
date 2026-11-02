@@ -697,7 +697,7 @@ const unavailableClear = execute(
   "surge",
   { $response: {}, $persistentStore: {} },
 );
-assert.equal(unavailableClear.out.body, "undefined");
+assert.equal(unavailableClear.out.body, "function");
 
 // Modified: 2026-11-02 (chance). Excluded SDK services do not become missing
 // adblock APIs; nested in-scope expressions still appear in the API inventory.
@@ -763,7 +763,10 @@ for (const to of ["qx", "surge"] as const) {
   if (to === "qx") {
     run();
     assert.equal(cleared, 1);
-  } else assert.throws(run, (e: any) => e.code === "UNSUPPORTED_API");
+  } else {
+    run();
+    assert.equal(cleared, 0);
+  }
 }
 let notice: any;
 execute(
@@ -780,31 +783,43 @@ execute(
     },
   },
 );
-assert.deepEqual(flat(notice[3]), { action: "clipboard", text: "copy me" });
+assert.deepEqual(flat(notice[3]), {});
 for (const option of [
   { openUrl: "https://test/", clipboard: "both" },
   { mediaUrl: "data:image/png;base64,AA==" },
 ]) {
-  assert.throws(() =>
-    execute('$notification.post("t","s","b",option);', "loon", "surge", {
+  execute(
+    '$notification.post("t","s","b",option,500);$done({body:"ok"});',
+    "loon",
+    "surge",
+    {
       $response: {},
       option,
       $notification: {
-        post() {
-          throw Error("must not submit");
+        post(...args: any[]) {
+          assert.deepEqual(flat(args[3]), {});
         },
       },
-    }),
+    },
   );
 }
-assert.throws(
-  () =>
-    execute('$httpClient.get({url:input,alpn:"h2"},()=>{});', "loon", "surge", {
-      input: "https://test/",
-      $response: {},
-    }),
-  (e: any) => e.code === "UNSUPPORTED_API",
+let surgeRequest: any;
+execute(
+  '$httpClient.get({url:input,alpn:"h2"},()=> $done({}));',
+  "loon",
+  "surge",
+  {
+    input: "https://test/",
+    $response: {},
+    $httpClient: {
+      get(o: any, cb: any) {
+        surgeRequest = o;
+        cb(null, { status: 200, headers: {} }, "");
+      },
+    },
+  },
 );
+assert.equal(surgeRequest.alpn, undefined);
 let qxRequest: any;
 execute(
   '$httpClient.get({url:input,alpn:"h2",unknown:(effects.push(1),true)},()=> $done({abort:true,body:"done"}));',
@@ -840,7 +855,7 @@ for (const to of ["qx", "surge"] as const) {
       { $response: {} },
     );
   if (to === "qx") assert.deepEqual(flat(action().out), { body: "value" });
-  else assert.throws(action, /h2_trailers/);
+  else assert.deepEqual(flat(action().out), { body: "value" });
 }
 // Excluded services are never read by the host capture or rewritten body.
 const scoped = pair("if(false)$dns.query(options,callback);$done({});", {
@@ -856,7 +871,7 @@ Object.defineProperty(bare, "$dns", {
 });
 vm.runInNewContext(scoped.code!, bare);
 console.log(
-  "Remaining Loon SDK contracts passed: real clear-all, clipboard notifications, native-only ALPN/trailer boundaries, QX omissions and excluded service isolation",
+  "SDK omission contracts passed: real QX clear-all, ignored Surge clear-all/click/delay/ALPN/trailers, inline notification media and excluded service isolation",
 );
 // Foreign-realm ArrayBuffers use the same completion and transport byte fields.
 const foreignBuffer = vm.runInNewContext("new Uint8Array([9,1,2,8]).buffer");
@@ -868,3 +883,47 @@ assert.deepEqual(
   Array.from(new Uint8Array(foreignResult.out.bodyBytes)),
   [9, 1, 2, 8],
 );
+
+// Modified: 2026-11-02 (chance). Source option construction still executes;
+// omitted click metadata getters are never needed to post the notification.
+for (const mediaUrl of ["iVBORw0KGgo=", "data:image/png;base64,iVBORw0KGgo="]) {
+  let posted: any;
+  const result = execute(
+    '$notification.post("t","s","b",options,2000);$done({body:"continued"});',
+    "loon",
+    "surge",
+    {
+      $response: {},
+      options: {
+        mediaUrl,
+        get openUrl() {
+          throw Error("ignored click option");
+        },
+      },
+      $notification: {
+        post(...args: any[]) {
+          posted = args;
+        },
+      },
+    },
+  );
+  assert.equal(result.out.body, "continued");
+  assert.deepEqual(flat(posted[3]), {
+    "media-base64": "iVBORw0KGgo=",
+    "media-base64-mime": "image/png",
+  });
+}
+const clearing = execute(
+  '$prefs.removeAllValues();$done({body:"continued"});',
+  "qx",
+  "surge",
+  {
+    $response: {},
+    $persistentStore: {
+      write() {
+        throw Error("must not delete keys");
+      },
+    },
+  },
+);
+assert.equal(clearing.out.body, "continued");

@@ -16,7 +16,7 @@ DNS、GeoIP、ASN、配置控制、任务和 Module 工具不参与新增 API �
 | QX fetch→Surge 字节响应            | 依据 charset 使用标准 TextDecoder；缺省 UTF-8，未知标签明确失败                      | UTF-8、旧编码及错误路径                                                 |
 | `$persistentStore` / `$prefs`      | 动态 String 键值、默认来源名称、显式 null/undefined 删除                             | 真实目标 SDK 返回值；不把空字符串当删除                                 |
 | Loon `$persistentStore.remove()`   | QX 调用真实 removeAllValues；Loon 保留原生 remove                                    | 全量清空不以部分已见键集合模拟                                          |
-| `$notification.post` / `$notify`   | 字段映射；Loon clipboard→Surge action/text；QX 未说明附加参数省略                    | 来源实参构造副作用与目标通知参数                                        |
+| `$notification.post` / `$notify`   | 字段映射；Surge 忽略通知点击行为；QX 未说明附加参数省略                    | 来源实参构造副作用与目标通知参数                                        |
 | `$done`                            | 动态完成对象、状态格式、字节、synthetic response 包装；先校验再锁定提交              | 校验错误后重试、只提交一次、原生抛错、echo 声明                         |
 | Loon `setTimeout/setInterval`      | 真实宿主调度；Loon interval 按文档只执行一次                                         | 回调、毫秒单位、附加参数与源 API presence                               |
 | UTF-8 / Base64                     | 独立标准实现，原生能力可用时优先                                                     | 编码、BOM、流式、fatal、品牌及非法输入                                  |
@@ -40,22 +40,17 @@ DNS、GeoIP、ASN、配置控制、任务和 Module 工具不参与新增 API �
 | 返回 | encrypt 为 `{ciphertext, tag?}`，decrypt 为 Uint8Array；同步返回                                                       |
 | 失败 | 类型/长度异常明确抛出；运算失败含 ENCRYPTION_FAILED/DECRYPTION_FAILED 及 cause。来源错误文字与原生细节不保证逐字相同   |
 
-## 无目标接口的处理边界
+## Surge 默认忽略策略
 
-以下是明确的目标能力差异，已经有对应处理，不是继续编写替代服务的待办。
+Modified: 2026-11-02 (chance). 用户明确授权以继续执行为优先：Surge 全量清空存储操作忽略，返回 undefined，不删除部分键、不报告清空成功。HTTP ALPN 和完成结果 h2_trailers/node/policy 字段省略，正常请求和完成继续执行。
 
-| 行为                                       | Quantumult X                                          | Surge                                                    |
-| ------------------------------------------ | ----------------------------------------------------- | -------------------------------------------------------- |
-| 未说明参数                                 | 按用户要求，在 API 调用处省略；保留原构造表达式及异常 | 有映射就转换；无等价行为明确失败                         |
-| 全量清空存储                               | 调用真实 removeAllValues                              | SDK 无全量清空方法，调用时 UNSUPPORTED_API               |
-| Loon 显式 ALPN                             | 目标未说明，省略                                      | fetch SDK 无对应选择器，明确失败；不原样转发冒充支持     |
-| 完成结果 h2_trailers                       | 未说明字段省略                                        | SDK 无 trailer 完成字段，明确失败；不丢掉它后声称等价    |
-| 原生通知延迟、内嵌媒体、同时打开链接并复制 | 额外通知参数省略                                      | 生命周期或动作契约无等价接口，明确失败；不伪造后台定时器 |
-| 原生 echo / body/header 声明约束           | 必须有正确 echo 或 body 声明                          | 依照实际目标 Script 声明                                 |
+通知忽略 delay、openUrl、clipboard 等点击行为，立即提交标题、副标题、正文。远程图片映射 media-url；PNG/JPEG/GIF/WebP Data URI 或裸 Base64 经签名识别映射 media-base64/media-base64-mime，无法识别的媒体省略。实参构造照常执行；不读取已忽略的点击选项 getter，不捕获作者业务代码或网络错误来假放行。
 
-存储缺失/空值、Cookie 状态、详细原生错误和实际引擎版本仍可能不同；保留真实 SDK 行为，不强制归一或伪装成功。Loon/QX 的字典 Header 输入仍采用明确的小写兼容政策，原键大小写和重复大小写键不保留；Surge full-header 数组不是新的来源转换方向。受 Proxy 不变量限制的 descriptor 明确失败。
+Header 继续使用大小写无关的查找、设置、删除和匹配。原始字段大小写仍按既定小写字典兼容政策规范化。
 
-真实源设备、版本、sourcePath 和不可得时刻不虚构。动态 Function 的全局作用域、任意全局反射、WASM/require/文件/配置 API 不在该运行时的通用模拟范围。没有增加按作者程序形状放行的证明器。
+源软件版本、构建号、路径等不恢复、不作为转换阻断，包装器用注释说明省略；保留兼容 presence 和实际可得的时间/名称。不会依据作者源码猜测并注释业务条件。任意作者逻辑直接依赖不存在的元数据，仍属于业务逻辑而非可安全删除的接口参数。
+
+以上是用户明确接受的语义降级，不能继续称为严格等价。正常参数类型错误、认证失败、网络失败及作者自身异常仍保留。
 
 ## 可复现构建与维护
 
@@ -63,6 +58,6 @@ ScriptHub 固定基线为 b943361f11be5795b3eb10f9cc4e5497642922fc，复用 faca
 
 `vendor/script-api-providers` 保存锁文件、完整许可、构建程序及 manifest。库独立作用域、延迟初始化，不污染宿主 globals，不运行时下载或依赖 Node。按声明的来源客户端整体加入能力，不扫描具体作者的调用决定是否带库。包体、标准修订和库版本是需要维护的实际成本。
 
-独立向量覆盖算法、返回形状、异常和异步行为；合成程序覆盖三方向及备份事务。runtimePolicyVersion=3、validationMode=api-runtime-compatibility。**整批实现、规范和测试完成后，才统一运行一次 Actions**，同事务刷新原件、共用 JS、API 清单和引用。
+独立向量覆盖算法、返回形状、异常和异步行为；合成程序覆盖三方向及备份事务。runtimePolicyVersion=4、validationMode=api-runtime-compatibility。**整批实现、规范和测试完成后，才统一运行一次 Actions**，同事务刷新原件、共用 JS、API 清单和引用。
 
 主要依据：[Loon API](https://nsloon.app/docs/Script/script_api/)、[Script V2](https://nsloon.app/docs/Script/script_v2/)、[QX 作者仓库](https://github.com/crossutility/Quantumult-X)、[Surge API](https://manual.nssurge.com/scripting/api.html)、[provider 固定版本与许可](../../vendor/script-api-providers/README.md)。

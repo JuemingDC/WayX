@@ -429,7 +429,7 @@ Modified: 2026-11-02 (chance). 接受 ScriptHub 的 Header 小写、大小写无
 
 ## 2.25 备份、清单与验证
 
-Modified: 2026-11-02 (chance). 原插件/脚本继续逐字节备份，源名与固定共用 URL 保持；仅 Actions 同事务拉取、更新原件、共用脚本、引用和外部 API 清单。Resource/Backup/script-api/<URL SHA>.json 绑定原件及清单摘要，记录原源码 UTF-16 API 位置与运行时适配，不记录逐业务值的伪证明。API 能力与后续实施条件维护在 docs/script-api/03-API能力与实施路线.md；AES/URL/旧编码公共 provider 已启用；原生无对应接口的行为仍明确列边界，不能以部分键清理模拟全量清空存储、以定时器模拟完成后的原生通知、或转发未说明的 Surge ALPN。Loon remove 可映射真实 QX removeAllValues，clipboard 可映射 Surge action/text。runtimePolicyVersion=3、validationMode=api-runtime-compatibility 必须明确出现在报告；保留旧版本的完整性迁移校验，不用旧 static policy 生成新文件。
+Modified: 2026-11-02 (chance). 原插件/脚本继续逐字节备份，源名与固定共用 URL 保持；仅 Actions 同事务拉取、更新原件、共用脚本、引用和外部 API 清单。Resource/Backup/script-api/<URL SHA>.json 绑定原件及清单摘要，记录原源码 UTF-16 API 位置与运行时适配，不记录逐业务值的伪证明。API 能力与后续实施条件维护在 docs/script-api/03-API能力与实施路线.md；AES/URL/旧编码公共 provider 已启用；原生无对应接口的行为仍明确列边界，不能以部分键清理模拟全量清空存储、以定时器模拟完成后的原生通知、或转发未说明的 Surge ALPN。Loon remove 可映射真实 QX removeAllValues，clipboard 可映射 Surge action/text。runtimePolicyVersion=4、validationMode=api-runtime-compatibility 必须明确出现在报告；保留旧版本的完整性迁移校验，不用旧 static policy 生成新文件。
 
 测试由 API 契约、标准向量、模拟原生网络及合成备份事务组成；覆盖动态输入、Env 接收者、Header 操作、七方法/失败/并发、字节、存储和通知，并以独立 zlib 向量验证压缩和损坏输入；原生 QX clear-all 保留，Surge 无清空存储 API 时不以已见键集合模拟。不得用源脚本的具体语法分支堆叠测试放行清单。Rule/Rewrite/Module 的已有转换职责不受影响。
 
@@ -438,3 +438,5 @@ Modified: 2026-11-02 (chance). 原插件/脚本继续逐字节备份，源名与
 依据： https://github.com/crossutility/Quantumult-X 、 https://manual.nssurge.com/scripting/ 、 https://nsloon.app/docs/Script/script_api/ 、 https://nsloon.app/docs/Script/script_v2/ 。
 
 Modified: 2026-11-02 (chance). 旧生成脚本清理在所有声明重绑定后、同一备份发布事务中执行。仅管理 API/Adblock 生成目录、生成器共享文件名规则及 legacy 目录；未标记为生成的作者/手工脚本不因无引用而删除。根据最终产物、冻结源声明、保留的手工脚本和脚本间相对/完整/编码 URL 建立引用闭包，保留传递依赖与仍作为来源 URL 的文件；无根引用的旧生成文件和孤立循环才移除。同步清理 adapters/bindings 的悬空记录，原始 Resource/Backup 字节不删除，status.json 记录 scriptCleanup。正在使用的 Rewrite mock/helper 和 Module 方向适配文件不按年代或目录整批删除。
+
+Modified: 2026-11-02 (chance). 用户新授权覆盖此前 Surge 严格阻断策略：全量清空存储操作忽略、返回 undefined；HTTP ALPN 与完成值 h2_trailers/node/policy 省略。通知忽略延时和所有点击行为，立即提交内容，远程媒体及可识别内嵌图片映射官方 media-url 或 media-base64/media-base64-mime。Header 匹配保持大小写无关。源版本/构建/路径字段不恢复、不阻断转换，以包装器注释说明；保留实际可得信息及兼容 presence，不通过源码猜测删除业务分支。这些明确接受的降级不等于严格语义一致；普通业务异常、网络错误和加密错误不得吞掉。
