@@ -111,8 +111,9 @@
             "canonical": "request.url",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$request.url",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -136,8 +137,9 @@
             "canonical": "request.body",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$request.body",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -145,8 +147,8 @@
           },
           {
             "id": "api:2",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "standard.URLSearchParams",
+            "kind": "codec",
             "source": {
               "api": "URLSearchParams",
               "start": 140,
@@ -156,15 +158,22 @@
               "access": "call",
               "memberPath": []
             },
-            "canonical": "runtime-member-dispatch",
+            "canonical": "standard.URLSearchParams",
             "value": "runtime value",
             "target": {
-              "api": "native engine / runtime capability",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "capability": "native-only",
+              "api": "URLSearchParams",
+              "lowering": "actual native engine global; no bundled fallback yet",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
-            "diagnostics": []
+            "diagnostics": [
+              {
+                "api": "URLSearchParams",
+                "reason": "actual native engine global; no bundled fallback yet",
+                "solution": "Evaluate a pinned whatwg-url bundle with URL/URLSearchParams together, WPT vectors, IDNA dependencies, ES compatibility and bundle-size budget"
+              }
+            ]
           },
           {
             "id": "api:3",
@@ -184,8 +193,9 @@
             "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$notify",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -209,8 +219,9 @@
             "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$notify",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -232,8 +243,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -267,8 +279,9 @@
             "canonical": "request.url",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$request.url",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -292,8 +305,9 @@
             "canonical": "request.body",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$request.body",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -301,8 +315,8 @@
           },
           {
             "id": "api:2",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "standard.URLSearchParams",
+            "kind": "codec",
             "source": {
               "api": "URLSearchParams",
               "start": 140,
@@ -312,15 +326,22 @@
               "access": "call",
               "memberPath": []
             },
-            "canonical": "runtime-member-dispatch",
+            "canonical": "standard.URLSearchParams",
             "value": "runtime value",
             "target": {
-              "api": "native engine / runtime capability",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "capability": "native-only",
+              "api": "URLSearchParams",
+              "lowering": "actual native engine global; no bundled fallback yet",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
-            "diagnostics": []
+            "diagnostics": [
+              {
+                "api": "URLSearchParams",
+                "reason": "actual native engine global; no bundled fallback yet",
+                "solution": "Evaluate a pinned whatwg-url bundle with URL/URLSearchParams together, WPT vectors, IDNA dependencies, ES compatibility and bundle-size budget"
+              }
+            ]
           },
           {
             "id": "api:3",
@@ -340,8 +361,9 @@
             "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$notification.post",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -365,8 +387,9 @@
             "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$notification.post",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -388,8 +411,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -423,8 +447,9 @@
             "canonical": "request.url",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$request.url",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -448,8 +473,9 @@
             "canonical": "request.body",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$request.body",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -457,8 +483,8 @@
           },
           {
             "id": "api:2",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "standard.URLSearchParams",
+            "kind": "codec",
             "source": {
               "api": "URLSearchParams",
               "start": 140,
@@ -468,15 +494,22 @@
               "access": "call",
               "memberPath": []
             },
-            "canonical": "runtime-member-dispatch",
+            "canonical": "standard.URLSearchParams",
             "value": "runtime value",
             "target": {
-              "api": "native engine / runtime capability",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "capability": "native-only",
+              "api": "URLSearchParams",
+              "lowering": "actual native engine global; no bundled fallback yet",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
-            "diagnostics": []
+            "diagnostics": [
+              {
+                "api": "URLSearchParams",
+                "reason": "actual native engine global; no bundled fallback yet",
+                "solution": "Evaluate a pinned whatwg-url bundle with URL/URLSearchParams together, WPT vectors, IDNA dependencies, ES compatibility and bundle-size budget"
+              }
+            ]
           },
           {
             "id": "api:3",
@@ -496,8 +529,9 @@
             "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$notification.post",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -521,8 +555,9 @@
             "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$notification.post",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -544,8 +579,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",

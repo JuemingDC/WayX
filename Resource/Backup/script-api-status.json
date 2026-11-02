@@ -44,8 +44,8 @@
     },
     "http": {
       "status": "runtime",
-      "domain": "Seven dynamic methods, concurrent requests, Promise rejection and callbacks, source defaults, units, policy names, text and exact byte views; QX-undocumented parameters omitted without deleting argument construction",
-      "outside": "No fabricated timeout/cancellation on QX. Target-native detailed errors, charset handling, cookie state and source-version differences can remain observable"
+      "domain": "Seven dynamic methods, concurrent requests, Promise rejection and callbacks, source defaults, units, policy names, exact byte views and Loon body-base64 decoding; preserve native QX decoded text and honor explicit foreign response charset with actual TextDecoder; QX-undocumented parameters omitted without deleting argument construction",
+      "outside": "No fabricated timeout/cancellation on QX. Unsupported response charset rejects with UNSUPPORTED_RESPONSE_CHARSET; native detailed errors, cookie state, ALPN, h2_trailers and source-version differences can remain observable"
     },
     "storage": {
       "status": "runtime",
@@ -54,7 +54,7 @@
     },
     "completion": {
       "status": "runtime",
-      "domain": "Dynamic completion dictionaries and wrappers, source status/byte field conversion, flat/wrapped synthetic responses",
+      "domain": "Dynamic completion dictionaries and wrappers, source status/byte field conversion, flat/wrapped synthetic responses; failed result validation permits author catch/fallback before the single host submission",
       "outside": "QX synthetic response requires an echo declaration; target QX body/header restrictions and unavailable fields are checked at invocation. No catch-and-pass-through suppression"
     },
     "environment": {
@@ -65,7 +65,25 @@
     "codecs": {
       "status": "standard-api-fallback",
       "domain": "Use native globals when available, otherwise retained UTF-8/Base64 implementations with independent standard vectors",
-      "outside": "Other encodings, compression, cryptography, WASM, require and host file/control APIs require actual target support; no empty implementations"
+      "outside": "Other encoding labels need an actual native decoder. URL/URLSearchParams are native-only until a tested WHATWG bundle is integrated. WASM, require and file/control APIs need actual target support; no empty implementations"
+    },
+    "compression": {
+      "status": "runtime-provider",
+      "source": "$utils.gzip / $utils.ungzip",
+      "provider": "nodeca/pako 2.1.0",
+      "commit": "3c06216518c259b569a5168dee867e6dabbe5160",
+      "notice": "vendor/pako/NOTICE.md",
+      "license": "MIT AND Zlib",
+      "domain": "Synchronous Uint8Array API; exact cross-realm views; native Loon first, otherwise lazy isolated provider; gzip framing and complete stream plus CRC/trailer validation; explicit failure codes",
+      "outside": "Valid gzip encoding bytes/header metadata and error messages may differ from native Loon. No compression algorithm is reimplemented locally"
+    },
+    "deferred": {
+      "status": "not-implemented-cross-host",
+      "aes": "Proposed pinned noble-ciphers synchronous ECB/CBC/CTR/GCM adapter; padding and separate authenticated tag need independent vectors before enabling",
+      "dns": "Native Loon resolver only; no system/UDP/DoQ/cache metadata fabricated via HTTP",
+      "geoip": "Native Loon local country/ASN/organization databases only; no silent external lookup or alternate database",
+      "policy": "Descriptive API entries report unavailable/native-only without statically blocking feature-detection branches; unclassified dynamic references are not support claims",
+      "roadmap": "docs/script-api/03-API能力与实施路线.md"
     },
     "verification": "API contract vectors and mock transports, syntax and backup integrity. Generated compatibility means API adapter composition succeeded, not every author business path or device runtime was verified"
   },
@@ -114,9 +132,10 @@
       "dependsOn": [],
       "qx": "$task.fetch",
       "surge": "$httpClient",
-      "loon": "$httpClient",
+      "loon": "$httpClient, $dns.query",
       "ruleIds": [
-        "http.request"
+        "http.request",
+        "dns.query"
       ]
     },
     {
@@ -143,14 +162,15 @@
       "support": "api-runtime-contract",
       "next": "Maintain source/target API contract vectors and native capability boundaries",
       "dependsOn": [],
-      "qx": "$prefs.valueForKey, $prefs.setValueForKey, $prefs.removeValueForKey",
+      "qx": "$prefs.valueForKey, $prefs.setValueForKey, $prefs.removeValueForKey, $prefs.removeAllValues",
       "surge": "$persistentStore.write, $persistentStore.read",
       "loon": "$persistentStore.write, $persistentStore.read",
       "ruleIds": [
         "storage.remove-by-write",
         "storage.read",
         "storage.write",
-        "storage.remove"
+        "storage.remove",
+        "storage.removeAll"
       ]
     },
     {
@@ -172,14 +192,20 @@
       "support": "api-runtime-contract",
       "next": "Maintain source/target API contract vectors and native capability boundaries",
       "dependsOn": [],
-      "qx": "TextEncoder, TextDecoder, atob, btoa",
-      "surge": "TextEncoder, TextDecoder, atob, btoa",
-      "loon": "TextEncoder, TextDecoder, atob, btoa",
+      "qx": "TextEncoder, TextDecoder, atob, btoa, URL, URLSearchParams",
+      "surge": "TextEncoder, TextDecoder, atob, btoa, URL, URLSearchParams",
+      "loon": "TextEncoder, TextDecoder, atob, btoa, $utils.gzip, $utils.ungzip, $crypto.aes.encrypt, $crypto.aes.decrypt, URL, URLSearchParams",
       "ruleIds": [
         "codec.TextEncoder",
         "codec.TextDecoder",
         "codec.atob",
-        "codec.btoa"
+        "codec.btoa",
+        "compression.gzip",
+        "compression.ungzip",
+        "crypto.aes.encrypt",
+        "crypto.aes.decrypt",
+        "standard.URL",
+        "standard.URLSearchParams"
       ]
     },
     {
@@ -190,8 +216,11 @@
       "dependsOn": [],
       "qx": "No direct SDK surface; see semantic operation plan",
       "surge": "$script.name, $script.startTime",
-      "loon": "$script.name, $script.startTime",
+      "loon": "$utils.geoip, $utils.ipasn, $utils.ipaso, $script.name, $script.startTime",
       "ruleIds": [
+        "ip.geoip",
+        "ip.ipasn",
+        "ip.ipaso",
         "script.name",
         "script.startTime"
       ]
@@ -240,8 +269,8 @@
         "surge": "$request"
       },
       "canonical": "request.context",
-      "value": "closed context / presence",
-      "lowering": "source-shaped context view; no object escape",
+      "value": "runtime context object / presence",
+      "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
       "proof": "runtime API contract; author values are validated at invocation"
     },
     {
@@ -253,8 +282,8 @@
         "surge": "$response"
       },
       "canonical": "response.context",
-      "value": "closed context / presence",
-      "lowering": "source-shaped context view; no object escape",
+      "value": "runtime context object / presence",
+      "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
       "proof": "runtime API contract; author values are validated at invocation"
     },
     {
@@ -305,7 +334,7 @@
         "surge": "$request.body"
       },
       "canonical": "request.body",
-      "value": "String",
+      "value": "String or declared bytes",
       "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
       "proof": "runtime API contract; author values are validated at invocation"
     },
@@ -331,7 +360,7 @@
         "surge": "$response.body"
       },
       "canonical": "response.body",
-      "value": "String",
+      "value": "String or declared bytes",
       "lowering": "identity; declaration controls whether body is available",
       "proof": "runtime API contract; author values are validated at invocation"
     },
@@ -521,6 +550,22 @@
       "proof": "runtime API contract; author values are validated at invocation"
     },
     {
+      "id": "storage.removeAll",
+      "kind": "storage",
+      "source": {
+        "qx": "$prefs.removeAllValues"
+      },
+      "canonical": "storage.removeAll",
+      "value": "clear the source application store",
+      "lowering": "native QX only; Surge has no enumerating/clear-all store API",
+      "availability": {
+        "qx": "native-only",
+        "surge": "unavailable"
+      },
+      "solution": "Preserve native QX removeAllValues; do not simulate global deletion with a partial generated-key registry",
+      "proof": "explicit capability boundary; provider proposal is not implemented support"
+    },
+    {
       "id": "http.request",
       "kind": "http",
       "source": {
@@ -555,7 +600,7 @@
       },
       "canonical": "script.argument",
       "value": "declared typed object or String",
-      "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+      "lowering": "actual source schema + target payload; QX argument is absent and author JavaScript handles it",
       "proof": "runtime API contract; author values are validated at invocation"
     },
     {
@@ -611,6 +656,178 @@
       "proof": "runtime API contract; author values are validated at invocation"
     },
     {
+      "id": "compression.gzip",
+      "kind": "codec",
+      "source": {
+        "loon": "$utils.gzip"
+      },
+      "target": {
+        "loon": "$utils.gzip",
+        "qx": "WayX.Pako.gzip",
+        "surge": "WayX.Pako.gzip"
+      },
+      "canonical": "compression.gzip",
+      "value": "synchronous Uint8Array -> Uint8Array",
+      "lowering": "native source first; lazy Pako gzip provider with exact views and explicit compression/decompression errors",
+      "proof": "runtime API contract; author values are validated at invocation"
+    },
+    {
+      "id": "compression.ungzip",
+      "kind": "codec",
+      "source": {
+        "loon": "$utils.ungzip"
+      },
+      "target": {
+        "loon": "$utils.ungzip",
+        "qx": "WayX.Pako.ungzip",
+        "surge": "WayX.Pako.ungzip"
+      },
+      "canonical": "compression.ungzip",
+      "value": "synchronous Uint8Array -> Uint8Array",
+      "lowering": "native source first; lazy Pako gzip provider with exact views and explicit compression/decompression errors",
+      "proof": "runtime API contract; author values are validated at invocation"
+    },
+    {
+      "id": "crypto.aes.encrypt",
+      "kind": "codec",
+      "source": {
+        "loon": "$crypto.aes.encrypt"
+      },
+      "canonical": "crypto.aes.encrypt",
+      "value": "synchronous Uint8Array AES; separate GCM tag",
+      "lowering": "native Loon only; no cross-client AES provider yet",
+      "availability": {
+        "loon": "native-only",
+        "qx": "unavailable",
+        "surge": "unavailable"
+      },
+      "solution": "Integrate pinned noble-ciphers synchronous ECB/CBC/CTR/GCM, explicit padding and separate authenticated tag; verify independent vectors before enabling",
+      "proof": "explicit capability boundary; provider proposal is not implemented support"
+    },
+    {
+      "id": "crypto.aes.decrypt",
+      "kind": "codec",
+      "source": {
+        "loon": "$crypto.aes.decrypt"
+      },
+      "canonical": "crypto.aes.decrypt",
+      "value": "synchronous Uint8Array AES; separate GCM tag",
+      "lowering": "native Loon only; no cross-client AES provider yet",
+      "availability": {
+        "loon": "native-only",
+        "qx": "unavailable",
+        "surge": "unavailable"
+      },
+      "solution": "Integrate pinned noble-ciphers synchronous ECB/CBC/CTR/GCM, explicit padding and separate authenticated tag; verify independent vectors before enabling",
+      "proof": "explicit capability boundary; provider proposal is not implemented support"
+    },
+    {
+      "id": "ip.geoip",
+      "kind": "environment",
+      "source": {
+        "loon": "$utils.geoip"
+      },
+      "canonical": "ip.geoip",
+      "value": "synchronous local-database lookup",
+      "lowering": "retain native Loon implementation; source database cannot be reconstructed",
+      "availability": {
+        "loon": "native-only",
+        "qx": "unavailable",
+        "surge": "unavailable"
+      },
+      "solution": "Use a real equivalent native database only after return/absence contracts are established; alternate database or remote lookup requires explicit semantic policy",
+      "proof": "explicit capability boundary; provider proposal is not implemented support"
+    },
+    {
+      "id": "ip.ipasn",
+      "kind": "environment",
+      "source": {
+        "loon": "$utils.ipasn"
+      },
+      "canonical": "ip.ipasn",
+      "value": "synchronous local-database lookup",
+      "lowering": "retain native Loon implementation; source database cannot be reconstructed",
+      "availability": {
+        "loon": "native-only",
+        "qx": "unavailable",
+        "surge": "unavailable"
+      },
+      "solution": "Use a real equivalent native database only after return/absence contracts are established; alternate database or remote lookup requires explicit semantic policy",
+      "proof": "explicit capability boundary; provider proposal is not implemented support"
+    },
+    {
+      "id": "ip.ipaso",
+      "kind": "environment",
+      "source": {
+        "loon": "$utils.ipaso"
+      },
+      "canonical": "ip.ipaso",
+      "value": "synchronous local-database lookup",
+      "lowering": "retain native Loon implementation; source database cannot be reconstructed",
+      "availability": {
+        "loon": "native-only",
+        "qx": "unavailable",
+        "surge": "unavailable"
+      },
+      "solution": "Use a real equivalent native database only after return/absence contracts are established; alternate database or remote lookup requires explicit semantic policy",
+      "proof": "explicit capability boundary; provider proposal is not implemented support"
+    },
+    {
+      "id": "dns.query",
+      "kind": "http",
+      "source": {
+        "loon": "$dns.query"
+      },
+      "canonical": "dns.query",
+      "value": "callback resolver with protocol/server/timeout/answers/cache metadata",
+      "lowering": "native Loon only; HTTP fetch is not a system DNS substitute",
+      "availability": {
+        "loon": "native-only",
+        "qx": "unavailable",
+        "surge": "unavailable"
+      },
+      "solution": "Map only an equivalent native resolver; an explicit DoH-only provider may be added separately without claiming UDP/DoQ/system-cache equivalence",
+      "proof": "explicit capability boundary; provider proposal is not implemented support"
+    },
+    {
+      "id": "standard.URL",
+      "kind": "codec",
+      "source": {
+        "qx": "URL",
+        "loon": "URL",
+        "surge": "URL"
+      },
+      "canonical": "standard.URL",
+      "value": "WHATWG URL standard class",
+      "lowering": "actual native engine global; no bundled fallback yet",
+      "availability": {
+        "loon": "native-only",
+        "qx": "native-only",
+        "surge": "native-only"
+      },
+      "solution": "Evaluate a pinned whatwg-url bundle with URL/URLSearchParams together, WPT vectors, IDNA dependencies, ES compatibility and bundle-size budget",
+      "proof": "explicit capability boundary; provider proposal is not implemented support"
+    },
+    {
+      "id": "standard.URLSearchParams",
+      "kind": "codec",
+      "source": {
+        "qx": "URLSearchParams",
+        "loon": "URLSearchParams",
+        "surge": "URLSearchParams"
+      },
+      "canonical": "standard.URLSearchParams",
+      "value": "WHATWG URL standard class",
+      "lowering": "actual native engine global; no bundled fallback yet",
+      "availability": {
+        "loon": "native-only",
+        "qx": "native-only",
+        "surge": "native-only"
+      },
+      "solution": "Evaluate a pinned whatwg-url bundle with URL/URLSearchParams together, WPT vectors, IDNA dependencies, ES compatibility and bundle-size budget",
+      "proof": "explicit capability boundary; provider proposal is not implemented support"
+    },
+    {
       "id": "script.name",
       "kind": "environment",
       "target": {
@@ -643,67 +860,67 @@
   "apiPlans": {
     "https://kelee.one/Resource/JavaScript/12306/12306_remove_ads.js": {
       "path": "Resource/Backup/script-api/e4e07d3c1af75bf2a2ab10a83e85a60ec8943d61ae4b9d9266dfce49b7fa70e7.json",
-      "sha256": "b610b6044395e1db667ceccbefd6a073f09cce4cf57c1873882e9d914bb63726",
+      "sha256": "19528dfe292f2570e991d193ca46bcb0c8ec4028a742c524715a9db5599a1f78",
       "sourceSha256": "22a825d8149d952dd9c6c1c5c96fa3f830a0ebba975f8fc402f55ad1f40d4a8a"
     },
     "https://kelee.one/Resource/JavaScript/AliYunDrive/AliYunDrive_remove_ads.js": {
       "path": "Resource/Backup/script-api/37eca0771b704596fb6d1a3a7bba8eca04f4cb4a0015d99077b6fd406fb965fe.json",
-      "sha256": "bc1bb0b0983d8af7b58f6d32386cdf48654910b54a81b0e976145897c3129d20",
+      "sha256": "f5818a54c499caaca2bdbe64a7a677d4ea997da3b217aef90e781dddbb3f6909",
       "sourceSha256": "4909ecde19541ad5e83be296e87eab83e62ede4e710fceee3d59dc4cf11f3e38"
     },
     "https://kelee.one/Resource/JavaScript/AutoHome/AutoHome_remove_ads.js": {
       "path": "Resource/Backup/script-api/3a6c3cc31e79d9bc174db0afb064a690fce4edf8ae1e5874b10b16e4a4e39082.json",
-      "sha256": "4ea6489822772a3db4664e5dd787258275c8eb58641341875f8fd1040167de65",
+      "sha256": "e8874f069d6d3c74bd260eb258469495ba3b1b33de8665ae76cf103ba1fe86b9",
       "sourceSha256": "9ef33d57454935592032fe7d204a9fee555883b49f86d938942719d95a2035dd"
     },
     "https://kelee.one/Resource/JavaScript/BabyTree/BabyTree_remove_ads.js": {
       "path": "Resource/Backup/script-api/cbe221cf5dc04adb10449214b330a946dbe9bca13ae16f7f2d0c88e986d770b2.json",
-      "sha256": "0577ce209392bd6e3573b5a110a2e06f8cc7aeb3c97c7732c7402abb6f8b4e99",
+      "sha256": "2b6cd9bba74acc2ec90dfb94bf79b203b0948084977e6216595df0cc88bc780a",
       "sourceSha256": "0159119e7b367400b85f8814eae93b5030f00bb51a5676e97c03056f3bca70ab"
     },
     "https://kelee.one/Resource/JavaScript/BaiduSearch/BaiduSearchHomePage_remove_ads.js": {
       "path": "Resource/Backup/script-api/c5a7ae3bef67c08afe54a6c49e9236165bf15b8d064384b5e09c978cb72667ca.json",
-      "sha256": "7c9af9270916a4d4ce95611fb2ea6fc35d8996c57768f56eb242da6be9040b8f",
+      "sha256": "3623a61e8e97c20afeafa8cae20b8a6ca1ba45db7218c3fa63807c0ba1d9602f",
       "sourceSha256": "a135cb358571270371159b1c1539e555f51c7e53d6531afc6b3687796df0b0d4"
     },
     "https://kelee.one/Resource/JavaScript/Baidu_input_method/Baidu_input_method_remove_ads.js": {
       "path": "Resource/Backup/script-api/83bee2441664cf5a2f83dd5c1a2464201d51c9ad04f55bdb341557f8fb8e384d.json",
-      "sha256": "27a7411680dfe5b0c56043e035e4f5b530ed2b145808e730ccfbe9d847720a5e",
+      "sha256": "992f77547a681010f963e6cb7c4bf6300ca208e5770baa590df1a8cc77a6fe45",
       "sourceSha256": "4401933fa39f97c72711cf075c9caa8506be46e3fdbf0572d96ab9493aaf623b"
     },
     "https://kelee.one/Resource/JavaScript/BiliComic/BiliComic_remove_ads.js": {
       "path": "Resource/Backup/script-api/d61358f358cf63a85776fdd4806af22f46c3c8bfe89f3134901a81fd73bb38f3.json",
-      "sha256": "c3c84a18bcbc91c18b6c051beef580eafd5c696c98fd8bb493f992a1e7549ccb",
+      "sha256": "4b702ac3c1ed430de85056a02c14554577c8cd5f9096b464dba0aa6887593b3d",
       "sourceSha256": "a44f3d9f44b79940c1d75561a3e4ddc1a57a6a989b6c39f7d97e48db4245224d"
     },
     "https://kelee.one/Resource/JavaScript/Bixin/common_tab.js": {
       "path": "Resource/Backup/script-api/30db55816f59864c4ed8879fbeb736948c147e311b4f18809d9a93f8abdc36fe.json",
-      "sha256": "73d763b19c1b40f5d20978bfc2128e75637f5f7a51f47490c22f2d417f3b0a70",
+      "sha256": "e09fb941126b2850eedbf535d808fb481902dd1af1425148065c2f32761565d8",
       "sourceSha256": "779cce9e7ca26323f8965b07412056e3f6d825b7a0e99e5d5707ebf24d6b898c"
     },
     "https://kelee.one/Resource/JavaScript/Bixin/my_page.js": {
       "path": "Resource/Backup/script-api/fd6b8721676ce2dfba09da8ee940b78cce3f6b97a7a530078c6db476a91df4ef.json",
-      "sha256": "2d2e6703681e6111f1e7460d6ebcc8777942d41178e46e211fbbed56f56d64ab",
+      "sha256": "17cb4ab1e69aaabeaf0c488d06df7f1ca57d7abead1a3cd47380505a48e8f22b",
       "sourceSha256": "06eb371ea79bae01f6f0bcced91af0cd534312e5266586f17aa94bd69958f7ee"
     },
     "https://kelee.one/Resource/JavaScript/BooHee/BooHee_remove_ads.js": {
       "path": "Resource/Backup/script-api/28f4dc541f88bac8214dec5e248db8cd12a0a4c06561a3fd2bceefc4200a996f.json",
-      "sha256": "cd1596f4aaa338b5ec8c8cf386c0b2fdb6840536300bc8a5c863e1904feca7b8",
+      "sha256": "39b5c29e453b4b27eeece1fc05afe4753c65824a881dae06a09490c6fc54ad4b",
       "sourceSha256": "8b044d530e905fd358dbe155ec75aa8ee460450bed5bf8634556716d544ff388"
     },
     "https://kelee.one/Resource/JavaScript/CaixinMedia/CaixinMedia_remove_ads.js": {
       "path": "Resource/Backup/script-api/1717ca508ca6ae8a8fc6547f13019fe069c760253c4b59112ffd8d7748221c5d.json",
-      "sha256": "1dc587c5b332ca30086fb7ac7904c31465748ec0b35e8b6af30617c2221aa641",
+      "sha256": "0cf920374acb211e87938a00c9d084360279c2dcc85f7c98c5824dd33d998c3a",
       "sourceSha256": "591a0e4aa1e5b6efb60a1d88fb9ef04e2d372cc4b2f3a8cc7d40f8abd6622ca5"
     },
     "https://kelee.one/Resource/JavaScript/Chelaile/Chelaile_remove_ads.js": {
       "path": "Resource/Backup/script-api/25d033d39f66a286a6f9236aea15e9a2f73be119436afdb5708e48f9433e7e7f.json",
-      "sha256": "29b88a78e7040301881f3cb48e71a3f5c3e72d0569551d328b426fc02a021667",
+      "sha256": "18fe6a65eca203fc20b693bdb12cb35a178b4f0811d9c474fe98aae7f70c92a0",
       "sourceSha256": "80b889b0fd9f45da4b3327d57bb9ad1809958c68478d1bdc4cc5a62ef9e69919"
     },
     "https://kelee.one/Resource/JavaScript/ColorfulClouds/ColorfulClouds_remove_ads.js": {
       "path": "Resource/Backup/script-api/b42c74e37c3cad9204884a778b552b88a1ebca40c0042b83647ae45d450d161a.json",
-      "sha256": "ede452ad5537bf8b3798cb513f0e15cb7a0ff49fe1db3d64e565c4d0a701f5d4",
+      "sha256": "adbf752a3855411e6762cbbec8a497e6cd80b1c6f0d3dda702bfdb99f6bad248",
       "sourceSha256": "51d20e0cd5f134603f541fdb7a05a3e9a259b8e3adece8347b90df237687c0a1"
     },
     "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js": {
@@ -713,1047 +930,1047 @@
     },
     "https://kelee.one/Resource/JavaScript/DjDuoDuo/DjDuoDuo_remove_ads.js": {
       "path": "Resource/Backup/script-api/35a3b12ec3a7d681843c585882c1c35310a89118dd730bcf8adcd872df3939d7.json",
-      "sha256": "6b5b17d6163a0e813ffd2c0b5bac7a19f774a8a2063599abe672406c2d81f20e",
+      "sha256": "a6d1781918eaa8148eb086c92a2180c67874c71fb82a30b77c0e314b4a4e1369",
       "sourceSha256": "6357b9dd30b48b64e24d206763e8276ac28b4e2a88c0435116eda42fdecda9e6"
     },
     "https://kelee.one/Resource/JavaScript/Douyu/Douyu_remove_ads.js": {
       "path": "Resource/Backup/script-api/c2037a6bd2937364103678c626b132d2bfb0fea9de6f25495eb8779a2f52dce3.json",
-      "sha256": "52d431b9a03aca966ea3355e567199c18f3623ce493318eae5c7a82d4d3c4702",
+      "sha256": "b772de08822c756941859d5da236da52e2fbd9524e7caac8a420fe05c2532087",
       "sourceSha256": "92c8426b0229a89e22277c7f8ca1ff71ad1900e8786cb9f24845491393612b1a"
     },
     "https://kelee.one/Resource/JavaScript/DubbingShow/DubbingShow_remove_ads.js": {
       "path": "Resource/Backup/script-api/694792f21aae2fcb1bc16e54edf5e533a5d718508c5afba5439c9c9d26506a0f.json",
-      "sha256": "df88743fb907709132dd64035187ba98afb045b9a0e73bdcaa41e18b163c370f",
+      "sha256": "8c0817cb81e47302b261516992ab3b3dc3b832f911c7df10c4d0a1de739df02c",
       "sourceSha256": "00b312e3ed559cfcda15cb43e637c94d6293ad3cb34b2c5d23d9bd330668fe52"
     },
     "https://kelee.one/Resource/JavaScript/FlyerTea/FlyerTea_remove_ads.js": {
       "path": "Resource/Backup/script-api/dd1adf0ea56d8040bbbada3f2575b2c9fc3b2780d7bf4c955c9bff7c08862ac6.json",
-      "sha256": "73fd2151a3132812f80bf4ea69a87b119ed6c9ceb8d1c2cc7bdc62ea7128d971",
+      "sha256": "c37bd53ab3a233522811fbd6b64b02ca6ff6ab176615a84cbc8d91dc6dc8123f",
       "sourceSha256": "096bf18999cb7071083a09b8a054087fb91a9872753ed5b64cafb151c0eee087"
     },
     "https://kelee.one/Resource/JavaScript/HUPU/HUPU_remove_ads.js": {
       "path": "Resource/Backup/script-api/09e8dc8c196b43efbff85f001ab5c6571d2693e9c5683ec9011fe3bf21b15d11.json",
-      "sha256": "49c8c60b7dcec472464600a5c7feab418f86c4672646065f97b9bc6990f99027",
+      "sha256": "3420720f56d24712ae137e56f36a98d9bb9d4b57b0e1a279b564e6adc9498783",
       "sourceSha256": "43ec9962925a76ca49cf1491a73430bd1b7fc3ef206de50eb0083c75b69865a6"
     },
     "https://kelee.one/Resource/JavaScript/IThome/IThome_remove_ads.js": {
       "path": "Resource/Backup/script-api/a31b4fde903aaa114e00ee12a505df2accb79313aa6f5d67c1b3bd61b7fc7392.json",
-      "sha256": "3f9d49bc19053d8c5ef124e78855393acb5ad75cd0cddaa6c7b344f2ee14fad3",
+      "sha256": "13bae54aa220c821e52ec248db865107f0c03ef6073c7488cec7b874faf5383f",
       "sourceSha256": "3008c1a2831ec084c07e44c2219ee8776aefb45a9b4053da675fde6701caa141"
     },
     "https://kelee.one/Resource/JavaScript/JD/JD_remove_ads.js": {
       "path": "Resource/Backup/script-api/0c08b6ade279c82cc2f9c3523f90c99da064a7d8614fcce521bbf71008b8e494.json",
-      "sha256": "99132557723e8af01a4ffd4f62a9b08419d8c0a4713936d8533d5d95afb52038",
+      "sha256": "9529385b515db78ba8770788ba82f8a93fef403b36d7f4abb5315dcc0817a557",
       "sourceSha256": "c029c4151fe73b3a6f660d0933393d1b6afd1969651f01a88d5a357abfdd7cb4"
     },
     "https://rucu6.pages.dev/Scripts/manmanbuy_ck.js": {
       "path": "Resource/Backup/script-api/7db6b6fea9984e314a544a7b2072db18d5a23edf19443f4e677abf3ac1b4f829.json",
-      "sha256": "c37483d86ba968ff3a501aa42966b39388dd8733c901af228acb8c533fdab276",
+      "sha256": "53421a22741c536d70cc165777865840bfa6ab97eeee778f68399a48b3fd1b29",
       "sourceSha256": "3b6deac141eb59cee95aec3bfec295bcfc33b60c8a9710975643f40f97c358d9"
     },
     "https://rucu6.pages.dev/Scripts/jingdong.js": {
       "path": "Resource/Backup/script-api/4c456c6aa61aac5f7a7dce71dea93a3a5af1be4b689b9f3329cf2eb183326e7b.json",
-      "sha256": "fd84b00d3a4f861ac497e45d468ab62f673b6bf4a9111bb95901ec4e22be003b",
+      "sha256": "5b30904c3c5814ddf19350cfd408d07e4d67e5352ed3eefd38f32fc628f8181b",
       "sourceSha256": "a8115b3c60d3e9ad76d9bd0e6bb1edf07b73bd569dbd80b7efbbcf7bd3059322"
     },
     "https://rucu6.pages.dev/Scripts/jd_price.js": {
       "path": "Resource/Backup/script-api/c93a9fa5ed13c4398531edbf5b19305907661f85ee5fc0465566111ede6eee36.json",
-      "sha256": "a2e030cb161d22d1b256e442f232f471b9a33f65bf7808f3e71f078a2ad39589",
+      "sha256": "14816213b15bc2c1f18b17dfa1a306681e1a92da6a03ccf7b4087d0c68a9cd93",
       "sourceSha256": "037c93dea8c42d0c38f8c2a9cdfe3b507c5f81cec06cde407fee0e1bb01d2aa6"
     },
     "https://kelee.one/Resource/JavaScript/KebidaDushu/KebidaDushu_remove_ads.js": {
       "path": "Resource/Backup/script-api/dbe13bf5df247a3452d140b3eb761fe3503771b662b5aec78aed93b14717ef58.json",
-      "sha256": "3df61f8725ad49b99fb766331cef1638c0e7a2b342d719f20d67006d70a92f65",
+      "sha256": "4f96ea03d4f0fc182cbfb13c439ff5e4f35b45005c6b1fa295052bcf84c9acac",
       "sourceSha256": "dbd6c116bf2540554ae3b452b1483c2ce3cc9ceee896ffb56f6f0372ff0089d2"
     },
     "https://kelee.one/Resource/JavaScript/KuaiKanComic/KuaiKanComic_remove_ads.js": {
       "path": "Resource/Backup/script-api/5d403a80285ee588ceea4a12b848fe4de13c605fd61cafa508a6c60d2a5a206e.json",
-      "sha256": "8217177e2e0d91273994b0c01f3395cffd264e8f958112112029cc893a70d0cc",
+      "sha256": "067b730938f150c8f5d547df35e218353983392e6781f667661f1ee3297557dc",
       "sourceSha256": "e9f4e623df954abbaa76b3e67059b370d7df97e71c16067fc5014d2c1a81a911"
     },
     "https://kelee.one/Resource/JavaScript/MKZ/MKZ_remove_ads.js": {
       "path": "Resource/Backup/script-api/34857e13ac47a2ad732b213031a48184488b991e7259cbddc8881e0802b53bb3.json",
-      "sha256": "ea2939a68e29e465cf693743345d92a65e62e8d069db16a47c6e12ce5327aecc",
+      "sha256": "4a06fad5b5616289447a408b25ac517e245e0c59b3abca69f07bb809bcc8a25c",
       "sourceSha256": "b3d570b03982fd706501218fdd9e6371f5bf0dd4d9e764e26a5accc4a7b6820b"
     },
     "https://kelee.one/Resource/JavaScript/MaiMai/MaiMai_remove_ads.js": {
       "path": "Resource/Backup/script-api/88e0dafed4cd147ba121b575a334603d2b24e0fce521e9d3e3cbe82699a4ba80.json",
-      "sha256": "95715d8505443637078e4c477cd839e75b6977b9bfca2941409ab837cc1a4ab0",
+      "sha256": "4af7e5b515ec44b44d44607b2f08f2ae11e5503e73d69af39adac309e1d8cd88",
       "sourceSha256": "e941215a83fa4b06cef7e5931776cef1ac777d0e3e0273b6674b7897f20e9466"
     },
     "https://kelee.one/Resource/JavaScript/MeituMYXJ/MeituMYXJ_remove_ads.js": {
       "path": "Resource/Backup/script-api/b158d39001e0c7483303257526a5c0829c0313f2ae2869b78f58c2d46bc1f8d4.json",
-      "sha256": "5ca259aa804ab2e1255e986942b927a82de63b33350cdef377cd15fa538fa251",
+      "sha256": "33d0b8c955973e02ad8e704308bdbcd4210cf1eb7b459c9fa1ea2863841ea97f",
       "sourceSha256": "9a50669b814eedd82eb9b73518089547bc7b9c5388dc4e441dfc9f155c55fc61"
     },
     "https://kelee.one/Resource/JavaScript/MotorFans/MotorFans_remove_ads.js": {
       "path": "Resource/Backup/script-api/28e7d9d5ad8f354c52ac7d0660709a809f8386b593b0b5cc1ffc88b796844ee1.json",
-      "sha256": "57ce3bb9194822b19a96597571faa2a83400e8f1a495cdc569fe5fcac3a92f3b",
+      "sha256": "1911adaf13db80a4adf601bb7cdd49c34e9ee25071e4a30c18875d2b9484af9d",
       "sourceSha256": "f464b6e3853433ae5fb5667c9b17b0333cffdc0c24014b7607fde6d39823f16d"
     },
     "https://rucu6.pages.dev/Scripts/12306.js": {
       "path": "Resource/Backup/script-api/821aa576b617d831a428200e731f412041c3fdd4f21eaabfa8b712f85716c636.json",
-      "sha256": "f87a96f0f81c4d841c05e6b415f307b2be2ac5c9aa4388ed5efb3921e3c171bd",
+      "sha256": "2709143e7a33946698e3a234c011831fc2303ba70bbe4a257d53cfbc2cd25374",
       "sourceSha256": "0c805290e56a4b557c0ed235ae06a1e5d70025ed3d990036e3f6b8ca44f3a0c3"
     },
     "https://rucu6.pages.dev/Scripts/header.js": {
       "path": "Resource/Backup/script-api/2b9fc61260fcedbf1e81cd88fdde9e074fc62571fc8af7210db6bf5641c43843.json",
-      "sha256": "987ec6f638f7e63e7320708126d129e99c0ed71f7ba87b5c93c19c28f30d9883",
+      "sha256": "8c0ef8ac396d6ee36ff7aabf3382f3aa68537e4952188fd547b4882504aacc55",
       "sourceSha256": "5e0bae36d3f8e9975b5e1de6e78acdb423904d75dd0dee8b683a526faf14d299"
     },
     "https://rucu6.pages.dev/Scripts/adrive.js": {
       "path": "Resource/Backup/script-api/9102b70e3365c403dda863baa75138b5daa594ac08a7d39b7aff3d4a2c15ba7c.json",
-      "sha256": "d2325c03c4f139879830d43d6008823d571c4d3949431798d6de1a46a7803886",
+      "sha256": "a0549cdd2ace43d5d547d26529f69984fae5612e0877bbd3c62dd6116e76a208",
       "sourceSha256": "bd7eacc3125068b590138218d9ab53bab69d2e6cc737b7b817fe2784b7141fb4"
     },
     "https://rucu6.pages.dev/Scripts/myblockads.js": {
       "path": "Resource/Backup/script-api/d477c79dc18470c7bae046d39330871387988061aa34ce6cb0a8a3df4ea45856.json",
-      "sha256": "65ec1c1a1d1b1b1262d5c6965aea188b1cab9c53ae055ad4bb27a031f4fc5da4",
+      "sha256": "3ef660575d9b7d0359ba06859eb21397d486f7248fd6be2e4c5cd1121d0593e6",
       "sourceSha256": "55725115e4adc11d8594d252617728c3b0267caa44fec21e6e819c9a81e17fa8"
     },
     "https://rucu6.pages.dev/Scripts/changyuan.js": {
       "path": "Resource/Backup/script-api/c51a82707df85157b4c7ce10182e679aef29031975cfc25970c09e389749fb33.json",
-      "sha256": "9d2023386c1b82f6d72c5841c73b3227d3e53873def6b8c7568376eba9c63349",
+      "sha256": "ba81ac298aca721a5bff8431c5008e5a9b2ed63772823b6660a1029039ddcae4",
       "sourceSha256": "c290a8db06f7589f5042633ad198a27e3ccbf76d8e600f6674f806fcd2b023c2"
     },
     "https://rucu6.pages.dev/Scripts/coolapk.js": {
       "path": "Resource/Backup/script-api/93242e4da35e4c61721dc64aeea3fa04e74e5f371cfb5242d0e014a48936f794.json",
-      "sha256": "e8ce8e74a6e01f45a129c100f331663a600b1243dbed6c9246416f5f72872b69",
+      "sha256": "e51523753ba46befe2638f0290913fd30646ade4aee2c4ae8fb52d469ca9abb9",
       "sourceSha256": "9de5475ec61381cc5ac2cd796b2f0e4212fd53b9e52a2bdd0f9b06478926d384"
     },
     "https://rucu6.pages.dev/Scripts/kugou.js": {
       "path": "Resource/Backup/script-api/8f7d651e07b13ce7cdd20c95f294f04f40c679170ce6701febf868f96222beb2.json",
-      "sha256": "fbfa1c72479dfd8e32e14849b1915c0ef50c53696211b3eba4d8f24f6a70d6de",
+      "sha256": "d57bee53dc35db32e4ffd2639d5fe3c82b29c0f429142d311cf93e082d80d420",
       "sourceSha256": "6063f59363090b1434f415eda9ade4f6011a7b409d0d500677cc4a081f89f43d"
     },
     "https://rucu6.pages.dev/Scripts/wechat.js": {
       "path": "Resource/Backup/script-api/06cb926a57e5541695aa9fc972751a3b94682030339647b39c3ced5f897e833b.json",
-      "sha256": "8678167e47203e902275dafd00560e174531c5714e04dde20a2a645cd1e9afa2",
+      "sha256": "f568c72799461f3c3482e11884f0630da723515110068f9dda2dc6004a1a6d84",
       "sourceSha256": "6477808f1d8ba96c16b5d6851ac646ad45a28ad24d2ea829377fcb4e14832a72"
     },
     "https://rucu6.pages.dev/Scripts/cloud139.js": {
       "path": "Resource/Backup/script-api/db81649b516738b5eca7adc11b0385f34753063e80b453f6b70dfddcc34e8f1a.json",
-      "sha256": "16f9b0c881cc8b17a06cc4633b9fed0a51512076b1c01807bc498dfa2829a5dd",
+      "sha256": "571d21ca7eeb8f63bf539781755a7aed44a96dfa468f6c63ecd356e08f4dfa80",
       "sourceSha256": "084a20edd58471dde5e7126bd7dd44bd177b8bb11b3e3d6a13b6379a03247b51"
     },
     "https://kelee.one/Resource/JavaScript/NetEaseGodlike/NetEaseGodlike_remove_ads.js": {
       "path": "Resource/Backup/script-api/57cfa1b30d9eed78bbe33fe52171c80a4071e3aa1a0fb99dab3be0eaa2ae64fb.json",
-      "sha256": "f2c56cb3efe2e1ee3f74502119d74169ceee84ee4f4f4e890ec9c93f65d7f83f",
+      "sha256": "db1244edc2f20642e44bd24099ddafb3c43f71f9c318c9bc4af3329070ccf632",
       "sourceSha256": "8e6d18a4deaef423190f51e9cb91c643ece48cd773d07c29357ed8384773bef6"
     },
     "https://kelee.one/Resource/JavaScript/NeteaseCloudMusic/NeteaseCloudMusic_remove_ads.js": {
       "path": "Resource/Backup/script-api/ca76a0fcc7d8aab871c521bd28b551d5ba5bedf2740d3155330dbb966ed7f411.json",
-      "sha256": "c91ae2240c59f92b5509c8e29b49be9edf8add5978755d88b70091e62b6878b8",
+      "sha256": "3223f9179c89fc6b9fb9adb2b261dc76b6abae39f01cc30d640a997407ef5849",
       "sourceSha256": "20c13c7c598b8e59058493e2143d5c62d27ce6ac2917d04c400fa16caa092528"
     },
     "https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js": {
       "path": "Resource/Backup/script-api/8fd25976d1ef634ab98bb87ba027cce4800a827772522490aae5361c0d2b694c.json",
-      "sha256": "39c68ef2e2b25110eefd78ed5687519c1bf02d6e39f4da9e0e1542134f72387b",
+      "sha256": "551871b0af32f2040c5a863c1cd2a25095e3391e116fc7989a3a849e3c7722e0",
       "sourceSha256": "9f03b3b39c8b6d576b1ac18cd098ef5fd08c17fb2be9044f94344ea3a3ff4b8b"
     },
     "https://kelee.one/Resource/JavaScript/PICC_Insurance/PICC_Insurance_remove_ads.js": {
       "path": "Resource/Backup/script-api/a09af5bf8168156cc91f95255ba73d64cc3f55670713dccec6cd874e4fdcfeb2.json",
-      "sha256": "d932f68cc139aa24d0d92b365b77261ee4574bb35c27d2d96683a9dcf30451cb",
+      "sha256": "6c067cd0510635cd7482dbd4f7f0816ec6856344b6bb0e8035325f19d7712598",
       "sourceSha256": "c9783faae5d4d945eafc44913ce55c26c1bf827f3145b5c5dd1b2daf4e13ffb8"
     },
     "https://kelee.one/Resource/JavaScript/PinDuoDuo/PinDuoDuo_remove_ads.js": {
       "path": "Resource/Backup/script-api/ea8de3d9034591b64f4f58078f5af36133f9b76e0c1520d1b1df429534a7d866.json",
-      "sha256": "2d5d0058a97e143323358174ab09f50bf0e33bbd483058725cdcd827cf89dc49",
+      "sha256": "6c6eeacb2dc3950c00bdbc8ba9eebbbe9867c7669cbb6e7fc98efa089e1c19d7",
       "sourceSha256": "63af2e44da24da11f5c1bc930aefdcef2ce16aa65293be3e80ba8520d46e9c58"
     },
     "https://raw.githubusercontent.com/TomCatXue/MyCookieCenter/main/scripts/tools/pixiv/pixiv_enhanced.js?v=202610071014": {
       "path": "Resource/Backup/script-api/c29ecf653b69d224f412b9b4b229eadbc789c8b181950eac0ac70658859b17f6.json",
-      "sha256": "f58a8a3312ac0d76ae4586fae7562a68fa81ebca51b2b6969babfd82f4c4cd35",
+      "sha256": "7c0bc45a9a077ac5fade8d8f6a642d5ae0a438e44676e8974e1c20aa38aab28c",
       "sourceSha256": "b61d3c03029a71983a7a41c08b8bd1458f6e38f14b9f735e6a2294dda5739aec"
     },
     "https://kelee.one/Resource/JavaScript/PuPuMall/PuPuMall_remove_ads.js": {
       "path": "Resource/Backup/script-api/15d2e267fe35d5112fa56323445448f985b54383203da482b346d9ad243a6109.json",
-      "sha256": "1713300c1ed091f7c33182b187e40c87ffcf6394defc670468b37bb6577d91bf",
+      "sha256": "f86d138137947db5dd1941ded39e32506fa685e0aeb31148f2ba1f614feca85e",
       "sourceSha256": "76659d365b0da3eef1ef54cde44254f9d951799138af52a3edeea2e29a43f83f"
     },
     "https://kelee.one/Resource/JavaScript/Qbb/my.js": {
       "path": "Resource/Backup/script-api/31c8920e3bcc5e878f941d70ef6380df9187141961e1559bbc858fa0d101e675.json",
-      "sha256": "b73cebf25e1fd57f360c350eb00e8b066e94c48dff860acf791dba6e014e07f2",
+      "sha256": "8d008d6d931048eb5f042cc2159b2b88b2d8d74c0c62cf41ea1865a79e7305d2",
       "sourceSha256": "11f97d5614fa9e1476f0f0993908cff31cc6137a7b10d2bbf2be10f0b28210ab"
     },
     "https://kelee.one/Resource/JavaScript/Qbb/homepage.js": {
       "path": "Resource/Backup/script-api/06a7c2ac7feb3dfb7512f21cc2534d0b5ec64cb9cbd428b14006f8c50a457f4c.json",
-      "sha256": "69fa2c541b9f984e5c121a7b47e1a3723fbf4cd70bb4e79d5424bdafd00743b2",
+      "sha256": "538e0929c1e87476d4b02ed5c49d71fa47547351707271bd948874317fc8f64b",
       "sourceSha256": "777c52e0bb54ff3982350f826bc9a3cdbddc74538c6411e87cd050e775e7548a"
     },
     "https://kelee.one/Resource/JavaScript/RedPaper/RedPaper_remove_ads.js": {
       "path": "Resource/Backup/script-api/a29fbc10f00cfc6e523f64f7c69568bbbcb922aa719d86ad4f453fa52abd5f56.json",
-      "sha256": "a8579f14918e861b3dc2a646664c9965359bb5cf92997186a84fd96fcb1b808e",
+      "sha256": "eaa6d7d3f380d8621c2a5a37f56fd4e167c19616ff22b75347f5e2e342ba5e3a",
       "sourceSha256": "f7b637c9c738b18f72dd61824e25b06dad7d55553de204daad0dddd675a74f0c"
     },
     "https://kelee.one/Resource/JavaScript/RiskBird/RiskBird_remove_ads.js": {
       "path": "Resource/Backup/script-api/bb38729be757d53fe5fafc4d943b45c861b9d0f0f7ee7bf0c0e72ef86030fd47.json",
-      "sha256": "a20c025129245c559e94662fdfbbe5e2d60f44e2c19cacb836dd4419f83e7899",
+      "sha256": "3408d76cb6c90d149711ccd94dcc1a3ed31136cecc051f1250739f25ccbe6b03",
       "sourceSha256": "56a1c10a6422423845a8486fbc5deff60f37e6aa9e40fc439317e7e2c57fc9e2"
     },
     "https://rucu6.pages.dev/Scripts/amap.js": {
       "path": "Resource/Backup/script-api/ef6210742aaa5d3a478f1d9e0c36ac1c706bc8ebec94b7195cf5e8721f5dbff0.json",
-      "sha256": "11219aa9c262fb7e7fc70103729e12f019921287356c185679c6c2197cd2586b",
+      "sha256": "ec603ee323c8a619ca954ede249b2c09c5bc332597365192591f67ce58f0f2e9",
       "sourceSha256": "90be0dca3a927df667c805470c31f75e2abd9a7d1c7903dd40e17ecb12c54004"
     },
     "https://rucu6.pages.dev/Scripts/pinduoduo.js": {
       "path": "Resource/Backup/script-api/3026ecfface77c7ebde1b53ef6df09c84184843aeb3744dde1d75d3672a0798c.json",
-      "sha256": "e25cca05ca6763b3994eae436468d00f6e0f1f02b1d12eb706c3a3becd7f4431",
+      "sha256": "212a6d67ede3cb9db725d18974cae3fc346239dcd772943b0bdba4bd5c52aef6",
       "sourceSha256": "817d4582c77a063e5716866d19aedc4944170996eb8a7ff3bf5392bfe9053dbb"
     },
     "https://rucu6.pages.dev/Scripts/youtube/request_gholts.js": {
       "path": "Resource/Backup/script-api/0b8b47c8cd9841e2029a314dc44e27fb7918541d2f71b501e659cddd3b091124.json",
-      "sha256": "d3ab3e90dce8635fb9967062828c7b83da1d521cf0e743e7e6215d682944fbcc",
+      "sha256": "f24a80989fafa4bef8a16cf94a2669f4ed9b4f4a3c241cfe6f74f6e16cc6c937",
       "sourceSha256": "b1daa514032c933b4942f7b72d5c2b5f4c95f4262592d3f5d1fe42750cd29061"
     },
     "https://rucu6.pages.dev/Scripts/youtube/response_gholts.js": {
       "path": "Resource/Backup/script-api/9c6f6b0f1d9d5fa8ab88ce1ee561d4fd4f25f1b234adc11e97613806eb3fbebc.json",
-      "sha256": "f853adcb93f1838b6703612319d10f02920bb7e2c22f362029a26b6648b8885d",
+      "sha256": "da0a1cebe83a857ef28069f197151ef43ddf609591958c757dbf6402cd816ce9",
       "sourceSha256": "4ccd4abe2cd929ea651ac6e2f03ebadf66a7d5c7ee443caed92c39d5c32a70d6"
     },
     "https://rucu6.pages.dev/Scripts/youtube/key_gholts.js": {
       "path": "Resource/Backup/script-api/50fa8c762b1397a5774495e7b15dc311f4892dd6e4de1b2f4201cd4b640bf86e.json",
-      "sha256": "4ffb3eb1b4ad9fafab2aac8eec40bcd6c6f55462bdfcc9b12a11364847d80738",
+      "sha256": "a44b06d5deb491366627b10b0ccd93837919996b0f9280712173dbc0538bf6d2",
       "sourceSha256": "39e3f12a9e31ff74c2768cc467bb989188c212b5dbd5cbb8743f62d961922ea1"
     },
     "https://rucu6.pages.dev/Scripts/youtube/ump_gholts.js": {
       "path": "Resource/Backup/script-api/34e7811759469267add028ad0027db93749f300aae286630b43dae441adbd2b0.json",
-      "sha256": "7f4288ba6c4723da7d3b8623dcab5f1358eba0eae8f54d1cc43cee833b7b591a",
+      "sha256": "06a2013cd61e7413a7cff323356ff5e1025a309100a0663cffc1380f05dc315f",
       "sourceSha256": "ee4f19c5d19deb3917b1f29674916946b8ba361e82c45adca32e23164ceaae49"
     },
     "https://kelee.one/Resource/JavaScript/ShoujiDesk/base_init.js": {
       "path": "Resource/Backup/script-api/20acddd675b36fc196a6f0acce46be660b69b1bc5e112299e344f11b590aa215.json",
-      "sha256": "48fdc20e249b8be5aecfcbbe0da8c3fedc7cb22bccb1c8c96f613bb002d713fb",
+      "sha256": "65bf0051dd08dd18438f08940f77090c95b7724072bfd4e7faedc958753d120f",
       "sourceSha256": "d588c5dae21ce09cb39617aa7abbd01cf976ec148083b45fc261fccccd67d68d"
     },
     "https://kelee.one/Resource/JavaScript/ShuQiCenterReader/ShuQiCenterReader_remove_ads.js": {
       "path": "Resource/Backup/script-api/b3647f0da5e106d628c89ad7caea9a47857fb5e5cc61738ad6fdea0b5ced5d64.json",
-      "sha256": "518e4fbd55c63c121dc42d59d86f7d80816dca8b802de72a54cef28e02908cee",
+      "sha256": "389720d7d6cb518df97063725706d4826d15b0d3c6da7b03ec48a627c76d4728",
       "sourceSha256": "aae03c4a577abdd6a9a77069ce6d16b327e5821afc6a85c8b689dcddf1b5f976"
     },
     "https://kelee.one/Resource/JavaScript/SodaMusic/SodaMusic_remove_ads.js": {
       "path": "Resource/Backup/script-api/2531c9fe6208f11080a7aaea570b93689779a9e4cbc9ab7486f8a7df9fe2603b.json",
-      "sha256": "5d6e146f3776f1f4ec928b14f0c140f4f1cc5368bf637ddd335f0031654f74ef",
+      "sha256": "79131e307e72539e19cdb920fd9b9bf51eb25743674dd8c8c6c226a822cd890f",
       "sourceSha256": "f7a929bfe291b2433db14a2a7ef99b38e92b1f21eaed847e05cc803269eddb93"
     },
     "https://kelee.one/Resource/JavaScript/Soul/Soul_remove_ads.js": {
       "path": "Resource/Backup/script-api/6659152f24c8df86ebb1140b449cfc732b2e6b96665edeceaeb9f48db65a8593.json",
-      "sha256": "125dc7b54a68e71318e4ddf02d5400b3fa5d8fa8df009a548c0da0dc38a60eb4",
+      "sha256": "d56e4c2c21798abdba180966832f0e54cca72c5266a344ad53b2276b18cfd4b6",
       "sourceSha256": "5a9a02b54668a58dbe2942d39eca12612b2f4669a6cd4fe2847032cbea753d0a"
     },
     "https://kelee.one/Resource/JavaScript/Spotify/Spotify_remove_ads.js": {
       "path": "Resource/Backup/script-api/4e8dba2035f28ce79da61945367d8ed2fb4690db139af70bc7a2f00f95c486c0.json",
-      "sha256": "38b68945d14d687385d9d42b1f687d57d0fde291f46a9f293b1e459ac977bacc",
+      "sha256": "8b9dce3850df614601462eda8f44c37cfb3f4c5913100ef3a97405e7726ddc8b",
       "sourceSha256": "198cb5869d9710c56ed1945156c8f6227fdf9d19da38ee1c8870f4d72f26c6c8"
     },
     "https://kelee.one/Resource/JavaScript/TV_Assistant/TV_Assistant_remove_ads.js": {
       "path": "Resource/Backup/script-api/6df6a61bc422d4a67151fa9293d0d943ce0c2d40dfa3451792921b5be1d31b36.json",
-      "sha256": "df4609c0e83ede3eadd5a7251f25a22495d87c853449558ef22c19f3987e12b5",
+      "sha256": "e900d104961d0a4093556bfdf7fe695073d7faaf3f87df146d421cc5864f74ad",
       "sourceSha256": "a957df12593369f6ce111a79619ba88cdad4870aa18b639ff1942a92d441bb18"
     },
     "https://kelee.one/Resource/JavaScript/Taobao/Taobao_remove_ads.js": {
       "path": "Resource/Backup/script-api/9d853d73b21f0772c345e6f6628d3ba985df3ae36806f308c2d9a30235d60f5b.json",
-      "sha256": "47050bd80f45175e2901eac823f50426c6ef435e40c07b74e626b57941b3c400",
+      "sha256": "063458c61eed34d0bc1540985a1dffae8fc18b8ef427cc48355363d0b6639a83",
       "sourceSha256": "3ccb2093683d84a0085a24506fb04d3ac87713e8e1bade764711816e8908d903"
     },
     "https://kelee.one/Resource/JavaScript/Tieba/tieba-proto.js": {
       "path": "Resource/Backup/script-api/3a02881f13f2cc05630d750b53d6b0a3484c5fb25b305021aa845ecea9ea5d8d.json",
-      "sha256": "c3588749d214f7d27a32e17fb628f58222b814d2657d49fd1caf30f46c7f4b69",
+      "sha256": "7cd41f8e4f772dcd40280635f9dc736e831c8ab76538b898edfe8439a2733e0a",
       "sourceSha256": "2ab9006be369e1083072ec49f4163245d8c385b0f3acc40910c2922454ebbd78"
     },
     "https://kelee.one/Resource/JavaScript/Uki/Uki_remove_ads.js": {
       "path": "Resource/Backup/script-api/6cf1d356d9f8222e430e69ed1fff490ceef3692740e272ad17bad15d4be18aff.json",
-      "sha256": "4617e49c63f1d8330377734a7bf5121abf265574f64133b00a3470452987e6df",
+      "sha256": "5b4e1bfdcac1dfd5775ac1db09172ccf05b92301c355bf5ecd11b6eb7a516b62",
       "sourceSha256": "af15371ec2946805b9f3f2af8a13f807434a05166e4f76178a8e28fdf645b720"
     },
     "https://kelee.one/Resource/JavaScript/Umetrip/Umetrip_remove_ads.js": {
       "path": "Resource/Backup/script-api/b1634469cda4f4eccbb9270d75bb867ac7185f8823da1ee6e9a1b86c292ba05e.json",
-      "sha256": "b3fe9752c93de4833c3b4df0381425ad7e435f44c696eef0f4ec5b0cc1eb35b9",
+      "sha256": "abcfa1216be32e056935fcc0c25cef5ce9fdb13fdbfbdfc5bd5f5fa23a2218d6",
       "sourceSha256": "c85b417e388f8fc8bbb0eb396db4869abe6a51e078a6148baa41bea379b5e2b5"
     },
     "https://rucu6.pages.dev/Scripts/baidu/baiduNoRedirect.js": {
       "path": "Resource/Backup/script-api/bbc2d768f38a841840d4729b5086ac803121a5730637f841316ba2f08c3e18a6.json",
-      "sha256": "6e511c01d56f92dc73c0a657e97e1bc89e14bbff29e68bad5d042bf4e35c14fa",
+      "sha256": "16f51f4df49bf315860b3978f3ccf28da84a47d7a1b54de25663179f5e6c86b2",
       "sourceSha256": "5d8b05231b6cfc7d635ad300611e357f27d2c247a3f012acc7a7464a72e0ee82"
     },
     "https://rucu6.pages.dev/Scripts/webpage/baidu-index.js": {
       "path": "Resource/Backup/script-api/c976b51fb013a428a3e881edb6718bc9291acf6c2b795d5f272d98dbba3878f8.json",
-      "sha256": "fbc38d11233a10ebca482a9168d71fd01f97782ee9ff2de22511defff0213972",
+      "sha256": "4f4c3b340303b905c54dc7789554624cee5787bdebf0fad497d9d82f4bd6df83",
       "sourceSha256": "34ad9b82cb0ab2c2f86c1a1e8a1fe08d5f3fee564d90386fd4581b6f77712517"
     },
     "https://rucu6.pages.dev/Scripts/webpage/baidu-zhidao.js": {
       "path": "Resource/Backup/script-api/12e96fd6df84d18b01aa4722549a0527f13f23fa112c0f24ce5ecaac927bae10.json",
-      "sha256": "cbba55da00a1356f5cb5824ed2c2782169754a34e3be6a281513e97db782d1e9",
+      "sha256": "f3cd8c17c80be829968ff52a18023a0685df86b48974b1ea2798bc6ced007afd",
       "sourceSha256": "74ef3f15baee30de1677e94d00a7fce99011346181366affc7ee4cee5e0ea628"
     },
     "https://rucu6.pages.dev/Scripts/webpage/myblockads.js": {
       "path": "Resource/Backup/script-api/75448e274a792df0699e55ecce4f9bfb1056f54b9516d204087e1f61d46608e6.json",
-      "sha256": "9ae53ca7f4107b1d3dc4d8d8072fe319a29f03a6eca701f0071cf3b7c635f4ac",
+      "sha256": "7bc5de211ae441933869ad8721f4720ed1fc9d4e90755aaa721853d30a74d2ae",
       "sourceSha256": "8fc43666281fba985e5c5fb5f79bf65e0df75d637206de216386b0ef20fdf95d"
     },
     "https://rucu6.pages.dev/Scripts/webpage/52ywy.js": {
       "path": "Resource/Backup/script-api/24bc13763e144e10fa2864b8c0239419987b1d1adbe8cd3ed6abbf7624ca0b19.json",
-      "sha256": "64d6ac38f269483a9649c3a73bb003416c44278c52a140520d0c4cbb1b252ce6",
+      "sha256": "442561bdffc48c85b441ff95439bd732a063221c9f965042d7bf571f9715662e",
       "sourceSha256": "2051c156d4925925782ed34ee620d1310e6cbd86ec27815e1a39f2dd13827afc"
     },
     "https://rucu6.pages.dev/Scripts/webpage/zimuquan.js": {
       "path": "Resource/Backup/script-api/20f454d55c70ecb70ff6bfcf2b6a47583df9fd0fd6ce1e3e4b4a9ed7872b19d4.json",
-      "sha256": "b8a92dfcaf968abc4f60c98eaccd214e8101e3d7c01a07bc76bfef8de2404711",
+      "sha256": "2701aecd443584c7187a0fcee7aea323f90ff24c6d5e96b061474968091b3768",
       "sourceSha256": "dd3c3ca0ca6b25f0ffecb61c195837821e9b8c3ab08b6f6f2a6de018e6692c81"
     },
     "https://rucu6.pages.dev/Scripts/webpage/ehentai.js": {
       "path": "Resource/Backup/script-api/0ff77e6a08bcc0a1faa6cdde63dec8da3c3c46cf097b6f1e9df778b111f37ec3.json",
-      "sha256": "2657450baab12a4747903ec0f41668be319c07ec21a789d601561a1d0ef99114",
+      "sha256": "a874e5b3b0cb70b2590bb63c5ed6b1f5a45eeb43caa0ced0760ec1b0b980c393",
       "sourceSha256": "c0a40ce4101392ea9d53ca2c84425f568505c0d2f4ac8293c9c46739424966cd"
     },
     "https://rucu6.pages.dev/Scripts/webpage/hanime.js": {
       "path": "Resource/Backup/script-api/ceb4bbfde63b333edd46f20884f99c7dff7bdfd7ed5acbb49a8faebb76a9ec7d.json",
-      "sha256": "ba7506cb8a6b0503eb89bb96dbb51357d9675ebfda5201f9f99c1a7a047cb324",
+      "sha256": "b19ca7d493a4c4498121685d255c966929c3e7d36e9f3398ce91a0605f8b4fd0",
       "sourceSha256": "08724fecc23a1150d6e5fc3d4b38d3e6a89d9d356bd5eea8c6d37a732836c6bb"
     },
     "https://rucu6.pages.dev/Scripts/webpage/missav.js": {
       "path": "Resource/Backup/script-api/a7046a06dbbcd6c256d12fb312ba8d1dbefe59159914473541c874869071d160.json",
-      "sha256": "de7f3d945ff13c8d5343a88738d83fa93ff10595b9f20b1fddd1b9ce921d4a7f",
+      "sha256": "dfda3e77d9ef4836782ac61a458fda51b18f194346cbc010704a6cdcf0004c40",
       "sourceSha256": "e5b92cc3652fd59b6702cef572f43a8781bca3e71cba6bab47fd29d541804ad5"
     },
     "https://rucu6.pages.dev/Scripts/webpage/pornhub.js": {
       "path": "Resource/Backup/script-api/a8d59ed8d2ba67d07ab534966aa75f8c25a234e06e52a28e3dd497804082b745.json",
-      "sha256": "8255cebbcf33a09d878e9e5b6f0b9c088b411848b09b470190e36e14fe760508",
+      "sha256": "4a39246d0d1199a1101b24c2b7121d9900f221ec1eb18f22cb465491011957ae",
       "sourceSha256": "1dc4996ee6f117227e22caaf6c7d2f740361a2e7bd77afa301403743f93b792b"
     },
     "https://rucu6.pages.dev/Scripts/weibo.js": {
       "path": "Resource/Backup/script-api/5d99ca157433146a14e01d1395a8dacf844320915e0b0e28402963c27dae8715.json",
-      "sha256": "62a283bc75db96875d3fd62af9a7fc8d7ca6eaf1ad0f13c104343ac2e08a952a",
+      "sha256": "0c6f2d84f8eec35cb69c5db05f9c5f0585f183ee4b7ab7fc234ab6f038baeaf2",
       "sourceSha256": "7498cbef4c2f3293afebc3a686faec63220e27a62cd16303c18db2371bf529f3"
     },
     "https://kelee.one/Resource/JavaScript/Weibo/Weibo_remove_ads.js": {
       "path": "Resource/Backup/script-api/dc0eef05c006b1a859e7c12eca652571c7d3be344642311d4ec73e301c49c7e0.json",
-      "sha256": "cf7c399a0fb9b636cd984f64c5d941106fa7ff968c8e06b33c0a2072068c9ba8",
+      "sha256": "5b579a278d5ddf6ed3b5db8c53726d748e43175b8525a51b685970ed0ae7989c",
       "sourceSha256": "026ccd766a53f744c2bf2aad93c4deb6f207defe4daf973178bb3e4193c997fb"
     },
     "https://kelee.one/Resource/JavaScript/Weidian/getAppConfig.js": {
       "path": "Resource/Backup/script-api/fa4881c9a0556a343e7a74692a485aafdc10f480c622366b0c2863f573aad246.json",
-      "sha256": "0f48e26f6d2a3ac58b27a22e64051f17fc42fabafee5c51b01fc85baabd51e8d",
+      "sha256": "6b2e37623af009aa137cc383fb22d1e5cf79d2a62e6673ca5c0767578a082b16",
       "sourceSha256": "5dfa32387cc7d12bf1bb517067b2abc8a2e4d3eb83049c98cdcafed2857b24b1"
     },
     "https://kelee.one/Resource/JavaScript/Weidian/wallet.js": {
       "path": "Resource/Backup/script-api/99a63d4a727cb3164a32cfe60d988d8583a7d6c3e7a6047f49c575ada7239d86.json",
-      "sha256": "b8215f0784fbed854a4c80ea1ae42a0b85ad155b67fc56e831c3786299c57a93",
+      "sha256": "cebba01a0b899f14323066dc06d7897c2b9a2eb1a21e13face1f4f78b4ec0fd4",
       "sourceSha256": "58668f38684df224e19d4f9c78e37c29c13c151359e1d9ea03f1138d0ab32b02"
     },
     "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/kff/kff.js": {
       "path": "Resource/Backup/script-api/91a927bdcefb8fee35204f640fd83b3aebe51781bdf13cf3e5a8c0f6995016cb.json",
-      "sha256": "b8e3b012f9978fe47a022cf0284835cec364150cd16caf1ccbb1fe62c54e5b75",
+      "sha256": "5dff7ce5e464ccdf206208c7c1d852162a8952e5ff2f846dde298b7e00a0d241",
       "sourceSha256": "8453c73e9412fd99396afbfea14e7d26c46936da1650603b6f2433cda18cbf2c"
     },
     "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/ems/ems.js": {
       "path": "Resource/Backup/script-api/5249430bf536868640b68fa59c85fcc3d079650a10f772715c2f03b0989db4fe.json",
-      "sha256": "aa83d46f623aa087f3a3e70f79e71612bb0ae6f3a1f24dd46074350de588bac6",
+      "sha256": "fa50bf7d25423bc0775d3e934809bb74579f149ff92125a762d327ed58f78f61",
       "sourceSha256": "2208e4945d8781e5bc9d20a436fc141629a7e4dc9fd516f9fe917196010cf5bc"
     },
     "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/xiaotucc/xiaotucc.js": {
       "path": "Resource/Backup/script-api/0a7f5cc6c9c50017348c32ea6516a31a639b13ad827195d3ae827d010bcec8a3.json",
-      "sha256": "cac0b987f6c72d4a743b09fddd4e51fe1bcad9e1e857b6b89706d494ac061e54",
+      "sha256": "bb24ee9928a0daf6ab6514abcbb578d6a37e6405a576b6473bf6e8471c0a6975",
       "sourceSha256": "a10131a49267ce2cdd17c7c4d783eb64c8aa943b83ee4dcadb846ccd2c4bbb1b"
     },
     "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/FamilyMart/FamilyMart.js": {
       "path": "Resource/Backup/script-api/630feb4741dba1ca06786d065d382b3e5a1cb8e27d7ac943b86c3075c9104e7a.json",
-      "sha256": "7ca20b73605a1cdee2a163b3d5ddd726bbd474ecaddc27905ac36dbaf040641f",
+      "sha256": "94922e4aac155039d5936e29044a48f3389b6b6d4a2a19d30ad2239083c43e11",
       "sourceSha256": "e25457f43eacfbf27ca8229445e69f60f7562ece723b5ebaf07969c0ebf75e1c"
     },
     "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/lawson/lawson.js": {
       "path": "Resource/Backup/script-api/d962d63c7caded9737ebc8c8a7e8e6715d54d3ce75b97a51d0c69548414aa0e7.json",
-      "sha256": "3dba4d7c659ba24ce42d5949df4830f632dce99a1766f7c350851345811e134f",
+      "sha256": "d5394b5987ce3a6570327ffa3a7507b03bbf35e1c3a8401b4c1a9cbfa2dae951",
       "sourceSha256": "3d57d6ae9070934eef3513e2a4b640fad9dd5076fbbc6c471994bd3d790068f1"
     },
     "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/chayanyuese/chayanyuese_remove_ads.js": {
       "path": "Resource/Backup/script-api/0758ac0de9b95a5cde755580afd4aa5646e3757b9060354370baff0747551f4f.json",
-      "sha256": "9c9a6007572beea453d00e23e2485f7a14d0dbf0bd89297f247d7fa9db4c08e7",
+      "sha256": "0afa9453f04b8da3d0e756732e7702795efa3c3d6cb320eec4726d0513a91c73",
       "sourceSha256": "4b7f857caa810648f7be584e916ceffb9c12dd3b2ce7766ed5bd605646e2a4d1"
     },
     "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/coco/coco.js": {
       "path": "Resource/Backup/script-api/2dc6bc77fe5244bda0c98c82e311ddd723f3c98686b111fb23e51dc004a78566.json",
-      "sha256": "32f3b971169cfe2366fa3689bd0ddcb9b1a72a5ee9bfe8b6f1e5fefa8b5dc8a3",
+      "sha256": "64a400ff506ecb1724b671b063e392199fe6335d8aafa0a190c20508d6ce6d1f",
       "sourceSha256": "dc9a1915eed8f6f760a8f3a03f5e2f5a0f346373693ae4ac2e0c5dbd90fd46b3"
     },
     "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/qingju/qingju.js": {
       "path": "Resource/Backup/script-api/c14e0d6e985b83f18894cf4f1d1e275c60c5e16d30819a492e3737a918c2da83.json",
-      "sha256": "4e6afb5c708a420b357943b04fe98770a3464ad5c81937a0c1f1c87e7e060796",
+      "sha256": "acec8a4bf12fe62c100961b6072b6f9c78100cad80b5cf4187e9d37b8dfe7aa4",
       "sourceSha256": "8664e7a22b21aaa8546ec167e3a43fee7ebd2c00552a126212720b09a4819bf8"
     },
     "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/alittle-tea/alittle-tea.js": {
       "path": "Resource/Backup/script-api/291682ce6dcd7cdc5992a6d212646c6d88ccdd953f31164230b8766462a25642.json",
-      "sha256": "1fd929315bd57c4d8f89edcfb05cc64381dfe8dc3045c3cea7958b828ad44569",
+      "sha256": "a7a0fa943f0dd20ba96e58b2382952b4dda887e6cc9a6cbc8d818b3c6ad972ee",
       "sourceSha256": "c765215071712fa0c0c0ef3719263fff81d4a1ce0189f8bc0861aa721657a44c"
     },
     "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/M_Stand/M_Stand.js": {
       "path": "Resource/Backup/script-api/1335e255edeb666e0b048b689fd904157a80ead9ea095426900489b31a3d174b.json",
-      "sha256": "9cf70a69bfa088e4ea81dda63571024747f7da26eab3250e9b722034edbb977f",
+      "sha256": "7f0b2c9dc205f4248e6b23cb81372458c914e6cc77aaa00292bcf28669948fd9",
       "sourceSha256": "5d6f163842ce53eb034fa01c244f6482fedd2f5d56b7c206c25d6f11c21e805f"
     },
     "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/T3/T3.js": {
       "path": "Resource/Backup/script-api/1dc1411467a12659a0ec4f1d6ca2a5546062530acd2e1015ca7fa7b8919edbc0.json",
-      "sha256": "af6fa9d11c4e7a4b64ed43600f2196e76ba687541895bc2ba412750fa79c653f",
+      "sha256": "be832579ebaf752d9bd5464174fa0d85ad11cb5c1f62c4799f90e5a1e8d07603",
       "sourceSha256": "ab1ca9af4dd9b294f585335856de51d6df2b61c31d9a3d1982a5b091355da25a"
     },
     "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/ming/ming.js": {
       "path": "Resource/Backup/script-api/81bb9080036abfe69470936e5bc185d55d4582ca152a0ab7788ac7f749e6c222.json",
-      "sha256": "5810b29ec6fe4558d50b72b8febac41da15543b60f9203f0a4ed84a2e26d8bd7",
+      "sha256": "ffa550495e6db7b7a09a379c289fc30592b5e0b51c603b1f26a7b99460e93675",
       "sourceSha256": "bd0f4e67ae73fdd083b10c1e802912d8c9ade1b2b14a0dead865d7af0b90d991"
     },
     "https://rucu6.pages.dev/Scripts/xiaohongshu.js": {
       "path": "Resource/Backup/script-api/14eae81ebab220de2e66575155f16563680ef71c47425cb64d5daf1ab5953e63.json",
-      "sha256": "69ec5f79e5868df980f58c6f04c849f93cd8c393477efee7ba2ab95cc964cb57",
+      "sha256": "1cb155005d1ae5035b59850529189801dad562f75bc1beda4d89148b7e492185",
       "sourceSha256": "c38d1edb0b923f15149741591a818e750e201be38994efcf897a7d52239bff97"
     },
     "https://kelee.one/Resource/JavaScript/YouTube/YouTube_remove_ads/YouTube_remove_ads_response.js": {
       "path": "Resource/Backup/script-api/0e06084d89adaf0d3f92e233b0f9f95d1aae4c373095783b586b5128c12dc025.json",
-      "sha256": "da875ecb25e42eb1e6c35b3eb070b2a162e575a8b7d12f358814ced658f29e80",
+      "sha256": "0ad83750008f53d1b2c0cf2d1efd20f651e8aefd8101916c0e33738961d15313",
       "sourceSha256": "b926d339069a8f54e84bd5d29e8c8364ee9ea72bb170197e281b04eda49e3568"
     },
     "https://kelee.one/Resource/JavaScript/YouTube/YouTube_remove_ads/YouTube_remove_ads_request.js": {
       "path": "Resource/Backup/script-api/a8704cadd8f8f0361df0ffede9fed6cd8f1ac17fa5759aba929a79e44564dbca.json",
-      "sha256": "8fe5869a2efc8cc87803552b6bf2fffeefcef18f911a9ad6ffa31ec5ef09804a",
+      "sha256": "ad0ffa118064fb47969077a417daa2f3c56f0a915723c610b91139687018b7fe",
       "sourceSha256": "af0646890f9847aa4576181b0637e31b86a3e2f6dd4d2041a56ffa971aacc10b"
     },
     "https://rucu6.pages.dev/Scripts/zhihu.js": {
       "path": "Resource/Backup/script-api/95fcdbecafefaae4fd408cc5fd876baa33bb3eabb0662e49dd63fcc1ad3ef9c7.json",
-      "sha256": "9aa09072c086927ceda41947a85edf0e22dc6029d865e57d6801c0d926f92668",
+      "sha256": "1f850400a0aad9af9dc60d1a977f49c0d4c7070740f67470f4774ad4b8c178aa",
       "sourceSha256": "f35efe4a539e1c69709ceffdcd220afc7563faa943b369ebd52238cb387f29e2"
     },
     "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/amdc.js": {
       "path": "Resource/Backup/script-api/ef90ca68bf9216b4289ad0997bf4b0c8bf5b92b79d4e419a1f206cce601dc019.json",
-      "sha256": "78fb457cfb1df13a1408481afd38a9d02e2d272b737d53926ef2411e6af769cf",
+      "sha256": "694cf93f223bb9e2c0beac2f3304840889067ea688b19b687dbbe3f25f95a418",
       "sourceSha256": "8217f2150f8d12ae04d2c49b5da0a838e83f4de68b34df71c2da16cc1267898f"
     },
     "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/amap.js": {
       "path": "Resource/Backup/script-api/b2c0f8aafb2f13cdfa860e5c51d6ccc1440e8f05ecb2997de11e55d0f8839579.json",
-      "sha256": "f3113e3da6b742e063754b0fe54a498eaddad20978798dedaeeac18ccb62c21d",
+      "sha256": "49ead8cfb3c58a59a7bf23c13c29438ab0ca3833416890cc7cca6f8e1c15da91",
       "sourceSha256": "936aaaf97cf69b8a5a25ba49303c0470a16ac48851e8bf58080ff9f129ff7c48"
     },
     "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/zhangshanggongjiao.js": {
       "path": "Resource/Backup/script-api/2ca8a4753be1721336dbf6e8854ead24189a5edadde086860ad2ce70f726578b.json",
-      "sha256": "42d2d319098f6a44593811212da595b49cf553d81519c4b161d1ce07d1a2df4f",
+      "sha256": "fd2e7af30898ac75e3bdf955066bef9bbbc5adf5c8c9d64eee9391818843ee49",
       "sourceSha256": "0a2ebfbf41ed4b7dbd39f4aa50616ac42cd59d5eb0baa026fc1b98e7a4f5a8bb"
     },
     "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/applet.js": {
       "path": "Resource/Backup/script-api/a94e56a8e11325bbdd4bda192c88018c46e23ce2b741bf84e13d75184fd0cd37.json",
-      "sha256": "b225a954f6fbe3e37257f42c3a8face9c11e3b7f7fae8e40e4b3a16f52f8ce91",
+      "sha256": "ac344b2b3946480af2266dbca39963fe26956117790fc3b134b16723c3f6ead0",
       "sourceSha256": "0e2ffdd010b7f1ee38c526af5b7842f8fe3af89bf7ccd298596025baa4471855"
     },
     "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/bing.js": {
       "path": "Resource/Backup/script-api/9894f7225d37af8620ef1d5e6b3d05111df57d88510f44ccfffc6b7b459c1c40.json",
-      "sha256": "8583d158cbc70a81df4c8962125c2b1acdde94542fe3551211b3ad2b40780d42",
+      "sha256": "a06f6ecd22d5f004ee8a773242bca705e5495a12afe48742a17f086dfa49ebb8",
       "sourceSha256": "12ecdd295de9c427dbd0fbed9d356d70e6b5c0afe0105fb7f678484b4fc98ce5"
     },
     "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/cainiao_json.js": {
       "path": "Resource/Backup/script-api/c53fa988e9de2faf0062a2a0c7ff8321d6a6b63eef7e3d0ba577da4358b27be7.json",
-      "sha256": "ec8f11345b2fb039c17ce43c0132f06a54529f55fe18ed02b95a9593e5d1bcf0",
+      "sha256": "5adf3768e2f3b8ac605e223b6129a3862b4016fc15040296d6d189a9777d0ea4",
       "sourceSha256": "508701b04e3289d37d9baa649dce8a317329b21ebd4433872dc7906866bcdd5c"
     },
     "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/caiyun_json.js": {
       "path": "Resource/Backup/script-api/1151295f67760bff51da72f90c3fc330954298c86b58a358caa43953d4f5f84f.json",
-      "sha256": "908b8a33e2cad46fe732741b7969232dcf8b0e24d92f2ef33394e08e668618a6",
+      "sha256": "54f8e0ded78654fa7cf7e2b8d5fe35a152f88604dffee08799bfa215150cbff8",
       "sourceSha256": "1a165112aac24bf3830fa47b77d223d85beffdeaf91ee96eef05ab9429b36844"
     },
     "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/chelaile.js": {
       "path": "Resource/Backup/script-api/e5c5def3fc5ea2b2648759d0a31862b655d9eb650f39d385d5d2a968dcb66717.json",
-      "sha256": "893d64b7d0baafe40239d990f467b35f2789945be782006c90486fa053d6fcd8",
+      "sha256": "3208b51048d3884fa727a853db99a50d150d818cdf677cbebd6e904978cbd396",
       "sourceSha256": "5ac31e6d28f37526c61efac734e34211a55e4afde5f5bb8bea94eaa543c04e95"
     },
     "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/keepStyle.js": {
       "path": "Resource/Backup/script-api/a8626525ec76a6aaf8fe2e5b9d2efccc60e90e2739955b8632c1c1cfe7c1c61e.json",
-      "sha256": "3fbc90ef2fb1301b5677a5d3b927142d2ea0c162fafdb04d0ecfc28c41581c65",
+      "sha256": "8f8a8f43b2fe269383ca9a5b669a79c784e4f2d722232ae6a7f27363b39c84ea",
       "sourceSha256": "199783afcdd891bfd5fa298638e5806263521c14fd561ab6fda84efe5fe1e332"
     },
     "https://gist.githubusercontent.com/ddgksf2013/4f53b7c6083678df25fecc8ff68b52c4/raw/netease.adblock.js": {
       "path": "Resource/Backup/script-api/8aa00307073790680a4fc73ab3380ecfa70539e2a124a3292181e5766612ac38.json",
-      "sha256": "e3f13a355ffa1d62947942416c86d1ed963eb29b7c9910bf36fc7e7b8bc4d85f",
+      "sha256": "887a35a9a95619522f8b7424e875bd8640bda5419b275fd220a6b07e3b63ee00",
       "sourceSha256": "6ba468eb994e3843d69563f8f3b31c2d63a62a68d60fc3a1fd61947c1546936f"
     },
     "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/reddit.js": {
       "path": "Resource/Backup/script-api/48085fb91a7c70472b445a500c8dfee9f711e3ecf74b6620fa29c56aa7d5c533.json",
-      "sha256": "45f0b8c9f2406077f6321a18fc3ee53eaed8c42addc7ab65b9bc85d8b5e813ca",
+      "sha256": "d8abd58963f6c9b8d936a95a60e0da14021ddc03dc0c27d578544e2c50153e53",
       "sourceSha256": "9fba62bb23f38607739e135376c88c8276d4f26d7e1cac478ad7467cedd0590e"
     },
     "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/smzdm_json.js": {
       "path": "Resource/Backup/script-api/dbdcc5fc1c239242fb188327c00b6a576057b53b0daab995a449142a393fd646.json",
-      "sha256": "67bf9a73300e58aac3414f2717b4e7fdd88838f7a94bd01dccefac1a9ad2d608",
+      "sha256": "59cbbaec0844c4537dbdd20a848663578fc539379731f6530a5a26b5c49246c7",
       "sourceSha256": "cbcabf770447117a66358314950a4233448eeb86274ccfb96d148294d327eece"
     },
     "https://raw.githubusercontent.com/app2smile/rules/master/js/tieba-proto.js": {
       "path": "Resource/Backup/script-api/f38021eb462fc211f4f2a268377861af099b43fbfb4eb694b9db532b5376b213.json",
-      "sha256": "e9e901de9771f5300420a9a7f28a99051d2f5e2e4b0568f297b36a9868da63d7",
+      "sha256": "2819447b931c9da3cff88d9a57b7dc6010617250087f281255bfb6eee34e79f7",
       "sourceSha256": "6015d737870b6d89c38a0181479ed715e07d11b5a2c3746f96f95e25835e8610"
     },
     "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/weibo_json.js": {
       "path": "Resource/Backup/script-api/ca866532ca5809b3509c37a454f75e2da5d3d94975b95b9a8c82f21ed88a32ac.json",
-      "sha256": "ad5e5cdb4abfa73eb69f15fcd940a2064067e57c3fca05f97f186c192d76d499",
+      "sha256": "18859b50c1a2d18c923360769b75d5e678ace22df319ba8ccb14627614a6f989",
       "sourceSha256": "1714a128eb1e2cc5c333e93bd66c860cbaa6a76bae0a3c9d15d5138fcd30b151"
     },
     "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/weibo_search_info.json": {
       "path": "Resource/Backup/script-api/b2506abb5e1fc4dc550bea9bb9d4a0949a3a513f51a24d56f3b19249c0ee66b1.json",
-      "sha256": "3cfb1a919cc00da6dbba94b0be3a03c85baad0553f1ebbe35290b1aa0527893c",
+      "sha256": "8c0f833c0bd09d823d66c737baf1f7f80713236eddbc28aedf69c0e616e48e81",
       "sourceSha256": "5404166f304ace3d4749e18500d595acadaf5c913d13c5b196657a05149872ac"
     },
     "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/weibo_search_topic.json": {
       "path": "Resource/Backup/script-api/2bd76811ea1e9d5083d8d1a6345677cc3d0b90ccdf4cdb28999a6ece180f20e2.json",
-      "sha256": "9e475becc62d8b4314085c69a47bee049179d86a7ef35221e8a4b01685e57bf0",
+      "sha256": "f2997c7b10675ac867d4fc44a0ff5964e36b335a2b31402341f994919fb102d4",
       "sourceSha256": "57881f577f253467924a5ce8698997bdc1dfaa102ca93c2538065d44a564215d"
     },
     "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/ximalaya_json.js": {
       "path": "Resource/Backup/script-api/7207e9dc08009d9def487c25b878f267e33e786da7957411309c3f4800ec0959.json",
-      "sha256": "b10cc86325cf8b3e489b5f0a0c457b82752857322900fd33eb6553d43ae45176",
+      "sha256": "0c2fa5c0eb57cff0311607a6a104206095a051a5b104a278a8d30374ba383543",
       "sourceSha256": "2b0cb0abf3cf9eaf16e45591c947d2ab1905c2fa5aa8c1ca56ac1f3b4cf19533"
     },
     "https://raw.githubusercontent.com/Maasea/sgmodule/refs/heads/master/Script/Youtube/youtube.response.js": {
       "path": "Resource/Backup/script-api/b4990e49550a5d8d9faa02a517837d3d8b3ff5bb2a4904a65cd3ffaadbbf9722.json",
-      "sha256": "4612b1d916bac18073bd43eeb2ec9b7984177930a6fedd1310cbaf104f041441",
+      "sha256": "25fff7942e4cfc42bfed6f1988dbb34beadea51601ee8317bedddb16db5b5d35",
       "sourceSha256": "f98483d5f5017514f82502253c0db5ce2d4ffb7839887aa2cadc22666f5a7f12"
     },
     "https://raw.githubusercontent.com/kokoryh/Script/master/js/12306.js": {
       "path": "Resource/Backup/script-api/53e7438651b1e488043d67ac58d47a8e6e42354c7e197cda699894072fd182dd.json",
-      "sha256": "cc9dbdbf9c1a65d770c71f9161a6128fd31d189fc39d6aaaea0fd17a45f34a8a",
+      "sha256": "73bdc476a63ff7a95a52d0861b69093d8e854b82df0167af3ad5a3620981b8d7",
       "sourceSha256": "676fe92784297b1ec93e0dc128597af3e38f42e9a37772cbdb9bda4ab9eed3dd"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/51card.js": {
       "path": "Resource/Backup/script-api/0430e3242fcfc32b7e582f2255c623ba5ebc16bf3715ac6211d0cf554d5206b6.json",
-      "sha256": "075e880ea87a82fa20981b98ea21198c685f3264ef3e4b37e59275c1b117d426",
+      "sha256": "8b4d2ba331c97ee98470e6f0d7e81ef03d3cdd00c99de0657ff8602b0f77037f",
       "sourceSha256": "5f3708e56c28a2e7fec50f90f8b6768ed0e6b3d7b354bef0e32fd21f7a57a6c2"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/555Ad.js": {
       "path": "Resource/Backup/script-api/f8526d9282f80412ff0535b3d2ddeeb8ef834d079b879642cd909b00775bd95c.json",
-      "sha256": "9119f1067fa7219435b20004d84d0e2e6a8e06aa16aebdb953b36561d52f92be",
+      "sha256": "fd81d9118dcd1585b5841919995d295a4cd2d1f2c645021216f0f48786262a02",
       "sourceSha256": "9d8d59fe3cbd5bdeffe80c580fa210a94432bfedc6cb5e018feda761dcbcf681"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/cainiao/cainiao.js": {
       "path": "Resource/Backup/script-api/05f68b57c8c1596647496c2caa89ae63947058e04cbc1c568541a9635bb081d2.json",
-      "sha256": "8b0e40986a93a94ca3b6246cf8bdbf4faded846e1d21d87d98c682203b1c990f",
+      "sha256": "ef19ef0c09163fcc338844ab2a34f0b32d9f3b393a4a19c997e97b5fc30287f4",
       "sourceSha256": "76fe899db1e045aaff2d71d6ff3c58cb665bac52a5996ff20e56079a02a6451c"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/myBlockAds.js": {
       "path": "Resource/Backup/script-api/99c1f7a94b665bd14fe621f4bc0afe7b60c2699b73065c110145d2b3901ecb07.json",
-      "sha256": "c4ed0ab4ce203f6417f496012ed256746c8f985d8fe76234c1e448e9c7bf30bd",
+      "sha256": "041f7b6e639b1f52b4eb7548b03c8a6b7475c3c7ca6c9e4336882ad828b5a314",
       "sourceSha256": "4cf62100424886068a5470daecec319e93ccd034c647d79a9daaa72bbbc341bb"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/adrive/adrive.js": {
       "path": "Resource/Backup/script-api/c3206eef6cecfab6061cc4309309915af8b0af591e38a821b86dc2e4c01607d9.json",
-      "sha256": "2189fed4dfdc948a7b043f3342766571c6f85f5a15c2662d1f88d38e0af179da",
+      "sha256": "34bb302679e741db3fe682a3fcc7c61616497b790c458c033fa7df5f96492d1a",
       "sourceSha256": "9d31582028a31ea605e69d09aa9e33949e57050006a8e0f3deb79b1c89933acd"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/cnftp.js": {
       "path": "Resource/Backup/script-api/47c242029d83452dbd689238b0b6a1e528b400a13a7b027041b840fa463021b9.json",
-      "sha256": "c4df74f78b867fdc0824f5e1f170fad9be88b12884a370b4acbeca509fa5c1df",
+      "sha256": "2491a2d494438ecb3849313b26175081cb8c728342d2406b37538fa8b54966b3",
       "sourceSha256": "4a95ce816c3e0bbaddf99e76c0f4b5ae3adb74318b9509e24ace40b675f11954"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/baidumap.js": {
       "path": "Resource/Backup/script-api/0906e7b6f8e0035ff32f5b537bf893bb3133de2714330eb41f0d02875f978603.json",
-      "sha256": "150c22502944bdd28c033dc33eed43df3ca816a2cb1d4df07d71f4d53e6e5c65",
+      "sha256": "af0fb1f7f3e86d1121ac5be19317f2817f4e9f143ac7263ae27015e75efa19cb",
       "sourceSha256": "26b1b805a73f0c4992e4b92025e09e5e3df18dd99f761ff690df925a323ad694"
     },
     "https://raw.githubusercontent.com/app2smile/rules/master/js/tieba-json.js": {
       "path": "Resource/Backup/script-api/9d456958a06617ecb6c35fd8d9d427acdbeae6938bee0217e440dbb184ab3aef.json",
-      "sha256": "e5d9c724465eddea879952cbee5b4b350a436bfaa8bc258e3e50d1e523db3834",
+      "sha256": "c1b9f2f558b00d6fa5b491312aa11e546c9b17bcbd608e535053947f6e314ace",
       "sourceSha256": "91040c0d5bf906357829d8df344a3bdce00b59e6c24f255e54a2ef7a46d04c69"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/bohe/bohe_ads.js": {
       "path": "Resource/Backup/script-api/50531633c8169eb776291d7e356e73932a24c943e89b9f377974a71ff16d630e.json",
-      "sha256": "4a3bf04ab21152e5863b6533244e90d035411754595dae9434ce3337a15e2a6f",
+      "sha256": "ccdf862f4ae9811bdb9d2da9d6d86548f7cb64b42d74ca9fb28a77ca83d7f97f",
       "sourceSha256": "493534355c02be962e06a75ad7eb51b1918c5c347122f40663ae9bc39a64cc1e"
     },
     "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/bilibiliManga.js": {
       "path": "Resource/Backup/script-api/0827b63452210c00b031dd044fd260600ae399eca5ec23e376ff3207c8e26b1e.json",
-      "sha256": "1d1c260c5a05fea26949ec1601dc443c371c432dd617758d035b9f4e870ae89d",
+      "sha256": "a099b2b18aaf486c3b71f65723290803a3dd7faa1a5fa1daf5840d643a425c71",
       "sourceSha256": "17035efc2c7b5d367a5f6e70ca2e0f7f23aa342c9edb3bf044587e5ee073f261"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/blued.js": {
       "path": "Resource/Backup/script-api/e118fec1aaae6a116fee5ac1f6be166f9e1c6185a11755c63f89ce969ef0ea56.json",
-      "sha256": "a214332fb8749cd520340bc327ebf867dd52116bd1a9f2d5304dfa3b32d9a742",
+      "sha256": "05619d9ca1271ea82a7466ed579ea7696723ce05ddcfbf4183faba3bf7501a64",
       "sourceSha256": "5b39cca2a3debe6a73083f7781b6b0eb47d91755f597169db34109db3813a172"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/caixin/caixinAd.js": {
       "path": "Resource/Backup/script-api/e0b4de0796f5edf5f5ce327bdbaed22941e7a4b1ab631429a466af585c3c3ba8.json",
-      "sha256": "74b54a25958dc9be5048bd965442d0a53abc52e2236e1ce2aa3ad75d19778878",
+      "sha256": "95d345be0b88c1550fa0662cd3dc89830201e66a583c13b3bb754594acd01d9a",
       "sourceSha256": "0366e7eb1ffc341c472304e526f93bf6104a1cda668c85f50e8798fe0f035e4d"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/didi/didiAds.js": {
       "path": "Resource/Backup/script-api/6497035a5ea6a19f47ccae3f9b7464658133472b82949c180d30750a30b92546.json",
-      "sha256": "0696bc1b7b78d3ee1482c9a42bb7271b7fbf6310980a86dca2a73ec0f4ea017e",
+      "sha256": "6015b049d32dfb2cf3aba93e10ca983fd698a56d465a6e4bb47c90d23d88c9e5",
       "sourceSha256": "c4f17a8ca8b27e15b7332460c83b5ba19aeded4c21e8f31beff8cefc54425ab7"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/dianyinglieshou.js": {
       "path": "Resource/Backup/script-api/8a4d8a86359999add3a3407878d4f26a6677a6bea38d1c580fc0ffdae3d8affb.json",
-      "sha256": "366b17f801a7d9b3e2ce0a1b2405898f84ce2d8faf592345fa531fafb61046c4",
+      "sha256": "0e8fd4d9f5c75850a74fff65cdd01dd845e3dc7c0ea0fb4f433bfea2eac745ea",
       "sourceSha256": "50926e7d5f53278d37e0dc2d66b8159a1813537708c88b231159cfa2b201f198"
     },
     "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/ddxq.js": {
       "path": "Resource/Backup/script-api/a929f621f8a48d498d4d0ba4934db99926c7c71b7b2f27826e81e3e20bc7daed.json",
-      "sha256": "ac60d401d5c0ed82fce3015883535581a83e0c2d70b7e55ca12c3bc0aaac6bae",
+      "sha256": "4c833ff7460a6623163286e5bbac2a03944efc8e9d80a76da9f90d9776ea8f1d",
       "sourceSha256": "8ae52e7bccc43facf64dc9edaf8e6e1c1da564c6bbab242fb9e51a304e3a0b16"
     },
     "https://raw.githubusercontent.com/NobyDa/Script/master/Bahamut/BahamutAnimeAds.js": {
       "path": "Resource/Backup/script-api/0ff4419465d79000c193272706741b71e8b7da6bde08e973dc1a2134946062c2.json",
-      "sha256": "d1a42621942a4d62233638f9d39899a0eb662ee49ad9b3565683cf8ef5e2e884",
+      "sha256": "31e03aac05c44f6979212a3590d863380d3e87ecba1e5d5c7dbc73f959734f9a",
       "sourceSha256": "7be309316b34c0272bdfef7ababd2219e79e3c85d38b525fa97e3ae409c40252"
     },
     "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/wechatApplet.js": {
       "path": "Resource/Backup/script-api/97c6492922dbf64f1990154ed507a550823df01be87e88d50aed995ea66950f2.json",
-      "sha256": "329fff33de9ebdef2c4072d62ef35213c3b0a07ba41a0cd8eb48baa9962e5b9b",
+      "sha256": "204184937f5e63a155a6dfe858737a0c12a5e30bf8a17c6d707777468aa1d6ea",
       "sourceSha256": "4e0a57585f4ce16bc2f655ec104d1b25d9d42864b78f3ca893b48e7c9e487bed"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/fly.js": {
       "path": "Resource/Backup/script-api/5caa481275e3c78ca4ac745cde46eebee8bdc1380d5a3cfde2ca7fcc702d715e.json",
-      "sha256": "d38f370ab4367017889d26a7a5f9f31f2df3cbe7c61dcf92a41a0e164ea08528",
+      "sha256": "b58c48e2ec0046f11b84051fe889c9b5e03a001afb4e334e85bd6f335d0e6e18",
       "sourceSha256": "9642b1436e2ad10a35cb40ba33b8b1b5c72047a8d1bdfaaa87600cf3d6c1cd41"
     },
     "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/flyert.js": {
       "path": "Resource/Backup/script-api/0024b28e1094abd512f271292dd5268c81ad011b9b0ee7c843345ef598fbb62c.json",
-      "sha256": "9d4155d73f798f2544be61bea380cc8744a28cad67c2003b9d84382b42093ee1",
+      "sha256": "459d2c6f726a13c1cb0feed36f50c8906001f66e9217102e3c119d278d2983d1",
       "sourceSha256": "9f7b49651ad956ae5fd7a17ad120c486c4f228ae2f7cfab21fcb4fccedfe2d98"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/fenbi.js": {
       "path": "Resource/Backup/script-api/c5e861643f0c40875be3a251c43572ad084a73f7a3e027f9c9f2111629e15efd.json",
-      "sha256": "7db6d541877f080c8629da0351e4f509542211e5688b20c1b9d49391047a52f0",
+      "sha256": "01d77da50d217cee001b433b9df65b421f28b6666615c4828a0ebee85746b77d",
       "sourceSha256": "bc6eff20278e7244bb5d11fd8698aa4195471f0df3cc68a28c598b8f60c232d5"
     },
     "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/foliday.js": {
       "path": "Resource/Backup/script-api/db81e1e426a23b3fc248c17aa2a4bc321d09708bff49263c67b5888485923d2c.json",
-      "sha256": "4a8b7e9995b89d0a2e0e919ee421380e7e01dabd5d929ef8edaef158a2864750",
+      "sha256": "0837803ee7e3516b5c6356ee4b573aa04931d94b5f05a6a337a421ab24cf540e",
       "sourceSha256": "9e48b618be78330bbcd1d29e56bc5a407414d12a03a158a4d559f7857c74b976"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/umetrip/umetrip_ads.js": {
       "path": "Resource/Backup/script-api/06d3dd7a4e7f429da3d1991de3df63c23c703353c33d5656abcb319c2f8a8c54.json",
-      "sha256": "4be12414f73a28b6a3d5da6e4bb911575000352424b2d6574135ce674bad34d5",
+      "sha256": "2407c36f3ece7959875dab67dcf940ebcd3efc2d42193d4008d1a7d364852b22",
       "sourceSha256": "7a0f7976a4b8f47649684cc382832e425610e924e0fdc11ea2e06b1ebd2cbacf"
     },
     "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/freshippo.js": {
       "path": "Resource/Backup/script-api/806c7be05c2b8c0a7b0dd2b302ca6eab3f9f080a6b143120d00c052014108cbd.json",
-      "sha256": "dcca694ae1b72c1c9706ff0d19f86640dcd0af1ef96443e04ffbd29654c2aa97",
+      "sha256": "3f1d3b83f9f9a0ae0d68731178f2c23249e6251068a63faa6c981894eee43ddd",
       "sourceSha256": "edf71faccbca61b153bbce98f56b75e27313883cf520e5e315f6ba15ed52360d"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/huifutianxia_ads.js": {
       "path": "Resource/Backup/script-api/99959724794229b5e462269ea2497b7a84f3fffe2c3677c986ddcb7ee258eb70.json",
-      "sha256": "f488960417b34b2f2edc196a95d5ab787ca3ef11d5f19f5e66525c0af357a342",
+      "sha256": "28f9879edd5290f1654de260ffc8c77423fcdb0a60de72a667aa9e2814bd8960",
       "sourceSha256": "5a97f31585d436c36413301a16b4862f62481923caf63f44b1e39eb3b7d1b11f"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/ithome/ithome.js": {
       "path": "Resource/Backup/script-api/b413e8b3735899cf485c12d8119861cd88f42cbc3e960702c34a4c60fe1ba48d.json",
-      "sha256": "cd2202bcdd3f98d0cf8ec49463e3b15fb8400acf43814a5f05aeaf0793fccd4a",
+      "sha256": "e93270b92875d35620df6d6454e64ff24bbea1e4a9f9190be99d8bdc69b04eca",
       "sourceSha256": "afa7249bf854abe582d6c6b73e0297d24a8ee2221db0982c8cb4ce90bb0d4872"
     },
     "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/ccblife.js": {
       "path": "Resource/Backup/script-api/d2fc650d201907b7a6077fb99bdabf2de322d324ce3dda479b4f5e54de5332c2.json",
-      "sha256": "42bf784eb0e818ea749b418819beef323fc1611902868ce4cfd5d6db14114261",
+      "sha256": "0a8c746cdf553e91958c735cf295ff84aaed9fc1bf803c4f42ef0a95ffb3dbe4",
       "sourceSha256": "d4017e1658d35309671deda236c0e0bcc560fa604796562d2b39fcc6f69b4958"
     },
     "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/alicdn.js": {
       "path": "Resource/Backup/script-api/a1536927e11e0b568bddd541fe913b21cd185bb447123c56d9c96581a1a3ad37.json",
-      "sha256": "8a4288241b29acc6d54580d5c43e6c631581fda6b17138e7f364fc607be32631",
+      "sha256": "54caf25c66d555a2abe7e4966a4da39ec2f3dc03f49b775a609b1a609a49d242",
       "sourceSha256": "e6ff8a29a82508abff43eab1e85c7d518002c6d810f5458d1b78a8219fc4cdcf"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/jingdong/jingdong.js": {
       "path": "Resource/Backup/script-api/644b98230e1f80b60ca49e3a84915d4efbb5542e0818e852c934ede5a17f0b9f.json",
-      "sha256": "f6acc3348523ace574f0422426f1fd15d384b0d2833eb25086b3648fc6029e71",
+      "sha256": "6fac051a9f3e998a3028d94b920fef9375ca4bb0eca477d7bd627350231883de",
       "sourceSha256": "3e7cc975f8985a4d2dbdbdefc405d0e3e6c9c07bf3c5361da1ecae206b6c04a1"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/jingxiAd.js": {
       "path": "Resource/Backup/script-api/a0a5a0cbf755b495f4fa9c9a16631e63722c9060be83ad5aafca446f8d16b596.json",
-      "sha256": "bb00cf9282a3955351b4ad40acfec64d09522d0bc484f7327475cfa1b993498b",
+      "sha256": "1da4a0f83f5de0b37c1eb45d62f4166d10003eb06d5f55a89fba1b1169961d00",
       "sourceSha256": "aa125c2689fba2cdd3ff1eb5aeb9e43bde2b1abab546cfcafdb67bd647d47b94"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/coolapk.js": {
       "path": "Resource/Backup/script-api/14d1e419b620df50aa929bf16be4c8dcefd1513f9867d52757e91d885e31cd38.json",
-      "sha256": "27f81c989a87f8234d8f62c05aceb78ee78083f32fd15ade5801c19a35377a6b",
+      "sha256": "994eeadb9b3d08f0c3bad4d7b95aa50b0e591f6a22db6611d305b3a2bbab3ead",
       "sourceSha256": "58002f35b6ed5dbcb277e4571f231cc5491d9cd2d04f72ad9c63d4b35b15c003"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/kuwo/kuwo.js": {
       "path": "Resource/Backup/script-api/75e7feecf556c810ad9a5cc27ecbe463654b51889a3c70c91271a23282bfea70.json",
-      "sha256": "aaa0a8564a9187e66ae2a209b9fbda1091cfbbb487c1342cea4b73da7979d813",
+      "sha256": "7768b1eef437470fc813c013ce8a630ac47162dbaf65194fcfdc5a36a0798079",
       "sourceSha256": "d5119438070518dcd250dba9d678d85b063db97db3a52bdce2ae34760469ae8a"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/quark.js": {
       "path": "Resource/Backup/script-api/dc899664787546eab13a07644e950481b583164519fc912e91241376d011e946.json",
-      "sha256": "762a5c698547f61f347b14b7b3882e8c8426ff69fe2c9a1a6566ec876a20a64a",
+      "sha256": "e50eae51321f9e959cacc6e244cdec146c38ba19b5d8f7d1a0a64d67d223e9a9",
       "sourceSha256": "a80632f4308d8971f2ee1b42cb1b2c3b72c90ec5619ed33849fcc0fcbf0f1bcc"
     },
     "https://raw.githubusercontent.com/app2smile/rules/master/js/adsense.js": {
       "path": "Resource/Backup/script-api/758f3f177a2912da809f4ccab4471090ad10ac4e170a5389d05fde35240a6159.json",
-      "sha256": "a4800beb83959b67c900bcdc1b5d4f43c71891b35e378a74cc3fca2950c0ecd5",
+      "sha256": "68e0c9cb06ada386301561fefe006758dad3c9341b668ef3af161b0bfbea1466",
       "sourceSha256": "171f97bb25c6cb29aeb134acdddca5c96b06e0e70a6e4f670914eba1c8f3b662"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/keep.js": {
       "path": "Resource/Backup/script-api/101b360ee977d0113360dbe159f084d0a73efa0dd2ab37f9cdf532d610cb8e41.json",
-      "sha256": "d096ca0da0aa553e5248a28975451176f8d6e7b960480d74effece011a5347c4",
+      "sha256": "ea6cc7dc1739d40509d65e501d00b427ca10eda11029298a5063a30301e91801",
       "sourceSha256": "4efaba25017ff63e2e39e7fa55fac425e38262576bb31fe487b98ce5fce37f92"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/lvtusuishenting/ltsst-ad.js": {
       "path": "Resource/Backup/script-api/733ffc3b95115e5acba92f87ee3e356914c5c0f39f134809696da76700c5722f.json",
-      "sha256": "88980b6e5590dd9b0d8f64eea095096a3ea8b59d6cc1b4872eb130cc1e65605b",
+      "sha256": "09aac6805a7321f60f112d004bbf03dff57ad619598af4b91f9bc4875b602e62",
       "sourceSha256": "d056e2f2ecb0a48ce09e324e7c5296b8e4fe54b0fbad0c68173bbd7717f3da49"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/lawson.js": {
       "path": "Resource/Backup/script-api/e8587938c145ab539f3634732ab785b20d3e0fadd7822c75aab90430c8d88ff1.json",
-      "sha256": "a00333e313c26e7481dabed3256c5f6273cb9de4db1fb94d10d57ce6d0422c0c",
+      "sha256": "bd68a03e89b0a9bcec0d891c10c567a0775405852f562fb77104dd20774b5e11",
       "sourceSha256": "ebf5ba4051ffeca870f3f0a15e6c9042649931c8d2b267e3bb51ef0545e3fb93"
     },
     "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/mafengwo.js": {
       "path": "Resource/Backup/script-api/30a4a807311c635ef1a3432e058a0b249f0557a3c2c64fc41725506aead68ca9.json",
-      "sha256": "3c92be0f282341ca36501b48307126d0041aa5358285f478968fe15a894873ca",
+      "sha256": "7e5d5e80ff1e098145ad5639006e6bf11ed08054aa153b0d89b66e9b8ed3dfd3",
       "sourceSha256": "9944c174ff0270e9b4cb9a0b8ebf8b40d1a9232b633d7fbee57c171eda6397ea"
     },
     "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/mdb.js": {
       "path": "Resource/Backup/script-api/89816a29460471fafce95bd55680cab8fb14e837d5149c78dbae7c9dcc053c77.json",
-      "sha256": "920a3de92552ec4566bf8de1e0cf09f69dbfb15ef63c7b146d1b0e0c264bed32",
+      "sha256": "0a91a9c06824c42c70b8d5bed2714041ef353d2d9b3576d67ee3b1713703323d",
       "sourceSha256": "f50cef7a5f3b3e3179f9c5a93f2ab937dd72d83ca4dc2c9e8a66937c38e3e9ab"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/maimai/maimai_ads.js": {
       "path": "Resource/Backup/script-api/b5f13a6e3c474f713868cf0a007277ceb6d9e48b9e5c2fc95607ca3d4268bd0a.json",
-      "sha256": "438fab72076f9509d3f5ec0cd453dc1295cae479f12eb2b55af8f9eb8147092a",
+      "sha256": "9d67e2d707ddc21e3fe72dc0c8b64fe5182adec95f07d467ab923f15ea13f2d1",
       "sourceSha256": "cdd9424de68aa4aad03ba5fda672ccf5e3d3344ee3886e72848bfb7b30977c28"
     },
     "https://github.com/fmz200/wool_scripts/raw/main/Scripts/mlxx/mlxx.js": {
       "path": "Resource/Backup/script-api/29c959d46da4e494dbef5e8cbe9b2b9313efe90ef3d6cf907717904dce0641f2.json",
-      "sha256": "371b20ac2b25174fbbcc0c52298cbe30e8aeb3b597df777a4e5da2f32d341ac3",
+      "sha256": "918a826d8422be7db86a5b8fca9b1b195105d887a7a1a7d44d71d513d075071f",
       "sourceSha256": "7c22e8836f2e9247755180d094d2700e5bb6d10d70cfd042ebc463eb501e8416"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/meiyou/meiyou_ads.js": {
       "path": "Resource/Backup/script-api/b5150f8cfaf435b65d8721028b861bd99ac68318860ae2d9972134549a8f2226.json",
-      "sha256": "a878d0e695fcd8359eae6100b2b7bda9bbfff312dc0d036b59d6eba3d8fe5574",
+      "sha256": "a240ba84dda8fe402d4b1359aa89a44bea3f6df9ac7414f52549caf733499547",
       "sourceSha256": "5bfa31920f176ec0a992d6dfd3ee68d3ea3e416597f87af622665fe6b8cb626a"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/refs/heads/main/Scripts/miguvideo/miguvideo_ads.js": {
       "path": "Resource/Backup/script-api/379472e34e6e55f279936c3e01d36ac83bca218ee6c55fb32762ef99e99353b5.json",
-      "sha256": "e2e88049924b70dae0f3962d9d7ea7bbec4b8e06228ea909525ff58797a4bfe4",
+      "sha256": "cbc7da3f3e0a52a35014131f50be1370888f5c8aa25ccb8a5452a253a1bbe70c",
       "sourceSha256": "869200a4759c7a9f3f89359fb36275121b0de0ae9772c5f0ce9765a5fcbec999"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/PupuSplashAds.js": {
       "path": "Resource/Backup/script-api/86a5c2c779ec62014e57d501ab8bc1741e4e347479e00f910b0aff09917e833c.json",
-      "sha256": "7752e0019844ac7ba97db783534dab3f923d8747dd060fce711b68ab5ede2991",
+      "sha256": "0217cdbde87acca31c1f95a891c82000fee7b32bbf39d6c37fafec400d6a13b3",
       "sourceSha256": "187189b01bd11dbd3fa992428facf680e73f26e5267cfe45dc24f53b788d9215"
     },
     "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/qmai.js": {
       "path": "Resource/Backup/script-api/6c23ec663dccbcbc0169fae0df06f00c7a362859a875a409bf9c6084f00deeeb.json",
-      "sha256": "f1cf3284801cd2d9bdecb9ced86889555b9267433d4a5069876dca0cc091f26b",
+      "sha256": "f8414d21c3e03571ac45d76c58b67dc21ae54747e68efbf6ed7fe9f5b42b4d20",
       "sourceSha256": "b6823b14feaba4600fdc73438d91b35f1c5b166da3177b70da19dc97f850ce65"
     },
     "https://raw.githubusercontent.com/app2smile/rules/master/js/qidian.js": {
       "path": "Resource/Backup/script-api/ac2c1ec848a8bd342ca543a3175e7744ecdf954df4544c8612a4ff038d1d86d1.json",
-      "sha256": "9a242592e4dd35079599fb004b659220226f3f0a71b8ef15755b2a814537c546",
+      "sha256": "85d04065966b465442bfb5dc9e2ec185d142797528305adb40041519dc3af41c",
       "sourceSha256": "e599a063040ecb222ad5d4f8666157ef1ee31495aef6d87fb13453dce46f5c19"
     },
     "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/51job.js": {
       "path": "Resource/Backup/script-api/e388fd2c12c508df424a2cf44ed1d3c073efdc3a2d6439486e6778d6078584ce.json",
-      "sha256": "0d4807672138d0b24949cbb9d2bf3d8db09827ed5a0c6d2353a3c78da1aa431e",
+      "sha256": "41681577f68f073222634b1922df545bdc429625aff1b7b28d32dcf37b9f431f",
       "sourceSha256": "85e2b927da9a653691d954775adbab6160e24ca8e6117b779d27c1924bec1af0"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/QuDa.js": {
       "path": "Resource/Backup/script-api/a5bda7e38c3ee7449f8829e7f73cea56218e87bc002ae21ba1320a20571012e7.json",
-      "sha256": "73ba236d0eb148f7391f58cbfde776fdc87b4b03a7b1881320ee01ef473e7505",
+      "sha256": "192da8a4724a48c6b3b21d58c025adf048255e4d4efc097af5050be2f05933e6",
       "sourceSha256": "a388141caa03a22decbe518fbdd670c806f0893a540daed142c9b0ba37636bd3"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/rrtv_json.js": {
       "path": "Resource/Backup/script-api/26050e48827affcf3cd2597466f26cff304152bab18e2309d8688be69d7d838f.json",
-      "sha256": "86509db13f4fcabb98fe7c8804028f83d1962763e7fe3087122b19670ec509e6",
+      "sha256": "b8759e1d5c2a013b344398895e9876aa04f7ef93898790a67587a37614279444",
       "sourceSha256": "4202921945c0ba616133ca833b034954c3b3b5f328199c809065ce25d16446a7"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/reddit.js": {
       "path": "Resource/Backup/script-api/fc4b214bb4657bd4028ae738cdb8388fbc510aaa70b95389cecd41e22ef5bc03.json",
-      "sha256": "ca341b1f624b4e518cb610d2d6bda5141ad9b251bc001344e27f3972b9e9e269",
+      "sha256": "ac26fd6ccd6439525d596b0a8047c16683ecc520549f6b69895eee3f2d616fce",
       "sourceSha256": "3178f057b758e8e5fa20477c8abde707fa367482f63553be833773dd33aec3ed"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/smzdm/smzdm_ads.js": {
       "path": "Resource/Backup/script-api/2d477c4af29cb5eecf6ad504e946a0bb7e155fdb48f853fef2653023da9f69a2.json",
-      "sha256": "2de103b264e19508124155fb79b21f6fc01cd0faefefec9e1e175a9d1a6665b5",
+      "sha256": "9adac9939b2d2de7e0383d869b5069ec37635519a9e9a873b04f0b5213fa53e6",
       "sourceSha256": "8e8b27474b277b334b1b37b14b412330485140b0df1cb77112f66fa043c550db"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/smzdm/Smzdm.js": {
       "path": "Resource/Backup/script-api/1ca6ef134b1be9f2af8f20ca2c8da9748b4602fc64bc7728e4463786fb30175b.json",
-      "sha256": "5cfb3158bbdfb0ff066df198545566db7aade8a378455772d2049860b8136325",
+      "sha256": "275a6660a76fa42b06d24a3d6a356586622965a32f958b7b6cee42c3a6aa546f",
       "sourceSha256": "611b9fa8cb1022622d1df9a2952b0f0fa1a001069b5666cce7e09b87dbec8dff"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/soda.js": {
       "path": "Resource/Backup/script-api/cf2c05d120b06d0a2d04085a76ea5b3c08244d523d92fe9a924041dd5ff5f87f.json",
-      "sha256": "3ddcd7daa70f6f154b764b1c8b0934b6f21fe69b47a262b57ffb0bdaeb8063e4",
+      "sha256": "257539e0e2770cc6d29ce2528466e620a0b316dfc1e6ed410c113254b1e7011f",
       "sourceSha256": "a252569a8ff6317abedd2714fb4932d631cc07ce857a403aa88a83818661b78e"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/template/req_replace_body.js": {
       "path": "Resource/Backup/script-api/c039fffc8a49b3bd1ab26af96959e763158b2ff79d5525c1d97ade4c590f9cdb.json",
-      "sha256": "499401d65c1815e8d6d8a44f6c9055cf44380a17aab7ddeb869f6e7114d74492",
+      "sha256": "22fa671a75c1e1724d461f4a77fa551dc27510409984fe2f80d0b30b3927c4dc",
       "sourceSha256": "90adc7374f0c9a62b25bbea2027570e2c08002130bca22d909607fcfca642c70"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/soul/soul_ads.js": {
       "path": "Resource/Backup/script-api/b605a47fa7e7a42cc3cabfd42c314f33e3f35404114c5fa92d8e1dfc6013cbb0.json",
-      "sha256": "04579f2cec3c7d220599395876fc45663d63e03ad40d960477681cd544fe373a",
+      "sha256": "3c95045e1b567443a3bd7487fbd233762c7d899b516e3723ced08169aa4b3a12",
       "sourceSha256": "a2987051900998f971fa9f9eba9b1ab96fa15fcfbc1848f7c96afa0dd038bdf1"
     },
     "https://raw.githubusercontent.com/app2smile/rules/master/js/spotify-qx-header.js": {
       "path": "Resource/Backup/script-api/d075fa04e43daa6e918b254c869da2fa4698818101f0c3b652d78190cff1a5d1.json",
-      "sha256": "25184a52cc99581471310e59e5fdaf71467b1f8b74ef52df3b2d9f2f3b198b79",
+      "sha256": "bfbe843bf68cb9f21c9836113fbd49bff8bfaf5f8b6e60d9bd95373fcd9fbefe",
       "sourceSha256": "77267bc9bdcc8a2bc8eb1e70fffaeee0fb0c097a076bc9040b6c430acf051f3c"
     },
     "https://raw.githubusercontent.com/app2smile/rules/master/js/spotify-proto.js": {
       "path": "Resource/Backup/script-api/99449675fd0d0002a7253dc6cded1942830b104fa4589ecb2fc8000b45a7ff8f.json",
-      "sha256": "899ec62b7e4282a8d3dc92183cf5bd816ba1d856d42cbf60f6f019fb5a2c3fda",
+      "sha256": "2f5e8715ffe7f9bb056c49465d81138325f28d19f9991c6beab55758800143db",
       "sourceSha256": "2e6850e888d092905c766f0bbedc4b4afb9a712330970cc1265105d7fb4995d0"
     },
     "https://raw.githubusercontent.com/app2smile/rules/master/js/spotify-json.js": {
       "path": "Resource/Backup/script-api/02086290c7c6ac68abb27e0608cd62c39587b51e034719177fdc7912a51956b5.json",
-      "sha256": "33b8ccc781f03e40798094c726817f8a4426c8166596dfedc21f3d291edea2a8",
+      "sha256": "bf007bc2c1b16cf2d244d377f507a9b8fdd7b37df8d81d9258bf2822d95ab1e8",
       "sourceSha256": "41cf1074770cdef3948baa12ff4a8db9045d1cac888714c8b7e69909eb531bc9"
     },
     "https://raw.githubusercontent.com/app2smile/rules/master/js/qq-news.js": {
       "path": "Resource/Backup/script-api/a4ac231868fb4ed36a78264aadd02b4e2e4fdd5e966422f708489e9c6ee7d813.json",
-      "sha256": "f0dd10a79a2d6117416039e9338b78c25482e70ed2ad7ea7092a54fcef297bf6",
+      "sha256": "09c6ded44661c7ef9cd710d7d4292c1c8c7348f0534010d1856dd273d62c314c",
       "sourceSha256": "98b921f278eae3f4d99751a35c2b0c867b9716bd20713da14859f4033f8c7394"
     },
     "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/tuhu.js": {
       "path": "Resource/Backup/script-api/75dcaa1d45273ed3aeb7161330fc9e2f1fceb854dde3dce923116c22d40f228f.json",
-      "sha256": "e58123bd8deedc8cdd783d40c2ea4f16469ff8fc9877be66e9cf7353be041551",
+      "sha256": "3fd48c8a58d8364b528bbf064154ca87d77175bba25467237d7e3cc78b521d28",
       "sourceSha256": "d4a8f475d9c24107644eadce1736e2d0db68974129809ca7f05c77e48abe4561"
     },
     "https://raw.githubusercontent.com/app2smile/rules/master/js/vgtime.js": {
       "path": "Resource/Backup/script-api/03e37ba50a09e20b1821d4c29cd727a6d4dd3b43dab9466216ae0c3f68e8a8a0.json",
-      "sha256": "bc181ab26f84e0ce0c37af9ceceb08cb466a37ea93eab8760781c75806e28db8",
+      "sha256": "1a47a1beff5640b68a342abd4e9ab0397123071e41d755bd7eaebabc52de8c09",
       "sourceSha256": "489f711e41734a6c9a8749d79923c3dc3930c63239fc7e97cb3e25a29c9eafd3"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/youdao/dict-youdao-ad.js": {
       "path": "Resource/Backup/script-api/3b4e680772277ff3705a76acb11c087928a4ad55306d82add361f436a448ae50.json",
-      "sha256": "57118a2af79d7213e10d88461b0ff3377da02fb3b1c05ed427823226625e4423",
+      "sha256": "a21de8724465f761d8c01dec32587028d2085c03c6883cce943df57522d52c2f",
       "sourceSha256": "07261d8faf3a9dd0591477679935b3a44fc1b044ed5ca849e01b04cc889f4c0c"
     },
     "https://raw.githubusercontent.com/Keywos/rule/main/script/wy/js/wyres.js": {
       "path": "Resource/Backup/script-api/9f029b3f48e034516e2f686c0909a2ee5f49bc79312f01f95aba627813a47790.json",
-      "sha256": "1413129c4499d889213ca3bd9ba4a3319c521de37ce8c38b1ae671d32c32ff82",
+      "sha256": "95e44bc8dc9885863113ffd8a8db3e31f9657da0c1e3a87809cf9c6f91a91abf",
       "sourceSha256": "b729d3f27bcb4992b7dc8d82ef7563af7b2a1380976f55975166f68defe3c393"
     },
     "https://raw.githubusercontent.com/zZPiglet/Task/master/asset/UnblockURLinWeChat.js": {
       "path": "Resource/Backup/script-api/6d1ee8efe017b7c03876a87c9c5d4e86d63520d5259dde18bed6b41165ffa247.json",
-      "sha256": "8c54b66c83a7ba450408939350e3679017003cbdd344a72775666f6ef1107c39",
+      "sha256": "12546bcbaaaedf32b58c5e016ac039d56392c886b2be8e5c9228a91493183fc1",
       "sourceSha256": "79098ac4d2eb7932c9b2b45ac7891469703626855e5d13ab4374af52cc48983e"
     },
     "https://raw.githubusercontent.com/Sliverkiss/QuantumultX/main/AdBlock/xmApp/wnbz.js": {
       "path": "Resource/Backup/script-api/8cd9d9503c51306766962d90e9475d756f31dfda20b21675611f1aba1caff28d.json",
-      "sha256": "5b30d6b676e7338e1d614136aeedbe0e1b84ade7a2d676781f07219fcfef38dd",
+      "sha256": "9edd0d009c8f56eb06d2a0412058842c3e5d3a9ea63d33dcb1e2a64127ab8720",
       "sourceSha256": "b4c4a10fbb15268d20b1c2dd69c842494029f7bd8eb691add5db105ce087cbef"
     },
     "https://raw.githubusercontent.com/ishowshu/qx/refs/heads/main/script/goofish.js": {
       "path": "Resource/Backup/script-api/d28d901fa4fd7ec7e2fe78a44f392d8d0dd34d8b9cb607eabcbb8bdfadf28fee.json",
-      "sha256": "ed6d0806659c9b9965f85824748c64a4d2e37c0753711cba421ecaf9017d094a",
+      "sha256": "74158f8d56d7e239d07804e51aa8eca338ca15ceb6f017e1118f1111b130158e",
       "sourceSha256": "d76d0a65d975a523ad4bb62c5d90dc9898a5a93ad79cf03dea01150705792b20"
     },
     "https://raw.githubusercontent.com/NobyDa/Script/master/QuantumultX/File/xjsp.js": {
       "path": "Resource/Backup/script-api/15cb41bf88f26d12a6434ef5d9e5de3cf4fde5ab2bf6fd8dc2df96bfff399908.json",
-      "sha256": "d536d4496f88184e000580575d1a68bdcfb2bed39bfdc57bd0be16f38cb41cff",
+      "sha256": "3d1e2660ec9fd1ddf555a9845124b4760f7d13c1939533e5cb726a25e3f733eb",
       "sourceSha256": "6fc5d0aa5b7d70febfc7081b95d16f15cf1664767286a9ca0c5939d5c8187859"
     },
     "https://github.com/fmz200/wool_scripts/raw/main/Scripts/xiaohongshu/xiaohongshu.js": {
       "path": "Resource/Backup/script-api/9f5ee26c8a7e012dee5b993dccd77e876aa7e9413833c2bf09d3f6a29800f552.json",
-      "sha256": "fcf71c94141ebf8417680ab03d90b3339cf0f4a572c2881c3a591e94b47465b9",
+      "sha256": "abd81b4b9313cb3f2501a237207cd58c1b7b72fa3a8c523c04ba7bc294a37c76",
       "sourceSha256": "318d89bce1117edb26a93b383804e195649ec4674a04efa9e3ddb4ef7f34b498"
     },
     "https://raw.githubusercontent.com/Sliverkiss/QuantumultX/main/AdBlock/xmApp/xmApp.js": {
       "path": "Resource/Backup/script-api/deda39243f57d7970e004746f234f9b391291f451dcf17f2f0c6de89e7f86a2b.json",
-      "sha256": "f6853016ad23fda3a6be567755f43c1917dfd3a4e3ee55771ecbaa7580d4f612",
+      "sha256": "efaf9f28447293893e5fd4af9ee98aec57e30d85c6896dcec83d80731f9ab24d",
       "sourceSha256": "319c650370f0c4086a6aea0f0d9efa0677c4ac9829d07830218dac69c174164a"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/xiaotucc.js": {
       "path": "Resource/Backup/script-api/5123ae634fe0813ce16bf8a4ce2865d03e7e574e40a025402ca4287624c704e9.json",
-      "sha256": "2f1fe2f9c4239d8561935bd1900ee701250470537740f59c7411398cbc8fb36c",
+      "sha256": "f97b66692496fba2f22f53d5e7a3c1bba7b1bb504d38a638099335f9ba288b01",
       "sourceSha256": "197bc64c8ddf1188d1b876d7b980d5708a0bdb79a01be51a9f3b14adc936cc9d"
     },
     "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/usmile.js": {
       "path": "Resource/Backup/script-api/39b651a656f6ea8409bccb80c4b7b32af682f1a40397299166c168f6618e8ccf.json",
-      "sha256": "6d9108f2fd3d2a6d96a653228215b6a36386352d183e078b300dcce0870c2791",
+      "sha256": "7edd02af1aae03352be72a0524980149606a48ac291e20a0f672205940163a8a",
       "sourceSha256": "afe656ce07d169fb9baf4d4484f77b0861341a88950fb64182cd30b45f70ce95"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/yx.js": {
       "path": "Resource/Backup/script-api/9aefdaf10b336424a8ef5708e4a8652518784bde54f78c3b9c10745903c243df.json",
-      "sha256": "f6bd559654d85f987896b6b5486d577fb470a61f778900d4f9960010fcc0f832",
+      "sha256": "ed235945f5fb546e16f1dcc343b5b9961a70d53472c2ed70801c3192df3883a9",
       "sourceSha256": "7a85dc4dabb4c048a2c9231c17580df96d94c478479a54e3be33346c64e7d6ec"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/zhangshanggongjiao.js": {
       "path": "Resource/Backup/script-api/bfec7c5588dc4bbac5c2918f39beed498ac116d2a5911d10177846e8c0d01269.json",
-      "sha256": "318f628cfe55501cf016a180666243b220cb92f5a2bab7c26671da09b4e8cb2c",
+      "sha256": "45be8302ecd9b6c2a50bc89b3c3a0ad3b034be0c7ed7a47e2cf1caa44131edda",
       "sourceSha256": "ee4e5a1ee5ce0817e0787578f7dd47874c65e9bd02bfda4b27527d4f6d59a44c"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/cmschina/cmschina.js": {
       "path": "Resource/Backup/script-api/a110f9b20814ed17ee291f6d4f3c1ab7b9bd9f4c2cfe6f111ea73e74a963f09c.json",
-      "sha256": "ea2d25f0cca4ea2eb6352e2868d6cc9135122c3618bff67521d47a607c4d4381",
+      "sha256": "02c77be6fd90003189abac08509b1a9a069494f2dfddfbf7ce3892c32b1b1a5d",
       "sourceSha256": "0d65a79b61b6ef85c88110538e21ca4f5aafe9b7acc6c3272b17ef7361c2c8b6"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/zhihu/zhihu.js": {
       "path": "Resource/Backup/script-api/1fa3a573d88ad61e046f92b0646aa6ac3bb880a576c61d4fbda6fb53c4398317.json",
-      "sha256": "d7e9676c6b4dda4556eaecb44870ba88b63320395b351d381c4777aaa8a2d7d8",
+      "sha256": "699105ed47f821443d6e0bcd0e180d6bdbed364d58c94953f6c77ec5e88b7167",
       "sourceSha256": "544fd88207b9d7005bb5cf427a1994028f91a95a65fde3db72a501983bff99f4"
     },
     "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/airchina.js": {
       "path": "Resource/Backup/script-api/ef523f718bdc0ef57e4b6dd2966b2b57d5806c3514ab863758b0dc117ecdc89a.json",
-      "sha256": "29fe097ee2723bd2e2c49a55faa83a59e1f62494591e5d908dd1b4bfc6d9cf08",
+      "sha256": "f9ce73266ed1edc8d5676f8f39ac20a1aded4577ee1c68c74ca8601f9953e576",
       "sourceSha256": "b3ad5ac0f6bd2a53b93aa5476cb97d7dcc386952ee1f7fae48f4a9ce98f1a2eb"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/picc/picc_ads.js": {
       "path": "Resource/Backup/script-api/224bd1ed6acc12dd248fba56140ca63c6adc30bccb2bd032d44e62407d4bb44c.json",
-      "sha256": "4dc657164e4ca963a8ba3e08f4bb1e7927d8d372a3bf7d5d87aa634a9cbf112f",
+      "sha256": "fd837b591d322e09649b02e989a6f7ff46f2ba93dffd42e8284357c9ab6b24ed",
       "sourceSha256": "07e5fa66a0efe225b0dae2beaab83a9f1f9ad4dd6d3748d571156db8e324300c"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/zhuanzhuan/zhuanzhuan.js": {
       "path": "Resource/Backup/script-api/5af7cfca554d6c202b382a3ee21de291cb7532619d17b712dc0761d12571b4f8.json",
-      "sha256": "2b749717a6ec26a2fc1005363b8298c7d97892933867b6373662afd57a204bf5",
+      "sha256": "ab5bb71c4b838301ca25d1a46a6d082a359a95960a0f28cc0ebda7869fa0c534",
       "sourceSha256": "b8498e51290e0d0e83018d216b9cf44d602cef5392c39a509ca576c06937efaf"
     },
     "https://kelee.one/Resource/JavaScript/iMaiCai/iMaiCai_remove_ads.js": {
       "path": "Resource/Backup/script-api/1560243f758f9a73bf7a8ab263e5cfb5e73679321bc968134d10d45527b2a99d.json",
-      "sha256": "bd96684a3459f78485878be07832f0bdb212a6ae2e041cd344662d10cd64d9d1",
+      "sha256": "24c11fac9890ec99c4d464090af94cf2bbfb45489fecf11bb4efe36bf3ec6224",
       "sourceSha256": "f186eb3760ab578964cf713104a2a563c2b9365cb2e23311f165537de3fc8b06"
     },
     "https://kelee.one/Resource/JavaScript/iWallBiZhi/core_initialize.js": {
       "path": "Resource/Backup/script-api/5ffbbbd1d719e1d10dec1c80996b6a44a25b88f2eb4289ddb72b1723beadcfca.json",
-      "sha256": "fa463d79274978381c0b7fd5051e6f338fbb29e5db8e15c8899502ebb7d37ef3",
+      "sha256": "9aa97661af49e2e0cb49bd01e22f6be039544dded197eefb8347389beb15c758",
       "sourceSha256": "85bb24cccb37499fe8c4e334a61b3c8b5a6485bb167a33141879e46ee0a3f531"
     },
     "https://kelee.one/Resource/JavaScript/iWallBiZhi/landing_initialize.js": {
       "path": "Resource/Backup/script-api/0aa34c5fc1ee3d8635e2020eae6fcdf66c8bf55a31fc40a80c162e1f8c8991d8.json",
-      "sha256": "ca74f6d47d7e2693ed3505af0d4884f779d87007df964f3b67184b1de850369a",
+      "sha256": "cf10de80496378b4fdf9154b002f1fc242e27c5d977861803aba5f5111ad77ff",
       "sourceSha256": "e799e430ef3f751c686a4cf3df5d8dc2ab7c7b81170f3feb08e6ee45452762e9"
     },
     "https://kelee.one/Resource/JavaScript/iWallBiZhi/landing.js": {
       "path": "Resource/Backup/script-api/d0482cab4b27d6d6f40e6801399b6e4fadfd96a58c79699c1afb50e330e83297.json",
-      "sha256": "b6863d19892a4b6010db986c59909ecfaf92ca2dea23f6d43b0f737f492ba43e",
+      "sha256": "67d53ea2684b43acc8892743952bb366a8aa649cb8ff7e5569bcacb8ead11f26",
       "sourceSha256": "66aec750fd71c6de8100e26789080efc736c3592f982cfb6703cdb13e96af1db"
     },
     "https://github.com/ishowshu/qx/raw/refs/heads/main/script/amap-new.js": {
       "path": "Resource/Backup/script-api/a8cb102909042edbe4c8ef4acd675443c911ff77a1fa4432e33933fd9b2c253f.json",
-      "sha256": "e5be8d4a4530e930f26200c96c2a7ba8a934eddb135ea0e644f807ffaad2d040",
+      "sha256": "42419336946470ebb2c9b0bece5200aa4f51acff47aa7d545da565812068515d",
       "sourceSha256": "38e5772eb450d2f7eeb8d8f29011e470243367967fd01c907ec8178771f2f4ce"
     },
     "https://github.com/ishowshu/qx/raw/refs/heads/main/script/bestv.js": {
       "path": "Resource/Backup/script-api/e6cdd3dd2d164b451d50ae03c325d69b989ed5292a6ebc1315a01d8dcef88897.json",
-      "sha256": "59377b61a6e96b1f2bfa5b91cd03174894b78dc84bb04280d85410f3a93ba9a7",
+      "sha256": "e2bfe3fb9809956eff9e218994b6c4923f16d1d09102f9f149cc1f63909482cd",
       "sourceSha256": "a0b53d7d95c77ad576245a5a9c770a262c1204ca85e58ea1c6d9badee0e71b51"
     },
     "https://github.com/ishowshu/qx/raw/refs/heads/main/script/bilibili-ad.js": {
       "path": "Resource/Backup/script-api/d769eac18a0aa176fe43ea601c456bb4699e13ab272c5c639a926480c64935c7.json",
-      "sha256": "b24f087b2f7454002d577826ee23126adabc8006dc50a3ec9a393a69daa4be24",
+      "sha256": "1a10533f2f40b6ab36ae2125109d980e8ee1d221ac96d7bc7994fa9defe2a78f",
       "sourceSha256": "f6b52b5370d979368121ecd757b5eaeea114d8668f5b9141c2197127a47a150a"
     },
     "https://github.com/ishowshu/qx/raw/refs/heads/main/script/caiyun.js": {
       "path": "Resource/Backup/script-api/18215ab2cd0e505d321c8895bf9890e3221e3ca48d4929dabfa7c23c42d619bb.json",
-      "sha256": "83903972f3c887f98301cfbd8daa40d79b8e91c04469dad51b96d01f8f867796",
+      "sha256": "0242294cdd357f801fdacd46805a190ca4cb1686d7424e7e2361248739ad05c2",
       "sourceSha256": "003c3b37dfc1293b082daeca7469b9db478dacf2edd1580b1a3d416be4682bc0"
     },
     "https://github.com/ishowshu/qx/raw/refs/heads/main/script/goofish.js": {
       "path": "Resource/Backup/script-api/c52952a8148b53c21d86f33bc43e3d08e0711d4577a677d6270018f2cc5e72cf.json",
-      "sha256": "3414439b33eea7c01b101a3ef3c5cc630ee67db33d45119b80d0d428b78786e7",
+      "sha256": "6544cbd6782c6188d06f33c8313e2b2314e5d2c70ff16f7c6d579f1753346b4b",
       "sourceSha256": "d76d0a65d975a523ad4bb62c5d90dc9898a5a93ad79cf03dea01150705792b20"
     },
     "https://github.com/ishowshu/qx/raw/refs/heads/main/script/keep.js": {
       "path": "Resource/Backup/script-api/db0b34b4344c01c721b2843c4096bd093514e4053ecb8b83f44cc5b928686a19.json",
-      "sha256": "b733359a95576c6789fa69276a0f291ac1d50aa80ed547e3eab94fe3c4990a5d",
+      "sha256": "134e64ab46872efa0f555409b4050dfd32a781269d5ab0098be13e70de121588",
       "sourceSha256": "d955973bdc94d7dab355bd534b60a5627b21bb0c3f9e89c9296214c41a9e7091"
     },
     "https://github.com/ishowshu/qx/raw/refs/heads/main/script/pdd.js": {
       "path": "Resource/Backup/script-api/95107c304a301601dc63c96d67c37270e5b99896b2b8a8430a69452d4f55bdc4.json",
-      "sha256": "d26036c55515e2724357c792297cc658ab63f431c6160f4ba4ffe5daaef533c1",
+      "sha256": "d6fd09f8d02d1355bbbdd69880e188b5fd8ff9cdae6db715f717714cfb29e025",
       "sourceSha256": "fa4d1cac3c791fdac0d6007ce67e3a2ba7c1703d15807c2dd086dbf6d6bd8ddb"
     },
     "https://github.com/ishowshu/qx/raw/refs/heads/main/script/pp.js": {
       "path": "Resource/Backup/script-api/8ed16206ce681abb251b2bae02533fecc84a18509144f4f97e874a9d5b2d3112.json",
-      "sha256": "7c1b57c49ccd935d9e14c550bb821051333af1f87ae68b6000457757489545f9",
+      "sha256": "49a8bec8405be3482ff80fbfdf79bb7ae3d3ead2e216f673816e032d9bda39ee",
       "sourceSha256": "3b419ba2d6a95c31432c6cf025218c618b190d5a0bf793855e9346f21f6668bf"
     },
     "https://github.com/ishowshu/qx/raw/refs/heads/main/script/shihuo.js": {
       "path": "Resource/Backup/script-api/77efc1885e03dc59a19d9c0eb85aa440123e442cae3ac6817eacdedb1e346d11.json",
-      "sha256": "5fbef59edd5d81118e2bc0c4b8e1f5f4ca4efd0dddf7c9ea22ff5df72ed31081",
+      "sha256": "6b35306f05cedf75cd71e5c82d0571396ee1615e078c07e38379640b442c959b",
       "sourceSha256": "f29be23186bdee00873c43387a0b5cd4dc9b0d359cb11041558fb9257b5bc30b"
     },
     "https://github.com/ishowshu/qx/raw/refs/heads/main/script/soul_qx.js": {
       "path": "Resource/Backup/script-api/0d48f859129b52476a0f2b4cd1bad287f81db4aa70937ac0efacf91b12f7847f.json",
-      "sha256": "735c4715a2e11cde353e62b2875e25f6e2198c292aee686c996ade33ea48e926",
+      "sha256": "34edfc4bd8c0c0965a20f848f36aef7e400a4a656d28766f5e95c67d568aef70",
       "sourceSha256": "0bbbfc3474f3b0c5a294fd167dff2a804d40cb585cc80d63a868333f9770d605"
     },
     "https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js": {
       "path": "Resource/Backup/script-api/2ac96d103b8f2e91d7cb24bb251254d06ddb79ba2c3b7405616b9ff5a2037317.json",
-      "sha256": "4188f1502266100e3b02fc295ae9c2b7f10f4c167bb102719987c2717d3dcc1e",
+      "sha256": "c000e78e71baf5c46f8d253728cf231396ec7eea0fa9a0b745a625405bb5e452",
       "sourceSha256": "f98483d5f5017514f82502253c0db5ce2d4ffb7839887aa2cadc22666f5a7f12"
     },
     "https://kelee.one/Resource/JavaScript/mobileClouds/mobileClouds_remove_ads.js": {
       "path": "Resource/Backup/script-api/9858236b73662cb2e7afd86b4b7dd9bff9525d6fd6b7eb8a500c226834b618a2.json",
-      "sha256": "dc30bc1b07bbeae4ce42a6c707b3dfe129bd72a68f900e919088249939e59f00",
+      "sha256": "95bf494675ae3bb73c3746cbfcf429e6cb8ade0efc9685305e7e21414d98c6ea",
       "sourceSha256": "ec2ac94692a6d6ceee12251142ccf3e200a3a27f2335bd32fdc64239c395d798"
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/bili_view_ad.js": {
       "path": "Resource/Backup/script-api/7dd528f27c32ac24f326a5442620adbc1e299bcb2c1bd43bb3746432211a9c45.json",
-      "sha256": "e65a1e6ea5b225e5504cfab2016e5bdfe405c0e529ff12e49e3df985de44f456",
+      "sha256": "54b1bde92d121b428477868f56e633fdc87967e9529a266320408073e335a949",
       "sourceSha256": "533d825cd9bca07cc007b02cef727b51ef09c90336e6f68968c5d31b53d30c79"
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/easybike-ad.js": {
       "path": "Resource/Backup/script-api/d081c9f5d4c720632ae64f775626c4c973ce67bd361de8794c6e1ef67d4f74a2.json",
-      "sha256": "4d2cf4d59859a41a05508b9d6b6ab1fb2c75873db21de078c49bd0ceacbffda2",
+      "sha256": "ddbcd2c2cb715ffd77a8620876d39e09f3c6ffbe46266a8a7cadfad8f4619659",
       "sourceSha256": "0a4677ca05a373375cdec1ad7b9d7664cc7d5795f86acea5df4b3647b93103a2"
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/hlwxx_remove_ads.js": {
       "path": "Resource/Backup/script-api/4b8d1b919e60e42746a00dfe7d1317765aef73c85e7eaba9c30746a2c05d1e65.json",
-      "sha256": "247374a4471490fcae2e597d13a313a7da0c0ace5b72be167b880a9a014dcaec",
+      "sha256": "e4614c1a982e202a63041eb6b03dc9d29aa42504ea455d2db4a16d0b74a3c9eb",
       "sourceSha256": "1ec71d2e02541253369b8562533c0edfdecbeb65787081bb6fa97a68af26c0ea"
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/mgtv_vip.js": {
       "path": "Resource/Backup/script-api/d3a5f386d448e0b52fea961c5bab2b8a7f7634aa72b2af8fbcdca7ed4708fb95.json",
-      "sha256": "ba725cfb18b8ad705adb3b7c5e0cf57d02ee107dc888cf3f93ba90faebcb15f5",
+      "sha256": "213b13c09129d5ddc92016e0dbfcca151386adb64b0214626e89b368fec31abf",
       "sourceSha256": "7393e4f79938096a5ae000533dd228f88b7d03215031f6b22bbf3edf56bd1bec"
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/migu_vip.js": {
       "path": "Resource/Backup/script-api/264410db8e1c7385837556f7520e01b89cde4966b28efd64432a85a658899671.json",
-      "sha256": "a7d95618e229a2a5b5cf4c8d586a02649d6ee9edd48725926534d92659a1e5fa",
+      "sha256": "87f89a80328acfafaffa0f6af68247aa1103a6a88051503b3076c3d74840e1ee",
       "sourceSha256": "ba3e803d4f5c305d0a003df1e92e948c5fd7de289c8f16b59c2d93259cfd8b6f"
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.js": {
       "path": "Resource/Backup/script-api/52eaad15c8b39f2c2f34b9d9b6d5f240df893579fee28146233bbf41abb20444.json",
-      "sha256": "6711749c4d7871b420223c97ef893bcd5c672761835c4297425845eef3e961b4",
+      "sha256": "47d91ba752c06df452a88f1f9f3202bcb2d2a77053af0946d39d5b085c16eab1",
       "sourceSha256": "9a48981f5d1cdac2d7c72c8f1164752ce712113eaf687aeeba2829e78c66308a"
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/TilingSales_getNav.js": {
       "path": "Resource/Backup/script-api/bf57a82a4cfe3c26ecfc3dede7830ae2cf9552190eca75ee76f3f4d19852d293.json",
-      "sha256": "b1ec008152bb11cb4ef41077923e3aa00d637eaacb6f82f93442eaf82b31c79e",
+      "sha256": "f50b77cdb70200dc6c38a373efa9c5ac2fc28dbe552119869a70b88ffa753ce5",
       "sourceSha256": "e7c13594f68a12745d9bc16b171c6bfdb3b4591ab482eb256453150f812d6f10"
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/txsports-ad-clean.js": {
       "path": "Resource/Backup/script-api/f685b508c8f0030b09799470748a955ab2ad56e312e19ab3ba7eb60110c73566.json",
-      "sha256": "47ac2b3e2cf7a672c424d3a697b517550720615ccd07d9047b0183618d923d44",
+      "sha256": "a8cccd297d0ac1768d21a25c8b616c5700e02459f7f86de5358251028f7bb85c",
       "sourceSha256": "4e226de5408e8a6fb25bc5ebfd1cb802bc89097d21dc3c1e85c12f3f3d56fab4"
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/Txvideoad.js": {
       "path": "Resource/Backup/script-api/32b2671fd33fa9e5844b6d7a172ed4d9d606a3c1ddc0975c805b20dadf8765dc.json",
-      "sha256": "92f0462aaa3523b17281c2160367be89037b9166a06121f0e30c8e8c0513da39",
+      "sha256": "17d3c379683e931b3c194d26177dc560cf46770dae606c29dc28d32304ff1238",
       "sourceSha256": "ca96b90cb1cefaa26af178d15a3a2e3f0f8cc03393b06934ef99fc156e825f10"
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MeiTuanNoAd.js": {
       "path": "Resource/Backup/script-api/99b02d3cac44ef89da33adb23bd977e98130af91022003e959895e86cad54010.json",
-      "sha256": "6e7f72203087f85dcbe146c966ca914341af0293106881e60c2ebb56777cb53e",
+      "sha256": "85263371169ad1661980f1c84a1d446ca79f68f7bc20e0d6471a04db96502725",
       "sourceSha256": "16a2800107ebbadde4209bb961894a4d068a9b19cd0267a66d412de896f50e05"
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/xhey-ad-clean.js": {
       "path": "Resource/Backup/script-api/48dd0194aea228c386f8809b2a9dd638b70a508072beb0fbb0eb8788690c0521.json",
-      "sha256": "94413143951f9ddc4307a9dac9056290bb71f22fae2e98f449d1e9b1e00531f6",
+      "sha256": "78519e114b2d7bc6637fa0aeb43c15e83739048da67bf5c3728a3fab334b4b83",
       "sourceSha256": "2d49b52df9ba6234d60235d0c2f6e56b1ad251566976fc718221b5e32f8a71d6"
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/xzimu-unlock.js": {
       "path": "Resource/Backup/script-api/4df0c3e5526a0675df2f7472e4e72e2ada0956a2a6fabb60840e12e8563fe130.json",
-      "sha256": "c2bbe2907ed34b75ce12a667145dc2cf9e50956d7724631dc7e7e2a64977c50a",
+      "sha256": "ff8df8f25235e13432ec393c44d227730d557c11b75adbb53b05677a5ab94e65",
       "sourceSha256": "4701ff812e25a39a827dce5f616e935f47a4dbd1bec76c9a1b8bc9458bcefc33"
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/youtube.response.js": {
       "path": "Resource/Backup/script-api/fa5f41822e443a9b0f0b3b7ed54bd4d0b23da8806a9c86021ba1eb7b02fa6ddc.json",
-      "sha256": "3454a095a4b3b42b05f8ed99d61768881d84bd009cdf369994bf982ed0787261",
+      "sha256": "d0892da656e020cefa38dcaa6adab59598fdb3cd5dfff1ca137940322826408d",
       "sourceSha256": "715d0d3fc27b8af35fdabefd6698fc984ec9f54612799921b3cf8f71575849c3"
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/yt-sub-clean.js": {
       "path": "Resource/Backup/script-api/586340f11939d72f1be8707ea0b256940efa61b3b7183830ee10b2e6f2f64bde.json",
-      "sha256": "ff3db56968708622dbdb416f393b38589377d9b6018e8fc3cfdc47381f4b9d1d",
+      "sha256": "c2fa2469671ff178fbe727022e052e4ac6412a68b52c66d6cb9aa1bca9d41c29",
       "sourceSha256": "45bffb0cdf55bddd894070ca542f908e995b552fea4ed20ad30ae612fa8c67f4"
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/yt-zh-sub.js": {
       "path": "Resource/Backup/script-api/941838a3032e0df344badc85327699fd45b8a04a9370abe493ba9b52cf5edff5.json",
-      "sha256": "c88f663b3c15245ca3c6ae2133d46046d303507c1cf4401434c52506060faaee",
+      "sha256": "b62fd2d4a4f5898dc9c2e37bcad520d5e4619add17902afce0e90ce15d73b20c",
       "sourceSha256": "c73794d6c3a8b9b9ab94c0bd6f2c33c71a603273129e44342cb8b486d9c17bc7"
     }
   },

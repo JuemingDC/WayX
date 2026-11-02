@@ -111,8 +111,9 @@
             "canonical": "response.body",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$response.body",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "identity; declaration controls whether body is available",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -134,8 +135,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -159,8 +161,9 @@
             "canonical": "request.method",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$request.method",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -184,8 +187,9 @@
             "canonical": "request.url",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$request.url",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -209,8 +213,9 @@
             "canonical": "response.body",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$response.body",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "identity; declaration controls whether body is available",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -232,8 +237,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -267,8 +273,9 @@
             "canonical": "response.body",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$response.body",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "identity; declaration controls whether body is available",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -290,8 +297,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -315,8 +323,9 @@
             "canonical": "request.method",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$request.method",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -340,8 +349,9 @@
             "canonical": "request.url",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$request.url",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -365,8 +375,9 @@
             "canonical": "response.body",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$response.body",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "identity; declaration controls whether body is available",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -388,8 +399,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",

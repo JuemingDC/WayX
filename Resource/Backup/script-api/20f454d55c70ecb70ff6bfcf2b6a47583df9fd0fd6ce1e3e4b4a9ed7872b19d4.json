@@ -172,8 +172,9 @@
             "canonical": "response.context",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$response",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -195,8 +196,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -218,8 +220,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -241,8 +244,9 @@
             "canonical": "codec.atob",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "atob",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "shared scoped standard implementation",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -264,8 +268,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -273,8 +278,8 @@
           },
           {
             "id": "api:5",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "standard.URL",
+            "kind": "codec",
             "source": {
               "api": "URL",
               "start": 232904,
@@ -284,15 +289,22 @@
               "access": "call",
               "memberPath": []
             },
-            "canonical": "runtime-member-dispatch",
+            "canonical": "standard.URL",
             "value": "runtime value",
             "target": {
-              "api": "native engine / runtime capability",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "capability": "native-only",
+              "api": "URL",
+              "lowering": "actual native engine global; no bundled fallback yet",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
-            "diagnostics": []
+            "diagnostics": [
+              {
+                "api": "URL",
+                "reason": "actual native engine global; no bundled fallback yet",
+                "solution": "Evaluate a pinned whatwg-url bundle with URL/URLSearchParams together, WPT vectors, IDNA dependencies, ES compatibility and bundle-size budget"
+              }
+            ]
           },
           {
             "id": "api:6",
@@ -310,8 +322,9 @@
             "canonical": "codec.btoa",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "btoa",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "shared scoped standard implementation",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -333,8 +346,9 @@
             "canonical": "codec.btoa",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "btoa",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "shared scoped standard implementation",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -356,8 +370,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -381,8 +396,9 @@
             "canonical": "response.context",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$response",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -404,8 +420,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -427,8 +444,9 @@
             "canonical": "runtime-member-dispatch",
             "value": "runtime value",
             "target": {
+              "capability": "unclassified",
               "api": "native engine / runtime capability",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -460,8 +478,9 @@
             "canonical": "response.context",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$response",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -483,8 +502,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -506,8 +526,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -529,8 +550,9 @@
             "canonical": "codec.atob",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "atob",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "shared scoped standard implementation",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -552,8 +574,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -561,8 +584,8 @@
           },
           {
             "id": "api:5",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "standard.URL",
+            "kind": "codec",
             "source": {
               "api": "URL",
               "start": 232904,
@@ -572,15 +595,22 @@
               "access": "call",
               "memberPath": []
             },
-            "canonical": "runtime-member-dispatch",
+            "canonical": "standard.URL",
             "value": "runtime value",
             "target": {
-              "api": "native engine / runtime capability",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "capability": "native-only",
+              "api": "URL",
+              "lowering": "actual native engine global; no bundled fallback yet",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
-            "diagnostics": []
+            "diagnostics": [
+              {
+                "api": "URL",
+                "reason": "actual native engine global; no bundled fallback yet",
+                "solution": "Evaluate a pinned whatwg-url bundle with URL/URLSearchParams together, WPT vectors, IDNA dependencies, ES compatibility and bundle-size budget"
+              }
+            ]
           },
           {
             "id": "api:6",
@@ -598,8 +628,9 @@
             "canonical": "codec.btoa",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "btoa",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "shared scoped standard implementation",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -621,8 +652,9 @@
             "canonical": "codec.btoa",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "btoa",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "shared scoped standard implementation",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -644,8 +676,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -669,8 +702,9 @@
             "canonical": "response.context",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$response",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -692,8 +726,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -715,8 +750,9 @@
             "canonical": "runtime-member-dispatch",
             "value": "runtime value",
             "target": {
+              "capability": "unclassified",
               "api": "native engine / runtime capability",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -748,8 +784,9 @@
             "canonical": "response.context",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$response",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -771,8 +808,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -794,8 +832,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -817,8 +856,9 @@
             "canonical": "codec.atob",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "atob",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "shared scoped standard implementation",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -840,8 +880,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -849,8 +890,8 @@
           },
           {
             "id": "api:5",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "standard.URL",
+            "kind": "codec",
             "source": {
               "api": "URL",
               "start": 232904,
@@ -860,15 +901,22 @@
               "access": "call",
               "memberPath": []
             },
-            "canonical": "runtime-member-dispatch",
+            "canonical": "standard.URL",
             "value": "runtime value",
             "target": {
-              "api": "native engine / runtime capability",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "capability": "native-only",
+              "api": "URL",
+              "lowering": "actual native engine global; no bundled fallback yet",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
-            "diagnostics": []
+            "diagnostics": [
+              {
+                "api": "URL",
+                "reason": "actual native engine global; no bundled fallback yet",
+                "solution": "Evaluate a pinned whatwg-url bundle with URL/URLSearchParams together, WPT vectors, IDNA dependencies, ES compatibility and bundle-size budget"
+              }
+            ]
           },
           {
             "id": "api:6",
@@ -886,8 +934,9 @@
             "canonical": "codec.btoa",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "btoa",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "shared scoped standard implementation",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -909,8 +958,9 @@
             "canonical": "codec.btoa",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "btoa",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "shared scoped standard implementation",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -932,8 +982,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -957,8 +1008,9 @@
             "canonical": "response.context",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$response",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -980,8 +1032,9 @@
             "canonical": "complete(pass|modify|respond)",
             "value": "runtime value",
             "target": {
+              "capability": "runtime",
               "api": "$done",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -1003,8 +1056,9 @@
             "canonical": "runtime-member-dispatch",
             "value": "runtime value",
             "target": {
+              "capability": "unclassified",
               "api": "native engine / runtime capability",
-              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
