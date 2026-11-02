@@ -109,9 +109,9 @@ export const scriptCapabilityBoundaries = {
   notification: {
     status: "conditional-url-and-http-media",
     domain:
-      "Three text fields; explicit Loon openUrl/mediaUrl or String link maps to Surge url/media-url, and explicit Surge open-url/url/media-url maps to Loon. Only HTTP(S) media and zero delay are supported; target QX omits optional arguments without parameter errors",
+      "Three text fields; QX-undocumented optional arguments are omitted for both QX sources and destinations, preserving expression effects on native and converted branches; explicit Loon openUrl/mediaUrl or String link maps to Surge url/media-url, and explicit Surge open-url/url/media-url maps to Loon. Only HTTP(S) media and zero delay are supported; target QX omits optional arguments without parameter errors",
     outside:
-      "Source QX rich-notification options lack author-repository evidence in inspected files and remain blocked to other hosts; clipboard confirmation, delayed delivery, base64 media, sound and lifecycle are not equated",
+      "QX optional fields have no rich-feature equivalence claim: they are omitted by user policy. Clipboard confirmation, delayed delivery, base64 media, sound and lifecycle for other sources still require explicit contracts",
     evidence:
       "Surge scripting/api.html notification options (iOS 5.11+/Mac 5.7+); Loon Script API notification section; QX sample.conf and sample-task.js document three text fields. No notification-delivery/device certification is claimed",
   },
@@ -128,6 +128,15 @@ export const scriptCapabilityBoundaries = {
       "Explicit stable binary profile and observed principal body reads map callback Uint8Array to QX ArrayBuffer bodyBytes with exact byte offsets; unflagged text retains body even if QX exposes bodyBytes too",
     outside:
       "Unresolved dynamic binary mode, missing required bytes and arbitrary mixed text/byte observations remain blocked",
+  },
+  // Modified: 2026-11-02 (chance). Untouched original response return is an
+  // explicit pass-through contract rather than generic header output support.
+  originalContextCompletion: {
+    status: "conditional-qx-response-pass-through",
+    domain:
+      "Direct $done($response) in a QX text response-body trigger; all context observations are immutable scalar reads or presence checks, with no aliases, escapes, header/binary reads or mutations. Surge receives $done({}) and retains original wire fields",
+    outside:
+      "Wrong phase, missing body declaration, binary input, context mutation/escape, reflective or indirect completion remain blocked; no general mutable-context/header support",
   },
   configurationControl: {
     status: "excluded",

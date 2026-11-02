@@ -4,11 +4,13 @@ import ts from "typescript";
 import crypto from "node:crypto";
 import {
   scriptApiDefinitions,
+  omitScriptNotificationOptions,
   scriptHostLayouts,
   type ScriptClient,
   type ScriptApiIR,
   type ScriptApiOperation,
 } from "../domain/script-api.ts";
+import { originalContextCompletionContract } from "./script-original-context.ts";
 import { completionString } from "./script-string.ts";
 import { resolvedPath, constantString } from "./script-bindings.ts";
 import {
@@ -224,6 +226,10 @@ export function parseScriptApiIR(
   >,
 ): ScriptApiIR & { analysisSourceSha256: string } {
   const operations: ScriptApiOperation[] = [];
+  const originalContext = originalContextCompletionContract(tree, checker, {
+    ...options,
+    from,
+  });
   const walk = (n: ts.Node, fn: (n: ts.Node) => void) => {
     fn(n);
     ts.forEachChild(n, (c) => walk(c, fn));
@@ -355,6 +361,20 @@ export function parseScriptApiIR(
       return fields;
     }
     if (kind === "completion") {
+      if (ts.isCallExpression(call) && originalContext.calls.has(call))
+        return [
+          {
+            source: "argument0",
+            canonical: "complete.pass-original",
+            target: from === to ? "argument0 (original context)" : "{}",
+            action: "map",
+            transform:
+              from === to
+                ? "native original response completion"
+                : "untouched original response; omit redundant header/body/status replacement",
+          },
+        ];
+
       const objects = call.arguments?.[0]
         ? completionObjects(call.arguments[0], tree, checker)
         : null;
@@ -526,7 +546,7 @@ export function parseScriptApiIR(
           });
           continue;
         }
-        if (to === "qx") {
+        if (omitScriptNotificationOptions(from, to)) {
           fields.push({
             source: "argument" + index,
             canonical: "notify.options",
@@ -606,6 +626,13 @@ export function parseScriptApiIR(
     const definitions = scriptApiDefinitions.filter((d) => {
       const key = d.source[from];
       if (!key) return false;
+      if (
+        d.selector === "original-context" &&
+        (!call ||
+          !ts.isCallExpression(call) ||
+          !originalContext.calls.has(call))
+      )
+        return false;
       if (d.selector === "deletion-marker") {
         const value = call?.arguments?.[0];
         if (

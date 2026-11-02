@@ -56,7 +56,10 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
   // no fake notification delay, clipboard action or undocumented QX options.
   function notify(title,subtitle,body,option,delay){
     if(config.to==='egern'){if(arguments.length>3)fail('notification options unavailable');return host.ctx.notify({title,subtitle,body});}
+    // Modified: 2026-11-02 (chance). Omit QX-undocumented source options
+    // before optional-field validation; argument construction already occurred.
     if(targetLayout.notification.open===null)return host.notifyQx(title,subtitle,body);
+    if(config.apiPlan.omitNotificationOptions)return host.notify.post(title,subtitle,body);
     if(arguments.length<=3)return host.notify.post(title,subtitle,body);
     if(delay!==undefined&&delay!==0)fail('notification delay has no verified target mapping');
     let url,media;const notification=sourceLayout.notification;
@@ -89,7 +92,11 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     const consume=()=>{if(consumed)throw new TypeError('Body has already been consumed');consumed=true;return value.body;};
     return {url:value.url,method:value.method,status:value.status??value.statusCode,headers:headersView(value.headers),text:async()=>{const v=consume();if(v===undefined||v===null)return '';if(typeof v!=='string')fail('binary-to-text decoding needs an explicit codec');return v;},json:async()=>{const v=consume();if(typeof v!=='string')fail('JSON requires the text-body contract');return JSON.parse(v);},arrayBuffer:async()=>{const v=consume();return v===undefined||v===null?new ArrayBuffer(0):buffer(v);}};
   }
+  // Modified: 2026-11-02 (chance). Only a proven untouched source context
+  // identity becomes pass-through; arbitrary/modified objects follow normal rules.
+  let originalResponse;
   function canonical(value){
+    if(config.contextPassThrough&&value===originalResponse&&value!==undefined)return {};
     if(value===undefined||value===null)return {};
     if(typeof value==='string'){if(config.from!=='qx')fail('non-QX string completion');return config.phase==='echo'?{response:{status:200,body:value}}:{body:value};}
     if(typeof value!=='object'||Array.isArray(value))fail('unsupported completion result');
@@ -214,7 +221,8 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     if(host.script&&host.script.startTime!==undefined){const start=host.script.startTime;script.startTime=sourceLayout.scriptStartTime==='date'?(start instanceof Date?start:new Date(start*1000)):(start instanceof Date?start.getTime()/1000:start);}
     const ctx={request:ctxMessage(request),response:ctxMessage(response),script,respond:value=>({response:value}),abort:()=>({abort:true})};
     const sourceTimer=(callback,delay,...args)=>setTimeout(()=>callback(...args),delay);
-    const result=run(view(request,'request'),view(response,'response'),done,config.from==='qx'?undefined:script,config.from==='qx'?undefined:sourceStore,config.from==='qx'?sourcePrefs:undefined,config.from==='qx'?undefined:{post:notify},config.from==='qx'?notify:undefined,ctx,config.from==='loon'?sourceTimer:setTimeout,config.from==='loon'?sourceTimer:undefined,callbackHttp(),sourceTask(),sourceArgument(),host.codecs&&host.codecs.TextEncoder,host.codecs&&host.codecs.TextDecoder,host.codecs&&host.codecs.atob,host.codecs&&host.codecs.btoa);
+    originalResponse=view(response,'response');
+    const result=run(view(request,'request'),originalResponse,done,config.from==='qx'?undefined:script,config.from==='qx'?undefined:sourceStore,config.from==='qx'?sourcePrefs:undefined,config.from==='qx'?undefined:{post:notify},config.from==='qx'?notify:undefined,ctx,config.from==='loon'?sourceTimer:setTimeout,config.from==='loon'?sourceTimer:undefined,callbackHttp(),sourceTask(),sourceArgument(),host.codecs&&host.codecs.TextEncoder,host.codecs&&host.codecs.TextDecoder,host.codecs&&host.codecs.atob,host.codecs&&host.codecs.btoa);
     if(config.from==='egern')return Promise.resolve(result).then(done);
     return completion||result;
   }

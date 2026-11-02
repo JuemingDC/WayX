@@ -1,7 +1,11 @@
 // Modified: 2026-11-02 (chance). Prove notification options per source contract;
 // target QX omits undocumented optional parameters without evaluating them twice.
 import ts from "typescript";
-import { scriptHostLayouts, type ScriptClient } from "../domain/script-api.ts";
+import {
+  scriptHostLayouts,
+  omitScriptNotificationOptions,
+  type ScriptClient,
+} from "../domain/script-api.ts";
 import { constantString } from "./script-bindings.ts";
 export function notificationContract(
   args: readonly ts.Expression[],
@@ -12,7 +16,9 @@ export function notificationContract(
   if (args.some(ts.isSpreadElement))
     return { ok: false, omitted: [] as string[] };
   if (args.length <= 3) return { ok: true, omitted: [] as string[] };
-  if (to === "qx")
+  // Modified: 2026-11-02 (chance). Source QX has the same documented
+  // three-text-field policy on every destination, including its native branch.
+  if (omitScriptNotificationOptions(from as ScriptClient, to as ScriptClient))
     return {
       ok: true,
       omitted: args.slice(3).map((_, i) => `notification.argument${i + 4}`),

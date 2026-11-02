@@ -205,7 +205,7 @@ export interface ScriptApiDefinition {
     | "environment";
   source: Partial<Record<ScriptClient, string>>;
   canonical: string;
-  selector?: "deletion-marker";
+  selector?: "deletion-marker" | "original-context";
   value: string;
   lowering: string;
   target?: Partial<Record<ScriptClient, string>>;
@@ -283,6 +283,19 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     lowering: "ArrayBuffer <-> Uint8Array preserving byteOffset/byteLength",
     proof: "explicit-binary-declaration",
   })),
+  {
+    id: "complete.original-context",
+    kind: "completion",
+    selector: "original-context",
+    source: { qx: "$done" },
+    target: { surge: "$done({})" },
+    canonical: "complete.pass-original",
+    value: "proven untouched response context",
+    lowering:
+      "preserve the original HTTP response without copying header/framing fields",
+    proof:
+      "same-phase-direct-original-context; immutable scalar-only reads; no alias/escape/binary",
+  },
   {
     id: "complete",
     kind: "completion",
@@ -518,4 +531,16 @@ export function scriptHostPresence(
     $surge: client === "surge" ? "object" : "undefined",
     $rocket: "undefined",
   };
+}
+
+// Modified: 2026-11-02 (chance). Undocumented QX notification parameters
+// are omitted on source and destination branches; expression effects stay intact.
+export function omitScriptNotificationOptions(
+  from: ScriptClient,
+  to: ScriptClient,
+) {
+  return (
+    scriptHostLayouts[from].notification.root === "$notify" ||
+    scriptHostLayouts[to].notification.root === "$notify"
+  );
 }

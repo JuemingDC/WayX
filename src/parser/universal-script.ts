@@ -195,7 +195,8 @@ export function planUniversalAdblockScript(
     role = fresh("__wayxRole"),
     config = fresh("__wayxConfig"),
     runBinding = fresh("__wayxRun"),
-    codecBinding = fresh("__wayxCodecs");
+    codecBinding = fresh("__wayxCodecs"),
+    nativeNotify = fresh("__wayxNativeNotify");
   // Modified: 2026-11-02 (chance). Inject HTTP only when a proven callback
   // contract needs it; all hosts still execute one author-named shared program.
   const usesHttp = Object.values(contexts).some((role: any) =>
@@ -228,7 +229,10 @@ const ${host}={request:typeof $request==='undefined'?undefined:$request,response
 const ${contextTable}=${JSON.stringify(contexts)},${role}=${host}.response===undefined?'request':'response',${config}=${contextTable}[${role}]&&${contextTable}[${role}][${target}];
 if(!${config})throw new Error('Unregistered adblock HTTP trigger');
 const ${runBinding}=${run};
-if(${target}===${JSON.stringify(from)}&&!${config}.httpTask)return ${runBinding}(${host}.request,${host}.response,${host}.done,${host}.script,${host}.store,${host}.prefs,${host}.notify,${host}.notifyQx,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval,${host}.http,${host}.task,${host}.argument,${codecBinding}&&${codecBinding}.TextEncoder,${codecBinding}&&${codecBinding}.TextDecoder,${codecBinding}&&${codecBinding}.atob,${codecBinding}&&${codecBinding}.btoa);
+// Modified: 2026-11-02 (chance). Apply the documented QX notification subset
+// on the native branch too; all original optional expressions still evaluate.
+const ${nativeNotify}=${config}.apiPlan.omitNotificationOptions&&${config}.omittedParameters&&${config}.omittedParameters.some(p=>p.startsWith('notification.argument'))&&typeof ${host}.notifyQx==='function'?((title,subtitle,body)=>${host}.notifyQx(title,subtitle,body)):${host}.notifyQx;
+if(${target}===${JSON.stringify(from)}&&!${config}.httpTask)return ${runBinding}(${host}.request,${host}.response,${host}.done,${host}.script,${host}.store,${host}.prefs,${host}.notify,${nativeNotify},undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval,${host}.http,${host}.task,${host}.argument,${codecBinding}&&${codecBinding}.TextEncoder,${codecBinding}&&${codecBinding}.TextDecoder,${codecBinding}&&${codecBinding}.atob,${codecBinding}&&${codecBinding}.btoa);
 return (${scriptApiRuntime})(${config},${host},${runBinding});
 })();\n`;
   try {

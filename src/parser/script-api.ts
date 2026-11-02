@@ -1,5 +1,6 @@
 // Modified: 2026-11-02 (chance). Concrete API occurrences lower through one
 // semantic IR and target plan; lexical proofs remain separate from API mappings.
+import { originalContextCompletionContract } from "./script-original-context.ts";
 import { parseScriptApiIR } from "./script-api-ir.ts";
 import { emitScriptApiPlan } from "../emit/script-api-plan.ts";
 import { scriptKnownFields } from "../domain/script-api.ts";
@@ -488,6 +489,30 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
     options.from,
     options.to,
   );
+  // Modified: 2026-11-02 (chance). Recognize direct immutable context return
+  // separately from dynamic completion objects and publish source omissions.
+  const originalContext = originalContextCompletionContract(
+    inventory.tree,
+    inventory.checker,
+    options,
+  );
+  for (let i = problems.length - 1; i >= 0; i--)
+    if (
+      originalContext.roots.has(problems[i].api) &&
+      problems[i].reason ===
+        "Bare platform-object aliases require data-flow proof"
+    )
+      problems.splice(i, 1);
+  const notificationOmissions = new Set<string>();
+  for (const { api, node } of inventory.calls)
+    if (api === "$notify" || api === "$notification.post")
+      for (const omission of notificationContract(
+        node.arguments,
+        inventory.checker,
+        options.from,
+        options.to,
+      ).omitted)
+        notificationOmissions.add(omission);
   if (options.from === options.to) {
     const operationIR = parseScriptApiIR(
       inventory.tree,
@@ -506,6 +531,9 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
       operationIR,
       contract: {
         apiPlan: emitScriptApiPlan(operationIR),
+        ...(notificationOmissions.size
+          ? { omittedParameters: [...notificationOmissions] }
+          : {}),
         ...(codecs.ok ? { portableCodecs: codecs.names } : {}),
         ...(taskContract.ok
           ? {
@@ -560,6 +588,7 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
   const allowedFields = scriptKnownFields();
   for (const api of features) {
     const [root, field] = api.split(".");
+    if (api === root && originalContext.roots.has(root)) continue;
     if (root === "$httpClient" && httpContract.ok) continue;
     if (root === "$task" && taskContract.ok) continue;
     if (gaps[root]) {
@@ -703,11 +732,14 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
     };
     scan(inventory.tree);
   }
-  const notificationOmissions = new Set<string>();
   let synthesis = 0,
     passOrModify = 0;
   for (const { api, node } of inventory.calls) {
     if (api === "$done") {
+      if (originalContext.calls.has(node)) {
+        passOrModify++;
+        continue;
+      }
       const arg = node.arguments[0];
       // Modified: 2026-11-02 (chance). Prove all closed literal assignments to a result variable; do not guess arbitrary dynamic objects.
       const objects = arg
@@ -995,6 +1027,7 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
   const effectiveOptions = {
     ...options,
     apiPlan,
+    ...(originalContext.calls.size ? { contextPassThrough: true } : {}),
     binaryReads:
       !!options.binary &&
       features.some((p) =>
@@ -1047,6 +1080,7 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
     operationIR,
     contract: {
       apiPlan,
+      ...(originalContext.calls.size ? { contextPassThrough: true } : {}),
       headerReads: headerContract.reads,
       headerPrefixes: headerContract.prefixes,
       binaryReads: effectiveOptions.binaryReads,
