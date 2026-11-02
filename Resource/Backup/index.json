@@ -7406,7 +7406,7 @@
       "path": "Script/Adblock/kelee.one-37eca0771b70/AliYunDrive_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/AliYunDrive/AliYunDrive_remove_ads.js",
       "sourceSha256": "4909ecde19541ad5e83be296e87eab83e62ede4e710fceee3d59dc4cf11f3e38",
-      "sha256": "379de816539ee42f6830bda6e6c9665e660f6e5fc93cb22e0b4f466109341d41",
+      "sha256": "c89c35feced76427aae03ebfcbed16b65e124e32dd41677ea38020fc817736d3",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -7428,6 +7428,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -7534,6 +7535,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -7640,6 +7642,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -7752,7 +7755,7 @@
       "path": "Script/Adblock/kelee.one-3a6c3cc31e79/AutoHome_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/AutoHome/AutoHome_remove_ads.js",
       "sourceSha256": "9ef33d57454935592032fe7d204a9fee555883b49f86d938942719d95a2035dd",
-      "sha256": "cd7595d93780d756cf49c9686a9488483c02a9142c3bb7c91ef559c0cac8d484",
+      "sha256": "1ac854c6411ff4c2c479b679ad82fd7c5a11ef9c14fb2e07bf2c6858044fde82",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -7774,6 +7777,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -7880,6 +7884,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -7986,6 +7991,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -8098,7 +8104,7 @@
       "path": "Script/Adblock/kelee.one-cbe221cf5dc0/BabyTree_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/BabyTree/BabyTree_remove_ads.js",
       "sourceSha256": "0159119e7b367400b85f8814eae93b5030f00bb51a5676e97c03056f3bca70ab",
-      "sha256": "dec91370b720da12050d59738c31c0337491bad02c36ed1d5abd3cbb0588d5a0",
+      "sha256": "427f8cb84a9405744b02c6245977086b8d4199f5bf060754d094639af61ed293",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -8120,6 +8126,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -8226,6 +8233,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -8332,6 +8340,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -8444,7 +8453,7 @@
       "path": "Script/Adblock/kelee.one-c5a7ae3bef67/BaiduSearchHomePage_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/BaiduSearch/BaiduSearchHomePage_remove_ads.js",
       "sourceSha256": "a135cb358571270371159b1c1539e555f51c7e53d6531afc6b3687796df0b0d4",
-      "sha256": "3d8315463ab578674fe8f26b849e3813fdd33873b74872ffea8e728a3776131d",
+      "sha256": "5e3ff66d7e1a40924480470fce67947a9571025dff814f3894ba29c78b4e3c40",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -8466,6 +8475,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -8572,6 +8582,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -8678,6 +8689,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -8788,7 +8800,7 @@
       "path": "Script/Adblock/kelee.one-83bee2441664/Baidu_input_method_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/Baidu_input_method/Baidu_input_method_remove_ads.js",
       "sourceSha256": "4401933fa39f97c72711cf075c9caa8506be46e3fdbf0572d96ab9493aaf623b",
-      "sha256": "a68e3dd10d652c05967e2c28e6555b9cd7650036595b6009e53a3c4e1d26ee49",
+      "sha256": "18c521570b6ebc7b840382cf9b321a5bb2e10455fbbd51a206eafe309c4fefad",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -8810,6 +8822,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -8916,6 +8929,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -9022,6 +9036,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -9134,7 +9149,7 @@
       "path": "Script/Adblock/kelee.one-28f4dc541f88/BooHee_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/BooHee/BooHee_remove_ads.js",
       "sourceSha256": "8b044d530e905fd358dbe155ec75aa8ee460450bed5bf8634556716d544ff388",
-      "sha256": "03803aac9a85a2664c5dddcc9cf4b391689f35d40c9e8ada23b3e92892dcfef8",
+      "sha256": "d46ac0a00e072fb7061c22aaff86d60d3e5c434df093085d02a3be935ff76c2f",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -9156,6 +9171,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -9262,6 +9278,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -9368,6 +9385,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -9480,7 +9498,7 @@
       "path": "Script/Adblock/kelee.one-25d033d39f66/Chelaile_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/Chelaile/Chelaile_remove_ads.js",
       "sourceSha256": "80b889b0fd9f45da4b3327d57bb9ad1809958c68478d1bdc4cc5a62ef9e69919",
-      "sha256": "ed6d070a237f0584bc8ac5c7757df658e95c7a6219a25235962dcc8efa397dbd",
+      "sha256": "e5d94a03d6d265c90bbab27fa3fd836ce4ba7f443fd99648e8489095c4e116ac",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -9502,6 +9520,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -9608,6 +9627,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -9714,6 +9734,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -9825,7 +9846,7 @@
       "path": "Script/Adblock/kelee.one-b42c74e37c3c/ColorfulClouds_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/ColorfulClouds/ColorfulClouds_remove_ads.js",
       "sourceSha256": "51d20e0cd5f134603f541fdb7a05a3e9a259b8e3adece8347b90df237687c0a1",
-      "sha256": "60c6ca4c58e07f216220dba85ee150c1f87aeacb183c1939004695c7dafbaf57",
+      "sha256": "337cc4abd35ad51e337efd3ea0bf8b70b995cf23cc8ed75de942c011324a5401",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -9847,6 +9868,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -9953,6 +9975,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -10059,6 +10082,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -10171,7 +10195,7 @@
       "path": "Script/Adblock/kelee.one-c2037a6bd293/Douyu_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/Douyu/Douyu_remove_ads.js",
       "sourceSha256": "92c8426b0229a89e22277c7f8ca1ff71ad1900e8786cb9f24845491393612b1a",
-      "sha256": "518144544ee85b8119e87dbb2b24fa465b50f9569c73a9903b1c708e3bb3ff58",
+      "sha256": "2d29e57ccc8624d17b5db46c3ba86c7286d26778aef15b702b5371048bf319e2",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -10193,6 +10217,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -10299,6 +10324,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -10405,6 +10431,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -10517,7 +10544,7 @@
       "path": "Script/Adblock/kelee.one-694792f21aae/DubbingShow_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/DubbingShow/DubbingShow_remove_ads.js",
       "sourceSha256": "00b312e3ed559cfcda15cb43e637c94d6293ad3cb34b2c5d23d9bd330668fe52",
-      "sha256": "7e2b8c350dbdb0be19c124b3df4b9bd53493045ae61989e0f0834e44aebc043e",
+      "sha256": "aced5ecf3c9f4f77e3926dced3340bbadac0e977db050ccb8a1459698207b385",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -10539,6 +10566,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -10645,6 +10673,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -10751,6 +10780,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -10863,7 +10893,7 @@
       "path": "Script/Adblock/kelee.one-dd1adf0ea56d/FlyerTea_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/FlyerTea/FlyerTea_remove_ads.js",
       "sourceSha256": "096bf18999cb7071083a09b8a054087fb91a9872753ed5b64cafb151c0eee087",
-      "sha256": "03e702443ae96dd31197d8db6667317a3c6c3af372ab887ae12922f0dd30eb79",
+      "sha256": "e39c8691ba87bf1bd175a865325a4544d7fba74ee9fabed3c5eced1ffc462086",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -10885,6 +10915,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -10991,6 +11022,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -11097,6 +11129,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -11209,7 +11242,7 @@
       "path": "Script/Adblock/kelee.one-09e8dc8c196b/HUPU_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/HUPU/HUPU_remove_ads.js",
       "sourceSha256": "43ec9962925a76ca49cf1491a73430bd1b7fc3ef206de50eb0083c75b69865a6",
-      "sha256": "154ec45245b1656b377aa7d6af73d984ae8847e3546fa0a66d0ef41069a729a0",
+      "sha256": "a277c58f0ea9563bb5e9718cb6b34dd54a209fb9ec8d9115e12b9facb22c7647",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -11231,6 +11264,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -11337,6 +11371,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -11443,6 +11478,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -11555,7 +11591,7 @@
       "path": "Script/Adblock/kelee.one-0c08b6ade279/JD_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/JD/JD_remove_ads.js",
       "sourceSha256": "c029c4151fe73b3a6f660d0933393d1b6afd1969651f01a88d5a357abfdd7cb4",
-      "sha256": "5206e7c354d11b1aefc056c90cccf2e062a8ca71bfeaee92316b86a015dae59f",
+      "sha256": "e2871489e30bb9322d9590613e1827c950ecef9fc09348f467ba131d5b92ab35",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -11577,6 +11613,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -11683,6 +11720,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -11789,6 +11827,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -11901,7 +11940,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-4c456c6aa61a/jingdong.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/jingdong.js",
       "sourceSha256": "a8115b3c60d3e9ad76d9bd0e6bb1edf07b73bd569dbd80b7efbbcf7bd3059322",
-      "sha256": "c85ef4186371b12f4ed04ae52995fe8443d3dfb651737a7486f31ea3ce52ecc8",
+      "sha256": "00dbe705801de5a3b4ce026594aa80280dd2ce02bbbf8ab11fabe95ebf0198c3",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -11923,6 +11962,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -12029,6 +12069,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -12135,6 +12176,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -12247,7 +12289,7 @@
       "path": "Script/Adblock/kelee.one-5d403a80285e/KuaiKanComic_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/KuaiKanComic/KuaiKanComic_remove_ads.js",
       "sourceSha256": "e9f4e623df954abbaa76b3e67059b370d7df97e71c16067fc5014d2c1a81a911",
-      "sha256": "36a2a416b004103b837c4409d0cdeae5f24e0a665fb803140bac28fc05c3ecdb",
+      "sha256": "8cf2543aa572dda4e8ce85a90af65f95b79acc37cf2575c5c44d9573f8ebac78",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -12269,6 +12311,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -12375,6 +12418,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -12481,6 +12525,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -12593,7 +12638,7 @@
       "path": "Script/Adblock/kelee.one-34857e13ac47/MKZ_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/MKZ/MKZ_remove_ads.js",
       "sourceSha256": "b3d570b03982fd706501218fdd9e6371f5bf0dd4d9e764e26a5accc4a7b6820b",
-      "sha256": "87d9b00a8bf2db47ce680aa0ba792acc4ffc0cd2721c2cdb89ccbc4b08b33550",
+      "sha256": "4fba00676aab65f80e6a46be621f121a74f1ac428e8b54ac7944ad8095e876be",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -12615,6 +12660,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -12721,6 +12767,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -12827,6 +12874,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -12939,7 +12987,7 @@
       "path": "Script/Adblock/kelee.one-88e0dafed4cd/MaiMai_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/MaiMai/MaiMai_remove_ads.js",
       "sourceSha256": "e941215a83fa4b06cef7e5931776cef1ac777d0e3e0273b6674b7897f20e9466",
-      "sha256": "3aba789f20b0d4777cf7cb11c66241b5fecec562c34947a5760e6b7aaa84cee4",
+      "sha256": "49835af84c6ac27c390b67cab60213324511977bb64835a5367af60ba0cb33d5",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -12961,6 +13009,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -13067,6 +13116,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -13173,6 +13223,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -13285,7 +13336,7 @@
       "path": "Script/Adblock/kelee.one-b158d39001e0/MeituMYXJ_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/MeituMYXJ/MeituMYXJ_remove_ads.js",
       "sourceSha256": "9a50669b814eedd82eb9b73518089547bc7b9c5388dc4e441dfc9f155c55fc61",
-      "sha256": "3522ed63305aba4e2202d2b66550fe07e1e78c76b9fbcc99bd7d3feea104f35c",
+      "sha256": "bef298652e3dfb7b7dc8bd6d1f579da65c3210c2de55dbda78c96e5f596399b6",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -13307,6 +13358,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -13413,6 +13465,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -13519,6 +13572,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -13631,7 +13685,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-9102b70e3365/adrive.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/adrive.js",
       "sourceSha256": "bd7eacc3125068b590138218d9ab53bab69d2e6cc737b7b817fe2784b7141fb4",
-      "sha256": "e222e77be0a70280a4f3ff0c9248a016c8bba7f64a085c5f154a1a891aefef5c",
+      "sha256": "5500b32506881b0fb383a42866e5d6401483d9548719b36dcbac84323fdf0a27",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -13653,6 +13707,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -13759,6 +13814,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -13865,6 +13921,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -13977,7 +14034,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-c51a82707df8/changyuan.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/changyuan.js",
       "sourceSha256": "c290a8db06f7589f5042633ad198a27e3ccbf76d8e600f6674f806fcd2b023c2",
-      "sha256": "266281ba30d5e25b3af0c227e32e5c041d40eb732d29903e1a51d27f3b30cc0a",
+      "sha256": "1be9f878a45a5a97c5ef36c461dc621b4a585a95c4f688cae68c30917c83b371",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -13999,6 +14056,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -14105,6 +14163,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -14211,6 +14270,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -14323,7 +14383,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-93242e4da35e/coolapk.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/coolapk.js",
       "sourceSha256": "9de5475ec61381cc5ac2cd796b2f0e4212fd53b9e52a2bdd0f9b06478926d384",
-      "sha256": "46ce91244a0b6065270933e62ebde7259040c1fb2e6286e5240e8fc47c9be15b",
+      "sha256": "99787a066872651d9deb795c9044551ffe50f722651530b31b068151968f6a79",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -14345,6 +14405,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -14451,6 +14512,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -14557,6 +14619,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -14669,7 +14732,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-db81649b5167/cloud139.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/cloud139.js",
       "sourceSha256": "084a20edd58471dde5e7126bd7dd44bd177b8bb11b3e3d6a13b6379a03247b51",
-      "sha256": "23a083c07998cba7110866527d6595f7bd4dc3c4526a5f55ad6dfd67f90162e7",
+      "sha256": "aa73e6651521e9f0f141b7513d8e2c3e7fc0cdc71f348d774a20a6a62c5f5eed",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -14691,6 +14754,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -14797,6 +14861,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -14903,6 +14968,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -15015,7 +15081,7 @@
       "path": "Script/Adblock/kelee.one-8fd25976d1ef/NeteaseNews_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js",
       "sourceSha256": "9f03b3b39c8b6d576b1ac18cd098ef5fd08c17fb2be9044f94344ea3a3ff4b8b",
-      "sha256": "11b7ffe708277d72eeb3cc3d8465fc3c0e1d573e056574a527c5fe2b61d75c93",
+      "sha256": "e6427957780428beabb922601bed08c57ffacb287ea3ead3863fc0992b3c9ebd",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -15037,6 +15103,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -15143,6 +15210,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -15249,6 +15317,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -15361,7 +15430,7 @@
       "path": "Script/Adblock/kelee.one-a09af5bf8168/PICC_Insurance_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/PICC_Insurance/PICC_Insurance_remove_ads.js",
       "sourceSha256": "c9783faae5d4d945eafc44913ce55c26c1bf827f3145b5c5dd1b2daf4e13ffb8",
-      "sha256": "9c4118af3699e221500e0335f8139e4bf0edc3a68562f51654eb82c2046878a2",
+      "sha256": "b995cb86e2cf45d7a01d61f047745a09fe9d182c3e47ba2b8ae2a62fb9e3f089",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -15383,6 +15452,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -15489,6 +15559,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -15595,6 +15666,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -15707,7 +15779,7 @@
       "path": "Script/Adblock/kelee.one-ea8de3d90345/PinDuoDuo_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/PinDuoDuo/PinDuoDuo_remove_ads.js",
       "sourceSha256": "63af2e44da24da11f5c1bc930aefdcef2ce16aa65293be3e80ba8520d46e9c58",
-      "sha256": "2339de27021c2227198e80e19659f20725a9ac9032024e905b10b7093a98d223",
+      "sha256": "576134cbacd84a0a16cd6e65f88e993b99e11492246cc158d65a16846dd365d7",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -15729,6 +15801,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -15835,6 +15908,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -15941,6 +16015,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -16052,7 +16127,7 @@
       "path": "Script/Adblock/kelee.one-15d2e267fe35/PuPuMall_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/PuPuMall/PuPuMall_remove_ads.js",
       "sourceSha256": "76659d365b0da3eef1ef54cde44254f9d951799138af52a3edeea2e29a43f83f",
-      "sha256": "acbf4d72a95c4724c71f54f4caebd6aca5c381afddd63d028750e6429c9e30b5",
+      "sha256": "fe98d5ceae71d92dea82a2737eb2a5bf9cd9addd806d6830c6371940020bf369",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -16074,6 +16149,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -16180,6 +16256,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -16286,6 +16363,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -16398,7 +16476,7 @@
       "path": "Script/Adblock/kelee.one-bb38729be757/RiskBird_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/RiskBird/RiskBird_remove_ads.js",
       "sourceSha256": "56a1c10a6422423845a8486fbc5deff60f37e6aa9e40fc439317e7e2c57fc9e2",
-      "sha256": "2815d5a186ff917890a9e058bcc4272b231f45002a617be2ce01f3fa2db67860",
+      "sha256": "beaee943a8b8c1e97ba8786de850c3b9a20f034a95b4e66637de1308b5031117",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -16420,6 +16498,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -16526,6 +16605,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -16632,6 +16712,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -16743,7 +16824,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-ef6210742aaa/amap.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/amap.js",
       "sourceSha256": "90be0dca3a927df667c805470c31f75e2abd9a7d1c7903dd40e17ecb12c54004",
-      "sha256": "47f58edac1ddcda3e7edcaba4a434b17213ae73f2806afed66b0a0cbc0aa1923",
+      "sha256": "85c5d734106f6f8886888b14cf1d74304e87b1a9cd8fff38f6e550a32e088662",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -16765,6 +16846,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -16871,6 +16953,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -16977,6 +17060,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -17089,7 +17173,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-3026ecfface7/pinduoduo.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/pinduoduo.js",
       "sourceSha256": "817d4582c77a063e5716866d19aedc4944170996eb8a7ff3bf5392bfe9053dbb",
-      "sha256": "e4ef2b6736fc2d28d857660fb55b7f2e72d2d0a4dfbdd8764dc775796f109c39",
+      "sha256": "a4cc465c0a7550ed6872ea08fe93572208b4b872d40b9363045b3b582b173070",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -17111,6 +17195,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -17217,6 +17302,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -17323,6 +17409,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -17435,7 +17522,7 @@
       "path": "Script/Adblock/kelee.one-b3647f0da5e1/ShuQiCenterReader_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/ShuQiCenterReader/ShuQiCenterReader_remove_ads.js",
       "sourceSha256": "aae03c4a577abdd6a9a77069ce6d16b327e5821afc6a85c8b689dcddf1b5f976",
-      "sha256": "1d297a32922abee87b248cdc10b8c2f89ff8629507d3fe4104b2ff13a207589e",
+      "sha256": "d3fa9d247afef195f7305193bf35275249eee3e27c2355e9318e959c15078853",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -17457,6 +17544,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -17563,6 +17651,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -17669,6 +17758,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -17780,7 +17870,7 @@
       "path": "Script/Adblock/kelee.one-6df6a61bc422/TV_Assistant_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/TV_Assistant/TV_Assistant_remove_ads.js",
       "sourceSha256": "a957df12593369f6ce111a79619ba88cdad4870aa18b639ff1942a92d441bb18",
-      "sha256": "78e3d3fa6bc9ef8267920d9755d092d63a1db9929163d5f2f03d4064cecc3094",
+      "sha256": "3374985ef31f4d17e2bb2a6fa1a4d6b33096c5f6e06b2e011f1dfbe659ffc662",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -17802,6 +17892,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -17908,6 +17999,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -18014,6 +18106,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -18125,7 +18218,7 @@
       "path": "Script/Adblock/kelee.one-6cf1d356d9f8/Uki_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/Uki/Uki_remove_ads.js",
       "sourceSha256": "af15371ec2946805b9f3f2af8a13f807434a05166e4f76178a8e28fdf645b720",
-      "sha256": "17bf8aa0bafbfe4ae6b60258a9371f4530008f2d2e33ab95e7b5081c2528befc",
+      "sha256": "55eda35093a43516e23d765470580926e3278f2c1f26ccc974a69bc650d1a1b0",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -18147,6 +18240,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -18253,6 +18347,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -18359,6 +18454,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -18471,7 +18567,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-c976b51fb013/baidu-index.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/webpage/baidu-index.js",
       "sourceSha256": "34ad9b82cb0ab2c2f86c1a1e8a1fe08d5f3fee564d90386fd4581b6f77712517",
-      "sha256": "6729496b17ea8b1a4d2ba63a2719c7373a220942fc294b0b9133c3649e821358",
+      "sha256": "623070865f75d3f5450e2a9f5574111c79629bd87b597bc0b8c7005877ef6554",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -18493,6 +18589,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -18599,6 +18696,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -18705,6 +18803,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -18815,7 +18914,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-12e96fd6df84/baidu-zhidao.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/webpage/baidu-zhidao.js",
       "sourceSha256": "74ef3f15baee30de1677e94d00a7fce99011346181366affc7ee4cee5e0ea628",
-      "sha256": "d1fba50b54c1cba614aa29d95751dfb02a949f132ec7b0be7ca2e52cbb19edab",
+      "sha256": "045e9b1ddc30d58a3be74a9b2c366c6cc70ca388d55f559d631d5a92e7c7da67",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -18837,6 +18936,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -18943,6 +19043,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -19049,6 +19150,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -19160,7 +19262,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-75448e274a79/myblockads.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/webpage/myblockads.js",
       "sourceSha256": "8fc43666281fba985e5c5fb5f79bf65e0df75d637206de216386b0ef20fdf95d",
-      "sha256": "cecff69ce9a483555ac83ec1605beb741b159d06e9253499592f2cb069702509",
+      "sha256": "9cfea6f75985ae83d32a5048229798c860302275c463fe1d853b04d141c698c6",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -19182,6 +19284,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -19288,6 +19391,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -19394,6 +19498,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -19506,7 +19611,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-a8d59ed8d2ba/pornhub.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/webpage/pornhub.js",
       "sourceSha256": "1dc4996ee6f117227e22caaf6c7d2f740361a2e7bd77afa301403743f93b792b",
-      "sha256": "cb6412eb3cde2f2f7d5c2e7d2713926298e0d0f8eadd0a9c39b6f7e1e0a60fe5",
+      "sha256": "807ea69b0ff63ca3be98193287517697a03b8e499eabec4c701988903e27e492",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -19528,6 +19633,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -19634,6 +19740,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -19740,6 +19847,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -19852,7 +19960,7 @@
       "path": "Script/Adblock/kelee.one-91a927bdcefb/kff.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/kff/kff.js",
       "sourceSha256": "8453c73e9412fd99396afbfea14e7d26c46936da1650603b6f2433cda18cbf2c",
-      "sha256": "5ffd056847de25177db97612286170fe5ac747d452840ae6c29f942b8d04431e",
+      "sha256": "f85bdd7131a538f323158979bf81811a234d74349d252dcf60d98a145c0aae61",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -19874,6 +19982,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -19980,6 +20089,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -20086,6 +20196,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -20197,7 +20308,7 @@
       "path": "Script/Adblock/kelee.one-5249430bf536/ems.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/ems/ems.js",
       "sourceSha256": "2208e4945d8781e5bc9d20a436fc141629a7e4dc9fd516f9fe917196010cf5bc",
-      "sha256": "7481f2e757e52146a6a4cb81a287b2bff17bf49975be55a4b5987ecf2c827c87",
+      "sha256": "54f42003bf0bb443b1e6496513021525edfb9d8f3830850fd107243372e6dd11",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -20219,6 +20330,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -20325,6 +20437,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -20431,6 +20544,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -20542,7 +20656,7 @@
       "path": "Script/Adblock/kelee.one-630feb4741db/FamilyMart.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/FamilyMart/FamilyMart.js",
       "sourceSha256": "e25457f43eacfbf27ca8229445e69f60f7562ece723b5ebaf07969c0ebf75e1c",
-      "sha256": "dd90d55e3492295451844976c518e431194a6d054f0d59af669aa9e1473eeecb",
+      "sha256": "5ed4ed618fa0c3dab76e51260e436b417be8812333e3a5336796b2e9c4c777b9",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -20564,6 +20678,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -20670,6 +20785,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -20776,6 +20892,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -20887,7 +21004,7 @@
       "path": "Script/Adblock/kelee.one-d962d63c7cad/lawson.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/lawson/lawson.js",
       "sourceSha256": "3d57d6ae9070934eef3513e2a4b640fad9dd5076fbbc6c471994bd3d790068f1",
-      "sha256": "b3e389725ef93c7e525a0c5c7861dc2caaa7b2263d73a2d97bcecb050acb13aa",
+      "sha256": "a20beaae19d88f0c9cebb1b85d79b42968d90d4ea8d64a9b5a4574e47a50a8e5",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -20909,6 +21026,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -21015,6 +21133,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -21121,6 +21240,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -21232,7 +21352,7 @@
       "path": "Script/Adblock/kelee.one-0758ac0de9b9/chayanyuese_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/chayanyuese/chayanyuese_remove_ads.js",
       "sourceSha256": "4b7f857caa810648f7be584e916ceffb9c12dd3b2ce7766ed5bd605646e2a4d1",
-      "sha256": "2b9b14fdcbb22b12746f247eae8ba6a4f167fd56181b0c850ead0eb31c6a8653",
+      "sha256": "e3daa08b4072c70025a14c3ddc98c1f4ec97c9d71109c3523c84bc335237edf3",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -21254,6 +21374,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -21360,6 +21481,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -21466,6 +21588,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -21577,7 +21700,7 @@
       "path": "Script/Adblock/kelee.one-2dc6bc77fe52/coco.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/coco/coco.js",
       "sourceSha256": "dc9a1915eed8f6f760a8f3a03f5e2f5a0f346373693ae4ac2e0c5dbd90fd46b3",
-      "sha256": "78d5e30c955ad4bd875667b55fed5a6b4dccbb4199feffa6b26ff712a55059fd",
+      "sha256": "d50073e8a88a1026fd85740543073c0cebec0cc82acd86459f383318ff01509f",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -21599,6 +21722,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -21705,6 +21829,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -21811,6 +21936,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -21922,7 +22048,7 @@
       "path": "Script/Adblock/kelee.one-c14e0d6e985b/qingju.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/qingju/qingju.js",
       "sourceSha256": "8664e7a22b21aaa8546ec167e3a43fee7ebd2c00552a126212720b09a4819bf8",
-      "sha256": "7115542e1a08156edf70410aed542ff189359d9d9902d452e3038355add9fd16",
+      "sha256": "fc1944fd8e0d5b3b41b4e16a7876c7c66d49a745d5f9ffe8f200b44a729af2bc",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -21944,6 +22070,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -22050,6 +22177,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -22156,6 +22284,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -22267,7 +22396,7 @@
       "path": "Script/Adblock/kelee.one-291682ce6dcd/alittle-tea.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/alittle-tea/alittle-tea.js",
       "sourceSha256": "c765215071712fa0c0c0ef3719263fff81d4a1ce0189f8bc0861aa721657a44c",
-      "sha256": "7429e64f90765fcc624721109b9c0606014eb8e029859be8c53301eb4b202ea1",
+      "sha256": "8b84ae12fe06ca84a9795f9f709128d88d5f6d6013258ecb16b1653e73ed0cec",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -22289,6 +22418,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -22395,6 +22525,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -22501,6 +22632,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -22612,7 +22744,7 @@
       "path": "Script/Adblock/kelee.one-1335e255edeb/M_Stand.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/M_Stand/M_Stand.js",
       "sourceSha256": "5d6f163842ce53eb034fa01c244f6482fedd2f5d56b7c206c25d6f11c21e805f",
-      "sha256": "12cc0b37ccdb8f240bc6358ef3213a2befcb3b25fc7d19dd4ec6f947faf5c121",
+      "sha256": "934eea5de764009ba8c27750e0b00253f12654fb3d0964e2cf5398035fca41eb",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -22634,6 +22766,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -22740,6 +22873,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -22846,6 +22980,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -22957,7 +23092,7 @@
       "path": "Script/Adblock/kelee.one-1dc1411467a1/T3.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/T3/T3.js",
       "sourceSha256": "ab1ca9af4dd9b294f585335856de51d6df2b61c31d9a3d1982a5b091355da25a",
-      "sha256": "d0476f322945914ce44188551d99cb9fff89394dbb73384ab998210bd8458917",
+      "sha256": "0124a1325184161fd42c2028e9e894b6a68ec40d58c5147e175e686517313bde",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -22979,6 +23114,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -23085,6 +23221,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -23191,6 +23328,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -23302,7 +23440,7 @@
       "path": "Script/Adblock/kelee.one-81bb9080036a/ming.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/ming/ming.js",
       "sourceSha256": "bd0f4e67ae73fdd083b10c1e802912d8c9ade1b2b14a0dead865d7af0b90d991",
-      "sha256": "f3d8f3833c1c73b73bb4f3cf224f07291e36f1e6614cb4acb99cf46c77b814be",
+      "sha256": "6ab4f421e0642f169ca26d0434a384fe98a0529af7d272042ded13fd779b7647",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -23324,6 +23462,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -23430,6 +23569,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -23536,6 +23676,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -23647,7 +23788,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-95fcdbecafef/zhihu.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/zhihu.js",
       "sourceSha256": "f35efe4a539e1c69709ceffdcd220afc7563faa943b369ebd52238cb387f29e2",
-      "sha256": "253eb1f891d85b5083f071fd18e56c3f0028343dd067ab6c27d159d42a89e870",
+      "sha256": "47c72a3bfaf5a41bf68b95c7553ab159a74e5915f3744527dcac82aa9ce6a53b",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -23669,6 +23810,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -23775,6 +23917,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -23881,6 +24024,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -23995,7 +24139,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-2ca8a4753be1/zhangshanggongjiao.js",
       "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/zhangshanggongjiao.js",
       "sourceSha256": "0a2ebfbf41ed4b7dbd39f4aa50616ac42cd59d5eb0baa026fc1b98e7a4f5a8bb",
-      "sha256": "1c61364f0a3113dee0c933a9c83088cb6f785084a7fc67f31e75148445fd0ccb",
+      "sha256": "684c54f21264ab5d858960059d27b06d2f65e5c1cb1bd34615cf13d7aca24b0f",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -24015,6 +24159,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -24118,6 +24263,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -24232,7 +24378,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-9894f7225d37/bing.js",
       "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/bing.js",
       "sourceSha256": "12ecdd295de9c427dbd0fbed9d356d70e6b5c0afe0105fb7f678484b4fc98ce5",
-      "sha256": "311253542029035631a1572a477382e7a52b6eee1e7246d461c437c57cb4e7db",
+      "sha256": "13edab6b83c1776c63836f3159a913a368861ccd9a35a9cc7c55967f38cafbfa",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -24252,6 +24398,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -24355,6 +24502,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -24470,7 +24618,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-c53fa988e9de/cainiao_json.js",
       "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/cainiao_json.js",
       "sourceSha256": "508701b04e3289d37d9baa649dce8a317329b21ebd4433872dc7906866bcdd5c",
-      "sha256": "9408ac811033ed4808acda2839aa37f08c05a910ffe2716a7ef5a218aafa0413",
+      "sha256": "4fed16c44397d13ffeb24eac2c71c7a21b40c18306adce667d1db456c8d3cf2d",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -24490,6 +24638,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -24593,6 +24742,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -24708,7 +24858,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-1151295f6776/caiyun_json.js",
       "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/caiyun_json.js",
       "sourceSha256": "1a165112aac24bf3830fa47b77d223d85beffdeaf91ee96eef05ab9429b36844",
-      "sha256": "f399c94dea378d80dfccbe24fc26988490dd91be6f505512e9fec5163ae8752f",
+      "sha256": "27c24fd2a549ea2ee8d0c7abe1ff9c1795c8124bd6b630f7a5d002bc4cf94a77",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -24728,6 +24878,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -24831,6 +24982,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -24946,7 +25098,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-a8626525ec76/keepStyle.js",
       "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/keepStyle.js",
       "sourceSha256": "199783afcdd891bfd5fa298638e5806263521c14fd561ab6fda84efe5fe1e332",
-      "sha256": "aca2f1b382b1c9b34e5c3170657e59fd7876e6ca94f48604efd3acad96128c1a",
+      "sha256": "9309c2c9dc1ea18826d8e9aac251a2c8160208df74cc9b2bf1e31f89002f52d4",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -24966,6 +25118,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -25069,6 +25222,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -25184,7 +25338,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-dbdcc5fc1c23/smzdm_json.js",
       "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/smzdm_json.js",
       "sourceSha256": "cbcabf770447117a66358314950a4233448eeb86274ccfb96d148294d327eece",
-      "sha256": "283ebbe738387fecac4fad4a81ca996499bf9d6668e0223ff632a12ad8725354",
+      "sha256": "e374fb21f630b73365c9007afb2494ae617537c33131e4fabca4d4a630638b61",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -25204,6 +25358,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -25307,6 +25462,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -25422,7 +25578,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-b2506abb5e1f/weibo_search_info.json",
       "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/weibo_search_info.json",
       "sourceSha256": "5404166f304ace3d4749e18500d595acadaf5c913d13c5b196657a05149872ac",
-      "sha256": "b35c246062d8e56e75e0ad01e34fcb1e04bad00646c6d8ba3c1cf37d83045594",
+      "sha256": "7ac731254ab0216f1b88c3af0d83f7960e283b661c69ed5016f2be6eb4ef0da3",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -25442,6 +25598,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -25545,6 +25702,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -25658,7 +25816,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-2bd76811ea1e/weibo_search_topic.json",
       "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/weibo_search_topic.json",
       "sourceSha256": "57881f577f253467924a5ce8698997bdc1dfaa102ca93c2538065d44a564215d",
-      "sha256": "fbae39376bf1c97eeffe995fa97b2cc5a181b10907bb84d1097a3c67d095a30d",
+      "sha256": "dcb1f882551380af09a4a214110afe8eb615dbc554af79932ba8e0fa6750b710",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -25678,6 +25836,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -25781,6 +25940,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -25894,7 +26054,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-7207e9dc0800/ximalaya_json.js",
       "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/ximalaya_json.js",
       "sourceSha256": "2b0cb0abf3cf9eaf16e45591c947d2ab1905c2fa5aa8c1ca56ac1f3b4cf19533",
-      "sha256": "275474aaabeecac7c2f479f895cfe7e1a07ba40159e58e34598f05b0f59dffc4",
+      "sha256": "31d09075de544ae58d38cd826c288cf2a9a8361bcd36f4bed87ba0b026ad3ddc",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -25914,6 +26074,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -26017,6 +26178,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -26132,7 +26294,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-0430e3242fcf/51card.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/51card.js",
       "sourceSha256": "5f3708e56c28a2e7fec50f90f8b6768ed0e6b3d7b354bef0e32fd21f7a57a6c2",
-      "sha256": "d6f9c5371426e6bdfd5b5843d2d59cf8f666df28539f7e9669e6528c261b8daf",
+      "sha256": "8c06009486b64e88b5401b3e1ecb9fadb2540ba95e7478d89104ec471c792ae8",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -26152,6 +26314,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -26255,6 +26418,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -26370,7 +26534,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-f8526d9282f8/555Ad.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/555Ad.js",
       "sourceSha256": "9d8d59fe3cbd5bdeffe80c580fa210a94432bfedc6cb5e018feda761dcbcf681",
-      "sha256": "d3bb7f8b74fbae9feb3cde9878e2740dfd4740d857b57249f69da51d9767a87b",
+      "sha256": "aeb8c3cf69beb798197edb9f051309d985d92019b0eabe27a43551b5f6ff972e",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -26390,6 +26554,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -26493,6 +26658,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -26607,7 +26773,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-05f68b57c8c1/cainiao.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/cainiao/cainiao.js",
       "sourceSha256": "76fe899db1e045aaff2d71d6ff3c58cb665bac52a5996ff20e56079a02a6451c",
-      "sha256": "948f48c1e293210d11a95b2931607e17d0941da22c5a8d75223f4a2aa25025af",
+      "sha256": "167e43a87e385ce40741386937e732a4d37b76404306b548bd6c4b1fb52d94bf",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -26627,6 +26793,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -26730,6 +26897,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -26845,7 +27013,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-c3206eef6cec/adrive.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/adrive/adrive.js",
       "sourceSha256": "9d31582028a31ea605e69d09aa9e33949e57050006a8e0f3deb79b1c89933acd",
-      "sha256": "f00ec94f18574ddf27fdd0c2e908ad4754f7a324744573e450c19d5a58a5ad15",
+      "sha256": "279e4abb098c0709b185688b6fee4ea388f30302cd9510635d96080a468638e3",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -26865,6 +27033,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -26968,6 +27137,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -27083,7 +27253,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-47c242029d83/cnftp.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/cnftp.js",
       "sourceSha256": "4a95ce816c3e0bbaddf99e76c0f4b5ae3adb74318b9509e24ace40b675f11954",
-      "sha256": "503a03a50cc094cc18344cd200163fd66549b0e3bd27efff0797efab76e8334a",
+      "sha256": "858c5e865fb74520bd7a937dfd1ec2a3a42a673a001bf856dda87924fb85ec40",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -27103,6 +27273,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -27206,6 +27377,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -27321,7 +27493,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-9d456958a066/tieba-json.js",
       "sourceUrl": "https://raw.githubusercontent.com/app2smile/rules/master/js/tieba-json.js",
       "sourceSha256": "91040c0d5bf906357829d8df344a3bdce00b59e6c24f255e54a2ef7a46d04c69",
-      "sha256": "cfe9e551dd717708e3febae0e136ffa4afd4e5ef05196565b395baecb49b7843",
+      "sha256": "679f0eebf6bcc04ee6ceea1090c61d05459229b27364cfb005191d1aa0c6a64a",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -27341,6 +27513,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -27444,6 +27617,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -27561,7 +27735,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-50531633c816/bohe_ads.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/bohe/bohe_ads.js",
       "sourceSha256": "493534355c02be962e06a75ad7eb51b1918c5c347122f40663ae9bc39a64cc1e",
-      "sha256": "2d580303c106c84c9ba8f186fcc213476de3ad449c46132adf462a8a59b68a82",
+      "sha256": "7b6c9080dc4a8bd5019bd26517f3496f8b02a9df31a122e4266b3a5461b128a1",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -27581,6 +27755,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -27684,6 +27859,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -27850,7 +28026,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-e118fec1aaae/blued.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/blued.js",
       "sourceSha256": "5b39cca2a3debe6a73083f7781b6b0eb47d91755f597169db34109db3813a172",
-      "sha256": "6c6248889b0a25fe89877a76d03e6e88ca9a12bf1dc3088b5aa8ba503cf2d2cd",
+      "sha256": "a2ffdde038df3daaee720470174178352a79c153db53c80ebf668c377e59c0c0",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -27870,6 +28046,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -27973,6 +28150,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -28087,7 +28265,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-6497035a5ea6/didiAds.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/didi/didiAds.js",
       "sourceSha256": "c4f17a8ca8b27e15b7332460c83b5ba19aeded4c21e8f31beff8cefc54425ab7",
-      "sha256": "d4a88d43c9b0eb5d827465488099ef16299154e02fcf289be2f354ea8215b80d",
+      "sha256": "2a27746952aee2ac4e9e41dfa61a49ec9e70e7f61c5e93331af0343165241569",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -28107,6 +28285,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -28210,6 +28389,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -28325,7 +28505,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-8a4d8a863599/dianyinglieshou.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/dianyinglieshou.js",
       "sourceSha256": "50926e7d5f53278d37e0dc2d66b8159a1813537708c88b231159cfa2b201f198",
-      "sha256": "3e685ee8c2ac8080d5c112a834c5064a5a560398aebf52dbea4b65e3416ce964",
+      "sha256": "d35f267b83ae2fe79a2ed71f0619939a9f5c309f3e815ef43c3693c390f49d26",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -28345,6 +28525,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -28448,6 +28629,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -28563,7 +28745,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-a929f621f8a4/ddxq.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/ddxq.js",
       "sourceSha256": "8ae52e7bccc43facf64dc9edaf8e6e1c1da564c6bbab242fb9e51a304e3a0b16",
-      "sha256": "7ca5cbf48c2216b4c00998c7bbb083de985dc73a37b22968312d1dfdf030db27",
+      "sha256": "e86c2aaa6dad1df47a90d08a970b43fdd01066da021eb17be1ba937d2c546600",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -28583,6 +28765,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -28686,6 +28869,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -28801,7 +28985,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-97c6492922db/wechatApplet.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/wechatApplet.js",
       "sourceSha256": "4e0a57585f4ce16bc2f655ec104d1b25d9d42864b78f3ca893b48e7c9e487bed",
-      "sha256": "6ab68232f01fa7b5966d13ffe45c4ef4376102ff6963a133b5869679042a54f1",
+      "sha256": "5de9ceeada898e4576ad8df715db93718bf0c2cf0a1d96f34656cf9cfb7f862d",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -28821,6 +29005,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -28924,6 +29109,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -29039,7 +29225,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-5caa481275e3/fly.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/fly.js",
       "sourceSha256": "9642b1436e2ad10a35cb40ba33b8b1b5c72047a8d1bdfaaa87600cf3d6c1cd41",
-      "sha256": "6f6ba50fd6a596c6427ec96e950c8eb97b40ab37b661f664222b0d2d9ac2062e",
+      "sha256": "d19154375fa23e31cb2a907c4985f637e52ebcc650feb1aabb7c24b04a5732ba",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -29059,6 +29245,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -29162,6 +29349,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -29276,7 +29464,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-c5e861643f0c/fenbi.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/fenbi.js",
       "sourceSha256": "bc6eff20278e7244bb5d11fd8698aa4195471f0df3cc68a28c598b8f60c232d5",
-      "sha256": "1bef7930b5c3b28e8f152b49834c144feea41639c0a11e707fe05d3f6f37467c",
+      "sha256": "adcf7872e031a2a22a29d9b1e5bfc21d49fb2b574da5e5b07b19c619f375be26",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -29296,6 +29484,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -29399,6 +29588,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -29514,7 +29704,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-db81e1e426a2/foliday.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/foliday.js",
       "sourceSha256": "9e48b618be78330bbcd1d29e56bc5a407414d12a03a158a4d559f7857c74b976",
-      "sha256": "122dca78a2f594dbf1512c43a8669dfca15cb00ee1b09ffa2f678ab8fa4b2bee",
+      "sha256": "ef30adbb473fb374d174caa2c670da180ff7adefb33e7ff6cd7825f602518285",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -29534,6 +29724,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -29637,6 +29828,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -29752,7 +29944,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-806c7be05c2b/freshippo.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/freshippo.js",
       "sourceSha256": "edf71faccbca61b153bbce98f56b75e27313883cf520e5e315f6ba15ed52360d",
-      "sha256": "cabc2cde39c95c8e9908aa5f57b51690ba5f60a48de040e8a0689d2d900c7744",
+      "sha256": "d21ba204eba16a10e32763ba3e59d8f808fc624ce42b2e808774c18342c2294d",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -29772,6 +29964,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -29875,6 +30068,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -29990,7 +30184,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-999597247942/huifutianxia_ads.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/huifutianxia_ads.js",
       "sourceSha256": "5a97f31585d436c36413301a16b4862f62481923caf63f44b1e39eb3b7d1b11f",
-      "sha256": "4d6795a0924f0497f5996795a83147baa2dbd759b2ab2f0750c6a862a80256a7",
+      "sha256": "e8d32a3218efd214fb6b6cfb26c30df3e640688787449769aaf26d6c06a395d4",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -30010,6 +30204,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -30113,6 +30308,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -30228,7 +30424,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-b413e8b37358/ithome.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/ithome/ithome.js",
       "sourceSha256": "afa7249bf854abe582d6c6b73e0297d24a8ee2221db0982c8cb4ce90bb0d4872",
-      "sha256": "579f56c7004cf4744d8943f4c3617e45b718a41cc7085f0c7fb6754a6909e35e",
+      "sha256": "65d26318703c14d6483e725d5ffce6f3929f572f7bec771b99c9d5a1966de6cb",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -30248,6 +30444,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -30351,6 +30548,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -30517,7 +30715,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-a1536927e11e/alicdn.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/alicdn.js",
       "sourceSha256": "e6ff8a29a82508abff43eab1e85c7d518002c6d810f5458d1b78a8219fc4cdcf",
-      "sha256": "d0af3a04f3a63ecac7b75eb171f834d85dfe05ab41a6ef213ec3afa4831e399e",
+      "sha256": "bc967ca893771598350152f84cc91239903b31981b75a85b5b74cd70b0be5430",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -30537,6 +30735,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -30640,6 +30839,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -30755,7 +30955,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-644b98230e1f/jingdong.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/jingdong/jingdong.js",
       "sourceSha256": "3e7cc975f8985a4d2dbdbdefc405d0e3e6c9c07bf3c5361da1ecae206b6c04a1",
-      "sha256": "68b286d417ba187fa08bb4cb4cda4020bfcbb35fd936b3a6a0c4bf4bbef2c220",
+      "sha256": "d8a4273be49245501782fbad72374829748e0e760fe22a174d6de7f846e511c4",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -30775,6 +30975,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -30878,6 +31079,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -30993,7 +31195,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-a0a5a0cbf755/jingxiAd.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/jingxiAd.js",
       "sourceSha256": "aa125c2689fba2cdd3ff1eb5aeb9e43bde2b1abab546cfcafdb67bd647d47b94",
-      "sha256": "1adb7404237a1cf0fa0cb6e9ba02b074ec7aee24b3ad3608fe47db547a15b449",
+      "sha256": "68b31ba13fa10f911a21dbe33420c4bc33cc5f41234c71e2ddcc07002c6689e2",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -31013,6 +31215,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -31116,6 +31319,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -31231,7 +31435,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-14d1e419b620/coolapk.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/coolapk.js",
       "sourceSha256": "58002f35b6ed5dbcb277e4571f231cc5491d9cd2d04f72ad9c63d4b35b15c003",
-      "sha256": "ed5e7efe4c7eb4eb10f0014bd197ba76d73e8faf7b67ffbfc5fb6bd071396d96",
+      "sha256": "fde678ac5bb7e4641aad64ae5c371a9eb170433713183161172d93679555603b",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -31251,6 +31455,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -31354,6 +31559,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -31469,7 +31675,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-75e7feecf556/kuwo.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/kuwo/kuwo.js",
       "sourceSha256": "d5119438070518dcd250dba9d678d85b063db97db3a52bdce2ae34760469ae8a",
-      "sha256": "f60ecba416ff7d13f47dc0df5ec2770873219bc5c7bc6428800a93e0e324ebac",
+      "sha256": "8a33c202b7ec97499cc75d3e10fd2808d8aac08ed526fe4211af6c88a5851a10",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -31489,6 +31695,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -31592,6 +31799,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -31708,7 +31916,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-758f3f177a29/adsense.js",
       "sourceUrl": "https://raw.githubusercontent.com/app2smile/rules/master/js/adsense.js",
       "sourceSha256": "171f97bb25c6cb29aeb134acdddca5c96b06e0e70a6e4f670914eba1c8f3b662",
-      "sha256": "b9acf1fbdcf00f8bee4b680385e9e117ab4664d6b222a950a13bda102dcc9adb",
+      "sha256": "75abc4497cf63b107f64497f60adcc8dda62d2d7759ed4e51874b4fdd85856ad",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -31728,6 +31936,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -31831,6 +32040,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -31948,7 +32158,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-101b360ee977/keep.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/keep.js",
       "sourceSha256": "4efaba25017ff63e2e39e7fa55fac425e38262576bb31fe487b98ce5fce37f92",
-      "sha256": "26a172341d3adfa9586800013e5eebcfea28dc494d3f59e1875d147121b7b73c",
+      "sha256": "d78d49c802f5011033ed26d81ec71d341fd983c3117025ab63d062f56bffa8bc",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -31968,6 +32178,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -32071,6 +32282,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -32186,7 +32398,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-733ffc3b9511/ltsst-ad.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/lvtusuishenting/ltsst-ad.js",
       "sourceSha256": "d056e2f2ecb0a48ce09e324e7c5296b8e4fe54b0fbad0c68173bbd7717f3da49",
-      "sha256": "9959cdc4b9ded1f5bfaeadf91fb5aae51ae6fde4b6ca866310eea25c9a54bbd3",
+      "sha256": "a9cd0fc518da43b2b2c8c790be8b2c97b5965fdfc665030bd552a04400580735",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -32206,6 +32418,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -32309,6 +32522,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -32424,7 +32638,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-e8587938c145/lawson.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/lawson.js",
       "sourceSha256": "ebf5ba4051ffeca870f3f0a15e6c9042649931c8d2b267e3bb51ef0545e3fb93",
-      "sha256": "76bca99b5f1313fe2699b0a91e26aa903c386c13f0f2fec8c06df1d059d70ba9",
+      "sha256": "7750865bd1209ea76e0700516622d6592259f8df433ecd8665cf76b30b090362",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -32444,6 +32658,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -32547,6 +32762,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -32662,7 +32878,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-30a4a807311c/mafengwo.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/mafengwo.js",
       "sourceSha256": "9944c174ff0270e9b4cb9a0b8ebf8b40d1a9232b633d7fbee57c171eda6397ea",
-      "sha256": "17b8cb76e2966b85d3801b40c0d7ab1d7f7b059f9f8777ff39fc381136af2bf6",
+      "sha256": "ea411d183d07b1cd123aa08e2e3ab5040c7319addb7d7f22e775efabb0f05b99",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -32682,6 +32898,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -32785,6 +33002,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -32900,7 +33118,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-b5f13a6e3c47/maimai_ads.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/maimai/maimai_ads.js",
       "sourceSha256": "cdd9424de68aa4aad03ba5fda672ccf5e3d3344ee3886e72848bfb7b30977c28",
-      "sha256": "72dc6dcb22016e836ac858f84c65fc0d54c88585546a87bfd7cab7fdd2759d5d",
+      "sha256": "448356085d0662cf3da961d73cad96b666c7c22565911472f541d196d88b9fcc",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -32920,6 +33138,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -33023,6 +33242,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -33138,7 +33358,7 @@
       "path": "Script/Adblock/github.com-29c959d46da4/mlxx.js",
       "sourceUrl": "https://github.com/fmz200/wool_scripts/raw/main/Scripts/mlxx/mlxx.js",
       "sourceSha256": "7c22e8836f2e9247755180d094d2700e5bb6d10d70cfd042ebc463eb501e8416",
-      "sha256": "7839645116a5275b8852132ab8e20bd8f5db693331c3ea91b4172257784b44cb",
+      "sha256": "3e326c8f25652ce53a6e617194d685d7504a447db3b6ac7b466f530002b33714",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -33158,6 +33378,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -33261,6 +33482,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -33376,7 +33598,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-86a5c2c779ec/PupuSplashAds.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/PupuSplashAds.js",
       "sourceSha256": "187189b01bd11dbd3fa992428facf680e73f26e5267cfe45dc24f53b788d9215",
-      "sha256": "d209942729105a0fa5c34f636507eb0aa021618b6f32f512c30e94ec098c53e7",
+      "sha256": "2188aa9bd65a6ac81829e284e0fcb1fdfb5c92e0cacaa2da8b9c3fd2793b0446",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -33396,6 +33618,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -33499,6 +33722,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -33614,7 +33838,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-6c23ec663dcc/qmai.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/qmai.js",
       "sourceSha256": "b6823b14feaba4600fdc73438d91b35f1c5b166da3177b70da19dc97f850ce65",
-      "sha256": "6f034409944255ad65b825bf6c8e9fb1eebdae22f20375a90efddb593364c8cd",
+      "sha256": "dd7db1f856d33465e1bc36ef7df9f7a8175cfd4112533a081f738530f3de01b2",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -33634,6 +33858,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -33737,6 +33962,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -33852,7 +34078,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-ac2c1ec848a8/qidian.js",
       "sourceUrl": "https://raw.githubusercontent.com/app2smile/rules/master/js/qidian.js",
       "sourceSha256": "e599a063040ecb222ad5d4f8666157ef1ee31495aef6d87fb13453dce46f5c19",
-      "sha256": "f22651913d20a1aa01dbdf345f9dfbcc89dfa08cf966189ecb53558d9ff88e92",
+      "sha256": "0ed8b99f8ac914541191dbba289edfa727c17ae94a25e98db67cf80eeb758eed",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -33872,6 +34098,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -33975,6 +34202,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -34092,7 +34320,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-e388fd2c12c5/51job.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/51job.js",
       "sourceSha256": "85e2b927da9a653691d954775adbab6160e24ca8e6117b779d27c1924bec1af0",
-      "sha256": "62d294d0e406456ffb7baee411c9e20c9848e698f22e42a195e35fb836edcb01",
+      "sha256": "6269f798ad8450debf10d0e95a53c77b72be69b518c45f8340a2201174793f15",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -34112,6 +34340,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -34215,6 +34444,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -34330,7 +34560,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-a5bda7e38c3e/QuDa.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/QuDa.js",
       "sourceSha256": "a388141caa03a22decbe518fbdd670c806f0893a540daed142c9b0ba37636bd3",
-      "sha256": "15ff2502e8c82214daa06f640ae9eae470505ee4507012ab8c3d786c9bfc3ec8",
+      "sha256": "0f0cae3e0975a721f6051b552caba6fed3e7af1dd8aa109189535ab293b45b0e",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -34350,6 +34580,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -34453,6 +34684,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -34567,7 +34799,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-2d477c4af29c/smzdm_ads.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/smzdm/smzdm_ads.js",
       "sourceSha256": "8e8b27474b277b334b1b37b14b412330485140b0df1cb77112f66fa043c550db",
-      "sha256": "d997f467e27a356dd9b1995caf18dddfd4134d4b1c6906c0a7067f00e729c11a",
+      "sha256": "9fbad5d092e9131b2a7726e53177574d4382e264b7b0772c156d71c964849f9c",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -34587,6 +34819,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -34690,6 +34923,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -34805,7 +35039,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-1ca6ef134b1b/Smzdm.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/smzdm/Smzdm.js",
       "sourceSha256": "611b9fa8cb1022622d1df9a2952b0f0fa1a001069b5666cce7e09b87dbec8dff",
-      "sha256": "5673d741beafad7415869a73f9f95eaf0bfc4444ef5d2cd5772c27fbf5a6b8e5",
+      "sha256": "7830e173e7b3712b362400ef03231a19344a3420f75282bdce1adb88e2bc67d2",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -34825,6 +35059,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -34928,6 +35163,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -35043,7 +35279,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-cf2c05d120b0/soda.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/soda.js",
       "sourceSha256": "a252569a8ff6317abedd2714fb4932d631cc07ce857a403aa88a83818661b78e",
-      "sha256": "e36037da261e3220ff3a7fb2e98bc03dcaec63e611afab9a2df22ec69536895c",
+      "sha256": "4d6aeae9f39190254a676e9870a45946b3d6522c503258d0abd5ec98a1cfe016",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -35063,6 +35299,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -35166,6 +35403,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -35280,7 +35518,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-c039fffc8a49/req_replace_body.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/template/req_replace_body.js",
       "sourceSha256": "90adc7374f0c9a62b25bbea2027570e2c08002130bca22d909607fcfca642c70",
-      "sha256": "6ca1b6b5afbe897edaa78261b51bf2106ee85d8f747806313ced480988fd012e",
+      "sha256": "88ad0cca326e24612393a58a86a1467b8820fb19835559a8b0a78c89d59d9826",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -35300,6 +35538,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -35403,6 +35642,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -35516,7 +35756,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-02086290c7c6/spotify-json.js",
       "sourceUrl": "https://raw.githubusercontent.com/app2smile/rules/master/js/spotify-json.js",
       "sourceSha256": "41cf1074770cdef3948baa12ff4a8db9045d1cac888714c8b7e69909eb531bc9",
-      "sha256": "6d0b525ae2814e34a032847f78a55e394db2c919d9a37ad9be5eaaddf4ce5cdd",
+      "sha256": "2a7f7523770cd18eb875a7f4b0e8ae2cb99e1d11a0e81f911bdc7c4915448f7d",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -35536,6 +35776,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -35639,6 +35880,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -35753,7 +35995,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-a4ac231868fb/qq-news.js",
       "sourceUrl": "https://raw.githubusercontent.com/app2smile/rules/master/js/qq-news.js",
       "sourceSha256": "98b921f278eae3f4d99751a35c2b0c867b9716bd20713da14859f4033f8c7394",
-      "sha256": "4d323c582211e60b7d2fc48010b823f95ad8e461042d06b9152b0c299cdc5bb9",
+      "sha256": "1633d962ec68e27f95097f7f97d0c49fccf9ce635c0060b0ea205c0a9f1fb7fa",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -35773,6 +36015,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -35876,6 +36119,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -35993,7 +36237,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-75dcaa1d4527/tuhu.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/tuhu.js",
       "sourceSha256": "d4a8f475d9c24107644eadce1736e2d0db68974129809ca7f05c77e48abe4561",
-      "sha256": "8acd233eb0ac0782481a3ac3fbb82189d5f159e09194431ca584d4ae4451dde7",
+      "sha256": "0aa0795084574c7bb30ecbce4a5298701470292325059412ac05400fe1c905ee",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -36013,6 +36257,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -36116,6 +36361,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -36231,7 +36477,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-03e37ba50a09/vgtime.js",
       "sourceUrl": "https://raw.githubusercontent.com/app2smile/rules/master/js/vgtime.js",
       "sourceSha256": "489f711e41734a6c9a8749d79923c3dc3930c63239fc7e97cb3e25a29c9eafd3",
-      "sha256": "2250c833dccf023b7f47c3163c31f707c2d4de1981d2c122c8dc477ba9bb5ba0",
+      "sha256": "6bbf36444c68f05043425330ede278c4ae7e49a9b67ae7b2ce888493eb228074",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -36251,6 +36497,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -36354,6 +36601,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -36468,7 +36716,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-3b4e68077227/dict-youdao-ad.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/youdao/dict-youdao-ad.js",
       "sourceSha256": "07261d8faf3a9dd0591477679935b3a44fc1b044ed5ca849e01b04cc889f4c0c",
-      "sha256": "4c88194bc3250a24b73e432fd125a61775764c5d71c1ed23bca29671f375bcc1",
+      "sha256": "e33a5eb4b31bdd1aec8200cfe5e7d2595906ba1a40a94b9e1ac2341c5b6c26a9",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -36488,6 +36736,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -36591,6 +36840,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -36706,7 +36956,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-d28d901fa4fd/goofish.js",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/refs/heads/main/script/goofish.js",
       "sourceSha256": "d76d0a65d975a523ad4bb62c5d90dc9898a5a93ad79cf03dea01150705792b20",
-      "sha256": "1f20d1eb11a6bfb0db7164003f7bc242ea77f3e51208639e550bca282c14c96b",
+      "sha256": "99933ad30add9edfa17986556c28e266a0ff6550f7d4f13da1f656e17d9f21ff",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -36726,6 +36976,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -36829,6 +37080,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -36944,7 +37196,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-15cb41bf88f2/xjsp.js",
       "sourceUrl": "https://raw.githubusercontent.com/NobyDa/Script/master/QuantumultX/File/xjsp.js",
       "sourceSha256": "6fc5d0aa5b7d70febfc7081b95d16f15cf1664767286a9ca0c5939d5c8187859",
-      "sha256": "a6721285790d36194737737f442ecd9047ad527dde1e9530abeac7968d8cc93c",
+      "sha256": "eb6b1d9de8b9267e8fede31a2fb7e939337a11fba992d9d90579ddc19652b933",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -36964,6 +37216,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -37067,6 +37320,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -37182,7 +37436,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-deda39243f57/xmApp.js",
       "sourceUrl": "https://raw.githubusercontent.com/Sliverkiss/QuantumultX/main/AdBlock/xmApp/xmApp.js",
       "sourceSha256": "319c650370f0c4086a6aea0f0d9efa0677c4ac9829d07830218dac69c174164a",
-      "sha256": "7a35e3f423d7a30ab770f2b137fc7b1e87878624f8d452ffa14ac38be6c6b797",
+      "sha256": "3b5af9c693250113ecdfb29518dacab1ac3bc16aa24b90408bb4fca4bb7e106d",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -37202,6 +37456,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -37305,6 +37560,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -37420,7 +37676,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-9aefdaf10b33/yx.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/yx.js",
       "sourceSha256": "7a85dc4dabb4c048a2c9231c17580df96d94c478479a54e3be33346c64e7d6ec",
-      "sha256": "3bdb48404ea23401b955d3118a6bebc271ccd83c0a72b463db6cd780d0a66f8e",
+      "sha256": "318ca3a9f248b9befd5a37cea17465d88aaa6fbbdff67e9595d8fb9039f35b03",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -37440,6 +37696,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -37543,6 +37800,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -37657,7 +37915,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-bfec7c5588dc/zhangshanggongjiao.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/zhangshanggongjiao.js",
       "sourceSha256": "ee4e5a1ee5ce0817e0787578f7dd47874c65e9bd02bfda4b27527d4f6d59a44c",
-      "sha256": "111abb2e33a734b15a45b53d25e4aafdae9980fb37537e2178b8e7204e600711",
+      "sha256": "09e4622b05a1f8d319635ebf78e66cf511678560ef32a6d93da5ca2ad575abc0",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -37677,6 +37935,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -37780,6 +38039,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -37894,7 +38154,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-a110f9b20814/cmschina.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/cmschina/cmschina.js",
       "sourceSha256": "0d65a79b61b6ef85c88110538e21ca4f5aafe9b7acc6c3272b17ef7361c2c8b6",
-      "sha256": "7d5df1cc84007b8b61b6be3adde2710b3da405e366909ba6227d134122ef616e",
+      "sha256": "9f0c92bd96aa45611a356904d2de65a4f73e808fe7624c2eb0d3c66ce044c304",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -37914,6 +38174,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -38017,6 +38278,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -38131,7 +38393,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-1fa3a573d88a/zhihu.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/zhihu/zhihu.js",
       "sourceSha256": "544fd88207b9d7005bb5cf427a1994028f91a95a65fde3db72a501983bff99f4",
-      "sha256": "3afd6836ecdf03a54242d598a8abbdbfbbff99e456ed18592d9e7182f474e87c",
+      "sha256": "3740d08ac66ed2376a019335dd247ed234b6d071e437630e4d4d9b4798d44334",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -38151,6 +38413,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -38254,6 +38517,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -38371,7 +38635,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-224bd1ed6acc/picc_ads.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/picc/picc_ads.js",
       "sourceSha256": "07e5fa66a0efe225b0dae2beaab83a9f1f9ad4dd6d3748d571156db8e324300c",
-      "sha256": "215787115e8e82260563eefe485821321f829d365f70b446bd0f1900e655ec2b",
+      "sha256": "63f3b5baf7d4f61ca43f94e08c9948d65e5c78e540a0cb955307fdddab542290",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -38391,6 +38655,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -38494,6 +38759,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -38609,7 +38875,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-5af7cfca554d/zhuanzhuan.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/zhuanzhuan/zhuanzhuan.js",
       "sourceSha256": "b8498e51290e0d0e83018d216b9cf44d602cef5392c39a509ca576c06937efaf",
-      "sha256": "751122483f642f6a4ccfaf0f4001314eab8a0cb3025ef4f9dc3b38ca681002c3",
+      "sha256": "1ae64d966288d78b0cab7812e0d3d93537f1382e6735f97703e0f34751a8129d",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -38629,6 +38895,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -38732,6 +38999,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -38847,7 +39115,7 @@
       "path": "Script/Adblock/kelee.one-1560243f758f/iMaiCai_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/iMaiCai/iMaiCai_remove_ads.js",
       "sourceSha256": "f186eb3760ab578964cf713104a2a563c2b9365cb2e23311f165537de3fc8b06",
-      "sha256": "456191e9362d8f18b464ea4e51ec81d0d4418be774e8cdb00eb43181e45e4b24",
+      "sha256": "7fe704bb1823130d5c5371659779b73a8565afd74aac64ee8d08ecbb69b96799",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -38869,6 +39137,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -38975,6 +39244,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -39081,6 +39351,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -39192,7 +39463,7 @@
       "path": "Script/Adblock/github.com-a8cb10290904/amap-new.js",
       "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/amap-new.js",
       "sourceSha256": "38e5772eb450d2f7eeb8d8f29011e470243367967fd01c907ec8178771f2f4ce",
-      "sha256": "d55baa39dac0ae319bf5b58731ca49a4fa00ef33f884759419fef54b68a6f4b4",
+      "sha256": "37813001c2f4c106fa829b43f06affa10c0cc32ef2cfa6ec7684ede927eb039d",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -39212,6 +39483,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -39315,6 +39587,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -39430,7 +39703,7 @@
       "path": "Script/Adblock/github.com-e6cdd3dd2d16/bestv.js",
       "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/bestv.js",
       "sourceSha256": "a0b53d7d95c77ad576245a5a9c770a262c1204ca85e58ea1c6d9badee0e71b51",
-      "sha256": "5cc99c9bb9edd906476ee633a2d58c15c165155fddefc5050bc8e2aa42478c74",
+      "sha256": "00819e502edb80cf06adcfd259e0332b1f49ec60e07c0dba8095946b84fa1786",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -39450,6 +39723,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -39553,6 +39827,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -39668,7 +39943,7 @@
       "path": "Script/Adblock/github.com-d769eac18a0a/bilibili-ad.js",
       "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/bilibili-ad.js",
       "sourceSha256": "f6b52b5370d979368121ecd757b5eaeea114d8668f5b9141c2197127a47a150a",
-      "sha256": "89a8aef7b3ca5745b63db37a760af32d173dc7165b24c7f0d7e8a494f231f190",
+      "sha256": "6a6d35715eaca4339fb5c5d855c557436f0d1b5fd12299b18473a7bff2d855a4",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -39688,6 +39963,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -39791,6 +40067,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -39906,7 +40183,7 @@
       "path": "Script/Adblock/github.com-c52952a8148b/goofish.js",
       "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/goofish.js",
       "sourceSha256": "d76d0a65d975a523ad4bb62c5d90dc9898a5a93ad79cf03dea01150705792b20",
-      "sha256": "1f20d1eb11a6bfb0db7164003f7bc242ea77f3e51208639e550bca282c14c96b",
+      "sha256": "99933ad30add9edfa17986556c28e266a0ff6550f7d4f13da1f656e17d9f21ff",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -39926,6 +40203,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -40029,6 +40307,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -40144,7 +40423,7 @@
       "path": "Script/Adblock/github.com-db0b34b4344c/keep.js",
       "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/keep.js",
       "sourceSha256": "d955973bdc94d7dab355bd534b60a5627b21bb0c3f9e89c9296214c41a9e7091",
-      "sha256": "80ce7fc6b05e482e74c3052ce74afa79b6dcc184e3bd95865e3dc4d28e7effb3",
+      "sha256": "02dc1307a101b43b7568705d109b3976b59ab82b900ab8eafda2a25c5602128b",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -40164,6 +40443,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -40267,6 +40547,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -40382,7 +40663,7 @@
       "path": "Script/Adblock/github.com-95107c304a30/pdd.js",
       "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/pdd.js",
       "sourceSha256": "fa4d1cac3c791fdac0d6007ce67e3a2ba7c1703d15807c2dd086dbf6d6bd8ddb",
-      "sha256": "12bf099508959d7b8569153a8785fb867090c26f3631f29e8f742794bf2a5e24",
+      "sha256": "580e2f3219c51839bc27638198eebe52656b7f7e649fb07987933801110500b9",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -40402,6 +40683,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -40505,6 +40787,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -40620,7 +40903,7 @@
       "path": "Script/Adblock/github.com-8ed16206ce68/pp.js",
       "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/pp.js",
       "sourceSha256": "3b419ba2d6a95c31432c6cf025218c618b190d5a0bf793855e9346f21f6668bf",
-      "sha256": "df818f80f57c88db941a22baa79d19581a01a1221e1ff7ed3a0742ae7340c001",
+      "sha256": "839f654dd2197cab056a6d06e5bff4eff54c8c2a12bcb8eace0e235f8806cad1",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -40640,6 +40923,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -40743,6 +41027,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -40858,7 +41143,7 @@
       "path": "Script/Adblock/github.com-77efc1885e03/shihuo.js",
       "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/shihuo.js",
       "sourceSha256": "f29be23186bdee00873c43387a0b5cd4dc9b0d359cb11041558fb9257b5bc30b",
-      "sha256": "748465cae004d62d454b55a6d8bd839f4c58225552d11bb74fb9481cd5a8a364",
+      "sha256": "5d02e01657c1f1789a791311195072efcccde00be18d7e14529fd24fb7b63728",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -40878,6 +41163,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -40981,6 +41267,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -41096,7 +41383,7 @@
       "path": "Script/Adblock/kelee.one-9858236b7366/mobileClouds_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/mobileClouds/mobileClouds_remove_ads.js",
       "sourceSha256": "ec2ac94692a6d6ceee12251142ccf3e200a3a27f2335bd32fdc64239c395d798",
-      "sha256": "84b9fc5c7097b3dfd2674fe1a66e2c209c7f8c07aca5164f1692825a0c90c399",
+      "sha256": "dadeaecafcaa30bd49c63dc5152106b9639e92cc07625e3d77f4ab6f3d5e1245",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -41118,6 +41405,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -41224,6 +41512,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -41330,6 +41619,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -41442,7 +41732,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-4b8d1b919e60/hlwxx_remove_ads.js",
       "sourceUrl": "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/hlwxx_remove_ads.js",
       "sourceSha256": "1ec71d2e02541253369b8562533c0edfdecbeb65787081bb6fa97a68af26c0ea",
-      "sha256": "b331e34dd05f7c6e0901764c9dd4ffa0668a1f45bcce99739d843037eeecf9c3",
+      "sha256": "f74bf7a3842e408e14940e03c1298681077b3dfaf6f4f8d6275e9644b9cd495f",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -41462,6 +41752,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -41565,6 +41856,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -41679,7 +41971,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-d3a5f386d448/mgtv_vip.js",
       "sourceUrl": "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/mgtv_vip.js",
       "sourceSha256": "7393e4f79938096a5ae000533dd228f88b7d03215031f6b22bbf3edf56bd1bec",
-      "sha256": "8ce91a89dd80a64fbc45a81d5f1b213a353ba65a11866e4c0080d7d770494c6b",
+      "sha256": "4a5a7f243e57e31e46b80a95c70970f50ee68ef113b098e69acca418ed276a6e",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -41699,6 +41991,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -41802,6 +42095,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -41916,7 +42210,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-99b02d3cac44/MeiTuanNoAd.js",
       "sourceUrl": "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MeiTuanNoAd.js",
       "sourceSha256": "16a2800107ebbadde4209bb961894a4d068a9b19cd0267a66d412de896f50e05",
-      "sha256": "c6eda794e44a5878c953cb32dfce958b077f8d702239bdf3262ebf9f3d25b0c1",
+      "sha256": "b511c02af5dfeaa7d535554b70fb1848c90b6250ac5048eb16bbec51847910e0",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -41936,6 +42230,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -42039,6 +42334,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -42153,7 +42449,7 @@
       "path": "Script/Adblock/kelee.one-d61358f358cf/BiliComic_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/BiliComic/BiliComic_remove_ads.js",
       "sourceSha256": "a44f3d9f44b79940c1d75561a3e4ddc1a57a6a989b6c39f7d97e48db4245224d",
-      "sha256": "24aadfd303e7826a6daf26b8c33051c4d937d000a2c1c74ae56664dce7fb00e2",
+      "sha256": "ceda325e52614cc818e4f180c82ede05f2a7517e439d83ef4d6e96f59d1cad14",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -42175,6 +42471,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -42281,6 +42578,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -42387,6 +42685,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -42499,7 +42798,7 @@
       "path": "Script/Adblock/kelee.one-1717ca508ca6/CaixinMedia_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/CaixinMedia/CaixinMedia_remove_ads.js",
       "sourceSha256": "591a0e4aa1e5b6efb60a1d88fb9ef04e2d372cc4b2f3a8cc7d40f8abd6622ca5",
-      "sha256": "943379eb0393b9951aa11b6eb913a2848a7c78afa4e9f24dc4f4aea931705d39",
+      "sha256": "3815e8c9908ddef20ec8c72908e673d71620918d80d344f1bf11d70b3611b09e",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -42521,6 +42820,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -42627,6 +42927,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -42733,6 +43034,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -42845,7 +43147,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-d477c79dc184/myblockads.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/myblockads.js",
       "sourceSha256": "55725115e4adc11d8594d252617728c3b0267caa44fec21e6e819c9a81e17fa8",
-      "sha256": "3e4df4ac62a148b00a659883cd15f32d0b791d1c1346a51b5c96be5eb48063a5",
+      "sha256": "59461ff0960b13961001932e1fa539473fd5e2e37e3c5391f9b6077e83aa69d5",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -42867,6 +43169,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -42973,6 +43276,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -43079,6 +43383,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -43191,7 +43496,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-8f7d651e07b1/kugou.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/kugou.js",
       "sourceSha256": "6063f59363090b1434f415eda9ade4f6011a7b409d0d500677cc4a081f89f43d",
-      "sha256": "67bdb0acb512f072452ed69fcbc67b2daec2bea1d58107ea088cb04c5057ca00",
+      "sha256": "ca72329df1920eef3b95390314aaaa88c74b8ebca7f6c87f535719b01d33dd9f",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -43213,6 +43518,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -43319,6 +43625,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -43425,6 +43732,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -43537,7 +43845,7 @@
       "path": "Script/Adblock/kelee.one-6659152f24c8/Soul_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/Soul/Soul_remove_ads.js",
       "sourceSha256": "5a9a02b54668a58dbe2942d39eca12612b2f4669a6cd4fe2847032cbea753d0a",
-      "sha256": "396213fcc43f398d4112e1e736801536eb8ca612b537d7509f33a00a87a9a70a",
+      "sha256": "6fec1a02e7c8cffd8acf720a2f3ce9283088434531fc837e79e14b77ef29914e",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -43559,6 +43867,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -43665,6 +43974,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -43771,6 +44081,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -43883,7 +44194,7 @@
       "path": "Script/Adblock/kelee.one-9d853d73b21f/Taobao_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/Taobao/Taobao_remove_ads.js",
       "sourceSha256": "3ccb2093683d84a0085a24506fb04d3ac87713e8e1bade764711816e8908d903",
-      "sha256": "82ae2f9d6f05c13a0bd1891e3c4a5cda52f26aa194552b98fa4ddee329c770a7",
+      "sha256": "98519a6d44ab44032fc09e8d79ccbabfa5ca2ffb565380021ef5a49e224e0f36",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -43905,6 +44216,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -44011,6 +44323,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -44117,6 +44430,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -44229,7 +44543,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-5d99ca157433/weibo.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/weibo.js",
       "sourceSha256": "7498cbef4c2f3293afebc3a686faec63220e27a62cd16303c18db2371bf529f3",
-      "sha256": "a3937133d88a518bde616abd8a1b55fc8c2948ed4ded2998247e30b629d7479a",
+      "sha256": "d56b377713d3d33069ce7931e210ca3b290ad9b4acde7c847ad01b0e551b7fdd",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -44251,6 +44565,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -44357,6 +44672,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -44463,6 +44779,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -44575,7 +44892,7 @@
       "path": "Script/Adblock/kelee.one-dc0eef05c006/Weibo_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/Weibo/Weibo_remove_ads.js",
       "sourceSha256": "026ccd766a53f744c2bf2aad93c4deb6f207defe4daf973178bb3e4193c997fb",
-      "sha256": "379bfcd043d0b2a2f1f9e7ddab0cac6d21f47f73d8278d73060186f8b39362dd",
+      "sha256": "2b94d4e92b0b6748bd45b21fa76690254823bd4523af4e64d8dd52d39bc2d61f",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -44597,6 +44914,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -44703,6 +45021,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -44809,6 +45128,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -44921,7 +45241,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-99c1f7a94b66/myBlockAds.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/myBlockAds.js",
       "sourceSha256": "4cf62100424886068a5470daecec319e93ccd034c647d79a9daaa72bbbc341bb",
-      "sha256": "e6cab1d308c11b0fc7b554d2a67752ee09bb6adf1829a6b9b74b6aa52eda6cc3",
+      "sha256": "f46644ed926e197d4dbcfeb70fa67ad02c38ff3ca2fc6c6a3a285520e2bcb748",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -44941,6 +45261,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -45044,6 +45365,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -45159,7 +45481,7 @@
       "path": "Script/Adblock/kelee.one-28e7d9d5ad8f/MotorFans_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/MotorFans/MotorFans_remove_ads.js",
       "sourceSha256": "f464b6e3853433ae5fb5667c9b17b0333cffdc0c24014b7607fde6d39823f16d",
-      "sha256": "6f6e3b75830291c2064de0a8cf32df5bae3c44af6d3c8c1cc7031656a0e68247",
+      "sha256": "04b3bc9aaa23c969b36e15ce89f91c98996bd3e439da1014b435f2058967eedf",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -45181,6 +45503,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -45287,6 +45610,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -45393,6 +45717,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -45504,7 +45829,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-821aa576b617/12306.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/12306.js",
       "sourceSha256": "0c805290e56a4b557c0ed235ae06a1e5d70025ed3d990036e3f6b8ca44f3a0c3",
-      "sha256": "2582b8ad34c08f44007d2d3d13262308b6572cb86f57a1f085ecf4bd38990421",
+      "sha256": "3f9f8bbcfcbf4ff17915250ffd460eb7b1d8436274450c069a1983c4e7746333",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -45526,6 +45851,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -45632,6 +45958,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -45738,6 +46065,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -45849,7 +46177,7 @@
       "path": "Script/Adblock/kelee.one-2531c9fe6208/SodaMusic_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/SodaMusic/SodaMusic_remove_ads.js",
       "sourceSha256": "f7a929bfe291b2433db14a2a7ef99b38e92b1f21eaed847e05cc803269eddb93",
-      "sha256": "be4ad5a08dc3168fbce80c24cc3fb244ea82c9583102ade613b6a959fd3d3acb",
+      "sha256": "e100a4d7a526a3cebfbbdde343b6cec09a54fb14aaf2d4db248b244be21e9b0c",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -45871,6 +46199,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -45977,6 +46306,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -46083,6 +46413,7 @@
             "responseBody": false,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -46194,7 +46525,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-53e7438651b1/12306.js",
       "sourceUrl": "https://raw.githubusercontent.com/kokoryh/Script/master/js/12306.js",
       "sourceSha256": "676fe92784297b1ec93e0dc128597af3e38f42e9a37772cbdb9bda4ab9eed3dd",
-      "sha256": "8ed60e8ec5f95e43c6cba340a1631fa6641874191e224c15f00bd83fd3174599",
+      "sha256": "ceddfc44cbfc72ac8661e161a53d6f150de048628d4c257bfcc256ff2dcbde34",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -46214,6 +46545,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -46317,6 +46649,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -46431,7 +46764,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-89816a294604/mdb.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/mdb.js",
       "sourceSha256": "f50cef7a5f3b3e3179f9c5a93f2ab937dd72d83ca4dc2c9e8a66937c38e3e9ab",
-      "sha256": "8df6cab918810b297d6d3fa5599bb37731804dc899c24df1ad9327f54b4c759e",
+      "sha256": "2ba66214af872134cbe810477a7811d5435c992d873dfe88c47a722560541f5e",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -46451,6 +46784,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -46554,6 +46888,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -46668,7 +47003,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-fc4b214bb465/reddit.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/reddit.js",
       "sourceSha256": "3178f057b758e8e5fa20477c8abde707fa367482f63553be833773dd33aec3ed",
-      "sha256": "fe49be2d1c51d7e223cb29d927f0954b5ce585898df2bce53620db95e2972ad7",
+      "sha256": "5007ab0cfab09fc5c74fe51cf690a11789217a3ccd7928de120a80d35eee36bc",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -46688,6 +47023,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -46791,6 +47127,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -46905,7 +47242,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-a94e56a8e113/applet.js",
       "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/applet.js",
       "sourceSha256": "0e2ffdd010b7f1ee38c526af5b7842f8fe3af89bf7ccd298596025baa4471855",
-      "sha256": "396731965f7b47ddfd940ee2789efae7fa63f458420bff8acf0c8ad49f06c448",
+      "sha256": "7bfb843afb5fb942971cbeceaa1838810bdcd42efc19fbb7db014986f83e0f1c",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -46925,6 +47262,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -47028,6 +47366,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -47142,7 +47481,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-8cd9d9503c51/wnbz.js",
       "sourceUrl": "https://raw.githubusercontent.com/Sliverkiss/QuantumultX/main/AdBlock/xmApp/wnbz.js",
       "sourceSha256": "b4c4a10fbb15268d20b1c2dd69c842494029f7bd8eb691add5db105ce087cbef",
-      "sha256": "1515ba72cda72a7805b9e5a8ae4cd04eaf5f100b9ca5442dcff07d698c150973",
+      "sha256": "96145f76068a91bb9b5117c2d11d45a703f3d4c152476a139e5902ffc579626c",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -47162,6 +47501,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -47265,6 +47605,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -47379,7 +47720,7 @@
       "path": "Script/Adblock/kelee.one-a31b4fde903a/IThome_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/IThome/IThome_remove_ads.js",
       "sourceSha256": "3008c1a2831ec084c07e44c2219ee8776aefb45a9b4053da675fde6701caa141",
-      "sha256": "2bc552eba32495e66b7c13d4cb74eb971ef4cb9e566adbae7fc09a0922e475f0",
+      "sha256": "db73e3d9348f591f07677af279f051cccfe245c667ba1a3cad70c69666c39aab",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -47409,6 +47750,7 @@
             },
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -47527,6 +47869,7 @@
             },
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -47642,6 +47985,7 @@
             },
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": false,
               "methods": [
                 "get",
                 "post",
@@ -47755,7 +48099,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-52eaad15c8b3/MT.js",
       "sourceUrl": "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.js",
       "sourceSha256": "9a48981f5d1cdac2d7c72c8f1164752ce712113eaf687aeeba2829e78c66308a",
-      "sha256": "92066abb10eaeb1d7925a20265e60f788a5d421f64f2e18b15e478ba7d331eae",
+      "sha256": "8f4e20b44ad98546a7f9025dc36e56c1230337300d0185e02b144b0aafbfe7fa",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -47775,6 +48119,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -47878,6 +48223,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -47993,7 +48339,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-48dd0194aea2/xhey-ad-clean.js",
       "sourceUrl": "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/xhey-ad-clean.js",
       "sourceSha256": "2d49b52df9ba6234d60235d0c2f6e56b1ad251566976fc718221b5e32f8a71d6",
-      "sha256": "eb1d70ab21c5cdca3438d3ebecf587edb958ccaba0bfa7a0eb567b997b38e14f",
+      "sha256": "5d38fcc5dca007abad9172edfda315f48ad1278f96f2b875dd6e9dcd84951c6f",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -48013,6 +48359,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -48116,6 +48463,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -48232,7 +48580,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-e0b4de0796f5/caixinAd.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/caixin/caixinAd.js",
       "sourceSha256": "0366e7eb1ffc341c472304e526f93bf6104a1cda668c85f50e8798fe0f035e4d",
-      "sha256": "360c45c1c7b775b265f7aea6f7461a35c2d212f58e27d76db7df7a6b024eb540",
+      "sha256": "fd55603e02ea5cb55a82291d5f2923fd13748afa7edbdc8d4c5dcf3ffdfbce38",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -48252,6 +48600,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -48355,6 +48704,7 @@
             "responseBody": true,
             "apiPlan": {
               "version": 1,
+              "omitNotificationOptions": true,
               "methods": [
                 "get",
                 "post",
@@ -48458,6 +48808,495 @@
       "features": [
         "$done",
         "$response.body.replace"
+      ],
+      "specialization": {
+        "folds": 0,
+        "branches": 0,
+        "reason": "no provable host branch"
+      }
+    },
+    "Script/Adblock/raw.githubusercontent.com-5123ae634fe0/xiaotucc.js": {
+      "path": "Script/Adblock/raw.githubusercontent.com-5123ae634fe0/xiaotucc.js",
+      "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/xiaotucc.js",
+      "sourceSha256": "197bc64c8ddf1188d1b876d7b980d5708a0bdb79a01be51a9f3b14adc936cc9d",
+      "sha256": "4bd46c1bb37f01e270598f9edb6b0db671247e5e58ad76d8fa1ebb47b21462c1",
+      "from": "qx",
+      "directionPolicyVersion": 1,
+      "targets": [
+        "qx",
+        "surge"
+      ],
+      "conversionTargets": [
+        "surge"
+      ],
+      "contexts": {
+        "response": {
+          "qx": {
+            "from": "qx",
+            "to": "qx",
+            "phase": "response",
+            "binary": false,
+            "responseBody": true,
+            "apiPlan": {
+              "version": 1,
+              "omitNotificationOptions": true,
+              "methods": [
+                "get",
+                "post",
+                "put",
+                "delete",
+                "head",
+                "options",
+                "patch"
+              ],
+              "source": {
+                "responseStatus": "statusCode",
+                "scriptStartTime": "absent",
+                "binaryField": "bodyBytes",
+                "store": {
+                  "style": "prefs",
+                  "read": "valueForKey",
+                  "write": "setValueForKey",
+                  "remove": "removeValueForKey",
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "promise",
+                  "root": "$task.fetch",
+                  "optionsRoot": "opts",
+                  "redirect": "redirection",
+                  "cookie": "auto-cookie",
+                  "tls": "skip-cert-verify",
+                  "policy": "policy",
+                  "timeoutMs": null,
+                  "directPolicy": "direct",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": false,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notify",
+                  "open": null,
+                  "media": null,
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "line",
+                  "synthetic": "flat"
+                },
+                "argument": "absent"
+              },
+              "target": {
+                "responseStatus": "statusCode",
+                "scriptStartTime": "absent",
+                "binaryField": "bodyBytes",
+                "store": {
+                  "style": "prefs",
+                  "read": "valueForKey",
+                  "write": "setValueForKey",
+                  "remove": "removeValueForKey",
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "promise",
+                  "root": "$task.fetch",
+                  "optionsRoot": "opts",
+                  "redirect": "redirection",
+                  "cookie": "auto-cookie",
+                  "tls": "skip-cert-verify",
+                  "policy": "policy",
+                  "timeoutMs": null,
+                  "directPolicy": "direct",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": false,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notify",
+                  "open": null,
+                  "media": null,
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "line",
+                  "synthetic": "flat"
+                },
+                "argument": "absent"
+              }
+            }
+          },
+          "surge": {
+            "from": "qx",
+            "to": "surge",
+            "phase": "response",
+            "binary": false,
+            "responseBody": true,
+            "apiPlan": {
+              "version": 1,
+              "omitNotificationOptions": true,
+              "methods": [
+                "get",
+                "post",
+                "put",
+                "delete",
+                "head",
+                "options",
+                "patch"
+              ],
+              "source": {
+                "responseStatus": "statusCode",
+                "scriptStartTime": "absent",
+                "binaryField": "bodyBytes",
+                "store": {
+                  "style": "prefs",
+                  "read": "valueForKey",
+                  "write": "setValueForKey",
+                  "remove": "removeValueForKey",
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "promise",
+                  "root": "$task.fetch",
+                  "optionsRoot": "opts",
+                  "redirect": "redirection",
+                  "cookie": "auto-cookie",
+                  "tls": "skip-cert-verify",
+                  "policy": "policy",
+                  "timeoutMs": null,
+                  "directPolicy": "direct",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": false,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notify",
+                  "open": null,
+                  "media": null,
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "line",
+                  "synthetic": "flat"
+                },
+                "argument": "absent"
+              },
+              "target": {
+                "responseStatus": "status",
+                "scriptStartTime": "epoch-seconds",
+                "binaryField": "body",
+                "store": {
+                  "style": "store",
+                  "read": "read",
+                  "write": "write",
+                  "remove": null,
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "callback",
+                  "root": "$httpClient",
+                  "optionsRoot": null,
+                  "redirect": "auto-redirect",
+                  "cookie": "auto-cookie",
+                  "tls": "insecure",
+                  "policy": "policy",
+                  "timeoutMs": 1000,
+                  "directPolicy": "DIRECT",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": true,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notification.post",
+                  "open": "url",
+                  "media": "media-url",
+                  "action": "action",
+                  "openAction": "open-url",
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "number",
+                  "synthetic": "response"
+                },
+                "argument": "string"
+              }
+            },
+            "contextPassThrough": true,
+            "headerReads": {},
+            "headerPrefixes": {},
+            "binaryReads": false
+          }
+        }
+      },
+      "features": [
+        "$done",
+        "$request.url.indexOf",
+        "$response",
+        "$response.body"
+      ],
+      "specialization": {
+        "folds": 0,
+        "branches": 0,
+        "reason": "no provable host branch"
+      }
+    },
+    "Script/Adblock/github.com-0d48f859129b/soul_qx.js": {
+      "path": "Script/Adblock/github.com-0d48f859129b/soul_qx.js",
+      "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/soul_qx.js",
+      "sourceSha256": "0bbbfc3474f3b0c5a294fd167dff2a804d40cb585cc80d63a868333f9770d605",
+      "sha256": "af30028eb56de692625679bafb0194c0da13b9d15c8de7009759cc02c61f3f7d",
+      "from": "qx",
+      "directionPolicyVersion": 1,
+      "targets": [
+        "qx",
+        "surge"
+      ],
+      "conversionTargets": [
+        "surge"
+      ],
+      "contexts": {
+        "response": {
+          "qx": {
+            "from": "qx",
+            "to": "qx",
+            "phase": "response",
+            "binary": false,
+            "responseBody": true,
+            "apiPlan": {
+              "version": 1,
+              "omitNotificationOptions": true,
+              "methods": [
+                "get",
+                "post",
+                "put",
+                "delete",
+                "head",
+                "options",
+                "patch"
+              ],
+              "source": {
+                "responseStatus": "statusCode",
+                "scriptStartTime": "absent",
+                "binaryField": "bodyBytes",
+                "store": {
+                  "style": "prefs",
+                  "read": "valueForKey",
+                  "write": "setValueForKey",
+                  "remove": "removeValueForKey",
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "promise",
+                  "root": "$task.fetch",
+                  "optionsRoot": "opts",
+                  "redirect": "redirection",
+                  "cookie": "auto-cookie",
+                  "tls": "skip-cert-verify",
+                  "policy": "policy",
+                  "timeoutMs": null,
+                  "directPolicy": "direct",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": false,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notify",
+                  "open": null,
+                  "media": null,
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "line",
+                  "synthetic": "flat"
+                },
+                "argument": "absent"
+              },
+              "target": {
+                "responseStatus": "statusCode",
+                "scriptStartTime": "absent",
+                "binaryField": "bodyBytes",
+                "store": {
+                  "style": "prefs",
+                  "read": "valueForKey",
+                  "write": "setValueForKey",
+                  "remove": "removeValueForKey",
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "promise",
+                  "root": "$task.fetch",
+                  "optionsRoot": "opts",
+                  "redirect": "redirection",
+                  "cookie": "auto-cookie",
+                  "tls": "skip-cert-verify",
+                  "policy": "policy",
+                  "timeoutMs": null,
+                  "directPolicy": "direct",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": false,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notify",
+                  "open": null,
+                  "media": null,
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "line",
+                  "synthetic": "flat"
+                },
+                "argument": "absent"
+              }
+            },
+            "omittedParameters": [
+              "notification.argument4"
+            ]
+          },
+          "surge": {
+            "from": "qx",
+            "to": "surge",
+            "phase": "response",
+            "binary": false,
+            "responseBody": true,
+            "apiPlan": {
+              "version": 1,
+              "omitNotificationOptions": true,
+              "methods": [
+                "get",
+                "post",
+                "put",
+                "delete",
+                "head",
+                "options",
+                "patch"
+              ],
+              "source": {
+                "responseStatus": "statusCode",
+                "scriptStartTime": "absent",
+                "binaryField": "bodyBytes",
+                "store": {
+                  "style": "prefs",
+                  "read": "valueForKey",
+                  "write": "setValueForKey",
+                  "remove": "removeValueForKey",
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "promise",
+                  "root": "$task.fetch",
+                  "optionsRoot": "opts",
+                  "redirect": "redirection",
+                  "cookie": "auto-cookie",
+                  "tls": "skip-cert-verify",
+                  "policy": "policy",
+                  "timeoutMs": null,
+                  "directPolicy": "direct",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": false,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notify",
+                  "open": null,
+                  "media": null,
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "line",
+                  "synthetic": "flat"
+                },
+                "argument": "absent"
+              },
+              "target": {
+                "responseStatus": "status",
+                "scriptStartTime": "epoch-seconds",
+                "binaryField": "body",
+                "store": {
+                  "style": "store",
+                  "read": "read",
+                  "write": "write",
+                  "remove": null,
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "callback",
+                  "root": "$httpClient",
+                  "optionsRoot": null,
+                  "redirect": "auto-redirect",
+                  "cookie": "auto-cookie",
+                  "tls": "insecure",
+                  "policy": "policy",
+                  "timeoutMs": 1000,
+                  "directPolicy": "DIRECT",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": true,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notification.post",
+                  "open": "url",
+                  "media": "media-url",
+                  "action": "action",
+                  "openAction": "open-url",
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "number",
+                  "synthetic": "response"
+                },
+                "argument": "string"
+              }
+            },
+            "headerReads": {},
+            "headerPrefixes": {},
+            "binaryReads": false,
+            "omittedParameters": [
+              "notification.argument4"
+            ]
+          }
+        }
+      },
+      "features": [
+        "$done",
+        "$notify",
+        "$request.url",
+        "$response.body"
       ],
       "specialization": {
         "folds": 0,
@@ -49357,6 +50196,11 @@
         "path": "Script/Adblock/raw.githubusercontent.com-e0b4de0796f5/caixinAd.js",
         "binary": false,
         "echo": false
+      },
+      "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/xiaotucc.js": {
+        "path": "Script/Adblock/raw.githubusercontent.com-5123ae634fe0/xiaotucc.js",
+        "binary": false,
+        "echo": false
       }
     },
     "Adblock/Surge/iMaiCai_remove_ads.sgmodule": {
@@ -49968,6 +50812,11 @@
         "path": "Script/Adblock/raw.githubusercontent.com-e0b4de0796f5/caixinAd.js",
         "binary": false,
         "echo": false
+      },
+      "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/xiaotucc.js": {
+        "path": "Script/Adblock/raw.githubusercontent.com-5123ae634fe0/xiaotucc.js",
+        "binary": false,
+        "echo": false
       }
     },
     "Adblock/Quantumult X/zenmofeishi_tb.snippet": {
@@ -50218,6 +51067,20 @@
     "Adblock/Surge/zenmofeishi_xhey-ad-clean.sgmodule": {
       "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/xhey-ad-clean.js": {
         "path": "Script/Adblock/raw.githubusercontent.com-48dd0194aea2/xhey-ad-clean.js",
+        "binary": false,
+        "echo": false
+      }
+    },
+    "Adblock/Quantumult X/ishowshu_soul.snippet": {
+      "https://github.com/ishowshu/qx/raw/refs/heads/main/script/soul_qx.js": {
+        "path": "Script/Adblock/github.com-0d48f859129b/soul_qx.js",
+        "binary": false,
+        "echo": false
+      }
+    },
+    "Adblock/Surge/ishowshu_soul.sgmodule": {
+      "https://github.com/ishowshu/qx/raw/refs/heads/main/script/soul_qx.js": {
+        "path": "Script/Adblock/github.com-0d48f859129b/soul_qx.js",
         "binary": false,
         "echo": false
       }
@@ -50791,7 +51654,7 @@
     },
     "https://raw.githubusercontent.com/Maasea/sgmodule/refs/heads/master/Script/Youtube/youtube.response.js": {
       "path": "Resource/Backup/script-api/b4990e49550a5d8d9faa02a517837d3d8b3ff5bb2a4904a65cd3ffaadbbf9722.json",
-      "sha256": "b9c18282dc6e2f02a5bd0450393d5b6d8ec2a1250b52b87ee03c208bdd9c093c",
+      "sha256": "2167f7c3796bc3acd3c5a03f3f91d97d664c7c7f37b362d10b194ce19d15241d",
       "sourceSha256": "f98483d5f5017514f82502253c0db5ce2d4ffb7839887aa2cadc22666f5a7f12"
     },
     "https://raw.githubusercontent.com/kokoryh/Script/master/js/12306.js": {
@@ -51001,12 +51864,12 @@
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/meiyou/meiyou_ads.js": {
       "path": "Resource/Backup/script-api/b5150f8cfaf435b65d8721028b861bd99ac68318860ae2d9972134549a8f2226.json",
-      "sha256": "b909bcba74ebc62d68eddc0f18f51635b2483a3dec0d8b6dbbe694373f44d61b",
+      "sha256": "dfcf7afd516005f2ca035ac812df2eeafcc42254f019922abf1654ee2e4f22ea",
       "sourceSha256": "5bfa31920f176ec0a992d6dfd3ee68d3ea3e416597f87af622665fe6b8cb626a"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/refs/heads/main/Scripts/miguvideo/miguvideo_ads.js": {
       "path": "Resource/Backup/script-api/379472e34e6e55f279936c3e01d36ac83bca218ee6c55fb32762ef99e99353b5.json",
-      "sha256": "e61170df959eabfb040d8d40684797b118b7ade49173727e5c630f3743944f19",
+      "sha256": "2aa72d438eae27eb478f8092eaf4c82f6d83e8ddc288d4ed16f0911a4fad94b9",
       "sourceSha256": "869200a4759c7a9f3f89359fb36275121b0de0ae9772c5f0ce9765a5fcbec999"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/PupuSplashAds.js": {
@@ -51036,7 +51899,7 @@
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/rrtv_json.js": {
       "path": "Resource/Backup/script-api/26050e48827affcf3cd2597466f26cff304152bab18e2309d8688be69d7d838f.json",
-      "sha256": "f80c5c3204e748ae88d6d36ef13cd73c33f0f10007136163c08cb851631aa874",
+      "sha256": "614b8262b06941ec4af61513da8cb32c4e0d68a84afbc07360f6428adce16d37",
       "sourceSha256": "4202921945c0ba616133ca833b034954c3b3b5f328199c809065ce25d16446a7"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/reddit.js": {
@@ -51066,7 +51929,7 @@
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/soul/soul_ads.js": {
       "path": "Resource/Backup/script-api/b605a47fa7e7a42cc3cabfd42c314f33e3f35404114c5fa92d8e1dfc6013cbb0.json",
-      "sha256": "744de7c76cdd4fd2dba3ece6331641b41c53c6bb4804ba079ab5a3e3cfb25866",
+      "sha256": "3349ae776d782db29fdecb14394ec7970edb10a695378d74a812ad1a639b3490",
       "sourceSha256": "a2987051900998f971fa9f9eba9b1ab96fa15fcfbc1848f7c96afa0dd038bdf1"
     },
     "https://raw.githubusercontent.com/app2smile/rules/master/js/spotify-qx-header.js": {
@@ -51111,7 +51974,7 @@
     },
     "https://raw.githubusercontent.com/zZPiglet/Task/master/asset/UnblockURLinWeChat.js": {
       "path": "Resource/Backup/script-api/6d1ee8efe017b7c03876a87c9c5d4e86d63520d5259dde18bed6b41165ffa247.json",
-      "sha256": "199a4e77634dffba7e6198ad4b31748282da81add63fa07b79207cf23244985e",
+      "sha256": "6d147464d3856686537c34a04a7adb89339e685bbf14a8b4ef063407c15bec40",
       "sourceSha256": "79098ac4d2eb7932c9b2b45ac7891469703626855e5d13ab4374af52cc48983e"
     },
     "https://raw.githubusercontent.com/Sliverkiss/QuantumultX/main/AdBlock/xmApp/wnbz.js": {
@@ -51131,7 +51994,7 @@
     },
     "https://github.com/fmz200/wool_scripts/raw/main/Scripts/xiaohongshu/xiaohongshu.js": {
       "path": "Resource/Backup/script-api/9f5ee26c8a7e012dee5b993dccd77e876aa7e9413833c2bf09d3f6a29800f552.json",
-      "sha256": "30a200533ad127fba8ddcd78e5090ec0c3d89ab5b76b5e4b8e3bdbbd026e63ca",
+      "sha256": "50363da2230601c8f253b4dcc96bf20ff454e7c4830b1bf752cbd03027a03b46",
       "sourceSha256": "318d89bce1117edb26a93b383804e195649ec4674a04efa9e3ddb4ef7f34b498"
     },
     "https://raw.githubusercontent.com/Sliverkiss/QuantumultX/main/AdBlock/xmApp/xmApp.js": {
@@ -51141,7 +52004,7 @@
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/xiaotucc.js": {
       "path": "Resource/Backup/script-api/5123ae634fe0813ce16bf8a4ce2865d03e7e574e40a025402ca4287624c704e9.json",
-      "sha256": "19f14cd039c5e892bec6921a8b701f7905528e0555e288607fcab751bd5e6022",
+      "sha256": "51c389bc8a5351a1f8f4990c37f50361cbfa0dfdf9d55d1bc9062aa04f316052",
       "sourceSha256": "197bc64c8ddf1188d1b876d7b980d5708a0bdb79a01be51a9f3b14adc936cc9d"
     },
     "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/usmile.js": {
@@ -51251,12 +52114,12 @@
     },
     "https://github.com/ishowshu/qx/raw/refs/heads/main/script/soul_qx.js": {
       "path": "Resource/Backup/script-api/0d48f859129b52476a0f2b4cd1bad287f81db4aa70937ac0efacf91b12f7847f.json",
-      "sha256": "4d063291762b34e4892674a2f85ca4bc38539c018b4529219a4cb29edb4549d2",
+      "sha256": "c52799d4a59cf87a76c41644fd3aa07a7b7c95352af5df4fe8757dd535452f40",
       "sourceSha256": "0bbbfc3474f3b0c5a294fd167dff2a804d40cb585cc80d63a868333f9770d605"
     },
     "https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js": {
       "path": "Resource/Backup/script-api/2ac96d103b8f2e91d7cb24bb251254d06ddb79ba2c3b7405616b9ff5a2037317.json",
-      "sha256": "5fdd52b34331a06a9175e51a4be37adbf59f5588cfb001ec2609d4ee8d0fe944",
+      "sha256": "03ca8a1ef17a00eb1ce66e3576771221481c1d194e5f1313651c47a713f3bc06",
       "sourceSha256": "f98483d5f5017514f82502253c0db5ce2d4ffb7839887aa2cadc22666f5a7f12"
     },
     "https://kelee.one/Resource/JavaScript/mobileClouds/mobileClouds_remove_ads.js": {
@@ -51326,7 +52189,7 @@
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/youtube.response.js": {
       "path": "Resource/Backup/script-api/fa5f41822e443a9b0f0b3b7ed54bd4d0b23da8806a9c86021ba1eb7b02fa6ddc.json",
-      "sha256": "bd3e0ac5ae8496ba99fe47862d1e4fe986e554ef5e4f49b010904e4da5728ce3",
+      "sha256": "c2d74013f0f3693e3201a47e281ce56e798713c840f85130d5a24f8bd033cd4e",
       "sourceSha256": "715d0d3fc27b8af35fdabefd6698fc984ec9f54612799921b3cf8f71575849c3"
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/yt-sub-clean.js": {

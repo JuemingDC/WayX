@@ -10422,14 +10422,8 @@
               "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
               "proof": "source-host-presence-layout; not foreign-API support"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notification.post",
-                "reason": "Notification attachments/actions/delay differ across clients",
-                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "read:112456",
@@ -10808,20 +10802,14 @@
                 "action": "map"
               },
               {
-                "source": "argument3.open-url",
-                "canonical": "notify.unknown",
+                "source": "argument3",
+                "canonical": "notify.options",
                 "target": null,
-                "action": "unresolved"
+                "action": "omit"
               }
             ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notify",
-                "reason": "Notification attachments/actions/delay differ across clients",
-                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:113863",
@@ -11434,11 +11422,6 @@
             "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients"
           },
           {
-            "api": "$notification.post",
-            "reason": "Notification attachments/actions/delay differ across clients",
-            "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-          },
-          {
             "api": "$done",
             "reason": "Dynamic completion object needs field/data-flow proof",
             "solution": "Use explicit result fields or add a verified program-specific plan"
@@ -11462,11 +11445,6 @@
             "api": "$prefs.setValueForKey",
             "reason": "Value coercion/deletion of dynamic non-string values is not proven equivalent",
             "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients"
-          },
-          {
-            "api": "$notify",
-            "reason": "Notification attachments/actions/delay differ across clients",
-            "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
           }
         ]
       }
@@ -11564,11 +11542,6 @@
       "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients"
     },
     {
-      "api": "$notification.post",
-      "reason": "surge: Notification attachments/actions/delay differ across clients",
-      "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-    },
-    {
       "api": "$done",
       "reason": "surge: Dynamic completion object needs field/data-flow proof",
       "solution": "Use explicit result fields or add a verified program-specific plan"
@@ -11592,11 +11565,6 @@
       "api": "$prefs.setValueForKey",
       "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
       "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients"
-    },
-    {
-      "api": "$notify",
-      "reason": "surge: Notification attachments/actions/delay differ across clients",
-      "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
     }
   ]
 }

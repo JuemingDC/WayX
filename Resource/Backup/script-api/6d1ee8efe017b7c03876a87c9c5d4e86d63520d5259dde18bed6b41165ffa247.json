@@ -2776,14 +2776,8 @@
               "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
               "proof": "notification-option-proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notify",
-                "reason": "Notification attachments/actions/delay differ across clients",
-                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "read:873",
@@ -4348,14 +4342,8 @@
                 "action": "map"
               }
             ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notify",
-                "reason": "Notification attachments/actions/delay differ across clients",
-                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:77981",
@@ -4395,16 +4383,16 @@
                 "canonical": "notify.body",
                 "target": "argument2",
                 "action": "map"
+              },
+              {
+                "source": "argument3",
+                "canonical": "notify.options",
+                "target": null,
+                "action": "omit"
               }
             ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notify",
-                "reason": "Notification attachments/actions/delay differ across clients",
-                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:78212",
@@ -4428,14 +4416,8 @@
               "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
               "proof": "source-host-presence-layout; not foreign-API support"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notification.post",
-                "reason": "Notification attachments/actions/delay differ across clients",
-                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:78287",
@@ -4459,14 +4441,8 @@
               "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
               "proof": "source-host-presence-layout; not foreign-API support"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notification.post",
-                "reason": "Notification attachments/actions/delay differ across clients",
-                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:78506",
@@ -4490,14 +4466,8 @@
               "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
               "proof": "source-host-presence-layout; not foreign-API support"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notification.post",
-                "reason": "Notification attachments/actions/delay differ across clients",
-                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:78581",
@@ -4521,14 +4491,8 @@
               "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
               "proof": "source-host-presence-layout; not foreign-API support"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notification.post",
-                "reason": "Notification attachments/actions/delay differ across clients",
-                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:78712",
@@ -4552,14 +4516,8 @@
               "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
               "proof": "source-host-presence-layout; not foreign-API support"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notification.post",
-                "reason": "Notification attachments/actions/delay differ across clients",
-                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:78797",
@@ -4583,14 +4541,8 @@
               "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
               "proof": "source-host-presence-layout; not foreign-API support"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notification.post",
-                "reason": "Notification attachments/actions/delay differ across clients",
-                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:79003",
@@ -4677,14 +4629,8 @@
               "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
               "proof": "notification-option-proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notify",
-                "reason": "Notification attachments/actions/delay differ across clients",
-                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:79411",
@@ -4837,16 +4783,6 @@
             "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
           },
           {
-            "api": "$notify",
-            "reason": "Notification attachments/actions/delay differ across clients",
-            "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-          },
-          {
-            "api": "$notification.post",
-            "reason": "Notification attachments/actions/delay differ across clients",
-            "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-          },
-          {
             "api": "$prefs.valueForKey",
             "reason": "Default/dynamic key namespaces differ across clients",
             "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
@@ -4940,16 +4876,6 @@
       "api": "$task",
       "reason": "surge: QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
       "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
-    },
-    {
-      "api": "$notify",
-      "reason": "surge: Notification attachments/actions/delay differ across clients",
-      "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-    },
-    {
-      "api": "$notification.post",
-      "reason": "surge: Notification attachments/actions/delay differ across clients",
-      "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
     },
     {
       "api": "$prefs.valueForKey",

@@ -311,7 +311,7 @@
           },
           {
             "id": "call:323",
-            "rule": "complete",
+            "rule": "complete.original-context",
             "kind": "completion",
             "source": {
               "api": "$done",
@@ -322,13 +322,22 @@
               "access": "call",
               "memberPath": []
             },
-            "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "canonical": "complete.pass-original",
+            "value": "proven untouched response context",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "preserve the original HTTP response without copying header/framing fields",
+              "proof": "same-phase-direct-original-context; immutable scalar-only reads; no alias/escape/binary"
             },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "complete.pass-original",
+                "target": "argument0 (original context)",
+                "action": "map",
+                "transform": "native original response completion"
+              }
+            ],
             "decision": "native",
             "diagnostics": []
           },
@@ -410,19 +419,8 @@
               "lowering": "identity; declaration controls whether body is available",
               "proof": "body-mode-proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$response",
-                "reason": "Bare platform-object aliases require data-flow proof",
-                "solution": "Access the documented member directly or keep this program native"
-              },
-              {
-                "api": "$response",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:129",
@@ -464,14 +462,8 @@
                 ]
               }
             ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$done",
-                "reason": "Dynamic completion object needs field/data-flow proof",
-                "solution": "Use explicit result fields or add a verified program-specific plan"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:182",
@@ -518,19 +510,8 @@
               "lowering": "identity; declaration controls whether body is available",
               "proof": "body-mode-proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$response",
-                "reason": "Bare platform-object aliases require data-flow proof",
-                "solution": "Access the documented member directly or keep this program native"
-              },
-              {
-                "api": "$response",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:280",
@@ -572,18 +553,12 @@
                 ]
               }
             ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$done",
-                "reason": "Dynamic completion object needs field/data-flow proof",
-                "solution": "Use explicit result fields or add a verified program-specific plan"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:323",
-            "rule": "complete",
+            "rule": "complete.original-context",
             "kind": "completion",
             "source": {
               "api": "$done",
@@ -594,21 +569,24 @@
               "access": "call",
               "memberPath": []
             },
-            "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "canonical": "complete.pass-original",
+            "value": "proven untouched response context",
             "target": {
-              "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "api": "$done({})",
+              "lowering": "preserve the original HTTP response without copying header/framing fields",
+              "proof": "same-phase-direct-original-context; immutable scalar-only reads; no alias/escape/binary"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
+            "fields": [
               {
-                "api": "$done",
-                "reason": "Dynamic completion object needs field/data-flow proof",
-                "solution": "Use explicit result fields or add a verified program-specific plan"
+                "source": "argument0",
+                "canonical": "complete.pass-original",
+                "target": "{}",
+                "action": "map",
+                "transform": "untouched original response; omit redundant header/body/status replacement"
               }
-            ]
+            ],
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "read:329",
@@ -630,56 +608,13 @@
               "lowering": "source-shaped context view; no object escape",
               "proof": "closed-context-proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$response",
-                "reason": "Bare platform-object aliases require data-flow proof",
-                "solution": "Access the documented member directly or keep this program native"
-              },
-              {
-                "api": "$response",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           }
         ],
-        "diagnostics": [
-          {
-            "api": "$response",
-            "reason": "Bare platform-object aliases require data-flow proof",
-            "solution": "Access the documented member directly or keep this program native"
-          },
-          {
-            "api": "$response",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
-            "api": "$done",
-            "reason": "Dynamic completion object needs field/data-flow proof",
-            "solution": "Use explicit result fields or add a verified program-specific plan"
-          }
-        ]
+        "diagnostics": []
       }
     }
   },
-  "diagnostics": [
-    {
-      "api": "$response",
-      "reason": "surge: Bare platform-object aliases require data-flow proof",
-      "solution": "Access the documented member directly or keep this program native"
-    },
-    {
-      "api": "$response",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
-      "api": "$done",
-      "reason": "surge: Dynamic completion object needs field/data-flow proof",
-      "solution": "Use explicit result fields or add a verified program-specific plan"
-    }
-  ]
+  "diagnostics": []
 }

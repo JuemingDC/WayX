@@ -144,8 +144,8 @@
     },
     "notification": {
       "status": "conditional-url-and-http-media",
-      "domain": "Three text fields; explicit Loon openUrl/mediaUrl or String link maps to Surge url/media-url, and explicit Surge open-url/url/media-url maps to Loon. Only HTTP(S) media and zero delay are supported; target QX omits optional arguments without parameter errors",
-      "outside": "Source QX rich-notification options lack author-repository evidence in inspected files and remain blocked to other hosts; clipboard confirmation, delayed delivery, base64 media, sound and lifecycle are not equated",
+      "domain": "Three text fields; QX-undocumented optional arguments are omitted for both QX sources and destinations, preserving expression effects on native and converted branches; explicit Loon openUrl/mediaUrl or String link maps to Surge url/media-url, and explicit Surge open-url/url/media-url maps to Loon. Only HTTP(S) media and zero delay are supported; target QX omits optional arguments without parameter errors",
+      "outside": "QX optional fields have no rich-feature equivalence claim: they are omitted by user policy. Clipboard confirmation, delayed delivery, base64 media, sound and lifecycle for other sources still require explicit contracts",
       "evidence": "Surge scripting/api.html notification options (iOS 5.11+/Mac 5.7+); Loon Script API notification section; QX sample.conf and sample-task.js document three text fields. No notification-delivery/device certification is claimed"
     },
     "arguments": {
@@ -157,6 +157,11 @@
       "status": "conditional",
       "domain": "Explicit stable binary profile and observed principal body reads map callback Uint8Array to QX ArrayBuffer bodyBytes with exact byte offsets; unflagged text retains body even if QX exposes bodyBytes too",
       "outside": "Unresolved dynamic binary mode, missing required bytes and arbitrary mixed text/byte observations remain blocked"
+    },
+    "originalContextCompletion": {
+      "status": "conditional-qx-response-pass-through",
+      "domain": "Direct $done($response) in a QX text response-body trigger; all context observations are immutable scalar reads or presence checks, with no aliases, escapes, header/binary reads or mutations. Surge receives $done({}) and retains original wire fields",
+      "outside": "Wrong phase, missing body declaration, binary input, context mutation/escape, reflective or indirect completion remain blocked; no general mutable-context/header support"
     },
     "configurationControl": {
       "status": "excluded",
@@ -194,6 +199,7 @@
       "surge": "$done",
       "loon": "$done",
       "ruleIds": [
+        "complete.original-context",
         "complete"
       ]
     },
@@ -611,6 +617,21 @@
       "value": "exact byte view",
       "lowering": "ArrayBuffer <-> Uint8Array preserving byteOffset/byteLength",
       "proof": "explicit-binary-declaration"
+    },
+    {
+      "id": "complete.original-context",
+      "kind": "completion",
+      "selector": "original-context",
+      "source": {
+        "qx": "$done"
+      },
+      "target": {
+        "surge": "$done({})"
+      },
+      "canonical": "complete.pass-original",
+      "value": "proven untouched response context",
+      "lowering": "preserve the original HTTP response without copying header/framing fields",
+      "proof": "same-phase-direct-original-context; immutable scalar-only reads; no alias/escape/binary"
     },
     {
       "id": "complete",
@@ -1483,7 +1504,7 @@
     },
     "https://raw.githubusercontent.com/Maasea/sgmodule/refs/heads/master/Script/Youtube/youtube.response.js": {
       "path": "Resource/Backup/script-api/b4990e49550a5d8d9faa02a517837d3d8b3ff5bb2a4904a65cd3ffaadbbf9722.json",
-      "sha256": "b9c18282dc6e2f02a5bd0450393d5b6d8ec2a1250b52b87ee03c208bdd9c093c",
+      "sha256": "2167f7c3796bc3acd3c5a03f3f91d97d664c7c7f37b362d10b194ce19d15241d",
       "sourceSha256": "f98483d5f5017514f82502253c0db5ce2d4ffb7839887aa2cadc22666f5a7f12"
     },
     "https://raw.githubusercontent.com/kokoryh/Script/master/js/12306.js": {
@@ -1693,12 +1714,12 @@
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/meiyou/meiyou_ads.js": {
       "path": "Resource/Backup/script-api/b5150f8cfaf435b65d8721028b861bd99ac68318860ae2d9972134549a8f2226.json",
-      "sha256": "b909bcba74ebc62d68eddc0f18f51635b2483a3dec0d8b6dbbe694373f44d61b",
+      "sha256": "dfcf7afd516005f2ca035ac812df2eeafcc42254f019922abf1654ee2e4f22ea",
       "sourceSha256": "5bfa31920f176ec0a992d6dfd3ee68d3ea3e416597f87af622665fe6b8cb626a"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/refs/heads/main/Scripts/miguvideo/miguvideo_ads.js": {
       "path": "Resource/Backup/script-api/379472e34e6e55f279936c3e01d36ac83bca218ee6c55fb32762ef99e99353b5.json",
-      "sha256": "e61170df959eabfb040d8d40684797b118b7ade49173727e5c630f3743944f19",
+      "sha256": "2aa72d438eae27eb478f8092eaf4c82f6d83e8ddc288d4ed16f0911a4fad94b9",
       "sourceSha256": "869200a4759c7a9f3f89359fb36275121b0de0ae9772c5f0ce9765a5fcbec999"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/PupuSplashAds.js": {
@@ -1728,7 +1749,7 @@
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/rrtv_json.js": {
       "path": "Resource/Backup/script-api/26050e48827affcf3cd2597466f26cff304152bab18e2309d8688be69d7d838f.json",
-      "sha256": "f80c5c3204e748ae88d6d36ef13cd73c33f0f10007136163c08cb851631aa874",
+      "sha256": "614b8262b06941ec4af61513da8cb32c4e0d68a84afbc07360f6428adce16d37",
       "sourceSha256": "4202921945c0ba616133ca833b034954c3b3b5f328199c809065ce25d16446a7"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/reddit.js": {
@@ -1758,7 +1779,7 @@
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/soul/soul_ads.js": {
       "path": "Resource/Backup/script-api/b605a47fa7e7a42cc3cabfd42c314f33e3f35404114c5fa92d8e1dfc6013cbb0.json",
-      "sha256": "744de7c76cdd4fd2dba3ece6331641b41c53c6bb4804ba079ab5a3e3cfb25866",
+      "sha256": "3349ae776d782db29fdecb14394ec7970edb10a695378d74a812ad1a639b3490",
       "sourceSha256": "a2987051900998f971fa9f9eba9b1ab96fa15fcfbc1848f7c96afa0dd038bdf1"
     },
     "https://raw.githubusercontent.com/app2smile/rules/master/js/spotify-qx-header.js": {
@@ -1803,7 +1824,7 @@
     },
     "https://raw.githubusercontent.com/zZPiglet/Task/master/asset/UnblockURLinWeChat.js": {
       "path": "Resource/Backup/script-api/6d1ee8efe017b7c03876a87c9c5d4e86d63520d5259dde18bed6b41165ffa247.json",
-      "sha256": "199a4e77634dffba7e6198ad4b31748282da81add63fa07b79207cf23244985e",
+      "sha256": "6d147464d3856686537c34a04a7adb89339e685bbf14a8b4ef063407c15bec40",
       "sourceSha256": "79098ac4d2eb7932c9b2b45ac7891469703626855e5d13ab4374af52cc48983e"
     },
     "https://raw.githubusercontent.com/Sliverkiss/QuantumultX/main/AdBlock/xmApp/wnbz.js": {
@@ -1823,7 +1844,7 @@
     },
     "https://github.com/fmz200/wool_scripts/raw/main/Scripts/xiaohongshu/xiaohongshu.js": {
       "path": "Resource/Backup/script-api/9f5ee26c8a7e012dee5b993dccd77e876aa7e9413833c2bf09d3f6a29800f552.json",
-      "sha256": "30a200533ad127fba8ddcd78e5090ec0c3d89ab5b76b5e4b8e3bdbbd026e63ca",
+      "sha256": "50363da2230601c8f253b4dcc96bf20ff454e7c4830b1bf752cbd03027a03b46",
       "sourceSha256": "318d89bce1117edb26a93b383804e195649ec4674a04efa9e3ddb4ef7f34b498"
     },
     "https://raw.githubusercontent.com/Sliverkiss/QuantumultX/main/AdBlock/xmApp/xmApp.js": {
@@ -1833,7 +1854,7 @@
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/xiaotucc.js": {
       "path": "Resource/Backup/script-api/5123ae634fe0813ce16bf8a4ce2865d03e7e574e40a025402ca4287624c704e9.json",
-      "sha256": "19f14cd039c5e892bec6921a8b701f7905528e0555e288607fcab751bd5e6022",
+      "sha256": "51c389bc8a5351a1f8f4990c37f50361cbfa0dfdf9d55d1bc9062aa04f316052",
       "sourceSha256": "197bc64c8ddf1188d1b876d7b980d5708a0bdb79a01be51a9f3b14adc936cc9d"
     },
     "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/usmile.js": {
@@ -1943,12 +1964,12 @@
     },
     "https://github.com/ishowshu/qx/raw/refs/heads/main/script/soul_qx.js": {
       "path": "Resource/Backup/script-api/0d48f859129b52476a0f2b4cd1bad287f81db4aa70937ac0efacf91b12f7847f.json",
-      "sha256": "4d063291762b34e4892674a2f85ca4bc38539c018b4529219a4cb29edb4549d2",
+      "sha256": "c52799d4a59cf87a76c41644fd3aa07a7b7c95352af5df4fe8757dd535452f40",
       "sourceSha256": "0bbbfc3474f3b0c5a294fd167dff2a804d40cb585cc80d63a868333f9770d605"
     },
     "https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js": {
       "path": "Resource/Backup/script-api/2ac96d103b8f2e91d7cb24bb251254d06ddb79ba2c3b7405616b9ff5a2037317.json",
-      "sha256": "5fdd52b34331a06a9175e51a4be37adbf59f5588cfb001ec2609d4ee8d0fe944",
+      "sha256": "03ca8a1ef17a00eb1ce66e3576771221481c1d194e5f1313651c47a713f3bc06",
       "sourceSha256": "f98483d5f5017514f82502253c0db5ce2d4ffb7839887aa2cadc22666f5a7f12"
     },
     "https://kelee.one/Resource/JavaScript/mobileClouds/mobileClouds_remove_ads.js": {
@@ -2018,7 +2039,7 @@
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/youtube.response.js": {
       "path": "Resource/Backup/script-api/fa5f41822e443a9b0f0b3b7ed54bd4d0b23da8806a9c86021ba1eb7b02fa6ddc.json",
-      "sha256": "bd3e0ac5ae8496ba99fe47862d1e4fe986e554ef5e4f49b010904e4da5728ce3",
+      "sha256": "c2d74013f0f3693e3201a47e281ce56e798713c840f85130d5a24f8bd033cd4e",
       "sourceSha256": "715d0d3fc27b8af35fdabefd6698fc984ec9f54612799921b3cf8f71575849c3"
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/yt-sub-clean.js": {
@@ -2034,12 +2055,12 @@
   },
   "conversionPriorities": {
     "basis": "Distinct blocked source URLs across every registered target/profile; family counts overlap. Single-family candidates still require implementation, all API proofs and runtime checks, not guaranteed unlocks.",
-    "blockedSources": 79,
+    "blockedSources": 77,
     "families": [
       {
         "family": "flow",
         "priority": "P0",
-        "affectedSources": 41,
+        "affectedSources": 40,
         "singleFamilyCandidates": [
           "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/amap.js",
           "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/chelaile.js",
@@ -2050,12 +2071,12 @@
           "arguments": 14,
           "binary": 5,
           "codecs": 14,
-          "completion": 21,
+          "completion": 20,
           "engine": 18,
           "environment": 17,
           "headers": 6,
           "http": 24,
-          "notification": 16,
+          "notification": 7,
           "other": 18,
           "profile": 1,
           "storage": 20
@@ -2064,17 +2085,17 @@
       {
         "family": "completion",
         "priority": "P1",
-        "affectedSources": 22,
+        "affectedSources": 21,
         "singleFamilyCandidates": [],
         "coBlockers": {
           "arguments": 8,
           "codecs": 8,
           "engine": 10,
           "environment": 15,
-          "flow": 21,
+          "flow": 20,
           "headers": 2,
           "http": 16,
-          "notification": 14,
+          "notification": 6,
           "other": 12,
           "profile": 1,
           "storage": 16
@@ -2094,7 +2115,7 @@
           "environment": 17,
           "flow": 24,
           "headers": 2,
-          "notification": 16,
+          "notification": 7,
           "other": 15,
           "storage": 18
         }
@@ -2149,7 +2170,7 @@
           "flow": 20,
           "headers": 2,
           "http": 18,
-          "notification": 16,
+          "notification": 7,
           "other": 14,
           "profile": 1
         }
@@ -2170,7 +2191,7 @@
           "flow": 14,
           "headers": 2,
           "http": 12,
-          "notification": 10,
+          "notification": 6,
           "other": 7,
           "storage": 12
         }
@@ -2189,7 +2210,7 @@
           "flow": 14,
           "headers": 5,
           "http": 10,
-          "notification": 6,
+          "notification": 2,
           "other": 5,
           "storage": 9
         }
@@ -2212,20 +2233,18 @@
       {
         "family": "notification",
         "priority": "P2",
-        "affectedSources": 18,
-        "singleFamilyCandidates": [
-          "https://github.com/ishowshu/qx/raw/refs/heads/main/script/soul_qx.js"
-        ],
+        "affectedSources": 8,
+        "singleFamilyCandidates": [],
         "coBlockers": {
-          "arguments": 10,
-          "codecs": 6,
-          "completion": 14,
-          "engine": 9,
-          "environment": 16,
-          "flow": 16,
-          "http": 16,
-          "other": 13,
-          "storage": 16
+          "arguments": 6,
+          "codecs": 2,
+          "completion": 6,
+          "engine": 3,
+          "environment": 7,
+          "flow": 7,
+          "http": 7,
+          "other": 7,
+          "storage": 7
         }
       },
       {
@@ -2241,7 +2260,7 @@
           "flow": 17,
           "headers": 3,
           "http": 17,
-          "notification": 16,
+          "notification": 7,
           "other": 13,
           "storage": 17
         }
@@ -2267,7 +2286,7 @@
           "flow": 18,
           "headers": 5,
           "http": 13,
-          "notification": 9,
+          "notification": 3,
           "other": 12,
           "profile": 1,
           "storage": 12
@@ -2305,16 +2324,16 @@
           "flow": 18,
           "headers": 2,
           "http": 15,
-          "notification": 13,
+          "notification": 7,
           "storage": 14
         }
       }
     ]
   },
-  "adapted": 816,
-  "blocked": 533,
+  "adapted": 822,
+  "blocked": 527,
   "excluded": 4,
-  "universal": 144,
+  "universal": 146,
   "diagnostics": [
     {
       "artifact": "Adblock/Surge/RuCu6_nodecheck.sgmodule",
@@ -37139,12 +37158,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -37173,12 +37186,6 @@
           "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
@@ -37186,7 +37193,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -37328,12 +37337,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -37362,12 +37365,6 @@
           "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
@@ -37375,7 +37372,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/ddgksf2013_youtubeads.sgmodule",
@@ -37517,12 +37516,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -37551,12 +37544,6 @@
           "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
@@ -37564,7 +37551,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -37706,12 +37695,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -37740,12 +37723,6 @@
           "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
@@ -37753,7 +37730,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -43085,18 +43064,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -43108,7 +43075,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -43300,18 +43269,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -43323,7 +43280,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -43515,18 +43474,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -43538,7 +43485,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -43730,18 +43679,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -43753,7 +43690,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -43945,18 +43884,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -43968,7 +43895,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -44160,18 +44089,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -44183,7 +44100,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -44894,18 +44813,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -44917,7 +44824,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -45120,18 +45029,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -45143,7 +45040,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -45346,18 +45245,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -45369,7 +45256,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -45572,18 +45461,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -45595,7 +45472,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -45798,18 +45677,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -45821,7 +45688,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -46024,18 +45893,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -46047,7 +45904,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -46250,18 +46109,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -46273,7 +46120,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -46476,18 +46325,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -46499,7 +46336,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -46702,18 +46541,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -46725,7 +46552,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -46928,18 +46757,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -46951,7 +46768,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -47154,18 +46973,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -47177,7 +46984,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -47380,18 +47189,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -47403,7 +47200,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -47606,18 +47405,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -47629,7 +47416,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -47832,18 +47621,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -47855,7 +47632,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -48058,18 +47837,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -48081,7 +47848,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -48284,18 +48053,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -48307,7 +48064,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -48510,18 +48269,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -48533,7 +48280,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -48736,18 +48485,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -48759,7 +48496,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -49679,18 +49418,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -49702,7 +49429,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -49894,18 +49623,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -49917,7 +49634,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -50109,18 +49828,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -50132,7 +49839,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -50324,18 +50033,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -50347,7 +50044,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -50539,18 +50238,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -50562,7 +50249,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -50754,18 +50443,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -50777,7 +50454,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -50969,18 +50648,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -50992,7 +50659,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -51184,18 +50853,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -51207,7 +50864,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -51399,18 +51058,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -51422,7 +51069,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -51614,18 +51263,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -51637,7 +51274,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -51829,18 +51468,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -51852,7 +51479,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -52044,18 +51673,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -52067,7 +51684,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -52259,18 +51878,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -52282,7 +51889,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -52474,18 +52083,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -52497,7 +52094,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -52689,18 +52288,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -52712,7 +52299,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -52904,18 +52493,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -52927,7 +52504,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -53119,18 +52698,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -53142,7 +52709,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -53334,18 +52903,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -53357,7 +52914,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -53549,18 +53108,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -53572,7 +53119,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -53764,18 +53313,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -53787,7 +53324,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -53979,18 +53518,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -54002,7 +53529,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -54194,18 +53723,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -54217,7 +53734,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -54409,18 +53928,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -54432,7 +53939,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -54624,18 +54133,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -54647,7 +54144,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -56543,18 +56042,6 @@
           "category": "analysis-unresolved"
         },
         {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$prefs.valueForKey",
           "reason": "surge: Default/dynamic key namespaces differ across clients",
           "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy",
@@ -56572,7 +56059,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -56700,18 +56189,6 @@
           "category": "analysis-unresolved"
         },
         {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$prefs.valueForKey",
           "reason": "surge: Default/dynamic key namespaces differ across clients",
           "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy",
@@ -56729,7 +56206,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -57268,18 +56747,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -57291,7 +56758,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -57418,18 +56887,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -57441,7 +56898,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -57568,18 +57027,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -57591,7 +57038,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -57718,18 +57167,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -57741,7 +57178,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -57868,18 +57307,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -57891,7 +57318,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -58018,18 +57447,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -58041,7 +57458,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -58168,18 +57587,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -58191,7 +57598,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -58318,18 +57727,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -58341,7 +57738,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -58468,18 +57867,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -58491,7 +57878,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -58618,18 +58007,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -58641,7 +58018,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_xiaohongshu.snippet",
@@ -58768,18 +58147,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -58791,7 +58158,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_xiaohongshu.snippet",
@@ -58918,18 +58287,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -58941,7 +58298,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_xiaohongshu.snippet",
@@ -59068,18 +58427,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -59091,7 +58438,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_xiaohongshu.snippet",
@@ -59218,18 +58567,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -59241,7 +58578,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_xiaohongshu.snippet",
@@ -59368,18 +58707,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -59391,7 +58718,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_xiaohongshu.snippet",
@@ -59518,18 +58847,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -59541,7 +58858,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_xiaohongshu.snippet",
@@ -59668,18 +58987,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -59691,7 +58998,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_xiaohongshu.snippet",
@@ -59818,18 +59127,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -59841,7 +59138,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_xiaohongshu.snippet",
@@ -59968,18 +59267,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -59991,7 +59278,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_xiaohongshu.snippet",
@@ -60118,18 +59407,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -60141,7 +59418,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -60268,18 +59547,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -60291,7 +59558,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -60418,18 +59687,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -60441,7 +59698,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -60568,18 +59827,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -60591,7 +59838,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -60718,18 +59967,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -60741,7 +59978,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -60868,18 +60107,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -60891,7 +60118,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -61018,18 +60247,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -61041,7 +60258,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -61168,18 +60387,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -61191,7 +60398,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -61318,18 +60527,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -61341,7 +60538,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -61468,18 +60667,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -61491,7 +60678,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -61618,18 +60807,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -61641,7 +60818,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_xiaohongshu.sgmodule",
@@ -61768,18 +60947,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -61791,7 +60958,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_xiaohongshu.sgmodule",
@@ -61918,18 +61087,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -61941,7 +61098,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_xiaohongshu.sgmodule",
@@ -62068,18 +61227,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -62091,7 +61238,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_xiaohongshu.sgmodule",
@@ -62218,18 +61367,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -62241,7 +61378,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_xiaohongshu.sgmodule",
@@ -62368,18 +61507,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -62391,7 +61518,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_xiaohongshu.sgmodule",
@@ -62518,18 +61647,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -62541,7 +61658,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_xiaohongshu.sgmodule",
@@ -62668,18 +61787,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -62691,7 +61798,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_xiaohongshu.sgmodule",
@@ -62818,18 +61927,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -62841,7 +61938,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_xiaohongshu.sgmodule",
@@ -62968,18 +62067,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -62991,7 +62078,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/fmz200_xiaohongshu.sgmodule",
@@ -63118,18 +62207,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -63141,7 +62218,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -63196,39 +62275,22 @@
         "qx"
       ],
       "to": "qx",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
         "$request.url.indexOf",
         "$response",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$response",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$response",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$done",
-          "reason": "surge: Dynamic completion object needs field/data-flow proof",
-          "solution": "Use explicit result fields or add a verified program-specific plan",
-          "category": "analysis-unresolved"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-5123ae634fe0/xiaotucc.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -63237,39 +62299,22 @@
         "qx"
       ],
       "to": "surge",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
         "$request.url.indexOf",
         "$response",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$response",
-          "reason": "surge: Bare platform-object aliases require data-flow proof",
-          "solution": "Access the documented member directly or keep this program native",
-          "category": "analysis-unresolved"
-        },
-        {
-          "api": "$response",
-          "reason": "surge: API/member is outside the documented portable subset",
-          "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile",
-          "category": "mapping-missing"
-        },
-        {
-          "api": "$done",
-          "reason": "surge: Dynamic completion object needs field/data-flow proof",
-          "solution": "Use explicit result fields or add a verified program-specific plan",
-          "category": "analysis-unresolved"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-5123ae634fe0/xiaotucc.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",
@@ -66440,27 +65485,24 @@
         "qx"
       ],
       "to": "qx",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
         "$notify",
         "$request.url",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ],
+      "path": "Script/Adblock/github.com-0d48f859129b/soul_qx.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Quantumult X/ishowshu_soul.snippet",
@@ -66469,27 +65511,24 @@
         "qx"
       ],
       "to": "qx",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
         "$notify",
         "$request.url",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ],
+      "path": "Script/Adblock/github.com-0d48f859129b/soul_qx.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Surge/ishowshu_soul.sgmodule",
@@ -66498,27 +65537,24 @@
         "qx"
       ],
       "to": "surge",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
         "$notify",
         "$request.url",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ],
+      "path": "Script/Adblock/github.com-0d48f859129b/soul_qx.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Surge/ishowshu_soul.sgmodule",
@@ -66527,27 +65563,24 @@
         "qx"
       ],
       "to": "surge",
-      "status": "blocked",
+      "status": "universal",
       "features": [
         "$done",
         "$notify",
         "$request.url",
         "$response.body"
       ],
-      "problems": [
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ],
+      "path": "Script/Adblock/github.com-0d48f859129b/soul_qx.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Quantumult X/ishowshu_youtube.snippet",
@@ -66689,12 +65722,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -66723,12 +65750,6 @@
           "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
@@ -66736,7 +65757,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/ishowshu_youtube.snippet",
@@ -66878,12 +65901,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -66912,12 +65929,6 @@
           "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
@@ -66925,7 +65936,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/ishowshu_youtube.snippet",
@@ -67067,12 +66080,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -67101,12 +66108,6 @@
           "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
@@ -67114,7 +66115,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/ishowshu_youtube.snippet",
@@ -67256,12 +66259,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -67290,12 +66287,6 @@
           "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
@@ -67303,7 +66294,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/ishowshu_youtube.snippet",
@@ -67445,12 +66438,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -67479,12 +66466,6 @@
           "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
@@ -67492,7 +66473,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/ishowshu_youtube.snippet",
@@ -67634,12 +66617,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -67668,12 +66645,6 @@
           "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
@@ -67681,7 +66652,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/ishowshu_youtube.snippet",
@@ -67823,12 +66796,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -67857,12 +66824,6 @@
           "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
@@ -67870,7 +66831,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/ishowshu_youtube.sgmodule",
@@ -68012,12 +66975,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -68046,12 +67003,6 @@
           "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
@@ -68059,7 +67010,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/ishowshu_youtube.sgmodule",
@@ -68201,12 +67154,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -68235,12 +67182,6 @@
           "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
@@ -68248,7 +67189,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/ishowshu_youtube.sgmodule",
@@ -68390,12 +67333,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -68424,12 +67361,6 @@
           "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
@@ -68437,7 +67368,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/ishowshu_youtube.sgmodule",
@@ -68579,12 +67512,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -68613,12 +67540,6 @@
           "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
@@ -68626,7 +67547,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/ishowshu_youtube.sgmodule",
@@ -68768,12 +67691,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -68802,12 +67719,6 @@
           "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
@@ -68815,7 +67726,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/ishowshu_youtube.sgmodule",
@@ -68957,12 +67870,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -68991,12 +67898,6 @@
           "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
@@ -69004,7 +67905,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/ishowshu_youtube.sgmodule",
@@ -69146,12 +68049,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -69180,12 +68077,6 @@
           "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
@@ -69193,7 +68084,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/mobileClouds_remove_ads.snippet",
@@ -74109,12 +73002,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -74143,12 +73030,6 @@
           "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
@@ -74156,7 +73037,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Surge/zenmofeishi_youtube.sgmodule",
@@ -74292,12 +73175,6 @@
           "category": "mapping-missing"
         },
         {
-          "api": "$notification.post",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
-        },
-        {
           "api": "$done",
           "reason": "surge: Dynamic completion object needs field/data-flow proof",
           "solution": "Use explicit result fields or add a verified program-specific plan",
@@ -74326,12 +73203,6 @@
           "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
           "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients",
           "category": "mapping-missing"
-        },
-        {
-          "api": "$notify",
-          "reason": "surge: Notification attachments/actions/delay differ across clients",
-          "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
-          "category": "mapping-missing"
         }
       ],
       "specialization": {
@@ -74339,7 +73210,9 @@
         "branches": 0,
         "reason": "source/text observations retained"
       },
-      "omittedParameters": []
+      "omittedParameters": [
+        "notification.argument4"
+      ]
     },
     {
       "artifact": "Adblock/Quantumult X/zenmofeishi_yt-zh.snippet",

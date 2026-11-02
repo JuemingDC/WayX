@@ -307,26 +307,14 @@
                 "action": "map"
               },
               {
-                "source": "argument3.media-url",
-                "canonical": "notify.unknown",
+                "source": "argument3",
+                "canonical": "notify.options",
                 "target": null,
-                "action": "unresolved"
-              },
-              {
-                "source": "argument3.open-url",
-                "canonical": "notify.unknown",
-                "target": null,
-                "action": "unresolved"
+                "action": "omit"
               }
             ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notify",
-                "reason": "Notification attachments/actions/delay differ across clients",
-                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:1244",
@@ -372,21 +360,9 @@
             "diagnostics": []
           }
         ],
-        "diagnostics": [
-          {
-            "api": "$notify",
-            "reason": "Notification attachments/actions/delay differ across clients",
-            "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-          }
-        ]
+        "diagnostics": []
       }
     }
   },
-  "diagnostics": [
-    {
-      "api": "$notify",
-      "reason": "surge: Notification attachments/actions/delay differ across clients",
-      "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-    }
-  ]
+  "diagnostics": []
 }
