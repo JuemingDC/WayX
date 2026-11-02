@@ -2,7 +2,7 @@
 // semantic IR and target plan; lexical proofs remain separate from API mappings.
 import { parseScriptApiIR } from "./script-api-ir.ts";
 import { emitScriptApiPlan } from "../emit/script-api-plan.ts";
-import { scriptSourceFields } from "../domain/script-api.ts";
+import { scriptKnownFields } from "../domain/script-api.ts";
 // Modified: 2026-11-02 (chance). Map documented optional notifications separately from HTTP options.
 import { notificationContract } from "./script-notification.ts";
 // Modified: 2026-11-01 (chance). Inspect JavaScript syntax rather than replacing API names in strings/comments; only emit adapters for a documented bounded contract.
@@ -557,7 +557,7 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
   });
   const add = (api: string, reason: string, solution: string) =>
     problems.push({ api, reason, solution });
-  const allowedFields = scriptSourceFields(options.from);
+  const allowedFields = scriptKnownFields();
   for (const api of features) {
     const [root, field] = api.split(".");
     if (root === "$httpClient" && httpContract.ok) continue;

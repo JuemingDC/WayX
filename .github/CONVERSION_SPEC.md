@@ -528,3 +528,5 @@ Modified: 2026-11-02 (chance). HTTP 成功对象可使用闭合 const 响应别�
 Modified: 2026-11-02 (chance). Script API 使用词法 AST→规范操作→目标计划→共同运行时的链路。具体 API 及宿主拼写、默认值、单位和字段由 src/domain/script-api.ts 统一提供；解析允许字段、描述型映射和执行计划共同引用，不维护平行转换表。每操作记录访问类型、成员路径、位置、源/规范/目标 API、参数映射、省略和证明；动态方法不默认 GET。数据流证明仍验证适用域，识别映射不等于整脚本通过。保留 QX 未说明参数省略及副作用规则。
 
 每 URL 生成 Resource/Backup/script-api/<URL SHA-256>.json；原始语法与特化语义位置分别绑定各自源码摘要，UTF-16 范围不可混用。index.apiPlans 绑定计划路径、内容摘要及当前原件摘要，校验失败报 api-plan-integrity。计划不注入作者正文。仅 Actions 同事务更新原件、共用脚本、计划、索引和引用；生产仍只有 2.31 的三个方向。新增转换须有具体输入对应、来源契约、目标执行及反例，不能以单脚本放行或报告映射代替实现。
+
+Modified: 2026-11-02 (chance). 语法识别须接纳共同目录中的已知跨宿主分支写法；来源 SDK 可用性是独立契约。目录为来源缺失的 SDK root 生成 source.absent 规则，目标保留来源 undefined 绑定和原条件求值，不将外端分支 API 接到真实目标 SDK。此项不是外端 API 的来源支持，不提供空实现；逐调用计划必须明确写 source.unavailable-binding。现存多端框架须有真实原件回归。

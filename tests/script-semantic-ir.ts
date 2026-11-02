@@ -5,6 +5,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import vm from "node:vm";
+import { planUniversalAdblockScript } from "../src/parser/universal-script.ts";
 import { planScriptApiConversion as pair } from "../src/parser/script-api.ts";
 import { refreshSourceBackups } from "../src/application/backups.ts";
 import { validateSourceBackups } from "../src/validation/backups.ts";
@@ -234,3 +235,50 @@ try {
 console.log(
   "Script semantic compiler passed: real Caixin/Spotify content, per-call spans and target fields, status/bytes/delete/HTTP/notification rules, executable layouts, omission decisions and hash-bound source sidecars",
 );
+
+// Modified: 2026-11-02 (chance). Real multi-client frameworks retain foreign
+// notification branches while their source-shaped bindings stay unavailable.
+const guarded = pair(
+  'if(typeof $notify === "function") $notify("a","b","c"); else $notification.post("a","b","c"); $done({});',
+  {
+    from: "qx",
+    to: "surge",
+    phase: "response",
+  },
+);
+assert.equal(guarded.status, "adapted", JSON.stringify(guarded.problems));
+const absentNotify = guarded.operationIR.operations.find(
+  (x) => x.rule === "source.absent.notification",
+)!;
+assert.equal(absentNotify.canonical, "source.unavailable-binding");
+assert.equal(absentNotify.target.api, "undefined");
+let notifications = 0;
+vm.runInNewContext(guarded.code!, {
+  setTimeout,
+  $response: {},
+  $notification: {
+    post() {
+      notifications++;
+    },
+  },
+  $done() {},
+});
+assert.equal(notifications, 1);
+
+for (const name of ["tieba-json", "adsense", "qidian", "qq-news"]) {
+  const url = `https://raw.githubusercontent.com/app2smile/rules/master/js/${name}.js`;
+  const program = await fs.readFile(archive.latest[url], "utf8");
+  const planned = planUniversalAdblockScript(program, "qx", [
+    { phase: "response", responseBody: true, binary: false, binaryKnown: true },
+  ]);
+  assert.equal(
+    planned.status,
+    "universal",
+    name + ": " + JSON.stringify(planned.problems),
+  );
+  assert.ok(
+    planned.operationPlans.response.surge.operations.some(
+      (x) => x.rule === "source.absent.notification",
+    ),
+  );
+}

@@ -438,16 +438,46 @@ export interface ScriptApiIR {
   diagnostics: { api: string; reason: string; solution: string }[];
 }
 
-// Parser validation consumes the same registered source surfaces as lowering.
-export function scriptSourceFields(client: ScriptClient) {
+// Modified: 2026-11-02 (chance). Syntax recognition includes documented foreign
+// surfaces in source-host branches; availability is a separate runtime contract.
+export function scriptKnownFields() {
   const fields: Record<string, Set<string>> = {};
   for (const definition of scriptApiDefinitions) {
-    const api = definition.source[client];
-    if (!api?.startsWith("$")) continue;
-    const [root, field] = api.split(".");
-    if (field) (fields[root] ??= new Set()).add(field);
+    for (const api of Object.values(definition.source)) {
+      if (!api?.startsWith("$")) continue;
+      const [root, field] = api.split(".");
+      if (field) (fields[root] ??= new Set()).add(field);
+    }
   }
   return fields;
+}
+
+// Modified: 2026-11-02 (chance). A foreign SDK reference in a guarded branch
+// preserves the source's absent binding; it must never invoke the target SDK.
+const knownRoots = new Set(
+  scriptApiDefinitions.flatMap((rule) =>
+    Object.values(rule.source)
+      .filter((api) => api.startsWith("$"))
+      .map((api) => api.split(".")[0]),
+  ),
+);
+for (const root of knownRoots) {
+  const absentClients = (["qx", "loon", "surge"] as const).filter(
+    (client) => scriptHostPresence(client)[root] === "undefined",
+  );
+  if (!absentClients.length) continue;
+  scriptApiDefinitions.push({
+    id: "source.absent." + root.slice(1),
+    kind: "environment",
+    source: Object.fromEntries(absentClients.map((client) => [client, root])),
+    target: same("undefined"),
+    canonical: "source.unavailable-binding",
+    value:
+      "undefined source SDK binding; original member access is not implemented",
+    lowering:
+      "preserve absent source binding and original branch/evaluation; never call destination SDK",
+    proof: "source-host-presence-layout; not foreign-API support",
+  });
 }
 
 // Modified: 2026-11-02 (chance). Published plans cannot mutate the global
