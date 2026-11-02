@@ -145,16 +145,34 @@ export function parseScriptApiIR(
         canonical: rule?.canonical || "runtime-member-dispatch",
         value: "runtime value",
         target: {
+          // Modified: 2026-11-02 (chance). An inventory entry is not a support
+          // certificate. Report provider/native/absent contracts explicitly.
+          capability: rule
+            ? rule.availability?.[to] || "runtime"
+            : "unclassified",
           api:
-            rule?.target?.[to] ||
-            rule?.source[to] ||
-            "native engine / runtime capability",
+            rule?.availability?.[to] === "unavailable"
+              ? null
+              : rule?.target?.[to] ||
+                rule?.source[to] ||
+                "native engine / runtime capability",
           lowering:
-            "Dispatch source API call through the shared runtime; validate values at invocation",
-          proof: "API runtime contract tests; no author-program static proof",
+            rule?.lowering ||
+            "Unclassified reference; depends on the actual runtime member and host capability",
+          proof: rule?.availability
+            ? "Capability boundary; no cross-host provider equivalence claim"
+            : "API runtime contract tests; no author-program static proof",
         },
         decision: "runtime",
-        diagnostics: [],
+        diagnostics: rule?.availability
+          ? [
+              {
+                api: r.api,
+                reason: rule.lowering,
+                solution: rule.solution || "Use actual native capability",
+              },
+            ]
+          : [],
       };
     },
   );

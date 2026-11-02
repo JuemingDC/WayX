@@ -417,21 +417,21 @@ Modified: 2026-11-01 (chance). 奶思大合集中实测含非 QX 的 DOMAIN 类�
 
 ## 2.23 ScriptHub 派生的通用 Script API 兼容层
 
-Modified: 2026-11-02 (chance). 用户要求 API 之间长期可维护的通用转换，取代历史逐源码/逐数据流放行策略。生产只开放 Loon→QX、Loon→Surge、QX→Surge；只处理 HTTP 去广告脚本。每 URL 一个同源命名的共用 JS，原业务正文一次，函数、类、this、动态对象和包装调用保持普通 JavaScript。不得新增脚本名白名单、具体实参证明器或以本地仓库脚本通过作为 API 转换依据。构建阶段仅检查经典 JS 语法、授权方向和 HTTP 触发声明；API 引用清单是描述性元数据。
+Modified: 2026-11-02 (chance). 用户要求 API 之间长期可维护的通用转换，取代历史逐源码/逐数据流放行策略。生产只开放 Loon→QX、Loon→Surge、QX→Surge；只处理 HTTP 去广告脚本。每 URL 一个同源命名的共用 JS，原业务正文一次，函数、类、this、动态对象和包装调用保持普通 JavaScript。不得新增脚本名白名单、具体实参证明器或以本地仓库脚本通过作为 API 转换依据。构建阶段仅检查经典 JS 语法、授权方向和 HTTP 触发声明；API 引用清单是描述性元数据；target.capability 区分 runtime/native-only/unavailable/unclassified，缺失 provider 不因未执行的功能检测分支静态阻断整份程序，也不冒充支持。
 
 复用 Script-Hub-Org/Script-Hub b943361f11be5795b3eb10f9cc4e5497642922fc 的 script-converter.js 运行时方案及 Header Proxy；固定来源、GPL 许可和修改说明放 vendor/script-hub。集中修复 delete/has/Symbol/原型方法、七 HTTP 方法、拒绝与缺失响应、字节/状态、来源默认值与单位、显式删除存储键。不得提供 timer 空函数、正则全文替换 $done、网络失败 resolve(null) 或捕错后假放行。宿主字段/默认值由 domain/script-api.ts 统一维护。
 
 ## 2.24 API 兼容政策和边界
 
-Modified: 2026-11-02 (chance). 接受 ScriptHub 的 Header 小写、大小写无关兼容政策；它不保持键大小写与重复大小写字段，不得继续以这些源码写法静态阻断全部转换。Header 操作在独立字典上进行，完整 Header 数组和 Proxy descriptor 不变量限制明确报告。HTTP 在运行时派发动态方法/参数，保留 Promise/callback、并发和错误；QX 未说明参数省略，原实参构造、副作用和异常保留，不伪造 QX 超时/取消。存储动态 String 键值使用目标原生 API，删除使用 remove 或 null，不试写空字符串；缺失值、空值及详细错误仍可能保持目标原生差异。动态完成结果按状态/字节/response 布局适配；QX 不支持参数省略，其它不可用字段报错。QX echo 与 response-body Header 规则需要正确声明，不能从具体业务正文推断改写触发语义。
+Modified: 2026-11-02 (chance). 接受 ScriptHub 的 Header 小写、大小写无关兼容政策；它不保持键大小写与重复大小写字段，不得继续以这些源码写法静态阻断全部转换。Header 操作在独立字典上进行，完整 Header 数组和 Proxy descriptor 不变量限制明确报告。HTTP 在运行时派发动态方法/参数，保留 Promise/callback、并发和错误；QX 未说明参数省略，原实参构造、副作用和异常保留，不伪造 QX 超时/取消。存储动态 String 键值使用目标原生 API，删除使用 remove 或 null，不试写空字符串；缺失值、空值及详细错误仍可能保持目标原生差异。原生 QX fetch 的已解码文本保持，外端字节按显式 charset 使用真实 TextDecoder 解码，不可用时以 UNSUPPORTED_RESPONSE_CHARSET 拒绝。Loon body-base64 解码为目标真实二进制 body，HTTP node 映射目标 policy，不写配置。动态完成结果校验成功后才锁定提交，校验失败可由作者捕获后重试；按状态/字节/response 布局适配；QX 不支持参数省略，其它不可用字段报错。QX echo 与 response-body Header 规则需要正确声明，不能从具体业务正文推断改写触发语义。
 
-来源 API presence 通过兼容 facade 提供。Loon 外端 presence 使用明确兼容标识，不假装真实版本或设备；不可恢复的源元数据、任意全局反射/Function 构造代码和原生引擎能力列为边界。实际 timers 保留；未提供的 WASM/压缩/文件/配置能力不模拟成功。API 兼容组合成功不代表任意作者程序严格等价或实机认证。
+来源 API presence 通过兼容 facade 提供。Loon 外端 presence 使用明确兼容标识，不假装真实版本或设备；不可恢复的源元数据、任意全局反射/Function 构造代码和原生引擎能力列为边界。实际 timers 保留。Loon gzip/ungzip 由原生优先、固定 Pako 2.1.0 同步 provider 提供；仅接受准确 Uint8Array 视图，gzip-only 完整流校验，CRC/Trailer 使用上游实现，错误不转成功。包含上游 MIT/Zlib 许可；按声明来源整体提供并延迟初始化，不按作者代码形状选 provider。未提供的 AES/DNS/GeoIP、WASM/文件/配置能力不模拟成功。API 兼容组合成功不代表任意作者程序严格等价或实机认证。
 
 ## 2.25 备份、清单与验证
 
-Modified: 2026-11-02 (chance). 原插件/脚本继续逐字节备份，源名与固定共用 URL 保持；仅 Actions 同事务拉取、更新原件、共用脚本、引用和外部 API 清单。Resource/Backup/script-api/<URL SHA>.json 绑定原件及清单摘要，记录原源码 UTF-16 API 位置与运行时适配，不记录逐业务值的伪证明。runtimePolicyVersion=2、validationMode=api-runtime-compatibility 必须明确出现在报告；保留旧版本的完整性迁移校验，不用旧 static policy 生成新文件。
+Modified: 2026-11-02 (chance). 原插件/脚本继续逐字节备份，源名与固定共用 URL 保持；仅 Actions 同事务拉取、更新原件、共用脚本、引用和外部 API 清单。Resource/Backup/script-api/<URL SHA>.json 绑定原件及清单摘要，记录原源码 UTF-16 API 位置与运行时适配，不记录逐业务值的伪证明。API 能力与后续实施条件维护在 docs/script-api/03-API能力与实施路线.md；AES/URL 方案未启用前不能记为支持。runtimePolicyVersion=2、validationMode=api-runtime-compatibility 必须明确出现在报告；保留旧版本的完整性迁移校验，不用旧 static policy 生成新文件。
 
-测试由 API 契约、标准向量、模拟原生网络及合成备份事务组成；覆盖动态输入、Env 接收者、Header 操作、七方法/失败/并发、字节、存储和通知。不得用源脚本的具体语法分支堆叠测试放行清单。Rule/Rewrite/Module 的已有转换职责不受影响。
+测试由 API 契约、标准向量、模拟原生网络及合成备份事务组成；覆盖动态输入、Env 接收者、Header 操作、七方法/失败/并发、字节、存储和通知，并以独立 zlib 向量验证压缩和损坏输入；原生 QX clear-all 保留，Surge 无清空存储 API 时不以已见键集合模拟。不得用源脚本的具体语法分支堆叠测试放行清单。Rule/Rewrite/Module 的已有转换职责不受影响。
 
 原生 QX echo-response/analyze-echo-response 的远程 HTTP(S) js/mjs/cjs 或已验证 WayX 共用脚本链接，仍修复为对应 script echo，保留 analyze/body、query/fragment 与来源依据；远程 JSON/数据和本地资源不误判为脚本。来源暂停和原备份获取授权不变。
 

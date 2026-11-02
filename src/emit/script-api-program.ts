@@ -2,6 +2,7 @@
 // scope. Lexical declarations and Env objects remain ordinary JavaScript.
 import ts from "typescript";
 import { scriptApiRuntime } from "./script-api-runtime.ts";
+import { pakoRuntime } from "../vendor/pako/runtime.ts";
 import { scriptCodecs } from "./script-codecs.ts";
 export function emitScriptApiProgram(
   source: string,
@@ -31,9 +32,14 @@ export function emitScriptApiProgram(
     scope = fresh("__wayxScope"),
     target = fresh("__wayxTarget"),
     table = fresh("__wayxContexts");
+  // Modified: 2026-11-02 (chance). Include providers by declared source client,
+  // never by scanning a business program for particular call patterns.
+  const loonSource = Object.values(contexts).some((targets: any) =>
+    Object.values(targets).some((c: any) => c.from === "loon"),
+  );
   return `/* Adapter: GPL-3.0-only; derived from ScriptHub b943361f11be5795b3eb10f9cc4e5497642922fc. See vendor/script-hub/NOTICE.md. */\n(function(){
 const ${target}=${fixedTarget ? JSON.stringify(fixedTarget) : "typeof $loon==='string'?'loon':typeof $task!=='undefined'&&typeof $task.fetch==='function'?'qx':typeof $environment!=='undefined'&&$environment['surge-version']?'surge':null"};
-const ${host}={global:globalThis,request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,task:typeof $task==='undefined'?undefined:$task,http:typeof $httpClient==='undefined'?undefined:$httpClient,prefs:typeof $prefs==='undefined'?undefined:$prefs,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,notifyQx:typeof $notify==='undefined'?undefined:$notify,notify:typeof $notification==='undefined'?undefined:$notification,script:typeof $script==='undefined'?undefined:$script,argument:typeof $argument==='undefined'?undefined:$argument,environment:typeof $environment==='undefined'?undefined:$environment,loon:typeof $loon==='undefined'?undefined:$loon,setTimeout:typeof setTimeout==='undefined'?undefined:setTimeout,codecs:(${scriptCodecs})()};
+const ${host}={global:globalThis,request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,task:typeof $task==='undefined'?undefined:$task,http:typeof $httpClient==='undefined'?undefined:$httpClient,prefs:typeof $prefs==='undefined'?undefined:$prefs,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,notifyQx:typeof $notify==='undefined'?undefined:$notify,notify:typeof $notification==='undefined'?undefined:$notification,script:typeof $script==='undefined'?undefined:$script,argument:typeof $argument==='undefined'?undefined:$argument,environment:typeof $environment==='undefined'?undefined:$environment,loon:typeof $loon==='undefined'?undefined:$loon,setTimeout:typeof setTimeout==='undefined'?undefined:setTimeout,codecs:(${scriptCodecs})(),utils:typeof $utils==='undefined'?undefined:$utils,crypto:typeof $crypto==='undefined'?undefined:$crypto,dns:typeof $dns==='undefined'?undefined:$dns,compression:${loonSource ? "(" + pakoRuntime + ")" : "undefined"}};
 const ${table}=${JSON.stringify(contexts)},${config}=${table}[${host}.response===undefined?'request':'response']?.[${target}];
 if(!${config})throw new Error('Unregistered HTTP source/target declaration');
 return (${scriptApiRuntime})(${config},${host},function(${scope}){with(${scope}){return (function(){\n${source}\n}).call(this);}});

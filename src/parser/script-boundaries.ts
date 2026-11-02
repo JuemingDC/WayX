@@ -23,9 +23,9 @@ export const scriptCapabilityBoundaries = {
   http: {
     status: "runtime",
     domain:
-      "Seven dynamic methods, concurrent requests, Promise rejection and callbacks, source defaults, units, policy names, text and exact byte views; QX-undocumented parameters omitted without deleting argument construction",
+      "Seven dynamic methods, concurrent requests, Promise rejection and callbacks, source defaults, units, policy names, exact byte views and Loon body-base64 decoding; preserve native QX decoded text and honor explicit foreign response charset with actual TextDecoder; QX-undocumented parameters omitted without deleting argument construction",
     outside:
-      "No fabricated timeout/cancellation on QX. Target-native detailed errors, charset handling, cookie state and source-version differences can remain observable",
+      "No fabricated timeout/cancellation on QX. Unsupported response charset rejects with UNSUPPORTED_RESPONSE_CHARSET; native detailed errors, cookie state, ALPN, h2_trailers and source-version differences can remain observable",
   },
   storage: {
     status: "runtime",
@@ -37,7 +37,7 @@ export const scriptCapabilityBoundaries = {
   completion: {
     status: "runtime",
     domain:
-      "Dynamic completion dictionaries and wrappers, source status/byte field conversion, flat/wrapped synthetic responses",
+      "Dynamic completion dictionaries and wrappers, source status/byte field conversion, flat/wrapped synthetic responses; failed result validation permits author catch/fallback before the single host submission",
     outside:
       "QX synthetic response requires an echo declaration; target QX body/header restrictions and unavailable fields are checked at invocation. No catch-and-pass-through suppression",
   },
@@ -53,7 +53,31 @@ export const scriptCapabilityBoundaries = {
     domain:
       "Use native globals when available, otherwise retained UTF-8/Base64 implementations with independent standard vectors",
     outside:
-      "Other encodings, compression, cryptography, WASM, require and host file/control APIs require actual target support; no empty implementations",
+      "Other encoding labels need an actual native decoder. URL/URLSearchParams are native-only until a tested WHATWG bundle is integrated. WASM, require and file/control APIs need actual target support; no empty implementations",
+  },
+  // Modified: 2026-11-02 (chance). Distinguish implemented providers from
+  // source-native services and proposals in every generated capability report.
+  compression: {
+    status: "runtime-provider",
+    source: "$utils.gzip / $utils.ungzip",
+    provider: "nodeca/pako 2.1.0",
+    commit: "3c06216518c259b569a5168dee867e6dabbe5160",
+    notice: "vendor/pako/NOTICE.md",
+    license: "MIT AND Zlib",
+    domain:
+      "Synchronous Uint8Array API; exact cross-realm views; native Loon first, otherwise lazy isolated provider; gzip framing and complete stream plus CRC/trailer validation; explicit failure codes",
+    outside:
+      "Valid gzip encoding bytes/header metadata and error messages may differ from native Loon. No compression algorithm is reimplemented locally",
+  },
+  deferred: {
+    status: "not-implemented-cross-host",
+    aes: "Proposed pinned noble-ciphers synchronous ECB/CBC/CTR/GCM adapter; padding and separate authenticated tag need independent vectors before enabling",
+    dns: "Native Loon resolver only; no system/UDP/DoQ/cache metadata fabricated via HTTP",
+    geoip:
+      "Native Loon local country/ASN/organization databases only; no silent external lookup or alternate database",
+    policy:
+      "Descriptive API entries report unavailable/native-only without statically blocking feature-detection branches; unclassified dynamic references are not support claims",
+    roadmap: "docs/script-api/03-API能力与实施路线.md",
   },
   verification:
     "API contract vectors and mock transports, syntax and backup integrity. Generated compatibility means API adapter composition succeeded, not every author business path or device runtime was verified",

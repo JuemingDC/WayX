@@ -420,3 +420,286 @@ for (const [from, to] of directions) {
     [1, 2],
   );
 }
+
+// Modified: 2026-11-02 (chance). Failed completion validation does not consume
+// the one native submission; native submission errors are not swallowed.
+for (const [from, to] of directions) {
+  let calls = 0;
+  let submitted: any;
+  execute(
+    'try{$done({status:"invalid"})}catch(e){$done({body:"fallback"})}$done({body:"duplicate"});',
+    from,
+    to,
+    {
+      $response: {},
+      $done: (value: any) => {
+        calls++;
+        submitted = value;
+      },
+    },
+  );
+  assert.equal(calls, 1);
+  assert.equal(submitted.body, "fallback");
+  const error = Error("native completion failed");
+  assert.throws(
+    () =>
+      execute('$done({body:"valid"});', from, to, {
+        $response: {},
+        $done: () => {
+          throw error;
+        },
+      }),
+    (e) => e === error,
+  );
+}
+// Native QX text is authoritative even when bytes are available. Foreign binary
+// responses decode explicit charsets or fail instead of silently corrupting text.
+const nativeText = execute(
+  "$task.fetch({url:input}).then(r=>$done({body:r.body}));",
+  "qx",
+  "qx",
+  {
+    input: "https://test/",
+    $response: {},
+    $task: {
+      fetch: () =>
+        Promise.resolve({
+          statusCode: 200,
+          headers: { "Content-Type": "text/plain; charset=windows-1252" },
+          body: "café",
+          bodyBytes: new Uint8Array([99, 97, 102, 233]).buffer,
+        }),
+    },
+  },
+);
+await new Promise((r) => setTimeout(r, 0));
+assert.equal(nativeText.out.body, "café");
+for (const decoder of [undefined, TextDecoder]) {
+  for (const [encoding, data, expected] of [
+    ["utf-8", new TextEncoder().encode("✓"), "✓"],
+    ["windows-1252", new Uint8Array([233]), "é"],
+  ] as const) {
+    const r = execute(
+      '$task.fetch({url:input}).then(r=>$done({body:r.body})).catch(e=>$done({body:e.code+":"+e.encoding}));',
+      "qx",
+      "surge",
+      {
+        input: "https://test/",
+        $response: {},
+        TextDecoder: decoder,
+        $httpClient: {
+          get: (_o: any, cb: any) =>
+            cb(
+              null,
+              {
+                status: 200,
+                headers: {
+                  "CONTENT-TYPE": 'text/plain; charset="' + encoding + '"',
+                },
+              },
+              data,
+            ),
+        },
+      },
+    );
+    await new Promise((r) => setTimeout(r, 0));
+    assert.equal(
+      r.out.body,
+      encoding === "windows-1252" && !decoder
+        ? "UNSUPPORTED_RESPONSE_CHARSET:windows-1252"
+        : expected,
+    );
+  }
+}
+let omitted: any;
+const effects: string[] = [];
+execute(
+  '$task.fetch({url:input,get bodyBytes(){effects.push("getter");return bytes;},timeout:(effects.push("timeout"),5),opts:{unknown:(effects.push("opts"),true)}}).then(()=>$done({}));',
+  "qx",
+  "surge",
+  {
+    input: "https://test/",
+    bytes: new Uint8Array([8]).buffer,
+    effects,
+    $response: {},
+    $httpClient: {
+      get: (o: any, cb: any) => {
+        omitted = o;
+        cb(null, { status: 200, headers: {} }, "");
+      },
+    },
+  },
+);
+await new Promise((r) => setTimeout(r, 0));
+assert.equal(omitted.bodyBytes, undefined);
+assert.equal(omitted.body, undefined);
+assert.equal(omitted.timeout, undefined);
+assert.deepEqual(effects, ["timeout", "opts"]); // Unknown getter is not an API argument.
+// A getter on a documented field is evaluated by the API boundary normally.
+for (const to of ["qx", "surge"] as const) {
+  let sent: any;
+  const native =
+    to === "qx"
+      ? {
+          $task: {
+            fetch: (o: any) => {
+              sent = o;
+              return Promise.resolve({
+                statusCode: 200,
+                headers: {},
+                body: "",
+              });
+            },
+          },
+        }
+      : {
+          $httpClient: {
+            post: (o: any, cb: any) => {
+              sent = o;
+              cb(null, { status: 200, headers: {} }, "");
+            },
+          },
+        };
+  const r = execute(
+    '$httpClient.post({url:input,body:encoded,"body-base64":true},()=>{const zipped=$utils.gzip(new Uint8Array([1,2,3]));$done({body:Array.from($utils.ungzip(zipped)).join(",")});});',
+    "loon",
+    to,
+    {
+      input: "https://test/",
+      encoded: Buffer.from([0, 128, 255]).toString("base64"),
+      $response: {},
+      ...native,
+    },
+  );
+  await new Promise((r) => setTimeout(r, 0));
+  assert.deepEqual(
+    Array.from(
+      sent.body instanceof ArrayBuffer ? new Uint8Array(sent.body) : sent.body,
+    ),
+    [0, 128, 255],
+  );
+  assert.equal(sent["body-base64"], undefined);
+  assert.equal(r.out.body, "1,2,3");
+  assert.ok(
+    r.p.operationIR?.operations.some((o: any) => o.rule === "compression.gzip"),
+  );
+}
+assert.throws(
+  () =>
+    execute(
+      '$httpClient.post({url:input,body:bytes,"body-base64":true},()=>{});',
+      "loon",
+      "surge",
+      { input: "https://test/", bytes: new Uint8Array([1]), $response: {} },
+    ),
+  /String body/,
+);
+
+// Modified: 2026-11-02 (chance). Inventories name missing providers without
+// blocking author feature detection; unrelated target APIs are not substituted.
+for (const to of ["qx", "surge"] as const) {
+  const r = execute(
+    '$done({body:[typeof $crypto,typeof $dns,typeof $utils.gzip].join(":")});if(false){$crypto.aes.encrypt(data,options);$dns.query(options,callback);$utils.geoip(ip);new URL(input);}',
+    "loon",
+    to,
+    { $response: {}, $crypto: { unrelated: true }, $dns: { unrelated: true } },
+  );
+  assert.equal(r.out.body, "undefined:undefined:function");
+  const operations = r.p.operationIR.operations;
+  for (const rule of ["crypto.aes.encrypt", "dns.query", "ip.geoip"])
+    assert.equal(
+      operations.find((o) => o.rule === rule)?.target.capability,
+      "unavailable",
+    );
+  assert.equal(
+    operations.find((o) => o.rule === "standard.URL")?.target.capability,
+    "native-only",
+  );
+}
+const nativeUtils = {
+  gzip: (v: any) => v,
+  ungzip: (v: any) => v,
+  geoip() {
+    assert.equal(this, nativeUtils);
+    return "native";
+  },
+};
+const cryptoRef = { aes: {} };
+const dnsRef = { query() {} };
+const nativeServices = execute(
+  '$done({body:$utils.geoip("1.1.1.1")+":"+String($crypto===cryptoRef)+":"+String($dns===dnsRef)});',
+  "loon",
+  "loon",
+  {
+    $response: {},
+    $utils: nativeUtils,
+    $crypto: cryptoRef,
+    $dns: dnsRef,
+    cryptoRef,
+    dnsRef,
+  },
+);
+assert.equal(nativeServices.out.body, "native:true:true");
+
+// Modified: 2026-11-02 (chance). SDK request routing is a per-fetch field;
+// clear-all is preserved only where the native source store actually offers it.
+for (const to of ["qx", "surge"] as const) {
+  let request: any;
+  const native =
+    to === "qx"
+      ? {
+          $task: {
+            fetch: (o: any) => {
+              request = o;
+              return Promise.resolve({
+                statusCode: 200,
+                headers: {},
+                body: "",
+              });
+            },
+          },
+        }
+      : {
+          $httpClient: {
+            get: (o: any, cb: any) => {
+              request = o;
+              cb(null, { status: 200, headers: {} }, "");
+            },
+          },
+        };
+  execute(
+    '$httpClient.get({url:input,node:"DIRECT"},()=> $done({}));',
+    "loon",
+    to,
+    { input: "https://test/", $response: {}, ...native },
+  );
+  await new Promise((r) => setTimeout(r, 0));
+  assert.equal(
+    to === "qx" ? request.opts.policy : request.policy,
+    to === "qx" ? "direct" : "DIRECT",
+  );
+  assert.equal(request.node, undefined);
+}
+let cleared = 0;
+const nativePrefs = {
+  removeAllValues() {
+    assert.equal(this, nativePrefs);
+    cleared++;
+    return true;
+  },
+};
+const clear = execute(
+  "$done({body:String($prefs.removeAllValues())});",
+  "qx",
+  "qx",
+  { $response: {}, $prefs: nativePrefs },
+);
+assert.equal(clear.out.body, "true");
+assert.equal(cleared, 1);
+const unavailableClear = execute(
+  "$done({body:typeof $prefs.removeAllValues});",
+  "qx",
+  "surge",
+  { $response: {}, $persistentStore: {} },
+);
+assert.equal(unavailableClear.out.body, "undefined");

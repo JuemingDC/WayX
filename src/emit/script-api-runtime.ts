@@ -2,6 +2,7 @@
 // Runtime compatibility derived from ScriptHub qxMock/prefix; see vendor notice.
 // Modified: 2026-11-02 (chance). One API-level runtime replaces source-specific
 // flow proofs. Dynamic values and Env receivers are handled when APIs are called.
+import { scriptCompression } from "./script-compression.ts";
 import { scriptHubHeaders } from "../vendor/script-hub/headers.ts";
 export const scriptApiRuntime = String.raw`function(config,host,run){
   const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
@@ -10,8 +11,10 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
   const headers=(${scriptHubHeaders});
   const bytes=value=>ArrayBuffer.isView(value)?new Uint8Array(value.buffer,value.byteOffset,value.byteLength):value instanceof ArrayBuffer?new Uint8Array(value):fail('binary body requires BufferSource');
   const buffer=value=>{const b=bytes(value);return b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength);};
-  const status=value=>{if(typeof value==='number'&&Number.isInteger(value)&&value>=100&&value<=599)return value;const m=typeof value==='string'&&/^HTTP\/[\d.]+\s+(\d{3})(?:\s.*)?$/.exec(value);if(m)return Number(m[1]);return fail('invalid HTTP status');};
-  const statusLine=value=>typeof value==='string'?value:'HTTP/1.1 '+status(value)+' '+({200:'OK',201:'Created',204:'No Content',301:'Moved Permanently',302:'Found',304:'Not Modified',400:'Bad Request',401:'Unauthorized',403:'Forbidden',404:'Not Found',500:'Internal Server Error'}[status(value)]||'Status');
+  // Modified: 2026-11-02 (chance). Validate status lines as well as numeric
+  // values before formatting for QX; strings must not bypass result validation.
+  const status=value=>{if(typeof value==='number'&&Number.isInteger(value)&&value>=100&&value<=599)return value;const m=typeof value==='string'&&/^HTTP\/[\d.]+\s+(\d{3})(?:\s.*)?$/.exec(value);if(m)return status(Number(m[1]));return fail('invalid HTTP status');};
+  const statusLine=value=>{const code=status(value);return typeof value==='string'?value:'HTTP/1.1 '+code+' '+({200:'OK',201:'Created',204:'No Content',301:'Moved Permanently',302:'Found',304:'Not Modified',400:'Bad Request',401:'Unauthorized',403:'Forbidden',404:'Not Found',500:'Internal Server Error'}[code]||'Status');};
   function view(value){
     if(value===undefined)return undefined;
     const result=Object.assign({},value);
@@ -25,6 +28,9 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
   }
   const request=view(host.request),response=view(host.response);
   let completed=false;
+  // Modified: 2026-11-02 (chance). Validation does not consume completion;
+  // author catch/fallback may retry until a result is submitted to the host.
+  const finish=value=>{completed=true;return host.done(value);};
   function message(value,synthetic){
     if(!value||typeof value!=='object'||Array.isArray(value))return fail('completion requires an object');
     const out=Object.assign({},value);
@@ -40,11 +46,10 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     return out;
   }
   function done(value){
-    if(completed)return;completed=true;
-    if(value===undefined||value===null)return host.done({});
+    if(completed)return;
+    if(value===undefined||value===null)return finish({});
     if(value===response||value===request){
       // Return actual current fields; mutations made by author code are retained.
-      const current=value===response?host.response:host.request;
       const out={};for(const k of ['url','headers','body','bodyBytes',source.responseStatus])if(own(value,k))out[k]=value[k];
       value=out;
     }
@@ -53,8 +58,8 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     if(value&&typeof value==='object'&&own(value,'response')){synthetic=true;payload=value.response;}
     else if(config.from==='qx'&&config.phase==='echo')synthetic=true;
     const out=message(payload,synthetic);
-    if(synthetic){if(target.completion.synthetic==='flat'){if(config.phase!=='echo')fail('QX synthetic response requires an echo declaration');return host.done(out);}return host.done({response:out});}
-    return host.done(out);
+    if(synthetic){if(target.completion.synthetic==='flat'){if(config.phase!=='echo')fail('QX synthetic response requires an echo declaration');return finish(out);}return finish({response:out});}
+    return finish(out);
   }
   // ScriptHub-style native transport bridge, with complete method/error contracts.
   function transport(input,style,method){
@@ -67,18 +72,23 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     const req={url:input.url};
     if(own(input,'headers'))req.headers=Object.assign({},input.headers);
     if(own(input,'body'))req.body=input.body instanceof ArrayBuffer||ArrayBuffer.isView(input.body)?(target.http.style==='promise'?buffer(input.body):bytes(input.body)):input.body;
-    if(own(input,'bodyBytes'))req.bodyBytes=buffer(input.bodyBytes);
     const mapped={};
     for(const semantic of ['redirect','cookie','tls'])mapped[target.http[semantic]]=own(options,http[semantic])?options[http[semantic]]:http.defaults[semantic];
     if(own(options,http.policy))mapped[target.http.policy]=options[http.policy]===http.directPolicy?target.http.directPolicy:options[http.policy];
+    // Modified: 2026-11-02 (chance). Decode the documented source body-base64
+    // value into the target's byte body instead of dropping its meaning.
+    if(style==='callback'&&input['body-base64']&&config.from!==config.to){
+      if(typeof input.body!=='string')fail('body-base64 requires a String body');
+      const raw=host.codecs.atob(input.body),data=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)data[i]=raw.charCodeAt(i);
+      req.body=target.http.style==='promise'?buffer(data):data;
+    }
     if(target.http.style==='promise'){
       req.method=verb.toUpperCase();req.opts=mapped;
       return {req,verb};
     }
     Object.assign(req,mapped);
     if(http.timeoutMs!==null&&target.http.timeoutMs!==null&&own(input,'timeout'))req.timeout=input.timeout*http.timeoutMs/target.http.timeoutMs;
-    for(const key of ['binary-mode','body-base64','alpn'])if(style==='callback'&&own(input,key))req[key]=input[key];
-    if(own(req,'bodyBytes')){req.body=bytes(req.bodyBytes);delete req.bodyBytes;req['binary-mode']=true;}
+    for(const key of ['binary-mode','body-base64','alpn'])if(style==='callback'&&own(input,key)&&(key!=='body-base64'||config.from===config.to))req[key]=input[key];
     if(style==='promise')req['binary-mode']=true;
     return {req,verb};
   }
@@ -88,7 +98,15 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
       const normalize=(native,data)=>{
         if(!native)return reject({error:'HTTP transport returned no response'});
         const out={statusCode:status(native[target.responseStatus]),headers:headers(native.headers||{})};
-        if(data instanceof ArrayBuffer||ArrayBuffer.isView(data)){out.bodyBytes=buffer(data);out.body=new host.codecs.TextDecoder().decode(bytes(data));}else out.body=data;
+        if(data instanceof ArrayBuffer||ArrayBuffer.isView(data)){
+          out.bodyBytes=buffer(data);
+          if(target.http.style==='promise'&&typeof native.body==='string')out.body=native.body;
+          else{
+            const type=out.headers['content-type']||'',match=typeof type==='string'&&/charset\s*=\s*["']?([^;\s"']+)/i.exec(type);
+            const encoding=match?match[1]:'utf-8',Decoder=typeof host.global.TextDecoder==='function'?host.global.TextDecoder:host.codecs.TextDecoder;
+            try{out.body=new Decoder(encoding).decode(bytes(data));}catch(cause){const error=new Error('HTTP response charset unavailable: '+encoding);error.code='UNSUPPORTED_RESPONSE_CHARSET';error.encoding=encoding;error.cause=cause;throw error;}
+          }
+        }else out.body=data;
         resolve(out);
       };
       if(target.http.style==='promise'){
@@ -117,6 +135,9 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
   }};
   const prefKey=key=>typeof key==='string'?key:fail('QX storage requires an explicit String key');
   const prefs={valueForKey:key=>store.read(prefKey(key)),setValueForKey:(value,key)=>{key=prefKey(key);if(typeof value!=='string')return fail('QX storage value must be String');return store.write(value,key);},removeValueForKey:key=>target.store.remove?nativeStore[target.store.remove](prefKey(key)):nativeStore[target.store.write](null,prefKey(key))};
+  // Modified: 2026-11-02 (chance). Native QX clear-all is real; other hosts
+  // cannot reproduce it by deleting only keys observed by this adapter.
+  if(config.from==='qx'&&config.to==='qx'&&host.prefs&&typeof host.prefs.removeAllValues==='function')prefs.removeAllValues=host.prefs.removeAllValues.bind(host.prefs);
   function notify(title='',subtitle='',body='',option,delay){
     if(config.apiPlan.omitNotificationOptions)return target.notification.root==='$notify'?host.notifyQx(title,subtitle,body):host.notify.post(title,subtitle,body);
     if(delay!==undefined&&delay!==0&&config.from!==config.to)return fail('notification delay has no target API');
@@ -139,6 +160,13 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     $notify:config.from==='qx'?notify:undefined,$notification:config.from==='qx'?undefined:{post:notify},
     $argument:argument,$environment:environment,$loon:config.from==='loon'?(host.loon||'Loon (WayX API compatibility)'):undefined,
   };
+  // Modified: 2026-11-02 (chance). Preserve native source-only services on Loon;
+  // do not accidentally expose a different target API as an implemented mapping.
+  if(config.from==='loon'){
+    overlay.$utils=(${scriptCompression})(host,config);
+    overlay.$crypto=config.from===config.to?host.crypto:undefined;
+    overlay.$dns=config.from===config.to?host.dns:undefined;
+  }
   if(config.from==='loon')overlay.setInterval=(fn,delay,...args)=>host.setTimeout(fn,delay,...args);
   for(const name of ['TextEncoder','TextDecoder','atob','btoa'])if(typeof host.global[name]==='undefined')overlay[name]=host.codecs[name];
   const scope=new Proxy(overlay,{has:(t,key)=>own(t,key),get:(t,key)=>key===Symbol.unscopables?undefined:Reflect.get(t,key),set:(t,key,value)=>Reflect.set(t,key,value)});

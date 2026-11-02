@@ -12,13 +12,15 @@ Modified: 2026-11-02 (chance). 当前维护方式为 ScriptHub 派生的运行�
 
 ## 通用调用
 
-动态对象、键名、函数包装、类和 Env 的 this 交给 JavaScript 执行。编译阶段只检查语法、授权方向、HTTP phase/binary 声明。API inventory 仅记录引用与能力，不对作者的实参、别名、分支逐项证明或白名单放行。
+动态对象、键名、函数包装、类和 Env 的 this 交给 JavaScript 执行。编译阶段只检查语法、授权方向、HTTP phase/binary 声明。API inventory 仅记录引用与能力，不对作者的实参、别名、分支逐项证明或白名单放行。target.capability 明确区分运行时适配、需要原生、未实现和未分类。
 
-Header 采用大小写无关、小写字典策略，这是接受的兼容规范化；不保持原键大小写和重复大小写键。HTTP 支持动态方法、并发、Promise/callback、二进制和动态结果，错误继续传播。QX 未说明参数按用户要求省略；原构造表达式、副作用及异常不被移除。
+Header 采用大小写无关、小写字典策略，这是接受的兼容规范化；不保持原键大小写和重复大小写键。HTTP 支持动态方法、并发、Promise/callback、二进制和动态结果，错误继续传播。原生 QX 已解码文本保留；外端字节按实际可用的 TextDecoder 处理 charset，不可用则明确拒绝。Loon body-base64 转真实字节，node 映射目标单次请求的 policy；$done 先校验后锁定提交，允许作者捕获校验错误后重试。QX 未说明参数按用户要求省略；原构造表达式、副作用及异常不被移除。
 
 ## 能力边界
 
-目标原生的存储缺失值、空值、详细错误对象、编码/Cookie 状态及客户端版本可能仍不同；兼容不等于整程序严格等价。真实源设备/版本、动态 Function 代码的 globals、完整 Header 数组、受限 Proxy descriptor、没有原生支持的压缩/WASM/文件/配置 API 不伪造支持。QX echo 和 body/header 规则需要相应声明；未知默认来源存储键、不可用通知动作在调用时明确失败。
+目标原生的存储缺失值、空值、详细错误对象、编码/Cookie 状态及客户端版本可能仍不同；兼容不等于整程序严格等价。真实源设备/版本、动态 Function 代码的 globals、完整 Header 数组、受限 Proxy descriptor、未提供的 AES/DNS/GeoIP/WASM/文件/配置 API 不伪造支持。Loon gzip/ungzip 已复用固定 Pako（原生优先、延迟初始化、gzip 完整流校验）；压缩字节编码和元数据不保证与原生一致。QX echo 和 body/header 规则需要相应声明；未知默认来源存储键、不可用通知动作在调用时明确失败。
+
+剩余 AES、URL、编码和宿主服务的实现选择及验收条件见 [API 能力与实施路线](script-api/03-API能力与实施路线.md)。QX removeAllValues 原生保留；目标没有全局清空存储接口时不伪造成功。
 
 ## 文件与验证
 
